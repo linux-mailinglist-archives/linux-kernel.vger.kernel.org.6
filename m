@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-416336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D89C9D4372
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:18:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BDEB9D4376
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F33282FF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C8AB282FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BED61BBBCF;
-	Wed, 20 Nov 2024 21:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2941C232B;
+	Wed, 20 Nov 2024 21:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="kdB08FMd"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XcEBO3Bz"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A71386D7;
-	Wed, 20 Nov 2024 21:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604FB1474B7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732137527; cv=none; b=h1WdxYFoS+bHpmyTdsuEiW5ulHIwuhe3Gi+7tEDE7sBxCcN1Fag48GGusWP4WOin6QWJveB59kCP9GV06HRaxGzloK2/MS/fKXdcq93CaT+AF3zoBMDOaZRqxgsDiir+oJhAWlYemQo8UOdnVyKiCN1nrsMr67w8J/Yze32Hmjc=
+	t=1732137614; cv=none; b=q6w/LqnOCFpAZRfE5w5oEBfOJTnJEshVXqbUtc0Pq8FTxWJ9TVVan+XDIIEN4ZEIuQGFajHRAeQxr/a3yu0Ry+bw4RoeKApkdGNeNzoJiMSesNvzh60bhyD22yyIrugyDnBaeZVTqke5ylhHuP/b+W+YIBGmKtal4vKnQ1Ul/jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732137527; c=relaxed/simple;
-	bh=s/ykia8tnQquMAciCLcq2D1BsQ1o40nj9QdizvoVbks=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=napd5cr8WyyDnSso8xIiOhyZt1GJHMsu6H3Xv41VgeOCIcb8ylOevBogY+YAv6npWYFmsEwfYt8C4JPsg6Is9RaqnR25taihoFKH1PKu1qAM2MERrojeE/jBANyqGbB8Q3A2NtKTd/VZvX8o/BcTiU5OfccbhHpTcfNOBSIjS3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=kdB08FMd; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id B85B11E0010;
-	Thu, 21 Nov 2024 00:18:32 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru B85B11E0010
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1732137512; bh=dXFFfkwKeRkZcHX5xFLpg60SG0o9S7rzk+KxSIUCzgk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=kdB08FMdFrg89QOmVYldTaVKLSQIeJz0R8QTxhaCBvlc2FpLfMvYqlPfTr4MkMwda
-	 pxP8f7EpGTzEaNL2zOxYInTqdPrIqkTK6QDVP85jqGBR8dnsklpB1soKrgDcon1CS0
-	 sLU68i9fCudm8IuEC40c1mSWqsgKoGVmL2fBC0VkdYbEBQMRRZTCawoHOENzHoJHr4
-	 iITieYuWdk6Or21233RNHO2QzctNRkaghoztwTRhLiL6gPPxS1M5wxlDa1dex2cRPd
-	 xmET58w9N1D+lxXuNSJXYl80pd+ecuu1o/Po11gxCiSf2+4oDF/MYJj0jvK6l/CpHS
-	 oJO9oDDBJHU0w==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Thu, 21 Nov 2024 00:18:32 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.247.42) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Thu, 21 Nov
- 2024 00:18:31 +0300
-From: Murad Masimov <m.masimov@maxima.ru>
-To: Mustafa Ismail <mustafa.ismail@intel.com>
-CC: Murad Masimov <m.masimov@maxima.ru>, Tatyana Nikolova
-	<tatyana.e.nikolova@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon
- Romanovsky <leon@kernel.org>, Shiraz Saleem <shiraz.saleem@intel.com>,
-	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] RDMA/irdma: prevent out-of-bounds shift on timeout calculation
-Date: Thu, 21 Nov 2024 00:18:07 +0300
-Message-ID: <20241120211809.922-1-m.masimov@maxima.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1732137614; c=relaxed/simple;
+	bh=ygHzeKyL0SvAgE6Cj96tfTz7qSOaczxSJ6NVDVZfFmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KHj+o5mDYbh2bl8Ir3NgSKLx2GLfHl/Q1IZEyum4+7i3KQPE59puBC617DPVAYT+puk856V+PQmyerOr8tqGDT39IHsBfH9UzRkv3dUol3dudQUjlttoA3sMpXmKgNbzw+8hcVkMQeDGoLSpKqdpRIRL2lKkaeFzH4+7FO2aERA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XcEBO3Bz; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 16:20:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732137610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MK7Yw13rIPAR5mXF8jT4hgAQAmxv6k0/U0gtqc/SGbE=;
+	b=XcEBO3BzCSx7AHhL9v/iGMOfgQ/Gkv5yqDMeO5LS0VgHj9PiFQPJbX5bKxpmIwstoRIgF7
+	7YTt9ibeyAobYGlgyhKU8hl1BZ+YwYRglYuO6FeIqDsEdGnDkZbVPgsxPPnYZg/fN4UegY
+	0Lk8vOwYMtA/cq7HF3t0VDqIg8loWvM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+References: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189318 [Nov 20 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 42 0.3.42 bec10d90a7a48fa5da8c590feab6ebd7732fec6b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.62:7.1.2;ksmg02.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/20 17:47:00 #26877225
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-After some finite number of tries, bitshift in the calculation of timetosend at
-function irdma_cm_timer_tick() will lead to out-of-bounds shift, which in this
-case is an undefined behaviour. For instance, if HZ is equal to 1024, the issue
-occurs after 21 tries, which will take less than
-IRDMA_MAX_TIMEOUT / HZ * 21 = 252 seconds.
+On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
+> On 11/20/24 13:34, Kent Overstreet wrote:
+> > On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
+> > > On 9/2/24 03:51, Kent Overstreet wrote:
+> > > > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> > > > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > > > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+> > > > > > > [...]
+> > > > > > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+> > > > > > > > in the case of bugs, because that's going to be an improvement w.r.t.
+> > > > > > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
+> > > > > > > > something that we can't guarantee won't happen in the wild - we WARN()
+> > > > > > > > and try to handle the error as best we can.
+> > > > > > > 
+> > > > > > > We have discussed that in a different email thread. And I have to say
+> > > > > > > that I am not convinced that returning NULL makes a broken code much
+> > > > > > > better. Why? Because we can expect that broken NOFAIL users will not have a
+> > > > > > > error checking path. Even valid NOFAIL users will not have one because
+> > > > > > > they _know_ they do not have a different than retry for ever recovery
+> > > > > > > path.
+> > > > > > 
+> > > > > > You mean where I asked you for a link to the discussion and rationale
+> > > > > > you claimed had happened? Still waiting on that
+> > > > > 
+> > > > > I am not your assistent to be tasked and search through lore archives.
+> > > > > Find one if you need that.
+> > > > > 
+> > > > > Anyway, if you read the email and even tried to understand what is
+> > > > > written there rather than immediately started shouting a response then
+> > > > > you would have noticed I have put actual arguments here. You are free to
+> > > > > disagree with them and lay down your arguments. You have decided to
+> > > > > 
+> > > > > [...]
+> > > > > 
+> > > > > > Yeah, enough of this insanity.
+> > > > > 
+> > > > > so I do not think you are able to do that. Again...
+> > > > 
+> > > > Michal, if you think crashing processes is an acceptable alternative to
+> > > > error handling _you have no business writing kernel code_.
+> > > > 
+> > > > You have been stridently arguing for one bad idea after another, and
+> > > > it's an insult to those of us who do give a shit about writing reliable
+> > > > software.
+> > > > 
+> > > > You're arguing against basic precepts of kernel programming.
+> > > > 
+> > > > Get your head examined. And get the fuck out of here with this shit.
+> > > > 
+> > > 
+> > > Kent,
+> > > 
+> > > Using language like this is clearly unacceptable and violates the
+> > > Code of Conduct. This type of language doesn't promote respectful
+> > > and productive discussions and is detrimental to the health of the
+> > > community.
+> > > 
+> > > You should be well aware that this type of language and personal
+> > > attack is a clear violation of the Linux kernel Contributor Covenant
+> > > Code of Conduct as outlined in the following:
+> > > 
+> > > https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+> > > 
+> > > Refer to the Code of Conduct and refrain from violating the Code of
+> > > Conduct in the future.
+> > 
+> > I believe Michal and I have more or less worked this out privately (and
+> > you guys have been copied on that as well).
+> 
+> Thank you for updating us on the behind the scenes work between you
+> and Michal.
+> 
+> I will make one correction to your statement, "you guys have been copied on
+> that as well" - which is inaccurate. You have shared your email exchanges
+> with Michal with us to let us know that the issue has been sorted out.
 
-Lower IRDMA_DEFAULT_RETRANS from 32 to 20 to prevent out-of-bounds shift for
-any HZ value less than 2048.
+That seems to be what I just said.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> You might have your reasons and concerns about the direction of the code
+> and design that pertains to the discussion in this email thread. You might
+> have your reasons for expressing your frustration. However, those need to be
+> worked out as separate from this Code of Conduct violation.
+> 
+> In the case of unacceptable behaviors as defined in the Code of Conduct
+> document, the process is to work towards restoring productive and
+> respectful discussions. It is reasonable to ask for an apology to help
+> us get to the goal as soon as possible.
+> 
+> I urge you once again to apologize for using language that negatively impacts
+> productive discussions.
 
-Fixes: 8385a875c9ee ("RDMA/irdma: Increase iWARP CM default rexmit count")
-Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
----
- drivers/infiniband/hw/irdma/cm.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/irdma/cm.h b/drivers/infiniband/hw/irdma/cm.h
-index 48ee285cf745..dc4ee1b185eb 100644
---- a/drivers/infiniband/hw/irdma/cm.h
-+++ b/drivers/infiniband/hw/irdma/cm.h
-@@ -41,7 +41,7 @@
- #define TCP_OPTIONS_PADDING	3
-
- #define IRDMA_DEFAULT_RETRYS	64
--#define IRDMA_DEFAULT_RETRANS	32
-+#define IRDMA_DEFAULT_RETRANS	20
- #define IRDMA_DEFAULT_TTL		0x40
- #define IRDMA_DEFAULT_RTT_VAR		6
- #define IRDMA_DEFAULT_SS_THRESH		0x3fffffff
---
-2.39.2
-
+Shuah, I'd be happy to give you that after the discussion I suggested.
+Failing that, I urge you to stick to what we agreed to last night.
 
