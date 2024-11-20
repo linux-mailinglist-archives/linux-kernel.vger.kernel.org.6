@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-415272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D479C9D33C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:49:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB309D33CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A72928346E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE702837AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F9A16DED2;
-	Wed, 20 Nov 2024 06:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610F660DCF;
+	Wed, 20 Nov 2024 06:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="SXblrgP/"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F566157466;
-	Wed, 20 Nov 2024 06:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w+XsQmXc"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAA7848C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732085302; cv=none; b=rTTohinLy4PdgvgSh+Xpj4p0WbkcbSTlKtRixUvYWC9f7RncPhUB6yV9dVjWgDyJs+o+/JsnmxHeeLhVMg8bzM1XFV4Oi0m4r6vX27Nz9/i8+PYEoYC2K92Z08GbJZJX+WYacLmyqfXpJIBvdxXsdJdxoNAXW/k7GfZPLxXpetE=
+	t=1732085567; cv=none; b=nOBVO64GdCctLw4EgJ54bbLU3OLlYeKUX030XaiWhBsYN/oPLexTkjPxDBzLnVJk2Doh6sRR5AthbP3+8ctpVij1fluK6Ip1cGtc/rei8Jyj8RmvD3jj9ty8N+fgf31B9gdqA146GJQHUwHK3TRVQ6AAJFZUAlvHWkqesC3A9Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732085302; c=relaxed/simple;
-	bh=03yhgGmdxKAMM7hG9WNCGsQUI/y8wqpw8cVe4oK+ZEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lg9OSrx8dCcVMzKO3G99roeDiSv4qdWo2tyP96hTKhSNK+ILrsCvZo/xovp8NUJKYb1UNPSANvea3I8wgzNVvlOUJpWbI+fzHIzhez6mjlsoLFY21POPlrRJoUKHtuM1sHN7W6Fz8NEFVeLHrhq11DPGx+ksJYeezroTabhck5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=SXblrgP/; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=RxxSJ
-	zuhen+I5MBVyFiCFH36XjMts/uli22nGaC4/a8=; b=SXblrgP/s223E1obJDxG1
-	3ZlhfOOEKXsr8qJpMa5agKnWl7mc2WFcmYD0krKhJOuVg/muS2PIj6t0gYH7WwKG
-	IwpKwJhBuHsP7pHk+il8paqY+nsIehYnW02ZMwFLSP72VPtHoe4ws/RZMjRzcrVw
-	HKh9lOVNpX3kBY/CntqmH0=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wDnD1j4hT1nTO3OIQ--.22522S8;
-	Wed, 20 Nov 2024 14:47:30 +0800 (CST)
-From: Ran Xiaokai <ranxiaokai627@163.com>
-To: juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	pshelar@ovn.org,
-	davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org,
-	ran.xiaokai@zte.com.cn,
-	linux-perf-users@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dev@openvswitch.org
-Subject: [PATCH 4/4] net: sysfs: convert call_rcu() to kvfree_rcu()
-Date: Wed, 20 Nov 2024 06:47:16 +0000
-Message-Id: <20241120064716.3361211-5-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241120064716.3361211-1-ranxiaokai627@163.com>
-References: <20241120064716.3361211-1-ranxiaokai627@163.com>
+	s=arc-20240116; t=1732085567; c=relaxed/simple;
+	bh=zlQRcmOt5d36/S6MQvKaqMJrGGai7g7s0walSI2h4n8=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=Voh+9ImnZV6/SuoeS3QivAYz0O4udmEN4uqJYhlT/VR2LaoPfeetAfu4/ftFyFX6Eh1o5NHapEteA9ILLSBLeMKLXNnkIGKuiukql1NwQNs2TZZ8gRFrraevjiFgy8XRH4mvvyjN3+pza+Hy5ZjNruLgzmQUeaMtOEq5cApgYE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w+XsQmXc; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3891f31330so2938876276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 22:52:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732085565; x=1732690365; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MaYH2W8sGkrg/tcGEaEzQRK218luN7NoGjzqVifhNqM=;
+        b=w+XsQmXcIDumZfrzZ8YrHcNpYqu3WL3YjQB3mhFlD2e38+g5nRLcV49w13W21SdAuV
+         Gd8oY263Q+viyvk/TnUF4ElKptqnqrqZ7kRKZ5jeBzvCqQwIGxncMsYnnFgTmWhQw4Nf
+         OQuIAGpEuGZkpw0sMG6bu4IO1VDlJFSnHRhXdnLrGQRWK4qSmI5kNVJutZT6Cx+522sb
+         KFiKrYn4duJO0geHdb3MLYrQ1uClGV+TEdLW6Qssew5jQ3ceH5hV0gTjvtyNZFdBfS7o
+         /GPLGNVOpJiA0HwNWNcDB9XlCocXU0FgXlxHIL6cgXYz1RxicVvX3/SRxnR+/04nQVOI
+         FKBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732085565; x=1732690365;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MaYH2W8sGkrg/tcGEaEzQRK218luN7NoGjzqVifhNqM=;
+        b=ip5arRoqH1eO9hWG1+90W3e/EGupHl1M/1b4i5an2gOJxHl29H3JKMGir80/u5A5yx
+         IoqMoe4g5KZ24/5P4mkCqd/+G13HHwN80ue/VJ6ebE5YjWlw4u7b/9C7fJBpz2IIoK0W
+         7lL50fEjDx2c1Yxu0zwoikByfFX+5uYKhqXlFvxmYyix5MkwrolJLx94+Bl9X3DoqJoU
+         0QlWTIFlwM2gfwmSDmKN9qJGp3lJlQdmjcgEA0vaz/nJlksJdcuJkq94y1YNXqNzAswE
+         fivWn2PWN/OVvLXKFrDCT3BZkF95U4UQl0u5geGyNAzEiqhun6H0I3cF+0RnH9kWj2MH
+         jOpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSGJcp0VhxgNqYGHnt0njh27V6hNzSA9EFUHM/LIsiqGUA8SHeqvtAU2MBmPcpAwW9FcO7RQ7AAyupvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+C26RgrkGF/Oa2q5HREvp20g5elxKrhCKXOWikmAKz6oiBh2X
+	2EXdc+D6grxPhTBqzk6334OxPnbnv1Q43wlWohvBqYCKperkWoiQD3Z4xw7A/84f2YiSnlol+ji
+	rL5KkBw==
+X-Google-Smtp-Source: AGHT+IGyd42lN7O2c3PrxL0xmpHYDINplOY7Y830evcZ89nZnibRmW42rFb+M2k6eliv+I1sDcAufOu9GHJN
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:f0ab:b1c6:6df2:ed2a])
+ (user=irogers job=sendgmr) by 2002:a25:74c7:0:b0:e38:8794:240e with SMTP id
+ 3f1490d57ef6-e38cb564970mr1101276.3.1732085565348; Tue, 19 Nov 2024 22:52:45
+ -0800 (PST)
+Date: Tue, 19 Nov 2024 22:52:24 -0800
+Message-Id: <20241120065224.286813-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnD1j4hT1nTO3OIQ--.22522S8
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WFWfWF4DCry8XrW3Xr4Dtwb_yoW8Xw17pr
-	45Gr9xt395Xr1kJrZ7Kr1IgF1UWr4jqF15WFn2kw1ftwn8Z34v9F17C340qFn5ArW8JFWU
-	Zw4Y9rsxAF48AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UdOz3UUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/1tbiqRudTGc9e4T0vgADsP
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+Subject: [PATCH v1] perf string: Avoid undefined NULL+1
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, 
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+While the value NULL+1 is never used it triggers a ubsan
+warning. Restructure and comment the loop to avoid this.
 
-The rcu callback rps_dev_flow_table_release() simply calls vfree().
-It's better to directly call kvfree_rcu().
-
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- net/core/net-sysfs.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ tools/perf/util/string.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 2d9afc6e2161..8ba2251af077 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -947,13 +947,6 @@ static ssize_t show_rps_dev_flow_table_cnt(struct netdev_rx_queue *queue,
- 	return sysfs_emit(buf, "%lu\n", val);
+diff --git a/tools/perf/util/string.c b/tools/perf/util/string.c
+index 308fc7ec88cc..c0e927bbadf6 100644
+--- a/tools/perf/util/string.c
++++ b/tools/perf/util/string.c
+@@ -254,11 +254,20 @@ char *strpbrk_esc(char *str, const char *stopset)
+ 
+ 	do {
+ 		ptr = strpbrk(str, stopset);
+-		if (ptr == str ||
+-		    (ptr == str + 1 && *(ptr - 1) != '\\'))
++		if (!ptr) {
++			/* stopset not in str. */
+ 			break;
++		}
++		if (ptr == str) {
++			/* stopset character is first in str. */
++			break;
++		}
++		if (ptr == str + 1 && str[0] != '\\') {
++			/* stopset chacter is second and wasn't preceded by a '\'. */
++			break;
++		}
+ 		str = ptr + 1;
+-	} while (ptr && *(ptr - 1) == '\\' && *(ptr - 2) != '\\');
++	} while (ptr[-1] == '\\' && ptr[-2] != '\\');
+ 
+ 	return ptr;
  }
- 
--static void rps_dev_flow_table_release(struct rcu_head *rcu)
--{
--	struct rps_dev_flow_table *table = container_of(rcu,
--	    struct rps_dev_flow_table, rcu);
--	vfree(table);
--}
--
- static ssize_t store_rps_dev_flow_table_cnt(struct netdev_rx_queue *queue,
- 					    const char *buf, size_t len)
- {
-@@ -1008,7 +1001,7 @@ static ssize_t store_rps_dev_flow_table_cnt(struct netdev_rx_queue *queue,
- 	spin_unlock(&rps_dev_flow_lock);
- 
- 	if (old_table)
--		call_rcu(&old_table->rcu, rps_dev_flow_table_release);
-+		kvfree_rcu(old_table, rcu);
- 
- 	return len;
- }
-@@ -1046,7 +1039,7 @@ static void rx_queue_release(struct kobject *kobj)
- 	flow_table = rcu_dereference_protected(queue->rps_flow_table, 1);
- 	if (flow_table) {
- 		RCU_INIT_POINTER(queue->rps_flow_table, NULL);
--		call_rcu(&flow_table->rcu, rps_dev_flow_table_release);
-+		kvfree_rcu(flow_table, rcu);
- 	}
- #endif
- 
 -- 
-2.17.1
-
+2.47.0.371.ga323438b13-goog
 
 
