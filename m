@@ -1,193 +1,124 @@
-Return-Path: <linux-kernel+bounces-415177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB439D3254
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:58:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A374C9D3257
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:02:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7811EB2290B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:58:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 317221F232F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A37F5FEED;
-	Wed, 20 Nov 2024 02:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BA5446A1;
+	Wed, 20 Nov 2024 03:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A57xcPX9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="f9K4M1x5"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009E41C62;
-	Wed, 20 Nov 2024 02:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838E73C3C;
+	Wed, 20 Nov 2024 03:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732071471; cv=none; b=FRYoQzB6+nvm0lr/ZRQywUblyNJvg0KfXuXCTUuTnM55O7P/hvW+FILicH9CO+eBU3DY+YfRpj584D0/gNNaMJQF9sBF+l5to806b9cHfAlbCZgvIoZCave8XIMoEkiqQ1dHJQg9X0alL2P1q0XP5WcImdR7Jphw0Ld93YbK2jQ=
+	t=1732071713; cv=none; b=iWsiBmTainSfZV/NCZ5o37RzcD/hxjdnXrF5R16z44YmQptgoqlF3G/v2vE47lZABIw8V4kvTfznPQehbqF4mUD3Karry393SBmNRLBF3LONNn8yiMZ8vDEsVzN+pEJLfz6WsbfJnOTbuXoURSc8Vdcd6/jMCNhkuWcgLCtqzsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732071471; c=relaxed/simple;
-	bh=Aw7IdFuEXLbMBlkSZdde3kG/DSC1Uw8cU93GCXPXfHk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cpAV1u6Z7edx2TiNKPV0R5UhnuXj/jeyLtxDgZZsVzwglGhPv1wcOhKRdhJJxe/vmbvVBZ3kRHWDcb1A7deL6rVXbGTP/n63U4FIKvXbQ7w8picmOW7cH73jx6mJIC7F5GvIrq6t2/vWiqmIsD46sdERE7kN2ehVYby4MgGkL1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A57xcPX9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC20AC4CECF;
-	Wed, 20 Nov 2024 02:57:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732071471;
-	bh=Aw7IdFuEXLbMBlkSZdde3kG/DSC1Uw8cU93GCXPXfHk=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=A57xcPX9gXaqjn05XIM4WCCKqcjtCldfwyCIwHK+xgJxoppX/tQR+HBnHHtzaR61N
-	 i6QiHuP+5ZvvYnePtA8f9TEcnd1zwnAKMN5kaLaq5WTTCshOlAY5sWFGM6hcNd7OxT
-	 33aFqJZ3px6iaeOON1APHXPlBX+8RlhUPbx+FMtMDmWIF4Ld80iuGEpEeq1rmnS4+P
-	 0wO81ajmDp9gNRis4uinLF1ZRZwyMQNbeq30Cv1PUJAz3kv9PlXPfpcZqrw7VLFYD0
-	 l/pD14XNcGTGv9NE8orh7ihiQeQWI7j4U/XoglqNjLvOMx9iI30DbuO5lA91VU/NXA
-	 5QCrUmgOUj1ZA==
-Message-ID: <35c20e47-9124-45df-8067-67c5ef29600e@kernel.org>
-Date: Wed, 20 Nov 2024 10:57:47 +0800
+	s=arc-20240116; t=1732071713; c=relaxed/simple;
+	bh=Vfsrf6Yb0Mlj84T3QFclVGgHS8qm2HBNnNREGwGCi28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xx2VOon08MapkfSl82cEm6kKIrGyXV6iiOEH0ZFSWYrjcO1DEcWMQkjtsmY1PuR59Dsw4d3wGvuFI7lBdM5wYeCCY1PIvuwmkEBujcuqp0wlsLx03TRzSmnP8/DvEHFLSonduEoFWZwPm8AZNKmuxTufVWQWbQPXdtdErLIc7S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=f9K4M1x5; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=SQambRT+eqU+XyR92PsS1euMdksf3+gQcD6V+DPXmVc=; b=f9K4M1x5fYPgFYc781683KXvI9
+	mf1XpMlHQ3inqaK7nCQnk6mpk1ylfi7/3PHvdX5TZCZWlr5v+5RvQbDYaqnoKqMTZfbxF4dWKkTBa
+	7GxAnIOWLZnJJY+j4StKeyJZJoB5LQcgwrj6uMUgpeZ0fdxMZ5sJ2vnntI/bWUgg531ApSbK7JYmf
+	UD5O1R76gChXZXfQmkJTbtLMxkzziC/E/AM7dcIYNYKDKkdPgx0/zuLb12ZXbm5ZejoISMcgUN4bV
+	/q1YMxRA6r4Lqv5pfoA1DiC4PN6xEEGV5+KNPjgOnmZwHNae61p152IQloIo7EKQO9lFCOxa9zvZT
+	S06AYCgw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tDay8-000PN0-1h;
+	Wed, 20 Nov 2024 11:01:29 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 20 Nov 2024 11:01:28 +0800
+Date: Wed, 20 Nov 2024 11:01:28 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, Cong Wang <cong.wang@bytedance.com>
+Subject: Re: [PATCH net 1/2] netpoll: Use rcu_access_pointer() in
+ __netpoll_setup
+Message-ID: <Zz1RCAT9Ao5PsAAK@gondor.apana.org.au>
+References: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
+ <20241118-netpoll_rcu-v1-1-a1888dcb4a02@debian.org>
+ <ZzwF4QdNch_UzMlV@gondor.apana.org.au>
+ <20241119-magnetic-striped-pig-bcffa9@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Eric Sandeen <sandeen@redhat.com>,
- Daniel Rosenberg <drosen@google.com>, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime
- mount option parsing"
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20241112010820.2788822-1-jaegeuk@kernel.org>
- <ZzPLELITeOeBsYdi@google.com>
- <2d26eeee-01f7-445b-a1d2-bc2de65b5599@kernel.org>
- <Zzz5ocjKK_naOnMq@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Zzz5ocjKK_naOnMq@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119-magnetic-striped-pig-bcffa9@leitao>
 
-On 2024/11/20 4:48, Jaegeuk Kim wrote:
-> On 11/19, Chao Yu wrote:
->> On 2024/11/13 5:39, Jaegeuk Kim via Linux-f2fs-devel wrote:
->>> Hi Eric,
->>>
->>> Could you please check this revert as it breaks the mount()?
->>> It seems F2FS needs to implement new mount support.
->>
->> Hi all,
->>
->> Actually, if we want to enable lazytime option, we can use mount
->> syscall as:
->>
->> mount("/dev/vdb", "/mnt/test", "f2fs", MS_LAZYTIME, NULL);
->>
->> or use shell script as:
->>
->> mount -t f2fs -o lazytime /dev/vdb /mnt/test
->>
->> IIUC, the reason why mount command can handle lazytime is, after
->> 8c7f073aaeaa ("libmount: add support for MS_LAZYTIME"), mount command
->> supports to map "lazytime" to MS_LAZYTIME, and use MS_LAZYTIME in
->> parameter @mountflags of mount(2).
->>
->> So, it looks we have alternative way to enable/disable lazytime feature
->> after removing Opt_{no,}lazytime parsing in f2fs, do we really need this
->> revert patch?
-> 
-> This is a regression of the below command. I don't think offering others are
-> feasible.
-> 
-> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+On Tue, Nov 19, 2024 at 02:22:06AM -0800, Breno Leitao wrote:
+>
+> I looked about rcu_dereference_protected() as well, and I though it is
+> used when you are de-referencing the pointer, which is a more expensive
+> approach.  In the code above, the code basically need to check if the
+> pointer is assigned or not. Looking at the code, it seems that having
+> rcu_access_pointer() inside the update lock seems a common pattern, than
+> that is what I chose.
 
-Alright, there are other options were removed along w/ removal of
-related feature. e.g.
+No, rcu_dereference_protected is actually cheaper than rcu_access_pointer:
 
-1. io_bits=%u by commit 87161a2b0aed ("f2fs: deprecate io_bits")
-2. whint_mode=%s by commit 930e2607638d ("f2fs: remove obsolete whint_mode")
+#define __rcu_access_pointer(p, local, space) \
+({ \
+        typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
+        rcu_check_sparse(p, space); \
+        ((typeof(*p) __force __kernel *)(local)); \
+})
 
-Do we need to add these options handling back, and print "xxx options were
-deprecated" as we did in ("f2fs: kill heap-based allocation"), in order to
-avoid mount(......, "io_bits=%u" or "whint_mode=%s") command regression?
+#define __rcu_dereference_protected(p, local, c, space) \
+({ \
+        RCU_LOCKDEP_WARN(!(c), "suspicious rcu_dereference_protected() usage"); \
+        rcu_check_sparse(p, space); \
+        ((typeof(*p) __force __kernel *)(p)); \
+})
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 867b147eb957..329f317e6f09 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -733,10 +733,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
-  			clear_opt(sbi, DISCARD);
-  			break;
-  		case Opt_noheap:
--			set_opt(sbi, NOHEAP);
--			break;
-  		case Opt_heap:
--			clear_opt(sbi, NOHEAP);
-+			f2fs_warn(sbi, "heap/no_heap options were deprecated");
-  			break;
+> On the other side, I understand we want to call an RCU primitive with
+> the _protected() context, so, I looked for a possible
+> `rcu_access_pointer_protected()`, but this best does not exist. Anyway,
+> I am happy to change it, if it is the correct API.
 
-Thanks,
+There is no need for rcu_access_pointer_protected because the
+rcu_dereference_protected helper is already the cheapest.
 
-> 
->>
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>> On 11/12, Jaegeuk Kim wrote:
->>>> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
->>>>
->>>> The above commit broke the lazytime mount, given
->>>>
->>>> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
->>>>
->>>> CC: stable@vger.kernel.org # 6.11+
->>>> Signed-off-by: Daniel Rosenberg <drosen@google.com>
->>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>> ---
->>>>    fs/f2fs/super.c | 10 ++++++++++
->>>>    1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>> index 49519439b770..35c4394e4fc6 100644
->>>> --- a/fs/f2fs/super.c
->>>> +++ b/fs/f2fs/super.c
->>>> @@ -150,6 +150,8 @@ enum {
->>>>    	Opt_mode,
->>>>    	Opt_fault_injection,
->>>>    	Opt_fault_type,
->>>> +	Opt_lazytime,
->>>> +	Opt_nolazytime,
->>>>    	Opt_quota,
->>>>    	Opt_noquota,
->>>>    	Opt_usrquota,
->>>> @@ -226,6 +228,8 @@ static match_table_t f2fs_tokens = {
->>>>    	{Opt_mode, "mode=%s"},
->>>>    	{Opt_fault_injection, "fault_injection=%u"},
->>>>    	{Opt_fault_type, "fault_type=%u"},
->>>> +	{Opt_lazytime, "lazytime"},
->>>> +	{Opt_nolazytime, "nolazytime"},
->>>>    	{Opt_quota, "quota"},
->>>>    	{Opt_noquota, "noquota"},
->>>>    	{Opt_usrquota, "usrquota"},
->>>> @@ -922,6 +926,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->>>>    			f2fs_info(sbi, "fault_type options not supported");
->>>>    			break;
->>>>    #endif
->>>> +		case Opt_lazytime:
->>>> +			sb->s_flags |= SB_LAZYTIME;
->>>> +			break;
->>>> +		case Opt_nolazytime:
->>>> +			sb->s_flags &= ~SB_LAZYTIME;
->>>> +			break;
->>>>    #ifdef CONFIG_QUOTA
->>>>    		case Opt_quota:
->>>>    		case Opt_usrquota:
->>>> -- 
->>>> 2.47.0.277.g8800431eea-goog
->>>
->>>
->>> _______________________________________________
->>> Linux-f2fs-devel mailing list
->>> Linux-f2fs-devel@lists.sourceforge.net
->>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> When 8fdd95ec162a was created, npinfo was an RCU pointer, although
+> without the RCU annotation that came later (5fbee843c).  That is
+> reason I chose to fix 8fdd95ec162a.
 
+The code was correct as is without RCU markings.  The only reason
+we need the RCU markings is because an __rcu tag was added to the
+variable later, without also making the necessary changes in the
+existing code using that variable.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
