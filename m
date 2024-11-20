@@ -1,72 +1,61 @@
-Return-Path: <linux-kernel+bounces-415364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4E09D3501
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:05:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B069D3505
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C3B1F22E57
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CE41F22021
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44144158858;
-	Wed, 20 Nov 2024 08:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEB91714D3;
+	Wed, 20 Nov 2024 08:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kvaz97s2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pVi2K95v"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBFXlqxC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F9060DCF
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64B15B551;
+	Wed, 20 Nov 2024 08:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732089925; cv=none; b=IAHT013EEd9bCDkp//FNSL2ZRr/xKKTZh0NylJyZMFc6Eny0N3IT5d06uDKUPW9PEuzav70noIkV6pdonkiuABeS3DWCgXVTG+KfKOpXgVTTqlD2H2x284Mc4I5oNmrSW+7D5/Yv+NrFfhALSRtMv64MIvgCf4vMEeBEuHc8Zkk=
+	t=1732089967; cv=none; b=QymdmHB4MUoGXGz0Jw4ibTKYJ67LLZjCHEFUs85owztXyYVR+TdrLXxh+Tsnj313OTxqS30X9mJ3wOYwVzHWDum2uze0i9mCK+GbIvYj8egBb98+PKmEmqW9evkVUf+7Kd8BzDuXzWNhnjVmh08LWVCaczeDYkA+IrdCjsHOkhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732089925; c=relaxed/simple;
-	bh=+XfZ6aH67RuphEum1sNMs/bFLTO1I8SN/QSDRfT+fFM=;
+	s=arc-20240116; t=1732089967; c=relaxed/simple;
+	bh=4XpgWRwxRQX8N4sCs+G1yqWwX0N+g8TGTG4+ywFNqTY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAyxpMoOViNx5CZcyYP0agDID0YU3bBTHlFNWFyHrEYI3fcT89yP7YBV/U9jgSD7pgCGWyc1NqmMC/7jKoTSy9YIORTvBo16S939Vzv12u0sDo37n3vtdEf1o+sdq92Yogt5lDWuy0Tzs88bDKNGuFfpDZsDbaXg2e8O+837FDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kvaz97s2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pVi2K95v; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Nov 2024 09:05:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732089922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zs0hoPbsHkv5OU8T4saAvd9rGQoJb3WXfsMJDKAk3GM=;
-	b=Kvaz97s2Lj9hLl9EdGilLgbw3ybjqljCYIKDdtypaur7sg1NhlrQSFmgEDgKiQu3k1QO4X
-	p6fVrxOeiSGuevlhL+CWVMGP3cASc0ar/7n+17Nt9CxaXYhvjnYpCT6SUKIuL9op6AltCG
-	TOlHGD2BkCPUnkmqGfW5ApB+j4Yjk+Bpf12Du+P6ZKEVyO3+HbeLc/vgk1+aJUyGn7K+Kn
-	HDOKhG5KkbAGotxqm/7n19ZXm6K3tKXUGjt9/D7q8YyeNFtCYpg/4zx2pVneJSOcYoxQ3W
-	rz+voQsbpu7Iwqbtt32+iMwjjO4aDCJMWsB2sxuQ/Bam063OT5OI3Rg/mnrU2w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732089922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zs0hoPbsHkv5OU8T4saAvd9rGQoJb3WXfsMJDKAk3GM=;
-	b=pVi2K95vDXXsmcVaHSVxEDy1KuLm3Snn4xzk9Z7RFLGmNDd2pkBBXsd2GV5g+9uweW2EHZ
-	XnR8/Hrp9UvXL4Cg==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev, Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
-	loongson-kernel@lists.loongnix.cn
-Subject: Re: [PATCH V2 2/4] LoongArch: Fix sleeping in atomic context for
- PREEMPT_RT
-Message-ID: <20241120080521.ynDZpGQd@linutronix.de>
-References: <20241117053740.3938646-1-chenhuacai@loongson.cn>
- <20241117054017.3938700-1-chenhuacai@loongson.cn>
- <20241117054017.3938700-2-chenhuacai@loongson.cn>
- <20241120074049.hw2lHvyM@linutronix.de>
- <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJA12jfFhKGNfH/02054WCZq4fbNkjf4Xw2eucHksQ0/p24bZP4SktyRIumezIkc5eiQZf+x/hiqOMY7UnTvxUvaoSzy8nu5N2xFzPBbkT8p0mz0uqdjsxkWZ2OYlPgrW7k9oIe0CMV9AoSE7KVCCYnPxVv206DBgxNcZEsLJj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBFXlqxC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4273AC4CECD;
+	Wed, 20 Nov 2024 08:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732089967;
+	bh=4XpgWRwxRQX8N4sCs+G1yqWwX0N+g8TGTG4+ywFNqTY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QBFXlqxC4rM78DDgViewI8/dKlQaxXqNEHoFtPKzouuOYFG7SkBH7iBRBo5wYmTsJ
+	 /UbMoKqzxONL293iN90t76vu5Q8XJTwtaMZKf4bTZ55d9DtZxyJcW4eCQJy925ZVc0
+	 gBgYF37HE3JAEZe2cPTtpFOYEnyJYm0AjFqnQQ+PZbRAoYryhlgXFrsY7lHqa45lqN
+	 7ga4XGm8PgZJVaQSn/ufDk9z/+G+h4Bp0roZU2mkaELv6MsTyk+QdUxnXVFgLUx4xL
+	 UZGqMMdGJMWzuK4mYcH5CpibI/anrEB5Zkmied7DiK+Key5iki/TV8GV2jiwJySj6i
+	 RHHcBF7AIAL6w==
+Date: Wed, 20 Nov 2024 09:06:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
+Message-ID: <ngjwfsymvo2sucvzyoanhezjisjqgfgnlixrzjgxjzlfchni7y@lvgrfslpnqmo>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,33 +64,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
+In-Reply-To: <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
 
-On 2024-11-20 15:46:08 [+0800], Huacai Chen wrote:
-> > > diff --git a/arch/loongarch/mm/tlb.c b/arch/loongarch/mm/tlb.c
-> > > index 5ac9beb5f093..3b427b319db2 100644
-> > > --- a/arch/loongarch/mm/tlb.c
-> > > +++ b/arch/loongarch/mm/tlb.c
-> > > @@ -289,7 +289,7 @@ static void setup_tlb_handler(int cpu)
-> > >               /* Avoid lockdep warning */
-> > >               rcutree_report_cpu_starting(cpu);
-> > >
-> > > -#ifdef CONFIG_NUMA
-> > > +#if defined(CONFIG_NUMA) && !defined(CONFIG_PREEMPT_RT)
-> > >               vec_sz = sizeof(exception_handlers);
-> >
-> > How does this work with NUMA and RT? You don't allocate memory and
-> > everything is fine? Couldn't you pre-allocate the memory on the boot CPU
-> > before kicking the CPU to boot? And then just assign the memory here.
-> Allocating percpu exception pages on the own node is just an
-> optimization, everything can work without this optimization.
-> Preallocation is meaningless because all pages come from Node-0.
+On Tue, Nov 12, 2024 at 08:31:34PM +0530, Krishna chaitanya chundru wrote:
+> Add QPS615 PCIe switch node which has 3 downstream ports and in one
+> downstream port two embedded ethernet devices are present.
+> 
+> Power to the QPS615 is supplied through two LDO regulators, controlled
+> by two GPIOs, these are added as fixed regulators. And the QPS615 is
+> configured through i2c.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 115 +++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
+>  2 files changed, 116 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index 0d45662b8028..0e890841b600 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
+>  		regulator-min-microvolt = <3700000>;
+>  		regulator-max-microvolt = <3700000>;
+>  	};
+> +
+> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_0P9";
+> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <899400>;
+> +		regulator-max-microvolt = <899400>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_0p9_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <4300>;
+> +	};
+> +
+> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "VDD_NTN_1P8";
+> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		enable-active-high;
+> +		pinctrl-0 = <&ntn_1p8_en>;
+> +		pinctrl-names = "default";
+> +		regulator-enable-ramp-delay = <10000>;
+> +	};
+>  };
+>  
+>  &apps_rsc {
+> @@ -684,6 +708,75 @@ &mdss_edp_phy {
+>  	status = "okay";
+>  };
+>  
+> +&pcie1_port {
+> +	pcie@0,0 {
+> +		compatible = "pci1179,0623";
 
-Don't you have alloc_pages_node() where you can set the node?
-And I mean pre-allocation so you don't have to allocate memory here but
-already have it ready.
+The switch is part of SoC or board? This is confusing, I thought QPS615
+is the SoC.
 
-> Huacai
+> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+> +		#address-cells = <3>;
+> +		#size-cells = <2>;
 
-Sebastian
+Best regards,
+Krzysztof
+
 
