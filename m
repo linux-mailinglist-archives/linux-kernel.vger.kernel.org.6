@@ -1,123 +1,163 @@
-Return-Path: <linux-kernel+bounces-415410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8739E9D35B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:43:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1329D35B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0E2283392
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F31F25C1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA4E175D3A;
-	Wed, 20 Nov 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QCPqhEij"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE59189BBF;
+	Wed, 20 Nov 2024 08:43:23 +0000 (UTC)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98ECE848C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC8818952C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092172; cv=none; b=hVrSJyhF4OOZQBAArGRrF5cX8CFt8r+N3BO4nqnoZpZ1XPX4wcipBrcpsGO4n7N+U2yVjzoW2vTcV2F/KdVfFQReMWCsIi0nxzu5ucSh4LFuElRQGZmIw1vuLT35uXtIaCM7GohyqOr0LAmk29i+RheKVyBaBLHi80mXeJ3oJQY=
+	t=1732092202; cv=none; b=qgH+F7YZxH330i0WAH9qiSswYvH2w/VvYFIBx04tw5WejX5yuLBM63pHqDvX1tRufrd4Qs29uZgATEcj0Mu478Reu2MrwxpkUsPyJERwDa2QiwiljBwk4uxoz6IA80wxW4BExvTPzg0Tjx/JnR7NjvTZiwScXo9l/RWlvacq4cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092172; c=relaxed/simple;
-	bh=LXj1hqHyPAaHyfoPYIfh1FdaduqmW9vj8ZYkSVAzusM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaRoxcn3u1m8A9R4ttTWJeCXo1vg9GcZBKfuOQxWf/BK1yPuSKARB7giv3TXVBBEItYJmzuz3aXS1cmXKTjXh8W0xsKH3shrRS2ZajbLeo+I+1Qa7ZBokgJI4Qgw/PHyZs0W9y6IpYG8tZ2tzt9HSwekhBlxmhZ6UDi6Bq1uD3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QCPqhEij; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=xzA/sMsXx59Ze9RLPhtIArvjovkbnF+3hM7gC9xWO8U=; b=QCPqhEij2bRKptLU1+L5R/xX9S
-	YTsRu6nSHvC6hWS8ih2Vor4/3YPPOw+BQ3mkD4Og2anv/V9y37TqalAPlu4cYeSlewQaNhWXTyw1J
-	QfdOYvaq9uT6//RjTxbF7BldPixlvhN0mqOlSxbInp4V9bEjImsfRmJ/VtI8SsMS+LICbTRtroTqh
-	iOHt+8Z8uYDNFQpdxhSf/wisXY9CmVAUrVKlKFusxMSm7t0ZcDQ/x60mDuV6S342egilo67wqXZuL
-	FNE0YFy1ot5mLaVX2ckgLQjwzfiUfVbqqRNudhsWOf5uNUcw5DjE671OLpc0+jftX1V5X7WImcITn
-	zPbkRIwg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDgIL-00000000STJ-00An;
-	Wed, 20 Nov 2024 08:42:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A1A183006AB; Wed, 20 Nov 2024 09:42:40 +0100 (CET)
-Date: Wed, 20 Nov 2024 09:42:40 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
-Message-ID: <20241120084240.GA19989@noisy.programming.kicks-ass.net>
-References: <20241119020519.832013-1-saravanak@google.com>
- <20241119092829.GF11903@noisy.programming.kicks-ass.net>
- <CAGETcx_vABsh8HgMi1rYRWmB5RhYwqGT6kKJ+9LX0HrcP8i7yA@mail.gmail.com>
+	s=arc-20240116; t=1732092202; c=relaxed/simple;
+	bh=8ABrIhJtTtJvyGf9fJCEFrwE5rc5vP1sGaxb2AVTnKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QSMJ45ABc11AueGrXi2UwXXlNfAmdKIRvzPEEVeNFEDm9I9fYxBwAiRxV55WpOLiDIfcY8bQUFt5LTm4Ka5GqjTumoO3ZvyXd2Z/AxaZKpM0o7d+9hvdvCdqrDAV61l2c4IdB8Dk4PEMnfA52oT+kssqbV3BV8Y5BYRkdr5hoBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6eeb741c26eso14353177b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:43:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732092199; x=1732696999;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TTPn9AsBcQNU4dqArDVuNmYIjZAypZecXjeABYJZVto=;
+        b=Ag/bQ9L7fShhHrzG6AKQKyksI4130kgxmXQYtxo7HFMtB+4+yxYVqsZzd8zwe0+fZp
+         luw3xrWyEwfiBCWyOUM55niNfkwj+jbOvBCcTJ34iSURWeJQY9BzvO8ienqPdgJh3g+h
+         BfDyFSQLKkfuml8Xn3IWdZ+cxB6W4LwfpmfQbuzyH7wWBzUOhQVpuBOxU+2yu8m402NW
+         inw4JI83AAaYKBDlV86D0qzYBGkr2AZnN/zxWgIw1AXeYQ0+DnuRbd96vWmpb5858JM3
+         FyEdrAZy9msb9x2Vg/idEPAI4txH4bCliYPKj+0/vgZcqand+aDEzH2+c0ghGF37KsiK
+         B2bA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq12B0Ex5KboXbqg3TdhXwpU7KH2KsTyW8bz+WOgNiqmn1jk2rCjZgO27hy3mmdz8dMFqPZresexthcmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgMSSjUN96nyVHlu7lvoYSSX2pWEFm3A9Am+Sf51Tq4oZ9QENZ
+	FbQG3B+crwfB/2hzPsU0LJAqqYnU5sdq3w3eMQKscRuVhUDmFhPR31xYhc0K
+X-Google-Smtp-Source: AGHT+IEdyJzeeLkr0XAL9wKUZgapU2VFpHt4lPLE3jAHcimH6gSP942RKaWmrKNr/dt0MTsfZ4Me+g==
+X-Received: by 2002:a05:6902:2491:b0:e38:b27a:37b3 with SMTP id 3f1490d57ef6-e38cb728681mr1361534276.49.1732092199140;
+        Wed, 20 Nov 2024 00:43:19 -0800 (PST)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e387e75edcdsm2918752276.31.2024.11.20.00.43.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 00:43:18 -0800 (PST)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ee7b886b5fso37782457b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:43:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWxfNUIGzgqbF5livwVjHuDJZEWZCC5HuFUobFzsQSR3w0QdY+dmBeZuzxArLTjl/yAFMOGOQbh8peRSUw=@vger.kernel.org
+X-Received: by 2002:a05:690c:6c87:b0:6ee:60ca:9d8e with SMTP id
+ 00721157ae682-6eebd0de490mr21884067b3.8.1732092198530; Wed, 20 Nov 2024
+ 00:43:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx_vABsh8HgMi1rYRWmB5RhYwqGT6kKJ+9LX0HrcP8i7yA@mail.gmail.com>
+References: <20241030171009.1853340-1-saravanak@google.com>
+ <CAMuHMdWv+x31-3OaKFKHJHJwK+KB0Hi3yJMRUJ3rqEThY=EE7Q@mail.gmail.com> <CAGETcx8hZsm0qbwYDAeX_OztYs2jHPv9dc2ZajVivhEvQ7O6bg@mail.gmail.com>
+In-Reply-To: <CAGETcx8hZsm0qbwYDAeX_OztYs2jHPv9dc2ZajVivhEvQ7O6bg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Nov 2024 09:43:06 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUo1fV-O9x6C578G8+WdES2bH7yQjO56PErFwSu2LNNkw@mail.gmail.com>
+Message-ID: <CAMuHMdUo1fV-O9x6C578G8+WdES2bH7yQjO56PErFwSu2LNNkw@mail.gmail.com>
+Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize cycle
+ detection logic
+To: Saravana Kannan <saravanak@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Francesco <francesco.dolcini@toradex.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 06:28:00PM -0800, Saravana Kannan wrote:
-> On Tue, Nov 19, 2024 at 1:28 AM Peter Zijlstra <peterz@infradead.org> wrote:
+Hi Saravana,
 
-> > Well, if we push this one step further, why do we need hotplug at all?
-> > Can't we just keep them up and idle?
+On Wed, Nov 20, 2024 at 3:04=E2=80=AFAM Saravana Kannan <saravanak@google.c=
+om> wrote:
+> On Tue, Nov 19, 2024 at 5:40=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Wed, Oct 30, 2024 at 6:10=E2=80=AFPM Saravana Kannan <saravanak@goog=
+le.com> wrote:
+> > > In attempting to optimize fw_devlink runtime, I introduced numerous c=
+ycle
+> > > detection bugs by foregoing cycle detection logic under specific
+> > > conditions. Each fix has further narrowed the conditions for optimiza=
+tion.
+> > >
+> > > It's time to give up on these optimization attempts and just run the =
+cycle
+> > > detection logic every time fw_devlink tries to create a device link.
+> > >
+> > > The specific bug report that triggered this fix involved a supplier f=
+wnode
+> > > that never gets a device created for it. Instead, the supplier fwnode=
+ is
+> > > represented by the device that corresponds to an ancestor fwnode.
+> > >
+> > > In this case, fw_devlink didn't do any cycle detection because the cy=
+cle
+> > > detection logic is only run when a device link is created between the
+> > > devices that correspond to the actual consumer and supplier fwnodes.
+> > >
+> > > With this change, fw_devlink will run cycle detection logic even when
+> > > creating SYNC_STATE_ONLY proxy device links from a device that is an
+> > > ancestor of a consumer fwnode.
+> > >
+> > > Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d=
+276@ideasonboard.com/
+> > > Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of o=
+verlapping cycles")
+> > > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> > > Signed-off-by: Saravana Kannan <saravanak@google.com>
 > >
-> > That is, if we look at suspend_enter(), you'll note that
-> > PM_SUSPEND_TO_IDLE happens before the whole disable_secondary_cpus()
-> > thing.
+> > Thanks for your patch, which is now commit bac3b10b78e54b7d ("driver
+> > core: fw_devlink: Stop trying to optimize cycle detection logic") in
+> > next-20241107 and later.
 > >
-> > So million-dollar question, can this pixel thing do suspend to idle?
-> 
-> Unfortunately not. You saw my rant about firmware and s2idle bugs at
-> LPC. But yes, I'm going my part towards pushing for s2idle over s2ram.
+> > > Geert/Francesco,
+> > >
+> > > If you want to test this patch, pull it in and compare the output of
+> > > the following:
+> > >
+> > > ls -1 /sys/class/devlink
+> > >
+> > > The only device links that should be missing with the patch should be
+> > > device links in a cycle that weren't detected before.
+> >
+> > I gave it a try on all my boards, and compared the output on a few of
+> > them, and everything looks fine.
+>
+> Thanks for testing the series Geert!
+>
+> And no noticeable boot time increases?
 
-Right, so with Google doing their own chips, I think you stand a fair
-chance of making it work 'soon', right? :-)
+That's a bit hard to measure, as the serial console output easily takes
+ten seconds.
 
-> And even if this Pixel could do it, there are a lot of devices in use
-> today that will never get a firmware update to enable s2idle. So, why
-> have all of them waste time and energy doing useless steps during
-> suspend?
+Gr{oetje,eeting}s,
 
-Right, so if we really want to go do this, we should add place-holder
-state for suspend, something like CPUHP_SUSPEND and document the
-requirements and audit all existing states now skipped to meet
-requirements.
+                        Geert
 
-I think it should go somewhere right between CPUHP_BP_PREPARE_DYN_END
-and CPUHP_BRINGUP_CPU. WORKQUEUE_PREP seems awefully random, and the
-typical purpose of the _PREPARE stages is to allocate memory/resources
-such that STARTING can do its thing, similarly _DEAD is about freeing
-resources that got unused during _DYING.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-So the most logical setup would be to skip the entire _DEAD/_PREPARE
-cycle.
-
-> > Traditionally hybernate is the whole save-to-disk and power machine off
-> > thing, and then there was suspend (to RAM) which was some dodgy as heck
-> > BIOS thing (on x86) which required all non-boot CPUs to be 'dead'.
-> 
-> My change would also help with the time it takes to power off the CPUs
-> during hibernate :) If it'll work (otherwise, we can make sure this
-> applies only to suspend).
-
-So I'm not sure you can actually skip this during hibernate. The thing
-is, we load the image from the boot CPU in a state where the secondary
-CPUs have never yet been loaded up. It might be possible to skip the
-DEAD/PREPARE cycle, but it would also mean the image must contain the
-full PREPARE resources. So if it all works, then the result is a larger
-image, for a slightly faster cycle, but since hibernate is already super
-slow, I don't think this trade-off is worth it.
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
