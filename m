@@ -1,202 +1,195 @@
-Return-Path: <linux-kernel+bounces-415158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F9409D321D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:15:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315E89D3222
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D71DB245A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:15:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68AD284322
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB5C42070;
-	Wed, 20 Nov 2024 02:15:04 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CBC2E40E;
-	Wed, 20 Nov 2024 02:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C9428371;
+	Wed, 20 Nov 2024 02:17:24 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B5F191;
+	Wed, 20 Nov 2024 02:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732068903; cv=none; b=YqINQHLLCbTIA+UCS4MCsmjT8OlQs/SX26x9bfOOjp3oi1dnIhkbW7UcIVuXuSGF8FgAcxE2C83rqkKn3Gzg+Yi/7DphCxTZzGpuqQB7UOqB/80oIaWWTAMhF8uDvJzNbHHI+ugeshGCHLv1RxG5S30y768o6m2L3aOGzieNgDU=
+	t=1732069044; cv=none; b=oEIo7rvS00SEOBTP3k/xTl0CaRcE4C+aaiItjrghwEa8LUp8EsntOqn7v+k0PX4sQmQV7ZfP1k8/N5otZUSS8N7KV9iZsPgoa0Ea1Vy/K9t7AbX+COTaIkZjoKgFPiZoHIfzclgYUpv6wJyAvUfhPoX8SIY6l2+HwnNpUVnWoJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732068903; c=relaxed/simple;
-	bh=nRMO5tBPsD78K2k5il0gmaxJciw7QdFyq4xgfVpMoes=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A77U3cXb3SIyXtqDeY+OyRzlbqva8uBG7NGVcXAQlaEEPNkn6NrQdvoxM657wTfawo5TSAnYZt6lwxPXh/sueAZk4bsTsX52ehQHTMsmCL28jol8oFm/y4+uFZlPhQ2uLjDyWpa7yMmJM1eYlfOQpviBLHpITsuPIjh21JG24/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3bf04b74a6e511efa216b1d71e6e1362-20241120
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CHARSET
-	HR_CHARSET_NUM, HR_CTE_8B, HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD
-	HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_CHARSET, HR_SJ_DIGIT_LEN, HR_SJ_HAN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:34f309a5-bdce-44ba-93d4-feb4254b643f,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-8
-X-CID-INFO: VERSION:1.1.38,REQID:34f309a5-bdce-44ba-93d4-feb4254b643f,IP:0,URL
-	:0,TC:0,Content:-5,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-8
-X-CID-META: VersionHash:82c5f88,CLOUDID:69e8dde557714b4bae663c109e263228,BulkI
-	D:241120095158LUGR8NIB,BulkQuantity:2,Recheck:0,SF:64|66|841|38|17|19|102,
-	TC:nil,Content:0,EDM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:ni
-	l,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
-X-UUID: 3bf04b74a6e511efa216b1d71e6e1362-20241120
-X-User: duanchenghao@kylinos.cn
-Received: from [172.30.80.21] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1445782142; Wed, 20 Nov 2024 10:14:55 +0800
-Message-ID: <4d59c6f60fb0b1c718cd150d75471f62db03de3b.camel@kylinos.cn>
-Subject: =?gb2312?Q?=BB=D8=B8=B4=A3=BA=5BPATCH?= v4] USB: Fix the issue of
- task recovery failure caused by USB status when S4 wakes up
-From: Duan Chenghao <duanchenghao@kylinos.cn>
-To: Greg KH <gregkh@linuxfoundation.org>, Alan Stern
- <stern@rowland.harvard.edu>
-Cc: stern@rowland.harvard.edu, saranya.gopal@intel.com, 
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
- rafael@kernel.org,  stanley_chang@realtek.com, tj@kernel.org,
- xiehongyu1@kylinos.cn,  xy521521@gmail.com, kernel test robot
- <lkp@intel.com>
-Date: Wed, 20 Nov 2024 10:14:50 +0800
-In-Reply-To: <2024102911-mooned-precise-f526@gregkh>
-References: <e795d88afb2b485fab97e2be7759664e823fbfad.camel@kylinos.cn>
-	 <20241024024038.26157-1-duanchenghao@kylinos.cn>
-	 <2024102432-conjoined-skylight-33f1@gregkh>
-	 <8aff9a5acbd21d7bd08b80e02ef2b34f2028cedf.camel@kylinos.cn>
-	 <2024102911-mooned-precise-f526@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.1-2kord0k2.4.25.1 
+	s=arc-20240116; t=1732069044; c=relaxed/simple;
+	bh=hVGhOStGSaQAnY+/wqyIUlVbKeyMJCsCDkyvLBNzN9o=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Vu1GSGSqYTxgSYbupLbevl3VX4LxrQBSVEcMUseX/PgobaWDPN6Dskm6QeWi/13rvn9sfeq63OfnCK6Wy8+W7YwFKtgD7O+qrCcjLt+ZwNu1XuMd++7k3oQ6MJnqyyvAsxbCQkfLgNdo+FSjEfOdu92EG9aGI2jUofVxNvzctY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.243.18:35581.401365535
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-123.150.8.42 (unknown [10.158.243.18])
+	by 189.cn (HERMES) with SMTP id 4B4DA10296C;
+	Wed, 20 Nov 2024 10:17:10 +0800 (CST)
+Received: from  ([123.150.8.42])
+	by gateway-153622-dep-5c5f88b874-pd459 with ESMTP id 08c685f21664449ab4ea252d4fcee535 for petr.pavlu@suse.com;
+	Wed, 20 Nov 2024 10:17:11 CST
+X-Transaction-ID: 08c685f21664449ab4ea252d4fcee535
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 123.150.8.42
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <d3cad11c-a65d-4faf-a636-3d85474d7175@189.cn>
+Date: Wed, 20 Nov 2024 10:17:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Song Chen <chensong_2000@189.cn>
+Subject: Re: [PATCH] kmod: verify module name before invoking modprobe
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: mcgrof@kernel.org, samitolvanen@google.com, da.gomez@samsung.com,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org
+References: <20241110114233.97169-1-chensong_2000@189.cn>
+ <21423aea-65c3-430e-932d-2ba70b6b9ac3@suse.com>
+ <524b444f-4b81-4005-b93a-39b7d3fd3db1@189.cn>
+ <8ea8dfed-608f-44b9-8adb-fb1798619215@suse.com>
+Content-Language: en-US
+In-Reply-To: <8ea8dfed-608f-44b9-8adb-fb1798619215@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Greg KH/Alan,
+Hi Petr,
 
-I haven't received a reply from both of you for a long time. Sorry for
-the disturbance. May I ask if the current patch can be merged into the
-mainline or stable branch? I need this conclusion as it is very
-important to me. Thank you very much.
+在 2024/11/18 20:54, Petr Pavlu 写道:
+> On 11/13/24 03:15, Song Chen wrote:
+>> 在 2024/11/12 20:56, Petr Pavlu 写道:
+>>> On 11/10/24 12:42, Song Chen wrote:
+>>>> Sometimes when kernel calls request_module to load a module
+>>>> into kernel space, it doesn't pass the module name appropriately,
+>>>> and request_module doesn't verify it as well.
+>>>>
+>>>> As a result, modprobe is invoked anyway and spend a lot of time
+>>>> searching a nonsense name.
+>>>>
+>>>> For example reported from a customer, he runs a user space process
+>>>> to call ioctl(fd, SIOCGIFINDEX, &ifr), the callstack in kernel is
+>>>> like that:
+>>>> dev_ioctl(net/core/dev_iovtl.c)
+>>>>     dev_load
+>>>>        request_module("netdev-%s", name);
+>>>>        or request_module("%s", name);
+>>>>
+>>>> However if name of NIC is empty, neither dev_load nor request_module
+>>>> checks it at the first place, modprobe will search module "netdev-"
+>>>> in its default path, env path and path configured in etc for nothing,
+>>>> increase a lot system overhead.
+>>>>
+>>>> To address this problem, this patch copies va_list and introduces
+>>>> a helper is_module_name_valid to verify the parameters validity
+>>>> one by one, either null or empty. if it fails, no modprobe invoked.
+>>>
+>>> I'm not sure if I fully follow why this should be addressed at the
+>>> request_module() level. If the user repeatedly invokes SIOCGIFINDEX with
+>>> an empty name and this increases their system load, wouldn't it be
+>>> better to update the userspace to prevent this non-sense request in the
+>>> first place?
+>>
+>> If the user process knew, it wouldn't make the mistake.
+> 
+> The user process should be able to check that the ifr_name passed to
+> SIOCGIFINDEX is empty and avoid the syscall altogether, or am I missing
+> something? Even if the kernel gets improved in some way to handle this
+> case better, I would still suggest looking at what the application is
+> doing and how it ends up making this call.
+> 
 
-Thanks
-Duan Chenghao 
+yes, agree, it's the user space process's fault after all.
 
-在 2024-10-29星期二的 04:27 +0100，Greg KH写道：
-> On Thu, Oct 24, 2024 at 04:46:48PM +0800, duanchenghao wrote:
-> > hi greg k-h,
-> > 
-> > 在 2024-10-24星期四的 09:05 +0200，Greg KH写道：
-> > > On Thu, Oct 24, 2024 at 10:40:38AM +0800, Duan Chenghao wrote:
-> > > > When a device is inserted into the USB port and an S4 wakeup is
-> > > > initiated,
-> > > > after the USB-hub initialization is completed, it will
-> > > > automatically enter
-> > > > suspend mode. Upon detecting a device on the USB port, it will
-> > > > proceed with
-> > > > resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state.
-> > > > During
-> > > > the S4
-> > > > wakeup process, peripherals are put into suspend mode, followed
-> > > > by
-> > > > task
-> > > > recovery. However, upon detecting that the hcd is in the
-> > > > HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status,
-> > > > causing the
-> > > > S4 suspend to fail and subsequent task recovery to not proceed.
-> > > > -
-> > > > [   27.594598][ 1]  PM: pci_pm_freeze():
-> > > > hcd_pci_suspend+0x0/0x28
-> > > > returns -16
-> > > > [   27.594601][ 1]  PM: dpm_run_callback():
-> > > > pci_pm_freeze+0x0/0x100
-> > > > returns -16
-> > > > [   27.603420][ 1]  ehci-pci 0000:00:04.1:
-> > > > pci_pm_freeze+0x0/0x100
-> > > > returned 0 after 3 usecs
-> > > > [   27.612233][ 1]  ehci-pci 0000:00:05.1:
-> > > > pci_pm_freeze+0x0/0x100
-> > > > returned -16 after 17223 usecs
-> > > > [   27.810067][ 1]  PM: Device 0000:00:05.1 failed to quiesce
-> > > > async: error -16
-> > > > [   27.816988][ 1]  PM: quiesce of devices aborted after
-> > > > 1833.282
-> > > > msecs
-> > > > [   27.823302][ 1]  PM: start quiesce of devices aborted after
-> > > > 1839.975 msecs
-> > > > ......
-> > > > [   31.303172][ 1]  PM: recover of devices complete after
-> > > > 3473.039
-> > > > msecs
-> > > > [   31.309818][ 1]  PM: Failed to load hibernation image,
-> > > > recovering.
-> > > > [   31.348188][ 1]  PM: Basic memory bitmaps freed
-> > > > [   31.352686][ 1]  OOM killer enabled.
-> > > > [   31.356232][ 1]  Restarting tasks ... done.
-> > > > [   31.360609][ 1]  PM: resume from hibernation failed (0)
-> > > > [   31.365800][ 1]  PM: Hibernation image not present or could
-> > > > not
-> > > > be loaded.
-> > > > 
-> > > > The "do_wakeup" is determined based on whether the controller's
-> > > > power/wakeup attribute is set. The current issue necessitates
-> > > > considering
-> > > > the type of suspend that is occurring. If the suspend type is
-> > > > either
-> > > > PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be
-> > > > set
-> > > > to
-> > > > false.
-> > > > 
-> > > > Reported-by: kernel test robot <
-> > > > lkp@intel.com
-> > > > >
-> > > > Closes:
-> > > > https://lore.kernel.org/oe-kbuild-all/202410151722.rfjtknRz-lkp@intel.com/
-> > > > 
-> > > > Signed-off-by: Alan Stern <
-> > > > stern@rowland.harvard.edu
-> > > > >
-> > > > Signed-off-by: Duan Chenghao <
-> > > > duanchenghao@kylinos.cn
-> > > > >
-> > > 
-> > > What commit id does this fix?
-> > 
-> > The current patch is not intended to fix an issue with a specific
-> > commit, but rather to address a long-standing problem in the USB
-> > core.
+>> moreover, what
+>> happened in dev_load was quite confusing, please see the code below:
+>>
+>>       no_module = !dev;
+>>       if (no_module && capable(CAP_NET_ADMIN))
+>>           no_module = request_module("netdev-%s", name);
+>>       if (no_module && capable(CAP_SYS_MODULE))
+>>           request_module("%s", name);
+>>
+>> Running the same process, sys admin or root user spends more time than
+>> normal user, it took a while for us to find the cause, that's why i
+>> tried to fix it in kernel.
+>>
+>> Similarly, if something should be done in the kernel,
+>>> wouldn't it be more straightforward for dev_ioctl()/dev_load() to check
+>>> this case?
+>>
+>> I thought about it at the beginning, not only dev_ioctl/dev_load but
+>> also other request_module callers should check this case as well, that
+>> would be too much effort, then I switched to check it at the beginning
+>> of request_module which every caller goes through.
+>>
+>>>
+>>> I think the same should in principle apply to other places that might
+>>> invoke request_module() with "%s" and a bogus value. The callers can
+>>> appropriately decide if their request makes sense and should be
+>>> fixed/improved.
+>>>
+>>
+>> Callees are obliged to do fault tolerance for callers, or at least let
+>> them know what is going on inside, what kinds of mistake they are
+>> making, there are a lot of such cases in kernel, such as call_modprobe
+>> in kernel/module/kmod.c, it checks if orig_module_name is NULL.
 > 
-> So should it be backported to older stable kernels?  If so, how far
-> back?
+> Ok, I see the idea behind checking that a value passed to
+> request_module() to format "%s" is non-NULL.
 > 
-> > > And I missed where Alan provided a signed-off-by, where was that?
-> > 
-> > In the following email, Alan proposed using "Signed-off-by" for
-> > signing.
-> > https://lore.kernel.org/all/489805e7-c19c-4b57-9cd7-713e075261cd@rowland.harvard.edu/
-> > 
+> I'm however not sure about rejecting empty strings as is also done by
+> the patch. Consider a call to request_module("mod%s", suffix) where the
+> suffix could be empty to select the default variant, or non-empty to
+> select e.g. some optimized version of the module. Only the caller knows
+> if the suffix being empty is valid or not.
 > 
-> Ah, missed that, sorry.
+> I've checked if this pattern is currently used in the kernel and wasn't
+> able to find anything, so that is good. However, I'm not sure if
+> request_module() should flat-out reject this use.
 > 
-> thanks,
-> 
-> greg k-h
 
+I accidentally found another problem in request_module when i was 
+testing this patch again, if the caller just passes a empty pointer to 
+request_module, like request_module(NULL), the process will be broken:
+
+[    2.336160]  ? asm_exc_page_fault+0x2b/0x30
+[    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+[    2.336160]  ? vsnprintf+0x5a/0x4f0
+[    2.336160]  __request_module+0x93/0x2b0
+[    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+[    2.336160]  ? notifier_call_chain+0x65/0xd0
+[    2.336160]  ? __pfx_crc64_rocksoft_notify+0x10/0x10
+[    2.336160]  crypto_probing_notify+0x43/0x60
+
+(please ignore the caller, that is a testing code.)
+
+I searched kernel code if this patter exists, and found in 
+__trace_bprintk of kernel/trace/trace_printk.c, it checks fmt at the 
+beginning of the function:
+
+      va_list ap;
+
+      if (unlikely(!fmt))
+          return 0;
+
+Therefore, i would like to suggest we should at least add this check in 
+request_module too. In that sense, why don't we do a little further to 
+verify every parameter's validity to provide better fault tolerance, 
+besides, it costs almost nothing.
+
+If you like this idea, i will send a v2.
+
+Many thanks.
+
+Song
 
