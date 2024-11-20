@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-416055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1C99D3FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:22:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E199D4006
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:28:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22B88B2D0BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:03:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB16BB32670
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BB914601C;
-	Wed, 20 Nov 2024 16:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9585F14D428;
+	Wed, 20 Nov 2024 16:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oVE5U1/3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU9bZpZ+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA921411DE;
-	Wed, 20 Nov 2024 16:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6BA146A9B;
+	Wed, 20 Nov 2024 16:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118566; cv=none; b=RSO7jWZAvOupmbNQlYugOW8yAlHZlT2dF/UIhUD2D+nEQrbdi+JVL3Bfs3rbV3lmtnwxZzFrsc5KNRJapjVqvZURnSHsdWJ0pLqoZE73wUA5CeQpYinjkd64po9iPzNIGQVSYdePhITbpLVbljvEIiVrZZ6DL1XdvrUihtPLGro=
+	t=1732118568; cv=none; b=dlVdDQtnpKvgUWCQEq7rOpeeCQX+O/BnE1DxJ1Vb/HgBqMxaMsqPqT/7oVK9Hjh9KedD/xZ7hi2YRsYuxZ69T8f0+mm6apt/Vc+H/5yjaCmL1OGhTdXUe90DN9ENk2j32TBzvIi7defRyoxw99mRPImy+0Zfgm0/Y/jYKfmi7nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118566; c=relaxed/simple;
-	bh=P/vnb+Nr34kWtE18wQ+8aAGDYW1lN43eC/nTy0Zff3c=;
+	s=arc-20240116; t=1732118568; c=relaxed/simple;
+	bh=PMFde2Hq2i+TgUbDNQIDtNYq5XMpm5+v4VbsvocqAX8=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fGgBftxewI0qttS+3+lHuUlpSjGP/P2p1fiIC+24hfnN/nPycJ6i6em+1K0TgVb7CQiWCxquC9bG1+QmO/JHyXeMmdt86EN9JMFLlXJU+78CWXlNE3Lrx3jZ57q8O3iAV9atGOy56i8eYVFstvY0wVl/hmknTh3H79Dvmpx2EgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oVE5U1/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CA3C4AF09;
-	Wed, 20 Nov 2024 16:02:45 +0000 (UTC)
+	 Message-Id:Subject; b=iJ+RXoeR7qdPevV8U/FcGZCkMhpJomQLmnOOhVTkcFDLYRtvbSDXi4DOLYVuf3HD/tzizITWK+jIup14U1RNZpEkAlF5QK4Ndup2Ep+g30TavtDCS+HupLk+CIm6nN0Y0I0zrFwprr/hGzMiRILM7o1ELIS1p2948ZoaCiqkqOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU9bZpZ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0836FC4CED1;
+	Wed, 20 Nov 2024 16:02:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118566;
-	bh=P/vnb+Nr34kWtE18wQ+8aAGDYW1lN43eC/nTy0Zff3c=;
+	s=k20201202; t=1732118568;
+	bh=PMFde2Hq2i+TgUbDNQIDtNYq5XMpm5+v4VbsvocqAX8=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=oVE5U1/3u0nTTxlWof5ZfzuSpBSABXhmx902ZQ35mMdmt/sUxMisc1MnKS9awYxwn
-	 T1sFfJ+U5Wc77BHyojJ8i6bJgfAJ7kT5U5KESrcAwA1STxNpZIojsaeD8w8gfT4N9v
-	 FKBqC1/15Gj3M201zdDWlS3mYihs4GBrfHX9QttLzcqO67TR4Mq02dZwgpIz8hZpsY
-	 SRMxuZYoIQLpwWhdGTaUnV5XSd6j7IUNqiIVWFSkNiWbXIZpN6umL/3290sT2VcGL3
-	 zvntfaUxRfbQVdJ4rDPTVVyVHmTeNIKaI41Zn/9+Ghyc4tsdzKuGZJXTIGrDfJlm/7
-	 wrLEw1KhRrp6w==
-Date: Wed, 20 Nov 2024 10:02:44 -0600
+	b=SU9bZpZ+RrT1XC5UWtLt+Fi86+EnVTQ1W9oDbsE7YSfbUZx7G25aln4c/HC36BPTv
+	 bTmWfGN3BhVdbWnTW+sJbhDeAdSdulvNv49EsyLkrQjo9eCGeNqCk7uCjhOdQ5ceXI
+	 8WJp/5i33rfet/iGuviOkVGi7wtaykY6G54MKhYl2MSCKbR/MQFOIqtHnvFJmHnh6S
+	 6gyUly/P0cynMgY7enJ6b5qevBtG7I3x+8uwm8cXlUFL/KPn5FB6LS5ANX2OUbInbS
+	 HwmWStVU7hQZW9lGm4Mcv932hR5j0CO//xTdRFBS3ASJX4BH1uaAcZ4WZQxvzt1lKy
+	 ezFBvytJiAFKA==
+Date: Wed, 20 Nov 2024 10:02:46 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,43 +50,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org, 
- alexandre.belloni@bootlin.com, nicolas.ferre@microchip.com, 
- conor+dt@kernel.org, linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org
-To: cristian.birsan@microchip.com
-In-Reply-To: <20241119160107.598411-1-cristian.birsan@microchip.com>
-References: <20241119160107.598411-1-cristian.birsan@microchip.com>
-Message-Id: <173211839995.1123874.16146391934927637121.robh@kernel.org>
-Subject: Re: [PATCH 0/2] ARM: dts: microchip: Add no-1-8-v property to
- sdmmc0 node
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Bjorn Andersson <andersson@kernel.org>, linux-kernel@vger.kernel.org, 
+ kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+In-Reply-To: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
+Message-Id: <173211840430.1123906.4830016117974808926.robh@kernel.org>
+Subject: Re: [PATCH v3 0/5] arm64: qcom: Add support for QCS9075 boards
 
 
-On Tue, 19 Nov 2024 18:01:05 +0200, cristian.birsan@microchip.com wrote:
-> From: Cristian Birsan <cristian.birsan@microchip.com>
+On Tue, 19 Nov 2024 23:19:49 +0530, Wasim Nazir wrote:
+> This series:
 > 
-> Add no-1-8-v property to sdmmc0 node to keep VDDSDMMC power rail at 3.3V.
-> This property will stop the LDO regulator from switching to 1.8V when the
-> MMC core detects an UHS SD Card. VDDSDMMC power rail is used by all the
-> SDMMC interface pins in GPIO mode (PA0 - PA13).
+> Add support for Qualcomm's rb8, ride/ride-r3 boards using QCS9075 SoC.
 > 
-> PA6 and PA10 GPIOs are used to enable the power switch controlling USB
-> Vbus for the USB Host.
+> QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
+> without safety monitorng feature of SAfetyIsLand subsystem.
+> This subsystem continues to supports other features like built-in
+> self-test, error-detection, reset-handling, etc.
 > 
-> Cristian Birsan (2):
->   ARM: dts: microchip: sama5d29_curiosity: Add no-1-8-v property to
->     sdmmc0 node
->   ARM: dts: microchip: sama5d27_wlsom1_ek: Add no-1-8-v property to
->     sdmmc0 node
+> Changelog:
 > 
->  arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts | 1 +
->  arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts | 1 +
->  2 files changed, 2 insertions(+)
+> v2:
+>   - Remove unused dp nodes & update commit for ride vs ride-r3.
+> 
+> v1: https://lore.kernel.org/all/20241110145339.3635437-1-quic_wasimn@quicinc.com/
+> 
+> Wasim Nazir (5):
+>   dt-bindings: arm: qcom,ids: add SoC ID for QCS9075
+>   soc: qcom: socinfo: add QCS9075 SoC ID
+>   dt-bindings: arm: qcom: Document rb8/ride/ride-r3 on QCS9075
+>   arm64: dts: qcom: Add support for QCS9075 RB8
+>   arm64: dts: qcom: Add support for QCS9075 Ride & Ride-r3
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   9 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   3 +
+>  arch/arm64/boot/dts/qcom/qcs9075-rb8.dts      | 281 ++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts  |  12 +
+>  arch/arm64/boot/dts/qcom/qcs9075-ride.dts     |  12 +
+>  drivers/soc/qcom/socinfo.c                    |   1 +
+>  include/dt-bindings/arm/qcom,ids.h            |   1 +
+>  7 files changed, 319 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-rb8.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
 > 
 > 
-> base-commit: 158f238aa69d91ad74e535c73f552bd4b025109c
+> base-commit: 929beafbe7acce3267c06115e13e03ff6e50548a
 > --
-> 2.34.1
+> 2.47.0
 > 
 > 
 > 
@@ -106,110 +120,104 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y microchip/at91-sama5d27_wlsom1_ek.dtb microchip/at91-sama5d29_curiosity.dtb' for 20241119160107.598411-1-cristian.birsan@microchip.com:
+New warnings running 'make CHECK_DTBS=y qcom/qcs9075-rb8.dtb qcom/qcs9075-ride-r3.dtb qcom/qcs9075-ride.dtb' for 20241119174954.1219002-1-quic_wasimn@quicinc.com:
 
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: etm@73c000: 'cpu' is a required property
-	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-etm.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/gadget@300000: failed to match any schema with compatible: ['atmel,sama5d3-udc']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: ohci@400000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['atmel,at91rm9200-ohci', 'usb-ohci'] is too long
-	'atmel,at91rm9200-ohci' is not one of ['allwinner,sun4i-a10-ohci', 'allwinner,sun50i-a100-ohci', 'allwinner,sun50i-a64-ohci', 'allwinner,sun50i-h6-ohci', 'allwinner,sun50i-h616-ohci', 'allwinner,sun55i-a523-ohci', 'allwinner,sun5i-a13-ohci', 'allwinner,sun6i-a31-ohci', 'allwinner,sun7i-a20-ohci', 'allwinner,sun8i-a23-ohci', 'allwinner,sun8i-a83t-ohci', 'allwinner,sun8i-h3-ohci', 'allwinner,sun8i-r40-ohci', 'allwinner,sun8i-v3s-ohci', 'allwinner,sun9i-a80-ohci', 'allwinner,sun20i-d1-ohci', 'brcm,bcm3384-ohci', 'brcm,bcm63268-ohci', 'brcm,bcm6328-ohci', 'brcm,bcm6358-ohci', 'brcm,bcm6362-ohci', 'brcm,bcm6368-ohci', 'brcm,bcm7125-ohci', 'brcm,bcm7346-ohci', 'brcm,bcm7358-ohci', 'brcm,bcm7360-ohci', 'brcm,bcm7362-ohci', 'brcm,bcm7420-ohci', 'brcm,bcm7425-ohci', 'brcm,bcm7435-ohci', 'hpe,gxp-ohci', 'ibm,476gtr-ohci', 'ingenic,jz4740-ohci', 'rockchip,rk3588-ohci', 'snps,hsdk-v1.0-ohci']
-	'atmel,at91rm9200-ohci' is not one of ['generic-ohci', 'ti,ohci-omap3']
-	'atmel,at91rm9200-ohci' is not one of ['cavium,octeon-6335-ohci', 'nintendo,hollywood-usb-ohci', 'nxp,ohci-nxp', 'st,spear600-ohci']
-	'generic-ohci' was expected
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: ohci@400000: $nodename:0: 'ohci@400000' does not match '^usb(@.*)?'
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: ohci@400000: Unevaluated properties are not allowed ('atmel,vbus-gpio', 'clock-names', 'compatible' were unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/ohci@400000: failed to match any schema with compatible: ['atmel,at91rm9200-ohci', 'usb-ohci']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: ehci@500000: $nodename:0: 'ehci@500000' does not match '^usb(@.*)?'
-	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: ehci@500000: Unevaluated properties are not allowed ('clock-names', 'phy_type' were unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/ebi@10000000: failed to match any schema with compatible: ['atmel,sama5d3-ebi']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: nand-controller: #address-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: nand-controller: #size-cells: 0 was expected
-	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/ebi@10000000/nand-controller: failed to match any schema with compatible: ['atmel,sama5d3-nand-controller']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: sdio-host@a0000000: $nodename:0: 'sdio-host@a0000000' does not match '^mmc(@.*)?$'
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: sdio-host@a0000000: Unevaluated properties are not allowed ('bus-width', 'no-1-8-v' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: sdio-host@b0000000: $nodename:0: 'sdio-host@b0000000' does not match '^mmc(@.*)?$'
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: sdio-host@b0000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'bus-width', 'mmc-pwrseq', 'no-1-8-v', 'non-removable', 'wifi@0' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: hlcdc@f0000000: 'hlcdc-display-controller', 'hlcdc-pwm' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/atmel,hlcdc.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/ramc@f000c000: failed to match any schema with compatible: ['atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/dma-controller@f0010000: failed to match any schema with compatible: ['atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/dma-controller@f0004000: failed to match any schema with compatible: ['atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: flash@0: Unevaluated properties are not allowed ('spi-cs-setup-ns' was unexpected)
-	from schema $id: http://devicetree.org/schemas/mtd/jedec,spi-nor.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/ssc@f8004000: failed to match any schema with compatible: ['atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/hsmc@f8014000: failed to match any schema with compatible: ['atmel,sama5d2-smc', 'syscon', 'simple-mfd']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/hsmc@f8014000/ecc-engine@f8014070: failed to match any schema with compatible: ['atmel,sama5d2-pmecc']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: pwm@f802c000: Unevaluated properties are not allowed ('clocks', 'interrupts' were unexpected)
-	from schema $id: http://devicetree.org/schemas/pwm/atmel,at91sam-pwm.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/sfr@f8030000: failed to match any schema with compatible: ['atmel,sama5d2-sfr', 'syscon']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/timer@f8048030: failed to match any schema with compatible: ['atmel,at91sam9260-pit']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: watchdog@f8048040: Unevaluated properties are not allowed ('clocks' was unexpected)
-	from schema $id: http://devicetree.org/schemas/watchdog/atmel,sama5d4-wdt.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: etm@73c000: 'cpu' is a required property
-	from schema $id: http://devicetree.org/schemas/arm/arm,coresight-etm.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/pinctrl@fc038000: failed to match any schema with compatible: ['atmel,sama5d2-pinctrl']
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/secumod@fc040000: failed to match any schema with compatible: ['atmel,sama5d2-secumod', 'syscon']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/gadget@300000: failed to match any schema with compatible: ['atmel,sama5d3-udc']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: ohci@400000: compatible: 'oneOf' conditional failed, one must be fixed:
-	['atmel,at91rm9200-ohci', 'usb-ohci'] is too long
-	'atmel,at91rm9200-ohci' is not one of ['allwinner,sun4i-a10-ohci', 'allwinner,sun50i-a100-ohci', 'allwinner,sun50i-a64-ohci', 'allwinner,sun50i-h6-ohci', 'allwinner,sun50i-h616-ohci', 'allwinner,sun55i-a523-ohci', 'allwinner,sun5i-a13-ohci', 'allwinner,sun6i-a31-ohci', 'allwinner,sun7i-a20-ohci', 'allwinner,sun8i-a23-ohci', 'allwinner,sun8i-a83t-ohci', 'allwinner,sun8i-h3-ohci', 'allwinner,sun8i-r40-ohci', 'allwinner,sun8i-v3s-ohci', 'allwinner,sun9i-a80-ohci', 'allwinner,sun20i-d1-ohci', 'brcm,bcm3384-ohci', 'brcm,bcm63268-ohci', 'brcm,bcm6328-ohci', 'brcm,bcm6358-ohci', 'brcm,bcm6362-ohci', 'brcm,bcm6368-ohci', 'brcm,bcm7125-ohci', 'brcm,bcm7346-ohci', 'brcm,bcm7358-ohci', 'brcm,bcm7360-ohci', 'brcm,bcm7362-ohci', 'brcm,bcm7420-ohci', 'brcm,bcm7425-ohci', 'brcm,bcm7435-ohci', 'hpe,gxp-ohci', 'ibm,476gtr-ohci', 'ingenic,jz4740-ohci', 'rockchip,rk3588-ohci', 'snps,hsdk-v1.0-ohci']
-	'atmel,at91rm9200-ohci' is not one of ['generic-ohci', 'ti,ohci-omap3']
-	'atmel,at91rm9200-ohci' is not one of ['cavium,octeon-6335-ohci', 'nintendo,hollywood-usb-ohci', 'nxp,ohci-nxp', 'st,spear600-ohci']
-	'generic-ohci' was expected
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: ohci@400000: $nodename:0: 'ohci@400000' does not match '^usb(@.*)?'
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: ohci@400000: Unevaluated properties are not allowed ('atmel,vbus-gpio', 'clock-names', 'compatible' were unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/generic-ohci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/ohci@400000: failed to match any schema with compatible: ['atmel,at91rm9200-ohci', 'usb-ohci']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: ehci@500000: $nodename:0: 'ehci@500000' does not match '^usb(@.*)?'
-	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dtb: /ahb/apb/chipid@fc069000: failed to match any schema with compatible: ['atmel,sama5d2-chipid']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: ehci@500000: Unevaluated properties are not allowed ('clock-names' was unexpected)
-	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/ebi@10000000: failed to match any schema with compatible: ['atmel,sama5d3-ebi']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: nand-controller: #address-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: nand-controller: #size-cells: 0 was expected
-	from schema $id: http://devicetree.org/schemas/mtd/nand-controller.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/ebi@10000000/nand-controller: failed to match any schema with compatible: ['atmel,sama5d3-nand-controller']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: sdio-host@a0000000: $nodename:0: 'sdio-host@a0000000' does not match '^mmc(@.*)?$'
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: sdio-host@a0000000: Unevaluated properties are not allowed ('bus-width', 'disable-wp', 'no-1-8-v' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: sdio-host@b0000000: $nodename:0: 'sdio-host@b0000000' does not match '^mmc(@.*)?$'
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: sdio-host@b0000000: Unevaluated properties are not allowed ('bus-width', 'disable-wp' were unexpected)
-	from schema $id: http://devicetree.org/schemas/mmc/atmel,sama5d2-sdhci.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: hlcdc@f0000000: 'hlcdc-display-controller', 'hlcdc-pwm' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/atmel,hlcdc.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/ramc@f000c000: failed to match any schema with compatible: ['atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/dma-controller@f0010000: failed to match any schema with compatible: ['atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/dma-controller@f0004000: failed to match any schema with compatible: ['atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/ssc@f8004000: failed to match any schema with compatible: ['atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/hsmc@f8014000: failed to match any schema with compatible: ['atmel,sama5d2-smc', 'syscon', 'simple-mfd']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/hsmc@f8014000/ecc-engine@f8014070: failed to match any schema with compatible: ['atmel,sama5d2-pmecc']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: pwm@f802c000: Unevaluated properties are not allowed ('clocks', 'interrupts' were unexpected)
-	from schema $id: http://devicetree.org/schemas/pwm/atmel,at91sam-pwm.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/sfr@f8030000: failed to match any schema with compatible: ['atmel,sama5d2-sfr', 'syscon']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/timer@f8048030: failed to match any schema with compatible: ['atmel,at91sam9260-pit']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: watchdog@f8048040: Unevaluated properties are not allowed ('clocks' was unexpected)
-	from schema $id: http://devicetree.org/schemas/watchdog/atmel,sama5d4-wdt.yaml#
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/pinctrl@fc038000: failed to match any schema with compatible: ['atmel,sama5d2-pinctrl']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/secumod@fc040000: failed to match any schema with compatible: ['atmel,sama5d2-secumod', 'syscon']
-arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dtb: /ahb/apb/chipid@fc069000: failed to match any schema with compatible: ['atmel,sama5d2-chipid']
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@800000: $nodename:0: 'qcom,gpi-dma@800000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: bluetooth: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@900000: $nodename:0: 'qcom,gpi-dma@900000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@a00000: $nodename:0: 'qcom,gpi-dma@a00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: qcom,gpi-dma@b00000: $nodename:0: 'qcom,gpi-dma@b00000' does not match '^dma-controller(@.*)?$'
+	from schema $id: http://devicetree.org/schemas/dma/qcom,gpi.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: crypto@1dfa000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,sa8775p-qce', 'qcom,qce'] is too long
+	['qcom,sa8775p-qce', 'qcom,qce'] is too short
+	'qcom,crypto-v5.1' was expected
+	'qcom,crypto-v5.4' was expected
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq4019-qce', 'qcom,sm8150-qce']
+	'qcom,sa8775p-qce' is not one of ['qcom,ipq6018-qce', 'qcom,ipq8074-qce', 'qcom,ipq9574-qce', 'qcom,msm8996-qce', 'qcom,qcm2290-qce', 'qcom,sdm845-qce', 'qcom,sm6115-qce']
+	'qcom,ipq4019-qce' was expected
+	'qcom,sm8150-qce' was expected
+	from schema $id: http://devicetree.org/schemas/crypto/qcom-qce.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-rb8.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23000000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: ethernet@23040000: Unevaluated properties are not allowed ('interconnect-names', 'interconnects', 'mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
+arch/arm64/boot/dts/qcom/qcs9075-ride.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/regulator/qcom,qca6390-pmu.yaml#
 
 
 
