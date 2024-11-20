@@ -1,163 +1,148 @@
-Return-Path: <linux-kernel+bounces-415531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27059D379A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:55:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB6229D37E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B071F22C25
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:55:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18F77B2AF99
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E119E980;
-	Wed, 20 Nov 2024 09:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A69519CCFA;
+	Wed, 20 Nov 2024 09:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="xFQyGeCq"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LhG5jRu5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D20C18A6B2
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD19171E76
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096427; cv=none; b=TL8ZUpAsFzN4QMgz66koSUUi7vCAHCo5yOp7l2hziG/d53E6dJl/0sDI2ZV/UwhvUT4yP/NsDhS+wJlAmCsfZKUq4UsF5zPog+uR6G73TvkfBgo4meptlK6WPYl7E8ul2LKYCYMEbXxeCisFm7VfyjEGhlLReSbOvYhMmbpS7uU=
+	t=1732096460; cv=none; b=RSMXJdLeS6nQnLjacMIdZTKGb+rG1RkM2DEnN/p53b/7DQerammu12Mm79laWHgkdGqboWlvEAzJpifqYP7HkXSYY/skoIG2YXp+hx8BqEONy4SMqKIaQWUdauJ/AboTV1hWlDn9PMJCJ92OskjkGTYgQkL6HGUBAgqXfiWWcDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096427; c=relaxed/simple;
-	bh=cQZTRBqxjhEgwS3LQIWpQ8z/rhpoUKg43ZSv/kyHHkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YG1MHCbrYH62ZyGVMCQIw52VtocAZrZ8xqNpGG3hTpJnCrOgQaJkiZNqvCXOWhTVmKiF7v7LblN/iOcvfNDLYogcJMocV0qDvAeB87dURYjPh71g/chzXp/C6hGQI3BtBrmLWia7y2hfj9G6ejCTfnKRC3bGXdpZXR/vJZJ3tLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=xFQyGeCq; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so45060775e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1732096423; x=1732701223; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJLDnW4xgZ8CURNC2nEQvItuWPLm2zclX2H1mWV132I=;
-        b=xFQyGeCqZdiM+ozc7/7218xtm+5/7zvZwleSMatyW9jgTEO662miANnmyfagDR3rUC
-         xFLgmktOYp2dCMvu8WKoDKXT+hzWjxOsxIYwjKORm2y0J+CwM7LJ8bKhvrHHxfaY22M+
-         +86gunhNWeQL5VDP8ANIe44j2yA7JoUk/e8RoPQNDzdW421aoYkqayxyDAUnFTiZTrgL
-         VtGY1/zcUKX3xrAgBL8pI8nuDf6PbCrjVathn44Dv3kiLn7p4zcW9YiWF3Axaj4HRrgv
-         dk2zjvQBRvPAZTZmik8aZVZoz6A6sxAbqTdHcCq1Rxac80+FEffvw4JLyglm9skvkFhy
-         oATA==
+	s=arc-20240116; t=1732096460; c=relaxed/simple;
+	bh=6+kSYwM46iXgBfi4BIO36+knYfu6qPvrCtDgL0vuI08=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t9UiZxjXMLmlIKp/ItBfXyylK9umHMzjwJ20CBFQq2uDF/InP9HrVyH0D0jDxji1A0C7SMayUnEnpE+myQqYUzspQRtFTzAW4317HFbvglyZlUGxdZSRv5nlmq4DUJNgmNxurNgViDBTQ7+tnpax+nm5i9DQBVt6yUmn5Q6h2u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LhG5jRu5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732096458;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bbiOLUeOow1OwHuAIeVM/vyiCjsuUl/cJgPqAb9nzdw=;
+	b=LhG5jRu5xtanKZvhUPWZrVPqLLKNe+TKaFoIq4EGRmFxFds8Mv5wvl65luAjNicImPsaPY
+	Jdi6HcJ4LPGX/jPlpXUwammCJC+7GyoYV07KUqoLns3YQJW5mE57IR+koEYpZn/rmDQifI
+	qakAOtKS8HlqK9GAJeQQqIU47Kfv7tQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-74-ciRsxny1NT2IhU-FsPKr_g-1; Wed, 20 Nov 2024 04:54:16 -0500
+X-MC-Unique: ciRsxny1NT2IhU-FsPKr_g-1
+X-Mimecast-MFC-AGG-ID: ciRsxny1NT2IhU-FsPKr_g
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315af466d9so30151725e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:54:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732096423; x=1732701223;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oJLDnW4xgZ8CURNC2nEQvItuWPLm2zclX2H1mWV132I=;
-        b=Fp+HoLpK/RALDoo0AjO3M2zArgYq5XK1jiKvnD4L9oZrdlm8bFOJYC1aIzfm2IeF5r
-         u+HbWinzdHz04DtzRWN/8jK3q3qghDhUlzoHHIt0lufMjjmQOoTmS1sRCNp/Pry225eI
-         ufbT21GERY+q3Pxe/bRy0Nz1SACBO15Tx5aN/E+nAggSsI4+MlKWBxYazXJGCLKceOi6
-         yIDi+WUZ4WFU2Ozae3WW4Fc8ZmEdvuf1ghNRJLMA4Bm722xN8qVVuruf4/QDHBCuhiYW
-         OgEaKQLPwUnFoPvQ3zTPrMjbj65dndBX/jDOuCZuDe9xFZ7LSspe/6pFPa2lAw52TfKd
-         QB1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXz8vrJ4oehP9arhbBoABidhCZpFl0TGXMXR0IB5nu6TQFz2Oe+JlgmDqhFljtBYBLWTaI4ImIXFpCO2HI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJXBq6XGLRbielC85+au1USjabGng+gU+S+Za+QtJ1R5vSCMW+
-	4JqxjSqgzpizJWatsQDpzJxicUc6z6LQzoCeZC+MbRNrjDS5hbWym3I+KqlPiq4=
-X-Google-Smtp-Source: AGHT+IFGYjEIekWosK3N1x9ZAj53wDHPjVwwCvrEQHprGAlHK6CAfM14PoWKCxOAsPnnpRIJDBdzbg==
-X-Received: by 2002:a05:600c:1d83:b0:431:5bf2:2d4 with SMTP id 5b1f17b1804b1-4334f02c7c6mr16575515e9.29.1732096422784;
-        Wed, 20 Nov 2024 01:53:42 -0800 (PST)
-Received: from fedora.. ([91.90.172.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4288sm13108335e9.23.2024.11.20.01.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 01:53:42 -0800 (PST)
-From: Daniel Semkowicz <dse@thaumatec.com>
-To: heiko@sntech.de
-Cc: Laurent.pinchart@ideasonboard.com,
-	andrzej.hajda@intel.com,
-	andy.yan@rock-chips.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	jernej.skrabec@gmail.com,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	neil.armstrong@linaro.org,
-	quentin.schulz@cherry.de,
-	rfoss@kernel.org,
-	robh@kernel.org,
-	tzimmermann@suse.de,
-	Daniel Semkowicz <dse@thaumatec.com>
-Subject: Re: [PATCH 0/3] drm/rockchip: Add driver for the new DSI2 controller
-Date: Wed, 20 Nov 2024 10:52:58 +0100
-Message-ID: <20241120095326.9854-1-dse@thaumatec.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241106123304.422854-1-heiko@sntech.de>
-References: <20241106123304.422854-1-heiko@sntech.de>
+        d=1e100.net; s=20230601; t=1732096455; x=1732701255;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bbiOLUeOow1OwHuAIeVM/vyiCjsuUl/cJgPqAb9nzdw=;
+        b=WMh5JsykUVa120Yxhn4f2CJCJxpVKsmLTyQciLv7KwWOIrEkfdHrc/JZtbNyN/1bTn
+         mUrOhjV6gG97zU2YEZF7PbNs4oMDZICgUGQyXdvGO/iZap8Jx7Tl0szncOe+lvsn0Ear
+         ucmG814qgM3A7DYfdD3l4RorIGSV6oeW7QRmWTTuj7m0ZhW/yY/8KnD15kMSdBHdpHhG
+         DFFjpzrGNv684XrNlSfczjev0s6ba3EjY03RPSoSjMcLB/pco+yLEewoHWMnF0shX2Nl
+         ISnlc0GPdgM5CJBj8a9VLqLcyn4EIUSxaOXqJMZj+vw4w3ZNmMcHiybeLoVgx1S18jns
+         EeIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFyyoY9VHHiRbDbn+ZoMaz1rP2WQjU1NjXz0BdNqkmhIVWVFVY9L+SNgoh71/zdRCZGUksIgKnnMA9FEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5ag7ndwQGvjvx4n1alS498hkrzpt3OpDAhsJQIwGRwpR/zeQ8
+	DOl8SLuYrJ7hF69JO688KK4XdRj0+zzP5MDkn/za+3bpdovtOyWR5Pl0E35oUwdZMDTpE82niwd
+	/pTpADZy7fUo7160KjlMpWPkeZdGH/DOX7+VC0ZRvi54DluqL23uYOV9jLmdkPg==
+X-Received: by 2002:a05:600c:35ce:b0:431:5f8c:ccbd with SMTP id 5b1f17b1804b1-433489814afmr18009625e9.4.1732096454917;
+        Wed, 20 Nov 2024 01:54:14 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGXMulEZ4fyzBXzlnp2Ga9PLAXAG7RNZVj/xsBGVFnmcRkjlWgLt0bBoAjxJ8oiDKgVuh2ZcQ==
+X-Received: by 2002:a05:600c:35ce:b0:431:5f8c:ccbd with SMTP id 5b1f17b1804b1-433489814afmr18009375e9.4.1732096454430;
+        Wed, 20 Nov 2024 01:54:14 -0800 (PST)
+Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463ab6csm13344535e9.35.2024.11.20.01.54.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 01:54:13 -0800 (PST)
+Message-ID: <7003f775-7389-41ed-95e5-1e0e07f3f6fb@redhat.com>
+Date: Wed, 20 Nov 2024 10:54:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] ipmr: Fix access to mfc_cache_list without lock
+ held
+From: Paolo Abeni <pabeni@redhat.com>
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
+ <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>, David Ahern <dsahern@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ Jakub Kicinski <kuba@kernel.org>, Breno Leitao <leitao@debian.org>
+References: <20241108-ipmr_rcu-v2-1-c718998e209b@debian.org>
+ <20241113191023.401fad6b@kernel.org>
+ <20241114-ancient-piquant-ibex-28a70b@leitao>
+ <20241114070308.79021413@kernel.org>
+ <20241115-frisky-mahogany-mouflon-19fc5b@leitao>
+ <20241115080031.6e6e15ff@kernel.org>
+ <9cdf4969-8422-4cda-b1d0-35a57a1fe233@nokia.com>
+ <9837c682-72a0-428e-81ab-b42f201b3c71@redhat.com>
+Content-Language: en-US
+In-Reply-To: <9837c682-72a0-428e-81ab-b42f201b3c71@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Heiko,
+On 11/15/24 17:55, Paolo Abeni wrote:
+> On 11/15/24 17:07, Stefan Wiehler wrote:
+>>> On Fri, 15 Nov 2024 01:16:27 -0800 Breno Leitao wrote:
+>>>> This one seems to be discussed in the following thread already.
+>>>>
+>>>> https://lore.kernel.org/all/20241017174109.85717-1-stefan.wiehler@nokia.com/
+>>>
+>>> That's why it rung a bell..
+>>> Stefan, are you planning to continue with the series?
+>>
+>> Yes, sorry for the delay, went on vacation and was busy with other tasks, but
+>> next week I plan to continue (i.e. refactor using refcount_t).
+> 
+> I forgot about that series and spent a little time investigating the
+> scenario.
+> 
+> I think we don't need a refcount: the tables are freed only at netns
+> cleanup time, so the netns refcount is enough to guarantee that the
+> tables are not deleted when escaping the RCU section.
+> 
+> Some debug assertions could help clarify, document and make the schema
+> more robust to later change.
+> 
+> Side note, I think we need to drop the RCU lock moved by:
+> 
+> https://lore.kernel.org/all/20241017174109.85717-2-stefan.wiehler@nokia.com/
+> 
+> as the seqfile core can call blocking functions - alloc(GFP_KERNEL) -
+> between ->start() and ->stop().
+> 
+> The issue is pre-existent to that patch, and even to the patch
+> introducing the original RCU() - the old read_lock() created an illegal
+> atomic scope - but I think we should address it while touching this code.
 
-> This series adds a bridge and glue driver for the DSI2 controller found
-> in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
-> 
-> As the manual states:
-> The Display Serial Interface 2 (DSI-2) is part of a group of communication
-> protocols defined by the MIPI Alliance. The MIPI DSI-2 Host Controller is
-> a digital core that implements all protocol functions defined in the
-> MIPI DSI-2 Specification.
-> 
-> 
-> While the driver structure is very similar to the previous DSI controller,
-> the programming model of the core is quite different, with a completely
-> new register set.
-> 
-> Another notable difference is that the phy interface is variable now too
-> in its width and some other settings.
-> 
-> 
-> Heiko Stuebner (3):
->   drm/bridge/synopsys: Add MIPI DSI2 host controller bridge
->   dt-bindings: display: rockchip: Add schema for RK3588 DW DSI2
->     controller
->   drm/rockchip: Add MIPI DSI2 glue driver for RK3588
-> 
->  .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |  119 ++
->  drivers/gpu/drm/bridge/synopsys/Kconfig       |    6 +
->  drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
->  .../gpu/drm/bridge/synopsys/dw-mipi-dsi2.c    | 1034 +++++++++++++++++
->  drivers/gpu/drm/rockchip/Kconfig              |   10 +
->  drivers/gpu/drm/rockchip/Makefile             |    1 +
->  .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  524 +++++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |    2 +
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |    1 +
->  include/drm/bridge/dw_mipi_dsi2.h             |   94 ++
->  10 files changed, 1792 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml
->  create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
->  create mode 100644 drivers/gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c
->  create mode 100644 include/drm/bridge/dw_mipi_dsi2.h
-> 
-> -- 
-> 2.45.2
+@Stefan: are you ok if I go ahead with this work, or do you prefer
+finish it yourself?
 
-Thank you for this work!
+Thanks,
 
-Sucessfuly tested this series with DSI/LVDS bridge.
-
-Test configuration was described in the thread "[PATCH v3 0/2] MIPI DSI
-phy for rk3588":
-https://lore.kernel.org/all/20241120093702.9018-1-dse@thaumatec.com/
-
-Tested-by: Daniel Semkowicz <dse@thaumatec.com>
-
-Kind regards
-Daniel
+Paolo
 
 
