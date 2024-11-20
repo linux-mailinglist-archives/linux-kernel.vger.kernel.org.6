@@ -1,94 +1,187 @@
-Return-Path: <linux-kernel+bounces-415174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0415D9D324C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:45:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E21A9D324F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA85B222D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:45:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D421283D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365B13C47B;
-	Wed, 20 Nov 2024 02:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U/ZRvCGO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DECF6EB7C;
+	Wed, 20 Nov 2024 02:57:08 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282F320B22
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4866520B22;
+	Wed, 20 Nov 2024 02:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732070727; cv=none; b=Wp/QW/jEXZF9DlUUu5iWRF23om7xTNz5r59Txl3RswdyeuEnaPoxEfQdAfDjGYg34UMAeSH3WtHytThuosy/gZ0Fu7WXZ92lOWHTO2Q2l0+DCJvu4ZIewCI5AKkRKMYoRcfaLypFpUkHrbQ12VC3yk55XlhbpHymQ6X72huc6Pg=
+	t=1732071428; cv=none; b=a66cbsNx9cmcDc2nskxXCkkfrVXpdQ0ZRLtN/8zZQW3nY5AUvE8Lt+3EESPR6wSiTYIhdaMYg4FaPaytXTPKIL50DbPMpdzT9G6EQZqpa3+YqbtyWJFsud1ttusQGGlcxzVnjJX8+HZdKBZGqoJ7cVvBQyM1G8oadEnnGJSKyoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732070727; c=relaxed/simple;
-	bh=YbDHL9FPP4Phk36bmR6yhe56OMyqr1qPt1bBYp3j7U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jv2wxNaYOn2A/zmeJXP99r7vL2Td5YNk+/u3T6eXLSSD1mw6RiK9F0HTvkdroI6ZUmNR/qbTWnUBIAj14NmXACnFdMn7JGZbAVa0sl+B0Zoa1RX4C/ciJIU6ZonGxgweB/Xze/R0AfmmiXUDoLaNqbvYu8ffOPi9WOrm/3j4MSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=U/ZRvCGO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=V5PH0hbl9Yb9iMWpTd7os3cL3Qh/tgBO9RrS13b2+qA=; b=U/ZRvCGOSRpBKbQNEcIdr+ZMiA
-	5mM+D289G9dHNOowlaUZ6IV0IO6uMpR9VggV1ur0OxTaI4NBdRwBxcJDvvwBhU3hh9MAeGfG3Oxth
-	W134XQzJr97ajzhMtBmDj9VN+Q7xPZfz43bsqHyMNgG/0UrFCnlk9N3uVnuEYFqZnJjajpw5C8/Hf
-	FAaMgFCQQ1Tl+pd5YmjLXdWX4Rz9lllBWo8v6uYahaXXkZ8ltGIV9EjomF5MdV1PKlWizqp+NWSe4
-	SHFtQBtG7mWVCymfIO++3A+T7bxQcfXbOxrrlgk4Gw5+oWWJ9DovyYvMDdPe3CDqRyxTjJcur0dNZ
-	tutv+MWw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDaiX-00000004m5b-2S6s;
-	Wed, 20 Nov 2024 02:45:21 +0000
-Date: Wed, 20 Nov 2024 02:45:21 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [PATCH v4 4/9] binder: remove struct binder_lru_page
-Message-ID: <Zz1NQXgk96vqHHFr@casper.infradead.org>
-References: <20241119183250.3497547-1-cmllamas@google.com>
- <20241119183250.3497547-5-cmllamas@google.com>
- <ZzziucEm3np6e7a0@casper.infradead.org>
- <ZzzyBwWIDy6Z2W4k@google.com>
+	s=arc-20240116; t=1732071428; c=relaxed/simple;
+	bh=/+bqiin+NU850O+KzQiUKl814nrZU3HnvH7ew7mfLDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SPrDE7/1li+It+HxOAWjPYI1Phi1mKR+Rlrv1Sw9CmllFoTyrzr1iLMPELtbByxW6+zPBbI2Qnm/3uTRYepzftk5V0w/pIu0UmpuFytoLvfcWdnzHF4uSlvG1N9Laxs2yFL3koP5mBG6DV+/iQ52Spgbe2o68zisU3AeethwP9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XtQxK03hRz4f3kFj;
+	Wed, 20 Nov 2024 10:56:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 7F0271A07B6;
+	Wed, 20 Nov 2024 10:56:55 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBHIob1Tz1nvscpCQ--.55033S3;
+	Wed, 20 Nov 2024 10:56:55 +0800 (CST)
+Message-ID: <56e451a7-e6ae-468a-81d8-f2513245f87f@huaweicloud.com>
+Date: Wed, 20 Nov 2024 10:56:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzzyBwWIDy6Z2W4k@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/27] ext4: don't write back data before punch hole in
+ nojournal mode
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, hch@infradead.org, david@fromorbit.com,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-4-yi.zhang@huaweicloud.com>
+ <20241118231521.GA9417@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241118231521.GA9417@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgBHIob1Tz1nvscpCQ--.55033S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCr4xCr4DtFyxZF4xur4rXwb_yoWrGw15pr
+	9akry5tr40gayqkr1ftFsFqryFg34vkrW8GryfG3s7Za90ywn2kF4DKw10ka4Ut398Gw40
+	qF48JasrWFyqvFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, Nov 19, 2024 at 08:16:07PM +0000, Carlos Llamas wrote:
-> If you are planning to keep page->private, I think we can just hang our
-> binder items in there. Something like...
+On 2024/11/19 7:15, Darrick J. Wong wrote:
+> On Tue, Oct 22, 2024 at 07:10:34PM +0800, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> There is no need to write back all data before punching a hole in
+>> data=ordered|writeback mode since it will be dropped soon after removing
+>> space, so just remove the filemap_write_and_wait_range() in these modes.
+>> However, in data=journal mode, we need to write dirty pages out before
+>> discarding page cache in case of crash before committing the freeing
+>> data transaction, which could expose old, stale data.
 > 
-> 	struct binder_page_items *bp;
-> 	struct page *p;
+> Can't the same thing happen with non-journaled data writes?
 > 
-> 	bp = kzalloc(sizeof(*bp), GFP_KERNEL);
-> 	bp->alloc = alloc;
-> 	INIT_LIST_HEAD(&bp->lru);
-> 	bp->index = index;
+> Say you write 1GB of "A"s to a file and fsync.  Then you write "B"s to
+> the same 1GB of file and immediately start punching it.  If the system
+> reboots before the mapping updates all get written to disk, won't you
+> risk seeing some of those "A" because we no longer flush the "B"s?
 > 
-> 	p = alloc_page(...);
-> 	p->private = (unsigned long)bp;
-> 
-> This would be absolutely fine in binder. Is this what you had in mind
-> for current users of page->lru?
+> Also, since the program didn't explicitly fsync the Bs, why bother
+> flushing the dirty data at all?  Are data=journal writes supposed to be
+> synchronous flushing writes nowadays?
 
-Something like that, yes.  Although you wouldn't even need to use
-page->private for it; you'd be able to use page->memdesc directly,
-and then not be in the way of shrinking to 8 bytes.
+Thanks you for your replay.
+
+This case is not exactly the problem that can occur in data=journal
+mode, the problem is even if we fsync "B"s before punching the hole, we
+may still encounter old data ("A"s or even order) if the system reboots
+before the hole-punching process is completed.
+
+The details of this problem is the ext4_punch_hole()->
+truncate_pagecache_range()-> ..->journal_unmap_buffer() will drop the
+checkpoint transaction, which may contain B's journaled data. Consequently,
+the journal tail could move advance beyond this point. If we do not flush
+the data before dropping the cache and a crash occurs before the punching
+transaction is committed, B's transaction will never recover, resulting
+in the loss of B's data. Therefore, this cannot happen in non-journaled
+data writes.
+
+This flush logic is copied from ext4_zero_range() since it has the same
+problem, Jan added it in commit 783ae448b7a2 ("ext4: Fix special handling
+of journalled data from extent zeroing"), please see it for more details.
+Jan, please correct me if my understanding is incorrect.
+
+Thanks,
+Yi.
+
+> 
+> --D
+> 
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>  fs/ext4/inode.c | 26 +++++++++++++++-----------
+>>  1 file changed, 15 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index f8796f7b0f94..94b923afcd9c 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -3965,17 +3965,6 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  
+>>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>>  
+>> -	/*
+>> -	 * Write out all dirty pages to avoid race conditions
+>> -	 * Then release them.
+>> -	 */
+>> -	if (mapping_tagged(mapping, PAGECACHE_TAG_DIRTY)) {
+>> -		ret = filemap_write_and_wait_range(mapping, offset,
+>> -						   offset + length - 1);
+>> -		if (ret)
+>> -			return ret;
+>> -	}
+>> -
+>>  	inode_lock(inode);
+>>  
+>>  	/* No need to punch hole beyond i_size */
+>> @@ -4037,6 +4026,21 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  		ret = ext4_update_disksize_before_punch(inode, offset, length);
+>>  		if (ret)
+>>  			goto out_dio;
+>> +
+>> +		/*
+>> +		 * For journalled data we need to write (and checkpoint) pages
+>> +		 * before discarding page cache to avoid inconsitent data on
+>> +		 * disk in case of crash before punching trans is committed.
+>> +		 */
+>> +		if (ext4_should_journal_data(inode)) {
+>> +			ret = filemap_write_and_wait_range(mapping,
+>> +					first_block_offset, last_block_offset);
+>> +			if (ret)
+>> +				goto out_dio;
+>> +		}
+>> +
+>> +		ext4_truncate_folios_range(inode, first_block_offset,
+>> +					   last_block_offset + 1);
+>>  		truncate_pagecache_range(inode, first_block_offset,
+>>  					 last_block_offset);
+>>  	}
+>> -- 
+>> 2.46.1
+>>
+>>
+
 
