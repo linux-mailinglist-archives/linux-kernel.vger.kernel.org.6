@@ -1,146 +1,152 @@
-Return-Path: <linux-kernel+bounces-416235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6049C9D4257
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:03:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05E29D4259
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F162831ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8875C1F21522
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCB11BC061;
-	Wed, 20 Nov 2024 19:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9B41B85C1;
+	Wed, 20 Nov 2024 19:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="T2VE1pDA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yra6Lbru"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E60155751
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6A315534B;
+	Wed, 20 Nov 2024 19:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732129430; cv=none; b=VxLdhPCLMo/U+ex6MgShxRPDpdJ54fBkFDCDP2nYqVNW1eswDGp9dpXIiWSXmEr6ajf7HOqWvm+z5JlTXdM3Syr1tdXiEYB56YuzLaxb8RIHfhtdWj4xUNWlNMLhBdQHCJv2YJrO2jHbrQgt4REV0xNwmaDBxp9rii/hoeiBUgU=
+	t=1732129531; cv=none; b=URl/sFCyNdONRCTIozjs3L948JSVoByiEJaBGRt6k+RKnYSsnRQDazQoN4l/l3YN3IFilcd3udU6nH9eZx4SKM+EDGUUVcQVYFeUU7YRpesSuPmlap0FmY+liAgUM8NCGKRCNVGPNCv5HsTvjpL8SYziyjUcuZZVde/XpeX2GR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732129430; c=relaxed/simple;
-	bh=SNseMcotiWfUHH5XA4Rb9g8E8LiVizl5r2o8UsKtJ+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tRY2As7EUD7+kncAQ8Ns+GNKfHUEiRPVRbVvdeEQ19cNu857lHGoxwox/pY0Iwzi1nhZUW+ZuBHApnR86byzEDwJ3LS3VTWKabZRTEE6WTqKgP81Trto3Q2LZa9JmeN6nuDcPSnN644Fo7OiGEjtTJNnyCl/9UupZx1+0TqG2/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=T2VE1pDA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B4FAF40E0275;
-	Wed, 20 Nov 2024 19:03:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id vHydp66S-MWa; Wed, 20 Nov 2024 19:03:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732129417; bh=fazILHj+S7I8Ls1rWJXD0uAZMOhdZmULh6p3bwYIoLc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T2VE1pDAWxeOQoPYly0FmY+yQyMpNYaHOpKgJ6OFz9yQ/LMpfTB8z1sU8yMXmDWaR
-	 7MuKmeLAk/sM9EWutR3c/FomM5FeZg9rrt3ZUWeQLBOst3jn0MuG/+I1C1fXaeSpAE
-	 +a39urtZIeOOdsHgvHx8xhCGbjrose8FCWuuMBj8MofrWTjBltli/fXecMZyWk1XZG
-	 EoWAnuxZvz6MptLAR3G5rLdtI6bJqtC/DFsuixzfHaok2w5DCWTw30Ys7NhEGHTfxd
-	 raCXD0XdvtNa6lQs/Ge/XTZ8y4QI4PHyQ9P3/RrnUC2qEnsqMcZ65hcJwNhJZg5Wj+
-	 z5Et4uPl+W3PhmlK/zPx4ZgZu9lycFGLe9oeVcKn4JglgNvSj8dm8EHb769e5RM2zM
-	 9qG48kS65bbo9dJxBjc5/qtUfwLN6MXB5l4+6w1uvu24RXFe2RrRqG7d6q0A8HeMMr
-	 HO5Tzqfb+2ypIPxs3GbxojQ8uCYBOcMHQOkwAJRb3qMOPLY/tSfB8U7x/5jdS+mtV4
-	 AGRpwzvNGbNaJKkalo6iKh36C9w5L+uqLsWHPHmUzU6hpUTCoY9+fln/rt5Wa9fIyW
-	 1JPpSCg2iwfKeLHWk6gqZyF0ZmlIrJzyc5Qohv4Pee2p9yLs1t5orwee7bbOlgg42J
-	 4fc97T6+fsFj47imEE7rf5OU=
-Received: from zn.tnic (p200300ea9736a1e2329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a1e2:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5D8B340E015E;
-	Wed, 20 Nov 2024 19:03:30 +0000 (UTC)
-Date: Wed, 20 Nov 2024 20:03:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shresth Prasad <shresthprasad7@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/sev: Fix dereference NULL return value
-Message-ID: <20241120190318.GCZz4ydl5z5mUHrJd4@fat_crate.local>
-References: <20241120-fix-dereference-null-x86-sev-v2-1-7e637851dfe2@gmail.com>
- <20241119210336.GEZzz9KMiZwf6R9hwd@fat_crate.local>
- <CAE8VWiKQ4fdeBeoWbGf55QXaqHrEdSCxo5qTJ=S2vKVd5W1scw@mail.gmail.com>
+	s=arc-20240116; t=1732129531; c=relaxed/simple;
+	bh=VgzztgUYTj2gdZLejtz2gNTSGzeKzDJP3AgjXP/IMu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CrznVrM5mL0+VkttEQVcoh0cuIpLXyRrxNSYLrZvo/3p7riN4Dsrxx0wsh2b63SwYaYRqyvam6TfWh66iw/ld/Wd1aWyWT/7PfyyPWMg5VuLr/UfOrF9lViJn3XLIEA/gVYRtGSh5wOxrOYQeW16BnjQScSXeuRDLVNYFkSSAOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yra6Lbru; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-212348d391cso306535ad.2;
+        Wed, 20 Nov 2024 11:05:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732129530; x=1732734330; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=gd7WOFiznCPMFUhnI5iH+6xGVNMYkxpQsmPsD6u9+zI=;
+        b=Yra6LbruqWG9q89zOPLDd0wwCeOH/j9qf9hsu5bDKKomAihvKWPju6ZdOs/LBSiUnN
+         +Lu9ZZB7PnE5sZ+zfe+Z+69b4zqcoPsKQlmcK8FNP2IvhmLtBSmLkbZ2bBDSKEDSyud8
+         urDmaIxXJh9JPZULZB8YcBFw3h+D12YAClknglzycuOAVOzTrnlsJxNz0bU1W0e00fYx
+         kwZkE/60jWInu9D/c+Ou6KufNZYiMak8LpGGd9tTxgPyQ9yJp2zuRfBk2atNWsTaT01j
+         roek2C9LzmNs5dBuGaJ24UV9QDIgAW+NyVDvRDjoZ51xdXFFASUeaYmqjmfNJAgUSLYU
+         JjSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732129530; x=1732734330;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gd7WOFiznCPMFUhnI5iH+6xGVNMYkxpQsmPsD6u9+zI=;
+        b=C/uCYsrfG/MkKbabTAEFWC+7nxhz4fwpBFx3lZwxruiCH9/7KNQ24nohGGPraxMFe6
+         eW/HLZEHsCV+AavClIw+LBlrSWdTkO19qKPrExwV6cUX8ujmP9tA50hHCFzdP3XvPGDV
+         4TYYEwkdUVZbn8X/B8TDI7U4BMWwnkXYRUveOn4v7DLj+DakGqykFYgrhgP2ty8W9TgX
+         cIMaK+c5Znb4VdseesSxhKyGkpDcLKdCaPCJevuSHWfYH0ZGwORKvR7EX/9dZTz3GecF
+         Pwapr9YmB1Z86WUJ39eU/LTAFBLqHti7DiNWhw/NgHBuwggUhFSRdvqh9JR/7+5Cea1C
+         AC3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2F+kio1e1ogazPJq6j0i1HGA0eAqu2gcUks687q/mxwwbciH9vRJhTdHmkJWSQ4neN57QcV3f@vger.kernel.org, AJvYcCUK82DPnxKbzf9908qGTDGooWLfORN1W8EIcav+K0HA/wb5N/E2j18omop07c+V71XSaNclFtJngADrgGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcefsuJbtV7+QvsgTGSiViiWxttqy4gtNpIRSbXmw2wUFSgcKU
+	X7wtYz/vJJCVOxtFj94FMRoWrlqK91KUTBtf678ebm54tHDyxoUB
+X-Google-Smtp-Source: AGHT+IH1zyGelybEsC18ngnaSAx9rUe1LaPZlFpgnIHWcfvZPSzTlaxdPS8WJl77iJAJ8uNWNRuaAQ==
+X-Received: by 2002:a17:902:e74a:b0:211:6b23:9aa8 with SMTP id d9443c01a7336-2126b0139c5mr54005255ad.36.1732129529685;
+        Wed, 20 Nov 2024 11:05:29 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f348e4sm93137075ad.125.2024.11.20.11.05.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 11:05:29 -0800 (PST)
+Message-ID: <cbd45b90-668a-4a2e-abb0-66b43b49ce94@gmail.com>
+Date: Wed, 20 Nov 2024 11:05:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAE8VWiKQ4fdeBeoWbGf55QXaqHrEdSCxo5qTJ=S2vKVd5W1scw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241120125629.623666563@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 06:23:09PM +0530, Shresth Prasad wrote:
-> lookup_address() does return NULL in some paths so I do assume that it
+On 11/20/24 04:56, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.63 release.
+> There are 82 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.63-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-You assume?
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Well, do you know or not? You can simply read lookup_address() and more
-specifically lookup_address_in_pgd_attr() and see whether it can return NULL
-or not.
-
-As to this particular case, I don't think it would return a NULL. Otherwise
-something else is very very wrong so perhaps it is better to crash'n'burn
-there.
-
-What would happen if you continue instead on a NULL ptr? Would that make sense
-either?
-
-Basically, I'm trying to make you think before you send patches. Just because
-some silly tool says something is wrong, it doesn't mean you should trust it
-blindly.
-
-You analyze the situation and *then* you send a patch, only when it is really
-an issue.
-
-> can happen, unless there's a logical reason why it can't (please let me know
-> if that's the case). I've also seen it be checked this way in a couple other
-> places.
-
-Kernel programming is not voodoo. You read the code and think.
-
-> I'm not sure why you can't open the page but would it help if I was more
-> descriptive in the commit message?
-
-SYNOPSYS
-
-Username:
-Password:
-
-is what I get.
-
-> Really sorry about that, I completely overlooked it. I'll CC them
-> when I resend the patch.
-
-Before you do, I'd like you to turn on brain and think about the questions
-above.
-
-And I'd like you to please read
-
-https://kernel.org/doc/html/latest/process/development-process.html
-
-and especially
-
-https://kernel.org/doc/html/latest/process/submitting-patches.html
-
-before you submit more patches.
-
-I'm not typing those to get ignored. I mean, I can ignore emails too if mine
-get ignored.
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Florian
 
