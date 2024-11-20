@@ -1,155 +1,160 @@
-Return-Path: <linux-kernel+bounces-415886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893F79D3D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:30:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55E99D3DB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:38:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3846C1F2174F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:30:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23333B28FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2A21AF0CC;
-	Wed, 20 Nov 2024 14:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF501AF0A1;
+	Wed, 20 Nov 2024 14:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="B5ffanFm"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QBLrQpeO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AC61AAE38;
-	Wed, 20 Nov 2024 14:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E3B1AA783
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113030; cv=none; b=tYunhDDlTpOhC3YXm2qbW6oBzy8elrMm9iQ+t5Smob0e0LFNxqUcVaAatOI684qkLGPe5kW/yo63meyF6l7Ae1vSlO9yObjr27oWd0aOEjD2HSs0suaZI2u1Il5R9UQDcd6FW+xYGlTgtRODeJsbiWzg4R4Qqgow26kSGLlQTx0=
+	t=1732113058; cv=none; b=eghbfRrLVJXKwNAo6Jl7RvMzhUmKrQl7EztF15oSS+cVk1B+pLBdMC+yrM1+FZ4CGVsha5a4sNoR9ovsb1MQs6o2MOw3vf1uwL0TmT27VzmOPsUYb1YjH9PfZEYoQDKzGkLLAR0Aw6w6Ijw2EMdzIimIQkF3jpktQQzfue0mhcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113030; c=relaxed/simple;
-	bh=W7OWA8tVFTiKEF42Oieigl4nxZ6o8b064cist9uE5fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=poXDhnkIVMbc/K/PMw76e5WjXInjzOfRMGkCYp5p4dy8fsaFAS3NpFHI6Dx/KoIh8OCAO3S2s/nnhm9YD/tmHpacaAGP2jTovHMspihQIYn3yXAy1odun8tKWWhGjTcSgzrlgVKur4a6U051QsbzW6DaJN5AC+ovRabfMPCpiUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=B5ffanFm; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CEA4C2805FA;
-	Wed, 20 Nov 2024 15:30:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1732113024; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=7apzaMS1lO1lrCYhLj60cV0wpNtVOKl6ln57IHdgp6I=;
-	b=B5ffanFmWap08QD1Oh+ynGU2/40mw16ZjqA3/1S67ev/gR6Jk+lhIZ4nHmYjYb428KlAti
-	Tg/tR51V98cX90+K5MSjFhmL51O87QxrgW+WJ4H+jZ40vjCGhmlfHcr2Tp2fvgahiVWqCP
-	qc3mMGKGJne8qaq9XSkdEz5T3QPCClR2lEVYHB7StVz142/hZh34u9Br2IszmJYg3xRbnY
-	4fjlsv9Q8numT1L5mhzmscwGX37T/nIUh80YnbeVPVz8Hoh3GssK/UsnAVjIfNxMAB+q7f
-	Z+0gvQe0kS+Ur7uLh/atFOYSgD9Jt1VM0ESG9Uk7Q34+zjlvM+DK1/XzU4HN0Q==
-Message-ID: <f90ee4f3-704d-4776-99e7-04f30969d93e@cachyos.org>
-Date: Wed, 20 Nov 2024 15:30:20 +0100
+	s=arc-20240116; t=1732113058; c=relaxed/simple;
+	bh=5pmYZbvrLupwj4BJfJQOcTaV2EEDO5P+XVwKmsfrkH0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fwUxVRltQnfMQ0eiprdMV/03jY8wIg01bDUHl1tskq3cOtLriPVrfokEZELPj5z/n0gH0klGVBzNL1JiqVV6qV5Iz/sIWYZJb5huetK4pa8Qh0MM9KJcHVKoFuct9vr0Hvev3SfRhJumyhJpsL5JwfzIYMuT/YTNB0woDTcF1Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QBLrQpeO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732113056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vMaVfU9xtl9jCnZwV3bp7ALlJWztWPDTsfcs4kOcUr4=;
+	b=QBLrQpeOh/zCDpXaAIyPxhnVuqJPhY744S8xVsDhjUIsgC9HFvahSWo+UCigZUb8Xug6oZ
+	BQekXyPRB84IDPM1PLdHkgEzVzdVkWUrBD4V2laLN5NTPOkDo9K05eNEJIqdKVNwqQHK8D
+	9yiVLZ9VNbFKNdekYvPsI33D1eJ/Pxg=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-312-jg5P1FfwPi-_95nmIeVRcg-1; Wed, 20 Nov 2024 09:30:52 -0500
+X-MC-Unique: jg5P1FfwPi-_95nmIeVRcg-1
+X-Mimecast-MFC-AGG-ID: jg5P1FfwPi-_95nmIeVRcg
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-71e7858820eso5708644b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:30:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732113052; x=1732717852;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vMaVfU9xtl9jCnZwV3bp7ALlJWztWPDTsfcs4kOcUr4=;
+        b=Dc8lDmVUaYX9wcJy1aukXPt9Nc4gMMUtCbNITwhnEQfHGVQUdBiMsj7+feKLPt5kR7
+         qNTeFbBbczbfcR526txlag8dmN51ITIV82PYdEzmUsrreKSb3r96N0r6pxXimIw5VG9D
+         FEE0zcfNhhHkYj+hypdSL7hypGJOgLHjNoV54xXqLaC92ETcDMYMHiefM1+lkBKE3bwa
+         Gyva2h1eRvp1Fe+hoZq0dOtHSwTzvLToI3SkujhRDfWC0L1O1I81x8/df3ThnwZi4RDM
+         2A2ynHlJyt0XzQ5yOODcj/72pmJN5Tpks/kBmuk4Hqm9hcZN2QzvD/gFMwtnxRQVGGsE
+         Yr3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVII2R2Tla/IaRLoh4jlahjaTNHTSs/bve/slP+FPcTqAzxQMNFjZCveKuGhnVzh3ne7DRZWHCNQW6Hc7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3MYZxIECPfeKnEaWgxy1Xk//DpdkNVy0TYzA2u4Af1q3o7V2z
+	m/1FFDluOiSlegekNqj61W/AOG87Y7NTQ3HOYc9J1smL2HQbQq0+7qnj9n1TAJN+zSqMLLkLfMZ
+	VoV59JChswHu2LfxaGQDRe65+l6UZHsON4nMPhAjlKsRRdzd/Tp3kPIQP2g22oQ==
+X-Received: by 2002:a17:90b:3881:b0:2ea:3d2e:a0d7 with SMTP id 98e67ed59e1d1-2eaca6fdca2mr3531595a91.15.1732113051808;
+        Wed, 20 Nov 2024 06:30:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IECdkxl+S+2db1pctE3VVYMcpzPK6h3n3Y5C+YW4i4MDyKHmQUKlg5WY2488lvUjDv3+OYg8g==
+X-Received: by 2002:a17:90b:3881:b0:2ea:3d2e:a0d7 with SMTP id 98e67ed59e1d1-2eaca6fdca2mr3531540a91.15.1732113051300;
+        Wed, 20 Nov 2024 06:30:51 -0800 (PST)
+Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02eca46sm1348721a91.7.2024.11.20.06.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 06:30:50 -0800 (PST)
+Message-ID: <67f6b7e9ff32593bf66f72ff1269458c3733ecae.camel@redhat.com>
+Subject: Re: [PATCH] drm/bochs: Replace deprecated PCI implicit devres
+From: Philipp Stanner <pstanner@redhat.com>
+To: Gerd Hoffmann <kraxel@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: virtualization@lists.linux.dev, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 20 Nov 2024 15:30:40 +0100
+In-Reply-To: <20241017125145.34729-2-pstanner@redhat.com>
+References: <20241017125145.34729-2-pstanner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/10] perf/x86/rapl: Add core energy counter support
- for AMD CPUs
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
- mingo@redhat.com, rui.zhang@intel.com, irogers@google.com,
- kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.dei,
- gautham.shenoy@amd.com
-Cc: kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241115060805.447565-1-Dhananjay.Ugwekar@amd.com>
- <20241115060805.447565-11-Dhananjay.Ugwekar@amd.com>
- <a7159bad-92a1-47e8-b892-2ae0dd9a94f6@cachyos.org>
- <7eaf557d-7e85-4fd3-abee-f84ac01d92c1@amd.com>
-Content-Language: en-US
-From: Peter Jung <ptr1337@cachyos.org>
-Organization: CachyOS
-In-Reply-To: <7eaf557d-7e85-4fd3-abee-f84ac01d92c1@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Dhananjay,
+On Thu, 2024-10-17 at 14:51 +0200, Philipp Stanner wrote:
+> bochs uses pcim_enable_device(), which causes pci_request_region() to
+> implicitly set up devres callbacks which will release the region on
+> driver detach. Despite this, the driver calls pci_release_regions()
+> manually on driver teardown.
+>=20
+> Implicit devres has been deprecated in PCI in commit 81fcf28e74a3
+> ("PCI:
+> Document hybrid devres hazards").
+>=20
+> Replace the calls to pci_request_region() with ones to always-managed
+> pcim_request_region(). Remove the unnecessary call to
+> pci_release_regions().
 
-On 20.11.24 14:58, Dhananjay Ugwekar wrote:
-> Hello Peter Jung,
-> 
-> Thanks for trying out the patchset,
-> 
-> On 11/20/2024 1:28 PM, Peter Jung wrote:
->> Hi together,
->>
->> This patch seems to crash the kernel  and results into a not bootable system.
->>
->>
->> The patch has been applied on base 6.12.rc7 - I have not tested it yet on linux-next.
->>
->> I was able to reproduce this issue also on the v6 and the only "good" version was the v4.
->> This has been reproduced on several zen3+ machines and also on my 9950X.
->>
->> Bisect log:
->> ```
->> git bisect start
->> # status: waiting for both good and bad commits
->> # good: [2d5404caa8c7bb5c4e0435f94b28834ae5456623] Linux 6.12-rc7
->> git bisect good 2d5404caa8c7bb5c4e0435f94b28834ae5456623
->> # status: waiting for bad commit, 1 good commit known
->> # bad: [372e95a40e04ae6ebe69300b76566af6455ba84e] perf/x86/rapl: Add core energy counter support for AMD CPUs
->> git bisect bad 372e95a40e04ae6ebe69300b76566af6455ba84e
->> # good: [fd3c84b2fc8a50030e8c7d91983f50539035ec3a] perf/x86/rapl: Rename rapl_pmu variables
->> git bisect good fd3c84b2fc8a50030e8c7d91983f50539035ec3a
->> # good: [96673b2c940e71fde50a54311ecdce00ff7a8e0b] perf/x86/rapl: Modify the generic variable names to *_pkg*
->> git bisect good 96673b2c940e71fde50a54311ecdce00ff7a8e0b
->> # good: [68b214c92635f0b24a3f3074873b77f4f1a82b80] perf/x86/rapl: Move the cntr_mask to rapl_pmus struct
->> git bisect good 68b214c92635f0b24a3f3074873b77f4f1a82b80
->> # first bad commit: [372e95a40e04ae6ebe69300b76566af6455ba84e] perf/x86/rapl: Add core energy counter support for AMD CPUs
->> ```
->>
->> Nov 17 12:17:37 varvalian kernel: RIP: 0010:internal_create_group+0x9a/0x4e0
->> Nov 17 12:17:37 varvalian kernel: Code: 7b 20 00 0f 84 cb 00 00 00 48 8d 74 24 1c 48 8d 54 24 18 4c 89 ff e8 15 8a 99 00 48 83 3b 00 74 59 48 8b 43 18 48 85 c0 74 11 <48> 8b 30 48 85 f6 74 09 4c 8b 5b 08 4d 85 db 75 1a 48 8b 43 20 48
->> Nov 17 12:17:37 varvalian kernel: RSP: 0018:ffffaa5281fe7868 EFLAGS: 00010202
->> Nov 17 12:17:37 varvalian kernel: RAX: 796772656e650073 RBX: ffffffffc2a642aa RCX: f781ec27a963db00
->> Nov 17 12:17:37 varvalian kernel: RDX: ffffaa5281fe7880 RSI: ffffaa5281fe7884 RDI: ffff90c611dc8400
->> Nov 17 12:17:37 varvalian kernel: RBP: 000000000000000f R08: 0000000000000000 R09: 0000000000000001
->> Nov 17 12:17:37 varvalian kernel: R10: 0000000002000001 R11: ffffffff8e86ee00 R12: 0000000000000000
->> Nov 17 12:17:37 varvalian kernel: R13: ffff90c6038469c0 R14: ffff90c611dc8400 R15: ffff90c611dc8400
->> Nov 17 12:17:37 varvalian kernel: FS:  00007163efc54880(0000) GS:ffff90c8efe00000(0000) knlGS:0000000000000000
->> Nov 17 12:17:37 varvalian kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> Nov 17 12:17:37 varvalian kernel: CR2: 00005c1834b98298 CR3: 0000000121298000 CR4: 0000000000f50ef0
->> Nov 17 12:17:37 varvalian kernel: PKRU: 55555554
->> Nov 17 12:17:47 varvalian kernel: ------------[ cut here ]------------
->> ```
->>
->> Ill do on the weekend some additonal tests based on the latest linux-next snapshot and provide some more logs.
-> Can you please try with the below diff once,
-> 
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index e9be1f31163d..d3bb3865c1b1 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -699,6 +699,7 @@ static const struct attribute_group *rapl_attr_update[] = {
-> 
->   static const struct attribute_group *rapl_core_attr_update[] = {
->          &rapl_events_core_group,
-> +       NULL,
->   };
-> 
->   static int __init init_rapl_pmu(struct rapl_pmus *rapl_pmus)
-> 
-> Regards,
-> Dhananjay
-> 
+Just saw that this patch is still floating around. Anyone feeling
+responsible for bochs who could review this?
 
 
-Thanks! This patch appears to fix the issue, when the kernel is built 
-with clang. Thanks for providing such fast fix! :)
-
-Peter
+P.
 
 
->> Regards,
->>
->> Peter
+>=20
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+> =C2=A0drivers/gpu/drm/tiny/bochs.c | 6 +++---
+> =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/tiny/bochs.c
+> b/drivers/gpu/drm/tiny/bochs.c
+> index 31fc5d839e10..888f12a67470 100644
+> --- a/drivers/gpu/drm/tiny/bochs.c
+> +++ b/drivers/gpu/drm/tiny/bochs.c
+> @@ -217,7 +217,7 @@ static int bochs_hw_init(struct drm_device *dev)
+> =C2=A0
+> =C2=A0	if (pdev->resource[2].flags & IORESOURCE_MEM) {
+> =C2=A0		/* mmio bar with vga and bochs registers present */
+> -		if (pci_request_region(pdev, 2, "bochs-drm") !=3D 0) {
+> +		if (pcim_request_region(pdev, 2, "bochs-drm") !=3D 0)
+> {
+> =C2=A0			DRM_ERROR("Cannot request mmio region\n");
+> =C2=A0			return -EBUSY;
+> =C2=A0		}
+> @@ -258,7 +258,7 @@ static int bochs_hw_init(struct drm_device *dev)
+> =C2=A0		size =3D min(size, mem);
+> =C2=A0	}
+> =C2=A0
+> -	if (pci_request_region(pdev, 0, "bochs-drm") !=3D 0)
+> +	if (pcim_request_region(pdev, 0, "bochs-drm") !=3D 0)
+> =C2=A0		DRM_WARN("Cannot request framebuffer, boot fb still
+> active?\n");
+> =C2=A0
+> =C2=A0	bochs->fb_map =3D ioremap(addr, size);
+> @@ -302,7 +302,7 @@ static void bochs_hw_fini(struct drm_device *dev)
+> =C2=A0		release_region(VBE_DISPI_IOPORT_INDEX, 2);
+> =C2=A0	if (bochs->fb_map)
+> =C2=A0		iounmap(bochs->fb_map);
+> -	pci_release_regions(to_pci_dev(dev->dev));
+> +
+> =C2=A0	drm_edid_free(bochs->drm_edid);
+> =C2=A0}
+> =C2=A0
 
 
