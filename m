@@ -1,356 +1,249 @@
-Return-Path: <linux-kernel+bounces-415198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353759D32D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:00:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C039D32DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E98732839DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:00:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0431F22E5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7BC158520;
-	Wed, 20 Nov 2024 03:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3645214F9FF;
+	Wed, 20 Nov 2024 04:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="m0+L+/wt"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c9PHkZOC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D97728EC;
-	Wed, 20 Nov 2024 03:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732075177; cv=none; b=GjH02s3yKrqazn+9Vs7w/RVSIrvBU8jIcNUN2duXN4j5PfCARB/LeanHQCsoPYz/fP6gDOTK0s2MQsDOUupcu+NQq951uEaLolzrxAy3ZeHm7UgBSsYKmFdAJtBVzH8972c9MXUplF14eOIuQ9xKLNbP4iVkxcvjc5X9x3Soei8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732075177; c=relaxed/simple;
-	bh=L4BQOlXzuhvBlV5KoHAUaNDGvnI3BSXwS4K7465biDo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ds1O8zeUOwMvSwxRyA11vk0NtCKny+ia2CehcaDrkOPqu2VC5oysJs7KJNKQIAI8NWnV4oeVk9N8GGCUCIWO6MkbzZ4ypNDpLcLvgsabc0rG2ARStuqJTHXW9nS6cKM4YrR+McWZZMiJm+B/IsDxZZuG2zB8mToZ7MDpmJMvfx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=m0+L+/wt; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK2RDe3015514;
-	Tue, 19 Nov 2024 22:59:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=51j9P
-	F4GSrv8m/Vt1BlPJYx3NPN6VSLCHBiJOrzh6hY=; b=m0+L+/wtmQ/nCP6IhtNZc
-	qGIF2+GHHsewA6YDjLei+U+NpbHLaxmZKyNoPB57ccKr2FphD1yMGCO/OJGREnln
-	FU/v/cQXgdRUswcVtW1w9Doc2fSByru76ROf1vU0Ab7A29/T6gOx/XrUCmiJGbJS
-	29GyfacxwurnQyBIyyhsP6zsdxBGg4HqE0NKdC40TWOBeMhZPiz6uOW3vGFe2ClS
-	VaA8GH2OFjprAuvJ9CQ0gMxl7DknGKvUT5lkBUYdr9KF4mTrFFBykheZIXcX9Aml
-	/CWiGIwNUzzb5tTfH7tTMVVn7TaWKQQV4nEXN6NxkgwbMAj4SvMLmsh3xf8uN+U/
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 43170framm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 22:59:10 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4AK3x9jQ029657
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 19 Nov 2024 22:59:09 -0500
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D0F74040;
+	Wed, 20 Nov 2024 04:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732075438; cv=fail; b=Z+BdyRtIRz7g2y6Sh86Gow3WbUyeSxIJBrWrklz2t+vhJPXnZTDFU1IGJIED4YGB+qOTIb3AO1CZhdsAzmJW9tRQhHmdRkOPXImm6bJQmcC8TTu+ZSJCLY2ZtHNr/38pWGALASRql8ZBkfbPDFuf9RLxveiZ9+fy6yVpjB44kck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732075438; c=relaxed/simple;
+	bh=xaR/w+V+Jy2k+2QgsjksyiPcfXVbsDUe/aG2AbTnS/0=;
+	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=E2VDxpwBeJQ85bijIz7HepotsalM87mH2zjH7awftBVyXFwNHSNrPOl8hXlw0qArfTtwlUz85vY+orkj0LiRKSR+YXXj8A3kN88pzcLaUeTtsJoVd8zq4/Nx+CX7Xy7PM95JEAWCqkiKzcenZNo91q33Z0TqdQZ6krTIQrVlxzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c9PHkZOC; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732075436; x=1763611436;
+  h=message-id:date:from:subject:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=xaR/w+V+Jy2k+2QgsjksyiPcfXVbsDUe/aG2AbTnS/0=;
+  b=c9PHkZOCZq3rZ8IPYGAkypKr7exuCwZwchTZdTMIYBiHEN6SrIzQ6wdy
+   7ct7lJBo0FOFKlcCMeLUd4bRBBE9UlaktVYp2FvbWMco/rIfD3FPa1nj0
+   2JHPvU0iT52WOKBnaoJDPmc+IL+5lzTPA/8UfMAEcxuYDRjUedBtZ/itn
+   lezimVe8s5en8651aqaYDoV0PzyYajIfjHYC+aSTuFpNLIbxu2oJQVvAJ
+   0BChkm3Lo8IZhtZxPPHI0V50yKdKpJSvrVUSJFQR4nDd57tmCKnTV5QmS
+   MbEas1VBONK0weSNxHwpSq9cviHispPQiV2fZAZLpWv+Q/GoXdDfD4h5C
+   Q==;
+X-CSE-ConnectionGUID: vl7wDDEFQqW3HHVJC4DoxA==
+X-CSE-MsgGUID: XK+BtqA8RY+sKGdsFVHVrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="43496609"
+X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
+   d="scan'208";a="43496609"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 20:03:55 -0800
+X-CSE-ConnectionGUID: rO54U7E3Re2iOWRuCGMhRQ==
+X-CSE-MsgGUID: NAzZo30tQVyukkIwu9rnoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
+   d="scan'208";a="113059156"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Nov 2024 20:03:55 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 19 Nov 2024 20:03:51 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 19 Nov 2024 20:03:51 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 19 Nov 2024 22:59:09 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 19 Nov 2024 22:59:09 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 19 Nov 2024 22:59:09 -0500
-Received: from CENCARNA-L02.ad.analog.com (CENCARNA-L02.ad.analog.com [10.116.39.203])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AK3wWZl027365;
-	Tue, 19 Nov 2024 22:58:59 -0500
-From: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-hwmon@vger.kernel.org>
-CC: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Delphine CC Chiu
-	<Delphine_CC_Chiu@Wiwynn.com>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Radu
- Sabau" <radu.sabau@analog.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>,
-        Alexis Czezar Torreno
-	<alexisczezar.torreno@analog.com>,
-        Cedric Encarnacion
-	<cedricjustine.encarnacion@analog.com>,
-        Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051, adp1055 and ltp8800
-Date: Wed, 20 Nov 2024 11:58:26 +0800
-Message-ID: <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
-References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
+ 15.1.2507.39; Tue, 19 Nov 2024 20:03:11 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GAo+GeABsS4dCyczLVfZB2cVbr7zNIbPDjFLk0F+gaCeX+IJNN9aXykPB7942f3LjZrrtQvPdnc66jgkpH3P6kgR0h6ZELrlpt6OGKttLo8nFQbpMBg1sXsN05Saybn9u3zOPEN9zDIY6Y+b4nlbMxcpENKcH/heaYuZMKPJH+CIAMXWxUb0riJdPz0dorukpmrN95bT2rWdrjivprgeUa9w0tHMMVCNsWTBtzl4MmHUi2V8LaYbNl3XeLgiMfk0C1nUZzGmklGYnMofj7jhT22iOKScVHB57HTxMl7t3+GM1uLWT1D74ombVDwrnb6mNXnKURIpDxxP/5s1vGrgWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hT+Veuyne5V/7h0y+VRjRY66Xq+zgfoH0kHo8cQo1fQ=;
+ b=dyM7Pmr4SYDyt7KaQeftZ0/X0/BnvaQk5ej+jcytpcGVO0xXtHJCigd6Vilt+PidC96oVDqulGm26fWl/0w8Pb7Yrec7m2ZjeqX4c8IRlWlYR+nBFbz25LDJe5ySqmDXFf8vTUKz2unXOgh21+fOQj/xPrCZmuoUglQQ5rcpDEmcd3qL2oui8DGdOg2sgshxnW+XEzvo/8fTU/ZanQBCq/GHcLKFquzuUXXaiCwtZIYCVrLeMBHyTDN9UyFFA0mHu/Ns1bghb3+CItQoCOtPJkzlIm+6l69s3jesvD/UKP6jlxHv0FQxHVciBLmmiKLGVvbhEzCuxBwoJ0wgZVu+eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by PH0PR11MB5880.namprd11.prod.outlook.com (2603:10b6:510:143::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Wed, 20 Nov
+ 2024 04:03:08 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8158.019; Wed, 20 Nov 2024
+ 04:03:08 +0000
+Message-ID: <4796ded1-a988-4038-bdbb-fc9a93da0c55@intel.com>
+Date: Tue, 19 Nov 2024 20:03:06 -0800
+User-Agent: Mozilla Thunderbird
+From: Reinette Chatre <reinette.chatre@intel.com>
+Subject: Re: [PATCH v9 6/9] x86/resctrl: Add "mba_MBps_event" file to ctrl_mon
+ directories
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, "Peter
+ Newman" <peternewman@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	<x86@kernel.org>
+CC: James Morse <james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20241114001712.80315-1-tony.luck@intel.com>
+ <20241114001712.80315-7-tony.luck@intel.com>
+Content-Language: en-US
+In-Reply-To: <20241114001712.80315-7-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0357.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::32) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: lcKxszCKuCocugpeOefSo9PcNzemEhXb
-X-Proofpoint-ORIG-GUID: lcKxszCKuCocugpeOefSo9PcNzemEhXb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 lowpriorityscore=0
- bulkscore=0 malwarescore=0 mlxscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411200028
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH0PR11MB5880:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c7321c7-9490-491e-f70a-08dd09183e05
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?NHJUVlBWM1BPbk0xcDhRd1ZBV1RiYlJaZ3JPM0RVZ2p5aUlGK2JiL2lra3JK?=
+ =?utf-8?B?UGNvT01qZTlqT2tqL3FEYXhYUFE3bjdGdk1uYW9sQzhBNnJFcWFEaWZYWnhh?=
+ =?utf-8?B?TStKdlp4MDIrc3Y3WGNKMEVIdHYwdVZsd0VKWnRncldPMzhlaytzc01ndjJO?=
+ =?utf-8?B?TzI1YW5yeWlVTjJ4VUwzVDNpR0s4cGdYQ2hPSEVXNk1WMGhGQkZ1WVovTjBY?=
+ =?utf-8?B?NVArSHpiY1dZazJLY0FIOUpzaWY0eWVMN2V5S0c2VkdPcWFHMmd1TFZqS1hN?=
+ =?utf-8?B?cUVtRFprLzZlam5FR1NWelhPckwzQWZHbHNzcnMxQ0tNRGNZWGk5Z0RCYk0r?=
+ =?utf-8?B?Q2dtUDRYWTQwUTQwU2paZUR1SmxQaFlHWGlNV3NnYzJUQWV2a1g5bjczaFpr?=
+ =?utf-8?B?RHFiTXZTZWtNNndYMXNkRVowc3dPQmNIcm1XeC9lNFFwTExBWHlvcFc5NU45?=
+ =?utf-8?B?cUYvT0UxZFN5ckdaUi9NbGw1TWdQQWFZcjlNem82S3ljdUpBNVpvK2t6QWRS?=
+ =?utf-8?B?WkdJMVFkZDhXcXMvUHUrajFBQ21TYU0velJBWTVwcFhac1gxZXJPZVpHeFhx?=
+ =?utf-8?B?cFpEekFPZHl5SmNEbTlXSytFVFNyOU0xTHpEalpudGhsU2ppSTlDYm1pOHNw?=
+ =?utf-8?B?SU55eHJ0SmowbHBWaDdHRTRVNHI4bW9XZ0pJWjNlWUdabHZyaUxtejFNbWZP?=
+ =?utf-8?B?U1FVMk51akVSemM1MUp2elIzeHg3eWZidjl0a244cWJKTW91Vi9pMUhvS0RG?=
+ =?utf-8?B?eS9kL3ZiakV5c0l3YTExTXRuc2lRK05nNU1NekpERXRLejUzVkhLV1FBNFkw?=
+ =?utf-8?B?UEp4RTk2YzBwVTUxR3VtblVGQmpKcnV3MTlmczFEaUI3S0ZneXJFeEhJUHZ3?=
+ =?utf-8?B?UE9mVlk1TmZ2WG4zenBhY08rWUdUR0VFaUw3Y3ExNVFFcEdFUDlVaXBZTDdF?=
+ =?utf-8?B?RzBvbCtZTHNkNHlnSmwwR1diZW45YkJFdDk5WmloTEt6UDdUWXBZUFFlT0Zm?=
+ =?utf-8?B?RXBkenN2cHcreUNnam5Ic1JCYjRka0JtQ1RCbWV4ellRSDBkZmNiclpnbm1L?=
+ =?utf-8?B?Z2srbnhRN1lVWkJncW9VOU9PUjM4bVZqNElWajlpRzVGUHBLS20yajJFdjgx?=
+ =?utf-8?B?VnVSZDJmMTd6eEdYajg3djZURmQ0T0hBa05xOUl3U2dtK0VrVHFFNHNxNUpt?=
+ =?utf-8?B?KzVWMlpGb3plTHdXTDZtbEJYOVRqdmhJbW9lRWZLVnNCSzh6dVdNbHFSbzQ1?=
+ =?utf-8?B?YjZOcWpoNUVQek9yK3dybnZUN0QxUGMzZ2JGR3dKYi9DZUJDRjBhbXN3U0xW?=
+ =?utf-8?B?eDUweWVjajkrZ0UrWUJUbm9BeitpMzRnRkZzbE40b1pjVDI3ckVqREltaGxT?=
+ =?utf-8?B?QVFkUTVrZzkzWmxlT2RCNThxNHFIa2lEMmYxVEUwMS9kbUpMdUduQUx0dkVy?=
+ =?utf-8?B?dkRsWDF3N2Z5NXNnOVdhVFJUU2xSVU5pNWNlZXp0bXJOaUhUYWxrbGhuc2NN?=
+ =?utf-8?B?QVNJTTZESDgyTjkzbG9rWEhBRy9iRXBOM21pTTdmRkY4ZHVPUmpPc053V0Zs?=
+ =?utf-8?B?NU0zQ3FKT3EwS2MrTkptMGhxdm5UdWRWbEF4MW5mNWZVNjVRWnZFZnhYWVZF?=
+ =?utf-8?B?VVdkcTBrOWtNLzFoZmNVbkdLaEF0WTVJaHYrRUg2dDM5RVBxREJXcmdsT1ow?=
+ =?utf-8?B?eHhhQkIyTWVNd2NLREc2UytSYTRKYUZxQTVUQ2gwUEc4VGtxM3RGWko0R2Rn?=
+ =?utf-8?Q?ZOKX+8Ramsz6LGPxA4K9sN2fvsgiwlZ8KJ4GYXw?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?enhBaVRSSzg5RFdXdW1rM3Y0L3dBcWtpT0V0cVIzSHF4VGU0elFHbG1HM0tE?=
+ =?utf-8?B?KzhYRjAwUWRNL0FhcTNKMzd0UjI2Q3Y5ZlcwV0w4UlFCN0dJNnQ3WkdsRCtR?=
+ =?utf-8?B?dFRiWmdmb1h1Qk83ZHRGNkY0N280S0Q1YTRVSnZXRWhCZGY1eTJJWkF6NzJl?=
+ =?utf-8?B?bEJyK0svZHlZamJRL2ZnSDZqclJxYXVTbm0wV1ZZcFF0ejdyeXhxbTh2UkpW?=
+ =?utf-8?B?ZVZRZEZzbGxIbmJqcVpLL0VDeXlvOWNNOWFyV1Y3WlB1Smh0THlrMGYzM0xV?=
+ =?utf-8?B?cHNWTUNEb0VoWWduazVDYStTQ3RPMVBDeGw5M2s3K1ZQb1JhVDAyTm9pVDJ2?=
+ =?utf-8?B?bTBwSXFZZGlpemJSeDRKVlpGdzdqU1hScXJrV0pJWlNaYUNMR2t2TGZ3SGxW?=
+ =?utf-8?B?YzNjUWxWcFBzVUZZVkpLZTQzY2VleU55SjRnUTcwZ0RMdjAzaGdjb0xZWjkr?=
+ =?utf-8?B?Q1k4dHNtMGJ1Y2dwNFh4ZUVwMFZVbUZZdXlaajdxTFZ4Wng4WTBxYUtqNVZh?=
+ =?utf-8?B?MGFnbUdMOEM4aGl0cXpjaU1FWjRZeXdVcTEzRVlWcnJBbVBjTXdRc3RFUVN2?=
+ =?utf-8?B?ZlcwVTB5SzdqRjBzcG1NV0s1Z0VwaUhaSEp3RGZ2RlFYbWJldUhoTkEyOWFz?=
+ =?utf-8?B?WnpMdGJKM1Q3ZU5hbUZOWCtzTXVjODBWeW0vcnUyTmhZTDBIT0VDVWFSZHYz?=
+ =?utf-8?B?ZGxmMmJxRW54bEJzbFE1NnhXbTAxeVllSmlydFRNR3RMWlNCc2lkNkxRODJu?=
+ =?utf-8?B?L0NhSk45cVRiSlUvUExDYUR4TmI5Y1o5N0tFNnFTZVlsbU53S24zdkM5Szh1?=
+ =?utf-8?B?NzJ3OWFaYmR4MndNSVRpdW4xV1Nsa0JUU0t6d3A3dEFsNC84ZHNxbDJiUVUy?=
+ =?utf-8?B?VmlsOEJqaVY5VGt6ZG84dGZFbFFFa1c0VFNpS2lnbEFUUk1jWlI4SXJVN1ho?=
+ =?utf-8?B?YVIxc0FZcTU1Y1ZtN1g4bXNUMXRvUW9ndFRvdHVZQ0M3Q1owZy9sQm5MdmFC?=
+ =?utf-8?B?U2Z4dy9BczRUSm4rYXlBbjJNL1B2RFlYdklBQ2ZTYy9VcHFmR2lsdVNZTTNL?=
+ =?utf-8?B?QWk3dnNPRElVM0pFVHpFT3dPdnJwVTlueXZqb0VuRFB4NzhyWVpPemRyNmRw?=
+ =?utf-8?B?V0hhdUpBK05nVGdGbVFjWlFGZGpaTi9ERXlRKzQ4MURoUURqaTVuSTlobEpI?=
+ =?utf-8?B?UzEzcUNLZEY5R3UrYzlKQ1EwQzRIOFB0VitTOWFBbEtIQURUSUtnWnNZUHhL?=
+ =?utf-8?B?cDhCU0RXVHh1YzhHYU5teVByMFpMRGU1RkRHYk8rTDhCT0FaOUJIVnFyN1Ev?=
+ =?utf-8?B?N0VncUlhVkw1Z1h6eml5Zy95NGZCdmJ4V29YdFJtWEk5Rit0bXJKZG5xcktE?=
+ =?utf-8?B?VENVdGd4RG55RjlDck1tUVpVOTBnUDdIN3hhMy9iMHpaa29SZ3A5MjNNVXdD?=
+ =?utf-8?B?cEp3QytGS1hKZHUxVXBZMFZ1YUtvQUVJM2JhaGcveS9XdFdqUkxINzltazVj?=
+ =?utf-8?B?M3I4ZzI0S1NFVjQxWGk0Q3NuSjNGa0tIencxdEpOWVp6NXdLUUNwMVd2THJm?=
+ =?utf-8?B?WUJ3MG02OVRRZEEwQWRDc0pWREhzTGRqeVZMbGZyVHJPZUtHUWJmMTRnUWox?=
+ =?utf-8?B?enc5eUR4WGtyVkUxbExnYjlTOEtXYVlRaUZZR2pFcnJTUGpVbW1id3BJc05H?=
+ =?utf-8?B?Y2ljMjBzRWkzZHpVallnSU9YSnVCU3Y4VE5oenNTSFc3MVlwTFBsR0hrNFg3?=
+ =?utf-8?B?WUt1a00xUytPUEl6R3YyTFNQSUJQQ2FzbFlaZW12WnZNYXR6TFBuQW04eUJw?=
+ =?utf-8?B?VHluMC9QYjNGT1VkblpDVjhuWmlQenc1czBwVktCZGh5eFRSQlBpUWtiM3k5?=
+ =?utf-8?B?Z0t0RHBtKzF6eDZOWEk1TDFoUFMxWnB1UnE4VG16RHNOUDdkdFJ0VURjem0z?=
+ =?utf-8?B?TlBDdUdLMkIxcnBnYUhyNEcvL241cVNXd2ZaSFVYSG1rdE80ekY5d1N6anBo?=
+ =?utf-8?B?U3JHRStKYjFOT1JmL1JLdzRrM1pEMm02UTBKUVhlckI0WWFjL1I4dlMwY1Zt?=
+ =?utf-8?B?N3JXREZ2d1N3K21rWGdYMWdxSzVIMVppM1BGeGJFZmx2dlIwakVDbGxQTEFY?=
+ =?utf-8?B?MHZzdXh6THVPckNBS2Qvc3Z4eS9LelNWa2hPQkNzSHoxbHF5UFdqQ0xDUFNC?=
+ =?utf-8?B?eXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c7321c7-9490-491e-f70a-08dd09183e05
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 04:03:08.2193
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +1wJNErdcLykT64knoFla4foy3Ew2v5NfjSyzca2+KsyAElukcwJIEq8x6xRgVF9RYcMQPTl+XzyOwm1q6N/W7IIEMXLgpQrSwbp24thRQw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5880
+X-OriginatorOrg: intel.com
 
-    ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
-    ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
-    LTP8800-1A/-2/-4A: 150A/135A/200A DC/DC µModule Regulator
+Hi Tony,
 
-The LTP8800 is a family of step-down μModule regulators that provides
-microprocessor core voltage from 54V power distribution architecture.
-LTP8800 features telemetry monitoring of input/output voltage, input
-current, output power, and temperature over PMBus.
+On 11/13/24 4:17 PM, Tony Luck wrote:
+> The "mba_MBps" mount option provides an alternate method to
+> control memory bandwidth. Instead of specifying allowable
+> bandwidth as a percentage of maximum possible, the user
+> provides a MiB/s limit value.
+> 
+> Historically the limit was enforced by a feedback loop from
 
-Co-developed-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
----
- Documentation/hwmon/adp1050.rst | 63 +++++++++++++++++++++++++++--
- drivers/hwmon/pmbus/Kconfig     |  9 +++++
- drivers/hwmon/pmbus/adp1050.c   | 72 +++++++++++++++++++++++++++++++--
- 3 files changed, 137 insertions(+), 7 deletions(-)
+"Historically the limit was enforced" no history needed since
+this is still the case at the time of this patch.
 
-diff --git a/Documentation/hwmon/adp1050.rst b/Documentation/hwmon/adp1050.rst
-index 8fa937064886..1692373ee5af 100644
---- a/Documentation/hwmon/adp1050.rst
-+++ b/Documentation/hwmon/adp1050.rst
-@@ -13,18 +13,43 @@ Supported chips:
- 
-     Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1050.pdf
- 
-+  * Analog Devices ADP1051
-+
-+    Prefix: 'adp1051'
-+
-+    Addresses scanned: I2C 0x70 - 0x77
-+
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1051.pdf
-+
-+  * Analog Devices ADP1055
-+
-+    Prefix: 'adp1055'
-+
-+    Addresses scanned: I2C 0x4B - 0x77
-+
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1055.pdf
-+
-+  * Analog Devices LTP8800-1A/-2/-4A
-+
-+    Prefix: 'ltp8800'
-+
-+    Addresses scanned: -
-+
-+    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-1A.pdf
-+         https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-2.pdf
-+         https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-4A.pdf
-+
- Authors:
- 
-   - Radu Sabau <radu.sabau@analog.com>
- 
--
- Description
- -----------
- 
--This driver supprts hardware monitoring for Analog Devices ADP1050 Digital
--Controller for Isolated Power Supply with PMBus interface.
-+This driver supports hardware monitoring for Analog Devices ADP1050, ADP1051, and
-+ADP1055 Digital Controller for Isolated Power Supply with PMBus interface.
- 
--The ADP1050 is an advanced digital controller with a PMBus™
-+The ADP105X is an advanced digital controller with a PMBus™
- interface targeting high density, high efficiency dc-to-dc power
- conversion used to monitor system temperatures, voltages and currents.
- Through the PMBus interface, the device can monitor input/output voltages,
-@@ -49,16 +74,46 @@ Sysfs Attributes
- in1_label         "vin"
- in1_input         Measured input voltage
- in1_alarm	  Input voltage alarm
-+in1_crit          Critical maximum input voltage
-+in1_crit_alarm    Input voltage high alarm
-+in1_lcrit         Critical minimum input voltage
-+in1_lcrit_alarm   Input voltage critical low alarm
- in2_label	  "vout1"
- in2_input	  Measured output voltage
- in2_crit	  Critical maximum output voltage
- in2_crit_alarm    Output voltage high alarm
- in2_lcrit	  Critical minimum output voltage
- in2_lcrit_alarm	  Output voltage critical low alarm
-+in2_max           Critical maximum output voltage
-+in2_max_alarm     Output voltage critical max alarm
-+in2_min           Critical minimum output voltage
-+in2_min_alarm     Output voltage critical min alarm
- curr1_label	  "iin"
- curr1_input	  Measured input current.
- curr1_alarm	  Input current alarm
-+curr1_crit        Critical maximum input current
-+curr1_crit_alarm  Input current high alarm
-+curr2_label       "iout1"
-+curr2_input       Measured output current
-+curr2_alarm	  Output current alarm
-+curr2_crit        Critical maximum output current
-+curr2_crit_alarm  Output current high alarm
-+curr2_lcrit       Critical minimum output current
-+curr2_lcrit_alarm Output current critical low alarm
-+curr2_max         Critical maximum output current
-+curr2_max_alarm   Output current critical max alarm
-+power1_label      "pout1"
-+power1_input      Measured output power
-+power1_crit       Critical maximum output power
-+power1_crit_alarm Output power high alarm
- temp1_input       Measured temperature
- temp1_crit	  Critical high temperature
- temp1_crit_alarm  Chip temperature critical high alarm
-+temp1_max         Critical maximum temperature
-+temp1_max_alarm   Temperature critical max alarm
-+temp2_input       Measured temperature
-+temp2_crit        Critical high temperature
-+temp2_crit_alarm  Chip temperature critical high alarm
-+temp2_max         Critical maximum temperature
-+temp2_max_alarm   Temperature critical max alarm
- ================= ========================================
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index f6d352841953..5d03a307824e 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -67,6 +67,15 @@ config SENSORS_ADP1050
- 	  This driver can also be built as a module. If so, the module will
- 	  be called adp1050.
- 
-+config SENSORS_ADP1050_REGULATOR
-+	bool "Regulator support for ADP1050 and compatibles"
-+	depends on SENSORS_ADP1050 && REGULATOR
-+	help
-+	  If you say yes here you get regulator support for Analog Devices
-+	  LTP8800-1A, LTP8800-4A, and LTP8800-2. LTP8800 is a family of DC/DC
-+	  µModule regulators that can provide microprocessor power from 54V
-+	  power distribution architecture.
-+
- config SENSORS_BEL_PFE
- 	tristate "Bel PFE Compatible Power Supplies"
- 	help
-diff --git a/drivers/hwmon/pmbus/adp1050.c b/drivers/hwmon/pmbus/adp1050.c
-index 20f22730fc01..46f2dda8adbb 100644
---- a/drivers/hwmon/pmbus/adp1050.c
-+++ b/drivers/hwmon/pmbus/adp1050.c
-@@ -11,6 +11,12 @@
- 
- #include "pmbus.h"
- 
-+#if IS_ENABLED(CONFIG_SENSORS_ADP1050_REGULATOR)
-+static const struct regulator_desc adp1050_reg_desc[] = {
-+	PMBUS_REGULATOR_ONE("vout"),
-+};
-+#endif /* CONFIG_SENSORS_ADP1050_REGULATOR */
-+
- static struct pmbus_driver_info adp1050_info = {
- 	.pages = 1,
- 	.format[PSC_VOLTAGE_IN] = linear,
-@@ -23,19 +29,79 @@ static struct pmbus_driver_info adp1050_info = {
- 		| PMBUS_HAVE_STATUS_TEMP,
- };
- 
-+static struct pmbus_driver_info adp1051_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_VOLTAGE_OUT] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN
-+		| PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT
-+		| PMBUS_HAVE_TEMP
-+		| PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT
-+		| PMBUS_HAVE_STATUS_INPUT
-+		| PMBUS_HAVE_STATUS_TEMP,
-+};
-+
-+static struct pmbus_driver_info adp1055_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_VOLTAGE_OUT] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN
-+		| PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT
-+		| PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3
-+		| PMBUS_HAVE_POUT
-+		| PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT
-+		| PMBUS_HAVE_STATUS_INPUT
-+		| PMBUS_HAVE_STATUS_TEMP,
-+};
-+
-+static struct pmbus_driver_info ltp8800_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_VOLTAGE_OUT] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN
-+		| PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT
-+		| PMBUS_HAVE_TEMP
-+		| PMBUS_HAVE_POUT
-+		| PMBUS_HAVE_STATUS_VOUT
-+		| PMBUS_HAVE_STATUS_INPUT
-+		| PMBUS_HAVE_STATUS_TEMP,
-+#if IS_ENABLED(CONFIG_SENSORS_ADP1050_REGULATOR)
-+	.num_regulators = 1,
-+	.reg_desc = adp1050_reg_desc,
-+#endif
-+};
-+
- static int adp1050_probe(struct i2c_client *client)
- {
--	return pmbus_do_probe(client, &adp1050_info);
-+	const struct pmbus_driver_info *info;
-+
-+	info = device_get_match_data(&client->dev);
-+	if (!info)
-+		return -ENODEV;
-+
-+	return pmbus_do_probe(client, info);
- }
- 
- static const struct i2c_device_id adp1050_id[] = {
--	{"adp1050"},
-+	{ .name = "adp1050", .driver_data = (kernel_ulong_t)&adp1050_info},
-+	{ .name = "adp1051", .driver_data = (kernel_ulong_t)&adp1051_info},
-+	{ .name = "adp1055", .driver_data = (kernel_ulong_t)&adp1055_info},
-+	{ .name = "ltp8800", .driver_data = (kernel_ulong_t)&ltp8800_info},
- 	{}
- };
- MODULE_DEVICE_TABLE(i2c, adp1050_id);
- 
- static const struct of_device_id adp1050_of_match[] = {
--	{ .compatible = "adi,adp1050"},
-+	{ .compatible = "adi,adp1050", .data = &adp1050_info},
-+	{ .compatible = "adi,adp1051", .data = &adp1051_info},
-+	{ .compatible = "adi,adp1055", .data = &adp1055_info},
-+	{ .compatible = "adi,ltp8800", .data = &ltp8800_info},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, adp1050_of_match);
--- 
-2.39.5
+> the measure local bandwidth to adjust the memory bandwidth
+> allocation controls.
 
+I am not sure what is meant by "a feedback loop from the measure
+local bandwidth" (that was copy&pasted to next patch).
+
+> 
+> In preparation to allow the user to pick the memory bandwidth
+> monitoring event used as input to the feedback loop, provide
+> a file in each ctrl_mon group directory that shows the event
+
+In the documentation the custom is to use CTRL_MON.
+
+> currently in use.
+
+Much better changelog. I think it will help to add a snippet that
+mentions the file is only visible to user space if resctrl
+was mounted with mba_MBps, and thus only visible when mba_sc is
+enabled, and thus reinforcing that this maintains the contract
+that rdtgrp->mba_mbps_event is only accessed when mba_sc is enabled.
+
+> 
+> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+
+Reinette
 
