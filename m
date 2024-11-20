@@ -1,182 +1,163 @@
-Return-Path: <linux-kernel+bounces-415526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C079D378B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F27059D379A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:55:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8F41F22A51
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88B071F22C25
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA75C19EED7;
-	Wed, 20 Nov 2024 09:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4E119E980;
+	Wed, 20 Nov 2024 09:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UMsqcLqi"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="xFQyGeCq"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960319CC3F;
-	Wed, 20 Nov 2024 09:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D20C18A6B2
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096366; cv=none; b=t2tcIWfdCGb0RD4OYNCPo8VqDyULjidSkgfEZ3uelyeco77GrVpZtt7gZ1Zth8PpA0wQy2kfZBY16LjmF4Pi2d0GzBQZQE7eXnoH5n4hm4W7RCCiLDZ/MuEL//uZny0aSJFnX+fiC2wMW8gs1MvWG3gszybuIqDEGOl+KIjpg1Q=
+	t=1732096427; cv=none; b=TL8ZUpAsFzN4QMgz66koSUUi7vCAHCo5yOp7l2hziG/d53E6dJl/0sDI2ZV/UwhvUT4yP/NsDhS+wJlAmCsfZKUq4UsF5zPog+uR6G73TvkfBgo4meptlK6WPYl7E8ul2LKYCYMEbXxeCisFm7VfyjEGhlLReSbOvYhMmbpS7uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096366; c=relaxed/simple;
-	bh=0k5XmDP3+QnNrEI2KbUVvvL7QkJFuQCAvDrn688lHe4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=M8PpRYusZ25T+rGrKvqHsh1Mpcsa3CgWXqRQecoX3WeIgsgGfyPCa2alphJzPKSq+aFnzjTtSPX6OMic2loTWV8msB8I+orI6NLMDMEWp/ICtqSuVTxWZ0VyCSSa03bW48011K9oBiIpU63kUgSbyRlM6/K2K50lySDyBa0HvxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UMsqcLqi; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BCCB60005;
-	Wed, 20 Nov 2024 09:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732096361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CjSe/U+nzv9GiQYKnA55TJmWIVaBLG17HklLuP9BQuo=;
-	b=UMsqcLqizhfjcdodWKdRRxIHV/G24AKIsGNrdAAq4ZT9e/a9MVuhkV/AOZQ0kRe+iAF131
-	xWlc7VGm++AIHwxvSi1cFpq8y3AfypDdpXPHg+R8zytnvRnc/lXI4CndJZ+clFyZkMNUkB
-	K4rSmJ+GW3cgI/j0F0Ziev7Q82q8O/t9yiUr50dDIellFUW7jQcHAjB3R7E1NepRa1KImD
-	zdXTwbQ4eOAIk2e9JAty7V91bo9Bvg3JKqBs7gJs9pV6bIjkqcrbzasIiMFj3N6nPUXPjS
-	hwLeJt9Ro2U3gRa7a/vAyOWgyPSCxvuhhqafKFS9d0uH3b3+344AeSnRRue/Ig==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: "tudor.ambarus@linaro.org" <tudor.ambarus@linaro.org>,
-  "michael@walle.cc" <michael@walle.cc>,  "broonie@kernel.org"
- <broonie@kernel.org>,  "pratyush@kernel.org" <pratyush@kernel.org>,
-  "richard@nod.at" <richard@nod.at>,  "vigneshr@ti.com" <vigneshr@ti.com>,
-  "robh@kernel.org" <robh@kernel.org>,  "conor+dt@kernel.org"
- <conor+dt@kernel.org>,  "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-  "Abbarapu, Venkatesh" <venkatesh.abbarapu@amd.com>,
-  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-  "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-  "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,  "Simek, Michal"
- <michal.simek@amd.com>,  "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,  "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>,  "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>,  "git (AMD-Xilinx)" <git@amd.com>,
-  "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>,
-  "beanhuo@micron.com" <beanhuo@micron.com>
-Subject: Re: [RFC PATCH 1/2] dt-bindings: mtd: Add bindings for describing
- concatinated MTD devices
-In-Reply-To: <IA0PR12MB76994483BBB757BD9F691513DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
-	(Amit Kumar Mahapatra's message of "Tue, 19 Nov 2024 17:02:33 +0000")
-References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
-	<20241026075347.580858-2-amit.kumar-mahapatra@amd.com>
-	<87frnoy8na.fsf@bootlin.com>
-	<IA0PR12MB76994483BBB757BD9F691513DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 20 Nov 2024 10:52:38 +0100
-Message-ID: <87sermxme1.fsf@bootlin.com>
+	s=arc-20240116; t=1732096427; c=relaxed/simple;
+	bh=cQZTRBqxjhEgwS3LQIWpQ8z/rhpoUKg43ZSv/kyHHkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YG1MHCbrYH62ZyGVMCQIw52VtocAZrZ8xqNpGG3hTpJnCrOgQaJkiZNqvCXOWhTVmKiF7v7LblN/iOcvfNDLYogcJMocV0qDvAeB87dURYjPh71g/chzXp/C6hGQI3BtBrmLWia7y2hfj9G6ejCTfnKRC3bGXdpZXR/vJZJ3tLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=xFQyGeCq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so45060775e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1732096423; x=1732701223; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oJLDnW4xgZ8CURNC2nEQvItuWPLm2zclX2H1mWV132I=;
+        b=xFQyGeCqZdiM+ozc7/7218xtm+5/7zvZwleSMatyW9jgTEO662miANnmyfagDR3rUC
+         xFLgmktOYp2dCMvu8WKoDKXT+hzWjxOsxIYwjKORm2y0J+CwM7LJ8bKhvrHHxfaY22M+
+         +86gunhNWeQL5VDP8ANIe44j2yA7JoUk/e8RoPQNDzdW421aoYkqayxyDAUnFTiZTrgL
+         VtGY1/zcUKX3xrAgBL8pI8nuDf6PbCrjVathn44Dv3kiLn7p4zcW9YiWF3Axaj4HRrgv
+         dk2zjvQBRvPAZTZmik8aZVZoz6A6sxAbqTdHcCq1Rxac80+FEffvw4JLyglm9skvkFhy
+         oATA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732096423; x=1732701223;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oJLDnW4xgZ8CURNC2nEQvItuWPLm2zclX2H1mWV132I=;
+        b=Fp+HoLpK/RALDoo0AjO3M2zArgYq5XK1jiKvnD4L9oZrdlm8bFOJYC1aIzfm2IeF5r
+         u+HbWinzdHz04DtzRWN/8jK3q3qghDhUlzoHHIt0lufMjjmQOoTmS1sRCNp/Pry225eI
+         ufbT21GERY+q3Pxe/bRy0Nz1SACBO15Tx5aN/E+nAggSsI4+MlKWBxYazXJGCLKceOi6
+         yIDi+WUZ4WFU2Ozae3WW4Fc8ZmEdvuf1ghNRJLMA4Bm722xN8qVVuruf4/QDHBCuhiYW
+         OgEaKQLPwUnFoPvQ3zTPrMjbj65dndBX/jDOuCZuDe9xFZ7LSspe/6pFPa2lAw52TfKd
+         QB1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXz8vrJ4oehP9arhbBoABidhCZpFl0TGXMXR0IB5nu6TQFz2Oe+JlgmDqhFljtBYBLWTaI4ImIXFpCO2HI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXBq6XGLRbielC85+au1USjabGng+gU+S+Za+QtJ1R5vSCMW+
+	4JqxjSqgzpizJWatsQDpzJxicUc6z6LQzoCeZC+MbRNrjDS5hbWym3I+KqlPiq4=
+X-Google-Smtp-Source: AGHT+IFGYjEIekWosK3N1x9ZAj53wDHPjVwwCvrEQHprGAlHK6CAfM14PoWKCxOAsPnnpRIJDBdzbg==
+X-Received: by 2002:a05:600c:1d83:b0:431:5bf2:2d4 with SMTP id 5b1f17b1804b1-4334f02c7c6mr16575515e9.29.1732096422784;
+        Wed, 20 Nov 2024 01:53:42 -0800 (PST)
+Received: from fedora.. ([91.90.172.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4288sm13108335e9.23.2024.11.20.01.53.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 01:53:42 -0800 (PST)
+From: Daniel Semkowicz <dse@thaumatec.com>
+To: heiko@sntech.de
+Cc: Laurent.pinchart@ideasonboard.com,
+	andrzej.hajda@intel.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	quentin.schulz@cherry.de,
+	rfoss@kernel.org,
+	robh@kernel.org,
+	tzimmermann@suse.de,
+	Daniel Semkowicz <dse@thaumatec.com>
+Subject: Re: [PATCH 0/3] drm/rockchip: Add driver for the new DSI2 controller
+Date: Wed, 20 Nov 2024 10:52:58 +0100
+Message-ID: <20241120095326.9854-1-dse@thaumatec.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241106123304.422854-1-heiko@sntech.de>
+References: <20241106123304.422854-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 19/11/2024 at 17:02:33 GMT, "Mahapatra, Amit Kumar" <amit.kumar-mahapatr=
-a@amd.com> wrote:
+Hello Heiko,
 
-> Hello Miquel,
->=20=20
->> > This approach was suggested by Rob [1] during a discussion on Miquel's
->> > initial approach [2] to extend the MTD-CONCAT driver to support
->> > stacked memories.
->> > Define each flash node separately with its respective partitions, and
->> > add a 'concat-parts' binding to link the partitions of the two flash
->> > nodes that need to be concatenated.
->> >
->> > flash@0 {
->> >         compatible =3D "jedec,spi-nor"
->> >         ...
->> >                 partitions {
->>=20
->> Wrong indentation here and below which makes the example hard to read.
->
-> Sorry about that. I am redefining both the flash nodes here with proper=20
-> indentation.
->
-> flash@0 {
-> 	compatible =3D "jedec,spi-nor"
-> 	...
-> 	partitions {
-> 		compatible =3D "fixed-partitions";
-> 		concat-partition =3D <&flash0_partition &flash1_partition>;
->=20=09=09
-> 		flash0_partition: partition@0 {
-> 			label =3D "part0_0";
-> 			reg =3D <0x0 0x800000>;
-> 		};
-> 	};
-> };
->
-> flash@1 {
-> 	compatible =3D "jedec,spi-nor"
-> 	...
-> 	partitions {
-> 		compatible =3D "fixed-partitions";
-> 		concat-partition =3D <&flash0_partition &flash1_partition>;
->=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-> 		flash1_partition: partition@0 {
-> 			label =3D "part0_1";
-> 			reg =3D <0x0 0x800000>;
-> 		};
-> 	};
-> };
->
->>=20
->> >                 compatible =3D "fixed-partitions";
->> >                         concat-partition =3D <&flash0_partition &flash=
-1_partition>;
->> >                         flash0_partition: partition@0 {
->> >                                 label =3D "part0_0";
->> >                                 reg =3D <0x0 0x800000>;
->> >                         }
->> >                 }
->> > }
->> > flash@1 {
->> >         compatible =3D "jedec,spi-nor"
->> >         ...
->> >                 partitions {
->> >                 compatible =3D "fixed-partitions";
->> >                         concat-partition =3D <&flash0_partition &flash=
-1_partition>;
->> >                         flash1_partition: partition@0 {
->> >                                 label =3D "part0_1";
->> >                                 reg =3D <0x0 0x800000>;
->> >                         }
->> >                 }
->> > }
->>=20
->> This approach has a limitation I didn't think about before: you cannot u=
-se anything
->> else than fixed partitions as partition parser.
->
-> Yes, that's correct=E2=80=94it won't function when partitions are defined=
- via the=20
-> command line. In my opinion, we should start by adding support for fixed=
-=20
-> partitions, add comments in code stating the same. If needed, we can late=
-r=20
-> extend the support to dynamic partitions as well.
+> This series adds a bridge and glue driver for the DSI2 controller found
+> in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
+> 
+> As the manual states:
+> The Display Serial Interface 2 (DSI-2) is part of a group of communication
+> protocols defined by the MIPI Alliance. The MIPI DSI-2 Host Controller is
+> a digital core that implements all protocol functions defined in the
+> MIPI DSI-2 Specification.
+> 
+> 
+> While the driver structure is very similar to the previous DSI controller,
+> the programming model of the core is quite different, with a completely
+> new register set.
+> 
+> Another notable difference is that the phy interface is variable now too
+> in its width and some other settings.
+> 
+> 
+> Heiko Stuebner (3):
+>   drm/bridge/synopsys: Add MIPI DSI2 host controller bridge
+>   dt-bindings: display: rockchip: Add schema for RK3588 DW DSI2
+>     controller
+>   drm/rockchip: Add MIPI DSI2 glue driver for RK3588
+> 
+>  .../rockchip/rockchip,rk3588-mipi-dsi2.yaml   |  119 ++
+>  drivers/gpu/drm/bridge/synopsys/Kconfig       |    6 +
+>  drivers/gpu/drm/bridge/synopsys/Makefile      |    1 +
+>  .../gpu/drm/bridge/synopsys/dw-mipi-dsi2.c    | 1034 +++++++++++++++++
+>  drivers/gpu/drm/rockchip/Kconfig              |   10 +
+>  drivers/gpu/drm/rockchip/Makefile             |    1 +
+>  .../gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c  |  524 +++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c   |    2 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h   |    1 +
+>  include/drm/bridge/dw_mipi_dsi2.h             |   94 ++
+>  10 files changed, 1792 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,rk3588-mipi-dsi2.yaml
+>  create mode 100644 drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c
+>  create mode 100644 drivers/gpu/drm/rockchip/dw-mipi-dsi2-rockchip.c
+>  create mode 100644 include/drm/bridge/dw_mipi_dsi2.h
+> 
+> -- 
+> 2.45.2
 
-New thought. What if it was a pure fixed-partition capability? That's
-actually what we want: defining fixed partitions through device
-boundaries. It automatically removes the need for further dynamic
-partition extensions.
+Thank you for this work!
 
-Thanks,
-Miqu=C3=A8l
+Sucessfuly tested this series with DSI/LVDS bridge.
+
+Test configuration was described in the thread "[PATCH v3 0/2] MIPI DSI
+phy for rk3588":
+https://lore.kernel.org/all/20241120093702.9018-1-dse@thaumatec.com/
+
+Tested-by: Daniel Semkowicz <dse@thaumatec.com>
+
+Kind regards
+Daniel
+
 
