@@ -1,279 +1,190 @@
-Return-Path: <linux-kernel+bounces-416076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 214EE9D408F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:53:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3419D3FEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:20:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEE16B29A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411361F226D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520CE14D70E;
-	Wed, 20 Nov 2024 16:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3D61552E0;
+	Wed, 20 Nov 2024 16:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iWPb9Fbn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I6/1nbja"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10D757C93
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B6153BF7;
+	Wed, 20 Nov 2024 16:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119617; cv=none; b=rMb8p1ssRDRgbIr8sjwl1gQmIM1CZcrEYzVY/IMvr1y9po3FJrjzwzY/zWHuVa7UwGDq0gju2m+UwJGz9J1s+0ymDXYKYez6SUNuqRnOslEDYoYy9kRVspekzY8CZkgBHQXcPDq8LwYXeP3vRBDhLgfKLA1jY1GQ7GivWLsUGoc=
+	t=1732119623; cv=none; b=JKy6OIFFwTP6kYjWc+VGbKYAiYn3j6LqBaJX4WZ89PvVLdldXIRBEBGexqUWeQTRe7GZuIX7HusBktJn1/mQNFz8Zh2gEIch2tPXv9e715bHT5W9pqfHL1ZjRr2wgw1088HNhZNsCK2ZC6Bfybi76c3qRNU1UkTE7TxB8GPjYZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119617; c=relaxed/simple;
-	bh=JOyJnEUp6lcgc++FbjC9F3S7PaK46lUElZNQSqdjPIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LQ1cmz9SiRtsXMoEdNJbFBEUDNfIsx+hyTBeu3OmdNlrLiwXoegOxAbYcg0reZFWuT3UAm993kNoyxN4lqzxLm6zzZG7oOVx26Ww7qhwQCudMrckFxzdLyKeZMVs4YL8j3H8yixqJM0Pmm+ELEWzcpWC90/PVyfZeGRMB4nu6VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iWPb9Fbn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732119614;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mEq/I4+dfQBoHbyZ6EJfrXkSbqtWWjD0ivJqjS1w7V0=;
-	b=iWPb9Fbni9IP9/9DMJK6B8B49hbjPdlq12Q3k70El530tmRPhSoxwgO4dHVqU3wOQiudy+
-	L8Xdm+v381fM9EinI6AmuBUVK8aGzl/o9Z+nDjGTRm8ZLydZ2ga/njYum/5IQfeYw61q+X
-	4fd1oQUw0ce2cyYkwzaZ6SHpr/FBu8c=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-335-QPdw4cDqOiq_HgIVKkuWjA-1; Wed, 20 Nov 2024 11:20:13 -0500
-X-MC-Unique: QPdw4cDqOiq_HgIVKkuWjA-1
-X-Mimecast-MFC-AGG-ID: QPdw4cDqOiq_HgIVKkuWjA
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4314c6ca114so41138095e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:20:13 -0800 (PST)
+	s=arc-20240116; t=1732119623; c=relaxed/simple;
+	bh=VhY2vIhS0JZOOhKsqCqkIA6timPyzX/pJA8LnkOESZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=djnOKlyqS3xiaG2aQStzjcn3+YOsbTFLAXy2sV0lIT4GnYPW4k+zddRnx/edPx/V99twr6GMHaDkMXph1/L1jBwBV1hzNzYZqIy9jhyTC0uTDCw/xMhNRo+/SgmLdQWvmEHnN4ytHTMh+ULDq0AZgqFbxXslmPjdRHfBuvSzjTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I6/1nbja; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b152a23e9aso129856385a.0;
+        Wed, 20 Nov 2024 08:20:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732119619; x=1732724419; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=wjGuNENkASJ1sxhnaZ8RtRQI4flY7dzE8vwBtkKiIKE=;
+        b=I6/1nbja3bJrdmGuLUkw8OvPb/s0o0Ih42de7HTB6WQkKPpv7+vYVrwRdT/pPcuiAw
+         2fyHIYtWGa1b8AVNA+AD2kKNEkbFFkrFQ/ieyWMqOMw98Zz3kjlxubH76NO29j4xqUiS
+         6ToL/nwdx0guYWaKVrLRwDxqeqQhzoFu98HMKazQnOPJuZu/CFQK1PqAegAOXkpTvMvS
+         7oDmlkCR4wd+/ww5jDat0v7fNujjKY0cLoIyzuxnRynIW7ElzkynpZEzZpovSCxPRDWZ
+         +e4LuaCY1uWZDHyTiIh0RTiCnQAK6J8/5SFbk9/o++oDv/cz/Slio+ARIJhqUF1cczfz
+         r/kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119612; x=1732724412;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mEq/I4+dfQBoHbyZ6EJfrXkSbqtWWjD0ivJqjS1w7V0=;
-        b=UCIM5uf+94ugSz5BNAz/rlvs2auy0pmCjgxpUw60dOT4OowitSIyzm0gaXMD8vXLHh
-         ZWA2fC/aQHoKhqlnLYhc47ifAuFWwrQpq2Inysfq3uyLhmn8Nzsxf8ZzcI0WM6cXR08Z
-         X6SFUg3B5xEsGLRcztA52mX+AZMlT04wU9qBCE6ATUs8OV1RSPNWDDLyelXWP38p2csF
-         UiCbEGcgWeChMbIwJgdlmaojFrHbTaZcC9sw16aim6SMiXkBr9isGFlCkEj9lAGNdrMJ
-         DOeesTX8EJxmH6sZz2rM1rSPOuZKKUVzD/q72L0rwxCwETyT8xMLQTtPm/WF3aR9Ikwx
-         0rfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDIlAyrHoPD/xiYwoezHMmbUR3pprj/IeinpknY4Ofm1hFaWxXpY1o9+2R9P4vVg+8cSZSzzU/1C9IYBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykAQL7NFF2qlpZAM+1hEO37ricaZT1bPUc9dsDs4qtmAFwLMTR
-	3kL7/7hsSuuF5YsuRYOBIX8FQ+hwYewPS06qEiUspXTkOsrpwPb5zKXcihmupwuPJYkuf0BNR0P
-	UYUE5rjWzsPux4maNrE+WCguDsCrgRVDH8xkj2uhRZoAatDdM2vCRhNGaRi1OzA==
-X-Received: by 2002:a5d:47ac:0:b0:382:4dad:3879 with SMTP id ffacd0b85a97d-38254a851c6mr3104125f8f.0.1732119612432;
-        Wed, 20 Nov 2024 08:20:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGmwTRpyYUUui75BprIw01ePkQXnzEg3oP5TbIk+6ErycPws5uB1h3GNxvKhMWsdOI9WE/3iQ==
-X-Received: by 2002:a5d:47ac:0:b0:382:4dad:3879 with SMTP id ffacd0b85a97d-38254a851c6mr3104100f8f.0.1732119612003;
-        Wed, 20 Nov 2024 08:20:12 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45bdbabsm23835385e9.18.2024.11.20.08.20.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 08:20:11 -0800 (PST)
-Message-ID: <9286da7a-9923-4a3b-a769-590e8824fa10@redhat.com>
-Date: Wed, 20 Nov 2024 17:20:09 +0100
+        d=1e100.net; s=20230601; t=1732119619; x=1732724419;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wjGuNENkASJ1sxhnaZ8RtRQI4flY7dzE8vwBtkKiIKE=;
+        b=rqrbXWIG9fqF6xLysZt7sz0xQMZfyXGS1lnUCJYJUsTcUSpJGpNAUmd7OU+oNIq3Wy
+         jMuDIVMqv6Nskg09pA1QBD2oaxthJu3wrQZR6ceNzsHXw1LfAADtv4OnWN5yatjnbhuv
+         f275OM0zW5GBluf+i8GM2COerAslUOapDm7rmvBCsT2g1Raee2VqPicr1SujhARMxZHN
+         unXeHQSm9K5EuZLZQdg5enSrFi+/ouaQtLmjkfvjNLJS5oWvMqXGlsJMZg3v2ip436Lm
+         0gCxxxJmqX4moSHRw60Sd8faNndOJl9CvTv5FG1r1rUS4DPkk+mbuTl29Fc2qRwm90Xi
+         q0iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkqzA5uGXcExpYcFH7DtXawcXvmwA0ozlB9eKpxNhqj7ocHUumvZngzseucgZaabHzzqvO1JxFUB63VKhizJw=@vger.kernel.org, AJvYcCUzTzI/b4PiN7mn1f1ie4s5YCn5iQ7VISrbZ9Kx3du24Z372v5yH7F2Lw+gJpT2p8DtHF+4xTKVLCmsA5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqEQ4YKqCuTFa71dyfMrLoDoFvEjt1YMg6ziDBTenrr6Th0tLz
+	cPaytAsAZRsJdEv5p7ab/9Znl8nG8ZSjz972riw9HLWEH3CaFkV+
+X-Gm-Gg: ASbGncvbs7gP62pXtTHqN7lBFZk4eGj5HZsfeT/h0oUnJGvhacA/5/ZjkWSWv33NAIi
+	m0UlvcsDGXz/fCiif6accdaE3rUsBpT8i9Q/ro8gVwLlVZS0MPe/i2pEuJ0dXfkT3nU2CkYaLpn
+	toRWM6dHjxnTIdPEf4VxNhvE3QttziiqEYtYWjgTZVAFWD8DtBsWu+U4ZwSpK0BPbfJOufGCGJz
+	xWUR6zLtDr5pl6Xi486xavD1oioPDCYMLIeVaSRaEryezNF18TW9xsSVtH+h14pzWaOC91oJSYb
+	qzGub+4y1UNJbnxFeZLDcpCI11hItaoXQSq0fbpn
+X-Google-Smtp-Source: AGHT+IESUNifRorN1RtbZ2H8fTui7Tpz5Qsemtxe3GpYAt5OStXssjwkj6m6pYWlMFs31ypkbCc+5A==
+X-Received: by 2002:a05:620a:3727:b0:7b1:557c:666f with SMTP id af79cd13be357-7b42ee1c773mr444630585a.25.1732119619586;
+        Wed, 20 Nov 2024 08:20:19 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b479d90cc5sm112732885a.59.2024.11.20.08.20.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 08:20:19 -0800 (PST)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 7A99C1200066;
+	Wed, 20 Nov 2024 11:20:18 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 20 Nov 2024 11:20:18 -0500
+X-ME-Sender: <xms:Qgw-Z270AMtHTgdSBQr34pxsq5Bnp4oa1dOxiNo9opqvlregUaH2Kw>
+    <xme:Qgw-Z_4CYUypaBLfNqgQaK4Cb6xbO-lj4QMg8eNKZr7UoMjO31F69l2JT10iKf5ao
+    l6UupALTgqSubUpnw>
+X-ME-Received: <xmr:Qgw-Z1fShqvTbb-YxMsVu_p6Km1fjx6zcr6QY9oDgRrbG-waSEkgcgH5daM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeggdekiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledthffg
+    heegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthht
+    oheprggsughivghlrdhjrghnuhhlghhuvgesghhmrghilhdrtghomhdprhgtphhtthhope
+    hruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhi
+    hnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhn
+    vghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpd
+    hrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
+X-ME-Proxy: <xmx:Qgw-ZzIleciNYYcUoMQUJPhWBwX6O79jSgtlljcSzJhaT4dVwX19vQ>
+    <xmx:Qgw-Z6KGWxW8JzIEAyRxf0x6TVnlGiocSHJQqjNuYCWUf_yii_FfkQ>
+    <xmx:Qgw-Z0x7LG2gyeZrc7Z1zEjEUqMBKzFc5rDhISRzcLoVYt0pvoshig>
+    <xmx:Qgw-Z-JYZHcSNCb9A9KET7Kn5sAEhrOoK7ooXxqFL16zWzXPwWZ3vQ>
+    <xmx:Qgw-ZxaxnfLlDGusSGQILVFKsD02EQQlDrGVxUHmFg55FPUwQj1XLRAD>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 20 Nov 2024 11:20:17 -0500 (EST)
+Date: Wed, 20 Nov 2024 08:20:16 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	airlied@redhat.com
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
+ mappings
+Message-ID: <Zz4MQO79vVFhgfJZ@tardis.local>
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <Zz1sHZLruF5sv7JT@casper.infradead.org>
+ <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
-To: kalyazin@amazon.com, pbonzini@redhat.com, corbet@lwn.net,
- kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jthoughton@google.com, brijesh.singh@amd.com, michael.roth@amd.com,
- graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
- nsaenz@amazon.es, xmarcalx@amazon.com,
- Sean Christopherson <seanjc@google.com>, linux-mm@kvack.org
-References: <20241024095429.54052-1-kalyazin@amazon.com>
- <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
- <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
- <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
- <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
 
-On 20.11.24 16:58, Nikita Kalyazin wrote:
-> 
-> 
-> On 20/11/2024 15:13, David Hildenbrand wrote:
->   > Hi!
-> 
-> Hi! :)
-> 
->   >> Results:
->   >>    - MAP_PRIVATE: 968 ms
->   >>    - MAP_SHARED: 1646 ms
->   >
->   > At least here it is expected to some degree: as soon as the page cache
->   > is involved map/unmap gets slower, because we are effectively
->   > maintaining two datastructures (page tables + page cache) instead of
->   > only a single one (page cache)
->   >
->   > Can you make sure that THP/large folios don't interfere in your
->   > experiments (e.g., madvise(MADV_NOHUGEPAGE))?
-> 
-> I was using transparent_hugepage=never command line argument in my testing.
-> 
-> $ cat /sys/kernel/mm/transparent_hugepage/enabled
-> always madvise [never]
-> 
-> Is that sufficient to exclude the THP/large folio factor?
+On Wed, Nov 20, 2024 at 10:10:44AM +0100, Alice Ryhl wrote:
+> On Wed, Nov 20, 2024 at 5:57 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Nov 19, 2024 at 01:24:01PM +0200, Abdiel Janulgue wrote:
+> > > This series aims to add support for pages that are not constructed by an
+> > > instance of the rust Page abstraction, for example those returned by
+> > > vmalloc_to_page() or virt_to_page().
+> > >
+> > > Changes sinve v3:
+> > > - Use the struct page's reference count to decide when to free the
+> > >   allocation (Alice Ryhl, Boqun Feng).
+> >
+> > Bleh, this is going to be "exciting".  We're in the middle of a multi-year
+> > project to remove refcounts from struct page.  The lifetime of a page
+> > will be controlled by the memdesc that it belongs to.  Some of those
+> > memdescs will have refcounts, but others will not.
+> >
 
-Yes!
+One question: will the page that doesn't have refcounts has an exclusive
+owner? I.e. there is one owner that's responsible to free the page and
+make sure other references to the page get properly invalidated (maybe
+via RCU?)
 
+> > We don't have a fully formed destination yet, so I can't give you a
+> > definite answer to a lot of questions.  Obviously I don't want to hold
+> > up the Rust project in any way, but I need to know that what we're trying
+> > to do will be expressible in Rust.
+> >
+> > Can we avoid referring to a page's refcount?
 > 
->   >> While this logic is intuitive, its performance effect is more
->   >> significant that I would expect.
->   >
->   > Yes. How much of the performance difference would remain if you hack out
->   > the atomic op just to play with it? I suspect there will still be some
->   > difference.
+> I don't think this patch needs the refcount at all, and the previous
+> version did not expose it. This came out of the advice to use put_page
+> over free_page. Does this mean that we should switch to put_page but
+> not use get_page?
 > 
-> I have tried that, but could not see any noticeable difference in the
-> overall results.
-> 
-> It looks like a big portion of the bottleneck has moved from
-> shmem_get_folio_gfp/folio_mark_uptodate to
-> finish_fault/__pte_offset_map_lock somehow.  I have no good explanation
-> for why:
 
-That's what I assumed. The profiling results can be rather fuzzy and 
-misleading with micro-benchmarks. :(
+I think the point is finding the exact lifetime model for pages, if it's
+not a simple refcounting, then what it is? Besides, we can still
+represent refcounting pages with `struct Page` and other pages with a
+different type name. So as far as I can see, this patch is OK for now.
 
-> 
-> Orig:
->                     - 69.62% do_fault
->                        + 44.61% __do_fault
->                        + 20.26% filemap_map_pages
->                        + 3.48% finish_fault
-> Hacked:
->                     - 67.39% do_fault
->                        + 32.45% __do_fault
->                        + 21.87% filemap_map_pages
->                        + 11.97% finish_fault
-> 
-> Orig:
->                        - 3.48% finish_fault
->                           - 1.28% set_pte_range
->                                0.96% folio_add_file_rmap_ptes
->                           - 0.91% __pte_offset_map_lock
->                                0.54% _raw_spin_lock
-> Hacked:
->                        - 11.97% finish_fault
->                           - 8.59% __pte_offset_map_lock
->                              - 6.27% _raw_spin_lock
->                                   preempt_count_add
->                                1.00% __pte_offset_map
->                           - 1.28% set_pte_range
->                              - folio_add_file_rmap_ptes
->                                   __mod_node_page_state
-> 
->   > Note that we might improve allocation times with guest_memfd when
->   > allocating larger folios.
-> 
-> I suppose it may not always be an option depending on requirements to
-> consistency of the allocation latency.  Eg if a large folio isn't
-> available at the time, the performance would degrade to the base case
-> (please correct me if I'm missing something).
+Regards,
+Boqun
 
-Yes, there are cons to that.
-
-> 
->> Heh, now I spot that your comment was as reply to a series.
-> 
-> Yeah, sorry if it wasn't obvious.
-> 
->> If your ioctl is supposed to to more than "allocating memory" like
->> MAP_POPULATE/MADV_POPULATE+* ... then POPULATE is a suboptimal choice.
->> Because for allocating memory, we would want to use fallocate() instead.
->> I assume you want to "allocate+copy"?
-> 
-> Yes, the ultimate use case is "allocate+copy".
-> 
->> I'll note that, as we're moving into the direction of moving
->> guest_memfd.c into mm/guestmem.c, we'll likely want to avoid "KVM_*"
->> ioctls, and think about something generic.
-> 
-> Good point, thanks.  Are we at the stage where some concrete API has
-> been proposed yet? I might have missed that.
-
-People are working on it, and we're figuring out some remaining details 
-(e.g., page_type to intercept folio_put() ). I assume we'll see a new 
-RFC soonish (famous last words), but it's not been proposed yet.
-
-> 
->> Any clue how your new ioctl will interact with the WIP to have shared
->> memory as part of guest_memfd? For example, could it be reasonable to
->> "populate" the shared memory first (via VMA) and then convert that
->> "allocated+filled" memory to private?
-> 
-> No, I can't immediately see why it shouldn't work.  My main concern
-> would probably still be about the latency of the population stage as I
-> can't see why it would improve compared to what we have now, because my
- > feeling is this is linked with the sharedness property of guest_memfd.
-
-If the problem is the "pagecache" overhead, then yes, it will be a 
-harder nut to crack. But maybe there are some low-hanging fruits to 
-optimize? Finding the main cause for the added overhead would be 
-interesting.
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Alice
 
