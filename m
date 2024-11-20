@@ -1,259 +1,191 @@
-Return-Path: <linux-kernel+bounces-416100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0FD9D40CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:08:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA389D402F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24555B326A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149231F2160D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4D51552E7;
-	Wed, 20 Nov 2024 16:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C019153814;
+	Wed, 20 Nov 2024 16:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="puHPrJl1"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RiVh/hzr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7043A14A4DD;
-	Wed, 20 Nov 2024 16:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BF714AD3D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120807; cv=none; b=Nz/Fj0GVUfAcTDGw+/96HYodmPZrtBPBzmqs9C8WCT/9k3fCUEdJrlmept+dPcX6EOkNhZmT7dbonTN1m97XlRP7UlQ4R7iUpQ2as2iIGYeqrgEhOVys4TVn6mVKHS2pnnsH3ekyC95HeiPI98GCVrgzGbaXHgggwvt7obJeUIg=
+	t=1732120581; cv=none; b=kToUVbAqd2FBYaFw4uyR9e3bhErYA3tWogkDJWJfS6F+NdvUSKZmgQGWAIh4GwSM/PxicXItLjVLxJ3+Orh6fUWE/dj8Rkcfqz59dSUQ6nYNufqh5MM/u9NpLEn1iIz5SlT/f1TVAOVX0NtWc0v37mkABfPDjxjy8aDJNyzP98c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120807; c=relaxed/simple;
-	bh=q9HJtEMcF1o9oN8jN4hPtFlSuhPQ/NI+JCqa7KQxZdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Ougadl/4wL+5YqKJUI66JcIBLTzkg5tI7eRXTkzNZOr1Vm4zIcU5Acam7fKPGXKN5JesUQml6iXQgiZdBiX97E0I/ZNGfTpUjRPZW2nG3S+h/9XV4qh/1+suA73YlFt6xmA74d3U+4eUx7Zbg0L1gKzPmwRB+2z7c8/qfs9LwqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=puHPrJl1; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEAXr8003253;
-	Wed, 20 Nov 2024 17:39:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	kk/4ImLRfW02WqanMlOBrVlAtIDvhKl0xS3pXSUv80c=; b=puHPrJl182BfBZwd
-	G4awuxSp53vzzrXidyQr7BosxKki0uluEHiMiXvAWK0t2G5W1knW/J7PXlv6Rf7N
-	HR9vkPs4+w6n/FSBtP5Apdo8EJdAIKPdIF8gTLU2uZkuaePte2+Xwcu4p4Z14CSC
-	aEZS+Ndxjkq7rFt17jaQFoUzq2QYQ3L+mXNkJNZ9arNOiCuM37FOuzguwmgAkftO
-	g0NnutMbIJQYXm+ExT+gEDG+o4hY+X7XlLkvirnxTAf27F5mCNZ6wWAU4ykr/fqo
-	Nywrn5sgzlraUZs1JWwExtRfIiTs3B2dRriOtsPA2YPHK0iiNh3snd4URm8jklFC
-	jgRCBA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xknwb6ph-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 17:39:47 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17AEF400A3;
-	Wed, 20 Nov 2024 17:38:27 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0EEE276BB0;
-	Wed, 20 Nov 2024 17:35:50 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 20 Nov
- 2024 17:35:50 +0100
-Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 20 Nov
- 2024 17:35:49 +0100
-Message-ID: <57a66f3c-d644-4ebb-b4dd-0b9d411ec243@foss.st.com>
-Date: Wed, 20 Nov 2024 17:35:49 +0100
+	s=arc-20240116; t=1732120581; c=relaxed/simple;
+	bh=VfR9wdxer9kVXX+JA4Pugu2yWhtmDNWs7LhPukfN9pM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IDeYOKFuWVl9cmbz/GxfuauFOekzdyeRoUb6Mo6eEfbKtdS0KjopWmTmMlfezZWtbor+FpIriL1+py4pcSsxHu5Ft1IO+CyA9J2fRbGOTQHZFcbZ+pkdLmPVkcXHlgJSZeACNBpdWg71ekaXPw9vcBskrH4qbVmkf2g9hJL3ZDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RiVh/hzr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732120579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qhU3S0A4Mnpsnqs/3/13cFEa605q4UA1j817veP3A6U=;
+	b=RiVh/hzrbl2C6NbK9kYda3B4naVZmX3s0UjEV5cv+H0RcJFKVF2SgPYumMgxhunHG3Ktvp
+	Mcii5d+BSD3WzLjB2Qi0p2IgYjlRGVZpku+Z1LLAwP2zy42sRVjF4MsSa+BuS7rsHC6iKN
+	A7UztKCT4UGaBdViIRzIUlgiXu6OT4g=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-8-8GrjGyztPAKbPyOARDdjdw-1; Wed, 20 Nov 2024 11:36:17 -0500
+X-MC-Unique: 8GrjGyztPAKbPyOARDdjdw-1
+X-Mimecast-MFC-AGG-ID: 8GrjGyztPAKbPyOARDdjdw
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-211555dce08so53590695ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:36:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732120575; x=1732725375;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qhU3S0A4Mnpsnqs/3/13cFEa605q4UA1j817veP3A6U=;
+        b=Qby+vcDIdlJ1YCGOO2yTOyK0kpqZOsV9cX7eGM/o+BQ+2SRVItAWfQ9Gnw2YALe6PY
+         XH0eqxxIJGOyX4F3y1Y5LmU0g3OupkCC/mTld7+NtACGaULmJbSyP8bP507zly1Fg+RD
+         85Bh0Z9tcnrj40FCJolCCmU0nwsWyqQYyQwFMHMHPCz7mAkRt/D/FslW6pCRuXYZ5NLN
+         Ry2kddzxnimvEObAj8pQbVexvQDzXC5VVpAUD1WtWyqX07UTdvZ4w0Hfq11Sgh/aT6oc
+         ilX/J+sk4sO/YJN5Ge9ex8c18vBG8RQ2DbnpkuCFAuNntVCjqUVvoci6QfMisyhA70mF
+         u+nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkrBrhNxMl/pLLrPm4nVMPjrcEdexQWCAQxx5qFeuRH2x28G6EC37vj13OFAJtUsWuXoeH3Go6y6GyAAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEZgSoFBmdH6l1Rw2ryD4Z01rxLPBuj+F2n95RIb9s9/cM8vZF
+	jh1tRHwsIZ5rRX39G0BMCdQjqCx+zDeJvxS8DQlyGVWey5Weute50tLdAqbF2ctGTETgRIVul4o
+	Yav4fwwCi2nqSDtaYz2c9u1pdSC3WGq09QJcfdgjSK48gmkXKQVFhMOZT85GT5MuGsS0OlLmUYD
+	wXsYKbc8utUEjHFlNgUNUHd9QWppLORT8dr/g4
+X-Received: by 2002:a17:902:ccd1:b0:20b:b40b:3454 with SMTP id d9443c01a7336-2126f9fb108mr36420065ad.0.1732120575530;
+        Wed, 20 Nov 2024 08:36:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFEndC+AthKB1mpAbXnqOydUaK60UqI1oD1suHPMIJwIkfHNBJIHODhd4fFPf5EbSrZJ9RZvD8mL6P1+1iEOyY=
+X-Received: by 2002:a17:902:ccd1:b0:20b:b40b:3454 with SMTP id
+ d9443c01a7336-2126f9fb108mr36419915ad.0.1732120575211; Wed, 20 Nov 2024
+ 08:36:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 4/7] remoteproc: Introduce release_fw optional
- operation
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Jens Wiklander
-	<jens.wiklander@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
-References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
- <20241104133515.256497-5-arnaud.pouliquen@foss.st.com>
- <Zzt+7NBdNjyzWZIb@p14s> <0d9075cd-68c2-49ec-9b9c-4315aa8c8517@foss.st.com>
- <CANLsYkxvTuLv8Omw-UeyPaA9g9QokmtMaMYD0eoUPo20wUuONQ@mail.gmail.com>
- <CANLsYkwPDFvJxgXrAV=92w+sT8tXB=-=K8Qs8eRVKm2C2v+0aA@mail.gmail.com>
-Content-Language: en-US
-From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Organization: STMicroelectronics
-In-Reply-To: <CANLsYkwPDFvJxgXrAV=92w+sT8tXB=-=K8Qs8eRVKm2C2v+0aA@mail.gmail.com>
+References: <20241120102325.3538-1-acarmina@redhat.com> <Zz332cG45rNSeE_B@arm.com>
+ <20241120102602.3e17f2d5@gandalf.local.home>
+In-Reply-To: <20241120102602.3e17f2d5@gandalf.local.home>
+From: Alessandro Carminati <acarmina@redhat.com>
+Date: Wed, 20 Nov 2024 17:36:04 +0100
+Message-ID: <CAGegRW74BOvkAmo4UiH-D45o4HijL7B4CPvEvNfze3AEoTKfCg@mail.gmail.com>
+Subject: Re: [PATCH] mm/kmemleak: Fix sleeping function called from invalid
+ context in kmemleak_seq_show
+To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Thomas Weissschuh <thomas.weissschuh@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+	Alessandro Carminati <alessandro.carminati@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Gabriele Paoloni <gpaoloni@redhat.com>, Eric Chanudet <echanude@redhat.com>, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: quoted-printable
+
+Looping selinix Maintainers into the conversation.
 
 
+On Wed, Nov 20, 2024 at 4:30=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Wed, 20 Nov 2024 14:53:13 +0000
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> > > -static void print_unreferenced(struct seq_file *seq,
+> > > +static depot_stack_handle_t print_unreferenced(struct seq_file *seq,
+> > >                            struct kmemleak_object *object)
+> > >  {
+> > > -   int i;
+> > > -   unsigned long *entries;
+> > > -   unsigned int nr_entries;
+> > > -
+> > > -   nr_entries =3D stack_depot_fetch(object->trace_handle, &entries);
+> > >     warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\=
+n",
+> > >                       object->pointer, object->size);
+> > >     warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu\n",
+> > > @@ -371,6 +366,23 @@ static void print_unreferenced(struct seq_file *=
+seq,
+> > >     hex_dump_object(seq, object);
+> > >     warn_or_seq_printf(seq, "  backtrace (crc %x):\n", object->checks=
+um);
+> > >
+> > > +   return object->trace_handle;
+> > > +}
+> >
+> > What I don't fully understand - is this a problem with any seq_printf()
+> > or just the backtrace pointers from the stack depot that trigger this
+> > issue? I guess it's something to do with restricted pointers but I'm no=
+t
+> > familiar with the PREEMPT_RT concepts. It would be good to explain,
+> > ideally both in the commit log and a comment in the code, why we only
+> > need to do this for the stack dump.
+>
+> In PREEMPT_RT, to achieve the ability to preempt in more context,
+> spin_lock() is converted to a special sleeping mutex. But there's some
+> places where it can not be converted, and in those cases we use
+> raw_spin_lock(). kmemleak has been converted to use raw_spin_lock() which
+> means anything that gets called under that lock can not take a normal
+> spin_lock().
+>
+> What happened here is that the kmemleak raw spinlock is held and
+> seq_printf() is called. Normally, this is not an issue, but the behavior =
+of
+> seq_printf() is dependent on what values is being printed.
+>
+> The "%pK" dereferences a pointer and there's some SELinux hooks attached =
+to
+> that code. The problem is that the SELinux hooks take spinlocks. This wou=
+ld
+> not have been an issue if it wasn't for that "%pK" in the format.
+>
+> Maybe SELinux locks should be converted to raw? I don't know how long tha=
+t
+> lock is held. There are some loops though :-/
+>
+> avc_insert():
+>
+>         spin_lock_irqsave(lock, flag);
+>         hlist_for_each_entry(pos, head, list) {
+>                 if (pos->ae.ssid =3D=3D ssid &&
+>                         pos->ae.tsid =3D=3D tsid &&
+>                         pos->ae.tclass =3D=3D tclass) {
+>                         avc_node_replace(node, pos);
+>                         goto found;
+>                 }
+>         }
+>         hlist_add_head_rcu(&node->list, head);
+> found:
+>         spin_unlock_irqrestore(lock, flag);
+>
+> Perhaps that could be converted to simple RCU?
+>
+> As I'm sure there's other places that call vsprintf() under a raw_spin_lo=
+ck
+> or non-preemptable context, perhaps this should be the fix we do.
+@Paul and @Stephen do you have any feedback on this idea?
 
-On 11/20/24 17:04, Mathieu Poirier wrote:
-> On Tue, 19 Nov 2024 at 13:38, Mathieu Poirier
-> <mathieu.poirier@linaro.org> wrote:
->>
->> On Tue, 19 Nov 2024 at 11:14, Arnaud POULIQUEN
->> <arnaud.pouliquen@foss.st.com> wrote:
->>>
->>> Hello Mathieu,
->>>
->>> On 11/18/24 18:52, Mathieu Poirier wrote:
->>>> On Mon, Nov 04, 2024 at 02:35:12PM +0100, Arnaud Pouliquen wrote:
->>>>> This patch updates the rproc_ops struct to include an optional
->>>>> release_fw function.
->>>>>
->>>>> The release_fw ops is responsible for releasing the remote processor
->>>>> firmware image. The ops is called in the following cases:
->>>>>
->>>>>  - An error occurs in rproc_start() between the loading of the segments and
->>>>>       the start of the remote processor.
->>>>>  - after stopping the remote processor.
->>>>>
->>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
->>>>> ---
->>>>> Updates from version V11:
->>>>> - fix typo in @release_fw comment
->>>>> ---
->>>>>  drivers/remoteproc/remoteproc_core.c | 5 +++++
->>>>>  include/linux/remoteproc.h           | 3 +++
->>>>>  2 files changed, 8 insertions(+)
->>>>>
->>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
->>>>> index 7694817f25d4..46863e1ca307 100644
->>>>> --- a/drivers/remoteproc/remoteproc_core.c
->>>>> +++ b/drivers/remoteproc/remoteproc_core.c
->>>>> @@ -1258,6 +1258,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
->>>>>
->>>>>  static void rproc_release_fw(struct rproc *rproc)
->>>>>  {
->>>>> +    if (rproc->ops->release_fw)
->>>>> +            rproc->ops->release_fw(rproc);
->>>>> +
->>>>>      /* Free the copy of the resource table */
->>>>>      kfree(rproc->cached_table);
->>>>>      rproc->cached_table = NULL;
->>>>> @@ -1377,6 +1380,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
->>>>>  unprepare_subdevices:
->>>>>      rproc_unprepare_subdevices(rproc);
->>>>>  reset_table_ptr:
->>>>> +    if (rproc->ops->release_fw)
->>>>> +            rproc->ops->release_fw(rproc);
->>>>>      rproc->table_ptr = rproc->cached_table;
->>>>
->>>> I suggest the following:
->>>>
->>>> 1) Create two new functions, i.e rproc_load_fw() and rproc_release_fw().  The
->>>> only thing those would do is call rproc->ops->load_fw() and
->>>> rproc->ops->release_fw(), if they are present.  When a TEE interface is
->>>> available, ->load_fw() and ->release_fw() become rproc_tee_load_fw() and
->>>> rproc_tee_release_fw().
->>>
->>>
->>> I'm wondering if it should be ->preload_fw() instead of ->load_fw() ops, as the
->>> ->load() op already exists.
->>>
->>
->> I agree that ->load() and ->load_fw() will lead to confusion.  I would
->> support ->preload_fw() but there is no obvious antonyme.
->>
->> Since we already have rproc_ops::prepare() and rproc_prepare_device()
->> I suggest rproc_ops::prepare_fw() and rproc_prepare_fw().  The
->> corollary would be rproc_ops::unprepare_fw() and rproc_unprepare_fm().
->> That said, I'm open to other ideas should you be interested in finding
->> other alternatives.
->>
-> 
-> Actually...  A better approach might to rename rproc::load to
-> rproc::load_segments.  That way we can use rproc::load_fw() and
-> rproc_load_fw() without confusion.
-
-Concerning this proposal, please correct me if I'm wrong
-- ops::load_segments() would be used for ELF format only as segment notion seems
-linked to this format.
-- ops:rproc_load_fw should be used for other formats.
-
-The risk is that someone may later come with a requirement to get a resource
-table first to configure some memories before loading a non-ELF firmware.
+>
+> -- Steve
+>
 
 
-> 
->>>>
->>>> 2) Call rproc_load_fw() in rproc_boot(), just before rproc_fw_boot().  If the
->>>> call to rproc_fw_boot() fails, call rproc_release_fw().
->>>>
->>>> 3) The same logic applies to rproc_boot_recovery(), i.e call rproc_load_fw()
->>>> before rproc_start() and call rproc_release_fw() if rproc_start() fails.
->>>
->>>
->>> I implemented this and I'm currently testing it.
->>> Thise second part requires a few adjustments to work. The ->load() ops needs to
->>> becomes optional to not be called if the "->preload_fw()" is used.
->>>
->>> For that, I propose to return 0 in rproc_load_segments if rproc->ops->load is
->>> NULL and compensate by checking that at least "->preload_fw()" or ->load() is
->>> non-null in rproc_alloc_ops.
->>>
->>
->> I agree.
->>
->>> Thanks,
->>> Arnaud
->>>
->>>
->>>>
->>>> 4) Take rproc_tee_load_fw() out of rproc_tee_parse_fw().  It will now be called
->>>> in rproc_load_fw().
->>>>
->>>> 5) As stated above function rproc_release_fw() now calls rproc_tee_release_fw().
->>>> The former is already called in rproc_shutdown() so we are good in that front.
->>>>
->>>> With the above the cached_table management within the core remains the same and
->>>> we can get rid of patch 3.7.
->>>
->>>>
->>>> Thanks,
->>>> Mathieu
->>>>
->>>>>
->>>>>      return ret;
->>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>>> index 2e0ddcb2d792..08e0187a84d9 100644
->>>>> --- a/include/linux/remoteproc.h
->>>>> +++ b/include/linux/remoteproc.h
->>>>> @@ -381,6 +381,8 @@ enum rsc_handling_status {
->>>>>   * @panic:  optional callback to react to system panic, core will delay
->>>>>   *          panic at least the returned number of milliseconds
->>>>>   * @coredump:         collect firmware dump after the subsystem is shutdown
->>>>> + * @release_fw:     optional function to release the firmware image from ROM memories.
->>>>> + *          This function is called after stopping the remote processor or in case of an error
->>>>>   */
->>>>>  struct rproc_ops {
->>>>>      int (*prepare)(struct rproc *rproc);
->>>>> @@ -403,6 +405,7 @@ struct rproc_ops {
->>>>>      u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
->>>>>      unsigned long (*panic)(struct rproc *rproc);
->>>>>      void (*coredump)(struct rproc *rproc);
->>>>> +    void (*release_fw)(struct rproc *rproc);
->>>>>  };
->>>>>
->>>>>  /**
->>>>> --
->>>>> 2.25.1
->>>>>
+--=20
+---
+172
+
 
