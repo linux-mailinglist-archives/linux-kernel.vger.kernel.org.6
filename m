@@ -1,125 +1,189 @@
-Return-Path: <linux-kernel+bounces-415767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0AFA9D3B1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:50:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C539D3B20
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6646C283938
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:50:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88151F26596
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB881A0AF5;
-	Wed, 20 Nov 2024 12:50:06 +0000 (UTC)
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853B31A2C0E;
+	Wed, 20 Nov 2024 12:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=phytecmesstechnikgmbh.onmicrosoft.com header.i=@phytecmesstechnikgmbh.onmicrosoft.com header.b="DcRUwoWC"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2094.outbound.protection.outlook.com [40.107.21.94])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84EA19DF4D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732107006; cv=none; b=fbydjLLZgd3aNx+5OdOYYIaqq/5zf8yjNGUxmlrW8lJOz+e61QK9yxRURbnB0weFFaWHsttCv3dlASdZFEkNUIwfXoPbMD0LwZXmrBbyn0SSssX64uA7VieW8XgtfxHZqJyj31moccrwMC2HClC0rOykToSk7XHVRmAahTVv2Hc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732107006; c=relaxed/simple;
-	bh=jS7aMpa63T45yjLrS+R35Cy/TD0V6z13wR4ZGFUUcdQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OCald7JD99D4kymRln7HVK1EDhBuGPt9cKOMqYPa3YreNnfpmemST6yOc9S3Uvo2kHUyac3wfM7OYEcYHg8ohL/6Syf5pHM99nD/SYoC8YJlfkYuSl4zfuVsZIRn1tyoLUo+jjiitTI9jjCytlF9RPqUH3owHS34X7dtO3j9oog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:35da:ab43:467b:7991])
-	by laurent.telenet-ops.be with cmsmtp
-	id f0pl2D00N3gUftr010pl1v; Wed, 20 Nov 2024 13:49:56 +0100
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tDk94-007c0d-1L;
-	Wed, 20 Nov 2024 13:49:45 +0100
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tDk9R-009NS0-8N;
-	Wed, 20 Nov 2024 13:49:45 +0100
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kees Cook <keescook@chromium.org>,
-	Jann Horn <jannh@google.com>
-Cc: linux-mm@kvack.org,
-	io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] slab: Fix too strict alignment check in create_cache()
-Date: Wed, 20 Nov 2024 13:49:41 +0100
-Message-Id: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4530B1DFEF;
+	Wed, 20 Nov 2024 12:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.94
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732107190; cv=fail; b=FKb59KdFHFJJQkMpbQHvWfsoTJDrQl6a9mukOfrbfYcdZKD97tMcLqur6FsoQq4tFWLLlempk/C5ksFygWG3Rt9MfOEKdy8GB893RTnfW5tndldhLaODjGACqzqzX3KyDps0uWIpeKAJ9L231IIO452KNtdy3lzMDnox4L5YDKA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732107190; c=relaxed/simple;
+	bh=Sj0IVLlNFQ0Y7JBO9kkRDNkZbFY4o0852UIJwpIiUjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L2P0YvRr2sdrX8ZTS8EhMvPp7zOqACcy86K/pwT/D4NiwR5RhRSay71UK4L+t8m+7XDPRp3u5rcszoKfa4qLk9De+2spKaj3uLSLMyhcXtTKPE/8xyZxXNKcvoxF+JXWsdjvuMWjJfpXo9TzK3BfOg3SCvrdGdhoQ9KdejjD6K0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytecmesstechnikgmbh.onmicrosoft.com header.i=@phytecmesstechnikgmbh.onmicrosoft.com header.b=DcRUwoWC; arc=fail smtp.client-ip=40.107.21.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pLbV5xkI0BGqCG8hwMp3OVeXWmID2dg45FLcmJ6X+Bwyez4hL2tVwON9auzzLPIRDD4qd5IyltfRrCqncRinsqM8Oa2pTUBsQACmoYYPTTRLEZfYASbxRLQVwdHeya5P/SVnvr/gNSkoovU/f8rCYu0Zo6uXqc8l84rV+wAnjQiXccoVjAQIODx6bx+8k8BGfoOoNj5aRk61UeXAVTp7ZVD3jNoUz+cA79N6hhryu+EcBgvWhi1oiKw33jbbwGiXOeKFR3rfpGNyd+g0pH8hQYG8mXp3+07wv6BdNR1bjzXHPup9a56bEsQNPQu4i/undEWsPsAA3EqyMU1xwIFlMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Xtb1L/BECqqh2TzqQO7ieq8R/yPpFJsieu3zLom10vI=;
+ b=runiQ+HgBIeN1vY4mvIpjNMtxqYuh1SGmGttc30sEkYKZv+/GW4NGPuSM5A8hOadMGyA687X/5wDiBTwHvBprvdhEczRe/rkK5PcLU6njaFAQsDrDy5c+Wbsw9ICbZI33sBzCTUC/Onu6s9c0sLCRGkzg0DBrjKCZi9EZsdJDyL9UdwO77Ga8CYGddZ8iTqbQ3eepsAGNWVMuVyf/c/6x+zZOh7fzTRftcFUhOYxq6l6lUua6UmfvdnYUo7BJpQTA2/IIIOLLE8w8SzX2Uggf0hOQU2isLh+bDa6YD6a0PNPv1S17vwTal3DL0M90Ois6IRL9+2DxzyLDywsZ5epjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=ti.com smtp.mailfrom=phytec.de; dmarc=none
+ action=none header.from=phytec.de; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=phytecmesstechnikgmbh.onmicrosoft.com;
+ s=selector1-phytecmesstechnikgmbh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xtb1L/BECqqh2TzqQO7ieq8R/yPpFJsieu3zLom10vI=;
+ b=DcRUwoWCAuXBdRTdzc6cXCxFVgICq3jUpeuyWtJSIoKzANdA0Y8iNbhfKV0DO0erc8fZpl7qsHrazax1V375iDE3EV4OxcGAYU0eM9KMqCbSMrmDAC1+RhSRdhRyk9kO73NS4lBObpj5bQaNiK/arBj88UjtL/n0noX/GIuAQxM=
+Received: from DUZPR01CA0229.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b4::26) by AS8P195MB1846.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:20b:52b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Wed, 20 Nov
+ 2024 12:53:01 +0000
+Received: from DU6PEPF00009524.eurprd02.prod.outlook.com
+ (2603:10a6:10:4b4:cafe::f4) by DUZPR01CA0229.outlook.office365.com
+ (2603:10a6:10:4b4::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15 via Frontend
+ Transport; Wed, 20 Nov 2024 12:53:01 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ DU6PEPF00009524.mail.protection.outlook.com (10.167.8.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8182.16 via Frontend Transport; Wed, 20 Nov 2024 12:53:00 +0000
+Received: from Berlix.phytec.de (172.25.0.12) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 20 Nov
+ 2024 13:53:00 +0100
+Received: from [172.25.39.28] (172.25.0.11) by Berlix.phytec.de (172.25.0.12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Wed, 20 Nov
+ 2024 13:52:59 +0100
+Message-ID: <9efdda6e-a401-4321-9680-905a1e70f392@phytec.de>
+Date: Wed, 20 Nov 2024 13:52:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] arm64: dts: ti: k3-am64-main: Switch ICSSG clock
+ to core clock
+To: MD Danish Anwar <danishanwar@ti.com>, <conor+dt@kernel.org>,
+	<krzk+dt@kernel.org>, <robh@kernel.org>, <ssantosh@kernel.org>, <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+CC: <srk@ti.com>, <devicetree@vger.kernel.org>, <kristo@kernel.org>,
+	<linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20241113110955.3876045-1-danishanwar@ti.com>
+ <20241113110955.3876045-3-danishanwar@ti.com>
+Content-Language: en-US
+From: Wadim Egorov <w.egorov@phytec.de>
+In-Reply-To: <20241113110955.3876045-3-danishanwar@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: Berlix.phytec.de (172.25.0.12) To Berlix.phytec.de
+ (172.25.0.12)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF00009524:EE_|AS8P195MB1846:EE_
+X-MS-Office365-Filtering-Correlation-Id: af870ffc-6b7b-49ed-2257-08dd09624412
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cTV5c1E4MTRXSkdWKytHVG1xS3prVE00UW44V3g3bWxjT2s1YjVsd2ZDNjAv?=
+ =?utf-8?B?VXQrQzV6a0c0ZVBUUUdSV3ZVNG9ncTJqSnpuZmkvUU1tWXBBaS9sY2gwQzRQ?=
+ =?utf-8?B?dXFwYndUeGRXTTBlL2ljVGpxR0tKSktiRkQwbmp1R1FqanJid2hPekZWTzcw?=
+ =?utf-8?B?UjBwcmNLUllVUElSYzZMc0doM0RHcUlSM3h6S0p1RS91YUozMUk0OU13ODZY?=
+ =?utf-8?B?Z0tEdC8xUHF2N1ROTFNWSVN2bmRjZk5jUHNVbEpEZHoxTFVxck5sODFqdjZx?=
+ =?utf-8?B?dWlxejNKaEp6RkNPUWZiSW5xeTZOV1NjVmhNWjFXbXI3ZVhuaXFpWklSQkwz?=
+ =?utf-8?B?K3hpRS8wbkJOMGJBaWFyMUg3RFExenlLaHpWL0NpS00rU1BuWXQ0NFM2Qkta?=
+ =?utf-8?B?ZlhSaHU4eVV4LzNHY2J4b1p2ZUhuWm9YMnFLcndVcGpmTzhBS01lR25jQ05P?=
+ =?utf-8?B?MWRLY0NDeEM5NUFMVWE1d1J3NllnTGZqalBocXVMZ2R0TFJoOE1PNkhuRVN4?=
+ =?utf-8?B?UVRWNVllU01wa0VwRWYzQndWV294bE0rU0s2QXVUbjVGdEtkVURldUNST2RB?=
+ =?utf-8?B?cDJtSGg1d1djR0hsTE10bEx5NHlXRmVKN3YwM0R4Q0dFUkRpUzQwTGNpZ3Qr?=
+ =?utf-8?B?VGtsNW5KcEhoUUVSa3FlTFZFNEt5R3VpZWxERVVmN0s3TWRVa0dXSlVRQVd2?=
+ =?utf-8?B?L2k2VFY3MUptQkp1eXBkZlZuYmJkaGR3UWFWYzBGUW1LOHJnTytYT0lyYXZG?=
+ =?utf-8?B?SHJIUXlKUVMyUWFUemVVZDlZMGZvVk44aVM0VStPd1ZzekN2aDlqZWtMVTRs?=
+ =?utf-8?B?aGNhaHA1aHNGOHlCQk4rbndFeEhmemJQODhJM3F0SDJYRjFUbFJ3N3loQi9i?=
+ =?utf-8?B?RTdhUEtOSGw1ajk2aEw1NVpKMDN6alltV2JaaG1nNVhXQ09jOGNIalNCNGhE?=
+ =?utf-8?B?R3FCMEhDeVZhbEdSeS8wYkIwNUc2S1ZHZHdBYVZ0YTZVQVJVaDduS0luTC9s?=
+ =?utf-8?B?dm4zdVlyMHJzSWIyK3RaSFI4RWJzMEdjSzhXL2xqcS8xb3ZOM2IzUjBWd21I?=
+ =?utf-8?B?YWptQ3EySEFOVkNFM3FrWUVUUWk0ci9PZ2dmTkxDTnhQb2tMeFgxVHBLZXhh?=
+ =?utf-8?B?eDZlRlY1QmlqcGpXbHdoUGtDRFIwdlNMQzN6eHlveVIzOVRCb2d6d0FQcWJj?=
+ =?utf-8?B?TlQwRmZlMGFjVGcxTENvSXRQaUFGTkl0SlJjdWtCTzJsSkRhc2lTTUphZjM5?=
+ =?utf-8?B?V0YrRVYvYThxTUlma0VvV0hyMWp0TWRScW9DVmpUa0dDQS9HSlg5ejNHRTZ0?=
+ =?utf-8?B?UDJSdE1VS1AwYmJZRU1OVFBOR1FSbDBmQjB5NTBKakl2MVhBZzNMTWgwSndj?=
+ =?utf-8?B?V0FzRXJ2azllVmZrZm1HSkNqdGhCb2tKblVYK1J6QWlXR0VkY1lLK01vNFhv?=
+ =?utf-8?B?S2RpTVBZcjQxeU1aSE5jWVJnRDlFNFdlSlArczQ0T1JpRWlMUnFuaHpaZFBC?=
+ =?utf-8?B?cVNvVnZiMFhXbDNtcEozK3ROSFZicmo0bjdhUWZpTmZ4eHp2L0FRWXNtWlZU?=
+ =?utf-8?B?ZUxDdXBkRHlTcVR4WmZicHJTT3hUeGdBWmpOQ0FSaXQreW1NYzBCSjgrYXlo?=
+ =?utf-8?B?dXAyek1rM2FhZU5xTDFPaERPVjZjeXpmR2tWT042L2ttbXEwbFh5bk55cGk1?=
+ =?utf-8?B?WTAxLzBuQmZpVFlsclZQUlBWazA5Mkw0K2lwTmh4eXJQT2pUaUVjTW1lMWNx?=
+ =?utf-8?B?cVlIbHlqSXJjRW9KN2dHYnZ5ZzU1TVFSb0NmemNHNWJmM3VUQTdaS1hnQTNR?=
+ =?utf-8?B?NG9RSm1XZGR6N0JIZ1N2RDRzZE5YQlZVelkvUW1FNWkyNWN0cXJuOTFqQ3li?=
+ =?utf-8?B?ZitTYWUxaFNYQjJRandwQUQvalhZeFREQWVZa21DVHpzRWc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 12:53:00.9337
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: af870ffc-6b7b-49ed-2257-08dd09624412
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF00009524.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8P195MB1846
 
-On m68k, where the minimum alignment of unsigned long is 2 bytes:
 
-    Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
-    CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
-    Stack from 0102fe5c:
-	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
-	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
-	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
-	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
-	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
-	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
-    Call Trace: [<00425e78>] dump_stack+0xc/0x10
-     [<0041eb74>] panic+0xd8/0x26c
-     [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
-     [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
-     [<0041e5f0>] memset+0x0/0x8c
-     [<005f67c0>] io_uring_init+0x54/0xd2
 
-The minimal alignment of an integral type may differ from its size,
-hence is not safe to assume that an arbitrary freeptr_t (which is
-basically an unsigned long) is always aligned to 4 or 8 bytes.
+Am 13.11.24 um 12:09 schrieb MD Danish Anwar:
+> ICSSG has 7 available clocks per instance. Add all the cloks to ICSSG
+> nodes. ICSSG currently uses ICSSG_ICLK (clk id 20) which operates at
+> 250MHz. Switch ICSSG clock to ICSSG_CORE clock (clk id 0) which operates at
+> 333MHz.
+> 
+> ICSSG_CORE clock will help get the most out of ICSSG as more cycles are
+> needed to fully support all ICSSG features.
+> 
+> This commit also changes assigned-clock-parents of coreclk-mux to
+> ICSSG_CORE clock from ICSSG_ICLK.
+> 
+> Performance update in dual mac mode
+>    With ICSSG_CORE Clk @ 333MHz
+>      Tx throughput - 934 Mbps
+>      Rx throughput - 914 Mbps,
+> 
+>    With ICSSG_ICLK clk @ 250MHz,
+>      Tx throughput - 920 Mbps
+>      Rx throughput - 706 Mbps
 
-As nothing seems to require the additional alignment, it is safe to fix
-this by relaxing the check to the actual minimum alignment of freeptr_t.
+I can see similar improvements. Thank you.
 
-Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
----
- mm/slab_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 893d320599151845..f2f201d865c108bd 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -230,7 +230,7 @@ static struct kmem_cache *create_cache(const char *name,
- 	if (args->use_freeptr_offset &&
- 	    (args->freeptr_offset >= object_size ||
- 	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
--	     !IS_ALIGNED(args->freeptr_offset, sizeof(freeptr_t))))
-+	     !IS_ALIGNED(args->freeptr_offset, __alignof(freeptr_t))))
- 		goto out;
- 
- 	err = -ENOMEM;
--- 
-2.34.1
+Tested on a phyBOARD-Electra-AM64x board,
 
+Tested-by: Wadim Egorov <w.egorov@phytec.de>
 
