@@ -1,113 +1,259 @@
-Return-Path: <linux-kernel+bounces-415464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065B69D369A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:15:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A92F9D36BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C051E285E01
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F68C1F25025
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE3418E34A;
-	Wed, 20 Nov 2024 09:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BF619F487;
+	Wed, 20 Nov 2024 09:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrwkreO2"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E6lyLOLP"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A8019B586
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE2319D08A;
+	Wed, 20 Nov 2024 09:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094113; cv=none; b=p8sAzS3Sl7hx4eRCv1NLl4HhQRDlGxTr8EHWR0DlJ6jXjRmXABa3eJEEUjTh+4N/pfq+GVY3BpxIMoGALKS1QCbBIgjDCbufezYYPgyRaBEE1T3/uIV4xR85xgrWXEFk1vQto5mF4MhlfLNTmNLN4+3qwq7Gwul2JbG0nymERxU=
+	t=1732094176; cv=none; b=gba2tw9mvA1bg+aliRU9pOQAHWKs+iLS6Mp3l4f0mry/lRFaNHVN13mlLRV/7Dr+lAGxMdwjr0C73E4Rfy1DVyF2WCxiUzC92sZzi/LtFqOHWTW4cXYAbIck+RoE29vE8LDqysVrID1sDwlz18iKx/WOaiqeCH7bqPlk368XVcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094113; c=relaxed/simple;
-	bh=2hdAbT7Sq9ipOSToiegjJMfm1hDkH2O1SCc4PKB5D7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nERBZXihmlksiaT0ljFv0jXseRKKpZge7YDPo5eaRkVXwFiy0UYNnb7bN/2uq2cAfE6KbULljNaJzihSPzy8fmVFp5vUDc2i/RoXoA3X+nFH/A0dJcvQT8BP6BpyEaPNg8sO5oaSZ03RX7dSxY2JTfnB+GHOHbcZgX5Kuq3R6BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BrwkreO2; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5111747cso51736381fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:15:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732094110; x=1732698910; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
-        b=BrwkreO2me6Kg0w0t9CBycLmcioKk5bJoDqEjtHnPXP5m3txQarl9UjkCdEWDI3hy2
-         muAk8GTFqdHwSK0SFbFIe9rcE8D3VAaFn4n8TTD80qOx5KJHtLIQrn2UVVusf7PIhYmu
-         /tuYHNWUTtxVhWhPT9M/O60UAy7/BA9Sw1xxh3Jm1tmziOZjQ+NBoSUlRDNirD5SCn4o
-         aKKNZ8kfQr1j94Jdh3Fb/BuJ3IHpeQPJ7+9eQ+2EYre2H1A/bR7H2yYGLfsgsupbBgAG
-         CgL80q4u/pskeme61HFeYE3YBvzHxD6G19+kj3r7v1uY5ZE12OhQKmIjkbpis8rBpW07
-         xSmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732094110; x=1732698910;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZqPJTooMuIvfQxCxUlIoLxMsIJNKGcrHg/Zv8d6/H4=;
-        b=YlgZjePKsGlT+dh/UU5wciAwT6Je+utRTEo4MOZd9+Hm4Zx23H0Gpl6YKkOoo/Wlnx
-         17TwxIgQx97E59EqD2JeWCtimvvIYKnSJhXFW/Q2fbFgTyHr1hq3byghwyXRwm4LfGkn
-         0ich5Tp8yEG16042BFnRFxGaOmgxV8KLPMoXO0y13MgwfnifK72YdFm96vge2axBjhaL
-         WyvXDI4ubYYjotM2ZG+kgCsAtjB7M6rxrhUCHAVJvIkIONoT45WIVaVS8yvflF+ebmaE
-         prXvQP+/YDXQEKlcNXA4wfqvA2oT9OFJqVzCsTkSnZ++S39sGvdxvVprr3r65KCs3saN
-         v4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCXjaRDV4TQhxVAsjReOZjjnfxw9u3mrTwno5wQxZoGO99TRVGG/8QX6toFJRKl2wNFaBqJOGx6k4qeDazA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVhGW1TRu2co250+euFOuvBx97xkZlpwuN8xMNB+a9UhI3GXRu
-	vXcRJ+YsimvbEqRPJH7ojy2UqkEFLIkoHC0NNP7TE7Gm6pLyikBc7QpZ/kKAa+zdNxxRSDyax7b
-	H
-X-Google-Smtp-Source: AGHT+IFpsEvlnavPKpISmZgS8ov+/Rflr4MbgvHBN0Ln88a6ToQBQhFBJg6MAGm+8dhJ0Y0wJj72pQ==
-X-Received: by 2002:a2e:be2b:0:b0:2ff:4ce0:d268 with SMTP id 38308e7fff4ca-2ff8db6039bmr11228371fa.2.1732094109757;
-        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm38337075e9.0.2024.11.20.01.15.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 01:15:09 -0800 (PST)
-Date: Wed, 20 Nov 2024 12:15:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH next] io_uring/region: return negative -E2BIG in
- io_create_region()
-Message-ID: <d8ea3bef-74d8-4f77-8223-6d36464dd4dc@stanley.mountain>
+	s=arc-20240116; t=1732094176; c=relaxed/simple;
+	bh=tFZY332cBUMh7fMCUSFSQZwUxpeAQOa1rtG+vIH+/Uw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gFYeuu9g7mnyJnlPchTMNFjul42/9at7+3FBxEZzt9zYOHEiuzh9d69ZfReP2pI6j0W/YyPN5ap4jVdfZ6nn9Giur9YaAZ8l5AxoBxgXusTuYl2aQsiE0ZoKscQCDnE4AJcX0ZU9RVbQxq9fZUJ+rla2RYGW03bP5qd0YwgpZYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E6lyLOLP; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FL4b005930;
+	Wed, 20 Nov 2024 09:16:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ofcJUspX3TFzq31Ta9ryEkXxgQIOCt12DilG77JumwE=; b=E6lyLOLPJGTTTntv
+	UX7G6ZRAayadJPI5px2I5pra2DnlaU603fAg6mOdUPFxzG5HS/XH1/qiyZJ0U2Af
+	3K/rZzVi8Ri11j95QFEmDWAjQcI4WbnIDeQbS0LoCGRdqIJ1+nZ983C4Oiwh+Rqi
+	A9iP6h4I8Jiaf1YEqGZZ27Sp+nH0qqmlVyQP9dOnZ5LmxGdX9D7xEQrBOWtNgULs
+	vPP3P7dSTWoU27lp00b1S3f03HR7NVJ4xzF57zbUrB45L/v2Hhk8MWdCM8sob4UY
+	Pdmq80SkkMJ4fnNG98sDtUA+69JW4GMEfa49pr8QjxX9OKC0zFAaPdAu+6T0H4pX
+	divxHw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4317t20rwr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 09:16:05 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AK9G3kt011916
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 09:16:03 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 20 Nov 2024 01:15:58 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_mdalam@quicinc.com>
+Subject: [PATCH v14 7/8] arm64: dts: qcom: ipq9574: Add SPI nand support
+Date: Wed, 20 Nov 2024 14:45:05 +0530
+Message-ID: <20241120091507.1404368-8-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241120091507.1404368-1-quic_mdalam@quicinc.com>
+References: <20241120091507.1404368-1-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: luO1zP2nFw501TLYn26luJDqAu9TSOut
+X-Proofpoint-ORIG-GUID: luO1zP2nFw501TLYn26luJDqAu9TSOut
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
+ mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200064
 
-This code accidentally returns positivie E2BIG instead of negative
--E2BIG.  The callers treat negatives and positives the same so this
-doesn't affect the kernel.  The error code is returned to userspace via
-the system call.
+Add SPI NAND support for ipq9574 SoC.
 
-Fixes: dfbbfbf19187 ("io_uring: introduce concept of memory regions")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
 ---
- io_uring/memmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/memmap.c b/io_uring/memmap.c
-index 6e6ee79ba94f..3d71756bc598 100644
---- a/io_uring/memmap.c
-+++ b/io_uring/memmap.c
-@@ -229,7 +229,7 @@ int io_create_region(struct io_ring_ctx *ctx, struct io_mapped_region *mr,
- 	if (!reg->size || reg->mmap_offset || reg->id)
- 		return -EINVAL;
- 	if ((reg->size >> PAGE_SHIFT) > INT_MAX)
--		return E2BIG;
-+		return -E2BIG;
- 	if ((reg->user_addr | reg->size) & ~PAGE_MASK)
- 		return -EINVAL;
- 	if (check_add_overflow(reg->user_addr, reg->size, &end))
+Change in [v14]
+
+* No change
+
+Change in [v13]
+
+* No change
+
+Change in [v12]
+
+* No change
+
+Change in [v11]
+
+* No change
+
+Change in [v10]
+
+* No change 
+
+Change in [v9]
+
+* No change
+
+Change in [v8]
+
+* No change
+
+Change in [v7]
+
+* No change
+
+Change in [v6]
+
+* No change
+
+Change in [v5]
+
+* No change
+
+Change in [v4]
+
+* No change
+
+Change in [v3]
+
+* Updated gpio number as per pin control driver
+
+* Fixed alignment issue
+
+Change in [v2]
+
+* Added initial enablement for spi-nand 
+
+Change in [v1]
+
+* Posted as RFC patch for design review
+
+ .../boot/dts/qcom/ipq9574-rdp-common.dtsi     | 43 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 27 ++++++++++++
+ 2 files changed, 70 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+index 91e104b0f865..6429a6b3b903 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
+@@ -139,6 +139,49 @@ gpio_leds_default: gpio-leds-default-state {
+ 		drive-strength = <8>;
+ 		bias-pull-up;
+ 	};
++
++	qpic_snand_default_state: qpic-snand-default-state {
++		clock-pins {
++			pins = "gpio5";
++			function = "qspi_clk";
++			drive-strength = <8>;
++			bias-disable;
++		};
++
++		cs-pins {
++			pins = "gpio4";
++			function = "qspi_cs";
++			drive-strength = <8>;
++			bias-disable;
++		};
++
++		data-pins {
++			pins = "gpio0", "gpio1", "gpio2", "gpio3";
++			function = "qspi_data";
++			drive-strength = <8>;
++			bias-disable;
++		};
++	};
++};
++
++&qpic_bam {
++	status = "okay";
++};
++
++&qpic_nand {
++	pinctrl-0 = <&qpic_snand_default_state>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	flash@0 {
++		compatible = "spi-nand";
++		reg = <0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		nand-ecc-engine = <&qpic_nand>;
++		nand-ecc-strength = <4>;
++		nand-ecc-step-size = <512>;
++	};
+ };
+ 
+ &usb_0_dwc3 {
+diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+index d1fd35ebc4a2..45fb26bc9480 100644
+--- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
++++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+@@ -330,6 +330,33 @@ tcsr: syscon@1937000 {
+ 			reg = <0x01937000 0x21000>;
+ 		};
+ 
++		qpic_bam: dma-controller@7984000 {
++			compatible = "qcom,bam-v1.7.0";
++			reg = <0x7984000 0x1c000>;
++			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_QPIC_AHB_CLK>;
++			clock-names = "bam_clk";
++			#dma-cells = <1>;
++			qcom,ee = <0>;
++			status = "disabled";
++		};
++
++		qpic_nand: spi@79b0000 {
++			compatible = "qcom,ipq9574-snand";
++			reg = <0x79b0000 0x10000>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&gcc GCC_QPIC_CLK>,
++				 <&gcc GCC_QPIC_AHB_CLK>,
++				 <&gcc GCC_QPIC_IO_MACRO_CLK>;
++			clock-names = "core", "aon", "iom";
++			dmas = <&qpic_bam 0>,
++			       <&qpic_bam 1>,
++			       <&qpic_bam 2>;
++			dma-names = "tx", "rx", "cmd";
++			status = "disabled";
++		};
++
+ 		sdhc_1: mmc@7804000 {
+ 			compatible = "qcom,ipq9574-sdhci", "qcom,sdhci-msm-v5";
+ 			reg = <0x07804000 0x1000>,
 -- 
-2.45.2
+2.34.1
 
 
