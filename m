@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-415371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8489D3520
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469F39D351E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32370B23F88
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7D651F2172C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C8918660C;
-	Wed, 20 Nov 2024 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1IK6fsg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC01171E7C;
+	Wed, 20 Nov 2024 08:15:02 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7AB171650
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD90E16DC3C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732090504; cv=none; b=XoDsRg4eMaw6QBnYt5t5hMQUTCjeDk7vMpAl8uPntoMnfoUUHSIhkOUksKivUsa9qksFEnweuaXVRaJyRKfT9DmTlsYghl7WDxl+jZe8SokB88OvfgbWVHznPByYglfH2JBw4dtN/J+7KkPm0CTG25VpmACubCRP26FlYTUGti4=
+	t=1732090502; cv=none; b=j4nWjTkFeIQd1DhVyk3kI40Kjnss9TBUGqOOd1zdYtfapTxkeeTcy28dXlk+3OkjsfFXmi3YByDh+h704tgbZK0nOrbIrO5UssW3ALk8QhM1PFitfy7sRlPC494TlTsc8G7IyC2JWYvxt9zxiu+JLIPfAUDHCsuXYcaRhh2IJ60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732090504; c=relaxed/simple;
-	bh=+fkx++0GLLxsDzLbfCega13ttZUztcy2M1kwpi034Q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gzj7J22+C/e9vpNwRyKwNBMFMmdKAauHA/ipdRZmT/9VZTFqd+3CW9Ihro/bsVGwSXKPGEdKglHayI9yy0XrjA96G2kuFzab4AveXU7urtVxFLIEh2Nh4J0gDg1vdvrdOZZ2OAeGbgzaZq63LGjQomKhOI7bxV0O8tKyoZI2ouU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1IK6fsg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732090501;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Gh6m/YaiQcWez3DW3gpI7yQKGyz075BISLGCEYs6JIY=;
-	b=N1IK6fsgV01eGt3jQrxduQ45v6CpPHnZhYdFWNL/YvE5P9ButOhzuvP1HoB8m/oXd4Hglo
-	1aG/VKDQOiwbUCFGTq0NuIBhL6iKfL+GfALMrYj12hfb6jG8orqD4/1ec2h65nt7JGssLv
-	OSwKw6lsgELsHiT5RKLorLOK2iQYaH4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-pqFBDy8RM8a5-PwqnLhryw-1; Wed,
- 20 Nov 2024 03:14:59 -0500
-X-MC-Unique: pqFBDy8RM8a5-PwqnLhryw-1
-X-Mimecast-MFC-AGG-ID: pqFBDy8RM8a5-PwqnLhryw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D3F9195608B;
-	Wed, 20 Nov 2024 08:14:57 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9E9B19560A3;
-	Wed, 20 Nov 2024 08:14:54 +0000 (UTC)
-Date: Wed, 20 Nov 2024 16:14:50 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 02/11] fs/proc/vmcore: replace vmcoredd_mutex by
- vmcore_mutex
-Message-ID: <Zz2aekArHaIT4JU5@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-3-david@redhat.com>
- <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
- <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
+	s=arc-20240116; t=1732090502; c=relaxed/simple;
+	bh=btndiWnlPwIXcPgtAdaPTZAhDf1YNroazmmYh4c1S5w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=k04TniCzuBtbmOScrqhbHJ+5JgmKVJ+3MjqN4NusdAH+4OlnafJDXQ5FHcc/oKbrDgtRU3s2GZ4cqEu/6ofky4QPj6vSvh7igK6z104w8l8NYiDHcmDbTTxubiPXcmPEqehOxTNcra3TzhtZ1H5FQncOpGrOwa5UjtyxcqkBuaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so9467955ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:15:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732090500; x=1732695300;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ad40FtYveJr9oIne7xznzh9EtdwiCChDJDJKXvOpnkc=;
+        b=mMrwGuBv/tmtK/FDKlMlkotPRX3i58VbheBy5PN4a9fKsaASqGs4h1W8SuwWLxPf36
+         Tk8f9YUzHAjQvgLKsxUVYaP97adfyv7ep++T6w4lck4/wn789GXcOMD69pj+w0/9P5Vq
+         kz1pw/CW8xsSBcOj3eRdPl/5VuSYsrDGGEY3MyPhQkeZMVrL2n2Uf7vly8qucV7oT5YO
+         CHiQJidj4kqo0hap94BSEdE9lW2CngyrVbkZmdn1S+m9agky65GsbnqvIf9vu5ouTM5Z
+         hDX954by5ou2RN5ZrODA1sPcI/JsviWhP8IAleovTjwfxCzvd4RsmEyU2f6DCHcI4BX/
+         GO9Q==
+X-Gm-Message-State: AOJu0YwrKi1HDnXeW9OHdcv7FnMbqlRvTVkl5AMyDIcR90nUU0lqOUw3
+	P7fVl6yZo5aTrtF+pC/3wACdXno4quevSTMmxFl1rCL5oJw8GyEtdPVo2Q01UjiWtsOTFFrurmG
+	Xl431HDK6hEj+cj9hyXzZ120zKHAdHAq/nyhG7Bh/mYtf41qwz1bZwiY=
+X-Google-Smtp-Source: AGHT+IGrbe7kdMrnkmLBKWlWBzdDZjzIVQFxt0fLaMZWOjew7ApHcypJWbt3+v4kgy1s9SJGXy3Adgb+ANm1aWv88+aT5srV43qF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Received: by 2002:a92:cdaa:0:b0:3a6:ac4e:2659 with SMTP id
+ e9e14a558f8ab-3a78642f46cmr21432905ab.6.1732090499912; Wed, 20 Nov 2024
+ 00:14:59 -0800 (PST)
+Date: Wed, 20 Nov 2024 00:14:59 -0800
+In-Reply-To: <67253f50.050a0220.35b515.0179.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673d9a83.050a0220.363a1b.0004.GAE@google.com>
+Subject: Re: [syzbot] Re: kernel BUG in ocfs2_reserve_suballoc_bits()
+From: syzbot <syzbot+fd05de09d1267725aa95@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/15/24 at 11:04am, David Hildenbrand wrote:
-> On 15.11.24 10:32, Baoquan He wrote:
-> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-> > > Let's use our new mutex instead.
-> > 
-> > Is there reason vmcoredd_mutex need be replaced and integrated with the
-> > vmcore_mutex? Is it the reason the concurrent opening of vmcore could
-> > happen with the old vmcoredd_mutex?
-> 
-> Yes, see the next patch in this series. But I consider this valuable on its
-> own: there is no need to have two mutexes.
-> 
-> I can make that clearer in the patch description.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-That would be great and more helpful. Because I didn't find the reason
-about the lock integration and avoid concurrent opening of vmcore in
-cover-letter and logs of the first few patches, I thought there have
-been potential problems and the first few patches are used to fix them.
+***
 
+Subject: Re: kernel BUG in ocfs2_reserve_suballoc_bits()
+Author: dmantipov@yandex.ru
+
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git bf9aa14fc523d2763fc9a10672a709224e8fcaf4
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 60df52e4c1f8..d65326d36b1c 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2440,6 +2440,13 @@ int ocfs2_inode_lock_full_nested(struct inode *inode,
+ 
+ 	status = 0;
+ 	acquired = 0;
++
++	/* Do not trust a filesystem which is known for containing errors. */
++	if (ocfs2_has_errors(osb)) {
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	/* We'll allow faking a readonly metadata lock for
+ 	 * rodevices. */
+ 	if (ocfs2_is_hard_readonly(osb)) {
+diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
+index 51c52768132d..a48f79ca750a 100644
+--- a/fs/ocfs2/ocfs2.h
++++ b/fs/ocfs2/ocfs2.h
+@@ -665,6 +665,17 @@ static inline int ocfs2_is_soft_readonly(struct ocfs2_super *osb)
+ 	return ret;
+ }
+ 
++static inline int ocfs2_has_errors(struct ocfs2_super *osb)
++{
++	int ret;
++
++	spin_lock(&osb->osb_lock);
++	ret = osb->osb_flags & OCFS2_OSB_ERROR_FS;
++	spin_unlock(&osb->osb_lock);
++
++	return ret;
++}
++
+ static inline int ocfs2_clusterinfo_valid(struct ocfs2_super *osb)
+ {
+ 	return (osb->s_feature_incompat &
 
