@@ -1,115 +1,74 @@
-Return-Path: <linux-kernel+bounces-415459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4005E9D3687
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:12:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6309E9D3688
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05629285DB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:12:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F63285F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBE81991BE;
-	Wed, 20 Nov 2024 09:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5C219C561;
+	Wed, 20 Nov 2024 09:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SX6OTBOU"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unsejYua"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E2E149C42;
-	Wed, 20 Nov 2024 09:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641E3149C42;
+	Wed, 20 Nov 2024 09:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093950; cv=none; b=gHkbsk9NCMeZ1KKcQ80/NRupjJUSpGC6QaDLImk5VtmHBeARUoT4xjMOwO5iVthqh7x8zjxA8X97wSFhcc6JEZRja/h+BNPNAaKB0+zxAV2HL6C6Y/PCUR/QvVxeeKMyIE+cnAnnues5rzAiXR9DQVqEP6jLL8V9l1+qv+dFOxw=
+	t=1732093963; cv=none; b=HYHI5kO5UOMPeHXpwoT5FC4SfMgxt0ce+MZlmbF+hrrlaE2kzjvkjP8f6hlWSqCYp1fpPVX60Pq09YX5BQOmGmZeV8/7p0FXJVBmZRzvDmMdXjYlIkj9xXY8CnZlZ4cbrRNglyQntTh+Hg626ZrUD7dWE1Cf2skhqipKQRcSfbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093950; c=relaxed/simple;
-	bh=+h6qn39iKYBYkjnAfwM2WCW/3rG7h0rqZ0p706MqXQ4=;
+	s=arc-20240116; t=1732093963; c=relaxed/simple;
+	bh=qwCr0Gre7wQLjjxcjoyM/08A5mIW1ALVpH56QzeTtHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hm1ytdShERBFcrRONzxE7HrbMLF6BXN+uwym7nj9fvNUUCoB5HCGNuTqK0uN/wYCAD5QY6+XoBX/f9Oz84khwqDKM6+DC1a2TSA7gNEPnce6gf4v6pypWnfzj0hpHXTz773ym+vMl6cFQIvDy1bZ9mYAHIPB+3pbf36AXCN4fVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SX6OTBOU; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wk2X3+PQpTfNDXktHKx5N1reY89npk+liD3n+j6xvIo=; b=SX6OTBOUcOh239e6zpRF5e6Hjm
-	aaczC8p43ZAau+BKYgPoqAbCP9M5KkaIAj+d6y/X1UKWi4VYa+a1sczzexsjpluoqdbeEx1UteHqZ
-	cJi5wTJExX6f3YSWkdJVE8MzwNXOH1kerEpzyhMvN1aCWYHLt6SlFNSY5k65FnfakSBiP8nV46rfo
-	1iuXpxL+K2dAoLL4R/W8+sGyL1RxaIZty9JUI0I5CyPHB96tTJjhT0RHK0egn83d7WgRabpZTntnP
-	tWvxSadGig7B4I34GoLq1EGGmupmazf6Nvko+pS2UyN9k7NiBF+SKXO+GjXObiJfxVXd0o/lDIbun
-	iOofmCpw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDgkx-00000000SXp-3ptr;
-	Wed, 20 Nov 2024 09:12:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8CA523006AB; Wed, 20 Nov 2024 10:12:15 +0100 (CET)
-Date: Wed, 20 Nov 2024 10:12:15 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ran Xiaokai <ranxiaokai627@163.com>
-Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org, mingo@redhat.com,
-	pshelar@ovn.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
-	ran.xiaokai@zte.com.cn, linux-perf-users@vger.kernel.org,
-	netdev@vger.kernel.org, dev@openvswitch.org
-Subject: Re: [PATCH 2/4] perf/core: convert call_rcu(free_ctx) to kfree_rcu()
-Message-ID: <20241120091215.GK39245@noisy.programming.kicks-ass.net>
-References: <20241120064716.3361211-1-ranxiaokai627@163.com>
- <20241120064716.3361211-3-ranxiaokai627@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=atA6dVQ54B2w1377XLP4R4ZFR5v+qiYf78jNPHzA4ahWGv2FBy9skMFtpl5RJB6/w/3dROcSvadsah9LAvL2WHhf0PVqZa/+cjOO7MVo3LzGWu8oXooXcTvLk5xmeOXfRekAuo2JChNIeHvluxcRV6PeXIHXnuDOg8/PvmSLOj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unsejYua; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDDEEC4CECD;
+	Wed, 20 Nov 2024 09:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732093962;
+	bh=qwCr0Gre7wQLjjxcjoyM/08A5mIW1ALVpH56QzeTtHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=unsejYuao4mN67vnfrpLIXVoLDfptJrAD9vfM1nnPJY4XXdqJqWzWLAdP4eZJyUpS
+	 VhJCmyP2n2WR/zdWk9sUmHeyLomNMjD4exC5V8aPNJ3SI+aFjyTFhZinqm21JbW1z3
+	 T0QJUO5RnuO3ipk4fx/HerlkLxMQ/X46iWFqI/uwTEzSeNU2ItMFheVgxKhsmVRoe0
+	 fBZ5lJ8o3nu9KXRA8eMRN0og/CWGCKWi8qAFsqETxJ0i1Kn6dNBXZZbp3SSAghgrqE
+	 7+L3U519yAjngOfKXpXns2wCbLS32qXPxIItsqauflwX4X7PrjoHul5un4N+AwNa/2
+	 SUeot7qxgY8rg==
+Date: Wed, 20 Nov 2024 10:12:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
+	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, memxor@gmail.com, snorcht@gmail.com, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH bpf-next v4 0/5] bpf: Add open-coded style process file
+ iterator and bpf_fget_task() kfunc
+Message-ID: <20241120-campieren-thermal-a2587b7b01f5@brauner>
+References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB5080BCAC62436057A03B334499202@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120064716.3361211-3-ranxiaokai627@163.com>
+In-Reply-To: <AM6PR03MB5080BCAC62436057A03B334499202@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On Wed, Nov 20, 2024 at 06:47:14AM +0000, Ran Xiaokai wrote:
-> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+On Tue, Nov 19, 2024 at 06:40:12PM +0000, Juntong Deng wrote:
+> I noticed that the path_d_path_kfunc_non_lsm test case failed in BPF CI,
+> I will fix it in the next version.
 > 
-> The rcu callback free_ctx() simply calls kfree().
-> It's better to directly call kfree_rcu().
+> But before that, I would like to get some feedback. :)
 
-Why is it better? 
-
-> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> ---
->  kernel/events/core.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 065f9188b44a..7f4cc9c41bbe 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -1210,14 +1210,6 @@ static void free_task_ctx_data(struct pmu *pmu, void *task_ctx_data)
->  		kmem_cache_free(pmu->task_ctx_cache, task_ctx_data);
->  }
->  
-> -static void free_ctx(struct rcu_head *head)
-> -{
-> -	struct perf_event_context *ctx;
-> -
-> -	ctx = container_of(head, struct perf_event_context, rcu_head);
-> -	kfree(ctx);
-> -}
-> -
->  static void put_ctx(struct perf_event_context *ctx)
->  {
->  	if (refcount_dec_and_test(&ctx->refcount)) {
-> @@ -1225,7 +1217,7 @@ static void put_ctx(struct perf_event_context *ctx)
->  			put_ctx(ctx->parent_ctx);
->  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
->  			put_task_struct(ctx->task);
-> -		call_rcu(&ctx->rcu_head, free_ctx);
-> +		kfree_rcu(ctx, rcu_head);
->  	}
->  }
->  
-> -- 
-> 2.17.1
-> 
-> 
+Please resend once -rc1 is out and rebased to upstream where - as you
+noticed - all fdget_rcu() variants are gone.
 
