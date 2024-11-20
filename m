@@ -1,90 +1,92 @@
-Return-Path: <linux-kernel+bounces-415781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959EF9D3C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:10:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF0A9D3C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31AF7B25F59
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9B5287CDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526751AA1C3;
-	Wed, 20 Nov 2024 13:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219EA1AAE0C;
+	Wed, 20 Nov 2024 13:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSLM67bI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g5Q+/BUq"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1421A0BE1;
-	Wed, 20 Nov 2024 13:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87511AAE00
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732107904; cv=none; b=S3mKEdLOvvIueNHnOgtbJDjk9XNUhEzMGY3zEa3J6wbm3ozKeixiitnZUcBGV6t7+H8LGHy8krN4y7NF0YQnPFw9q3+pVd1eU+1l5h3aHIGhK5uo4OGgiyUVme4ZUIfVt7LN/2UM3Y7Nx0p4PZCbMPNaNsWyiihyWiXIEThDJRo=
+	t=1732107933; cv=none; b=tf8+E00//uTZS0ES/B/EDo1Xq6/pRFJgq2q6wZmi17zlWauC4siUSibjv2C8RihOzNWFAcmgDrk7cRiNrRmtEYMzCDD5Keo9EzU9O2C3KDpSkOmecJwNYZ9hFPTJBE/78/Kl0MgfvFq+lcgjevNQAjfD5WWDTBpz4RZYRO1DOUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732107904; c=relaxed/simple;
-	bh=9m6mTSvMbY55RNATfYzda/Ir2l7gqVQoQfp6l6VtBgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ptVR7E55DpPx4hgBH/5uwNyg0WWmn/HGiYKAZkIFOi90dikqMjENav4w3qCk12YlFwuShlIGjyiSZX9pj6bvn75pR05gd03wJqlQiY6XPHQ7zqWwfWpCzc9ZsT5YchxSprVHX+FffvhcPw+ZIYLY46bA9bYdjO/QSbPThh11cik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSLM67bI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F89EC4AF09;
-	Wed, 20 Nov 2024 13:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732107904;
-	bh=9m6mTSvMbY55RNATfYzda/Ir2l7gqVQoQfp6l6VtBgM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dSLM67bIIFYMoUiRgVrE6M1rVc8WY+NP8Zairo5Hc0OeGzwwoDZm/MiO7WA2gzU0h
-	 evp/q/ja+Zzf2mv2KQf2j2k/wQ6XaljvA8rz8LQ9bsgYW8CM5S/dDODi8RKA1u8Ql5
-	 de1nfLnrYFyrQRxv082Kc4i0s261G/ZHzZ+ntd8NRPmAjnRIQjEZOOjTebao2mht5X
-	 jg+oI/VpAEihcIulFbJnjmHigqwKT/UIwvBpPa5810yBrm/w43HLWN+D6dbPFneIH0
-	 eDzrWGt3PvaZx+rE7tBFiLdv767ZU9uzp8MgQYDLe0DbreKd21wczNkYFOM0I1tUmi
-	 PZLuLnZoP6MpQ==
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e3889bc7ec6so3989359276.1;
-        Wed, 20 Nov 2024 05:05:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUcGyrH7WAU4LrY9y5QNuXVThk0wrlXykFlqP+H4Ygkkfwmz+mxgAY3e/xE/3IxHdC3Su1rhvNiZy/yEGJ@vger.kernel.org, AJvYcCUYU/QtS4gbFr19I2EJdJd7IBMLAJZVIC8ZiWdRop2KH6IkWHKmFDpdd4QbXY6eh6Qlv+xPlGcWFjtW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEBremTl98a5OYcjKQA/rIE8ornu44gz7/7reItLdj9BKR2HTN
-	OgDDumvLKwtSEx2TdxaCYBnD5hc3yW65lhHfq8iFwUEqFC5uV9s3tJ7Wxj9N4+V4EDmx20O937t
-	alv9XUANWgLpL6IKPSx0Jp4Tiuw==
-X-Google-Smtp-Source: AGHT+IFcwkV6ydMgxFk41YB5EkLftzzYmqmDGjwice/c/i3Y5Agbyng39V9RyUpcsU7ffDvAxoG+cGIjjidoFoDdIR0=
-X-Received: by 2002:a05:690c:9987:b0:6e5:bf26:578 with SMTP id
- 00721157ae682-6eebd121400mr30868957b3.17.1732107903371; Wed, 20 Nov 2024
- 05:05:03 -0800 (PST)
+	s=arc-20240116; t=1732107933; c=relaxed/simple;
+	bh=KBffu/dejV66mtn99IVVjRLvR+lCkIRbYLQn9mLvpmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTbC3a/A+7mH7aEJ/SIp9bflbC7jbEazOu3rD5mONazL4ZFx+oZilA18O8WnbTTJz9e1PiJkCdrRrxpSOg6hn4DhLY8rhfGhVJiugrRfNeX1joe7Vogq8dpMi0kCUd4TOOZcReGSBlm/Qx5kkc0N+gYDDbgJE04SV0SNEHCN/Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g5Q+/BUq; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6056ea19-acf9-4ba9-bb27-d18598d22a2e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732107924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CId5N/ufcuAL77pVCfhtuI+j2MsmhTA8i0CzPZcEl9o=;
+	b=g5Q+/BUqi3osUCk+yWj4lJwQkfEt8Kuu+TNBM/VOVKmxATfYCQV/z6jRKJ5ir5YAbs08Qm
+	P3IHaCYVnRmHqOpqLcoJ5qYI/q+Xhdn1vz1s+ob+dWUOOMMLeBIKRZAygXGMp0lyFnF5ks
+	q4Wbmj/tFC9SuSBY43WknoLrqO28rMc=
+Date: Wed, 20 Nov 2024 05:05:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115193409.3618257-1-robh@kernel.org> <Zz3SnIiW_iu10rrs@standask-GA-A55M-S2HP>
-In-Reply-To: <Zz3SnIiW_iu10rrs@standask-GA-A55M-S2HP>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 20 Nov 2024 07:04:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK7_T2TOgpk54Zn-h4DXQyD5ZzHAZKtULjQxiY_WyveXA@mail.gmail.com>
-Message-ID: <CAL_JsqK7_T2TOgpk54Zn-h4DXQyD5ZzHAZKtULjQxiY_WyveXA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: sprd: Remove unused and undocumented
- "constant_charge_voltage_max_microvolt" property
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: baolin.wang@linux.alibaba.com, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org, 
-	orsonzhai@gmail.com, zhang.lyra@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] ptp: ocp: Fix the wrong format specifier
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, jonathan.lemon@gmail.com
+Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241120062605.35739-1-zhangjiao2@cmss.chinamobile.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241120062605.35739-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 20, 2024 at 6:14=E2=80=AFAM Stanislav Jakubek
-<stano.jakubek@gmail.com> wrote:
->
-> Hi Rob,
->
-> constant-charge-voltage-max-microvolt is a valid property, which I assume
-> was the original intention here. I've already submitted a patch changing =
-this
-> to the documented property:
->
-> https://lore.kernel.org/lkml/aa557091d9494fdaa3eda75803f9ea97014c8832.173=
-0918663.git.stano.jakubek@gmail.com/
+On 19/11/2024 22:26, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> Use '%u' instead of '%d' for unsigned int.
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Ok, thanks. We should apply your patch instead.
+This is net-next material, but the merge window has started and
+therefore net-next is closed, please repost in 2 weeks.
 
-Rob
+> ---
+>   drivers/ptp/ptp_ocp.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index 5feecaadde8e..52e46fee8e5e 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -1455,7 +1455,7 @@ ptp_ocp_verify(struct ptp_clock_info *ptp_info, unsigned pin,
+>   		 * channels 1..4 are the frequency generators.
+>   		 */
+>   		if (chan)
+> -			snprintf(buf, sizeof(buf), "OUT: GEN%d", chan);
+> +			snprintf(buf, sizeof(buf), "OUT: GEN%u", chan);
+>   		else
+>   			snprintf(buf, sizeof(buf), "OUT: PHC");
+>   		break;
+
 
