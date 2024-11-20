@@ -1,135 +1,162 @@
-Return-Path: <linux-kernel+bounces-415481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3AA9D36E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:20:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8E9D36F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C831F26E8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:20:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80B66B2922C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA319F47E;
-	Wed, 20 Nov 2024 09:18:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A519F118
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E491A0AE1;
+	Wed, 20 Nov 2024 09:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="L1MODHOP"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275BE19D8A9;
+	Wed, 20 Nov 2024 09:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094304; cv=none; b=EmkNttjGA1PA6VzQS52AWjsPpIjqOULExtVHjBUkvXszBAjB+uLEKHhh7P4WzgKEOw9xhbAVXpQCzUs9SifyZKnCKrT31lOCtwULHPg43QqDDTy2ToXvga4f1lCePudyZMUWaYYuNHzIX+W/d0Jr4KiXSvfZ5utQLjU2E9qzu2k=
+	t=1732094331; cv=none; b=cGopDrPGhE0Fat+78gGA3BckgLpkl49QSePhzasi8l4Eq6cCG7fwxmxDDjv7wEne1dKXZGOoWE3OIX4IHq+SwRtKpvbVhD3CMmt1HZfBnFLvf97Qm0w+jghxD3nKnhnvixHs8CorE+FvflOjNXZD0yitpcJx8vLbcAGRJVtAq2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094304; c=relaxed/simple;
-	bh=6va+wkhwIco1QHZj1VVk17XoJmd99G2rmtvlnGTPN10=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gfIvHi/sjGnApkJ6N3+gQ2uzGXbceor6p2A90M5tTMxYUewWpMiWktKwj3bdTx6k4/KSmnBbtkpjrfuboyQHpTGfYrJymzqaWUYk09VmL+5kEF6XgKagpFeqdHRMwtflLyU8N7uCdVSqGr9mWfMP3DNhsxeDrO9DU9tsTwFUHwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a77de12c48so16837205ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:18:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732094302; x=1732699102;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jj/krNA+0xga5ye0XvZq56f6vcX0jsGHLzgJT6onnAE=;
-        b=At+PCh49pp5+v+dKas3C3x0yn/gZnV3QzDg1y8aaUNm/0ohSVygXT6r7GnQv5OMpcC
-         sOkLG3mQnqN3q7FvbWS62EvSz5wd6it5S+CzBAkigldeKB8h7tG74NzxrF9mK/PgrIHB
-         U6C7tPiaoi4tOfOMaIVbkVNQF+QMtGgLP9FtVDVyEgm62E9Ku+YspkDoxpviILsG+5gR
-         XQHdtKrfqtm4EJkNcF3ZtHHVQdDOVOZpVRW+4xeKpYqM0MBwCzSbnzlY17aQJ+amV/4k
-         EW9MpQ4ncGhZqcTzt4TB97BEnR7yz2ZOucjemdabburV5eiGORK5FjoUaBz+mR7aTOTT
-         fVYw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3hfuzRjTNkWEJsB8aQqhoLWlRNmcdjUGSIOi6I5V82j3j7mmue0if0CvJx3UU+nuD0GO0qGAVLfgbvV4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzw4PzU1mVvka173Z27tJP3MVXkhPvby1mCAlifEDtWz/1MpGE
-	afCVRm9xoKy74yxc/M+/Rki5hkesUzQ7dMzCT7cq8E4rcWI6FZrneZbZTZuRsRqrVpzeI7sQs+c
-	6h5FEGnXbWdKeejWHhF/X9bEQzZBifavABsA6wVNlseFa9zxPZZtITZE=
-X-Google-Smtp-Source: AGHT+IFGhL+ZaHQjREBSS6Jq8cwAZgxvMuYLqCBTqKdlETCFNLJh9e6y7Os79E0cHEpNWDnujcHSwBSfpdhvKatD13T+9obGvNe1
+	s=arc-20240116; t=1732094331; c=relaxed/simple;
+	bh=+1lp7Gs+nbopp5+xlmTPAa3SjIQYCBnmzEDpeD//iTs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XeUnxl06YkmDLDOQ0E7bhkksew/aAjv8j+/KuuLDElfjHoVOFy/js8EBY+UqHzu+d9qI7CPoodDDRQqPpaxv0IXxTdqXG4Nh+eLgKMZ9fKU/4+9AqlrDm0HLtboJAnGojlWCpHAA2Ba9SZSymWx5V4GSqBi/gFHFuqeFA2AkRcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=L1MODHOP; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=X7NmX
+	eNMZrpE4xxuV4Osc9gaedHkw4Y2+Jp+z5tu668=; b=L1MODHOPY1MqT9rvyh4Wv
+	BAI/+jhog45+Y/5nDYf1/OH97QLECFoTQzhOLmsrS4RzEuUhm/orm8FIYVKgHF6p
+	MCXawG4VHnjB3aQWfWVEnBrt/RJQDBI3cTWdtbvZdTE1U5G/NB9Hp7ZrdzBpe0Xq
+	y2OjrVoOuc+IjU1lkQ8blY=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgCn275jqT1n6zt8EA--.52105S4;
+	Wed, 20 Nov 2024 17:18:35 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org,
+	kees@kernel.org,
+	linux-kernel@vger.kernel.org,
+	geert@linux-m68k.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 3/3] pinctrl: Fix a potential abuse of seq_printf() format string
+Date: Wed, 20 Nov 2024 17:18:25 +0800
+Message-Id: <24caaeb7ef27daf12e32cbb914858a029f0da117.1732093745.git.00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1789:b0:3a7:4826:b947 with SMTP id
- e9e14a558f8ab-3a78656fd09mr22144355ab.17.1732094302052; Wed, 20 Nov 2024
- 01:18:22 -0800 (PST)
-Date: Wed, 20 Nov 2024 01:18:22 -0800
-In-Reply-To: <00000000000052c1d00616feca15@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673da95e.050a0220.363a1b.0009.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] WARNING in hci_recv_frame
-From: syzbot <syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PCgvCgCn275jqT1n6zt8EA--.52105S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCr4rKr17AFW7Wr17urW5GFg_yoWrAw1UpF
+	W3GF1Yyr45Jw4DWry5AwsruFy3G3WIyrWjgw1Sg343ZF45Ar4kt3W3KFWxZFs09rWkJr13
+	Zr45XFyDWF18J3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEfHU7UUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRGdqmc9oqUyfQAGsb
 
-syzbot has found a reproducer for the following issue on:
+Using device name as format string of seq_printf() is prone to
+"Format string attack", opens possibility for exploitation.
+Seq_puts() is safer and more efficient.
 
-HEAD commit:    a5c93bfec0be Merge tag 'x86-mm-2024-11-18' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1378475f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9b5cb37a5a4eda10
-dashboard link: https://syzkaller.appspot.com/bug?extid=3e07a461b836821ff70e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12694ae8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/70daf24cbd5f/disk-a5c93bfe.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/43d73b55bde3/vmlinux-a5c93bfe.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1742639611a8/bzImage-a5c93bfe.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com
-
-Bluetooth: hci0: Opcode 0x0c03 failed: -112
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 11474 at kernel/workqueue.c:2257 __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
-Modules linked in:
-CPU: 1 UID: 0 PID: 11474 Comm: syz.3.1469 Not tainted 6.12.0-syzkaller-01518-ga5c93bfec0be #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:__queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
-Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 8f 55 98 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 70 79 36 00 85 db 75 60 e8 27 77 36 00 90 <0f> 0b 90 e9 f9 f7 ff ff e8 19 77 36 00 90 0f 0b 90 e9 a8 f7 ff ff
-RSP: 0018:ffffc9000b2b7bf8 EFLAGS: 00010093
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff815719b0
-RDX: ffff88802b422440 RSI: ffffffff815719b9 RDI: 0000000000000005
-RBP: ffff8880360a8a80 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000008 R14: ffff8880123d3000 R15: ffff8880123d3000
-FS:  00007f22bc8606c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f38a17baf98 CR3: 000000006114e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- hci_recv_frame+0x23f/0x7e0 net/bluetooth/hci_core.c:2946
- vhci_get_user drivers/bluetooth/hci_vhci.c:511 [inline]
- vhci_write+0x385/0x470 drivers/bluetooth/hci_vhci.c:607
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0x5ae/0x1150 fs/read_write.c:679
- ksys_write+0x12b/0x250 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f22bb97d23f
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 c9 8d 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 1c 8e 02 00 48
-RSP: 002b:00007f22bc860000 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f22bbb35f80 RCX: 00007f22bb97d23f
-RDX: 0000000000000007 RSI: 0000000020000000 RDI: 00000000000000ca
-RBP: 00007f22bb9f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f22bbb35f80 R15: 00007ffc1b246d58
- </TASK>
-
-
+Signed-off-by: David Wang <00107082@163.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    | 2 +-
+ drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 +-
+ drivers/pinctrl/pinctrl-mcp23s08.c          | 2 +-
+ drivers/pinctrl/pinctrl-stmfx.c             | 2 +-
+ drivers/pinctrl/pinctrl-sx150x.c            | 2 +-
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c     | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+index fd5ce52d05b1..c9a3d3aa8c10 100644
+--- a/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
++++ b/drivers/pinctrl/bcm/pinctrl-iproc-gpio.c
+@@ -309,7 +309,7 @@ static void iproc_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct iproc_gpio *chip = gpiochip_get_data(gc);
+ 
+-	seq_printf(p, dev_name(chip->dev));
++	seq_puts(p, dev_name(chip->dev));
+ }
+ 
+ static const struct irq_chip iproc_gpio_irq_chip = {
+diff --git a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+index 4c4ada06423d..335744ac8310 100644
+--- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
++++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
+@@ -734,7 +734,7 @@ static void armada_37xx_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+ 	struct armada_37xx_pinctrl *info = gpiochip_get_data(chip);
+ 
+-	seq_printf(p, info->data->name);
++	seq_puts(p, info->data->name);
+ }
+ 
+ static const struct irq_chip armada_37xx_irqchip = {
+diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
+index 737d0ae3d0b6..d66c3a3e8429 100644
+--- a/drivers/pinctrl/pinctrl-mcp23s08.c
++++ b/drivers/pinctrl/pinctrl-mcp23s08.c
+@@ -569,7 +569,7 @@ static void mcp23s08_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct mcp23s08 *mcp = gpiochip_get_data(gc);
+ 
+-	seq_printf(p, dev_name(mcp->dev));
++	seq_puts(p, dev_name(mcp->dev));
+ }
+ 
+ static const struct irq_chip mcp23s08_irq_chip = {
+diff --git a/drivers/pinctrl/pinctrl-stmfx.c b/drivers/pinctrl/pinctrl-stmfx.c
+index d2c5321dd025..31d68183b743 100644
+--- a/drivers/pinctrl/pinctrl-stmfx.c
++++ b/drivers/pinctrl/pinctrl-stmfx.c
+@@ -599,7 +599,7 @@ static void stmfx_pinctrl_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
+ 	struct stmfx_pinctrl *pctl = gpiochip_get_data(gpio_chip);
+ 
+-	seq_printf(p, dev_name(pctl->dev));
++	seq_puts(p, dev_name(pctl->dev));
+ }
+ 
+ static const struct irq_chip stmfx_pinctrl_irq_chip = {
+diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
+index fd0331a87cda..dbe14566e1f3 100644
+--- a/drivers/pinctrl/pinctrl-sx150x.c
++++ b/drivers/pinctrl/pinctrl-sx150x.c
+@@ -584,7 +584,7 @@ static void sx150x_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct sx150x_pinctrl *pctl = gpiochip_get_data(gc);
+ 
+-	seq_printf(p, pctl->client->name);
++	seq_puts(p, pctl->client->name);
+ }
+ 
+ static const struct irq_chip sx150x_irq_chip = {
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 5a403915fed2..8742b440339e 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -2290,7 +2290,7 @@ static void rzg2l_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+ 
+-	seq_printf(p, dev_name(gc->parent));
++	seq_puts(p, dev_name(gc->parent));
+ }
+ 
+ static int rzg2l_gpio_irq_set_wake(struct irq_data *data, unsigned int on)
+-- 
+2.39.2
+
 
