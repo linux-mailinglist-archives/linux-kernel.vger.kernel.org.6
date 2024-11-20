@@ -1,118 +1,138 @@
-Return-Path: <linux-kernel+bounces-415643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37659D3942
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:16:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A7A9D393C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC7AB2E907
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2443F1F26DA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FF219E99B;
-	Wed, 20 Nov 2024 11:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7030319E7E2;
+	Wed, 20 Nov 2024 11:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkcAN8OR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xh6euSmW"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05CE18660C;
-	Wed, 20 Nov 2024 11:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297FD19C575
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732101185; cv=none; b=sYbDw5a2fipSN8NRfM27aqslIXHTcAEA2T3QvV1LnkDzvX3OrevxgvgBpa38BQGIabfOkloRADKU7Hwoebj/M4BLBqEGzXc91y2/n4LDfVvyOqAyGKS7oo2UmdtiPywOKJ6K3WVbr7huYWlaN9mKXuJ+Scav1HmTiFbgDVnPWZ0=
+	t=1732101238; cv=none; b=SSi7B9/thXngbFAxeQXJt1IuWyfpFpBWvN+4u3uTDpmhcZCCkQIhhGj47rpUONvdMp6e/8zI/DejyTWyI/3PaW4ZCta1noj41+8FMXVIZazh3A2whZyGdMzLQlTEfIuOfLRKRGM2vPOPAlKYR7qy/hS283dQufc/Y0DBtikIZj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732101185; c=relaxed/simple;
-	bh=1tK3mNV1medkTsrWi5AOiq1g0g7TLImk9SIlS9oUxJg=;
+	s=arc-20240116; t=1732101238; c=relaxed/simple;
+	bh=2R7MrlSbXdsIoKmQ8B225gvAC/SXbSoY+2vtlQPNGnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxK5RTalPqPWQ2Dixq6TYn/5lfuCL7Gw88bOmIv67VckKJ+f2a0r0Y3XnqGvazi8VJgiwgRvTukkyJfkN75SnGHpoQYg3nZeh7uLEshl/FEb1mulFmU1od3ya9c2nv1XfqSYpJMnUUD8tR7YWqn9vLm711be+y9QYVZ0S2f+dAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkcAN8OR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27D68C4CECD;
-	Wed, 20 Nov 2024 11:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732101184;
-	bh=1tK3mNV1medkTsrWi5AOiq1g0g7TLImk9SIlS9oUxJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tkcAN8ORF74aFH3WrhIEDG3ZIdnSG/SKW8//csuqj/WcsBLygQBVoNcBmyoCGxGlc
-	 2A72KH31KkIJypBqxHI9U0Nxox229R9R6hVb4Pco2D1I28DGYpYSCWzW/LFt01qbT7
-	 PmeTSCHkof9GvT1STlNmnavoSonRCupTOfca3V64uDCh/DBsc6btugI4hl/iiZfGgK
-	 5hftA8xbK63wx/QfUA4sWwSCTd2iwaeRl2/2uL7bwCrYi4zmJXCxofkR3z/Pm+EOUJ
-	 YwGJ4VZx4Cka/mRiwdPe5pUFmCZziCl1FYrdbK7vLdaOv60la3lRAHTyLqFyU3mByo
-	 BotohyMqUeFyA==
-Date: Wed, 20 Nov 2024 12:12:59 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH v2 0/3] symlink length caching
-Message-ID: <20241120-eisbahn-frost-824303fa16d9@brauner>
-References: <20241119094555.660666-1-mjguzik@gmail.com>
- <20241120-werden-reptil-85a16457b708@brauner>
- <CAGudoHGOC6to4_nJX9vhWV8HnF19U2xmmZY3Nc0ZbZnyTtGyxw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d8hDJGQICXjylPt8msVfMjDxCbOS0MzP7Ifz+TnC6OKmNzoe6Bl8d8YPc9lRXMqQ1C/SQ8rHRQI1HqcBgozrQTbjGIteIvjb43dUGv12gnx1K9/Ro6Ct19lmSvkYcn8chN//KsQss3pp5kite/su/3qrPYQIcnUYu6/nWsi5/6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xh6euSmW; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53d9ff92edaso7373388e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:13:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732101235; x=1732706035; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSBDmYSFXuA2s69SSkdK3qaRDlUBpjefVOog6k4GCqA=;
+        b=Xh6euSmWSI183aFHWmbJUcgYbM7Z4O1/VFPWRSHd8I1nkw3etu3zRfaJ2RchUv7p1/
+         m+QoQF9GilXji8STASehIi4MlaijBwdVrp99EiVv3xG804YAbKob7YH8bcX6G3V/33DX
+         je8TVUVDamfu1ouKGm6Lm9iTNhl9oidfrVKHJLwHXjq/QxOb9blKdd58E2pzF5cqdjiV
+         LzrVy9Xav5Nu7+tadoxM6AzXe1OMfYrQWt1pVquVt3PDR6oRbKrHJnQWR4bEdvh2dlR8
+         0REDI7bohd3lUIi9FnayMGAQKgRjdEdAGjw+3qeESX+19wTqcmEdWobXbtjBGJ3B5N+A
+         m4Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732101235; x=1732706035;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MSBDmYSFXuA2s69SSkdK3qaRDlUBpjefVOog6k4GCqA=;
+        b=pV2i/+UgvlwGVD2QL2AHRKDBBmkbDwUNXuZoujCoIv18zJnnTJcCpeZF471jSmjmYa
+         Mg7JSzOZqJBUuM4LXre4Oi/RzLekuC/a8atm9SzOK8iJomQKZ1fe0BEOe5lnZL0jRLo1
+         KheJbg4Nuc5MxIgTb0J5m98s8j1DETch3S3tUZVXJWTOdQsYXQcs3zn848xztXz+W0JS
+         jYeHSbHiC05IV5SYw8JxMB0OiVRsKK8zhjicNlfGhOlBaTpz0A8iTCJGYOGxNog1w15Y
+         GSgPRyOY3YnV4nL2e+hKAus1ggNurnLJ4dxMq7OHG522/9wrAzLZlkb1RKguwSgfhfg6
+         gaSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEkxc3/VDV0BSnS6n21v2M3Pc8hFU5sYwoV3KpYi2br/k8rY8mC9sH+fmfj3WD8Zg1PA63MaAySOmAEUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ3Rx5Fe+J9DSia2Yi5glbHzK+c1nUB57YiJMyyCdjcJ7nGCgv
+	aKuiP/XK5hFEuaEqN4ZlCqdtMcHkSTIJH23Gwv1W+VfdTUFjJ4WoIUMhi51YIe8=
+X-Google-Smtp-Source: AGHT+IGYdVlXPyYW57Sact665A1h86qBYlsDUr8EZ6uXwnZYrcEpnGp/EwmAPkJR1t4j3+9iwpyGLg==
+X-Received: by 2002:a05:6512:b0d:b0:539:e3d8:fa33 with SMTP id 2adb3069b0e04-53dc13742c2mr907280e87.54.1732101235338;
+        Wed, 20 Nov 2024 03:13:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd3edcd5sm597600e87.44.2024.11.20.03.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 03:13:53 -0800 (PST)
+Date: Wed, 20 Nov 2024 13:13:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha <quic_mojha@quicinc.com>, 
+	Stephan Gerhold <stephan.gerhold@linaro.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Kuldeep Singh <quic_kuldsing@quicinc.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Andrew Halaney <ahalaney@redhat.com>, Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>, 
+	Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 0/6] firmware: qcom: scm: Fixes for concurrency
+Message-ID: <vr64bidkdzoebqmkq3f5jnpqf2hqcf2nvqc27vhu53ave3bced@3ffd2wqtxrvd>
+References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHGOC6to4_nJX9vhWV8HnF19U2xmmZY3Nc0ZbZnyTtGyxw@mail.gmail.com>
+In-Reply-To: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
 
-On Wed, Nov 20, 2024 at 11:42:33AM +0100, Mateusz Guzik wrote:
-> On Wed, Nov 20, 2024 at 11:33 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Nov 19, 2024 at 10:45:52AM +0100, Mateusz Guzik wrote:
-> > > quote:
-> > >     When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
-> > >     speed up when issuing readlink on /initrd.img on ext4.
-> > >
-> > > Benchmark code at the bottom.
-> > >
-> > > ext4 and tmpfs are patched, other filesystems can also get there with
-> > > some more work.
-> > >
-> > > Arguably the current get_link API should be patched to let the fs return
-> > > the size, but that's not a churn I'm interested into diving in.
-> > >
-> > > On my v1 Jan remarked 1.5% is not a particularly high win questioning
-> > > whether doing this makes sense. I noted the value is only this small
-> > > because of other slowdowns.
-> >
-> > The thing is that you're stealing one of the holes I just put into struct
-> > inode a cycle ago or so. The general idea has been to shrink struct
-> > inode if we can and I'm not sure that caching the link length is
-> > actually worth losing that hole. Otherwise I wouldn't object.
-> >
+On Tue, Nov 19, 2024 at 07:33:16PM +0100, Krzysztof Kozlowski wrote:
+> SCM driver looks messy in terms of handling concurrency of probe.  The
+> driver exports interface which is guarded by global '__scm' variable
+> but:
+> 1. Lacks proper read barrier (commit adding write barriers mixed up
+>    READ_ONCE with a read barrier).
+> 2. Lacks barriers or checks for '__scm' in multiple places.
+> 3. Lacks probe error cleanup.
 > 
-> Per the patch description this can be a union with something not used
-> for symlinks. I'll find a nice field.
+> I fixed here few visible things, but this was not tested extensively.  I
+> tried only SM8450.
+> 
+> ARM32 and SC8280xp/X1E platforms would be useful for testing as well.
 
-Ok!
+ARM32 devices are present in the lab.
 
 > 
-> > > All that aside there is also quite a bit of branching and func calling
-> > > which does not need to be there (example: make vfsuid/vfsgid, could be
-> > > combined into one routine etc.).
-> >
-> > They should probably also be made inline functions and likely/unlikely
-> > sprinkled in there.
+> All the issues here are non-urgent, IOW, they were here for some time
+> (v6.10-rc1 and earlier).
 > 
-> someone(tm) should at least do a sweep through in-vfs code. for
-
-Yeah, in this case I was specifically talking about make_vfs{g,u}id().
-They should be inlines and they should contain likely/unlikely.
-
-> example LOOKUP_IS_SCOPED is sometimes marked as unlikely and other
-> times has no annotations whatsoever, even though ultimately it all
-> executes in the same setting
+> Best regards,
+> Krzysztof
 > 
-> Interestingly even __read_seqcount_begin (used *twice* in path_init())
-> is missing one. I sent a patch to fix it long time ago but the
-> recipient did not respond
+> ---
+> Krzysztof Kozlowski (6):
+>       firmware: qcom: scm: Fix missing read barrier in qcom_scm_is_available()
+>       firmware: qcom: scm: Fix missing read barrier in qcom_scm_get_tzmem_pool()
+>       firmware: qcom: scm: Handle various probe ordering for qcom_scm_assign_mem()
+>       [RFC/RFT] firmware: qcom: scm: Cleanup global '__scm' on probe failures
+>       firmware: qcom: scm: smc: Handle missing SCM device
+>       firmware: qcom: scm: smc: Narrow 'mempool' variable scope
+> 
+>  drivers/firmware/qcom/qcom_scm-smc.c |  6 +++-
+>  drivers/firmware/qcom/qcom_scm.c     | 55 +++++++++++++++++++++++++-----------
+>  2 files changed, 44 insertions(+), 17 deletions(-)
+> ---
+> base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+> change-id: 20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-a25d59074882
+> 
+> Best regards,
+> -- 
+> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 
-I snatched it.
+-- 
+With best wishes
+Dmitry
 
