@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-415395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF789D3573
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:32:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126C39D357B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE8641F22640
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:32:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C3A5B21619
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C337F176240;
-	Wed, 20 Nov 2024 08:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53634166F3A;
+	Wed, 20 Nov 2024 08:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WU/cpYpO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM2ZEazw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2014C8615A;
-	Wed, 20 Nov 2024 08:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A067B184F;
+	Wed, 20 Nov 2024 08:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732091535; cv=none; b=fihAcc9HVaum7hgl+72qE2dRTMsbzDBVyAsvyZy8PKyYPROaCXGc5tBOWrmaL3Ty2NspgzL7ug95A0g+PCEdhCK+7m7Mgy7mFx1BrLC6s2TZTUM+j6Od7xnkHxIsH8+V3kHQ3wcedxZF/WW/cKR8ZAMJOiSaBwWvE73NHTSo+5c=
+	t=1732091618; cv=none; b=inWvsOA+k7Z3l51L55qGe1j1S0Sk8Mzn9iF/uvLr/Am0KFoMgvJgktsl/Y6l+I7ZOZFxHbhty3+U9IzvBTgsaLRsVWUhZUKkruLMNt64xvzIXN0LdJD7pVPMahZ/i/GqJHuYcHFERhCMSrtAo3feIjLvdQlRyROZTvj4f7uJBdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732091535; c=relaxed/simple;
-	bh=6UHD4CiLpylVStYrvd1VFQTVTBZ0TOL/9FX4hXr4mkg=;
+	s=arc-20240116; t=1732091618; c=relaxed/simple;
+	bh=sNtuOK9HVJ9DnFTRNBCJVHA+kqaGYSHimWq98ReJCMA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oEQdPQhMopPBL2wmUY0iTor0ap2HxPX7yFI21hvwvqX9+bElk2CVmTjqgNHEdAEkRVeToZ8sl4lCBkw6jomvtAcduFAJ/lVhdUQm68jolADrqHpJiSHceuWmLI9o3uCuwqz3LRYP7jR5g61PkfdhMjPF8DmN7zZgn8Rz0eknWgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WU/cpYpO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA6EC4CECD;
-	Wed, 20 Nov 2024 08:32:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lre3TmymYM5Ss/Kc90MgqzUoeRfwEaaTAe727G8XVOXQC+iM8Aiwg/hOtiG3QRFdyCyPA1he+Za6r1lYYtxRZeiTPNJdfJ+bFURBeO4bLhMUC6H2+K5XNon4f1f5SMdkyGucBf0cq40AtvQKVqZV/+3eBVdF6P2hFLObWxxeGrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM2ZEazw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5EC2C4CED7;
+	Wed, 20 Nov 2024 08:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732091534;
-	bh=6UHD4CiLpylVStYrvd1VFQTVTBZ0TOL/9FX4hXr4mkg=;
+	s=k20201202; t=1732091618;
+	bh=sNtuOK9HVJ9DnFTRNBCJVHA+kqaGYSHimWq98ReJCMA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WU/cpYpOOcqNHSD9QhlnIQlVGYNlqDCgoto/vDyNP9GNbZSScYgIEhtXmGhIJKbA0
-	 GLxhlS2DTg+VEQQ3kMXjp4HE0Q27QBkGr2Rnd3+CZIV99+PCRKwOubtSCGDAMhPPiH
-	 nWoQ2aUlDcVe5chjSGfVyLq5iZPSt2trgy5wPXzBlFfNN4ZpFb54V14xbShOpf+sQO
-	 Cypsd/WszFjGw1WAKLeVVg41ln0Qed8R4/Hm1pmBKZsho5XdkwctKnXAI0y4ZLs6yS
-	 6ToyM+Ovhn5vyveZA8jwgFf6dlOhp2xqKrprBhBXVCmv+m7NPe7oQXRju/1kQ0HQrq
-	 B15eYDKn99X7w==
-Message-ID: <e7974001-227e-4224-a895-21be5a1a3e3a@kernel.org>
-Date: Wed, 20 Nov 2024 09:32:06 +0100
+	b=ZM2ZEazwM2VNBcYOBF3N0VKxstsoiXEAJUSPKGMHUIjJZU2sAQpZTmxtkxOFSdV59
+	 G74Dj/AiidFe9sYADnZapz4YlVx4OJwOIF86VMaWWgTHnMAn3U/zbcMFn0CQsB1Nza
+	 rNxgSTlfXTzbI2mjJBhrdsFrBLSESRWsjzROxdi9+mDDF5boKQ95rH9nQZaBVFGQ/C
+	 EMzys2tWOmJNn7JoxzVoSDI5wW6v3udK6jAW8a/rqKTqzBdwWenFxiZWEIXrT9ye9c
+	 KaUovoENyoNd44qvha+QzYJrhfD2ZoRPx5Wors3XR8IJPRn+nPw5cQtAfkTg/KjjuJ
+	 EHvsNgmdIc+Dw==
+Message-ID: <01b7d6f8-bb60-4d61-a5e5-0f1c52bbb463@kernel.org>
+Date: Wed, 20 Nov 2024 09:33:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/21] arm64: dts: ti: k3-am62: New GPU binding details
+Subject: Re: [PATCH v2 21/21] arm64: dts: ti: k3-j721s2: Add GPU node
 To: Matt Coster <matt.coster@imgtec.com>, Frank Binns
  <frank.binns@imgtec.com>, David Airlie <airlied@gmail.com>,
  Simona Vetter <simona@ffwll.ch>,
@@ -62,7 +62,7 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
 References: <20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com>
- <20241118-sets-bxs-4-64-patch-v1-v2-7-3fd45d9fb0cf@imgtec.com>
+ <20241118-sets-bxs-4-64-patch-v1-v2-21-3fd45d9fb0cf@imgtec.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,46 +108,49 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241118-sets-bxs-4-64-patch-v1-v2-7-3fd45d9fb0cf@imgtec.com>
+In-Reply-To: <20241118-sets-bxs-4-64-patch-v1-v2-21-3fd45d9fb0cf@imgtec.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/11/2024 14:01, Matt Coster wrote:
-> Use the new compatible string introduced earlier (in "dt-bindings: gpu:
-> img: More explicit compatible strings") and add a name to the single power
-> domain for this GPU (introduced in "dt-bindings: gpu: img: Power domain
-> details").
+On 18/11/2024 14:02, Matt Coster wrote:
+> The J721S2 binding is based on the TI downstream binding in 54b0f2a00d92
+> ("arm64: dts: ti: k3-j721s2-main: add gpu node") from [1] but with updated
+> compatible strings.
+> 
+> The clock[2] and power[3] indices were verified from docs, but the
+> source of the interrupt index remains elusive.
+> 
+> References for indices: clocks[1], interrupts[2], power[3].
+> 
+> [1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel
+> [2]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/clocks.html
+> [3]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/devices.html
 > 
 > Signed-off-by: Matt Coster <matt.coster@imgtec.com>
 > ---
 > Changes in v2:
-> - None
-> - Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-7-4ed30e865892@imgtec.com
+> - Use normal reg syntax for 64-bit values
+> - Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-21-4ed30e865892@imgtec.com
 
-Do not mix DTS with code. It always goes either to end of patchset or
-entirely separate.
-
-To be clear: this cannot be merged into DRM.
+For DRM maintainers:
+This patch cannot be merged into DRM tree.
 
 
 > ---
->  arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> index 5b92aef5b284b78749a01d44184b66e7776a124d..93dcc67c3138ad5b4a7ad6c9bcabb71a2b7e408d 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-> @@ -693,12 +693,13 @@ ospi0: spi@fc40000 {
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> index 9ed6949b40e9dfafdaf6861944b0b128b053a44f..9adc2c704ba4b38d1a0e7c9ded035fe79630451d 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
+> @@ -2047,4 +2047,16 @@ watchdog8: watchdog@23f0000 {
+>  		/* reserved for MAIN_R5F1_1 */
+>  		status = "reserved";
 >  	};
->  
->  	gpu: gpu@fd00000 {
-> -		compatible = "ti,am62-gpu", "img,img-axe";
-> +		compatible = "ti,am62-gpu", "img,img-axe-1-16m", "img,img-rogue";
-
-Definitely NAK, breaks users and nothing in commit msg provides any help
-on that, including why or how it affects potential users.
-
+> +
+> +	gpu: gpu@4e20000000 {
+Drop unused label.
 
 Best regards,
 Krzysztof
