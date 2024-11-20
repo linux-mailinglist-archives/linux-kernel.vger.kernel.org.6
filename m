@@ -1,273 +1,75 @@
-Return-Path: <linux-kernel+bounces-415736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623A29D3A9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:24:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839999D3AA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230A2282BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FC4282E6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136A719DF60;
-	Wed, 20 Nov 2024 12:24:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F001A302E;
+	Wed, 20 Nov 2024 12:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KIx0blxU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2F3TC1vO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KIx0blxU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2F3TC1vO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YmEH7q1v"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860CD172BD5;
-	Wed, 20 Nov 2024 12:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CE619F104;
+	Wed, 20 Nov 2024 12:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732105445; cv=none; b=aUwiyEFlCqXpLLimcJ0sk7TevXnuGrTNSdCmkOMgEB91VJNqLlna24dpD8POMmbNWiLn/J1HEU7anwGog2FRIQd0YiEphTM6oSM2EueyLcWchLjPRSVPsBakuXxMAM1F8t6cizbtCd7Ojq7ItUb1TnSYcQP9Xl0zZkAqe3wLS1M=
+	t=1732105636; cv=none; b=GfCkX8XLMUJjLeBihLisyE4Lp1HYRnlPrv3ZiuOtEtAJvTQnwFMVsO3P/FOP/ojvmzW53AaFRG5cbxZ/ZFx0JnR7kyFp0lKIeX+ep84BG27MzETcgar9a/yHdQJmHT4pK3bCh+2ScuzmGM6DDFNiX7+H60oI4ZwcZpvUuffLjoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732105445; c=relaxed/simple;
-	bh=K5K1Yw+04T/dpRHzJK4zgf/M5dBzfsDcoWJpc0vA5ww=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tF1O2TOmNbwf9uc36E7XkVLr5Q66a/xI3RmofagDNpdOH5etNUbBt4YzjiS1xYPHRAZ5hBbGeiFhfyPNyXYycLer005d/T1H/0tnyF7IFXZ3dR//JwtrQiax/niUcLoL8p9ZsmO+J/eB8tD5NFh4FN54eWqAm66CHqF1wPwoxog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KIx0blxU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2F3TC1vO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KIx0blxU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2F3TC1vO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 152892198C;
-	Wed, 20 Nov 2024 12:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732105436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sv1wEwUCRnJgcO3pMn8ORE+/2tjnCkxAdkeEeFOh8so=;
-	b=KIx0blxUFL9bJVyktEgCeBFKPKZ4WbAcpLdCS5burmflYn/+j3UQQUJPdMCZORNMVASxRl
-	z6OUNXLVsLki1TKHYFUkgAdDiLYnjwXdi//ECfCYp4UAzqfBKz8diRnHW+2+EVKzEuKw/o
-	bC3se6JPJ6HJxL0iubkT0Mp+N+OyQhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732105436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sv1wEwUCRnJgcO3pMn8ORE+/2tjnCkxAdkeEeFOh8so=;
-	b=2F3TC1vOPjTWOxZJco88LmeS7C4NWtF8RBLcjRWOSrYL+/jkMJ9gOLwH+dEFxhfWvKuFMS
-	qS1svuKgbiab3nBA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KIx0blxU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2F3TC1vO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732105436; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sv1wEwUCRnJgcO3pMn8ORE+/2tjnCkxAdkeEeFOh8so=;
-	b=KIx0blxUFL9bJVyktEgCeBFKPKZ4WbAcpLdCS5burmflYn/+j3UQQUJPdMCZORNMVASxRl
-	z6OUNXLVsLki1TKHYFUkgAdDiLYnjwXdi//ECfCYp4UAzqfBKz8diRnHW+2+EVKzEuKw/o
-	bC3se6JPJ6HJxL0iubkT0Mp+N+OyQhY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732105436;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sv1wEwUCRnJgcO3pMn8ORE+/2tjnCkxAdkeEeFOh8so=;
-	b=2F3TC1vOPjTWOxZJco88LmeS7C4NWtF8RBLcjRWOSrYL+/jkMJ9gOLwH+dEFxhfWvKuFMS
-	qS1svuKgbiab3nBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9373137CF;
-	Wed, 20 Nov 2024 12:23:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id F09UMNvUPWdlCwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 20 Nov 2024 12:23:55 +0000
-Date: Wed, 20 Nov 2024 13:23:51 +0100
-Message-ID: <878qte3xgo.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: <srinivas.kandagatla@linaro.org>,
-	<mathias.nyman@intel.com>,
-	<perex@perex.cz>,
-	<conor+dt@kernel.org>,
-	<dmitry.torokhov@gmail.com>,
-	<corbet@lwn.net>,
-	<broonie@kernel.org>,
-	<lgirdwood@gmail.com>,
-	<krzk+dt@kernel.org>,
-	<pierre-louis.bossart@linux.intel.com>,
-	<Thinh.Nguyen@synopsys.com>,
-	<tiwai@suse.com>,
-	<robh@kernel.org>,
-	<gregkh@linuxfoundation.org>,
-	<linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>,
-	<linux-input@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v30 15/30] ASoC: usb: Fetch ASoC card and pcm device information
-In-Reply-To: <20241106193413.1730413-16-quic_wcheng@quicinc.com>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
-	<20241106193413.1730413-16-quic_wcheng@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1732105636; c=relaxed/simple;
+	bh=Qb4eqMebJcQI3QOs9amzuOmJHtyisaX1Fxo3qWZ1X3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=smesjOyHEMucrEviSMr1uZge/Zc/p2duuEc0zu/sXr1gDXJSmv2YwdJ8afc09F9g9eVUbWWDVVIrzJEIkmhdeIztHLKtJ2SJ34XPsNsYi/1JlW0V948++JKZ7FNTpbYqXBN7Kfd3fG2bFbEe+y1ftWWhOGPH+lcEShosia8cabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YmEH7q1v; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732105626; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=hWFSbqCPWtJxCwPgT6LDllmiwlrYCejAuYkhuuUWIQk=;
+	b=YmEH7q1vo9DC97Zu7ntSr2sbkjxQ+2EW9zTKH6EegQH3rigMpM2R4arra3FQM3Mt2HWoEblg231NCFJFmKn9lKG+DzSVj1tpkQ8l5HH3bedX9vRW38GI9yl7/MfjEO4UtI4obut2hf9eb7v8u2GEzoWljEWBOP63c98MxY2tR4Q=
+Received: from 30.13.184.88(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJsR6ue_1732105624 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Nov 2024 20:27:05 +0800
+Message-ID: <a31e5b41-d495-4b5e-996d-1cb0a1f6929f@linux.alibaba.com>
+Date: Wed, 20 Nov 2024 20:27:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 152892198C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linaro.org,intel.com,perex.cz,kernel.org,gmail.com,lwn.net,linux.intel.com,synopsys.com,suse.com,linuxfoundation.org,vger.kernel.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[dt];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[quicinc.com:email,intel.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.01
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: sprd: Remove unused and undocumented
+ "constant_charge_voltage_max_microvolt" property
+To: Stanislav Jakubek <stano.jakubek@gmail.com>, robh@kernel.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+ linux-kernel@vger.kernel.org, orsonzhai@gmail.com, zhang.lyra@gmail.com
+References: <Zz3SnIiW_iu10rrs@standask-GA-A55M-S2HP>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <Zz3SnIiW_iu10rrs@standask-GA-A55M-S2HP>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 06 Nov 2024 20:33:58 +0100,
-Wesley Cheng wrote:
+
+
+On 2024/11/20 20:14, Stanislav Jakubek wrote:
+> Hi Rob,
 > 
-> USB SND needs to know how the USB offload path is being routed.  This would
-> allow for applications to open the corresponding sound card and pcm device
-> when it wants to take the audio offload path.  This callback should return
-> the mapped indexes based on the USB SND device information.
+> constant-charge-voltage-max-microvolt is a valid property, which I assume
+> was the original intention here. I've already submitted a patch changing this
+> to the documented property:
 > 
-> Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> ---
->  include/sound/soc-usb.h | 16 ++++++++++++++++
->  sound/soc/soc-usb.c     | 34 ++++++++++++++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
+> https://lore.kernel.org/lkml/aa557091d9494fdaa3eda75803f9ea97014c8832.1730918663.git.stano.jakubek@gmail.com/
 > 
-> diff --git a/include/sound/soc-usb.h b/include/sound/soc-usb.h
-> index 587ea07a8cf5..c3d3e8d62ac5 100644
-> --- a/include/sound/soc-usb.h
-> +++ b/include/sound/soc-usb.h
-> @@ -36,6 +36,11 @@ struct snd_soc_usb_device {
->   * @list - list head for SND SOC struct list
->   * @component - reference to ASoC component
->   * @connection_status_cb - callback to notify connection events
-> + * @update_offload_route_info - callback to fetch mapped ASoC card and pcm
-> + *				device pair.  This is unrelated to the concept
-> + *				of DAPM route.  The "route" argument carries
-> + *				an array used for a kcontrol output and should
-> + *				contain two integers, card and pcm device index
->   * @priv_data - driver data
->   **/
->  struct snd_soc_usb {
-> @@ -44,6 +49,9 @@ struct snd_soc_usb {
->  	int (*connection_status_cb)(struct snd_soc_usb *usb,
->  				    struct snd_soc_usb_device *sdev,
->  				    bool connected);
-> +	int (*update_offload_route_info)(struct snd_soc_component *component,
-> +					 int card, int pcm, int direction,
-> +					 long *route);
->  	void *priv_data;
->  };
->  
-> @@ -61,6 +69,8 @@ int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
->  int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component);
->  int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
->  				    struct snd_soc_jack *jack);
-> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
-> +				     int direction, long *route);
->  
->  struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
->  					      void *data);
-> @@ -109,6 +119,12 @@ static inline int snd_soc_usb_enable_offload_jack(struct snd_soc_component *comp
->  	return 0;
->  }
->  
-> +static int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
-> +					    int direction, long *route)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->  static inline struct snd_soc_usb *
->  snd_soc_usb_allocate_port(struct snd_soc_component *component, void *data)
->  {
-> diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-> index ab914878e101..e56826f1df71 100644
-> --- a/sound/soc/soc-usb.c
-> +++ b/sound/soc/soc-usb.c
-> @@ -145,6 +145,40 @@ int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
->  }
->  EXPORT_SYMBOL_GPL(snd_soc_usb_enable_offload_jack);
->  
-> +/**
-> + * snd_soc_usb_update_offload_route - Find active USB offload path
-> + * @dev - USB device to get offload status
-> + * @card - USB card index
-> + * @pcm - USB PCM device index
-> + * @direction - playback or capture direction
-> + * @route - pointer to route output array
-> + *
-> + * Fetch the current status for the USB SND card and PCM device indexes
-> + * specified.  The "route" argument should be an array of integers being
-> + * used for a kcontrol output.  The first element should have the selected
-> + * card index, and the second element should have the selected pcm device
-> + * index.
-> + */
-> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
-> +				     int direction, long *route)
-> +{
-> +	struct snd_soc_usb *ctx;
-> +	int ret = -EINVAL;
-> +
-> +	ctx = snd_soc_find_usb_ctx(dev);
-> +	if (!ctx)
-> +		return -ENODEV;
-> +
-> +	mutex_lock(&ctx_mutex);
-> +	if (ctx && ctx->update_offload_route_info)
-> +		ret = ctx->update_offload_route_info(ctx->component, card, pcm,
-> +						     direction, route);
-> +	mutex_unlock(&ctx_mutex);
+> Baolin also reviewed that patch... make of that what you will.
 
-The second ctx check is redundant.  And the locking scheme looks
-dubious -- as ctx isn't protected by ctx_mutex after its retrieval via
-snd_soc_find_usb_ctx(), even if you reacquire ctx_mutex, it may point
-to an already released object (in theory).
-
-IOW, for a safer protection, you'd need to cover the whole
-find-and-exec procedure via a single ctx_mutex lock action.
-
-
-thanks,
-
-Takashi
+Ah, yes. Sorry I forgot your patch. Thanks for reminding.
 
