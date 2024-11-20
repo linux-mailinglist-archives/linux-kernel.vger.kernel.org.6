@@ -1,153 +1,136 @@
-Return-Path: <linux-kernel+bounces-415300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAB19D3411
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:22:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DABA39D3412
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:23:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FCC7B22E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:22:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6529B22F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3A41586C8;
-	Wed, 20 Nov 2024 07:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05C1156F39;
+	Wed, 20 Nov 2024 07:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hDCGiDQM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpSElneh"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159D200CB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86328200CB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732087320; cv=none; b=keE/LSbFij9j5VtNXlwG3p//dIParlbzLYxJloUz7zFFeO9mUphHLj5Eg8pWqGl+8b7yW1ytVfKpY32vdkUM5aHXSWnb12fbfpcyBtJBuMvM5YQs9auBedWPjD69w1ajjzgIj96gziIz1l8RpTM5XsWgdPsz9nz+jgqndydYF5k=
+	t=1732087393; cv=none; b=tnxv0x/W8OPooMnZfmqZ7ybpgG8GX4KOLD0mHpXcoHLjUwTuLwscpaUYwCR3hx9EUwaNVsQq5PWBkKvQOT0KUmS2c3tYphHnQqTLq0Jmr0OejAF39kL30q6/V2FSYB+qT285W1xyMrqAeTEelsbNhifscod8eJ1L5S9X2zVLQh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732087320; c=relaxed/simple;
-	bh=C+0KfnGdDBUYcJNneAihNuIYCdtSQpayaOSP2MWpluY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8ECHjSgliqK4vQgqhbq1MrNStvLGNyO3D0Ou8wC0N5vze24AsxkP/q1dpeMlJEsH0ogcYlNCi2kec6cNV+1KLEV1DoYhrvDTrkv8vLte7tojFtUexI9VqAh104inPz19qoGK8oN0CjOVx5gIKybvUsGDhaXAmYB3z3Gj6GeCpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hDCGiDQM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732087317;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4UNfjaijTVuehkLLB09ZGD0Qs5te78NeeI0Sbpvi304=;
-	b=hDCGiDQMu7fbr5G382elh+vogFJLS/pnQtzkpsTb28dkXy0KxDF7qPS+stAHUpU0kqnFr0
-	tLnrAwv/6wiqyTvrNf+9Siv381rhunm9wNK8tlCk2AuEjThG8Wb/T4oQHbiUlPqi2Ctupq
-	IxyWfBxl1CByG02iMoUWVr1rJtyfTvA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-Pp_YtALEMACgx0Bp-798LA-1; Wed,
- 20 Nov 2024 02:21:55 -0500
-X-MC-Unique: Pp_YtALEMACgx0Bp-798LA-1
-X-Mimecast-MFC-AGG-ID: Pp_YtALEMACgx0Bp-798LA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75EFE1956088;
-	Wed, 20 Nov 2024 07:21:54 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3532B19560A3;
-	Wed, 20 Nov 2024 07:21:52 +0000 (UTC)
-Date: Wed, 20 Nov 2024 15:21:48 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-	bp@alien8.de, x86@kernel.org
-Subject: Re: [PATCH v2 1/2] x86/ioremap: introduce helper to implement
- xxx_is_setup_data()
-Message-ID: <Zz2ODGBXmOLDY4mv@MiWiFi-R3L-srv>
-References: <20241118010819.46602-1-bhe@redhat.com>
- <20241118010819.46602-2-bhe@redhat.com>
- <7cc5e26c-42fc-a700-ae19-608920cafe44@amd.com>
- <ZzwA53x3KYQgDbeQ@MiWiFi-R3L-srv>
- <Zzxuv3FFmCxmTtS-@gmail.com>
+	s=arc-20240116; t=1732087393; c=relaxed/simple;
+	bh=9TUH4fBzcOFFv2mVquyak0awmCdSSw1x1C2GwnTi8IY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=UT1n64I/nBakVhWkwzCHzA44LpaiWYL5/bu2zWQ20/0fcI1FO8L/7d4eMdUB3RGyZ+Gdx4okIFzOFue4EgFxQk1Ir8YCWMrjC0a9qJ6bzbemKtIkQX17/XUkSBzeHm5N/powEXLVXUHF8bKOSk01mqwJcT+IJ24rwRqs5srEf9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpSElneh; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso242303366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 23:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732087390; x=1732692190; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9TUH4fBzcOFFv2mVquyak0awmCdSSw1x1C2GwnTi8IY=;
+        b=SpSElnehtmxt/BU8wAfW1ziX4Sec0Q+jCy/DAynb754bn6sOUDe8vnr158jNmNG3em
+         5SqkiPMD3qEy2EmIl6BDl3RwM4HqlFJWp4Exc6hdFlWrtzaWDw2vOnVrH4NvTuFRWH8c
+         nTIa1kr0rCG8Jfqg6FniQkKOu9c9tspU4b6iN32fPK6KsqSyWIISUT7zfyioXWYQZde3
+         Q6zA1ltJOHUsE+5RNa36wfGdppT61fFnoYqAHcdWiJ5G2YK3sOWYOPCO9gVCZZsDU0qB
+         kNaDxIU1nit8dnhqMb2UmvYGc2hMaoGFRUxfDxm9zLM8iqSlD/xqshmF/wsGe06XyqB+
+         3gGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732087390; x=1732692190;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9TUH4fBzcOFFv2mVquyak0awmCdSSw1x1C2GwnTi8IY=;
+        b=EHpFS4l6pIMw7Uy6FGnA8VYjERkFDo1V0r7az7HMG3oYnJaaEccqrNEDklTReUy119
+         W+iLcqjwJfO/UTyVd2RfTDJdAYGPhAFpsSMejGP2jzm8zIZ1Afa1GtnFsJOTtMMca5ZZ
+         QhFNdm4xZhL4tP8gVESZZTBPMJia5sZVYbvw8qalP8nFYTwv+Rjr+YULz9PPaVyj0gdh
+         9tnhMlFmgnqyTQa3MkOG+8ql8fqIZyVll2lRlv84nbATgzGLQBGHTMYf78QOWusFEOOC
+         96clFaqy0SvC8JauPztThOJ84Eszy55ceMetvBQeVOXwe8cvBokJb8focVzBzfaO1+Wj
+         YK1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWxD1YDkw3fa6alXHpz2VP3IRZlE95RD6NltjCos0ebRT6sQ3M0XLHyMhOWwh743WillZOrBtB4nuFBjLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEpjkSuYf9eWGeNCY9Im+3kAjn5lcVfWWqVwtbA2RidZ/pqJhU
+	iPooWk+4x1RfA6Qri8hs9vV4wyXUv2E+QbpF5TOn/Xbi+YBbGQSMi7X58+RC+yIs7+FQjnCayRU
+	s0wShiPuFODHdtwxhtdEpzpsupaI=
+X-Google-Smtp-Source: AGHT+IFJLaQBiwiWiQwPPj21kY4gRHUQRpwhGpQ3ocHcoYF5cTnC9mIFUs/iW5OYYbNRN5ehA+LKxz+IPQmL9rmyI/g=
+X-Received: by 2002:a17:907:2da2:b0:a9f:450:48eb with SMTP id
+ a640c23a62f3a-aa4dd71a2c0mr141394266b.45.1732087389628; Tue, 19 Nov 2024
+ 23:23:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zzxuv3FFmCxmTtS-@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <CAOuPNLhxBBihr38p_XMQEgkiLFc+DPxkQf4oewF8U1+ihaFn-Q@mail.gmail.com>
+In-Reply-To: <CAOuPNLhxBBihr38p_XMQEgkiLFc+DPxkQf4oewF8U1+ihaFn-Q@mail.gmail.com>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Wed, 20 Nov 2024 12:52:57 +0530
+Message-ID: <CAOuPNLhhWzoBQH85zEd95LbONtrknq+b7tfcze50VPa9bEnXzw@mail.gmail.com>
+Subject: Re: Block based OTA update needs mtdblock
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-mtd <linux-mtd@lists.infradead.org>, chengzhihao1@huawei.com, 
+	open list <linux-kernel@vger.kernel.org>, kernelnewbies@nl.linux.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/19/24 at 11:55am, Ingo Molnar wrote:
-> 
-> * Baoquan He <bhe@redhat.com> wrote:
-> 
-> > On 11/18/24 at 09:19am, Tom Lendacky wrote:
-> > > On 11/17/24 19:08, Baoquan He wrote:
-> > > > Functions memremap_is_setup_data() and early_memremap_is_setup_data()
-> > > > share completely the same process and handling, except of the
-> > > > different memremap/unmap invocations.
-> > > > 
-> > > > So add helper __memremap_is_setup_data() to extract the common part,
-> > > > parameter 'early' is used to decide what kind of memremap/unmap
-> > > > APIs are called. This simplifies codes a lot by removing the duplicated
-> > > > codes, and also removes the similar code comment above them.
-> > > > 
-> > > > And '__ref' is added to __memremap_is_setup_data() to suppress below
-> > > > section mismatch warning:
-> > > > 
-> > > > ARNING: modpost: vmlinux: section mismatch in reference: __memremap_is_setup_data+0x5f (section: .text) ->
-> > > > early_memunmap (section: .init.text)
-> > > > 
-> > > > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > > > ---
-> > > >  arch/x86/mm/ioremap.c | 108 +++++++++++++++---------------------------
-> > > >  1 file changed, 38 insertions(+), 70 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> > > > index 8d29163568a7..68d78e2b1203 100644
-> > > > --- a/arch/x86/mm/ioremap.c
-> > > > +++ b/arch/x86/mm/ioremap.c
-> > > > @@ -628,12 +628,13 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
-> > > >  	return false;
-> > > >  }
-> > > >  
-> > > > +#define SD_SIZE sizeof(struct setup_data)
-> > > 
-> > > Nit, I still think you should use "sizeof(*data)" in the code instead of
-> > > creating a #define.
-> > 
-> > Thanks for reviewing, Tom.
-> > 
-> > Boris suggested this. Both is fine to me. If there is indeed a tiny
-> > preference, I would choose SD_SIZE. It's going a bit far, but not too
-> > far.
-> 
-> Yeah, I'd prefer Boris's SD_SIZE suggestion too: while *normally* we'd 
-> use the 'sizeof(*data)' pattern, this particular size repeats a number 
-> of times and not all contexts are obvious - so abstracting it out into 
-> a trivial define looks like the proper cleanup.
+Hi,
 
-Totally agree.
+On Mon, 4 Nov 2024 at 21:31, Pintu Agarwal <pintu.ping@gmail.com> wrote:
+>
+> Hi All,
+>
+> For one of our automotive products we have the following configuration:
+> QC chipset, arm64, Kernel-5.15, NAND Flash 1GB, A/B system, UBI
+> volumes (squashfs, ubifs), DM-verity for rootfs (squashfs), simple
+> busybox platform.
+>
+> For OTA updates we have a strong dependency with MTD_BLOCK.
+>
+> Till now, we were using ubiblock for mounting squashfs volumes and
+> completely got rid of mtd_block by configuring it as a loadable
+> module.
+> But, we also need to support OTA updates (Full, Incremental) on A/B
+> volumes using the same Android OTA framework.
+> https://source.android.com/docs/core/ota/nonab/block
+>
+> OTA update will be applied to the B (inactive) partition.
+> OTA updates prefer block based update over file based especially for
+> dm-verity enabled devices.
+>
+> Now, the problem is, on MTD we only have 2 options for block based
+> updates; ubi_block or mtd_block.
+> We cannot use ubiblock for OTA updates as it is read only.
+> For full update volume, we can use "ubiupdatevol" interface to
+> completely replace the volume content, but for partial or incremental
+> update we need to update only specific blocks and not entire
+> partitions.
+> Thus, we have to use the MTD_BLOCK (/dev/mtdblock) interface to
+> support block based OTA updates on UBI volumes.
+> Thus, during ota updates (only) we need to install the mtdblock
+> module, perform the update and then uninstall the module.
+>
+> That means, we cannot completely get rid of MTD_BLOCK from our product
+> especially for OTA use cases.
+>
+> Is this the only way, or do we have any other option to support OTA
+> updates over UBI volumes ?
+>
+Restarting this thread again...
+Any further comment on this ?
 
-> 
-> Maybe such material changes should be done in a separate patch though:
-> 
->    x86/ioremap: Introduce helper to implement xxx_is_setup_data()
->    x86/ioremap: Clean up size calculations in xxx_is_setup_data()
-> 
-> ... or so, where the first patch is a trivial refactoring that keeps 
-> the existing patterns - which would make the series easier to review.
+Did anybody used block based OTA update NAND A/B system without using
+mtd_block ?
+Since ubiblock is read-only, it seems there is no other way to perform
+OTA update, if mtd_block is disabled.
+Or, we need to make ubiblock also as read/write.
 
-OK, will do like this if Tom doesn't oppose it.
 
-During v1, Tom suggested squashing the helper introducing patch and
-helper using patch into one patch. I personally prefer splitting code
-changes into multiple independent units so that reviewing is focused on
-the controversial change, but not the whole big patch including many
-controversial points is posted again and again. 
-
-Thanks a lot for careful reviewing and great suggestions.
-
+Thanks,
+Pintu
 
