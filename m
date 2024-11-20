@@ -1,98 +1,125 @@
-Return-Path: <linux-kernel+bounces-416335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAC99D436E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:15:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D89C9D4372
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:18:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B141F222CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F33282FF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEAA1BC068;
-	Wed, 20 Nov 2024 21:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BED61BBBCF;
+	Wed, 20 Nov 2024 21:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AFpzmrLY"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="kdB08FMd"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF23214037F;
-	Wed, 20 Nov 2024 21:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086A71386D7;
+	Wed, 20 Nov 2024 21:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732137339; cv=none; b=PamgR9ozJ0tQ3lRngS9BheQNZ4sfzqmR+jaIsN0b7taD7jsZynXEh+qCudrtNfuPYOsRCc/bOnu2FEiQLjBBhtWO1xet4QyD4IRFtD+EUFAjksJtvb6p3N/emcR3/AJiVEDLcOpQJkAq9zV6VS18H+E9AaHqq2t7JkBS21FKd5k=
+	t=1732137527; cv=none; b=h1WdxYFoS+bHpmyTdsuEiW5ulHIwuhe3Gi+7tEDE7sBxCcN1Fag48GGusWP4WOin6QWJveB59kCP9GV06HRaxGzloK2/MS/fKXdcq93CaT+AF3zoBMDOaZRqxgsDiir+oJhAWlYemQo8UOdnVyKiCN1nrsMr67w8J/Yze32Hmjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732137339; c=relaxed/simple;
-	bh=BsPWBjDlIHldk9u6ExGHBAxKRO6gfIMDbEFMPn/tqzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rtk/99MMYBWO6/tXHfmQ+7+PZz/C8ckqlkBbpPPaIvjg5wLrgcqXGkrPaYTJExKdCq2K+NztA/9NSJevEZR5dX4jflBbBapO1K92ilfg76I29iaLfpS/QENx0FintaLoQA7omdtjicMESXYB1JLxXFJZQyHXOnFM8GyDcQk4DME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AFpzmrLY; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EDE0440E015F;
-	Wed, 20 Nov 2024 21:15:35 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id T75JQP4pBQGS; Wed, 20 Nov 2024 21:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732137332; bh=T0vlX15pz2NJblllAODXy8/ru5NjDSIgys3eZddA52k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AFpzmrLYCdBMjSEeY383FHkJVOM/8Hkn5O/g0lcXj2gaNDHVbAySt9X5TKDHXvhUw
-	 f5T9hXkblLGh0xZo97GWpYs77j10+On6uJa0aVS+CBwlCNw4nlQYcpuCvA9Tdw+7bN
-	 JLvppyRqFXKGTeb+nNu4BvNKbgaceczUxWTNyP1Rc3nIHruqMBZoG5epBzYxsObtro
-	 QbaLKS01bwZrnm5WAOADvonqyu9vVJW2W+Gqc6ISXnBkVOj/3dIMKtqZAHsETwIIeJ
-	 mWKNr96c6x0O27dAhEBr7ZHgHBE/2cFYyrE4nbmutxHdbKDnuuAU1fsLTxBkP7jpYl
-	 EjdWnj5UWAgz0m2l2WYnRXQBHcXh81Xg8vB8Ns/k9a443UUfIrAZDXpJON8Gbuekwt
-	 a6lANWMO5nKILSPfi0XP9r0nKGDt4hJSegjZh1Pp8O2lItpmt6JH8fLbOyt7CXRjRJ
-	 ytqjl4ovNkHySEC6HmF96OaGdpH558c3Y6SgZrImLIVFisLA6zwnWxGOVOM1ebULWk
-	 g554CWvL/jiEWxRQPVrcAkI8xv2FtLxdiOhCyfeNfypst7aHLMN/bCMyfZRmG0uhWv
-	 NIp4NRsyU474JH9KKrAsVD4HXkS/JbiXVT3TshBr/OhPO8P8MGSLBeFyx61uDAekGb
-	 y6iyFJWZMvG23A3A0KZ3cLJ8=
-Received: from zn.tnic (p200300ea9736a1e2329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a1e2:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CFFEF40E021C;
-	Wed, 20 Nov 2024 21:15:26 +0000 (UTC)
-Date: Wed, 20 Nov 2024 22:15:25 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: Borislav Petkov <bp@kernel.org>, linux-doc@vger.kernel.org,
-	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] Documentation: Merge x86-specific boot options doc
- into kernel-parameters.txt
-Message-ID: <20241120211525.GEZz5RbZEtEExSz3h6@fat_crate.local>
-References: <20241120163033.12829-1-bp@kernel.org>
- <1932ef4f-b797-49b8-ab86-b687210c8778@intel.com>
+	s=arc-20240116; t=1732137527; c=relaxed/simple;
+	bh=s/ykia8tnQquMAciCLcq2D1BsQ1o40nj9QdizvoVbks=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=napd5cr8WyyDnSso8xIiOhyZt1GJHMsu6H3Xv41VgeOCIcb8ylOevBogY+YAv6npWYFmsEwfYt8C4JPsg6Is9RaqnR25taihoFKH1PKu1qAM2MERrojeE/jBANyqGbB8Q3A2NtKTd/VZvX8o/BcTiU5OfccbhHpTcfNOBSIjS3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=kdB08FMd; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id B85B11E0010;
+	Thu, 21 Nov 2024 00:18:32 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru B85B11E0010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1732137512; bh=dXFFfkwKeRkZcHX5xFLpg60SG0o9S7rzk+KxSIUCzgk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=kdB08FMdFrg89QOmVYldTaVKLSQIeJz0R8QTxhaCBvlc2FpLfMvYqlPfTr4MkMwda
+	 pxP8f7EpGTzEaNL2zOxYInTqdPrIqkTK6QDVP85jqGBR8dnsklpB1soKrgDcon1CS0
+	 sLU68i9fCudm8IuEC40c1mSWqsgKoGVmL2fBC0VkdYbEBQMRRZTCawoHOENzHoJHr4
+	 iITieYuWdk6Or21233RNHO2QzctNRkaghoztwTRhLiL6gPPxS1M5wxlDa1dex2cRPd
+	 xmET58w9N1D+lxXuNSJXYl80pd+ecuu1o/Po11gxCiSf2+4oDF/MYJj0jvK6l/CpHS
+	 oJO9oDDBJHU0w==
+Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Thu, 21 Nov 2024 00:18:32 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.247.42) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Thu, 21 Nov
+ 2024 00:18:31 +0300
+From: Murad Masimov <m.masimov@maxima.ru>
+To: Mustafa Ismail <mustafa.ismail@intel.com>
+CC: Murad Masimov <m.masimov@maxima.ru>, Tatyana Nikolova
+	<tatyana.e.nikolova@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, Leon
+ Romanovsky <leon@kernel.org>, Shiraz Saleem <shiraz.saleem@intel.com>,
+	<linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] RDMA/irdma: prevent out-of-bounds shift on timeout calculation
+Date: Thu, 21 Nov 2024 00:18:07 +0300
+Message-ID: <20241120211809.922-1-m.masimov@maxima.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1932ef4f-b797-49b8-ab86-b687210c8778@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189318 [Nov 20 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 42 0.3.42 bec10d90a7a48fa5da8c590feab6ebd7732fec6b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.62:7.1.2;ksmg02.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/20 17:47:00 #26877225
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Wed, Nov 20, 2024 at 11:46:22AM -0800, Sohil Mehta wrote:
-> Remove it from the index too?
+After some finite number of tries, bitshift in the calculation of timetosend at
+function irdma_cm_timer_tick() will lead to out-of-bounds shift, which in this
+case is an undefined behaviour. For instance, if HZ is equal to 1024, the issue
+occurs after 21 tries, which will take less than
+IRDMA_MAX_TIMEOUT / HZ * 21 = 252 seconds.
 
-...
+Lower IRDMA_DEFAULT_RETRANS from 32 to 20 to prevent out-of-bounds shift for
+any HZ value less than 2048.
 
-> Whitespace error here: space before tab in indent
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Both fixed.
+Fixes: 8385a875c9ee ("RDMA/irdma: Increase iWARP CM default rexmit count")
+Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+---
+ drivers/infiniband/hw/irdma/cm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thx.
+diff --git a/drivers/infiniband/hw/irdma/cm.h b/drivers/infiniband/hw/irdma/cm.h
+index 48ee285cf745..dc4ee1b185eb 100644
+--- a/drivers/infiniband/hw/irdma/cm.h
++++ b/drivers/infiniband/hw/irdma/cm.h
+@@ -41,7 +41,7 @@
+ #define TCP_OPTIONS_PADDING	3
 
--- 
-Regards/Gruss,
-    Boris.
+ #define IRDMA_DEFAULT_RETRYS	64
+-#define IRDMA_DEFAULT_RETRANS	32
++#define IRDMA_DEFAULT_RETRANS	20
+ #define IRDMA_DEFAULT_TTL		0x40
+ #define IRDMA_DEFAULT_RTT_VAR		6
+ #define IRDMA_DEFAULT_SS_THRESH		0x3fffffff
+--
+2.39.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
