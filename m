@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-416349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367BB9D4392
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:36:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CAE9D4394
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E22A61F21AD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7DF4B22D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246D41CB51C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5591CB9E9;
 	Wed, 20 Nov 2024 21:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eWdCakaS"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dHuSg9Tq"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05251BD513
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43151CB333
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732138457; cv=none; b=Prw1FPC7hEC/K5u/+BEo+N1ZVvYdLLvn4P5DM9/o/Il6KuhXEnfKTPNnPGxATc/cv+fXXuxNwHQCq7ee7JfH6m8nqc/+nt2171S2MLz4GC63q+Z4vy/+/0DsdlK02aiABUvB3DCzbmimEDEvHak0CmC7TGaqrafj66C9xo4+FM8=
+	t=1732138458; cv=none; b=bD69cMUWTWb+ZJG7+SIGI2GQi9MSjSD9omAkUJHlcqclfVTswKtcsW3LLAZDNBt0pGf6cfRLm5QepaGsimb/ufJH+KNuYlbGnVC9LB2gOyZBVwJdLHTfxDhFhyl3+eIbOG3y2+5Rcoyh3DQOJ8jOIRnMADSbZYTC+mDOyTaWR8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732138457; c=relaxed/simple;
-	bh=p+nS5eNSFSea7wrSjxxVMVpqrYPjYIH7CARSb8ahoso=;
+	s=arc-20240116; t=1732138458; c=relaxed/simple;
+	bh=/Whh0lLO/yI7/FPmO+jIOLQNQF0tPIusHK4fVYMh/RY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YLqLkPMie3ZgwmDTJF4y7zuOncfDpP97zie6pHK38F8CPWlnFcKn2/OcvDlEE0n7UwmX9Lkdqy8m5OLgC4w3NJflTk2MLCCTNrX0EnGLE8ZaSuCQyRz3r+EHbLDySUBEuD8/L82iY9s2Wl1Qrh9TEYBPN2CPwADsx5WAzBNqUnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eWdCakaS; arc=none smtp.client-ip=209.85.160.54
+	 In-Reply-To:To:Cc; b=own42kXWgi3YAhHmi+zA5HPFbm9Y1ZDKVjsdThrM3mdpcD+PABcNRovbySSd01M6Rlf15SFVnZRJtGXw/9m0fhybgprZwVXI018T0WZiBbB4EAsD349Oy15sO6qaCx5CtgOGL44LRbsAnOZZfdX6hYhlfjpb4PhGwB5fEiRaMuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dHuSg9Tq; arc=none smtp.client-ip=209.85.161.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-27b7a1480bdso192587fac.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:34:15 -0800 (PST)
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ec1ee25504so137906eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:34:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732138455; x=1732743255; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732138456; x=1732743256; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Iu7aDJGbDBdHDN9nX/nWmhMIbwEvqk3RBRXOi7f/0Bs=;
-        b=eWdCakaS1yWEa5IIT34PgY74OenRfeKe7SngSBN+gJZGVnplvScAZ/YtU2GcygfrP7
-         75AitbXoNAEZ7mgrzy9+XuQDoocSLYs6s8wWEmIWAIrLGfcw62x9ylZTvZJ4Vgx/5ATz
-         TSH7a6DG9SgNnIIL0za2EbIZmt0wVNdis6zTGz1fqPzYETcDjAGyRKLrl0RwnTrl1YOl
-         dNBoDqZFemnek89qCiEsDRje/kWKcK5ERg+7xDLkq1++7IA96AnBlitDJk+Lgaz2/Tw+
-         TL+VudG+xWeI64sOouOyv5ff7cFxBHyLg1tBX/tg28qAodkgzI7djI2+z4PnDRT+MU7y
-         7GZw==
+        bh=cxS2Z0C5wIvgTQSNU8Qu3dmatgrBAAmj1e5pgYj3js0=;
+        b=dHuSg9TqOdo09fewDAsy7NY8cehS9cgCTVdERzvUHYqGr85ZyTQ1evMmMz2w63X08d
+         mlgUK7wNno9VXsLTRsY6RRviD/rqv541w26z66X5bPM+sqi9YahxkoY3OgPiXbd/29VB
+         +K3MlHv75BKuQG6RtcqYBLTF5CrkD1RTCnIIjkF/JMuEomkZ903j3PHeoS9/4IqsS+6I
+         jKgL/TqO41iXr4RZnMI/qN29L8QM4+bOBJrHk0M2TIQGc7hKY06sDstWA+4M8FTqPyrt
+         9aihtzA5qGot4OvcK1bpXGPF9MuzxJgAx2hYp/5j/I5bypyQMG0BbyEJgSueCy3baWrc
+         D/dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732138455; x=1732743255;
+        d=1e100.net; s=20230601; t=1732138456; x=1732743256;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Iu7aDJGbDBdHDN9nX/nWmhMIbwEvqk3RBRXOi7f/0Bs=;
-        b=u65eZjPOUFJdpsJj/9ZOqNUrP6EJSMelDyQcNT+DKQXh+hsX+MOlxV8/1ICDpdA0OD
-         1IIFY5eRbYZtS403f95TrWJLWZgk7+sZjfgy/A9jMzDUEONFkKMEomhD+ZKkwWKHi3gE
-         kNh6VtOjSU1LZ1dlUff/fz7ciZrdRqF2YLHaMZSuq29sMqN1wJhj9EYDfVz61oJpZuKK
-         HBQvt/MlS5w+ZAfSnNM/hTIBtOGh8oSsfKec+hPj643odwBLpV05ZZy/6p4XSccfn76Y
-         qFqRbJgU0/ZJ4ML9XT9yU2EupV+xDJfQsoiK8T9GTdRLg8qjUD3xKMzaVVfk4FpAECUC
-         jsFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXP4EnkdnxDyVr8BKDbtqGT129rihQoZrkZcFT/IbcC2Qp7ut9leYlfqkRdYhv/AdPad6wmMS8a7lGJ+Ps=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz97JY5thFFcitjjLyiehlYOH+NOfkoZE1H1T2Y6xhloMtSgefG
-	u+KSeOjyznjus8gZxUdl5wnpi4zI+RGLxmgfAdjGzQM6z9K39ziBZnfEps7ltdA=
-X-Google-Smtp-Source: AGHT+IHXx6o3MNspetZNr4gTo1mEHeioI28P55Eo6Nd/3JODlVCwxdabASABo8ThWmfyi+yvZviiTw==
-X-Received: by 2002:a05:6871:4b12:b0:295:d711:f12d with SMTP id 586e51a60fabf-296d9ae33ecmr3788154fac.15.1732138455002;
+        bh=cxS2Z0C5wIvgTQSNU8Qu3dmatgrBAAmj1e5pgYj3js0=;
+        b=pFAkfcljANGMWBTzWOR9Z4VDnQac9pyPOYg2/0FygLMQ8A0w+jFrZ7wcQNSn0jsvRg
+         p4/uDPVzHI63JgFpOWBue1BE+g3e0BixRjiD6qKVzPNhLqRIZ6/vKwyjShoVYsngVevm
+         0OKwIYXnMfnEZ3RQBpTlSb8JJblWIzjoGJur1H9y/tCBCJ7w61yWoKbKxmZSQsASejRp
+         K9L5hRitkSZ5i1hal4Ecp9ibNvLeqI4+eWaOGC9rk7TMPjKRua32m66LErQlsvK0a2el
+         N5mcYR1pX7NOym/7PeHau/Tta5SXyOPNjMXfaaADb9xQvPGxUaUY60XK4E9Rp2Rqa9g3
+         Yoxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzFNuJ3ET1jTRVc75zfMmMid0rTCzQn+m8O8+f5ELv0PZx52S+T/6cCv+yHd/74ynsOX+9q5cqBhlXcik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmqLVqEZn/IbzsvEEfaw5uIdolNuywWWuOcHri865kFN2GblVf
+	WsDrJ2Euoi5aUYlvhQ3mrD1nyO8B1KkaBIjZm7eq2IN8bwaqXNwJVLYLKSMNBEQ=
+X-Google-Smtp-Source: AGHT+IF2lB8QgTcV4vegaXvpiMgWjD/98kXniLRx2lPUYn1xYr2NIjkpvUWFO1Od3RLDELoRjuQ/NA==
+X-Received: by 2002:a05:6870:ac85:b0:296:e46b:8d09 with SMTP id 586e51a60fabf-296e46bd876mr3947193fac.12.1732138455757;
         Wed, 20 Nov 2024 13:34:15 -0800 (PST)
 Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651852c27sm4487365fac.2.2024.11.20.13.34.14
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651852c27sm4487365fac.2.2024.11.20.13.34.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 13:34:14 -0800 (PST)
+        Wed, 20 Nov 2024 13:34:15 -0800 (PST)
 From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 20 Nov 2024 15:33:33 -0600
-Subject: [PATCH 10/11] iio: dac: ltc2688: use
+Date: Wed, 20 Nov 2024 15:33:34 -0600
+Subject: [PATCH 11/11] iio: dac: max5821: use
  devm_regulator_get_enable_read_voltage()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241120-iio-regulator-cleanup-round-6-v1-10-d5a5360f7ec3@baylibre.com>
+Message-Id: <20241120-iio-regulator-cleanup-round-6-v1-11-d5a5360f7ec3@baylibre.com>
 References: <20241120-iio-regulator-cleanup-round-6-v1-0-d5a5360f7ec3@baylibre.com>
 In-Reply-To: <20241120-iio-regulator-cleanup-round-6-v1-0-d5a5360f7ec3@baylibre.com>
 To: Jonathan Cameron <jic23@kernel.org>
@@ -93,93 +93,69 @@ Simplify the code by using devm_regulator_get_enable_read_voltage().
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
- drivers/iio/dac/ltc2688.c | 44 ++++++++++----------------------------------
- 1 file changed, 10 insertions(+), 34 deletions(-)
+ drivers/iio/dac/max5821.c | 36 ++++--------------------------------
+ 1 file changed, 4 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/iio/dac/ltc2688.c b/drivers/iio/dac/ltc2688.c
-index 376dca163c91..bdc857c7fa6d 100644
---- a/drivers/iio/dac/ltc2688.c
-+++ b/drivers/iio/dac/ltc2688.c
-@@ -842,7 +842,7 @@ static int ltc2688_channel_config(struct ltc2688_state *st)
- 	return 0;
- }
+diff --git a/drivers/iio/dac/max5821.c b/drivers/iio/dac/max5821.c
+index 18ba3eaaad75..b062a18be5e7 100644
+--- a/drivers/iio/dac/max5821.c
++++ b/drivers/iio/dac/max5821.c
+@@ -32,7 +32,6 @@ enum max5821_device_ids {
  
--static int ltc2688_setup(struct ltc2688_state *st, struct regulator *vref)
-+static int ltc2688_setup(struct ltc2688_state *st, bool has_external_vref)
- {
- 	struct device *dev = &st->spi->dev;
- 	struct gpio_desc *gpio;
-@@ -881,18 +881,13 @@ static int ltc2688_setup(struct ltc2688_state *st, struct regulator *vref)
- 	if (ret)
- 		return ret;
+ struct max5821_data {
+ 	struct i2c_client	*client;
+-	struct regulator	*vref_reg;
+ 	unsigned short		vref_mv;
+ 	bool			powerdown[MAX5821_MAX_DAC_CHANNELS];
+ 	u8			powerdown_mode[MAX5821_MAX_DAC_CHANNELS];
+@@ -295,11 +294,6 @@ static const struct iio_info max5821_info = {
+ 	.write_raw = max5821_write_raw,
+ };
  
--	if (!vref)
-+	if (!has_external_vref)
- 		return 0;
- 
- 	return regmap_set_bits(st->regmap, LTC2688_CMD_CONFIG,
- 			       LTC2688_CONFIG_EXT_REF);
- }
- 
--static void ltc2688_disable_regulator(void *regulator)
+-static void max5821_regulator_disable(void *reg)
 -{
--	regulator_disable(regulator);
+-	regulator_disable(reg);
 -}
 -
- static bool ltc2688_reg_readable(struct device *dev, unsigned int reg)
+ static int max5821_probe(struct i2c_client *client)
  {
- 	switch (reg) {
-@@ -947,8 +942,8 @@ static int ltc2688_probe(struct spi_device *spi)
- 	static const char * const regulators[] = { "vcc", "iovcc" };
- 	struct ltc2688_state *st;
- 	struct iio_dev *indio_dev;
--	struct regulator *vref_reg;
- 	struct device *dev = &spi->dev;
-+	bool has_external_vref;
- 	int ret;
+ 	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+@@ -321,32 +315,10 @@ static int max5821_probe(struct i2c_client *client)
+ 		data->powerdown_mode[tmp] = MAX5821_100KOHM_TO_GND;
+ 	}
  
- 	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
-@@ -973,34 +968,15 @@ static int ltc2688_probe(struct spi_device *spi)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to enable regulators\n");
- 
--	vref_reg = devm_regulator_get_optional(dev, "vref");
--	if (IS_ERR(vref_reg)) {
--		if (PTR_ERR(vref_reg) != -ENODEV)
--			return dev_err_probe(dev, PTR_ERR(vref_reg),
--					     "Failed to get vref regulator");
+-	data->vref_reg = devm_regulator_get(&client->dev, "vref");
+-	if (IS_ERR(data->vref_reg))
+-		return dev_err_probe(&client->dev, PTR_ERR(data->vref_reg),
+-				     "Failed to get vref regulator\n");
 -
--		vref_reg = NULL;
--		/* internal reference */
--		st->vref = 4096;
--	} else {
--		ret = regulator_enable(vref_reg);
--		if (ret)
--			return dev_err_probe(dev, ret,
--					     "Failed to enable vref regulators\n");
+-	ret = regulator_enable(data->vref_reg);
+-	if (ret) {
+-		dev_err(&client->dev,
+-			"Failed to enable vref regulator: %d\n", ret);
+-		return ret;
+-	}
 -
--		ret = devm_add_action_or_reset(dev, ltc2688_disable_regulator,
--					       vref_reg);
--		if (ret)
--			return ret;
+-	ret = devm_add_action_or_reset(&client->dev, max5821_regulator_disable,
+-				       data->vref_reg);
+-	if (ret) {
+-		dev_err(&client->dev,
+-			"Failed to add action to managed regulator: %d\n", ret);
+-		return ret;
+-	}
 -
--		ret = regulator_get_voltage(vref_reg);
--		if (ret < 0)
--			return dev_err_probe(dev, ret, "Failed to get vref\n");
-+	ret = devm_regulator_get_enable_read_voltage(dev, "vref");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(dev, ret,
+-	ret = regulator_get_voltage(data->vref_reg);
+-	if (ret < 0) {
+-		dev_err(&client->dev,
+-			"Failed to get voltage on regulator: %d\n", ret);
+-		return ret;
+-	}
++	ret = devm_regulator_get_enable_read_voltage(&client->dev, "vref");
++	if (ret)
++		return dev_err_probe(&client->dev, ret,
 +				     "Failed to get vref regulator voltage\n");
  
--		st->vref = ret / 1000;
--	}
-+	has_external_vref = ret != -ENODEV;
-+	st->vref = has_external_vref ? ret / 1000 : 0;
- 
--	ret = ltc2688_setup(st, vref_reg);
-+	ret = ltc2688_setup(st, has_external_vref);
- 	if (ret)
- 		return ret;
+ 	data->vref_mv = ret / 1000;
  
 
 -- 
