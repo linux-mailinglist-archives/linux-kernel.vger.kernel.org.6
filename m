@@ -1,133 +1,142 @@
-Return-Path: <linux-kernel+bounces-415975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD0A9D3EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:12:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B19D3F63
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328B6282C48
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:12:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C477B37DFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E851C82E2;
-	Wed, 20 Nov 2024 15:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0241BC061;
+	Wed, 20 Nov 2024 15:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Upqv/vsR"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCgK8OqQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2AD19CCFC;
-	Wed, 20 Nov 2024 15:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE761EB3D;
+	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114833; cv=none; b=MwGF1bT1HoIheU7KqJlkXNKqxQXEGGYTyXbzrkx45gEdEd8EPNlC0aHXn8IWcoboO4oabjkGZmcJaBf8tJsD1s4rKt9mJWbDWso0RQVofrNedUfEwhuicHAA0gLaagstYUAKDhWGt34IUTxdYUINu0e41g+lyaFGnkZS2GgFvuA=
+	t=1732114876; cv=none; b=CYH+ntTW3NPJbz97chTdgkN0gwxr7kkeDgB3jNA+d8LyNM6WC7cnBB8Rg58Fam3+/Mr+WEPtT9bRmRgAPr4p1GE7oj8xmsnDNmXmcfhDdpTJUKdqWLtR9MCpuoVscvCJ1qWSHYrphuugcn8iNxadfAR4/RmCo1fEH8wEJY1oAUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114833; c=relaxed/simple;
-	bh=9ZC+2ipveOKTiTiA55rUJph3DsBYXv6Abypl2uf3Xqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ebAMXVJvy78bhoRMSirPG8h5xnsxP46T8VOpSrcVT9rSyGf6BK0P/GwGuCctrK3NmTUUPZ/jcZFd69Y0kkVm+9q0C4DjffWjw1BDvj+1W+uD2yFWgjno7ouWGM1V3Xq/IgiDQnz6kWIlUbaRhYpVgXMhrq3n4urUdhanEzkKR4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Upqv/vsR; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so2755207a12.2;
-        Wed, 20 Nov 2024 07:00:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732114830; x=1732719630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lFFenx849KBhQwdSdYlyI/GCskIbw5nu6S3nTEvWg0M=;
-        b=Upqv/vsRX3sN4EjsUHkCvIVbbcB0CQMb4GbXCVFs24yLg8Qi1BHDOeGXWC8c7y7ysc
-         YWSIwJ+5GJ5rvgIFIwPYDC+exlBWE1ffG1RQhZ1SAlXS98BaESZwfkDU6obtdTWCkjVv
-         UA7S2sQywwiz5DflooBQSDoKvXFuoTmBIdQLqcNuABCe/Edt3eGrJE02mqbzSBHfED3Z
-         OdeA1MdOF0EvP7GdKUxW0rL4ks8pVbIgkihJwC6SHFlJ8/ySHaY86irAPFF+VkuMSzRd
-         sqdP2zxU8CKa6HI3z+CdDkmWI5Q0vk/xiGJqp1Hlfra0Hvu6d8pEmOpYNedNZTL6h1yd
-         j5Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732114830; x=1732719630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFFenx849KBhQwdSdYlyI/GCskIbw5nu6S3nTEvWg0M=;
-        b=xGdk0F4DoXAGBT3yELiqUEITz+QgtTQKPoKs6te7wJZbGSB8FuTH8CcjTYHvmFCSK3
-         FOqe7rrWK+upO+7XbuAL77pfzG7TuJxLwVblu+WyUPM73QaFPy4srj9TsQUUJa5DwlSG
-         Y0XuO/vWfScofyN6/pvM4WLwjCTC4weSbRR+b+CVZ4if13Lxr6Yg8F2rdALhSmzQtKLu
-         YOaNbKMoYiiJhntcfSlCHHGc4+YS3+bDN0CdfBydM2RRBvcY0nefTtZTjm8ubPnb9Ovw
-         QFAyEMvI4oQiYYuYSdh/opgWZ4+VkdIYDY1NtIOom1JIedqlPBQWCHTCUbi6aFpOdn7W
-         9BsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8vICOdeY8HBtBjdp1plxtaZGaoL+458Q/fp6xsKu9TaWMQOcmuR98Z6qTkMfkg1eoxcXIIlm5ah/USQ==@vger.kernel.org, AJvYcCVLkJnlRlWuTsfBoczMvHShNUsZjUU/IhjmsmnhedyfJpwYKDmnZeRQMvOPxzmsfAcQKA+ozsRLuDZFOemf@vger.kernel.org, AJvYcCVR20ZFMHx2dqHaz03YSs6q1MeXx9exFoER/YKSz4281k+n0ZVq2q2sQndJAKvf5GhyGU/IC0awMA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMSdB0z/PGhj7XvcZKTHZMBYhYfEnRA0sm/V8gJ8UZ+8kA+WNU
-	e5repVhLjidDBkqxyFRHYGYas/pe52Vx/hm/ogu4aWETJ54DlBVR
-X-Google-Smtp-Source: AGHT+IFV1FFI1cI7abiH+7KTSeeEW/+3XLs4ah+x+jtitU1XtL5LK2apTa03VWws5gWrvzNJ0ykmqw==
-X-Received: by 2002:a05:6a20:12ce:b0:1d9:780a:4311 with SMTP id adf61e73a8af0-1ddaecd0f35mr4458444637.18.1732114827931;
-        Wed, 20 Nov 2024 07:00:27 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dcf424sm9688998a12.78.2024.11.20.07.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 07:00:27 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 20 Nov 2024 07:00:26 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg,
-	Rapoport@rox.of.borg, Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-Message-ID: <5df87ac7-9779-4a9e-b3ca-6aeddb1a4896@roeck-us.net>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+	s=arc-20240116; t=1732114876; c=relaxed/simple;
+	bh=9PHHaga7qdizbZvNAUY9ymsRQ2ooNPqub9YJW56h3qo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FjooauzBt9GcIj7teNhWV3Mn54IrlJmJx4eNYD5wCkjGZ/+H1eWXrLH2+i3xfbPKpW6DzylhlckFEYSi1wEE3gWXBRmPvswd3d/mbSzPBvQQcAWzfHzuOcTq0V4Ksy4HWmwteqUwpvKBrfYrMuHCjgRyGa+PsIcmBBaY1VSXF8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCgK8OqQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 93959C4CECD;
+	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732114875;
+	bh=9PHHaga7qdizbZvNAUY9ymsRQ2ooNPqub9YJW56h3qo=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=JCgK8OqQcukJuFdvCEamxuF8FRP0ALaJfShK1alyCkI9pE567w8EL6hovidWUf7Kq
+	 iCaKt9Hf/G8Duke6dldLjeGGPKOy50F1RhLF8WFt6c/Tol2uyJWutt4qiOUEboiGUJ
+	 uhZc7z09LMtTaiZv6ezoIFaf4LQ78FrfAaz9TNGBsBwkcjkAoJqr1R9HYR+H0vqfxC
+	 gFpWand3PtTHwFEK2sI+nYG2g2exfWjvaEU+Xr0XGdTupSK6na2vAyaIekCE67C9cR
+	 KJBMy6hXV7KxO8wIfBm4fF8sjdQYzvSoASqSn2hNL72W7J9dMuEikUd+z1fk7gzna0
+	 3D2kWvzvuFeLQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B8D711AA;
+	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
+From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
+Date: Wed, 20 Nov 2024 20:31:13 +0530
+Subject: [PATCH net-next v2] net/smc: Remove unused function parameter in
+ __smc_diag_dump
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241120-fix-oops-__smc_diag_dump-v2-1-9703b18191e0@iiitd.ac.in>
+X-B4-Tracking: v=1; b=H4sIALj5PWcC/4WNQQqDMBREryJ/3S8mxoJd9R5FQpp89S9MJEnFI
+ t69wQuUWQ0z8+aARJEpwaM6INLGiYMvRt4qsLPxEyG74kE2UgnR9DjyjiGsCbVOi9WOzaTdZ1m
+ xuZt3S71r+1FBma+RSvdCv8BTRk97hqEkM6cc4vf63MSV/8dvAots15mWOmWcejJzdrWxNXsYz
+ vP8AQMX4onMAAAA
+X-Change-ID: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
+ "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
+ Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>, 
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Manas <manas18244@iiitd.ac.in>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732114874; l=1964;
+ i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
+ bh=RbsJs9xT5OEaPMfZxEp4gByrXVK8Tp/HwiFKPToZuMU=;
+ b=yfq/MghKcAbWF2qD5/LJadh+UeQjXsDoTsZHgqNhsXBu6xgQOkxlNUQcm72cf00XWAsS1LtfI
+ zJETk+AZQLPBFg9IetHj1TxzztZw8rKQKxbrxrGK0GKQFYphxDoB8eP
+X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
+ pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
+X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
+ auth_id=196
+X-Original-From: Manas <manas18244@iiitd.ac.in>
+Reply-To: manas18244@iiitd.ac.in
 
-On Wed, Nov 20, 2024 at 01:46:21PM +0100, Geert Uytterhoeven wrote:
-> On m68k, where the minimum alignment of unsigned long is 2 bytes:
-> 
->     Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
->     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
->     Stack from 0102fe5c:
-> 	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
-> 	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
-> 	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
-> 	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
-> 	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
-> 	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
->     Call Trace: [<00425e78>] dump_stack+0xc/0x10
->      [<0041eb74>] panic+0xd8/0x26c
->      [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
->      [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
->      [<0041e5f0>] memset+0x0/0x8c
->      [<005f67c0>] io_uring_init+0x54/0xd2
-> 
-> The minimal alignment of an integral type may differ from its size,
-> hence is not safe to assume that an arbitrary freeptr_t (which is
-> basically an unsigned long) is always aligned to 4 or 8 bytes.
-> 
-> As nothing seems to require the additional alignment, it is safe to fix
-> this by relaxing the check to the actual minimum alignment of freeptr_t.
-> 
-> Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-> Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+From: Manas <manas18244@iiitd.ac.in>
 
-On m68k:
+The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
+There is only one instance of this function being called and its passed
+with a NULL value in place of bc.
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Manas <manas18244@iiitd.ac.in>
+---
+Changes in v2:
+- Added target tree and prefix
+- Carried forward Reviewed-by: tag from v1
+- Link to v1: https://lore.kernel.org/r/20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in
+---
+ net/smc/smc_diag.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
+index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
+--- a/net/smc/smc_diag.c
++++ b/net/smc/smc_diag.c
+@@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
+ 
+ static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
+ 			   struct netlink_callback *cb,
+-			   const struct smc_diag_req *req,
+-			   struct nlattr *bc)
++			   const struct smc_diag_req *req)
+ {
+ 	struct smc_sock *smc = smc_sk(sk);
+ 	struct smc_diag_fallback fallback;
+@@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+ 	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
+ 	struct net *net = sock_net(skb->sk);
+ 	int snum = cb_ctx->pos[p_type];
+-	struct nlattr *bc = NULL;
+ 	struct hlist_head *head;
+ 	int rc = 0, num = 0;
+ 	struct sock *sk;
+@@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
+ 			continue;
+ 		if (num < snum)
+ 			goto next;
+-		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
++		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
+ 		if (rc < 0)
+ 			goto out;
+ next:
+
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
+
+Best regards,
+-- 
+Manas <manas18244@iiitd.ac.in>
+
+
 
