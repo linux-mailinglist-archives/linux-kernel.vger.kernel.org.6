@@ -1,114 +1,166 @@
-Return-Path: <linux-kernel+bounces-416081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71B69D3FF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:23:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0669D3FFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC22281534
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067EA1F23D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206714BF87;
-	Wed, 20 Nov 2024 16:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EA0153801;
+	Wed, 20 Nov 2024 16:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npWRgFtN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DOY4y7BA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A30D145335;
-	Wed, 20 Nov 2024 16:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C066C146A79
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119772; cv=none; b=LOqCGmG9lT4vLsgk+KJAHry3DCRQHN0mOdzeoF/VFNrs3m52y91FJX9nces9g69LlJfLeJArvrAAfwpMkROoYksUN5TbD7bJO+wDgfmQPNegbpvoMntc2EUraLDdlX2JNCg9l1oxP9zYM7H5+T3KyNrn1xv94+QRUAnWyyfHkII=
+	t=1732119913; cv=none; b=iX9bqetKkH5/SwPRsA+oI/NLoXR6mCulZ1qGSqILYmO2ymm8jxL/jkoUdZgctW4wObE1PgGREFUNSSaQgkiDtJBcb56bNYMgVUrd0v8vgW8N5ajjjYTAt1itcBTzFVoDcJQf3Li8L/4rX61Rjha3SEUgC8u7zMMpGBV5+1LGdao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119772; c=relaxed/simple;
-	bh=wlZcEBoWf0udUSwiv9TVQf3VzKNWFqJ1JTuILs8cvAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reoTXYXLqDaxuhz6EbZXsVWSeeSJ0WaEOjrDvF3ov6VelTtGwcY5M7X4/lpuJFIMFp3MiSH6PiNlQt0w3FXgJPpVPWBCbAF2bYw3OtOoGBs2KKHaI+Tl+caAA++vg3VkrlnUzsniD6GJzT6jhw8eW1Q4snSMGDM6xVLT83VD5PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npWRgFtN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0A0C4CECD;
-	Wed, 20 Nov 2024 16:22:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732119771;
-	bh=wlZcEBoWf0udUSwiv9TVQf3VzKNWFqJ1JTuILs8cvAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=npWRgFtNmCZyBRnL4g5xJj2h4uie9eThjtqcBWDVxLYyzaViHWKDQ3xaSzcuDyrX4
-	 Uh14wMEERn6mSkfifq3K5V+XqurH/L+um01BaOMuLHLYm1PKdoF+ImkHS+DCENLcGy
-	 fGQtshnbtUwe6JKlZN/1JHxJWbSe8EotlcgP1c3QCCXOFiYlbkwyDh37aHuF40APC0
-	 /Y0xAKUXu3sQy5fJYETmeMRV6y/c/OKviV+Recm6U3GHq/9j71VKMvLZC5JoAjrEPe
-	 dX2MgBjJFjuhv5VQepvi+zkFpVKvR6z+sgUcA7MDv0tQvrLlVe6b7vMvVSFkXM6xZo
-	 Q4JHqbzMvafDQ==
-Date: Wed, 20 Nov 2024 16:22:47 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Potin Lai <potin.lai.pt@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Patrick Williams <patrick@stwcx.xyz>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Cosmo Chou <cosmo.chou@quantatw.com>,
-	Potin Lai <potin.lai@quantatw.com>
-Subject: Re: [PATCH 2/2] dt-bindings: trivial-devices: add ipmb-dev
-Message-ID: <20241120-enjoyably-disarm-0365850f67e7@spud>
-References: <20241120-trivial-devices-v1-0-1f7cb48ee21b@gmail.com>
- <20241120-trivial-devices-v1-2-1f7cb48ee21b@gmail.com>
+	s=arc-20240116; t=1732119913; c=relaxed/simple;
+	bh=93S9b76DLfHg1j3hGUFKC6KusKfH4b9Sf6zjZ5dEV2M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=r/9eza+65BUg0Ltzz3D3GW8UehWtjH6UBUpdUs+hJbKNA37X9DJ8pLsUviAwWiX1uwM5Rjw3iJr+cOf6upyiNGEY6556sszBUI2kg33o8QZvKIiCT4wBf52XgagtCZvEiG/hei15zcYg/+vTmOKe6+b4Nt10GbaO2UymAEd2ol0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DOY4y7BA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732119909;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KnMkGleZIsu11xw1ZkKAb4+ieA42pt74OZ0CpBzWkW0=;
+	b=DOY4y7BAO2hnmspUQ7PeB+fW5HfIrDzsqwA5hZ7JHeFY4oUcrEVcj8B/uxZhI6+++EI5G3
+	JhrbUCMcuROOVFTq4OvOebBXT2ZRVmwEUiXo+0U8AW8AStKlIHcdKwwJvE4INZVE8257Mj
+	XFuY94eM7ZBAtOrKHfOdFdn7A1/NF2c=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-644-OLqEPljNOamlexRXo6XdMg-1; Wed, 20 Nov 2024 11:25:08 -0500
+X-MC-Unique: OLqEPljNOamlexRXo6XdMg-1
+X-Mimecast-MFC-AGG-ID: OLqEPljNOamlexRXo6XdMg
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b35758d690so103894285a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:25:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732119908; x=1732724708;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KnMkGleZIsu11xw1ZkKAb4+ieA42pt74OZ0CpBzWkW0=;
+        b=aZswzDAMwSl1bFdksNtBeea29zJ4i4QOmCxRyHV1R5Jq95pp+lPBV31ZDLFj/Dv0Ue
+         KMKQJltITb4zHZNMXIM1Ifnwn3BEHTVfFmWlT2dmdT203rA6D5Z6c5Tem8rKvn0+TDdX
+         MhQbPo+wbP5KwnWNvR3xYPRgHaQF4qjk/y1sTTOXX22Yw3oi+sJ9gAuqHUqeNR/sfpnw
+         anjTjhMDSw4l16EDIEf9dY1W2lPKRzMxf8RpRDH8geUnejCnrzGOThGhhMnsjkGyJgw2
+         M1SVU+EH9SWcJL34n3BmmmDLRFo3UTlzBszLSsiI/Txq9T/4rh/qNXdVJkdRjp29PKxV
+         xzrg==
+X-Gm-Message-State: AOJu0YwPOWcEO2TbAkmMj9X7ngo68+DvBms0uqETgnrU+vbJ1wLMjPGZ
+	Vjj03VFKfKXHuVIRaSlq8a06w9iAZzoFgczcRk3Iz9ZXBdtKCfpXHKV3cg4yZa1nuekSXE6hbmz
+	RS/MjW/J6Ts8LswxukK9n9vBOn8+ivpIAM272OFG1mG3FGPV74XnefLrVTI5j9A==
+X-Received: by 2002:a05:620a:1993:b0:7a9:be53:fe3b with SMTP id af79cd13be357-7b42edcbc1bmr441517285a.14.1732119908192;
+        Wed, 20 Nov 2024 08:25:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG+5agK6i6snnGPwkWZs91MFHpm70SIo/e9jAKzDpAFTE1YXLtw0mxvEd1b9vUkNxYONzCDpA==
+X-Received: by 2002:a05:620a:1993:b0:7a9:be53:fe3b with SMTP id af79cd13be357-7b42edcbc1bmr441510785a.14.1732119907854;
+        Wed, 20 Nov 2024 08:25:07 -0800 (PST)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b4852400a3sm112207985a.96.2024.11.20.08.25.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 08:25:07 -0800 (PST)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+ x86@kernel.org, rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, Wanpeng Li
+ <wanpengli@tencent.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Andy
+ Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Frederic Weisbecker <frederic@kernel.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Neeraj Upadhyay <quic_neeraju@quicinc.com>, Joel
+ Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Zqiang <qiang.zhang1211@gmail.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Jason Baron <jbaron@akamai.com>, Kees Cook
+ <keescook@chromium.org>, Sami Tolvanen <samitolvanen@google.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Juerg
+ Haefliger <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
+ <nsaenz@kernel.org>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
+ Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
+ Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
+ Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
+ <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+ Dionna Glaze <dionnaglaze@google.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo
+ Tosatti <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel
+ Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
+In-Reply-To: <20241119233902.kierxzg2aywpevqx@jpoimboe>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-7-vschneid@redhat.com>
+ <20241119233902.kierxzg2aywpevqx@jpoimboe>
+Date: Wed, 20 Nov 2024 17:24:59 +0100
+Message-ID: <xhsmhy11dhnz8.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WBfiMg/EF/i4dHJ0"
-Content-Disposition: inline
-In-Reply-To: <20241120-trivial-devices-v1-2-1f7cb48ee21b@gmail.com>
+Content-Type: text/plain
 
+On 19/11/24 15:39, Josh Poimboeuf wrote:
+> On Tue, Nov 19, 2024 at 04:34:53PM +0100, Valentin Schneider wrote:
+>> Later commits will cause objtool to warn about non __ro_after_init static
+>> keys being used in .noinstr sections in order to safely defer instruction
+>> patching IPIs targeted at NOHZ_FULL CPUs.
+>
+> Don't we need similar checking for static calls?
+>
 
---WBfiMg/EF/i4dHJ0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+/sifts through my notes throwing paper all around
 
-On Wed, Nov 20, 2024 at 11:28:07PM +0800, Potin Lai wrote:
-> Add ipmb-dev into trivial-devices to support IPMB device node.
+Huh, I thought I had something, but no... Per the results they don't seem
+to be flipped around as much as static keys, but they also end up in
+text_poke_bp(), so yeah, we do. Welp, I'll add that to the list.
 
-What is an "impb device"? You need a better description than this.
+>> Two such keys currently exist: mds_idle_clear and __sched_clock_stable,
+>> which can both be modified at runtime.
+>
+> Not sure if feasible, but it sure would be a lot simpler to just make
+> "no noinstr patching" a hard rule and then convert the above keys (or at
+> least their noinstr-specific usage) to regular branches.
+>
+> Then "no noinstr patching" could be unilaterally enforced in
+> text_poke_bp().
+>
+>> diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
+>> index f5a2727ca4a9a..93e729545b941 100644
+>> --- a/include/linux/jump_label.h
+>> +++ b/include/linux/jump_label.h
+>> @@ -200,7 +200,8 @@ struct module;
+>>  #define JUMP_TYPE_FALSE		0UL
+>>  #define JUMP_TYPE_TRUE		1UL
+>>  #define JUMP_TYPE_LINKED	2UL
+>> -#define JUMP_TYPE_MASK		3UL
+>> +#define JUMP_TYPE_FORCEFUL      4UL
+>
+> JUMP_TYPE_NOINSTR_ALLOWED ?
+>
 
->=20
-> Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
-> ---
->  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
-umentation/devicetree/bindings/trivial-devices.yaml
-> index aa09dc51dab7..89dfac9b6a9e 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -149,6 +149,8 @@ properties:
->            - injoinic,ip5209
->              # Inspur Power System power supply unit version 1
->            - inspur,ipsps1
-> +            # IPMB Device
-> +          - ipmb-dev
->              # Intersil ISL29028 Ambient Light and Proximity Sensor
->            - isil,isl29028
->              # Intersil ISL29030 Ambient Light and Proximity Sensor
->=20
-> --=20
-> 2.31.1
->=20
+That's better, I'll take it. Thanks!
 
---WBfiMg/EF/i4dHJ0
-Content-Type: application/pgp-signature; name="signature.asc"
+> -- 
+> Josh
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZz4M1wAKCRB4tDGHoIJi
-0latAP9l/Lz0OalWnoWUyS34zmO/ysLdokpFXOxnfa3su5zhpQD/Wk2HinYwKVdy
-XNC3TZBimwmXlWqAlcffTrf/4VkNWgc=
-=xqFi
------END PGP SIGNATURE-----
-
---WBfiMg/EF/i4dHJ0--
 
