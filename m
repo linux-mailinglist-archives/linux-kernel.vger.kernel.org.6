@@ -1,316 +1,283 @@
-Return-Path: <linux-kernel+bounces-415891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F8E9D3DDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:47:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268699D3DB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:38:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2995B29E7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11C52847ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABD71B3727;
-	Wed, 20 Nov 2024 14:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516B31ADFE8;
+	Wed, 20 Nov 2024 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ULUjmoXK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i27XemEK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9182EA939;
-	Wed, 20 Nov 2024 14:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8C1AA7A6;
+	Wed, 20 Nov 2024 14:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113242; cv=none; b=KHVtG6D6+kdctp7l5txK0r7mNxrXMiwntlOcTxttPRk2M04IPSfBnF70I7Gw5OcIo7QrgtC0yBCC/pEk2YunS28PZjdv5KS/keNT6W7kEm7iwPKRCJGZe+ecJPZxhCkz+eXBfSv1WNsnnS84088JDmftqtp6GrVgbqu5qFA1wzs=
+	t=1732113476; cv=none; b=H7qh5/owCE4c/o2zC+bQdoO7pKVJ3oaav+8QSTt0VgoD0aSFYoLD26u6a2kK6Tg5C8AaC11YL5RxszLxpWuheDZzwqO/ANCv6F6RHuA3omoPFCGuys4LvPvTrcPur4XDPyrC7xIDoPMDXpm8OpR4zD69PUrtWNLPLQjHgPyxgcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113242; c=relaxed/simple;
-	bh=f6jE4YHqQUGgN75eGWXUJ9kbNinucKH3z14BlVmeZW8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IV4iwCwAhV9HXLhXDZ/pko16VL4OB4u+49oPeq0GdRsDfb3GhvP5WnRsUV5gBBm9tq+829CingHZ0Au+59dP1J3162/1Ztunxi0PyN2hnUmq2DlBLslMfTgcGeP4p9upQoYoYaehIRRDpvwWPn+ZdJmj9b9O4bGlJNqpUrXRKfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ULUjmoXK; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1732113476; c=relaxed/simple;
+	bh=huhfnspYmyT9A0LEG6xXsTFa1U1/BfpTovXGM0t2Kak=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Lynqjan6jN0AIAtONTPf6M0sWQLI6x3ghgMSLDrBHbcXAHMCXIFNc+TrOc/xKesfFK1X5xfURobbDsy/V5Fp5n/DQqJydMyf/s7v9d7YGmH4i9Qb13z1GPe8/0uYvABUg6EmLgtbE1Y+1v7Y9yrLwnyjnesfXarGW+EfTMOp41Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i27XemEK; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732113240; x=1763649240;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=f6jE4YHqQUGgN75eGWXUJ9kbNinucKH3z14BlVmeZW8=;
-  b=ULUjmoXK/oVzEGE8SZ4rNycYIm6Dji4xDFrkJJEDH7yZHizJsMg/fRMw
-   tI4v+VAX8/hUO2yfeWmuWAbrru79JHetrntt28wtuntQU5TkJjVni0rzQ
-   L6nuqcE4LiBVVxIltDUQWBntfEszADRA/CJ28JxTzW2PIsDOuMpI0hB9b
-   PIfiAwCLSeAkWlHjU9cMH79lF04s4a61MzNDiLmZB9AMb2gAdwq/T0f1a
-   mtX8oJewi8zOrwBcWXoP8E2wN/FK/wLi5b9m/Jl1c/4VX6XbVvB+JwCRv
-   HG4FEhJMEzbTE71B3GSU+tkKGd+Jr521hlMdJYLtBcILCFpqZhnGi04ay
-   g==;
-X-CSE-ConnectionGUID: Ldysh7jGR9SfEUXcOngAbQ==
-X-CSE-MsgGUID: 1pBrx6qnSqW/JqDl9CPSvA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="31544966"
+  t=1732113476; x=1763649476;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=huhfnspYmyT9A0LEG6xXsTFa1U1/BfpTovXGM0t2Kak=;
+  b=i27XemEKy9sVx7wwF3ay4Yi4rlxRddCG/KbaR9dXgHU3MIYRDAFtH2Uu
+   xbsQARyfhCTtilEM0hsoilDv8SL58ehvNJtdlWQ14tov3LPzOJ6E2LEM2
+   YpvT26nJGOM5vpUN9cXe8cQYX0YoRxP0m7bePhuSDjoelasSLY0tTmEyO
+   XlbnX3Fr5+j8CcqziP/lcwKGg9HkYfZo7M3WMFhVrTLFFeFoInv+0z8Wl
+   DzSUXZEk0NAGIRgh6P6j6V7ts9gGtS5/Sm7dtKWMFosw5TotRNOvB3tRI
+   7IbtK3dRnelCA7jZFHI6fKLI1UwAJKwhggW8ZlwjGa/N7Slbb9GzLvdLz
+   w==;
+X-CSE-ConnectionGUID: 2cbr75vBTZiq1yq0TDLzLw==
+X-CSE-MsgGUID: zZM2//sfSBKy+KEKCXjvOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="42684964"
 X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="31544966"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 06:33:54 -0800
-X-CSE-ConnectionGUID: 7HDv2UnUQhGVSJlya5RSlg==
-X-CSE-MsgGUID: +1jjkapGQf+B8EB6Qily/A==
+   d="scan'208";a="42684964"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 06:37:38 -0800
+X-CSE-ConnectionGUID: 8isG7xbCRWe1GHP/k4ss8A==
+X-CSE-MsgGUID: yQI1+t9GT7+pt8Exz7P1Bg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="90318056"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa007.jf.intel.com with ESMTP; 20 Nov 2024 06:33:50 -0800
-Message-ID: <9b86a2c9-de7f-46b7-b63d-451ebc9c87dd@linux.intel.com>
-Date: Wed, 20 Nov 2024 16:36:07 +0200
+   d="scan'208";a="90100512"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.15])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 06:37:31 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Wed, 20 Nov 2024 16:37:28 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>, Armin Wolf <W_Armin@gmx.de>
+Subject: Re: [PATCH v7 10/22] ACPI: platform_profile: Create class for ACPI
+ platform profile
+In-Reply-To: <20241119171739.77028-11-mario.limonciello@amd.com>
+Message-ID: <6aa9ba66-485f-6de9-1769-a544e8313d22@linux.intel.com>
+References: <20241119171739.77028-1-mario.limonciello@amd.com> <20241119171739.77028-11-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 02/30] xhci: sec-intr: add initial api to register a
- secondary interrupter entity
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
- lgirdwood@gmail.com, krzk+dt@kernel.org,
- pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
- tiwai@suse.com, robh@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <20241106193413.1730413-3-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20241106193413.1730413-3-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 6.11.2024 21.33, Wesley Cheng wrote:
-> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+On Tue, 19 Nov 2024, Mario Limonciello wrote:
+
+> When registering a platform profile handler create a class device
+> that will allow changing a single platform profile handler.
 > 
-> Introduce XHCI sec intr, which manages the USB endpoints being requested by
-> a client driver.  This is used for when client drivers are attempting to
-> offload USB endpoints to another entity for handling USB transfers.  XHCI
-> sec intr will allow for drivers to fetch the required information about the
-> transfer ring, so the user can submit transfers independently.  Expose the
-> required APIs for drivers to register and request for a USB endpoint and to
-> manage XHCI secondary interrupters.
+> The class and sysfs group are no longer needed when the platform profile
+> core is a module and unloaded, so remove them at that time as well.
 > 
-> Driver renaming, multiple ring segment page linking, proper endpoint clean
-> up, and allowing module compilation added by Wesley Cheng to complete
-> original concept code by Mathias Nyman.
-> 
-> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-> Co-developed-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 > ---
->   drivers/usb/host/Kconfig          |  11 +
->   drivers/usb/host/Makefile         |   2 +
->   drivers/usb/host/xhci-sec-intr.c  | 438 ++++++++++++++++++++++++++++++
->   drivers/usb/host/xhci.h           |   4 +
->   include/linux/usb/xhci-sec-intr.h |  70 +++++
->   5 files changed, 525 insertions(+)
->   create mode 100644 drivers/usb/host/xhci-sec-intr.c
->   create mode 100644 include/linux/usb/xhci-sec-intr.h
+> v7:
+>  * Whitespace
+>  * Add tag
+>  * Drop class_is_registered() check
+>  * Remove legacy sysfs before class
+> v6:
+>  * Catch failures in ida_alloc
+>  * Use 4th argument of device_create instead of dev_set_drvdata()
+>  * Squash unregister patch
+>  * Add module init callback
+>  * Move class creation to module init
+>  * Update visibility based on group presence
+>  * Add back parent device
+> v5:
+>  * Use ida instead of idr
+>  * Use device_unregister instead of device_destroy()
+>  * MKDEV (0, 0)
+> ---
+>  drivers/acpi/platform_profile.c  | 86 ++++++++++++++++++++++++++++++--
+>  include/linux/platform_profile.h |  2 +
+>  2 files changed, 83 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-> index d011d6c753ed..a2d549e3e076 100644
-> --- a/drivers/usb/host/Kconfig
-> +++ b/drivers/usb/host/Kconfig
-> @@ -104,6 +104,17 @@ config USB_XHCI_RZV2M
->   	  Say 'Y' to enable the support for the xHCI host controller
->   	  found in Renesas RZ/V2M SoC.
->   
-> +config USB_XHCI_SEC_INTR
-> +	tristate "xHCI support for secondary interrupter management"
-> +	help
-> +	  Say 'Y' to enable the support for the xHCI secondary management.
-> +	  Provide a mechanism for a sideband datapath for payload associated
-> +	  with audio class endpoints. This allows for an audio DSP to use
-> +	  xHCI USB endpoints directly, allowing CPU to sleep while playing
-> +	  audio.  This is not the same feature as the audio sideband
-> +	  capability mentioned within the xHCI specification, and continues
-> +	  to utilize main system memory for data transfers.
-
-This same API should be used for the hardware xHCI sideband capability.
-We should add a function that checks which types of xHC sideband capability xHC
-hardware can support, and pick and pass a type to xhci xhci_sec_intr_register()
-when registering a sideband/sec_intr
-
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index 32affb75e782d..3524a2b4618ed 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -5,6 +5,7 @@
+>  #include <linux/acpi.h>
+>  #include <linux/bits.h>
+>  #include <linux/init.h>
+> +#include <linux/kdev_t.h>
+>  #include <linux/mutex.h>
+>  #include <linux/platform_profile.h>
+>  #include <linux/sysfs.h>
+> @@ -22,6 +23,12 @@ static const char * const profile_names[] = {
+>  };
+>  static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
+>  
+> +static DEFINE_IDA(platform_profile_ida);
 > +
->   config USB_XHCI_TEGRA
->   	tristate "xHCI support for NVIDIA Tegra SoCs"
->   	depends on PHY_TEGRA_XUSB
-> diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
-> index be4e5245c52f..d4b127f48cf9 100644
-> --- a/drivers/usb/host/Makefile
-> +++ b/drivers/usb/host/Makefile
-> @@ -32,6 +32,8 @@ endif
->   xhci-rcar-hcd-y				+= xhci-rcar.o
->   xhci-rcar-hcd-$(CONFIG_USB_XHCI_RZV2M)	+= xhci-rzv2m.o
->   
-> +obj-$(CONFIG_USB_XHCI_SEC_INTR) += xhci-sec-intr.o
+> +static const struct class platform_profile_class = {
+> +	.name = "platform-profile",
+> +};
 > +
->   obj-$(CONFIG_USB_PCI)	+= pci-quirks.o
->   
->   obj-$(CONFIG_USB_EHCI_HCD)	+= ehci-hcd.o
-> diff --git a/drivers/usb/host/xhci-sec-intr.c b/drivers/usb/host/xhci-sec-intr.c
-> new file mode 100644
-> index 000000000000..b112c3388368
-> --- /dev/null
-> +++ b/drivers/usb/host/xhci-sec-intr.c
-> @@ -0,0 +1,438 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * xHCI host controller secondary interrupter management
-> + *
-> + * Provides logic for client drivers that support utilizing xHCI secondary
-> + * interrupters.
-> + *
-> + * Copyright (c) 2023-2024, Intel Corporation.
-> + *
-> + * Author: Mathias Nyman
-> + */
-> +
-> +#include <linux/usb/xhci-sec-intr.h>
-> +#include <linux/dma-direct.h>
-> +
-> +#include "xhci.h"
-> +
-> +/* internal helpers */
-> +static struct sg_table *
-> +xhci_ring_to_sgtable(struct xhci_sec_intr *si, struct xhci_ring *ring)
+>  static ssize_t platform_profile_choices_show(struct device *dev,
+>  					struct device_attribute *attr,
+>  					char *buf)
+> @@ -105,8 +112,25 @@ static struct attribute *platform_profile_attrs[] = {
+>  	NULL
+>  };
+>  
+> +static int profile_class_registered(struct device *dev, const void *data)
 > +{
-> +	struct xhci_segment *seg;
-> +	struct sg_table	*sgt;
-> +	unsigned int n_pages;
-> +	struct page **pages;
-> +	struct device *dev;
-> +	size_t sz;
-> +	int i;
-> +
-> +	dev = xhci_to_hcd(si->xhci)->self.sysdev;
-> +	sz = ring->num_segs * TRB_SEGMENT_SIZE;
-> +	n_pages = PAGE_ALIGN(sz) >> PAGE_SHIFT;
-> +	pages = kvmalloc_array(n_pages, sizeof(struct page *), GFP_KERNEL);
-> +	if (!pages)
-> +		return NULL;
-> +
-> +	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
-> +	if (!sgt) {
-> +		kvfree(pages);
-> +		return NULL;
-> +	}
-> +
-> +	seg = ring->first_seg;
-> +	if (!seg)
-> +		goto err;
-> +	/*
-> +	 * Rings can potentially have multiple segments, create an array that
-> +	 * carries page references to allocated segments.  Utilize the
-> +	 * sg_alloc_table_from_pages() to create the sg table, and to ensure
-> +	 * that page links are created.
-> +	 */
-> +	for (i = 0; i < ring->num_segs; i++) {
-> +		dma_get_sgtable(dev, sgt, seg->trbs, seg->dma,
-> +				TRB_SEGMENT_SIZE);
-> +		pages[i] = sg_page(sgt->sgl);
-> +		sg_free_table(sgt);
-> +		seg = seg->next;
-> +	}
-> +
-> +	if (sg_alloc_table_from_pages(sgt, pages, n_pages, 0, sz, GFP_KERNEL))
-> +		goto err;
-> +
-> +	/*
-> +	 * Save first segment dma address to sg dma_address field for the sideband
-> +	 * client to have access to the IOVA of the ring.
-> +	 */
-> +	sg_dma_address(sgt->sgl) = ring->first_seg->dma;
-> +
-> +	return sgt;
-> +
-> +err:
-> +	kvfree(pages);
-> +	kfree(sgt);
-> +
-> +	return NULL;
+> +	return 1;
 > +}
 > +
-> +static void
-> +__xhci_sec_intr_remove_endpoint(struct xhci_sec_intr *si, struct xhci_virt_ep *ep)
+> +static umode_t profile_class_is_visible(struct kobject *kobj, struct attribute *attr, int idx)
 > +{
-> +	/*
-> +	 * Issue a stop endpoint command when an endpoint is removed.
-> +	 * The stop ep cmd handler will handle the ring cleanup.
-> +	 */
-> +	xhci_stop_endpoint_sync(si->xhci, ep, 0, GFP_KERNEL);
-> +
-> +	ep->sec = NULL;
-> +	si->eps[ep->ep_index] = NULL;
+> +	if (!class_find_device(&platform_profile_class, NULL, NULL, profile_class_registered))
+> +		return 0;
+> +	if (attr == &dev_attr_platform_profile_choices.attr)
+> +		return 0444;
+> +	if (attr == &dev_attr_platform_profile.attr)
+> +		return 0644;
+
+These two should just return attr->mode I think.
+
+> +	return 0;
+
+Is this even necessary for something?
+
+-- 
+ i.
+
 > +}
 > +
-> +/* endpoint api functions */
+>  static const struct attribute_group platform_profile_group = {
+> -	.attrs = platform_profile_attrs
+> +	.attrs = platform_profile_attrs,
+> +	.is_visible = profile_class_is_visible,
+>  };
+>  
+>  void platform_profile_notify(struct platform_profile_handler *pprof)
+> @@ -164,25 +188,77 @@ int platform_profile_register(struct platform_profile_handler *pprof)
+>  	if (cur_profile)
+>  		return -EEXIST;
+>  
+> -	err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+> -	if (err)
+> -		return err;
+> +	/* create class interface for individual handler */
+> +	pprof->minor = ida_alloc(&platform_profile_ida, GFP_KERNEL);
+> +	if (pprof->minor < 0)
+> +		return pprof->minor;
+> +	pprof->class_dev = device_create(&platform_profile_class, pprof->dev,
+> +					 MKDEV(0, 0), pprof, "platform-profile-%d",
+> +					 pprof->minor);
+> +	if (IS_ERR(pprof->class_dev)) {
+> +		err = PTR_ERR(pprof->class_dev);
+> +		goto cleanup_ida;
+> +	}
+>  
+>  	cur_profile = pprof;
 > +
-> +/**
-> + * xhci_sec_intr_add_endpoint - add endpoint to access list
-> + * @si: secondary interrupter instance for this usb device
-> + * @host_ep: usb host endpoint
-> + *
-> + * Adds an endpoint to the list of endpoints utilizing secondary interrupters
-> + * for this usb device.
-> + * After an endpoint is added the client can get the endpoint transfer ring
-> + * buffer by calling xhci_sec_intr_get_endpoint_buffer()
-> + *
-> + * Return: 0 on success, negative error otherwise.
-> + */
-> +int
-> +xhci_sec_intr_add_endpoint(struct xhci_sec_intr *si,
-> +			   struct usb_host_endpoint *host_ep)
+> +	err = sysfs_update_group(acpi_kobj, &platform_profile_group);
+> +	if (err)
+> +		goto cleanup_cur;
+> +
+>  	return 0;
+> +
+> +cleanup_cur:
+> +	cur_profile = NULL;
+> +	device_unregister(pprof->class_dev);
+> +
+> +cleanup_ida:
+> +	ida_free(&platform_profile_ida, pprof->minor);
+> +
+> +	return err;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_register);
+>  
+>  int platform_profile_remove(struct platform_profile_handler *pprof)
+>  {
+> +	int id;
+>  	guard(mutex)(&profile_lock);
+>  
+> -	sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>  	cur_profile = NULL;
+> +
+> +	id = pprof->minor;
+> +	device_unregister(pprof->class_dev);
+> +	ida_free(&platform_profile_ida, id);
+> +
+> +	sysfs_update_group(acpi_kobj, &platform_profile_group);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_remove);
+>  
+> +static int __init platform_profile_init(void)
 > +{
-> +	struct xhci_virt_ep *ep;
-> +	unsigned int ep_index;
+> +	int err;
 > +
-> +	mutex_lock(&si->mutex);
-> +	ep_index = xhci_get_endpoint_index(&host_ep->desc);
-> +	ep = &si->vdev->eps[ep_index];
+> +	err = class_register(&platform_profile_class);
+> +	if (err)
+> +		return err;
 > +
-> +	if (ep->ep_state & EP_HAS_STREAMS) {
-> +		mutex_unlock(&si->mutex);
-> +		return -EINVAL;
-> +	}
+> +	err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+> +	if (err)
+> +		class_unregister(&platform_profile_class);
 > +
-> +	/*
-> +	 * Note, we don't know the DMA mask of the audio DSP device, if its
-> +	 * smaller than for xhci it won't be able to access the endpoint ring
-> +	 * buffer. This could be solved by not allowing the audio class driver
-> +	 * to add the endpoint the normal way, but instead offload it immediately,
-> +	 * and let this function add the endpoint and allocate the ring buffer
-> +	 * with the smallest common DMA mask
-> +	 */
-> +	if (si->eps[ep_index] || ep->sec) {
-> +		mutex_unlock(&si->mutex);
-> +		return -EBUSY;
-> +	}
+> +	return err;
+> +}
 > +
-> +	ep->sec = si;
-> +	si->eps[ep_index] = ep;
-> +	mutex_unlock(&si->mutex);
-
-We should probably check in xhci-mem.c if ep->sec is set before freeing the
-endpoint ring.
-We don't want the sideband client driver to touch freed rings.
-Maybe we even need a way for xhci driver to notify this sideband/sec_intr client
-in case a offloaded device or endpoint is being freed.
-
-I guess usb core in most cases ensures class drivers are properly removed,
-and thus this sideband/sec_interrupt should be unregistered before xhci starts
-freeing endpoints, but I'm not sure sure this is true in all corner cases.
-This is the first time we share endpoint ring addresses.
-
-Thanks
-Mathias
-
+> +static void __exit platform_profile_exit(void)
+> +{
+> +	sysfs_remove_group(acpi_kobj, &platform_profile_group);
+> +	class_unregister(&platform_profile_class);
+> +}
+> +module_init(platform_profile_init);
+> +module_exit(platform_profile_exit);
+> +
+>  MODULE_AUTHOR("Mark Pearson <markpearson@lenovo.com>");
+>  MODULE_DESCRIPTION("ACPI platform profile sysfs interface");
+>  MODULE_LICENSE("GPL");
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
+> index 8ec0b8da56db5..a888fd085c513 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -29,6 +29,8 @@ enum platform_profile_option {
+>  struct platform_profile_handler {
+>  	const char *name;
+>  	struct device *dev;
+> +	struct device *class_dev;
+> +	int minor;
+>  	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>  	int (*profile_get)(struct platform_profile_handler *pprof,
+>  				enum platform_profile_option *profile);
+> 
 
