@@ -1,108 +1,193 @@
-Return-Path: <linux-kernel+bounces-415176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DE89D3251
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:57:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB439D3254
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:58:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F5CB232A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:57:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7811EB2290B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786CB130E27;
-	Wed, 20 Nov 2024 02:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A37F5FEED;
+	Wed, 20 Nov 2024 02:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uybYeJe9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A57xcPX9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8936420B22;
-	Wed, 20 Nov 2024 02:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009E41C62;
+	Wed, 20 Nov 2024 02:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732071444; cv=none; b=gsrSSnOqolVHERkNO2V+XfSTpJ3R0ImBMCvo3XjcYc7DcYiPCCqAHTFz/ChJ1KYaveHuf+XdI/JkKNhagbFnD3KuRwossdN3+aZx9yGJ4hoRp8EU57qmd3BfgMXm6gBWW0VRbAr9/DSXxbhpHBy395DYgbwvxQHG+Zt6O8+3ru0=
+	t=1732071471; cv=none; b=FRYoQzB6+nvm0lr/ZRQywUblyNJvg0KfXuXCTUuTnM55O7P/hvW+FILicH9CO+eBU3DY+YfRpj584D0/gNNaMJQF9sBF+l5to806b9cHfAlbCZgvIoZCave8XIMoEkiqQ1dHJQg9X0alL2P1q0XP5WcImdR7Jphw0Ld93YbK2jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732071444; c=relaxed/simple;
-	bh=G10UPaBnUBavmugrnHhPQkyktEYU71RIp6L8EISqH5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VmNwY6MwW5ZhPkuu0Hbg2Q96/a3SsDm8TVUYuCIO5VaNfCkZv2nAIRxuUSmp0siTh8UCGSlTetaUhjX8CakgkWr3uIOw0e271A36lBlOTxBtUVk1PmVeI5RTQYRAMf0DPTIILlzi5ZjZzGnmc1A1q170gPd9KEVuHvwxZy3TvO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uybYeJe9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732071436;
-	bh=+i614AaB++4PFOr4rkVDfFFlj6DDy3/1nHoYC9M2bVM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uybYeJe9BipUN6W8ZuN4jix/7gDo8TiuYupt96X8bXeyEzqzuh0SlsoEVYePDX8U4
-	 FZPlkUuAyk57dDUavpO7kk1q30sjb2cDKTX29Cu6a+mu0RSbxdlT+CQTuA6jLSRq7k
-	 faPLLgnX3af4KXxR7gGpgmVqE1T7l9XQJW35RFTbdOzmKHYXS0hRTGqZNg6VixMxsc
-	 zxBeOn7VDcFrNd5EDePve1nqHuofKQmqt6qIsi+uWm/HEdMpCLlL54JAjG9XuYw5Lv
-	 U5xd4r1wZNe2n6uCUnCOXlTcNNZpY7de7j9OhPKlwiXmMSfEHIJ7ECvl443hrF1aWg
-	 m2AU7NUsEtV3w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XtQy424gGz4xgn;
-	Wed, 20 Nov 2024 13:57:16 +1100 (AEDT)
-Date: Wed, 20 Nov 2024 13:57:17 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the arm64 tree with the mm tree
-Message-ID: <20241120135717.2be629ee@canb.auug.org.au>
-In-Reply-To: <CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com>
-References: <20241028111058.4419a9ed@canb.auug.org.au>
-	<20241120120124.03f09ac5@canb.auug.org.au>
-	<CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com>
+	s=arc-20240116; t=1732071471; c=relaxed/simple;
+	bh=Aw7IdFuEXLbMBlkSZdde3kG/DSC1Uw8cU93GCXPXfHk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cpAV1u6Z7edx2TiNKPV0R5UhnuXj/jeyLtxDgZZsVzwglGhPv1wcOhKRdhJJxe/vmbvVBZ3kRHWDcb1A7deL6rVXbGTP/n63U4FIKvXbQ7w8picmOW7cH73jx6mJIC7F5GvIrq6t2/vWiqmIsD46sdERE7kN2ehVYby4MgGkL1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A57xcPX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC20AC4CECF;
+	Wed, 20 Nov 2024 02:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732071471;
+	bh=Aw7IdFuEXLbMBlkSZdde3kG/DSC1Uw8cU93GCXPXfHk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=A57xcPX9gXaqjn05XIM4WCCKqcjtCldfwyCIwHK+xgJxoppX/tQR+HBnHHtzaR61N
+	 i6QiHuP+5ZvvYnePtA8f9TEcnd1zwnAKMN5kaLaq5WTTCshOlAY5sWFGM6hcNd7OxT
+	 33aFqJZ3px6iaeOON1APHXPlBX+8RlhUPbx+FMtMDmWIF4Ld80iuGEpEeq1rmnS4+P
+	 0wO81ajmDp9gNRis4uinLF1ZRZwyMQNbeq30Cv1PUJAz3kv9PlXPfpcZqrw7VLFYD0
+	 l/pD14XNcGTGv9NE8orh7ihiQeQWI7j4U/XoglqNjLvOMx9iI30DbuO5lA91VU/NXA
+	 5QCrUmgOUj1ZA==
+Message-ID: <35c20e47-9124-45df-8067-67c5ef29600e@kernel.org>
+Date: Wed, 20 Nov 2024 10:57:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xNL10=yQuMtDeGbs1e6_n39";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Eric Sandeen <sandeen@redhat.com>,
+ Daniel Rosenberg <drosen@google.com>, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime
+ mount option parsing"
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20241112010820.2788822-1-jaegeuk@kernel.org>
+ <ZzPLELITeOeBsYdi@google.com>
+ <2d26eeee-01f7-445b-a1d2-bc2de65b5599@kernel.org>
+ <Zzz5ocjKK_naOnMq@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Zzz5ocjKK_naOnMq@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/xNL10=yQuMtDeGbs1e6_n39
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2024/11/20 4:48, Jaegeuk Kim wrote:
+> On 11/19, Chao Yu wrote:
+>> On 2024/11/13 5:39, Jaegeuk Kim via Linux-f2fs-devel wrote:
+>>> Hi Eric,
+>>>
+>>> Could you please check this revert as it breaks the mount()?
+>>> It seems F2FS needs to implement new mount support.
+>>
+>> Hi all,
+>>
+>> Actually, if we want to enable lazytime option, we can use mount
+>> syscall as:
+>>
+>> mount("/dev/vdb", "/mnt/test", "f2fs", MS_LAZYTIME, NULL);
+>>
+>> or use shell script as:
+>>
+>> mount -t f2fs -o lazytime /dev/vdb /mnt/test
+>>
+>> IIUC, the reason why mount command can handle lazytime is, after
+>> 8c7f073aaeaa ("libmount: add support for MS_LAZYTIME"), mount command
+>> supports to map "lazytime" to MS_LAZYTIME, and use MS_LAZYTIME in
+>> parameter @mountflags of mount(2).
+>>
+>> So, it looks we have alternative way to enable/disable lazytime feature
+>> after removing Opt_{no,}lazytime parsing in f2fs, do we really need this
+>> revert patch?
+> 
+> This is a regression of the below command. I don't think offering others are
+> feasible.
+> 
+> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
 
-Hi Suren,
+Alright, there are other options were removed along w/ removal of
+related feature. e.g.
 
-On Tue, 19 Nov 2024 17:09:46 -0800 Suren Baghdasaryan <surenb@google.com> w=
-rote:
->
-> Let me try to manually apply it to Linus' ToT and will send a replacement=
- patch.
+1. io_bits=%u by commit 87161a2b0aed ("f2fs: deprecate io_bits")
+2. whint_mode=%s by commit 930e2607638d ("f2fs: remove obsolete whint_mode")
 
-Please don't.  Andrew will tell Linus about the conflict (he has done,
-I think) and Linus will just fix it up when he merges the mm-stable
-tree.
+Do we need to add these options handling back, and print "xxx options were
+deprecated" as we did in ("f2fs: kill heap-based allocation"), in order to
+avoid mount(......, "io_bits=%u" or "whint_mode=%s") command regression?
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 867b147eb957..329f317e6f09 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -733,10 +733,8 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+  			clear_opt(sbi, DISCARD);
+  			break;
+  		case Opt_noheap:
+-			set_opt(sbi, NOHEAP);
+-			break;
+  		case Opt_heap:
+-			clear_opt(sbi, NOHEAP);
++			f2fs_warn(sbi, "heap/no_heap options were deprecated");
+  			break;
 
---Sig_/xNL10=yQuMtDeGbs1e6_n39
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>> Thanks,
+>>>
+>>> On 11/12, Jaegeuk Kim wrote:
+>>>> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
+>>>>
+>>>> The above commit broke the lazytime mount, given
+>>>>
+>>>> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+>>>>
+>>>> CC: stable@vger.kernel.org # 6.11+
+>>>> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>> ---
+>>>>    fs/f2fs/super.c | 10 ++++++++++
+>>>>    1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>> index 49519439b770..35c4394e4fc6 100644
+>>>> --- a/fs/f2fs/super.c
+>>>> +++ b/fs/f2fs/super.c
+>>>> @@ -150,6 +150,8 @@ enum {
+>>>>    	Opt_mode,
+>>>>    	Opt_fault_injection,
+>>>>    	Opt_fault_type,
+>>>> +	Opt_lazytime,
+>>>> +	Opt_nolazytime,
+>>>>    	Opt_quota,
+>>>>    	Opt_noquota,
+>>>>    	Opt_usrquota,
+>>>> @@ -226,6 +228,8 @@ static match_table_t f2fs_tokens = {
+>>>>    	{Opt_mode, "mode=%s"},
+>>>>    	{Opt_fault_injection, "fault_injection=%u"},
+>>>>    	{Opt_fault_type, "fault_type=%u"},
+>>>> +	{Opt_lazytime, "lazytime"},
+>>>> +	{Opt_nolazytime, "nolazytime"},
+>>>>    	{Opt_quota, "quota"},
+>>>>    	{Opt_noquota, "noquota"},
+>>>>    	{Opt_usrquota, "usrquota"},
+>>>> @@ -922,6 +926,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>>>>    			f2fs_info(sbi, "fault_type options not supported");
+>>>>    			break;
+>>>>    #endif
+>>>> +		case Opt_lazytime:
+>>>> +			sb->s_flags |= SB_LAZYTIME;
+>>>> +			break;
+>>>> +		case Opt_nolazytime:
+>>>> +			sb->s_flags &= ~SB_LAZYTIME;
+>>>> +			break;
+>>>>    #ifdef CONFIG_QUOTA
+>>>>    		case Opt_quota:
+>>>>    		case Opt_usrquota:
+>>>> -- 
+>>>> 2.47.0.277.g8800431eea-goog
+>>>
+>>>
+>>> _______________________________________________
+>>> Linux-f2fs-devel mailing list
+>>> Linux-f2fs-devel@lists.sourceforge.net
+>>> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc9UA0ACgkQAVBC80lX
-0Gy9MQgAo+0peXQ+g+4RbfUQqVzA8U7iW/Tbvw4lQ11bb755gQB/XFCZC+TlW+2r
-IEPzDOYWvJ+7ULaogyZq6+I5CDQvwx4Ksv7x/Z8qi9cO4GM2e2OIWiHm3O3XXvjr
-TE64Bnu2sWAEkCQXcOZ3vSeVX2FZ6bLpeqWFN7M/AV7oYDQAn4ftDQwhmPtF0wlP
-2ZNbhPd3tc4COT8XpWf4y4WC3ZZ6meIFuXYsVYJOr7LcUktNYmKeUG41zZ8PMMDj
-Bza866l8zXSuTn8rMNsgD+R0I1btqAxHErIM+J4NwzWG9kSKI2qYcLVp67ISz53m
-YoLkQWygRbR6K0OmArvei5ZNilMuEw==
-=LRaN
------END PGP SIGNATURE-----
-
---Sig_/xNL10=yQuMtDeGbs1e6_n39--
 
