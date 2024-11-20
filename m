@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-415744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F269D3AC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:38:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5AA9D3AC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:38:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38635B241A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E7E51F213BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4C51A2860;
-	Wed, 20 Nov 2024 12:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6551A2860;
+	Wed, 20 Nov 2024 12:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7XgM48p"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eqs2hFtD"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0751A76A3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA821A08D7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732106273; cv=none; b=lnDZ+lfqcgLugyMhycF2immzEGkOtAUpCKCZW7FSfuzwtzCvBQiDf+RE9LBMoa6uh/G+7TbRHs6Z1B7icSr4RBYjua/GnmXkpPTcnlXZvaQ0s3TECVmNfgEKk5R1Oa2zQsR1KTw65u9ZQCbhW+c3jbqJxpfChQOMJKP/sz0AYP4=
+	t=1732106310; cv=none; b=ZNZ4WBBOtqbgG5suUQh0aqREfuWrVEnEPUpO/IESqsZ6G82Thu3Uv8RRCs+qrnYE7/C/CuGkCnv2o6TcDtl8Cun4uDGaDGtxhstDATfqnSyP1VxvEGX44xhOkvCtj4C0J+vLF590vBgOX3xacKrxzBLY/wgkTm/0syOT9ODjfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732106273; c=relaxed/simple;
-	bh=hGNhi3mDUnjXZyPKKkHWlafcIccCqvhPnj3EyW602AM=;
+	s=arc-20240116; t=1732106310; c=relaxed/simple;
+	bh=T1SHhS5gSBi3f2Ap4tHWCiN3xBm5XNZaeGss3DVKBDY=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QV+TqH6luy0j9rKha1ZchOY9rtGiBU7nzADy+m2XsvcP2JBLjB5h+tgIQ++Ju/0kh1IbxYYiU3uPgvyIQcsnDrId9k2LjeyEWyJZhpqa6xbqiqGrZa+AD+rwFQGl6ujbjCrPR1qN4laWG+MWydtfxRukdC1zAeWZ177bhfIsPQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a7XgM48p; arc=none smtp.client-ip=209.85.221.45
+	 In-Reply-To:Content-Type; b=VdcQmm0ct55BgLPcLqkYB+uuc1KOi05dEAi03Ju5QChcA7Q6v/uYIguKpIIyDI3sxy1KlaJ9+7XQxJ10D0UkvHkOdkhMtpFm/vtt4IR8sP5j3v0/QGG1dsax8iWggjH58dslAmjYWgEfnIExLLxeOCLvrkIzknKNsF3jAYHp6tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eqs2hFtD; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3824709ee03so2486531f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:37:51 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e63c8678so4838144e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:38:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732106270; x=1732711070; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1732106307; x=1732711107; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gziM8urKl1B9e4nzfFx9z8Wbv3rlCgU3+h1y6PGcuuI=;
-        b=a7XgM48pDX3K9NIWL/lCWLWqP9wWO3nA0Qhywy+COafVSb1Xe1rv/66mA7ztHLEi6K
-         3RfWzahZzlDRF1H3XVqnnq3xnXZcuOssZFUFE9ih1gBbhyNTtidswyJg6ele9eJjgxke
-         lBugDTZBIVO/bVYEUhc7SpYQyVS8XMw7Oy24V+pMuA+b8sOIdFycXeoS6xRDnIHMCSga
-         ydTsaEO8WzR3RQezCsOgKB6eq7Y4euwV8kl9LMoNC7ZBtq7FRCdpnJByk3vl0DzXL5eY
-         BW1REZbYK7SelNsF0NlnUdIpWp6I03svXAFJWtv5lq10XQK3SmP3mD9k7Fhs7pkKGPyM
-         QSTw==
+        bh=LcUEOpFKPbKPpXUIzJ5sVKWN691GW1SaJnZt3c54KG0=;
+        b=eqs2hFtD1NXa08JLrxuTdUnrV19/JgL7RLd96Azc9bHuuKn00lPDwiOUr+d3zPRHlk
+         d2c+k65DszUP2tm5/YQ5WoRaoJQsOQZ6/A1cWm71W+8Ol3ohkqOe9Drl24jGppiKuR+I
+         k6iDR+aX9pSIQT3Gs9UIZrERNoch8n5BfUnH3O02VTdnnzOW7YK+UYE4V9sr2IdzuGOY
+         u48hPqX3ZJTKwVc3J+9TUMIOH6Skq8m/STDM9GmiEuRoKmPUGtEczVspimFfHp7atnUh
+         4Y/A/RMFlkwHAwMSBOCXhe0G23+wKNmFjZCLX96GUHrw7zawVPmocNi/osqTg8j1M2Gn
+         EKBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732106270; x=1732711070;
+        d=1e100.net; s=20230601; t=1732106307; x=1732711107;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=gziM8urKl1B9e4nzfFx9z8Wbv3rlCgU3+h1y6PGcuuI=;
-        b=HGzCOnwsPZ8F3Bo8R+LgOvyG3HbABAKYiLeJnDTn92bjSfXfkbFjcvGgRG2hsIop6R
-         D5LKxVXlMJrESOXlR3d+cG6nQa9BeyPYX56IhQRF5af61gjTwbykuMsS5YL6OqrlsyY7
-         1C0aL1rdvB0nQjp4rW+Yu/q+20JzGDXbolsOUbbAAZ8Cm8bxXdPMtp+QPmX692DEHmGk
-         dJ1tRgquoTGINl4SFVfmUajMl7CC2L3BgbMI31M/UuRnLPcI8+6qWQ2EgvIRnrSerc3T
-         M3+pGFdbxGGCsGeKDhNz5OnOYVjHLqVpMUalNrUGez8esbddLcm3bU3UjyPdR8mDfhuR
-         5iog==
-X-Forwarded-Encrypted: i=1; AJvYcCUeGhhRQxQN/4MKmDdE5dCn0gO10DGj0xyKGr1SrQLw3kZfLto3O8HrNF+YWOMBisNYcT+Wzp1KqsywrXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1ZG4avLKsYTJbmBut4DRWhTzZYyGLRyJzoi77hLqebNQQyagQ
-	wVZn0Zif2u9jPdLUEOu9sKAXi/pUw94sj/C8/47jiPz4DyAH0W73qgA849DNnu8=
-X-Google-Smtp-Source: AGHT+IGdJQAc+iugPISjAUH200goFko5j0vmx0r96libdXqJlDe8aAFXpLkq1rdFGaZ45mhCCnvewg==
-X-Received: by 2002:a05:6000:1a88:b0:382:30a5:c38b with SMTP id ffacd0b85a97d-38254b0e1d0mr1677410f8f.42.1732106269882;
-        Wed, 20 Nov 2024 04:37:49 -0800 (PST)
+        bh=LcUEOpFKPbKPpXUIzJ5sVKWN691GW1SaJnZt3c54KG0=;
+        b=BJt7zo9aJlJCwdRpxbaDuvgvyjF80oG0Bm2NlUOo1SBuIDhK831sNp1iQU6JeHPOFh
+         Ye3DpLRBURCws/TLoilFWiAqW1ziCUD/k/183wC2gj3MnCK8Kzf+XnA2F07ZEaXQpf7o
+         jl+0PPFvWFVCB2bczzzFkE1R304PyEs/RlFw9yJXnzUUqAIGkgXBrjlOSgRz1D+/IXDj
+         P9xplW47wPR8RM10UVOsCbl/cMYtB9XR6LzTjc4NVmPkAX1uKij0KviUxuHwTtNzm9Fg
+         l8Ns0v4YxgIlIFtlCimALkeWEw2V0Yhjn4CTp6WEo1gahHmehGnRP1X9IB0RmLKCP0Nl
+         /a3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtzSVuI9QemWvLmYCiwaw5rwv3DKSz8i1klVNnBvPd+DuJcuS2cPMbxukwt8sD/B/+P4XINg+l0zVL16Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxronyQxJ5gRhUk7nlUSHTdX1Xwpmok1Gvi0f1fwbvzadHBpR7W
+	XNP+a8Qlxejc+m5UjGzM8brKBvynx/FEeut6OsPejomH9uUGvxxXLUQuwvPwpBQ=
+X-Google-Smtp-Source: AGHT+IET0Zw1GUg8juWJTYxh5Mnsf3Wkht9UNm0mLBOVYbwCAwfJ4/8EQhMft+wrL/1dot2VgyvChA==
+X-Received: by 2002:a05:6512:b8e:b0:538:9e40:94b with SMTP id 2adb3069b0e04-53dc13384aemr1066848e87.19.1732106306977;
+        Wed, 20 Nov 2024 04:38:26 -0800 (PST)
 Received: from ?IPV6:2a01:e0a:982:cbb0:927b:2848:1f7d:3776? ([2a01:e0a:982:cbb0:927b:2848:1f7d:3776])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1165sm17968325e9.2.2024.11.20.04.37.48
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd4783c1sm626248e87.239.2024.11.20.04.38.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 04:37:49 -0800 (PST)
-Message-ID: <8218a053-6b69-4e1f-adb0-4c11930412ed@linaro.org>
-Date: Wed, 20 Nov 2024 13:37:48 +0100
+        Wed, 20 Nov 2024 04:38:25 -0800 (PST)
+Message-ID: <14583b16-776f-46ca-85fb-c1d151a72781@linaro.org>
+Date: Wed, 20 Nov 2024 13:38:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 04/11] drm/msm: adreno: add GMU_BW_VOTE feature flag
+Subject: Re: [PATCH v2 10/11] arm64: qcom: dts: sm8550: add interconnect and
+ opp-peak-kBps for GPU
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
  Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
@@ -96,8 +97,8 @@ Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
  linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
 References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
- <20241119-topic-sm8x50-gpu-bw-vote-v2-4-4deb87be2498@linaro.org>
- <iw75ptavkqw3vybfov2f7koz5nh5lfzxcou3wey7rdsqt2gj5n@7luy2kqrzkj5>
+ <20241119-topic-sm8x50-gpu-bw-vote-v2-10-4deb87be2498@linaro.org>
+ <ctx4ajfhrpu43scq7momrx6lhel6c5sk43yjtvowv25ur6swzh@igo7gofc4lpg>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -124,48 +125,93 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <iw75ptavkqw3vybfov2f7koz5nh5lfzxcou3wey7rdsqt2gj5n@7luy2kqrzkj5>
+In-Reply-To: <ctx4ajfhrpu43scq7momrx6lhel6c5sk43yjtvowv25ur6swzh@igo7gofc4lpg>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 20/11/2024 12:19, Dmitry Baryshkov wrote:
-> On Tue, Nov 19, 2024 at 06:56:39PM +0100, Neil Armstrong wrote:
->> The Adreno GMU Management Unit (GNU) can also scale the DDR Bandwidth
->> along the Frequency and Power Domain level, but by default we leave the
->> OPP core vote for the interconnect ddr path.
->>
->> While scaling via the interconnect path was sufficient, newer GPUs
->> like the A750 requires specific vote paremeters and bandwidth to
->> achieve full functionality.
->>
->> While the feature will require some data in a6xx_info, it's safer
->> to only enable tested platforms with this flag first.
->>
->> Add a new feature enabling DDR Bandwidth vote via GMU.
-> 
-> Squash into the implementation patch.
-
-Which one ? the flag is use in the next 3 patches
-
-> 
+On 20/11/2024 12:47, Dmitry Baryshkov wrote:
+> On Tue, Nov 19, 2024 at 06:56:45PM +0100, Neil Armstrong wrote:
+>> Each GPU OPP requires a specific peak DDR bandwidth, let's add
+>> those to each OPP and also the related interconnect path.
 >>
 >> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 >> ---
->>   drivers/gpu/drm/msm/adreno/adreno_gpu.h | 1 +
->>   1 file changed, 1 insertion(+)
+>>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
 >>
->> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> index 4702d4cfca3b58fb3cbb25cb6805f1c19be2ebcb..394b96eb6c83354ae008b15b562bedb96cd391dd 100644
->> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->> @@ -58,6 +58,7 @@ enum adreno_family {
->>   #define ADRENO_FEAT_HAS_HW_APRIV		BIT(0)
->>   #define ADRENO_FEAT_HAS_CACHED_COHERENT		BIT(1)
->>   #define ADRENO_FEAT_PREEMPTION			BIT(2)
->> +#define ADRENO_FEAT_GMU_BW_VOTE			BIT(3)
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> index 9dc0ee3eb98f8711e01934e47331b99e3bb73682..808dce3a624197d38222f53fffa280e63088c1c1 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>> @@ -2113,6 +2113,9 @@ gpu: gpu@3d00000 {
+>>   			qcom,gmu = <&gmu>;
+>>   			#cooling-cells = <2>;
 >>   
->>   /* Helper for formating the chip_id in the way that userspace tools like
->>    * crashdec expect.
+>> +			interconnects = <&gem_noc MASTER_GFX3D 0 &mc_virt SLAVE_EBI1 0>;
+> 
+> QCOM_ICC_TAG_ALWAYS
+
+Exact, bad copy paste...
+
+Thanks,
+Neil
+
+> 
+>> +			interconnect-names = "gfx-mem";
+>> +
+>>   			status = "disabled";
+>>   
+>>   			zap-shader {
+>> @@ -2126,41 +2129,49 @@ gpu_opp_table: opp-table {
+>>   				opp-680000000 {
+>>   					opp-hz = /bits/ 64 <680000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+>> +					opp-peak-kBps = <16500000>;
+>>   				};
+>>   
+>>   				opp-615000000 {
+>>   					opp-hz = /bits/ 64 <615000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
+>> +					opp-peak-kBps = <16500000>;
+>>   				};
+>>   
+>>   				opp-550000000 {
+>>   					opp-hz = /bits/ 64 <550000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
+>> +					opp-peak-kBps = <12449218>;
+>>   				};
+>>   
+>>   				opp-475000000 {
+>>   					opp-hz = /bits/ 64 <475000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
+>> +					opp-peak-kBps = <8171875>;
+>>   				};
+>>   
+>>   				opp-401000000 {
+>>   					opp-hz = /bits/ 64 <401000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+>> +					opp-peak-kBps = <6671875>;
+>>   				};
+>>   
+>>   				opp-348000000 {
+>>   					opp-hz = /bits/ 64 <348000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D0>;
+>> +					opp-peak-kBps = <6074218>;
+>>   				};
+>>   
+>>   				opp-295000000 {
+>>   					opp-hz = /bits/ 64 <295000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
+>> +					opp-peak-kBps = <6074218>;
+>>   				};
+>>   
+>>   				opp-220000000 {
+>>   					opp-hz = /bits/ 64 <220000000>;
+>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
+>> +					opp-peak-kBps = <6074218>;
+>>   				};
+>>   			};
+>>   		};
 >>
 >> -- 
 >> 2.34.1
