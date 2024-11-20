@@ -1,250 +1,143 @@
-Return-Path: <linux-kernel+bounces-416381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C9E09D43FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:39:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9759D4408
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:51:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79278B21E5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:39:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3555D2833C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB981BDA80;
-	Wed, 20 Nov 2024 22:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DDC1B85C1;
+	Wed, 20 Nov 2024 22:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kMpmUr7t"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OSfNlOpw"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B00155A34
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D6B16EBEE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142365; cv=none; b=VtLmqR4UAXKdmfs1fJmLmsVcIKqDQZD8gY/XYpUFOXwGzwTpBe4wjYNzngcA4VVaP0NvZkRVkCE4//GAKcYreBWThc/1qRB1FCSyqkhCOhr/6mMN7uI2vcQ4N1yV9qhxERGJBtlK4YZgH99JCisIBYY0rmPTTHtfaF3lDyc9wkA=
+	t=1732143062; cv=none; b=mtjSDY910r1VVa2vxtqQDW2r6pG6+unKh3kcGnOU4P+4WrnGVnn/IfyKgVUwR9ks4EWg+ykwn8ExfuB2ggS82TRtH2v2HRUKqsiTyeevKChx96QwCHzizKujkZ2a+RTgECF1H1Rs5s0buYQcj5LDRS4et7Izyb5BWhXqIDsffZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142365; c=relaxed/simple;
-	bh=bgMH5E7Vvil8Bv1qxkERoJnxSVcPnJjjrH8D/t7UMqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kn7eEP1xSycebsi+7PzDtUNlJfWVBx0j3aOhjUL9D1DMpbEb0BpXZvfGJYAPsekldmaUTG2mYhFitozpW8RJRc9wVwnzWFdv2GRUGF4NGOWir0mjxkQiRXT5ng2VH6/TnSQQ+KVzs1Jliz8shNMJg7Fq+AkZ10eL2dgMac4RkNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kMpmUr7t; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 17:39:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732142359;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X2/JeZijvoPKUZZfcLuuRPDgYIeN9xurOmrCA6EJFa8=;
-	b=kMpmUr7t4bgG7YPKba5Iuk2UD7FPX2bdqFmQPjWPVckFVFA37h44btxWbCc7DnYPBJUIRy
-	6perO+IqUOjNupf7rGj6JWeYjy4cSAVUnDL9dOuu2Lo2iKXhN6/uy9w//9u/eOE0HLMVew
-	p0SVw4EFbF7TaYVqOAwJeUB8FycwDxo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
-References: <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
- <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+	s=arc-20240116; t=1732143062; c=relaxed/simple;
+	bh=Xq4pUH5YC7kT8weuS7XEdmvcmkSfjecyf3TuJ1rriAQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HILgsM814bzsPkP0lXzaknrxXaIUZAFwd6RUleA6ccvyRxhGZNJWhMKokh9S9oGRbsMeAXiC2K92l2MlL3gkgQIUXVlg/HJk6i7eXK5oyOwsYHdDrfNGc+yEdwyPxBZcI6GrY0zvE8DjCmlJr5sVJcdufC+IyNDlxgsyxVhcY7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OSfNlOpw; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so48434366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:50:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732143058; x=1732747858; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QS2ar3tEHnDP8Hb1PCxc6yuUPXwMY0RHaGXUCLtQX3I=;
+        b=OSfNlOpwOW/UNAu6jNnNPjQi/B7hc8M6V9JidrHav6srrjVxoVe/zXsTxOXNKluNxd
+         dalQa7GnQJrPLqpb65pHwZQUMj8atoLN7g2WR1PJ69eTmlUXUWxMKv2ZoHpxxngDuacc
+         L0h0j7eqOwnchcHbWJ/rDf02gErG5dZF0NXC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732143058; x=1732747858;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QS2ar3tEHnDP8Hb1PCxc6yuUPXwMY0RHaGXUCLtQX3I=;
+        b=wQz2L4Yd+zqzj6pUqZtsb5pJCE2cCLPVsaqLxvcCygCjd7Bo7acGu+tU9DVGdKmmMH
+         8XQd2b1/6ylA0ynOqEMPhZCrQuNS42EDGqY2wlsiSCT0zNr7ngzELNSrmEQFuTNi9dX3
+         FtWfGyYN+jjsJGLqCd+b2o1WtXc1k0adJRQxrcNtasQj4uzu0eZZVycxW1hcVDd54owE
+         KAGz5lGIV9fvhNoPq2zdTOG1XQrc9vWQCu45SdNqM9Qy8F9BsCiB1Tg+I3juyHSfDv/C
+         b635ydjkBZaP3rqzSqFIVy5/jlRFXviSifjRirrlPVJPkNX0/zFheOPB6+JfVu8Fy3dy
+         ckQw==
+X-Gm-Message-State: AOJu0YzV9YW1xNmVp1fhKuZ9GT2S0jSTUaixYOzVDN7TFvxM3xUAGvgb
+	rdmjS6mtYBtDvZoTY+CAk4NiuAfquWrG3iy92KMFzjU3niAayvIVV7csRRky67dB0CYKZseD60L
+	8M4P4tA==
+X-Gm-Gg: ASbGncvl/h4phUZ03TNGWcXmSpQ2gVjsVPZNMSCSOa7nGnKh9lqhTwuCDnRBsn2GF/H
+	t0WkdZjaIIdc88PcVMP9G0qlKDzZJBSq/KpTb/pllCXE3eF+5G4pKxfK4N5A/KYrc+GoUb5XVy+
+	EtAmGVNgb4kXkPwKkNcW8dtCbar1QSKJdRN+vTZG85Y299KI+xwJ4asCjucykfMIoChupVLSxG+
+	NerzRrGwJ0AD1Dy4aB6eldKxR6FJ28C0j/oTPIbDdfdOXpmDZPz00BB2vlaPI9Hh0UxTd0HeCVQ
+	QMe7YK4CQrPp+Z4xZWgMr3/K
+X-Google-Smtp-Source: AGHT+IHG/hYhwh5jHN14EZkHs7cLBCWITzgjwPYGCxDtoMBB1zgyCRBsW1AsvVs2whbFupaLBsnxLQ==
+X-Received: by 2002:a17:907:7e91:b0:a99:e4a2:1cda with SMTP id a640c23a62f3a-aa4dd74c86bmr456401166b.56.1732143058117;
+        Wed, 20 Nov 2024 14:50:58 -0800 (PST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f4318900sm8467166b.139.2024.11.20.14.50.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:50:56 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso38843366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:50:56 -0800 (PST)
+X-Received: by 2002:a17:906:dac2:b0:a9e:45e6:42cb with SMTP id
+ a640c23a62f3a-aa4dd55226emr507639866b.18.1732143055922; Wed, 20 Nov 2024
+ 14:50:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
-X-Migadu-Flow: FLOW_OUT
+References: <202411190900.FE40FA5@keescook> <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <CAHk-=wjPpuThc4Wbtk-aUz4buUSH9-gvsmjT5P3=2tU_Kz8oVA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjPpuThc4Wbtk-aUz4buUSH9-gvsmjT5P3=2tU_Kz8oVA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 20 Nov 2024 14:50:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wh4k8ks_oq4v=LXxidXZ+r-_er7cORjNzySjDaD8Xc9ng@mail.gmail.com>
+Message-ID: <CAHk-=wh4k8ks_oq4v=LXxidXZ+r-_er7cORjNzySjDaD8Xc9ng@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Nir Lichtman <nir@lichtman.org>, 
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
+	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 20, 2024 at 03:21:06PM -0700, Shuah Khan wrote:
-> On 11/20/24 14:37, Shuah Khan wrote:
-> > On 11/20/24 14:20, Kent Overstreet wrote:
-> > > On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
-> > > > On 11/20/24 13:34, Kent Overstreet wrote:
-> > > > > On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
-> > > > > > On 9/2/24 03:51, Kent Overstreet wrote:
-> > > > > > > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> > > > > > > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > > > > > > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > > > > > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> > > > > > > > > > [...]
-> > > > > > > > > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > > > > > > > > > > in the case of bugs, because that's going to be an improvement w.r.t.
-> > > > > > > > > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > > > > > > > > > > something that we can't guarantee won't happen in the wild - we WARN()
-> > > > > > > > > > > and try to handle the error as best we can.
-> > > > > > > > > > 
-> > > > > > > > > > We have discussed that in a different email thread. And I have to say
-> > > > > > > > > > that I am not convinced that returning NULL makes a broken code much
-> > > > > > > > > > better. Why? Because we can expect that broken NOFAIL users will not have a
-> > > > > > > > > > error checking path. Even valid NOFAIL users will not have one because
-> > > > > > > > > > they _know_ they do not have a different than retry for ever recovery
-> > > > > > > > > > path.
-> > > > > > > > > 
-> > > > > > > > > You mean where I asked you for a link to the discussion and rationale
-> > > > > > > > > you claimed had happened? Still waiting on that
-> > > > > > > > 
-> > > > > > > > I am not your assistent to be tasked and search through lore archives.
-> > > > > > > > Find one if you need that.
-> > > > > > > > 
-> > > > > > > > Anyway, if you read the email and even tried to understand what is
-> > > > > > > > written there rather than immediately started shouting a response then
-> > > > > > > > you would have noticed I have put actual arguments here. You are free to
-> > > > > > > > disagree with them and lay down your arguments. You have decided to
-> > > > > > > > 
-> > > > > > > > [...]
-> > > > > > > > 
-> > > > > > > > > Yeah, enough of this insanity.
-> > > > > > > > 
-> > > > > > > > so I do not think you are able to do that. Again...
-> > > > > > > 
-> > > > > > > Michal, if you think crashing processes is an acceptable alternative to
-> > > > > > > error handling _you have no business writing kernel code_.
-> > > > > > > 
-> > > > > > > You have been stridently arguing for one bad idea after another, and
-> > > > > > > it's an insult to those of us who do give a shit about writing reliable
-> > > > > > > software.
-> > > > > > > 
-> > > > > > > You're arguing against basic precepts of kernel programming.
-> > > > > > > 
-> > > > > > > Get your head examined. And get the fuck out of here with this shit.
-> > > > > > > 
-> > > > > > 
-> > > > > > Kent,
-> > > > > > 
-> > > > > > Using language like this is clearly unacceptable and violates the
-> > > > > > Code of Conduct. This type of language doesn't promote respectful
-> > > > > > and productive discussions and is detrimental to the health of the
-> > > > > > community.
-> > > > > > 
-> > > > > > You should be well aware that this type of language and personal
-> > > > > > attack is a clear violation of the Linux kernel Contributor Covenant
-> > > > > > Code of Conduct as outlined in the following:
-> > > > > > 
-> > > > > > https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
-> > > > > > 
-> > > > > > Refer to the Code of Conduct and refrain from violating the Code of
-> > > > > > Conduct in the future.
-> > > > > 
-> > > > > I believe Michal and I have more or less worked this out privately (and
-> > > > > you guys have been copied on that as well).
-> > > > 
-> > > > Thank you for updating us on the behind the scenes work between you
-> > > > and Michal.
-> > > > 
-> > > > I will make one correction to your statement, "you guys have been copied on
-> > > > that as well" - which is inaccurate. You have shared your email exchanges
-> > > > with Michal with us to let us know that the issue has been sorted out.
-> > > 
-> > > That seems to be what I just said.
-> > > 
-> > > > You might have your reasons and concerns about the direction of the code
-> > > > and design that pertains to the discussion in this email thread. You might
-> > > > have your reasons for expressing your frustration. However, those need to be
-> > > > worked out as separate from this Code of Conduct violation.
-> > > > 
-> > > > In the case of unacceptable behaviors as defined in the Code of Conduct
-> > > > document, the process is to work towards restoring productive and
-> > > > respectful discussions. It is reasonable to ask for an apology to help
-> > > > us get to the goal as soon as possible.
-> > > > 
-> > > > I urge you once again to apologize for using language that negatively impacts
-> > > > productive discussions.
-> > > 
-> > > Shuah, I'd be happy to give you that after the discussion I suggested.
-> > > Failing that, I urge you to stick to what we agreed to last night.
-> The only thing we agreed upon is that you would respond the thread
-> to update your sorting things out with Michal.
+On Wed, 20 Nov 2024 at 14:33, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 20 Nov 2024 at 14:32, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > People: we *have* a filename. It's right there in the dentry. Which is
+> > right there as bprm->file->f_dentry.dentry.
+>
+> ... that should obviously be '...->f_path.dentry'.
 
-...Shall I quote you?
+One thing to look out for is that dentry->name can be switched around
+by renames etc
 
-> 
-> As for the discussion, I will repeat what I said in our conversation
-> that the discussion will be lot more productive after making amends
-> with the community. I stand by that assessment.
-> 
-> I will also repeat what I said that the discussion and debate is
-> outside the scope of the current issue the Code of Conduct Committee
-> is trying to resolve.
-> 
-> I didn't pick up on your desire to apologize after the discussion in
-> our conversation.
-> 
-> Are you saying you will be happy to make amends with an apology after
-> the discussion and debate?
+So you probably want to do something like
 
-Look, I just want to be done with this, so let me lay it all out as I
-see it, starting from the beginning of where things went off the rails
-between myself and Michal:
+        const char *name = smp_load_acquire(&dentry->d_name.name);
 
-Michal's (as well as Steve's) behaviour in the memory allocation
-profiling review process was, in my view, unacceptable (this included
-such things as crashing our LSF presentation with ideas they'd come up
-with that morning, and persistent dismissive axegrinding on the list).
-The project was nearly killed because of his inability to listen to the
-reasons for a design and being stubbornly stuck on his right to be heard
-as the maintainer.
+under the RCU read lock before then copying it with strscpy(). It
+should always be NULL-terminated.
 
-In my view, being a good maintainer has a lot more to do with
-stewardship and leadership, than stubbornly insisting for - whatever
-that was. In any event, that was where I came to the conclusion "I just
-cannot work that guy".
+If you want to be extra careful, you might surround it with a
 
-Next up, PF_MEMALLOC_NORECLAIM over Michal's nack - I was wrong there, I
-only did it because it really seemed to me that Michal was axe grinding
-against _anything_ I was posting, but I still shouldn't have and that
-was more serious infraction in my view; that sort of thing causes a real
-loss of trust, and no I will not do it again.
+        read_seqbegin_or_lock(&rename_lock, &seq);
 
-The subsequent PF_MEMALLOC_NORECLAIM discussion was such a trainwreck
-that I don't think I will go into it. Except to say that yes, if it
-makes you happy, I shouldn't have used that language and I won't do it
-again.
+        ..
 
-But I do have to call out you, the CoC board's behaviour, and I think
-that ony fair since you call out other people's behaviour publically.
+        if (need_seqretry(&rename_lock, seq)) {
+                seq = 1;
+                goto restart;
+        }
+        done_seqretry(&rename_lock, seq);
 
-Greg's behaviour when he approached me at Plumbers was beyond
-unprofessional, and since it wasn't exactly public and you guys have
-already heard about it privately I won't repeat exactly what happened,
-but it is an issue.
+but I seriously doubt we even care that much. If people want to mess
+with the executable filename, they can just use links or whatever, so
+this is a "politeness" thing rather than anything else.
 
-Shuah, you weren't much better.
+(And yes, our d_path() code tries to be extra smart and also uses
+'name->len' to avoid having to search for the end of the string etc,
+but that then causes huge complexities with ->len and ->name not
+matching, so it has to compensate for that with being extra careful.
+So don't do that)
 
-There were concerns raised in the recent CoC enforcement thread, by
-someone with experience in such matters, that your aproach seemed
-extremeely heavy handed and I find myself in 100% agreement.
-
-The approach you take is that of a bad HR department: all about image,
-no understanding. When tensions arise, it's important get to the bottom
-of things, to at least try to take the time to listen with an open mind.
-People have real frustrations, and it's amazing what you can learn and
-what you can accomplish by having real conversations.
-
-But that's not what you guys do: you say "Ok, if someone's being too
-much of an asshole, we'll just be an even bigger asshole!".
-
-No. Cut that out.
-
-I've done the hard work of stepping in and building bridges when
-relations have broken down (on quite a large scale), so I'm offended by
-what you guys do.
+                     Linus
 
