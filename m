@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-415981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A13D9D3F51
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6579D3FAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 839A5B2C53C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:14:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D4CEB3874D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19E61C3F1D;
-	Wed, 20 Nov 2024 15:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="R3zP1Au8"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B162191;
-	Wed, 20 Nov 2024 15:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC741BD509;
+	Wed, 20 Nov 2024 15:04:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AEC1A9B3B;
+	Wed, 20 Nov 2024 15:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115123; cv=none; b=Q5gU2As7vurktd21ZHdCasdTsS9weB43Dn8xn0fSWCye88PILAQZYpRp2sAFkYqay20wZIwriXfzk9TDVOlzK+Iq8bdNmpz4jAsTUuDBBAI89I2HUa7+aDv0A5GRwePU+f/BBI+/7a7j3ARYur+HT2NJ+EkNepINZuoa0cluPHU=
+	t=1732115091; cv=none; b=ITG9E41qmBFFxxzVNnizvaLen6ajWPLEXn8x1Y2m7SYCgBLAdDcr+4IdjRataXCoCTJa9qUI0T3SGNVTFz0rfN4RpCf5x5d5pD5ULJg0+8STxTwSt8XUv6+mpsErvxjv+N0NdLAS/EjPUVyWxCoiclIkeyv1nJtGwyr7aMpVBR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115123; c=relaxed/simple;
-	bh=cJrE4ToYIP5CIareHQOhSJiVf7PCn0QVg3yRcgbv7S4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HKMDKE8NU4KbN6ZUrETe/P9T2NpGgYp3uR8xyZibJLHpqujeu2gFto99/XA4T+Sc+OoUzH6vjhzlEhnvn7Hy0efX+/CBYfbelliqHNIUYteSsXMJpf+6ABXDwlu1/9n6n2fcAyt7grn7Vu+dVwPfkYB2pSI3QyyPdvwYPfplZXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=R3zP1Au8; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=An+oO
-	/WpoPVJKTAJOX8K0HE0T6gSg+KJ3jkNA6cU1ug=; b=R3zP1Au86glVFbMeSEVJt
-	7CmIM4sJjjcgg5H39FFw00dKziAHxKQ6ArZDchk+uRjaNwbB2gWa0vHhWxkccaEJ
-	4I/r3IUk7hGD3W28hbswSXgS61DhaNUgHRZK7KEbZTOKxMTJ1IGGlJPdYxEL8NS+
-	rv5uAMSik/ByzxMEmOiqGc=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3fxSa+j1n+KAZCA--.15273S2;
-	Wed, 20 Nov 2024 23:04:59 +0800 (CST)
-From: tuqiang <tuqiang0606@163.com>
-To: gregkh@linuxfoundation.org
-Cc: dledford@redhat.com,
-	jgg@ziepe.ca,
-	jiang.kun2@zte.com.cn,
-	leon@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	stable@vger.kernel.org,
-	tu.qiang35@zte.com.cn,
-	xu.xin16@zte.com.cn
-Subject: Re: [PATCH STABLE 5.10] RDMA/restrack: Release MR/QP restrack when delete
-Date: Wed, 20 Nov 2024 15:04:58 +0000
-Message-Id: <20241120150458.3372235-1-tuqiang0606@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2024111642-backside-reach-7ec3@gregkh>
-References: <2024111642-backside-reach-7ec3@gregkh>
+	s=arc-20240116; t=1732115091; c=relaxed/simple;
+	bh=hDeJYjycHF77ZLbMNTQlumwoqT3rg0rRLzelRS/sr8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LqjLZ8k+imW3kdZQgYvqHX05ugOYMnaL+pdAHtB//lrxp7xBuPMF2gJpYfUBc0APiYEW6qKy016KaOoU9oX95P7F+k0xSaeOdHquDKpZ1MXSWZ9PPRI+3eoTTYhv8C3hOQsH6aaMzh0ZHSC1YKCBTs4zsaLgBEXTQ8AJb+2ffb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16FFCC4CECD;
+	Wed, 20 Nov 2024 15:04:50 +0000 (UTC)
+Date: Wed, 20 Nov 2024 10:05:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: kernel test robot <lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, Paolo
+ Bonzini <pbonzini@redhat.com>
+Subject: Re: arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse: sparse: incorrect
+ type in assignment (different base types)
+Message-ID: <20241120100526.26705a95@gandalf.local.home>
+In-Reply-To: <202411201356.pXoYlKFB-lkp@intel.com>
+References: <202411201356.pXoYlKFB-lkp@intel.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3fxSa+j1n+KAZCA--.15273S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kw18XFy8ZryfGF4xGryDWrg_yoW5Jry3pr
-	1DGrWfAw4UGryrAw4UJr15XF1Sy3yFya1UWrn293W5ZF1UKr1DJr1jkwn8Arn8GrWxAr47
-	tr1vgrZxK345tF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRrb15UUUUU=
-X-CM-SenderInfo: 5wxtxtdqjqliqw6rljoofrz/xtbBaRidIGc96Rzk0gAAsV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->
->On Sat, Nov 16, 2024 at 05:57:48PM +0800, jiang.kun2@zte.com.cn wrote:
->> From: tuqiang <tu.qiang35@zte.com.cn>
->> 
->> The MR/QP restrack also needs to be released when delete it, otherwise it
->> cause memory leak as the task struct won't be released.
->> 
->> This problem has been fixed by the commit <dac153f2802d>
->> ("RDMA/restrack: Release MR restrack when delete"), but still exists in the
->> linux-5.10.y branch.
->
->Why don't we just take the correct fix?  Why is this needed instead?
+On Wed, 20 Nov 2024 13:59:39 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-1. Reply: Why don't we just take the correct fix?
-=========================================
-Due to inconsistent code context, it is not possible to directly cherry-pick the 
-changes to the linux-5.10 branch.
-The commit 514aee660df4 (RDMA: Globally allocate and release QP memory) resolved 
-the resource release issue for QP, but the MR issue remains unresolved.
+> Hi Steven,
+> 
+> First bad commit (maybe != root cause):
 
+Does not look to be root cause.
 
-2. Reply: Why is this needed instead?
-==================================
-When a user applies for resources by executing MR/QP-related commands, they will
-reference the task_struct object. However, when consuming the object, rdma_restrack_del 
-does not have the corresponding release mechanism.
+-- Steve
 
-Stack:
-0xffffffffb70df1d0 : get_task_struct+0x0/0x50 [kernel]
-0xffffffffc5b3a42c : rdma_restrack_attach_task.isra.6+0x2c/0x50 [ib_core]
-0xffffffffc748fd54 : ib_uverbs_reg_mr+0x194/0x260 [ib_uverbs]
-0xffffffffc749a049 : ib_uverbs_handler_UVERBS_METHOD_INVOKE_WRITE+0xb9/0x110 [ib_uverbs]
-0xffffffffc7496a1f : ib_uverbs_run_method+0x6ff/0x7b0 [ib_uverbs]
-0xffffffffc7496c65 : ib_uverbs_cmd_verbs+0x195/0x360 [ib_uverbs]
-0xffffffffc7496ec3 : ib_uverbs_ioctl+0x93/0xe0 [ib_uverbs]
-0xffffffffb736bbe9 : __x64_sys_ioctl+0x89/0xc0 [kernel]
-0xffffffffb7a62a10 : do_syscall_64+0x30/0x40 [kernel]
-
-0xffffffffb70df1d0 : get_task_struct+0x0/0x50 [kernel]
-0xffffffffc5b3a42c : rdma_restrack_attach_task.isra.6+0x2c/0x50 [ib_core]
-0xffffffffc749bfea : ib_uverbs_handler_UVERBS_METHOD_QP_CREATE+0xaba/0xb40 [ib_uverbs]
-0xffffffffc7496a1f : ib_uverbs_run_method+0x6ff/0x7b0 [ib_uverbs]
-0xffffffffc7496c65 : ib_uverbs_cmd_verbs+0x195/0x360 [ib_uverbs]
-0xffffffffc7496ec3 : ib_uverbs_ioctl+0x93/0xe0 [ib_uverbs]
-0xffffffffb736bbe9 : __x64_sys_ioctl+0x89/0xc0 [kernel]
-0xffffffffb7a62a10 : do_syscall_64+0x30/0x40 [kernel]
-
->
->thanks,
->
->greg k-h
+> 
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   bf9aa14fc523d2763fc9a10672a709224e8fcaf4
+> commit: 59cbd4eea48fdbc68fc17a29ad71188fea74b28b KVM: Remove HIGH_RES_TIMERS dependency
+> date:   3 months ago
+> config: x86_64-randconfig-r133-20241119 (https://download.01.org/0day-ci/archive/20241120/202411201356.pXoYlKFB-lkp@intel.com/config)
+> compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241120/202411201356.pXoYlKFB-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202411201356.pXoYlKFB-lkp@intel.com/
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse: sparse: incorrect type in assignment (different base types) @@     expected int [assigned] ret @@     got restricted vm_fault_t @@  
+>    arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse:     expected int [assigned] ret
+>    arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse:     got restricted vm_fault_t
+> >> arch/x86/kernel/cpu/sgx/virt.c:60:20: sparse: sparse: restricted vm_fault_t degrades to integer
+> >> arch/x86/kernel/cpu/sgx/virt.c:354:36: sparse: sparse: cast removes address space '__user' of expression  
+>    arch/x86/kernel/cpu/sgx/virt.c:385:24: sparse: sparse: cast removes address space '__user' of expression
+>    arch/x86/kernel/cpu/sgx/virt.c:385:43: sparse: sparse: cast removes address space '__user' of expression
+>    arch/x86/kernel/cpu/sgx/virt.c:385:58: sparse: sparse: cast removes address space '__user' of expression
+>    arch/x86/kernel/cpu/sgx/virt.c: note: in included file (through include/linux/miscdevice.h):
+>    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+>    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+> 
+> vim +59 arch/x86/kernel/cpu/sgx/virt.c
+> 
+> 540745ddbc70eab Sean Christopherson 2021-03-19  32  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  33  static int __sgx_vepc_fault(struct sgx_vepc *vepc,
+> 540745ddbc70eab Sean Christopherson 2021-03-19  34  			    struct vm_area_struct *vma, unsigned long addr)
+> 540745ddbc70eab Sean Christopherson 2021-03-19  35  {
+> 540745ddbc70eab Sean Christopherson 2021-03-19  36  	struct sgx_epc_page *epc_page;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  37  	unsigned long index, pfn;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  38  	int ret;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  39  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  40  	WARN_ON(!mutex_is_locked(&vepc->lock));
+> 540745ddbc70eab Sean Christopherson 2021-03-19  41  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  42  	/* Calculate index of EPC page in virtual EPC's page_array */
+> 540745ddbc70eab Sean Christopherson 2021-03-19  43  	index = vma->vm_pgoff + PFN_DOWN(addr - vma->vm_start);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  44  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  45  	epc_page = xa_load(&vepc->page_array, index);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  46  	if (epc_page)
+> 540745ddbc70eab Sean Christopherson 2021-03-19  47  		return 0;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  48  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  49  	epc_page = sgx_alloc_epc_page(vepc, false);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  50  	if (IS_ERR(epc_page))
+> 540745ddbc70eab Sean Christopherson 2021-03-19  51  		return PTR_ERR(epc_page);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  52  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  53  	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
+> 540745ddbc70eab Sean Christopherson 2021-03-19  54  	if (ret)
+> 540745ddbc70eab Sean Christopherson 2021-03-19  55  		goto err_free;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  56  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  57  	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
+> 540745ddbc70eab Sean Christopherson 2021-03-19  58  
+> 540745ddbc70eab Sean Christopherson 2021-03-19 @59  	ret = vmf_insert_pfn(vma, addr, pfn);
+> 540745ddbc70eab Sean Christopherson 2021-03-19 @60  	if (ret != VM_FAULT_NOPAGE) {
+> 540745ddbc70eab Sean Christopherson 2021-03-19  61  		ret = -EFAULT;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  62  		goto err_delete;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  63  	}
+> 540745ddbc70eab Sean Christopherson 2021-03-19  64  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  65  	return 0;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  66  
+> 540745ddbc70eab Sean Christopherson 2021-03-19  67  err_delete:
+> 540745ddbc70eab Sean Christopherson 2021-03-19  68  	xa_erase(&vepc->page_array, index);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  69  err_free:
+> 540745ddbc70eab Sean Christopherson 2021-03-19  70  	sgx_free_epc_page(epc_page);
+> 540745ddbc70eab Sean Christopherson 2021-03-19  71  	return ret;
+> 540745ddbc70eab Sean Christopherson 2021-03-19  72  }
+> 540745ddbc70eab Sean Christopherson 2021-03-19  73  
+> 
+> :::::: The code at line 59 was first introduced by commit
+> :::::: 540745ddbc70eabdc7dbd3fcc00fe4fb17cd59ba x86/sgx: Introduce virtual EPC for use by KVM guests
+> 
+> :::::: TO: Sean Christopherson <sean.j.christopherson@intel.com>
+> :::::: CC: Borislav Petkov <bp@suse.de>
+> 
 
 
