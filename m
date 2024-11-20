@@ -1,218 +1,155 @@
-Return-Path: <linux-kernel+bounces-415555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 543159D37D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A50769D37E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:04:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7CE1F249C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1991F24B07
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E431AB508;
-	Wed, 20 Nov 2024 10:00:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27AB19EEC2;
+	Wed, 20 Nov 2024 10:01:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFBA1AA1DE;
-	Wed, 20 Nov 2024 10:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1A019DF4F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096838; cv=none; b=newU0nSR8UsuM/AeSdAl83OeFZELUcg4k4lOqbPPGcG4OuC9zNUgt93CyGhQIoJXDBVeMPW1jMbdXT4F/ekpYyOmxakOyr1iHKQCraUF0/YSdteoARRGq5crgCedoNUNjC7Po3OMwRqtSUI6XjXxTg/4JIr+nXyyTbOmLB8JYsA=
+	t=1732096900; cv=none; b=GeLLBF4IuZT52b1R7fYFYoEkiheERGqYiSCtwxXDANYDcmoPMlWO+Te9xkocpZ/5SubnWIrZSVeEAvRsdbbybxpdKItolvJglJFE5kyMy7PKTJpQK3kCnYQJCejd8BCQ+LrK+lm7XKtwQ+Ip59IAEUn7niy+tSlD8OYUE4DHKUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096838; c=relaxed/simple;
-	bh=aU8mrRh2PwcG4SYFEXTEPcfJJ57bkVCpuJvMDJZRP84=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jGE4wZHuuOr7KAUMW3j43fY2MYHNeM1C7i7SBWeIgghen1Up0B0hayHZJKyJJwDRnMxVOX2JFO/ILemHuMxQy2LyQGEM/N1+xU9YxTrLUOrH1jqs9a7Wcy///Rxvl61P89CX+enn9m1VjDHDC4fKVNT+4ZH3irgOPTG+oB3IaBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XtcHt12zjz6K98Z;
-	Wed, 20 Nov 2024 17:58:18 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
-	by mail.maildlp.com (Postfix) with ESMTPS id AECA7140CF4;
-	Wed, 20 Nov 2024 18:00:34 +0800 (CST)
-Received: from P_UKIT01-A7bmah.china.huawei.com (10.195.247.212) by
- frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 20 Nov 2024 11:00:33 +0100
-From: <shiju.jose@huawei.com>
-To: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>,
-	<nifan.cxl@gmail.com>, <vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
-	<dave@stgolabs.net>
-CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>, <shiju.jose@huawei.com>
-Subject: [PATCH 13/13] rasdaemon: ras-mc-ctl: Update logging of CXL memory module data to align with CXL spec rev 3.1
-Date: Wed, 20 Nov 2024 09:59:23 +0000
-Message-ID: <20241120095923.1891-14-shiju.jose@huawei.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20241120095923.1891-1-shiju.jose@huawei.com>
-References: <20241120095923.1891-1-shiju.jose@huawei.com>
+	s=arc-20240116; t=1732096900; c=relaxed/simple;
+	bh=chcNovfSeV+DZRaWhommLahi04LyZbnfEGviJ3Q2E80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cIQqDAqtWCh5M8jlQsf2iFbgt/8c2npd7tRn0oUH1SDlH7fl+2DBA++nLopKG680p1ha5WXGRZMML6NPbhYCuHXplUhDQt6RVVX+0LwZR7lkut531RlQXUIcy9WDuogVxII5CNXLbD3pkNoL/PK2K4DxUQfbZ+dTJYYlA+quODk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tDhWM-0008UK-HI; Wed, 20 Nov 2024 11:01:14 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tDhWL-001igc-02;
+	Wed, 20 Nov 2024 11:01:13 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 8D2CF377B9F;
+	Wed, 20 Nov 2024 10:01:12 +0000 (UTC)
+Date: Wed, 20 Nov 2024 11:01:12 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, NXP Linux Team <s32@nxp.com>, 
+	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH 3/3] can: flexcan: handle S32G2/S32G3 separate interrupt
+ lines
+Message-ID: <20241120-venomous-skilled-rottweiler-622b36-mkl@pengutronix.de>
+References: <20241119081053.4175940-1-ciprianmarian.costea@oss.nxp.com>
+ <20241119081053.4175940-4-ciprianmarian.costea@oss.nxp.com>
+ <20241120-magnificent-accelerated-robin-70e7ef-mkl@pengutronix.de>
+ <c9d8ff57-730f-40d9-887e-d11aba87c4b5@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500007.china.huawei.com (7.182.85.172)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3wnxz2cl47oixl33"
+Content-Disposition: inline
+In-Reply-To: <c9d8ff57-730f-40d9-887e-d11aba87c4b5@oss.nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Shiju Jose <shiju.jose@huawei.com>
 
-CXL spec 3.1 section 8.2.9.2.1.3 Table 8-47, Memory Module Event Record
-has updated with following new fields and new info for Device Event Type
-and Device Health Information fields.
-1. Validity Flags
-2. Component Identifier
-3. Device Event Sub-Type
+--3wnxz2cl47oixl33
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/3] can: flexcan: handle S32G2/S32G3 separate interrupt
+ lines
+MIME-Version: 1.0
 
-This update modifies ras-mc-ctl to parse and log CXL memory module event
-data stored in the RAS SQLite database table, reflecting the
-specification changes introduced in revision 3.1.
+On 20.11.2024 11:01:25, Ciprian Marian Costea wrote:
+> On 11/20/2024 10:52 AM, Marc Kleine-Budde wrote:
+> > On 19.11.2024 10:10:53, Ciprian Costea wrote:
+> > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+> > >=20
+> > > On S32G2/S32G3 SoC, there are separate interrupts
+> > > for state change, bus errors, MBs 0-7 and MBs 8-127 respectively.
+> > >=20
+> > > In order to handle this FlexCAN hardware particularity, reuse
+> > > the 'FLEXCAN_QUIRK_NR_IRQ_3' quirk provided by mcf5441x's irq
+> > > handling support.
+> > >=20
+> > > Additionally, introduce 'FLEXCAN_QUIRK_SECONDARY_MB_IRQ' quirk,
+> > > which can be used in case there are two separate mailbox ranges
+> > > controlled by independent hardware interrupt lines, as it is
+> > > the case on S32G2/S32G3 SoC.
+> >=20
+> > Does the mainline driver already handle the 2nd mailbox range? Is there
+> > any downstream code yet?
+> >=20
+> > Marc
+> >=20
+>=20
+> Hello Marc,
+>=20
+> The mainline driver already handles the 2nd mailbox range (same
+> 'flexcan_irq') is used. The only difference is that for the 2nd mailbox
+> range a separate interrupt line is used.
 
-Example output,
+AFAICS the IP core supports up to 128 mailboxes, though the driver only
+supports 64 mailboxes. Which mailboxes do you mean by the "2nd mailbox
+range"? What about mailboxes 64..127, which IRQ will them?
 
-./util/ras-mc-ctl --errors
-...
-CXL memory module events:
-1 2024-11-20 00:22:33 +0000 error: memdev=mem0, host=0000:0f:00.0, serial=0x3, \
-log=Fatal, hdr_uuid=fe927475-dd59-4339-a586-79bab113b774, hdr_flags=0x1, , \
-hdr_handle=0x1, hdr_related_handle=0x0, hdr_timestamp=1970-01-01 00:04:38 +0000, \
-hdr_length=128, hdr_maint_op_class=0, hdr_maint_op_sub_class=1, \
-event_type: Temperature Change, event_sub_type: Unsupported Config Data, \
-health_status: 'MAINTENANCE_NEEDED' , 'REPLACEMENT_NEEDED' , \
-media_status: All Data Loss in Event of Power Loss, life_used=8, \
-dirty_shutdown_cnt=33, cor_vol_err_cnt=25, cor_per_err_cnt=45, \
-device_temp=3, add_status=3 \
-component_id:02 74 c5 08 9a 1a 0b fc d2 7e 2f 31 9b 3c 81 4d \
-pldm_entity_id:00 00 00 00 00 00 pldm_resource_id:fc d2 7e 2f 
-...
+> I do plan to upstream more patches to the flexcan driver but they relate =
+to
+> Power Management (Suspend and Resume routines) and I plan to do this in a
+> separate patchset.
 
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
----
- util/ras-mc-ctl.in | 46 +++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 5 deletions(-)
+regards,
+Marc
 
-diff --git a/util/ras-mc-ctl.in b/util/ras-mc-ctl.in
-index dbb1607..0990da9 100755
---- a/util/ras-mc-ctl.in
-+++ b/util/ras-mc-ctl.in
-@@ -1439,11 +1439,12 @@ sub get_cxl_transaction_type
-     return $types[$_[0]];
- }
- 
-+# CXL rev 3.1 section 8.2.9.2.1.3; Table 8-47
- sub get_cxl_dev_event_type
- {
-     my @types;
- 
--    if ($_[0] < 0 || $_[0] > 5) {
-+    if ($_[0] < 0 || $_[0] > 8) {
- 	return "unknown-type";
-     }
- 
-@@ -1452,15 +1453,37 @@ sub get_cxl_dev_event_type
- 	      "Life Used Change",
- 	      "Temperature Change",
- 	      "Data Path Error",
--	      "LSA Error");
-+	      "LSA Error",
-+	      "Unrecoverable Internal Sideband Bus Error",
-+	      "Memory Media FRU Error",
-+	      "Power Management Fault");
- 
-     return $types[$_[0]];
- }
- 
-+sub get_cxl_dev_event_sub_type
-+{
-+    my @types;
-+
-+    if ($_[0] < 0 || $_[0] > 3) {
-+	return "unknown-type";
-+    }
-+
-+    @types = ("Not Reported",
-+	      "Invalid Config Data",
-+	      "Unsupported Config Data",
-+	      "Unsupported Memory Media FRU");
-+
-+    return $types[$_[0]];
-+}
-+
-+#CXL rev 3.1 section 8.2.9.9.3.1; Table 8-133
- use constant {
-     CXL_DHI_HS_MAINTENANCE_NEEDED => 0x0001,
-     CXL_DHI_HS_PERFORMANCE_DEGRADED => 0x0002,
-     CXL_DHI_HS_HW_REPLACEMENT_NEEDED => 0x0004,
-+    CXL_DHI_HS_HW_REPLACEMENT_NEEDED => 0x0004,
-+    CXL_DHI_HS_MEM_CAPACITY_DEGRADED => 0x0008,
- };
- 
- sub get_cxl_health_status_text
-@@ -1477,6 +1500,9 @@ sub get_cxl_health_status_text
-     if ($flags & CXL_DHI_HS_HW_REPLACEMENT_NEEDED) {
- 	push @out, (sprintf "\'REPLACEMENT_NEEDED\' ");
-     }
-+    if ($flags & CXL_DHI_HS_MEM_CAPACITY_DEGRADED) {
-+	push @out, (sprintf "\'MEM_CAPACITY_DEGRADED\' ");
-+    }
- 
-     return join (", ", @out);
- }
-@@ -1821,7 +1847,7 @@ sub errors
-     my ($hdr_uuid, $hdr_flags, $hdr_handle, $hdr_related_handle, $hdr_ts, $hdr_length, $hdr_maint_op_class, $hdr_maint_op_sub_class, $data);
-     my ($dpa_flags, $descriptor, $mem_event_type, $mem_event_sub_type, $transaction_type, $channel, $rank, $device, $comp_id, $pldm_entity_id, $pldm_res_id);
-     my ($nibble_mask, $bank_group, $row, $column, $cor_mask);
--    my ($event_type, $health_status, $media_status, $life_used, $dirty_shutdown_cnt, $cor_vol_err_cnt, $cor_per_err_cnt, $device_temp, $add_status);
-+    my ($event_type, $event_sub_type, $health_status, $media_status, $life_used, $dirty_shutdown_cnt, $cor_vol_err_cnt, $cor_per_err_cnt, $device_temp, $add_status);
-     my ($sub_channel, $cme_threshold_ev_flags, $cme_count, $cvme_count);
- 
-     my $dbh = DBI->connect("dbi:SQLite:dbname=$dbname", "", "", {});
-@@ -2155,10 +2181,10 @@ sub errors
- 	}
- 
- 	# CXL memory module errors
--	$query = "select id, timestamp, memdev, host, serial, log_type, hdr_uuid, hdr_flags, hdr_handle, hdr_related_handle, hdr_ts, hdr_length, hdr_maint_op_class, event_type, health_status, media_status, life_used, dirty_shutdown_cnt, cor_vol_err_cnt, cor_per_err_cnt, device_temp, add_status, hdr_maint_op_sub_class from cxl_memory_module_event$conf{opt}{since} order by id";
-+	$query = "select id, timestamp, memdev, host, serial, log_type, hdr_uuid, hdr_flags, hdr_handle, hdr_related_handle, hdr_ts, hdr_length, hdr_maint_op_class, event_type, health_status, media_status, life_used, dirty_shutdown_cnt, cor_vol_err_cnt, cor_per_err_cnt, device_temp, add_status, hdr_maint_op_sub_class, event_sub_type, comp_id, pldm_entity_id, pldm_resource_id from cxl_memory_module_event$conf{opt}{since} order by id";
- 	$query_handle = $dbh->prepare($query);
- 	$query_handle->execute();
--	$query_handle->bind_columns(\($id, $timestamp, $memdev, $host, $serial, $log_type, $hdr_uuid, $hdr_flags, $hdr_handle, $hdr_related_handle, $hdr_ts, $hdr_length, $hdr_maint_op_class, $event_type, $health_status, $media_status, $life_used, $dirty_shutdown_cnt, $cor_vol_err_cnt, $cor_per_err_cnt, $device_temp, $add_status, $hdr_maint_op_sub_class));
-+	$query_handle->bind_columns(\($id, $timestamp, $memdev, $host, $serial, $log_type, $hdr_uuid, $hdr_flags, $hdr_handle, $hdr_related_handle, $hdr_ts, $hdr_length, $hdr_maint_op_class, $event_type, $health_status, $media_status, $life_used, $dirty_shutdown_cnt, $cor_vol_err_cnt, $cor_per_err_cnt, $device_temp, $add_status, $hdr_maint_op_sub_class, $event_sub_type, $comp_id, $pldm_entity_id, $pldm_res_id));
- 	$out = "";
- 	while($query_handle->fetch()) {
- 	    $out .= "$id $timestamp error: ";
-@@ -2175,6 +2201,7 @@ sub errors
- 	    $out .= sprintf "hdr_maint_op_class=%u, ", $hdr_maint_op_class if (defined $hdr_maint_op_class && length $hdr_maint_op_class);
- 	    $out .= sprintf "hdr_maint_op_sub_class=%u, ", $hdr_maint_op_sub_class if (defined $hdr_maint_op_sub_class && length $hdr_maint_op_sub_class);
- 	    $out .= sprintf "event_type: %s, ", get_cxl_dev_event_type($event_type)  if (defined $event_type && length $event_type);
-+            $out .= sprintf "event_sub_type: %s, ", get_cxl_dev_event_sub_type($event_sub_type)  if (defined $event_sub_type && length $event_sub_type);
- 	    $out .= sprintf "health_status: %s, ", get_cxl_health_status_text($health_status)  if (defined $health_status && length $health_status);
- 	    $out .= sprintf "media_status: %s, ", get_cxl_media_status($media_status)  if (defined $media_status && length $media_status);
- 	    $out .= sprintf "life_used=%u, ", $life_used  if (defined $life_used && length $life_used);
-@@ -2183,6 +2210,15 @@ sub errors
- 	    $out .= sprintf "cor_per_err_cnt=%u, ", $cor_per_err_cnt  if (defined $cor_per_err_cnt && length $cor_per_err_cnt);
- 	    $out .= sprintf "device_temp=%u, ", $device_temp  if (defined $device_temp && length $device_temp);
- 	    $out .= sprintf "add_status=%u ", $add_status  if (defined $add_status && length $add_status);
-+            if (defined $comp_id && length $comp_id) {
-+                print_cxl_dev_id("component_id", $comp_id, CXL_EVENT_GEN_MED_COMP_ID_SIZE, $out);
-+            }
-+            if (defined $pldm_entity_id && length $pldm_entity_id) {
-+                print_cxl_dev_id("pldm_entity_id", $pldm_entity_id, CXL_EVENT_GEN_PLDM_ENTITY_ID_SIZE, $out);
-+            }
-+            if (defined $pldm_res_id && length $pldm_res_id) {
-+                print_cxl_dev_id("pldm_resource_id", $pldm_res_id, CXL_EVENT_GEN_PLDM_RES_ID_SIZE, $out);
-+            }
- 	    $out .= "\n";
- 	}
- 	if ($out ne "") {
--- 
-2.43.0
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--3wnxz2cl47oixl33
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc9s2UACgkQKDiiPnot
+vG+mXQf+NEq1bSfJ1c4c9BnkrCHdJ8Th83zFhGmdTCdimKVJda+UVE+kZXKkSkvf
+WQKn4pX291kNV4SbBw1YeWk/cbS7WrpHrFO3GzxNXYgftoLV00v21E3sH6hZYLVj
+cot8rw1k3M+bi/bhnrsBxZW+rTC4xJHVmU+AbAXXsUu4fXV0wdTtW7hndoBtnkio
+kTwU2duz2R/x5O6ni9vP7afjGVig43jtzXfLWPT7p3PHbMzB9Y3XCc8Lf4xsGR6o
+IQdi1LKVAr0OjFJiy6WmhJJ2YhByE/jVpEnfyRjAHmnr8jIclAg6q9IAtbChAXH2
+dX5EByDmnF8G0EJG/C0jPBczpI87dA==
+=ZtzX
+-----END PGP SIGNATURE-----
+
+--3wnxz2cl47oixl33--
 
