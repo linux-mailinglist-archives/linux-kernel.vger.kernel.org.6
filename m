@@ -1,115 +1,218 @@
-Return-Path: <linux-kernel+bounces-415509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E8EF9D3730
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D1B9D3732
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAC21B26CCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:39:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F28F8B290C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26B19CC1C;
-	Wed, 20 Nov 2024 09:38:37 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A375E19CD1B;
+	Wed, 20 Nov 2024 09:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=quectel.com header.i=@quectel.com header.b="Ra6oC/Ko"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020074.outbound.protection.outlook.com [52.101.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC5B18C02E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732095517; cv=none; b=stP4gU+8RNL4nRUa+08VL4q6IGtI3j43ExZjmY7g6qZGvFMkZ2Ac67OSItNOgKONggM0wineMag9ovX5P2e81tzLQq7vHi/rA8K27kzRONNox2xHWbPt4BvyCi5NtfEL6TsECAFHSAVxniLiIo9O5qY2+AEnFzeHw3bxa+rPhbM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732095517; c=relaxed/simple;
-	bh=XJpQWKLgVSVZJsWF+Wy3ZGjpMO/LT7JQVOPqmoXdXZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MMCeQSQKa41LaAAV7l3YPoIXsg3TE0+cb0X7Qom+uh/QArQgz+JRiYCBKiS6P6sOiV0hYxPvFUaXnfgI2nxA/9QSyt14RnNf9wDsPm3FXNmkMhp2J1PdvkgtyZ9U9PYdFtBy+7VOBCY5bi9697qNz3R3zsz6o17a9b8P1xze1aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 30a5f3d4a72311efa216b1d71e6e1362-20241120
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
-	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_TRUSTED, SA_EXISTED, SN_TRUSTED, SN_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS
-	GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:95d4111d-5746-4350-a786-7c58a076b5da,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:20
-X-CID-INFO: VERSION:1.1.38,REQID:95d4111d-5746-4350-a786-7c58a076b5da,IP:0,URL
-	:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:20
-X-CID-META: VersionHash:82c5f88,CLOUDID:28b95fb47be3158f0464a97d339d7408,BulkI
-	D:241120173827N644GAJ1,BulkQuantity:0,Recheck:0,SF:66|841|38|17|19|102,TC:
-	nil,Content:0,EDM:5,IP:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,C
-	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 30a5f3d4a72311efa216b1d71e6e1362-20241120
-X-User: xiaopei01@kylinos.cn
-Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 406220667; Wed, 20 Nov 2024 17:38:25 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: herve.codina@bootlin.com,
-	qiang.zhao@nxp.com,
-	christophe.leroy@csgroup.eu,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org,
-	xiaopeitux@foxmail.com,
-	Pei Xiao <xiaopei01@kylinos.cn>
-Subject: [PATCH] soc: fsl: cpm1: qmc: Fix qmc_probe() warn missing error code ret
-Date: Wed, 20 Nov 2024 17:38:20 +0800
-Message-Id: <82d8c18da160b9e0a73c5c5e2eb25ad2831cc6f9.1732095360.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <bac2dc94-1bf3-4dcf-b776-cd78ef992d28@suswa.mountain>
-References: <bac2dc94-1bf3-4dcf-b776-cd78ef992d28@suswa.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C661187844;
+	Wed, 20 Nov 2024 09:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732095572; cv=fail; b=obI5PCwFaD/WI9RXdjS0lh7Um0uovy2fo5dfSfHk3M1O7BaZKHHorbhM/Fb5aH1536wOuT5a+qr74L/A6DCyDgCfhKTrHbRR0zMVyrF6iCgN5H2RJ9wsvJboKjD793eg+MlB7f/andJFazUYFerMkOTow++brLAzPJEhamSsu64=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732095572; c=relaxed/simple;
+	bh=ICnf4U3rcI2XSJpKYsdtl6dcTQRzfjBOMCjbDUuLSE0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Lr53ut/tzytAfuZd98u9VmEh29ILF+7FNG/mQViJ+AO1gBH8YG9cUKJu8ZnMH6wMjfy5bJ0oi4jRVNHMo73r+NzhC/aG9fV60PULpIHz6aHYjRHl03ka/QwW5DJRLG3Ehn3KsrSzON0v82p3Bclx7dPgBS4ug4jmZ69zX5KlRVM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quectel.com; spf=pass smtp.mailfrom=quectel.com; dkim=pass (1024-bit key) header.d=quectel.com header.i=@quectel.com header.b=Ra6oC/Ko; arc=fail smtp.client-ip=52.101.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quectel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quectel.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aOcKMdmOUFLIF8WPnzOczVV5OWCqhkLM5LoxmUxRoZ+obdyZqXz8j//J0d5o8ImHRBWxTmGQZVBlYu1gCRnHKKw3+vqctKI6w4JDO2Gm4HCNqg5W1F35eW+9LVQpUmMLToAp8ZS8Qf2slj5Bix+LgwQNJmFsB6mxT2KC2wgdRDI3YH32JBZYeOmKqpIvlPxSwsspETrihrt2FmtaSJTbFfp58Z8Jl95tEDw+5Vqk2Z3ztoORhOvKZYDXIdrJJINliBKLCPXFgud3pvsF1UJnBsMhzl+a4MmdrkzZktM+5SsO947MdWBdcO4kouKJtW9i+PDKDioMYDmBUworz0bJUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2nUgiiCpvR1gQE/ROjt9v+5sTquYr3Qvyli+kAH+YCo=;
+ b=mAyTEmiou47nDocpHhsusthlEtsKT2NEhH6B1WAVEMnARcD3SCeIJmOXMNR7oqASvPMR06MYr0paVmSLwsniNgH4gOy7ctDVMJ7R/uQvzwxA3GFDCzjr7TvffifNwTkeD3ZDRUFywV/ophIqa+YvY8+jwj1NX4t2XAXlisP8BWxJOYZe8kRCVmuF9VZTJT7PuTnw4/pMZ7EY08pVfbk+xdTteghZntGK+GtEVAPVRMGm4d/52S76aisZgOIuYdLoriUEAkGwuMsnL+3MZ5eAcMr4skFkOG84UdfjXCUYZG9tY/7IME+g9U9YajDA4AmnMAcmj4tCzLwMGe832wznmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=quectel.com; dmarc=pass action=none header.from=quectel.com;
+ dkim=pass header.d=quectel.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quectel.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2nUgiiCpvR1gQE/ROjt9v+5sTquYr3Qvyli+kAH+YCo=;
+ b=Ra6oC/KoVmdqMy5Hj4rAEBkwZ4QbMks7R31Xm150p8ld13sIBsbbvVv4KQxUE/IVegi0c56wLg9Vr0Tm2oEHn6GNp3+P7jq8DaHsqdlxk3BteSRjiV4ynkdoBH7TK6CdwE27VRLCOPGKWMxstXPSILRdk7nkxTtORA7DCumCLtE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=quectel.com;
+Received: from SG2PR06MB5358.apcprd06.prod.outlook.com (2603:1096:4:1d5::7) by
+ JH0PR06MB6704.apcprd06.prod.outlook.com (2603:1096:990:37::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8182.14; Wed, 20 Nov 2024 09:39:25 +0000
+Received: from SG2PR06MB5358.apcprd06.prod.outlook.com
+ ([fe80::e711:eea9:af2:b2ab]) by SG2PR06MB5358.apcprd06.prod.outlook.com
+ ([fe80::e711:eea9:af2:b2ab%3]) with mapi id 15.20.8182.011; Wed, 20 Nov 2024
+ 09:39:25 +0000
+From: Jerry Meng <jerry.meng.lk@quectel.com>
+To: ryazanov.s.a@gmail.com,
+	loic.poulain@linaro.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jerry Meng <jerry.meng.lk@quectel.com>
+Subject: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
+Date: Wed, 20 Nov 2024 17:39:04 +0800
+Message-Id: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TPYP295CA0051.TWNP295.PROD.OUTLOOK.COM
+ (2603:1096:7d0:8::11) To SG2PR06MB5358.apcprd06.prod.outlook.com
+ (2603:1096:4:1d5::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PR06MB5358:EE_|JH0PR06MB6704:EE_
+X-MS-Office365-Filtering-Correlation-Id: 552840fe-8973-4832-7ed2-08dd0947387e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?O/izVw6wZJw9qZfQOq1lvqrT8B3DFHYs9gtbEMV9D2XXpHEN4kgsgHps92eE?=
+ =?us-ascii?Q?QI72UNzjGNd/upLlzNmluY2p2y53Iummo2pmsmdU9jEZQ6+K7cxYyMVIj+No?=
+ =?us-ascii?Q?hLn9oCNW2cmhiOi0MWH6bmhAaNfGvALUgtW39JDqHzpC1NGq/3ixJG+XZQnP?=
+ =?us-ascii?Q?/EgX7d0/igELMaLt6T504Mv6YDbxeL2RsdZ2o+JTPP7XHtFUX/xMTEAprg9W?=
+ =?us-ascii?Q?DDHXNQsjgLD/Fbmy3I/xhkkrtUVUlEVDKXqXCunNEviNMIKdNUCLJoznm8lr?=
+ =?us-ascii?Q?+CtVWQQod5wbxN3P8Ou9tq7WeuCymTrPSDaoi2yux2SWh4JIbzs3Oxx5w+Vj?=
+ =?us-ascii?Q?LbRFpwoOUj360QJz451sSUKY6p+sU0o+4PjehBbW9SFJ78xKJcmceRjemZTO?=
+ =?us-ascii?Q?zurxN4jfLrWp38gyuR+xWJxf1i01uPWi2WipfJOwmp+t6qBNI3QKeERTwgAw?=
+ =?us-ascii?Q?BqrBj7+qJi6Cn3k9Q8h+TReXSzg8zpqxeQ4zvAhDzZpkI5EjVY4lAB0T4zrh?=
+ =?us-ascii?Q?SU5on+V5CR7KxBX2d52PVxSaJmOBAZfQRmIokG3zsbgs5rZz1zWCCvwT9ViF?=
+ =?us-ascii?Q?nbyh9jPKGHhms7NpS7aH7utV0CXG8rBuq1mwBLNpYn+qh9UP9f3ikDy8dceF?=
+ =?us-ascii?Q?ZzGcskJR1aY0ZFc5wlzfpqLhlWxoCyzD2U/b7SDT3bvXDDeWbYQpqMDMvCcL?=
+ =?us-ascii?Q?l3VyeuzOv5F+6nQr6zcWK0HeVI+T1taCkcqYuPUcely/0RcgEDgXpfTPrdy4?=
+ =?us-ascii?Q?y4c/Z82k0FNTz0EwJt0oE6TLDvT98v4BOrv/vZHSpzkA+e9CSwo6jmzsYPsN?=
+ =?us-ascii?Q?38A5zTrNMZF3jcMwvf2b6LB5B7ah+4qNMHkbMy6BUB2zhtmIpqXjAqmcC0KC?=
+ =?us-ascii?Q?bCIPeMER5tQMRC/asrONxbnkHUnWvXquZE+GYq7ip5Bd+AheO/flSuzXYuGr?=
+ =?us-ascii?Q?hAJNQ5WsqDIPEjZl7J7G85+DYqztfcme/isy/LJLDjwTM69hflrUTpLsgBSq?=
+ =?us-ascii?Q?JRmjf5M5Sx3ldDNDqXstt9344vj5V1e8GpqGfSVtNLEPGiwmUQ/rmPL6qN7I?=
+ =?us-ascii?Q?fp0VibdyVs5Xqv6XlGX3Iv6vd8WFqCnkXNhTm/Gvo2DKzAMyfYpekqQ6/WPK?=
+ =?us-ascii?Q?00p5Hccb58bxzHtPFDx/Jg05LKkNywlroJxMwMdp/Q2fc2xXIakJ+RdhuuPD?=
+ =?us-ascii?Q?L0bbfnCGs5LLNoRfajT+kjFO05e3BPd2dF/Mq2lJMMtiRVITlb1qEW66Frex?=
+ =?us-ascii?Q?KCMiqkwDGY5iRdHbH1GYIuo5j7YL92e2HYRbV20lzm0AvwK/nRKKrJveVgMt?=
+ =?us-ascii?Q?MhMHTz4NBtBPX/Qr0FJbe9qhODqY6uhQCl28LQv9Rr129lmwKcRYo0uPiBSe?=
+ =?us-ascii?Q?a5wLS1c=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB5358.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?c2wUxaOIGKOsISkmbCVWhN4rx7qvMeO5xe0BWIrLQwBKtIqxD4Owu/yY2fsf?=
+ =?us-ascii?Q?xS4UESCAQxgh+Jy46liH0rhjdP0bdmjnaRuho9nal3HfshqjFxrgZAc2M+8y?=
+ =?us-ascii?Q?zJGmGA0ypMTHtw3SMJUqluAP3xEI76bPPfh+Y3QSB7zRSreQCOfS3NaKupSs?=
+ =?us-ascii?Q?pGmlDB0fKyUDJqpuKO0GvBnZIYPaRt/S8l9BhhwtA1IrppB9VO6dnLbCid/Q?=
+ =?us-ascii?Q?+DsN8sN8qCXSlIGD+sgtLJ9yj3olpiXys4cWkHikm1Rit3sHlFQx9zEQYRGj?=
+ =?us-ascii?Q?BdNMkAKA93U5LdJlVo5hFbbqqhjCKafFqsvtNsYoXIEhVabFvVUPEngaDgkE?=
+ =?us-ascii?Q?L3adJ+8opRDK3kP1QWGCCE6fh82m9FZgA8loMAbhB5dWgwRwfXrGG4r5DpTb?=
+ =?us-ascii?Q?Iibb22/p+VJJF+sXiZIgDaZ2J77C1LS41k4bGFmW4N96yFuAZ2iFj4r70vjI?=
+ =?us-ascii?Q?5bCqjp1kyDZqM4vf3++cujS/9aUPBUrBWD8y7xPH4MAToVxbe8fMdWCh8U/T?=
+ =?us-ascii?Q?RLP0ekutzLyxCbCUegKpS9Ac1ucduNm/UNfAGryQk/JzNrernxo6efe13fNh?=
+ =?us-ascii?Q?JsG14hAdmI9gJpbf3TbzQWSIYWopx0H4jlKiRK1n0g/tqydVZidKjQfbqbMy?=
+ =?us-ascii?Q?CA6+jq7ZYv8Ud4qgWZXBvlIJKPcd3aD0pwlJOOCMBwi7Wv6rab6fnKUsDZ4c?=
+ =?us-ascii?Q?t3ZQykP9dnMXYGJ4N9aUGT0BDDXChaHPROnFfIAhPdVmRp5jCY04ojqQrZeP?=
+ =?us-ascii?Q?Us93zgwMkr8uTMkR19SIR2H2eRFMHIVzu+X7z1lH/48IqRlkSQqgLoFdZPAg?=
+ =?us-ascii?Q?WdYPq74BDaXZzD6L8ET50nUZYeRPz5iEbMwBdvnhzwZuKTtFKVVl3gTe3NmV?=
+ =?us-ascii?Q?nCxMeGN3GZDamDg+oDYjulihcf4h0zeLrHGqS3uuPTSASD4g7fFaqUO5dtZ4?=
+ =?us-ascii?Q?HAIpsgsu84bpouakt+QP/qx+KXnRKIPwHCiQsP96thlBNIGPzHbvpSygArNT?=
+ =?us-ascii?Q?7wfjX7Z228KRDnmyveskDy0roLeMAr94JxnRT6KUUL3puaxiW0FqybnboA2M?=
+ =?us-ascii?Q?NWpyQfxTgDlzd1aa+uxW5SVAcHUFdtkZv0vc1xfM/fZaUQRU+kQI8UQihWl1?=
+ =?us-ascii?Q?5H50bTOchsBHy4JBpF+AsQG5fmHWrE1lpEsyjex5gCayZzwIp2aVNWBvKmvc?=
+ =?us-ascii?Q?NORwu3M0tfXqhiIdn3LNmzNoRhOMEdwJs28uPg5qrUC/mefDUfPjLpUkZst5?=
+ =?us-ascii?Q?TCBiFTMMy6RkuHO/DvMl0CjlS9mP95aeub4omug/EZUzeauUvb6WUAo2Qdml?=
+ =?us-ascii?Q?mzfl6PbCzmXRsDERBdO07wOaiEYHPD3hY70SnMUFJC3DZ46fHxQihZr4Fjw9?=
+ =?us-ascii?Q?8Bt7kS2WhHAuHIRXy0er5xd9cfaHKRC/B0lK3/e+RbTslnn/Gv1JD1N2YBmQ?=
+ =?us-ascii?Q?KVSTLZ04zaYomWE+9/xjYwhx6zyNP3JVrY0zEGVtuUqd7ZGFJCgFAP0ZsF06?=
+ =?us-ascii?Q?YlLn/dQb9uckfrPOvUXyjtew5I2fz95iJbMpWsXSs24LR9Pvw+B1jFYu1qGA?=
+ =?us-ascii?Q?y+eZyIbs/xwwIsK9t0n4Wak299yx4n1d1DaCwyJ9B1AYXE0n/91nMHmoZY8w?=
+ =?us-ascii?Q?Yw=3D=3D?=
+X-OriginatorOrg: quectel.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 552840fe-8973-4832-7ed2-08dd0947387e
+X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB5358.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 09:39:25.4761
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7730d043-e129-480c-b1ba-e5b6a9f476aa
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gYw7FY5euAAP7WjEGWqsDO8HZPgDW83dFZTRkkcu0F4g+EMq5d8qsxGy5WffGiJ8ntg13WaQyDnzoeQWUHasW9QHCgolrcvJvaN7HMFbe1k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6704
 
-platform_get_irq() may failed,but ret still equals to 0,
-will cacuse qmc_probe() return 0 but fail.
+Add a Sahara protocol-based interface for downloading ramdump
+from Qualcomm modems in SBL ramdump mode.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202411051350.KNy6ZIWA-lkp@intel.com/
-Fixes: 3178d58e0b97 ("soc: fsl: cpm1: Add support for QMC")
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+Signed-off-by: Jerry Meng <jerry.meng.lk@quectel.com>
 ---
- drivers/soc/fsl/qe/qmc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+v1 -> v2:
+	- Fix errors checked by checkpatch.pl, mainly change indentation from space to tab
+	- change my email acount to fit git-send-email
 
-diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
-index 19cc581b06d0..a78768cd6007 100644
---- a/drivers/soc/fsl/qe/qmc.c
-+++ b/drivers/soc/fsl/qe/qmc.c
-@@ -2004,8 +2004,10 @@ static int qmc_probe(struct platform_device *pdev)
+ drivers/net/wwan/mhi_wwan_ctrl.c | 1 +
+ drivers/net/wwan/wwan_core.c     | 4 ++++
+ include/linux/wwan.h             | 2 ++
+ 3 files changed, 7 insertions(+)
+
+diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
+index e9f979d2d..082090ae5 100644
+--- a/drivers/net/wwan/mhi_wwan_ctrl.c
++++ b/drivers/net/wwan/mhi_wwan_ctrl.c
+@@ -263,6 +263,7 @@ static const struct mhi_device_id mhi_wwan_ctrl_match_table[] = {
+ 	{ .chan = "QMI", .driver_data = WWAN_PORT_QMI },
+ 	{ .chan = "DIAG", .driver_data = WWAN_PORT_QCDM },
+ 	{ .chan = "FIREHOSE", .driver_data = WWAN_PORT_FIREHOSE },
++	{ .chan = "SAHARA", .driver_data = WWAN_PORT_SAHARA},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(mhi, mhi_wwan_ctrl_match_table);
+diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
+index a51e27559..5eb0d6de3 100644
+--- a/drivers/net/wwan/wwan_core.c
++++ b/drivers/net/wwan/wwan_core.c
+@@ -342,6 +342,10 @@ static const struct {
+ 		.name = "MIPC",
+ 		.devsuf = "mipc",
+ 	},
++	[WWAN_PORT_SAHARA] = {
++		.name = "SAHARA",
++		.devsuf = "sahara",
++	},
+ };
  
- 	/* Set the irq handler */
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
-+	if (irq < 0) {
-+		ret = -EINVAL;
- 		goto err_exit_xcc;
-+	}
- 	ret = devm_request_irq(qmc->dev, irq, qmc_irq_handler, 0, "qmc", qmc);
- 	if (ret < 0)
- 		goto err_exit_xcc;
+ static ssize_t type_show(struct device *dev, struct device_attribute *attr,
+diff --git a/include/linux/wwan.h b/include/linux/wwan.h
+index 79c781875..b0ea276f2 100644
+--- a/include/linux/wwan.h
++++ b/include/linux/wwan.h
+@@ -19,6 +19,7 @@
+  * @WWAN_PORT_FASTBOOT: Fastboot protocol control
+  * @WWAN_PORT_ADB: ADB protocol control
+  * @WWAN_PORT_MIPC: MTK MIPC diagnostic interface
++ * @WWAN_PORT_SAHARA: Sahara protocol-based interface for downloading ramdump from Qualcomm modems
+  *
+  * @WWAN_PORT_MAX: Highest supported port types
+  * @WWAN_PORT_UNKNOWN: Special value to indicate an unknown port type
+@@ -34,6 +35,7 @@ enum wwan_port_type {
+ 	WWAN_PORT_FASTBOOT,
+ 	WWAN_PORT_ADB,
+ 	WWAN_PORT_MIPC,
++	WWAN_PORT_SAHARA,
+ 
+ 	/* Add new port types above this line */
+ 
 -- 
-2.34.1
+2.25.1
 
 
