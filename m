@@ -1,224 +1,132 @@
-Return-Path: <linux-kernel+bounces-416156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ADE9D4107
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:20:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C35959D414C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD08A1F219B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:20:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364D0B32BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E630D18660C;
-	Wed, 20 Nov 2024 17:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6021A08D7;
+	Wed, 20 Nov 2024 17:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="RLdObkge"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="imE9zBIP"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F64D139579
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CE614831E;
+	Wed, 20 Nov 2024 17:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732123251; cv=none; b=bWWvXtgxzZkOiUo0qIOZO1fj0kq8cXcoDnpH6dpA/gCfwEeTWrES5UlL5Dh0JCDSwQPy68DKy7YgHVqgIhSrIuImQ5J/jOgPVph33cucgNsDKv6sMRDU54SxarBz3iE/hc5JI+sCngLF6NNcpN+YfJL6qZIAMin0j693C1zLpOM=
+	t=1732123306; cv=none; b=PTL2m9+RIb6je55SDrUwKAX5aVexXl8GWXDY2qgMJ62Pc36uF05sxx6v8YgatFYQHNa+pB/iT6vf7ZHSPGNgcw8+yHZvVbqiVLxAm1HkI/Aqtk8gDA5Pk0H8Fut7LaWTCiokDM2MsrIzrdXfoiXRE+yCKqgc1zoJciT7tnUo8kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732123251; c=relaxed/simple;
-	bh=ZHFKuY0fjwbcfP5H0oN136GXGZnXgOPc9J2oDjgrrIE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CfXNJjoaY0La8wmRs55ocQiSlijL2tVgcAIx3FZ5Mv97k4ivly394MKOVsGujM7FZapIPOH1siHxvab2Cz/w8LxlrJ9V3qucfk9XA7LiGQTPiyk5ybxekFckDuAqbOUxpFyFV6Kd2CMUSlEtwE7ZWaErhaCqoEYHPaxnPb5jSuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=RLdObkge; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1732123247; x=1732382447;
-	bh=OlGaza0B5c6KUUDofYWjGR9m+lHpK3J3GBTEAcZ2GV0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=RLdObkgeYcNfH39o8cuG5d0ikHScQiyIR3eX2RdQ0QVpuwb7UUnp2G+zvSnowFqNK
-	 9K2ONjH5eEAVrw77i8w2qrfb8uku0O1SxaBI9N79ivQmKif+KFy09Mw8gVOIQ4uxwR
-	 quSb6YiUY7JrOIJCse3WzAO/Pd1roZLxV97EGXfFtqaYLk/OfJbjqUMnJ0KReppdsp
-	 LtX5BRTRmQTuN7UjOEJpJLwgNZt2YOgQh0cZgFlBNtU8Z/t5ZCOdbGQOhLPxLF6sND
-	 QL8sA53+RRgHy3od54iAefqrld0j9G0KqUzyJV6Sy+GQFIRRTCW2MpEyk7WOigK/bu
-	 iycfY/XlmxnLA==
-Date: Wed, 20 Nov 2024 17:20:43 +0000
-To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, cyphar@cyphar.com, david@readahead.eu, dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, jeffxu@google.com, jorgelo@chromium.org, keescook@chromium.org, skhan@linuxfoundation.org
-From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
-Cc: stable@vger.kernel.org
-Subject: Re: [PATCH v4] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
-Message-ID: <oW_SDTKktmL4lr9x_8kUjLvw13YMMZswM0raHDnFVLlMeaW24MSuxe7pr28Tu0JYh-19Y_4E7AU8GvWyOspbyw7qIcxgo-I-7358ix1HdL0=@protonmail.com>
-In-Reply-To: <aOShI37M3MN63hDFOQGncbS8dxBsKGXVaxrwu0a5ubcrTqrPrgZJRXXYBOyiW3cHKFqh61sT4efgRsbJpvnJMDOHsurGYnr454oa3dUW3r8=@protonmail.com>
-References: <20240630184912.37335-1-pobrn@protonmail.com> <aOShI37M3MN63hDFOQGncbS8dxBsKGXVaxrwu0a5ubcrTqrPrgZJRXXYBOyiW3cHKFqh61sT4efgRsbJpvnJMDOHsurGYnr454oa3dUW3r8=@protonmail.com>
-Feedback-ID: 20568564:user:proton
-X-Pm-Message-ID: c499259deb5b64d7a1adf3c1fadcdee5e51a3006
+	s=arc-20240116; t=1732123306; c=relaxed/simple;
+	bh=NTciS5uR2bAcpu7nQc7zBidMJaiWZix4ilhuKQ1/pP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jfd0kQU14X0eN/dKkGZatSHuHQeFYU+G+XdtUiOjjY+w7DbpCeWLAOU5U2EvS8QJ6rJhwoYfrVOy+S9S33O3uj1vuR0oXPJUzykGTn2N0J3/L0xTWY4suExzIxkSnsdxlygT4Hne0/hwFjd0xA3drsvmCZAYyTJcKDl2upjVeD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=imE9zBIP; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732123304; x=1763659304;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=3/fY0iM7juE2IxcKaSuL8G4jyBXYD27Dqt66/gwlyWk=;
+  b=imE9zBIPFC/1fqFeuRonDRUTShDe5OvvLrzOG2VDEZ3qaqK9vM1J9Z3k
+   p7DQqDwkUgUaFKoil60ELSxIs0MM4hkyWFBsWRveSqNp/tF+kMODMU4Qq
+   CInbnE9fHmA/p8Vz828xvcJf/7uPJ21al5ISi5kadkTmasxRSymO0qvEs
+   o=;
+X-IronPort-AV: E=Sophos;i="6.12,170,1728950400"; 
+   d="scan'208";a="696763459"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 17:21:39 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:22431]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.34.163:2525] with esmtp (Farcaster)
+ id fa3a87a2-973e-4cfe-b2e3-5253ed2bf86d; Wed, 20 Nov 2024 17:21:38 +0000 (UTC)
+X-Farcaster-Flow-ID: fa3a87a2-973e-4cfe-b2e3-5253ed2bf86d
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 20 Nov 2024 17:21:38 +0000
+Received: from [192.168.4.239] (10.106.82.23) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 20 Nov 2024
+ 17:21:37 +0000
+Message-ID: <03a12598-74aa-4202-a79a-668b45dbcc47@amazon.com>
+Date: Wed, 20 Nov 2024 17:21:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+To: David Hildenbrand <david@redhat.com>, <pbonzini@redhat.com>,
+	<corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>, "Sean
+ Christopherson" <seanjc@google.com>, <linux-mm@kvack.org>
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
+ <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
+ <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
+ <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
+ <9286da7a-9923-4a3b-a769-590e8824fa10@redhat.com>
+ <f55d56d7-0ab9-495f-96bf-9bf642a9762d@redhat.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <f55d56d7-0ab9-495f-96bf-9bf642a9762d@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D005EUB002.ant.amazon.com (10.252.51.103) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-Hi
 
 
-Gentle ping again. I am still hoping we can move forward with this.
+On 20/11/2024 16:44, David Hildenbrand wrote:
+>> If the problem is the "pagecache" overhead, then yes, it will be a
+>> harder nut to crack. But maybe there are some low-hanging fruits to
+>> optimize? Finding the main cause for the added overhead would be
+>> interesting.
 
+Agreed, knowing the exact root cause would be really nice.
 
-Regards,
-Barnab=C3=A1s P=C5=91cze
+> Can you compare uffdio_copy() when using anonymous memory vs. shmem?
+> That's likely the best we could currently achieve with guest_memfd.
 
+Yeah, I was doing that too. It was about ~28% slower in my setup, while 
+with guest_memfd it was ~34% slower.  The variance of the data was quite 
+high so the difference may well be just noise.  In other words, I'd be 
+much happier if we could bring guest_memfd (or even shmem) performance 
+closer to the anon/private than if we just equalised guest_memfd with 
+shmem (which are probably already pretty close).
 
-2024. szeptember 28., szombat 0:09 keltez=C3=A9ssel, Barnab=C3=A1s P=C5=
-=91cze <pobrn@protonmail.com> =C3=ADrta:
+> There is the tools/testing/selftests/mm/uffd-stress benchmark, not sure
+> if that is of any help; it SEGFAULTS for me right now with a (likely)
+> division by 0.
 
-> Hi
->=20
->=20
-> Gentle ping. Is there any chance we could move forward with this? I am no=
-t aware
-> of any breakage it would cause; but longer the wait, the higher the likel=
-ihood.
->=20
->=20
-> Regards,
-> Barnab=C3=A1s P=C5=91cze
->=20
-> 2024. j=C3=BAnius 30., vas=C3=A1rnap 20:49 keltez=C3=A9ssel, Barnab=C3=
-=A1s P=C5=91cze <pobrn@protonmail.com> =C3=ADrta:
->=20
-> > `MFD_NOEXEC_SEAL` should remove the executable bits and set `F_SEAL_EXE=
-C`
-> > to prevent further modifications to the executable bits as per the comm=
-ent
-> > in the uapi header file:
-> >
-> >   not executable and sealed to prevent changing to executable
-> >
-> > However, commit 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_=
-EXEC")
-> > that introduced this feature made it so that `MFD_NOEXEC_SEAL` unsets
-> > `F_SEAL_SEAL`, essentially acting as a superset of `MFD_ALLOW_SEALING`.
-> >
-> > Nothing implies that it should be so, and indeed up until the second ve=
-rsion
-> > of the of the patchset[0] that introduced `MFD_EXEC` and `MFD_NOEXEC_SE=
-AL`,
-> > `F_SEAL_SEAL` was not removed, however, it was changed in the third rev=
-ision
-> > of the patchset[1] without a clear explanation.
-> >
-> > This behaviour is surprising for application developers, there is no
-> > documentation that would reveal that `MFD_NOEXEC_SEAL` has the addition=
-al
-> > effect of `MFD_ALLOW_SEALING`. Additionally, combined with `vm.memfd_no=
-exec=3D2`
-> > it has the effect of making all memfds initially sealable.
-> >
-> > So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested,
-> > thereby returning to the pre-Linux 6.3 behaviour of only allowing
-> > sealing when `MFD_ALLOW_SEALING` is specified.
-> >
-> > Now, this is technically a uapi break. However, the damage is expected
-> > to be minimal. To trigger user visible change, a program has to do the
-> > following steps:
-> >
-> >  - create memfd:
-> >    - with `MFD_NOEXEC_SEAL`,
-> >    - without `MFD_ALLOW_SEALING`;
-> >  - try to add seals / check the seals.
-> >
-> > But that seems unlikely to happen intentionally since this change
-> > essentially reverts the kernel's behaviour to that of Linux <6.3,
-> > so if a program worked correctly on those older kernels, it will
-> > likely work correctly after this change.
-> >
-> > I have used Debian Code Search and GitHub to try to find potential
-> > breakages, and I could only find a single one. dbus-broker's
-> > memfd_create() wrapper is aware of this implicit `MFD_ALLOW_SEALING`
-> > behaviour, and tries to work around it[2]. This workaround will
-> > break. Luckily, this only affects the test suite, it does not affect
-> > the normal operations of dbus-broker. There is a PR with a fix[3].
-> >
-> > I also carried out a smoke test by building a kernel with this change
-> > and booting an Arch Linux system into GNOME and Plasma sessions.
-> >
-> > There was also a previous attempt to address this peculiarity by
-> > introducing a new flag[4].
-> >
-> > [0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google=
-.com/
-> > [1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google=
-.com/
-> > [2]: https://github.com/bus1/dbus-broker/blob/9eb0b7e5826fc76cad7b025bc=
-46f267d4a8784cb/src/util/misc.c#L114
-> > [3]: https://github.com/bus1/dbus-broker/pull/366
-> > [4]: https://lore.kernel.org/lkml/20230714114753.170814-1-david@readahe=
-ad.eu/
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
-> > ---
-> >
-> > * v3: https://lore.kernel.org/linux-mm/20240611231409.3899809-1-jeffxu@=
-chromium.org/
-> > * v2: https://lore.kernel.org/linux-mm/20240524033933.135049-1-jeffxu@g=
-oogle.com/
-> > * v1: https://lore.kernel.org/linux-mm/20240513191544.94754-1-pobrn@pro=
-tonmail.com/
-> >
-> > This fourth version returns to removing the inconsistency as opposed to=
- documenting
-> > its existence, with the same code change as v1 but with a somewhat exte=
-nded commit
-> > message. This is sent because I believe it is worth at least a try; it =
-can be easily
-> > reverted if bigger application breakages are discovered than initially =
-imagined.
-> >
-> > ---
-> >  mm/memfd.c                                 | 9 ++++-----
-> >  tools/testing/selftests/memfd/memfd_test.c | 2 +-
-> >  2 files changed, 5 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/mm/memfd.c b/mm/memfd.c
-> > index 7d8d3ab3fa37..8b7f6afee21d 100644
-> > --- a/mm/memfd.c
-> > +++ b/mm/memfd.c
-> > @@ -356,12 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
-> >
-> >  =09=09inode->i_mode &=3D ~0111;
-> >  =09=09file_seals =3D memfd_file_seals_ptr(file);
-> > -=09=09if (file_seals) {
-> > -=09=09=09*file_seals &=3D ~F_SEAL_SEAL;
-> > +=09=09if (file_seals)
-> >  =09=09=09*file_seals |=3D F_SEAL_EXEC;
-> > -=09=09}
-> > -=09} else if (flags & MFD_ALLOW_SEALING) {
-> > -=09=09/* MFD_EXEC and MFD_ALLOW_SEALING are set */
-> > +=09}
-> > +
-> > +=09if (flags & MFD_ALLOW_SEALING) {
-> >  =09=09file_seals =3D memfd_file_seals_ptr(file);
-> >  =09=09if (file_seals)
-> >  =09=09=09*file_seals &=3D ~F_SEAL_SEAL;
-> > diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing=
-/selftests/memfd/memfd_test.c
-> > index 95af2d78fd31..7b78329f65b6 100644
-> > --- a/tools/testing/selftests/memfd/memfd_test.c
-> > +++ b/tools/testing/selftests/memfd/memfd_test.c
-> > @@ -1151,7 +1151,7 @@ static void test_noexec_seal(void)
-> >  =09=09=09    mfd_def_size,
-> >  =09=09=09    MFD_CLOEXEC | MFD_NOEXEC_SEAL);
-> >  =09mfd_assert_mode(fd, 0666);
-> > -=09mfd_assert_has_seals(fd, F_SEAL_EXEC);
-> > +=09mfd_assert_has_seals(fd, F_SEAL_SEAL | F_SEAL_EXEC);
-> >  =09mfd_fail_chmod(fd, 0777);
-> >  =09close(fd);
-> >  }
-> > --
-> > 2.45.2
-> >
+Thanks for the pointer, will take a look!
+
+> Cheers,
+> 
+> David / dhildenb
+> 
+
 
