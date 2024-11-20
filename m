@@ -1,186 +1,158 @@
-Return-Path: <linux-kernel+bounces-416262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3099D42A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:44:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C709B9D42A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95A50B229F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:44:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868CD283DE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7EF1BD50A;
-	Wed, 20 Nov 2024 19:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gn22U385"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF541BD03C;
+	Wed, 20 Nov 2024 19:44:53 +0000 (UTC)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC67F1386D7
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B88413C83D;
+	Wed, 20 Nov 2024 19:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732131877; cv=none; b=nyS86FiOPMiKVzYbftIFEzdKGpjAirEoxTbbJmMbYRlxvGjUJjY5HluCyFWjdMW6az4gb+g5arMXYOdiA6ndkzuAbYZeljQSzwz7ylN3XYgBykV7rknIVL5TeaJ9tubUIgBw1/eIt9b4+dhSXH37sVrp96UFOtw7GKeZAR/rIXo=
+	t=1732131893; cv=none; b=OGYPFQjFl2rZB6UGPM0KVLlawh8bjempkKUYBkgjr2OZdgKniHENb55iEzZI+UPVDtirBEfPLvwHji6EAK6KtnistKc8Mm3+XSMoriC/5inDHtHO4ZtSnaqd/0s1RAhi15AolHhbaCHs3WHkjRqkmzlgd63sVa6LiLmpPnogWRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732131877; c=relaxed/simple;
-	bh=IZEUfEBA1GzgFRBNbx1tHS/egkklfYbaa5zvGtyCCqI=;
+	s=arc-20240116; t=1732131893; c=relaxed/simple;
+	bh=/wiwytDOUcHNNbF55kARr56LnJaKs85SIuaDjna0Bx4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GM9F7L9H3621ixs1WyqRUUu8FHiFt3v8SnXCHt4s97/y/fLlGK/wZA+P0sHCzlDaXrjoqrkx4TGXQsCSAsmHJRnPzl476z1M/DPFPji8TD+dJLHvOBN3aWB4gvN/haEyEo1jgtRWPQplg7li4PDQWnEaucCIL+AmccZ0f4yxj3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gn22U385; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A298C4CECD;
-	Wed, 20 Nov 2024 19:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732131877;
-	bh=IZEUfEBA1GzgFRBNbx1tHS/egkklfYbaa5zvGtyCCqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gn22U385nUsSZCxBW7uRTwvMBZSCi1ucG0zd9CHa4Q0lt/NQJyAm0BoCXgu4RDmS7
-	 uryrSwk8hwAHJhWiKZLVkLl+U9Txs4Be0qYJIbRNc8V0BDJ9HQW46puBPifkLsSCNP
-	 gI/Ap5TM2ND75SJW2NDznsYl+5pfdwKNcGS63Uu6VxVQ9fxBGH34LZqdaxKH8zBGwS
-	 9vbjOk7ZErTDdpKyJvrODe7XvWlbaYvNkJFSvFDIJn/wCfaeBW/P5WZcgNIv7rWLKT
-	 +sUWGUDApHddbrsEmfOGbPhWqOmmOx8c3NBPjA4RTcET8+SZCJibWXpbfvp8E5iQo6
-	 LPPbhWqpDjIRw==
-Date: Wed, 20 Nov 2024 20:44:33 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [GIT pull] timers/core for v6.13-rc1
-Message-ID: <20241120-kurort-belehren-9f5212e1dc18@brauner>
-References: <173195757899.1896928.6143737920583881655.tglx@xen13>
- <173195758632.1896928.11371209657780930206.tglx@xen13>
- <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
- <20241120-backwaren-faible-99807b4768bb@brauner>
- <Zz3SLAW-97Zhjfhv@gmail.com>
- <20241120-nennwert-hausfassade-e515eddb6198@brauner>
- <Zz4J_a2bYyNzJxWZ@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjfaCDW0ZZToNdgFvXe2cKYsBbkELMLRJd41tbuxe8uX6mSgUU6/sXqwuELjpMieEFO/MTfHQkIgX9F/TjqcYWtHC/81wxiC0T4av5BfRCgVSxGNKwPosATaJDF8B/uIWTIWTh90kmlC7B1HxuZbA9FHJ3AEritl2yx/aer3fW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfa90e04c2so85581a12.1;
+        Wed, 20 Nov 2024 11:44:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732131890; x=1732736690;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=THRi3sy/5qC0fUASXvWioXtk0quT9gz69AznhmP0uAU=;
+        b=UfD7GMDc0S1yWw5NHjniLfXDXfc0MNwLydrz7kmTBx8OVUzKiob5EGpzP8OWGR03sn
+         hnx9IC1XPomedBnoENZOl3hI1QBzNFD3XaVu1/cCGsV0bdH8YUNmXhAAmjNRT2Ufx8ME
+         SaO3uZiEeUOLrDkbHPQHXK4JYucL0WrKx23gOaVn20Zzf357bUtwbQs68CdJbKoPcvXq
+         nFotKc3Z6yHlBO2/b+wN62vf8X+X8LDtTq7O1nOCLx1+Gzf3JEOYK2RmVVlT/Iui043e
+         PuOLeAzRy2hCzemtay6giJx38NSzZr6v7JsYZILTBZ4rYtFlSeKQK53xdko88hjgL+NM
+         QG4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKOuqSvl6rPAw40qGImwjqvi2vvBtuwjlEtqg4nBH+vcZ2KqheCYkGnpNXs8ooe162Ri8u96amWbiM6HUb@vger.kernel.org, AJvYcCWLG4xIjU7ZfA/JeCTYKGuVdTwevKXx1O1PmQRulIMHeHE+3lh1d9WpjCp/WDxzhi4hBf3A1d5a60ucIuCePuo=@vger.kernel.org, AJvYcCWreHQGdPI2kapt0AHzPs1j2P5TrVUUAQSALdquEt3cKRdornwIhUQw2D1i+IUygi57ZA16dgDs3r4lSCEAosyRKiuwiVOb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFjXOdLCO5F7aHHUGf7Lv26SXBcaj35BgIYDtvujTei09xI9Wq
+	vrA0q63XGosqUxhSBvrCGxJv1kI94chBHo5w43gr1tQ5MQxhY/gy
+X-Gm-Gg: ASbGncsKaR+TFayHPY5qqZoi4hyNi8dYzWKtEvsE38iwiLv2283XoDNnKZeeODrvgu3
+	BGGl9vxNaUCrjVqO4nX0/xDi/zYuP3tbW1DzXvBtpaAQKRm36YvXCuGGeCUiwDk5hLP/F1GaZW2
+	fzgtdGA+eHgWNU+zGCwh4xpb2qQuYmdVq/XXN99CNM89XER316hAOa47n1xEnlozhoiODRScU6V
+	AM9SmBMEp/jLrZ+PrVc2KdUq4f3K2p/plVcs0FVY9U6N88=
+X-Google-Smtp-Source: AGHT+IFydFiruA8tqHqM/ls2aflXZ4jqqlwr3HW3n3VmZyZisUMwDNoaSegIST8iHiz4H6TlviaeNA==
+X-Received: by 2002:a17:907:1c0d:b0:a99:f0cf:f571 with SMTP id a640c23a62f3a-aa4dd57e0b9mr365748666b.33.1732131889496;
+        Wed, 20 Nov 2024 11:44:49 -0800 (PST)
+Received: from gmail.com ([2620:10d:c092:400::5:a87e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df265bbsm805833766b.38.2024.11.20.11.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 11:44:49 -0800 (PST)
+Date: Wed, 20 Nov 2024 19:44:46 +0000
+From: Breno Leitao <leitao@debian.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	noodles@earth.li
+Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
+ ima_measurements list traversal
+Message-ID: <Zz48LjTS_r-j9Qny@gmail.com>
+References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
+ <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zz4J_a2bYyNzJxWZ@gmail.com>
+In-Reply-To: <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
 
-On Wed, Nov 20, 2024 at 05:10:37PM +0100, Ingo Molnar wrote:
+Hello Mimi,
+
+On Tue, Nov 19, 2024 at 01:10:10PM -0500, Mimi Zohar wrote:
+> Hi Breno,
 > 
-> * Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > On Wed, Nov 20, 2024 at 01:12:28PM +0100, Ingo Molnar wrote:
-> > > 
-> > > * Christian Brauner <brauner@kernel.org> wrote:
-> > > 
-> > > > On Tue, Nov 19, 2024 at 04:33:45PM -0800, Linus Torvalds wrote:
-> > > > > On Mon, 18 Nov 2024 at 11:22, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > > > >
-> > > > > 
-> > > > > >   - Core infrastructure for VFS multigrain timestamping
-> > > > > >
-> > > > > >     This is required to allow the kernel to use coarse grained time stamps
-> > > > > >     by default and switch to fine grained time stamps when inode attributes
-> > > > > >     are actively observed via getattr().
-> > > > > >
-> > > > > >     These changes have been provided to the VFS tree as well, so that the
-> > > > > >     VFS specific infrastructure could be built on top.
-> > > > > 
-> > > > > Bah. Except the vfs tree didn't take it as a shared branch, but
-> > > > > instead cherry-picked the commits and as a result they are duplicate
-> > > > > and caused a (trivial) merge conflict.
-> > > > 
-> > > > Wait, I'm confused. I definitely pulled that branch the day after Thomas
-> > > > gave it to me and in my vfs.mgtime branch I clearly see:
-> > > > 
-> > > > commit d7c898a73f875bd205df53074c1d542766171da1
-> > > > Merge: 8cf0b93919e1 2a15385742c6
-> > > > Author:     Christian Brauner <brauner@kernel.org>
-> > > > AuthorDate: Mon Oct 7 12:47:19 2024 +0200
-> > > > Commit:     Christian Brauner <brauner@kernel.org>
-> > > > CommitDate: Thu Oct 10 10:20:57 2024 +0200
-> > > > 
-> > > >     Merge tag 'timers-core-for-vfs' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip into vfs.mgtime
-> > > > 
-> > > >     Timekeeping interfaces for consumption by the VFS tree.
-> > > > 
-> > > >     Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > 
-> > > > Unless I did something odd during the pull?
-> > > 
-> > > The problem was caused by two commits which got rebased in the VFS 
-> > > tree:
-> > > 
-> > > Commit 1:
-> > > 
-> > >   ee3283c608df ("timekeeping: Add interfaces for handling timestamps with a floor value")
-> > > 
-> > >   commit ee3283c608dfa21251b0821d7bb198c7ae3189f6
-> > >   Author:     Jeff Layton <jlayton@kernel.org>
-> > >   AuthorDate: Wed Oct 2 17:27:16 2024 -0400
-> > >   Commit:     Christian Brauner <brauner@kernel.org>
-> > >   CommitDate: Thu Oct 10 10:20:46 2024 +0200
-> > >               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > > 
-> > > Which is a rebase of Thomas's original commit:
-> > > 
-> > >   70c8fd00a9bd ("timekeeping: Add interfaces for handling timestamps with a floor value")
-> > > 
-> > >   commit 70c8fd00a9bd0509bbf7bccd9baea8bbd5ddc756
-> > >   Author:     Jeff Layton <jlayton@kernel.org>
-> > >   AuthorDate: Wed Oct 2 17:27:16 2024 -0400
-> > >   Commit:     Thomas Gleixner <tglx@linutronix.de>
-> > >   CommitDate: Sun Oct 6 20:56:07 2024 +0200
-> > > 
-> > > And commit 2:
-> > > 
-> > >   2a15385742c6 ("timekeeping: Add percpu counter for tracking floor swap events")
-> > > 
-> > >   commit 2a15385742c689a271345dcbb4c28b9c568bc7ce
-> > >   Author:     Jeff Layton <jlayton@kernel.org>
-> > >   AuthorDate: Wed Oct 2 17:27:17 2024 -0400
-> > >   Commit:     Christian Brauner <brauner@kernel.org>
-> > >   CommitDate: Thu Oct 10 10:20:46 2024 +0200
-> > >               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > > 
-> > > Which is a rebase of Thomas's original commit:
-> > > 
-> > >   96f9a366ec8a timekeeping: Add percpu counter for tracking floor swap events
-> > > 
-> > >   commit 96f9a366ec8abe027326d7aab84d64370019f0f1 (tag: timers-core-for-vfs)
-> > >   Author:     Jeff Layton <jlayton@kernel.org>
-> > >   AuthorDate: Wed Oct 2 17:27:17 2024 -0400
-> > >   Commit:     Thomas Gleixner <tglx@linutronix.de>
-> > >   CommitDate: Sun Oct 6 20:56:07 2024 +0200
+> On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
+> > Fix a potential RCU issue where ima_measurements list is traversed using
+> > list_for_each_entry_rcu() without proper RCU read lock protection. This
+> > caused warnings when CONFIG_PROVE_RCU was enabled:
 > > 
-> > I was just looking through my reflog and I realised that I did a rebase
-> > onto v6.12-rc2 (v6.12-rc1 had a horribly virtqueue bug that made testing
-> > in a vm a giant pain). Sorry about that I should've noticed that
-> > earlier.
+> >   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
+> > 
+> > Add rcu_read_lock() before iterating over ima_measurements list to ensure
+> > proper RCU synchronization, consistent with other RCU list traversals in
+> > the codebase.
 > 
-> So, so sh1t happens, but I think there could also be a workflow bug 
-> here: somehow your tooling added your Signed-off-by during the rebase, 
-> to a commit not committed by you originally.
-
-I see. I assume that happens because I have an ancient
-.git/hooks/prepare-commit-msg which contains:
-
-COMMIT_MSG_FILE=$1
-COMMIT_SOURCE=$2
-
-SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
-git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
-
-I honestly have no idea anymore why I added that hook originally...
-
+> The synchronization is to prevent freeing of data while walking the RCU list. In
+> this case, new measurements are only appended to the IMA measurement list.  So
+> there shouldn't be an issue.
 > 
-> > Though I'm confused why -next didn't catch this. When that happens -next
-> > usually reports duplicate commits. Hm... Did I miss the report?
-> 
-> I haven't seen duplicate commit warnings from -next for some time - but 
-> it can detect accidental rebases, because without your SOB added -next 
-> would have detected the incorrect SOB chain I believe. So I'd 
-> investigate how your SOB got there. I don't think vanilla rebase is 
-> adding it automatically?
+> The IMA measurement list is being copied during kexec "load", while other
+> processes are still running.  Depending on the IMA policy, the kexec "load",
+> itself, and these other processes may result in additional measurements, which
+> should be copied across kexec.  Adding the rcu_read_{lock, unlock} would
+> unnecessarily prevent them from being copied.
 
-Yes, vanilla rebase doesn't do this.
+Thank you for the detailed explanation. Since rcu_read_lock() operations are
+lightweight, I believe keeping them wouldn't impact performance significantly.
+
+However, if you prefer the lockless approach, I would suggest adding an
+argument to list_for_each_entry_rcu() to keep the warning out. What are
+your thoughts on this?
+
+Author: Breno Leitao <leitao@debian.org>
+Date:   Mon Nov 4 02:26:45 2024 -0800
+
+    ima: kexec: silence RCU list traversal warning
+
+    The ima_measurements list is append-only and doesn't require rcu_read_lock()
+    protection. However, lockdep issues a warning when traversing RCU lists
+    without the read lock:
+
+      security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
+
+    Fix this by using the lockless variant of list_for_each_entry_rcu() with
+    the last argument set to true. This tells the RCU subsystem that
+    traversing this append-only list without the read lock is intentional
+    and safe.
+
+    This change silences the lockdep warning while maintaining the correct
+    semantics for the append-only list traversal.
+
+    Signed-off-by: Breno Leitao <leitao@debian.org>
+
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 52e00332defed..9d45f4d26f731 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	/* This is an append-only list, no need to hold the RCU read lock */
++	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+ 			ima_measurements_show(&file, qe);
+
 
