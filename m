@@ -1,122 +1,122 @@
-Return-Path: <linux-kernel+bounces-416215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F439D421D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F109D4219
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:38:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89DC1F22CFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:38:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDDD1F22A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:38:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8B91A0BDC;
-	Wed, 20 Nov 2024 18:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492571A7259;
+	Wed, 20 Nov 2024 18:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="eDumvWdq"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARoDrCjR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818A215747D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5C15624B;
+	Wed, 20 Nov 2024 18:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732127911; cv=none; b=aIOhiSNTwlXtXAkZnVR5wqKzrqkPdMYVUo/gDQE+Lzv+Mg/NwX23UV8DzfavHQyWZqxllv+CsHtOqRjVwd7CDcYdVH/m31q1W/rlF9qnEzttNUrbT3YZQWKwL43JbK2Tx3Cxs7fJhCe7KAkR2MG5KZN231IcrdvtlBqJWFZG3uw=
+	t=1732127885; cv=none; b=oEscD/wGyZAQtHL5JDOR0EYhVnRi0Ki79GWy/omMuufiTyzdvbWVVBAP4SlfNbSK96dMeFbDIJqDXn0cU7Dt4/vETN7loY5J82VdWKsFOWDv0DT6q+9MsiueeXwSl6Xv4Tz7BBgnLv8/82d30T4gSnMqVy5QYN13WYh/7mIJhU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732127911; c=relaxed/simple;
-	bh=T6d8sk8kGrQZjM1qvOIwDX39pdFYkEJhoVEdDrTs/pY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lq5as/jSdKjX/mzUUvAGDRPjab+BCA6jpfZ1aOoatZs+PCkPnAoMLK0gbyPOe+Y4e6vfZnaY01gFTBTwrxskr1iJFuHMuYExuLasqd/dB5BgIUj1tkt1UM1hA5YaHpjeFZfspesiIFpTB+ci/qZK7v1kCz54vzNsj3XMWzj5ZYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=eDumvWdq; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732127861; x=1732732661; i=efault@gmx.de;
-	bh=NdExGZIL9ViZ59F1sDXr6yus2i3N675v6+zYamhAKE8=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=eDumvWdq3OnMkTr8XTTOTL42n0Nnut93l79Ad+3YRP7SB5prAqVYdbHuLNKS6pTN
-	 MVecsCOeXTfj/6qveaSOdQoUDsDDPvycJv4lS9owxPsMRcoQg0zyQRBHzqSKcYJEf
-	 /VA0mPgi18UVZl6TUH+7EpkFUb3hAQw/bhC4jvo3p5k8IEpl5cMSV964pv8VOnKHp
-	 O9qFX56kfVIC+2bGjmscJSLXJed0MAFiSsinDJl7hiK2tA2jnfFEmGZtS/r/8q7US
-	 KUmJm2f0egABFUOuRn/NO9EOFjH4iB865aIm9YdwlpeiFwSJAVov3qtwTBAHgfZIk
-	 /a0Ct1o9SZ+NoGcYnQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.176]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1My36N-1twrow36OF-0142zo; Wed, 20
- Nov 2024 19:37:41 +0100
-Message-ID: <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
-Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to
- a busy CPU
-From: Mike Galbraith <efault@gmx.de>
-To: Phil Auld <pauld@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com, 
- juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,  rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com,  linux-kernel@vger.kernel.org,
- kprateek.nayak@amd.com, wuyun.abel@bytedance.com, 
- youssefesmat@chromium.org, tglx@linutronix.de
-Date: Wed, 20 Nov 2024 19:37:39 +0100
-In-Reply-To: <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
-References: <5280774bce7343c43904ae3df4403942092f5562.camel@gmx.de>
-	 <20241107140945.GA34695@noisy.programming.kicks-ass.net>
-	 <750542452c4f852831e601e1b8de40df4b108d9a.camel@gmx.de>
-	 <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
-	 <20241112124117.GA336451@pauld.westford.csb>
-	 <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
-	 <20241112154140.GC336451@pauld.westford.csb>
-	 <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
-	 <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
-	 <20241114112854.GA471026@pauld.westford.csb>
-	 <20241119113016.GB66918@pauld.westford.csb>
-	 <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1732127885; c=relaxed/simple;
+	bh=hGKVfrB+JPEHZ0SCxNgIxIJiUsJ2SLFwlPUcdvwUFgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z1lsbwF1yVIdoWGfFAtzIwGYMnC8KenbMAEivCXTI1E7VpuVD2vVvGah2DtuxWyIkWAVLw3JN/kS3rTPAuIUjWOYXofpSiU9j0l3uSpao3Xev6rlvdfCmIt45lX9CIj75/P5ZnFukKy3OAbxrZJDguQXwjlGwiDmNG+Ab+CcOqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARoDrCjR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732127884; x=1763663884;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hGKVfrB+JPEHZ0SCxNgIxIJiUsJ2SLFwlPUcdvwUFgk=;
+  b=ARoDrCjRIAVXU3Fnn2QMBt4RfdpcngwgD8L+/QHYgTb8c7xFaXQLJBhJ
+   CkX7ewtLh1bLHkeHiRPMfTDwHMyKsfTPqIYMf2TCZ05q+OtpacGqqsp38
+   1mNKqKNIhKlmgtFq2r9sVw3hn9K+lcLFq2V+aJE+6EPiBG/1vtp1368OR
+   mX0dqq5IA46DvGIk/DVLaFbri/SxN/YvFSvE23K1pPpqfHJEAhlfbOESR
+   r1Z2+aqn9ul/TT0DOxlTyOTy1tvAfSrgI6O2Fi7m18GdZrqd/xMVCo18C
+   PeoM4zaeqM0xQyXoSOvRTGRpKE2RlMppQAk1zn/SN7tjHzxmtPJxPx261
+   Q==;
+X-CSE-ConnectionGUID: oRMbQKRdTR2ylDnS50t6zA==
+X-CSE-MsgGUID: b9mT5zFjTJuhSmu1Dw1c1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="49735943"
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="49735943"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:38:04 -0800
+X-CSE-ConnectionGUID: f3vjDGdLQGCc5avxFkZm/w==
+X-CSE-MsgGUID: CLS29EcdQjCDm8oFAy2U7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="113278616"
+Received: from nathanae-mobl.amr.corp.intel.com (HELO [10.125.50.190]) ([10.125.50.190])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:38:03 -0800
+Message-ID: <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com>
+Date: Wed, 20 Nov 2024 10:37:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:r5nLWB7bPE3DG/ABZlDMdrSXguakyOT/OecTPTvAopAFaaDhhq4
- Ld6XG9H6AFqiEQ6tKuSRVxYy9hTSN5SN02fCM/qbHok9vsvCSmV7NluvM+NPNwYbu6QS7YX
- IMFclqdXhzCxNGES0yIWUg3wOOsCKNLSChDdOlAbrcuPg7mV4q3sm9cybXyhZ5J5+ozBiBb
- FSTGcErhKISKTLOqmqqpA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:D6RtyeS2LGg=;WgMVuPtFjnSgYheJ5nzEpFLqxir
- SZJatDFiHsAGjsIaU/qR6kVo86PHO0fpfcLtJ9OegnVX/Off7RCOuUtRJuALSN7cWmf0pzmFE
- Ofnt96zdZpEhVp7x5f5aGnJ4gkBXL4K9XSpNn7lJzORZvRtwnvh1vNtULWwcZE91lwTf+oXsT
- vSnIaHwUn8Hc8Wi3zgGVKy1+khZ0PmVdUtp6afXCpNQvjCJZz7GRRKiOCVjXz/5/OLQGRRxsy
- tnyXfyQ3i9Nf8/a7uBwbPJ3Tk/LWwgwIFcDnXGi23lUWCvZ+760+pq6yts+1I7g4bzcdYwERJ
- VGacShuL0Q8XC8fsEtn/V0YhrHrZv+9uw0biQ1O6F+0k1T9iUNoiyqponstNURueIne7YYHIy
- ypl6dhsNrwKaBVIghBxjZbDPO4EqdfEXLU+MVa7VAb9vjaT1IP0Blg0IfnrhNg0GsVzLJowrV
- KC38CLWXbqx3srWVhi5vibpB4QqigHVNm0P3246mMfBGblnXkip0nAhDwKlwjB4x6469nb3c1
- H+aXs7YCijAyN8K9RGhRj9g4/5Dtf16apaSfoS/JOHq4iOYoRFQqTCILe2kSdY/KcjPyXVXvh
- OI2Qjvfw7cAi4gBFxpgTmbVuFMKzZpFkdnVjy7o5fQ5SN+cuPyWJ3Chdkhqlhi4dSd0lWH2Z0
- bhXHa1PnPLKDn8SxEMMeuIV+ZWz5fQ9HbwEXf2Bl5EpRJK3ntR3QtH/SnPMeaujNudGguWcQ1
- S8l9/G4q1pmq+P+YSkDy4CG1PRVqQmPsKuOGe6ksK8R6uQNtF0VdtZ15waJz5rGhDn+jBzb3e
- JJiMZ2alSdyvSmPGOtim0SdoKOsAFKawt8dbhC3QU0KX63NP5qpALheRSk9lXFu6vdBKl86X1
- k2oCRCu6t7FTszsqZZoFdJuKhajoPB7J+F7x+W4aQ49Q75i6Gh78fpHjn
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in
+ acpi_os_sleep().
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>, anna-maria@linutronix.de,
+ tglx@linutronix.de, peterz@infradead.org, frederic@kernel.org,
+ corbet@lwn.net, akpm@linux-foundation.org, linux-acpi@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Len Brown <len.brown@intel.com>, Todd Brandt <todd.e.brandt@intel.com>
+References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
+ <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
+ <90818e23-0bdb-40ad-b2f9-5117c7d8045e@linux.intel.com>
+ <CAJZ5v0gxNEQx5Q+KXs-AMn=bt7GD=jU-TseMHUc5mHp0tKSBtA@mail.gmail.com>
+ <0147ea1a-3595-47ae-a9d5-5625b267b7a8@linux.intel.com>
+ <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+Content-Language: en-US
+From: Arjan van de Ven <arjan@linux.intel.com>
+In-Reply-To: <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-11-19 at 12:51 +0100, Mike Galbraith wrote:
-> On Tue, 2024-11-19 at 06:30 -0500, Phil Auld wrote:
-> >
-> > This, below, by itself, did not do help and caused a small slowdown on=
- some
-> > other tests.=C2=A0 Did this need to be on top of the wakeup change?
->
-> No, that made a mess.
+On 11/20/2024 10:03 AM, Rafael J. Wysocki wrote:
+> On Tue, Nov 19, 2024 at 4:08 PM Arjan van de Ven <arjan@linux.intel.com> wrote:
+>>
+>> On 11/19/2024 5:42 AM, Rafael J. Wysocki wrote:
+>>> On Mon, Nov 18, 2024 at 3:35 PM Arjan van de Ven <arjan@linux.intel.com> wrote:
+>>>>
+>>>>> And the argument seems to be that it is better to always use more
+>>>>> resources in a given path (ACPI sleep in this particular case) than to
+>>>>> be somewhat inaccurate which is visible in some cases.
+>>>>>
+>>>>> This would mean that hrtimers should always be used everywhere, but they aren't.
+>>>>
+>>>> more or less rule of thumb is that regular timers are optimized for not firing case
+>>>> (e.g. timeouts that get deleted when the actual event happens) while hrtimers
+>>>> are optimized for the case where the timer is expected to fire.
+>>>
+>>> I've heard that, which makes me wonder why msleep() is still there.
+>>>
+>>> One thing that's rarely mentioned is that programming a timer in HW
+>>> actually takes time, so if it is done too often, it hurts performance
+>>> through latency (even if this is the TSC deadline timer).
+>>
+>> yup and this is why you want to group events together "somewhat", and which is why
+>> we have slack, to allow that to happen
+> 
+> So what do you think would be the minimum slack to use in this case?
+> 
+> I thought about something on the order of 199 us, but now I'm thinking
+> that 50 us would work too.  Less than this - I'm not sure.
 
-Rashly speculating that turning mobile kthread component loose is what
-helped your write regression...
+50 usec is likely more than enough in practice.
 
-You could try adding (p->flags & PF_KTHREAD) to the wakeup patch to
-only turn hard working kthreads loose to try to dodge service latency.
-Seems unlikely wakeup frequency * instances would combine to shred fio
-the way turning tbench loose did.
 
-	-Mike
 
