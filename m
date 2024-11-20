@@ -1,225 +1,189 @@
-Return-Path: <linux-kernel+bounces-416317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F30A9D4335
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:39:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E979D4330
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:38:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0372824BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA8F1F20F48
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CF51BC9F9;
-	Wed, 20 Nov 2024 20:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3121BC9E9;
+	Wed, 20 Nov 2024 20:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pzC8QRXd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IXGfixLD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F015C165EFA;
-	Wed, 20 Nov 2024 20:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C972F2A;
+	Wed, 20 Nov 2024 20:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732135163; cv=none; b=n+8mTybOS5B4AoJ4nNz4360CszXGqa2lmBLAR/trTHG787JtrwsXFu00RvFOhU4ndAlSXVUjX6+dcI2OY9h1iQ9gNiuvzFcFrzFqlAMY8P5DhxFtUuarQ8onw13OyBpr8iQmBH/wfOoGmxTv4Qac47X1t+ndupoEspEciauBZXE=
+	t=1732135131; cv=none; b=aCTjGWnhQ9z9SHencOaFtOzsIm9EhpyE0kQPWzWUjsLKHwmmAxkLeO3K7dP6xGgPMsSxOhtsWZSJROOp8W/yayujz64Oq0i037GEWEnmXvt1xnGzYv4iBfrZn1k9oBKBgvpMULRImpOsO9GAesDmn6T4JU/XXXQI1dhIjIJpK+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732135163; c=relaxed/simple;
-	bh=Tzn76we2GTFyNHZGWQiBFSyVYvershnmKtDGNW8elto=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUGnjif6I8fOc8KDSja0k42g/OyAVs7BjFcB5doCBiTtcHuPzbISOVm3L0eKpIdtHiCmjz6uyi34nN9dVi7jFl4mXJSEb1eA1PKouLjOTHVhHhGALjG51DVogTFX3cJIx0rpuqNzgRXW9IBlHtPU9o2FizQWb/EHOUZLPECFink=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pzC8QRXd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKHS9Wk024342;
-	Wed, 20 Nov 2024 20:38:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2j4aSP
-	SVSBojoB4IzTo0vBEcDKUSurMXvDL4C4/c85A=; b=pzC8QRXd0YKDLFbHstGPD8
-	EeugYdVOYkzobBBTDoByUMu/UcxaaB1xuU7eREv+Q8FdtIKVJr7GRZ5fdb90gW1j
-	RL1lyog9pPCaYgrG4emNCiUhZQfSmY/GhdMC8hesdejBgpFrp8oBxd2DiTBAYgEV
-	OpYfGb27JUFocqLt2sIw3Ga0vQeetT2zscR7ZASW5gYsCS8DbDRsh2rzJ34eEf0U
-	qRz7nWlvfd9mVZeJ3kjwq2NCzHqkDcQXw5ru02+GKFteqfIUTTYaEBWkhjifEnlw
-	yMt8/YWJ3OapBcvQQI91t1fAm/6EyFAwUBbLv7jIHtcnL7ENIO2pX6y8KtAZnSVQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttfekq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 20:38:49 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AKKcn8E016657;
-	Wed, 20 Nov 2024 20:38:49 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttfekn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 20:38:49 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJtJ7q025906;
-	Wed, 20 Nov 2024 20:38:48 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1f9yp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 20:38:48 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKKclHg50201296
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 20:38:47 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A1025805A;
-	Wed, 20 Nov 2024 20:38:47 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4A7E358054;
-	Wed, 20 Nov 2024 20:38:46 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 20 Nov 2024 20:38:46 +0000 (GMT)
-Message-ID: <5a315c98bcb8b900c8f4bac06fdfccec1308fcce.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
- ima_measurements list traversal
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E.
- Hallyn" <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thiago Jung Bauermann
- <bauerman@linux.vnet.ibm.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        noodles@earth.li
-Date: Wed, 20 Nov 2024 15:38:45 -0500
-In-Reply-To: <Zz48LjTS_r-j9Qny@gmail.com>
-References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-	 <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
-	 <Zz48LjTS_r-j9Qny@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732135131; c=relaxed/simple;
+	bh=+5Y0qbRrViO3GMeurt2tZfKhhx1FHV6cNAsoCq4C07w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKUMUITYS/lCPgbBnfkTQgsk/Y0nG/CyBqbgjvoTtClazdVoxLrBgAxmMiTtX4xjnNL853FUf1dw81/s3My55KNL+S5lLlvlOxbLI/pCmZ2OBk2l4Old9rvuKKc+BHGru4ir95cLfskMtgmo/HXlwSBu7WpavgsBK3rVAIW1feQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IXGfixLD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D101C4CECD;
+	Wed, 20 Nov 2024 20:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732135130;
+	bh=+5Y0qbRrViO3GMeurt2tZfKhhx1FHV6cNAsoCq4C07w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IXGfixLDpaBgzbUue1q95L/wK0RSea9FMEURCrOLwHxHR7iZdh34rm4yYYgGdfmAL
+	 4+HqG3pplXhytnRXBMGafoF6zW959Z7RBGNRv3+MvMkFjXYXhtiQf57SQloD3asaqL
+	 MbbMbBGfI8mW44Yt5Cf0IRiz6VU+j7t+Pfjj2KRoJmF/BHwizj1+t9zryGa57oddUa
+	 DA5lKcjwOecpHQj94QHePoQIbAfXBC12bTayISHLcEqVxy4R3iAZmCwnBv7rMmO/Ex
+	 bHv2n1htZhUEZQkyhRCCvtCAKoxrb4E2bUBeVU44uXWeHIli4dqVwMDkqNLf/sLXog
+	 n+/G9WMZC5K1w==
+Date: Wed, 20 Nov 2024 20:38:49 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>
+Subject: Re: [PATCH] Revert "f2fs: remove unreachable lazytime mount option
+ parsing"
+Message-ID: <Zz5I2cdFn331_0ud@google.com>
+References: <20241112010820.2788822-1-jaegeuk@kernel.org>
+ <ZzPLELITeOeBsYdi@google.com>
+ <493ce255-efcd-48af-ad7f-6e421cc04f1c@redhat.com>
+ <ee341ea4-904c-4885-bf8d-8111f9e416b5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZYB-crtMbPLlFFNlx3eNIRMKql0Hcf7X
-X-Proofpoint-ORIG-GUID: UMzIkNF1mY9_Kzvnnbq9AuBVvpEJKJY6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411200143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee341ea4-904c-4885-bf8d-8111f9e416b5@redhat.com>
 
-On Wed, 2024-11-20 at 19:44 +0000, Breno Leitao wrote:
-> Hello Mimi,
->=20
-> On Tue, Nov 19, 2024 at 01:10:10PM -0500, Mimi Zohar wrote:
-> > Hi Breno,
-> >=20
-> > On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
-> > > Fix a potential RCU issue where ima_measurements list is traversed us=
-ing
-> > > list_for_each_entry_rcu() without proper RCU read lock protection. Th=
-is
-> > > caused warnings when CONFIG_PROVE_RCU was enabled:
-> > >=20
-> > >   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-rea=
-der section!!
-> > >=20
-> > > Add rcu_read_lock() before iterating over ima_measurements list to en=
-sure
-> > > proper RCU synchronization, consistent with other RCU list traversals=
- in
-> > > the codebase.
-> >=20
-> > The synchronization is to prevent freeing of data while walking the RCU=
- list. In
-> > this case, new measurements are only appended to the IMA measurement li=
-st.  So
-> > there shouldn't be an issue.
-> >=20
-> > The IMA measurement list is being copied during kexec "load", while oth=
-er
-> > processes are still running.  Depending on the IMA policy, the kexec "l=
-oad",
-> > itself, and these other processes may result in additional measurements=
-, which
-> > should be copied across kexec.  Adding the rcu_read_{lock, unlock} woul=
-d
-> > unnecessarily prevent them from being copied.
->=20
-> Thank you for the detailed explanation. Since rcu_read_lock() operations =
-are
-> lightweight, I believe keeping them wouldn't impact performance significa=
-ntly.
+On 11/20, Eric Sandeen wrote:
+> On 11/20/24 8:27 AM, Eric Sandeen wrote:
+> > On 11/12/24 3:39 PM, Jaegeuk Kim wrote:
+> >> Hi Eric,
+> >>
+> >> Could you please check this revert as it breaks the mount()?
+> >> It seems F2FS needs to implement new mount support.
+> >>
+> >> Thanks,
+> > 
+> > I'm sorry, I missed this email. I will look into it more today.
+> 
+> Ok, I see that I had not considered a direct mount call passing
+> the lazytime option strings. :(
+> 
+> Using mount(8), "lazytime" is never passed as an option all the way to f2fs,
+> nor is "nolazytime" -
+> 
+> # mount -o loop,nolazytime f2fsfile.img mnt
+> # mount | grep lazytime
+> /root/f2fs-test/f2fsfile.img on /root/f2fs-test/mnt type f2fs (rw,relatime,lazytime,seclabel,background_gc=on,nogc_merge,discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
+> 
+> (note that lazytime is still set despite -o nolazytime)
+> 
+> when mount(8) is using the new mount API, it does do fsconfig for (no)lazytime:
+> 
+> fsconfig(3, FSCONFIG_SET_FLAG, "nolazytime", NULL, 0) = 0
+> 
+> but that is consumed by the VFS and never sent into f2fs for parsing.
+> 
+> And because default_options() does:
+> 
+> sbi->sb->s_flags |= SB_LAZYTIME;
+> 
+> by default, it overrides the "nolazytime" that the vfs had previously handled.
+> 
+> I'm fairly sure that when mount(8) was using the old mount API (long ago) it also
+> did not send in the lazytime option string - it sent it as a flag instead.
+> 
+> However - a direct call to mount(2) /will/ pass those options all the way
+> to f2fs, and parse_options() does need to handle them there or it will be rejected
+> as an invalid option.
+> 
+> (Note that f2fs is the only filesystem that attempts to handle lazytime within
+> the filesystem itself):
+> 
+> [linux]# grep -r \"lazytime\" fs/*/
+> fs/f2fs/super.c:	{Opt_lazytime, "lazytime"},
+> [linux]#
+> 
+> I'm not entirely sure how to untangle all this, but regressions are not acceptable,
+> so please revert my commit for now.
 
-It's not a question of performance, but of missing measurements in the IMA
-measurement list.
+Thanks for the explanation. At a glance, I thought it's caused that f2fs doesn't
+implement fs_context_operations. We'll take a look at how to support it.
 
->=20
-> However, if you prefer the lockless approach, I would suggest adding an
-> argument to list_for_each_entry_rcu() to keep the warning out. What are
-> your thoughts on this?
-
-Yes, this is better.
-
-thanks,
-
-Mimi
->=20
-> Author: Breno Leitao <leitao@debian.org>
-> Date:   Mon Nov 4 02:26:45 2024 -0800
->=20
->     ima: kexec: silence RCU list traversal warning
->=20
->     The ima_measurements list is append-only and doesn't require rcu_read=
-_lock()
->     protection. However, lockdep issues a warning when traversing RCU lis=
-ts
->     without the read lock:
->=20
->       security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-rea=
-der section!!
->=20
->     Fix this by using the lockless variant of list_for_each_entry_rcu() w=
-ith
->     the last argument set to true. This tells the RCU subsystem that
->     traversing this append-only list without the read lock is intentional
->     and safe.
->=20
->     This change silences the lockdep warning while maintaining the correc=
-t
->     semantics for the append-only list traversal.
->=20
->     Signed-off-by: Breno Leitao <leitao@debian.org>
->=20
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
-ima_kexec.c
-> index 52e00332defed..9d45f4d26f731 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buf=
-fer_size, void **buffer,
->=20
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version =3D 1;
-> -	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-> +	/* This is an append-only list, no need to hold the RCU read lock */
-> +	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
->  		if (file.count < file.size) {
->  			khdr.count++;
->  			ima_measurements_show(&file, qe);
->=20
->=20
-
+> 
+> Thanks,
+> -Eric
+> 
+> 
+> > As for f2fs new mount API support, I have been struggling with it for a
+> > long time, f2fs has been uniquely complex. The assumption that the superblock
+> > and on-disk features are known at option parsing time makes it much more
+> > difficult than most other filesystems.
+> > 
+> > But if there's a problem/regression with this commit, I have no objection to
+> > reverting the commit for now, and I'm sorry for the error.
+> > 
+> > -Eric
+> > 
+> >> On 11/12, Jaegeuk Kim wrote:
+> >>> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
+> >>>
+> >>> The above commit broke the lazytime mount, given
+> >>>
+> >>> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+> >>>
+> >>> CC: stable@vger.kernel.org # 6.11+
+> >>> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>>  fs/f2fs/super.c | 10 ++++++++++
+> >>>  1 file changed, 10 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> >>> index 49519439b770..35c4394e4fc6 100644
+> >>> --- a/fs/f2fs/super.c
+> >>> +++ b/fs/f2fs/super.c
+> >>> @@ -150,6 +150,8 @@ enum {
+> >>>  	Opt_mode,
+> >>>  	Opt_fault_injection,
+> >>>  	Opt_fault_type,
+> >>> +	Opt_lazytime,
+> >>> +	Opt_nolazytime,
+> >>>  	Opt_quota,
+> >>>  	Opt_noquota,
+> >>>  	Opt_usrquota,
+> >>> @@ -226,6 +228,8 @@ static match_table_t f2fs_tokens = {
+> >>>  	{Opt_mode, "mode=%s"},
+> >>>  	{Opt_fault_injection, "fault_injection=%u"},
+> >>>  	{Opt_fault_type, "fault_type=%u"},
+> >>> +	{Opt_lazytime, "lazytime"},
+> >>> +	{Opt_nolazytime, "nolazytime"},
+> >>>  	{Opt_quota, "quota"},
+> >>>  	{Opt_noquota, "noquota"},
+> >>>  	{Opt_usrquota, "usrquota"},
+> >>> @@ -922,6 +926,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+> >>>  			f2fs_info(sbi, "fault_type options not supported");
+> >>>  			break;
+> >>>  #endif
+> >>> +		case Opt_lazytime:
+> >>> +			sb->s_flags |= SB_LAZYTIME;
+> >>> +			break;
+> >>> +		case Opt_nolazytime:
+> >>> +			sb->s_flags &= ~SB_LAZYTIME;
+> >>> +			break;
+> >>>  #ifdef CONFIG_QUOTA
+> >>>  		case Opt_quota:
+> >>>  		case Opt_usrquota:
+> >>> -- 
+> >>> 2.47.0.277.g8800431eea-goog
+> >>
+> > 
 
