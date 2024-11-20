@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-416011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8B09D3F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:32:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FE9C9D3F26
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11D60281C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:32:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45472855AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172DF1369B4;
-	Wed, 20 Nov 2024 15:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B044A4690;
+	Wed, 20 Nov 2024 15:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FgaVkoEG"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dCmL0YzI"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1583B1A2;
-	Wed, 20 Nov 2024 15:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695684037
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732116745; cv=none; b=p62xVBrjUGa3zZ7eHnwcGGKmM0qQKQOC/FfqVsAPT0ND3Xb1+6e5y1nGY130ua760HuvkPTVoInyJ2bkYubzbf2YNT5Bgxr/M1PCsy4CG7O0pwY2uOPZblqL7x4d6TTn/8HRvj2Nc6Va/KdYS7INoQYsZJjzzYUCa4oeh7dCviY=
+	t=1732116882; cv=none; b=WEU2r09DECYc6UtH4ZR1fgCy3THbIaxPuVgVqeO7r/RqIMFOC4Bh3eCF991algrFbhRBNFeKMXwiEpWDJGDjZmoZCqUYhyEzDeWECINacE0L/DFrxpLGbYy8owNvLxm2Qzb6iLeO6LldSjzvWo70KrCAElTEgG19J3JJwm6BlkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732116745; c=relaxed/simple;
-	bh=Eryi4OYXCbHpDEV284F8kC8uQ7m7+bl5Uw0oCZKqmXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaOXR2VS/wc6C2NeIEEOlaaj2Vtm+XFuO+famPsPcqNO4FP1gzYCjpgwJVdjLbZIl6kFaPcp3TsWIsVuOR5jJmGft7XhiKLY286AnPzMvb5198OL8+Fm5iJv7r2p4Lp+eemFv5/xtG4E1eBbSUFCsOuDMzvzNYGvtu3qPk0ywCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FgaVkoEG; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tcTMY8ya7ymb7xaXseOqMs9+4oRXdKR5XJcZuGIQGZ4=; b=FgaVkoEG00IplUMFhm2q9bJDcn
-	f6lPIFe1mjGu/mzL0QDHreJek22LGkhbkX5aNB+qoQoIiolzWlB1o1Ar51QCtm/bbtkdagk50nH3y
-	WiTSE9pgIau4cnAnW/HSBZPgC8VowGKtyI6rMugABbcUVqm00Qf2G39vFqnu3hPJhWqhyGmH/6Hvn
-	16Q88vjI7HzOKfej71txLNGyXjGPPRvkuWPEd6mq0x1yM93Q8prU08tfjSrjyHNmBJUG4Aj6nXnHE
-	nwFv4JzxtdPHumBy8wrQx8vNyTDlDUvdVQO2sGNjcUu6kpr7uiOs553P3EE+P3n3wld+ZY47zcNu+
-	0tmqHdKQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDmgn-00000000U1t-2qD3;
-	Wed, 20 Nov 2024 15:32:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 4B01A300446; Wed, 20 Nov 2024 16:32:21 +0100 (CET)
-Date: Wed, 20 Nov 2024 16:32:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure to
- defer kernel TLBI
-Message-ID: <20241120153221.GM38972@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-14-vschneid@redhat.com>
- <20241120152216.GM19989@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1732116882; c=relaxed/simple;
+	bh=9BbNjf2dYDzMP2fE4iDugHcRs8M6ZP5S18XzWK6IgOc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XahLRWwDXRpqQxJ17542SejTaEwptRzGcob5VjCGtiRk2m3jNj5AHvw3CdjFidg17/qLEyj7ilsTRmgxLIv5PGc3kdCxogCfISID5kPLoEMGTh+OkoCQYRPfmmvCyd35wyw4WMV88yyIGmDSbLWRDzQwZc9YdyENH1UTsQH87eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dCmL0YzI; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEx2lm026174;
+	Wed, 20 Nov 2024 15:33:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Bh8MRm
+	v0pX9jmFl/6GWRY8seqCjGSEKE6C1pTn7rS0Y=; b=dCmL0YzIJtaw3kYOvtWw1B
+	TUoOLdeOA/NRuCw+hJPlqnv8/OfEQs/mmphSfcM+s5kDs5R34nDii4JapXBIDVjl
+	18CU693Mc2vJF6ifaAPRVujHnIYuNss0HfCX9op79Hm4OSffCiDDjifXeKo2NDdD
+	q81aCdCuaEbp5NS0Lo/AQ7Dy+A1Vwi28W3wzyGhfjGJwVmhOxetM4Fkwzr9BAVKs
+	NnbQfInejp/3cd+hREdcJ9kHxr4FhWvaZlPq0mW2o9sXAfpD0AM8fUIdGH7j1uaC
+	ynVB5oGBfL0HPunsxKm26QPAMX6hrra82F8stXVqIsoZ93TBworO8nXZO4elv1fg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1vkku-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:33:18 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AKFRdR3016149;
+	Wed, 20 Nov 2024 15:33:17 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1vkkp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:33:17 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9tOVD011836;
+	Wed, 20 Nov 2024 15:33:16 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y7xjps2a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:33:16 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKFXEa956689076
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 15:33:14 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEECE2004D;
+	Wed, 20 Nov 2024 15:33:14 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6B66B20043;
+	Wed, 20 Nov 2024 15:33:12 +0000 (GMT)
+Received: from [9.39.17.146] (unknown [9.39.17.146])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 20 Nov 2024 15:33:12 +0000 (GMT)
+Message-ID: <b98b7795-070a-4d9c-9599-445c2ff55fd7@linux.ibm.com>
+Date: Wed, 20 Nov 2024 21:03:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120152216.GM19989@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] powerpc: Large user copy aware of full:rt:lazy
+ preemption
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Ankur Arora <ankur.a.arora@oracle.com>
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, maddy@linux.ibm.com,
+        linux-kernel@vger.kernel.org, vschneid@redhat.com,
+        mark.rutland@arm.com
+References: <20241116192306.88217-1-sshegde@linux.ibm.com>
+ <20241116192306.88217-3-sshegde@linux.ibm.com> <874j43hqy8.fsf@oracle.com>
+ <20241120080312.uHw4eJcQ@linutronix.de>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241120080312.uHw4eJcQ@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Lxn4TwimSjF5ZDmHrDVncIqTmAArPk-q
+X-Proofpoint-ORIG-GUID: PGvuBsbHrGTCCltdKFKc1bebG_OZGQjr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200104
 
-On Wed, Nov 20, 2024 at 04:22:16PM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 19, 2024 at 04:35:00PM +0100, Valentin Schneider wrote:
-> 
-> > +void noinstr __flush_tlb_all_noinstr(void)
-> > +{
-> > +	/*
-> > +	 * This is for invocation in early entry code that cannot be
-> > +	 * instrumented. A RMW to CR4 works for most cases, but relies on
-> > +	 * being able to flip either of the PGE or PCIDE bits. Flipping CR4.PCID
-> > +	 * would require also resetting CR3.PCID, so just try with CR4.PGE, else
-> > +	 * do the CR3 write.
-> > +	 *
-> > +	 * XXX: this gives paravirt the finger.
-> > +	 */
-> > +	if (cpu_feature_enabled(X86_FEATURE_PGE))
-> > +		__native_tlb_flush_global_noinstr(this_cpu_read(cpu_tlbstate.cr4));
-> > +	else
-> > +		native_flush_tlb_local_noinstr();
-> > +}
-> 
-> Urgh, so that's a lot of ugleh, and cr4 has that pinning stuff and gah.
-> 
-> Why not always just do the CR3 write and call it a day? That should also
-> work for paravirt, no? Just make the whole write_cr3 thing noinstr and
-> voila.
 
-Oh gawd, just having looked at xen_write_cr3() this might not be
-entirely trivial to mark noinstr :/
 
+On 11/20/24 13:33, Sebastian Andrzej Siewior wrote:
+> On 2024-11-19 13:08:31 [-0800], Ankur Arora wrote:
+>>
+>> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+>>
+
+Thanks Ankur and Sebastian for taking a look.
+
+>>> Large user copy_to/from (more than 16 bytes) uses vmx instructions to
+>>> speed things up. Once the copy is done, it makes sense to try schedule
+>>> as soon as possible for preemptible kernels. So do this for
+>>> preempt=full/lazy and rt kernel.
+>>
+>> Note that this check will also fire for PREEMPT_DYNAMIC && preempt=none.
+>> So when power supports PREEMPT_DYNAMIC this will need to change
+>> to preempt_model_*() based checks.
+
+Yes. This and return to kernel both needs to change when PowerPC support PREEMPT_DYNAMIC.
+I have a patch in work in which I essentially do check for the preemption model.
+Either below or based on static key.
+
+-	if (IS_ENABLED(CONFIG_PREEMPTION) && need_resched())
++	if (preempt_model_preemptible() && need_resched())
+
+
+
++mark +valentin
+
+More looking into how PREEMPPT_DYNAMIC works with static key, I have one query.
+This is more on PREEMPT_DYNAMIC than anything to with LAZY.
+
+I see many places use static_key based check instead of using preempt_model_preemptible such as
+dynamic_preempt_schedule, is it because static_key is faster?
+
+On the other hand, using preempt_model_preemptible could make the code simpler.
+
+>>
+>>> Not checking for lazy bit here, since it could lead to unnecessary
+>>> context switches.
+>>
+>> Maybe:
+>> Not checking for lazy bit here, since we only want to schedule when
+>> a context switch is imminently required.
+> 
+> Isn't his behaviour here exactly what preempt_enable() would do?
+> If the LAZY bit is set, it is delayed until return to userland or an
+> explicit schedule() because it is done. If this LAZY bit turned into an
+> actual scheduling request then it is acted upon.
+> 
+> Sebastian
 
 
