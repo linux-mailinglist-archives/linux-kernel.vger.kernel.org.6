@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-415164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E389D9D3231
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:32:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2918C9D3238
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8255EB23CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90B4BB22B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C215336D;
-	Wed, 20 Nov 2024 02:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE5043AB9;
+	Wed, 20 Nov 2024 02:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="Z57hFmuI"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oJ2Ttww2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EDF2E3FE
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47960E545;
+	Wed, 20 Nov 2024 02:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732069924; cv=none; b=cS9U3qryUODiT5JdYs+yNZwieSqHM1Sf8seeLA36X4gLYNuPBKN0yvwuBO/6YZgxIZau6v58r7jH95jpyTq8T9tC2uE74bL/UZxt/bL9emWpm3CQF+rjvT+AKc5t7rv5Ts3s1zgybrbuCdhSzQqDGrpB4pNxEYB8imNyT/Mda3M=
+	t=1732070101; cv=none; b=hZ6oKJIu4sSDup5g7xotiOZ2/r/f50+Q/t6MNIZwjQkqPLNGETY1CmhStpbu+uQC48I8323lGst/9fWQHStGxbMdJndAFf11I/IY/0D1woErGguBdu45ftvk3ZrELUQGpn98iMOlppCLikidX1dEgABZPJPeblzBXJkWEEgTuEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732069924; c=relaxed/simple;
-	bh=IJRHEBv22CCPwsTeJhDR5YAQTUAy4jX4+RLOHq4x16E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aoWAA/9XecV89IgLGhq8gC0UzYCLRbvYvMrJh3aedEluI6ubrVa4BwpZkrXY8nuOIUCq0+tMBQU0h0cUI9m0Ke9OsC7GXPmni7ccBYCMFNrLN63S6lzVd2aEcg17Wa45IDPKh2QsVEngNoDURd3qKICnfoOMX9zkaGkgUSVQCR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=Z57hFmuI; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2968322f5feso1410295fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:32:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1732069922; x=1732674722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3z610eh0qCJd2kaOZ7Lkn+Ilb4Xt4NLJTNRQhvjlOc=;
-        b=Z57hFmuIYsd1iXfgUkBx+0kTGHrJ1UbhSYfDzUAIeaq8/zNetdZjIlYGA2nk4bG5hc
-         V40H/HbiPtgwjpf2wL4NaKxaB+8h7tiX3MMUsZyUSWSx71yeg+yXiX9o45YdPHg/Q20D
-         PXCIkXQ7/LjWJ/2GyGb4SHtp8tnGPl7oQO4Nxuu9c4QY9thwNxRFq5KKwdACrVfwKT6U
-         koG5cPZfxTahoj5j6IFp5yq6sDAxbYjuv46sFGlJQccUbGQdzhnF6Gf4WXPHm5yz5XVf
-         ZPUztQmIowpe4HvSHN3fO2B6JDWpbSGC9ErgBv+MFb+hjGnVaWjII9RLmBSOeePJBTj0
-         Zzgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732069922; x=1732674722;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n3z610eh0qCJd2kaOZ7Lkn+Ilb4Xt4NLJTNRQhvjlOc=;
-        b=GZWqY06dnMrTccMB8OzeBJMZEMJOrjlVLN75uf7nVDis9BrPW/dLOcVYzNcqPfn4C4
-         lpeuJFfF1RKU2+LpiUtPo34dLEzPKoMUNd8hIUneFXehoVsmSwnn8fdNJYi32EMthJT5
-         v80MMT/jI6JaL4dQ53qd0Nlc3ycSoY0PW6xk2thtNhXrWBIdfUoi98T44wE+q3tNb6xN
-         Pz3wbqLb5MiFBrq2sfcxyLJMW/0RbmbmvgQXLyjwpeWmEj6eNDfcv1dMSsnGL7XKTG4t
-         E2m1uosIFJCEb3fUzAx+vPvZpxy0oyCmvn0eXjC238GV/1qRRL4Xpi2LBE7OiELI46cK
-         ie2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYrOaHp7Mzf1FEQVwuhKic37ZbqtOKV+xggonrA37utkfpgw2suGIOclfgCemuGc50/GZwXjjsHcvwde4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/R5YpTSDh4OJTSyAl/60Mmnx0AmG3IYedL4r0hrofyt/tf2z0
-	TGV0RF83OCZF/p0H44z3Pd2jE9LB9f/ssxG+0xQ0G3H/kiVmGtxfToi9DQRbPXQ=
-X-Google-Smtp-Source: AGHT+IFfSumVh91w5x9msiZmygRxDbJS7v7w+BJEhWhfq2eMN5sfNcaNQ01peKn0p30SVbyVU7B39g==
-X-Received: by 2002:a05:6871:613:b0:296:e4bb:80f5 with SMTP id 586e51a60fabf-296e4bc1d99mr314446fac.36.1732069922013;
-        Tue, 19 Nov 2024 18:32:02 -0800 (PST)
-Received: from mail.minyard.net ([2001:470:b8f6:1b:ec53:8290:86a1:aa7c])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651945ee6sm3977928fac.29.2024.11.19.18.31.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 18:32:00 -0800 (PST)
-Date: Tue, 19 Nov 2024 20:31:56 -0600
-From: Corey Minyard <corey@minyard.net>
-To: Quan Nguyen <quan@os.amperecomputing.com>
-Cc: Potin Lai <potin.lai.pt@gmail.com>, Corey Minyard <minyard@acm.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Patrick Williams <patrick@stwcx.xyz>,
-	openipmi-developer@lists.sourceforge.net,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Cosmo Chou <cosmo.chou@quantatw.com>,
-	Potin Lai <potin.lai@quantatw.com>,
-	Cosmo Chou <chou.cosmo@gmail.com>
-Subject: Re: [PATCH v2 2/2] ipmi: ssif_bmc: add GPIO-based alert mechanism
-Message-ID: <Zz1KHCLwpOdsCagr@mail.minyard.net>
-Reply-To: corey@minyard.net
-References: <20241022-ssif-alert-gpios-v2-0-c7dd6dd17a7e@gmail.com>
- <20241022-ssif-alert-gpios-v2-2-c7dd6dd17a7e@gmail.com>
- <434333fb-5703-449e-83f2-46e85f34fd23@os.amperecomputing.com>
- <CAB9gMfphfY0H721G9qV8_3sm1d_RTnKkWbEOeqC-0ox9p4cfCQ@mail.gmail.com>
- <b2441bab-304b-4983-8780-43671e8add4b@os.amperecomputing.com>
+	s=arc-20240116; t=1732070101; c=relaxed/simple;
+	bh=iHVRLGFAKh/PeVcKMn/azh2L9Py/ZSGp9Bad4Dnqa9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oZYic1s4gTUXB1E6jec4Xxh+LsXpgZcnhObx089fBYECPA2mmbknBzpB0mzQMuFHyYrlcmEnf+qq9lChr2M7NUBafwcMBdTFjWBzBdncfg2dwFSjKcYtcUNarkFDleBOCdLgj9wklhJTvZ6oN36R2R2ufMrtX7RfDqWq9X4rQ4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oJ2Ttww2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732070090;
+	bh=v7E20c1qfPaOhIqvypHRa4hnsb9Acllf9o72WjX/5mE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oJ2Ttww2ydfUfWH1yak1BsWsPHq2+mjKFAqk8jYxqkZuTPq2maxcCA3T9EVwMrur4
+	 yC1g2BoDh+PjEDfeWLiaxOVW86/AFV8x0WBu3RsBsqASAiQ2JTwegEzoadeeQ9qiaL
+	 F/873t1iSdbp9O8Vqp9844Y6BhoUsP7TKh4+5QvywHxhDpCfqaUY4pBtmkMyg5/3N4
+	 NNc3A9q2cy3pVv9nLhZkztam3ziN1o+RZmkQo4Scn1cQkAaNq5kJd6MiSk7rHrFgYS
+	 Ih0DgesDD2y697wFEeT6xyMqWE208aTAglJReR4M+yew1MwJ/oKkHih1GxQAviYYIy
+	 XydIkqBFy4o+A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XtQS86pHKz4xcw;
+	Wed, 20 Nov 2024 13:34:48 +1100 (AEDT)
+Date: Wed, 20 Nov 2024 13:34:51 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2?=
+ =?UTF-8?B?bQ==?= <thomas.hellstrom@linux.intel.com>, Uros Bizjak
+ <ubizjak@gmail.com>, DRM XE List <intel-xe@lists.freedesktop.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: build failure after merge of the random tree
+Message-ID: <20241120133451.69ece175@canb.auug.org.au>
+In-Reply-To: <20241010153855.588ec772@canb.auug.org.au>
+References: <20241001134423.62b12a80@canb.auug.org.au>
+	<20241010153855.588ec772@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b2441bab-304b-4983-8780-43671e8add4b@os.amperecomputing.com>
+Content-Type: multipart/signed; boundary="Sig_/hhMAZBGHzC+bfx+5XMczUGl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Nov 20, 2024 at 08:58:47AM +0700, Quan Nguyen wrote:
-> On 19/11/2024 18:30, Corey Minyard wrote:
-> > I just saw this.  What makes you think alerts are not supported in ipmi_ssif?
-> 
-> Yes, Corey, I see alerts are supported in ipmi_ssif.
-> 
-> My apology about the unclear question, I was just curious about whether this
-> gpio-based alerts mechanism is confirmed through test with current ipmi_ssif
-> without any extra patches.
+--Sig_/hhMAZBGHzC+bfx+5XMczUGl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Ah.  The way this would work would be that the GPIO is run to an
-interrupt on the host processor.  Generally all the alerting devices on
-the SMBus will "or" into that interrupt somehow.
+Hi all,
 
-When the interrupt comes in, the host will issue a request to the SMBus
-alert address and each device that has an alert pending will respond
-with their address.  Because of the wire or of the SMBus, the lowest
-address will win.
+On Thu, 10 Oct 2024 15:38:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Tue, 1 Oct 2024 13:44:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> >
+> > After merging the random tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> >=20
+> > Caused by commit
+> >=20
+> >   38d1a9d296c8 ("random: Do not include <linux/prandom.h> in <linux/ran=
+dom.h>")
+> >=20
+> > interacting with commit
+> >=20
+> >   5a90b60db5e6 ("drm/xe: Add a xe_bo subtest for shrinking / swapping")
+> >=20
+> > from the drm-xe tree.
+> >=20
+> > I have applied the following merge fix patch for today. =20
+>=20
+> The patch is now:
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 1 Oct 2024 13:33:48 +1000
+> Subject: [PATCH] fix up for "random: Do not include <linux/prandom.h> in
+>  <linux/random.h>"
+>=20
+> interacting with commit
+>=20
+>   5a90b60db5e6 ("drm/xe: Add a xe_bo subtest for shrinking / swapping")
+>=20
+> from the drm-xe tree.
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/xe/tests/xe_bo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/xe/tests/xe_bo.c b/drivers/gpu/drm/xe/tests/=
+xe_bo.c
+> index cd811aa2b227..3e0ae40ebbd2 100644
+> --- a/drivers/gpu/drm/xe/tests/xe_bo.c
+> +++ b/drivers/gpu/drm/xe/tests/xe_bo.c
+> @@ -8,7 +8,7 @@
+> =20
+>  #include <linux/iosys-map.h>
+>  #include <linux/math64.h>
+> -#include <linux/random.h>
+> +#include <linux/prandom.h>
+>  #include <linux/swap.h>
+> =20
+>  #include <uapi/linux/sysinfo.h>
 
-On Linux, the driver for that particular device will be told that an
-alert came in if it has registered for that alert.
+This patch is now needed when merging the drm tree and Linus' tree.
 
-The GPIO is just an interrupt, so that should just work.  That's not the
-hard part.  There has to be some device tree work on the host side to
-map the interrupt to an SMBus alert for a specific bus.  (I think you
-can do this with ACPI, too, but I'm not sure.)  And the device, of
-course, must respond properly to the alert request.
+--=20
+Cheers,
+Stephen Rothwell
 
-So the GPIO is not something that's unusual.  If it generates an
-interrupt (and all the other stuff is in place on the host side) it will
-work.
+--Sig_/hhMAZBGHzC+bfx+5XMczUGl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--corey
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc9SssACgkQAVBC80lX
+0Gy2gQgApGEZEiS1QAqXHVlh4J2wwbYkrOffJcGDd0GWplCxiXLIxU5nBBpD588f
+lNKweHWPhE+bzQUnujn8rzYkbWuQsLufoFEDxLtRgkNcJYShUllPNpjlVzj56u9W
+YoTXJusR7CMdThLOPNJlKNE24EYhKoJU618qu3cVlM47EzolYUsH+ZVOaKWrN6J1
+2H5+Qrlw8gGdPq9Wwuwq6Of91rbS40PR+VrtugQu5o44j7i7hDbuhVZbnH5NQS/+
+x51MkcldS5MYd+3eKwMPDPQutR3iienGbxCoTVDOgOwMthNNN2Jknov8yjhOCoUi
+N2fjEtiOqqXOONiVDUpPw6JPC5hivg==
+=WIyO
+-----END PGP SIGNATURE-----
+
+--Sig_/hhMAZBGHzC+bfx+5XMczUGl--
 
