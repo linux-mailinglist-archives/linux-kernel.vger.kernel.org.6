@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-416080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892409D3FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71B69D3FF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:23:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381311F22B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC22281534
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E451547EF;
-	Wed, 20 Nov 2024 16:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F206714BF87;
+	Wed, 20 Nov 2024 16:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViG1yl9X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npWRgFtN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED53B1537C3;
-	Wed, 20 Nov 2024 16:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A30D145335;
+	Wed, 20 Nov 2024 16:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119683; cv=none; b=S0gkpmb1Nn2XY40xL/ob8Pyd6yTLCGIYJw1vs5s/kchfyouVu5OwKejvVC/MFFnaDOys0hnj/SnrXyULasr1lqGfOEyR1LJ1vkagD8YkvDKRleuQhWOP+OPZqrW/FO7qwdIJombtcnRC88BI0fAmC/fySJQgJIPOixa7W+zCfXg=
+	t=1732119772; cv=none; b=LOqCGmG9lT4vLsgk+KJAHry3DCRQHN0mOdzeoF/VFNrs3m52y91FJX9nces9g69LlJfLeJArvrAAfwpMkROoYksUN5TbD7bJO+wDgfmQPNegbpvoMntc2EUraLDdlX2JNCg9l1oxP9zYM7H5+T3KyNrn1xv94+QRUAnWyyfHkII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119683; c=relaxed/simple;
-	bh=8V0tVZLTAmcmPHYhysLCyCFUh8prNiIRw2JMFafb1N0=;
+	s=arc-20240116; t=1732119772; c=relaxed/simple;
+	bh=wlZcEBoWf0udUSwiv9TVQf3VzKNWFqJ1JTuILs8cvAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aB+qMNWwiULN5O5Xv+BL7lWmVehUQJjq7IT8BF5bRowJTIwfG4ynMEQtECX658jjFQ0tFwa1RfQnSjzRBshav0FIspSOdwqqkoQpC66Sk1ArE7WJzn5hLH5e/idsdGNUubI1MLXDLTF3SgzbnKfijsdj2qPJ97vgmxNNChI2UmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViG1yl9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE99C4CECD;
-	Wed, 20 Nov 2024 16:21:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=reoTXYXLqDaxuhz6EbZXsVWSeeSJ0WaEOjrDvF3ov6VelTtGwcY5M7X4/lpuJFIMFp3MiSH6PiNlQt0w3FXgJPpVPWBCbAF2bYw3OtOoGBs2KKHaI+Tl+caAA++vg3VkrlnUzsniD6GJzT6jhw8eW1Q4snSMGDM6xVLT83VD5PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npWRgFtN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F0A0C4CECD;
+	Wed, 20 Nov 2024 16:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732119682;
-	bh=8V0tVZLTAmcmPHYhysLCyCFUh8prNiIRw2JMFafb1N0=;
+	s=k20201202; t=1732119771;
+	bh=wlZcEBoWf0udUSwiv9TVQf3VzKNWFqJ1JTuILs8cvAM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ViG1yl9Xwx5EhE7iVka9N+4LNcIz5LoK60+wC9sjB8zm2yNFzF745MnIp6UTkciix
-	 3bEgjb9ibT3PGPFlnYRoV0LKXNe2UosjoMJbc1N4e+ApzEBGQJ8n1Vqc8d8im/RYzA
-	 MaCRVPsUuFH/CeqZLgIon/9FtmDTn9a5yBDAfCYlcs8AKw+opK+mWOkln9JOIgWMPg
-	 +2Mk2s6pVjWszU5vxA9QzjLu/QZShqUcVbWzxvHlPbzwrNDuPu/SixH+yVTg9K5/wn
-	 aMLtv3rDImDQIdGtTuxunIE9x4CI7q2Hxz6f6yH2o0309351UxuvBR4ESiJVpJpFtH
-	 SotSZ5bxps8rg==
-Date: Wed, 20 Nov 2024 08:21:20 -0800
-From: "jpoimboe@kernel.org" <jpoimboe@kernel.org>
-To: "Shah, Amit" <Amit.Shah@amd.com>
-Cc: "Phillips, Kim" <kim.phillips@amd.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"kai.huang@intel.com" <kai.huang@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Moger, Babu" <Babu.Moger@amd.com>,
-	"Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-	"amit@kernel.org" <amit@kernel.org>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"Kaplan, David" <David.Kaplan@amd.com>
-Subject: Re: [PATCH 2/2] x86/bugs: Don't fill RSB on context switch with eIBRS
-Message-ID: <20241120162120.z6zteeespf4cir4s@jpoimboe>
-References: <cover.1732087270.git.jpoimboe@kernel.org>
- <9792424a4fe23ccc1f7ebbef121bfdd31e696d5d.1732087270.git.jpoimboe@kernel.org>
- <b2c639694a390208807999873c8b42a674d1ffa2.camel@amd.com>
+	b=npWRgFtNmCZyBRnL4g5xJj2h4uie9eThjtqcBWDVxLYyzaViHWKDQ3xaSzcuDyrX4
+	 Uh14wMEERn6mSkfifq3K5V+XqurH/L+um01BaOMuLHLYm1PKdoF+ImkHS+DCENLcGy
+	 fGQtshnbtUwe6JKlZN/1JHxJWbSe8EotlcgP1c3QCCXOFiYlbkwyDh37aHuF40APC0
+	 /Y0xAKUXu3sQy5fJYETmeMRV6y/c/OKviV+Recm6U3GHq/9j71VKMvLZC5JoAjrEPe
+	 dX2MgBjJFjuhv5VQepvi+zkFpVKvR6z+sgUcA7MDv0tQvrLlVe6b7vMvVSFkXM6xZo
+	 Q4JHqbzMvafDQ==
+Date: Wed, 20 Nov 2024 16:22:47 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Potin Lai <potin.lai.pt@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Patrick Williams <patrick@stwcx.xyz>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Cosmo Chou <cosmo.chou@quantatw.com>,
+	Potin Lai <potin.lai@quantatw.com>
+Subject: Re: [PATCH 2/2] dt-bindings: trivial-devices: add ipmb-dev
+Message-ID: <20241120-enjoyably-disarm-0365850f67e7@spud>
+References: <20241120-trivial-devices-v1-0-1f7cb48ee21b@gmail.com>
+ <20241120-trivial-devices-v1-2-1f7cb48ee21b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="WBfiMg/EF/i4dHJ0"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2c639694a390208807999873c8b42a674d1ffa2.camel@amd.com>
+In-Reply-To: <20241120-trivial-devices-v1-2-1f7cb48ee21b@gmail.com>
 
-On Wed, Nov 20, 2024 at 10:27:42AM +0000, Shah, Amit wrote:
-> On Tue, 2024-11-19 at 23:27 -0800, Josh Poimboeuf wrote:
-> > User->user Spectre v2 attacks (including RSB) across context switches
-> > are already mitigated by IBPB in cond_mitigation(), if enabled
-> > globally
-> > or if at least one of the tasks has opted in to protection.  RSB
-> > filling
-> > without IBPB serves no purpose for protecting user space, as indirect
-> > branches are still vulnerable.
-> > 
-> > User->kernel RSB attacks are mitigated by eIBRS.  In which case the
-> > RSB
-> > filling on context switch isn't needed.  Fix that.
-> > 
-> > While at it, update and coalesce the comments describing the various
-> > RSB
-> > mitigations.
-> 
-> Looks good from first impressions - but there's something that needs
-> some deeper analysis: AMD's Automatic IBRS piggybacks on eIBRS, and has
-> some special cases.  Adding Kim to CC to check and confirm if
-> everything's still as expected.
 
-FWIW, so "Technical Guidance for Mitigating Branch Type Confusion" has
-the following:
+--WBfiMg/EF/i4dHJ0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Finally, branches that are predicted as ‘ret’ instructions get their
-  predicted targets from the Return Address Predictor (RAP). AMD
-  recommends software use a RAP stuffing sequence (mitigation V2-3 in
-  [2]) and/or Supervisor Mode Execution Protection (SMEP) to ensure that
-  the addresses in the RAP are safe for speculation. Collectively, we
-  refer to these mitigations as “RAP Protection”.
+On Wed, Nov 20, 2024 at 11:28:07PM +0800, Potin Lai wrote:
+> Add ipmb-dev into trivial-devices to support IPMB device node.
 
-So it sounds like user->kernel RAP poisoning is mitigated by SMEP on AMD.
+What is an "impb device"? You need a better description than this.
 
--- 
-Josh
+>=20
+> Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index aa09dc51dab7..89dfac9b6a9e 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -149,6 +149,8 @@ properties:
+>            - injoinic,ip5209
+>              # Inspur Power System power supply unit version 1
+>            - inspur,ipsps1
+> +            # IPMB Device
+> +          - ipmb-dev
+>              # Intersil ISL29028 Ambient Light and Proximity Sensor
+>            - isil,isl29028
+>              # Intersil ISL29030 Ambient Light and Proximity Sensor
+>=20
+> --=20
+> 2.31.1
+>=20
+
+--WBfiMg/EF/i4dHJ0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZz4M1wAKCRB4tDGHoIJi
+0latAP9l/Lz0OalWnoWUyS34zmO/ysLdokpFXOxnfa3su5zhpQD/Wk2HinYwKVdy
+XNC3TZBimwmXlWqAlcffTrf/4VkNWgc=
+=xqFi
+-----END PGP SIGNATURE-----
+
+--WBfiMg/EF/i4dHJ0--
 
