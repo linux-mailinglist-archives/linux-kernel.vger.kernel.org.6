@@ -1,99 +1,221 @@
-Return-Path: <linux-kernel+bounces-416366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEAA9D43DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:18:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF58A9D43E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4923FB23B20
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555711F2260F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850E21BD03C;
-	Wed, 20 Nov 2024 22:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12331C3319;
+	Wed, 20 Nov 2024 22:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9DFv+Fa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hjwf6T9L"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC072F2A;
-	Wed, 20 Nov 2024 22:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539AE154BE0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732141093; cv=none; b=eqNEatNLDo3YPwXJMiGqTnd6b5Nvikaf4l1DPHyTZ9C1NBFxkop2b3kTLhE+LfoiAVIfFArfLCi4l/rxg4C3QivZ0Ovdf6G31Z8JDZ/fq/Djg/9PX/te3NpinqpJCl+tsOVFTSxrtoS9nDkGGkTJLw+OAZVvMDJ4OzoCrU3svJs=
+	t=1732141271; cv=none; b=F/tIZnKxAM/c6ulAk4KuGKqcnWuI4ZeYqaKtc4E2SNrdkWYCVhyWe/w1C3Kr8Y6s7f+HJfpCoIYpdnsuzBdJ6UxQnzUrZfNsu9/j9NBlBlhMDvQiOrJS4MAyj7I6RotAfmeHkP9HZClVATCTs7tE48bKgAXwKkUcqzqgA1yx+94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732141093; c=relaxed/simple;
-	bh=zNtJfwiVcVkYBUM9zLvpDyW7OUPFJRLMjLBG4HwmZT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=fqUwCi3HJ46Jektv2WcYGunnYUUIciVnfYW4S9djPnQIKpd/SiGTtPsRZle6FMG0X2ZLnrkxHAEOBN477iE2x33pqEoEtePEASrEYghjYG+T70hPPhHHk8ODf27vd4fY+xRrKf10WF9sxDvsvXNfTmffFphT0LF5ue5D76HzVO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9DFv+Fa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AD2AC4CECD;
-	Wed, 20 Nov 2024 22:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732141092;
-	bh=zNtJfwiVcVkYBUM9zLvpDyW7OUPFJRLMjLBG4HwmZT4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=T9DFv+FaiKrMY+etPtl1qx/mzXnRufGOZZsTkuqtt8SgUclwT9043SxCVIHlBuQOt
-	 +V539SB4BQGoCuNKuZdEtQeY+p48ZmrxfqbdFGi7DNp2ysuuIDmtUrwFPlfyZDRNRC
-	 XbtXvVmrQINNvmy+LpNzafByDfNYeIYU8GY2i4RbmJvE+qsN5ii8Mn3DCxaEuEufQD
-	 wgG+0F0h0BOQO//+HJ8eNkVKTUOQqcmfIutOcicbZNkFxcgvuGodz1zOloOmizVK1u
-	 iad4b+XX4DGvtflRbJz/x9/istukut2EIGbm5N6otLKkda+VwWrc3VB/B6AKKD6sAi
-	 egQkh808e4A2Q==
-Date: Wed, 20 Nov 2024 16:18:10 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bartosz.golaszewski@linaro.org,
-	Jonathan Currier <dullfire@yahoo.com>
-Subject: Re: [PATCH] PCI/pwrctrl: Create device link only if both platform
- device and supplies are present
-Message-ID: <20241120221810.GA2357837@bhelgaas>
+	s=arc-20240116; t=1732141271; c=relaxed/simple;
+	bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FnMGAsEKg2cgQ18DUGWsT8nfInDGCgKFNnB1ZMkN0ww//Q+Is4oEBAUaJ0aLyA4VOylkc6uAIyU53tCtsjBip0gLMcRKo4tb9KPeDloLi4oyQar8GAYC7i08cu8D4B6Sv2MaUSQ1PjjJJlvBArragqluTvk20VMAbmf2ptYhoVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hjwf6T9L; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-83ab94452a7so10771739f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:21:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1732141268; x=1732746068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+        b=hjwf6T9LG9TzzRypZ7QQuwISSNhMxVFW8OjiLPdexCtHHIu2osbjXBqWZZV5bFmx0B
+         EzxyPt8YgvKxopbhQdtolmDNgpwF+5U43i/rQcyQwKZ0hBs8x3JBlf/C0En6GPtFxUhH
+         iYUYkAp7P6qUNpGfZ/46wAQCeeqH4vznCuDfw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732141268; x=1732746068;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ouB8/de/lCxNFcMrrsx07QJ6XNyLFzvpUW8HYXhGhM0=;
+        b=p93wkZxJlFE2jW0xJl9Mt7PqTCWGAjk/mDvzUdUfcMbYjfAicblIJWeKXf+MzBn/xp
+         6n3CjDSxfLnzy6EAo71YxdSzNHJrXGB/EBCI7l3XOWdfLqptpNbL/37io5iteUkSdBot
+         /YZmMYX93LvFq1WEHm6pPyfAF254gcEA87/HkflkFuTOwb+VNaIiD/tKO3cfIc+2ZsNw
+         T4lBQD0lzrCP0aowF82bTh/RH5PqTjuIBZU8xcO10tVJS8v9gW+HcHYfiE8Zuf1VC2D4
+         Db3x76YLMpMYeBzkPlpxZev42eciOZp6S4x0tpjcv2EjgTSVNJeYWRH9WWuArhaDZ01M
+         srag==
+X-Forwarded-Encrypted: i=1; AJvYcCU15zFXaEnfybGszLEAq+GCMwhufhgHU8r9lx+BJvGSrA8r9x8pLqqTBLaMkwGsEtZXjqCVQnW6p78KUxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2xEbKblkdel/vt0V8nKmqdu30y3tkmzPBGgDr1XvR4K1jMFq8
+	zsDh4rY4Hbp38bMaVETzfA9nfpaDQx2o5PJXrbWj8iREOsGDAlyE+OD8E8pCAlZlfOhwHcNRnbI
+	A
+X-Google-Smtp-Source: AGHT+IFmwjcCHTD7M7msR+ZombMchwunGMPWFXdbv0JlxupApzrqgjgRYqau+Y+HPtOu4H5jYx5Agw==
+X-Received: by 2002:a05:6602:3423:b0:83a:872f:4b98 with SMTP id ca18e2360f4ac-83eb5f5de66mr521515639f.2.1732141268473;
+        Wed, 20 Nov 2024 14:21:08 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83e6e0ece8csm308117639f.41.2024.11.20.14.21.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:21:07 -0800 (PST)
+Message-ID: <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+Date: Wed, 20 Nov 2024 15:21:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120062459.6371-1-manivannan.sadhasivam@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+From: Shuah Khan <skhan@linuxfoundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>,
+ Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+Content-Language: en-US
+In-Reply-To: <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 11:54:59AM +0530, Manivannan Sadhasivam wrote:
-> Checking only for platform device for the PCI devices and creating the
-> devlink causes regression on SPARCv9 systems as they seem to have platform
-> device populated elsewhere.
-> 
-> So add a check for supplies in DT to make sure that the devlink is only
-> created for devices that require pwrctrl support.
-> 
-> Reported-by: Jonathan Currier <dullfire@yahoo.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219513
-> Fixes: 03cfe0e05650 ("PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers")
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On 11/20/24 14:37, Shuah Khan wrote:
+> On 11/20/24 14:20, Kent Overstreet wrote:
+>> On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
+>>> On 11/20/24 13:34, Kent Overstreet wrote:
+>>>> On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
+>>>>> On 9/2/24 03:51, Kent Overstreet wrote:
+>>>>>> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+>>>>>>> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+>>>>>>>> On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+>>>>>>>>> On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+>>>>>>>>> [...]
+>>>>>>>>>> But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+>>>>>>>>>> in the case of bugs, because that's going to be an improvement w.r.t.
+>>>>>>>>>> system robustness, in exactly the same way we don't use BUG_ON() if it's
+>>>>>>>>>> something that we can't guarantee won't happen in the wild - we WARN()
+>>>>>>>>>> and try to handle the error as best we can.
+>>>>>>>>>
+>>>>>>>>> We have discussed that in a different email thread. And I have to say
+>>>>>>>>> that I am not convinced that returning NULL makes a broken code much
+>>>>>>>>> better. Why? Because we can expect that broken NOFAIL users will not have a
+>>>>>>>>> error checking path. Even valid NOFAIL users will not have one because
+>>>>>>>>> they _know_ they do not have a different than retry for ever recovery
+>>>>>>>>> path.
+>>>>>>>>
+>>>>>>>> You mean where I asked you for a link to the discussion and rationale
+>>>>>>>> you claimed had happened? Still waiting on that
+>>>>>>>
+>>>>>>> I am not your assistent to be tasked and search through lore archives.
+>>>>>>> Find one if you need that.
+>>>>>>>
+>>>>>>> Anyway, if you read the email and even tried to understand what is
+>>>>>>> written there rather than immediately started shouting a response then
+>>>>>>> you would have noticed I have put actual arguments here. You are free to
+>>>>>>> disagree with them and lay down your arguments. You have decided to
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>> Yeah, enough of this insanity.
+>>>>>>>
+>>>>>>> so I do not think you are able to do that. Again...
+>>>>>>
+>>>>>> Michal, if you think crashing processes is an acceptable alternative to
+>>>>>> error handling _you have no business writing kernel code_.
+>>>>>>
+>>>>>> You have been stridently arguing for one bad idea after another, and
+>>>>>> it's an insult to those of us who do give a shit about writing reliable
+>>>>>> software.
+>>>>>>
+>>>>>> You're arguing against basic precepts of kernel programming.
+>>>>>>
+>>>>>> Get your head examined. And get the fuck out of here with this shit.
+>>>>>>
+>>>>>
+>>>>> Kent,
+>>>>>
+>>>>> Using language like this is clearly unacceptable and violates the
+>>>>> Code of Conduct. This type of language doesn't promote respectful
+>>>>> and productive discussions and is detrimental to the health of the
+>>>>> community.
+>>>>>
+>>>>> You should be well aware that this type of language and personal
+>>>>> attack is a clear violation of the Linux kernel Contributor Covenant
+>>>>> Code of Conduct as outlined in the following:
+>>>>>
+>>>>> https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+>>>>>
+>>>>> Refer to the Code of Conduct and refrain from violating the Code of
+>>>>> Conduct in the future.
+>>>>
+>>>> I believe Michal and I have more or less worked this out privately (and
+>>>> you guys have been copied on that as well).
+>>>
+>>> Thank you for updating us on the behind the scenes work between you
+>>> and Michal.
+>>>
+>>> I will make one correction to your statement, "you guys have been copied on
+>>> that as well" - which is inaccurate. You have shared your email exchanges
+>>> with Michal with us to let us know that the issue has been sorted out.
+>>
+>> That seems to be what I just said.
+>>
+>>> You might have your reasons and concerns about the direction of the code
+>>> and design that pertains to the discussion in this email thread. You might
+>>> have your reasons for expressing your frustration. However, those need to be
+>>> worked out as separate from this Code of Conduct violation.
+>>>
+>>> In the case of unacceptable behaviors as defined in the Code of Conduct
+>>> document, the process is to work towards restoring productive and
+>>> respectful discussions. It is reasonable to ask for an apology to help
+>>> us get to the goal as soon as possible.
+>>>
+>>> I urge you once again to apologize for using language that negatively impacts
+>>> productive discussions.
+>>
+>> Shuah, I'd be happy to give you that after the discussion I suggested.
+>> Failing that, I urge you to stick to what we agreed to last night.
+The only thing we agreed upon is that you would respond the thread
+to update your sorting things out with Michal.
 
-Thanks, squashed into 03cfe0e05650 for v6.13:
+As for the discussion, I will repeat what I said in our conversation
+that the discussion will be lot more productive after making amends
+with the community. I stand by that assessment.
 
-https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=cc70852b0962
+I will also repeat what I said that the discussion and debate is
+outside the scope of the current issue the Code of Conduct Committee
+is trying to resolve.
 
-> ---
->  drivers/pci/bus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 7a061cc860d5..e70f4c089cd4 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -394,7 +394,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->  	 * PCI client drivers.
->  	 */
->  	pdev = of_find_device_by_node(dn);
-> -	if (pdev) {
-> +	if (pdev && of_pci_is_supply_present(dn)) {
->  		if (!device_link_add(&dev->dev, &pdev->dev,
->  				     DL_FLAG_AUTOREMOVE_CONSUMER))
->  			pci_err(dev, "failed to add device link between %s and %s\n",
-> -- 
-> 2.25.1
-> 
+I didn't pick up on your desire to apologize after the discussion in
+our conversation.
+
+Are you saying you will be happy to make amends with an apology after
+the discussion and debate?
+
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
