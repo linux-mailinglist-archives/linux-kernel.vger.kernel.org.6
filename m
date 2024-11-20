@@ -1,258 +1,324 @@
-Return-Path: <linux-kernel+bounces-416030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE659D3F5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:52:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36D09D3F68
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:53:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2C7F2834CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795261F238B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539D21448E0;
-	Wed, 20 Nov 2024 15:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E185143C72;
+	Wed, 20 Nov 2024 15:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WN9X5vHA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="bwLpTVO9"
+Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC6612BF02;
-	Wed, 20 Nov 2024 15:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D9713DDAA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117919; cv=none; b=ui7iJBrmfy2pBZzwsVjOkPtgP2xJsD0TQ4Fu/loKTTXb5shsIAmW47hKY+9T8mraRu7tWfRs0RmLVPDG5fMe01AoGGsjCzkZk7Xi9gnhWO6Zvqn529waCyQmDCfHKChHDrulUqvZKG/QrTFgaUO9lYZH9cCycXgY5Zay1RJLezQ=
+	t=1732117971; cv=none; b=kNHFhQz5kxg0SUDmnbInNRJnNVB+/JZKSJR1zjIqHJySjqk+1ZDdXG8YZzYdWvljRgneHTB/Mszs/ZwVpeveRXq2onGGhCPm2Vy3iy1NEmj+YVGKFQhhJQhHB51OvgQ2RxCqiCHdxqpNvXo63+rXuB8s4lbX3Dpz6+5+g/XDQjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117919; c=relaxed/simple;
-	bh=8IVlxGS65y/Z3LoG7hMZVm0036HIRMtQCt9WMX5LvSs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gFBFIUcv6juaqshczTb9FQquEHgiZA2q/ttbrzGttK2b0N8DkWdLfa1YNb6PJnaHVEsPIgj3mv8e+J1kHYpNnrB01FNc4Nd+yzI9dL/LLtHeyWWpagcVjKRwLpGCzvIwsW0C2xoAcrd02p6p7yC3YftkCkDd/erzumJERBR4WUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WN9X5vHA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B8EC4CECD;
-	Wed, 20 Nov 2024 15:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732117919;
-	bh=8IVlxGS65y/Z3LoG7hMZVm0036HIRMtQCt9WMX5LvSs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=WN9X5vHAn8EZDfk/XToTYw0qs7/N4R/AVvvRgNYbMvSfSK138ceU6Ooo6mfEEoo4Q
-	 J0tkUZxSD47qNUS8o1EiIy4yNv/7Yi2ZYvTtS3cUhCKW320koNEwfbgmD55S+vWZUo
-	 +lAv5dfK/mv5CNCPCMGYIUWWk6blMQ0/+YNXiu/ZaeAjjCHI4emtzi6+03ff7gc0Xi
-	 kTBzH+Pv2WRi+H6SeWJeHPJprq69z0l6lFrbmQ9iWTAaoODJq6I+o0MAOFxYLPIHWD
-	 +NHs2cTPRRoBKqhWNZCMcO9PIquZQYYNncBIA/+iP089JSVmCWLE9DV78JBS3ccjh5
-	 JKyfL/8nmVicA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 11/13] rust: hrtimer: add `TimerMode`
-In-Reply-To: <f27dfef8aa3d184382a6573ddde8d89a2d688f24.camel@redhat.com>
-	(Lyude Paul's message of "Wed, 13 Nov 2024 18:37:31 -0500")
-References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-	<20241017-hrtimer-v3-v6-12-rc2-v3-11-59a75cbb44da@kernel.org>
-	<qy9A8zxsg2_oQ_c3z6liELLAIfDg2Pn0DxdC67WySelkCoF9NQptKeQTNNZxA-_Su-H3sYhBHYpWQ7iiCHAN6A==@protonmail.internalid>
-	<f27dfef8aa3d184382a6573ddde8d89a2d688f24.camel@redhat.com>
-Date: Wed, 20 Nov 2024 16:51:44 +0100
-Message-ID: <87r0753nu7.fsf@kernel.org>
+	s=arc-20240116; t=1732117971; c=relaxed/simple;
+	bh=hQ2dfJD5Sim/WtOVH/D0D9SRKM1Stxb1eW7RqKVhwzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwCBG4c52t4Ke+p79RWjE2MGruVrAaY6BVte+i+gSE5fDAwL3a08HZri29zxi35mMZLRx/g6W/M08PNUZix7jXb33DC5Syg94d998ajEadWwdX7/cFo5nkrxIbqkAJhoy2qryRI+NI3WddEhBcVv1qKl5OAGC8JIeuxVR1/ubng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=bwLpTVO9; arc=none smtp.client-ip=148.163.143.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
+	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEmF2c030125;
+	Wed, 20 Nov 2024 15:52:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=rtqhIJRePY/6XPXWcioKi1rKiV
+	0xPIODDhqnohdo9pk=; b=bwLpTVO9tm9FA9SsGRg9udN6yuQWm4m8nbi7k8DS/V
+	7RL4TjVUykujwBL0ij3Of8Kr+ndh/zVR4bSPEnarvplk0HQ6kRTCNCD3cu3LSjDP
+	vicDiZzUh3a8bz7vlIBcTAfXl/O+QxtlHU19vWo2gYxKo/l0M48G6wRgta8T7msP
+	6PY3ATFIy4hSBjphkgejvE2apvLVXgo5k4OQsDCBWyuCMGuIKhTEX7jCWT7aox2S
+	Zxi/61H0g5W0HvpfgGMHwRJH6SC5z3rfe1RWjModjJsHVXirkBXgXl8zWvZWBAEB
+	GAlaZk0+iX+XZ6ZW8BCuj7d2D5SkzL3Gq9kriLaobDcg==
+Received: from p1lg14881.it.hpe.com ([16.230.97.202])
+	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 431hungnq0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:52:32 +0000 (GMT)
+Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 6B87C806B6F;
+	Wed, 20 Nov 2024 15:52:31 +0000 (UTC)
+Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 178DD802835;
+	Wed, 20 Nov 2024 15:52:26 +0000 (UTC)
+Date: Wed, 20 Nov 2024 09:52:24 -0600
+From: Steve Wahl <steve.wahl@hpe.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
+        K Prateek Nayak <kprateek.nayak@amd.com>,
+        Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>,
+        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
+Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
+Message-ID: <Zz4FuGyFDaQUWXjz@swahl-home.5wahls.com>
+References: <20241031200431.182443-1-steve.wahl@hpe.com>
+ <xhsmh4j4cctsc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ZzTI6l-9Z0oCbrEH@swahl-home.5wahls.com>
+ <Zzz9MXHaUwpq2h0q@swahl-home.5wahls.com>
+ <xhsmh5xoij0ly.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh5xoij0ly.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+X-Proofpoint-GUID: 3-Lj_0daKhcw2PPs4dyG5hd5BeOn_sUJ
+X-Proofpoint-ORIG-GUID: 3-Lj_0daKhcw2PPs4dyG5hd5BeOn_sUJ
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0
+ priorityscore=1501 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411200107
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On Tue, Nov 19, 2024 at 11:54:33PM +0100, Valentin Schneider wrote:
+> On 19/11/24 15:03, Steve Wahl wrote:
+> > On Wed, Nov 13, 2024 at 09:42:34AM -0600, Steve Wahl wrote:
+> >> On Tue, Nov 12, 2024 at 05:15:47PM +0100, Valentin Schneider wrote:
+> >> > On 31/10/24 15:04, Steve Wahl wrote:
+> >> > > Use a different approach to topology_span_sane(), that checks for the
+> >> > > same constraint of no partial overlaps for any two CPU sets for
+> >> > > non-NUMA topology levels, but does so in a way that is O(N) rather
+> >> > > than O(N^2).
+> >> > >
+> >> > > Instead of comparing with all other masks to detect collisions, keep
+> >> > > one mask that includes all CPUs seen so far and detect collisions with
+> >> > > a single cpumask_intersects test.
+> >> > >
+> >> > > If the current mask has no collisions with previously seen masks, it
+> >> > > should be a new mask, which can be uniquely identified ("id") by the
+> >> > > lowest bit set in this mask.  Mark that we've seen a mask with this
+> >> > > id, and add the CPUs in this mask to the list of those seen.
+> >> > >
+> >> > > If the current mask does collide with previously seen masks, it should
+> >> > > be exactly equal to a mask seen before, identified once again by the
+> >> > > lowest bit the current mask has set.  It's an error if we haven't seen
+> >> > > a mask with that id, or if the current mask doesn't match the one we
+> >> > > get by looking up that id.
+> >> > >
+> >> > > Move the topology_span_sane() check out of the existing topology level
+> >> > > loop, let it do its own looping to match the needs of this algorithm.
+> >> > >
+> >> > > On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
+> >> > > the average time to take one processor offline is reduced from 2.18
+> >> > > seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
+> >> > > 34m49.765s without this change, 16m10.038s with this change in place.)
+> >> > >
+> >> > > Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+> >> > > ---
+> >> > >
+> >> > > Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
+> >> > > simplifies the code, and eliminates the erroneous use of
+> >> > > num_possible_cpus() that Peter Zijlstra noted.
+> >> > >
+> >> > > Version 1 discussion:
+> >> > >     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
+> >> > >
+> >> > >  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
+> >> > >  1 file changed, 48 insertions(+), 25 deletions(-)
+> >> > >
+> >> > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> >> > > index 9748a4c8d668..6a2a3e91d59e 100644
+> >> > > --- a/kernel/sched/topology.c
+> >> > > +++ b/kernel/sched/topology.c
+> >> > > @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+> >> > >
+> >> > >  /*
+> >> > >   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
+> >> > > - * any two given CPUs at this (non-NUMA) topology level.
+> >> > > + * any two given CPUs on non-NUMA topology levels.
+> >> > >   */
+> >> > > -static bool topology_span_sane(struct sched_domain_topology_level *tl,
+> >> > > -			      const struct cpumask *cpu_map, int cpu)
+> >> > > +static bool topology_span_sane(const struct cpumask *cpu_map)
+> >> > >  {
+> >> > > -	int i = cpu + 1;
+> >> > > +	struct sched_domain_topology_level *tl;
+> >> > > +	struct cpumask *covered, *id_seen;
+> >> > > +	int cpu;
+> >> > >
+> >> > > -	/* NUMA levels are allowed to overlap */
+> >> > > -	if (tl->flags & SDTL_OVERLAP)
+> >> > > -		return true;
+> >> > > +	lockdep_assert_held(&sched_domains_mutex);
+> >> > > +	covered = sched_domains_tmpmask;
+> >> > > +	id_seen = sched_domains_tmpmask2;
+> >> > > +
+> >> > > +	for_each_sd_topology(tl) {
+> >> > > +
+> >> > > +		/* NUMA levels are allowed to overlap */
+> >> > > +		if (tl->flags & SDTL_OVERLAP)
+> >> > > +			continue;
+> >> > > +
+> >> > > +		cpumask_clear(covered);
+> >> > > +		cpumask_clear(id_seen);
+> >> > >
+> >> > > -	/*
+> >> > > -	 * Non-NUMA levels cannot partially overlap - they must be either
+> >> > > -	 * completely equal or completely disjoint. Otherwise we can end up
+> >> > > -	 * breaking the sched_group lists - i.e. a later get_group() pass
+> >> > > -	 * breaks the linking done for an earlier span.
+> >> > > -	 */
+> >> > > -	for_each_cpu_from(i, cpu_map) {
+> >> > >                  /*
+> >> > > -		 * We should 'and' all those masks with 'cpu_map' to exactly
+> >> > > -		 * match the topology we're about to build, but that can only
+> >> > > -		 * remove CPUs, which only lessens our ability to detect
+> >> > > -		 * overlaps
+> >> > > +		 * Non-NUMA levels cannot partially overlap - they must be either
+> >> > > +		 * completely equal or completely disjoint. Otherwise we can end up
+> >> > > +		 * breaking the sched_group lists - i.e. a later get_group() pass
+> >> > > +		 * breaks the linking done for an earlier span.
+> >> > >                   */
+> >> > > -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
+> >> > > -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
+> >> > > -			return false;
+> >> > > +		for_each_cpu(cpu, cpu_map) {
+> >> > > +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
+> >> > > +			int id;
+> >> > > +
+> >> > > +			/* lowest bit set in this mask is used as a unique id */
+> >> > > +			id = cpumask_first(tl_cpu_mask);
+> >> > > +
+> >> > > +			/* if this mask doesn't collide with what we've already seen */
+> >> > > +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
+> >> > > +				/* Really odd case when cpu != id, likely not sane */
+> >> > > +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
+> >> > > +					return false;
+> >> > > +				if (cpumask_test_and_set_cpu(id, id_seen))
+> >> > > +					return false;
+> >> > > +				cpumask_or(covered, tl_cpu_mask, covered);
+> >> > > +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
+> >> > > +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
+> >> > > +				/*
+> >> > > +				 * a collision with covered should have exactly matched
+> >> > > +				 * a previously seen mask with the same id
+> >> > > +				 */
+> >> > > +				return false;
+> >> > > +			}
+> >> > > +		}
+> >> >
+> >> > Ok so you're speeding it up, but you still get a O(nr_cpu_ids) walk every
+> >> > hotplug when the check itself only needs to be done at most once per
+> >> > possible online CPU combination (~ 2^(nr_cpu_ids)). If all CPUs are kicked
+> >> > to life at boot, then the check only needs to be done once. If you only
+> >> > boot with a subset of present CPUs to speed things up, the check still
+> >> > becomes irrelevant once you've kicked the rest to life.
+> >> >
+> >> > I would reiterate my suggestion to get to a state where the check can be
+> >> > entirely short-circuited [1].
+> >> >
+> >> > [1]: http://lore.kernel.org/r/xhsmh8quc5ca4.mognet@vschneid-thinkpadt14sgen2i.remote.csb
+> >>
+> >> Bringing forward a bit of that conversation:
+> >>
+> >> > > I tried adding this, surprisingly I saw no effect on the time taken,
+> >> > > perhaps even a small slowdown, when combined with my patch.  So at
+> >> > > this point I don't intend to add it to v2 of the patch.
+> >> > >
+> >> >
+> >> > Thanks for testing, I assume your cpu_possible_mask reports more CPUs than
+> >> > you have physically plugged in...
+> >>
+> >> That assumption is wrong.  I started with all CPUs enabled.  Disabled
+> >> and re-enabled cpus from there.  The timings I got were as I stated,
+> >> no effect, perhaps a small slowdown.
+> >>
+> >> > I guess it would make sense to short-circuit the function when
+> >> > cpu_map is a subset of what we've previously checked, and then
+> >> > re-kick the testing once new CPU(s) are plugged in. Something like
+> >> > the untested below?
+> >> >
+> >> > Optimisations notwithstanding, IMO we shouldn't be repeating checks if we
+> >> > can avoid it.
+> >>
+> >> I will attempt to measure it once more.  I was surprised at my
+> >> measured results, but that's why we take them, right?
+> >>
+> >> If I can't measure a difference, though, I am not sure it's
+> >> appropriate to include the change with this patch, the point of which
+> >> *is* optimization.
+> >
+> > I completed timing tests; test system has 1920 logical CPUS, 2 threads
+> > per core, 60 cores per NUMA node, and the script offlined then onlined
+> > both threads of half the cores in each node.  Four runs each were
+> > timed.  Times in seconds.
+> >
+> > Unpatched kernel:
+> >       Offline		Online
+> > min	3991.57		3967.22
+> > max	4025.59		4028.66
+> > avg	4013.79		3996.75
+> > stddev	15.28		29.90
+> >
+> > With my patch:
+> >       Offline		Online
+> > min	1987.97		2130.7
+> > max	2032.25		2150.93
+> > avg	2017.43		2140.18
+> > stddev	20.12		10.25
+> >
+> > With my patch + Valentin's extra short-circuit patch:
+> > min	2019.58		2137.43
+> > max	2056.89		2223.86
+> > avg	2033.04		2171.91
+> > stddev	16.83		37.73
+> >
+> > I'm at a loss as to why adding the short circuit slowed things down,
+> > but it's in the noise.  If you want a new version of the patch
+> > incorporating both changes after viewing these timings, I'm willing to
+> > make that change.  Let me know how you feel.
+> >
+> 
+> Huh, weird. Obviously your patch improves the situation and the
+> short-circuit as proposed doesn't, so I'd say go forth with your patch and
+> I'll poke around to figure out what's going on and submit a hopefully
+> working short-circuit.
 
-> On Thu, 2024-10-17 at 15:04 +0200, Andreas Hindborg wrote:
->> Allow selection of timer mode by passing a `TimerMode` variant to
->> `Timer::new`.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/hrtimer.rs | 88 +++++++++++++++++++++++++++++++++++++++++++=
-++++---
->>  1 file changed, 84 insertions(+), 4 deletions(-)
->>
->> diff --git a/rust/kernel/hrtimer.rs b/rust/kernel/hrtimer.rs
->> index 2c1573e19576de93afc959d71e94173e2c1ed715..1674d1dcba39cc7ab82e1f18=
-9002afa365ee9341 100644
->> --- a/rust/kernel/hrtimer.rs
->> +++ b/rust/kernel/hrtimer.rs
->> @@ -38,12 +38,13 @@
->>  /// # Invariants
->>  ///
->>  /// * `self.timer` is initialized by `bindings::hrtimer_init`.
->> -#[repr(transparent)]
->>  #[pin_data]
->>  #[repr(C)]
->>  pub struct Timer<U> {
->>      #[pin]
->>      timer: Opaque<bindings::hrtimer>,
->> +    // This field goes away when `bindings::hrtimer_setup` is added.
->> +    mode: TimerMode,
->>      _t: PhantomData<U>,
->>  }
->>
->> @@ -56,7 +57,7 @@ unsafe impl<U> Sync for Timer<U> {}
->>
->>  impl<T> Timer<T> {
->>      /// Return an initializer for a new timer instance.
->> -    pub fn new() -> impl PinInit<Self>
->> +    pub fn new(mode: TimerMode) -> impl PinInit<Self>
->>      where
->>          T: TimerCallback,
->>      {
->> @@ -70,7 +71,7 @@ pub fn new() -> impl PinInit<Self>
->>                      bindings::hrtimer_init(
->>                          place,
->>                          bindings::CLOCK_MONOTONIC as i32,
->> -                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
->> +                        mode.into(),
->>                      );
->>                  }
->>
->> @@ -83,6 +84,7 @@ pub fn new() -> impl PinInit<Self>
->>                  // exclusive access.
->>                  unsafe { core::ptr::write(function, Some(T::CallbackTar=
-get::run)) };
->>              }),
->> +            mode: mode,
->>              _t: PhantomData,
->>          })
->>      }
->> @@ -330,7 +332,7 @@ unsafe fn start(self_ptr: *const Self, expires: Ktim=
-e) {
->>                  Self::c_timer_ptr(self_ptr).cast_mut(),
->>                  expires.to_ns(),
->>                  0,
->> -                bindings::hrtimer_mode_HRTIMER_MODE_REL,
->> +                (*Self::raw_get_timer(self_ptr)).mode.into(),
->>              );
->>          }
->>      }
->> @@ -362,6 +364,84 @@ fn from(value: TimerRestart) -> Self {
->>      }
->>  }
->>
->> +/// Operational mode of [`Timer`].
->> +#[derive(Clone, Copy)]
->> +pub enum TimerMode {
->> +    /// Timer expires at the given expiration time.
->> +    Absolute,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    Relative,
->> +    /// Timer does not move between CPU cores.
->> +    Pinned,
->> +    /// Timer handler is executed in soft irq context.
->> +    Soft,
->> +    /// Timer handler is executed in hard irq context.
->> +    Hard,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    AbsolutePinned,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    RelativePinned,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer handler is executed in soft irq context.
->> +    AbsoluteSoft,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    /// Timer handler is executed in soft irq context.
->> +    RelativeSoft,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in soft irq context.
->> +    AbsolutePinnedSoft,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in soft irq context.
->> +    RelativePinnedSoft,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer handler is executed in hard irq context.
->> +    AbsoluteHard,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    /// Timer handler is executed in hard irq context.
->> +    RelativeHard,
->> +    /// Timer expires at the given expiration time.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in hard irq context.
->> +    AbsolutePinnedHard,
->> +    /// Timer expires after the given expiration time interpreted as a =
-duration from now.
->> +    /// Timer does not move between CPU cores.
->> +    /// Timer handler is executed in hard irq context.
->> +    RelativePinnedHard,
->> +}
->> +
->> +impl From<TimerMode> for bindings::hrtimer_mode {
->> +    fn from(value: TimerMode) -> Self {
->> +        use bindings::*;
->> +        match value {
->> +            TimerMode::Absolute =3D> hrtimer_mode_HRTIMER_MODE_ABS,
->> +            TimerMode::Relative =3D> hrtimer_mode_HRTIMER_MODE_REL,
->> +            TimerMode::Pinned =3D> hrtimer_mode_HRTIMER_MODE_PINNED,
->> +            TimerMode::Soft =3D> hrtimer_mode_HRTIMER_MODE_SOFT,
->> +            TimerMode::Hard =3D> hrtimer_mode_HRTIMER_MODE_HARD,
->> +            TimerMode::AbsolutePinned =3D> hrtimer_mode_HRTIMER_MODE_AB=
-S_PINNED,
->> +            TimerMode::RelativePinned =3D> hrtimer_mode_HRTIMER_MODE_RE=
-L_PINNED,
->> +            TimerMode::AbsoluteSoft =3D> hrtimer_mode_HRTIMER_MODE_ABS_=
-SOFT,
->> +            TimerMode::RelativeSoft =3D> hrtimer_mode_HRTIMER_MODE_REL_=
-SOFT,
->> +            TimerMode::AbsolutePinnedSoft =3D> hrtimer_mode_HRTIMER_MOD=
-E_ABS_PINNED_SOFT,
->> +            TimerMode::RelativePinnedSoft =3D> hrtimer_mode_HRTIMER_MOD=
-E_REL_PINNED_SOFT,
->> +            TimerMode::AbsoluteHard =3D> hrtimer_mode_HRTIMER_MODE_ABS_=
-HARD,
->> +            TimerMode::RelativeHard =3D> hrtimer_mode_HRTIMER_MODE_REL_=
-HARD,
->> +            TimerMode::AbsolutePinnedHard =3D> hrtimer_mode_HRTIMER_MOD=
-E_ABS_PINNED_HARD,
->> +            TimerMode::RelativePinnedHard =3D> hrtimer_mode_HRTIMER_MOD=
-E_REL_PINNED_HARD,
->> +        }
->> +    }
->> +}
->
-> Are we sure we actually need to explicitly convert it like this? You shou=
-ld be
-> able to use #[repr(=E2=80=A6)] to indicate that the enum is the same type=
- as the
-> actual C constant, and then we can just assign the value of each C consta=
-nt as
-> the discriminant for each enum value in TimerMode.
->
+I think the short-circuit is actually working.  In the previous email
+iteration on this, after I did the timings saying it was a tad slower,
+I added some printk's to make sure the short circuit was actually
+happening, and it appeared to be true.  And this time around, I came
+up with a version of your patch that functions without mine; it's not
+as pretty before combining all the topology levels into one call to
+topology_span_sane, but the result of the bypass is a similar time
+saving.
 
-Some combinations of modes are illegal. With this approach, it is not
-possible to name the illegal combinations.
+I am thinking that the memory touched by the full topology_span_sane
+run may be pre-loading the cache for some of the subsequent
+operations.  That's the best I can come up with, at least for the
+moment.
 
-Interesting discussion is happening on Zulip regarding a possible
-solution for enums like this [1].
+--> Steve
 
-
-Best regards,
-Andreas Hindborg
-
-
-
-
-[1] https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topic/=
-Best.20way.20to.20handle.20enum.2Fflags.20situation
-
+-- 
+Steve Wahl, Hewlett Packard Enterprise
 
