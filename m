@@ -1,140 +1,181 @@
-Return-Path: <linux-kernel+bounces-416079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD329D3FEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 279499D3FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CE871F23322
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD04280F0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C5F150994;
-	Wed, 20 Nov 2024 16:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A621547C6;
+	Wed, 20 Nov 2024 16:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wl+GD1L5"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k3G0+6pw"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F67714A630;
-	Wed, 20 Nov 2024 16:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2012A154439
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119640; cv=none; b=KIjpzg7IPxaNykhTp9CtaCrZW/NBNuAgKBBVU68OTJrD8d8RQop7xl/8A33h4MUTGHm1ESbnR6bZJpo8QPWwQ/vaxEuVX5g1KRAJMdhMaZO5txhKaR2DSGU50f9Dhossmijljmm6h68W0ThdqGlAVpvvwlB36zNa18C5aBEQUGE=
+	t=1732119623; cv=none; b=EhyatSkF7Zy8KRk15j2Kb1wS3Ap4l9ss8JyNUG5XLvtyoWMrx2ilzgJEWXMvBx/l9sTl7mPVkae9KI/ftDshQxRrBoeTwgIvTBGoEVl+L6lilSgU0anrZdBoGha6gKAf5Fz1a5Q+lxSGBqBdsrv/q4IWvfecrt+7XW8kfHud6wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119640; c=relaxed/simple;
-	bh=NkMlPuo43fHO0TgD1QYD9cIO7PO1KxGZkQheI8cp+JM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=btbG3fPqqcvdbLeOd1dO3uyx12SO/a+4acwkBfq4mIgZ5ppVHwgzwqP4bvZxQ/BBK79H3R+Ml5b9C09381HZXwM0TV3s5sed7KldSFi7Xgw6myg25d458wyH+0H27FohlbfwuARO6xcytI67JvvYAg5apHrMEzfabQrbUVOZgwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wl+GD1L5; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso45553101fa.1;
-        Wed, 20 Nov 2024 08:20:38 -0800 (PST)
+	s=arc-20240116; t=1732119623; c=relaxed/simple;
+	bh=ySs++z4n1Fi/1AdNo5v3rz91meDM6WppVpPGxczPJjI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FtDvFdgIfzFdQ1DzUUiMIbD6X1EXWW9GH0loFAh2v877OtBbVIGi+CwdVDk2Fqa7LL7KWL7TbqB2F61ZT1uVGJQuoYhytb/tIAeAO+DjMKpff8iQm9Jkb35tkArp4jEibOt7DhRc7YNI2W2u3xmuzZCjivcBJy+r3WcL3BEmUc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k3G0+6pw; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315eac969aso6671295e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:20:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732119636; x=1732724436; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ImSW+JuDhb3RgJw1o2hGS9mRoFnCl9ZYkL7+gfakSyM=;
-        b=Wl+GD1L5nOaXU3W61R6cdsPrlTXAfMnNR2915tNug1wKKLsxUreHBQc1xYoK8LE7YK
-         uvmAkGOe06QPB+oclB7lgJgFXUWHm52ez5IWCn8IEQK/XLfov7kd+7UK32f513x/BjOY
-         SDpZwY+YqFqGYvNckGrFSSiCp274JF5V3H2AlVL1bIy6JdsNnnEkIi456HkcZiCEoeTW
-         gCHZfTt8ghV0IZu9rYEOfZH3jZY19aFsXA6VEUIyeKmGC7bKdD0ew9Nm+PcDsfynX2yt
-         0QumsBxIxcV+nmWKFffS2WhjAH3UwchpJN742FBiwARQzSNiqTO/KCfPVfrsDCXUSbyA
-         crzg==
+        d=linaro.org; s=google; t=1732119620; x=1732724420; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8VbDXySIpVH71kNIIiHD5xXarApVi2DKm9eek/oULpY=;
+        b=k3G0+6pwtG+QHWeevc6XfXTen9Pf8ZOFSPONSFa0W7m2l91O9lXRAGSELS8c5wfMAZ
+         R8CWw6N5xzCXPQ2z31+XtH9d9zR5TYcUie5wiVlCMua7qF4PqULJnERV+LLjhLpW0Rg7
+         XHzT1jh3bjIw6M+jT2T2QW4qmEvbjVMV3bgpyxvFFFbH8Fehhk2PntL83Xw3+ZUT5UkG
+         nG9UG9TSbobRAUtGluxRH4RADHnrWaU6sp2tBUmzCRplbQI9fx2nUqx4cB0Kl2/DYzuv
+         PEQBGgV/kEslxWSUfR9lTEVyjBm3ZNKuIhN6qflCC/KAf7DyiK0w8xG5lN11pEsQdWou
+         fjhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119636; x=1732724436;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ImSW+JuDhb3RgJw1o2hGS9mRoFnCl9ZYkL7+gfakSyM=;
-        b=lAXfRbZhdtyn1q9yj7UxlxmOdKO7uv0P8rPAGTa6lRPkqXpADmAOA86qoPLXrOdopL
-         eXRppi027TirornubM/Ud7DVyglV6ZxVguz5ea0uGo4NFgGUwcnJs0NZF2c8MO8wNgrY
-         F2LcKj6NCqjsdB4xw97litutR/mugGC2J3tFaDegUcqpazW2FvEso0glqeuCCKjgcswW
-         PEL1DF/1naC8YKOOWLhv72UxZMwwrtSsdFyzBeNP0X4R/C62x9bL+sdaHNswkH8of48b
-         eTEKGxcGNh/ZRTQ5O/npl8Id7jOPAuXItDJGGDpdCjm4w0ZjQmH137gS5j4FnegGWM2I
-         9VlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMzUxwJhHAyRXHKPeVvukS1qIJIOmQE9YSLQIR0R94A1xzES9FSE7X0tUtbOvCVONGK+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz90156GAW9waZDBceAZap1i36QR8LX1LRiFBsmPUQWzZa08p9N
-	ohDDrXe42pKCPcD+GZSTdEy683NOmzt/kcLjwLpAswuWz95aaBS43Tl+M/M5ugyPP/DRSflgnPM
-	z/4DDBI7ahaIIi+Wjj0MiXyKjb/gKXQ==
-X-Google-Smtp-Source: AGHT+IHNRQW/uxvLO+ngyUCL/BIFpVe/+hHdEEcutNrMQSMyWScoaAXP0lL3BqY9nHe93PE2jdPKH7UlnQJM0kusp+A=
-X-Received: by 2002:a2e:a541:0:b0:2fb:5688:55c0 with SMTP id
- 38308e7fff4ca-2ff8dcdcb27mr21196231fa.38.1732119635474; Wed, 20 Nov 2024
- 08:20:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732119620; x=1732724420;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8VbDXySIpVH71kNIIiHD5xXarApVi2DKm9eek/oULpY=;
+        b=q3Z/lWt/ao25pykEoI7bGU70oA2ad1HcNN+7bEuod8QgD/wkXHt8JOb4y5vt2co7KR
+         tiW5asRbpQV06qetiHkEExNluRFh5LY2v3+YgOiI8EZ0rEFEh9PelaQlqh6qS8WxJglt
+         o+aL7Uj8vgqQtq55ldFpvsCiBDlRdqjqNB0ig+NQK4tXuMuj/zvEYOk/uUEW4NEVg6DK
+         2KXa5AxbASUkCuBEP0s7W7XQ7c5lUOPIOdSrTPPfzb0dcQNiJxy/94UZjJZK0iBDMdcw
+         vYsnOX+t9lh40s5zYsaQpU1eZXmiZNmcnda7sBEVwqSsE39/jTxI/ZXIDcv46JnSVQ5s
+         YNYg==
+X-Forwarded-Encrypted: i=1; AJvYcCU294rcwVS2TIpkAULxQvkVgyZdpi6lANdIDqswW6ycPw3PuEN1WE7BjUZRy1scAyHvLvF9qnT5GavFMck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+4jccK/jfzkE4cv2vTdj8Kahuc+GoCMZCoTlfbX5zU0q51hj6
+	wMzABUdlZXugZCSBurW4LozsXSdK2+qBA3hpcuIOfYxwm7ef78absbWgBSh3dR0=
+X-Google-Smtp-Source: AGHT+IHrpX4baJR0AnkhRg24fQu6/3DnHGns5UJl0EWQkfsbVCm2wg4Owt4oTV9GbOK5eIA4XDS66Q==
+X-Received: by 2002:a05:600c:19d0:b0:431:405a:f93b with SMTP id 5b1f17b1804b1-432f57e17fdmr62681445e9.10.1732119620484;
+        Wed, 20 Nov 2024 08:20:20 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:927b:2848:1f7d:3776? ([2a01:e0a:982:cbb0:927b:2848:1f7d:3776])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm46606955e9.0.2024.11.20.08.20.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 08:20:20 -0800 (PST)
+Message-ID: <d7071991-db0a-49cc-a345-71457d68617c@linaro.org>
+Date: Wed, 20 Nov 2024 17:20:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHP4M8VxL3GJx0Ofhk4_AToD-J0X+_20QmfZpq06DuN4CKc15w@mail.gmail.com>
-In-Reply-To: <CAHP4M8VxL3GJx0Ofhk4_AToD-J0X+_20QmfZpq06DuN4CKc15w@mail.gmail.com>
-From: Ajay Garg <ajaygargnsit@gmail.com>
-Date: Wed, 20 Nov 2024 21:50:18 +0530
-Message-ID: <CAHP4M8WMELcT8G1p7o5khEn5B9X+0UBkEMiScu9eD89qdpUbrw@mail.gmail.com>
-Subject: Re: Queries regarding consolidated picture of virtualization and SPT/EPT/IOMMU/DMAR/PT
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, iommu@lists.linux-foundation.org, 
-	kvm@vger.kernel.org, Linux Memory Management List <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 0/6] firmware: qcom: scm: Fixes for concurrency
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha
+ <quic_mojha@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Kuldeep Singh <quic_kuldsing@quicinc.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
+ Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
+ <vr64bidkdzoebqmkq3f5jnpqf2hqcf2nvqc27vhu53ave3bced@3ffd2wqtxrvd>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <vr64bidkdzoebqmkq3f5jnpqf2hqcf2nvqc27vhu53ave3bced@3ffd2wqtxrvd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi everyone.
+On 20/11/2024 12:13, Dmitry Baryshkov wrote:
+> On Tue, Nov 19, 2024 at 07:33:16PM +0100, Krzysztof Kozlowski wrote:
+>> SCM driver looks messy in terms of handling concurrency of probe.  The
+>> driver exports interface which is guarded by global '__scm' variable
+>> but:
+>> 1. Lacks proper read barrier (commit adding write barriers mixed up
+>>     READ_ONCE with a read barrier).
+>> 2. Lacks barriers or checks for '__scm' in multiple places.
+>> 3. Lacks probe error cleanup.
+>>
+>> I fixed here few visible things, but this was not tested extensively.  I
+>> tried only SM8450.
+>>
+>> ARM32 and SC8280xp/X1E platforms would be useful for testing as well.
+> 
+> ARM32 devices are present in the lab.
 
-Will be grateful for some insight if I am on the right path :)
+I passed the patchset on our devices, and no regressions observed:
 
-On Mon, Nov 18, 2024 at 11:30=E2=80=AFPM Ajay Garg <ajaygargnsit@gmail.com>=
- wrote:
->
-> Hi everyone.
->
-> I understand in a para-virtualization environment, VMM maintains a
-> shadow-page-table (SPT) per process per guest, for GVA =3D> HPA
-> translation. The hardware/MMU is passed a single pointer to this
-> shadow-page-table. The guest is aware that it is running in a
-> virtualization environment, and communicates with VMM to help maintain
-> the shadow-page-table.
->
-> In full-virtualization/HVM virtualization, the guest is unaware that
-> it is running in a virtualized environment, and all GVA =3D> GPA are
-> private. The VMM is obviously aware of all HVA =3D> HPA mappings; plus
-> GPA =3D> HVA is trivial as it's only an offset difference (Extended Page
-> Table, EPT). The hardware/MMU is passed three things :
->
->         * Pointer to guest page-table, for GVA =3D> GPA.
->         * Offset, for GPA =3D> HVA.
->         * Pointer to host page-table, for HVA =3D> HPA.
->
-> In both the above cases, DMA is a challenge (without IOMMU), as
-> device-addresses would need to be physically-contiguous. This would in
-> turn mean that all of  GPA needs to be physically-contiguous, which in
-> turn means that the host would need to spawn guest-process with all of
-> memory (HVA) which is physically-contiguous - very hard to meet
-> generally.
->
-> *_Kindly correct me if I have made a mistake so far at conceptual level._=
-*
->
->
-> Now, enters IOMMU, providing the ability to DMA with non-contiguous
-> device-addresses.
-> Now, my queries are simple :
->
-> *
-> Is IOMMU DMA-Remapping mode (DMAR) analogous to a para-virtualization
-> environment (as per previous brief context)?
->
-> *
-> Is IOMMU Pass-through (PT) mode analogous to a HVM environment (as per
-> previous brief context)?
->
->
-> Many thanks in advance for your time; hopefully I have not been a
-> complete idiot ..
->
->
-> Thanks and Regards,
-> Ajay
+arm32: https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/116195
+arm64(including x1e): https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/116201
+
+Neil
+
+> 
+>>
+>> All the issues here are non-urgent, IOW, they were here for some time
+>> (v6.10-rc1 and earlier).
+>>
+>> Best regards,
+>> Krzysztof
+>>
+>> ---
+>> Krzysztof Kozlowski (6):
+>>        firmware: qcom: scm: Fix missing read barrier in qcom_scm_is_available()
+>>        firmware: qcom: scm: Fix missing read barrier in qcom_scm_get_tzmem_pool()
+>>        firmware: qcom: scm: Handle various probe ordering for qcom_scm_assign_mem()
+>>        [RFC/RFT] firmware: qcom: scm: Cleanup global '__scm' on probe failures
+>>        firmware: qcom: scm: smc: Handle missing SCM device
+>>        firmware: qcom: scm: smc: Narrow 'mempool' variable scope
+>>
+>>   drivers/firmware/qcom/qcom_scm-smc.c |  6 +++-
+>>   drivers/firmware/qcom/qcom_scm.c     | 55 +++++++++++++++++++++++++-----------
+>>   2 files changed, 44 insertions(+), 17 deletions(-)
+>> ---
+>> base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+>> change-id: 20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-a25d59074882
+>>
+>> Best regards,
+>> -- 
+>> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+> 
+
 
