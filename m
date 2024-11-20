@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-416396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF779D443B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:03:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189D99D443C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4DB91F22C0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:03:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F1E6B24273
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649B91D279D;
-	Wed, 20 Nov 2024 22:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF461D31B5;
+	Wed, 20 Nov 2024 22:58:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="R+AwGkFo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gdra1tYf"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H4yNQuaQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QAGB7CUh"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF591CEAA7;
-	Wed, 20 Nov 2024 22:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF3E1CEAA7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143465; cv=none; b=WdF3Ar/jmz3GvM2duBfT9isTFvMvttvgPpXP+Wk4/CmyAab+9A1Jt834tNG06y9rvuGlN8kPlWmBx7eP4z1qP7vCf5ItIiEPs+68EbRbbQCEBooA8JmVwS5OECHUeH8ms9SdVylGeDhZtgiGy8vYLYCHFLv2hiMySAW8G+qAbSI=
+	t=1732143496; cv=none; b=q8COKcssTnlDDVfPoMlsQwflD6jzljKV4mqcM17U8FVe4XfQcdbgIf4/5qaXSq3Qx3yaocIYxYGRVEdzlFVQMP6bEigW0iaXP1EZgdYLLn/mH8MtlAEGB1soRXfJDf1l2uHkDeiQ8NmdTioXaKBMnXNEYqog0XJIBTUyqJsN8pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143465; c=relaxed/simple;
-	bh=Q+DckTrsrIkx5XUoBH2p9S4ZqT7N25G8hfDXBdqSAac=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=e/OiLIV0BIOfnt1eJ4h02sVZ+odtnFMannEquCdjcNU5Ll8VoSX7NvSzyYmZT1SjvAb5oMRrUoeoeOpwL9qZbc+OlN1FPM42BGWlj+AyaEalq7wGGePV/WHJ0KjaX55fO2DYcRm8ow015Qt6CnTT/2hSeg9KYEGCDOOi7c89xoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=R+AwGkFo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gdra1tYf; arc=none smtp.client-ip=103.168.172.148
+	s=arc-20240116; t=1732143496; c=relaxed/simple;
+	bh=HYO3LF2gYzhM5iEeYRRuJeM3/0R8BXUrfJzTmFfthfo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=eaNadzvXLn3yDM/6qEjduNeyTNKE5+nMfB7YDr68vqMAlcETYy1tvX/ykUKbwwEvdeuoJlHt01iDd1YE47HuQIkh1rSDPA9alodctF61DNfVVFeVWJni+KAG6INSh/Lynnjw/unzR/9In7h1HsDhikYTfjMqlZg0WhLfEt7wrto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H4yNQuaQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QAGB7CUh; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8C55913806B2;
-	Wed, 20 Nov 2024 17:57:40 -0500 (EST)
+	by mailfhigh.phl.internal (Postfix) with ESMTP id B4B6A11400EA;
+	Wed, 20 Nov 2024 17:58:13 -0500 (EST)
 Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 20 Nov 2024 17:57:40 -0500
+  by phl-compute-10.internal (MEProxy); Wed, 20 Nov 2024 17:58:13 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1732143460; x=1732229860; bh=v3
-	3bTF1lUmn265ZZFGSSWMjsTMfGelk5vnAGLiroiys=; b=R+AwGkFoBF5HY+BMxz
-	HkQdnm5S9KRYOq8B1gkA4t3LwCNFeURJNcg8ngzJ2seJdpakQ7mu707GMPfrCD0Y
-	B+TJHkTTcLj/ZWsoCMBE6J0WvBRkoiFfe9d/yk1tn3oBwTMkWClYe1ZxOcP9PQyt
-	ELUv8n2GhbVmnmzu6clKWjPURVqDU2jUr8tIF+HyOJ4caBKqRTTCMyjQhRUMi10R
-	suXCY5gDkKwnUh9Yk/XLpc+V9wB3MJ0rQ9aqa/qKhtkFh5bWA6N82r3qnHgVutRg
-	Bfqch5/oIoEBHngfIiVobGiR4hEvIeQelfHoG7TfqxavHl/rFfCfBZLOPNQ1Zf/7
-	bNQg==
+	:subject:subject:to:to; s=fm3; t=1732143493; x=1732229893; bh=xe
+	OHpXlzAJD44WoT0DuFPbZEIKnuN7VOKl/I9OA3OcQ=; b=H4yNQuaQ2j2CuaTNNo
+	VgaIn0oq35XnNt3KdxrlCoMGJOdbtA5d5ZbguUtTIbAwrXiMs+lQZCpX2BoRNLyo
+	xv0M4BmXpbBjUiDswJN+gfMcm6jv0pQPObsBvPzZ9dQWenI1mDXgM8Oe3biyPRkE
+	N9QFW2yAG9LvTUV9KPNi2881sf1rwpS2IfEW/8mvkZlajVQoFfl9r7e4n2XFVh4/
+	aAS7w/9XmM4i404Vzvob3cSPk2Df8caeS6Djl9L9jLfwn+iO8uZZafoOK4fRtQeB
+	m6xQ16/SeVeYIi9ukkt3y96g3t/Z60ZCv09j6NGflskoUjEUOJb8NUx/zANSp/ez
+	mxmQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1732143460; x=1732229860; bh=v33bTF1lUmn265ZZFGSSWMjsTMfG
-	elk5vnAGLiroiys=; b=Gdra1tYfRPGN/ItSaZltR9NLK0WOgntjF3DLYRi4qWOk
-	vcB/+qNqLXfZgOdn6mu9ZZk9gbRFJiviU44EhNkeQhH79LgGEvI2jE7wj4tqHKJ1
-	+PLJP4OmxojPiFEwUvOVB+0qJVcHeg+dc6jtmxvPWJBOeaRkiRjcgkYbrPnXRWYb
-	ntmpQTc8/wl/u3Bc0aOcM1jC82LEAVfZ4wURleJ2ZtS22nZ+BOmenoYi5j/U/cs9
-	BKlagDUmZqBNnM67CRMDO/7Vhushl1Z7/agrQqE9VyC9SP3NXmRCtkqc6tEoy5Dl
-	uOrsCwQmcRyHqg28252DDS5o22rUqgWgjfPXLVCCsA==
-X-ME-Sender: <xms:ZGk-Z24R3AEft1iK0W6hcXaQkq7DFR65rWuhAoAFpIzK2NP0m5r97Q>
-    <xme:ZGk-Z_5buj-k0YXISoXSHkgrbPYlrqx--OajQzPgVfmN_c6h4l1A5IKkw9YBgQkNr
-    zAbbmVecn2hWWQEf4I>
+	fm1; t=1732143493; x=1732229893; bh=xeOHpXlzAJD44WoT0DuFPbZEIKnu
+	N7VOKl/I9OA3OcQ=; b=QAGB7CUhPbO502RxEZiQeaRBDysiqntvudgLdZaDxHo+
+	A9ZV2QnNwL5MoSz4zcgGLadqd1qh3vGViXrviT5KrN0zhbAlUw6v3no3gdwL3Tj6
+	n3bRvTqdx9ZcjnlIknTWUCevFkNxmPSRkVjOyFIDUHEGCn7KdHm+N3IsYf4WF3qs
+	sF/4+cz4lQNaZVDGKWr/NAtaRnBayHRr8rKwq5oVpXsY0IrxYLNDL+RDMx7GTZF4
+	EWp6BWBlpINek8hPB2wgSAGDN+Win2kYzNW+b6PjxkA1tFa4UIb7f/rz+tNkjaG+
+	6R6Q0dxLgQxHTlhjwPwm+nx4IB5jh1ZGC1KIUIpY/w==
+X-ME-Sender: <xms:hWk-Z1wGWmyq0jnK0nYtrYkvK4nnyDtG7YXbOAaHGd84XGwTlAYIug>
+    <xme:hWk-Z1R50fDZbCHL_uby1cMkbA3Gpql6lSYnlpmnYEvJUZsUnWux1h7zVWDU4ap0L
+    fZ71YaYA61VvS4H8Fw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgddtgecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
     hsucdlqddutddtmdenucfjughrpefoggffhffvvefkufgtgfesthhqredtredtjeenucfh
     rhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqe
-    enucggtffrrghtthgvrhhnpedvieeggefhhffhgfeuvddvledvffdtgfdvffdtvdfggeeg
-    hfektdefuedtvdeugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggs
-    rdguvgdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epnhhpihhtrhgvsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopehjvhgvthhtvghr
-    sehkrghlrhgrhidrvghupdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopehstghhnhgvlhhlvgeslhhinhhugidr
-    ihgsmhdrtghomhdprhgtphhtthhopehhtghhsehlshhtrdguvgdprhgtphhtthhopehlih
-    hnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehvih
-    hrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-ME-Proxy: <xmx:ZGk-Z1e3h5qhUoU4pBfktPLraGTa2IIr_48M00AGtTvWonEIY7Szhg>
-    <xmx:ZGk-ZzKmmHXNDbINAaXQYPkN-Y-waUuSf_I4O_FblHnBgE7McqH10g>
-    <xmx:ZGk-Z6JzqwUdHJ9cMynQy5-wntjezrRpOQNcEOqZjaFZF-wUOX_4Xg>
-    <xmx:ZGk-Z0xkIgp8NOju5b5ANDU-m_GJ4GumujY7vqG9NHoKZQO6AMJJRw>
-    <xmx:ZGk-Z7rhioQlKs_EVhccKvwnKxxRYGE9lTGQaqHWsVXd1KVKRSqZtOIg>
+    enucggtffrrghtthgvrhhnpeelveehkeffgfdtheekveehhfdtheefkefggeekheeuhffg
+    heejteevgfdtuddvkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouh
+    hnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghl
+    sehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhotgeslhhish
+    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:hWk-Z_V4AmXAYSjsWklDl99CZ-SU_kMp0lirRUX5ZrjcpoF56Dij9Q>
+    <xmx:hWk-Z3gKeXeeamCe_HawyrCuTVg_DvYNc--dd5njSkBh6Dzpwet8nA>
+    <xmx:hWk-Z3AJ1ZAXfWo74g_AGalaie9wqRSdBjmVDCULPahowE1w36wXXw>
+    <xmx:hWk-ZwJBVmUd-w7XbM6jzD_q_ZhYC-NM-jMpg3W1NUlm6AAM0Do62w>
+    <xmx:hWk-Z-MEcSte231BCKXp6Y6hn5nTJIc6NVOY4T1vjfSRxezlmT4an02M>
 Feedback-ID: i56a14606:Fastmail
 Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E933C2220071; Wed, 20 Nov 2024 17:57:39 -0500 (EST)
+	id 77E822220071; Wed, 20 Nov 2024 17:58:13 -0500 (EST)
 X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,170 +89,89 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 20 Nov 2024 23:57:18 +0100
+Date: Wed, 20 Nov 2024 23:57:49 +0100
 From: "Arnd Bergmann" <arnd@arndb.de>
 To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Julian Vetter" <jvetter@kalray.eu>, "Nicolas Pitre" <npitre@baylibre.com>,
- "Christoph Hellwig" <hch@lst.de>
-Message-Id: <c09168a6-23e7-40fd-afc2-4c3ac6deaff6@app.fastmail.com>
-Subject: [GIT PULL] asm-generic updates for 6.13
+Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
+Subject: [GIT PULL 0/4] soc updates for 6.13
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66=
-d7b:
+The SoC tree this time has a moderate 840 patches from 203
+contributors. There is not much remarkable in there, overall
+we have a lot of new SoCs and board files in the devicetree
+updates, but not as many changes to the Snapdragon platform
+as we've had most of last year.
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+The most active contributors by number of patches this
+time were:
 
-are available in the Git repository at:
+     32 Geert Uytterhoeven
+     29 Krzysztof Kozlowski
+     26 Marek Vasut
+     26 Konrad Dybcio
+     23 Frank Li
+     22 Dmitry Baryshkov
+     21 Fei Shao
+     18 Wolfram Sang
+     18 Fabio Estevam
+     17 Manorit Chawdhry
+     14 Andreas Kemnade
+     12 Nick Chan
+     12 Neil Armstrong
+     12 Jo=EF=BF=BD=EF=BF=BDo Paulo Gon=EF=BF=BD=EF=BF=BDalves
+     12 Ivaylo Ivanov
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git t=
-ags/asm-generic-3.13
+and the overall dirstat shows nxp, qualcomm, rockchip
+and ti as the largest changes, with only NXP i.MX6
+still seeing a lot of work on 32-bit boards.
 
-for you to fetch changes up to 0af8e32343f8d0db31f593464fc140eaef25a281:
-
-  empty include/asm-generic/vga.h (2024-11-11 21:51:42 +0100)
-
-----------------------------------------------------------------
-asm-generic updates for 6.13
-
-These are a number of unrelated cleanups, generally simplifying the
-architecture specific header files:
-
- - A series from Al Viro simplifies asm/vga.h, after it turns out that
-   most of it can be generalized.
-
- - A series from Julian Vetter adds a common version of
-   memcpy_{to,from}io() and memset_io() and changes most architectures
-   to use that instead of their own implementation
-
- - A series from Niklas Schnelle concludes his work to make PC
-   style inb()/outb() optional
-
- - Nicolas Pitre contributes improvements for the generic do_div()
-   helper
-
- - Christoph Hellwig adds a generic version of page_to_phys()
-   and phys_to_page(), replacing the slightly different architecture
-   specific definitions.
-
- - Uwe Kleine-Koenig has a minor cleanup for ioctl definitions
-
-----------------------------------------------------------------
-Al Viro (4):
-      vt_buffer.h: get rid of dead code in default scr_...() instances
-      asm/vga.h: don't bother with scr_mem{cpy,move}v() unless we need to
-      sparc: get rid of asm/vga.h
-      empty include/asm-generic/vga.h
-
-Arnd Bergmann (3):
-      hexagon: simplify asm/io.h for !HAS_IOPORT
-      lib/iomem_copy: fix kerneldoc format style
-      tty: serial: export serial_8250_warn_need_ioport
-
-Christoph Hellwig (2):
-      asm-generic: provide generic page_to_phys and phys_to_page impleme=
-ntations
-      asm-generic: add an optional pfn_valid check to page_to_phys
-
-Julian Vetter (4):
-      New implementation for IO memcpy and IO memset
-      arm64: Use new fallback IO memcpy/memset
-      csky: Use new fallback IO memcpy/memset
-      loongarch: Use new fallback IO memcpy/memset
-
-Nicolas Pitre (4):
-      lib/math/test_div64: add some edge cases relevant to __div64_const=
-32()
-      asm-generic/div64: optimize/simplify __div64_const32()
-      ARM: div64: improve __arch_xprod_64()
-      __arch_xprod64(): make __always_inline when optimizing for perform=
-ance
-
-Niklas Schnelle (6):
-      hexagon: Don't select GENERIC_IOMAP without HAS_IOPORT support
-      Bluetooth: add HAS_IOPORT dependencies
-      drm: handle HAS_IOPORT dependencies
-      tty: serial: handle HAS_IOPORT dependencies
-      asm-generic/io.h: Remove I/O port accessors for HAS_IOPORT=3Dn
-      watchdog: Add HAS_IOPORT dependency for SBC8360 and SBC7240
-
-Uwe Kleine-K=C3=B6nig (1):
-      UAPI/ioctl: Improve parameter name of ioctl request definition hel=
-pers
-
- arch/alpha/include/asm/io.h           |   1 -
- arch/arc/include/asm/io.h             |   3 -
- arch/arm/include/asm/div64.h          |  13 +-
- arch/arm/include/asm/memory.h         |   6 -
- arch/arm64/include/asm/io.h           |  11 --
- arch/arm64/include/asm/memory.h       |   6 -
- arch/arm64/kernel/io.c                |  87 -------------
- arch/csky/include/asm/io.h            |  11 --
- arch/csky/include/asm/page.h          |   3 -
- arch/csky/kernel/Makefile             |   2 +-
- arch/csky/kernel/io.c                 |  91 --------------
- arch/hexagon/Kconfig                  |   5 +-
- arch/hexagon/include/asm/io.h         | 223 ++-------------------------=
--------
- arch/hexagon/include/asm/page.h       |   6 -
- arch/hexagon/lib/Makefile             |   2 +-
- arch/hexagon/lib/io.c                 |  82 -------------
- arch/loongarch/include/asm/io.h       |  10 --
- arch/loongarch/include/asm/page.h     |   3 -
- arch/loongarch/kernel/Makefile        |   2 +-
- arch/loongarch/kernel/io.c            |  94 --------------
- arch/m68k/include/asm/virtconvert.h   |   3 -
- arch/microblaze/include/asm/page.h    |   1 -
- arch/mips/include/asm/io.h            |   5 -
- arch/mips/include/asm/vga.h           |   4 -
- arch/nios2/include/asm/io.h           |   3 -
- arch/openrisc/include/asm/page.h      |   2 -
- arch/parisc/include/asm/page.h        |   1 -
- arch/powerpc/include/asm/io.h         |  12 --
- arch/powerpc/include/asm/vga.h        |   5 -
- arch/riscv/include/asm/page.h         |   3 -
- arch/s390/include/asm/page.h          |   2 -
- arch/sh/include/asm/page.h            |   1 -
- arch/sh/include/asm/vga.h             |   7 --
- arch/sparc/include/asm/page.h         |   2 -
- arch/sparc/include/asm/vga.h          |  60 ---------
- arch/um/include/asm/pgtable.h         |   2 -
- arch/x86/include/asm/io.h             |   5 -
- arch/xtensa/include/asm/page.h        |   1 -
- drivers/bluetooth/Kconfig             |   6 +-
- drivers/gpu/drm/gma500/Kconfig        |   2 +-
- drivers/gpu/drm/qxl/Kconfig           |   2 +-
- drivers/gpu/drm/tiny/bochs.c          |  19 ++-
- drivers/gpu/drm/tiny/cirrus.c         |   2 +
- drivers/gpu/drm/xe/Kconfig            |   2 +-
- drivers/tty/Kconfig                   |   4 +-
- drivers/tty/serial/8250/8250_early.c  |   4 +
- drivers/tty/serial/8250/8250_pci.c    |  40 ++++++
- drivers/tty/serial/8250/8250_pcilib.c |  13 +-
- drivers/tty/serial/8250/8250_pcilib.h |   2 +
- drivers/tty/serial/8250/8250_port.c   |  27 +++-
- drivers/tty/serial/8250/Kconfig       |   4 +-
- drivers/tty/serial/Kconfig            |   2 +-
- drivers/watchdog/Kconfig              |   4 +-
- include/asm-generic/div64.h           | 121 +++++++-----------
- include/asm-generic/io.h              |  82 ++++++++++---
- include/asm-generic/memory_model.h    |  13 ++
- include/asm-generic/vga.h             |  23 +---
- include/linux/serial_core.h           |   4 +
- include/linux/vt_buffer.h             |  24 ----
- include/uapi/asm-generic/ioctl.h      |  14 +--
- lib/Makefile                          |   2 +-
- lib/iomem_copy.c                      | 136 +++++++++++++++++++++
- lib/math/test_div64.c                 |  85 ++++++++++++-
- 63 files changed, 487 insertions(+), 930 deletions(-)
- delete mode 100644 arch/csky/kernel/io.c
- delete mode 100644 arch/hexagon/lib/io.c
- delete mode 100644 arch/loongarch/kernel/io.c
- delete mode 100644 arch/sh/include/asm/vga.h
- delete mode 100644 arch/sparc/include/asm/vga.h
- create mode 100644 lib/iomem_copy.c
+   0.4% Documentation/devicetree/bindings/arm/
+   0.5% Documentation/devicetree/bindings/clock/
+   0.1% Documentation/devicetree/bindings/soc/mediatek/
+   0.2% Documentation/devicetree/bindings/
+   0.2% arch/arm/boot/dts/allwinner/
+   0.1% arch/arm/boot/dts/amlogic/
+   1.9% arch/arm/boot/dts/microchip/
+  17.7% arch/arm/boot/dts/nxp/imx/
+   0.5% arch/arm/boot/dts/qcom/
+   0.4% arch/arm/boot/dts/renesas/
+   0.7% arch/arm/boot/dts/rockchip/
+   0.2% arch/arm/boot/dts/st/
+   0.3% arch/arm/boot/dts/ti/omap/
+   0.3% arch/arm/
+   0.2% arch/arm64/boot/dts/allwinner/
+   0.4% arch/arm64/boot/dts/amlogic/
+   3.0% arch/arm64/boot/dts/apple/
+   4.5% arch/arm64/boot/dts/exynos/
+   8.2% arch/arm64/boot/dts/freescale/
+   2.1% arch/arm64/boot/dts/mediatek/
+   1.0% arch/arm64/boot/dts/nvidia/
+  12.6% arch/arm64/boot/dts/qcom/
+   0.7% arch/arm64/boot/dts/renesas/
+  19.6% arch/arm64/boot/dts/rockchip/
+   0.1% arch/arm64/boot/dts/st/
+  11.4% arch/arm64/boot/dts/ti/
+   0.1% arch/arm64/boot/dts/xilinx/
+   0.2% arch/riscv/boot/dts/sophgo/
+   0.4% arch/riscv/boot/dts/thead/
+   0.1% arch/
+   0.1% drivers/firmware/arm_scmi/transports/
+   0.2% drivers/firmware/arm_scmi/
+   0.4% drivers/firmware/xilinx/
+   0.8% drivers/firmware/
+   0.4% drivers/misc/
+   0.4% drivers/reset/amlogic/
+   0.4% drivers/reset/
+   0.5% drivers/soc/hisilicon/
+   0.1% drivers/soc/imx/
+   0.8% drivers/soc/mediatek/
+   3.4% drivers/soc/qcom/
+   0.1% drivers/soc/
+   0.1% drivers/
+   1.1% include/dt-bindings/clock/
+   0.1% include/linux/soc/
+   0.6% include/linux/
 
