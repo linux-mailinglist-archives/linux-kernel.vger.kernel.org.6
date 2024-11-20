@@ -1,81 +1,92 @@
-Return-Path: <linux-kernel+bounces-416089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67929D4017
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:31:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D41359D401B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E771F23942
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:31:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944182810D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8B514C5B3;
-	Wed, 20 Nov 2024 16:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C727214EC55;
+	Wed, 20 Nov 2024 16:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4L+hwgq"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="lk1KV26W"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2063.outbound.protection.outlook.com [40.107.104.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7250F142E77
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120295; cv=none; b=NNZRXWhEEUWi8SXGVMtjaxsplLwtE+DSRtqwsEMguZvAIf0e2fN04SxvCTuls7DTYRmHlXQoQqk8YJ6rj1fP/oyoUlccV1Ttj52KGQHfGVwD59pwKQ3CLTTF0m23zhduYxnGcwDVPn5QiBZa2szOV57pliB4XMXRvCnMKu0/SDE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120295; c=relaxed/simple;
-	bh=Q+l6Cv7jwTPILSch36jOEoXOnjXz8m2RT4lRwXML0VU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y6oRN0Y6r/y/hjVLqMHPhxcloz4Gfkai20hHQf9oRilrgwqECfzHCwFakySZXxRVxH7Kn/Kotyc8q2UAvGA/U9QFNblp0MhGvqk3lr+sxek7V+3044Pxt4wi5k9lYAQ2rgaSW6VbzpjbynHeuS5jphIDKVhjKS1XBfMndnP1U+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4L+hwgq; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cdda5cfb6so52752125ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732120294; x=1732725094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jo3cYItHRsu8SdofGbFrSUdngYAz2EuSxidQOSiNuyA=;
-        b=d4L+hwgqUuKQwCVDRmAmt9iXR7pGfJFCy3XbiSIPYdB8pvIqZtcQITfVZa4/4O1ONB
-         oEKhfijTExX0c7PYnSlS2/P1/NBahrSZj5sogvLjH4uJ4j4tSuj9SQl9JKkHWIjgtRsW
-         ezm8gUa/pgW0jHhmgP22hkBoXH4Y51KNzYBN66Of0PM/6NEZL/NooAS2qwoUzGlamR4H
-         V/rII0KeqVmKImpQr2lAHoip5it+/6T8jbsfaCJ/G0f5y1vaCkFhwkdcNstTN1DewxKq
-         QkPh385tB55I4H0LzZwpBNJ8wUEgpaPaJdQD6jHdQHEEJuGmRxpG0Xvc54y1DH38s+2k
-         l7dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732120294; x=1732725094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Jo3cYItHRsu8SdofGbFrSUdngYAz2EuSxidQOSiNuyA=;
-        b=vrVkZ1LjZbs9HuvVNk+Jipm3+mpKWpZxVTam6jqW7eG2BhXfrNEimtF5vEbLfHVdRR
-         pNT7LtfkwkPHfxHbI5dqwK33kJd0HllY8D4hrsdgVwaeJ37Pir9gDZ2paM+aqCHzmTWr
-         fTKXASGdO/zkbnkjw74SJCbhnEx3sXAV89VFjXlTTgA1RjbX6SrKgZbhLHj9liniSU1M
-         jcSyan3Ri5qcV/9fP0ocd910IaiR2VGOfHkaXC0E2x66Kre8BxJgZzqaXLeIf1E3ZXwM
-         RbWyiZRHUxsmM6nQCDa+/lr/cgzTEPHu86fgWqS9ghcrKm9BcdIS7bDpYVmfS101Xccz
-         f9gw==
-X-Forwarded-Encrypted: i=1; AJvYcCV83cWtKzkKgdAZ5ZG0TXNdBQfQivbsp/Zfnri5V0iiPkpkUKbL6QzOwyhBplXYmbkQ8qtURGfvK1QpZig=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5XC6EtyGlnKUFvsfcQdtNRbNlzJdXwo0nmQanOncrFWrW6E4S
-	7dYdfElTs9StbTqwUWzFn+WOg0Ff4vtzvPwgbghwUfsrkyMKwOOS
-X-Google-Smtp-Source: AGHT+IHoaH1jZOYbVRBJ8Bp/rydZCssTUtdZRnzH956JRbFONzHlsvJLGEPfKfhJxV1jLgk+qIseKg==
-X-Received: by 2002:a17:902:e542:b0:212:10de:4aba with SMTP id d9443c01a7336-2126aea8a38mr33178005ad.28.1732120293452;
-        Wed, 20 Nov 2024 08:31:33 -0800 (PST)
-Received: from localhost.localdomain (123-193-217-197.dynamic.kbronet.com.tw. [123.193.217.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724bef8da43sm1820403b3a.97.2024.11.20.08.31.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 08:31:33 -0800 (PST)
-From: Yiwei Lin <s921975628@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com
-Cc: Yiwei Lin <s921975628@gmail.com>
-Subject: [PATCH] sched/uapi: Reflect the use of sched_runtime in fair scheduler
-Date: Thu, 21 Nov 2024 00:31:29 +0800
-Message-Id: <20241120163129.13577-1-s921975628@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED90A749C;
+	Wed, 20 Nov 2024 16:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732120378; cv=fail; b=ZVDoZ2hEp4OCM1fopkVphNis1DbMrzce1leeUo3u2JEDa2zdL4VVJ190vRqCje3ZusBfsl/hnIgys/Ha13M0Q+WtR/YYigckoOxWLMN9rkcGV38JqdouLVzDxxRo/3Hx494CCF5FKbwWE1g6cMi5fj/yVjZSR7n8wn+U8g7YtcU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732120378; c=relaxed/simple;
+	bh=H6LpUDBygfkMS9zp2BVnXSmciA9LasDLca5c8ig273w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XnAkCSTzhVCcdduYJxdg5v2elD8DkRVHNRLCMAcIcxBgphvE0ZMMt8nts1O1cCV01m6uewNdeaTZDdv0R0m6m3kEA4sCtGsqusOTaAPCKtLCz2fj6Zd/IgBGUk+7rziKZiWW0+56uyQrT3qyG/QdE1xxk8HEByvgrwpxB8WrQd0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=lk1KV26W; arc=fail smtp.client-ip=40.107.104.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=G/+MRlZdjPB9cFEolVhq6Bv810MQTvjSfpTbSX+kUt5sbEMtullL4fT7HOaNmN7XOcyMUC2pvV/kOHurRVxcWtPT7tQNsYaMJZiYM1fvvFyMBQEZfRfHCbY1rU3udfkabuWB1vUFqlkK016MO0Hc7QhVSyd9UMTPtZpfkQ1tQYNI3AiTVoH65B9XqEj7SdtdNg0tUCPpvdO2YTRBHcEJvkFg9/ObTC+ypqt8qOeZjPTDal7i9hag7dUX9VLVxVu3gyp/SZWu6JaSECIdKDIHzOUOsjnbQhr7sH60uHueP/5+Kud4pq6uFdCIfam8wsPm99lF/p5HLjRLJsNDTBYm2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g/LUxddudgeISzy0/DOMEmKHjyTo7AnPg0qCENE8VkI=;
+ b=geOooHJFSNbl4WACHlSzYYy7HnshhA5nMxe2o1rBCwgpF9FuOrccQQdoIIH/G7UXzyVzDpjM4Pyqm02AxvcCNms4XNOUkPUejrXHo/xdgecF5HA0MOndpSw023P5UYrNmnLU0cHOJzzjQJP29DhUbMtbcuDmKL8EBRTdWSRFjrwldXz2PMEsYnK7wFSLmziitLiSobDcq7YVjaQk2vPIAZO3ELNaE9nAHgTTKE88SSfhaz20S+lIrEWrS1iPU5203FxIlHMGXaMVv9/+1Ng0BL74t3M4/y/PrSH10uB9fpzz+OragjY8esFhfr+ptg/8/Bc1oiVPEqdgBpx6I5no6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=kernel.org smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g/LUxddudgeISzy0/DOMEmKHjyTo7AnPg0qCENE8VkI=;
+ b=lk1KV26WPvLqlA/rIKHOIHTnSZ2s2MHcYzwsFBSPAbHJnZi0XXJMugtfAQaqLJRp5QU4WbxwJ5nYI3a/oFKaGH0YishrUd++B6PUvYKs9oJh1ZeMIPfjxNU8H31NmzcqG8np1qq3aQB/jYUlITwC3eQS+8eLsyF/eXFxYuEB1mw=
+Received: from AM0PR05CA0075.eurprd05.prod.outlook.com (2603:10a6:208:136::15)
+ by DB4PR02MB8631.eurprd02.prod.outlook.com (2603:10a6:10:384::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
+ 2024 16:32:52 +0000
+Received: from AMS1EPF00000048.eurprd04.prod.outlook.com
+ (2603:10a6:208:136:cafe::73) by AM0PR05CA0075.outlook.office365.com
+ (2603:10a6:208:136::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.25 via Frontend
+ Transport; Wed, 20 Nov 2024 16:32:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AMS1EPF00000048.mail.protection.outlook.com (10.167.16.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8182.16 via Frontend Transport; Wed, 20 Nov 2024 16:32:52 +0000
+Received: from se-mail02w.axis.com (10.20.40.8) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 20 Nov
+ 2024 17:32:51 +0100
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 20 Nov 2024 17:32:51 +0100
+Received: from pc48051-2208.se.axis.com (pc48051-2208.se.axis.com [10.96.59.31])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id 5A5A53BB;
+	Wed, 20 Nov 2024 17:32:51 +0100 (CET)
+Received: by pc48051-2208.se.axis.com (Postfix, from userid 21236)
+	id 5655018E1ECB; Wed, 20 Nov 2024 17:32:51 +0100 (CET)
+From: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <rickard.andersson@axis.com>,
+	<kernel@axis.com>, Per-Daniel Olsson <perdaniel.olsson@axis.com>
+Subject: [PATCH v6 0/2] Support for Texas Instruments OPT4060 RGBW Color sensor.
+Date: Wed, 20 Nov 2024 17:32:45 +0100
+Message-ID: <20241120163247.2791600-1-perdaniel.olsson@axis.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,55 +94,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF00000048:EE_|DB4PR02MB8631:EE_
+X-MS-Office365-Filtering-Correlation-Id: a63e5519-e4aa-4629-53e6-08dd0980fab5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/5J//mvhdwnqe1Q26oEe3NnGjqxW9uWw/MhU3lfKEFhcZJH1AMNVwDmcy1q8?=
+ =?us-ascii?Q?TE2H9S/rZrQ/KPYHIY8Z8cx18pNWf9zKYn3PGQ4EViRRFxV9+CX5cnlJOIyC?=
+ =?us-ascii?Q?u+V40FKbscF82BTZJ2TZ0LsigNBFh9Mm6GHg+2vizsVXlQi8A5c9bpTwLEiX?=
+ =?us-ascii?Q?OUXwmRm+m6cpJXuHCxtdeA8+9Ce99gzIqn3O+ki7h/sfox9WTRhUxgzFI0Wd?=
+ =?us-ascii?Q?XQshoU1QY7fBy2ygiqD7F0hgA0N4H67VINMtU3CeyWBT8hEKlClY77TAvcEh?=
+ =?us-ascii?Q?U26Ug2P+QA5o5cOmppZqtexNl0wcHtnCqt5cqtMFH2msZ4sTtgpROQotYC2F?=
+ =?us-ascii?Q?bRic7YvidfIPwmPlfELf1S0wc+pRIplguFnE6cZRjfkFbX2swdCo4/du78Q0?=
+ =?us-ascii?Q?jKePswhQutFyNkaPQUU6jI3iRtI8Iy/AKmhI1wtuJiXHdDEEcL7K9LL+9sFB?=
+ =?us-ascii?Q?fwIV9EAle0xSnqHiBfOGVxB0DsthuBZrxottXUSpvQTj5YPKkfYTLVGMj9+9?=
+ =?us-ascii?Q?fODow9vIrDYtcGikiM6A0XsTIWOKMSbGP1UvE2aQRDSsXl+rYm8TXqNQqDg/?=
+ =?us-ascii?Q?w09gJuHs661lWXmHweTjS9cM6+5SxW29i83UDvwcC/GoBfGcbbngtDFijSqi?=
+ =?us-ascii?Q?fANd0aojaLr2wNRfWm6p7BxN9i5wPs3Z8mg70CrpbUG7OtDE3lZ0NCobjp0K?=
+ =?us-ascii?Q?OhXr9m+mxwC1U3vwdNPGGiiuG2YzjvaGTULo0gnkvlPatC+vJ9wdaIvCVO1g?=
+ =?us-ascii?Q?BZmAiWFmjv/2PgKuUsamsVoC8cwCrhOk7h/ZbrDswXhornUW+xSKmIduj4aM?=
+ =?us-ascii?Q?f76ObkknK2tFN/qSXFEZoxziJ3ZjB7QN+dKTdlO5EeCNfTiPxu486cbFpZ09?=
+ =?us-ascii?Q?NvzjNlrEk0shoo6gM4zPQ0YvQDuvKl8Rf7O7HDpm6BhuE2+PDUxZ+LwHSorg?=
+ =?us-ascii?Q?2pH1q8wU4QtK2G6X49Q0bFrEuJuXAOngeFDrTahOa2k2aRp1ErqCRFk6vCLa?=
+ =?us-ascii?Q?sHLEEUW2/mi8qeDrvu/nemMC/EA1HM1Cb8AqvherVMvQwvkLYnNv44my8RvQ?=
+ =?us-ascii?Q?9g3K983Rx0HmOYfZwbymgJdaTTAs8rsi7jjY2+21Frxrnrc8ySV3NHR1KPVB?=
+ =?us-ascii?Q?HmmTr0Y7IEfcz9oEIgRNe572//XemRq+RrqjdC5R7vEajboMfpv8oKIm1Imx?=
+ =?us-ascii?Q?lZMxpwKdvRLk0e6kjzvgNfigXzLTtUeYMsVR9ycyIdSvf9CK86MXkFfRv/S0?=
+ =?us-ascii?Q?WsMs1Mf87fyXaGFF0zUw9tVKQ67PhifiBOQ4dwy9o94CLssq6cFIWL6a075V?=
+ =?us-ascii?Q?z3if94TbFZq++C3wlc0QqhyrQSaWI2jfIX6i/+sJ+nkrNyXvcZmWzamftaTB?=
+ =?us-ascii?Q?6TL1hco=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 16:32:52.2661
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a63e5519-e4aa-4629-53e6-08dd0980fab5
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF00000048.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR02MB8631
 
-After the commit 857b158d, sched_attr::sched_runtime is used
-to directly set a suggested request/slice length. Update the
-comment and descriptions in sched/uapi to synchronize with this
-change.
+This patch series adds support for Texas Instruments OPT4060 RGBW Color sensor
+using the i2c interface.
 
-Signed-off-by: Yiwei Lin <s921975628@gmail.com>
----
- include/uapi/linux/sched/types.h | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+The driver exposes raw adc values for red, green, blue and clear. The
+illuminance is exposed as a calculated value in lux, the calculation uses the
+wide spectrum green channel as base. The relative normalized color components
+for red, green and blue are exposed as scaled values. Those values give the
+relative colors independently of the light intensity. Integration time can be
+configured through sysfs as well. The OPT4060 sensor supports both rising and
+falling threshold interrupts. These interrupts are exposed as IIO events. The
+driver also implements an IIO triggered buffer with a trigger for conversion
+ready interrupts.
 
-diff --git a/include/uapi/linux/sched/types.h b/include/uapi/linux/sched/types.h
-index bf6e9ae03..b52850b24 100644
---- a/include/uapi/linux/sched/types.h
-+++ b/include/uapi/linux/sched/types.h
-@@ -66,9 +66,15 @@
-  * and policies, that can be used to ensure all the tasks will make their
-  * timing constraints.
-  *
-- * As of now, the SCHED_DEADLINE policy (sched_dl scheduling class) is the
-- * only user of this new interface. More information about the algorithm
-- * available in the scheduling class file or in Documentation/.
-+ * The SCHED_DEADLINE policy (sched_dl scheduling class) is the main
-+ * user of this new interface. For SCHED_NORMAL and SCHED_BATCH tasks
-+ * scheduled by the fair(EEVDF) scheduler, although not exactly the same
-+ * as the sporadic time-constrained task we mentioned, some concepts are
-+ * similar to the model. The period and deadline for SCHED_NORMAL/SCHED_BATCH
-+ * task are decided by the scheduler algorithm. However, the user can still
-+ * suggest the request/slice length using sched_runtime in this policy. More
-+ * information about these algorithms is available in the scheduling class
-+ * file or Documentation/.
-  *
-  * Task Utilization Attributes
-  * ===========================
-@@ -108,10 +114,12 @@ struct sched_attr {
- 	__u32 sched_priority;
- 
- 	/* SCHED_DEADLINE */
--	__u64 sched_runtime;
- 	__u64 sched_deadline;
- 	__u64 sched_period;
- 
-+	/* SCHED_NORMAL, SCHED_BATCH, SCHED_DEADLINE */
-+	__u64 sched_runtime;
-+
- 	/* Utilization hints */
- 	__u32 sched_util_min;
- 	__u32 sched_util_max;
--- 
-2.34.1
+Changes in v6:
+- Modified the driver to work with any trigger. Verified using iio-trig-sysfs.
+- Fixed return in opt4060_trigger_set_state(...).
+- Break added in opt4060_read_ev_period(...).
+- Struct and variable declaration chnages in opt4060_trigger_handler(...).
+- Events changed to modified and not unmodified.
+- Moved variable declaration from case statement in opt4060_read_event(...), and
+  opt4060_write_event(...), found by test robot.
+- Init_completion() moved to a place related to IRQ.
+- Documentation: Added opt4060.rst with description of calculations.
+- Ducumentation: Added missing _raw parameters in Documentation/ABI/testing/sysfs-bus-iio
+- Link to V5: https://lore.kernel.org/lkml/20241106120036.986755-1-perdaniel.olsson@axis.com/
+
+Changes in v5:
+- Cover letter: Description adapted to new channel and trigger setup.
+- Trigger for threshold removed.
+- Channel setup modified according to email discussion.
+- Switched to aligned_s64 from linux-next.
+- Endianness in buffer changed to IIO_CPU.
+- opt4060_read_raw_value(...) changed to avoid endian issue plus early return.
+- opt4060_read_chan_value(...) split of in several for new channel setup.
+- Improved return values in multiple places.
+- The preenable callback removed, functionality moved to set_state.
+- Irq setup removed from opt4060_irq_thread(...).
+- Flipped logic with early return in opt4060_trigger_one_shot(...).
+- devm_add_action_or_reset(...) moved to after opt4060_load_defaults(...).
+- Documentation: Added sysfs-bus-iio-light-opt4060 with channel descriptions.
+- Added hard coded name indio_dev->name.
+- Modified opt4060_volatile_reg(...) to make test robot happy.
+- Link to V4: https://lore.kernel.org/lkml/20241016213409.3823162-1-perdaniel.olsson@axis.com/
+
+Changes in v4:
+- Fix for a warning found by test robot in opt4060_write_event(...).
+- Correction of early return in opt4060_write_event(...) and opt4060_read_event(...),
+  missed from review of version 2.
+- Correction of timeout for sample conversion.
+- Correction of bug when changing integration time with buffer enabled.
+- Link to V3: https://lore.kernel.org/lkml/20241015143713.2017626-1-perdaniel.olsson@axis.com/
+
+Changes in v3:
+- Cover letter: Removed lux from description.
+- OPT_4060_DRV_NAME define removed.
+- Corrected alignment for struct opt4060_buffer.
+- Added description of the CRC calculation.
+- Cleaned variable declaration in several places.
+- Added a path for the non-irq case in opt4060_read_chan_value(...).
+- Added a description of processed values.
+- Use of regmap_clear_bits in opt4060_power_down(...).
+- Switched to IIO_INTENSITY instead of IIO_LIGHT.
+- Correction of channel index in IIO_UNMOD_EVENT_CODE, found by test robot.
+- Added iio_chan_spec for the non-irq case without events.
+- Fixed braces in a few if-else statements.
+- Refactoring with early returns in a few places to reduce indentation.
+- Replaced for_each_set_bit with iio_for_each_active_channel.
+- Removed various too obvious comments.
+- Fixed various other code style problems.
+- Link to V2: https://lore.kernel.org/lkml/20241005165119.3549472-1-perdaniel.olsson@axis.com/
+
+Changes in v2:
+- dt-bindings: Removed incorrect allOf.
+- dt-bindings: Changed to generic node name.
+- Correction in opt4060_trigger_one_shot(...) for continuous mode.
+- Correction in opt4060_power_down(...), wrong register was read.
+- Corrected usage of active_scan_mask in opt4060_trigger_handler(...).
+- Clean-up of various comments.
+- Link to V1: https://lore.kernel.org/lkml/20241003164932.1162049-1-perdaniel.olsson@axis.com/
+
+Per-Daniel Olsson (2):
+  dt-bindings: iio: light: Document TI OPT4060 RGBW sensor
+  iio: light: Add support for TI OPT4060 color sensor
+
+ Documentation/ABI/testing/sysfs-bus-iio       |    4 +
+ .../bindings/iio/light/ti,opt4060.yaml        |   51 +
+ Documentation/iio/index.rst                   |    1 +
+ Documentation/iio/opt4060.rst                 |   52 +
+ drivers/iio/light/Kconfig                     |   13 +
+ drivers/iio/light/Makefile                    |    1 +
+ drivers/iio/light/opt4060.c                   | 1295 +++++++++++++++++
+ 7 files changed, 1417 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml
+ create mode 100644 Documentation/iio/opt4060.rst
+ create mode 100644 drivers/iio/light/opt4060.c
+
+--
+2.39.5
 
 
