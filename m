@@ -1,174 +1,688 @@
-Return-Path: <linux-kernel+bounces-415286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAE7E9D33ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:02:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBA79D33EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDF1282206
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2F22844A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD91017BB38;
-	Wed, 20 Nov 2024 07:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8689616DED2;
+	Wed, 20 Nov 2024 07:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSoPGQFw"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCC8Y/ya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F86F17B4F6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE7C158D94;
+	Wed, 20 Nov 2024 07:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732086083; cv=none; b=A6SRwM2uM0H+xTvfqWxb4Trn/vnEtO/k6yeIRlERNgWaAdf8ZcOyAm/GN3NjmK3G7QulJtfXu19Z4toknmWON+M7ddsgXiImaRxDTCHzds+MYDmHD4dmf1/bvgEW8ORdW/vAEVPPE9dBG3Idhn2er3ALO8kbVJy4P8NFn2VVM2o=
+	t=1732086076; cv=none; b=om2QLpckJboroFz/X0yIarfobcFHSknic4yK4HCWBoGgFMKAQWdPxDkBTdaSfO+guhbN7rO0ZFNdkcZtS4VgJjRlhY7kZrufkCIHA2dLEbQj22m4BPrxNxMmk69kgl4BCSDAdkvoehw52J6hH6rOzvPh2farWNOlf1s0wZVNjlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732086083; c=relaxed/simple;
-	bh=+8wlx+M47iI8fZbBgvDNoDloXyci5FRGHHEtcbUg8WM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDvirYiYwk7r+U6+mFZTzvS4Y2jBErb/H6W1Hom20yeB+dzSrpq7H81mjC+VrLds6M1/dO6MvdcQXcmkIPo2b583/B90t8sYyDGqhPSamJk9YBg2tMkTxLoPFZ72kGIUkLWpGv3HzUx8EU8KO7DyCsyu+MwR6GRVg69YOKjVfew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSoPGQFw; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e3686088c3so4781814a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 23:01:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732086081; x=1732690881; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/ViYzAc9WLK6jLOPltHnzdk750GZoNYIYgpGNbpi34M=;
-        b=PSoPGQFwH/NwDmYvruAzXsAcIySKGxVClBorFuVx20NGKo3b7+TCpUuw3Y6id0gafU
-         FXOP8SHnnXD3nhwhtjcit/RNQeh2C5mChzTdxU7IEWRL0o1pjsSGKtlMcO4CDSiuNdta
-         7v1F3SmCNleJqehrYlJiZbkJKqBPb3PIR0wnriDTCDI9Il7/ZtJ8Ny3UKTulCBv1JOut
-         AzrCBuvouRL+XbSVogoELMlVKfHBFxsDfIIxezAeIDRMRb50JFcEEMQSDTgQ0FZ8JZWt
-         Uv6194GdaGZ8bHgwNS2gUEBEP6Va8CEZNCIToIyhJtvRM08qAkh7IEOtr21SmXB/F80X
-         dmEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732086081; x=1732690881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ViYzAc9WLK6jLOPltHnzdk750GZoNYIYgpGNbpi34M=;
-        b=DmvuoslUuw0rcdQOp1QtNCKN6lLwgzVKEcy9ychubmECj+If1QZ8ECKYQkvDkEAEr+
-         1XT6Srz/nH8ClA21jkU0UiDB0JG7MqKQmowiF2rGR4BYlz7kaq2d+gATITgKlVId3jeh
-         gzV3VGlaIzaZg/v8M7gnI5rUjCY6TAjykisJbYo2PAIyWRd15jKFCIwKN6BcfF5paLCm
-         D6S31YYTPgBa6d8ScbfGckFIl6eAGyf9wHRMh2lq0BQOLVgm/OCurXrrgAZ5NJsoRgns
-         094zZoE0bl3E4GqAk/KKH2XmoSDMdvD7jvK0ts1bff48x32OumcSY7fuy/O+dnEWKvJQ
-         ufmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQz7H761PGZnkjKD7+enUQjOVoHqNPTtudsLRN+fBZaeqpi9n0YnUqBwECMBvrkbGxWu2qC5T2RdYR2SM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoLYznkp4Agr8xoDbM2PG6ponoyaxe5nDZRZXcdqwdXAFvHcRI
-	ajpZ+TszWOckzlK3hsevAvVHfqjKSvyYbkZD0FSkaIj62CxFTXV9/MEOnx+Y3A==
-X-Google-Smtp-Source: AGHT+IHj2cuOOlfcohUcdNygmcvikQt71/Syr1p8dbOWgBZHbuuarNyAfZM+UbV1oden1U8Pt0wBMQ==
-X-Received: by 2002:a17:90b:4c04:b0:2ea:6d7a:d6bc with SMTP id 98e67ed59e1d1-2eaca738f91mr1932814a91.19.1732086080860;
-        Tue, 19 Nov 2024 23:01:20 -0800 (PST)
-Received: from thinkpad ([120.60.129.189])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead031448csm561848a91.20.2024.11.19.23.01.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 23:01:20 -0800 (PST)
-Date: Wed, 20 Nov 2024 12:31:15 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	linux-mtd@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_srichara@quicinc.com,
-	quic_nainmeht@quicinc.com, quic_laksd@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [PATCH 1/2] mtd: rawnand: qcom: Pass 18 bit offset from QPIC
- base address to BAM
-Message-ID: <20241120070115.qox54zr3yhnkqgmd@thinkpad>
-References: <20241119092058.480363-1-quic_mdalam@quicinc.com>
- <20241119092058.480363-2-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1732086076; c=relaxed/simple;
+	bh=YYju9L+LcZxXYJseH5w6EBwkpwPYFI0dNSlOGcw8dkg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=eGNl8FOZtR0+8V6vUsEODlJKVU236sjcyH8YbRRnYQU7viCIyPNY/7LC2NDtx4Ncv2MYeMvHcbj35k631DaCDlMROgCiN/dhiNvxgU6jNXlUKM0DNGhzRmCY8wSbEBH6GwXY8VE+S0Zk7ZX3/RmkQTZMOtdt7SM/hidasSO2/os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCC8Y/ya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F0984C4CEDE;
+	Wed, 20 Nov 2024 07:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732086076;
+	bh=YYju9L+LcZxXYJseH5w6EBwkpwPYFI0dNSlOGcw8dkg=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=hCC8Y/yaeGZYafDfQf9ylT0khGAab/GFyky93i+A2d3xkpVkUBTLigrZZe9tFH+1v
+	 5Md/287I1dJjtyoJkeS7BCrB63Ot9skT/0wuzyaqgVrjsIfOzSNGN34WmklP0DkUAe
+	 HbwXlVe9OhuudZWvY0XqxU+C/1ixUaFX7pvSQcSVvIvv8P1IjdHSGA9N7l4534VH6v
+	 Osu06Pqb5kGKKEPeTe7TAHDQhTpWFP6Fs7/pnfMEmw7K1HsxdrY3QK0Vtq72JVrrk5
+	 m/4VV3kYph86ref92qNczSG4fognU1Wi+uyIn0Yr4yc+D+d3uwz4HvuEYCyjb1hj3a
+	 kcCkTUblu7feQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7A2D6E2CE;
+	Wed, 20 Nov 2024 07:01:15 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Wed, 20 Nov 2024 15:01:16 +0800
+Subject: [PATCH v2 4/5] clk: meson: add support for the A5 SoC PLL clock
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241119092058.480363-2-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241120-a5-clk-v2-4-1208621e961d@amlogic.com>
+References: <20241120-a5-clk-v2-0-1208621e961d@amlogic.com>
+In-Reply-To: <20241120-a5-clk-v2-0-1208621e961d@amlogic.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
+ Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732086073; l=15848;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=ufNns50cMIJf+uDkgB1ybMHGrhord9Hu2FJ8gD/+2B0=;
+ b=BnxrE1ONbN7eEzp+a33ZXntchyTiP0vwtQR7xf7HfyWKXZWwNMWP2LX7Wc8xYFPsJef+G3Bv9
+ qXwcVPuJL9KAm3S6zttY9JLnjPVuubP7XnRBcJtcAo4wNzOVpk8ld+E
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Tue, Nov 19, 2024 at 02:50:57PM +0530, Md Sadre Alam wrote:
-> Currently we are configuring lower 24 bits of address in descriptor
-> whereas QPIC design expects 18 bit register offset from QPIC base
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-You mean 'QPIC IP' here? But is it QPIC or NANDc? I guess the later.
+Add the PLL clock controller driver for the Amlogic A5 SoC family.
 
-> address to be configured in cmd descriptors. This is leading to a
-> different address actually being used in HW, leading to wrong value
-> read.
-> 
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ drivers/clk/meson/Kconfig  |  14 ++
+ drivers/clk/meson/Makefile |   1 +
+ drivers/clk/meson/a5-pll.c | 543 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 558 insertions(+)
 
-This doesn't clearly say what the actual issue is. IIUC, the issue is that the
-NANDc base address is different from the QPIC base address. But the driver
-doesn't take it into account and just used the QPIC base as the NANDc base. This
-used to work as the NANDc IP only considers the lower 18 bits of the address
-passed by the driver to derive the register offset. Since the base address of
-QPIC used to contain all 0 for lower 18 bits (like 0x07980000), the driver ended
-up passing the actual register offset in it and NANDc worked properly. But on
-newer SoCs like SDX75, the QPIC base address doesn't contain all 0 for lower 18
-bits (like 0x01C98000). So NANDc sees wrong offset as per the current logic.
-
-> Older targets also used same configuration (lower 24 bits) like sdxpinn,
-
-Please use actual product names and not internal names. I believe you are
-referring to SDX55/SDX65 here.
-
-> ipq etc. but issue is masked in older targets due to lower 18 bits of QPIC
-> base address being zero leading to expected address generation.
-> 
-> Sdxpinn     : QPIC_QPIC | 0x01C98000 (Lower 18 bits are non zero)
-> Sdxnightjar : QPIC_QPIC | 0x07980000 (Lower 18 bits are zero) Same for
-> older targets.
-
-Same here.
-
-> 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
-
-Please add relevant Fixes tag.
-
-> ---
->  drivers/mtd/nand/raw/qcom_nandc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index b8cff9240b28..34ee8555fb8a 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -207,7 +207,7 @@ nandc_set_reg(chip, reg,			\
->  #define dev_cmd_reg_addr(nandc, reg) ((nandc)->props->dev_cmd_reg_start + (reg))
->  
->  /* Returns the NAND register physical address */
-> -#define nandc_reg_phys(chip, offset) ((chip)->base_phys + (offset))
-> +#define nandc_reg_phys(chip, offset)  ((nandc)->props->offset_from_qpic + (offset))
->  
->  /* Returns the dma address for reg read buffer */
->  #define reg_buf_dma_addr(chip, vaddr) \
-> @@ -561,6 +561,7 @@ struct qcom_nandc_props {
->  	bool is_qpic;
->  	bool qpic_v2;
->  	bool use_codeword_fixup;
-> +	u32 offset_from_qpic;
-
-nandc_offset?
-
->  };
->  
->  /* Frees the BAM transaction memory */
-> @@ -3477,6 +3478,7 @@ static const struct qcom_nandc_props ipq806x_nandc_props = {
->  	.is_bam = false,
->  	.use_codeword_fixup = true,
->  	.dev_cmd_reg_start = 0x0,
-> +	.offset_from_qpic = 0x30000,
-
-How 0x30000 is supposed to work? You said the NANDc ignores lower 18 bits, but
-this has 17th and 18th bits set.
-
-- Mani
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 78f648c9c97d..3c97b3a1649d 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -132,6 +132,20 @@ config COMMON_CLK_A1_PERIPHERALS
+ 	  device, A1 SoC Family. Say Y if you want A1 Peripherals clock
+ 	  controller to work.
+ 
++config COMMON_CLK_A5_PLL
++	tristate "Amlogic A5 PLL clock controller"
++	depends on ARM64
++	default y
++	imply COMMON_CLK_SCMI
++	select COMMON_CLK_MESON_REGMAP
++	select COMMON_CLK_MESON_PLL
++	select COMMON_CLK_MESON_MPLL
++	select COMMON_CLK_MESON_CLKC_UTILS
++	help
++	  Support for the PLL clock controller on Amlogic AV40x device, AKA A5.
++	  Say Y if you want the board to work, because PLLs are the parent
++	  of most peripherals.
++
+ config COMMON_CLK_C3_PLL
+ 	tristate "Amlogic C3 PLL clock controller"
+ 	depends on ARM64
+diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+index bc56a47931c1..fc4b8a723145 100644
+--- a/drivers/clk/meson/Makefile
++++ b/drivers/clk/meson/Makefile
+@@ -20,6 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
+ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+ obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
+ obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
++obj-$(CONFIG_COMMON_CLK_A5_PLL) += a5-pll.o
+ obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
+ obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
+ obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+diff --git a/drivers/clk/meson/a5-pll.c b/drivers/clk/meson/a5-pll.c
+new file mode 100644
+index 000000000000..f18700dfd055
+--- /dev/null
++++ b/drivers/clk/meson/a5-pll.c
+@@ -0,0 +1,543 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Amlogic A5 PLL Controller Driver
++ *
++ * Copyright (c) 2024 Amlogic, inc.
++ * Author: Chuan Liu <chuan.liu@amlogic.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/platform_device.h>
++#include "clk-regmap.h"
++#include "clk-pll.h"
++#include "clk-mpll.h"
++#include "meson-clkc-utils.h"
++#include <dt-bindings/clock/amlogic,a5-pll-clkc.h>
++
++#define ANACTRL_GP0PLL_CTRL0			0x80
++#define ANACTRL_GP0PLL_CTRL1			0x84
++#define ANACTRL_GP0PLL_CTRL2			0x88
++#define ANACTRL_GP0PLL_CTRL3			0x8c
++#define ANACTRL_GP0PLL_CTRL4			0x90
++#define ANACTRL_GP0PLL_CTRL5			0x94
++#define ANACTRL_GP0PLL_CTRL6			0x98
++#define ANACTRL_HIFIPLL_CTRL0			0x100
++#define ANACTRL_HIFIPLL_CTRL1			0x104
++#define ANACTRL_HIFIPLL_CTRL2			0x108
++#define ANACTRL_HIFIPLL_CTRL3			0x10c
++#define ANACTRL_HIFIPLL_CTRL4			0x110
++#define ANACTRL_HIFIPLL_CTRL5			0x114
++#define ANACTRL_HIFIPLL_CTRL6			0x118
++#define ANACTRL_MPLL_CTRL0			0x180
++#define ANACTRL_MPLL_CTRL1			0x184
++#define ANACTRL_MPLL_CTRL2			0x188
++#define ANACTRL_MPLL_CTRL3			0x18c
++#define ANACTRL_MPLL_CTRL4			0x190
++#define ANACTRL_MPLL_CTRL5			0x194
++#define ANACTRL_MPLL_CTRL6			0x198
++#define ANACTRL_MPLL_CTRL7			0x19c
++#define ANACTRL_MPLL_CTRL8			0x1a0
++
++static struct clk_fixed_factor mpll_prediv = {
++	.mult = 1,
++	.div = 2,
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll_prediv",
++		.ops = &clk_fixed_factor_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "fix_dco"
++		},
++		.num_parents = 1,
++	},
++};
++
++static const struct reg_sequence mpll0_init_regs[] = {
++	{ .reg = ANACTRL_MPLL_CTRL2,	.def = 0x40000033 },
++};
++
++static struct clk_regmap mpll0_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = ANACTRL_MPLL_CTRL1,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = ANACTRL_MPLL_CTRL1,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = ANACTRL_MPLL_CTRL1,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = ANACTRL_MPLL_CTRL1,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = mpll0_init_regs,
++		.init_count = ARRAY_SIZE(mpll0_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap mpll0 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = ANACTRL_MPLL_CTRL1,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll0",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &mpll0_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence mpll1_init_regs[] = {
++	{ .reg = ANACTRL_MPLL_CTRL4,	.def = 0x40000033 },
++};
++
++static struct clk_regmap mpll1_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = ANACTRL_MPLL_CTRL3,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = ANACTRL_MPLL_CTRL3,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = ANACTRL_MPLL_CTRL3,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = ANACTRL_MPLL_CTRL3,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = mpll1_init_regs,
++		.init_count = ARRAY_SIZE(mpll1_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll1_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap mpll1 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = ANACTRL_MPLL_CTRL3,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll1",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &mpll1_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence mpll2_init_regs[] = {
++	{ .reg = ANACTRL_MPLL_CTRL6,	.def = 0x40000033 },
++};
++
++static struct clk_regmap mpll2_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = ANACTRL_MPLL_CTRL5,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = ANACTRL_MPLL_CTRL5,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = ANACTRL_MPLL_CTRL5,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = ANACTRL_MPLL_CTRL5,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = mpll2_init_regs,
++		.init_count = ARRAY_SIZE(mpll2_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll2_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap mpll2 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = ANACTRL_MPLL_CTRL5,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll2",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &mpll2_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence mpll3_init_regs[] = {
++	{ .reg = ANACTRL_MPLL_CTRL8,	.def = 0x40000033 },
++};
++
++static struct clk_regmap mpll3_div = {
++	.data = &(struct meson_clk_mpll_data){
++		.sdm = {
++			.reg_off = ANACTRL_MPLL_CTRL7,
++			.shift   = 0,
++			.width   = 14,
++		},
++		.sdm_en = {
++			.reg_off = ANACTRL_MPLL_CTRL7,
++			.shift   = 30,
++			.width	 = 1,
++		},
++		.n2 = {
++			.reg_off = ANACTRL_MPLL_CTRL7,
++			.shift   = 20,
++			.width   = 9,
++		},
++		.ssen = {
++			.reg_off = ANACTRL_MPLL_CTRL7,
++			.shift   = 29,
++			.width	 = 1,
++		},
++		.init_regs = mpll3_init_regs,
++		.init_count = ARRAY_SIZE(mpll3_init_regs),
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll3_div",
++		.ops = &meson_clk_mpll_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&mpll_prediv.hw
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap mpll3 = {
++	.data = &(struct clk_regmap_gate_data){
++		.offset = ANACTRL_MPLL_CTRL7,
++		.bit_idx = 31,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "mpll3",
++		.ops = &clk_regmap_gate_ops,
++		.parent_hws = (const struct clk_hw *[]) { &mpll3_div.hw },
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence gp0_init_regs[] = {
++	{ .reg = ANACTRL_GP0PLL_CTRL2, .def = 0x00000000 },
++	{ .reg = ANACTRL_GP0PLL_CTRL3, .def = 0x6a295c00 },
++	{ .reg = ANACTRL_GP0PLL_CTRL4, .def = 0x65771290 },
++	{ .reg = ANACTRL_GP0PLL_CTRL5, .def = 0x3927200a },
++	{ .reg = ANACTRL_GP0PLL_CTRL6, .def = 0x54540000 }
++};
++
++static const struct pll_mult_range gp0_pll_mult_range = {
++	.min = 125,
++	.max = 250,
++};
++
++static struct clk_regmap gp0_pll_dco = {
++	.data = &(struct meson_clk_pll_data) {
++		.en = {
++			.reg_off = ANACTRL_GP0PLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = ANACTRL_GP0PLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.frac = {
++			.reg_off = ANACTRL_GP0PLL_CTRL1,
++			.shift   = 0,
++			.width   = 17,
++		},
++		.n = {
++			.reg_off = ANACTRL_GP0PLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = ANACTRL_GP0PLL_CTRL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = ANACTRL_GP0PLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &gp0_pll_mult_range,
++		.init_regs = gp0_init_regs,
++		.init_count = ARRAY_SIZE(gp0_init_regs),
++		.frac_max = 100000,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gp0_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal_24m",
++		},
++		.num_parents = 1,
++	},
++};
++
++/* The maximum frequency divider supports is 32, not 128(2^7) */
++static const struct clk_div_table gp0_pll_od_table[] = {
++	{ 0,  1 },
++	{ 1,  2 },
++	{ 2,  4 },
++	{ 3,  8 },
++	{ 4, 16 },
++	{ 5, 32 },
++	{ /* sentinel */ }
++};
++
++static struct clk_regmap gp0_pll = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = ANACTRL_GP0PLL_CTRL0,
++		.shift = 16,
++		.width = 3,
++		.table = gp0_pll_od_table,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "gp0_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&gp0_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static const struct reg_sequence hifi_init_regs[] = {
++	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00000000 },
++	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x6a295c00 },
++	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x65771290 },
++	{ .reg = ANACTRL_HIFIPLL_CTRL5, .def = 0x3927200a },
++	{ .reg = ANACTRL_HIFIPLL_CTRL6, .def = 0x54540000 }
++};
++
++static const struct pll_mult_range hifi_pll_mult_range = {
++	.min = 125,
++	.max = 250,
++};
++
++static struct clk_regmap hifi_pll_dco = {
++	.data = &(struct meson_clk_pll_data) {
++		.en = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL0,
++			.shift   = 28,
++			.width   = 1,
++		},
++		.m = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL0,
++			.shift   = 0,
++			.width   = 8,
++		},
++		.frac = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL1,
++			.shift   = 0,
++			.width   = 17,
++		},
++		.n = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL0,
++			.shift   = 10,
++			.width   = 5,
++		},
++		.l = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL0,
++			.shift   = 31,
++			.width   = 1,
++		},
++		.rst = {
++			.reg_off = ANACTRL_HIFIPLL_CTRL0,
++			.shift   = 29,
++			.width   = 1,
++		},
++		.range = &hifi_pll_mult_range,
++		.init_regs = hifi_init_regs,
++		.init_count = ARRAY_SIZE(hifi_init_regs),
++		.frac_max = 100000,
++		/* NOTE: The original design of hifi_pll is to provide
++		 * clock for audio, which requires clock accuracy.
++		 * Therefore, flag CLK_MESON_PLL_ROUND_CLOSEST is added
++		 * to make the output frequency of hifi_pll closer to
++		 * the target frequency.
++		 */
++		.flags = CLK_MESON_PLL_ROUND_CLOSEST,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "hifi_pll_dco",
++		.ops = &meson_clk_pll_ops,
++		.parent_data = &(const struct clk_parent_data) {
++			.fw_name = "xtal_24m",
++		},
++		.num_parents = 1,
++	},
++};
++
++static struct clk_regmap hifi_pll = {
++	.data = &(struct clk_regmap_div_data) {
++		.offset = ANACTRL_HIFIPLL_CTRL0,
++		.shift = 16,
++		/* NOTE: The actual reserved bit width of the od (output
++		 * divider) of hifi_pll is 3 bit, but its actual maximum
++		 * effective divider factor is 8. It can just use 2 bit and add
++		 * flag CLK_DIVIDER_POWER_OF_TWO (max_div = 2^3 = 8).
++		 */
++		.width = 2,
++		.flags = CLK_DIVIDER_POWER_OF_TWO,
++	},
++	.hw.init = &(struct clk_init_data) {
++		.name = "hifi_pll",
++		.ops = &clk_regmap_divider_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&hifi_pll_dco.hw
++		},
++		.num_parents = 1,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_hw *a5_pll_hw_clks[] = {
++	[CLKID_MPLL_PREDIV]	= &mpll_prediv.hw,
++	[CLKID_MPLL0_DIV]	= &mpll0_div.hw,
++	[CLKID_MPLL0]		= &mpll0.hw,
++	[CLKID_MPLL1_DIV]	= &mpll1_div.hw,
++	[CLKID_MPLL1]		= &mpll1.hw,
++	[CLKID_MPLL2_DIV]	= &mpll2_div.hw,
++	[CLKID_MPLL2]		= &mpll2.hw,
++	[CLKID_MPLL3_DIV]	= &mpll3_div.hw,
++	[CLKID_MPLL3]		= &mpll3.hw,
++	[CLKID_GP0_PLL_DCO]	= &gp0_pll_dco.hw,
++	[CLKID_GP0_PLL]		= &gp0_pll.hw,
++	[CLKID_HIFI_PLL_DCO]	= &hifi_pll_dco.hw,
++	[CLKID_HIFI_PLL]	= &hifi_pll.hw
++};
++
++/* Convenience table to populate regmap in .probe */
++static struct clk_regmap *const a5_pll_clk_regmaps[] = {
++	&mpll0_div,
++	&mpll0,
++	&mpll1_div,
++	&mpll1,
++	&mpll2_div,
++	&mpll2,
++	&mpll3_div,
++	&mpll3,
++	&gp0_pll_dco,
++	&gp0_pll,
++	&hifi_pll_dco,
++	&hifi_pll
++};
++
++static const struct regmap_config clkc_regmap_config = {
++	.reg_bits       = 32,
++	.val_bits       = 32,
++	.reg_stride     = 4,
++	.max_register   = ANACTRL_MPLL_CTRL8,
++};
++
++static struct meson_clk_hw_data a5_pll_clks = {
++	.hws = a5_pll_hw_clks,
++	.num = ARRAY_SIZE(a5_pll_hw_clks),
++};
++
++static int aml_a5_pll_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct regmap *regmap;
++	void __iomem *base;
++	int clkid, ret, i;
++
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	/* Populate regmap for the regmap backed clocks */
++	for (i = 0; i < ARRAY_SIZE(a5_pll_clk_regmaps); i++)
++		a5_pll_clk_regmaps[i]->map = regmap;
++
++	for (clkid = 0; clkid < a5_pll_clks.num; clkid++) {
++		/* array might be sparse */
++		if (!a5_pll_clks.hws[clkid])
++			continue;
++
++		ret = devm_clk_hw_register(dev, a5_pll_clks.hws[clkid]);
++		if (ret) {
++			dev_err(dev, "Clock registration failed\n");
++			return ret;
++		}
++	}
++
++	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get,
++					   &a5_pll_clks);
++}
++
++static const struct of_device_id a5_pll_clkc_match_table[] = {
++	{
++		.compatible = "amlogic,a5-pll-clkc",
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, a5_pll_clkc_match_table);
++
++static struct platform_driver a5_pll_driver = {
++	.probe		= aml_a5_pll_probe,
++	.driver		= {
++		.name	= "a5-pll-clkc",
++		.of_match_table = a5_pll_clkc_match_table,
++	},
++};
++module_platform_driver(a5_pll_driver);
++
++MODULE_DESCRIPTION("Amlogic A5 PLL Clock Controller driver");
++MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
++MODULE_LICENSE("GPL");
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.37.1
+
+
 
