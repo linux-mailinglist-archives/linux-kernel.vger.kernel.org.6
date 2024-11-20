@@ -1,124 +1,115 @@
-Return-Path: <linux-kernel+bounces-415458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1559D3683
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:11:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4005E9D3687
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D553285B6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:11:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05629285DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C870199238;
-	Wed, 20 Nov 2024 09:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBE81991BE;
+	Wed, 20 Nov 2024 09:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZcN5P/d"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SX6OTBOU"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D5B18A6DB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E2E149C42;
+	Wed, 20 Nov 2024 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093860; cv=none; b=K0W5cGyJmSn8gQIFtpxVHgOB50cOfsM+oFvqITY74aWMrHza1r3erIupFkc41esklMAgiSb6fEZM+dFjpifjoqqWRPvXEFbcCd8c2Cft/uoHq4I4RKFw82MsdrMjNiGqXWEaf3nRGry7rGj3gExXrNXq71TBidK3/6HMzHKmlKM=
+	t=1732093950; cv=none; b=gHkbsk9NCMeZ1KKcQ80/NRupjJUSpGC6QaDLImk5VtmHBeARUoT4xjMOwO5iVthqh7x8zjxA8X97wSFhcc6JEZRja/h+BNPNAaKB0+zxAV2HL6C6Y/PCUR/QvVxeeKMyIE+cnAnnues5rzAiXR9DQVqEP6jLL8V9l1+qv+dFOxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093860; c=relaxed/simple;
-	bh=2no53dCj7JDkx0sffNAY9g9WwHKzK1IG3PuUNiLugXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EV8BffQ3mqvk/KvOWknyWrH4hAl95wvBf31FVwhKxy6Hf0b36XGS3D7pbmKqoitBlSt+g9AO5QfjMlUbcXUQXtcOrXi2F7BkYinIHbLQ5nMNBy0cKsTun53kQP/MBf0sSge/wUHHBVmC6oLn2i6mbmP0iStJyMgJoNOUiTlRMTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZcN5P/d; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3824a089b2cso1180020f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:10:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732093857; x=1732698657; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=taQfAO7UsVPf+OWP/Z17Mad9ERlkGUab/JxNPFh1DDw=;
-        b=1ZcN5P/dIlsPuRy1B4z9zDEzl/tWj/u0DLBSF/8kZq/ufHPscXw4TzGK4hap17tf+1
-         ZyqLZfED06bvMNkYMf4TcBELgGHyIIrgIJYYcIaA6NiSQ2VmapW13ozQyuWOYRs6s6L5
-         5wKIGE6Swa7k0LizqBOy/KyThT3ZmBAxx2kF2gryFqvqet+xEy7+Pa2u7AJS+QJirOq4
-         /Yr9WLowxirJdXOr4kFI2qKR8OQQv30lWj8brsE4ot9RAEgt4a48+GYvIonHYBPZ/HP1
-         QRGXOVgVEQMRmA+RCT4c4b/3sgMEy9fJPBWkgK/PTEtrTem+M/ZcwyM824efmtT//HYU
-         /kHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732093857; x=1732698657;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=taQfAO7UsVPf+OWP/Z17Mad9ERlkGUab/JxNPFh1DDw=;
-        b=PmeZXTE5CdVVZ8z+MZVHSltuXMCWrK0Z9QZdM+Kiyn5QTFTdBo+IVvuUSVKJpR9YL7
-         f83GiL/OeNZQCasUZtkPimKNVzfMEYFt16mqURTpeE5VOHoX/zWsQDuKALjZ3Iaq2QjD
-         Imu67rcN8TGZ/1XWRIUyxfK+xsTErJotuDZWq1qGYrFrl49xJUi+ve+evZPEwlWvpH1+
-         QRFIpup1YKLiSZQQPz7+TdE/qBVjUYF/HNHR5jc+vFSGilhRbjsjlrZlASvoi785a01g
-         VtgtNJkj75foge80MzniTBJkFjj3CxtUMXMDoFelmIltfdKj/Rue+AsiAalnREEWj0NY
-         QxzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuloLAXSa47Ronl75YQv2jpuvb6ByEEsa+048XeRD6P5xzBj08ieyIJLrvAQr9NF9TcFdcXieDOtB59aM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7P6XKZVQ2jXD1r2oL416TcckPbkmB8cE9F6oSFkyznnMRgkwh
-	6gw4+f8wga+RmbMERdj+GNhfCrL7zPk/kGIdhyKlnUmUjSEs5Js0sunF6i9rwPI3SUsd7okXiWb
-	RtCLkNqdm4zmRJOFB9JbM1VWDf1gFQFdBWaID
-X-Google-Smtp-Source: AGHT+IE0Qr6c8zEO0W+zjaOi3AJMKcjk7pnHmZj3Gs9w6cUneUNmZHuNKxDnfUxGyGK7KDV6BRIx3PXwyrLZUoiGnjo=
-X-Received: by 2002:a5d:47c4:0:b0:382:499a:dc6d with SMTP id
- ffacd0b85a97d-38254b24de7mr1265757f8f.55.1732093857168; Wed, 20 Nov 2024
- 01:10:57 -0800 (PST)
+	s=arc-20240116; t=1732093950; c=relaxed/simple;
+	bh=+h6qn39iKYBYkjnAfwM2WCW/3rG7h0rqZ0p706MqXQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hm1ytdShERBFcrRONzxE7HrbMLF6BXN+uwym7nj9fvNUUCoB5HCGNuTqK0uN/wYCAD5QY6+XoBX/f9Oz84khwqDKM6+DC1a2TSA7gNEPnce6gf4v6pypWnfzj0hpHXTz773ym+vMl6cFQIvDy1bZ9mYAHIPB+3pbf36AXCN4fVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SX6OTBOU; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wk2X3+PQpTfNDXktHKx5N1reY89npk+liD3n+j6xvIo=; b=SX6OTBOUcOh239e6zpRF5e6Hjm
+	aaczC8p43ZAau+BKYgPoqAbCP9M5KkaIAj+d6y/X1UKWi4VYa+a1sczzexsjpluoqdbeEx1UteHqZ
+	cJi5wTJExX6f3YSWkdJVE8MzwNXOH1kerEpzyhMvN1aCWYHLt6SlFNSY5k65FnfakSBiP8nV46rfo
+	1iuXpxL+K2dAoLL4R/W8+sGyL1RxaIZty9JUI0I5CyPHB96tTJjhT0RHK0egn83d7WgRabpZTntnP
+	tWvxSadGig7B4I34GoLq1EGGmupmazf6Nvko+pS2UyN9k7NiBF+SKXO+GjXObiJfxVXd0o/lDIbun
+	iOofmCpw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDgkx-00000000SXp-3ptr;
+	Wed, 20 Nov 2024 09:12:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8CA523006AB; Wed, 20 Nov 2024 10:12:15 +0100 (CET)
+Date: Wed, 20 Nov 2024 10:12:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Ran Xiaokai <ranxiaokai627@163.com>
+Cc: juri.lelli@redhat.com, vincent.guittot@linaro.org, mingo@redhat.com,
+	pshelar@ovn.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
+	ran.xiaokai@zte.com.cn, linux-perf-users@vger.kernel.org,
+	netdev@vger.kernel.org, dev@openvswitch.org
+Subject: Re: [PATCH 2/4] perf/core: convert call_rcu(free_ctx) to kfree_rcu()
+Message-ID: <20241120091215.GK39245@noisy.programming.kicks-ass.net>
+References: <20241120064716.3361211-1-ranxiaokai627@163.com>
+ <20241120064716.3361211-3-ranxiaokai627@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com> <Zz1sHZLruF5sv7JT@casper.infradead.org>
-In-Reply-To: <Zz1sHZLruF5sv7JT@casper.infradead.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 20 Nov 2024 10:10:44 +0100
-Message-ID: <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120064716.3361211-3-ranxiaokai627@163.com>
 
-On Wed, Nov 20, 2024 at 5:57=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Tue, Nov 19, 2024 at 01:24:01PM +0200, Abdiel Janulgue wrote:
-> > This series aims to add support for pages that are not constructed by a=
-n
-> > instance of the rust Page abstraction, for example those returned by
-> > vmalloc_to_page() or virt_to_page().
-> >
-> > Changes sinve v3:
-> > - Use the struct page's reference count to decide when to free the
-> >   allocation (Alice Ryhl, Boqun Feng).
->
-> Bleh, this is going to be "exciting".  We're in the middle of a multi-yea=
-r
-> project to remove refcounts from struct page.  The lifetime of a page
-> will be controlled by the memdesc that it belongs to.  Some of those
-> memdescs will have refcounts, but others will not.
->
-> We don't have a fully formed destination yet, so I can't give you a
-> definite answer to a lot of questions.  Obviously I don't want to hold
-> up the Rust project in any way, but I need to know that what we're trying
-> to do will be expressible in Rust.
->
-> Can we avoid referring to a page's refcount?
+On Wed, Nov 20, 2024 at 06:47:14AM +0000, Ran Xiaokai wrote:
+> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> 
+> The rcu callback free_ctx() simply calls kfree().
+> It's better to directly call kfree_rcu().
 
-I don't think this patch needs the refcount at all, and the previous
-version did not expose it. This came out of the advice to use put_page
-over free_page. Does this mean that we should switch to put_page but
-not use get_page?
+Why is it better? 
 
-Alice
+> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> ---
+>  kernel/events/core.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 065f9188b44a..7f4cc9c41bbe 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -1210,14 +1210,6 @@ static void free_task_ctx_data(struct pmu *pmu, void *task_ctx_data)
+>  		kmem_cache_free(pmu->task_ctx_cache, task_ctx_data);
+>  }
+>  
+> -static void free_ctx(struct rcu_head *head)
+> -{
+> -	struct perf_event_context *ctx;
+> -
+> -	ctx = container_of(head, struct perf_event_context, rcu_head);
+> -	kfree(ctx);
+> -}
+> -
+>  static void put_ctx(struct perf_event_context *ctx)
+>  {
+>  	if (refcount_dec_and_test(&ctx->refcount)) {
+> @@ -1225,7 +1217,7 @@ static void put_ctx(struct perf_event_context *ctx)
+>  			put_ctx(ctx->parent_ctx);
+>  		if (ctx->task && ctx->task != TASK_TOMBSTONE)
+>  			put_task_struct(ctx->task);
+> -		call_rcu(&ctx->rcu_head, free_ctx);
+> +		kfree_rcu(ctx, rcu_head);
+>  	}
+>  }
+>  
+> -- 
+> 2.17.1
+> 
+> 
 
