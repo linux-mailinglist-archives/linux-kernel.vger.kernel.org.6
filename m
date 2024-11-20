@@ -1,101 +1,172 @@
-Return-Path: <linux-kernel+bounces-415317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786979D3441
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:41:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6529D3455
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326541F238C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:41:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD27284D3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE89315CD79;
-	Wed, 20 Nov 2024 07:41:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6241714D3;
+	Wed, 20 Nov 2024 07:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=atemu.net header.i=@atemu.net header.b="O6Ne+6dd"
-Received: from mail-4022.proton.ch (mail-4022.proton.ch [185.70.40.22])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CD6qGQI3"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C8414F9F9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F85515533F;
+	Wed, 20 Nov 2024 07:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088508; cv=none; b=lScQryxlBrCqeKJA80yqkbefxtpFMrwepPzKZB6yv7lNxsgUWhtNsvmqS+aSWDGajX/29fPZPQqzdXw2YNmdLsJO35OzItQgEX/JoTHjDsTEwYykte58P8lA/ucn7J42mICxMH1jhYoqRZxttc7rjW9A5J3shRxqt3SYxDIGfT4=
+	t=1732088613; cv=none; b=iKaejunu/kcoOh7fqaIBxMp7d936Ea5ic5E9wa0Grh0iLlfbMhVIfoj9kzsz23dN2+56fZwNFfG3f9GSPxLjd0oMUdelrazuQZmd7EKYNWOu7DrJHdK0UBnnCBVUNaqyBXeJtdzRDMqhY6I5ejAGQ8oKPeR28wSZWaYHGi+6Iz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088508; c=relaxed/simple;
-	bh=DfOMndIjGsv34/aBSKaqCXwWx2QvU2bdgOtVEzv6jYQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fGCLj+OB8d+nsvzfZj7p6NX960/nLsQpYl66+drmTpEqb5uzkhPiGb8Sr6TDL1G/ue211HSjCgSk6l7K1MEsBc1f5HOmNEHQOAiNeNbvzbNNx+4ltFLdkTWRmyXmfjhWG9ewp/WvMwLwHuSghkRlaTFxkZuq0FVUmSWoQajJ7mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atemu.net; spf=pass smtp.mailfrom=atemu.net; dkim=pass (2048-bit key) header.d=atemu.net header.i=@atemu.net header.b=O6Ne+6dd; arc=none smtp.client-ip=185.70.40.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atemu.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atemu.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atemu.net;
-	s=protonmail; t=1732088496; x=1732347696;
-	bh=DfOMndIjGsv34/aBSKaqCXwWx2QvU2bdgOtVEzv6jYQ=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=O6Ne+6ddD2piPpdu0SnWjciKh7z+oyT0xy/WufV9MSBwYjVSXjym8/NAag99cvaxW
-	 F2hc2R+HN6Im7X4xiY+Ns4ej5zQP9MceZv7ugNwflgPyPKJs+hI8xQAAZmIRgP+9Xu
-	 kgf1/38Eij7PoeAYgyiwueY6wTVUuDIfhlpOJ8oXOQEblE7vuhFr+IA5NoqrciFXho
-	 nHdOilv+ocn6XBQRC9cBqBjpimma5fit6JRVYpaSjg8UCdsHhU0hfQU900UjAWnu0M
-	 mwZa6GyUyGFcC1nGwBSySu+oAu62unOVLGV4r/kLmUTJ8rtepDGq5m2K7ZSUcDCV4J
-	 RxIvmAIF8hRMA==
-Date: Wed, 20 Nov 2024 07:41:32 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Atemu <git@atemu.net>
-Cc: Luca Stefani <luca.stefani.ge1@gmail.com>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] btrfs: Don't block system suspend during fstrim
-Message-ID: <wnPVOgJfpl_-T0Kmx_rLagKGYDUVPe2v9-dL75Pn8evLxtS0h1PY3OGUSihwcMAJ4Q5A3heeKnYQZcPaX81_ieEwyKirOcV2ZdutRF8JgrI=@atemu.net>
-In-Reply-To: <2024111923-capsize-resonant-eed6@gregkh>
-References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com> <20240917203346.9670-3-luca.stefani.ge1@gmail.com> <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net> <2024111923-capsize-resonant-eed6@gregkh>
-Feedback-ID: 115536826:user:proton
-X-Pm-Message-ID: 511bcd18c705e0d7dc66634b07d64c7984fea09f
+	s=arc-20240116; t=1732088613; c=relaxed/simple;
+	bh=0CdquCFaES4KDH1W2g2KxERpmc7esmrg9IkJD3SUXD4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eQAEvPw8Pk7GXm+VhMgWGjDVyUtJexX7DHbG2bAIvRsbra7csGOfsj730/EiM/pq2UYstNb9uAdMzEyTxEwoUlzrHGaSMXztF8KhKynGuCc9hPA2uk1D9t/6C4y2299Rqv+Z844cK36HLW7Qc3AUur9d5kxBC3nkvYE6PxmTW9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CD6qGQI3; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E5F38240003;
+	Wed, 20 Nov 2024 07:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732088606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KMZdNfbUY+BAlC109d0n5H3KzVea6UjxKkrWS1zAHd8=;
+	b=CD6qGQI3r+u88yac/u7L4e2TEA148/TLyUabiSBOlRDttm6mESPVamNyqqiaFyIKZIONAS
+	YYYKl6eBPFzZ9puZLLpQ8scbm4EHDlM/+GwtdDkfvDSzsnbMQZsN3Kdlk4i7LjhviMMR5b
+	DlPt7MIfjo/2kXlzFnmWtBhMrtSfE3kWbbg6o9xG4+3Y54gcNKTI9ixQr39M4letDsaKh/
+	c2ee8srL00HgHHeyhoLzAX+8xgk1bod6+MfgsYJB7A8K8KWGiUWjcDo30zxlei35AenKxO
+	JiV6Qmx5+2fvczBg2gbA/AZThDmoIDA7YcDbtEUyFlrqs01coSzeX/Wh5ihFTg==
+From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Subject: [PATCH bpf-next v3 00/14] selftests/bpf: migrate
+ test_flow_dissector.sh to test_progs
+Date: Wed, 20 Nov 2024 08:43:10 +0100
+Message-Id: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------96f118910c6e996d752378763fb02220b244965101fa83695a6dcd1715c36a86"; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAA6TPWcC/2XNywqDMBQE0F+Ru25KXip21f8opZjkpgaskURSi
+ /jvDVn1sRyGObNBxOAwwqnaIGBy0fkpB3GoQA/9dEfiTM7AKZeMso7Y0T9vxsWIevGBCFRU09Z
+ q1gjIozmgdWsBL6BmSyZcF7jmZnAxD17lKbHSF5Qx8YsmRijhrZbG0rrjRp+V98vopqP2j4Il/
+ gnIP4BnAFH2QqEw2NTfwL7vb2w1GNr5AAAA
+X-Change-ID: 20241019-flow_dissector-3eb0c07fc163
+To: Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+ Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: ebpf@linuxfoundation.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------96f118910c6e996d752378763fb02220b244965101fa83695a6dcd1715c36a86
-Content-Type: multipart/mixed;boundary=---------------------017ddf27874286d9994ecd49e37022ec
+Hello,
+this is the revision 3 of test_flow_dissector_migration.sh into
+test_progs. This revision addresses comments from Stanislas, especially
+about proper reuse of pseudo-header checksuming in new network helpers.
 
------------------------017ddf27874286d9994ecd49e37022ec
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;charset=utf-8
+There are 2 "main" parts in test_flow_dissector.sh:
+- a set of tests checking flow_dissector programs attachment to either
+  root namespace or non-root namespace
+- dissection test
 
-Hi, =
+The first set is integrated in flow_dissector.c, which already contains
+some existing tests for flow_dissector programs. This series uses the
+opportunity to update a bit this file (use new assert, re-split tests,
+etc)
+The second part is migrated into a new file under test_progs,
+flow_dissector_classification.c. It uses the same eBPF programs as
+flow_dissector.c, but the difference is rather about how those program
+are executed:
+- flow_dissector.c manually runs programs with BPF_PROG_RUN
+- flow_dissector_classification.c sends real packets to be dissected, and
+  so it also executes kernel code related to eBPF flow dissector (eg:
+__skb_flow_bpf_to_target)
 
+---
+Changes in v3:
+- Keep new helpers name in sync with kernel ones
+- Document some existing network helpers
+- Properly reuse pseudo-header csum helper in transport layer csum
+  helper
+- Drop duplicate assert
+- Use const for test structure in the migrated test
+- Simplify shutdown callchain for basic test
+- collect Acked-by
+- Link to v2: https://lore.kernel.org/r/20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com
 
+Changes in v2:
+- allow tests to run in parallel
+- move some generic helpers to network_helpers.h
+- define proper function for ASSERT_MEMEQ
+- fetch acked-by tags
+- Link to v1: https://lore.kernel.org/r/20241113-flow_dissector-v1-0-27c4df0592dc@bootlin.com
 
-> What is the git commit id in LInus's tree you are referring to here?
+---
+Alexis Lothoré (eBPF Foundation) (14):
+      selftests/bpf: add a macro to compare raw memory
+      selftests/bpf: use ASSERT_MEMEQ to compare bpf flow keys
+      selftests/bpf: replace CHECK calls with ASSERT macros in flow_dissector test
+      selftests/bpf: re-split main function into dedicated tests
+      selftests/bpf: expose all subtests from flow_dissector
+      selftests/bpf: add gre packets testing to flow_dissector
+      selftests/bpf: migrate flow_dissector namespace exclusivity test
+      selftests/bpf: Enable generic tc actions in selftests config
+      selftests/bpf: move ip checksum helper to network helpers
+      selftests/bpf: document pseudo-header checksum helpers
+      selftests/bpf: use the same udp and tcp headers in tests under test_progs
+      selftests/bpf: add network helpers to generate udp checksums
+      selftests/bpf: migrate bpf flow dissectors tests to test_progs
+      selftests/bpf: remove test_flow_dissector.sh
 
-It's 69313850dce33ce8c24b38576a279421f4c60996. Apparently marked for backp=
-ort to 5.15+.
+ tools/testing/selftests/bpf/.gitignore             |   1 -
+ tools/testing/selftests/bpf/Makefile               |   3 +-
+ tools/testing/selftests/bpf/config                 |   1 +
+ tools/testing/selftests/bpf/network_helpers.c      |   2 +-
+ tools/testing/selftests/bpf/network_helpers.h      |  96 +++
+ .../selftests/bpf/prog_tests/flow_dissector.c      | 323 +++++++--
+ .../bpf/prog_tests/flow_dissector_classification.c | 792 +++++++++++++++++++++
+ .../testing/selftests/bpf/prog_tests/sockopt_sk.c  |   2 +-
+ .../testing/selftests/bpf/prog_tests/xdp_bonding.c |   2 +-
+ .../selftests/bpf/prog_tests/xdp_do_redirect.c     |   2 +-
+ .../selftests/bpf/prog_tests/xdp_flowtable.c       |   2 +-
+ .../selftests/bpf/prog_tests/xdp_metadata.c        |  21 +-
+ .../selftests/bpf/progs/test_cls_redirect.c        |   2 +-
+ .../selftests/bpf/progs/test_cls_redirect.h        |   2 +-
+ .../selftests/bpf/progs/test_cls_redirect_dynptr.c |   2 +-
+ tools/testing/selftests/bpf/test_flow_dissector.c  | 780 --------------------
+ tools/testing/selftests/bpf/test_flow_dissector.sh | 178 -----
+ tools/testing/selftests/bpf/test_progs.c           |  15 +
+ tools/testing/selftests/bpf/test_progs.h           |  15 +
+ tools/testing/selftests/bpf/xdp_hw_metadata.c      |   2 +-
+ 20 files changed, 1176 insertions(+), 1067 deletions(-)
+---
+base-commit: 8e403f7465a7c73e3a8ef62bba8cd75ef525e4b1
+change-id: 20241019-flow_dissector-3eb0c07fc163
 
-Thanks,
-Atemu
------------------------017ddf27874286d9994ecd49e37022ec--
-
---------96f118910c6e996d752378763fb02220b244965101fa83695a6dcd1715c36a86
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: ProtonMail
-
-wnUEARYKACcFgmc9kpMJkC0PmHbu18WeFiEEtYzCY6YbbjouhlYsLQ+Ydu7X
-xZ4AAJEhAP9ct6rmEBwv28OTpquRB5Lr+wSQtbBLzGnmccfIqFnlSQD/YFAr
-2s4RFt90lVC6pBlYWyJPmY8aijshMd04cagsGw0=
-=YEVU
------END PGP SIGNATURE-----
-
-
---------96f118910c6e996d752378763fb02220b244965101fa83695a6dcd1715c36a86--
+Best regards,
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
