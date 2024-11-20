@@ -1,52 +1,60 @@
-Return-Path: <linux-kernel+bounces-415448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC559D3651
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:03:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20AF9D3653
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12855283A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:03:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B1D1F233A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3422B19ADA6;
-	Wed, 20 Nov 2024 09:02:59 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D301586DB;
-	Wed, 20 Nov 2024 09:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A87185E50;
+	Wed, 20 Nov 2024 09:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R8TnYMIk"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58ABDA932;
+	Wed, 20 Nov 2024 09:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093378; cv=none; b=UCQt8WIrp7DenC1+kK9UP/R8rYtgPHzZ2JXVF41vwHWlJ5kYmCNJcsLKjWYHj6js+5uSxOAywBENfAULXVTGjy+6FNnyg+0oze19VkzjYQ4gTWCdWb8175dPa81Bk7pKh/jxmrvl1IN7yIPcz8F0/sBUs/NNHbijAoyMUp/mIBA=
+	t=1732093440; cv=none; b=hsB030JHOP5i791WveWjBXZeR2wJRk3u150Xy4754GVEN6Jw6zK4MRq6Vp2tfFppX79a2zqwJnm/VVPBdTKU03FnFODFPZm7HCU0WNHB+IrHO8+Yg7Er/vs4BpFXNYR84VDXbnUV71nQtA1j5NKLmWTiZLnrz1vtVOVFw2uUIZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093378; c=relaxed/simple;
-	bh=dQuf6/yyA3NgGkcae5ZJw5+p5TYlDDaDSEx2Pobd1Ns=;
+	s=arc-20240116; t=1732093440; c=relaxed/simple;
+	bh=9X+mU1e98GUO9riOayBq4detdn+863adFnXVmtFwROA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaLjkOH10PHO8U6/KY8o+eGN027QjqU1V2Y5CuaBaT8M1NWvo2171EYBNIil9P/CoPH0UKZC9y1yTZpQGKjjqmeGczXfykvVvcEVO/c0fjqzkSuWmluxBo3yACV4irmoxUTti0D+yFJbDY3ECMM1NeO4rzaa2i/TsiyLkc9jY4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tDgbU-00069z-00; Wed, 20 Nov 2024 10:02:28 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id EFA44C0110; Wed, 20 Nov 2024 10:02:16 +0100 (CET)
-Date: Wed, 20 Nov 2024 10:02:16 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"markus.stockhausen@gmx.de" <markus.stockhausen@gmx.de>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v5 2/3] mips: dts: realtek: Add SPI NAND controller
-Message-ID: <Zz2lmMdaz6MFjrm6@alpha.franken.de>
-References: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
- <20241015225434.3970360-3-chris.packham@alliedtelesis.co.nz>
- <3c6f90bc-2223-447d-9094-81011a2815b0@alliedtelesis.co.nz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzdbLZYOAfBGv4sTRx6/xMhZUvFvw5nqdEdtqViY4Nr/IlOeNJtYv1LKsN/pAN+iMwj+Y8+drt5ut1l4Txx9HyWLdjfig3kwFQGiQiw+5Su48lwvy24Ip1HbuAo2q6UN3RsWyQjaSUR7yjdKdRjuzG8Ay7mK7vydcRyyIgg3zzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R8TnYMIk; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Q6fZVPeJLh5zqpRAP7nrk/3zS0Fav8RZ7sccznXWyBw=; b=R8TnYMIkh8VDcvdPVWk4d7pQtU
+	TOAE6b31pM1deknAVj1rMYdDjThBCBJGzLQNjscY8Cre7+ezAdCXXnBCM6+oHN4HjUZ6edAud18Up
+	LS3MCDd6B4nno+9vicHrIdL1OevIgt2VJZ3Bw6X/RaDX3iG+/OWxvsmgBUES6IvajIWFF0MoKmJ3c
+	80Ke2xpYGyLB5FdLbN5pgl3ufM7P8q9mN3V9j1/TQ3PQ02hzNtDVmblS6mNJCFyMUTTE+zcHVYB9j
+	OjqXTJngfLG7lLKpmnNAFzFQgYTfBmCyx8A1ywotGgZiC4PAAYKI3SMmCSSMjFFT7oRA5sdaGFEdR
+	nRVcUTeA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDgcs-00000000SWT-4AsH;
+	Wed, 20 Nov 2024 09:03:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 36E613006AB; Wed, 20 Nov 2024 10:03:54 +0100 (CET)
+Date: Wed, 20 Nov 2024 10:03:54 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Chenbo Lu <chenbo.lu@jobyaviation.com>
+Cc: stable@vger.kernel.org, regressions@lists.linux.dev, mingo@redhat.com,
+	juri.lelli@redhat.com, linux-kernel@vger.kernel.org,
+	vschneid@redhat.com
+Subject: Re: Performance Degradation After Upgrading to Kernel 6.8
+Message-ID: <20241120090354.GE19989@noisy.programming.kicks-ass.net>
+References: <CACodVevaOp4f=Gg467_m-FAdQFceGQYr7_Ahtt6CfpDVQhAsjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,29 +63,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c6f90bc-2223-447d-9094-81011a2815b0@alliedtelesis.co.nz>
+In-Reply-To: <CACodVevaOp4f=Gg467_m-FAdQFceGQYr7_Ahtt6CfpDVQhAsjA@mail.gmail.com>
 
-On Wed, Nov 20, 2024 at 02:41:15AM +0000, Chris Packham wrote:
-> Hi Thomas,
+On Tue, Nov 19, 2024 at 04:30:02PM -0800, Chenbo Lu wrote:
+> Hello,
 > 
-> On 16/10/24 11:54, Chris Packham wrote:
-> > Add the SPI-NAND controller on the RTL9300 family of devices. This
-> > supports serial/dual/quad data width and DMA for read/program
-> > operations.
-> >
-> > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> I am experiencing a significant performance degradation after
+> upgrading my kernel from version 6.6 to 6.8 and would appreciate any
+> insights or suggestions.
 > 
-> Has this one fallen through the cracks?
+> I am running a high-load simulation system that spawns more than 1000
+> threads and the overall CPU usage is 30%+ . Most of the threads are
+> using real-time
+> scheduling (SCHED_RR), and the threads of a model are using
+> SCHED_DEADLINE. After upgrading the kernel, I noticed that the
+> execution time of my model has increased from 4.5ms to 6ms.
 > 
-> I see you picked up a couple of my other changes for 6.13 but this seems 
-> to be missing from mips/linux.
+> What I Have Done So Far:
+> 1. I found this [bug
+> report](https://bugzilla.kernel.org/show_bug.cgi?id=219366#c7) and
+> reverted the commit efa7df3e3bb5da8e6abbe37727417f32a37fba47 mentioned
+> in the post. Unfortunately, this did not resolve the issue.
+> 2. I performed a git bisect and found that after these two commits
+> related to scheduling (RT and deadline) were merged, the problem
+> happened. They are 612f769edd06a6e42f7cd72425488e68ddaeef0a,
+> 5fe7765997b139e2d922b58359dea181efe618f9
 
-hmm, I thought I saw some unresolved problems with the other patches...
-But if this is all good, I'll add it to my second pull request.
+And yet you failed to Cc Valentin, the author of said commits :/
 
-Thomas.
+> After reverting these two commits, the model execution time improved
+> to around 5 ms.
+> 3. I revert two more commits, and the execution time is back to 4.7ms:
+> 63ba8422f876e32ee564ea95da9a7313b13ff0a1,
+> efa7df3e3bb5da8e6abbe37727417f32a37fba47
+> 
+> My questions are:
+> 1.Has anyone else experienced similar performance degradation after
+> upgrading to kernel 6.8?
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+This is 4 kernel releases back, I my memory isn't that long.
+
+> 2.Can anyone explain why these two commits are causing the problem? I
+> am not very familiar with the kernel code and would appreciate any
+> insights.
+
+There might be a race window between setting the tro and sending the
+IPI, such that previously the extra IPIs would sooner find the newly
+pushable task.
+
+Valentin, would it make sense to set tro before enqueueing the pushable,
+instead of after it?
 
