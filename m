@@ -1,176 +1,240 @@
-Return-Path: <linux-kernel+bounces-415799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC0E9D3CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:45:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E589D3CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A012881AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:45:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 900E51F227AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F01ABEB5;
-	Wed, 20 Nov 2024 13:45:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CAE1AA7A6;
+	Wed, 20 Nov 2024 13:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TdExN8HH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A71A2C0E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECA61A7262
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732110332; cv=none; b=rG9tPDpl33fX0UIwAtGMzRGOLJ0WPLvcLYPRo8+Sy51D22BqsgzbMQjlYDkICxCfYj1DjtfbgzEtmMOcl7i+OCvyVOT0Vl2Fd2TvTMI1SgPbgk7nRNjfgJM7ReMdDZbyiEpTaO5TSwyvovoDuJc40ACG/Y1UCQCjAhLu91epRmg=
+	t=1732110380; cv=none; b=mNDNSfHMajoWrOoLQ4jYlyLu2rBBHVqhQYRHWcYhKx74Nr6YZWw2rl1vz8A4PI36qFMwMj3dAGFF0dyw92m+4t33Y07fVDfHZzQsNTPlAXodEXzAzCx9CI6is2UtFXT90XgWMHjdMdDn3/c5CeVjZMvHiJn939Jz5b+LwsPd9qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732110332; c=relaxed/simple;
-	bh=HHaoBCC8MK64RwHit1JQhYwaHeQLH9QM8pOD53gKPRI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DPBnss8LNOVPyA4SpXCPIYsQAwllwJSSAFGp/8M6cTGPsdq65Dn5ls8PUPsUnVrhSGfSjyNHUdwuxVIrUlbu4KRLGcOxfRS0CN7z+/MkWi7BYfxdxO+Ad4Zcwo1XQTDeLBMImR4YvWa2vTskemjyCN9VS/AMUnlLvKnOdLMB0DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so18853525ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:45:30 -0800 (PST)
+	s=arc-20240116; t=1732110380; c=relaxed/simple;
+	bh=4vqg4VuazgJsGpOh72wwxCJ9PCnIDe9vWowNOrd/uX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oDetuJmpWLjp8mNvsYSSTaDp8/ghKZ7mPhKArCexyihGmsYmEEn00J1pCvm7ub5Tc1wH6Ga/M0YXoPzNLFpWT+WVLPcqxNmOBAQp4qQZWA7nyylellhcDN0lLRD/vhrdS5AZVU86Fy2slKP6exUWq+Wiw0UXPaa4E8EWFbZ2h9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TdExN8HH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732110375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1Ri4tZOAJYW8pxNO/lLGuZP6CvXZw9/dNjDLAj8UJrY=;
+	b=TdExN8HHro5k4uoyMjM9Z7duE/dDCgcSLBmlvhHceDRGIwBV4Cx2akNB8uaWMMbyNYxQpi
+	7bT1mjssX2BtoBn9QgvOTF9Ywoxdc0Q9FgptmOXzzVAVVZYhABQNJK5/IzcupWBHOr6FsD
+	sd+y2UWSIGe+v5qL+f42EU6jqGnZhI0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-594-fKEX1J9VM8iB1nVU5NmpkQ-1; Wed, 20 Nov 2024 08:46:14 -0500
+X-MC-Unique: fKEX1J9VM8iB1nVU5NmpkQ-1
+X-Mimecast-MFC-AGG-ID: fKEX1J9VM8iB1nVU5NmpkQ
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-431604a3b47so16034615e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:46:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732110329; x=1732715129;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ycQjTfS2NOM91awP/bXrJt0XnXXfKhyI2pL/uuArTSY=;
-        b=HePSMrkTzJJovU/zgb3AllBlx4OnQEcyEjHzaAxoTHMApBP4iwIwTIsoj/auzFHNKb
-         HvzNv+SnED9NPAUXrHmRZboEQt8p2JsGs2KPzWEqNzpEVtEPUdKAhPAbn0j39sDVPOEj
-         uPEDDReyiau/HtIEz0i5gfSzExzr/6lQgXIveoln5qBb4nA+s93JfE3nKQaapA4nnwtu
-         i+zbZ+mtgbm1zMvC8u1Acin/vfM3UIkTMwFxkI8JO1JvIlQWkx8GEKQg7UYdUTDZqoUy
-         VyA0NqY+SHvs+Ub696QFD2GzsVDirwhgRZ2WUx0reW2admY8OChBu5Q+O4iKFyseqOee
-         xsmw==
-X-Gm-Message-State: AOJu0YxzlAQ9YTiPCpi1AAwycFQRLzGecOJzBRjojeThMlX10JYt1L3V
-	bL857ACs/UR45F6krltXufhhhkEy3qMd1z/ZkLQMKx/eCP5t432QC3Rp+16foUK2FI9EJcJijaH
-	hiHu8gT571DMLiRdx5wZaf9JmT+aVs7iWYAx2qHNmAMwm4pQfSvsAJks=
-X-Google-Smtp-Source: AGHT+IH3ad3T4hqc4asFT+D/H0cLBeVbVwxflb+dKyaNJA3S9UIzmGps4B/nbsOee5ELbKoSC1Rbu6wLAQc02EMCjv44hZeJstqA
+        d=1e100.net; s=20230601; t=1732110373; x=1732715173;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1Ri4tZOAJYW8pxNO/lLGuZP6CvXZw9/dNjDLAj8UJrY=;
+        b=TZ9idtjnsAbmJolRGJFxv3yqfGgsLEjo/4awte1Ey12vM45f+oQOThg3W9LDHUnJlj
+         w8SIPwD1lZuGZfdzKaA0gB+Ry3mXoE5EMmtsw+nc9DOVDHZ9uhRyBZJnnA76dJhacmPr
+         U1c5CWIo8qJv+SYma2L8Tx1L62NEMBR/Bf8fwlcyoAlrtzl90Yt985rrnDmMb2m3O+KX
+         TEv0k/hDx9LiJd8NZNsmEB91khbqtLpIrINHaF03KbzDNrVyFm8Wxwg57X2P2rYKN3gX
+         QMrX0lh+sp8YetOq2VPmP/o0adxbeiEO6rs5Y771D+SdrpeZmMdb+THW/zc7p8p4sS0h
+         Ud8w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5Lpebp/KE0tF/69ctw7+tZ9fzehDu+JcCbwz5oQg2mxU44DwO8Mwiere5tTJSomz8nU/yMmTAUzexQDA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCs2DLDne3zZXVnANfy9/MxUJRO6hqwtqgLjHYLC/r3dnThoVl
+	0JAMc4URhzys69IBMTJkwW7+XUVlfDnXU79spSO8roid5AEqRllJk2jfkdwUmaXwnj7sq3IzyKW
+	sX3Sc0Qd9ONmxKsEuhq4ZGCdjShFQKC3MGm0oQ0UzRrdwDk+nqR1NTDrA1rOftA==
+X-Received: by 2002:a05:600c:3acf:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-433489b3175mr28483155e9.10.1732110373440;
+        Wed, 20 Nov 2024 05:46:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHL5FpbLSyV/3P5T72T2TQsBaP3zsjUQ/jI6Vn8ySj88Akn5ETssrgK561qvkmcpcXgwTclhA==
+X-Received: by 2002:a05:600c:3acf:b0:428:ec2a:8c94 with SMTP id 5b1f17b1804b1-433489b3175mr28482955e9.10.1732110373061;
+        Wed, 20 Nov 2024 05:46:13 -0800 (PST)
+Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b46426d7sm19481465e9.36.2024.11.20.05.46.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 05:46:11 -0800 (PST)
+Message-ID: <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
+Date: Wed, 20 Nov 2024 14:46:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b03:b0:3a7:7ee3:108d with SMTP id
- e9e14a558f8ab-3a7865a9107mr32230585ab.23.1732110329481; Wed, 20 Nov 2024
- 05:45:29 -0800 (PST)
-Date: Wed, 20 Nov 2024 05:45:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673de7f9.050a0220.363a1b.0011.GAE@google.com>
-Subject: [syzbot] [media?] [usb?] WARNING in iguanair_get_features/usb_submit_urb
-From: syzbot <syzbot+e3ae1e7f4b88f3e696f5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mchehab@kernel.org, sean@mess.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+To: kalyazin@amazon.com, pbonzini@redhat.com, corbet@lwn.net,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jthoughton@google.com, brijesh.singh@amd.com, michael.roth@amd.com,
+ graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
+ nsaenz@amazon.es, xmarcalx@amazon.com,
+ Sean Christopherson <seanjc@google.com>, linux-mm@kvack.org
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 20.11.24 13:09, Nikita Kalyazin wrote:
+> On 24/10/2024 10:54, Nikita Kalyazin wrote:
+>> [2] proposes an alternative to
+>> UserfaultFD for intercepting stage-2 faults, while this series
+>> conceptually compliments it with the ability to populate guest memory
+>> backed by guest_memfd for `KVM_X86_SW_PROTECTED_VM` VMs.
+> 
+> +David
+> +Sean
+> +mm
 
-syzbot found the following issue on:
+Hi!
 
-HEAD commit:    f868cd251776 Merge tag 'drm-fixes-2024-11-16' of https://g..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=175892c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
-dashboard link: https://syzkaller.appspot.com/bug?extid=e3ae1e7f4b88f3e696f5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10edf1a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d892c0580000
+> 
+> While measuring memory population performance of guest_memfd using this
+> series, I noticed that guest_memfd population takes longer than my
+> baseline, which is filling anonymous private memory via UFFDIO_COPY.
+> 
+> I am using x86_64 for my measurements and 3 GiB memory region:
+>    - anon/private UFFDIO_COPY:  940 ms
+>    - guest_memfd:              1371 ms (+46%)
+> 
+> It turns out that the effect is observable not only for guest_memfd, but
+> also for any type of shared memory, eg memfd or anonymous memory mapped
+> as shared.
+ > Below are measurements of a plain mmap(MAP_POPULATE) operation:>
+> mmap(NULL, 3ll * (1 << 30), PROT_READ | PROT_WRITE, MAP_PRIVATE |
+> MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+>    vs
+> mmap(NULL, 3ll * (1 << 30), PROT_READ | PROT_WRITE, MAP_SHARED |
+> MAP_ANONYMOUS | MAP_POPULATE, -1, 0);
+> 
+> Results:
+>    - MAP_PRIVATE: 968 ms
+>    - MAP_SHARED: 1646 ms
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/50674231b58f/disk-f868cd25.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c6a8d7f6f69f/vmlinux-f868cd25.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5b4f3e883f4a/bzImage-f868cd25.xz
+At least here it is expected to some degree: as soon as the page cache 
+is involved map/unmap gets slower, because we are effectively 
+maintaining two datastructures (page tables + page cache) instead of 
+only a single one (page cache)
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e3ae1e7f4b88f3e696f5@syzkaller.appspotmail.com
+Can you make sure that THP/large folios don't interfere in your 
+experiments (e.g., madvise(MADV_NOHUGEPAGE))?
 
-usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-1: Product: syz
-usb 1-1: Manufacturer: syz
-usb 1-1: SerialNumber: syz
-usb 1-1: config 0 descriptor??
-------------[ cut here ]------------
-URB ffff88802128ea00 submitted while active
-WARNING: CPU: 0 PID: 972 at drivers/usb/core/urb.c:379 usb_submit_urb+0x1039/0x1930 drivers/usb/core/urb.c:379
-Modules linked in:
-CPU: 0 UID: 0 PID: 972 Comm: kworker/0:2 Not tainted 6.12.0-rc7-syzkaller-00187-gf868cd251776 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:usb_submit_urb+0x1039/0x1930 drivers/usb/core/urb.c:379
-Code: 00 eb 66 e8 f9 b9 5b fa e9 79 f0 ff ff e8 ef b9 5b fa c6 05 4c a6 cd 08 01 90 48 c7 c7 80 21 b1 8c 4c 89 ee e8 48 b0 1c fa 90 <0f> 0b 90 90 e9 40 f0 ff ff e8 c9 b9 5b fa eb 12 e8 c2 b9 5b fa 41
-RSP: 0018:ffffc9000378ec50 EFLAGS: 00010246
-RAX: 60687f36e4038100 RBX: 0000000000000cc0 RCX: ffff88802606bc00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffff88802128ea08 R08: ffffffff8155e312 R09: fffffbfff1cf9fd0
-R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88802fb894a8
-R13: ffff88802128ea00 R14: dffffc0000000000 R15: ffff88802fb89400
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005653c9143738 CR3: 0000000028d30000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- iguanair_send drivers/media/rc/iguanair.c:193 [inline]
- iguanair_get_features+0x1c8/0x7c0 drivers/media/rc/iguanair.c:218
- iguanair_probe+0xb1c/0x1540 drivers/media/rc/iguanair.c:438
- usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
- really_probe+0x2b8/0xad0 drivers/base/dd.c:658
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
- driver_probe_device+0x50/0x430 drivers/base/dd.c:830
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
- __device_attach+0x333/0x520 drivers/base/dd.c:1030
- bus_probe_device+0x189/0x260 drivers/base/bus.c:534
- device_add+0x856/0xbf0 drivers/base/core.c:3672
- usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
- usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
- really_probe+0x2b8/0xad0 drivers/base/dd.c:658
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
- driver_probe_device+0x50/0x430 drivers/base/dd.c:830
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
- bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
- __device_attach+0x333/0x520 drivers/base/dd.c:1030
- bus_probe_device+0x189/0x260 drivers/base/bus.c:534
- device_add+0x856/0xbf0 drivers/base/core.c:3672
- usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+> 
+> I am seeing this effect on a range of kernels. The oldest I used was
+> 5.10, the newest is the current kvm-next (for-linus-2590-gd96c77bd4eeb).
+> 
+> When profiling with perf, I observe the following hottest operations
+> (kvm-next). Attaching full distributions at the end of the email.
+> 
+> MAP_PRIVATE:
+> - 19.72% clear_page_erms, rep stos %al,%es:(%rdi)
+> 
+> MAP_SHARED:
+> - 43.94% shmem_get_folio_gfp, lock orb $0x8,(%rdi), which is atomic
+> setting of the PG_uptodate bit
+> - 10.98% clear_page_erms, rep stos %al,%es:(%rdi)
 
+Interesting.
+> 
+> Note that MAP_PRIVATE/do_anonymous_page calls __folio_mark_uptodate that
+> sets the PG_uptodate bit regularly.
+> , while MAP_SHARED/shmem_get_folio_gfp calls folio_mark_uptodate that
+> sets the PG_uptodate bit atomically.
+> 
+> While this logic is intuitive, its performance effect is more
+> significant that I would expect.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yes. How much of the performance difference would remain if you hack out 
+the atomic op just to play with it? I suspect there will still be some 
+difference.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> The questions are:
+>    - Is this a well-known behaviour?
+>    - Is there a way to mitigate that, ie make shared memory (including
+> guest_memfd) population faster/comparable to private memory?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Likely. But your experiment measures above something different than what 
+guest_memfd vs. anon does: guest_memfd doesn't update page tables, so I 
+would assume guest_memfd will be faster than MAP_POPULATE.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+How do you end up allocating memory for guest_memfd? Using simple 
+fallocate()?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Note that we might improve allocation times with guest_memfd when 
+allocating larger folios.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+-- 
+Cheers,
 
-If you want to undo deduplication, reply with:
-#syz undup
+David / dhildenb
+
 
