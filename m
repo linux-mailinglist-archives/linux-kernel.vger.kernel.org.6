@@ -1,108 +1,88 @@
-Return-Path: <linux-kernel+bounces-415969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F259D3E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AF59D3E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A533284875
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66B0028422B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0802E1D90DB;
-	Wed, 20 Nov 2024 14:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99551D9A63;
+	Wed, 20 Nov 2024 14:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q91erEAQ"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJ/BllcH"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE6E1C57A5;
-	Wed, 20 Nov 2024 14:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3441D9329;
+	Wed, 20 Nov 2024 14:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114670; cv=none; b=M+StwRJDayqefBJ2MsYgjsaQr7Pwg1pxE0aFm9DCxf/H9cSf/K86zxmbQ04j4oFotKHwhVkduNzIr3QjnBoIopGVKQ2zrz9RNVahkNTZbf9X2r/6KSSpCeqHSCeCUpv4RgJ3TC89tAlXkJ89QalM8ta64T9wekeSFdUsYuAzQn0=
+	t=1732114685; cv=none; b=C1o7HYcqIGA8ccQU9uU0zjjCtRIvtZMU36lpUVJvV6TACIrfGQQyGaYmKKFNSS1/AJ19HalLTKx1k6otZoVY1R51tbssL30kbtqUxRkahwjabNFPzKf1kBjtlC9ZbGxI5JIB5Jc2yoL51cInnatPpU4VLjZbmENklEzP1+hWHn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114670; c=relaxed/simple;
-	bh=w4RwPLlFWRfw71b5zlZiK0uQ/mhhhRbkndbVxlkKVxE=;
+	s=arc-20240116; t=1732114685; c=relaxed/simple;
+	bh=8CMRHB2cxqTmamBsqg9uudH9g9ASPeTH0X8IvXsphJI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmjXmv8ofnjMIxyvIq7GJ9oY7A9oV9pHTF8I2GErlTsYuchZvrmTs7bb5WV92zhzOZSc5ljel/HATvL96VPRAwwMxR4M6aoPoLI9zrkNIxddLebzajKL0GFeaG8UCfzhvewbXwbLELhL0sDy5ndh8roysBC0Pa+GYzuELL5uIwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q91erEAQ; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=w4RwPLlFWRfw71b5zlZiK0uQ/mhhhRbkndbVxlkKVxE=; b=q91erEAQYnhO6SfqnSd5192dsu
-	TqmUxmxU42V0DCFscJVyv7suDTDbuCguDIG4UHdvpu6y2+t82htk8umoOsHCgIuShf63PZRJ4n/DL
-	m5OI36m7dcMC4WYTvPhcUsXymjngJuHK8rzEE4/hnL68pXrGHFdexCyA2HaKm3Ue2oM/yXBW9fSBb
-	RoI48xNyA/c2G5AoPjyKbD1fgE/Q6donR5arZSuCXM7ldb+3RN1xSrK6T37B24YTKEomu2ldBFIhj
-	vgDoNYHII0bMtq6zSccJvlvraP++zCqREJM3vLTgblrxAkrFSqxssrc85DQ4DiI5zYMvOrfamAd4S
-	uvjrPf8Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDm9J-00000005Mwt-2JtI;
-	Wed, 20 Nov 2024 14:57:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 722643006AB; Wed, 20 Nov 2024 15:57:46 +0100 (CET)
-Date: Wed, 20 Nov 2024 15:57:46 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
-Message-ID: <20241120145746.GL38972@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-7-vschneid@redhat.com>
- <20241119233902.kierxzg2aywpevqx@jpoimboe>
- <20241120145649.GJ19989@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DpTjNv9JJTfh9A8bsAIhBb6irl7F327iU1zgRdT9eNoeV3ghDJO0Uvg8wlLHzQ+1zTa2r6SywsAU7pFEksa7phrjYFCzfQxJ/Evz781z++c5h8cc0GYhWF9CkGvTvInsUrKock/g0nyn/dBggPy80hdOuaDZQEiuOkXIMJd9Kr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJ/BllcH; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ea2dd09971so1900267a91.3;
+        Wed, 20 Nov 2024 06:58:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732114683; x=1732719483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V5tRs5SDxCA6uVSrjq3npJTWFM0ZTaUuFsUk1yMWVPU=;
+        b=QJ/BllcH641o7SQSu5OaHg+rFWIXm5INxRqB+4chvijzOgMh2AKP7MCG6fcN4aUU63
+         eyKo4cbv8dKwfk+GEMtG5zIrHd3QpfiDz1omwc6HeTYp5d20k0wn6ofouoAFQWvoMBEG
+         c2B6YZACUIFjh/iclEbqmWqHkao6cFgZkH0P9R/P/p7oFVTW1BMkT3K/CvR/XGIAZFFZ
+         mSqMt1F3mtpO0oZ2fuI/PL2ipl9RrfFxnynpGbusX+4rCfMXvtKo3AxiOoeI3+OTS5B0
+         M43PiLURO33MprfaHfnjHZc+Y/AWHoCr20hWDtZh//7EU5smD8VZBDVKQmregbBcgeTK
+         np0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732114683; x=1732719483;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V5tRs5SDxCA6uVSrjq3npJTWFM0ZTaUuFsUk1yMWVPU=;
+        b=VDzi/U5hBDPxOa632rOU6iK0W7TvYZ+13ClFKqjbGRaeUCOZnOujEeWg8rYfljyTBj
+         D1T1+Kr5tpZUncFs64e0opKIkDXHwsMRrBuv8u2jJwE3PDAHz41kk1rL6p1NZHFhwAse
+         oFunpMHwR/EzBh57oOA5REFzCnWjpq+JNqXocr620UjN7dj2mIW2yyYjUIsnDftstnSs
+         GuH8uJUQZAkPZs7UshUwXtQWOyfqVADEQ3M8LAQZKwpnijgHAJhUtYdmVg+8HXjF7KCD
+         YVxJdMINXIhpx/ce6HqmdABVJmQz0T9Tf2s6fnmblS78bKiJjxXZly9jMXELtWKSqI5g
+         LR8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWp4Q5BAn5M3KbfF82uvzo9irM9FX5fKIr2ZbnPFWd3CLEf9xyFHcZQTCaCGA13m9kOOT+mf3Gm@vger.kernel.org, AJvYcCXG+me+UZP6YlDT4K5pPDS1yMiRy5o1oujCwou2krF+JXhYMy40orMW75WxRx4uceSa0NKUTASq+fUQDnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybVAcHLrIGTbFC2HIBNh4HlBn7T5eoJnkHFUhV1DPTXKOd2+7a
+	F6XAJw/p4nzDyZU6UCqWQCeu6peRtlENsPATbdmxtce4Ti4qceHZ
+X-Google-Smtp-Source: AGHT+IFV7iRAEgSa8oH8+7AoTvx0uOegkgCNlN1vBcrbCPN/pmNqJi3DO6BRx8wXmhFSKq6G9fmCIQ==
+X-Received: by 2002:a17:90b:4d0a:b0:2ea:94a1:f653 with SMTP id 98e67ed59e1d1-2eaca7ddfd1mr3149652a91.31.1732114682861;
+        Wed, 20 Nov 2024 06:58:02 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea238sm1404275a91.10.2024.11.20.06.58.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 06:58:02 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 20 Nov 2024 06:58:01 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] net: microchip: vcap: Add typegroup table
+ terminators in kunit tests
+Message-ID: <24a5975e-a022-4bf4-a2ec-76012f977806@roeck-us.net>
+References: <20241119213202.2884639-1-linux@roeck-us.net>
+ <20241120105202.cvmhyfzvaz6bdkfd@DEN-DL-M70577>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,13 +91,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120145649.GJ19989@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241120105202.cvmhyfzvaz6bdkfd@DEN-DL-M70577>
 
-On Wed, Nov 20, 2024 at 03:56:49PM +0100, Peter Zijlstra wrote:
+On Wed, Nov 20, 2024 at 10:52:02AM +0000, Daniel Machon wrote:
+> Hi Guenter,
+> 
+> > Comments in the code state that "A typegroup table ends with an all-zero
+> > terminator". Add the missing terminators.
+> > 
+> > Some of the typegroups did have a terminator of ".offset = 0, .width = 0,
+> > .value = 0,". Replace those terminators with "{ }" (no trailing ',') for
+> > consistency and to excplicitly state "this is a terminator".
+> > 
+> > Fixes: 67d637516fa9 ("net: microchip: sparx5: Adding KUNIT test for the VCAP API")
+> > Cc: Steen Hegelund <steen.hegelund@microchip.com>
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > ---
+> > resend: forgot to copy netdev@.
+> 
+> You are missing the target tree in the subject - in this case it should be
+> 'net'
 
-> But I think we can make the fall-back safer, we can simply force the IPI
-> when we poke at noinstr code -- then NOHZ_FULL gets to keep the pieces,
-> but at least we don't violate any correctness constraints.
+Sorry, I seem to be missing something. The subject starts with
+"net: microchip: vcap: Add ...". How should it look like instead ?
 
-I should have read more; that's what is being proposed.
+Thanks,
+Guenter
 
