@@ -1,244 +1,150 @@
-Return-Path: <linux-kernel+bounces-416408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52249D4458
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:15:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AF59D4461
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EB7282BAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6DE282B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939331C232B;
-	Wed, 20 Nov 2024 23:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5AF1C8788;
+	Wed, 20 Nov 2024 23:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zei7Qffj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ibo4fAAD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053F81C3F14;
-	Wed, 20 Nov 2024 23:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732144527; cv=fail; b=gAoJqLSv+uuEb/s7PNy6qjmOj99AY43MU3l+ZOro55dRV8P2DUb6WDnUDgpgEI0vEIH9Hice4UtRqIcvXHqQOJJ6qm3p6VPNA7H43M130m3HTCfs3+ulxFN8PlogFqItgHUGd80Dp0HRvqrcCPZucZyB+NrIHMfam8TdyFnB0RI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732144527; c=relaxed/simple;
-	bh=vQg69RYKkKXhAWcTFd9aKbCrAbhYVShIpTfJHS0+7M8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WZ/MiyUEjrnRJ8iYMz8U0E0U8Lz9r6xQ6yhMpJuMI3a0f6F5APoPhNBI9GeMFi0Xsi/hM5ttu3i7GAn7AOXXW5SF348VzuYRKzw6BZVYgLhRIV0Et2OLgz0h7Fhft41hMLSllGIgrKgTw/RprEmnO0y1bjBMZR0yJUr3TyrnZ7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zei7Qffj; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732144526; x=1763680526;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=vQg69RYKkKXhAWcTFd9aKbCrAbhYVShIpTfJHS0+7M8=;
-  b=Zei7Qffj83CzpN/EkF84/kZQYBoUym1JhGWA8XWjOS5bRebvrGzdztLq
-   CP/xkEI0AxD/RTfa74f5NNPVy6BJZzS3ME57iALzzAgeeVqrKc523RdWA
-   Ikly/eSZUnC1NTwGmvSY8oTYMJ7NyDjFCuST3aV4RS2J7ZBxkKxWeHt6y
-   mGdZXKhb5M6xGPf6FJd7CvINIpdXbkN/ZVlCckLChRAu3vCWXeO3q/YrF
-   1VUqPwM7Qao9fz8cXrxTc6+oqM+LxFqHA4LMAaLATWWQZL0KwpstjA955
-   +/v6+6p37P6tyWMBr435nJ4WaVRPwmG4i+GrVdut2TLL+S4rl3gtg049O
-   Q==;
-X-CSE-ConnectionGUID: 5O8SCtiuQkORBcWUWoAI3w==
-X-CSE-MsgGUID: kF3awYtCTjOsRHABlbvqWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="42871361"
-X-IronPort-AV: E=Sophos;i="6.12,171,1728975600"; 
-   d="scan'208";a="42871361"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 15:15:23 -0800
-X-CSE-ConnectionGUID: x0vQNZcCQhmg6pyR3UJaeA==
-X-CSE-MsgGUID: i03vRZr1RNmZhExtBApIyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,171,1728975600"; 
-   d="scan'208";a="95013174"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Nov 2024 15:15:21 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 20 Nov 2024 15:15:20 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 20 Nov 2024 15:15:20 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 20 Nov 2024 15:15:20 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CgMoRLtp0nRREq+lr19eTH4d5HfU5wT9GdzNmYG8iJezwPD89JczYOlpEy4EZ+nAIxO0zSsyY8qTHUHYTLuIn2e5K3gdRQXEfduo5OPhq9LWJu3rIeUpY+z76QlpJmy9JcFC0O9U3akGRz76Bld2p/zRUHXuOcKLNOKGuzzChMRpuxxwxFJRDYusP+Awx1Hn6TuKqRv7DUtJ0PMNx/kgSttUE5vKw3ctd9olfcpBwqFzQ3tSqnX6LLItbPr8n/SYCGgbUB2phtDyYY5CsGYfpi9zk9Up73uih+Rr2fghz6VhwB9/lc23QyLPj+kPV1Ce+P2qvpVXa0t3uqfN+UkbSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1hrL/YlR/zgnwe1VO0cIlUSHo/G7qmpVkZ+xG9FR8sM=;
- b=fM6h6+6wBhZTnzusMCSy6CwWKzUnVqMXisQc/NG4Dtp2Y2R7iU8S0Bg4wkD77s8hQ0bge+heFRsXUkoBX9+eRBLxqtA6iP1unIqSK9wYOqQWJbV49fO29rx4NeZuqYXcFRJk/3HL4jpGlpfUw9BDU+TaCAbIjXXgobwZAUlVqeSBsR/bQyd1cQkJIN4Tzxos75UAU1f5Wyy207VxnrGvR2WWZFFOWm+cNvD7b9fi1tCDR6O1zUq1JKoIb/hC3GywYA/7qGPaClXW9F1CvUQKBNAsgmYkrl+8sP+6s4QtT1A+MG1VhWPd/T+j+PqBvoDncx7j0qjPvcXm7+1vCgg0bA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com (2603:10b6:a03:18::25)
- by DM4PR11MB7207.namprd11.prod.outlook.com (2603:10b6:8:111::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
- 2024 23:15:13 +0000
-Received: from BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b]) by BYAPR11MB3320.namprd11.prod.outlook.com
- ([fe80::e8c4:59e3:f1d5:af3b%6]) with mapi id 15.20.8158.017; Wed, 20 Nov 2024
- 23:15:13 +0000
-Message-ID: <ad1ceef4-b98d-4fca-90b9-b9b09e311001@intel.com>
-Date: Wed, 20 Nov 2024 15:15:12 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Documentation: Merge x86-specific boot options doc
- into kernel-parameters.txt
-To: Borislav Petkov <bp@alien8.de>
-CC: Borislav Petkov <bp@kernel.org>, <linux-doc@vger.kernel.org>, X86 ML
-	<x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <20241120163033.12829-1-bp@kernel.org>
- <0d4f2978-22f4-4e8d-a6b8-e6b90888dc25@intel.com>
- <20241120211122.GDZz5QeheUP5thy_Zi@fat_crate.local>
-Content-Language: en-US
-From: Sohil Mehta <sohil.mehta@intel.com>
-In-Reply-To: <20241120211122.GDZz5QeheUP5thy_Zi@fat_crate.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR04CA0006.namprd04.prod.outlook.com
- (2603:10b6:a03:217::11) To BYAPR11MB3320.namprd11.prod.outlook.com
- (2603:10b6:a03:18::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C8A27447;
+	Wed, 20 Nov 2024 23:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732144713; cv=none; b=gPr9HY+Da8Fou/QGFI645me1XutXYSIw+/15TuV1MrLy9cnivl6u9XuHMPY38mdBGyJPUgBzZDjqmxCQumj/oKEfccHsfkABd35EeBBF/jrGy678EgJwTyktW00L9aH5tTkvAf8er2uyZV7/ot7cdr4IXu9WzcgyS9ddCwWbwI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732144713; c=relaxed/simple;
+	bh=SVAHyeGTzoghoI1kXDg2gcjhAZXFJM9LY16aIDIrBCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sL5Y5h0jro62tOD2eyMgSafR0Cua6pUTKTyU4oKiff3B244h5OWWCDBSf/aMJBuMMvpiRuYfKW7ANLuwQn6a2YN+xb8A5mjNozFN6CFTsYTjNaLrxqTErWCUhp6WWcVrWXrrW5HObKgVVNPwOkPcT6xEWziEbqOwDJIKrP5JS8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ibo4fAAD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKLNB3d003945;
+	Wed, 20 Nov 2024 23:18:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lanws6Yx3ikB7msfjQOOsmduMmYwECqYx43uI2TK1no=; b=Ibo4fAADwmwti8Rd
+	dqa17jA8omDgxnj3+QoHhRaVx5TIpePypG0rZNAchheHpXLd+ATN/13qsYvwROqc
+	6YFzfzUXBqhscSNc7rfbxlOjVfaOYhuw18ix5s4AWZ8V6VPmtTHRPGWH6CF26BCw
+	O6fqCBqG04155VJG4B9pYMaQfg+9vdA3eZgbyklYy8a5RqJhy19f+mjitzuzXj/5
+	m8OnhXYIwGbVOVPp9JpGFeuIjB247Zx89l+oNQhoE/l7qiNv+mB9sQXlwJzjWLaI
+	fSBRw9k1miT7nRD0IZ7YqFLSYW4YyaElCvfHI1RfXAHlSHsmeGqLQ3n58mea3MH9
+	c/BzMQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3a42s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 23:18:09 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKNI9I4029347
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 23:18:09 GMT
+Received: from [10.110.30.192] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
+ 2024 15:18:08 -0800
+Message-ID: <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
+Date: Wed, 20 Nov 2024 15:18:07 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3320:EE_|DM4PR11MB7207:EE_
-X-MS-Office365-Filtering-Correlation-Id: f025cecf-3b48-4a07-63a3-08dd09b92fe4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?SHoxWisvVmc1L1NCWmVHc3NZRHBic044MVhGaDRGTG8vRmVVR2NqTk9BMnRv?=
- =?utf-8?B?RndySEw4MzN3cFZ6V1hYcStyWWE3cHZMNC9iZi9OVWJqODJmdFhKUmJSUnNu?=
- =?utf-8?B?bkZBcWRHc01mcnRzYzJyOGQzSDZXNmdYRkNrY2NHZEdwUHJuVjNEc1VIR3F1?=
- =?utf-8?B?ZlI0UUFFeldKcUFwOEhkN2NKT0JMOGJlanlueGtUa1ZtTlVQdE1JZHRSNjc4?=
- =?utf-8?B?bXpIZXloaW1iNm5lNkFKdGtwU0QvWS9sK1JwMk92YStIZ1VMakw5Ri9ZYkhr?=
- =?utf-8?B?dGFQc3hRaGdKbEhBMFNJbW4xbjkzWlJMT1FZRVJUS3N4Zjgxa2dLelkrbzNl?=
- =?utf-8?B?Skp0U1JPK05lOEYwSzJRaURETUx6dFkycEFzTVNkeHhpb2VkaEQrZHN3cmRk?=
- =?utf-8?B?Vk9jZlBDK3ZoWGtVdXFlamFVaTgvc0h1a09Db0kvYnZXQlppMjFNbnptNm5s?=
- =?utf-8?B?VHZ6dnZWS1JML05iMkI2Y3kwcTFudEFoMUVpcVU5RFg0aHo3T2crbnZmalBJ?=
- =?utf-8?B?MmVxNmkxVzRlRkltT05xQmZhYncrenQ1YkwyL0ptSkQ1aENibDFxUTdJMngr?=
- =?utf-8?B?NVlKZm9vN0o1ZUJ6clZGR1JGU0JjN2NQWXdtVVB1Z0RqME5vQmpIV2FybUt5?=
- =?utf-8?B?dFFvRzBOQnV5RUlTZk1TMnBaR3dqSFdIZ1NFWGlqNjhBUTNPT2hwYkJ5WTZP?=
- =?utf-8?B?SllrcVpJdjE4M0kxQzdNaThVRkExLzMwb1VKa1dpMVJEc2o3VkJuQUxxcE44?=
- =?utf-8?B?TTJTbUxQSXlKUXA1M2ZwbXkwVEtMS2dIRDNjK0oyTWI2RW4reFcxa0owaDZz?=
- =?utf-8?B?TVNLVnQzZ1BRKzFsN0JaUHUzN1RGcjV0QUlkM1R5U0FTZHFRbzlTYlQ0eHN2?=
- =?utf-8?B?b1FnczdVRDNVM0hmR2dVNnlOdG9wcHc4RkxMOHovQndkZmFmTU1uSWxmbmFn?=
- =?utf-8?B?Z2NTQjZNajgrTzN6SXc2WHJ6Y0prZU9MTDRxeGxsZkwrYk5lVUU2R2hpcHZC?=
- =?utf-8?B?Lzl5RUo2Q3FlUDlQVWw1UnpPa1ZhNVM1azBKOFZyWWUxNWJ2U3BBQU9ReXdn?=
- =?utf-8?B?ejlwOUxtUDBtdWQ1SXpEWDlSTUJ2QlhnZG9yWXc0bTNzWCszMHh6Z1Y2TUJt?=
- =?utf-8?B?QnFkWXc3Si9xUEhVZUNKeHM0dmV6SVdzL2FmYTFrdEQrenNpUEU5UUJEVkFr?=
- =?utf-8?B?NjJpRGtFWm9meTZpRGR0K2lRb2NMVk82Z1JqN2lhSldFQzRPWFZjd2N4UmhI?=
- =?utf-8?B?dzJaeHp0WHVFR3FiQ1d0TGZsa0piUlgrSUMvWWVXb1NSWFB1ejdRV3NzKzA0?=
- =?utf-8?B?eEJ2WW8ydWtQSm4yMzdVZlhYckltcENHa0JReEFxOC9ORWs5UFMvbkhQTjRQ?=
- =?utf-8?B?WFZ3a05HNk4yK04vU21PMHA1QS9PQ0xzVVAxOFZPdFNmMlhrOGgva050WUd3?=
- =?utf-8?B?ekpabzhBcWhhdWRyU0ZrWjJnL1FUU3ZRT3ZMSTdWdGxhSks4STRpbXdVRHB3?=
- =?utf-8?B?WVhsWHcrQmViYUYzOWtZUUpwM3BjOUlJN0xnQkxNVXRBUW9MdkVmdXYrZWF0?=
- =?utf-8?B?U2hVRlB1cGtNYWRsNHBCZEZVWm1STmNKSDRCM2k5ZFg3NThuS3lJSURCRFh2?=
- =?utf-8?B?ZFBSVmNGbm12dm51YVhqQ2N6VUx2SEkzSTJmUytkeGZ5WXYxblhoZGU2RlBT?=
- =?utf-8?B?OG5jUkIzY2E2SUpNdVRzS3ExN0JTQW9DN1BCc3hkNmo3bVRjSXV6U1llUnEr?=
- =?utf-8?Q?0s0AcutNmNtUsZAE8M5kn/Cmg2gSYZ/0EFprkuS?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3320.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QU9QK3dkRTlhMG13QzdUMWhuMlpYYzd4T3k2TThVT2FhaytIa295b0s4OGda?=
- =?utf-8?B?SjBjbzhlaEhVNE5ONUYwQWhVTWM2bjRmbjdib28wa1RXR25VV29kOVRZRWlQ?=
- =?utf-8?B?dHJJdVk5Q0JEc1JML2lNSnJWRFBjSDg1WFFOWFl1TkZGZ3BoajNCelNhSkNL?=
- =?utf-8?B?L1NIUzJTdzdhaHd3YnpQRmRDYnlHaFJVQlJKWGFwVkNGNHdwOU1IVFFFNXlu?=
- =?utf-8?B?Q3pqUVdlcnVBZE16eHF3MElTbnhaNHVWZ0xubUxka25YYjVDRTQ0Vno5d0pu?=
- =?utf-8?B?R2ZFWVNsbGRHZnVoTFAxZkJQQi9YZWlDYlg3a0dBZEFBdnBVOVpMSjhTbEZW?=
- =?utf-8?B?L0NuL082TjNvQyt1Q3ZKOVYyTHA1d29SVTlPREY5V3RQdkd6UjJHK1NoMFdV?=
- =?utf-8?B?YlR2RzdNaXZCUWtiZGlmOEVPaFQvL011RklxVEJBSUFWVWhTa2xnSmpDRjNQ?=
- =?utf-8?B?Nk5WUktMUGpWQkJJMWFLbTRmSjN2elZjY01jeTFQSnBJdnFTNWVtY2oyOU40?=
- =?utf-8?B?OGhuMG0rUFZJNGlJOVRtWEI0YUVxY3V1WHR4ZHF1UFA4RlFDUm5RR25QT0lF?=
- =?utf-8?B?eHJ1Z1FEcU1lSk9xdXRKanVTUHdWOE5ITjhSMnVkUy9zeHFYN285RDhySEpk?=
- =?utf-8?B?Mkk4Q29vUUxtSHc4Uk4xKzdFNGdFNlB3ajJadkZJWjRzL3pZZ3J5RjE4SEk1?=
- =?utf-8?B?d2tnZ2FtUGdVOUpOS2wzV2U1STlDZ0ZwODkrUkl5SlBybUgreUE1VmNpbnNZ?=
- =?utf-8?B?OHAzcVk3Vk1NZTdJYTRBWlF1OFlJeFZIdnFSV0RGOEViLzNGTHIwbmR0ZkRX?=
- =?utf-8?B?NXJRWS84VWtMb3hkbWFVQ2NWOVJlQWJsYmx6L0RNc1dGOUtMenhwYldNdkMr?=
- =?utf-8?B?OEdnR2EraGJzbFBSYm5GYVZwUVRzYnRHc1ZVaTV0UlBIenZyaVBHdVF5T2xw?=
- =?utf-8?B?RnJVQmJZOGdJd2lnWU1PMmp0Q1g1dVJwVGRmM2JsUjE2b3dVa3gvdFdpczRI?=
- =?utf-8?B?Ym1SUEZ2ei9ldmRWMTNSZ3F6ZUd6bzlleHgyTG4yNUVEQ2lldVBjYWpFWmp4?=
- =?utf-8?B?aHEyZ2J1aUpsUlU2dVBtOUUvTFNwYUpnYXNPUjBTVG1rcGV0cThkdUFGTWFF?=
- =?utf-8?B?Y1V6bW5EejJreTUxdUl3UkVWaFJiVG0xeE9EZkRGbUJzblZBYkxIZ2lZWmJG?=
- =?utf-8?B?RTJ1RGUvb1ZwaWsyNDdab2VWNEx6Q3RQYS93dlQ2NDBhd25xeTZiclJCVjU4?=
- =?utf-8?B?Z2dsWUxETUJYeURmemhSTFJNdUUrU2cyVGJWTDdGZTFJZkQzbUIxUnI5L3Vt?=
- =?utf-8?B?ZDdVV2tJQm9rTjQzWU5PckZOSkRpTHJ4N3loc1hrclFlaStJVGx5bXpYMjA3?=
- =?utf-8?B?YSszVU14MjJ2Qys4VDFSa0dTcUUxVHVvcnBwZ1FqZnFWYmx4U1dGeWw4VXNG?=
- =?utf-8?B?ME1jZFVoYnhlWjF2MlNTU3FoVVIrRWR2bi8xYkVpcnRjaDlxMG5CbEdMTU42?=
- =?utf-8?B?bjNZeTE4Qy9aVE1YK3JCUHhFVXJzQUE4VFlEbTZ5K3NrR25SZDVYWjBBc3Zu?=
- =?utf-8?B?bHdjN2Z1T0pXM1Y4bVg1Y0JSNWhGN0k2RW55d2xmS2dUcEQ2ZjRYYm0xZWw2?=
- =?utf-8?B?bGswTnRXR2hpM21GOWxrOGd5T2JWejFjRllHdysvRjFvZGErR3BBZ1RDMnlK?=
- =?utf-8?B?ZVpZYkF4SnJscGM3bXpvYXFZNStJZ0R2bkdTcGFjMVdMRWRBOFdsOUxlWTc5?=
- =?utf-8?B?dVhycFdTMzNoekloUTBENFBFNDBxSTJ0UUYxZDhtVC9WS1JLZkJ6dldqZW1k?=
- =?utf-8?B?UFF3S2J2OUwwVTZWcnRteUpBckNDSHhBaC9DdHFRcHFHNWN5N3l0eGVmUFdn?=
- =?utf-8?B?ekRXOUdaTW01SmMxWnhOUmxlVjg0b0R5VlJDN3pJVzljcmc1b2greU9JeVB6?=
- =?utf-8?B?QkF0aWh3cmFjTDNmS09mU3ZCamhoRjZsaDYwQ0JvenRJN2NjeG5TdGxNa0JD?=
- =?utf-8?B?Y3dXdlV5K0MzNUxBaWZoZWFSbWw5MU43a1BZRXlNbW9MU1QxRE45N0RPaFUx?=
- =?utf-8?B?TjRneG9EUVBEamgzek0xaWpEa0VwNEo5NUo0ZVhqM04yaHlzZHhmRFJuaWh0?=
- =?utf-8?Q?9/PuPp/n+M9hEbSuzXYUIfgeI?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f025cecf-3b48-4a07-63a3-08dd09b92fe4
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3320.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 23:15:13.5222
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EsG55EplQaei+4pGzTMUkGZUrH2Cb+FWjoEvR+8uEy8AO4AiXlvHBwIQ3JdgZwVN5RxKZQFIS2+wj+dB8pLX2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7207
-X-OriginatorOrg: intel.com
-
-On 11/20/2024 1:11 PM, Borislav Petkov wrote:
-> On Wed, Nov 20, 2024 at 12:49:10PM -0800, Sohil Mehta wrote:
->> Instead of double tabs and <option>: <description>, would this be more
->> readable if the options and their descriptions are separated?
-> 
-> Have you seen the rest of this file?
-> 
-
-To clarify, I am not suggesting to have the description at less than 2
-tab distance from the main command line option. It's just the
-sub-option. It would still keep everything aligned with the rest of the
-file.
-
-	mce=
-		<sub-option-1>
-			[Description - ...]
-
-		<sub-option-2>
-			[Description - ...]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
+To: Takashi Iwai <tiwai@suse.de>
+CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
+        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
+        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <pierre-louis.bossart@linux.dev>, <Thinh.Nguyen@synopsys.com>,
+        <tiwai@suse.com>, <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
+ <2024111655-approve-throwback-e7df@gregkh>
+ <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
+ <875xoi3wqw.wl-tiwai@suse.de>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <875xoi3wqw.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CyBvhwumMXz5hdJs_nJXfcoj34E6y-gX
+X-Proofpoint-ORIG-GUID: CyBvhwumMXz5hdJs_nJXfcoj34E6y-gX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1011 priorityscore=1501 impostorscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411200162
 
 
-I see quite a few places that do exactly as the above:
- console=
- console_msg_format=
- earlycon=
- hibernate=
- intel_iommu=
- io_delay=
- pcie_*=
+On 11/20/2024 4:39 AM, Takashi Iwai wrote:
+> On Tue, 19 Nov 2024 18:50:52 +0100,
+> Wesley Cheng wrote:
+>>
+>> On 11/15/2024 11:42 PM, Greg KH wrote:
+>>> On Fri, Nov 15, 2024 at 02:42:47PM -0800, Wesley Cheng wrote:
+>>>> Hi,
+>>>>
+>>>> On 11/6/2024 11:33 AM, Wesley Cheng wrote:
+>>>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+>>>> Are there any more clarifications that I can help with to get this
+>>>> series going?  I know its been a long time coming, so folks may have
+>>>> lost context, but if there are any points that might be blocking the
+>>>> series from getting merged, please let me know.
+>>> I would like others to review this (xhci maintainer for one), to give
+>>> their blessing before I even consider this.
+>> Thanks, Greg...Yes, I was hoping to see if I could clarify any points for Mathias and Takashi if they had any concerns.  Just so folks are also aware, we did deploy a portion of the series (specifically the XHCI sec interrupter and USB SND core changes) into devices on the market, if that adds any confidence into those changes.  For the most part, there were no major issues within those drivers, and the single minor bug (in the XHCI sec intr) that we did catch was fixed in previous submissions, and should be highlighted in the change revision list.
+> Well, from the sound subsystem side, the only concerns are the design
+> issues: namely, whether the implementations with two cards are
+> acceptable, and whether the current control of PCM mapping is OK from
+> the user POV.  IIRC, there were discussions with Intel people and
+> others, and I haven't followed whether we got consensus.
+> If we reached some agreement, it'd be appreciated if you can put acks
+> from them in the patches, too.
 
+I believe Amadeusz was still against having the two card design, and wants the routing to automatically happen when playback happens on the sound card created by the USB SND layer.  However, even with that kind of implementation, the major pieces brought in by this series should still be relevant, ie soc-usb and the vendor offload driver.  The only thing that would really change is adding a path from the USB SND PCM ops to interact with the ASoC entities.  Complexity-wise, this would obviously have a good amount of changes to the USB SND/ASoC core drivers.  Some things I can think of that we'd need to introduce:
 
-In some other cases such as pci=, mitigations=, spectre_v2_user= and
-vsyscall= the sub-option is at a 1-2 tab distance and the description is
-another 1-2 tabs from that.
+1.  Exposing some of the ASoC PCM (soc-pcm) APIs to be able to be called by soc-usb (to mimic a FE open from ASoC), so we can trigger ASoC DAI ops when USB SND FE is opened.
 
-Either way, in most places, I see the sub-option and description being
-separated which is all I am requesting. (Pretty please?)
+2.  Proper fallback mechanism in case offload path enablement fails to the legacy USB SND path.
 
-efi= and idle= has it similar to the way you have proposed for mce= but
-I find it harder to read. (Maybe it's just me.)
+3.  Master kcontrol to disable offload logic for each USB SND device.
+
+IMO, both the points you mentioned correspond to the same topic.  If we go with having offload being operated on one FE, then there is no need for the kcontrol of PCM mapping.  If we have two cards, then we will need the control for offload device mapping.  Can't speak for Pierre, but at least with my discussions with him, I don't think he's against the two card design, just as long as we have the proper kcontrol that notifies userspace of how to utilize the offload path.
+
+> The internal implementation details can be adjusted later, but those
+> two must be set in stone after merging the stuff to the upstream.
+>
+> (BTW, the mail address of Pierre changed; I corrected in this mail.)
+>
+Thanks for updating the email address.
+
+Thanks
+
+Wesley Cheng
+
 
