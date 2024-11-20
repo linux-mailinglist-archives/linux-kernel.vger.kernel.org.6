@@ -1,131 +1,149 @@
-Return-Path: <linux-kernel+bounces-415861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A3D9D3D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:16:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FBAC9D3D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1901F22893
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:16:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 055ACB2DFB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEB71C7274;
-	Wed, 20 Nov 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77111B0105;
+	Wed, 20 Nov 2024 14:11:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4Y3Y460"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XniGTXcX"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9891AB53F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1481684B0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732111788; cv=none; b=U8hAHfobDlAa+0gBd1nseacPJnOH24yTfI5XiWHknhiGKDo9l2Ho2toGnSCzHAptIy044EeJK5Vv62IKva9+QTjd55FqN24jszxHRdxPeoRheZn6m+dAMVMoLNiFyxdkFlj5p6+gILWiTrnG4P6WU8O7ZOfFN1Uj6xfgsEdnJqU=
+	t=1732111900; cv=none; b=cVydcCfddiKQcfUtphmv3KMPY0SDhEy9iw7rTnz0ssPmA1MvktvrIhFZLHtU44CxHbgwnzAP2Vi6hQxsks6+9gWDA5Ptit8whxrpiwk02JBqUkA22iEfk4MwrQbe9qvnrYlk75g67P4oFTR6TMSsWKKHZuakxM2jymqoCc58bZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732111788; c=relaxed/simple;
-	bh=3xktHGjcwKLhOF8Z8CDzVVn2fFRzytFyj2iHYgJ233s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=khP59oqeIOCt+11Pi+4sBxTxuoAWKxRIAO2dhg0trmP8iEQ4kymMuLHI6PsmuP69RVy5JeJs4swqlhjrBxfFLx/e2Rk1xqB5C0/tdex4fyC8vBZK0A+DrMg95CgXeg5VO37YY7Jqxpz7eGyZTvQBTNbGMJugljgPT+6k8imRTh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4Y3Y460; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1732111900; c=relaxed/simple;
+	bh=FfUNXLNLMYAUKNxyY8yLvAOSk6II0QVXiht1oJ/aXwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ax53YtgylPiba0me7M4S3JIjhpJt8G6PUsJrUSAXuGc8TFjH6cBsjV7y/2WTGYz4Rtonz5aTspfJrcMWkK23OrQCMs3byr5N5WwvPsuSZUCDIPsPDD4X1KM3CuUop1jM7hsjMggZy1NVPBJpTXL83Quip7zx+CX4MMadYbjTx3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XniGTXcX; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732111785;
+	s=mimecast20190719; t=1732111897;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=obBlFw7qbM1McyMjnug/w2OVz6Lnb7eCQvB8k59rMVI=;
-	b=i4Y3Y460XMbZQd6VaCTg/NI+yUN9zVvtTXBVC5Uik7nvNmiGPYPMvLd6H9OTWh1CMHJjMc
-	Mg78/K1TbU7uIYwE52YFM5L2wf07uQPSMNTYbDwFOwlKjhzjOW899hbgYvnW83aboT/LWh
-	/dB5lAtiLH5OA1LGG21owEn6Bo/cczw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-575-rslvtjznM5CuQKOZoWDIyQ-1; Wed,
- 20 Nov 2024 09:09:43 -0500
-X-MC-Unique: rslvtjznM5CuQKOZoWDIyQ-1
-X-Mimecast-MFC-AGG-ID: rslvtjznM5CuQKOZoWDIyQ
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD18F1955DC1;
-	Wed, 20 Nov 2024 14:09:41 +0000 (UTC)
-Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A35461955F43;
-	Wed, 20 Nov 2024 14:09:40 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 2/2] nfs/blocklayout: Limit repeat device registration on failure
-Date: Wed, 20 Nov 2024 09:09:35 -0500
-Message-ID: <d156fbaf743d5ec2de50a894170f3d9c7b7a146c.1732111502.git.bcodding@redhat.com>
-In-Reply-To: <cover.1732111502.git.bcodding@redhat.com>
-References: <cover.1732111502.git.bcodding@redhat.com>
+	bh=r1HheHXxH2Lq66Pb3UAs+ct3ExAz5ElR999iJ69jx0Q=;
+	b=XniGTXcXE6ofL7xAVKM+7HsySRB7eZxoSwv4Epqkxhh8yOSFBJo6pAIMnK7MGHjun0Ubiv
+	s58swN52YTw6LplqpmEcVRn7UhdB1ovFJHrKrfj0euPPKp6rJmNPZ50LIuGYyuAMhQpwz/
+	1Z0etwSnCUZPI2OF1dJLv/cnm92KQyY=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-Wju3ulSiM8mqhVfYCdebvA-1; Wed, 20 Nov 2024 09:11:36 -0500
+X-MC-Unique: Wju3ulSiM8mqhVfYCdebvA-1
+X-Mimecast-MFC-AGG-ID: Wju3ulSiM8mqhVfYCdebvA
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5cfc97dade6so1623498a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:11:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732111895; x=1732716695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r1HheHXxH2Lq66Pb3UAs+ct3ExAz5ElR999iJ69jx0Q=;
+        b=MmfAXDGoGyLmrxIsnDCr5aG6Y+b+twcLO4b04KOh1foMlR3ZRNEi4xnZyp/vaUpJh2
+         g2hFqqK+Hko0Esn+NA2WwuD7YMJnPqumPZpzTUQx6RPIcEsJHTglNG0UcXcXX/hKktdx
+         hKJ25WuwT9BLQ8wH67jCCULWHPMkY8QBQ1E5h+liJexi0YjZloSvtgc1i3LAv3PNDURl
+         xM+cKX/GgpL3dLX8cvLLPVC5mI3zBz2gV9ZhERmAqziKkS4jp6FEPI9viRSCeI65MKK0
+         FkOQ8dQNRRnPh+cnhH2zhQptFMTQAQpEjyfsJlRpZq3AtpkXlulR1ZWfMD22TA+FJFSf
+         QRPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWY2yrG+qiJPRgp116t8vUxkRKGEXezMg3HsSgqEpUikxQtyw3konxj9yqzjhjKKksXta7jenEauF48qJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXyCDDj3IYzYEMQaVus5Wpeb6UFf0bMFmEkwCvCDMCsvyI/z4m
+	KuciJX5PcOgC9Ul6qQbaz+ZSxhOPSKovMFWcXS2pCbHSkWS6VNWbs2+xx807AvGBlAjB3SmF+BK
+	p2UNNKKNaxO8zj075WBnErPJwiaT/y7bYuSAIDd+WIsa8Sxdo/+iizOy4SRjryA==
+X-Received: by 2002:a17:907:971d:b0:a99:c9a4:a4d5 with SMTP id a640c23a62f3a-aa4dd57cf5amr307473866b.29.1732111895283;
+        Wed, 20 Nov 2024 06:11:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IElPsBJusCgQQSy0/ZUamPrIprvapmeW+J3BVJ72fqi1ZqWyGC3oczhgmzOu6DsZlUvs2u7Bw==
+X-Received: by 2002:a17:907:971d:b0:a99:c9a4:a4d5 with SMTP id a640c23a62f3a-aa4dd57cf5amr307470466b.29.1732111894916;
+        Wed, 20 Nov 2024 06:11:34 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dfffcd4sm774935966b.98.2024.11.20.06.11.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 06:11:34 -0800 (PST)
+Message-ID: <bcb447bc-0de2-4c74-8e17-6b0eb186da70@redhat.com>
+Date: Wed, 20 Nov 2024 15:11:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
+ symbols
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, tux@tuxedocomputers.com,
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
+References: <20241114103133.547032-4-ukleinek@kernel.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241114103133.547032-4-ukleinek@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-If we're unable to register a SCSI device, ensure we mark the device as
-unavailable so that it will timeout and be re-added via GETDEVINFO.  This
-avoids repeated doomed attempts to register a device in the IO path.
+Hi All,
 
-Add some clarifying comments as well.
+On 14-Nov-24 11:31 AM, Uwe Kleine-König wrote:
+> Hello,
+> 
+> the kernel modules provided by Tuxedo on
+> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
+> are licensed under GPLv3 or later. This is incompatible with the
+> kernel's license and so makes it impossible for distributions and other
+> third parties to support these at least in pre-compiled form and so
+> limits user experience and the possibilities to work on mainlining these
+> drivers.
+> 
+> This incompatibility is created on purpose to control the upstream
+> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
+> a nice summary of the situation and some further links about the issue.
+> 
+> Note that the pull request that fixed the MODULE_LICENSE invocations to
+> stop claiming GPL(v2) compatibility was accepted and then immediately
+> reverted "for the time being until the legal stuff is sorted out"
+> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
 
-Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
-Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/nfs/blocklayout/blocklayout.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+I know I'm a bit late to this discussion.
 
-diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
-index 0becdec12970..b36bc2f4f7e2 100644
---- a/fs/nfs/blocklayout/blocklayout.c
-+++ b/fs/nfs/blocklayout/blocklayout.c
-@@ -571,19 +571,29 @@ bl_find_get_deviceid(struct nfs_server *server,
- 	if (!node)
- 		return ERR_PTR(-ENODEV);
- 
-+	/*
-+	 * Devices that are marked unavailable are left in the cache with a
-+	 * timeout to avoid sending GETDEVINFO after every LAYOUTGET, or
-+	 * constantly attempting to register the device.  Once marked as
-+	 * unavailable they must be deleted and never reused.
-+	 */
- 	if (test_bit(NFS_DEVICEID_UNAVAILABLE, &node->flags)) {
- 		unsigned long end = jiffies;
- 		unsigned long start = end - PNFS_DEVICE_RETRY_TIMEOUT;
- 
- 		if (!time_in_range(node->timestamp_unavailable, start, end)) {
-+			/* Force a new GETDEVINFO for this LAYOUT */
- 			nfs4_delete_deviceid(node->ld, node->nfs_client, id);
- 			goto retry;
- 		}
- 		goto out_put;
- 	}
- 
--	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node)))
-+	/* If we cannot register, treat this device as transient */
-+	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node))) {
-+		nfs4_mark_deviceid_unavailable(node);
- 		goto out_put;
-+	}
- 
- 	return node;
- 
--- 
-2.47.0
+Still I want to point out that Tuxedo and especially Werner has
+always been a good upstream actor and I do not believe that they
+are operating in bad faith here, but rather that the GPL v3
+licensing is just an unfortunate mistake which is hard to fix
+after the fact.
+
+As maintainer of drivers/platform/x86 I have worked quite a bit
+with Tuxedo/Werner and their contributions there are much
+appreciated. They have also helped a lot with sorting out issues
+with the PS/2 keyboard driver on Clevo barebones covering not
+only their own models but all models and helping out with cleaning
+up the quirk code there which was getting a bit messy.
+
+Also as you know Werner has already relicensed  all the out of tree
+drivers which Tuxedo could easily relicense to GPL v2 to GPL v2.
+
+TL;DR: I do not believe that Tuxedo/Werner are acting in bad
+faith here and IMHO it would be good to give them some leeway
+here while they sort this out.
+
+Regards,
+
+Hans
+
 
 
