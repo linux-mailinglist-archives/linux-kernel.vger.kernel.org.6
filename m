@@ -1,154 +1,166 @@
-Return-Path: <linux-kernel+bounces-415671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568239D39B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:43:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D6D89D39B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:43:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1694F2822D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:43:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57861F22A84
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F551A0B0E;
-	Wed, 20 Nov 2024 11:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186F41A0BCA;
+	Wed, 20 Nov 2024 11:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JoN8oZ07";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YcWg6uAk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JoN8oZ07";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YcWg6uAk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iF7C9rj+"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC8019D8A3;
-	Wed, 20 Nov 2024 11:42:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102F81A08A3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732102951; cv=none; b=dDcg3JtiOAcdGA/t8DbxVp/Mnb9P+rSo8FKCLbSVbnXDFcuzuklM/OVOFVF1ds7X9vfqUNO1QksBs8PXTkfncln+xoJ2fuetGoryP7tH33oZ5haj32CXUXjB16li3b4ZvQgkp2CkD7mRG/TfmvtixcGft9ZJA8xhm2ylaWkkEPk=
+	t=1732102996; cv=none; b=AP6/HtaCm8k27PWpDtOloQNHAiU+/WF7OLhZ7WCERzghAWDKdUiiH4u4EmedwSlIjZP81cMKOWCjcqvyHvGKAVn1UBGz1dE/fGkA/NE54dxAHuMFSw4twSuGgRzWeqxiRuGIRiga7A7UvX1K2dyjy3RvCKaTqUGNUvQAyVNPY5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732102951; c=relaxed/simple;
-	bh=y4NLLTWyYXjyYGqPxXpWnwEh2JfHBgxN148ZNc6DGc4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mKuFvf2S2SNp513lTWSm8yui3x0N3mnIZpZWWc8PLSFsVtvQz1deNdCh/lXPiE0ckOXG82EV4BUzGn5Ue8DpaMjFLqtEIxmzGf7MA1QldrokN6s8joHz1C86CfE9PDlZZF0DI4EEW7KRhkXdZDoYq0DLyVqkhDmDLa1Dx6xCVjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JoN8oZ07; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YcWg6uAk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JoN8oZ07; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YcWg6uAk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E25BC1F76E;
-	Wed, 20 Nov 2024 11:42:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732102947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSJHqq17lovBmeACeob9g+ohEW03fo5ZEFf0G9GBxmU=;
-	b=JoN8oZ07TeRcdLQwtEK5WRHi8Rao7iIHxMsjnW5Vtrp/F248OXC0zvMOXJcQp+fqW+Mhyv
-	ze5yMPj2Hhr8VUdYG5OCWZjqsHHCUxsetNg9DIr729NFhWfy1vAWvgjBIjwXHBhOFex7y0
-	3sBSA9iUxphlk00UQIDcJ0agPeeY62M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732102947;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSJHqq17lovBmeACeob9g+ohEW03fo5ZEFf0G9GBxmU=;
-	b=YcWg6uAkmJPZR4uc/UxsMTeqGsOGpM6kwRsygYljsl7KIufTPpqnGWsIYpVRchojDpqfom
-	9e9N1EGHn6hFGmDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732102947; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSJHqq17lovBmeACeob9g+ohEW03fo5ZEFf0G9GBxmU=;
-	b=JoN8oZ07TeRcdLQwtEK5WRHi8Rao7iIHxMsjnW5Vtrp/F248OXC0zvMOXJcQp+fqW+Mhyv
-	ze5yMPj2Hhr8VUdYG5OCWZjqsHHCUxsetNg9DIr729NFhWfy1vAWvgjBIjwXHBhOFex7y0
-	3sBSA9iUxphlk00UQIDcJ0agPeeY62M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732102947;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iSJHqq17lovBmeACeob9g+ohEW03fo5ZEFf0G9GBxmU=;
-	b=YcWg6uAkmJPZR4uc/UxsMTeqGsOGpM6kwRsygYljsl7KIufTPpqnGWsIYpVRchojDpqfom
-	9e9N1EGHn6hFGmDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5B0E13297;
-	Wed, 20 Nov 2024 11:42:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id S4pPKyPLPWfffAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 20 Nov 2024 11:42:27 +0000
-Date: Wed, 20 Nov 2024 12:42:27 +0100
-Message-ID: <87h6823zdo.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lkp@intel.com,
-	broonie@kernel.org,
-	arnd@arndb.de,
-	xiaopeitux@foxmail.com
-Subject: Re: [PATCH] ALSA: ac97: bus: Fix the mistake in the comment
-In-Reply-To: <3990bfc8cd47637908eaa179802c1d91459d829b.1732083924.git.xiaopei01@kylinos.cn>
-References: <202411180804.FUfdymYO-lkp@intel.com>
-	<3990bfc8cd47637908eaa179802c1d91459d829b.1732083924.git.xiaopei01@kylinos.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1732102996; c=relaxed/simple;
+	bh=RRq7JKOG2hPM79w92qiO0vq00P414StUpp6YDNpECLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBV4s/Jh4WXSwre8x8yopn4J7ldzlDlfvRo0RRp7L/DEkQ0Bnh/CypV5fBEQfmGwHStn1nDA3XGv78KnnZt0h2xnzkaI5UhfY1jCTOwBy9sNGIDjw1fSJwT0oAvaayU3jELqQuJIi/VrsbC3+dzdE2cEN2IV6oWNzzHQe3RNImk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iF7C9rj+; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so59752231fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:43:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732102990; x=1732707790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VSYLa/PMHHVco2nOBDm0FbnRK7yU/MzaWdRnTC16VA8=;
+        b=iF7C9rj+rlXmQNLdPnYFTgGnr+rLZ8I/ew23IwlsmTSTLWNPtx7ImhXS4Z8W3OsAPi
+         ngZp7vcR6N/dCf2NFyh3ZP+xw2K9riR3MZHuF0w8csXTxwjaHRJzmHx+RcN6swj4tBO2
+         tcSWodqXxuoOV8YmsY6sHPnVVFRe0dnbte9Gqi1f2PmCRQpbCMUkbCgsq/e55NcABKaF
+         8A0xxYcS+V58aiE5zO/8M9A2FEKmZoMcVPCVSuvE/xtIywzMIxIxtsLmOYN6EdWBr20d
+         EViu3+UQos0PU/u4NDbh4uR9Pggj/BB6R8n4PWvYehhBpKPxBQpKWf1HRwIiIwrF55R4
+         KhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732102990; x=1732707790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VSYLa/PMHHVco2nOBDm0FbnRK7yU/MzaWdRnTC16VA8=;
+        b=EpXVA7Uhfbcg0SA8oJyneBzTgP/IeS15EtwFtsDdtlQImLmeDg6Dwk19IaS3jHe6rq
+         gN0qqIyZodhfPoSBxtq0GjvMGM481m3OhqiFmgZILNUwVj+U9YZSK3UV+pJ+pAZBhrTu
+         TeMy8in+rAZdvqOwjx7pN8WecULq3MZszSD2htDec3woP590sLOKeL8H3Amd/egdhrnv
+         /O1d3i8/QVnSJHsJ92DcUV455vuU3+T2gRtPX6Nf8/fFK0Q49/O66BAdAMmgPGLr93tl
+         MQAPlzKyE8DtDeGtXTfx3osCG4JbrLT0JXNtCZt1UTAszt8p6/e/tl58hN7wyaNBcx86
+         DlUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcQSB71ynshWupIWn5VUPG7flSras2ugH1hSDQGIw0XJdjS/+nksw86SnuOin6JOjgFN4PbvVxWGxB9b4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHZdnslz/mOB2YgYuyfwvf8O4lhcTnYUpw61y9G7eE4XOUPrAL
+	fXJx0dKY5qCUOaTRkslVPiLyZ31HDPMnbjq93x+xsHtw1nCyGdIAW62U8EaunZo=
+X-Google-Smtp-Source: AGHT+IF9ZBf1+YUfdGVyh6yNIX525uxZ5nQKA7c5eh3EUqR+wIW5KU13VNtSiXYkMjcNwKphXd1Xow==
+X-Received: by 2002:a2e:a804:0:b0:2ff:566e:b597 with SMTP id 38308e7fff4ca-2ff8dcbc950mr20654481fa.38.1732102990124;
+        Wed, 20 Nov 2024 03:43:10 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff81e41badsm5872951fa.32.2024.11.20.03.43.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 03:43:08 -0800 (PST)
+Date: Wed, 20 Nov 2024 13:43:06 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display
+ Port
+Message-ID: <qpdponpaztryzacue5vtythr4b4cu6fohmgiwlzredm7ky7caw@eose6vpy4e7y>
+References: <20241120105954.9665-1-quic_mukhopad@quicinc.com>
+ <20241120105954.9665-3-quic_mukhopad@quicinc.com>
+ <lkovymvjsbd44v2huij7paikvnmo7i7rrmkmvpha2wn5sc4hr3@ppr2dgvhzy6d>
+ <a741b71b-af04-44aa-9e08-a3f852b8a801@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[foxmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,vger.kernel.org,intel.com,kernel.org,arndb.de,foxmail.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[intel.com:email,kylinos.cn:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a741b71b-af04-44aa-9e08-a3f852b8a801@quicinc.com>
 
-On Wed, 20 Nov 2024 07:30:19 +0100,
-Pei Xiao wrote:
+On Wed, Nov 20, 2024 at 05:05:50PM +0530, Soutrik Mukhopadhyay wrote:
 > 
-> Fix mistake in the comment.
-> sound/ac97/bus.c:192: warning: Function parameter or member 'drv' not described in 'snd_ac97_codec_driver_register'
-> sound/ac97/bus.c:192: warning: Excess function parameter 'dev' description in 'snd_ac97_codec_driver_register'
-> sound/ac97/bus.c:205: warning: Function parameter or member 'drv' not described in 'snd_ac97_codec_driver_unregister'
-> sound/ac97/bus.c:205: warning: Excess function parameter 'dev' description in 'snd_ac97_codec_driver_unregister'
-> sound/ac97/bus.c:351: warning: Function parameter or member 'codecs_pdata' not described in 'snd_ac97_controller_register'
+> On 11/20/2024 4:42 PM, Dmitry Baryshkov wrote:
+> > On Wed, Nov 20, 2024 at 04:29:54PM +0530, Soutrik Mukhopadhyay wrote:
+> > > Enable DPTX0 and DPTX1 along with their corresponding PHYs for
+> > > sa8775p-ride platform.
+> > > > Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 80 ++++++++++++++++++++++
+> > >  1 file changed, 80 insertions(+)
+> > > > diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > index adb71aeff339..4847e4942386 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> > > @@ -27,6 +27,30 @@
+> > >  	chosen {
+> > >  		stdout-path = "serial0:115200n8";
+> > >  	};
+> > > +
+> > > +	dp0-connector {
+> > > +		compatible = "dp-connector";
+> > > +		label = "DP0";
+> > 
+> > Thundercomm's SA8775p RIDE platform doesn't show such a connector. At
+> > least not on a device advertised on the web pages.
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202411180804.FUfdymYO-lkp@intel.com/
-> Fixes: 74426fbff66e ("ALSA: ac97: add an ac97 bus")
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> 
+> Are you referring to this product in the Thundercomm web page : SA8225P and
+> SA8775P
+> Ride SX 4.0 Automotive Development Platform ?
 
-Thanks, applied now.
+Yes
 
+> For this particular product we
+> can see
+> eDP 0/1/2/3 serving as the dp connectors.
 
-Takashi
+Please correct the labels then. And also please mention why eDP2/3 are
+not included / tested.
+
+> 
+> 
+> > 
+> > > +		type = "full-size";
+> > > +
+> > > +		port {
+> > > +			dp0_connector_in: endpoint {
+> > > +				remote-endpoint = <&mdss0_dp0_out>;
+> > > +			};
+> > > +		};
+> > > +	};
+> > > +
+> > > +	dp1-connector {
+> > > +		compatible = "dp-connector";
+> > > +		label = "DP1";
+> > 
+> > Same comment here.
+> > 
+> > > +		type = "full-size";
+> > > +
+> > > +		port {
+> > > +			dp1_connector_in: endpoint {
+> > > +				remote-endpoint = <&mdss0_dp1_out>;
+> > > +			};
+> > > +		};
+> > > +	};
+> > >  };
+> > >  >  &apps_rsc {
+> > 
+
+-- 
+With best wishes
+Dmitry
 
