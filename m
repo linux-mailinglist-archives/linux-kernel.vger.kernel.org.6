@@ -1,117 +1,103 @@
-Return-Path: <linux-kernel+bounces-415666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D753C9D39A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:41:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49999D39A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B1A01F2233D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:41:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27C05B24B80
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24CF1A01BE;
-	Wed, 20 Nov 2024 11:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743D71A0BE5;
+	Wed, 20 Nov 2024 11:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pIyXcthe"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NX+o7Tp5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A3B19F13F;
-	Wed, 20 Nov 2024 11:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861EC1A08CA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732102898; cv=none; b=h3iVcjyRFwYsbz2wje2ll476+NXHGoxL9T73XQHDhZPplhDZa6zNYoE8EzAX4S2AB9DFwIwASTFEKPxIW0dNIQnzPcQOy3AsumkIy3zk/jQgp8T933LxAietys3RV9tzv9zgBXShdNbQt3q5uvgXf9YXOI65fE+lt/uzpMHyd78=
+	t=1732102901; cv=none; b=H5eBCGSwXUVwtLqcKwwA+3Fk5HVdjD9a+s1JbjrJqbaVVW+jgEP8iI9nbJ8tl7TEN4qLeiFdL78IkZ+ox2DY+zhfCz4KHmncSawOLnyj5N3e3BkQS+1gTFotrSgZ6RtfygNG/ss3TIXYKqdNvhTSBclAU9JgcLzaYlZArmCtjS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732102898; c=relaxed/simple;
-	bh=vILuFizisww0o60BEmPF3+25yS8w/Yg/Fr0GNNJrfUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D4g9IF40+LvofwrTORs2DcmJ3KTD4rGkxlinx+zPGW9tAWv3geVIiZS1a1PgeeJSrt3B/CLaSFaJFlB1aoZSeo/Hqbnepc34VVgwU7Mj7Xcdu2gNYnnRKMSmritruKivHeoUE44/fY5djQaB7v2v+LYt5/4+PL+R2q/b1Swzuak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pIyXcthe; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Pj3fkjxRBBRbKsik6UaWTJe/SP1ioAOvTFAZ8+3xNBI=; b=pIyXcthefqtcgadsqRc7qaaHRG
-	hi6v7ChfC1RQB61X13RRO558mhfiV7ABPoiP+LbCJC5ykYHJp9gMouduUCMqwKwlSu9s+69cS+z8o
-	Fcaxl3IrTM8U+lK75izHvfmo6U0tfHz1btxRHGekSWzD5d5UpI+RX4E8XO5C48sc0Lr8BBC8fENdJ
-	9KnW8TS+sR5ecuJqMbFwRi24lKmbCsdaGT+hxPk4CAz7fGFwDF9ppHmRb5dRomHG0HYCHBW82Kde8
-	lo8NIIH2JAQghOEBjMH1v5ssYwuHvFzxJgRwJK15sDP52FiGqKN47Uo+1MiEjoXL0H2lJYzf5483y
-	akhr1DCQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44762)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDj5F-0005PY-1e;
-	Wed, 20 Nov 2024 11:41:22 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDj5A-00073k-2J;
-	Wed, 20 Nov 2024 11:41:16 +0000
-Date: Wed, 20 Nov 2024 11:41:16 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net v2 1/2] net: phy: replace phydev->eee_enabled with
- eee_cfg.eee_enabled
-Message-ID: <Zz3K3DnAkDgeNP7R@shell.armlinux.org.uk>
-References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
- <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
- <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
- <c1bb831c-fd88-4b03-bda6-d8f4ec4a1681@linux.intel.com>
- <ZzxerMEiUYUhdDIy@pengutronix.de>
+	s=arc-20240116; t=1732102901; c=relaxed/simple;
+	bh=R89d6A5mpwXuErqQT+DVy8w/GHdyMclAMWFBAG1D84E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZfCMJB2m/Z9GWJWpGvGOG6uy+0/HVUFBGyvpJkTarnk29O55KREl/OuUnIjHS/X1+UuOgJW8h4OjVsAbgQeXcFVQFesVIV89amFLLm2TmFBVW+sOrxYLA/sfh4T8+wyP9ZgaJfZIHLHPGZE563FZ9Glgfh5zEcJpDhxluE6Ka+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NX+o7Tp5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732102891;
+	bh=R89d6A5mpwXuErqQT+DVy8w/GHdyMclAMWFBAG1D84E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NX+o7Tp5Ee3wuIvWGNWF704zgabeh6RLROGj+n+3cECHTbk4Vu/OMxxDYEYfEZDNg
+	 v93h8y46MGAe3Q5gmPmpAm7UOQin/PC3NwR0bFOQKMOzdDtI9YDctNK6VrppyN+rMQ
+	 xyRgEJmSOAq9cLxGkMrtZym7Md8+TGaRgLs1NTPda+B6aT7wBy754halz29Upn5Gy6
+	 qNoMaLhMQD1c7QCe74MrtGlmydEHUHD+WxeDiwuWwg23bjv2RYN297R8qA+B0k/vO9
+	 ijfrv9ZtTe0x89jXxzbpqlh7eR0xV0+nGmG+zx79Xapqo2q3aCYJuI/L1MR/EuZJXu
+	 Bu2PKM4gm7D+Q==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B50E17E362F;
+	Wed, 20 Nov 2024 12:41:31 +0100 (CET)
+Date: Wed, 20 Nov 2024 12:41:25 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Liviu Dudau <liviu.dudau@arm.com>
+Cc: Steven Price <steven.price@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH] drm/panthor: Fix compilation failure on panthor_fw.c
+Message-ID: <20241120124125.0bf1b9ac@collabora.com>
+In-Reply-To: <20241119164455.572771-1-liviu.dudau@arm.com>
+References: <20241119164455.572771-1-liviu.dudau@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzxerMEiUYUhdDIy@pengutronix.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 10:47:24AM +0100, Oleksij Rempel wrote:
-> On Tue, Nov 19, 2024 at 05:06:33PM +0800, Choong Yong Liang wrote:
-> > Sorry for the late reply; I just got back from my sick leave. I wasn't aware
-> > that you had already submitted a patch. I thought I should include it in my
-> > patch series. However, I think I messed up the "Signed-off" part. Sorry
-> > about that.
-> > 
-> > The testing part actually took quite some time to complete, and I was
-> > already sick last Friday. I was only able to complete the patch series and
-> > resubmit the patch, and I thought we could discuss the test results from the
-> > patch series. The issue was initially found with EEE on GPY PHY working
-> > together with ptp4l, and it did not meet the expected results. There are
-> > many things that need to be tested, as it is not only Marvell PHY that has
-> > the issue.
+On Tue, 19 Nov 2024 16:44:55 +0000
+Liviu Dudau <liviu.dudau@arm.com> wrote:
+
+> Commit 498893bd596e ("drm/panthor: Simplify FW fast reset path") forgot
+> to copy the definition of glb_iface when it move one line of code.
 > 
-> Hm, the PTP issue with EEE is usually related to PHYs implementing the
-> EEE without MAC/LPI support.
+> Fixes: Commit 498893bd596e ("drm/panthor: Simplify FW fast reset path")
+> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 
-I think you are referring to PHYs that implement EEE on their own,
-without requiring support at the MAC, such as Atheros SmartEEE.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-It wasn't clear that you aren't referring to a situation where the
-PHY has EEE support, requiring the MAC to generate LPI but the MAC
-does have that ability.
+Liviu, can you queue this patch to drm-misc if that's not already done?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> ---
+>  drivers/gpu/drm/panthor/panthor_fw.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index 4bc52b1b1a286..c807b6ce71bd4 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -1133,6 +1133,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+>  		 * This is not needed on a slow reset because FW sections are
+>  		 * re-initialized.
+>  		 */
+> +		struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+>  		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+>  
+>  		ret = panthor_fw_start(ptdev);
+
 
