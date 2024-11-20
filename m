@@ -1,145 +1,134 @@
-Return-Path: <linux-kernel+bounces-416373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE789D43EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:33:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D740C9D43EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405211F2267F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:33:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C8362833E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A38A18A6B2;
-	Wed, 20 Nov 2024 22:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AF19B3ED;
+	Wed, 20 Nov 2024 22:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CY0rmZ0q"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SqmcAhJP"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD37188717;
-	Wed, 20 Nov 2024 22:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA5814885D
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142005; cv=none; b=iCeMgZOA3lMPxpiBUl9QFDHdzb+VnNf41gzJQtdkbPgDPwLRdFPdZUSyFViuDemKz+KZOQruv5t5LZzjUiAwSmtRfEBYXlFs1S2mX/Rxkgoyr+bPEUyctQmAudKzPozSL6IWcY8L1ose8QMhtIcTbZV7rJi+Xl/9ePnwGNghKWU=
+	t=1732141985; cv=none; b=TQHU6reTdm//hBkiFEh79XHllgU/rQQieigIrVdrhTK+DE95ecA7s4YlXWGALcfOa3frDUw2kgwXvC3pHte7sE1WDB2rQcJWYk9q/dP1jgQcTm1ETopbGmotoB8jg/FYFCE5BkM7Gcek+8pYRaMfY0t3FM4ozx0kAkNPzHXSLxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142005; c=relaxed/simple;
-	bh=Ro0CtiL3ZzjiFTFmwz2565AcUxxRdDotQMfOjOxI8eM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Em0WWLJZU84oCRDa/7ZbtlO0Bfpg/JVldZF0HkhWoGMIfXyjCxKcEQjCJDNXqlr51kzJLrK489hXcF8FJmXPe3K468OfhBxOxGshuuVUbgBVcigUJhaFzCWuxwyo4isKjGCFf9liBJEc3FHJKpxy9VMXBzkzWUYqAIjwqj6Q9Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CY0rmZ0q; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-211fcadd960so1458645ad.2;
-        Wed, 20 Nov 2024 14:33:23 -0800 (PST)
+	s=arc-20240116; t=1732141985; c=relaxed/simple;
+	bh=ZW/OJgWLeFbjei46IAPX/4Cz7LMxgTjOd/pJAhr2qyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QpsoJvIrpCQ2XW7fNzfDXbJ/UgMe7GytXm1o0TZZsnHsDWaa/pt9zHSsaxufJN01yzFGLbecCBhHlh98QaBcTmfHkAEtRosFnY8tIxCbIbfVDf1bV7NuWbfZ9+9M8Q9cUVmvJsz+VcIcB/VBO7JRF/dTgy0RH92yeMx9IgeZLA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SqmcAhJP; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so46268666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:33:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732142003; x=1732746803; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=91aDxN0XTQNGQGQT8Q/szbDxtIhhxYQG+hsB7O1S3Ug=;
-        b=CY0rmZ0q+hyPD+6V+i3Jj5FkSF37W15YEK1HKMyT5Z32fCyIvgkq0T/rCeUB05FsTR
-         OHRVxTi4qfrxgfiuss3Hq1HDuq5Xx5qaHA7uEjCIhsaqTjjoxUGUXMKG8AuaLeXJGRkN
-         bKussoTl6JmBY/QL15LDtkOA/1tUbSTDeb3ZXlWN1+8fqp1cbNroRaSPqR2BsXBvrnC+
-         nTkCUvOfOLAu46w/5j2TV/HT+vzxDXBuvHJymU0inm1FvDamyi//onafHSjeHCJ0NjjO
-         qEw8/IXZz+UkEnLBGjnPoQO3otgAflilzYebz0dsk7EbLDglVvkVM/rpPxSCW38r8wRp
-         1HuA==
+        d=linux-foundation.org; s=google; t=1732141982; x=1732746782; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ko48x4KlSLfqkqiHilhm1LDzZc0/qFH+wFE90LYYo2c=;
+        b=SqmcAhJPt15XUcvalIdY/42ACRciNFWsIj155tH+wrtva+hWvlgQKPlTNgc8Nbmq7Z
+         XbXCsC4ij5dKDxbxnGgBC7H6iunijE8nbwuCn6hqlFOQxjYXNJKGq0eAjaqlLWWimsw/
+         hy8uF3RrL3suiT/BbxgX+f46Sb5/qfkIu08sg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732142003; x=1732746803;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732141982; x=1732746782;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=91aDxN0XTQNGQGQT8Q/szbDxtIhhxYQG+hsB7O1S3Ug=;
-        b=Le5b4FqFkQClQKpYNM1JB7ydTVg1w4ow0djrrwsLBUkiiemBzZasSsWbCdM0l/cx9O
-         Qd84fWr2cgD9ip1aVZ8zLU8f8+bGVg829JX/aoP8uA7zXGssDJJZmbJ4zH3YYC2DMoA1
-         HlgUiLJ3l2pT6PLU7isLDKyRfRlAiNgZEakFwWNzK4haEJ6IAZIsTlpHSMQNJvNwCToT
-         XjOd+z8PM2snV2GTdUV9HlnFOmdSe3+asf4SBPxRc9MSfylB5yBG2pZ+PPyS+8S9VDTy
-         +TRQrawkvtuUJl/Y0SI0z2c4uUS8tiXtDxPoQnisJ3b0h3iRlWTmNEWsy60/qmwKLxts
-         BzTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrr49Cu8XB6BAqrVCsAuEGLhFciNgNlvoFD3D3PXpGt3bxZ38d1HwVYWaafpTEC9/iRlceCryDzEV0azBZPA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs5BYtZmcX4BCRsdxT71ISCa6qzbs1lzeT2+Zg1weczU9PyzD+
-	pfSdPyZdmSI/UWy14JHcj//ob/DVfem1KmauDq6qVl70BICdFh7T
-X-Google-Smtp-Source: AGHT+IGeGe8bOec4hMM4YUcVvnZkB7kV+LtA46t9+5yn7tVFugX6lX6a6g5kEWj8M788pNCgZn8mqQ==
-X-Received: by 2002:a17:903:41c6:b0:212:37e:3fcd with SMTP id d9443c01a7336-2126c97a053mr47913995ad.56.1732142003132;
-        Wed, 20 Nov 2024 14:33:23 -0800 (PST)
-Received: from mitchelllevy. ([131.107.1.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212883f6a00sm563535ad.250.2024.11.20.14.33.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 14:33:22 -0800 (PST)
-From: Mitchell Levy <levymitchell0@gmail.com>
-Date: Wed, 20 Nov 2024 14:32:29 -0800
-Subject: [PATCH] x86/tools: Use a longer buffer for insn_decoder_test
+        bh=Ko48x4KlSLfqkqiHilhm1LDzZc0/qFH+wFE90LYYo2c=;
+        b=LqS9L900tZiBVYTl2MKKYQMLVmG9rqXqv/EHjOkk18chO3px8GfOLzN5kau1ql/UxH
+         tvK6quYdXXkHktRlOBkuWSQTfNcFaT6IYYv9nNa5f4x4vITVwG6+qx9SCK5ljkMPuzuB
+         vMZwonTj99Cn8eXoO+oXW52N0D36wHcLw18tK0pMhq6BrkIiC2sugrds2lprdVLZJFmD
+         3fnsOtsxg7u7RzNw+rzcNwrX+YWBbqIn8cQytceG4UUBupWq2yDRb5anq6MTMQ+T3us6
+         huQPvbpkYimeBog+jg7dBhpShy754W5hx4EJMxsxtyzEOMyzrDXyRXdwsxg/wgnCL86R
+         yIFw==
+X-Gm-Message-State: AOJu0YzJzH9litd2OwwkrJgd+C9NhnYxztHZIfr+PDUtvVvN5pCrfBew
+	SxKqjfzyM3ZU8PcyEsekpVGjdi0l/1CrXVHEHaMqSDBSvwQiv6d4ax1v1vjB9mgKxU8/DMrCTSj
+	qiOJE/Q==
+X-Gm-Gg: ASbGncvfIYsWqFB/aPKAz9zTZAzm1DXUI1eirMXyG3AkZzcR9ycEBbdEa4DPUQdiS9f
+	aGOE2XiMew6mmjK+mCIoNQSDZwvYW5gAxgHSlj+7OoCgaC/44cLZDQDKhApZK6+DRo0sZ2YPt4c
+	KRfdRzvBxTwfcRfEq34yqdrYJF14HS/CLUO44cg/e8CmjgWeZLVu1s9BnUofx3BlGdYC/vGvgWK
+	x1UsUvfZZOXmUqa/Y+0buFSxjqK/jnc4J74SAJIU46yqnLkiIJL5Qbuz6ewfbFoayoH4d5x9akH
+	vPsH35/M06Tx/Jk4YH2qNIpD
+X-Google-Smtp-Source: AGHT+IHB2EH31Dc3+e1ZhZoBhDdtJI4JXYZJ+CQ8EuhCC3l4M4ZLI9QIy4+e1dFYMM/3RKkEuA4oLQ==
+X-Received: by 2002:a17:907:1c0d:b0:a99:f0cf:f571 with SMTP id a640c23a62f3a-aa4dd57e0b9mr400059666b.33.1732141981756;
+        Wed, 20 Nov 2024 14:33:01 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f42d33b7sm7067266b.100.2024.11.20.14.33.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:33:01 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso43146966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:33:00 -0800 (PST)
+X-Received: by 2002:a17:906:ee8d:b0:a9a:634:dd2 with SMTP id
+ a640c23a62f3a-aa4dd71b718mr452705166b.43.1732141980572; Wed, 20 Nov 2024
+ 14:33:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241120-insn-decoder-test-len-fix-v1-1-44b075deda05@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAHxjPmcC/x2MwQqDMBAFf0X27EISpKb+iniQ5KkLZZWsSEH89
- 4YeZ2DmJkMRGA3NTQWXmOxawbcNpW3WFSy5MgUXOu99ZFFTzkh7RuETdvIHyot82c0xvUJA/84
- d1f4oqPr/Hqfn+QH0rWbWawAAAA==
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
- Mitchell Levy <levymitchell0@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732142002; l=1637;
- i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
- bh=Ro0CtiL3ZzjiFTFmwz2565AcUxxRdDotQMfOjOxI8eM=;
- b=EqW00ynzOD0MCouqTvm3wjRQhPD3zprb5xBOIhTnQNMo7hhRZEpWfibLS3+BG8sJsbPpgkwSS
- u93732XD9ChDnx41X4TGi3WnZU58cxIHLiX3rX06pW03bM4pOqAeeKQ
-X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
- pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
+References: <202411190900.FE40FA5@keescook>
+In-Reply-To: <202411190900.FE40FA5@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 20 Nov 2024 14:32:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+Message-ID: <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Nir Lichtman <nir@lichtman.org>, 
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
+	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 
-Use a 1024 byte buffer for parsing objdump output lines to accommodate
-long symbols created by rust doctests.
+On Tue, 19 Nov 2024 at 09:00, Kees Cook <kees@kernel.org> wrote:
+>
+> - exec: Use argv[0] for "comm" with AT_EMPTY_PATH (Tycho Andersen,
+>   Dan Carpenter, Nir Lichtman)
 
-The number 1024 is based on giving a healthy margin above KSYM_NAME_LEN
-to accommodate angle brackets, addresses, and whitespace.
+Ugh. I *really* despise this one.
 
----
-Rust doctests can result in very long symbol names, which results in
-very long lines in objdump output, such as:
-<__pfx__RINvNtCshBBT4i9RzFA_4core3ptr13drop_in_placeINtNtNtCskPkSD4WGMmy_6kernel4sync3arc3ArcINtNtNtNtBN_5block2mq7tag_set6TagSetNtNvNvNvCs8MySzWyGC07_25doctests_kernel_generated33rust_doctest_kernel_block_mq_rs_04main42__doctest_main_rust_kernel_block_mq_rs_58_011MyBlkDeviceEEEB23_>:ffffffff818bb250
+People: we *have* a filename. It's right there in the dentry. Which is
+right there as bprm->file->f_dentry.dentry.
 
-Currently, fgets will truncate on the first read of this line (but this
-is fine since we see it starts with '<' and continue the loop), but on
-the second we get "rs_58_011MyBlkDeviceEEEB23_>:ffffffff818bb250", which
-is treated as malformed. 
+And that's actually going to match the actual execcutable, unlike, for
+example, argv[0], which can be filled in with random data.
 
-Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
----
- arch/x86/tools/insn_decoder_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+*AND* we don't need any silly and expensive get_user_arg_ptr() and
+strndup_user() copy for it, which does that user access twice.
 
-diff --git a/arch/x86/tools/insn_decoder_test.c b/arch/x86/tools/insn_decoder_test.c
-index 472540aeabc2..18601b3c5037 100644
---- a/arch/x86/tools/insn_decoder_test.c
-+++ b/arch/x86/tools/insn_decoder_test.c
-@@ -106,7 +106,7 @@ static void parse_args(int argc, char **argv)
- 	}
- }
- 
--#define BUFSIZE 256
-+#define BUFSIZE 1024
- 
- int main(int argc, char **argv)
- {
+And no, we shouldn't fall back to the horrid thing that bprm->fdpath
+does either. That's the thing that you apparently thought was too ugly
+to use, and literally the *only* use of it was for this case.
 
----
-base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
-change-id: 20241118-insn-decoder-test-len-fix-0a8c622e79d4
+The reason that code existed at all was to generate a filename, and
+because we didn't use to have access to the 'bprm->file' back in the
+days.
 
-Best regards,
--- 
-Mitchell Levy <levymitchell0@gmail.com>
+But that was changed by commit 978ffcbf00d8 ("execve: open the
+executable file before doing anything else").
 
+So I really really think that what this code *should* have done is
+
+ - get rid of fdpath that you made pointless by not using it for 'comm[]'
+
+ - teach the code to use the dentry name instead
+
+because this horrible hack is too broken to live.
+
+             Linus
 
