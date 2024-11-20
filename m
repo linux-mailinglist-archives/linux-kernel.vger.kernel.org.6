@@ -1,155 +1,107 @@
-Return-Path: <linux-kernel+bounces-416006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A641E9D3F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:58:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8B89D3F14
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:31:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF862B304F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122A7285406
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A364640BE0;
-	Wed, 20 Nov 2024 15:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="LCeu9V1q"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBF58249F;
+	Wed, 20 Nov 2024 15:31:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980034B5C1;
-	Wed, 20 Nov 2024 15:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAFEA939;
+	Wed, 20 Nov 2024 15:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732116627; cv=none; b=HIl0zhmTmecopKwSjNP4a5iwpSFKV8+onBuIyfw8uqyWLbVGmJrys9l/Ra3V4VgdezUyh9gbKme/wLBL7VooG2e+iXz3TAZADg78WZoEpYnsZEzsgUFPsGP5HEQT2faX6zOXlfnBj1cJlNJ4fh/rt/fls0O0aIpQNBwah4XlZgQ=
+	t=1732116676; cv=none; b=VrslXH3z7rKIQGxaPm/rJnsNas1JVY5JGE9ZYdZSIKnC5deSt+SwcQkP9MoxaAdc69SLajCfdqPGWuMe6Nt3T9miuZHV6+mHr4oVA2sf9STLf/BltYLgHaAk1uPhD0Cy1fADtQ1LAJ1fFTkDFOmW8s7SbwxBtYShrIyc5Ii+SJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732116627; c=relaxed/simple;
-	bh=j4CtSxksIEIQ1zyrX4HyLd+iQzjRfcoZC/JH6Pc12A0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FHcw1PfETiA1fP+eu1E1u9brJJk1b7CcU+erl8MoQ3/1tIHcF9yHZUoFOfQbaaB+6xHq5hcqW/X3TVoD5e3lHS+leOyJEFJQpWVFY0MyKKAD30AbaWuTJEleTvSsiBNXP/pkZyHHnG/jO8a0jkUmqWj0za6WgLPS4lcDDvMFB7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=LCeu9V1q; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732116601; x=1732721401; i=frank.scheiner@web.de;
-	bh=j4CtSxksIEIQ1zyrX4HyLd+iQzjRfcoZC/JH6Pc12A0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LCeu9V1quWWPcfyi4M4cbuPy6RfVhszMT4CoS9YV//WcRsdVE78CocFNkIXsdKqz
-	 fxEc2e9OdV4iF5/LyCYxMWpVwWtrv784tdYMEqHO0ki1brq3jZwDt0CHpbZ5cgDWX
-	 RA8uLa7g5tTNa9EimzZDP9GjyJWwQyeVhu0J2WZhWFXJ3rCpbaR4dlzcvA6sI+vcW
-	 gKghPS+XiBFMfDleAdYhxgf07AEPJFsTAaCc5xWZjiiDGwETWlcr8CecvDD1XYh9d
-	 Ib62eKOMqGs/iS2j9mAzlmH1/JokL56eOOFzoptyZx21y60UMALCbEB62vq33Rcj1
-	 hVxVP+QYCp1zt3VBsA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.30] ([79.200.222.179]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MhFhe-1tiBmk3ya2-00fs21; Wed, 20
- Nov 2024 16:30:01 +0100
-Message-ID: <775f2bd5-5567-4da2-9b79-8f2e7fc9b38a@web.de>
-Date: Wed, 20 Nov 2024 16:29:59 +0100
+	s=arc-20240116; t=1732116676; c=relaxed/simple;
+	bh=LAIUGaDGpx0bD1QEhD+EB3pleLk83mjLnaRqurNbXSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UGWFfA5zM/OrREzUk7XkRDZiH+jGx/mwvcHU2mM6ex0n8MyTCofBJ4KZETMX2J0h5vBPaa6GEthtNtqz3btaOWmFsWgMdUN8xhcHT/jH5FUgFXwfMPSoJi7bNXh9boViarthl8HRZqg8kNSxnQ+GpXrrGX2AlWl9Jml7rq821uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BB4C4CECD;
+	Wed, 20 Nov 2024 15:31:14 +0000 (UTC)
+Date: Wed, 20 Nov 2024 10:31:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
+ <tglozar@redhat.com>
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+Message-ID: <20241120103150.3442d658@gandalf.local.home>
+In-Reply-To: <66e2b7cd-4a4f-4f60-9846-a14c476bd050@yoseli.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+	<20241115102554.29232d34@gandalf.local.home>
+	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+	<20241115145502.631c9a2c@gandalf.local.home>
+	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+	<20241118152057.13042840@gandalf.local.home>
+	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
+	<20241119102631.76363f2a@gandalf.local.home>
+	<20241119112850.219834f5@gandalf.local.home>
+	<e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
+	<20241119131035.3c42a533@gandalf.local.home>
+	<66e2b7cd-4a4f-4f60-9846-a14c476bd050@yoseli.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Frank Scheiner <frank.scheiner@web.de>
-Subject: Re: Linux 6.12
-To: torvalds@linux-foundation.org
-Cc: =?UTF-8?B?VG9tw6HFoSBHbG96YXI=?= <tglozar@gmail.com>,
- Sergei Trofimovich <slyich@gmail.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-ia64@vger.kernel.org,
- t2@t2sde.org
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:xOzZJ5tRyFkvfKBxbt7nBXwHvuyAkdxlFiNel3j6c45R0SIxgw2
- WhByoy/IWm3Ua9ZjPC5ayNsN8lxpt5RrkGiPf+HzHG5kDpkHSWqLFVDpHmJzkS6BMf6uemP
- qRol1Rw4qKxWARMCe0oyStLniuRF04HSaFIFyegypRCimWJv2LnFQIfpkMYQ51LMIWG6Hq4
- q6K2z+N+ZJ5P0LVe31QMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:qG0oXz7UEGQ=;LnaInnpYYmBF6D5xWf4W5rc7ol/
- xYpB5Z8upXqUQN24aS875AGYwMg7Vmcp7OMqtvP6Plz4XGQqOkLIJmbqT0qxwWhIb6dnz5ZMz
- vCNKmMsLRUQnTn51ttIc7b7tSPEzDc5eMUF/cAEOnoi0wkqqwX+gy6ymJmBHW61gIo5+wfOZ0
- 08nJh7vsqW6WF12DPQoLiEqnW6RewIXkoKTL19neh38UY6HrpHFHiTcwZFLWnPW3Y9Ao+bKzV
- zhHVAt1OrWMqNVKrSobI+GTLKZjeQ83+1RPOJcARMw8aj5G8HkR8Dxbi1catSWlOWAR5VSD4R
- Ja3Gkwbkx07afgaD5biKmyUu/WoXWVNMkcLcK/fSI3VxsQfaJLDkUxL4CMsDUfTjy0SbOXe6I
- oEWoUF4b3F+kTFQCutLt9ZPyr8ZGLL33rjjCmd6JqT2oiv8FPdric6pHVq29/zjubmsyuxEZf
- ZEOpTpJ5Cl9jG8hYUFzv7ukyyzIZ77ruUS9kVoeHUNSFrgZ27YK7PAKNHZRqP5IAnwV9BaRlp
- 1n7XWwfRU6BXGf+JyMd6b8L8AvN/6lux8Mxmfcr4E5iRzcNuxq/I5Gzw+TxtvH2Cs2RNbuZPD
- ht6XofMozlkOBD1IJ+SAt/itlt3prKu/aEG+vweVphtmyigILndn0wpKxmcQlvbnaBrkDprrD
- kKi/w7mv/0olL+7vaebOkjxdS1CLznoRo+EKF3bI2rFHsXFbHbU9rPJOXXKbNkGb9nnEFGHR3
- HA5NXpr6L19ErBsLY0euUl/W9k61UT3p4BotcaQctXFmQHNc2mTugskPPGPJL0tvmO6dryENi
- 7cNa/WbtGIy0f6o4Yi4pRAffvGj5P6RK6yHvPlYuZGX0tMkoJIKNJvp3lg2hG2+QF+nJ2VkWy
- duJdYy6+wZoQ3xyiuvmFi3xeiIt5Q3v7vfMoE1bDoo4L4xvyPM1scnsFqE/1DaSaEeKBmTKeU
- jYK6vffuuRMoXGE4A87SkbqBxRjxdGProlw3245erUmEIJ6GVQnoM/WbU+VGH0+cI0lrEZIIQ
- wUY9EjDlIPEAQY18DdksvMNjCkSKiceL6S28jDW1qMUpYEMadwC7wYqYfzAslSNd4qtrIfJET
- nEkq9IGEEM4d3xvokJPiaYX0gTc1Il
 
-Dear all,
+On Wed, 20 Nov 2024 12:47:19 +0100
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
 
-here comes the usual update on Linux/ia64 for v6.12:
+> Long story short: it fails at kbuffer_load_subbuffer() call in
+> read_cpu_pages().
+> 
+> I added printf in the kbuffer helpers in libevent, and it finishes at:
+> __read_long_4: call read_4 at 0x600230c2
+> __read_4_sw: ptr=0x8044e2ac
+> 
+> static unsigned int __read_4_sw(void *ptr)
+> {
+> 	printf("%s: ptr=%p, value: %08x\n", __func__, ptr, *(unsigned int *)ptr);
+> 	unsigned int data = *(unsigned int *)ptr;
+> 	printf("%s: data=%08x\n", __func__, data);
+> 
+> 	return swap_4(data);
+> }
+> 
+> As soon as ptr is dereferenced, the segfault appears.
+> ptr should be ok though, as the address is valid afaik...
 
-We're already past mid November, so it looks like we're doing this now
-since over a year actually. Maybe a good occasion to go through some of
-the highlights during this time frame:
+But you don't know what ptr it failed on, right?
 
-* Six mainline releases v6.7 - v6.12, all running on the ia64 hardware
-we have available for testing ([1]). Not to speak of all the RCs and
-test builds during merge windows tested in between. To have a
-forward-look on possible build problems between RCs and during merge
-windows an auto-builder for Linux mainline was set up, that builds
-mainline for ia64 each day. This also shortens the time frame for us to
-check for a cause when problems arise.
+If dereferencing a pointer will crash, the below line:
 
-[1]: http://epic-linux.org/#!testing-effort/tested-kernels-table.md
+ 	printf("%s: ptr=%p, value: %08x\n", __func__, ptr, *(unsigned int *)ptr);
 
+Will crash before printing, because you are dereferencing ptr. Perhaps you
+should change this to:
 
-* The hp-sim platform was reinstated for Linux up to mainline, allowing
-everybody to run ia64 software (kernels and userland) on non-ia64
-hardware, thanks to ski maintained by Sergei Trofimovich. This is for
-example used for our Linux stable R(C) auto-builder to test-boot each
-kernel after it was built and run some userland tools for a test. By
-involving ski for this auto-builder it can not only demonstrate build
-problems, but also problems during runtime, as shown already in the
-corresponding issues ([2]).
+ 	printf("%s: ptr=%p\n" value: %08x\n", __func__, ptr);
+	printf("    value: %08x\n", *(unsigned int *)ptr);
 
-[2]: https://github.com/linux-ia64/linux-stable-rc/issues
+And that way you will see what 'ptr' is before the crash. Or did you do
+that already?
+
+-- Steve
 
 
-* Two Linux distributions keep support for ia64: T2/SDE ([3]) and EPIC
-Slack [(4)].
+> 
+> I must say that now I am stuck :-(.
 
-[3]: https://t2sde.org/
-
-[4]: http://epic-slack.org/
-
-
-* Also http://epic-linux.org/ was established to allow interested people
-to find current and relevant information about Linux/ia64 at a central
-place.
-
-
-Maybe someone can help me here with the history, but was there another
-architecture that has been kicked out of the kernel, that received that
-level of continuation afterwards?
-
-We'll see where this goes.
-
-
-Find the last Linux/ia64 update on [5].
-
-[5]: https://lore.kernel.org/lkml/5d1b5880-9bdc-4b04-81dc-341df7b02177@web.de/
-
-****
-
-Thank you all for your hard work on Linux!
-
-Cheers,
-Frank et al
 
