@@ -1,76 +1,97 @@
-Return-Path: <linux-kernel+bounces-416115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864D99D4069
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:46:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EFB9D406B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C77428450C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0E8283CBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84238155725;
-	Wed, 20 Nov 2024 16:45:02 +0000 (UTC)
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA691A00FA;
+	Wed, 20 Nov 2024 16:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+DaSyWM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D97154BE0
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8219E82A;
+	Wed, 20 Nov 2024 16:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732121102; cv=none; b=t4mIAgKf0w7jU0MZ5Gz5F9EJOWe2hYS+qhrW70seBDn/NuMYSzzf52q158g1MvQz6jEwDohE09+YKnI777gbew93CqYgYEZTcRwVlQLYiS4nyfNG93X1CPGhptHooCqtpseAcHygknG3XiCEhzEgkPSMeAZLkXNzCOzj1APwZko=
+	t=1732121109; cv=none; b=n1IqpwY+kZHOceAyTGg9qnoWIun/3XuSUa21rV58kQJ8T55TSqkiIj3ur0UqkGuxra1N4dqn8PNG0+S3rQ9tKjFYtKrBxCqJEv8GI+xIrpJvbNJXJwCO2L0/c/1uWALX2T5wQ2VW/Y+mp8zLYPUfvEw5CS5svJOSjfyJjXdbbtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732121102; c=relaxed/simple;
-	bh=eElI0PQS6RM/KBvZvT/6wjNMvQDv0TOKHZU5Ee9F190=;
-	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=LPLyODfdb5fUKarxX+dlgtMz4inq4+B2blYYmcmkMsvbFBXoSWmApGVyjs6Uh0+CPOKvqveFMesRC9D+zZ2LuBYDnn5txfW96nKaAim605V3ZhaQcGZMSYcLueMtAt7sU2+kOxQGbUpXwva+tyF8NX5TKd25CGYAG3Oq54XEvC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rasom.in; spf=pass smtp.mailfrom=rasom.in; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rasom.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasom.in
-Date: Wed, 20 Nov 2024 16:44:39 +0000
-To: sudipm.mukherjee@gmail.com, teddy.wang@siliconmotion.com, gregkh@linuxfoundation.org, linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-From: Cheolu Choi <ray@rasom.in>
-Subject: [PATCH] staging: sm750fb: Remove unnecessary parentheses
-Message-ID: <Zz4R8L7493vTJmry@rasomin>
-Feedback-ID: 125224831:user:proton
-X-Pm-Message-ID: 9d4c393f2b28920b1b9ee299cf8b3e9568236fdc
+	s=arc-20240116; t=1732121109; c=relaxed/simple;
+	bh=goepUeNRf/dhLe9FZnxV0RcEfYTEgS341FBStnR18Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ilyDGPVn53LEI32h1ktVIqVqe8yI5Ss2byof3DZnSR0H0xzLjo3kV9PJSt7FIFjoPQ2Bw7MRA6xV2laxdy+VpT4Q32v3zCRzRq8pDAdV3ZMAcHnsRBVncdvwh51gK+U39pLbenIvRqngqB+gIgL2p54c4j12lsDMcQ3wg7dDTEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+DaSyWM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17F0DC4CED2;
+	Wed, 20 Nov 2024 16:45:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732121109;
+	bh=goepUeNRf/dhLe9FZnxV0RcEfYTEgS341FBStnR18Fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q+DaSyWM2YQTHrqFzfl9WtRLCcpI+o/cp2eHJULvsp0PvC2LtiLFwApfZrRip4JXC
+	 RYQKjo5TDVnwEPiXQ0+VwKnvi1DgXS9KGZwkKsahzQe/Y+yLer4spe+jow6/FxHjld
+	 Rj43XaMD+aYRwLtP8CZ5wq/V0+fpbikmuMQT2VPoyNOBhPzsqZdiuMdvLLloReMavC
+	 5kSYnAMIJsjj2dZbj61GozPpgK0W46sMn5YWmBkjyFyRL0vj7klMJSyEPmUnza0S/a
+	 u3d1EzHL/qwM+eKCm+C3TbLlP6twmplQAtQvBPjh1iVOivKAmKLPYSOlms5RUNAQb6
+	 aHiQ++50FXMPA==
+Date: Wed, 20 Nov 2024 16:45:01 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+Message-ID: <c8939577-318a-4dbe-8490-174228be896f@sirena.org.uk>
+References: <20241120125629.681745345@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Adhere to Linux kernel coding style.
-
-Reported by checkpatch:
-CHECK: Unnecessary parentheses around 'clk_gpio > 31'
-CHECK: Unnecessary parentheses around 'data_gpio > 31'
-
-Signed-off-by: Cheolu Choi <ray@rasom.in>
----
- drivers/staging/sm750fb/ddk750_swi2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/sm750fb/ddk750_swi2c.c b/drivers/staging/sm750=
-fb/ddk750_swi2c.c
-index 0ef8d4ff2ef9..50e51d730d86 100644
---- a/drivers/staging/sm750fb/ddk750_swi2c.c
-+++ b/drivers/staging/sm750fb/ddk750_swi2c.c
-@@ -393,7 +393,7 @@ long sm750_sw_i2c_init(unsigned char clk_gpio, unsigned=
- char data_gpio)
- =09 * Return 0 if the GPIO pins to be used is out of range. The
- =09 * range is only from [0..63]
- =09 */
--=09if ((clk_gpio > 31) || (data_gpio > 31))
-+=09if (clk_gpio > 31 || data_gpio > 31)
- =09=09return -1;
-=20
- =09if (sm750_get_chip_type() =3D=3D SM750LE)
---=20
-2.34.1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="UyDIZA+z5bdc3JeX"
+Content-Disposition: inline
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+X-Cookie: Place stamp here.
 
 
+--UyDIZA+z5bdc3JeX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Nov 20, 2024 at 01:55:35PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--UyDIZA+z5bdc3JeX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc+EgwACgkQJNaLcl1U
+h9D7fQf/dKTOoCa4J3mZe6peeRp5Niv1U7Tf6za5FY4SZY8mLMsPoPQ3c1UCpdTi
+fxQzM+Oi/VhqXSiKLVHNg4b9W06Gf2S+eNYpZqqjy8841QdAereR1Lrv0zShFG3v
+zoSMihGmhSFM6VsVNs86XmATvE1M6nL0+oiPU1+zcCo8hB7XgWE/DbEGLsUj1lfj
+HOKYpc+LUENElzb6Tvyy65vxhLxZaLHQm3E1cJQL0/jLcdnAYiHmqg6LcCA2Hu7p
+9Y5WK7vHLz75vi7PnHZtyULzTNIogbc8CwL4EO0NQcTx+Fla5p4MTRlR+sEJnB8k
+rIUQcYf4TdkA6I3ZWitlnf9fixExAw==
+=VEQx
+-----END PGP SIGNATURE-----
+
+--UyDIZA+z5bdc3JeX--
 
