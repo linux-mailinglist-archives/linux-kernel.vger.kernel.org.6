@@ -1,130 +1,119 @@
-Return-Path: <linux-kernel+bounces-416125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9099D408A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:51:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5555F9D408B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:51:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5619C1F26A1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0362815F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D074154C15;
-	Wed, 20 Nov 2024 16:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7190A154C04;
+	Wed, 20 Nov 2024 16:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eG+8L5r0"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="WhPD/xyf"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF4E14EC55
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A4F153814;
+	Wed, 20 Nov 2024 16:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732121465; cv=none; b=BnFZ3j3ZanTR7l4AFf4desumZHgfsLb8OyBUpGHGP7oF6/3HsP1roWyVZOMekLKPNCK/ELUeGWaPlO9L/u99l06FzdQtjpEw3FSLAoS/bJxMovtonHxCpLDzi8iNORdjO9PXpQbXtNFZ46ZWKukxbqKdDvIW5mV0NNYAMNqYJrg=
+	t=1732121474; cv=none; b=Y/c6TAv9O+KBUE6TY5H8+frIP7RXt1YAMVfcT/4N3YmJdlI0p24W08024D5iIPLeEElne6uudrlvFMEo35ua/yzkIHFtbJFZesVuwKEkWDahfTh20WSQVcAVSoFquF8SSrBiTu+FK8eNRKaWBOv0i3AlkqPIoYJ40QXwdR5iCAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732121465; c=relaxed/simple;
-	bh=CArJjqyZn29K7jqNLHvcRGyvEoXAG9RjhAjwmglVuTE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDnzapbTf+Rorpfo6bnkjK+uV7/r4hDRnBK7YMag+eOVzQmtXr40KM3eeVLJ22gxMdsE7GIYmlpBxKTR3rzliyKJ/uENBHleMsrGb6OWLfwAQE70ApzgMdpJLuNUg8LVgO8/QIrar6X3EUP+k8ChuRLoeJFPgLVZ4J28cV2e5eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eG+8L5r0; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 08:50:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732121460;
+	s=arc-20240116; t=1732121474; c=relaxed/simple;
+	bh=FCp62Nk3R/z7mBK/KJriUMZ/kO6zaz8UQdOXrf4Pskk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UKUTIn/l0pbtrt/ZHi+1WkUVKHSfgx3I1fZhN75DorPUYjAbRkZHVBeyXvwyj48MNvP+u4DgKxNLFQyIggQZ/Wa064F1mocub0vHCdgoK4yNaGmgkygNkhQ3vNGRCS3wpsezL7TtEf8gwOsJ2veHnLvHzVQGCRhqHRMngZ/4mg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=WhPD/xyf; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1930F20008;
+	Wed, 20 Nov 2024 16:51:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1732121464;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JW6CUngLOu75VOV9f472xCW07lVeBTteuDR8jNnNruo=;
-	b=eG+8L5r0N3ZU3xEKnaOmGokcBySKemg9tZZ+pRsL4ENHRbcW8bl81OLaeXKPHO3fWbRzBh
-	5D0zg6aHKJE7IzNHdD2E3ZA033N6YRItW+4Urr3xPpoAytY+P4MIU5e7o01nm1R2irf6IU
-	T8evyv6vvMxVYObWuwU3ccJi0+YPyZA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Russ Weight <russ.weight@linux.dev>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Marco Felsch <kernel@pengutronix.de>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
- FW_UPLOAD_ERR_SKIP
-Message-ID: <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
-References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
- <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
+	bh=3FTjxfBZmWQS65GNRmIHMoS/Ljz1h55cLCa9PWWBBNM=;
+	b=WhPD/xyfefmpMjmQi5CDiU8Zbm3LjvbpQUp4fbzCuPb4QXUyeeLJA0TSo482hwjRjrRDci
+	/DaU+tQmhcYymoM7npAwTFS4Sr7F3rR5FgCncLQ1GzPCxF0lV60xhcpQhOdlMj8s3iqdd7
+	5If9tOV1/yyqSeFPhWbIqKJE61UOpg0bghsIX5D+TDetUeYXvD/qmb6YAPbev41suTMHkS
+	bGq7sjK2n95W0x6FANodsBxO0T/WVYenCK2vNLAXSyQPXk46pBBRkUBaHhI4s5PTsx9xOW
+	JYnPWXZiztmNrYtWo49PrnKrSP2UvA925fflYzofzSYD+GWe1CJKAth4jJ8dOg==
+Message-ID: <6da6dfe4-f5f7-4802-902e-47ec89364b35@yoseli.org>
+Date: Wed, 20 Nov 2024 17:51:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>,
+ Tomas Glozar <tglozar@redhat.com>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+ <20241115102554.29232d34@gandalf.local.home>
+ <cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+ <20241115145502.631c9a2c@gandalf.local.home>
+ <2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+ <20241118152057.13042840@gandalf.local.home>
+ <22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
+ <20241119102631.76363f2a@gandalf.local.home>
+ <20241119112850.219834f5@gandalf.local.home>
+ <e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
+ <20241119131035.3c42a533@gandalf.local.home>
+ <66e2b7cd-4a4f-4f60-9846-a14c476bd050@yoseli.org>
+ <20241120103150.3442d658@gandalf.local.home>
+ <2dc1cdfa-d33a-48b6-ab77-d04b06a3efe8@yoseli.org>
+ <20241120114341.30ac73c6@gandalf.local.home>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20241120114341.30ac73c6@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
-> It's no error if a driver indicates that the firmware is already
-> up-to-date and the update can be skipped.
+
+
+On 20/11/2024 17:43, Steven Rostedt wrote:
+> On Wed, 20 Nov 2024 16:59:55 +0100
+> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
 > 
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
->  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>>> And that way you will see what 'ptr' is before the crash. Or did you do
+>>> that already?
+>>
+>> Yes, I did, sorry I thought it was in the previous dump :-(.
 > 
-> diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
-> index b3cbe5b156e3..44f3d8fa5e64 100644
-> --- a/drivers/base/firmware_loader/sysfs_upload.c
-> +++ b/drivers/base/firmware_loader/sysfs_upload.c
-> @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
->  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
->  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
->  	if (ret != FW_UPLOAD_ERR_NONE) {
-> +		if (ret == FW_UPLOAD_ERR_SKIP) {
-> +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
-> +			ret = FW_UPLOAD_ERR_NONE;
-> +		}
-
-If you change the error-code from FW_UPLOAD_ERR_SKIP to
-FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
-patch will never be seen. There are currently no other instances where
-an error code requires special-case modifications to the fw_upload
-code and I don't think it is necessary to add it here.
-
-The dev_info() message above can be provided by the device driver
-that is using this API.
-
-I think you can either:
-
-(1) allow "skip" to be treated as an error. The update didn't happen...
-
--or-
-
-(2) The prepare function could detect the situation and set
-    a flag in the same device driver. Your write function could
-    set *written to the full data size and return without writing
-    anything. Your poll_complete handler could also return
-    FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
-    at all. You would get the info message from the device driver
-    and fw_upload would exit without an error.
-
-Thanks,
-- Russ
-
->  		fw_upload_set_error(fwlp, ret);
->  		goto putdev_exit;
->  	}
+> Can you see if this makes a difference?
 > 
-> -- 
-> 2.39.5
+> Patch libtracefs:
 > 
+> diff --git a/src/tracefs-events.c b/src/tracefs-events.c
+> index 77d1ba89b038..19ea3b3f8d36 100644
+> --- a/src/tracefs-events.c
+> +++ b/src/tracefs-events.c
+> @@ -274,7 +274,7 @@ static int open_cpu_files(struct tracefs_instance *instance, cpu_set_t *cpus,
+>   		if (snapshot)
+>   			tcpu = tracefs_cpu_snapshot_open(instance, cpu, true);
+>   		else
+> -			tcpu = tracefs_cpu_open_mapped(instance, cpu, true);
+> +			tcpu = tracefs_cpu_open(instance, cpu, true);
+>   		if (!tcpu)
+>   			goto error;
+>   
+
+Nope. Nice try :-) !
+
+If you need me to add a few specific printfs I can run it.
+
+JM
 
