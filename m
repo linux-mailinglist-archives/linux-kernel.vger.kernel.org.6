@@ -1,112 +1,202 @@
-Return-Path: <linux-kernel+bounces-415157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC21C9D321A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:14:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9409D321D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:15:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BAC283FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:14:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D71DB245A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112981E485;
-	Wed, 20 Nov 2024 02:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZVFp3ufX"
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB5C42070;
+	Wed, 20 Nov 2024 02:15:04 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC60727447
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CBC2E40E;
+	Wed, 20 Nov 2024 02:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732068868; cv=none; b=KSdOjX3aJPRPaBkWQvDACISHZEhsImowLVf89Zre+6F1gsG2PRTyH77wUe5mbFZiryRCAbOoXicgbtNXLoX9h75e3liF3q9G++xTE1RMWe4bBk7m7ibtwIl2KLB2hKXW14zkDGArDjiZPHucr4VFqb7Vax0m/au0T1N2/eh3Mqk=
+	t=1732068903; cv=none; b=YqINQHLLCbTIA+UCS4MCsmjT8OlQs/SX26x9bfOOjp3oi1dnIhkbW7UcIVuXuSGF8FgAcxE2C83rqkKn3Gzg+Yi/7DphCxTZzGpuqQB7UOqB/80oIaWWTAMhF8uDvJzNbHHI+ugeshGCHLv1RxG5S30y768o6m2L3aOGzieNgDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732068868; c=relaxed/simple;
-	bh=Zpf7ID4DWt4Ihn9/JNAQsyosrVGQE8NmSLKdTOK1OKw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lsxX9Nr4bd7fWwgl0FYM4UK1y+xgxZZgU+fy9VTxW8of5OKuUrNvRIJ4Pk8C++f3xEvcbYgsNoeYdY+ZROTuPYOr6M3ZFWzxGhMu0FBGguvxRTrponJedp35wPVsXoRBqV7MAhjViIfvLhjgmdqF/pEVgluIHuEYLBbZ8yFzH20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZVFp3ufX; arc=none smtp.client-ip=95.215.58.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732068860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pZE9XS2nS1P9CSr00f4qjxs7S+FpZe2i+/rEGi6QgV8=;
-	b=ZVFp3ufXSYcmcijvZx7n/JQU74JqYc0cBkoW1y+Me2Aq41VLQOOV9vgDjMQzLPPxgVbnau
-	IQ+wezzWUH13AwVKHlkKdYbpWImeuEzAAOzcAhR+OeVSpBZejcmyNTZzuioEL6woK/u5QX
-	euM28gjcSYwQxAachvsnoJH1XMkz+nY=
+	s=arc-20240116; t=1732068903; c=relaxed/simple;
+	bh=nRMO5tBPsD78K2k5il0gmaxJciw7QdFyq4xgfVpMoes=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=A77U3cXb3SIyXtqDeY+OyRzlbqva8uBG7NGVcXAQlaEEPNkn6NrQdvoxM657wTfawo5TSAnYZt6lwxPXh/sueAZk4bsTsX52ehQHTMsmCL28jol8oFm/y4+uFZlPhQ2uLjDyWpa7yMmJM1eYlfOQpviBLHpITsuPIjh21JG24/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3bf04b74a6e511efa216b1d71e6e1362-20241120
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CHARSET
+	HR_CHARSET_NUM, HR_CTE_8B, HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD
+	HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_CHARSET, HR_SJ_DIGIT_LEN, HR_SJ_HAN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NAME
+	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:34f309a5-bdce-44ba-93d4-feb4254b643f,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-8
+X-CID-INFO: VERSION:1.1.38,REQID:34f309a5-bdce-44ba-93d4-feb4254b643f,IP:0,URL
+	:0,TC:0,Content:-5,EDM:0,RT:2,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-8
+X-CID-META: VersionHash:82c5f88,CLOUDID:69e8dde557714b4bae663c109e263228,BulkI
+	D:241120095158LUGR8NIB,BulkQuantity:2,Recheck:0,SF:64|66|841|38|17|19|102,
+	TC:nil,Content:0,EDM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:ni
+	l,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
+X-UUID: 3bf04b74a6e511efa216b1d71e6e1362-20241120
+X-User: duanchenghao@kylinos.cn
+Received: from [172.30.80.21] [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1445782142; Wed, 20 Nov 2024 10:14:55 +0800
+Message-ID: <4d59c6f60fb0b1c718cd150d75471f62db03de3b.camel@kylinos.cn>
+Subject: =?gb2312?Q?=BB=D8=B8=B4=A3=BA=5BPATCH?= v4] USB: Fix the issue of
+ task recovery failure caused by USB status when S4 wakes up
+From: Duan Chenghao <duanchenghao@kylinos.cn>
+To: Greg KH <gregkh@linuxfoundation.org>, Alan Stern
+ <stern@rowland.harvard.edu>
+Cc: stern@rowland.harvard.edu, saranya.gopal@intel.com, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
+ rafael@kernel.org,  stanley_chang@realtek.com, tj@kernel.org,
+ xiehongyu1@kylinos.cn,  xy521521@gmail.com, kernel test robot
+ <lkp@intel.com>
+Date: Wed, 20 Nov 2024 10:14:50 +0800
+In-Reply-To: <2024102911-mooned-precise-f526@gregkh>
+References: <e795d88afb2b485fab97e2be7759664e823fbfad.camel@kylinos.cn>
+	 <20241024024038.26157-1-duanchenghao@kylinos.cn>
+	 <2024102432-conjoined-skylight-33f1@gregkh>
+	 <8aff9a5acbd21d7bd08b80e02ef2b34f2028cedf.camel@kylinos.cn>
+	 <2024102911-mooned-precise-f526@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.1-2kord0k2.4.25.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] mm: pgtable: make ptep_clear() non-atomic
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20241119090740.65768-1-zhengqi.arch@bytedance.com>
-Date: Wed, 20 Nov 2024 10:13:21 +0800
-Cc: pasha.tatashin@soleen.com,
- tongtiangen@huawei.com,
- jannh@google.com,
- lorenzo.stoakes@oracle.com,
- david@redhat.com,
- ryan.roberts@arm.com,
- peterx@redhat.com,
- jgg@ziepe.ca,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <A87F992C-F96C-44CB-A93B-E7ECA7B5BDB7@linux.dev>
-References: <20241119090740.65768-1-zhengqi.arch@bytedance.com>
-To: Qi Zheng <zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+Hi Greg KH/Alan,
 
+I haven't received a reply from both of you for a long time. Sorry for
+the disturbance. May I ask if the current patch can be merged into the
+mainline or stable branch? I need this conclusion as it is very
+important to me. Thank you very much.
 
-> On Nov 19, 2024, at 17:07, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
-> 
-> In the generic ptep_get_and_clear() implementation, it is just a simple
-> combination of ptep_get() and pte_clear(). But for some architectures
-> (such as x86 and arm64, etc), the hardware will modify the A/D bits of the
-> page table entry, so the ptep_get_and_clear() needs to be overwritten
-> and implemented as an atomic operation to avoid contention, which has a
-> performance cost.
-> 
-> The commit d283d422c6c4 ("x86: mm: add x86_64 support for page table
-> check") adds the ptep_clear() on the x86, and makes it call
-> ptep_get_and_clear() when CONFIG_PAGE_TABLE_CHECK is enabled. The page
-> table check feature does not actually care about the A/D bits, so only
-> ptep_get() + pte_clear() should be called. But considering that the page
-> table check is a debug option, this should not have much of an impact.
-> 
-> But then the commit de8c8e52836d ("mm: page_table_check: add hooks to
-> public helpers") changed ptep_clear() to unconditionally call
-> ptep_get_and_clear(), so that the CONFIG_PAGE_TABLE_CHECK check can be
-> put into the page table check stubs (in include/linux/page_table_check.h).
-> This also cause performance loss to the kernel without
-> CONFIG_PAGE_TABLE_CHECK enabled, which doesn't make sense.
-> 
-> Currently ptep_clear() is only used in debug code and in khugepaged
-> collapse paths, which are fairly expensive. So the cost of an extra atomic
-> RMW operation does not matter. But this may be used for other paths in the
-> future. After all, for the present pte entry, we need to call ptep_clear()
-> instead of pte_clear() to ensure that PAGE_TABLE_CHECK works properly.
-> 
-> So to be more precise, just calling ptep_get() and pte_clear() in the
-> ptep_clear().
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+Thanks
+Duan Chenghao 
 
-Reviewed-by: Muchun Song <muchun.song@linux.dev>
-
+在 2024-10-29星期二的 04:27 +0100，Greg KH写道：
+> On Thu, Oct 24, 2024 at 04:46:48PM +0800, duanchenghao wrote:
+> > hi greg k-h,
+> > 
+> > 在 2024-10-24星期四的 09:05 +0200，Greg KH写道：
+> > > On Thu, Oct 24, 2024 at 10:40:38AM +0800, Duan Chenghao wrote:
+> > > > When a device is inserted into the USB port and an S4 wakeup is
+> > > > initiated,
+> > > > after the USB-hub initialization is completed, it will
+> > > > automatically enter
+> > > > suspend mode. Upon detecting a device on the USB port, it will
+> > > > proceed with
+> > > > resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state.
+> > > > During
+> > > > the S4
+> > > > wakeup process, peripherals are put into suspend mode, followed
+> > > > by
+> > > > task
+> > > > recovery. However, upon detecting that the hcd is in the
+> > > > HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status,
+> > > > causing the
+> > > > S4 suspend to fail and subsequent task recovery to not proceed.
+> > > > -
+> > > > [   27.594598][ 1]  PM: pci_pm_freeze():
+> > > > hcd_pci_suspend+0x0/0x28
+> > > > returns -16
+> > > > [   27.594601][ 1]  PM: dpm_run_callback():
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returns -16
+> > > > [   27.603420][ 1]  ehci-pci 0000:00:04.1:
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returned 0 after 3 usecs
+> > > > [   27.612233][ 1]  ehci-pci 0000:00:05.1:
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returned -16 after 17223 usecs
+> > > > [   27.810067][ 1]  PM: Device 0000:00:05.1 failed to quiesce
+> > > > async: error -16
+> > > > [   27.816988][ 1]  PM: quiesce of devices aborted after
+> > > > 1833.282
+> > > > msecs
+> > > > [   27.823302][ 1]  PM: start quiesce of devices aborted after
+> > > > 1839.975 msecs
+> > > > ......
+> > > > [   31.303172][ 1]  PM: recover of devices complete after
+> > > > 3473.039
+> > > > msecs
+> > > > [   31.309818][ 1]  PM: Failed to load hibernation image,
+> > > > recovering.
+> > > > [   31.348188][ 1]  PM: Basic memory bitmaps freed
+> > > > [   31.352686][ 1]  OOM killer enabled.
+> > > > [   31.356232][ 1]  Restarting tasks ... done.
+> > > > [   31.360609][ 1]  PM: resume from hibernation failed (0)
+> > > > [   31.365800][ 1]  PM: Hibernation image not present or could
+> > > > not
+> > > > be loaded.
+> > > > 
+> > > > The "do_wakeup" is determined based on whether the controller's
+> > > > power/wakeup attribute is set. The current issue necessitates
+> > > > considering
+> > > > the type of suspend that is occurring. If the suspend type is
+> > > > either
+> > > > PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be
+> > > > set
+> > > > to
+> > > > false.
+> > > > 
+> > > > Reported-by: kernel test robot <
+> > > > lkp@intel.com
+> > > > >
+> > > > Closes:
+> > > > https://lore.kernel.org/oe-kbuild-all/202410151722.rfjtknRz-lkp@intel.com/
+> > > > 
+> > > > Signed-off-by: Alan Stern <
+> > > > stern@rowland.harvard.edu
+> > > > >
+> > > > Signed-off-by: Duan Chenghao <
+> > > > duanchenghao@kylinos.cn
+> > > > >
+> > > 
+> > > What commit id does this fix?
+> > 
+> > The current patch is not intended to fix an issue with a specific
+> > commit, but rather to address a long-standing problem in the USB
+> > core.
+> 
+> So should it be backported to older stable kernels?  If so, how far
+> back?
+> 
+> > > And I missed where Alan provided a signed-off-by, where was that?
+> > 
+> > In the following email, Alan proposed using "Signed-off-by" for
+> > signing.
+> > https://lore.kernel.org/all/489805e7-c19c-4b57-9cd7-713e075261cd@rowland.harvard.edu/
+> > 
+> 
+> Ah, missed that, sorry.
+> 
+> thanks,
+> 
+> greg k-h
 
 
