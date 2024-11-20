@@ -1,218 +1,133 @@
-Return-Path: <linux-kernel+bounces-415974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1443B9D3ED8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:18:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD0A9D3EAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994ADB3794E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328B6282C48
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451B01DDC23;
-	Wed, 20 Nov 2024 14:59:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E851C82E2;
+	Wed, 20 Nov 2024 15:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Upqv/vsR"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A801DDC0F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2AD19CCFC;
+	Wed, 20 Nov 2024 15:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114778; cv=none; b=H+b3eOSmVMOFUPJuxAJJfonMSepvOonRvke+GPQSCVrTv+nJmcNnOxdWej6i5W7DAHGIwVHXVoGAQASMCATOSIpdd6nr2xfhePFFp8CZltr/jxNf5wKk6pfnFup3/yNr83lNPQcLj+i8L/GtVtXnAa6XMLsytgn1tyBJVXLCJyA=
+	t=1732114833; cv=none; b=MwGF1bT1HoIheU7KqJlkXNKqxQXEGGYTyXbzrkx45gEdEd8EPNlC0aHXn8IWcoboO4oabjkGZmcJaBf8tJsD1s4rKt9mJWbDWso0RQVofrNedUfEwhuicHAA0gLaagstYUAKDhWGt34IUTxdYUINu0e41g+lyaFGnkZS2GgFvuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114778; c=relaxed/simple;
-	bh=IIaQ/NzZuMMZgIo4ugvEZQFGFXjYoYRJy5eOVmENsG8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pVTiU+7dJhurIKAcCVUDZ+VAviNNlAl3g+h4It3yM6D6jNJU/F86aruclZup+lC7yXn2miyw5ES6QjdzY6F96CsrHYIr6+IPy7Nw1f8HJV3vhqL1s8r+hl7dxQoWAMlsHl5cfb9KMJWjXJ/2RZmwroZNGtYZtY4HfX9DKRwtS+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xtkwq2JTMz6GD2P;
-	Wed, 20 Nov 2024 22:57:15 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 92410140114;
-	Wed, 20 Nov 2024 22:59:32 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
- 2024 15:59:32 +0100
-Date: Wed, 20 Nov 2024 14:59:30 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 4/6] acpi/ghes: Use HEST table offsets when preparing
- GHES records
-Message-ID: <20241120145930.00003895@huawei.com>
-In-Reply-To: <cf60aee0059d12755c1b9deb2dddb355d8543297.1731486604.git.mchehab+huawei@kernel.org>
-References: <cover.1731486604.git.mchehab+huawei@kernel.org>
-	<cf60aee0059d12755c1b9deb2dddb355d8543297.1731486604.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732114833; c=relaxed/simple;
+	bh=9ZC+2ipveOKTiTiA55rUJph3DsBYXv6Abypl2uf3Xqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ebAMXVJvy78bhoRMSirPG8h5xnsxP46T8VOpSrcVT9rSyGf6BK0P/GwGuCctrK3NmTUUPZ/jcZFd69Y0kkVm+9q0C4DjffWjw1BDvj+1W+uD2yFWgjno7ouWGM1V3Xq/IgiDQnz6kWIlUbaRhYpVgXMhrq3n4urUdhanEzkKR4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Upqv/vsR; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so2755207a12.2;
+        Wed, 20 Nov 2024 07:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732114830; x=1732719630; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lFFenx849KBhQwdSdYlyI/GCskIbw5nu6S3nTEvWg0M=;
+        b=Upqv/vsRX3sN4EjsUHkCvIVbbcB0CQMb4GbXCVFs24yLg8Qi1BHDOeGXWC8c7y7ysc
+         YWSIwJ+5GJ5rvgIFIwPYDC+exlBWE1ffG1RQhZ1SAlXS98BaESZwfkDU6obtdTWCkjVv
+         UA7S2sQywwiz5DflooBQSDoKvXFuoTmBIdQLqcNuABCe/Edt3eGrJE02mqbzSBHfED3Z
+         OdeA1MdOF0EvP7GdKUxW0rL4ks8pVbIgkihJwC6SHFlJ8/ySHaY86irAPFF+VkuMSzRd
+         sqdP2zxU8CKa6HI3z+CdDkmWI5Q0vk/xiGJqp1Hlfra0Hvu6d8pEmOpYNedNZTL6h1yd
+         j5Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732114830; x=1732719630;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lFFenx849KBhQwdSdYlyI/GCskIbw5nu6S3nTEvWg0M=;
+        b=xGdk0F4DoXAGBT3yELiqUEITz+QgtTQKPoKs6te7wJZbGSB8FuTH8CcjTYHvmFCSK3
+         FOqe7rrWK+upO+7XbuAL77pfzG7TuJxLwVblu+WyUPM73QaFPy4srj9TsQUUJa5DwlSG
+         Y0XuO/vWfScofyN6/pvM4WLwjCTC4weSbRR+b+CVZ4if13Lxr6Yg8F2rdALhSmzQtKLu
+         YOaNbKMoYiiJhntcfSlCHHGc4+YS3+bDN0CdfBydM2RRBvcY0nefTtZTjm8ubPnb9Ovw
+         QFAyEMvI4oQiYYuYSdh/opgWZ4+VkdIYDY1NtIOom1JIedqlPBQWCHTCUbi6aFpOdn7W
+         9BsA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8vICOdeY8HBtBjdp1plxtaZGaoL+458Q/fp6xsKu9TaWMQOcmuR98Z6qTkMfkg1eoxcXIIlm5ah/USQ==@vger.kernel.org, AJvYcCVLkJnlRlWuTsfBoczMvHShNUsZjUU/IhjmsmnhedyfJpwYKDmnZeRQMvOPxzmsfAcQKA+ozsRLuDZFOemf@vger.kernel.org, AJvYcCVR20ZFMHx2dqHaz03YSs6q1MeXx9exFoER/YKSz4281k+n0ZVq2q2sQndJAKvf5GhyGU/IC0awMA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMSdB0z/PGhj7XvcZKTHZMBYhYfEnRA0sm/V8gJ8UZ+8kA+WNU
+	e5repVhLjidDBkqxyFRHYGYas/pe52Vx/hm/ogu4aWETJ54DlBVR
+X-Google-Smtp-Source: AGHT+IFV1FFI1cI7abiH+7KTSeeEW/+3XLs4ah+x+jtitU1XtL5LK2apTa03VWws5gWrvzNJ0ykmqw==
+X-Received: by 2002:a05:6a20:12ce:b0:1d9:780a:4311 with SMTP id adf61e73a8af0-1ddaecd0f35mr4458444637.18.1732114827931;
+        Wed, 20 Nov 2024 07:00:27 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dcf424sm9688998a12.78.2024.11.20.07.00.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 07:00:27 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 20 Nov 2024 07:00:26 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg,
+	Rapoport@rox.of.borg, Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+	linux-mm@kvack.org, io-uring@vger.kernel.org,
+	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+Message-ID: <5df87ac7-9779-4a9e-b3ca-6aeddb1a4896@roeck-us.net>
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
 
-On Wed, 13 Nov 2024 09:37:01 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> There are two pointers that are needed during error injection:
+On Wed, Nov 20, 2024 at 01:46:21PM +0100, Geert Uytterhoeven wrote:
+> On m68k, where the minimum alignment of unsigned long is 2 bytes:
 > 
-> 1. The start address of the CPER block to be stored;
-> 2. The address of the ack, which needs a reset before next error.
+>     Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
+>     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
+>     Stack from 0102fe5c:
+> 	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
+> 	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
+> 	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
+> 	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
+> 	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
+> 	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
+>     Call Trace: [<00425e78>] dump_stack+0xc/0x10
+>      [<0041eb74>] panic+0xd8/0x26c
+>      [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
+>      [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
+>      [<0041e5f0>] memset+0x0/0x8c
+>      [<005f67c0>] io_uring_init+0x54/0xd2
 > 
-> Calculate them preferrable from the HEST table, as this allows
-> checking the source ID, the size of the table and the type of
-> HEST error block structures.
-
-It is preferable to calculate them from the HEST table.  This allows
-checking the source ID, the size of the table and the type of the
-HEST error block structures.
-
-A few comments inline.
-
-Jonathan
-
-
+> The minimal alignment of an integral type may differ from its size,
+> hence is not safe to assume that an arbitrary freeptr_t (which is
+> basically an unsigned long) is always aligned to 4 or 8 bytes.
 > 
-> Yet, keep the old code, as this is needed for migration purposes.
+> As nothing seems to require the additional alignment, it is safe to fix
+> this by relaxing the check to the actual minimum alignment of freeptr_t.
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  hw/acpi/ghes.c | 98 ++++++++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 88 insertions(+), 10 deletions(-)
-> 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index c93bbaf1994a..9ee25efe8abf 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -61,6 +61,23 @@
->   */
->  #define ACPI_GHES_GESB_SIZE                 20
->  
-> +/*
-> + * Offsets with regards to the start of the HEST table stored at
-> + * ags->hest_addr_le, according with the memory layout map at
-> + * docs/specs/acpi_hest_ghes.rst.
-> + */
-> +
-/*
- * ACPI 6.2:
+> Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
+> Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-to be consistent with local style.
+On m68k:
 
-> +/* ACPI 6.2: 18.3.2.8 Generic Hardware Error Source version 2
-> + * Table 18-382 Generic Hardware Error Source version 2 (GHESv2) Structure
-> + */
-> +#define HEST_GHES_V2_TABLE_SIZE  92
-> +#define GHES_ACK_OFFSET          (64 + GAS_ADDR_OFFSET)
-> +
-/*
- * ACPI 6.2: 
-> +/* ACPI 6.2: 18.3.2.7: Generic Hardware Error Source
-> + * Table 18-380: 'Error Status Address' field
-> + */
-
-> +static void get_ghes_source_offsets(uint16_t source_id, uint64_t hest_addr,
-> +                                    uint64_t *cper_addr,
-> +                                    uint64_t *read_ack_start_addr,
-> +                                    Error **errp)
-> +{
-> +    uint64_t hest_err_block_addr, hest_read_ack_addr;
-> +    uint64_t err_source_struct, error_block_addr;
-> +    uint32_t num_sources, i;
-> +
-> +    if (!hest_addr) {
-
-Trivial but I wonder if this should be named to indicate that it sin't the start
-of HEST but the first bit of the header.
-hest_body_address or something like that maybe?  I don't care that much
-though if you prefer to keep as is.
-
-
-> +        return;
-> +    }
-> +
-> +    cpu_physical_memory_read(hest_addr, &num_sources, sizeof(num_sources));
-> +    num_sources = le32_to_cpu(num_sources);
-> +
-> +    err_source_struct = hest_addr + sizeof(num_sources);
-> +
-> +    /*
-> +     * Currently, HEST Error source navigates only for GHESv2 tables
-> +     */
-
-Feels like duplication of the comment below where the type check is.
-Maybe drop this one?
-
-> +
-> +    for (i = 0; i < num_sources; i++) {
-> +        uint64_t addr = err_source_struct;
-> +        uint16_t type, src_id;
-> +
-> +        cpu_physical_memory_read(addr, &type, sizeof(type));
-> +        type = le16_to_cpu(type);
-> +
-> +        /* For now, we only know the size of GHESv2 table */
-> +        if (type != ACPI_GHES_SOURCE_GENERIC_ERROR_V2) {
-> +            error_setg(errp, "HEST: type %d not supported.", type);
-> +            return;
-> +        }
-> +
-> +        /* It is GHES. Compare CPER source address */
-
-It's GHESv2 (of course this bit is the same, but none the less comment
-is misleading). I'd just go with
-        /* Compare CPER source address */
-
-> +        addr += sizeof(type);
-> +        cpu_physical_memory_read(addr, &src_id, sizeof(src_id));
-> +
-> +        if (src_id == source_id) {
-> +            break;
-> +        }
-> +
-> +        err_source_struct += HEST_GHES_V2_TABLE_SIZE;
-> +    }
-> +    if (i == num_sources) {
-> +        error_setg(errp, "HEST: Source %d not found.", source_id);
-> +        return;
-> +    }
-> +
-> +    /* Navigate though table address pointers */
-> +    hest_err_block_addr = err_source_struct + GHES_ERR_ST_ADDR_OFFSET;
-> +    hest_read_ack_addr = err_source_struct + GHES_ACK_OFFSET;
-
-> +
-> +    cpu_physical_memory_read(hest_err_block_addr, &error_block_addr,
-> +                             sizeof(error_block_addr));
-So this points to a registers
-> +
-> +    cpu_physical_memory_read(error_block_addr, cper_addr,
-> +                             sizeof(*cper_addr));
-and this reads the register. I'm not sure the spec defines the
-contents of that register to be constant.  Maybe we should avoid
-reading the register here and do it instead at read of the record?
-I 'think' you could in theory use different storage for the CPER
-depending on other unhandled errors or whatever else meant you didn't
-want a fixed location.
-
-Or maybe just add a comment to say that the location of CPER storage
-is fixed.
-
-> +
-> +    cpu_physical_memory_read(hest_read_ack_addr, read_ack_start_addr,
-> +                             sizeof(*read_ack_start_addr));
-> +}
-
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
