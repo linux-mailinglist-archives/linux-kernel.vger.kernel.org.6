@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-415224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226319D3313
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:04:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C740A9D3315
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C24291F23FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:04:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46D4CB24A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFAA15625A;
-	Wed, 20 Nov 2024 05:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8251415697A;
+	Wed, 20 Nov 2024 05:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cc6N2m0B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fqogr6nv"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D6879CD
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4280879CD;
+	Wed, 20 Nov 2024 05:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732079063; cv=none; b=Fgw/1ky5pbIriHHtTo6CF3/YgYRJF+mf4WEMYMZsYhARjDuykGn4qqaOiyRat3kiR/+lUW2yRS0EDwzLgB49GRU8xR+W/P8L5NZwoWFhnx/aMz39bWfFPs8nLeAuel/rLWy0rAo2AUVVgiqABCSFGkCET9exiJzZIAurPV36WrM=
+	t=1732079099; cv=none; b=i8j1n+o2TMYmkRzA6rOnRobtQq6+a7gUr/tqJzpyEvabbCJ/yTUaPMG6f5CY/mY9xuhglEtXRXWa9/Pn5Jn8BcykZb8R2dbJe2SNLjd7q+Em82DSN4eeXL1jA7JSVsvT0QoulA4rgRtS/6qhPyHlsGVyj3F9QiZbACKPll8MM5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732079063; c=relaxed/simple;
-	bh=vDAqi2dqCWiN2YZnhNhVTCZw5+wN6pHMmpmkkkjKH1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AVkZ8A0PYWE/jOc9l5co0HcoYlQzW5w9w8J9vkywQ4AVNYbR+Uj3hTlk4LNis/2U61RnpPRm2kkDR2utk/aK1cUeDPScAxBwYtLGzhLUJCN7Gc1uIhShs+mLCFxI65ALL4lV9N9XQPe73xhTbv2ooQj01vNjLCo0XKPRlWnQ3Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cc6N2m0B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732079060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vDAqi2dqCWiN2YZnhNhVTCZw5+wN6pHMmpmkkkjKH1Q=;
-	b=cc6N2m0BSyJYcoHw9DCxd2Zr9bb+dcdY5R3DiAf2xATciz7QoiX56a15AEmpgGpO6BffHn
-	XNjzghMaIsC/ELyDZBrOjVcQ77FJ5JCTT49XvzxRgOI7iQkNka/JqmSghsGfjAad1ldfsa
-	67nTG9wANMd9Aw0yXyz5rBrX7lm26UE=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-Cf3RfNJ8NPa8QyS1S66aPQ-1; Wed, 20 Nov 2024 00:04:18 -0500
-X-MC-Unique: Cf3RfNJ8NPa8QyS1S66aPQ-1
-X-Mimecast-MFC-AGG-ID: Cf3RfNJ8NPa8QyS1S66aPQ
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a157d028aso266557066b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:04:18 -0800 (PST)
+	s=arc-20240116; t=1732079099; c=relaxed/simple;
+	bh=vwdLdlZBdR2XgCTkCGvmFTzN+2BPVNW04Yb54bofmFY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hX07gPRdTPiiqQgnoZaIXL7ZKNfQ2jbGe+oKU70oEolrANazV39KEeWT9gEztEB5uAqA7kWbAAazav6GFICrPV3436k/Pd13WguLG3O0B5AIGNLqfzu7T6EzvJp+KIljjUI07RpfSxopZMbGTVB915OwahuD6nldKJsc9lcLPyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fqogr6nv; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso1358995a12.3;
+        Tue, 19 Nov 2024 21:04:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732079096; x=1732683896; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iDzqRQmbV2PA+ACm5mYhCZYmsznh/BcrPcsNX+5Rzd4=;
+        b=Fqogr6nvANL4kA/rUmjAAH2BB3qUFAUEk6UpvSD5q96kDZjpMak4haTS9AHADtPTai
+         g9eJMGGFIb7txguNbkoSGWuGF46/8dj5VqoS+FadaXPeEkFHqGfZ35OxeVaZa5d+G6Cn
+         QS2g252ZxPcJqAjeC8BHEgoezoBnOGwgBwfcQbeYI88/UF6UaiaRrdz+6fZH9JUN5JYh
+         dxge47q5AZ2oHGDBTxbTEGXN9+245CmjAzkDGHlkJHQGushgD7KxQREXtM4MSDRsW29k
+         w6RzbikFMniz1vjfiiwDABCzrIotB5IIK6vHUrtQEUX7aQVdj8gfkkmlfD1tJ/XopIpg
+         UErQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732079057; x=1732683857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vDAqi2dqCWiN2YZnhNhVTCZw5+wN6pHMmpmkkkjKH1Q=;
-        b=CDVYiF9FALF5QBNWQY+yGZfr9jMkrpRKw4dVIqiAPpX4fhZpJEQTHWYR8HPMLj6oLS
-         vTieSoekyABbwHJRYwD9dygMgNrTkWRTWrvf8H9Pc+hzAw43mUD/DN6NLHY9wzVUNM9K
-         bRLVRfdYay0M1aFpkyZNSn8nqtbyq3UcIZyV8PmlP9iBkoqDVrg3duZP7gFoGT/LOIrr
-         Ohfanqhur8pX9+h+m9uq9zgmXllv3IaMqxE2CTnz5/yeL+iOJ5LinN/qR0VlqWEHMQoE
-         R85msnKhbAZVCz96me18r1Z6W5JbD9wyW2IT4C7Pcb2BCvYnv/ugVR194bNxPgEGEXhv
-         dyqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCnmSzatIEDsjrnB34t5ZsnQFiWav6dO4KIEU1iIob0kAkb+F3d9y3qSJHnsjza90x0LuJYZs43wZMrxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybA7lIsOcipqkGnN04XXpUocuEcpmcQHSInOcbVhdi050yyEWh
-	FWiDeO/djhsoQ0KHTtJ0NtdaGHBk+wW+PqytinL7wplmbJFg7cBmLBEIo1sJsgYGpHerxnCKUj7
-	mFf0li57+y9BtVLl3y0UzpQaU14r/iApJ05UCZK/uytlJgy03SN8Y0AzKXlKKd+01d9PXB/D6rH
-	rA5U9iPVclgLpAPPWR9lp13ODrwf7o8I+T7VAaNVX6HbDZ
-X-Received: by 2002:a17:907:d24:b0:a9a:dfa5:47d2 with SMTP id a640c23a62f3a-aa4dd766b0cmr115552866b.59.1732079057054;
-        Tue, 19 Nov 2024 21:04:17 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGJqqbJngHMM5ArDt8/GXCWAKULtZ8n7hwb8ar5N+ZdcEu0iuznBUyULwAgVQGAf1ye5qTvujjwqCL1l80JPqM=
-X-Received: by 2002:a17:907:d24:b0:a9a:dfa5:47d2 with SMTP id
- a640c23a62f3a-aa4dd766b0cmr115552066b.59.1732079056738; Tue, 19 Nov 2024
- 21:04:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732079096; x=1732683896;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iDzqRQmbV2PA+ACm5mYhCZYmsznh/BcrPcsNX+5Rzd4=;
+        b=aAb/wrLHmRd0a0Aem7scfEmAaLpuEosoFinA6UTxFT8SZ0toFchMQfEDvXJMYwGnyG
+         RuLzIZjaq7TPaMmer8DLOSJdBYoeCT+iWZP71lTvNxFAqJpH4O/TDYZQNKrylnpG9sc1
+         M6OeX+yVCxZ8QQQh4afHTL9+agJ9K/XtCDB3CVc+4z+qUCcEzm19bpua/me17zRAXlpZ
+         r+ubxhkNbmKxM/0bOJTJQjeff8VDD1RWzTiuaUXdpRcqeP+CFEL3zY4IUwgZPHoR96Sk
+         5wjYcd60tX3N7nSvdRyFJjcxI/mB5+oljshwwVySNye6xmiA3JicnOV8huRrCmZJX8lc
+         0Fhg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvEkyqFMWDQbGlfbMTDyzSwqCYNhooiOmXuVynrSr/eDbE/7Aqzy8Y8FJR7cO1QJY7eGfLxEJeHKHrXZsd@vger.kernel.org, AJvYcCXYCndcnWlv9KKHAWGg0l/WUoVVhMHZ4SLlxnZyeLbm7oNRg27hAxqcnt2QvKcH3BZVsnoTz/HgrLGhWJD0@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt7Yim056PVAGEGu2fKpCyONMOVuLiT/oaJDNfyc1/IqkS3wFn
+	wvuaM0xKn+FnQKxGrg7vuQRH3G6y/6Unc9vq7V/BP2gXk3ur0q4B
+X-Google-Smtp-Source: AGHT+IGXHKrgOAEXK8lTj10qUqfAMieZLXkbaFv8HzsFgHnzL3kEMyr/0wjhIgmVWuNZ4D1J6pHREg==
+X-Received: by 2002:a05:6a21:6d92:b0:1db:f642:8d8b with SMTP id adf61e73a8af0-1ddb09139d4mr2281960637.45.1732079096328;
+        Tue, 19 Nov 2024 21:04:56 -0800 (PST)
+Received: from HOME-PC ([223.185.132.211])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befa6f7fsm623414b3a.134.2024.11.19.21.04.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 21:04:56 -0800 (PST)
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: robdclark@gmail.com,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	linux-arm-msm@vger.kernel.org
+Cc: sean@poorly.run,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	quic_bjorande@quicinc.com,
+	quic_parellan@quicinc.com,
+	quic_khsieh@quicinc.com,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	dianders@chromium.org,
+	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Subject: [PATCH drm-next] drm/msm/dp: Fix potential division by zero issue
+Date: Wed, 20 Nov 2024 10:34:51 +0530
+Message-Id: <20241120050451.100957-1-dheeraj.linuxdev@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119134858.1862632-1-tglozar@redhat.com> <20241119102257.3df588ce@gandalf.local.home>
-In-Reply-To: <20241119102257.3df588ce@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 20 Nov 2024 06:04:05 +0100
-Message-ID: <CAP4=nvQ-J9uEm-mAnBhjLvy_LOzB4KvMoCBYeeo4w5_fMwbiow@mail.gmail.com>
-Subject: Re: [PATCH] rtla/timerlat: Fix histogram ALL for zero samples
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jkacur@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=C3=BAt 19. 11. 2024 v 16:22 odes=C3=ADlatel Steven Rostedt <rostedt@goodmi=
-s.org> napsal:
->
-> There's a lot of duplicate code here. Can you please make a helper
-> function, that at least has:
+The variable pixel_div can remain zero due to an invalid rate input,
+leading to a potential division by zero issue. This patch fixes it and
+the function now logs an error and returns early.
 
-Good point, I thought it's not that bad when I was writing it, but
-together with the already implemented ifs, this pattern is now there
-19 times. I will send a v2 once I'm back from vacation.
+Additionally, this patch resolves trailing whitespace issues detected
+by checkpatch.pl in the same file.
 
-Tomas
+Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+---
+ drivers/gpu/drm/msm/dp/dp_catalog.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+index b4c8856fb25d..e170f70f1d42 100644
+--- a/drivers/gpu/drm/msm/dp/dp_catalog.c
++++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+@@ -225,7 +225,7 @@ int msm_dp_catalog_aux_clear_hw_interrupts(struct msm_dp_catalog *msm_dp_catalog
+  * This function reset AUX controller
+  *
+  * NOTE: reset AUX controller will also clear any pending HPD related interrupts
+- * 
++ *
+  */
+ void msm_dp_catalog_aux_reset(struct msm_dp_catalog *msm_dp_catalog)
+ {
+@@ -487,8 +487,10 @@ void msm_dp_catalog_ctrl_config_msa(struct msm_dp_catalog *msm_dp_catalog,
+ 		pixel_div = 2;
+ 	else if (rate == link_rate_hbr2)
+ 		pixel_div = 4;
+-	else
++	else {
+ 		DRM_ERROR("Invalid pixel mux divider\n");
++		return;
++	}
+ 
+ 	dispcc_input_rate = (rate * 10) / pixel_div;
+ 
+@@ -579,7 +581,7 @@ u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog)
+  * This function reset the DP controller
+  *
+  * NOTE: reset DP controller will also clear any pending HPD related interrupts
+- * 
++ *
+  */
+ void msm_dp_catalog_ctrl_reset(struct msm_dp_catalog *msm_dp_catalog)
+ {
+-- 
+2.34.1
 
 
