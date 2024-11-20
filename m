@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-416058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00539D3FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:04:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D9C9D40AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 748E61F21AC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 031D8B2A10C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1F415AD9C;
-	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59013D638;
+	Wed, 20 Nov 2024 16:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pell6VCd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzZq/XnK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3F113B7BE;
-	Wed, 20 Nov 2024 16:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66BF19F424;
+	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118572; cv=none; b=CjwQPx4UTZYihz1rkeIQyLjO+9Q8B0rSz5+t3zCBpgCvIBCgA9HPwX3gjVpe/Igj14CEPlIooPJEdLCpxkZAqG8eB9FxLPXQemFuOVp/Oqpp5uBZbBT8w6czniBGN1ei99NSjVvEXAYvJf00L7/f/KKASYiBJj1k28aT6tSQMgk=
+	t=1732118573; cv=none; b=rlUk+3+qHtKNJ38RFPw9QInGLwkui3nIgSoFT4xECuxybcwkvfe6RujL6tW6MfsG/XUEg3fVLL/NKTZKXz8BSxGncsnbmu7rmS9VxsImdC4RyvuNcDBhTK7zwxTKUOVtcmuu5uj6RBvt2Q1kJupCTi9kFAdTH8+YjyuGHsC60yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118572; c=relaxed/simple;
-	bh=dbCtaGhVDNU6himXRK3WCjgYx8s5bxzWGTwYnWP6vB4=;
+	s=arc-20240116; t=1732118573; c=relaxed/simple;
+	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=uXYjXRTMQNQ5a+L2e3GS11F1MHwEHvDl0iGtUFCBTcyaFM3CUwBNESWq/gdZhYko9AW6U+/DnUD6WfAvGYx/3thMZT+w42NhBYbE4AA4k2uiW6bPkf0hFeRxkjP50bwaIMFlk+E4zAni6OsHhCd13v9aP8jXumVfhj/VlyH0/Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pell6VCd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D178CC4CECD;
-	Wed, 20 Nov 2024 16:02:51 +0000 (UTC)
+	 Message-Id:Subject; b=LSrW18yIB0eVDdFFC2rdYZ5gpA8oszwnwxKVtHwi7Mx1wC+Qewx5x/JPtA8MoKVwBFX3EA1KNFZfMKDfgaFBxvuJBSPjvM4Ng2e5CZYNSkuu1WvhUkGb0byl28+LpOTC9TkIEcP+01bzgYXGUWskC+yQiNTIttjgFBbbDnSgsh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzZq/XnK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B5AC4CED3;
+	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118572;
-	bh=dbCtaGhVDNU6himXRK3WCjgYx8s5bxzWGTwYnWP6vB4=;
+	s=k20201202; t=1732118573;
+	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=pell6VCd6UZc+0BIha68xjZq69MtKDESlQTygDNEgZFG3kjM5XmepJsshwtFU9eRc
-	 ODAjIm2DLVBqGGkVOF7jjtSPKYAv5XojQhmVlxi4loGmozf7eiRt8uVL2z6jnbYWxk
-	 HOo/79lrtnXMd9z5O10kXp8rJyuX4QmZXbfesmLTRfUVfZzp6HWUfk8v23ZSZdXuYG
-	 OKqhZT6Xirujv2xkzzGoSi5zDtu4mze2A6mNO8HgaksVTQPH6V2m6FKuToBGEPAKxB
-	 BDsW6UDFteVnEUmzpauxDQDP14ZeYo3R1lxMJCIBsVWVuTbQs2FymmRAU5P2B2ZNmI
-	 ndvjK7duAuBnQ==
-Date: Wed, 20 Nov 2024 10:02:50 -0600
+	b=EzZq/XnKvOEpmQceuz8jMQBGH5pVIq3kKZdMG4KalP4y7FTZI/yJN3F4PK5Vng818
+	 3iMYCfcfl3WqQ9+5Ws3rnE5efRknAkNqdUPFVq6HQIen8Z8phCIQPdEIQDzt+wl65i
+	 GxnPr47skISDZjmpBVuLTLnTdMNlGA+SAJ7BLYWD9LpKsXqjh7KvS28/M9rOEM1KDI
+	 zTfV/gsu/REEUuH1Pz5E7uVIxsCH+JkrhbI9WC/LQC+AtaW1cy+MjcTJohYRHm2Mke
+	 zHgrEJabJJLC1gyC+gdckFMVWiojkOzhc8/A7k0oP5MuS4SZSpyAZnIm5vq/WZLYA0
+	 MFbVcbyjxh4kA==
+Date: Wed, 20 Nov 2024 10:02:52 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,45 +50,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: iuliana.prodan@nxp.com, kernel@pengutronix.de, daniel.baluta@gmail.com, 
- conor+dt@kernel.org, devicetree@vger.kernel.org, frank.li@nxp.com, 
- laurentiu.mihalcea@nxp.com, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- shawnguo@kernel.org, shengjiu.wang@nxp.com, s.hauer@pengutronix.de, 
- aisheng.dong@nxp.com, krzk+dt@kernel.org, festevam@gmail.com
-To: Daniel Baluta <daniel.baluta@nxp.com>
-In-Reply-To: <20241120135859.3133984-1-daniel.baluta@nxp.com>
-References: <20241120135859.3133984-1-daniel.baluta@nxp.com>
-Message-Id: <173211841141.1124481.13198183587928963879.robh@kernel.org>
-Subject: Re: [PATCH 0/5] Configure imx8mp dsp node for rproc usage
+Cc: sboyd@kernel.org, linux-serial@vger.kernel.org, krzk+dt@kernel.org, 
+ linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, conor+dt@kernel.org, romain.sioen@microchip.com, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+ alexandre.belloni@bootlin.com, arnd@arndb.de, nicolas.ferre@microchip.com, 
+ mihai.sain@microchip.com, mturquette@baylibre.com, claudiu.beznea@tuxon.dev, 
+ dharma.b@microchip.com, varshini.rajendran@microchip.com
+To: Ryan.Wanner@microchip.com
+In-Reply-To: <cover.1732030972.git.Ryan.Wanner@microchip.com>
+References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
+Message-Id: <173211841742.1124520.7475940959733704423.robh@kernel.org>
+Subject: Re: [PATCH 00/15] Add support for SAMA7D65
 
 
-On Wed, 20 Nov 2024 15:58:53 +0200, Daniel Baluta wrote:
-> DSP found in i.MX8MP SOC can be used by multiple frameworks in order to
-> enable various applications:
-> 	- rproc/rpmsg framework, used to load for example Zephyr samples
-> 	- Sound Open Firmware, used to enable various audio processing
-> 	  pipelines.
+On Tue, 19 Nov 2024 09:40:06 -0700, Ryan.Wanner@microchip.com wrote:
+> From: Ryan Wanner <Ryan.Wanner@microchip.com>
 > 
-> Current dsp node was configured with SOF in mind but it doesn't work
-> well with imx8mp-evk dts. SOF controls audio IPs from firmware side
-> while imx8mp-evk preffers to control audio IPs from Linux side.
+> This series adds support for the SAMA7D65 SoC.
 > 
-> So, configure 'dsp' node to be used with rproc scenario and later will
-> add a separate dts or an overlay to configure the node for SOF.
+> There have been patches in this series that have been tagged as
+> Reviewed-by or Acked-by, I will link these threads below.
 > 
-> This patch series configures and enables dsp node to be used with rproc.
+> 1) https://lore.kernel.org/lkml/20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com/
+> 2) https://lore.kernel.org/lkml/20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com/
+> 3) https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
+> 4) https://lore.kernel.org/lkml/1da0abbb-94e5-42fd-a2d2-71d5d7d253fb@microchip.com/
 > 
-> Daniel Baluta (5):
->   arm64: dts: imx8mp: Add mu2 root clock
->   arm64: dts: imx8mp: Configure dsp node for rproc usage
->   arm64: dts: imx8mp: Add DSP clocks
->   arm64: dts: imx8mp: Add fsl,dsp-ctrl property for dsp
->   arm64: dts: Add dsp rproc related mem regions
+> The clock system patches have been sent before and are added to this set
+> to follow the correct practice of submitting patches. I will list that
+> thread below.
 > 
->  arch/arm64/boot/dts/freescale/imx8mp-evk.dts |  6 +++++
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi    | 23 ++++++++++++--------
->  2 files changed, 20 insertions(+), 9 deletions(-)
+> 1) https://lore.kernel.org/linux-arm-kernel/d970e158-db74-4ffe-9fb4-57026ac0a947@tuxon.dev/
+> 
+> Dharma Balasubiramani (7):
+>   dt-bindings: mfd: atmel,sama5d2-flexcom: add
+>     microchip,sama7d65-flexcom
+>   dt-bindings: atmel-sysreg: add sama7d65 RAM and PIT
+>   dt-bindings: mmc: atmel,sama5d2-sdhci: add microchip,sama7d65-sdhci
+>   dt-bindings: serial: atmel,at91-usart: add microchip,sama7d65-usart
+>   dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
+>   dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
+>   dt-bindings: clock: Add SAMA7D65 PMC compatible string
+> 
+> Romain Sioen (2):
+>   dt-bindings: ARM: at91: Document Microchip SAMA7D65 Curiosity
+>   ARM: dts: microchip: add support for sama7d65_curiosity board
+> 
+> Ryan Wanner (5):
+>   ARM: configs: at91: sama7: add new SoC config
+>   ARM: dts: microchip: add sama7d65 SoC DT
+>   clk: at91: clk-master: increase maximum number of clocks
+>   clk: at91: clk-sam9x60-pll: increase maximum amount of plls
+>   clk: at91: sama7d65: add sama7d65 pmc driver
+> 
+> Varshini Rajendran (1):
+>   dt-bindings: clock: at91: Allow MCKs to be exported and referenced in
+>     DT
+> 
+>  .../devicetree/bindings/arm/atmel-at91.yaml   |    7 +
+>  .../devicetree/bindings/arm/atmel-sysregs.txt |   14 +-
+>  .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
+>  .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    1 +
+>  .../bindings/mfd/atmel,sama5d2-flexcom.yaml   |    9 +-
+>  .../bindings/mmc/atmel,sama5d2-sdhci.yaml     |    1 +
+>  .../pinctrl/atmel,at91-pio4-pinctrl.txt       |    1 +
+>  .../bindings/serial/atmel,at91-usart.yaml     |    1 +
+>  arch/arm/boot/dts/microchip/Makefile          |    3 +
+>  .../dts/microchip/at91-sama7d65_curiosity.dts |   89 ++
+>  .../arm/boot/dts/microchip/sama7d65-pinfunc.h |  947 ++++++++++++
+>  arch/arm/boot/dts/microchip/sama7d65.dtsi     |  155 ++
+>  arch/arm/configs/multi_v7_defconfig           |    1 +
+>  arch/arm/configs/sama7_defconfig              |    1 +
+>  arch/arm/mach-at91/Kconfig                    |   12 +
+>  drivers/clk/at91/Makefile                     |    1 +
+>  drivers/clk/at91/clk-master.c                 |    2 +-
+>  drivers/clk/at91/clk-sam9x60-pll.c            |    2 +-
+>  drivers/clk/at91/pmc.c                        |    1 +
+>  drivers/clk/at91/sama7d65.c                   | 1373 +++++++++++++++++
+>  include/dt-bindings/clock/at91.h              |    4 +
+>  21 files changed, 2614 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
+>  create mode 100644 arch/arm/boot/dts/microchip/sama7d65-pinfunc.h
+>  create mode 100644 arch/arm/boot/dts/microchip/sama7d65.dtsi
+>  create mode 100644 drivers/clk/at91/sama7d65.c
 > 
 > --
 > 2.43.0
@@ -111,10 +157,13 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y freescale/imx8mp-evk.dtb' for 20241120135859.3133984-1-daniel.baluta@nxp.com:
+New warnings running 'make CHECK_DTBS=y microchip/at91-sama7d65_curiosity.dtb' for cover.1732030972.git.Ryan.Wanner@microchip.com:
 
-arch/arm64/boot/dts/freescale/imx8mp-evk.dtb: clock-controller@30e20000: compatible: ['fsl,imx8mp-audio-blk-ctrl', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/clock/imx8mp-audiomix.yaml#
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/pinctrl@e0014000: failed to match any schema with compatible: ['microchip,sama7d65-pinctrl']
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
+arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
 
 
 
