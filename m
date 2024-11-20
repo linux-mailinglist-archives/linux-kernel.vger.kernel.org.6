@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-415774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DFA9D3BB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:02:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF839D3BDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00EE2B2976F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:01:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8EA1F23F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5562E1ABEB4;
-	Wed, 20 Nov 2024 12:59:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454161A7045;
-	Wed, 20 Nov 2024 12:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AAF1C9B74;
+	Wed, 20 Nov 2024 13:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="adVLAoln"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B751AA7AE;
+	Wed, 20 Nov 2024 13:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732107571; cv=none; b=ZVtIRskxQpdpcE0/vOrkDQ7Qi7mbTplKKbXjzwj5w9MmoYgIRu7h7nCVP2+evUkMd4kAWfrzQSQ5I4/yQ3Se7oywBKhme5LxCyDjBpg/Gchg/I84N+mOTwpRziNOC5B77P6S0NsmqzzUZWZd2j+vXEETM+htK1GmvCZ2PrYDMWc=
+	t=1732107618; cv=none; b=enGll9zo7+7OwtNGaFjXmnRaN+VzZLJaA3vEq+Anx489tlb77p9IU8esKe00xzO85eoLUQqCHCoY2M55nfibhEdHas87KMhHW11rki4I2d0HLP1fxq55GN0S6cXGWVeVL9HOlY8k8ZEosli2Q8mxCSBIvxwTVOmrDE7vtUA2LcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732107571; c=relaxed/simple;
-	bh=L32376mfl5pi1AolZvZ1Q5R8CC/ReoAERHv4c1JHqRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMFHOqEpn6Sm2H1qsaoEymLdlE1pbjWLD74fnItEH/Lus7lYEawuwD1+MWtZ8qUUKLweAz3yiSEHirghHe7ZmV0WIb3/S6L1BhpAk7fWPfocfZ9sESu5ixU5RbRJlM56qEWk0hEkbpwH//wLX56KikN1eZNFeBgSMFHMrshSKA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 218841480;
-	Wed, 20 Nov 2024 04:59:55 -0800 (PST)
-Received: from [10.34.125.39] (e126645.nice.arm.com [10.34.125.39])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D92E93F66E;
-	Wed, 20 Nov 2024 04:59:21 -0800 (PST)
-Message-ID: <6b86e4c8-5243-4052-9af6-bf8f080346d5@arm.com>
-Date: Wed, 20 Nov 2024 13:59:19 +0100
+	s=arc-20240116; t=1732107618; c=relaxed/simple;
+	bh=lnSflGzBTEK00pG99f+FveddFOFgN8Bmzg0DOu60lYE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tKHw9ADN/LS8f2CisFfPnrAPvpuWGxl496+xOiGk82Ee61t/Lj6K3cIGImqWlHllXSiY0C/Scl485m/miGBkYsodMCGw+2/A1+IY5Lz/KY5cjGCW9zdYMdPz27qf/tTgOVMMECIa6Rk2LBVbe28fUhok3XEQRkGwNTi2hMHQWbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=adVLAoln; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e5f6e44727so2450725b6e.0;
+        Wed, 20 Nov 2024 05:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732107615; x=1732712415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EDqOcDIpGKI5hYNE6Sj7mEbCMZ8HdAAjaXY3MTLtetI=;
+        b=adVLAolnqT1jnvr6i+SPnZpkK2BxsF7O6Nmj7yuv/u9Z/eKlffQWoQr+DRWCC1pswl
+         c//JCKg/VHtc/wVn0QMHRJb2DcyRXPGhSPfI7VT9addtW494b3q/VzuRD1hsWDj59XVq
+         OfxdwudFtFrQnfUt/8ii5McSGSCWKfyQpZWcAHZaMg2l6cr3z0NH4oL9bZtWzGj/csNV
+         av86TzKfcNqlOo+3NlEVSIttdANKJj5vSOKHkOeCg2DvuTT9CCFAcW5vnTyHDQo2AGCw
+         1ao8z7DMXRJ51cuvF+njMftkgOjX1ofOc5EzckUATlL/iBNPp6iUYMYaoHXIfeHMtU4Q
+         pz4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732107615; x=1732712415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EDqOcDIpGKI5hYNE6Sj7mEbCMZ8HdAAjaXY3MTLtetI=;
+        b=aX8QooZRkfEq2tHzfLzMUHaF9ns5FJk9yRuG6oxj/3EvrxpkCYyAu1zGRLV89QDhIZ
+         Koe29JgMfurjN4U4HTEpVBSkvPRAIpnuIeAcfgJfHrDg1M5c2cmjKS2v0jleqXh54QO7
+         LSq8OJ9JOsePBS8lcFUN6CVpCRN5TrtnaNUR8l9ASnWJgb3VKtiYdI5bVlujtaTnBShg
+         bBUxQz7M/01mTp11eHwHgKc0OeqclrobBHt90yuvpvHjlF+qCLgDWzJ8mFPqNifY8AgM
+         Fa+DDnxXxyGLfoWW5w1YNdu7hJjus2+xHYCwrSFPoZXl6du5Vdg81gGPQCAb5ibuRKyj
+         53vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWB1Odvk5fGFOh/shIqfMyME+ai0Y9VA9iAyNuo4vFCVNp1alFNKOQui6qIdvculufJvjPYkktlvCCN3g==@vger.kernel.org, AJvYcCWpJ70PFHG+a5uzJA2Zeue6MxnAQV11uVP765Z9tpUfR4WxFBlE2c0RvQ4NLx3sogurQqVYymMkWXOs9rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI2YOp4OLmsDulqx1BCa7hFg0q6XvHQFh1p2Dt7R+XctEycmFe
+	oBLXfEpTT16QxowSkEVWWI5ghTgbbhKxeFi9KUZYlctFFWVnCGnI
+X-Google-Smtp-Source: AGHT+IEsDvUDsMBR/Ffo23Ig5BpqckyyMpAfyq8F6YFQdtbAldYWtYa1W2QjOrCPFXyXLI/6QZR1jA==
+X-Received: by 2002:a05:6808:1394:b0:3e6:2889:585e with SMTP id 5614622812f47-3e7eb7d3fd6mr2383564b6e.38.1732107614916;
+        Wed, 20 Nov 2024 05:00:14 -0800 (PST)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:11a2:6510:cf5d:dd30:9fe4:5132])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dae969sm9454719a12.63.2024.11.20.05.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 05:00:14 -0800 (PST)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: dgilbert@interlog.com
+Cc: James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>,
+	syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com
+Subject: [PATCH] scsi: sg: fix slab-use-after-free Read in sg_release
+Date: Wed, 20 Nov 2024 18:29:44 +0530
+Message-Id: <20241120125944.88095-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in
- acpi_os_sleep().
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>
-Cc: Len Brown <lenb@kernel.org>, anna-maria@linutronix.de,
- tglx@linutronix.de, peterz@infradead.org, frederic@kernel.org,
- corbet@lwn.net, akpm@linux-foundation.org, linux-acpi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>,
- Todd Brandt <todd.e.brandt@intel.com>
-References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
- <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
- <60f8eac0-9144-486b-983f-4ed09101cf0a@redhat.com>
- <CAJZ5v0g7rpdUjrS969stJiqqtO5zG+FTr4TOxg+SYN2dPC_9jA@mail.gmail.com>
- <4daf0c32-9799-4eb5-8334-175d8089bc39@arm.com>
- <dbc2892f-0735-4510-9509-b225b65537c9@arm.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <dbc2892f-0735-4510-9509-b225b65537c9@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Fix a use-after-free bug in `sg_release`,
+detected by syzbot with KASAN:
 
+BUG: KASAN: slab-use-after-free in lock_release+0x151/0xa30
+kernel/locking/lockdep.c:5838
+__mutex_unlock_slowpath+0xe2/0x750 kernel/locking/mutex.c:912
+sg_release+0x1f4/0x2e0 drivers/scsi/sg.c:407
 
-On 11/20/24 13:06, Dietmar Eggemann wrote:
-> On 20/11/2024 10:01, Pierre Gondois wrote:
->>
->>
->> On 11/18/24 13:02, Rafael J. Wysocki wrote:
->>> Hi Hans,
->>>
->>> On Mon, Nov 18, 2024 at 12:38 PM Hans de Goede <hdegoede@redhat.com>
->>> wrote:
->>>>
->>>> Hi Rafael, Len,
->>>>
->>>> On 18-Nov-24 12:03 PM, Rafael J. Wysocki wrote:
->>>>> On Sat, Nov 16, 2024 at 12:11 AM Len Brown <lenb@kernel.org> wrote:
-> 
-> [...]
-> 
->> FWIW, testing the above version on an Arm Juno platform by executing
->> the following method:
->>
->> Method (SLEE, 1, Serialized)  {
->>    Sleep(Arg0)
->> }
->>
->> _wo: without patch
->> _w: with patch
->> - Values in ns.
->> - Requesting to sleep X ms
->> - Tested over 10 iterations
->> - HZ=250
->> +------+------------+----------+------------+---------+-----------+
->> |   ms |    mean_wo |   std_wo |    mean_w  |  std_w  |     ratio |
->> +------+------------+----------+------------+---------+-----------+
->> |    1 |    8087797 |  2079703 |    1313920 |   55066 | -83.75429 |
->> |    2 |    7942471 |  2201985 |    2416064 |  111604 | -69.58044 |
->> |    3 |    8373704 |   144274 |    3632537 |  111037 | -56.61970 |
->> |    4 |    7946013 |  2214330 |    4606028 |  255838 | -42.03346 |
->> |    5 |   11418920 |  1673914 |    5955548 |  131862 | -47.84490 |
->> |    6 |   11427042 |  1677519 |    7045713 |  211439 | -38.34176 |
->> |    7 |   12301242 |   221580 |    8174633 |  330050 | -33.54628 |
->> |    8 |   11411606 |  1672182 |    9191048 |  431767 | -19.45877 |
->> |    9 |   16722304 |  1288625 |   10517284 |  103274 | -37.10625 |
->> |   10 |   16746542 |  1280385 |   11564426 |  417218 | -30.94439 |
->> |   20 |   24294957 |    70703 |   22756497 |  673936 |  -6.33243 |
->> |   30 |   36284782 |    74340 |   34131455 |  391473 |  -5.93452 |
->> |   40 |   44703162 |  1199709 |   45407108 |  289715 |   1.57471 |
->> |   50 |   56311282 |   281418 |   56098040 |  607739 |  -0.37868 |
->> |   60 |   64225811 |   247587 |   64302246 |  132059 |   0.11901 |
->> |   70 |   76299457 |    99853 |   76282497 |   83910 |  -0.02223 |
->> |  100 |  104214393 |    38642 |  104212524 |  244424 |  -0.00179 |
->> | 1000 | 1016131215 |   245725 | 1017051744 | 2748280 |   0.09059 |
->> | 2000 | 2007711297 |  1325094 | 2007628922 | 1421807 |  -0.00410 |
->> +------+------------+----------+------------+---------+-----------+
->> - With the patch, the min sleep duration is never below the requested
->>    sleep duration
->>
->> So indeed the penalty of using msleep is big for small sleep durations.
-> 
-> Just to make sure, this is with Rafael's proposal, using msleep() for
-> values >= 48ms = (12 * 1000/250)ms and usleep_range() otherwise?
-> 
+Root Cause:
+In `sg_release`, the function `kref_put(&sfp->f_ref, sg_remove_sfp)`
+is called before releasing the `open_rel_lock` mutex. The `kref_put`
+call may decrement the reference count of `sfp` to zero, triggering
+its cleanup through `sg_remove_sfp`. This cleanup includes scheduling
+deferred work via `sg_remove_sfp_usercontext`, which ultimately frees
+`sfp`.
 
-Yes exact
+After `kref_put`, `sg_release` continues to unlock `open_rel_lock` and
+may reference `sfp` or `sdp`. If `sfp` has already been freed, this
+results in a slab-use-after-free error.
+
+Fix:
+The `kref_put(&sfp->f_ref, sg_remove_sfp)` call is moved after unlocking
+the `open_rel_lock` mutex. This ensures:
+- No references to `sfp` or `sdp` occur after the reference count is  
+  decremented.  
+- Cleanup functions such as sg_remove_sfp and sg_remove_sfp_usercontext  
+  can safely execute without impacting the mutex handling in `sg_release`. 
+
+The fix has been tested and validated by syzbot. This patch closes the bug
+reported at the following syzkaller link and ensures proper sequencing of
+resource cleanup and mutex operations, eliminating the risk of
+use-after-free errors in `sg_release`.
+
+Reported-by: syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com 
+Closes: https://syzkaller.appspot.com/bug?extid=7efb5850a17ba6ce098b 
+Tested-by: syzbot+7efb5850a17ba6ce098b@syzkaller.appspotmail.com 
+Fixes: cc833acbee9d ("sg: O_EXCL and other lock handling ")
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+ drivers/scsi/sg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index f86be197f..457d54171 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -393,7 +393,6 @@ sg_release(struct inode *inode, struct file *filp)
+ 
+ 	mutex_lock(&sdp->open_rel_lock);
+ 	scsi_autopm_put_device(sdp->device);
+-	kref_put(&sfp->f_ref, sg_remove_sfp);
+ 	sdp->open_cnt--;
+ 
+ 	/* possibly many open()s waiting on exlude clearing, start many;
+@@ -405,6 +404,7 @@ sg_release(struct inode *inode, struct file *filp)
+ 		wake_up_interruptible(&sdp->open_wait);
+ 	}
+ 	mutex_unlock(&sdp->open_rel_lock);
++	kref_put(&sfp->f_ref, sg_remove_sfp);
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
 
