@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-415327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE649D348E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5949D3445
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:43:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962AE1F23928
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:46:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33FB21F2321A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAA819E826;
-	Wed, 20 Nov 2024 07:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598FF15ECDF;
+	Wed, 20 Nov 2024 07:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nwh8Hwj6"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRelD/ug"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5129F19ABD8;
-	Wed, 20 Nov 2024 07:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41E115533F;
+	Wed, 20 Nov 2024 07:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088620; cv=none; b=e09tEn4XWhIN1aDgM/u6/96JFi/6am8fN5yqdj78um4Oev03paxNcJgpdW1TIrubiUdMh9Ii50FL+hgFNNHdkJ9FjZYqqGo4BT+H2ZcYThlFf46Z1lQbb5ONZCoQPnIWN5zcfKUoMhTVQPDwpMM4PO4bTVPzI9kjdb7xqOC0EWE=
+	t=1732088601; cv=none; b=pmEGVwNYWj65IUiDQQlrEbpOBMs/22O2AtDuSBzN2zxfi2XHopLnBTiLgAyp6cUIhK0wDRGdaXX94X5irakuC4A8RFOQ0CifwgoNceofFMi0gw0Vhhhj6tUEx2QiNQoCZgIjglOYU6Gfs4V8Z1lzCLO8LaXkd35lgMytKaiodvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088620; c=relaxed/simple;
-	bh=SLaqNi8sV6LOqwUiHrki5fAoOb/y9rKuG4iAfsmwqzY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PdZa2xOnTOsy2/hmKRiKyc4Hu6kiSbAPuwsJ8XNmM3jOr/wi7P4QnuwVVOEA2E9vmBObtu0EW3o+jz0q1D4FIEOwJOPqNv4k0oDSHtsCfIH2cwBn0CajFXeLwRvIDDrnoww3BKoghV2IURvnYfuKhibPz/okTg4zqw/c5bIFEc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nwh8Hwj6; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D659B240008;
-	Wed, 20 Nov 2024 07:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732088617;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YMTGnFyD36MsNEVM2J6r94qGNXIMhpQegdtY9Puer+M=;
-	b=nwh8Hwj69hyac4hQj0bt5SCtnXgja2wC8OvEB4FEbPR1lD2nopwsw357OKluLcPWaOdjSx
-	qk42hQSQfRq+iN/n35WOH9YTRaZXmpVH6fCnsr0Zg4vjN85HXo2QZt8AcIuPkWTvGK6AA/
-	WVOE6qgjJ7aC3Ai/3FIAQXBr/VGH2MEWr1CzTo//Gi9Y8LkuOuw4l6TLlv/xSyI8qnNa/q
-	a94WMAwnpCBPZ3TfKkBOF2xjQC3jE+jORdGwy8shfaCC2KEXeAEfsUZhI+wscRt6oqDyYl
-	rE/WtlC2e5BZAr2SejtERi771ekSnGbcum2XmI1m9s6n1Uo1csgGH1K2TEqL+w==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Wed, 20 Nov 2024 08:43:18 +0100
-Subject: [PATCH bpf-next v3 08/14] selftests/bpf: Enable generic tc actions
- in selftests config
+	s=arc-20240116; t=1732088601; c=relaxed/simple;
+	bh=e/qUlesIoPvZnfcqTn241IZzsmmY5zAWI/3JuDmPcI4=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=RTfibMhiWBGAKpV/xSil2Eu0mHZ0KTEJ0I1NIr/ehL8Ngn/zbtRNKcwqWp7uBFy94D3nRCQmx1ZInkra6wcu56UEVuK/+9vy+Iw9iiVrFWuc3+ROz2eK0mz1EFWUbKc5ZtKjcCNHx18UAEgEUWxaaHY10NmF5ec38/vS5+YsdVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRelD/ug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06E8AC4CECD;
+	Wed, 20 Nov 2024 07:43:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732088600;
+	bh=e/qUlesIoPvZnfcqTn241IZzsmmY5zAWI/3JuDmPcI4=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=aRelD/ugp1snYM/kKpdtKr6Pccv4S5hAB/A9s1gzKwQBRXVnfQ8quE1f0Z44TZE1u
+	 LTqnBiIsXd2yWB//vRsHfL9toCQh9Rh87Hg5nnJmI/zNqUWg585bvcKrv61I3P3LyX
+	 Ee0UrHMabol2nP5m92aIZuf4CL3GYZkeTQ8O3NvMcrQ8a5jGQnHIM6/JF+jar7v8CP
+	 h5R3U8BP1vrxqlYi/EnhckthUaoxd2/XS9eHEXz5aglZFK0HXBkpXZ8pHjC+6yJ5yA
+	 883SIV5DDA+1aFi0DHdwzAKZ8omi4WNLkYHEnO6aHQs5EvmGsM4rDD0BzZMFeGhYdl
+	 l1UKaSlMI2m8Q==
+Date: Wed, 20 Nov 2024 01:43:18 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241120-flow_dissector-v3-8-45b46494f937@bootlin.com>
-References: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
-In-Reply-To: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
-To: Andrii Nakryiko <andrii@kernel.org>, 
- Eduard Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: alexis.lothore@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Yong Wu <yong.wu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ linux-arm-kernel@lists.infradead.org, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+To: Friday Yang <friday.yang@mediatek.com>
+In-Reply-To: <20241120063701.8194-2-friday.yang@mediatek.com>
+References: <20241120063701.8194-1-friday.yang@mediatek.com>
+ <20241120063701.8194-2-friday.yang@mediatek.com>
+Message-Id: <173208859835.3697069.14880651940019418279.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: memory: mediatek: Add SMI reset
+ and clamp related property
 
-Enable CONFIG_NET_ACT_GACT to allow adding simple actions with tc
-filters. This is for example needed to migrate test_flow_dissector into
-the automated testing performed in CI.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
-Changes in v3:
-- none
-Changes in v2:
-- fetch Acked-by tag
----
- tools/testing/selftests/bpf/config | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, 20 Nov 2024 14:36:38 +0800, Friday Yang wrote:
+> On the MediaTek platform, some SMI LARBs are directly linked to SMI
+> Common. While some SMI LARBs are linked to SMI Sub Common, then SMI
+> Sub Common is linked to SMI Common. The hardware block diagram could
+> be described as below.
+> Add 'resets' and 'reset-names' for SMI LARBs to support SMI reset
+> and clamp operation. The SMI reset driver could get the reset signal
+> through the two properties.
+> 
+>              SMI-Common(Smart Multimedia Interface Common)
+>                           |
+>          +----------------+------------------+
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>          |                |                  |
+>        larb0       SMI-Sub-Common0     SMI-Sub-Common1
+>                    |      |     |      |             |
+>                   larb1  larb2 larb3  larb7       larb9
+> 
+> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
+> ---
+> 
+> Although this can pass the dtbs_check, maybe there is a better way
+> to describe the requirements for 'resets' and 'reset-names' in bindings.
+> But I don't find a better way to describe it that only SMI larbs located
+> in camera and image subsys requires the 'resets' and 'reset-names'.
+> I would appreciate it if you could give some suggestions.
+> 
+> .../mediatek,smi-common.yaml                  |  2 +
+>  .../memory-controllers/mediatek,smi-larb.yaml | 53 +++++++++++++++----
+>  2 files changed, 44 insertions(+), 11 deletions(-)
+> 
 
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index 4ca84c8d9116a48b1ebf04488ebf7ebfcb633282..c378d5d07e029109061fcd433cec223280a525a4 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -58,6 +58,7 @@ CONFIG_MPLS=y
- CONFIG_MPLS_IPTUNNEL=y
- CONFIG_MPLS_ROUTING=y
- CONFIG_MPTCP=y
-+CONFIG_NET_ACT_GACT=y
- CONFIG_NET_ACT_SKBMOD=y
- CONFIG_NET_CLS=y
- CONFIG_NET_CLS_ACT=y
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.47.0
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.yaml:143:13: [warning] wrong indentation: expected 10 but found 12 (indentation)
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.example.dts:29.43-44 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241120063701.8194-2-friday.yang@mediatek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
