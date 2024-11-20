@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-416243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9791E9D4272
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:17:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F9B9D4273
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 131B7B2430A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:17:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65ED71F22F4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B419C543;
-	Wed, 20 Nov 2024 19:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3051AB6FD;
+	Wed, 20 Nov 2024 19:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="H8DipLzv"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="CSfOZL55"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3431A155C9E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAC215746E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732130223; cv=none; b=FbkXATqk9jJ1XfxkHYrzjHM5vTJIgngPSMFZfAUAvVD0D8Isy9Gr8QCskpqrO+ikSYxl7InVcLPvcLVsbbBuONp56xI+QXsnYxBrNm4E7sbA3zsSXP1mdO83sygN99QkxkAd5VqLftg+sWFz4z4h3doPRmkoHZTCEmGJlSXVv7o=
+	t=1732130252; cv=none; b=ucjG9XBvJ6iBhyVYacHzV8KwA9tIUrpdtpWHhC1XnskJDUgx6GJggo7o2/IzWr/NpZCzmkfh2Q4Z1WbZCQlQAdXar5QaZRlacynnhPMhYvhOtg5J1B7aeaZZ9zVwL975bWIWrY3NBmEuZz5yNd2rIGZd9VNxcMKmf11p+P8sNbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732130223; c=relaxed/simple;
-	bh=DKMyPBuGWKFCERsUw5+gNwFeye1j8dqRzAwdYRi9AtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJKQO7rofOYQFz/FxMAIOYsuBoONOvIHr5WxIJFK6ry+PnUb8Bfp7Xr5ctwR8Vi628OQ6OEhoKWH+h61J4iIV0ZggO+YWnftRR4yxyrq4VccYWQxVNyvkE02N02ymT6pjT5dUpcSVFH/CRYvTujUFB13g9OmrLTtbvEj0b6OCCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=H8DipLzv; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=L7t+8dV1vLK9wmgSqZN4gnE8Nl6CKzOAb9OKd3yMqq8=; b=H8DipLzvFn+SAsWaLidOGwu5mD
-	ZxlGZ45Sr70v4nAjVJ5tQvF5RfXQ6qRYWFWojFr3yWn/0TSGuY4eFJYlij0ec4X+Qi3Mf22paH1nV
-	D9NAW4lpIWmc3Kz9oXIaG5iCuuVy6/y3jlGP1jQLBj+1cBAQHPMyYUkaUO+nT7aaJIR2rdd/d7Wzu
-	6bU7SrlzWfHPXKjtllHjU+2ZXl/Q0yeJ7NX4fl6x1+G1Ssazzu1asLkhpcfT4AqVjZYb3ndFNGq1c
-	hsHUWU9nxheyhajjP+l8xYZKZ6u1S961lRUy5pt0FOoenqnjjhXkavehgkrV1/1mMlmmeEmHXtCg+
-	8VNnNUDQ==;
-Received: from [189.79.117.216] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tDqC7-009yMk-4X; Wed, 20 Nov 2024 20:16:55 +0100
-Message-ID: <afccb8f2-a376-266f-5477-493bbc5fb7d3@igalia.com>
-Date: Wed, 20 Nov 2024 16:16:47 -0300
+	s=arc-20240116; t=1732130252; c=relaxed/simple;
+	bh=vGcatcbsSuXPFzJR3D9welFSsng16vRjIJUPoyCUcOo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fccYw7nkMZFhPOJDQBBttFQj/CzBdGcoyTEd39RLNZsDPe7pQi9UTdDse9D2Ma692USxN/Ywb4eOXFx70TC467AcerES7vdEnfNFlvuVoLaG/I08bP/vDlK/NKN4bWNkRZGlhR8x6jVSVA+doGnEiSRoOlUAWXcXZBQnmgzfv1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=CSfOZL55; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso628255e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:17:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1732130249; x=1732735049; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jr7qqPzbHAkagf9kWZH8AFBjV0Ls4zMfwt5LoWCWDEI=;
+        b=CSfOZL5525XLRhDbzTsxEHBy3Jw6o5O632zGnHtRUhsLBfqEK0+TTmI+Mzeon74t/w
+         NVfNgyxyImlD/y5Du+HmYLZOil3QdwBkuy5j8otfNycD8osy+a+n0XoFOE5KHXdqdORf
+         urJksUYwjps1slXH8O/UoGsiFEsGUYodKxYeMJcz6BKHCUBmV9LCsTLvnCkpHK+M0sfV
+         TGMtQpx3Z3FyHG37/JtXGbbnJSaMJaU2HOtef7+gPG4x8mLLwpR39zIvaXlV4xQ4LkiP
+         mMq1/K2iXH1S+pABI33Ue3c/yqUeQU1De+nA8P/BPPDT8jEIDlEaTmL82AZXsm8EBA+H
+         bCmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732130249; x=1732735049;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jr7qqPzbHAkagf9kWZH8AFBjV0Ls4zMfwt5LoWCWDEI=;
+        b=DqkJyrmYw65PZYdKoJXsDhlMwobdyT/AGYPhqBY6b5taG4aljR17I37rxyGt+nYpfX
+         +AmXzLt/+nSYgol4XmLGtUuXG4zKcgGgDzChV50+yc9LoWMV/L7N/B9TRTxxdnQGE+UI
+         e66kbkVg1ACHj5++sqvinysaUldZIIZbxNopRoZMOAnrYyLVtQqn503B7o/hGxnk/n+k
+         CwX59n/Fm//7NiUcr+P7mTIkw+wub75JKyGsyMAY6XEQB1+XKkejabVb+r1/TCK+abRC
+         ZoiiNMA4Al551ezhMW4B9SoEOi/UxD8BL1XmTux9Rq4wqNxqIOYW6IV7SNCR2GjK5Kiq
+         AawQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUldD7JrUYODlEHq41toT756bT1Uoo4E4XFMn1s7Ndr6mQc6uOO9aJnr/vz95esbkDnsKcgErtYHgYRcaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJDN25X1L1CJ6rDKT3wMHF9e7x8YLGlHFis0+p15Ubmm0tQey6
+	2Z/B1RLcqHK5U4PL1uw9MX4mdBHsrOuZlxt7hGKRRvRtzxFLjMCcfZmTRln3nQc=
+X-Google-Smtp-Source: AGHT+IHvFo9WlmxcMV8IjdperLMhQZjV3VgLzVSA3y+8HnawYzK6+2xS69U+wMdnZmgdTzRDcgK+WQ==
+X-Received: by 2002:a05:600c:1f11:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-4334f0154b9mr36081565e9.23.1732130249071;
+        Wed, 20 Nov 2024 11:17:29 -0800 (PST)
+Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3825a2c5ef2sm172457f8f.53.2024.11.20.11.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 11:17:28 -0800 (PST)
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: [PATCH v2 0/4] media: i2c: imx290: Add support for imx462
+Date: Wed, 20 Nov 2024 19:17:02 +0000
+Message-Id: <20241120-media-imx290-imx462-v2-0-7e562cf191d8@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH RESEND v3] x86/split_lock: fix delayed detection enabling
-Content-Language: en-US
-To: Maksim Davydov <davydov-max@yandex-team.ru>
-Cc: den-plotnikov@yandex-team.ru, linux-kernel@vger.kernel.org,
- x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de
-References: <20241113142301.704057-1-davydov-max@yandex-team.ru>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <20241113142301.704057-1-davydov-max@yandex-team.ru>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK41PmcC/32NSQ7CMBAEvxLNGaN4cBY48Q+Ug5eBzCGLxihKF
+ PnvOHkAp1a11NU7RBKmCI9iB6GFI09jBrwU4Hs7fkhxyAxYotFaGzVQYKt4WPFeHmFqVK4O2qN
+ xTeMqyMtZ6M3raX11mXuO30m282TRR/vft2hVKl/dWouEpmnrp9g4OxLZZr76aYAupfQDVR3xf
+ LwAAAA=
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
 
-On 13/11/2024 11:23, Maksim Davydov wrote:
-> If the warn mode with disabled mitigation mode is used, then on each
-> CPU where the split lock occurred detection will be disabled in order to
-> make progress and delayed work will be scheduled, which then will enable
-> detection back. Now it turns out that all CPUs use one global delayed
-> work structure. This leads to the fact that if a split lock occurs on
-> several CPUs at the same time (within 2 jiffies), only one CPU will
-> schedule delayed work, but the rest will not. The return value of
-> schedule_delayed_work_on() would have shown this, but it is not checked
-> in the code.
-> 
-> A diagram that can help to understand the bug reproduction:
-> https://lore.kernel.org/all/2cd54041-253b-4e78-b8ea-dbe9b884ff9b@yandex-team.ru/
-> 
-> In order to fix the warn mode with disabled mitigation mode, delayed work
-> has to be a per-CPU.
-> 
-> v3 -> v2:
-> * place and time of the per-CPU structure initialization were changed.
->   initcall doesn't seem to be a good place for it, so deferred
->   initialization is used.
-> 
-> Fixes: 727209376f49 ("x86/split_lock: Add sysctl to control the misery mode")
-> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
-> ---
->  arch/x86/kernel/cpu/intel.c | 20 ++++++++++++++++----
->  1 file changed, 16 insertions(+), 4 deletions(-)
+imx462 is the successor to imx290 (and imx327 before that), and only
+requires a few very minor register tweaks.
 
+Whilst at it I also fixed the todo over imx327 and imx290 having very
+slightly different maximum analog gains (29.4dB vs 30.0dB) and added
+that to the variant structure.
 
-Hi Maksim, thanks for resubmitting again. I think that is indeed a valid
-fix, but what I've also noticed is that recently (as in this week) the
-code changed from the intel.c file to a more generic one, since AMD is
-enabling split lock detection in their CPUs apparently [0].
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+---
+Changes in v2:
+- Added patch 2 to correct register 0x3011 to 0x00 on imx290.
+- Corrected title for dtbindings patch to remove duplicated "media"
+- Picked up tags.
+- Link to v1: https://lore.kernel.org/r/20241114-media-imx290-imx462-v1-0-c538a2e24786@raspberrypi.com
 
-So, I'd suggest you to rebase against 6.13-rc, that would likely
-increase the chances of a merge. Once you do that, I can try to test it
-as well, though I don't personally have an Intel CPU with that feature
-(but some friends have it).
+---
+Dave Stevenson (4):
+      media: i2c: imx290: Limit analogue gain according to module
+      media: i2c: imx290: Register 0x3011 varies between imx327 and imx290
+      media: dt-bindings: sony,imx290: Add IMX462 to the IMX290 binding
+      media: i2c: imx290: Add configuration for IMX462
 
-Cheers,
+ .../devicetree/bindings/media/i2c/sony,imx290.yaml |  2 +
+ drivers/media/i2c/imx290.c                         | 81 ++++++++++++++++++++--
+ 2 files changed, 76 insertions(+), 7 deletions(-)
+---
+base-commit: ed61c59139509f76d3592683c90dc3fdc6e23cd6
+change-id: 20241114-media-imx290-imx462-b6d1c24b77b5
 
+Best regards,
+-- 
+Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-Guilherme
-
-
-[0] https://lore.kernel.org/r/ZzuBNj4JImJGUNJc@gmail.com/
 
