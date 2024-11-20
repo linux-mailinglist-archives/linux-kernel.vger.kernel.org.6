@@ -1,172 +1,86 @@
-Return-Path: <linux-kernel+bounces-416059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D9C9D40AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:58:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E426C9D3FA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 031D8B2A10C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897941F22535
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A59013D638;
-	Wed, 20 Nov 2024 16:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzZq/XnK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A9A14831E;
+	Wed, 20 Nov 2024 16:03:11 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66BF19F424;
-	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81BC13B58A;
+	Wed, 20 Nov 2024 16:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118573; cv=none; b=rlUk+3+qHtKNJ38RFPw9QInGLwkui3nIgSoFT4xECuxybcwkvfe6RujL6tW6MfsG/XUEg3fVLL/NKTZKXz8BSxGncsnbmu7rmS9VxsImdC4RyvuNcDBhTK7zwxTKUOVtcmuu5uj6RBvt2Q1kJupCTi9kFAdTH8+YjyuGHsC60yQ=
+	t=1732118590; cv=none; b=tbPKts549sh5vINbSx3Mt1TGb2M49+pIaGUAA3cIOgSQvGIEpDyW4fmPTREs2wwv+Hbd3QbgzJlS3UEnhzxIQSMQk+ydkiEWDBhW9OL9rPqHpv9XwQN9yKuPUJ2cWagYBI4j6MYQ6MuD/Efdt6vX+CtMUPd6wwHiVyu6sUtMJwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118573; c=relaxed/simple;
-	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=LSrW18yIB0eVDdFFC2rdYZ5gpA8oszwnwxKVtHwi7Mx1wC+Qewx5x/JPtA8MoKVwBFX3EA1KNFZfMKDfgaFBxvuJBSPjvM4Ng2e5CZYNSkuu1WvhUkGb0byl28+LpOTC9TkIEcP+01bzgYXGUWskC+yQiNTIttjgFBbbDnSgsh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzZq/XnK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B5AC4CED3;
-	Wed, 20 Nov 2024 16:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118573;
-	bh=JgLWOHmUTemObVeIGpwUPte2754GI41s/ZUZDvGmHiY=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EzZq/XnKvOEpmQceuz8jMQBGH5pVIq3kKZdMG4KalP4y7FTZI/yJN3F4PK5Vng818
-	 3iMYCfcfl3WqQ9+5Ws3rnE5efRknAkNqdUPFVq6HQIen8Z8phCIQPdEIQDzt+wl65i
-	 GxnPr47skISDZjmpBVuLTLnTdMNlGA+SAJ7BLYWD9LpKsXqjh7KvS28/M9rOEM1KDI
-	 zTfV/gsu/REEUuH1Pz5E7uVIxsCH+JkrhbI9WC/LQC+AtaW1cy+MjcTJohYRHm2Mke
-	 zHgrEJabJJLC1gyC+gdckFMVWiojkOzhc8/A7k0oP5MuS4SZSpyAZnIm5vq/WZLYA0
-	 MFbVcbyjxh4kA==
-Date: Wed, 20 Nov 2024 10:02:52 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1732118590; c=relaxed/simple;
+	bh=RJ4Vucc/cxtUFNACctKnTIOaLzrgb7JCOMjpeh0QwSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lC1jK5gyv3QukK1bcP/bfYFin9F+RSp1SkyEhIrelOrv7YqFa1uRdsmwHihDUvKIdK7dKhJzN2eNDq1kZsjshXeGFo3zJQ6uH/rdpGRJ5MmhWhUUsTi7ro5lNe4uI+SzpLFHg/ivDusVBpf2jVpFXcW1RGmP2Qehf2HRxLW9yN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39AEDC4CECD;
+	Wed, 20 Nov 2024 16:03:10 +0000 (UTC)
+Date: Wed, 20 Nov 2024 08:03:08 -0800
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+	jthoughton@google.com
+Subject: Re: [PATCH v2 01/12] objtool: Generic annotation infrastructure
+Message-ID: <20241120160308.o24km3zwrpbqn7m4@jpoimboe>
+References: <20241111115935.796797988@infradead.org>
+ <20241111125218.113053713@infradead.org>
+ <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
+ <20241116093331.GG22801@noisy.programming.kicks-ass.net>
+ <20241120003123.rhb57tk7mljeyusl@jpoimboe>
+ <20241120010424.thsbdwfwz2e7elza@jpoimboe>
+ <20241120085254.GD19989@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: sboyd@kernel.org, linux-serial@vger.kernel.org, krzk+dt@kernel.org, 
- linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-gpio@vger.kernel.org, conor+dt@kernel.org, romain.sioen@microchip.com, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- alexandre.belloni@bootlin.com, arnd@arndb.de, nicolas.ferre@microchip.com, 
- mihai.sain@microchip.com, mturquette@baylibre.com, claudiu.beznea@tuxon.dev, 
- dharma.b@microchip.com, varshini.rajendran@microchip.com
-To: Ryan.Wanner@microchip.com
-In-Reply-To: <cover.1732030972.git.Ryan.Wanner@microchip.com>
-References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
-Message-Id: <173211841742.1124520.7475940959733704423.robh@kernel.org>
-Subject: Re: [PATCH 00/15] Add support for SAMA7D65
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241120085254.GD19989@noisy.programming.kicks-ass.net>
 
-
-On Tue, 19 Nov 2024 09:40:06 -0700, Ryan.Wanner@microchip.com wrote:
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Wed, Nov 20, 2024 at 09:52:54AM +0100, Peter Zijlstra wrote:
+> On Tue, Nov 19, 2024 at 05:04:24PM -0800, Josh Poimboeuf wrote:
+> > On Tue, Nov 19, 2024 at 04:31:25PM -0800, Josh Poimboeuf wrote:
+> > > On Sat, Nov 16, 2024 at 10:33:31AM +0100, Peter Zijlstra wrote:
+> > > > On Fri, Nov 15, 2024 at 10:38:28AM -0800, Josh Poimboeuf wrote:
+> > > > > On Mon, Nov 11, 2024 at 12:59:36PM +0100, Peter Zijlstra wrote:
+> > > > > > +#define ASM_ANNOTATE(x)						\
+> > > > > > +	"911:\n\t"						\
+> > > > > > +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
+> > > > > > +	".long 911b - .\n\t"					\
+> > > > > > +	".long " __stringify(x) "\n\t"				\
+> > > > > > +	".popsection\n\t"
+> > > > > 
+> > > > > Why mergeable and progbits?
+> > > > 
+> > > > In order to get sh_entsize ?
+> > > 
+> > > Is that a guess?  If so, it's not very convincing as I don't see what
+> > > entsize would have to do with it.
+> > 
+> > Oh, nevermind... I see it's a gas syntax issue.
 > 
-> This series adds support for the SAMA7D65 SoC.
-> 
-> There have been patches in this series that have been tagged as
-> Reviewed-by or Acked-by, I will link these threads below.
-> 
-> 1) https://lore.kernel.org/lkml/20240829-sama7d65-core-dt-v1-1-e5d882886f59@microchip.com/
-> 2) https://lore.kernel.org/lkml/20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com/
-> 3) https://lore.kernel.org/lkml/20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com/
-> 4) https://lore.kernel.org/lkml/1da0abbb-94e5-42fd-a2d2-71d5d7d253fb@microchip.com/
-> 
-> The clock system patches have been sent before and are added to this set
-> to follow the correct practice of submitting patches. I will list that
-> thread below.
-> 
-> 1) https://lore.kernel.org/linux-arm-kernel/d970e158-db74-4ffe-9fb4-57026ac0a947@tuxon.dev/
-> 
-> Dharma Balasubiramani (7):
->   dt-bindings: mfd: atmel,sama5d2-flexcom: add
->     microchip,sama7d65-flexcom
->   dt-bindings: atmel-sysreg: add sama7d65 RAM and PIT
->   dt-bindings: mmc: atmel,sama5d2-sdhci: add microchip,sama7d65-sdhci
->   dt-bindings: serial: atmel,at91-usart: add microchip,sama7d65-usart
->   dt-bindings: pinctrl: at91-pio4: add microchip,sama7d65-pinctrl
->   dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
->   dt-bindings: clock: Add SAMA7D65 PMC compatible string
-> 
-> Romain Sioen (2):
->   dt-bindings: ARM: at91: Document Microchip SAMA7D65 Curiosity
->   ARM: dts: microchip: add support for sama7d65_curiosity board
-> 
-> Ryan Wanner (5):
->   ARM: configs: at91: sama7: add new SoC config
->   ARM: dts: microchip: add sama7d65 SoC DT
->   clk: at91: clk-master: increase maximum number of clocks
->   clk: at91: clk-sam9x60-pll: increase maximum amount of plls
->   clk: at91: sama7d65: add sama7d65 pmc driver
-> 
-> Varshini Rajendran (1):
->   dt-bindings: clock: at91: Allow MCKs to be exported and referenced in
->     DT
-> 
->  .../devicetree/bindings/arm/atmel-at91.yaml   |    7 +
->  .../devicetree/bindings/arm/atmel-sysregs.txt |   14 +-
->  .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
->  .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    1 +
->  .../bindings/mfd/atmel,sama5d2-flexcom.yaml   |    9 +-
->  .../bindings/mmc/atmel,sama5d2-sdhci.yaml     |    1 +
->  .../pinctrl/atmel,at91-pio4-pinctrl.txt       |    1 +
->  .../bindings/serial/atmel,at91-usart.yaml     |    1 +
->  arch/arm/boot/dts/microchip/Makefile          |    3 +
->  .../dts/microchip/at91-sama7d65_curiosity.dts |   89 ++
->  .../arm/boot/dts/microchip/sama7d65-pinfunc.h |  947 ++++++++++++
->  arch/arm/boot/dts/microchip/sama7d65.dtsi     |  155 ++
->  arch/arm/configs/multi_v7_defconfig           |    1 +
->  arch/arm/configs/sama7_defconfig              |    1 +
->  arch/arm/mach-at91/Kconfig                    |   12 +
->  drivers/clk/at91/Makefile                     |    1 +
->  drivers/clk/at91/clk-master.c                 |    2 +-
->  drivers/clk/at91/clk-sam9x60-pll.c            |    2 +-
->  drivers/clk/at91/pmc.c                        |    1 +
->  drivers/clk/at91/sama7d65.c                   | 1373 +++++++++++++++++
->  include/dt-bindings/clock/at91.h              |    4 +
->  21 files changed, 2614 insertions(+), 13 deletions(-)
->  create mode 100644 arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
->  create mode 100644 arch/arm/boot/dts/microchip/sama7d65-pinfunc.h
->  create mode 100644 arch/arm/boot/dts/microchip/sama7d65.dtsi
->  create mode 100644 drivers/clk/at91/sama7d65.c
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+> Not a guess, only mergable gets entsize, and progbits is a required
+> argument per the syntax in order to specify entsize.
 
+If you look at "readelf -WS vmlinux" there are plenty of non-mergeable
+sections with entsize.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y microchip/at91-sama7d65_curiosity.dtb' for cover.1732030972.git.Ryan.Wanner@microchip.com:
-
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/pinctrl@e0014000: failed to match any schema with compatible: ['microchip,sama7d65-pinctrl']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1800000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dtb: /soc/timer@e1804000: failed to match any schema with compatible: ['microchip,sama7d65-pit64b', 'microchip,sam9x60-pit64b']
-
-
-
-
-
+-- 
+Josh
 
