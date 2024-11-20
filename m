@@ -1,166 +1,182 @@
-Return-Path: <linux-kernel+bounces-415627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF9519D3946
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF98D9D3953
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBFBBB252D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:05:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE07AB22AF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECDF1A2540;
-	Wed, 20 Nov 2024 11:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA1C19F464;
+	Wed, 20 Nov 2024 11:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2J4+Vz1"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="+7YZLOA4";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="EeQ8xmfA"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5097319F464;
-	Wed, 20 Nov 2024 11:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732100666; cv=none; b=bCRS/+DHIunWGUvibaSgi5d+FQRy0Gy+xv9R4Lev1xqrWDuwDJqt6jPJpYzN1KgwAy/WiffliaybuVffjFNfD+Ij+wotdiTpmy5q0J/ZtleUvu1Bzp4oL+nb9ep50IWWJpY87Z5+rJR9JgJ++h+ZQJNky0u2XtLGw+1lwdbC/G8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732100666; c=relaxed/simple;
-	bh=HLIF31sLBH0UFLU1mL0HvKWOocAmOPTN1vR/q9fWAxc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zdod6NlfVxG14RFoURJFbN73Ia4PN32rLJlz9a0jQXf/ySDHX/eZ2ksMrLNETesxgOvp7M3feLXn5/RPjX1dBMRuHX5b3xNwJ6awoW0verH6Ud5sCgxqsG3VWlOLoVlHn9G+OKYUEWdUJeP248KJ3+TuOyvTdz6HjSv+rHaedc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2J4+Vz1; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43167ff0f91so47806665e9.1;
-        Wed, 20 Nov 2024 03:04:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732100662; x=1732705462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hSUV8u/PigmG/RnkK9L9y5PvfBVnhZwSbQHvFo3bfTI=;
-        b=g2J4+Vz1NCMqnTwFBD1x7h00iaM6wOwQN7X1p1n35X+HqrAWheczvl93vDULjELIRR
-         tZOBioc79/AWW0NhzFgxgdORnjdbJY/FI00PyvPgkJO1asRQVZ4O0U86F7Yxpbgv17He
-         T/0fErIgKMnKSU06UG3MOuZEvxj4GYBs37WGvUj8F0+y6OQzYxCgwt8EUuDrB9FP8lp4
-         MtrFiOh+EvCzN6Y/Ct1VZ+xcq9h0FrUDW+STHBcryz9cavBqNI3tWgacip1Ib+c0++Ry
-         NOrqdSltMyTHwbrjCF9JWLRwxXQAlfv8TjD94i3zGDefnaA4Z7J9LNj1cfBYRKj66u5i
-         k3Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732100662; x=1732705462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hSUV8u/PigmG/RnkK9L9y5PvfBVnhZwSbQHvFo3bfTI=;
-        b=I4WCNv2Ny7bDlJpkLVEaSpoLmN6pi7ISzO/NKjt1s/EFSH06JtG3Xo877d3grEpzuq
-         x70CwwBiV6tI0lNKUuGU4trrGnOik1TYtAxxfqf6DeHOmS77SMkW7cTQZ1c1JkEpcCHL
-         8AsdlHYhGyebbFE2saXG3BsRvuJMqP+5WQy2qu5trBIS0qgnbe4FXEmU1zs09zPJ6+Cx
-         k2EGhZZJMocPRcGRRwwZiVSwk/j1gLY2YSVs1GlLMKnfOMXJFdil39bEwBW7278wZ1fS
-         hA1jdaWRUYC3Gh3L6IEkKaY9njynmv4QRy+z041VDeQURW26z4Pl/3NF/bEBkUep+bvg
-         YFcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhCDwtSO49p5ZBBAYp3F70QrNaeMNeCFuAUkGvhoWtvT1qkUcTtbBlkXLpDS9p9DNvORyHGDKFdt0BeX+sQA==@vger.kernel.org, AJvYcCUtlhHGJQMZLA1Z3JxgwlAaHt13ILia3Qh6f1CiUbTcHGE7ule3QqrWv+fOcKwPQuKwZQoWuVfQrkDgMgJW@vger.kernel.org, AJvYcCWsRhKaGdcFVW2FTIn1gGtgaWNz1fAwQrq/2SlUCohWw3jFquawLBQsYkZP9umxiWQ8lZw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3vczGD3xYovSs7RQgmgdu4PK4inG7S0i4SLA2OB8WdIeGByYa
-	HNORzjw7332RGWd+4votkyGdo4bctjRxLshz2i80QzTrzTmKrvEl
-X-Google-Smtp-Source: AGHT+IFQ7Bytdn5N8T8vu8IeyWK5Lkg6W07FQ6lpT7b0IjOKbcxy5UJ6hV7EtotQ/xH7fh57DPLL+w==
-X-Received: by 2002:a05:6000:1448:b0:382:4a66:f4ff with SMTP id ffacd0b85a97d-38254af4fefmr1679670f8f.13.1732100662486;
-        Wed, 20 Nov 2024 03:04:22 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490bee8sm1755590f8f.23.2024.11.20.03.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 03:04:22 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 20 Nov 2024 12:04:20 +0100
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Juntong Deng <juntong.deng@outlook.com>, ast@kernel.org,
-	daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org,
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, memxor@gmail.com, snorcht@gmail.com,
-	brauner@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 1/5] bpf: Introduce task_file open-coded
- iterator kfuncs
-Message-ID: <Zz3CNMZB94Qmy8nY@krava>
-References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB508013A6E8B5DEF15A87B1EC99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <Zz3AG0htZjt9RTFl@krava>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0667F1A2562;
+	Wed, 20 Nov 2024 11:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732100668; cv=fail; b=PuXnMvHHl5u8zv1PMV2AZtjCHDgaVyyWIyb2GOwdJknhP7bPI4Ap7GfW8jOFPEJxd+GZyvDOqN3K9AE/nTcfBCOMfHrcbYmu3NW004TkZ8vc8FnpqNBk/h+2P0gYByErtF8HkL3Uijz+2DkE7a4aS4EirCRkBn7/BVrjgCl73ZY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732100668; c=relaxed/simple;
+	bh=d8Tva37tunzUVXrkergK6kbO7c6e7kSHNNurJrVq/zo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=H8qZR+uBXGHFGDdXNffjNUfXh2A/9ISIRBHAhuowlqmokEzo8A7Zru27pAOWUIACgknFP2iRS5KahqrhbjFDqzML2RyQge3UFM4qYyTdQbKkv/RIajfZbSpaj/aqeGoDzp8zOhGqsh3kGh0rip1mjijR6bthFOprNaTerkvfXkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=+7YZLOA4; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=EeQ8xmfA; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id C67ED480AB5;
+	Wed, 20 Nov 2024 06:04:25 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1732100665;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=zapun0s3m4q12V8nyro11PzJ8BjJUdOqUJswQ7zVZUA=;
+ b=+7YZLOA4TRnSHM2MnOWai+a1Jij2LN3KadrQc+ZfatdzCYnOxOBpg8Ny2e2nQOHPSF2pE
+ kYIKHwVkWvsDt1FCg==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1732100665;
+	cv=none; b=Q94j/SPPdMNajyT1Cgpeu7ZMj1+yHiLeeqjc74L1UbiQ1cjATjDGaICb8eSMwmG/Nd4LhRqG/AwLwEbH1E/2WAtE5k47wv1H4XEbABRGyj1LTSejoU473Bsdjtnjh+w5KMNhONrPoT33A7731qNHnWDupO9G/oZkTQFXlz+1wXMsO159CXp+/QjWCwGlkx1Ae5bIVbA+sR1aKUPVq/9ByIRixfIyLECjl5u5UUuLnVsCSlxKGLWW7ME7pEfTzFfsYqEiLi7XAQLkB2qM5LYb/sTMpXxx8ZoLV5x6BvGvqkWJ0dzs1SiTQfx6amYVMN+Zv3eyq6y6w0KuymhgTnHiUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1732100665; c=relaxed/simple;
+	bh=d8Tva37tunzUVXrkergK6kbO7c6e7kSHNNurJrVq/zo=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=Hm86uAoHdP22HhnNg03+4DGnEVjDUg0CPjF2PSFpKPgz0K0Qt2yYQX5OrtPqRsonH0qBT7N2df1hDQZuiP+i96FT9yjZO7P7jZ8PKb8uNZ/acZ81nAsHInFXCQwI+698leWz+iuocrLxa9QirdFXVA260bDWt+IvVXESotrsPLBebClx8xqRUupOOiq4s4CrnFiT0O0hurKEJsGlUX2fC/rr4wUKraYdhQ1C6jAR2bbKN+2X9bVvYSVsoO6AkaZBsawabwWXrQECRUlxoqXW5mVORXn6pGA/VdwVLVVQXdwr3APB0/B3TfcTyCeve17z/epeAcc60XsbQjbON+4APA==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1732100665;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=zapun0s3m4q12V8nyro11PzJ8BjJUdOqUJswQ7zVZUA=;
+ b=EeQ8xmfAQnxkI53HYOz8eUgAZQR/dLJEaII3Q9pJiwEY/i+A6wmIztqFp3Bfxenr73FJv
+ vKwj/RNkO4NBivPqTvfEtUcBK/KQVLZFbwbXRFTEJt01g9UNmUODKu/TqLYYOmoXt/JMlh4
+ SzqfKpMr2wAjaN88LAfulQa7dpfPKBgX5tr1I27kwq6EITqb219ED2Dx69NhyxFDYTMz4E6
+ vN/XTTdLP+OWkNt52GeXv1VI1LtyjgqwuL8RcUbge+41wqk6yiD50GcE9eg2f+T7w3s1PlQ
+ 1ptwR4JtWN/JZ3TGlTY7Y6VjLsD37m13kQOXcXQqUjL0H67IfuyV77rHdwTQ==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 8648D280047;
+	Wed, 20 Nov 2024 06:04:25 -0500 (EST)
+Message-ID: <9ad77de15c483d31ba10b4b7bcf65a9e133f63ae.camel@sapience.com>
+Subject: Re: md-raid  6.11.8 page fault oops
+From: Genes Lists <lists@sapience.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	linux@leemhuis.info
+Date: Wed, 20 Nov 2024 06:04:25 -0500
+In-Reply-To: <Zz23Z3RK/AHSXY1I@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
+	 <34333c67f5490cda041bc0cbe4336b94271d5b49.camel@sapience.com>
+	 <Zzx34Mm5K42GWyKj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+	 <ef8bd4f9308dbf941076b2f7bd8a81590a09aa5e.camel@sapience.com>
+	 <Zz23Z3RK/AHSXY1I@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-WDsWYzT6rEAUh7xf+AYr"
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zz3AG0htZjt9RTFl@krava>
 
-On Wed, Nov 20, 2024 at 11:55:23AM +0100, Jiri Olsa wrote:
-> On Tue, Nov 19, 2024 at 05:53:58PM +0000, Juntong Deng wrote:
-> 
-> SNIP
-> 
-> > +/**
-> > + * bpf_iter_task_file_next() - Get the next file in bpf_iter_task_file
-> > + *
-> > + * bpf_iter_task_file_next acquires a reference to the struct file.
-> > + *
-> > + * The reference to struct file acquired by the previous
-> > + * bpf_iter_task_file_next() is released in the next bpf_iter_task_file_next(),
-> > + * and the last reference is released in the last bpf_iter_task_file_next()
-> > + * that returns NULL.
-> > + *
-> > + * @it: the bpf_iter_task_file to be checked
-> > + *
-> > + * @returns a pointer to bpf_iter_task_file_item
-> > + */
-> > +__bpf_kfunc struct bpf_iter_task_file_item *bpf_iter_task_file_next(struct bpf_iter_task_file *it)
-> > +{
-> > +	struct bpf_iter_task_file_kern *kit = (void *)it;
-> > +	struct bpf_iter_task_file_item *item = &kit->item;
-> > +
-> > +	if (item->file)
-> > +		fput(item->file);
-> > +
-> 
-> missing rcu_read_lock ?
 
-nah user needs to take it explicitly, should have read the whole thing first, sry
+--=-WDsWYzT6rEAUh7xf+AYr
+Content-Type: multipart/alternative; boundary="=-vtO7mtNc6IVZEMUQ8cvh"
 
-jirka
+--=-vtO7mtNc6IVZEMUQ8cvh
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> jirka
-> 
-> > +	item->file = task_lookup_next_fdget_rcu(item->task, &kit->next_fd);
-> > +	item->fd = kit->next_fd;
-> > +
-> > +	kit->next_fd++;
-> > +
-> > +	if (!item->file)
-> > +		return NULL;
-> > +
-> > +	return item;
-> > +}
-> > +
-> > +/**
-> > + * bpf_iter_task_file_destroy() - Destroy a bpf_iter_task_file
-> > + *
-> > + * If the iterator does not iterate to the end, then the last
-> > + * struct file reference is released at this time.
-> > + *
-> > + * @it: the bpf_iter_task_file to be destroyed
-> > + */
-> > +__bpf_kfunc void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it)
-> > +{
-> > +	struct bpf_iter_task_file_kern *kit = (void *)it;
-> > +	struct bpf_iter_task_file_item *item = &kit->item;
-> > +
-> > +	if (item->file)
-> > +		fput(item->file);
-> > +}
-> > +
-> >  __bpf_kfunc_end_defs();
-> >  
-> >  DEFINE_PER_CPU(struct mmap_unlock_irq_work, mmap_unlock_work);
-> > -- 
-> > 2.39.5
-> > 
+On Wed, 2024-11-20 at 15:48 +0530, Ojaswin Mujoo wrote:
+>=20
+> Got it, I'm still not sure what might be causing this oops. Would you
+> happen to a have a reproducer that I can play around with on my
+> system?
+>=20
+> Regards,
+> ojaswin
+>=20
+
+Sorry, unfortunately I do not have a reproducer otherwise I could
+bisect. This system has an rsync backup of about 5 TB twice a day
+(receives data over net and writes to local raid disks) - and it
+happened during one of them.
+
+gene
+
+--=20
+Gene
+
+
+--=-vtO7mtNc6IVZEMUQ8cvh
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Wed, 2024-11-20 at 15:48 +0530, Ojaswin Mujoo =
+wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-le=
+ft:2px #729fcf solid;padding-left:1ex"><div><br></div><div>Got it, I'm stil=
+l not sure what might be causing this oops. Would you<br></div><div>happen =
+to a have a reproducer that I can play around with on my system?<br></div><=
+div><br></div><div>Regards,<br></div><div>ojaswin<br></div><div><br></div><=
+/blockquote><div><br></div><div>Sorry, unfortunately I do not have a reprod=
+ucer otherwise I could bisect. This system has an rsync backup of about 5 T=
+B twice a day (receives data over net and writes to local raid disks) - and=
+ it happened during one of them.</div><div><br></div><div>gene</div><div><b=
+r></div><div><span><pre>-- <br></pre><div><span style=3D"background-color: =
+inherit;">Gene</span></div><div><br></div></span></div></body></html>
+
+--=-vtO7mtNc6IVZEMUQ8cvh--
+
+--=-WDsWYzT6rEAUh7xf+AYr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZz3COQAKCRA5BdB0L6Ze
+2wLlAQD/NbMyLy7/vCkTJQfXuiuvHtzeCgbehKprPc0SXSSNsgD9Hi9/7pzuDeGr
+vrYOwdHkl/KMw/gQ4f6+C8UkrlwuPQY=
+=u8Ko
+-----END PGP SIGNATURE-----
+
+--=-WDsWYzT6rEAUh7xf+AYr--
 
