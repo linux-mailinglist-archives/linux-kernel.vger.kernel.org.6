@@ -1,53 +1,72 @@
-Return-Path: <linux-kernel+bounces-415465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2399D369E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:15:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C469D36A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E738B25DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD92E285F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D88415DBBA;
-	Wed, 20 Nov 2024 09:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A420519D063;
+	Wed, 20 Nov 2024 09:15:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JMQAfQU2"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5141918A956;
-	Wed, 20 Nov 2024 09:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TuwR7tWl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26715156F20;
+	Wed, 20 Nov 2024 09:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094133; cv=none; b=BhbWRBA3HNcY2Fub4rbSRdwm+fiqPrTm7yn5A3LaW/No0QDyKRtN6cf1QUI4Dp+kvRNrc1KY997AAV/xiE/gCpOsEYATtS5Vxk5t9LVeIqEtWVB8zMeOLs4UBAkyKGnuct8sVIVtIZUHqJ6nOR5VQ4KuHenfp5uZvNj5wDwRnBI=
+	t=1732094144; cv=none; b=HfpdfZzNgk3H0SskW+gZJdZDwmJbor2sFg+NLCLkU84Eeckz801CKUN4BDNmPN4o0ZGYiF3F6xyNOHUEYh8ScyqPZ5LSKwzx9rlJYbKKZrn7PV2BpWwe1nZFznZ9avM3Sp364VOM2KpipNuOU+PEGK5UcIDnMQgItFqkkszrKKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094133; c=relaxed/simple;
-	bh=wSe5QddiVgQxNOaD6oGwRFNMnEIo8FZcNh+SbeJBrug=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XLjVJUI7CeiorZZLYncdD3uS72JDKw+/sDCdvpYd9Njv+WDlTFoKNDAQbk8/y4LalwGY+GkE9X0osSt4L9VcSq7L4MmTq6hfW7vwVaW+35Oc9X8jGXHI5YQiDJdGizoFaxsT4CDW8p+0FKWq6cI+2eUhFg8MlsgTdGVPYVoF3ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JMQAfQU2; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ioayO
-	sAWaQXmu+VuhRxkOmZDwOakxhPl3mb+f0DnSqY=; b=JMQAfQU2Kkhazo58QUg5V
-	Bp5NuLGcBxS0EC4UocZZcNL6PGLfzJYtrRRWmiVAXH9s0OCsIb+v3qyA0dKOXqn6
-	8YNO6icsZdSEOu1glFndytI0MZO2YWvdUR1pne2BOMntcHdf+kjmz8vPPXu/b8St
-	hed//LedJ18c2huz7eOOTw=
-Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDn1tSNqD1nifurIg--.60055S4;
-	Wed, 20 Nov 2024 17:15:10 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Cc: kees@kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	geert@linux-m68k.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH 1/3] gpio: Fix a potential abuse of seq_printf() format string
-Date: Wed, 20 Nov 2024 17:14:51 +0800
-Message-Id: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1732094144; c=relaxed/simple;
+	bh=qOiy60b9BhJm3ACugZrr094V2j5jfpdn6wtZRetLLLw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fKgb7UizXHHXiRseezZTWd/kIa/kxrGsQUTxCMY3Zn7iKQayjjdQd4Q7i7WWfmQ8H9fCSeyhdLT1C7QD4OeGkVe6hSlCHvOT5L6+K3KOmMQ7MOkv+xSkHgai0ttJDd4gYygS70CZCLBZEsq5R+sfhTWayyh6ZJ1HJezE/d6Hw1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TuwR7tWl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FRN2010580;
+	Wed, 20 Nov 2024 09:15:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=S0qikturYHEswY7xvKjVu9
+	1QtwyYT2CdYXpNBWOksIA=; b=TuwR7tWlN66tROBf21CVxHmdcaMQIPtW6x6Kaa
+	CBOifif1DS3PDKuOjSsEjz/H6QbRTGFwoF+pl7vY3PoB4xHNx4Go9khXNyC0I0+A
+	RgJdgUdTHBNh96PF3WDjdQ+x5Wg/skv6hDLYgWgm/T0hFzppiF4ufPt9Ot3z6vYp
+	6LlqgXco07jGa2cQrDFVFp7Z4SO9EMwCd5JD5pUd6ixXYoRx8S9SVQRVGoyD1wDQ
+	UPIWO2F2cFlE0femcbmEy/lQUVSdRGmgetIuU36wVNcPTVWdL4wdmgTqj0Uty/ve
+	NHOVqGS+TzqKBLKLRBBK8T6aRY+oTgKGfZbeD7mSuZDTDM7w==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43091mda5m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 09:15:28 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AK9FQse024872
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 09:15:26 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 20 Nov 2024 01:15:21 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>,
+        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>,
+        <quic_mdalam@quicinc.com>
+Subject: [PATCH v14 0/8] Add QPIC SPI NAND driver
+Date: Wed, 20 Nov 2024 14:44:58 +0530
+Message-ID: <20241120091507.1404368-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,204 +74,234 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn1tSNqD1nifurIg--.60055S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW3WFy8XF1UuF1DXw1UXrWUArb_yoW3Xr1UpF
-	yYvFy8Ar4DJF1YqFyUAan7Za4Yk3WayFW2gF1Sk34fZr1UtrZrKFW7tFWxZFs0qry8Zr4a
-	vr4qgFyUGF18Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p__-BDUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hKdqmc9pPVwvgAAsy
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jS-azxiCQSq96LhUknrjysTtcI54sJLl
+X-Proofpoint-GUID: jS-azxiCQSq96LhUknrjysTtcI54sJLl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ clxscore=1015 bulkscore=0 mlxlogscore=803 lowpriorityscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200063
 
-Using device name as format string of seq_printf() is prone to
-"Format string attack", opens possibility for exploitation.
-Seq_puts() is safer and more efficient.
+v14:
+ * Updated commit message
+ * Fix spelling mistake
+ * Remove "inline" from multiple APIs from qcom_nandc.c file
+ * Move '|' in qcom_param_page_type_exec() APIs at the end of line
 
-Signed-off-by: David Wang <00107082@163.com>
----
- drivers/gpio/gpio-aspeed-sgpio.c | 2 +-
- drivers/gpio/gpio-aspeed.c       | 2 +-
- drivers/gpio/gpio-ep93xx.c       | 2 +-
- drivers/gpio/gpio-hlwd.c         | 2 +-
- drivers/gpio/gpio-mlxbf2.c       | 2 +-
- drivers/gpio/gpio-omap.c         | 2 +-
- drivers/gpio/gpio-pca953x.c      | 2 +-
- drivers/gpio/gpio-pl061.c        | 2 +-
- drivers/gpio/gpio-tegra.c        | 2 +-
- drivers/gpio/gpio-tegra186.c     | 2 +-
- drivers/gpio/gpio-tqmx86.c       | 2 +-
- drivers/gpio/gpio-visconti.c     | 2 +-
- drivers/gpio/gpio-xgs-iproc.c    | 2 +-
- 13 files changed, 13 insertions(+), 13 deletions(-)
+v13:
+ * Added Reviewed-by tag 
+ * Added MODULE_DESCRIPTION() macro
+ * Added 2024 Qualcomm Innovation Center Copyright
+ * Changed return type of qcom_spi_cmd_mapping() from u32 to
+   int to fix the kernel test bot warning
+ * Changed type of variable cmd in qcom_spi_write_page() from u32
+   to int
+ * Removed unused variable s_op from qcom_spi_write_page()
+ * Updated return value variable type from u32 to int in
+   qcom_spi_send_cmdaddr()
 
-diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
-index 72755fee6478..34eb26298e32 100644
---- a/drivers/gpio/gpio-aspeed-sgpio.c
-+++ b/drivers/gpio/gpio-aspeed-sgpio.c
-@@ -420,7 +420,7 @@ static void aspeed_sgpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	int offset;
- 
- 	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
--	seq_printf(p, dev_name(gpio->dev));
-+	seq_puts(p, dev_name(gpio->dev));
- }
- 
- static const struct irq_chip aspeed_sgpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-index ea40ad43a79b..7f3292d9f016 100644
---- a/drivers/gpio/gpio-aspeed.c
-+++ b/drivers/gpio/gpio-aspeed.c
-@@ -1102,7 +1102,7 @@ static void aspeed_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	if (rc)
- 		return;
- 
--	seq_printf(p, dev_name(gpio->dev));
-+	seq_puts(p, dev_name(gpio->dev));
- }
- 
- static const struct irq_chip aspeed_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index ab798c848215..58d2464c07bc 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -249,7 +249,7 @@ static void ep93xx_irq_print_chip(struct irq_data *data, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
- 
--	seq_printf(p, dev_name(gc->parent));
-+	seq_puts(p, dev_name(gc->parent));
- }
- 
- static const struct irq_chip gpio_eic_irq_chip = {
-diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
-index 1bcfc1835dae..0580f6712bea 100644
---- a/drivers/gpio/gpio-hlwd.c
-+++ b/drivers/gpio/gpio-hlwd.c
-@@ -210,7 +210,7 @@ static void hlwd_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
- 	struct hlwd_gpio *hlwd =
- 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
- 
--	seq_printf(p, dev_name(hlwd->dev));
-+	seq_puts(p, dev_name(hlwd->dev));
- }
- 
- static const struct irq_chip hlwd_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-index 6abe01bc39c3..6f3dda6b635f 100644
---- a/drivers/gpio/gpio-mlxbf2.c
-+++ b/drivers/gpio/gpio-mlxbf2.c
-@@ -331,7 +331,7 @@ static void mlxbf2_gpio_irq_print_chip(struct irq_data *irqd,
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
- 	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
- 
--	seq_printf(p, dev_name(gs->dev));
-+	seq_puts(p, dev_name(gs->dev));
- }
- 
- static const struct irq_chip mlxbf2_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
-index 76d5d87e9681..279524b640ae 100644
---- a/drivers/gpio/gpio-omap.c
-+++ b/drivers/gpio/gpio-omap.c
-@@ -715,7 +715,7 @@ static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- {
- 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
- 
--	seq_printf(p, dev_name(bank->dev));
-+	seq_puts(p, dev_name(bank->dev));
- }
- 
- static const struct irq_chip omap_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index 3f2d33ee20cc..272febc3230e 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -815,7 +815,7 @@ static void pca953x_irq_print_chip(struct irq_data *data, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
- 
--	seq_printf(p, dev_name(gc->parent));
-+	seq_puts(p, dev_name(gc->parent));
- }
- 
- static const struct irq_chip pca953x_irq_chip = {
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index a211a02d4b4a..1c273727ffa3 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -291,7 +291,7 @@ static void pl061_irq_print_chip(struct irq_data *data, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
- 
--	seq_printf(p, dev_name(gc->parent));
-+	seq_puts(p, dev_name(gc->parent));
- }
- 
- static const struct irq_chip pl061_irq_chip = {
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 6d3a39a03f58..9ad286adf263 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -600,7 +600,7 @@ static void tegra_gpio_irq_print_chip(struct irq_data *d, struct seq_file *s)
- {
- 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
- 
--	seq_printf(s, dev_name(chip->parent));
-+	seq_puts(s, dev_name(chip->parent));
- }
- 
- static const struct irq_chip tegra_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index 1ecb733a5e88..6895b65c86af 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -610,7 +610,7 @@ static void tegra186_irq_print_chip(struct irq_data *data, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
- 
--	seq_printf(p, dev_name(gc->parent));
-+	seq_puts(p, dev_name(gc->parent));
- }
- 
- static const struct irq_chip tegra186_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-index f2e7e8754d95..5e26eb3adabb 100644
---- a/drivers/gpio/gpio-tqmx86.c
-+++ b/drivers/gpio/gpio-tqmx86.c
-@@ -275,7 +275,7 @@ static void tqmx86_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- {
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 
--	seq_printf(p, gc->label);
-+	seq_puts(p, gc->label);
- }
- 
- static const struct irq_chip tqmx86_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
-index ebc71ecdb6cf..5bd965c18a46 100644
---- a/drivers/gpio/gpio-visconti.c
-+++ b/drivers/gpio/gpio-visconti.c
-@@ -142,7 +142,7 @@ static void visconti_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct visconti_gpio *priv = gpiochip_get_data(gc);
- 
--	seq_printf(p, dev_name(priv->dev));
-+	seq_puts(p, dev_name(priv->dev));
- }
- 
- static const struct irq_chip visconti_gpio_irq_chip = {
-diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
-index d445eea03687..e9390f136b3c 100644
---- a/drivers/gpio/gpio-xgs-iproc.c
-+++ b/drivers/gpio/gpio-xgs-iproc.c
-@@ -198,7 +198,7 @@ static void iproc_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
- 	struct iproc_gpio_chip *chip = to_iproc_gpio(gc);
- 
--	seq_printf(p, dev_name(chip->dev));
-+	seq_puts(p, dev_name(chip->dev));
- }
- 
- static const struct irq_chip iproc_gpio_irq_chip = {
+v12:
+ * Added EXPORT_SYMBOL() macro for all the api in qpic_common.c
+ * Added MODULE_LICENSE() macro in qpic_common.c to build
+   qpic_common.c as module as well
+ * Removed bool type for CONFIG_MTD_NAND_QCOM to fix build error
+   reported by kernel test bot
+ * Added obj-$(CONFIG_MTD_NAND_QCOM) += qpic_common.o condition
+   in Makefile to build qpic_common.c as built-in or as module
+   based on CONFIG_MTD_NAND_QCOM
+ * Added Reviewed-by tag
+ * Added obj-$(CONFIG_SPI_QPIC_SNAND) += qpic_common.o in Makefile
+   to build qpic_common.c based on CONFIG_SPI_QPIC_SNAND
+ * Updated commit header and commit message
+ * Removed sdhci node from rdp433.dts file 
+
+v11:
+ * Dropped Reviewed-by tag
+ * Added soc based compatible "qcom,ipq9574-snand"
+ * fixed build error reported by kernel test bot by
+   changing statement "depends on MTD" to "selct MTD"
+   in drivers/spi/Kconfig file
+
+v10:
+ * Fixed compilation warnings reported by kernel test robot
+ * Added depends on CONFIG_MTD for qpic-spi nand driver
+ * Removed extra bracket from statement if (i == (num_cw - 1))
+   in qcom_spi_program_raw() api.
+
+v9:
+ * Fixed all the compilation warning reported by
+   kernel test robot
+  * Changed type of cmd1, vld to u32 from __le32 in qcom_nand_controller
+   structure
+ * Changed type of cfg0, cfg1, cfg0_raw, cfg1_raw, clrflashstatus,
+   ecc_buf_cfg, ecc_bch_cfg, clrreadstatus to u32 in qcom_nand_host
+   structure
+ * In nandc_set_read_loc_first() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In nandc_set_read_loc_last() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * Changed data type of cw_offset, read_size, is_last_read_loc to
+   u32 in nandc_set_read_loc() api to fix compilation warning reported
+   by kernel test bot
+ * In set_address() api added cpu_to_le32() macro to fix compilation
+   warning reported by kernel test bot
+ * In update_rw_regs() api added cpu_to_le32() macro to fix compilation
+   warning reported by kernel test bot
+ * In qcom_op_cmd_mapping() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_read_status_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_read_id_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_misc_cmd_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot
+ * In qcom_param_page_type_exec() api added cpu_to_le32() macro to fix
+   compilation warning reported by kernel test bot   
+ * In update_rw_regs() api added cpu_to_le32() macro to fix compilation
+   issue reported by kernel test bot
+ * In qcom_param_page_type_exec() api added cpu_to_le32() macro to fix
+   compilation issue reported by kernel test bot
+ * Changed data type of addr1, addr2, cmd, to __le32 in qpic_spi_nand
+   structure
+ * In qcom_spi_set_read_loc_first() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_set_read_loc_last() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_init() api added cpu_to_le32() macro to fix compilation
+   warning
+ * In qcom_spi_ecc_init_ctx_pipelined() api removed unused variables
+   reqs, user, step_size, strength and added cpu_to_le32() macro as well
+   to fix compilation warning
+ * In qcom_spi_read_last_cw() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_check_error() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_read_page_ecc() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_read_page_oob() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_raw() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_ecc() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_program_oob() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_send_cmdaddr() api added cpu_to_le32() macro to fix
+   compilation warning
+ * In qcom_spi_io_op() api added cpu_to_le32() macro to fix compilation
+    warning
+v8:
+ * Fixed compilation warning reported by kernel test robot
+ * Added "chip" description in nandc_set_read_loc_first()
+ * Added "chip" description" in nandc_set_read_loc_last()
+ * Changed data type of read_location0, read_location1,
+   read_location2, read_location3, addr0, addr1, cmd, cfg0,
+   cfg1, ecc_bch_cfg, ecc_buf_cfg, clrflashstatus, clrreadstatus,
+   orig_cmd1, orig_vld to __le32 to fix compilation warning.
+ * Included bitfield.h header file in spi-qpic-snand.c to
+   fix compilation warning
+ * Removed unused variable "steps" variable from 
+   qcom_spi_ecc_init_ctx_pipelined()
+
+v7:
+ * Added read_oob() and write_oob() api
+ * Added FIELD_PREP() in spi init
+ * Made CONFIG_SPI_QPIC_SNAND and CONFIG_MTD_NAND_QCOM
+   as bool type
+ * Removed offset 0 in oob_ecc() layout
+ * Handled multiple error condition
+
+v6:
+ * Added FIELD_PREP() and GENMASK() macro
+ * Added qpic_spi_nand{..} structure for
+   spi nand realted variables
+ * Made qpic_common.c slectable based on
+   either CONFIG_MTD_NAND_QCOM or CONFIG_SPI_QPIC_SNAND
+ * Removed rawnand.h from qpic-common.h 
+ * Removed partitions.h and rawnand.h form spi-qpic-snand.c
+ * Added qcom_nand_unalloc() in remove()
+
+v5:
+ * Fixes nandbiterr issue
+ * Added raw_read() and raw_write() API
+ * Added qcom_ prefix to all the common API
+ * Removed register indirection
+ * Following tests for SPI-NAND devices passed
+
+   - mtd_oobtest
+   - mtd_pagetest
+   - mtd_readtest
+   - mtd_speedtest
+   - mtd_stresstest
+   - mtd_subpagetest
+   - mtd_nandbiterrs
+   - nandtest
+   - nanddump
+   - nandwrite
+   - nandbiterr -i
+   - mtd erase
+   - mtd write
+   - dd
+   - hexddump
+
+v4:
+ * In this patch series fixes kernel doc for all the cmmon api
+ * Also fixes dm-binding commit message
+ * Fix qpic_common.c compilation based on config
+
+v3:
+ * In this patch series fixes multiple things like
+   added clock-name, added _alloc_controller api instead
+   of alloc_master, made common apis more generic etc.
+
+ * Addressed all the comment from v2 patch series
+
+v2:
+ * https://lore.kernel.org/linux-arm-msm/20240215134856.1313239-1-quic_mdalam@quicinc.com/
+ * In this series of patchs we have added basic working QPIC SPI NAND
+   driver with READ, WRITE, ERASE etc functionality
+
+ * Addressed all the comments given in RFC [v1] patch
+
+v1:
+ * https://lore.kernel.org/linux-arm-msm/20231031120307.1600689-1-quic_mdalam@quicinc.com/
+
+Md Sadre Alam (8):
+  spi: dt-bindings: Introduce qcom,spi-qpic-snand
+  mtd: rawnand: qcom: cleanup qcom_nandc driver
+  mtd: rawnand: qcom: Add qcom prefix to common api
+  mtd: nand: Add qpic_common API file
+  mtd: rawnand: qcom: use FIELD_PREP and GENMASK
+  spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
+  arm64: dts: qcom: ipq9574: Add SPI nand support
+  arm64: dts: qcom: ipq9574: Remove eMMC node
+
+ .../bindings/spi/qcom,spi-qpic-snand.yaml     |   83 +
+ .../boot/dts/qcom/ipq9574-rdp-common.dtsi     |   43 +
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   |   12 -
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   27 +
+ drivers/mtd/nand/Makefile                     |    6 +-
+ drivers/mtd/nand/qpic_common.c                |  759 +++++++
+ drivers/mtd/nand/raw/qcom_nandc.c             | 1773 +++--------------
+ drivers/spi/Kconfig                           |    9 +
+ drivers/spi/Makefile                          |    1 +
+ drivers/spi/spi-qpic-snand.c                  | 1633 +++++++++++++++
+ include/linux/mtd/nand-qpic-common.h          |  482 +++++
+ 11 files changed, 3370 insertions(+), 1458 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/qcom,spi-qpic-snand.yaml
+ create mode 100644 drivers/mtd/nand/qpic_common.c
+ create mode 100644 drivers/spi/spi-qpic-snand.c
+ create mode 100644 include/linux/mtd/nand-qpic-common.h
+
 -- 
-2.39.2
+2.34.1
 
 
