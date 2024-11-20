@@ -1,146 +1,140 @@
-Return-Path: <linux-kernel+bounces-415865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774DF9D3D57
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:18:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2839D3D4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A89C280EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 312B528374E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9CB1D86C0;
-	Wed, 20 Nov 2024 14:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44711C7B79;
+	Wed, 20 Nov 2024 14:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AZCZRucq"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jyp6UAJJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0961D63EC
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D2C1AA7AA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732111795; cv=none; b=Y4g+FujDvhsJfcauRavzMs47RK+xKJEemtCFBxkX1kyL83AszL8WmiEqXwuJZ/519ulL677utPITilIPjmsktYY2OIZ7Q6Ts10aZdTTNU5MYmK5Eth50eO4M/pwzpetfwNXyqg02elPi+zkDWUiOXe6+OV8B0SE52if9xXw9ZYU=
+	t=1732111789; cv=none; b=s/jvJhvMwF0+yJJMBdKecl63BeHEfeU/Xtul1/nerNBslcURqPgWcXvM4GbzToXFDpmKQYkM4+vgQFyj9W8/ZB3Cp/UjNuHDOXG+0vaLA2XFagzr+QOuzAkgYyyfuoQlZbZKxZGSa5g1REiCSo/nEaGG7pkNtSsCjNASnZivrrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732111795; c=relaxed/simple;
-	bh=CJT0iMPgfMMKY590TyF/jv0a/eQmMMiUwvdaVlMZsfs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VZxhl77xSGtiH7exkgUrsbEzcRXUSPrLgiCkfccpZtBJhmfyWyhJHlnWmYdWMMiI4L/60uDKqLpnrgYxCHydkO4FxWV61JgI+KSuRbqEGu09YQA2z5qyHXvJltUDlSd0B+V4qigH84A8PKGm5fVL9hAjsnqxaY3aJkbuG6QGEtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=AZCZRucq; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-212776d6449so3698125ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1732111794; x=1732716594; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZzaCab4EHiwWgil1/Ov6nfcjuRXdoG8N44OR/d6zxqU=;
-        b=AZCZRucqf7a15JSeZKFqNYU9351g+sAnoMOyy0GL8Qft4HPSuARV2oCNEiEi8RWDBE
-         u3tvm/ccKFQdL5nmawDoaSv6F0fEdk0x92hrTHtBfCU/N/BBk3fGXjZg9nlF0VHCqXlC
-         icZQY3UjDTpcU3A5VaAJbouuigAFN6cHmYckbVfMzDR0s59xkLPn1WSfKmLQGK9kko2u
-         6V3VicdTKWqQ6UrKgA7H19JTfM1PC4tI1cBNdDNOkO+Sn61DPrcAHoRgu1GWpc7VdZlg
-         iAUqXjTh0tgGJ/iAz8h1JsYP9OQQiAj5S4VehOrpPVetaPOXbiEfMjhZ1Uo4abxTfH9j
-         vteg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732111794; x=1732716594;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZzaCab4EHiwWgil1/Ov6nfcjuRXdoG8N44OR/d6zxqU=;
-        b=W4o115vC8ustD9mdBGoNkeoPh7jSWsJzVz0WH9E936fMDsD8T3y83B18yEF8+MI8eg
-         +R0OPYpMpEYkgMXczLRiswcXgpwoe/JgTqVqTRfKsqtVPI5R92CvuShmvXqltekp5A2E
-         j2Hr8yMrQVZHm3TgbOE8DPXV3mAjSxOqeqYpscSpr77TeRyq5C2l7Ov0N9wHWa8WTRRd
-         9M42KKv11OPbiN/SI84WNvmIOW+IZZzevZxBldwfRGJ5ma0NzXaX4nawcdtMIpWBzIsS
-         B2F1MSxkfoN6bF2T7xDM/Nd2Z97wFNJngeO/AdL5vhxGNj185NMg8ed1Pi9GIasjplBO
-         DTZA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsBZoVp7Kf2IUldJ8RjBc1qdWeWlGsjG9s2RRBpmQIHuh9UlJ5euWFh2jmOSpscZjVXoh8o4Dm9DByLJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2W/ciTNbhJn0xNOGKkEhIVs/gPBc1f5KUPRsrW0mmMRFAqKZR
-	9kSF99p2xZS2bMTZ1uqNw3FtmunjnfqrldKe+AZAwnhMMmjhC00xn5fePfLs9LQ=
-X-Google-Smtp-Source: AGHT+IFOL5TGyzlW376Xm8KJIH1icYR3lg7mocMWM7r0WKrZePcwEdBegYT8u0kbgOQDNjc9If25Dg==
-X-Received: by 2002:a17:902:f688:b0:20c:a692:cf1e with SMTP id d9443c01a7336-2126ff7e7c6mr19809445ad.43.1732111793787;
-        Wed, 20 Nov 2024 06:09:53 -0800 (PST)
-Received: from [127.0.1.1] (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f474fcsm92502505ad.213.2024.11.20.06.09.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 06:09:53 -0800 (PST)
-From: Max Hsu <max.hsu@sifive.com>
-Date: Wed, 20 Nov 2024 22:09:34 +0800
-Subject: [PATCH RFC v3 3/3] riscv: KVM: Add Svukte extension support for
- Guest/VM
+	s=arc-20240116; t=1732111789; c=relaxed/simple;
+	bh=P0esqpfCVIKD6GC5qpermc9EFlN4zlzNggcWx08FVXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bg+Yw/ZEyoZ3fzxM+cRxkSn3tSemc4SHd2fU4ai0jVBedTpPCAchEzjXJcZfklLNgY4htCI5MLg4+ETlruVQe2/NkBqFPgKv7riWg5X2PQUvlBuf4AivyVnimngNeqxBlH6Ry5jUrLX/nRr2kHQjj7H50144IlrEY/2AeGS9sxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jyp6UAJJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732111786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=exClAK1Ex5b7lb7CBU4f4Lt0EX/bR7auCnoEN47gAdc=;
+	b=Jyp6UAJJpIPw1VmKyh8VJ05nZ59h8Biy3IH910d7fJkZklnF9MBuuY+J/d5oWafvRPTeRI
+	HXqauBwzQxO4CWTHTQNjZY7p8/238v713qDjx+NoNp2OFlWhvBst9Fkx7KXFvDA7hHgTj6
+	QH6516+57B5sAbUj+0pGVAASLKMqH+Q=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-124-_iFhFkQLOneNDoERyeNNBA-1; Wed,
+ 20 Nov 2024 09:09:41 -0500
+X-MC-Unique: _iFhFkQLOneNDoERyeNNBA-1
+X-Mimecast-MFC-AGG-ID: _iFhFkQLOneNDoERyeNNBA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5DF451956096;
+	Wed, 20 Nov 2024 14:09:40 +0000 (UTC)
+Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A38FA1955F43;
+	Wed, 20 Nov 2024 14:09:38 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 1/2] nfs/blocklayout: Don't attempt unregister for invalid block device
+Date: Wed, 20 Nov 2024 09:09:34 -0500
+Message-ID: <4e9690bed3d95d1c4cf2a7b1cc76f7cd1b333847.1732111502.git.bcodding@redhat.com>
+In-Reply-To: <cover.1732111502.git.bcodding@redhat.com>
+References: <cover.1732111502.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241120-dev-maxh-svukte-v3-v3-3-1e533d41ae15@sifive.com>
-References: <20241120-dev-maxh-svukte-v3-v3-0-1e533d41ae15@sifive.com>
-In-Reply-To: <20241120-dev-maxh-svukte-v3-v3-0-1e533d41ae15@sifive.com>
-To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>
-Cc: Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
- Max Hsu <max.hsu@sifive.com>, Samuel Holland <samuel.holland@sifive.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1321; i=max.hsu@sifive.com;
- h=from:subject:message-id; bh=CJT0iMPgfMMKY590TyF/jv0a/eQmMMiUwvdaVlMZsfs=;
- b=owEB7QES/pANAwAKAdID/Z0HeUC9AcsmYgBnPe2kadvH5t/olEh4nZ968ktrx/equF2lYqvX8
- y0+ccmYkHyJAbMEAAEKAB0WIQTqXmcbOhS2KZE9X2jSA/2dB3lAvQUCZz3tpAAKCRDSA/2dB3lA
- vQSQDACIUsjg3BUBC94txWJFJnsW+HdGsZK9TdrvP+9cahCFdSbYefBFYDX+F6qrGFGZ4xd1dZI
- FgYxgtdj1e571lb++BZPkfR4WVNcV3JrX5/B0UmnEXolTaLvraICuVl5r1gPmRDUbTKGlPGka/a
- hHMAQocMymw6cUu6/MM2ZTscgvJSzCEYgcdwJ9YPXvEKKsmaepFSBoZjfsL5SuJG/Ja3pyTgvCF
- X1/njUvmXBN5+VLfqj91GeLNPV5tCcYxZe1oLWqljxohLeXrEdmTy+4+1i6g4AsQi7vIsQs3Wzk
- cOy+tDP1uTNQrUQ6HVD8QT12FAUuH27qlxxJoSVy1YNWvDknVuM94hkLv7Y6O/eSNGNJGnlV1Kj
- I2IDHywxZohyBH7rV5Ny2An8bjvPfJHS1wf2r3G/gt6vNXu4qNDclE+TGyuawb4KxLkLtFx6RON
- DwJgbyToqac448RyXhmMEWoDDOMcfwnlsB7aqqbAFcN3VfhT4WQG7OlCWDJmnpSKyFbhw=
-X-Developer-Key: i=max.hsu@sifive.com; a=openpgp;
- fpr=EA5E671B3A14B629913D5F68D203FD9D077940BD
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Add KVM_RISCV_ISA_EXT_SVUKTE for VMM to detect the enablement
-or disablement the Svukte extension for Guest/VM
+Since commit d869da91cccb ("nfs/blocklayout: Fix premature PR key
+unregistration") an unmount of a pNFS SCSI layout-enabled NFS may
+dereference a NULL block_device in:
 
-Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-Signed-off-by: Max Hsu <max.hsu@sifive.com>
+  bl_unregister_scsi+0x16/0xe0 [blocklayoutdriver]
+  bl_free_device+0x70/0x80 [blocklayoutdriver]
+  bl_free_deviceid_node+0x12/0x30 [blocklayoutdriver]
+  nfs4_put_deviceid_node+0x60/0xc0 [nfsv4]
+  nfs4_deviceid_purge_client+0x132/0x190 [nfsv4]
+  unset_pnfs_layoutdriver+0x59/0x60 [nfsv4]
+  nfs4_destroy_server+0x36/0x70 [nfsv4]
+  nfs_free_server+0x23/0xe0 [nfs]
+  deactivate_locked_super+0x30/0xb0
+  cleanup_mnt+0xba/0x150
+  task_work_run+0x59/0x90
+  syscall_exit_to_user_mode+0x217/0x220
+  do_syscall_64+0x8e/0x160
+
+This happens because even though we were able to create the
+nfs4_deviceid_node, the lookup for the device was unable to attach the
+block device to the pnfs_block_dev.
+
+If we never found a block device to register, we can avoid this case with
+the PNFS_BDEV_REGISTERED flag.  Move the deref behind the test for the
+flag.
+
+Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/include/uapi/asm/kvm.h | 1 +
- arch/riscv/kvm/vcpu_onereg.c      | 1 +
- 2 files changed, 2 insertions(+)
+ fs/nfs/blocklayout/dev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/asm/kvm.h
-index 4f24201376b17215315cf1fb8888d0a562dc76ac..158f9253658c4c28a533b2bda179fb48bf41e1fc 100644
---- a/arch/riscv/include/uapi/asm/kvm.h
-+++ b/arch/riscv/include/uapi/asm/kvm.h
-@@ -177,6 +177,7 @@ enum KVM_RISCV_ISA_EXT_ID {
- 	KVM_RISCV_ISA_EXT_ZAWRS,
- 	KVM_RISCV_ISA_EXT_SMNPM,
- 	KVM_RISCV_ISA_EXT_SSNPM,
-+	KVM_RISCV_ISA_EXT_SVUKTE,
- 	KVM_RISCV_ISA_EXT_MAX,
- };
+diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
+index 6252f4447945..cab8809f0e0f 100644
+--- a/fs/nfs/blocklayout/dev.c
++++ b/fs/nfs/blocklayout/dev.c
+@@ -20,9 +20,6 @@ static void bl_unregister_scsi(struct pnfs_block_dev *dev)
+ 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
+ 	int status;
  
-diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-index 5b68490ad9b75fef6a18289d8c5cf9291594e01e..4c3a77cdeed0956e21e53d1ab4e948a170ac5c5c 100644
---- a/arch/riscv/kvm/vcpu_onereg.c
-+++ b/arch/riscv/kvm/vcpu_onereg.c
-@@ -43,6 +43,7 @@ static const unsigned long kvm_isa_ext_arr[] = {
- 	KVM_ISA_EXT_ARR(SVINVAL),
- 	KVM_ISA_EXT_ARR(SVNAPOT),
- 	KVM_ISA_EXT_ARR(SVPBMT),
-+	KVM_ISA_EXT_ARR(SVUKTE),
- 	KVM_ISA_EXT_ARR(ZACAS),
- 	KVM_ISA_EXT_ARR(ZAWRS),
- 	KVM_ISA_EXT_ARR(ZBA),
-
+-	if (!test_and_clear_bit(PNFS_BDEV_REGISTERED, &dev->flags))
+-		return;
+-
+ 	status = ops->pr_register(bdev, dev->pr_key, 0, false);
+ 	if (status)
+ 		trace_bl_pr_key_unreg_err(bdev, dev->pr_key, status);
+@@ -58,7 +55,8 @@ static void bl_unregister_dev(struct pnfs_block_dev *dev)
+ 		return;
+ 	}
+ 
+-	if (dev->type == PNFS_BLOCK_VOLUME_SCSI)
++	if (dev->type == PNFS_BLOCK_VOLUME_SCSI &&
++		test_and_clear_bit(PNFS_BDEV_REGISTERED, &dev->flags))
+ 		bl_unregister_scsi(dev);
+ }
+ 
 -- 
-2.43.2
+2.47.0
 
 
