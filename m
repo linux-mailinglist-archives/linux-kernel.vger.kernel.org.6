@@ -1,125 +1,129 @@
-Return-Path: <linux-kernel+bounces-415972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9E59D3EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:11:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D879D3EA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:12:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9971F2463D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8431F24873
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C771DC05D;
-	Wed, 20 Nov 2024 14:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F031DD885;
+	Wed, 20 Nov 2024 14:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ew7HvsRk"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DMgnCklC"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66B1C75E4;
-	Wed, 20 Nov 2024 14:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025021C761F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114750; cv=none; b=GQrwG1rtKtaU8zoIVYpr7kRpp3H3M1gGh79MRZlsysnfew6OmFG5hb6j3MR1xdrZwfit+GoTczjU9s8qowCuiLCig2QO2i1BrUZtuaD6B+otOx45W4xgLKzLUtNQ9gu4XAbiVcLAraxP5Fl7Cvjc04s8ojVyj0zVxe54mtXF6FA=
+	t=1732114768; cv=none; b=oCLBL6528I+DWnXVHqLkt8m4LyccmGaqpa5tGotZbU1MJOgLLeIk8F6/C6jYVcP8s+eS+SUDo4tOR1LfeYzs7v/atuLJlCZoCoyOsVyzlmL3t1VSbEY1Aem9hSk8fM8d2ADn2EHXeqy57y/TlyRNsIx13DAONJzhMfXai0sDPq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114750; c=relaxed/simple;
-	bh=mgj4bvZ/X9lF9Afs6hkeLwqdCb98lX1871WUaw0D2YA=;
+	s=arc-20240116; t=1732114768; c=relaxed/simple;
+	bh=xaPF0Xudp3d/bmQL2xmlO/yPfi+mdTitYGkLa2xjOtQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lR9z8/eFuwg1UW2ePQRwhG0ltELJBe8h+TRmGaRTlARm5oVwT7vZT2ehMRj9Il+mwlkke8UP42tBVAMjqKe4wP7s1GhKdE3pxEtv9DXDbzbY0qpISnA8Cc7EtzfrtKw3h+G0wwD4VUsZwiJ+qsXsmt3VhJDKrIS0KJUUvAGz/ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ew7HvsRk; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RkowXip/85xKsOA9eS4V3TnfVFLeWlFM6e9qis0TUFo=; b=ew7HvsRkHFTom5sTnUqzSG0oAO
-	ph2CPqO/ygxJ/UPM1WUb+pYR0aHrsOxLuya8BpPk6cbQe7m4o8R6UyxrT56fisaJpI/vFiYU6Bxds
-	9kG361m6Pt6bVUEHKciM9MNv6n0DeDnr3UoPQ1HATq0bL/rvVgpKHO/CPebxjZHz2SGumyNYakGU8
-	gLKwJSCZ55FiCvjyNICyvPDS/wqrke6fPTkuii22vWFlAQRkd2AK+ZRfhifvacNWLsUjG2bXsE/p7
-	Wwtsy0LReGjbKYrASQ0vbBFba1zyTDzJKYiUZiSs1m4+1RHu4gw19DuBmdh21X/FztxkFnivc9Z6I
-	zfyYJrNA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDmAb-00000000TrW-1QgA;
-	Wed, 20 Nov 2024 14:59:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 025EF3006AB; Wed, 20 Nov 2024 15:59:05 +0100 (CET)
-Date: Wed, 20 Nov 2024 15:59:04 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 08/15] sched/clock, x86: Make __sched_clock_stable
- forceful
-Message-ID: <20241120145904.GK19989@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-9-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UAYKJujNxUR3WUFHOVNMLfwqjemLHYVt7NdL7EzAYZb/t1WykfKIQnCPG09sy2DtOgchUUPsR4w/seA/BBsalJ+jEtN5mlCoSstsg+dPwiopeOw5Hlau+F6V7ONqMUXKly8YsuMm7MqeHbn2TcA6RG5K2OdieLHs7t8XBvVBnAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DMgnCklC; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so41554085e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:59:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732114765; x=1732719565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VNySOlZ728Qwil3fWKGNJRdQ74n20bXi/RqzObtMGPg=;
+        b=DMgnCklCwPWA8R/TcT8KRb4dOYFxtWMdfQoseLOMPf/iwtwL5vlnT+krVo5VswsgXO
+         l0csqp+j3gORaOsBd2lrTxrhK0pyeCJwJ+bW1pss7I5K8GRKook/KP5pAlwJf5cSVVHs
+         YH4eZx9S5eCEurVUiQsvpmXGQ6mBgSh0gyeGfXOiXLhPIXBPl7wEA7DwYQctsfNHzk1D
+         cNvwdQUGNq/3C/QAhuqXnhTG3Ou2/xmkmN5ODN8nsGmtHHPmqjRfj9qdbEkyU7Fvo1QL
+         FZ+OQF6zM2iZmB+zuWz/Dx+48pmaBYwt6SsDvJlNWxGIYirf4WEIWp3aQoXCvbjM9p36
+         HUCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732114765; x=1732719565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VNySOlZ728Qwil3fWKGNJRdQ74n20bXi/RqzObtMGPg=;
+        b=omQljAgojK8Iym7IedIGg6ri1wFdSaJ+Dc9Zq+pYCjtThVx0CCtWKhQEwveeVsKzt0
+         aclUIzADF6EruZ4wTwpo8vOUcT/xt2hslBTKaP2HU/pf3dePSMTtN/frRBXtvq22WBoI
+         wy2d90i/ccfl3SkOtPNdBJLMN1OKJSyEMg1bebnn/Bi4Slxb107SAj9NxXAwU/GygcuW
+         O0/IDfC8u6bqfeAUqa4UR5oQfDepoGC0UIXu+tHVcIoaP/PSbNn18vCeWjx1FGdeusWX
+         DGMJ5lboJoUj21m6CRIQcvqlT/qE4rqt3RNZaRm9qaveweh8D8xDJ1QztNqyE7rbIg9n
+         hmPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRsPYqs9vW76TWH40ZlMoTVjtTqgss/FQD3qSw5REsp8y1D221PHvmWo5xQmCkdRASAuAn7n5XCtMqv+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyquFmfpCFH2NnJwrLsQJpM5qF/rXp6k1NYBPSoozZE47pUSDjm
+	lCB7lVMw6AvJyu1QN0phRBnWCa04tRj3s0d1IISL8FMVUcKwFjXX6PPkf7zYgI4=
+X-Google-Smtp-Source: AGHT+IHQ2dmEzHfyh4PcYnC+LimJ6ZLtLl2LOMIvfxYsqrjiWJYRuSfmnpxmbQO+Vl8LsI0rFWX6gg==
+X-Received: by 2002:a05:6000:1541:b0:382:5177:3a4f with SMTP id ffacd0b85a97d-38254b21313mr2465999f8f.49.1732114765245;
+        Wed, 20 Nov 2024 06:59:25 -0800 (PST)
+Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254905328sm2348689f8f.2.2024.11.20.06.59.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 06:59:24 -0800 (PST)
+Date: Wed, 20 Nov 2024 15:59:23 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] PCI: pwrctl: Add power control driver for qps615
+Message-ID: <j44dasmtyopz3i5dhwq75m2nr7bikcifka2zzvjr55wdlr6bhh@5c2ite46tvxu>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="me5utvjifrxgd6pz"
 Content-Disposition: inline
-In-Reply-To: <20241119153502.41361-9-vschneid@redhat.com>
+In-Reply-To: <20241112-qps615_pwr-v3-6-29a1e98aa2b0@quicinc.com>
 
-On Tue, Nov 19, 2024 at 04:34:55PM +0100, Valentin Schneider wrote:
-> Later commits will cause objtool to warn about non __ro_after_init static
-> keys being used in .noinstr sections in order to safely defer instruction
-> patching IPIs targeted at NOHZ_FULL CPUs.
-> 
-> __sched_clock_stable is used in .noinstr code, and can be modified at
-> runtime (e.g. KVM module loading). Suppressing the text_poke_sync() IPI has
 
-Wait, what !? loading KVM causes the TSC to be marked unstable?
+--me5utvjifrxgd6pz
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v3 6/6] PCI: pwrctl: Add power control driver for qps615
+MIME-Version: 1.0
+
+Hello,
+
+On Tue, Nov 12, 2024 at 08:31:38PM +0530, Krishna chaitanya chundru wrote:
+> +static struct platform_driver qps615_pwrctl_driver = {
+> [...]
+> +	.remove_new = qps615_pwrctl_remove,
+
+Please use .remove instead of .remove_new.
+
+Best regards
+Uwe
+
+--me5utvjifrxgd6pz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc9+UgACgkQj4D7WH0S
+/k5hBAf/axrIVl8P9918nf4b7oboxs1O5Z6BSG98CyDzUCKbeFYbtTiXpS/Q7Pk6
+q1/09KeLUNOwaVrFPByOIR6z/SXxVfkDzaqgC98TsgWxs9H3NeT8b9LjdAqPW0Lo
+T25ukMkxel8BsKQC8NREsjsgGEsNgZYsn5VWaMNQuOOX/rII7PLbe5FKtVT4y3mV
+gmttxug1BnPCj13ZrN/2s+mnuYeM03ziWa14rX/BAjWnjkGr3tuzt0y+oWTIgpMr
+5EipxngCY1/JS5UQ8rdgDBcyFAATut/c2s5SF1sONP1cdqkG1kVseZWvtHjrtpSe
+P1p8X2WkoG57A5eNnX20N+qjxvX35g==
+=rntr
+-----END PGP SIGNATURE-----
+
+--me5utvjifrxgd6pz--
 
