@@ -1,277 +1,107 @@
-Return-Path: <linux-kernel+bounces-415541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE449D380A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:12:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C5A9D3805
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E919DB27EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:58:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E471CB2C677
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E008D19D06B;
-	Wed, 20 Nov 2024 09:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YcKYT+X/"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BAE19F101;
+	Wed, 20 Nov 2024 10:00:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A4915DBBA;
-	Wed, 20 Nov 2024 09:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2ACB17BB2E;
+	Wed, 20 Nov 2024 10:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096697; cv=none; b=UNIlu6ElGHiV3FhcTOhjPKuab2hiUKtogQR3CHcfwQoHQZLgdUSS/hYU9/O1Y6pd8nv01uxWro1flCN9bua99fivi1OWCKBwFQEe8/dIOmpLaBSQsdkqUJNahzWVba2Cckvprl8oCVKAAKZhJGOjLxzz+PI7gf3BaTrxRx1Jvew=
+	t=1732096824; cv=none; b=lFZSapcR52qO8Gugo2bM7aXHR5jiXsRRGeuzO5RmiCwgSYlOR9Iy1gTWvX3RtaMnRzwiTWPcHLWOOqzw+M1TI00tEduuiNwrJgRJ7k/WA2kUpyPB45O1aD57YO1X40yeNcR76BxprL/D7ULp+ZL3vAnavDG3evn0BYHZZwjZIEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096697; c=relaxed/simple;
-	bh=K8zBgnmsPULEghjWE7qyt+SNHsWqFYpGiv4K6uGA2Fc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DWOuZ1GFDuvFITZmgLq8rCRvwGPcZ1qiwt1SekMKZc+zP3Rj53tjlNVQoz/eeptuKgxZJVkA1S/TNp3zCRWKId9flc0dsd1v+bYIxOJecqooBkJk5DpvdHa/O79FhviU9YKI/GmlpSskvW8IJ9Xs9nphnmQIC+MFEEgn3Nsmf74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YcKYT+X/; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 888561C0002;
-	Wed, 20 Nov 2024 09:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732096687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BJBQhOJJKyJIub486+xY+tIqICKMJsQpiwZBKO1U4e0=;
-	b=YcKYT+X/kbeYr3xub2kdu7gZpNiUBE1WFtfL/o3SWpxY9P8YR+407tw5COM81yOdPrP6K2
-	2ZoMCniU3Qy9u2MJM8Ob7NpPPDhkgZgemPcI80cDgnlO/mORHAm+4UiQwMkOIlY5zlJoh0
-	yK4BxEiqBGdzXECuq9OfzL1Bnl5DvppHJU7GWXt6OEJmDUtS/fxkoKBYQn5SaVV7DZ0B2d
-	3olI/snl8pzs4+vdP4ehSjTuBkFb6TIqKTWQSVvC5NERf8tS/NWGRhSPJJkUvDbAAr3woO
-	JOgupd7SKHZVJGnlvu8k6LqtZgnN/4KRQU8kfcQw2paLjzSnMvwu9UrohouTfg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: "tudor.ambarus@linaro.org" <tudor.ambarus@linaro.org>,
-  "michael@walle.cc" <michael@walle.cc>,  "broonie@kernel.org"
- <broonie@kernel.org>,  "pratyush@kernel.org" <pratyush@kernel.org>,
-  "richard@nod.at" <richard@nod.at>,  "vigneshr@ti.com" <vigneshr@ti.com>,
-  "robh@kernel.org" <robh@kernel.org>,  "conor+dt@kernel.org"
- <conor+dt@kernel.org>,  "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-  "Abbarapu, Venkatesh" <venkatesh.abbarapu@amd.com>,
-  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-  "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-  "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-  "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,  "Simek, Michal"
- <michal.simek@amd.com>,  "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,  "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>,  "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>,  "git (AMD-Xilinx)" <git@amd.com>,
-  "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>,
-  "beanhuo@micron.com" <beanhuo@micron.com>
-Subject: Re: [RFC PATCH 2/2] dt-bindings: spi: Update stacked and parallel
- bindings
-In-Reply-To: <IA0PR12MB769947EEA7AB4D9DFF0B2510DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
-	(Amit Kumar Mahapatra's message of "Tue, 19 Nov 2024 17:02:45 +0000")
-References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
-	<20241026075347.580858-3-amit.kumar-mahapatra@amd.com>
-	<87y11gwtij.fsf@bootlin.com>
-	<IA0PR12MB769947EEA7AB4D9DFF0B2510DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 20 Nov 2024 10:58:05 +0100
-Message-ID: <87bjyaxm4y.fsf@bootlin.com>
+	s=arc-20240116; t=1732096824; c=relaxed/simple;
+	bh=gJuYhytfzP1s0tqg6XZMauahlV3fdl16xGguFwiZfn0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gATOP37chyy2/Rh6VqCJZva5T9YQSWlKkinKTL5FR1OqvGe+d6fB55i++h21XKc4zfyeaK/LKPsGB4W6+7oukRuVwdn1vEsST8Cny0lNxwvZmYXZ2F5FkWzkUwUxDs/ync+jYp5EMPl97wnx5TqdaldxHuWIoEz/rh2LCzqTmAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XtcKm0HKzz6L74b;
+	Wed, 20 Nov 2024 17:59:56 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id 402EA140F41;
+	Wed, 20 Nov 2024 18:00:18 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.195.247.212) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 20 Nov 2024 11:00:17 +0100
+From: <shiju.jose@huawei.com>
+To: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>,
+	<nifan.cxl@gmail.com>, <vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dave@stgolabs.net>
+CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>, <shiju.jose@huawei.com>
+Subject: [PATCH 00/13] rasdaemon: cxl: Update CXL event logging and recording to CXL spec rev 3.1
+Date: Wed, 20 Nov 2024 09:59:10 +0000
+Message-ID: <20241120095923.1891-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500007.china.huawei.com (7.182.85.172)
 
-On 19/11/2024 at 17:02:45 GMT, "Mahapatra, Amit Kumar" <amit.kumar-mahapatr=
-a@amd.com> wrote:
+From: Shiju Jose <shiju.jose@huawei.com>
 
-> Hello Miquel,
->
->> >         flash@1 {
->> >                 compatible =3D "jedec,spi-nor"
->> >                 reg =3D <0x01>;
->> >                 stacked-memories =3D <&flash@0 &flash@1>;
->> >                 spi-max-frequency =3D <50000000>;
->> >                 ...
->> >                         partitions {
->>=20
->> Same comment as before here.
->
-> Sorry again=20
->
-> spi@0 {
-> 	...
-> 	flash@0 {
-> 		compatible =3D "jedec,spi-nor"
-> 		reg =3D <0x00>;
-> 		stacked-memories =3D <&flash@0 &flash@1>;
-> 		spi-max-frequency =3D <50000000>;
-> 		...
-> 		partitions {
-> 			compatible =3D "fixed-partitions";
-> 			concat-partition =3D <&flash0_part0 &flash1_part0>;
->=20=09=09=09
-> 			flash0_part0: partition@0 {
-> 				label =3D "part0_0";
-> 				reg =3D <0x0 0x800000>;
-> 			};
-> 		};
-> 	};
-> 	flash@1 {
-> 		compatible =3D "jedec,spi-nor"
-> 		reg =3D <0x01>;
-> 		stacked-memories =3D <&flash@0 &flash@1>;
-> 		spi-max-frequency =3D <50000000>;
-> 		...
-> 		partitions {
-> 			compatible =3D "fixed-partitions";
-> 			concat-partition =3D <&flash0_part0 &flash1_part0>;
->=20=09=09=09
-> 			flash1_part0: partition@0 {
-> 				label =3D "part0_1";
-> 				reg =3D <0x0 0x800000>;
-> 			};
-> 		};
-> 	};
-> };
->
->>=20
->> >                         compatible =3D "fixed-partitions";
->> >                                 concat-partition =3D <&flash0_partitio=
-n &flash1_partition>;
->> >                                 flash1_partition: partition@0 {
->> >                                         label =3D "part0_1";
->> >                                         reg =3D <0x0 0x800000>;
->> >                                 }
->> >                         }
->> >         }
->> >
->> > }
->> >
->> > parallel-memories binding changes:
->> > - Remove the size information from the bindings and change the type to
->> >   boolen.
->> > - Each flash connected in parallel mode should be identical and will h=
-ave
->> >   one flash node for both the flash devices.
->> > - The =E2=80=9Creg=E2=80=9D prop will contain the physical CS number f=
-or both the connected
->> >   flashes.
->> >
->> > The new layer will double the mtd-> size and register it with the mtd
->> > layer.
->>=20
->> Not so sure about that, you'll need a new mtd device to capture the whol=
-e device.
->> But this is implementation related, not relevant for binding.
->>=20
->> >
->> > spi@1 {
->> >         ...
->> >         flash@3 {
->> >                 compatible =3D "jedec,spi-nor"
->> >                 reg =3D <0x00 0x01>;
->> >                 paralle-memories ;
->>=20
->> Please fix the typos and the spacing (same above).
->>=20
->> >                 spi-max-frequency =3D <50000000>;
->> >                 ...
->> >                         partitions {
->> >                         compatible =3D "fixed-partitions";
->> >                                 flash0_partition: partition@0 {
->> >                                         label =3D "part0_0";
->> >                                         reg =3D <0x0 0x800000>;
->> >                                 }
->> >                         }
->> >         }
->> > }
->> >
->> > Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
->> > ---
->> >  .../bindings/spi/spi-controller.yaml          | 23 +++++++++++++++++--
->> >  .../bindings/spi/spi-peripheral-props.yaml    |  9 +++-----
->> >  2 files changed, 24 insertions(+), 8 deletions(-)
->> >
->> > diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml
->> > b/Documentation/devicetree/bindings/spi/spi-controller.yaml
->> > index 093150c0cb87..2d300f98dd72 100644
->> > --- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
->> > +++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
->> > @@ -185,7 +185,26 @@ examples:
->> >          flash@2 {
->> >              compatible =3D "jedec,spi-nor";
->> >              spi-max-frequency =3D <50000000>;
->> > -            reg =3D <2>, <3>;
->> > -            stacked-memories =3D /bits/ 64 <0x10000000 0x10000000>;
->> > +            reg =3D <2>;
->> > +            stacked-memories =3D <&flash0 &flash1>;
->> >          };
->>=20
->> I'm sorry but this is not what you've talked about in this series.
->> Either you have flash0 and flash1 and use the stacked-memories property =
-in both of
->> them (which is what you described) or you create a third virtual device =
-which points
->> to two other flashes. This example allows for an easier use of the parti=
-tions
->
-> If I understand your point correctly, you're suggesting that we should=20
-> avoid using stacked-memories and concat-partition properties together and=
-=20
-> instead choose one approach. Between the two, I believe concat-partition=
-=20
-> would be the better option.
+1. Update CXL event logging and recording for CXL spec rev 3.1 and for the
+following and corresponding kernel CXL trace events changes.
+https://lore.kernel.org/lkml/20241120093745.1847-1-shiju.jose@huawei.com/
 
-That's not exactly it, look at the reg properties above, they do not
-match the flash devices. Your example above invalid but it is not clear
-whether this is another typo or voluntary.
+2. Add following fixes.
+ - Fix logging of memory event type field of DRAM trace event.
+ - Fix mismatch in 'region' field's name with that in kernel DRAM trace
+   event.
 
-> While looking into your mtdconcat patch [1], I noticed that it creates a=
-=20
-> virtual MTD device that points to partitions on two different flash nodes=
-,=20
-> which aligns perfectly with our requirements.
->
-> However, there are two key concerns that, if addressed, could make this=20
-> patch suitable for the stacked mode:
->
-> 1/ The creation of a virtual device that does not have a physical=20
-> existence.
+Shiju Jose (13):
+  rasdaemon: cxl: Fix logging of memory event type of DRAM trace event
+  rasdaemon: cxl: Fix mismatch in region field's name with kernel DRAM
+    trace event
+  rasdaemon: cxl: Add automatic indexing for storing CXL fields in
+    SQLite database
+  rasdaemon: cxl: Update common event to CXL spec rev 3.1
+  rasdaemon: cxl: Add Component Identifier formatting for CXL spec rev
+    3.1
+  rasdaemon: cxl: Update CXL general media event to CXL spec rev 3.1
+  rasdaemon: cxl: Update CXL DRAM event to CXL spec rev 3.1
+  rasdaemon: cxl: Update memory module event to CXL spec rev 3.1
+  rasdaemon: ras-mc-ctl: Fix logging of memory event type in CXL DRAM
+    error table
+  rasdaemon: ras-mc-ctl: Update logging of common event data to align
+    with CXL spec rev 3.1
+  rasdaemon: ras-mc-ctl: Update logging of CXL general media event data
+    to align with CXL spec rev 3.1
+  rasdaemon: ras-mc-ctl: Update logging of CXL DRAM event data to align
+    with CXL spec rev 3.1
+  rasdaemon: ras-mc-ctl: Update logging of CXL memory module data to
+    align with CXL spec rev 3.1
 
-We do already have:
-- the master mtd device (disabled by default for historical reasons, but
-  can be enabled with a Kconfig option).
-- an mtd device per partition
+ ras-cxl-handler.c  | 262 ++++++++++++++++++++++++++++++++++++++++++---
+ ras-record.c       | 181 ++++++++++++++++++++-----------
+ ras-record.h       |  21 ++++
+ ras-report.c       |  30 ++++--
+ util/ras-mc-ctl.in | 194 ++++++++++++++++++++++++++++-----
+ 5 files changed, 583 insertions(+), 105 deletions(-)
 
-I don't see a problem in creating virtual mtd devices in the kernel.
+-- 
+2.43.0
 
-> 2/ The creation of individual MTD devices that are concatenated to form=20
-> the virtual MTD device, which may not be needed by the user.
-
-You can also get rid of them by default (or perhaps do the opposite and
-let a Kconfig option for that).
-
-> Regarding the first point, I currently cannot think of a better generic=20
-> way to support the stacked feature than creating a virtual device.
-> Please let me know you thoughts on this.
->
-> For the second point, one possible solution is to hide the individual MTD=
-=20
-> devices (that form the concatenated virtual MTD device) from the user onc=
-e=20
-> the virtual device is created. Please let us know if you have any other=20
-> suggestions to address this issue.
-
-That is what is done with the master device by default.
-
-> [1] https://lore.kernel.org/linux-mtd/20191127105522.31445-5-miquel.rayna=
-l@bootlin.com/=20
-
-Thanks,
-Miqu=C3=A8l
 
