@@ -1,168 +1,120 @@
-Return-Path: <linux-kernel+bounces-416097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58B79D4040
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:40:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8029D403A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:39:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F895B29788
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375B31F222AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB4153BED;
-	Wed, 20 Nov 2024 16:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2B3153814;
+	Wed, 20 Nov 2024 16:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMWSIgVt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvAeQaUq"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B49F145335;
-	Wed, 20 Nov 2024 16:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E580D749C;
+	Wed, 20 Nov 2024 16:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120662; cv=none; b=Cgr13CXGd6aSW949JSvi6sQ+gv8vUWrNji2UZEAmCbHhlaoezrVejlb6iGP8sEQw3up3/Q5QTQdFR/tLG6LPI2cgzG/hZuUcn8bVuaPQC3VhsxeJCdYy0fZV8Rc9X+6zlYvMkhKzadIcymMZ2mtvFrwfAWPj/9GddUTFTVT8zo4=
+	t=1732120779; cv=none; b=FJS2fGb73H1CQYtFUkhyrc9m1P7yFHZSB76TGaXfbXYiw3ZxIKr4BlCUW2nkSiCp9lh9aJjjlMZZb/mg8OayyVLISzmsutoSY589fjeWYOiJUXZ7rrxfwNjBGMOqnTGcKFe5qNKVc8rrdcfAwFm4Mr1AX2Ixy84vpjkOXa6KoXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120662; c=relaxed/simple;
-	bh=MseR2j5hxTqT7Bar0/xqOpVboZgTwU8i2w8NcRlv5s4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPeemz/rZSIOYC+VNenkSWlXPAMrAtOXuxjKCGkVKn5vMXWkYQ/SRYKLI+JYKp2w6RimBX0FOg7VE5SqjuDECgVlqUHHZkWMhPR02+Sx12vEH1hKqINUG5G/QtRX6YY6NblQmRXgkNgCzxsL7NijRs/GUTslKlde/8VG9vYAh+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMWSIgVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851C4C4CECD;
-	Wed, 20 Nov 2024 16:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732120660;
-	bh=MseR2j5hxTqT7Bar0/xqOpVboZgTwU8i2w8NcRlv5s4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QMWSIgVtcGml1aPdZ8hbOIM8g+T6EZigJrY91VWtxzfGrgTEgfs+N/9Q2lJ7Q7CFR
-	 lAEj9x9KchamdtSrvmPoNr2j88sALwzOqLjzyboLP0YFYRomvvphV/rS/oQ4JgwCBA
-	 ukSSjv44S3Dga/7oC+dHk7ycPqFyi6hUtQ9iSba2MViNzm3W7JpikZWu6F3X0TQ5ya
-	 aDWo7X3DGMUYnypoLi9K4W5ml13uSk8aWKcR/wxLu5zeyDSqHlHs3lMfjQ+4YE8vgj
-	 oro5JY5/u28wVHXb8aUkZNV9PoW1EGh07jAS27Y5dXeEwrcLxxFsSs1fMnyzy05lJt
-	 JHhl+JH//QFsA==
-Message-ID: <ecf58f72-39b9-4e9d-a2bb-8cc225b4f875@kernel.org>
-Date: Wed, 20 Nov 2024 17:37:34 +0100
+	s=arc-20240116; t=1732120779; c=relaxed/simple;
+	bh=BsIa+RgaLPKa5bAxbkQ1STBnEtdx6f/7oQ0Otk+B8Hc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GSqh3ebVbteS6zVPyim0KPkY02QDiMlhOcHZd6aU8+LorY5OszXdk66o1+IOxwuP1wKcUtGDfdLbvER8+mmsOn+AYwMO3C3C9oIOAzvSrNwsET7pmCbNXnz0JrE+NRTJWX+4rI6Z/5gPNLNsZO0KcObvPqnIWUQQlkE1T4AE//E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvAeQaUq; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-72483f6e2f3so916850b3a.1;
+        Wed, 20 Nov 2024 08:39:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732120777; x=1732725577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CAUwlthhsrI+QxNOIY7hNomh5JBQhjmQBWtieudrhVg=;
+        b=JvAeQaUq2NLPVkfW71DcLHYun9lcKyWDz1+h6Bsky1YR2u205cY9IzlKEXrhiihi0C
+         XoLEurP841Y43urjYCor3E5h25rwvaZLWjoLWdY+IcgIxToWXPGCFcXES3+QzsbsaggR
+         MwEufknnQ05DzYQ2thKLw3De552GEDEz5odyJYcaa+6DYZ/yt1YHGKPhOQJ7cHEqqFC0
+         1JWebkcJSbsHuvzLW0KAF+D9ne7ayYS9I3DRsJMb/qKN0yScZPO5v66HORD0Q1TWbhGL
+         mQJlcFIfX4BaubklBQWfN9j332m8K4q9PQxCkpacb4syizfZvR+bJlkZrH0+gEUBIcwj
+         hogA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732120777; x=1732725577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CAUwlthhsrI+QxNOIY7hNomh5JBQhjmQBWtieudrhVg=;
+        b=C/ILeGG3wSFxQuu/gkcer7XZk3sZh3WcBKgAa0jMIpcJ+9Hj+oXFlGKqZwNsN0MGRg
+         JJ76tYckdeBzYx7iGK+WXTe9k6IYVztVgY+rdI5sHrlXx+0VskkPXp4G5ucvxf3n5O07
+         Fv0cOsFm1Gvyvv4fIWJd1LgKWvqBrV5TNUwPqIkGz3PZrjwTMRjy9adE5Dhtx+kOkj1Q
+         tG6/6lSgo+KOIZJiDVcMMSQ922xIcTz5x7cql+v/dTQdkZyLx62ytoHGNgdyFMZyNr2X
+         dk6YHyiLDaRkYFYUi5QTR+IYqXMMHMuSlXH+ZTLcns18EiFQ3Yt09Tx1oo7M/BbbceSv
+         jhHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5BFkxDqX+q5WnqVi9LtNnNRZmpwXlGEjkCsUEk6iQIRTN649wUybsvPgiOLSBYjz910UPoW6XlvNYi8MfX8a3BL1wEQ==@vger.kernel.org, AJvYcCXiQSV0SNE6tiv5mFNpEFmzDL3kRq6MjjI5jYJ+wfnIjWzpKqxkoD1OWslvvSRTvSyVf44N6nttNJA8MDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4a44IP1Mr/Gj2uyJc4Z1nXyzrr2v3LWrEJQvNiCHSc34kHQfy
+	BWIIwFp4046a3+lUeMhVpN3xLEWSpABZJs7w6j0xOJHbPPQhZVZB
+X-Google-Smtp-Source: AGHT+IHHtFpi8o5Bm0xSkzaHeuFqDgQowwYXmMwUDAN8o/XELlMVq1TRzHOKcUsgeTK0wChjShhODg==
+X-Received: by 2002:a05:6a00:1393:b0:724:67c6:99de with SMTP id d2e1a72fcca58-724af97a50amr13747289b3a.12.1732120777067;
+        Wed, 20 Nov 2024 08:39:37 -0800 (PST)
+Received: from localhost.localdomain ([181.84.94.92])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befac939sm1845981b3a.163.2024.11.20.08.39.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 08:39:36 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [PATCH v2 0/4] alienware-wmi: Improvements
+Date: Wed, 20 Nov 2024 13:38:36 -0300
+Message-ID: <20241120163834.6446-3-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: chrome: add new binding
- google,cros-ec-chrage-state
-To: "Sung-Chi, Li" <lschyi@chromium.org>, Benson Leung <bleung@chromium.org>,
- Tzung-Bi Shih <tzungbi@kernel.org>, Guenter Roeck <groeck@chromium.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
- devicetree@vger.kernel.org
-References: <20241118-add_charger_state-v1-0-94997079f35a@chromium.org>
- <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/11/2024 10:33, Sung-Chi, Li wrote:
-> Add new dt bindings for charge chip control. The charge chip control
-> dt configuration is used by the driver 'cros-ec-charge-state', which is
-> added in the commit "platform/chrome: cros_ec_charge_state: add new
-> driver to control charge".
-> 
-> As these charge chip controls are connected under the ChromeOS Embedded
-> Controller (EC), also add the patternProperties to the
-> mfd/google,cros-ec bindings.
-> 
-> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
-> ---
->  .../bindings/chrome/google,cros-charge-state.yaml  | 62 ++++++++++++++++++++++
->  .../devicetree/bindings/mfd/google,cros-ec.yaml    |  4 ++
->  2 files changed, 66 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml b/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml
-> new file mode 100644
-> index 000000000000..40e8f6988769
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/chrome/google,cros-charge-state.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Chrome OS EC(Embedded Controller) charge state driver.
+Hi!
 
-Capitalize, drop driver, drop full stop.
+I want to migrate this driver to the new WMI interface. These are some
+improvements I figured I should send beforehand.
 
+I made everything on top of pdx86/for-next because I think they are not
+fixes, just improvements. Check individual patches for more details.
 
-...
+Regards,
+Kurt
 
-> +examples:
-> +  - |+
+---
+v2:
+ - Dropped patch 4/5 bacause it's empty after changes
+ - Changed patch order:
+    1 -> 3
+    2 -> 4
+    3 -> 1
+    5 -> 2
+---
+Kurt Borja (4):
+  alienware-wmi: Migrate to device managed resources
+  alienware-wmi: Improves sysfs groups creation
+  alienware-wmi: Simplify platform device creation
+  alienware-wmi: Remove unnecessary check at module exit
 
-No need for +
+ drivers/platform/x86/dell/alienware-wmi.c | 186 ++++++++--------------
+ 1 file changed, 62 insertions(+), 124 deletions(-)
 
-> +    spi {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      cros_ec: ec@0 {
-> +        compatible = "google,cros-ec-spi";
-> +        reg = <0>;
-> +        interrupts = <35 0>;
-> +
-> +        charge_chip_battery_current: charge-chip-battery {
+-- 
+2.47.0
 
-1. Drop unused label.
-2. So this is a battery? Then just "battery"... or this is a charger?
-Please look how power supplies are done. This should not be different.
-
-Best regards,
-Krzysztof
 
