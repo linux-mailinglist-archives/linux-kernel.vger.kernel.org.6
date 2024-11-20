@@ -1,152 +1,201 @@
-Return-Path: <linux-kernel+bounces-415517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53CE9D374B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:44:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044A39D3754
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:47:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F64B1F243F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:44:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E33C4B2AE14
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8809619CCFC;
-	Wed, 20 Nov 2024 09:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7449C19D080;
+	Wed, 20 Nov 2024 09:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hSHwIsVY"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FPc65wOT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0B217799F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D005919CCFA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732095821; cv=none; b=EFuapYN76ySwTGKuWaR1xCnsh61iCoCNKRuIWZAgAxcr+LNKvkHPs51Rk2Kf73l/mfukpTRX5BKAoFNx7uFAFTtsFgrcsCz6IXvHYtdnw19kPde8qFd6xI6WVYUT2tuVjdbDFGeHPBFJMKJUNvE/x90HeaehN7jkD8uxUOuOFLQ=
+	t=1732095916; cv=none; b=cZ78CkLZhC/Tl8A8HV4YdHMnJWSuWj7Vbhex1fCljUQaF13h/xhw63qv33QoM6sybFYqhvQZ3dntxG7NclQrwMjUuquc0E5zGeRbO2buqmbDEN4L+zIBERDz/XhTR91LTJ0rdLahJPQqE9NmyszjCvDaQlV6nd7YQQH/GTnozig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732095821; c=relaxed/simple;
-	bh=3IYRdTUfO3yDGyAuYaGAOpNJ3n3ybKoAhhl963CdxV4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEHO2RpGdcZOjW+pmHcFWNSrA5N3CZ3LUgFkXuA6PD8m06eHg0NC18WUCDCnkagTdsoD4cKWrMUCYxjfMrZERMTELS5BpjMfmazt2c+yHoazoWmhL/rsbJZWKLFbpdT1iQEohC15PSQSN9JYZfUA9v1cTU7bUllPaREtIzJ0LDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hSHwIsVY; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9693dc739so6327539a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:43:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732095818; x=1732700618; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hnMuJVLT9f8LFRD+CDKFKXxiScl2L/4chGY+NToAMxA=;
-        b=hSHwIsVYJmJ40Xuu6jpjX4sClYWAqX3ezuXl6LOP8BA13B9F9lwOJv9dCtjMcdIHoh
-         3BemI87PoSWQqAGsLingHeYuGdx8wCebDGuatE0ltqZnO3pphUBwVbwS/ZFsjb3DvdNq
-         jW6epmzhhDypvHU0Mo4zg05apHgvm8XCShvU3YRWs7Dci1GV7Lbv8iAraEQy8qB4KOM3
-         SHWKFkThlat0YVX2Jl/9/9M7t8ogjIHhpFZocwjc+s6mDOxwmYaAdaS6T7zzjiWtvTeS
-         4pe9iYgv8clLGc8NXvKXnH2R8BVFEsApV4QL7F+SRjjfhvdesUSDwk88PdhUTsIMy7BO
-         TXQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732095818; x=1732700618;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hnMuJVLT9f8LFRD+CDKFKXxiScl2L/4chGY+NToAMxA=;
-        b=MYhhADEgSD6DM02L1nXvc2nI2f8ifwBPGJxGPrG91H41amZm31n1BQtA3/R1RbSUnS
-         CnmTj5YOMvfNLiaDGWls1dNZNzFZqUZxEuBxlLgkMFgI8DAIhqweX5O17gn0ZpR0LA2e
-         3f8NoYvsSOejoJjMDDIOW6AoL9W0NGG0p2XNgT+d73oNilQiC1rOj1r7t8DTciGnS1Mf
-         nBImckAv4ErzBCMgqf6g4ZDI46ARebBqWNrB1r5lk0TW4NNxYE8w9kIlcWIPR9d88095
-         q1ax9xS1gpHYM+ejF21hO2Ao7nDlRqKdLNu+Zt9Sp8AJJzIr797dcVK61qTr2RHuF8MV
-         Ka0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXNp0IGQXoWsKfubqZu08P+c6JFAYV0bUn/Yul2ELx/vZI79VEOrDi/oUtnHRjYEERurWhuNQT/b0iN/k8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiFhM4aO7qEIEprHFVayvy1hfZvoOpMSz2ZFQoBh6loUACezDu
-	jgVmLbY0AFNAUJBSWWa5kvDL/BWDhf+Utf5uAk1vgM3QtisBOXh+itSwT00BGsLhFiCqfiSkxkp
-	LLl4=
-X-Google-Smtp-Source: AGHT+IHPRVJgISuT50tHDUxOcColFsHDGhCQoGsxkLXqTG91NWmfuCwkbfL9wtykWsiswaDg+PK2jg==
-X-Received: by 2002:a05:6402:2807:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5cff4c41f5fmr982907a12.12.1732095818491;
-        Wed, 20 Nov 2024 01:43:38 -0800 (PST)
-Received: from [192.168.68.163] ([145.224.90.249])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44de59bsm615495a12.2.2024.11.20.01.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 01:43:38 -0800 (PST)
-Message-ID: <0f6241cf-8938-4c3b-82ef-fbfd29676bd7@linaro.org>
-Date: Wed, 20 Nov 2024 09:43:36 +0000
+	s=arc-20240116; t=1732095916; c=relaxed/simple;
+	bh=ifnyv1d3sztNi3k4bwM+5btJy7wZJFA0rEOKEXcKV1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=me337Qh4Yc1zv5Ksj/czeFSFCJn5Iav2nclHLOOPDcypESUH9X9+HYCNaBxH6g6L0FbqvOc2lFddRFsX5xU8Uxgmm81lBUI3f0P9pNAFPu/h5nVbnJ+b6/qOybdQXl3CwdU+ZEHaNIJa05wqQ/s1eHyOC1VHDKiUCxXlZ/qkQDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FPc65wOT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732095913;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3/vmlr1THzcj/O2Lltl3HGhrofUeBCh2vBg0AXGmDaA=;
+	b=FPc65wOTPnMfpRC+ceJ8MuBKQigRo3eZB9Q5r1qfDLj1XZAYPKvJLjGHoqmUb3p8Gooau4
+	R3vRTsVUeiv9vZF83bKgVff7uoOfZGNrgpqpAMJiRVH7qqbYQGUP3uQ3nOuQKsxYbufmxg
+	oCvtc7oFA4XJ62sbXCIa2+Vf+V1lRhE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-OEXwKvnHMPmrea1pxaUrkA-1; Wed,
+ 20 Nov 2024 04:45:10 -0500
+X-MC-Unique: OEXwKvnHMPmrea1pxaUrkA-1
+X-Mimecast-MFC-AGG-ID: OEXwKvnHMPmrea1pxaUrkA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 749C31955F43;
+	Wed, 20 Nov 2024 09:45:08 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 700CA195607C;
+	Wed, 20 Nov 2024 09:45:06 +0000 (UTC)
+Date: Wed, 20 Nov 2024 17:45:02 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 05/11] fs/proc/vmcore: factor out allocating a vmcore
+ memory node
+Message-ID: <Zz2vnl1HQOC6vF20@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-6-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 07/12] KVM: arm64: arm_spe: Give SPE enabled state to
- KVM
-To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>,
- Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc: coresight@lists.linaro.org, kvmarm@lists.linux.dev,
- Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Fuad Tabba
- <tabba@google.com>, James Morse <james.morse@arm.com>,
- Shiqi Liu <shiqiliu@hust.edu.cn>, Mark Brown <broonie@kernel.org>,
- Raghavendra Rao Ananta <rananta@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241112103717.589952-1-james.clark@linaro.org>
- <20241112103717.589952-8-james.clark@linaro.org> <Zz2o9XryCezwAf61@linux.dev>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <Zz2o9XryCezwAf61@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-6-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> Let's factor it out into include/linux/crash_dump.h, from where we can
+> use it also outside of vmcore.c later.
 
+LGTM,
 
-On 20/11/2024 9:16 am, Oliver Upton wrote:
-> Hi James,
+Acked-by: Baoquan He <bhe@redhat.com>
+
 > 
-> On Tue, Nov 12, 2024 at 10:37:06AM +0000, James Clark wrote:
->> Currently in nVHE, KVM has to check if SPE is enabled on every guest
->> switch even if it was never used. Because it's a debug feature and is
->> more likely to not be used than used, give KVM the SPE buffer status to
->> allow a much simpler and faster do-nothing path in the hyp.
->>
->> This is always called with preemption disabled except for probe/hotplug
->> which gets wrapped with preempt_disable().
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  fs/proc/vmcore.c           | 21 ++-------------------
+>  include/linux/crash_dump.h | 14 ++++++++++++++
+>  2 files changed, 16 insertions(+), 19 deletions(-)
 > 
-> Unless the performance penalty of checking if SPE is measurably bad, I'd
-> rather we keep things as-is.
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 47652df95202..76fdc3fb8c0e 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -683,11 +683,6 @@ static const struct proc_ops vmcore_proc_ops = {
+>  	.proc_mmap	= mmap_vmcore,
+>  };
+>  
+> -static struct vmcore_mem_node * __init get_new_element(void)
+> -{
+> -	return kzalloc(sizeof(struct vmcore_mem_node), GFP_KERNEL);
+> -}
+> -
+>  static u64 get_vmcore_size(size_t elfsz, size_t elfnotesegsz,
+>  			   struct list_head *vc_list)
+>  {
+> @@ -1090,7 +1085,6 @@ static int __init process_ptload_program_headers_elf64(char *elfptr,
+>  						size_t elfnotes_sz,
+>  						struct list_head *vc_list)
+>  {
+> -	struct vmcore_mem_node *new;
+>  	int i;
+>  	Elf64_Ehdr *ehdr_ptr;
+>  	Elf64_Phdr *phdr_ptr;
+> @@ -1113,13 +1107,8 @@ static int __init process_ptload_program_headers_elf64(char *elfptr,
+>  		end = roundup(paddr + phdr_ptr->p_memsz, PAGE_SIZE);
+>  		size = end - start;
+>  
+> -		/* Add this contiguous chunk of memory to vmcore list.*/
+> -		new = get_new_element();
+> -		if (!new)
+> +		if (vmcore_alloc_add_mem_node(vc_list, start, size))
+>  			return -ENOMEM;
+> -		new->paddr = start;
+> -		new->size = size;
+> -		list_add_tail(&new->list, vc_list);
+>  
+>  		/* Update the program header offset. */
+>  		phdr_ptr->p_offset = vmcore_off + (paddr - start);
+> @@ -1133,7 +1122,6 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
+>  						size_t elfnotes_sz,
+>  						struct list_head *vc_list)
+>  {
+> -	struct vmcore_mem_node *new;
+>  	int i;
+>  	Elf32_Ehdr *ehdr_ptr;
+>  	Elf32_Phdr *phdr_ptr;
+> @@ -1156,13 +1144,8 @@ static int __init process_ptload_program_headers_elf32(char *elfptr,
+>  		end = roundup(paddr + phdr_ptr->p_memsz, PAGE_SIZE);
+>  		size = end - start;
+>  
+> -		/* Add this contiguous chunk of memory to vmcore list.*/
+> -		new = get_new_element();
+> -		if (!new)
+> +		if (vmcore_alloc_add_mem_node(vc_list, start, size))
+>  			return -ENOMEM;
+> -		new->paddr = start;
+> -		new->size = size;
+> -		list_add_tail(&new->list, vc_list);
+>  
+>  		/* Update the program header offset */
+>  		phdr_ptr->p_offset = vmcore_off + (paddr - start);
+> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+> index 5e48ab12c12b..ae77049fc023 100644
+> --- a/include/linux/crash_dump.h
+> +++ b/include/linux/crash_dump.h
+> @@ -121,6 +121,20 @@ struct vmcore_mem_node {
+>  	loff_t offset;
+>  };
+>  
+> +/* Allocate a vmcore memory node and add it to the list. */
+> +static inline int vmcore_alloc_add_mem_node(struct list_head *list,
+> +		unsigned long long paddr, unsigned long long size)
+> +{
+> +	struct vmcore_mem_node *m = kzalloc(sizeof(*m), GFP_KERNEL);
+> +
+> +	if (!m)
+> +		return -ENOMEM;
+> +	m->paddr = paddr;
+> +	m->size = size;
+> +	list_add_tail(&m->list, list);
+> +	return 0;
+> +}
+> +
+>  #else /* !CONFIG_CRASH_DUMP */
+>  static inline bool is_kdump_kernel(void) { return false; }
+>  #endif /* CONFIG_CRASH_DUMP */
+> -- 
+> 2.46.1
 > 
-> Folks that want to go fast are probably using VHE to begin with. As you
-> note below, we need the hypervisor to decide if SPE is enabled based on
-> hardware in protected mode anyway. Using a common flow for protected and
-> non-protected configs keeps complexity down and increases the likelihood
-> SPE save/restore code actually gets tested.
-> 
-
-I'm not sure if there is any measurable difference. This change was 
-actually in response to this review from Marc here [1]:
-
-   > Why do we need to save anything if nothing was enabled, which is
-   > *all the time*? I'm sorry to break it to you, but nobody uses these
-   > features.  So I'd like them to have zero cost when not in use.
-
-   > Surely there is something there that should say "yup, tracing" or
-   > not (such as the enable bits), which would avoid hitting the sysreg
-   > pointlessly?
-
-I suppose I could have taken the "zero cost" bit a bit too literally and 
-maybe there were some simpler optimizations that didn't involve strongly 
-coupling the driver to KVM. At least for enable/disable, for filtering 
-it would still be required.
-
-I'm trying to think if there is some middle ground where there is a 
-systemwide flag or static key that gets set on the very first SPE or 
-trace session. In theory it could be simpler than this per-cpu enable 
-disable stuff, but in the end it pretty much ends up needing the same 
-info from the driver (and has the same protected mode issue). So you 
-might as well do it as fine grained as this or not at all like you suggest.
-
-[1]: https://lore.kernel.org/linux-arm-kernel/86bk832jza.wl-maz@kernel.org/
 
 
