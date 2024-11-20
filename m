@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-416326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F59C9D4352
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:00:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC779D4354
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:01:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D19D8B254DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:00:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179491F22406
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD191C1F0B;
-	Wed, 20 Nov 2024 21:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5167B1C4A35;
+	Wed, 20 Nov 2024 21:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjMjAp61"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ai6JbdYq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEFB1BBBE0;
-	Wed, 20 Nov 2024 21:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6FE1BBBE0;
+	Wed, 20 Nov 2024 21:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732136424; cv=none; b=oNsGSgxLrx5hO//GVnUsXgYmOisDTiIqW2GDjm8EzR8MPoohxbSbHOuMFbJCSeD1JWxNxXStWFpZQmSHlffgGnIEcx+WLe5jFwFV9J2zred80fUMvSBwgKg90+uoCOnOeAYxCz9vX8bWHvMMX+9zBF3Q0SbQY8umQIBSKrOxYBs=
+	t=1732136430; cv=none; b=dtDkAQzWZOEAGze5fZVTgJUF/XUtJhauxAfI7TWcE/pbsGodCofRWxq1U9jyTAtFU9iRZWgqN7gYkypQJRgkV/PJYzNUvDUmiQ4MVBBDrJM/h2iPK9KTyN+889+PGLWx5Zx/buL2NqLZGsuZ7X4m5NIbZCUqzqpFovTrM15p2u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732136424; c=relaxed/simple;
-	bh=dkwHufzagrij+JgxU73Xm4sazl7KhJ5U9V/vqHm4S3w=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YyOwLSHG/ZsXBC/rFGLfxi63+4SZrJfiOylSMgw/5HHluK4UmQnD4r5vBC/LeBDav2LWmHEHL6tPbaRzZBgXuha6uY3eycDE3InGG6Z0jfgGqPiNu9RPiBeZoYgwHhXXh/BdXV/UEH/9pfkZPIKjOQuzGqZdDeNvq3k75gg75B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjMjAp61; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30926C4CECD;
-	Wed, 20 Nov 2024 21:00:24 +0000 (UTC)
+	s=arc-20240116; t=1732136430; c=relaxed/simple;
+	bh=ErYEEIdaYprSFGd6Fd1ys6fhltywqc1oy5OW1KZF/2E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=McOTmkdeYWtImfcu9UxaB4TVOM/o5ESRhkZIqmjEo6WZ7VGkg3Y8aTYohV4ODfN41tIcdiSaH8QBXdo3ysxOrFW0RcGSnpq0/OxbEQwxw9sWQ5clNLppfH6QTNdwKhS8qeX77JZfi+qRTZFeRnY27qesYp/LVh7/O7eTDSH1sFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ai6JbdYq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8A0C4CECD;
+	Wed, 20 Nov 2024 21:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732136424;
-	bh=dkwHufzagrij+JgxU73Xm4sazl7KhJ5U9V/vqHm4S3w=;
+	s=k20201202; t=1732136430;
+	bh=ErYEEIdaYprSFGd6Fd1ys6fhltywqc1oy5OW1KZF/2E=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=JjMjAp61J9+6r0lZMHw2YFFOmPyCZiM1I3VB2XptWVQCv8xLAT/sr1A86CkSzrsgi
-	 vmSQODaKqiw+X1ndfSW2KT8XbNlPvlOdBfB2uqi+xb0Br4NGR/DxLprkgAh2ydRJuz
-	 wWKpa7MaCjXThKQIoA4lHWSq1mmuM/YFB/F8Wcz8tzvhuWjizkuyD2Cg5cKjN5slx4
-	 FX7HM7TAbnTg4Vi/usxVWxmmxdfBVsFFJ15RR7Mj2rrh3aUS8M7tuekr+XHr4b1Qoc
-	 7zHKmfT44a4iOnmGz1qNsHCqTsGIQOYhyGBWycGr6Sh+YzHhUI/gxxOy+mrITn5yin
-	 OPjqT5Y6kJbNQ==
+	b=ai6JbdYqZKV7b1+8ZjigSgPM1X2Y0xcRBbBXJBsYJfLymL8NBEHtAH3P5T6pQcm9o
+	 AMchvzjHjtA8wVeAFJ6IixK7H8WWUHqnreuMq1b+y34K5JA4a/7qR0Nnwb1O/0MXbj
+	 c+XvQwJEBZqRRvx4o+PqZeziyC7Z1B5ERZkAfKAKmt9BVFeFul/U6ncU5PasEabBq7
+	 Z4hwS7BXf8pl0Iccz9JKF0RzdD++XVGXNHd3D+/8TfDv4rhzRxHfZxB13jbUOx/BH8
+	 bzDCw/1eQR3uMrfC7oAwlbIG40zQzmN1byeT2hG1osn64AmXhwLHZ/IxbMyLd6Zy6R
+	 7Sysqy3dbMLOw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33BE23809A80;
-	Wed, 20 Nov 2024 21:00:37 +0000 (UTC)
-Subject: Re: [GIT PULL] MMC and MEMSTICK updates for v6.13
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 358063809A80;
+	Wed, 20 Nov 2024 21:00:43 +0000 (UTC)
+Subject: Re: [GIT PULL] gpio updates for v6.13-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241118132623.154217-1-ulf.hansson@linaro.org>
-References: <20241118132623.154217-1-ulf.hansson@linaro.org>
-X-PR-Tracked-List-Id: <linux-mmc.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241118132623.154217-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.13
-X-PR-Tracked-Commit-Id: c0baf6ead75d6db16798ae48a4ac38c3af4e9280
+In-Reply-To: <20241118125515.49743-1-brgl@bgdev.pl>
+References: <20241118125515.49743-1-brgl@bgdev.pl>
+X-PR-Tracked-List-Id: <linux-gpio.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241118125515.49743-1-brgl@bgdev.pl>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.13-rc1
+X-PR-Tracked-Commit-Id: bef29ca3a6458582ac13320d47bf2646e5734dc8
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 38556294b83f5c5818041c98a00e3a0e88fbb58c
-Message-Id: <173213643569.1349251.15145682804495011762.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Nov 2024 21:00:35 +0000
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+X-PR-Merge-Commit-Id: 131561f2ca075f3737c2b4821c4d067dfba0f55f
+Message-Id: <173213644177.1349251.13835411673402905075.pr-tracker-bot@kernel.org>
+Date: Wed, 20 Nov 2024 21:00:41 +0000
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 18 Nov 2024 14:26:13 +0100:
+The pull request you sent on Mon, 18 Nov 2024 13:55:12 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.13
+> git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.13-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/38556294b83f5c5818041c98a00e3a0e88fbb58c
+https://git.kernel.org/torvalds/c/131561f2ca075f3737c2b4821c4d067dfba0f55f
 
 Thank you!
 
