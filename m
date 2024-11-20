@@ -1,207 +1,90 @@
-Return-Path: <linux-kernel+bounces-416051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A169D3F8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:00:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DAC59D3FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F1A41F21CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:00:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A47DB3B975
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525E4145B16;
-	Wed, 20 Nov 2024 15:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60DE1537AA;
+	Wed, 20 Nov 2024 15:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="nKBXymSs"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAdDTUaJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61A9145B10;
-	Wed, 20 Nov 2024 15:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020514B077;
+	Wed, 20 Nov 2024 15:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118317; cv=none; b=HGVO8ji/ukGl0ljtSJaMPkQj2u8eYYZ0UNYGjMefbu0q4cf86iQmNL0uyDYb0a/BLmy/N9TGjbrx8fPHIBAfwNxWXket8KQkeCS3w71pIfIZaz/eX2uUBTs3XhlkOk2TZDMz6/TSp51s5kVBkXiNfVHq/1uXsKc9XalSZ+eeus0=
+	t=1732118337; cv=none; b=dlJwcxrwSXet5DEsrDYUHnUshgqT3cBeTD2890fDMgljcJ6cKN7vdLAbWS6DTsHGyTQdtiJAeJm+wiYS/M7wNwHhEjYqSvqWw1Go2uyRD+XjN0v2e9gpa17wMOQUke5YEeAJrfD85HORygUwb83BNHvArGwcxISBiIoJqFhqdlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118317; c=relaxed/simple;
-	bh=QUCP/F2MW152qu6dweDXIAy8zsQV0D5nzigkKZ7Shn8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=q/hg0/O7S4EAyVt6OTEsTKuWX9C7WVOGB4l7SqgK68na+fHMYNM/UVcS8VWhWC0sunBAPGAh4uJcSCva0w1H27mUIqqDjtUZCIRoIKOsfwengnxusewqMf+eIAqEwRz3lWXFzlaSGRly6fiTa0E5xlNsBsa2eFCq+PPl0SSexVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=nKBXymSs; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732118316; x=1763654316;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=pSZsUFc2pO+H1LRn5VA2nkGQrkmW6bpxo1bRSlx8hok=;
-  b=nKBXymSslzz7JdNVM3DEMOasxtjimeKlQDXacfEYu70zWB9myuJf8lsq
-   l0qy6j5cEJPj3RU2H5oyAHrulQbRuEo2MTF5OxRLHqCR7FJSQf5SJA6ot
-   +YOue2BYfwe3IftXPA6+hyz5b5av9o0Ib7Dozkbxor4S9Js4GZOBC5Rj3
-   A=;
-X-IronPort-AV: E=Sophos;i="6.12,170,1728950400"; 
-   d="scan'208";a="354185361"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 15:58:34 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.10.100:53225]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.207:2525] with esmtp (Farcaster)
- id 5ec6092c-67cf-4bc6-a64f-e617283997e7; Wed, 20 Nov 2024 15:58:32 +0000 (UTC)
-X-Farcaster-Flow-ID: 5ec6092c-67cf-4bc6-a64f-e617283997e7
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 20 Nov 2024 15:58:31 +0000
-Received: from [192.168.4.239] (10.106.82.23) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 20 Nov 2024
- 15:58:30 +0000
-Message-ID: <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
-Date: Wed, 20 Nov 2024 15:58:29 +0000
+	s=arc-20240116; t=1732118337; c=relaxed/simple;
+	bh=PBO+6ywj2PcgEksLd2QnUclp4cCButUpCEqwidE/yfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MBrg1ej5jnZHiWm9n/DNjCEfLLMVLs4CHARci3Q7uji91x1OIBnkQeJUTtzcT+RleeCtONEfGAlgREic1XxGLIgZLRXl0MmA73/qiskZ7ikjCxdab64IjOuUbHaG3KsZYfAqJxidBHrO+TP29RPIrgUfyNdwxnBBW+NF7IjDeMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAdDTUaJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC64C4CECD;
+	Wed, 20 Nov 2024 15:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732118336;
+	bh=PBO+6ywj2PcgEksLd2QnUclp4cCButUpCEqwidE/yfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UAdDTUaJvZ8iVJrkMsWXcRaIIhFDT4qOfS+nRrPbQc0r8wUFLbg7i9MJve+ldQdOg
+	 MFS3yzaYbnQy3Ymlnbux4JDHJ592hPmMuEVPysq5PJPvX2G00+wFqDNgsmyTqviESh
+	 1Kr3fh1NEoqxtz1gmEwDR1C1Qa3AcgTXvocRBNb+U1yJS6DzJvEChscM8I68TTpUJJ
+	 oGv9O+/J+sZ+1ZBFtM/tcg0MgkEWTmXIOV6jzTRGq9SmkKy7sS6Z5JrYVtZFw1My01
+	 YUjTJtS4suVGGnKNlldCDn/l+iioZg1eVINnQh2I4vuqzBPQArcRUqsRlcnSlb6nFG
+	 VGfHbP4v9cOQA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 00/13] hrtimer Rust API
+In-Reply-To: <8fa20279fe8067602fbb106329a0f7d9c4146b3b.camel@redhat.com>
+	(Lyude Paul's message of "Wed, 13 Nov 2024 18:39:53 -0500")
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
+	<KuX-uY44Td6jpb3dtlR-S5Eo-KEFXad0UorWcwaspcNfH75QUPklyMfQmAsCPuLVV3PM3iNrDKdXJNhyzZm4cQ==@protonmail.internalid>
+	<8fa20279fe8067602fbb106329a0f7d9c4146b3b.camel@redhat.com>
+Date: Wed, 20 Nov 2024 16:58:42 +0100
+Message-ID: <87msht3nil.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
-To: David Hildenbrand <david@redhat.com>, <pbonzini@redhat.com>,
-	<corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
-	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
-	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>, "Sean
- Christopherson" <seanjc@google.com>, <linux-mm@kvack.org>
-References: <20241024095429.54052-1-kalyazin@amazon.com>
- <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
- <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
- <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D014EUA003.ant.amazon.com (10.252.50.119) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: text/plain
+
+"Lyude Paul" <lyude@redhat.com> writes:
+
+> With the comments I left addressed:
+>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+
+Thanks for the review!
+
+> (I'll have to rereview it soon when you rebase I assume, but I have a rebased
+> version locally (can send to you if you want) so I know the changes won't be
+> too difficult ;)
+
+I did not rebase on the new C API yet actually, but I will very soon.
 
 
 
-On 20/11/2024 15:13, David Hildenbrand wrote:
- > Hi!
-
-Hi! :)
-
- >> Results:
- >>    - MAP_PRIVATE: 968 ms
- >>    - MAP_SHARED: 1646 ms
- >
- > At least here it is expected to some degree: as soon as the page cache
- > is involved map/unmap gets slower, because we are effectively
- > maintaining two datastructures (page tables + page cache) instead of
- > only a single one (page cache)
- >
- > Can you make sure that THP/large folios don't interfere in your
- > experiments (e.g., madvise(MADV_NOHUGEPAGE))?
-
-I was using transparent_hugepage=never command line argument in my testing.
-
-$ cat /sys/kernel/mm/transparent_hugepage/enabled
-always madvise [never]
-
-Is that sufficient to exclude the THP/large folio factor?
-
- >> While this logic is intuitive, its performance effect is more
- >> significant that I would expect.
- >
- > Yes. How much of the performance difference would remain if you hack out
- > the atomic op just to play with it? I suspect there will still be some
- > difference.
-
-I have tried that, but could not see any noticeable difference in the 
-overall results.
-
-It looks like a big portion of the bottleneck has moved from 
-shmem_get_folio_gfp/folio_mark_uptodate to 
-finish_fault/__pte_offset_map_lock somehow.  I have no good explanation 
-for why:
-
-Orig:
-                   - 69.62% do_fault
-                      + 44.61% __do_fault
-                      + 20.26% filemap_map_pages
-                      + 3.48% finish_fault
-Hacked:
-                   - 67.39% do_fault
-                      + 32.45% __do_fault
-                      + 21.87% filemap_map_pages
-                      + 11.97% finish_fault
-
-Orig:
-                      - 3.48% finish_fault
-                         - 1.28% set_pte_range
-                              0.96% folio_add_file_rmap_ptes
-                         - 0.91% __pte_offset_map_lock
-                              0.54% _raw_spin_lock
-Hacked:
-                      - 11.97% finish_fault
-                         - 8.59% __pte_offset_map_lock
-                            - 6.27% _raw_spin_lock
-                                 preempt_count_add
-                              1.00% __pte_offset_map
-                         - 1.28% set_pte_range
-                            - folio_add_file_rmap_ptes
-                                 __mod_node_page_state
-
- > Note that we might improve allocation times with guest_memfd when
- > allocating larger folios.
-
-I suppose it may not always be an option depending on requirements to 
-consistency of the allocation latency.  Eg if a large folio isn't 
-available at the time, the performance would degrade to the base case 
-(please correct me if I'm missing something).
-
-> Heh, now I spot that your comment was as reply to a series.
-
-Yeah, sorry if it wasn't obvious.
-
-> If your ioctl is supposed to to more than "allocating memory" like
-> MAP_POPULATE/MADV_POPULATE+* ... then POPULATE is a suboptimal choice.
-> Because for allocating memory, we would want to use fallocate() instead.
-> I assume you want to "allocate+copy"?
-
-Yes, the ultimate use case is "allocate+copy".
-
-> I'll note that, as we're moving into the direction of moving
-> guest_memfd.c into mm/guestmem.c, we'll likely want to avoid "KVM_*"
-> ioctls, and think about something generic.
-
-Good point, thanks.  Are we at the stage where some concrete API has 
-been proposed yet? I might have missed that.
-
-> Any clue how your new ioctl will interact with the WIP to have shared
-> memory as part of guest_memfd? For example, could it be reasonable to
-> "populate" the shared memory first (via VMA) and then convert that
-> "allocated+filled" memory to private?
-
-No, I can't immediately see why it shouldn't work.  My main concern 
-would probably still be about the latency of the population stage as I 
-can't see why it would improve compared to what we have now, because my 
-feeling is this is linked with the sharedness property of guest_memfd.
-
-> Cheers,
-> 
-> David / dhildenb
+Best regards,
+Andreas Hindborg
 
 
 
