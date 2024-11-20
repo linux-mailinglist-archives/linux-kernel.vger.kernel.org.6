@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-415878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C079D3D7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:25:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA539D3D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371042827A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641CA281AE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A9D1A4F1B;
-	Wed, 20 Nov 2024 14:25:00 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6391AA7A4;
+	Wed, 20 Nov 2024 14:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rl8xdE18"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D403AD27
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FC91A4F1B;
+	Wed, 20 Nov 2024 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732112700; cv=none; b=o1y0yOACJsFvrFSgG7E7E5n1Yvz6YO77qa1CHX1OBcLnhQ3N/oq2QFNbL8O3tssn7Layd3/ZV6IlRdlI/htSYc7+xmIRA1G3ElIxl/F2g5497EAXv4rQnjmuuWlRADu6lSwKflHOmO3vrszlRxfOiPcj8uiM5GYSxQWykCVs6R0=
+	t=1732112728; cv=none; b=BXW5yyXqmQO9ahsRlsnqp+8m5VAKCzoltYTMnwRqOnfn3kkK2irnXef2W2HJkV/5hZVsihsMOTPxZM0/yTq7dTjBkuvxzS7eXp/LQr+SQVFQct1YU/U3jdNajGIY4dJsWfAMaduJFFt1Z1zALL80KoJ69vcnSFcoMxyH/ItI/0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732112700; c=relaxed/simple;
-	bh=Rdgxa+F86EkYm+G3sft1SGuwmE7n0VrEmvTwp74fS68=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Blj05W3ZylrDCLwSgVb011OscssUI8Q2iFDV01s52t3rCzo9y8ZFMDgmxJ4vvTIWwsdyg8O7RtDybezNu0GHUWayiErsjs8Rk+kiQ9h5u2HmGQyRYmiLf8aakSF0VgC7Y2fqGSx3/dOnXqOgzI4xowEBANUnCkSlGMf2z8y0WB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xtk7T0qzJz67mSm;
-	Wed, 20 Nov 2024 22:21:25 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9AD8B140AB8;
-	Wed, 20 Nov 2024 22:24:56 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
- 2024 15:24:56 +0100
-Date: Wed, 20 Nov 2024 14:24:54 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v3 14/15] acpi/ghes: Change ghes fill logic to work with
- only one source
-Message-ID: <20241120142454.000020f5@huawei.com>
-In-Reply-To: <3cf3d0f0253faf8d2497175e8473431d8ef25810.1731406254.git.mchehab+huawei@kernel.org>
-References: <cover.1731406254.git.mchehab+huawei@kernel.org>
-	<3cf3d0f0253faf8d2497175e8473431d8ef25810.1731406254.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732112728; c=relaxed/simple;
+	bh=y6qu8dBLA0LCgbdRq7LXfUlUzWcMqEAMFsWovlz6Unc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sk+ypJpmCExe7Xv7i23/I0tnfB100lO+VnoTs+4VHCmK3fw9SCSd6MqhQafSMFWWca/oVeeRQDO6B0pmVEoAy4ajqPwvBsgdOp+xbgatEf6hu5cYkleu3utGXxnxiB5phAyQuA9a6/jpuVrC+JoKXW0Ge/AbkLLaKBkyWOiL4wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rl8xdE18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47140C4CECD;
+	Wed, 20 Nov 2024 14:25:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732112725;
+	bh=y6qu8dBLA0LCgbdRq7LXfUlUzWcMqEAMFsWovlz6Unc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rl8xdE186zc9YHa9wdheQGVrp4/5QVCl/CW4AkkvQbPspSciM9q9phIJJ7KChVJOW
+	 oDh/GZ5uDMq1CCRL9pehXvCz2viEY8+Vk3PqLnaAArnVvuQkZAIBh2I1C4JHn+McoI
+	 64SDYeJ4482YWDHNlyvI4AfZDxTcn+NDG34ctLv8=
+Date: Wed, 20 Nov 2024 15:25:00 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, "rbm@suse.com" <rbm@suse.com>,
+	"skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel-mentees@lists.linuxfoundation.org" <linux-kernel-mentees@lists.linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: dwc3: remove unused sg struct member
+Message-ID: <2024112037-grader-outsource-e821@gregkh>
+References: <20241119212452.269255-1-luis.hernandez093@gmail.com>
+ <20241119221907.tyt4luboduaymukl@synopsys.com>
+ <Zz3vdkEzSobJ54bI@x13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zz3vdkEzSobJ54bI@x13>
 
-On Tue, 12 Nov 2024 11:14:58 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> Extending to multiple sources require a BIOS pointer to the
-> beginning of the HEST table, which in turn requires a backward-compatible
-> code.
+On Wed, Nov 20, 2024 at 09:17:26AM -0500, Luis Felipe Hernandez wrote:
+> Thanks, Thinh and Greg, for the feedback!
 > 
-> So, the current code supports only one source. Ensure that and simplify
-> the code.
+> On Tue, Nov 19, 2024 at 10:19:09PM +0000, Thinh Nguyen wrote:
+> > > Previously, this patch addressed a documentation warning caused by the
+> > 
+> > Remove this paragraph. This context only makes sense in this thread
+> > where the previous patch version is visible.
+> > 
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-One trivial comment.
-Otherwise LGTM
+> I’ll update the commit message and remove the unnecessary paragraph as suggested.
+> 
+> > > Reported-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+> > 
+> > I'm not the one who should be attributed to by the Reported-by tag.
+> > 
+> > I think Greg was alluding to this report by Stephen Rothwell:
+> > https://lore.kernel.org/all/20241118194006.77c7b126@canb.auug.org.au/
+> > 
+> > It wasn't Cc to the linux-usb list, so I'm not sure if you've seen it.
+> > If your change was base on the report above, then you can update the
+> > Reported-by tag accordingly.
+> > 
+> 
+> Regarding the report by Stephen Rothwell, I wasn’t aware of it before. I found the warning independently while trying to compile the Documentation subsystem, looking for bugs to address.
+> 
+> That said, now that I’m aware of Stephen’s thread, I wouldn’t mind updating the commit message to include a reference to it if you think it would help link the two discussions. Let me know your thoughts on this.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Sure, it can not hurt, as it was reported by them, and fixed by you,
+everyone gets credit!
 
-> ---
+thanks,
 
->  void ghes_record_cper_errors(const void *cper, size_t len,
->                               uint16_t source_id, Error **errp)
->  {
->      uint64_t cper_addr = 0, read_ack_register_addr = 0, read_ack_register;
-> -    uint64_t start_addr;
->      AcpiGedState *acpi_ged_state;
->      AcpiGhesState *ags;
->  
-> @@ -418,11 +416,8 @@ void ghes_record_cper_errors(const void *cper, size_t len,
->      }
->      ags = &acpi_ged_state->ghes_state;
->  
-> -    start_addr = le64_to_cpu(ags->hw_error_le);
-> -
-> -    start_addr += source_id * sizeof(uint64_t);
-> -
-> -    get_ghes_offsets(start_addr, &cper_addr, &read_ack_register_addr);
-> +    assert(ACPI_GHES_ERROR_SOURCE_COUNT == 1);
-> +    get_ghes_offsets(le64_to_cpu(ags->hw_error_le), &cper_addr, &read_ack_register_addr);
-
-Long line. I'd break it.
-
->  
->      cper_addr = le64_to_cpu(cper_addr);
->      if (!cper_addr) {
-
+greg k-h
 
