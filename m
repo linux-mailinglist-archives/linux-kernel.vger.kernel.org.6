@@ -1,191 +1,168 @@
-Return-Path: <linux-kernel+bounces-416096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA389D402F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:36:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58B79D4040
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:40:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149231F2160D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F895B29788
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C019153814;
-	Wed, 20 Nov 2024 16:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB4153BED;
+	Wed, 20 Nov 2024 16:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RiVh/hzr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMWSIgVt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BF714AD3D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B49F145335;
+	Wed, 20 Nov 2024 16:37:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120581; cv=none; b=kToUVbAqd2FBYaFw4uyR9e3bhErYA3tWogkDJWJfS6F+NdvUSKZmgQGWAIh4GwSM/PxicXItLjVLxJ3+Orh6fUWE/dj8Rkcfqz59dSUQ6nYNufqh5MM/u9NpLEn1iIz5SlT/f1TVAOVX0NtWc0v37mkABfPDjxjy8aDJNyzP98c=
+	t=1732120662; cv=none; b=Cgr13CXGd6aSW949JSvi6sQ+gv8vUWrNji2UZEAmCbHhlaoezrVejlb6iGP8sEQw3up3/Q5QTQdFR/tLG6LPI2cgzG/hZuUcn8bVuaPQC3VhsxeJCdYy0fZV8Rc9X+6zlYvMkhKzadIcymMZ2mtvFrwfAWPj/9GddUTFTVT8zo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120581; c=relaxed/simple;
-	bh=VfR9wdxer9kVXX+JA4Pugu2yWhtmDNWs7LhPukfN9pM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IDeYOKFuWVl9cmbz/GxfuauFOekzdyeRoUb6Mo6eEfbKtdS0KjopWmTmMlfezZWtbor+FpIriL1+py4pcSsxHu5Ft1IO+CyA9J2fRbGOTQHZFcbZ+pkdLmPVkcXHlgJSZeACNBpdWg71ekaXPw9vcBskrH4qbVmkf2g9hJL3ZDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RiVh/hzr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732120579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qhU3S0A4Mnpsnqs/3/13cFEa605q4UA1j817veP3A6U=;
-	b=RiVh/hzrbl2C6NbK9kYda3B4naVZmX3s0UjEV5cv+H0RcJFKVF2SgPYumMgxhunHG3Ktvp
-	Mcii5d+BSD3WzLjB2Qi0p2IgYjlRGVZpku+Z1LLAwP2zy42sRVjF4MsSa+BuS7rsHC6iKN
-	A7UztKCT4UGaBdViIRzIUlgiXu6OT4g=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-8-8GrjGyztPAKbPyOARDdjdw-1; Wed, 20 Nov 2024 11:36:17 -0500
-X-MC-Unique: 8GrjGyztPAKbPyOARDdjdw-1
-X-Mimecast-MFC-AGG-ID: 8GrjGyztPAKbPyOARDdjdw
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-211555dce08so53590695ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:36:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732120575; x=1732725375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qhU3S0A4Mnpsnqs/3/13cFEa605q4UA1j817veP3A6U=;
-        b=Qby+vcDIdlJ1YCGOO2yTOyK0kpqZOsV9cX7eGM/o+BQ+2SRVItAWfQ9Gnw2YALe6PY
-         XH0eqxxIJGOyX4F3y1Y5LmU0g3OupkCC/mTld7+NtACGaULmJbSyP8bP507zly1Fg+RD
-         85Bh0Z9tcnrj40FCJolCCmU0nwsWyqQYyQwFMHMHPCz7mAkRt/D/FslW6pCRuXYZ5NLN
-         Ry2kddzxnimvEObAj8pQbVexvQDzXC5VVpAUD1WtWyqX07UTdvZ4w0Hfq11Sgh/aT6oc
-         ilX/J+sk4sO/YJN5Ge9ex8c18vBG8RQ2DbnpkuCFAuNntVCjqUVvoci6QfMisyhA70mF
-         u+nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkrBrhNxMl/pLLrPm4nVMPjrcEdexQWCAQxx5qFeuRH2x28G6EC37vj13OFAJtUsWuXoeH3Go6y6GyAAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEZgSoFBmdH6l1Rw2ryD4Z01rxLPBuj+F2n95RIb9s9/cM8vZF
-	jh1tRHwsIZ5rRX39G0BMCdQjqCx+zDeJvxS8DQlyGVWey5Weute50tLdAqbF2ctGTETgRIVul4o
-	Yav4fwwCi2nqSDtaYz2c9u1pdSC3WGq09QJcfdgjSK48gmkXKQVFhMOZT85GT5MuGsS0OlLmUYD
-	wXsYKbc8utUEjHFlNgUNUHd9QWppLORT8dr/g4
-X-Received: by 2002:a17:902:ccd1:b0:20b:b40b:3454 with SMTP id d9443c01a7336-2126f9fb108mr36420065ad.0.1732120575530;
-        Wed, 20 Nov 2024 08:36:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFEndC+AthKB1mpAbXnqOydUaK60UqI1oD1suHPMIJwIkfHNBJIHODhd4fFPf5EbSrZJ9RZvD8mL6P1+1iEOyY=
-X-Received: by 2002:a17:902:ccd1:b0:20b:b40b:3454 with SMTP id
- d9443c01a7336-2126f9fb108mr36419915ad.0.1732120575211; Wed, 20 Nov 2024
- 08:36:15 -0800 (PST)
+	s=arc-20240116; t=1732120662; c=relaxed/simple;
+	bh=MseR2j5hxTqT7Bar0/xqOpVboZgTwU8i2w8NcRlv5s4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jPeemz/rZSIOYC+VNenkSWlXPAMrAtOXuxjKCGkVKn5vMXWkYQ/SRYKLI+JYKp2w6RimBX0FOg7VE5SqjuDECgVlqUHHZkWMhPR02+Sx12vEH1hKqINUG5G/QtRX6YY6NblQmRXgkNgCzxsL7NijRs/GUTslKlde/8VG9vYAh+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMWSIgVt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 851C4C4CECD;
+	Wed, 20 Nov 2024 16:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732120660;
+	bh=MseR2j5hxTqT7Bar0/xqOpVboZgTwU8i2w8NcRlv5s4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QMWSIgVtcGml1aPdZ8hbOIM8g+T6EZigJrY91VWtxzfGrgTEgfs+N/9Q2lJ7Q7CFR
+	 lAEj9x9KchamdtSrvmPoNr2j88sALwzOqLjzyboLP0YFYRomvvphV/rS/oQ4JgwCBA
+	 ukSSjv44S3Dga/7oC+dHk7ycPqFyi6hUtQ9iSba2MViNzm3W7JpikZWu6F3X0TQ5ya
+	 aDWo7X3DGMUYnypoLi9K4W5ml13uSk8aWKcR/wxLu5zeyDSqHlHs3lMfjQ+4YE8vgj
+	 oro5JY5/u28wVHXb8aUkZNV9PoW1EGh07jAS27Y5dXeEwrcLxxFsSs1fMnyzy05lJt
+	 JHhl+JH//QFsA==
+Message-ID: <ecf58f72-39b9-4e9d-a2bb-8cc225b4f875@kernel.org>
+Date: Wed, 20 Nov 2024 17:37:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120102325.3538-1-acarmina@redhat.com> <Zz332cG45rNSeE_B@arm.com>
- <20241120102602.3e17f2d5@gandalf.local.home>
-In-Reply-To: <20241120102602.3e17f2d5@gandalf.local.home>
-From: Alessandro Carminati <acarmina@redhat.com>
-Date: Wed, 20 Nov 2024 17:36:04 +0100
-Message-ID: <CAGegRW74BOvkAmo4UiH-D45o4HijL7B4CPvEvNfze3AEoTKfCg@mail.gmail.com>
-Subject: Re: [PATCH] mm/kmemleak: Fix sleeping function called from invalid
- context in kmemleak_seq_show
-To: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Thomas Weissschuh <thomas.weissschuh@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
-	Alessandro Carminati <alessandro.carminati@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Gabriele Paoloni <gpaoloni@redhat.com>, Eric Chanudet <echanude@redhat.com>, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: chrome: add new binding
+ google,cros-ec-chrage-state
+To: "Sung-Chi, Li" <lschyi@chromium.org>, Benson Leung <bleung@chromium.org>,
+ Tzung-Bi Shih <tzungbi@kernel.org>, Guenter Roeck <groeck@chromium.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+ devicetree@vger.kernel.org
+References: <20241118-add_charger_state-v1-0-94997079f35a@chromium.org>
+ <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Looping selinix Maintainers into the conversation.
+On 18/11/2024 10:33, Sung-Chi, Li wrote:
+> Add new dt bindings for charge chip control. The charge chip control
+> dt configuration is used by the driver 'cros-ec-charge-state', which is
+> added in the commit "platform/chrome: cros_ec_charge_state: add new
+> driver to control charge".
+> 
+> As these charge chip controls are connected under the ChromeOS Embedded
+> Controller (EC), also add the patternProperties to the
+> mfd/google,cros-ec bindings.
+> 
+> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
+> ---
+>  .../bindings/chrome/google,cros-charge-state.yaml  | 62 ++++++++++++++++++++++
+>  .../devicetree/bindings/mfd/google,cros-ec.yaml    |  4 ++
+>  2 files changed, 66 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml b/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml
+> new file mode 100644
+> index 000000000000..40e8f6988769
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/chrome/google,cros-charge-state.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/chrome/google,cros-charge-state.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Chrome OS EC(Embedded Controller) charge state driver.
 
-
-On Wed, Nov 20, 2024 at 4:30=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Wed, 20 Nov 2024 14:53:13 +0000
-> Catalin Marinas <catalin.marinas@arm.com> wrote:
->
-> > > -static void print_unreferenced(struct seq_file *seq,
-> > > +static depot_stack_handle_t print_unreferenced(struct seq_file *seq,
-> > >                            struct kmemleak_object *object)
-> > >  {
-> > > -   int i;
-> > > -   unsigned long *entries;
-> > > -   unsigned int nr_entries;
-> > > -
-> > > -   nr_entries =3D stack_depot_fetch(object->trace_handle, &entries);
-> > >     warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\=
-n",
-> > >                       object->pointer, object->size);
-> > >     warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu\n",
-> > > @@ -371,6 +366,23 @@ static void print_unreferenced(struct seq_file *=
-seq,
-> > >     hex_dump_object(seq, object);
-> > >     warn_or_seq_printf(seq, "  backtrace (crc %x):\n", object->checks=
-um);
-> > >
-> > > +   return object->trace_handle;
-> > > +}
-> >
-> > What I don't fully understand - is this a problem with any seq_printf()
-> > or just the backtrace pointers from the stack depot that trigger this
-> > issue? I guess it's something to do with restricted pointers but I'm no=
-t
-> > familiar with the PREEMPT_RT concepts. It would be good to explain,
-> > ideally both in the commit log and a comment in the code, why we only
-> > need to do this for the stack dump.
->
-> In PREEMPT_RT, to achieve the ability to preempt in more context,
-> spin_lock() is converted to a special sleeping mutex. But there's some
-> places where it can not be converted, and in those cases we use
-> raw_spin_lock(). kmemleak has been converted to use raw_spin_lock() which
-> means anything that gets called under that lock can not take a normal
-> spin_lock().
->
-> What happened here is that the kmemleak raw spinlock is held and
-> seq_printf() is called. Normally, this is not an issue, but the behavior =
-of
-> seq_printf() is dependent on what values is being printed.
->
-> The "%pK" dereferences a pointer and there's some SELinux hooks attached =
-to
-> that code. The problem is that the SELinux hooks take spinlocks. This wou=
-ld
-> not have been an issue if it wasn't for that "%pK" in the format.
->
-> Maybe SELinux locks should be converted to raw? I don't know how long tha=
-t
-> lock is held. There are some loops though :-/
->
-> avc_insert():
->
->         spin_lock_irqsave(lock, flag);
->         hlist_for_each_entry(pos, head, list) {
->                 if (pos->ae.ssid =3D=3D ssid &&
->                         pos->ae.tsid =3D=3D tsid &&
->                         pos->ae.tclass =3D=3D tclass) {
->                         avc_node_replace(node, pos);
->                         goto found;
->                 }
->         }
->         hlist_add_head_rcu(&node->list, head);
-> found:
->         spin_unlock_irqrestore(lock, flag);
->
-> Perhaps that could be converted to simple RCU?
->
-> As I'm sure there's other places that call vsprintf() under a raw_spin_lo=
-ck
-> or non-preemptable context, perhaps this should be the fix we do.
-@Paul and @Stephen do you have any feedback on this idea?
-
->
-> -- Steve
->
+Capitalize, drop driver, drop full stop.
 
 
---=20
----
-172
+...
 
+> +examples:
+> +  - |+
+
+No need for +
+
+> +    spi {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      cros_ec: ec@0 {
+> +        compatible = "google,cros-ec-spi";
+> +        reg = <0>;
+> +        interrupts = <35 0>;
+> +
+> +        charge_chip_battery_current: charge-chip-battery {
+
+1. Drop unused label.
+2. So this is a battery? Then just "battery"... or this is a charger?
+Please look how power supplies are done. This should not be different.
+
+Best regards,
+Krzysztof
 
