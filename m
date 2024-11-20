@@ -1,99 +1,128 @@
-Return-Path: <linux-kernel+bounces-416196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41D39D41F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:14:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AFFD9D41E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B952281E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47C6AB23798
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6592B1C75E4;
-	Wed, 20 Nov 2024 18:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1581B86EF;
+	Wed, 20 Nov 2024 18:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dfa99b90"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRYmQAyd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2421BDAB5;
-	Wed, 20 Nov 2024 18:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BB785C5E;
+	Wed, 20 Nov 2024 18:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732126367; cv=none; b=ZEFWKDxmemknRaSx56XTHcjBPpg56LY0EEqU2zvSLPaFG/anXzX0wQQ7uzQJHHSiDn+ZncTUlpvyvXYPtaHmNKHOU8tvU8+/VOUeFIIssRFd8RKJdzQrnQtgoyzpRi3J+5/vII3mBOTuWDCvYJS4/KMOnNXQESDDxorQn03hpIM=
+	t=1732126364; cv=none; b=UQFYjpVouBfm2mW4FAQjr9jXvhE0K26TYXJCsSNoNXZ0VBHZ409/R3TgghJo6ZP7y70efRn/FDrcD2EAXBmy9UZi3XgB/n5jsy3Se8szRygywFlVQUOSWRRYlpwpnzpKfOQUH/8oZxn4lhxq61jYOX4JOuwZhJ1EvPeYMeGfJ0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732126367; c=relaxed/simple;
-	bh=ioxxLAUmczTtwoDDSxGkvsdiX6i9vCPHTedkjZs4s1A=;
+	s=arc-20240116; t=1732126364; c=relaxed/simple;
+	bh=S3W6OYUtc6RpBtlWvHHDwkqdYqpCpCp9r9LAEi9WpgU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kAWQ6HB76jZ1NKpqLMsZ9fM/I4oqw0zC77rxPC1uM1fEBLXiH5AZp8dX19ia4Bi7LiDM5Bc3ypj3bewLg/T3+iZDsyNzFuQzNQaX3QkeASB6VFwaq9mu/Luw3THkR7dP1esmNs/LYBISnpk+BV/SsKRAzW5TGJbwPbMS2RlE6mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dfa99b90; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732126366; x=1763662366;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ioxxLAUmczTtwoDDSxGkvsdiX6i9vCPHTedkjZs4s1A=;
-  b=Dfa99b90qaggY0M4T1cHdDp+mLW8IYv7Ydif0M27OMWnTg7vHECJLW9k
-   XnLrLlPUYswpwx4gooTkasdNaB9ooHspnTwbThrOKKxy5gPlbeS+TxnJr
-   3il7oHrigsJBBTvrZzlj+1zwNY0KsGxHqZM8oirV23O7LbHbhzGrxOKXO
-   z0HSo1OEISZEUl1TN6aEgvEUMVwLTmBwFaPxHgBfNwhhjPsSuE4gWI1ID
-   9DZNqaJgxT21S/IifvRWRp0RU2wAF0WQ0GdP5UdVdgFithtFS6SqqH/Nx
-   2lG3dphwLOHHjihGLNUi7fzIzY9dpC4cSU3so22F9km/AF4asJhFl1YOA
-   Q==;
-X-CSE-ConnectionGUID: zwVUcXIJSU+WQ47D8ciCZQ==
-X-CSE-MsgGUID: nexgseX/T/CAR0cfPhjpQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="43587848"
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="43587848"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:12:46 -0800
-X-CSE-ConnectionGUID: MnaaUSTUQzeAUDvKUoogeA==
-X-CSE-MsgGUID: 6J9o4yNOSt2NIfz72mDnzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="120863679"
-Received: from abkail-mobl.amr.corp.intel.com (HELO desk) ([10.125.145.31])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:12:45 -0800
-Date: Wed, 20 Nov 2024 10:12:38 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, amit@kernel.org,
-	kvm@vger.kernel.org, amit.shah@amd.com, thomas.lendacky@amd.com,
-	bp@alien8.de, tglx@linutronix.de, peterz@infradead.org,
-	corbet@lwn.net, mingo@redhat.com, dave.hansen@linux.intel.com,
-	hpa@zytor.com, seanjc@google.com, pbonzini@redhat.com,
-	daniel.sneddon@linux.intel.com, kai.huang@intel.com,
-	sandipan.das@amd.com, boris.ostrovsky@oracle.com,
-	Babu.Moger@amd.com, david.kaplan@amd.com, dwmw@amazon.co.uk,
-	andrew.cooper3@citrix.com
-Subject: Re: [PATCH 1/2] x86/bugs: Don't fill RSB on VMEXIT with
- eIBRS+retpoline
-Message-ID: <20241120181238.n3xwpd6uticlaw4a@desk>
-References: <cover.1732087270.git.jpoimboe@kernel.org>
- <2e062b6c142bb3770a0829e2cf21e11e8fb6ae5c.1732087270.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EtuF60OF2QlUNsPtFI6mBzLYqiWGTaV3t3oDi3rI46lvjNRRPjNcN056f3gXFYbEMCaLe+2X87BEw1RDCty8ROJbk3xSd9Jh9pDBXACHrov2K03gUPjjLX2+qvurq2wb2QgUIBx6h07m4Q08SFYVFN5qgDbyTk1zKfTFgZ2dzLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hRYmQAyd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4C9CC4CECD;
+	Wed, 20 Nov 2024 18:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732126364;
+	bh=S3W6OYUtc6RpBtlWvHHDwkqdYqpCpCp9r9LAEi9WpgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hRYmQAyd08GsbH/gLhyi8jau4DK5NSWw8MSsmUwUYNimAAXMHBP4W13Tkd9AnUXrd
+	 oWt/XrM0p/F54/FqZWGb4FiGLxY/+79vAC1vMKxLMOr1OR3s2t7TMJrlV3XKvi2HoW
+	 OGe48ZJlFgDz/2E5WWdrjhwV5A0uqFXxvEhtv5TdOLawkySjdyF9uQre1njHo+PhBX
+	 kQKT4NxMGKF5z9VcMzcS8TE2h9lvtW3k0DgA10nzWkGOyNwS2APf+61tAcOaDeLg6a
+	 iOfPywR0bWlvze1iMt2Y3ymGyJ9JniMcWLLpXlSOFRYT9IHr2aLgDIE6WH4OWLrESY
+	 ZcqV/jCsuO42A==
+Date: Wed, 20 Nov 2024 10:12:40 -0800
+From: Kees Cook <kees@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: David Wang <00107082@163.com>, brgl@bgdev.pl, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	geert@linux-m68k.org, linux-hardening@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] Fix a potential abuse of seq_printf() format string in
+ drivers
+Message-ID: <202411201008.5262C14@keescook>
+References: <20241120053055.225195-1-00107082@163.com>
+ <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2e062b6c142bb3770a0829e2cf21e11e8fb6ae5c.1732087270.git.jpoimboe@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 11:27:50PM -0800, Josh Poimboeuf wrote:
-> eIBRS protects against RSB underflow/poisoning attacks.  Adding
-> retpoline to the mix doesn't change that.  Retpoline has a balanced
-> CALL/RET anyway.
+On Wed, Nov 20, 2024 at 08:35:38AM +0100, Linus Walleij wrote:
+> On Wed, Nov 20, 2024 at 6:31 AM David Wang <00107082@163.com> wrote:
 > 
-> So the current full RSB filling on VMEXIT with eIBRS+retpoline is
-> overkill.  Disable it (or do the VMEXIT_LITE mitigation if needed).
+> > Using device name as format string of seq_printf() is proned to
+> > "Format string attack", opens possibility for exploitation.
+> > Seq_puts() is safer and more efficient.
+> >
+> > Signed-off-by: David Wang <00107082@163.com>
 > 
-> Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Okay better get Kees' eye on this, he looks after string vulnerabilities.
+> (But I think you're right.)
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Agreed, this may lead to kernel memory content exposures. seq_puts()
+looks right.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+To defend against this, it might be interesting to detect
+single-argument seq_printf() usage and aim it at seq_puts()
+automatically...
+
+> 
+> >  drivers/gpio/gpio-aspeed-sgpio.c            | 2 +-
+> >  drivers/gpio/gpio-aspeed.c                  | 2 +-
+> >  drivers/gpio/gpio-ep93xx.c                  | 2 +-
+> >  drivers/gpio/gpio-hlwd.c                    | 2 +-
+> >  drivers/gpio/gpio-mlxbf2.c                  | 2 +-
+> >  drivers/gpio/gpio-omap.c                    | 2 +-
+> >  drivers/gpio/gpio-pca953x.c                 | 2 +-
+> >  drivers/gpio/gpio-pl061.c                   | 2 +-
+> >  drivers/gpio/gpio-tegra.c                   | 2 +-
+> >  drivers/gpio/gpio-tegra186.c                | 2 +-
+> >  drivers/gpio/gpio-tqmx86.c                  | 2 +-
+> >  drivers/gpio/gpio-visconti.c                | 2 +-
+> >  drivers/gpio/gpio-xgs-iproc.c               | 2 +-
+> >  drivers/irqchip/irq-gic.c                   | 2 +-
+> >  drivers/irqchip/irq-mvebu-pic.c             | 2 +-
+> >  drivers/irqchip/irq-versatile-fpga.c        | 2 +-
+> >  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    | 2 +-
+> >  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 +-
+> >  drivers/pinctrl/pinctrl-mcp23s08.c          | 2 +-
+> >  drivers/pinctrl/pinctrl-stmfx.c             | 2 +-
+> >  drivers/pinctrl/pinctrl-sx150x.c            | 2 +-
+> >  drivers/pinctrl/renesas/pinctrl-rzg2l.c     | 2 +-
+> 
+> Can you split this in three patches per-subsystem?
+> One for gpio, one for irqchip and one for pinctrl?
+> 
+> Then send to each subsystem maintainer and CC kees on
+> each.
+> 
+> I'm just the pinctrl maintainer. The rest can be found with
+> scripts/get_maintainer.pl.
+
+Oof. That's a lot of work for a mechanical change like this. Perhaps
+Greg KH can take it directly to the drivers tree instead?
+
+-Kees
+
+-- 
+Kees Cook
 
