@@ -1,269 +1,139 @@
-Return-Path: <linux-kernel+bounces-416386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4774E9D440F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:55:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD3B9D4438
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:02:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28671F24023
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34FBD281472
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0AC1C8FCF;
-	Wed, 20 Nov 2024 22:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B41D0DE6;
+	Wed, 20 Nov 2024 22:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qO2IKaSv"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCPP6AdY"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4206B1C877E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014751D0947;
+	Wed, 20 Nov 2024 22:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143319; cv=none; b=nKGc2blMxtzIz5b8WH4E1ErgDOCuWZtbCz6Q3Mcns1GIic47nXhinpxf6L6AazU0PLz0B2czaWxTS+vIvTfa12txgIpdvKKYXkyT0mHyQuT5GsuzHUeQDRlidXR6d/DLC+2PoVRjf1Z5hMWbUDmYp/4XgjA0AOL1Gr5yNGMyUTo=
+	t=1732143383; cv=none; b=L4JKEqckTQRuyRVEVf1DUQ8R0neACs853PbNEGuQIoX+Jjp9AI9lk5ZlueDRPa3mt4T1tdUR75C72uxqtASJe1IGefB5zPjMq88LQi5ssGkEwhs9cZelsyemPpiQZnDokoW+aWe8xDc7+IRyHzZgm2jqZbXl0RMBCSlgra8wFg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143319; c=relaxed/simple;
-	bh=o/7mpnxnSD6czGPjKYI4k5kO04AF4cb9zKhn7kJX4js=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKqZmdH79QTLN2g021maWbA8Kp/DBY7A5I7iNdj+WPkVpzxo5uQAN9tMsFAZiLUO2sECgItqZabCoYTFgYIrmpW6yN5B5rdPpwUeWrWNfNjntXIlKHe8/Bv7K8ztprVDWB9us0266L+WtFcSSaoCbwI+DSHTU9lSB8vKC1nXLuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qO2IKaSv; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 17:55:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732143310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dqYuKTvze3qmtMd9uDN7Oc7WT+P2czNI7GBxpdmcRy8=;
-	b=qO2IKaSvb1ajpdC2BCVJ5sveheJ+RTlU28PRzl43PlWvIyl4Ybu/Zk1lm67JkLpWp8ObKf
-	ks+NS8ENUg7QWMkO9u48W7OPFINtf0srmMJSsIVp4htll8dvBUpz6gyOUHGr5+5kDCRWxc
-	YO9HrAqPKgQ0+ZeSI6p9CFBR1XGTr+g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
-References: <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
- <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
- <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+	s=arc-20240116; t=1732143383; c=relaxed/simple;
+	bh=L5JPavDv6jkOs8+4SL1iJB89HN6ikbiWc++GnD2aw9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HVfhtW5UouQLaY/MfdhG165Ew4D5JA7lfzG7vFt3Bj3w6jyStBIheTA4ljY4pCiq/Jyp36cBI+vPBFAklY9mTPa7QS11D+x85LkWL2zagwm+uyYljTomXXCTSBWfUPb/zygQr4PxHF4PVzWI2sRrW6tLNMyR9OTTKFoUXkB/qg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCPP6AdY; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53da3b911b9so260191e87.2;
+        Wed, 20 Nov 2024 14:56:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732143379; x=1732748179; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EDe+ut7FU4NjsmyCYmZbNnNl7UOa9iCRRrQvfMKje+E=;
+        b=NCPP6AdYLIXtvQgzSwK2Nc6iMviR2hMYUizmdQEGIbXEhtMr7ZVtGNUXYrsPYzlGwU
+         6644cvNRZnNWbDPzsGMRprdATzQIyVepY59w6c1sqJNDKWWZITdjCIWRUWEBLXPoe1eq
+         ucUS9Ol8WkGVt3bKr1yJ47J6vwvF0RbyCqbMlRrrcnZ44WFe5Xb6EiH13eafanf+BEgE
+         HyfgJTANWASit4ZVdC/vhrPEEiVVyUD5tXfVmq2RSywC8Kv9y8PTr5VoCuAzJoUnyKzJ
+         eyFi2PIGnCKh3RBxyu1jJA/moIuB01PjFMXa8CzpXGHmanmGcTzTS/FN3j4edvEOjj69
+         71WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732143379; x=1732748179;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EDe+ut7FU4NjsmyCYmZbNnNl7UOa9iCRRrQvfMKje+E=;
+        b=oLrUExB/2vK/TFJpOqeqTYu3AaTALLJEq7Is8b5tEGq6AqMoYg8CzbnINypA/MgfCq
+         yC31EtpIKY29V5TFzkTHwWx0CP0mMR6fRHpY6n3m2iIi5Y8QH8ySGwiiSCUB31im10CN
+         i8/QPBmeBtVZwqqjI4KkurnY8cjettRzNup9tOrQtpR2l1eKBoTMY5To1Jbq3up6E6Jo
+         S8rJ/5RH8LSqcyoG0t7cbjGpNywBFdx6wIXBPA7e6TJ2shabpvVDh7agcpfqM/DTSP9b
+         GxP8Eq+ZVzek6gV6Jon88mmVdnr+qv3Q7ImSmth8xSIqTL5b1dynMszhnLuMucA6g2j+
+         JMYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTxuNu4+vP9Hxrmbs1k08OnGYWrwdC4YrGKezndRr2nQM7t5eSApvsF3sovf4MXCl2nle0a48DSWSeKRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx/8d9PLnKr3uZW0VVWRo+viEp/sp15B48DxCD7Q3GGu/Mispl
+	DbQPBgBJyOXbig45No+xIAxI8+8Zk72xscU4Gtu8e7lV3fwH4j/b
+X-Google-Smtp-Source: AGHT+IEPWWHE/H8MR95ODYZ/MAqZO2vFJWEoMmaT8xgsBQiNCOjdaFjg85Aupur+Yw0QashfxHHKHg==
+X-Received: by 2002:a19:8c1b:0:b0:539:f953:2da7 with SMTP id 2adb3069b0e04-53dc136df2amr1696512e87.50.1732143378777;
+        Wed, 20 Nov 2024 14:56:18 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd4723ffsm777283e87.193.2024.11.20.14.56.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:56:17 -0800 (PST)
+Message-ID: <43a07c04-2985-4999-b6d6-732794906a36@gmail.com>
+Date: Thu, 21 Nov 2024 00:56:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page
+ mappings
+To: Jann Horn <jannh@google.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <20241119112408.779243-3-abdiel.janulgue@gmail.com>
+ <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 05:39:19PM -0500, Kent Overstreet wrote:
-> On Wed, Nov 20, 2024 at 03:21:06PM -0700, Shuah Khan wrote:
-> > On 11/20/24 14:37, Shuah Khan wrote:
-> > > On 11/20/24 14:20, Kent Overstreet wrote:
-> > > > On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
-> > > > > On 11/20/24 13:34, Kent Overstreet wrote:
-> > > > > > On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
-> > > > > > > On 9/2/24 03:51, Kent Overstreet wrote:
-> > > > > > > > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> > > > > > > > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > > > > > > > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > > > > > > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> > > > > > > > > > > [...]
-> > > > > > > > > > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > > > > > > > > > > > in the case of bugs, because that's going to be an improvement w.r.t.
-> > > > > > > > > > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > > > > > > > > > > > something that we can't guarantee won't happen in the wild - we WARN()
-> > > > > > > > > > > > and try to handle the error as best we can.
-> > > > > > > > > > > 
-> > > > > > > > > > > We have discussed that in a different email thread. And I have to say
-> > > > > > > > > > > that I am not convinced that returning NULL makes a broken code much
-> > > > > > > > > > > better. Why? Because we can expect that broken NOFAIL users will not have a
-> > > > > > > > > > > error checking path. Even valid NOFAIL users will not have one because
-> > > > > > > > > > > they _know_ they do not have a different than retry for ever recovery
-> > > > > > > > > > > path.
-> > > > > > > > > > 
-> > > > > > > > > > You mean where I asked you for a link to the discussion and rationale
-> > > > > > > > > > you claimed had happened? Still waiting on that
-> > > > > > > > > 
-> > > > > > > > > I am not your assistent to be tasked and search through lore archives.
-> > > > > > > > > Find one if you need that.
-> > > > > > > > > 
-> > > > > > > > > Anyway, if you read the email and even tried to understand what is
-> > > > > > > > > written there rather than immediately started shouting a response then
-> > > > > > > > > you would have noticed I have put actual arguments here. You are free to
-> > > > > > > > > disagree with them and lay down your arguments. You have decided to
-> > > > > > > > > 
-> > > > > > > > > [...]
-> > > > > > > > > 
-> > > > > > > > > > Yeah, enough of this insanity.
-> > > > > > > > > 
-> > > > > > > > > so I do not think you are able to do that. Again...
-> > > > > > > > 
-> > > > > > > > Michal, if you think crashing processes is an acceptable alternative to
-> > > > > > > > error handling _you have no business writing kernel code_.
-> > > > > > > > 
-> > > > > > > > You have been stridently arguing for one bad idea after another, and
-> > > > > > > > it's an insult to those of us who do give a shit about writing reliable
-> > > > > > > > software.
-> > > > > > > > 
-> > > > > > > > You're arguing against basic precepts of kernel programming.
-> > > > > > > > 
-> > > > > > > > Get your head examined. And get the fuck out of here with this shit.
-> > > > > > > > 
-> > > > > > > 
-> > > > > > > Kent,
-> > > > > > > 
-> > > > > > > Using language like this is clearly unacceptable and violates the
-> > > > > > > Code of Conduct. This type of language doesn't promote respectful
-> > > > > > > and productive discussions and is detrimental to the health of the
-> > > > > > > community.
-> > > > > > > 
-> > > > > > > You should be well aware that this type of language and personal
-> > > > > > > attack is a clear violation of the Linux kernel Contributor Covenant
-> > > > > > > Code of Conduct as outlined in the following:
-> > > > > > > 
-> > > > > > > https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
-> > > > > > > 
-> > > > > > > Refer to the Code of Conduct and refrain from violating the Code of
-> > > > > > > Conduct in the future.
-> > > > > > 
-> > > > > > I believe Michal and I have more or less worked this out privately (and
-> > > > > > you guys have been copied on that as well).
-> > > > > 
-> > > > > Thank you for updating us on the behind the scenes work between you
-> > > > > and Michal.
-> > > > > 
-> > > > > I will make one correction to your statement, "you guys have been copied on
-> > > > > that as well" - which is inaccurate. You have shared your email exchanges
-> > > > > with Michal with us to let us know that the issue has been sorted out.
-> > > > 
-> > > > That seems to be what I just said.
-> > > > 
-> > > > > You might have your reasons and concerns about the direction of the code
-> > > > > and design that pertains to the discussion in this email thread. You might
-> > > > > have your reasons for expressing your frustration. However, those need to be
-> > > > > worked out as separate from this Code of Conduct violation.
-> > > > > 
-> > > > > In the case of unacceptable behaviors as defined in the Code of Conduct
-> > > > > document, the process is to work towards restoring productive and
-> > > > > respectful discussions. It is reasonable to ask for an apology to help
-> > > > > us get to the goal as soon as possible.
-> > > > > 
-> > > > > I urge you once again to apologize for using language that negatively impacts
-> > > > > productive discussions.
-> > > > 
-> > > > Shuah, I'd be happy to give you that after the discussion I suggested.
-> > > > Failing that, I urge you to stick to what we agreed to last night.
-> > The only thing we agreed upon is that you would respond the thread
-> > to update your sorting things out with Michal.
-> 
-> ...Shall I quote you?
-> 
-> > 
-> > As for the discussion, I will repeat what I said in our conversation
-> > that the discussion will be lot more productive after making amends
-> > with the community. I stand by that assessment.
-> > 
-> > I will also repeat what I said that the discussion and debate is
-> > outside the scope of the current issue the Code of Conduct Committee
-> > is trying to resolve.
-> > 
-> > I didn't pick up on your desire to apologize after the discussion in
-> > our conversation.
-> > 
-> > Are you saying you will be happy to make amends with an apology after
-> > the discussion and debate?
-> 
-> Look, I just want to be done with this, so let me lay it all out as I
-> see it, starting from the beginning of where things went off the rails
-> between myself and Michal:
-> 
-> Michal's (as well as Steve's) behaviour in the memory allocation
-> profiling review process was, in my view, unacceptable (this included
-> such things as crashing our LSF presentation with ideas they'd come up
-> with that morning, and persistent dismissive axegrinding on the list).
-> The project was nearly killed because of his inability to listen to the
-> reasons for a design and being stubbornly stuck on his right to be heard
-> as the maintainer.
-> 
-> In my view, being a good maintainer has a lot more to do with
-> stewardship and leadership, than stubbornly insisting for - whatever
-> that was. In any event, that was where I came to the conclusion "I just
-> cannot work that guy".
-> 
-> Next up, PF_MEMALLOC_NORECLAIM over Michal's nack - I was wrong there, I
-> only did it because it really seemed to me that Michal was axe grinding
-> against _anything_ I was posting, but I still shouldn't have and that
-> was more serious infraction in my view; that sort of thing causes a real
-> loss of trust, and no I will not do it again.
-> 
-> The subsequent PF_MEMALLOC_NORECLAIM discussion was such a trainwreck
-> that I don't think I will go into it. Except to say that yes, if it
-> makes you happy, I shouldn't have used that language and I won't do it
-> again.
-> 
-> But I do have to call out you, the CoC board's behaviour, and I think
-> that ony fair since you call out other people's behaviour publically.
-> 
-> Greg's behaviour when he approached me at Plumbers was beyond
-> unprofessional, and since it wasn't exactly public and you guys have
-> already heard about it privately I won't repeat exactly what happened,
-> but it is an issue.
-> 
-> Shuah, you weren't much better.
-> 
-> There were concerns raised in the recent CoC enforcement thread, by
-> someone with experience in such matters, that your aproach seemed
-> extremeely heavy handed and I find myself in 100% agreement.
-> 
-> The approach you take is that of a bad HR department: all about image,
-> no understanding. When tensions arise, it's important get to the bottom
-> of things, to at least try to take the time to listen with an open mind.
-> People have real frustrations, and it's amazing what you can learn and
-> what you can accomplish by having real conversations.
-> 
-> But that's not what you guys do: you say "Ok, if someone's being too
-> much of an asshole, we'll just be an even bigger asshole!".
-> 
-> No. Cut that out.
-> 
-> I've done the hard work of stepping in and building bridges when
-> relations have broken down (on quite a large scale), so I'm offended by
-> what you guys do.
+Hi,
 
-Now, I've said two things I'll do differently, or not do in the future.
+Thanks for the feedback.
 
-Michal, would you be willing to consider changing your approach a bit in
-similar situations? Try to lead a little bit less by "I'm the mainainer,
-my concerns must be addressed" and a little bit more by incorporating
-the best of everyone's ideas, and showing respect to others who have
-studied their problems, as you want to be respected as maintainer?
+On 19/11/2024 19:07, Jann Horn wrote:
+>> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a Self>
+> 
+> Sorry, can you explain to me what the semantics of this are? Does this
+> create a Page reference that is not lifetime-bound to the PageSlice?
 
-Shuah, would you be willing to entertain the notion of modifying your
-approach a bit as well? More in the direction of genuine conversations
-and understanding, less of just following a process and slapping people
-if they don't comply?
+This creates a Page reference that is tied to the lifetime of the `C 
+struct page` behind the PageSlice buffer. Basically, it's just a cast 
+from the struct page pointer and does not own that resource.
 
-We've got people in the community who are good at this sort of thing,
-and might be willing to help if they were asked - it doesn't have to
-just be you guys, and if we started encouraging this sort of thing it
-could be a real learning experience for everyone.
+>> +fn to_vec_with_allocator<A: Allocator>(val: &[u8]) -> Result<Vec<PageSlice, A>, AllocError> {
+> Do I understand correctly that this can be used to create a kmalloc
+> allocation whose pages can then basically be passed to
+> page_slice_to_page()?
+> 
+> FYI, the page refcount does not protect against UAF of slab
+> allocations through new slab allocations of the same size. In other
+> words: The slab allocator can internally recycle memory without going
+> through the page allocator, and the slab allocator itself does not
+> care about page refcounts.
+> 
+> If the Page returned from calling page_slice_to_page() on the slab
+> memory pages returned from to_vec_with_allocator() is purely usable as
+> a borrow and there is no way to later grab a refcounted reference to
+> it or pass it into a C function that assumes it can grab a reference
+> to the page, I guess that works. 
+
+Yes, I think that is the intent. I appreciate your help in pointing out 
+the issues with using refcounts in slab memory pages. As you can see, 
+page_slice_to_page() only returns a Page reference (not a refcounted 
+Page). Hopefully that addresses your concern?
+
+Regards,
+Abdiel
 
