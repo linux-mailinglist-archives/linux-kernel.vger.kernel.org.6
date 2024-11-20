@@ -1,103 +1,99 @@
-Return-Path: <linux-kernel+bounces-415667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49999D39A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:42:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4059D39B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27C05B24B80
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2349B2808F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743D71A0BE5;
-	Wed, 20 Nov 2024 11:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814F81A256F;
+	Wed, 20 Nov 2024 11:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NX+o7Tp5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861EC1A08CA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="oi+BfHp0"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9B61A01BE;
+	Wed, 20 Nov 2024 11:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732102901; cv=none; b=H5eBCGSwXUVwtLqcKwwA+3Fk5HVdjD9a+s1JbjrJqbaVVW+jgEP8iI9nbJ8tl7TEN4qLeiFdL78IkZ+ox2DY+zhfCz4KHmncSawOLnyj5N3e3BkQS+1gTFotrSgZ6RtfygNG/ss3TIXYKqdNvhTSBclAU9JgcLzaYlZArmCtjS0=
+	t=1732102939; cv=none; b=GAebh14FRFB9KZ5HAhePZpRz+0izZqzihJc5/pOeF5RGtHb/0cKn9wsebDN7MDSwjxwq0U4qVbFjtu94HGTjYObBL4YtmOAPdjWFOJXw93lo2BTnAcsUPcCR4V+sT8VSD79DA3hgCd13qhj9bPTvMaJIPXFv03yTWVgmyV+uwnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732102901; c=relaxed/simple;
-	bh=R89d6A5mpwXuErqQT+DVy8w/GHdyMclAMWFBAG1D84E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZfCMJB2m/Z9GWJWpGvGOG6uy+0/HVUFBGyvpJkTarnk29O55KREl/OuUnIjHS/X1+UuOgJW8h4OjVsAbgQeXcFVQFesVIV89amFLLm2TmFBVW+sOrxYLA/sfh4T8+wyP9ZgaJfZIHLHPGZE563FZ9Glgfh5zEcJpDhxluE6Ka+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NX+o7Tp5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732102891;
-	bh=R89d6A5mpwXuErqQT+DVy8w/GHdyMclAMWFBAG1D84E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NX+o7Tp5Ee3wuIvWGNWF704zgabeh6RLROGj+n+3cECHTbk4Vu/OMxxDYEYfEZDNg
-	 v93h8y46MGAe3Q5gmPmpAm7UOQin/PC3NwR0bFOQKMOzdDtI9YDctNK6VrppyN+rMQ
-	 xyRgEJmSOAq9cLxGkMrtZym7Md8+TGaRgLs1NTPda+B6aT7wBy754halz29Upn5Gy6
-	 qNoMaLhMQD1c7QCe74MrtGlmydEHUHD+WxeDiwuWwg23bjv2RYN297R8qA+B0k/vO9
-	 ijfrv9ZtTe0x89jXxzbpqlh7eR0xV0+nGmG+zx79Xapqo2q3aCYJuI/L1MR/EuZJXu
-	 Bu2PKM4gm7D+Q==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6B50E17E362F;
-	Wed, 20 Nov 2024 12:41:31 +0100 (CET)
-Date: Wed, 20 Nov 2024 12:41:25 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Steven Price <steven.price@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] drm/panthor: Fix compilation failure on panthor_fw.c
-Message-ID: <20241120124125.0bf1b9ac@collabora.com>
-In-Reply-To: <20241119164455.572771-1-liviu.dudau@arm.com>
-References: <20241119164455.572771-1-liviu.dudau@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1732102939; c=relaxed/simple;
+	bh=CvCJEH+Lxk8A3OmQGhvy3VkIiHAL8qBPQY/3xvua5Yc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=D/gJ8TvQFgQpZQpz2QuJo8W4pXYb5HQU06V8+Wia9bPBExJUt+D7KmwSnI0eVusEZA7xoV2jXQLWiVk4cCG4CuHn9oe4adsdasQx9r/pySWEYNp+P0Gv8p9Zs8AiG5KR7YutcIza/r7NYAlBXMEQB9te3pK2aiylKl3agtQQbpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=oi+BfHp0 reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=/sRJJY0JNrqdLEGJDTJnDSvIbBEf57fqyOcD4plwToo=; b=o
+	i+BfHp0yo7CpgWl4iRsbC6WbtVWD88T48DoBGhsLXMI2a5px3sd1tCdHYaaL5OSx
+	/azSuy/Dr2r+2BdDBLfodD6cT0q1nfwfgNvKrOjQx1XrAEsjHYKc3kG+38E8QXkM
+	DR1VfczF1jfxWc1hQdyFFTxQN9J+FTOOto0/3Eqv5A=
+Received: from 00107082$163.com ( [111.35.191.191] ) by
+ ajax-webmail-wmsvr-40-127 (Coremail) ; Wed, 20 Nov 2024 19:41:43 +0800
+ (CST)
+Date: Wed, 20 Nov 2024 19:41:43 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, kees@kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] gpio: Fix a potential abuse of seq_printf() format
+ string
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <CAMuHMdWEuWrfj3p0pX7FX6AgOKryFUnCEBRhPkhvnSEkMwThpQ@mail.gmail.com>
+References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+ <CAMuHMdWEuWrfj3p0pX7FX6AgOKryFUnCEBRhPkhvnSEkMwThpQ@mail.gmail.com>
+X-NTES-SC: AL_Qu2YAP2bvUEr5SKRZOkZnEYQheY4XMKyuPkg1YJXOp80lyTjxx4AbG5JGn/s9fmABgemoQm8YBJz9tpBXo9nWpiogbqMBx5/2flkEchxccmW
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <238c054f.ad0a.1934960d5fe.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:fygvCgD3_6z4yj1nIeIsAA--.56031W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0gmdqmc9uhySaAADsp
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Tue, 19 Nov 2024 16:44:55 +0000
-Liviu Dudau <liviu.dudau@arm.com> wrote:
-
-> Commit 498893bd596e ("drm/panthor: Simplify FW fast reset path") forgot
-> to copy the definition of glb_iface when it move one line of code.
-> 
-> Fixes: Commit 498893bd596e ("drm/panthor: Simplify FW fast reset path")
-> Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
-Liviu, can you queue this patch to drm-misc if that's not already done?
-
-> ---
->  drivers/gpu/drm/panthor/panthor_fw.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index 4bc52b1b1a286..c807b6ce71bd4 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1133,6 +1133,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
->  		 * This is not needed on a slow reset because FW sections are
->  		 * re-initialized.
->  		 */
-> +		struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
->  		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
->  
->  		ret = panthor_fw_start(ptdev);
-
+CkF0IDIwMjQtMTEtMjAgMTk6MDQ6MzksICJHZWVydCBVeXR0ZXJob2V2ZW4iIDxnZWVydEBsaW51
+eC1tNjhrLm9yZz4gd3JvdGU6Cj5IaSBEYXZpZCwKPgo+T24gV2VkLCBOb3YgMjAsIDIwMjQgYXQg
+MTA6MTXigK9BTSBEYXZpZCBXYW5nIDwwMDEwNzA4MkAxNjMuY29tPiB3cm90ZToKPj4gVXNpbmcg
+ZGV2aWNlIG5hbWUgYXMgZm9ybWF0IHN0cmluZyBvZiBzZXFfcHJpbnRmKCkgaXMgcHJvbmUgdG8K
+Pj4gIkZvcm1hdCBzdHJpbmcgYXR0YWNrIiwgb3BlbnMgcG9zc2liaWxpdHkgZm9yIGV4cGxvaXRh
+dGlvbi4KPj4gU2VxX3B1dHMoKSBpcyBzYWZlciBhbmQgbW9yZSBlZmZpY2llbnQuCj4+Cj4+IFNp
+Z25lZC1vZmYtYnk6IERhdmlkIFdhbmcgPDAwMTA3MDgyQDE2My5jb20+Cj4KPlRoYW5rcyBmb3Ig
+eW91ciBwYXRjaCEKPgo+PiAtLS0gYS9kcml2ZXJzL2dwaW8vZ3Bpby1hc3BlZWQtc2dwaW8uYwo+
+PiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1hc3BlZWQtc2dwaW8uYwo+PiBAQCAtNDIwLDcgKzQy
+MCw3IEBAIHN0YXRpYyB2b2lkIGFzcGVlZF9zZ3Bpb19pcnFfcHJpbnRfY2hpcChzdHJ1Y3QgaXJx
+X2RhdGEgKmQsIHN0cnVjdCBzZXFfZmlsZSAqcCkKPj4gICAgICAgICBpbnQgb2Zmc2V0Owo+Pgo+
+PiAgICAgICAgIGlycWRfdG9fYXNwZWVkX3NncGlvX2RhdGEoZCwgJmdwaW8sICZiYW5rLCAmYml0
+LCAmb2Zmc2V0KTsKPj4gLSAgICAgICBzZXFfcHJpbnRmKHAsIGRldl9uYW1lKGdwaW8tPmRldikp
+Owo+PiArICAgICAgIHNlcV9wdXRzKHAsIGRldl9uYW1lKGdwaW8tPmRldikpOwo+Cj5JZiB3ZSB3
+YW50IHRvIGFkZCB0aGUgbWlzc2luZyBzcGFjZSBoZXJlLCB0aGUgY29kZSBoYXMgdG8gYmUgY2hh
+bmdlZAo+dG8gdXNlIHNlcV9wcmludGYoLi4uLCAiICVzIiwgLi4uKSBhZ2Fpbi4KCkl0J3Mga2lu
+ZCBvZiBzdHJhbmdlIHRvIGFkZCBsZWFkaW5nIGFsaWdubWVudCBzcGFjZXMgaW4gYSBmdW5jdGlv
+biBuYW1lZCB4eHhfcHJpbnRfY2hpcCgpOyAKCj4KPkhvd2V2ZXIsIGl0IG1pZ2h0IGJlIHNpbXBs
+ZXIgdG8gbW92ZSB0aGlzIHRvIHRoZSBjb3JlLiBJLmUuIGFkZCBhbgo+dW5jb25kaXRpb25hbCBz
+ZXFfcHV0YyhwLCAnICcpIHRvIHNob3dfaW50ZXJydXB0cygpWzFdLCBhbmQgZHJvcCB0aGUKPnNw
+YWNlcyBmcm9tIGFsbCBjYWxsYmFja3MgYW5kIGZyb20gdGhlIGZhbGxiYWNrcyBpbiBzaG93X2lu
+dGVycnVwdHMoKS4KCkkgd291bGQgdm90ZSBmb3IgdGhpcyBhcHByb2FjaCwgICBpZiB3ZSB3YW50
+IHRvIGZpeCAgdGhvc2UgbWlzYmVoYXZpbmcgYWxpZ25tZW50cy4KSXQncyBjbGVhbmVyLgoKCj4K
+PlsxXSBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92Ni4xMi9zb3VyY2Uva2VybmVs
+L2lycS9wcm9jLmMjTDUwMwo+Cj5HcntvZXRqZSxlZXRpbmd9cywKPgo+ICAgICAgICAgICAgICAg
+ICAgICAgICAgR2VlcnQKPgo+LS0gCj5HZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3Rz
+IG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdlZXJ0QGxpbnV4LW02OGsub3JnCj4KPkluIHBlcnNv
+bmFsIGNvbnZlcnNhdGlvbnMgd2l0aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEg
+aGFja2VyLiBCdXQKPndoZW4gSSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAi
+cHJvZ3JhbW1lciIgb3Igc29tZXRoaW5nIGxpa2UgdGhhdC4KPiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgLS0gTGludXMgVG9ydmFsZHMKCgpUaGFua3N+CkRhdmlkCg==
 
