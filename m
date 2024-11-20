@@ -1,138 +1,176 @@
-Return-Path: <linux-kernel+bounces-416172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED009D4164
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:47:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B57F9D41B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276F5B26232
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:41:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E70BB25C59
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8B91AB539;
-	Wed, 20 Nov 2024 17:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596101ACDE3;
+	Wed, 20 Nov 2024 17:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="si/5NTgs"
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSFv0Y6h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5688146593;
-	Wed, 20 Nov 2024 17:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC5C15539A;
+	Wed, 20 Nov 2024 17:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732124500; cv=none; b=MrVNvWh1nr155BZcO7tNyaW2bbrdr38CeVSlAuGGkRcKsTZsoDAmx0Ap7o0OimaZB+A2VibKkLJj7YVKN5S21kQyjfQGaDU7Wc8BuYC7E6J6Yg7a5co1FLmekjSITuSE2ZSphLN3diGWBUCAgGbKWFkb2P8Eu2j0UVRzSGhSurE=
+	t=1732124802; cv=none; b=ixlhay8UuaRd6RnzeDHiE9r/69wdjEmaTvwJe2PZqNUWkbBUOSUQqvubabG0A2gmZ/NfEsvzwz88LLPELTme6nYLD5tWQVfeSwYAiaPFXVQCWjKQ9aXpRu3PlvSt7EPuGgbgIcjOqp77LLD4gC6SXa7NLZ3HWFY0O9/NBB7HHQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732124500; c=relaxed/simple;
-	bh=77l5BUdA3wUh+Ds92rI4XZsS4TQVkqTZf3ifB+JsiZs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JSH+UBx8ijlsYDb6y7YMUBDJ0+Iu8PxWrROZrYiy8jJm0o1mRI53kRBUQAmGt1bQ8m+GcqMLFM+0Agm1xSc2AwT9IKe5EFaRu5gLp263Uves7IqXrwdLKdK1x0HteUdAefzK8LeiisinCEwUFJYg9+Ml5CmQqiMUl2hhmSDErpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=si/5NTgs; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732124499; x=1763660499;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=dMxU76y/coq4MPw428ZOn69UQJ/3wc1UFFgfd5jLDwU=;
-  b=si/5NTgs7XV7aY21yqdGmgLYq4FVJuQNyE81zKwp2/1F/SvamY2cLBhg
-   pcR6qJn7M2797HxaGMHikbFvEyMQlcfj7uWuSnaiHJT/NVF4XuncIIwfc
-   qWx6sXtW5wNb2P/Uc+desJJq8PRfgYal10aHU2kR/VAm/6rR1n1g63vnp
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,170,1728950400"; 
-   d="scan'208";a="675210391"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 17:41:36 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:29938]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.32.84:2525] with esmtp (Farcaster)
- id afdc4bc4-bba2-498f-afae-82f05c096ff1; Wed, 20 Nov 2024 17:41:34 +0000 (UTC)
-X-Farcaster-Flow-ID: afdc4bc4-bba2-498f-afae-82f05c096ff1
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 20 Nov 2024 17:41:34 +0000
-Received: from [192.168.4.239] (10.106.82.23) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 20 Nov 2024
- 17:41:33 +0000
-Message-ID: <acdfa273-5da0-48dd-b506-e1064eea2726@amazon.com>
-Date: Wed, 20 Nov 2024 17:41:31 +0000
+	s=arc-20240116; t=1732124802; c=relaxed/simple;
+	bh=IWeGbqt/aP9Z+v83QQBIzJ9NOFn4vM22aA07hXlz+O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PqEyKZSfhh7wFA4qE7MD/A2lKn1xO/S2hx7TmCj8kr07Xx4JMZzB62ZMMS6gjvg2XbDF0G14FGLfU+cvqp/tM0PPiiWMg5SsCbvvyJKd+Pp9ueilYFcTno5Lb34HmBo3TI4XkLL4uufEUD0gNHuMS3gzpQPuKHff9WQVBZlYIdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSFv0Y6h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABC3C4CECD;
+	Wed, 20 Nov 2024 17:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732124802;
+	bh=IWeGbqt/aP9Z+v83QQBIzJ9NOFn4vM22aA07hXlz+O8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gSFv0Y6h9roeAEtyMm+CahvnA61YwGAfn2GL1NT6D5Dol5PpgWDvHpEbkANV3/JS/
+	 ZbfUsCr+U68Z+/PZC7eKpcFv775sS6FOx/XsHpm/+39eIIV19kE0W8Luw+h4i73eT5
+	 Lbne7PV83ScJaDjpPtFIi3t2SZtQaOWF22TFNOsrmE+FwH7nggerTsaXyU9DWRVg/s
+	 yxA3ZQtGLdEkguak8xMiO3MDDI9zhMTPeXza9nWg50o965QZ9m6h9i2qA5HbSAuj+b
+	 0kB/AmTtpUvV1jkUS6SwZignCm1uf/9pcsrV2hv8iuGx5R0bB2XxCUxDQsSDf51484
+	 M7rNnaCLHdYhQ==
+Date: Wed, 20 Nov 2024 17:46:36 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Daniel Machon <daniel.machon@microchip.com>
+Cc: UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Horatiu Vultur <horatiu.vultur@microchip.com>,
+	Russell King <linux@armlinux.org.uk>, jacob.e.keller@intel.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v2 8/8] dt-bindings: net: sparx5: document RGMII
+ MAC delays
+Message-ID: <20241120-decrease-wired-f6f21af817ce@spud>
+References: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
+ <20241113-sparx5-lan969x-switch-driver-4-v2-8-0db98ac096d1@microchip.com>
+ <20241114-liquefy-chasing-a85e284f14b9@spud>
+ <20241118105025.hjtji5cnl75rcrb4@DEN-DL-M70577>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
-To: Paolo Bonzini <pbonzini@redhat.com>, <corbet@lwn.net>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
-	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
-	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
-References: <20241024095429.54052-1-kalyazin@amazon.com>
- <86811253-a310-4474-8d0a-dad453630a2d@redhat.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <86811253-a310-4474-8d0a-dad453630a2d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D005EUA002.ant.amazon.com (10.252.50.11) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2zHSNTjBPABr97aC"
+Content-Disposition: inline
+In-Reply-To: <20241118105025.hjtji5cnl75rcrb4@DEN-DL-M70577>
+
+
+--2zHSNTjBPABr97aC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 18, 2024 at 10:50:25AM +0000, Daniel Machon wrote:
+> Hi Conor,
+>=20
+> > > The lan969x switch device supports two RGMII port interfaces that can=
+ be
+> > > configured for MAC level rx and tx delays.
+> > >=20
+> > > Document two new properties {rx,tx}-internal-delay-ps. Make them
+> > > required properties, if the phy-mode is one of: rgmii, rgmii_id,
+> > > rgmii-rxid or rgmii-txid. Also specify accepted values.
+> > >=20
+> > > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> > > ---
+> > >  .../bindings/net/microchip,sparx5-switch.yaml        | 20 ++++++++++=
+++++++++++
+> > >  1 file changed, 20 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-s=
+witch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.=
+yaml
+> > > index dedfad526666..a3f2b70c5c77 100644
+> > > --- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.y=
+aml
+> > > +++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.y=
+aml
+> > > @@ -129,6 +129,26 @@ properties:
+> > >              minimum: 0
+> > >              maximum: 383
+> > > =20
+> > > +        allOf:
+> > > +          - if:
+> > > +              properties:
+> > > +                phy-mode:
+> > > +                  contains:
+> > > +                    enum:
+> > > +                      - rgmii
+> > > +                      - rgmii-rxid
+> > > +                      - rgmii-txid
+> > > +                      - rgmii-id
+> > > +            then:
+> > > +              properties:
+> > > +                rx-internal-delay-ps:
+> > > +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
+> > > +                tx-internal-delay-ps:
+> > > +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
+> >=20
+> > Properties should be define at the top level and constrained in the
+> > if/then parts. Please move the property definitions out, and just leave
+> > the required: bit here.
+> >=20
+> > > +              required:
+> > > +                - rx-internal-delay-ps
+> > > +                - tx-internal-delay-ps
+> >=20
+> > You've got no else, so these properties are valid even for !rgmii?
+> >=20
+> > > +
+> > >          required:
+> > >            - reg
+> > >            - phys
+> >=20
+> > Additionally, please move the conditional bits below the required
+> > property list.
+> >=20
+> > Cheers,
+> > Conor.
+>=20
+> I will be getting rid of the 'required' constraints in v3. What I hear
+> you say, is that the two {rx,tx}-internal-delay-ps properties (incl.
+> their enum values) should be moved out of the if/else and to the
+> top-level - can you confirm this?
+
+> Is specifying the values
+> a property can take not considered a constraint?
+
+Actually, in this case the property isn't even defined (per
+ethernet-controller.yaml) if the phy-mode wasn't an rgmii one, so what
+you had here was probably fine. Ordinarily, that's not the case, so you'd
+have been setting constraints for only rgmii phy-modes and no
+constraints at all for non-rgmii phy-modes.
 
 
 
-On 20/11/2024 13:55, Paolo Bonzini wrote:
->> Patch 4 allows to call the ioctl from a separate (non-VMM) process.  It
->> has been prohibited by [3], but I have not been able to locate the exact
->> justification for the requirement.
-> 
-> The justification is that the "struct kvm" has a long-lived tie to a
-> host process's address space.
-> 
-> Invoking ioctls like KVM_SET_USER_MEMORY_REGION and KVM_RUN from
-> different processes would make things very messy, because it is not
-> clear which mm you are working with: the MMU notifier is registered for
-> kvm->mm, but some functions such as get_user_pages do not take an mm for
-> example and always operate on current->mm.
+--2zHSNTjBPABr97aC
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That's fair, thanks for the explanation.
+-----BEGIN PGP SIGNATURE-----
 
-> In your case, it should be enough to add a ioctl on the guestmemfd
-> instead?
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZz4gfAAKCRB4tDGHoIJi
+0u2lAQD4xPN6l1CFgILsMQlm4WvjtBORrt9dFeneTtKWr3k3AgD/e6O6OVSW6HTS
+wF4lBPCGhNRpUc4Ab2cECyQ2ZBI8cgQ=
+=fiLn
+-----END PGP SIGNATURE-----
 
-That's right. That would be sufficient indeed.  Is that something that 
-could be considered?  Would that be some non-KVM API, with guest_memfd 
-moving to an mm library?
-
- > But the real question is, what are you using
- > KVM_X86_SW_PROTECTED_VM for?
-
-The concrete use case is VM restoration from a snapshot in Firecracker 
-[1].  In the current setup, the VMM registers a UFFD against the guest 
-memory and sends the UFFD handle to an external process that knows how 
-to obtain the snapshotted memory.  We would like to preserve the 
-semantics, but also remove the guest memory from the direct map [2]. 
-Mimicing this with guest_memfd would be sending some form of a 
-guest_memfd handle to that process that would be using it to populate 
-guest_memfd.
-
-[1]: 
-https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md#userfaultfd
-[2]: 
-https://lore.kernel.org/kvm/20241030134912.515725-1-roypat@amazon.co.uk/T/
-
-> Paolo
+--2zHSNTjBPABr97aC--
 
