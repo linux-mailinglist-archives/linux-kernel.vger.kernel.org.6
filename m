@@ -1,163 +1,249 @@
-Return-Path: <linux-kernel+bounces-415488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D95D9D3705
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:24:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD51B9D370D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474A41F27001
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:24:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FE8B22230
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DB651991A8;
-	Wed, 20 Nov 2024 09:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BE219AD48;
+	Wed, 20 Nov 2024 09:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Zjfndpt6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFBCIo9N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0D3158535;
-	Wed, 20 Nov 2024 09:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EE0200CB;
+	Wed, 20 Nov 2024 09:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094684; cv=none; b=fUUvSbrcDNvisBB5VnYlrY5ytiz+ftGlqtw8D7ebZGygW6juwLl18tWr5dEKoUsM3OdCI6VJzpYMbC1PW6x96GLvoiiQ+P77Xs/yA3EkDJlsys8ZgFN+OSqnIq24Ry5dI7JjCIAG5HVy/PL2SSOLraezla5kffxit9AlbtnGhwk=
+	t=1732094913; cv=none; b=Q61OZtXrfHIVU3YfSrqR8qRBNNVN3qNu/T/VMHXDwV38hlrqNk1AI5GacKDcB5jlLSv3k0MdoSl8ShyWO+nM636jmv4p0z1wm+f0PzImQOMqAPfD6wzmMOPVxrv2zrv9ZLqOEfDv8CNKFEYIB+X1GqkCRUBi5q+bPnjDA2V8hKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094684; c=relaxed/simple;
-	bh=KeeZjdkz3m5NAs3K+kqMz9FMhPpTqy/RdWyM6Bwg3vg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U26rx2z3Y9BbUEbKT8+Ksml/dXwNtKAS8niRf8DvnFbGsNc6AKTXndEK/yMooU5vEujOsN1a60sIUemjReakfBzNcvT4X+YAHyXP+VEDHPW4KX0SQq5jOP66rdz8g41/avhBHJLQCQYQtuBBJRItg5RFEmEd4uYtX8Pf4rckrP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Zjfndpt6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FJbR019260;
-	Wed, 20 Nov 2024 09:23:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0eUrxXeKNDLoWi0nj3C/7caPr7l7ZX4VyKkMA5xqIIg=; b=Zjfndpt6qNtfGIQr
-	+McUepRTRXD4PcLMxKpi1YUihmRoNPrNzaSOOTnV+HdfaD60XHoVSXore76xUwdV
-	Lh4zK+FDNuZTsuq+i+3HOwAj5i+VSbS/PhMzssyBHzmaeKvGKkaKgAQkvf/Cgab0
-	YBIPiI3UnGrKPQf7yQEjw0nDz6DUvA2PjilRPXFPBfROc35eUTo0Yy8VkeTZ/L6y
-	g4M2LY0wVkL97jnmAlFQ8PxyBgwLJGJDcUqZsdx8qLqD9K3kqOrPRgqzvFi7ENow
-	tt8oHZ+8xF76DyGXctqWGvqY/MXm0DgG2G2dKJ34Y0PjQ2ZtsJcjap2vqYauLjg8
-	VIQhPg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hg5ah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 09:23:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AK9NwWM028281
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 09:23:58 GMT
-Received: from [10.216.62.246] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 01:23:54 -0800
-Message-ID: <99810132-85b6-45ee-9933-7a00c3672c47@quicinc.com>
-Date: Wed, 20 Nov 2024 14:53:51 +0530
+	s=arc-20240116; t=1732094913; c=relaxed/simple;
+	bh=VrcMGITK8dOAe5io5QsstOrr2rW+8zosAYtEPi0gZug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2Kfpic46aYncMeGiH4ZsfwSxsmrnACivEKBY3P+MpyA2TOzbF5JWPXKJIM0ZtfL9jU0ZMsHaJ+IyW6GPL9vRpFZXW9KrvkQeuDwVbcYx7nbxW18UzVH2lBUqphq/KTmeqUewscd6V5bO8SDGKolzna7X3QcZbLs6SJ0EqqyD68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFBCIo9N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D989FC4CECD;
+	Wed, 20 Nov 2024 09:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732094912;
+	bh=VrcMGITK8dOAe5io5QsstOrr2rW+8zosAYtEPi0gZug=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BFBCIo9NM7T3C8kL+eYe/R11UdP27waGeu/Tgc2t5UfEomqenlmAs7S32a/VgkfjW
+	 EICNtgnOCB3TdBR0P88GanbPfaDjmZE73S4I7FxrGBxCom7jtrnNOL9egb2sKKQRPr
+	 gnQCKtmbTrG5O9Ogl3oW10d710bmric/Jiu8UEODtLb4wQ5myLFKUoad35wsNYIScV
+	 /l6rtf3p7oCt2FTpUujSTsn1LimMX39EUP6bHJnU9iea865rVkzd2PUFWmDtTpiteX
+	 Ui5/GhoW/gcVjGIUiXfTQpmdnOK72pSVpdARXg1kCdbI1xASZEheg217InxFyWxrZY
+	 AFDvPRQirbGsg==
+Date: Wed, 20 Nov 2024 10:28:25 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <songliubraving@meta.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Jeff Layton <jlayton@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"repnop@google.com" <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+Message-ID: <20241120-wimpel-virologen-1a58b127eec6@brauner>
+References: <20241112082600.298035-1-song@kernel.org>
+ <20241112082600.298035-3-song@kernel.org>
+ <20241113-sensation-morgen-852f49484fd8@brauner>
+ <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
+ <20241115111914.qhrwe4mek6quthko@quack3>
+ <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
+ <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
+ <CAOQ4uxgUYHEZTx7udTXm8fDTfhyFM-9LOubnnAc430xQSLvSVA@mail.gmail.com>
+ <CAOQ4uxhyDAHjyxUeLfWeff76+Qpe5KKrygj2KALqRPVKRHjSOA@mail.gmail.com>
+ <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: usb: snps,dwc3: Add
- snps,filter-se0-fsls-eop quirk
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Uttkarsh Aggarwal
-	<quic_uaggarwa@quicinc.com>
-CC: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Thinh Nguyen
-	<Thinh.Nguyen@synopsys.com>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_ppratap@quicinc.com>, <quic_jackp@quicinc.com>
-References: <20241017114055.13971-1-quic_uaggarwa@quicinc.com>
- <20241017114055.13971-2-quic_uaggarwa@quicinc.com>
- <gclvciv5cmrcut6qvo3kh3ycutqt5sot5k4i2nwics6myhuxvq@cf6ajwflxdlc>
- <1129e0a7-6bd0-416e-8c56-6b8d75600c4e@quicinc.com>
- <f9f66565-6356-4b61-8653-1e9c006b892c@kernel.org>
-Content-Language: en-US
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-In-Reply-To: <f9f66565-6356-4b61-8653-1e9c006b892c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aXnsb68vogMjrmCwR3eejPNCDYEXDKLi
-X-Proofpoint-GUID: aXnsb68vogMjrmCwR3eejPNCDYEXDKLi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=713 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411200064
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
 
-
-
-On 11/7/2024 3:25 PM, Krzysztof Kozlowski wrote:
-> On 07/11/2024 07:17, Krishna Kurapati wrote:
->>
->>
->> On 10/18/2024 11:57 AM, Krzysztof Kozlowski wrote:
->>> On Thu, Oct 17, 2024 at 05:10:54PM +0530, Uttkarsh Aggarwal wrote:
->>>> Adding a new 'snps,filter-se0-fsls-eop quirk' DT quirk to dwc3 core to set
->>>> GUCTL1 BIT 29. When set, controller will ignore single SE0 glitch on the
->>>> linestate during transmission. Only two or more SE0 is considered as
->>>> valid EOP on FS/LS port. This bit is applicable only in FS in device mode
->>>> and FS/LS mode of operation in host mode.
->>>
->>> Why this is not device/compatible specific? Just like all other quirks
->>> pushed last one year.
->>
->> Hi Krzysztof,
->>
->>    Apologies for a late reply from our end.
->>
->>    In DWC3 core/dwc3-qcom atleast, there have been no compatible specific
->> quirks added.
+On Tue, Nov 19, 2024 at 09:53:20PM +0000, Song Liu wrote:
+> Hi Jeff and Amir, 
 > 
-
-Sorry again for late reply.
-
-> Nothing stops from adding these, I think.
+> Thanks for your inputs!
 > 
-
-Agree, we can take that approach of adding soc specific compatibles to 
-dwc3 driver instead of adding through bindings.
-
->> Also since this is a property of the Synopsys controller
->> hardware and not QC specific one, can we add it in bindings itself.
->> Because this is a property other vendors might also use and adding it
->> via compatible might not be appropriate.
+> > On Nov 19, 2024, at 7:30 AM, Amir Goldstein <amir73il@gmail.com> wrote:
+> > 
+> > On Tue, Nov 19, 2024 at 4:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >> 
+> >> On Tue, Nov 19, 2024 at 3:21 PM Jeff Layton <jlayton@kernel.org> wrote:
+> >>> 
 > 
-> This does no answer my question. I don't see how this is not related to
-> one specific piece of SoC.
+> [...]
 > 
-> If you claim this is board-related, not SoC, give some arguments.
-> Repeating the same is just no helping.
+> >>> Longer term, I think it may be beneficial to come up with a way to attach
+> >>>>> private info to the inode in a way that doesn't cost us one pointer per
+> >>>>> funcionality that may possibly attach info to the inode. We already have
+> >>>>> i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's always a tough
+> >>>>> call where the space overhead for everybody is worth the runtime &
+> >>>>> complexity overhead for users using the functionality...
+> >>>> 
+> >>>> It does seem to be the right long term solution, and I am willing to
+> >>>> work on it. However, I would really appreciate some positive feedback
+> >>>> on the idea, so that I have better confidence my weeks of work has a
+> >>>> better chance to worth it.
+> >>>> 
+> >>>> Thanks,
+> >>>> Song
+> >>>> 
+> >>>> [1] https://github.com/systemd/systemd/blob/main/src/core/bpf/restrict_fs/restrict-fs.bpf.c
+> >>> 
+> >>> fsnotify is somewhat similar to file locking in that few inodes on the
+> >>> machine actually utilize these fields.
+> >>> 
+> >>> For file locking, we allocate and populate the inode->i_flctx field on
+> >>> an as-needed basis. The kernel then hangs on to that struct until the
+> >>> inode is freed.
 > 
+> If we have some universal on-demand per-inode memory allocator, 
+> I guess we can move i_flctx to it?
+> 
+> >>> We could do something similar here. We have this now:
+> >>> 
+> >>> #ifdef CONFIG_FSNOTIFY
+> >>>        __u32                   i_fsnotify_mask; /* all events this inode cares about */
+> >>>        /* 32-bit hole reserved for expanding i_fsnotify_mask */
+> >>>        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
+> >>> #endif
+> 
+> And maybe some fsnotify fields too?
+> 
+> With a couple users, I think it justifies to have some universal
+> on-demond allocator. 
+> 
+> >>> What if you were to turn these fields into a pointer to a new struct:
+> >>> 
+> >>>        struct fsnotify_inode_context {
+> >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
+> >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
+> >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
+> >>>        };
+> >>> 
+> >> 
+> >> The extra indirection is going to hurt for i_fsnotify_mask
+> >> it is being accessed frequently in fsnotify hooks, so I wouldn't move it
+> >> into a container, but it could be moved to the hole after i_state.
+> 
+> >>> Then whenever you have to populate any of these fields, you just
+> >>> allocate one of these structs and set the inode up to point to it.
+> >>> They're tiny too, so don't bother freeing it until the inode is
+> >>> deallocated.
+> >>> 
+> >>> It'd mean rejiggering a fair bit of fsnotify code, but it would give
+> >>> the fsnotify code an easier way to expand per-inode info in the future.
+> >>> It would also slightly shrink struct inode too.
+> 
+> I am hoping to make i_bpf_storage available to tracing programs. 
+> Therefore, I would rather not limit it to fsnotify context. We can
+> still use the universal on-demand allocator.
 
-But my point was that although the issue was found only on some QC 
-SoC's, the solution still lies in some bits being set in controller 
-register space and it is part of Synopsys IP. So wouldn't officially we 
-add that support in bindings and then enable/disable the feature via DT 
-like we did for other quirks ? If many SoC's need it in future, the 
-driver needs to add a long list of compatible specific data which 
-otherwise might be quirks in DT.
+Can't we just do something like:
 
-Regards,
-Krishna,
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 7e29433c5ecc..cc05a5485365 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -627,6 +627,12 @@ is_uncached_acl(struct posix_acl *acl)
+ #define IOP_DEFAULT_READLINK   0x0010
+ #define IOP_MGTIME     0x0020
 
++struct inode_addons {
++        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
++        struct bpf_local_storage __rcu          *i_bpf_storage;
++        __u32                                   i_fsnotify_mask; /* all events this inode cares about */
++};
++
+ /*
+  * Keep mostly read-only and often accessed (especially for
+  * the RCU path lookup and 'stat' data) fields at the beginning
+@@ -731,12 +737,7 @@ struct inode {
+                unsigned                i_dir_seq;
+        };
 
+-
+-#ifdef CONFIG_FSNOTIFY
+-       __u32                   i_fsnotify_mask; /* all events this inode cares about */
+-       /* 32-bit hole reserved for expanding i_fsnotify_mask */
+-       struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
+-#endif
++       struct inode_addons *i_addons;
+
+ #ifdef CONFIG_FS_ENCRYPTION
+        struct fscrypt_inode_info       *i_crypt_info;
+
+Then when either fsnotify or bpf needs that storage they can do a
+cmpxchg() based allocation for struct inode_addons just like I did with
+f_owner:
+
+int file_f_owner_allocate(struct file *file)
+{
+	struct fown_struct *f_owner;
+
+	f_owner = file_f_owner(file);
+	if (f_owner)
+		return 0;
+
+	f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
+	if (!f_owner)
+		return -ENOMEM;
+
+	rwlock_init(&f_owner->lock);
+	f_owner->file = file;
+	/* If someone else raced us, drop our allocation. */
+	if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
+		kfree(f_owner);
+	return 0;
+}
+
+The internal allocations for specific fields are up to the subsystem
+ofc. Does that make sense?
+
+> >>>        struct fsnotify_inode_context {
+> >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
+> >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
+> >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
+> >>>        };
+
+> 
+> >> 
+> >> This was already done for s_fsnotify_marks, so you can follow the recipe
+> >> of 07a3b8d0bf72 ("fsnotify: lazy attach fsnotify_sb_info state to sb")
+> >> and create an fsnotify_inode_info container.
+> >> 
+> > 
+> > On second thought, fsnotify_sb_info container is allocated and attached
+> > in the context of userspace adding a mark.
+> > 
+> > If you will need allocate and attach fsnotify_inode_info in the content of
+> > fast path fanotify hook in order to add the inode to the map, I don't
+> > think that is going to fly??
+> 
+> Do you mean we may not be able to allocate memory in the fast path 
+> hook? AFAICT, the fast path is still in the process context, so I 
+> think this is not a problem?
+> 
+> Thanks,
+> Song 
+> 
 
