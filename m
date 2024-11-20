@@ -1,148 +1,191 @@
-Return-Path: <linux-kernel+bounces-416074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BEA9D3FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:15:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9769D3FE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2BC2849FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911921F23337
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B75F1514F8;
-	Wed, 20 Nov 2024 16:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fhezj2jX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DEAA141987
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2DC14C5B0;
+	Wed, 20 Nov 2024 16:18:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE085A4D5;
+	Wed, 20 Nov 2024 16:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119329; cv=none; b=l86+xYrHceh3M9gYa4O/M1uRU89jmNCxkMRZf3zP07rMWFTRoGnw6WlZ6CW7f7afr4qon6+noY2l+HmOXiTh4iZhcJMk3MzLe0bpwqIydJeOASWPjwCcd2p9L9T4Tsb58Lwk8Ooz3WSSoS+8i7BRWT+yZ3yKBo0VtXHspLQXg4k=
+	t=1732119487; cv=none; b=ScFja+CcaxUIq5O78CJq/MDs7pgTqvciwNGINXRZS2nFvTuCGHMz1dAFM9VMJ48G3qcgY6/+7MS2DCMOTmP4oTgLyiaMDhhUHqdPdiVnXfV23UsPF5UPxmhpE2QD5UGSLbat1yxjHtHBl6403NzvFF+L/bv4N4AsreodtICck8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119329; c=relaxed/simple;
-	bh=VNWYPyllDhn6wyHA8vHCBZcrdTpypW9KdBxrUGgTSiU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lRmKzLrnBt2joHvZBh8nxhaqv3map3k403QCyp2jUYgbWjHaOIY74Pv+mgM5eOY55V4ShvFoZNZqBok/7pI255iKYxQZInk/6t2RC0bzqiVkazS9f6goPfRUBsz8QIYnRK7wiIieFWFXCWF7AwgfN3mzN8aqvalUYC0CL9AESkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fhezj2jX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732119326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s9neiNV5Ecw1Rm63FFkLc6Zp+LPvspTbTCjcardEBqA=;
-	b=Fhezj2jXn7R4d6ndULg5zE43osuCLMh5xKDTAicP8shjBDavobsODvM7R/sjS0hFRTXhKl
-	FF4kvX6Zt+7aeJ/CsgStV/BafxlyLbuiNHguNS6eWixJx63g/DCXPhlZRYV2fc1MaOo1Ij
-	BfgMQN5WwMCE58El+i6tIvE251jtIEY=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-164-gZa_dz_dPTCJkvPO6n76_g-1; Wed, 20 Nov 2024 11:15:24 -0500
-X-MC-Unique: gZa_dz_dPTCJkvPO6n76_g-1
-X-Mimecast-MFC-AGG-ID: gZa_dz_dPTCJkvPO6n76_g
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d41a3c9c9cso33772666d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:15:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119324; x=1732724124;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9neiNV5Ecw1Rm63FFkLc6Zp+LPvspTbTCjcardEBqA=;
-        b=LvHft6W8LLqSfUIU5T+Gr3FYpnkbeBYhtvzsNGHk/+fZOdSOeFshY7Le9genN7hD2j
-         WjzDwJnr5qwMDaLp00z70FaK3gynRXSjj/Wv322Qg8bvaWNdsFWeV1UsyFm71Mu3gUa+
-         OqeWVu0BiiJqB5clVNHVaIgzWkGQjDRqUxFZ277zEksw2+Bx8yYT4T9Do+etWXbiXXqB
-         gNNNYoDCtJikVy3HfAqq0n3T8MgOfXhFMUrfnGgexoSMxO5pymNOfUYNoCQsPJVFH37Y
-         abj3F1IBdVkG5j7eld/XHsDyZJIdm8a05/3SZXLf+2q68pNQyMOL6/SzC6LEnV2azLox
-         eR3g==
-X-Gm-Message-State: AOJu0YyTlhptqT2ZgLbEMjNRNNXOZLNn4Llpl50EPjJDogNwvEDyraxC
-	mEIaTyMKOcZoQAO2GUcdr5bUi7aAYY19u2KzbH+Ux/LJhHkDKzcgb6b+ZHDu5RO+hIjHC8uTFVN
-	60RcpHWc/ykoVUHb1LKCzsPmXl34Q9Xz9qHUa8z5+oSVzzWdZSP+7LvQPzVWf3Q==
-X-Gm-Gg: ASbGncu8SoV3coj+5VXB8DDXci1/qRzftwtzp31kXc4dwF+8FIQZYv6ZiH9uq1qt08A
-	2vqM8SEkbTQTV1P5CLRouBpnW9KP9b3xWuhC3J8WZiVmXzwN9u6MSoYtTGZvNPFqXpvVbf/bQbF
-	86fIt6P/MZRlNDqIC/tRGze9LprfjGT6SESYJ0icXjGM5Vz54V3BvlZlCuPnc41G/HQYDVT//m7
-	q2k88va2pS1IXY7GYTI4sv+x4r1ngIBBHjRmtf/vd7bkIFV+nYuERRx5nYBmCGC+IJMmwcQv3d3
-	CUeYb0PXyGP4ejV/A1akbc8RFjGbhfjJS7Q=
-X-Received: by 2002:a05:6214:2aa7:b0:6d4:1f86:b1f2 with SMTP id 6a1803df08f44-6d4377bd8bcmr43340386d6.11.1732119324028;
-        Wed, 20 Nov 2024 08:15:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IErytLY/ydBtG/c68cV9sB/Rs0q2MHssCkf2mLl/ZoHSY4DaUVm1Hfo6p7yhhfkcknSTmK2WQ==
-X-Received: by 2002:a05:6214:2aa7:b0:6d4:1f86:b1f2 with SMTP id 6a1803df08f44-6d4377bd8bcmr43339716d6.11.1732119323729;
-        Wed, 20 Nov 2024 08:15:23 -0800 (PST)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d43812ab67sm12352206d6.88.2024.11.20.08.15.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 08:15:22 -0800 (PST)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- x86@kernel.org, rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
- "Paul E . McKenney" <paulmck@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Jonathan
- Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Paolo
- Bonzini <pbonzini@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, Vitaly
- Kuznetsov <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>, Neeraj Upadhyay
- <quic_neeraju@quicinc.com>, Joel Fernandes <joel@joelfernandes.org>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, Andrew
- Morton <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>,
- Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>, Sami Tolvanen
- <samitolvanen@google.com>, Ard Biesheuvel <ardb@kernel.org>, Nicholas
- Piggin <npiggin@gmail.com>, Juerg Haefliger
- <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
- Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
- Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
- <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
- Dionna Glaze <dionnaglaze@google.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo
- Tosatti <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel
- Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 04/15] rcu: Add a small-width RCU watching
- counter debug option
-In-Reply-To: <20241120145049.GI19989@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-5-vschneid@redhat.com>
- <20241120145049.GI19989@noisy.programming.kicks-ass.net>
-Date: Wed, 20 Nov 2024 17:15:14 +0100
-Message-ID: <xhsmh1pz5j2zx.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1732119487; c=relaxed/simple;
+	bh=steiTH9WgmEuOIfuCUhnix08ztBgjaw+7hd+ArWDPkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QDAaLgbSBU+zuA1+rtd62QXp3vWL3FqEbjLYky6+juHNENjZ7GXmqAVpbIrXpcjND6Ns/yDdvs2nl+4sYBnkFH9rIgRxoLfxnQCV2I6vYTFRU5HI+HjMDcuWMR4Bvs7vu5Gbdparrcf/W3dhZTH5dLQ2YgoPE4aoTntKsmKMqAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86D201480;
+	Wed, 20 Nov 2024 08:18:32 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97A8A3F66E;
+	Wed, 20 Nov 2024 08:18:00 -0800 (PST)
+Message-ID: <15f937d7-7ac1-4a7f-abcd-abfede191b51@arm.com>
+Date: Wed, 20 Nov 2024 16:17:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 3/3] page_pool: skip dma sync operation for
+ inflight pages
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Alexander Duyck <alexander.duyck@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, IOMMU <iommu@lists.linux.dev>,
+ MM <linux-mm@kvack.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-4-linyunsheng@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241120103456.396577-4-linyunsheng@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 20/11/24 15:50, Peter Zijlstra wrote:
-> On Tue, Nov 19, 2024 at 04:34:51PM +0100, Valentin Schneider wrote:
->> A later commit will reduce the size of the RCU watching counter to free up
->> some bits for another purpose. Paul suggested adding a config option to
->> test the extreme case where the counter is reduced to its minimum usable
->> width for rcutorture to poke at, so do that.
->> 
->> Make it only configurable under RCU_EXPERT. While at it, add a comment to
->> explain the layout of context_tracking->state.
->
-> Note that this means it will get selected by allyesconfig and the like,
-> is that desired?
->
+On 20/11/2024 10:34 am, Yunsheng Lin wrote:
+> Skip dma sync operation for inflight pages before the
+> page_pool_destroy() returns to the driver as DMA API
+> expects to be called with a valid device bound to a
+> driver as mentioned in [1].
+> 
+> After page_pool_destroy() is called, the page is not
+> expected to be recycled back to pool->alloc cache and
+> dma sync operation is not needed when the page is not
+> recyclable or pool->ring is full, so only skip the dma
+> sync operation for the infilght pages by clearing the
+> pool->dma_sync under protection of rcu lock when page
+> is recycled to pool->ring to ensure that there is no
+> dma sync operation called after page_pool_destroy() is
+> returned.
 
-I would say no
+Something feels off here - either this is a micro-optimisation which I 
+wouldn't really expect to be meaningful, or it means patch #2 doesn't 
+actually do what it claims. If it really is possible to attempt to 
+dma_sync a page *after* page_pool_inflight_unmap() has already reclaimed 
+and unmapped it, that represents yet another DMA API lifecycle issue, 
+which as well as being even more obviously incorrect usage-wise, could 
+also still lead to the same crash (if the device is non-coherent).
 
-> If no, depends on !COMPILE_TEST can help here.
+Otherwise, I don't imagine it's really worth worrying about optimising 
+out syncs for any pages which happen to get naturally returned after 
+page_pool_destroy() starts but before they're explicitly reclaimed. 
+Realistically, the kinds of big server systems where reclaim takes an 
+appreciable amount of time are going to be coherent and skipping syncs 
+anyway.
 
-Noted, thank you!
+Thanks,
+Robin.
 
+> 1. https://lore.kernel.org/all/caf31b5e-0e8f-4844-b7ba-ef59ed13b74e@arm.com/
+> CC: Robin Murphy <robin.murphy@arm.com>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: IOMMU <iommu@lists.linux.dev>
+> CC: MM <linux-mm@kvack.org>
+> Fixes: f71fec47c2df ("page_pool: make sure struct device is stable")
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>   net/core/page_pool.c | 25 ++++++++++++++++++-------
+>   1 file changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 33a314abbba4..0bde7c6c781a 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -712,7 +712,8 @@ static void page_pool_return_page(struct page_pool *pool, netmem_ref netmem)
+>   	rcu_read_unlock();
+>   }
+>   
+> -static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem)
+> +static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem,
+> +				      unsigned int dma_sync_size)
+>   {
+>   	int ret;
+>   	/* BH protection not needed if current is softirq */
+> @@ -723,10 +724,13 @@ static bool page_pool_recycle_in_ring(struct page_pool *pool, netmem_ref netmem)
+>   
+>   	if (!ret) {
+>   		recycle_stat_inc(pool, ring);
+> -		return true;
+> +
+> +		rcu_read_lock();
+> +		page_pool_dma_sync_for_device(pool, netmem, dma_sync_size);
+> +		rcu_read_unlock();
+>   	}
+>   
+> -	return false;
+> +	return !ret;
+>   }
+>   
+>   /* Only allow direct recycling in special circumstances, into the
+> @@ -779,10 +783,11 @@ __page_pool_put_page(struct page_pool *pool, netmem_ref netmem,
+>   	if (likely(__page_pool_page_can_be_recycled(netmem))) {
+>   		/* Read barrier done in page_ref_count / READ_ONCE */
+>   
+> -		page_pool_dma_sync_for_device(pool, netmem, dma_sync_size);
+> -
+> -		if (allow_direct && page_pool_recycle_in_cache(netmem, pool))
+> +		if (allow_direct && page_pool_recycle_in_cache(netmem, pool)) {
+> +			page_pool_dma_sync_for_device(pool, netmem,
+> +						      dma_sync_size);
+>   			return 0;
+> +		}
+>   
+>   		/* Page found as candidate for recycling */
+>   		return netmem;
+> @@ -845,7 +850,7 @@ void page_pool_put_unrefed_netmem(struct page_pool *pool, netmem_ref netmem,
+>   
+>   	netmem =
+>   		__page_pool_put_page(pool, netmem, dma_sync_size, allow_direct);
+> -	if (netmem && !page_pool_recycle_in_ring(pool, netmem)) {
+> +	if (netmem && !page_pool_recycle_in_ring(pool, netmem, dma_sync_size)) {
+>   		/* Cache full, fallback to free pages */
+>   		recycle_stat_inc(pool, ring_full);
+>   		page_pool_return_page(pool, netmem);
+> @@ -903,14 +908,18 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
+>   
+>   	/* Bulk producer into ptr_ring page_pool cache */
+>   	in_softirq = page_pool_producer_lock(pool);
+> +	rcu_read_lock();
+>   	for (i = 0; i < bulk_len; i++) {
+>   		if (__ptr_ring_produce(&pool->ring, data[i])) {
+>   			/* ring full */
+>   			recycle_stat_inc(pool, ring_full);
+>   			break;
+>   		}
+> +		page_pool_dma_sync_for_device(pool, (__force netmem_ref)data[i],
+> +					      -1);
+>   	}
+>   	recycle_stat_add(pool, ring, i);
+> +	rcu_read_unlock();
+>   	page_pool_producer_unlock(pool, in_softirq);
+>   
+>   	/* Hopefully all pages was return into ptr_ring */
+> @@ -1200,6 +1209,8 @@ void page_pool_destroy(struct page_pool *pool)
+>   	if (!page_pool_release(pool))
+>   		return;
+>   
+> +	pool->dma_sync = false;
+> +
+>   	/* Paired with rcu lock in page_pool_napi_local() to enable clearing
+>   	 * of pool->p.napi in page_pool_disable_direct_recycling() is seen
+>   	 * before returning to driver to free the napi instance.
 
