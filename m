@@ -1,158 +1,130 @@
-Return-Path: <linux-kernel+bounces-415601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5FF9D38D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:55:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F0C9D38DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44567284334
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31141F2590C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A56A19E83C;
-	Wed, 20 Nov 2024 10:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkBfVSFb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0519D89B;
+	Wed, 20 Nov 2024 10:56:54 +0000 (UTC)
+Received: from out198-12.us.a.mail.aliyun.com (out198-12.us.a.mail.aliyun.com [47.90.198.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330A19C551;
-	Wed, 20 Nov 2024 10:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE5A1A0715;
+	Wed, 20 Nov 2024 10:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732100129; cv=none; b=bWdxkTdXtFYhx1LQuOxal8juW2/nHT14XH+0T4g3P/B+kveY3qgdfZJN/cQw8gpSIWX3rZLdBWMnGzCJuZsI2IYlAz2hj0kVSdVRB24IMXKKdQwSNQgBKmRQAkjdQxutx1tLZg01TMjqBbKaL1zip8tTS0vWBlfyQbqNVPxDWfY=
+	t=1732100214; cv=none; b=kK6B9/f0EA/MNmsB8fLrmRT8wYhQ4zWaw6zVRWd2rF/e55CP/PXF/y04JFb/Toef/Es2LjgHzqwTAn+Aj72yRTw26VtQR8WMoLUetc/kjirW9lNR/j/avhYlFpjVNoImKAtZEvdRrIzkZzB+VNQMVuoQRQPLTqywK3mOttWm/CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732100129; c=relaxed/simple;
-	bh=5fAO1WmNHsbkwm5ApUCHwwKfxltnVmGaCcB8bsehc/M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D94q1fqeVRxy/wva+uylywGLMabmsQWC3CTDYxjSLn0BcgpbIYGm2kkw6fbTnB6t5lkCkX5w85+RR/Djb5G8MMDdToLrFD6KxpqRfwwPmGS0ghTuTIup+HcBgKLmRqxP6MdARaMUq4UC+SbyoGaso50hugxKdh+2QQAfWU3GHyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkBfVSFb; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa1e51ce601so774024666b.3;
-        Wed, 20 Nov 2024 02:55:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732100126; x=1732704926; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bZ832vKXSaqdK6+2qvAMZI0ii8aOixUcx8WfJ8JlLv0=;
-        b=AkBfVSFbVbPbNvC5nSEwUdZ6NXpyeUfnDneaA3TZ3GpJJdtfTDJlNq09fZ+o5DbHPC
-         MPQBdSb/zYEtJNIRON8gek1WGsaQfyA/h1bD+oYSVfDbPo5FPSFr4fb7KAfenTriFPXQ
-         1tzX9/htduYBrjx4gC57mRfQLvPiEQ5CcDRvJsy1EJ4zE33nQmdcRGt/mlJsOGu7Wye5
-         nUJwkPllODp8N5ZufbFWB+Uz5MiqxI8sJUiT33fb/B3l8OW376QitTSSsYH13mUOVIc4
-         Q4kxBb943uYhMgeLaGVj8fp08Nnz56EdLN+i596cUfFU/R+xC6ehAJKZ+yX/Jv4CeFzY
-         fqTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732100126; x=1732704926;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZ832vKXSaqdK6+2qvAMZI0ii8aOixUcx8WfJ8JlLv0=;
-        b=eTQDw7trB109bXm0bm3j6aAdfIEnfGS3pa65fELoDneDK1RK6g62NPm7/9tXxyblBN
-         Ua+t4xFu0SGrgmscHvIKjFaEjqo1mynLYWXlffx56Ki4sg4P5KfN2OxhlIRBflp+vJs7
-         5FqpgFjNJuvYSMxoMGMZZRdhPXtFWnFIwd374Y1VuLCvMNMw6d2hEG+p/b/MRY897SAf
-         DGOrgS+sof8xS/0hmvtv/1DFTxBXZECTM6ZuYr+2pFS/iMOGQchZGN76JBW+QQKu6eZI
-         N/4vP/WxZblDj+XA5DtTvvepP1aZ3GXHpH6keQ/7gqL4FO4zxF01yD1qUc47s12xQATc
-         mIiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuC+TvN7xtPDy6o5hddPKPWcfDTHLXVmKKkiN6hl4V6b0QBGr7l7Ta3OGwEXGKBebBvjSDvBJ5IoT58p88/g==@vger.kernel.org, AJvYcCVCo6tTaCobizMwuTWTuuikK0t0Qww80DFr3cUaDXtXvmQsJ8Dtm5M5mKHiTX4z1DKrO18=@vger.kernel.org, AJvYcCWXoQkgXPJ51zBNLB90J4k93Gg96GC9hHzVAo6+42dXRF0PCD8oQtIlPU13fgFEGOANx8UYmZm6NG3Jnt3H@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIKf17O4remfxGrZBBOI09Dkf0xm/TLg/GWiqz1W/MjT6CntfB
-	smBYWpUk80dF+ajE6qPZIwRD3usq8chafQsBJKFg+cwBq/34em3Z
-X-Google-Smtp-Source: AGHT+IFXmsOSAoa+aCWV/3Pq4idAxDbgFh0yb212Bgl0eSG0cXGpq+b2iVUhk3XUjdBPp97jt/v2Rw==
-X-Received: by 2002:a17:906:6a08:b0:aa4:9ab1:1982 with SMTP id a640c23a62f3a-aa4dd548167mr196917766b.4.1732100126159;
-        Wed, 20 Nov 2024 02:55:26 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e042ed1sm751701466b.134.2024.11.20.02.55.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 02:55:25 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 20 Nov 2024 11:55:23 +0100
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
-	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
-	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
-	sdf@fomichev.me, haoluo@google.com, memxor@gmail.com,
-	snorcht@gmail.com, brauner@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH bpf-next v4 1/5] bpf: Introduce task_file open-coded
- iterator kfuncs
-Message-ID: <Zz3AG0htZjt9RTFl@krava>
-References: <AM6PR03MB50804C0DF9FB1E844B593FDB99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB508013A6E8B5DEF15A87B1EC99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+	s=arc-20240116; t=1732100214; c=relaxed/simple;
+	bh=zyLEPwcrNI/SUqSQ8t+WZoAkPWPx0+dHSrV+zOjgPK0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Sw3fxOtjmoMY5gAA5M2bicu1+eV0K6sTDXyPaQCVhaNlrjWo8cL4jIZyBxbtXsBtBb08SsLHTMOvgytdqoE/LQQsyVKwaMYwXVq7rBiUXHJqNqmD0qaLiA8O8DqgeaCYrvq8n9gcGHpLB+GJxKfP/5LyGAUzvh0SBoDAf12CELk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com; spf=pass smtp.mailfrom=motor-comm.com; arc=none smtp.client-ip=47.90.198.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motor-comm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motor-comm.com
+Received: from sun-VirtualBox..(mailfrom:Frank.Sae@motor-comm.com fp:SMTPD_---.aGmppAb_1732100186 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Wed, 20 Nov 2024 18:56:39 +0800
+From: Frank Sae <Frank.Sae@motor-comm.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com,
+	hua.sun@motor-comm.com,
+	Frank.Sae@motor-comm.com
+Subject: [PATCH net-next v2 00/21] net:yt6801: Add Motorcomm yt6801 PCIe driver
+Date: Wed, 20 Nov 2024 18:56:04 +0800
+Message-Id: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM6PR03MB508013A6E8B5DEF15A87B1EC99202@AM6PR03MB5080.eurprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 05:53:58PM +0000, Juntong Deng wrote:
+This series includes adding Motorcomm YT6801 Gigabit ethernet driver
+and adding yt6801 ethernet driver entry in MAINTAINERS file.
 
-SNIP
+YT6801 integrates a YT8531S phy.
 
-> +/**
-> + * bpf_iter_task_file_next() - Get the next file in bpf_iter_task_file
-> + *
-> + * bpf_iter_task_file_next acquires a reference to the struct file.
-> + *
-> + * The reference to struct file acquired by the previous
-> + * bpf_iter_task_file_next() is released in the next bpf_iter_task_file_next(),
-> + * and the last reference is released in the last bpf_iter_task_file_next()
-> + * that returns NULL.
-> + *
-> + * @it: the bpf_iter_task_file to be checked
-> + *
-> + * @returns a pointer to bpf_iter_task_file_item
-> + */
-> +__bpf_kfunc struct bpf_iter_task_file_item *bpf_iter_task_file_next(struct bpf_iter_task_file *it)
-> +{
-> +	struct bpf_iter_task_file_kern *kit = (void *)it;
-> +	struct bpf_iter_task_file_item *item = &kit->item;
-> +
-> +	if (item->file)
-> +		fput(item->file);
-> +
+v1 -> v2:
+- Split this driver into multiple patches.
+- Reorganize this driver code and remove redundant code
+- Remove PHY handling code and use phylib.
+- Remove writing ASPM config
+- Use generic power management instead of pci_driver.suspend()/resume()
+- Add Space before closing "*/"
 
-missing rcu_read_lock ?
+Frank Sae (21):
+  motorcomm:yt6801: Add support for a pci table in this module
+  motorcomm:yt6801: Implement pci_driver shutdown
+  motorcomm:yt6801: Implement the fxgmac_drv_probe function
+  motorcomm:yt6801: Implement the .ndo_open function
+  motorcomm:yt6801: Implement the fxgmac_start function
+  motorcomm:yt6801: Implement the poll functions
+  motorcomm:yt6801: Implement the fxgmac_init function
+  motorcomm:yt6801: Implement the fxgmac_read_mac_addr function
+  motorcomm:yt6801: Implement some hw_ops function
+  motorcomm:yt6801: Implement .ndo_start_xmit function
+  motorcomm:yt6801: Implement some net_device_ops function
+  motorcomm:yt6801: Implement .ndo_tx_timeout and .ndo_change_mtu
+    functions
+  motorcomm:yt6801: Implement some ethtool_ops function
+  motorcomm:yt6801: Implement the WOL function of ethtool_ops
+  motorcomm:yt6801: Implement pci_driver suspend and resume
+  motorcomm:yt6801: Add a Makefile in the motorcomm folder
+  motorcomm:yt6801: Update the Makefile and Kconfig in the motorcomm
+  motorcomm:yt6801: Update the Makefile and Kconfig in the ethernet
+  ethernet: Update the index.rst in the ethernet documentation folder
+  motorcomm:yt6801: Add a yt6801.rst in the ethernet documentation
+    folder
+  MAINTAINERS：Add the motorcomm ethernet driver entry
 
-jirka
+ .../device_drivers/ethernet/index.rst         |    1 +
+ .../ethernet/motorcomm/yt6801.rst             |   20 +
+ MAINTAINERS                                   |    8 +
+ drivers/net/ethernet/Kconfig                  |    1 +
+ drivers/net/ethernet/Makefile                 |    1 +
+ drivers/net/ethernet/motorcomm/Kconfig        |   27 +
+ drivers/net/ethernet/motorcomm/Makefile       |    6 +
+ .../net/ethernet/motorcomm/yt6801/Makefile    |    9 +
+ .../net/ethernet/motorcomm/yt6801/yt6801.h    |  617 +++
+ .../ethernet/motorcomm/yt6801/yt6801_desc.c   |  638 ++++
+ .../ethernet/motorcomm/yt6801/yt6801_desc.h   |   39 +
+ .../motorcomm/yt6801/yt6801_ethtool.c         |  907 +++++
+ .../net/ethernet/motorcomm/yt6801/yt6801_hw.c | 3383 +++++++++++++++++
+ .../ethernet/motorcomm/yt6801/yt6801_net.c    | 2908 ++++++++++++++
+ .../ethernet/motorcomm/yt6801/yt6801_net.h    |   32 +
+ .../ethernet/motorcomm/yt6801/yt6801_pci.c    |  191 +
+ .../ethernet/motorcomm/yt6801/yt6801_type.h   | 1398 +++++++
+ 17 files changed, 10186 insertions(+)
+ create mode 100644 Documentation/networking/device_drivers/ethernet/motorcomm/yt6801.rst
+ create mode 100644 drivers/net/ethernet/motorcomm/Kconfig
+ create mode 100644 drivers/net/ethernet/motorcomm/Makefile
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/Makefile
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801.h
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_desc.h
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_ethtool.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_hw.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_net.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_net.h
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_pci.c
+ create mode 100644 drivers/net/ethernet/motorcomm/yt6801/yt6801_type.h
 
-> +	item->file = task_lookup_next_fdget_rcu(item->task, &kit->next_fd);
-> +	item->fd = kit->next_fd;
-> +
-> +	kit->next_fd++;
-> +
-> +	if (!item->file)
-> +		return NULL;
-> +
-> +	return item;
-> +}
-> +
-> +/**
-> + * bpf_iter_task_file_destroy() - Destroy a bpf_iter_task_file
-> + *
-> + * If the iterator does not iterate to the end, then the last
-> + * struct file reference is released at this time.
-> + *
-> + * @it: the bpf_iter_task_file to be destroyed
-> + */
-> +__bpf_kfunc void bpf_iter_task_file_destroy(struct bpf_iter_task_file *it)
-> +{
-> +	struct bpf_iter_task_file_kern *kit = (void *)it;
-> +	struct bpf_iter_task_file_item *item = &kit->item;
-> +
-> +	if (item->file)
-> +		fput(item->file);
-> +}
-> +
->  __bpf_kfunc_end_defs();
->  
->  DEFINE_PER_CPU(struct mmap_unlock_irq_work, mmap_unlock_work);
-> -- 
-> 2.39.5
-> 
+-- 
+2.34.1
+
 
