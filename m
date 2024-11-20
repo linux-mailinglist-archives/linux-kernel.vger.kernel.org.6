@@ -1,184 +1,131 @@
-Return-Path: <linux-kernel+bounces-415335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1599D34B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:49:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B9A9D34B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931BC1F215B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9511F213C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D57015D5C4;
-	Wed, 20 Nov 2024 07:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB6B188721;
+	Wed, 20 Nov 2024 07:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afs4FKcs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fDFDC9C2"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCBE169AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B9D172BA9
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088781; cv=none; b=teZ+ihMA5TlvVIMUh0SUdUc2i53+6RvSpatG8M8f+9Yt5WXLGvJfeqMk0wbVtOdnTUiAWDhuWcoPkIquf7W0AR+91Glq1l/5jAczoU2xYXwe7esIdjgDfUGAwASDDk6Lr5zn5T/2ymqiDOVzIGgDyJpnyaP1XW5efHmKk0mC4lY=
+	t=1732088792; cv=none; b=uuLgmwWWbENxA5sQAZ2FQlyTa1O7dD6emMeHSwQKi1Lkk7a6rPzdvt5LNbSc3arug5rTfu5A7Bs2XJxwfkUFBo0snEl//V8YGd4V2hoWsm41ZHeSUMXkdDSi7jNJGGwIvXLwiIs134eW7r7Cr8W6RsfVDq9y1ckBOuQIVWKwgLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088781; c=relaxed/simple;
-	bh=D5WgUsL2ipnxJE4L9wdWyb88uva9VzMmPzQMjB4IrMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qtrnCiFk6IZdxyWda8V2X6mHWHKA2zIDHrQTem1Q23nyq4eqqO7ZM7Ml9hyClSlk9EMa8GhtaUjpHUXeaGOQvS9gtFnwvwVibfy8Lwgmi/nFmZaVFiI0TLF7GdMo450pgXDyjrdmbJTCGmD1/7euGSnXVB9uo9w6R5iEZtD6LUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Afs4FKcs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3B9C4CED9
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:46:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732088781;
-	bh=D5WgUsL2ipnxJE4L9wdWyb88uva9VzMmPzQMjB4IrMw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Afs4FKcs7y2eGRAcPnlOYvHRtxIExaZLMDRhGXlhOP1a3fMVgMapcUk6bLATxkrMA
-	 kjzTuTgxvgcvA6Aw4LPfwYcFYnkNn7mM/Jlh6hyEq2/2Bovcq/4xY0InZGErhPzFuG
-	 nWOWpu+gwJsK1iXY11foqu9dsafl7LMPKb0eqq4QMNFnjAeqNLMUrLE51oKUIChmdD
-	 +R6BVcN7qoURnLXItEBu287Tghg5Bik5BKGju+bzv/En3Y7/B/R/1n8gOTax5Xx/Z0
-	 LC9b/ZVsy86vqwo8Vm1ivNU8TovOGIzmaEgm72KgOwqa0DatfbqxkB1bSVxqaMQgWN
-	 Xpj5SNqoTVMGw==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfddc94c83so2394062a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 23:46:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX80Rx/OKlZy43BkRXQXzUuqAY1x8gU2MPf889ZJNHdia6MIQpPs32ZpBm000HAL9n+Q+tnVTS2spOA9BM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwroXfDsLsyIssVy3MHtKOfgo5EWzFkajrNF7JGRBGjNN+8kzxZ
-	+ubGoH4m/p/dvrX/o8GK1o/TjRxWMEEulYMQMZU774uVkv7GHbKq0fkM1/ZGN0yazz6Lgfrsz8p
-	6paM2UPJAzMbnsWOoGr7JZa9uOH8=
-X-Google-Smtp-Source: AGHT+IH/pUxw2sNueyn0x3c+1sIRSsDc0GAf84s6TqqTUMwuBQ+OJrRw7nTMMn5iusOqcT8AlaxXaE14zfBkwyJgVo0=
-X-Received: by 2002:a17:906:6a18:b0:aa4:a814:3f69 with SMTP id
- a640c23a62f3a-aa4dd5304bemr174664466b.4.1732088780005; Tue, 19 Nov 2024
- 23:46:20 -0800 (PST)
+	s=arc-20240116; t=1732088792; c=relaxed/simple;
+	bh=7ffXjx0Ik+eVEI0uzKyRX3vMNdwO8ECAiPgVZgcLjRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OjBVVYcwOoqLxOlSoSm0MZhe5UIPcjQK9D4r/lbNgYxbUEK6Y2tiXp5BjWCaYTA+ijQkjKfPwKE3aVmN4pcUaqAKYSWNYty9SnxQY2Rtln7OSBPp6DJavLPbMz4m9e04imiG/iT1yj9EfJTVsmG7b0n3kH4ggPYZcWls8OJF/zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fDFDC9C2; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 07:46:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732088785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIsoxDDC/xIkUZ9OKR1VL27Mws23rhY0ZxT1YiRdli0=;
+	b=fDFDC9C2DqymuzFllq+n19yMNcf+28i/sHmTgmy6MJfcbpAZ3gwJXnhX0eOxufNpPEs3nA
+	HtdLctFaUhG4K6TSJD15JPDmM6YxJQKMlDDhJRWLgUL/YBFyScQV4/AFQE+VnyJrHd/U8f
+	9iXtXmt2ISTJR7eLTzDqZ3FSrOlfCDs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Jiaqi Yan <jiaqiyan@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, duenwen@google.com, rananta@google.com,
+	James Houghton <jthoughton@google.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v1] KVM: arm64: Introduce KVM_CAP_ARM_SIGBUS_ON_SEA
+Message-ID: <Zz2TyC9-zNQ3D-KB@linux.dev>
+References: <20241031212104.1429609-1-jiaqiyan@google.com>
+ <86r07v1g2z.wl-maz@kernel.org>
+ <CACw3F51FbzkkX_DcCVCieZ=408oP_Fy3sXYk5AjWRX3RJO2Fzg@mail.gmail.com>
+ <878qtou96b.wl-maz@kernel.org>
+ <CACw3F50gB40dqQ4CZ7f4X4aRkxHQhjiYunAhqbmVtcGnd5g3bA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117053740.3938646-1-chenhuacai@loongson.cn>
- <20241117054017.3938700-1-chenhuacai@loongson.cn> <20241117054017.3938700-2-chenhuacai@loongson.cn>
- <20241120074049.hw2lHvyM@linutronix.de>
-In-Reply-To: <20241120074049.hw2lHvyM@linutronix.de>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 20 Nov 2024 15:46:08 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
-Message-ID: <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
-Subject: Re: [PATCH V2 2/4] LoongArch: Fix sleeping in atomic context for PREEMPT_RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
-	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-rt-devel@lists.linux.dev, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org, 
-	loongson-kernel@lists.loongnix.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACw3F50gB40dqQ4CZ7f4X4aRkxHQhjiYunAhqbmVtcGnd5g3bA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 20, 2024 at 3:40=E2=80=AFPM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
+On Tue, Nov 19, 2024 at 03:57:46PM -0800, Jiaqi Yan wrote:
 >
-> On 2024-11-17 13:40:15 [+0800], Huacai Chen wrote:
-> > Commit bab1c299f3945ffe79 ("LoongArch: Fix sleeping in atomic context i=
-n
-> > setup_tlb_handler()") changes the gfp flag from GFP_KERNEL to GFP_ATOMI=
-C
-> > for alloc_pages_node(). However, for PREEMPT_RT kernels we can still ge=
-t
-> > a "sleeping in atomic context" error:
-> >
-> > [    0.372259] BUG: sleeping function called from invalid context at ke=
-rnel/locking/spinlock_rt.c:48
-> > [    0.372266] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0=
-, name: swapper/1
-> > [    0.372268] preempt_count: 1, expected: 0
-> > [    0.372270] RCU nest depth: 1, expected: 1
-> > [    0.372272] 3 locks held by swapper/1/0:
-> > [    0.372274]  #0: 900000000c9f5e60 (&pcp->lock){+.+.}-{3:3}, at: get_=
-page_from_freelist+0x524/0x1c60
-> > [    0.372294]  #1: 90000000087013b8 (rcu_read_lock){....}-{1:3}, at: r=
-t_spin_trylock+0x50/0x140
-> > [    0.372305]  #2: 900000047fffd388 (&zone->lock){+.+.}-{3:3}, at: __r=
-mqueue_pcplist+0x30c/0xea0
-> > [    0.372314] irq event stamp: 0
-> > [    0.372316] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
-> > [    0.372322] hardirqs last disabled at (0): [<9000000005947320>] copy=
-_process+0x9c0/0x26e0
-> > [    0.372329] softirqs last  enabled at (0): [<9000000005947320>] copy=
-_process+0x9c0/0x26e0
-> > [    0.372335] softirqs last disabled at (0): [<0000000000000000>] 0x0
-> > [    0.372341] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.12.0-=
-rc7+ #1891
-> > [    0.372346] Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Lo=
-ongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/2=
-1/2022
-> > [    0.372349] Stack : 0000000000000089 9000000005a0db9c 90000000071519=
-c8 9000000100388000
-> > [    0.372486]         900000010038b890 0000000000000000 900000010038b8=
-98 9000000007e53788
-> > [    0.372492]         900000000815bcc8 900000000815bcc0 900000010038b7=
-00 0000000000000001
-> > [    0.372498]         0000000000000001 4b031894b9d6b725 00000000055ec0=
-00 9000000100338fc0
-> > [    0.372503]         00000000000000c4 0000000000000001 00000000000000=
-2d 0000000000000003
-> > [    0.372509]         0000000000000030 0000000000000003 00000000055ec0=
-00 0000000000000003
-> > [    0.372515]         900000000806d000 9000000007e53788 00000000000000=
-b0 0000000000000004
-> > [    0.372521]         0000000000000000 0000000000000000 900000000c9f5f=
-10 0000000000000000
-> > [    0.372526]         90000000076f12d8 9000000007e53788 90000000059247=
-78 0000000000000000
-> > [    0.372532]         00000000000000b0 0000000000000004 00000000000000=
-00 0000000000070000
-> > [    0.372537]         ...
-> > [    0.372540] Call Trace:
-> > [    0.372542] [<9000000005924778>] show_stack+0x38/0x180
-> > [    0.372548] [<90000000071519c4>] dump_stack_lvl+0x94/0xe4
-> > [    0.372555] [<900000000599b880>] __might_resched+0x1a0/0x260
-> > [    0.372561] [<90000000071675cc>] rt_spin_lock+0x4c/0x140
-> > [    0.372565] [<9000000005cbb768>] __rmqueue_pcplist+0x308/0xea0
-> > [    0.372570] [<9000000005cbed84>] get_page_from_freelist+0x564/0x1c60
-> > [    0.372575] [<9000000005cc0d98>] __alloc_pages_noprof+0x218/0x1820
-> > [    0.372580] [<900000000593b36c>] tlb_init+0x1ac/0x298
-> > [    0.372585] [<9000000005924b74>] per_cpu_trap_init+0x114/0x140
-> > [    0.372589] [<9000000005921964>] cpu_probe+0x4e4/0xa60
-> > [    0.372592] [<9000000005934874>] start_secondary+0x34/0xc0
-> > [    0.372599] [<900000000715615c>] smpboot_entry+0x64/0x6c
-> >
-> > This is because in PREEMPT_RT kernels normal spinlocks are replaced by
-> > rt spinlocks and rt_spin_lock() will cause sleeping. Fix it by disablin=
-g
-> > NUMA optimization completely for PREEMPT_RT kernels.
-> >
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >  arch/loongarch/mm/tlb.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/loongarch/mm/tlb.c b/arch/loongarch/mm/tlb.c
-> > index 5ac9beb5f093..3b427b319db2 100644
-> > --- a/arch/loongarch/mm/tlb.c
-> > +++ b/arch/loongarch/mm/tlb.c
-> > @@ -289,7 +289,7 @@ static void setup_tlb_handler(int cpu)
-> >               /* Avoid lockdep warning */
-> >               rcutree_report_cpu_starting(cpu);
-> >
-> > -#ifdef CONFIG_NUMA
-> > +#if defined(CONFIG_NUMA) && !defined(CONFIG_PREEMPT_RT)
-> >               vec_sz =3D sizeof(exception_handlers);
->
-> How does this work with NUMA and RT? You don't allocate memory and
-> everything is fine? Couldn't you pre-allocate the memory on the boot CPU
-> before kicking the CPU to boot? And then just assign the memory here.
-Allocating percpu exception pages on the own node is just an
-optimization, everything can work without this optimization.
-Preallocation is meaningless because all pages come from Node-0.
+> While continuing the discussion here, I think it may make sense I sent
+> out a V2 with 2 major updates:
+>   - add documentation for new SIGBUS feature
+>   - remove KVM_CAP_ARM_SIGBUS_ON_SEA
 
-Huacai
+Just wanted to add that QEMU already has a functioning "MCE" injection
+implemenation based on signals that deals with the sloppy mess of
+coordinating w/ vCPU threads [*].
 
->
-> >               if (pcpu_handlers[cpu])
->
-> Sebastian
+I completely agree with Marc that the UAPI around using signals for this
+sort of thing is a giant pile of crap, but it seems to be a semi-understood
+pile of crap. And from that perspective, wiring unclaimed SEAs into the
+existing infrastructure at least makes the UAPI consistent.
+
+[*]: https://elixir.bootlin.com/qemu/v9.1.1/C/ident/kvm_on_sigbus_vcpu
+
+> On Tue, Nov 12, 2024 at 12:51 AM Marc Zyngier <maz@kernel.org> wrote:
+> > > Do you mean a CAP that VMM can tell KVM the VM guest has RAS ability?
+> > > I don't know if there is one for arm64. On x86 there is
+> > > KVM_X86_SETUP_MCE. KVM_CAP_ARM_INJECT_EXT_DABT maybe a revelant one
+> > > but I don't think it is exactly the one for "RAS ability".
+> >
+> > Having though about this a bit more, I now think this is independent
+> > of the guest supporting RAS. This really is about the VMM asking to be
+> > made aware of RAS errors affecting the guest, and it is the signalling
+> > back to the guest that needs to be gated by ID_AA64PFR0_EL1.RAS.
+> 
+> Just to make sure I fully catch you. I think ID_AA64PFR0_EL1.RAS
+> translates to ARM64_HAS_RAS_EXTN in the kernel. If VMM signals RAS
+> error back to the guest with SEA, are you suggesting
+> __kvm_arm_vcpu_set_events should check
+> cpus_have_final_cap(ARM64_HAS_RAS_EXTN) before it
+> kvm_inject_dabt(vcpu)?
+> 
+> If so, how could __kvm_arm_vcpu_set_events know if the error is about
+> RAS (e.g. memory error) vs about accessing memory not in a memslot
+> (i.e. KVM_EXIT_ARM_NISV)? I guess KVM needs to look at ESR_EL2 again
+> (e.g. kvm_vcpu_abt_issea vs kvm_vcpu_dabt_isvalid)?
+
+Good point. I don't think we can lock down this UAPI after the fact
+given the existing use cases. It is ultimately up to the VMM what to do.
+
+I don't see anything that would stop an implementation without FEAT_RAS
+from generating an SEA in this situation. The lack of FEAT_RAS (to me at
+least) implies:
+
+ - No ESR injection for vSErrors (already enforced in UAPI)
+ - No deferral of SErrors / ESBs
+ - No error record registers in the PE
+
+Of course, it is very likely you've thought about this more than I have,
+Marc.
+
+-- 
+Thanks,
+Oliver
 
