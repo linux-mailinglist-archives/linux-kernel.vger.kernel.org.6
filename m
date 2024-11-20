@@ -1,171 +1,147 @@
-Return-Path: <linux-kernel+bounces-415493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CBF9D3715
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:30:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004B49D3717
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D671F2430C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489B7282707
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFC119D078;
-	Wed, 20 Nov 2024 09:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D0B18A6A8;
+	Wed, 20 Nov 2024 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eQ1WZAfx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jiENKcB7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eQ1WZAfx";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jiENKcB7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TAnSY5SQ"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1294178368;
-	Wed, 20 Nov 2024 09:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE815C15F;
+	Wed, 20 Nov 2024 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732095033; cv=none; b=UqJR4J7vECza59IYVuqFuVnJYFiw2yK8j53d0Xoq1E6G5rYb5mQ4HeHq4Xdj9ZSz0BczC75wKaQzeEMIWjv3vHoiOVSdZPuK4CFco328br3Ns0u0uQu3hIUYwXQEWzRHV+FgeLQHeryfrIPjDDxluJqYJM7gs/L+//UFNW2Wn6o=
+	t=1732095078; cv=none; b=Bt2Z2m90q3EFPSz9vB8GyaE0jGGlUXBt5xJIxCbI5ZCSziPMgiPOOYBMHHwBdHT/dy47oaoxLVZawCXrk6FZGSKuQFFOUjcKJdTkfDEnCpg4S0H5TtUfJhAUCCXtItyOgNutnKU78AyId6NDtiMVxYrgZGTTgg/hUf12eQMnWOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732095033; c=relaxed/simple;
-	bh=j4OkGv0QWzN9YW1RGIkRru8mwRAeg0fkhg/mvdATgSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ucx7/lscv17iLdi8+tIFhI6QY99de8u1x8KY5GLc2RcHwvnuxwdVWuFaXn2aVKPtXVujwA+7BNptZcN/XOmZIAhYdqgxum1mWhfJee/zooxolRe+uxNpfccBvSDezWwj0R76RLvL92us1bmaMywxpQr5zlQ2gjxEqP+yzOT2SVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eQ1WZAfx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jiENKcB7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eQ1WZAfx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jiENKcB7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4DB48219E5;
-	Wed, 20 Nov 2024 09:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732095030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VfsgsxGOXOnzEUyuEZfWiii0Ydk9i7uA2SrKMC247A=;
-	b=eQ1WZAfxl+Z7iNndOrx1BitjneAEWExruaVBmmB+Sr63bkGtGKiLGz9byvxKBvORcqGzpY
-	nQJitik8bjtaaRqKvi12DwFYQ25E378UhWw2mmTT4wM457qh6CLLc5Tj8wZtZmnIdEGITL
-	9m4ZHe0NHsKbxdl63Q4plPlgBfmMCa8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732095030;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VfsgsxGOXOnzEUyuEZfWiii0Ydk9i7uA2SrKMC247A=;
-	b=jiENKcB7aUI7T6+Seh78eFBYLsRWTY+g2dJmsUSD6Z5oTVnYLKRI0cteuZgO1gjWWgESGW
-	eAva0jHuwvzYCqAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732095030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VfsgsxGOXOnzEUyuEZfWiii0Ydk9i7uA2SrKMC247A=;
-	b=eQ1WZAfxl+Z7iNndOrx1BitjneAEWExruaVBmmB+Sr63bkGtGKiLGz9byvxKBvORcqGzpY
-	nQJitik8bjtaaRqKvi12DwFYQ25E378UhWw2mmTT4wM457qh6CLLc5Tj8wZtZmnIdEGITL
-	9m4ZHe0NHsKbxdl63Q4plPlgBfmMCa8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732095030;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0VfsgsxGOXOnzEUyuEZfWiii0Ydk9i7uA2SrKMC247A=;
-	b=jiENKcB7aUI7T6+Seh78eFBYLsRWTY+g2dJmsUSD6Z5oTVnYLKRI0cteuZgO1gjWWgESGW
-	eAva0jHuwvzYCqAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D430B13942;
-	Wed, 20 Nov 2024 09:30:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IBqtMTWsPWdeUgAAD6G6ig
-	(envelope-from <pperego@suse.de>); Wed, 20 Nov 2024 09:30:29 +0000
-From: Paolo Perego <pperego@suse.de>
-To: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Lee Jones <lee@kernel.org>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Paolo Perego <pperego@suse.de>,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH 1/1] Remove hard-coded strings by using the helper functions str_true_false()
-Date: Wed, 20 Nov 2024 10:30:20 +0100
-Message-ID: <20241120093020.6409-2-pperego@suse.de>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241120093020.6409-1-pperego@suse.de>
-References: <20241120093020.6409-1-pperego@suse.de>
+	s=arc-20240116; t=1732095078; c=relaxed/simple;
+	bh=qHgdT6ArI512NA+4mWJ1GrsHqJSMtCO1updHHFx1ai0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QB5w6y1Wl/UgbgmXomSNSFJL7RUliTlZDDQVyQovz5PUpdNMVJji4w1SkkqskA3v9AwPyBMdWR2pIwZhpUTcEn1bSk+46jNiFCOjPVEkuqWQVMDw0SXCdd3QxUI0LLTdqgs3LL1ZTYeLyVWK+uuTQv7hOlrPZfxGNm93LO/x0og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TAnSY5SQ; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AK9UkWf053730;
+	Wed, 20 Nov 2024 03:30:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732095046;
+	bh=U40w8bgx80+U51qZz8LaooL3Yp1nnphNk5nf7bSVTts=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=TAnSY5SQzcGz+JUhGdciBYlxvde52ldvrUoOqpv8nX3TYeo1yqXUZTLFCjkTXuAPk
+	 vzu4CfIyQRWfXiPYcERfyipf9UdMmoEn6ztn9acKIVZV1HzEtfQsq5t120vtbAPtoT
+	 voxmn/qLu/tETsheEl/jv2KCkGbcuJHJmWVfRmlU=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AK9UkVK055478
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 20 Nov 2024 03:30:46 -0600
+Received: from flwvowa02.ent.ti.com (10.64.41.53) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 20
+ Nov 2024 03:30:45 -0600
+Received: from DFLE114.ent.ti.com (10.64.6.35) by flwvowa02.ent.ti.com
+ (10.64.41.53) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2507.34; Wed, 20 Nov
+ 2024 03:30:45 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 20 Nov 2024 03:30:45 -0600
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AK9UiLR034922;
+	Wed, 20 Nov 2024 03:30:45 -0600
+Date: Wed, 20 Nov 2024 15:00:44 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Jacky Bai <ping.bai@nxp.com>
+CC: <lpieralisi@kernel.org>, <sudeep.holla@arm.com>, <rafael@kernel.org>,
+        <daniel.lezcano@linaro.org>, <james.morse@arm.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
+        <khilman@baylibre.com>
+Subject: Re: [PATCH] cpuidle: psci: Init cpuidle only for present CPUs
+Message-ID: <20241120093044.5yeyel4263fc27k7@lcpd911>
+References: <20241120070608.1314850-1-ping.bai@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[linuxfoundation.org,suse.de,linaro.org,kernel.org,intel.com,gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241120070608.1314850-1-ping.bai@nxp.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Signed-off-by: Paolo Perego <pperego@suse.de>
----
- drivers/staging/fbtft/fb_ssd1351.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/staging/fbtft/fb_ssd1351.c b/drivers/staging/fbtft/fb_ssd1351.c
-index f6db2933ebba..6736b09b2f45 100644
---- a/drivers/staging/fbtft/fb_ssd1351.c
-+++ b/drivers/staging/fbtft/fb_ssd1351.c
-@@ -6,6 +6,7 @@
- #include <linux/init.h>
- #include <linux/spi/spi.h>
- #include <linux/delay.h>
-+#include <linux/string_choices.h>
- 
- #include "fbtft.h"
- 
-@@ -162,7 +163,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
- static int blank(struct fbtft_par *par, bool on)
- {
- 	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
--		      __func__, on ? "true" : "false");
-+		      __func__, str_true_false(on));
- 	if (on)
- 		write_reg(par, 0xAE);
- 	else
+On Nov 20, 2024 at 15:06:08 +0800, Jacky Bai wrote:
+> With 'nosmp' or 'maxcpus=0' boot command line paremeters,
+
+s/paremeters/parameters
+
+checkpatch should've caught this for you.
+
+> the 'cpu_present_mask' may not be the same as 'cpu_possible_mask'
+> 
+> In current psci cpuidle driver init, for_each_possible_cpu()
+> is used to init the cpudile for each possible CPU. but in
+
+s/cpudile/cpuidle
+
+> drivers/base/cpu.c ->cpu_dev_register_generic(),
+> for_each_present_cpu() is used to register cpu device for
+> present CPUs.
+> 
+> When boot system with 'nosmp' or 'maxcpus=0', the cpuidle driver
+> init failed due to no valid CPU device sysfs node for non-boot CPUs.
+> 
+> [ 0.182993] Failed to register cpuidle device for cpu1
+
+Please can we get a "Fixes:" Tag?
+
+> 
+> Use for_each_present_cpu() to register cpuidle only for present
+> CPUs.
+> 
+> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> ---
+>  drivers/cpuidle/cpuidle-psci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
+> index 2562dc001fc1..00117e9b33e8 100644
+> --- a/drivers/cpuidle/cpuidle-psci.c
+> +++ b/drivers/cpuidle/cpuidle-psci.c
+> @@ -410,7 +410,7 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
+>  	struct cpuidle_driver *drv;
+>  	struct cpuidle_device *dev;
+>  
+> -	for_each_possible_cpu(cpu) {
+> +	for_each_present_cpu(cpu) {
+
+With above concerns addressed,
+
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
+>  		ret = psci_idle_init_cpu(&pdev->dev, cpu);
+>  		if (ret)
+>  			goto out_fail;
+> -- 
+> 2.34.1
+> 
+> 
+
 -- 
-2.47.0
-
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
