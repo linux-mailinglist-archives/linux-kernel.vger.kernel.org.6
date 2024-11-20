@@ -1,143 +1,97 @@
-Return-Path: <linux-kernel+bounces-415478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D748F9D36DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:19:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA089D36D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:19:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA4B2845BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:19:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DBC1F261D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6496A19CC28;
-	Wed, 20 Nov 2024 09:17:06 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08870199943;
+	Wed, 20 Nov 2024 09:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NdSDYVLo"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B999166F0C;
-	Wed, 20 Nov 2024 09:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2E31865E1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094225; cv=none; b=AzuOOrfjOVEkn2RPau/XhM/+BrVtCxBaveBNl+qgSrWFwg8VuaDuw8chCCZ8rC8EjsTXaT4jQRHhJmHSez6X7GlT2hu8kOmag0gDxTao5R59nQbfoIERyl60GI6NQg3HviLkf/GB/fo330zZm3mzI+rx8RqwPWApd9cclJ2KxL8=
+	t=1732094212; cv=none; b=C8z91lU3glETJS6YjeL7eJdBglSjDFnmC03nG5PvyoN3HbhYWy66soYP/lO7I+ycxmoubGQ/vQiRh88eTkuTI8ifDrhHRGRcQQ0WhTEu+cYGUcAa7o3T6HyBUx3O7zfxcordFHMeBc9vbjuft3oUr+U5f1qOEKF3xkDcWSqxb+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094225; c=relaxed/simple;
-	bh=gAVjzkaXRr+xe9qeGtTLqpf9sbv7Z9bAxVHWSex9YJE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d5pXGaDAMlTfgU07eJaj/K0e0MZhW2seZTeHS1Z8ZESZKjB7MlmGkche7Tq1mD0dHrQOqbJmNc3cgLj66UTZUQvR4cr4s8mf+4kJ/uVBQjiMFMZSc3GkA3EnDuEM3w6+ynSIuMEgFFtegAx5OfdTECWR36deYkUh7pAx9Hf3QCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XtZmq3DMxz9v7Jb;
-	Wed, 20 Nov 2024 16:49:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 5C4861407F5;
-	Wed, 20 Nov 2024 17:16:50 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwC3HHzrqD1noRn4AQ--.3289S2;
-	Wed, 20 Nov 2024 10:16:49 +0100 (CET)
-Message-ID: <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 02/15] module: Introduce ksys_finit_module()
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
- samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
- paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
- shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
- linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
- linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
- pbrobinson@gmail.com, zbyszek@in.waw.pl,  mjg59@srcf.ucam.org,
- pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
- jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
- mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Wed, 20 Nov 2024 10:16:23 +0100
-In-Reply-To: <ZzzwxdHbG9HynADT@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <20241119104922.2772571-3-roberto.sassu@huaweicloud.com>
-	 <20241119121402.GA28228@lst.de> <ZzzwxdHbG9HynADT@bombadil.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732094212; c=relaxed/simple;
+	bh=ZpByQMwmmWUqUCrhi4pK94CzqA3vVsdCx4OnACYInBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMNs6LgwRtzNpdEUYyP7rmq3iT0dixLMcYfgf9O0hhB3BqjQn5azBp0eoXHt4fAler365PWX2EGJI2veYnjk2ZDDyjUAooZLCi7TEv9XRn2HCfgmw6ifKxY2/UXZZdU/jiPE8BOVCGobww7hLL8SaFnuGvOkj1hkpqhf/ySC/40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NdSDYVLo; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 09:16:37 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732094207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tIPpHPyISSClh/FBZwmso93xc+iFIzjr1637smd/Ql4=;
+	b=NdSDYVLo6jjFxxrU7eb0XWXnCtK1025ElAvHSIpqwMkW71rEgmMBcZQILLQbrZArKj8jWD
+	Ma93bd5EkBt7gr8nidj01Fxi3y5FuF0YfUwpl1wDGlZuBQgyBbo/bXUzSMEm56m55bf4b6
+	lsDi8Wuao9RAS6KSmCz/Wo3gC/ICw3M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: James Clark <james.clark@linaro.org>
+Cc: suzuki.poulose@arm.com, coresight@lists.linaro.org,
+	kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Fuad Tabba <tabba@google.com>, James Morse <james.morse@arm.com>,
+	Shiqi Liu <shiqiliu@hust.edu.cn>, Mark Brown <broonie@kernel.org>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 07/12] KVM: arm64: arm_spe: Give SPE enabled state to
+ KVM
+Message-ID: <Zz2o9XryCezwAf61@linux.dev>
+References: <20241112103717.589952-1-james.clark@linaro.org>
+ <20241112103717.589952-8-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwC3HHzrqD1noRn4AQ--.3289S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zr18Kr1Dur15Zr48tr47Arb_yoW8tr1rpF
-	Wruan8tF1vqr1kAFWkGw1xZryIg3y3AF4aqas5Z34fZr909r4UuF4I9r43ua4DWr18Kw1j
-	krn0qrW8G34DAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	EksDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBGc9SXIBzwACsm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112103717.589952-8-james.clark@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 2024-11-19 at 12:10 -0800, Luis Chamberlain wrote:
-> On Tue, Nov 19, 2024 at 01:14:02PM +0100, Christoph Hellwig wrote:
-> > On Tue, Nov 19, 2024 at 11:49:09AM +0100, Roberto Sassu wrote:
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > Introduce ksys_finit_module() to let kernel components request a kern=
-el
-> > > module without requiring running modprobe.
-> >=20
-> > That does sound more than sketchy, even more so because the commit log
-> > completely fails to explain why you'd need to do that.
->=20
-> I also don't think the commit log is correct, I don't see how the
-> code is preventing calling modprobe, the indepotent check is intended
-> to prevent duplicate module init calls which may allocate extra vmalloc
-> space only to release it. You can test to see if your patch has any
-> improvments by enabling MODULE_STATS and MODULE_DEBUG_AUTOLOAD_DUPS
-> and check before / after results of /sys/kernel/debug/modules/stats  ,
-> right now this patch and commit log is not telling me anything useful.
+Hi James,
 
-Maybe I misunderstood the code, but what causes modprobe to be executed
-in user space is a call to request_module().
+On Tue, Nov 12, 2024 at 10:37:06AM +0000, James Clark wrote:
+> Currently in nVHE, KVM has to check if SPE is enabled on every guest
+> switch even if it was never used. Because it's a debug feature and is
+> more likely to not be used than used, give KVM the SPE buffer status to
+> allow a much simpler and faster do-nothing path in the hyp.
+> 
+> This is always called with preemption disabled except for probe/hotplug
+> which gets wrapped with preempt_disable().
 
-In my patch, I simply ported the code of the finit_module() system call
-to _ksys_finit_module(), net the conversion from struct fd to struct
-file, which is kept in the system call code.
+Unless the performance penalty of checking if SPE is measurably bad, I'd
+rather we keep things as-is.
 
-Also, from the kernel side, I'm providing a valid address for module
-arguments, and duplicating the string either with kmemdup() or
-strndup_user() in load_module(), depending on where the memory belongs
-to.
+Folks that want to go fast are probably using VHE to begin with. As you
+note below, we need the hypervisor to decide if SPE is enabled based on
+hardware in protected mode anyway. Using a common flow for protected and
+non-protected configs keeps complexity down and increases the likelihood
+SPE save/restore code actually gets tested.
 
-Again, maybe I misunderstood, but I'm not introducing any functional
-change to the current behavior, the kernel side also provides a file
-descriptor and module arguments as user space would do (e.g. by
-executing insmod).
-
-As for the motivation, please have a look at my response to Christian:
-
-https://lore.kernel.org/linux-integrity/ZzzvAPetAn7CUEvx@bombadil.infradead=
-.org/T/#ma8656b921bb5bfb60e7f10331061d462a87ce9f4
-
-
-In addition, you could also see how ksys_finit_module() is used here:
-
-https://lore.kernel.org/linux-integrity/20241119104922.2772571-8-roberto.sa=
-ssu@huaweicloud.com/
-
-Thanks
-
-Roberto
-
+-- 
+Thanks,
+Oliver
 
