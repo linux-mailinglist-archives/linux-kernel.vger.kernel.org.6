@@ -1,1648 +1,270 @@
-Return-Path: <linux-kernel+bounces-416037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665619D3F6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:54:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627349D3F6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 060651F23BD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAD8D1F23E9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC00714AD3D;
-	Wed, 20 Nov 2024 15:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B7143C63;
+	Wed, 20 Nov 2024 15:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RD609PJX"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0q1FJrQr"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2050.outbound.protection.outlook.com [40.107.212.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A872145B0B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117982; cv=none; b=habmo37SGXtFgi2LXPlDm3lLnpZw6IkEQbh+ktGq2KtIfOk1dWZ66BptGrKT8I3+/7pzBNeKfw0p3OoclLkMtRH1j/ySPpE/W1SZIqkr+VLR3H38o206xrcwEXEsub/F6wMdzFz9W0VLK/FGWBucyix72Ibof0uRCLLraMn2rVQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117982; c=relaxed/simple;
-	bh=FNnesGMMQb0tc5nboo/+ESd9TicpF8S6NBEpr9cslng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PyolROb5ORJd7HNc08jW5HRPfGh10wxeGNBmsc6ex9jpXHhAFYip3Q8pxm7fRbo4bJp2OcuGHTwaEIetpkUL2qhLYPKkwPzWvYIdnTfF30DX5JltdPaByADrsn1v0Owdpq2Aj3W61q8DM79IdTqriALA2mLUvt9v5J8jvsgoYf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RD609PJX; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-432d9b8558aso6252205e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732117976; x=1732722776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XMfKOSolIPFtP/2jfvl4rNgPPHayVOA0ad+l75+iyAA=;
-        b=RD609PJX+Xs6mJGl8kegjGKG+BFojn4JDwVX6LScHcJnn12yC4Ls58B3xB8mrM3Ww3
-         qbY4Luta8hcUm019ZHoPjZIpll5PennoC0fl+VdJEmayq9BzuHjy+uzgmfrqIaAV3XwF
-         C3uKgr50HjQ8luXSNNditMB9MR8xLOVVUJ+xjGQirSZ5q9I9w34+PVabCmf3ewSan8T/
-         5GWxYRAxUAz4EzSoAXr/ORg8/GG054R/Yz0uhKzuay55HYT0ubT5PXdfO43aebQ8jp9E
-         X97+G3jBT9d4hTE0XFsXIvjAgOOf9w2+G1Myi30kLIyHSsQuu297WUg9IkS8KiDji4uW
-         Mk8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732117976; x=1732722776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XMfKOSolIPFtP/2jfvl4rNgPPHayVOA0ad+l75+iyAA=;
-        b=hfXfa8Sk5fEAw0IzPhtFW/213ebvNCGkNNFaInzT4eJt+UZG2YBuDDoBJQ3Ne6J6+v
-         tsbHKZjzKPNqpuYeyvyaLS8rdagvdR2/RUWyojiMP3HNmyhJG+YACN/72jxhAzazbv6K
-         pxSSVK1/T3fd0QDFR1SQ42hZFLULSrJs+WZ1P7/dwyFRhQhw/ZSSTeuIUYLwduYTqEOH
-         MNyradjWj18TjOfT4PEA+IXnrqnKT99AsDu0hH5WdEIQccW6Blreo/l7GXAe0h0XebZ4
-         wx4GpVSB6d+6J69RqsV7rOZbUyYP282RexNqe3P2rc+0MvWvgLu59x29YRskJUoABstd
-         2fkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmaexVvjtaLsZKBGTG06d1mvGQ3Vwm9LfTlfJc+ESRF7Bfr0LutcDYF0L6HcWw/QbQQt6ws8+91Hz98vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLx7cQo/kvWpL20doWO95KS1/IT+vq3LeKsBwsuc4lKbZTk7o6
-	KEtlXZh4jZyMi6gslYkjMfRoQzteLSeWf7H5jDyztzG/0hZkYaO/nCK6B3Mm+nw=
-X-Google-Smtp-Source: AGHT+IF6ZscXg785uja2z2GelqYihpqipd+9E958AyI6nC7aqnt0aCtC7W/Lq6VbG5hoq7cuwr6VFg==
-X-Received: by 2002:a05:600c:510d:b0:42c:b603:422 with SMTP id 5b1f17b1804b1-4334762187emr27995855e9.8.1732117976375;
-        Wed, 20 Nov 2024 07:52:56 -0800 (PST)
-Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4c68sm22990385e9.22.2024.11.20.07.52.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 07:52:55 -0800 (PST)
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: rafael@kernel.org
-Cc: saravanak@google.com,
-	arnd@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	quic_manafm@quicinc.com
-Subject: [RFC 2/2] selftests: Add perf_qos selftests
-Date: Wed, 20 Nov 2024 16:52:45 +0100
-Message-ID: <20241120155245.1710666-2-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241120155245.1710666-1-daniel.lezcano@linaro.org>
-References: <20241120155245.1710666-1-daniel.lezcano@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DBC13BACC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732118053; cv=fail; b=C4XhGSfRglfLDpr0upFMCDs+D7fY8RGmXOgKImokMZW85Nju0aKrxw2Bgo4/bbE0ketioJ/QCA6KU1naAVUbAyWIFSbjJKlwlrhBVSL2bf0gCo4zlyx4LgsWdPrXnq9LJrjHW6cCKN7xeGE0Zm+mBmgkVzIBgZhOeaZK4Qlh3Rg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732118053; c=relaxed/simple;
+	bh=p0WeM5I/A8qgd/91sCjDOmcOZ65fqMjf5CcnvTa9kZ0=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iUCgJgsYUzCedj98T+xyqZD2Dkp1z+/SVJG9vS9T95rhz2gTQMrNMQGjHuRjPKcD9IXOjNGC8vUfTRFtVB7/r5AWlMSWn/bPCKe9giVBvVGzgcsrtWexkDtdxQQkGD2OBOE0wy47HIybKLd5cQ4/BaBsU30rKXGdzZ6rn/Dp+RM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0q1FJrQr; arc=fail smtp.client-ip=40.107.212.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IgQRiZuON+AQ7ofCv7QqDBDsEzjlU6GC/QIm+osOSwiR8k1gy0RhX2hP+mv9vCfJjeG3tOcacsve6XDcnPBL8x/A4XxwOobOIcDnoa0nLGMjN5AnSjPxjA+VfEyGoa4j54ovYl96CQs3fkw4lYB2N3GUnMrP5qrICl60fZxsXK23pzPjuWFYQpBWNDg58qlRZKBTRB0xM90NHMuEm4mqQFSDsPsbhlBaLGCDH5fk4K2q2+Ks/z2cT09f50lyDrqnOMM48BuaY6qU0/MeA/LLJwvai3wHwDGjrRQxXUE7pXg3lOmbcYJsOgjOlQne8vkff7jB6xoxVlwdnPUe3UnwGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IlvCp8quyGuU6kgKhuR9zyXRJ8Y8lW/SEijua9/ELHU=;
+ b=rnyWVnKly7m8YhcjfZN6xGdqG/ZMwy6SZZGDuRrx+FMeCAdbTR8up3W6VPKHqZkCv1wsqHXE9NdO/rudaA+4SJMm1FBfXQ7tZgHTm1FzjLGWCWMOoeivnB5Bv/RthonOUaTnlbQtjWF56P2YJbIoCvtWevreL4AwTGtsszBfWM9DilstG7kSKhbYIf7qK3WCMpvEg6mrkhWgst2aMob8TsdB2EV8Kp2adimPpNBwoWm1e7K803EklqdjcritWLufvU5BptCsDW8MBUuNZs3sfvKWgT1ao5F9lX7SddY2CL9ukfxspCt4NI8sCPkjMxIy9xVJ4PpLFuGbuF26F8SLxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IlvCp8quyGuU6kgKhuR9zyXRJ8Y8lW/SEijua9/ELHU=;
+ b=0q1FJrQr+rv8PhrJCVQ5tJ3eLx0/u+40nzjCnpUL73R33Fu0SCVBh5p3CdXFHRS87xBuaDdGoQOQsmNyMUs051m9417YMwaMvp24PbzvEF4eHEWVZAjzbYReVjgRsBVfd6pgEG4/VFmfqNQHDUNr5ZB6YtvUz7TBV7mIc2Y6wDc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
+ by CY5PR12MB6429.namprd12.prod.outlook.com (2603:10b6:930:3b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Wed, 20 Nov
+ 2024 15:54:06 +0000
+Received: from PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
+ ([fe80::5e9c:4117:b5e0:cf39%4]) with mapi id 15.20.8158.019; Wed, 20 Nov 2024
+ 15:54:06 +0000
+Message-ID: <197f9c0e-e057-41d4-8492-8e49adc45d18@amd.com>
+Date: Wed, 20 Nov 2024 21:23:56 +0530
+User-Agent: Mozilla Thunderbird
+From: Ravi Bangoria <ravi.bangoria@amd.com>
+Subject: Re: [PATCH 06/19] perf: Simplify perf_pmu_register()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@kernel.org, lucas.demarchi@intel.com, linux-kernel@vger.kernel.org,
+ willy@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ Ravi Bangoria <ravi.bangoria@amd.com>
+References: <20241104133909.669111662@infradead.org>
+ <20241104135518.198937277@infradead.org>
+ <d64ebfba-49db-4b04-9a84-b9ecd26e6c76@amd.com>
+ <20241120144603.GG19989@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+In-Reply-To: <20241120144603.GG19989@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0090.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::35) To PH7PR12MB6588.namprd12.prod.outlook.com
+ (2603:10b6:510:210::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|CY5PR12MB6429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e45a9dd-24b6-441c-c4c7-08dd097b9042
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZU5oRE51ZFNYOFBrcllFcUhUNWI0bHgyYWp3S1JXSUtjckcxMi83WmFPSmdl?=
+ =?utf-8?B?cU93MW02N25GZEgxd0licjhvSVNSUk1WSHY2ajJKRkZOUmZ1MExSRE84a0Ja?=
+ =?utf-8?B?Qzd4akhyUmZaMXhmeWtYeWcrRVU0cy9lOTFyVjBOQnRuMkxQcHUwUU5XLyti?=
+ =?utf-8?B?b3o3MlFaa0RkL29BQXlCbjgrY1JCRU5vcEcyVEU1SUpIRWFQMDU5R3pGUDd4?=
+ =?utf-8?B?UzRzQlJXUkxLZDhiUXFEdnkrcDNDREZtM0hvOXFEaWZNYy9HcUV3MEt0VURS?=
+ =?utf-8?B?WVJPeVpVYktpR3F2TnVVaUFqcmZqY002Ry9TZXFJSzFCN0Y4dlZGanpNTTQ2?=
+ =?utf-8?B?Y2QvQ1UvcGlzNGEwZks0cnlkMXN5MGdnNEU2ODdnTlpscVRTK1YxT0VxN3Vk?=
+ =?utf-8?B?a3lOTmxLNllRMDZCRmgySWJsdXlMNHNDamRWMEdkVENyNzJmWnIzV3N3cEU1?=
+ =?utf-8?B?d3NxUmwrc0ZDV1ptTGZFZGYvdXB2czZHWUpXVGY4ODZXWjdUR2ZaejJkUjVk?=
+ =?utf-8?B?VE5PL1VLQTY1MTNJN3lBcGdETHEzWmpOdXk3QzRBMHZFcVpPbm9qU1FpcnR6?=
+ =?utf-8?B?anYrK2lYMWhxd1FyUWp6TC9FT0ZZNU43a1RucFpVWVU2aTZnTTBKc1ZaMEFr?=
+ =?utf-8?B?dFphcFAwQ1JFdGYvV29BLzFJQ0xubGRld05KYUJQZEhjV1U5aUI5dEw4ZXhl?=
+ =?utf-8?B?ckF3d3Q3UnhaSDNmRU82MWxSTGhCR0grNEMzN3dGRHVEaU9sWDlwS3pUejVV?=
+ =?utf-8?B?OUV4a2pQWDMxRWZHblFYdlJidTgraGZsc3lLZko0V04rVHJzdGp1S3A0NkJL?=
+ =?utf-8?B?bnp0M2E2VlAyZVpRLzIvRDkxQXJ6SUZHblFTb3JtRGUyUXkyeVRodVU5WSsr?=
+ =?utf-8?B?ZlVRbDdoNDhOczUxeVlJaEdHNVp0bFdJdnhJUDc5NStUeG9XZkdiT1k4dkxo?=
+ =?utf-8?B?VHo0bmF6WWRGb2RtZFpNZzlwejZXYmxGZHJDN3dRa2h6VmUrNVNGMDVXNElq?=
+ =?utf-8?B?TmZjRzNaWWZzd1BEalEwSDlVVGM1eEx5U09ub1JtaGIrTVE5M08wWnBva01K?=
+ =?utf-8?B?YS9UWFJKNzI0a3FpdU5sdFBpTCtNZ0RpbkFjSmNrajd3RndXZzlXcVJlMU1o?=
+ =?utf-8?B?NmM2bXBtUTY0NlZndUdqSm83UkliKzdMNVNUNXJDNXZPaG83K1JRYUxDMzQ3?=
+ =?utf-8?B?MVlXYXB1b1dkcFRKM0dScVRDZzdvYnFDeG4vYzVoS3RmbUFXN0JkOXcwSThD?=
+ =?utf-8?B?Yi8xMWFhZTFtZGVIaHhPUEN6RHhJakNFVzVhMkhJUnBRY3ROREdPdUJpZkww?=
+ =?utf-8?B?UUxqR1ZqeGNRbHR4dHVqZmVIc2xLLzFmcm5icTI4RVZPa1ZoaGJwV3lIa3dv?=
+ =?utf-8?B?a3YyQlhGeEtlMCsxeGhvdTV4c1E1Nm1mbGtVdEhXcWdrSmlMb0E2a0hoSzI0?=
+ =?utf-8?B?bHRwcWJmNSthNnI2UzNkRU5UYnU5SFVQaTQyTCt5bTRqSGV2SEllaVExK1Za?=
+ =?utf-8?B?dFpMMithSkMvL3Z2S2JKWWQxYzFTMUcyWk44bW41OFFrc1FKNGNPUkRZRm5D?=
+ =?utf-8?B?WEpSZmhWSGtQcm43b2hLV2hqczlpLzJuZTBaMTNhdC9xMFk0ems1R2gzRDJv?=
+ =?utf-8?B?WFBhYmsyQXFTWUpQdXRnaXdTOUJzc0VIVmJkdit2d2pxVlVGMEEyUnY5dktN?=
+ =?utf-8?B?bzg3VzhRcEVvS0JVK3dSd3hENjFkNGQ0M3JxOHV5VkpaaW9oVVpVRW5HZVZi?=
+ =?utf-8?Q?GQovpHaCiDVdbiOOeucxD5SLNdR4HME8Xl5lwa/?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b2N6VTdRQ1ZFdkQzMHE1S0tqK2VYWnFTT3k3TUJJNWY0eEdQMUFiWGxxbGNM?=
+ =?utf-8?B?ek4ybkdQcjdTcWFOUStNRnJScllBMzk2M2dpZUlUL1VrdFBOK3dMdDdDalhD?=
+ =?utf-8?B?TXlUSkR1WEQ3RlVyWStYYVAyVHRkcVFuaVVRTHBrQmxONXVCazBYcnJIMnBR?=
+ =?utf-8?B?STNidTVTazlYVGd1ZlJCMTcrdHl6WDlYNmsxaHNwWGgyb25uU1JBa2djVzlP?=
+ =?utf-8?B?YkxFSklRRVhjYU96QnROTGF2ZXVsT2dOM1FkZ2xYZzhQL0RaalZqVDJIYWI4?=
+ =?utf-8?B?ZDUwRTZ4NVExNkd3TTRYVFhNZnJhaWErU2h1Y0NMTk9MUlFmU01rOG11OXJY?=
+ =?utf-8?B?dnRHUFVEOVlzelNZbkd2d05hZjV3S2tzai9wN2plRm9Od1FiY3ZWcWV5bXpK?=
+ =?utf-8?B?RmtOT1pZQVp5dFpvTXp1WXp6MEJxYTlxbU9HdHRKU3JYSDZ1YmRGeDVjSUVo?=
+ =?utf-8?B?bmxaKy93dVBGOHlkcTJpTGI3TmpoUFFOaitJdzJWcmFwc0dKU1VUTjhBYjFY?=
+ =?utf-8?B?OUpIeTZpZ1lCTTBqWExSRjkxUFFJM0hkeGZXU1JHR0dTQ0lrMXZ2Y1B0d3lH?=
+ =?utf-8?B?VDVxQkkzWFExSW1wOUZTMDFySzkrd0svdEFLcVdFYWNBMFZPMXd5RWRSSzBH?=
+ =?utf-8?B?dVFVZmJ4M2NtMW13Z01KYy81U0N0bCtPZkQvMEhrTUlLR3F2TUFSWFA2bThU?=
+ =?utf-8?B?OEIzdlhhMG5QSmNIbHdpYlA4WmRBYVRKQmMwZGRXenAycThqQXdEUC9mUEFh?=
+ =?utf-8?B?VndnMFMwYmcrVzU5U2JZL2RScExFZTJSTEJ2YU84bVNyMm5DOXovOVV6ajdr?=
+ =?utf-8?B?SnY5dTZxQUhEakE5Lzh6cU9oSmx5V3ZTeHp0eGQ3Y3dLbE9xSFkxN3J4TFp5?=
+ =?utf-8?B?a3Y1WHplVkRvSFhRN05OUDZmMnI2UWp5UEdtTHJXVDBSSVNud0d1dEo3dGNv?=
+ =?utf-8?B?TUZ2RWQveVlSb25Dc0ZVTkVsNHlhZUFURjZDZ0FpaWplWVhwL24wTVJjc0VM?=
+ =?utf-8?B?Wnp3eW5YS2l2cTFIbWFuaDlYcUQxb2tvMmU5Skp6S3lJTVkxSVAzSUtvenRD?=
+ =?utf-8?B?eVY1VUtCbndhS2h3THhpNWlEZ0tOV01TUC9ab3VteXprQVU1QkYrdW9UbHow?=
+ =?utf-8?B?YlVEM1lCNHdnQzhhc2R0eGJ5VUNISW4rSFJ2Ym16RW5JM3htTmRhMDFaOTNF?=
+ =?utf-8?B?Umk3K0UzbXpBUTlpRVdxb2tMY2FNZkFSSzR1SjV1VHhOZzZpM2trekx2eldO?=
+ =?utf-8?B?VmM2UlZ2cjFGZ3YxTEFhOFh0ZHN4eHl5QmlEdXE5RFZhemo1SmJuQXpkQUJV?=
+ =?utf-8?B?akhPSEdGK2FMK2ZhUTFOQkRjWVQxNFo5dTY0S2ExWk1uNlRoQU9vcWxIcEtY?=
+ =?utf-8?B?VHJPNGxhYUV4L05rMmtqVFZEMlZoczdKTCtIU0ptcXdrS1JqdFl5akRsaXZs?=
+ =?utf-8?B?TDV0NjJMOUhqQ0FMUG4yZXRXNmVEcDJGb2Y5NitKdWNPUXQ2UTFKeFF6a3JO?=
+ =?utf-8?B?bHpVK1BQUHhVWGhCUlp3NC9tbmxib25QVm5yQ05uVU5sajhIS3hWMyt0cDNM?=
+ =?utf-8?B?ZE1GdTJhZEJGbnErMTdWMW1nQzJRdUp0VGtpU3pTbHN3ZHNlVmJLNXF5elpT?=
+ =?utf-8?B?SGFaazVlcHppUG0zNW9HaWhhV2VxaCtRL3h0TWIyZjhibGI4VEtIbE1tYmY5?=
+ =?utf-8?B?SVNQeUc3ZDluWjU1M3lJWXdCU3hSM1FxTDR3TnpCOFVLbGpjdHZ6Tit3THhE?=
+ =?utf-8?B?UktTVjVScE8wbks5U2wwOHBMTGtSblZXUHhMNXlTTndXYmRuVU03OWhLZTVt?=
+ =?utf-8?B?UzN0ZUpubnYrNG1aOEdHN1VrN1hEdHJaYldQSXpybTZrc1hSb1p2L2sxWDlt?=
+ =?utf-8?B?SGxSS3dVbnhuZ0E5aGhGTVRmNzR1U245UjJ1d044a2drQUMwb3lEaGwzQytW?=
+ =?utf-8?B?bTEvakQ3WkpnaEY3NkpYdU00UXZWcSt5aFhZaGxHK2puSFZDakVxZnV2bi8w?=
+ =?utf-8?B?Sk96MHpJZlcrQmR5STNkQXdSN2xCYWdtKzZsV2FwMjdPdllvdDNBcUNNSjly?=
+ =?utf-8?B?MWFtQzZOS1E5L0VnUUs1VUk3a29HVU9xSEI5TUlSclpQeU0xS0xmVWVSV1ZW?=
+ =?utf-8?Q?Anwidm5JcGW0aohptXzbiIsoo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e45a9dd-24b6-441c-c4c7-08dd097b9042
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 15:54:06.6573
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VcC5Rl4X9LrGshsk1+aqGZVJ0jt8m7u/enaKcT12t7bId3QPDoHgjLjpJO5QA+rE3iDsidZLu6wY74qpqo0tjw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6429
 
-The performance QoS is a framework to allow the userspace to set the
-performance limits of a device which is exported as a char device in
-/dev. The performance constraints are set from userspace and their
-life cycle is tied with the opened file descriptor and other processes
-requesting the same constraint via another instance of the file
-descriptor. This kind of non trivial behavior, involving constraint
-limits to be enqueued in a sorted list and depending on the process
-holding a file descriptor, deserves a set of testing programs.
+On 20-Nov-24 8:16 PM, Peter Zijlstra wrote:
+> On Wed, Nov 20, 2024 at 06:36:55PM +0530, Ravi Bangoria wrote:
+>> Hi Peter,
+>>
+>>> --- a/kernel/events/core.c
+>>> +++ b/kernel/events/core.c
+>>> @@ -11778,52 +11778,49 @@ static void perf_pmu_free(struct pmu *pm
+>>>  	free_percpu(pmu->cpu_pmu_context);
+>>>  }
+>>>  
+>>> -int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+>>> +DEFINE_FREE(pmu_unregister, struct pmu *, if (_T) perf_pmu_free(_T))
+>>> +
+>>> +int perf_pmu_register(struct pmu *_pmu, const char *name, int type)
+>>>  {
+>>> -	int cpu, ret, max = PERF_TYPE_MAX;
+>>> +	int cpu, max = PERF_TYPE_MAX;
+>>>  
+>>> -	pmu->type = -1;
+>>> +	struct pmu *pmu __free(pmu_unregister) = _pmu;
+>>> +	guard(mutex)(&pmus_lock);
+>>>  
+>>> -	mutex_lock(&pmus_lock);
+>>> -	ret = -ENOMEM;
+>>>  	pmu->pmu_disable_count = alloc_percpu(int);
+>>>  	if (!pmu->pmu_disable_count)
+>>> -		goto unlock;
+>>> +		return -ENOMEM;
+>>>  
+>>> -	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n")) {
+>>> -		ret = -EINVAL;
+>>> -		goto free;
+>>> -	}
+>>> +	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n"))
+>>> +		return -EINVAL;
+>>>  
+>>> -	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
+>>> -		ret = -EINVAL;
+>>> -		goto free;
+>>> -	}
+>>> +	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE,
+>>> +		      "Can not register a pmu with an invalid scope.\n"))
+>>> +		return -EINVAL;
+>>>  
+>>>  	pmu->name = name;
+>>>  
+>>>  	if (type >= 0)
+>>>  		max = type;
+>>>  
+>>> -	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
+>>> -	if (ret < 0)
+>>> -		goto free;
+>>> +	CLASS(idr_alloc, pmu_type)(&pmu_idr, NULL, max, 0, GFP_KERNEL);
+>>> +	if (pmu_type.id < 0)
+>>> +		return pmu_type.id;
+>>>  
+>>> -	WARN_ON(type >= 0 && ret != type);
+>>> +	WARN_ON(type >= 0 && pmu_type.id != type);
+>>>  
+>>> -	pmu->type = ret;
+>>> +	pmu->type = pmu_type.id;
+>>>  	atomic_set(&pmu->exclusive_cnt, 0);
+>>>  
+>>>  	if (pmu_bus_running && !pmu->dev) {
+>>> -		ret = pmu_dev_alloc(pmu);
+>>> +		int ret = pmu_dev_alloc(pmu);
+>>>  		if (ret)
+>>> -			goto free;
+>>> +			return ret;
+>>
+>> pmu_dev_alloc() can fail before or in device_add(). perf_pmu_free() should
+>> not call device_del() for such cases. No?
+> 
+> Right you are -- but is this not introduced in the previous patch?
 
-This patch provides somes tests which depend on a kernel module
-creating a dummy performance QoS device. More tests will be added
-later.
+I didn't notice that.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- lib/Kconfig.debug                             |   9 ++
- lib/Makefile                                  |   1 +
- lib/test_perf_qos.c                           |  69 ++++++++
- tools/include/uapi/linux/perf_qos_ioctl.h     |  47 ++++++
- tools/testing/selftests/Makefile              |   1 +
- tools/testing/selftests/perf_qos/Makefile     |  16 ++
- tools/testing/selftests/perf_qos/get_limits.c |  61 +++++++
- .../testing/selftests/perf_qos/get_set_max.c  |  95 +++++++++++
- .../selftests/perf_qos/get_set_max_forked.c   | 150 ++++++++++++++++++
- .../testing/selftests/perf_qos/get_set_min.c  |  95 +++++++++++
- .../selftests/perf_qos/get_set_min_forked.c   | 150 ++++++++++++++++++
- tools/testing/selftests/perf_qos/get_unit.c   |  46 ++++++
- .../selftests/perf_qos/set_max_forked.c       | 147 +++++++++++++++++
- .../selftests/perf_qos/set_min_forked.c       | 147 +++++++++++++++++
- .../selftests/perf_qos/set_multiple_maxs.c    |  93 +++++++++++
- .../selftests/perf_qos/set_multiple_mins.c    |  87 ++++++++++
- .../perf_qos/set_same_multiple_maxs.c         |  84 ++++++++++
- .../perf_qos/set_same_multiple_mins.c         |  84 ++++++++++
- 18 files changed, 1382 insertions(+)
- create mode 100644 lib/test_perf_qos.c
- create mode 100644 tools/include/uapi/linux/perf_qos_ioctl.h
- create mode 100644 tools/testing/selftests/perf_qos/Makefile
- create mode 100644 tools/testing/selftests/perf_qos/get_limits.c
- create mode 100644 tools/testing/selftests/perf_qos/get_set_max.c
- create mode 100644 tools/testing/selftests/perf_qos/get_set_max_forked.c
- create mode 100644 tools/testing/selftests/perf_qos/get_set_min.c
- create mode 100644 tools/testing/selftests/perf_qos/get_set_min_forked.c
- create mode 100644 tools/testing/selftests/perf_qos/get_unit.c
- create mode 100644 tools/testing/selftests/perf_qos/set_max_forked.c
- create mode 100644 tools/testing/selftests/perf_qos/set_min_forked.c
- create mode 100644 tools/testing/selftests/perf_qos/set_multiple_maxs.c
- create mode 100644 tools/testing/selftests/perf_qos/set_multiple_mins.c
- create mode 100644 tools/testing/selftests/perf_qos/set_same_multiple_maxs.c
- create mode 100644 tools/testing/selftests/perf_qos/set_same_multiple_mins.c
+> Also, this should cure things, no?
+> 
+> ---
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11810,6 +11810,7 @@ static int pmu_dev_alloc(struct pmu *pmu
+>  
+>  free_dev:
+>  	put_device(pmu->dev);
+> +	pmu->dev = NULL;
+>  	goto out;
+>  }
+>  
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 7312ae7c3cc5..5b66089d6103 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2585,6 +2585,15 @@ config TEST_FIRMWARE
- 
- 	  If unsure, say N.
- 
-+config TEST_PERF_QOS
-+	tristate "Create a dummy device for the performance QoS testing"
-+	help
-+	  This builds the "test_perf_qos" module which creates an
-+	  userspace interface for testing the performance QoS API. It
-+	  is needed for the performance QoS selftests.
-+
-+	  If unsure, say N.
-+
- config TEST_SYSCTL
- 	tristate "sysctl test driver"
- 	depends on PROC_SYSCTL
-diff --git a/lib/Makefile b/lib/Makefile
-index 773adf88af41..72d345071725 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_TEST_BPF) += test_bpf.o
- test_dhry-objs := dhry_1.o dhry_2.o dhry_run.o
- obj-$(CONFIG_TEST_DHRY) += test_dhry.o
- obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
-+obj-$(CONFIG_TEST_PERF_QOS) += test_perf_qos.o
- obj-$(CONFIG_TEST_BITOPS) += test_bitops.o
- CFLAGS_test_bitops.o += -Werror
- obj-$(CONFIG_CPUMASK_KUNIT_TEST) += cpumask_kunit.o
-diff --git a/lib/test_perf_qos.c b/lib/test_perf_qos.c
-new file mode 100644
-index 000000000000..7d1c21f4170d
---- /dev/null
-+++ b/lib/test_perf_qos.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Kernel module for testing performance QoS
-+ *
-+ * Copyright (2024) Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@kernel.org>
-+ *
-+ */
-+#include <linux/module.h>
-+#include <linux/perf_qos.h>
-+
-+static struct perf_qos *pq;
-+
-+static int test_set_perf_limit_min(int limit)
-+{
-+	static int prev_limit = -1;
-+
-+	pr_info("Performance minimal limit set to %d->%d\n",
-+		prev_limit, limit);
-+
-+	WARN_ON_ONCE(prev_limit == limit);
-+	
-+	return 0;
-+}
-+
-+static int test_set_perf_limit_max(int limit)
-+{
-+	static int prev_limit = -1;
-+
-+	pr_info("Performance maximal limit set to %d->%d\n",
-+		prev_limit, limit);
-+
-+	WARN_ON_ONCE(prev_limit == limit);
-+
-+	return 0;
-+}
-+
-+static int __init test_perf_qos_init(void)
-+{
-+	struct perf_qos_ops ops = {
-+		.set_perf_limit_max = test_set_perf_limit_max,
-+		.set_perf_limit_min = test_set_perf_limit_min,
-+	};
-+
-+	struct perf_qos_value_descr descr = {
-+		.unit = PERF_QOS_UNIT_NORMAL,
-+		.limit_min = 0,
-+		.limit_max = 1024,
-+	};
-+	
-+	pq = perf_qos_device_create("dummy", &ops, &descr);
-+	if (IS_ERR(pq))
-+		return PTR_ERR(pq);
-+
-+	return 0;
-+}
-+
-+static void __exit test_perf_qos_exit(void)
-+{
-+	perf_qos_device_destroy(pq);
-+}
-+
-+module_init(test_perf_qos_init);
-+module_exit(test_perf_qos_exit);
-+
-+MODULE_AUTHOR("Daniel Lezcano <daniel.lezcano@kernel.org>");
-+MODULE_DESCRIPTION("Kernel module for testing the performance QoS");
-+MODULE_LICENSE("GPL");
-diff --git a/tools/include/uapi/linux/perf_qos_ioctl.h b/tools/include/uapi/linux/perf_qos_ioctl.h
-new file mode 100644
-index 000000000000..a9fb8940c175
---- /dev/null
-+++ b/tools/include/uapi/linux/perf_qos_ioctl.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: LGPL-2.0+ WITH Linux-syscall-note */
-+/*
-+ * Performance QoS device abstraction
-+ *
-+ * Copyright (2024) Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#ifndef __PERF_QOS_IOCTL_H
-+#define __PERF_QOS_IOCTL_H
-+
-+#include <linux/types.h>
-+
-+enum {
-+	PERF_QOS_IOC_SET_MIN_CMD,
-+	PERF_QOS_IOC_GET_MIN_CMD,
-+	PERF_QOS_IOC_SET_MAX_CMD,
-+	PERF_QOS_IOC_GET_MAX_CMD,
-+	PERF_QOS_IOC_GET_UNIT_CMD,
-+	PERF_QOS_IOC_GET_LIMITS_CMD,
-+	PERF_QOS_IOC_MAX_CMD,
-+};
-+
-+typedef enum {
-+	PERF_QOS_UNIT_NORMAL,
-+	PERF_QOS_UNIT_KBPS,
-+	PERF_QOS_UNIT_MAX
-+} perf_qos_unit_t;
-+
-+struct perf_qos_ioctl_arg {
-+	int value;
-+	int limit_min;
-+	int limit_max;
-+	perf_qos_unit_t unit;
-+};
-+
-+#define PERF_QOS_IOCTL_TYPE 'P'
-+
-+#define PERF_QOS_IOC_SET_MIN	_IOW(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_SET_MIN_CMD,	struct perf_qos_ioctl_arg *)
-+#define PERF_QOS_IOC_GET_MIN	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_MIN_CMD,	struct perf_qos_ioctl_arg *)
-+#define PERF_QOS_IOC_SET_MAX	_IOW(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_SET_MAX_CMD,	struct perf_qos_ioctl_arg *)
-+#define PERF_QOS_IOC_GET_MAX	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_MAX_CMD,	struct perf_qos_ioctl_arg *)
-+#define PERF_QOS_IOC_GET_UNIT	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_UNIT_CMD,	struct perf_qos_ioctl_arg *)
-+#define PERF_QOS_IOC_GET_LIMITS	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_LIMITS_CMD,	struct perf_qos_ioctl_arg *)
-+
-+#endif
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 363d031a16f7..d6f3706443c6 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -73,6 +73,7 @@ TARGETS += net/rds
- TARGETS += net/tcp_ao
- TARGETS += nsfs
- TARGETS += perf_events
-+TARGETS += perf_qos
- TARGETS += pidfd
- TARGETS += pid_namespace
- TARGETS += power_supply
-diff --git a/tools/testing/selftests/perf_qos/Makefile b/tools/testing/selftests/perf_qos/Makefile
-new file mode 100644
-index 000000000000..279a2bce1b82
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/Makefile
-@@ -0,0 +1,16 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+TEST_GEN_PROGS = get_unit get_limits
-+TEST_GEN_PROGS += get_set_min get_set_max
-+TEST_GEN_PROGS += get_set_min_forked get_set_max_forked
-+TEST_GEN_PROGS += set_min_forked set_max_forked
-+TEST_GEN_PROGS += set_multiple_mins set_multiple_maxs
-+TEST_GEN_PROGS += set_same_multiple_mins set_same_multiple_maxs
-+
-+include ../lib.mk
-+
-+TOOLSDIR := $(top_srcdir)/tools
-+TOOLSINCDIR := $(TOOLSDIR)/include
-+APIDIR := $(TOOLSINCDIR)/uapi
-+
-+CFLAGS += -Wall -O2 -I$(APIDIR)
-diff --git a/tools/testing/selftests/perf_qos/get_limits.c b/tools/testing/selftests/perf_qos/get_limits.c
-new file mode 100644
-index 000000000000..e7559481a9a3
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_limits.c
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = {};
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_LIMITS, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (arg.unit != PERF_QOS_UNIT_NORMAL) {
-+		fprintf(stderr, "Invalid unit, expected 'PERF_QOS_UNIT_NORMAL'\n");
-+		return 1;
-+	}
-+
-+	if (arg.limit_min != 0) {
-+		fprintf(stderr, "Invalid minimum unit %d != 0\n", arg.limit_min);
-+		return 1;
-+	}
-+
-+	if (arg.limit_max != 1024) {
-+		fprintf(stderr, "Invalid maximum unit %d != 1024\n", arg.limit_max);
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/get_set_max.c b/tools/testing/selftests/perf_qos/get_set_max.c
-new file mode 100644
-index 000000000000..87bf5c26acf7
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_set_max.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = { .value = 512 };
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test 1: Check the value is set
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = 0;
-+	
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (arg.value != 512) {
-+		fprintf(stderr, "max value differs with set/get (arg=%d)\n",
-+			arg.value);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test 2: Check we can not set the same constraint
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg) == 0) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+	
-+	/*
-+	 * Test 3: Check the constraint is removed
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_GET_LIMITS, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = arg.limit_max;
-+	
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+	
-+	if (!ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/get_set_max_forked.c b/tools/testing/selftests/perf_qos/get_set_max_forked.c
-new file mode 100644
-index 000000000000..1bffddd684c8
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_set_max_forked.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+static int test_forked_get_set_max(int fd, const char *path)
-+{
-+	pid_t pid;
-+	int fds[2];
-+	int result;
-+	const int init_value = 256;
-+	struct perf_qos_ioctl_arg arg = { .value = init_value };
-+
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (pipe(fds)) {
-+		fprintf(stderr, "Failed to pipe: %m\n");
-+		return 1;
-+	}
-+		
-+	pid = fork();
-+	if (pid < 0) {
-+		fprintf(stderr, "Failed to fork: %m\n");
-+		return 1;
-+	}
-+
-+	if (!pid) {
-+		close(fd);
-+		close(fds[0]);
-+
-+		fd = open(path, 0, O_RDWR);
-+		if (fd < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+
-+		/*
-+		 * At this point, we must have a 'init_value'
-+		 * constraint created by the parent process
-+		 */
-+		if (ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		result = arg.value;
-+
-+		if (write(fds[1], &result, sizeof(result)) < 0) {
-+			fprintf(stderr, "Failed to write result to pipe: %m\n");
-+			exit(1);
-+		}
-+
-+		exit(0);
-+	}
-+
-+	close(fds[1]);
-+
-+	if (read(fds[0], &result, sizeof(result)) < 0) {
-+		fprintf(stderr, "Failed to read pipe: %m\n");
-+		return 1;
-+	}
-+
-+	if (result != init_value) {
-+		fprintf(stderr, "Child test failed: %d\n", result);
-+		return 1;
-+	}
-+
-+	if (waitpid(pid, NULL, 0) < 0) {
-+		fprintf(stderr, "Failed to wait child pid: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = 0;
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (arg.value != init_value) {
-+		fprintf(stderr, "Perf constraints differ %d <> %d\n",
-+			arg.value, init_value);
-+		return 1;
-+	}
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_LIMITS, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = arg.limit_max;
-+
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (!ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	return test_forked_get_set_max(fd, path);
-+}
-diff --git a/tools/testing/selftests/perf_qos/get_set_min.c b/tools/testing/selftests/perf_qos/get_set_min.c
-new file mode 100644
-index 000000000000..89c0a6f9f106
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_set_min.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = { .value = 512 };
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test 1: Check the value is set
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = 0;
-+	
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (arg.value != 512) {
-+		fprintf(stderr, "min value differs with set/get (arg=%d)\n",
-+			arg.value);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test 2: Check we can not set the same constraint
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg) == 0) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+	
-+	/*
-+	 * Test 3: Check the constraint is removed
-+	 */
-+	if (ioctl(fd, PERF_QOS_IOC_GET_LIMITS, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = arg.limit_min;
-+	
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+	
-+	if (!ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/get_set_min_forked.c b/tools/testing/selftests/perf_qos/get_set_min_forked.c
-new file mode 100644
-index 000000000000..36971da265a5
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_set_min_forked.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+static int test_forked_get_set_min(int fd, const char *path)
-+{
-+	pid_t pid;
-+	int fds[2];
-+	int result;
-+	const int init_value = 256;
-+	struct perf_qos_ioctl_arg arg = { .value = init_value };
-+
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (pipe(fds)) {
-+		fprintf(stderr, "Failed to pipe: %m\n");
-+		return 1;
-+	}
-+		
-+	pid = fork();
-+	if (pid < 0) {
-+		fprintf(stderr, "Failed to fork: %m\n");
-+		return 1;
-+	}
-+
-+	if (!pid) {
-+		close(fd);
-+		close(fds[0]);
-+
-+		fd = open(path, 0, O_RDWR);
-+		if (fd < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+
-+		/*
-+		 * At this point, we must have a 'init_value'
-+		 * constraint created by the parent process
-+		 */
-+		if (ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		result = arg.value;
-+
-+		if (write(fds[1], &result, sizeof(result)) < 0) {
-+			fprintf(stderr, "Failed to write result to pipe: %m\n");
-+			exit(1);
-+		}
-+
-+		exit(0);
-+	}
-+
-+	close(fds[1]);
-+
-+	if (read(fds[0], &result, sizeof(result)) < 0) {
-+		fprintf(stderr, "Failed to read pipe: %m\n");
-+		return 1;
-+	}
-+
-+	if (result != init_value) {
-+		fprintf(stderr, "Child test failed: %d\n", result);
-+		return 1;
-+	}
-+
-+	if (waitpid(pid, NULL, 0) < 0) {
-+		fprintf(stderr, "Failed to wait child pid: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = 0;
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (arg.value != init_value) {
-+		fprintf(stderr, "Perf constraints differ %d <> %d\n",
-+			arg.value, init_value);
-+		return 1;
-+	}
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_LIMITS, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	arg.value = arg.limit_min;
-+
-+	if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	if (!ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	return test_forked_get_set_min(fd, path);
-+}
-diff --git a/tools/testing/selftests/perf_qos/get_unit.c b/tools/testing/selftests/perf_qos/get_unit.c
-new file mode 100644
-index 000000000000..938322d78599
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/get_unit.c
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = {};
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_UNIT, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_max_forked.c b/tools/testing/selftests/perf_qos/set_max_forked.c
-new file mode 100644
-index 000000000000..cff06364ba81
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_max_forked.c
-@@ -0,0 +1,147 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+static int integer_cmp(const void *a, const void *b)
-+{
-+	int *ia = (typeof(ia))(a);
-+	int *ib = (typeof(ib))(b);
-+
-+	return (*ia) - (*ib);
-+}
-+
-+static int test_forked_set_max(int fd, const char *path)
-+{
-+	struct perf_qos_ioctl_arg arg;
-+
-+	int i;
-+	int nr_pids = 100;
-+	pid_t pids[nr_pids];
-+	int value, values[nr_pids];
-+	int fds[nr_pids][2];
-+	int ret = 1;
-+	
-+	memset(pids, 0, sizeof(pid_t) * nr_pids);
-+
-+	/*
-+	 * Random values in the interval 0-1024, to be set by each
-+	 * child process. The underlying framework will sort them out
-+	 * so when reading them, they should be ordered and while the
-+	 * child process exits, the new maximal will be set each time.
-+	 */
-+	for (i = 0; i < nr_pids; i++) {
-+		value = rand() % 1023;
-+
-+		if (pipe(fds[i])) {
-+			fprintf(stderr, "Failed to pipe: %m\n");
-+			goto out;
-+		}
-+		
-+		pids[i] = fork();
-+		if (pids[i] < 0) {
-+			fprintf(stderr, "Failed to fork: %m\n");
-+			goto out;
-+		}
-+
-+		if (!pids[i]) {
-+
-+			arg.value = value;
-+
-+			close(fd);
-+			close(fds[i][0]);
-+
-+			fd = open(path, 0, O_RDWR);
-+			if (fd < 0) {
-+				fprintf(stderr, "Failed to open '%s': %m\n", path);
-+				goto out;
-+			}
-+
-+			if (ioctl(fd, PERF_QOS_IOC_SET_MAX, &arg)) {
-+				fprintf(stderr, "Failed to ioctl: %m\n");
-+				goto out;
-+			}
-+
-+			if (write(fds[i][1], &value, sizeof(value)) < 0) {
-+				fprintf(stderr, "Failed to write in the pipe: %m\n");
-+				goto out;
-+			}
-+
-+			poll(0, 0, -1);
-+			
-+			exit(0);
-+		}
-+
-+		close(fds[i][1]);
-+		values[i] = value;
-+	}
-+
-+	/*
-+	 * Wait for all the children to set the constraint and write
-+	 * to the pipe
-+	 */
-+	for (i = 0; i < nr_pids; i++) {
-+		if (read(fds[i][0], &value, sizeof(value)) < 0) {
-+			fprintf(stderr, "Failed to read pipe: %m\n");
-+			goto out;
-+		}
-+	}
-+
-+	qsort(values, nr_pids, sizeof(values[0]), integer_cmp);
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		goto out;
-+	}
-+
-+	if (arg.value != values[0]) {
-+		fprintf(stderr, "Unexcepted value order %d <> %d\n",
-+			arg.value, values[0]);
-+		goto out;
-+	}
-+
-+	ret = 0;
-+out:
-+	for (i = 0; i < nr_pids; i++) {
-+		kill(pids[i], SIGTERM);
-+		waitpid(pids[i], NULL, 0);
-+	}
-+
-+	return ret;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	return test_forked_set_max(fd, path);
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_min_forked.c b/tools/testing/selftests/perf_qos/set_min_forked.c
-new file mode 100644
-index 000000000000..beda48c251f6
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_min_forked.c
-@@ -0,0 +1,147 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+static int integer_cmp(const void *a, const void *b)
-+{
-+	int *ia = (typeof(ia))(a);
-+	int *ib = (typeof(ib))(b);
-+
-+	return (*ib) - (*ia);
-+}
-+
-+static int test_forked_set_min(int fd, const char *path)
-+{
-+	struct perf_qos_ioctl_arg arg;
-+
-+	int i;
-+	int nr_pids = 100;
-+	pid_t pids[nr_pids];
-+	int value, values[nr_pids];
-+	int fds[nr_pids][2];
-+	int ret = 1;
-+	
-+	memset(pids, 0, sizeof(pid_t) * nr_pids);
-+
-+	/*
-+	 * Random values in the interval 0-1024, to be set by each
-+	 * child process. The underlying framework will sort them out
-+	 * so when reading them, they should be ordered and while the
-+	 * child process exits, the new minimal will be set each time.
-+	 */
-+	for (i = 0; i < nr_pids; i++) {
-+		value = rand() % 1023;
-+
-+		if (pipe(fds[i])) {
-+			fprintf(stderr, "Failed to pipe: %m\n");
-+			goto out;
-+		}
-+		
-+		pids[i] = fork();
-+		if (pids[i] < 0) {
-+			fprintf(stderr, "Failed to fork: %m\n");
-+			goto out;
-+		}
-+
-+		if (!pids[i]) {
-+
-+			arg.value = value;
-+
-+			close(fd);
-+			close(fds[i][0]);
-+
-+			fd = open(path, 0, O_RDWR);
-+			if (fd < 0) {
-+				fprintf(stderr, "Failed to open '%s': %m\n", path);
-+				goto out;
-+			}
-+
-+			if (ioctl(fd, PERF_QOS_IOC_SET_MIN, &arg)) {
-+				fprintf(stderr, "Failed to ioctl: %m\n");
-+				goto out;
-+			}
-+
-+			if (write(fds[i][1], &value, sizeof(value)) < 0) {
-+				fprintf(stderr, "Failed to write in the pipe: %m\n");
-+				goto out;
-+			}
-+
-+			poll(0, 0, -1);
-+			
-+			exit(0);
-+		}
-+
-+		close(fds[i][1]);
-+		values[i] = value;
-+	}
-+
-+	/*
-+	 * Wait for all the children to set the constraint and write
-+	 * to the pipe
-+	 */
-+	for (i = 0; i < nr_pids; i++) {
-+		if (read(fds[i][0], &value, sizeof(value)) < 0) {
-+			fprintf(stderr, "Failed to read pipe: %m\n");
-+			goto out;
-+		}
-+	}
-+
-+	qsort(values, nr_pids, sizeof(values[0]), integer_cmp);
-+
-+	if (ioctl(fd, PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "Failed to ioctl: %m\n");
-+		goto out;
-+	}
-+
-+	if (arg.value != values[0]) {
-+		fprintf(stderr, "Unexcepted value order %d <> %d\n",
-+			arg.value, values[0]);
-+		goto out;
-+	}
-+
-+	ret = 0;
-+out:
-+	for (i = 0; i < nr_pids; i++) {
-+		kill(pids[i], SIGTERM);
-+		waitpid(pids[i], NULL, 0);
-+	}
-+
-+	return ret;
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	const char *path = "/dev/perf_qos/dummy";
-+	int fd;
-+	
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	fd = open(path, 0, O_RDWR);
-+	if (fd < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	return test_forked_set_min(fd, path);
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_multiple_maxs.c b/tools/testing/selftests/perf_qos/set_multiple_maxs.c
-new file mode 100644
-index 000000000000..e30a81043283
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_multiple_maxs.c
-@@ -0,0 +1,93 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg;
-+	const char *path = "/dev/perf_qos/dummy";
-+	const int nr_fds = 256;
-+	int i, fd[nr_fds];
-+
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	for (i = 0; i < nr_fds; i++) {
-+
-+		fd[i] = open(path, 0, O_RDWR);
-+		if (fd[i] < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		/*
-+		 * We want a value increasing so the value we set is
-+		 * always the first entry in the list of constraints
-+		 * and when we get the max, we get the last value we
-+		 * set.
-+		 */
-+		arg.value = nr_fds - i;
-+
-+		if (ioctl(fd[i], PERF_QOS_IOC_SET_MAX, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+		
-+		if (ioctl(fd[i], PERF_QOS_IOC_GET_MAX, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		if (arg.value != (nr_fds - i)) {
-+			fprintf(stderr, "max value differs with set/get (arg=%d <> %d)\n",
-+				arg.value, nr_fds - i);
-+			return 1;
-+		}
-+	}
-+
-+	for (i = 0; i < nr_fds; i++)
-+		close(fd[i]);
-+
-+	fd[0] = open(path, 0, O_RDWR);
-+	if (fd[0] < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test: Check the constraint is removed
-+	 */
-+	if (!ioctl(fd[0], PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_multiple_mins.c b/tools/testing/selftests/perf_qos/set_multiple_mins.c
-new file mode 100644
-index 000000000000..e6412a592c3a
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_multiple_mins.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg;
-+	const char *path = "/dev/perf_qos/dummy";
-+	const int nr_fds = 256;
-+	int i, fd[nr_fds];
-+
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	for (i = 0; i < nr_fds; i++) {
-+
-+		fd[i] = open(path, 0, O_RDWR);
-+		if (fd[i] < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		arg.value = i + 1;
-+
-+		if (ioctl(fd[i], PERF_QOS_IOC_SET_MIN, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+		
-+		if (ioctl(fd[i], PERF_QOS_IOC_GET_MIN, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		if (arg.value != i + 1) {
-+			fprintf(stderr, "min value differs with set/get (arg=%d <> %d)\n",
-+				arg.value, nr_fds + 1);
-+			return 1;
-+		}
-+	}
-+
-+	for (i = 0; i < nr_fds; i++)
-+		close(fd[i]);
-+
-+	fd[0] = open(path, 0, O_RDWR);
-+	if (fd[0] < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test: Check the constraint is removed
-+	 */
-+	if (!ioctl(fd[0], PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_same_multiple_maxs.c b/tools/testing/selftests/perf_qos/set_same_multiple_maxs.c
-new file mode 100644
-index 000000000000..ce36b28794fd
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_same_multiple_maxs.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = { .value = 512 };
-+	const char *path = "/dev/perf_qos/dummy";
-+	const int nr_fds = 256;
-+	int i, fd[nr_fds];
-+
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	for (i = 0; i < nr_fds; i++) {
-+		fd[i] = open(path, 0, O_RDWR);
-+		if (fd[i] < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		if (ioctl(fd[i], PERF_QOS_IOC_SET_MAX, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+		
-+		if (ioctl(fd[i], PERF_QOS_IOC_GET_MAX, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		if (arg.value != 512) {
-+			fprintf(stderr, "max value differs with set/get (arg=%d)\n",
-+				arg.value);
-+			return 1;
-+		}
-+	}
-+
-+	for (i = 0; i < nr_fds; i++)
-+		close(fd[i]);
-+
-+	fd[0] = open(path, 0, O_RDWR);
-+	if (fd[0] < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test: Check the constraint is removed
-+	 */
-+	if (!ioctl(fd[0], PERF_QOS_IOC_GET_MAX, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/perf_qos/set_same_multiple_mins.c b/tools/testing/selftests/perf_qos/set_same_multiple_mins.c
-new file mode 100644
-index 000000000000..90fd47be50f6
---- /dev/null
-+++ b/tools/testing/selftests/perf_qos/set_same_multiple_mins.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Performance Quality of Service (Perf QoS) support base.
-+ *
-+ * Copyright (C) 2024 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <signal.h>
-+#include <stdarg.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/poll.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+
-+#include <linux/perf_qos_ioctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+	struct perf_qos_ioctl_arg arg = { .value = 512 };
-+	const char *path = "/dev/perf_qos/dummy";
-+	const int nr_fds = 256;
-+	int i, fd[nr_fds];
-+
-+	if (argc == 2)
-+		path = argv[1];
-+
-+	for (i = 0; i < nr_fds; i++) {
-+		fd[i] = open(path, 0, O_RDWR);
-+		if (fd[i] < 0) {
-+			fprintf(stderr, "Failed to open '%s': %m\n", path);
-+			return 1;
-+		}
-+
-+		if (ioctl(fd[i], PERF_QOS_IOC_SET_MIN, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		arg.value = 0;
-+		
-+		if (ioctl(fd[i], PERF_QOS_IOC_GET_MIN, &arg)) {
-+			fprintf(stderr, "Failed to ioctl: %m\n");
-+			return 1;
-+		}
-+
-+		if (arg.value != 512) {
-+			fprintf(stderr, "min value differs with set/get (arg=%d)\n",
-+				arg.value);
-+			return 1;
-+		}
-+	}
-+
-+	for (i = 0; i < nr_fds; i++)
-+		close(fd[i]);
-+
-+	fd[0] = open(path, 0, O_RDWR);
-+	if (fd[0] < 0) {
-+		fprintf(stderr, "Failed to open '%s': %m\n", path);
-+		return 1;
-+	}
-+
-+	/*
-+	 * Test: Check the constraint is removed
-+	 */
-+	if (!ioctl(fd[0], PERF_QOS_IOC_GET_MIN, &arg)) {
-+		fprintf(stderr, "ioctl should have failed\n");
-+		return 1;
-+	}
-+
-+	if (errno != ENODATA) {
-+		fprintf(stderr, "errno should have been ENODATA\n");
-+		return 1;
-+	}
-+
-+	return 0;
-+}
--- 
-2.43.0
+Yes, this should fix it.
 
+Thanks,
+Ravi
 
