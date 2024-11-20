@@ -1,176 +1,99 @@
-Return-Path: <linux-kernel+bounces-415801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4CF9D3CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:47:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6819D3CAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5A94B226E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:47:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989DC1F22B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C611A76A3;
-	Wed, 20 Nov 2024 13:47:24 +0000 (UTC)
-Received: from luna.linkmauve.fr (luna.linkmauve.fr [82.65.109.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AC81A9B45;
+	Wed, 20 Nov 2024 13:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dwQ/7DzW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B0A46B8;
-	Wed, 20 Nov 2024 13:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.65.109.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CDF174EDB;
+	Wed, 20 Nov 2024 13:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732110444; cv=none; b=SXoVWxxTCSVy2iDAE7NBWis5zn/5xTrfPZ4VGMW9St5C2TqEAxWWzBKw4M7ihJg20jJTFM4WDYMkQJAUqs2K/SbzLP61aZSlG31wVbZBylU+Ce+1+Kr+hXcd5zLwGi2Gb3EhOdfXdQePf4ifWRu2m3dtJEscsd0Y+zVHYI0ibZI=
+	t=1732110280; cv=none; b=FWd+JDQpkcfGVZwYZGqkZVWAqo8PnVyFGX9F+agDvVd2s9TRNq/CtJP4G0bycUIrH01RwFBIW+A7gUCxLwsN1p4IAz0ZNgWkkDeTLzkocZklYyTaoOlrRd377kw2Xt/FLi9wn7XII+XD9qpoY8HvF+NLGLNi6eKEMqnespkr2RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732110444; c=relaxed/simple;
-	bh=GP/o+Od12FOpsHcCB1ShPWRmit3YqkCpFr4TAa12ps4=;
+	s=arc-20240116; t=1732110280; c=relaxed/simple;
+	bh=C2rql73uLMURyIBEH7UxHHjPWEFZgEpKP8fm9VyTVwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scO8cR0FuRpbVMX1eQbXAn4AklWyfYIcIHKm9cVLRqO9fkUQPt9mqFYa21AZu+wTbYqc6SEHqK0/cQXeUkohuaTVxwGN8+lUOZjrP4vR1YBop2NGqaRnTRIHQeHpKILOMcf0KdAQFacgV7mfnnFTJBA9TTDaLTq3w0nWRba2P90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr; spf=pass smtp.mailfrom=linkmauve.fr; arc=none smtp.client-ip=82.65.109.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linkmauve.fr
-Received: by luna.linkmauve.fr (Postfix, from userid 1000)
-	id D522618559CF; Wed, 20 Nov 2024 14:42:03 +0100 (CET)
-Date: Wed, 20 Nov 2024 14:42:03 +0100
-From: Link Mauve <linkmauve@linkmauve.fr>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Fritz Koenig <frkoenig@chromium.org>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2 1/3] media: uapi: add WebP uAPI
-Message-ID: <Zz3nK9FvSpxgVzmo@desktop>
-References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
- <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXRymbEgHC2R5kTBKHF6XbOEczb/dxC2VHxrjIoBu+33N1IFSGIiVOQCEfFosUdxEL5Q9BczNmSZWjH6P291z2SlNShyz6iFYdqNCdD1BtIbO80gw/pZ5kDDVCApV3VaNbKDKbMjB7XhAxNQlsj/jZq724nC8Pj8wgCX2TB0S5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dwQ/7DzW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vwDPiYIBxwEmAaxai1DgMFwF8LB6iOUHjsbt/QR1yko=; b=dwQ/7DzWt63C6SmfRoK5OrKV1l
+	jRvx7JKVfjETzd8RbU+63a98l6A5iM/YrQfGnE+V3inVGUYSkESBNpTPj2Ig8sYuN1yDBXsL9ck6L
+	8ILcrrEBhA5M3tzqu6J9pbDVSrda9UiViBg6CDjvGe5SID+sFJDX2PtAzet4YPzlLJNw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tDkzw-00DxOS-NA; Wed, 20 Nov 2024 14:44:00 +0100
+Date: Wed, 20 Nov 2024 14:44:00 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Jacky Chou <jacky_chou@aspeedtech.com>, hkallweit1@gmail.com,
+	linux@armlinux.org.uk, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, joel@jms.id.au,
+	f.fainelli@gmail.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] net: mdio: aspeed: Add dummy read for fire control
+Message-ID: <b6155c5f-3012-42d1-90dc-8ef39d1eef2d@lunn.ch>
+References: <20241119095141.1236414-1-jacky_chou@aspeedtech.com>
+ <d28177c9152408d77840992f2b76efe3cb675b7a.camel@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241120110105.244413-2-hugues.fruchet@foss.st.com>
-Jabber-ID: linkmauve@linkmauve.fr
+In-Reply-To: <d28177c9152408d77840992f2b76efe3cb675b7a.camel@codeconstruct.com.au>
 
-Hi,
-
-On Wed, Nov 20, 2024 at 12:01:03PM +0100, Hugues Fruchet wrote:
-> This patch adds the WebP picture decoding kernel uAPI.
+On Wed, Nov 20, 2024 at 03:13:11PM +1030, Andrew Jeffery wrote:
+> On Tue, 2024-11-19 at 17:51 +0800, Jacky Chou wrote:
+> > When the command bus is sometimes busy, it may cause the command is
+> > not
+> > arrived to MDIO controller immediately. On software, the driver
+> > issues a
+> > write command to the command bus does not wait for command complete
+> > and
+> > it returned back to code immediately. But a read command will wait
+> > for
+> > the data back, once a read command was back indicates the previous
+> > write
+> > command had arrived to controller.
+> > Add a dummy read to ensure triggering mdio controller before starting
+> > polling the status of mdio controller to avoid polling unexpected
+> > timeout.
 > 
-> This design is based on currently available VP8 API implementation and
-> aims to support the development of WebP stateless video codecs
-> on Linux.
+> Why use the explicit dummy read rather than adjust the poll interval or
+> duration? I still don't think that's been adequately explained given
+> the hardware-clear of the fire bit on completion, which is what we're
+> polling for.
 
-Why do you need this new uAPI exactly?  The WebP format is more complex
-than the simple 'VP8 ' format, the 'VP8X' fourcc for instance is an
-animated format which may contain multiple VP8 keyframes, or an alpha
-side channel, and just like any other video container we queue each
-VP8 frame separately in V4L2 for decoding, not the whole file.
+I'm guessing here, but if the hardware has not received the write, the
+read could return an indication that the hardware is idle, and so the
+poll exits immediately. The returned value of the first read need to
+be ignored. It is simpler and more reliable to do that with an
+explicit read, rather than try to play with the poll timing.
 
-In Onix[1] I parse the WebP header and pass the raw VP8 frame to V4L2
-without the RIFF around it.
+AS i said, a guess. We need a good commit message explaining the
+reality of what is happening here.
 
-So I’d rather NACK this patch, I don’t think it’s a good idea to
-hardcode the simplest version of the WebP container in the uAPI, to the
-detriment of all other possible WebP files.
-
-[1] git clone https://git.linkmauve.fr/onix.git/
-
-> 
-> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
-> ---
->  Documentation/userspace-api/media/v4l/biblio.rst  |  9 +++++++++
->  .../userspace-api/media/v4l/pixfmt-compressed.rst | 15 +++++++++++++++
->  drivers/media/v4l2-core/v4l2-ioctl.c              |  1 +
->  include/uapi/linux/videodev2.h                    |  1 +
->  4 files changed, 26 insertions(+)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/biblio.rst b/Documentation/userspace-api/media/v4l/biblio.rst
-> index 35674eeae20d..df3e963fc54f 100644
-> --- a/Documentation/userspace-api/media/v4l/biblio.rst
-> +++ b/Documentation/userspace-api/media/v4l/biblio.rst
-> @@ -447,3 +447,12 @@ AV1
->  :title:     AV1 Bitstream & Decoding Process Specification
->  
->  :author:    Peter de Rivaz, Argon Design Ltd, Jack Haughton, Argon Design Ltd
-> +
-> +.. _webp:
-> +
-> +WEBP
-> +====
-> +
-> +:title:     WEBP picture Bitstream & Decoding Process Specification
-> +
-> +:author:    Google (https://developers.google.com/speed/webp)
-> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
-> index 806ed73ac474..e664e70b0619 100644
-> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
-> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
-> @@ -169,6 +169,21 @@ Compressed Formats
->  	this pixel format. The output buffer must contain the appropriate number
->  	of macroblocks to decode a full corresponding frame to the matching
->  	capture buffer.
-> +    * .. _V4L2-PIX-FMT-WEBP-FRAME:
-> +
-> +      - ``V4L2_PIX_FMT_WEBP_FRAME``
-> +      - 'WEBP'
-> +      - WEBP VP8 parsed frame, excluding WEBP RIFF header, keeping only the VP8
-> +	bistream including the frame header, as extracted from the container.
-> +	This format is adapted for stateless video decoders that implement a
-> +	WEBP pipeline with the :ref:`stateless_decoder`.
-> +	Metadata associated with the frame to decode is required to be passed
-> +	through the ``V4L2_CID_STATELESS_VP8_FRAME`` control.
-> +	See the :ref:`associated Codec Control IDs <v4l2-codec-stateless-vp8>`.
-> +	Exactly one output and one capture buffer must be provided for use with
-> +	this pixel format. The output buffer must contain the appropriate number
-> +	of macroblocks to decode a full corresponding frame to the matching
-> +	capture buffer.
->  
->      * .. _V4L2-PIX-FMT-VP9:
->  
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 0304daa8471d..e2ff03d0d773 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1501,6 +1501,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
->  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
->  		case V4L2_PIX_FMT_VP8_FRAME:    descr = "VP8 Frame"; break;
-> +		case V4L2_PIX_FMT_WEBP_FRAME:    descr = "WEBP VP8 Frame"; break;
->  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
->  		case V4L2_PIX_FMT_VP9_FRAME:    descr = "VP9 Frame"; break;
->  		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index e7c4dce39007..09fff269e852 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -757,6 +757,7 @@ struct v4l2_pix_format {
->  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
->  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
->  #define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F') /* VP8 parsed frame */
-> +#define V4L2_PIX_FMT_WEBP_FRAME v4l2_fourcc('W', 'B', 'P', 'F') /* WEBP VP8 parsed frame */
->  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
->  #define V4L2_PIX_FMT_VP9_FRAME v4l2_fourcc('V', 'P', '9', 'F') /* VP9 parsed frame */
->  #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
-> -- 
-> 2.25.1
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
-
--- 
-Link Mauve
+	Andrew
 
