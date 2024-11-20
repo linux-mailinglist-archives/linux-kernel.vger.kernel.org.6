@@ -1,97 +1,119 @@
-Return-Path: <linux-kernel+bounces-415477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA089D36D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:19:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 845D19D36DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DBC1F261D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:19:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2B32842C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08870199943;
-	Wed, 20 Nov 2024 09:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144AA19CC20;
+	Wed, 20 Nov 2024 09:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NdSDYVLo"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2E31865E1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FelG8r3b"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F423919AD48
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094212; cv=none; b=C8z91lU3glETJS6YjeL7eJdBglSjDFnmC03nG5PvyoN3HbhYWy66soYP/lO7I+ycxmoubGQ/vQiRh88eTkuTI8ifDrhHRGRcQQ0WhTEu+cYGUcAa7o3T6HyBUx3O7zfxcordFHMeBc9vbjuft3oUr+U5f1qOEKF3xkDcWSqxb+w=
+	t=1732094252; cv=none; b=p80UXudnc+H6RSJRKjE6n/kixqUdcpaTooYRxFJisCfuTVwr0odAO9/jWu9ej10yrNnjiMnouvoh2N6KfUdexlWe/JbeixBt/RZ33zO6iBGFaEGOJZvgLtIqLssmOcrtIgAywkOtaxa8sCj7AyeeKfcHKDUtVFP0lF6uigGQ5Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094212; c=relaxed/simple;
-	bh=ZpByQMwmmWUqUCrhi4pK94CzqA3vVsdCx4OnACYInBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QMNs6LgwRtzNpdEUYyP7rmq3iT0dixLMcYfgf9O0hhB3BqjQn5azBp0eoXHt4fAler365PWX2EGJI2veYnjk2ZDDyjUAooZLCi7TEv9XRn2HCfgmw6ifKxY2/UXZZdU/jiPE8BOVCGobww7hLL8SaFnuGvOkj1hkpqhf/ySC/40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NdSDYVLo; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 09:16:37 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732094207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tIPpHPyISSClh/FBZwmso93xc+iFIzjr1637smd/Ql4=;
-	b=NdSDYVLo6jjFxxrU7eb0XWXnCtK1025ElAvHSIpqwMkW71rEgmMBcZQILLQbrZArKj8jWD
-	Ma93bd5EkBt7gr8nidj01Fxi3y5FuF0YfUwpl1wDGlZuBQgyBbo/bXUzSMEm56m55bf4b6
-	lsDi8Wuao9RAS6KSmCz/Wo3gC/ICw3M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: James Clark <james.clark@linaro.org>
-Cc: suzuki.poulose@arm.com, coresight@lists.linaro.org,
-	kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Fuad Tabba <tabba@google.com>, James Morse <james.morse@arm.com>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>, Mark Brown <broonie@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 07/12] KVM: arm64: arm_spe: Give SPE enabled state to
- KVM
-Message-ID: <Zz2o9XryCezwAf61@linux.dev>
-References: <20241112103717.589952-1-james.clark@linaro.org>
- <20241112103717.589952-8-james.clark@linaro.org>
+	s=arc-20240116; t=1732094252; c=relaxed/simple;
+	bh=pamlAT7YrMUBTKbqo+eOUtuarnXN54r8/hz9pNEgvVE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZtBu3IS+ivUqx9sG+bgXkbqmnPYT+2zmt9vVChLuxXLfTUSKDLSMTGOz2UvQhMOH/IULa+YtPljyG0hZ9jsqplB5ZVOPkywJt9i256TSTF01fQnwQ8UAR+fCFCigobeVIdME7/d2Fubf8H3dZspjpT0dTgHfyAN56RAZVrSIki8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FelG8r3b; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pASy3
+	Hri0XiR5e82slCk+94XiuRqLmmyYyxOiSXMmaY=; b=FelG8r3b6+TLxImX27860
+	YA1IPhNQ0ZNn9WTrLK5hfJgVqewLwtYj+wS92p4Ic2yUFBkjtbTJScwC0f9vyY2O
+	Fx0u5W0Rev/t5D2oClAolfJJArapj5WzaSCDEd8B/JH9hxSaQoCs7omBjzxRyIvq
+	IPD3uwVbGhzJMYH7Xt0hek=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDn71UUqT1nUk5JGQ--.8558S4;
+	Wed, 20 Nov 2024 17:17:15 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: tglx@linutronix.de
+Cc: kees@kernel.org,
+	linux-kernel@vger.kernel.org,
+	geert@linux-m68k.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 2/3] irqchip: Fix a potential abuse of seq_printf() format string
+Date: Wed, 20 Nov 2024 17:17:06 +0800
+Message-Id: <762e88c3e940bd6087c35b599f2c88baff775c6b.1732093745.git.00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112103717.589952-8-james.clark@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDn71UUqT1nUk5JGQ--.8558S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CrWDKw4rZFWruF45ZF4UXFb_yoW8ur4kpa
+	y5Jas2vws3C3WUWF1UCanrZFy5J3Z0krW7KayfJwnIvF98G39FkF12yry7ZFsYqrW7G3WY
+	kF40qFyUWFy7CFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_KZXUUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRGdqmc9oqUyfQAEsZ
 
-Hi James,
+Using device name as format string of seq_printf() is prone to
+"Format string attack", opens possibility for exploitation.
+Seq_puts() is safer and more efficient.
 
-On Tue, Nov 12, 2024 at 10:37:06AM +0000, James Clark wrote:
-> Currently in nVHE, KVM has to check if SPE is enabled on every guest
-> switch even if it was never used. Because it's a debug feature and is
-> more likely to not be used than used, give KVM the SPE buffer status to
-> allow a much simpler and faster do-nothing path in the hyp.
-> 
-> This is always called with preemption disabled except for probe/hotplug
-> which gets wrapped with preempt_disable().
+Signed-off-by: David Wang <00107082@163.com>
+---
+ drivers/irqchip/irq-gic.c            | 2 +-
+ drivers/irqchip/irq-mvebu-pic.c      | 2 +-
+ drivers/irqchip/irq-versatile-fpga.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Unless the performance penalty of checking if SPE is measurably bad, I'd
-rather we keep things as-is.
-
-Folks that want to go fast are probably using VHE to begin with. As you
-note below, we need the hypervisor to decide if SPE is enabled based on
-hardware in protected mode anyway. Using a common flow for protected and
-non-protected configs keeps complexity down and increases the likelihood
-SPE save/restore code actually gets tested.
-
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 3be7bd8cd8cd..8fae6dc01024 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -400,7 +400,7 @@ static void gic_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gic_chip_data *gic = irq_data_get_irq_chip_data(d);
+ 
+ 	if (gic->domain->pm_dev)
+-		seq_printf(p, gic->domain->pm_dev->of_node->name);
++		seq_puts(p, gic->domain->pm_dev->of_node->name);
+ 	else
+ 		seq_printf(p, "GIC-%d", (int)(gic - &gic_data[0]));
+ }
+diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
+index 08b0cc862adf..b815a60f930c 100644
+--- a/drivers/irqchip/irq-mvebu-pic.c
++++ b/drivers/irqchip/irq-mvebu-pic.c
+@@ -71,7 +71,7 @@ static void mvebu_pic_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct mvebu_pic *pic = irq_data_get_irq_chip_data(d);
+ 
+-	seq_printf(p, dev_name(&pic->pdev->dev));
++	seq_puts(p, dev_name(&pic->pdev->dev));
+ }
+ 
+ static const struct irq_chip mvebu_pic_chip = {
+diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
+index ca471c6fee99..0abc8934c2ee 100644
+--- a/drivers/irqchip/irq-versatile-fpga.c
++++ b/drivers/irqchip/irq-versatile-fpga.c
+@@ -69,7 +69,7 @@ static void fpga_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct fpga_irq_data *f = irq_data_get_irq_chip_data(d);
+ 
+-	seq_printf(p, irq_domain_get_of_node(f->domain)->name);
++	seq_puts(p, irq_domain_get_of_node(f->domain)->name);
+ }
+ 
+ static const struct irq_chip fpga_chip = {
 -- 
-Thanks,
-Oliver
+2.39.2
+
 
