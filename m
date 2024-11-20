@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-415171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1039D3243
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:39:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EADE89D3248
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCFA81F2475F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45B02B2331B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DF112A177;
-	Wed, 20 Nov 2024 02:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB50224D4;
+	Wed, 20 Nov 2024 02:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="epsGOD7A"
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="A1/tHHa/"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B1193;
-	Wed, 20 Nov 2024 02:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8976D28EC
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732070324; cv=none; b=FLv/S2huXTfgSi/xiESImYe4vAMNQigTKaOfQfy52riaveqYjgFEPJeW8F+1K8u+4rd7A1jmI2OThzYkHyW/536YrlJhDQnJF49XUGNfKv6ReuHTiAeCHQkwkN4iUY8OExB4Fi9gO5/XnkL3zAEKkd5UBhP5B1IBdWOYaSgPoKs=
+	t=1732070487; cv=none; b=Ac9WqDUof4VbxX9Z7PwZ7w8Wr5Co/Ha/i4wGb1fRstNQ6FEqm/YpbeLVKsIAt3ns9ftSklR0lT0/tSDdFoAQ0SMiSrFrEwWiIctiJUwy02lG6oH5RM0RsoyMqRmAPvkPFc2C9ZDIrK3OJ/x7OOpfuAK1Fq48MTwCSjcnVZU/c7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732070324; c=relaxed/simple;
-	bh=XkT3o/i+NwiMJ1655TnGy+Dtho9myHtNkEHiHcVhO7Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fIduFPp4k/+XW6lMCeWaWG3XkxhWA1C8yWpxIPAFFuxKL6OBhPI+AoMgB1wgBMnWRrG05CAzB0NxT1WAAFSoSeJA6zwbNRMx4Rgx5OL6miPpjMz1T7euX5NuOYUWN/HzunFLvDn+NiylUG2xis0RID/rzcuGBLzmdi/1KcHmr7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=epsGOD7A; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732070323; x=1763606323;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=teKkpS7Y1Tw9w8clUF79MJIV3A5m/Qb9nzaptFzGyzo=;
-  b=epsGOD7A8t71Xout8ZJX9D7pKcOqL5Ma7b5CEpO5PEjBP/zLQSUCQbKB
-   LG8bXXFfQPPgzBa9SsoxTqcO6phlEQKPwycCi9Eh+6weIpWmuCwxES3ST
-   WOL9yqgOmf2MRQK34mpzgPaPPRqjf+gUYn5O8fe6iX8yg3bAMoxRc9qYO
-   8=;
-X-IronPort-AV: E=Sophos;i="6.12,168,1728950400"; 
-   d="scan'208";a="777087469"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 02:38:37 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:12421]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.181:2525] with esmtp (Farcaster)
- id 08d44827-056b-4fa3-8ef7-6ec67820fb81; Wed, 20 Nov 2024 02:38:34 +0000 (UTC)
-X-Farcaster-Flow-ID: 08d44827-056b-4fa3-8ef7-6ec67820fb81
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Wed, 20 Nov 2024 02:38:34 +0000
-Received: from 6c7e67c6786f.amazon.com (10.119.75.102) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Wed, 20 Nov 2024 02:38:31 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <mengkanglai2@huawei.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-	<fengtao40@huawei.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <yanan@huawei.com>
-Subject: Re: kernel tcp sockets stuck in FIN_WAIT1 after call tcp_close
-Date: Tue, 19 Nov 2024 18:38:28 -0800
-Message-ID: <20241120023828.907-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <d46151818b694dc79b488061817d3d73@huawei.com>
-References: <d46151818b694dc79b488061817d3d73@huawei.com>
+	s=arc-20240116; t=1732070487; c=relaxed/simple;
+	bh=91eWlc5eZBkqkOB4ChVP5gUd5xtOD3zDkofW7pkJzPU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hh60uGYVEA8xDrsjaLraBlYL/UUsAVwxV3UURwhUWKaWbIqvZULCLRS3k1xo8HRMYXqA/QCeh5e7ciY/ILPGKxHtimwmiIBn9QS/62xLSgp3uzQLALP/j/Cbg60s73YIXBfkDzW8m6ZmTvWthoNnOUiMzK7Ni9sShWn6vg88UY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=A1/tHHa/; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id B01012C03E8;
+	Wed, 20 Nov 2024 15:41:15 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1732070475;
+	bh=91eWlc5eZBkqkOB4ChVP5gUd5xtOD3zDkofW7pkJzPU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=A1/tHHa/6D9mTAdRYbAVt53FJl69LZ1f6ptb25LDnPmozHo/jSawlnDVDDOgJIE3R
+	 d6e1RVBthtiRc6bjXAokxnR87Nh/aNlx3tOU2PiYAx0926rJ4UJVgAfNQRd/8buW/D
+	 AvjrFoVfmNff96WLKbZwlDpMpWj2r9VonrQy72jsyrsQegQMK73cAh2JetImOOiTC7
+	 F9V/1UYtmZfxs7hjtmdLzZP7giBFS4VC1zgodLKQkkdEQtg0NAWYuB8uIYr1zXu16S
+	 WuWATmOm407nQJaxph37f2dbSZy+mDd3kXE8OcYfHEzpgae/wlMSQ6vmG0VLdLs4U0
+	 JHizCUiP2JH+Q==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B673d4c4b0001>; Wed, 20 Nov 2024 15:41:15 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 20 Nov 2024 15:41:15 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1544.011; Wed, 20 Nov 2024 15:41:15 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: "broonie@kernel.org" <broonie@kernel.org>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "tsbogend@alpha.franken.de"
+	<tsbogend@alpha.franken.de>, "markus.stockhausen@gmx.de"
+	<markus.stockhausen@gmx.de>
+CC: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] mips: dts: realtek: Add SPI NAND controller
+Thread-Topic: [PATCH v5 2/3] mips: dts: realtek: Add SPI NAND controller
+Thread-Index: AQHbH1U4/mGTnZ5p60+M9ubQPAR5c7K+0r2A
+Date: Wed, 20 Nov 2024 02:41:15 +0000
+Message-ID: <3c6f90bc-2223-447d-9094-81011a2815b0@alliedtelesis.co.nz>
+References: <20241015225434.3970360-1-chris.packham@alliedtelesis.co.nz>
+ <20241015225434.3970360-3-chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <20241015225434.3970360-3-chris.packham@alliedtelesis.co.nz>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4BC56FE4D01F6A489BDADE5E28104F2F@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gam0nhXL c=1 sm=1 tr=0 ts=673d4c4b a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=ToiQWlOc-a4dKcAUQ18A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-From: mengkanglai <mengkanglai2@huawei.com>
-Date: Tue, 19 Nov 2024 08:38:26 +0000
-> > 
-> > From: mengkanglai <mengkanglai2@huawei.com>
-> > Date: Wed, 13 Nov 2024 12:40:34 +0000
-> > > Hello, Eric:
-> > > Commit 151c9c724d05 (tcp: properly terminate timers for kernel 
-> > > sockets) introduce inet_csk_clear_xmit_timers_sync in tcp_close.
-> > > For kernel sockets it does not hold sk->sk_net_refcnt, if this is 
-> > > kernel tcp socket it will call tcp_send_fin in __tcp_close to send FIN 
-> > > packet to remotes server,
-> > 
-> > Just curious which subsystem the kernel socket is created by.
-> > 
-> > Recently, CIFS and sunrpc are (being) converted to hold net refcnt.
-> > 
-> > CIFS: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ef7134c7fc48e1441b398e55a862232868a6f0a7
-> > sunrpc: https://lore.kernel.org/netdev/20241112135434.803890-1-liujian56@huawei.com/
-> > 
-> > I remember RDS's listener does not hold refcnt but other client sockets (SMC, RDS, MPTCP, CIFS, sunrpc) do.
-> > 
-> > I think all TCP kernel sockets should hold netns refcnt except for one created at pernet_operations.init() hook like RDS.
-> > 
-> > > if this fin packet lost due to network faults, tcp should retransmit 
-> > > this fin packet, but tcp_timer stopped by inet_csk_clear_xmit_timers_sync.
-> > > tcp sockets state will stuck in FIN_WAIT1 and never go away. I think 
-> > > it's not right.
-> 
-> 
-> I found this problem when testing nfs. sunrpc: https://lore.kernel.org/netdev/20241112135434.803890-1-liujian56@huawei.com/ will solve this problem. 
-> I agree with that all TCP kernel sockets should hold netns refcnt.
-> However, for kernel tcp sockets created by other kernel modules through
-> sock_create_kern or sk_alloc(kern=0),
-
-In the next cycle, I'll rename sock_create_kern() to sock_create_net_noref()
-and add sock_create_net() so that out-of-tree module will fail to build and
-such users will notice sock_create_net_noref() would trigger an issue.
-
-https://github.com/q2ven/linux/commits/427_2
-
-
-> it means that they must now hold
-> sk_net_refcnf, otherwise fin will only be sent once and will not be
-> retransmitted when the socket is released.But other use tcp modules may
-> not be aware of hold sk_net_refcnt. should we add a check in tcp_close？
-
-The check doesn't fix the issue for in-netns users.
-
-I'd rather print the allocator and change it to use
-sock_create_net() instead.
-
----8<---
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 0d704bda6c41..7d6a1faa05a3 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -3220,8 +3220,12 @@ void tcp_close(struct sock *sk, long timeout)
- 	lock_sock(sk);
- 	__tcp_close(sk, timeout);
- 	release_sock(sk);
-+
-+#ifdef CONFIG_NET_NS_REFCNT_TRACKER
- 	if (!sk->sk_net_refcnt)
--		inet_csk_clear_xmit_timers_sync(sk);
-+		stack_depot_print(sk->ns_tracker);
-+#endif
-+
- 	sock_put(sk);
- }
- EXPORT_SYMBOL(tcp_close);
----8<---
-
-> 
-> ---
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index fb920369c..6b92026a4 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -2804,7 +2804,7 @@ void tcp_close(struct sock *sk, long timeout)
->         lock_sock(sk);
->         __tcp_close(sk, timeout);
->         release_sock(sk);
-> -       if (!sk->sk_net_refcnt)
-> +       if (sk->net != &init_net && !sk->sk_net_refcnt)
->                 inet_csk_clear_xmit_timers_sync(sk);
->         sock_put(sk);
->  }
+SGkgVGhvbWFzLA0KDQpPbiAxNi8xMC8yNCAxMTo1NCwgQ2hyaXMgUGFja2hhbSB3cm90ZToNCj4g
+QWRkIHRoZSBTUEktTkFORCBjb250cm9sbGVyIG9uIHRoZSBSVEw5MzAwIGZhbWlseSBvZiBkZXZp
+Y2VzLiBUaGlzDQo+IHN1cHBvcnRzIHNlcmlhbC9kdWFsL3F1YWQgZGF0YSB3aWR0aCBhbmQgRE1B
+IGZvciByZWFkL3Byb2dyYW0NCj4gb3BlcmF0aW9ucy4NCj4NCj4gU2lnbmVkLW9mZi1ieTogQ2hy
+aXMgUGFja2hhbSA8Y2hyaXMucGFja2hhbUBhbGxpZWR0ZWxlc2lzLmNvLm56Pg0KDQpIYXMgdGhp
+cyBvbmUgZmFsbGVuIHRocm91Z2ggdGhlIGNyYWNrcz8NCg0KSSBzZWUgeW91IHBpY2tlZCB1cCBh
+IGNvdXBsZSBvZiBteSBvdGhlciBjaGFuZ2VzIGZvciA2LjEzIGJ1dCB0aGlzIHNlZW1zIA0KdG8g
+YmUgbWlzc2luZyBmcm9tIG1pcHMvbGludXguDQoNCj4gLS0tDQo+DQo+IE5vdGVzOg0KPiAgICAg
+IENoYW5nZXMgaW4gdjQgJiB2NToNCj4gICAgICAtIG5vbmUNCj4gICAgICBDaGFuZ2VzIGluIHYz
+Og0KPiAgICAgIC0gZHJvcCB3aWxkY2FyZCBydGw5MzAwLXNuYW5kIGNvbXBhdGlibGUNCj4gICAg
+ICAtIGRyb3AgY2xvY2stbmFtZXMNCj4gICAgICBDaGFuZ2VzIGluIHYyOg0KPiAgICAgIC0gQWRk
+IGNsb2Nrcw0KPg0KPiAgIGFyY2gvbWlwcy9ib290L2R0cy9yZWFsdGVrL3J0bDkzMHguZHRzaSB8
+IDEzICsrKysrKysrKysrKysNCj4gICAxIGZpbGUgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygrKQ0K
+Pg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNp
+IGIvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsvcnRsOTMweC5kdHNpDQo+IGluZGV4IGYyNzE5
+NDBmODJiZS4uYjAxYTQwZWMzMDY0IDEwMDY0NA0KPiAtLS0gYS9hcmNoL21pcHMvYm9vdC9kdHMv
+cmVhbHRlay9ydGw5MzB4LmR0c2kNCj4gKysrIGIvYXJjaC9taXBzL2Jvb3QvZHRzL3JlYWx0ZWsv
+cnRsOTMweC5kdHNpDQo+IEBAIC0zMiw2ICszMiw4IEBAIGx4X2NsazogY2xvY2stMTc1bWh6IHsN
+Cj4gICB9Ow0KPiAgIA0KPiAgICZzb2Mgew0KPiArCXJhbmdlcyA9IDwweDAgMHgxODAwMDAwMCAw
+eDIwMDAwPjsNCj4gKw0KPiAgIAlpbnRjOiBpbnRlcnJ1cHQtY29udHJvbGxlckAzMDAwIHsNCj4g
+ICAJCWNvbXBhdGlibGUgPSAicmVhbHRlayxydGw5MzAwLWludGMiLCAicmVhbHRlayxydGwtaW50
+YyI7DQo+ICAgCQlyZWcgPSA8MHgzMDAwIDB4MTg+LCA8MHgzMDE4IDB4MTg+Ow0KPiBAQCAtNTks
+NiArNjEsMTcgQEAgdGltZXIwOiB0aW1lckAzMjAwIHsNCj4gICAJCWludGVycnVwdHMgPSA8Nz4s
+IDw4PiwgPDk+LCA8MTA+LCA8MTE+Ow0KPiAgIAkJY2xvY2tzID0gPCZseF9jbGs+Ow0KPiAgIAl9
+Ow0KPiArDQo+ICsJc25hbmQ6IHNwaUAxYTQwMCB7DQo+ICsJCWNvbXBhdGlibGUgPSAicmVhbHRl
+ayxydGw5MzAxLXNuYW5kIjsNCj4gKwkJcmVnID0gPDB4MWE0MDAgMHg0ND47DQo+ICsJCWludGVy
+cnVwdC1wYXJlbnQgPSA8JmludGM+Ow0KPiArCQlpbnRlcnJ1cHRzID0gPDE5PjsNCj4gKwkJY2xv
+Y2tzID0gPCZseF9jbGs+Ow0KPiArCQkjYWRkcmVzcy1jZWxscyA9IDwxPjsNCj4gKwkJI3NpemUt
+Y2VsbHMgPSA8MD47DQo+ICsJCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQo+ICsJfTsNCj4gICB9Ow0K
+PiAgIA0KPiAgICZ1YXJ0MCB7
 
