@@ -1,183 +1,175 @@
-Return-Path: <linux-kernel+bounces-415871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FE49D3D66
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:20:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A349D3D85
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC930282164
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:20:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D66B22DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7D1AAE19;
-	Wed, 20 Nov 2024 14:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115C81AA787;
+	Wed, 20 Nov 2024 14:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdSHDxSE"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hYuovrBb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6438C1AA1FB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60E5381BA;
+	Wed, 20 Nov 2024 14:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732112346; cv=none; b=r3A/C8jsyZT9K4ZyI8pIWVV1T4zcIjHlH6kXNiOy+L1iEObA1GYDMu0I+EpvczWV8DcRg79+ftcuDDar5WhHyy6o7ASeYUyEWZGuH1pHazlSEWJsj47eSD9QA+plKRsiCGK9E0L462ibdT1+5k+z1IicbYRye+wOsSgKXPQjpKA=
+	t=1732112469; cv=none; b=onQns+2H97cMPgu9NBdwfAEDa8Hy0Q0u06CvMsHnDxAkLtXeHOzX26nmYZKX8RI9KgM6adMxvRLv+uTpTY1scbHhnuhEAlFSX54d0D4gEyR9mFzYqcpiJoDwVke/35EoeDOCfu6IsKnRUAIXXZ4RqXxmom9c7B1rf9KytDZ5KSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732112346; c=relaxed/simple;
-	bh=x6MZoU7eyedwTGcl9VBhNOR2auU0fxwkG+2SL8SxAvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i12Q6b/Fu9sM9HrhP3HforHcDU/S0nS4E8AIx9Xgq0/SUX16QFcGpfaeTqfv47zTe8Jx39ohytg8A2lBg4+DxfeZy1W+hi1RoQGsnLVwIJuin/ty5h0QfDd4dV/jWgX9lUlPx0hk0XPibyMUaIHKnMzDQojRntMXqfvgP7PCZI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KdSHDxSE; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37ece998fe6so451581f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:19:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732112343; x=1732717143; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lx56WyBXTgXtuce0NPq7L0ROTVdmVjkxGdZS1KIB1zQ=;
-        b=KdSHDxSE6UegA/6jU/fLiAVhYsJYUIa/74fJtc9yX07XYTvIVnIZG4SzawwKTuZ3nf
-         dEGtqUgiQFtMVu050/Toi3S7x3Oef2J07uqWM1syuKSG5ZH5zLpa6Gfh5vQrD52Drvuz
-         WkoZ4WGrEs3z/APMsJhbdOwJ5jEh6CJjPQN7PusRr5t6MMEG5rSWstJnbyjN+68No0v5
-         8cuveMwyO7qCS/V7q6cWOfb2VvrkIXm+xFcUUN+FIkzHkyHBanB2SFITFKuaKY5n0ULd
-         5Rq9a+hYJiyhVDGpr1Sby5b1YNgu3ObO4wJesv6u0z9e2uyHqVRAQr6chdvStwnpr6K+
-         2Y9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732112343; x=1732717143;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Lx56WyBXTgXtuce0NPq7L0ROTVdmVjkxGdZS1KIB1zQ=;
-        b=uzh4dT4MqoPSkYd5tN3VD2pxLLDp22ECsP7IetpYROedaqB1qHdZaheyBgyuuG+dhl
-         LtFqcXJKPEBJ+IQ7GhkxAjLBg4Eh8i3vBIOirvhMSplc4Zlckv3nRlLrteoii+txVzSt
-         dQXA7lh/GeVYLECqfPvyIw8EZjIvtPuCL7jebI9puvHpwnbF7b8JQfE5rsNNaipz9a1L
-         jBYXV2QAie4oc4OzixwJwLLzvSLv4aobGYU+VV+IbAfljN4zEfQ9BThcDy6begPclt4M
-         SCcG1QHP5/wjPsB8y+71QL4ARBXfOvpdu6tVUQ830A7zmIwP9fVD0ugQ6Io6rJIer1iZ
-         M79g==
-X-Forwarded-Encrypted: i=1; AJvYcCWw6eZdHCDtVm8ulFTRfEBOMScvZiAsqVRBi+fXPVmePwI/qR/rJR7zaQoqyY/v90uMkqJfKorew5qIImU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSW8CWCD6WOTAhmybp6cduiFQVjAh52gm36AhiPnP3dmr4E3wE
-	/eVz5HuxNu3ztQK9Vrv8DnDDUjJXJJA3fczcGwm/paN6vblnnB5Yr9OfaiBWcAM=
-X-Gm-Gg: ASbGncs25qchorMwZg941jNEwGB4X8Yty9vVOQRT2JRnHpidqJ/2ie1gYeKrMSRep0R
-	0du/HLb2AMZjDThuRgJSiS+uB4S60D5Va9LFMnolCM4RgOEzGMJ3uBwtDot32yGLc6wQCAeHE/k
-	wpoiRgTXHUksGyfQa6Lli4ZaLQ8FH02kl79K9O1GmO2zZk6mlswgsxRvmuA3o/Wp0F9J2EuLZ7s
-	LaoEXrcmwR9IktG1fTTxyoe0/q8IpwzjNr4e14teCmegdy4Tv4B9z7bqE7No95J2W6J4A==
-X-Google-Smtp-Source: AGHT+IGD8RpZxKWpShjz3sqfyvWOBlCeCXonyTIjtnVTLNRI8ijfGdDzmz5U1BMdJtd8lBeWSkojZw==
-X-Received: by 2002:a05:6000:1a8a:b0:37d:52cc:c484 with SMTP id ffacd0b85a97d-38254b16604mr936553f8f.9.1732112342529;
-        Wed, 20 Nov 2024 06:19:02 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254793404sm2319375f8f.0.2024.11.20.06.19.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 06:19:01 -0800 (PST)
-Message-ID: <a5343627-a325-465e-b744-747d4c1b2cae@linaro.org>
-Date: Wed, 20 Nov 2024 15:19:00 +0100
+	s=arc-20240116; t=1732112469; c=relaxed/simple;
+	bh=8cTqGsmGudynJgTzvwaLDSQ2AMY2obRkbefKULIFLAc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rp3Y6ofPo2cqcmv8al/VrWD+RPgot/DypP7/Eb3dJC+CXWlE8KEPsHhExwmJi3rkST7GMxSJbD3veFn2djrMgbcLkplyGYk0WooI7UcZlbo4vyjcmv5vC7SAwLuobVD5xz3PbY7Dc5Bi1rbShJ2zze6sSQoz8E/9Pvh5UYNinOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hYuovrBb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732112465;
+	bh=8cTqGsmGudynJgTzvwaLDSQ2AMY2obRkbefKULIFLAc=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=hYuovrBbnjC9qV5BFgycLCS5CYxetYlExRTzAhoz9DlrNaHRjWihVmw1viYzie66z
+	 1rIptfWi8JWxY2ZwCH57aXYbbq0DoCvfZznAydZjmjbifAonXLr0G4fMkNNc8RhCa6
+	 y9nK1lEB/zvmVQSbEj9oiB3EAuviK6+42wSnI8epjpXSVt70iPz4dgk0RppARE9e5d
+	 2eiJBlMJnicjMYE6u3ZkRfw9CHo6rI+FsEYAAgUHi90kIlsYbfvoCJrLEb8E1ON3/n
+	 eg4Cc99XgtUxkBYCHTFu0K7Z2jqGmG0ToRaNFK7n0GxpgfugyTAPUm5Sqeroz9le3E
+	 xKfkUBHKMol6Q==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::580])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6D86317E3686;
+	Wed, 20 Nov 2024 15:21:03 +0100 (CET)
+Message-ID: <19cf9e45e00ccf68f35339d8d694e026ffa48037.camel@collabora.com>
+Subject: Re: [PATCH v2 1/3] media: uapi: add WebP uAPI
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues Fruchet <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, Fritz Koenig	 <frkoenig@chromium.org>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,  Daniel Almeida
+ <daniel.almeida@collabora.com>, Andrzej Pietrasiewicz
+ <andrzej.p@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Wed, 20 Nov 2024 09:21:01 -0500
+In-Reply-To: <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
+	 <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] firmware: qcom: scm: Handle various probe ordering
- for qcom_scm_assign_mem()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha
- <quic_mojha@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Kuldeep Singh <quic_kuldsing@quicinc.com>,
- Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
- Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
- <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-3-7056127007a7@linaro.org>
- <CAMRc=Me=Eu6+SpdguKurWgQDrpuo4qTCwWO6GfzS=YuA9vUzOw@mail.gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CAMRc=Me=Eu6+SpdguKurWgQDrpuo4qTCwWO6GfzS=YuA9vUzOw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/11/2024 15:07, Bartosz Golaszewski wrote:
->> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
->> index 5d91b8e22844608f35432f1ba9c08d477d4ff762..93212c8f20ad65ecc44804b00f4b93e3eaaf8d95 100644
->> --- a/drivers/firmware/qcom/qcom_scm.c
->> +++ b/drivers/firmware/qcom/qcom_scm.c
->> @@ -1075,6 +1075,9 @@ int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,
->>         int ret, i, b;
->>         u64 srcvm_bits = *srcvm;
->>
->> +       if (!qcom_scm_is_available())
->> +               return -EPROBE_DEFER;
->> +
+Hi Hughe,
+
+thanks for the update.
+
+Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
+> This patch adds the WebP picture decoding kernel uAPI.
 > 
-> Should we be returning -EPROBE_DEFER from functions that are not
-> necessarily limited to being used in probe()? For instance ath10k uses
-> it in a workqueue job. I think this is why this driver is probed in
-> subsys_initcall() rather than module_initcall().
-Uh, good point. To my understanding, every resource like function can do
-it, e.g. clk_get. Whether drivers call it in probe() or somewhere else -
-e.g. some startup call like there is plenty in the ASoC or DMA
-device_alloc_chan_resources() - is responsibility of the
-driver/consumer, not the provider of that resource.
+> This design is based on currently available VP8 API implementation and
+> aims to support the development of WebP stateless video codecs
+> on Linux.
+> 
+> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+> ---
+>  Documentation/userspace-api/media/v4l/biblio.rst  |  9 +++++++++
+>  .../userspace-api/media/v4l/pixfmt-compressed.rst | 15 +++++++++++++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c              |  1 +
+>  include/uapi/linux/videodev2.h                    |  1 +
+>  4 files changed, 26 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/biblio.rst b/Documentation/userspace-api/media/v4l/biblio.rst
+> index 35674eeae20d..df3e963fc54f 100644
+> --- a/Documentation/userspace-api/media/v4l/biblio.rst
+> +++ b/Documentation/userspace-api/media/v4l/biblio.rst
+> @@ -447,3 +447,12 @@ AV1
+>  :title:     AV1 Bitstream & Decoding Process Specification
+>  
+>  :author:    Peter de Rivaz, Argon Design Ltd, Jack Haughton, Argon Design Ltd
+> +
+> +.. _webp:
+> +
+> +WEBP
+> +====
+> +
+> +:title:     WEBP picture Bitstream & Decoding Process Specification
+> +
+> +:author:    Google (https://developers.google.com/speed/webp)
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> index 806ed73ac474..e664e70b0619 100644
+> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> @@ -169,6 +169,21 @@ Compressed Formats
+>  	this pixel format. The output buffer must contain the appropriate number
+>  	of macroblocks to decode a full corresponding frame to the matching
+>  	capture buffer.
+> +    * .. _V4L2-PIX-FMT-WEBP-FRAME:
+> +
+> +      - ``V4L2_PIX_FMT_WEBP_FRAME``
+> +      - 'WEBP'
+> +      - WEBP VP8 parsed frame, excluding WEBP RIFF header, keeping only the VP8
+> +	bistream including the frame header, as extracted from the container.
+> +	This format is adapted for stateless video decoders that implement a
+> +	WEBP pipeline with the :ref:`stateless_decoder`.
+> +	Metadata associated with the frame to decode is required to be passed
+> +	through the ``V4L2_CID_STATELESS_VP8_FRAME`` control.
+> +	See the :ref:`associated Codec Control IDs <v4l2-codec-stateless-vp8>`.
+> +	Exactly one output and one capture buffer must be provided for use with
+> +	this pixel format. The output buffer must contain the appropriate number
+> +	of macroblocks to decode a full corresponding frame to the matching
+> +	capture buffer.
 
-With such explanation returning EPROBE_DEFER is ok, just like returning
-anything else (e.g. EINVAL).
+I wonder if we should document the constraints, I think
+V4L2_VP8_FRAME_FLAG_KEY_FRAME must be set, which imply that last/golden/alt
+timestamp are ignored.
 
-Now about this function: it is not exactly "get a resource" one, but
-still the caller might want to call it again later, which is implied by
-EPROBE_DEFER. Maybe this should be EAGAIN instead? Just like
-power-supply is doing in power_supply_get_property().
+With that clarified:
 
-Best regards,
-Krzysztof
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+> 
+>  
+>      * .. _V4L2-PIX-FMT-VP9:
+>  
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 0304daa8471d..e2ff03d0d773 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1501,6 +1501,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+>  		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+>  		case V4L2_PIX_FMT_VP8_FRAME:    descr = "VP8 Frame"; break;
+> +		case V4L2_PIX_FMT_WEBP_FRAME:    descr = "WEBP VP8 Frame"; break;
+>  		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+>  		case V4L2_PIX_FMT_VP9_FRAME:    descr = "VP9 Frame"; break;
+>  		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index e7c4dce39007..09fff269e852 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -757,6 +757,7 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
+>  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+>  #define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F') /* VP8 parsed frame */
+> +#define V4L2_PIX_FMT_WEBP_FRAME v4l2_fourcc('W', 'B', 'P', 'F') /* WEBP VP8 parsed frame */
+>  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+>  #define V4L2_PIX_FMT_VP9_FRAME v4l2_fourcc('V', 'P', '9', 'F') /* VP9 parsed frame */
+>  #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
+
 
