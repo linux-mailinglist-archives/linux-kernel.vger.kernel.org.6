@@ -1,181 +1,123 @@
-Return-Path: <linux-kernel+bounces-416078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279499D3FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892409D3FEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:21:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD04280F0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 381311F22B58
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A621547C6;
-	Wed, 20 Nov 2024 16:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E451547EF;
+	Wed, 20 Nov 2024 16:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k3G0+6pw"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViG1yl9X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2012A154439
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED53B1537C3;
+	Wed, 20 Nov 2024 16:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119623; cv=none; b=EhyatSkF7Zy8KRk15j2Kb1wS3Ap4l9ss8JyNUG5XLvtyoWMrx2ilzgJEWXMvBx/l9sTl7mPVkae9KI/ftDshQxRrBoeTwgIvTBGoEVl+L6lilSgU0anrZdBoGha6gKAf5Fz1a5Q+lxSGBqBdsrv/q4IWvfecrt+7XW8kfHud6wo=
+	t=1732119683; cv=none; b=S0gkpmb1Nn2XY40xL/ob8Pyd6yTLCGIYJw1vs5s/kchfyouVu5OwKejvVC/MFFnaDOys0hnj/SnrXyULasr1lqGfOEyR1LJ1vkagD8YkvDKRleuQhWOP+OPZqrW/FO7qwdIJombtcnRC88BI0fAmC/fySJQgJIPOixa7W+zCfXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119623; c=relaxed/simple;
-	bh=ySs++z4n1Fi/1AdNo5v3rz91meDM6WppVpPGxczPJjI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FtDvFdgIfzFdQ1DzUUiMIbD6X1EXWW9GH0loFAh2v877OtBbVIGi+CwdVDk2Fqa7LL7KWL7TbqB2F61ZT1uVGJQuoYhytb/tIAeAO+DjMKpff8iQm9Jkb35tkArp4jEibOt7DhRc7YNI2W2u3xmuzZCjivcBJy+r3WcL3BEmUc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k3G0+6pw; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315eac969aso6671295e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:20:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732119620; x=1732724420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8VbDXySIpVH71kNIIiHD5xXarApVi2DKm9eek/oULpY=;
-        b=k3G0+6pwtG+QHWeevc6XfXTen9Pf8ZOFSPONSFa0W7m2l91O9lXRAGSELS8c5wfMAZ
-         R8CWw6N5xzCXPQ2z31+XtH9d9zR5TYcUie5wiVlCMua7qF4PqULJnERV+LLjhLpW0Rg7
-         XHzT1jh3bjIw6M+jT2T2QW4qmEvbjVMV3bgpyxvFFFbH8Fehhk2PntL83Xw3+ZUT5UkG
-         nG9UG9TSbobRAUtGluxRH4RADHnrWaU6sp2tBUmzCRplbQI9fx2nUqx4cB0Kl2/DYzuv
-         PEQBGgV/kEslxWSUfR9lTEVyjBm3ZNKuIhN6qflCC/KAf7DyiK0w8xG5lN11pEsQdWou
-         fjhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732119620; x=1732724420;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8VbDXySIpVH71kNIIiHD5xXarApVi2DKm9eek/oULpY=;
-        b=q3Z/lWt/ao25pykEoI7bGU70oA2ad1HcNN+7bEuod8QgD/wkXHt8JOb4y5vt2co7KR
-         tiW5asRbpQV06qetiHkEExNluRFh5LY2v3+YgOiI8EZ0rEFEh9PelaQlqh6qS8WxJglt
-         o+aL7Uj8vgqQtq55ldFpvsCiBDlRdqjqNB0ig+NQK4tXuMuj/zvEYOk/uUEW4NEVg6DK
-         2KXa5AxbASUkCuBEP0s7W7XQ7c5lUOPIOdSrTPPfzb0dcQNiJxy/94UZjJZK0iBDMdcw
-         vYsnOX+t9lh40s5zYsaQpU1eZXmiZNmcnda7sBEVwqSsE39/jTxI/ZXIDcv46JnSVQ5s
-         YNYg==
-X-Forwarded-Encrypted: i=1; AJvYcCU294rcwVS2TIpkAULxQvkVgyZdpi6lANdIDqswW6ycPw3PuEN1WE7BjUZRy1scAyHvLvF9qnT5GavFMck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+4jccK/jfzkE4cv2vTdj8Kahuc+GoCMZCoTlfbX5zU0q51hj6
-	wMzABUdlZXugZCSBurW4LozsXSdK2+qBA3hpcuIOfYxwm7ef78absbWgBSh3dR0=
-X-Google-Smtp-Source: AGHT+IHrpX4baJR0AnkhRg24fQu6/3DnHGns5UJl0EWQkfsbVCm2wg4Owt4oTV9GbOK5eIA4XDS66Q==
-X-Received: by 2002:a05:600c:19d0:b0:431:405a:f93b with SMTP id 5b1f17b1804b1-432f57e17fdmr62681445e9.10.1732119620484;
-        Wed, 20 Nov 2024 08:20:20 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:927b:2848:1f7d:3776? ([2a01:e0a:982:cbb0:927b:2848:1f7d:3776])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643e65bsm46606955e9.0.2024.11.20.08.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 08:20:20 -0800 (PST)
-Message-ID: <d7071991-db0a-49cc-a345-71457d68617c@linaro.org>
-Date: Wed, 20 Nov 2024 17:20:18 +0100
+	s=arc-20240116; t=1732119683; c=relaxed/simple;
+	bh=8V0tVZLTAmcmPHYhysLCyCFUh8prNiIRw2JMFafb1N0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aB+qMNWwiULN5O5Xv+BL7lWmVehUQJjq7IT8BF5bRowJTIwfG4ynMEQtECX658jjFQ0tFwa1RfQnSjzRBshav0FIspSOdwqqkoQpC66Sk1ArE7WJzn5hLH5e/idsdGNUubI1MLXDLTF3SgzbnKfijsdj2qPJ97vgmxNNChI2UmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ViG1yl9X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE99C4CECD;
+	Wed, 20 Nov 2024 16:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732119682;
+	bh=8V0tVZLTAmcmPHYhysLCyCFUh8prNiIRw2JMFafb1N0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ViG1yl9Xwx5EhE7iVka9N+4LNcIz5LoK60+wC9sjB8zm2yNFzF745MnIp6UTkciix
+	 3bEgjb9ibT3PGPFlnYRoV0LKXNe2UosjoMJbc1N4e+ApzEBGQJ8n1Vqc8d8im/RYzA
+	 MaCRVPsUuFH/CeqZLgIon/9FtmDTn9a5yBDAfCYlcs8AKw+opK+mWOkln9JOIgWMPg
+	 +2Mk2s6pVjWszU5vxA9QzjLu/QZShqUcVbWzxvHlPbzwrNDuPu/SixH+yVTg9K5/wn
+	 aMLtv3rDImDQIdGtTuxunIE9x4CI7q2Hxz6f6yH2o0309351UxuvBR4ESiJVpJpFtH
+	 SotSZ5bxps8rg==
+Date: Wed, 20 Nov 2024 08:21:20 -0800
+From: "jpoimboe@kernel.org" <jpoimboe@kernel.org>
+To: "Shah, Amit" <Amit.Shah@amd.com>
+Cc: "Phillips, Kim" <kim.phillips@amd.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"kai.huang@intel.com" <kai.huang@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"Moger, Babu" <Babu.Moger@amd.com>,
+	"Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+	"amit@kernel.org" <amit@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"Kaplan, David" <David.Kaplan@amd.com>
+Subject: Re: [PATCH 2/2] x86/bugs: Don't fill RSB on context switch with eIBRS
+Message-ID: <20241120162120.z6zteeespf4cir4s@jpoimboe>
+References: <cover.1732087270.git.jpoimboe@kernel.org>
+ <9792424a4fe23ccc1f7ebbef121bfdd31e696d5d.1732087270.git.jpoimboe@kernel.org>
+ <b2c639694a390208807999873c8b42a674d1ffa2.camel@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/6] firmware: qcom: scm: Fixes for concurrency
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha
- <quic_mojha@quicinc.com>, Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Kuldeep Singh <quic_kuldsing@quicinc.com>,
- Elliot Berman <quic_eberman@quicinc.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
- Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
- <vr64bidkdzoebqmkq3f5jnpqf2hqcf2nvqc27vhu53ave3bced@3ffd2wqtxrvd>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <vr64bidkdzoebqmkq3f5jnpqf2hqcf2nvqc27vhu53ave3bced@3ffd2wqtxrvd>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2c639694a390208807999873c8b42a674d1ffa2.camel@amd.com>
 
-On 20/11/2024 12:13, Dmitry Baryshkov wrote:
-> On Tue, Nov 19, 2024 at 07:33:16PM +0100, Krzysztof Kozlowski wrote:
->> SCM driver looks messy in terms of handling concurrency of probe.  The
->> driver exports interface which is guarded by global '__scm' variable
->> but:
->> 1. Lacks proper read barrier (commit adding write barriers mixed up
->>     READ_ONCE with a read barrier).
->> 2. Lacks barriers or checks for '__scm' in multiple places.
->> 3. Lacks probe error cleanup.
->>
->> I fixed here few visible things, but this was not tested extensively.  I
->> tried only SM8450.
->>
->> ARM32 and SC8280xp/X1E platforms would be useful for testing as well.
+On Wed, Nov 20, 2024 at 10:27:42AM +0000, Shah, Amit wrote:
+> On Tue, 2024-11-19 at 23:27 -0800, Josh Poimboeuf wrote:
+> > User->user Spectre v2 attacks (including RSB) across context switches
+> > are already mitigated by IBPB in cond_mitigation(), if enabled
+> > globally
+> > or if at least one of the tasks has opted in to protection.  RSB
+> > filling
+> > without IBPB serves no purpose for protecting user space, as indirect
+> > branches are still vulnerable.
+> > 
+> > User->kernel RSB attacks are mitigated by eIBRS.  In which case the
+> > RSB
+> > filling on context switch isn't needed.  Fix that.
+> > 
+> > While at it, update and coalesce the comments describing the various
+> > RSB
+> > mitigations.
 > 
-> ARM32 devices are present in the lab.
+> Looks good from first impressions - but there's something that needs
+> some deeper analysis: AMD's Automatic IBRS piggybacks on eIBRS, and has
+> some special cases.  Adding Kim to CC to check and confirm if
+> everything's still as expected.
 
-I passed the patchset on our devices, and no regressions observed:
+FWIW, so "Technical Guidance for Mitigating Branch Type Confusion" has
+the following:
 
-arm32: https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/116195
-arm64(including x1e): https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/pipelines/116201
+  Finally, branches that are predicted as ‘ret’ instructions get their
+  predicted targets from the Return Address Predictor (RAP). AMD
+  recommends software use a RAP stuffing sequence (mitigation V2-3 in
+  [2]) and/or Supervisor Mode Execution Protection (SMEP) to ensure that
+  the addresses in the RAP are safe for speculation. Collectively, we
+  refer to these mitigations as “RAP Protection”.
 
-Neil
+So it sounds like user->kernel RAP poisoning is mitigated by SMEP on AMD.
 
-> 
->>
->> All the issues here are non-urgent, IOW, they were here for some time
->> (v6.10-rc1 and earlier).
->>
->> Best regards,
->> Krzysztof
->>
->> ---
->> Krzysztof Kozlowski (6):
->>        firmware: qcom: scm: Fix missing read barrier in qcom_scm_is_available()
->>        firmware: qcom: scm: Fix missing read barrier in qcom_scm_get_tzmem_pool()
->>        firmware: qcom: scm: Handle various probe ordering for qcom_scm_assign_mem()
->>        [RFC/RFT] firmware: qcom: scm: Cleanup global '__scm' on probe failures
->>        firmware: qcom: scm: smc: Handle missing SCM device
->>        firmware: qcom: scm: smc: Narrow 'mempool' variable scope
->>
->>   drivers/firmware/qcom/qcom_scm-smc.c |  6 +++-
->>   drivers/firmware/qcom/qcom_scm.c     | 55 +++++++++++++++++++++++++-----------
->>   2 files changed, 44 insertions(+), 17 deletions(-)
->> ---
->> base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
->> change-id: 20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-a25d59074882
->>
->> Best regards,
->> -- 
->> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>
-> 
-
+-- 
+Josh
 
