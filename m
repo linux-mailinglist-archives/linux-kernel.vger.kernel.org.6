@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-415977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F3E9D3EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:13:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70C59D3EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:13:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0677282CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861E01F2465F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DA71C729E;
-	Wed, 20 Nov 2024 15:01:26 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5601C9B6F;
+	Wed, 20 Nov 2024 15:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1gej4nmU"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5BC1BC9E5
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22651BBBF8
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114885; cv=none; b=XtcbITqRAIgvlBximZTg2DIkxD6csYH23QE/7C6f6Dln1P9NMBpC1FCZl3cN2CrLNX/tXVxaNmLyeSp1g6Af5AX14sEJavsMpjp3/2Qs+99bVYfsC6/xbDejn1ep77KMAqnzifCKb2SV4iWcUpce4mHT0V0D07jEwbZ2EV7aQ24=
+	t=1732114909; cv=none; b=NRF1ODui6tgwYnZf2figgzVizYIZrEmE45qHu+j5tURh8Y3v+BbKa9dS0A9fAh6bZHgEIm1BtZliCyM+yyx8m9z6FNRweLQrIdWBGEIKczALu9YsOEHPW5bTclIuXzv1ZGNa/5IChgAJHnm6rO7Eh09Mb1CI9atHnpZS57/CtuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114885; c=relaxed/simple;
-	bh=GdRAwWuiYbi6EugybkHrLMuAJvQwG9769/GB/p7t0Ts=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nfS8qV3sya8V6NY0kLq3Gjf6JSzo9dFsyQWzsHFacv8qa3abLMBymMbelVSKNlAdcQFDFvyeHv11XXnYKaN14EdEesyS4y5hFC5ZmTpy2SiJ9aD6SkJF+42RJA8kIKdwHJ5UfE9B0BZcGQFXVmpUL2hTxJ6MvXEeHOSwhD552WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xtl164f4zz6LD6c;
-	Wed, 20 Nov 2024 23:00:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 38094140B55;
-	Wed, 20 Nov 2024 23:01:21 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
- 2024 16:01:20 +0100
-Date: Wed, 20 Nov 2024 15:01:19 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 5/6] acpi/generic_event_device: Update GHES migration to
- cover hest addr
-Message-ID: <20241120150119.00007d3d@huawei.com>
-In-Reply-To: <6391dfec0a26b83641c2b2062115b839490cc902.1731486604.git.mchehab+huawei@kernel.org>
-References: <cover.1731486604.git.mchehab+huawei@kernel.org>
-	<6391dfec0a26b83641c2b2062115b839490cc902.1731486604.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732114909; c=relaxed/simple;
+	bh=psA/yx29BkrqBjVz6CY+5ew1vTfWB696Gi4MuZ45UTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W75BfdTZvv9UCmfBe6lt50bLg1Il1kEyTRqxPFYE4p45ZadNuFHeIty0H2cnnSWeyJtrkNDT6TDRxz8nuQr/7PKGuUf+HEYXpDMLZGpgx/z+XMs3KRTNsMJWXFmE2I2QwuERLXo8QnwBJzimmEYdmm6MwSpUB6D26fiMSeI4RWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1gej4nmU; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-71a5ab612ceso1110372a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:01:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732114906; x=1732719706; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fjeGjNQC2qd8d6ObuWGHMSnUI8c2BdH57TDRpy3EvpI=;
+        b=1gej4nmUSoF8V14n3Wrvxs8AA9TMkhyz46QxBcHkpT19YVp26Ki9nSzP6IwvHipM7E
+         dotbsRmCQdmHEPYzGZxqzwZi/s1+UczrO5NqZ4E8qYORZKVm4VJpBBUhM9McCEpI/tAw
+         o5/p4I5saL0FJCGe1Heio57K1bMdiThFN61FL94K/P0FaPrhMjzwejUfU47mijNS7F24
+         JrlfHaRj0btLS/tphjC/yBAOvR33dO5PvjOK/4/7BF5Hxf7j+DTGJkQRxfiFtOoy8i5G
+         sIA0PVxGc+R+PdHKauIzKo4lrlavFBxDCoaf5WlQE6Ucj5IGQX1ntBao8m2O3KEUkpU/
+         m2tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732114906; x=1732719706;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fjeGjNQC2qd8d6ObuWGHMSnUI8c2BdH57TDRpy3EvpI=;
+        b=gl3O1lrOufwUBqTYkcuMoHupulOaG8lhpnR/SknUqxHfMvweG4oQC3dCPuOYp03yP9
+         AjrqcFZZCxLGtfZEtZAA/Q/zEE2G6QfTjhHJNa0a51jmd11pS3w3EL7FAu2t/JXVWqaJ
+         d3FwiIHTZT54si4bqB9lJ+MS87SkecWBx32C45NFjK88Zn33nbgIEwdNUk2V2x2dwm93
+         UAf1kiOkbLaDKfxJpK/cuJ9w1z8oOrcGut0Xjvdnlb2ipfMnQRK8D3E4yuC/Qwq06l7a
+         2DjtFIJGtHMVKVwiUtP9kbQkF5NQBQk83/fF8n60GqK6hruzuU6RRIsSpx1szmPxVqvB
+         X8mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxBejWtiC6YobOb59cYU9YeJijlG1u05tHEhUw7E2/2Ypu/iDLz6RlunaMi7S4/kNu0TP690aeY/qQO5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl/bMsGedFvLFxWmVns2hLv1KIYFaoiz1PnXS8N/doCapBR3QL
+	KjRefvSLd1GR0Pgs+jw8uPxqkzHQLp1pko2U1sGcO/MRlAWz/HhKPMTbh9EBFA0=
+X-Google-Smtp-Source: AGHT+IGQSK+2IQshD7ZaHoNgSTljD0BMUROfHrfP8qhqEluFOIRh7AnMrDmor+21VIn6g7IrmClwsw==
+X-Received: by 2002:a05:6830:61c1:b0:718:c0d:6c02 with SMTP id 46e09a7af769-71ab30f789dmr3993968a34.2.1732114905882;
+        Wed, 20 Nov 2024 07:01:45 -0800 (PST)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a78212bdfsm3984668a34.61.2024.11.20.07.01.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 07:01:43 -0800 (PST)
+Message-ID: <7e895fd8-35c5-4cf0-bd9b-239de5153999@kernel.dk>
+Date: Wed, 20 Nov 2024 08:01:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Pavel Begunkov
+ <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
+ Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Cc: linux-mm@kvack.org, io-uring@vger.kernel.org, linux-m68k@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 13 Nov 2024 09:37:02 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> The GHES migration logic at GED should now support HEST table
-> location too.
+On 11/20/24 5:49 AM, Geert Uytterhoeven wrote:
+> On m68k, where the minimum alignment of unsigned long is 2 bytes:
 > 
-> Increase migration version and change needed to check for both
-> ghes_addr_le and hest_addr_le.
-
-Where is the migration version increased?  Maybe I'm misunderstanding
-the comment.
-
+>     Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
+>     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
+>     Stack from 0102fe5c:
+> 	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
+> 	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
+> 	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
+> 	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
+> 	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
+> 	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
+>     Call Trace: [<00425e78>] dump_stack+0xc/0x10
+>      [<0041eb74>] panic+0xd8/0x26c
+>      [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
+>      [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
+>      [<0041e5f0>] memset+0x0/0x8c
+>      [<005f67c0>] io_uring_init+0x54/0xd2
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> The minimal alignment of an integral type may differ from its size,
+> hence is not safe to assume that an arbitrary freeptr_t (which is
+> basically an unsigned long) is always aligned to 4 or 8 bytes.
+> 
+> As nothing seems to require the additional alignment, it is safe to fix
+> this by relaxing the check to the actual minimum alignment of freeptr_t.
+> 
+> Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
+> Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 > ---
->  hw/acpi/generic_event_device.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
+>  mm/slab_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
-> index 17baf36132a8..c1116dd8d7ae 100644
-> --- a/hw/acpi/generic_event_device.c
-> +++ b/hw/acpi/generic_event_device.c
-> @@ -387,6 +387,34 @@ static const VMStateDescription vmstate_ghes_state = {
->      }
->  };
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 893d320599151845..f2f201d865c108bd 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -230,7 +230,7 @@ static struct kmem_cache *create_cache(const char *name,
+>  	if (args->use_freeptr_offset &&
+>  	    (args->freeptr_offset >= object_size ||
+>  	     !(flags & SLAB_TYPESAFE_BY_RCU) ||
+> -	     !IS_ALIGNED(args->freeptr_offset, sizeof(freeptr_t))))
+> +	     !IS_ALIGNED(args->freeptr_offset, __alignof(freeptr_t))))
+>  		goto out;
 >  
-> +static const VMStateDescription vmstate_hest = {
-> +    .name = "acpi-hest",
-> +    .version_id = 1,
-> +    .minimum_version_id = 1,
-> +    .fields = (const VMStateField[]) {
-> +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
-> +        VMSTATE_END_OF_LIST()
-> +    },
-> +};
-> +
-> +static bool hest_needed(void *opaque)
-> +{
-> +    AcpiGedState *s = opaque;
-> +    return s->ghes_state.hest_addr_le;
-> +}
-> +
-> +static const VMStateDescription vmstate_hest_state = {
-> +    .name = "acpi-ged/hest",
-> +    .version_id = 1,
-> +    .minimum_version_id = 1,
-> +    .needed = hest_needed,
-> +    .fields = (const VMStateField[]) {
-> +        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
-> +                       vmstate_hest, AcpiGhesState),
-> +        VMSTATE_END_OF_LIST()
-> +    }
-> +};
-> +
->  static const VMStateDescription vmstate_acpi_ged = {
->      .name = "acpi-ged",
->      .version_id = 1,
-> @@ -399,6 +427,7 @@ static const VMStateDescription vmstate_acpi_ged = {
->          &vmstate_memhp_state,
->          &vmstate_cpuhp_state,
->          &vmstate_ghes_state,
-> +        &vmstate_hest_state,
->          NULL
->      }
->  };
+>  	err = -ENOMEM;
 
+This looks much better, thanks.
+
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
+
+-- 
+Jens Axboe
 
