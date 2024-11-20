@@ -1,243 +1,269 @@
-Return-Path: <linux-kernel+bounces-416385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534799D440C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4774E9D440F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6B71F2280B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C28671F24023
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45C1BDAB5;
-	Wed, 20 Nov 2024 22:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0AC1C8FCF;
+	Wed, 20 Nov 2024 22:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YhPT+kKo"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qO2IKaSv"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BA61A0BE3
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4206B1C877E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143241; cv=none; b=l496OqbFIiWnkkFQN13T/X+uIXCTZI83ZAK4xoyPxMZQphCZMVcE3dd2Y1GyHIk9n77Nsxi7yVBXLsQpiPbUn9FICP6ZdJR5nig70PPBrOEE3Hf5Cl1QoZF482uJ0b9c0z9mLx6uqDoNDCUBM/M1BDb0kRqd8Yfk9jKQ6jN7Cak=
+	t=1732143319; cv=none; b=nKGc2blMxtzIz5b8WH4E1ErgDOCuWZtbCz6Q3Mcns1GIic47nXhinpxf6L6AazU0PLz0B2czaWxTS+vIvTfa12txgIpdvKKYXkyT0mHyQuT5GsuzHUeQDRlidXR6d/DLC+2PoVRjf1Z5hMWbUDmYp/4XgjA0AOL1Gr5yNGMyUTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143241; c=relaxed/simple;
-	bh=Yn+AMrJhxvDyr5NFRzcaVYH0arIbMuSBjcaU2Cu0rBc=;
+	s=arc-20240116; t=1732143319; c=relaxed/simple;
+	bh=o/7mpnxnSD6czGPjKYI4k5kO04AF4cb9zKhn7kJX4js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKRFAdYGkcTVyWZEf6Ny0oBUZ13RcAfXQ0O9DStcp1BK0wG43BNj6HSxI+VVsjboSg9F7ytJuxMEu9MKfjdlVz1qP8wsZIu5mx4Z2ZpjX2oaIpAszekqwsCA/VUe5pAbRZgyv0YOf5rhWnhc9HwJNmoWJvDp7g7/Fs481/g381E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YhPT+kKo; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f12ba78072so257240a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:53:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732143239; x=1732748039; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OpIlqMn/s0feZOT3HHhuTTXA4GdVd8VK4Ygvn8WOph0=;
-        b=YhPT+kKoq9UTFPIBpmttUfIdQsX9CUGjQn6hpWnqecsGpOH9pk+x1ZGGStmGhCfCrz
-         bXJfo7kpAyUdFIYAQNCQjn0Aggd0Jt0637DSYrXXpMGDzCgdw1rs/5FwOqh1VKfeTCdF
-         niD4Ai3ADsVGrcD7kMfV0WnqHPvVpZtMnwI7FU9oRtJFBoKdP0LKP1lhIo7FOQdj0gUs
-         5CyHdqBBjuYsHcQvEDdzxt8VQJF45t0XjFbTUyxEzowHeXRO0xGnUOjWqtvCvcrq0bn0
-         rqwH2Q9mBzkTtmCdZhUp5aaOeGJ7UfARDBcbGrBqvq3s6R4Mn1pRTBP2OwMFk1KCIIrH
-         3dnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732143239; x=1732748039;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpIlqMn/s0feZOT3HHhuTTXA4GdVd8VK4Ygvn8WOph0=;
-        b=VNVjrvgDw/hovKpSiU21jtrzEz7AQw7Hl6mpMVEsO2HupkkT9EMyuLyD4zZOcoKclG
-         JfIZ2qeq8ow8MttOT1Y1vuQjmdgIFQC7JWLWWauuzRvSBnKyf5RPQ5YBcdkaxnfxlkv/
-         FjN1MET8XU0Kc08GhybTNklivPAHjNRhQsGyP692FTAr4vyeYphHdzGaLQkKYmGuSRNK
-         JNbITnQdI6DY6lxFMi0tbJA5iaw5AiX52B8tez+7IqOKNbH7HyZRwM4cQQ5EvQD/pEbm
-         c32FXYSlMsFf0ZQcChh+MNY51hy3WxajOBp7Fjqp2Jy7eTvISvl6HTBISsZzdwdW04ZB
-         A0tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXze+740g/hr00bsjcWMZusc63KU4W6Q4CZLDkCy7yDqSk9Lv13N8JaayGYEqgyZef+e6wCZ6n8T4+QwWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwj75iRU/GDgXsisVqWBB/QVBy/JWkrsjQ1bj5PfkrkCRmlh55
-	usGADReJLSLhQo618QdyplBAonuLt75bSM4Fn6SUohEWtTM/X7bgbY4i240/2NA=
-X-Gm-Gg: ASbGncvdOPxu7oKbVJTlMT3DpiiHtD/Z2JEWgHtyEAgFbthXiIrkHXeQZ2RX28ZzD6+
-	uF9jAkBOAj9WsUYkrgR86AZ9aXRlJYDKAZaUSaOoBa8O9EdBLW0Ugh/YOBbYB0EtTKq/v2gZBUL
-	5JzFMFaetynGqZbguQor3WiTmTMzWuGVDZMUf76+BU+cw1AF6G8K+4x2/j1SnTnjIj8VGCq7Uq1
-	omOjtTJSrwSe0s63yhHbwY/CLGPM9DgkH8lYVdw1Fur18QjdGINgffQYNK8f/yrqtjaAmswR4DT
-	jNoHrvO+o5RAeMw4uHTha4qQ9Q==
-X-Google-Smtp-Source: AGHT+IEo1QuTwU82hD/MIwaVhIynIO5wBU9St642b/kl/3xFbT6jtUcqMQWk7Nd7qyhS8/1VVJyvZQ==
-X-Received: by 2002:a17:90b:17cf:b0:2e2:a6ef:d7a6 with SMTP id 98e67ed59e1d1-2eaca7e1b9bmr4743792a91.36.1732143238826;
-        Wed, 20 Nov 2024 14:53:58 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea415sm1903177a91.2.2024.11.20.14.53.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 14:53:58 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tDta6-000000012l2-4032;
-	Thu, 21 Nov 2024 09:53:54 +1100
-Date: Thu, 21 Nov 2024 09:53:54 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Stephen Zhang <starzhangzsd@gmail.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com,
-	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org,
-	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
-Message-ID: <Zz5ogh1-52n35lZk@dread.disaster.area>
-References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
- <ZyhAOEkrjZzOQ4kJ@dread.disaster.area>
- <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
- <Zyi683yYTcnKz+Y7@dread.disaster.area>
- <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
- <ZzFmOzld1P9ReIiA@dread.disaster.area>
- <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKqZmdH79QTLN2g021maWbA8Kp/DBY7A5I7iNdj+WPkVpzxo5uQAN9tMsFAZiLUO2sECgItqZabCoYTFgYIrmpW6yN5B5rdPpwUeWrWNfNjntXIlKHe8/Bv7K8ztprVDWB9us0266L+WtFcSSaoCbwI+DSHTU9lSB8vKC1nXLuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qO2IKaSv; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 17:55:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732143310;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dqYuKTvze3qmtMd9uDN7Oc7WT+P2czNI7GBxpdmcRy8=;
+	b=qO2IKaSvb1ajpdC2BCVJ5sveheJ+RTlU28PRzl43PlWvIyl4Ybu/Zk1lm67JkLpWp8ObKf
+	ks+NS8ENUg7QWMkO9u48W7OPFINtf0srmMJSsIVp4htll8dvBUpz6gyOUHGr5+5kDCRWxc
+	YO9HrAqPKgQ0+ZeSI6p9CFBR1XGTr+g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+References: <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
+In-Reply-To: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, Nov 17, 2024 at 09:34:53AM +0800, Stephen Zhang wrote:
-> Dave Chinner <david@fromorbit.com> 于2024年11月11日周一 10:04写道：
-> >
-> > On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
-> > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 20:15写道：
-> > > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
-> > > > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 11:32写道：
-> > > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
-> >
-> > [snip unnecessary stereotyping, accusations and repeated information]
-> >
-> > > > AFAICT, this "reserve AG space for inodes" behaviour that you are
-> > > > trying to acheive is effectively what the inode32 allocator already
-> > > > implements. By forcing inode allocation into the AGs below 1TB and
-> > > > preventing data from being allocated in those AGs until allocation
-> > > > in all the AGs above start failing, it effectively provides the same
-> > > > functionality but without the constraints of a global first fit
-> > > > allocation policy.
-> > > >
-> > > > We can do this with any AG by setting it up to prefer metadata,
-> > > > but given we already have the inode32 allocator we can run some
-> > > > tests to see if setting the metadata-preferred flag makes the
-> > > > existing allocation policies do what is needed.
-> > > >
-> > > > That is, mkfs a new 2TB filesystem with the same 344AG geometry as
-> > > > above, mount it with -o inode32 and run the workload that fragments
-> > > > all the free space. What we should see is that AGs in the upper TB
-> > > > of the filesystem should fill almost to full before any significant
-> > > > amount of allocation occurs in the AGs in the first TB of space.
-> >
-> > Have you performed this experiment yet?
-> >
-> > I did not ask it idly, and I certainly did not ask it with the intent
-> > that we might implement inode32 with AFs. It is fundamentally
-> > impossible to implement inode32 with the proposed AF feature.
-> >
-> > The inode32 policy -requires- top down data fill so that AG 0 is the
-> > *last to fill* with user data. The AF first-fit proposal guarantees
-> > bottom up fill where AG 0 is the *first to fill* with user data.
-> >
-> > For example:
-> >
-> > > So for the inode32 logarithm:
-> > > 1. I need to specify a preferred ag, like ag 0:
-> > > |----------------------------
-> > > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > > +----------------------------
-> > > 2. Someday space will be used up to 100%, Then we have to growfs to ag 7:
-> > > +------+------+------+------+------+------+------+------+
-> > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > > +------+------+------+------+------+------+------+------+
-> > > 3. specify another ag for inodes again.
-> > > 4. repeat 1-3.
-> >
-> > Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
-> > entire lower 1TB of the filesystem. Hence if we get to all AGs full
-> > the entire inode32 inode allocation space is full.
-> >
-> > Even if we grow the filesystem at this point, we still *cannot*
-> > allocate more inodes in the inode32 space. That space (AGs 0-1) is
-> > full even after the growfs.  Hence we will still give ENOSPC, and
-> > that is -correct behaviour- because the inode32 policy requires this
-> > behaviour.
-> >
-> > IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
-> > when the inode space is exhausted. Only physically moving data out
-> > of the lower AGs can fix that problem...
-> >
-> > > for the AF logarithm:
-> > >     mount -o af1=1 $dev $mnt
-> > > and we are done.
-> > > |<-----+ af 0 +----->|<af 1>|
-> > > |----------------------------
-> > > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > > +----------------------------
-> > > because the af is a relative number to ag_count, so when growfs, it will
-> > > become:
-> > > |<-----+ af 0 +--------------------------------->|<af 1>|
-> > > +------+------+------+------+------+------+------+------+
-> > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > > +------+------+------+------+------+------+------+------+
-> > > So just set it once, and run forever.
-> >
-> > That is actually the general solution to the original problem being
-> > reported. I realised this about half way through reading your
-> > original proposal. This is why I pointed out inode32 and the
-> > preferred metadata mechanism in the AG allocator policies.
-> >
-> > That is, a general solution should only require the highest AG
-> > to be marked as metadata preferred. Then -all- data allocation will
-> > then skip over the highest AG until there is no space left in any of
-> > the lower AGs. This behaviour will be enforced by the existing AG
-> > iteration allocation algorithms without any change being needed.
-> >
-> > Then when we grow the fs, we set the new highest AG to be metadata
-> > preferred, and that space will now be reserved for inodes until all
-> > other space is consumed.
-> >
-> > Do you now understand why I asked you to test whether the inode32
-> > mount option kept the data out of the lower AGs until the higher AGs
-> > were completely filled? It's because I wanted confirmation that the
-> > metadata preferred flag would do what we need to implement a
-> > general solution for the problematic workload.
-> >
+On Wed, Nov 20, 2024 at 05:39:19PM -0500, Kent Overstreet wrote:
+> On Wed, Nov 20, 2024 at 03:21:06PM -0700, Shuah Khan wrote:
+> > On 11/20/24 14:37, Shuah Khan wrote:
+> > > On 11/20/24 14:20, Kent Overstreet wrote:
+> > > > On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
+> > > > > On 11/20/24 13:34, Kent Overstreet wrote:
+> > > > > > On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
+> > > > > > > On 9/2/24 03:51, Kent Overstreet wrote:
+> > > > > > > > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> > > > > > > > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > > > > > > > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > > > > > > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+> > > > > > > > > > > [...]
+> > > > > > > > > > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+> > > > > > > > > > > > in the case of bugs, because that's going to be an improvement w.r.t.
+> > > > > > > > > > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
+> > > > > > > > > > > > something that we can't guarantee won't happen in the wild - we WARN()
+> > > > > > > > > > > > and try to handle the error as best we can.
+> > > > > > > > > > > 
+> > > > > > > > > > > We have discussed that in a different email thread. And I have to say
+> > > > > > > > > > > that I am not convinced that returning NULL makes a broken code much
+> > > > > > > > > > > better. Why? Because we can expect that broken NOFAIL users will not have a
+> > > > > > > > > > > error checking path. Even valid NOFAIL users will not have one because
+> > > > > > > > > > > they _know_ they do not have a different than retry for ever recovery
+> > > > > > > > > > > path.
+> > > > > > > > > > 
+> > > > > > > > > > You mean where I asked you for a link to the discussion and rationale
+> > > > > > > > > > you claimed had happened? Still waiting on that
+> > > > > > > > > 
+> > > > > > > > > I am not your assistent to be tasked and search through lore archives.
+> > > > > > > > > Find one if you need that.
+> > > > > > > > > 
+> > > > > > > > > Anyway, if you read the email and even tried to understand what is
+> > > > > > > > > written there rather than immediately started shouting a response then
+> > > > > > > > > you would have noticed I have put actual arguments here. You are free to
+> > > > > > > > > disagree with them and lay down your arguments. You have decided to
+> > > > > > > > > 
+> > > > > > > > > [...]
+> > > > > > > > > 
+> > > > > > > > > > Yeah, enough of this insanity.
+> > > > > > > > > 
+> > > > > > > > > so I do not think you are able to do that. Again...
+> > > > > > > > 
+> > > > > > > > Michal, if you think crashing processes is an acceptable alternative to
+> > > > > > > > error handling _you have no business writing kernel code_.
+> > > > > > > > 
+> > > > > > > > You have been stridently arguing for one bad idea after another, and
+> > > > > > > > it's an insult to those of us who do give a shit about writing reliable
+> > > > > > > > software.
+> > > > > > > > 
+> > > > > > > > You're arguing against basic precepts of kernel programming.
+> > > > > > > > 
+> > > > > > > > Get your head examined. And get the fuck out of here with this shit.
+> > > > > > > > 
+> > > > > > > 
+> > > > > > > Kent,
+> > > > > > > 
+> > > > > > > Using language like this is clearly unacceptable and violates the
+> > > > > > > Code of Conduct. This type of language doesn't promote respectful
+> > > > > > > and productive discussions and is detrimental to the health of the
+> > > > > > > community.
+> > > > > > > 
+> > > > > > > You should be well aware that this type of language and personal
+> > > > > > > attack is a clear violation of the Linux kernel Contributor Covenant
+> > > > > > > Code of Conduct as outlined in the following:
+> > > > > > > 
+> > > > > > > https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+> > > > > > > 
+> > > > > > > Refer to the Code of Conduct and refrain from violating the Code of
+> > > > > > > Conduct in the future.
+> > > > > > 
+> > > > > > I believe Michal and I have more or less worked this out privately (and
+> > > > > > you guys have been copied on that as well).
+> > > > > 
+> > > > > Thank you for updating us on the behind the scenes work between you
+> > > > > and Michal.
+> > > > > 
+> > > > > I will make one correction to your statement, "you guys have been copied on
+> > > > > that as well" - which is inaccurate. You have shared your email exchanges
+> > > > > with Michal with us to let us know that the issue has been sorted out.
+> > > > 
+> > > > That seems to be what I just said.
+> > > > 
+> > > > > You might have your reasons and concerns about the direction of the code
+> > > > > and design that pertains to the discussion in this email thread. You might
+> > > > > have your reasons for expressing your frustration. However, those need to be
+> > > > > worked out as separate from this Code of Conduct violation.
+> > > > > 
+> > > > > In the case of unacceptable behaviors as defined in the Code of Conduct
+> > > > > document, the process is to work towards restoring productive and
+> > > > > respectful discussions. It is reasonable to ask for an apology to help
+> > > > > us get to the goal as soon as possible.
+> > > > > 
+> > > > > I urge you once again to apologize for using language that negatively impacts
+> > > > > productive discussions.
+> > > > 
+> > > > Shuah, I'd be happy to give you that after the discussion I suggested.
+> > > > Failing that, I urge you to stick to what we agreed to last night.
+> > The only thing we agreed upon is that you would respond the thread
+> > to update your sorting things out with Michal.
 > 
-> Hi, I have tested the inode32 mount option. To my suprise, the inode32
-> or the metadata preferred structure (will be referred to as inode32 for the
-> rest reply) doesn't implement the desired behavior as the AF rule[1] does:
->         Lower AFs/AGs will do anything they can for allocation before going
-> to HIGHER/RESERVED AFs/AGS. [1]
+> ...Shall I quote you?
+> 
+> > 
+> > As for the discussion, I will repeat what I said in our conversation
+> > that the discussion will be lot more productive after making amends
+> > with the community. I stand by that assessment.
+> > 
+> > I will also repeat what I said that the discussion and debate is
+> > outside the scope of the current issue the Code of Conduct Committee
+> > is trying to resolve.
+> > 
+> > I didn't pick up on your desire to apologize after the discussion in
+> > our conversation.
+> > 
+> > Are you saying you will be happy to make amends with an apology after
+> > the discussion and debate?
+> 
+> Look, I just want to be done with this, so let me lay it all out as I
+> see it, starting from the beginning of where things went off the rails
+> between myself and Michal:
+> 
+> Michal's (as well as Steve's) behaviour in the memory allocation
+> profiling review process was, in my view, unacceptable (this included
+> such things as crashing our LSF presentation with ideas they'd come up
+> with that morning, and persistent dismissive axegrinding on the list).
+> The project was nearly killed because of his inability to listen to the
+> reasons for a design and being stubbornly stuck on his right to be heard
+> as the maintainer.
+> 
+> In my view, being a good maintainer has a lot more to do with
+> stewardship and leadership, than stubbornly insisting for - whatever
+> that was. In any event, that was where I came to the conclusion "I just
+> cannot work that guy".
+> 
+> Next up, PF_MEMALLOC_NORECLAIM over Michal's nack - I was wrong there, I
+> only did it because it really seemed to me that Michal was axe grinding
+> against _anything_ I was posting, but I still shouldn't have and that
+> was more serious infraction in my view; that sort of thing causes a real
+> loss of trust, and no I will not do it again.
+> 
+> The subsequent PF_MEMALLOC_NORECLAIM discussion was such a trainwreck
+> that I don't think I will go into it. Except to say that yes, if it
+> makes you happy, I shouldn't have used that language and I won't do it
+> again.
+> 
+> But I do have to call out you, the CoC board's behaviour, and I think
+> that ony fair since you call out other people's behaviour publically.
+> 
+> Greg's behaviour when he approached me at Plumbers was beyond
+> unprofessional, and since it wasn't exactly public and you guys have
+> already heard about it privately I won't repeat exactly what happened,
+> but it is an issue.
+> 
+> Shuah, you weren't much better.
+> 
+> There were concerns raised in the recent CoC enforcement thread, by
+> someone with experience in such matters, that your aproach seemed
+> extremeely heavy handed and I find myself in 100% agreement.
+> 
+> The approach you take is that of a bad HR department: all about image,
+> no understanding. When tensions arise, it's important get to the bottom
+> of things, to at least try to take the time to listen with an open mind.
+> People have real frustrations, and it's amazing what you can learn and
+> what you can accomplish by having real conversations.
+> 
+> But that's not what you guys do: you say "Ok, if someone's being too
+> much of an asshole, we'll just be an even bigger asshole!".
+> 
+> No. Cut that out.
+> 
+> I've done the hard work of stepping in and building bridges when
+> relations have broken down (on quite a large scale), so I'm offended by
+> what you guys do.
 
-This isn't important or relevant to the experiment I asked you to
-perform and report the results of.
+Now, I've said two things I'll do differently, or not do in the future.
 
-I asked you to observe and report the filesystem fill pattern in
-your environment when metadata preferred AGs are enabled. It isn't
-important whether inode32 exactly solves your problem, what I want
-to know is whether the underlying mechanism has sufficient control
-to provide a general solution that is always enabled.
+Michal, would you be willing to consider changing your approach a bit in
+similar situations? Try to lead a little bit less by "I'm the mainainer,
+my concerns must be addressed" and a little bit more by incorporating
+the best of everyone's ideas, and showing respect to others who have
+studied their problems, as you want to be respected as maintainer?
 
-This is foundational engineering process: check your hypothesis work
-as you expect before building more stuff on top of them. i.e.
-perform experiments to confirm your ideas will work before doing
-anything else.
+Shuah, would you be willing to entertain the notion of modifying your
+approach a bit as well? More in the direction of genuine conversations
+and understanding, less of just following a process and slapping people
+if they don't comply?
 
-If you answer a request for an experiment to be run with "theory
-tells me it won't work" then you haven't understood why you were
-asked to run an experiment in the first place.
-
-If you can't run requested experiments or don't understand why an
-expert might be asking for that experiment to be run, then say so.
-I can explain in more detail, but I don't like to waste time on
-ideas that I can't confirm have a solid basis in reality...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+We've got people in the community who are good at this sort of thing,
+and might be willing to help if they were asked - it doesn't have to
+just be you guys, and if we started encouraging this sort of thing it
+could be a real learning experience for everyone.
 
