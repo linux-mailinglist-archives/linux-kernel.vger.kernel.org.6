@@ -1,115 +1,258 @@
-Return-Path: <linux-kernel+bounces-415463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A85919D3699
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:15:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2399D369E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:15:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C92A285F4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E738B25DF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B2219C561;
-	Wed, 20 Nov 2024 09:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D88415DBBA;
+	Wed, 20 Nov 2024 09:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZNIwuK88";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="q6xhrnB7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7FD1953BB;
-	Wed, 20 Nov 2024 09:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JMQAfQU2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5141918A956;
+	Wed, 20 Nov 2024 09:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094104; cv=none; b=kjvAT2O21HvC/ge7Cduj8pu0pVu04Iyrvgyy4IPkQUF0NrNy8bcJJUtDWQa2xmBunbBBfNfya3Ea7YzJRl09rMNya9hYLeO2OTKo17vDfj6EQYlDk93xJm3SBcxMjjYmj8IWT7OONrIaVY/QaZh6bYZXGSgXI8Xb6YE9H0S26RA=
+	t=1732094133; cv=none; b=BhbWRBA3HNcY2Fub4rbSRdwm+fiqPrTm7yn5A3LaW/No0QDyKRtN6cf1QUI4Dp+kvRNrc1KY997AAV/xiE/gCpOsEYATtS5Vxk5t9LVeIqEtWVB8zMeOLs4UBAkyKGnuct8sVIVtIZUHqJ6nOR5VQ4KuHenfp5uZvNj5wDwRnBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094104; c=relaxed/simple;
-	bh=1AqMwBd2fwyT0PJ1aufpv7qtkxrCYGdSVyFzcWGPUSA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b4toi+uzE5jbragG2MoCREjDmzIjDasgEFkf6BR8xP9b/8Z6fhJ7o7V5zR1ciYbrP+1BzPoH3rN3KGWq5Jwu31afNMIiNuCBXDgLtqYvANKR7oCXoSPzFCBKn0KIyfKIfzzH719PbOUjhHplUx7EmMHsqXdRXK/YFXLuc4+tPKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZNIwuK88; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=q6xhrnB7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732094100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qUaoUu58p2ei5u53XgN4KnMyMyGd6RlLfof/fQPZE84=;
-	b=ZNIwuK88dMFIWC8wSIf0aVTNzXeGUXLUC+gljr89+H+QAi0aQFZWNMwu6TAWym/7Wvfv6/
-	AavMBIufDy5Row6FcGF//7BYyo7jaZqDGDpO812O+H8ZuLAAdKGARm7ahCFrAPU1skjmW+
-	ymsBHUR1s2bfO8PR8V60xceAONg87pN9bDE5xwfLx7xFWE3z1Ctacphqa9AMRxSfXUQT2S
-	Gtqydpmu37Rf/HWBlTOP7VLX8Ns1HAM5SKEQmlD937j6p+bbR9CcU2y3sSOrtwUOdufOAN
-	+bFUNgO8UN3KoYM6Jf1skX+qlI5boZvQwyTnlqwAtgnreQubelul8eSyvZXkcQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732094100;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qUaoUu58p2ei5u53XgN4KnMyMyGd6RlLfof/fQPZE84=;
-	b=q6xhrnB730/spkq4OzzNB48+6IpzX0nb9L0558CGOnFrZ7LweF4iXUUXAajjNIVf0qv9Gg
-	P1Yz438Lee8xO7CA==
-Date: Wed, 20 Nov 2024 10:14:07 +0100
-Subject: [PATCH] selinux: explicitly clean generated av_permissions.h
+	s=arc-20240116; t=1732094133; c=relaxed/simple;
+	bh=wSe5QddiVgQxNOaD6oGwRFNMnEIo8FZcNh+SbeJBrug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XLjVJUI7CeiorZZLYncdD3uS72JDKw+/sDCdvpYd9Njv+WDlTFoKNDAQbk8/y4LalwGY+GkE9X0osSt4L9VcSq7L4MmTq6hfW7vwVaW+35Oc9X8jGXHI5YQiDJdGizoFaxsT4CDW8p+0FKWq6cI+2eUhFg8MlsgTdGVPYVoF3ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JMQAfQU2; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ioayO
+	sAWaQXmu+VuhRxkOmZDwOakxhPl3mb+f0DnSqY=; b=JMQAfQU2Kkhazo58QUg5V
+	Bp5NuLGcBxS0EC4UocZZcNL6PGLfzJYtrRRWmiVAXH9s0OCsIb+v3qyA0dKOXqn6
+	8YNO6icsZdSEOu1glFndytI0MZO2YWvdUR1pne2BOMntcHdf+kjmz8vPPXu/b8St
+	hed//LedJ18c2huz7eOOTw=
+Received: from localhost.localdomain (unknown [111.35.191.191])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDn1tSNqD1nifurIg--.60055S4;
+	Wed, 20 Nov 2024 17:15:10 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: kees@kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	geert@linux-m68k.org,
+	David Wang <00107082@163.com>
+Subject: [PATCH 1/3] gpio: Fix a potential abuse of seq_printf() format string
+Date: Wed, 20 Nov 2024 17:14:51 +0800
+Message-Id: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAF6oPWcC/x3MQQqAIBBA0avErBtQE4KuEi1MxxoQC6UQxLsnL
- d/i/wqZElOGZaiQ6OXMV+yQ4wD2NPEgZNcNSigtpRKYKXB8CtpAJqLz1gmazaT1Dr25E3ku/2/
- dWvsAd0QQ4V8AAAA=
-X-Change-ID: 20241120-selinux-clean-dfcd0e7a344b
-To: Paul Moore <paul@paul-moore.com>, 
- Stephen Smalley <stephen.smalley.work@gmail.com>, 
- Ondrej Mosnacek <omosnace@redhat.com>, 
- Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, 
- Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
- selinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732094098; l=1017;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=1AqMwBd2fwyT0PJ1aufpv7qtkxrCYGdSVyFzcWGPUSA=;
- b=hJegPWxCYL19dK/A3bdGcHvZDa2ZCb0G0ux8MxYfF0sWVfGH03wj6TaFYygAuForlBzEBMxa+
- V9AHgS73VzLBVEzXPpGDXvrW4O+D80oCVmLETrvEiwZTNzDwTGpZ+UI
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+X-CM-TRANSID:_____wDn1tSNqD1nifurIg--.60055S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW3WFy8XF1UuF1DXw1UXrWUArb_yoW3Xr1UpF
+	yYvFy8Ar4DJF1YqFyUAan7Za4Yk3WayFW2gF1Sk34fZr1UtrZrKFW7tFWxZFs0qry8Zr4a
+	vr4qgFyUGF18Zw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p__-BDUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/xtbB0hKdqmc9pPVwvgAAsy
 
-av_permissions.h is not declared as a target and therefore won't be
-added to clean-files automatically by kbuild.
-For details why it is not a target see the Makefile itself.
+Using device name as format string of seq_printf() is prone to
+"Format string attack", opens possibility for exploitation.
+Seq_puts() is safer and more efficient.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: David Wang <00107082@163.com>
 ---
- security/selinux/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpio/gpio-aspeed-sgpio.c | 2 +-
+ drivers/gpio/gpio-aspeed.c       | 2 +-
+ drivers/gpio/gpio-ep93xx.c       | 2 +-
+ drivers/gpio/gpio-hlwd.c         | 2 +-
+ drivers/gpio/gpio-mlxbf2.c       | 2 +-
+ drivers/gpio/gpio-omap.c         | 2 +-
+ drivers/gpio/gpio-pca953x.c      | 2 +-
+ drivers/gpio/gpio-pl061.c        | 2 +-
+ drivers/gpio/gpio-tegra.c        | 2 +-
+ drivers/gpio/gpio-tegra186.c     | 2 +-
+ drivers/gpio/gpio-tqmx86.c       | 2 +-
+ drivers/gpio/gpio-visconti.c     | 2 +-
+ drivers/gpio/gpio-xgs-iproc.c    | 2 +-
+ 13 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-index 86f0575f670da66a9dc57e13a236d6a5551af38e..58129a7c8cfa08f9caf5444f7df776f41056b77a 100644
---- a/security/selinux/Makefile
-+++ b/security/selinux/Makefile
-@@ -41,5 +41,8 @@ targets += flask.h
- $(obj)/flask.h: $(obj)/genheaders FORCE
- 	$(call if_changed,genhdrs)
+diff --git a/drivers/gpio/gpio-aspeed-sgpio.c b/drivers/gpio/gpio-aspeed-sgpio.c
+index 72755fee6478..34eb26298e32 100644
+--- a/drivers/gpio/gpio-aspeed-sgpio.c
++++ b/drivers/gpio/gpio-aspeed-sgpio.c
+@@ -420,7 +420,7 @@ static void aspeed_sgpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	int offset;
  
-+# see the note above, remove this line
-+clean-files += av_permissions.h
-+
- hostprogs := genheaders
- HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-
----
-base-commit: bf9aa14fc523d2763fc9a10672a709224e8fcaf4
-change-id: 20241120-selinux-clean-dfcd0e7a344b
-
-Best regards,
+ 	irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
+-	seq_printf(p, dev_name(gpio->dev));
++	seq_puts(p, dev_name(gpio->dev));
+ }
+ 
+ static const struct irq_chip aspeed_sgpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index ea40ad43a79b..7f3292d9f016 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -1102,7 +1102,7 @@ static void aspeed_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	if (rc)
+ 		return;
+ 
+-	seq_printf(p, dev_name(gpio->dev));
++	seq_puts(p, dev_name(gpio->dev));
+ }
+ 
+ static const struct irq_chip aspeed_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
+index ab798c848215..58d2464c07bc 100644
+--- a/drivers/gpio/gpio-ep93xx.c
++++ b/drivers/gpio/gpio-ep93xx.c
+@@ -249,7 +249,7 @@ static void ep93xx_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+ 
+-	seq_printf(p, dev_name(gc->parent));
++	seq_puts(p, dev_name(gc->parent));
+ }
+ 
+ static const struct irq_chip gpio_eic_irq_chip = {
+diff --git a/drivers/gpio/gpio-hlwd.c b/drivers/gpio/gpio-hlwd.c
+index 1bcfc1835dae..0580f6712bea 100644
+--- a/drivers/gpio/gpio-hlwd.c
++++ b/drivers/gpio/gpio-hlwd.c
+@@ -210,7 +210,7 @@ static void hlwd_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ 	struct hlwd_gpio *hlwd =
+ 		gpiochip_get_data(irq_data_get_irq_chip_data(data));
+ 
+-	seq_printf(p, dev_name(hlwd->dev));
++	seq_puts(p, dev_name(hlwd->dev));
+ }
+ 
+ static const struct irq_chip hlwd_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
+index 6abe01bc39c3..6f3dda6b635f 100644
+--- a/drivers/gpio/gpio-mlxbf2.c
++++ b/drivers/gpio/gpio-mlxbf2.c
+@@ -331,7 +331,7 @@ static void mlxbf2_gpio_irq_print_chip(struct irq_data *irqd,
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(irqd);
+ 	struct mlxbf2_gpio_context *gs = gpiochip_get_data(gc);
+ 
+-	seq_printf(p, dev_name(gs->dev));
++	seq_puts(p, dev_name(gs->dev));
+ }
+ 
+ static const struct irq_chip mlxbf2_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 76d5d87e9681..279524b640ae 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -715,7 +715,7 @@ static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+ 
+-	seq_printf(p, dev_name(bank->dev));
++	seq_puts(p, dev_name(bank->dev));
+ }
+ 
+ static const struct irq_chip omap_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 3f2d33ee20cc..272febc3230e 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -815,7 +815,7 @@ static void pca953x_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+ 
+-	seq_printf(p, dev_name(gc->parent));
++	seq_puts(p, dev_name(gc->parent));
+ }
+ 
+ static const struct irq_chip pca953x_irq_chip = {
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index a211a02d4b4a..1c273727ffa3 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -291,7 +291,7 @@ static void pl061_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+ 
+-	seq_printf(p, dev_name(gc->parent));
++	seq_puts(p, dev_name(gc->parent));
+ }
+ 
+ static const struct irq_chip pl061_irq_chip = {
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 6d3a39a03f58..9ad286adf263 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -600,7 +600,7 @@ static void tegra_gpio_irq_print_chip(struct irq_data *d, struct seq_file *s)
+ {
+ 	struct gpio_chip *chip = irq_data_get_irq_chip_data(d);
+ 
+-	seq_printf(s, dev_name(chip->parent));
++	seq_puts(s, dev_name(chip->parent));
+ }
+ 
+ static const struct irq_chip tegra_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 1ecb733a5e88..6895b65c86af 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -610,7 +610,7 @@ static void tegra186_irq_print_chip(struct irq_data *data, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
+ 
+-	seq_printf(p, dev_name(gc->parent));
++	seq_puts(p, dev_name(gc->parent));
+ }
+ 
+ static const struct irq_chip tegra186_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
+index f2e7e8754d95..5e26eb3adabb 100644
+--- a/drivers/gpio/gpio-tqmx86.c
++++ b/drivers/gpio/gpio-tqmx86.c
+@@ -275,7 +275,7 @@ static void tqmx86_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ {
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 
+-	seq_printf(p, gc->label);
++	seq_puts(p, gc->label);
+ }
+ 
+ static const struct irq_chip tqmx86_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-visconti.c b/drivers/gpio/gpio-visconti.c
+index ebc71ecdb6cf..5bd965c18a46 100644
+--- a/drivers/gpio/gpio-visconti.c
++++ b/drivers/gpio/gpio-visconti.c
+@@ -142,7 +142,7 @@ static void visconti_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct visconti_gpio *priv = gpiochip_get_data(gc);
+ 
+-	seq_printf(p, dev_name(priv->dev));
++	seq_puts(p, dev_name(priv->dev));
+ }
+ 
+ static const struct irq_chip visconti_gpio_irq_chip = {
+diff --git a/drivers/gpio/gpio-xgs-iproc.c b/drivers/gpio/gpio-xgs-iproc.c
+index d445eea03687..e9390f136b3c 100644
+--- a/drivers/gpio/gpio-xgs-iproc.c
++++ b/drivers/gpio/gpio-xgs-iproc.c
+@@ -198,7 +198,7 @@ static void iproc_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+ 	struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+ 	struct iproc_gpio_chip *chip = to_iproc_gpio(gc);
+ 
+-	seq_printf(p, dev_name(chip->dev));
++	seq_puts(p, dev_name(chip->dev));
+ }
+ 
+ static const struct irq_chip iproc_gpio_irq_chip = {
 -- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+2.39.2
 
 
