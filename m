@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-415201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67CB09D32DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:04:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEF19D32DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213941F2383C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:04:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3982842F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86F0156F39;
-	Wed, 20 Nov 2024 04:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOjHkX1l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08129157495;
+	Wed, 20 Nov 2024 04:15:27 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FC373176;
-	Wed, 20 Nov 2024 04:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2374E40BE5;
+	Wed, 20 Nov 2024 04:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732075440; cv=none; b=RkSmbe5yXU1HWGR6eKd/c+PJbFu5i4H5GrC38kUY4HDi61exFDLgrMDQTMlmHKPewlOQEh8pTRmLid8aPB5tbb+imy3C2xDMLzZcsl1SlBAqcGUX1x+sJYymcPZ2PCx1hp/GJfM1AUra/nRjJ/EM1SG2KCyFp0cq2FLw628TKz0=
+	t=1732076126; cv=none; b=CxfKxCyfCSfaksxcRQo5w6dk/UGqjwbPymWgf6wTXIRfNg8ut6Tjj03vBJ2C0Z1uxYAC/roX7wh/nd3it0pqE311yqrCdlufsHvaqya2QK7ULwdoaVHOsJuUSu1wZ8JfYUQjdruGLKZc5b71XVFTr9ioUWeWtJtCeFrwaS+TyAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732075440; c=relaxed/simple;
-	bh=r41Eb+fJ3uIywp8te8U4WHM8WHp7sJWz+VL8aPrV7nA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XmeJ/ZZSI9N2VMgzeJeI4JsS/46iH9H1vCubjHvAp7pncPz1EuywxHFzC/tA2hZHwagAF6BEJbRWLHsYodCEkOI4cq3HGEclogGffetgkAxs3fkAfWYQI4QiczG1jJ+T+neey3+l2i61lShJiE9oTE8HYOqhK0wTUJU/94JSjLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOjHkX1l; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732075438; x=1763611438;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r41Eb+fJ3uIywp8te8U4WHM8WHp7sJWz+VL8aPrV7nA=;
-  b=QOjHkX1lcMKxu0beETiggI9lEI9di234F+9PZMpvNG+rjzAOXoUowxkH
-   iZKSQ3qRt+RZKgKGKTPzVFA4bOSzE5fjGYkwCTDtrLKoUnvVbYai5K8yM
-   7eQyphlh6WkrYODsPDxJfDKnZD4KxL3/tJYBYZ/g0JdFX+e+pJvHLY7yK
-   HtfLnhexOdm5Gw+TvJKUCSzxYe5Z8m0caVHD7ht9ZARKSMabQ0UkOmP5h
-   xVaeA5cPFHFXu1dPyTIxQUP70ptBaZHP9BiDWIHaXX58xNfkSq0ZhM6qk
-   kSaVg/2pAPBBf6jPiUKU+LtX/fLbjeUg+WpIcs98QBRhM6Jp2A4IFlB30
-   A==;
-X-CSE-ConnectionGUID: rahOZsykToeqMGuthCgDfQ==
-X-CSE-MsgGUID: nsl/syGFSK6YfHrBC7Cy2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="36024545"
-X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
-   d="scan'208";a="36024545"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 20:03:57 -0800
-X-CSE-ConnectionGUID: sXZrxEyUSTSoSVppd524cg==
-X-CSE-MsgGUID: QFNulvvjSR6eI60JKfRu9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
-   d="scan'208";a="94243691"
-Received: from shiningy-mobl1.ccr.corp.intel.com (HELO [10.124.227.33]) ([10.124.227.33])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 20:03:51 -0800
-Message-ID: <6fc71b3c-fbc1-4fb8-9692-f85d3166a68f@linux.intel.com>
-Date: Wed, 20 Nov 2024 12:03:49 +0800
+	s=arc-20240116; t=1732076126; c=relaxed/simple;
+	bh=qt2aGpe/ZKwPmKb1YE5dtUUieqz+F7tO6qvYmjfTNz0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gSj2b77btsDOStBy+hPhr+vuDOx0eCq1LoNJnnxaJt0e/jeQV0wN2LEjPNOonIfYKF8mKbCrsIlZHUYJaKO3qY0A+GRIXm1lqnxa+u0/tpJYUy0txN2wLrvf4DZQtYHseA2v21cmmXB8Os7IUee8qTpH8wI7T4UuDqq4+mUCVKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XtShN6wdFz1yp5c;
+	Wed, 20 Nov 2024 12:15:32 +0800 (CST)
+Received: from kwepemf200016.china.huawei.com (unknown [7.202.181.9])
+	by mail.maildlp.com (Postfix) with ESMTPS id 16E0D1A0188;
+	Wed, 20 Nov 2024 12:15:20 +0800 (CST)
+Received: from [10.108.234.194] (10.108.234.194) by
+ kwepemf200016.china.huawei.com (7.202.181.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 20 Nov 2024 12:15:18 +0800
+Message-ID: <f7cc4ce1-9c20-4a5b-8a66-69b1f00a7776@huawei.com>
+Date: Wed, 20 Nov 2024 12:15:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,74 +47,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] KVM: Introduce KVM_EXIT_COCO exit type
-To: Michael Roth <michael.roth@amd.com>
-Cc: Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, x86@kernel.org,
- pbonzini@redhat.com, jroedel@suse.de, thomas.lendacky@amd.com,
- pgonda@google.com, ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com,
- liam.merwick@oracle.com, Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "Peng, Chao P" <chao.p.peng@intel.com>
-References: <20240621134041.3170480-1-michael.roth@amd.com>
- <20240621134041.3170480-5-michael.roth@amd.com> <ZnwkMyy1kgu0dFdv@google.com>
- <r3tffokfww4yaytdfunj5kfy2aqqcsxp7sm3ga7wdytgyb3vnz@pfmstnvtuyg2>
- <Zn8YM-s0TRUk-6T-@google.com>
- <r7wqzejwpcvmys6jx7qcio2r6wvxfiideniqmwv5tohbohnvzu@6stwuvmnrkpo>
- <f8dfeab2-e5f2-4df6-9406-0aff36afc08a@linux.intel.com>
- <20241119135327.zjxlczjbli3wdo5o@amd.com>
+Subject: Re: [PATCH v2 1/3] vfs: support caching symlink lengths in inodes
+To: Mateusz Guzik <mjguzik@gmail.com>, <brauner@kernel.org>
+CC: <viro@zeniv.linux.org.uk>, <jack@suse.cz>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <hughd@google.com>,
+	<linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <linux-mm@kvack.org>
+References: <20241119094555.660666-1-mjguzik@gmail.com>
+ <20241119094555.660666-2-mjguzik@gmail.com>
 Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20241119135327.zjxlczjbli3wdo5o@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "wangjianjian (C)" <wangjianjian3@huawei.com>
+In-Reply-To: <20241119094555.660666-2-mjguzik@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf200016.china.huawei.com (7.202.181.9)
 
+On 2024/11/19 17:45, Mateusz Guzik wrote:
+> When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
+> speed up when issuing readlink on /initrd.img on ext4.
+> 
+> Filesystems opt in by calling inode_set_cached_link() when creating an
+> inode.
+> 
+> The size is stored in what used to be a 4-byte hole. If necessary the
+> field can be made smaller and converted into a union with something not
+> used with symlinks.
+> 
+> Churn-wise the current readlink_copy() helper is patched to accept the
+> size instead of calculating it.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+>   fs/namei.c                     | 34 +++++++++++++++++++---------------
+>   fs/proc/namespaces.c           |  2 +-
+>   include/linux/fs.h             | 12 ++++++++++--
+>   security/apparmor/apparmorfs.c |  2 +-
+>   4 files changed, 31 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 9d30c7aa9aa6..e56c29a22d26 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -5272,19 +5272,16 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
+>   				getname(newname), 0);
+>   }
+>   
+> -int readlink_copy(char __user *buffer, int buflen, const char *link)
+> +int readlink_copy(char __user *buffer, int buflen, const char *link, int linklen)
+>   {
+> -	int len = PTR_ERR(link);
+> -	if (IS_ERR(link))
+> -		goto out;
+> +	int copylen;
+>   
+> -	len = strlen(link);
+> -	if (len > (unsigned) buflen)
+> -		len = buflen;
+> -	if (copy_to_user(buffer, link, len))
+> -		len = -EFAULT;
+> -out:
+> -	return len;
+> +	copylen = linklen;
+> +	if (unlikely(copylen > (unsigned) buflen))
+> +		copylen = buflen;
+> +	if (copy_to_user(buffer, link, copylen))
+> +		copylen = -EFAULT;
+> +	return copylen;
+>   }
+>   
+>   /**
+> @@ -5304,6 +5301,9 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+>   	const char *link;
+>   	int res;
+>   
+> +	if (inode->i_opflags & IOP_CACHED_LINK)
+> +		return readlink_copy(buffer, buflen, inode->i_link, inode->i_linklen);
+> +
+>   	if (unlikely(!(inode->i_opflags & IOP_DEFAULT_READLINK))) {
+>   		if (unlikely(inode->i_op->readlink))
+>   			return inode->i_op->readlink(dentry, buffer, buflen);
+> @@ -5322,7 +5322,7 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+>   		if (IS_ERR(link))
+>   			return PTR_ERR(link);
+>   	}
+> -	res = readlink_copy(buffer, buflen, link);
+> +	res = readlink_copy(buffer, buflen, link, strlen(link));
+>   	do_delayed_call(&done);
+>   	return res;
+>   }
+> @@ -5391,10 +5391,14 @@ EXPORT_SYMBOL(page_put_link);
+>   
+>   int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+>   {
+> +	const char *link;
+> +	int res;
+> +
+>   	DEFINE_DELAYED_CALL(done);
+> -	int res = readlink_copy(buffer, buflen,
+> -				page_get_link(dentry, d_inode(dentry),
+> -					      &done));
+> +	link = page_get_link(dentry, d_inode(dentry), &done);
+> +	res = PTR_ERR(link);
+> +	if (!IS_ERR(link))
+> +		res = readlink_copy(buffer, buflen, link, strlen(link));
+>   	do_delayed_call(&done);
+>   	return res;
+>   }
+> diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
+> index 8e159fc78c0a..c610224faf10 100644
+> --- a/fs/proc/namespaces.c
+> +++ b/fs/proc/namespaces.c
+> @@ -83,7 +83,7 @@ static int proc_ns_readlink(struct dentry *dentry, char __user *buffer, int bufl
+>   	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
+>   		res = ns_get_name(name, sizeof(name), task, ns_ops);
+>   		if (res >= 0)
+> -			res = readlink_copy(buffer, buflen, name);
+> +			res = readlink_copy(buffer, buflen, name, strlen(name));
+>   	}
+>   	put_task_struct(task);
+>   	return res;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 972147da71f9..30e332fb399d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -626,6 +626,7 @@ is_uncached_acl(struct posix_acl *acl)
+>   #define IOP_XATTR	0x0008
+>   #define IOP_DEFAULT_READLINK	0x0010
+>   #define IOP_MGTIME	0x0020
+> +#define IOP_CACHED_LINK	0x0040
+>   
+>   /*
+>    * Keep mostly read-only and often accessed (especially for
+> @@ -686,7 +687,7 @@ struct inode {
+>   
+>   	/* Misc */
+>   	u32			i_state;
+> -	/* 32-bit hole */
+> +	int			i_linklen;	/* for symlinks */
+>   	struct rw_semaphore	i_rwsem;
+>   
+>   	unsigned long		dirtied_when;	/* jiffies of first dirtying */
+> @@ -749,6 +750,13 @@ struct inode {
+>   	void			*i_private; /* fs or device private pointer */
+>   } __randomize_layout;
+>   
+> +static inline void inode_set_cached_link(struct inode *inode, char *link, int linklen)
+> +{
+> +	inode->i_link = link;
+> +	inode->i_linklen = linklen;
+Just curious, is this linklen equal to inode size? if it is, why don't 
+use it?
+> +	inode->i_opflags |= IOP_CACHED_LINK;
+> +}
+> +
+>   /*
+>    * Get bit address from inode->i_state to use with wait_var_event()
+>    * infrastructre.
+> @@ -3351,7 +3359,7 @@ extern const struct file_operations generic_ro_fops;
+>   
+>   #define special_file(m) (S_ISCHR(m)||S_ISBLK(m)||S_ISFIFO(m)||S_ISSOCK(m))
+>   
+> -extern int readlink_copy(char __user *, int, const char *);
+> +extern int readlink_copy(char __user *, int, const char *, int);
+>   extern int page_readlink(struct dentry *, char __user *, int);
+>   extern const char *page_get_link(struct dentry *, struct inode *,
+>   				 struct delayed_call *);
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 01b923d97a44..60959cfba672 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -2611,7 +2611,7 @@ static int policy_readlink(struct dentry *dentry, char __user *buffer,
+>   	res = snprintf(name, sizeof(name), "%s:[%lu]", AAFS_NAME,
+>   		       d_inode(dentry)->i_ino);
+>   	if (res > 0 && res < sizeof(name))
+> -		res = readlink_copy(buffer, buflen, name);
+> +		res = readlink_copy(buffer, buflen, name, strlen(name));
+>   	else
+>   		res = -ENOENT;
+>   
+-- 
+Regards
 
-
-
-On 11/19/2024 9:53 PM, Michael Roth wrote:
-[...]
-> A few weeks back we discussed during the PUCK call on whether it makes
-> sense for use a common exit type for REQ_CERTS and TDX_GET_QUOTE, and
-> due to the asynchronous/polling nature of TDX_GET_QUOTE, and the
-> somewhat-particular file-locking requirements that need to be built into
-> the REQ_CERTS handling, we'd decided that it's probably more trouble
-> than it's worth to try to merge the 2.
->
-> However, I'm still hoping that KVM_EXIT_COCO might still provide some
-> useful infrastructure for introducing something like
-> KVM_EXIT_COCO_GET_QUOTE that implements the TDX-specific requirements
-> more directly.
-I am not sure it benefits much.
-Since the handling codes of REQ_CERTS and  TDX_GET_QUOTE in userspace are
-quite different, i.e., there will be little common code to reuse, but it
-requires KVM to convert the error code from the KVM_EXIT_COCO version to
-vendor specific versions.
-
-
->
-> I've just submitted v2 of KVM_EXIT_COCO where the userspace-provided
-> error codes are reworked to be less dependent on specific spec-defined
-> values but instead relies on standard error codes that KVM can provide
-> special handling for internally when needed:
->
->    https://lore.kernel.org/kvm/20241119133513.3612633-1-michael.roth@amd.com/
->
-> But I suppose in your case userspace would just return "SUCCESS"/0 and
-According to GHCI spec, besides "TDG.VP.VMCALL_SUCCESS", there are two more
-error codes "TDG.VP.VMCALL_RETRY" and "TDG.VP.VMCALL_INVALID_OPERAND".
-"TDG.VP.VMCALL_RETRY" could cover EAGAIN.
-"TDG.VP.VMCALL_INVALID_OPERAND" could be used to cover the other errors
-returned, i.e., EIO and ENOSPC according to your proposal in v2.
-
-> then all the vendor-specific values are mainly in relation to the
-> "Status Code" field so it likely doesn't make a huge difference as far
-> as what userspace passes back to KVM.
->
-> Thanks,
->
-> Mike
->
-[...]
 
