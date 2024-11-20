@@ -1,91 +1,82 @@
-Return-Path: <linux-kernel+bounces-416231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59A79D4250
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:00:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5049D4252
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:02:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A201F23CAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:00:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43EF2830D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FDF1BBBE0;
-	Wed, 20 Nov 2024 18:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C631953AD;
+	Wed, 20 Nov 2024 19:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gsyw3BuN"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2042.outbound.protection.outlook.com [40.107.95.42])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="eJamJMqS"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11022128.outbound.protection.outlook.com [52.101.43.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184AB13C83D;
-	Wed, 20 Nov 2024 18:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A388D13AA35;
+	Wed, 20 Nov 2024 19:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.128
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732129176; cv=fail; b=QkIno7dEfAjMbo12x97XxfJDAHJROSDLxImmG86Pff2pafp9puWTqD80vpKIVaZfW+gExy72u6K7eYRIBYkhsEvUWAbCeRqdxdljXq9vMHm95h2Ng9c+csaK6OlZgGinh5fSeieY8RukJgEcv0/LitFSjrASapmMBV3ULiXuedY=
+	t=1732129350; cv=fail; b=NCc/0J9HQMJgwbMTXHwBRx5eo7btTeJHsGE/PaWX/45StWK2js4w4a1dg/FbQzNZOX3mojzJtA/NFPLqjBWzngD6yy2NWIEj6mUZoutJ7609fQvZ6MpDjaErREu4e5zL6adCPf5NvTu1GvykZKpYTJU6e2QW3fGBI9ryGtK6PPI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732129176; c=relaxed/simple;
-	bh=g/TY3w+cHO6GVLHr2MSIbs3PpXq+bFEFyZwePZhsP3Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CgcfoPo9ZYIxndWghJLlID4zCmy8jmUn16yB1G5ZdS9ChU9fWnTX5dg/Zh96gDRZhSvoZdQ3ZyQGXkhkMwENpmuRME9Rylj4o2D+RPTpEI5WTh7lET4j1/Eobe0RNuRmIKxqRnaE8gaFuHtmZPWquCLqXLyDpnJM+I86oY7wUYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gsyw3BuN; arc=fail smtp.client-ip=40.107.95.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1732129350; c=relaxed/simple;
+	bh=UK3oLMWuBCQbqWEgb5F34fL7125t5Rjj8srZuRvi0BU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=KSMZStlATj7BG9Fh6SXYjEsiEaUFUAVFvoI67YL47x0WQcjenxqbNSoNKVGX0p15UZ0QEwv8nAzWwSLs5zZcKTup9oLMExPbLvJRr/bMA3JCztw3tc7TkctKJmupCGH832jSm/Id0awpcx54iew5mxpUmv7hoczND2n1ww4pTdY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=eJamJMqS; arc=fail smtp.client-ip=52.101.43.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ojzISrVsasbOgs7I379r4lJrF8wOvfQl9CVPoJ5xsG2s1MpAfHgLg4H90CBbOkf0Juku3nT8POflX8LSGnfuyfiCL0Dl3MhqRMvKOSilfT7sQCvxhBp3l8gDCEKKaLd4hkHk5E9CzfyIgSjHnWeVYkp8y8AxnjdMh1ay+/PZgL3m488nS+zi2dk5hJOcxsDe67Ek6qCqoCYpp8TEFIFONEim2Yxynbb8mS2QH72r4Yb1esuiMCAhEucsrgDNetXg3cwY8YNgUs3iEpZ9PSE6+5V9lEnie0AMm+4ZsEPmvx52ot6Tt7P1dKfAVAXcYkRk0sU9+8fXvhOPprNz8fIUKA==
+ b=y70IltZdnABZ2k07vnYd8yoCIbzn4MuaZvG9Rgw+WfghLpZJLezPJmr0xSelzP98gq7lFLWKDJ/Dy6F/3xmJJBjRatQCgCOMXavLWLuksPF7aB0/byXorW4zs5sUv1icltI+nshbKEQDO+LpRTdtP8HZDe4qEOGky+8t2RMjJ5kumK8RfX5jWv2+V9/bOaO7kCrX1shggaJrUw9u7L9XJmKTyM8EAah1RbwtBIC4U9YpMO/GxkWPBjNW9vm/Q0xmnune8cxKMzQhkDHhUEGauahvWTmz7Oel+Awvv+iqkqITN/3kBrEn5din0GwHuM0NhoGCxEKjmgnlXnJA0zUCGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=B7gMtUceSCEAHyI/30QOsVtseqEaazgOT67AxkZjYco=;
- b=Fi5p56Yd8WX5C+2BvcAnUQ+Alv7USxbGHK6z7vaeiMKwP+jFHSOR8v6IMq7ll0KL+Zc7PXdfOn4VJnbqDPNtWvUl2oN2LuWbaIipS2rhtqI8krrgc5JQT34gQw1PhNFSM7t7FU12+ELFIVLRBtqr/ldoub2rYhPTByPF7XT7cJcVO8YZ/gcbr4ibHAphPnyDBH6UwXfajxg+6b6H/qAWE7a15nwV6FWd1mI597LWEatPicnKlrHcPpA0PnvYAVcoHm+f+xMORsHhPt1SCreQpIK6rBccixLX4SPY8CGUBktDkTokVeMuZN5Tl2Ks/LYVm08+hvru30QSkRfVcCxl0Q==
+ bh=CTbgrBzgvWaIBEBOmfVqyU0s8IR0ifAI/lwXMWtI0ls=;
+ b=r1lVlgwIeKYvO29DbG08mgYgoiXS0ZPDhgn486Dys5vUkh4FK9Ns4bzDh/xwrD6+jTnkowgkv3wGvCgEtdmtTqdeIeBjVZVoENPAM+FCMCjauWmQ+aAjunsf0UWOsCh5AHkohSqEVFi/dQmufi8Rcr/+EYXe2lr4xrxaDOgD6xVXJO9MGCe0Rr7SVzh4w232BGB1udA9zdI8TDdTL/aY22QLKZdVJalOoTTKjKlK/+Zrk36iv1kb6m6vaZ0Ph7Gwg+12mSekN5d91l00kv5Lf6+yxMLMGkgmC6LSR87ld64V7HtVP7/XX/wmUPAyX7fQ0RmeYDLlb2yHM0UA+Xl+DQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B7gMtUceSCEAHyI/30QOsVtseqEaazgOT67AxkZjYco=;
- b=gsyw3BuNKQngQiPZ7ye6eImKdGNSOelxCGnoNLof16gNE7//FnsNeowjAMT/FVvXcX2CoTUY0jz3fH9SA+Xrp2oDiqAH3pmx6DG4QFw6Kp9rNeWF4IN5vw1idAe/vtNMfYhQzxZ3KlmHjsdenadV2H13wXdgyu9cvJzmyb18ihI=
+ bh=CTbgrBzgvWaIBEBOmfVqyU0s8IR0ifAI/lwXMWtI0ls=;
+ b=eJamJMqSSx8dur5K0DDkj7U33uxePtqQ7DLbFMPT1BnW0TBryJCqRJh8c9xVhsbg/aGZjcFEIiiZxFTd2U1Jsf7C9yGmexJGIERYD9FnKsMuaKXYmIkZOaPh0LJQfZz/jRtvLG5RW1AaQUBoWOO1CLdi5eD23B6zYtB7x6TKTPA=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by DM6PR12MB4137.namprd12.prod.outlook.com (2603:10b6:5:218::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Wed, 20 Nov
- 2024 18:59:31 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.8158.023; Wed, 20 Nov 2024
- 18:59:31 +0000
-Message-ID: <a1feb895-a28c-46f9-a5fc-5152df8f3b51@amd.com>
-Date: Wed, 20 Nov 2024 12:59:26 -0600
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v9 23/26] x86/resctrl: Configure mbm_cntr_assign mode if
- supported
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: fenghua.yu@intel.com, x86@kernel.org, hpa@zytor.com, thuth@redhat.com,
- paulmck@kernel.org, rostedt@goodmis.org, akpm@linux-foundation.org,
- xiongwei.song@windriver.com, pawan.kumar.gupta@linux.intel.com,
- daniel.sneddon@linux.intel.com, perry.yuan@amd.com, sandipan.das@amd.com,
- kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
- jithu.joseph@intel.com, brijesh.singh@amd.com, xin3.li@intel.com,
- ebiggers@google.com, andrew.cooper3@citrix.com, mario.limonciello@amd.com,
- james.morse@arm.com, tan.shaopeng@fujitsu.com, tony.luck@intel.com,
- vikas.shivappa@linux.intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com,
- maciej.wieczor-retman@intel.com, eranian@google.com, jpoimboe@kernel.org,
- thomas.lendacky@amd.com
-References: <cover.1730244116.git.babu.moger@amd.com>
- <2964648aa19f9d961c76c83a25f10fe3993abf59.1730244116.git.babu.moger@amd.com>
- <af70578b-e682-4e7d-8373-61f61fafdc0c@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <af70578b-e682-4e7d-8373-61f61fafdc0c@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR01CA0002.prod.exchangelabs.com (2603:10b6:805:b6::15)
- To MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ BY3PR01MB6788.prod.exchangelabs.com (2603:10b6:a03:360::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8182.14; Wed, 20 Nov 2024 19:02:21 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%6]) with mapi id 15.20.8182.013; Wed, 20 Nov 2024
+ 19:02:21 +0000
+From: admiyo@os.amperecomputing.com
+To:
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: [PATCH v8 0/2] MCTP Over PCC Transport
+Date: Wed, 20 Nov 2024 14:02:13 -0500
+Message-ID: <20241120190216.425715-1-admiyo@os.amperecomputing.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0075.namprd13.prod.outlook.com
+ (2603:10b6:208:2b8::20) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,114 +84,250 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DM6PR12MB4137:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80c30ca1-5c08-40d2-c43c-08dd099576ff
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|BY3PR01MB6788:EE_
+X-MS-Office365-Filtering-Correlation-Id: e11dc13a-c2b9-4403-b124-08dd0995dc87
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|52116014|376014|7416014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?blVhOTVwUUlTRGtTTElKTlZHQkEvODZwZFp0cDRuN1JpYlc1dm9ZeUQzTTRJ?=
- =?utf-8?B?RllsakpvbFVyRnF5TCtiNW5LZjU1L2pYZWxzN1ZzNVV2b0NHdFY2Ums2cHNI?=
- =?utf-8?B?eDl4TDhiQjgrdkw1VEtqSGh5Y0lsVjE0UnlRYUxHaS85ajhQOHM1L01Wa055?=
- =?utf-8?B?UllURnI2amR0alRaVFlnYVNULzZRRVFnaitKU244VWZjejJYcm5sdTlrTDJm?=
- =?utf-8?B?dk91QkhEL0p0U0JMZjc1Ky9kZmwwSW9XQ292emZFcmRPM29OYno2elVnU2dH?=
- =?utf-8?B?MnJ4ZURiQVJ3RUs0eXVVN1RRcHoxQnlpYmRRMjU5RDF0bFdBRmVCcVRqRHdQ?=
- =?utf-8?B?VDB6UEJkNkRveFpPK1YvRDk5RHkxVERPcjBxOC9qejVoVUJtaUNobmcyckZO?=
- =?utf-8?B?VUhyN0txaWxRZkRBYW9TcnhtUzBZaUFpK2JiSy9udEtaN2k4TU53K2sxKzhJ?=
- =?utf-8?B?ZWFYZ3h2T2JGc2srRmdHYjJWTzVrZWtVVm4ybGx2d09pR1lONnkwaVprMy9y?=
- =?utf-8?B?N1VWdGJ4NHFTdW1Sc0tMU0pxRFljTWQ1R3RBUHVqTkRaZjlmekdRT0FWMDdY?=
- =?utf-8?B?QldXTityVkpDbnU5UjZYbE1YNjdSTE12Zk4rK2xsWU9nWXp3VWFOTmp3bGNB?=
- =?utf-8?B?NGswZVRkNVdlK3VnN0Q4NE5zN0lLTllWdndML0hNWUhDSzdIajZTR0FWNmh3?=
- =?utf-8?B?OXY0Q3Iyb2NLVG1HY2NQNy9DaHlkbW1UcHIrbHBHczV4RFIxckFnUVNhTlhX?=
- =?utf-8?B?enFoMVlNZ3dIUWRFczkzQVVVWEZuMmhnV3VpSlRDa0J3VkVtbThEQmlVakxp?=
- =?utf-8?B?RmpneFE1YXdJUVp0S29LKzdIQUxIYU9wZVBrWXlxUGtmZEFUekx1VFRrcEpB?=
- =?utf-8?B?NHZJdzlSS2V6cjZIMEg0OFFjSXpZdVE3cURiSTltUHlxT1ZCejZXQ3kwanV4?=
- =?utf-8?B?VXN3VkYrRFpnUDVrcko4aGFoeGhNTkg2SUdXNzRJZktnNS9INHBwRlNyWWdj?=
- =?utf-8?B?K2dKaTg2WHZsQUxIV1ZjaFZkajlsbFNTa04rUUtXOFY3c0dNSnpnc2NpRWth?=
- =?utf-8?B?SURWVWFPMStMalpEZWJVdEZhQzFKMW9tUlVwTytLeFhyVjdvRUhtTXF5TjRW?=
- =?utf-8?B?R0pjMmFKNnNpWjQrLy9BVEdWaE1JaStJZmMzWTJMWFFzSkVITWpkNjBrWk1v?=
- =?utf-8?B?KzhFcGQrbGFNM0xKTlB2OStEYkhvYm92bk5mOHR3MVhuM2xxek5Yb01lUjZS?=
- =?utf-8?B?enpQOThjcUd6S2FkR2IzOW9qNDQ5SVd4QVBtMXFQaVRSRU11eVIyRFBDM1VP?=
- =?utf-8?B?MHZnWEZyWVdmb3VrWnhTSFNpTnZlRHNtQXVFSWdGVlQxVWlvanZZdlJxcVR3?=
- =?utf-8?B?M3p4bXEwZVU0V1ZGTzRzNHBpQjBnVlBJdHd1bzdSeG1SR1FSUm5zWDk0OXhX?=
- =?utf-8?B?VVVXaDZvcW9kWkpwb28zQldXWmdFM3ptWngvU3BkZjVjcURqc0VhOXM5NUw0?=
- =?utf-8?B?cXlwK3pzSERud2dFUmtGQlBiWTRaMkpZYkhrQnF2S0EyekZTbUh6U2gzdUta?=
- =?utf-8?B?TTk5UlFDTGtUZzFMbEwwbTE1TVFKQTVMMkhZRGEyTlByTjMyYnJUTzgxTjli?=
- =?utf-8?B?Z25BZUNkQTBzZ3duS081NUFqN2lCRDV0MXNaQkQ3L1RPMjlDazBtRjg5bXNn?=
- =?utf-8?B?WEVibWMxN1Q5U09lVHJtN3JEbHFoZWIzUGN4MlhiN0p3bitBL0tiNG1YOGJa?=
- =?utf-8?Q?AWA9GotT9l7bUOh5LZOfIKTdM6ekeLHGmwis5ML?=
+	=?us-ascii?Q?ikvklA2acCWlkTVcKsuH3ThuPCfI6UQq3SqcApiLVhbZjaQDb0AiBCPQY7oX?=
+ =?us-ascii?Q?KthUSN9T8q4RTbdz2LpMbzUNxbJt9G6apmN0Fjd4RYeONS7+xpLRIfn9W9UT?=
+ =?us-ascii?Q?/u4gTwht69fQ0kEBcbUbDNW3Jwv8ff/86hoKiAL7nOiHrK975QkzXPojFGJv?=
+ =?us-ascii?Q?ooPdSAlPgjqsQY5ltJ9SDOLyy4s662x+us/1UuSNR9n8dRpVD8UFNLJrC/tq?=
+ =?us-ascii?Q?ersVHcfJPivAi3CUXOvu1uvANeM6lNaee04jBiazJ3wu/aGXsuid8tfORnrd?=
+ =?us-ascii?Q?sVXG2JsO2qSJdVQdxIn2RxM99UhU9RUq36ekdlyMKOzXzvevlYvrsbaYY7Ie?=
+ =?us-ascii?Q?ieMLN9uD/bEqtd2TQyzKiwyZpqtVP75Y/Ep0rYk7P8nTQE5Px5CXvVIjKM9q?=
+ =?us-ascii?Q?H0I6/g9Aksjwwf3Gf390vy6/BAlSzFhS9j0PjYQcBMM9j/S8NAxM6WkahLQ7?=
+ =?us-ascii?Q?MbGulRx1vByEifZlISRSdW2Ba4lXHvUZgiul8rEotocHZ1MfKJ9J+fH3WbnH?=
+ =?us-ascii?Q?8U2J3p7B3EEc6/A1H7wQun6Gdzwut9UY3Tky4hv+rRiaLOgNhibw0sAclY4i?=
+ =?us-ascii?Q?eEvQOgDsRmiVorRk2CDiriRAo78DE5FK/PXC0KXJlvDtUJVyrE21fZA8sj+g?=
+ =?us-ascii?Q?WVocjwXNFaNhHb+dvrmP40zQyWU07aXZcx3NmDWSUHWZCPlX/pz1s1O8Yw5p?=
+ =?us-ascii?Q?NtX6KTh8MD/gQgF5BXSn/zwunANa4+66rWnVm/eLxtTlMo1OuTbG1O6mKfmC?=
+ =?us-ascii?Q?TJoJMXm1GIG2juYCzO3cFfTC9andDJMA8pZQy01s8DctcgVy7MUOPCLM+aCw?=
+ =?us-ascii?Q?GqN2s5B7eJ9ITOSCmdFBJiZRIDMlJyeoogTgzk+11NZQAbaQcOq0pEIvBFzR?=
+ =?us-ascii?Q?f4QpBXsSl6u0BGg7BqqEPzGcIhB8guaibeczWQiVaY70vSyb19zz+bU5ZJt1?=
+ =?us-ascii?Q?BQDJ1cahbs0FPgJpXzY50Xf82JgD34KnUCjQ/GydmSz2AZBpkNG46qwBLumc?=
+ =?us-ascii?Q?Y2BrvUIHahEFFw38YOuQJA1l9vmdEKmEbsQ/4mp5rLfRQ7YY/5QnIPtHYU8l?=
+ =?us-ascii?Q?H2H2jbx1hWC50Ll99Buz3FkPiSaS9PdZ5S7WR9nW5sBk2aD4bkjB5g5oMoPY?=
+ =?us-ascii?Q?j9sxo6rE+c4NDbNHTDRwmUpT5Y9FqZ9heI2gQZCbHGD6owv2bqX1Noa51Zsp?=
+ =?us-ascii?Q?znBlIWNfxyo7KYRcZv5tBJciGWm7kM3lUdtPTwCfuJkKUHF7bpp9cjSB5gLD?=
+ =?us-ascii?Q?sCoLpnYFMFbJwxIdTWIdjwHfEkaB9n1JUrIk3n4Abg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(52116014)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?V1hHSklFR1dMNHdrVDhndzFXNXVGSE5NQjh5MnpFV3VFU0ZKSWprQ0JqaU9G?=
- =?utf-8?B?c0F5RVJmMktxY3BQanpYRUpRQmRUR0d0REp0MDEzK3kxUmlXdjEvODZDRkN5?=
- =?utf-8?B?MDhFNjNUT0hBRnUrRXNrQUZCUlZ4Rm44Ri9vZXo5ZUFnVTI2cFdEL3g1KzRC?=
- =?utf-8?B?cnVKU0xvQW1LSE5COHU0TGZoRWtSSlRWQjgzeE1ib1dRaTdZOG9EejhGMDNY?=
- =?utf-8?B?eDRZb1owZmFHWVVjWmgzaWZnRzRGU3M1aEtNOEdmUmVTSmNka2RQY3lPZHUy?=
- =?utf-8?B?M0NaVE03R2FHSXBnOWxBaW53Y2hKeWxRd0REQkxuWkpIc1AxZ2E5aHVjd0JK?=
- =?utf-8?B?RHpuOWlGeko0NEZ6SVU1bVVGbHVMYnBPd0NqUXhXOC9mMmIwcUlIOTg5ZGtH?=
- =?utf-8?B?SWQ0dXp3TWtSSDIyZno3MHN5RkROOWMraUxIYklGMnFuSWZEcHBoMFZGcG1j?=
- =?utf-8?B?WkV5QmdJS1RiRTlZMVFOWkMrS2ZYY3A5TlBzcFg4WHJjaGxKcjkraExyM1Iw?=
- =?utf-8?B?c2JNYXNWSXlYQTNQZ2taWXZHMzdiZEp1Q3VzTnIxdTNEVTdwVE5yTDNFL3hq?=
- =?utf-8?B?RGs2Y2xwdXdhZXJPdTFTUzlhbS9mZDE4aGVMS1ZhZzR1cHhUeU1hdUxBbjI4?=
- =?utf-8?B?N2tqai9sZnhyMFp0U2YrcndaTk1icURjSFFWTE56aXZxQ3B3a2ZvMGJNcVJu?=
- =?utf-8?B?d1JucWhKSnFENnZFVFovZWFIWU96ZkgycytrSGZYMlpTNTRRb0xSOVVyaXkz?=
- =?utf-8?B?Mk8xYnVLcVpCakpiNEdQdHZSRERiWnRrSTlSQnRnM1hMSGNIeEVvc2w0VnpN?=
- =?utf-8?B?cFF3c0h0L2tKaXoxTGwydHRZWlY0QUs1eXJlNWRwaFVMOVNqWDA5MGNXOGI5?=
- =?utf-8?B?eE5YV0dzN3Urc0hLZ0lvcTE0RWhjaEhhU3hLZ0NNUUhSQXI0MUhaak5YV1Qv?=
- =?utf-8?B?UHRQYkN2T3ZHWmdIWHdkWSs4UWJjNXBiYm8zRThYSXcxdGwwWmx1Z3UweW92?=
- =?utf-8?B?dzlqZ0Y2WUpMLzB6NzVmTzJwZFFtQ1BRZHpTendqU2Q0elVzV3ZiUktjL0tk?=
- =?utf-8?B?T0ROUHUremIwVTZsTm5EOEIzekhHK3Bod0tIVm9sVHBRbUZDMlpteFZ5YjlN?=
- =?utf-8?B?dGdGWUxxUzRsS2JtbmxSWW8vUDNNYnlEd2RHVmw4ZU83V2Y0STJlbU1UMUlN?=
- =?utf-8?B?OXZPT2xRclF6Nm1uS1ZIR3p0QnlkUjVGOE1WTHJwQ20vRmV6MWMyeGxZVWJ6?=
- =?utf-8?B?cTBFVGxPc3NxY0JVajJYUm4ycUNNSjVWNWRIT0VmSENlSEpTR2JDcW1xM0xu?=
- =?utf-8?B?WWtRZkRZUnJOc0lkRVByM2JycWgyZnFzQWUvVE9zbXhiellmN3h2N0FkRUNi?=
- =?utf-8?B?WFJUVEQ3cUVHWksyZVFKbzZ6OGMvS2wzWW9lK1FjTzN1aU56VmUwWEtiblR4?=
- =?utf-8?B?OGhPcVlLYkhpYXhlMzV0L090WU9wUndsZ2JFVUpjc3lFTFdoK3E0NFEyN09x?=
- =?utf-8?B?VjdrN2hQMU4wUzBNU0dFZmdDRnZIUk1QYjJjTS81NWVEVzY4ZDEwRGJSQ3Fi?=
- =?utf-8?B?Y2N2SmtRQTdIUVcvQkxmZTFPMEc4M3lGU0ZWbHU3VmRtRmVQTHlSL3dIVENt?=
- =?utf-8?B?WXhzS3VaVHptQm01ZUhJMzJRTEpQZUx6NnBRK3QybjByb3F1OU5aY0V3cXVx?=
- =?utf-8?B?R2ZwZlZmNTVmODFqemt3OHFWYXUrdkFVdGtmMFAyZUwwaVNlamF5SXdlNGEz?=
- =?utf-8?B?bUY1WDBlOExYaXczVGNkZ0o5am1reVNNWXJibmd2a1ZjMjJXcmJIb1ZvaUZQ?=
- =?utf-8?B?SldBcUVGV0E2eGJjeS93QnhEaEo3OFFHU1E4eGg1clQ4ekRuRkgrdlpteHIw?=
- =?utf-8?B?REVWMkpuTm1LSWp5MnN2MDIvWmtpeStCSTVvcFJGcEpvaU1hanVaSEFMVmxW?=
- =?utf-8?B?aFRCOWovbkFENUdIOWR6VWVjL0U0cmQzbFVoOFVJVktpTmJaZU9uRkVBSEhs?=
- =?utf-8?B?N0NYdFFoeTg2cmlWbXljNHB0enNpaDF6a0Q1bnpDRXd1eFBqNTZEcHgyY0hk?=
- =?utf-8?B?YzBQWFI5aGFxTDdBZ2IrcFBXVkh5RGxORHpUUHV1UFQ4ZS81cE1VL2pUL01h?=
- =?utf-8?Q?JIzI=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80c30ca1-5c08-40d2-c43c-08dd099576ff
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
+	=?us-ascii?Q?InvL4y7R7iFLfIyIyHe2ZS8HmgzSCGD8gzH/mw6VEDTZ9OMRcC89E9/CO2Xp?=
+ =?us-ascii?Q?34DxxQw1tzAhgKOEUyBTdH4Gi9wjtBJzpIvKFjhf5XoRnbXXtvTI+66fWZuW?=
+ =?us-ascii?Q?5P00xp089KKpUBHimV0ygEs4L5iQ6EDFobNXd8kAsj09VFtZNLIUvAGrF6r5?=
+ =?us-ascii?Q?7zJJIGhFfBw9Jp4aLrPziXHO/fASwdD1F82GKxm//15JZHFKLMOsEaU1hKkd?=
+ =?us-ascii?Q?IYrIKk6Jr/Grw6HeMzCKOMllYJW/nhqVtr1/cmGqkco1vYO4B7lp6h4GhRQI?=
+ =?us-ascii?Q?rD79IQUpy+FHfKD0b3AAPo7FHBfMiiFTNgnSTFG4TrCZQwVsjUy+DNzTCZcj?=
+ =?us-ascii?Q?x0jqYt5ZBQFWMhzf85g+Rz7tDucS3pN8I2R901+2Dohdsmzv9AqPl1UunKw+?=
+ =?us-ascii?Q?1UGEJ2GKEbns26dJ7pGl2JbtAM2uCM58S7xw/HRPTg494xyaXxK5KRG+VyGF?=
+ =?us-ascii?Q?YYcpSyS6oPizdwxkDPYwUEvEUOEgbCceKQLJLDEiKC4htVpt1+fy29M/pwkx?=
+ =?us-ascii?Q?TyxgRbWIacQ+a/WCIwqR3qlwTAahgdOVc9q7r16F6gXvDdYEB0WdgVAuERe7?=
+ =?us-ascii?Q?8Aqf8dqEt32VKJ89W/icZxLU/ikUxynNGNoQfUqXKU8tPZT2DhzHb49/o3tz?=
+ =?us-ascii?Q?BD7eQS97oZZ104XF7jxfYm1MBelUaiAaEDhXH/vy3vQ6FkPUxlH4nXX6DtLQ?=
+ =?us-ascii?Q?hdtcgIIZ12JB0HhUFUQdhnVUfn8ZrzNo8xjypHwjGRUdKc4aaOlS7Ps5hkS8?=
+ =?us-ascii?Q?xLM5oOiTUQss6/caeHQ005pY+3Bm9/G7HI3bvqxzs0C/hPHw8eDj4yB9xBGU?=
+ =?us-ascii?Q?bZicCn6vKu8PQHq3wlKFCoYP2ZhI9OxLSPKdIfJunF09WGL5Wb9jtU/ibD+1?=
+ =?us-ascii?Q?5ThssFHAtCMCMGtt0O8h+/E/Le8lwhMvY0nUCx3o209NmtORArB6e0IuGeV9?=
+ =?us-ascii?Q?yPVni8azfdG4rX6iv2/fzucaBmJN+XPWvnuvZvxv5Ya8fRibXfHaBjxUd+vd?=
+ =?us-ascii?Q?PUv8XCYRm9Jgy4+JHcmHpHdecafBexlwvgnLi5/Nv/V6PL/pe4x13H9XWiQh?=
+ =?us-ascii?Q?Jx4FqYitJ8Y+UoPy9dG8l61crl8qJ8AbAjqMmibzMrxIf4kSCWdSs2Y42Y84?=
+ =?us-ascii?Q?ZG/lKtuVEdURylyT5K15SJdiyje+rgmbZ/+spxvzBtRQDFB+YjJMn86MZjSs?=
+ =?us-ascii?Q?ObPvkXB/oetLmvrJ2MwezFsJPFdzXE9+HxI1LliloYJGkXvGMUJd63Bl05ni?=
+ =?us-ascii?Q?E3wLaGZBCQbnLy7CaE9mLnwSQ41jkF44gVSjOxzUgiu3B5uTR+ueU9nru8RS?=
+ =?us-ascii?Q?LJV8mIidLRyVghK3WeJOEJ96I7aIqKyn4jArwUTe+64193baVYTEKQk8L2xT?=
+ =?us-ascii?Q?qbqfaOTsXehr3JGue5B8gMPMXJgvM6VxTsRKwp6DdmZ2Ax8dfxbaumcOnBrZ?=
+ =?us-ascii?Q?cHbqYVX98llL8EPSFpn/bfUUi+urN+RWkQ9nVgt8D2SNJmZrEyXpOOCX2uou?=
+ =?us-ascii?Q?NNoIic5xGG7y8hzS7hzRqvvuElwNYr8Hn+Tqchnbdkxrw37DR7xcqKfjYlUc?=
+ =?us-ascii?Q?odCySzoHXxa9ufXu/edRqQUYT31RxXxikKBGlZJ+TuWYU+imJgzJf7+mB/hC?=
+ =?us-ascii?Q?9EXYltfliR6YYCWziYudQeOSvxrAFeHHzJUisTegEbjpLDqibNPWlZnQquZD?=
+ =?us-ascii?Q?aoX/Q5fSteQhoAuG3MY0/Pfq/pA=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e11dc13a-c2b9-4403-b124-08dd0995dc87
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 18:59:30.9577
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 19:02:21.2690
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5N3g4cxPRIv6iXwkRG7bQhq6Iblj1BBF0RfmEkk2VW+lpLfsToE667/73QAHhWgg
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4137
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hol1xH3nb3xhq3aUprM/CHN2gFpTj0vxGk6j8OFkv/Kc89lx65DR+hDV3vZqpsAa5ldNAdP99xk4ihpPHBu6KT+6V8J5MS0HQncd4MfFwafveqcbM1CujgfZ75yHyooz
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY3PR01MB6788
 
-Hi Reinette,
+From: Adam Young <admiyo@os.amperecomputing.com>
 
-On 11/18/24 13:23, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 10/29/24 4:21 PM, Babu Moger wrote:
->> Configure mbm_cntr_assign on AMD. 'mbm_cntr_assign' mode in AMD is ABMC
->> (Assignable Bandwidth Monitoring Counters). It is enabled by default when
->> supported on the system.
->>
->> When the ABMC is updated, it must be updated on all the logical processors
->> in the resctrl domain.
-> 
-> This needs imperative tone.
-> 
+This series adds support for the Management Control Transport Protocol (MCTP)
+over the Platform Communication Channel (PCC) mechanism.
 
-Ensure that the ABMC is updated on all logical processors in the resctrl
-domain.
+DMTF DSP:0292
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
+
+MCTP defines a communication model intended to
+facilitate communication between Management controllers
+and other management controllers, and between Management
+controllers and management devices
+
+PCC is a mechanism for communication between components within
+the  Platform.  It is a composed of shared memory regions,
+interrupt registers, and status registers.
+
+The MCTP over PCC driver makes use of two PCC channels. For
+sending messages, it uses a Type 3 channel, and for receiving
+messages it uses the paired Type 4 channel.  The device
+and corresponding channels are specified via ACPI.
+
+The first patch in the series implements a mechanism to allow the driver
+to indicate whether an ACK should be sent back to the caller
+after processing the interrupt.  This is an optional feature in
+the PCC code, but has been made explicitly required in another driver.
+The implementation here maintains the backwards compatibility of that
+driver.
+
+MCTP is a general purpose  protocol so  it would  be impossible to enumerate
+all the use cases, but some of the ones that are most topical are attestation
+and RAS support.  There are a handful of protocols built on top of MCTP, to
+include PLDM and SPDM, both specified by the DMTF.
+
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0240_1.0.0.pdf
+https://www.dmtf.org/sites/default/files/standards/documents/DSP0274_1.3.0.pd
+
+SPDM entails various usages, including device identity collection, device
+authentication, measurement collection, and device secure session establishment.
+
+PLDM is more likely to be used  for hardware support: temperature, voltage, or
+fan sensor control.
+
+At least two companies have devices that can make use of the mechanism. One is
+Ampere Computing, my employer.
+
+The mechanism it uses is called Platform Communication Channels is part of the
+ACPI spec: https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/14_Platform_Communications_Channel/Platform_Comm_Channel.html
+
+Since it is a socket interface, the system administrator also has  the ability
+to ignore an MCTP link that they do not want to enable.  This link would be visible
+to the end user, but would not be usable.
+
+If MCTP support is disabled in the Kernel, this driver would also be disabled.
+
+PCC is based on a shared buffer and a set of I/O mapped memory locations that the
+Spec calls registers.  This mechanism exists regardless of the existence of the
+driver. Thus, if the user has the ability to map these  physical location to
+virtual locations, they have the ability to drive the hardware.  Thus, there
+is a security aspect to this mechanism that extends beyond the responsibilities
+of the operating system.
+
+If the hardware does not expose the PCC in the ACPI table, this device will never
+be enabled.  Thus it is only an issue on hard that does support PCC.  In that case,
+it is up to the remote controller to sanitize communication; MCTP will be exposed
+as a socket interface, and userland can send any crafted packet it wants.  It would
+thus also be incumbent on the hardware manufacturer to allow the end user to disable
+MCTP over PCC communication if they did not want to expose it.
+
+Previous Version:
+https://lore.kernel.org/all/20241029165414.58746-1-admiyo@os.amperecomputing.com/
+
+Changes in V8:
+- change 0 to NULL for pointer check of shmem
+- add semi for static version of pcc_mbox_ioremap
+- convert pcc_mbox_ioremap function to static inline when client code is not being built
+- remove shmem comment from struct pcc_chan_info descriptor
+- copy rx_dropped in mctp_pcc_net_stats
+- removed trailing newline on error message
+- removed double space in dev_dbg string
+- use big endian for header members
+- Fix use full spec ID in description
+- Fix typo in file description
+- Form the complete outbound message in the sk_buff
+
+Changes in V7:
+- Removed the Hardware address as specification is not published.
+- Map the shared buffer in the mailbox and share the mapped region with the driver
+- Use the sk_buff memory to prepare the message before copying to shared region
+
+Changes in V6:
+- Removed patch for ACPICA code that has merged
+- Includes the hardware address in the network device
+- Converted all device resources to devm resources
+- Removed mctp_pcc_driver_remove function
+- uses acpi_driver_module for initialization
+- created helper structure for in and out mailboxes
+- Consolidated code for initializing mailboxes in the add_device function
+- Added specification references
+- Removed duplicate constant PCC_ACK_FLAG_MASK
+- Use the MCTP_SIGNATURE_LENGTH define
+- made naming of header structs consistent
+- use sizeof local variables for offset calculations
+- prefix structure name to avoid potential clash
+- removed unnecessary null initialization from acpi_device_id
+
+Changes in V5
+- Removed Owner field from ACPI module declaration
+- removed unused next field from struct mctp_pcc_ndev
+- Corrected logic reading  RX ACK flag.
+- Added comment for struct pcc_chan_info field shmem_base_addr
+- check against current mtu instead of max mtu for packet length\
+- removed unnecessary lookups of pnd->mdev.dev
+
+Changes in V4
+- Read flags out of shared buffer to trigger ACK for Type 4 RX
+- Remove list of netdevs and cleanup from devices only
+- tag PCCT protocol headers as little endian
+- Remove unused constants
+
+Changes in V3
+- removed unused header
+- removed spurious space
+- removed spurious semis after functiomns
+- removed null assignment for init
+- remove redundant set of device on skb
+- tabify constant declarations
+- added  rtnl_link_stats64 function
+- set MTU to minimum to start
+- clean up logic on driver removal
+- remove cast on void * assignment
+- call cleanup function directly
+- check received length before allocating skb
+- introduce symbolic constatn for ACK FLAG MASK
+- symbolic constant for PCC header flag.
+- Add namespace ID to PCC magic
+- replaced readls with copy from io of PCC header
+- replaced custom modules init and cleanup with ACPI version
+
+Changes in V2
+
+- All Variable Declarations are in reverse Xmass Tree Format
+- All Checkpatch Warnings Are Fixed
+- Removed Dead code
+- Added packet tx/rx stats
+- Removed network physical address.  This is still in
+  disucssion in the spec, and will be added once there
+  is consensus. The protocol can be used with out it.
+  This also lead to the removal of the Big Endian
+  conversions.
+- Avoided using non volatile pointers in copy to and from io space
+- Reorderd the patches to put the ACK check for the PCC Mailbox
+  as a pre-requisite.  The corresponding change for the MCTP
+  driver has been inlined in the main patch.
+- Replaced magic numbers with constants, fixed typos, and other
+  minor changes from code review.
+
+Adam Young (2):
+  pcc: Check before sending MCTP PCC response ACK
+  mctp pcc: Implement MCTP over PCC Transport
+
+ drivers/mailbox/pcc.c       |  61 ++++++-
+ drivers/net/mctp/Kconfig    |  13 ++
+ drivers/net/mctp/Makefile   |   1 +
+ drivers/net/mctp/mctp-pcc.c | 321 ++++++++++++++++++++++++++++++++++++
+ include/acpi/pcc.h          |   7 +
+ 5 files changed, 395 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/net/mctp/mctp-pcc.c
 
 -- 
-Thanks
-Babu Moger
+2.43.0
+
 
