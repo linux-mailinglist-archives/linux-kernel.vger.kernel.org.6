@@ -1,102 +1,87 @@
-Return-Path: <linux-kernel+bounces-415707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1B59D3A0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:58:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B64AF9D3A0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B25E280FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 701AA28207B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600601A0715;
-	Wed, 20 Nov 2024 11:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F92B19C553;
+	Wed, 20 Nov 2024 11:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qyqkFcoI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ddss9Gul";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qyqkFcoI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ddss9Gul"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UqI0dZxF"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6538E19D060;
-	Wed, 20 Nov 2024 11:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E63419F41C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732103856; cv=none; b=DlMDrdu1B6BMsO6JPd9bu04Ec8z3+GxuwJPsaEoDl9tQy1LRlQ2pJM9C1ikYaksq4GVZmZ/cwre0IvIcUL0q5MuAfg+J/f2VeWzq/B2iUkrl3n/ewpaQadLFjVXVw6yN5ITzLgxF4IXTaRESDm2CXHtvRZiXeKJPuxjHNNziC7A=
+	t=1732103879; cv=none; b=BzCCdh2JrxBq+yZnZC7jIgXnAydyRA4htjTSPoAWEfUGVXzi4xxQyaOIXLubi0r+JQ+cVhCJlBfyGyyZC2WPdxCUhQgkkXpeyL7aZxQhZXXGOyCN2JOBgCJEuHioUsfT44kfEmvnj76UyrbXrpNinxZJlEnW8/zRUmHbh4M0AYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732103856; c=relaxed/simple;
-	bh=qKL/jn7qjS4czTVmfysiYAnNefEAEVOI9+h6G0SN/Sk=;
+	s=arc-20240116; t=1732103879; c=relaxed/simple;
+	bh=0e0nr2aDV/a5TiJuxeZ1nyQWXMPEjp/tJGOao9xoL1Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhZ0RvoK+eGxYpBFbwxmQOgv748Q0qLqt0RBq9PLdHKmOMwEO1uKt9OzfohaCPjC7Vv54DD9W6Db2YUTq98z29YvXugalWj16qOtLWSQzLlsi++WYflyaTe/ZsjEnMI2ne+3MOLdgWYCzvB76vJ6Ojsic4Fr7Es/t2ld2HHcwbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qyqkFcoI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ddss9Gul; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qyqkFcoI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ddss9Gul; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 613F91F76E;
-	Wed, 20 Nov 2024 11:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732103852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IavqSNCbqUkWJ5eYBw9gwWOmwKh1kgh1iYd5CwKJmz8=;
-	b=qyqkFcoI32xIg3C13k1Lny8LPkxmG8CEk1duEJOZIvBXXUzHpoiLocW1IKZgCltQWTkzdD
-	i++rtQ4R6X8CKELWPu+PvtzGi2tuHsdkNLEThjpzLF3lLKNSdahAsea6cgAE5NocnftiRo
-	plDV9ZGQD2OHi3tC7uMNtcYPA8JFQD0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732103852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IavqSNCbqUkWJ5eYBw9gwWOmwKh1kgh1iYd5CwKJmz8=;
-	b=Ddss9GulcQLpQgFQ7Zm0D3ki1/IrEQiCUsv0+UkWVI07Uz/cx46VoKOsra8t9iDLL6f/vx
-	06nNUi9PxMYdKaDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qyqkFcoI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Ddss9Gul
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732103852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IavqSNCbqUkWJ5eYBw9gwWOmwKh1kgh1iYd5CwKJmz8=;
-	b=qyqkFcoI32xIg3C13k1Lny8LPkxmG8CEk1duEJOZIvBXXUzHpoiLocW1IKZgCltQWTkzdD
-	i++rtQ4R6X8CKELWPu+PvtzGi2tuHsdkNLEThjpzLF3lLKNSdahAsea6cgAE5NocnftiRo
-	plDV9ZGQD2OHi3tC7uMNtcYPA8JFQD0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732103852;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IavqSNCbqUkWJ5eYBw9gwWOmwKh1kgh1iYd5CwKJmz8=;
-	b=Ddss9GulcQLpQgFQ7Zm0D3ki1/IrEQiCUsv0+UkWVI07Uz/cx46VoKOsra8t9iDLL6f/vx
-	06nNUi9PxMYdKaDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 45BDA137CF;
-	Wed, 20 Nov 2024 11:57:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cR29EKzOPWfmAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 20 Nov 2024 11:57:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E4D17A08E1; Wed, 20 Nov 2024 12:57:31 +0100 (CET)
-Date: Wed, 20 Nov 2024 12:57:31 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jim Zhao <jimzhao.ai@gmail.com>
-Cc: jack@suse.cz, shikemeng@huaweicloud.com, akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, willy@infradead.org
-Subject: Re: [PATCH v2] mm/page-writeback: Raise wb_thresh to prevent write
- blocking with strictlimit
-Message-ID: <20241120115731.gzxozbnb6eazhil7@quack3>
-References: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
- <20241119122922.3939538-1-jimzhao.ai@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oW/mVAEfs8L5is5bLW/9UWrW2MqAEdthWOw+sNI3Fw4C7cf/NkPPDP+/LHQdcDfcqBdXGsOrnfs0SRrwBPAZpWKAJHJmGxJ+zo6xVSsrNe+ndVCP/h9kUB7xy3j1hhiuZEAhD6PF3ACnubCaEUC+AG6KQ4mUv4YkFR/GXowIyts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UqI0dZxF; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53d9ff8ef3aso2384553e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:57:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732103876; x=1732708676; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kkDJuRPym29fU3HSSlVBvB5wB9QK3I5iEUymjLs3BXM=;
+        b=UqI0dZxFjUM6pkeHNrTr9DZly81eUQuGEU7Q4qo+Xn+XbekRXeL3LNkbuLkgpCvBf5
+         2BLNPZOSMPIdBKYYc/dSYQat2V1qiSRZmQVbVJFOVMjuIBzYGbTn44wTx7G3gYiD1D1g
+         +gZH8FtNWiV7F95q0FV+/HLKtLG5ucCjCRvq7JfSm4gIHNDsvnjB3DPy/EbuAf8d9Mhi
+         HGxu4DrP/BXhXmPb2aJ/WHgLdF9k+ZxoUmoATip0Abilz4AuaPhHBc78XEhI6Zt4ivBO
+         /XSCmUb0bWR3cx6ZkJUOe5FnmSVKgltDvqCMcZusYShH3qbD8GRXTec2XRll7hFcW+OX
+         VcTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732103876; x=1732708676;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kkDJuRPym29fU3HSSlVBvB5wB9QK3I5iEUymjLs3BXM=;
+        b=LLXLblj+SDAQcibjNPGwiysgUP/oaWuC/xE2skStoWFEZODEd9NxIuHtaFgeaUlZnw
+         uIvFqzzZ50u+9jQfgjTVQBDDtevrVghj2SlQGsfJkqi5BQcbL8HZw4ABa6wmZrHHW7Et
+         Il2JZohs528mJtxTPRLYCgt8kOBX+qAg93tIWJZ8sOelNSrtLUvgvsRefdbJwdExuVrr
+         Fmmx2jYBB63289KxVsnEXH2AJu4UiMI5jAvfmmw4HlUXDB9G7nbuzJS6PBfycWcm1+fx
+         p+aH88CQF/kOwhicE87iu/CVuTiVPMZi8RVe/7QEAQLVy5MiyzT+d7OQROlLyj4wcvF+
+         gN8w==
+X-Forwarded-Encrypted: i=1; AJvYcCULdbv4LZDpS86Sz/48ViYt1pRb3LhsLvJ9sT+7nUvPEq/0CfVWAWKpxzubBQ1KAD25IdnNw8lr2ntV5vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL85YncD5gclwHgPlMXcpbHjQILVW7ob1rWJ8Dk/nogrKhPNiv
+	iwBghbN9rbNcUtTS9MLxLlDGhWAWoDMwBWeP9+E9OJRKWcMwmhUmWbqIxfCIxFk=
+X-Gm-Gg: ASbGncv8Whwz4Bz0oxvklROzA8MiexI3EWRUWEGTgpPaowJcDz/oJPi1EQYrT0zwK+j
+	Rl9ePJYMwknbI+/QZb3dGs74IPxmBJi22eXueWrbmQK3MSLDOxh3t+0ggrcOD3h3tr/VPmfPgVt
+	zmF8yfM5K1lCBlKoqD5zh2YF/s1CvrALJtxXyIaqVVIdPECgSx7B16iBuMRBgkxEdNGnJ0D/x5p
+	rW2jNoWHPkDjA9ict0hg82b2r3hDYehWBEE4nL3cpglM6BAOPysQavGg33vSw1IFWLtZyvk1EaA
+	lV/jSIKEvnOFOynviGcU8kzMAKcexA==
+X-Google-Smtp-Source: AGHT+IEhdK1oi5UhEJitu+CYeExmzTppA+htmFSLIfQ47nQb2OOw28dJBcmFit/oz+783D827lApYA==
+X-Received: by 2002:a05:6512:3b2a:b0:539:edea:9ed9 with SMTP id 2adb3069b0e04-53dc13275aamr1000536e87.1.1732103875668;
+        Wed, 20 Nov 2024 03:57:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd4671d9sm606538e87.115.2024.11.20.03.57.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 03:57:54 -0800 (PST)
+Date: Wed, 20 Nov 2024 13:57:52 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Komal Bajaj <quic_kbajaj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Melody Olvera <quic_molvera@quicinc.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: qcom: qdu/qru1000-idp: Fix the voltage
+ setting
+Message-ID: <orvnnjclxlwrab34daxrepn3m3la3heogkxbncl44yjyn3wxkt@vnp4knb5nedo>
+References: <20241119070812.16079-1-quic_kbajaj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,232 +90,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119122922.3939538-1-jimzhao.ai@gmail.com>
-X-Rspamd-Queue-Id: 613F91F76E
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+In-Reply-To: <20241119070812.16079-1-quic_kbajaj@quicinc.com>
 
-Hello!
+On Tue, Nov 19, 2024 at 12:38:11PM +0530, Komal Bajaj wrote:
+> While adding the USB support, it was found that the configuration
+> for regulator smps5 was incorrectly set. Upon cross verifying for
+> all the regulators, found that smps4, smps6 and smps8 are also
+> incorrectly configured. The patch corrects these configurations.
+> 
+> In particular -
+> - smps4 is 1.574V min and 2.04V max
+> - smps5 is 1.2V min and 1.4V max
+> - smps6 is 0.382V min and 1.12V max
+> - smps8 is fixed at 0.752V
 
-On Tue 19-11-24 20:29:22, Jim Zhao wrote:
-> Thanks, Jan, I just sent patch v2, could you please review it ?
-
-Yes, the patch looks good to me.
+Could you please comment whether your values represent the min/max
+supported by the regulators themselves or the shared min/max by all the
+devices powered by the corresponding regulator?
 
 > 
-> And I found the debug info in the bdi stats. 
-> The BdiDirtyThresh value may be greater than DirtyThresh, and after
-> applying this patch, the value of BdiDirtyThresh could become even
-> larger.
-> 
-> without patch:
+> Fixes: d1f2cfe2f669 ("arm64: dts: qcom: Add base QDU1000/QRU1000 IDP DTs")
+> Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
 > ---
-> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
-> BdiWriteback:                0 kB
-> BdiReclaimable:             96 kB
-> BdiDirtyThresh:        1346824 kB
-
-But this is odd. The machine appears to have around 3GB of memory, doesn't
-it? I suspect this is caused by multiple cgroup-writeback contexts
-contributing to BdiDirtyThresh - in fact I think the math in
-bdi_collect_stats() is wrong as it is adding wb_thresh() calculated based
-on global dirty_thresh for each cgwb whereas it should be adding
-wb_thresh() calculated based on per-memcg dirty_thresh... You can have a
-look at /sys/kernel/debug/bdi/8:0/wb_stats file which should have correct
-limits as far as I'm reading the code.
-
-								Honza
-
-> DirtyThresh:            673412 kB
-> BackgroundThresh:       336292 kB
-> BdiDirtied:              19872 kB
-> BdiWritten:              19776 kB
-> BdiWriteBandwidth:           0 kBps
-> b_dirty:                     0
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
+> Changes in v3 -
+> * Minor nit pick in commit message
+> * Link to v2: https://lore.kernel.org/all/20240524082236.24112-1-quic_kbajaj@quicinc.com/
 > 
-> with patch:
+> Changes in v2-
+> * Updated the commit message as suggested by Krzysztof
+> * Link to v1: https://lore.kernel.org/linux-arm-msm/20240514131038.28036-1-quic_kbajaj@quicinc.com/
 > ---
-> root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
-> BdiWriteback:               96 kB
-> BdiReclaimable:            192 kB
-> BdiDirtyThresh:        3090736 kB
-> DirtyThresh:            650716 kB
-> BackgroundThresh:       324960 kB
-> BdiDirtied:             472512 kB
-> BdiWritten:             470592 kB
-> BdiWriteBandwidth:      106268 kBps
-> b_dirty:                     2
-> b_io:                        0
-> b_more_io:                   0
-> b_dirty_time:                0
-> bdi_list:                    1
-> state:                       1
+>  arch/arm64/boot/dts/qcom/qdu1000-idp.dts | 16 ++++++++--------
+>  arch/arm64/boot/dts/qcom/qru1000-idp.dts | 16 ++++++++--------
+>  2 files changed, 16 insertions(+), 16 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> index e65305f8136c..6e8f9007068b 100644
+> --- a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
 > 
-> @kemeng, is this a normal behavior or an issue ?
+>  		vreg_s4a_1p8: smps4 {
+>  			regulator-name = "vreg_s4a_1p8";
+> -			regulator-min-microvolt = <1800000>;
+> -			regulator-max-microvolt = <1800000>;
+> +			regulator-min-microvolt = <1574000>;
+> +			regulator-max-microvolt = <2040000>;
+>  		};
 > 
-> Thanks,
-> Jim Zhao
+>  		vreg_s5a_2p0: smps5 {
+>  			regulator-name = "vreg_s5a_2p0";
+> -			regulator-min-microvolt = <1904000>;
+> -			regulator-max-microvolt = <2000000>;
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1400000>;
+
+Having 2.0 V regulator with the range of 1.2V - 1.4V is strange.
+
+>  		};
 > 
+>  		vreg_s6a_0p9: smps6 {
+>  			regulator-name = "vreg_s6a_0p9";
+> -			regulator-min-microvolt = <920000>;
+> -			regulator-max-microvolt = <1128000>;
+> +			regulator-min-microvolt = <382000>;
+> +			regulator-max-microvolt = <1120000>;
+
+The same applies to this regulator, 0.9V usually can not go to 0.382 V
+and still let the devices to continue working.
+
+>  		};
 > 
-> > With the strictlimit flag, wb_thresh acts as a hard limit in
-> > balance_dirty_pages() and wb_position_ratio().  When device write
-> > operations are inactive, wb_thresh can drop to 0, causing writes to be
-> > blocked.  The issue occasionally occurs in fuse fs, particularly with
-> > network backends, the write thread is blocked frequently during a period.
-> > To address it, this patch raises the minimum wb_thresh to a controllable
-> > level, similar to the non-strictlimit case.
-> >
-> > Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
-> > ---
-> > Changes in v2:
-> > 1. Consolidate all wb_thresh bumping logic in __wb_calc_thresh for consistency;
-> > 2. Replace the limit variable with thresh for calculating the bump value,
-> > as __wb_calc_thresh is also used to calculate the background threshold;
-> > 3. Add domain_dirty_avail in wb_calc_thresh to get dtc->dirty.
-> > ---
-> >  mm/page-writeback.c | 48 ++++++++++++++++++++++-----------------------
-> >  1 file changed, 23 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > index e5a9eb795f99..8b13bcb42de3 100644
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
-> >                                     unsigned long thresh)
-> >  {
-> >       struct wb_domain *dom = dtc_dom(dtc);
-> > +     struct bdi_writeback *wb = dtc->wb;
-> >       u64 wb_thresh;
-> > +     u64 wb_max_thresh;
-> >       unsigned long numerator, denominator;
-> >       unsigned long wb_min_ratio, wb_max_ratio;
-> >
-> > @@ -931,11 +933,27 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
-> >       wb_thresh *= numerator;
-> >       wb_thresh = div64_ul(wb_thresh, denominator);
-> >
-> > -     wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
-> > +     wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
-> >
-> >       wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
-> > -     if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
-> > -             wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-> > +
-> > +     /*
-> > +      * It's very possible that wb_thresh is close to 0 not because the
-> > +      * device is slow, but that it has remained inactive for long time.
-> > +      * Honour such devices a reasonable good (hopefully IO efficient)
-> > +      * threshold, so that the occasional writes won't be blocked and active
-> > +      * writes can rampup the threshold quickly.
-> > +      */
-> > +     if (thresh > dtc->dirty) {
-> > +             if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
-> > +                     wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
-> > +             else
-> > +                     wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
-> > +     }
-> > +
-> > +     wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-> > +     if (wb_thresh > wb_max_thresh)
-> > +             wb_thresh = wb_max_thresh;
-> >
-> >       return wb_thresh;
-> >  }
-> > @@ -944,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
-> >  {
-> >       struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
-> >
-> > +     domain_dirty_avail(&gdtc, true);
-> >       return __wb_calc_thresh(&gdtc, thresh);
-> >  }
-> >
-> > @@ -1120,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
-> >       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
-> >               long long wb_pos_ratio;
-> >
-> > -             if (dtc->wb_dirty < 8) {
-> > -                     dtc->pos_ratio = min_t(long long, pos_ratio * 2,
-> > -                                        2 << RATELIMIT_CALC_SHIFT);
-> > -                     return;
-> > -             }
-> > -
-> >               if (dtc->wb_dirty >= wb_thresh)
-> >                       return;
-> >
-> > @@ -1196,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
-> >        */
-> >       if (unlikely(wb_thresh > dtc->thresh))
-> >               wb_thresh = dtc->thresh;
-> > -     /*
-> > -      * It's very possible that wb_thresh is close to 0 not because the
-> > -      * device is slow, but that it has remained inactive for long time.
-> > -      * Honour such devices a reasonable good (hopefully IO efficient)
-> > -      * threshold, so that the occasional writes won't be blocked and active
-> > -      * writes can rampup the threshold quickly.
-> > -      */
-> > -     wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
-> >       /*
-> >        * scale global setpoint to wb's:
-> >        *      wb_setpoint = setpoint * wb_thresh / thresh
-> > @@ -1459,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
-> >        * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
-> >        * Hence, to calculate "step" properly, we have to use wb_dirty as
-> >        * "dirty" and wb_setpoint as "setpoint".
-> > -      *
-> > -      * We rampup dirty_ratelimit forcibly if wb_dirty is low because
-> > -      * it's possible that wb_thresh is close to zero due to inactivity
-> > -      * of backing device.
-> >        */
-> >       if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
-> >               dirty = dtc->wb_dirty;
-> > -             if (dtc->wb_dirty < 8)
-> > -                     setpoint = dtc->wb_dirty + 1;
-> > -             else
-> > -                     setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
-> > +             setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
-> >       }
-> >
-> >       if (dirty < setpoint) {
-> > --
-> > 2.20.1
+>  		vreg_s7a_1p2: smps7 {
+> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
+> 
+>  		vreg_s8a_1p3: smps8 {
+>  			regulator-name = "vreg_s8a_1p3";
+> -			regulator-min-microvolt = <1352000>;
+> -			regulator-max-microvolt = <1352000>;
+> +			regulator-min-microvolt = <752000>;
+> +			regulator-max-microvolt = <752000>;
+
+1.3V at 0.752V?
+
+>  		};
+> 
+>  		vreg_l1a_0p91: ldo1 {
+> diff --git a/arch/arm64/boot/dts/qcom/qru1000-idp.dts b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> index 1c781d9e24cf..8b0ddc187ca0 100644
+> --- a/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+> @@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
+> 
+>  		vreg_s4a_1p8: smps4 {
+>  			regulator-name = "vreg_s4a_1p8";
+> -			regulator-min-microvolt = <1800000>;
+> -			regulator-max-microvolt = <1800000>;
+> +			regulator-min-microvolt = <1574000>;
+> +			regulator-max-microvolt = <2040000>;
+>  		};
+> 
+>  		vreg_s5a_2p0: smps5 {
+>  			regulator-name = "vreg_s5a_2p0";
+> -			regulator-min-microvolt = <1904000>;
+> -			regulator-max-microvolt = <2000000>;
+> +			regulator-min-microvolt = <1200000>;
+> +			regulator-max-microvolt = <1400000>;
+>  		};
+> 
+>  		vreg_s6a_0p9: smps6 {
+>  			regulator-name = "vreg_s6a_0p9";
+> -			regulator-min-microvolt = <920000>;
+> -			regulator-max-microvolt = <1128000>;
+> +			regulator-min-microvolt = <382000>;
+> +			regulator-max-microvolt = <1120000>;
+>  		};
+> 
+>  		vreg_s7a_1p2: smps7 {
+> @@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
+> 
+>  		vreg_s8a_1p3: smps8 {
+>  			regulator-name = "vreg_s8a_1p3";
+> -			regulator-min-microvolt = <1352000>;
+> -			regulator-max-microvolt = <1352000>;
+> +			regulator-min-microvolt = <752000>;
+> +			regulator-max-microvolt = <752000>;
+>  		};
+> 
+>  		vreg_l1a_0p91: ldo1 {
+> --
+> 2.46.0
+> 
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+With best wishes
+Dmitry
 
