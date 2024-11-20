@@ -1,75 +1,118 @@
-Return-Path: <linux-kernel+bounces-415890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052B99D3DA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:34:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E499D3DAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F727B256BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:33:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCB4280D9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5124B1AA7AE;
-	Wed, 20 Nov 2024 14:33:15 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D491AA7BF;
+	Wed, 20 Nov 2024 14:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVAmTbSB"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2031BA939
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021FF1AAE38
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113195; cv=none; b=J5+ybhu8rYpmeba30p6EhRDPsuuza0wa9DrqDnDpD4MkXdn1r2teHPEHjuDOmg81ti2qPOUM7WRf1u2TQEKnnkMX8/QYhlbbIRgVryp34h/HNK32tJCwIezJwhmRyQ/1ODB6Jx96tfQTpPOe+bhCBru2qtZRGuJWv16zxe+QfQs=
+	t=1732113335; cv=none; b=iUYJ2P5yllCsaulSbQaos2KVQrp0sEFig33iqBAHoR4KjKq5UdPIIOI2682dmpIoD2L+7Q2bVTTcSKQdTlXyc/cjcKujfkw2awoA37Pa2j8vemNB4wUHX8y58NbFm4Ll5RW4wxi/CeryjbdysXBaFj8fWzJmQ5lY5UoSlhjAFY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113195; c=relaxed/simple;
-	bh=tpwHXt9OjnubS8VGjaLMRiwcCx1f7NKywEcpbcAammk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Uu4Jylg2BZv7OZNsN1V969GNXyZK3Ngp6sFv7ai9UZhuXaAWXAETS/Yx0EVyNC3Rdo4e8HVbAesLUMiJNZWR7i6o8fBEPJA8Wv6t8MiOBkJKRpKCFHN/fzXMnOou4Mdajso69DLohSms8ejG/EupXu4ZKz5ctVAtF8D09qUVU0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XtkJz1qLpz6J6q2;
-	Wed, 20 Nov 2024 22:29:39 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C3633140D1A;
-	Wed, 20 Nov 2024 22:33:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
- 2024 15:33:10 +0100
-Date: Wed, 20 Nov 2024 14:33:08 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
-	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
-Subject: Re: [PATCH 3/6] acpi/ghes: rename the function which gets hw error
- offsets
-Message-ID: <20241120143308.00005c31@huawei.com>
-In-Reply-To: <3dccd08b82755bd42ab61408d5d86b2bfe2f2f01.1731486604.git.mchehab+huawei@kernel.org>
-References: <cover.1731486604.git.mchehab+huawei@kernel.org>
-	<3dccd08b82755bd42ab61408d5d86b2bfe2f2f01.1731486604.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732113335; c=relaxed/simple;
+	bh=FmFmA786Xnnh4fyc/uaDqdewoBevznugnbpqVfJZ8F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ixw4cv9AzMWlmGJl+BwmIGqCKlC6lX2/Ez5OKg8c8S9okeX//lOYj1fRjS7MQbQNJkmcTfuNsrt4JNgCNmviGp1r+Vbrs3xZ0fx8UN/NpwddXBf3UYVd47Ft7fXfs8N+LK7V25IZZYkDgxOuDVDRdpbCt7GT/kXUIZPAoOGH34E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HVAmTbSB; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3824a089b2cso1378157f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:35:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732113332; x=1732718132; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T5q/NrOb0j9a7AJB2JY8f6QBt3D5Yw/OXkV0jHgryNM=;
+        b=HVAmTbSBfAd0c2i8CSGhUGOKnryqellooZ+nXMNItLxrPugaOEFjEG9cBpuDaeGYok
+         zaikWjYFcCWUi+uzlLAy+g0OrXABlJSi3n0tXLumtvSvSqO9NMS69RJT3r6NQJwTEZNW
+         zab6cwwX/ZXsT8e3aHfHBDsuX6fDWe+kBUeYyZ5JhD09HA9wARFbbzFv7kQTRe5V+boX
+         sYlUn8jRAJ7McFWXjwpFxo1VscIk5qJwEYwR4nzZ8M62+2x3IpfVQMdOM7a/TEvyHUpL
+         EgkmUXeKAIXuq4Hvcu25oS1srqOkhNoDeJIJh2Blga2NqoI4bN9kJPRAIkh3OY4BUYne
+         ij4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732113332; x=1732718132;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T5q/NrOb0j9a7AJB2JY8f6QBt3D5Yw/OXkV0jHgryNM=;
+        b=R10qnQjg4mfa8Y35nY51A3xxsAMD/8BAy+mNZtqhgSPsdzmwaIiyBFhCTQ3pqNI85N
+         yrXxVJkJgIJTqTJiW9OcEpBIduSQfbc46WWzRUnpLORU2vRKy8W9Jyga/reergC0uewB
+         DtFchgI04+9e0iMH1CtrJ15vX06PUDLWYH6WISyCq7lmn8vopsQGzSAa7pLNW245cFUZ
+         7N7r+V3BGgyR9ZFf0cWjV9wQnky30Yf7GqeQgDpJXCfKLnG9XQ97McIhoYbLspoL71Jz
+         PvpHEMbNlQuf5xBmiVobppXQpI40Li68UNi/YeW3zuX2C+sceojE4ADfwT/2u65p0NQu
+         rQRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUipI69K1C9oE0nGTLVoVEC7taStj0ZxQiWbRvMBxwyNf8YU9AjQX7capnmEzC3dR2rWUcVXVGnsDKofOw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeJLnjuDUBdZnVV62tmztNtlsxnSNSc4bhJeJwq/e+O8trWjey
+	QQtrCAA6vLGWeWq+mRawkRwA6k7CPuOEKGgZnLCsHw6RA/2AvnXcNsNimf5dLvw=
+X-Google-Smtp-Source: AGHT+IFWe/uFMAKibkVW/x9MHd8Z1EECf5mY82HweltfCWS/ylgqPpMPLvVAMlvSP5bESkBAHm7oYA==
+X-Received: by 2002:a5d:5886:0:b0:382:346b:3675 with SMTP id ffacd0b85a97d-38254b1803fmr2152247f8f.46.1732113331881;
+        Wed, 20 Nov 2024 06:35:31 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933c85sm2229157f8f.65.2024.11.20.06.35.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 06:35:31 -0800 (PST)
+Message-ID: <7ae98d62-9617-41de-ba67-bad2120b33b3@linaro.org>
+Date: Wed, 20 Nov 2024 14:35:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] dt-bindings: i2c: qcom-cci: Document x1e80100
+ compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-1-54075d75f654@linaro.org>
+ <jfhd6fhp55dsahqajx375jitezsvscsbjfrbetpnzplsrq3ciu@5q2up7wbgp4y>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <jfhd6fhp55dsahqajx375jitezsvscsbjfrbetpnzplsrq3ciu@5q2up7wbgp4y>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 13 Nov 2024 09:37:00 +0100
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-
-> Rename: get_ghes_offsets->get_hw_error_offsets
-> to make clear that this function return offsets based on the
-> hardware error firmware.
+On 20/11/2024 08:49, Krzysztof Kozlowski wrote:
+> On Tue, Nov 19, 2024 at 01:10:30PM +0000, Bryan O'Donoghue wrote:
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
 > 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Missing commit msg. Checkpatch :)
+> 
+>>   Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+> 
+> Best regards,
+> Krzysztof
+> 
+
+How did I miss that...
 
