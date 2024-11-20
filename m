@@ -1,80 +1,115 @@
-Return-Path: <linux-kernel+bounces-415438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DEB9D3623
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:59:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA9D9D3625
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2D91F25DC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561A01F25FDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB50D1865E5;
-	Wed, 20 Nov 2024 08:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065DF189B8F;
+	Wed, 20 Nov 2024 08:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyXlp+xb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="UemcjZ7j"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D7B185E53;
-	Wed, 20 Nov 2024 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8370176FB6;
+	Wed, 20 Nov 2024 08:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732093143; cv=none; b=BkmvugQ1HHpaEPdsVmqRcWFpzLmGNHLKYXnyFQcdT5H+AGtJUy0G+wOTlQ6dOuvgW3C27xpJeek34pDBlEi3FPhqcTiTblhuCjzzv2HFye1feNN5DwhASXTSYpn6T2GUKuao5E/eAa8KtTjmourdGmum6WzaLd381gILkuOnq8Q=
+	t=1732093184; cv=none; b=XUviOoMLNygsASlAhgYNMho1Kho1E5AJ/zAb/+T9XHLsgHsIX/blBK8thMns+Eo8JWy6qGLsIo4PILqQkeGiur3EF6wQ2HmKbfCMqbPj0YiYBLQ5WsFt7uLgL9j460EEmfCTlp9qLhg0Bi4PicnsMYS1erngdKJbAfAUaqE+IL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732093143; c=relaxed/simple;
-	bh=FSqB6Ma9NEk5mchTyPwpPByw+/YUgMeVPc7CFRfOzu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkX6glAzfd2Y3ODqb7O0mX0GCyMKG+tEow17cj6cJOGpSjZ5SmjF2p7s4tj5wjvgFa/EnWCs1EIIRp/Rr5fSH5OCzwEXIjiTg/rwHwpak/ndrJchAYH7b0JlQyyRdTih6/qyUYOl/qk8w0ef0c60J248JUqU2U5wBwSyqpRZINc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyXlp+xb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B7FC4CECD;
-	Wed, 20 Nov 2024 08:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732093142;
-	bh=FSqB6Ma9NEk5mchTyPwpPByw+/YUgMeVPc7CFRfOzu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nyXlp+xbycTok0UduEZaqH5btL55Hkbe5ORaILAS+UywoVb1ocVl70OTaqUBM4ApG
-	 vrmHHJgI4hOHLrjicoS2ZazPLPGde2mkKPvV8RixZUfAsraYOHbWx6vxkUPDLYWpSi
-	 GwQKHRUgiRM3R9cee1/LKjLtHRDCtA5zpx9A//JP4A4kCP4FQmJFxKYcNemWf8fSCR
-	 I+7PRm1Yj8l8fhO4diJcD+onrRnn4qa66SBqYBPTHqnUv4s+o5vOaLNzlAzSWD5Nx0
-	 EW1nc0yHDGNZg3Qdebd/ZCLgtrEM7YmYQuOt4S4k2krH1FRl26Ra8XqNNfJRd7uZD/
-	 HLB4hvw0XMzGA==
-Date: Wed, 20 Nov 2024 09:58:58 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan.Wanner@microchip.com
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
-	mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de, dharma.b@microchip.com, 
-	mihai.sain@microchip.com, romain.sioen@microchip.com, varshini.rajendran@microchip.com, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 02/15] dt-bindings: mfd: atmel,sama5d2-flexcom: add
- microchip,sama7d65-flexcom
-Message-ID: <3ftlfgfumjcpkkowg4cj3ehyo4oonpingpdpz5usg37wevg7xb@n4ytc3vuvr3n>
-References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
- <46928aa2d15d05fa3046c270a51a10cd56c2e919.1732030972.git.Ryan.Wanner@microchip.com>
+	s=arc-20240116; t=1732093184; c=relaxed/simple;
+	bh=aLc8Kf492MgjE+zyg6gQJeLIBhn15j3FbQt2OvLg/AI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c80Rlt1Lq7pEMg7+Gj6P0nsrPeXxJkNCgTwlH2sEkzFRtYW8Em3BfawXsfd8IGbF+9jJHYnB4DueZvV7VmS1G+yXxgJHfMMEcze/WMLNN6AajjX1MXSaDiCMUbsnKHOaTntOcWzRcsQWsrHANYXt5s7PNWBlcT9Iap4Dai563P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=UemcjZ7j; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=bRFNEAGI0aekibeSDFr0Rp1D2DibBePt8ql2pp92DS4=;
+	t=1732093182; x=1733302782; b=UemcjZ7jR8/SxTdF75h78lEcsScsawZS02ySMuUOrkLag7j
+	3WwNVRIiL0/aVulPd58lECTnQwF7Y7+jEEbfuvOWHJPIS1GoP/zuY5rUGMt2pAYpVgx/UaiNj5gj9
+	RrgK9cBbDH/vylntzjPY6zNObzangltTWOQyxBdO/s6TjRu0m1b7t44slZpfJw6tgsSw50LcBYIcM
+	egXB7ObY4K2PKX/RjIprfE90FWaifDW5x+aC/opE8Wv8rZk0z0TshBIvof6emaQ0yKwW88oWhatQW
+	of/ex4u/kqePDZurUME0fuivcnX/LTqXuD4hZEpTl5GT5MTiccR0Jow3By2TjWWA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1tDgYl-00000009eTs-2lW2;
+	Wed, 20 Nov 2024 09:59:39 +0100
+Message-ID: <b28eb973d42b680db268eda1868b672264ab12be.camel@sipsolutions.net>
+Subject: Re: [PATCH] wifi: cfg80211: fix WARN_ON during CAC cancelling
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Aditya Kumar Singh <quic_adisi@quicinc.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 20 Nov 2024 09:59:38 +0100
+In-Reply-To: <a074905b-34c5-4cc3-a38f-a2c4bc281e5d@quicinc.com>
+References: <20241113-mlo_dfs_fix-v1-1-e4326736347b@quicinc.com>
+	 <d0eb18d4a302e4be5251106fbfa8f5e10dd36477.camel@sipsolutions.net>
+	 <383a616d-50c7-4538-9e94-fc8526405c94@quicinc.com>
+	 <6b59e7a5f90b85dfc9146fa2cbdfe56c0a307a3e.camel@sipsolutions.net>
+	 <f383c25d-fb76-4e3e-b900-7156f608bef0@quicinc.com>
+	 <c30bde94d07e4984c02e0e329df7032f95b00a4a.camel@sipsolutions.net>
+	 <a074905b-34c5-4cc3-a38f-a2c4bc281e5d@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <46928aa2d15d05fa3046c270a51a10cd56c2e919.1732030972.git.Ryan.Wanner@microchip.com>
+X-malware-bazaar: not-scanned
 
-On Tue, Nov 19, 2024 at 09:40:08AM -0700, Ryan.Wanner@microchip.com wrote:
-> From: Dharma Balasubiramani <dharma.b@microchip.com>
-> 
-> Add flexcom binding documentation for sama7d65.
-> 
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+On Tue, 2024-11-19 at 11:23 +0530, Aditya Kumar Singh wrote:
+>=20
+> --- a/net/mac80211/cfg.c
+> +++ b/net/mac80211/cfg.c
+> @@ -5046,10 +5046,11 @@ static void ieee80211_del_intf_link(struct wiphy=
+=20
+> *wiphy,
+>                                      unsigned int link_id)
+>   {
+>          struct ieee80211_sub_if_data *sdata =3D=20
+> IEEE80211_WDEV_TO_SUB_IF(wdev);
+> +       u16 new_links =3D wdev->valid_links & ~BIT(link_id);
+>=20
+>          lockdep_assert_wiphy(sdata->local->hw.wiphy);
+>=20
+> -       ieee80211_vif_set_links(sdata, wdev->valid_links, 0);
+> +       ieee80211_vif_set_links(sdata, new_links, 0);
+>   }
 
-I retract my Reviewed-by. Missing SoB.
+Needing this part is sort of clear then, but maybe not entirely obvious?
+Should probably be accompanied by some documentation updates.
 
-Best regards,
-Krzysztof
+> So I will submit this as patch then?
 
+Seems reasonable.
+
+> > There's necessarily going to be some temporary inconsistency here, I'm
+> > not sure it matters too much if it isn't very visible?
+> >=20
+>=20
+> Any particular case you suspect and want me to test?
+
+No, not really.
+
+> I'm more inclining towards the first suggestion you gave - clearing the=
+=20
+> bitmap later. What's your suggestion?
+>=20
+
+Sure.
+
+johannes
 
