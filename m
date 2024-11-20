@@ -1,191 +1,131 @@
-Return-Path: <linux-kernel+bounces-415731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561659D3AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:28:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0949D3A96
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 350FCB22741
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:16:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61CCDB2B7A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B79B1A4F1B;
-	Wed, 20 Nov 2024 12:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99D21A4AA1;
+	Wed, 20 Nov 2024 12:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kXFWHLiN"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="qY0Bw2k/";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HOoQOQtc"
+Received: from flow-a4-smtp.messagingengine.com (flow-a4-smtp.messagingengine.com [103.168.172.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E771A4E9D
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8DF1A00EC;
+	Wed, 20 Nov 2024 12:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732104976; cv=none; b=EaflsAELEQGZM92L5ujmlAJbpln2p397IMkVwvidHX31AXvFd3rTPFLMXnDtzp9TiOS1uilH97Ade65hWwRdF8Ak31UO61zWNOX2jsFfUYEIvgaov6M4C1SCiOQwuYTNHlY2B2m6hw5LKBv7uTu5UXFW9RH3qoeIVL0SltxxA44=
+	t=1732105026; cv=none; b=jI+gaB3lF5e4m7CC/oNVDUpp9AJD1b1OD0G634/8XtAEvV9bQRM9dmmVXtvjdtH1zYBbrPiRJVqvvyLCgJEKnLP7EgexOfFjvWJ7+SKH/XFxE/znuieZxKkO3vyi5K5x1J0k7g8TMCJEf8StRtPzDjrR6vXHIsHi+skymvQtzDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732104976; c=relaxed/simple;
-	bh=r9BGWtiuF0mfz6RBtnoPJ158IEaZpOtLb28KEG6nOwU=;
+	s=arc-20240116; t=1732105026; c=relaxed/simple;
+	bh=xppnjPqrvhoerBzopeX8R1LH7VW4ackbG9x/TnTFAbY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s91Pi1NKZcl32rb67BTmoOkdH0wEqaNK1mGRsyk6qomfUvHmFqwQQ+VK2tR9nLMpOdp3RUaFXe0ObFnYcOc4AdOdk4orxlpBoSPneK3xMmyMNebeC43y3P6SxIyvDL4lltirUs2wA8GkXf9PcLwhcJ6r98wRWbwtHjIo4ki0Rgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kXFWHLiN; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so41663041fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:16:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732104973; x=1732709773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIsUKn523ItPFhw9PoQgspXzNPwI8eBe9tACkVcqoFg=;
-        b=kXFWHLiN85+mdNa675J3x2MOayJj7HH2PlOGP1OD8SjYAk38Y1/S1eC50D80pJH34+
-         Ydpo+HjuaXMekXnMOuDD8H7H85C2E1W9Sb53RGI5nyOmlyJQ1BMkVujGg7AWSzjS/WJl
-         R2klshASlUisFvauR62JHYJ6pPqjw0Ib7GAOY0qCNxhHnwsIj68mzB1wA08vlr/MQgD5
-         JcD2lCAuW7M2ISIVeouwsEDYiwBZHgNrYzSupaVRhTezUPte8lC/0f1NM7xQ4KNiypIW
-         JPk8862jln+7RIfLNf8MrL162irtKQSpSR4SA/2XANID9HH5SoTdysYAvjMAmgP5hzdD
-         dk1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732104973; x=1732709773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cIsUKn523ItPFhw9PoQgspXzNPwI8eBe9tACkVcqoFg=;
-        b=aBc1mSedPuPw2hJtmLu5GvsDTB6ywOM5d+bjIUmoYdu1GFaJny/tYyKtY7u8Tamo/e
-         9k0LeLxDnGp4FAifzCnd+bC7+KPobJi/NYDic+Dh5d38EIQCP1vuiYGoGAnE/u54Rp1j
-         J1Hckv/g7sufATiki3QUBouiD7Hm0YyKTZ25TznVC9c0HJQt4EYfE6533T5cC8mlRNp8
-         N/InuU6zbaR5hSo89Yg7ijhUueySDXWYXFV8uu6SLfFktWIedZUxn6h7/UjJCntEoxa9
-         NgrMh9oyZL7ptQ9LNtR1RaswEzq1qtdkDPBVORCM0kbnSonpwLh9iVy8n6kFmgfQc6OT
-         xsfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaME8zIO9K6F+TUNgDnzuPfbokt6CNF8eR+jT1Yt9zvVgVl7g/HrtcmOD6094vzsYWHfIgfSHD4RKK5Mw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH4ZLJ78EipIkCVgpkzQ7/V5Varzjyd/Qrwk72QQafrb/S7UTZ
-	XtIWCv1QjEcXjbf9LYVKyzIYtYKsGTndkO2Oru5Q6zE0SriyCPAoNQcj1WUc51Q=
-X-Google-Smtp-Source: AGHT+IG+JbXwf7DnQ9184clVxgyLKaSqR5SrvWGXCF34hbjR2SJgwz1JS9pJIQewA46R8bEOMRQG1Q==
-X-Received: by 2002:a2e:bc20:0:b0:2ff:78be:e02d with SMTP id 38308e7fff4ca-2ff8dbcb795mr14542921fa.11.1732104973210;
-        Wed, 20 Nov 2024 04:16:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff69ae80c5sm15094771fa.80.2024.11.20.04.16.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 04:16:11 -0800 (PST)
-Date: Wed, 20 Nov 2024 14:16:09 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, sean@poorly.run, marijn.suijten@somainline.org, 
-	airlied@gmail.com, simona@ffwll.ch, quic_bjorande@quicinc.com, 
-	quic_parellan@quicinc.com, quic_khsieh@quicinc.com, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, dianders@chromium.org
-Subject: Re: [PATCH drm-next] drm/msm/dp: Fix potential division by zero issue
-Message-ID: <pwwukfhijwywhz7tailrfamxdyz6jabo5ref64xr6upnkzcpel@flzvrcr3m3h5>
-References: <20241120050451.100957-1-dheeraj.linuxdev@gmail.com>
- <piembwzz7x6plsps3umjg3b3pi2ii44svmeii3wwtydtriceny@uqq7ck2ge5zz>
- <Zz3N7IvdN4L8N62p@HOME-PC>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDC88NaNZLHdc6OWepRWV+FSOnN+w5iT8Ibl5gt9/dmPEQdI9epX0jk3+gJqcn22JgEW8DfUM5+Gi6RXLFkfUQEgpwIv/0ixEKJWb5Oux1O2n8/gfLXvZSlrdGx0yCwM18t5HTGeUksLEIQVtGKSdRKwIH77+QSVsHYdp4VJL/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=qY0Bw2k/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HOoQOQtc; arc=none smtp.client-ip=103.168.172.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailflow.phl.internal (Postfix) with ESMTP id 664AC20062C;
+	Wed, 20 Nov 2024 07:17:02 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Wed, 20 Nov 2024 07:17:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732105022; x=
+	1732108622; bh=vZVutuXEb1XYsMhVjUw558rkRrLgw9D1s6JcwZMWDvU=; b=q
+	Y0Bw2k/4epLtl0RenkcDDqmdeZ5hkHDuAQSQ8gBFcRgQLRQoeuUu3nzO0jBZoN48
+	rRFtjYjC+CkaBabqua3CjDdj24zNjTOrCs/ziJVGKm1fZhzUm+Boep/A78Iv1BYp
+	xhCmGVPXfLwOxZFiK6iA0ARsY0qxTxQ9iIYftV+oM9OHTKMMsXKhPPeI+ddjp2bU
+	+zVvUTWTdnSm/9R6FtAMU7djuRk6Q+4Li1DD4nb66x70JVsv86AfBNHO0YSsq9pp
+	3Z9DcoMhmlnjhG4rO8QEh6252AwffPxCFNNlOh84d1xPplDqCpeR2jC7aKJnsOMf
+	adkxBPthp12qm24PVVZeg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732105022; x=1732108622; bh=vZVutuXEb1XYsMhVjUw558rkRrLgw9D1s6J
+	cwZMWDvU=; b=HOoQOQtchL5TiOTbbAmiGuyzjZzV4d0ygOUnKcDG2Cc+OyhcPD5
+	QDrZIuPwgrW16clvUz15HYsBuPMGfVvNlHzvqG78GWo5XvMD8pqKobyxm1+h8XgN
+	wUMIMfDqrpcM23sL5w6PmkWNJ/tDbNkZmtZjrn8yTd56TFCroHhoCYRj2MWqnW4Z
+	JdVMnsTz/Mytvvcsy5hQHe3mEhv220Tp+dhBMpvVHkX4/saXwpjV77aEyisXhoka
+	btDBcMH3/gb0dLIkHRrx9UP/k8BCh3p1yVui/q3MZA+W/Ei53Kp78NeEm9VWWkT/
+	1qEnvhjHYlbXonsIIZxsGlcLcEQF8P/dRlw==
+X-ME-Sender: <xms:PdM9Z2mdKVAv2XIJPMK60uYWcpDf4qm1Y_c2gx5K33i5PUrZ9OerLA>
+    <xme:PdM9Z9135vfv-0UvluHyn1nD3X12NIhOIw9DJhhSvYTGuatQ3rtwLX29OWFyj_sOM
+    zgt6S41daczpz9VeNA>
+X-ME-Received: <xmr:PdM9Z0rv7bnTEP9iyAx3CkhRe8hX5PVZFO36MHncjJbEl3_zUDDgpWH216sg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeggdefkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhu
+    nhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:PdM9Z6nKZvjUTRn67IgSe-JJNfk9WtfgrB5roiiDhJf0tOfXqMDd-A>
+    <xmx:PtM9Z03k57tfWNiK_rUPkWPNK3xBgXw9i3T76A_hOgh_R9mtw_HpZA>
+    <xmx:PtM9Zxv_uxZ0ruNKS2Mc7z8vRgic6Rr6Fp0u9zfF2WQXMcBm-xnrfg>
+    <xmx:PtM9ZwVyv57uSvSxUiPBROdVGTXPPv1n1KcKx5pioKgy_A60a2bRKQ>
+    <xmx:PtM9Z1I-f3ZZBgDQ_vH7z-eMWRnm3FY6fDUcBNM0tDolDeJh8mkuJglP>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 20 Nov 2024 07:17:01 -0500 (EST)
+Date: Wed, 20 Nov 2024 13:17:00 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 20/23] ovpn: kill key and notify userspace
+ in case of IV exhaustion
+Message-ID: <Zz3TPLlpEwtAYu3V@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-20-de4698c73a25@openvpn.net>
+ <Zyn0aYyPVaaQJg3r@hog>
+ <816d8b43-8c19-4a4c-9e37-98a3415848b5@openvpn.net>
+ <ZzS3jgNQoDH_0TvK@hog>
+ <21330449-fab6-4c0b-a155-84c7419adbcb@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zz3N7IvdN4L8N62p@HOME-PC>
+In-Reply-To: <21330449-fab6-4c0b-a155-84c7419adbcb@openvpn.net>
 
-On Wed, Nov 20, 2024 at 05:24:20PM +0530, Dheeraj Reddy Jonnalagadda wrote:
-> On Wed, Nov 20, 2024 at 01:02:32PM +0200, Dmitry Baryshkov wrote:
-> > On Wed, Nov 20, 2024 at 10:34:51AM +0530, Dheeraj Reddy Jonnalagadda wrote:
-> > > The variable pixel_div can remain zero due to an invalid rate input,
-> > 
-> > No, it can not. Rate is set by the driver, which knowns which rates are
-> > supported. 
-> > 
-> > > leading to a potential division by zero issue. This patch fixes it and
-> > > the function now logs an error and returns early.
-> > 
-> > See Documentation/process/submitting-patches.rst, look for "This patch"
-> > string.
-> > 
-> > > 
-> > > Additionally, this patch resolves trailing whitespace issues detected
-> > > by checkpatch.pl in the same file.
-> > 
-> > Additionally perform ... => separate commits.
-> > 
-> > > 
-> > > Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-> > > ---
-> > >  drivers/gpu/drm/msm/dp/dp_catalog.c | 8 +++++---
-> > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > > index b4c8856fb25d..e170f70f1d42 100644
-> > > --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > > +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> > > @@ -225,7 +225,7 @@ int msm_dp_catalog_aux_clear_hw_interrupts(struct msm_dp_catalog *msm_dp_catalog
-> > >   * This function reset AUX controller
-> > >   *
-> > >   * NOTE: reset AUX controller will also clear any pending HPD related interrupts
-> > > - * 
-> > > + *
-> > >   */
-> > >  void msm_dp_catalog_aux_reset(struct msm_dp_catalog *msm_dp_catalog)
-> > >  {
-> > > @@ -487,8 +487,10 @@ void msm_dp_catalog_ctrl_config_msa(struct msm_dp_catalog *msm_dp_catalog,
-> > >  		pixel_div = 2;
-> > >  	else if (rate == link_rate_hbr2)
-> > >  		pixel_div = 4;
-> > > -	else
-> > > +	else {
-> > >  		DRM_ERROR("Invalid pixel mux divider\n");
-> > > +		return;
-> > > +	}
-> > >  
-> > >  	dispcc_input_rate = (rate * 10) / pixel_div;
-> > >  
-> > > @@ -579,7 +581,7 @@ u32 msm_dp_catalog_hw_revision(const struct msm_dp_catalog *msm_dp_catalog)
-> > >   * This function reset the DP controller
-> > >   *
-> > >   * NOTE: reset DP controller will also clear any pending HPD related interrupts
-> > > - * 
-> > > + *
-> > >   */
-> > >  void msm_dp_catalog_ctrl_reset(struct msm_dp_catalog *msm_dp_catalog)
-> > >  {
-> > > -- 
-> > > 2.34.1
-> > > 
-> > 
-> > -- 
-> > With best wishes
-> > Dmitry
+2024-11-14, 11:38:51 +0100, Antonio Quartulli wrote:
+> On 13/11/2024 15:28, Sabrina Dubroca wrote:
+> > Around that same "which netns" question, ovpn_udp{4,6}_output uses the
+> > socket's, but ovpn_nexthop_from_rt{4,6} uses the netdev's.
 > 
-> Hello Dmitry,
-> 
-> Thank you for the valuable feedback. Will update my commit messages
-> accordingly. I wanted to seek clarification on the the divide by zero
-> issue. Would pixel_dev not be zero upon hitting the else case as
-> indicated below casuing a div by zero?
-> 
-> 	u32 mvid, nvid, pixel_div = 0, dispcc_input_rate;
-> 	u32 const nvid_fixed = DP_LINK_CONSTANT_N_VALUE;
-> 	
-> 	[..]
-> 	
-> 	if (rate == link_rate_hbr3)
-> 		pixel_div = 6;
-> 	else if (rate == 162000 || rate == 270000)
-> 		pixel_div = 2;
-> 	else if (rate == link_rate_hbr2)
-> 		pixel_div = 4;
-> 	else
-> 		DRM_ERROR("Invalid pixel mux divider\n"); <<-- here
+> I think this is ok, because routing related decision should be taken in the
+> netns where the device is, but the transport layer should make decisions
+> based on where the socket lives.
 
-The 'rate' itself also comes from the driver and the calling functions
-ensure that the value is correct.
-
-> 
-> 	dispcc_input_rate = (rate * 10) / pixel_div;
-> 
-> -Dheeraj
+Right, thanks for checking.
 
 -- 
-With best wishes
-Dmitry
+Sabrina
 
