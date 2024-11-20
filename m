@@ -1,169 +1,243 @@
-Return-Path: <linux-kernel+bounces-416384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7109D440A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:53:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534799D440C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:54:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14D62822F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:53:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6B71F2280B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7651BDA84;
-	Wed, 20 Nov 2024 22:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C45C1BDAB5;
+	Wed, 20 Nov 2024 22:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X0HHVXIl"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="YhPT+kKo"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830F816EBEE;
-	Wed, 20 Nov 2024 22:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BA61A0BE3
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143226; cv=none; b=t1v3x+ZfDEet7YRsE1w9/zzT61cVXz5wCQmUf/D+97zwImroGDEKfNNXWcmYdypVR/SwZ4tM8mljlrQ4VOIhmX0I8vmto0bbEozC3FiHmqXlEFINrmcN7Myrxi902HYNf1jyGP1xq6Xl/uFlktw/mxwzRRN0p5sza9nbcx+ZQ3I=
+	t=1732143241; cv=none; b=l496OqbFIiWnkkFQN13T/X+uIXCTZI83ZAK4xoyPxMZQphCZMVcE3dd2Y1GyHIk9n77Nsxi7yVBXLsQpiPbUn9FICP6ZdJR5nig70PPBrOEE3Hf5Cl1QoZF482uJ0b9c0z9mLx6uqDoNDCUBM/M1BDb0kRqd8Yfk9jKQ6jN7Cak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143226; c=relaxed/simple;
-	bh=U5mlwYngCJSzwalPkrojT/KkruaUO5ObHTRyXy1Llds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BcE3FlzFnITptfSDBhSgia6ULA9OQqJ2eKn524PFIthRzkPNvBmoJwnEl8dh9jMYw2Ci7Cofh9gSMlk5K4Qg2dRcuudQI9E/1tQQpJp2D6M538V2DrRPHWF5UySlVb6we+9L+dW8j+wIAPrIGrOyOdaufH+j4g8GGvn3hvmrRt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X0HHVXIl; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431616c23b5so1277215e9.0;
-        Wed, 20 Nov 2024 14:53:44 -0800 (PST)
+	s=arc-20240116; t=1732143241; c=relaxed/simple;
+	bh=Yn+AMrJhxvDyr5NFRzcaVYH0arIbMuSBjcaU2Cu0rBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKRFAdYGkcTVyWZEf6Ny0oBUZ13RcAfXQ0O9DStcp1BK0wG43BNj6HSxI+VVsjboSg9F7ytJuxMEu9MKfjdlVz1qP8wsZIu5mx4Z2ZpjX2oaIpAszekqwsCA/VUe5pAbRZgyv0YOf5rhWnhc9HwJNmoWJvDp7g7/Fs481/g381E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=YhPT+kKo; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7f12ba78072so257240a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:53:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732143223; x=1732748023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IsMj39NZqnVLxxCEfy2ZtKXA+QzcGZ/qO30hFJl13Ug=;
-        b=X0HHVXIl0cNujzgwsKuPez8/w5vkgQ56MNpz81iTZDZBFewDodMgKqfQdOkbolvIog
-         rxMULdZGiYCZAvbIgZSfm+T1w0tOpqgKPP/dtRe810Uj+8GOTHO/TTUYL7JX3vw+184I
-         1z4xAXi2bTx96vZhk7tsvAEODgpkkP+TM14jx6xWvFW+0iIJxvB6lYLDTpOPRtya36Ou
-         80/lPG1zPnFLHSM545pe2hkLM6+BGpwutwBTdseIV4KjpQJqG2mj2Zd58F+kpyvjZ4vl
-         klW15kxqtb48rOGlwDSJWuf/OBFnwXVBTW9rNSnncwSZ4X11VO1EPOXdRoC+XXjEjAOp
-         aMIw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732143239; x=1732748039; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OpIlqMn/s0feZOT3HHhuTTXA4GdVd8VK4Ygvn8WOph0=;
+        b=YhPT+kKoq9UTFPIBpmttUfIdQsX9CUGjQn6hpWnqecsGpOH9pk+x1ZGGStmGhCfCrz
+         bXJfo7kpAyUdFIYAQNCQjn0Aggd0Jt0637DSYrXXpMGDzCgdw1rs/5FwOqh1VKfeTCdF
+         niD4Ai3ADsVGrcD7kMfV0WnqHPvVpZtMnwI7FU9oRtJFBoKdP0LKP1lhIo7FOQdj0gUs
+         5CyHdqBBjuYsHcQvEDdzxt8VQJF45t0XjFbTUyxEzowHeXRO0xGnUOjWqtvCvcrq0bn0
+         rqwH2Q9mBzkTtmCdZhUp5aaOeGJ7UfARDBcbGrBqvq3s6R4Mn1pRTBP2OwMFk1KCIIrH
+         3dnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732143223; x=1732748023;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732143239; x=1732748039;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsMj39NZqnVLxxCEfy2ZtKXA+QzcGZ/qO30hFJl13Ug=;
-        b=f2V6VTxfVrQI60oB8+kWVZUkzRV7Rt7YDvfNbpdKFbqTcQ4MzC5CXQ2kAaPTl6DWsQ
-         pCJvQ1iSFvL340NYtN097VW2PJ1w0J/q3whuO8fBpeoAjDhCR5Im78PgqdRKz+7B+Bkg
-         SGALYY5190Uc3DpEcWWIByQv7YrP88cdYoG6p7QNd7jxDJ5IiNlXywemEJFerGlbguc9
-         pByh7bgMe0BEYT+Ou+zYXTPKBmsEQ1x03SllmTHucM0R8GtEw2GiKSXuOnUyA942fbp0
-         xlPwhOg0SVRMzE4lvClKsOb9FcVT4l2ZNo0I3SgVLa3K1fmG1RjtpJD9fqprP94mC0RY
-         Gbew==
-X-Forwarded-Encrypted: i=1; AJvYcCVqyvXGeDeYIQyCayKNfDZMNEptRYRcRQLn1eC3I3WIH7VnInpDrcu517eKpzrIhQjAXibXbwDz98F5@vger.kernel.org, AJvYcCWiIqY20Vl3wLQ07ld8bEzEeKrCHNaEXHdv8pqIlXXVT22VKCLQyVtTfC9/Vn1ZQFkOI/clb0mxgmwEQhpT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR8Am3gldenpu83FWJTaB9F7WtKnBMr6mQTCKStX+29o0btHT9
-	8LWmLnkeSw5E+/yLqvQNBznCk3GADmFlF/rVVbfKdwnt9QZhef6YlzAHE0R9
-X-Google-Smtp-Source: AGHT+IFRav4z1cOkCzYCYXk1rIn5A7PhHN81ImgrIxKlyZcUUavYCy4suGo9g782eOcqWEkJhrxMqw==
-X-Received: by 2002:a05:600c:3ba0:b0:431:52da:9d89 with SMTP id 5b1f17b1804b1-433c5c9157bmr8608755e9.1.1732143222559;
-        Wed, 20 Nov 2024 14:53:42 -0800 (PST)
-Received: from [192.168.0.100] (85-193-33-171.rib.o2.cz. [85.193.33.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d395asm33728405e9.19.2024.11.20.14.53.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 14:53:41 -0800 (PST)
-Message-ID: <f824fcb5-8c04-4a39-887c-64fed2439cef@gmail.com>
-Date: Wed, 20 Nov 2024 23:53:40 +0100
+        bh=OpIlqMn/s0feZOT3HHhuTTXA4GdVd8VK4Ygvn8WOph0=;
+        b=VNVjrvgDw/hovKpSiU21jtrzEz7AQw7Hl6mpMVEsO2HupkkT9EMyuLyD4zZOcoKclG
+         JfIZ2qeq8ow8MttOT1Y1vuQjmdgIFQC7JWLWWauuzRvSBnKyf5RPQ5YBcdkaxnfxlkv/
+         FjN1MET8XU0Kc08GhybTNklivPAHjNRhQsGyP692FTAr4vyeYphHdzGaLQkKYmGuSRNK
+         JNbITnQdI6DY6lxFMi0tbJA5iaw5AiX52B8tez+7IqOKNbH7HyZRwM4cQQ5EvQD/pEbm
+         c32FXYSlMsFf0ZQcChh+MNY51hy3WxajOBp7Fjqp2Jy7eTvISvl6HTBISsZzdwdW04ZB
+         A0tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXze+740g/hr00bsjcWMZusc63KU4W6Q4CZLDkCy7yDqSk9Lv13N8JaayGYEqgyZef+e6wCZ6n8T4+QwWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxwj75iRU/GDgXsisVqWBB/QVBy/JWkrsjQ1bj5PfkrkCRmlh55
+	usGADReJLSLhQo618QdyplBAonuLt75bSM4Fn6SUohEWtTM/X7bgbY4i240/2NA=
+X-Gm-Gg: ASbGncvdOPxu7oKbVJTlMT3DpiiHtD/Z2JEWgHtyEAgFbthXiIrkHXeQZ2RX28ZzD6+
+	uF9jAkBOAj9WsUYkrgR86AZ9aXRlJYDKAZaUSaOoBa8O9EdBLW0Ugh/YOBbYB0EtTKq/v2gZBUL
+	5JzFMFaetynGqZbguQor3WiTmTMzWuGVDZMUf76+BU+cw1AF6G8K+4x2/j1SnTnjIj8VGCq7Uq1
+	omOjtTJSrwSe0s63yhHbwY/CLGPM9DgkH8lYVdw1Fur18QjdGINgffQYNK8f/yrqtjaAmswR4DT
+	jNoHrvO+o5RAeMw4uHTha4qQ9Q==
+X-Google-Smtp-Source: AGHT+IEo1QuTwU82hD/MIwaVhIynIO5wBU9St642b/kl/3xFbT6jtUcqMQWk7Nd7qyhS8/1VVJyvZQ==
+X-Received: by 2002:a17:90b:17cf:b0:2e2:a6ef:d7a6 with SMTP id 98e67ed59e1d1-2eaca7e1b9bmr4743792a91.36.1732143238826;
+        Wed, 20 Nov 2024 14:53:58 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea415sm1903177a91.2.2024.11.20.14.53.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 14:53:58 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tDta6-000000012l2-4032;
+	Thu, 21 Nov 2024 09:53:54 +1100
+Date: Thu, 21 Nov 2024 09:53:54 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Stephen Zhang <starzhangzsd@gmail.com>
+Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com,
+	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org,
+	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+Message-ID: <Zz5ogh1-52n35lZk@dread.disaster.area>
+References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
+ <ZyhAOEkrjZzOQ4kJ@dread.disaster.area>
+ <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
+ <Zyi683yYTcnKz+Y7@dread.disaster.area>
+ <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
+ <ZzFmOzld1P9ReIiA@dread.disaster.area>
+ <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: w1: ds2482: Add vcc-supply property
-To: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Stefan Wahren <stefan.wahren@chargebyte.com>,
- Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com>
- <20241115-ds2482-add-reg-v1-3-cc84b9aba126@gmail.com>
- <20241115-happy-garter-2cf65f4b1290@spud>
- <83c8487c-2c50-4315-8244-ff80632165e9@gmail.com>
- <9896a38f-4b68-46a9-83b8-bf76abea47ba@kernel.org>
-Content-Language: cs
-From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
-In-Reply-To: <9896a38f-4b68-46a9-83b8-bf76abea47ba@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
 
-Hello,
-
-> On 20/11/2024 09:34, Kryštof Černý wrote:
->> Hello,
->>
->>> On Fri, Nov 15, 2024 at 03:58:06PM +0100, Kryštof Černý via B4 Relay wrote:
->>>> From: Kryštof Černý <cleverline1mc@gmail.com>
->>>>
->>>> Adds the newly added vcc-supply property to bindings.
->>>
->>> This commit message is a circular argument. You're adding it to the
->>> binding, which of course means it is newly added.
->>
->> You are right, I will replace with "Adds the vcc-supply property to
->> bindings." in the next version.
+On Sun, Nov 17, 2024 at 09:34:53AM +0800, Stephen Zhang wrote:
+> Dave Chinner <david@fromorbit.com> 于2024年11月11日周一 10:04写道：
+> >
+> > On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
+> > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 20:15写道：
+> > > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
+> > > > > Dave Chinner <david@fromorbit.com> 于2024年11月4日周一 11:32写道：
+> > > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
+> >
+> > [snip unnecessary stereotyping, accusations and repeated information]
+> >
+> > > > AFAICT, this "reserve AG space for inodes" behaviour that you are
+> > > > trying to acheive is effectively what the inode32 allocator already
+> > > > implements. By forcing inode allocation into the AGs below 1TB and
+> > > > preventing data from being allocated in those AGs until allocation
+> > > > in all the AGs above start failing, it effectively provides the same
+> > > > functionality but without the constraints of a global first fit
+> > > > allocation policy.
+> > > >
+> > > > We can do this with any AG by setting it up to prefer metadata,
+> > > > but given we already have the inode32 allocator we can run some
+> > > > tests to see if setting the metadata-preferred flag makes the
+> > > > existing allocation policies do what is needed.
+> > > >
+> > > > That is, mkfs a new 2TB filesystem with the same 344AG geometry as
+> > > > above, mount it with -o inode32 and run the workload that fragments
+> > > > all the free space. What we should see is that AGs in the upper TB
+> > > > of the filesystem should fill almost to full before any significant
+> > > > amount of allocation occurs in the AGs in the first TB of space.
+> >
+> > Have you performed this experiment yet?
+> >
+> > I did not ask it idly, and I certainly did not ask it with the intent
+> > that we might implement inode32 with AFs. It is fundamentally
+> > impossible to implement inode32 with the proposed AF feature.
+> >
+> > The inode32 policy -requires- top down data fill so that AG 0 is the
+> > *last to fill* with user data. The AF first-fit proposal guarantees
+> > bottom up fill where AG 0 is the *first to fill* with user data.
+> >
+> > For example:
+> >
+> > > So for the inode32 logarithm:
+> > > 1. I need to specify a preferred ag, like ag 0:
+> > > |----------------------------
+> > > | ag 0 | ag 1 | ag 2 | ag 3 |
+> > > +----------------------------
+> > > 2. Someday space will be used up to 100%, Then we have to growfs to ag 7:
+> > > +------+------+------+------+------+------+------+------+
+> > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> > > +------+------+------+------+------+------+------+------+
+> > > 3. specify another ag for inodes again.
+> > > 4. repeat 1-3.
+> >
+> > Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
+> > entire lower 1TB of the filesystem. Hence if we get to all AGs full
+> > the entire inode32 inode allocation space is full.
+> >
+> > Even if we grow the filesystem at this point, we still *cannot*
+> > allocate more inodes in the inode32 space. That space (AGs 0-1) is
+> > full even after the growfs.  Hence we will still give ENOSPC, and
+> > that is -correct behaviour- because the inode32 policy requires this
+> > behaviour.
+> >
+> > IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
+> > when the inode space is exhausted. Only physically moving data out
+> > of the lower AGs can fix that problem...
+> >
+> > > for the AF logarithm:
+> > >     mount -o af1=1 $dev $mnt
+> > > and we are done.
+> > > |<-----+ af 0 +----->|<af 1>|
+> > > |----------------------------
+> > > | ag 0 | ag 1 | ag 2 | ag 3 |
+> > > +----------------------------
+> > > because the af is a relative number to ag_count, so when growfs, it will
+> > > become:
+> > > |<-----+ af 0 +--------------------------------->|<af 1>|
+> > > +------+------+------+------+------+------+------+------+
+> > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> > > +------+------+------+------+------+------+------+------+
+> > > So just set it once, and run forever.
+> >
+> > That is actually the general solution to the original problem being
+> > reported. I realised this about half way through reading your
+> > original proposal. This is why I pointed out inode32 and the
+> > preferred metadata mechanism in the AG allocator policies.
+> >
+> > That is, a general solution should only require the highest AG
+> > to be marked as metadata preferred. Then -all- data allocation will
+> > then skip over the highest AG until there is no space left in any of
+> > the lower AGs. This behaviour will be enforced by the existing AG
+> > iteration allocation algorithms without any change being needed.
+> >
+> > Then when we grow the fs, we set the new highest AG to be metadata
+> > preferred, and that space will now be reserved for inodes until all
+> > other space is consumed.
+> >
+> > Do you now understand why I asked you to test whether the inode32
+> > mount option kept the data out of the lower AGs until the higher AGs
+> > were completely filled? It's because I wanted confirmation that the
+> > metadata preferred flag would do what we need to implement a
+> > general solution for the problematic workload.
+> >
 > 
-> No, please say why, e.g. because it was missing and device has it
-> according to datasheet.
+> Hi, I have tested the inode32 mount option. To my suprise, the inode32
+> or the metadata preferred structure (will be referred to as inode32 for the
+> rest reply) doesn't implement the desired behavior as the AF rule[1] does:
+>         Lower AFs/AGs will do anything they can for allocation before going
+> to HIGHER/RESERVED AFs/AGS. [1]
 
-Right, what about:
+This isn't important or relevant to the experiment I asked you to
+perform and report the results of.
 
-Adds the optional vcc-supply property to bindings, informs if the device 
-needs a regulator to be turned on for its operation.
+I asked you to observe and report the filesystem fill pattern in
+your environment when metadata preferred AGs are enabled. It isn't
+important whether inode32 exactly solves your problem, what I want
+to know is whether the underlying mechanism has sufficient control
+to provide a general solution that is always enabled.
 
+This is foundational engineering process: check your hypothesis work
+as you expect before building more stuff on top of them. i.e.
+perform experiments to confirm your ideas will work before doing
+anything else.
 
->>
->>>>
->>>> Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/w1/maxim,ds2482.yaml | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
->>>> index 422becc6e1fa8d58665c5586ebdc611cd0b2c760..a6b9e0658ec858cb24b21cf64443a061bb43e4ef 100644
->>>> --- a/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
->>>> +++ b/Documentation/devicetree/bindings/w1/maxim,ds2482.yaml
->>>> @@ -25,6 +25,9 @@ properties:
->>>>      reg:
->>>>        maxItems: 1
->>>>    
->>>> +  vcc-supply:
->>>> +    description: phandle of the regulator that provides the supply voltage.
->>>
->>> "vcc-supply: true" should suffice.
->>>
->>
->> Right, I suppose you mean to remove the description and just have
->> "vcc-supply: true".
->> If so, could you explain why no description? Is it some standard property
->> or because the name is self-explanatory? If you mean to keep both,
->> please reply.
-> 
-> It's almost self-explanatory and your description does not give any more
-> information. git grep for existing code - you will find also examples
-> which give actual information, e.g. detailed PIN name and accepted voltages.
-> 
+If you answer a request for an experiment to be run with "theory
+tells me it won't work" then you haven't understood why you were
+asked to run an experiment in the first place.
 
-Thanks for the tip, best description I have come up with:
+If you can't run requested experiments or don't understand why an
+expert might be asking for that experiment to be run, then say so.
+I can explain in more detail, but I don't like to waste time on
+ideas that I can't confirm have a solid basis in reality...
 
-   vcc-supply:
-     description:
-       Regulator that drives the VCC pin (2.9-5.5 V). Depending on the 
-hardware
-       design, it may set the vcc voltage of 3 wire 1-Wire bus variant.
-
-Would be glad for feedback if you think it's a good idea to use it, or
-just keep "vcc-supply: true".
-
-> 
-> Best regards,
-> Krzysztof
-
-Thank you,
-Kryštof Černý
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
