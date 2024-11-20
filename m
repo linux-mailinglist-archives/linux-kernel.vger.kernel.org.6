@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-415311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E3BC9D342F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:36:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6A89D3433
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0401D2837A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953BD28340C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA2B15A86B;
-	Wed, 20 Nov 2024 07:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3E015B0E2;
+	Wed, 20 Nov 2024 07:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q/FEoeL2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T3TOYwg9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6dbx5qo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415B15533F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9EB156676;
+	Wed, 20 Nov 2024 07:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088208; cv=none; b=EXMWuklghQzwvBzHjlwKarBTaWzwmAcA1mpr96f9vu/nIR40wDbPTi4kBDz/s2hBGT3uhzyoRQqH7WF8+3hij51yqBCF0ZaWZIxqFU7nExBCznYX9uxn9fElRMKUkPgn2Q+YL3ezb3PH7i2qCjYBttOcozH9zWACQFZdlgV3bTM=
+	t=1732088306; cv=none; b=pfpVs9IZh8IeXwa/rbMXqODCMvwrsT4J5t94NbFdo+GHFdj/W3wUNalASvBDFThPSEqkiyOjvk9hAANVg4boXeUIM/QpSvXcq4aqE+sT+ewSy3metMWzYyPk/X5TtIhTtRR4OxafmDBMAmzKE29SbRH4O2z4PDdw9eyf+qieKDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088208; c=relaxed/simple;
-	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQ9s6SaYm2jf97wTdWb1IMs6L87CL6iXb35LUlNrMG6axN5uqvbLZ0k/RVRRBIVk8MgVwnmXfqgrx9BKwSf1CU6L19Hvu4+MLU25lkyFte5h4Q/x2xymMyQfCM4yGhPseY7TwsFM4Q//6a6cBrWZY/sU+rtqF7bCQ80JY+4QE1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q/FEoeL2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T3TOYwg9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 20 Nov 2024 08:36:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732088199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
-	b=Q/FEoeL2n3rPOA3BjimAeMTo1U6LuQneHGWVC/Xj7SFK+piscwl/jb0syV49xRcJUQ+/bV
-	5HJ1H9EdvyGA5DUIMpWJg4Q4Bsv3+qQl3W52U258+H3uFvQ3WB0QdtPsJrW4kiRncQy1M2
-	xaIYfJpr+8ruyTuFLK3EQfTZbRCzYWTYiJZaTTsukW3Lndq7jnwFmQCDxmsMZuXqLH5odM
-	geWhU0cXZvPbzZ40YEPBd2ohdsX5PcrwkCYk4T7RpAFItREWF69uUktFdd412Y5sETyRmS
-	j6LxbZeXGrGg6/CBaDYsJGsgVm+KDoS37Q2niJyd8KzlU71FozYMrH9svs+daw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732088199;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
-	b=T3TOYwg9QCc9ArJ8tzo8otiKD6Kn24s+oPAKwTTYPZ2uESkXucu4HsyRPe+2nHjEJ5XIBn
-	ryVjf3ru52o4RbDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Clark Williams <clark.williams@gmail.com>
-Cc: Clark Williams <clrkwllms@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
-Message-ID: <20241120073637.iwQyy4q7@linutronix.de>
-References: <20241114103111.5W5ZY0D4@linutronix.de>
- <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
- <20241114111409.LWKp5YEg@linutronix.de>
- <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
- <20241114113018.Ilo9ZsQo@linutronix.de>
- <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
- <20241114132956.wafcHvaB@linutronix.de>
- <ZzYMie7ktV8ByaQF@demetrius>
- <20241118073659.MGircGsm@linutronix.de>
- <CAPAFJkp_MQ8rNsTTY3xfYMhdtiWQunN65Yfft1SqZLptG2J5cw@mail.gmail.com>
+	s=arc-20240116; t=1732088306; c=relaxed/simple;
+	bh=hwd1mc/hlGAx6mR2RGmfLQm/PRsiMDhfOr0kBN/H+X8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ou7HMY9F97PaUjyh5EkaHk9hEY7uQL0Qu63uSnasGv8KNz2jCdItLkRnbZzKlps5UvwDP8za5pPvLexJTXsj9Z9mnLPRIGEHHzOYgYJoLrJXpT9tp2+rgsn+y0khvstPbul8JdqihRvt4II8n/LDPmLZZe77JDtDePZSXPxufLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6dbx5qo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DE4C4CED0;
+	Wed, 20 Nov 2024 07:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732088306;
+	bh=hwd1mc/hlGAx6mR2RGmfLQm/PRsiMDhfOr0kBN/H+X8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R6dbx5qoP8BMYwsY5l3/+0UmVwR3Pny1NxP38lixmmnkdHFqa36GgstXCDUZry0Ez
+	 AY8IHqXMgKctmz48aw2vMsksU4hB8GF7Ri1xw3uMm338X9YqDS1oWmuQLx7gEUnGc+
+	 POYYG8HLtdk9Vg6/cdo940PziXXFkfjE01Cxg5H9+R9aP1WP+SF35QrEAj+GRNs6hd
+	 PEj78nnTX2mxNym+kAwAs9PG2iZnf7fGzmngydDBUo13Wz4kxY4O/GlnbdgxjXXvDt
+	 XT/cPFapXDK6pquzyIvHIsw+eNqbPeAWLxqI38MMgSb5FHvcK/BQe5H6EWz7G0aP1T
+	 E9wg4FD4SGC6w==
+Message-ID: <410ebbd0-2304-4d9e-8d4a-5e63ab29ada8@kernel.org>
+Date: Wed, 20 Nov 2024 08:38:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAPAFJkp_MQ8rNsTTY3xfYMhdtiWQunN65Yfft1SqZLptG2J5cw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
+To: keith zhao <keith.zhao@starfivetech.com>, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ p.zabel@pengutronix.de, changhuang.liang@starfivetech.com,
+ jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org
+References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
+ <20241120061848.196754-4-keith.zhao@starfivetech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241120061848.196754-4-keith.zhao@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-11-20 02:17:53 [+0000], Clark Williams wrote:
-> On Mon, Nov 18, 2024 at 7:37=E2=80=AFAM Sebastian Andrzej Siewior <
-> bigeasy@linutronix.de> wrote:
->=20
-> > On 2024-11-14 08:43:21 [-0600], Clark Williams wrote:
-> > > We see similar problems with chronyd accessing the RTC on aarch64
-> > > systems that use UEFI. Accessing anything via the EFI Runtime is very
-> > > slow. Probably going to turn off 'rtcsync' in chronyd when running
-> > > low-latency workloads.
-> >
-> > But isn't "we call into EFI and have no clue what happens" exactly the
-> > reason why we disable EFI runtime services?
-> >
-> >
-> I've had customers want access to EFI variables. I believe we default EFI
-> runtime to be off and allow it to be turned on.
+On 20/11/2024 07:18, keith zhao wrote:
+> +	/* Unmute hotplug interrupt */
+> +	hdmi_modb(hdmi, HDMI_STATUS, m_MASK_INT_HOTPLUG, v_MASK_INT_HOTPLUG(1));
+> +
+> +	ret = devm_request_threaded_irq(hdmi->dev, irq, inno_hdmi_hardirq,
+> +					inno_hdmi_irq, IRQF_SHARED,
+> +					dev_name(hdmi->dev), hdmi);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(inno_hdmi_bind);
+> +
+> +MODULE_AUTHOR("Keith Zhao <keithzhao@starfivetech.com>");
+> +MODULE_DESCRIPTION("INNO HDMI transmitter driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:inno-hdmi");
 
-So the efi-rtc is accessed via functions calls into EFI. So you call in
-there and they do (probably) access the RTC via i2c and remain in EFI
-(block) for the entire process. That is why the access is disabled. The
-difference here is that the bus access is slow so every read/ write
-seems to take a while.
+You should not need MODULE_ALIAS() in normal cases. If you need it,
+usually it means your device ID table is wrong (e.g. misses either
+entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+for incomplete ID table.
 
-The EFI variable access by itself is fine however the variables might be
-saved in NAND flash. The write access may trigger an erase process and
-relocate the data and so may the read if too many bit flips were
-detected.
 
-> Clark
-
-Sebastian
+Best regards,
+Krzysztof
 
