@@ -1,209 +1,214 @@
-Return-Path: <linux-kernel+bounces-415107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE0C9D31A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:09:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8405D9D31A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD5ACB23B73
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:09:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4190B21CE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE461BDDF;
-	Wed, 20 Nov 2024 01:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFEE1B95B;
+	Wed, 20 Nov 2024 01:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B77kN8Ej"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psGrWpNN"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ED810A3E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82030EACD
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732064975; cv=none; b=HWNsF2hx4PNe2pnkwv4fi3HtCOsVXDbvA7SDUoIVSlQF6t4gOFlNM5qZBIMsYQBwR4hGBR68xoOsDudhdd6c0JWDMOkfZbwf7J6SHqDKq588oEz1Z7K4U/SZ8oQiaTfBPK40IjdmqB7NcyqE6TgCn0kpzMB1wOziAbZPeMvTSmo=
+	t=1732065001; cv=none; b=mJsFq28/x3CjUSgHUOSDU86U7lkGj6nTUTqUH2hYydCYjlSIpOwNbMELcBEnKrt50byp4xuiRhqkoPKtYnxwrxY562kO82pwMc0DWADCxpySoI5Hzz88IUo9Gw+FsucNNsHvDYf1EZUDTfUfbqit8DwEadZT6DtN2t05MFGZpsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732064975; c=relaxed/simple;
-	bh=Vj355c/zFITMQdHKCKf583txuNNPyzHRszs0Cn12ivQ=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vBh03z3gPSVF0QuztzQGTYip1hNLk51aZRFgjTaXVgGYmD/SPV6UyQ4FWM7oF4fwqbx2ZbL5cV6LCeTekhLN+pLL4IuH0WxRzdMNOEBc/EaUBw3tVBAYZzVXrfzsIl2NbySURBBJxOi2Oy78NPI24+xWmHXW0s4GKNFt4lTkW28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=B77kN8Ej; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6d41b209858so10665226d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:09:33 -0800 (PST)
+	s=arc-20240116; t=1732065001; c=relaxed/simple;
+	bh=hTwajJRAAvU6UJ4h6j5qhr1gH9r7IyhS/L6+4LgUJ0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UE2PlK1AFzeMqL1DqyTfrEsSEbMeruRMufUf2BxbsX7dJdv/mp7NJ6RyJVXgHrWmw7VwQbW7Q9tyXsJe2Ifi10WQSIb90PgsD9v33m9KxX03tMRkeYA7Yy4VX3GZ3FpbzD38Bk04mmLsWePb3mpRBGuTSn4UiJel2cZD8unj41U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=psGrWpNN; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460969c49f2so466221cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:09:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732064972; x=1732669772; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Vj355c/zFITMQdHKCKf583txuNNPyzHRszs0Cn12ivQ=;
-        b=B77kN8EjGZSnqUwsRacSUr5i98AzOhvhVFfm67oOos5KeTsUjsq66VZKUMLiuHdnmf
-         u84hK+uo76URV17U6oggKMzkNEwnj0K1Rfm2Ir0e9bLSNKwL5jz8utCjtdN/XbDWkurS
-         Xa08OWdflmRfegX/JAQeICrYaR1rMCGQnVN3w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732064972; x=1732669772;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732064998; x=1732669798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vj355c/zFITMQdHKCKf583txuNNPyzHRszs0Cn12ivQ=;
-        b=Htp1FfEXkPZ4mDB0fVgI4wISI6bRkXF1KBgfZDQZle6HzOD1asPnj2NbkYap1bWNSg
-         kEJ0dS31kz5bsuH9b2AHBMkRDhOUhbFhCfaKA+ZmxterOiPK39E2QGpNCJAlxs5J12+B
-         MuXLX4YVbch3dK/bMvgbgCI+jAedjtTVgH43rxvwyaYDxbIAjhA2gpyFqR42Q1yDKxsE
-         tBhmA+sWSFZRX68w8bNgxlKx1tYidODrVC2knjVx1KD2EzjA5VpoBjoN9pGYOsv5N5ch
-         C5CiMQU9OMUQb6TvvG0CM4/xFz5c0F8vF+C3/zWOaTnwqZyPVxjP8DAriZW932Asl6fR
-         okCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRYZzT9Igmq+r4A25xCN3tLmy4gS8YJ6OD/2P9O3/seNVqFpOzEC61cV98dHuia+kSg//bR7ewVhQ1nuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwznmkC5Qq6HuPXqAOMRUzJrLoECqejrIjm4NCuZACO6m1opILD
-	UanGdYBrVB2IxDYoHc8WVdVszFuPMeinAp78h85NoglSqA1HZd3X90HE0H8FTC9Ot4Ghr2BmGN6
-	3IrH6jhHn5k/7nsReY+r3o6BQ6LiEhT5zMbdr
-X-Gm-Gg: ASbGncvEGSS66iFaD9uZJAcZP88goLjjlmYWcJlkEdTf/zb22viaqG0sxziIPi7P0JQ
-	MxeigHOnvVLiAxMcMtrtUG9ROQ3I6U+E4rC97/gdRYfZist/9qhuqrZsPuDk=
-X-Google-Smtp-Source: AGHT+IFEQP0GoC2K78QjB5OV4UVVBTAop+qg+n0pMj+V8unQfj0rGdOhjC0ubNaryFKoIeIMuX2Cx56PFjeqpAF1wOA=
-X-Received: by 2002:ad4:5ca4:0:b0:6cc:567:d595 with SMTP id
- 6a1803df08f44-6d4377afcf2mr13493476d6.7.1732064972431; Tue, 19 Nov 2024
- 17:09:32 -0800 (PST)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 19 Nov 2024 20:09:31 -0500
+        bh=fyD0n8XFP8f0istqBBknRrTZ6rAT8CN6zVNxOsts9j4=;
+        b=psGrWpNNMHIn4c2oLFFckbtKqtUWx1UXJqQRpWFivUwVlW96+SfNI/UFrEtBt+s5yd
+         5qPlR3Z4icOCLKelvbLiTj0GjE9BXIaiMuG/957MRC0Vu0f9hvlmqnI2NWOJRNEeyj0U
+         c22agTgVrJo4h+dIpxJQpMElsX+bM9LTvI7Bv7ZuwjGKAzrC0Lfxfbjsl4pvuX5B1lv0
+         asaKM3dowZNJC7sfLbECaWI4/oGIgJNBht5Hgwbf38YnsCFdrQsFicH6s/H9d1U/WCuP
+         ruQtWLGl2SO6w5Q+0WFiiTZGJOQtp4sd74fqJhPMjKu85yRA7ZCNXZcLMQoJomerUrqd
+         JIjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732064998; x=1732669798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fyD0n8XFP8f0istqBBknRrTZ6rAT8CN6zVNxOsts9j4=;
+        b=u1eleq0lCvqDtlX5h2AtlbtZoBm64TR9+/w7zo/0eUWcUVh6k5z0YFizAW2T1ymp1O
+         uaGGWaq+YAFlBejqIVYHhT83XX7jW7hyK9SSX2yOkpkQavIHYS3HR6a68qybU9vgtTGi
+         9PSLmB2Tt6uZUuLpJEbZI82OwiDxfiygjFmjqmoOMS4pLTTOcUqNSZWtn7mHpwCwdzVv
+         FQpHYkin3cTABpjb86WsstmKnm9QPKxRxZCdL0fMbZh8VHLpAnFX+GWkkv3Edihsr+Uy
+         R3OwLDwlcSI15lENw6BhFPGnjIh6XkH2o5IQJ8vC191GEsqyQ0jhmpNM2u5JbmcuITfs
+         CVPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbtZI82/18sX9bYSzK/J+oVl9QqXHpdHmvBe9KbhdS/4gV1JoR2nYglhlh1iLix571+/J3ATO7we2zR4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVawq84oXTS4hoORrIGjG2+Bux8Ubkzt/ZLIzN4J7toit0wPKX
+	SuajjO7Qy4HhRBJtysnoIvfyzZdq1OMsIfffZyrPVsk4wIbtpvQbrEQWGb2GzNvre1Mbw/PkMuN
+	vNbX/cKMDGXFPg+oI3NlvSmhVhWqBwgVL0FeXWm19cIDL9lmEJmHh
+X-Gm-Gg: ASbGncseUw76tdpHYEg4XxP/WAHKmf5x7QkGiExdbiysuJpDYVKdFe2yTRhJGITwc2d
+	QP0GhipPEGDAe6Y1z+0BOac5hXQy1y5A=
+X-Google-Smtp-Source: AGHT+IFsHmpVebwMXEK1glSVoxpXP+DG+iAfRE6TY3s0nAUoSLrP9HGvoiwMiUxbSdstOSlZRyQPTMfIc0RCUhStYcE=
+X-Received: by 2002:a05:622a:3c6:b0:460:e7fa:cf2 with SMTP id
+ d75a77b69052e-464d33fc13amr461681cf.23.1732064998036; Tue, 19 Nov 2024
+ 17:09:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5kisfv22tgqwzjpxqrbx56ywr7l4r7pny3pl2r7crv4rijqbwk@azricdasttg7>
-References: <phdcjgqqpjpruxp7v2mw446q73xr3eg4wfgfbjw5tasgr2pgg2@77swbk47b2tg>
- <lf7y7wpuca6kzqcglgs5d443iusf7xjocum4adi7t3npfavccx@zgsp37oyztme>
- <CAE-0n53-KmOS3zXmJPvOOZ7xxkek9-S=oBExgaY0PDnt_HjdNw@mail.gmail.com>
- <yk3xidaisbd56yndaucax7otijjauqmm7lqm6q4q633kdawlqo@qaq27lwxmvwd>
- <CAE-0n501j+8bMnMKabFyZjn+MLUy3Z68Hiv1PsfW0APy5ggN8g@mail.gmail.com>
- <gstohhcdnmnkszk4l2ikd5xiewtotgo5okia62paauj6zpaw7y@4wchyvoynm2p>
- <CAE-0n50z6MNa7WOsg-NU7k8BpFeJJyYfHX3ov6DsthLWauSNpA@mail.gmail.com>
- <hqmx7jtkvrwvb27n56hw7rpefhp37lhr3a5fawz7gsl76uuj5s@h7m6wpdhibkk>
- <CAE-0n50y1O2C47zOGJPmMjKXK_m6a=jhpEAP4nW+RymZbo2xyg@mail.gmail.com> <5kisfv22tgqwzjpxqrbx56ywr7l4r7pny3pl2r7crv4rijqbwk@azricdasttg7>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
-Date: Tue, 19 Nov 2024 20:09:31 -0500
-Message-ID: <CAE-0n50Bxi2GfnxOmMwe-F+k5jMSiyAVPDb6K8pYm-i6hpJTOA@mail.gmail.com>
-Subject: Re: [PATCH v4 15/18] dt-bindings: usb: Add ports to
- google,cros-ec-typec for DP altmode
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, devicetree@vger.kernel.org, 
-	Douglas Anderson <dianders@chromium.org>, Pin-yen Lin <treapking@chromium.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Benson Leung <bleung@chromium.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, 
-	dri-devel@lists.freedesktop.org, Guenter Roeck <groeck@chromium.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Lee Jones <lee@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Prashant Malani <pmalani@chromium.org>, 
-	Robert Foss <rfoss@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Ivan Orlov <ivan.orlov0322@gmail.com>, 
-	linux-acpi@vger.kernel.org, linux-usb@vger.kernel.org, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>
+References: <20241028111058.4419a9ed@canb.auug.org.au> <20241120120124.03f09ac5@canb.auug.org.au>
+In-Reply-To: <20241120120124.03f09ac5@canb.auug.org.au>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 19 Nov 2024 17:09:46 -0800
+Message-ID: <CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the mm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Quoting Dmitry Baryshkov (2024-11-15 09:17:15)
-> On Mon, Nov 11, 2024 at 06:16:27PM -0800, Stephen Boyd wrote:
-> > Quoting Dmitry Baryshkov (2024-11-08 23:05:18)
-> > > On Thu, Nov 07, 2024 at 04:28:24PM -0800, Stephen Boyd wrote:
-> > > > Quoting Dmitry Baryshkov (2024-10-31 15:54:49)
-> > > > > On Thu, Oct 31, 2024 at 02:45:29PM -0700, Stephen Boyd wrote:
-> > > > > > Quoting Dmitry Baryshkov (2024-10-31 11:42:36)
-> > > > > > > On Tue, Oct 29, 2024 at 01:15:51PM -0700, Stephen Boyd wrote:
-> > > > Long story short, I don't see how we can avoid _any_ lane assignment
-> > > > logic in drm_bridge. The logic shouldn't walk the entire bridge chain,
-> > > > but it should at least act on the bridge that is a DP bridge. I think
-> > > > you're saying pretty much the same thing here, but you want the lane
-> > > > remapping to be done via the typec layer whereas I want it to be done in
-> > > > the drm_bridge layer. To me it looks out of place to add a
-> > > > typec_switch_desc inside each DP drm_bridge because we duplicate the
-> > > > logic about USB type-c DP altmode lane assignment to each DP bridge. A
-> > > > DP bridge should just think about DP and not know or care about USB
-> > > > type-c.
-> > > >
-> > > > This is what's leading me to think we need some sort of lane assignment
-> > > > capability at the DP connector. How that assignment flows from the DP
-> > > > connector created in drm_bridge_connector.c to the hardware is where it
-> > > > is less clear to me. Should that be implemented as a typec_switch_desc,
-> > > > essentially out of band with drm_bridge, or as some drm_bridge_funcs
-> > > > function similar to struct drm_bridge_funcs::hdmi_*()? If you look at
-> > > > IT6505 in it6505_get_extcon_property() it actually wants to pull the
-> > > > orientation of the type-c port with extcon_get_property(EXTCON_DISP_DP,
-> > > > EXTCON_PROP_USB_TYPEC_POLARITY). Maybe pushing the orientation to the DP
-> > > > bridge is backwards and we should be exposing this as some sort of
-> > > > connector API that the drm_bridge can query whenever it wants.
-> > >
-> > > And it6505_get_extcon_property() / EXTCON_PROP_USB_TYPEC_POLARITY is a
-> > > Type-C code, isn't it?
-> > >
+On Tue, Nov 19, 2024 at 5:01=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> On Mon, 28 Oct 2024 11:10:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 > >
-> > Sort of? It's combining DP and USB_TYPEC enums there so it's not very
-> > clear if it's one or the other instead of just both.
->
-> But EXTCON_PROP_USB_TYPEC_POLARITY is just a Type-C, nothing about DP in it.
-
-It's extcon_get_property(it6505->extcon, EXTCON_DISP_DP,
-EXTCON_PROP_USB_TYPEC_POLARITY, ...) which has EXTCON_DISP_DP in there,
-so there's something about DP there. That's all I'm saying.
-
+> > Today's linux-next merge of the arm64 tree got a conflict in:
 > >
-> > I understand that the QMP PHY driver has implemented the lane control
-> > for orientation with a typec_switch_desc, but the QMP PHY is a plain DP
-> > PHY in this scenario. How would the type-c handlers work here? We
-> > couldn't call them through the type-c framework as far as I can tell.
+> >   include/linux/mm.h
+> >
+> > between commit:
+> >
+> >   e87ec503cf2e ("mm/codetag: uninline and move pgalloc_tag_copy and pga=
+lloc_tag_split")
+> >
+> > from the mm-unstable branch of the mm tree and commit:
+> >
+> >   91e102e79740 ("prctl: arch-agnostic prctl for shadow stack")
+> >
+> > from the arm64 tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tre=
+e
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularl=
+y
+> > complex conflicts.
+> >
+> > --
+> > Cheers,
+> > Stephen Rothwell
+> >
+> > diff --cc include/linux/mm.h
+> > index 086ba524d3ba,8852c39c7695..000000000000
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@@ -4166,4 -4174,65 +4178,8 @@@ static inline int do_mseal(unsigned lo=
+n
+> >   }
+> >   #endif
+> >
+> >  -#ifdef CONFIG_MEM_ALLOC_PROFILING
+> >  -static inline void pgalloc_tag_split(struct folio *folio, int old_ord=
+er, int new_order)
+> >  -{
+> >  -    int i;
+> >  -    struct alloc_tag *tag;
+> >  -    unsigned int nr_pages =3D 1 << new_order;
+> >  -
+> >  -    if (!mem_alloc_profiling_enabled())
+> >  -            return;
+> >  -
+> >  -    tag =3D pgalloc_tag_get(&folio->page);
+> >  -    if (!tag)
+> >  -            return;
+> >  -
+> >  -    for (i =3D nr_pages; i < (1 << old_order); i +=3D nr_pages) {
+> >  -            union codetag_ref *ref =3D get_page_tag_ref(folio_page(fo=
+lio, i));
+> >  -
+> >  -            if (ref) {
+> >  -                    /* Set new reference to point to the original tag=
+ */
+> >  -                    alloc_tag_ref_set(ref, tag);
+> >  -                    put_page_tag_ref(ref);
+> >  -            }
+> >  -    }
+> >  -}
+> >  -
+> >  -static inline void pgalloc_tag_copy(struct folio *new, struct folio *=
+old)
+> >  -{
+> >  -    struct alloc_tag *tag;
+> >  -    union codetag_ref *ref;
+> >  -
+> >  -    tag =3D pgalloc_tag_get(&old->page);
+> >  -    if (!tag)
+> >  -            return;
+> >  -
+> >  -    ref =3D get_page_tag_ref(&new->page);
+> >  -    if (!ref)
+> >  -            return;
+> >  -
+> >  -    /* Clear the old ref to the original allocation tag. */
+> >  -    clear_page_tag_ref(&old->page);
+> >  -    /* Decrement the counters of the tag on get_new_folio. */
+> >  -    alloc_tag_sub(ref, folio_nr_pages(new));
+> >  -
+> >  -    __alloc_tag_ref_set(ref, tag);
+> >  -
+> >  -    put_page_tag_ref(ref);
+> >  -}
+> >  -#else /* !CONFIG_MEM_ALLOC_PROFILING */
+> >  -static inline void pgalloc_tag_split(struct folio *folio, int old_ord=
+er, int new_order)
+> >  -{
+> >  -}
+> >  -
+> >  -static inline void pgalloc_tag_copy(struct folio *new, struct folio *=
+old)
+> >  -{
+> >  -}
+> >  -#endif /* CONFIG_MEM_ALLOC_PROFILING */
+> >  -
+> > + int arch_get_shadow_stack_status(struct task_struct *t, unsigned long=
+ __user *status);
+> > + int arch_set_shadow_stack_status(struct task_struct *t, unsigned long=
+ status);
+> > + int arch_lock_shadow_stack_status(struct task_struct *t, unsigned lon=
+g status);
+> > +
+> >   #endif /* _LINUX_MM_H */
 >
-> If QMP PHY is a plain DP PHY, it usually has no support for lane remapping
-> (e.g. phy-qcom-edp doesn't).
->
-> Let me reiterate, please: lane management is outside of the DisplayPort
-> spec, at least as far as I can understand it. All lane remapping
-> (especially a dynamic one) is a pure vendor extension to the standard.
-> I'm trying to find a way to support Corsola and Trogdor without adding
-> "this is done specially for Google" kind of API. Usually that doesn't
-> fly in the long term.
+> This is now a conflict between the mm-stable tree and Linus' tree.
 
-Got it.
+Let me try to manually apply it to Linus' ToT and will send a replacement p=
+atch.
 
 >
-> I understand that using Type-C API for the DRM bridge sounds strange.
-> But even the mentioned bridge uses Type-C API. It asks for the Type-C
-> polarity, not the DP polarity.
->
-
-I understand that lane assignment isn't part of the DisplayPort spec,
-while it is part of the USB Type-C DisplayPort Altmode spec.
-
-I'm not entirely convinced that lane assignment is _only_ part of the
-altmode spec and should be implemented with a typec switch though,
-because I imagine some hardware design could be created that has two
-DisplayPort connectors, just like these two USB-C connectors, and some
-sort of HPD redriver logic similar to the EC that decides which DP port
-"wins" and should have DP sent to it. Or perhaps 2 lanes DP to a DP
-connector and 2 lanes DP sent to a DP to HDMI bridge (shudder). In
-either case, USB type-c isn't involved.
-
-It sounds like we're debating how to handle lane assignment in the
-kernel. Either way, the code is going to be implemented in the bridge
-driver because it's the one that has to change what physical lane a
-logical lane is assigned to. The question is if it should be some sort
-of bridge_funcs callback, or should bridge drivers hook into the typec
-framework to expose an orientation switch, or something else?
-
-I'm thinking we should introduce some sort of bridge_funcs callback that
-can be called from the DP altmode driver, either parallel to the
-drm_connector_oob_hotplug_event() function or from it directly. If we
-can pass the fwnode for the usb-c-connector to the oob_hotplug_event
-callback, maybe that's all we need to figure out which lanes go where.
-And then in the 2 DP connector muxing world we can call
-drm_connector_oob_hotplug_event() with one or the other DP connector
-node, which will likely be children nodes of the "HPD redriver" device.
+> --
+> Cheers,
+> Stephen Rothwell
 
