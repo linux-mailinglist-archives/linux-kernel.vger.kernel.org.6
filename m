@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-416134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D3F9D4106
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:20:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BEAB9D40B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40378B21434
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619FB281AEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BAB156677;
-	Wed, 20 Nov 2024 17:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F954156646;
+	Wed, 20 Nov 2024 17:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tNzWInAv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVW90Z/T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C7914F12D;
-	Wed, 20 Nov 2024 17:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80323146593;
+	Wed, 20 Nov 2024 17:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122022; cv=none; b=H4DCFZ3upvbB5U6nw0ZaZW1IEIlBvN3aP9fA4dxXw9KNIjrVtegvXk59uBXgNpPjPVCjhfdbg7pZ8DWDQ78/+r7sQgwdd5S9NqnOHIK0rL3OwSPTiYSvzpoQ1oe6LNWihL4LJlbGN4o8nR+bjR4zFn+E5BW7Z0ykKLO3CojemyI=
+	t=1732122073; cv=none; b=IGB7TXDSDMSGhsn6yaTLpLnZMTA/sVg3jrgthGR49cZXpswHYa6I7+qOC2GMEolRPdruGyVn/EvJ6hSBun67BYh1cNE+SbZsKCrEP/75jrEW/NyNQXjxsrtfOcfdA9vT9xeA+ECbijf99eKFoniNUiAH62WfZ/h3tXwtN2yfEt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122022; c=relaxed/simple;
-	bh=bYzeSkQ9Bd7O4xF6AGbqkibiHuCXxUi77anWi3k2pSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MLAg86HidVEH9RevNEhRHkgvUORhzQmluSK06rLFk3ox6s1cP8gYazaqWvrbqvqQPECNy3g746p5j0N34XPeW48VvhvLiuc5WtZqXkW/1nEZRJoweFKoA5gyMQEyFz6n90QA15iEI6nYq1d+RCw1pf9p/m37ylaqrZ8aUpoHm9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tNzWInAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7FBEC4CED7;
-	Wed, 20 Nov 2024 17:00:14 +0000 (UTC)
+	s=arc-20240116; t=1732122073; c=relaxed/simple;
+	bh=Yd5y9TAqwXW3wuS/C2vKft6znlgb5goQ9UaHAHJ2e2c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=X1B0LL/DY4AkYdNFNjACIw4wOi8xyDXMQjNLAHsBL373ONkw1L5kifui/7IjqU7QE0g4bDHHMCtq3EdJ+WLY5pF17FnJVRZoQGRS8fYuLQMMMLEoy/48sAAUJw9mlJ1FQfZxkyGBrF3rAKbsZQlQZaTScQKGTWxYMjwDXZMrUAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVW90Z/T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93BCC4CECD;
+	Wed, 20 Nov 2024 17:01:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732122018;
-	bh=bYzeSkQ9Bd7O4xF6AGbqkibiHuCXxUi77anWi3k2pSM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tNzWInAvu39W7dIAmftVg7wN3eLA5ELeCNBPa81lRhhpW5vHyPJiQexZQ3e82zNBj
-	 f648Dm+UOsUshsFtYeWntnzcnPqskWUj8N+KaOOMgt/EnyeDNx08zLrhV+LUP1J1UT
-	 RYBLhKoUpfaIUXPXnQ/akJz0Qz/tbP4ZWygaKWHt+GsvMYIZ+FSc0CgwdlIFm7Q0A8
-	 gmawmCC9PKDJk/xCxhxYjvqp2r2khRd0jyJTpMqQK6x8YZomkfz7zXSS3S4DMMLBzr
-	 OIbPLzdrmQgY/tinyD+GEPph+QxNhxFQdSo56/Yx4Fe6kvVs+Y52i0ZHneUyiiDJLD
-	 ra7psytEHwEbA==
-Message-ID: <252644d9-e304-45ee-91ed-a1452300840f@kernel.org>
-Date: Wed, 20 Nov 2024 18:00:12 +0100
+	s=k20201202; t=1732122073;
+	bh=Yd5y9TAqwXW3wuS/C2vKft6znlgb5goQ9UaHAHJ2e2c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cVW90Z/TPrLPPd+7wyWG7tpIGLozX/SyP4F/bOBm/vBzIbkNQ5SgbnunOeDUMvavV
+	 JG/ekmYn6Edh/j8rDfmfVih9PlkS+l0+iCanUSw6vs6ByS7SAjJaNwGRuFd5g4ZTA6
+	 +FFszA9egDZwJEKjR3bhyTlOZngNuoNnQS491dttMnUUb4xJ/6Hlm1nl8Inzmmh3+X
+	 NSPJYDFYqVTbKwtoC5OL9bDyQCHjzKr9L3D+vmmUcPdo6wX91bKUFe8LRSikVQhQO/
+	 VIgwYe7EnVP7x/OUdrINgYXexb/fRGgAMsloMJj8spg6owSNIdTwGOvIrmMpHvMbS9
+	 Nl6ejX6moncpw==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.1 00/73] 6.1.119-rc1 review
+Date: Wed, 20 Nov 2024 09:01:05 -0800
+Message-Id: <20241120170105.69369-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241120125809.623237564@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs8300: Add watchdog node
-To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_jiegan@quicinc.com,
- quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com
-References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
- <20241119102315.3167607-3-quic_liuxin@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241119102315.3167607-3-quic_liuxin@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/11/2024 11:23, Xin Liu wrote:
-> Add the watchdog node for QCS8300 SoC.
+Hello,
+
+On Wed, 20 Nov 2024 13:57:46 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.1.119 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> ---
+> Responses should be made by Fri, 22 Nov 2024 12:57:58 +0000.
+> Anything received after that time might be too late.
 
-<form letter>
-This is a friendly reminder during the review process.
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-It looks like you received a tag and forgot to add it.
+Tested-by: SeongJae Park <sj@kernel.org>
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] 43ca6897c30a ("Linux 6.1.119-rc1")
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+Thanks,
+SJ
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+[...]
 
->  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.
-Best regards,
-Krzysztof
+---
+
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: sysfs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
