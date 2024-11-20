@@ -1,130 +1,72 @@
-Return-Path: <linux-kernel+bounces-415088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAA89D3167
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AA49D3168
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:31:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3781F23089
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C1291F232C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0291D555;
-	Wed, 20 Nov 2024 00:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mc2JLndg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE439AD58;
+	Wed, 20 Nov 2024 00:31:25 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D53FF9FE;
-	Wed, 20 Nov 2024 00:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7371B191;
+	Wed, 20 Nov 2024 00:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732062626; cv=none; b=EMl29rcmeCdJl8WcqUo+4mIKTdlH93qMXLZjPl/UadcYKPhwLb/8s08kqI0tCZod5ufv1pJhR3xosPMepntGlZdyK0VGjDUX+ukbB5ILwNFIAhInZAlEssTsG3/0JmlbYd0TP+YRAc5qOUJLxfrMHq5FxH77jQH0Y+yY+aKRLZw=
+	t=1732062685; cv=none; b=FGtgpFOg92dQryVbQJ34vFebzyEQka2GaFnOVSYynJeJz9Xe9Y8itO7tK0sgW9hSwQe6laQ+RjOzdMm0MFICPWSnm9bCOuRcyouh4ANrGItzmy2LAE168Jw2nLGr9OxQiqMieZ5yfrbk+dHneDCwyJ2KZ+7mMrK0Pg3mcXnRRoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732062626; c=relaxed/simple;
-	bh=Tj39gEQRUnuZujqX2/SNkK2rF5SE+IM6h9lUEGWn254=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lG/8RRa2c7qhNal61PZq0swEVbu+fDQTVrHHrh7my7VjDHft0Y1Jn6A7XxZVWHFRUrF39Lh7HlwH4Kx81C3GBRDkQNDbzo4KTKUjVnPjvwfWcjgXxEOnX4hg4lUPb44PB5kxQ2y6SIdaDB/ib31lUa40kD0IIA+o7jJJmCsfm2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mc2JLndg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732062614;
-	bh=xgE8VEddh66b6D5zGoRX/UR/hABPOyWddRiDV3o9Iqc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mc2JLndgDTR8x68KMC8rykavNvJ3fiwGig9qJ0Mx9UA5PA4C7DQ6dOlU2Cgwykfg1
-	 7pmf3wKU3QJl5Os4iSFtV/DGVXptML1tYstxxm9CI1MKdFREMdHMKR9wFy2mpUqwQX
-	 pJvCOFNg+dqXyQME9QxnPhccO8Njb1BzJ0AnjodP4Y/s05dDTmRWYsFci5/1byFj4R
-	 yVdXFleOrbSOwtMyGrYjePp0y7hDjIAO7/3GE02C6BfBlYduzWZGafwjCF+/zDefdH
-	 eLPx2l2P6EGC5WMU+IUnxbasmQOo06zaU9fJyP3f6Sas1EtrrjRWraKuOxK/SbJUKj
-	 KoB0H+BlAGX8w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XtMhP2JjKz4w2L;
-	Wed, 20 Nov 2024 11:30:13 +1100 (AEDT)
-Date: Wed, 20 Nov 2024 11:30:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
- David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ceph tree with the net tree
-Message-ID: <20241120113015.294cf1d2@canb.auug.org.au>
+	s=arc-20240116; t=1732062685; c=relaxed/simple;
+	bh=MmFvQdctCXISMeSN6vO99yIvqNannejpEJfmA1KZahQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXzeuv846YKL0lenoChEqzg86YxiLKshia82RcpZjc+9v9QtYp+MskL2XVqrmd9M6AXJvOGTl6woetkxIM2VijFXEtp5CobgoVD6u1kcy+GXTKV+7u7dcnJ3G2mf+9Fo0w0KH4R5JiiSDEvfAXbj0D8ttLhF/CgbCyE1fXFPJxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2BB7C4CECF;
+	Wed, 20 Nov 2024 00:31:24 +0000 (UTC)
+Date: Tue, 19 Nov 2024 16:31:23 -0800
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+	jthoughton@google.com
+Subject: Re: [PATCH v2 01/12] objtool: Generic annotation infrastructure
+Message-ID: <20241120003123.rhb57tk7mljeyusl@jpoimboe>
+References: <20241111115935.796797988@infradead.org>
+ <20241111125218.113053713@infradead.org>
+ <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
+ <20241116093331.GG22801@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/DaF8sq.aa1GmhT4rubJOvbh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241116093331.GG22801@noisy.programming.kicks-ass.net>
 
---Sig_/DaF8sq.aa1GmhT4rubJOvbh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Nov 16, 2024 at 10:33:31AM +0100, Peter Zijlstra wrote:
+> On Fri, Nov 15, 2024 at 10:38:28AM -0800, Josh Poimboeuf wrote:
+> > On Mon, Nov 11, 2024 at 12:59:36PM +0100, Peter Zijlstra wrote:
+> > > +#define ASM_ANNOTATE(x)						\
+> > > +	"911:\n\t"						\
+> > > +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
+> > > +	".long 911b - .\n\t"					\
+> > > +	".long " __stringify(x) "\n\t"				\
+> > > +	".popsection\n\t"
+> > 
+> > Why mergeable and progbits?
+> 
+> In order to get sh_entsize ?
 
-Hi all,
+Is that a guess?  If so, it's not very convincing as I don't see what
+entsize would have to do with it.
 
-Today's linux-next merge of the ceph tree got a conflict in:
-
-  MAINTAINERS
-
-between commit:
-
-  4262bacb748f ("MAINTAINERS: exclude can core, drivers and DT bindings fro=
-m netdev ML")
-
-from the net tree and commit:
-
-  6779c9d59a07 ("MAINTAINERS: exclude net/ceph from networking")
-
-from the ceph tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 54fc0c1232b8,3771691fa978..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -16235,7 -16179,7 +16236,8 @@@ X:	include/net/mac80211.
-  X:	include/net/wext.h
-  X:	net/9p/
-  X:	net/bluetooth/
- +X:	net/can/
-+ X:	net/ceph/
-  X:	net/mac80211/
-  X:	net/rfkill/
-  X:	net/wireless/
-
---Sig_/DaF8sq.aa1GmhT4rubJOvbh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc9LZcACgkQAVBC80lX
-0GyhAgf/XHLwOcd9hP83RfBiS+nYp/gLhU5fkhsyd8y6YM/RHAhgpEj0+TzFrW+O
-ClwWaVIebEE3x2KOgw6QuPXQmvi+AJ0YJz+ZNTkxGXVb8cAL8Gi6RnP8xwlepxoE
-jAVH93XesiKQIrzTOMxdhP7+3De+Bs42Zz/nO/V2GqGbcSDOm/p7RnLgZE5Hv8ZG
-bn6rpZLS1SFjqcCc/TxnxjT1g0kLIwNUBZ7s/CTugcKQ9LAmQ+nQ/k7zzriNqbPb
-rBbI2tHM8x9JrDhahrItOcS3bedhayknnG48kKBG3mAtR8/ZVQ+eZst37kKMKclJ
-uBhxbupBrVkiFjYWK5LfMolRA2+J2g==
-=Dpml
------END PGP SIGNATURE-----
-
---Sig_/DaF8sq.aa1GmhT4rubJOvbh--
+-- 
+Josh
 
