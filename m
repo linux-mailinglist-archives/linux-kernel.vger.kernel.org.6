@@ -1,89 +1,218 @@
-Return-Path: <linux-kernel+bounces-416375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31A19D43F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:34:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62DE9D43FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DF9282AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:34:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1791F2240D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B3E1BDA80;
-	Wed, 20 Nov 2024 22:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FC01C6F54;
+	Wed, 20 Nov 2024 22:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="drl4n9pw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfGTMpzk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161EC188717;
-	Wed, 20 Nov 2024 22:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44744188717;
+	Wed, 20 Nov 2024 22:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142078; cv=none; b=R+NyscgSvgHc/ILJUA15flA0cZd0pMvU4Rh8Bpzvtgrg2cBWDkcyP4/NXl1Po1gmGh10siwkkB9lREmTXBixRXpnYJiCJgWGxdLYe8lS+6KoLh+4g3g981e4bldp4ZGtKHdqFz0jRyAonIm3ww6v38AKbXm+ie9z6G0hzPFRz1A=
+	t=1732142211; cv=none; b=A/ufDZiCFTDIOg9Jdkm6V7hVWMvofmw/2Sh99SJflxhwgBxMDrKDq8rj9pQS0r2/zOiV3CIoW2v/6Sh0kiTwU66NTj25fCn+iaEBDQWFt7bmI19KCWm1iIhP9DNVCu/RvaI9Id+3p/agcUTRhh113+wu6TvThyBVASrLqbexdWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142078; c=relaxed/simple;
-	bh=nZJ0yC27OSYKoh/M06FiEtADKZURX1+kaM8rnVQa7sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uNPz4H6Tf9OsTVxfZ/ILMUcvj9IS9eU22KsDyIbfPKym47EqipzsJ0NZrS8qaw9ApuHxZ2dIyG7uIy2sabH3RHI0MsEzdAyoYhJmfddUf35witFDl9ydeoT8gkDCC632NgwLLy4x0+HtkmkLq0DVnLvSr03vIoQl1o5rthiRPxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=drl4n9pw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2B2C4CECD;
-	Wed, 20 Nov 2024 22:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732142077;
-	bh=nZJ0yC27OSYKoh/M06FiEtADKZURX1+kaM8rnVQa7sw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=drl4n9pwNQmlNmDQoMx4MHmMsmb4IR4/EKUaDRiAK7Zm6cu+NVoN/YQxM/v8mfnMP
-	 cZsrVlh2K85hvZCAGMn8NJaKaVfcMogRNsJ58MHg8O+vFBQYt0RTbaMDwzEjvMHX1L
-	 9L+EVFf5kn/GsoX/Rl54GLwlS19l8EZaoYKb1x3FWEiNtI+0MxwFKsjuROHodv2i0y
-	 5Exbh+EqetWuS5xdO8Ba+9h9ggJkHtkrf/ilQBwxFZseG6hu0Hq30zxYOV2hOXhHUG
-	 r08+zJwd3lmuyllUlROpfggiNYEUMsoYA4VW+Q6M41rC9uNQAqbMMUCoVoY5Q5O8un
-	 95RydiVL0mfzA==
-Date: Wed, 20 Nov 2024 16:34:36 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH 11/15] PCI: don't include 'pm_wakeup.h' directly
-Message-ID: <20241120223436.GA2358716@bhelgaas>
+	s=arc-20240116; t=1732142211; c=relaxed/simple;
+	bh=2Cp5aaXjkP+a168HGxSLsBZhGl2+scjhbt48AyM8k80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qhr9JcHpZEsc0WCPYftHknVKCudJ5yMhb2Jm6ekdXVMj5jbjc7BXgoVAwv61GaQdxeDJFAW0JBK6j4s8IxiyeR/BitRbLUObQe5RFF29td+JzP0ABhGfhMLK7WQ9BvuZLl/fQq7LFNw5nXNLejgWGKXzZBdcyOEfMcE7vGyYvbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfGTMpzk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJn2dx025955;
+	Wed, 20 Nov 2024 22:36:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lUU8Tt86LNQJ0csNs06y2W4/lu/ueaR7HRud2/xtk6Y=; b=HfGTMpzkwigxCuQq
+	ewzf9kMNpccplf6sNLzhFq4qtqXH+wzWMzyKeKgJHvv+RPI7Fm0gg5wU0zZof8up
+	KNDodGyYRu8bBJCAOYcBTXfd3a/3L3kgFJkXbPpgriEXVyUVzlhamDWh5c6kg32W
+	W0o3JOLyS4BEvXKhFWmg5qxftCiW2PIJ5hjvrC6PrtlGoGRuucFLFTWEw1yN6PL1
+	XjL2GSUvSwPiiPItVj2xw5Z0ko7Nb//rfB3IHqIzNCWoOmQTnfYtft9Wxl+2fSLT
+	moOv/sSJzaqBCRuKrPYuCgn8/yInL5M6q4FdJvo21OXNKNYgLyl/mMoaQJ+rxV+i
+	JnOQVg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431byjj4vv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 22:36:32 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKMaUmn016740
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 22:36:30 GMT
+Received: from [10.110.30.192] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
+ 2024 14:36:30 -0800
+Message-ID: <28302a54-d33a-45eb-be73-fcf3bfe45f90@quicinc.com>
+Date: Wed, 20 Nov 2024 14:36:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118072917.3853-12-wsa+renesas@sang-engineering.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 15/30] ASoC: usb: Fetch ASoC card and pcm device
+ information
+To: Takashi Iwai <tiwai@suse.de>
+CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <20241106193413.1730413-16-quic_wcheng@quicinc.com>
+ <878qte3xgo.wl-tiwai@suse.de>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <878qte3xgo.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: O7wmN2mmlr7Akp3bt07XtRk4PbPO3_Os
+X-Proofpoint-ORIG-GUID: O7wmN2mmlr7Akp3bt07XtRk4PbPO3_Os
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200161
 
-On Mon, Nov 18, 2024 at 08:29:10AM +0100, Wolfram Sang wrote:
-> The header clearly states that it does not want to be included directly,
-> only via 'device.h'. 'platform_device.h' works equally well. Remove the
-> direct inclusion.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hi Takashi,
 
-I plan to pick this up for v6.14 as soon as the v6.13 merge window
-closes.
+On 11/20/2024 4:23 AM, Takashi Iwai wrote:
+> On Wed, 06 Nov 2024 20:33:58 +0100,
+> Wesley Cheng wrote:
+>> USB SND needs to know how the USB offload path is being routed.  This would
+>> allow for applications to open the corresponding sound card and pcm device
+>> when it wants to take the audio offload path.  This callback should return
+>> the mapped indexes based on the USB SND device information.
+>>
+>> Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  include/sound/soc-usb.h | 16 ++++++++++++++++
+>>  sound/soc/soc-usb.c     | 34 ++++++++++++++++++++++++++++++++++
+>>  2 files changed, 50 insertions(+)
+>>
+>> diff --git a/include/sound/soc-usb.h b/include/sound/soc-usb.h
+>> index 587ea07a8cf5..c3d3e8d62ac5 100644
+>> --- a/include/sound/soc-usb.h
+>> +++ b/include/sound/soc-usb.h
+>> @@ -36,6 +36,11 @@ struct snd_soc_usb_device {
+>>   * @list - list head for SND SOC struct list
+>>   * @component - reference to ASoC component
+>>   * @connection_status_cb - callback to notify connection events
+>> + * @update_offload_route_info - callback to fetch mapped ASoC card and pcm
+>> + *				device pair.  This is unrelated to the concept
+>> + *				of DAPM route.  The "route" argument carries
+>> + *				an array used for a kcontrol output and should
+>> + *				contain two integers, card and pcm device index
+>>   * @priv_data - driver data
+>>   **/
+>>  struct snd_soc_usb {
+>> @@ -44,6 +49,9 @@ struct snd_soc_usb {
+>>  	int (*connection_status_cb)(struct snd_soc_usb *usb,
+>>  				    struct snd_soc_usb_device *sdev,
+>>  				    bool connected);
+>> +	int (*update_offload_route_info)(struct snd_soc_component *component,
+>> +					 int card, int pcm, int direction,
+>> +					 long *route);
+>>  	void *priv_data;
+>>  };
+>>  
+>> @@ -61,6 +69,8 @@ int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
+>>  int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component);
+>>  int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
+>>  				    struct snd_soc_jack *jack);
+>> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
+>> +				     int direction, long *route);
+>>  
+>>  struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
+>>  					      void *data);
+>> @@ -109,6 +119,12 @@ static inline int snd_soc_usb_enable_offload_jack(struct snd_soc_component *comp
+>>  	return 0;
+>>  }
+>>  
+>> +static int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
+>> +					    int direction, long *route)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>>  static inline struct snd_soc_usb *
+>>  snd_soc_usb_allocate_port(struct snd_soc_component *component, void *data)
+>>  {
+>> diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
+>> index ab914878e101..e56826f1df71 100644
+>> --- a/sound/soc/soc-usb.c
+>> +++ b/sound/soc/soc-usb.c
+>> @@ -145,6 +145,40 @@ int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
+>>  }
+>>  EXPORT_SYMBOL_GPL(snd_soc_usb_enable_offload_jack);
+>>  
+>> +/**
+>> + * snd_soc_usb_update_offload_route - Find active USB offload path
+>> + * @dev - USB device to get offload status
+>> + * @card - USB card index
+>> + * @pcm - USB PCM device index
+>> + * @direction - playback or capture direction
+>> + * @route - pointer to route output array
+>> + *
+>> + * Fetch the current status for the USB SND card and PCM device indexes
+>> + * specified.  The "route" argument should be an array of integers being
+>> + * used for a kcontrol output.  The first element should have the selected
+>> + * card index, and the second element should have the selected pcm device
+>> + * index.
+>> + */
+>> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
+>> +				     int direction, long *route)
+>> +{
+>> +	struct snd_soc_usb *ctx;
+>> +	int ret = -EINVAL;
+>> +
+>> +	ctx = snd_soc_find_usb_ctx(dev);
+>> +	if (!ctx)
+>> +		return -ENODEV;
+>> +
+>> +	mutex_lock(&ctx_mutex);
+>> +	if (ctx && ctx->update_offload_route_info)
+>> +		ret = ctx->update_offload_route_info(ctx->component, card, pcm,
+>> +						     direction, route);
+>> +	mutex_unlock(&ctx_mutex);
+> The second ctx check is redundant.  And the locking scheme looks
+> dubious -- as ctx isn't protected by ctx_mutex after its retrieval via
+> snd_soc_find_usb_ctx(), even if you reacquire ctx_mutex, it may point
+> to an already released object (in theory).
+>
+> IOW, for a safer protection, you'd need to cover the whole
+> find-and-exec procedure via a single ctx_mutex lock action.
+>
+That's fair, will make the change to move the mutexes around.
 
-> ---
->  drivers/pci/pci.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 225a6cd2e9ca..3b1939c9cf46 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -23,7 +23,6 @@
->  #include <linux/string.h>
->  #include <linux/log2.h>
->  #include <linux/logic_pio.h>
-> -#include <linux/pm_wakeup.h>
->  #include <linux/device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/pci_hotplug.h>
-> -- 
-> 2.39.2
-> 
+Thanks
+
+Wesley Cheng
+
 
