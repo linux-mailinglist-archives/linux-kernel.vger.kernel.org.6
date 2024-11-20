@@ -1,115 +1,150 @@
-Return-Path: <linux-kernel+bounces-416353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F839D4399
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62B989D4395
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 440C3B2636D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:37:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01E73B23858
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617031C761F;
-	Wed, 20 Nov 2024 21:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617FD1C1F0A;
+	Wed, 20 Nov 2024 21:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtSw+IkE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bBRGm/nv"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3C31C7299;
-	Wed, 20 Nov 2024 21:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D3F219ED
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732138529; cv=none; b=qqyn2N1VssdcdllcMzHfFzBd3Nf3z06PHKpFWZ6JXMYMG/4xcWgww+HmIQPuuLVXazRR0PtG5AJT7e2N+UssAfRNCmbgY4UniRXHteytdmpBds6IHgI3XwsjS8e/BejdQD9ChH3iTlYAhuRkjfAAAoMvSAlkqdfvMpGhpaSAtjk=
+	t=1732138517; cv=none; b=q+ENPk0l6RQT5nRPqKJTJPWhxASrdZKTRey2LMWfk07Z+P/tklD1f0auzBoIRlr4v9MiWtXW8HJ2Oud5kVxOhBezFIjugha0x3p/X8J4qfadYJzxaMgb6SxNN3vON9SyErKMWrXiw2i1amuotLuuhG+cGcUe7O3AoIDxnCtgXME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732138529; c=relaxed/simple;
-	bh=221kYit23f9QJxeOwC9neMdzrf/0CgYCMcgmEKVkURI=;
+	s=arc-20240116; t=1732138517; c=relaxed/simple;
+	bh=lM/WKcDKIwOXst1Ru1M19tCM8Fi5ObiOLcFy8LJgHSU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0CUYFTbcFtC+rGVsH5lskADRAdZ/EOBS/crg0Pv2x1bgfmV4sryxCNwOBShrUI1/rJawgSf4VygdRXn1Cw7uZoAD4BmF0tU/6RLmUWI332TyWrnhrm3ez6fqUYqVtShtWT+V14bk4se4JiKFzws8YDjHYvijQfWkPtdeGMZ3eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AtSw+IkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F6DEC4AF09;
-	Wed, 20 Nov 2024 21:35:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732138529;
-	bh=221kYit23f9QJxeOwC9neMdzrf/0CgYCMcgmEKVkURI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AtSw+IkENfdI0iMOfNeq7N4J+o6eLyrxtLEhUpNLjN764qstmpkWErj6nM+WDxFvC
-	 KS7baZBiPlfQLyoTVQ/ZbCUOmn1KwYvwDisz4fYt+46LgWWwFgmx87JbRw81D8U5VW
-	 /5aAVRIkoBGzlVt7DEabGrd7tK2chDyXUo80bw8xJNFQGGdwwYIDozvkEdrWk6O2KO
-	 0QX/rMGIZG8oH7EK2KxZJ8jACWLVQAzonzZUsCGBSf5Y/fg/NkAxhEHeHWB2dQYD1u
-	 IyN5E9jT3qy/B84GjPNFhwk0Nth3O31+HsseGvRqzl+zYnc3Nnsv2Pvc/Iyxu/OsXc
-	 M4Zk+a4/J6gug==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e8607c2aso195065e87.3;
-        Wed, 20 Nov 2024 13:35:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWmdwXnrLET9AydrxnZAnovR6UF/xvw7egMww+DpDX9YIikJOv6ev3mbiq8k3yHjr2wqZqaeFyTB7jsdYY=@vger.kernel.org, AJvYcCWps12JrTX5bcMJu2+lFb4YYqfOnEfj43OULMNyLiUDvPzleqq0L1TARnsrecIrD00U6//aIxFrxFLXaMt6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/QcBc/LtFtGOAmsKQ6gK9IIR7HrEQdjwIPSMlVDSUmoNt4xns
-	NEhPMaNOQthPxzMgYT+OiOOmUYZx8dDRo+WhTfikJvJw7PcrLh2tLEkmniGxah+GOY6248rx6Jx
-	dHZmZOgpCX8p+6hHG73YDxWEZ/5A=
-X-Google-Smtp-Source: AGHT+IFtmpACgo2WdBjeF3KSeMaOZg3iR6IINYTuzz6B/NBI3VQXA/HLNEHHfQg9tbjwQt/LklOU87alu/iYAe/eofU=
-X-Received: by 2002:a05:6512:3d8f:b0:53d:ab15:1aee with SMTP id
- 2adb3069b0e04-53dc136dc37mr2166462e87.49.1732138527773; Wed, 20 Nov 2024
- 13:35:27 -0800 (PST)
+	 To:Cc:Content-Type; b=pVZP+nV5n2yjBCqR4d8wogieI0Ew6z5LqMzk+oC+jdEOxee0/tEsKev5Kmx/mNHdNR3utcZQxgeU033j1kFErHyd79r0fU4ykKLchbTi/GleDnCv+ibzQcIi9yvymPYP7u78DEedLD7srl89TiBbocGA6U21Y1cnvb0Ic1HxAao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bBRGm/nv; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-856f9be0389so80224241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:35:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732138515; x=1732743315; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pv6oNkx5kLI5l81tt9YoIOgWAGXnk3pmvt99mDOzf+I=;
+        b=bBRGm/nv/Dz4uUzTpKgeLhko/5WAJyuLVG3aNjhIZGveU1jDOvrO096008izhBbSbZ
+         Kv9BQR4G3+MsPZtOGdwTQFXyvlRi+M0A0KLvTyf+22HYQNc0gqWWULxVZgraAqfxvU7B
+         qjsvx8pCLDXGg4b58yvmH8KCXMxPWtkbE1HQGMyNNZOsuwP1MoMxg7PXWiw25mHCZlqC
+         OzVkq4vz9w2gjnc1gWI3HZfmps63yeqR0EhAY5IQDI1xwdBr07TIOFWO8uRghbWV0oTu
+         +aTeZAnCYFg5QD1nj2vxKX/+ciVQ8lxAAXVyDZ4lJs3nbAlTIWn3hvqhRj0PlXtRpTxz
+         p1ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732138515; x=1732743315;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pv6oNkx5kLI5l81tt9YoIOgWAGXnk3pmvt99mDOzf+I=;
+        b=PG+JxDAp2G3UW7STgMjDh4zKfQuWpY6WSMTBtzQUSzMhisi9MP7Z8Is9FMD21a1qau
+         vHedvbGQDUKHDeF0GVCq3uHiHUsj4AKMMeKy2WAE0fdra3TGXRUZe3Opvp4W/iHN4SWG
+         7plIY7BJ64jbKt3JJv/kxfcl1X3l3VJ37gXFFLyj0wAUp15m+MpxGuzly4NGmWSwtzrP
+         CAxeY7VDBLnwb2Ip2YVdcbiO1XhFdQ+Bdv0xdOFWplr8q3sBNXMRCEw3ol+wugQO4vbk
+         dF5uD4RFOYXFlSuni1tMiGxWH1JNhg99aby6G0lyPqXr1sbvNA8bZ0568W74TQPSKD9v
+         lTXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBnL5QfQgVCpP6JozZpE6DNEMacj+ipmEw7PpBh+2Iy6EC40IAa6RQw0nwT0d90e4NkXS0zasbE+wW+38=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb5Pq5pIz6WQeWDUL51bKFybthQfoUbB2O/mAaqWVlxvmuWIMY
+	4jFWpN4R9V5blcGQ2YZdpAJ2G7J/tkKqp23jS3yOWaLDIq/8CMfhqYqZMEi1fRYdPh0EPmVwC2c
+	VCdmGJEsolOxDa0BurvsOLngOs48=
+X-Gm-Gg: ASbGncszLyUSkBlb1a1nEsqEZ1eGhUeOwgjWxKebjtYFK8hgKjffuYPjIqTonjxDQAJ
+	1Ry163qp2cM3EvHnjuYXPUAziG/+k/8dYedrplX47+YUCsrrZIpbS37gCuMuOqaMy+w==
+X-Google-Smtp-Source: AGHT+IFvm29J3oFLKuPgZZJeJU/V5JpXf/pNMOYGnCoFS57wIUTFTg5ufU+JA0M0pQEWEykYWep6FN21VVG1GartUBg=
+X-Received: by 2002:a05:6102:3f8b:b0:4a4:7928:638f with SMTP id
+ ada2fe7eead31-4adaf41110cmr6210467137.3.1732138515100; Wed, 20 Nov 2024
+ 13:35:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120204125.52644-1-pvorel@suse.cz>
-In-Reply-To: <20241120204125.52644-1-pvorel@suse.cz>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 21 Nov 2024 06:34:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
-Message-ID: <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
-To: Petr Vorel <pvorel@suse.cz>
-Cc: linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Rob Clark <robdclark@gmail.com>
+References: <c6a2085278292be8ccc24635ad75b0a59f3cd7dd.1731397290.git.baolin.wang@linux.alibaba.com>
+ <45509f49416849e6708a4fd57c988b8b0921210a.1731480582.git.baolin.wang@linux.alibaba.com>
+In-Reply-To: <45509f49416849e6708a4fd57c988b8b0921210a.1731480582.git.baolin.wang@linux.alibaba.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 21 Nov 2024 10:35:04 +1300
+Message-ID: <CAGsJ_4xvkcB6_g+RENBZ-G8aY7HZ4bdVGVgs2f8H7PSACtJrBw@mail.gmail.com>
+Subject: Re: [PATCH] docs: tmpfs: update the huge folios policy for tmpfs and
+ shmem fix
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, da.gomez@samsung.com, david@redhat.com, 
+	hughd@google.com, ioworker0@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, ryan.roberts@arm.com, wangkefeng.wang@huawei.com, 
+	willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 5:41=E2=80=AFAM Petr Vorel <pvorel@suse.cz> wrote:
+On Wed, Nov 13, 2024 at 7:57=E2=80=AFPM Baolin Wang
+<baolin.wang@linux.alibaba.com> wrote:
 >
-> It will be used in the next commit for DRM_MSM.
+> Drop 'fadvise()' from the doc, since fadvise() has no HUGEPAGE advise
+> currently.
 >
-> Suggested-by: Rob Clark <robdclark@gmail.com>
-> Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+Reviewed-by: Barry Song <baohua@kernel.org>
+
+I couldn=E2=80=99t find any mention of HUGEPAGE in fadvise() either.
+
+FADV_NORMAL
+FADV_RANDOM
+FADV_SEQUENTIAL
+FADV_WILLNEED
+FADV_DONTNEED
+FADV_NOREUSE
+
 > ---
-> Changes v3->v4:
-> * Move definition to the end of the file
-
-
-I prefer to not check the tool.
-
-Why don't you install python3?
-
-
-
-
->  init/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/admin-guide/mm/transhuge.rst | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 >
-> diff --git a/init/Kconfig b/init/Kconfig
-> index fbd0cb06a50a..c77e45484e81 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -2047,3 +2047,6 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
->  # <asm/syscall_wrapper.h>.
->  config ARCH_HAS_SYSCALL_WRAPPER
->         def_bool n
-> +
-> +config HAVE_PYTHON3
-> +       def_bool $(success,$(PYTHON3) -V)
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
+dmin-guide/mm/transhuge.rst
+> index ba6edff728ed..333958ef0d5f 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -382,10 +382,10 @@ never
+>
+>  within_size
+>      Only allocate huge page if it will be fully within i_size.
+> -    Also respect fadvise()/madvise() hints;
+> +    Also respect madvise() hints;
+>
+>  advise
+> -    Only allocate huge pages if requested with fadvise()/madvise();
+> +    Only allocate huge pages if requested with madvise();
+>
+>  Remember, that the kernel may use huge pages of all available sizes, and
+>  that no fine control as for the internal tmpfs mount is available.
+> @@ -438,10 +438,10 @@ never
+>
+>  within_size
+>      Only allocate <size> huge page if it will be fully within i_size.
+> -    Also respect fadvise()/madvise() hints;
+> +    Also respect madvise() hints;
+>
+>  advise
+> -    Only allocate <size> huge pages if requested with fadvise()/madvise(=
+);
+> +    Only allocate <size> huge pages if requested with madvise();
+>
+>  Need of application restart
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
 > --
-> 2.45.2
+> 2.39.3
 >
-
-
---=20
-Best Regards
-Masahiro Yamada
 
