@@ -1,91 +1,156 @@
-Return-Path: <linux-kernel+bounces-415522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 672F29D3773
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:52:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FC49D3758
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3332812FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2E11F22DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E47919F108;
-	Wed, 20 Nov 2024 09:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF7D19D060;
+	Wed, 20 Nov 2024 09:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="eeDCWYI9"
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fxj+9SR4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77ED018EFC1;
-	Wed, 20 Nov 2024 09:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4EF199934
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096292; cv=none; b=maDdQhjgBZax+MN7C+vItEbHHgDJeRQrfkcTzW5sguonqfHMJaVENDFvgvrwAgV0mV6KOL5n6Xa3v8L+de3NLd9K9RKHzCUHiFsvrwCVcXAPUxDlvqHJTWSte0pMSxQiv1k2pjWjsUqLzRsywLPx+nHqM0DR7cwrhjfOunc9pzM=
+	t=1732096029; cv=none; b=NRX7kSAox+cuDtU2yKZp6kCPesScC190TWm1EdBHv7JU2LuY5yp/sc2fyemFDm6zaiYhr1oJlooSpiHuk1mKW+eh+IYAVJqQmEEBXj20KrSpWJwisq0zVVTA2Lh9x7ENfsMQHYVGLxsxuBhCWqq+cXKNYSblJLMwr1cT+Z7lyEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096292; c=relaxed/simple;
-	bh=hX1ZJF+sGGIC+8ruMcNzuj5ORxT9wSray9WemWCxTyw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+X/jP9b1fge2BungO7pkYNyPAuWnXTLs9XfEQegtScy4ouSRIaEoubf/1Br/SxYQ4sFABwAyC5QklRaNNqfw8uZNvJzbfUG/c6otxle3aMgX2UFpOsez/F870Y9XVFZHMSx0MUL25MuyC7KeBddXtCdrHMrQqqpgZ3EQiJI3gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=eeDCWYI9; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1732095977;
-	bh=hX1ZJF+sGGIC+8ruMcNzuj5ORxT9wSray9WemWCxTyw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eeDCWYI9Ys8QDbAwJ+8duDW9BJLaRGtrwOKNrOA4LF6lwv32DkazcmRaSyA7cGXSh
-	 9GlIPqYi2qOyeYIQGY9RxChXdqW36pZeFkv0dEvUUdm+m7ulfCMYdwLx2mbiYEzUV7
-	 Lk4O36lG4wXDuAzWH6cTrnxLVJnnQWsOdmmAUxgY=
-Received: from localhost.localdomain ([111.48.58.13])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id B8F32AAA; Wed, 20 Nov 2024 17:46:15 +0800
-X-QQ-mid: xmsmtpt1732095975tomnem8ce
-Message-ID: <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
-X-QQ-XMAILINFO: NnYhxYSyuBnLZ5Zmw0+h4a+g4rLsmAD3gPh+J7MA74U5LwZfUeO0GXRNk8i1HB
-	 r00ykJkRGzA1uZWYHYakHlq480PetZjVTFjSLAvrXWFyX6YhHs6BKa4bGEkzD0Ndfy+a8q8FHIdx
-	 ejt5v6Gf/y9IxIbm2r0UU9bVYUbkDRArA5HzCIxu1XnHnmqNmB44HNLrT+B2GSDsrkA0lA7gMfGw
-	 2R86FWhw8011kl7wjnZpLAvRZDzLztNQG8UNKkF7Du9D9zTzG5ac33nSOISWsbIYqywOvkO7fvBh
-	 gAWucWFcoFYJ+xLI/w5lGtq/ZwBeDkanTBOC4VlvLjYmMW47Kwscovl4t6NupgGROGmQadLHXMR3
-	 nsmAOYNxUSV1l33U/i/W94KWsWIN67zlArQrDfjGIl3aF+1gxnKbImIOdiMqj9UMT9gSmSC3nJGU
-	 oZE9Va2iYbKZewHV3royWNOxBBInG87LT23o+unInMkdwf0AYj/xlyjX1Dy4/x4SozeRPqDJgyJX
-	 imzznUkazK7aOvsqE4V4/y4yjnUD7yzVkYFaZ7LXh70X3dIWALj0qSgI851QHidGBb+URUh/5Cc7
-	 +P5NgWlghbtSBC76selZf7LZDIVvHNOowMCMy35xw3Y9kIaIOQuE302d1h0RVSeDgHoV5wQbqlFv
-	 g12wlwgwMtY7KxQNoJI0SDdLF4nJRpOe1pGHn43X0JJ7iQweXLcE7MK8/Y+AX05zgrajfpZTDwdd
-	 1GlrXwS3+PgJZjG3StTXo3IZebBdob7STcf+Ok4bf+zmvByBwp/AuMl78lULAqzGcvnmkgncpcJU
-	 naLorrY48Da2eVaN4j32814uTIkJfPUoCVdLcmwPbIaiDR8FWv6teHcnn1Sr5r3xEY98SKpJ04pF
-	 KX6WC599V7CznzEA/LEaJI7Lf3ZSb+NdqAP8GCoA+rz07gDjO4R0l8g3KxP8dcAOm55VV5Jb6znZ
-	 Ab8A+n2x4Qf+4A3dOt0Sm90gyfsje9jZz/M+Es3bzVq1EmegftWlMh9NA/5cbdOZA1MWw9Ei4=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Cong Yi <yicong.srfy@foxmail.com>
-To: linux@armlinux.org.uk
-Cc: andrew@lunn.ch,
-	hkallweit1@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for improving code readability
-Date: Wed, 20 Nov 2024 17:46:14 +0800
-X-OQ-MSGID: <20241120094614.175215-1-yicong.srfy@foxmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
-References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
+	s=arc-20240116; t=1732096029; c=relaxed/simple;
+	bh=BeB0I5N9lmAH1/USVhzS2jrTuW+JT107L4SWdR0WNKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rIyHogLsTDhhyFhcFt//W/EMYGZ8HRXT0QrQdVT6XvauCSGkToIdt4Xx4YbzXFcQxN0M0vsPYD1faTkrOogC27NmsG5GavY/Ob8u5USIb0nJGTS3pEkkFJfkOGOBzWClgZzYFpmgWhi17PtJoXUlT9xck9TICfs9DDCCDLAOqn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fxj+9SR4; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732096027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RQ/EL0J6kjGmTeoQldkQB/yJmR9CyO2pv3yRZbq8j84=;
+	b=fxj+9SR4kWRFT4/nelYaba4R+NGH6c+6LWqHvsO3XuEH/jhwdOWZG3n9gTenyvRfMYjPZA
+	7FSClvE6GDERYLgV6go3PKlyKBoQpAxbSz5wV7vQT50h6n+mvPNvW6KpLbRObqwV8VE8NT
+	ztyBftS8fRfkzdr6MR3XRqM9tEZ+tVU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-425-Humkb_9bOb-2SPRao4GIRw-1; Wed,
+ 20 Nov 2024 04:47:03 -0500
+X-MC-Unique: Humkb_9bOb-2SPRao4GIRw-1
+X-Mimecast-MFC-AGG-ID: Humkb_9bOb-2SPRao4GIRw
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 770D91955BCF;
+	Wed, 20 Nov 2024 09:47:01 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE26530000DF;
+	Wed, 20 Nov 2024 09:46:58 +0000 (UTC)
+Date: Wed, 20 Nov 2024 17:46:54 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 06/11] fs/proc/vmcore: factor out freeing a list of
+ vmcore ranges
+Message-ID: <Zz2wDu9XskX1dgN7@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-7-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025151134.1275575-7-david@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi, Russell King:
+On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> Let's factor it out into include/linux/crash_dump.h, from where we can
+> use it also outside of vmcore.c later.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  fs/proc/vmcore.c           |  9 +--------
+>  include/linux/crash_dump.h | 11 +++++++++++
+>  2 files changed, 12 insertions(+), 8 deletions(-)
 
-Thank you for your reply!
-Yes, as you say, there is no problem with the definitions themselves
-being named. When I just read from Linux-5.4 to 6.6, I thought
-that PCS_STATE_ and PHYLINK_DISABLE- were associated in some way.
-After reading the code carefully, I found that there was no correlation。
-In order to avoid similar confusion, I sent this patch.
+LGTM,
+
+Acked-by: Baoquan He <bhe@redhat.com>
+
+> 
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 76fdc3fb8c0e..3e90416ee54e 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -1568,14 +1568,7 @@ void vmcore_cleanup(void)
+>  		proc_vmcore = NULL;
+>  	}
+>  
+> -	/* clear the vmcore list. */
+> -	while (!list_empty(&vmcore_list)) {
+> -		struct vmcore_mem_node *m;
+> -
+> -		m = list_first_entry(&vmcore_list, struct vmcore_mem_node, list);
+> -		list_del(&m->list);
+> -		kfree(m);
+> -	}
+> +	vmcore_free_mem_nodes(&vmcore_list);
+>  	free_elfcorebuf();
+>  
+>  	/* clear vmcore device dump list */
+> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+> index ae77049fc023..722dbcff7371 100644
+> --- a/include/linux/crash_dump.h
+> +++ b/include/linux/crash_dump.h
+> @@ -135,6 +135,17 @@ static inline int vmcore_alloc_add_mem_node(struct list_head *list,
+>  	return 0;
+>  }
+>  
+> +/* Free a list of vmcore memory nodes. */
+> +static inline void vmcore_free_mem_nodes(struct list_head *list)
+> +{
+> +	struct vmcore_mem_node *m, *tmp;
+> +
+> +	list_for_each_entry_safe(m, tmp, list, list) {
+> +		list_del(&m->list);
+> +		kfree(m);
+> +	}
+> +}
+> +
+>  #else /* !CONFIG_CRASH_DUMP */
+>  static inline bool is_kdump_kernel(void) { return false; }
+>  #endif /* CONFIG_CRASH_DUMP */
+> -- 
+> 2.46.1
+> 
 
 
