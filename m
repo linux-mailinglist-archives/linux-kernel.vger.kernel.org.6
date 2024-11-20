@@ -1,137 +1,200 @@
-Return-Path: <linux-kernel+bounces-416027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFFF9D3FCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:14:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F4419D3F62
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ED59B3075A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E341F2357E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF54143871;
-	Wed, 20 Nov 2024 15:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEC114F10E;
+	Wed, 20 Nov 2024 15:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqwB+GLn"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4hf7XU7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDDD85C5E;
-	Wed, 20 Nov 2024 15:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F0914C5AE;
+	Wed, 20 Nov 2024 15:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117572; cv=none; b=Jn3QT/QAC2wkdNVbL7T0mMbWs9dELTzEKlh56YNDCb7l/OZnKlUhk8bjlt6ODqlFIUUaryOiisXRsildyeJcL6zjLm88bwYOYiUBiQ1MzrnkjpbKaQpDnE8EXz4fjrU6V3ZxZyAPf17MFNkgT/OmU8GV66kcbY/tOB0vUrt+WLk=
+	t=1732117928; cv=none; b=YLE+4O5E3et9cvIvyuHciukIlP8Te7RCWDz4wF++wniLd17UMiMlcaZ06DXeIelAK89EZh3n1ZP4KJdg3KPb3f2TcJwVlpw4/syKdiXRjEQpGaZcgmahwIKDGCaL6sjyVvgApztpk3DpjdxAe266S7hqvRQzLcssIaHq5bJ190g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117572; c=relaxed/simple;
-	bh=NoAx2DXVAyrCS/4irxTbhJAiFco/Aqrx4Ig8U69PSHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pj0dbjZcQXljdKuE0L+uCQJkJeMyb0DVANUe8qx0goli8LSiXKYev0B6gJkuQYEpU3VchHIBznO1LOfxnisSY7L27G/ZrAgdS83Wi4ySUxHM2Seop5Hr1r0Tqt7ycrxwKwPpTT5Z+sOEbnmTD4pFwavL0mFbllF5DMjmIsx4aDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqwB+GLn; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-72061bfec2dso3783261b3a.2;
-        Wed, 20 Nov 2024 07:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732117570; x=1732722370; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mlC1fiUhPeILfOtmUrQ/N6IVvKcd/i9shLrZYcMb/8g=;
-        b=XqwB+GLn712YpETVHXn/KObtD9Dn2dBTNmd7uUGWHG9Mh+/A6D+mDNcgkd0vPiBfbS
-         AzmVrgrt0pFCuvePw+dSbopuHEXnuJF2LI+rPYHnxi+W/iPqmYGo8wY8WDzyJ563UVdf
-         kmFjo0zZcfTRWNMNZhPX65tiqTWZBXbPWeTvibfiP+ZOogLGY8fNBsUJ5VhmjWx4M7bJ
-         Edq88Rhhp9BLk7289UTBAKlB0XxbYSlPG9dGPF5HuN32cr61IwncBGuFS+hq3Es/ki6Q
-         N4Ln1A8H9Sv8yS8EJpD07W6c/J9B2D0CesSb48VZgk1I9fKGQ5XaroQiaaFz6dUBDxSo
-         Eclw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732117570; x=1732722370;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mlC1fiUhPeILfOtmUrQ/N6IVvKcd/i9shLrZYcMb/8g=;
-        b=hI+5gRt7sa3tZD3Qq1aiMCcbXjjAk+bmPv8PMjWZ084/uJWFI7jz6EWo+xt0+5ScZv
-         uF9WByxxZV02fO4JpxHjliqVoA6HZIpROD97lnZTUM1vmxBvNi/a+ujttcvNlKzv/Tdr
-         WK23hL/GuyPwYL28COIdm+MNjoYA0yknZiPnifca2zXQu0WyNm7E3Dwrfty/9RtVz+NR
-         J9q1fzb5Tlg0uWe149JQJeu1oadNRQtP1DfWmY78E5SoafJaGlablBoK2NjtyCN2w0b/
-         bk3eqoiBy6tsstd34kvnFoJRnRg6QCmiSp68qHZG8FIzqiPc2ZCx7JtzhGRd4VqnLIyi
-         bO3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXm5+2nka8EASKYST43ueqiyt6aCbocKUZld0Tk0pCRPVllrwHXiOz0vrnU3r95qjmPJ/CQU1twOAYkg+M=@vger.kernel.org, AJvYcCXwrgCbjDwLjD7GpEBnB307TTLq0hKJwiCn22WNBx3StISkCdF5DAuvoi0tnKO4JiaX8nYxNxzF5xtO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9X6vCQVSiHMO0zKJqpAy0EFTVhMwXVEWOEIAz/R0QNoRIQw85
-	DwmLuJoL9How+W0ElThrSqTJEGd7rQ/oead8RGJpcR7zsyTpL8e4gjbhAXYcDSs=
-X-Google-Smtp-Source: AGHT+IFNRYwFJYtTRsYFIAe54Lh4omf9H/vO8B1hc+P4dH5FyrlHuZmBlJaXnBwLQ8pp45dbnF1nBQ==
-X-Received: by 2002:a05:6a00:138b:b0:71e:695:41ee with SMTP id d2e1a72fcca58-724becd76f7mr4397056b3a.5.1732117570022;
-        Wed, 20 Nov 2024 07:46:10 -0800 (PST)
-Received: from x13.. ([149.40.62.6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724bef8daa5sm1844109b3a.102.2024.11.20.07.46.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 07:46:09 -0800 (PST)
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org,
-	rbm@suse.com
-Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
-	skhan@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v4] usb: dwc3: remove unused sg struct member
-Date: Wed, 20 Nov 2024 10:46:03 -0500
-Message-ID: <20241120154604.51815-1-luis.hernandez093@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732117928; c=relaxed/simple;
+	bh=6sl/hLhDAqd6o+eAytT6pnSBd2n8Gpaj7e9r8RvqjBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yy6xiZWS5jhVTt7ETATq9wbRrX9qSOh+5e/7AmA9/NoaqaDU+zoZm+QBoHimyK8fs3rjDswizrhQaUQndusCFquYN7qvIu6sdODezrQPaIp1yo3ZJBSWlkop/51IgwVL+RhByQJE2slxhzSc/e48facM7HY91XVg10T1SZk+tvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4hf7XU7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C544C4CECD;
+	Wed, 20 Nov 2024 15:52:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732117926;
+	bh=6sl/hLhDAqd6o+eAytT6pnSBd2n8Gpaj7e9r8RvqjBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=J4hf7XU7fVyNLaI5lOBa2AVW8PZ4aLSVmiJGeZS2FUyA4HpJKeMI0TZN4sHOD1605
+	 dPD4rwZb7ut1Bv7L41EsnrUU1kels9bgCyOdD9Cqp2WTJUmzUwcVHy+gznObfxiQ+e
+	 cEwUck+ppV4h4ZA/j6/7HLKOC+RnzLDyVese5ENYT5oiOtXWfx0uqvioZ9A1nm5e64
+	 hgUL6yuCOL3OmfTKW97u7g7TmBJCjG0Z1vG4K2dVUXtYdZX/45H4SexSfWa4Dw5yx9
+	 3N0Gb4AHCaXjg9v/zM9rMhd1xR2yvJQ60aOA+rVAyEoMhopJqT8nyeXwKDioMU8aGQ
+	 /Z+Rc2QCC3Ylw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Lyude Paul" <lyude@redhat.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 07/13] rust: hrtimer: implement `UnsafeTimerPointer`
+ for `Pin<&T>`
+In-Reply-To: <4a1ee5fff788d6624234f7e6df992406952ddb1d.camel@redhat.com>
+	(Lyude Paul's message of "Wed, 13 Nov 2024 18:30:42 -0500")
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
+	<20241017-hrtimer-v3-v6-12-rc2-v3-7-59a75cbb44da@kernel.org>
+	<jHA_jGNaF2hHo2a_74AwFcLGTGjFLasx1dKROtdfw1QjgncwXCymfXB0F8JC2z3jSg-kaWSa7a_ATsVXaPDzBQ==@protonmail.internalid>
+	<4a1ee5fff788d6624234f7e6df992406952ddb1d.camel@redhat.com>
+Date: Wed, 20 Nov 2024 16:48:07 +0100
+Message-ID: <87v7wh3o08.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The sg (scatter-gather list pointer) member of the dwc3_request struct
-is no longer used and should be removed. This patch eliminates the unused
-member, cleaning up the struct.
+"Lyude Paul" <lyude@redhat.com> writes:
 
-This change improves code clarity and avoids maintaining unnecessary 
-members in the structure.
+> On Thu, 2024-10-17 at 15:04 +0200, Andreas Hindborg wrote:
+>> Allow pinned references to structs that contain a `Timer` node to be
+>> scheduled with the `hrtimer` subsystem.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/hrtimer.rs     |  1 +
+>>  rust/kernel/hrtimer/pin.rs | 97 ++++++++++++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 98 insertions(+)
+>>
+>> diff --git a/rust/kernel/hrtimer.rs b/rust/kernel/hrtimer.rs
+>> index e97d7b8ec63ce6c9ac3fe9522192a28fba78b8ba..ceedf330a803ec2db7ff6c25713ae48e2fd1f4ca 100644
+>> --- a/rust/kernel/hrtimer.rs
+>> +++ b/rust/kernel/hrtimer.rs
+>> @@ -362,3 +362,4 @@ unsafe fn raw_get_timer(ptr: *const Self) ->
+>>  }
+>>
+>>  mod arc;
+>> +mod pin;
+>> diff --git a/rust/kernel/hrtimer/pin.rs b/rust/kernel/hrtimer/pin.rs
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..a2c1dbd5e48b668cc3dc540c5fd5514f5331d968
+>> --- /dev/null
+>> +++ b/rust/kernel/hrtimer/pin.rs
+>> @@ -0,0 +1,97 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +use super::HasTimer;
+>> +use super::RawTimerCallback;
+>> +use super::Timer;
+>> +use super::TimerCallback;
+>> +use super::TimerHandle;
+>> +use super::UnsafeTimerPointer;
+>> +use crate::time::Ktime;
+>> +use core::pin::Pin;
+>> +
+>> +/// A handle for a `Pin<&HasTimer>`. When the handle exists, the timer might be
+>> +/// running.
+>> +pub struct PinTimerHandle<'a, U>
+>> +where
+>> +    U: HasTimer<U>,
+>> +{
+>> +    pub(crate) inner: Pin<&'a U>,
+>> +}
+>> +
+>> +// SAFETY: We cancel the timer when the handle is dropped. The implementation of
+>> +// the `cancel` method will block if the timer handler is running.
+>> +unsafe impl<'a, U> TimerHandle for PinTimerHandle<'a, U>
+>> +where
+>> +    U: HasTimer<U>,
+>> +{
+>> +    fn cancel(&mut self) -> bool {
+>> +        let self_ptr = self.inner.get_ref() as *const U;
+>> +
+>> +        // SAFETY: As we got `self_ptr` from a reference above, it must point to
+>> +        // a valid `U`.
+>> +        let timer_ptr = unsafe { <U as HasTimer<U>>::raw_get_timer(self_ptr) };
+>> +
+>> +        // SAFETY: As `timer_ptr` is derived from a reference, it must point to
+>> +        // a valid and initialized `Timer`.
+>> +        unsafe { Timer::<U>::raw_cancel(timer_ptr) }
+>> +    }
+>> +}
+>> +
+>> +impl<'a, U> Drop for PinTimerHandle<'a, U>
+>> +where
+>> +    U: HasTimer<U>,
+>> +{
+>> +    fn drop(&mut self) {
+>> +        self.cancel();
+>> +    }
+>> +}
+>> +
+>> +// SAFETY: We capture the lifetime of `Self` when we create a `PinTimerHandle`,
+>> +// so `Self` will outlive the handle.
+>> +unsafe impl<'a, U> UnsafeTimerPointer for Pin<&'a U>
+>> +where
+>> +    U: Send + Sync,
+>> +    U: HasTimer<U>,
+>> +    U: TimerCallback<CallbackTarget<'a> = Self>,
+>> +{
+>> +    type TimerHandle = PinTimerHandle<'a, U>;
+>> +
+>> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle {
+>> +        use core::ops::Deref;
+>
+> I'm sure this is valid but this seems like a strange place to put a module use
+> (also - do we ever actually need to import Deref explicitly? It should always
+> be imported)
 
-Reviewed-by: Ricardo B. Marliere <rbm@suse.com>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/all/20241118194006.77c7b126@canb.auug.org.au/
-Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
----
-v2: remove unused sg struct member as per review[1]
-v3: 
-  - Add reported-by tag as per review [2]
-  - Carry over reviewed-by tag from v2 [3]
-  - Update commit subject to reflect maintainers
-  - Update commit message to reflect actual change gathered from 
-    Thinh Nguyen's feedback
+`core::ops::Deref` is not in scope. So if we want to use
+`Deref::deref()`, we must import the trait first.
 
-[1] https://lore.kernel.org/all/20241119020807.cn7ugxnhbkqwrr2b@synopsys.com/
-[2] https://lore.kernel.org/all/2024111922-pantyhose-panorama-6f16@gregkh/
-[3] https://lore.kernel.org/all/5l65sdskdzbehxamff5ax4ptiqhaxh7ewi4umtpp6ynen45nj6@nebuxjg4c4rx/
-v4:
-  - Remove out of context paragraph from commit message as per 
-    Thinh Nguyen's[1]
-  - Fix Reported-by, correctly attribute report to Stephen Rothwell
+My first intuition for writing this expression was:
 
-[1] https://lore.kernel.org/all/20241119221907.tyt4luboduaymukl@synopsys.com/
----
- drivers/usb/dwc3/core.h | 1 -
- 1 file changed, 1 deletion(-)
+ `(*self) as *const U;`
 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index ee73789326bc..3be069c4520e 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -956,7 +956,6 @@ struct dwc3_request {
- 	struct usb_request	request;
- 	struct list_head	list;
- 	struct dwc3_ep		*dep;
--	struct scatterlist	*sg;
- 	struct scatterlist	*start_sg;
- 
- 	unsigned int		num_pending_sgs;
--- 
-2.47.0
+because `*self` should invoke `Deref::deref()`, right?
+
+But the compiler does not do what I thought it would do. I am not sure
+why it does not work. It thinks the result of `(*self)` is not a
+reference, but a value expression:
+
+> error[E0605]: non-primitive cast: `U` as `*const U`
+>   --> /home/aeh/src/linux-rust/hrtimer-v4-wip/rust/kernel/hrtimer/pin.rs:62:24
+>    |
+> 62 |         let self_ptr = (*self) as *const U;
+>    |                        ^^^^^^^^^^^^^^^^^^^ invalid cast
+>    |
+> help: consider borrowing the value
+>    |
+> 62 |         let self_ptr = &(*self) as *const U;
+>    |                        +
+
+
+Another option to consider is:
+
+ `<Self as core::ops::Deref>::deref(&self) as *const U;`
+
+That is also fine for me. Which one do you like better?
+
+
+Best regards,
+Andreas Hindborg
+
 
 
