@@ -1,73 +1,69 @@
-Return-Path: <linux-kernel+bounces-415236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE879D3345
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:53:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8983A9D334A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:53:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84C30B2194A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22F69B22B97
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79E31581EE;
-	Wed, 20 Nov 2024 05:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E451581F8;
+	Wed, 20 Nov 2024 05:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kh7ZVabP"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oRyTqoIn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79001E545;
-	Wed, 20 Nov 2024 05:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C7078C76;
+	Wed, 20 Nov 2024 05:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732081975; cv=none; b=nqpk5RxZQVffSYbFEi8yMSwcekAIV/UffMxRfdiDTMVZ55chwCXcJcMorUygl6ZETIL2+AUzej4sP93Vs4PJAXoCKemBPpOdPEQD9FxFuwdyiA0ELiOuwwmlOa/XfQQFTkcttB/xmZFBzajNSJt114oFIWayrVjOoi15ZuDwKlo=
+	t=1732082010; cv=none; b=oN5UOq5r3KZKHSq3CXR/PWL33TP8wgXfQ+A9v46rCYBZ8GjpfBTuNBTUbnOdPqOPrfISZuIU3/XH0hMSEgD8qMWe5V4srxI5DmIfX99Da+0/9+pxj7K+wKQwYusa/fFKq95aKk35huji5XxVRtWaGFetWT3+okfOfR96JwLbvRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732081975; c=relaxed/simple;
-	bh=HhjLfZzAV2GlW3VZGQfySWZBZmERQ56RLr3tlOdBncI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KCjMiE4LoFVAZbOpaMSWZmKbi7cZP2h8wzHNZ+9/YUGYxckNtd5g/5sO6J4800t3mjYpAy8n+n1+lWQU7ufFd24qWl2MZB+hCSQ6UYkTqVnJMzQL7XUb2g8pWHbOhYlwFIRGiMBvWbOiwnXL+U96ce9x0LkdZQ3Szugn3RS4200=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kh7ZVabP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=jr9WLGkJrrZOa98eYcd077ebF/TWB7trxnSnvwKlbOA=; b=kh7ZVabPW5MmiXgGZnnRsh4lkh
-	Gg1CIt2l7b5iHBPiouaBLfNYV01fDd0h5SqmXhjsLrZ8dDFYnxnSfrortlmqNYXMq1X4BrNkbLTkQ
-	ppa4U+c5/YOt5Si1+Lv53bfvTktL4UckV7fCMB0+55GUs/s9S/iQ5iEPsfMnMIJGEjmMTehHroyf1
-	kAPqZYhMI9Gy4xW6nJAKx/Ky91oKFFuIQpp4TPDlVCzMReUs01J/vLUUAm1G+nXn6tEM+YGY2PnXs
-	+XQMNjd7a9gnA3KfsMSVxUxVdXe0FesnCvQQg42PSKg7V+ofsoBMio1mkTctA03W6o1F9kHnsN7ur
-	ZSLQ/mkQ==;
-Received: from [50.53.2.24] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDddx-0000000ESJw-0Ma0;
-	Wed, 20 Nov 2024 05:52:49 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Ian Kent <raven@themaw.net>,
-	autofs@vger.kernel.org,
-	Alexander Aring <aahringo@redhat.com>,
-	David Teigland <teigland@redhat.com>,
-	gfs2@lists.linux.dev,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	fsverity@lists.linux.dev,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	ocfs2-devel@lists.linux.dev
-Subject: [PATCH] Documentation: filesystems: update filename extensions
-Date: Tue, 19 Nov 2024 21:52:46 -0800
-Message-ID: <20241120055246.158368-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732082010; c=relaxed/simple;
+	bh=jhO+MVAyk6A0ALucdUV3SKoONq3wyur4YDIg44CpDyw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/xGwhkmEKyz0efF6DLOFJl6MWhu0FM+R9aAHEi8z/A4NY6S2Tc650XeCphE7TlO5NDexDC10rWTQgU4y3SwqsMAyCqSJYI3mGlGJF2GuabPJW1uf5KK0cf2i2f6OcIbmmLJPiUnEpKfHFjE95v0h0raLnieYI+kj3bgNrt58Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oRyTqoIn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJIFE6l030154;
+	Wed, 20 Nov 2024 05:53:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TsDY9yAdf/ePyQdc/w8aQp
+	jGS1f8pDLXuad5PrYIUig=; b=oRyTqoIncVR7WqHFsvbkH4V/x+KydvgELOdL8m
+	uDDM9HjMv31CgrHjc8lfTLWmSzJdzNeQu2pMrrYegaLH67IFtlIotik0bnMzwKGx
+	8Oiyldo/kK8fJftOuXwKeU2UTV24I5uU48ySsAvw8BCToVUZVAy0q4/81tPHmRib
+	q8d2uRN7UaupnxYOfaXsJUdWvLoOwSyT/ar3196JG5jP0/wCv1C5naiOD8BNDSKp
+	yTX5E7jW+a7oL1sJ8zykLzR1803c+r5WwZDrpifxmo9tgDm/K9uSjCPmAR51r/Kw
+	IQjxA54zn9kJH1A/hxl3tGJ+Isx7TS6CEbS6CGQvIgXOnImw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y6cv9s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 05:53:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AK5r6An031559
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 05:53:06 GMT
+Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 19 Nov 2024 21:53:01 -0800
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <quic_rjendra@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+Subject: [PATCH 0/2] Add watchdog support for IPQ5424
+Date: Wed, 20 Nov 2024 11:22:46 +0530
+Message-ID: <20241120055248.657813-1-quic_mmanikan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,100 +71,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: grXfIcVeyE9uCWzTQF5zZ-btSUHW0sJH
+X-Proofpoint-GUID: grXfIcVeyE9uCWzTQF5zZ-btSUHW0sJH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=756 suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1011 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200041
 
-Update references to most txt files to rst files.
-Update one reference to an md file to a rst file.
-Update one file path to its current location.
+Add a watchdog node to the IPQ5424 device tree and update the relevant
+bindings accordingly.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: Ian Kent <raven@themaw.net>
-Cc: autofs@vger.kernel.org
-Cc: Alexander Aring <aahringo@redhat.com>
-Cc: David Teigland <teigland@redhat.com>
-Cc: gfs2@lists.linux.dev
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: Theodore Y. Ts'o <tytso@mit.edu>
-Cc: fsverity@lists.linux.dev
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: ocfs2-devel@lists.linux.dev
----
- Documentation/filesystems/autofs.rst                 |    2 +-
- Documentation/filesystems/dlmfs.rst                  |    2 +-
- Documentation/filesystems/fsverity.rst               |    2 +-
- Documentation/filesystems/path-lookup.rst            |    2 +-
- Documentation/filesystems/path-lookup.txt            |    2 +-
- Documentation/filesystems/ramfs-rootfs-initramfs.rst |    2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+Manikanta Mylavarapu (2):
+  dt-bindings: watchdog: Document Qualcomm IPQ5424
+  arm64: dts: qcom: ipq5424: Add watchdog node
 
---- linux-next-20241119.orig/Documentation/filesystems/autofs.rst
-+++ linux-next-20241119/Documentation/filesystems/autofs.rst
-@@ -442,7 +442,7 @@ which can be used to communicate directl
- It requires CAP_SYS_ADMIN for access.
- 
- The 'ioctl's that can be used on this device are described in a separate
--document `autofs-mount-control.txt`, and are summarised briefly here.
-+document `autofs-mount-control.rst`, and are summarised briefly here.
- Each ioctl is passed a pointer to an `autofs_dev_ioctl` structure::
- 
-         struct autofs_dev_ioctl {
---- linux-next-20241119.orig/Documentation/filesystems/dlmfs.rst
-+++ linux-next-20241119/Documentation/filesystems/dlmfs.rst
-@@ -36,7 +36,7 @@ None
- Usage
- =====
- 
--If you're just interested in OCFS2, then please see ocfs2.txt. The
-+If you're just interested in OCFS2, then please see ocfs2.rst. The
- rest of this document will be geared towards those who want to use
- dlmfs for easy to setup and easy to use clustered locking in
- userspace.
---- linux-next-20241119.orig/Documentation/filesystems/fsverity.rst
-+++ linux-next-20241119/Documentation/filesystems/fsverity.rst
-@@ -16,7 +16,7 @@ btrfs filesystems.  Like fscrypt, not to
- code is needed to support fs-verity.
- 
- fs-verity is similar to `dm-verity
--<https://www.kernel.org/doc/Documentation/device-mapper/verity.txt>`_
-+<https://www.kernel.org/doc/Documentation/admin-guide/device-mapper/verity.rst>`_
- but works on files rather than block devices.  On regular files on
- filesystems supporting fs-verity, userspace can execute an ioctl that
- causes the filesystem to build a Merkle tree for the file and persist
---- linux-next-20241119.orig/Documentation/filesystems/path-lookup.rst
-+++ linux-next-20241119/Documentation/filesystems/path-lookup.rst
-@@ -531,7 +531,7 @@ this retry process in the next article.
- Automount points are locations in the filesystem where an attempt to
- lookup a name can trigger changes to how that lookup should be
- handled, in particular by mounting a filesystem there.  These are
--covered in greater detail in autofs.txt in the Linux documentation
-+covered in greater detail in autofs.rst in the Linux documentation
- tree, but a few notes specifically related to path lookup are in order
- here.
- 
---- linux-next-20241119.orig/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-+++ linux-next-20241119/Documentation/filesystems/ramfs-rootfs-initramfs.rst
-@@ -315,7 +315,7 @@ the above threads) is:
- 2) The cpio archive format chosen by the kernel is simpler and cleaner (and
-    thus easier to create and parse) than any of the (literally dozens of)
-    various tar archive formats.  The complete initramfs archive format is
--   explained in buffer-format.txt, created in usr/gen_init_cpio.c, and
-+   explained in buffer-format.rst, created in usr/gen_init_cpio.c, and
-    extracted in init/initramfs.c.  All three together come to less than 26k
-    total of human-readable text.
- 
---- linux-next-20241119.orig/Documentation/filesystems/path-lookup.txt
-+++ linux-next-20241119/Documentation/filesystems/path-lookup.txt
-@@ -379,4 +379,4 @@ Papers and other documentation on dcache
- 
- 2. http://lse.sourceforge.net/locking/dcache/dcache.html
- 
--3. path-lookup.md in this directory.
-+3. path-lookup.rst in this directory.
+ Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi                    | 7 +++++++
+ 2 files changed, 8 insertions(+)
+
+-- 
+2.34.1
+
 
