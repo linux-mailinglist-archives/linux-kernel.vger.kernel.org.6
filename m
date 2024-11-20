@@ -1,119 +1,133 @@
-Return-Path: <linux-kernel+bounces-415136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B51819D31E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:22:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F099D31E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB971F239C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:22:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03391F237E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852431B7F4;
-	Wed, 20 Nov 2024 01:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224FE1E515;
+	Wed, 20 Nov 2024 01:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="SIKkUbqd"
-Received: from mail-m24109.xmail.ntesmail.com (mail-m24109.xmail.ntesmail.com [45.195.24.109])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uxzJ3Uzz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC65EED8;
-	Wed, 20 Nov 2024 01:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.195.24.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E934CA920;
+	Wed, 20 Nov 2024 01:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732065745; cv=none; b=OLGQ3PRguwGcoiVzdoKDbsZUwAzWs/iczyx2Ik7kO38LefRwJwCkXg4AQajy1YFL0nCWi2X+Dag0KLRiTE+EB1Znbn2YCJIXHTCMD1Oo+C/CG9xJxgufxhxTseMHNKfMTp3Xeq1gw3HYOFhsJAN2y1saH7L3fDLh5xk5QQI/n4g=
+	t=1732066148; cv=none; b=XmAzLvJQFIKO5Eap7fu7J/Zw4vvQOv1clV9jFKMLBd0MrUvsb3oaOb0kUF8ibZMQGaYFwLnvsmd+5qagJriLo/4F3QDmMIQ2u4b0Pcg+k2PeIfBl2+hM78QZJQcp5uVFQiPKaW5xF8Yi+xjnhIzQrHd5RHp8a/Dt7RdR0sk01jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732065745; c=relaxed/simple;
-	bh=LG1K0LyvIOCuD7NM9eRmoBLOj06O57MRqo4woKUYWdw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GPrifK9CwVOxOtHesYy/6R0Tahs1J3sTdc5tVARwEPrshfbeDDQ66Z+SZVLeI0uPkkvxSIFPGDTtmpW5VuX88pa6cBmqP3ed5ziCruNeYMZ6u0vWdOdXyM2go0W690q2Sp/6N8kCoLWPP2LsisVGJA8NBR5t6oZSql1wXOExzlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=SIKkUbqd; arc=none smtp.client-ip=45.195.24.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 33e51e23;
-	Wed, 20 Nov 2024 09:22:10 +0800 (GMT+08:00)
-From: Jon Lin <jon.lin@rock-chips.com>
-To: broonie@kernel.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de,
-	jon.lin@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: [PATCH] spi: rockchip-sfc: Support ACPI
-Date: Wed, 20 Nov 2024 09:22:08 +0800
-Message-Id: <20241120012208.1193034-1-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732066148; c=relaxed/simple;
+	bh=sXpffKphaYU/PrdGBQJqh+XW7Bds0opukM76WrIT39k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rd6OkqANjtaNmyKX3bgxJ90uTbQnq3Av5PXL/A9ST9V3oCyBqOzgLVt9CgPwwEn0APsdn0Aq3YAGH9LP0dgj/LG18lAlSZkFTxEaoREARWgKrh4UTPiik7Uj7zzjfo13kW7neFf3mt+1LxsozFsMa06FTIilbxyY3sc/5YXUI8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uxzJ3Uzz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=v59Vb7JIm4gIzlWuLSdfGKzwV8mP+10Ck1kAdwSazko=; b=uxzJ3Uzzm2z2NKYnQ/LOjUTAmA
+	ccxgyLv5PyIGBS00RVBHCih0Mj6nhecGarzmtA+CPArV+LamT7FCcD6pyY3VhbM93KwqQguIYYFEx
+	yB/iTC8qDjIS+zjZhmpL4x+w9jUd+SmfvGHhFNdWGX4ei+ha++j9SwCdJ8/EwgF9VG/ZdjBcXtAAX
+	0KXcemq5RZBwhUv8RkBrB3k+hG5lLKjKfqb8npjK0GBdmPL7IpCecuq2fFc68IiK/mVbkPU64tHsa
+	qrp5sI1vQuIX5mhKx6xtpysHtfz2CNA3cSFg4/1r0xKica6lo2fRrmyW2HWFSr3JLgz8ulEMOYuZ8
+	B4zehw1Q==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDZWd-00000004ivI-482S;
+	Wed, 20 Nov 2024 01:29:01 +0000
+Message-ID: <9750d1c0-15b5-470f-9391-3f3d535d1a52@infradead.org>
+Date: Tue, 19 Nov 2024 17:28:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkxDTFZKH0NCHUlIS05ISkhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a934729a09809d9kunm33e51e23
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NRw6Tww6HDIeT0gqFTwySy8s
-	IzwaFDpVSlVKTEhJS01OTEhKTUxLVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
-	QVlOQ1VJSVVMVUpKT1lXWQgBWUFKQ0lPNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=SIKkUbqd1UD6wg4Ir2CWDFg9eY5xS3C5QaInroY38GsKPx2HWyGq315zqKv3nAQmmVjk2d1e3zp+Q9VdoXxGhV8/ep98jWVAFAvrqlG+yUSrCnSEhHEXiLMol95k181NauvT+QssWMHVPE4lnYVDtU77hD3vcS7XZZSX8es/stQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=4roe1uOrMlMXfDLEUiS1htJOky9bJXMb1BjJs0uBvqY=;
-	h=date:mime-version:subject:message-id:from;
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: pwrseq: Fix trivial misspellings
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241120-pwrseq-doc-trivial-fixes-v1-1-19a70f4dd156@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241120-pwrseq-doc-trivial-fixes-v1-1-19a70f4dd156@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Compatible with ACPI.
 
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
----
 
- drivers/spi/spi-rockchip-sfc.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+On 11/19/24 5:14 PM, Javier Carrasco wrote:
+> Use proper spelling for 'discrete'. When at it, capitalize 'Linux',
+> which is common practice in the documentation.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-diff --git a/drivers/spi/spi-rockchip-sfc.c b/drivers/spi/spi-rockchip-sfc.c
-index 69d0f2175568..138508d2c736 100644
---- a/drivers/spi/spi-rockchip-sfc.c
-+++ b/drivers/spi/spi-rockchip-sfc.c
-@@ -491,7 +491,7 @@ static int rockchip_sfc_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op
- 	u32 len = op->data.nbytes;
- 	int ret;
- 
--	if (unlikely(mem->spi->max_speed_hz != sfc->frequency)) {
-+	if (unlikely(mem->spi->max_speed_hz != sfc->frequency) && !has_acpi_companion(sfc->dev)) {
- 		ret = clk_set_rate(sfc->clk, mem->spi->max_speed_hz);
- 		if (ret)
- 			return ret;
-@@ -579,16 +579,24 @@ static int rockchip_sfc_probe(struct platform_device *pdev)
- 	if (IS_ERR(sfc->regbase))
- 		return PTR_ERR(sfc->regbase);
- 
--	sfc->clk = devm_clk_get(&pdev->dev, "clk_sfc");
-+	if (!has_acpi_companion(&pdev->dev))
-+		sfc->clk = devm_clk_get(&pdev->dev, "clk_sfc");
- 	if (IS_ERR(sfc->clk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(sfc->clk),
- 				     "Failed to get sfc interface clk\n");
- 
--	sfc->hclk = devm_clk_get(&pdev->dev, "hclk_sfc");
-+	if (!has_acpi_companion(&pdev->dev))
-+		sfc->hclk = devm_clk_get(&pdev->dev, "hclk_sfc");
- 	if (IS_ERR(sfc->hclk))
- 		return dev_err_probe(&pdev->dev, PTR_ERR(sfc->hclk),
- 				     "Failed to get sfc ahb clk\n");
- 
-+	if (has_acpi_companion(&pdev->dev)) {
-+		ret = device_property_read_u32(&pdev->dev, "clock-frequency", &sfc->frequency);
-+		if (ret)
-+			return dev_err_probe(&pdev->dev, ret, "Failed to find clock-frequency\n");
-+	}
-+
- 	sfc->use_dma = !of_property_read_bool(sfc->dev->of_node, "rockchip,sfc-no-dma");
- 
- 	if (sfc->use_dma) {
+LGTM. Thanks.
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+
+> ---
+>  Documentation/driver-api/pwrseq.rst | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/pwrseq.rst b/Documentation/driver-api/pwrseq.rst
+> index a644084ded17..ad18b2326b68 100644
+> --- a/Documentation/driver-api/pwrseq.rst
+> +++ b/Documentation/driver-api/pwrseq.rst
+> @@ -11,7 +11,7 @@ Introduction
+>  ============
+>  
+>  This framework is designed to abstract complex power-up sequences that are
+> -shared between multiple logical devices in the linux kernel.
+> +shared between multiple logical devices in the Linux kernel.
+>  
+>  The intention is to allow consumers to obtain a power sequencing handle
+>  exposed by the power sequence provider and delegate the actual requesting and
+> @@ -25,7 +25,7 @@ The power sequencing API uses a number of terms specific to the subsystem:
+>  
+>  Unit
+>  
+> -    A unit is a discreet chunk of a power sequence. For instance one unit may
+> +    A unit is a discrete chunk of a power sequence. For instance one unit may
+>      enable a set of regulators, another may enable a specific GPIO. Units can
+>      define dependencies in the form of other units that must be enabled before
+>      it itself can be.
+> @@ -62,7 +62,7 @@ Provider interface
+>  The provider API is admittedly not nearly as straightforward as the one for
+>  consumers but it makes up for it in flexibility.
+>  
+> -Each provider can logically split the power-up sequence into descrete chunks
+> +Each provider can logically split the power-up sequence into discrete chunks
+>  (units) and define their dependencies. They can then expose named targets that
+>  consumers may use as the final point in the sequence that they wish to reach.
+>  
+> @@ -72,7 +72,7 @@ register with the pwrseq subsystem by calling pwrseq_device_register().
+>  Dynamic consumer matching
+>  -------------------------
+>  
+> -The main difference between pwrseq and other linux kernel providers is the
+> +The main difference between pwrseq and other Linux kernel providers is the
+>  mechanism for dynamic matching of consumers and providers. Every power sequence
+>  provider driver must implement the `match()` callback and pass it to the pwrseq
+>  core when registering with the subsystems.
+> 
+> ---
+> base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+> change-id: 20241120-pwrseq-doc-trivial-fixes-ee8744695d52
+> 
+> Best regards,
+
 -- 
-2.34.1
-
+~Randy
 
