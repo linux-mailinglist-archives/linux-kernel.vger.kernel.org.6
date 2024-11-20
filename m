@@ -1,188 +1,117 @@
-Return-Path: <linux-kernel+bounces-415901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B86DF9D3DCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:43:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C2C9D3DD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A17284AE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E2C284832
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 426051B14FA;
-	Wed, 20 Nov 2024 14:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3981AD9EE;
+	Wed, 20 Nov 2024 14:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="it4OyP09"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fIfp9bWk"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0125F1AA7B1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890916D9B8;
+	Wed, 20 Nov 2024 14:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113818; cv=none; b=gW6xhsAtmG0WHvlFbDcp6kIDn+hyE+7ebJ0cqsSstq5f10V5Lc0A9jqHWzpxdntVy2PkXXWAH871gdGENbTEgeZWbAe68At4bfzKCDng9+MGZWl9GcLMZMVHJa0mTnKYQU3fkTH1CkLGg4U0wLYqK1oRGdYMSezn+iciUIDHKIY=
+	t=1732113884; cv=none; b=BMQAAmwauwLIrOrtZvFlCKv/tYaRD4VySEu0iyM8n2epcKCfj4+DKU6QKCCv3bpadj+Mu/6Q74EmP81yuVJ6kscEz0PfmXXzveK/339bCH7QG2PmiT6ElgvNYcGq6eD81CnsuUUajEntr/Md7tH3Hm6xRzJLyNVRnRTwNCiOy1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113818; c=relaxed/simple;
-	bh=3H0qJXOUKg7BZKQpQxV+nwwmTnCQUnU4BeIQFsGiWSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mw1MQJQn4y7hLiCdMuhju680OtX8yd7RqNOe+uNDzcOga8oKnqu+LhrYC+Ha1VY4eTWr8rZD2uv3N7g0UPX6n4lofaOsHxrg/jK0sS7Cjah/V+6+nz673sbCzsCJ6BggfNNFOTsifrtnZFeZgdMUVhVJ4SKsxODeaRxKMekEGbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=it4OyP09; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cd76c513cso56506705ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:43:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732113815; x=1732718615; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r2sFP2NARD2FOImCkIlq0O7UZoSIEEdwWYR8ebMsnZM=;
-        b=it4OyP09FSmSZIpygN0zZDQGfhOvALZTOGADlKCz6qFL3ZzLWaBmkqXndLYcRQbRnx
-         sFE77HI2pHhnab8CTneKrza6oemJPmgtfgO8jE1GbBmJiZJS4UMK/qo2gLyRrJ34xjk3
-         Uj4Tt/19w+Kn/n/72sLRzRsw5QMMUppwjaKiw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732113815; x=1732718615;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r2sFP2NARD2FOImCkIlq0O7UZoSIEEdwWYR8ebMsnZM=;
-        b=bcoJIlKIVbY0OvZirJGJ652MHfBzQWwLD7hYDHRnUrf5+5NeiuNPa1dTwt12b9JEGo
-         9D+jSH0nl9Apq/BmrCMH7bOZ3V8Rq3aErKjJn8T3b4wb9GIIpM3pkNky3EbPr2icmms3
-         zFJXsXcvg4fi37OcoAvTXFyOgu08zJQEenbFb0KouafHLl+oZpaT63nKiFEJcp1EHF95
-         7gV2mqH9JOM4yP6z507wh3keGXxFTK5uQr7c/sJEqYWcbby2aGMbFvQ8DGpR0SqjxurN
-         B+EEgAEJpQwba2kjfeCKz0bWV2ipquQMQ8QVOXC6Y8MpIMBNwibjBJ3/HsNIQgK9FMaH
-         abYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvfrGNJRqUQHS77tpQTwKHklRV1KLgHNMiQ7dNsnM34Klelz5PI7vOD+W3VUTcy7SpxHs8Su0haQSf22M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9tx7IfD7NvOurIkHms6uNPgatzS6MTLM4dFeCcNb26VtpCPJ3
-	MVeqUVRq/xPHFdfiCRLOLUidkeWP1qJe1Hoaspq/TWszyTc7wnbv82b7cxn8PwxiVc/UgyEiAps
-	=
-X-Google-Smtp-Source: AGHT+IHrqFJWz0s59g9FgRfIcR+Hkel493W1WmHhcvI3BqlDeTy/+0hsTKksJsdNlcr/vqEUW3RGfg==
-X-Received: by 2002:a17:902:d4c3:b0:212:5ba8:882b with SMTP id d9443c01a7336-2126cb4cdfbmr24710825ad.57.1732113815363;
-        Wed, 20 Nov 2024 06:43:35 -0800 (PST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f46765sm90642425ad.203.2024.11.20.06.43.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 06:43:34 -0800 (PST)
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f71f2b1370so4913538a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:43:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWvTh6DaQEyBpcFe9MHTi+bJo1RsI6mpbI3t8D4+fK3SXx4499DcS4ILVXXTm00EzVREv9dglT2MJp+TuI=@vger.kernel.org
-X-Received: by 2002:a05:6a20:9f09:b0:1db:d980:440e with SMTP id
- adf61e73a8af0-1ddae5e0c52mr4938722637.14.1732113813781; Wed, 20 Nov 2024
- 06:43:33 -0800 (PST)
+	s=arc-20240116; t=1732113884; c=relaxed/simple;
+	bh=5CCbvKv+VIzsR7QI6BcLoEt1IdbnLtAcVPyElZFExMU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qTuZ3lm1j1HmasQ8t5O8mN1Jeo4IIKzQNui2bnSDwLkrsVso4R/RJwQdzSfER8pvcGktu2UMPVu7Bc17mUIU1X4CcUA+zlzL9b786zMlPSwLFPhKMkCgHDzTJOEsTBuMpWeI4W8dlkDer5ED0UisMO2amgePwR3ZPwCRdkRMg9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fIfp9bWk; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AKEiSh54137450
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 08:44:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732113868;
+	bh=SmGRAQNzr9IbhEOimZwTw8lIUi3ybRW4Cu3nzQgFFX8=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fIfp9bWkeIRSAsrfQv74AZsEIHLWPZfK+OJ2om1FYn5//e7jYRu/zl5D/Q/G96TWF
+	 uRnpksVkY2gLoy4hijKqUw6oRCsPvpenq8mr5Wedb6UXlWQH4FJpVEei/tcM3yJzgL
+	 AANTEPNi/JNok7RkBsb8QtvRHlHDDlNutSvx/DkA=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AKEiSfU092708
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 20 Nov 2024 08:44:28 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 20
+ Nov 2024 08:44:28 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 20 Nov 2024 08:44:28 -0600
+Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AKEiSBc009121;
+	Wed, 20 Nov 2024 08:44:28 -0600
+Date: Wed, 20 Nov 2024 08:44:28 -0600
+From: Bryan Brattlof <bb@ti.com>
+To: Andrew Davis <afd@ti.com>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am62l: add initial infrastructure
+Message-ID: <20241120144428.xp5lscjl652qexd2@bryanbrattlof.com>
+X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
+References: <20241117-am62lx-v1-0-4e71e42d781d@ti.com>
+ <20241117-am62lx-v1-1-4e71e42d781d@ti.com>
+ <19223ad9-1f92-4688-9efd-b6aadb250d9d@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-uvc-readless-v3-0-d97c1a3084d0@chromium.org>
- <20241118-uvc-readless-v3-1-d97c1a3084d0@chromium.org> <20241120140526.GW12409@pendragon.ideasonboard.com>
-In-Reply-To: <20241120140526.GW12409@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Wed, 20 Nov 2024 15:43:22 +0100
-X-Gmail-Original-Message-ID: <CANiDSCvazZ4Y3OZ9X7chU-_N-4HbeQKUh23eOWkmkAxGaks2QA@mail.gmail.com>
-Message-ID: <CANiDSCvazZ4Y3OZ9X7chU-_N-4HbeQKUh23eOWkmkAxGaks2QA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] media: uvcvideo: Support partial control reads
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <19223ad9-1f92-4688-9efd-b6aadb250d9d@ti.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Laurent
+On November 18, 2024 thus sayeth Andrew Davis:
+> On 11/17/24 11:34 PM, Bryan Brattlof wrote:
+> > From: Vignesh Raghavendra <vigneshr@ti.com>
+> > 
+> > Add the initial infrastructure needed for the AM62L. All of which can be
+> > found in the Technical Reference Manual (TRM) located here:
+> > 
+> >      https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+> 
+> We usually use the non-direct links, that way they can be updated
+> to the latest, so here and everywhere below:
+> 
+> https://www.ti.com/lit/pdf/sprujb4
+> 
+> Also might be good to get the TRM folks to now drop the
+> "Confidential NDA" watermarks..
+> 
 
-On Wed, 20 Nov 2024 at 15:05, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Ricardo,
->
-> Thank you for the patch.
->
-> On Mon, Nov 18, 2024 at 05:16:51PM +0000, Ricardo Ribalda wrote:
-> > Some cameras, like the ELMO MX-P3, do not return all the bytes
-> > requested from a control if it can fit in less bytes.
-> > Eg: Returning 0xab instead of 0x00ab.
-> > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
-> >
-> > Extend the returned value from the camera and return it.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_video.c | 16 +++++++++++++++-
-> >  1 file changed, 15 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > index cd9c29532fb0..e165850397a0 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -76,8 +76,22 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
-> >
-> >       ret = __uvc_query_ctrl(dev, query, unit, intfnum, cs, data, size,
-> >                               UVC_CTRL_CONTROL_TIMEOUT);
-> > -     if (likely(ret == size))
-> > +     if (ret > 0) {
-> > +             if (size == ret)
-> > +                     return 0;
->
-> Why is this within the ret > 0 block ? I would write
->
->         if (likely(ret == size))
->                 return 0;
->
->         if (ret > 0) {
->
-> > +
-> > +             /*
-> > +              * In UVC the data is represented in little-endian by default.
->
-> By default, or always ?
->
-> > +              * Some devices return shorter control packages that expected
->
-> What's a "control package" ?
+That's a good point. I'll use the non-direct link
 
-usb control transfers.
->
-> I think you meants "than expected", not "that expected".
->
-> > +              * if the return value can fit in less bytes.
-> > +              * Zero all the bytes that the device have not written.
-> > +              */
->
-> Do we want to apply this workaround to GET_INFO and GET_LEN, or can we
-> restrict it to GET_CUR, GET_MIN, GET_MAX and GET_RES ?
+..
 
-I believe that the original behaviour before
-a763b9fb58be ("media: uvcvideo: Do not return positive errors in
-uvc_query_ctrl()")
-was used for all types. I think the safest thing to do is to go back
-to the old behaviour.
+> > +		 cbass_wakeup:  bus@43000000 {
+> 
+> Some odd whitespace indent here and below in this node.
+> 
 
-Let me know what you prefer.
+Nice! I'll fix this up in the next revision
 
-
->
-> > +             memset(data + ret, 0, size - ret);
-> > +             dev_warn_once(&dev->udev->dev,
-> > +                           "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-> > +                           uvc_query_name(query), cs, unit, ret, size);
-> >               return 0;
-> > +     }
-> >
-> >       if (ret != -EPIPE) {
-> >               dev_err(&dev->udev->dev,
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
-
-
-
--- 
-Ricardo Ribalda
+~Bryan
 
