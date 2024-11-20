@@ -1,70 +1,65 @@
-Return-Path: <linux-kernel+bounces-416165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0459D4129
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:31:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6F79D414A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A50283B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:31:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1652B2C201
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE6D1AAE00;
-	Wed, 20 Nov 2024 17:31:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EEA19F424;
+	Wed, 20 Nov 2024 17:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O/wq2KL5"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA5813B58A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90F13AD20
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732123859; cv=none; b=FBUdT/cy67dqzMukmbGPmTJQkwjULnr1H74zQpXJ9PlvPrsJbhKeZ/ozKs8VihX4OSRbCRAchhjmJ/YNFwF6hfBysJDqTntVokgVMLE6S6C98nhGMIWdHSuVO5MQDh+8ID/DW3rEbA713h/+aT1U/UFDdpL1JRED9XCy6b/0G9w=
+	t=1732123890; cv=none; b=poqlGPhcmWG6QxxmhUoRKTV/v24Yx+X4SctN2Wtl4dPJG5QEFQBYjFHknn3SouAIBaEFajnMb+pKdLTcq8mSXQNVgtJI9Qay7wFkcxOWE0nt2ZiV2t7BHMzciqah6GQ6CqicUMpFslmRQbD8DALTJ8yWJaCB2+NNvBgePEm6nUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732123859; c=relaxed/simple;
-	bh=UdmBR0vlYUwE0j7Xk0Auu9zw64mJgjK4bcR4taYvDfk=;
+	s=arc-20240116; t=1732123890; c=relaxed/simple;
+	bh=52UlUca83BCJ4bTbpXzo0dcf4hoWvy6v64cKcaFXNeM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZU1nnBcR7mPMYgjqplKC/Ujjj9wkYDDmPKKrQS2RUvftyFpGJJ8VaFsV874N90ggVJjE6SIu5Pp9Zt4bq9Z2flX7kxGyvnIjBgGuXgij9BIKquwp7DUiO/U6r6rsMemHCJnDZ0SMrgEt0TBtQ4k1q+yAU0+hoZGqwVqJUxHx8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDoXG-0006Fm-Im; Wed, 20 Nov 2024 18:30:38 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDoXF-001m6C-38;
-	Wed, 20 Nov 2024 18:30:37 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDoXF-005I5x-2m;
-	Wed, 20 Nov 2024 18:30:37 +0100
-Date: Wed, 20 Nov 2024 18:30:37 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Russ Weight <russ.weight@linux.dev>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Marco Felsch <kernel@pengutronix.de>,
-	Henrik Rydberg <rydberg@bitmath.org>,
-	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
- FW_UPLOAD_ERR_SKIP
-Message-ID: <20241120173037.x6cro7r2wh5aoadg@pengutronix.de>
-References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
- <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
- <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+8M61gwEFWQTt+IgEYVr01FSHvSlWloynBgcLsCl2TWyJf5RbQTCLmYVkbSzd7Rq0idqwXbpeTw+XE2ToMkprk3CzQwHwuFbPzIwQr9/2CoPJyvCqwpWDPGR5oj5MybyvWG5d+qaRzdKbrXEEBbv96tTsXyi7a2gMYoGo8U2cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O/wq2KL5; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 17:31:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732123885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tnHduo24AdOoAdI77IZf7s1iLW4IzFa8VA+z+Tg/Y28=;
+	b=O/wq2KL5Z4g46tyl35oMSphCNZCGWzeMbieD+t20CV6A6f2SqjodzFgD/GhtOEJIk3dJk/
+	UKVmbib2LnSuMj/Z2ga8+AMytY/UiXA7lZOwSE88ZuYHRBhzkesDozYmEeBzGudItwH5ST
+	lKzeWILaG+QtwK18R45dAx/ba18969Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: James Clark <james.clark@linaro.org>
+Cc: suzuki.poulose@arm.com, coresight@lists.linaro.org,
+	kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Shiqi Liu <shiqiliu@hust.edu.cn>, Fuad Tabba <tabba@google.com>,
+	James Morse <james.morse@arm.com>, Mark Brown <broonie@kernel.org>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 11/12] KVM: arm64: Swap TRFCR on guest switch
+Message-ID: <Zz4c5LmQnK2SD5HO@linux.dev>
+References: <20241112103717.589952-1-james.clark@linaro.org>
+ <20241112103717.589952-12-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,100 +68,223 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241112103717.589952-12-james.clark@linaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Tue, Nov 12, 2024 at 10:37:10AM +0000, James Clark wrote:
+> +void kvm_set_trfcr(u64 host_trfcr, u64 guest_trfcr)
+> +{
+> +	if (kvm_arm_skip_trace_state())
+> +		return;
+> +
+> +	if (has_vhe())
+> +		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
+> +	else
+> +		if (host_trfcr != guest_trfcr) {
+> +			*host_data_ptr(host_debug_state.trfcr_el1) = guest_trfcr;
 
-On 24-11-20, Russ Weight wrote:
-> On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
-> > It's no error if a driver indicates that the firmware is already
-> > up-to-date and the update can be skipped.
-> > 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
-> > index b3cbe5b156e3..44f3d8fa5e64 100644
-> > --- a/drivers/base/firmware_loader/sysfs_upload.c
-> > +++ b/drivers/base/firmware_loader/sysfs_upload.c
-> > @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
-> >  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
-> >  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
-> >  	if (ret != FW_UPLOAD_ERR_NONE) {
-> > +		if (ret == FW_UPLOAD_ERR_SKIP) {
-> > +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
-> > +			ret = FW_UPLOAD_ERR_NONE;
-> > +		}
-> 
-> If you change the error-code from FW_UPLOAD_ERR_SKIP to
-> FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
-> patch will never be seen. There are currently no other instances where
+Huh? That's going into host_debug_state, which is the dumping grounds
+for *host* context when entering a guest.
 
-Do we really need to set it? As explained within the commit message,
-it's no error if FW_UPLOAD_ERR_SKIP is returned. The previous patch just
-added all pieces which may be required later on.
+Not sure why we'd stick a *guest* value in there...
 
-> an error code requires special-case modifications to the fw_upload
-> code and I don't think it is necessary to add it here.
+> +			host_data_set_flag(HOST_STATE_SWAP_TRFCR);
+> +		} else
+> +			host_data_clear_flag(HOST_STATE_SWAP_TRFCR);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_set_trfcr);
 
-Because at the moment no one is checking it except for the gb-beagleplay
-driver. This driver prints a dev_warn() string and returns a failure.
-Now the userspace needs some heuristic by parsing dmesg to check the
-reason. This is rather complex and very error prone as the sting can be
-changed in the future.
+I have a rather strong distaste for this interface, both with the
+coresight driver and internally with the hypervisor. It'd be better if
+the driver actually told KVM what the *intent* is rather than throwing a
+pile of bits over the fence and forcing KVM to interpret what that
+configuration means.
 
-Therefore I added the support to have a simple error code which can be
-returned by a driver. I'm open to return "skip" as error instead of
-casting it to none. Both is fine for me since both allow the userspace
-to easily check if the error is a 'real' error or if the fw-update was
-just skipped due to already-up-to-date.
+> +static void __debug_swap_trace(void)
+> +{
+> +	u64 trfcr = read_sysreg_el1(SYS_TRFCR);
+> +
+> +	write_sysreg_el1(*host_data_ptr(host_debug_state.trfcr_el1), SYS_TRFCR);
+> +	*host_data_ptr(host_debug_state.trfcr_el1) = trfcr;
+> +	host_data_set_flag(HOST_STATE_RESTORE_TRFCR);
+> +}
+> +
 
-I wouldn't say that this is a special case, it is very common but no one
-is performing a fw-version check. Therefore I added this to the common
-code, to make it easier for driver devs.
+What if trace is disabled in the guest or in the host? Do we need to
+synchronize when transitioning from an enabled -> disabled state like we
+do today?
 
-> The dev_info() message above can be provided by the device driver
-> that is using this API.
-> 
-> I think you can either:
-> 
-> (1) allow "skip" to be treated as an error. The update didn't happen...
+I took a stab at this, completely untested of course && punts on
+protected mode. But this is _generally_ how I'd like to see everything
+fit together.
 
-Please see above.
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 8bc0ec151684..b4714cece5f0 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -611,7 +611,7 @@ struct cpu_sve_state {
+  */
+ struct kvm_host_data {
+ #define KVM_HOST_DATA_FLAG_HAS_SPE			0
+-#define KVM_HOST_DATA_FLAG_HAS_TRBE			1
++#define KVM_HOST_DATA_FLAG_HOST_TRBE_ENABLED		1
+ #define KVM_HOST_DATA_FLAG_HOST_SVE_ENABLED		2
+ #define KVM_HOST_DATA_FLAG_HOST_SME_ENABLED		3
+ 	unsigned long flags;
+@@ -659,6 +659,9 @@ struct kvm_host_data {
+ 		u64 mdcr_el2;
+ 	} host_debug_state;
+ 
++	/* Guest trace filter value */
++	u64 guest_trfcr_el1;
++
+ 	/* Number of programmable event counters (PMCR_EL0.N) for this CPU */
+ 	unsigned int nr_event_counters;
+ 
+@@ -1381,6 +1384,8 @@ static inline bool kvm_pmu_counter_deferred(struct perf_event_attr *attr)
+ void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr);
+ void kvm_clr_pmu_events(u64 clr);
+ bool kvm_set_pmuserenr(u64 val);
++void kvm_enable_trbe(u64 guest_trfcr);
++void kvm_disable_trbe(void);
+ #else
+ static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
+ static inline void kvm_clr_pmu_events(u64 clr) {}
+@@ -1388,6 +1393,8 @@ static inline bool kvm_set_pmuserenr(u64 val)
+ {
+ 	return false;
+ }
++void kvm_enable_trbe(u64 guest_trfcr) {}
++void kvm_disable_trbe(void) {}
+ #endif
+ 
+ void kvm_vcpu_load_vhe(struct kvm_vcpu *vcpu);
+diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+index 46dbeabd6833..6ef8d8f4b452 100644
+--- a/arch/arm64/kvm/debug.c
++++ b/arch/arm64/kvm/debug.c
+@@ -72,10 +72,6 @@ void kvm_init_host_debug_data(void)
+ 	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_PMSVer_SHIFT) &&
+ 	    !(read_sysreg_s(SYS_PMBIDR_EL1) & PMBIDR_EL1_P))
+ 		host_data_set_flag(HAS_SPE);
+-
+-	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceBuffer_SHIFT) &&
+-	    !(read_sysreg_s(SYS_TRBIDR_EL1) & TRBIDR_EL1_P))
+-		host_data_set_flag(HAS_TRBE);
+ }
+ 
+ /*
+@@ -215,3 +211,27 @@ void kvm_debug_handle_oslar(struct kvm_vcpu *vcpu, u64 val)
+ 	kvm_arch_vcpu_load(vcpu, smp_processor_id());
+ 	preempt_enable();
+ }
++
++void kvm_enable_trbe(u64 guest_trfcr)
++{
++	if (WARN_ON_ONCE(preemptible()))
++		return;
++
++	if (has_vhe()) {
++		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
++		return;
++	}
++
++	*host_data_ptr(guest_trfcr_el1) = guest_trfcr;
++	host_data_set_flag(HOST_TRBE_ENABLED);
++}
++EXPORT_SYMBOL_GPL(kvm_enable_trbe);
++
++void kvm_disable_trbe(void)
++{
++	if (has_vhe() || WARN_ON_ONCE(preemptible()))
++		return;
++
++	host_data_clear_flag(HOST_TRBE_ENABLED);
++}
++EXPORT_SYMBOL_GPL(kvm_disable_trbe);
+diff --git a/arch/arm64/kvm/hyp/nvhe/debug-sr.c b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
+index 858bb38e273f..d36cbce75bee 100644
+--- a/arch/arm64/kvm/hyp/nvhe/debug-sr.c
++++ b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
+@@ -51,32 +51,33 @@ static void __debug_restore_spe(u64 pmscr_el1)
+ 	write_sysreg_el1(pmscr_el1, SYS_PMSCR);
+ }
+ 
+-static void __debug_save_trace(u64 *trfcr_el1)
++static void __trace_do_switch(u64 *saved_trfcr, u64 new_trfcr)
+ {
+-	*trfcr_el1 = 0;
++	*saved_trfcr = read_sysreg_el1(SYS_TRFCR);
++	write_sysreg_el1(new_trfcr, SYS_TRFCR);
+ 
+-	/* Check if the TRBE is enabled */
+-	if (!(read_sysreg_s(SYS_TRBLIMITR_EL1) & TRBLIMITR_EL1_E))
++	/* Nothing left to do if going to an enabled state */
++	if (new_trfcr)
+ 		return;
++
+ 	/*
+-	 * Prohibit trace generation while we are in guest.
+-	 * Since access to TRFCR_EL1 is trapped, the guest can't
+-	 * modify the filtering set by the host.
++	 * Switching to a context with trace generation disabled. Drain the
++	 * trace buffer to memory.
+ 	 */
+-	*trfcr_el1 = read_sysreg_el1(SYS_TRFCR);
+-	write_sysreg_el1(0, SYS_TRFCR);
+ 	isb();
+-	/* Drain the trace buffer to memory */
+ 	tsb_csync();
+ }
+ 
+-static void __debug_restore_trace(u64 trfcr_el1)
++static void __trace_switch_to_guest(void)
+ {
+-	if (!trfcr_el1)
+-		return;
++	__trace_do_switch(host_data_ptr(host_debug_state.trfcr_el1),
++			  *host_data_ptr(guest_trfcr_el1));
++}
+ 
+-	/* Restore trace filter controls */
+-	write_sysreg_el1(trfcr_el1, SYS_TRFCR);
++static void __trace_switch_to_host(void)
++{
++	__trace_do_switch(host_data_ptr(guest_trfcr_el1),
++			  *host_data_ptr(host_debug_state.trfcr_el1));
+ }
+ 
+ void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
+@@ -84,9 +85,13 @@ void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
+ 	/* Disable and flush SPE data generation */
+ 	if (host_data_test_flag(HAS_SPE))
+ 		__debug_save_spe(host_data_ptr(host_debug_state.pmscr_el1));
+-	/* Disable and flush Self-Hosted Trace generation */
+-	if (host_data_test_flag(HAS_TRBE))
+-		__debug_save_trace(host_data_ptr(host_debug_state.trfcr_el1));
++
++	/*
++	 * Switch the trace filter, potentially disabling and flushing trace
++	 * data generation
++	 */
++	if (host_data_test_flag(HOST_TRBE_ENABLED))
++		__trace_switch_to_guest();
+ }
+ 
+ void __debug_switch_to_guest(struct kvm_vcpu *vcpu)
+@@ -98,8 +103,8 @@ void __debug_restore_host_buffers_nvhe(struct kvm_vcpu *vcpu)
+ {
+ 	if (host_data_test_flag(HAS_SPE))
+ 		__debug_restore_spe(*host_data_ptr(host_debug_state.pmscr_el1));
+-	if (host_data_test_flag(HAS_TRBE))
+-		__debug_restore_trace(*host_data_ptr(host_debug_state.trfcr_el1));
++	if (host_data_test_flag(HOST_TRBE_ENABLED))
++		__trace_switch_to_host();
+ }
+ 
+ void __debug_switch_to_host(struct kvm_vcpu *vcpu)
 
-> -or-
-> 
-> (2) The prepare function could detect the situation and set
->     a flag in the same device driver. Your write function could
->     set *written to the full data size and return without writing
->     anything. Your poll_complete handler could also return
->     FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
->     at all. You would get the info message from the device driver
->     and fw_upload would exit without an error.
-
-Please see above. I don't think that this is special case and why making
-the life hard for driver devs instead of having a well known fw
-behaviour?
-
-Regards,
-  Marco
-
-> 
-> Thanks,
-> - Russ
-> 
-> >  		fw_upload_set_error(fwlp, ret);
-> >  		goto putdev_exit;
-> >  	}
-> > 
-> > -- 
-> > 2.39.5
-> > 
-> 
+-- 
+Thanks,
+Oliver
 
