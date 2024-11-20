@@ -1,53 +1,70 @@
-Return-Path: <linux-kernel+bounces-415423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B078C9D35E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:50:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83FFA9D35E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759B0283448
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:50:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192391F21E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EC919B3F9;
-	Wed, 20 Nov 2024 08:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0306184556;
+	Wed, 20 Nov 2024 08:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/3ci7cq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IBZejzyX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3SFs9zG/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A83A199E8B;
-	Wed, 20 Nov 2024 08:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CB161321;
+	Wed, 20 Nov 2024 08:50:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092596; cv=none; b=EA1Im9E2CtarP27AZW5RJnKt9iXEw3ipNd83SM6NeXefWJ/nNjmMmXkP9jA7Z6Wki8PaF/9Ke/E6h0wTVA+p4b8ODfJVrAgiRK1UnPxqHrXicR/8cZnYx9vQUgOddDSpNqBlHX8ZyQ7+fRyPwKmCYUJieaDvoOuBxLPsH15QLhU=
+	t=1732092650; cv=none; b=PwkFDA47N9Z8A5LPjrsV5HX6s8LAq2HrIgIDCTDoy8rcXmMhuk5wvpT4pw/Lzd//9sMXBEsGns/ZqR8/lk+plq24qoirw6dbjfRrJt8oed+7kjPoaF/4wk5Mh/AYsz2DoRKm1OK1Q8hF+y7wNzAYFgu1zO+HuoXZ/427B/qEQpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092596; c=relaxed/simple;
-	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
+	s=arc-20240116; t=1732092650; c=relaxed/simple;
+	bh=sMxXyfdZ6KRSllXJEGIi58evPGGJtnrUvgDQLm70gO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKaZT8mZfc9af/EF6D9KO7vxRAX8Vv695xGzzFNoCeqf76R84GFW6Aae96q/IKczKtaNff/dROlkCrOWf5EFXMMMM3d/RLz4Zdu3aHM9DxQjdcYmFaT9kvKej5JZXzxHBcdm4krHm7+p2C4Hpl7AczvXw5cJVBRB1D6eOU/0HsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/3ci7cq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90001C4CECD;
-	Wed, 20 Nov 2024 08:49:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732092595;
-	bh=17yvpj13rJwUj4YlCynfsDAg0/81R7EvqIs+Q1YFiig=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g/3ci7cq9nIOI9kexjaDHIx+ZsChbHM8JjOiuJkd+/NiDhHWB0NrsGyspopnxZ0fH
-	 TqjrXHh76Nbq/rrTSHDakCzXr94/TG+TdJDOLZPCmAWIAU79a57if0gso14Eox6oW1
-	 yFSB0yg0Fq/4ZPFQ2Hg3HRL7XOHU2j77Cqt5Ww69+S7PxcINF6ocEGgiPtEWXIb+lI
-	 3CMibvqaUvGWkwgBrk1AroUzrwzX5Gafsmg5HCO42Alv/lHglNXFJiWUFqpHoShh6F
-	 TRDqOFfvOp05yCgTH/AZd21yjwORcIPKbZQ9mefU+RWl1i5T9ehii41wrktNxKYkAj
-	 +8FOJxr1NgTSw==
-Date: Wed, 20 Nov 2024 09:49:51 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] vfs netfs
-Message-ID: <20241120-abermals-inkrafttreten-8b838a76833f@brauner>
-References: <20241115-vfs-netfs-7df3b2479ea4@brauner>
- <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/K+DPGqgSX3UB7yAix25igFmsGLdMkwPS0ycsA25Hns7zZi3jFeMLd/QXOzsodx8eOEoAmEScNn1xo50VC/VG1wn+j2J/XMXd/4fWFOk6r5iVogz8ZfBlHc/D2A5MZOs/PwNJiv9fA2dN7IokGl51Bb/gtIMY1GRH34IzT2no4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IBZejzyX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3SFs9zG/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Nov 2024 09:50:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732092647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Oe9wHru8jR91xqwNVUEM0jNj172x93463fWxP69UVU=;
+	b=IBZejzyXTEybKdyqYcth8IMRNhFugumdnp9FOv6mFRVSH1+XfGomM0HOBlsB8/VZ5FanSq
+	KBakqRuuJwjqMLFjzVuqFDJom//QDTQIgvzFlCP81srSGVhIwzv+qX8EQTAh6aKnzNNbfm
+	NMKQkYvP3ZQaBPr/xoSXu+r3tK4FG7fEYBllTp1H94LxDZEb7J/hGu9mPh+HhL2HqczE0/
+	loi3mC4WEfy5p9Wn5nl3qieXyLNYpltAAFR6THGHUtBeezXvc6/m3TYBjSV4kWT69lzDap
+	Kz1tcALMSNTFFMrmIgz1Z4P2WjMmJHf3pdj1fgi0Ex1/o4+inQw44iHDr9w3WQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732092647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Oe9wHru8jR91xqwNVUEM0jNj172x93463fWxP69UVU=;
+	b=3SFs9zG/TnFK0RNywoKEqmPzmDkdUJiG2BU+LsI5+xY0wE3dHr2tHuesls1xJuOHaAzI8E
+	Su+TrfWHvfvQ+YBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Andreas Schwab <schwab@suse.de>,
+	Song Shuai <songshuaishuai@tinylab.org>,
+	Celeste Liu <coelacanthushex@gmail.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] riscv: Fix sleeping in invalid context in die()
+Message-ID: <20241120085045.LJ5b7oh9@linutronix.de>
+References: <20241118091333.1185288-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,37 +73,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
+In-Reply-To: <20241118091333.1185288-1-namcao@linutronix.de>
 
-On Mon, Nov 18, 2024 at 10:29:42AM -0800, Linus Torvalds wrote:
-> On Fri, 15 Nov 2024 at 06:00, Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > A pidfs patch ended up in the branch and I didn't notice it. I decided
-> > to leave it in here instead of rebasing the whole branch.
+On 2024-11-18 10:13:33 [+0100], Nam Cao wrote:
+> die() can be called in exception handler, and therefore cannot sleep.
+> However, die() takes spinlock_t which can sleep with PREEMPT_RT enabled.
+> That causes the following warning:
 > 
-> What happened here?
-
-The base of the branch is definitely v6.12-rc1. The branch is simply
-vfs.netfs with vfs-6.13.netfs tag. And the branch looks perfectly fine.
-
-I think the issue was that I sent you the fixes tag you mention below
-that contained some fixes that were in vfs.netfs. So afterwards I just
-didn't rebase vfs.netfs but merged two other series on top of it with
-v6.12-rc1 as parent. And I think that might've somehow confused the git
-request-pull call.
-
-Rebasing would've been the cleaner thing here since I had a long time
-until the merge window. But other than that it doesn't look like I did
-something that was actively wrong? But I might just be missing
-something.
-
+> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 285, name: mutex
+> preempt_count: 110001, expected: 0
+> RCU nest depth: 0, expected: 0
+> CPU: 0 UID: 0 PID: 285 Comm: mutex Not tainted 6.12.0-rc7-00022-ge19049cf7d56-dirty #234
+> Hardware name: riscv-virtio,qemu (DT)
+> Call Trace:
+>     dump_backtrace+0x1c/0x24
+>     show_stack+0x2c/0x38
+>     dump_stack_lvl+0x5a/0x72
+>     dump_stack+0x14/0x1c
+>     __might_resched+0x130/0x13a
+>     rt_spin_lock+0x2a/0x5c
+>     die+0x24/0x112
+>     do_trap_insn_illegal+0xa0/0xea
+>     _new_vmalloc_restore_context_a0+0xcc/0xd8
+> Oops - illegal instruction [#1]
 > 
-> Not only isn't there a pidfs patch in here, it also doesn't have the
-> afs patches you claim it has, because all of those came in long ago in
-> commit a5f24c795513: "Pull vfs fixes from Christian Brauner".
+> Switch to use raw_spinlock_t, which does not sleep even with PREEMPT_RT
+> enabled.
 > 
-> So I've pulled this, but your pull request was all wonky because you
-> used some odd base commit.
-> 
->               Linus
+> Fixes: 76d2a0493a17 ("RISC-V: Init and Halt Code")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
+
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+The die_lock() is probably do let one CPU die at a time. On x86 there is
+support for for recursive die so if it happens, you don't spin on the
+die_lock and see nothing. Not sure if this is a thing.
+
+Sebastian
 
