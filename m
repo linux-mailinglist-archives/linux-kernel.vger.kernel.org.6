@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-415739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85AC9D3AAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:33:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E12A9D3AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ED981F22E7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41FFE1F22A47
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF2F19F114;
-	Wed, 20 Nov 2024 12:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E8B19F114;
+	Wed, 20 Nov 2024 12:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ifki3lrh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZjYQsQb"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE588F77;
-	Wed, 20 Nov 2024 12:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D171E481;
+	Wed, 20 Nov 2024 12:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732105975; cv=none; b=JyHB4C2ppTW3xM2fmZbakxpLwMItC0PYOtlSNnU7dm9HSPyyWtdGgoz7XkvAsr/mMxpk1FAUSLWnKsX/2K1MlqqU/XgVd3v87mG26szi8Gvnpnzw6v8faRUXkc3bOx6WsxZ6d32G7TGxvUNdMV2DEBzF1OcHaHdwaJmbz9sGzvg=
+	t=1732106094; cv=none; b=pr8sBqSNbGFcKt2tazI/TUV7PvjHJ8Izurm0SfqnNqdGfK/VdZl1rtEH6Ziidh1D3iWzPyAF2TBvGE4jAq+Mb4NIxv37mNiWpxMfhVgOOvOhCxwaCAnXwPSmCkKulizwhZNfk+1ePKSoj9IwNVEcr8ZKdZ1dBJZYnaV3w3GWsPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732105975; c=relaxed/simple;
-	bh=BORz0CF2IQbmXcz7O43m7nZi39ZyC2WsbFBh0jgAF0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJusLqmWlZ430jL09ALU0douVZ3M6Adf/Zu4uaZQy5JgOx2ymv3B+d0+tjg7jEw9rOjQ12xSu/a6EKWrdr30XdwKCXMEHTX0ZdwdLWYNZsQnynqBSVbs4IuULSO2k4CkRLnTUR7cdfNNhOQw4hk6WeuAXBMdeTzSJ4iNpcuLPwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ifki3lrh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65C67C4CECD;
-	Wed, 20 Nov 2024 12:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732105974;
-	bh=BORz0CF2IQbmXcz7O43m7nZi39ZyC2WsbFBh0jgAF0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ifki3lrhQlZVPwe2jnQyj376Q5qQ+8rXgBboUtAMtC4UCWqVr2H17dMRQbS/v4gvJ
-	 ls8/EVH2agddzteywUb0iuAuWFdE7Ks5lnReoSNK+GepmfORFLrS+4LpZFeYf7ZaUD
-	 dSfPyxbOHZk5KzMmThPE9ZoLc99l6K671GQhDOZo=
-Date: Wed, 20 Nov 2024 13:32:29 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: stable@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Jann Horn <jannh@google.com>,
-	syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com,
-	Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH 6.12.y v2] mm/mmap: fix __mmap_region() error handling in
- rare merge failure case
-Message-ID: <2024112019-skating-goofball-d2be@gregkh>
-References: <20241119175945.2600945-1-Liam.Howlett@oracle.com>
+	s=arc-20240116; t=1732106094; c=relaxed/simple;
+	bh=tCqXrE4hGPCCeFZVd2gCAn8G+VfER0VRfIIuMoPCZQw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m0BWlOWWMjlmjSUAYxUdq8LcOr3X4uCz/mk37d0mFthz1eKaGrDLjshPX7ZlbDMIMHu/60vdxBENJYsl6oe/ahVkcX00Pql94Ei3iRkT2WjDO7dkMfLOBrnvgi/s6bN2z+VBQzkp0vO+mvU0WaIc5jAeeV/PI00ylX5gZqO1DzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZjYQsQb; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec86a67feso384741566b.1;
+        Wed, 20 Nov 2024 04:34:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732106091; x=1732710891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s9be3oshnUjRS174lvbHheMcbFfB0AWJTZEVzgfguJI=;
+        b=VZjYQsQb3itd53KbCF35Ng7gNi8euwn/4BH3Nsvokrf1FNPIEg8xxVMdhNGAOPfnAM
+         vVuEStI8jy9X1yVwkxVGF/PaSrQArMDges2BCNkrJiWxlHD56jZdS1BL02Hq+IEWnGUU
+         lmMoVdOWYGvSvSg5hxmvGLJFpIKtg2aKZMz6dwdhOCO56be2Po03dc+Xcsdf1c2Q6RGs
+         jr4ZdfH3Y1QlIa2mgAhYHG4hjf4BGWBmkG8datNjZc4HPp6GWdZ8M/D2M9Dp+cXTwoHK
+         Wtq4BPtLndLZnXTulafvr7cnDcJ37UV8PKXQ65WzgAH4SvBU3AiKrP33EyeYE+a4xoOL
+         1tSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732106091; x=1732710891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s9be3oshnUjRS174lvbHheMcbFfB0AWJTZEVzgfguJI=;
+        b=QXwVPoU/CEW2i0uihSLYTXKaJcaeeEj99fhx5MXAzGB3BgdrN98CclTV/b1ZteSsaW
+         9g6AaPCh+4JvtnJr/i8iYb+TVHzwrTvj3nuqBdu+rSqoGk/J94/Agt6wISR/cVQ14WR7
+         UmM3RrN1Kb1aVf3sJUe4C6g2VeM5DmKSUn2RLOcT+q8QoIKeK/s+J0V5AO9Xmr1ZvsPh
+         YSdg+HJoSJijskJrm3dMoPluWDnmfKW161TBdIX78zoKyVbjArxsQS2o/VdSGFGAO/cD
+         zQ9yx2shCIXa4qFTx+1MGKxEpKqw3bzfOdMCXlW/NP/HylHotqjRRHDAsKvlKR6plZYJ
+         adtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCXxoyxm6JvQQRUsDQUmjPrnc6d0Yu+WAQt9EQfTAOjJgqDSKXxncg/s0LiV7A5B3f7171yqlNyQ6+Djc=@vger.kernel.org, AJvYcCVvK46q+4Nyn0WoUEFqrs8V+X3iX6riCncLcExMIMN209VLNBWWCH9YnCZilHDiD0mIwvGqQOu14YwJ4uOVxg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM5Z/P13p5i6jvVnvII1YfndwilGZJkzQrp8e8T8s3vJGSERtJ
+	G1pNFtFOFCfVjWTEP1Hr3ol23+/mqoJLicUXuG4fhPYYxJBgld5CPQkwY8eH3OA5FxC0az+M7un
+	SNrMRSxdJKk2iW1ld3tUJvEOt7oIZ24Fs
+X-Google-Smtp-Source: AGHT+IGLH3ySfyfw8VX5rYvejtffct7dyhAxmZDlWXw4R0+0MyaWqXkkffo27tVWqmXnK2GYzpN/5t6uz9YmAVgB0M4=
+X-Received: by 2002:a17:907:8689:b0:a99:ebcc:bfbe with SMTP id
+ a640c23a62f3a-aa4dd57ba6bmr257815766b.27.1732106090692; Wed, 20 Nov 2024
+ 04:34:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119175945.2600945-1-Liam.Howlett@oracle.com>
+References: <CAOQ4uxhc9-MMF1nEpoxC5X41FRqSygGdVcTuvdJKurMxWU1U0Q@mail.gmail.com>
+ <20241119155817.83651-1-kovalev@altlinux.org>
+In-Reply-To: <20241119155817.83651-1-kovalev@altlinux.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 20 Nov 2024 13:34:39 +0100
+Message-ID: <CAOQ4uxhOTYZdjuVajBV_-wrQnVOERUOz7UmJJvcDUkWpkXkDvw@mail.gmail.com>
+Subject: Re: [PATCH v2] ovl: Filter invalid inodes with missing lookup function
+To: Vasiliy Kovalev <kovalev@altlinux.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 12:59:45PM -0500, Liam R. Howlett wrote:
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-> 
-> The mmap_region() function tries to install a new vma, which requires a
-> pre-allocation for the maple tree write due to the complex locking
-> scenarios involved.
-> 
-> Recent efforts to simplify the error recovery required the relocation of
-> the preallocation of the maple tree nodes (via vma_iter_prealloc()
-> calling mas_preallocate()) higher in the function.
-> 
-> The relocation of the preallocation meant that, if there was a file
-> associated with the vma and the driver call (mmap_file()) modified the
-> vma flags, then a new merge of the new vma with existing vmas is
-> attempted.
-> 
-> During the attempt to merge the existing vma with the new vma, the vma
-> iterator is used - the same iterator that would be used for the next
-> write attempt to the tree.  In the event of needing a further allocation
-> and if the new allocations fails, the vma iterator (and contained maple
-> state) will cleaned up, including freeing all previous allocations and
-> will be reset internally.
-> 
-> Upon returning to the __mmap_region() function, the error is available
-> in the vma_merge_struct and can be used to detect the -ENOMEM status.
-> 
-> Hitting an -ENOMEM scenario after the driver callback leaves the system
-> in a state that undoing the mapping is worse than continuing by dipping
-> into the reserve.
-> 
-> A preallocation should be performed in the case of an -ENOMEM and the
-> allocations were lost during the failure scenario.  The __GFP_NOFAIL
-> flag is used in the allocation to ensure the allocation succeeds after
-> implicitly telling the driver that the mapping was happening.
-> 
-> The range is already set in the vma_iter_store() call below, so it is
-> not necessary and is dropped.
-> 
-> Reported-by: syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/x/log.txt?x=17b0ace8580000
-> Fixes: 5de195060b2e2 ("mm: resolve faulty mmap_region() error path behaviour")
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Jann Horn <jannh@google.com>
+On Tue, Nov 19, 2024 at 4:58=E2=80=AFPM Vasiliy Kovalev <kovalev@altlinux.o=
+rg> wrote:
+>
+> Add a check to the ovl_dentry_weird() function to prevent the
+> processing of directory inodes that lack the lookup function.
+> This is important because such inodes can cause errors in overlayfs
+> when passed to the lowerstack.
+>
+> Reported-by: syzbot+a8c9d476508bd14a90e5@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=3Da8c9d476508bd14a90e5
+> Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
 > Cc: <stable@vger.kernel.org>
 > ---
->  mm/mmap.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> Changes since v1:
->  - Don't bail out and force the allocation when the merge failure is
->    -ENOMEM - Thanks Lorenzo
+>  fs/overlayfs/util.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 3bb107471fb42..9aa7493b1e103 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -202,6 +202,9 @@ void ovl_dentry_init_flags(struct dentry *dentry, str=
+uct dentry *upperdentry,
+>
+>  bool ovl_dentry_weird(struct dentry *dentry)
+>  {
+> +       if (!d_can_lookup(dentry) && !d_is_file(dentry) && !d_is_symlink(=
+dentry))
+> +               return true;
+> +
+>         return dentry->d_flags & (DCACHE_NEED_AUTOMOUNT |
+>                                   DCACHE_MANAGE_TRANSIT |
+>                                   DCACHE_OP_HASH |
+> --
+> 2.33.8
+>
 
-Now queued up, thanks.
+Applied to overlayfs-next. Will send along with 6.13 PR
 
-greg k-h
+Thanks,
+Amir.
 
