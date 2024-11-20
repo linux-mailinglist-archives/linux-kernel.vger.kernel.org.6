@@ -1,177 +1,116 @@
-Return-Path: <linux-kernel+bounces-415369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D9819D351D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8489D3520
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C5C282E24
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:15:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32370B23F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6001714D3;
-	Wed, 20 Nov 2024 08:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C8918660C;
+	Wed, 20 Nov 2024 08:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMhZmW39"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N1IK6fsg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F351607AC;
-	Wed, 20 Nov 2024 08:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7AB171650
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732090492; cv=none; b=etiIws4xhSA5pZyAlVy34ZdG3aabba0cW/8lx6A7Fu590S3M9RMv6SsZtbeqhRHbARsSYfxMefj9AocXV48j5k+RGVE42Rb0FjmBRCENnPdv0Kxk3t0LkCzpDOsyMRNqr/756dkRks9gKUoWf5ZtH2q8QeORNHoTcjzO1KDGtG4=
+	t=1732090504; cv=none; b=XoDsRg4eMaw6QBnYt5t5hMQUTCjeDk7vMpAl8uPntoMnfoUUHSIhkOUksKivUsa9qksFEnweuaXVRaJyRKfT9DmTlsYghl7WDxl+jZe8SokB88OvfgbWVHznPByYglfH2JBw4dtN/J+7KkPm0CTG25VpmACubCRP26FlYTUGti4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732090492; c=relaxed/simple;
-	bh=Pa5Yk/HnUg5MvoN8XrOEvIq+CxCgif9sO1+RXnFkcJs=;
+	s=arc-20240116; t=1732090504; c=relaxed/simple;
+	bh=+fkx++0GLLxsDzLbfCega13ttZUztcy2M1kwpi034Q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXscmVNXffgY0JUSCLHkXIGFvNXPH3ysxRHN6DjpuKfkfnyx/vNmcvlTimasgdolCuMeb1fn6I+BuCYKg28IzqD6sRQv9DgT2q1VXd7d3DPXyfLuSxmR8hZY7UFUDqgEvKsrXfpCDzHSyNTMC1Agkhg2U4YFdu74CTbI0Wb1O5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMhZmW39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C35C4CED0;
-	Wed, 20 Nov 2024 08:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732090491;
-	bh=Pa5Yk/HnUg5MvoN8XrOEvIq+CxCgif9sO1+RXnFkcJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BMhZmW39NqRKgsEWAhiU1mubH/U8UbcXZXtVyLN3LXyosLAQNCt9mOXNgQeImwiZs
-	 LgOhnWDMOiGIfjxjaeJ8RTEziWWFvIPsatgRPoL7M9R8tykr67pmS13jKgRUi/XLkC
-	 1ajCYkr++DcReFij4XyBQyAKA2sCH3LmdIM550tOXx2CbtpMOrEMgDSu/Rci5F85p6
-	 mVSy8GXiseCyL/rrNm67eK0xe9RlU6CAfNc5JfXf7fo5+BiXwwKaBzBj7+iY/ryo3Q
-	 58IQaDLU5fUehx21Boa8V+R5jKltJQSS28oF61gD5vTWYoSnuWUdvn5fZ32i5KUF4X
-	 zxE/fVchoJlTQ==
-Date: Wed, 20 Nov 2024 09:14:47 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-Message-ID: <5kz6ghe56yiprlvhyduv7olcrajvejyvulcpjav6doiyvr6dcl@6qlt4nebp4gb>
-References: <cover.1732020224.git.marcelo.schmitt@analog.com>
- <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gzj7J22+C/e9vpNwRyKwNBMFMmdKAauHA/ipdRZmT/9VZTFqd+3CW9Ihro/bsVGwSXKPGEdKglHayI9yy0XrjA96G2kuFzab4AveXU7urtVxFLIEh2Nh4J0gDg1vdvrdOZZ2OAeGbgzaZq63LGjQomKhOI7bxV0O8tKyoZI2ouU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N1IK6fsg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732090501;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gh6m/YaiQcWez3DW3gpI7yQKGyz075BISLGCEYs6JIY=;
+	b=N1IK6fsgV01eGt3jQrxduQ45v6CpPHnZhYdFWNL/YvE5P9ButOhzuvP1HoB8m/oXd4Hglo
+	1aG/VKDQOiwbUCFGTq0NuIBhL6iKfL+GfALMrYj12hfb6jG8orqD4/1ec2h65nt7JGssLv
+	OSwKw6lsgELsHiT5RKLorLOK2iQYaH4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-589-pqFBDy8RM8a5-PwqnLhryw-1; Wed,
+ 20 Nov 2024 03:14:59 -0500
+X-MC-Unique: pqFBDy8RM8a5-PwqnLhryw-1
+X-Mimecast-MFC-AGG-ID: pqFBDy8RM8a5-PwqnLhryw
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D3F9195608B;
+	Wed, 20 Nov 2024 08:14:57 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C9E9B19560A3;
+	Wed, 20 Nov 2024 08:14:54 +0000 (UTC)
+Date: Wed, 20 Nov 2024 16:14:50 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 02/11] fs/proc/vmcore: replace vmcoredd_mutex by
+ vmcore_mutex
+Message-ID: <Zz2aekArHaIT4JU5@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-3-david@redhat.com>
+ <ZzcVGrUcgNMXPkqw@MiWiFi-R3L-srv>
+ <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
+In-Reply-To: <9160c6b4-f8a0-431d-8a21-ead510a887a1@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Nov 19, 2024 at 09:53:40AM -0300, Marcelo Schmitt wrote:
-> Extend the AD4000 series device tree documentation to also describe
-> PulSAR devices.
+On 11/15/24 at 11:04am, David Hildenbrand wrote:
+> On 15.11.24 10:32, Baoquan He wrote:
+> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > Let's use our new mutex instead.
+> > 
+> > Is there reason vmcoredd_mutex need be replaced and integrated with the
+> > vmcore_mutex? Is it the reason the concurrent opening of vmcore could
+> > happen with the old vmcoredd_mutex?
 > 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
-> No changes from v2 -> v3.
+> Yes, see the next patch in this series. But I consider this valuable on its
+> own: there is no need to have two mutexes.
 > 
->  .../bindings/iio/adc/adi,ad4000.yaml          | 71 +++++++++++++++++++
->  1 file changed, 71 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> index e413a9d8d2a2..4dbb3d2876f9 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> @@ -19,6 +19,20 @@ description: |
->      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
->      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
-> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
->  
->  $ref: /schemas/spi/spi-peripheral-props.yaml#
->  
-> @@ -63,6 +77,37 @@ properties:
->  
->        - const: adi,adaq4003
->  
-> +      - const: adi,ad7946
+> I can make that clearer in the patch description.
 
-All such cases are just one enum. That's the preferred syntax.
-
-
-> +      - items:
-> +          - enum:
-> +              - adi,ad7942
-> +          - const: adi,ad7946
-> +
-> +      - const: adi,ad7983
-> +      - items:
-> +          - enum:
-> +              - adi,ad7980
-> +              - adi,ad7988-5
-> +              - adi,ad7686
-> +              - adi,ad7685
-
-Keep alphabetical order.
-
-> +              - adi,ad7988-1
-> +          - const: adi,ad7983
-> +
-> +      - const: adi,ad7688
-> +      - items:
-> +          - enum:
-> +              - adi,ad7693
-> +              - adi,ad7687
-> +          - const: adi,ad7688
-> +
-> +      - const: adi,ad7984
-> +      - items:
-> +          - enum:
-> +              - adi,ad7982
-> +              - adi,ad7690
-> +              - adi,ad7691
-> +          - const: adi,ad7984
-> +
->    reg:
->      maxItems: 1
->  
-> @@ -133,6 +178,32 @@ required:
->    - ref-supply
->  
->  allOf:
-> +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,ad7685
-
-Why do you need this? It's fallback is already here.
-
-> +              - adi,ad7686
-> +              - adi,ad7687
-> +              - adi,ad7688
-> +              - adi,ad7690
-> +              - adi,ad7691
-> +              - adi,ad7693
-> +              - adi,ad7942
-> +              - adi,ad7946
-> +              - adi,ad7980
-> +              - adi,ad7982
-> +              - adi,ad7983
-> +              - adi,ad7984
-> +              - adi,ad7988-1
-> +              - adi,ad7988-5
-
-Best regards,
-Krzysztof
+That would be great and more helpful. Because I didn't find the reason
+about the lock integration and avoid concurrent opening of vmcore in
+cover-letter and logs of the first few patches, I thought there have
+been potential problems and the first few patches are used to fix them.
 
 
