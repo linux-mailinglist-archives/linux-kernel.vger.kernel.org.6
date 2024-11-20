@@ -1,47 +1,68 @@
-Return-Path: <linux-kernel+bounces-416095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F86F9D402B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:35:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0FD9D40CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47BF1F2479B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:35:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24555B326A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C403153801;
-	Wed, 20 Nov 2024 16:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4D51552E7;
+	Wed, 20 Nov 2024 16:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDuCqdcx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="puHPrJl1"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752DF145335;
-	Wed, 20 Nov 2024 16:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7043A14A4DD;
+	Wed, 20 Nov 2024 16:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120520; cv=none; b=p1jSptWfFDp/Vyzv7OzHR4DWCMkWNcU7Rs0iiq8AK0mxJE10FTxTY6AZ1I1KdanxZ1GJicXc1KsEEFaG+VnmDwcJyWDemfUoYW+nuB0/KS42of2RAdg9ZyKJJgRsAAUJFPqhGnXFKzyQP4WSxgHhGi5NfpHwQSRe8WMRM4mstoQ=
+	t=1732120807; cv=none; b=Nz/Fj0GVUfAcTDGw+/96HYodmPZrtBPBzmqs9C8WCT/9k3fCUEdJrlmept+dPcX6EOkNhZmT7dbonTN1m97XlRP7UlQ4R7iUpQ2as2iIGYeqrgEhOVys4TVn6mVKHS2pnnsH3ekyC95HeiPI98GCVrgzGbaXHgggwvt7obJeUIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120520; c=relaxed/simple;
-	bh=wrXCT/Qct4r92/jjtAU5YdXOU1Gry2h2bLHzjvDI8D8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FkFFHRi2lFVKUD/DzmI6g6rI75OOGDE0ls9SQbKG2zK8nulRnV4lPpxypa2QNRHEBeUhY6r2lgFtKTlLOlY13kfD2E9TS3v9gEU45SY2rGqjrusTCytqE1EvbhlXYixcozBdt9usfXo9oagnGzLaKSl3jxleiMqM5/Um5LbstWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDuCqdcx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 326F8C4CECE;
-	Wed, 20 Nov 2024 16:35:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732120519;
-	bh=wrXCT/Qct4r92/jjtAU5YdXOU1Gry2h2bLHzjvDI8D8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hDuCqdcx0ELUmUkYhONpIEevkQq04Tda9d2bNHkhXRistY0ZwdVffE2pims5pBaKR
-	 9MnFCvDM+bBuyLT4EuYJ5yKcOF49rPxmojXeZcN0TGsuYOVKTDTJe7E25XTMwT1TIp
-	 EhS5j/6xt8RVPR3kW2IoVuB90/tEvoecl9zKxNdgpIfIDbuoKdZ1oeP+vZtWlWqTmf
-	 IH4NN3w9KXd/FCAADkO3itJjReyGA30TTuswN+A0bXgOJy6zEC1hmILZsL/DsP7/Bv
-	 ycy9b2zEYrqPBIqk+DT3RBYNZLEV+vFqq7uQLNXGgGmdMIvadPbxtqg++XI2hhbzqh
-	 aiJt2LCp92JVg==
-Message-ID: <caafbc83-22de-4699-a126-e5df13866f1b@kernel.org>
-Date: Wed, 20 Nov 2024 17:35:13 +0100
+	s=arc-20240116; t=1732120807; c=relaxed/simple;
+	bh=q9HJtEMcF1o9oN8jN4hPtFlSuhPQ/NI+JCqa7KQxZdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ougadl/4wL+5YqKJUI66JcIBLTzkg5tI7eRXTkzNZOr1Vm4zIcU5Acam7fKPGXKN5JesUQml6iXQgiZdBiX97E0I/ZNGfTpUjRPZW2nG3S+h/9XV4qh/1+suA73YlFt6xmA74d3U+4eUx7Zbg0L1gKzPmwRB+2z7c8/qfs9LwqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=puHPrJl1; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEAXr8003253;
+	Wed, 20 Nov 2024 17:39:47 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	kk/4ImLRfW02WqanMlOBrVlAtIDvhKl0xS3pXSUv80c=; b=puHPrJl182BfBZwd
+	G4awuxSp53vzzrXidyQr7BosxKki0uluEHiMiXvAWK0t2G5W1knW/J7PXlv6Rf7N
+	HR9vkPs4+w6n/FSBtP5Apdo8EJdAIKPdIF8gTLU2uZkuaePte2+Xwcu4p4Z14CSC
+	aEZS+Ndxjkq7rFt17jaQFoUzq2QYQ3L+mXNkJNZ9arNOiCuM37FOuzguwmgAkftO
+	g0NnutMbIJQYXm+ExT+gEDG+o4hY+X7XlLkvirnxTAf27F5mCNZ6wWAU4ykr/fqo
+	Nywrn5sgzlraUZs1JWwExtRfIiTs3B2dRriOtsPA2YPHK0iiNh3snd4URm8jklFC
+	jgRCBA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xknwb6ph-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 17:39:47 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 17AEF400A3;
+	Wed, 20 Nov 2024 17:38:27 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0EEE276BB0;
+	Wed, 20 Nov 2024 17:35:50 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 20 Nov
+ 2024 17:35:50 +0100
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Wed, 20 Nov
+ 2024 17:35:49 +0100
+Message-ID: <57a66f3c-d644-4ebb-b4dd-0b9d411ec243@foss.st.com>
+Date: Wed, 20 Nov 2024 17:35:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,117 +70,190 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: chrome: add new binding
- google,cros-ec-chrage-state
-To: "Sung-Chi, Li" <lschyi@chromium.org>, Rob Herring <robh@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org
-References: <20241118-add_charger_state-v1-0-94997079f35a@chromium.org>
- <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
- <20241118202520.GA3273373-robh@kernel.org> <Zzv2ltfXqaW-2ALm@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v13 4/7] remoteproc: Introduce release_fw optional
+ operation
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+ <20241104133515.256497-5-arnaud.pouliquen@foss.st.com>
+ <Zzt+7NBdNjyzWZIb@p14s> <0d9075cd-68c2-49ec-9b9c-4315aa8c8517@foss.st.com>
+ <CANLsYkxvTuLv8Omw-UeyPaA9g9QokmtMaMYD0eoUPo20wUuONQ@mail.gmail.com>
+ <CANLsYkwPDFvJxgXrAV=92w+sT8tXB=-=K8Qs8eRVKm2C2v+0aA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zzv2ltfXqaW-2ALm@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <CANLsYkwPDFvJxgXrAV=92w+sT8tXB=-=K8Qs8eRVKm2C2v+0aA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On 19/11/2024 03:23, Sung-Chi, Li wrote:
-> 
->>> +
->>> +  type:
+
+
+On 11/20/24 17:04, Mathieu Poirier wrote:
+> On Tue, 19 Nov 2024 at 13:38, Mathieu Poirier
+> <mathieu.poirier@linaro.org> wrote:
 >>
->> Too generic. Property types are global. You need a vendor prefix for 
->> starters.
+>> On Tue, 19 Nov 2024 at 11:14, Arnaud POULIQUEN
+>> <arnaud.pouliquen@foss.st.com> wrote:
+>>>
+>>> Hello Mathieu,
+>>>
+>>> On 11/18/24 18:52, Mathieu Poirier wrote:
+>>>> On Mon, Nov 04, 2024 at 02:35:12PM +0100, Arnaud Pouliquen wrote:
+>>>>> This patch updates the rproc_ops struct to include an optional
+>>>>> release_fw function.
+>>>>>
+>>>>> The release_fw ops is responsible for releasing the remote processor
+>>>>> firmware image. The ops is called in the following cases:
+>>>>>
+>>>>>  - An error occurs in rproc_start() between the loading of the segments and
+>>>>>       the start of the remote processor.
+>>>>>  - after stopping the remote processor.
+>>>>>
+>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>> ---
+>>>>> Updates from version V11:
+>>>>> - fix typo in @release_fw comment
+>>>>> ---
+>>>>>  drivers/remoteproc/remoteproc_core.c | 5 +++++
+>>>>>  include/linux/remoteproc.h           | 3 +++
+>>>>>  2 files changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>>>>> index 7694817f25d4..46863e1ca307 100644
+>>>>> --- a/drivers/remoteproc/remoteproc_core.c
+>>>>> +++ b/drivers/remoteproc/remoteproc_core.c
+>>>>> @@ -1258,6 +1258,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+>>>>>
+>>>>>  static void rproc_release_fw(struct rproc *rproc)
+>>>>>  {
+>>>>> +    if (rproc->ops->release_fw)
+>>>>> +            rproc->ops->release_fw(rproc);
+>>>>> +
+>>>>>      /* Free the copy of the resource table */
+>>>>>      kfree(rproc->cached_table);
+>>>>>      rproc->cached_table = NULL;
+>>>>> @@ -1377,6 +1380,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>>>>  unprepare_subdevices:
+>>>>>      rproc_unprepare_subdevices(rproc);
+>>>>>  reset_table_ptr:
+>>>>> +    if (rproc->ops->release_fw)
+>>>>> +            rproc->ops->release_fw(rproc);
+>>>>>      rproc->table_ptr = rproc->cached_table;
+>>>>
+>>>> I suggest the following:
+>>>>
+>>>> 1) Create two new functions, i.e rproc_load_fw() and rproc_release_fw().  The
+>>>> only thing those would do is call rproc->ops->load_fw() and
+>>>> rproc->ops->release_fw(), if they are present.  When a TEE interface is
+>>>> available, ->load_fw() and ->release_fw() become rproc_tee_load_fw() and
+>>>> rproc_tee_release_fw().
+>>>
+>>>
+>>> I'm wondering if it should be ->preload_fw() instead of ->load_fw() ops, as the
+>>> ->load() op already exists.
+>>>
+>>
+>> I agree that ->load() and ->load_fw() will lead to confusion.  I would
+>> support ->preload_fw() but there is no obvious antonyme.
+>>
+>> Since we already have rproc_ops::prepare() and rproc_prepare_device()
+>> I suggest rproc_ops::prepare_fw() and rproc_prepare_fw().  The
+>> corollary would be rproc_ops::unprepare_fw() and rproc_unprepare_fm().
+>> That said, I'm open to other ideas should you be interested in finding
+>> other alternatives.
 >>
 > 
-> Thank you, I will use a more specific name in the following patches.
+> Actually...  A better approach might to rename rproc::load to
+> rproc::load_segments.  That way we can use rproc::load_fw() and
+> rproc_load_fw() without confusion.
+
+Concerning this proposal, please correct me if I'm wrong
+- ops::load_segments() would be used for ELF format only as segment notion seems
+linked to this format.
+- ops:rproc_load_fw should be used for other formats.
+
+The risk is that someone may later come with a requirement to get a resource
+table first to configure some memories before loading a non-ELF firmware.
+
+
 > 
->>> +    description: current limit type.
->>> +    enum:
->>> +      - charge
->>> +      - input
+>>>>
+>>>> 2) Call rproc_load_fw() in rproc_boot(), just before rproc_fw_boot().  If the
+>>>> call to rproc_fw_boot() fails, call rproc_release_fw().
+>>>>
+>>>> 3) The same logic applies to rproc_boot_recovery(), i.e call rproc_load_fw()
+>>>> before rproc_start() and call rproc_release_fw() if rproc_start() fails.
+>>>
+>>>
+>>> I implemented this and I'm currently testing it.
+>>> Thise second part requires a few adjustments to work. The ->load() ops needs to
+>>> becomes optional to not be called if the "->preload_fw()" is used.
+>>>
+>>> For that, I propose to return 0 in rproc_load_segments if rproc->ops->load is
+>>> NULL and compensate by checking that at least "->preload_fw()" or ->load() is
+>>> non-null in rproc_alloc_ops.
+>>>
 >>
->> What if you need to describe both?
+>> I agree.
 >>
-> 
-> We need to declare different DTS nods for each. This node is representing the
-> constraint, not the charge chip itself.
-
-Looks like you are re-implementing charger manager. Even title says: driver.
-
-Use standard psy properties including battery. All this is supposed to
-describe hardware, not your driver.
-
-> The voltage, min and max milliamp on each current type are different on a single
-> charge chip. For example, I have a device that uses the charge chip rt9490, and
-> it has the following set up:
-
-> 
-> - Input current
->   - min-milliamp: 100
->   - max-milliamp: 3300
-> - Charge current
->   - min-milliamp: 150
->   - max-milliamp: 5000
-> 
-> I cannot find a clean way to merge different current type, max, and min milliamp
-> just in a single DTS node.
-
-Well, all other bindings were able, so I really do not get why this one
-is so special.
-
-> Also, we need to split different constraints into its own DTS node. It is
-> because the a cooling device in the thermal framework need its own DTS node, so
-> we can use it in the trip section.
-
-So fix thermal framework.
-
-Best regards,
-Krzysztof
+>>> Thanks,
+>>> Arnaud
+>>>
+>>>
+>>>>
+>>>> 4) Take rproc_tee_load_fw() out of rproc_tee_parse_fw().  It will now be called
+>>>> in rproc_load_fw().
+>>>>
+>>>> 5) As stated above function rproc_release_fw() now calls rproc_tee_release_fw().
+>>>> The former is already called in rproc_shutdown() so we are good in that front.
+>>>>
+>>>> With the above the cached_table management within the core remains the same and
+>>>> we can get rid of patch 3.7.
+>>>
+>>>>
+>>>> Thanks,
+>>>> Mathieu
+>>>>
+>>>>>
+>>>>>      return ret;
+>>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>>>>> index 2e0ddcb2d792..08e0187a84d9 100644
+>>>>> --- a/include/linux/remoteproc.h
+>>>>> +++ b/include/linux/remoteproc.h
+>>>>> @@ -381,6 +381,8 @@ enum rsc_handling_status {
+>>>>>   * @panic:  optional callback to react to system panic, core will delay
+>>>>>   *          panic at least the returned number of milliseconds
+>>>>>   * @coredump:         collect firmware dump after the subsystem is shutdown
+>>>>> + * @release_fw:     optional function to release the firmware image from ROM memories.
+>>>>> + *          This function is called after stopping the remote processor or in case of an error
+>>>>>   */
+>>>>>  struct rproc_ops {
+>>>>>      int (*prepare)(struct rproc *rproc);
+>>>>> @@ -403,6 +405,7 @@ struct rproc_ops {
+>>>>>      u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+>>>>>      unsigned long (*panic)(struct rproc *rproc);
+>>>>>      void (*coredump)(struct rproc *rproc);
+>>>>> +    void (*release_fw)(struct rproc *rproc);
+>>>>>  };
+>>>>>
+>>>>>  /**
+>>>>> --
+>>>>> 2.25.1
+>>>>>
 
