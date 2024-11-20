@@ -1,156 +1,225 @@
-Return-Path: <linux-kernel+bounces-416315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43059D432F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:37:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F30A9D4335
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749552826E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0372824BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF7E1BC097;
-	Wed, 20 Nov 2024 20:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CF51BC9F9;
+	Wed, 20 Nov 2024 20:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Q++p/NM5"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pzC8QRXd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1534C1BBBC5
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F015C165EFA;
+	Wed, 20 Nov 2024 20:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732135044; cv=none; b=oTMp70fBb4v6txsH6X2y6y/gwKXYuRdFjtIBs5o/9i6xLDFv0DsJhwyZzaa3deXP3H0kWYsocesj37XZY0L92GjnhgIwn2pX4xARU96I2xhJ8dxInJwH2ugXVQLv0t7LcMfNfD312buNZHOcb4H1IBM2uNMiKj7J1ojCBnVjldk=
+	t=1732135163; cv=none; b=n+8mTybOS5B4AoJ4nNz4360CszXGqa2lmBLAR/trTHG787JtrwsXFu00RvFOhU4ndAlSXVUjX6+dcI2OY9h1iQ9gNiuvzFcFrzFqlAMY8P5DhxFtUuarQ8onw13OyBpr8iQmBH/wfOoGmxTv4Qac47X1t+ndupoEspEciauBZXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732135044; c=relaxed/simple;
-	bh=gxdo/qfNxQeE8KQho8RvlhXWrZvSkpA6qPXBeVgUJXo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaqUE9AldUuEt+TiZsbiBS9Qil/pHmaCwR9ypjo+V0x+qhH2pgnonKbZ2397bOga8qAPFkIkuXW/sksckCv1Xn1C/X+pJoLFQjXFTSSztiJY4LWIN6VlXYVQcgvFQcKrjyoaj4KhrncyfDSrZWwoa40fPBudg5CfycJ8QKR/NrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Q++p/NM5; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d01caa66so204823b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732135041; x=1732739841; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j7agw+MVRyIWuBCl7pZ+mHszf9nzIBAC/CJ3AinkBqw=;
-        b=Q++p/NM5V2P0QCp2VjUddqV8grc4gu6TasiyBOjEJQMiSQgildyUd8BLF97mO16/gX
-         kTe1Jos6tv+4nNZPMMMSPx6HSzOetxJw82emuaY6c0d3ITXa3luQTBYGSay+ie+6oABL
-         TOJ1SCQiHGe1R75MPDrXtVZ/QlTWHU4jrPsRzdipsip9KcV5nAA1aio0kXTzHCSKLlTG
-         k/i6fvt7Cd8OkTorLtfhQWGGVV52tDjb0ASwIvHHLTOh3eLBffLLJR5/4WKbuR6q99Rb
-         vGfkeqp9eFbmc3ow7QN9qYTkKYrhRlJinKXsmg2NJHCKu+puEBR4zawIeTf45GOEcxHO
-         JrsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732135041; x=1732739841;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j7agw+MVRyIWuBCl7pZ+mHszf9nzIBAC/CJ3AinkBqw=;
-        b=lQRRU/aK7HNP1mrHZX/4d03/9SB/POOuRmfT4/iWWXa2AJKSvLEAqzEr6YMZnsK/Uz
-         e/ZJFgzLxxs90lLMJrzanB6WeBikR1Lbo0Y1yN82i9wy+mEPo/T/p4RWcEVxI1ndc1XW
-         tfADQepaTtBDp9zGq0KOrA0PqJGNCKWBEbTnPYdx/qpQ+glPegtrRbjLQIH22EErxQ2I
-         au2psylF+Jd1Hstswpj1QKMho/c5vXuCrK11iavBZBIlZdR4hcySb74V9jpOtlX4AXdu
-         s6Mu5JbOiexbJTBasoiX83wV2YB/cfLHyCxHzDFE77g8ksw5IC1dG1JnR8C8zPiUA3X0
-         en0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWrP/1fw1b1qQd8uzPkTgZQu6IKBoV9C3iAY/q9SBY3f5P9NxkpAJqQ7DsuObHc8gQI2NMgGI4k4NNQeqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz6ueOuFkHVRRhj3TqFcIhSlLjbZyNQZADJb231Srt2O/E+CJz
-	GgJjMCyDcV+dJJo1+ZpDR3B1uGilbMKlxAr+7XPTsGeUcsXnp2OkNhbLhs2Udoo=
-X-Google-Smtp-Source: AGHT+IGreu4pbRdf9RAsxW9otLcD4fFTHm8D1pwAWAPrW4pJkHesAy9VcpvXrA5aTGE2ELi+7vWGbw==
-X-Received: by 2002:a17:90b:52c3:b0:2ea:b564:4b35 with SMTP id 98e67ed59e1d1-2eaca6e41f2mr5271046a91.9.1732135041400;
-        Wed, 20 Nov 2024 12:37:21 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead03de6f6sm1762377a91.34.2024.11.20.12.37.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 12:37:20 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tDrRt-000000010Wl-2glT;
-	Thu, 21 Nov 2024 07:37:17 +1100
-Date: Thu, 21 Nov 2024 07:37:17 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
-Message-ID: <Zz5IfYYQXHyZPwbi@dread.disaster.area>
-References: <20241120150725.3378-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1732135163; c=relaxed/simple;
+	bh=Tzn76we2GTFyNHZGWQiBFSyVYvershnmKtDGNW8elto=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kUGnjif6I8fOc8KDSja0k42g/OyAVs7BjFcB5doCBiTtcHuPzbISOVm3L0eKpIdtHiCmjz6uyi34nN9dVi7jFl4mXJSEb1eA1PKouLjOTHVhHhGALjG51DVogTFX3cJIx0rpuqNzgRXW9IBlHtPU9o2FizQWb/EHOUZLPECFink=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pzC8QRXd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKHS9Wk024342;
+	Wed, 20 Nov 2024 20:38:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2j4aSP
+	SVSBojoB4IzTo0vBEcDKUSurMXvDL4C4/c85A=; b=pzC8QRXd0YKDLFbHstGPD8
+	EeugYdVOYkzobBBTDoByUMu/UcxaaB1xuU7eREv+Q8FdtIKVJr7GRZ5fdb90gW1j
+	RL1lyog9pPCaYgrG4emNCiUhZQfSmY/GhdMC8hesdejBgpFrp8oBxd2DiTBAYgEV
+	OpYfGb27JUFocqLt2sIw3Ga0vQeetT2zscR7ZASW5gYsCS8DbDRsh2rzJ34eEf0U
+	qRz7nWlvfd9mVZeJ3kjwq2NCzHqkDcQXw5ru02+GKFteqfIUTTYaEBWkhjifEnlw
+	yMt8/YWJ3OapBcvQQI91t1fAm/6EyFAwUBbLv7jIHtcnL7ENIO2pX6y8KtAZnSVQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttfekq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 20:38:49 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AKKcn8E016657;
+	Wed, 20 Nov 2024 20:38:49 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttfekn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 20:38:49 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJtJ7q025906;
+	Wed, 20 Nov 2024 20:38:48 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1f9yp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 20:38:48 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKKclHg50201296
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 20:38:47 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A1025805A;
+	Wed, 20 Nov 2024 20:38:47 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A7E358054;
+	Wed, 20 Nov 2024 20:38:46 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 20 Nov 2024 20:38:46 +0000 (GMT)
+Message-ID: <5a315c98bcb8b900c8f4bac06fdfccec1308fcce.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
+ ima_measurements list traversal
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E.
+ Hallyn" <serge@hallyn.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thiago Jung Bauermann
+ <bauerman@linux.vnet.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        noodles@earth.li
+Date: Wed, 20 Nov 2024 15:38:45 -0500
+In-Reply-To: <Zz48LjTS_r-j9Qny@gmail.com>
+References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
+	 <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
+	 <Zz48LjTS_r-j9Qny@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120150725.3378-1-ubizjak@gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZYB-crtMbPLlFFNlx3eNIRMKql0Hcf7X
+X-Proofpoint-ORIG-GUID: UMzIkNF1mY9_Kzvnnbq9AuBVvpEJKJY6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411200143
 
-On Wed, Nov 20, 2024 at 04:06:22PM +0100, Uros Bizjak wrote:
-> try_cmpxchg() loop with constant "new" value can be substituted
-> with just xchg() to atomically get and clear the location.
-> 
-> The code on x86_64 improves from:
-> 
->     1e7f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
->     1e84:	48 03 14 c5 00 00 00 	add    0x0(,%rax,8),%rdx
->     1e8b:	00
-> 			1e88: R_X86_64_32S	__per_cpu_offset
->     1e8c:	8b 02                	mov    (%rdx),%eax
->     1e8e:	41 89 c5             	mov    %eax,%r13d
->     1e91:	31 c9                	xor    %ecx,%ecx
->     1e93:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
->     1e97:	75 f5                	jne    1e8e <xlog_cil_commit+0x84e>
->     1e99:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
->     1e9e:	45 01 e9             	add    %r13d,%r9d
-> 
-> to just:
-> 
->     1e7f:	48 03 14 cd 00 00 00 	add    0x0(,%rcx,8),%rdx
->     1e86:	00
-> 			1e83: R_X86_64_32S	__per_cpu_offset
->     1e87:	31 c9                	xor    %ecx,%ecx
->     1e89:	87 0a                	xchg   %ecx,(%rdx)
->     1e8b:	41 01 cb             	add    %ecx,%r11d
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Chandan Babu R <chandan.babu@oracle.com>
-> Cc: "Darrick J. Wong" <djwong@kernel.org>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> ---
->  fs/xfs/xfs_log_cil.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-> index 80da0cf87d7a..9d667be1d909 100644
-> --- a/fs/xfs/xfs_log_cil.c
-> +++ b/fs/xfs/xfs_log_cil.c
-> @@ -171,11 +171,8 @@ xlog_cil_insert_pcp_aggregate(
->  	 */
->  	for_each_cpu(cpu, &ctx->cil_pcpmask) {
->  		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
-> -		int			old = READ_ONCE(cilpcp->space_used);
->  
-> -		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
-> -			;
-> -		count += old;
-> +		count += xchg(&cilpcp->space_used, 0);
->  	}
->  	atomic_add(count, &ctx->space_used);
->  }
+On Wed, 2024-11-20 at 19:44 +0000, Breno Leitao wrote:
+> Hello Mimi,
+>=20
+> On Tue, Nov 19, 2024 at 01:10:10PM -0500, Mimi Zohar wrote:
+> > Hi Breno,
+> >=20
+> > On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
+> > > Fix a potential RCU issue where ima_measurements list is traversed us=
+ing
+> > > list_for_each_entry_rcu() without proper RCU read lock protection. Th=
+is
+> > > caused warnings when CONFIG_PROVE_RCU was enabled:
+> > >=20
+> > >   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-rea=
+der section!!
+> > >=20
+> > > Add rcu_read_lock() before iterating over ima_measurements list to en=
+sure
+> > > proper RCU synchronization, consistent with other RCU list traversals=
+ in
+> > > the codebase.
+> >=20
+> > The synchronization is to prevent freeing of data while walking the RCU=
+ list. In
+> > this case, new measurements are only appended to the IMA measurement li=
+st.  So
+> > there shouldn't be an issue.
+> >=20
+> > The IMA measurement list is being copied during kexec "load", while oth=
+er
+> > processes are still running.  Depending on the IMA policy, the kexec "l=
+oad",
+> > itself, and these other processes may result in additional measurements=
+, which
+> > should be copied across kexec.  Adding the rcu_read_{lock, unlock} woul=
+d
+> > unnecessarily prevent them from being copied.
+>=20
+> Thank you for the detailed explanation. Since rcu_read_lock() operations =
+are
+> lightweight, I believe keeping them wouldn't impact performance significa=
+ntly.
 
-Looks fine.
+It's not a question of performance, but of missing measurements in the IMA
+measurement list.
 
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
+>=20
+> However, if you prefer the lockless approach, I would suggest adding an
+> argument to list_for_each_entry_rcu() to keep the warning out. What are
+> your thoughts on this?
 
--- 
-Dave Chinner
-david@fromorbit.com
+Yes, this is better.
+
+thanks,
+
+Mimi
+>=20
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Mon Nov 4 02:26:45 2024 -0800
+>=20
+>     ima: kexec: silence RCU list traversal warning
+>=20
+>     The ima_measurements list is append-only and doesn't require rcu_read=
+_lock()
+>     protection. However, lockdep issues a warning when traversing RCU lis=
+ts
+>     without the read lock:
+>=20
+>       security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-rea=
+der section!!
+>=20
+>     Fix this by using the lockless variant of list_for_each_entry_rcu() w=
+ith
+>     the last argument set to true. This tells the RCU subsystem that
+>     traversing this append-only list without the read lock is intentional
+>     and safe.
+>=20
+>     This change silences the lockdep warning while maintaining the correc=
+t
+>     semantics for the append-only list traversal.
+>=20
+>     Signed-off-by: Breno Leitao <leitao@debian.org>
+>=20
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
+ima_kexec.c
+> index 52e00332defed..9d45f4d26f731 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buf=
+fer_size, void **buffer,
+>=20
+>  	memset(&khdr, 0, sizeof(khdr));
+>  	khdr.version =3D 1;
+> -	list_for_each_entry_rcu(qe, &ima_measurements, later) {
+> +	/* This is an append-only list, no need to hold the RCU read lock */
+> +	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+>  		if (file.count < file.size) {
+>  			khdr.count++;
+>  			ima_measurements_show(&file, qe);
+>=20
+>=20
+
 
