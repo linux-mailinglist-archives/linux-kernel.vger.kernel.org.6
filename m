@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-415401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17E379D3593
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:35:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED0C9D3563
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BE83B24306
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1FF1F226CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE9D18A6AC;
-	Wed, 20 Nov 2024 08:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CE0172BA9;
+	Wed, 20 Nov 2024 08:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="M5qlBRfS"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RI6Ns4Z0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE96187844;
-	Wed, 20 Nov 2024 08:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3362156F20;
+	Wed, 20 Nov 2024 08:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732091709; cv=none; b=ITBhtX6xKDbe9hVVpreyaHxnCyfiTeNyVuL0WYCJpFYst3uA6j7e48uileI9TRQqAT2PIlB4iJS3hTFFSe29eY7WnqExqQIUBRolRJkPkCl7QwA9m5mr5tseEJglsIQ5utdnyQlWRpnmH2bZejlgpwJ6st9MICOVRsZiLVZgtAw=
+	t=1732091309; cv=none; b=J8UeYXECOb6IxQhDCoUg35TS7vY8WyCXMv7wxbKbb20xQOJbv7a5sHl1y7zNlQU/jgQKFmpFSFTbOUnF0N1pXoNGbPlVRskCuNOy4cxCLbm6mz+HdVKZ7JEs75/LWS9PvwFdMJVnzzGgKjy7sus6XttT+IULge4TmeCVW4S8Q8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732091709; c=relaxed/simple;
-	bh=55A8FeZ2TpcWNVaw339qWDeg5tKpRPnQiXrnOOVibu4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=dMc8Ouc0N5ZHZg+I7spy+bTbPAbx8FlRCOLH4gmH7IVtpnUVrE7jdoZI8Lyx8SAxcIBHPF4mBx5l9jClR6C0TkzUm2B24VwA6OPtGMFsufPvnBZwciAlkgh4QcC7xUrfiCJmmTx3ugyrB+Zx2grcoHxWuKsTfOoFLC+2yRaoHAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=M5qlBRfS; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1732091708; x=1763627708;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=55A8FeZ2TpcWNVaw339qWDeg5tKpRPnQiXrnOOVibu4=;
-  b=M5qlBRfSbZClO423hOUseBrSFJHfUBJpvZSesl6t6f0Jz1Tl7MLzpZKz
-   ts0pqXbmv0vCYo1ZFYDw5F2E4FsUx9/K5gS+pIqdfZHhS6cnuqyd1TEwE
-   4M3nizR7w29pWIx/K1R2xMHfACCuw+2LP2aAjMdFXjSC5D5YolMJEyAgh
-   lB2P0v1ocDKUohA0mBcT0jHyudg3syx8wxU9HAms3fZ8+R9U18NwJV721
-   LNykTKREHB6lAo3gqtElBU9dUyjyIPByc6/OvUgw0zVkO6jp+/FL2aQbs
-   Y/ZKuTY2Ibtvo5Ls5QMDXBfE5EvOe4RHaeqW3pNb1162wLoTFhcboC9sC
-   w==;
-X-CSE-ConnectionGUID: 0G/ItBSvSQqPiV4u0hJ3jA==
-X-CSE-MsgGUID: OuuoQFbsTC2KrX/X/n6znA==
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="34273278"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Nov 2024 01:35:06 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 20 Nov 2024 01:34:36 -0700
-Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 20 Nov 2024 01:34:30 -0700
-From: Charan Pedumuru <charan.pedumuru@microchip.com>
-Date: Wed, 20 Nov 2024 13:58:08 +0530
-Subject: [PATCH v3] dt-bindings: net: can: atmel: Convert to json schema
+	s=arc-20240116; t=1732091309; c=relaxed/simple;
+	bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BzgrHDcDURIfzRnkJd6vpMQwcFo2NNldCK0m0RplgrNgT8NGKmsgtAyUOZL0lVbvV3I11lMxmdrpb7KJ3Q6SXIDUcJxQo8X7yAQaq7nBFtuw4/f3/xm6QleRzNkJA/FEZ9dZQiI+kzn2dmSZgLYqYjg2638y34NK3LPn29gpH2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RI6Ns4Z0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FC74C4CECD;
+	Wed, 20 Nov 2024 08:28:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732091309;
+	bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RI6Ns4Z0pYGeqqYyRzWp77GU8jov8PilY5yrobKeBgcqD8S6ZpqISfqKlrj0OZx3U
+	 GfHE34tX4H3cO6a0r7cHKBks6kpccjSL6yU6Y2TZ2msE39Gufe7jDC96ud4bNwogys
+	 Rf0QgRYg6lyN4tc3QUwq61U5FU6M7fKzvzutLE2jzrWyUoNTsWzw2AeK4S9h9VYNDg
+	 54C6UpMHibVGysZg4GgVtCfg1Blzsl4p+QqQvWiZ8roWUdockS6KK9x560C3zP1MkW
+	 ynqrCYmtIc9aOhetsDYn3meLpcAO/FT91O7F/GoyNEG0on/tJoMRj6r7422w31W6MZ
+	 2AMkgeYD2bZIQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] netfs: silence an uninitialized variable warning
+Date: Wed, 20 Nov 2024 09:28:20 +0100
+Message-ID: <20241120-lageplan-kneifen-e124b37dee93@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
+References: <867904ba-85fe-4766-91cb-3c8ce0703c1e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,143 +62,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241120-can-v3-1-da5bb4f6128d@microchip.com>
-X-B4-Tracking: v=1; b=H4sIAJedPWcC/12Myw6CMBBFf4XM2ppOsaW48j+MC/pAZgElrWk0h
- H+3YGKiy3Nzz1kg+Ug+wblaIPpMicJUoD5UYIduuntGrjAILk68RcFsNzHtTdNr30ilHJTnHH1
- Pz71yvRUeKD1CfO3RjNv662dkyKxUEg1q3hpzGcnGYAeajzaMsDWy+HrIef3xRPG0bDi6WrTKu
- X9vXdc3t5RQGtIAAAA=
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Charan Pedumuru
-	<charan.pedumuru@microchip.com>
-X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1158; i=brauner@kernel.org; h=from:subject:message-id; bh=BEN+FFG8DzVJ1Osemg/1oIpG9nJboJMmdJivsCj5HIU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbzl2m8GxdzyqWFy9zImbvUJw/++bl1mUb5tr3zntx5 srjFCG+Zx2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATWfmO4Z/iEqHAqz0XZ2/0 Wq897+Mx8YYDebm3tbSLDXVNjtvLtlsxMiwsrfPROC4gLmD4wtk7pslGyzaXt+mg4mI3Ea1JDy6 L8wIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Convert old text based binding to json schema.
-Changes during conversion:
-- Add a fallback for `microchip,sam9x60-can` as it is compatible with the
-  CAN IP core on `atmel,at91sam9x5-can`.
-- Add the required properties `clock` and `clock-names`, which were
-  missing in the original binding.
-- Update examples and include appropriate file directives to resolve
-  errors identified by `dt_binding_check` and `dtbs_check`.
+On Mon, 18 Nov 2024 09:08:19 +0300, Dan Carpenter wrote:
+> Smatch complains that "ret" is uninitialized on the success path if we
+> don't enter the nested loop at the end of the function.  In real life we
+> will enter that loop so "ret" will be zero.
+> 
+> Generally, I don't endorse silencing static checker warnings but in this
+> case, I think it make sense.
+> 
+> [...]
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
----
-Changes in v3:
-- Modified the commit message with reasons for each change
-- Link to v2: https://lore.kernel.org/r/20241003-can-v2-1-85701d3296dd@microchip.com
+Applied to the vfs-6.14.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.netfs branch should appear in linux-next soon.
 
-Changes in v2:
-- Renamed the title to "Microchip AT91 CAN controller"
-- Removed the unnecessary labels and add clock properties to examples
-- Removed if condition statements and made clock properties as default required properties
-- Link to v1: https://lore.kernel.org/r/20240912-can-v1-1-c5651b1809bb@microchip.com
----
- .../bindings/net/can/atmel,at91sam9263-can.yaml    | 58 ++++++++++++++++++++++
- .../devicetree/bindings/net/can/atmel-can.txt      | 15 ------
- 2 files changed, 58 insertions(+), 15 deletions(-)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-new file mode 100644
-index 000000000000..c818c01a718b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-@@ -0,0 +1,58 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip AT91 CAN Controller
-+
-+maintainers:
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+
-+allOf:
-+  - $ref: can-controller.yaml#
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,at91sam9263-can
-+          - atmel,at91sam9x5-can
-+      - items:
-+          - enum:
-+              - microchip,sam9x60-can
-+          - const: atmel,at91sam9x5-can
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: can_clk
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/at91.h>
-+    can@f000c000 {
-+          compatible = "atmel,at91sam9263-can";
-+          reg = <0xf000c000 0x300>;
-+          interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
-+          clocks = <&pmc PMC_TYPE_PERIPHERAL 12>;
-+          clock-names = "can_clk";
-+    };
-diff --git a/Documentation/devicetree/bindings/net/can/atmel-can.txt b/Documentation/devicetree/bindings/net/can/atmel-can.txt
-deleted file mode 100644
-index 218a3b3eb27e..000000000000
---- a/Documentation/devicetree/bindings/net/can/atmel-can.txt
-+++ /dev/null
-@@ -1,15 +0,0 @@
--* AT91 CAN *
--
--Required properties:
--  - compatible: Should be "atmel,at91sam9263-can", "atmel,at91sam9x5-can" or
--    "microchip,sam9x60-can"
--  - reg: Should contain CAN controller registers location and length
--  - interrupts: Should contain IRQ line for the CAN controller
--
--Example:
--
--	can0: can@f000c000 {
--		compatible = "atmel,at91sam9x5-can";
--		reg = <0xf000c000 0x300>;
--		interrupts = <40 4 5>
--	};
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
----
-base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
-change-id: 20240912-can-8eb7f8e7566d
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@microchip.com>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.netfs
 
+[1/1] netfs: silence an uninitialized variable warning
+      https://git.kernel.org/vfs/vfs/c/574cb560cc1c
 
