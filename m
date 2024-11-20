@@ -1,290 +1,110 @@
-Return-Path: <linux-kernel+bounces-416166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D6F79D414A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:40:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5651F9D412F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1652B2C201
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B850281FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EEA19F424;
-	Wed, 20 Nov 2024 17:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE1619C542;
+	Wed, 20 Nov 2024 17:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O/wq2KL5"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RwksfhdM"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90F13AD20
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D113487BE;
+	Wed, 20 Nov 2024 17:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732123890; cv=none; b=poqlGPhcmWG6QxxmhUoRKTV/v24Yx+X4SctN2Wtl4dPJG5QEFQBYjFHknn3SouAIBaEFajnMb+pKdLTcq8mSXQNVgtJI9Qay7wFkcxOWE0nt2ZiV2t7BHMzciqah6GQ6CqicUMpFslmRQbD8DALTJ8yWJaCB2+NNvBgePEm6nUI=
+	t=1732123972; cv=none; b=gIB4JYtaIchGW4+BKdCbgIrlKtuE8c2yyN+I3pof/bgnZs8CxQ9pFvr75TeFZhn7bNR9sYQIxwkFdyquV/zuSoZxyN4+My+h1LovDNL6KeDa4yyC0C7NbZ8z5rtZ7A/y85i4N7lqsgOo1Y+rhgIQpf7yH9VTeltFJLDPtbgzeJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732123890; c=relaxed/simple;
-	bh=52UlUca83BCJ4bTbpXzo0dcf4hoWvy6v64cKcaFXNeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t+8M61gwEFWQTt+IgEYVr01FSHvSlWloynBgcLsCl2TWyJf5RbQTCLmYVkbSzd7Rq0idqwXbpeTw+XE2ToMkprk3CzQwHwuFbPzIwQr9/2CoPJyvCqwpWDPGR5oj5MybyvWG5d+qaRzdKbrXEEBbv96tTsXyi7a2gMYoGo8U2cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O/wq2KL5; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 17:31:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732123885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tnHduo24AdOoAdI77IZf7s1iLW4IzFa8VA+z+Tg/Y28=;
-	b=O/wq2KL5Z4g46tyl35oMSphCNZCGWzeMbieD+t20CV6A6f2SqjodzFgD/GhtOEJIk3dJk/
-	UKVmbib2LnSuMj/Z2ga8+AMytY/UiXA7lZOwSE88ZuYHRBhzkesDozYmEeBzGudItwH5ST
-	lKzeWILaG+QtwK18R45dAx/ba18969Q=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: James Clark <james.clark@linaro.org>
-Cc: suzuki.poulose@arm.com, coresight@lists.linaro.org,
-	kvmarm@lists.linux.dev, Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Shiqi Liu <shiqiliu@hust.edu.cn>, Fuad Tabba <tabba@google.com>,
-	James Morse <james.morse@arm.com>, Mark Brown <broonie@kernel.org>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 11/12] KVM: arm64: Swap TRFCR on guest switch
-Message-ID: <Zz4c5LmQnK2SD5HO@linux.dev>
-References: <20241112103717.589952-1-james.clark@linaro.org>
- <20241112103717.589952-12-james.clark@linaro.org>
+	s=arc-20240116; t=1732123972; c=relaxed/simple;
+	bh=Ydm7LuOScxlb4wHp+uTbMha1SN4b3rRxDoJYfVZYrLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h9JEUhqIBYdMDD+pNmG8Dr8xUzDDoeabQfSH2utjmCenNJCx11MrC8trQH4LK9ukBV4W3JQgYQ29dJ2zKxOUcNpoaPg4Lw3ulBUNboqdDSEN4//53uWS/RQhGOJI21DMUq56a9vHpr8SNovk2ib5C8CiUo3I7VeYmK1lDxaVE1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RwksfhdM; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso44104a91.0;
+        Wed, 20 Nov 2024 09:32:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732123971; x=1732728771; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G/2Lytn1vm/IYW/jhQDWAPmSMmgq3z2ocN64hCXLvjs=;
+        b=RwksfhdM98kf5mm83DW4JWdg+ol+pnFgrbQBE6EXT4RPSlmIA+lvnCnM5zyo9nKzrN
+         QLhHusoJbesFQmnBAeYXEzb0LXaAQb1+1101m0xWLThh0cOe2iZrLdFwPNB9d8Gagjun
+         hpVmQJ1re9aOeQQvy1pM/f7OtCS8IvEKgQx4foPFm83fOJXUaaX3aen4LY8ESIcWOLz5
+         s0bV+qzjcpA0tznvfiNfXZDL6HhKdB4qMC8y1dD+8mrBCHg7eYnUOTK48xE/LWXbB8Pv
+         BqQdyxgy13VmV+zQ6fuucYXNu1dL2/M4RLt1aIZh5ri0bMQw32YuZrUeBfWJXYN9YyZm
+         2zFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732123971; x=1732728771;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G/2Lytn1vm/IYW/jhQDWAPmSMmgq3z2ocN64hCXLvjs=;
+        b=IAnqPyiVHU2u7QQBNgGXQgftygoLjB7sVe6YxwOkfJZF/fV9mK7yAwnab8t2bR4zxl
+         4U60jljgDNELxmAEvwX2+Kgrmdzf/+YaQjV26Rk+5t4XH/VBz7b+HuJl+rQJp6rkf71J
+         c3rxPCq+2u0WbzwtYg4sn+KTGDFQVuygC17xwneoaXwNVHidi2Q4iPhkjepu8Jemw6Ns
+         Jm1krMT4STPM34ooJbB2Vm6bnxdOu3S4T4314Gt+P36X+Ug2K6dA634OnQyEf4U4zk7l
+         3eXezCgNXCA9ZoqqusUxVYjpYwPBoVqMzBMwDL7cgVNWyk3505h5pZ2iox00/nV2KzPu
+         FwJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOQyIVWFuWSFojKc3o6XblqVaOQifxsxFsJ5UCNp71qKssSjGV0+mIHMqS4m2MWIU430p6WmbZU59qjTqk@vger.kernel.org, AJvYcCVhoGdTsmBAg/u8hJUhZMR9780wRveqD7yySFk+huXbpZiHinxbMD2uULufpmzvHDmL4MERdmGYYvhNcJ8=@vger.kernel.org, AJvYcCXp0VjBa9r3l0SFeaHrtIlq3ywLjpp76r3ZHS/agSnuhLuef+BMnPM2brvif/XUCs+xIb5HswM5ess=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6NHai9rzCqj2qE0b+O+bVo3Qg1ZsNenUbGqqK8CFXsZ1SYPrJ
+	aLxo/AAKhqqo9psNPMPR5cO8jWRwEa/QKgQvZuL72k1cV/dplZWSwqSiu9r0SjyceftCOw264Tx
+	owWhclgO77SBiQt+FRyHcPsCwJDU=
+X-Google-Smtp-Source: AGHT+IHerz1Iuc8dyH4PpuZqIVt7KpLCTN71uXCQnZYztGGh+ZSbOJc6m8Z9MNLoR0+cjQLmDOeC84yAM1gSlvybWL0=
+X-Received: by 2002:a17:90b:4d88:b0:2ea:6f19:1804 with SMTP id
+ 98e67ed59e1d1-2eaca7d0bedmr3911138a91.25.1732123970570; Wed, 20 Nov 2024
+ 09:32:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112103717.589952-12-james.clark@linaro.org>
-X-Migadu-Flow: FLOW_OUT
+References: <20241114-alc287-nitro5-v1-0-72e5bf2275c3@gmail.com>
+ <20241114-alc287-nitro5-v1-1-72e5bf2275c3@gmail.com> <87iksmq8ho.wl-tiwai@suse.de>
+ <CALiyAo=5aLbYEyRWWw7QscTk6cXy5qckHToiPL6h4fKM9=skLg@mail.gmail.com> <87ed387ioq.wl-tiwai@suse.de>
+In-Reply-To: <87ed387ioq.wl-tiwai@suse.de>
+From: Hridesh MG <hridesh699@gmail.com>
+Date: Wed, 20 Nov 2024 23:02:13 +0530
+Message-ID: <CALiyAo=awTsGQnGH5UPB7dF5QsZ2AFkKv5LcJkJRXV9sv51iqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ALSA: hda/realtek: Fix headset mic on Acer Nitro 5
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Stefan Binding <sbinding@opensource.cirrus.com>, Kailang Yang <kailang@realtek.com>, 
+	Simon Trimmer <simont@opensource.cirrus.com>, Joshua Grisham <josh@joshuagrisham.com>, 
+	Richard Fitzgerald <rf@opensource.cirrus.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 12, 2024 at 10:37:10AM +0000, James Clark wrote:
-> +void kvm_set_trfcr(u64 host_trfcr, u64 guest_trfcr)
-> +{
-> +	if (kvm_arm_skip_trace_state())
-> +		return;
-> +
-> +	if (has_vhe())
-> +		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
-> +	else
-> +		if (host_trfcr != guest_trfcr) {
-> +			*host_data_ptr(host_debug_state.trfcr_el1) = guest_trfcr;
+> Is alc_fixup_headset_mode() called by the quirk chain?
+> When this is set up via quirks, alc_update_headset_mode() gets called
+> at initialization and this should detect the headset type.  At that
+> point, alc_headset_mode_ctia() would be called if the proper type gets
+> detected.
 
-Huh? That's going into host_debug_state, which is the dumping grounds
-for *host* context when entering a guest.
+Thanks for pointing me in the right direction, I believe I've managed
+to find the root problem. I've set it up via quirks to call
+alc_update_headset_mode(), when I plug in any earphone,
+alc_determine_headset_type() incorrectly determines that the type is
+OMTP despite it being CTIA (I've confirmed this on a friend's laptop).
+Adding my codec to a case in alc_determine_headset_type() for my codec
+seems to fix this issue.
+After the headset is detected as CTIA, I also had to add my codec to a
+case in alc_headset_mode_ctia() to set the process coefficient to
+0xD689 (as written in my original patch) to finally pick up the mic
+input.
 
-Not sure why we'd stick a *guest* value in there...
-
-> +			host_data_set_flag(HOST_STATE_SWAP_TRFCR);
-> +		} else
-> +			host_data_clear_flag(HOST_STATE_SWAP_TRFCR);
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_set_trfcr);
-
-I have a rather strong distaste for this interface, both with the
-coresight driver and internally with the hypervisor. It'd be better if
-the driver actually told KVM what the *intent* is rather than throwing a
-pile of bits over the fence and forcing KVM to interpret what that
-configuration means.
-
-> +static void __debug_swap_trace(void)
-> +{
-> +	u64 trfcr = read_sysreg_el1(SYS_TRFCR);
-> +
-> +	write_sysreg_el1(*host_data_ptr(host_debug_state.trfcr_el1), SYS_TRFCR);
-> +	*host_data_ptr(host_debug_state.trfcr_el1) = trfcr;
-> +	host_data_set_flag(HOST_STATE_RESTORE_TRFCR);
-> +}
-> +
-
-What if trace is disabled in the guest or in the host? Do we need to
-synchronize when transitioning from an enabled -> disabled state like we
-do today?
-
-I took a stab at this, completely untested of course && punts on
-protected mode. But this is _generally_ how I'd like to see everything
-fit together.
-
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 8bc0ec151684..b4714cece5f0 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -611,7 +611,7 @@ struct cpu_sve_state {
-  */
- struct kvm_host_data {
- #define KVM_HOST_DATA_FLAG_HAS_SPE			0
--#define KVM_HOST_DATA_FLAG_HAS_TRBE			1
-+#define KVM_HOST_DATA_FLAG_HOST_TRBE_ENABLED		1
- #define KVM_HOST_DATA_FLAG_HOST_SVE_ENABLED		2
- #define KVM_HOST_DATA_FLAG_HOST_SME_ENABLED		3
- 	unsigned long flags;
-@@ -659,6 +659,9 @@ struct kvm_host_data {
- 		u64 mdcr_el2;
- 	} host_debug_state;
- 
-+	/* Guest trace filter value */
-+	u64 guest_trfcr_el1;
-+
- 	/* Number of programmable event counters (PMCR_EL0.N) for this CPU */
- 	unsigned int nr_event_counters;
- 
-@@ -1381,6 +1384,8 @@ static inline bool kvm_pmu_counter_deferred(struct perf_event_attr *attr)
- void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr);
- void kvm_clr_pmu_events(u64 clr);
- bool kvm_set_pmuserenr(u64 val);
-+void kvm_enable_trbe(u64 guest_trfcr);
-+void kvm_disable_trbe(void);
- #else
- static inline void kvm_set_pmu_events(u64 set, struct perf_event_attr *attr) {}
- static inline void kvm_clr_pmu_events(u64 clr) {}
-@@ -1388,6 +1393,8 @@ static inline bool kvm_set_pmuserenr(u64 val)
- {
- 	return false;
- }
-+void kvm_enable_trbe(u64 guest_trfcr) {}
-+void kvm_disable_trbe(void) {}
- #endif
- 
- void kvm_vcpu_load_vhe(struct kvm_vcpu *vcpu);
-diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
-index 46dbeabd6833..6ef8d8f4b452 100644
---- a/arch/arm64/kvm/debug.c
-+++ b/arch/arm64/kvm/debug.c
-@@ -72,10 +72,6 @@ void kvm_init_host_debug_data(void)
- 	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_PMSVer_SHIFT) &&
- 	    !(read_sysreg_s(SYS_PMBIDR_EL1) & PMBIDR_EL1_P))
- 		host_data_set_flag(HAS_SPE);
--
--	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_TraceBuffer_SHIFT) &&
--	    !(read_sysreg_s(SYS_TRBIDR_EL1) & TRBIDR_EL1_P))
--		host_data_set_flag(HAS_TRBE);
- }
- 
- /*
-@@ -215,3 +211,27 @@ void kvm_debug_handle_oslar(struct kvm_vcpu *vcpu, u64 val)
- 	kvm_arch_vcpu_load(vcpu, smp_processor_id());
- 	preempt_enable();
- }
-+
-+void kvm_enable_trbe(u64 guest_trfcr)
-+{
-+	if (WARN_ON_ONCE(preemptible()))
-+		return;
-+
-+	if (has_vhe()) {
-+		write_sysreg_s(guest_trfcr, SYS_TRFCR_EL12);
-+		return;
-+	}
-+
-+	*host_data_ptr(guest_trfcr_el1) = guest_trfcr;
-+	host_data_set_flag(HOST_TRBE_ENABLED);
-+}
-+EXPORT_SYMBOL_GPL(kvm_enable_trbe);
-+
-+void kvm_disable_trbe(void)
-+{
-+	if (has_vhe() || WARN_ON_ONCE(preemptible()))
-+		return;
-+
-+	host_data_clear_flag(HOST_TRBE_ENABLED);
-+}
-+EXPORT_SYMBOL_GPL(kvm_disable_trbe);
-diff --git a/arch/arm64/kvm/hyp/nvhe/debug-sr.c b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-index 858bb38e273f..d36cbce75bee 100644
---- a/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-+++ b/arch/arm64/kvm/hyp/nvhe/debug-sr.c
-@@ -51,32 +51,33 @@ static void __debug_restore_spe(u64 pmscr_el1)
- 	write_sysreg_el1(pmscr_el1, SYS_PMSCR);
- }
- 
--static void __debug_save_trace(u64 *trfcr_el1)
-+static void __trace_do_switch(u64 *saved_trfcr, u64 new_trfcr)
- {
--	*trfcr_el1 = 0;
-+	*saved_trfcr = read_sysreg_el1(SYS_TRFCR);
-+	write_sysreg_el1(new_trfcr, SYS_TRFCR);
- 
--	/* Check if the TRBE is enabled */
--	if (!(read_sysreg_s(SYS_TRBLIMITR_EL1) & TRBLIMITR_EL1_E))
-+	/* Nothing left to do if going to an enabled state */
-+	if (new_trfcr)
- 		return;
-+
- 	/*
--	 * Prohibit trace generation while we are in guest.
--	 * Since access to TRFCR_EL1 is trapped, the guest can't
--	 * modify the filtering set by the host.
-+	 * Switching to a context with trace generation disabled. Drain the
-+	 * trace buffer to memory.
- 	 */
--	*trfcr_el1 = read_sysreg_el1(SYS_TRFCR);
--	write_sysreg_el1(0, SYS_TRFCR);
- 	isb();
--	/* Drain the trace buffer to memory */
- 	tsb_csync();
- }
- 
--static void __debug_restore_trace(u64 trfcr_el1)
-+static void __trace_switch_to_guest(void)
- {
--	if (!trfcr_el1)
--		return;
-+	__trace_do_switch(host_data_ptr(host_debug_state.trfcr_el1),
-+			  *host_data_ptr(guest_trfcr_el1));
-+}
- 
--	/* Restore trace filter controls */
--	write_sysreg_el1(trfcr_el1, SYS_TRFCR);
-+static void __trace_switch_to_host(void)
-+{
-+	__trace_do_switch(host_data_ptr(guest_trfcr_el1),
-+			  *host_data_ptr(host_debug_state.trfcr_el1));
- }
- 
- void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
-@@ -84,9 +85,13 @@ void __debug_save_host_buffers_nvhe(struct kvm_vcpu *vcpu)
- 	/* Disable and flush SPE data generation */
- 	if (host_data_test_flag(HAS_SPE))
- 		__debug_save_spe(host_data_ptr(host_debug_state.pmscr_el1));
--	/* Disable and flush Self-Hosted Trace generation */
--	if (host_data_test_flag(HAS_TRBE))
--		__debug_save_trace(host_data_ptr(host_debug_state.trfcr_el1));
-+
-+	/*
-+	 * Switch the trace filter, potentially disabling and flushing trace
-+	 * data generation
-+	 */
-+	if (host_data_test_flag(HOST_TRBE_ENABLED))
-+		__trace_switch_to_guest();
- }
- 
- void __debug_switch_to_guest(struct kvm_vcpu *vcpu)
-@@ -98,8 +103,8 @@ void __debug_restore_host_buffers_nvhe(struct kvm_vcpu *vcpu)
- {
- 	if (host_data_test_flag(HAS_SPE))
- 		__debug_restore_spe(*host_data_ptr(host_debug_state.pmscr_el1));
--	if (host_data_test_flag(HAS_TRBE))
--		__debug_restore_trace(*host_data_ptr(host_debug_state.trfcr_el1));
-+	if (host_data_test_flag(HOST_TRBE_ENABLED))
-+		__trace_switch_to_host();
- }
- 
- void __debug_switch_to_host(struct kvm_vcpu *vcpu)
-
--- 
-Thanks,
-Oliver
+I hope this is a satisfactory approach, if it is not, please let me
+know. I'll make an attempt to understand the cases and process
+coefficients before sending v2.
 
