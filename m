@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-415184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E242E9D3271
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:15:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D22A9D3278
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8109DB23F8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240E9284015
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9378B15666A;
-	Wed, 20 Nov 2024 03:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE333E545;
+	Wed, 20 Nov 2024 03:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hvi3dn/X"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xrVgSRzQ"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02691547D8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D67713C3C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732072536; cv=none; b=jwxiflGAOcXiqDhGeoBQW31qz8Co4nSjP8mRkbAfRcgcK18gD7a4RBoJZspIR+MQxcPr+t2XnY4dnjRWikzUGCVZSTLaVfoQ/1UrKOl1EPR3OatQ69noKOMwVE5FhWuNrnmIP+91gosl0qxByiTh6SIoi7oah5qLs7aqYnxsWhk=
+	t=1732072718; cv=none; b=Zk/fdgaKl8R6w6d91FSQyzCE29cSryv6C0htCzYBkgkhQbAICT6zjlp9jOdAfku1srVb/5ghkLQsSGUxM9NyreZ9AAA2hp6SaXrFhY6jA0wpBOjHnHSa82r9aiV3HXzGlVxO5bj0m2TcFHnFgbJF24SJdcM3kTsIumR49wQln6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732072536; c=relaxed/simple;
-	bh=QYBilDzkSkb1abEzANyeRxgYDytG7KjEI9bskxW5MZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sUtw4OgoLlFsBdi2S/GfkVvQqDounRxnfzLFHIRg7FSnmuQmE4RlViJA/SfEgi9zQGIskBv9HrmuQ9eBJTwvlKwUqhWZL5JkCPRfbJdhnLVixN6e0fUgXahC/iQ3DCmg8Bg4cgfvF9VujDQSX34XGcbtRXozwElQY8fMLp9Trak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Hvi3dn/X; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720c2db824eso1672067b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:15:34 -0800 (PST)
+	s=arc-20240116; t=1732072718; c=relaxed/simple;
+	bh=Y5iAcEh/p6GUVWqFyRVE3fHhBbSXGWG+mm94peOz+vk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dBh/92ORxDUUrQHqbB4B/aYKjediwDD4RFe7dYmY1wwSIznXy7PPaKXahLjF0F56TX2gkoEuATm8fc/IP1eJxjiZbbQglraw8/bJKBYpkbFbZjyyhGBamTE+aI5tRh4MiQDoDnUjSnSSskR/2o1RQoztlz29GxYE0dpoLWcsr2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xrVgSRzQ; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460a8d1a9b7so485421cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:18:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732072534; x=1732677334; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kZSva+QoTVrzF7+bpQWC+3EfbJTYWWaNpUIOffyDhLA=;
-        b=Hvi3dn/XAmTNYe+8vH8ukkVnKxZT+d7BMrNIDTK4D8c7NBzlf8uu38QD5vNpd6mKql
-         wBStoRmb4ecEwfHJIr8A+3k+MwmShhyELPnycSNN1vsvLo4otjzWmmYZumO5xpMLku2F
-         nopBWMSjiXKqyY383d/IXcllHMqh4ktEdrZfA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732072534; x=1732677334;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732072716; x=1732677516; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kZSva+QoTVrzF7+bpQWC+3EfbJTYWWaNpUIOffyDhLA=;
-        b=GWRpY3fQ1K2JlmDosbyNFFsaELlHKCbBUJOWxAAf7zGH5Fo1xMBV+EMhP2FRUB7G/s
-         VBmGcGmqCTk11O0ZWDHMCaWeAMI8Wwvt9qWscLQ75gzzfvjbiVGPtR+rasUQY3b1nVG5
-         JPi+iWQdEasTlcslgsZjIDKjtOtE0gpJVf4eHhMMpcHP+lQxtfJn2JfsKEz2V+gOXOm6
-         Ayl1vmL9ZaBUHE5r02ZqYoFRYhRJRmMRZ3pxCApWow3kC1O/rrYuHcDVW3iWPLYG2bzo
-         jUBB7XN4Gridy7kvYsi3sWwxqLhv5tGJlqtVq4tb8Cffw6PMSHIPyygGFHqe2BvBjHvH
-         r3fw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3aTcUkdo0mLa+HPJDA4GWmImJ7ZSciQXAgSSxDxHLwml18CJTpbAEXc3Au+NKpkpzmItFc/qg0C1SvZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztE6bSZfW5OS75jR+uzc9sG9zh26yS+4SMfiVerQVHCI28kabH
-	Cje9pFN+LQxTwf40f/3iKe1o20g9e3unZ3vUIh5WjH+1nczWFSRUsdGidvGekA==
-X-Google-Smtp-Source: AGHT+IFoBDOvjfjxm45eiDb4JEPWT0CGtuUdJ+ZNfMLgP5G2wdqCKEPQK923zWmyBPd4CEQnJkbjkg==
-X-Received: by 2002:a17:902:fc8e:b0:212:3f13:d4d5 with SMTP id d9443c01a7336-2126c11226amr11032255ad.27.1732072534058;
-        Tue, 19 Nov 2024 19:15:34 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:5534:f54c:1465:9438])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21232eabc04sm37897005ad.155.2024.11.19.19.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 19:15:33 -0800 (PST)
-Date: Wed, 20 Nov 2024 12:15:29 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Alexey Romanov <avromanov@salutedevices.com>
-Cc: minchan@kernel.org, senozhatsky@chromium.org, axboe@kernel.dk,
-	terrelln@fb.com, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, kernel@salutedevices.com
-Subject: Re: [PATCH v1 0/3] zram: introduce crypto-backend api
-Message-ID: <20241120031529.GD2668855@google.com>
-References: <20241119122713.3294173-1-avromanov@salutedevices.com>
+        bh=xLNS5mXE4yKiuRP3UvcA6K7o1TitY+2Wc0SGKWDFnkM=;
+        b=xrVgSRzQG9KkJh6FnMKdPQ35DtL7qRbXF9dwLUtKhKCaAuagC6umO6AF7dFz7xNDmC
+         d1nztT+GGYM5FQH8X8bh+VWI+2ag1IJdRStndZDCigPktqofy6xEWBuCE7pZqlhNL/n6
+         1R6VwXSRwTG1iRuIIngNKS+ItxAXr/l6rr0/P0uce1xO9X2wqgucxH1jWVr5lhfd5Pn/
+         JNDulDrQ531prAlG9RDA3XQ1XyZipkoKqd16Xo86IWW2ijmDzaweOuaT7ka6SosJtEHB
+         3wclgam5RdkGeQHLpuUxPSpffiG87xGfPWgIkYH3bhwIA9bMDCnkFDrdwA4ML8L9F2H9
+         tSmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732072716; x=1732677516;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xLNS5mXE4yKiuRP3UvcA6K7o1TitY+2Wc0SGKWDFnkM=;
+        b=Et1lFt/9+dy/yFzs7xKCN5Cxvmo6USb+4qplTYH45Gh/eLGFu4tOq8GVweklythn79
+         jh8/XGMIwwc85D4l0p2WMLhkILBw+WTxCRwUw4NMcwwNYdK7HBTRKEK+3e38dTKi81zA
+         QnN1TA2hMunpQJRa55BiHSo/xBVb/3NPKmkupSJI2zCJ0K6kQ2Rn+jRPSwaM3VKNDoGg
+         h6gNRnkZpViYf6ubjEZy8sneW03U3zS0sCXIy38EoT0X26xjwnVwlv6/PdrJ4Psa8TtW
+         v3VbMgPDZQ0O+/4VSAfKokl1aUdxRDH65Wd1LcVCZaqSjJc0qoOJA0u6HlyLQzTHsbgC
+         FBrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVLpz89ghenacxpFec9H0JIotQLD8vzXsI+iCdEzGzdqmxEsDRXnVghpjxWMmjpJoA+rnS1gyEO0t53pw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+HkKAMJxpLJB5NWesRv4Far0m46s6SAQNBtt6E7kK/IQVdiLl
+	R2eZEs+QWMWaxYuDypHpTYaxrpD9zNx8nX6Dqal6iffJ07OEKZDPzwxHJ+/1+HYF91xuRXt3vgn
+	Ii1KzBEDtQRReX5imSmFuUxbbgupX3lexMrmIIbWXdF/HHvL9t41V
+X-Gm-Gg: ASbGncvrOEd3eAC3rhW3WqgVGIJmQttwRv64Ck7KRGoGZon3NHYuZX43tX4Ivtqzh9e
+	ckfwm66hEMWgc30C48iNZs0ZY1jiJOq4=
+X-Google-Smtp-Source: AGHT+IEdVF4YrymO4+9+6+8Skpx97z2ulHzsS9qFr14E2c/0VfGgfPXk0T64dSj05tEVBQXctcNHYqV7h9HBODjbJus=
+X-Received: by 2002:a05:622a:4209:b0:462:1db:549 with SMTP id
+ d75a77b69052e-464268faba6mr1984871cf.8.1732072715456; Tue, 19 Nov 2024
+ 19:18:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119122713.3294173-1-avromanov@salutedevices.com>
+References: <20241028111058.4419a9ed@canb.auug.org.au> <20241120120124.03f09ac5@canb.auug.org.au>
+ <CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com> <20241120135717.2be629ee@canb.auug.org.au>
+In-Reply-To: <20241120135717.2be629ee@canb.auug.org.au>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 19 Nov 2024 19:18:24 -0800
+Message-ID: <CAJuCfpH5GyeqZeao+Muzi3cAgVUKjkzkxBR-GqLF3huw1b-ZEw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the mm tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/11/19 15:27), Alexey Romanov wrote:
-> Since we use custom backend implementation, we remove the ability
-> for users to use algorithms from crypto backend. This breaks
-> backward compatibility, user doesn't necessarily use one of the
-> algorithms from "custom" backends defined in zram folder.
+On Tue, Nov 19, 2024 at 6:57=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi Suren,
+>
+> On Tue, 19 Nov 2024 17:09:46 -0800 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+> >
+> > Let me try to manually apply it to Linus' ToT and will send a replaceme=
+nt patch.
+>
+> Please don't.  Andrew will tell Linus about the conflict (he has done,
+> I think) and Linus will just fix it up when he merges the mm-stable
+> tree.
 
-Sorry, no, we are not adding this for a hypothetical scenario.
+Sounds good.
+I attached the promised patch in my previous reply but I guess it
+won't be needed.
 
-> For example, he can use some driver with hardware compression support.
-
-Such as?  Pretty much all H/W compression modules (I'm aware of)
-that people use with zram are out-of-tree.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
