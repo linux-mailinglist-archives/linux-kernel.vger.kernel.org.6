@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-415232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9DB79D332C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:36:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C61A9D3334
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 06:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F836283345
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:36:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2BE81F23750
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7710415747D;
-	Wed, 20 Nov 2024 05:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C24F157466;
+	Wed, 20 Nov 2024 05:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEHpUqMF"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6q6eqyE"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A17156669;
-	Wed, 20 Nov 2024 05:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496A71547FD;
+	Wed, 20 Nov 2024 05:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732080976; cv=none; b=GwfcmqIjAmAa9YcHj4O/6c8y9JbvtVXlNUJ89E2nt/hg6LYxMMmjV0skgoP4UdYQvxMqBBwh8dHWlZVTst4Po7Cwp2JMD53SjH9E9OOJKssuYwrzkifbnjDsbwlmABNivzruOqLWHl6qWX8Eqo+owjC371ol/i4YMx8nQ7qIgqk=
+	t=1732081240; cv=none; b=Z67ue+vvF5zx5bM99cQezuhXYBDC+zi0heNXyVCV3K/wBr1k+JBsXg4PXBPPDj33tjZM+RfVg+zTnhYU+WQKgiPLN+BKGRf4qZ4HrQ09E3GLiLdAFXY51myPziKGZ0UK2DaZUk6d2iNoQbYjCy1oge2NKNFWBumZHfMaBcVS7JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732080976; c=relaxed/simple;
-	bh=3mq5+iqMIwmAGAbAOZ3WJy+zC/nZcG1A/YxkXZxMR4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IRkmQ8xiClJLGwjwGuEfTYgSPFHaz/RkqPntWwNuBD6t8h/LEoWMLhuwSuUT3W0YRelIzB3Na/qpeo+JDtPlbQTwp5Cw8dLvwwlB5swW+J1NwcFSs6/1yVDqw6s1t8MzDCHz7Oi/VT6bKoALTEarZ6yyfpnq6dyF5A5Ua6UAzVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEHpUqMF; arc=none smtp.client-ip=209.85.210.47
+	s=arc-20240116; t=1732081240; c=relaxed/simple;
+	bh=NZX7EJEftC8ogdSNUbqlqxEm7+iQXkYv8nzBOlRv0z0=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=NBMpyTrV3PKu13vts8D+dkIKBIDStyPUxY/LDZxSak6+yKLdkbcw3eiVLknY+N+nI1+HdDVzQiFW1iTT8kilcBvk1maAd/4Rn57rHvKXUTXqLs/w17hWmQKEPSi39jLf+P3YawqKDeWj3ZTo4odc6qvHxB7emqnJJg95Bglfe58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6q6eqyE; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7181eb9ad46so999034a34.1;
-        Tue, 19 Nov 2024 21:36:15 -0800 (PST)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7f43259d220so2795987a12.3;
+        Tue, 19 Nov 2024 21:40:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732080974; x=1732685774; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRwcqVhrMWWtuyE+OLPL5NHoUdOo/BxzRoMgxzXnrkA=;
-        b=LEHpUqMFcUGVu14pwjTdnRteTdwXYYBTQIVhK5wXbWEDFhgconjzrRktpWf3OEABsa
-         yK+pOHhBe+T7vwMAa+pbMlcrKrrPe6jCeFXA+b1AkvYAjN+hRjt8zgCHzk0lG8v9L14T
-         6Mf9nWh1rShaW1nOP2yfsoZTYAMVpCAFjtZaq0BvK1c8/IiSIavhAppjjBks47Dfxy8+
-         RLcVThWV5J3KIY2TigtJLPar1pnuqXd5heCvdPz77+8pmtgGLvQqt9ub4ggLqmSqXoI3
-         ZKevqOsCJhiUl1X8t/hkRzNAtXM8JhTvDs8sOs5pb/ZHyPN1Th83WM0J69B11mntFOU8
-         p4cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732080974; x=1732685774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732081238; x=1732686038; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:cc:to:content-language:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xRwcqVhrMWWtuyE+OLPL5NHoUdOo/BxzRoMgxzXnrkA=;
-        b=loBma73rctN+Q+cxyiPm0oPPQroPrAgmWrRJxqVhF3xdzdAEvTK26a05o6IaTbiS45
-         9qLn3ex0FC6jLrmolWrf2s6qNobTpO3QwgYxVt7EclroCQqiz2W6b6s2aIMifbxXe7+H
-         tk0unHc4k5WasXUa5ulBdI8QJe0HvClRPkNvERvRBuG/RWWbcQj8OL+qEdqCTB3aQcZK
-         fcRKWJXx5qFIn2RrcRBn20R4oLJ3zCop77xmFUfIQHz0WNrxy8U7UeV8V2bO61FHJV8U
-         mCjqUx7916DBpoON9A8KBPiTTG78CFGKvP16urp6oVpGCvSVE3LI5vSxH4VlgXgNMKA5
-         t2Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNu0MA86Qv4Zb1uOTAJGe5LHDPopGylqvY2j6qZZnSwlhjLV2hkye8GDKhag6fOBZW+XPL3RGcEJFEIQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTRao7IKpp9A9YzM2abbF/5viEMyR8Q+tyhVlDpdgRrSYhvTFo
-	oW3L7xXac5PTEJaNfwoDce5BaVSdWD+05tQElqIYZ3CuzwF4mG3/
-X-Google-Smtp-Source: AGHT+IEINX116vl4gIhEO+YETzlb+ZEQU0ZOmoguc1OJHWnXur7CYB6qLK517Onlg3HZrRiY5MLnfw==
-X-Received: by 2002:a9d:7b54:0:b0:70f:7123:1f34 with SMTP id 46e09a7af769-71ab3216af2mr1408427a34.30.1732080974485;
-        Tue, 19 Nov 2024 21:36:14 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:4fd4:a79d:4d7b:917f])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c3224asm8639311a12.29.2024.11.19.21.36.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 21:36:14 -0800 (PST)
-Date: Tue, 19 Nov 2024 21:36:11 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, linux-input@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 06/15] Input: sun4i-lradc-keys - don't include
- 'pm_wakeup.h' directly
-Message-ID: <Zz11SwzIYTgkgbty@google.com>
-References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
- <20241118072917.3853-7-wsa+renesas@sang-engineering.com>
+        bh=49ldDJo3N8z4og68gIqgA/slR0RHXRgXwRCuFS38v0c=;
+        b=g6q6eqyEeyGTIQXCpiuFnqmBzYIt+g8KWKj7VfK6XbtXEItrFhEiUyrFh3gL2Anviz
+         yAxDnWTpAuTNoiGdlaLferDX/JOA53IxXBiPaeGSkPr3xAhgSk5m5Qt81wnPabtl3qYs
+         8ASVfHFx8XBY5GUtAKKm0JJMtelLWf9z4V8py263TGxeMzwq9w3fXCwQzCGkatRxTSqF
+         5phYlP+LliybKyadsiV560syQikLbg8FtRwNbTkPQFAvpFQRuwqQoiyprL8Jz9D/812D
+         vhokt2j6ZJRVlp1rxDIEAUc1lR6LprtX1kINhOGZM+BDUqFQzHpS/wW7aQbWMZ8KF/F3
+         NdMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732081238; x=1732686038;
+        h=content-transfer-encoding:subject:cc:to:content-language:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=49ldDJo3N8z4og68gIqgA/slR0RHXRgXwRCuFS38v0c=;
+        b=CX8TnJiQ3/J07X2X6SiKlV8nLpQFXMvYaTn+tmceghI3UVP4/FNT35TSxvGGEZESN3
+         Hdv+ydQcsAWyPxqy3eFIhfXIG8dO12tm563KEmAN230mduqLfWES0TPfpWDOzsVtRWRG
+         HhiK1BU2auyWgO+qITpEix0DfFTjVsaf4PZfLlf7Or8rBLb5fktnS70cUZ0yorHzNuiI
+         fQihzhb0xXfSubvhdQMlDudabF+sRVb0Y/c35gCauFlP8K4qwSzce8h2qt6c6oLuQmqc
+         Zoo+OHIzdcRPzSZVEh+/dMuDSQ8tTdl2OGZbufOf4zvx+hEkzxQ0TUf7uJt5wfaFhjTQ
+         +mqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4wZEMUgSVILaYuD8tOcTfU9x/3dNRW9v3zU4gK2YUZxB2FE9Q9LqsGieWXxKzC8+kwqvC1sGfZGc3cds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmIP++cdB5yRkRQ+w7aW8/6TUlGOKG/FNLbmarg+QrfNSfdzGe
+	5ny9SIdHQOeownjBI6P+mz82wQASXNHuJR3TvjR+7SeDqBkshsUA
+X-Google-Smtp-Source: AGHT+IG31LJq2bi3QnR5bKoafknw+rirBINa2huhIzbNN7UNJ1r6TTupybhgqrYR4YKxnchSEkCH2A==
+X-Received: by 2002:a05:6a20:8402:b0:1dc:32a:d409 with SMTP id adf61e73a8af0-1ddb0433d90mr2589292637.39.1732081238451;
+        Tue, 19 Nov 2024 21:40:38 -0800 (PST)
+Received: from [10.193.178.64] ([124.127.236.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2125fa8dddcsm14406445ad.264.2024.11.19.21.40.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 21:40:38 -0800 (PST)
+Message-ID: <0c04e4ea-b900-4476-abc9-6b57e5c26e43@gmail.com>
+Date: Wed, 20 Nov 2024 13:40:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118072917.3853-7-wsa+renesas@sang-engineering.com>
+User-Agent: Mozilla Thunderbird
+From: ZhengYuan Huang <gality369@gmail.com>
+Content-Language: en-US
+To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ baijiaju@buaa.edu.cn
+Subject: [BUG] fs/eventfd: Possible undefined behavior about read and eventfd
+ interaction
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024 at 08:29:05AM +0100, Wolfram Sang wrote:
-> The header clearly states that it does not want to be included directly,
-> only via 'device.h'. 'platform_device.h' works equally well. Remove the
-> direct inclusion.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello,
 
-Applied, thank you.
+Our dynamic analysis tool has encountered a potential issue with the
+interaction between read and eventfd. Below is a minimal code snippet
+to reproduce the behavior:
 
--- 
-Dmitry
+int main() {
+  int fd = syscall(__NR_eventfd, 1);
+  int ret = syscall(__NR_read, fd, 0x000fffffffffffff, 8);
+  assert(ret == -1); // invalid address
+  long value;
+  int ret2 = syscall(__NR_read, fd, &value, 8);
+  assert(0); // never reached here
+  return 0;
+}
+
+When read is called with an eventfd file descriptor and an invalid 
+address as the second argument, it fails and correctly returns an 
+"invalid address" error. However, the second read syscall does not 
+proceed; instead, it blocks indefinitely. This suggests that the 
+counter in the eventfd object is consumed by the first read syscall, 
+despite its failure.
+
+I could not find any explanation for this behavior in the man pages 
+or the source code. Could you clarify if this behavior is expected, 
+or might it be a bug?
+
+Thank you for your time and assistance. Please let me know if 
+further details or additional reproducer information are needed.
+
+Best wishes,
+ZhengYuan Huang
 
