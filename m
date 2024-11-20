@@ -1,292 +1,583 @@
-Return-Path: <linux-kernel+bounces-416428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A63359D44AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:49:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4BA9D4441
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1C81F2243A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:49:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10466B213EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71041C8767;
-	Wed, 20 Nov 2024 23:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EE21586C8;
+	Wed, 20 Nov 2024 23:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="LHacp10L";
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ZfxUDpG+";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="UeeOLjKN"
-Received: from mx0b-00230701.pphosted.com (mx0b-00230701.pphosted.com [148.163.158.9])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YAk6I8zN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vXqrLVxI"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6631BC9ED;
-	Wed, 20 Nov 2024 23:48:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732146540; cv=fail; b=D1GIyLXK+5eg+zWb/yf5Dq/h3UBzz0lFUvNlQT0cSl8xacvq1LqgW/nrkFQsDBzR2RkkP8Nr1yKkex5SsAUMv/TpVq41/k5lMKqemQ6FnjpUoq43LVe7zimkB+TE+uCQa8i5WehyAwFEMNLj0SqJCW9LOU2oORPycXZGthJeuKc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732146540; c=relaxed/simple;
-	bh=JP6g0f3Ft4zp5vsLcUiqPvQXhsKHK4vU+dYQfd4nTbk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=chgrzdH814gG48yi7h7UNccZDlXDtkK/KcC5x/iz8wwmbgCea7BFqNqBwY9bPJS4lpCMlydk2R4ujxy4YVAj5fKBdjonSDF2pHsl8RNW1yNZAJgzHf65xhk++z+Ci5sNWJ/UGms+rH3HtuvurLgh5H3+U6jaFpzg4JcSZ3tysr0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com; spf=pass smtp.mailfrom=synopsys.com; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=LHacp10L; dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=ZfxUDpG+; dkim=fail (1024-bit key) header.d=synopsys.com header.i=@synopsys.com header.b=UeeOLjKN reason="signature verification failed"; arc=fail smtp.client-ip=148.163.158.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synopsys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synopsys.com
-Received: from pps.filterd (m0297265.ppops.net [127.0.0.1])
-	by mx0a-00230701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKGHwHx026901;
-	Wed, 20 Nov 2024 15:00:37 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com; h=
-	cc:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pfptdkimsnps; bh=JP6g0f3Ft4zp5vsLcUiqPvQXhsKHK4vU+dYQfd4nTbk=; b=
-	LHacp10LJUpCVPXyagtMzI7LpLe72WlJMZJJjEMWgL8G/W5JW2AGVwp8oSRMssu3
-	oyZOUEzgkd9b1ZrM7Q7XbhNqQF+YynhdukiB2JtLKCcxMSkd5mG/nB729zYQBINv
-	gs8vu1lHKQDvw9G785trZ1cw2NJX+W3ELmf9YJedj/1VjpY/ifu9G22hs2CQSzhl
-	i2P3T/6z07bRCEvHkdfhN59ky5Ja52m8fCoOp2Hlrj2zoxfLamqvTZzw4Uy3AMTn
-	f+lGCQpLFT4dBwItOoelU/HxDumQKBWUSsFO1cXg9ivhceG6WMv+GfDiiN2e4NIr
-	oAkmWBeUP4T6ccrWoyyrVg==
-Received: from smtprelay-out1.synopsys.com (smtprelay-out1.synopsys.com [149.117.87.133])
-	by mx0a-00230701.pphosted.com (PPS) with ESMTPS id 42xu6y5g5w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 15:00:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-	t=1732143635; bh=JP6g0f3Ft4zp5vsLcUiqPvQXhsKHK4vU+dYQfd4nTbk=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=ZfxUDpG+Q4D/St2WGzAb0A+DkZ7IGWYicCUYrsTC+ATubk70bcEKTc5j2FOHN4coY
-	 evDZWWA17RyC4+yalSrVcmcr8fS2dXnW/W4IJunLL8bykpjOwDxlhHQnckXouTeYyd
-	 G+MUi/iNjh+zX6sXS2IEcF7VKQd3fCTytcKPn1zA+omTJd5g9b8u5/mL/ImkAUAPo3
-	 56oJndoTyL7f884sYHpj5p8jJTy8YJ4i+G04OV9XAD/4RhRkAKPSbJauOHpd1RvKDT
-	 6o/crqDsWKdkna0UYlVJp5BQPfaWdaHuOdWI63iFLc0h+ZWJLqUbPGfgqFTRsvqQZI
-	 C1L2JIhBIsg8g==
-Received: from mailhost.synopsys.com (us03-mailhost2.synopsys.com [10.4.17.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits)
-	 client-signature RSA-PSS (2048 bits))
-	(Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-	by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id C440D40144;
-	Wed, 20 Nov 2024 23:00:33 +0000 (UTC)
-Received: from o365relay-in.synopsys.com (us03-o365relay3.synopsys.com [10.4.161.139])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(Client CN "o365relay-in.synopsys.com", Issuer "Entrust Certification Authority - L1K" (not verified))
-	by mailhost.synopsys.com (Postfix) with ESMTPS id 4506FA008F;
-	Wed, 20 Nov 2024 23:00:32 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-	dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.a=rsa-sha256 header.s=selector1 header.b=UeeOLjKN;
-	dkim-atps=neutral
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2048.outbound.protection.outlook.com [104.47.56.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-	by o365relay-in.synopsys.com (Postfix) with ESMTPS id 00EFD40112;
-	Wed, 20 Nov 2024 23:00:31 +0000 (UTC)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w9YLygThVGcYOGgRP8uIIjdAlsg/MwYWXk50v4xNpmWDVoaRqcU4dAnL8DOzkXoovZ+UcjEdVn6v3bap8oRUscKFhR4ASS6nRZAMFU5w2UNRYVbM/44oArAJqyKIqhmQnW0YWR1mK80scMFvyoFCz4pbOanYiR8fmKqW9q8MB1QH9E7VzDkSlqnH5dSzKPe4PbxJhz5alphTeIH+J9CZlMWrKggr+SlVSLCnlNE3SsqDxh9PSxPRcDYuy7N1rckv0vSIS6IBB2JEJUgVIh6emeMeE6TbORUwHltzLgyWcWwITF8d6sekRhAHyU/ox3ArYcYCaMF9h1x0PEK1FjsUug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JP6g0f3Ft4zp5vsLcUiqPvQXhsKHK4vU+dYQfd4nTbk=;
- b=SWt94whXqLwNemFPeXjuFz8p0CyckJbJ63zYTxDntNqdP0CVLhqoEPazhlrwU9jSkotsJh9enj2fQh6Cg9Y7DHqBqn1LDnr4s3Sp0x51tPziIzitoDrgqWIzfWvZCHBJjwb/hJO/llU0RjdoKKDxjqDXw0dPsfxW2id+V8LDD3KW9WL+z2S9lVbDdV80XfoSGyaWsQCM/QRVML/XTEBfYqmlZnzfFyL7W4MF02hhO/0EzCgi8leUSLFMntzf6RkbyMvhrUTIXiQk/PZycmqTsgyrKTPK7KrkI9opLaF0bDnNlOYjU425Np8m6K8V85DJHyMYgEAxIsZ2BQWHAtD+wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JP6g0f3Ft4zp5vsLcUiqPvQXhsKHK4vU+dYQfd4nTbk=;
- b=UeeOLjKNZqv3F5eJRtXL0iltNTWL6KrP6XNRtSTPE72m6vLJrbmkXx9oTag0FEiuvPKYDwCPJYcOLKGy1vw/KdPmEf9bwCw+AD/4Q+MqcYzGC8OrmP1z5w5cWbhDInCx/+pX6k2MY96lbkOKHUAjYvukjTe1ezqKZ/ZHrej83XM=
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16)
- by CH3PR12MB7500.namprd12.prod.outlook.com (2603:10b6:610:148::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
- 2024 23:00:27 +0000
-Received: from LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8]) by LV2PR12MB5990.namprd12.prod.outlook.com
- ([fe80::3d09:f15f:d888:33a8%4]) with mapi id 15.20.8182.013; Wed, 20 Nov 2024
- 23:00:26 +0000
-X-SNPS-Relay: synopsys.com
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-To: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "rbm@suse.com" <rbm@suse.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel-mentees@lists.linuxfoundation.org" <linux-kernel-mentees@lists.linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v4] usb: dwc3: remove unused sg struct member
-Thread-Topic: [PATCH v4] usb: dwc3: remove unused sg struct member
-Thread-Index: AQHbO2Ngz1EJpIKD/EKg7hKCJ2IoDbLAyS6A
-Date: Wed, 20 Nov 2024 23:00:26 +0000
-Message-ID: <20241120230023.jb6s5yfyng3dlgpr@synopsys.com>
-References: <20241120154604.51815-1-luis.hernandez093@gmail.com>
-In-Reply-To: <20241120154604.51815-1-luis.hernandez093@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: LV2PR12MB5990:EE_|CH3PR12MB7500:EE_
-x-ms-office365-filtering-correlation-id: 18ffabd8-ffca-4787-8f6a-08dd09b71f2e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NmN4TmJjZ0NWdVFNU3lLRHh5dC91YzczWnlkaVVJcGQza3RqckN3TVRESmRC?=
- =?utf-8?B?dE9qNGJBUHhPOS9MLzFrOHFLODdaOVd4L3pEeXQ1NHFjR3FES2VvN2FSVVM1?=
- =?utf-8?B?dUV6Z3BsTUJQTWFUeHZaYWp3U2N3UEVDN2VFYzNFbGZmRTZIcWE0dGkwanBv?=
- =?utf-8?B?b3QvMEVVV2huSnNmTGxEV2lVMkFsZmlqamZvV0RBUXFicUE5TjZkTGhRNnZw?=
- =?utf-8?B?RnpXZDRTT3F1dVRHb1hoS0RRMzdtNm51a1orZVVDdWwrUVpqRytkUzUxaEpT?=
- =?utf-8?B?WkUzVE1DOFdxYyt6ZHpJbzVBQTNKQTR1QlpyelcxclMzMDR4aEFXS3RtOG1o?=
- =?utf-8?B?TWVBdE9RSzJNVDlFR1NoYnAxT1FmN2dzUTZmNWJIbGlUdDlUdVg3MWp2Mk5t?=
- =?utf-8?B?V2pHUFIwVnI0Mms2K1VGMDlOdk84VE4rTmhBSmxuR0FDek9nSjZmb3lTbUZQ?=
- =?utf-8?B?NEtTa3lFSUhCZ3ZXN2tjMEJUVHM1Vis1KzRyVm9NbDJDZmRGbVNRbFRNK2tK?=
- =?utf-8?B?SFllcWdPUkRtYnJlMUR4VEZPd2tRbGYwMkl5Y1FtazZNME5DdXZweXo2UWVW?=
- =?utf-8?B?SkJlM2UvVC9mZk1tcnRHSWM4OUZNc0Z6M0ltcXVhcm01STdraDNRTElBQnpV?=
- =?utf-8?B?NUpteEdXbW1xU2NRS3Z5bGxTVm85MnFzOE1ZNy9sQkZ1aHN6c1NvSmtZUzgv?=
- =?utf-8?B?Q3o1bENhV3RQK1JmQU9ncmxaVUxGWitiaFVqZ0dRQU05QW4wcDd4MVZoUWo4?=
- =?utf-8?B?QmgvTzRxNStQSllGOFp0QStpMjdBUm8wcUNqZzkwS0tLaldScTR4L2ZuQTl1?=
- =?utf-8?B?VTZJaGlmK1p2RUdacXhOaDBBd3d1ZjcvODFjZ3M2c3k4RFNReFZ5WGkyTU1V?=
- =?utf-8?B?bjZKZVJhS0h2Z1pRTVpSY1dWbXlGSXRENytHUUFaa2xlbEw0eHlkR1FxTzd3?=
- =?utf-8?B?TEpsVzJyUW41TDFHU1QrMS9xNForVHpwMS9HcER1M0ZRak1SeDdIQVBIWTcx?=
- =?utf-8?B?bHhmc0ZuTnVUbm81ZWgraWw1cmtGQTRGam1WWFpaZFBxSklWT1Z0MGZUVWV4?=
- =?utf-8?B?T3Y5S2ttbXNDcCtzbnNuTEwyQXVNZGZ6L1RERm5PS045ZmFvMTR3bzV6NUpj?=
- =?utf-8?B?L0xaamtwRkhHdDcwWXNOZnFxOXN4Tlo0eENWZ01aS0lvK283bk0vTUlMSFpy?=
- =?utf-8?B?Ty9oRU0rMk5WK1pLODFFUjlTVjBjTDNISUhCbmx0Nm9hU05iWEpNank0ekJL?=
- =?utf-8?B?VFF6dDcrUm1yMFFlSjg4UXVqdHh6SzMzNTVxa2lpVTE1QS9DM080aUt2TFVn?=
- =?utf-8?B?ditxL25KNzNJOTRhOE9oVG11d3dveVUrYmtoWXg2bHJLQ0ZBVHdEdVk3azFI?=
- =?utf-8?B?djNqR1JEdEw3ZFFrRUNhT2ZoYnU3VnpOWHJXMnJLMmZ0aVpoQzRSc1JZUWZi?=
- =?utf-8?B?VU5zcDRuaGJkMzBtcWpNQVpsbnRoUUhjMHA3d0QwenRYSXNyUExHUkxkVFF0?=
- =?utf-8?B?WHYvSk1kNkpRSFJrbzlnQVRNMGs0Zks0WG5ZMm5CVk85NVhqL1o4U3Y4a3d0?=
- =?utf-8?B?eTFaWlMvTHlyQW41QnE2S1Y1cUZadXBQVWM5RGRxRDBRYVowVUd3KzZDcGhX?=
- =?utf-8?B?aC8ybmF5NUp5OFdPVDNXRnJaMGRKZXRBVkhIYjk2RlZEN2RsbmdaUkpTQTMy?=
- =?utf-8?B?bEJYakRpeU1pTnR3YmtnR3JSSU84YmZqcGVCcUdyRHRuQVFTNEREbDY3THh2?=
- =?utf-8?Q?BsGRlfSjrrokgv6+qf+f/4fDN+P7r8NeCl0aDUz?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MnZxZEw4VG9ZM01GdEFpMGNKYlhaVXA5K0JZWU1sTUE0R05FalJVUXlhWC8r?=
- =?utf-8?B?cW0zcTdBeE9BOWRxbW40L0V5TlEwdzlqYW9PUDN6MFkvU1hobVBna3BZZ0Y2?=
- =?utf-8?B?UkJXY1NEeHVjQ3hrK3ZMMUZNTmNRTDhUOERUYXk1ZmU2NlhHWUVqMzRsWW8x?=
- =?utf-8?B?aU1NNjUrSkg0SEh3bU9MNDMxbVpVcHVoT2VER1kzSmpDRUV5a1BSa0NtL2hu?=
- =?utf-8?B?M1cyZm5QL0djRnB6MHk1VytpZnRmTStaUCtTdXBvcWNPS0VUZGtSMkpJdlZu?=
- =?utf-8?B?NVh6a1VVYkJ1djRuN20wWlVJblNnMnNMV3BLVVJUOGRDK1B2RFdDMlZhdExh?=
- =?utf-8?B?S1JEMWtGQlFHTkE4UWttUzRLdm5ZdzVGZWZKRzhoVDh6ai94Nk4xcCtwS2Vi?=
- =?utf-8?B?ZDkwVXk3S1gzYk1UNXZNeVpmcUE1R1lVRUpOS3d1MG9KRVFpd1RST0d4STd1?=
- =?utf-8?B?NkJSa1dhNU54UFFWT0tXYnlzTjRoK0Zjb2trNGt2Z2F1NkQ5eHgzVitKdXd3?=
- =?utf-8?B?RkM5dTJ5ZEV2MWFEaVQvM2x0QU5IeDVDVjBPSFhGRWZ0ZW5hcTI3dDlLcTNU?=
- =?utf-8?B?NnluU3BWVXc0U0pMV3k3QklOT1djSUZSeVdrdnYxNnpWd0NVYW9rc0lwTTFh?=
- =?utf-8?B?bDZXemtPTGdGUVoyTzNlSEg3am9BWjJGSUZiVXp3Rmk4L0dyUDV6ZUh5K2pF?=
- =?utf-8?B?Y3pIclcrRDVlQU1pOVc2aTUzVHZoSmhrUWM2SXJBV3VLQ0xaRnREb1dlMi8z?=
- =?utf-8?B?ank5QmdKbGNqdE5RMm1EMjQyQmtzMGo0elphcFNLR0FqVHUrRUMrc014SGNK?=
- =?utf-8?B?YTZSL1oxbWZxUjV1ZDNGQTdMK3BzOGhYaDArTUxTd2dqSW1BL25ybkR3ZXRq?=
- =?utf-8?B?c0Z5S2F2QlR3Ym0yeE9mM093YWtEMWQ5SjhFeEVHdGZNTDA3VEcvSzlubjV4?=
- =?utf-8?B?UFdOV0dFNDMvMVc0allSUUQ1NGd5M0cvMUNJNVlwNzJwcUM0R1BlWWtlbUlJ?=
- =?utf-8?B?ekpaNUNCK2hBM29kUU5wclV2YWo2cG1IRzBqL3lzZ2NSbjZVVHgvbjV1WnNN?=
- =?utf-8?B?b1U4b09pVFJwZVZKcngrZTNQSG9rNkpTN2p1YU96VGVNV0tBYUdnQ0NHUXV3?=
- =?utf-8?B?T1YxWmlkUkNsOW90dUE0aWdaeUJTZmM2bFpXR2JpMGM5WkkzeUczRnd2bmZF?=
- =?utf-8?B?WXRxK3dYVUFkcVo3WTcvb2U3bUdpenJ5OXZCUGlTSHJORGpJUW4yTk9GYmRi?=
- =?utf-8?B?YXdNVnozZ1ZlQlUvOU51bWlXQngvKzFnMnBYR1V3Ny8vbXdOZDZOY3E0YW9P?=
- =?utf-8?B?U001b0Y1RnRibkx2NWdJNVpuYzZoQ1lrbUlDWjNFTDlHNlR0Zm9hUDNZdmJ0?=
- =?utf-8?B?VTNzVDBXUmFVaUlwN2JnZnkxY2t6dnZHdUx1bmR5dEI3R3FadThNa0UzdEE0?=
- =?utf-8?B?eDZJNElOemJ5TE9GOWl6bHNuMVpHSnl2NW1icnNXVEhyWEREVTdXSjBIRVdM?=
- =?utf-8?B?dGdBbGNkekt2bE5RMlZlQkVOVDgvRWZMQnFWVmFWbCtOK0hhMHJOZGp4SjM2?=
- =?utf-8?B?bURmb0NHWUJlaDBaaG1SZ0J3WWtYSTdDY0FzbEJXb0RPSzNEQzVMaWJ2UEw1?=
- =?utf-8?B?aGFwQW1UdEgvWWJxaDYzVVlISHdxbkJvZEdnQWE5UWFMcFdWZS9mVEpmV1Ju?=
- =?utf-8?B?VVdtSFdObnN0L3Fla0ZYSUdzaXhPZk1ySWNmbTI5cTNqN3lDenFJMXVRTHk0?=
- =?utf-8?B?dDJIOGNXZklUaERES2doQjRBUDQvUkV6TDVIQVRBeGtLR1RvSjgxZW4vYTJz?=
- =?utf-8?B?TVhLWnVLU3VqVWxtaG11YS9oRDBGMzVWKzI5Z3FRTEVVL0R3aTQzV2RBTVp4?=
- =?utf-8?B?VS96czdsZWlUZXZHR3BrTWV1d1pweUU5MVRIQjNBU2NXbVdRV3NRb3lCMkNG?=
- =?utf-8?B?QUV6b2puVVE4ZUJsVCtNZ09WNnpYQ2NyeEFRaWVXTVI2bTY4TnF4SG56U3dz?=
- =?utf-8?B?RjRyb0RJMjdDZkRUdnlxaldRd0tjVk0rcWZUK3RzNytNTU1zeG5XT0Y1d3Fz?=
- =?utf-8?B?VFRCTWwrd29MZWdPWVNNMzdWQWI5VHVlb01UK0xOUVdLQUhma0h4RjIxSEpH?=
- =?utf-8?Q?pLLpaKAJH7zsy43l0teNVPKhb?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A80848FF11AB5641A47227FDA429C189@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF381BC097
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732143703; cv=none; b=L6UCc5a++pUEWVrN1TtMSqfeOYwHbkWxMvPh6mQv3O8mREej6tqOPOEpuT5o18KVhrXHjYqc63G7cdSt2zMuku+BYdTvZ3GswH+0mtKl0xEXwDEAMxuKqeq38s+Hz3swkz4rs1i+KkMl9wkge2437XwIbNe9UFowoeAsr8AIKbM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732143703; c=relaxed/simple;
+	bh=odCl4rngO+Jr11TXEzuqntRbY15dvn9eRn7Rq8yzLUI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=hjXG5Fw/wad/wKxhCZRHz8rM6REPJSKuwntnmnhDs5a3L5LMUyJaaTnMGlZSYKu3mSEahMWdeUxPxRLR1Lu/9p2trWJeLAF/32lfFwfyKCCI0y1v/MdgEFz6UsOcgW2Q8TgFfMavFP10wSSNGpv9GMVue//wXZe6dNIIKbelQOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YAk6I8zN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=vXqrLVxI; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 66B2C138024F;
+	Wed, 20 Nov 2024 18:01:40 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Wed, 20 Nov 2024 18:01:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732143700;
+	 x=1732230100; bh=JkSQzdxZR0eUhkdqjYv9fjHNDZi97MgPjMRaPX6jnmA=; b=
+	YAk6I8zNq2NbCL5EBBUd4PNcaVouDuL33EdxqVKWO2Fp7h4s1BMnhsxkjkaWqWwp
+	5TvuwMzikrMr7rogWyfZ1+z1hWhu6Mx2oL2bsIW+8OT1HTW1FwKv2rumLNfXI2JR
+	9dTd9ZdXnYvS8AF/u3XAK1wjp3hq8qy1WYG0bDXNkcynNOQzxmF/IAiC3XUf1dHm
+	lhSUMNG3FI54gA51PyhzyRdZPyxaDSVGgHXLHmcNldYUYTSP0Fk2C/DQJujVTv0H
+	mezEIQVRWXaH9yGhECIbrg9cAwoWtvZcnVxCnWXVupgOBvqEV0dizDMFS+uWOu+1
+	pibJUj0z37F/UV7xNBlJzA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732143700; x=
+	1732230100; bh=JkSQzdxZR0eUhkdqjYv9fjHNDZi97MgPjMRaPX6jnmA=; b=v
+	XqrLVxIJgiAHmQMaXxhiNcjo8GVM9uqOUtA+U2pJGxwbX18ptu3GvOBAY2v/z6Zy
+	F0mV4uedO0mnKHXgs0AP5WcKyNiYpVXoMDUBVAyv0NELPqqpHJwpJ/EsyTbJEZ36
+	Y/ItMAIba68Rq/QsMnQX28y3yUDgUrEbb63e4fLoXubRx4L89AKKg1Tc1gHW+Eue
+	FmfVnxOE14BqgxY6AADE+FX0j5enpVSUSCaApMSs4Hq7IHEkA3u81DPYIs0pV27m
+	N7vC4oTCtZfWfKCzs0mdzUaZMUnuqOEPotiTePGVNmNmnuky6ZuQX9L5J6Dmxr4k
+	+ypXBUZ7ZsPe+Gb22fSzw==
+X-ME-Sender: <xms:VGo-Z18B7jaSH3FNRE7zMtqsH8mpGthhCnw5ptbTbnAGtGTO4gSMxQ>
+    <xme:VGo-Z5sLHCZ-Z9LVMkKURcSjWydwb3INqH6nKJMe81lgAAcC-1kHpUbv3q1KDnv_H
+    R3Fl6TBw-bFQmtlYqk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgddthecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpeejfefhleeigfevudekleekkeeujeeutdeigefgveek
+    tdejieffudegtdejueelueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthh
+    husgdrtghomhdpphgvnhhguhhtrhhonhhigidruggvnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspg
+    hrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghl
+    ughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgt
+    phhtthhopehsohgtsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:VGo-ZzCLooCvpTp9VZhrIcGhvUpKruZqFfwIqzk-I7ZKeLnR61l3oA>
+    <xmx:VGo-Z5fPZQMAsRW3N5HhQWBA6uDn9AAIyL-9kDO4fWOUJmAPYHahQQ>
+    <xmx:VGo-Z6PRUnhE7d0iJDd0Lp-2Gi_5lzTgVlcR5nXWiMzXVgwBpXiQdA>
+    <xmx:VGo-Z7lQxsAnweHJ3rv8gh_ZRrdUMB8W5pLpEVQaS9Z5GWlPvgE0JA>
+    <xmx:VGo-Z3q0GH05AgDBa2ywocR6eI8EUweLb08jzdii27sH5hIHAiXHmM7z>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1A4B72220073; Wed, 20 Nov 2024 18:01:39 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	UUCF25r7NKquZCsrZ+ikvuZSnQyOR8ugLdxrD6DgsAfcBmppTWnVuWMsuBst2g8elef0HjtZjEqmsde+e/1WlkmpjwqnK0pGoPx1/0LZfg0B/FOFihvxQQn8vGyUryIpDOVuEtFhgKYeeB9ZaR/B22+rdg7VrfOpVjns254PltZwFYr3kB0HdKLvk4j4OtI4/uJpPgyG395LwKn4Qxn7lG+Zg4vAZS/IiCMD25s+QRmmnmDOS073nQqa1meS2h9630pQR6557X7tMMCzZLsDq9VTEqSCNARHXpxfRYmFy+Krc5Gy8s6R4Fw80SHoH/N81oPqDGLmXGL6Zrw9517zTLeIx/XrT+SaJEog6djUH5CLUkCEvby6ZTHksPcm23f5efoHt4QsIQD+bOmDRf9+0ve2Ev4IobFS/iFCoaYMnG4oEkJ4ySa4jkOWVW2nuOnIB2B9HwMOoPARcyrASUm/p0VwCl9THBmxRffeflB91OrlxiWBSpk+afwVEbMeq5yfy9ImyyFrbeE03G1QzNL56sWp5dJl46mbO7Th4jYfIk6ssHnny67/uqAzJGioivodxYAxHGizZl6nDnRlIi5kZzd3PWe6xoI/ccvggPGx7eI4yhnqJpDIoT7WTVzV4ZZccdgVAl6IxR9LGR9WGWO32g==
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18ffabd8-ffca-4787-8f6a-08dd09b71f2e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2024 23:00:26.3051
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FbTj7ymjVTxVIskBXgdzKt/OgJ9tFhJwJ0HX0D8n0wCyEpm0gkYsmld/IMnQYMbklgtlShvd3711GBLXFET4bQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7500
-X-Proofpoint-ORIG-GUID: cFTywf4CK8pvCN6k0KJOseOYoj_ZHCi3
-X-Proofpoint-GUID: cFTywf4CK8pvCN6k0KJOseOYoj_ZHCi3
-X-Authority-Analysis: v=2.4 cv=JI5psNKb c=1 sm=1 tr=0 ts=673e6a14 cx=c_pps a=t4gDRyhI9k+KZ5gXRQysFQ==:117 a=t4gDRyhI9k+KZ5gXRQysFQ==:17 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=VlfZXiiP6vEA:10 a=nEwiWwFL_bsA:10 a=qPHU084jO2kA:10 a=VwQbUJbxAAAA:8 a=rOUgymgbAAAA:8 a=jIQo8A4GAAAA:8 a=iox4zFpeAAAA:8 a=pGLkceISAAAA:8 a=6zXYmIRHL7c-Pv1aY8gA:9 a=QEXdDO2ut3YA:10 a=MP9ZtiD8KjrkvI0BhSjB:22 a=Lf5xNeLK5dgiOs8hzIjU:22
- a=WzC6qhA0u3u7Ye7llzcV:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_active_cloned_notspam policy=outbound_active_cloned score=0
- adultscore=0 mlxlogscore=915 malwarescore=0 suspectscore=0 clxscore=1011
- priorityscore=1501 mlxscore=0 bulkscore=0 phishscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 classifier=spam authscore=0 adjust=0
- reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411200162
+Date: Thu, 21 Nov 2024 00:01:18 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Message-Id: <0fe1a527-1c58-4ae5-963a-3becfb8ba28a@app.fastmail.com>
+In-Reply-To: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
+References: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
+Subject: [GIT PULL 2/4] soc: driver updates for 6.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCBOb3YgMjAsIDIwMjQsIEx1aXMgRmVsaXBlIEhlcm5hbmRleiB3cm90ZToNCj4gVGhl
-IHNnIChzY2F0dGVyLWdhdGhlciBsaXN0IHBvaW50ZXIpIG1lbWJlciBvZiB0aGUgZHdjM19yZXF1
-ZXN0IHN0cnVjdA0KPiBpcyBubyBsb25nZXIgdXNlZCBhbmQgc2hvdWxkIGJlIHJlbW92ZWQuIFRo
-aXMgcGF0Y2ggZWxpbWluYXRlcyB0aGUgdW51c2VkDQo+IG1lbWJlciwgY2xlYW5pbmcgdXAgdGhl
-IHN0cnVjdC4NCj4gDQo+IFRoaXMgY2hhbmdlIGltcHJvdmVzIGNvZGUgY2xhcml0eSBhbmQgYXZv
-aWRzIG1haW50YWluaW5nIHVubmVjZXNzYXJ5IA0KPiBtZW1iZXJzIGluIHRoZSBzdHJ1Y3R1cmUu
-DQo+IA0KPiBSZXZpZXdlZC1ieTogUmljYXJkbyBCLiBNYXJsaWVyZSA8cmJtQHN1c2UuY29tPg0K
-PiBSZXBvcnRlZC1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+
-IENsb3NlczogaHR0cHM6Ly91cmxkZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9yZS5rZXJuZWwu
-b3JnL2FsbC8yMDI0MTExODE5NDAwNi43N2M3YjEyNkBjYW5iLmF1dWcub3JnLmF1L19fOyEhQTRG
-MlI5R19wZyFlQmhqNTJRYWZfd0dabUs3NFNMSFN3MnVKbHdXZ3lIRTcwUUZWTzNhWDhGZ1pQeXlr
-emRyaUhxUUdHODhsOUdhYnNuX2xYT1B6enVVVEVSR3hWT2IwZGdESmpFQU1mNCQgDQo+IFNpZ25l
-ZC1vZmYtYnk6IEx1aXMgRmVsaXBlIEhlcm5hbmRleiA8bHVpcy5oZXJuYW5kZXowOTNAZ21haWwu
-Y29tPg0KPiAtLS0NCj4gdjI6IHJlbW92ZSB1bnVzZWQgc2cgc3RydWN0IG1lbWJlciBhcyBwZXIg
-cmV2aWV3WzFdDQo+IHYzOiANCj4gICAtIEFkZCByZXBvcnRlZC1ieSB0YWcgYXMgcGVyIHJldmll
-dyBbMl0NCj4gICAtIENhcnJ5IG92ZXIgcmV2aWV3ZWQtYnkgdGFnIGZyb20gdjIgWzNdDQo+ICAg
-LSBVcGRhdGUgY29tbWl0IHN1YmplY3QgdG8gcmVmbGVjdCBtYWludGFpbmVycw0KPiAgIC0gVXBk
-YXRlIGNvbW1pdCBtZXNzYWdlIHRvIHJlZmxlY3QgYWN0dWFsIGNoYW5nZSBnYXRoZXJlZCBmcm9t
-IA0KPiAgICAgVGhpbmggTmd1eWVuJ3MgZmVlZGJhY2sNCj4gDQo+IFsxXSBodHRwczovL3VybGRl
-ZmVuc2UuY29tL3YzL19faHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQxMTE5MDIwODA3
-LmNuN3VneG5oYmtxd3JyMmJAc3lub3BzeXMuY29tL19fOyEhQTRGMlI5R19wZyFlQmhqNTJRYWZf
-d0dabUs3NFNMSFN3MnVKbHdXZ3lIRTcwUUZWTzNhWDhGZ1pQeXlremRyaUhxUUdHODhsOUdhYnNu
-X2xYT1B6enVVVEVSR3hWT2IwZGdELXNDSDRUVSQgDQo+IFsyXSBodHRwczovL3VybGRlZmVuc2Uu
-Y29tL3YzL19faHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQxMTE5MjItcGFudHlob3Nl
-LXBhbm9yYW1hLTZmMTZAZ3JlZ2toL19fOyEhQTRGMlI5R19wZyFlQmhqNTJRYWZfd0dabUs3NFNM
-SFN3MnVKbHdXZ3lIRTcwUUZWTzNhWDhGZ1pQeXlremRyaUhxUUdHODhsOUdhYnNuX2xYT1B6enVV
-VEVSR3hWT2IwZGdEeE1XRE0tMCQgDQo+IFszXSBodHRwczovL3VybGRlZmVuc2UuY29tL3YzL19f
-aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzVsNjVzZHNrZHpiZWh4YW1mZjVheDRwdGlxaGF4
-aDdld2k0dW10cHA2eW5lbjQ1bmo2QG5lYnV4amc0YzRyeC9fXzshIUE0RjJSOUdfcGchZUJoajUy
-UWFmX3dHWm1LNzRTTEhTdzJ1Smx3V2d5SEU3MFFGVk8zYVg4RmdaUHl5a3pkcmlIcVFHRzg4bDlH
-YWJzbl9sWE9Qenp1VVRFUkd4Vk9iMGRnRHMtTUZfNk0kIA0KPiB2NDoNCj4gICAtIFJlbW92ZSBv
-dXQgb2YgY29udGV4dCBwYXJhZ3JhcGggZnJvbSBjb21taXQgbWVzc2FnZSBhcyBwZXIgDQo+ICAg
-ICBUaGluaCBOZ3V5ZW4nc1sxXQ0KPiAgIC0gRml4IFJlcG9ydGVkLWJ5LCBjb3JyZWN0bHkgYXR0
-cmlidXRlIHJlcG9ydCB0byBTdGVwaGVuIFJvdGh3ZWxsDQo+IA0KPiBbMV0gaHR0cHM6Ly91cmxk
-ZWZlbnNlLmNvbS92My9fX2h0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2FsbC8yMDI0MTExOTIyMTkw
-Ny50eXQ0bHVib2R1YXltdWtsQHN5bm9wc3lzLmNvbS9fXzshIUE0RjJSOUdfcGchZUJoajUyUWFm
-X3dHWm1LNzRTTEhTdzJ1Smx3V2d5SEU3MFFGVk8zYVg4RmdaUHl5a3pkcmlIcVFHRzg4bDlHYWJz
-bl9sWE9Qenp1VVRFUkd4Vk9iMGRnRHVkcUJUTlEkIA0KPiAtLS0NCj4gIGRyaXZlcnMvdXNiL2R3
-YzMvY29yZS5oIHwgMSAtDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQ0KPiANCj4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2R3YzMvY29yZS5oIGIvZHJpdmVycy91c2IvZHdjMy9j
-b3JlLmgNCj4gaW5kZXggZWU3Mzc4OTMyNmJjLi4zYmUwNjljNDUyMGUgMTAwNjQ0DQo+IC0tLSBh
-L2RyaXZlcnMvdXNiL2R3YzMvY29yZS5oDQo+ICsrKyBiL2RyaXZlcnMvdXNiL2R3YzMvY29yZS5o
-DQo+IEBAIC05NTYsNyArOTU2LDYgQEAgc3RydWN0IGR3YzNfcmVxdWVzdCB7DQo+ICAJc3RydWN0
-IHVzYl9yZXF1ZXN0CXJlcXVlc3Q7DQo+ICAJc3RydWN0IGxpc3RfaGVhZAlsaXN0Ow0KPiAgCXN0
-cnVjdCBkd2MzX2VwCQkqZGVwOw0KPiAtCXN0cnVjdCBzY2F0dGVybGlzdAkqc2c7DQo+ICAJc3Ry
-dWN0IHNjYXR0ZXJsaXN0CSpzdGFydF9zZzsNCj4gIA0KPiAgCXVuc2lnbmVkIGludAkJbnVtX3Bl
-bmRpbmdfc2dzOw0KPiAtLSANCj4gMi40Ny4wDQo+IA0KDQpBY2tlZC1ieTogVGhpbmggTmd1eWVu
-IDxUaGluaC5OZ3V5ZW5Ac3lub3BzeXMuY29tPg0KDQpUaGFua3MsDQpUaGluaA==
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600=
+924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-d=
+rivers-6.13
+
+for you to fetch changes up to b77587ac51d2fe4b9d5751662ddc083d19153662:
+
+  Merge tag 'soc_fsl-6.13-1' of https://github.com/chleroy/linux into so=
+c/drivers (2024-11-15 15:19:47 +0100)
+
+----------------------------------------------------------------
+soc: driver updates for 6.12
+
+Nothing particular important in the SoC driver updates, just the usual
+improvements to for drivers/soc and a couple of subsystems that don't
+fit anywhere else:
+
+ - The largest set of updates is for Qualcomm SoC drivers, extending the
+   set of supported features for additional SoCs in the QSEECOM, LLCC
+   and socinfo drivers.a
+
+ - The ti_sci firmware driver gains support for power managment
+
+ - The drivers/reset subsystem sees a rework of the microchip
+   sparx5 and amlogic reset drivers to support additional chips,
+   plus a few minor updates on other platforms
+
+ - The SCMI firmware interface driver gains support for two protocol
+   extensions, allowing more flexible use of the shared memory area
+   and new DT binding properties for configurability.
+
+ - Mediatek SoC drivers gain support for power managment on the MT8188
+   SoC and a new driver for DVFS.
+
+ - The AMD/Xilinx ZynqMP SoC drivers gain support for system reboot
+   and a few bugfixes
+
+ - The Hisilicon Kunpeng HCCS driver gains support for configuring
+   lanes through sysfs
+
+Finally, there are cleanups and minor fixes for drivers/soc, drivers/bus,
+and drivers/memory, including changing back the .remove_new callback
+to .remove, as well as a few other updates for freescale (powerpc)
+soc drivers, NXP i.MX soc drivers, cznic turris platform driver, memory
+controller drviers, TI OMAP SoC drivers, and Tegra firmware drivers
+
+----------------------------------------------------------------
+Aleksandrs Vinarskis (1):
+      firmware: qcom: scm: Allow QSEECOM on Dell XPS 13 9345
+
+Alessandro Zanni (1):
+      soc: ti: knav_qmss_queue: Drop redundant continue statement
+
+Andrew Davis (1):
+      firmware: ti_sci: Remove use of of_match_ptr() helper
+
+Andrew Kreimer (1):
+      thermal/ti-soc-thermal: Fix typos
+
+AngeloGioacchino Del Regno (4):
+      dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8=
+195
+      soc: mediatek: Add MediaTek DVFS Resource Collector (DVFSRC) driver
+      soc: mediatek: mtk-cmdq: Move mask build and append to function
+      soc: mediatek: mtk-cmdq: Move cmdq_instruction init to declaration
+
+Arnd Bergmann (13):
+      Merge tag 'hisi-drivers-for-6.13' of https://github.com/hisilicon/=
+linux-hisi into arm/drivers
+      Merge tag 'tegra-for-6.13-firmware' of https://git.kernel.org/pub/=
+scm/linux/kernel/git/tegra/linux into arm/drivers
+      Merge tag 'memory-controller-drv-6.13' of https://git.kernel.org/p=
+ub/scm/linux/kernel/git/krzk/linux-mem-ctrl into arm/drivers
+      Merge tag 'zynqmp-soc-for-6.13' of https://github.com/Xilinx/linux=
+-xlnx into arm/drivers
+      Merge tag 'qcom-drivers-for-6.13' of https://git.kernel.org/pub/sc=
+m/linux/kernel/git/qcom/linux into arm/drivers
+      Merge tag 'imx-drivers-6.13' of https://git.kernel.org/pub/scm/lin=
+ux/kernel/git/shawnguo/linux into arm/drivers
+      Merge tag 'mtk-soc-for-v6.13' of https://git.kernel.org/pub/scm/li=
+nux/kernel/git/mediatek/linux into arm/drivers
+      Merge tag 'omap-for-v6.13/drivers-signed' of https://git.kernel.or=
+g/pub/scm/linux/kernel/git/khilman/linux-omap into arm/drivers
+      Merge tag 'scmi-updates-6.13' of https://git.kernel.org/pub/scm/li=
+nux/kernel/git/sudeep.holla/linux into soc/drivers
+      Merge tag 'reset-for-v6.13' of git://git.pengutronix.de/pza/linux =
+into soc/drivers
+      Merge tag 'ti-driver-soc-for-v6.13' of https://git.kernel.org/pub/=
+scm/linux/kernel/git/ti/linux into soc/drivers
+      Merge tag 'qcom-drivers-for-6.13-2' of https://git.kernel.org/pub/=
+scm/linux/kernel/git/qcom/linux into soc/drivers
+      Merge tag 'soc_fsl-6.13-1' of https://github.com/chleroy/linux int=
+o soc/drivers
+
+Bjorn Andersson (3):
+      soc: qcom: pd-mapper: Add QCM6490 PD maps
+      firmware: qcom: scm: Introduce CP_SMMU_APERTURE_ID
+      drm/msm/adreno: Setup SMMU aparture for per-process page table
+
+Cl=C3=A9ment L=C3=A9ger (2):
+      reset: mchp: sparx5: Allow building as a module
+      reset: mchp: sparx5: set the dev member of the reset controller
+
+Cristian Marussi (8):
+      firmware: arm_scmi: Reject clear channel request on A2P
+      dt-bindings: firmware: arm,scmi: Add missing vendor string
+      firmware: arm_scmi: Use vendor string in max-rx-timeout-ms
+      firmware: arm_scmi: Account for SHMEM memory overhead
+      firmware: arm_scmi: Calculate virtio PDU max size dynamically
+      dt-bindings: firmware: arm,scmi: Introduce more transport properti=
+es
+      firmware: arm_scmi: Use max_msg and max_msg_size devicetree proper=
+ties
+      firmware: arm_scmi: Relocate atomic_threshold to scmi_desc
+
+Dan Carpenter (1):
+      soc: qcom: geni-se: fix array underflow in geni_se_clk_tbl_get()
+
+Dave Gerlach (1):
+      firmware: ti_sci: Introduce Power Management Ops
+
+Dmitry Baryshkov (7):
+      dt-bindings: arm: qcom,ids: add SoC ID for SAR2130P and SAR1130P
+      soc: qcom: socinfo: add SoC IDs for SAR1130P and SAR2130P
+      dt-bindings: firmware: qcom,scm: Add SAR2130P compatible
+      dt-bindings: soc: qcom,aoss-qmp: Add SAR2130P compatible
+      dt-bindings: cache: qcom,llcc: document SAR2130P and SAR1130P
+      soc: qcom: llcc: use deciman integers for bit shift values
+      soc: qcom: llcc: add support for SAR2130P and SAR1130P
+
+Esben Haabendal (1):
+      arm64: defconfig: Update defconfig with now user-visible CONFIG_FS=
+L_IFC
+
+Florian Fainelli (2):
+      dt-bindings: sram: Document reg-io-width property
+      firmware: arm_scmi: Support 'reg-io-width' property for shared mem=
+ory
+
+Frank Li (1):
+      dt-bindings: memory-controllers: fsl,ifc: split child node differe=
+nces
+
+Gaosheng Cui (1):
+      drivers: soc: xilinx: add the missing kfree in xlnx_add_cb_for_sus=
+pend()
+
+Georgi Vlaev (1):
+      firmware: ti_sci: Add support for querying the firmware caps
+
+Herve Codina (7):
+      misc: Add support for LAN966x PCI device
+      MAINTAINERS: Add the Microchip LAN966x PCI driver entry
+      reset: mchp: sparx5: Map cpu-syscon locally in case of LAN966x
+      reset: mchp: sparx5: Add MCHP_LAN966X_PCI dependency
+      misc: lan966x_pci: Fix dtc warns 'missing or empty reg/ranges prop=
+erty'
+      misc: lan966x_pci: Fix dtc warn 'Missing interrupt-parent'
+      soc: fsl: cpm1: qmc: Set the ret error code on platform_get_irq() =
+failure
+
+Huisong Li (6):
+      soc: hisilicon: kunpeng_hccs: Fix a PCC typo
+      soc: hisilicon: kunpeng_hccs: Return failure on having not die or =
+port information
+      soc: hisilicon: kunpeng_hccs: Add the check for base address and s=
+ize of shared memory
+      soc: hisilicon: kunpeng_hccs: Fix the 'lane_mode' field name in po=
+rt info structure to 'max_lane_num'
+      soc: hisilicon: kunpeng_hccs: Add used HCCS types sysfs
+      soc: hisilicon: kunpeng_hccs: Support low power feature for the sp=
+ecified HCCS type
+
+Javier Carrasco (2):
+      soc: fsl: cpm1: tsa: switch to for_each_available_child_of_node_sc=
+oped()
+      soc: fsl: rcpm: fix missing of_node_put() in copy_ippdexpcr1_setti=
+ng()
+
+Jerome Brunet (9):
+      reset: amlogic: convert driver to regmap
+      reset: amlogic: use generic data matching function
+      reset: amlogic: make parameters unsigned
+      reset: amlogic: add driver parameters
+      reset: amlogic: use reset number instead of register count
+      reset: amlogic: add reset status support
+      reset: amlogic: move drivers to a dedicated directory
+      reset: amlogic: split the device core and platform probe
+      reset: amlogic: add auxiliary reset driver support
+
+Jingyi Wang (3):
+      dt-bindings: soc: qcom: add qcom,qcs8300-imem compatible
+      dt-bindings: cache: qcom,llcc: Document the QCS8300 LLCC
+      soc: qcom: llcc: Add LLCC configuration for the QCS8300 platform
+
+Jinjie Ruan (2):
+      soc: ti: smartreflex: Use IRQF_NO_AUTOEN flag in request_irq()
+      soc: ti: knav_qmss_queue: Use IRQF_NO_AUTOEN flag in request_irq()
+
+Joe Hattori (1):
+      soc: qcom: ice: Remove the device_link field in qcom_ice
+
+Julia Lawall (1):
+      soc: qcom: qmi: Reorganize kerneldoc parameter names
+
+J=C3=A9r=C3=B4me de Bretagne (1):
+      firmware: qcom: scm: Allow QSEECOM on Microsoft Surface Pro 9 5G
+
+Kevin Hilman (1):
+      firmware: ti_sci: add CPU latency constraint management
+
+Konrad Dybcio (3):
+      soc: qcom: llcc: Use designated initializers for LLC settings
+      soc: qcom: smem: Fix up kerneldoc
+      soc: qcom: llcc: Flip the manual slice configuration condition
+
+Krzysztof Kozlowski (5):
+      qcom: MAINTAINERS: add linux-msm IRC on OFTC
+      soc: qcom: pbs: simplify locking with guard()
+      soc: qcom: smem_state: simplify locking with guard()
+      dt-bindings: soc: qcom: aoss-qmp: Add SM8750
+      Revert "firmware: tegra: bpmp: Use scoped device node handling to =
+simplify error paths"
+
+Kyle Deng (1):
+      dt-bindings: soc: qcom,aoss-qmp: Document the QCS8300 AOSS channel
+
+Lijuan Gao (2):
+      dt-bindings: arm: qcom,ids: add SoC ID for QCS615
+      soc: qcom: socinfo: Add QCS615 SoC ID table entry
+
+Luo Qiu (1):
+      firmware: arm_scpi: Check the DVFS OPP count returned by the firmw=
+are
+
+Manikanta Mylavarapu (2):
+      dt-bindings: arm: qcom,ids: add SoC ID for IPQ5424/IPQ5404
+      soc: qcom: socinfo: add IPQ5424/IPQ5404 SoC ID
+
+Marek Beh=C3=BAn (3):
+      firmware: turris-mox-rwtm: Document the driver private data struct=
+ure
+      platform: cznic: turris-omnia-mcu: Document the driver private dat=
+a structure
+      platform: cznic: turris-omnia-mcu: Rename variable holding GPIO li=
+ne names
+
+Marek Vasut (3):
+      soc: imx8m: Probe the SoC driver as platform driver
+      soc: imx8m: Remove global soc_uid
+      soc: imx8m: Use devm_* to simplify probe failure handling
+
+Markus Elfring (1):
+      soc: mediatek: mtk-svs: Call of_node_put(np) only once in svs_get_=
+subsys_device()
+
+Markus Schneider-Pargmann (1):
+      PM: QoS: Export dev_pm_qos_read_value
+
+Maya Matuszczyk (1):
+      firmware: qcom: scm:  Allow QSEECOM on Lenovo Yoga Slim 7x
+
+Melody Olvera (1):
+      dt-bindings: firmware: qcom,scm: Document sm8750 SCM
+
+Nikunj Kela (4):
+      dt-bindings: firmware: qcom,scm: document support for SA8255p
+      dt-bindings: soc: qcom: aoss-qmp: document support for SA8255p
+      dt-bindings: arm: qcom: add the SoC ID for SA8255P
+      soc: qcom: socinfo: add support for SA8255P
+
+Pablo Sun (1):
+      soc: mediatek: mediatek-regulator-coupler: Support mt8188
+
+Philipp Zabel (4):
+      reset: amlogic: Fix small whitespace issue
+      reset: replace boolean parameters with flags parameter
+      reset: Add devres helpers to request pre-deasserted reset controls
+      reset: uniphier-glue: Use devm_reset_control_bulk_get_shared_deass=
+erted()
+
+Ronak Jain (5):
+      firmware: xilinx: Add missing debug firmware interfaces
+      firmware: xilinx: use u32 for reset ID in reset APIs
+      firmware: xilinx: add a warning print for unsupported feature
+      firmware: xilinx: add support for new SMC call format
+      firmware: xilinx: fix feature check logic for TF-A specific APIs
+
+Sibi Sankar (1):
+      firmware: qcom: uefisecapp: Allow X1E Devkit devices
+
+Song Xue (2):
+      dt-bindings: cache: qcom,llcc: Document the QCS615 LLCC
+      soc: qcom: llcc: Add configuration data for QCS615
+
+Tengfei Fan (2):
+      dt-bindings: arm: qcom,ids: add SoC ID for QCS9100
+      soc: qcom: socinfo: add QCS9100 ID
+
+Uwe Kleine-K=C3=B6nig (2):
+      soc: Switch back to struct platform_driver::remove()
+      bus: Switch back to struct platform_driver::remove()
+
+Vibhore Vardhan (1):
+      firmware: ti_sci: Add system suspend and resume call
+
+Xinqi Zhang (1):
+      firmware: arm_scmi: Fix slab-use-after-free in scmi_bus_notifier()
+
+Zhang Zekun (3):
+      soc: qcom: rpmh-rsc: Simplify code with dev_err_probe()
+      soc: qcom: smem: Simplify code with dev_err_probe()
+      soc: qcom: smp2p: Simplify code with dev_err_probe()
+
+Zhenhua Huang (1):
+      dt-bindings: firmware: qcom,scm: document SCM on QCS8300 SoCs
+
+ .../testing/sysfs-devices-platform-kunpeng_hccs    |   45 +
+ .../devicetree/bindings/cache/qcom,llcc.yaml       |   32 +
+ .../devicetree/bindings/firmware/arm,scmi.yaml     |   17 +-
+ .../devicetree/bindings/firmware/qcom,scm.yaml     |    6 +
+ .../bindings/memory-controllers/fsl/fsl,ifc.yaml   |   32 +-
+ .../soc/mediatek/mediatek,mt8183-dvfsrc.yaml       |   83 +
+ .../bindings/soc/qcom/qcom,aoss-qmp.yaml           |    4 +
+ .../devicetree/bindings/sram/qcom,imem.yaml        |    1 +
+ Documentation/devicetree/bindings/sram/sram.yaml   |    6 +
+ MAINTAINERS                                        |    9 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/base/power/qos.c                           |    1 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c                    |    2 +-
+ drivers/bus/hisi_lpc.c                             |    2 +-
+ drivers/bus/omap-ocp2scp.c                         |    2 +-
+ drivers/bus/omap_l3_smx.c                          |    2 +-
+ drivers/bus/qcom-ssc-block-bus.c                   |    2 +-
+ drivers/bus/simple-pm-bus.c                        |    2 +-
+ drivers/bus/sun50i-de2.c                           |    2 +-
+ drivers/bus/sunxi-rsb.c                            |    2 +-
+ drivers/bus/tegra-aconnect.c                       |    2 +-
+ drivers/bus/tegra-gmi.c                            |    2 +-
+ drivers/bus/ti-pwmss.c                             |    2 +-
+ drivers/bus/ti-sysc.c                              |    2 +-
+ drivers/bus/ts-nbus.c                              |    2 +-
+ drivers/firmware/arm_scmi/bus.c                    |    7 +-
+ drivers/firmware/arm_scmi/common.h                 |   47 +-
+ drivers/firmware/arm_scmi/driver.c                 |   52 +-
+ drivers/firmware/arm_scmi/shmem.c                  |   85 +-
+ drivers/firmware/arm_scmi/transports/mailbox.c     |   15 +-
+ drivers/firmware/arm_scmi/transports/optee.c       |   19 +-
+ drivers/firmware/arm_scmi/transports/smc.c         |   13 +-
+ drivers/firmware/arm_scmi/transports/virtio.c      |   15 +-
+ drivers/firmware/arm_scpi.c                        |    3 +
+ drivers/firmware/qcom/qcom_scm.c                   |   30 +
+ drivers/firmware/qcom/qcom_scm.h                   |    1 +
+ drivers/firmware/tegra/bpmp.c                      |   14 +-
+ drivers/firmware/ti_sci.c                          |  489 ++-
+ drivers/firmware/ti_sci.h                          |  143 +-
+ drivers/firmware/turris-mox-rwtm.c                 |   23 +-
+ drivers/firmware/xilinx/zynqmp-debug.c             |  162 +-
+ drivers/firmware/xilinx/zynqmp.c                   |  153 +-
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c            |   11 +
+ drivers/misc/Kconfig                               |   24 +
+ drivers/misc/Makefile                              |    3 +
+ drivers/misc/lan966x_pci.c                         |  215 ++
+ drivers/misc/lan966x_pci.dtso                      |  177 ++
+ drivers/pci/quirks.c                               |    1 +
+ drivers/platform/cznic/turris-omnia-mcu-gpio.c     |    4 +-
+ drivers/platform/cznic/turris-omnia-mcu.h          |   42 +-
+ drivers/reset/Kconfig                              |   19 +-
+ drivers/reset/Makefile                             |    3 +-
+ drivers/reset/amlogic/Kconfig                      |   27 +
+ drivers/reset/amlogic/Makefile                     |    4 +
+ .../reset/{ =3D> amlogic}/reset-meson-audio-arb.c    |    0
+ drivers/reset/amlogic/reset-meson-aux.c            |  136 +
+ drivers/reset/amlogic/reset-meson-common.c         |  142 +
+ drivers/reset/amlogic/reset-meson.c                |  105 +
+ drivers/reset/amlogic/reset-meson.h                |   28 +
+ drivers/reset/core.c                               |  119 +-
+ drivers/reset/reset-meson.c                        |  159 -
+ drivers/reset/reset-microchip-sparx5.c             |   38 +-
+ drivers/reset/reset-uniphier-glue.c                |   24 +-
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c               |    2 +-
+ drivers/soc/aspeed/aspeed-lpc-snoop.c              |    2 +-
+ drivers/soc/aspeed/aspeed-p2a-ctrl.c               |    2 +-
+ drivers/soc/aspeed/aspeed-uart-routing.c           |    2 +-
+ drivers/soc/fsl/dpaa2-console.c                    |    2 +-
+ drivers/soc/fsl/qe/qmc.c                           |    6 +-
+ drivers/soc/fsl/qe/tsa.c                           |   30 +-
+ drivers/soc/fsl/rcpm.c                             |    1 +
+ drivers/soc/fujitsu/a64fx-diag.c                   |    2 +-
+ drivers/soc/hisilicon/Kconfig                      |    7 +-
+ drivers/soc/hisilicon/kunpeng_hccs.c               |  516 +++-
+ drivers/soc/hisilicon/kunpeng_hccs.h               |   33 +-
+ drivers/soc/imx/soc-imx8m.c                        |  174 +-
+ drivers/soc/ixp4xx/ixp4xx-npe.c                    |    2 +-
+ drivers/soc/ixp4xx/ixp4xx-qmgr.c                   |    2 +-
+ drivers/soc/litex/litex_soc_ctrl.c                 |    2 +-
+ drivers/soc/loongson/loongson2_guts.c              |    2 +-
+ drivers/soc/mediatek/Kconfig                       |   11 +
+ drivers/soc/mediatek/Makefile                      |    1 +
+ drivers/soc/mediatek/mtk-cmdq-helper.c             |  230 +-
+ drivers/soc/mediatek/mtk-devapc.c                  |    2 +-
+ drivers/soc/mediatek/mtk-dvfsrc.c                  |  545 ++++
+ drivers/soc/mediatek/mtk-mmsys.c                   |    2 +-
+ drivers/soc/mediatek/mtk-regulator-coupler.c       |    1 +
+ drivers/soc/mediatek/mtk-socinfo.c                 |    2 +-
+ drivers/soc/mediatek/mtk-svs.c                     |    4 +-
+ drivers/soc/microchip/mpfs-sys-controller.c        |    2 +-
+ drivers/soc/pxa/ssp.c                              |    2 +-
+ drivers/soc/qcom/icc-bwmon.c                       |    2 +-
+ drivers/soc/qcom/ice.c                             |    6 +-
+ drivers/soc/qcom/llcc-qcom.c                       | 3265 +++++++++++++=
++++++--
+ drivers/soc/qcom/ocmem.c                           |    2 +-
+ drivers/soc/qcom/pmic_glink.c                      |    2 +-
+ drivers/soc/qcom/qcom-geni-se.c                    |    3 +-
+ drivers/soc/qcom/qcom-pbs.c                        |   22 +-
+ drivers/soc/qcom/qcom_aoss.c                       |    2 +-
+ drivers/soc/qcom/qcom_gsbi.c                       |    2 +-
+ drivers/soc/qcom/qcom_pd_mapper.c                  |    1 +
+ drivers/soc/qcom/qcom_stats.c                      |    2 +-
+ drivers/soc/qcom/qmi_interface.c                   |    2 +-
+ drivers/soc/qcom/ramp_controller.c                 |    4 +-
+ drivers/soc/qcom/rmtfs_mem.c                       |    2 +-
+ drivers/soc/qcom/rpm-proc.c                        |    2 +-
+ drivers/soc/qcom/rpm_master_stats.c                |    2 +-
+ drivers/soc/qcom/rpmh-rsc.c                        |    9 +-
+ drivers/soc/qcom/smem.c                            |   18 +-
+ drivers/soc/qcom/smem_state.c                      |   12 +-
+ drivers/soc/qcom/smp2p.c                           |   11 +-
+ drivers/soc/qcom/smsm.c                            |    6 +-
+ drivers/soc/qcom/socinfo.c                         |    9 +-
+ drivers/soc/rockchip/io-domain.c                   |    8 +-
+ drivers/soc/samsung/exynos-chipid.c                |    4 +-
+ drivers/soc/tegra/cbb/tegra194-cbb.c               |    2 +-
+ drivers/soc/ti/k3-ringacc.c                        |    2 +-
+ drivers/soc/ti/knav_dma.c                          |    4 +-
+ drivers/soc/ti/knav_qmss_queue.c                   |    8 +-
+ drivers/soc/ti/pm33xx.c                            |    2 +-
+ drivers/soc/ti/pruss.c                             |    4 +-
+ drivers/soc/ti/smartreflex.c                       |    6 +-
+ drivers/soc/ti/wkup_m3_ipc.c                       |    2 +-
+ drivers/soc/xilinx/xlnx_event_manager.c            |    6 +-
+ drivers/soc/xilinx/zynqmp_power.c                  |    2 +-
+ drivers/thermal/ti-soc-thermal/dra752-bandgap.h    |    4 +-
+ drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h  |    8 +-
+ drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h  |    4 +-
+ include/dt-bindings/arm/qcom,ids.h                 |    7 +
+ include/linux/firmware/qcom/qcom_scm.h             |    2 +
+ include/linux/firmware/xlnx-zynqmp.h               |   39 +-
+ include/linux/reset.h                              |  274 +-
+ include/linux/soc/mediatek/dvfsrc.h                |   36 +
+ include/linux/soc/mediatek/mtk_sip_svc.h           |    3 +
+ include/linux/soc/qcom/llcc-qcom.h                 |   12 +
+ include/linux/soc/ti/ti_sci_protocol.h             |   30 +
+ include/soc/amlogic/reset-meson-aux.h              |   23 +
+ 137 files changed, 7215 insertions(+), 1067 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/mediatek/media=
+tek,mt8183-dvfsrc.yaml
+ create mode 100644 drivers/misc/lan966x_pci.c
+ create mode 100644 drivers/misc/lan966x_pci.dtso
+ create mode 100644 drivers/reset/amlogic/Kconfig
+ create mode 100644 drivers/reset/amlogic/Makefile
+ rename drivers/reset/{ =3D> amlogic}/reset-meson-audio-arb.c (100%)
+ create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
+ create mode 100644 drivers/reset/amlogic/reset-meson-common.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.c
+ create mode 100644 drivers/reset/amlogic/reset-meson.h
+ delete mode 100644 drivers/reset/reset-meson.c
+ create mode 100644 drivers/soc/mediatek/mtk-dvfsrc.c
+ create mode 100644 include/linux/soc/mediatek/dvfsrc.h
+ create mode 100644 include/soc/amlogic/reset-meson-aux.h
 
