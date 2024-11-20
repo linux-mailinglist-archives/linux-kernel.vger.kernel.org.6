@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-415711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DE79D3A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1A39D3A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7703CB29E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2260B22B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009061A2567;
-	Wed, 20 Nov 2024 12:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6822819F41C;
+	Wed, 20 Nov 2024 12:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="NVsic0aq"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Yqm9cKWN"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928111A08D7;
-	Wed, 20 Nov 2024 12:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A5919E833
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732104004; cv=none; b=BcJVABe8mWFSlvI58tuigiHFwceBitR+ZO+w2T45odN4FDWQpxTj7GOHVZ7HSR5KwyV+RGc+RGFFPiLuWgMNob2Fr4eEnDZwHqQ8GwLgdiER7HeQAD+N01hzorJt8ExQcE4LeSYyMtFcE3MHPm8oJhuWY4s2Y7pL6NI98b1XfQM=
+	t=1732104235; cv=none; b=MyXAHBljvgc3afOXMLI/mS0db730iuImezzZkXMi3Ff7OLsU5mz/n9MIQGo57Kyk2Ig7N6YToAyNcp4IgvHdo9kMQQgh3RlymuPWWoEsfysGbkpnce73XjQetfAGEBeKxB3wP9Lh2dzI4t0TuA/g8h+GyRWKJtA6CUFMYMkfPu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732104004; c=relaxed/simple;
-	bh=fwJu7oWlw2VUjiuanKnAixM65GU0IscIJTXumFEZEqg=;
+	s=arc-20240116; t=1732104235; c=relaxed/simple;
+	bh=ebiOEPWDASTmqe1MSxfIOuNrlTqoc/XH5CV5Uf86rmE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wn5g66FnmCqM/ovbYNQ+3aHMsMNVB/jGY3EyhDOkII4qLdpvdz5E5warfplsSNm6IJ7KuHtQJ67UpezrRbU2655ZQq46g3z+6N3RNej4Y8C9z21GO8WcRvwEzDjDTRej4TmBZSgt77szyL+SClEWVik9/BbYFVuvnZorRD6Oo2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=NVsic0aq; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1FVnryMM8lSBpu5IKb6YzzE0+p3MecXFHq+tUNyftqs=; b=NVsic0aqBY69L9DWCME2+mmF/b
-	CE4nxmsQ1kXVHb5JKokNfJizGvCJAxwUeLKHuSgJIUnKSoo5WjR2BBwPXoIzVRaGj9T8Tmto06gZi
-	9ZowFFLJBZsKmYLlQAbYxHdwGDEi4ysIKnKKAUTXn7EORLvSaAMzkBBk5BVcd54GMEsw+1hiTHFDS
-	QShu4RArI/MXolXw+KA7bvZ0HaQmfBoJfi34jT6Jodsxt65MtJkUQ77rdn3c76W0HU8heSUJjk/3r
-	G79IPnI8kDtH4qxtwKDf3DASryoAWElXEYWarb2vhegkObAumfOXuYvZhnTD6K3G3Vn6dVhN6URjH
-	3l44bIeQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56694)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDjMt-0005RK-1U;
-	Wed, 20 Nov 2024 11:59:36 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDjMn-000742-10;
-	Wed, 20 Nov 2024 11:59:29 +0000
-Date: Wed, 20 Nov 2024 11:59:29 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jan Petrous <jan.petrous@oss.nxp.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH v5 00/16] Add support for Synopsis DWMAC IP on NXP
- Automotive SoCs S32G2xx/S32G3xx/S32R45
-Message-ID: <Zz3PIROyOIvpzlto@shell.armlinux.org.uk>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
- <Zzy_enX2VyS0YUl3@shell.armlinux.org.uk>
- <Zz3Oz3JiRLyD1qKx@lsv051416.swis.nl-cdc01.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJtEj0P+ONwu1rhX+FdOBj+5oQG45G3CHnrqFwNJKzFIrxpjYRs5o6+Nkg90N6P5vH+4uj2kcSkF9XrVrXAsL2Lf9A4FtheYt+okh/LVTa4uw9uOVx2hwDljUloRWJZEqZcjUmcC9tRr687BuXuMINc+RQjBA2QgEQ3Xj1E9qa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Yqm9cKWN; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43169902057so56024055e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732104231; x=1732709031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BAxdRzhOYrouT/5MhvDembquc5UFQi3vigSKJDBImCU=;
+        b=Yqm9cKWN2jKbQ9ZOWgR7Pe3YwFF6IS1J5ZLz/cicn2+lyWtGPW1GS0nm6a0LRLD1y6
+         aeQ1f88R5GbIyQlasCmaH7O+Mlq8tLJYlGfQXuTcCm5EnxdTnWVg3MTdODQFHOqdThDK
+         LhcvMZwZeAOaPtLunuDTrkAsCg2DkS+d41kGC/TVrwgpx1jfDFOMdPW1RDWPwsRJI/cQ
+         uZKBJaYybRc7NQ5itSAqClWgEoDK6Yjf/AveqWQe4OZIHe0Oa1Z396FcSndvJ2Q28ceM
+         ZKUU+9ZcrFcu23JI/Y6X2hNlNzoehnFQMyMLeVaqZdm/xaLeeDfQnJ3ErC/Q+nbEocXI
+         hLBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732104231; x=1732709031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BAxdRzhOYrouT/5MhvDembquc5UFQi3vigSKJDBImCU=;
+        b=uzdoa/CZTj/e9CBnhjzLFZyrSOYdvtmoeFa/NB+r1IdjvO1Yb+CZi383ZeqPG/j/Vu
+         omwLfw+Bp/XfERw6/2lvCsh+pe6y0myCcwFiAR0pABFwgW4UxEqJvS3GtDY/yh5pcnMX
+         Nj9g60Feqyw2DQQX3vq2PO97g9p2K8Xr+MScuGxVVGOEV54/HlAOaQ+TBDE+p855J2Q9
+         fPXEo2n8CDs8CjEJhLeMsRIMYYs3nKWGzO1aYW0YqwhuQIDJrzPQ+GSsectnI8N2h6AP
+         Zas3G9F03ZiactXoEY3ca8JmgyMTHi2J+N+SF1NA5SU/3Mz50FeB96ZpF2rG2M0QPXsR
+         m/aw==
+X-Gm-Message-State: AOJu0Yytx6ceIgwJ6izUzL1y3p73qQ4T/Hc7QW1mn2Y/KDNeGfR50jyJ
+	fPZFtvEKOtfxCspFDKPxbZZDHB8v50VFRbxKJv8TtbT826VspA/QICF5FDLYV/E=
+X-Google-Smtp-Source: AGHT+IGjopcSt0mlRYRqL80tr2QaHyUpHiLzEE5R54Myqo3Nu8PqZxlrk2NYs2xuExxiYi66Ab/D8w==
+X-Received: by 2002:a05:6000:1565:b0:382:3754:38ed with SMTP id ffacd0b85a97d-38254af5110mr2057295f8f.21.1732104231380;
+        Wed, 20 Nov 2024 04:03:51 -0800 (PST)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493f3ebsm1870395f8f.105.2024.11.20.04.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 04:03:50 -0800 (PST)
+Date: Wed, 20 Nov 2024 13:03:48 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org, John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 02/11] printk: Use struct console for suppression and
+ extended console state
+Message-ID: <Zz3P_vDLiNNCLCQR@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <ba47efbe432cf33cb358a027a2266296e2cfe89e.1730133890.git.chris@chrisdown.name>
+ <84plmw527r.fsf@jogness.linutronix.de>
+ <Zz1i78qGL02oF8Zl@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,49 +88,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zz3Oz3JiRLyD1qKx@lsv051416.swis.nl-cdc01.nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <Zz1i78qGL02oF8Zl@chrisdown.name>
 
-On Wed, Nov 20, 2024 at 12:58:07PM +0100, Jan Petrous wrote:
-> On Tue, Nov 19, 2024 at 04:40:26PM +0000, Russell King (Oracle) wrote:
-> > Hi,
+On Wed 2024-11-20 04:17:51, Chris Down wrote:
+> John Ogness writes:
+> > On 2024-10-28, Chris Down <chris@chrisdown.name> wrote:
+> > > In preparation for supporting per-console loglevels, modify
+> > > printk_get_next_message() to accept the console itself instead of
+> > > individual arguments that mimic its fields.
 > > 
-> > On Tue, Nov 19, 2024 at 04:00:06PM +0100, Jan Petrous via B4 Relay wrote:
-> > > The SoC series S32G2xx and S32G3xx feature one DWMAC instance,
-> > > the SoC S32R45 has two instances. The devices can use RGMII/RMII/MII
-> > > interface over Pinctrl device or the output can be routed
-> > > to the embedded SerDes for SGMII connectivity.
-> > > 
-> > > The provided stmmac glue code implements only basic functionality,
-> > > interface support is restricted to RGMII only. More, including
-> > > SGMII/SerDes support will come later.
-> > > 
-> > > This patchset adds stmmac glue driver based on downstream NXP git [0].
+> > Sorry, this is not allowed. printk_get_next_message() was created
+> > specifically to locklessly retrieve and format arbitrary records. It
+> > must never be tied to a console because it has nothing to do with
+> > consoles (as can bee seen with the devkmsg_read() hack you added in the
+> > function).
 > > 
-> > A few things for the overall series:
+> > I recommend adding an extra argument specifying the level.
 > > 
-> > 1. Note that net-next is closed due to the merge window, so patches should
-> >    be sent as RFC.
+> > The extra argument would be redundant if may_suppress=false. So perhaps
+> > as an alternative change "bool may_suppress" to "u32 supress_level". The
+> > loglevels are only 3 bits. So you could easily define a special value
+> > NO_SUPPRESS to represent the may_suppress=false case.
 > > 
-> > 2. The formatting of the subject line should include the tree to which
-> >    you wish the patches to be applied - that being net-next for
-> >    development work.
+> > #define NO_SUPPRESS BIT(31)
 > > 
-> > For more information, see:
+> > bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+> >                             bool is_extended, u32 suppress_level);
 > > 
-> > https://kernel.org/doc/html/v6.12/process/maintainer-netdev.html#netdev-faq
+> > Then in devkmsg_read():
 > > 
+> > printk_get_next_message(&pmsg, atomic64_read(&user->seq), true, NO_SUPRRESS)
 > 
-> Hi Russell,
+> Petr, what do you think about this? I remember when we discussed this before
+> we talked about either determining state via `struct console` (which seems
+> to turn out not to be feasible) or passing another argument.
 > 
-> thanks for review and hints with series proper targeting. I will
-> reformulate series to 'RFC net-next v6 x/y' for v6.
+> Do you prefer to have another argument or do the bit dance?
+> 
+> Personally I prefer the simpler solution with more arguments instead of bit
+> stuffing if we have to go this way, but I'm up for whichever sounds good to
+> you.
 
-'PATCH RFC net-next v6 x/y' is better.
+Ah, I though that John's proposal was reasonable. But it is true that
+the meaning of @supress_level is not clear.
 
-Thanks.
+I see two possibilities:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+  1. printk_get_next_message() and console_emit_next_record()
+     could pass con->level.
+
+     But then we would need to create the extra value for devkmsg_read().
+
+
+ 2. printk_get_next_message() and console_emit_next_record()
+    could pass console_effective_loglevel().
+
+    devkmsg_read() could pass CONSOLE_LOGLEVEL_MOTORMOUTH.
+
+
+Sigh, it seems that any solution is hairy, including the one which
+passed @con.
+
+I personally think that the 2nd variant, passing the effective
+loglevel, is least ugly. I am just not sure about a good name
+for the parameter. What about?
+
+    bool printk_get_next_message(struct printk_message *pmsg, u64 seq,
+				 bool is_extended, int con_eff_level);
+
+Note that this would require passing the effective loglevel also
+to suppress_message_printing() so that we would get:
+
+static bool suppress_message_printing(int level, int con_eff_level)
+{
+	return level >= con_eff_level;
+}
+
+Best Regards,
+Petr
 
