@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-416070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22889D40E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:13:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2789D4093
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A456B375B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:11:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CB0DB24C46
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6D0154BFC;
-	Wed, 20 Nov 2024 16:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E4714C5BD;
+	Wed, 20 Nov 2024 16:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wqVlfTkF"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktV6EAdv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1831A13AA31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2993A13E41A;
 	Wed, 20 Nov 2024 16:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732119053; cv=none; b=WQgSsTbnydcPIakRONtU3eIC8IIgfEgnUeGATOuI3zzGHF1MJYjPM+lw9b+sdCJXTCbz1htDHGAlZ6pWySeH0E8se15FkZfq25Y55xQi9KnKiEOfEFwH9K8OvKXlzxqx7gShcTZOPTlKROXE4GxECUgCTlygJn3ZC5/CK6MVLss=
+	t=1732119050; cv=none; b=Y7O/HquKyB5atr1ej1ZNjrixsDix4I7Jkex8pvBk0gtuhe+GMJsu+PAhVeCP0tyiiGYzPz01Z2Ei00+YQnuQq3uJVBY/3I4Qg44us5Vz5ICXQHm+rc7gNLCTMoehR3G1oCFWvBZmrkbyJtbL7SQQ4yXyszEAORNm1xfwlyPiPGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732119053; c=relaxed/simple;
-	bh=pfriz3GoW4ivHoZQDFCLbfIt/zTGENc7ZHmvNxANy3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ikyi+M+ca75Sw9fGnVvP6v11eFP5uBxtysgUCKdvxEqU9AEs3GDn2jDP18UXV6m2/qCd5Z43aivg9ATmLbLUXwK/rFaCGTDySylDhLkBAsCazHTIH9Kec/K9MZKxMpYI+Ul6NffGEvg3pvKqfKiBmwMZb1n6BGlk5XbWppB6Rqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wqVlfTkF; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=De3bamnoeyPbjdYYxJ07ADGjjT7Pux9RhrDqOh+tlzg=; b=wqVlfTkFNO3ByyK2i132UKpJ8N
-	qFjKyyD0nWG2cKokk6OSg5SPTjxPGObKaJhmmQkyMjMMvfnVseHEaGsCmC4+fOtNbZFRYEfoqfUhx
-	k8bpLSdQDll5qH23rqi0MqDGU7u0wFWNf+5Y5WVYXf7EaC4aO/ash2NMqGLMT/LY5q83DRhR/27fh
-	9nZKGMn5fF9V/+4ad+mLQR4nlw2+CzIWufp8K0MeLTFlwgWnsetLbHCNnClmS/0mKeOa6tBj8HSOc
-	4s43ZS2czQlqdfMVS9bo2xU9CeVT132sTE4KJ12pQfiHOc11CL3JuZ4FVH/0QAg/4kLckNMSiUx8t
-	N8+drscQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDnHx-0000000HRwW-22pI;
-	Wed, 20 Nov 2024 16:10:45 +0000
-Date: Wed, 20 Nov 2024 16:10:45 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: almaz.alexandrovich@paragon-software.com, brauner@kernel.org,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-	syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V3] fs/ntfs3: check if the inode is bad before creating
- symlink
-Message-ID: <20241120161045.GL3387508@ZenIV>
-References: <20241119163647.GJ3387508@ZenIV>
- <20241120030443.2679200-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1732119050; c=relaxed/simple;
+	bh=3Za60ZFlpe4MkTK49XqK+z0H+TjcuhfWcXkV4Eo85A4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fjWbPCENJT8iVLWT6qJJfChlN4m6GxcFCnKCgEoeTwqhE2TzDV9mZ8i76IN33t7ic94zKY5YY+LiqlxxkgXEALSqlHngQmKk6Vv8Cr0d2/PikO4jNJcMhLO6OUXMUIfGvSVJuLYVLJo7j6IJIHZhEnMuvpYufSXn969pbnA6RfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktV6EAdv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70750C4CECE;
+	Wed, 20 Nov 2024 16:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732119049;
+	bh=3Za60ZFlpe4MkTK49XqK+z0H+TjcuhfWcXkV4Eo85A4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ktV6EAdvJMbNuEYsQPSJmJo39ZxbS14u+aj7e059i6UhJOjg0P4DNtd0c9piHvHV+
+	 39LmVa1NnJ6fQW7RpA8B9iLVwu/tEdNFvce6TsPnIp0me5ONE+xgZ+3xxvE01mp9A2
+	 X5rqJcDkZ5p/enneQTKddM8jL2JjCufCgj3eBdkmpxrYo86KU2SlI6uwu8DCA9XROA
+	 UxTrmSL1PVUi2H9obUPpaQmfBnoJUZ/yHL6U5t+YwVkwEO43Jhw3cEa6+dSJhrAqM4
+	 oX+yuub+RdNyKIVi3EUE6Tk2WsNKM/IUkc/muDLJli4CbM5uYd7jG2ryjdVnWAqx1H
+	 LwEcHQCqfF3CQ==
+Date: Wed, 20 Nov 2024 10:10:47 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	stable+noautosel@kernel.org,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH v2 3/5] PCI/pwrctl: Ensure that the pwrctl drivers are
+ probed before the PCI client drivers
+Message-ID: <20241120161047.GA2325953@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,32 +66,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120030443.2679200-1-lizhi.xu@windriver.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20241025-pci-pwrctl-rework-v2-3-568756156cbe@linaro.org>
 
-On Wed, Nov 20, 2024 at 11:04:43AM +0800, Lizhi Xu wrote:
-> syzbot reported a null-ptr-deref in pick_link. [1]
+On Fri, Oct 25, 2024 at 01:24:53PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> First, i_link and i_dir_seq are in the same union, they share the same memory
-> address, and i_dir_seq will be updated during the execution of walk_component,
-> which makes the value of i_link equal to i_dir_seq.
-> 
-> Secondly, the chmod execution failed, which resulted in setting the mode value
-> of file0's inode to REG when executing ntfs_bad_inode.
-> 
-> Third, when creating a symbolic link using the file0 whose inode has been marked
-> as bad, it is not determined whether its inode is bad, which ultimately leads to
-> null-ptr-deref when performing a mount operation on the symbolic link bus because
-> the i_link value is equal to i_dir_seq=2. 
-> 
-> Note: ("file0, bus" are defined in reproducer [2])
-> 
-> To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
-> whether the inode of file is already bad.
+> As per the kernel device driver model, pwrctl device is the supplier for
+> the PCI device. But the device link that enforces the supplier-consumer
+> relationship is created inside the pwrctl driver currently. Due to this,
+> the driver model doesn't prevent probing of the PCI client drivers before
+> probing the corresponding pwrctl drivers. This may lead to a race condition
+> if the PCI device was already powered on by the bootloader (before the
+> pwrctl driver).
 
-I would really like to understand how the hell did that bad inode end up passed
-to d_splice_alias()/d_instantiate()/whatever it had been.
+> +	 * Create a device link between the PCI device and pwrctl device (if
+> +	 * exists). This ensures that the pwrctl drivers are probed before the
+> +	 * PCI client drivers.
+> +	 */
+> +	pdev = of_find_device_by_node(dn);
+> +	if (pdev) {
+> +		if (!device_link_add(&dev->dev, &pdev->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
+> +			pci_err(dev, "failed to add device link between %s and %s\n",
+> +				dev_name(&dev->dev), pdev->name);
 
-That's the root cause - and it looks like ntfs is too free with make_bad_inode()
-in general, which might cause other problems.
+This prints the name for "dev" twice (once by pci_err(dev) and again
+from dev_name(&dev->dev)).  Is it helpful to see it twice here?
 
