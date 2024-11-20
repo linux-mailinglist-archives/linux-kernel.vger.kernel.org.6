@@ -1,102 +1,149 @@
-Return-Path: <linux-kernel+bounces-415408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333249D35A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:41:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF12F9D35AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9198B215E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C3DDB22B6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B22E176FB4;
-	Wed, 20 Nov 2024 08:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117AA178368;
+	Wed, 20 Nov 2024 08:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YaRdoGOn"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VECQN232"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5208615A;
-	Wed, 20 Nov 2024 08:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A1E15B115;
+	Wed, 20 Nov 2024 08:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092055; cv=none; b=hONcz1f1nLmd7NSLAq8HFuSj6ufUoBfvnAU4Bws3uVBfpoAypHrBSHba5cEfllk3m/mfj81zn/2pjc1aoTyuH2Ynd0W9gBt1DOJYjp0I0IlJWUDDeyPcWjxdT1Fu5Iz7sg6QJZ684VWC6txRiEdlqmLwkPSgvjRme6i0CymdXrY=
+	t=1732092107; cv=none; b=i9IDWrBfiDg4UOWdp9TyMQe38sRCBg0djyMWb9V+0NccZ7WhffoPVRHl7ZXIfKpqud6AQI4pmpf+CFmArLCTl58AKqrI4mzAPhEjJyuay8Xj6QQtVWvm2Kr7Z9YeLBbp4Kw79FpxFGDgzN84txFOU2JYSjhVqqHLCZuzrNp0IhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092055; c=relaxed/simple;
-	bh=Ui3ctbnKKRdOImumJ4A3TJT2obyL1ylkW3xkwgNY7NU=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=bS5wwl9mgJAMcajPx85QtILu/0b5dH05A3HS0HEnK8rqmnk2MnNVCoXdWi+j9/mzKq8yx8dmFtN32GkkIWdAXcNi2OarmN5NX0r6FvPSlULwjMuwZaagCkEkTFF6ai8yIIc7dE3xirANhWBzZiHMw1kmDdRra5qWl9ehF0dOSq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YaRdoGOn; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1732092048; bh=H9Y1oBLqHBrIdDkJYdX6Ga8AnpCl7ourwR5hxF0QsUI=;
-	h=From:To:Cc:Subject:Date;
-	b=YaRdoGOn6TPBsED4jNlVteL4NC1RBTbhiL/8emxQ61nU0tV4YSuiyzKvindvlidKu
-	 G+2lrWgzsLFL742Ow9SHjAI0wLsKhfgOhKavaDrrqN6ax/MVAClgDd17IoPoFTNmmJ
-	 1Lh1vEx8+btIBITkFOz70AeFb5lkmdkEIwmgDUO0=
-Received: from archlinux-sandisk.localdomain ([218.95.110.191])
-	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
-	id A2EAEE34; Wed, 20 Nov 2024 16:40:46 +0800
-X-QQ-mid: xmsmtpt1732092046t0uad8frp
-Message-ID: <tencent_79E5C40F0E9E179868A209952556B053C206@qq.com>
-X-QQ-XMAILINFO: M9J3/gYsWGfr80NJ+ti6rl1M1uxoROc9GFuJxt/tf5ma6Z6aBW52ok7P6sEgbc
-	 QWWXfYWN4IwPgggaZghuhbIKmAFCa7WWISi5H/+HELEwsFambNpcsAz74lC13Z4l5EHUN3fzXSVM
-	 /V74K2bJKLM0lSYyFPBnQ9kIc8m68DAclUJe8swuG8fDyKqDRgQOx7f8hHTAbF0p3lRIUduEj3jn
-	 YTFnCeTRVf5vdCU67j8xJLjVkb1VA95Xb0Ru8dAz94tXoETLJzYR/S9DoLL2/NTP/de0wI+dG/U8
-	 USML1nY+DKg7Xwc/yXri2hUQXSAYwBqh8iEsN6WBQw7RD7OSYWw7jL4G/9JFEouLWz0Tc5G3OAKY
-	 T+4culshWcKIgaAxk35WlksXqbVqkNhCYGQF/bChB9H/D3iLTJQKeuhEy3085mxpwGj2cUprTTfg
-	 AWP0CY3xjEUuZPHNZt0zm5A7m7jYrih0tmvlvGHNLjVs2AZIHSNiw4+RVmoCzEBPaPLDLSfarwXG
-	 qG5bBt4jSQxu73nfFoPl5oU2rpxH2aClJSGEY0RpfIoxK22sVK8uuR3Ub0HD9jI0VUXMrtuT7Yx7
-	 R1bfmp8fyy3felYU04oQgoGtIBONGlKUKaPYwGOoqPp+bE+GXT3Z8gzHvVquD6+O5IPB0+3DQdY4
-	 M3cEehL6mIt+qQxuD07qI3lKLt1dVtJ6tiLWi8enam46V6Toc9s/sQcbbvKol4qkyBJfONzrU79w
-	 hp6pdQPJ0Zz7QHHn5lBDwR1zAKoMwwBSNGNbW0E+bytnAyJa5C0PE+dM5bnn5qVRX/caMuIKCVO4
-	 fmzvYCv4n9yPOXX0JNGZ/TW3Z+FBqshQJhvdCHr4Hq9jhg4F5dF+hhBzdfRN8B1xtRcdQXOxONUr
-	 BoYvaaafam4G3MtXS6F0aQEiqFXmFpqM/7z2DrcmbA3rk60GuDModSIYLcAKVsEHwhyVoRkioRM4
-	 Ix7lmM6Pg=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Jiale Yang <295107659@qq.com>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiale Yang <295107659@qq.com>
-Subject: [PATCH 2/2] fs/fuse: Keep variables in fuse_i.h consistent with those in inode.c
-Date: Wed, 20 Nov 2024 16:40:13 +0800
-X-OQ-MSGID: <20241120084013.1990-1-295107659@qq.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732092107; c=relaxed/simple;
+	bh=4rfnlRucQnUgzLpd0n5nAO1dDQNhlvEJVooFv39keHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jbn/67n8DIO8Vmh5H5HAaA3m4TAnxU07QAh4pEQ4a/Zy9NUWPKDdqyiQC6m1mGg23YO3DwEMO3mM+vCAQydOMKRR/gQT4gjd67VwdMJ1LjK7m+l4f3C36+Q4mEgox4mC+cfrellw8KalwRTnXQwqBhEoBVaziFM7aN3yk4/nuoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VECQN232; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CE1C4CECD;
+	Wed, 20 Nov 2024 08:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732092106;
+	bh=4rfnlRucQnUgzLpd0n5nAO1dDQNhlvEJVooFv39keHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VECQN232ULMNimccmpdbW1C1om6Kf4R7RvMR84F0yabWNow5lQfMHwQ/B6A/cjjh/
+	 UTmHEGpksoGNB/8wgoqDIzJJCbZYoeQwWe1tHY4n1GhQIWdzN9vQHhUe9pnYv2EXBI
+	 04Va3NGM4V+Z9XdwOoGO4GvfIvRBH3Yp4ZV1fCPvieTBvJIGpUd0qALi7JnI5WJe7y
+	 IN2N//7VtZGwQBw8ViTaIssdg459szyR6JkL2rT0D6zpKKahEL3Mb5l8zhxKn5bm1V
+	 kfaZcCnx0AsUpe5LmLvnv5gspYU6GRVNzfEqeoIz7N9GDVsF8CcW/GAFywkDJUYziB
+	 NFfsHLsgZJJhw==
+Date: Wed, 20 Nov 2024 09:41:43 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ming-Jen Chen <mjchen0829@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sudeep.holla@arm.com, 
+	arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, dmitry.torokhov@gmail.com
+Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+Message-ID: <ql6m6qrdokwfu4iizn6wmvovawuc7kgg6jfzxebkmac5muz66e@myrjvq5jm7gg>
+References: <20241119025954.4161-1-mjchen0829@gmail.com>
+ <20241119025954.4161-2-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241119025954.4161-2-mjchen0829@gmail.com>
 
-A similar patch to the previous one. Change 'unsigned's to 'unsigned int's,
-to keep these extern variables consistent with their declarations in
-inode.c.
+On Tue, Nov 19, 2024 at 02:59:53AM +0000, Ming-Jen Chen wrote:
+> Add YAML bindings for MA35D1 SoC keypad.
+> 
+> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
+> ---
+>  .../bindings/input/nuvoton,ma35d1-keypad.yaml | 69 +++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
+> new file mode 100644
+> index 000000000000..9ccd81a2574d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
 
-Signed-off-by: Jiale Yang <295107659@qq.com>
----
- fs/fuse/fuse_i.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Filename matching compatible. You got this comment already.
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 74744c6f2..7f761c087 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -54,8 +54,8 @@ extern struct list_head fuse_conn_list;
- extern struct mutex fuse_mutex;
- 
- /** Module parameters */
--extern unsigned max_user_bgreq;
--extern unsigned max_user_congthresh;
-+extern unsigned int max_user_bgreq;
-+extern unsigned int max_user_congthresh;
- 
- /* One forget request */
- struct fuse_forget_link {
--- 
-2.47.0
+
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Nuvoton MA35D1 Keypad
+> +
+> +maintainers:
+> +  - Ming-jen Chen <mjchen0829@gmail.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/input/matrix-keymap.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-kpi
+> +
+> +  debounce-delay-ms:
+> +    description: Debounce delay time in milliseconds.
+> +    maxItems: 1
+> +
+> +  scan-interval-ms:
+> +    description: Scan interval time in milliseconds.
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+
+Keep the same order of properties as in required: block.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - linux,keymap
+> +  - keypad,num-rows
+> +  - keypad,num-columns
+> +  - debounce-delay-ms
+> +  - scan-interval-ms
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/input/input.h>
+> +    keypad@404A0000 {
+
+Lowercase hex
+
+> +      compatible = "nuvoton,ma35d1-kpi";
+> +      reg = <0x404A0000 0x10000>;
+
+Lowercase hex
+
+Best regards,
+Krzysztof
 
 
