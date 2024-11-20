@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-415959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE589D3E80
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:06:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51BE29D3F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C86284CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:06:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB700B33EFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A1B1D5ACE;
-	Wed, 20 Nov 2024 14:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819601D6DB5;
+	Wed, 20 Nov 2024 14:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eybKjgv4"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0rJ7HrJL"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975CD1D1F4B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742671D460B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114581; cv=none; b=eeJS1Y8IzRD9DwWOyymo69D4vSLmpOamn/OD7Gst99EWAYHpHCTZs2M7T3ay2KPRhYgJRBF0Kfnwp5kP1Sq2vlRgbevG9/dT8KVEqw5PJ2v97Gbo4f7eS4qfRqCMBbgsZT2jjtMVKsR65/3E5TCuT2droG2JLdunrNI7q5BNh7Q=
+	t=1732114584; cv=none; b=Z2WKjr8Tc7Nwr5LbUCUodPYLEkPW9xO4YMEEOqXzxSs4AHXhhr09VBqxfXs+z8HKx753bKal+wex1MsT4hv0VlVZHHDuSLSfxTLslad2zO/Tv+rWcmkK+oJWh8FpWpZKpkRaSj2RXAw1+hfvxkevhcE/J5RoMyOqNP94c7bNo4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114581; c=relaxed/simple;
-	bh=thHW2hYjZXfFchwxaSHY31jS6Gxjf/8txx6XeVPPA40=;
+	s=arc-20240116; t=1732114584; c=relaxed/simple;
+	bh=Xqhb993p62ucfXpgqmTAzwF8zVU/iTXacAc64i+hvXs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lOl+n0coGCWl08bYBc3YBAjPjgfPg/8pkOhEwTm7q4RoQGpBZhMB5oXjV7J1pK0AT1oaLytpYwJZc8GkUvA1Qp64ODXvFDja1cMyre1oKPgTja75TKfRETUgWFXKIB9WtFXJQDSZ0/C00/2imn48yhd+M5q/mUkKMJgM8lvMVCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eybKjgv4; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=YXZBRNxo6Z0dSO13X7dXS2Cl7K+uFnsp9jyCiZ3hbjkuyRpVGU1c33vVxS+zWl5Xe6hE25VIw8dZgNPkZaxJuzlub+iIWLtFUFIuzB4wdwQemSpfzOxmIXco/f+GvuWclQSFVk/tVOrexkohi0pPnpOOFNRCD3kpzb0ask222nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0rJ7HrJL; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-38231e6b4cbso3605219f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:56:19 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee484ec18aso42867947b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:56:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732114578; x=1732719378; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732114580; x=1732719380; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRAvnS0IaCWBMzdRyDGxGfoX2WP3nXVUoH5LBPSc5Qs=;
-        b=eybKjgv4PFc5KfXmZJcVYt1b7hbYiQRDgN1YxYOdacw3hzsoVaEoLpPxmFwNkMpGAj
-         W3LI4u2N6T0EBWnuA0DhIAhmQNc6zPEOdT3ier6Btyz/hgiZcXYFGGR10UU5O7hd2hGw
-         9d+aGByeAwRdWkPC+yWn7E6+uqknVRPTqMHkBlWsnOW5Ksm1+MIomaumUsKJGbRcOmm0
-         qeALVYHveqmD2HWze09H0riX3BELXazxg3QLcxx4mWHwhNHVpNBLTn9AMOh50mVgH6AY
-         18H/Ywu+UhLt/LY/31yumaP+JuU6lXqjO5Vxc2YXXHpGxSABPwNoIW/W3gd+kGy5Tqn5
-         u00A==
+        bh=hUP5pKIRXgXTZOS13MJMWQ9DFpxOfGZ7r+UgNJvVuSI=;
+        b=0rJ7HrJLBN3h3gCT51daqKjsnmC0ebM0JccG86UFWwtUG/Y+RBcPonIYVf87eA7w5z
+         IJ1D745TImrQwdEX1cpuUIX4ABW98J5A9FXiFd5rOgt3YzRSOirmZXXtr/B9E1SuNQfL
+         3xk1nhUHP77TTvQBT9EzBAOvv4sj1PZcaFge7CaGcmy/6wf96djPIkdTr5onjuPqG5jb
+         5swAlYphJV5wAC4E3jTZck7yzRUl92unpcj4HKAakQEn6+21vb6MBoi9CaR1v/ffbeym
+         7GwrGCXEWi6gKlSL9QCkVmcSgQ4SJAqBnNGOzpQEUOluHjY3zPI8zz+Td5sU+IWP9ZvJ
+         upuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732114578; x=1732719378;
+        d=1e100.net; s=20230601; t=1732114580; x=1732719380;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRAvnS0IaCWBMzdRyDGxGfoX2WP3nXVUoH5LBPSc5Qs=;
-        b=GK4so8EbEWdAOkdCy9LNcRGHUpH8j73LZUlPatL9xglnX9EfKcDpr9pfO+bfYbIOiy
-         /JAKyGPbwyFf8zp82p4S++wE6fBhC2dhXroJtFz39wc7OL52Wm0aq6xK14/SD2IfgmQ3
-         xKXAX0uhZNL8pPOFbJTCS7q3M9eCUoCXSFxRxGJ88xN6VbIk44W/vAXtVt8Yty7qFETO
-         oRB53hlAqOydpEyhsozQm+878QUtP4yiFi43nGCtLP5mVC0NOvmHyCjFy4j1E9Q4DdfI
-         2huB+cdOVLjGC3NDKJUE4ZQEi5fAuaMXIHVSv3FX7q24zs9bIS6OCDRwdayM3GLNByQW
-         HDjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXl8i6SG8jgZaDYPNPHBVBGVVpAha6SsLGR1cnyyEJPVWFns4zDk8Qi066GI6Fm+ThZKc0TgZJ1jCgz6tU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY6W1s5di2CDNmY28w/WAtW8tp5GJ3rxzXVtquiWUlH3rItMgr
-	UJhirl61eWR6qrg84xtS6CLMVxzxDXVU0VnqA7mbcN5kCz+bvv1ueRrwI7VsV3mg/4yewCieXdY
-	/WUX9NBOScBBPvQ==
-X-Google-Smtp-Source: AGHT+IGq/r3HGbbtFoFVRvHr1EOlzN/Wt8+om4kWd42V+YspQZes17Yps3LGccfMBIlhtc72415J8+GJZmwAm9s=
+        bh=hUP5pKIRXgXTZOS13MJMWQ9DFpxOfGZ7r+UgNJvVuSI=;
+        b=lBkiipdEhjR6reFXIg2nx1/xYku4NkSmqyp5bIO32YJ89per+WU9+QwAmC+jyuqiHc
+         /iri0qk+n2muovUfihYzzopR6F23J9CicV8C/Pl3njsomqu61qvjsesf3JLmABEWeaMS
+         yB1qyLN0GhS0AD+fR+cwgSGUoggqx8xHJDI5PYM/pTPD/SNp4PkOdB5kY+l9sN08e9lt
+         3fgIVFH7lWdLEfdsx0gn7JEmfInPPwjkzD3WUQEIDsmseWQD6MaZnke1GcyjSyIlwRrN
+         dkhUF9zzAY++x2rP4j528neOr6s/9FOpWk5BrOqLzuNWL54Ed+Ph4JrwmmoF4pVwfOKe
+         o4nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6Gb665BhXDVpXVLBY5UtQOfWLD53Hbw6MM5VyHmgh8fcjy2hqVtzxeV/7pLKF4WV7ncueL+/G3clK52c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz88JQ4NYxS/xm2JG5mGhAUVF70hSTOHFkxMJE3VxWtOTp3tMiP
+	GyoErz0GiwUYDhVwEX9aWX71s0iMw5aYEs9exSfMCy4rDDUq6Mh0TMbF3lgFPXOOZtUCOu2ZkX3
+	Nx3yXVyDxyM9g3Q==
+X-Google-Smtp-Source: AGHT+IEG9WEVO32XNJycTeJbJu48vAwd8yZZDgjUr+05hjT6U66t/ondGMQmQEA/GIQ+PsqbB1I6Xqu/GnabS+U=
 X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:68:fe9:ac10:f29e])
- (user=aliceryhl job=sendgmr) by 2002:a05:6000:cf:b0:37d:5467:4008 with SMTP
- id ffacd0b85a97d-38254b18ad3mr818f8f.5.1732114577963; Wed, 20 Nov 2024
- 06:56:17 -0800 (PST)
-Date: Wed, 20 Nov 2024 14:49:55 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:5781:b0:6e2:ad08:4924 with SMTP
+ id 00721157ae682-6eebd296195mr14787b3.4.1732114580372; Wed, 20 Nov 2024
+ 06:56:20 -0800 (PST)
+Date: Wed, 20 Nov 2024 14:49:56 +0000
 In-Reply-To: <20241120-vma-v8-0-eb31425da66b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241120-vma-v8-0-eb31425da66b@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9857; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=thHW2hYjZXfFchwxaSHY31jS6Gxjf/8txx6XeVPPA40=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnPfiIPfGxtRmuM/beITcG2729I1pZZuD2y71Hm
- a5hLFdiTyWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZz34iAAKCRAEWL7uWMY5
- RrM9EAChZwI5X5J59zvpP7My8BG3gVmNliYXLaMF7DdF13YYqlfRr6Nw3FK7e+/5u8oyjxwjLDq
- i3Aerdaf3lQlSYU3T8YKbVn4UKhByCAgIggWEbwvt8y0OPSLqBJ8gzZ8qYHcluaqHVB6En/S47l
- 7lsU2P1ozQStRB699rZdudrnMkzcxUw7oPTdb4oj33RV6AN3B7WuiPf/9FXT+L99Mz3fDdjhyu/
- DZFg5TzMI7PXpxVysdNfctskP27Y+Z/4W/wr534zWMVNHWwURuyfzMFgxpA68y6YgmeIp7jBp80
- h2+3Y4/WFCfH7dtvc2a3W7vdheRq8OqP3hIU7j85so4RpYZrLRFWJTsI6ksb8Tx6YatClhaN8xs
- QqZWzy67zmvq6CD9bNdc8iSGKicFWYqL3CRAK0dPh1iKzItCU/VYo6NDfKDVPKcJGCoeRa1mny2
- klw3Ap8CxgCgpmRPo9MKuHZre8uhJo7HBYPJMqNjVqTzWUGkHHap3fIa/pW/02sBXfteKVY4BsY
- ixHgtqTqQsvDkUGNy7QnWKGvdDAWJel/bBeazpquvJIDptb99myFDl581bVHCit1O/7vW+4egEw
- CeMAkJ7joMJHpeK7O9KH0ek1UkNOypcg1cM4iLNqxpYvpGAVDO0IA41NZEWF3DyHOy4fl4KJhlt xSzwOusQ+/1n5aA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8694; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=Xqhb993p62ucfXpgqmTAzwF8zVU/iTXacAc64i+hvXs=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnPfiJtZ8e3RVRA+k2lDQWtngvEf9QEVRA3KEln
+ +zY498BKQmJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZz34iQAKCRAEWL7uWMY5
+ RpOaD/4yxq12q8wgIfSEmCve+/+Os+hqeA6WaIrFWW5ionzJ0gIAJ9cftQLGZTKFI8+rvupF8Lp
+ dR1pbVHaU8sw+3jpSLHyp0jNLFTOL5gbGW1yFUHsGIjzxw9ZghQPcX+3vola7oY+NRtH0UmDDSf
+ 8SHI4Dgs+ykt3Kxa09hTFwnho5mhAtnRKj2ngOcwoqWbTMeGi7vSEbENMrrIyTRmnN4JMfdtNSM
+ w/yYL/NWvnBcoEgwTBvK3Nb1UOFaXc0Qbqs3Bjv0y9q/0WFl6Pflj7UA/Fnoy7ic1VZsxQUDmvs
+ TqskcSB6vHZBhIne4/8r2NYal0rmG9qtI0u1O51X9qF+udqdWZtRJBrFDnWI9oEIWUaNE+THgG0
+ 5/kSBR40GPZYjpwSdwM4HiyBlgxx74DpP9La+cyScGLvbsTOqG/8VkQLtlSus1MsYrElbH1Owqh
+ fFYUr9RuGgxgFZVRxAnc0bIBTam6l6qUBZkUWO/Oa9wbwgq9laxBOwXXDAjr18IFTGblGKLyeCW
+ 1YOxkDN0nbIADD4637WxbTL4l2wYEaDiGA1W5ZMdFdJugTmNZodJxoye7vDLMjEOx5d+dvf2/t7
+ gFm838Bm4GUkNA1Dm/Pjvht0d8hg0e9hRZx3uqJnRZIXU2Lt6DznOKYGva8smnLR0ySkWip8guU k0h7uXIHYMJyYWA==
 X-Mailer: b4 0.13.0
-Message-ID: <20241120-vma-v8-1-eb31425da66b@google.com>
-Subject: [PATCH v8 1/7] mm: rust: add abstraction for struct mm_struct
+Message-ID: <20241120-vma-v8-2-eb31425da66b@google.com>
+Subject: [PATCH v8 2/7] mm: rust: add vm_area_struct methods that require read access
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
 	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
@@ -103,320 +103,249 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
 	Andreas Hindborg <a.hindborg@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 
-These abstractions allow you to reference a `struct mm_struct` using
-both mmgrab and mmget refcounts. This is done using two Rust types:
+This adds a type called VmAreaRef which is used when referencing a vma
+that you have read access to. Here, read access means that you hold
+either the mmap read lock or the vma read lock (or stronger).
 
-* Mm - represents an mm_struct where you don't know anything about the
-  value of mm_users.
-* MmWithUser - represents an mm_struct where you know at compile time
-  that mm_users is non-zero.
-
-This allows us to encode in the type system whether a method requires
-that mm_users is non-zero or not. For instance, you can always call
-`mmget_not_zero` but you can only call `mmap_read_lock` when mm_users is
-non-zero.
+Additionally, a vma_lookup method is added to the mmap read guard, which
+enables you to obtain a &VmAreaRef in safe Rust code.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/helpers/helpers.c |   1 +
- rust/helpers/mm.c      |  39 +++++++++
- rust/kernel/lib.rs     |   1 +
- rust/kernel/mm.rs      | 219 +++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 260 insertions(+)
+ rust/helpers/mm.c      |   6 ++
+ rust/kernel/mm.rs      |  21 ++++++
+ rust/kernel/mm/virt.rs | 171 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 198 insertions(+)
 
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 20a0c69d5cc7..60a488eb4efe 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -13,6 +13,7 @@
- #include "build_bug.c"
- #include "err.c"
- #include "kunit.c"
-+#include "mm.c"
- #include "mutex.c"
- #include "page.c"
- #include "rbtree.c"
 diff --git a/rust/helpers/mm.c b/rust/helpers/mm.c
-new file mode 100644
-index 000000000000..7201747a5d31
---- /dev/null
+index 7201747a5d31..7b72eb065a3e 100644
+--- a/rust/helpers/mm.c
 +++ b/rust/helpers/mm.c
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -37,3 +37,9 @@ void rust_helper_mmap_read_unlock(struct mm_struct *mm)
+ {
+ 	mmap_read_unlock(mm);
+ }
 +
-+#include <linux/mm.h>
-+#include <linux/sched/mm.h>
-+
-+void rust_helper_mmgrab(struct mm_struct *mm)
++struct vm_area_struct *rust_helper_vma_lookup(struct mm_struct *mm,
++					      unsigned long addr)
 +{
-+	mmgrab(mm);
++	return vma_lookup(mm, addr);
 +}
-+
-+void rust_helper_mmdrop(struct mm_struct *mm)
-+{
-+	mmdrop(mm);
-+}
-+
-+void rust_helper_mmget(struct mm_struct *mm)
-+{
-+	mmget(mm);
-+}
-+
-+bool rust_helper_mmget_not_zero(struct mm_struct *mm)
-+{
-+	return mmget_not_zero(mm);
-+}
-+
-+void rust_helper_mmap_read_lock(struct mm_struct *mm)
-+{
-+	mmap_read_lock(mm);
-+}
-+
-+bool rust_helper_mmap_read_trylock(struct mm_struct *mm)
-+{
-+	return mmap_read_trylock(mm);
-+}
-+
-+void rust_helper_mmap_read_unlock(struct mm_struct *mm)
-+{
-+	mmap_read_unlock(mm);
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 66f5cde7f322..cc1963510cdf 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -43,6 +43,7 @@
- pub mod kunit;
- pub mod list;
- pub mod miscdevice;
-+pub mod mm;
- #[cfg(CONFIG_NET)]
- pub mod net;
- pub mod page;
 diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-new file mode 100644
-index 000000000000..84cba581edaa
---- /dev/null
+index 84cba581edaa..ace8e7d57afe 100644
+--- a/rust/kernel/mm.rs
 +++ b/rust/kernel/mm.rs
-@@ -0,0 +1,219 @@
+@@ -12,6 +12,8 @@
+ };
+ use core::{ops::Deref, ptr::NonNull};
+ 
++pub mod virt;
++
+ /// A wrapper for the kernel's `struct mm_struct`.
+ ///
+ /// Since `mm_users` may be zero, the associated address space may not exist anymore. You can use
+@@ -210,6 +212,25 @@ pub struct MmapReadGuard<'a> {
+     _nts: NotThreadSafe,
+ }
+ 
++impl<'a> MmapReadGuard<'a> {
++    /// Look up a vma at the given address.
++    #[inline]
++    pub fn vma_lookup(&self, vma_addr: usize) -> Option<&virt::VmAreaRef> {
++        // SAFETY: We hold a reference to the mm, so the pointer must be valid. Any value is okay
++        // for `vma_addr`.
++        let vma = unsafe { bindings::vma_lookup(self.mm.as_raw(), vma_addr as _) };
++
++        if vma.is_null() {
++            None
++        } else {
++            // SAFETY: We just checked that a vma was found, so the pointer is valid. Furthermore,
++            // the returned area will borrow from this read lock guard, so it can only be used
++            // while the mmap read lock is still held.
++            unsafe { Some(virt::VmAreaRef::from_raw(vma)) }
++        }
++    }
++}
++
+ impl Drop for MmapReadGuard<'_> {
+     #[inline]
+     fn drop(&mut self) {
+diff --git a/rust/kernel/mm/virt.rs b/rust/kernel/mm/virt.rs
+new file mode 100644
+index 000000000000..1e755dca46dd
+--- /dev/null
++++ b/rust/kernel/mm/virt.rs
+@@ -0,0 +1,171 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +// Copyright (C) 2024 Google LLC.
 +
-+//! Memory management.
-+//!
-+//! C header: [`include/linux/mm.h`](srctree/include/linux/mm.h)
++//! Virtual memory.
 +
-+use crate::{
-+    bindings,
-+    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
-+};
-+use core::{ops::Deref, ptr::NonNull};
++use crate::{bindings, types::Opaque};
 +
-+/// A wrapper for the kernel's `struct mm_struct`.
++/// A wrapper for the kernel's `struct vm_area_struct` with read access.
 +///
-+/// Since `mm_users` may be zero, the associated address space may not exist anymore. You can use
-+/// [`mmget_not_zero`] to be able to access the address space.
-+///
-+/// The `ARef<Mm>` smart pointer holds an `mmgrab` refcount. Its destructor may sleep.
++/// It represents an area of virtual memory.
 +///
 +/// # Invariants
 +///
-+/// Values of this type are always refcounted using `mmgrab`.
-+///
-+/// [`mmget_not_zero`]: Mm::mmget_not_zero
++/// The caller must hold the mmap read lock or the vma read lock.
 +#[repr(transparent)]
-+pub struct Mm {
-+    mm: Opaque<bindings::mm_struct>,
++pub struct VmAreaRef {
++    vma: Opaque<bindings::vm_area_struct>,
 +}
 +
-+// SAFETY: It is safe to call `mmdrop` on another thread than where `mmgrab` was called.
-+unsafe impl Send for Mm {}
-+// SAFETY: All methods on `Mm` can be called in parallel from several threads.
-+unsafe impl Sync for Mm {}
-+
-+// SAFETY: By the type invariants, this type is always refcounted.
-+unsafe impl AlwaysRefCounted for Mm {
++// Methods you can call when holding the mmap or vma read lock (or strong). They must be usable no
++// matter what the vma flags are.
++impl VmAreaRef {
++    /// Access a virtual memory area given a raw pointer.
++    ///
++    /// # Safety
++    ///
++    /// Callers must ensure that `vma` is valid for the duration of 'a, and that the mmap read lock
++    /// (or stronger) is held for at least the duration of 'a.
 +    #[inline]
-+    fn inc_ref(&self) {
-+        // SAFETY: The pointer is valid since self is a reference.
-+        unsafe { bindings::mmgrab(self.as_raw()) };
++    pub unsafe fn from_raw<'a>(vma: *const bindings::vm_area_struct) -> &'a Self {
++        // SAFETY: The caller ensures that the invariants are satisfied for the duration of 'a.
++        unsafe { &*vma.cast() }
 +    }
 +
++    /// Returns a raw pointer to this area.
 +    #[inline]
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: The caller is giving up their refcount.
-+        unsafe { bindings::mmdrop(obj.cast().as_ptr()) };
-+    }
-+}
-+
-+/// A wrapper for the kernel's `struct mm_struct`.
-+///
-+/// This type is like [`Mm`], but with non-zero `mm_users`. It can only be used when `mm_users` can
-+/// be proven to be non-zero at compile-time, usually because the relevant code holds an `mmget`
-+/// refcount. It can be used to access the associated address space.
-+///
-+/// The `ARef<MmWithUser>` smart pointer holds an `mmget` refcount. Its destructor may sleep.
-+///
-+/// # Invariants
-+///
-+/// Values of this type are always refcounted using `mmget`. The value of `mm_users` is non-zero.
-+#[repr(transparent)]
-+pub struct MmWithUser {
-+    mm: Mm,
-+}
-+
-+// SAFETY: It is safe to call `mmput` on another thread than where `mmget` was called.
-+unsafe impl Send for MmWithUser {}
-+// SAFETY: All methods on `MmWithUser` can be called in parallel from several threads.
-+unsafe impl Sync for MmWithUser {}
-+
-+// SAFETY: By the type invariants, this type is always refcounted.
-+unsafe impl AlwaysRefCounted for MmWithUser {
-+    #[inline]
-+    fn inc_ref(&self) {
-+        // SAFETY: The pointer is valid since self is a reference.
-+        unsafe { bindings::mmget(self.as_raw()) };
++    pub fn as_ptr(&self) -> *mut bindings::vm_area_struct {
++        self.vma.get()
 +    }
 +
++    /// Returns the flags associated with the virtual memory area.
++    ///
++    /// The possible flags are a combination of the constants in [`flags`].
 +    #[inline]
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: The caller is giving up their refcount.
-+        unsafe { bindings::mmput(obj.cast().as_ptr()) };
++    pub fn flags(&self) -> vm_flags_t {
++        // SAFETY: By the type invariants, the caller holds at least the mmap read lock, so this
++        // access is not a data race.
++        unsafe { (*self.as_ptr()).__bindgen_anon_2.vm_flags as _ }
 +    }
-+}
 +
-+// Make all `Mm` methods available on `MmWithUser`.
-+impl Deref for MmWithUser {
-+    type Target = Mm;
-+
++    /// Returns the start address of the virtual memory area.
 +    #[inline]
-+    fn deref(&self) -> &Mm {
-+        &self.mm
++    pub fn start(&self) -> usize {
++        // SAFETY: By the type invariants, the caller holds at least the mmap read lock, so this
++        // access is not a data race.
++        unsafe { (*self.as_ptr()).__bindgen_anon_1.__bindgen_anon_1.vm_start as _ }
 +    }
-+}
 +
-+// These methods are safe to call even if `mm_users` is zero.
-+impl Mm {
-+    /// Call `mmgrab` on `current.mm`.
++    /// Returns the end address of the virtual memory area.
 +    #[inline]
-+    pub fn mmgrab_current() -> Option<ARef<Mm>> {
-+        // SAFETY: It's safe to get the `mm` field from current.
-+        let mm = unsafe {
-+            let current = bindings::get_current();
-+            (*current).mm
++    pub fn end(&self) -> usize {
++        // SAFETY: By the type invariants, the caller holds at least the mmap read lock, so this
++        // access is not a data race.
++        unsafe { (*self.as_ptr()).__bindgen_anon_1.__bindgen_anon_1.vm_end as _ }
++    }
++
++    /// Unmap pages in the given page range.
++    #[inline]
++    pub fn zap_page_range_single(&self, address: usize, size: usize) {
++        // SAFETY: By the type invariants, the caller has read access to this VMA, which is
++        // sufficient for this method call. This method has no requirements on the vma flags. Any
++        // value of `address` and `size` is allowed.
++        unsafe {
++            bindings::zap_page_range_single(
++                self.as_ptr(),
++                address as _,
++                size as _,
++                core::ptr::null_mut(),
++            )
 +        };
-+
-+        if mm.is_null() {
-+            return None;
-+        }
-+
-+        // SAFETY: The value of `current->mm` is guaranteed to be null or a valid `mm_struct`. We
-+        // just checked that it's not null. Furthermore, the returned `&Mm` is valid only for the
-+        // duration of this function, and `current->mm` will stay valid for that long.
-+        let mm = unsafe { Mm::from_raw(mm) };
-+
-+        // This increments the refcount using `mmgrab`.
-+        Some(ARef::from(mm))
-+    }
-+
-+    /// Returns a raw pointer to the inner `mm_struct`.
-+    #[inline]
-+    pub fn as_raw(&self) -> *mut bindings::mm_struct {
-+        self.mm.get()
-+    }
-+
-+    /// Obtain a reference from a raw pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that `ptr` points at an `mm_struct`, and that it is not deallocated
-+    /// during the lifetime 'a.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::mm_struct) -> &'a Mm {
-+        // SAFETY: Caller promises that the pointer is valid for 'a. Layouts are compatible due to
-+        // repr(transparent).
-+        unsafe { &*ptr.cast() }
-+    }
-+
-+    /// Calls `mmget_not_zero` and returns a handle if it succeeds.
-+    #[inline]
-+    pub fn mmget_not_zero(&self) -> Option<ARef<MmWithUser>> {
-+        // SAFETY: The pointer is valid since self is a reference.
-+        let success = unsafe { bindings::mmget_not_zero(self.as_raw()) };
-+
-+        if success {
-+            // SAFETY: We just created an `mmget` refcount.
-+            Some(unsafe { ARef::from_raw(NonNull::new_unchecked(self.as_raw().cast())) })
-+        } else {
-+            None
-+        }
 +    }
 +}
 +
-+// These methods require `mm_users` to be non-zero.
-+impl MmWithUser {
-+    /// Obtain a reference from a raw pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that `ptr` points at an `mm_struct`, and that `mm_users` remains
-+    /// non-zero for the duration of the lifetime 'a.
-+    #[inline]
-+    pub unsafe fn from_raw<'a>(ptr: *const bindings::mm_struct) -> &'a MmWithUser {
-+        // SAFETY: Caller promises that the pointer is valid for 'a. The layout is compatible due
-+        // to repr(transparent).
-+        unsafe { &*ptr.cast() }
-+    }
++/// The integer type used for vma flags.
++#[doc(inline)]
++pub use bindings::vm_flags_t;
 +
-+    /// Lock the mmap read lock.
-+    #[inline]
-+    pub fn mmap_read_lock(&self) -> MmapReadGuard<'_> {
-+        // SAFETY: The pointer is valid since self is a reference.
-+        unsafe { bindings::mmap_read_lock(self.as_raw()) };
++/// All possible flags for [`VmAreaRef`].
++pub mod flags {
++    use super::vm_flags_t;
++    use crate::bindings;
 +
-+        // INVARIANT: We just acquired the read lock.
-+        MmapReadGuard {
-+            mm: self,
-+            _nts: NotThreadSafe,
-+        }
-+    }
++    /// No flags are set.
++    pub const NONE: vm_flags_t = bindings::VM_NONE as _;
 +
-+    /// Try to lock the mmap read lock.
-+    #[inline]
-+    pub fn mmap_read_trylock(&self) -> Option<MmapReadGuard<'_>> {
-+        // SAFETY: The pointer is valid since self is a reference.
-+        let success = unsafe { bindings::mmap_read_trylock(self.as_raw()) };
++    /// Mapping allows reads.
++    pub const READ: vm_flags_t = bindings::VM_READ as _;
 +
-+        if success {
-+            // INVARIANT: We just acquired the read lock.
-+            Some(MmapReadGuard {
-+                mm: self,
-+                _nts: NotThreadSafe,
-+            })
-+        } else {
-+            None
-+        }
-+    }
-+}
++    /// Mapping allows writes.
++    pub const WRITE: vm_flags_t = bindings::VM_WRITE as _;
 +
-+/// A guard for the mmap read lock.
-+///
-+/// # Invariants
-+///
-+/// This `MmapReadGuard` guard owns the mmap read lock.
-+pub struct MmapReadGuard<'a> {
-+    mm: &'a MmWithUser,
-+    // `mmap_read_lock` and `mmap_read_unlock` must be called on the same thread
-+    _nts: NotThreadSafe,
-+}
++    /// Mapping allows execution.
++    pub const EXEC: vm_flags_t = bindings::VM_EXEC as _;
 +
-+impl Drop for MmapReadGuard<'_> {
-+    #[inline]
-+    fn drop(&mut self) {
-+        // SAFETY: We hold the read lock by the type invariants.
-+        unsafe { bindings::mmap_read_unlock(self.mm.as_raw()) };
-+    }
++    /// Mapping is shared.
++    pub const SHARED: vm_flags_t = bindings::VM_SHARED as _;
++
++    /// Mapping may be updated to allow reads.
++    pub const MAYREAD: vm_flags_t = bindings::VM_MAYREAD as _;
++
++    /// Mapping may be updated to allow writes.
++    pub const MAYWRITE: vm_flags_t = bindings::VM_MAYWRITE as _;
++
++    /// Mapping may be updated to allow execution.
++    pub const MAYEXEC: vm_flags_t = bindings::VM_MAYEXEC as _;
++
++    /// Mapping may be updated to be shared.
++    pub const MAYSHARE: vm_flags_t = bindings::VM_MAYSHARE as _;
++
++    /// Page-ranges managed without `struct page`, just pure PFN.
++    pub const PFNMAP: vm_flags_t = bindings::VM_PFNMAP as _;
++
++    /// Memory mapped I/O or similar.
++    pub const IO: vm_flags_t = bindings::VM_IO as _;
++
++    /// Do not copy this vma on fork.
++    pub const DONTCOPY: vm_flags_t = bindings::VM_DONTCOPY as _;
++
++    /// Cannot expand with mremap().
++    pub const DONTEXPAND: vm_flags_t = bindings::VM_DONTEXPAND as _;
++
++    /// Lock the pages covered when they are faulted in.
++    pub const LOCKONFAULT: vm_flags_t = bindings::VM_LOCKONFAULT as _;
++
++    /// Is a VM accounted object.
++    pub const ACCOUNT: vm_flags_t = bindings::VM_ACCOUNT as _;
++
++    /// should the VM suppress accounting.
++    pub const NORESERVE: vm_flags_t = bindings::VM_NORESERVE as _;
++
++    /// Huge TLB Page VM.
++    pub const HUGETLB: vm_flags_t = bindings::VM_HUGETLB as _;
++
++    /// Synchronous page faults.
++    pub const SYNC: vm_flags_t = bindings::VM_SYNC as _;
++
++    /// Architecture-specific flag.
++    pub const ARCH_1: vm_flags_t = bindings::VM_ARCH_1 as _;
++
++    /// Wipe VMA contents in child..
++    pub const WIPEONFORK: vm_flags_t = bindings::VM_WIPEONFORK as _;
++
++    /// Do not include in the core dump.
++    pub const DONTDUMP: vm_flags_t = bindings::VM_DONTDUMP as _;
++
++    /// Not soft dirty clean area.
++    pub const SOFTDIRTY: vm_flags_t = bindings::VM_SOFTDIRTY as _;
++
++    /// Can contain `struct page` and pure PFN pages.
++    pub const MIXEDMAP: vm_flags_t = bindings::VM_MIXEDMAP as _;
++
++    /// MADV_HUGEPAGE marked this vma.
++    pub const HUGEPAGE: vm_flags_t = bindings::VM_HUGEPAGE as _;
++
++    /// MADV_NOHUGEPAGE marked this vma.
++    pub const NOHUGEPAGE: vm_flags_t = bindings::VM_NOHUGEPAGE as _;
++
++    /// KSM may merge identical pages.
++    pub const MERGEABLE: vm_flags_t = bindings::VM_MERGEABLE as _;
 +}
 
 -- 
