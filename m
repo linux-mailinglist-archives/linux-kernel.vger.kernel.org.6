@@ -1,166 +1,156 @@
-Return-Path: <linux-kernel+bounces-415595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD43F9D38BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:51:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AB39D38C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:52:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C2351F2435A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8D72841B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5319919DF9A;
-	Wed, 20 Nov 2024 10:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="I8IbUpIt"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30661199FB2
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7C419D894;
+	Wed, 20 Nov 2024 10:52:34 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E257E33C5;
+	Wed, 20 Nov 2024 10:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732099879; cv=none; b=FHw2/AfHl2HOsSC5DGwBQ+tyqJd+8RyWKfcJEm0p5L0ORDHoQNapp6vpCBNbwB27/CjpYJkyZpDU16LBlj82W59ZPnasEpVUobjk/CaUG5PeA83rKCAneaiNoFkIb/w7lc8vj/KsEpZfhaQoOCZy6mnknbUTiwRxBnwNjqxBU9g=
+	t=1732099954; cv=none; b=WLCe7pNXgpUeaYx9inBSQ+gdFUU1ZyDWxiBk2FKkfE9VVVmhU62HTnpZpklKicoUaC2W157UR6Dh2xfNS3dJl8e/FciWLhvSh+QjAn+SMImr6aFAH4+eS/6iZzn5aeaXEJvN8xRzAgouZQatPK7oPoPB2UCt/U1SR0UIzXqyQws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732099879; c=relaxed/simple;
-	bh=VIF+FyOXBpj3sl2QYpLzeSBurqwwz5+qcTwPTBZyBPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a+cPuC8XBL95nhNNlB394kpyb88YrFdL4+wNFIFNHGrSeel+WUA71AqNO0bhcRIhHJ9NCbVrhyCkmYhOc0LsL/NyXUGE+uxEA4rynCjsQNZ7eBDR/GJ4ysUfwrceA+P20Ga8qawTN9fXs3xJUBzy0Wmt1thmJi4Nte2Uop25oMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=I8IbUpIt; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539d9fffea1so1929123e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:51:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732099873; x=1732704673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YSV7n5uieMGLxmtC3IgusnUCWfo7HJvEXUUz/yMf7DU=;
-        b=I8IbUpItUZ2bk7+xYmtjZXvwPrZSAQ1NANyTGib1dESYcPxTZDuX1qlyeBkXtKyZ98
-         oQYmn1mVj0nQjRWkx5kavYD6aElmbkutn2pIsvJ9W4leJclqO05smMhM6kVCg0mudI06
-         rXpqsrU0To1CkzzBDwh5MuUFY7AEEa3mZUXAprlWcmnC/I3pI1ZzykeIEybI26F+Vcpi
-         CszLNXvhCt55fEU/Ui1ImnlzlzltgwhJm11Y2RN2Z7o5PQ0M5erZ23PahCyawtYysgem
-         wqMLqL8rqAg8+GO0Eahsy8APVxic75DdF3L+aZevS50SkYEc9faw9nRhEBLbBbLczpu+
-         KS0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732099873; x=1732704673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YSV7n5uieMGLxmtC3IgusnUCWfo7HJvEXUUz/yMf7DU=;
-        b=gFVfVoEsN8q2c3E5QDBiA9/h/ZfEqQkCqVWHQALLZD1lOoQgx5a/pTzv+axXDGwsj7
-         RyN7Cxj7t7APNW19lWNaOyQHkn0/DwDKJE9t08GYAYrMulf5Q/EYnSYDtRcWYKV1BFao
-         XdgrkKFCIDnQ2q9Uu8fbJ5lAfST5mOd8pl+ifUkq9WQ4WLVCoMlNKUlt4yNpjRnbnmGz
-         rU+DgBa2n40cK/D/K+YSh5n0NG4v8qWZlhGedAabYbqNHsjoqi5jPQfBsx5AjTPgORma
-         oPeQh0sZU0lYkCdVBxqr8Sbyts8+K2m5fteg4BzUfWYvJ32+Raz34wD3YO4u9Gj9ZY32
-         qVHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwpTIoSLyESO1q71K/UweJXYLbGlVwrmzLXVDCVhnjO8C0r8YuTFD0gP8iWmKAesL8AjcbxDxPRfaLriM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwleGWjbsWjZ5U/cb3rI/XW+71hubi6GcUO2VnUXrAMvJuom2lJ
-	AAy9G6AH6c6FbYtFQc9SEEkS4NabyOBBZlpGTJvJMffmBd4OS0XPm4Yq3crb9PPxlmiy17DxyWQ
-	0S7rY0UbOnhpH506A0OgrI/IHosundPGk8Aoc6Nln3nK36BrV
-X-Gm-Gg: ASbGncv/Ejn/OhqsbsYVoFJfi3A7jbu0/o2Pelme/fM3QEobZylJWnjeiNFwPC54jM6
-	oo4QzxB4EVIs4NuX61sAka8l4IUPfz8ufEOV18Y8tUSTVp/Vj1dvxF8VvhK89xYA=
-X-Google-Smtp-Source: AGHT+IG6xl5NREy8BcJqWnYoAnnJiL7QZi758v8u/j5cG6idLf7Odlp0ZZ7OhsiP6+n70jhs7IKE2YUkjsAHV4d9P0M=
-X-Received: by 2002:a05:6512:2253:b0:539:e4b5:10e5 with SMTP id
- 2adb3069b0e04-53dc132785cmr944137e87.9.1732099871923; Wed, 20 Nov 2024
- 02:51:11 -0800 (PST)
+	s=arc-20240116; t=1732099954; c=relaxed/simple;
+	bh=BvrPqH/JjuDxvHT2iBBoF6DimfCqDzvK3hg6PwE5HHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TRSWix6sgQIKCG21FiSzyJlzmQwBnbsE5U4/wnmVkwgA6tTobsnMolNAWSvlrDTKyo6hdprBBgXAhoLvs5tTylHhKKMVh3BXRVx0FNGEh0iVxa2DmuDASLa0MiQVpAGjesRiFagqpNnhNymPsdFlbyMa6c6pIwiYiM589Uo7Gx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app05-12005 (RichMail) with SMTP id 2ee5673dbf66034-5504b;
+	Wed, 20 Nov 2024 18:52:25 +0800 (CST)
+X-RM-TRANSID:2ee5673dbf66034-5504b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee9673dbf5635b-7f187;
+	Wed, 20 Nov 2024 18:52:25 +0800 (CST)
+X-RM-TRANSID:2ee9673dbf5635b-7f187
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: krisman@kernel.org,
+	hughd@google.com,
+	akpm@linux-foundation.org,
+	andrealmeid@igalia.com,
+	brauner@kernel.org,
+	tytso@mit.edu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v1] tmpfs: Unsigned expression compared with zero
+Date: Wed, 20 Nov 2024 18:51:50 +0800
+Message-Id: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
- <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-1-7056127007a7@linaro.org>
-In-Reply-To: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-1-7056127007a7@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 20 Nov 2024 11:51:01 +0100
-Message-ID: <CAMRc=Mca41Ob=QzAMgz-aAhfzmBZq3=HyLr=D7_rbaZ3H5CqZw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] firmware: qcom: scm: Fix missing read barrier in qcom_scm_is_available()
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Mukesh Ojha <quic_mojha@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Kuldeep Singh <quic_kuldsing@quicinc.com>, 
-	Elliot Berman <quic_eberman@quicinc.com>, Andrew Halaney <ahalaney@redhat.com>, 
-	Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>, Andy Gross <andy.gross@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 7:37=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Commit 2e4955167ec5 ("firmware: qcom: scm: Fix __scm and waitq
-> completion variable initialization") introduced a write barrier in probe
-> function to store global '__scm' variable.  It also claimed that it
-> added a read barrier, because as we all known barriers are paired (see
-> memory-barriers.txt: "Note that write barriers should normally be paired
-> with read or address-dependency barriers"), however it did not really
-> add it.
->
-> The offending commit used READ_ONCE() to access '__scm' global which is
-> not a barrier.
->
-> The barrier is needed so the store to '__scm' will be properly visible.
-> This is most likely not fatal in current driver design, because missing
-> read barrier would mean qcom_scm_is_available() callers will access old
-> value, NULL.  Driver does not support unbinding and does not correctly
-> handle probe failures, thus there is no risk of stale or old pointer in
-> '__scm' variable.
->
-> However for code correctness, readability and to be sure that we did not
-> mess up something in this tricky topic of SMP barriers, add a read
-> barrier for accessing '__scm'.  Change also comment from useless/obvious
-> what does barrier do, to what is expected: which other parts of the code
-> are involved here.
->
-> Fixes: 2e4955167ec5 ("firmware: qcom: scm: Fix __scm and waitq completion=
- variable initialization")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/firmware/qcom/qcom_scm.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qco=
-m_scm.c
-> index 72bf87ddcd969834609cda2aa915b67505e93943..246d672e8f7f0e2a326a03a5a=
-f40cd434a665e67 100644
-> --- a/drivers/firmware/qcom/qcom_scm.c
-> +++ b/drivers/firmware/qcom/qcom_scm.c
-> @@ -1867,7 +1867,8 @@ static int qcom_scm_qseecom_init(struct qcom_scm *s=
-cm)
->   */
->  bool qcom_scm_is_available(void)
->  {
-> -       return !!READ_ONCE(__scm);
-> +       /* Paired with smp_store_release() in qcom_scm_probe */
-> +       return !!smp_load_acquire(&__scm);
->  }
->  EXPORT_SYMBOL_GPL(qcom_scm_is_available);
->
-> @@ -2024,7 +2025,7 @@ static int qcom_scm_probe(struct platform_device *p=
-dev)
->         if (ret)
->                 return ret;
->
-> -       /* Let all above stores be available after this */
-> +       /* Paired with smp_load_acquire() in qcom_scm_is_available(). */
->         smp_store_release(&__scm, scm);
->
->         irq =3D platform_get_irq_optional(pdev, 0);
->
-> --
-> 2.43.0
->
->
+The return value from the call to utf8_parse_version() is not
+of the unsigned type.
 
-I'm not an expert on barriers and SMP but the explanation sounds correct to=
- me.
+However, the return value is being assigned to an unsigned int
+variable 'version'. This will result in the inability to handle
+errors that occur when parsing a UTF-8 version number from
+a string.
 
-Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Additionally, this patch can help eliminate the following
+Coccicheck warning:
+
+mm/shmem.c:4378:6-13: WARNING: Unsigned expression compared with zero: version < 0
+
+Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+---
+ fs/unicode/utf8-core.c  | 9 +++++----
+ include/linux/unicode.h | 2 +-
+ mm/shmem.c              | 5 +++--
+ 3 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/fs/unicode/utf8-core.c b/fs/unicode/utf8-core.c
+index 6fc9ab8667e6..c54dc7ac5ce6 100644
+--- a/fs/unicode/utf8-core.c
++++ b/fs/unicode/utf8-core.c
+@@ -219,9 +219,9 @@ EXPORT_SYMBOL(utf8_unload);
+  *
+  * @version: input string
+  *
+- * Returns the parsed version on success, negative code on error
++ * Returns 0 on success, negative code on error
+  */
+-int utf8_parse_version(char *version)
++int utf8_parse_version(char *version_str, unsigned int *version)
+ {
+ 	substring_t args[3];
+ 	unsigned int maj, min, rev;
+@@ -230,13 +230,14 @@ int utf8_parse_version(char *version)
+ 		{0, NULL}
+ 	};
+ 
+-	if (match_token(version, token, args) != 1)
++	if (match_token(version_str, token, args) != 1)
+ 		return -EINVAL;
+ 
+ 	if (match_int(&args[0], &maj) || match_int(&args[1], &min) ||
+ 	    match_int(&args[2], &rev))
+ 		return -EINVAL;
+ 
+-	return UNICODE_AGE(maj, min, rev);
++	*version = UNICODE_AGE(maj, min, rev);
++	return 0;
+ }
+ EXPORT_SYMBOL(utf8_parse_version);
+diff --git a/include/linux/unicode.h b/include/linux/unicode.h
+index 5e6b212a2aed..7de545bc66cb 100644
+--- a/include/linux/unicode.h
++++ b/include/linux/unicode.h
+@@ -78,6 +78,6 @@ int utf8_casefold_hash(const struct unicode_map *um, const void *salt,
+ struct unicode_map *utf8_load(unsigned int version);
+ void utf8_unload(struct unicode_map *um);
+ 
+-int utf8_parse_version(char *version);
++int utf8_parse_version(char *version_str, unsigned int *version);
+ 
+ #endif /* _LINUX_UNICODE_H */
+diff --git a/mm/shmem.c b/mm/shmem.c
+index ccb9629a0f70..7d07f649a8df 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -4368,14 +4368,15 @@ static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_parameter *
+ 	unsigned int version = UTF8_LATEST;
+ 	struct unicode_map *encoding;
+ 	char *version_str = param->string + 5;
++	int ret;
+ 
+ 	if (!latest_version) {
+ 		if (strncmp(param->string, "utf8-", 5))
+ 			return invalfc(fc, "Only UTF-8 encodings are supported "
+ 				       "in the format: utf8-<version number>");
+ 
+-		version = utf8_parse_version(version_str);
+-		if (version < 0)
++		ret = utf8_parse_version(version_str, &version);
++		if (ret < 0)
+ 			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
+ 	}
+ 
+-- 
+2.33.0
+
+
+
 
