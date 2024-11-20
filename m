@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-416143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EB49D40D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:09:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180029D40D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B051F253AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:09:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21CF280E36
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D4F19E82A;
-	Wed, 20 Nov 2024 17:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E489B15667B;
+	Wed, 20 Nov 2024 17:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQ890Sme"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d95i085E"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B96D16D9B8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227BA153BF7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122553; cv=none; b=rEkzh1gnvQue2e9rcJhd5dl6ImtWtS8iC97GhduUySzxMSfYIj0XWpmA0DZ3iCSLXZry0MbcawZS5MMZbX0jHW4KEqJjStftAAoOtpW3532c7LA4FSBm2W1vHYNTUBs4NHvRN4t5NPBBtXAoRp2XsqMYK4gZ3c1g7/yF7hPcab4=
+	t=1732122606; cv=none; b=Rs/J86fma+SB+a0AVZWaKTNTYEaBGNoppjjxhMwhReE1zetyyFW3BgjvtKBoC2MjiLmHm46tWNuabBQwKVKvrS6Wi4mQscYJkzG3FfhQq/oGK2XpmLa6AZ5vdThQnjUWGwPSooOKvnVjCOXkcP2OrN/quZTWpTzMUjWbwPb9olc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122553; c=relaxed/simple;
-	bh=GxGYBTBzNgOeIfq/QdI2OaIkEKakJlVruSDheSbNFFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZG49AaIMX/K8kuMlBrP1+NkiG0j36nnrWqGLVJCK6L4cwbgoHJ/kgM/3SR4SvEi+rjwtQiQ9JaTwZ1i/lqVWnSrjqTSnhwzKqld3CWu6bzKcfET1V6d4z/kkHQ6mGRNzNA+Y7ki1N7BEOIornuw6gen2gmQ3w/EdxdYMRGKIaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQ890Sme; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so61803175e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:09:11 -0800 (PST)
+	s=arc-20240116; t=1732122606; c=relaxed/simple;
+	bh=DI4mzrRhN1pXfPAx1Qmz4elhPEkPtm63o6O/v8ByJz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UhsxVbp92hGGZQMTpD+P5CcjG0N9Sxbhmo8upXzQowXn2eFJZ2UjMz5/rx6BoIjQdc+OuT0vasJn4R/Im0099e2Hxd3gkWyrdIk1L3adqnULVj2as1j/90MkTE0iLPFEQ4QAPDvI9liPwNSQ4MQ6AVvy1P4XnykNeI/KMcKVN/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d95i085E; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfc035649bso5632405a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:10:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732122550; x=1732727350; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1lBaWVIKUDm8mK0qFWu7ZMD66HrRVg+A8qSokIpCLr0=;
-        b=BQ890SmeFYdur6wFjXEHO7s5gpo3VUjwH1KfoUuCzRrDxF6USOgLfi1KvtlMX48NSJ
-         m8r+yEcEAUGMWSASciaAe+LZZRLIb7Wj5FZQ9ajG0PYlopMG4nO7cxTXtCrQ6Y6ULaSV
-         MjlDNHR+iABTSPetyJVowR7FLYBufsdLYSEldM/p69njeUw+VzsJbuSIek6lgT7I26B7
-         AAjxWOnSU4BC2rW8l/MMHjzoNB9Rb8h/YwF5DS9rpkW/NyCccIZMpiNkMOcboppJchGX
-         BJyUVVMwfOAxz59qHeK9ZlbFUR6yrOOAT/90sYSk/030U5l0J82BWG/Lkq1Xfzk4eMY5
-         Apgw==
+        d=linux-foundation.org; s=google; t=1732122602; x=1732727402; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uVFQpj1IlF/pwYf52lZknl0pPtpf2sXOXdQjvKyV+Rc=;
+        b=d95i085EDtcDAx2ZoHkKEC4R+26NFE12uo/B7ntPObJRKSSeXCPdk3H/bjmNrjIfo8
+         EnkMC2G1o0bprdKG5d3Ol8N3ZcwUwxRO91hPy64bET5Tu4D78qCIaoOjJ4O86bqAMWmA
+         rs35QGw6b/zx+hfx8RonsZnEAmRpYrs3bOdy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732122550; x=1732727350;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1lBaWVIKUDm8mK0qFWu7ZMD66HrRVg+A8qSokIpCLr0=;
-        b=kck5D0OJ4n43iel2mIGGKYcfwZi8s4lbEHVmAEo0LVu0p4gFvVzed8DxzPrkGJVcDs
-         ZXbXA9cYkIgjPQf3PhUdt7yaK/m1URYtj+NiXZ+ttFRQNBIrgp4sWE5xd5WGX+pUwBvB
-         Z5OTKOzNMOF42siT5caWxphBYxSWWIiFhhkAc4Q74AZygtx4wRRsrPAJSgBwAPG1zaem
-         U097N+LGTSZMpykAJHQ1rsv0VgKdhAn4oNTxkx8A0Q8LJJseszuIpR8GQNad7eoEp6jp
-         slJaifUyCpuIIp+CpmYKgWK4aAVteq3dnOO4tVhpUnaoemjOTUYVIA4A6/lFHKkwohVO
-         m4Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdT+7b8BkjzMxdHIqoQFgvmna8hkJFh83nRCQQwFu8l5tmqGcGQOD0q4qEcNNDj7XwZWCDkYrLgC5cDVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI7n2WKec/jNVfPnKZszmyM458zhpn/AKGYC5Ym4TjtRC+iNLq
-	ucgz9Fg3lqlHc9yvAHt6U/l3917HZiwMHcOhMoQLgJDM+K3sPm5IlOLGMKB/tjw=
-X-Google-Smtp-Source: AGHT+IGiaYIxKh7fbsrmK6tgUUwDYtTaqJ5Wpge3WBivCuMq4wZZiH8eGrvzsvlRCSKNGG+wDtIT/w==
-X-Received: by 2002:a05:600c:3b12:b0:431:4b88:d407 with SMTP id 5b1f17b1804b1-433489819c0mr37456805e9.5.1732122550515;
-        Wed, 20 Nov 2024 09:09:10 -0800 (PST)
-Received: from [192.168.0.200] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b46359b9sm25029685e9.36.2024.11.20.09.09.08
+        d=1e100.net; s=20230601; t=1732122602; x=1732727402;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uVFQpj1IlF/pwYf52lZknl0pPtpf2sXOXdQjvKyV+Rc=;
+        b=a48BjxUKXgLJItimg3tN6N9AlqwvpFYRa/WVW74lJCXheugKyLJgyllcSoOFDBeFnl
+         obqMdPDvccAZCzV3T0BIvb1d6DplLil5EyvBWB5NhqrgF54rzJkJDesEN9oOSlkxCQfL
+         7Giao2nQLGLh4m3JO6L7NVeGZLOtLez+ChrXFGtKqZhw1PdJgGoxTEAis4/HIt1/1Ikk
+         dcmmpNPLSpKFvczrCiUGAj80LfSgGXaSqQTq2MHtS4APKAlaVZWfd4RQj/aZCqoIirms
+         cK/SsYMTNXG/DQ7i2fiGyu9b5RQMUY2inedklGyn1bIwPBp26dbVq4rXq+cXAI8HnU8b
+         aFPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCDVMSLF+qE8A53TssyQ5oY4hzwF1hMa/CwjwINCC8z2ZUyZLPxdQuR+DPBoYVXsG2GeUGCPyA+b4IzSk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5Fbi9aj5hrxvzZ2WvpwVFaeMEXdn48N/a+DQn7eaLCyJW5wb
+	BIClR+CK2WBng1YOCBtJmZhJ51aijbiI4Dq93noyYBGYjr+gugN/HAoPNkM2SYFr5jqpJzLCMzq
+	QPOpkDg==
+X-Google-Smtp-Source: AGHT+IGsb9ZGv9WhPbTIIqzxKrfi/bgU9xEUqJWfp6H3tT1cRaFMUWyjlqpvou2KVL/Hy+z6Fe43SA==
+X-Received: by 2002:a05:6402:908:b0:5cf:9c4e:a4a7 with SMTP id 4fb4d7f45d1cf-5cff4cf6c93mr2524173a12.33.1732122602170;
+        Wed, 20 Nov 2024 09:10:02 -0800 (PST)
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com. [209.85.218.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44ef803sm1038505a12.28.2024.11.20.09.10.01
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 09:09:09 -0800 (PST)
-Message-ID: <7a52ca1f-303e-44ae-b750-6aaa521516c3@linaro.org>
-Date: Wed, 20 Nov 2024 17:09:08 +0000
+        Wed, 20 Nov 2024 09:10:01 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a850270e2so425566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:10:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX2dDHwSl0NTIbh5AVCmTU6dup4sw+u5tUlKLcABvBoC76FnyMePyOQiyT9qivQ8yVytE6l7ob9t0qZY2c=@vger.kernel.org
+X-Received: by 2002:a17:907:787:b0:a9e:c881:80bd with SMTP id
+ a640c23a62f3a-aa4dd719b2dmr250045066b.37.1732122601222; Wed, 20 Nov 2024
+ 09:10:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
- <zhhna2wni4yqhnc2tqfc2ugril3h4kzbyr3ix6vpwrgghwytfa@kjfpff5zdl4z>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <zhhna2wni4yqhnc2tqfc2ugril3h4kzbyr3ix6vpwrgghwytfa@kjfpff5zdl4z>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241115-vfs-netfs-7df3b2479ea4@brauner> <CAHk-=wjCHJc--j0mLyOsWQ1Qhk0f5zq+sBdiK7wp9wmFHV=Q2g@mail.gmail.com>
+ <20241120-abermals-inkrafttreten-8b838a76833f@brauner>
+In-Reply-To: <20241120-abermals-inkrafttreten-8b838a76833f@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 20 Nov 2024 09:09:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wicQOQ1mkZqtX0eEWOxBG9Dih+b3DvmGnyY2oVe2vn8RQ@mail.gmail.com>
+Message-ID: <CAHk-=wicQOQ1mkZqtX0eEWOxBG9Dih+b3DvmGnyY2oVe2vn8RQ@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs netfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/11/2024 15:34, Bjorn Andersson wrote:
-> What I think you want is two things:
-> 1) When you're accessing the registers, you want the clock controller's
-> power-domain to be on.
-> 2) When the client vote for a GDSC, you want to have the PM framework
-> also ensure that parent power-domains are kept on.
-> For the single case, this is handled by the pm_genpd_add_subdomain()
-> call below. This, or something along those lines, seems like the
-> appropriate solution.
+On Wed, 20 Nov 2024 at 00:49, Christian Brauner <brauner@kernel.org> wrote:
+>
+> The base of the branch is definitely v6.12-rc1. The branch is simply
+> vfs.netfs with vfs-6.13.netfs tag. And the branch looks perfectly fine.
 
-Yes.
+The branch looks fine, it was just the pull request that contained old
+stale commits that you had already sent me.
 
-I'm finding with this patch reverted but, keeping the first patch that 
-it pretty much works as you'd want with the caveat that gdsc_register -> 
-gdsc_en -> gdsc_toggle fails the first time.
+> I think the issue was that I sent you the fixes tag you mention below
+> that contained some fixes that were in vfs.netfs. So afterwards I just
+> didn't rebase vfs.netfs but merged two other series on top of it with
+> v6.12-rc1 as parent. And I think that might've somehow confused the git
+> request-pull call.
 
-After that I see the GDSCs on/off as excpected
+Oh, you shouldn't rebase. But it also sounds like you are actually
+tracking the bases for your branches manually. You shouldn't do that
+either.
 
-cat /sys/kernel/debug/pm_genpd/cam_cc_titan_top_gdsc/current_state
-off-0
+All you need to do is fetch from upstream, so that git sees what I
+have, and then when you do the pull request, you tell it not the base
+of the branch, but just what upstream has. git will then figure out
+the base from that.
 
-cat /sys/kernel/debug/pm_genpd/cam_cc_ife_0_gdsc/current_state
-off-0
-
-cam -c 1 --capture=10 --file
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_titan_top_gdsc/current_state
-off-0
-
-cat /sys/kernel/debug/pm_genpd/cam_cc_ife_0_gdsc/current_state
-off-0
-
-Perhaps we just need to fix the probe path @ gdsc_register()
-
----
-bod
+                Linus
 
