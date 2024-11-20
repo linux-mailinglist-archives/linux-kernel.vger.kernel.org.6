@@ -1,129 +1,174 @@
-Return-Path: <linux-kernel+bounces-415730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3B49D3A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:19:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AF49D3A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A12B26FE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6DCA1F23BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ACB1A7274;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5711A7264;
 	Wed, 20 Nov 2024 12:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pKQAb2m8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gYOVtqlp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PLT+iV2t";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gYOVtqlp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PLT+iV2t"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871871A0AE9;
-	Wed, 20 Nov 2024 12:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EC119F13B;
+	Wed, 20 Nov 2024 12:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732104954; cv=none; b=jLDa7Uf/L0qGqJLeM1KyhTOzqtU330ToFkEhQeeSziOfxkNUyGXoU8VIHS/5H6EYl/Hf4zn18tMMP/JdBjvYIqzaWwfqnv/iakZ/scGG62dezd/91Lrr7LtE0CocaPAyKjNes6hUBIG8OXNbCzFPS+CEZfPkWTCNYOmv9iXX0uE=
+	t=1732104954; cv=none; b=djythtP0BOWCEXRxXuSqWngvA3t1PXfMUQ68KzJs7ggLfMcSMn9P0xD/CAKfKmHwKmXSKXeeaPyB10bdIyBiO903ceMoVRYf2i9gitioCmvPup0K2w30fzBb88VErPlms5XjqpkCGcUT92usKpuZHqMCKNqqchdMp8pWPmCzw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732104954; c=relaxed/simple;
-	bh=kVXKB5aLoD57P+eLktbLKXC4YFrRi7R7r32NgHrZYqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEA5yvhs4b0vvq3N59aQJ8/L4f6uQ7VSB/NuHR15cK1ZARHcRFqZf12CyHuRipXwbM1GksSwuNtnH7PJlQf7FF7AcO11KBLiZaOOSILFS/R56W7if3xqexPGqXpDdxAYWw+w8uahTXmKevse7S+2lOkINlRiGk3N5sheyGOUKq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pKQAb2m8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF7CC4CED1;
-	Wed, 20 Nov 2024 12:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732104954;
-	bh=kVXKB5aLoD57P+eLktbLKXC4YFrRi7R7r32NgHrZYqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pKQAb2m87FdNFePvB39KeNKxRgG2lwz0yqq0rI0dHnDbBeE6d+s/mLOu8b5t3PLrc
-	 6ExsD7qPRLBElbtoLZ8skKROX/nx/FWiqDQiPpojJ1kUMjXLzutmxHZaYKRKoHx03Y
-	 XvqvNTopAsw8Ye6lbg9cJd0NcF1ssYMlX6OjvN60=
-Date: Wed, 20 Nov 2024 13:15:28 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Paolo Perego <pperego@suse.de>
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Lee Jones <lee@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: Re: [PATCH 1/1] Remove hard-coded strings by using the helper
- functions str_true_false()
-Message-ID: <2024112010-occupancy-viper-7c80@gregkh>
-References: <20241120093020.6409-1-pperego@suse.de>
- <20241120093020.6409-2-pperego@suse.de>
+	bh=rUWRVgIpsN+qqDYsytfpIupLDOZ51LODujjC8CHoTZc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Av+8nAyDkjX00l7+mtT6TgjP+wvRGXmYGWuAjB4GBHpR+rvY5eQjej+M3LezOeW7TZ35n/yADj/DSRX/FBB/7TiXDFw8O1tg6VZIharb0jnM7MYxJnRVD5C6K4F/MUoz+6jlDwn6huG1lc33i+33DTX5uimBb+2kLRms0irV0K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gYOVtqlp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PLT+iV2t; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gYOVtqlp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PLT+iV2t; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4FC851F76E;
+	Wed, 20 Nov 2024 12:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732104951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R6TtZOhsAKBtybCxBgSSK+eJqeEPxyGmEPvC3eHY3IE=;
+	b=gYOVtqlpmEBIa9ncQj3AZs8dQKvAiCR4NouHLPoIyceGzfa+l+G11v3RhG8V8olfA/nCEB
+	N70hRlx4JS9jC3mtKN14j0gA3K0y1/ig5FpTyZ9zv2wzMw7LuHSPkPOhU2MLV6UOPzt6TP
+	7UjF5/oMb/2ncozW5D8hM8ZyZ7jx1a0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732104951;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R6TtZOhsAKBtybCxBgSSK+eJqeEPxyGmEPvC3eHY3IE=;
+	b=PLT+iV2tn7kwhTcYgDYYJeMI4PbScJS0Dan4ViISWeQxnIv820ibMmGlDIwOFlRNYyQjj0
+	Gv0bf7Xp5i90X3Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732104951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R6TtZOhsAKBtybCxBgSSK+eJqeEPxyGmEPvC3eHY3IE=;
+	b=gYOVtqlpmEBIa9ncQj3AZs8dQKvAiCR4NouHLPoIyceGzfa+l+G11v3RhG8V8olfA/nCEB
+	N70hRlx4JS9jC3mtKN14j0gA3K0y1/ig5FpTyZ9zv2wzMw7LuHSPkPOhU2MLV6UOPzt6TP
+	7UjF5/oMb/2ncozW5D8hM8ZyZ7jx1a0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732104951;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R6TtZOhsAKBtybCxBgSSK+eJqeEPxyGmEPvC3eHY3IE=;
+	b=PLT+iV2tn7kwhTcYgDYYJeMI4PbScJS0Dan4ViISWeQxnIv820ibMmGlDIwOFlRNYyQjj0
+	Gv0bf7Xp5i90X3Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 072FE137CF;
+	Wed, 20 Nov 2024 12:15:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W9g0AffSPWfyCAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 20 Nov 2024 12:15:51 +0000
+Date: Wed, 20 Nov 2024 13:15:50 +0100
+Message-ID: <87a5du3xu1.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: <srinivas.kandagatla@linaro.org>,
+	<mathias.nyman@intel.com>,
+	<perex@perex.cz>,
+	<conor+dt@kernel.org>,
+	<dmitry.torokhov@gmail.com>,
+	<corbet@lwn.net>,
+	<broonie@kernel.org>,
+	<lgirdwood@gmail.com>,
+	<krzk+dt@kernel.org>,
+	<pierre-louis.bossart@linux.intel.com>,
+	<Thinh.Nguyen@synopsys.com>,
+	<tiwai@suse.com>,
+	<robh@kernel.org>,
+	<gregkh@linuxfoundation.org>,
+	<linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>,
+	<linux-input@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v30 26/30] ALSA: usb-audio: qcom: Introduce QC USB SND offloading support
+In-Reply-To: <20241106193413.1730413-27-quic_wcheng@quicinc.com>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+	<20241106193413.1730413-27-quic_wcheng@quicinc.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120093020.6409-2-pperego@suse.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linaro.org,intel.com,perex.cz,kernel.org,gmail.com,lwn.net,linux.intel.com,synopsys.com,suse.com,linuxfoundation.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-On Wed, Nov 20, 2024 at 10:30:20AM +0100, Paolo Perego wrote:
-> Signed-off-by: Paolo Perego <pperego@suse.de>
-> ---
->  drivers/staging/fbtft/fb_ssd1351.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/fbtft/fb_ssd1351.c b/drivers/staging/fbtft/fb_ssd1351.c
-> index f6db2933ebba..6736b09b2f45 100644
-> --- a/drivers/staging/fbtft/fb_ssd1351.c
-> +++ b/drivers/staging/fbtft/fb_ssd1351.c
-> @@ -6,6 +6,7 @@
->  #include <linux/init.h>
->  #include <linux/spi/spi.h>
->  #include <linux/delay.h>
-> +#include <linux/string_choices.h>
->  
->  #include "fbtft.h"
->  
-> @@ -162,7 +163,7 @@ static int set_gamma(struct fbtft_par *par, u32 *curves)
->  static int blank(struct fbtft_par *par, bool on)
->  {
->  	fbtft_par_dbg(DEBUG_BLANK, par, "(%s=%s)\n",
-> -		      __func__, on ? "true" : "false");
-> +		      __func__, str_true_false(on));
->  	if (on)
->  		write_reg(par, 0xAE);
->  	else
-> -- 
-> 2.47.0
-> 
-> 
+On Wed, 06 Nov 2024 20:34:09 +0100,
+Wesley Cheng wrote:
+> +config SND_USB_AUDIO_QMI
+> +	tristate "Qualcomm Audio Offload driver"
+> +	depends on QCOM_QMI_HELPERS && SND_USB_AUDIO && USB_XHCI_SEC_INTR && SND_SOC_USB
+> +	select SND_PCM
 
-Hi,
+This select is superfluous as it already depends on
+CONFIG_SND_USB_AUDIO that does select it.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> diff --git a/sound/usb/qcom/Makefile b/sound/usb/qcom/Makefile
+> new file mode 100644
+> index 000000000000..a81c9b28d484
+> --- /dev/null
+> +++ b/sound/usb/qcom/Makefile
+> @@ -0,0 +1,2 @@
+> +snd-usb-audio-qmi-objs := usb_audio_qmi_v01.o qc_audio_offload.o
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Use snd-usb-audio-qmi-y instead of *-objs.
 
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
 
 thanks,
 
-greg k-h's patch email bot
+Takashi
 
