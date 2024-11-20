@@ -1,125 +1,182 @@
-Return-Path: <linux-kernel+bounces-415525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C9B9D3781
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:53:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15C079D378B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0BE1F21EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:53:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8F41F22A51
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AEA19D894;
-	Wed, 20 Nov 2024 09:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA75C19EED7;
+	Wed, 20 Nov 2024 09:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TyMmhvof"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UMsqcLqi"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEDA19AA68;
-	Wed, 20 Nov 2024 09:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5960319CC3F;
+	Wed, 20 Nov 2024 09:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732096363; cv=none; b=HzA084l0qPmTPWIJfca/LakU2tIsZhjMQ6ootF/hhs5AvDOyT5gwXw4yiYgkRuut1oR9ZCqsPTSfrXZMtycwi2YvW8jiz/Wgj8ENY7dDkOF7EeoBCJ8917/Vf1pRGUDo18+gqoks0IKGAzAAWknFkSr9hyrl2I53KzmspUcDhZI=
+	t=1732096366; cv=none; b=t2tcIWfdCGb0RD4OYNCPo8VqDyULjidSkgfEZ3uelyeco77GrVpZtt7gZ1Zth8PpA0wQy2kfZBY16LjmF4Pi2d0GzBQZQE7eXnoH5n4hm4W7RCCiLDZ/MuEL//uZny0aSJFnX+fiC2wMW8gs1MvWG3gszybuIqDEGOl+KIjpg1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732096363; c=relaxed/simple;
-	bh=oTjxLSyLUSDWUqEL4U89tgmhSivPbNqKBql5iY5FXnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bLwPGuAjjFkEcNoZtuu4e327J8tutnhYLVJvcRJAeAfzN7uWyvhDFU4k0gLs5o1MKNO6rvMHLg+IuxexcUldhpo56nJfm2VcO1LpvGhBsxv/5R3HLKQiqQHp0bVKxx3XLJT0yaYuiFETNfcyp6JV3L43zkwnqxBtan+G2HKo+sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TyMmhvof; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FT9B005743;
-	Wed, 20 Nov 2024 09:52:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d0302W7DdnTeDi5GvqZgRf9A+n5FM0dF6jQPmr+WzZ8=; b=TyMmhvofTo8CYN/D
-	rCSnuLbLRiwECV/WCXX2G1rfiF7Qp7EizdNKvHNY+RZ8EjzXoVPwzA8/mr3pFWY+
-	781Bt55zyBLPVmbYNc4eGFoLI2vMGVItaEIXq0Pk36sroaqEl1xGMQRs6UzdYnzd
-	u8DUAFoHjLtRFA1mf7ZysR8cWcDbchQob0GkPG7mILFaTls42Q08OivLdmkITy3v
-	8dIND/0/DgpaubugKIrXRFYdVUgUBYHlqoeBbYTTrS+9ABsMxUP9rWEPNYywoMUT
-	7USrmKTMq5MGeh9z3fbNE3IQWgHZ7ZrnSYfZUSmep4D1GoCptegU1bJUdUeFeWFv
-	jhTVsg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7wemx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 09:52:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AK9qNVa014018
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 09:52:23 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 01:52:18 -0800
-Message-ID: <48bf0cde-42e2-4032-a71c-3f9d43d02385@quicinc.com>
-Date: Wed, 20 Nov 2024 15:22:15 +0530
+	s=arc-20240116; t=1732096366; c=relaxed/simple;
+	bh=0k5XmDP3+QnNrEI2KbUVvvL7QkJFuQCAvDrn688lHe4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M8PpRYusZ25T+rGrKvqHsh1Mpcsa3CgWXqRQecoX3WeIgsgGfyPCa2alphJzPKSq+aFnzjTtSPX6OMic2loTWV8msB8I+orI6NLMDMEWp/ICtqSuVTxWZ0VyCSSa03bW48011K9oBiIpU63kUgSbyRlM6/K2K50lySDyBa0HvxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UMsqcLqi; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2BCCB60005;
+	Wed, 20 Nov 2024 09:52:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732096361;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CjSe/U+nzv9GiQYKnA55TJmWIVaBLG17HklLuP9BQuo=;
+	b=UMsqcLqizhfjcdodWKdRRxIHV/G24AKIsGNrdAAq4ZT9e/a9MVuhkV/AOZQ0kRe+iAF131
+	xWlc7VGm++AIHwxvSi1cFpq8y3AfypDdpXPHg+R8zytnvRnc/lXI4CndJZ+clFyZkMNUkB
+	K4rSmJ+GW3cgI/j0F0Ziev7Q82q8O/t9yiUr50dDIellFUW7jQcHAjB3R7E1NepRa1KImD
+	zdXTwbQ4eOAIk2e9JAty7V91bo9Bvg3JKqBs7gJs9pV6bIjkqcrbzasIiMFj3N6nPUXPjS
+	hwLeJt9Ro2U3gRa7a/vAyOWgyPSCxvuhhqafKFS9d0uH3b3+344AeSnRRue/Ig==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+Cc: "tudor.ambarus@linaro.org" <tudor.ambarus@linaro.org>,
+  "michael@walle.cc" <michael@walle.cc>,  "broonie@kernel.org"
+ <broonie@kernel.org>,  "pratyush@kernel.org" <pratyush@kernel.org>,
+  "richard@nod.at" <richard@nod.at>,  "vigneshr@ti.com" <vigneshr@ti.com>,
+  "robh@kernel.org" <robh@kernel.org>,  "conor+dt@kernel.org"
+ <conor+dt@kernel.org>,  "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+  "Abbarapu, Venkatesh" <venkatesh.abbarapu@amd.com>,
+  "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+  "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+  "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,  "Simek, Michal"
+ <michal.simek@amd.com>,  "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,  "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>,  "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>,  "git (AMD-Xilinx)" <git@amd.com>,
+  "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>,
+  "beanhuo@micron.com" <beanhuo@micron.com>
+Subject: Re: [RFC PATCH 1/2] dt-bindings: mtd: Add bindings for describing
+ concatinated MTD devices
+In-Reply-To: <IA0PR12MB76994483BBB757BD9F691513DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
+	(Amit Kumar Mahapatra's message of "Tue, 19 Nov 2024 17:02:33 +0000")
+References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
+	<20241026075347.580858-2-amit.kumar-mahapatra@amd.com>
+	<87frnoy8na.fsf@bootlin.com>
+	<IA0PR12MB76994483BBB757BD9F691513DC202@IA0PR12MB7699.namprd12.prod.outlook.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 20 Nov 2024 10:52:38 +0100
+Message-ID: <87sermxme1.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: ipq5424: Add watchdog node
-To: Krzysztof Kozlowski <krzk@kernel.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <quic_rjendra@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241120055248.657813-1-quic_mmanikan@quicinc.com>
- <20241120055248.657813-3-quic_mmanikan@quicinc.com>
- <e134af10-4d58-4bee-9de2-80c120ca8a02@kernel.org>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <e134af10-4d58-4bee-9de2-80c120ca8a02@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: PhuqJ_ZSMbfZf6nJ9MPWUppNJBBD-5Gj
-X-Proofpoint-GUID: PhuqJ_ZSMbfZf6nJ9MPWUppNJBBD-5Gj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- mlxlogscore=846 clxscore=1015 suspectscore=0 adultscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411200069
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
+On 19/11/2024 at 17:02:33 GMT, "Mahapatra, Amit Kumar" <amit.kumar-mahapatr=
+a@amd.com> wrote:
 
+> Hello Miquel,
+>=20=20
+>> > This approach was suggested by Rob [1] during a discussion on Miquel's
+>> > initial approach [2] to extend the MTD-CONCAT driver to support
+>> > stacked memories.
+>> > Define each flash node separately with its respective partitions, and
+>> > add a 'concat-parts' binding to link the partitions of the two flash
+>> > nodes that need to be concatenated.
+>> >
+>> > flash@0 {
+>> >         compatible =3D "jedec,spi-nor"
+>> >         ...
+>> >                 partitions {
+>>=20
+>> Wrong indentation here and below which makes the example hard to read.
+>
+> Sorry about that. I am redefining both the flash nodes here with proper=20
+> indentation.
+>
+> flash@0 {
+> 	compatible =3D "jedec,spi-nor"
+> 	...
+> 	partitions {
+> 		compatible =3D "fixed-partitions";
+> 		concat-partition =3D <&flash0_partition &flash1_partition>;
+>=20=09=09
+> 		flash0_partition: partition@0 {
+> 			label =3D "part0_0";
+> 			reg =3D <0x0 0x800000>;
+> 		};
+> 	};
+> };
+>
+> flash@1 {
+> 	compatible =3D "jedec,spi-nor"
+> 	...
+> 	partitions {
+> 		compatible =3D "fixed-partitions";
+> 		concat-partition =3D <&flash0_partition &flash1_partition>;
+>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+> 		flash1_partition: partition@0 {
+> 			label =3D "part0_1";
+> 			reg =3D <0x0 0x800000>;
+> 		};
+> 	};
+> };
+>
+>>=20
+>> >                 compatible =3D "fixed-partitions";
+>> >                         concat-partition =3D <&flash0_partition &flash=
+1_partition>;
+>> >                         flash0_partition: partition@0 {
+>> >                                 label =3D "part0_0";
+>> >                                 reg =3D <0x0 0x800000>;
+>> >                         }
+>> >                 }
+>> > }
+>> > flash@1 {
+>> >         compatible =3D "jedec,spi-nor"
+>> >         ...
+>> >                 partitions {
+>> >                 compatible =3D "fixed-partitions";
+>> >                         concat-partition =3D <&flash0_partition &flash=
+1_partition>;
+>> >                         flash1_partition: partition@0 {
+>> >                                 label =3D "part0_1";
+>> >                                 reg =3D <0x0 0x800000>;
+>> >                         }
+>> >                 }
+>> > }
+>>=20
+>> This approach has a limitation I didn't think about before: you cannot u=
+se anything
+>> else than fixed partitions as partition parser.
+>
+> Yes, that's correct=E2=80=94it won't function when partitions are defined=
+ via the=20
+> command line. In my opinion, we should start by adding support for fixed=
+=20
+> partitions, add comments in code stating the same. If needed, we can late=
+r=20
+> extend the support to dynamic partitions as well.
 
-On 11/20/2024 1:10 PM, Krzysztof Kozlowski wrote:
-> On 20/11/2024 06:52, Manikanta Mylavarapu wrote:
->> Add the watchdog node for IPQ5424 SoC.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/ipq5424.dtsi | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
->> index 5e219f900412..4ca1ef1c4dc7 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
->> @@ -233,6 +233,13 @@ intc: interrupt-controller@f200000 {
->>  			msi-controller;
->>  		};
->>  
->> +		watchdog: watchdog@f410000 {
-> You do not use the label. Can be dropped.
-> 
+New thought. What if it was a pure fixed-partition capability? That's
+actually what we want: defining fixed partitions through device
+boundaries. It automatically removes the need for further dynamic
+partition extensions.
 
-Okay, sure. I will drop label.
-
-Thanks & Regards,
-Manikanta.
+Thanks,
+Miqu=C3=A8l
 
