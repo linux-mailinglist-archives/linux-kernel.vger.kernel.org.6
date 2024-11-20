@@ -1,126 +1,451 @@
-Return-Path: <linux-kernel+bounces-416298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECEE9D42F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:22:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F889D42F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:23:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C8D5B2919B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7E4282B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353A21BBBC5;
-	Wed, 20 Nov 2024 20:22:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60C5C1AB6FD;
+	Wed, 20 Nov 2024 20:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AU1+95RB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iv274UDB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EB6145B18;
-	Wed, 20 Nov 2024 20:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62CF145B18
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732134138; cv=none; b=XMkgIG1TJ0euRiXaslp01l/Cn97J4MEfgJswZr0iNG5B+jJn2xtqDUWjxHoGkROLY2Tc0afkvsczYHRZ9YbszxK9WkRcjGHCKFwe7fpfItrk/yt/8ot83s7iPXS8CHmyjSXrGKxVltmTsr08f4Wa2F90C3VExQB+PGRLp15Qsc4=
+	t=1732134198; cv=none; b=g1TtIRK3XmU2YHPasuLGTJo6oMfF5keyuPHJA+B5Sp+VPhko0laPc2PDE6scLPb7KSB2VXYTzXRfzoar8E8/EBbhe0F+sNgAKS9tZ6cO2+5G9ST0oZrmJUiI05LCiBGl/iQ+Ur/LcAFZF7GB4HouTqxrcIYAhdP6NPmsbtsqJjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732134138; c=relaxed/simple;
-	bh=pbUjkkEUj6pUI2tekegEPPQ/oo0bRuT03AegnZ1y3TU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=EV5dXfK+UQb3+5fsKPiz4We4r09EnwWBKhq3jMFZqNOOfgCkiUcrIRr+J13tw4DeXdc/TJWpxH0yBBtAuz9dVOjDMOdJC9Lz5wpZrBlIGPofZUEI/HTAtnJGk2u0ZlVKkML+8vzjpV2/Nnlw2xSMgxtbftVYwgYz/64YbZSVvoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AU1+95RB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9B9C4CECD;
-	Wed, 20 Nov 2024 20:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732134138;
-	bh=pbUjkkEUj6pUI2tekegEPPQ/oo0bRuT03AegnZ1y3TU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=AU1+95RB9KsBGdk6c0s4wqxoF5c8jbB3/yTh+81FgvQ4Ob7k04iUkXSNfAWU0Tw5/
-	 CNEtesxRI+6QewAFz2uOzdyNHhfMvcivdg1VgJ24DuVkkNyAckHta5wosvhG3/F0Aq
-	 epTOJL4vvGgsVSYxcHZ9grn11apzlhUSDv3q+MgD2BKYZPcA2CzLg09ZuNz6Z3LYVh
-	 Ubfwly24vZeWq5RqMOacyCr2Cb8keZesR3ci4dpJ4Aqk/9kXHQ5PWylR/0eSmv/rCT
-	 vcXS9EfCK2sFjNTOMSZUihj0+xEaKSml5a/EaeJe6a4G67UKQDJPunRnq8uTwNLTnu
-	 1FaI5EPeeWXPg==
-Date: Wed, 20 Nov 2024 14:22:16 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Luo Yifan <luoyifan@cmss.chinamobile.com>
-Cc: manivannan.sadhasivam@linaro.org, kw@linux.com, kishon@kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools: PCI: Fix several incorrect format specifiers
-Message-ID: <20241120202216.GA2347727@bhelgaas>
+	s=arc-20240116; t=1732134198; c=relaxed/simple;
+	bh=eO/jj761pmLuYmdCc4WuWNYVmFWgTTZ8uzEReHpK9po=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwFEgpWZ1mQauKFOeD4oFG4ts+sFK5idWsadeXtwDo+s5fGghOmpbkyjrwMkoBTl8HaSBMk4pKdMiLKUl1bTUMCg8Rbl8K/Uc9dHUOvGiU+IKUvC9vbfrxpfoI8taHm1szGDPYYGGadyerICXODzTiZEtJ3IncVUM4qmq29zDSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iv274UDB; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732134195; x=1763670195;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=eO/jj761pmLuYmdCc4WuWNYVmFWgTTZ8uzEReHpK9po=;
+  b=iv274UDBVKQ3CkhGbTF9uALkzPgMi+nlJyiJ1xcoVGWCqdRnMntIVK2X
+   WkS4deQ3rnF94HYw6evG/5vCqSkz5vXU+QwoF7tJ7kZtYZjIPhqjvywt/
+   oJI7ygI89QVTs6atn+0PmLKK0W8vyL0l+Gpf6ADfwKFYux8nEoI022SKE
+   ZjkD8AJ41nj1nFNHVO2fawMFftbnUBr78vvkgWdIYoCkxcanuCI0ZR8wV
+   7t0nytIxz2vOz6PKgHwt587m1AHQk3bzDIMbYMpJnP9SdllFXdPGOImby
+   mwHDDLzfTwinDGO5+t9YknifkBEMAXl9385rOM1WP2xzIk4niutbo6n8m
+   w==;
+X-CSE-ConnectionGUID: XECmVJ20QCySAZR+eC5dyQ==
+X-CSE-MsgGUID: mXVFAu2IQKSc6jJqLNVRUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="32466274"
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="32466274"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 12:23:15 -0800
+X-CSE-ConnectionGUID: 1SAQcP8hTduKUkYYr3yqgQ==
+X-CSE-MsgGUID: ADOuxtcmSbytYwX0c7k8xQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="90429805"
+Received: from bmurrell-mobl.amr.corp.intel.com (HELO [10.125.109.160]) ([10.125.109.160])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 12:23:14 -0800
+Message-ID: <e2a5ffef-77e3-4f66-b3b4-d1f2ab62c514@intel.com>
+Date: Wed, 20 Nov 2024 13:23:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112090924.287056-1-luoyifan@cmss.chinamobile.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/11] x86/cpu: Make all all CPUID leaf names consistent
+To: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, tglx@linutronix.de, bp@alien8.de, rafael@kernel.org,
+ lenb@kernel.org, irenic.rajneesh@gmail.com, david.e.box@intel.com
+References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+ <20241120195342.F862CF8D@davehans-spike.ostc.intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20241120195342.F862CF8D@davehans-spike.ostc.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 05:09:24PM +0800, Luo Yifan wrote:
-> Make a minor change to eliminate static checker warnings. Fix several
-> incorrect format specifiers that misused signed and unsigned versions.
+
+
+On 11/20/24 12:53 PM, Dave Hansen wrote:
 > 
-> Signed-off-by: Luo Yifan <luoyifan@cmss.chinamobile.com>
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> The leaf names are not consistent.  Give them all a CPUID_LEAF_ prefix
+> for consistency and vertical alignment.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-Applied with Mani's reviewed-by to pci/misc for v6.13, thanks!
+Acked-by: Dave Jiang <dave.jiang@intel.com> # for ioatdma bits
 
 > ---
->  tools/pci/pcitest.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/tools/pci/pcitest.c b/tools/pci/pcitest.c
-> index 470258009..7b530d838 100644
-> --- a/tools/pci/pcitest.c
-> +++ b/tools/pci/pcitest.c
-> @@ -95,7 +95,7 @@ static int run_test(struct pci_test *test)
+>  b/arch/x86/events/intel/pt.c            |    4 ++--
+>  b/arch/x86/include/asm/cpuid.h          |   12 ++++++------
+>  b/arch/x86/kernel/acpi/cstate.c         |    2 +-
+>  b/arch/x86/kernel/cpu/common.c          |    6 +++---
+>  b/arch/x86/kernel/fpu/xstate.c          |   20 ++++++++++----------
+>  b/arch/x86/kernel/hpet.c                |    2 +-
+>  b/arch/x86/kernel/process.c             |    2 +-
+>  b/arch/x86/kernel/smpboot.c             |    2 +-
+>  b/arch/x86/kernel/tsc.c                 |   18 +++++++++---------
+>  b/arch/x86/xen/enlighten_pv.c           |    4 ++--
+>  b/drivers/acpi/acpi_pad.c               |    2 +-
+>  b/drivers/dma/ioat/dca.c                |    2 +-
+>  b/drivers/idle/intel_idle.c             |    2 +-
+>  b/drivers/platform/x86/intel/pmc/core.c |    4 ++--
+>  14 files changed, 41 insertions(+), 41 deletions(-)
+> 
+> diff -puN arch/x86/events/intel/pt.c~xsave-leaf-checks-3 arch/x86/events/intel/pt.c
+> --- a/arch/x86/events/intel/pt.c~xsave-leaf-checks-3	2024-11-20 11:44:20.873790535 -0800
+> +++ b/arch/x86/events/intel/pt.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -202,10 +202,10 @@ static int __init pt_pmu_hw_init(void)
+>  	 * otherwise, zero for numerator stands for "not enumerated"
+>  	 * as per SDM
+>  	 */
+> -	if (boot_cpu_data.cpuid_level >= CPUID_TSC_LEAF) {
+> +	if (boot_cpu_data.cpuid_level >= CPUID_LEAF_TSC) {
+>  		u32 eax, ebx, ecx, edx;
 >  
->  	if (test->msinum > 0 && test->msinum <= 32) {
->  		ret = ioctl(fd, PCITEST_MSI, test->msinum);
-> -		fprintf(stdout, "MSI%d:\t\t", test->msinum);
-> +		fprintf(stdout, "MSI%u:\t\t", test->msinum);
->  		if (ret < 0)
->  			fprintf(stdout, "TEST FAILED\n");
->  		else
-> @@ -104,7 +104,7 @@ static int run_test(struct pci_test *test)
+> -		cpuid(CPUID_TSC_LEAF, &eax, &ebx, &ecx, &edx);
+> +		cpuid(CPUID_LEAF_TSC, &eax, &ebx, &ecx, &edx);
 >  
->  	if (test->msixnum > 0 && test->msixnum <= 2048) {
->  		ret = ioctl(fd, PCITEST_MSIX, test->msixnum);
-> -		fprintf(stdout, "MSI-X%d:\t\t", test->msixnum);
-> +		fprintf(stdout, "MSI-X%u:\t\t", test->msixnum);
->  		if (ret < 0)
->  			fprintf(stdout, "TEST FAILED\n");
->  		else
-> @@ -116,7 +116,7 @@ static int run_test(struct pci_test *test)
->  		if (test->use_dma)
->  			param.flags = PCITEST_FLAGS_USE_DMA;
->  		ret = ioctl(fd, PCITEST_WRITE, &param);
-> -		fprintf(stdout, "WRITE (%7ld bytes):\t\t", test->size);
-> +		fprintf(stdout, "WRITE (%7lu bytes):\t\t", test->size);
->  		if (ret < 0)
->  			fprintf(stdout, "TEST FAILED\n");
->  		else
-> @@ -128,7 +128,7 @@ static int run_test(struct pci_test *test)
->  		if (test->use_dma)
->  			param.flags = PCITEST_FLAGS_USE_DMA;
->  		ret = ioctl(fd, PCITEST_READ, &param);
-> -		fprintf(stdout, "READ (%7ld bytes):\t\t", test->size);
-> +		fprintf(stdout, "READ (%7lu bytes):\t\t", test->size);
->  		if (ret < 0)
->  			fprintf(stdout, "TEST FAILED\n");
->  		else
-> @@ -140,7 +140,7 @@ static int run_test(struct pci_test *test)
->  		if (test->use_dma)
->  			param.flags = PCITEST_FLAGS_USE_DMA;
->  		ret = ioctl(fd, PCITEST_COPY, &param);
-> -		fprintf(stdout, "COPY (%7ld bytes):\t\t", test->size);
-> +		fprintf(stdout, "COPY (%7lu bytes):\t\t", test->size);
->  		if (ret < 0)
->  			fprintf(stdout, "TEST FAILED\n");
->  		else
-> -- 
-> 2.27.0
-> 
-> 
-> 
+>  		pt_pmu.tsc_art_num = ebx;
+>  		pt_pmu.tsc_art_den = eax;
+> diff -puN arch/x86/include/asm/cpuid.h~xsave-leaf-checks-3 arch/x86/include/asm/cpuid.h
+> --- a/arch/x86/include/asm/cpuid.h~xsave-leaf-checks-3	2024-11-20 11:44:20.873790535 -0800
+> +++ b/arch/x86/include/asm/cpuid.h	2024-11-20 11:44:20.897791454 -0800
+> @@ -19,12 +19,12 @@ enum cpuid_regs_idx {
+>  	CPUID_EDX,
+>  };
+>  
+> -#define CPUID_MWAIT_LEAF	0x5
+> -#define CPUID_DCA_LEAF		0x9
+> -#define XSTATE_CPUID		0x0d
+> -#define CPUID_TSC_LEAF		0x15
+> -#define CPUID_FREQ_LEAF		0x16
+> -#define TILE_CPUID		0x1d
+> +#define CPUID_LEAF_MWAIT	0x5
+> +#define CPUID_LEAF_DCA		0x9
+> +#define CPUID_LEAF_XSTATE	0x0d
+> +#define CPUID_LEAF_TSC		0x15
+> +#define CPUID_LEAF_FREQ		0x16
+> +#define CPUID_LEAF_TILE		0x1d
+>  
+>  #ifdef CONFIG_X86_32
+>  extern int have_cpuid_p(void);
+> diff -puN arch/x86/kernel/acpi/cstate.c~xsave-leaf-checks-3 arch/x86/kernel/acpi/cstate.c
+> --- a/arch/x86/kernel/acpi/cstate.c~xsave-leaf-checks-3	2024-11-20 11:44:20.877790688 -0800
+> +++ b/arch/x86/kernel/acpi/cstate.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -129,7 +129,7 @@ static long acpi_processor_ffh_cstate_pr
+>  	unsigned int cstate_type; /* C-state type and not ACPI C-state type */
+>  	unsigned int num_cstate_subtype;
+>  
+> -	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &edx);
+> +	cpuid(CPUID_LEAF_MWAIT, &eax, &ebx, &ecx, &edx);
+>  
+>  	/* Check whether this particular cx_type (in CST) is supported or not */
+>  	cstate_type = (((cx->address >> MWAIT_SUBSTATE_SIZE) &
+> diff -puN arch/x86/kernel/cpu/common.c~xsave-leaf-checks-3 arch/x86/kernel/cpu/common.c
+> --- a/arch/x86/kernel/cpu/common.c~xsave-leaf-checks-3	2024-11-20 11:44:20.877790688 -0800
+> +++ b/arch/x86/kernel/cpu/common.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -638,9 +638,9 @@ struct cpuid_dependent_feature {
+>  
+>  static const struct cpuid_dependent_feature
+>  cpuid_dependent_features[] = {
+> -	{ X86_FEATURE_MWAIT,		CPUID_MWAIT_LEAF },
+> -	{ X86_FEATURE_DCA,		CPUID_DCA_LEAF },
+> -	{ X86_FEATURE_XSAVE,		XSTATE_CPUID },
+> +	{ X86_FEATURE_MWAIT,		CPUID_LEAF_MWAIT },
+> +	{ X86_FEATURE_DCA,		CPUID_LEAF_DCA },
+> +	{ X86_FEATURE_XSAVE,		CPUID_LEAF_XSTATE },
+>  	{ 0, 0 }
+>  };
+>  
+> diff -puN arch/x86/kernel/fpu/xstate.c~xsave-leaf-checks-3 arch/x86/kernel/fpu/xstate.c
+> --- a/arch/x86/kernel/fpu/xstate.c~xsave-leaf-checks-3	2024-11-20 11:44:20.881790840 -0800
+> +++ b/arch/x86/kernel/fpu/xstate.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -233,7 +233,7 @@ static void __init setup_xstate_cache(vo
+>  						       xmm_space);
+>  
+>  	for_each_extended_xfeature(i, fpu_kernel_cfg.max_features) {
+> -		cpuid_count(XSTATE_CPUID, i, &eax, &ebx, &ecx, &edx);
+> +		cpuid_count(CPUID_LEAF_XSTATE, i, &eax, &ebx, &ecx, &edx);
+>  
+>  		xstate_sizes[i] = eax;
+>  		xstate_flags[i] = ecx;
+> @@ -399,7 +399,7 @@ int xfeature_size(int xfeature_nr)
+>  	u32 eax, ebx, ecx, edx;
+>  
+>  	CHECK_XFEATURE(xfeature_nr);
+> -	cpuid_count(XSTATE_CPUID, xfeature_nr, &eax, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_XSTATE, xfeature_nr, &eax, &ebx, &ecx, &edx);
+>  	return eax;
+>  }
+>  
+> @@ -442,9 +442,9 @@ static void __init __xstate_dump_leaves(
+>  	 * just in case there are some goodies up there
+>  	 */
+>  	for (i = 0; i < XFEATURE_MAX + 10; i++) {
+> -		cpuid_count(XSTATE_CPUID, i, &eax, &ebx, &ecx, &edx);
+> +		cpuid_count(CPUID_LEAF_XSTATE, i, &eax, &ebx, &ecx, &edx);
+>  		pr_warn("CPUID[%02x, %02x]: eax=%08x ebx=%08x ecx=%08x edx=%08x\n",
+> -			XSTATE_CPUID, i, eax, ebx, ecx, edx);
+> +			CPUID_LEAF_XSTATE, i, eax, ebx, ecx, edx);
+>  	}
+>  }
+>  
+> @@ -485,7 +485,7 @@ static int __init check_xtile_data_again
+>  	 * Check the maximum palette id:
+>  	 *   eax: the highest numbered palette subleaf.
+>  	 */
+> -	cpuid_count(TILE_CPUID, 0, &max_palid, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_TILE, 0, &max_palid, &ebx, &ecx, &edx);
+>  
+>  	/*
+>  	 * Cross-check each tile size and find the maximum number of
+> @@ -499,7 +499,7 @@ static int __init check_xtile_data_again
+>  		 *   eax[31:16]:  bytes per title
+>  		 *   ebx[31:16]:  the max names (or max number of tiles)
+>  		 */
+> -		cpuid_count(TILE_CPUID, palid, &eax, &ebx, &edx, &edx);
+> +		cpuid_count(CPUID_LEAF_TILE, palid, &eax, &ebx, &edx, &edx);
+>  		tile_size = eax >> 16;
+>  		max = ebx >> 16;
+>  
+> @@ -634,7 +634,7 @@ static unsigned int __init get_compacted
+>  	 * are no supervisor states, but XSAVEC still uses compacted
+>  	 * format.
+>  	 */
+> -	cpuid_count(XSTATE_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_XSTATE, 1, &eax, &ebx, &ecx, &edx);
+>  	return ebx;
+>  }
+>  
+> @@ -675,7 +675,7 @@ static unsigned int __init get_xsave_siz
+>  	 *    containing all the *user* state components
+>  	 *    corresponding to bits currently set in XCR0.
+>  	 */
+> -	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_XSTATE, 0, &eax, &ebx, &ecx, &edx);
+>  	return ebx;
+>  }
+>  
+> @@ -767,13 +767,13 @@ void __init fpu__init_system_xstate(unsi
+>  	/*
+>  	 * Find user xstates supported by the processor.
+>  	 */
+> -	cpuid_count(XSTATE_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_XSTATE, 0, &eax, &ebx, &ecx, &edx);
+>  	fpu_kernel_cfg.max_features = eax + ((u64)edx << 32);
+>  
+>  	/*
+>  	 * Find supervisor xstates supported by the processor.
+>  	 */
+> -	cpuid_count(XSTATE_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> +	cpuid_count(CPUID_LEAF_XSTATE, 1, &eax, &ebx, &ecx, &edx);
+>  	fpu_kernel_cfg.max_features |= ecx + ((u64)edx << 32);
+>  
+>  	if ((fpu_kernel_cfg.max_features & XFEATURE_MASK_FPSSE) != XFEATURE_MASK_FPSSE) {
+> diff -puN arch/x86/kernel/hpet.c~xsave-leaf-checks-3 arch/x86/kernel/hpet.c
+> --- a/arch/x86/kernel/hpet.c~xsave-leaf-checks-3	2024-11-20 11:44:20.881790840 -0800
+> +++ b/arch/x86/kernel/hpet.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -928,7 +928,7 @@ static bool __init mwait_pc10_supported(
+>  	if (!cpu_feature_enabled(X86_FEATURE_MWAIT))
+>  		return false;
+>  
+> -	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &mwait_substates);
+> +	cpuid(CPUID_LEAF_MWAIT, &eax, &ebx, &ecx, &mwait_substates);
+>  
+>  	return (ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED) &&
+>  	       (ecx & CPUID5_ECX_INTERRUPT_BREAK) &&
+> diff -puN arch/x86/kernel/process.c~xsave-leaf-checks-3 arch/x86/kernel/process.c
+> --- a/arch/x86/kernel/process.c~xsave-leaf-checks-3	2024-11-20 11:44:20.881790840 -0800
+> +++ b/arch/x86/kernel/process.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -878,7 +878,7 @@ static __init bool prefer_mwait_c1_over_
+>  	if (boot_cpu_has_bug(X86_BUG_MONITOR) || boot_cpu_has_bug(X86_BUG_AMD_APIC_C1E))
+>  		return false;
+>  
+> -	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &edx);
+> +	cpuid(CPUID_LEAF_MWAIT, &eax, &ebx, &ecx, &edx);
+>  
+>  	/*
+>  	 * If MWAIT extensions are not available, it is safe to use MWAIT
+> diff -puN arch/x86/kernel/smpboot.c~xsave-leaf-checks-3 arch/x86/kernel/smpboot.c
+> --- a/arch/x86/kernel/smpboot.c~xsave-leaf-checks-3	2024-11-20 11:44:20.885790995 -0800
+> +++ b/arch/x86/kernel/smpboot.c	2024-11-20 11:44:20.897791454 -0800
+> @@ -1292,7 +1292,7 @@ static inline void mwait_play_dead(void)
+>  	if (!this_cpu_has(X86_FEATURE_CLFLUSH))
+>  		return;
+>  
+> -	eax = CPUID_MWAIT_LEAF;
+> +	eax = CPUID_LEAF_MWAIT;
+>  	ecx = 0;
+>  	native_cpuid(&eax, &ebx, &ecx, &edx);
+>  
+> diff -puN arch/x86/kernel/tsc.c~xsave-leaf-checks-3 arch/x86/kernel/tsc.c
+> --- a/arch/x86/kernel/tsc.c~xsave-leaf-checks-3	2024-11-20 11:44:20.885790995 -0800
+> +++ b/arch/x86/kernel/tsc.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -665,13 +665,13 @@ unsigned long native_calibrate_tsc(void)
+>  	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+>  		return 0;
+>  
+> -	if (boot_cpu_data.cpuid_level < CPUID_TSC_LEAF)
+> +	if (boot_cpu_data.cpuid_level < CPUID_LEAF_TSC)
+>  		return 0;
+>  
+>  	eax_denominator = ebx_numerator = ecx_hz = edx = 0;
+>  
+>  	/* CPUID 15H TSC/Crystal ratio, plus optionally Crystal Hz */
+> -	cpuid(CPUID_TSC_LEAF, &eax_denominator, &ebx_numerator, &ecx_hz, &edx);
+> +	cpuid(CPUID_LEAF_TSC, &eax_denominator, &ebx_numerator, &ecx_hz, &edx);
+>  
+>  	if (ebx_numerator == 0 || eax_denominator == 0)
+>  		return 0;
+> @@ -680,7 +680,7 @@ unsigned long native_calibrate_tsc(void)
+>  
+>  	/*
+>  	 * Denverton SoCs don't report crystal clock, and also don't support
+> -	 * CPUID_FREQ_LEAF for the calculation below, so hardcode the 25MHz
+> +	 * CPUID_LEAF_FREQ for the calculation below, so hardcode the 25MHz
+>  	 * crystal clock.
+>  	 */
+>  	if (crystal_khz == 0 &&
+> @@ -700,10 +700,10 @@ unsigned long native_calibrate_tsc(void)
+>  	 * clock, but we can easily calculate it to a high degree of accuracy
+>  	 * by considering the crystal ratio and the CPU speed.
+>  	 */
+> -	if (crystal_khz == 0 && boot_cpu_data.cpuid_level >= CPUID_FREQ_LEAF) {
+> +	if (crystal_khz == 0 && boot_cpu_data.cpuid_level >= CPUID_LEAF_FREQ) {
+>  		unsigned int eax_base_mhz, ebx, ecx, edx;
+>  
+> -		cpuid(CPUID_FREQ_LEAF, &eax_base_mhz, &ebx, &ecx, &edx);
+> +		cpuid(CPUID_LEAF_FREQ, &eax_base_mhz, &ebx, &ecx, &edx);
+>  		crystal_khz = eax_base_mhz * 1000 *
+>  			eax_denominator / ebx_numerator;
+>  	}
+> @@ -738,12 +738,12 @@ static unsigned long cpu_khz_from_cpuid(
+>  	if (boot_cpu_data.x86_vendor != X86_VENDOR_INTEL)
+>  		return 0;
+>  
+> -	if (boot_cpu_data.cpuid_level < CPUID_FREQ_LEAF)
+> +	if (boot_cpu_data.cpuid_level < CPUID_LEAF_FREQ)
+>  		return 0;
+>  
+>  	eax_base_mhz = ebx_max_mhz = ecx_bus_mhz = edx = 0;
+>  
+> -	cpuid(CPUID_FREQ_LEAF, &eax_base_mhz, &ebx_max_mhz, &ecx_bus_mhz, &edx);
+> +	cpuid(CPUID_LEAF_FREQ, &eax_base_mhz, &ebx_max_mhz, &ecx_bus_mhz, &edx);
+>  
+>  	return eax_base_mhz * 1000;
+>  }
+> @@ -1076,7 +1076,7 @@ static void __init detect_art(void)
+>  {
+>  	unsigned int unused;
+>  
+> -	if (boot_cpu_data.cpuid_level < CPUID_TSC_LEAF)
+> +	if (boot_cpu_data.cpuid_level < CPUID_LEAF_TSC)
+>  		return;
+>  
+>  	/*
+> @@ -1089,7 +1089,7 @@ static void __init detect_art(void)
+>  	    tsc_async_resets)
+>  		return;
+>  
+> -	cpuid(CPUID_TSC_LEAF, &art_base_clk.denominator,
+> +	cpuid(CPUID_LEAF_TSC, &art_base_clk.denominator,
+>  	      &art_base_clk.numerator, &art_base_clk.freq_khz, &unused);
+>  
+>  	art_base_clk.freq_khz /= KHZ;
+> diff -puN arch/x86/xen/enlighten_pv.c~xsave-leaf-checks-3 arch/x86/xen/enlighten_pv.c
+> --- a/arch/x86/xen/enlighten_pv.c~xsave-leaf-checks-3	2024-11-20 11:44:20.889791148 -0800
+> +++ b/arch/x86/xen/enlighten_pv.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -231,7 +231,7 @@ static void xen_cpuid(unsigned int *ax,
+>  		or_ebx = smp_processor_id() << 24;
+>  		break;
+>  
+> -	case CPUID_MWAIT_LEAF:
+> +	case CPUID_LEAF_MWAIT:
+>  		/* Synthesize the values.. */
+>  		*ax = 0;
+>  		*bx = 0;
+> @@ -301,7 +301,7 @@ static bool __init xen_check_mwait(void)
+>  	 * ecx and edx. The hypercall provides only partial information.
+>  	 */
+>  
+> -	ax = CPUID_MWAIT_LEAF;
+> +	ax = CPUID_LEAF_MWAIT;
+>  	bx = 0;
+>  	cx = 0;
+>  	dx = 0;
+> diff -puN drivers/acpi/acpi_pad.c~xsave-leaf-checks-3 drivers/acpi/acpi_pad.c
+> --- a/drivers/acpi/acpi_pad.c~xsave-leaf-checks-3	2024-11-20 11:44:20.889791148 -0800
+> +++ b/drivers/acpi/acpi_pad.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -48,7 +48,7 @@ static void power_saving_mwait_init(void
+>  	if (!boot_cpu_has(X86_FEATURE_MWAIT))
+>  		return;
+>  
+> -	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &edx);
+> +	cpuid(CPUID_LEAF_MWAIT, &eax, &ebx, &ecx, &edx);
+>  
+>  	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED) ||
+>  	    !(ecx & CPUID5_ECX_INTERRUPT_BREAK))
+> diff -puN drivers/dma/ioat/dca.c~xsave-leaf-checks-3 drivers/dma/ioat/dca.c
+> --- a/drivers/dma/ioat/dca.c~xsave-leaf-checks-3	2024-11-20 11:44:20.889791148 -0800
+> +++ b/drivers/dma/ioat/dca.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -63,7 +63,7 @@ static int dca_enabled_in_bios(struct pc
+>  	u32 eax;
+>  	int res;
+>  
+> -	eax = cpuid_eax(CPUID_DCA_LEAF);
+> +	eax = cpuid_eax(CPUID_LEAF_DCA);
+>  	res = eax & BIT(0);
+>  	if (!res)
+>  		dev_dbg(&pdev->dev, "DCA is disabled in BIOS\n");
+> diff -puN drivers/idle/intel_idle.c~xsave-leaf-checks-3 drivers/idle/intel_idle.c
+> --- a/drivers/idle/intel_idle.c~xsave-leaf-checks-3	2024-11-20 11:44:20.893791301 -0800
+> +++ b/drivers/idle/intel_idle.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -2269,7 +2269,7 @@ static int __init intel_idle_init(void)
+>  			return -ENODEV;
+>  	}
+>  
+> -	cpuid(CPUID_MWAIT_LEAF, &eax, &ebx, &ecx, &mwait_substates);
+> +	cpuid(CPUID_LEAF_MWAIT, &eax, &ebx, &ecx, &mwait_substates);
+>  
+>  	if (!(ecx & CPUID5_ECX_EXTENSIONS_SUPPORTED) ||
+>  	    !(ecx & CPUID5_ECX_INTERRUPT_BREAK) ||
+> diff -puN drivers/platform/x86/intel/pmc/core.c~xsave-leaf-checks-3 drivers/platform/x86/intel/pmc/core.c
+> --- a/drivers/platform/x86/intel/pmc/core.c~xsave-leaf-checks-3	2024-11-20 11:44:20.893791301 -0800
+> +++ b/drivers/platform/x86/intel/pmc/core.c	2024-11-20 11:44:20.901791607 -0800
+> @@ -936,13 +936,13 @@ static unsigned int pmc_core_get_crystal
+>  {
+>  	unsigned int eax_denominator, ebx_numerator, ecx_hz, edx;
+>  
+> -	if (boot_cpu_data.cpuid_level < CPUID_TSC_LEAF)
+> +	if (boot_cpu_data.cpuid_level < CPUID_LEAF_TSC)
+>  		return 0;
+>  
+>  	eax_denominator = ebx_numerator = ecx_hz = edx = 0;
+>  
+>  	/* TSC/Crystal ratio, plus optionally Crystal Hz */
+> -	cpuid(CPUID_TSC_LEAF, &eax_denominator, &ebx_numerator, &ecx_hz, &edx);
+> +	cpuid(CPUID_LEAF_TSC, &eax_denominator, &ebx_numerator, &ecx_hz, &edx);
+>  
+>  	if (ebx_numerator == 0 || eax_denominator == 0)
+>  		return 0;
+> _
+
 
