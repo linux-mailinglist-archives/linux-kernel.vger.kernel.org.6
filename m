@@ -1,238 +1,156 @@
-Return-Path: <linux-kernel+bounces-415512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4D9D3733
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:41:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422979D3735
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284A3B270FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:41:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2D631F2379E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A2319C551;
-	Wed, 20 Nov 2024 09:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB6019B586;
+	Wed, 20 Nov 2024 09:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JGzbOkB/"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2056.outbound.protection.outlook.com [40.107.103.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RE5ziMZh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417FE170A3D;
-	Wed, 20 Nov 2024 09:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732095692; cv=fail; b=mIGQ8Ssp+1eW/szJ3/gtVOw3p/101WtDDpSHKhP6TY4xARkQt2ayu1aOM4OioKKF+ELhlPjOEnCPAPiRBLnbUjSP7L78QfxpdVovQJqKKS2CAruDaXMi8jrhZN2JfcTAGyzb8wKTPO1BOh9uS4YoafS7qq/Z7i4NEbEHHmrP8+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732095692; c=relaxed/simple;
-	bh=U+7tDjJnQWD/C1dzF9SoiyF5etykNDVi8TLeTYH6w1s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=V+496CWfJ1Njpk8uZoqT+hNGShnMLIeUGgx+3QgOfJeVBji2dRtOCiHbTtcIn3+g4sxeKZk2S/pELJ6DZTaQ7QSG6veEkX/NY4EfcheYTgDos/pS/uD6c1pc/SLqqaKd6IxAlGINMxuilkFbBrteI0sfb47ax0Fxslaps4WJ9l4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JGzbOkB/; arc=fail smtp.client-ip=40.107.103.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xT+STgBI2RdCGDgZYaxs0SXajGX39yqAmHYGFJ8XdF+ojmjd7bGTuMrfYJOpzwbAlKG0qfmnBAcadjcwLMB5odHhWSbpcYaSDRboUTq5mpiU+fWjgmpStOxjBZj5n4JR+/Hik4jhewFqZHlagtnnlLFN8WHNa/y2vAu9I10YnUa1ZmA7Vnobu3gL9AmMAR61f6KGBHSgTkG7G+VZ1SLAvIKhK/rlgwXZIOO64Cadf69sZfDlOETDSHvwyKR40/spMm5ymFfY4JSaZRt626j1fkqBzvL0NvU092caJsxYiZ9LuJMM+9n64iSOD5ojC2PMC93Fmcmme5VE177ItBEe/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N2LK0tMhB6+/cnSkPzCXRoCL5dgxpm7k3a5OYNeE/UM=;
- b=h+dpiMfS+AAPfo5xA5iGU3oxRItTXDPPA5i5wRNP0Y9Olb5IZUJhhTP7tVsRt74TlqQQOZWdn7666qh2EbefxAzmOd2LswwE2wervRPWX2gZ7wUr3GCipWZQFwXI6X/qW0hzhWlxH1kb8S30XSBTxBsT5u8iqNQI/TBf2T8oHEVJAyG+A2GLoECvMZVLd7cJb8Ke3CHABk5YgqBJrWW+5iKKhuvVBf7koL2nCZnsqkeIqtLKyfmsRD3GQ650JBiuEydy6w7nzGd3sPaHaPX6vhho7Veu9VoYC5ArOsci/1FaKaWrXXaLOnXoYsnCiHwablMPu/Yh/7Pl3mgCAIYNww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=N2LK0tMhB6+/cnSkPzCXRoCL5dgxpm7k3a5OYNeE/UM=;
- b=JGzbOkB/I+iHRlmzPnAw1IEp2rWaHJ9OQidvO72svdJIwbY75/+MuHjZth8EWcFzPjYOEOHENFgA5pF+ryD+kYcDNAwPCXbv64AVYvuZQYBCbAgzOeloKauYdeNDCsTvyV0hS+hQ7WmEYJoD8S5Omig0eW6La3UMmUWrZAYaCuC0DJ1gkVkex07R4z2zNz7UUkkJs8YGAldsEMl4NpNbRjwILl3dVKt7p+FRJ+PRXRv7bsuQm0QEyRwqKa+cufU5Qks63CiIlhrPgFGF1/BINPxlonfdFsX+4RnNX2sty6Mhfmnln1Ad3lMOMfvYwQHx879hvlNn6s+OKgeihUBA/Q==
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com (2603:10a6:20b:429::24)
- by AM9PR04MB7697.eurprd04.prod.outlook.com (2603:10a6:20b:2d6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
- 2024 09:41:27 +0000
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb]) by AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb%6]) with mapi id 15.20.8158.023; Wed, 20 Nov 2024
- 09:41:27 +0000
-From: Jacky Bai <ping.bai@nxp.com>
-To: Dhruva Gole <d-gole@ti.com>
-CC: "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "sudeep.holla@arm.com"
-	<sudeep.holla@arm.com>, "rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"james.morse@arm.com" <james.morse@arm.com>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"khilman@baylibre.com" <khilman@baylibre.com>
-Subject: RE: [PATCH] cpuidle: psci: Init cpuidle only for present CPUs
-Thread-Topic: [PATCH] cpuidle: psci: Init cpuidle only for present CPUs
-Thread-Index: AQHbOxqwCt/lUxHvT0C9yctjTWG0GLK/54kAgAAAq7A=
-Date: Wed, 20 Nov 2024 09:41:27 +0000
-Message-ID:
- <AS8PR04MB864270D86D36F0AEDFD5922A87212@AS8PR04MB8642.eurprd04.prod.outlook.com>
-References: <20241120070608.1314850-1-ping.bai@nxp.com>
- <20241120093044.5yeyel4263fc27k7@lcpd911>
-In-Reply-To: <20241120093044.5yeyel4263fc27k7@lcpd911>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8642:EE_|AM9PR04MB7697:EE_
-x-ms-office365-filtering-correlation-id: 37aa0b6a-62fd-423e-a1b7-08dd0947814c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?dSTA72eOPwshSU9mvNgMyGQnEuJ0pbj8UrcoSaP4vUBWASwVQecBXkmOq91H?=
- =?us-ascii?Q?p6T/xwY6kXirtVLo85kLNxeNQTDiRQLMQwvNCv2wi/I2oF3dYNqNKZG7mkBh?=
- =?us-ascii?Q?gKdvC2ZKaDv3lPlF8Qq1AW/hK36H2mg8rZ/+SRIHDntfV8GFXgziKkx0tWeJ?=
- =?us-ascii?Q?TaoXgn6GMFov0g+kPEAoV1xVOlm2UIHqRua1Tt+ZWc8mEJ5Hrla8VYlI+qsz?=
- =?us-ascii?Q?jJv2JLaU3CXLtJ8fEA+HGXpTFCmP3Kmx8rJmVCu7qDdrjOMq+wrj7JNoGuVl?=
- =?us-ascii?Q?B0yKZUcC02j7U+GCO58JozEwFn5330HsqUMulpTpoCWBijVdDI5ZfuKpIMh4?=
- =?us-ascii?Q?hoPq8lpITAxxPS4tYg5bKSfhKYq4pqpAVwiqHC2Zff/sa6vNjqsbSDa2Bbei?=
- =?us-ascii?Q?ux5yP1oj06noJpSJPQImlzHc2pmti+a4WDldfsk5nqoe5+AtpPnoGcFI54+6?=
- =?us-ascii?Q?qw1tEnPMtWNbG/QURa1YuPNKbgRC4zTYmwkBARFJEBjCbUs6FxjfPq5syQhU?=
- =?us-ascii?Q?icaDfUtmtfO5bOFWXOAWqLiTErceSVWliCZGWPDqJl9SYy/2g1cP6WSzZAVg?=
- =?us-ascii?Q?F3YOsfvNHeKaaDhZrb7YpmHcFt8b7uXJgM/b/Tck/yht7QX3h5m4kay3yup1?=
- =?us-ascii?Q?KDbqHO/vWiUzGOMerSeVTYrdPBD0fJvKsA1q4yaZAkpw5fggH8w+Ixd3cwbK?=
- =?us-ascii?Q?CtkUwXjHCAodYSN7+UrDU94NOETG5aA40hIilnGXuM+5jht6z53Gp1R94gPj?=
- =?us-ascii?Q?kgxnoO0o8X9UpIdCEMBJ4iUbfTLUkL3tNNi1S44QPwr4BcedZYvqrK1iDIoN?=
- =?us-ascii?Q?AUOBcd+y/MiDbcyaAgCZzDVNFh5Q1Ophm382+zhsPtMeV2Yf+zn4Azm5/4fk?=
- =?us-ascii?Q?h8GSDuJhtrl0MhkwmFNgg6qIN5dH1XhrvlUZG0gspkVvKKuW/vtfH9vmx13q?=
- =?us-ascii?Q?g3/QRA9QT8D2xZYbw9gHyaYTq4ephU3hMrWW4NPWl7GOLpnfAz6E2NkQPGvW?=
- =?us-ascii?Q?7QR3DHnkkJBe14hvYJ/xXXjP+n5GQhMBGAXdqnZZQqF69pju8MCHO2aWHZQ4?=
- =?us-ascii?Q?thVpVFwhZOiU+c0rre7YYZ+Rl4cRY1r1ka/O/Xb3MWtytfPNuihrHhhHMqhH?=
- =?us-ascii?Q?xgrawjABGH3dDpkL+hjXaElriNcZMQ04+2W9xirhjWzZ0v01SFvYJhzpFJVT?=
- =?us-ascii?Q?BHBgyKRTxkUIRWu3YVJsJMA+lTMmpnoxoBmBSlZK3IiRNMQIWPXWYUnzhOq7?=
- =?us-ascii?Q?Mj7N5w3Z47+sDO5Dg3Wob8wsAvwyahpZfg0Pd8l1EhzFthYkggGyiVv62X1L?=
- =?us-ascii?Q?VmI0NLQSRYpsX7MvD0cxy42prhuMLuzK5sBf31KCd/CrR1e9tFGuKRkZMLFP?=
- =?us-ascii?Q?N5/0f3I=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qWzUkefD9DHKVeyCnT0SrdKBRQ2FYJKz5+cgWYRQdMTAS9M4MiF89b7k0mxq?=
- =?us-ascii?Q?3e3B4DCM32oNW9TOTeJVnN3f0bpkNRqLlQBgLmJKMl0OfTX/I4wKullDhR5e?=
- =?us-ascii?Q?qozyUfhsKlXLeuJVXCGLWqmkftyAA7Gbyc9NxWJgoTkKtZq3CTjQ3DLMVwGR?=
- =?us-ascii?Q?eb4xcu4fWxLvN05/b7zQwJXJFKf1gnwK652UkoRC0qA0jiTsMkqUXm1ah0+J?=
- =?us-ascii?Q?6YK6Rh6+Crtp0W0MK1POkuWozolV640vkU1f8/Fo0fyqqnQ417O8tJGs0mgr?=
- =?us-ascii?Q?YL5xhU5yCgfwcgUPaNyqOjzeEK9bTGEyRnqHSjtuPScLGGlOFMfBOtvxaFRe?=
- =?us-ascii?Q?jPtTr/i6R3QXELhE8SkcDXnDKSM0FiNPMP9GsmcVlbNR0qz5T0qHuhxXHqfa?=
- =?us-ascii?Q?FaExgiIChFsHsbDZ8v8HOQk6hU529uYfapYU99ZRNvnkO5jBM3sfuZaQat7m?=
- =?us-ascii?Q?7Cf98QvAhAZESVAazzgbprZ7apBFVRFpCwho4aXcThAcuyycbQvzznFXnNeM?=
- =?us-ascii?Q?o5bW2AcAqgm25p2WRmLAPpBWopQNAUJ5TCv9Rf0vVysi6YU6SKUHQSPfm/kE?=
- =?us-ascii?Q?dfrDquyP0NkrXglqpMUGWfCH29NKnTTBxzTEOQVw7ao6d/VXwLg1ijJBPHHx?=
- =?us-ascii?Q?QLt74sC1uOizlCsnWUE/nBYEjjv0lkkwYca5OmIbAv2YBSYPcJNuT8EmxDj3?=
- =?us-ascii?Q?SdxVcZTP2nI0fOZA+rzHRkVPNCKfwc5cPxTrirbJXOtIjIDI0pBBsRvNeaI3?=
- =?us-ascii?Q?P09BIlWrT/40O0sI1gx5JxSVlRCQ5ZydcpLwGKLCbQ2WxUtstcS+QesmEcGf?=
- =?us-ascii?Q?6lcjkpxbRT001vHPsIcWPK25jKEAWXVIwYc3PWpgqmym4aRPgGkvtdcA2jj0?=
- =?us-ascii?Q?j4cSbHUAtVqoaIuePNchJLyR4knybhz8KknTTWtPWkn+V2F2A1LG48RjbRpZ?=
- =?us-ascii?Q?hex+m4dzWl/UpbTv6UhJJ07RzgKDEwAKeXjQIaYiqgm7AK6bzhuZEo2HU5tT?=
- =?us-ascii?Q?J7sdRMs4SBvCMsioENw8sdcHcaDAMKVbNsYIn7hJYSHG4FIKf4VJGt4XjjEr?=
- =?us-ascii?Q?xW9EucufbrQvyBDtsKrcuUB1z+XiuXhEWasdA98Lxwsvnd8HPpBhXEX+rq3m?=
- =?us-ascii?Q?nJppFwEkzCBWsmfPxQS2pV0IvW3D/ENk7tnD8jFzCgiw8+DwHnBzIXRpdGQ2?=
- =?us-ascii?Q?Vi8HyBACCw/2DLlS+Fk4vOFlKpCZmBWpY7hng3cMLtzYNYF153/wPXOWA4PX?=
- =?us-ascii?Q?iQvlIiMmiVUbk8dt7+jJoGb4kRtVlPa08USbxOAFjgELv+ccrXu1ragpZYu1?=
- =?us-ascii?Q?4plVAnBxiJd+GjRj5/GGZfDgdwyGVJgSbnnjJNFyXsuZoaTGMkQ3JBbkyJL2?=
- =?us-ascii?Q?dodoUVfKZdUcwe4tRBqq1dI6B0Un7012cc/GTVK/Oh1+jKzB+L5mQBF6jwis?=
- =?us-ascii?Q?HRL7wQuRcLjAOwRc4QX6UjpPTaTv7S4vWOw8b3nUK/x34uKf4EIrvMSTGYbG?=
- =?us-ascii?Q?mvI6+M6LfZRyyddr0+wtTvnXbDuGov1phhMdZc6rgLpwPQfQtphdEl3oUSi7?=
- =?us-ascii?Q?us0wHaWem3vT1zr7Mm8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49839174EDB
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732095755; cv=none; b=gl8QdAkfcT+H6UCt+8UVhVhz/iffvfmJEkptUDN5Q8dYFBBZ0PiqJn50afe53B/Dyn/k8MM6/0luonjfRcaZv9/hVJmObmByWxbYRt10/ADd4caGplEFZWmw/AMOQOnH8v0FR+VbAnOHUMSJzTTb0Ls1sHTSIBB0BrTl6rf+Pf4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732095755; c=relaxed/simple;
+	bh=+MfqtJzp+ShAy/X+9uRsWq7bOah9Lc4YrSYMKQjQ8Aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TBoS3tGNvO5OlVAlvFjdoUCrOUhrMdaV9yixBE+JWi3yBM1h0CizAKrJ+3kKpI7/kNAsVvv9HA0A+ikUNiAd30i+bSugv5PnREyzOcqhTe4e+16gy3eLnKB47cjE1FWfsz5ROL0UaxizLVt8GP/B4CrUEodEhHttDVCfjtOIsg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RE5ziMZh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732095752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BtnWcCy/RhXE31KVrvFbhBplS1bhLk3pDVg35AMkfJY=;
+	b=RE5ziMZhjcCIE97fAOlLFnVQwccWXsrg9tD6QlvCrcOhBsUuyCx566Xi5cokS+Ei+220mh
+	Wy16orPVMdD47biZStcemSQvQ5TFnp9ryW9lOEF4WXpjykpAAcj9mm94qk6czPUQVoRakw
+	59mfG8PQtx9dgdIt74jWuXMFTgBLFp0=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-MR-qE1QFOU6higATofrtoA-1; Wed,
+ 20 Nov 2024 04:42:30 -0500
+X-MC-Unique: MR-qE1QFOU6higATofrtoA-1
+X-Mimecast-MFC-AGG-ID: MR-qE1QFOU6higATofrtoA
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4B67019560BA;
+	Wed, 20 Nov 2024 09:42:27 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5BE5319560A3;
+	Wed, 20 Nov 2024 09:42:25 +0000 (UTC)
+Date: Wed, 20 Nov 2024 17:42:19 +0800
+From: Baoquan He <bhe@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Eric Farman <farman@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from
+ kcore.h to crash_dump.h
+Message-ID: <Zz2u+2abswlwVcer@MiWiFi-R3L-srv>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-5-david@redhat.com>
+ <ZzcYEQwLuLnGQM1y@MiWiFi-R3L-srv>
+ <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37aa0b6a-62fd-423e-a1b7-08dd0947814c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2024 09:41:27.2728
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 952ETFGtiBejAVSki/0Az5q3HVzG8ep/kNF5fRJ8CT1/+aMSSpqyncvY47qYeH+2mKdffPOQ+eWP1STops8k/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7697
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
->=20
-> Hi,
->=20
-> On Nov 20, 2024 at 15:06:08 +0800, Jacky Bai wrote:
-> > With 'nosmp' or 'maxcpus=3D0' boot command line paremeters,
->=20
-> s/paremeters/parameters
->=20
-> checkpatch should've caught this for you.
->=20
+On 11/15/24 at 10:59am, David Hildenbrand wrote:
+> On 15.11.24 10:44, Baoquan He wrote:
+> > On 10/25/24 at 05:11pm, David Hildenbrand wrote:
+> > > These defines are not related to /proc/kcore, move them to crash_dump.h
+> > > instead. While at it, rename "struct vmcore" to "struct
+> > > vmcore_mem_node", which is a more fitting name.
+> > 
+> > Agree it's inappropriate to put the defintions in kcore.h. However for
+> > 'struct vmcore', it's only used in fs/proc/vmcore.c from my code
+> > serching, do you think if we can put it in fs/proc/vmcore.c directly?
+> > And 'struct vmcoredd_node' too.
+> 
+> See the next patches and how virtio-mem will make use of the feactored out
+> functions. Not putting them as inline functions into a header will require
+> exporting symbols just do add a vmcore memory node to the list, which I want
+> to avoid -- overkill for these simple helpers.
 
-Thx, it is my bad, the checkpatch error fix was missed.
-Will fix it in v2.
+I see. It makes sense to put them in crash_dump.h. Thanks for
+explanation.
 
-> > the 'cpu_present_mask' may not be the same as 'cpu_possible_mask'
-> >
-> > In current psci cpuidle driver init, for_each_possible_cpu() is used
-> > to init the cpudile for each possible CPU. but in
->=20
-> s/cpudile/cpuidle
->=20
-> > drivers/base/cpu.c ->cpu_dev_register_generic(),
-> > for_each_present_cpu() is used to register cpu device for present
-> > CPUs.
-> >
-> > When boot system with 'nosmp' or 'maxcpus=3D0', the cpuidle driver init
-> > failed due to no valid CPU device sysfs node for non-boot CPUs.
-> >
-> > [ 0.182993] Failed to register cpuidle device for cpu1
->=20
-> Please can we get a "Fixes:" Tag?
->=20
+> 
+> > 
+> > And about the renaming, with my understanding each instance of struct
+> > vmcore represents one memory region, isn't it a little confusing to be
+> > called vmcore_mem_node? I understand you probablly want to unify the
+> > vmcore and vmcoredd's naming. I have to admit I don't know vmcoredd well
+> > and its naming, while most of people have been knowing vmcore representing
+> > memory region very well.
+> 
+> I chose "vmcore_mem_node" because it is a memory range stored in a list.
+> Note the symmetry with "vmcoredd_node"
 
-OK, will add it in v2.
+I would say the justification of naming "vmcore_mem_node" is to keep
+symmetry with "vmcoredd_node". If because it is a memory range, it really
+should not be called vmcore_mem_node. As we know, memory node has
+specific meaning in kernel, it's the memory range existing on a NUMA node.
 
-BR
+And vmcoredd is not a widely used feature. At least in fedora/RHEL, we
+leave it to customers themselves to use and handle, we don't support it.
+And we add 'novmcoredd' to kdump kernel cmdline by default to disable it
+in fedora/RHEL. So a rarely used feature should not be taken to decide
+the naming of a mature and and widely used feature's name. My personal
+opinion.
 
-> >
-> > Use for_each_present_cpu() to register cpuidle only for present CPUs.
-> >
-> > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> > ---
-> >  drivers/cpuidle/cpuidle-psci.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/cpuidle/cpuidle-psci.c
-> > b/drivers/cpuidle/cpuidle-psci.c index 2562dc001fc1..00117e9b33e8
-> > 100644
-> > --- a/drivers/cpuidle/cpuidle-psci.c
-> > +++ b/drivers/cpuidle/cpuidle-psci.c
-> > @@ -410,7 +410,7 @@ static int psci_cpuidle_probe(struct
-> platform_device *pdev)
-> >       struct cpuidle_driver *drv;
-> >       struct cpuidle_device *dev;
-> >
-> > -     for_each_possible_cpu(cpu) {
-> > +     for_each_present_cpu(cpu) {
->=20
-> With above concerns addressed,
->=20
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
->=20
-> >               ret =3D psci_idle_init_cpu(&pdev->dev, cpu);
-> >               if (ret)
-> >                       goto out_fail;
-> > --
-> > 2.34.1
-> >
-> >
->=20
-> --
-> Best regards,
-> Dhruva Gole
-> Texas Instruments Incorporated
+> 
+> If there are strong feelings I can use a different name, but
+
+Yes, I would suggest we better keep the old name or take a more
+appropriate one if have to change.
+
+> "vmcore_mem_node" really describes what it actually is. Especially now that
+> we have different vmcore nodes.
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
+
 
