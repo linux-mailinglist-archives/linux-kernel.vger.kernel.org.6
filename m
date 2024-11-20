@@ -1,139 +1,145 @@
-Return-Path: <linux-kernel+bounces-416382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DE39D4400
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE789D43EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCE41F22A0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:39:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405211F2267F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93A81BDA80;
-	Wed, 20 Nov 2024 22:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A38A18A6B2;
+	Wed, 20 Nov 2024 22:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="XERx9oDw";
-	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="4NdoRxLl";
-	dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="X1DOf1+Q"
-Received: from trent.utfs.org (trent.utfs.org [94.185.90.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CY0rmZ0q"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CF01BD9F1
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.185.90.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD37188717;
+	Wed, 20 Nov 2024 22:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142388; cv=none; b=ZdxL+47oJoZl1T3H5bou9PPqRM4U0tQp4MVwolJlU1zVx5D8+3Dia8O3pWWgMXig/HAX1h9L/vXT8cA9UmTMxhn5DHT+WVlkV7sM9eI9Rf1eFI/LPow0mU1rFCGr3r11W37miumk/j1zwc/S1tXP0Fna64LFD0+C2CBlvlWcojI=
+	t=1732142005; cv=none; b=iCeMgZOA3lMPxpiBUl9QFDHdzb+VnNf41gzJQtdkbPgDPwLRdFPdZUSyFViuDemKz+KZOQruv5t5LZzjUiAwSmtRfEBYXlFs1S2mX/Rxkgoyr+bPEUyctQmAudKzPozSL6IWcY8L1ose8QMhtIcTbZV7rJi+Xl/9ePnwGNghKWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142388; c=relaxed/simple;
-	bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=ncQrXHLfThfzGKjgja+m6nz4r7IlWoTbVTiVbzV9D96CXSE3zA3ypfuc9tQKmT8uWXgousW69pmMhmeco7/Cq7HKRWSycOj3fv/ClDHBEfcvGvw9jkACm8CfU32s30XQr6BMi4ftpCkRR6hvNwr7lczGhYiDJXlln092PH5ty0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de; spf=pass smtp.mailfrom=nerdbynature.de; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=XERx9oDw; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=4NdoRxLl; dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=X1DOf1+Q; arc=none smtp.client-ip=94.185.90.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nerdbynature.de
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple;
- d=nerdbynature.de; i=@nerdbynature.de; q=dns/txt; s=key1;
- t=1732141908; h=date : from : to : cc : subject : message-id :
- mime-version : content-type : from;
- bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
- b=XERx9oDwIYGL9/ZdFUQPKsVdyXwCVSG9Fu/SBvq68b1YYrJgEmExd6q4p+zw9rqsfa6jw
- gh+qQVxskVGUzw/Dw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=nerdbynature.de;
-	s=dkim; t=1732141908;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=Yt+ssbzSDnfOC5r8ngOzdIASr+ertzByXTP/emHNFYA=;
-	b=4NdoRxLlOJ6P+P7AO3qaRId2GcjYG1I1qWQwKZN3bA5suG2Rsma+fy1bJK6qVSwA5w8Krp
-	BAsJt9h0T73/VpBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nerdbynature.de;
- i=@nerdbynature.de; q=dns/txt; s=key0; t=1732141908; h=date : from :
- to : cc : subject : message-id : mime-version : content-type : from;
- bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
- b=X1DOf1+QirNtTEeVcy+xzzjVLVuoP5T3jL3f1nwLkMRcbl9J9nqxCRR2wyzPihHnzPU9b
- g3rv/x6VJrwyBjqQzcTB+X1S3FaIehl5uerwZDwlH8ngRJuU90UcdbZlgZJSeDEGK/nAi1k
- j7agxZmrCyJBtvHYTMUdKOFV+EPyba2Z3UYWpUi/pq+zvKy8cuZP90gR06ouR4000CcHFLk
- De4d0Y2sRE30klbwhbZh2cM+OGE6mAU3KGpdVrJ07CcgeFnvzlgoKsojMQVWQDuCbmKOC/m
- T2IelkCz0YajPG0byxUcx8ik36m63R6RjHebLnJWsg+6euZp7WuHFMEmgdKQ==
-Received: from localhost (localhost [IPv6:::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by trent.utfs.org (Postfix) with ESMTPS id 38D3E5F957;
-	Wed, 20 Nov 2024 23:31:48 +0100 (CET)
-Date: Wed, 20 Nov 2024 23:31:48 +0100 (CET)
-From: Christian Kujau <lists@nerdbynature.de>
-To: Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH] arm64 support for vboxguest
-Message-ID: <f088e1da-8fae-2acb-6f7a-e414708d8e67@nerdbynature.de>
+	s=arc-20240116; t=1732142005; c=relaxed/simple;
+	bh=Ro0CtiL3ZzjiFTFmwz2565AcUxxRdDotQMfOjOxI8eM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Em0WWLJZU84oCRDa/7ZbtlO0Bfpg/JVldZF0HkhWoGMIfXyjCxKcEQjCJDNXqlr51kzJLrK489hXcF8FJmXPe3K468OfhBxOxGshuuVUbgBVcigUJhaFzCWuxwyo4isKjGCFf9liBJEc3FHJKpxy9VMXBzkzWUYqAIjwqj6Q9Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CY0rmZ0q; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-211fcadd960so1458645ad.2;
+        Wed, 20 Nov 2024 14:33:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732142003; x=1732746803; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=91aDxN0XTQNGQGQT8Q/szbDxtIhhxYQG+hsB7O1S3Ug=;
+        b=CY0rmZ0q+hyPD+6V+i3Jj5FkSF37W15YEK1HKMyT5Z32fCyIvgkq0T/rCeUB05FsTR
+         OHRVxTi4qfrxgfiuss3Hq1HDuq5Xx5qaHA7uEjCIhsaqTjjoxUGUXMKG8AuaLeXJGRkN
+         bKussoTl6JmBY/QL15LDtkOA/1tUbSTDeb3ZXlWN1+8fqp1cbNroRaSPqR2BsXBvrnC+
+         nTkCUvOfOLAu46w/5j2TV/HT+vzxDXBuvHJymU0inm1FvDamyi//onafHSjeHCJ0NjjO
+         qEw8/IXZz+UkEnLBGjnPoQO3otgAflilzYebz0dsk7EbLDglVvkVM/rpPxSCW38r8wRp
+         1HuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732142003; x=1732746803;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=91aDxN0XTQNGQGQT8Q/szbDxtIhhxYQG+hsB7O1S3Ug=;
+        b=Le5b4FqFkQClQKpYNM1JB7ydTVg1w4ow0djrrwsLBUkiiemBzZasSsWbCdM0l/cx9O
+         Qd84fWr2cgD9ip1aVZ8zLU8f8+bGVg829JX/aoP8uA7zXGssDJJZmbJ4zH3YYC2DMoA1
+         HlgUiLJ3l2pT6PLU7isLDKyRfRlAiNgZEakFwWNzK4haEJ6IAZIsTlpHSMQNJvNwCToT
+         XjOd+z8PM2snV2GTdUV9HlnFOmdSe3+asf4SBPxRc9MSfylB5yBG2pZ+PPyS+8S9VDTy
+         +TRQrawkvtuUJl/Y0SI0z2c4uUS8tiXtDxPoQnisJ3b0h3iRlWTmNEWsy60/qmwKLxts
+         BzTg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrr49Cu8XB6BAqrVCsAuEGLhFciNgNlvoFD3D3PXpGt3bxZ38d1HwVYWaafpTEC9/iRlceCryDzEV0azBZPA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs5BYtZmcX4BCRsdxT71ISCa6qzbs1lzeT2+Zg1weczU9PyzD+
+	pfSdPyZdmSI/UWy14JHcj//ob/DVfem1KmauDq6qVl70BICdFh7T
+X-Google-Smtp-Source: AGHT+IGeGe8bOec4hMM4YUcVvnZkB7kV+LtA46t9+5yn7tVFugX6lX6a6g5kEWj8M788pNCgZn8mqQ==
+X-Received: by 2002:a17:903:41c6:b0:212:37e:3fcd with SMTP id d9443c01a7336-2126c97a053mr47913995ad.56.1732142003132;
+        Wed, 20 Nov 2024 14:33:23 -0800 (PST)
+Received: from mitchelllevy. ([131.107.1.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212883f6a00sm563535ad.250.2024.11.20.14.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 14:33:22 -0800 (PST)
+From: Mitchell Levy <levymitchell0@gmail.com>
+Date: Wed, 20 Nov 2024 14:32:29 -0800
+Subject: [PATCH] x86/tools: Use a longer buffer for insn_decoder_test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241120-insn-decoder-test-len-fix-v1-1-44b075deda05@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAHxjPmcC/x2MwQqDMBAFf0X27EISpKb+iniQ5KkLZZWsSEH89
+ 4YeZ2DmJkMRGA3NTQWXmOxawbcNpW3WFSy5MgUXOu99ZFFTzkh7RuETdvIHyot82c0xvUJA/84
+ d1f4oqPr/Hqfn+QH0rWbWawAAAA==
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Mitchell Levy <levymitchell0@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732142002; l=1637;
+ i=levymitchell0@gmail.com; s=20240719; h=from:subject:message-id;
+ bh=Ro0CtiL3ZzjiFTFmwz2565AcUxxRdDotQMfOjOxI8eM=;
+ b=EqW00ynzOD0MCouqTvm3wjRQhPD3zprb5xBOIhTnQNMo7hhRZEpWfibLS3+BG8sJsbPpgkwSS
+ u93732XD9ChDnx41X4TGi3WnZU58cxIHLiX3rX06pW03bM4pOqAeeKQ
+X-Developer-Key: i=levymitchell0@gmail.com; a=ed25519;
+ pk=n6kBmUnb+UNmjVkTnDwrLwTJAEKUfs2e8E+MFPZI93E=
 
-Hello,
+Use a 1024 byte buffer for parsing objdump output lines to accommodate
+long symbols created by rust doctests.
 
-now that VirtualBox able to run as a host on arm64 (e.g. the Apple M3 
-processors) I was wondering if there are any plans to port the vboxguest 
-driver to that platform? I added ARM64 to the Kconfig files (see below) on 
-vboxguest and vboxsf, and also for vboxvideo, and it compiled just like 
-that and at least vboxsf appears to work just fine.
+The number 1024 is based on giving a healthy margin above KSYM_NAME_LEN
+to accommodate angle brackets, addresses, and whitespace.
 
-I don't know how to test vboxvideo yet (the module loads just fine), but 
-if we at least enable to option in the Kconfig file at least people would 
-be able to test it :-)
+---
+Rust doctests can result in very long symbol names, which results in
+very long lines in objdump output, such as:
+<__pfx__RINvNtCshBBT4i9RzFA_4core3ptr13drop_in_placeINtNtNtCskPkSD4WGMmy_6kernel4sync3arc3ArcINtNtNtNtBN_5block2mq7tag_set6TagSetNtNvNvNvCs8MySzWyGC07_25doctests_kernel_generated33rust_doctest_kernel_block_mq_rs_04main42__doctest_main_rust_kernel_block_mq_rs_58_011MyBlkDeviceEEEB23_>:ffffffff818bb250
 
-Comments?
+Currently, fgets will truncate on the first read of this line (but this
+is fine since we see it starts with '<' and continue the loop), but on
+the second we get "rs_58_011MyBlkDeviceEEEB23_>:ffffffff818bb250", which
+is treated as malformed. 
 
-Thanks,
-Christian.
+Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+---
+ arch/x86/tools/insn_decoder_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Signed-off-by: Christian Kujau <lists@nerdbynature.de>
+diff --git a/arch/x86/tools/insn_decoder_test.c b/arch/x86/tools/insn_decoder_test.c
+index 472540aeabc2..18601b3c5037 100644
+--- a/arch/x86/tools/insn_decoder_test.c
++++ b/arch/x86/tools/insn_decoder_test.c
+@@ -106,7 +106,7 @@ static void parse_args(int argc, char **argv)
+ 	}
+ }
+ 
+-#define BUFSIZE 256
++#define BUFSIZE 1024
+ 
+ int main(int argc, char **argv)
+ {
 
-diff --git a/drivers/gpu/drm/vboxvideo/Kconfig b/drivers/gpu/drm/vboxvideo/Kconfig
-index 45fe135d6e43..a68708da3853 100644
---- a/drivers/gpu/drm/vboxvideo/Kconfig
-+++ b/drivers/gpu/drm/vboxvideo/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- config DRM_VBOXVIDEO
- 	tristate "Virtual Box Graphics Card"
--	depends on DRM && X86 && PCI
-+	depends on DRM && (ARM64 || X86) && PCI
- 	select DRM_KMS_HELPER
- 	select DRM_VRAM_HELPER
- 	select DRM_TTM
-diff --git a/drivers/virt/vboxguest/Kconfig b/drivers/virt/vboxguest/Kconfig
-index cc329887bfae..11b153e7454e 100644
---- a/drivers/virt/vboxguest/Kconfig
-+++ b/drivers/virt/vboxguest/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config VBOXGUEST
- 	tristate "Virtual Box Guest integration support"
--	depends on X86 && PCI && INPUT
-+	depends on (ARM64 || X86) && PCI && INPUT
- 	help
- 	  This is a driver for the Virtual Box Guest PCI device used in
- 	  Virtual Box virtual machines. Enabling this driver will add
-diff --git a/fs/vboxsf/Kconfig b/fs/vboxsf/Kconfig
-index b84586ae08b3..d4694026db8b 100644
---- a/fs/vboxsf/Kconfig
-+++ b/fs/vboxsf/Kconfig
-@@ -1,6 +1,6 @@
- config VBOXSF_FS
- 	tristate "VirtualBox guest shared folder (vboxsf) support"
--	depends on X86 && VBOXGUEST
-+	depends on (ARM64 || X86) && VBOXGUEST
- 	select NLS
- 	help
- 	  VirtualBox hosts can share folders with guests, this driver
+---
+base-commit: 37c5695cb37a20403947062be8cb7e00f6bed353
+change-id: 20241118-insn-decoder-test-len-fix-0a8c622e79d4
+
+Best regards,
 -- 
-BOFH excuse #326:
+Mitchell Levy <levymitchell0@gmail.com>
 
-We need a licensed electrician to replace the light bulbs in the computer room.
 
