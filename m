@@ -1,158 +1,179 @@
-Return-Path: <linux-kernel+bounces-415599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481579D38CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:54:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC549D38CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C632843A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99BBB1F254BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4333419E83C;
-	Wed, 20 Nov 2024 10:54:28 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025E919F487;
+	Wed, 20 Nov 2024 10:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oerig4Qz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74AB1848C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3E919C56C;
+	Wed, 20 Nov 2024 10:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732100067; cv=none; b=RvoHbr/yEmOPEqOWTmn0eJnZq87yiYENlvcVJ3cJgluSp3HRyL0s3nbr6BFlf4CRZeffyn8e9Qye462TWSKitgiNIyMvKSDuM1RlGsf4BhdPUrNhQfbSikL0G7wQvGm6DnHqYEUYZ3Lg/3Q9GnZ0Q6cc/p1k5eiit32fHMxbjps=
+	t=1732100080; cv=none; b=TOHMF9oMcxIhIi7cVwUQ3xhZEqff+uvCAuA7OdLXnyZt/rDGB51S6NoFNDR9z2w4Gd0o2T8fINL0M41blsxhKihZC1vZ/We8w4F47KctN1qKHPNL+tkYvJcUUQYkDt8CXwBR5iKiSXigcb/lSyV+Anqi9reoTT5AqT3odlJse/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732100067; c=relaxed/simple;
-	bh=hDDa9WNLmClXft6l1f7IWQJ4LEaIlaLSd4OF6qsf6qY=;
+	s=arc-20240116; t=1732100080; c=relaxed/simple;
+	bh=v56PH/TC6VfhJinSkV1dT70LzT5v+DrJrRasoRvKhFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOYRbALCLWK6DGPsYAiMQWRrz9iTpq/IA/fMMgrSpdGYjXO1OqnHW9swWfafDepXMYmVQ0r//DoJ7/bibZbpZAjNw2B5nvdkBhnrT9NWZ02qVV7vcZaIfpfrNCNKFqqXcqBwRgKBibTaTpdIwQAXObsfvkY5YIEMWnNlvlkh9x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tDiLV-0000qZ-8i; Wed, 20 Nov 2024 11:54:05 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tDiLU-001j71-0x;
-	Wed, 20 Nov 2024 11:54:04 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D87AF377C4A;
-	Wed, 20 Nov 2024 10:54:03 +0000 (UTC)
-Date: Wed, 20 Nov 2024 11:54:03 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, NXP Linux Team <s32@nxp.com>, 
-	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 3/3] can: flexcan: handle S32G2/S32G3 separate interrupt
- lines
-Message-ID: <20241120-rational-chocolate-marten-70ed52-mkl@pengutronix.de>
-References: <20241119081053.4175940-1-ciprianmarian.costea@oss.nxp.com>
- <20241119081053.4175940-4-ciprianmarian.costea@oss.nxp.com>
- <20241120-magnificent-accelerated-robin-70e7ef-mkl@pengutronix.de>
- <c9d8ff57-730f-40d9-887e-d11aba87c4b5@oss.nxp.com>
- <20241120-venomous-skilled-rottweiler-622b36-mkl@pengutronix.de>
- <aa73f763-44bc-4e59-ad4a-ccaedaeaf1e8@oss.nxp.com>
- <20241120-cheerful-pug-of-efficiency-bc9b22-mkl@pengutronix.de>
- <72d06daa-82ed-4dc6-8396-fb20c63f5456@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVThZ6bq7YTY2BZvws/Er7PoUtNQt2VZVza7r8OHnAsaJxTykK721ELvfUNCiOJ+4+jNzBkKTFv8gmr8jxgv7Szjq/vwOc/MPX5CYqBzY6DvRj/H3ximyySznzJzcgf/YdWTMtZeLyvoJQWTZSi/WGOmZmiR9oCQPkHm+vgSqeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oerig4Qz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 544F2C4CECD;
+	Wed, 20 Nov 2024 10:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732100078;
+	bh=v56PH/TC6VfhJinSkV1dT70LzT5v+DrJrRasoRvKhFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oerig4QzLHxMLkwFcONbh+QH7JccDk0DYE3OO/JNvQbbuExvz1IHXFtkNKc6ws900
+	 Ph+vlJcQywEm83n2EWh8eOD3E6AZfrjvVpMWMXWX3fTt+R3wkNOnwGEEtf5zQCC2uo
+	 zm2de2K9vuAY5MO1/HoqnapioBJ0nJglbW9z3CJkqGC66wmic0Hh3Y8wS9bq3PAygE
+	 DQRp/srrPst1RiqG1ma/fqzGFR4rh5hRjKE6OJ7Hk2bXvOPwq0Ufil5r28O7veX/F6
+	 Ad1KjhFA/txIArs9lwbKNUhi2TBYUTNnd4c9ugCn654jg7d9lyoYTrVJbr+9dD32Ud
+	 iibD+W02/qyJg==
+Date: Wed, 20 Nov 2024 11:54:36 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+	x86@kernel.org, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Juerg Haefliger <juerg.haefliger@canonical.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
+	Chuang Wang <nashuiliang@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
+	Julian Pidancet <julian.pidancet@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v3 11/15] context-tracking: Introduce work deferral
+ infrastructure
+Message-ID: <Zz2_7MbxvfjKsz08@pavilion.home>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-12-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="utw4dr5kz2nuipyk"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <72d06daa-82ed-4dc6-8396-fb20c63f5456@oss.nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241119153502.41361-12-vschneid@redhat.com>
 
+Le Tue, Nov 19, 2024 at 04:34:58PM +0100, Valentin Schneider a écrit :
+> +bool ct_set_cpu_work(unsigned int cpu, unsigned int work)
+> +{
+> +	struct context_tracking *ct = per_cpu_ptr(&context_tracking, cpu);
+> +	unsigned int old;
+> +	bool ret = false;
+> +
+> +	preempt_disable();
+> +
+> +	old = atomic_read(&ct->state);
+> +	/*
+> +	 * Try setting the work until either
+> +	 * - the target CPU has entered kernelspace
+> +	 * - the work has been set
+> +	 */
+> +	do {
+> +		ret = atomic_try_cmpxchg(&ct->state, &old, old | (work << CT_WORK_START));
+> +	} while (!ret && ((old & CT_STATE_MASK) != CT_STATE_KERNEL));
+> +
+> +	preempt_enable();
+> +	return ret;
 
---utw4dr5kz2nuipyk
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/3] can: flexcan: handle S32G2/S32G3 separate interrupt
- lines
-MIME-Version: 1.0
+Does it ignore the IPI even if:
 
-On 20.11.2024 12:47:02, Ciprian Marian Costea wrote:
-> > > > > The mainline driver already handles the 2nd mailbox range (same
-> > > > > 'flexcan_irq') is used. The only difference is that for the 2nd m=
-ailbox
-> > > > > range a separate interrupt line is used.
-> > > >=20
-> > > > AFAICS the IP core supports up to 128 mailboxes, though the driver =
-only
-> > > > supports 64 mailboxes. Which mailboxes do you mean by the "2nd mail=
-box
-> > > > range"? What about mailboxes 64..127, which IRQ will them?
-> > >=20
-> > > On S32G the following is the mapping between FlexCAN IRQs and mailbox=
-es:
-> > > - IRQ line X -> Mailboxes 0-7
-> > > - IRQ line Y -> Mailboxes 8-127 (Logical OR of Message Buffer Interru=
-pt
-> > > lines 127 to 8)
-> > >=20
-> > > By 2nd range, I was refering to Mailboxes 8-127.
-> >=20
-> > Interesting, do you know why it's not symmetrical (0...63, 64...127)?
-> > Can you point me to the documentation.
->=20
-> Unfortunately I do not know why such hardware integration decisions have
-> been made.
->=20
-> Documentation for S32G3 SoC can be found on the official NXP website,
-> here:
-> https://www.nxp.com/products/processors-and-microcontrollers/s32-automoti=
-ve-platform/s32g-vehicle-network-processors/s32g3-processors-for-vehicle-ne=
-tworking:S32G3
->=20
-> But please note that you need to setup an account beforehand.
+     (ret && (old & CT_STATE_MASK) == CT_STATE_KERNEL))
 
-I have that already, where is the mailbox to IRQ mapping described?
+?
 
-regards,
-Marc
+And what about CT_STATE_IDLE?
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Is the work ignored in those two cases?
 
---utw4dr5kz2nuipyk
-Content-Type: application/pgp-signature; name="signature.asc"
+But would it be cleaner to never set the work if the target is elsewhere
+than CT_STATE_USER. So you don't need to clear the work on kernel exit
+but rather on kernel entry.
 
------BEGIN PGP SIGNATURE-----
+That is:
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc9v8gACgkQKDiiPnot
-vG+DZgf/YI75+HHjeafE/UmEJS+6suu6FOSK7UxM5pI+GEKnHbVPKtuYihoiXHfL
-EINWDOpfWVfCUCviimHjSbKanxhJtxUnsd7FhLSPi6bPuavJ6E2yG4WfyCLJFxsx
-v2HYiIaOkSOYepHOwvSCXQsvLDayIzDFs4KMbBfZQYVtVsncWYhhCE7N2/Vukl41
-3m5h2pMDXrjp50CrgblivlDpUlz9Bi4NTuMl23mMu54qnsVlBfiTgMGuq0F/nsdp
-2MqW0+mgRsytIZTSH7XeaMyz6fsefl6rItpGgZSBL3CulV7rpNSlbyjQFwOw9aTO
-4iwInFhNu9rj1lOP/7fJ7F998w08aA==
-=F+0U
------END PGP SIGNATURE-----
+bool ct_set_cpu_work(unsigned int cpu, unsigned int work)
+{
+	struct context_tracking *ct = per_cpu_ptr(&context_tracking, cpu);
+	unsigned int old;
+	bool ret = false;
 
---utw4dr5kz2nuipyk--
+	preempt_disable();
+
+	old = atomic_read(&ct->state);
+
+	/* Start with our best wishes */
+	old &= ~CT_STATE_MASK;
+	old |= CT_STATE_USER
+
+	/*
+	 * Try setting the work until either
+	 * - the target CPU has exited userspace
+	 * - the work has been set
+	 */
+	do {
+		ret = atomic_try_cmpxchg(&ct->state, &old, old | (work << CT_WORK_START));
+	} while (!ret && ((old & CT_STATE_MASK) == CT_STATE_USER));
+
+	preempt_enable();
+
+	return ret;
+}
+
+Thanks.
 
