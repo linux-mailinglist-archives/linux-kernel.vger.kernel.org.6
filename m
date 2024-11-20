@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-415367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72129D350D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:09:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA34D9D3516
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B541F21525
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9941128218E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A881170A15;
-	Wed, 20 Nov 2024 08:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47EA171E49;
+	Wed, 20 Nov 2024 08:12:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SN43AKKv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H52j9Svc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DE715B551;
-	Wed, 20 Nov 2024 08:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8E11586DB;
+	Wed, 20 Nov 2024 08:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732090139; cv=none; b=GZyW+nz6Tr24z7Bj9xx2vrOVBc6yCa3Uw48pbCTiCAIB80pemfXdzeWLZE2qH+Kl9HEScb9upxZWqD2lDLU39SXgvmEuDuqgLhCjVDT/nqMO0ZX5jN/2wBEjN06s5fx8qShhpH8U4sTgCCmmR1w3vdiWj13BC/PYDI5/rXWNmcA=
+	t=1732090356; cv=none; b=R+MS66Jbj5Pwgy2bBJjM0t4PIkHMUHVoJ1hgJkojNcWAHoUMfaASZQEgMlgaByJzCOB2UutL0bc5xLvouc1hJIVPWN3UOFmgdjJ2lD2/t0EY9nYfMZ11Dc7oYjXBqT32T7onGxHCZuODQyqrTACXVzRjdRaeULWKqblOfiuyxTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732090139; c=relaxed/simple;
-	bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q648i8pV71l1BNiC4kHfk+is8wXhPX3Uyp1AKlIfc9Zz5zuualXEf1PDMlPCE2KQJCDGS/FnxmbnhVqAo7J1mZ7p6Hi78gBGH5bhy21QB4ZuTnf9eQJnXi+luA2tYGYZZpLBMA6/qwDbe68fUBExvLF4zAxZlnPYfZjrDw7iCsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SN43AKKv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43220C4CECD;
-	Wed, 20 Nov 2024 08:08:57 +0000 (UTC)
+	s=arc-20240116; t=1732090356; c=relaxed/simple;
+	bh=ty/S4gauAhtzgOdL7+3lbsv+AiMkOi0u4zHGD4rkM34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J5TpNIZadTy66+DTN5mNGX0fJhKB3Vo8fMQwsVBLAb4K66pAyBGGxEbErlTJA93/xyTmH037uHisLBDlSui3xhuujyLorDl5aNWZmHDv+Ls3ZpHgLHJhT69QdLmHxDMd7rNrlwwj9UBuMJqRzwNfktTqP/UvRUqw6BMSED2akRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H52j9Svc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1002BC4CED7;
+	Wed, 20 Nov 2024 08:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732090138;
-	bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SN43AKKvadsCBNddFXvFQxupeDFVL3qWSHJIScRnUHVuXqqo9Ho3GQ8G+aBrzwBSv
-	 HSa1Mnsm8Pzx2frjaZoSXZTHD2MmxAHBveG6K1TQOAR4s34F61+3r7VYHsl5tYzT3e
-	 0hh4lr75uT87HF5uZlsEZhxJZxECWH7YP8mgkX7aie1r+xFwypHItvCvVC+KBykych
-	 63z9FBWq1f8n6YndF9xtxkYYac95JPST3wCNlTHlnrfirzDvrHTs7bbiIFciDyPeJD
-	 wMRyIqkp2Ue6KMA76N4iMerz3PFXufczQSVJr31mNnB1vm25XGHQ3nxc4g7OAoS4F8
-	 S7Zv8z5Ett88Q==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: delay sysctl_nr_open check in expand_files()
-Date: Wed, 20 Nov 2024 09:08:50 +0100
-Message-ID: <20241120-obstgarten-vorne-f918e84076e2@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241116064128.280870-1-mjguzik@gmail.com>
-References: <20241116064128.280870-1-mjguzik@gmail.com>
+	s=k20201202; t=1732090355;
+	bh=ty/S4gauAhtzgOdL7+3lbsv+AiMkOi0u4zHGD4rkM34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H52j9Svc7q9EL5E4/cBNawNgHi4DRKDFmkZHTPZQqsLqbBOiTKmkGsUmWqcrBHdGT
+	 q1ldS+d+RwXWCXznSO96Sy8xESWdVuubgqBAM91MwfkamMFUa4wtJVzBLidliCM4Rk
+	 jAsFtWr/SdOih3Yw0qy+O3gi9sA4fBP8CTfx58nqleTay4bAYYTKtJq0fGomXcfTP8
+	 ieKFXUPiCq6b6pswhdGLPAdjg1xXLqHkPAtFHkFrz/IJ0aw7NESF0haGaoNRM6y6yq
+	 NaND/dbfKyPxV0kHf9ZETMAkJJ6cpo1FPfOHmbtlgwBMLZ2vY4YTq3JwvoP7g3zWpE
+	 rsnmLjLjn8yAQ==
+Date: Wed, 20 Nov 2024 09:12:32 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kim Seer Paller <kimseer.paller@analog.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v3 1/2] dt-bindings: power/supply: Add ltc4162-f/s and
+ ltc4015
+Message-ID: <bwn36yetahe7bjwsrcx4lljn6r7ta4d2r6pacq4ccmxbkkurpo@vkgjle4ckl6b>
+References: <20241119032304.23588-1-kimseer.paller@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1445; i=brauner@kernel.org; h=from:subject:message-id; bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbzhTp2j9b7VPoai6Xs7fmP39i4cC+wkswNKjrVMSGy 6fam7z9OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZif5OR4QWLTdrGLpa5SxZ3 7r6vl5p2Ssp28+rw6CcTmg9JbbOVXsLIsHiqtvhczpZNcrmL9lqrGVkd8DfZoz+vj99A5k/mipA tzAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241119032304.23588-1-kimseer.paller@analog.com>
 
-On Sat, 16 Nov 2024 07:41:28 +0100, Mateusz Guzik wrote:
-> Suppose a thread sharing the table started a resize, while
-> sysctl_nr_open got lowered to a value which prohibits it. This is still
-> going to go through with and without the patch, which is fine.
+On Tue, Nov 19, 2024 at 11:23:03AM +0800, Kim Seer Paller wrote:
+> Add LTC4162-F/S and LTC4015 to the supported devices of LTC4162-L.
+> They share a common set of registers. The only differences lie in the
+> resolution value of the scaling factor for battery voltage and battery
+> current measurement, input voltage, and input current for different
+> battery chemistries. The differences also include the calculation of
+> setting and getting the actual voltage applied to the charge voltage,
+> as well as getting the die temperature.
 > 
-> Further suppose another thread shows up to do a matching expansion while
-> resize_in_progress == true. It is going to error out since it performs
-> the sysctl_nr_open check *before* finding out if there is an expansion
-> in progress. But the aformentioned thread is going to succeded, so the
-> error is spurious (and it would not happen if the thread showed up a
-> little bit later).
+> This add compatible entries for ltc4162-f/s and ltc4015 and include
+> datasheets for new devices.
 > 
-> [...]
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> ---
+> V2 -> V3: Described differences in the programming model between variants/devices.
+> V1 -> V2: Modified commit message describing differences between
+>           variants/devices.
+> 
+>  .../devicetree/bindings/power/supply/ltc4162-l.yaml         | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> index 29d536541..9b546150d 100644
+> --- a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> +++ b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
+> @@ -17,12 +17,18 @@ description: |
+>    panels, etc., and a rechargeable Lithium-Ion/Polymer battery.
+>  
+>    Specifications about the charger can be found at:
+> +    https://www.analog.com/en/products/ltc4162-l.html
+> +    https://www.analog.com/en/products/ltc4162-f.html
+>      https://www.analog.com/en/products/ltc4162-s.html
+> +    https://www.analog.com/en/products/ltc4015.html
+>  
+>  properties:
+>    compatible:
+>      enum:
+>        - lltc,ltc4162-l
+> +      - lltc,ltc4162-f
+> +      - lltc,ltc4162-s
+> +      - lltc,ltc4015
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+Keep alphabetical order.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+I assume these are not compatible.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Best regards,
+Krzysztof
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
-
-[1/1] fs: delay sysctl_nr_open check in expand_files()
-      https://git.kernel.org/vfs/vfs/c/bb35f8709172
 
