@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-415217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB8DB9D3302
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:54:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6159D3305
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5F811F23C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:54:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194A9284323
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B93015697A;
-	Wed, 20 Nov 2024 04:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281E1156F2B;
+	Wed, 20 Nov 2024 04:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="NvXLS/23"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2KHWw+QX"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA3042AAB;
-	Wed, 20 Nov 2024 04:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F106F1494DF
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732078465; cv=none; b=eLmaJw1KKuVzsS1hS8waPvfmAlZKxKg0wcGDvmf1Td8ZNUTm6uB2rzII9fcxT/MqdItn70qE9VEkvhGdPW3RKhNlc0Xh0K6x2sS6G3kpC+w8hyUvGyy2L60s6rFEAI4HViK0/aLebXWSiPe2s7vYrABgZWKO4v7pYurUnXT1Ymg=
+	t=1732078555; cv=none; b=cMkCNsQwz7v1VLyWPAQeFe2Hy+YsR44FoybLvbeZ3Bf5IvkQRL+PoXuNZioDUXOWla7JCNcs3rLkc6PDP3DS8ZQlCYFr52Q8alzd7h5pRJD2Z98pCvBPvfNCJk/X24Cpf8a9RWS3yfoGygIobpqrTOgIYF3OEXGcctXxAI9gFUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732078465; c=relaxed/simple;
-	bh=m0rejVzUQ8KWXV5movCkOFjMtx+/Mx0idUJFVHrt9mc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=keuXhO/FcTEpldGiD5gqROASCgcP7nKlFMNROP2BrLfW6DXS/fo7CCSESNpZT5vHJaF7bnFKr5Wgbg2vb51DvTRAgvHG6u+z7ov386hjL9V9Cee+3JPTjHYYf4sOHprhzSYJ8WrnN30sUUfEaw0J9wbSJjCa5xV5MiG14M2ahmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=NvXLS/23; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1732078555; c=relaxed/simple;
+	bh=qidyDdoPMSrLqOEPcAD7Fm10v61MJZnJnKYjl/6vk68=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oxBoUeDFHBCAl5ahJB2ufcTDzqFAOczUAg5tn+8lKClfngaV/8ZS64nPmcR/CyPqbZIdM6W0p9i7t1+6MWYpPqSLDzewOpcgV5ixjyBFjRliA047/lbprHOTyJuA5+aBXiJEtbMnLDqyXFmkglY2Qap11Fi8B8YvmpDPhJiujk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2KHWw+QX; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ec267b879so845215366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:55:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1732078461;
-	bh=m0rejVzUQ8KWXV5movCkOFjMtx+/Mx0idUJFVHrt9mc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=NvXLS/23phZOX0oazXs4Xv1vRCgMfkzmxFiB2ptYRe7mgYNjLB+TA0uCUFMX3lLt0
-	 OdWVhkBFqcddqEvt0LlVxkQKBwKzKGDLyAGbg1UAww346BcgXd7qG/6KHHdeO4ybza
-	 Zj3pDAQiZ9KF3qsFAFEp46bpmY2+rQIq7Jvk5SihOKZEEDcnz4ebdfw0jHkb+a44ON
-	 cMjJ7xFGrTa1NblXj0zmPI/zgfoLxjKj+axuEaCzOGUIXeiIKimOLX0kL8+a/oLxXi
-	 jPXESR1UDnEITr7oNggg5/MSGOLEk3fiXM8s2krf4/Cn5H5Q8AK5sKcQ6b2mJuW+mY
-	 CKvW8eYkKhmsw==
-Received: from [192.168.68.112] (ppp118-210-181-13.adl-adc-lon-bras34.tpg.internode.on.net [118.210.181.13])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 9637766403;
-	Wed, 20 Nov 2024 12:54:19 +0800 (AWST)
-Message-ID: <1bc83ee73545f9aab6e0a931cda8f5ffe41cb445.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Guenter Roeck <linux@roeck-us.net>, Chin-Ting Kuo
-	 <chin-ting_kuo@aspeedtech.com>, Patrick Williams <patrick@stwcx.xyz>, 
-	"wim@linux-watchdog.org"
-	 <wim@linux-watchdog.org>
-Cc: "joel@jms.id.au" <joel@jms.id.au>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
- <linux-watchdog@vger.kernel.org>, "Peter.Yin@quantatw.com"
- <Peter.Yin@quantatw.com>, "Patrick_NC_Lin@wiwynn.com"
- <Patrick_NC_Lin@wiwynn.com>, "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
-  "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>, BMC-SW
- <BMC-SW@aspeedtech.com>,  "chnguyen@amperecomputing.com"
- <chnguyen@amperecomputing.com>
-Date: Wed, 20 Nov 2024 15:24:18 +1030
-In-Reply-To: <9565c496-44d8-4214-8038-931926210d0f@roeck-us.net>
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
-	 <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-	 <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
-	 <a0faca9a6ec7f4acdfa2f29b4ffb94b5392aea6b.camel@codeconstruct.com.au>
-	 <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <ed77d57facaaef0be796b4c6a742dc7bf3bff479.camel@codeconstruct.com.au>
-	 <TYZPR06MB52039B02B6D3053355F30489B25D2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <9a1e64ef-81d9-48b0-b871-ce4ff792eae4@roeck-us.net>
-	 <TYZPR06MB52039DB39B62E6FA5220103AB2272@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <2531f830-6a36-4bd5-ba1e-9e19f0f66496@roeck-us.net>
-	 <219607ab74764f3d47659fb5ab3223b3034152e5.camel@codeconstruct.com.au>
-	 <9565c496-44d8-4214-8038-931926210d0f@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=google.com; s=20230601; t=1732078552; x=1732683352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rLsyLORpZtZ6b2mAwzZkeZQ6i4pKu4Ce89IT06ouUsE=;
+        b=2KHWw+QXDv6nUb3d+NKqaevr/+grlnuz8jQjJ+j+FMPgBK/cVUJyNDSFRA6IyeQWhm
+         mDOucjhkUXSm2J1z6IQyKqaLsFNfmywSyjUmIyqkMb19nK2Il9vkqB7SSBw4ACi/WnZK
+         URrFbgj36nbc7fOOoXJdParYew5Xd9df8/J/cagsyIDFALwo05rjFUpoMp4wj9JgaLTG
+         nTcE/Qks39+gYiaLkrUDnOIFeyWTER1OEsgyYTzzZDlmWUqaPrsyPm/8eCsFVWKYD7pT
+         xQuuZzR0Q1/zHC/lEbrY+WAPAwEFNn6nYRD4CZJW/7aSkj5sXnzBc3jP0wGCrZlTTh1y
+         KMbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732078552; x=1732683352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rLsyLORpZtZ6b2mAwzZkeZQ6i4pKu4Ce89IT06ouUsE=;
+        b=A6a05XGd7GQIiWOnU2qD1gfIJm1QZhkOP1/XrFFhBhjcQUpnOlwXlM6ho4W1h+OF/v
+         jhyGBKfw+uEbNZtV4TX9h7CssFf6jjHjVFD9UxhfwO4BWLi11FLsBNTnUjvTfbnWCqge
+         JTYtGv5X1RN6DauZq6RkPRvaF8K5dCCBLO7MeW8eD19KReC/ycDWhK4gBR3MHLoy1lT6
+         eTzkjb6hu7Vh/kZaBdnA6DkF4izCvvTA1c2fnQJfKrY0eWPHWdDphioKhIXJaP4CGkLr
+         iymO7mIy7w/W0GOP0Oimqc6MiHH5Mv6LfbA079SrKyPDIc09uEGdzYzHfF+kzW8rijSw
+         VcyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDtDLN4fniVh9vQ58/uGbH9JXxqvfZ/ekZV7PPv1jwGqqFD3xWe1iygEqIKlAjR3J1Wq5RwwLe+21SR7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqDOQwg4zDYmMt7yeOPqP7mSaPp5L6Zvah+IERquOSjRWwJ+kr
+	g83rYefT8kICSPRQb44be3p0aBmP9vRv2osbCG4z5Ern9rh3U/YUCIB9XVunFsxRW6fX+yytt4T
+	WCKfJnz7XtyxoUjUEygdqnI7vzX2jlO7tDndB
+X-Google-Smtp-Source: AGHT+IGineP2bUXtNwD1Ct4msCtFonm9FZ5ffyQckr3P3Efc8YypLgUph8KTFI3sRkQXjSxM5eevi7MkccDQbnEgqmo=
+X-Received: by 2002:a17:907:961e:b0:aa4:777d:7394 with SMTP id
+ a640c23a62f3a-aa4dd52feabmr116533166b.11.1732078552227; Tue, 19 Nov 2024
+ 20:55:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241119133513.3612633-1-michael.roth@amd.com>
+ <20241119133513.3612633-2-michael.roth@amd.com> <CAAH4kHZ_A7-dNyMiyrZ2p46te=Xi7SRosS_kSjYvG6sJTcmb7A@mail.gmail.com>
+In-Reply-To: <CAAH4kHZ_A7-dNyMiyrZ2p46te=Xi7SRosS_kSjYvG6sJTcmb7A@mail.gmail.com>
+From: Dionna Amalie Glaze <dionnaglaze@google.com>
+Date: Tue, 19 Nov 2024 20:55:40 -0800
+Message-ID: <CAAH4kHYncFsa=5NZVX35jk3jicx1fnYTHsLwapHmJ03+TNKa9w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] KVM: Introduce KVM_EXIT_COCO exit type
+To: Michael Roth <michael.roth@amd.com>
+Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com, 
+	seanjc@google.com, jroedel@suse.de, thomas.lendacky@amd.com, 
+	pgonda@google.com, ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com, 
+	liam.merwick@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-11-18 at 17:27 -0800, Guenter Roeck wrote:
-> So, again, what exactly would userspace do with the information that
-> this
-> was a watchdog triggered warm reboot ? Why would it need that
-> information ?
+On Tue, Nov 19, 2024 at 8:54=E2=80=AFPM Dionna Amalie Glaze
+<dionnaglaze@google.com> wrote:
+>
+> On Tue, Nov 19, 2024 at 5:51=E2=80=AFAM Michael Roth <michael.roth@amd.co=
+m> wrote:
+> >
+> > +struct kvm_exit_coco {
+> > +#define KVM_EXIT_COCO_REQ_CERTS                0
+> > +#define KVM_EXIT_COCO_MAX              1
+> > +       __u8 nr;
+> > +       __u8 pad0[7];
+> > +       __u32 ret;
+> > +       __u32 pad1;
+> > +       union {
+> > +               struct {
+> > +                       __u64 gfn;
+> > +                       __u32 npages;
+>
+> Should this not also include a vmm_err code to report to the guest? We
+> need some way for user space to indicate that KVM should write the
+> vmm_err to the upper 32 bits of exit_info_2.
+> I don't think we have a snapshot of the GHCB accessible to userspace.
+>
+> I'm still not quite able to get a good test of this patch series
+> ready. Making the certificate file accessible to the VMM process has
+> been unfortunately challenging due to how we manage chroots and VMM
+> upgrades.
+> Still, I'm stuck in the VMM implementation of grabbing the file lock
+> for the certificates and asking myself "how do I tell KVM to write
+> exit_info_2 =3D (2 << 32) | (exit_info_2 & ((1 << 32)-1) before entering
+> the guest?"
+> A __u32 vmm_err field of this struct would nicely make its size 64-bit al=
+igned..
 
-I'll defer to the others on To/Cc to answer that.
+retracted. I needed to look 2 lines lower. I need to stop working this late=
+.
+>
+> --
+> -Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
-My only position is I don't think changing behaviour of existing
-drivers to exploit WDIOF_EXTERN1 as a graceful-reboot indicator is a
-good idea either. Obviously I don't have much skin in the game with
-watchdog maintenance, so my thoughts shouldn't have much influence
-beyond the Aspeed-specifics, but I just didn't want to see some fun new
-confusion or incompatibility arise as a result.
 
-Andrew
+
+--=20
+-Dionna Glaze, PhD, CISSP, CCSP (she/her)
 
