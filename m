@@ -1,149 +1,139 @@
-Return-Path: <linux-kernel+bounces-416379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051C09D43F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:36:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8DE39D4400
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83750B24C23
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FCE41F22A0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BD31C7281;
-	Wed, 20 Nov 2024 22:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93A81BDA80;
+	Wed, 20 Nov 2024 22:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bmVzVyYP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="XERx9oDw";
+	dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="4NdoRxLl";
+	dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b="X1DOf1+Q"
+Received: from trent.utfs.org (trent.utfs.org [94.185.90.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9E61BD4EB
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CF01BD9F1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.185.90.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142121; cv=none; b=AtK0KSqTj4dABhmqcvo02DQ0WIxN8WY1Jm+WQkGZ4464Tekno7bDQTKgxgPLgP68LnGz9fI7KmHU2JKG17la0cz06PO1YBbD2esrN1f3VaynRbaa+6Sz93Jk0Q/bgYaWM4lwshyUfpq5F0zx1xUWC2wU/vrPmEYK6Wx6HHNSgWg=
+	t=1732142388; cv=none; b=ZdxL+47oJoZl1T3H5bou9PPqRM4U0tQp4MVwolJlU1zVx5D8+3Dia8O3pWWgMXig/HAX1h9L/vXT8cA9UmTMxhn5DHT+WVlkV7sM9eI9Rf1eFI/LPow0mU1rFCGr3r11W37miumk/j1zwc/S1tXP0Fna64LFD0+C2CBlvlWcojI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142121; c=relaxed/simple;
-	bh=2oOh1nTY41cvATmIAlO+1LRQLtQSWc2a2JycbyTdgZo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OOxX9zJQPlzykvDVyapnUF1qkh7ICDnxhsMWNc6Ly8eYDygeDx9jDGQw6v0Ev27NjVCovexL5ch/U0S7E0RMUAfZZ7ti0p1BGaOODqqDg+i09uRl8D8hShOCiKBYlbEjpNMKovbR7enonIGkgBIhOOVdRf+r8s17CZxgHW3Lydo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bmVzVyYP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732142118;
+	s=arc-20240116; t=1732142388; c=relaxed/simple;
+	bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=ncQrXHLfThfzGKjgja+m6nz4r7IlWoTbVTiVbzV9D96CXSE3zA3ypfuc9tQKmT8uWXgousW69pmMhmeco7/Cq7HKRWSycOj3fv/ClDHBEfcvGvw9jkACm8CfU32s30XQr6BMi4ftpCkRR6hvNwr7lczGhYiDJXlln092PH5ty0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de; spf=pass smtp.mailfrom=nerdbynature.de; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=XERx9oDw; dkim=permerror (0-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=4NdoRxLl; dkim=pass (2048-bit key) header.d=nerdbynature.de header.i=@nerdbynature.de header.b=X1DOf1+Q; arc=none smtp.client-ip=94.185.90.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nerdbynature.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nerdbynature.de
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/simple;
+ d=nerdbynature.de; i=@nerdbynature.de; q=dns/txt; s=key1;
+ t=1732141908; h=date : from : to : cc : subject : message-id :
+ mime-version : content-type : from;
+ bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
+ b=XERx9oDwIYGL9/ZdFUQPKsVdyXwCVSG9Fu/SBvq68b1YYrJgEmExd6q4p+zw9rqsfa6jw
+ gh+qQVxskVGUzw/Dw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=nerdbynature.de;
+	s=dkim; t=1732141908;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xy6wj28XSU6G9iFcG9lOwNtV5S2Gmt1xXPacba/a7Ek=;
-	b=bmVzVyYPk0u0i7/tF9qnwpgHUATUGtNQuCHO/YzyebQs5HfZVButWxVd0XSJOzc6nVU70B
-	jEtureGLL9EZ5+FWmEaqSz2ecGtntTBxNGvOSJ1+o1cId13+9vaSlLQktM3AGIttlupv/v
-	VQWOS3MbCtpuNSLvck9UHDsvQrDPID4=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-269-f5nkY8HrPt2H34TZ8dItYA-1; Wed,
- 20 Nov 2024 17:35:14 -0500
-X-MC-Unique: f5nkY8HrPt2H34TZ8dItYA-1
-X-Mimecast-MFC-AGG-ID: f5nkY8HrPt2H34TZ8dItYA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=Yt+ssbzSDnfOC5r8ngOzdIASr+ertzByXTP/emHNFYA=;
+	b=4NdoRxLlOJ6P+P7AO3qaRId2GcjYG1I1qWQwKZN3bA5suG2Rsma+fy1bJK6qVSwA5w8Krp
+	BAsJt9h0T73/VpBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nerdbynature.de;
+ i=@nerdbynature.de; q=dns/txt; s=key0; t=1732141908; h=date : from :
+ to : cc : subject : message-id : mime-version : content-type : from;
+ bh=4Fb48p7sNTcJp/KinmFYSONXA39+Z+qHelvsOfFzLYg=;
+ b=X1DOf1+QirNtTEeVcy+xzzjVLVuoP5T3jL3f1nwLkMRcbl9J9nqxCRR2wyzPihHnzPU9b
+ g3rv/x6VJrwyBjqQzcTB+X1S3FaIehl5uerwZDwlH8ngRJuU90UcdbZlgZJSeDEGK/nAi1k
+ j7agxZmrCyJBtvHYTMUdKOFV+EPyba2Z3UYWpUi/pq+zvKy8cuZP90gR06ouR4000CcHFLk
+ De4d0Y2sRE30klbwhbZh2cM+OGE6mAU3KGpdVrJ07CcgeFnvzlgoKsojMQVWQDuCbmKOC/m
+ T2IelkCz0YajPG0byxUcx8ik36m63R6RjHebLnJWsg+6euZp7WuHFMEmgdKQ==
+Received: from localhost (localhost [IPv6:::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 283E419560B0;
-	Wed, 20 Nov 2024 22:35:12 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.88.12])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B86C719560A3;
-	Wed, 20 Nov 2024 22:35:03 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	Filipe Xavier <felipe_life@live.com>
-Subject: [PATCH 3/3] rust: sync: Add Guard::new_unchecked()
-Date: Wed, 20 Nov 2024 17:30:43 -0500
-Message-ID: <20241120223442.2491136-4-lyude@redhat.com>
-In-Reply-To: <20241120223442.2491136-1-lyude@redhat.com>
-References: <20241120223442.2491136-1-lyude@redhat.com>
+	by trent.utfs.org (Postfix) with ESMTPS id 38D3E5F957;
+	Wed, 20 Nov 2024 23:31:48 +0100 (CET)
+Date: Wed, 20 Nov 2024 23:31:48 +0100 (CET)
+From: Christian Kujau <lists@nerdbynature.de>
+To: Hans de Goede <hdegoede@redhat.com>, Arnd Bergmann <arnd@arndb.de>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: linux-kernel@vger.kernel.org
+Subject: [RFC][PATCH] arm64 support for vboxguest
+Message-ID: <f088e1da-8fae-2acb-6f7a-e414708d8e67@nerdbynature.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
 
-Asserting is_locked() for unsafe Guard::new() calls is quite useful for
-verifying safety for callers outside the lock module. But in the lock
-module, it's a bit unnecessary and a potential performance hit for safe
-rust code. Mainly because it implies all safe lock acquisitions in rust
-will have to run this debug assertion.
+Hello,
 
-So, let's split out Guard::new() by adding a Guard::new_unchecked()
-function that skips this debug assertion. Of course, we leave this function
-as private and note that it is only ever intended for use in this specific
-module.
+now that VirtualBox able to run as a host on arm64 (e.g. the Apple M3 
+processors) I was wondering if there are any plans to port the vboxguest 
+driver to that platform? I added ARM64 to the Kconfig files (see below) on 
+vboxguest and vboxsf, and also for vboxvideo, and it compiled just like 
+that and at least vboxsf appears to work just fine.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/sync/lock.rs | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+I don't know how to test vboxvideo yet (the module loads just fine), but 
+if we at least enable to option in the Kconfig file at least people would 
+be able to test it :-)
 
-diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-index 0a7f2ed767423..2fd4b665ffc9a 100644
---- a/rust/kernel/sync/lock.rs
-+++ b/rust/kernel/sync/lock.rs
-@@ -166,7 +166,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
-         // that `init` was called.
-         let state = unsafe { B::lock(self.state.get()) };
-         // SAFETY: The lock was just acquired.
--        unsafe { Guard::new(self, state) }
-+        unsafe { Guard::new_unchecked(self, state) }
-     }
- 
-     /// Tries to acquire the lock.
-@@ -175,7 +175,7 @@ pub fn lock(&self) -> Guard<'_, T, B> {
-     pub fn try_lock(&self) -> Option<Guard<'_, T, B>> {
-         // SAFETY: The constructor of the type calls `init`, so the existence of the object proves
-         // that `init` was called.
--        unsafe { B::try_lock(self.state.get()).map(|state| Guard::new(self, state)) }
-+        unsafe { B::try_lock(self.state.get()).map(|state| Guard::new_unchecked(self, state)) }
-     }
- 
-     /// Return whether or not the lock is currently acquired.
-@@ -255,6 +255,19 @@ impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
-     pub unsafe fn new(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
-         debug_assert!(lock.is_locked());
- 
-+        // SAFETY: Our safety requirements fulfill the requirements of this function.
-+        unsafe { Self::new_unchecked(lock, state) }
-+    }
-+
-+    /// Constructs a new immutable lock guard without assertions.
-+    ///
-+    /// Unlike [`Guard::new`], this function does not run a debug assertion to ensure the lock has
-+    /// been acquired. It should only be used in this module.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that it owns the lock.
-+    unsafe fn new_unchecked(lock: &'a Lock<T, B>, state: B::GuardState) -> Self {
-         Self {
-             lock,
-             state,
+Comments?
+
+Thanks,
+Christian.
+
+Signed-off-by: Christian Kujau <lists@nerdbynature.de>
+
+diff --git a/drivers/gpu/drm/vboxvideo/Kconfig b/drivers/gpu/drm/vboxvideo/Kconfig
+index 45fe135d6e43..a68708da3853 100644
+--- a/drivers/gpu/drm/vboxvideo/Kconfig
++++ b/drivers/gpu/drm/vboxvideo/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ config DRM_VBOXVIDEO
+ 	tristate "Virtual Box Graphics Card"
+-	depends on DRM && X86 && PCI
++	depends on DRM && (ARM64 || X86) && PCI
+ 	select DRM_KMS_HELPER
+ 	select DRM_VRAM_HELPER
+ 	select DRM_TTM
+diff --git a/drivers/virt/vboxguest/Kconfig b/drivers/virt/vboxguest/Kconfig
+index cc329887bfae..11b153e7454e 100644
+--- a/drivers/virt/vboxguest/Kconfig
++++ b/drivers/virt/vboxguest/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config VBOXGUEST
+ 	tristate "Virtual Box Guest integration support"
+-	depends on X86 && PCI && INPUT
++	depends on (ARM64 || X86) && PCI && INPUT
+ 	help
+ 	  This is a driver for the Virtual Box Guest PCI device used in
+ 	  Virtual Box virtual machines. Enabling this driver will add
+diff --git a/fs/vboxsf/Kconfig b/fs/vboxsf/Kconfig
+index b84586ae08b3..d4694026db8b 100644
+--- a/fs/vboxsf/Kconfig
++++ b/fs/vboxsf/Kconfig
+@@ -1,6 +1,6 @@
+ config VBOXSF_FS
+ 	tristate "VirtualBox guest shared folder (vboxsf) support"
+-	depends on X86 && VBOXGUEST
++	depends on (ARM64 || X86) && VBOXGUEST
+ 	select NLS
+ 	help
+ 	  VirtualBox hosts can share folders with guests, this driver
 -- 
-2.47.0
+BOFH excuse #326:
 
+We need a licensed electrician to replace the light bulbs in the computer room.
 
