@@ -1,105 +1,126 @@
-Return-Path: <linux-kernel+bounces-416034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04679D3F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:53:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AD39D3EF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456C01F23AD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:53:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC2E283B68
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62D715534B;
-	Wed, 20 Nov 2024 15:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrbMvjyx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BDC19F10A;
+	Wed, 20 Nov 2024 15:25:29 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F02B155303;
-	Wed, 20 Nov 2024 15:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDB7191;
+	Wed, 20 Nov 2024 15:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117935; cv=none; b=pDHSF4a0jt33h3AlFBE1P2b6QdpD26XTWY17JDyJcDS/v0C7/I7jEQvUV7c517T+2iK7VZXp/Pd6iAQPQdc6mkk8diveKKn6vjwaPlWxYSzmrloZdniboMzz08dcxVSccvKhVG2sLxriKVNJII3s59d/p673E7z4UjiLjMLNdPs=
+	t=1732116329; cv=none; b=nsLnav+o8rGjud9Wad2qlYeWlcjJd6Qqi7WmJ40yMiSwvrYrAX3aczho4nLm2fevLYcdTs6rlgdnxE4KQSwLevhIRueh52DalRF9XvwDNy3XkRiaJr7Q9JH0lWM4iwiUgHKVIdk4Docf2Jyc1xVgbwByaF8RVnY8YzrwVtOr+BU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117935; c=relaxed/simple;
-	bh=n8TDtoDD+tY39h2LivsDQa4bXgXGn/UExsse2WuBgxw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=URaKp4b5FR2fLI+rusoyft3JIVWIFSVbipOQqK2gWLNw7bDXrCPZlKGXLu61ifP1big6YUn/+91QVToGxuQjoHGCZ6oeLfQ4ruWCeYLaiWo+kSWLaLH0CsLgg50+RzKLIowvhnVxDHsaCk68Fsis8lTKh45wIM06T7cGdrc3wd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrbMvjyx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89423C4CED1;
-	Wed, 20 Nov 2024 15:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732117934;
-	bh=n8TDtoDD+tY39h2LivsDQa4bXgXGn/UExsse2WuBgxw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PrbMvjyxDM0sLc5hnKcDHnO4ldyXvy9h29JWu1Pgh9oqJOF1JIA+nkhFgYZtcaXIA
-	 P7fHGCvAlliXsixRsqDLhEBu65Lt7gvkk3jGkeBEIdbMjWQlrgjxGJHFm1ZnWCzhUB
-	 /1bu0ZcxSZ5pY0Jt5ZXtroa1xwI3ailVJgRqWFfbvOXGZd44XHgQZIwoVE0FP9mfH8
-	 2ObtxV7yKQBkDs7AMbEFoF334ML+3JHBdViNBv+8tfQvY6icik5ROHs17Iug+YeYCu
-	 15oxCIbbMFF5Q4YMQ3+jPYR7K6g5NF5FkhPfyOQ62gObIUFSQmaRzV6eQdMDF3Hu2c
-	 F9B8a2DoN/o8A==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 06/13] rust: hrtimer: add `UnsafeTimerPointer`
-In-Reply-To: <3a94c12f91964c5c89476bb2376a7489ccc0d154.camel@redhat.com>
-	(Lyude Paul's message of "Wed, 13 Nov 2024 18:27:32 -0500")
-References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-	<20241017-hrtimer-v3-v6-12-rc2-v3-6-59a75cbb44da@kernel.org>
-	<BODmd-cUvAXxw85e-6--Q9NlnO46gnUA1rG7m0h_FlQun_CcEYHCLMHV8VhjTkF1Cv5rAtridN3PNhqip0mBFw==@protonmail.internalid>
-	<3a94c12f91964c5c89476bb2376a7489ccc0d154.camel@redhat.com>
-Date: Wed, 20 Nov 2024 16:25:07 +0100
-Message-ID: <87zflu2ai4.fsf@kernel.org>
+	s=arc-20240116; t=1732116329; c=relaxed/simple;
+	bh=kIG6lGz4gd7ogfkn7cosafnidYgvVj6qYiN3+h4433w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s0QjVzRMCs7CML1reRhdVWCIzb06qnjFJzHlsPcnOnCC+LZZywMVizT/crbMOdGknuA5FXiIcLT+i902YB5m1+kNDqKdONOBe/Yr/ayIFnOzqW2ekpcwBDxP71sYm4fE5TAPzQX6xjrvbYbX0OuK9Q80ksxSSlf4VpSqGQux17A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183F7C4CECD;
+	Wed, 20 Nov 2024 15:25:26 +0000 (UTC)
+Date: Wed, 20 Nov 2024 10:26:02 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Alessandro Carminati <acarmina@redhat.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Thomas Weissschuh
+ <thomas.weissschuh@linutronix.de>, Alessandro Carminati
+ <alessandro.carminati@gmail.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Gabriele Paoloni <gpaoloni@redhat.com>, Eric Chanudet <echanude@redhat.com>
+Subject: Re: [PATCH] mm/kmemleak: Fix sleeping function called from invalid
+ context in kmemleak_seq_show
+Message-ID: <20241120102602.3e17f2d5@gandalf.local.home>
+In-Reply-To: <Zz332cG45rNSeE_B@arm.com>
+References: <20241120102325.3538-1-acarmina@redhat.com>
+	<Zz332cG45rNSeE_B@arm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On Wed, 20 Nov 2024 14:53:13 +0000
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-> On Thu, 2024-10-17 at 15:04 +0200, Andreas Hindborg wrote:
->> Add a trait to allow unsafely queuing stack allocated timers.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/hrtimer.rs | 33 +++++++++++++++++++++++++++++++++
->>  1 file changed, 33 insertions(+)
->>
->> diff --git a/rust/kernel/hrtimer.rs b/rust/kernel/hrtimer.rs
->> index eeed2afd501b64b94d57cc658616659e28785078..e97d7b8ec63ce6c9ac3fe9522192a28fba78b8ba 100644
->> --- a/rust/kernel/hrtimer.rs
->> +++ b/rust/kernel/hrtimer.rs
->> @@ -151,6 +151,39 @@ pub trait TimerPointer: Sync + Sized {
->>      fn start(self, expires: Ktime) -> Self::TimerHandle;
->>  }
->>
->> +/// Unsafe version of [`TimerPointer`] for situations where leaking the
->> +/// `TimerHandle` returned by `start` would be unsound. This is the case for
->> +/// stack allocated timers.
->> +///
->> +/// Typical implementers are pinned references such as [`Pin<&T>].
->
-> Missing a `
+> > -static void print_unreferenced(struct seq_file *seq,
+> > +static depot_stack_handle_t print_unreferenced(struct seq_file *seq,
+> >  			       struct kmemleak_object *object)
+> >  {
+> > -	int i;
+> > -	unsigned long *entries;
+> > -	unsigned int nr_entries;
+> > -
+> > -	nr_entries = stack_depot_fetch(object->trace_handle, &entries);
+> >  	warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
+> >  			  object->pointer, object->size);
+> >  	warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu\n",
+> > @@ -371,6 +366,23 @@ static void print_unreferenced(struct seq_file *seq,
+> >  	hex_dump_object(seq, object);
+> >  	warn_or_seq_printf(seq, "  backtrace (crc %x):\n", object->checksum);
+> >  
+> > +	return object->trace_handle;
+> > +}  
+> 
+> What I don't fully understand - is this a problem with any seq_printf()
+> or just the backtrace pointers from the stack depot that trigger this
+> issue? I guess it's something to do with restricted pointers but I'm not
+> familiar with the PREEMPT_RT concepts. It would be good to explain,
+> ideally both in the commit log and a comment in the code, why we only
+> need to do this for the stack dump.
 
-Thanks! I wonder why this is not caught when building the docs.
+In PREEMPT_RT, to achieve the ability to preempt in more context,
+spin_lock() is converted to a special sleeping mutex. But there's some
+places where it can not be converted, and in those cases we use
+raw_spin_lock(). kmemleak has been converted to use raw_spin_lock() which
+means anything that gets called under that lock can not take a normal
+spin_lock().
 
+What happened here is that the kmemleak raw spinlock is held and
+seq_printf() is called. Normally, this is not an issue, but the behavior of
+seq_printf() is dependent on what values is being printed.
 
-Best regards,
-Andreas Hindborg
+The "%pK" dereferences a pointer and there's some SELinux hooks attached to
+that code. The problem is that the SELinux hooks take spinlocks. This would
+not have been an issue if it wasn't for that "%pK" in the format.
 
+Maybe SELinux locks should be converted to raw? I don't know how long that
+lock is held. There are some loops though :-/
 
+avc_insert():
 
+	spin_lock_irqsave(lock, flag);
+	hlist_for_each_entry(pos, head, list) {
+		if (pos->ae.ssid == ssid &&
+			pos->ae.tsid == tsid &&
+			pos->ae.tclass == tclass) {
+			avc_node_replace(node, pos);
+			goto found;
+		}
+	}
+	hlist_add_head_rcu(&node->list, head);
+found:
+	spin_unlock_irqrestore(lock, flag);
+
+Perhaps that could be converted to simple RCU?
+
+As I'm sure there's other places that call vsprintf() under a raw_spin_lock
+or non-preemptable context, perhaps this should be the fix we do.
+
+-- Steve
 
