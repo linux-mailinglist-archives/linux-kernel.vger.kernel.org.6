@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-415407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF289D35A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:39:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333249D35A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E9128317D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9198B215E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6A17DFFA;
-	Wed, 20 Nov 2024 08:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B22E176FB4;
+	Wed, 20 Nov 2024 08:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXV7Z/pm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YaRdoGOn"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D916DEB5;
-	Wed, 20 Nov 2024 08:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5208615A;
+	Wed, 20 Nov 2024 08:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732091978; cv=none; b=Eyp48xyKphVF4hfFJjoHchSef9UBRUApLZ33AuvjQbwpIQ16Q48rPz8ubwOSkRM6rMTnvfYVFIn+4/FbSDLB7t3cmhdsLiXPDvjpo+7stB3ZwkgeBxbYLcQPAzEC70gpjwUpZ8b5oojEoxmdxV3zKvZOUHp1VBedpSfonLkS2xI=
+	t=1732092055; cv=none; b=hONcz1f1nLmd7NSLAq8HFuSj6ufUoBfvnAU4Bws3uVBfpoAypHrBSHba5cEfllk3m/mfj81zn/2pjc1aoTyuH2Ynd0W9gBt1DOJYjp0I0IlJWUDDeyPcWjxdT1Fu5Iz7sg6QJZ684VWC6txRiEdlqmLwkPSgvjRme6i0CymdXrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732091978; c=relaxed/simple;
-	bh=uCabY3aXdU8knrzyUvKDoBC/ts+x8ZTTZaaPEX0zYC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUyiA3qGWTHdM2E9I6JQLwChaa5pZk2D3K7RduXEzAbdzPwV/Gpi9jKi4iyI5sFnf8XYjKSdUkTo+OsUeNdNut9HzD758SZHz/hcbQUG7N6Bl1OYA0rn93CRoBOvN/+5WLaIWAsdm3LvzUas0XZI817LbizpfyJkKCEuZrVRCEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXV7Z/pm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A8EC4CECD;
-	Wed, 20 Nov 2024 08:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732091978;
-	bh=uCabY3aXdU8knrzyUvKDoBC/ts+x8ZTTZaaPEX0zYC8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dXV7Z/pm3H/r3AO4Tq9FfR6TpXz+12dGVNcVBe4YnWLALAydN5KQPUMUuyqP+lzGc
-	 6pS5yeOLEaQCj9p+3eAP2Up0tsIR/2X3YGP8WwavkFt/ebx2YOXWau1ZoMNTzhIL0J
-	 CSS/EhklqMdNOKXRwDg1CR+A8/3cumO0ZcW5fBY/G24NJgjXhbmXVSnrCvD/LQIf6f
-	 pDcGUqoBhfz9LqAWWJnalmmhYtPVxk/ZNYl7W1+c3Cmop1xfglJ4rRo9Wv+fNQYlV6
-	 uki1XOe5gh/lex7JBneDXof+3DxhhFljG2uhkIMBoMeaw88+NpD7XSILNWFkP9TYsK
-	 1xlZ63Jhz8Izg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tDgFD-000000007wu-3WTl;
-	Wed, 20 Nov 2024 09:39:27 +0100
-Date: Wed, 20 Nov 2024 09:39:27 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org,
-	Leonard Lausen <leonard@lausen.nl>
-Subject: Re: [PATCH v2 1/2] drm/msm/dpu1: don't choke on disabling the
- writeback connector
-Message-ID: <Zz2gP5jDr4Jq1OyP@hovoldconsulting.com>
-References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
- <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
+	s=arc-20240116; t=1732092055; c=relaxed/simple;
+	bh=Ui3ctbnKKRdOImumJ4A3TJT2obyL1ylkW3xkwgNY7NU=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=bS5wwl9mgJAMcajPx85QtILu/0b5dH05A3HS0HEnK8rqmnk2MnNVCoXdWi+j9/mzKq8yx8dmFtN32GkkIWdAXcNi2OarmN5NX0r6FvPSlULwjMuwZaagCkEkTFF6ai8yIIc7dE3xirANhWBzZiHMw1kmDdRra5qWl9ehF0dOSq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YaRdoGOn; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1732092048; bh=H9Y1oBLqHBrIdDkJYdX6Ga8AnpCl7ourwR5hxF0QsUI=;
+	h=From:To:Cc:Subject:Date;
+	b=YaRdoGOn6TPBsED4jNlVteL4NC1RBTbhiL/8emxQ61nU0tV4YSuiyzKvindvlidKu
+	 G+2lrWgzsLFL742Ow9SHjAI0wLsKhfgOhKavaDrrqN6ax/MVAClgDd17IoPoFTNmmJ
+	 1Lh1vEx8+btIBITkFOz70AeFb5lkmdkEIwmgDUO0=
+Received: from archlinux-sandisk.localdomain ([218.95.110.191])
+	by newxmesmtplogicsvrszc16-0.qq.com (NewEsmtp) with SMTP
+	id A2EAEE34; Wed, 20 Nov 2024 16:40:46 +0800
+X-QQ-mid: xmsmtpt1732092046t0uad8frp
+Message-ID: <tencent_79E5C40F0E9E179868A209952556B053C206@qq.com>
+X-QQ-XMAILINFO: M9J3/gYsWGfr80NJ+ti6rl1M1uxoROc9GFuJxt/tf5ma6Z6aBW52ok7P6sEgbc
+	 QWWXfYWN4IwPgggaZghuhbIKmAFCa7WWISi5H/+HELEwsFambNpcsAz74lC13Z4l5EHUN3fzXSVM
+	 /V74K2bJKLM0lSYyFPBnQ9kIc8m68DAclUJe8swuG8fDyKqDRgQOx7f8hHTAbF0p3lRIUduEj3jn
+	 YTFnCeTRVf5vdCU67j8xJLjVkb1VA95Xb0Ru8dAz94tXoETLJzYR/S9DoLL2/NTP/de0wI+dG/U8
+	 USML1nY+DKg7Xwc/yXri2hUQXSAYwBqh8iEsN6WBQw7RD7OSYWw7jL4G/9JFEouLWz0Tc5G3OAKY
+	 T+4culshWcKIgaAxk35WlksXqbVqkNhCYGQF/bChB9H/D3iLTJQKeuhEy3085mxpwGj2cUprTTfg
+	 AWP0CY3xjEUuZPHNZt0zm5A7m7jYrih0tmvlvGHNLjVs2AZIHSNiw4+RVmoCzEBPaPLDLSfarwXG
+	 qG5bBt4jSQxu73nfFoPl5oU2rpxH2aClJSGEY0RpfIoxK22sVK8uuR3Ub0HD9jI0VUXMrtuT7Yx7
+	 R1bfmp8fyy3felYU04oQgoGtIBONGlKUKaPYwGOoqPp+bE+GXT3Z8gzHvVquD6+O5IPB0+3DQdY4
+	 M3cEehL6mIt+qQxuD07qI3lKLt1dVtJ6tiLWi8enam46V6Toc9s/sQcbbvKol4qkyBJfONzrU79w
+	 hp6pdQPJ0Zz7QHHn5lBDwR1zAKoMwwBSNGNbW0E+bytnAyJa5C0PE+dM5bnn5qVRX/caMuIKCVO4
+	 fmzvYCv4n9yPOXX0JNGZ/TW3Z+FBqshQJhvdCHr4Hq9jhg4F5dF+hhBzdfRN8B1xtRcdQXOxONUr
+	 BoYvaaafam4G3MtXS6F0aQEiqFXmFpqM/7z2DrcmbA3rk60GuDModSIYLcAKVsEHwhyVoRkioRM4
+	 Ix7lmM6Pg=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Jiale Yang <295107659@qq.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiale Yang <295107659@qq.com>
+Subject: [PATCH 2/2] fs/fuse: Keep variables in fuse_i.h consistent with those in inode.c
+Date: Wed, 20 Nov 2024 16:40:13 +0800
+X-OQ-MSGID: <20241120084013.1990-1-295107659@qq.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
 
-On Fri, Aug 02, 2024 at 10:47:33PM +0300, Dmitry Baryshkov wrote:
-> During suspend/resume process all connectors are explicitly disabled and
-> then reenabled. However resume fails because of the connector_status check:
-> 
-> [ 1185.831970] [dpu error]connector not connected 3
+A similar patch to the previous one. Change 'unsigned's to 'unsigned int's,
+to keep these extern variables consistent with their declarations in
+inode.c.
 
-Please also include the follow-on resume error. I'm seeing:
+Signed-off-by: Jiale Yang <295107659@qq.com>
+---
+ fs/fuse/fuse_i.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	[dpu error]connector not connected 3
-	[drm:drm_mode_config_helper_resume [drm_kms_helper]] *ERROR* Failed to resume (-22)
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index 74744c6f2..7f761c087 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -54,8 +54,8 @@ extern struct list_head fuse_conn_list;
+ extern struct mutex fuse_mutex;
+ 
+ /** Module parameters */
+-extern unsigned max_user_bgreq;
+-extern unsigned max_user_congthresh;
++extern unsigned int max_user_bgreq;
++extern unsigned int max_user_congthresh;
+ 
+ /* One forget request */
+ struct fuse_forget_link {
+-- 
+2.47.0
 
-and say something about that this can prevent displays from being
-enabled on resume in some setups (preferably with an explanation why if
-you have one).
-
-> It doesn't make sense to check for the Writeback connected status (and
-> other drivers don't perform such check), so drop the check.
-> 
-> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu_writeback.c")
-
-I noticed that the implementation had this status check also before
-71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to
-dpu_writeback.c").
-
-Why did this not cause any trouble back then? Or is this not the right
-Fixes tag?
-
-> Cc: stable@vger.kernel.org
-> Reported-by: Leonard Lausen <leonard@lausen.nl>
-> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/57
-
-Perhaps you can include mine an György's reports here too.
-
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-With the above addressed:
-
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-
-Johan
 
