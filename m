@@ -1,171 +1,156 @@
-Return-Path: <linux-kernel+bounces-416314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9739D432D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:36:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43059D432F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C6E2842E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 749552826E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513C1BE23C;
-	Wed, 20 Nov 2024 20:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF7E1BC097;
+	Wed, 20 Nov 2024 20:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeAx1EkN"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Q++p/NM5"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED619DF9E;
-	Wed, 20 Nov 2024 20:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1534C1BBBC5
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732134987; cv=none; b=WZoolGAYLHFy3iUFp60UPrlOXxz0Wrpr7YPl3XJFAioYlFfpGzC0sQYa0vjzyWDkfvanKNQa5pkHCgMSx4ICECTV1q5np5jjvGAcXpl00eQPGDSzE10950LWxp0fx92FMiXtS9vCprUqXkBGlQCWtrPjY5N9pCBbneRKwltoqP0=
+	t=1732135044; cv=none; b=oTMp70fBb4v6txsH6X2y6y/gwKXYuRdFjtIBs5o/9i6xLDFv0DsJhwyZzaa3deXP3H0kWYsocesj37XZY0L92GjnhgIwn2pX4xARU96I2xhJ8dxInJwH2ugXVQLv0t7LcMfNfD312buNZHOcb4H1IBM2uNMiKj7J1ojCBnVjldk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732134987; c=relaxed/simple;
-	bh=3pTF8HtboJNXamrbK2zTKYm6YaLD0WCIOPJbeAO1+kA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mal/QWaD59ZudV5oQHhJXtroqCzNvyCJTMWAIgNiWmG6jmhf4xD+EQZtsAc6tZtTYeMTi+pba4+LKjuvShMdfXU8cV86aDGyIfdaAoS5K3G4BXxx5RoT9qz8yE+1ogweUHA0sy8Ih0BXk+W3HEUYqydH2TyhuCAR83/U5FJer78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TeAx1EkN; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38231f84dccso84029f8f.1;
-        Wed, 20 Nov 2024 12:36:25 -0800 (PST)
+	s=arc-20240116; t=1732135044; c=relaxed/simple;
+	bh=gxdo/qfNxQeE8KQho8RvlhXWrZvSkpA6qPXBeVgUJXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZaqUE9AldUuEt+TiZsbiBS9Qil/pHmaCwR9ypjo+V0x+qhH2pgnonKbZ2397bOga8qAPFkIkuXW/sksckCv1Xn1C/X+pJoLFQjXFTSSztiJY4LWIN6VlXYVQcgvFQcKrjyoaj4KhrncyfDSrZWwoa40fPBudg5CfycJ8QKR/NrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Q++p/NM5; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d01caa66so204823b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:37:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732134984; x=1732739784; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x3or1iEimUGIRqJLaR9LmxWG/5ydCrarknTWSiPGeos=;
-        b=TeAx1EkNlP/8Vwv0hpV+H3sein5F/g1gGRMdusuIywEgYzB4twXdPzzFaoMB5ncoAw
-         c533HHpY09Og3c+CC2ebzxT0bv+W67TRAhFvSZBGPNyoUZWdtdeLcN7xf8UIT74/EZAM
-         XsPLstLx5uCNNG4TybneJjuqVUBB7BD1iYsfA6P/U4O4/5znJd8F9T718vXZj0h+3qO3
-         +bYHqqbxDwZn6eBwsusz2Cm3W6/xC/Gw8tjvc0Z7E0wQqa8bK/172aGTqYHqFqTu5nNe
-         3Ktcc9UEC7xwyVoWqBhs426zxKRXq/1C0ULbfnsEq9jPOyTMMD6n5NKh/+09nIH1td3c
-         wFyQ==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732135041; x=1732739841; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=j7agw+MVRyIWuBCl7pZ+mHszf9nzIBAC/CJ3AinkBqw=;
+        b=Q++p/NM5V2P0QCp2VjUddqV8grc4gu6TasiyBOjEJQMiSQgildyUd8BLF97mO16/gX
+         kTe1Jos6tv+4nNZPMMMSPx6HSzOetxJw82emuaY6c0d3ITXa3luQTBYGSay+ie+6oABL
+         TOJ1SCQiHGe1R75MPDrXtVZ/QlTWHU4jrPsRzdipsip9KcV5nAA1aio0kXTzHCSKLlTG
+         k/i6fvt7Cd8OkTorLtfhQWGGVV52tDjb0ASwIvHHLTOh3eLBffLLJR5/4WKbuR6q99Rb
+         vGfkeqp9eFbmc3ow7QN9qYTkKYrhRlJinKXsmg2NJHCKu+puEBR4zawIeTf45GOEcxHO
+         JrsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732134984; x=1732739784;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3or1iEimUGIRqJLaR9LmxWG/5ydCrarknTWSiPGeos=;
-        b=k6irMUp1dLBfqHfbFosNSgJZbseDPVQ1O9n/ABLQ7DE1HOrHUpOtCekDZhT77NHZ2O
-         GXPfGuR70Si6lEKblpwx74swS3tYb54jsypQx5SC5zRkZ1eMXcHEjY4X9ydywkUKMYvN
-         etg6ruS7QRtcI20FRO30h2R0/ZMFl+fkF2F0iA6I+kQe+a1NT28IvWsN050+udFp+1Ga
-         m2fxTipDX7ItyYzv9Dcho+W8XJEwR7e30R2tdMZrSncnRm9Om+6MAOfQkYUdix4hrMWL
-         qF914DDcAVsrDMO87YzviffTjbVVgAC1anxTnu/8YoEPGffkJNMvubtQ410g98mzOnFi
-         88nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxUNi1Gip+Zg7nex7T5QI/WwB7tPmXaKnWQMMhw1BWe+YqQZ2cuP/AXEJD/vCgBAEpdyLoXwpGd9MkYz0Q@vger.kernel.org, AJvYcCXVwE68f3QkJwpwa4WUgJ+aACS242MYTInShHx1sRVYU09q1DhpFElZdD85s7zKxAkzz6+84eV6lq8WJi9I@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOhZ/zKvyMJ90dcnHz1B5P0OtMFtsbEQeaCGadcvHRF0o65DYx
-	CwjX1B6ePLP+5YcO0FJmhQpxtVnZxJZco7zXaWXWjSJQzwQs8B7q
-X-Gm-Gg: ASbGncvyqsRalVmT788cwMcMRCIBNTyYmLkgvv7pwzzgftds2+3OFVTMMJK+IJGNxXQ
-	J8eQXNyR4pvNnqDj9jbTVNLllEjXhCqai1Xo+jANdRjIRgcc+e/vMeVbSy4Eo+0X+ZHTrkkSOvc
-	zYLdi06WwNINfk/8UDW/ZAWGzdGzCemsdyVYyjK2nhMMUcxubVuaNKF7ofCMAmmXKVTuHCgvJnF
-	NykyIEjUKadfFQxYgHxsafnS9X7XDSLa+E+C+uAutf3P69i8sU=
-X-Google-Smtp-Source: AGHT+IECZF5CB7ww/8uLBoheSaSo8qyLeRSAQ+EmDMpZQZa/pX+WHMDslgstSLfXg4Lqs8NFX60nxQ==
-X-Received: by 2002:a05:6000:2a8:b0:382:3f31:f3b9 with SMTP id ffacd0b85a97d-38254b20749mr2491140f8f.56.1732134983501;
-        Wed, 20 Nov 2024 12:36:23 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463af68sm30560835e9.40.2024.11.20.12.36.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 12:36:23 -0800 (PST)
-Message-ID: <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com>
-Date: Wed, 20 Nov 2024 22:36:58 +0200
+        d=1e100.net; s=20230601; t=1732135041; x=1732739841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7agw+MVRyIWuBCl7pZ+mHszf9nzIBAC/CJ3AinkBqw=;
+        b=lQRRU/aK7HNP1mrHZX/4d03/9SB/POOuRmfT4/iWWXa2AJKSvLEAqzEr6YMZnsK/Uz
+         e/ZJFgzLxxs90lLMJrzanB6WeBikR1Lbo0Y1yN82i9wy+mEPo/T/p4RWcEVxI1ndc1XW
+         tfADQepaTtBDp9zGq0KOrA0PqJGNCKWBEbTnPYdx/qpQ+glPegtrRbjLQIH22EErxQ2I
+         au2psylF+Jd1Hstswpj1QKMho/c5vXuCrK11iavBZBIlZdR4hcySb74V9jpOtlX4AXdu
+         s6Mu5JbOiexbJTBasoiX83wV2YB/cfLHyCxHzDFE77g8ksw5IC1dG1JnR8C8zPiUA3X0
+         en0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWrP/1fw1b1qQd8uzPkTgZQu6IKBoV9C3iAY/q9SBY3f5P9NxkpAJqQ7DsuObHc8gQI2NMgGI4k4NNQeqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz6ueOuFkHVRRhj3TqFcIhSlLjbZyNQZADJb231Srt2O/E+CJz
+	GgJjMCyDcV+dJJo1+ZpDR3B1uGilbMKlxAr+7XPTsGeUcsXnp2OkNhbLhs2Udoo=
+X-Google-Smtp-Source: AGHT+IGreu4pbRdf9RAsxW9otLcD4fFTHm8D1pwAWAPrW4pJkHesAy9VcpvXrA5aTGE2ELi+7vWGbw==
+X-Received: by 2002:a17:90b:52c3:b0:2ea:b564:4b35 with SMTP id 98e67ed59e1d1-2eaca6e41f2mr5271046a91.9.1732135041400;
+        Wed, 20 Nov 2024 12:37:21 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead03de6f6sm1762377a91.34.2024.11.20.12.37.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 12:37:20 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tDrRt-000000010Wl-2glT;
+	Thu, 21 Nov 2024 07:37:17 +1100
+Date: Thu, 21 Nov 2024 07:37:17 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
+Message-ID: <Zz5IfYYQXHyZPwbi@dread.disaster.area>
+References: <20241120150725.3378-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
-To: Jerry Meng <jerry.meng.lk@quectel.com>, loic.poulain@linaro.org,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120150725.3378-1-ubizjak@gmail.com>
 
-+Manivannan
-
-Hello Jerry,
-
-this version looks a way better, still there is one minor thing to 
-improve. See below.
-
-Manivannan, Loic, could you advice is it Ok to export that SAHARA port 
-as is?
-
-On 20.11.2024 11:39, Jerry Meng wrote:
-> Add a Sahara protocol-based interface for downloading ramdump
-> from Qualcomm modems in SBL ramdump mode.
+On Wed, Nov 20, 2024 at 04:06:22PM +0100, Uros Bizjak wrote:
+> try_cmpxchg() loop with constant "new" value can be substituted
+> with just xchg() to atomically get and clear the location.
 > 
-> Signed-off-by: Jerry Meng <jerry.meng.lk@quectel.com>
+> The code on x86_64 improves from:
+> 
+>     1e7f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+>     1e84:	48 03 14 c5 00 00 00 	add    0x0(,%rax,8),%rdx
+>     1e8b:	00
+> 			1e88: R_X86_64_32S	__per_cpu_offset
+>     1e8c:	8b 02                	mov    (%rdx),%eax
+>     1e8e:	41 89 c5             	mov    %eax,%r13d
+>     1e91:	31 c9                	xor    %ecx,%ecx
+>     1e93:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
+>     1e97:	75 f5                	jne    1e8e <xlog_cil_commit+0x84e>
+>     1e99:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+>     1e9e:	45 01 e9             	add    %r13d,%r9d
+> 
+> to just:
+> 
+>     1e7f:	48 03 14 cd 00 00 00 	add    0x0(,%rcx,8),%rdx
+>     1e86:	00
+> 			1e83: R_X86_64_32S	__per_cpu_offset
+>     1e87:	31 c9                	xor    %ecx,%ecx
+>     1e89:	87 0a                	xchg   %ecx,(%rdx)
+>     1e8b:	41 01 cb             	add    %ecx,%r11d
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Chandan Babu R <chandan.babu@oracle.com>
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Dave Chinner <dchinner@redhat.com>
 > ---
-> v1 -> v2:
-> 	- Fix errors checked by checkpatch.pl, mainly change indentation from space to tab
-> 	- change my email acount to fit git-send-email
+>  fs/xfs/xfs_log_cil.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
->   drivers/net/wwan/mhi_wwan_ctrl.c | 1 +
->   drivers/net/wwan/wwan_core.c     | 4 ++++
->   include/linux/wwan.h             | 2 ++
->   3 files changed, 7 insertions(+)
-> 
-> diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
-> index e9f979d2d..082090ae5 100644
-> --- a/drivers/net/wwan/mhi_wwan_ctrl.c
-> +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
-> @@ -263,6 +263,7 @@ static const struct mhi_device_id mhi_wwan_ctrl_match_table[] = {
->   	{ .chan = "QMI", .driver_data = WWAN_PORT_QMI },
->   	{ .chan = "DIAG", .driver_data = WWAN_PORT_QCDM },
->   	{ .chan = "FIREHOSE", .driver_data = WWAN_PORT_FIREHOSE },
-> +	{ .chan = "SAHARA", .driver_data = WWAN_PORT_SAHARA},
-                                                            ^
-The space is still missing between WWAN_PORT_SAHARA and trailing '}'. 
-Please follow the format of existing table entries.
+> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+> index 80da0cf87d7a..9d667be1d909 100644
+> --- a/fs/xfs/xfs_log_cil.c
+> +++ b/fs/xfs/xfs_log_cil.c
+> @@ -171,11 +171,8 @@ xlog_cil_insert_pcp_aggregate(
+>  	 */
+>  	for_each_cpu(cpu, &ctx->cil_pcpmask) {
+>  		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
+> -		int			old = READ_ONCE(cilpcp->space_used);
+>  
+> -		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
+> -			;
+> -		count += old;
+> +		count += xchg(&cilpcp->space_used, 0);
+>  	}
+>  	atomic_add(count, &ctx->space_used);
+>  }
 
->   	{},
->   };
->   MODULE_DEVICE_TABLE(mhi, mhi_wwan_ctrl_match_table);
-> diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
-> index a51e27559..5eb0d6de3 100644
-> --- a/drivers/net/wwan/wwan_core.c
-> +++ b/drivers/net/wwan/wwan_core.c
-> @@ -342,6 +342,10 @@ static const struct {
->   		.name = "MIPC",
->   		.devsuf = "mipc",
->   	},
-> +	[WWAN_PORT_SAHARA] = {
-> +		.name = "SAHARA",
-> +		.devsuf = "sahara",
-> +	},
->   };
->   
->   static ssize_t type_show(struct device *dev, struct device_attribute *attr,
-> diff --git a/include/linux/wwan.h b/include/linux/wwan.h
-> index 79c781875..b0ea276f2 100644
-> --- a/include/linux/wwan.h
-> +++ b/include/linux/wwan.h
-> @@ -19,6 +19,7 @@
->   * @WWAN_PORT_FASTBOOT: Fastboot protocol control
->   * @WWAN_PORT_ADB: ADB protocol control
->   * @WWAN_PORT_MIPC: MTK MIPC diagnostic interface
-> + * @WWAN_PORT_SAHARA: Sahara protocol-based interface for downloading ramdump from Qualcomm modems
->   *
->   * @WWAN_PORT_MAX: Highest supported port types
->   * @WWAN_PORT_UNKNOWN: Special value to indicate an unknown port type
-> @@ -34,6 +35,7 @@ enum wwan_port_type {
->   	WWAN_PORT_FASTBOOT,
->   	WWAN_PORT_ADB,
->   	WWAN_PORT_MIPC,
-> +	WWAN_PORT_SAHARA,
->   
->   	/* Add new port types above this line */
->   
+Looks fine.
 
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+-- 
+Dave Chinner
+david@fromorbit.com
 
