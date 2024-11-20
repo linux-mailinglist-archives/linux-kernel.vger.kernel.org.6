@@ -1,339 +1,133 @@
-Return-Path: <linux-kernel+bounces-415165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA239D3232
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:32:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E389D9D3231
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2724B2446F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8255EB23CED
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198893F9C5;
-	Wed, 20 Nov 2024 02:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C215336D;
+	Wed, 20 Nov 2024 02:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UnG5Y3Ma"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="Z57hFmuI"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE76628691
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EDF2E3FE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732069932; cv=none; b=dKibN66Yqao8TCU50H3WxtFNOvmDpRIQdGuaPaCrTGKPNpm/+llr3cmpuIm5GkzeQvTqfnLaUl1BtWQceJw+qn1ILxdt2TzpOLgeBIy7PFRCRivGaraRabTMMhjx/Gazb57sYmDsU1BQju2UfgyAhYnD3llXQ1BfJ1RWYN2PZrc=
+	t=1732069924; cv=none; b=cS9U3qryUODiT5JdYs+yNZwieSqHM1Sf8seeLA36X4gLYNuPBKN0yvwuBO/6YZgxIZau6v58r7jH95jpyTq8T9tC2uE74bL/UZxt/bL9emWpm3CQF+rjvT+AKc5t7rv5Ts3s1zgybrbuCdhSzQqDGrpB4pNxEYB8imNyT/Mda3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732069932; c=relaxed/simple;
-	bh=upRDFDNn3e9sVjsx+si8HEybjpJVG1i9vaC3T3+gAAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MMpSPc4POL3aw9HoxX47ApnsKv2AD7sGOQsXaL19qVKFWMLgDIE4Q6666UNKoUqU8M+02mgRaH/n1kaHdWzdlPn9QBeQwX4NBkTeux7f9/sHMoDZp7yCfT6QSfg6HcrmZb4xsOy9Yje3MQ5LhyW/trhaZ/ker70Wi6fFz5H5/Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UnG5Y3Ma; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <78374b54-1a68-4dc1-a220-dcef30a338c1@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732069926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7YpUv7rVcJFYRzzR3PZNYnI2fm9zbQhap8P3eqbO/jA=;
-	b=UnG5Y3Ma0zxvODOk1WVsIt4vW/4aUWryiIWUbzxytKAqczBJ4qnd1iplphXbukQUOTD2K6
-	TTXMzHT1kwgWNXkvZydlCA5X2SduFfYEwHTdJi0vUIBcb7ZsbRNixmmtdnjKcE2Xf3N52w
-	Fm8c4UpKMC3sAfGcWn4z35tC3A+QVcw=
-Date: Wed, 20 Nov 2024 10:31:53 +0800
+	s=arc-20240116; t=1732069924; c=relaxed/simple;
+	bh=IJRHEBv22CCPwsTeJhDR5YAQTUAy4jX4+RLOHq4x16E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aoWAA/9XecV89IgLGhq8gC0UzYCLRbvYvMrJh3aedEluI6ubrVa4BwpZkrXY8nuOIUCq0+tMBQU0h0cUI9m0Ke9OsC7GXPmni7ccBYCMFNrLN63S6lzVd2aEcg17Wa45IDPKh2QsVEngNoDURd3qKICnfoOMX9zkaGkgUSVQCR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=Z57hFmuI; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2968322f5feso1410295fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:32:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1732069922; x=1732674722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n3z610eh0qCJd2kaOZ7Lkn+Ilb4Xt4NLJTNRQhvjlOc=;
+        b=Z57hFmuIYsd1iXfgUkBx+0kTGHrJ1UbhSYfDzUAIeaq8/zNetdZjIlYGA2nk4bG5hc
+         V40H/HbiPtgwjpf2wL4NaKxaB+8h7tiX3MMUsZyUSWSx71yeg+yXiX9o45YdPHg/Q20D
+         PXCIkXQ7/LjWJ/2GyGb4SHtp8tnGPl7oQO4Nxuu9c4QY9thwNxRFq5KKwdACrVfwKT6U
+         koG5cPZfxTahoj5j6IFp5yq6sDAxbYjuv46sFGlJQccUbGQdzhnF6Gf4WXPHm5yz5XVf
+         ZPUztQmIowpe4HvSHN3fO2B6JDWpbSGC9ErgBv+MFb+hjGnVaWjII9RLmBSOeePJBTj0
+         Zzgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732069922; x=1732674722;
+        h=in-reply-to:content-disposition:mime-version:references:reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n3z610eh0qCJd2kaOZ7Lkn+Ilb4Xt4NLJTNRQhvjlOc=;
+        b=GZWqY06dnMrTccMB8OzeBJMZEMJOrjlVLN75uf7nVDis9BrPW/dLOcVYzNcqPfn4C4
+         lpeuJFfF1RKU2+LpiUtPo34dLEzPKoMUNd8hIUneFXehoVsmSwnn8fdNJYi32EMthJT5
+         v80MMT/jI6JaL4dQ53qd0Nlc3ycSoY0PW6xk2thtNhXrWBIdfUoi98T44wE+q3tNb6xN
+         Pz3wbqLb5MiFBrq2sfcxyLJMW/0RbmbmvgQXLyjwpeWmEj6eNDfcv1dMSsnGL7XKTG4t
+         E2m1uosIFJCEb3fUzAx+vPvZpxy0oyCmvn0eXjC238GV/1qRRL4Xpi2LBE7OiELI46cK
+         ie2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYrOaHp7Mzf1FEQVwuhKic37ZbqtOKV+xggonrA37utkfpgw2suGIOclfgCemuGc50/GZwXjjsHcvwde4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/R5YpTSDh4OJTSyAl/60Mmnx0AmG3IYedL4r0hrofyt/tf2z0
+	TGV0RF83OCZF/p0H44z3Pd2jE9LB9f/ssxG+0xQ0G3H/kiVmGtxfToi9DQRbPXQ=
+X-Google-Smtp-Source: AGHT+IFfSumVh91w5x9msiZmygRxDbJS7v7w+BJEhWhfq2eMN5sfNcaNQ01peKn0p30SVbyVU7B39g==
+X-Received: by 2002:a05:6871:613:b0:296:e4bb:80f5 with SMTP id 586e51a60fabf-296e4bc1d99mr314446fac.36.1732069922013;
+        Tue, 19 Nov 2024 18:32:02 -0800 (PST)
+Received: from mail.minyard.net ([2001:470:b8f6:1b:ec53:8290:86a1:aa7c])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651945ee6sm3977928fac.29.2024.11.19.18.31.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 18:32:00 -0800 (PST)
+Date: Tue, 19 Nov 2024 20:31:56 -0600
+From: Corey Minyard <corey@minyard.net>
+To: Quan Nguyen <quan@os.amperecomputing.com>
+Cc: Potin Lai <potin.lai.pt@gmail.com>, Corey Minyard <minyard@acm.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Patrick Williams <patrick@stwcx.xyz>,
+	openipmi-developer@lists.sourceforge.net,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Cosmo Chou <cosmo.chou@quantatw.com>,
+	Potin Lai <potin.lai@quantatw.com>,
+	Cosmo Chou <chou.cosmo@gmail.com>
+Subject: Re: [PATCH v2 2/2] ipmi: ssif_bmc: add GPIO-based alert mechanism
+Message-ID: <Zz1KHCLwpOdsCagr@mail.minyard.net>
+Reply-To: corey@minyard.net
+References: <20241022-ssif-alert-gpios-v2-0-c7dd6dd17a7e@gmail.com>
+ <20241022-ssif-alert-gpios-v2-2-c7dd6dd17a7e@gmail.com>
+ <434333fb-5703-449e-83f2-46e85f34fd23@os.amperecomputing.com>
+ <CAB9gMfphfY0H721G9qV8_3sm1d_RTnKkWbEOeqC-0ox9p4cfCQ@mail.gmail.com>
+ <b2441bab-304b-4983-8780-43671e8add4b@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
- zswap_decompress().
-To: Yosry Ahmed <yosryahmed@google.com>,
- "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- "usamaarif642@gmail.com" <usamaarif642@gmail.com>,
- "ryan.roberts@arm.com" <ryan.roberts@arm.com>,
- "21cnbao@gmail.com" <21cnbao@gmail.com>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
- "Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
- "Gopal, Vinodh" <vinodh.gopal@intel.com>
-References: <20241113052413.157039-1-kanchana.p.sridhar@intel.com>
- <CAKEwX=P6mxZ+-5UcunRHeoAVwtZD=UMfKqCGUeun-krJeT8ekg@mail.gmail.com>
- <SJ0PR11MB56785F052557B685054AF74AC95B2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <20241114051149.GC1564047@cmpxchg.org>
- <SJ0PR11MB56780DD2A8EB343627FE94FCC95B2@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <9a807484-6693-4e2a-a087-97bbc5ee4ed9@linux.dev>
- <SJ0PR11MB567847C73338BC325FE49D11C9242@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkZ+OM2uiHgHHeNqBeSaptfXw4MG=E280-5PKpeybB=8dQ@mail.gmail.com>
- <SJ0PR11MB5678C6C693444F64E38CE2EBC9202@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkaMMoPjrR7mLNMiFD7nOhUoLBJ22BNQYEPvfPww5d2jTg@mail.gmail.com>
- <SJ0PR11MB5678A7DF494C3FCB687D620EC9202@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkYP9c8Dc1+fuG2i=okFbVf=jBph3cdFmOO0+vAvmcApvQ@mail.gmail.com>
- <SJ0PR11MB56780456B6808A54954D9EC9C9202@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkZiE3PeRF=9_-ySMr7rDogGQtG9aHuwfZvpMF3uPN6aJQ@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <CAJD7tkZiE3PeRF=9_-ySMr7rDogGQtG9aHuwfZvpMF3uPN6aJQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2441bab-304b-4983-8780-43671e8add4b@os.amperecomputing.com>
 
-On 2024/11/20 07:44, Yosry Ahmed wrote:
-> On Tue, Nov 19, 2024 at 2:35 PM Sridhar, Kanchana P
-> <kanchana.p.sridhar@intel.com> wrote:
->>
->>
->>> -----Original Message-----
->>> From: Yosry Ahmed <yosryahmed@google.com>
->>> Sent: Tuesday, November 19, 2024 11:51 AM
->>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
->>> Cc: Chengming Zhou <chengming.zhou@linux.dev>; Johannes Weiner
->>> <hannes@cmpxchg.org>; Nhat Pham <nphamcs@gmail.com>; linux-
->>> kernel@vger.kernel.org; linux-mm@kvack.org; usamaarif642@gmail.com;
->>> ryan.roberts@arm.com; 21cnbao@gmail.com; akpm@linux-foundation.org;
->>> Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal, Vinodh
->>> <vinodh.gopal@intel.com>
->>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
->>> zswap_decompress().
->>>
->>> On Tue, Nov 19, 2024 at 11:42 AM Sridhar, Kanchana P
->>> <kanchana.p.sridhar@intel.com> wrote:
->>>>
->>>>
->>>>> -----Original Message-----
->>>>> From: Yosry Ahmed <yosryahmed@google.com>
->>>>> Sent: Tuesday, November 19, 2024 11:27 AM
->>>>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
->>>>> Cc: Chengming Zhou <chengming.zhou@linux.dev>; Johannes Weiner
->>>>> <hannes@cmpxchg.org>; Nhat Pham <nphamcs@gmail.com>; linux-
->>>>> kernel@vger.kernel.org; linux-mm@kvack.org; usamaarif642@gmail.com;
->>>>> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
->>>>> 21cnbao@gmail.com; akpm@linux-foundation.org; Feghali, Wajdi K
->>>>> <wajdi.k.feghali@intel.com>; Gopal, Vinodh <vinodh.gopal@intel.com>
->>>>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
->>>>> zswap_decompress().
->>>>>
->>>>> On Tue, Nov 19, 2024 at 11:22 AM Sridhar, Kanchana P
->>>>> <kanchana.p.sridhar@intel.com> wrote:
->>>>>>
->>>>>>
->>>>>>> -----Original Message-----
->>>>>>> From: Yosry Ahmed <yosryahmed@google.com>
->>>>>>> Sent: Friday, November 15, 2024 1:49 PM
->>>>>>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
->>>>>>> Cc: Chengming Zhou <chengming.zhou@linux.dev>; Johannes Weiner
->>>>>>> <hannes@cmpxchg.org>; Nhat Pham <nphamcs@gmail.com>; linux-
->>>>>>> kernel@vger.kernel.org; linux-mm@kvack.org;
->>> usamaarif642@gmail.com;
->>>>>>> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
->>>>>>> 21cnbao@gmail.com; akpm@linux-foundation.org; Feghali, Wajdi K
->>>>>>> <wajdi.k.feghali@intel.com>; Gopal, Vinodh
->>> <vinodh.gopal@intel.com>
->>>>>>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
->>>>>>> zswap_decompress().
->>>>>>>
->>>>>>> On Fri, Nov 15, 2024 at 1:14 PM Sridhar, Kanchana P
->>>>>>> <kanchana.p.sridhar@intel.com> wrote:
->>>>>>>>
->>>>>>>> Hi Chengming,
->>>>>>>>
->>>>>>>>> -----Original Message-----
->>>>>>>>> From: Chengming Zhou <chengming.zhou@linux.dev>
->>>>>>>>> Sent: Wednesday, November 13, 2024 11:24 PM
->>>>>>>>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>;
->>> Johannes
->>>>>>> Weiner
->>>>>>>>> <hannes@cmpxchg.org>
->>>>>>>>> Cc: Nhat Pham <nphamcs@gmail.com>; Yosry Ahmed
->>>>>>>>> <yosryahmed@google.com>; linux-kernel@vger.kernel.org; linux-
->>>>>>>>> mm@kvack.org; usamaarif642@gmail.com;
->>> ryan.roberts@arm.com;
->>>>>>> Huang,
->>>>>>>>> Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
->>>>>>>>> foundation.org; Feghali, Wajdi K <wajdi.k.feghali@intel.com>;
->>> Gopal,
->>>>>>> Vinodh
->>>>>>>>> <vinodh.gopal@intel.com>
->>>>>>>>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory leak in
->>>>>>>>> zswap_decompress().
->>>>>>>>>
->>>>>>>>> Hello,
->>>>>>>>>
->>>>>>>>> On 2024/11/14 14:37, Sridhar, Kanchana P wrote:
->>>>>>>>>>
->>>>>>>>>>> -----Original Message-----
->>>>>>>>>>> From: Johannes Weiner <hannes@cmpxchg.org>
->>>>>>>>>>> Sent: Wednesday, November 13, 2024 9:12 PM
->>>>>>>>>>> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
->>>>>>>>>>> Cc: Nhat Pham <nphamcs@gmail.com>; Yosry Ahmed
->>>>>>>>>>> <yosryahmed@google.com>; linux-kernel@vger.kernel.org;
->>> linux-
->>>>>>>>>>> mm@kvack.org; chengming.zhou@linux.dev;
->>>>>>> usamaarif642@gmail.com;
->>>>>>>>>>> ryan.roberts@arm.com; Huang, Ying <ying.huang@intel.com>;
->>>>>>>>>>> 21cnbao@gmail.com; akpm@linux-foundation.org; Feghali,
->>> Wajdi K
->>>>>>>>>>> <wajdi.k.feghali@intel.com>; Gopal, Vinodh
->>>>> <vinodh.gopal@intel.com>
->>>>>>>>>>> Subject: Re: [PATCH v1] mm: zswap: Fix a potential memory
->>> leak in
->>>>>>>>>>> zswap_decompress().
->>>>>>>>>>>
->>>>>>>>>>> On Thu, Nov 14, 2024 at 01:56:16AM +0000, Sridhar, Kanchana
->>> P
->>>>>>> wrote:
->>>>>>>>>>>> So my question was, can we prevent the migration to a
->>> different
->>>>> cpu
->>>>>>>>>>>> by relinquishing the mutex lock after this conditional
->>>>>>>>>>>
->>>>>>>>>>> Holding the mutex doesn't prevent preemption/migration.
->>>>>>>>>>
->>>>>>>>>> Sure, however, is this also applicable to holding the mutex of a
->>> per-
->>>>> cpu
->>>>>>>>>> structure obtained via raw_cpu_ptr()?
->>>>>>>>>
->>>>>>>>> Yes, unless you use migration_disable() or cpus_read_lock() to
->>> protect
->>>>>>>>> this section.
->>>>>>>>
->>>>>>>> Ok.
->>>>>>>>
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> Would holding the mutex prevent the acomp_ctx of the cpu prior
->>> to
->>>>>>>>>> the migration (in the UAF scenario you described) from being
->>>>> deleted?
->>>>>>>>>
->>>>>>>>> No, cpu offline can kick in anytime to free the acomp_ctx->buffer.
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> If holding the per-cpu acomp_ctx's mutex isn't sufficient to
->>> prevent
->>>>> the
->>>>>>>>>> UAF, I agree, we might need a way to prevent the acomp_ctx
->>> from
->>>>> being
->>>>>>>>>> deleted, e.g. with refcounts as you've suggested, or to not use
->>> the
->>>>>>>>>
->>>>>>>>> Right, refcount solution from Johannes is very good IMHO.
->>>>>>>>>
->>>>>>>>>> acomp_ctx at all for the check, instead use a boolean.
->>>>>>>>>
->>>>>>>>> But this is not enough to just avoid using acomp_ctx for the check,
->>>>>>>>> the usage of acomp_ctx inside the mutex is also UAF, since cpu
->>> offline
->>>>>>>>> can kick in anytime to free the acomp_ctx->buffer.
->>>>>>>>
->>>>>>>> I see. How would the refcounts work? Would this add latency to
->>> zswap
->>>>>>>> ops? In low memory situations, could the cpu offlining code over-ride
->>>>>>>> the refcounts?
->>>>>>>
->>>>>>> I think what Johannes meant is that the zswap compress/decompress
->>>>>>> paths grab a ref on the acomp_ctx before using it, and the CPU
->>>>>>> offlining code only drops the initial ref, and does not free the
->>>>>>> buffer directly. The buffer is only freed when the ref drops to zero.
->>>>>>>
->>>>>>> I am not familiar with CPU hotplug, would it be simpler if we have a
->>>>>>> wrapper like get_acomp_ctx() that disables migration or calls
->>>>>>> cpus_read_lock() before grabbing the per-CPU acomp_ctx? A similar
->>>>>>> wrapper, put_acompt_ctx() will be used after we are done using the
->>>>>>> acomp_ctx.
->>>>>>
->>>>>> Would it be sufficient to add a check for mutex_is_locked() in
->>>>>> zswap_cpu_comp_dead() and if this returns true, to exit without
->>> deleting
->>>>>> the acomp?
->>>>>
->>>>> I don't think this works. First of all, it's racy. It's possible the
->>>>> mutex gets locked after we check mutex_is_locked() but before we
->>>>> delete the acomp_ctx. Also, if we find that the mutex is locked, then
->>>>> we do nothing and essentially leak the memory.
->>>>
->>>> Yes, this would assume the cpu offlining code retries at some interval,
->>>> which could prevent the memory leak.
->>>
->>> I am not sure about that, but even so, it wouldn't handle the first
->>> scenario where the mutex gets locked after we check mutex_is_locked().
->>>
->>>>
->>>>>
->>>>> Second, and probably more important, this only checks if anyone is
->>>>> currently holding the mutex. What about tasks that may be sleeping
->>>>> waiting for the mutex to be unlocked? The mutex will be deleted from
->>>>> under them as well.
->>>>
->>>> Wouldn't this and the race described above, also be issues for the
->>>> refcount based approach?
->>>
->>> I don't think so, at least if implemented correctly. There are a lot
->>> of examples around the kernel that use RCU + refcounts for such use
->>> cases. I think there are also some examples in kernel docs.
->>>
->>> That being said, I am wondering if we can get away with something
->>> simpler like holding the cpus read lock or disabling migration as I
->>> suggested earlier, but I am not quite sure.
->>
->> Another idea to consider is how zsmalloc avoids this issue through
->> its use of the local_lock() on the per-cpu mapping area. This disables
->> preemption from zs_map_object() through zs_unmap_object().
->> Would changing the acomp_ctx's mutex to a local_lock solve the
->> problem?
+On Wed, Nov 20, 2024 at 08:58:47AM +0700, Quan Nguyen wrote:
+> On 19/11/2024 18:30, Corey Minyard wrote:
+> > I just saw this.  What makes you think alerts are not supported in ipmi_ssif?
 > 
-> This is similar to disabling migration as I suggested, but disabling
-> preemption means that we cannot sleep, we spin on a lock instead.
+> Yes, Corey, I see alerts are supported in ipmi_ssif.
 > 
-> In zswap_compress(), we send the compression request and may sleep
-> waiting for it. We also make a non-atomic allocation later that may
-> also sleep but that's less of a problem.
-> 
-> In zswap_decompress() we may also sleep, which is why we sometimes
-> copy the data into acomp_ctx->buffer and unmap the handle to begin
-> with.
-> 
-> So I don't think we can just replace the mutex with a lock.
-> 
->>
->>>
->>>>
->>>> Also, I am wondering if the mutex design already handles cases where
->>>> tasks are sleeping, waiting for a mutex that disappears?
->>>
->>> I don't believe so. It doesn't make sense for someone to free a mutex
->>> while someone is waiting for it. How would the waiter know if the
->>> memory backing the mutex was freed?
->>
->> Thanks Yosry, all good points. There would need to be some sort of
->> arbiter (for e.g., the cpu offlining code) that would reschedule tasks
->> running on a cpu before shutting it down, which could address
->> this specific issue. I was thinking these are not problems unique to
->> zswap's per-cpu acomp_ctx->mutex wrt the offlining?
-> 
-> There are a few reasons why zswap has this problem and other code may
-> not have it. For example the data structure is dynamically allocated
-> and is freed during offlining, it wouldn't be a problem if it was
-> static. Also the fact that we don't disable preemption when accessing
-> the per-CPU data, as I mentioned earlier, which would prevent the CPU
-> we are running on from going offline while we access the per-CPU data.
-> 
-> I think we should either:
-> (a) Use refcounts.
-> (b) Disable migration.
-> (c) Hold the CPUs read lock.
-> 
-> I was hoping someone with more knowledge about CPU offlining would
-> confirm (b) and (c) would work, but I am pretty confident they would.
+> My apology about the unclear question, I was just curious about whether this
+> gpio-based alerts mechanism is confirmed through test with current ipmi_ssif
+> without any extra patches.
 
-+1, I also think (b) or (c) should work with my limited knowledge about
-CPU offlining :-) And they seem simpler than refcounts implementation.
+Ah.  The way this would work would be that the GPIO is run to an
+interrupt on the host processor.  Generally all the alerting devices on
+the SMBus will "or" into that interrupt somehow.
 
-Thanks.
+When the interrupt comes in, the host will issue a request to the SMBus
+alert address and each device that has an alert pending will respond
+with their address.  Because of the wire or of the SMBus, the lowest
+address will win.
+
+On Linux, the driver for that particular device will be told that an
+alert came in if it has registered for that alert.
+
+The GPIO is just an interrupt, so that should just work.  That's not the
+hard part.  There has to be some device tree work on the host side to
+map the interrupt to an SMBus alert for a specific bus.  (I think you
+can do this with ACPI, too, but I'm not sure.)  And the device, of
+course, must respond properly to the alert request.
+
+So the GPIO is not something that's unusual.  If it generates an
+interrupt (and all the other stuff is in place on the host side) it will
+work.
+
+-corey
 
