@@ -1,151 +1,234 @@
-Return-Path: <linux-kernel+bounces-415146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569079D31FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:04:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFA29D3204
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:06:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD2B61F239C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:04:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0ADB21E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4952B1E485;
-	Wed, 20 Nov 2024 02:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B24288B1;
+	Wed, 20 Nov 2024 02:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I2j6i5Gx"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jY0VaqoR"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16B83D76
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F353D76
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732068286; cv=none; b=U1jn/2J0f0Rc32hWmdT88dTF2Q3EeJKKDeJ4Tq3Qzj7aKvMnsA0b9w5ID65noFUGeu/xAIEXGP+B/8Lbf2JwKWxQobzXvaiqaruJbeD6ISvCJNrMEMb3U5pUPE3lyWLDANvzejCjkgB+7DCdVEp5OUconzYjy/scgT0mp8yWQGY=
+	t=1732068365; cv=none; b=c0QdOs7sOyaiBreh6iRHqJ1+e4zaBTyuxqqExgr+HJ5b7yOwRbHODr3oo9Zoo8CisMMEn2Uc0MNiWfn8HQPPUwGuvI9KEvE9N8n1yGQqjRKWmoc+ZtGeV334oYSR6/fd6Z2mNIEl26CkIQm+tKxKfo7dvIE6TlyjxzHcO3NQx8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732068286; c=relaxed/simple;
-	bh=wefildTR1uUtAKMhgsElm7TqkOgtnYZuACo7ag2CqBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I14i+rKUxv0ll8X4bFbThfi7mERnRDwP5jg2x5jDT7emLUTD+aDr0YwyGkrGk6ZPvMzqiWhA6ImeOacnKraT7HdtseDejo+vS7gchckiP1g6A/w7PX4dPHZ1QHyhLknRKPIKdfuhdN23J/7d3VRFnqvPrHQfLf69Jnlq+/A9nuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I2j6i5Gx; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53c779ef19cso6241711e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:04:44 -0800 (PST)
+	s=arc-20240116; t=1732068365; c=relaxed/simple;
+	bh=NrXZS7z6piojoTKtIuFW8W4hz5WtNP/lPOiq5PK25Rk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=k9nCKkZT0CK1PGpjIfmGYnv7UxCiYgD30jcbvY2xZUQAnTGutfa/cXCQj4ad1/y8rm7v+RNhGjrC+SkVB0chPQwoZvg4lggRAq+0tRFlGuP4gBsqNDpokaoV/qpiFILFwC3AkFAAtLrl1TJuW+XWxTq3DlnqaixrsqVxSl+067k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jY0VaqoR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21210eaa803so32367435ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:06:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732068283; x=1732673083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732068363; x=1732673163; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wefildTR1uUtAKMhgsElm7TqkOgtnYZuACo7ag2CqBk=;
-        b=I2j6i5GxVtrl3rfnvXRO4AU/r5yxVhqDvS9lYDaSeO4vWZe9yeYSPW9dAdUZdKh/6d
-         WkDp/o8Ww0L0qdfow+P0P8nsHe8P52nGuy52NtvGUNRj6t0HgJe4m0tYssB2s1yf29+C
-         lps34vRCh60B2poFBaQStqM1jRweoCARQjDdSxM5gehTwrXYJxX9PjCi3YFQc4UqHSpn
-         Ughyt8Ge74PVQvC3n3Gxqg0su5UDv8Bl2xI7S+5uSVixmM4gROPqqHQ+UQZxUQbBU+58
-         p4kwXaMzr3DvWbVNBWyg7Q46pjDfOSSWHidO76iztjoN7FjL9VC4NVeKGtlKySM0ykhT
-         550g==
+        bh=Os1la1Kb6FjtkBbLXARGU7KzNa7W0YtNDjjutSJCWzU=;
+        b=jY0VaqoRPSqUGNUNs5D8+Zf17bM2hDDRZSunMFl1dElHwD+grbHpW8ccVNzcRO4aJB
+         4YpwmKJ3neIcgzp5WHS6xuDhjM+dkgFVfvk2rqwPj73Hulb+6Xgywssh+dHOnXN9aWPa
+         Li7y1zDFUJnZgUhqMeY4CyBsL1e7EIDv1qEoc3a2NapxLIbjY2qNwlWXppTaraAMPKYN
+         LJZzgF+Un5PhrXV1mvxIpRHeEYK8QIoJKb0l9gexmrGfToLxeytaAVEph8cwMWsee3VL
+         a5jk7qIZy+4OQHFpeg63E39V6qNyNfTue8geaS3jnNhBuNg1gL97GYWTaFL5m6e+SBbS
+         zcWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732068283; x=1732673083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732068363; x=1732673163;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wefildTR1uUtAKMhgsElm7TqkOgtnYZuACo7ag2CqBk=;
-        b=qJoASgIPIONKyqMZ44fb7s77t/D1X3kX/dhQMKd5V39F7n+zXjNoMzeYhmofnx4hvV
-         ILT4o+RUxrVeI7yY7Q2N83cxvQdz2x/NQZdOA2+JaNyjgdnPZNK7EEwpUWwTk/u3SbGE
-         O+c2eoHAWdy1dWCF5fRE0zOeC4vCxOA7H/irRUaRgix5DpyJUpt3BYjLg3Uf97ysLLMh
-         C2UdaB8yxDZFl0sV5ndJ5tIPg0qWF0+U/NqCqqS9PsjifVlu1pgn4y3tddkcpuXD5qEf
-         bsP41ngwl4TpDSoxkrMgob4BL0xHukMuorrI0/yYcx8F5eiANK3cSsisKlaJOi99InKm
-         rA7g==
-X-Forwarded-Encrypted: i=1; AJvYcCXh6PNizr6pvuUB7Shik5H+nAFIoJv2Er5+qJ6i6RYwFRky1IvoZLqsUHoqqwO6arboeh8hYGapPWhFSBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAU7M9C8PzMrOtXmwUkoWsCpCUKccg0+2O1oWTNA144NEW/ep2
-	7rWt2gLFM5LLovzs08slab4iddhWcQRxsvlU8/WqC7JLQw+Kt7YqBWFt9vUcoHoGZnRWQ1+DV+s
-	XzfAs561WzE0j/gt3LnmVIkV0R2xBdc2uB4T5
-X-Google-Smtp-Source: AGHT+IGb8F+Uqb68QHQ25IRYX2JETNA+AsuOGghRwQkUvYiquguCiLNI3lhbZf6jvGk5rtAPMKBxYmX9oDWf9XyPxFk=
-X-Received: by 2002:a05:6512:b0b:b0:539:ea49:d163 with SMTP id
- 2adb3069b0e04-53dc132e21fmr223782e87.21.1732068282808; Tue, 19 Nov 2024
- 18:04:42 -0800 (PST)
+        bh=Os1la1Kb6FjtkBbLXARGU7KzNa7W0YtNDjjutSJCWzU=;
+        b=D07/C6oErEm2OQRkyW6PtjqKtt5QNYrcDszSViynJaeEoo3U9HKM0j+cKyFYJ2+o2I
+         ikFn31VWXVN/cw6rJoQ4wH6JPVX56WuFvFIOIeBC61IO5fwDagDZamXUMEnhYvPnZ7KJ
+         BotrGIylIcenmwIVuvL+LfnhYPiCGxou0YSQvo8/WFQCqNAvXUwnraLCRGHKVErJo5Sq
+         6uWnfjcwksVZ0X+jI8PzbLLHjibJoJ62eolgxmHQGWbrYlUX8udlIevF77ziv/Vx4LH+
+         RESLV9R+iyZTTmJHi0hLvspEnQNBtXMAY/8BmKxLyh7tu8Vvp2ISWpl6RP8qua2Fj8Yk
+         S+tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0g6bhOcSiD/dLRFlkE7qXXxHsMeIUnFMm3ODe+zIpajmFeJMZvewuvO4KDRsJjnb6c9TAt9K/hPdSdJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPiNWAKvbDZzBCWc8Q14s2IT5cTxTb4YT7aWXHP3vJdaSGbm1c
+	+Qak6+dhppFBvYomJ5EoJN0Q9stNYxjvXU68YRo0GH8xI5UsdyolRL0PN76Zqpr+WiXu/gxcod6
+	TdQM=
+X-Google-Smtp-Source: AGHT+IExO5AA2SJHZ0fyOFEFuJdgfrqhsLfJNIIGUa5+Wrgez4ddbtnOOHd/GLgTucKNdDTsUxnhtQ==
+X-Received: by 2002:a17:902:dac7:b0:212:40e0:9553 with SMTP id d9443c01a7336-2126a41ad3emr14887915ad.32.1732068363103;
+        Tue, 19 Nov 2024 18:06:03 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead0311078sm120983a91.8.2024.11.19.18.06.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 18:06:02 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: yukuai3@huawei.com, tj@kernel.org, josef@toxicpanda.com, 
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zach Wade <zachwade.k@gmail.com>
+Cc: Ding Hui <dinghui@sangfor.com.cn>
+In-Reply-To: <20241119153410.2546-1-zachwade.k@gmail.com>
+References: <20241119153410.2546-1-zachwade.k@gmail.com>
+Subject: Re: [PATCH] Revert "block, bfq: merge bfq_release_process_ref()
+ into bfq_put_cooperator()"
+Message-Id: <173206836183.183392.14838257909819889976.b4-ty@kernel.dk>
+Date: Tue, 19 Nov 2024 19:06:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030171009.1853340-1-saravanak@google.com> <CAMuHMdWv+x31-3OaKFKHJHJwK+KB0Hi3yJMRUJ3rqEThY=EE7Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdWv+x31-3OaKFKHJHJwK+KB0Hi3yJMRUJ3rqEThY=EE7Q@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 19 Nov 2024 18:04:05 -0800
-Message-ID: <CAGETcx8hZsm0qbwYDAeX_OztYs2jHPv9dc2ZajVivhEvQ7O6bg@mail.gmail.com>
-Subject: Re: [PATCH v3] driver core: fw_devlink: Stop trying to optimize cycle
- detection logic
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Francesco <francesco.dolcini@toradex.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-86319
 
-On Tue, Nov 19, 2024 at 5:40=E2=80=AFAM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Saravana,
->
-> On Wed, Oct 30, 2024 at 6:10=E2=80=AFPM Saravana Kannan <saravanak@google=
-.com> wrote:
-> > In attempting to optimize fw_devlink runtime, I introduced numerous cyc=
-le
-> > detection bugs by foregoing cycle detection logic under specific
-> > conditions. Each fix has further narrowed the conditions for optimizati=
-on.
-> >
-> > It's time to give up on these optimization attempts and just run the cy=
-cle
-> > detection logic every time fw_devlink tries to create a device link.
-> >
-> > The specific bug report that triggered this fix involved a supplier fwn=
-ode
-> > that never gets a device created for it. Instead, the supplier fwnode i=
-s
-> > represented by the device that corresponds to an ancestor fwnode.
-> >
-> > In this case, fw_devlink didn't do any cycle detection because the cycl=
-e
-> > detection logic is only run when a device link is created between the
-> > devices that correspond to the actual consumer and supplier fwnodes.
-> >
-> > With this change, fw_devlink will run cycle detection logic even when
-> > creating SYNC_STATE_ONLY proxy device links from a device that is an
-> > ancestor of a consumer fwnode.
-> >
-> > Reported-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> > Closes: https://lore.kernel.org/all/1a1ab663-d068-40fb-8c94-f0715403d27=
-6@ideasonboard.com/
-> > Fixes: 6442d79d880c ("driver core: fw_devlink: Improve detection of ove=
-rlapping cycles")
-> > Tested-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
->
-> Thanks for your patch, which is now commit bac3b10b78e54b7d ("driver
-> core: fw_devlink: Stop trying to optimize cycle detection logic") in
-> next-20241107 and later.
->
-> > Geert/Francesco,
-> >
-> > If you want to test this patch, pull it in and compare the output of
-> > the following:
-> >
-> > ls -1 /sys/class/devlink
-> >
-> > The only device links that should be missing with the patch should be
-> > device links in a cycle that weren't detected before.
->
-> I gave it a try on all my boards, and compared the output on a few of
-> them, and everything looks fine.
 
-Thanks for testing the series Geert!
+On Tue, 19 Nov 2024 23:34:10 +0800, Zach Wade wrote:
+> This reverts commit bc3b1e9e7c50e1de0f573eea3871db61dd4787de.
+> 
+> The bic is associated with sync_bfqq, and bfq_release_process_ref cannot
+> be put into bfq_put_cooperator.
+> 
+> kasan report:
+> [  400.347277] ==================================================================
+> [  400.347287] BUG: KASAN: slab-use-after-free in bic_set_bfqq+0x200/0x230
+> [  400.347420] Read of size 8 at addr ffff88881cab7d60 by task dockerd/5800
+> [  400.347430]
+> [  400.347436] CPU: 24 UID: 0 PID: 5800 Comm: dockerd Kdump: loaded Tainted: G E 6.12.0 #32
+> [  400.347450] Tainted: [E]=UNSIGNED_MODULE
+> [  400.347454] Hardware name: VMware, Inc. VMware20,1/440BX Desktop Reference Platform, BIOS VMW201.00V.20192059.B64.2207280713 07/28/2022
+> [  400.347460] Call Trace:
+> [  400.347464]  <TASK>
+> [  400.347468]  dump_stack_lvl+0x5d/0x80
+> [  400.347490]  print_report+0x174/0x505
+> [  400.347521]  kasan_report+0xe0/0x160
+> [  400.347541]  bic_set_bfqq+0x200/0x230
+> [  400.347549]  bfq_bic_update_cgroup+0x419/0x740
+> [  400.347560]  bfq_bio_merge+0x133/0x320
+> [  400.347584]  blk_mq_submit_bio+0x1761/0x1e20
+> [  400.347625]  __submit_bio+0x28b/0x7b0
+> [  400.347664]  submit_bio_noacct_nocheck+0x6b2/0xd30
+> [  400.347690]  iomap_readahead+0x50c/0x680
+> [  400.347731]  read_pages+0x17f/0x9c0
+> [  400.347785]  page_cache_ra_unbounded+0x366/0x4a0
+> [  400.347795]  filemap_fault+0x83d/0x2340
+> [  400.347819]  __xfs_filemap_fault+0x11a/0x7d0 [xfs]
+> [  400.349256]  __do_fault+0xf1/0x610
+> [  400.349270]  do_fault+0x977/0x11a0
+> [  400.349281]  __handle_mm_fault+0x5d1/0x850
+> [  400.349314]  handle_mm_fault+0x1f8/0x560
+> [  400.349324]  do_user_addr_fault+0x324/0x970
+> [  400.349337]  exc_page_fault+0x76/0xf0
+> [  400.349350]  asm_exc_page_fault+0x26/0x30
+> [  400.349360] RIP: 0033:0x55a480d77375
+> [  400.349384] Code: cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 49 3b 66 10 0f 86 ae 02 00 00 55 48 89 e5 48 83 ec 58 48 8b 10 <83> 7a 10 00 0f 84 27 02 00 00 44 0f b6 42 28 44 0f b6 4a 29 41 80
+> [  400.349392] RSP: 002b:00007f18c37fd8b8 EFLAGS: 00010216
+> [  400.349401] RAX: 00007f18c37fd9d0 RBX: 0000000000000000 RCX: 0000000000000000
+> [  400.349407] RDX: 000055a484407d38 RSI: 000000c000e8b0c0 RDI: 0000000000000000
+> [  400.349412] RBP: 00007f18c37fd910 R08: 000055a484017f60 R09: 000055a484066f80
+> [  400.349417] R10: 0000000000194000 R11: 0000000000000005 R12: 0000000000000008
+> [  400.349422] R13: 0000000000000000 R14: 000000c000476a80 R15: 0000000000000000
+> [  400.349430]  </TASK>
+> [  400.349452]
+> [  400.349454] Allocated by task 5800:
+> [  400.349459]  kasan_save_stack+0x30/0x50
+> [  400.349469]  kasan_save_track+0x14/0x30
+> [  400.349475]  __kasan_slab_alloc+0x89/0x90
+> [  400.349482]  kmem_cache_alloc_node_noprof+0xdc/0x2a0
+> [  400.349492]  bfq_get_queue+0x1ef/0x1100
+> [  400.349502]  __bfq_get_bfqq_handle_split+0x11a/0x510
+> [  400.349511]  bfq_insert_requests+0xf55/0x9030
+> [  400.349519]  blk_mq_flush_plug_list+0x446/0x14c0
+> [  400.349527]  __blk_flush_plug+0x27c/0x4e0
+> [  400.349534]  blk_finish_plug+0x52/0xa0
+> [  400.349540]  _xfs_buf_ioapply+0x739/0xc30 [xfs]
+> [  400.350246]  __xfs_buf_submit+0x1b2/0x640 [xfs]
+> [  400.350967]  xfs_buf_read_map+0x306/0xa20 [xfs]
+> [  400.351672]  xfs_trans_read_buf_map+0x285/0x7d0 [xfs]
+> [  400.352386]  xfs_imap_to_bp+0x107/0x270 [xfs]
+> [  400.353077]  xfs_iget+0x70d/0x1eb0 [xfs]
+> [  400.353786]  xfs_lookup+0x2ca/0x3a0 [xfs]
+> [  400.354506]  xfs_vn_lookup+0x14e/0x1a0 [xfs]
+> [  400.355197]  __lookup_slow+0x19c/0x340
+> [  400.355204]  lookup_one_unlocked+0xfc/0x120
+> [  400.355211]  ovl_lookup_single+0x1b3/0xcf0 [overlay]
+> [  400.355255]  ovl_lookup_layer+0x316/0x490 [overlay]
+> [  400.355295]  ovl_lookup+0x844/0x1fd0 [overlay]
+> [  400.355351]  lookup_one_qstr_excl+0xef/0x150
+> [  400.355357]  do_unlinkat+0x22a/0x620
+> [  400.355366]  __x64_sys_unlinkat+0x109/0x1e0
+> [  400.355375]  do_syscall_64+0x82/0x160
+> [  400.355384]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  400.355393]
+> [  400.355395] Freed by task 5800:
+> [  400.355400]  kasan_save_stack+0x30/0x50
+> [  400.355407]  kasan_save_track+0x14/0x30
+> [  400.355413]  kasan_save_free_info+0x3b/0x70
+> [  400.355422]  __kasan_slab_free+0x4f/0x70
+> [  400.355429]  kmem_cache_free+0x176/0x520
+> [  400.355438]  bfq_put_queue+0x67e/0x980
+> [  400.355447]  bfq_bic_update_cgroup+0x407/0x740
+> [  400.355454]  bfq_bio_merge+0x133/0x320
+> [  400.355460]  blk_mq_submit_bio+0x1761/0x1e20
+> [  400.355467]  __submit_bio+0x28b/0x7b0
+> [  400.355473]  submit_bio_noacct_nocheck+0x6b2/0xd30
+> [  400.355480]  iomap_readahead+0x50c/0x680
+> [  400.355490]  read_pages+0x17f/0x9c0
+> [  400.355498]  page_cache_ra_unbounded+0x366/0x4a0
+> [  400.355505]  filemap_fault+0x83d/0x2340
+> [  400.355514]  __xfs_filemap_fault+0x11a/0x7d0 [xfs]
+> [  400.356204]  __do_fault+0xf1/0x610
+> [  400.356213]  do_fault+0x977/0x11a0
+> [  400.356221]  __handle_mm_fault+0x5d1/0x850
+> [  400.356230]  handle_mm_fault+0x1f8/0x560
+> [  400.356238]  do_user_addr_fault+0x324/0x970
+> [  400.356248]  exc_page_fault+0x76/0xf0
+> [  400.356258]  asm_exc_page_fault+0x26/0x30
+> [  400.356266]
+> [  400.356269] The buggy address belongs to the object at ffff88881cab7bc0
+>                 which belongs to the cache bfq_queue of size 576
+> [  400.356276] The buggy address is located 416 bytes inside of
+>                 freed 576-byte region [ffff88881cab7bc0, ffff88881cab7e00)
+> [  400.356285]
+> [  400.356287] The buggy address belongs to the physical page:
+> [  400.356292] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88881cab0b00 pfn:0x81cab0
+> [  400.356300] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> [  400.356323] flags: 0x50000000000040(head|node=1|zone=2)
+> [  400.356331] page_type: f5(slab)
+> [  400.356340] raw: 0050000000000040 ffff88880a00c280 dead000000000122 0000000000000000
+> [  400.356347] raw: ffff88881cab0b00 00000000802e0025 00000001f5000000 0000000000000000
+> [  400.356354] head: 0050000000000040 ffff88880a00c280 dead000000000122 0000000000000000
+> [  400.356359] head: ffff88881cab0b00 00000000802e0025 00000001f5000000 0000000000000000
+> [  400.356365] head: 0050000000000003 ffffea002072ac01 ffffffffffffffff 0000000000000000
+> [  400.356370] head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+> [  400.356378] page dumped because: kasan: bad access detected
+> [  400.356381]
+> [  400.356383] Memory state around the buggy address:
+> [  400.356387]  ffff88881cab7c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> [  400.356392]  ffff88881cab7c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> [  400.356397] >ffff88881cab7d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> [  400.356400]                                                        ^
+> [  400.356405]  ffff88881cab7d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> [  400.356409]  ffff88881cab7e00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [  400.356413] ==================================================================
+> 
+> [...]
 
-And no noticeable boot time increases?
+Applied, thanks!
 
-Thanks,
-Saravana
+[1/1] Revert "block, bfq: merge bfq_release_process_ref() into bfq_put_cooperator()"
+      commit: cf5a60d971c7b59efb89927919404be655a9e35a
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
