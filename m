@@ -1,246 +1,173 @@
-Return-Path: <linux-kernel+bounces-415784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98E69D3C41
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:09:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12AD9D3C56
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:12:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D40428843C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 980552872A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8907C1A725C;
-	Wed, 20 Nov 2024 13:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A39719F424;
+	Wed, 20 Nov 2024 13:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="I8KmthfN"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jGZhu9Dw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAEE1A2C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732108030; cv=fail; b=A6kNPWyNLNUnvGKzjOaPs/RnpYLsfz82ARZzN5z3Ecl1JfZ6P5as+CnlAxQT0kYGeev3ZuFksren1YxePlwL8yIoeE7ZZymxgm1wmSg3bDnPFoWd69rmqVDG2WfQrvkfNq5N4sTK9DARfhBTUVvJ6VEsnAKvXahoV/qXp5Cnwj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732108030; c=relaxed/simple;
-	bh=7W3J1BRnSaz0hk3k1+i8veVefi7uvzABIMbDzblaZlc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rsOP+ToMQnqDai110Dzna9BuW4uc1O0xTVyLXdaIJc1BsfPj9jDX8OCOWKb6buzRTcNpCxjhwxBOL5YxBxPkQ4i7O/ZwX+z7CFMAFFlD/lWpAndjblxABnFH00BEJMDFE9cZLEyUpVDAoeyEqTe1WmnUeKBeJcpqSzJXoQlMGcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=I8KmthfN; arc=fail smtp.client-ip=40.107.236.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xiv3C2flCzNyeDIr1tUEm3d88Bi3V+r25qrn8MSQDxzZhBI/ICbeyE1iruHQtFacVx+ACfAKsghyNxD0OT8hE9HBNLVbkkSZDOwlMPDDCHqTTrNCwGaqzTrgrzYjx/r9WD4xPx2CE+HPANeYDkTFvHxXnWALu5tUWvTq6Q5htG3usydO6RnzH6S1jpfDaaM9bG8l/dkvJMsug5hiFTdIU0heiWFK8E5lR5bv8HERxPIQv35tjNEHr5eV7UtIgKUSo2+qMfSKW1nZoQEBwDhlgTUuAfGYOt/bC/51IYEYTpTrdZAJzZzLL9lySQeIIFuRnOHfexw/lSOyBl8eo/3pPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/x0ynnS4nz4j4Wt1DOPHMO0u9sor6K6tZRXwNCBJszU=;
- b=O6Dkc7r0VfspKhMFvPlyeTI+FjICmEelCuWMtrypnsl7/1WwDVOFcQayRGewenOc4ykuB6OptWcCKUyKGAUwFfGyVFtpGz4xAYmc0oB37UebceFEBDbfrncoAuPsLAoNX4FwjbOzSkg895cWG4ym/uMt2pIdTrKH39IvG2v21ikGrLf7ZDEpaMewEnydIfYUktXXzxmVXJ7um4+EeCoeRv0ENjRVnmaWjDpJ3FbkkN/pxTftj8oROU+37jJpKp+X3A3K4eiWTVuTW0bKnyiOBYNvOSLBFhtvccXX/8zVDYNSh2OGH1h97+aIFPBw7zLFN1Wnp6YWSeeNsemrc6e5Nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/x0ynnS4nz4j4Wt1DOPHMO0u9sor6K6tZRXwNCBJszU=;
- b=I8KmthfNXV+22l6AvpOEPT64twOoiFZXYK7J7k3GAdlofhb3Z6nxY0VtgrBt5eq5x34VZ2A4XYHBl2BuOIXZzf31DPovDRd8lXIyM7R50VKKnvL3D9dyn2jFeHGbc0bGCwCHNM7Qn06JjWaeFbGKrayFPy76uGI0q9AH61GUDyY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by MW4PR12MB7334.namprd12.prod.outlook.com (2603:10b6:303:219::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
- 2024 13:07:05 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%4]) with mapi id 15.20.8158.019; Wed, 20 Nov 2024
- 13:07:05 +0000
-Message-ID: <d64ebfba-49db-4b04-9a84-b9ecd26e6c76@amd.com>
-Date: Wed, 20 Nov 2024 18:36:55 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/19] perf: Simplify perf_pmu_register()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@kernel.org, lucas.demarchi@intel.com, linux-kernel@vger.kernel.org,
- willy@infradead.org, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20241104133909.669111662@infradead.org>
- <20241104135518.198937277@infradead.org>
-Content-Language: en-US
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-In-Reply-To: <20241104135518.198937277@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0094.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:27::9) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9122417F7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732108330; cv=none; b=An/73Y7hQThfVivHwtJal4i8lOj1PtNNJLfhx/G3v8v7MadKsrH+t9FQbHkwh125UDIZbH7U66RLnrkzRo3qtED3+bHYxYPxXefGo/VI8esXtFlsTelvzfsuDhDuFalJSjuFwOnEb7attKmhlIQNivTIjaYKrXp96466b1yHe10=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732108330; c=relaxed/simple;
+	bh=k+5dEYh0Wx0gYDwBov9cnbkAU6CMVjt/gVpf33OC/N8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UEdPKciT5CnMiRPXc0Bs4YBMS1fMz0qfdgdkl0Vw3RsQwzmqNQUgegwMfR90TOB4TdMmobuLC9KoDEH8XszT1nfGayrXFU6FmUuBJKZz80+ZL+ee8h/VGNj9zTRmFu0EcSCcKNzYdF8TWJGj7kZQHiYys2uFmuYHGiziPr4SIGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jGZhu9Dw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB08CC4CECD;
+	Wed, 20 Nov 2024 13:12:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732108330;
+	bh=k+5dEYh0Wx0gYDwBov9cnbkAU6CMVjt/gVpf33OC/N8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jGZhu9Dwi+lGk9ZsjijKZtKKmfps855+KQDnqkWJagaRykvm2OPjoa3N7MXkOMafs
+	 TE+QWilPmnA3oHJchvWXEJw1WePCqb4iEZzbli7EjPOJcdSJGkR7Pl9HO21Q2LWteL
+	 eAwdFkF+dvkwEOJ2xB+30+nVCbEYibc1HqmsSgV7/nIoBve5Db+l6ZIACcoiViKHcT
+	 cccKAxYjyGLTsGykPjnZ4z1n8KFZXypqjklh5YxiP+OM3MzFg21y6pHacUYDc1qedp
+	 H6ayz5UPejtY03knpY4awE4AgRy3FByrk7wJdPB4tmtz0/3GEmcJTYBrmhvSGk1mN+
+	 a9rDfMwo0nRnw==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	David Hildenbrand <david@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Oscar Salvador <osalvador@suse.de>
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Andrew Bresticker <abrestic@rivosinc.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	virtualization@lists.linux-foundation.org
+Subject: [PATCH fixes] riscv: mm: Do not call pmd dtor on vmemmap page table teardown
+Date: Wed, 20 Nov 2024 14:12:02 +0100
+Message-ID: <20241120131203.1859787-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|MW4PR12MB7334:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76b2c78d-3e74-4d28-3801-08dd09643ae1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d3ZPQTZ5YzZNZkhSZWZvUHhZdlNTcXF4djRHZ0pIeExBczNZamFUeEtnZ1NY?=
- =?utf-8?B?VHhWd0V1Nm1kUFhxRUJtSGNlMCtra3h0UFhRS3h2VzNYNWVHMkd6enhhdWR0?=
- =?utf-8?B?WXBpbXRlQWRINWF3ZEo4UHgrdW9iQ0MxeUlDYmcvU2ZCYlhOMFgxc2lhV05j?=
- =?utf-8?B?SmdrUFRkZXdIeWlENnhjdFVKeUlTcG1sME0rV0xCcnVTSHlidXozb0lUMEtt?=
- =?utf-8?B?STBTNThtZVhrTHoyWmhqcDZVb1VuMER3MDA4NGxlTkduNGFERDFaY0I3Ykwz?=
- =?utf-8?B?dXhWRHFwbjh2UDZ6WXBpZlg2UWlubGRoNVRFSFlrY0ExY1ExOGx5VWtNenpz?=
- =?utf-8?B?aGF5VGNLZ2RGZkE1bEl3bGZMSjRHc3hrODB1bEtSR2tNVWROU09GM3NoaWt4?=
- =?utf-8?B?RkR3NGE4K3JGOG1DcDBtQUlVaVRFcCs1dmIxOTIwQVZwNW9Xby90M280a0xl?=
- =?utf-8?B?bFM3eFFrWFZUQ2dzUVRldzVsNUdqakE3UUJJUEtMdVJBZGY3bWs3R1ZiSHQx?=
- =?utf-8?B?LzNJYW01VUxyT0RFTHhNZHQxWWMzYVVaNDBaUFFPMlhzQXBQWUdHU0dxc1Zp?=
- =?utf-8?B?WTRCTk1YTW1oRlJXS3VRR0pXaW93SnpWanQ2bkJHdUQrcFV6Qk12SVRFa2k2?=
- =?utf-8?B?YUJjZm1NcGpmYXBVNXRFUytwRlBtZUFuYXgzeU53YlZuWEtobWQvNWZqSWxW?=
- =?utf-8?B?WkQxcHc3RVJaYVJ3TWtEWmpINnJQbjBQR3VtWjNxU0Q1TmFSL3NHRmljK3Nt?=
- =?utf-8?B?b2UwbEt3S0dWem84Vyt1em5hWkZWRXJQWUthYzdwVnRmYnZ2ZFR1bUUrS0Jt?=
- =?utf-8?B?K1lGSWxaejVSam5JRXBrNGtZdm1Ld21rQXlyUE9PYndxVWhxcFpkb1BjV3Y5?=
- =?utf-8?B?dWd3VlRTWGtmU1lLR0E1Q0lwbGI1UEZydzNZM3JzR2xJS3doWVJWRjB3ZHZ5?=
- =?utf-8?B?dlp2VUVpT0xFVC8yQXdncE5IY2l3eDdESWE3Z203bUt6V25zTDJLUFJyY0dz?=
- =?utf-8?B?eG1DYVhzcFl6NE5YNG5xaUlCVFlXZXFmZzZ5UG56WW1xcHZ0Y1FyblgybE1J?=
- =?utf-8?B?SVRPd21ralZkZVhjeEROKzVrajdGb2NsUTJxdy9zUURPcEsyUU5NbjJZUmZm?=
- =?utf-8?B?UFNRanc0VVhwWWRlUEx4Vy9JM29YUnBvTEFYRlVpd2hXOGkxc3gvck02MTdE?=
- =?utf-8?B?WlRNZktPbklHWm40ZElwcFdkYjNxNEtSOEV3b0ZvQllnWnprTUVlcjh3SWRJ?=
- =?utf-8?B?ZlNwbXZIMVBGaStiYitQZWtmZUdNaElCdkgrMzUyRnBlVTIvZkhZK2dveis1?=
- =?utf-8?B?azZQbUFjYmZLeENWQ3NNWkY3eUJJTFRKcU9mZFByMzltSWttTlU1NVpZeWJ6?=
- =?utf-8?B?Ty9CNWU4eTdUcURPRFFLa2NpWXZ2Y3FIWDdQTlBWWWd3OTc4N0RCR2F3eHIw?=
- =?utf-8?B?VzdxRWNiM054Z3RBbFB5VmV2YW1rVEMrR1d1cjllRzNMSDV1bkNoelhzNE1X?=
- =?utf-8?B?emtTU3dINDVOeW01UW01YTFDdGxYenQyN2hCQy8xTy9pZFltOTFKZ3RIMVJs?=
- =?utf-8?B?VW4vdFExdXVKUVVBckNzU0ZMS2l5QnBtTVF5WXRPalZ1UFhzK0NyV1RlZzRQ?=
- =?utf-8?B?VlNwMzRNNFFuTkJIMHlzNXZOb2FtZlY5ekFNbjJaWHB4Q2t0eTRPWHh5L0VJ?=
- =?utf-8?B?SHpTQVU0a2R0UkF6VEM5N2lVWkJJOTVONUpuMzRzZDA2ejk0c1p6OE1mQ0s0?=
- =?utf-8?Q?WfyDe/XCHqs4bf+WHvINlM/X3INDzbSf/LKuiu0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S1djVzU3MXpJRUp0M2xOUlhmOU1MN1hZRzJPaGpIZnFOVmJTaHlFeVJCbWt4?=
- =?utf-8?B?YzU2NVIrTm9iVnI2N1hFRTB5VmRPL2pTaEdiOXZ2RUpieDg4L213T0JjQWdO?=
- =?utf-8?B?ZVVWclArVnNsbDd0NjhvYzQ0anp4clA1R1g5N0lYMkJ1aXhUMSs5RGN6TWpu?=
- =?utf-8?B?VE9ra1NQRnlnclNnL0t2RXplM04venVYMkVnV1Z5a2R4Y3o4TVluUWFrclpB?=
- =?utf-8?B?OWUrVzExMXNrbWtiYVBSNFdLbDhBUGZiL1ZJbkxYM3pzalZ4c2NZQzFFZzRB?=
- =?utf-8?B?S3pmZzkrUnY0eVFXK2VMQi9JWTErRVNmZGVNMXJqM0NrRXZybUFvSGUvd0t2?=
- =?utf-8?B?RHprMGpUNm5QYVU3TkNhVjdLQnp3aStrNVB3TithZ0NnSER0ZFphdnFReVpW?=
- =?utf-8?B?V1paOGRNSHA0YmlyTEhacXBVemU5dWJBRHB1TDBGVkk2K3ExeVpnd292aEMr?=
- =?utf-8?B?NzVRMzJ0a0Z6RkFJVitVaERTRnhvZG04VXZXb1FxU2lGeGhnRmNnd1MyTEZV?=
- =?utf-8?B?eE5KZGFYTEJiRm1tRWxuUmFMMWpyZXZHTVdOQ3NYa1hkaXdNSDVFVzQ3Z0Zj?=
- =?utf-8?B?ckdFQWxpYlRycHBkemt0ektQQ3ZUaTVYNXNNSVFFYi9aWWkxUXRrWUx3RDAz?=
- =?utf-8?B?VnVxNkkvTFJzNnEwWW04MXRxNjQ2cjNmbWdiYzFERitZQzNXUHZEMGdaalNt?=
- =?utf-8?B?Vjg4MFliay9oU2tvTklid0c5ZklZZmtBYnhQM0wyWDNBZlpOaHdDTUl3VmxW?=
- =?utf-8?B?bTF6TXpLWW5PSGZiYnhsd0Z3cW1uLzlPU040aVJJUVlSQmNYM1lWb002V09x?=
- =?utf-8?B?TU84OVc1aUdGcnM5VzJQT3p5dDV4bEJXSDRpeXU5bENDZTExYk9nWDR4dXdC?=
- =?utf-8?B?U3Y2WFZ6THlhN09KR1g2Wm1nekYrKzhsOERISUxhK0I3VmNTeEsxS0JlblZo?=
- =?utf-8?B?bnlRRjc3TnlXQi92OTBKczZORnhFamsrY1FhUGlyV0hRWWd1T1NzMHA1dmdI?=
- =?utf-8?B?cWZlSFVTVExOYTJFS3NUWGZhaTljN2dRbmVKMWUxREhLd1YrTFRSdlNFTU5D?=
- =?utf-8?B?d2dUVzQ0SGZVeVBZbDQ4bEJQYUR1TndRdjlVOThiU3FzTk40OElrZGQ3TmdO?=
- =?utf-8?B?WW4wcWdGUWxoWmdoMFRLRGJxOXZYZjh3aDBRYis0OHJKb3V3am1ORTJEYXlS?=
- =?utf-8?B?QjhVaEppTkxhUysxNHltNzBNaTBzT2NQRzl6SWFjNzMwV0xMc1hET0g3TEdy?=
- =?utf-8?B?Lys4WjJQSzNKdVpHeDAvN0ViUFpzQVBZbkhaN3VPdnNURnVKZ3RPZGYvdGJj?=
- =?utf-8?B?c1RxT3llNmFPRS9yR3ZFMVVPWXRGZVRBSGp0OG9qTnlRd0JhNm8yaXRwWWR3?=
- =?utf-8?B?M2N5Ulh1STZUckpSczdhSkpHYjhObFM1d2dadERTUVVmOEY2blYzNzVYVnRG?=
- =?utf-8?B?cDdnMWk5czlTU2pQZTk4S3JqMW5samNpb3ZrbjlzSjdZRS9yTjdNOFN0VHN1?=
- =?utf-8?B?TmxWa3VGd2VXRjFNZUtQQ0hibEFycTVhS1NaRVlsaWVhNTkzM3VidDJQTGY2?=
- =?utf-8?B?Z1dFWEtoOWxUV2tFK0hQTjNydHVxQ0VFS25kMFFucWJvRitJdVlYYUYrTTZM?=
- =?utf-8?B?VHU0NFgyVjhONkl0clQwUXVpYUN1YkJhNFJGYnNndXZ1R0tYTGpFT0U2UERp?=
- =?utf-8?B?dnhWTHRXYXRPMnBLMHFkME9qU0hhaGR2WUE1K1FQakRudmJhWjRES2Q5WTdo?=
- =?utf-8?B?Rk4yRVBQV2I5R2xuOGFwT1c1MEZ5MG8zMW1VSU4wRjJ0Mm1Sby9YWmc1NXZL?=
- =?utf-8?B?Zk9qTGQySlBISTRmVmFqWnF6M0M4cW5DTGNJMkVFTDdjYkRwSnRQMUd4bXhR?=
- =?utf-8?B?MlJyQ0YxdEluTVFsQ25DQWh3cENTUEZxOXVBaXBLOWR6RGxOclRIc3ZKUzAx?=
- =?utf-8?B?YXZ0Z0JrRE1jbmhYU2FKQTRPRU45WFFqdnNCOCtsQVVzSFFRWEdnR0o4Qm9P?=
- =?utf-8?B?bi9Fa29OaElndVFaSzBkSkZjK0pIR1dGTlpDQ3dHWFoybWNMQWQ2OVVkcUMw?=
- =?utf-8?B?UlVvK0gyR0YzSDVPaTB4MUVnUkJ6N3M1TUZjVGZsM2F6eVdTc0FIR2lrZnZT?=
- =?utf-8?Q?EHcEU+eUf/QeAsO3ZhN0DQAk7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76b2c78d-3e74-4d28-3801-08dd09643ae1
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 13:07:04.9439
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +UKX72GxYG8MU1kOjaJHGPK6YhXush2ssUjEZYrbYkhAaxHq9HZGfO47Ls8NFUKCjqZQdao6Qda1vaShvoy5OA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7334
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Peter,
+From: Björn Töpel <bjorn@rivosinc.com>
 
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11778,52 +11778,49 @@ static void perf_pmu_free(struct pmu *pm
->  	free_percpu(pmu->cpu_pmu_context);
->  }
->  
-> -int perf_pmu_register(struct pmu *pmu, const char *name, int type)
-> +DEFINE_FREE(pmu_unregister, struct pmu *, if (_T) perf_pmu_free(_T))
-> +
-> +int perf_pmu_register(struct pmu *_pmu, const char *name, int type)
->  {
-> -	int cpu, ret, max = PERF_TYPE_MAX;
-> +	int cpu, max = PERF_TYPE_MAX;
->  
-> -	pmu->type = -1;
-> +	struct pmu *pmu __free(pmu_unregister) = _pmu;
-> +	guard(mutex)(&pmus_lock);
->  
-> -	mutex_lock(&pmus_lock);
-> -	ret = -ENOMEM;
->  	pmu->pmu_disable_count = alloc_percpu(int);
->  	if (!pmu->pmu_disable_count)
-> -		goto unlock;
-> +		return -ENOMEM;
->  
-> -	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n")) {
-> -		ret = -EINVAL;
-> -		goto free;
-> -	}
-> +	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n"))
-> +		return -EINVAL;
->  
-> -	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
-> -		ret = -EINVAL;
-> -		goto free;
-> -	}
-> +	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE,
-> +		      "Can not register a pmu with an invalid scope.\n"))
-> +		return -EINVAL;
->  
->  	pmu->name = name;
->  
->  	if (type >= 0)
->  		max = type;
->  
-> -	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
-> -	if (ret < 0)
-> -		goto free;
-> +	CLASS(idr_alloc, pmu_type)(&pmu_idr, NULL, max, 0, GFP_KERNEL);
-> +	if (pmu_type.id < 0)
-> +		return pmu_type.id;
->  
-> -	WARN_ON(type >= 0 && ret != type);
-> +	WARN_ON(type >= 0 && pmu_type.id != type);
->  
-> -	pmu->type = ret;
-> +	pmu->type = pmu_type.id;
->  	atomic_set(&pmu->exclusive_cnt, 0);
->  
->  	if (pmu_bus_running && !pmu->dev) {
-> -		ret = pmu_dev_alloc(pmu);
-> +		int ret = pmu_dev_alloc(pmu);
->  		if (ret)
-> -			goto free;
-> +			return ret;
+The vmemmap's, which is used for RV64 with SPARSEMEM_VMEMMAP, page
+tables are populated using pmd (page middle directory) hugetables.
+However, the pmd allocation is not using the generic mechanism used by
+the VMA code (e.g. pmd_alloc()), or the RISC-V specific
+create_pgd_mapping()/alloc_pmd_late(). Instead, the vmemmap page table
+code allocates a page, and calls vmemmap_set_pmd(). This results in
+that the pmd ctor is *not* called, nor would it make sense to do so.
 
-pmu_dev_alloc() can fail before or in device_add(). perf_pmu_free() should
-not call device_del() for such cases. No?
+Now, when tearing down a vmemmap page table pmd, the cleanup code
+would unconditionally, and incorrectly call the pmd dtor, which
+results in a crash (best case).
 
-Thanks,
-Ravi
+This issue was found when running the HMM selftests:
+
+  | tools/testing/selftests/mm# ./test_hmm.sh smoke
+  | ... # when unloading the test_hmm.ko module
+  | page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10915b
+  | flags: 0x1000000000000000(node=0|zone=1)
+  | raw: 1000000000000000 0000000000000000 dead000000000122 0000000000000000
+  | raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+  | page dumped because: VM_BUG_ON_PAGE(ptdesc->pmd_huge_pte)
+  | ------------[ cut here ]------------
+  | kernel BUG at include/linux/mm.h:3080!
+  | Kernel BUG [#1]
+  | Modules linked in: test_hmm(-) sch_fq_codel fuse drm drm_panel_orientation_quirks backlight dm_mod
+  | CPU: 1 UID: 0 PID: 514 Comm: modprobe Tainted: G        W          6.12.0-00982-gf2a4f1682d07 #2
+  | Tainted: [W]=WARN
+  | Hardware name: riscv-virtio qemu/qemu, BIOS 2024.10 10/01/2024
+  | epc : remove_pgd_mapping+0xbec/0x1070
+  |  ra : remove_pgd_mapping+0xbec/0x1070
+  | epc : ffffffff80010a68 ra : ffffffff80010a68 sp : ff20000000a73940
+  |  gp : ffffffff827b2d88 tp : ff6000008785da40 t0 : ffffffff80fbce04
+  |  t1 : 0720072007200720 t2 : 706d756420656761 s0 : ff20000000a73a50
+  |  s1 : ff6000008915cff8 a0 : 0000000000000039 a1 : 0000000000000008
+  |  a2 : ff600003fff0de20 a3 : 0000000000000000 a4 : 0000000000000000
+  |  a5 : 0000000000000000 a6 : c0000000ffffefff a7 : ffffffff824469b8
+  |  s2 : ff1c0000022456c0 s3 : ff1ffffffdbfffff s4 : ff6000008915c000
+  |  s5 : ff6000008915c000 s6 : ff6000008915c000 s7 : ff1ffffffdc00000
+  |  s8 : 0000000000000001 s9 : ff1ffffffdc00000 s10: ffffffff819a31f0
+  |  s11: ffffffffffffffff t3 : ffffffff8000c950 t4 : ff60000080244f00
+  |  t5 : ff60000080244000 t6 : ff20000000a73708
+  | status: 0000000200000120 badaddr: ffffffff80010a68 cause: 0000000000000003
+  | [<ffffffff80010a68>] remove_pgd_mapping+0xbec/0x1070
+  | [<ffffffff80fd238e>] vmemmap_free+0x14/0x1e
+  | [<ffffffff8032e698>] section_deactivate+0x220/0x452
+  | [<ffffffff8032ef7e>] sparse_remove_section+0x4a/0x58
+  | [<ffffffff802f8700>] __remove_pages+0x7e/0xba
+  | [<ffffffff803760d8>] memunmap_pages+0x2bc/0x3fe
+  | [<ffffffff02a3ca28>] dmirror_device_remove_chunks+0x2ea/0x518 [test_hmm]
+  | [<ffffffff02a3e026>] hmm_dmirror_exit+0x3e/0x1018 [test_hmm]
+  | [<ffffffff80102c14>] __riscv_sys_delete_module+0x15a/0x2a6
+  | [<ffffffff80fd020c>] do_trap_ecall_u+0x1f2/0x266
+  | [<ffffffff80fde0a2>] _new_vmalloc_restore_context_a0+0xc6/0xd2
+  | Code: bf51 7597 0184 8593 76a5 854a 4097 0029 80e7 2c00 (9002) 7597
+  | ---[ end trace 0000000000000000 ]---
+  | Kernel panic - not syncing: Fatal exception in interrupt
+
+Add a check to avoid calling the pmd dtor, if the calling context is
+vmemmap_free().
+
+Fixes: c75a74f4ba19 ("riscv: mm: Add memory hotplugging support")
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+ arch/riscv/mm/init.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+index 0e8c20adcd98..fc53ce748c80 100644
+--- a/arch/riscv/mm/init.c
++++ b/arch/riscv/mm/init.c
+@@ -1566,7 +1566,7 @@ static void __meminit free_pte_table(pte_t *pte_start, pmd_t *pmd)
+ 	pmd_clear(pmd);
+ }
+ 
+-static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud)
++static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud, bool is_vmemmap)
+ {
+ 	struct page *page = pud_page(*pud);
+ 	struct ptdesc *ptdesc = page_ptdesc(page);
+@@ -1579,7 +1579,8 @@ static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud)
+ 			return;
+ 	}
+ 
+-	pagetable_pmd_dtor(ptdesc);
++	if (!is_vmemmap)
++		pagetable_pmd_dtor(ptdesc);
+ 	if (PageReserved(page))
+ 		free_reserved_page(page);
+ 	else
+@@ -1703,7 +1704,7 @@ static void __meminit remove_pud_mapping(pud_t *pud_base, unsigned long addr, un
+ 		remove_pmd_mapping(pmd_base, addr, next, is_vmemmap, altmap);
+ 
+ 		if (pgtable_l4_enabled)
+-			free_pmd_table(pmd_base, pudp);
++			free_pmd_table(pmd_base, pudp, is_vmemmap);
+ 	}
+ }
+ 
+
+base-commit: 57f7c7dc78cd09622b12920d92b40c1ce11b234e
+-- 
+2.45.2
+
 
