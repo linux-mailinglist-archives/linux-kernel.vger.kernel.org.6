@@ -1,199 +1,372 @@
-Return-Path: <linux-kernel+bounces-416226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB6F9D4240
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:53:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EA29D4246
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0252283589
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:53:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D131F2182D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02361BBBCF;
-	Wed, 20 Nov 2024 18:53:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FEC1BC074;
+	Wed, 20 Nov 2024 18:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcJUd8/W"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBAE824A0
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04003824A0;
+	Wed, 20 Nov 2024 18:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732128812; cv=none; b=CP1fpklo1zzm/YF/qnZQk3m8LgwLeiAiDd4Hw+yOpLHCBA1+v9F8sDQpvu93EYMdpsz/oyw5uPJBCLfUaH8wYrFcyF+5XCxyardMpWiz7iHXiZj5E1+dqWEIP34TpcPSTG2k9g3ACRYwTpmzD3DhvA4UMD9LaV488DsN492Po8E=
+	t=1732128879; cv=none; b=OhgV3X+BjSto34TVZ+EjsaZVIMj93AdUqiwZalaC95NBvUP4vQMmRv5A/BxJ8aaMUt5RwjUemvFwUGDu3Tfx5dGDvqu3/MyrLmwQtghtYZCooB5gMZNUPEivBzY9HTor4xn9Hreq/xqUPJo+cJ4QvJQDH46kgcxyTh+8RTr40Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732128812; c=relaxed/simple;
-	bh=c6ig68unAR21zMdFvzejjatneJBpr7tq3DLOMZITG2Y=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gZFJxQausqcposCzjHVTdD4XtV3nfweDlhxgqd/viSLg7gOxDsH8ONTOQp1kZIQ39xoZbL8fqw9qtt79UAZZ71VL+THWQHMF6fOJb6LcfBDY8zuOsb0ZXGDGAtqm54tBuIVSDIlSh+yHvp8r2tcQVjZkl6CqPQZVmfjnYOdcXOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a778ce76fbso158715ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:53:30 -0800 (PST)
+	s=arc-20240116; t=1732128879; c=relaxed/simple;
+	bh=pgZb7KzJR7PCND8fGLHmXt4q8yO1ZiQtgM9nsPkQEyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=px3MdRS+EACxTSK6rbYNOAnP9vCXiiY2ZgUX91eWvHYor9sPcJyVJHWEUNN2iMDDsQWUQ/GoOKByNi04pLAoLCVwA1hzNCB+odW58ekP5GDbcQnXF79keVq2Bp+nVWBeXob3kkTLt3/9siJH9bAmfjUM4VV1Qt7+BfvXAeiYimw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcJUd8/W; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aff992087so3757639f.3;
+        Wed, 20 Nov 2024 10:54:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732128877; x=1732733677; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ywphHwRJ47bemIP9RZfgn34nLun0kYe1BEdTqOds8Rs=;
+        b=RcJUd8/WKDmsJQINGxxLCPUAy4tta6TicnZjnKtZCizrEvIT8LaiCp0ybcmjd4v4Gv
+         xTRdZ1Z7G9NiLldpKcl1MxhVioQphiHKDki3tsH/WqdNUSV++hA/cRW/h9TG05xqmBPP
+         dIt40Y213M3/zgqDADMnNEex96DaRPcHkimT7UH/0++BKQ26SNyXz2HygXYphdY5DbES
+         Q9LoAZVh0lxzUjvQNrRVGVsgDHEAy801zW7mM6Y2b8VQEv/OTNBYsT91MU2K1+Ot/ncs
+         wATHOtK1LHPlTjquSETWY8uoSdGjdujmym8UrkdYk4xlq0M68viPnpupxLVWpp5sQRo+
+         LeWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732128810; x=1732733610;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pBfTw/RMwktv2neywATU9VAiByUlJz2SeD/AgwNqRMI=;
-        b=HgaOLbaRxgk3vJTJmRffc5DtWGtz8JlY1ed+F1xrq5ESdecBjSRgfSlDrSOqmB762N
-         YeI/isNGPYFehxExXDVEI9gUsGyUAeMXueCm5BKqKM4Yo0c36qxAMbTURlZ2WopO0bta
-         nI8CWLa/QmTYcM5siI3iAJytC7Kt1WdGdhnGV4T1dgQ/VrlJqyrkXUzNdgGZn9hztMTq
-         BlfYzzbDtb6JWNu1eSUB3Znzzyj/m1DYX5S5rDhg+SuzW9ssWyt9C0lwUxE+11AOq77l
-         kCEm/XURhqvdz3jw9CF8SAlpNzjQyTy+trT2O7GOjCJ2nFGxkv0pwaCR7RSqZckmKPHi
-         Ym7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU94zF79wOTDGYZUywwNG96ibhPW2SS5wXBW/GKE0EJdeN04vP0OJGzsuWPFU1zGfio8dZTt9S/3uLiOR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmv1dLwwxw71HyQYy/VIPZGJ6MkMm+xH4SDH4ANH1XxwOLOmV+
-	3Tk5kGtoaP+HioF5WMUYEsuVFJ6vaS6zHSN3KUoCr4ZK3LZFEPH6fqMEhMHwQ3c4ZT9r72TIMYU
-	XCoArs+YsGAzJbizHPAFrt5iUTAPGJUq91USyAdlW+Cs0WCuR5G+Hmvk=
-X-Google-Smtp-Source: AGHT+IHM5swEvxiEdnh2/hUEzNEDMCW/nELMOsybDCxySB1RF2dD/achksVacyjv8PgZ6TuCq1tfIi41Tko1KlP+kx4eMnUjv0KH
+        d=1e100.net; s=20230601; t=1732128877; x=1732733677;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ywphHwRJ47bemIP9RZfgn34nLun0kYe1BEdTqOds8Rs=;
+        b=qDBoKHCwaPCemxM48yAJLjuveer5HnfcIfmG4Bhe3Y+sBzTqHANtMcSHD1ZPsQBeDG
+         JHIbIi5RPgQTpX0GUnWHBGPPgF2D5Kw+qyPQHUrAk6V0L+4ZUsgk8m8FhrIgPfkjOu99
+         WT2rpqNITtJfL76383KJIpRZGQFYLrZnhdQ27OP8tBUWtBS5li72L/UVYzFA0MYys6Ov
+         Ft4VdGEktEboFfTFpFt7ZPQDFiMIP7DhmSLLV7sgspNDx6dX9AgzGK/d6O85ZwwC1G/t
+         UNlO60uqaCpCEs9mVFhGievVT2KTj6Ylw2GG033Ewd5hYbPnr+V4D0qNHTiyo/gwPPu0
+         sC1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUR2LYHTMH1W0TVaO9ll19DsppF834T9vjPz9KjBXxIN5LUnjLt9hzWextUa2rlA0jtedW5HIaeEgk8Gboa@vger.kernel.org, AJvYcCUzH+TwUJYUzeS+kJZh82pN0jPPAzmzr15dBv7h4jEQfemNcrN6aN/koX3ZkOdETbDyVoY6khzGBJlHwgAFTQ==@vger.kernel.org, AJvYcCX3NAIEzmJEi1jQFhL4pezZVwUY70lxCP/qw+2VFZjCdLGdF40SfNQ4Qh+OJ+Lscpdt8zNLfvr6PBk=@vger.kernel.org, AJvYcCX3YhLPvB8J06Ap7p5Q28QYaX+mnwDB7baxroMrFvrbO4AGRuA+GC/adnW4JQRNEQJFN76ZMCDzVHG9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyThiuzgQxDDjSkX3F8UwWhjlQSmW0uVg0EUa6Vjv7Jjtrjx1Sz
+	j71UJxl13cZdIYM5HnzVaP1NhckjTcWBsuuu3GSvLsvXes167ejIoxs4ro92vlGWlzPx6Mj+Dg8
+	+BciGKyMMWl8XP4G8guo2DBWCMFw=
+X-Gm-Gg: ASbGncuu8fkq/0mOY0dUsBE39D68tiFlMpVqtA8FgUoarYSRc5uvY4lA48zhrL/Kl9/
+	OJ3NaXRuEu/z/A2cV82w9KRweaHszK/QFdgx3ajTEQ8XBNJQOQv20SxJBhcpm
+X-Google-Smtp-Source: AGHT+IHd8C0gyOGxo8kEUV2MAn22vYluHbM6lDo81yALGvxv3opZ3P+eFDcZSWKWEXJFXyRB4VB0sPN5xiZpchHYexo=
+X-Received: by 2002:a05:6602:6d8e:b0:834:d7b6:4fea with SMTP id
+ ca18e2360f4ac-83eb5fce118mr454937039f.6.1732128877090; Wed, 20 Nov 2024
+ 10:54:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4b:0:b0:3a3:b5ba:bfba with SMTP id
- e9e14a558f8ab-3a7865732bdmr40362885ab.15.1732128809873; Wed, 20 Nov 2024
- 10:53:29 -0800 (PST)
-Date: Wed, 20 Nov 2024 10:53:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673e3029.050a0220.363a1b.0024.GAE@google.com>
-Subject: [syzbot] [kernel?] general protection fault in device_move
-From: syzbot <syzbot+1f4e278e8e1a9b01f95f@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, rafael@kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+ <20241119-topic-sm8x50-gpu-bw-vote-v2-3-4deb87be2498@linaro.org> <fkezpguictntg2wkouwqipnaaiauo6vu46n7a2xzvlorzvyeaw@bbcpj3bs5eko>
+In-Reply-To: <fkezpguictntg2wkouwqipnaaiauo6vu46n7a2xzvlorzvyeaw@bbcpj3bs5eko>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 20 Nov 2024 10:54:24 -0800
+Message-ID: <CAF6AEGs6zT_kaTXNohUaA7KWZxZTr4byaoMoLAceuyqA7S+2CQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] drm/msm: adreno: move features bits in a
+ separate variable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Nov 20, 2024 at 3:18=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Tue, Nov 19, 2024 at 06:56:38PM +0100, Neil Armstrong wrote:
+> > Now the features defines have the right name, introduce a features
+> > bitfield and move the features defines in it, fixing all code checking
+> > for them.
+> >
+> > No functional changes intended.
+>
+> I think it might be better to squahs this patch into the previous one,
+> it would simplify checking that we use .quirks for ADRENO_QUIRK_foo and
+> .features for ADRENO_FEAT_bar.
+>
 
-syzbot found the following issue on:
+IMHO better to keep this separated
 
-HEAD commit:    dd7207838d38 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f7c6c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e6d63a300b6a84a4
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f4e278e8e1a9b01f95f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+But we don't have _that_ many features/quirks so I don't find
+combining them all that problematic
 
-Unfortunately, I don't have any reproducer for this issue yet.
+BR,
+-R
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d2e97bd9853a/disk-dd720783.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/02b4c391d07a/vmlinux-dd720783.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/eaa4c64e1e50/bzImage-dd720783.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1f4e278e8e1a9b01f95f@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
-CPU: 0 UID: 0 PID: 7855 Comm: syz-executor Not tainted 6.12.0-rc7-syzkaller-01770-gdd7207838d38 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:klist_put lib/klist.c:212 [inline]
-RIP: 0010:klist_del lib/klist.c:230 [inline]
-RIP: 0010:klist_remove+0x1e8/0x480 lib/klist.c:249
-Code: 3c 06 00 74 08 4c 89 ff e8 65 a6 40 f6 4d 8b 27 49 83 e4 fe 49 8d 7c 24 58 48 89 f8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 05 e8 3d a6 40 f6 4d 8b 6c 24 58 4c 89 e7 e8 10 a5
-RSP: 0018:ffffc9000ad178c0 EFLAGS: 00010202
-RAX: 000000000000000b RBX: ffffffff9003e3c8 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000058
-RBP: ffffc9000ad179b0 R08: ffffffff9003e363 R09: 1ffffffff2007c6c
-R10: dffffc0000000000 R11: fffffbfff2007c6d R12: 0000000000000000
-R13: ffffffff9003e3c0 R14: 1ffff11029a9c40c R15: ffff88814d4e2060
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fffa5b58fd8 CR3: 0000000031058000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- device_move+0x1b4/0x710 drivers/base/core.c:4643
- hci_conn_del_sysfs+0xac/0x160 net/bluetooth/hci_sysfs.c:75
- hci_conn_cleanup net/bluetooth/hci_conn.c:174 [inline]
- hci_conn_del+0x8c4/0xc40 net/bluetooth/hci_conn.c:1164
- hci_conn_hash_flush+0x18e/0x240 net/bluetooth/hci_conn.c:2699
- hci_dev_close_sync+0xa42/0x11c0 net/bluetooth/hci_sync.c:5212
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_unregister_dev+0x20b/0x510 net/bluetooth/hci_core.c:2698
- vhci_release+0x80/0xd0 drivers/bluetooth/hci_vhci.c:664
- __fput+0x23f/0x880 fs/file_table.c:431
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- exit_task_work include/linux/task_work.h:43 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3121d7e819
-Code: Unable to access opcode bytes at 0x7f3121d7e7ef.
-RSP: 002b:00007ffcf8975c18 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f3121d7e819
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000043
-RBP: 00007f3121dde5b0 R08: 00007ffcf89739b7 R09: 0000000000000003
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000003 R14: 00000000ffffffff R15: 00007ffcf8975dc0
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:klist_put lib/klist.c:212 [inline]
-RIP: 0010:klist_del lib/klist.c:230 [inline]
-RIP: 0010:klist_remove+0x1e8/0x480 lib/klist.c:249
-Code: 3c 06 00 74 08 4c 89 ff e8 65 a6 40 f6 4d 8b 27 49 83 e4 fe 49 8d 7c 24 58 48 89 f8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 05 e8 3d a6 40 f6 4d 8b 6c 24 58 4c 89 e7 e8 10 a5
-RSP: 0018:ffffc9000ad178c0 EFLAGS: 00010202
-RAX: 000000000000000b RBX: ffffffff9003e3c8 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000058
-RBP: ffffc9000ad179b0 R08: ffffffff9003e363 R09: 1ffffffff2007c6c
-R10: dffffc0000000000 R11: fffffbfff2007c6d R12: 0000000000000000
-R13: ffffffff9003e3c0 R14: 1ffff11029a9c40c R15: ffff88814d4e2060
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000607f8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	3c 06                	cmp    $0x6,%al
-   2:	00 74 08 4c          	add    %dh,0x4c(%rax,%rcx,1)
-   6:	89 ff                	mov    %edi,%edi
-   8:	e8 65 a6 40 f6       	call   0xf640a672
-   d:	4d 8b 27             	mov    (%r15),%r12
-  10:	49 83 e4 fe          	and    $0xfffffffffffffffe,%r12
-  14:	49 8d 7c 24 58       	lea    0x58(%r12),%rdi
-  19:	48 89 f8             	mov    %rdi,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2e:	74 05                	je     0x35
-  30:	e8 3d a6 40 f6       	call   0xf640a672
-  35:	4d 8b 6c 24 58       	mov    0x58(%r12),%r13
-  3a:	4c 89 e7             	mov    %r12,%rdi
-  3d:	e8                   	.byte 0xe8
-  3e:	10                   	.byte 0x10
-  3f:	a5                   	movsl  %ds:(%rsi),%es:(%rdi)
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> >
+> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_catalog.c  | 34 +++++++++++++++-------=
+--------
+> >  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  4 ++--
+> >  drivers/gpu/drm/msm/adreno/adreno_device.c |  2 +-
+> >  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  7 +++---
+> >  4 files changed, 24 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/dr=
+m/msm/adreno/a6xx_catalog.c
+> > index 825c820def315968d508973c8ae40c7c7b646569..93f0d4bf50ba773ecde93e6=
+c29a2fcec24ebb7b3 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> > @@ -743,7 +743,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a615_zap.mbn",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -769,7 +769,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .a6xx =3D &(const struct a6xx_info) {
+> >                       .protect =3D &a630_protect,
+> > @@ -839,7 +839,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a615_zap.mdt",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -864,7 +864,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                         ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a620_zap.mbn",
+> > @@ -892,7 +892,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_1M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a630_zap.mdt",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -911,7 +911,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_1M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a640_zap.mdt",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -934,7 +934,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_1M + SZ_128K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                       ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a650_zap.mdt",
+> > @@ -961,7 +961,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_1M + SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                       ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a660_zap.mdt",
+> > @@ -981,7 +981,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_1M + SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                       ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -1000,7 +1000,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_512K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                       ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a660_zap.mbn",
+> > @@ -1028,7 +1028,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_2M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a640_zap.mdt",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -1046,7 +1046,7 @@ static const struct adreno_info a6xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_4M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                       ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a690_zap.mdt",
+> > @@ -1331,7 +1331,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_128K,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_HW_APRIV,
+> > +             .features =3D ADRENO_FEAT_HAS_HW_APRIV,
+> >               .init =3D a6xx_gpu_init,
+> >               .zapfw =3D "a702_zap.mbn",
+> >               .a6xx =3D &(const struct a6xx_info) {
+> > @@ -1355,7 +1355,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D SZ_2M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                         ADRENO_FEAT_HAS_HW_APRIV |
+> >                         ADRENO_FEAT_PREEMPTION,
+> >               .init =3D a6xx_gpu_init,
+> > @@ -1377,7 +1377,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D 3 * SZ_1M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                         ADRENO_FEAT_HAS_HW_APRIV |
+> >                         ADRENO_FEAT_PREEMPTION,
+> >               .init =3D a6xx_gpu_init,
+> > @@ -1400,7 +1400,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D 3 * SZ_1M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                         ADRENO_FEAT_HAS_HW_APRIV |
+> >                         ADRENO_FEAT_PREEMPTION,
+> >               .init =3D a6xx_gpu_init,
+> > @@ -1422,7 +1422,7 @@ static const struct adreno_info a7xx_gpus[] =3D {
+> >               },
+> >               .gmem =3D 3 * SZ_1M,
+> >               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> > -             .quirks =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> > +             .features =3D ADRENO_FEAT_HAS_CACHED_COHERENT |
+> >                         ADRENO_FEAT_HAS_HW_APRIV |
+> >                         ADRENO_FEAT_PREEMPTION,
+> >               .init =3D a6xx_gpu_init,
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/ms=
+m/adreno/a6xx_gpu.c
+> > index 2ebd3fac212576a1507e0b6afe2560cd0408dd89..654d0cff421f15901cd4bf3=
+3b41e70004634ec75 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> > @@ -2478,7 +2478,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *=
+dev)
+> >       adreno_gpu->gmu_is_wrapper =3D of_device_is_compatible(node, "qco=
+m,adreno-gmu-wrapper");
+> >
+> >       adreno_gpu->base.hw_apriv =3D
+> > -             !!(config->info->quirks & ADRENO_FEAT_HAS_HW_APRIV);
+> > +             !!(config->info->features & ADRENO_FEAT_HAS_HW_APRIV);
+> >
+> >       /* gpu->info only gets assigned in adreno_gpu_init() */
+> >       is_a7xx =3D config->info->family =3D=3D ADRENO_7XX_GEN1 ||
+> > @@ -2495,7 +2495,7 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *=
+dev)
+> >       }
+> >
+> >       if ((enable_preemption =3D=3D 1) || (enable_preemption =3D=3D -1 =
+&&
+> > -         (config->info->quirks & ADRENO_FEAT_PREEMPTION)))
+> > +         (config->info->features & ADRENO_FEAT_PREEMPTION)))
+> >               ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 4);
+> >       else if (is_a7xx)
+> >               ret =3D adreno_gpu_init(dev, pdev, adreno_gpu, &funcs_a7x=
+x, 1);
+> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/d=
+rm/msm/adreno/adreno_device.c
+> > index 09d4569f77528c2a20cabc814668c4c930dd07f1..11a228472fa0cef3b6e4e21=
+a366470fbbc3ea8df 100644
+> > --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> > @@ -207,7 +207,7 @@ static int adreno_bind(struct device *dev, struct d=
+evice *master, void *data)
+> >
+> >       priv->is_a2xx =3D info->family < ADRENO_3XX;
+> >       priv->has_cached_coherent =3D
+> > -             !!(info->quirks & ADRENO_FEAT_HAS_CACHED_COHERENT);
+> > +             !!(info->features & ADRENO_FEAT_HAS_CACHED_COHERENT);
+> >
+> >       gpu =3D info->init(drm);
+> >       if (IS_ERR(gpu)) {
+> > diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/=
+msm/adreno/adreno_gpu.h
+> > index 8782c25e8a393ec7d9dc23ad450908d039bd08c5..4702d4cfca3b58fb3cbb25c=
+b6805f1c19be2ebcb 100644
+> > --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> > @@ -55,9 +55,9 @@ enum adreno_family {
+> >  #define ADRENO_QUIRK_FAULT_DETECT_MASK               BIT(1)
+> >  #define ADRENO_QUIRK_LMLOADKILL_DISABLE              BIT(2)
+> >
+> > -#define ADRENO_FEAT_HAS_HW_APRIV             BIT(3)
+> > -#define ADRENO_FEAT_HAS_CACHED_COHERENT              BIT(4)
+> > -#define ADRENO_FEAT_PREEMPTION                       BIT(5)
+> > +#define ADRENO_FEAT_HAS_HW_APRIV             BIT(0)
+> > +#define ADRENO_FEAT_HAS_CACHED_COHERENT              BIT(1)
+> > +#define ADRENO_FEAT_PREEMPTION                       BIT(2)
+> >
+> >  /* Helper for formating the chip_id in the way that userspace tools li=
+ke
+> >   * crashdec expect.
+> > @@ -98,6 +98,7 @@ struct adreno_info {
+> >       uint32_t revn;
+> >       const char *fw[ADRENO_FW_MAX];
+> >       uint32_t gmem;
+> > +     u64 features;
+> >       u64 quirks;
+> >       struct msm_gpu *(*init)(struct drm_device *dev);
+> >       const char *zapfw;
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
