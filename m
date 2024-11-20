@@ -1,114 +1,70 @@
-Return-Path: <linux-kernel+bounces-415346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F79B9D34CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:53:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 311F79D34BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E1731F23BE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:53:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D250E1F21B34
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6F819F424;
-	Wed, 20 Nov 2024 07:50:37 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F4A189BB5;
+	Wed, 20 Nov 2024 07:50:27 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B2619E994;
-	Wed, 20 Nov 2024 07:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF75189B8C;
+	Wed, 20 Nov 2024 07:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732089037; cv=none; b=laR+odeakmnhST0Zdh615WglIcw4wg558l/AZxAg5J54PX87iaTUReI80euWS9/Zn9b8gmME4Pz1qttBgU/ljnc/Bd2IG/kZgI0oJZ6BOKwjKTnfqWG0353DA6CqVilxQmJDW+zCJBzCwpfIg6twM19jgx5x/toBAhv+oFMXvMo=
+	t=1732089027; cv=none; b=LAWa35RlcpbwG91IXRSVdc3ugxhiBBVCqaGXxH6YK710ybgsXTXFi/cceW5Ccj6c3CAMZZLHk3GSbJGkUaqr3Onarpd7lV6xd0vxyUW4l0lhqT67epKJSH+5DqZmGHhFjA3/bIQh62g0B4tlJF/Zk2Dd/kqhSnIQe+cLrUKv/+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732089037; c=relaxed/simple;
-	bh=1kMtEwZIMoVnpTCmX5br6E/I6+2C+eeLozcHk1VYQJM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sSCYN3R6QUH6h6IqsDlAItbOKjbaYoLP/frXtn5fKeIjX5i0N48WM0/DNwgXzkK94Wod6W01m/mTUJLNqU6ehir9e6a1l7VNbhQ47NIGPA0XWi9Mjh8l7ildi5/lunZSQ779uoV24yl0WS3KgIgHq7ysXHYuPPPVt4+kMfcAXqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 20 Nov
- 2024 15:50:18 +0800
-Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Wed, 20 Nov 2024 15:50:18 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <p.zabel@pengutronix.de>,
-	<ratbert@faraday-tech.com>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jacky_chou@aspeedtech.com>
-Subject: [PATCH net-next v3 7/7] net: ftgmac100: remove extra newline symbols
-Date: Wed, 20 Nov 2024 15:50:17 +0800
-Message-ID: <20241120075017.2590228-8-jacky_chou@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241120075017.2590228-1-jacky_chou@aspeedtech.com>
-References: <20241120075017.2590228-1-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1732089027; c=relaxed/simple;
+	bh=Pgm6vDJSYNE6XLVqzmM2tKX1+m5dsYR/GDmcWdO6QyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctnsThNpB8kIxAb9MoCfTit2mlYXQW05AaEpdOI/BfA6JvvPcUw2TfacBkBLtbgWrn5KACuwNyuZ8nyndVvSdWH9uF6DFhG+WTJ61sWyyW/FzaixLnUdmxWeHX9I7W6kQqlax481FD1Q2025NzFtpZQlVZ6V8WfI+GSX3L6njl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C24FC4CED7;
+	Wed, 20 Nov 2024 07:50:25 +0000 (UTC)
+Date: Wed, 20 Nov 2024 08:50:22 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Russ Weight <russ.weight@linux.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Marco Felsch <kernel@pengutronix.de>, 
+	Henrik Rydberg <rydberg@bitmath.org>, Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 3/5] dt-bindings: vendor-prefixes: Add TouchNetix AS
+Message-ID: <b5hjephfcvdu2jjchodaj5u4yltvatdgmse7xvwkhaepn5dinv@sfl4utyuz34g>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-3-6124925b9718@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241119-v6-10-topic-touchscreen-axiom-v1-3-6124925b9718@pengutronix.de>
 
-Remove some unnecessary newline symbols in code.
+On Tue, Nov 19, 2024 at 11:33:52PM +0100, Marco Felsch wrote:
+> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> 
+> Add vendor prefix for TouchNetix AS (https://www.touchnetix.com/products/).
+> 
+> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- drivers/net/ethernet/faraday/ftgmac100.c | 5 -----
- 1 file changed, 5 deletions(-)
+I think this did not happen (only Ack).
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index cae3434e8849..57b24c458738 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -575,7 +575,6 @@ static bool ftgmac100_rx_packet(struct ftgmac100 *priv, int *processed)
- 	dma_unmap_single(priv->dev, map, RX_BUF_SIZE, DMA_FROM_DEVICE);
- #endif
- 
--
- 	/* Resplenish rx ring */
- 	ftgmac100_alloc_rx_buf(priv, pointer, rxdes, GFP_ATOMIC);
- 	priv->rx_pointer = ftgmac100_next_rx_pointer(priv, pointer);
-@@ -1273,7 +1272,6 @@ static int ftgmac100_poll(struct napi_struct *napi, int budget)
- 		more = ftgmac100_rx_packet(priv, &work_done);
- 	} while (more && work_done < budget);
- 
--
- 	/* The interrupt is telling us to kick the MAC back to life
- 	 * after an RX overflow
- 	 */
-@@ -1363,7 +1361,6 @@ static void ftgmac100_reset(struct ftgmac100 *priv)
- 	if (priv->mii_bus)
- 		mutex_lock(&priv->mii_bus->mdio_lock);
- 
--
- 	/* Check if the interface is still up */
- 	if (!netif_running(netdev))
- 		goto bail;
-@@ -1462,7 +1459,6 @@ static void ftgmac100_adjust_link(struct net_device *netdev)
- 
- 	if (netdev->phydev)
- 		mutex_lock(&netdev->phydev->lock);
--
- }
- 
- static int ftgmac100_mii_probe(struct net_device *netdev)
-@@ -1990,7 +1986,6 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 			dev_err(priv->dev, "MII probe failed!\n");
- 			goto err_ncsi_dev;
- 		}
--
- 	}
- 
- 	if (priv->is_aspeed) {
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
