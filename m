@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-416214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F109D4219
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:38:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31E49D4223
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DDDD1F22A3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:38:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B26B9B23354
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492571A7259;
-	Wed, 20 Nov 2024 18:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959CC156C70;
+	Wed, 20 Nov 2024 18:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ARoDrCjR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tq1h8FdI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5C15624B;
-	Wed, 20 Nov 2024 18:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFCB20B22
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732127885; cv=none; b=oEscD/wGyZAQtHL5JDOR0EYhVnRi0Ki79GWy/omMuufiTyzdvbWVVBAP4SlfNbSK96dMeFbDIJqDXn0cU7Dt4/vETN7loY5J82VdWKsFOWDv0DT6q+9MsiueeXwSl6Xv4Tz7BBgnLv8/82d30T4gSnMqVy5QYN13WYh/7mIJhU4=
+	t=1732127928; cv=none; b=sc6UO80jKa6RVaAn5aFmXH7GYQ4NtcOnunf0Yq6YVJWuc1P00gLEnPc4NVpiZNhTnbgt+iDLIotwVs4fW8jdG331Z1PFVEqU1ytObJ9p2yUYJr4YjcxL1YIvytw147KJk27L5jtLpbiQ4vMl/cxfFuNz6cukS9aaHdpkJVSdNQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732127885; c=relaxed/simple;
-	bh=hGKVfrB+JPEHZ0SCxNgIxIJiUsJ2SLFwlPUcdvwUFgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1lsbwF1yVIdoWGfFAtzIwGYMnC8KenbMAEivCXTI1E7VpuVD2vVvGah2DtuxWyIkWAVLw3JN/kS3rTPAuIUjWOYXofpSiU9j0l3uSpao3Xev6rlvdfCmIt45lX9CIj75/P5ZnFukKy3OAbxrZJDguQXwjlGwiDmNG+Ab+CcOqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ARoDrCjR; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732127884; x=1763663884;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hGKVfrB+JPEHZ0SCxNgIxIJiUsJ2SLFwlPUcdvwUFgk=;
-  b=ARoDrCjRIAVXU3Fnn2QMBt4RfdpcngwgD8L+/QHYgTb8c7xFaXQLJBhJ
-   CkX7ewtLh1bLHkeHiRPMfTDwHMyKsfTPqIYMf2TCZ05q+OtpacGqqsp38
-   1mNKqKNIhKlmgtFq2r9sVw3hn9K+lcLFq2V+aJE+6EPiBG/1vtp1368OR
-   mX0dqq5IA46DvGIk/DVLaFbri/SxN/YvFSvE23K1pPpqfHJEAhlfbOESR
-   r1Z2+aqn9ul/TT0DOxlTyOTy1tvAfSrgI6O2Fi7m18GdZrqd/xMVCo18C
-   PeoM4zaeqM0xQyXoSOvRTGRpKE2RlMppQAk1zn/SN7tjHzxmtPJxPx261
-   Q==;
-X-CSE-ConnectionGUID: oRMbQKRdTR2ylDnS50t6zA==
-X-CSE-MsgGUID: b9mT5zFjTJuhSmu1Dw1c1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="49735943"
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="49735943"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:38:04 -0800
-X-CSE-ConnectionGUID: f3vjDGdLQGCc5avxFkZm/w==
-X-CSE-MsgGUID: CLS29EcdQjCDm8oFAy2U7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="113278616"
-Received: from nathanae-mobl.amr.corp.intel.com (HELO [10.125.50.190]) ([10.125.50.190])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 10:38:03 -0800
-Message-ID: <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com>
-Date: Wed, 20 Nov 2024 10:37:58 -0800
+	s=arc-20240116; t=1732127928; c=relaxed/simple;
+	bh=zJDrBQkfzupD+AL4ebyYwluJVFuuKGZTLMNeHy5cU6c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=AVNhBvLOHmHoWOAtG6IqTjiPDJKMG4qF2gvd43JoWGX9xeSA2w0zd8eqj/OdnXBmCwJ+McydqsZIKjx1nd3aNaExAbBfFP/Vq9ca33f114AAQQNiTR1iCktmX80HbfrHKX7jWDaoGGmgdhXRUb3AFM/mrokTG7XXwbhNcXIwPMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tq1h8FdI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732127925;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+EwWFa+oJ50TsSitG9vuWmc1jUW/Wlmo17AdZ9ZTB3k=;
+	b=Tq1h8FdIxpcSkZGGybGIGXX4wbdP76nHVsCkuGpezzCCtixcMK17R2KJoIFe2PSXygHj+X
+	mmzwY5m/dhJ3AvVFup+oVdUkYhn45h5nXKianbkBZJEaXUsFbBRaLvBDJSRz6PhPQDiJyw
+	kcw0lzC2+DtIMFzqZqxmetljekRqxEQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-136-BAthHSgEPeC895Sk2Q5NGQ-1; Wed, 20 Nov 2024 13:38:43 -0500
+X-MC-Unique: BAthHSgEPeC895Sk2Q5NGQ-1
+X-Mimecast-MFC-AGG-ID: BAthHSgEPeC895Sk2Q5NGQ
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-382428c257eso5868f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:38:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732127922; x=1732732722;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:to:from:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+EwWFa+oJ50TsSitG9vuWmc1jUW/Wlmo17AdZ9ZTB3k=;
+        b=weua8usV8XnV8BGhX/cK2aQpGtVnkFOKeCvH/oVBMHBuCeAltz230B/KO/NArVPyPd
+         rG9s830a6FjWzC78B0lUB1WUWYdoDdYCFCnbUGgXEdRMq/US8ayPk97KFaS3DdMmIsBO
+         RZhlxFcPEVujQF9ZVsf7zygrSvwUAhyAUBRQI6mokB9RKZADsvRktS2LaMEBLuaoBOvf
+         9iO7IPffLCMEa6tugS7Gg2ZXLz1ICPHKmPeEwgPkPrYQmoueGfl7A2Hf2Rnww3TTjlsN
+         wLBoNJzY/LAXI13H6AuYhJ5TL6J9kYCJ7XwFLWAZSJ0oEl1JLjLXPonms5kc5zU9ADLd
+         uyvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFWOCUc35ZZJhei0u/7RXKlyzFIVq4YQr9FsNaqU3CReL9bEq1o2c399FrmrzCcIAGfjBb5bR+0YNdI4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnyUStiR+Z2fsYX80ZLXJeVEHcO33ulzdSj29N+nNCSD662Jgm
+	zEIM9GnndjO4Vt97TlkisNh4QrDpg1LKg4VS1UD6EpkGOoQmm7MDK2TTtNu9UBay1yfRegmIor5
+	FUyFii56uqvtccmKgmmeGkONik78Kz4e6Z4sNPKvBVagAl1sB+ZPomcKvNtM51w==
+X-Gm-Gg: ASbGncsotk4OWYWZtf1tWAwYEIrovib+WwkvMBQ9YPxvEqevNK2punxWo6OWVImDml8
+	dAVBAdlqqbRcEPhPtkB80IY4wvYAzRgePDGBPIOLG/taSKt3eUyZJO3ZO8fQPQqzKM1rIUF3rKW
+	Vjg5eLklJpexKs1n7Bh9y7y6jK9RpyHdruyYrz/rEbU8r4TFRTxWII6t2zsWXXwNNFpC+0ZefPL
+	jrvOqSrDhfS4Bazvf2QIrSmT/23xwnSLRUVaUF0ZS57Li3Q0Gx1hI1iS3bxKpr0e2c3ReSvmnLL
+	Ff7n3ecUl5L0mxsrBzKvs587X6BGNBoozSSNdR/7vybfW9I03Qw1DfJjPfp9a7Rgf85ol0eY9mW
+	vKg==
+X-Received: by 2002:a5d:588f:0:b0:382:d0b:179a with SMTP id ffacd0b85a97d-38254ae0456mr2739625f8f.6.1732127922245;
+        Wed, 20 Nov 2024 10:38:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IENlz3e7Yy/b/UQkMqIYJJ65O8k0AnlfB46VzLFYLs9WPMNqPldgeQwpFChZnf9dnvU63avew==
+X-Received: by 2002:a5d:588f:0:b0:382:d0b:179a with SMTP id ffacd0b85a97d-38254ae0456mr2739613f8f.6.1732127921817;
+        Wed, 20 Nov 2024 10:38:41 -0800 (PST)
+Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933d39sm2802027f8f.83.2024.11.20.10.38.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 10:38:40 -0800 (PST)
+Message-ID: <fa9d2da7-f547-4731-af84-b4871e588bae@redhat.com>
+Date: Wed, 20 Nov 2024 19:38:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,57 +89,290 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in
- acpi_os_sleep().
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>, anna-maria@linutronix.de,
- tglx@linutronix.de, peterz@infradead.org, frederic@kernel.org,
- corbet@lwn.net, akpm@linux-foundation.org, linux-acpi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Len Brown <len.brown@intel.com>, Todd Brandt <todd.e.brandt@intel.com>
-References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
- <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
- <90818e23-0bdb-40ad-b2f9-5117c7d8045e@linux.intel.com>
- <CAJZ5v0gxNEQx5Q+KXs-AMn=bt7GD=jU-TseMHUc5mHp0tKSBtA@mail.gmail.com>
- <0147ea1a-3595-47ae-a9d5-5625b267b7a8@linux.intel.com>
- <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] general protection fault in do_migrate_pages
+From: David Hildenbrand <david@redhat.com>
+To: syzbot <syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+References: <673d2696.050a0220.3c9d61.012f.GAE@google.com>
+ <13aa3ca2-00a3-4b9f-a052-261d873f017d@redhat.com>
+ <a299097b-7070-44c4-97ec-40dcf87c5c21@redhat.com>
+ <252adf0e-9a0b-4419-88eb-e94adc5c2320@redhat.com>
 Content-Language: en-US
-From: Arjan van de Ven <arjan@linux.intel.com>
-In-Reply-To: <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <252adf0e-9a0b-4419-88eb-e94adc5c2320@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 11/20/2024 10:03 AM, Rafael J. Wysocki wrote:
-> On Tue, Nov 19, 2024 at 4:08 PM Arjan van de Ven <arjan@linux.intel.com> wrote:
->>
->> On 11/19/2024 5:42 AM, Rafael J. Wysocki wrote:
->>> On Mon, Nov 18, 2024 at 3:35 PM Arjan van de Ven <arjan@linux.intel.com> wrote:
+On 20.11.24 19:11, David Hildenbrand wrote:
+> On 20.11.24 17:39, David Hildenbrand wrote:
+>> On 20.11.24 16:38, David Hildenbrand wrote:
+>>> On 20.11.24 01:00, syzbot wrote:
+>>>> Hello,
 >>>>
->>>>> And the argument seems to be that it is better to always use more
->>>>> resources in a given path (ACPI sleep in this particular case) than to
->>>>> be somewhat inaccurate which is visible in some cases.
->>>>>
->>>>> This would mean that hrtimers should always be used everywhere, but they aren't.
+>>>> syzbot found the following issue on:
 >>>>
->>>> more or less rule of thumb is that regular timers are optimized for not firing case
->>>> (e.g. timeouts that get deleted when the actual event happens) while hrtimers
->>>> are optimized for the case where the timer is expected to fire.
+>>>> HEAD commit:    f868cd251776 Merge tag 'drm-fixes-2024-11-16' of https://g..
+>>>> git tree:       upstream
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15473cc0580000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=ff8e8187a30080b5
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=3511625422f7aa637f0d
+>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17e8d130580000
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159c71a7980000
+>>>>
+>>>> Downloadable assets:
+>>>> disk image: https://storage.googleapis.com/syzbot-assets/a0d46da55993/disk-f868cd25.raw.xz
+>>>> vmlinux: https://storage.googleapis.com/syzbot-assets/da57ef4813fd/vmlinux-f868cd25.xz
+>>>> kernel image: https://storage.googleapis.com/syzbot-assets/3cdde892ea08/bzImage-f868cd25.xz
+>>>>
+>>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>>> Reported-by: syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com
+>>>>
+>>>> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+>>>> KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+>>>> CPU: 1 UID: 0 PID: 6021 Comm: syz-executor284 Not tainted 6.12.0-rc7-syzkaller-00187-gf868cd251776 #0
+>>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+>>>> RIP: 0010:migrate_to_node mm/mempolicy.c:1090 [inline]
+>>>> RIP: 0010:do_migrate_pages+0x403/0x6f0 mm/mempolicy.c:1194
+>>>> Code: 8b 54 24 30 41 83 c8 10 80 3a 00 4d 63 c0 0f 85 d1 02 00 00 48 89 c1 48 8b 54 24 18 48 be 00 00 00 00 00 fc ff df 48 c1 e9 03 <80> 3c 31 00 48 8b 92 b0 00 00 00 0f 85 74 02 00 00 48 8b 30 49 89
+>>>> RSP: 0018:ffffc9000375fd08 EFLAGS: 00010246
+>>>> RAX: 0000000000000000 RBX: ffffc9000375fd78 RCX: 0000000000000000
+>>>> RDX: ffff88807e171300 RSI: dffffc0000000000 RDI: ffff88803390c044
+>>>> RBP: ffff88807e171428 R08: 0000000000000014 R09: fffffbfff2039ef1
+>>>> R10: ffffffff901cf78f R11: 0000000000000000 R12: 0000000000000003
+>>>> R13: ffffc9000375fe90 R14: ffffc9000375fe98 R15: ffffc9000375fdf8
+>>>> FS:  00005555919e1380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00005555919e1ca8 CR3: 000000007f12a000 CR4: 00000000003526f0
+>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> Call Trace:
+>>>>      <TASK>
+>>>>      kernel_migrate_pages+0x5b2/0x750 mm/mempolicy.c:1709
+>>>>      __do_sys_migrate_pages mm/mempolicy.c:1727 [inline]
+>>>>      __se_sys_migrate_pages mm/mempolicy.c:1723 [inline]
+>>>>      __x64_sys_migrate_pages+0x96/0x100 mm/mempolicy.c:1723
+>>>>      do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>>>      do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>>>>      entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>>> RIP: 0033:0x7fedcca74af9
+>>>> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+>>>> RSP: 002b:00007ffe4d85c278 EFLAGS: 00000206 ORIG_RAX: 0000000000000100
+>>>> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fedcca74af9
+>>>> RDX: 0000000020000000 RSI: 000000000000005a RDI: 0000000000001786
+>>>> RBP: 0000000000010bf2 R08: 0000000000006080 R09: 0000000000000006
+>>>> R10: 0000000020000040 R11: 0000000000000206 R12: 00007ffe4d85c28c
+>>>> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
+>>>>      </TASK>
+>>>> Modules linked in:
+>>>> ---[ end trace 0000000000000000 ]---
+>>>> RIP: 0010:migrate_to_node mm/mempolicy.c:1090 [inline]
+>>>> RIP: 0010:do_migrate_pages+0x403/0x6f0 mm/mempolicy.c:1194
+>>>> Code: 8b 54 24 30 41 83 c8 10 80 3a 00 4d 63 c0 0f 85 d1 02 00 00 48 89 c1 48 8b 54 24 18 48 be 00 00 00 00 00 fc ff df 48 c1 e9 03 <80> 3c 31 00 48 8b 92 b0 00 00 00 0f 85 74 02 00 00 48 8b 30 49 89
+>>>> RSP: 0018:ffffc9000375fd08 EFLAGS: 00010246
+>>>> RAX: 0000000000000000 RBX: ffffc9000375fd78 RCX: 0000000000000000
+>>>> RDX: ffff88807e171300 RSI: dffffc0000000000 RDI: ffff88803390c044
+>>>> RBP: ffff88807e171428 R08: 0000000000000014 R09: fffffbfff2039ef1
+>>>> R10: ffffffff901cf78f R11: 0000000000000000 R12: 0000000000000003
+>>>> R13: ffffc9000375fe90 R14: ffffc9000375fe98 R15: ffffc9000375fdf8
+>>>> FS:  00005555919e1380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> CR2: 00005555919e1ca8 CR3: 000000007f12a000 CR4: 00000000003526f0
+>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> ----------------
+>>>> Code disassembly (best guess):
+>>>>        0:	8b 54 24 30          	mov    0x30(%rsp),%edx
+>>>>        4:	41 83 c8 10          	or     $0x10,%r8d
+>>>>        8:	80 3a 00             	cmpb   $0x0,(%rdx)
+>>>>        b:	4d 63 c0             	movslq %r8d,%r8
+>>>>        e:	0f 85 d1 02 00 00    	jne    0x2e5
+>>>>       14:	48 89 c1             	mov    %rax,%rcx
+>>>>       17:	48 8b 54 24 18       	mov    0x18(%rsp),%rdx
+>>>>       1c:	48 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%rsi
+>>>>       23:	fc ff df
+>>>>       26:	48 c1 e9 03          	shr    $0x3,%rcx
+>>>> * 2a:	80 3c 31 00          	cmpb   $0x0,(%rcx,%rsi,1) <-- trapping instruction
+>>>>       2e:	48 8b 92 b0 00 00 00 	mov    0xb0(%rdx),%rdx
+>>>>       35:	0f 85 74 02 00 00    	jne    0x2af
+>>>>       3b:	48 8b 30             	mov    (%rax),%rsi
+>>>>       3e:	49                   	rex.WB
+>>>>       3f:	89                   	.byte 0x89
+>>>>
 >>>
->>> I've heard that, which makes me wonder why msleep() is still there.
+>>> Hmmm, there is not much meat in this report :)
 >>>
->>> One thing that's rarely mentioned is that programming a timer in HW
->>> actually takes time, so if it is done too often, it hurts performance
->>> through latency (even if this is the TSC deadline timer).
+>>> The reproducer seems to execute migrate_pages() in a fork'ed child
+>>> process, and kills that process after a while. Not 100% sure if the
+>>> concurrent killing of the process is relevant.
+>>>
+>>> Before the child process calls migrate_pages(), it executes
+>>> MADV_DONTFORK on the complete address space (funny, I wonder what that
+>>> does ...) and then calls clone3() without CLONE_VM.
+>>>
 >>
->> yup and this is why you want to group events together "somewhat", and which is why
->> we have slack, to allow that to happen
+>> After running it for a while in a VM with the given config:
+>>
+>> [  827.514143][T37171] Oops: general protection fault, probably for
+>> non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+>> [  827.516614][T37171] KASAN: null-ptr-deref in range
+>> [0x0000000000000000-0x0000000000000007]
+>> [  827.518162][T37171] CPU: 4 UID: 0 PID: 37171 Comm: repro4 Not tainted
+>> 6.12.0-rc7-00187-gf868cd251776 #99
+>> [  827.519935][T37171] Hardware name: QEMU Standard PC (Q35 + ICH9,
+>> 2009), BIOS 1.16.3-2.fc40 04/01/2014
+>> [  827.521648][T37171] RIP: 0010:do_migrate_pages+0x404/0x6e0
+>> [  827.522774][T37171] Code: 10 80 39 00 4d 63 c0 0f 85 9b 02 00 00 48
+>> be 00 00 00 00 00 fc ff df 48 8b 4c 24 28 48 8b 91 b0 00 00 00 48 89 c1
+>> 48 c1 e9 03 <80> 3c 31 00 0f 85 95 02 00 00 48 8b 30 49 89 d9 48 8b 4c
+>> 24 08 48
+>> [  827.526342][T37171] RSP: 0018:ffffc90028157ce8 EFLAGS: 00010256
+>> [  827.527480][T37171] RAX: 0000000000000000 RBX: ffffc90028157d68 RCX:
+>> 0000000000000000
+>> [  827.528942][T37171] RDX: 00007ffffffff000 RSI: dffffc0000000000 RDI:
+>> ffff88811dcd8444
+>> [  827.530406][T37171] RBP: 0000000000000003 R08: 0000000000000014 R09:
+>> ffff88811dcd8ad8
+>> [  827.531865][T37171] R10: ffffffff903e668f R11: 0000000000000000 R12:
+>> ffffc90028157e80
+>> [  827.533341][T37171] R13: ffff8881f3a2b0a8 R14: ffffc90028157e28 R15:
+>> ffffc90028157e88
+>> [  827.534806][T37171] FS:  00007f096d49f740(0000)
+>> GS:ffff8881f4a00000(0000) knlGS:0000000000000000
+>> [  827.536452][T37171] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [  827.537672][T37171] CR2: 00007ff2dcb96810 CR3: 00000001eed18000 CR4:
+>> 0000000000750ef0
+>> [  827.539135][T37171] PKRU: 55555554
+>> [  827.539799][T37171] Call Trace:
+>> [  827.540407][T37171]  <TASK>
+>> [  827.540965][T37171]  ? die_addr.cold+0x8/0xd
+>> [  827.541823][T37171]  ? exc_general_protection+0x147/0x240
+>> [  827.542888][T37171]  ? asm_exc_general_protection+0x26/0x30
+>> [  827.543960][T37171]  ? do_migrate_pages+0x404/0x6e0
+>> [  827.544915][T37171]  ? do_migrate_pages+0x3cd/0x6e0
+>> [  827.545873][T37171]  ? __pfx_do_migrate_pages+0x10/0x10
+>> [  827.546895][T37171]  ? do_raw_spin_lock+0x12a/0x2b0
+>> [  827.547854][T37171]  ? apparmor_capable+0x11c/0x3b0
+>> [  827.548818][T37171]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  827.549878][T37171]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  827.550937][T37171]  ? security_capable+0x80/0x260
+>> [  827.551893][T37171]  kernel_migrate_pages+0x5b7/0x750
+>> [  827.552891][T37171]  ? __pfx_kernel_migrate_pages+0x10/0x10
+>> [  827.553975][T37171]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  827.555028][T37171]  ? rcu_is_watching+0x12/0xc0
+>> [  827.555938][T37171]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  827.557000][T37171]  __x64_sys_migrate_pages+0x96/0x100
+>> [  827.558022][T37171]  ? srso_alias_return_thunk+0x5/0xfbef5
+>> [  827.559077][T37171]  ? lockdep_hardirqs_on+0x7b/0x110
+>> [  827.560052][T37171]  do_syscall_64+0xc7/0x250
+>> [  827.560909][T37171]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
-> So what do you think would be the minimum slack to use in this case?
+> .. digging further, we call migrate_pages() with the pid of a process
+> we created using clone3(!CLONE_VM).
 > 
-> I thought about something on the order of 199 us, but now I'm thinking
-> that 50 us would work too.  Less than this - I'm not sure.
+> The crashing code is likely:
+> 
+>           vma = find_vma(mm, 0);
+>       722c:       e8 00 00 00 00          call   7231 <do_migrate_pages+0x3c1>
+>       7231:       48 8b 7c 24 28          mov    0x28(%rsp),%rdi
+>       7236:       31 f6                   xor    %esi,%esi
+>       7238:       e8 00 00 00 00          call   723d <do_migrate_pages+0x3cd>
+>                                         flags | MPOL_MF_DISCONTIG_OK, &pagelist);
+>       723d:       44 8b 44 24 3c          mov    0x3c(%rsp),%r8d
+>           nr_failed = queue_pages_range(mm, vma->vm_start, mm->task_size, &nmask,
+>       7242:       48 8b 4c 24 40          mov    0x40(%rsp),%rcx
+>                                         flags | MPOL_MF_DISCONTIG_OK, &pagelist);
+>       7247:       41 83 c8 10             or     $0x10,%r8d
+>           nr_failed = queue_pages_range(mm, vma->vm_start, mm->task_size, &nmask,
+>       724b:       80 39 00                cmpb   $0x0,(%rcx)
+>       724e:       4d 63 c0                movslq %r8d,%r8
+>       7251:       0f 85 9b 02 00 00       jne    74f2 <do_migrate_pages+0x682>
+>       7257:       48 be 00 00 00 00 00    movabs $0xdffffc0000000000,%rsi
+>       725e:       fc ff df
+>       7261:       48 8b 4c 24 28          mov    0x28(%rsp),%rcx
+>       7266:       48 8b 91 b0 00 00 00    mov    0xb0(%rcx),%rdx
+>       726d:       48 89 c1                mov    %rax,%rcx
+>       7270:       48 c1 e9 03             shr    $0x3,%rcx
+>       7274:       80 3c 31 00             cmpb   $0x0,(%rcx,%rsi,1)
+> 
+> <--- we seem toc rash here
+> 
+>       7278:       0f 85 95 02 00 00       jne    7513 <do_migrate_pages+0x6a3>
+>       727e:       48 8b 30                mov    (%rax),%rsi
+>       7281:       49 89 d9                mov    %rbx,%r9
+>       7284:       48 8b 4c 24 08          mov    0x8(%rsp),%rcx
+>       7289:       48 8b 7c 24 28          mov    0x28(%rsp),%rdi
+>       728e:       e8 8d 9a ff ff          call   d20 <queue_pages_range>
+>       7293:       48 89 44 24 30          mov    %rax,0x30(%rsp)
+>       7298:       e9 c4 00 00 00          jmp    7361 <do_migrate_pages+0x4f1>
+>           up_read(&mm->mmap_lock);
+>       729d:       e8 00 00 00 00          call   72a2 <do_migrate_pages+0x432>
+>       72a2:       4c 89 ef                mov    %r13,%rdi
+>       72a5:       e8 00 00 00 00          call   72aa <do_migrate_pages+0x43a>
+> 
+> 
+> Which would be do_migrate_pages()->migrate_to_node():
+> 
+> mmap_read_lock(mm);
+> vma = find_vma(mm, 0);
+> nr_failed = queue_pages_range(mm, vma->vm_start, mm->task_size, &nmask,
+> 			      flags | MPOL_MF_DISCONTIG_OK, &pagelist);
+> mmap_read_unlock(mm);
+> 
+> ... and it seems to fail before calling queue_pages_range() :/
+> 
+> Did we, for some reason get a vma=NULL, because someone is concurrently tearing down the MM?
 
-50 usec is likely more than enough in practice.
+I think that's exactly what's happening. Will send a fix after testing it.
 
+-- 
+Cheers,
+
+David / dhildenb
 
 
