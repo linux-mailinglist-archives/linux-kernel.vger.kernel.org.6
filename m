@@ -1,177 +1,156 @@
-Return-Path: <linux-kernel+bounces-416397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189D99D443C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:03:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2013B9D443E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F1E6B24273
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A7C28241F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF461D31B5;
-	Wed, 20 Nov 2024 22:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A10B1D363D;
+	Wed, 20 Nov 2024 22:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="H4yNQuaQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QAGB7CUh"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Wr5WcVdQ"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF3E1CEAA7
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA641D359A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143496; cv=none; b=q8COKcssTnlDDVfPoMlsQwflD6jzljKV4mqcM17U8FVe4XfQcdbgIf4/5qaXSq3Qx3yaocIYxYGRVEdzlFVQMP6bEigW0iaXP1EZgdYLLn/mH8MtlAEGB1soRXfJDf1l2uHkDeiQ8NmdTioXaKBMnXNEYqog0XJIBTUyqJsN8pA=
+	t=1732143510; cv=none; b=HwI/b/bo7k7uI8qZ60wNDqB3ubmHnlMhl08hNc+C1OCrax4EQUbfUv2o/kHZJqDX/vxuho1uGDgmsEZcRg3OenVdbK/e0XT7DjINSJ7LFt+hQAq13Hv6CVbXM2gKljs8I0cYemSPFH0qjZd2YIS3ft94DI+plArzOLBdpuq5iKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143496; c=relaxed/simple;
-	bh=HYO3LF2gYzhM5iEeYRRuJeM3/0R8BXUrfJzTmFfthfo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:Subject:Content-Type; b=eaNadzvXLn3yDM/6qEjduNeyTNKE5+nMfB7YDr68vqMAlcETYy1tvX/ykUKbwwEvdeuoJlHt01iDd1YE47HuQIkh1rSDPA9alodctF61DNfVVFeVWJni+KAG6INSh/Lynnjw/unzR/9In7h1HsDhikYTfjMqlZg0WhLfEt7wrto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=H4yNQuaQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QAGB7CUh; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B4B6A11400EA;
-	Wed, 20 Nov 2024 17:58:13 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 20 Nov 2024 17:58:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1732143493; x=1732229893; bh=xe
-	OHpXlzAJD44WoT0DuFPbZEIKnuN7VOKl/I9OA3OcQ=; b=H4yNQuaQ2j2CuaTNNo
-	VgaIn0oq35XnNt3KdxrlCoMGJOdbtA5d5ZbguUtTIbAwrXiMs+lQZCpX2BoRNLyo
-	xv0M4BmXpbBjUiDswJN+gfMcm6jv0pQPObsBvPzZ9dQWenI1mDXgM8Oe3biyPRkE
-	N9QFW2yAG9LvTUV9KPNi2881sf1rwpS2IfEW/8mvkZlajVQoFfl9r7e4n2XFVh4/
-	aAS7w/9XmM4i404Vzvob3cSPk2Df8caeS6Djl9L9jLfwn+iO8uZZafoOK4fRtQeB
-	m6xQ16/SeVeYIi9ukkt3y96g3t/Z60ZCv09j6NGflskoUjEUOJb8NUx/zANSp/ez
-	mxmQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1732143493; x=1732229893; bh=xeOHpXlzAJD44WoT0DuFPbZEIKnu
-	N7VOKl/I9OA3OcQ=; b=QAGB7CUhPbO502RxEZiQeaRBDysiqntvudgLdZaDxHo+
-	A9ZV2QnNwL5MoSz4zcgGLadqd1qh3vGViXrviT5KrN0zhbAlUw6v3no3gdwL3Tj6
-	n3bRvTqdx9ZcjnlIknTWUCevFkNxmPSRkVjOyFIDUHEGCn7KdHm+N3IsYf4WF3qs
-	sF/4+cz4lQNaZVDGKWr/NAtaRnBayHRr8rKwq5oVpXsY0IrxYLNDL+RDMx7GTZF4
-	EWp6BWBlpINek8hPB2wgSAGDN+Win2kYzNW+b6PjxkA1tFa4UIb7f/rz+tNkjaG+
-	6R6Q0dxLgQxHTlhjwPwm+nx4IB5jh1ZGC1KIUIpY/w==
-X-ME-Sender: <xms:hWk-Z1wGWmyq0jnK0nYtrYkvK4nnyDtG7YXbOAaHGd84XGwTlAYIug>
-    <xme:hWk-Z1R50fDZbCHL_uby1cMkbA3Gpql6lSYnlpmnYEvJUZsUnWux1h7zVWDU4ap0L
-    fZ71YaYA61VvS4H8Fw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgddtgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkufgtgfesthhqredtredtjeenucfh
-    rhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqe
-    enucggtffrrghtthgvrhhnpeelveehkeffgfdtheekveehhfdtheefkefggeekheeuhffg
-    heejteevgfdtuddvkeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouh
-    hnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghl
-    sehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhotgeslhhish
-    htshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:hWk-Z_V4AmXAYSjsWklDl99CZ-SU_kMp0lirRUX5ZrjcpoF56Dij9Q>
-    <xmx:hWk-Z3gKeXeeamCe_HawyrCuTVg_DvYNc--dd5njSkBh6Dzpwet8nA>
-    <xmx:hWk-Z3AJ1ZAXfWo74g_AGalaie9wqRSdBjmVDCULPahowE1w36wXXw>
-    <xmx:hWk-ZwJBVmUd-w7XbM6jzD_q_ZhYC-NM-jMpg3W1NUlm6AAM0Do62w>
-    <xmx:hWk-Z-MEcSte231BCKXp6Y6hn5nTJIc6NVOY4T1vjfSRxezlmT4an02M>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 77E822220071; Wed, 20 Nov 2024 17:58:13 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732143510; c=relaxed/simple;
+	bh=1skV2qFAGfSvbe534zMjcl+hBxCjgXktPRELDMeL1ZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UwvuE6IWH7hFLuEphu/pWxVpIOtr/+cHigFKnO5yCgr+WJyJDGBF3dIv7XuRIygDYwyK3vm6INiFv8RDeeLJHjSF42vrwisdR0fTEaz8ehgPjTQAt3fI0qJHY2H9lqLEaj3KLZTBiwDcLqXN9Dn32/MYUDYMsVHsdO4NMnlW/GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Wr5WcVdQ; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3a78de8aa87so967255ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1732143507; x=1732748307; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zbBxCzNBeFc+wnUmMcmZVchDz/UBEx2euh7K944pRho=;
+        b=Wr5WcVdQBsQBlMssvpQqYREzhQo3o+X9GWr1mOzxZ9IBpXRRQd1KPXtVUBoJbG/XA8
+         gnV1VNAAHbArw24jUx5WM7IkHTrWJaxI1Suzb8xVBMK7GxbCokmAE3HF+plwiVulNID6
+         mRPbHCZ44eHyDF62zo7E1zOkgNXlO6Gm+0AeM5+1jJK89VYJM9Mb9vY2VdE8mxYDFBas
+         sloCK2Y3MHluVGIwbsM0mbPtTipMjHzT61Ft21LioY07XNyrSXKEFqVN/kWo2s1t8NiJ
+         t1Brzga3kuhYc7aMUq4/BGe/FMhjdHFC9xYj/50hktDl1dmbX6e3l2EYkJ67Y8wxslJd
+         TX8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732143507; x=1732748307;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbBxCzNBeFc+wnUmMcmZVchDz/UBEx2euh7K944pRho=;
+        b=gdn1OVBBVW7DoIyVpFoOr7FgXHcuXs8PZR1SdEQ66lG5m6nGVkZusFRSTp1wtSpVo2
+         m4OFLrtR7pYvmIMzYhsjPYCYxX6sU9U9FwJyOHAUGWSAlB+ZsspDcKMM3n3cd/w/+jvB
+         f13U+1CHZuopsLUl+9CgIO3voqGX5OhyNpnb8pN3AJTbTTwexqxitHzTpoYhOIVJvteZ
+         nAQx8mmDTSjJDc80bPv6i1ILQ7jYEIi/qCOdOuiTa38BdOkBdK8DCTjK0udPYpFDKQ2b
+         +UzpUy70lZWaemG/VoIkmHb7/STu+0So5xUS2k1+BB3ndZG8i8Px0Up0d23QafApHMc8
+         Ub6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXB2i5OeMZyuJeEs+Nv6Xs34+JOGmllLHz8d3cZ9aaNpai8Y+Ox5umNK5KQG/C0DCMD0Bfs1I5IatYDVoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhaduPCUBTvFoPT3xZw0QsgQco+4AM+4fCm7tgHY+41/9fk2RB
+	CMlVN9vwF46H1H+DJQUvio5FGSDW3j2oJ4AajIrZAUHBwDi4EgSgSQ8oK59WWXU=
+X-Gm-Gg: ASbGnct6PVylIqp6cECltwi8s2rV4XMLCkIEI6ZWb0AVhLXiTRSYtM2nMwOXScJvOi5
+	zTaFYNGToGzg/j8RhwwGpwuXngsmyrCZz9N+MTHdKF9I8rA29E1JlXpQtPd4uObDOuGIQfMzXV7
+	bVUrFXmxH7/FprQc5pxLy5jMfqqTgIMnb12potHFJaqdGPOCsDttcU84t6DMqhflQuk9o1Uo4ib
+	pgntKqlTcqc/rBR4OdMSCF9YeUwFAKSqewmusAxJYhjOtDRTP8F4Q+kL9tTXNsYCRilBUvVwkE=
+X-Google-Smtp-Source: AGHT+IFvnDSs0nypxasHrAqHXfd62zgZW+seKpuOYdOy+I7WC2wqrJzw+E6F2xuiWGwbF5BKh5ZUTQ==
+X-Received: by 2002:a05:6e02:1a43:b0:3a7:6c6a:e2a2 with SMTP id e9e14a558f8ab-3a78645638fmr49953825ab.9.1732143507343;
+        Wed, 20 Nov 2024 14:58:27 -0800 (PST)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e06d707c12sm3421896173.41.2024.11.20.14.58.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 14:58:26 -0800 (PST)
+Message-ID: <15a6ecb8-ca6b-46bd-a065-0f35c488628e@sifive.com>
+Date: Wed, 20 Nov 2024 16:58:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 20 Nov 2024 23:57:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
-Subject: [GIT PULL 0/4] soc updates for 6.13
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] of: property: fw_devlink: Do not use interrupt-parent
+ directly
+To: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241114195652.3068725-1-samuel.holland@sifive.com>
+ <20241119154117.GA1537069-robh@kernel.org>
+ <1f78898b-f703-4fd9-8f68-c0835a85de9e@sifive.com>
+ <CAL_JsqJ0K5z9rNHKNF1Xq8XnAkrxZaG-Th-e-G-zy5bo9_8=QA@mail.gmail.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <CAL_JsqJ0K5z9rNHKNF1Xq8XnAkrxZaG-Th-e-G-zy5bo9_8=QA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The SoC tree this time has a moderate 840 patches from 203
-contributors. There is not much remarkable in there, overall
-we have a lot of new SoCs and board files in the devicetree
-updates, but not as many changes to the Snapdragon platform
-as we've had most of last year.
+On 2024-11-19 11:49 AM, Rob Herring wrote:
+> On Tue, Nov 19, 2024 at 10:47 AM Samuel Holland
+> <samuel.holland@sifive.com> wrote:
+>>
+>> Hi Rob,
+>>
+>> On 2024-11-19 9:41 AM, Rob Herring wrote:
+>>> On Thu, Nov 14, 2024 at 11:56:49AM -0800, Samuel Holland wrote:
+>>>> commit 7f00be96f125 ("of: property: Add device link support for
+>>>> interrupt-parent, dmas and -gpio(s)") started adding device links for
+>>>> the interrupt-parent property. Later, commit f265f06af194 ("of:
+>>>> property: Fix fw_devlink handling of interrupts/interrupts-extended")
+>>>> added full support for parsing the interrupts and interrupts-extended
+>>>> properties, which includes looking up the node of the parent domain.
+>>>> This made the handler for the interrupt-parent property redundant.
+>>>>
+>>>> In fact, creating device links based solely on interrupt-parent is
+>>>> problematic, because it can create spurious cycles. A node may have
+>>>> this property without itself being an interrupt controller or consumer.
+>>>> For example, this property is often present in the root node or a /soc
+>>>> bus node to set the default interrupt parent for child nodes. However,
+>>>> it is incorrect for the bus to depend on the interrupt controller, as
+>>>> some of the bus's childre may not be interrupt consumers at all or may
+>>>
+>>> typo
+>>>
+>>>> have a different interrupt parent.
+>>>>
+>>>> Resolving these spurious dependency cycles can cause an incorrect probe
+>>>> order for interrupt controller drivers. This was observed on a RISC-V
+>>>> system with both an APLIC and IMSIC under /soc, where interrupt-parent
+>>>> in /soc points to the APLIC, and the APLIC msi-parent points to the
+>>>> IMSIC. fw_devlink found three dependency cycles and attempted to probe
+>>>> the APLIC before the IMSIC. After applying this patch, there were no
+>>>> dependency cycles and the probe order was correct.
+>>>>
+>>>> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+>>>
+>>> I assume this should go to stable? It needs Fixes tags.
+>>
+>> What commit should I put in the Fixes tag? f265f06af194 ("of: property: Fix
+>> fw_devlink handling of interrupts/interrupts-extended"), because it finished
+>> making this code redundant? That commit didn't introduce any new bugs--this code
+>> was always wrong--but I would be hesitant to backport this change any further,
+>> because it might cause regressions without the "interrupts" property parsing in
+>> place.
+> 
+> I'd guess that f265f06af194 has been backported to everything with
+> 7f00be96f125. I think we want either all 3 commits or none of them. If
+> something only works with a subset, then upstream is broken.
 
-The most active contributors by number of patches this
-time were:
+Of the current LTS branches, v5.10 has only 7f00be96f125. f265f06af194 was only
+backported as far as v5.15, since it Fixes: 4104ca776ba3 ("of: property: Add
+fw_devlink support for interrupts"), which was merged for v5.12. I will add this
+same Fixes: tag for v2.
 
-     32 Geert Uytterhoeven
-     29 Krzysztof Kozlowski
-     26 Marek Vasut
-     26 Konrad Dybcio
-     23 Frank Li
-     22 Dmitry Baryshkov
-     21 Fei Shao
-     18 Wolfram Sang
-     18 Fabio Estevam
-     17 Manorit Chawdhry
-     14 Andreas Kemnade
-     12 Nick Chan
-     12 Neil Armstrong
-     12 Jo=EF=BF=BD=EF=BF=BDo Paulo Gon=EF=BF=BD=EF=BF=BDalves
-     12 Ivaylo Ivanov
+Regards,
+Samuel
 
-and the overall dirstat shows nxp, qualcomm, rockchip
-and ti as the largest changes, with only NXP i.MX6
-still seeing a lot of work on 32-bit boards.
-
-   0.4% Documentation/devicetree/bindings/arm/
-   0.5% Documentation/devicetree/bindings/clock/
-   0.1% Documentation/devicetree/bindings/soc/mediatek/
-   0.2% Documentation/devicetree/bindings/
-   0.2% arch/arm/boot/dts/allwinner/
-   0.1% arch/arm/boot/dts/amlogic/
-   1.9% arch/arm/boot/dts/microchip/
-  17.7% arch/arm/boot/dts/nxp/imx/
-   0.5% arch/arm/boot/dts/qcom/
-   0.4% arch/arm/boot/dts/renesas/
-   0.7% arch/arm/boot/dts/rockchip/
-   0.2% arch/arm/boot/dts/st/
-   0.3% arch/arm/boot/dts/ti/omap/
-   0.3% arch/arm/
-   0.2% arch/arm64/boot/dts/allwinner/
-   0.4% arch/arm64/boot/dts/amlogic/
-   3.0% arch/arm64/boot/dts/apple/
-   4.5% arch/arm64/boot/dts/exynos/
-   8.2% arch/arm64/boot/dts/freescale/
-   2.1% arch/arm64/boot/dts/mediatek/
-   1.0% arch/arm64/boot/dts/nvidia/
-  12.6% arch/arm64/boot/dts/qcom/
-   0.7% arch/arm64/boot/dts/renesas/
-  19.6% arch/arm64/boot/dts/rockchip/
-   0.1% arch/arm64/boot/dts/st/
-  11.4% arch/arm64/boot/dts/ti/
-   0.1% arch/arm64/boot/dts/xilinx/
-   0.2% arch/riscv/boot/dts/sophgo/
-   0.4% arch/riscv/boot/dts/thead/
-   0.1% arch/
-   0.1% drivers/firmware/arm_scmi/transports/
-   0.2% drivers/firmware/arm_scmi/
-   0.4% drivers/firmware/xilinx/
-   0.8% drivers/firmware/
-   0.4% drivers/misc/
-   0.4% drivers/reset/amlogic/
-   0.4% drivers/reset/
-   0.5% drivers/soc/hisilicon/
-   0.1% drivers/soc/imx/
-   0.8% drivers/soc/mediatek/
-   3.4% drivers/soc/qcom/
-   0.1% drivers/soc/
-   0.1% drivers/
-   1.1% include/dt-bindings/clock/
-   0.1% include/linux/soc/
-   0.6% include/linux/
 
