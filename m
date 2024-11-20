@@ -1,191 +1,107 @@
-Return-Path: <linux-kernel+bounces-415363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83E19D3500
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:05:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4E09D3501
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F213B2587B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:05:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C3B1F22E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5457D16F8E5;
-	Wed, 20 Nov 2024 08:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44144158858;
+	Wed, 20 Nov 2024 08:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FIFS3H17"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Kvaz97s2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pVi2K95v"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830FB166F16
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F9060DCF
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732089913; cv=none; b=fm2c9VcnORZTJkYkEPZH0aCFkjg2E5EXqcWkU3vXA/Wh38CqXbDuATM2yKmpDEGzS0qMBzZLsGVxn9+tRxTv5GObqsdQQSPkPH3gfdWuW9eKyC1CAD+agh/UuZ6RhaTVKTdSrJzCdLpi7ndyrUoS45KYROxl2TbRpnWwLf0EnRU=
+	t=1732089925; cv=none; b=IAHT013EEd9bCDkp//FNSL2ZRr/xKKTZh0NylJyZMFc6Eny0N3IT5d06uDKUPW9PEuzav70noIkV6pdonkiuABeS3DWCgXVTG+KfKOpXgVTTqlD2H2x284Mc4I5oNmrSW+7D5/Yv+NrFfhALSRtMv64MIvgCf4vMEeBEuHc8Zkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732089913; c=relaxed/simple;
-	bh=8c4RY0owHoz5An/7xGsvontCEb/FG4VsXHaUAG4EBZ0=;
+	s=arc-20240116; t=1732089925; c=relaxed/simple;
+	bh=+XfZ6aH67RuphEum1sNMs/bFLTO1I8SN/QSDRfT+fFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuEV1/sUIYOTlXnJS8YSpkUuFUO0c8NbdCZHJGBqqEnM6OyfZv+pFA5LpcC+s4PaUNnXrD1NKBdMoLUng7rj6hl6rvWtuo0muyotvnY3T+Hna2fElj2ExwovYvP+kQxFwAGrLrIevg7qEibqujUGyAHg00qmNEtX5/EG4nv91k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FIFS3H17; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so55217735e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:05:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732089907; x=1732694707; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jRgDfoaQT9KNI5x6/6yzE+UnJrhXzmTHlyAUFtH2BlU=;
-        b=FIFS3H17mQY8pwTarpQ0y2+fPZ7eIXhnMJbJzZmuIdRx4I0Vp+h/41TwfS2N9KR+bo
-         nqCDnj7an/RLZ1y9RTlE69FLtIgrcHsqLOEaWyT+AJiGU18103kq1cm/EZ4DdsMIH8iq
-         17IksWMZPmOmhgLmfHBKKE35syhXd0edaBYwIOh/JuoKjdiuehutl8FXERNDlqFrvWWG
-         Gnd5Ubd/D6QZJov43N2DRCHQ933R6NfIalBwhdaXnRkXxvmq1RkVjMIGx/p0KghyKtkj
-         Iczo/PDfmI5/1Ggd7ZCUqy8gf1X0E5usLoG5KrEF0kW9lEd9f/M/qzEJR/CPVOEnZSNK
-         rQHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732089907; x=1732694707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jRgDfoaQT9KNI5x6/6yzE+UnJrhXzmTHlyAUFtH2BlU=;
-        b=EUiV/bptBhaTjANyL5EsyNKhl+2E5PstC3sMKrhNOtPK+IOgrl7RpwFISjYHaTPeSu
-         2Q7RYR8qW5y7me9GWAabXOPeTjy/W/VrPsSfUTlOoRlOD9gj571vaoZYTEvvYp5G8KSv
-         ZloK+nhXo876EZMIfEoK9UpCZ64aexu+Yfoitl8ZXEmu24UinAJb4o8X9LfGYqC400Sa
-         26moX85EW+Z6zYOllCQJT0LKR+HwZSM7RJeDwzxsNtj7z2DRbVLzHsw9LkemxQq/h+aa
-         1G8UzZfx1D9p2L0EnJI5zxLtspww0HGiu0qJNWyUb/gUes/EqRjdf52C2hcFUNv98mEo
-         g1og==
-X-Forwarded-Encrypted: i=1; AJvYcCXDp1ZunWUpjmXVBTSqBuY8anoV7w3OTlwQLROWC87kjfx+FtukWfCgR1aHNbh4xQp6VEMS2rx8btFcwMk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWMBBXGuZCuTtZwHnopzG137m2oZc6wp9ylf3TRkFkn5APk70C
-	YRoJmLWK0zfWeNlblNlT0sRuc+cStTUu5hFIGvuEc9JXD5zkQ7pLzpT8TCex6wE=
-X-Google-Smtp-Source: AGHT+IEFny7M03Y934XV3HYBrb4ejakxQGcLpkJMphiZM1V77YWoi33QS9ejQpOi9Dvb73myIts4lQ==
-X-Received: by 2002:a05:600c:1d93:b0:42b:ac3d:3abc with SMTP id 5b1f17b1804b1-4334f01548dmr15750715e9.24.1732089906850;
-        Wed, 20 Nov 2024 00:05:06 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b4643100sm10021045e9.39.2024.11.20.00.05.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 00:05:06 -0800 (PST)
-Date: Wed, 20 Nov 2024 11:05:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, jasowang@redhat.com,
-	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com,
-	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Satha Rao <skoteshwar@marvell.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] vdpa/octeon_ep: enable support for multiple
- interrupts per device
-Message-ID: <b799bf24-876a-41da-b297-d2323c314674@stanley.mountain>
-References: <20241120070508.789508-1-sthotton@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAyxpMoOViNx5CZcyYP0agDID0YU3bBTHlFNWFyHrEYI3fcT89yP7YBV/U9jgSD7pgCGWyc1NqmMC/7jKoTSy9YIORTvBo16S939Vzv12u0sDo37n3vtdEf1o+sdq92Yogt5lDWuy0Tzs88bDKNGuFfpDZsDbaXg2e8O+837FDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Kvaz97s2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pVi2K95v; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Nov 2024 09:05:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732089922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zs0hoPbsHkv5OU8T4saAvd9rGQoJb3WXfsMJDKAk3GM=;
+	b=Kvaz97s2Lj9hLl9EdGilLgbw3ybjqljCYIKDdtypaur7sg1NhlrQSFmgEDgKiQu3k1QO4X
+	p6fVrxOeiSGuevlhL+CWVMGP3cASc0ar/7n+17Nt9CxaXYhvjnYpCT6SUKIuL9op6AltCG
+	TOlHGD2BkCPUnkmqGfW5ApB+j4Yjk+Bpf12Du+P6ZKEVyO3+HbeLc/vgk1+aJUyGn7K+Kn
+	HDOKhG5KkbAGotxqm/7n19ZXm6K3tKXUGjt9/D7q8YyeNFtCYpg/4zx2pVneJSOcYoxQ3W
+	rz+voQsbpu7Iwqbtt32+iMwjjO4aDCJMWsB2sxuQ/Bam063OT5OI3Rg/mnrU2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732089922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zs0hoPbsHkv5OU8T4saAvd9rGQoJb3WXfsMJDKAk3GM=;
+	b=pVi2K95vDXXsmcVaHSVxEDy1KuLm3Snn4xzk9Z7RFLGmNDd2pkBBXsd2GV5g+9uweW2EHZ
+	XnR8/Hrp9UvXL4Cg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+	loongson-kernel@lists.loongnix.cn
+Subject: Re: [PATCH V2 2/4] LoongArch: Fix sleeping in atomic context for
+ PREEMPT_RT
+Message-ID: <20241120080521.ynDZpGQd@linutronix.de>
+References: <20241117053740.3938646-1-chenhuacai@loongson.cn>
+ <20241117054017.3938700-1-chenhuacai@loongson.cn>
+ <20241117054017.3938700-2-chenhuacai@loongson.cn>
+ <20241120074049.hw2lHvyM@linutronix.de>
+ <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120070508.789508-1-sthotton@marvell.com>
+In-Reply-To: <CAAhV-H5P5KOZiv1C68R4notkjwkoTd49=t_09cifXLGLRKDNCQ@mail.gmail.com>
 
-On Wed, Nov 20, 2024 at 12:34:50PM +0530, Shijith Thotton wrote:
-> @@ -63,44 +80,53 @@ static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
->  static void octep_free_irqs(struct octep_hw *oct_hw)
->  {
->  	struct pci_dev *pdev = oct_hw->pdev;
-> +	int irq;
-> +
-> +	for (irq = 0; irq < oct_hw->nb_irqs && oct_hw->irqs; irq++) {
-> +		if (oct_hw->irqs[irq] < 0)
-> +			continue;
->  
-> -	if (oct_hw->irq != -1) {
-> -		devm_free_irq(&pdev->dev, oct_hw->irq, oct_hw);
-> -		oct_hw->irq = -1;
-> +		devm_free_irq(&pdev->dev, oct_hw->irqs[irq], oct_hw);
->  	}
-> +
->  	pci_free_irq_vectors(pdev);
-> +	kfree(oct_hw->irqs);
+On 2024-11-20 15:46:08 [+0800], Huacai Chen wrote:
+> > > diff --git a/arch/loongarch/mm/tlb.c b/arch/loongarch/mm/tlb.c
+> > > index 5ac9beb5f093..3b427b319db2 100644
+> > > --- a/arch/loongarch/mm/tlb.c
+> > > +++ b/arch/loongarch/mm/tlb.c
+> > > @@ -289,7 +289,7 @@ static void setup_tlb_handler(int cpu)
+> > >               /* Avoid lockdep warning */
+> > >               rcutree_report_cpu_starting(cpu);
+> > >
+> > > -#ifdef CONFIG_NUMA
+> > > +#if defined(CONFIG_NUMA) && !defined(CONFIG_PREEMPT_RT)
+> > >               vec_sz = sizeof(exception_handlers);
+> >
+> > How does this work with NUMA and RT? You don't allocate memory and
+> > everything is fine? Couldn't you pre-allocate the memory on the boot CPU
+> > before kicking the CPU to boot? And then just assign the memory here.
+> Allocating percpu exception pages on the own node is just an
+> optimization, everything can work without this optimization.
+> Preallocation is meaningless because all pages come from Node-0.
 
-You should add:
+Don't you have alloc_pages_node() where you can set the node?
+And I mean pre-allocation so you don't have to allocate memory here but
+already have it ready.
 
-	oct_hw->nb_irqs = 0;
-	oct_hw->irqs = NULL;
+> Huacai
 
-Otherwise if reset is called twice in a row, before re-initializing the IRQs it
-results in a use after free.
-
->  }
->  
->  static int octep_request_irqs(struct octep_hw *oct_hw)
->  {
->  	struct pci_dev *pdev = oct_hw->pdev;
-> -	int ret, irq;
-> +	int ret, irq, idx;
->  
-> -	/* Currently HW device provisions one IRQ per VF, hence
-> -	 * allocate one IRQ for all virtqueues call interface.
-> -	 */
-> -	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
-> +	ret = pci_alloc_irq_vectors(pdev, 1, oct_hw->nb_irqs, PCI_IRQ_MSIX);
->  	if (ret < 0) {
->  		dev_err(&pdev->dev, "Failed to alloc msix vector");
->  		return ret;
->  	}
->  
-> -	snprintf(oct_hw->vqs->msix_name, sizeof(oct_hw->vqs->msix_name),
-> -		 OCTEP_VDPA_DRIVER_NAME "-vf-%d", pci_iov_vf_id(pdev));
-> +	oct_hw->irqs = kcalloc(oct_hw->nb_irqs, sizeof(int), GFP_KERNEL);
-
-This isn't free on the ->release() path or whatever.  octep_free_irqs() is
-called on reset() but we rely on devm_ to free the IRQs on ->release().  Use
-devm_kcalloc() here as well, probably.
-
-> +	if (!oct_hw->irqs) {
-> +		ret = -ENOMEM;
-> +		goto free_irqs;
-> +	}
->  
-> -	irq = pci_irq_vector(pdev, 0);
-> -	ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
-> -			       oct_hw->vqs->msix_name, oct_hw);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to register interrupt handler\n");
-> -		goto free_irq_vec;
-> +	memset(oct_hw->irqs, -1, sizeof(oct_hw->irqs));
-
-This works, but it would be more normal to just leave it zeroed and check for
-zero instead of checking for negatives.  There is never a zero IRQ.  See my blog
-for more details:
-https://staticthinking.wordpress.com/2023/08/07/writing-a-check-for-zero-irq-error-codes/
-
-regards,
-dan carpenter
-
-> +
-> +	for (idx = 0; idx < oct_hw->nb_irqs; idx++) {
-> +		irq = pci_irq_vector(pdev, idx);
-> +		ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
-> +				       dev_name(&pdev->dev), oct_hw);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Failed to register interrupt handler\n");
-> +			goto free_irqs;
-> +		}
-> +		oct_hw->irqs[idx] = irq;
->  	}
-> -	oct_hw->irq = irq;
->  
->  	return 0;
->  
-> -free_irq_vec:
-> -	pci_free_irq_vectors(pdev);
-> +free_irqs:
-> +	octep_free_irqs(oct_hw);
->  	return ret;
->  }
->  
-
-regards,
-dan carpenter
+Sebastian
 
