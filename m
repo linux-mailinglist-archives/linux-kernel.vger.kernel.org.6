@@ -1,109 +1,69 @@
-Return-Path: <linux-kernel+bounces-415989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C189D3ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:17:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6765E9D3F0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB111F220AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B84B4B3A0E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7761B1B0109;
-	Wed, 20 Nov 2024 15:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A31C7B69;
+	Wed, 20 Nov 2024 15:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hHQQtivy"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMZdtdQ+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EoHW11c0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF282B9A9;
-	Wed, 20 Nov 2024 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5571BC9F7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115591; cv=none; b=UH3WbdAjnYxTqVUnnHtZq0/lZ823HjRoM3aiVj4bznls3oCjxBqIJaapKOfB8owTsXiD1c1AwF4ZoL33UJZW0HVD8TqkzVmYgEil3QJdQtu8wreHL/crqfWnuIslHW22R9k1YojXuUuwsLnZffLj1T9B+8pQ1GtsB1yiDUHTOU4=
+	t=1732115615; cv=none; b=oLP1JCxuifAiyY6rkulufu/fza98GtfAeqtHqgnHfd744EgWdFMcm/C3qew3ctuBk5m7RoDzUc9Qwm8xNRLx/nUh8mSUWNfwXx+5Ev5+T4IvqokJnmDx9QULJdAcuumpVi5p6Tk0HuJ/Z1yfGh0m7Z+/0II1qEJ5gKOUz73gdWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115591; c=relaxed/simple;
-	bh=/ICbzWM/m9Ey+tjFGLTbiKkd6MhG4IyhhGiknGWoNjg=;
+	s=arc-20240116; t=1732115615; c=relaxed/simple;
+	bh=qKv9cxbSY+Qe8be9WuTZQY3IxWhec3ATul1vGb9cfs8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkOVkuNFbApEuRRvETfjTSw6AiJMFFfS6nUXLxon/6ZbOuKxcILVdNAjMEitzzgzshs6OS7GIiwZ7Bl9SxYPw2gOpmVPhA1ygFrNYWnJ97PonlOOiohIW17yr+y7j6l8zcxWthyQiVFS4ONFSjRfj8Y9/bDYnmOItUyMCeI464k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hHQQtivy; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AAZRDzlSytBcEeYbJd2bXyGg47+8MrAXJx0XsTo+ZCk=; b=hHQQtivypT3ptz/3Ng1DE0HYYc
-	ui45zM/vkkkWmkIkMIkjF8WnrBlzDbQ/bMF/zf4Sy2NSFsZu+/jaZ2HccJy8QPhMdwzOD7xB2vxP0
-	SP/Xhg12scFjjWG65KN1giIEGj498w3S1FHEULPi6tzNACfQ0apQ2otQK9ArVd9G1++V8UvkKGXUF
-	O4wb+v87ZdqqKtS9Vmj/jKu2YxhRA7hp4E/eKutXXMDhBsjK2RyWf3kYuoQ+xcd4Pyh4tzfoZelFT
-	53b8s43+VeviRTcjem3wSYAvSX+Kad1JoN35MMtbbawjNxeDNPSx06aRS0jG1T0WRY6aZf5eloTsl
-	F6cXyBwA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDmOB-00000005NpY-0kTk;
-	Wed, 20 Nov 2024 15:13:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0D62E300446; Wed, 20 Nov 2024 16:13:08 +0100 (CET)
-Date: Wed, 20 Nov 2024 16:13:08 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 12/15] context_tracking,x86: Defer kernel text
- patching IPIs
-Message-ID: <20241120151308.GL19989@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-13-vschneid@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PE3Ix2rR2edOUBKHP/1Y5uCnjgDPPSWG0C7t76hvdyZxtCtuXxreDUl05d86UUpzB5pk6j2pIK/HjIWRsq9RyD8iVAevPxSm0H/vL+g7Ha+euLCwKcouWPhJFs4FT3prBcGRud1n1jZEU9dV3ydBoXIxIkcwLfnjp2UDhJmkTWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMZdtdQ+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EoHW11c0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Nov 2024 16:13:28 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732115611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyO8yv8V4ueZfLiOBMizzmpe+ea8iyO25drixQuoPIY=;
+	b=uMZdtdQ+edsln1z1OlicaONMvdN6iaesn6y5qYMjSZI7zi0tDxUL0YBV7ddareJwzQI/KR
+	AvLUM75RMybwKoeCNOiAHLYEyqYErHxfTYRuo4S6eCCWT33N5dj3BeMYptcDeXd0RQL4w8
+	zxtS6gcUUd/ingmnljT+0NIlDDp2SkBcW9HdNTnZEmFQBTOyS8A/72IYiuAo9qva+TKKrR
+	e4hGBeNNpLi29j11uiCVoOme1HZtkBCMmzFO9GfW7vUTyXiG+YBiUZ3TsfRKrkM1IDTIKI
+	QH/ex2DWgFdIKv2mM5yde+YErwNjC9aXvQKU6Md1kCJ7zldXcJMKE0KdViN+cQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732115611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyO8yv8V4ueZfLiOBMizzmpe+ea8iyO25drixQuoPIY=;
+	b=EoHW11c0n63ekpk9SHmSTus4WuhhFTe/zue9FX/KIpRWzURrr0p2m0qeLAokfkGLfcTcwb
+	W5f5t2S9QTMY5LDg==
+From: Thomas Weissschuh <thomas.weissschuh@linutronix.de>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Alessandro Carminati <acarmina@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alessandro Carminati <alessandro.carminati@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Gabriele Paoloni <gpaoloni@redhat.com>, Eric Chanudet <echanude@redhat.com>
+Subject: Re: [PATCH] mm/kmemleak: Fix sleeping function called from invalid
+ context in kmemleak_seq_show
+Message-ID: <20241120160448-11661c83-6a2e-4afb-9711-ffec3f9342b5@linutronix.de>
+References: <20241120102325.3538-1-acarmina@redhat.com>
+ <Zz332cG45rNSeE_B@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,62 +72,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119153502.41361-13-vschneid@redhat.com>
+In-Reply-To: <Zz332cG45rNSeE_B@arm.com>
 
-On Tue, Nov 19, 2024 at 04:34:59PM +0100, Valentin Schneider wrote:
+On Wed, Nov 20, 2024 at 02:53:13PM +0000, Catalin Marinas wrote:
+> On Wed, Nov 20, 2024 at 10:23:25AM +0000, Alessandro Carminati wrote:
+> > This patch addresses a bug in the RT variant of the kernel where a
+> > "sleeping function called from invalid context" warning may occur in
+> > kmemleak_seq_show under specific conditions:
+> > - CONFIG_PREEMPT_RT=y
+> > - SELinux is the LSM for the system
+> > - `kptr_restrict` is set to 1.
+> > - The kmemleak buffer contains at least one item.
+> > 
+> > Commit 8c96f1bc6fc49c724c4cdd22d3e99260263b7384 ("mm/kmemleak: turn
+> > kmemleak_lock and object->lock to raw_spinlock_t") introduced a change
+> > where kmemleak_seq_show is executed in atomic context within the RT kernel.
+> > However, the SELinux capability check within this function flow still
+> > relies on regular spinlocks, leading to potential race conditions that
+> > trigger the error when printing the kmemleak backtrace.
+> > 
+> > To resolve this, the backtrace printing has been moved out of the critical
+> > section.
 
-> +static void __text_poke_sync(smp_cond_func_t cond_func)
-> +{
-> +	on_each_cpu_cond(cond_func, do_sync_core, NULL, 1);
-> +}
-> +
->  void text_poke_sync(void)
->  {
-> -	on_each_cpu(do_sync_core, NULL, 1);
-> +	__text_poke_sync(NULL);
-> +}
-> +
-> +void text_poke_sync_deferrable(void)
-> +{
-> +	__text_poke_sync(do_sync_core_defer_cond);
->  }
+[..]
 
-How about we unwrap some of that like so:
+> What I don't fully understand - is this a problem with any seq_printf()
+> or just the backtrace pointers from the stack depot that trigger this
+> issue? I guess it's something to do with restricted pointers but I'm not
+> familiar with the PREEMPT_RT concepts. It would be good to explain,
+> ideally both in the commit log and a comment in the code, why we only
+> need to do this for the stack dump.
 
->  /*
-> @@ -2257,6 +2273,8 @@ static int tp_vec_nr;
->  static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries)
->  {
->  	unsigned char int3 = INT3_INSN_OPCODE;
-> +	bool force_ipi = false;
-> +	void (*sync_fn)(void);
+Yes, this is a problem for all users of lib/vsprintf.c.
+I am working on a fix for this, to avoid calling the sleeping functions
+from contexts which are not allowed to do so.
+In these cases the pointers would not be printed.
 
-	smp_cond_func_t cond = do_sync_core_defer_cond;
+This fix for kmemleak is still needed as the pointers in the kmemleak
+report are useful.
 
->  	unsigned int i;
->  	int do_sync;
->  
-> @@ -2291,11 +2309,18 @@ static void text_poke_bp_batch(struct text_poke_loc *tp, unsigned int nr_entries
->  	 * First step: add a int3 trap to the address that will be patched.
->  	 */
->  	for (i = 0; i < nr_entries; i++) {
-> +		/*
-> +		 * Record that we need to send the IPI if at least one location
-> +		 * in the batch requires it.
-> +		 */
-> +		force_ipi |= tp[i].force_ipi;
 
-		if (tp[i].force_ipi)
-			cond = NULL;
-
->  		tp[i].old = *(u8 *)text_poke_addr(&tp[i]);
->  		text_poke(text_poke_addr(&tp[i]), &int3, INT3_INSN_SIZE);
->  	}
->  
-> -	text_poke_sync();
-> +	sync_fn = force_ipi ? text_poke_sync : text_poke_sync_deferrable;
-> +
-> +	sync_fn();
-
-	__text_poke_sync(cond);
+Thomas
 
