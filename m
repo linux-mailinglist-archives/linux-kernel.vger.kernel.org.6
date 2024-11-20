@@ -1,131 +1,279 @@
-Return-Path: <linux-kernel+bounces-415571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAB49D383F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:22:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E215A9D3845
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4171F23275
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1DDE285C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7990B19CC1C;
-	Wed, 20 Nov 2024 10:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2796E19C542;
+	Wed, 20 Nov 2024 10:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ud7ivUQk"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PB1i1l4z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE80B146D53;
-	Wed, 20 Nov 2024 10:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E13F1865E0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732098144; cv=none; b=r9MIevaYhvbRcjSlfAOtm64MYA7IT19DEHCBoW+VSBzYOEBU7LQjwO8sXhhqJLCUAA4Lru/RCF9DY2kqE/gZE1Zawq7zhlrApIVSUBfbsTTbIW0egqC4vA5r58JDH0maIvge+J7WEwMa9q4wjY8ROJpGIZlkZxnk8fDRVW2VvtM=
+	t=1732098280; cv=none; b=d73bId7mp8W5Ezgip99iBX0C6c4ys6aDNeZersNxkGKIdoPief6FXjJ6zkZWTAp+FNLykAS2Ugbk1rZTzFNh96Yehtk4Rk6W/EpnQN8kujyX8fncgKpS1dhk6CImMXTD4fC66Xmb2z/+ePCa96XoHgQI6tGgNB3tvp5utDFTeX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732098144; c=relaxed/simple;
-	bh=kJQDEeMh5yQymd7/4zNyXAyvNMvAn8pbTvK9MW3F1j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1ceEiXzERU9M72UwiT+gQJZQDpcD1vFAo2yEWOzV9bIFzwkcPB6qSUasV0hEUxEqxqh655Ly8zv0k7214q8WG6q6SvaW31gsjSlTrEAjQEVOQ+PMEuoW4u+HfEsI9mt3S0nQvsZ0w+IEFBRVEQwD7L9h40wXOTUnG+FnPKmaL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ud7ivUQk; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6BHYRXy9lLaaBbd09VImTq6Rn50W4X4567EqZRkeTsQ=; b=Ud7ivUQkqoJelXj28zCQsU+gIU
-	rPNqESkMj9Dvu0GcK3GwMBeifTq00wVepK50OM0ITEOdtka/jqFErp6Jd8j999ZICXAW3mvcrtkvK
-	CusDuiYnEJ629rY55UUL/cBOjUKRFBuX/QQ0VICN6+DrH4L+Ho55jjI7IoNjs/cWvfyFbmptF1Klx
-	vEhnAtqlle6ozdCc/aMWBNbBq7u2ct3VCOEy18Xvn1aIkiTLeG6uKCbmVgjwRnFMZT4eAurE+BZ5H
-	x1Ct2ikx1ujlCMCd31kJ29lLgD5iVA3BgXaBQ3K/vEe5Jd7aBT4P21yj4cyyY2YhFQ7RnlBQHq7Pn
-	jj1hI06g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDhql-0000000582g-0cwS;
-	Wed, 20 Nov 2024 10:22:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 04D013006AB; Wed, 20 Nov 2024 11:22:20 +0100 (CET)
-Date: Wed, 20 Nov 2024 11:22:19 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
+	s=arc-20240116; t=1732098280; c=relaxed/simple;
+	bh=o/D2B5pcBs3jgrtGoerHxuWzyxNyqaDoSKTsq0e0wLA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-type; b=OjRlwMUMxNm0CGtmM4o2PLPyZNyBArP35n/QM5tthGYingBbG53V2CsHK2OcJynGlBgPwYjIUSll1wZ4YjEgREFvkNwCzDzyyzoRTLsMVUuMZVoUORsyqJM/zzvx9Ic0k6BxyHXo4IvIS+VxKpFTYGCqqUNWhkpHYr7Wm5gKkHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PB1i1l4z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732098277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=p/iBJks2mitS8xx8UW4h8YzqskEGlCYT8cc+MxErLho=;
+	b=PB1i1l4zS4TCkwahP+sOjAjSrkpl7S4z9Pytme5MtWB7e23aYWUmpY/eB9E6aIgqxvkmdK
+	3ns1vCIlBIgmOV5dfEVEVx8MPzGk4PJGop9qNIAs0gC9SRo+h55+1R3MZgzVruk3nv5mh+
+	eRnftY/LxNiNCqGUN+KJQLoIcTG/aUk=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-516-A5pr_W-4NMy9LCxnDaZT4Q-1; Wed, 20 Nov 2024 05:24:33 -0500
+X-MC-Unique: A5pr_W-4NMy9LCxnDaZT4Q-1
+X-Mimecast-MFC-AGG-ID: A5pr_W-4NMy9LCxnDaZT4Q
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5cfca544b47so2372719a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:24:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732098272; x=1732703072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p/iBJks2mitS8xx8UW4h8YzqskEGlCYT8cc+MxErLho=;
+        b=Axn3bHz6Nz4ROldO8mnvdfAxp0139eVRk1oOqxyc5LU14JwNZnjTR+t6/XJaszJq8q
+         uFcoqovFWYRWWBqOquUsOvmxNYnCthaYXEaXiiYVBVvyE2UlOZ52G+aszl4EiYDDrLNz
+         XhjSZYFLKAFQxNVQq7GfK8hom7uQNfsXqcgmNW94lm6RsZnEQi5dc6azZ0C9c70ZAbMY
+         jIXVLWJqV2LAWx1RorRV7WVTtOwug0XJZCbFi17Ma5jdK+wR06Fxuxwv6AK/rzt7RLSX
+         DrkNNB9KuvGJoHxGXqloaf4c+HmqdavG1bydlH8TVgR/3tadTXknweBLZWVAH4PodWpL
+         0A3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzlFURWEVwwZS8eCOEolPhZ7R2tyCWZ9YikC0LLiYTg7ySzD+CmZdGKJtFkCYhIOO1PAzZRaB6fJ+OFLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsIRX+gzn+Hys2oIayl2aGGobxTkW60ycSlriZmi7HqePkNDtg
+	GhChD1VxZq0zOfGZqzVU2DPtdBehFS9Ot57On4f0uJBJn4mZAXxi+BLDio6fXqBZYhWgkc8/CU9
+	u8jPBGp+TFpVHmHB31KRk6TjaKfx+DbBJEHjfiGEM6leJzzsaLDFeT0LDfPuW0g==
+X-Received: by 2002:a05:6402:430b:b0:5cf:e022:24f5 with SMTP id 4fb4d7f45d1cf-5cff4afd5b8mr1390766a12.2.1732098272481;
+        Wed, 20 Nov 2024 02:24:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHYa8gJ77UzAO3+WSjRuopMOyzPLYeoXq2QJfC/hbjhkfVpAmRLCa3elDekTiUsEaip20iS2Q==
+X-Received: by 2002:a05:6402:430b:b0:5cf:e022:24f5 with SMTP id 4fb4d7f45d1cf-5cff4afd5b8mr1390752a12.2.1732098272037;
+        Wed, 20 Nov 2024 02:24:32 -0800 (PST)
+Received: from lab.hqhome163.com ([194.183.10.152])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44efb03sm653932a12.29.2024.11.20.02.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 02:24:31 -0800 (PST)
+From: Alessandro Carminati <acarmina@redhat.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	Thomas Weissschuh <thomas.weissschuh@linutronix.de>
+Cc: Alessandro Carminati <alessandro.carminati@gmail.com>,
 	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
-Message-ID: <20241120102219.GF19989@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-7-vschneid@redhat.com>
- <20241120000532.maqzgsn7m34lti6u@jpoimboe>
+	Gabriele Paoloni <gpaoloni@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>,
+	Alessandro Carminati <acarmina@redhat.com>
+Subject: [PATCH] mm/kmemleak: Fix sleeping function called from invalid context in kmemleak_seq_show
+Date: Wed, 20 Nov 2024 10:23:25 +0000
+Message-Id: <20241120102325.3538-1-acarmina@redhat.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120000532.maqzgsn7m34lti6u@jpoimboe>
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 04:05:32PM -0800, Josh Poimboeuf wrote:
-> On Tue, Nov 19, 2024 at 04:34:53PM +0100, Valentin Schneider wrote:
-> > +++ b/include/linux/jump_label.h
-> > @@ -200,7 +200,8 @@ struct module;
-> >  #define JUMP_TYPE_FALSE		0UL
-> >  #define JUMP_TYPE_TRUE		1UL
-> >  #define JUMP_TYPE_LINKED	2UL
-> > -#define JUMP_TYPE_MASK		3UL
-> > +#define JUMP_TYPE_FORCEFUL      4UL
-> > +#define JUMP_TYPE_MASK		7UL
-> 
-> Hm, I don't think we can (ab)use this pointer bit on 32-bit arches, as
-> the address could be 4 byte aligned?
+This patch addresses a bug in the RT variant of the kernel where a
+"sleeping function called from invalid context" warning may occur in
+kmemleak_seq_show under specific conditions:
+- CONFIG_PREEMPT_RT=y
+- SELinux is the LSM for the system
+- `kptr_restrict` is set to 1.
+- The kmemleak buffer contains at least one item.
 
-Right, you can force the alignment of the thing, workqueues do similar
-hacks to get more bits.
+Commit 8c96f1bc6fc49c724c4cdd22d3e99260263b7384 ("mm/kmemleak: turn
+kmemleak_lock and object->lock to raw_spinlock_t") introduced a change
+where kmemleak_seq_show is executed in atomic context within the RT kernel.
+However, the SELinux capability check within this function flow still
+relies on regular spinlocks, leading to potential race conditions that
+trigger the error when printing the kmemleak backtrace.
+
+To resolve this, the backtrace printing has been moved out of the critical
+section.
+
+Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
+---
+Please read previous conversation in the RFC
+https://lore.kernel.org/all/20241115145410.114376-1-acarmina@redhat.com/
+
+Splash triggering this patch:
+
+```
+[  159.247069] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+[  159.247193] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 136, name: cat
+[  159.247241] preempt_count: 1, expected: 0
+[  159.247277] RCU nest depth: 2, expected: 2
+[  159.247388] 6 locks held by cat/136:
+[  159.247438]  #0: ffff32e64bcbf950 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb8/0xe30
+[  159.248835]  #1: ffffafe6aaa9dea0 (scan_mutex){+.+.}-{3:3}, at: kmemleak_seq_start+0x34/0x128
+[  159.249053]  #3: ffff32e6546b1cd0 (&object->lock){....}-{2:2}, at: kmemleak_seq_show+0x3c/0x1e0
+[  159.249127]  #4: ffffafe6aa8d8560 (rcu_read_lock){....}-{1:2}, at: has_ns_capability_noaudit+0x8/0x1b0
+[  159.249205]  #5: ffffafe6aabbc0f8 (notif_lock){+.+.}-{2:2}, at: avc_compute_av+0xc4/0x3d0
+[  159.249364] irq event stamp: 136660
+[  159.249407] hardirqs last  enabled at (136659): [<ffffafe6a80fd7a0>] _raw_spin_unlock_irqrestore+0xa8/0xd8
+[  159.249465] hardirqs last disabled at (136660): [<ffffafe6a80fd85c>] _raw_spin_lock_irqsave+0x8c/0xb0
+[  159.249518] softirqs last  enabled at (0): [<ffffafe6a5d50b28>] copy_process+0x11d8/0x3df8
+[  159.249571] softirqs last disabled at (0): [<0000000000000000>] 0x0
+[  159.249970] Preemption disabled at:
+[  159.249988] [<ffffafe6a6598a4c>] kmemleak_seq_show+0x3c/0x1e0
+[  159.250609] CPU: 1 UID: 0 PID: 136 Comm: cat Tainted: G            E      6.11.0-rt7+ #34
+[  159.250797] Tainted: [E]=UNSIGNED_MODULE
+[  159.250822] Hardware name: linux,dummy-virt (DT)
+[  159.251050] Call trace:
+[  159.251079]  dump_backtrace+0xa0/0x128
+[  159.251132]  show_stack+0x1c/0x30
+[  159.251156]  dump_stack_lvl+0xe8/0x198
+[  159.251180]  dump_stack+0x18/0x20
+[  159.251227]  rt_spin_lock+0x8c/0x1a8
+[  159.251273]  avc_perm_nonode+0xa0/0x150
+[  159.251316]  cred_has_capability.isra.0+0x118/0x218
+[  159.251340]  selinux_capable+0x50/0x80
+[  159.251363]  security_capable+0x7c/0xd0
+[  159.251388]  has_ns_capability_noaudit+0x94/0x1b0
+[  159.251412]  has_capability_noaudit+0x20/0x30
+[  159.251437]  restricted_pointer+0x21c/0x4b0
+[  159.251461]  pointer+0x298/0x760
+[  159.251482]  vsnprintf+0x330/0xf70
+[  159.251504]  seq_printf+0x178/0x218
+[  159.251526]  print_unreferenced+0x1a4/0x2d0
+[  159.251551]  kmemleak_seq_show+0xd0/0x1e0
+[  159.251576]  seq_read_iter+0x354/0xe30
+[  159.251599]  seq_read+0x250/0x378
+[  159.251622]  full_proxy_read+0xd8/0x148
+[  159.251649]  vfs_read+0x190/0x918
+[  159.251672]  ksys_read+0xf0/0x1e0
+[  159.251693]  __arm64_sys_read+0x70/0xa8
+[  159.251716]  invoke_syscall.constprop.0+0xd4/0x1d8
+[  159.251767]  el0_svc+0x50/0x158
+[  159.251813]  el0t_64_sync+0x17c/0x180
+```
+ mm/kmemleak.c | 46 ++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 36 insertions(+), 10 deletions(-)
+
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 0400f5e8ac60..c77899af3e9e 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -356,14 +356,9 @@ static bool unreferenced_object(struct kmemleak_object *object)
+  * Printing of the unreferenced objects information to the seq file. The
+  * print_unreferenced function must be called with the object->lock held.
+  */
+-static void print_unreferenced(struct seq_file *seq,
++static depot_stack_handle_t print_unreferenced(struct seq_file *seq,
+ 			       struct kmemleak_object *object)
+ {
+-	int i;
+-	unsigned long *entries;
+-	unsigned int nr_entries;
+-
+-	nr_entries = stack_depot_fetch(object->trace_handle, &entries);
+ 	warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
+ 			  object->pointer, object->size);
+ 	warn_or_seq_printf(seq, "  comm \"%s\", pid %d, jiffies %lu\n",
+@@ -371,6 +366,23 @@ static void print_unreferenced(struct seq_file *seq,
+ 	hex_dump_object(seq, object);
+ 	warn_or_seq_printf(seq, "  backtrace (crc %x):\n", object->checksum);
+ 
++	return object->trace_handle;
++}
++
++/*
++ * Prints stack traces of unreferenced objects outside of the lock context.
++ * This avoids potential issues with printing pointers that might require
++ * additional locking.
++ */
++static void print_stack_trace(struct seq_file *seq,
++			      depot_stack_handle_t h)
++{
++	int i;
++	unsigned long *entries;
++	unsigned int nr_entries;
++
++	nr_entries = stack_depot_fetch(h, &entries);
++
+ 	for (i = 0; i < nr_entries; i++) {
+ 		void *ptr = (void *)entries[i];
+ 		warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
+@@ -1621,7 +1633,9 @@ static void kmemleak_cond_resched(struct kmemleak_object *object)
+  */
+ static void kmemleak_scan(void)
+ {
++	depot_stack_handle_t stackdepot_handle;
+ 	struct kmemleak_object *object;
++	bool do_print = false;
+ 	struct zone *zone;
+ 	int __maybe_unused i;
+ 	int new_leaks = 0;
+@@ -1783,12 +1797,17 @@ static void kmemleak_scan(void)
+ 		    !(object->flags & OBJECT_REPORTED)) {
+ 			object->flags |= OBJECT_REPORTED;
+ 
+-			if (kmemleak_verbose)
+-				print_unreferenced(NULL, object);
++			if (kmemleak_verbose) {
++				stackdepot_handle = print_unreferenced(NULL, object);
++				do_print = true;
++			}
+ 
+ 			new_leaks++;
+ 		}
+ 		raw_spin_unlock_irq(&object->lock);
++		if (kmemleak_verbose && do_print)
++			print_stack_trace(NULL, stackdepot_handle);
++
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -1937,13 +1956,20 @@ static void kmemleak_seq_stop(struct seq_file *seq, void *v)
+  */
+ static int kmemleak_seq_show(struct seq_file *seq, void *v)
+ {
++	depot_stack_handle_t stackdepot_handle;
+ 	struct kmemleak_object *object = v;
++	bool do_print = false;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&object->lock, flags);
+-	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object))
+-		print_unreferenced(seq, object);
++	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object)) {
++		stackdepot_handle = print_unreferenced(seq, object);
++		do_print = true;
++	}
+ 	raw_spin_unlock_irqrestore(&object->lock, flags);
++	if (do_print)
++		print_stack_trace(seq, stackdepot_handle);
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
 
