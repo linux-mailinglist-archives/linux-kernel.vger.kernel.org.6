@@ -1,324 +1,943 @@
-Return-Path: <linux-kernel+bounces-416035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36D09D3F68
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:53:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 137CB9D408D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 795261F238B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:53:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F4194B2EC7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E185143C72;
-	Wed, 20 Nov 2024 15:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF05C14A62A;
+	Wed, 20 Nov 2024 15:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="bwLpTVO9"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YfMLuQ48"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D9713DDAA
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543A5146A79
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117971; cv=none; b=kNHFhQz5kxg0SUDmnbInNRJnNVB+/JZKSJR1zjIqHJySjqk+1ZDdXG8YZzYdWvljRgneHTB/Mszs/ZwVpeveRXq2onGGhCPm2Vy3iy1NEmj+YVGKFQhhJQhHB51OvgQ2RxCqiCHdxqpNvXo63+rXuB8s4lbX3Dpz6+5+g/XDQjI=
+	t=1732117981; cv=none; b=B1yWJt3n4M0dTy0uw/k8ASHJ9vcAmXzB6vcLmnsF8zhRe1+cYZoiQOmDHeqvXSslismZ5zx49w23SgYTv+eyNnuyUBbwkmndUb788OWoxF3tvjChFZz6+RinZbCwiIEZTmlD99yzsVyYoN7itiaf8xDbkaI0MH/JgYMS0wI1THA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117971; c=relaxed/simple;
-	bh=hQ2dfJD5Sim/WtOVH/D0D9SRKM1Stxb1eW7RqKVhwzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NwCBG4c52t4Ke+p79RWjE2MGruVrAaY6BVte+i+gSE5fDAwL3a08HZri29zxi35mMZLRx/g6W/M08PNUZix7jXb33DC5Syg94d998ajEadWwdX7/cFo5nkrxIbqkAJhoy2qryRI+NI3WddEhBcVv1qKl5OAGC8JIeuxVR1/ubng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=bwLpTVO9; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0150245.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEmF2c030125;
-	Wed, 20 Nov 2024 15:52:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=rtqhIJRePY/6XPXWcioKi1rKiV
-	0xPIODDhqnohdo9pk=; b=bwLpTVO9tm9FA9SsGRg9udN6yuQWm4m8nbi7k8DS/V
-	7RL4TjVUykujwBL0ij3Of8Kr+ndh/zVR4bSPEnarvplk0HQ6kRTCNCD3cu3LSjDP
-	vicDiZzUh3a8bz7vlIBcTAfXl/O+QxtlHU19vWo2gYxKo/l0M48G6wRgta8T7msP
-	6PY3ATFIy4hSBjphkgejvE2apvLVXgo5k4OQsDCBWyuCMGuIKhTEX7jCWT7aox2S
-	Zxi/61H0g5W0HvpfgGMHwRJH6SC5z3rfe1RWjModjJsHVXirkBXgXl8zWvZWBAEB
-	GAlaZk0+iX+XZ6ZW8BCuj7d2D5SkzL3Gq9kriLaobDcg==
-Received: from p1lg14881.it.hpe.com ([16.230.97.202])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 431hungnq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 15:52:32 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14881.it.hpe.com (Postfix) with ESMTPS id 6B87C806B6F;
-	Wed, 20 Nov 2024 15:52:31 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 178DD802835;
-	Wed, 20 Nov 2024 15:52:26 +0000 (UTC)
-Date: Wed, 20 Nov 2024 09:52:24 -0600
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
-Message-ID: <Zz4FuGyFDaQUWXjz@swahl-home.5wahls.com>
-References: <20241031200431.182443-1-steve.wahl@hpe.com>
- <xhsmh4j4cctsc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ZzTI6l-9Z0oCbrEH@swahl-home.5wahls.com>
- <Zzz9MXHaUwpq2h0q@swahl-home.5wahls.com>
- <xhsmh5xoij0ly.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1732117981; c=relaxed/simple;
+	bh=1R2evHqJjTAOJq6eWx6ez7n95sSq3cWULsEjyx+80CM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cjJSK7rmFBC3nANCcnVjpkV3JN2QUpB/0/4fopS4vBUaCzUv2TK64kViQ/gVGg52iKmisJq05F8MeTVvd91F2yUisJQgEzc7pU5eDXmbsPwDbw6/x7S2g3pkfPEbLJ8C9/VMXpTjcmf5CW9SsSXd7ieQAgTyFU/siuJeiN11j4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YfMLuQ48; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so40163025e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:52:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732117975; x=1732722775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W1+yrDJHhNP/k8iIQ03AESdYUNrwW2Xyy7iqhUZ+RYo=;
+        b=YfMLuQ48Dw0tfb34k7hRgGPLfyKZse9vD6OPUut+n5RqjUyh9L8xBXun2ec2H1Ro2Y
+         s3Mw8YEPwP3sDEVY6VeoO68dFUjjkijJ/y1rrT+AOwIeaDZrSXMSK8iWKNoliB5WH0q/
+         tzsjfDDouJYzhmeVPjDqnBCs7wt3m/plZZrIndiOw9JNsvD2fTfEAl0l4AGIttA+4zKL
+         b8pxEd+FDyVovqFa76pD8xCYyS2s6El9t8JvDwM6bCQwt2TBhjrkIQCIi95reO9CyXJf
+         gjttnDiqwc2qwmnontugxHG1iCWJXwdPRduEhnXcBl71v8Ej7vta3iOYmvuU2tLYnxg9
+         V8/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732117975; x=1732722775;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W1+yrDJHhNP/k8iIQ03AESdYUNrwW2Xyy7iqhUZ+RYo=;
+        b=uQHDEcwcuNzeM2y7yNVSvZZSNGsceY3YRMT+c4TeA8kHSDt/uqH2SVatE5ABdZYYoD
+         KL1MYEIGw0D7xeUlAaIVWezNBMHcModLEDbE9Qf3qMDmW1kDzU2vF+LrIyG/Q4Kmfrnw
+         3//kfV1yRmgOgsoH2YqiRdxNas7Pmw919AX+G3UgvdKUscxQtYWYYtFFam3gU8IsxLrc
+         nz6+5enj1ICJMKVOPm1+967y2YwKt/N9cnlXZuHekQ9sfEhj7OWB/fxrMMtio+Zv57Hr
+         5//GOPV5g9QXGZZsepqqpK6crktZ5q4PzhjzO+L7MxsAUDDDigcQKUCEaIan10JpJfc6
+         Gi7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXU3B0soH/o04+w3UABvs6LrhoQ9WsjIH0ohPZT7hdGpwAC2i8I7FI2FkFU6LoHd68JXDtJsA1x4qE/P6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQbavpnbylWw4edqDh9CwFVTLfw3Air51LGAI944nHQs8Pgwkx
+	YvDaXzmv+NX34gZek3VXAKetCv/Mk55uHsFznfbRBlEXGYRSyn3fz5wnMREVFhR4XT136vb5Hf9
+	P
+X-Google-Smtp-Source: AGHT+IEL4RGybpgX5qcUl8wnIgiRUiUJNeTcUs6MFYWo+q4NCVTyqqop0UHcXNi7CIJyBeH9DIsYQw==
+X-Received: by 2002:a05:600c:19ca:b0:431:52f5:f48d with SMTP id 5b1f17b1804b1-4334f02a6b9mr31011725e9.31.1732117975472;
+        Wed, 20 Nov 2024 07:52:55 -0800 (PST)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4c68sm22990385e9.22.2024.11.20.07.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 07:52:54 -0800 (PST)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: rafael@kernel.org
+Cc: saravanak@google.com,
+	arnd@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	quic_manafm@quicinc.com
+Subject: [RFC 1/2] power: Userspace performance QoS
+Date: Wed, 20 Nov 2024 16:52:44 +0100
+Message-ID: <20241120155245.1710666-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmh5xoij0ly.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-X-Proofpoint-GUID: 3-Lj_0daKhcw2PPs4dyG5hd5BeOn_sUJ
-X-Proofpoint-ORIG-GUID: 3-Lj_0daKhcw2PPs4dyG5hd5BeOn_sUJ
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 adultscore=0
- priorityscore=1501 mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411200107
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 11:54:33PM +0100, Valentin Schneider wrote:
-> On 19/11/24 15:03, Steve Wahl wrote:
-> > On Wed, Nov 13, 2024 at 09:42:34AM -0600, Steve Wahl wrote:
-> >> On Tue, Nov 12, 2024 at 05:15:47PM +0100, Valentin Schneider wrote:
-> >> > On 31/10/24 15:04, Steve Wahl wrote:
-> >> > > Use a different approach to topology_span_sane(), that checks for the
-> >> > > same constraint of no partial overlaps for any two CPU sets for
-> >> > > non-NUMA topology levels, but does so in a way that is O(N) rather
-> >> > > than O(N^2).
-> >> > >
-> >> > > Instead of comparing with all other masks to detect collisions, keep
-> >> > > one mask that includes all CPUs seen so far and detect collisions with
-> >> > > a single cpumask_intersects test.
-> >> > >
-> >> > > If the current mask has no collisions with previously seen masks, it
-> >> > > should be a new mask, which can be uniquely identified ("id") by the
-> >> > > lowest bit set in this mask.  Mark that we've seen a mask with this
-> >> > > id, and add the CPUs in this mask to the list of those seen.
-> >> > >
-> >> > > If the current mask does collide with previously seen masks, it should
-> >> > > be exactly equal to a mask seen before, identified once again by the
-> >> > > lowest bit the current mask has set.  It's an error if we haven't seen
-> >> > > a mask with that id, or if the current mask doesn't match the one we
-> >> > > get by looking up that id.
-> >> > >
-> >> > > Move the topology_span_sane() check out of the existing topology level
-> >> > > loop, let it do its own looping to match the needs of this algorithm.
-> >> > >
-> >> > > On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> >> > > the average time to take one processor offline is reduced from 2.18
-> >> > > seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> >> > > 34m49.765s without this change, 16m10.038s with this change in place.)
-> >> > >
-> >> > > Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> >> > > ---
-> >> > >
-> >> > > Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
-> >> > > simplifies the code, and eliminates the erroneous use of
-> >> > > num_possible_cpus() that Peter Zijlstra noted.
-> >> > >
-> >> > > Version 1 discussion:
-> >> > >     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
-> >> > >
-> >> > >  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
-> >> > >  1 file changed, 48 insertions(+), 25 deletions(-)
-> >> > >
-> >> > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> >> > > index 9748a4c8d668..6a2a3e91d59e 100644
-> >> > > --- a/kernel/sched/topology.c
-> >> > > +++ b/kernel/sched/topology.c
-> >> > > @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
-> >> > >
-> >> > >  /*
-> >> > >   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
-> >> > > - * any two given CPUs at this (non-NUMA) topology level.
-> >> > > + * any two given CPUs on non-NUMA topology levels.
-> >> > >   */
-> >> > > -static bool topology_span_sane(struct sched_domain_topology_level *tl,
-> >> > > -			      const struct cpumask *cpu_map, int cpu)
-> >> > > +static bool topology_span_sane(const struct cpumask *cpu_map)
-> >> > >  {
-> >> > > -	int i = cpu + 1;
-> >> > > +	struct sched_domain_topology_level *tl;
-> >> > > +	struct cpumask *covered, *id_seen;
-> >> > > +	int cpu;
-> >> > >
-> >> > > -	/* NUMA levels are allowed to overlap */
-> >> > > -	if (tl->flags & SDTL_OVERLAP)
-> >> > > -		return true;
-> >> > > +	lockdep_assert_held(&sched_domains_mutex);
-> >> > > +	covered = sched_domains_tmpmask;
-> >> > > +	id_seen = sched_domains_tmpmask2;
-> >> > > +
-> >> > > +	for_each_sd_topology(tl) {
-> >> > > +
-> >> > > +		/* NUMA levels are allowed to overlap */
-> >> > > +		if (tl->flags & SDTL_OVERLAP)
-> >> > > +			continue;
-> >> > > +
-> >> > > +		cpumask_clear(covered);
-> >> > > +		cpumask_clear(id_seen);
-> >> > >
-> >> > > -	/*
-> >> > > -	 * Non-NUMA levels cannot partially overlap - they must be either
-> >> > > -	 * completely equal or completely disjoint. Otherwise we can end up
-> >> > > -	 * breaking the sched_group lists - i.e. a later get_group() pass
-> >> > > -	 * breaks the linking done for an earlier span.
-> >> > > -	 */
-> >> > > -	for_each_cpu_from(i, cpu_map) {
-> >> > >                  /*
-> >> > > -		 * We should 'and' all those masks with 'cpu_map' to exactly
-> >> > > -		 * match the topology we're about to build, but that can only
-> >> > > -		 * remove CPUs, which only lessens our ability to detect
-> >> > > -		 * overlaps
-> >> > > +		 * Non-NUMA levels cannot partially overlap - they must be either
-> >> > > +		 * completely equal or completely disjoint. Otherwise we can end up
-> >> > > +		 * breaking the sched_group lists - i.e. a later get_group() pass
-> >> > > +		 * breaks the linking done for an earlier span.
-> >> > >                   */
-> >> > > -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
-> >> > > -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
-> >> > > -			return false;
-> >> > > +		for_each_cpu(cpu, cpu_map) {
-> >> > > +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
-> >> > > +			int id;
-> >> > > +
-> >> > > +			/* lowest bit set in this mask is used as a unique id */
-> >> > > +			id = cpumask_first(tl_cpu_mask);
-> >> > > +
-> >> > > +			/* if this mask doesn't collide with what we've already seen */
-> >> > > +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
-> >> > > +				/* Really odd case when cpu != id, likely not sane */
-> >> > > +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
-> >> > > +					return false;
-> >> > > +				if (cpumask_test_and_set_cpu(id, id_seen))
-> >> > > +					return false;
-> >> > > +				cpumask_or(covered, tl_cpu_mask, covered);
-> >> > > +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
-> >> > > +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
-> >> > > +				/*
-> >> > > +				 * a collision with covered should have exactly matched
-> >> > > +				 * a previously seen mask with the same id
-> >> > > +				 */
-> >> > > +				return false;
-> >> > > +			}
-> >> > > +		}
-> >> >
-> >> > Ok so you're speeding it up, but you still get a O(nr_cpu_ids) walk every
-> >> > hotplug when the check itself only needs to be done at most once per
-> >> > possible online CPU combination (~ 2^(nr_cpu_ids)). If all CPUs are kicked
-> >> > to life at boot, then the check only needs to be done once. If you only
-> >> > boot with a subset of present CPUs to speed things up, the check still
-> >> > becomes irrelevant once you've kicked the rest to life.
-> >> >
-> >> > I would reiterate my suggestion to get to a state where the check can be
-> >> > entirely short-circuited [1].
-> >> >
-> >> > [1]: http://lore.kernel.org/r/xhsmh8quc5ca4.mognet@vschneid-thinkpadt14sgen2i.remote.csb
-> >>
-> >> Bringing forward a bit of that conversation:
-> >>
-> >> > > I tried adding this, surprisingly I saw no effect on the time taken,
-> >> > > perhaps even a small slowdown, when combined with my patch.  So at
-> >> > > this point I don't intend to add it to v2 of the patch.
-> >> > >
-> >> >
-> >> > Thanks for testing, I assume your cpu_possible_mask reports more CPUs than
-> >> > you have physically plugged in...
-> >>
-> >> That assumption is wrong.  I started with all CPUs enabled.  Disabled
-> >> and re-enabled cpus from there.  The timings I got were as I stated,
-> >> no effect, perhaps a small slowdown.
-> >>
-> >> > I guess it would make sense to short-circuit the function when
-> >> > cpu_map is a subset of what we've previously checked, and then
-> >> > re-kick the testing once new CPU(s) are plugged in. Something like
-> >> > the untested below?
-> >> >
-> >> > Optimisations notwithstanding, IMO we shouldn't be repeating checks if we
-> >> > can avoid it.
-> >>
-> >> I will attempt to measure it once more.  I was surprised at my
-> >> measured results, but that's why we take them, right?
-> >>
-> >> If I can't measure a difference, though, I am not sure it's
-> >> appropriate to include the change with this patch, the point of which
-> >> *is* optimization.
-> >
-> > I completed timing tests; test system has 1920 logical CPUS, 2 threads
-> > per core, 60 cores per NUMA node, and the script offlined then onlined
-> > both threads of half the cores in each node.  Four runs each were
-> > timed.  Times in seconds.
-> >
-> > Unpatched kernel:
-> >       Offline		Online
-> > min	3991.57		3967.22
-> > max	4025.59		4028.66
-> > avg	4013.79		3996.75
-> > stddev	15.28		29.90
-> >
-> > With my patch:
-> >       Offline		Online
-> > min	1987.97		2130.7
-> > max	2032.25		2150.93
-> > avg	2017.43		2140.18
-> > stddev	20.12		10.25
-> >
-> > With my patch + Valentin's extra short-circuit patch:
-> > min	2019.58		2137.43
-> > max	2056.89		2223.86
-> > avg	2033.04		2171.91
-> > stddev	16.83		37.73
-> >
-> > I'm at a loss as to why adding the short circuit slowed things down,
-> > but it's in the noise.  If you want a new version of the patch
-> > incorporating both changes after viewing these timings, I'm willing to
-> > make that change.  Let me know how you feel.
-> >
-> 
-> Huh, weird. Obviously your patch improves the situation and the
-> short-circuit as proposed doesn't, so I'd say go forth with your patch and
-> I'll poke around to figure out what's going on and submit a hopefully
-> working short-circuit.
+In the embedded ecosystem, the Linux kernel is modified to integrate
+fake thermal cooling devices for the sake of the ABI exported in the
+sysfs.
 
-I think the short-circuit is actually working.  In the previous email
-iteration on this, after I did the timings saying it was a tad slower,
-I added some printk's to make sure the short circuit was actually
-happening, and it appeared to be true.  And this time around, I came
-up with a version of your patch that functions without mine; it's not
-as pretty before combining all the topology levels into one call to
-topology_span_sane, but the result of the bypass is a similar time
-saving.
+While investigating those different devices, it appears most of them
+could fall under a performance QoS feature.
 
-I am thinking that the memory touched by the full topology_span_sane
-run may be pre-loading the cache for some of the subsequent
-operations.  That's the best I can come up with, at least for the
-moment.
+As discussed at the Linux Plumber Conference 2024, we want to let the
+userspace to access the device performance knob via a char device
+which would be created by the backend drivers and controlled with an
+ioctl.
 
---> Steve
+A performance constraint is a minimal or a maximal limit applied to a
+device performance state. A process can only set one constraint per
+limit, in other words a minimal performance and/or a maximal
+performance constraint. A new value will change the current
+constraint, not create a new one. If another constraint must be
+stacked with the current one, then the char device file must be opened
+again and the resulting new file descriptor must be used to create a
+new constraint.
 
+Constraint life cycle:
+
+The userspace can be a place where buggy programs with root privileges
+can tamper with the device performance. In order to prevent some dumb
+logics to set a device performance state and then go away, thus
+messing with the global system performance consistency, there is a
+particular care of the constraint life cycles. These ones are directly
+tied with the opened file descriptor of the char device. When it is
+released, then the constraint is removed but only if its refcount
+reaches zero. This situation exists if only process sets the
+constraint and then closes the file descriptor (manually or at exit
+time). If the process forks multiple time and the children inherit the
+file descriptor, the constraint will be removed when all the children
+close the file descriptor.
+
+However, if another process opens the char device and sets a
+constraint which already exists then that results in incrementing the
+refcount of the constraint. The constraint is then removed when all
+the processes have closed their file descriptor pointing to the char
+device.
+
+At creation time:
+
+ - if another process asked for the same limit of performance, then
+   the refcount constraint is incremented
+
+ - if there is an existing constraint with a higher priority, then the
+   requested constraint is queued in the ordered list of constraints
+
+ - if there is an existing constraint with a lower limit, then the
+   requested constrained is applied and the current constraint is
+   queued in the ordered list of constraints
+
+At removal time:
+
+ - if the removed constraint is the current one, then the next
+   constraint in the ordered list is applied
+
+ - if the removed constraint is not the current one, then it is simply
+   removed from the ordered list
+
+The changes allows the userspace to set a performance constraint for a
+specific device but the kernel may also want to apply a performance
+constraint. The in-kernel API is not yet implemented as it represents
+a significant amount of work depending on the direction of this patch.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ include/linux/perf_qos.h            |  45 ++
+ include/uapi/linux/perf_qos_ioctl.h |  47 ++
+ kernel/power/Makefile               |   2 +-
+ kernel/power/perf_qos.c             | 652 ++++++++++++++++++++++++++++
+ 4 files changed, 745 insertions(+), 1 deletion(-)
+ create mode 100644 include/linux/perf_qos.h
+ create mode 100644 include/uapi/linux/perf_qos_ioctl.h
+ create mode 100644 kernel/power/perf_qos.c
+
+diff --git a/include/linux/perf_qos.h b/include/linux/perf_qos.h
+new file mode 100644
+index 000000000000..57529c40be4d
+--- /dev/null
++++ b/include/linux/perf_qos.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Performance QoS device abstraction
++ *
++ * Copyright (2024) Linaro Ltd
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ */
++#ifndef __PERF_QOS_H
++#define __PERF_QOS_H
++
++#include <uapi/linux/perf_qos_ioctl.h>
++
++struct perf_qos;
++
++/**
++ * struct perf_qos_value_descr - Performance constraint description
++ *
++ * @unit: the unit used for the constraint (normalized, throughput, ...)
++ * @limit_min: the minimal constraint limit to be set
++ * @limit_max: the maximal constraint limit to be set
++ */
++struct perf_qos_value_descr {
++	perf_qos_unit_t unit;
++	int limit_min;
++	int limit_max;
++};
++
++typedef int (*set_perf_limit_cb_t)(int);
++
++struct perf_qos_ops {
++	set_perf_limit_cb_t set_perf_limit_max;
++	set_perf_limit_cb_t set_perf_limit_min;
++};
++
++extern struct perf_qos *perf_qos_device_create(const char *name,
++					       struct perf_qos_ops *ops,
++					       struct perf_qos_value_descr *descr);
++
++extern int perf_qos_is_allowed(struct perf_qos *pq, int performance);
++
++extern void perf_qos_device_destroy(struct perf_qos *pq);
++
++#endif
+diff --git a/include/uapi/linux/perf_qos_ioctl.h b/include/uapi/linux/perf_qos_ioctl.h
+new file mode 100644
+index 000000000000..a9fb8940c175
+--- /dev/null
++++ b/include/uapi/linux/perf_qos_ioctl.h
+@@ -0,0 +1,47 @@
++/* SPDX-License-Identifier: LGPL-2.0+ WITH Linux-syscall-note */
++/*
++ * Performance QoS device abstraction
++ *
++ * Copyright (2024) Linaro Ltd
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ */
++#ifndef __PERF_QOS_IOCTL_H
++#define __PERF_QOS_IOCTL_H
++
++#include <linux/types.h>
++
++enum {
++	PERF_QOS_IOC_SET_MIN_CMD,
++	PERF_QOS_IOC_GET_MIN_CMD,
++	PERF_QOS_IOC_SET_MAX_CMD,
++	PERF_QOS_IOC_GET_MAX_CMD,
++	PERF_QOS_IOC_GET_UNIT_CMD,
++	PERF_QOS_IOC_GET_LIMITS_CMD,
++	PERF_QOS_IOC_MAX_CMD,
++};
++
++typedef enum {
++	PERF_QOS_UNIT_NORMAL,
++	PERF_QOS_UNIT_KBPS,
++	PERF_QOS_UNIT_MAX
++} perf_qos_unit_t;
++
++struct perf_qos_ioctl_arg {
++	int value;
++	int limit_min;
++	int limit_max;
++	perf_qos_unit_t unit;
++};
++
++#define PERF_QOS_IOCTL_TYPE 'P'
++
++#define PERF_QOS_IOC_SET_MIN	_IOW(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_SET_MIN_CMD,	struct perf_qos_ioctl_arg *)
++#define PERF_QOS_IOC_GET_MIN	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_MIN_CMD,	struct perf_qos_ioctl_arg *)
++#define PERF_QOS_IOC_SET_MAX	_IOW(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_SET_MAX_CMD,	struct perf_qos_ioctl_arg *)
++#define PERF_QOS_IOC_GET_MAX	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_MAX_CMD,	struct perf_qos_ioctl_arg *)
++#define PERF_QOS_IOC_GET_UNIT	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_UNIT_CMD,	struct perf_qos_ioctl_arg *)
++#define PERF_QOS_IOC_GET_LIMITS	_IOR(PERF_QOS_IOCTL_TYPE, PERF_QOS_IOC_GET_LIMITS_CMD,	struct perf_qos_ioctl_arg *)
++
++#endif
+diff --git a/kernel/power/Makefile b/kernel/power/Makefile
+index 874ad834dc8d..e2e4d707ab6e 100644
+--- a/kernel/power/Makefile
++++ b/kernel/power/Makefile
+@@ -8,7 +8,7 @@ endif
+ 
+ KASAN_SANITIZE_snapshot.o	:= n
+ 
+-obj-y				+= qos.o
++obj-y				+= qos.o perf_qos.o
+ obj-$(CONFIG_PM)		+= main.o
+ obj-$(CONFIG_VT_CONSOLE_SLEEP)	+= console.o
+ obj-$(CONFIG_FREEZER)		+= process.o
+diff --git a/kernel/power/perf_qos.c b/kernel/power/perf_qos.c
+new file mode 100644
+index 000000000000..ca0619b07ae5
+--- /dev/null
++++ b/kernel/power/perf_qos.c
+@@ -0,0 +1,652 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Performance Quality of Service (Perf QoS) support base.
++ *
++ * Copyright (C) 2024 Linaro Ltd
++ *
++ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
++ *
++ */
++#include <linux/cdev.h>
++#include <linux/perf_qos.h>
++#include <linux/list_sort.h>
++
++#define DEVNAME "perf_qos"
++#define NUM_PERF_QOS_MINORS 128
++
++static DEFINE_IDR(perf_qos_minors);
++static struct class *perf_qos_class;
++static dev_t perf_qos_devt;
++
++typedef enum {
++	PERF_QOS_LIMIT_MAX,
++	PERF_QOS_LIMIT_MIN,
++} perf_qos_limit_t;
++
++/**
++ * struct perf_qos_constraint - structure holding a constraint information
++ *
++ * @soft_limit: an integer corresponding of the limit value set
++ * @hard_limit: an integer corresponding to the limit value allowed by the driver
++ * @kref: a refcount to the constraint responsible of its life cycle
++ * @set_perf_limit_cb: a callback to notify the backend driver about the limit change
++ * @node: the list node to attach this constraint with the list of constraints
++ * @head: the list of constraints the @node
++ *
++ * This structure has a couple of instanciation per perf QoS file
++ * opened by a process. The process can apply one or two constraints
++ * to the device.
++ *
++ * Other processes will allocate their own constraints which will be
++ * added in the list of constraints.
++ */
++struct perf_qos_constraint {
++	int soft_limit;
++	int hard_limit;
++	set_perf_limit_cb_t set_perf_limit_cb;
++	struct kref kref;
++	struct list_head node;
++	struct list_head *head;
++};
++
++/**
++ * struct perf_qos - structure owning the constraint information for
++ * 			the device
++ *
++ * @lock: lock to protect the actions on the list of constraints
++ * @perf_qos_cdev: a struct cdev used for the device destruction
++ * @ops: the ops given by the backend driver to notify the change of constraint
++ * @descr: a constraint descriptor giving the units and the boundaries
++ * @perf_min: the list of the minimal performance constraints
++ * @perf_max: the list of the maximal performance constraints
++ */
++struct perf_qos {
++	spinlock_t lock;
++	struct cdev perf_qos_cdev;
++	struct perf_qos_ops *ops;
++	struct perf_qos_value_descr *descr;
++	struct list_head perf_min;
++	struct list_head perf_max;
++};
++
++/**
++ * struct perf_qos_data - structure with the requested constraints
++ *
++ * @pqc_min: the requested performance constraint giving the minimal value
++ * @pqc_max: the requested performance constraint giving the maximal value
++ */
++struct perf_qos_data {
++	struct perf_qos_constraint *pqc_min;
++	struct perf_qos_constraint *pqc_max;
++};
++
++static struct perf_qos_constraint *perf_qos_constraint_find(struct list_head *list, int value)
++{
++	struct perf_qos_constraint *pcq;
++
++	list_for_each_entry(pcq, list, node) {
++		if (pcq->soft_limit == value)
++			return pcq;
++	}
++
++	return NULL;
++}
++
++static int perf_qos_constraint_cmp(void *data,
++				   const struct list_head *l1,
++				   const struct list_head *l2)
++{
++	struct perf_qos_constraint *pqc1 = container_of(l1, struct perf_qos_constraint, node);
++	struct perf_qos_constraint *pqc2 = container_of(l2, struct perf_qos_constraint, node);
++
++	/*
++	 * The comparison will depend if we apply a max or min
++	 * performance constraint. If the soft limit is lesser than
++	 * the hard limit, that means it is a maximum limitation.
++	 */
++	if (pqc1->soft_limit < pqc1->hard_limit)
++		return pqc1->soft_limit - pqc2->soft_limit;
++
++	return pqc2->soft_limit - pqc1->soft_limit;
++}
++
++static int perf_qos_del(struct perf_qos_constraint *pcq)
++{
++	const struct perf_qos_constraint *first;
++	int new_limit;
++
++	first = list_first_entry(pcq->head, struct perf_qos_constraint, node);
++
++	list_del(&pcq->node);
++
++	/*
++	 * The active constraint is not the one we removed, so there
++	 * is nothing more to do
++	 */
++	if (first != pcq)
++		return 0;
++
++	/*
++	 * As we remove the first entry, then get the new first entry
++	 * to apply the next constraint. If there is no more
++	 * constraint set, reset to the original limit. Otherwise, use
++	 * the new constraint value.
++	 */
++	if (list_empty(pcq->head))
++		new_limit = pcq->hard_limit;
++	else {
++		first = list_first_entry(pcq->head, struct perf_qos_constraint, node);
++		new_limit = first->soft_limit;
++	};
++
++	/*
++	 * Notify the backend driver to update its performance level
++	 * if needed. If the performance level is currently inside the
++	 * new limits, nothing will happen. Otherwise it must be
++	 * adjust the current performance level to be inside the
++	 * authorized limits
++	 */
++	pcq->set_perf_limit_cb(new_limit);
++
++	return 1;
++}
++
++static int perf_qos_add(struct perf_qos_constraint *pcq)
++{
++	const struct perf_qos_constraint *first;
++
++	list_add(&pcq->node, pcq->head);
++
++	list_sort(NULL, pcq->head, perf_qos_constraint_cmp);
++
++	/*
++	 * A sort happened resulting in a different constraint at the head
++	 */
++	first = list_first_entry(pcq->head, struct perf_qos_constraint, node);
++
++	/*
++	 * The inserted constraint did not become the active one, so
++	 * we can bail out
++	 */
++	if (pcq != first)
++		return 0;
++
++	/*
++	 * Notify the backend driver to update its performance level
++	 * if needed. If the performance level is currently inside the
++	 * new limits, nothing will happen. Otherwise it must be
++	 * adjust the current performance level to be inside the
++	 * authorized limits
++	 */
++	pcq->set_perf_limit_cb(first->soft_limit);
++
++	return 1;
++}
++
++static void perf_qos_constraint_release(struct kref *kref)
++{
++	struct perf_qos_constraint *pcq;
++
++	pcq = container_of(kref, struct perf_qos_constraint, kref);
++
++	/*
++	 * The removal of the constraint results in the change of the
++	 * first entry of the list which means it was the active
++	 * one. We need to apply the next constraint of the list
++	 */
++	if (perf_qos_del(pcq)) {
++		/* Something to do */
++	}
++
++	kfree(pcq);
++}
++
++static void perf_qos_constraint_put(struct perf_qos_constraint *pcq)
++{
++	kref_put(&pcq->kref, perf_qos_constraint_release);
++}
++
++static void perf_qos_constraint_get(struct perf_qos_constraint *pcq)
++{
++	kref_get(&pcq->kref);
++}
++
++static struct perf_qos_constraint *perf_qos_constraint_alloc(struct perf_qos *pq, int soft_limit,
++							     struct list_head *perf, perf_qos_limit_t limit)
++{
++	struct perf_qos_constraint *pqc;
++
++	pqc = kzalloc(sizeof(*pqc), GFP_KERNEL);
++	if (!pqc)
++		return NULL;
++
++	kref_init(&pqc->kref);
++	INIT_LIST_HEAD(&pqc->node);
++
++	if (limit == PERF_QOS_LIMIT_MAX) {
++		pqc->set_perf_limit_cb = pq->ops->set_perf_limit_max;
++		pqc->hard_limit = pq->descr->limit_max;
++	} else {
++		pqc->set_perf_limit_cb = pq->ops->set_perf_limit_min;
++		pqc->hard_limit = pq->descr->limit_min;
++	}
++
++	pqc->head = perf;
++	pqc->soft_limit = soft_limit;
++
++	return pqc;
++}
++
++static int perf_qos_open(struct inode *inode, struct file *file)
++{
++	struct perf_qos_data *pqd;
++	struct perf_qos *pq;
++
++	pq = idr_find(&perf_qos_minors, iminor(inode));
++	if (!pq)
++		return -ENODEV;
++
++	inode->i_private = pq;
++
++	pqd = kzalloc(sizeof(*pqd), GFP_KERNEL);
++	if (!pqd)
++		return -ENOMEM;
++
++	file->private_data = pqd;
++
++	return 0;
++}
++
++static int perf_qos_release(struct inode *inode, struct file *file)
++{
++	struct perf_qos *pq = inode->i_private;
++	struct perf_qos_data *pqd = file->private_data;
++
++	spin_lock(&pq->lock);
++
++	if (pqd->pqc_min)
++		perf_qos_constraint_put(pqd->pqc_min);
++
++	if (pqd->pqc_max)
++		perf_qos_constraint_put(pqd->pqc_max);
++
++	spin_unlock(&pq->lock);
++
++	kfree(pqd);
++
++	return 0;
++}
++
++static int perf_qos_unset(struct perf_qos_constraint **cur_pqc,
++			  perf_qos_limit_t limit, struct list_head *perf, int value)
++{
++	/*
++	 * Removing a constraint:
++	 *
++	 * - if it exists then *current_pqc is set. We decrement the
++         *   refcount and update the current constraint by setting it
++         *   to NULL
++	 *
++	 * - if the current constraint does not exist then, it is an
++         *   error and we should exit with an error
++	 */
++	if (!(*cur_pqc))
++		return -EINVAL;
++
++	perf_qos_constraint_put(*cur_pqc);
++	*cur_pqc = NULL;
++
++	return 0;
++}
++
++static int perf_qos_set(struct perf_qos *pq, struct perf_qos_constraint **cur_pqc,
++			perf_qos_limit_t limit, struct list_head *perf, int value)
++{
++	struct perf_qos_constraint *pqc;
++	int ret = 0;
++
++	/*
++	 * We are trying to set the same constraint.
++	 */
++	if (*cur_pqc && ((*cur_pqc)->soft_limit == value)) {
++		ret = -EALREADY;
++		goto out;
++	}
++
++	/*
++	 * Case 2 : Adding a constraint:
++	 *
++	 * - it already exists because it was created by another
++	 *   process, we increment the refcount
++	 *
++	 * - it already exists because we created it before, we
++	 *   return an error
++	 *
++	 * - it does not exist but there is a previous different
++         *   constraint we set before. It is a constraint change. We
++         *   must release the previous constraint and create a new
++         *   one. However, we apply the new constraint and then we
++         *   remove the old one in order to not have the backend
++         *   driver with a window where there is no constraint at all
++	 *
++	 * - it does not exist and there is no previous constraint. It
++         *   is a new constraint. We allocate the constraint, apply it
++         *   and set it as the current constraint
++	 */
++	pqc = perf_qos_constraint_find(perf, value);
++	if (pqc) {
++		perf_qos_constraint_get(pqc);
++	} else {
++		pqc = perf_qos_constraint_alloc(pq, value, perf, limit);
++		if (!pqc) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		/*
++		 * The new constraint has to be applied because it
++		 * results in a change of the first entry of the list
++		 * of constraints
++		 */
++		if (perf_qos_add(pqc)) {
++			/* Something to do */
++		}
++	}
++
++	/*
++	 * We previously set a constraint, let's release the refcount
++	 * as we change it. The constraint can be freed if we are the
++	 * last one having a reference to it or if we are the creator
++	 * and no other process held a refcount on it.
++	 */
++	if ((*cur_pqc))
++		perf_qos_constraint_put(*cur_pqc);
++
++	*cur_pqc = pqc;
++out:
++	return ret;
++}
++
++static int ioctl_perf_qos_set_max(struct perf_qos *pq,
++				  struct perf_qos_data *pqd,
++				  struct perf_qos_ioctl_arg *pqia)
++{
++	if (pqia->value > pq->descr->limit_max)
++		return -EINVAL;
++
++	if (pqia->value == pq->descr->limit_max)
++		return perf_qos_unset(&pqd->pqc_max, PERF_QOS_LIMIT_MAX,
++				    &pq->perf_max, pqia->value);
++	else
++		return perf_qos_set(pq, &pqd->pqc_max, PERF_QOS_LIMIT_MAX,
++				    &pq->perf_max, pqia->value);
++}
++
++static int ioctl_perf_qos_set_min(struct perf_qos *pq,
++				  struct perf_qos_data *pqd,
++				  struct perf_qos_ioctl_arg *pqia)
++{
++	if (pqia->value < pq->descr->limit_min)
++		return -EINVAL;
++
++	if (pqia->value == pq->descr->limit_min)
++		return perf_qos_unset(&pqd->pqc_min, PERF_QOS_LIMIT_MIN,
++				    &pq->perf_min, pqia->value);
++	else
++		return perf_qos_set(pq, &pqd->pqc_min, PERF_QOS_LIMIT_MIN,
++				    &pq->perf_min, pqia->value);
++}
++
++static int perf_qos_get(struct list_head *perf, int *value)
++{
++	struct perf_qos_constraint *pqc;
++
++	/*
++	 * We may not have set any performance constraint yet but
++	 * another process may have set one, so we get the head of
++	 * performance constraint list
++	 */
++	if (list_empty(perf))
++		return -ENODATA;
++
++	pqc = list_first_entry(perf, struct perf_qos_constraint, node);
++
++	*value = pqc->soft_limit;
++
++	return 0;
++}
++
++static int ioctl_perf_qos_get_min(struct perf_qos *pq,
++				  struct perf_qos_data *pqd,
++				  struct perf_qos_ioctl_arg *pqia)
++{
++	return perf_qos_get(&pq->perf_min, &pqia->value);
++}
++
++static int ioctl_perf_qos_get_max(struct perf_qos *pq,
++				  struct perf_qos_data *pqd,
++				  struct perf_qos_ioctl_arg *pqia)
++{
++	return perf_qos_get(&pq->perf_max, &pqia->value);
++}
++
++static int ioctl_perf_qos_get_unit(struct perf_qos *pq,
++				   struct perf_qos_data *pqd,
++				   struct perf_qos_ioctl_arg *pqia)
++{
++	pqia->unit = pq->descr->unit;
++
++	return 0;
++}
++
++static int ioctl_perf_qos_get_limits(struct perf_qos *pq,
++				     struct perf_qos_data *pqd,
++				     struct perf_qos_ioctl_arg *pqia)
++{
++	pqia->limit_min = pq->descr->limit_min;
++	pqia->limit_max = pq->descr->limit_max;
++
++	return 0;
++}
++
++typedef int (*perf_qos_ioctl_ops_t)(struct perf_qos *pq,
++				    struct perf_qos_data *pqd,
++				    struct perf_qos_ioctl_arg *pqia);
++
++static long perf_qos_ioctl(struct file *file, unsigned int ucmd,
++			   unsigned long arg)
++{
++	struct perf_qos_data *pqd = file->private_data;
++	struct perf_qos *pq = file->f_inode->i_private;
++	struct perf_qos_ioctl_arg pqia;
++	int cmd = _IOC_NR(ucmd);
++	int dir = _IOC_DIR(ucmd);
++	int type = _IOC_TYPE(ucmd);
++	int ret;
++
++	perf_qos_ioctl_ops_t perf_qos_ioctl_ops[] = {
++		[PERF_QOS_IOC_SET_MAX_CMD]  	= ioctl_perf_qos_set_max,
++		[PERF_QOS_IOC_SET_MIN_CMD]  	= ioctl_perf_qos_set_min,
++		[PERF_QOS_IOC_GET_MAX_CMD]  	= ioctl_perf_qos_get_max,
++		[PERF_QOS_IOC_GET_MIN_CMD]  	= ioctl_perf_qos_get_min,
++		[PERF_QOS_IOC_GET_UNIT_CMD] 	= ioctl_perf_qos_get_unit,
++		[PERF_QOS_IOC_GET_LIMITS_CMD] 	= ioctl_perf_qos_get_limits,
++	};
++
++	if (type != PERF_QOS_IOCTL_TYPE)
++		return -EINVAL;
++
++	if (cmd < 0 || cmd >= PERF_QOS_IOC_MAX_CMD)
++		return -EINVAL;
++
++	if (dir & _IOC_WRITE) {
++		if (copy_from_user(&pqia, (typeof(pqia) *)arg, sizeof(pqia)))
++			return -EACCES;
++	}
++
++	spin_lock(&pq->lock);
++	ret = perf_qos_ioctl_ops[cmd](pq, pqd, &pqia);
++	spin_unlock(&pq->lock);
++
++	if (ret)
++		goto out;
++
++	if (dir & _IOC_READ) {
++		if (copy_to_user((typeof(pqia) *)arg, &pqia, sizeof(pqia)))
++			return -EACCES;
++	}
++out:
++	return ret;
++}
++
++static const struct file_operations perf_qos_fops = {
++	.owner          = THIS_MODULE,
++	.open		= perf_qos_open,
++	.release	= perf_qos_release,
++	.unlocked_ioctl = perf_qos_ioctl,
++#ifdef CONFIG_COMPAT
++	.compat_ioctl	= perf_qos_ioctl,
++#endif
++};
++
++void perf_qos_device_destroy(struct perf_qos *pq)
++{
++	idr_remove(&perf_qos_minors, MINOR(pq->perf_qos_cdev.dev));
++	device_destroy(perf_qos_class, pq->perf_qos_cdev.dev);
++	cdev_del(&pq->perf_qos_cdev);
++	kfree(pq->descr);
++	kfree(pq->ops);
++	kfree(pq);
++}
++EXPORT_SYMBOL_GPL(perf_qos_device_destroy);
++
++int perf_qos_is_allowed(struct perf_qos *pq, int performance)
++{
++	const struct perf_qos_constraint *first;
++	int allowed = 1;
++
++	spin_lock(&pq->lock);
++
++	first = list_first_entry(&pq->perf_min, struct perf_qos_constraint, node);
++	if (performance < first->soft_limit)
++		allowed = 0;
++
++	first = list_first_entry(&pq->perf_max, struct perf_qos_constraint, node);
++	if (performance > first->soft_limit)
++		allowed = 0;
++
++	spin_unlock(&pq->lock);
++
++	return allowed;
++}
++EXPORT_SYMBOL_GPL(perf_qos_is_allowed);
++
++struct perf_qos *perf_qos_device_create(const char *name,
++					struct perf_qos_ops *ops,
++					struct perf_qos_value_descr *descr)
++{
++	struct device *dev;
++	struct perf_qos *pq;
++	dev_t devt;
++	int minor;
++	int ret;
++
++	if (!ops->set_perf_limit_max || !ops->set_perf_limit_min)
++		return ERR_PTR(-EINVAL);
++
++	if (descr->unit < 0 || descr->unit >= PERF_QOS_UNIT_MAX)
++		return ERR_PTR(-EINVAL);
++
++	if (descr->limit_min > descr->limit_max)
++		return ERR_PTR(-EINVAL);
++
++	if (descr->unit == PERF_QOS_UNIT_NORMAL) {
++		if (descr->limit_min < 0 || descr->limit_max > 1024)
++			return ERR_PTR(-EINVAL);
++	}
++
++	pq = kzalloc(sizeof(*pq), GFP_KERNEL);
++	if (!pq)
++		return ERR_PTR(-ENOMEM);
++
++	INIT_LIST_HEAD(&pq->perf_min);
++	INIT_LIST_HEAD(&pq->perf_max);
++	spin_lock_init(&pq->lock);
++
++	pq->ops = kmemdup(ops, sizeof(*ops), GFP_KERNEL);
++	if (!pq->ops) {
++		ret = -ENOMEM;
++		goto out_kfree_pq;
++	}
++
++	pq->descr = kmemdup(descr, sizeof(*descr), GFP_KERNEL);
++	if (!pq->descr) {
++		ret = -ENOMEM;
++		goto out_kfree_pq_ops;
++	}
++
++	minor = idr_alloc(&perf_qos_minors, pq, 0,
++			  NUM_PERF_QOS_MINORS, GFP_KERNEL);
++	if (minor < 0)
++		goto out_kfree_pq_descr;
++
++	devt = MKDEV(MAJOR(perf_qos_devt), minor);
++
++	cdev_init(&pq->perf_qos_cdev, &perf_qos_fops);
++
++	ret = cdev_add(&pq->perf_qos_cdev, devt, 1);
++	if (ret < 0)
++		goto out_idr_remove;
++
++	dev = device_create(perf_qos_class, NULL, devt, NULL, name);
++	if (IS_ERR(dev)) {
++		ret = PTR_ERR(dev);
++		goto out_cdev_del;
++	}
++
++	return pq;
++
++out_cdev_del:
++	cdev_del(&pq->perf_qos_cdev);
++
++out_idr_remove:
++	idr_remove(&perf_qos_minors, minor);
++
++out_kfree_pq_descr:
++	kfree(pq->descr);
++
++out_kfree_pq_ops:
++	kfree(pq->ops);
++
++out_kfree_pq:
++	kfree(pq);
++
++	return ERR_PTR(ret);
++}
++EXPORT_SYMBOL_GPL(perf_qos_device_create);
++
++static char *perf_qos_devnode(const struct device *dev, umode_t *mode)
++{
++	return kasprintf(GFP_KERNEL, "%s/%s", DEVNAME, dev_name(dev));
++}
++
++static int perf_qos_init(void)
++{
++	int ret;
++
++	ret = alloc_chrdev_region(&perf_qos_devt, 0,
++				  NUM_PERF_QOS_MINORS, DEVNAME);
++	if (ret)
++		return ret;
++
++	perf_qos_class = class_create(DEVNAME);
++	if (IS_ERR(perf_qos_class)) {
++		unregister_chrdev_region(perf_qos_devt, NUM_PERF_QOS_MINORS);
++		return PTR_ERR(perf_qos_class);
++	}
++	perf_qos_class->devnode = perf_qos_devnode;
++
++	return 0;
++}
++
++subsys_initcall(perf_qos_init);
 -- 
-Steve Wahl, Hewlett Packard Enterprise
+2.43.0
+
 
