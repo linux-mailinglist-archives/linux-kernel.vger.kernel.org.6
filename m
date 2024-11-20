@@ -1,163 +1,333 @@
-Return-Path: <linux-kernel+bounces-416404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A7EE9D444B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:05:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFC39D4447
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80696B23675
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97821F22C31
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F601C9DDF;
-	Wed, 20 Nov 2024 23:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5034B1C8315;
+	Wed, 20 Nov 2024 23:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BDqfMPB5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s1Mr92xG"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WaOoXn9t"
+Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5458B1C9DCE
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D401C75ED
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143761; cv=none; b=Z0BPhY3wZtyfgS6OSl2jDAMIT0bLbFoi3gpaHjATvTqJqoMzEqUkRC4HMpZ926DauxpH9oj+6fc22xIqBRaJmz2xJQ+dVflCO4WjpcDbpIRnsxhR4kuk4VsAzfHoE+xjmbvxmwG+pmdbQiB5UKayxp97PpHJmfkEdvbsDFmxmos=
+	t=1732143746; cv=none; b=g3cj4W89wEqFWr4NMnPYJuej7H7QLUqMU3IRvh0vbLg73zaZIjUefII9IhAm09piX2A4ogpt3l3Y4UmI7ccFZIPmchYnyZ86xw8vpsndC54qvC7Gge3J2BdAsCQvJKTSsUNvR26gXZYJHbNNG0Mq6hEjipbzFMWtMhobKE0nj3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143761; c=relaxed/simple;
-	bh=65cja3GLqAPgZTRQurSeNRYC1HigINlbwxieHmzKrUo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=dose9oenPgMuq2uZ5+hIGObJbUPbwfmqjVxkiGGn75TJ02teYBWAiFI8TWsbfeOrBHvCfB993eTL9TzFEZulhPrBFGV58f8AhHThOlBU9xe4MhT8NClJcmcf5no4YZA5OCtaKREbwTqZsOlmU8YR0PCfz7zLJScY7tTZWa8uREM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BDqfMPB5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=s1Mr92xG; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 8CFDF114011B;
-	Wed, 20 Nov 2024 18:02:38 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 20 Nov 2024 18:02:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1732143758;
-	 x=1732230158; bh=+tOl6rSvZsKNggveupEMbGpTcJr/+iEv+wbu7ZX4M4o=; b=
-	BDqfMPB5gVL4POujedGPXgY+5Y3bsnsa4FDbFT6CRgvc0/dEMvyGogMIbarOHSeO
-	AkKnLyYCiijMGSJ4aTGuw897UdvartOSY9i4mQETG3dHiC7SbL72h/kRHfdb87eR
-	CYkYpvJTmphLDu5mZZx5Q4C8eMo3pg5Dt4rjNDrw9BFQGOWCchDeXHSmS/3nH7PO
-	ZnTQ6h8elOn/hlykdTWZMNjxMYByLH4Hv3lf/qQ+d7jNjRBqExaPem43B2m6HXkg
-	dhKsiP5sK2CR6/7Px0CNKiivI8PrVsFwbAur7QYBg34P1XcTPlPV7FuqAh5wto1h
-	Q2hvzgxkbgNgoG1pkfN4iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732143758; x=
-	1732230158; bh=+tOl6rSvZsKNggveupEMbGpTcJr/+iEv+wbu7ZX4M4o=; b=s
-	1Mr92xGe+iXUCQ1Qj34DDZgtI3DceVGrIPK5xYsgdya7DQoRMQIaJcwYfM6A8jjj
-	BB3TZboeF/st/fYPWqxfivXktK7nVgBaAYtblD5YLGImpbFey6/edXRct14RO6ay
-	mQ45NXbR3AMpgNiv6+0eaMAzUnbKd2CPfw0x7GOi43vI7X/Tq1fzj+YZpdpaTncA
-	XqJtnhTeAQ1AcjDswTtyXNVRXlsRIubPIl7dy6/ZSCrP34LZ3j1H1HGLLvhnxmoW
-	CvbYeiyAbaw8bJ/8SKUD2a2vlru1CtcH7HbC7KvqTFpneDfpBgfujCe/e76sZVgU
-	kGGu8o9yV8q64rvYP3CLw==
-X-ME-Sender: <xms:jmo-Z7ZvmHoQVGNG7n7yQszewy3JzP_5JZSmBnAR61ojQbXLiZN1Hw>
-    <xme:jmo-Z6YwAz9fhnXj1F_DVsxs9snxvKDT6Atgbt-JaOxpo_0khsfhW39rh6ZkniVuS
-    zMkvQY3tFp7cQ8Wf44>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgddthecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpeefffelleduheehleejtdfhheegtdffhedtffeileeh
-    keetffevtdegheduhfeiudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthh
-    husgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeegpdhmohguvgepsh
-    hmthhpohhuthdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggr
-    thhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlih
-    hsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhotgeslhhishhtshdr
-    lhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:jmo-Z98yeXYdC44bOs3Km_vOlSVrvdg-MwauVfuG3iFUUkNZpls0dg>
-    <xmx:jmo-ZxpvxuEqO1fsM254RFPEYpxQ7lWrx431rhkUFL9dtcjbpi5P9w>
-    <xmx:jmo-Z2puip3eGCITk9fdwCC8cxny7CLUkQRQw_EwEnXsLxNL0bp2yg>
-    <xmx:jmo-Z3TbwqkhrJy_LoCl0KgRP2gEYv-DGHQZ05HuFJSG_M9i2mcS5A>
-    <xmx:jmo-Z5W715FPWEsO6kZwPw1z6Mu_UrBmDrSJ8sXoKnUlAP_F_DsmsLLy>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 54DFE2220071; Wed, 20 Nov 2024 18:02:38 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732143746; c=relaxed/simple;
+	bh=r722JIbjWKTV6x5kIRUMPrrtZ91RAYRiLvlDgi1scsA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JXRcCH6Cvy92rNuazTHvkNHpA55NhPQEDzIEmXLJDr/mcEe8cL/hpQ6RsROv+j9CCe+sFzpXxd2uFA9rKhs33nA45TTLLoeliAlUdj/N68oF4XxDglEloP581D83vQoEzd59E8HqRHnhwPJPLMbpx0lwMC/ouoXvzYoNyToonN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WaOoXn9t; arc=none smtp.client-ip=209.85.208.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-2fb4feba303so402441fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:02:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732143742; x=1732748542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C99xPu0F2JrLLvKVuob7osXujIs4pqASysQpASNt43U=;
+        b=WaOoXn9ter8ri2p2KOWZL+1QR70McZ6/gJJ1dCWTQArNeJJV3CcCCdzTQMm6//Hiw8
+         MkY4fV/T8nXQw0h91ZuCnTVajQWhu76QYG+80re/aIaP7U+Xmf4NeE24wUl3cWv5AMGv
+         zLCLRM8CLItyQ91JCPsUOBUJ6OZ69shr4HO/zK++sulV6E9ZLJWWN/Dw/oOOzjcLyrKZ
+         ic7FONw2lGOvK2cl5XPJOXJQekCYEQeEa1U/laPF1790PVScsy9ONKK0+FQQexOxLNoa
+         81yU6IK8txaFbScrwvRGzzoyDm1BbCT0030TyGPkvWu6u4pqWLsFuaNBVJCMv4XofbVo
+         OQYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732143742; x=1732748542;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C99xPu0F2JrLLvKVuob7osXujIs4pqASysQpASNt43U=;
+        b=n+h8Xk4/jvNPOpBZuJ/BuLyONj1mJ6709jTjh818fLSUFwbFGVzFyErIy0Mesv8jFv
+         vzQG+PuospKUaJRlGddlN78MPnlxtW5bd3k3cTVp9k6yIc4SmQNJ1X3DYpIWXfeqiSzS
+         LVlppDf2bKXezE1SDyLvb/UHRiO3GYVTNKQaF9tq9nfRGK6gYarIenO+KxHs4NZcLWjs
+         izfl52VZ1OPW1JcOBqJYtr+R8gOg9A1WUOZxuSpIxwna6LSjmmh5SaCqF0fYNr6DxQWb
+         NqSplPey9shdbgtJW/0PrH2fpDpoaCCg3uul6XtCBTlmFq5DWOfh0hL6iYD5kn9HjfXs
+         Nz5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXx3f7TOJDAmlGPR+AW6pY9lv5sFFN0dT0euHwUeBGsa5jFgeQqi14iFbmftftG0EtFE7GbKHLU+L5IhfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLoJXMH4dNit1zGS6+MDCL2BeUBLiozmn7zccxx1+En2ieM4iy
+	9GoEOoEOodwkPzPVFMwD/fS9emZjdeHbV8MvvA8Vtbxvht2FH9ILOPbH0qLBKAI=
+X-Gm-Gg: ASbGncsG204r0HezDTWq3xncqdquhTphhNgoDfzNUghQE6T+qkakTw4l6h2ZLGDzOso
+	BIAuoVnDxvrkOqj86n43VCoOjY5Bs2H3MWPVCTzZ8+aLYGh1Vn4cLd674IizPC06jiY/bvBB1i6
+	BLLT4UnQ7n8X0UJidR+bHJxrauYmG3dfXcM/zOKbzOTwpUZ5i5nc+iNNavzNrsctptqdgtfn7io
+	2UM2rJ9Jdl++slITuXspGn7Bzh6IV8QUclJCUD8JsmjW1gD2C8glme70czqtOMU9dotyRvCUB/T
+	Z+30VzHoLIM43fS+zN8kHBY5cBrq
+X-Google-Smtp-Source: AGHT+IF/LUBkOpj9adAK7WT3mpKAbftOM6gI9+oD0hdR5L9Ychgb0xD20dJNLpqrS9C2lqgIaJYcTQ==
+X-Received: by 2002:a05:6512:2311:b0:53d:a4d8:1b3d with SMTP id 2adb3069b0e04-53dc1369787mr532834e87.10.1732143741959;
+        Wed, 20 Nov 2024 15:02:21 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd3ee026sm773736e87.14.2024.11.20.15.02.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 15:02:20 -0800 (PST)
+Message-ID: <bb58d02f-9ed6-476f-8bc6-ad56cb35e37f@linaro.org>
+Date: Thu, 21 Nov 2024 01:02:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 21 Nov 2024 00:02:17 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Message-Id: <77eaecac-c423-494d-91f0-e08322fbb0d8@app.fastmail.com>
-In-Reply-To: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
-References: <d58cbbc9-e5b0-49c3-8cf7-d0726e796e92@app.fastmail.com>
-Subject: [GIT PULL 3/4] soc: defconfig updates for 6.13
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] dt-bindings: media: Add qcom,x1e80100-camss binding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-2-54075d75f654@linaro.org>
+ <92f3f608-1ca6-4c41-9406-28c7ad589872@linaro.org>
+ <66d1c50f-ebfc-41c7-95a4-5d555b336da4@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <66d1c50f-ebfc-41c7-95a4-5d555b336da4@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+Hi Bryan,
 
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+On 11/19/24 17:11, Bryan O'Donoghue wrote:
+> On 19/11/2024 14:34, Vladimir Zapolskiy wrote:
+>> Hi Bryan,
+>>
+>> please find a few review comments below.
+>>
+>> On 11/19/24 15:10, Bryan O'Donoghue wrote:
+>>> Add bindings for qcom,x1e80100-camss in order to support the camera
+>>> subsystem for x1e80100 as found in various Co-Pilot laptops.
+>>>
+>>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> ---
+>>>    .../bindings/media/qcom,x1e80100-camss.yaml        | 354 +++++++++++
+>>> ++++++++++
+>>>    1 file changed, 354 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-
+>>> camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-
+>>> camss.yaml
+>>> new file mode 100644
+>>> index
+>>> 0000000000000000000000000000000000000000..ca2499cd52a51e14bad3cf8a8ca94c9d23ed5030
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
+>>> @@ -0,0 +1,354 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/media/qcom,x1e80100-camss.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Qualcomm X1E80100 Camera Subsystem (CAMSS)
+>>> +
+>>> +maintainers:
+>>> +  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>> +
+>>> +description: |
+>>> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: qcom,x1e80100-camss
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 29
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: camnoc_rt_axi
+>>> +      - const: camnoc_nrt_axi
+>>> +      - const: core_ahb
+>>> +      - const: cpas_ahb
+>>> +      - const: cpas_fast_ahb
+>>> +      - const: cpas_vfe0
+>>> +      - const: cpas_vfe1
+>>> +      - const: cpas_vfe_lite
+>>> +      - const: cphy_rx_clk_src
+>>> +      - const: csid
+>>> +      - const: csid_csiphy_rx
+>>> +      - const: csiphy0
+>>> +      - const: csiphy0_timer
+>>> +      - const: csiphy1
+>>> +      - const: csiphy1_timer
+>>> +      - const: csiphy2
+>>> +      - const: csiphy2_timer
+>>> +      - const: csiphy4
+>>> +      - const: csiphy4_timer
+>>
+>> What does happen to csiphy3? Could it fall through the cracks?
+>>
+> 
+> Nope.
+> 
+> For whatever reason csiphy4 is the name here. I guess different SKUs
+> have been fused out this way. I'd assume there's some version that does
+> csiphy0-csiphy4 inclusive.
+> 
+> Not here though.
+> 
+>>> +      - const: gcc_axi_hf
+>>> +      - const: gcc_axi_sf
+>>> +      - const: vfe0
+>>> +      - const: vfe0_fast_ahb
+>>> +      - const: vfe1
+>>> +      - const: vfe1_fast_ahb
+>>> +      - const: vfe_lite
+>>> +      - const: vfe_lite_ahb
+>>> +      - const: vfe_lite_cphy_rx
+>>> +      - const: vfe_lite_csid
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 13
+>>> +
+>>> +  interrupt-names:
+>>> +    items:
+>>> +      - const: csid0
+>>> +      - const: csid1
+>>> +      - const: csid2
+>>> +      - const: csid_lite0
+>>> +      - const: csid_lite1
+>>> +      - const: csiphy0
+>>> +      - const: csiphy1
+>>> +      - const: csiphy2
+>>> +      - const: csiphy4
+>>> +      - const: vfe0
+>>> +      - const: vfe1
+>>> +      - const: vfe_lite0
+>>> +      - const: vfe_lite1
+>>> +
+>>> +  iommus:
+>>> +    maxItems: 13
+>>> +
+>>> +  interconnects:
+>>> +    maxItems: 4
+>>> +
+>>> +  interconnect-names:
+>>> +    items:
+>>> +      - const: cam_ahb
+>>> +      - const: cam_hf_mnoc
+>>> +      - const: cam_sf_mnoc
+>>> +      - const: cam_sf_icp_mnoc
+>>> +
+>>> +  power-domains:
+>>> +    items:
+>>> +      - description: IFE0 GDSC - Image Front End, Global Distributed
+>>> Switch Controller.
+>>> +      - description: IFE1 GDSC - Image Front End, Global Distributed
+>>> Switch Controller.
+>>> +      - description: Titan Top GDSC - Titan ISP Block, Global
+>>> Distributed Switch Controller.
+>>> +
+>>> +  power-domain-names:
+>>> +    items:
+>>> +      - const: ife0
+>>> +      - const: ife1
+>>> +      - const: top
+>>> +
+>>> +  ports:
+>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>> +
+>>> +    description:
+>>> +      CSI input ports.
+>>> +
+>>> +    patternProperties:
+>>> +      "^port@[03]+$":
+>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>>> +        unevaluatedProperties: false
+>>> +
+>>> +        description:
+>>> +          Input port for receiving CSI data from a CSIPHY.
+>>> +
+>>> +        properties:
+>>> +          endpoint:
+>>> +            $ref: video-interfaces.yaml#
+>>> +            unevaluatedProperties: false
+>>> +
+>>> +            properties:
+>>> +              clock-lanes:
+>>> +                maxItems: 1
+>>> +
+>>> +              data-lanes:
+>>> +                minItems: 1
+>>> +                maxItems: 4
+>>> +
+>>> +            required:
+>>> +              - clock-lanes
+>>> +              - data-lanes
+>>> +
+>>> +  reg:
+>>> +    maxItems: 12
+>>> +
+>>> +  reg-names:
+>>> +    items:
+>>> +      - const: csid0
+>>> +      - const: csid1
+>>> +      - const: csid2
+>>> +      - const: csid_wrapper
+>>> +      - const: csiphy0
+>>> +      - const: csiphy1
+>>> +      - const: csiphy2
+>>> +      - const: csiphy4
+>>> +      - const: vfe_lite0
+>>> +      - const: vfe_lite1
+>>> +      - const: vfe0
+>>> +      - const: vfe1
+>>> +
+>>> +  vdda-phy-supply:
+>>> +    description:
+>>> +      Phandle to a 0.9V regulator supply to PHY core block.
+>>> +
+>>> +  vdda-pll-supply:
+>>> +    description:
+>>> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
+>>
+>> I believe it's very unlikely that the SoC pads are called like this,
+>> as we discussed it in the recent past.
+>>
+>> Please rename the properties to reflect the names inherited from
+>> the actual hardware.
+> 
+> I believe we agreed to convert to the PHY infrastructure after 8550,
+> 7280 and x1e80100.
+> 
+> So these names should rename as is.
 
-are available in the Git repository at:
+my ask is not related to the planned PHY conversion, it's much simpler and
+easily doable, just reflect the proper pad names in the property names.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.13
+There is no such hardware objects on the SoC, which names can be associated
+to "vdda-phy" or "vdda-pll" property names. Okay, split of CSIPHY specific
+supplies can be done separately, but can you introduce here property names
+like "vdd-csiphy-0p9-supply" and "vdd-csiphy-1p2-supply"?
 
-for you to fetch changes up to de6dff2090ddfa74ae53e3e52243a9b9f3ff8526:
+Also you put a description like "supply to PHY refclk pll block", but if I
+remember correctly once you've said that the datasheet (of another SoC)
+does not give any clues about the usage of the supply, thus it invalidates
+the given description.
 
-  Merge tag 'at91-defconfig-6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into soc/defconfig (2024-11-13 22:49:50 +0100)
+I'm unhappy that people tend to copy defects, which are trivial to fix or
+avoid at least.
 
-----------------------------------------------------------------
-soc: defconfig updates for 6.13
-
-As usual, a few newly added device drivers get enabled in the
-arm32 multi_v7_defconfig and arm64 defconfig as well as a few of
-the SoC specific config files.
-
-The main visible change is the inclusion of (reduced) debug info
-by default in the 32-bit defconfig.
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
-
-Arnd Bergmann (6):
-      Merge tag 'arm-soc/for-6.13/defconfig' of https://github.com/Broadcom/stblinux into soc/defconfig
-      Merge tag 'qcom-arm64-defconfig-for-6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
-      Merge tag 'imx-defconfig-6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into soc/defconfig
-      Merge tag 'renesas-arm-defconfig-for-v6.13-tag1' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/defconfig
-      Merge tag 'ti-k3-config-for-v6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux into soc/defconfig
-      Merge tag 'at91-defconfig-6.13' of https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux into soc/defconfig
-
-Claudiu Beznea (1):
-      arm64: defconfig: Enable VBATTB clock and Renesas RTCA-3
-
-Florian Fainelli (1):
-      ARM: multi_v7_defconfig: Enable debugging symbols by default
-
-Mihai Sain (1):
-      ARM: configs: at91: enable PAC1934 driver as module
-
-Taniya Das (1):
-      arm64: defconfig: Enable sc7280 clock controllers
-
-Wadim Egorov (1):
-      arm64: defconfig: Enable PCF857X GPIO expander
-
- arch/arm/configs/at91_dt_defconfig   | 1 +
- arch/arm/configs/imx_v6_v7_defconfig | 2 ++
- arch/arm/configs/multi_v7_defconfig  | 3 +++
- arch/arm/configs/sama5_defconfig     | 1 +
- arch/arm/configs/sama7_defconfig     | 1 +
- arch/arm64/configs/defconfig         | 6 ++++++
- 6 files changed, 14 insertions(+)
+--
+Best wishes,
+Vladimir
 
