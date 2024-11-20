@@ -1,186 +1,202 @@
-Return-Path: <linux-kernel+bounces-416331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8E49D435B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9429D435A
 	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3481F218E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 966401F22C87
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FE81BD516;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819191BD513;
 	Wed, 20 Nov 2024 21:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZyBGaf7q"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjRuotsC"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24935199238
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E16F1946CA;
+	Wed, 20 Nov 2024 21:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732136571; cv=none; b=KqcPbsQXxaTObEmaf5Dm/E9XdW0u8WVizQarsvu1Hb2RbJ/bwI7kQFHQxOoJNRl7NBoCf2F0XM3XAJ3/lAJYDHpRlRACD6f1GY3jGANSVGKelWPKOkySuY7EEqTx/XUP2Th4FT9jJU6Alh4CycuffTMveSkjUyguZYame05BWRo=
+	t=1732136571; cv=none; b=gjAL9D4bUp/drtd/JGZa/p14OxMD5WRcbZth1JPwbancP546RWNM6y61NaOklem1QfUUAxVRSOSWfpQRCgeAHf5RTHBruCftB5LNBZDwBGKGnGorXpYuBjIkTMfLhcz0rODF26PV80ZzAqOi9wxJNYWqK3ZZ8P1qsRFVuxhHvsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732136571; c=relaxed/simple;
-	bh=lJUnRJZI7WwjItLIkoqkLS/Y/5o3RNRZX2wrVx/qbRY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=imvjCugZvecrVuwMa/TAOgEz/O2SysU7TE7Tsu2KNEeZ/goTP3gahK9bZcKxd8SlBoZiRVYoZwomQAzO+0fVTK7QOz3rjujq8eOgCedKhecaeyU+pPNf7ABzGRHBKhX5evlGj+Om5TquK9mpgYbHUBsf1CXAtmx4c9RY2Ak+U7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZyBGaf7q; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539d9fffea1so143798e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:02:49 -0800 (PST)
+	bh=l+1UWZE/FneQaNmor7t7VOQyW1K40sQUIogRLrdtxu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bbiyK4EFNwX1Bf/Oni6U3HXA995ON9ZCIUMVImSiEtm+BStFC+Gd6pcvU++mNN3PRJA6uzKQSuke3Qfa7PSgUi5qnUFmluLBzh1JJXVL9FuIMWofU8lrQXulcIB2LLzedmfgc43eOlvRfZktqRC1PrmSQu3/QKMtLSOytF2hzXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjRuotsC; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43161c0068bso1192225e9.1;
+        Wed, 20 Nov 2024 13:02:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732136568; x=1732741368; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lJUnRJZI7WwjItLIkoqkLS/Y/5o3RNRZX2wrVx/qbRY=;
-        b=ZyBGaf7q+KXrTh0h7rdKieqcjhBjnFCvZanYSeWwyMAmRlh02N/6UU4iGfRTT8R0gB
-         UC9S565RmglxC1PH0i8GG3CA6ZWDq+LbY8gUefiUIgCtYYxzApOjJqXqLzOEE2iiH0z3
-         i3TpFr0xeNBomCtXWEV5x67pwJW79cgRmy6VO/k3rCAO1LUKXTZo/kJTEV84uKikd/xE
-         u77mu79y/2M/70c+QQgHtz/7VLlm20YzT/yykLtzqWZ+DqCkoecJIrbS2vDGOTRtqUD0
-         QHcdx2T7DEoV2Sj98dltL0gcqhAfay29jS2cxPoV3TPAIxY4PSWkug1XzJsXkgd/piGX
-         IRJw==
+        d=gmail.com; s=20230601; t=1732136568; x=1732741368; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0W86VFjt+Quipz5Nb0iH8DglZM9vyXbtWOfKsYcoOVE=;
+        b=PjRuotsClifEuIVSxAk9JmqftVpHTilkZLsZhttg+jdQ/WNEB2eQxPmor/kOufWIuD
+         iBUoKSqJK1U89CtVifXUGF30KISCLpIELjc0CwsWBuAdqa2/3lTM6nkhP7ZQrcRzfQdl
+         a6BQb3h1LbVLvk/I6wC3KZq7fLBaVFGHfwNFhkZE6+YDUXX2RXgHDcoejPyjZgq426L9
+         zLox+czfY3Uo02rGkDM4BgczlK1SX3na75b9Hekuk68UEWjLJfBCeW2BU6myqWbdMDLR
+         ElB+lLzs8p/OwW3erpF3rgoG+lWjpGmb/ICTqtp4pYfmrA/sjV5LmtkA+EGFdl6Rnzno
+         SA1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1732136568; x=1732741368;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lJUnRJZI7WwjItLIkoqkLS/Y/5o3RNRZX2wrVx/qbRY=;
-        b=grIxAnNoAcxJAAdmAo2HwYUEzKyK2pgXWKmVm5UlrPuVS+nOUmaflvlCjN8cObcc8h
-         W6hOPhml/fk+BreuRyOwdTv/J8NJdofVtVj9O9+0bD5D1nls6jGW7xbRAnXRRANq3eV6
-         ujftxx65jOk9uvoNAUcD1UkeZQokTV4bv0jWr67PRC7ealzSeobT21UaXmQdDcDSaFVu
-         +Ayi+qQZVbC4B2vu1SZxhrcFwTk8BcOqHGAVWTWsgLq9H0XHmLiZMSJk4zPQ1Gpiq+WO
-         Jbtm4oUPFChYwBaoBI6w4qPVEDx71hGseLLPN4Bp7n32kwiQdDqQI3h0q5YQqjMhKowZ
-         8xiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/n8cW4QPVe2cHmx45BxCI6USbh/IeeMl2RS8O/ySaVvKano1VpS5f23VriHCDHGSQNc5JDTrqaDpFb5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC1MkDxpgDGszMLangjE9urQa+JEKw0PZ2W8hyqieE1oXfD5sM
-	rQAlcIyrZ3tFuahLhr/gU5VrCqmSP8c1CqU2tHQA8t3KKCO7A0hu/cvBUNh85nxMQ2BMnsKL/uf
-	3qNeqtFpUCJfhUH76pw2lPYWweCJTitJM/YmCgQEg33YM+EUlCxkK
-X-Gm-Gg: ASbGncth2hxCbCj7PjqA8FsYyfkpsRfC+m5ExT19j7rl3TgSXtDPCZIr/C9v5gffKip
-	cltxcNKn9MiEtmtWzmp/3yj4SoeklmvhTvFPyTd5DwrG9c0cZTj1QLNJ94w==
-X-Google-Smtp-Source: AGHT+IEVtwvvfrRLs27lH5uzyC7A/OLqTCvhRway1U+/vkm/cNI3SUT6Tc/If1D0LpBCF36tu6+X7WOJS4hqlro+sac=
-X-Received: by 2002:ac2:5a0a:0:b0:539:eb2f:a026 with SMTP id
- 2adb3069b0e04-53dc1349fbcmr1749787e87.33.1732136567895; Wed, 20 Nov 2024
- 13:02:47 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0W86VFjt+Quipz5Nb0iH8DglZM9vyXbtWOfKsYcoOVE=;
+        b=olKF4MB+fc9gbOU1ebiX2ppfuHa7gBfbcWBJjuFW3nk+9zqH+BTJZEAXVa+mtFES3s
+         VWd1+F67oCaE+rmKW2WayaOgObPUs6fxGeELqHV1N7o+cRa7sWDQdWuqgX0RoLBdHukd
+         RtViN4OsJNgL5GAhqnVuf++vYGmqmHSdZl9jUkc6hcFuji9qQUWcmCA9GQFtzLHfY0CY
+         8l44bydvFbQblJy7gLArGoJmwE6N5bdg0JNxr7h/zJ7xdD7rAuD/nJzse6xJc4lIm2/M
+         JOExTqgF6dVt8i9BGd2YgCq+c4IVKiTAjPoLKvzlQ0FAlTsX6gL14Hb2mWTKp70Po80N
+         GhTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUP9eGz3p43tI4rYmRcr3Nx0+lzSEeJ4BLC4/1N/FyaUguf2v0YobbbaBPJ0O766Y4rc2N7/YtGSsWo6dk=@vger.kernel.org, AJvYcCW3tt+JHomupY66xdykhob609tjORqNk1XAGZ0jsXFXDQMP0+Q1Z6ShLlqHVFupPXQfTykX/IklUi9cbbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP5Jsiom6q/1778PtauazBPSr1EhdDzHV/MCSfXcBjw9hKnXf7
+	R5YP+yA6Y7CrH+Qq27DiOHbhjesf0jdP7G1bQDD/tgw7qN9bhi5OZ1lsB6b1
+X-Google-Smtp-Source: AGHT+IF+WGkTBr+0IZp/PelvWY5A1KaHqBiRh2Q9FUd5skJu6MnEGMlSt6tBYeUgrbDBapVo2LRhVw==
+X-Received: by 2002:a05:600c:310b:b0:431:3b53:105e with SMTP id 5b1f17b1804b1-433489b4d16mr37864135e9.9.1732136568157;
+        Wed, 20 Nov 2024 13:02:48 -0800 (PST)
+Received: from [192.168.199.20] ([95.76.0.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463ad1fsm31501395e9.38.2024.11.20.13.02.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 13:02:47 -0800 (PST)
+Message-ID: <57a3a34c-261d-44ec-b96e-05fecb0b7cab@gmail.com>
+Date: Wed, 20 Nov 2024 23:02:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119020519.832013-1-saravanak@google.com> <20241119092829.GF11903@noisy.programming.kicks-ass.net>
- <CAGETcx_vABsh8HgMi1rYRWmB5RhYwqGT6kKJ+9LX0HrcP8i7yA@mail.gmail.com> <20241120084240.GA19989@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241120084240.GA19989@noisy.programming.kicks-ass.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 20 Nov 2024 13:02:11 -0800
-Message-ID: <CAGETcx_wv_sC+FhChr8OaV6wjkHxTf9W66AoBQihV=m70G=_iQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] ALSA: usb-audio: Fix missing xrun report in lowlatency mode
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+ Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
+References: <25d5b0d8-4efd-4630-9d33-7a9e3fa9dc2b@gmail.com>
+ <874j425pjz.wl-tiwai@suse.de> <87v7wi484f.wl-tiwai@suse.de>
+Content-Language: en-US
+From: Leonard Crestez <cdleonard@gmail.com>
+In-Reply-To: <87v7wi484f.wl-tiwai@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 12:42=E2=80=AFAM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
->
-> On Tue, Nov 19, 2024 at 06:28:00PM -0800, Saravana Kannan wrote:
-> > On Tue, Nov 19, 2024 at 1:28=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
->
-> > > Well, if we push this one step further, why do we need hotplug at all=
-?
-> > > Can't we just keep them up and idle?
-> > >
-> > > That is, if we look at suspend_enter(), you'll note that
-> > > PM_SUSPEND_TO_IDLE happens before the whole disable_secondary_cpus()
-> > > thing.
-> > >
-> > > So million-dollar question, can this pixel thing do suspend to idle?
-> >
-> > Unfortunately not. You saw my rant about firmware and s2idle bugs at
-> > LPC. But yes, I'm going my part towards pushing for s2idle over s2ram.
->
-> Right, so with Google doing their own chips, I think you stand a fair
-> chance of making it work 'soon', right? :-)
+On 11/20/24 10:33, Takashi Iwai wrote:
+> On Wed, 20 Nov 2024 08:31:44 +0100,
+> Takashi Iwai wrote:
+>>
+>> On Tue, 19 Nov 2024 22:54:19 +0100,
+>> Leonard Crestez wrote:
+>>>
+>>> Hello,
+>>>
+>>> I’m investigating an issue where USB Audio does not properly send
+>>> XRUN notifications.
+>>>
+>>> The issue can be reproduced with aplay: enable xrun_debug, aplay -D
+>>> plughw:0 and CTRL-Z - no XRUN message is seen
+>>>
+>>> Disabling lowlatency_playback via modprobe parameter does make this
+>>> issue go away - XRUNs are reported correctly without any changes.
+>>>
+>>>
+>>> After a lot of tracing the following seems to be happening:
+>>>
+>>> - prepare_playback_urb find avail=48, meaning 48 bytes still to-be-played
+>>> - snd_usb_endpoint_next_packet_size decides that 48 is too little and
+>>> returns -EAGAIN. Specifically -EAGAIN is returned from
+>>> next_packet_size
+>>> - The return value of prepare_playback_urb is propagated through
+>>> prepare_outbound_urb back to snd_usb_queue_pending_output_urbs
+>>> - snd_usb_queue_pending_output_urbs receives -EAGAIN from
+>>> prepare_outbound_urb
+>>> - since err is -EAGAIN the ctx is pushed back to the ready list and
+>>> transmission is aborted but notify_xrun is skipped
+>>> - no more playback?
+>>>
+>>> It is possible to make XRUNs happen by caling notify_xrun even on
+>>> -EAGAIN, diff looks like this:
+>>>
+>>> diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
+>>> index 568099467dbb..da64ee0cf60a 100644
+>>> --- a/sound/usb/endpoint.c
+>>> +++ b/sound/usb/endpoint.c
+>>> @@ -495,10 +495,11 @@ int snd_usb_queue_pending_output_urbs(struct
+>>> snd_usb_endpoint *ep,
+>>>                          break;
+>>>                  if (err < 0) {
+>>>                          /* push back to ready list again for -EAGAIN */
+>>>                          if (err == -EAGAIN) {
+>>>                                  push_back_to_ready_list(ep, ctx);
+>>> +                               notify_xrun(ep);
+>>>                                  break;
+>>>                          }
+>>>
+>>>                          if (!in_stream_lock)
+>>>                                  notify_xrun(ep);
+>>>
+>>>
+>>> This mail was not formatted as proper patch because this seems very
+>>> likely incorrect, it undoes an explicit check. What would a correct
+>>> solution look like?
+>>
+>> The -EAGAIN there itself doesn't mean the crucial xrun yet.  There may
+>> be still pending URBS to be processed.  The real XRUN happens only
+>> when there is no URBs pending, hence nothing will be taken further --
+>> at least for low-latency operation.  (In the case of implicit feedback
+>> mode, it can be driven by the feedback from the capture stream, and
+>> the empty URB check might be wrong.)
+>>
+>> Could you check the change below?  (totally untested)
+> 
+> A bit more change would be needed because it can lead to a false xrun
+> at draining.  At stopping, it shouldn't reach to that code path.
+> The revised patch is below.
 
-I can neither confirm or deny :)
+> --- a/sound/usb/endpoint.c
+> +++ b/sound/usb/endpoint.c
+> @@ -403,10 +403,15 @@ static int prepare_inbound_urb(struct snd_usb_endpoint *ep,
+>   static void notify_xrun(struct snd_usb_endpoint *ep)
+>   {
+>   	struct snd_usb_substream *data_subs;
+> +	struct snd_pcm_substream *psubs;
+>   
+>   	data_subs = READ_ONCE(ep->data_subs);
+> -	if (data_subs && data_subs->pcm_substream)
+> -		snd_pcm_stop_xrun(data_subs->pcm_substream);
+> +	if (!data_subs)
+> +		return;
+> +	psubs = data_subs->pcm_substream;
+> +	if (psubs && psubs->runtime &&
+> +	    psubs->runtime->state == SNDRV_PCM_STATE_RUNNING)
+> +		snd_pcm_stop_xrun(psubs);
+>   }
+>   
+>   static struct snd_usb_packet_info *
+> @@ -562,7 +567,10 @@ static void snd_complete_urb(struct urb *urb)
+>   			push_back_to_ready_list(ep, ctx);
+>   			clear_bit(ctx->index, &ep->active_mask);
+>   			snd_usb_queue_pending_output_urbs(ep, false);
+> -			atomic_dec(&ep->submitted_urbs); /* decrement at last */
+> +			/* decrement at last, and check xrun */
+> +			if (atomic_dec_and_test(&ep->submitted_urbs) &&
+> +			    !snd_usb_endpoint_implicit_feedback_sink(ep))
+> +				notify_xrun(ep);
+>   			return;
+>   		}
 
->
-> > And even if this Pixel could do it, there are a lot of devices in use
-> > today that will never get a firmware update to enable s2idle. So, why
-> > have all of them waste time and energy doing useless steps during
-> > suspend?
->
-> Right, so if we really want to go do this, we should add place-holder
-> state for suspend, something like CPUHP_SUSPEND and document the
-> requirements and audit all existing states now skipped to meet
-> requirements.
+This makes more sense than what I hacked to together and seems to work 
+well in initial testing.
 
-Yup! This is exactly what I had in mind. But didn't want to go full
-out on the patch before I got some sanity check here.
+I'll report back if issues are found.
 
->
-> I think it should go somewhere right between CPUHP_BP_PREPARE_DYN_END
-> and CPUHP_BRINGUP_CPU.
-
-I was thinking before CPUHP_BP_PREPARE_DYN because I saw some drivers
-doing whatever the heck they do in CPUHP_BP_PREPARE_DYN. It'll be much
-easier to do audits of non-dynamic stuff and keep it within
-requirements.
-
-> WORKQUEUE_PREP seems awefully random, and the
-> typical purpose of the _PREPARE stages is to allocate memory/resources
-> such that STARTING can do its thing, similarly _DEAD is about freeing
-> resources that got unused during _DYING.
-
-Yeah, I understood all this. I wanted to pick CPUHP_TMIGR_PREPARE
-(mentioned in my first email) because it was right before
-CPUHP_BP_PREPARE_DYN (and if you skip over CPUHP_MIPS_SOC_PREPARE
-which sounds like a hardware step). But hrtimers seem to have a bug --
-if the sequence fails anywhere in between CPUHP_AP_HRTIMERS_DYING and
-CPUHP_HRTIMERS_PREPARE things fail badly.
-
-So, for now I'd say we get in something like CPUHP_SUSPEND wherever it
-works right now (after WORKQUEUE_PREP) and slowly move it up till we
-get it right before CPUHP_BP_PREPARE_DYN.
-
-> So the most logical setup would be to skip the entire _DEAD/_PREPARE
-> cycle.
-
-Makes sense to me.
-
-On a separate note, I'm kinda confused by state machine stages where
-only one of the startup/teardown callbacks are set up. For example,
-I'd think the workqueue_prepare_cpu() would be combined with
-workqueue_online_cpu()/workqueue_offline_cpu(). Why is online() not
-sufficient to undo whatever offline() did?
-
->
-> > > Traditionally hybernate is the whole save-to-disk and power machine o=
-ff
-> > > thing, and then there was suspend (to RAM) which was some dodgy as he=
-ck
-> > > BIOS thing (on x86) which required all non-boot CPUs to be 'dead'.
-> >
-> > My change would also help with the time it takes to power off the CPUs
-> > during hibernate :) If it'll work (otherwise, we can make sure this
-> > applies only to suspend).
->
-> So I'm not sure you can actually skip this during hibernate. The thing
-> is, we load the image from the boot CPU in a state where the secondary
-> CPUs have never yet been loaded up. It might be possible to skip the
-> DEAD/PREPARE cycle, but it would also mean the image must contain the
-> full PREPARE resources. So if it all works, then the result is a larger
-> image, for a slightly faster cycle, but since hibernate is already super
-> slow, I don't think this trade-off is worth it.
-
-Ok, makes sense. We'll have to make some changes so that this doesn't
-run for hibernate (it will as this patch is written).
-
--Saravana
+--
+Thanks,
+Leonard
 
