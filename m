@@ -1,86 +1,123 @@
-Return-Path: <linux-kernel+bounces-415499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820289D3721
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DE29D3727
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06108B25B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:37:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF453B264A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9208199238;
-	Wed, 20 Nov 2024 09:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CG44vEbZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C902119CC20;
+	Wed, 20 Nov 2024 09:38:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AE817BB2E;
-	Wed, 20 Nov 2024 09:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6D4187844;
+	Wed, 20 Nov 2024 09:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732095441; cv=none; b=ffAeohE+B2qTmp0IQfkuyqE/SdvACgUsKr1DUcL25FNpaFv/cB7WGd2xmzkaRmPLkRkUGPAgyB7FTyTqdCeQEEtCbaoEuzh5/JbCKQ6ABhGxwb2fUVGwsYdoiyUXvA2UY85RXffFRYZ3yCpHawQT0gsdLUg1eLmlbJpm6TYKxqQ=
+	t=1732095487; cv=none; b=D8HyyVn5L95bM3s5VrpT9ufhq8GwdDlQDChY/JDHL+RSwyNK9pQC5yeBcxDWYW6HDNhNLNXv47BxYdYKk9qzffnez/IS8zldhyqVqX7RiB1UUl78XlXTzKyESH/XedGsw6XxXcdJBhm4K+DLOEuQRZ+3ojG9OH92naQU2jjZH/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732095441; c=relaxed/simple;
-	bh=X4fvx7OYW3IFbkZhVwXE01Sd/Yz9bZAt3sV+EvA250I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfl3ovQGJO0IwzZAdSXwHoJ4uKkCA3vNCwh0UYc4Jos2YmkkkvkRUNJfvdUHNaxBTnT+DynVrbrecE4MHXY3kLZWeXHb/Z4DclaogFjs3UgYti3OyPmYAb/6nCqu+sipYq8xQX76zoXnTPDSbAwgibQ63qN6vO0bgXtgW9MPHxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CG44vEbZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=R7oiEFYEVMIo/khuiHsimbHdxohCO0mg/KK57Qh3Fjc=; b=CG44vEbZh5mNOR1judhvLEF8IO
-	ZgJJOJfpVUUSSMmuYuL0lTo/HT25YjiaVzEP5Txt5AdxmhJH7dEb54GCxcOczM3qdQu0YRF1ZzUMk
-	HjM7xxk8Xnj+OmiSZC4+vzZY9j1HcdGNfgdOFCgCuf0ZWG0b1J8lHiVaNdPdiRdFGFzoRAtFCFByz
-	9LSkzdkhGE8YtsCOEgJt8q/3sRwB+JQbG7LMXvn1enX/7Cc8D4WWYw8C3NAPY9ZEHv2Yd9Sg/SIx7
-	au+G68Jlf4nmVkyllC48AiRnJKwRRhD5nEs5ECzZZk0OL3KiShyzrY8Seve+8Swa1IZU7p86zE55E
-	yZ7P+8Dw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDh9C-0000000Evv9-03kO;
-	Wed, 20 Nov 2024 09:37:18 +0000
-Date: Wed, 20 Nov 2024 01:37:17 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Raphael Isemann <teemperor@gmail.com>,
-	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
-	Herbert Bos <h.j.bos@vu.nl>, Greg KH <gregkh@linuxfoundation.org>,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [RFC v2 1/2] dmapool: Move pool metadata into non-DMA memory
-Message-ID: <Zz2tzVqql2RMSFN4@infradead.org>
-References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
- <20241119205529.3871048-2-bjohannesmeyer@gmail.com>
+	s=arc-20240116; t=1732095487; c=relaxed/simple;
+	bh=RQCpbnI2ElijDM2g3Sr2ukzpIOTf3Z4DZPbpNgbggmA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uM0XWx8kfh9tKIzW6hpS6kh4o5kkt13Usgp1D7Jh3iAqyACvAiWSvF6fc7V7cdeeLnxb604TV3hcPa14ALZ0C8PcPgJhnfEqzrgU7P7VDasZcf7jkvCy98jEdVUA+AA0+siJNcYiq+IJIHEp+Ab8BY75nTeEgbhzPFqlxnpY9vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xtbnl6Psjz6K977;
+	Wed, 20 Nov 2024 17:35:39 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
+	by mail.maildlp.com (Postfix) with ESMTPS id 67B03140AB8;
+	Wed, 20 Nov 2024 17:37:56 +0800 (CST)
+Received: from P_UKIT01-A7bmah.china.huawei.com (10.195.247.212) by
+ frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 20 Nov 2024 10:37:55 +0100
+From: <shiju.jose@huawei.com>
+To: <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<jonathan.cameron@huawei.com>, <alison.schofield@intel.com>,
+	<nifan.cxl@gmail.com>, <vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dave@stgolabs.net>, <linux-cxl@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>, <shiju.jose@huawei.com>
+Subject: [PATCH v4 0/6] Update Event Records to CXL spec rev 3.1
+Date: Wed, 20 Nov 2024 09:37:39 +0000
+Message-ID: <20241120093745.1847-1-shiju.jose@huawei.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241119205529.3871048-2-bjohannesmeyer@gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500007.china.huawei.com (7.182.85.172)
 
-On Tue, Nov 19, 2024 at 09:55:28PM +0100, Brian Johannesmeyer wrote:
+From: Shiju Jose <shiju.jose@huawei.com>
 
-> +	page->blocks_per_page = pool->allocation / pool->size;
-> +	page->blocks = kmalloc_array(page->blocks_per_page,
-> +				     sizeof(struct dma_block), GFP_KERNEL);
+Add updates for the changes in CXL spec rev 3.1 in the CXL events
+records and CXL trace events implementation.
 
-Given that you now need an array of the blocks anyway, it might make
-sense to switch from a linked list to a bitmap for tracking free state,
-which would be a lot more efficient as you only need a bit per block
-as tracking overhead instead of a two pointers and a dma_addr_t.
+Notes:
+=====
+1. The number of decoded strings in TP_printk() caused parsing error when
+libtraceevent in userspace parses the CXL trace events, for rasdaemon.
+It was found that long decoded strings of field values in the TP_printk()
+caused the issue. As a solution, decoding of some fields in the TP_printk()
+are removed to accommodate the new fields. 
+Decoding of all these fields is added in the userspace tool rasdaemon.
 
-e.g. do a find_first_zero_bit() to find the ﬀree slot, then calculate
-the dma_addr and virt address by simple offseting into the dma_page
-ones with bitnr * pool->size.
+2. Verified with modified CXL error injection in QEMU CXL emulation and
+CXL mock test in kernel.(Thanks to Jonathan for verify with CXL mock test).
+
+Shiju Jose (6):
+  cxl/events: Update Common Event Record to CXL spec rev 3.1
+  cxl/events: Add Component Identifier formatting for CXL spec rev 3.1
+  cxl/events: Update General Media Event Record to CXL spec rev 3.1
+  cxl/events: Update DRAM Event Record to CXL spec rev 3.1
+  cxl/events: Update Memory Module Event Record to CXL spec rev 3.1
+  cxl/test: Update test code for event records to CXL spec rev 3.1
+
+Changes:
+V3 -> V4
+1. Changes for the parsing error parsing error when libtraceevent in
+userspace parses the CXL trace events, for rasdaemon.
+It was found that long decoded strings of field values in the TP_printk()
+caused the issue, looks like due to buffer overflow/corruption.
+Increasing known buffer sizes in userspace and kernel did not help.
+As a solution, decoding of some fields in the TP_printk() are removed
+to accommodate the new fields.
+Decoding of these fields is added in the userspace tool rasdaemon.
+
+V2 -> V3
+1. Changes for the feedbacks from Jonathan.
+ - Added printing component Id format bit in show_valid_flags()
+ - Modified parsing component ID in patch [2] and added logging
+   of raw comp-id, comp_id_pldm_flags, PLDM entity id and
+   PLDM resource id in patches 3 to 4.
+ 
+V1 -> V2
+1. Changes for the feedbacks from Jonathan.
+  - Separate patch for Component Identifier formatting.
+  - Moved printing of event sub type after event type.
+  - For memory module event, rename sub_type to event_sub_type. 
+2. Changes for the feedbacks from Alison.
+  - Updated patch's subject
+  - Updated CXL test code for CXL spec rev 3.1 event records.
+3. Changed logic for Component Identifier formatting and other improvements.
+
+ drivers/cxl/core/trace.h     | 233 ++++++++++++++++++++++++++---------
+ include/cxl/event.h          |  28 +++--
+ tools/testing/cxl/test/mem.c |  23 +++-
+ 3 files changed, 217 insertions(+), 67 deletions(-)
+
+-- 
+2.43.0
 
 
