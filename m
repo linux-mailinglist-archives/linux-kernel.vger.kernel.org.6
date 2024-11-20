@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-416421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E739D4480
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:33:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F01D9D4491
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE842832BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:33:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 946A5B21E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D0D197531;
-	Wed, 20 Nov 2024 23:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A1F71BDA84;
+	Wed, 20 Nov 2024 23:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cwHUpPG1"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/XvMaE7"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCE5175D35
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14760146593;
+	Wed, 20 Nov 2024 23:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732145586; cv=none; b=GMt5futDm/FC7aZgYAvnBZnV0swb55GwphD+5D/wGN8+0cWTivRZk6NSltHc8WoOS3IdJARqBMLX6hRpcy3UtQcvb2VOHfiXy+vEkn/7x4elmkHtDmSbO/juwJBzc3h2064sJNdvb5vy5nU3rS1hp+6BxNjFWSuYdVNWqNeWeTo=
+	t=1732145637; cv=none; b=mDUgHFMTzSvABV2xkcQdmSEHo/wAZbQhv5d4i7ppoeu/bdMEZio7r1NjC0V6LrlxB1oE9dNgv87O8cIQ15XsxfMPwhj0T3X/yx+tR3qkDNyY90hXEryfY00XI4/HwYgrOMpVR/IwH+c5koEY8DgmcrZEgFKHqST0wJYDHE833mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732145586; c=relaxed/simple;
-	bh=slB9hAQ2KQOolIaeaDoO8zuNwTG21C1fXRqaDI0Whus=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruC2rlxJEc3xhIWr/34z0gCD9heDmtVCM1qLIw9w6b4MYC23QHrt/T32PFsdZUtkRr9aqGMm6g8FGTMajANzR36o16evJF96XrKj72hLtQaFQJij/2fdvjnf/dB3v6kRngGPVrFXeZ92DuWE8r7PYaXTl1TrSzKh7hMdW9uD6QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cwHUpPG1; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 15:32:53 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732145582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUJ4vT4Ev2xEsGw1E2zk4jxanqmeSvQ/TmbjsSxUcJ0=;
-	b=cwHUpPG1lD+rR862ml7ejaG6HIZPrb7H8/Bly23BzEXpadR1vB/Wtz7fXKfzBDBfsQ9nHu
-	ph9b85ad81NHJB2VGmxsLJ/LxEKub1yy/xUBd/A8AZEMoE2dMLfA+cxhMpTiCA5HSahm8E
-	aAKDh/v9vs6/E2GX4719ks7ZONEiHfw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, 
-	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, oleg@redhat.com, 
-	dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
-	hdanton@sina.com, hughd@google.com, minchan@google.com, jannh@google.com, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v4 2/5] mm: move per-vma lock into vm_area_struct
-Message-ID: <zfd7xdkr5dkvvx3caqao3oorh2pxxifhdhwsw2iyxcuzbevo3n@sobu7xhw24vv>
-References: <20241120000826.335387-1-surenb@google.com>
- <20241120000826.335387-3-surenb@google.com>
+	s=arc-20240116; t=1732145637; c=relaxed/simple;
+	bh=6J7xR11ORo3RIfap9ywU3d0t+DfN7EdMpAulAvdmJCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ncyGs8YTrB3m49S8wh4ITxJkQnsU5QK/BTpzV/jEpWyK+Z3Lx4ert10n+BX2roU8wtr/HEBryXx2DskQTWq44VMten7MzjKN54utuRBy6YesuASZXfWnM1QUAjSK1uHrn0bKt+x44UBpAug/qhnTdMDFYgIe3wxNKzHlmFieWxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/XvMaE7; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43163667f0eso2307245e9.0;
+        Wed, 20 Nov 2024 15:33:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732145634; x=1732750434; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KA1UH+wyjBnkz15ZnSLPILDTGoXb7OXqR690RmvAP8E=;
+        b=D/XvMaE7zx3sl6V+tNdu8GarjQOzDmgK8NE2yAYCpbDv6+egcaW7MZjfSOfmQnskSg
+         UywOxGSZNLIcihI2alQWpf0lhn+jrRUayPg4BwhOqXaap6ovnbb8bek+jdZAX93OxSVL
+         uW4hVRUHhNucE8KSbJ8OvJdJ8Ul9wUFpHos9t5T6FXIz5vBRRRp9e4bUUelPmy5upCA9
+         nXRzCkyJrtbPqrXR4lrSjuxkqddKFcFBEVxIOZKVrjkA6bVuWxnHa3yZj0Bzx10lJq9T
+         HWwnBQc1yPCOJk6jtmf2qHcZhwBeMC3cClDGVHDtPc8C7zIQMrrTdZf4/9/zVw4oe1uW
+         aYcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732145634; x=1732750434;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KA1UH+wyjBnkz15ZnSLPILDTGoXb7OXqR690RmvAP8E=;
+        b=utne24VMLPZEc1GSF5vC0NNC40y+PJD/6mrYHP3KREAsAfMbRO1oi0n8z+c4nXwm6B
+         tYv6BOmfOAdJYA6ZnGzjf/OVSOHGbTWZky0GVxmb64YJ2bOe0vSCppRZ/7s4yRzB3UEu
+         JUwNKFSaV3L6r/uL5s7fpKGK1487y3nEOX3eRihhTAuQ5PVFIEQ+5xir53JboasopehY
+         Yf5LXlnpq7GFpeI4CdCjamJEbVAL99gzq4zNmti+TXUXo0BVC1Q6P4aSdH9reSckIM7l
+         LLoFsTI9wlvbHsNiWsjCugINuot50IvAQAoSsElas+DBskgAooVa/SpEy86ZOYFDlV+D
+         Wf4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV0OSjtS/qoEhtMsdV7durFL5XTEJIEtNPeJq4qJa1TuySZcUD1TWho4h7PQzbxgP8RFfsEBcn++UqQaoPbmCPA@vger.kernel.org, AJvYcCVXMP5gLx+xZ+WBlqA7LzUeRPT7ZgRyNClxoI8hNDAWRs2zjqZ6OVLofsdhY/rGCvOWohF4+hc9@vger.kernel.org, AJvYcCWwu6mBg5mtOjIcF0bnKWX2pMmOHqEzj7x5ObGO3N/1v/6D/ANdD4ZxgBWB4fYAQ+ldce+jebL0VA704d8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+TDPPShyyIcZCWtWU0WiFMXUHb0jn13K7rMkxETYrdLIVBBow
+	ZUjEwJM1nVooZl/r6U+WTc/uazcrzTwjIUS4EKJcfEeIKf+iY9oD
+X-Google-Smtp-Source: AGHT+IE+SQIsEimpHXJsKKmHX3ZxLKNCRpYFvsqLzYug5ritHNDbcVB7wT5lLQWpGSN3e76BizHlYg==
+X-Received: by 2002:a5d:5f8f:0:b0:381:f5c2:97c9 with SMTP id ffacd0b85a97d-38254af996emr3437272f8f.25.1732145634043;
+        Wed, 20 Nov 2024 15:33:54 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825a6bbe80sm476375f8f.35.2024.11.20.15.33.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 15:33:52 -0800 (PST)
+Message-ID: <68214df3-23b6-4da4-9ad9-b10e8878a4da@gmail.com>
+Date: Thu, 21 Nov 2024 01:34:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120000826.335387-3-surenb@google.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 07/23] ovpn: introduce the ovpn_socket object
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-7-de4698c73a25@openvpn.net>
+ <62d382f8-ea45-4157-b54b-8fed7bdafcca@gmail.com>
+ <1dffb833-1688-4572-bbf8-c6524cd84402@openvpn.net>
+ <b8612694-c5b7-4b62-8b9d-783aaec1439f@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <b8612694-c5b7-4b62-8b9d-783aaec1439f@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 04:08:23PM -0800, Suren Baghdasaryan wrote:
-> Back when per-vma locks were introduces, vm_lock was moved out of
-> vm_area_struct in [1] because of the performance regression caused by
-> false cacheline sharing. Recent investigation [2] revealed that the
-> regressions is limited to a rather old Broadwell microarchitecture and
-> even there it can be mitigated by disabling adjacent cacheline
-> prefetching, see [3].
-> Splitting single logical structure into multiple ones leads to more
-> complicated management, extra pointer dereferences and overall less
-> maintainable code. When that split-away part is a lock, it complicates
-> things even further. With no performance benefits, there are no reasons
-> for this split. Merging the vm_lock back into vm_area_struct also allows
-> vm_area_struct to use SLAB_TYPESAFE_BY_RCU later in this patchset.
-> Move vm_lock back into vm_area_struct, aligning it at the cacheline
-> boundary and changing the cache to be cacheline-aligned as well.
-> With kernel compiled using defconfig, this causes VMA memory consumption
-> to grow from 160 (vm_area_struct) + 40 (vm_lock) bytes to 256 bytes:
+On 19.11.2024 15:44, Antonio Quartulli wrote:
+> On 15/11/2024 15:28, Antonio Quartulli wrote:
+> [...]
+>>>> +}
+>>>> +
+>>>> +static struct ovpn_socket *ovpn_socket_get(struct socket *sock)
+>>>> +{
+>>>> +    struct ovpn_socket *ovpn_sock;
+>>>> +
+>>>> +    rcu_read_lock();
+>>>> +    ovpn_sock = rcu_dereference_sk_user_data(sock->sk);
+>>>> +    if (!ovpn_socket_hold(ovpn_sock)) {
+>>>> +        pr_warn("%s: found ovpn_socket with ref = 0\n", __func__);
+>>>
+>>> Should we be more specific here and print warning with 
+>>> netdev_warn(ovpn_sock->ovpn->dev, ...)?
+>>
+>> ACK must be an unnoticed leftover
 > 
->     slabinfo before:
->      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
->      vma_lock         ...     40  102    1 : ...
->      vm_area_struct   ...    160   51    2 : ...
-> 
->     slabinfo after moving vm_lock:
->      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
->      vm_area_struct   ...    256   32    2 : ...
-> 
-> Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 pages,
-> which is 5.5MB per 100000 VMAs. Note that the size of this structure is
-> dependent on the kernel configuration and typically the original size is
-> higher than 160 bytes. Therefore these calculations are close to the
-> worst case scenario. A more realistic vm_area_struct usage before this
-> change is:
-> 
->      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
->      vma_lock         ...     40  102    1 : ...
->      vm_area_struct   ...    176   46    2 : ...
-> 
-> Aggregate VMA memory consumption per 1000 VMAs grows from 54 to 64 pages,
-> which is 3.9MB per 100000 VMAs.
-> This memory consumption growth can be addressed later by optimizing the
-> vm_lock.
-> 
-> [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.com/
-> [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
-> [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com/
-> 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> I take this back.
+> If refcounter is zero, I'd avoid accessing any field of the ovpn_sock 
+> object, thus the pr_warn() without any reference to the device.
 
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+If it's such unlikely scenario, then should it be:
 
-One question below.
+if (WARN_ON(!ovpn_socket_hold(ovpn_sock)))
+     ovpn_sock = NULL;
 
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -716,8 +716,6 @@ struct vm_area_struct {
->  	 * slowpath.
->  	 */
->  	unsigned int vm_lock_seq;
-> -	/* Unstable RCU readers are allowed to read this. */
-> -	struct vma_lock *vm_lock;
->  #endif
->  
->  	/*
-> @@ -770,6 +768,10 @@ struct vm_area_struct {
->  	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
->  #endif
->  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> +#ifdef CONFIG_PER_VMA_LOCK
-> +	/* Unstable RCU readers are allowed to read this. */
-> +	struct vma_lock vm_lock ____cacheline_aligned_in_smp;
-> +#endif
->  } __randomize_layout;
+?
 
-Do we just want 'struct vm_area_struct' to be cacheline aligned or do we
-want 'struct vma_lock vm_lock' to be on a separate cacheline as well?
-
+--
+Sergey
 
