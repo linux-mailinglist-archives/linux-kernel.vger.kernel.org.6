@@ -1,47 +1,63 @@
-Return-Path: <linux-kernel+bounces-416171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFBF9D413C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:35:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AED009D4164
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:47:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F01F2828D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:35:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 276F5B26232
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886D113AD20;
-	Wed, 20 Nov 2024 17:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8B91AB539;
+	Wed, 20 Nov 2024 17:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBKxiblv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="si/5NTgs"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79AD5588F;
-	Wed, 20 Nov 2024 17:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5688146593;
+	Wed, 20 Nov 2024 17:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732124140; cv=none; b=J/0aSU51gQ4TMlAQ2jvvONzj55DrMWaeGBsP3WCVfpzvPoZwcZesq97bhf87NKHOZfrbLmzDO09D04CXeHaAZfFAozoASxS/OiYyTXXWkJFAA53dDIb9tNHMhus8bTfO5hp3/TgOIQN6KxonGvOQ38+V/BOQbNEPdoxHbDLRKKA=
+	t=1732124500; cv=none; b=MrVNvWh1nr155BZcO7tNyaW2bbrdr38CeVSlAuGGkRcKsTZsoDAmx0Ap7o0OimaZB+A2VibKkLJj7YVKN5S21kQyjfQGaDU7Wc8BuYC7E6J6Yg7a5co1FLmekjSITuSE2ZSphLN3diGWBUCAgGbKWFkb2P8Eu2j0UVRzSGhSurE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732124140; c=relaxed/simple;
-	bh=CSuqCML4kJmQA6Wrl3wxaPZHEjyIHabwVgxjyIttfkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BLIFXieV1eqOf3KDbTlnzq4Xb8R7zsQKMkYnRdx04VbiD46Tqa8h1o303Y7DjIXMqTlb/g9/kJnD7f58IiaGEIRfATbf63/X3p16GM6MuvXhmacIh19b2jdu5jfRErlkC5fJiUr4BC+jX3hgqWpOZmwVJsTm3p5QwNa1gJAVGOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBKxiblv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2AD5C4CECD;
-	Wed, 20 Nov 2024 17:35:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732124140;
-	bh=CSuqCML4kJmQA6Wrl3wxaPZHEjyIHabwVgxjyIttfkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZBKxiblveyb5QtKCQg5H5ei2JDTv4SPUEUiNI45CeHkE4D1Ut14z5L1Zolgex3tP3
-	 4Am6K6zrZ0ruLDuISVjkgWrc05ROAkV0VBRrO4zckhh5XQhSt1fakBymVC0rQPyFLG
-	 raNZ+3ugQwAtnZFrilVmejn1YLLc0PhsirLLll8U0Dgn9YNY4dnzAlfy5o8WEdPSrc
-	 QPM5eS0JxNCkGAvCNVvquCi9Im6dkZZ9BdVdUQlBA3vww2Sg9Pufx6UZatlnFXlui/
-	 mjoUYfQs0KAzJudIwWklHCo46vXLrjYXCINXb6m6sHRhKYE/PApTbg6VrWGQrCW7V6
-	 bwGKnBr/bvfEg==
-Message-ID: <dfe8e47e-6c31-4b11-b733-38e5bd0e49d3@kernel.org>
-Date: Wed, 20 Nov 2024 18:35:33 +0100
+	s=arc-20240116; t=1732124500; c=relaxed/simple;
+	bh=77l5BUdA3wUh+Ds92rI4XZsS4TQVkqTZf3ifB+JsiZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JSH+UBx8ijlsYDb6y7YMUBDJ0+Iu8PxWrROZrYiy8jJm0o1mRI53kRBUQAmGt1bQ8m+GcqMLFM+0Agm1xSc2AwT9IKe5EFaRu5gLp263Uves7IqXrwdLKdK1x0HteUdAefzK8LeiisinCEwUFJYg9+Ml5CmQqiMUl2hhmSDErpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=si/5NTgs; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732124499; x=1763660499;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=dMxU76y/coq4MPw428ZOn69UQJ/3wc1UFFgfd5jLDwU=;
+  b=si/5NTgs7XV7aY21yqdGmgLYq4FVJuQNyE81zKwp2/1F/SvamY2cLBhg
+   pcR6qJn7M2797HxaGMHikbFvEyMQlcfj7uWuSnaiHJT/NVF4XuncIIwfc
+   qWx6sXtW5wNb2P/Uc+desJJq8PRfgYal10aHU2kR/VAm/6rR1n1g63vnp
+   k=;
+X-IronPort-AV: E=Sophos;i="6.12,170,1728950400"; 
+   d="scan'208";a="675210391"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 17:41:36 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:29938]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.32.84:2525] with esmtp (Farcaster)
+ id afdc4bc4-bba2-498f-afae-82f05c096ff1; Wed, 20 Nov 2024 17:41:34 +0000 (UTC)
+X-Farcaster-Flow-ID: afdc4bc4-bba2-498f-afae-82f05c096ff1
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 20 Nov 2024 17:41:34 +0000
+Received: from [192.168.4.239] (10.106.82.23) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Wed, 20 Nov 2024
+ 17:41:33 +0000
+Message-ID: <acdfa273-5da0-48dd-b506-e1064eea2726@amazon.com>
+Date: Wed, 20 Nov 2024 17:41:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,96 +65,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: (pmbus/adp1050): Add bindings for
- adp1051, adp1055 and ltp8800
-To: Conor Dooley <conor@kernel.org>,
- Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-hwmon@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
- Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Radu Sabau <radu.sabau@analog.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Alexis Czezar Torreno <alexisczezar.torreno@analog.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
- <20241120035826.3920-2-cedricjustine.encarnacion@analog.com>
- <20241120-process-hulk-ecedcbf088f7@spud>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+To: Paolo Bonzini <pbonzini@redhat.com>, <corbet@lwn.net>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <86811253-a310-4474-8d0a-dad453630a2d@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241120-process-hulk-ecedcbf088f7@spud>
-Content-Type: text/plain; charset=UTF-8
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <86811253-a310-4474-8d0a-dad453630a2d@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D005EUA002.ant.amazon.com (10.252.50.11) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-On 20/11/2024 18:11, Conor Dooley wrote:
-> On Wed, Nov 20, 2024 at 11:58:25AM +0800, Cedric Encarnacion wrote:
->> add dt-bindings for adp1051, adp1055, and ltp8800 pmbus.
->>     ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
->>     ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
->>     LTP8800-1A/-2/-4A: 150A/135A/200A DC/DC µModule Regulator
->>
->> Co-developed-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
->> Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
->> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+
+
+On 20/11/2024 13:55, Paolo Bonzini wrote:
+>> Patch 4 allows to call the ioctl from a separate (non-VMM) process.  It
+>> has been prohibited by [3], but I have not been able to locate the exact
+>> justification for the requirement.
 > 
-> Why did you drop my ack?
-> https://lore.kernel.org/all/20241106-linoleum-kebab-decf14f54f76@spud/
-So that's a v2? Or v3? Then should be marked correctly. Please start
-using b4. I already asked analog.com for this in few cases. Feel free
-not to use b4 if you send correct patches, but this is not the case here.
+> The justification is that the "struct kvm" has a long-lived tie to a
+> host process's address space.
+> 
+> Invoking ioctls like KVM_SET_USER_MEMORY_REGION and KVM_RUN from
+> different processes would make things very messy, because it is not
+> clear which mm you are working with: the MMU notifier is registered for
+> kvm->mm, but some functions such as get_user_pages do not take an mm for
+> example and always operate on current->mm.
 
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+That's fair, thanks for the explanation.
 
+> In your case, it should be enough to add a ioctl on the guestmemfd
+> instead?
 
+That's right. That would be sufficient indeed.  Is that something that 
+could be considered?  Would that be some non-KVM API, with guest_memfd 
+moving to an mm library?
 
-Best regards,
-Krzysztof
+ > But the real question is, what are you using
+ > KVM_X86_SW_PROTECTED_VM for?
+
+The concrete use case is VM restoration from a snapshot in Firecracker 
+[1].  In the current setup, the VMM registers a UFFD against the guest 
+memory and sends the UFFD handle to an external process that knows how 
+to obtain the snapshotted memory.  We would like to preserve the 
+semantics, but also remove the guest memory from the direct map [2]. 
+Mimicing this with guest_memfd would be sending some form of a 
+guest_memfd handle to that process that would be using it to populate 
+guest_memfd.
+
+[1]: 
+https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md#userfaultfd
+[2]: 
+https://lore.kernel.org/kvm/20241030134912.515725-1-roypat@amazon.co.uk/T/
+
+> Paolo
 
