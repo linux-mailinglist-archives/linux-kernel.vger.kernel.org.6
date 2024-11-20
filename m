@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-416045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79B069D3F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:57:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507E89D3FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FE93280D34
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:57:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D9C8B3A63D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC9915697B;
-	Wed, 20 Nov 2024 15:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0090B1AB537;
+	Wed, 20 Nov 2024 15:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCbdpbA0"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBfsEzMw"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71544149DF4;
-	Wed, 20 Nov 2024 15:55:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BB514AD3D;
+	Wed, 20 Nov 2024 15:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118145; cv=none; b=FxEy7Yb7B3cZIw4ZpqbLctEFDCJcmA8aCzSMa4uZMU0QU8Xop1YWisr80eUi/xzlzZYrj6pG6A6g9QzV1Y4ey6M1/FcmTMPTP+ijO7b6RTd20vW4eqNNvviS5wWy/ZY6U6NDyezuM7ob26XSmIvrRWKl1wGAC6ASbnH15+xrmAs=
+	t=1732118163; cv=none; b=Mt96DHERUJXmTxlWd53xs7kqUq3w3zInccOg/iQamOdfhTLRRb/XKsT7pWsGTN4pTf5FyvaZ6AL7l7/jRtuwZ2E89OwK+Hn0LJoHUkBjLCuqP2lvrrf0d9K2qRofnh5m++sTW2ZOfo1G2bTHL+Thq1+Q0gg2Bf8m7iTqorrMMmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118145; c=relaxed/simple;
-	bh=fIdhUfiza/vDK9RkE6id2mDmAoBFg1X7DVWjFHqQny8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1CeeP/YVmjuq4UQQ82o/jMvHQSwogcf8JeOCdeQENmEt60i/bX/ow9BYl1+uNTsoVYd2wK6NEvD/KICQK8UxT+w3REDgwV4RO2m6H4G+ou1Ev2GKrk0ZX8CP+imglNA68zmg2wIbJz0qSlDK6kQLQsgz2w3AH4FzV6RdZOF4Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCbdpbA0; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1732118163; c=relaxed/simple;
+	bh=Ou//29Ar9qWIEg2uWs4icTwUqoiHtGhD2hyQZSTq5Ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PY/MjSHPgiETA/Fk7ndOr4SGAGITjxbTikWkIWvwQqZLK3ox5uBAIpnTUekEef6DGwQOtzIOobMVWPqeJbTwbAIZsESNXSpz9ByEvgLka4yS21v26vwry5dwRFIERWjgU+ijwM+7sIVtJCUpDjrF9SIlb4PXob60wK/0NBSLgKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBfsEzMw; arc=none smtp.client-ip=209.85.210.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20c805a0753so23459065ad.0;
-        Wed, 20 Nov 2024 07:55:44 -0800 (PST)
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7181eb9ad46so1265636a34.1;
+        Wed, 20 Nov 2024 07:56:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732118144; x=1732722944; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AUQymMFxwrhSGX/+yxnXqAd+VjQFL+AsUSIHlUAW5jM=;
-        b=XCbdpbA0dMohdvt1KO3W5zWPI47TBoqGdpJcd3oOxAmfepJKbMKV7RgtOVJzAvHF6S
-         H6NQq2kEsFy1jt/5Y2Ue7i+qcvrXBtpOcFwEMC1V/5OrwfqjpOlfoyVBhyKVMVHw1GS3
-         EMuesgHGtGJegot+ZmfrmWtQgthsqUVnlrBo2ySP10DSuausTL21LLqhr7kWiX2GmMHG
-         kT7Nj71OjzBAL/QtZbZoWgMiPNlfq1wUeC9ZdL06Vixb0GOiDpUQucB4RduWkiRgo/Sv
-         dpSmwgz2HrMGYnsd52OLJPNFGrkK+VB+5Vydz3gN0y6IYX+FvHaLL9/L7cST48D1RZaE
-         OkXw==
+        d=gmail.com; s=20230601; t=1732118161; x=1732722961; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUjcMIPq9FUNVmO7WhCAuDNGDpLobM76UY/aeCnpGLE=;
+        b=SBfsEzMwDGdQp8C5HjQIa0wd/9MVOTKt5Tb7QvGYXoSFFl5DfQ3UE0R19VA71Kb3lH
+         AV0yx+f42mX9Sj20xuojWs22bDzpLkncCHetzZ5eP27dWWAtWpFbZyUsjRs02yaLwpvK
+         QFYyQyuYVQawavjfqEv1XeijXwEhkbC+yaL/Tm1+0VznV6JsPA0Pwq3CS98SqmdSNiPm
+         WKaapuVtw6HanqwNveVAZYE7Zb/k/RiXsAvPNsvGzewfZpMxr58DqQuOPT11LNonSHqO
+         qv1uxKOvB+8p2T8/NDsXdzq1cROFsQ9KxIcFPu3XAcTUXbtZ+2O4la4RoCfGu0NneOpb
+         LyAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732118144; x=1732722944;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AUQymMFxwrhSGX/+yxnXqAd+VjQFL+AsUSIHlUAW5jM=;
-        b=HZHGLPa6Mygu0UI7xM+0PTFWSq1ATXoMInnufHt7AAxVypu27P7jL3rLpxG0B70T5E
-         aKHhfHWCJwvcH1WhC/2w21FA2GMtFNeUDBy/lg5/0n4mqiNGi2HlK7sJFX/59nWId6ic
-         xMiY3XAwRfA6sD1OVdoPiw7BLko9YrrScPJZ4KJ5bFCt2GjFHdaWQ5xqWJkb7I0lFub/
-         aPLAX6Brs3mwEy4mMzwVE+VkGGOd/5hxvubApbH2PhblSacLYVX1CjZ329vLCOvmV3hM
-         wJTju+sPen4ivIhepMW/QAubCUo4pRZADkDhV5R0MHz6GxtcSts8sgFRTH0e5vK2Tg8g
-         dI/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWrHyizclW1UR9QtsPfTzTew9BXz0SAQwmakvraueYhQ4zQJ5m/OPRQ3t7X6QOzng9s3MXor7/Z@vger.kernel.org, AJvYcCXP7dmjqN6qG6BBLdbF82LGa6c91osUgJrgrag+HBtUPnHVxwwrAC84/Gs1jjJoo+r2h1aoxq/nHu3+NPyH@vger.kernel.org, AJvYcCXTdAVyfKm+SOZ+e6Eo5gjJ+584xmbJxdknHA1Y4B5b6F9B/BUIPoO3z+ookzjG93yG5c3cTdRAJBzJSguXjpyb@vger.kernel.org, AJvYcCXgKUOq9UDmKgVUBayJQbpF4iQXJ/GzeItFDrEGJep30n7yAhgMG5O7bKvkOfDnFBXCWpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0VG3iXwURapCVttelx5fpvCsKab1XZeoqGgWZLkxXA++XX6If
-	UfS5puf6EwZD79isfT4WQv1/os7x0nNwrlHR3eVfTrlYyH8VWH8=
-X-Gm-Gg: ASbGnctXRx+VVjLIRhIV8t0Zqn6UJ++RZmPaCA9Y48vCBvUDeqLXSmHT5b0Ws2BwRib
-	gJbKuwpcaolIkhWBMussQKsKahYmfzHJZEMmDzTeoJs+lQGB30ecs3tK00QxXVPG9/tKReNk8aa
-	3Da1UQetmFX1mQymlI804WSs6eCy7/DXWGRc1q1ZaYwDWyZaZJ4zdnkqCRCLwOBEuM7c05v+aib
-	/5IfAWJSs9tk08lY9gUzdKIqr2DsgfVGnFy6jFp8ojr48o0iA==
-X-Google-Smtp-Source: AGHT+IGSsYXQdZoVajnSpa8lqE318JZ4JLIhBaSdvhkFxYX/LyPDqBuurRJGuQ2rlT9s1GL+apMkpA==
-X-Received: by 2002:a17:903:1c3:b0:212:77d:3899 with SMTP id d9443c01a7336-2126a3f32fbmr45862975ad.31.1732118143834;
-        Wed, 20 Nov 2024 07:55:43 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc305dsm93619125ad.44.2024.11.20.07.55.43
+        d=1e100.net; s=20230601; t=1732118161; x=1732722961;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xUjcMIPq9FUNVmO7WhCAuDNGDpLobM76UY/aeCnpGLE=;
+        b=cTslLx5rB1TG/+X/o1xUZp33ShXni0GuFrD/R8xv0O6BofX+QpvDOrTdpgOPNvAndf
+         2UukcGAWj4WbEyX33ttsHZmZidHmhkFZvgc7c3qQBX6vaMTk+H3HtYUBE7HOA15zO6u6
+         K4dQFwSZhixsyGcuyZE2DA/S3w7JmI1lwyeUCNCYN3HRoV/xglPsOyG63VB8M8RZud4l
+         mkwSKWyMsQo2FA6y5phY7x7uIvidnbir97jtcOkT/fIubkLU+IQoSQXFb3aiyv9GBeLM
+         RSFk1oyK12KHEsHXenSRtdC32s8ptzmauv3Pd12Kxpg0WdBnJUp5UaVgVsKYQ1Lb8pg4
+         kzBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVH2hOcwY//HkY6riF0WMn3kcEzl7Dd71GSYM2ZUh+apdHRCk6q13hZphIAU7AKdHiQXOB2uLrd+E8=@vger.kernel.org, AJvYcCWl0ZBPQqZLnhYhM/R8O/cUs7269xnKZvSpS7k1qTzouwgWx1pm2/eDvVz64Fu9sCtCBGb1GV9OIGgb4CO2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeeJ2h/eAxX5cSl7CVrbasRdh9kiJWxyCNRt2HVQPNX750SPde
+	2pX7jITZXgpKgQVqBmxaac9luHihr9ZikdIH7zZCBK/TyCTewAYX7Ys3xDHmye4=
+X-Google-Smtp-Source: AGHT+IHcKZrbaTU2tT7qkMh4am5/XKechOdGa9HHi0r8HWAUblV0ghefdWN5br52HmalYy6jvHJHuw==
+X-Received: by 2002:a05:6830:e10:b0:718:6cc:b5a2 with SMTP id 46e09a7af769-71ab31f993emr2699568a34.20.1732118160932;
+        Wed, 20 Nov 2024 07:56:00 -0800 (PST)
+Received: from Hridesh-ArchLinux.am.students.amrita.edu ([175.184.253.10])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c13354sm9691844a12.10.2024.11.20.07.55.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 07:55:43 -0800 (PST)
-Date: Wed, 20 Nov 2024 07:55:42 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Bastien Curutchet <bastien.curutchet@bootlin.com>,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v3 10/14] selftests/bpf: document pseudo-header
- checksum helpers
-Message-ID: <Zz4Gfi8ll9lDH7aG@mini-arch>
-References: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
- <20241120-flow_dissector-v3-10-45b46494f937@bootlin.com>
+        Wed, 20 Nov 2024 07:56:00 -0800 (PST)
+From: Hridesh MG <hridesh699@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Abhinav Saxena <xandfury@gmail.com>,
+	Hridesh MG <hridesh699@gmail.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: docs: fix dead hyperlink to Intel HD-Audio spec
+Date: Wed, 20 Nov 2024 21:25:51 +0530
+Message-ID: <20241120155553.21099-1-hridesh699@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241120-flow_dissector-v3-10-45b46494f937@bootlin.com>
 
-On 11/20, Alexis Lothoré (eBPF Foundation) wrote:
-> network_helpers.h provides helpers to compute checksum for pseudo
-> headers but no helpers to compute the global checksums.
-> 
-> Before adding those, clarify csum_tcpudp_magic and csum_ipv6_magic
-> purpose by adding some documentation.
-> 
-> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
+Update the hyperlink as it currently redirects to a generic site
+instead of the actual specification.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+---
+I encountered the outdated link while debugging a codec issue and
+thought it might be useful to update.
+---
+ Documentation/sound/hd-audio/notes.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/sound/hd-audio/notes.rst b/Documentation/sound/hd-audio/notes.rst
+index e199131bf5ab..f81e94d8f145 100644
+--- a/Documentation/sound/hd-audio/notes.rst
++++ b/Documentation/sound/hd-audio/notes.rst
+@@ -42,7 +42,7 @@ If you are interested in the deep debugging of HD-audio, read the
+ HD-audio specification at first.  The specification is found on
+ Intel's web page, for example:
+ 
+-* https://www.intel.com/standards/hdaudio/
++* https://www.intel.com/content/www/us/en/standards/high-definition-audio-specification.html
+ 
+ 
+ HD-Audio Controller
+-- 
+2.47.0
 
