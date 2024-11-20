@@ -1,98 +1,194 @@
-Return-Path: <linux-kernel+bounces-416228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E289D4249
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:55:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 190A69D424C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2D7B28E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:55:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D653DB22F89
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6825E824A0;
-	Wed, 20 Nov 2024 18:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FE413C83D;
+	Wed, 20 Nov 2024 18:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS4pPb9q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qq/6H8St"
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8F51A0BDC;
-	Wed, 20 Nov 2024 18:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9D614D70E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732128906; cv=none; b=S1E9wsjmgT0KCkIBbUU7olQvj5HN90Ite2y1CUpTE7MRtlXVne15ATMY/3zhbEiIGi3zUF6Zo6WSsaV9PGPn+Fzx2BAMhHuPyKAfVG2JImptLvcQAW7W6g7HR8e72oeqefq/rDDRANT0olBMpRhkQUyBiJ9CNyeEqrD8Qep7dgM=
+	t=1732128992; cv=none; b=rAeyulk47q0AReBYKo5XmuxYlS70L/JSwaJHVlTL3kTDZB2eY2iN2T/YI/h/SBDF8O8v6i2676FCr+XPDyhrIItiB0D22WyDx/P6Np8R/io8IGt8EnL/Z0lVWQE7OHwO4bTW9o3K0wFa1Wqqati0XKhuIFbm/6Lp9UxLkKnvcws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732128906; c=relaxed/simple;
-	bh=7iNlVObpcindp4mU4f5rY8q81sWe5uVVk4LFqLRBvCU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DWtjCPUktNeuklSf77vUOP/4LS6jYN5mTSGemBDpqeBhb9MyE9//WEOi1MkbII4RkV7IvFEK1JvxxspXht5/ksUCNI0qGWda9zSCJoIa+5DtehBWZ3D1lmosylNPK5EvVf1+d5a7BxrHcpPkJ1on0F7DAoKSlzO4KenXftWLMc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS4pPb9q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D9CFC4CED8;
-	Wed, 20 Nov 2024 18:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732128906;
-	bh=7iNlVObpcindp4mU4f5rY8q81sWe5uVVk4LFqLRBvCU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tS4pPb9qS1zHYqWlZ0+aEQoGlegmlD2l7SHUWRJ9KN3H2GNdvo5LA6osnDfhT7iXG
-	 bzktOGorzXT6LqT31xzolRS9479BV4mTj2FJlKi758XTFim0+1tIgUZj/9Z1QQsjkC
-	 ZaDabfnquLmHmP8W41QMFJfQGG09GVcJ9f97PHndnh+eYLXns6jyY4n1mnhxgaSo3C
-	 18Bqr0qMTqXmtis8lXcxCDOL4KbGIet9mpuZNcCwrPLvIqncxweNi/N+zh4cZhVzap
-	 zoLdDxw8LvWo7n38BwGMPKDUjnxdgs6wXoiCD5LvagiaE/WQD/zVBYBPeBUvGdRWlW
-	 BjBIwvwCn4d1g==
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e600ae1664so67725b6e.2;
-        Wed, 20 Nov 2024 10:55:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW+EyQdu4Dt6BVGhU2WmSiWmW5Z/qQjHwrXF5stDn4QXaBgFX6m77vizbzOlfNhLWX4oNKWl9hu11c=@vger.kernel.org, AJvYcCW93MmMjsKNGvWbS6PCXMof+cVwJdUG9p0968QD7DWYRyiPyeiPEdQmklzSVjhEci2ZYvUYThxubk7n@vger.kernel.org, AJvYcCXLuZrwJ4RPWzo1KFMLtrle9gYtBeX3hTvBpHpDMd+NjwGuAWCN0N6dcl1NfmBDEi71gjxAde+Al9I2g1OT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLNFZHUf5AZcRjCdQItyb/9+KJjxj4OB30NkFCQUGTKGAIZgF7
-	b2wZ/Uvp+dKGLATNWuQtojsMPubvWBhOZwLzeIIFbO2MPQaFcJXmMXQoLNF7VakwUjNyYHUmN+T
-	am2SXz6/5QD23TiW7PyVA/bOYiwg=
-X-Google-Smtp-Source: AGHT+IEvr6u7FvVsflV5ZrLmCrlhPJkj7ve6zXLwwAB4za8pZzBbg+m/NmobsyNgM5TmRm76lnKu0OViaXX87/EP8Jo=
-X-Received: by 2002:a05:6808:3188:b0:3e7:a201:db0f with SMTP id
- 5614622812f47-3e7eb738affmr3589483b6e.25.1732128905489; Wed, 20 Nov 2024
- 10:55:05 -0800 (PST)
+	s=arc-20240116; t=1732128992; c=relaxed/simple;
+	bh=6OMVb1cP7lwG0cKH2mxInLBQsdinK0PjS1MpnWYh0vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSuyaMpIkZn28kaPfnfNp77n+7mV+rpk2VuAovEIz9E5tWweB/N1pRwYyy66StGBw9gxK1X66OB3yX26f8jFmm0yBMk5+DZFIR8rGCNDRmHf45AE1zdj/VPjQfqgLR91Yv3SOYg68pUTFCAC2ChfOjNj/QCuoHsBq1g/8A+rA0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qq/6H8St; arc=none smtp.client-ip=91.218.175.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 10:56:11 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732128987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0l9hkEoEyIxKnpHx142wYDgJUJrgnU+jeao/cnQv+nc=;
+	b=Qq/6H8SthQ1x4jah1i77G9wcr1j2qvCYtJr/DWCGvQFQPp1/HrA/ZiJAMBBy2EQKfs0Znj
+	MlCNa36AaTrTYGG8QSqTx7V+JKe7Y9DjtGnLRuEZZxIFVMbcIK5sL5FVCVUhp5rmIEaIAn
+	i64F/YBlDgRC/BxhtauQv/zOTsYcvhg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Marco Felsch <kernel@pengutronix.de>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
+ FW_UPLOAD_ERR_SKIP
+Message-ID: <20241120185611.43soqjcyruztby4f@4VRSMR2-DT.corp.robot.car>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
+ <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
+ <20241120173037.x6cro7r2wh5aoadg@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
- <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
- <90818e23-0bdb-40ad-b2f9-5117c7d8045e@linux.intel.com> <CAJZ5v0gxNEQx5Q+KXs-AMn=bt7GD=jU-TseMHUc5mHp0tKSBtA@mail.gmail.com>
- <0147ea1a-3595-47ae-a9d5-5625b267b7a8@linux.intel.com> <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
- <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com> <CAJZ5v0h5=3LMVCa8kSoomNyF9r_7HLmpkH+YhYEO_N7H6-hAGQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0h5=3LMVCa8kSoomNyF9r_7HLmpkH+YhYEO_N7H6-hAGQ@mail.gmail.com>
-From: Len Brown <lenb@kernel.org>
-Date: Wed, 20 Nov 2024 13:54:54 -0500
-X-Gmail-Original-Message-ID: <CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com>
-Message-ID: <CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in acpi_os_sleep().
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>, anna-maria@linutronix.de, tglx@linutronix.de, 
-	peterz@infradead.org, frederic@kernel.org, corbet@lwn.net, 
-	akpm@linux-foundation.org, linux-acpi@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, Todd Brandt <todd.e.brandt@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 20, 2024 at 1:50=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
-
-> > 50 usec is likely more than enough in practice.
->
-> And would you use the same slack value regardless of the sleep
-> duration, or make it somehow depend on the sleep duration?
-
-timerslack_ns is 50 usec for all user-space, no matter the duration.
-
-This part was done right -- it doesn't depend on the sleep duration.
-
-Coalescing depends on the pattern of wakeups over time.
-That pattern doesn't necessarily depend on sleep duration,
-so it is a hard sell to tie them together.
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120173037.x6cro7r2wh5aoadg@pengutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
 
---=20
-Len Brown, Intel
+On Wed, Nov 20, 2024 at 06:30:37PM +0100, Marco Felsch wrote:
+> Hi,
+> 
+> On 24-11-20, Russ Weight wrote:
+> > On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
+> > > It's no error if a driver indicates that the firmware is already
+> > > up-to-date and the update can be skipped.
+> > > 
+> > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > > ---
+> > >  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > 
+> > > diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+> > > index b3cbe5b156e3..44f3d8fa5e64 100644
+> > > --- a/drivers/base/firmware_loader/sysfs_upload.c
+> > > +++ b/drivers/base/firmware_loader/sysfs_upload.c
+> > > @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
+> > >  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
+> > >  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
+> > >  	if (ret != FW_UPLOAD_ERR_NONE) {
+> > > +		if (ret == FW_UPLOAD_ERR_SKIP) {
+> > > +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
+> > > +			ret = FW_UPLOAD_ERR_NONE;
+> > > +		}
+> > 
+> > If you change the error-code from FW_UPLOAD_ERR_SKIP to
+> > FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
+> > patch will never be seen. There are currently no other instances where
+> 
+> Do we really need to set it? As explained within the commit message,
+> it's no error if FW_UPLOAD_ERR_SKIP is returned. The previous patch just
+> added all pieces which may be required later on.
+> 
+> > an error code requires special-case modifications to the fw_upload
+> > code and I don't think it is necessary to add it here.
+> 
+> Because at the moment no one is checking it except for the gb-beagleplay
+> driver. This driver prints a dev_warn() string and returns a failure.
+> Now the userspace needs some heuristic by parsing dmesg to check the
+> reason. This is rather complex and very error prone as the sting can be
+> changed in the future.
+> 
+> Therefore I added the support to have a simple error code which can be
+> returned by a driver. I'm open to return "skip" as error instead of
+> casting it to none. Both is fine for me since both allow the userspace
+> to easily check if the error is a 'real' error or if the fw-update was
+> just skipped due to already-up-to-date.
+
+Are you saying that you intend for the user-space code to see "skip"?
+Because in the current implementation, I don't think the user-space
+code would see "skip". If you ultimately return FW_UPLOAD_ERR_NONE,
+then cat'ing the error file should result in an empty file.
+
+> 
+> I wouldn't say that this is a special case, it is very common but no one
+> is performing a fw-version check. Therefore I added this to the common
+> code, to make it easier for driver devs.
+
+By "special case" I meant to say that this is the first time this
+core code has had to know about any error codes other than
+FW_UPLOAD_ERR_NONE - and the first time that an error type alters
+the code flow.
+
+I understand that other drivers may also want to abort if the
+firmware being loaded is a duplicate.
+
+> 
+> > The dev_info() message above can be provided by the device driver
+> > that is using this API.
+> > 
+> > I think you can either:
+> > 
+> > (1) allow "skip" to be treated as an error. The update didn't happen...
+> 
+> Please see above.
+> 
+> > -or-
+> > 
+> > (2) The prepare function could detect the situation and set
+> >     a flag in the same device driver. Your write function could
+> >     set *written to the full data size and return without writing
+> >     anything. Your poll_complete handler could also return
+> >     FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
+> >     at all. You would get the info message from the device driver
+> >     and fw_upload would exit without an error.
+> 
+> Please see above. I don't think that this is special case and why making
+> the life hard for driver devs instead of having a well known fw
+> behaviour?
+
+If you are not opposed to treating it as an error, then all you need
+to add are the error code and the string to go with it.
+
+Instead of FW_UPLOAD_ERR_SKIP -> "skip", how about
+FW_UPLOAD_ERR_DUPLICATE -> "duplicate_firmware"?
+
+Thanks,
+- Russ
+
+> 
+> Regards,
+>   Marco
+> 
+> > 
+> > Thanks,
+> > - Russ
+> > 
+> > >  		fw_upload_set_error(fwlp, ret);
+> > >  		goto putdev_exit;
+> > >  	}
+> > > 
+> > > -- 
+> > > 2.39.5
+> > > 
+> > 
 
