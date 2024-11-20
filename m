@@ -1,137 +1,161 @@
-Return-Path: <linux-kernel+bounces-415585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8CF9D388E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:43:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE289D3896
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4275A2843C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76B14B26C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9CD19E999;
-	Wed, 20 Nov 2024 10:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60412199934;
+	Wed, 20 Nov 2024 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtJ5isa9"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CuDE3e9Y"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986A719D8A0;
-	Wed, 20 Nov 2024 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB3F19DF4B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732099371; cv=none; b=ChuJoxHJGgcnTpUpaJ7kxisecmh9hblibfWHPMWqKHOf2S5vkX+1iyhETZ87Qw0N6ubcHXT3Xz2qQqUVucc/g950JKrywMAIVo215J5qryJaeiupKtDXWKHAzJ9LZQT1dA9gsPQOb/7XYNSTV+xH2IgdG8GivTZ8wgMIf6OxhMc=
+	t=1732099417; cv=none; b=ljUt0d5z5LFWB7DAvLtkjZPntZI6Q3RPFhqPi0lgeQsM9i23I6KeJk36mACFLIj5wLmJ267yhslMfq90oDEN5N9jKZirW4Hnaoe6M+yDu4l32ran0+MtmHtCLd2j6msJjztg7Kyfxh8S8w3uhisG8/wm18qJyZiBL2TLRJwVLsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732099371; c=relaxed/simple;
-	bh=8CdhlOiWSgPSc0I2TJV4p5BcnUvFnL+U8Uc7hVG1hS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t/2iRy6g8AD+4D0uZBCBuUY5M0L61/BhY9evjtTVQv8AOeIIJz24MvFb/bbZHts9H4/0RN6/hXEeW/xv9XtdTGJqQ7olKY2sx39GraA1qNr/WNrO6QkDkQoHWLNb4Q4gSU16q9hk53edOP3CPuFjCp8o8pQx/fU00CbrxO3MzZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtJ5isa9; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cffb4d7d9dso371670a12.0;
-        Wed, 20 Nov 2024 02:42:49 -0800 (PST)
+	s=arc-20240116; t=1732099417; c=relaxed/simple;
+	bh=V+/MEtn3nVo+kVuLjA7VUTnQYml1jSRYhfqMcSBxIZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K0T553tL2PyPwYHFsh/+TVUWswvbYWbonxYscd/Sc5PlzbAX1h45oJ20tUMuYtlDfun3iv+cAibjmhOFmkGxa3ciwq7G4PmBXPT5V+3BlrPfpotR3uN6v2NPEIe2Oz1aypiWLONaBXtY70kyB3Ft9GmT2TAfJ59MbVl08wIjoiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CuDE3e9Y; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da209492cso6516809e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:43:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732099368; x=1732704168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g1Fye+w9f2/wqLsR/K13urMmL0eynzt5Fyy+QvQyjT8=;
-        b=XtJ5isa9R325PsuOhDtxspq/vNK9PSfzXFlJk5vuiHECEdeUjUNbePgNVOwgMAgFDn
-         PD5RivreQlws7cEAf98hGosvuuljpbXkSBLZ5eopXXjuRoMa/6mDgEAhAw8vvtWk5U2+
-         TDpqH/yGGHgjkq+TzYpuFdfxtU95YN/lBhklTSa+JrNcKVLNtniaZ573YDKhycvTZRrz
-         AclAVJIo/l7Ug7DZ72Wfu2epTO1ljsELJCij7SKFpuKiovGBwFYofxO5o+IeB2/PevOm
-         U2o5y24kjVzL8WiL0m6tU0OtXOPu+vuRBKdbcVX8hA3+TymF7SQiV2/y8W3gZbMYsBqU
-         LsLw==
+        d=linaro.org; s=google; t=1732099414; x=1732704214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=56B0s+ajZzOmTEonufappGobLQWqg2YeuA0usKhiLy0=;
+        b=CuDE3e9YmDLFvB4b78HezQWYQgjoIEJUDiOI1eFpq0Of5RRzfuHMmqy3/gmMBOvObB
+         phpGUN4uacvXFAzahZ15G5pplfB8U7mx/hUaYWK5qMSeAZjs7MROkea+ZvKGRqb2+P4Q
+         boD1G96ooU8+pOACU5TSjgANjDbFSNwD+Yi1zxeGGeloocY7g/461XYB+S2Q4i9lEP+C
+         pbXI2rTD6VdaKwOerlXndK6dfUilLd9eeKTj14M3Tszt8Xf+BNDA0jw4Ipawvyta8L1o
+         47xuYv/7RxL79aI1Bw2/w2PhfDgNPrFnaJNJgQjtSjMKJbBxpRXDNXe/nRLrcNoBq8Ym
+         a5EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732099368; x=1732704168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g1Fye+w9f2/wqLsR/K13urMmL0eynzt5Fyy+QvQyjT8=;
-        b=GZ+kQccde3B512j6ZPhKWFLRO2boGbbb+j0uIhLmoasGsKAc0H5sSBWSyMnh2aJ69x
-         D9j5Cq4VdrVlnBAJaVILfvaXmCiI/W++UsRzRjHDtiI6y8dFS0/gAGLCqty95WLkw7sn
-         qpo+EOiRKcjHs/hhdX6cjJtOuOfbK4n4HxyHu0rF6k7LvTuM4yd5eu5ciATLLELD2X+j
-         UFyBcSLOTxNeHhua8wDt7Sxz1WtO27SFETtErqkcYXgn1A6vMzTO5JI9vNvD2N8HOla+
-         D8R0XPb+CjRMTcm2k7UtqU8QnqIf/llPqUS4mXCRuC5YKNqs9T1ZNogaYJs4+OolUerw
-         utCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxVyStikzOY7og898bzS3KTPtNTgtu1IEa3Kle35HrNyXc3xHSQcq+kvU74d72c3BilyE163tdSEyT3OQGrA==@vger.kernel.org, AJvYcCXi+WUZW7LxOazlOAZbnxoaX+c0Il7MiU/MgGCbq+BD0zGqZpQcxIRhkNqzj2XB2fxNzoIYcifeJ45n@vger.kernel.org, AJvYcCXvlJd9LGNQAsJhB7H1QIIme5ANP1T+mj56h+CmFa1ZdTKCMe3tbkB6TRUu7FlExsA74F9RIWzsFmhoYj2m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+grZYVaasNUwZ4+UAbmy4YD5nme8BkfpYcoGwQS88nBeeedpr
-	lYz7oGcDyIObcL6WldlWUbG0s0//c0bA/roTnr7FTW9SB8h2tFRsfjPWzwK5ch1txqwHHxWmvk5
-	IzX4/MEmClSPzJ/bsdX9Yo11RIEg=
-X-Google-Smtp-Source: AGHT+IHvQxdoP+pAvWn1yN9/vfpnNgFvtu0z7BICfkNMmGGOWDcXwtOpUgaA6XYGwsQAvynctV9szk8UEj3jV6Hqhts=
-X-Received: by 2002:a17:906:6a04:b0:a9e:d539:86c4 with SMTP id
- a640c23a62f3a-aa4dd5481d0mr159817966b.9.1732099367707; Wed, 20 Nov 2024
- 02:42:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732099414; x=1732704214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=56B0s+ajZzOmTEonufappGobLQWqg2YeuA0usKhiLy0=;
+        b=PNUDRG39xPKOV2FK+YixHN2NsSSOSSagJTssLm6w+msPfYO0cok+ZVzuEyqnUp4gQT
+         90cSbB+Z6+iU8WiBOysSqAHibN54pzl+b+dVNB6jmiuGOyzyF0EdACk7FQmakm+LmdIZ
+         cigsBWStx4EvaXX44vyWAD7neiCBBIkUwKZpYznrFc5tORNOLwok9Ez2/ViryygHw5XR
+         1D26Frq88sBnlgBfMX9Yq9sJ1u5KBctpDBBRcQWgcLlP8A6+4K0b6QQm+AUND/mVE3/o
+         fC/jgoZTe/HxRYNvXXpojFlYDC5pF3ji3HXa4F5QqFmsiDzKFm29P6NegNz4fY/RWyQk
+         PiNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrSCle3tjXHqqh9fyhJS+ElxmWpdwUdaVyFS3yE5KmaoUSLeqotCVYK2A3v6OmpsmAojIk3KZusqGpz4U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWTe8C91yGmNKkmtdJGvJneXMDZ4wMkzndzpH+/BAnuZSU7zeg
+	N6PK+FmKYCYiSayiuUL/9BYVLftRxiGHEHI/Gf4RlbaC1zs1+f/Ib8ELbN1d84w=
+X-Google-Smtp-Source: AGHT+IFtz95KHAingBu4+6JxpvwiZFXOgLDbTsR4XQYWIXQ/wmYoEfAj4pt85XX8+TRQgbgS5MkOKA==
+X-Received: by 2002:a19:8c02:0:b0:533:4689:973c with SMTP id 2adb3069b0e04-53dc13343ddmr608112e87.23.1732099414065;
+        Wed, 20 Nov 2024 02:43:34 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd3edca6sm591093e87.27.2024.11.20.02.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 02:43:33 -0800 (PST)
+Date: Wed, 20 Nov 2024 12:43:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Cheng Jiang <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, quic_zijuhu@quicinc.com, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
+Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
+Message-ID: <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-2-quic_chejiang@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119094555.660666-1-mjguzik@gmail.com> <20241120-werden-reptil-85a16457b708@brauner>
-In-Reply-To: <20241120-werden-reptil-85a16457b708@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 20 Nov 2024 11:42:33 +0100
-Message-ID: <CAGudoHGOC6to4_nJX9vhWV8HnF19U2xmmZY3Nc0ZbZnyTtGyxw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] symlink length caching
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, 
-	tytso@mit.edu, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120095428.1122935-2-quic_chejiang@quicinc.com>
 
-On Wed, Nov 20, 2024 at 11:33=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Tue, Nov 19, 2024 at 10:45:52AM +0100, Mateusz Guzik wrote:
-> > quote:
-> >     When utilized it dodges strlen() in vfs_readlink(), giving about 1.=
-5%
-> >     speed up when issuing readlink on /initrd.img on ext4.
-> >
-> > Benchmark code at the bottom.
-> >
-> > ext4 and tmpfs are patched, other filesystems can also get there with
-> > some more work.
-> >
-> > Arguably the current get_link API should be patched to let the fs retur=
-n
-> > the size, but that's not a churn I'm interested into diving in.
-> >
-> > On my v1 Jan remarked 1.5% is not a particularly high win questioning
-> > whether doing this makes sense. I noted the value is only this small
-> > because of other slowdowns.
->
-> The thing is that you're stealing one of the holes I just put into struct
-> inode a cycle ago or so. The general idea has been to shrink struct
-> inode if we can and I'm not sure that caching the link length is
-> actually worth losing that hole. Otherwise I wouldn't object.
->
+On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
+> Several Qualcomm projects will use the same Bluetooth chip, each
+> focusing on different features. For instance, consumer projects
+> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
+> SINK feature, which may have more optimizations for coexistence when
+> acting as a SINK. Due to the patch size, it is not feasible to include
+> all features in a single firmware.
+> 
+> Therefore, the 'product-variant' devicetree property is used to provide
+> product information for the Bluetooth driver to load the appropriate
+> firmware.
+> 
+> If this property is not defined, the default firmware will be loaded,
+> ensuring there are no backward compatibility issues with older
+> devicetrees.
+> 
+> The product-variant defines like this:
+>   0 - 15 (16 bits) are product line specific definitions
+>   16 - 23 (8 bits) are for the product line.
+>   24 - 31 (8 bits) are reserved for future use, 0 currently
 
-Per the patch description this can be a union with something not used
-for symlinks. I'll find a nice field.
+Please use text strings instead of encoding this information into random
+integers and then using just 3 bits out of 32.
 
-> > All that aside there is also quite a bit of branching and func calling
-> > which does not need to be there (example: make vfsuid/vfsgid, could be
-> > combined into one routine etc.).
->
-> They should probably also be made inline functions and likely/unlikely
-> sprinkled in there.
+> 
+> |---------------------------------------------------------------------|
+> |                       32 Bits                                       |
+> |---------------------------------------------------------------------|
+> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
+> |---------------------------------------------------------------------|
+> |   Reserved        |    0: default       | 0: default                |
+> |                   |    1: CE            |                           |
+> |                   |    2: IoT           |                           |
+> |                   |    3: Auto          |                           |
+> |                   |    4: Reserved      |                           |
+> |---------------------------------------------------------------------|
+> 
+> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> ---
+>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> index 7bb68311c609..9019fe7bcdc6 100644
+> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> @@ -110,6 +110,12 @@ properties:
+>      description:
+>        boot firmware is incorrectly passing the address in big-endian order
+>  
+> +  qcom,product-variant:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      specify the product information for driver to load the appropriate firmware
 
-someone(tm) should at least do a sweep through in-vfs code. for
-example LOOKUP_IS_SCOPED is sometimes marked as unlikely and other
-times has no annotations whatsoever, even though ultimately it all
-executes in the same setting
+DT describes hardware. Is this a hardware property?
 
-Interestingly even __read_seqcount_begin (used *twice* in path_init())
-is missing one. I sent a patch to fix it long time ago but the
-recipient did not respond, maybe I should resend with more people in
-cc (who though?), see:
-https://lore.kernel.org/all/20230727180355.813995-1-mjguzik@gmail.com/
+> +
+> +
+>  required:
+>    - compatible
+>  
+> -- 
+> 2.25.1
+> 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+-- 
+With best wishes
+Dmitry
 
