@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-415179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F2B9D325C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:02:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41DD9D3261
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:05:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA143283CFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CE51F23302
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA97F9D9;
-	Wed, 20 Nov 2024 03:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b="rv6x7jtb"
-Received: from mailgate02.uberspace.is (mailgate02.uberspace.is [185.26.156.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74826CDAF;
+	Wed, 20 Nov 2024 03:05:14 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A027310A3E
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B30DF9D9;
+	Wed, 20 Nov 2024 03:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732071763; cv=none; b=GzZl/QHAmjVOZxAAf/sgcm/Ix3QDtO/RupD6CIkx+Xuw7VYfLg6nBTnoDrU4zKi1lwgMfkMkCLV1WExJIufOK16KEelkU1TBoN6LKxcIGnW2CzDvmerOFrPVo6B7A2Fxwm1MlXK9PvspKyd5KKrW6R5oiwu7dROmlecese4PSK8=
+	t=1732071914; cv=none; b=lkEOvR9QPmXZc4aMEtBITzn2kdrufEEZy6CU8Ng+SEYSllqelBo2MdJhHhjpHJDInLyX7LOxxZH77mtIYcWLAxMYwiOqCdzS8ToQOeDP90rVc8fLtuq72be31TXdFnEtAsyGB+ZlBLizcJFfXoh8vHbhsymjd2MCnZGblcLSit4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732071763; c=relaxed/simple;
-	bh=8jNv7+kbCBf2b2GClu55b6gv+Vj/t/2sMO+mquGa+Jo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BUpV/zare0kV4a6rnhWWHVD40KzxUQ7A4uoJlMl7ntY03tJdkA4iMa2Azrz3mwMCiEdyTYP3jYcxBqJXh4qnk1oHOUfbeda7runyqkwJYHoofggcicctk/o/nwmVO2qmPbY03ZnqNYXRe8IkbeJcQxhsObLsF0pnjHSn+3Kr+eM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl; spf=pass smtp.mailfrom=lausen.nl; dkim=fail (0-bit key) header.d=lausen.nl header.i=@lausen.nl header.b=rv6x7jtb reason="key not found in DNS"; arc=none smtp.client-ip=185.26.156.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lausen.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lausen.nl
-Received: from devico.uberspace.de (devico.uberspace.de [185.26.156.185])
-	by mailgate02.uberspace.is (Postfix) with ESMTPS id CEE6517F8B6
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:02:37 +0100 (CET)
-Received: (qmail 29189 invoked by uid 990); 20 Nov 2024 03:02:37 -0000
-Authentication-Results: devico.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by devico.uberspace.de (Haraka/3.0.1) with ESMTPSA; Wed, 20 Nov 2024 04:02:37 +0100
-Message-ID: <4f145884-2c91-4e32-a7bc-b439746c6adb@lausen.nl>
-Date: Tue, 19 Nov 2024 22:02:33 -0500
+	s=arc-20240116; t=1732071914; c=relaxed/simple;
+	bh=PYHgJqIhXRjvZtZCJMc+5DZmdkvRvd1KuH9LUviAV4Q=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gHaTO2w0mq7QMgBG+rLPmEraFkOmsjEwwJ+yQgr1T2TTKZnSiFSNsCsCP+s4OVUHdZrfuihwM2d4oFMYIn+1ufHGrZQ2lRXfqbe9RZLbaaurF9vzdjYbK1kxZCcVOkEPDMcWdtLzu1xx3K56EBpcD5XKlHI4zFB4d5FaX4mqlfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK2vPrk009734;
+	Wed, 20 Nov 2024 03:04:48 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0kun5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Wed, 20 Nov 2024 03:04:48 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Tue, 19 Nov 2024 19:04:47 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Tue, 19 Nov 2024 19:04:44 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V3] fs/ntfs3: check if the inode is bad before creating symlink
+Date: Wed, 20 Nov 2024 11:04:43 +0800
+Message-ID: <20241120030443.2679200-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241119163647.GJ3387508@ZenIV>
+References: <20241119163647.GJ3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2,1/2] drm/msm/dpu1: don't choke on disabling the writeback
- connector
-To: Johan Hovold <johan@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>
-References: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
- <b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com>
- <ZzyYI8KkWK36FfXf@hovoldconsulting.com>
- <2138d887-f1bf-424a-b3e5-e827a39cc855@lausen.nl>
- <ZzyqhK-FUwoAcgx1@hovoldconsulting.com>
-Content-Language: en-US
-From: Leonard Lausen <leonard@lausen.nl>
-Autocrypt: addr=leonard@lausen.nl; keydata=
- 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 Sw==
-In-Reply-To: <ZzyqhK-FUwoAcgx1@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Bar: -
-X-Rspamd-Report: BAYES_HAM(-1.061072) XM_UA_NO_VERSION(0.01) MIME_GOOD(-0.1)
-X-Rspamd-Score: -1.151072
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=lausen.nl; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=8jNv7+kbCBf2b2GClu55b6gv+Vj/t/2sMO+mquGa+Jo=;
-	b=rv6x7jtbsQwegujTx322XHsocu0G20sR2MloiMMToFZdVRigWM4UijidEw3B8hDLBeMlQJvLDv
-	evkg1IcrS1efiBp0RrUjTW3uvyt0E3eFwqCe74HbT3ehIL44RE4cQSty1fq48AR/0VEzU7FJInjo
-	/0GdtfL5gukerZoiOiSxQwcXGCHHRgsrmxSoBH6+Is+lLY008QKo8X92TrexLSJZdwBwofLisVsR
-	TrlgZZ7zFzulwn7C/gb2hzoox+3e0gTgUL+sf9BhAjVZFR5Eqm1rEdAbIS2BeUjeIYhWd6N4HiSv
-	+TU9Z41bKBY8E9KThE0B0X0Gu9Tbk3rfr+geJBYiYoFY6arXPeq4aTbhSM7rmbLDAogsE/NtGBZ6
-	6Y4WoUFnK90Stwt6o89ZOtOQrzxMQ8YR1bYjcqeojhRUByV+HWkkf4c8miGWwyezYII6KrY6DHTJ
-	U+VUb2wgg1pd+mgxzcaYdGKDz4xvk4LxpUof9If3hBqSoc56cRKDUp1ihi2txUunPdH0iU2cO498
-	N4z3gp48Ebu/0fZGMk1Yj6UT4DLctLcH0BD2ZTwOAppTNt/BSKGQs39nFgvUE3KbBWaSrjiZo7TM
-	etyAHxDpajSECOTRBF/iWWUEh4+cmgK4gAArdQ4g8UmjX9ic9k/CXLn4nk5VjBDoTVHkaEYn6LQN
-	s=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: MBj4tbq8NdUTMlIalFvPDc28nckuDK7_
+X-Proofpoint-GUID: MBj4tbq8NdUTMlIalFvPDc28nckuDK7_
+X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=673d51d0 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=RmbGFA46GKlq9jInG3gA:9
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-19_16,2024-11-18_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ mlxlogscore=836 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411200023
 
->> The issue of "internal display fails to resume properly (switching VT brings it back)"
->> also affects sc7180 platform during some resumes. Do you see the issue consistently
->> during every resume?
-> 
-> Yes, it happens on every suspend cycle here.
-> 
-> I didn't notice the issue initially as fbdev does not seem to be
-> affected, and I've been running with this patch applied to suppress the
-> resume errors since it was posted.
+syzbot reported a null-ptr-deref in pick_link. [1]
 
-Ok. Then situation is worse on x1e80100 than sc7180, where the issue only
-occurs sporadically.
+First, i_link and i_dir_seq are in the same union, they share the same memory
+address, and i_dir_seq will be updated during the execution of walk_component,
+which makes the value of i_link equal to i_dir_seq.
 
->>> The x1e80100 is the only platform I have access to with a writeback
->>> connector, but this regression potentially affects a whole host of older
->>> platforms as well.
->>
->> Have you attempted setting CTM or other DRM state when running with this patch?
-> 
-> Nope, I just want basic suspend to work.
+Secondly, the chmod execution failed, which resulted in setting the mode value
+of file0's inode to REG when executing ntfs_bad_inode.
 
-Ok.
+Third, when creating a symbolic link using the file0 whose inode has been marked
+as bad, it is not determined whether its inode is bad, which ultimately leads to
+null-ptr-deref when performing a mount operation on the symbolic link bus because
+the i_link value is equal to i_dir_seq=2. 
 
-Given my previous testing and finding of this patch causing unexplained CRTC
-CTM regression was back in July on 6.9.8 and next-20240709, I went ahead and
-tested on 6.10.14, 6.11.9 and 6.12 as well. To recall, the problematic behavior
-observed with this patch before was that CRTC CTM state would be lost after
-suspend with external display attached and re-setting the state was no longer
-possible after resume. (The "failed to get dspp on lm 0" etc. errors mentioned
-in my earlier email today were not associated with CRTC state issue, but
-actually occur with and without this patch. Apologies for misstating, given the
-elapsed time):
+Note: ("file0, bus" are defined in reproducer [2])
 
-The finding is that while 6.10.14 with this patch applied still suffers from
-that regression, 6.11.9 and 6.12 do not face the CRTC state regression.
-Therefore, whatever issue the patch uncovered in older kernels and which
-justified not merging it before due to regressing basic CTM functionality, is
-now fixed. The patch should be good to merge and backport to 6.11, but from my
-perspective should not be backported to older kernels unless the interaction
-with the DRM CRTC state issue is understood and an associated fix backported as
-well.
+To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
+whether the inode of file is already bad.
 
-I also confirmed that the patch (still) fixes the
-"[drm:drm_mode_config_helper_resume] *ERROR* Failed to resume (-22)"
-error upon resume.
+[1]
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
+Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
+RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
+R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
+R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
+FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ step_into+0xca9/0x1080 fs/namei.c:1923
+ lookup_last fs/namei.c:2556 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2580
+ filename_lookup+0x256/0x610 fs/namei.c:2609
+ user_path_at+0x3a/0x60 fs/namei.c:3016
+ do_mount fs/namespace.c:3844 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4b18ad5b19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
+R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
+ </TASK>
 
-Tested-by: Leonard Lausen <leonard@lausen.nl> # on sc7180 lazor
+[2]
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
 
-Thank you
-Leonard
+Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+V1 --> V2: add the root cause of the i_link not set issue and imporve the check
+V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
+
+ fs/ntfs3/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index be04d2845bb7..fefbdcf75016 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+ 	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
+ 	struct NTFS_DE *de;
+ 
++	if (is_bad_inode(inode))
++		return -EIO;
++
+ 	/* Allocate PATH_MAX bytes. */
+ 	de = __getname();
+ 	if (!de)
+-- 
+2.43.0
 
 
