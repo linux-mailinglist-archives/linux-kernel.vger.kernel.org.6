@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-416414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B799D446A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:20:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4B49D446C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D33BBB2202E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8441B1F21833
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEBD1C4A2F;
-	Wed, 20 Nov 2024 23:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905D31C4A37;
+	Wed, 20 Nov 2024 23:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PZwQXqpw"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HKrwqy09"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7E71925AC
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9CD165EFA
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732144845; cv=none; b=dH1Q16+NMlNSPVQBVjeez6rkHsgYGCtCXYFWf6iZfyXHK67DO1383K/5HupjRlEK5IOdJH+hd7XHyds53A6IRNHDxAAOZhj/1Gmy/XfZVnjjmXNnSgOrUmAAIBv9YOTDnmIVreKs5tug1mn54cdMRpv9lBGDA/cozbL3sRVyDWA=
+	t=1732144912; cv=none; b=rhO3Hq9n31Eqzk8eNLKQORm649xy5p46kxGODq+Arn/7dsD986+M9f4VAqti60MylcqfuHPjrtZGpFs9GnXWiXhcWwI1icpr/yAO4gkpazNcPuvKKKwSWo0BZm2EDEji1Qa5gwbVl719brZvWKSXqRElnJf5cX86Zv668i9wOPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732144845; c=relaxed/simple;
-	bh=eupxP0WAfuiBRZTPQdKjbDaBL40xdQ9r/lQfnUunKPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IeRljK03Mwp3y0n+piNH79wFcCSUD8ow/aWiwNYyEjcWiCKUjy5c+NyoCAFjqP1azpzU6374V45ROQKSUK3+1Wcfc7vbxwtCn2h2OeGGThpEkvLYugoY9LMDF9m/5VlPEtn2ctrSpMIozd+LphnvDacDKaG70MR8ceZNxgkOhBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PZwQXqpw; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83aba237c03so10709939f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:20:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1732144842; x=1732749642; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kI8LjRbHnrIYCWVFuTZVSrxkVpMakjiw/cyxut4YKfI=;
-        b=PZwQXqpwR62MZrA+7oubRf492DnC+H+wDoWMS5g0f+hToW8jTlC1MBs5Zbm8qtJrUy
-         oACXnMWF4GU4JMlW04tjWKAkNpuL1nTRhSOuh1CVa+URI7qamFy+U2RjUzK57jee0iRc
-         EFohr1R/oiymvJeCqfz9zvmbtakvIdH3H0sWI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732144842; x=1732749642;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kI8LjRbHnrIYCWVFuTZVSrxkVpMakjiw/cyxut4YKfI=;
-        b=cUjDRCDBWQGtimlT6h2iP1JP5EUuQkCtSa12rwxseaASi35iLD5YitmtUfPzaG5Vup
-         B8OFbBqhv2O9t0tfotvMGJ/VzhwQvf1q1KAwMFyOTw/IHOugFZtaISZXr239to79BJ66
-         aW/lVT+IW4BxyWwoArnOOuUFslXZIelbbPfZNfAzaQ9gD7c4xpzPstgA3IpVu85qMT3F
-         9C9fyQs/evUT6t1IUJUsVp2sLm94akLf+7XXCI2Ookjqj0Pa4ErZLeCBdk0q9CTZwIHR
-         xUSZMFP8oe8CqlTisxB8DSZb/K2ojZ5A5yexCXtFkFZZwt+YaYnMnc4xLYd/jvVJ8BLM
-         Cq3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXL10ABs0ZjDt9JE8J7EM9H4wFXgIFcEGqXsvmzzmCozITQ6nHaARIcXnV4JrzpI0SccGLCup9NGL//92k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfpEopqOYfQEXW6cMHUTvYE4ZYQksrHMnh5cq7eSdhJ1TT1mYU
-	kJ+oIElKHNesMHZU5EfyQSqOVIeDaFQTWGYrWFnZuJURpA8b78zEg1euoz5LSeE=
-X-Google-Smtp-Source: AGHT+IEEiuGathMJnfCVnOnRROnN/kddhLVKZ8maKJ87UcKzpikjw9GywFlkWjEQ98DV5mVGfqUK2w==
-X-Received: by 2002:a05:6602:2c03:b0:83a:ab63:20b with SMTP id ca18e2360f4ac-83eb5f88fd2mr584939039f.4.1732144842233;
-        Wed, 20 Nov 2024 15:20:42 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e06d6ebe55sm3349642173.6.2024.11.20.15.20.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 15:20:41 -0800 (PST)
-Message-ID: <3b2a3cfc-861b-48c2-834b-408532a230e3@linuxfoundation.org>
-Date: Wed, 20 Nov 2024 16:20:40 -0700
+	s=arc-20240116; t=1732144912; c=relaxed/simple;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/l5GzCQUAmEhEPUolPCnZsgnK93r37Y2fwLMxbDWNTFElKu5uO149r1M4zLX8eFmwZJWI/9sfA1Cexzsa3I5gOtuXXBlfeiMH2KxoNt5bsMuBT12tCZsODJ9Yzp3vKmPY4pgLwgwkISorA0omYc8Zm1D/uSTuxoI4A3Wu7tDzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HKrwqy09; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 18:21:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732144908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	b=HKrwqy09rx+v3St23VlrK6XlssnrZJ4sNXBHbXhKUzVhYaBvnvTAmeXFQY9KeRZ+PII+QN
+	HwPjeSSjpI8GuJ1gLIBH89oKKoVhUMw/npHWT80DDmWfRxoykto0sOpdAXNqtwVKmiZsQa
+	5tA3yCWmWNB79qvI+pkZza0c4Oh92NM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <3hzjgsbq4fjmo4fd3d7gmn6p4uhqw2plqwx3lgzymtlf7vbgzf@ql7ly575idde>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241120125629.623666563@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+X-Migadu-Flow: FLOW_OUT
 
-On 11/20/24 05:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.63 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.63-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Lastly, the thing that motivated me to make an issue out of this was
+several recent complaints, by my funders, that it's gotten increasingly
+difficult to get work done on the lists lately without showing up at
+conferences and shmoozing with the right people. I've noticed that as
+well.
 
-Compiled and booted on my test system. No dmesg regressions.
+That's something we do need to address, and I see a common thread
+between that and dismissive/authoritarian behaviour, and I think those
+of us at the highest level (i.e. CoC board members) should be mindful of
+how we set the tone for everyone else.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Yes, we're all Busy Important People (TM), but doing our jobs well
+requires us to engage well with people.
 
-thanks,
--- Shuah
+I think that should be prioritized at least as much as "language". It's
+not just about what words we use to communicate, it's about whether
+we're able to communicate effectively or at all.
 
+Couple's therapists say they can tell in a few minutes if a relationship
+is worth salvaging or if it's beyond repair - and it comes down to if
+they come in displaying anger or dismissiventess. Anger can be worked
+through, dismissiveness means they no longer care.
+
+I find the same is true with engineers. When people are pissed off about
+something, that anger is often pointing to some important issue
+underneath that, and getting to the bottom of it is going to hava a big
+payoff. But when teams stop being able to work together - when people
+start getting silod, afraid to stick their head up - that's really bad.
+
+Vannevar Bush said that all he did was get people to talk to each other.
 
