@@ -1,164 +1,99 @@
-Return-Path: <linux-kernel+bounces-415792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6A19D3C8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:30:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 087029D3C90
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6A3283871
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36D92837D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4817A1AA795;
-	Wed, 20 Nov 2024 13:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzZwppXn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651881A08C5;
+	Wed, 20 Nov 2024 13:31:29 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880511A7262;
-	Wed, 20 Nov 2024 13:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8830A17F7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732109402; cv=none; b=ZWDH1j2ed26vDLrHon/PWO1urPh+qyAYk77qnjoNGjW1eKHYEHVMzjkFfH1+uU3V0YywSp1UBGIHp+BWcubQb/9fQ/cfFVxMWXYhfJC/RfASUDUBP6j/mCzihk6uKQMHsDzqHLPvbGrTCutlCm4w2b9gMYNuHXQW5wzkoDjS2+w=
+	t=1732109489; cv=none; b=ZNMmvj2Dzqge7X8gfi8vl1Y+t1DgLH+cvq09Ob4bJQ5+TFlyWZLk6PpAR2CkC7o6PRAGGP9q7vzk1FmAoDeDioEuNnaligiO17ZY7W8MO0WQ/VVUi1TN8NsT7ARCWddH+b/DpoEGqhZSE5EHVTeyHzGSMiZbl+nnhL6+kRpzM8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732109402; c=relaxed/simple;
-	bh=isJA2biOXVu6F7lzmbZnW7b3ubuI6gH7McIl9fuN/Vs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LIkvulfWZBwygiRGIQ2emmYN05tgm8esZ+J8eh8p3gIOMsCScanMw83SP5uOemY47odcXyLzAWiyNRLyTMkMVDoXOdrUV69zgjqkkGvSmKYY/L3m8YxLsJoEMfqeTN6yQBJzDmLHF+jO2usKUcEMywlWibsw4yBYxr4Hi/+xeMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzZwppXn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C7BC4CECD;
-	Wed, 20 Nov 2024 13:29:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732109402;
-	bh=isJA2biOXVu6F7lzmbZnW7b3ubuI6gH7McIl9fuN/Vs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VzZwppXnYlNYwZGUsEvTci14bLXT/uqtugKrsJGnX2G23qjq+GvlWknsaG1VR6UKO
-	 JDD5kw+na49C5OBF9NGYPkeo/p3hszkv7pUPL3jt0dS82sCDn9n1eyQqVgMj/Me2/O
-	 DDnynK2v+egyXLIvPEk7CdyYjVjHJrgtPmql9yFJPp0VyzTWq9R+O5FuQP5m5VXLfq
-	 qMYWR1Fb4uNsh0E+zfJ/WxPbsm22QkRucraYRy7zCK+cmub4YOAF4NHBJC4n7M0nhP
-	 8UEUUV2AUTHhuXIeRJPvdpxDJNoCc5PVYy+8F++PsKWAb1MG/S4PwEh1FlDG3Klq7G
-	 OGYgGPL1hbyJQ==
-Message-ID: <3e9e7164-7e9b-4a65-8051-c1423b6ccc11@kernel.org>
-Date: Wed, 20 Nov 2024 14:29:54 +0100
+	s=arc-20240116; t=1732109489; c=relaxed/simple;
+	bh=MU57nMisx/6DEWDRufdi0/bsONzbPtV2fDCpEnmn7FU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KI2d9IG0WCoP31ghuS+IfIeh/PHJrOHex4kUeAkLKWbgnyIq31enb6H8Oqcq4wWl6f4oA0i2KR7oBYZJJw3Oriiwt5CmUjHrNCDAfeYO2nYbSH7kTTkp2z+8o0h5WXsj4f1qLpUSFqSi9mE4MhjgK66t8qlyF8kbHbsYVyeRcd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a78b04470cso4884345ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:31:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732109486; x=1732714286;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d/BK3spmsTuxEzWm9e/Iu6YJGilsWDZvSEFFz5TUplE=;
+        b=p9DPrapZoDKhHVSgcRLi9w5C2yyV9Mk9Xj+LPdelNf1w1aUJYW7useAerasu2rwFEw
+         iVZTS9EiX0q9R7tH+s4ySEWnJDWP1N2sktG6/cSGYDfbuZ/a2OPMZyL2WQYi9LDFjcnz
+         nzmCC8jv5FopSjN9wWb996FkrvSjxnV3Qo/2pvECP5bOiNBX2x68+dIt7XYGWoRMjrX7
+         KQxjIM8ioT0yFueMwhm9e53idQ02szy/RFfUh2tieVjdxKTE6OgiCJ4JPAIndJndvuEE
+         MTcxGhvp8edt3uaVkTE1ELXZMJ/puMbKbt2fPhAyIEoywOVwbmWnnsTi5eHtpOSxtVpN
+         x98w==
+X-Forwarded-Encrypted: i=1; AJvYcCXD/t0atMt12XK+oD6WYaG0bTuR0eodcxGFz045ade1o5D6A2jamahhM0dObyBmjG9w5VqYt7BCAnNSdb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc0I5V+x8TXi7zmw7VPyWYgg7fDY0mBq7vo3iKJWc7JKPTnXWA
+	v2ctx++JvcrgW4TjG2eD7nj54EQfktp/9eOeSNtOJcV5KLrdt6r/vgaET03OQYs1ZjGOfj4Slzy
+	FaehqlPmNXodRgUMCv/hYzybywxAzwEGXNKSLOHn3XGRij4v7fFr7018=
+X-Google-Smtp-Source: AGHT+IGNkM4FXQLC52rJnBBrgYZ9hMSrVqlzi9r0gSGenJtqsEGtG1gV/hn0Rixsya44TSqnTcavRAE0WGshWuFspPKsCC6vq7Of
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3 SoC
- support
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- NXP Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>,
- Alberto Ruiz <aruizrui@redhat.com>, Enric Balletbo <eballetb@redhat.com>
-References: <20241119081053.4175940-1-ciprianmarian.costea@oss.nxp.com>
- <20241119081053.4175940-2-ciprianmarian.costea@oss.nxp.com>
- <o4uiphg4lcmdmvibiheyvqa4zmp3kijn7u3qo5c5mofemqaii7@fdn3h2hspks7>
- <5527f0e2-1986-4eb5-b16a-86276db0cbb5@kernel.org>
- <cc38915f-bd91-413c-93fc-4f1a5f3b1541@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <cc38915f-bd91-413c-93fc-4f1a5f3b1541@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3104:b0:3a7:8cdd:c08d with SMTP id
+ e9e14a558f8ab-3a78cddc108mr12190545ab.4.1732109486630; Wed, 20 Nov 2024
+ 05:31:26 -0800 (PST)
+Date: Wed, 20 Nov 2024 05:31:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673de4ae.050a0220.3c9d61.0162.GAE@google.com>
+Subject: [syzbot] Monthly overlayfs report (Nov 2024)
+From: syzbot <syzbot+list777de70fa5f0bf9080a5@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 20/11/2024 11:33, Ciprian Marian Costea wrote:
-> On 11/20/2024 11:12 AM, Krzysztof Kozlowski wrote:
->> On 20/11/2024 09:45, Krzysztof Kozlowski wrote:
->>> On Tue, Nov 19, 2024 at 10:10:51AM +0200, Ciprian Costea wrote:
->>>>     reg:
->>>>       maxItems: 1
->>>> @@ -136,6 +138,23 @@ required:
->>>>     - reg
->>>>     - interrupts
->>>>   
->>>> +allOf:
->>>> +  - $ref: can-controller.yaml#
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            const: nxp,s32g2-flexcan
->>>> +    then:
->>>> +      properties:
->>>> +        interrupts:
->>>> +          minItems: 4
->>>> +          maxItems: 4
->>>
->>> Top level says max is 1. You need to keep there widest constraints.
->> And list items here instead...
->>
->> Best regards,
->> Krzysztof
-> 
-> Hello Krzysztof,
-> 
-> Just to confirm before making any changes:
-> Are you referring to directly change 'maxItems' to value 4 ? Instead of 
+Hello overlayfs maintainers/developers,
 
-No, I want you to create a list here. List the items. Nothing about
-"maxItems" in my message above (unless you quote earlier but then
-respond under proper quote). Just like other bindings are doing.
+This is a 31-day syzbot report for the overlayfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/overlayfs
 
-https://elixir.bootlin.com/linux/v6.11-rc6/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L127
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 28 have already been fixed.
 
-> using this 'if' condition under 'allOf' ?
+Some of the still happening issues:
 
-Best regards,
-Krzysztof
+Ref Crashes Repro Title
+<1> 130     Yes   BUG: unable to handle kernel NULL pointer dereference in __lookup_slow (3)
+                  https://syzkaller.appspot.com/bug?extid=94891a5155abdf6821b7
+<2> 4       Yes   WARNING in ovl_encode_real_fh
+                  https://syzkaller.appspot.com/bug?extid=ec07f6f5ce62b858579f
+<3> 2       No    possible deadlock in pipe_lock (6)
+                  https://syzkaller.appspot.com/bug?extid=603e6f91a1f6c5af8c02
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
