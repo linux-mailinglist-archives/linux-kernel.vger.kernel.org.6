@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-415083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7609D315A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:09:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BBC9D315B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 449B9283DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:09:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612BFB21A66
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFF92BD11;
-	Wed, 20 Nov 2024 00:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B24E136A;
+	Wed, 20 Nov 2024 00:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gJD3VnaY"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UowlDWHd"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052DB1C01
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535DC193
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732061325; cv=none; b=rk1HEQRA3rtw03tUZHw04uGvGqKpuWTRa3BZKJgpIUys+SSC8fFT29SGs/2zOOjv8vJ0WPUXGLaAYQ0iuohgaOgl0ZzlRLCJ+ZXql0ZoB6BFDQmwGTFBwq4UK9Pza8OTf6uHGy6cSRljDeovyf+dvtj1n3cazT0vlFxFk3s7iN8=
+	t=1732061666; cv=none; b=hBx4el0ff0zwggXyvIUjAnnvdHzreiR3uapjlEcKD7mioglUYbo1A9iNrZtWfz2lTsZdmFSSYr5wTn9Jzkw4duKe3pnocguDcVNxi51/vq/3ajy4vGBHYQS+FyLxB8MMoAdKBvGUl2djZv0Rfpm1rKyzkTjsN31eZG738Kw8vmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732061325; c=relaxed/simple;
-	bh=vW4Z0ZGOmtEV/XeePxhUsVUAClcMrrgx+7r+mI7C7D0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=okVpZ+RyOA2o5AGB1XH2BOKofuOJUPrfhciLf1zZRq5eM6CFNBIIqADHMyVJSKfZIB1ZL/pboWteVtHCZlwYPqc5GxaaUP2/v9ngv1VbBLH4UutvyGczOi3DRIdMNTXBCerblYvpCA3Pb+Ynd+cYglSPPxLx+no4dol7Ifz4ht0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gJD3VnaY; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3891b4a68bso4049102276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:08:42 -0800 (PST)
+	s=arc-20240116; t=1732061666; c=relaxed/simple;
+	bh=Gd/0Xv+NEIlB+gytnCJAHTqTsoWhAKBgTUwAXk+5u6k=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=mJbfxhm3sdzAPPjtGHnMXMZAOqiRh+TCkFCUQBxGmoOXyuIo5ToYNLtniUF3bwElr5C2I2dTH3Zg4RpGJS/HB/V6RO9Yq69QBjfP+AtFhfu4LYCeyT0eMbJPG1RiHvsrikfG479CUz575YJcUY6zdkVieSneXR8PoG6JH3KZvz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UowlDWHd; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732061322; x=1732666122; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVe9xIxnbmkl7SmN6iZyRrlBkQz17Arq0DLY4ssSJic=;
-        b=gJD3VnaYnVawoNE8Xx9TrM/3Q9d8A2AdSK6iNEbwfzFGu2+aJjUdiJ07oRLqeEmstG
-         wcu0TawGIqXgabGgRtMR6p5Nw6Z9+FOrQ21UbOKF4ZopO87eg/K+7/uZbCK1eHWYdpo4
-         3pBWtj9vvfeYpr6IBQToHs0+Pz77FZF3JzgmhRPSyaCpOoeCP6h080WV10AF054bgzix
-         g44aCtUln3eYVyjELG1KHpc8kNV5ilXqjrS82Uh5Q4KdBIWF3XAda7L8EgVFhcPQhQ3w
-         rfUWzZqGoXtajeQyxiUu9W/5DxkxpRAbNGQGWz9Mgcf0lzmmz5ivvlRNQ7YHggEhaanG
-         jZiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732061322; x=1732666122;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVe9xIxnbmkl7SmN6iZyRrlBkQz17Arq0DLY4ssSJic=;
-        b=iUydvnqP7OKWgHtS7raCPj/lrd9/ptvV8XPgaMYR44+6nuep28lKlJi3CBwKaMuJxw
-         n616Saj4fovKr+RU52CZNb/AsOplIlh6P6BwJgb6ttHgNzkCWrT9JDLqegSHoe/rD4m9
-         ALWJ6X0eZT47zQKutg5w4mb8Rl1pLOeviFRdmlmvLPL/a8T2THhZdkAAc/mjqoTfTJF0
-         xGY3em4GziMbbDlu4XQdyZSadatKNseefPw78nLQLZSg4+yi7FF53vhiNVVrXPZnkNUk
-         Zgp32623TGrFzTxQrxfUqeCi7ftVqC+6faj30rrHd4RePE5a6fG+6J+WNO4aF/gbrbb4
-         VuSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXnwwdWzKsqB4/3bDckJZn6X4wiAm7cq5gOjVKhUd7TSp+oEC/nKFtDjSpZxy2/1N03tOTCiXKWFmFsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCnX6N3YUM4NrWjUv+6aYWjPKdlbW0w0+6ZpqyP8H6p+xqtRZ1
-	C7XXYnY3WKNXBZm0nyP8n90jrV+SZQ7amW01/hrvZfys8A6bVKh9RZcaVD7Isr/qieuEARE+cnw
-	nTg==
-X-Google-Smtp-Source: AGHT+IFNThkOcHUKsCtTkSyc+T5kvPSN7H0YRbmdu7qNTw5Do0Nv7SXuJL8X2fZ3WwFBn19KFwdE3O6n0sE=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:af45:bbc1:fc75:e695])
- (user=surenb job=sendgmr) by 2002:a25:aa50:0:b0:e2b:da82:f695 with SMTP id
- 3f1490d57ef6-e38cb5f8230mr276276.6.1732061321895; Tue, 19 Nov 2024 16:08:41
- -0800 (PST)
-Date: Tue, 19 Nov 2024 16:08:26 -0800
-In-Reply-To: <20241120000826.335387-1-surenb@google.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732061665; x=1763597665;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Gd/0Xv+NEIlB+gytnCJAHTqTsoWhAKBgTUwAXk+5u6k=;
+  b=UowlDWHde4lxLWE+FIxHnTDuZplFZwqSsYNz0qiem1nl8CxFrmnclz+3
+   gw0FNCW22Jt4OeLnAhJ9g2Tyhr+uzenEE0WUbQrgRcugqXfPhNnAV6miV
+   1tD2b0jpGzDk8tcOT4ZoJQ8lm/pchFMM/uBcy9FIo7m5E0uaKmiEeEmSe
+   U=;
+X-IronPort-AV: E=Sophos;i="6.12,168,1728950400"; 
+   d="scan'208";a="450385454"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 00:14:23 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:14748]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.31.190:2525] with esmtp (Farcaster)
+ id 9e273278-530d-449d-9227-8033cb9a5e88; Wed, 20 Nov 2024 00:14:22 +0000 (UTC)
+X-Farcaster-Flow-ID: 9e273278-530d-449d-9227-8033cb9a5e88
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Wed, 20 Nov 2024 00:14:22 +0000
+Received: from [192.168.4.152] (10.187.170.35) by
+ EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Wed, 20 Nov 2024 00:14:21 +0000
+Message-ID: <543c5064-3ad8-4fb1-b05d-0772d7ce1d47@amazon.com>
+Date: Tue, 19 Nov 2024 17:14:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241120000826.335387-1-surenb@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241120000826.335387-6-surenb@google.com>
-Subject: [PATCH v4 5/5] docs/mm: document latest changes to vm_lock
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, surenb@google.com
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: <jackmanb@google.com>
+CC: <bp@alien8.de>, <canellac@amazon.at>, <dave.hansen@linux.intel.com>,
+	<david.kaplan@amd.com>, <derekmn@amazon.com>, <hpa@zytor.com>,
+	<jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<mlipp@amazon.at>, <pawan.kumar.gupta@linux.intel.com>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
+References: <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <CA+i-1C1zN_GcLagTRgfJqT6uFoZaMZj1NUfxkvP7eG=VGQ0GGQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D038UWC002.ant.amazon.com (10.13.139.238) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-Change the documentation to reflect that vm_lock is integrated into vma.
-Document newly introduced vma_start_read_locked{_nested} functions.
+On 2024-11-13 at 14:15+0000, Brendan Jackman wrote:
+> On Wed, 13 Nov 2024 at 04:58, Manwaring, Derek <derekmn@amazon.com> wrote:
+> > Personally I wouldn't put too much weight on the possibility of
+> > disabling kernel mitigations with these future approaches. For what
+> > we're looking at with direct map removal, I would still keep kernel
+> > mitigations on unless we really needed one off. Brendan, I know you were
+> > looking at this differently though for ASI. What are your thoughts?
+>
+> [...]
+>
+> At first I wanted to say the same thing about your work to remove
+> stuff from the direct map. Basically that's about architecting
+> ourselves towards a world where the "guest->kernel" attack vector just
+> isn't meaningful, right?
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- Documentation/mm/process_addrs.rst | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Right, that is definitely the goal. The approach is like Microsoft
+describes in the Secret-Free Hypervisor paper [1].
 
-diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/process_addrs.rst
-index 1bf7ad010fc0..a18450b6496d 100644
---- a/Documentation/mm/process_addrs.rst
-+++ b/Documentation/mm/process_addrs.rst
-@@ -686,7 +686,11 @@ calls :c:func:`!rcu_read_lock` to ensure that the VMA is looked up in an RCU
- critical section, then attempts to VMA lock it via :c:func:`!vma_start_read`,
- before releasing the RCU lock via :c:func:`!rcu_read_unlock`.
- 
--VMA read locks hold the read lock on the :c:member:`!vma->vm_lock` semaphore for
-+In cases when the user already holds mmap read lock, :c:func:`!vma_start_read_locked`
-+and :c:func:`!vma_start_read_locked_nested` can be used. These functions always
-+succeed in acquiring VMA read lock.
-+
-+VMA read locks hold the read lock on the :c:member:`!vma.vm_lock` semaphore for
- their duration and the caller of :c:func:`!lock_vma_under_rcu` must release it
- via :c:func:`!vma_end_read`.
- 
-@@ -750,7 +754,7 @@ keep VMAs locked across entirely separate write operations. It also maintains
- correct lock ordering.
- 
- Each time a VMA read lock is acquired, we acquire a read lock on the
--:c:member:`!vma->vm_lock` read/write semaphore and hold it, while checking that
-+:c:member:`!vma.vm_lock` read/write semaphore and hold it, while checking that
- the sequence count of the VMA does not match that of the mm.
- 
- If it does, the read lock fails. If it does not, we hold the lock, excluding
-@@ -760,7 +764,7 @@ Importantly, maple tree operations performed in :c:func:`!lock_vma_under_rcu`
- are also RCU safe, so the whole read lock operation is guaranteed to function
- correctly.
- 
--On the write side, we acquire a write lock on the :c:member:`!vma->vm_lock`
-+On the write side, we acquire a write lock on the :c:member:`!vma.vm_lock`
- read/write semaphore, before setting the VMA's sequence number under this lock,
- also simultaneously holding the mmap write lock.
- 
--- 
-2.47.0.338.g60cca15819-goog
+Call me belt-and-suspenders, but I prefer to leave mitigations in place
+as well unless the performance is terrible. Like rappelling with a good
+harness but still pad the fall zone.
 
+Derek
+
+
+[1] https://www.microsoft.com/en-us/research/uploads/prod/2022/07/sf-hypervisor.pdf
 
