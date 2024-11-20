@@ -1,345 +1,157 @@
-Return-Path: <linux-kernel+bounces-415142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D12209D31F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:43:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAC19D31F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5315E1F23C0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE2C283F59
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861FE1B95B;
-	Wed, 20 Nov 2024 01:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E507922318;
+	Wed, 20 Nov 2024 01:44:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wCP8IX/p"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b2wZfub/"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31B7848C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3CF848C;
+	Wed, 20 Nov 2024 01:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732067012; cv=none; b=b8kxJoYYi8/4EiCEK8u3NoEZRM8ejzw/BNGsxALBM4yngL9dECULzuTLtynjHMHodr39X5RCOGxJLCQSkW7ZSF2yNdtvTW6PgpoO29cBzqNEtNPQNZHnf1kR6uvZFddWf2mSRUrJXdMKm0MJ1YYTS3DbK7JVtqfnKHF6CNEebNY=
+	t=1732067077; cv=none; b=fHCFFP0ThzYYoSmCoK5vsQyMJ7J3Q9+DcfmadHMnEEaVHwkDZq2BTsIWA30HNgog8s9Y5RsZPXzlNOLkqoQgAakQ9k17nYzJIKLM5HF5vp0KDPZF9F3GfOLh5qm21T9TupYEyF7HOm6krIlz0VMpbOILWWmoJcNfHkJqZYHC3sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732067012; c=relaxed/simple;
-	bh=scpMwPeXZvNWv0ZtoucrzQ/HlbDuMl2+pH3j0Zgsaew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AkTo69LpXgk6RIYkDcjn9EDTg6pnBF355x15x61uRXew/BvAPlbmg17Kqu9gu34ImAKGefCrJ2nbiTSdpiS2nX4kg8UDWaFbg9zWIwWN5H6lXLJGow5crzloFm3fqGRrtsIS66P56wVpUjzBqw+rbgB1O0GsDf0EyoPPoiarIG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wCP8IX/p; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4608dddaa35so576941cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:43:30 -0800 (PST)
+	s=arc-20240116; t=1732067077; c=relaxed/simple;
+	bh=N4HiQB17Z3vYGECwOvk/cqK4Q/N0FyvBVoa3JW3io1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qNlPqKTNHlQ2KIfXrtZzNMbYRegQm+ar7J4AOEMzoKxkmpicBO2GC+6KhGIzAll0YL0KtNUhSf5Dh1Ed4ZUUpLtHFPcBNkZw8tIIcw32+GIKsl6Pdqv491WkURlTNHlyUZ/x6Mf+fV2maZhHXvNaPYoplRJlbxtDt6O1QsmEK5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b2wZfub/; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa4d257eb68so79428766b.0;
+        Tue, 19 Nov 2024 17:44:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732067009; x=1732671809; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zte8Mvos0yCsXWWJxn9c6KpEtSyXLJ8ogL7Yw83+Ao0=;
-        b=wCP8IX/paSITVPNFv24QHryj5dulvAzC73wFchELy7qA2wVI4LlpNLOvKwPp43JkL/
-         +QGh34MnhDkbG+/1PxW6wx5PB/4uRoTSxUI7O9z3Go1s2oOUSvKqMGuIf60mylIj9Zu5
-         m9Hp8q7dVKbIJNRVZmbDIiTCnApI3n5yd1yAbWnodxTU6xjJlz82P0nuPGAwBEWlA/rQ
-         r5pwrSqfna3vl3DoJ4UjYdu+ZW0OohCpbqq7mhlQLqr4EigwyOUqfmVAeuqPQREULscW
-         IWj276YOgisAlKKu6XGHg+vEQBByeQTXKG75vdPF3Z+WUec/KX+RqvcD2A2sgrQD8+5X
-         VzUw==
+        d=gmail.com; s=20230601; t=1732067074; x=1732671874; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qGvpf6g4Dc68ipCf5V61ph+6g7GtAJ4EqxhkjvAMcog=;
+        b=b2wZfub/quuXXiC068O4dgr7Y/T8GLoQZwxhNg3KN3G2Ml0p6mti4TU7hgc0LfJcVG
+         icKfoKnLidhIJ96Zjlij35b/lSrjmjeLx51qF6a51B+uuQmQL1a4FJgMGOYNwiwaYmoe
+         ahbYsg1d7zjgOqTPsSTFYvjpt7Kp1IzZl7wlXfax76BnEkOwe9QqoMi/OQjw9eaj+K4j
+         DBgM7o44BS7CXqMWacK6xtrLUkjIdiksl9Mnqmz8yR4GqTyxCJ0fEsjPZBczbkZVd71U
+         HAXxoCCBqr/tFSlm5LSWc9DEjI2utRV8XAuCTvd+h/XngOpOfvqiRxAL0OOFGhu6pjTb
+         6sTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732067009; x=1732671809;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zte8Mvos0yCsXWWJxn9c6KpEtSyXLJ8ogL7Yw83+Ao0=;
-        b=LBdPAkQ6ToKiIpxRySlhjOcCqjXZ9Ziwia0uC8yPL4le+o4vl33tWBeHEpVkO4HjfP
-         alaAFHKDVJMZ1gB/+NZmssyuzkOnON06Vj8Sfemnn4l15llhGayveKfYA6vRx4/iZuC6
-         fVKaPJQnu8ws4g12v06NzAtY731YcqxGGwoN8IMMhXqvk0Fy1ePI7gWRhC/1aAkeMI+x
-         T1kDrnq6HAMCTFFO1kJM0yj1tF6BDJz6Vt1Yd3yHm3R/8g5MH8bxTF/h7BcVf1/pOOo9
-         1SXcP3SDn91omYeu5FZDsZsljife6tzr0lqM6zGI7Rje9t0RmcYdR++scHtqR5y29h9k
-         PHFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWO9bd8a+TOcOv4/OAKXur5tJdNaObGVlYHo1ZvqnRQWxyBTFumPbHsnwHlf+DedZUbBmHlI3F7Ylo6ABc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhh9MGLDMjLWWl74EeAsQHPVZ6pPHsbUsj3fQExOf1ZOgcuItV
-	kkLU2wNYw2C/hA5gn9XH2zmJaGssieS37ISzI6oSykT90rC2rmnEPfLvYOs3vvWzD7c1lG4EJXC
-	nNYxVMzXw+BDI0nOy5zSmGy3F1UYtuULimg3E9pwItlfqVb/5GeGZLV8=
-X-Gm-Gg: ASbGnctA+llHaXkBEHaR2lDvmbSQtCEM5phBkPgfelJLMhc49Xujcxx+slg0GB/fR1J
-	elEPpkcYM5ziVUyHsMbeQFoOa34Fb/5c=
-X-Google-Smtp-Source: AGHT+IHaIBEjaoMEz70ediY09Oj1sMDoNhOA54MdFBy0m3ujuy9C+69jIBC4diDoGidztVmajbpCL9czZdG7AEW8q5w=
-X-Received: by 2002:a05:622a:428e:b0:463:95bc:54cc with SMTP id
- d75a77b69052e-464d1c9f726mr615141cf.3.1732067009194; Tue, 19 Nov 2024
- 17:43:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732067074; x=1732671874;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qGvpf6g4Dc68ipCf5V61ph+6g7GtAJ4EqxhkjvAMcog=;
+        b=gKGemiCEiJHsodWoRvFvuOisP8w55SE5l/RxWpyaSHJad5g+R8spH9KDEK4JoA46z1
+         dq/sU0xd5E02PbvpZBLcK5J2TS1GUG6X0yARcJye+JYGgUXOH4SCoTnhPCd/V/sQLKLX
+         745EERKYidF74Tdo8v/r5V/ikU/9AIm5SdEF+gOkVl+VVWvxVZomW4Bv5nx51J1B3EFw
+         AdeHvr6SaAa8PPdOWA8NtXdWx014QtFTynVeNFKMt/1DEKRmeQI6o6eRJIm7/Smc1+0Y
+         PUtz2e0DGOQlCV6x6beoq2aKQal5TcbB8ec/b2yRGYuviHG4Rm55SuyJ4DIoluYCDfw3
+         Kpug==
+X-Forwarded-Encrypted: i=1; AJvYcCVzBtbdz+gND/UwUxBCWzznm7x7so36rifw2yqnbmBzdaa0YgDVUpaEOppfymoUFPFyQN5U7q+Ie328gDEd@vger.kernel.org, AJvYcCW06D1mv1oQB9XC6BpZa0+0/s2DSYqAItY2fX9nu46jo7WP6yxSqcVEl3qs6ciRz18wqF4zUB3m@vger.kernel.org, AJvYcCWvgvIKb6ChRpIpPMr+aCs6SN2woROCChgRGea97zOxmn9ylUXqIsd1Dttdr9KjL44jmxVD7+FvSvmXFnN5@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXxs7VeBnurMt+3L190gyzvahERk3Y43BWV8ig0yYcp21BPnLn
+	UMUNBPKYin1Pemni7FrlQ4UMcfs/O6dMx0u/FBD45s7R0c6xs4GW
+X-Google-Smtp-Source: AGHT+IGBoA7jGj3ZbQLqM0Ioy2emYkiKyqr2G846rWjX+8AEUzPNGDRyNrQmgCtT+t93Skm6njTP0A==
+X-Received: by 2002:a17:907:36ca:b0:a9e:d532:4cc7 with SMTP id a640c23a62f3a-aa4dca6e161mr97907466b.8.1732067073646;
+        Tue, 19 Nov 2024 17:44:33 -0800 (PST)
+Received: from f (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e043552sm708261766b.149.2024.11.19.17.44.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 17:44:32 -0800 (PST)
+Date: Wed, 20 Nov 2024 02:44:17 +0100
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jeongjun Park <aha310510@gmail.com>, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
+ calling vfs_getattr
+Message-ID: <3pgol63eo77aourqigop3wrub7i3m5rvubusbwb4iy5twldfww@4lhilngahtxg>
+References: <20241117165540.GF3387508@ZenIV>
+ <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
+ <20241118070330.GG3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028111058.4419a9ed@canb.auug.org.au> <20241120120124.03f09ac5@canb.auug.org.au>
- <CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com>
-In-Reply-To: <CAJuCfpGNKzBadFix9WpN-PQMr2Mwj1NjawzSk8ycBST9USKpcA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 19 Nov 2024 17:43:18 -0800
-Message-ID: <CAJuCfpGgqmdM27KUkH2Yf3pPkwxgktDpzYkOMrW=Xc96cxPfXA@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with the mm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
-Content-Type: multipart/mixed; boundary="000000000000d06ef106274e4684"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241118070330.GG3387508@ZenIV>
 
---000000000000d06ef106274e4684
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 18, 2024 at 07:03:30AM +0000, Al Viro wrote:
+> On Mon, Nov 18, 2024 at 03:00:39PM +0900, Jeongjun Park wrote:
+> > All the functions that added lock in this patch are called only via syscall,
+> > so in most cases there will be no noticeable performance issue.
+> 
+> Pardon me, but I am unable to follow your reasoning.
+> 
 
-On Tue, Nov 19, 2024 at 5:09=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Tue, Nov 19, 2024 at 5:01=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.o=
-rg.au> wrote:
-> >
-> > Hi all,
-> >
-> > On Mon, 28 Oct 2024 11:10:58 +1100 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> > >
-> > > Today's linux-next merge of the arm64 tree got a conflict in:
-> > >
-> > >   include/linux/mm.h
-> > >
-> > > between commit:
-> > >
-> > >   e87ec503cf2e ("mm/codetag: uninline and move pgalloc_tag_copy and p=
-galloc_tag_split")
-> > >
-> > > from the mm-unstable branch of the mm tree and commit:
-> > >
-> > >   91e102e79740 ("prctl: arch-agnostic prctl for shadow stack")
-> > >
-> > > from the arm64 tree.
-> > >
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your t=
-ree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particula=
-rly
-> > > complex conflicts.
-> > >
-> > > --
-> > > Cheers,
-> > > Stephen Rothwell
-> > >
-> > > diff --cc include/linux/mm.h
-> > > index 086ba524d3ba,8852c39c7695..000000000000
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@@ -4166,4 -4174,65 +4178,8 @@@ static inline int do_mseal(unsigned =
-lon
-> > >   }
-> > >   #endif
-> > >
-> > >  -#ifdef CONFIG_MEM_ALLOC_PROFILING
-> > >  -static inline void pgalloc_tag_split(struct folio *folio, int old_o=
-rder, int new_order)
-> > >  -{
-> > >  -    int i;
-> > >  -    struct alloc_tag *tag;
-> > >  -    unsigned int nr_pages =3D 1 << new_order;
-> > >  -
-> > >  -    if (!mem_alloc_profiling_enabled())
-> > >  -            return;
-> > >  -
-> > >  -    tag =3D pgalloc_tag_get(&folio->page);
-> > >  -    if (!tag)
-> > >  -            return;
-> > >  -
-> > >  -    for (i =3D nr_pages; i < (1 << old_order); i +=3D nr_pages) {
-> > >  -            union codetag_ref *ref =3D get_page_tag_ref(folio_page(=
-folio, i));
-> > >  -
-> > >  -            if (ref) {
-> > >  -                    /* Set new reference to point to the original t=
-ag */
-> > >  -                    alloc_tag_ref_set(ref, tag);
-> > >  -                    put_page_tag_ref(ref);
-> > >  -            }
-> > >  -    }
-> > >  -}
-> > >  -
-> > >  -static inline void pgalloc_tag_copy(struct folio *new, struct folio=
- *old)
-> > >  -{
-> > >  -    struct alloc_tag *tag;
-> > >  -    union codetag_ref *ref;
-> > >  -
-> > >  -    tag =3D pgalloc_tag_get(&old->page);
-> > >  -    if (!tag)
-> > >  -            return;
-> > >  -
-> > >  -    ref =3D get_page_tag_ref(&new->page);
-> > >  -    if (!ref)
-> > >  -            return;
-> > >  -
-> > >  -    /* Clear the old ref to the original allocation tag. */
-> > >  -    clear_page_tag_ref(&old->page);
-> > >  -    /* Decrement the counters of the tag on get_new_folio. */
-> > >  -    alloc_tag_sub(ref, folio_nr_pages(new));
-> > >  -
-> > >  -    __alloc_tag_ref_set(ref, tag);
-> > >  -
-> > >  -    put_page_tag_ref(ref);
-> > >  -}
-> > >  -#else /* !CONFIG_MEM_ALLOC_PROFILING */
-> > >  -static inline void pgalloc_tag_split(struct folio *folio, int old_o=
-rder, int new_order)
-> > >  -{
-> > >  -}
-> > >  -
-> > >  -static inline void pgalloc_tag_copy(struct folio *new, struct folio=
- *old)
-> > >  -{
-> > >  -}
-> > >  -#endif /* CONFIG_MEM_ALLOC_PROFILING */
-> > >  -
-> > > + int arch_get_shadow_stack_status(struct task_struct *t, unsigned lo=
-ng __user *status);
-> > > + int arch_set_shadow_stack_status(struct task_struct *t, unsigned lo=
-ng status);
-> > > + int arch_lock_shadow_stack_status(struct task_struct *t, unsigned l=
-ong status);
-> > > +
-> > >   #endif /* _LINUX_MM_H */
-> >
-> > This is now a conflict between the mm-stable tree and Linus' tree.
->
-> Let me try to manually apply it to Linus' ToT and will send a replacement=
- patch.
+I suspect the argument is that the overhead of issuing a syscall is big
+enough that the extra cost of taking the lock trip wont be visible, but
+that's not accurate -- atomics are measurable when added to syscalls,
+even on modern CPUs.
 
-Attached patch should apply to Linus' tree but please make sure the
-following two patches from mm-stable are merged before this one
-because there are dependencies between them:
+> > And
+> > this data-race is not a problem that only occurs in theory. It is
+> > a bug that syzbot has been reporting for years. Many file systems that
+> > exist in the kernel lock inode_lock before calling vfs_getattr, so
+> > data-race does not occur, but only fs/stat.c has had a data-race
+> > for years. This alone shows that adding inode_lock to some
+> > functions is a good way to solve the problem without much 
+> > performance degradation.
+> 
+> Explain.  First of all, these are, by far, the most frequent callers
+> of vfs_getattr(); what "many filesystems" are doing around their calls
+> of the same is irrelevant.  Which filesystems, BTW?  And which call
+> chains are you talking about?  Most of the filesystems never call it
+> at all.
+> 
+> Furthermore, on a lot of userland loads stat(2) is a very hot path -
+> it is called a lot.  And the rwsem in question has a plenty of takers -
+> both shared and exclusive.  The effect of piling a lot of threads
+> that grab it shared on top of the existing mix is not something
+> I am ready to predict without experiments - not beyond "likely to be
+> unpleasant, possibly very much so".
+> 
+> Finally, you have not offered any explanations of the reasons why
+> that data race matters - and "syzbot reporting" is not one.  It is
+> possible that actual observable bugs exist, but it would be useful
+> to have at least one of those described in details.
+> 
+[snip]
 
-ed265529d39a mm/codetag: fix arg in pgalloc_tag_copy alloc_tag_sub
-42895a861244 alloc_tag: introduce pgtag_ref_handle to abstract page
-tag references
+On the stock kernel it is at least theoretically possible to transiently
+observe a state which is mid-update (as in not valid), but I was under
+the impression this was known and considered not a problem.
 
->
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
+Nonetheless, as an example say an inode is owned by 0:0 and is being
+chowned to 1:1 and this is handled by setattr_copy.
 
---000000000000d06ef106274e4684
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-mm-codetag-uninline-and-move-pgalloc_tag_copy-and-pg.patch"
-Content-Disposition: attachment; 
-	filename="0001-mm-codetag-uninline-and-move-pgalloc_tag_copy-and-pg.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3p7ykhl0>
-X-Attachment-Id: f_m3p7ykhl0
+The ids are updated one after another:
+[snip]
+        i_uid_update(idmap, attr, inode);
+        i_gid_update(idmap, attr, inode);
+[/snip]
 
-RnJvbSBhOWRmNzdjZGM0MmMwNmIwNjhmNzgyYjQ3MzM4NTU0MTNkMmZmOTI2IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJlbiBCYWdoZGFzYXJ5YW4gPHN1cmVuYkBnb29nbGUuY29t
-PgpEYXRlOiBUaHUsIDI0IE9jdCAyMDI0IDA5OjIzOjE4IC0wNzAwClN1YmplY3Q6IFtQQVRDSCAx
-LzFdIG1tL2NvZGV0YWc6IHVuaW5saW5lIGFuZCBtb3ZlIHBnYWxsb2NfdGFnX2NvcHkgYW5kCiBw
-Z2FsbG9jX3RhZ19zcGxpdAoKcGdhbGxvY190YWdfY29weSgpIGFuZCBwZ2FsbG9jX3RhZ19zcGxp
-dCgpIGFyZSBzaXphYmxlIGFuZCBvdXRzaWRlIG9mIGFueQpwZXJmb3JtYW5jZS1jcml0aWNhbCBw
-YXRocywgc28gaXQgc2hvdWxkIGJlIGZpbmUgdG8gdW5pbmxpbmUgdGhlbS4gIEFsc28KbW92ZSB0
-aGVpciBkZWNsYXJhdGlvbnMgaW50byBwZ2FsbG9jX3RhZy5oIHdoaWNoIHNlZW1zIGxpa2UgYSBt
-b3JlCmFwcHJvcHJpYXRlIHBsYWNlIGZvciB0aGVtLiAgTm8gZnVuY3Rpb25hbCBjaGFuZ2VzIG90
-aGVyIHRoYW4gdW5pbmxpbmluZy4KCkxpbms6IGh0dHBzOi8vbGttbC5rZXJuZWwub3JnL3IvMjAy
-NDEwMjQxNjIzMTguMTY0MDc4MS0xLXN1cmVuYkBnb29nbGUuY29tClNpZ25lZC1vZmYtYnk6IFN1
-cmVuIEJhZ2hkYXNhcnlhbiA8c3VyZW5iQGdvb2dsZS5jb20+ClN1Z2dlc3RlZC1ieTogQW5kcmV3
-IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4KQWNrZWQtYnk6IFl1IFpoYW8gPHl1
-emhhb0Bnb29nbGUuY29tPgpDYzogS2VudCBPdmVyc3RyZWV0IDxrZW50Lm92ZXJzdHJlZXRAbGlu
-dXguZGV2PgpDYzogUGFzaGEgVGF0YXNoaW4gPHBhc2hhLnRhdGFzaGluQHNvbGVlbi5jb20+CkNj
-OiBTb3VyYXYgUGFuZGEgPHNvdXJhdnBhbmRhQGdvb2dsZS5jb20+ClNpZ25lZC1vZmYtYnk6IEFu
-ZHJldyBNb3J0b24gPGFrcG1AbGludXgtZm91bmRhdGlvbi5vcmc+Ci0tLQogaW5jbHVkZS9saW51
-eC9tbS5oICAgICAgICAgIHwgNTggLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQogaW5jbHVkZS9saW51eC9wZ2FsbG9jX3RhZy5oIHwgIDUgKysrKwogbGliL2FsbG9jX3RhZy5j
-ICAgICAgICAgICAgIHwgNDggKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAzIGZpbGVz
-IGNoYW5nZWQsIDUzIGluc2VydGlvbnMoKyksIDU4IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvbGludXgvbW0uaCBiL2luY2x1ZGUvbGludXgvbW0uaAppbmRleCBjMzZkYzQ0YWI5
-MWYuLjhiYWQ3OTE4ZjVkOSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9tbS5oCisrKyBiL2lu
-Y2x1ZGUvbGludXgvbW0uaApAQCAtNDE3NSw2NCArNDE3NSw2IEBAIHN0YXRpYyBpbmxpbmUgaW50
-IGRvX21zZWFsKHVuc2lnbmVkIGxvbmcgc3RhcnQsIHNpemVfdCBsZW5faW4sIHVuc2lnbmVkIGxv
-bmcgZmxhCiB9CiAjZW5kaWYKIAotI2lmZGVmIENPTkZJR19NRU1fQUxMT0NfUFJPRklMSU5HCi1z
-dGF0aWMgaW5saW5lIHZvaWQgcGdhbGxvY190YWdfc3BsaXQoc3RydWN0IGZvbGlvICpmb2xpbywg
-aW50IG9sZF9vcmRlciwgaW50IG5ld19vcmRlcikKLXsKLQlpbnQgaTsKLQlzdHJ1Y3QgYWxsb2Nf
-dGFnICp0YWc7Ci0JdW5zaWduZWQgaW50IG5yX3BhZ2VzID0gMSA8PCBuZXdfb3JkZXI7Ci0KLQlp
-ZiAoIW1lbV9hbGxvY19wcm9maWxpbmdfZW5hYmxlZCgpKQotCQlyZXR1cm47Ci0KLQl0YWcgPSBw
-Z2FsbG9jX3RhZ19nZXQoJmZvbGlvLT5wYWdlKTsKLQlpZiAoIXRhZykKLQkJcmV0dXJuOwotCi0J
-Zm9yIChpID0gbnJfcGFnZXM7IGkgPCAoMSA8PCBvbGRfb3JkZXIpOyBpICs9IG5yX3BhZ2VzKSB7
-Ci0JCXVuaW9uIHBndGFnX3JlZl9oYW5kbGUgaGFuZGxlOwotCQl1bmlvbiBjb2RldGFnX3JlZiBy
-ZWY7Ci0KLQkJaWYgKGdldF9wYWdlX3RhZ19yZWYoZm9saW9fcGFnZShmb2xpbywgaSksICZyZWYs
-ICZoYW5kbGUpKSB7Ci0JCQkvKiBTZXQgbmV3IHJlZmVyZW5jZSB0byBwb2ludCB0byB0aGUgb3Jp
-Z2luYWwgdGFnICovCi0JCQlhbGxvY190YWdfcmVmX3NldCgmcmVmLCB0YWcpOwotCQkJdXBkYXRl
-X3BhZ2VfdGFnX3JlZihoYW5kbGUsICZyZWYpOwotCQkJcHV0X3BhZ2VfdGFnX3JlZihoYW5kbGUp
-OwotCQl9Ci0JfQotfQotCi1zdGF0aWMgaW5saW5lIHZvaWQgcGdhbGxvY190YWdfY29weShzdHJ1
-Y3QgZm9saW8gKm5ldywgc3RydWN0IGZvbGlvICpvbGQpCi17Ci0JdW5pb24gcGd0YWdfcmVmX2hh
-bmRsZSBoYW5kbGU7Ci0JdW5pb24gY29kZXRhZ19yZWYgcmVmOwotCXN0cnVjdCBhbGxvY190YWcg
-KnRhZzsKLQotCXRhZyA9IHBnYWxsb2NfdGFnX2dldCgmb2xkLT5wYWdlKTsKLQlpZiAoIXRhZykK
-LQkJcmV0dXJuOwotCi0JaWYgKCFnZXRfcGFnZV90YWdfcmVmKCZuZXctPnBhZ2UsICZyZWYsICZo
-YW5kbGUpKQotCQlyZXR1cm47Ci0KLQkvKiBDbGVhciB0aGUgb2xkIHJlZiB0byB0aGUgb3JpZ2lu
-YWwgYWxsb2NhdGlvbiB0YWcuICovCi0JY2xlYXJfcGFnZV90YWdfcmVmKCZvbGQtPnBhZ2UpOwot
-CS8qIERlY3JlbWVudCB0aGUgY291bnRlcnMgb2YgdGhlIHRhZyBvbiBnZXRfbmV3X2ZvbGlvLiAq
-LwotCWFsbG9jX3RhZ19zdWIoJnJlZiwgZm9saW9fc2l6ZShuZXcpKTsKLQlfX2FsbG9jX3RhZ19y
-ZWZfc2V0KCZyZWYsIHRhZyk7Ci0JdXBkYXRlX3BhZ2VfdGFnX3JlZihoYW5kbGUsICZyZWYpOwot
-CXB1dF9wYWdlX3RhZ19yZWYoaGFuZGxlKTsKLX0KLSNlbHNlIC8qICFDT05GSUdfTUVNX0FMTE9D
-X1BST0ZJTElORyAqLwotc3RhdGljIGlubGluZSB2b2lkIHBnYWxsb2NfdGFnX3NwbGl0KHN0cnVj
-dCBmb2xpbyAqZm9saW8sIGludCBvbGRfb3JkZXIsIGludCBuZXdfb3JkZXIpCi17Ci19Ci0KLXN0
-YXRpYyBpbmxpbmUgdm9pZCBwZ2FsbG9jX3RhZ19jb3B5KHN0cnVjdCBmb2xpbyAqbmV3LCBzdHJ1
-Y3QgZm9saW8gKm9sZCkKLXsKLX0KLSNlbmRpZiAvKiBDT05GSUdfTUVNX0FMTE9DX1BST0ZJTElO
-RyAqLwotCiBpbnQgYXJjaF9nZXRfc2hhZG93X3N0YWNrX3N0YXR1cyhzdHJ1Y3QgdGFza19zdHJ1
-Y3QgKnQsIHVuc2lnbmVkIGxvbmcgX191c2VyICpzdGF0dXMpOwogaW50IGFyY2hfc2V0X3NoYWRv
-d19zdGFja19zdGF0dXMoc3RydWN0IHRhc2tfc3RydWN0ICp0LCB1bnNpZ25lZCBsb25nIHN0YXR1
-cyk7CiBpbnQgYXJjaF9sb2NrX3NoYWRvd19zdGFja19zdGF0dXMoc3RydWN0IHRhc2tfc3RydWN0
-ICp0LCB1bnNpZ25lZCBsb25nIHN0YXR1cyk7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3Bn
-YWxsb2NfdGFnLmggYi9pbmNsdWRlL2xpbnV4L3BnYWxsb2NfdGFnLmgKaW5kZXggYjEzY2QzMzEz
-YTg4Li5hOTQyYjVhMDNlYmYgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvcGdhbGxvY190YWcu
-aAorKysgYi9pbmNsdWRlL2xpbnV4L3BnYWxsb2NfdGFnLmgKQEAgLTEyMiw2ICsxMjIsOSBAQCBz
-dGF0aWMgaW5saW5lIHZvaWQgcGdhbGxvY190YWdfc3ViX3BhZ2VzKHN0cnVjdCBhbGxvY190YWcg
-KnRhZywgdW5zaWduZWQgaW50IG5yKQogCQl0aGlzX2NwdV9zdWIodGFnLT5jb3VudGVycy0+Ynl0
-ZXMsIFBBR0VfU0laRSAqIG5yKTsKIH0KIAordm9pZCBwZ2FsbG9jX3RhZ19zcGxpdChzdHJ1Y3Qg
-Zm9saW8gKmZvbGlvLCBpbnQgb2xkX29yZGVyLCBpbnQgbmV3X29yZGVyKTsKK3ZvaWQgcGdhbGxv
-Y190YWdfY29weShzdHJ1Y3QgZm9saW8gKm5ldywgc3RydWN0IGZvbGlvICpvbGQpOworCiAjZWxz
-ZSAvKiBDT05GSUdfTUVNX0FMTE9DX1BST0ZJTElORyAqLwogCiBzdGF0aWMgaW5saW5lIHZvaWQg
-Y2xlYXJfcGFnZV90YWdfcmVmKHN0cnVjdCBwYWdlICpwYWdlKSB7fQpAQCAtMTMwLDYgKzEzMyw4
-IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBwZ2FsbG9jX3RhZ19hZGQoc3RydWN0IHBhZ2UgKnBhZ2Us
-IHN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzaywKIHN0YXRpYyBpbmxpbmUgdm9pZCBwZ2FsbG9jX3Rh
-Z19zdWIoc3RydWN0IHBhZ2UgKnBhZ2UsIHVuc2lnbmVkIGludCBucikge30KIHN0YXRpYyBpbmxp
-bmUgc3RydWN0IGFsbG9jX3RhZyAqcGdhbGxvY190YWdfZ2V0KHN0cnVjdCBwYWdlICpwYWdlKSB7
-IHJldHVybiBOVUxMOyB9CiBzdGF0aWMgaW5saW5lIHZvaWQgcGdhbGxvY190YWdfc3ViX3BhZ2Vz
-KHN0cnVjdCBhbGxvY190YWcgKnRhZywgdW5zaWduZWQgaW50IG5yKSB7fQorc3RhdGljIGlubGlu
-ZSB2b2lkIHBnYWxsb2NfdGFnX3NwbGl0KHN0cnVjdCBmb2xpbyAqZm9saW8sIGludCBvbGRfb3Jk
-ZXIsIGludCBuZXdfb3JkZXIpIHt9CitzdGF0aWMgaW5saW5lIHZvaWQgcGdhbGxvY190YWdfY29w
-eShzdHJ1Y3QgZm9saW8gKm5ldywgc3RydWN0IGZvbGlvICpvbGQpIHt9CiAKICNlbmRpZiAvKiBD
-T05GSUdfTUVNX0FMTE9DX1BST0ZJTElORyAqLwogCmRpZmYgLS1naXQgYS9saWIvYWxsb2NfdGFn
-LmMgYi9saWIvYWxsb2NfdGFnLmMKaW5kZXggODFlNWY5YTcwZjIyLi5mMjc5MDI3MmE2MDMgMTAw
-NjQ0Ci0tLSBhL2xpYi9hbGxvY190YWcuYworKysgYi9saWIvYWxsb2NfdGFnLmMKQEAgLTE0NCw2
-ICsxNDQsNTQgQEAgc2l6ZV90IGFsbG9jX3RhZ190b3BfdXNlcnMoc3RydWN0IGNvZGV0YWdfYnl0
-ZXMgKnRhZ3MsIHNpemVfdCBjb3VudCwgYm9vbCBjYW5fc2wKIAlyZXR1cm4gbnI7CiB9CiAKK3Zv
-aWQgcGdhbGxvY190YWdfc3BsaXQoc3RydWN0IGZvbGlvICpmb2xpbywgaW50IG9sZF9vcmRlciwg
-aW50IG5ld19vcmRlcikKK3sKKwlpbnQgaTsKKwlzdHJ1Y3QgYWxsb2NfdGFnICp0YWc7CisJdW5z
-aWduZWQgaW50IG5yX3BhZ2VzID0gMSA8PCBuZXdfb3JkZXI7CisKKwlpZiAoIW1lbV9hbGxvY19w
-cm9maWxpbmdfZW5hYmxlZCgpKQorCQlyZXR1cm47CisKKwl0YWcgPSBwZ2FsbG9jX3RhZ19nZXQo
-JmZvbGlvLT5wYWdlKTsKKwlpZiAoIXRhZykKKwkJcmV0dXJuOworCisJZm9yIChpID0gbnJfcGFn
-ZXM7IGkgPCAoMSA8PCBvbGRfb3JkZXIpOyBpICs9IG5yX3BhZ2VzKSB7CisJCXVuaW9uIHBndGFn
-X3JlZl9oYW5kbGUgaGFuZGxlOworCQl1bmlvbiBjb2RldGFnX3JlZiByZWY7CisKKwkJaWYgKGdl
-dF9wYWdlX3RhZ19yZWYoZm9saW9fcGFnZShmb2xpbywgaSksICZyZWYsICZoYW5kbGUpKSB7CisJ
-CQkvKiBTZXQgbmV3IHJlZmVyZW5jZSB0byBwb2ludCB0byB0aGUgb3JpZ2luYWwgdGFnICovCisJ
-CQlhbGxvY190YWdfcmVmX3NldCgmcmVmLCB0YWcpOworCQkJdXBkYXRlX3BhZ2VfdGFnX3JlZiho
-YW5kbGUsICZyZWYpOworCQkJcHV0X3BhZ2VfdGFnX3JlZihoYW5kbGUpOworCQl9CisJfQorfQor
-Cit2b2lkIHBnYWxsb2NfdGFnX2NvcHkoc3RydWN0IGZvbGlvICpuZXcsIHN0cnVjdCBmb2xpbyAq
-b2xkKQoreworCXVuaW9uIHBndGFnX3JlZl9oYW5kbGUgaGFuZGxlOworCXVuaW9uIGNvZGV0YWdf
-cmVmIHJlZjsKKwlzdHJ1Y3QgYWxsb2NfdGFnICp0YWc7CisKKwl0YWcgPSBwZ2FsbG9jX3RhZ19n
-ZXQoJm9sZC0+cGFnZSk7CisJaWYgKCF0YWcpCisJCXJldHVybjsKKworCWlmICghZ2V0X3BhZ2Vf
-dGFnX3JlZigmbmV3LT5wYWdlLCAmcmVmLCAmaGFuZGxlKSkKKwkJcmV0dXJuOworCisJLyogQ2xl
-YXIgdGhlIG9sZCByZWYgdG8gdGhlIG9yaWdpbmFsIGFsbG9jYXRpb24gdGFnLiAqLworCWNsZWFy
-X3BhZ2VfdGFnX3JlZigmb2xkLT5wYWdlKTsKKwkvKiBEZWNyZW1lbnQgdGhlIGNvdW50ZXJzIG9m
-IHRoZSB0YWcgb24gZ2V0X25ld19mb2xpby4gKi8KKwlhbGxvY190YWdfc3ViKCZyZWYsIGZvbGlv
-X3NpemUobmV3KSk7CisJX19hbGxvY190YWdfcmVmX3NldCgmcmVmLCB0YWcpOworCXVwZGF0ZV9w
-YWdlX3RhZ19yZWYoaGFuZGxlLCAmcmVmKTsKKwlwdXRfcGFnZV90YWdfcmVmKGhhbmRsZSk7Cit9
-CisKIHN0YXRpYyB2b2lkIF9faW5pdCBwcm9jZnNfaW5pdCh2b2lkKQogewogCXByb2NfY3JlYXRl
-X3NlcSgiYWxsb2NpbmZvIiwgMDQwMCwgTlVMTCwgJmFsbG9jaW5mb19zZXFfb3ApOwotLSAKMi40
-Ny4wLjMzOC5nNjBjY2ExNTgxOS1nb29nCgo=
---000000000000d06ef106274e4684--
+So at least in principle it may be someone issuing getattr in parallel
+will happen to spot 1:0 (as opposed to 0:0 or 1:1), which was never set
+on the inode and is merely an artifact of hitting the timing.
+
+This would be a bug, but I don't believe this is serious enough to
+justify taking the inode lock to get out of. 
+
+Worst case, if someone is to handle this, I guess the obvious approach
+introduces a sequence counter to be modified around setattr.  Then
+getattr could retry few times in case of seqc comparison failure and
+only give up and take the lock afterwards. This would probably avoid
+taking the lock in getattr for all real cases, even in face of racing
+setattr.
 
