@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-416124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFDC9D4096
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:54:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9099D408A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB1AB34BFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:49:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5619C1F26A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B431153BF8;
-	Wed, 20 Nov 2024 16:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D074154C15;
+	Wed, 20 Nov 2024 16:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qP7zuNWt"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eG+8L5r0"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DB21514F8
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF4E14EC55
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732121348; cv=none; b=QFRcKkCKewYmk20ZLp7F7t+XyAU8RJF4ygG1ZAdL/uPR0Vvkrct7kBMAHM7oSHEvTwy243U6HSrqE++i5R92A++NlGWDsV09b6/Yeeg97gw3abePrw9EpTeRD8VLkAWnK35Cpz4Jvic8XcWML7Kj2NJ0r7uNdGsvEkbwKMROCio=
+	t=1732121465; cv=none; b=BnFZ3j3ZanTR7l4AFf4desumZHgfsLb8OyBUpGHGP7oF6/3HsP1roWyVZOMekLKPNCK/ELUeGWaPlO9L/u99l06FzdQtjpEw3FSLAoS/bJxMovtonHxCpLDzi8iNORdjO9PXpQbXtNFZ46ZWKukxbqKdDvIW5mV0NNYAMNqYJrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732121348; c=relaxed/simple;
-	bh=srZ9SCWdJyh8yNz8se0UPXWlQVN0xpkVWoSbiXEFNo0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M9ybEj/+UMhAWwFDytMA9HqBh3aYAiQ+YdhTO/HMefgl+REi+GbA5+HFlSJ7L46iD/sIZosJ0OhLcW49f8mQUHMd/j+7cBbP7rwGDZqOk+bINhqohXUAJ2U099dhpLuSnMYr5+dlsoJx9EyVL9wDTzKD1KH+K6XBdstZY3zZ5oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qP7zuNWt; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so21644065e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 08:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732121345; x=1732726145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n8UgD457K+Hay4DWV5Dre9+UIqq+Qp9AxidcbC+nUoA=;
-        b=qP7zuNWtmbmNY6/Qi2gVNSUNaF+3no5dhPMr9qonH+113/6pPyfnzepN+6zjFO2hnj
-         CwANPHr8q/AuAgGrOri2Bx/SAVQV5uXSaQdJr90wt1IZhb1iHOXu9qRLY9hi7H2jvywI
-         7+kOI2BsZP1zv1C0v22/0bGgv7coNp4yOkvAE8jJuR5lpuUSS5X/jey1wnniTGcWxcr3
-         ObgJ+47x7wmhVu+SB5ZCHPNHDAv1QoDWL/dZCAzn1XTSNwybEHafDL3QdP1Vo0v4nVOx
-         sX77QbLDBp/TeyOV9PfGgS5sD5Skei8HSIhibL5eF7xgLv5wmAE9cdiOc61nTEdlZnGh
-         nTKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732121345; x=1732726145;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n8UgD457K+Hay4DWV5Dre9+UIqq+Qp9AxidcbC+nUoA=;
-        b=FdLpVgUv17TdmyYC7o8Q3gpLvOR+nkMvxvGr6x6sQGw5m/xixAja7F0t3Eyy7EHukn
-         fPkt0G5VtwfCmEjpAwm2N9xgZ+hqCNXjYfRKfRMxBeErWLirIJv7a/C87ebUzx9NPZql
-         cEm2wPnyVRlYu4tyjt9t1zHqo8qygL3+d9+1yTCTd++TD9DK3gAuprThxt6bZW6Q1lwS
-         9UaCUfKjP76xYXYdAr7cWFA9Id9GmH9h9b6WwGAMeHPpUaoC8lgmJSi4paKXfWkTlK7D
-         Ty2QYXbu6Avbm3VREGqzdlQ0ucXO6JuBFXpCZfBtEhc/UTu2og8tCvdKMFQxBwchO4ZH
-         jZXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEt5DL7x3VnM1VFlpH7goO/Anbo+JBrm8DKISUdfNdlGLDotpx3QHEU7eZXYhEoNawUMAxPS2e53L7Ucw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwERpi1rgFa1gcg4txyAagu1m60Vty8qUIkPnkRZCEEI1vzKJp6
-	RMKaAdmqI543RBw/SS9XYmFQG+Bg0eIHaGOa5VBcqyvRtLwK+5RgE0qyQkZw0TA=
-X-Google-Smtp-Source: AGHT+IHo9WhI3mbF3lCYmgsOy4+wAwOTVXhU5u9vhGfivrKQbhnhnyedHmi0kYrH9tI43DWFsRMBOQ==
-X-Received: by 2002:a05:600c:3ca9:b0:42e:75a6:bb60 with SMTP id 5b1f17b1804b1-433489d6886mr28109325e9.19.1732121345508;
-        Wed, 20 Nov 2024 08:49:05 -0800 (PST)
-Received: from [192.168.0.200] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463aba6sm24821125e9.34.2024.11.20.08.49.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 08:49:05 -0800 (PST)
-Message-ID: <587de15d-06c8-4f12-8986-f60a80fe5ad8@linaro.org>
-Date: Wed, 20 Nov 2024 16:49:04 +0000
+	s=arc-20240116; t=1732121465; c=relaxed/simple;
+	bh=CArJjqyZn29K7jqNLHvcRGyvEoXAG9RjhAjwmglVuTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDnzapbTf+Rorpfo6bnkjK+uV7/r4hDRnBK7YMag+eOVzQmtXr40KM3eeVLJ22gxMdsE7GIYmlpBxKTR3rzliyKJ/uENBHleMsrGb6OWLfwAQE70ApzgMdpJLuNUg8LVgO8/QIrar6X3EUP+k8ChuRLoeJFPgLVZ4J28cV2e5eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eG+8L5r0; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 08:50:49 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732121460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JW6CUngLOu75VOV9f472xCW07lVeBTteuDR8jNnNruo=;
+	b=eG+8L5r0N3ZU3xEKnaOmGokcBySKemg9tZZ+pRsL4ENHRbcW8bl81OLaeXKPHO3fWbRzBh
+	5D0zg6aHKJE7IzNHdD2E3ZA033N6YRItW+4Urr3xPpoAytY+P4MIU5e7o01nm1R2irf6IU
+	T8evyv6vvMxVYObWuwU3ccJi0+YPyZA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Marco Felsch <kernel@pengutronix.de>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
+ FW_UPLOAD_ERR_SKIP
+Message-ID: <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: qcom: common: Add support for power-domain
- attachment
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
- <u6azgqlmncadcwiz42pk36q7rehwajnftvwfjh4aoawskdwkof@ao2imoy34k4y>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <u6azgqlmncadcwiz42pk36q7rehwajnftvwfjh4aoawskdwkof@ao2imoy34k4y>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
+X-Migadu-Flow: FLOW_OUT
 
-On 19/11/2024 15:41, Bjorn Andersson wrote:
-audience what exactly you mean with "singleton" and "core logic".
+On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
+> It's no error if a driver indicates that the firmware is already
+> up-to-date and the update can be skipped.
 > 
->> Use dev_pm_domain_attach_list() to automatically hook the list of given
->> power-domains in the dtsi for the clock being registered in
->> qcom_cc_really_probe().
->>
-> Do we need to power on/off all the associated power-domains every time
-> we access registers in the clock controller etc, or only in relation to
-> operating these GDSCs?
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+>  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+> index b3cbe5b156e3..44f3d8fa5e64 100644
+> --- a/drivers/base/firmware_loader/sysfs_upload.c
+> +++ b/drivers/base/firmware_loader/sysfs_upload.c
+> @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
+>  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
+>  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
+>  	if (ret != FW_UPLOAD_ERR_NONE) {
+> +		if (ret == FW_UPLOAD_ERR_SKIP) {
+> +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
+> +			ret = FW_UPLOAD_ERR_NONE;
+> +		}
 
-Its a good question.
+If you change the error-code from FW_UPLOAD_ERR_SKIP to
+FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
+patch will never be seen. There are currently no other instances where
+an error code requires special-case modifications to the fw_upload
+code and I don't think it is necessary to add it here.
 
-No I don't believe these PDs are required for the regs themselves i.e. 
-we can write and read - I checked the regs in the clock's probe with the 
-GDSCs off
+The dev_info() message above can be provided by the device driver
+that is using this API.
 
-         /* Keep clocks always enabled */
-         qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
-         qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
+I think you can either:
 
-only inside the probe where we actually try to switch the clock on, do 
-we need the PD.
+(1) allow "skip" to be treated as an error. The update didn't happen...
 
-         ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, 
-regmap);
+-or-
 
-Which means the registers themselves don't need the PD. The clock 
-remains "stuck" unless the GDSC is on which to me means that the PLL 
-isn't powered until the GDSC is switched on.
+(2) The prepare function could detect the situation and set
+    a flag in the same device driver. Your write function could
+    set *written to the full data size and return without writing
+    anything. Your poll_complete handler could also return
+    FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
+    at all. You would get the info message from the device driver
+    and fw_upload would exit without an error.
 
-So no, the regs are fine but the PLL won't budge without juice from the PD.
+Thanks,
+- Russ
 
----
-bod
+>  		fw_upload_set_error(fwlp, ret);
+>  		goto putdev_exit;
+>  	}
+> 
+> -- 
+> 2.39.5
+> 
 
