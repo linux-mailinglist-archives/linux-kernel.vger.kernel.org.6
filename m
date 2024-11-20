@@ -1,132 +1,281 @@
-Return-Path: <linux-kernel+bounces-415950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B1D9D3E71
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:03:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E4C9D3E75
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:04:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D231F245E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:03:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B401E1F24184
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FA31BDA8A;
-	Wed, 20 Nov 2024 14:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F21A1ABEB4;
+	Wed, 20 Nov 2024 14:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V22efuLh"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bpyIR0Ng"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C229F1C1F11
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B071714CD;
+	Wed, 20 Nov 2024 14:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114466; cv=none; b=dIRBKx9b0+8ciiQ/cktX/pdTx9L7u9UJ9kOYM3VWys1xkAjdeK43oBmUp+TWUbm4c0RfOOazzn/X0UiJCJSLx5JZeRJq+6VdAFNBhx+1Zm0c9hirvHF5UcwPAreZ4OxO3mVGABqQLyxed03bHI6XlXD+zalIv6Zcn9T/j7TRNOA=
+	t=1732114528; cv=none; b=CxLh2uRlbHJDc0yjbuMS1ibUOasF5zPyTGO2ip3Hcr0mYNZjSqlNoqSuTiELQw0pE07jmcJGzd/RZvBY+k85nxJB/vB9VA9xbLQPQgu3Vfg+QuDwahkU1AMc4bp0JKPzm0C75h7OpYwCdBm5WUYM08NshIWVah6UUdMx9SGiuFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114466; c=relaxed/simple;
-	bh=+IBp4/mjnKTPpeerE1KBjykMT3Q8waxXevFTUgQU2VE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o9zVD8jYh8wCpgzoRBfwb1TKmPydJFPtUim95RWgS0RVBETgl0TTHSLLhRpCwtArT91vZm7tfh7TZ5fxLRPTk6PXOmQPbuvhsjDynH0hVraaq67LFKo/hT7FzWnWy8u62sCqeYukSuSQmFXZxa/TniWQepd7BbMsbrt/YsmJe9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V22efuLh; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314f38d274so59952155e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:54:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732114461; x=1732719261; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3X8EvBZcglG3G3y/PY+m6JzHpXCgEpZdkFsrUAh0Gw=;
-        b=V22efuLhPG3sFIO0v058/LtfM7Cou7yQt9laG8hJu9ElHJl8hwEf4ifxzF0mwGQSM5
-         +Ar4owwheei3LOEVtIYlgL7kUC4h+DohbwGJYRKMSKHAzuAI4aK5Tlm1awmGjnACXwod
-         pt7YtBNC32/2rSaMpsQ3o7AiyztsMhvcQ07lMHq5wvp7eDu1L73doV3Jn4z5UMFdcPcr
-         me2vWs230iQo9ieEE0iu/1/SVVWegGvtolVxkUC4C/8afNaMnlINXax1+N4qEDfowQH3
-         gViiBDd/p0eKdiclUwJNdf/P5shHrO0Xl0lodsFN+pcckQrcjiIQks1XnavZZLtcp9Kr
-         cSKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732114461; x=1732719261;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z3X8EvBZcglG3G3y/PY+m6JzHpXCgEpZdkFsrUAh0Gw=;
-        b=j37lgeMnydvfCP1dxOu8tDLuXI5xEspW3vfbCogvz+VHQNzw9Hotmwp62CHLhxpTF0
-         0GyroMdN21HZ0WwIihQu08oJmSlE176r1XDQoNiRsfV3XiKzcWwWtcmdlyurztuqJoNV
-         QdFQxkkVuDujL1Or7ChPWfKBNMLATK4liCWq5JuONGZkEd05NkEn/q6g5H4Ul2uAYhB7
-         I7L3dBEzcRNTEIFacTf/YybsB7N9pzYXH0hmz4PX45acFsY9LrKQ8mdQYvDV2bVrxPYT
-         1cEwEpMLulycV2+SQ1QZ6SQljHePrBC5bqurC0zvmbkpqwP0RIWNZSIZWUhvPZXKmIKb
-         UNhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQEJyrlCLv2IC8YNGNLaKaBC46cry9STn2u8tYDOcrDkCn3YZRIlJjdiCJhU6Xc6poob5jNssYluuwGTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+VCNrNooMSjbd9+FtTi//Gmcj46oEkUIUMi1EriNYTENQbMrL
-	Ly1QQNPQruZU7g/MgDCDkLCrSjPPjwLrHwAvaMzF3jjCTroe84dM0xxQRT3GB5U=
-X-Google-Smtp-Source: AGHT+IFi1TKB6lZ7v+YT4VtiSV0LnHSOQ/6l8OmuJTtWBoIuIMfezbIIQdy8YVWrFvr/BbOc/zL94Q==
-X-Received: by 2002:a05:600c:1394:b0:431:5533:8f0d with SMTP id 5b1f17b1804b1-4334f01d780mr35116405e9.30.1732114461062;
-        Wed, 20 Nov 2024 06:54:21 -0800 (PST)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490c850sm2267700f8f.35.2024.11.20.06.54.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 06:54:20 -0800 (PST)
-Date: Wed, 20 Nov 2024 15:54:18 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Chris Down <chris@chrisdown.name>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 06/11] printk: console: Introduce sysfs interface for
- per-console loglevels
-Message-ID: <Zz34GgmFbuZKQOzG@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
- <2024111508-native-subtype-2990@gregkh>
- <Zz1tOxW6PO_2OeSA@chrisdown.name>
- <84frnms3c3.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1732114528; c=relaxed/simple;
+	bh=DycnefkIl3vmED20SiUj4Da2wruBCyCSjcCyItlN4KA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bWwT9Ku8KW/Y/HU0xjjr26hlQzmvU7/UQRBlj4k4anMhLzN2TJHTW5k9XOHnBGu+ngRmHmmZBtRrwiF/olXVJY7lQDS6Sin8d2o5w4H21KNo8DUX8K7k+qK/0na8abT7tmm6lOazyDB4yNrYDIBXG3j8xIXhhNVXPfLzKsEukY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bpyIR0Ng; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FIXg019239;
+	Wed, 20 Nov 2024 14:55:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7c+Gc2YJ0ZXrfOntRroLVvAoJrbU+KPCNzU9bfv1j50=; b=bpyIR0NgQ/rDQtXm
+	jSzoLktWNao1xlBGLuUIacp9W4Wdekz3EbWSRFW6XmwsNCOrbCjENgfzYFAQykZW
+	+ekhPVni+OYCheSwAlT0+ltWHCvtn4aHQJOtXEZKwbfFZvSriqXF2qLtIyZl/YL7
+	it5AFajAGr/TZCbT+IhnyPTKRoIsN0U9URE9DbQc4WEZRluCF53zYm9AWLDPfY1m
+	t9+oVoAGquNiW28wi4uGgXaIcYBnR7K7Wl0yWKLc/vHNTzwpsUmJLkJihF/JrJXr
+	Fj5yAh8JZnfeoMUkuRDNsLeox4XlqkQIYCXGCio56RtQkY+rf8d+SNGl/Xla+tD8
+	QHG6zw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hh0ge-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 14:55:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKEtAsf008053
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 14:55:10 GMT
+Received: from [10.216.30.190] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
+ 2024 06:55:06 -0800
+Message-ID: <acff673f-3c6c-36c8-516a-1476b9a8fb60@quicinc.com>
+Date: Wed, 20 Nov 2024 20:24:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84frnms3c3.fsf@jogness.linutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v3] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+Content-Language: en-US
+To: Hongxing Zhu <hongxing.zhu@nxp.com>,
+        "jingoohan1@gmail.com"
+	<jingoohan1@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+        "kw@linux.com"
+	<kw@linux.com>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "robh@kernel.org" <robh@kernel.org>, Frank Li <frank.li@nxp.com>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>,
+        "kernel@pengutronix.de"
+	<kernel@pengutronix.de>,
+        "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20241118054447.2470345-1-hongxing.zhu@nxp.com>
+ <118e87ef-3852-8c07-7de7-d97e885cfdd6@quicinc.com>
+ <AS8PR04MB867619836B0F30C2663AB9418C202@AS8PR04MB8676.eurprd04.prod.outlook.com>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <AS8PR04MB867619836B0F30C2663AB9418C202@AS8PR04MB8676.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vwkeWJAgPs8ML3y7whbOoi8X1x4L3AZz
+X-Proofpoint-GUID: vwkeWJAgPs8ML3y7whbOoi8X1x4L3AZz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411200099
 
-On Wed 2024-11-20 09:49:08, John Ogness wrote:
-> On 2024-11-20, Chris Down <chris@chrisdown.name> wrote:
-> >>> +static ssize_t loglevel_show(struct device *dev, struct device_attribute *attr,
-> >>> +			     char *buf)
-> >>> +{
-> >>> +	struct console *con = dev_get_drvdata(dev);
-> >>> +
-> >>> +	return sysfs_emit(buf, "%d\n", READ_ONCE(con->level));
-> >>
-> >>While I admire the use of READ_ONCE() properly, it really doesn't matter
-> >>for sysfs as it could change right afterwards and no one cares.  So no
-> >>need for that here, right?
-> >
-> > From my reading of the code it looks like we need this to avoid
-> > tearing.
+
+
+On 11/19/2024 2:18 PM, Hongxing Zhu wrote:
+>> -----Original Message-----
+>> From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+>> Sent: 2024年11月18日 14:57
+>> To: Hongxing Zhu <hongxing.zhu@nxp.com>; jingoohan1@gmail.com;
+>> bhelgaas@google.com; lpieralisi@kernel.org; kw@linux.com;
+>> manivannan.sadhasivam@linaro.org; robh@kernel.org; Frank Li
+>> <frank.li@nxp.com>
+>> Cc: imx@lists.linux.dev; kernel@pengutronix.de; linux-pci@vger.kernel.org;
+>> linux-kernel@vger.kernel.org
+>> Subject: Re: [PATCH v3] PCI: dwc: Clean up some unnecessary codes in
+>> dw_pcie_suspend_noirq()
+>>
+>>
+>>
+>> On 11/18/2024 11:14 AM, Richard Zhu wrote:
+>>> Before sending PME_TURN_OFF, don't test the LTSSM state. Since it's
+>>> safe to send PME_TURN_OFF message regardless of whether the link is up
+>>> or down. So, there would be no need to test the LTSSM state before
+>>> sending PME_TURN_OFF message.
+>>>
+>>> Only print the message when ltssm_stat is not in DETECT and POLL.
+>>> In the other words, there isn't an error message when no endpoint is
+>>> connected at all.
+>>>
+>>> Also, when the endpoint is connected and PME_TURN_OFF is sent, do not
+>>> return error if the link doesn't enter L2. Just print a warning and
+>>> continue with the suspend as the link will be recovered in
+>> dw_pcie_resume_noirq().
+>>>
+>>> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+>>> ---
+>>> v3 changes:
+>>> - Refine the commit message refer to Manivannan's comments.
+>>> - Regarding Frank's comments, avoid 10ms wait when no link up.
+>>> v2 changes:
+>>> - Don't remove L2 poll check.
+>>> - Add one 1us delay after L2 entry.
+>>> - No error return when L2 entry is timeout
+>>> - Don't print message when no link up.
+>>> ---
+>>>    .../pci/controller/dwc/pcie-designware-host.c | 40 ++++++++++---------
+>>>    drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+>>>    2 files changed, 23 insertions(+), 18 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> index 24e89b66b772..68fbc16199e8 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>>> @@ -927,24 +927,28 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>>>    	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) &
+>> PCI_EXP_LNKCTL_ASPM_L1)
+>>>    		return 0;
+>>>
+>>> -	/* Only send out PME_TURN_OFF when PCIE link is up */
+>>> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+>>> -		if (pci->pp.ops->pme_turn_off)
+>>> -			pci->pp.ops->pme_turn_off(&pci->pp);
+>>> -		else
+>>> -			ret = dw_pcie_pme_turn_off(pci);
+>>> -
+>>> -		if (ret)
+>>> -			return ret;
+>>> +	if (pci->pp.ops->pme_turn_off)
+>>> +		pci->pp.ops->pme_turn_off(&pci->pp);
+>>> +	else
+>>> +		ret = dw_pcie_pme_turn_off(pci);
+>>> +	if (ret)
+>>> +		return ret;
+>>>
+>>> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val ==
+>> DW_PCIE_LTSSM_L2_IDLE,
+>>> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
+>>> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+>>> -		if (ret) {
+>>> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM:
+>> 0x%x\n", val);
+>>> -			return ret;
+>>> -		}
+>>> -	}
+>>> +	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+>>> +				val == DW_PCIE_LTSSM_L2_IDLE ||
+>>> +				val <= DW_PCIE_LTSSM_DETECT_WAIT,
+>>> +				PCIE_PME_TO_L2_TIMEOUT_US/10,
+>>> +				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+>>> +	if (ret && (val > DW_PCIE_LTSSM_DETECT_WAIT))
+>>> +		/* Only dump message when ltssm_stat isn't in DETECT and POLL */
+>>> +		dev_warn(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n",
+>>> +val);
+>> we need to return ret here in case we fail to enter L2 when the endpoint is
+>> connected.
+>>
+> Hi Krishna:
+> I used encounter the following error, when some NVME devices are used.
+> For example, the "Sandisk SN720 256G NVME SSD disk".
+> "imx6q-pcie 4c300000.pcie: Timeout waiting for L2 entry! LTSSM: 0x19"
+> LTSSM:0x19 means S_DISABLED. Is this an error actually or something else?
+> BTW, without the error return. The NVME disk can be functional again after
+>   resume back. Otherwise, system is hang in suspend.
+> To my knowledge I know two cases which might have happen here.
+
+LTSSM state can also enter disabled state if the disable bit in the link
+control register is set but I don't think that is the case here.
+
+Other case might be if DPC is enabled and hardware detects any error in
+the link can you check if DPC is enabled. IF it is enabled you can try
+if disabling helps here or not.
+
+- Krishna Chaitanya.
+> Logs with error return when LTSSM is 0x19(v4 patch).
+> rtcwakeup.out: wakeup from "mem" using rtc0 at Fri Jan  2 00:01:02 1970
+> [   31.014728] PM: suspend entry (deep)
+> ...
+> [   31.636729] imx6q-pcie 4c300000.pcie: Timeout waiting for L2 entry! LTSSM: 0x19
+> [   31.644191] imx6q-pcie 4c300000.pcie: PM: dpm_run_callback(): genpd_suspend_noirq returns -110
+> [   31.652936] imx6q-pcie 4c300000.pcie: PM: failed to suspend noirq: error -110
 > 
-> I cannot imagine that any compiler would perform multiple reads to read
-> an aligned field of 4-bytes. Particularly since this function only reads
-> this one field.
-
-I believe that the chance is very very small. But are you 100% sure, please?
-
-Honestly, it seems that everyone agrees that the READ_ONCE() makes
-some sense. I do not understand why some many people wants to remove
-it. I personally prefer to be on the safe side.
-
-> At most it is kind of annotating lockless access to con->level. But
-> since it is not using data_race(), it would still trigger KCSAN with a
-> warning. I recommend removing it.
-
-I actually suggested to make a wrapper similar to
-console_srcu_read_flags() and use the data_race() there, see
-https://lore.kernel.org/r/Zy4368zf-sJyyzja@pathway.suse.cz
-
-Best Regards,
-Petr
+> Logs without error return when LTSSM is 0x19(this v3 patch).
+> rtcwakeup.out: wakeup from "mem" using rtc0 at Fri Jan  2 00:01:02 1970
+> [   31.079868] PM: suspend entry (deep)
+> ...
+> [   31.732253] imx6q-pcie 4c300000.pcie: Timeout waiting for L2 entry! LTSSM: 0x19
+> [   31.758051] Disabling non-boot CPUs ...
+> ...
+> [   31.799148] psci: CPU1 killed (polled 4 ms)
+> [   31.806229] Enabling non-boot CPUs ...
+> [   31.810690] Detected VIPT I-cache on CPU1
+> [   31.810766] GICv3: CPU1: found redistributor 100 region 0:0x0000000048080000
+> [   31.810844] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+> [   31.812365] CPU1 is up
+> ...
+> 
+> Best Regards
+> Richard Zhu
+>   
+>> - Krishna Chaitanya.
+>>> +	else
+>>> +		/*
+>>> +		 * Refer to r6.0, sec 5.3.3.2.1, software should wait at least
+>>> +		 * 100ns after L2/L3 Ready before turning off refclock and
+>>> +		 * main power. It's harmless too when no endpoint connected.
+>>> +		 */
+>>> +		udelay(1);
+>>>
+>>>    	dw_pcie_stop_link(pci);
+>>>    	if (pci->pp.ops->deinit)
+>>> @@ -952,7 +956,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>>>
+>>>    	pci->suspended = true;
+>>>
+>>> -	return ret;
+>>> +	return 0;
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(dw_pcie_suspend_noirq);
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pcie-designware.h
+>>> b/drivers/pci/controller/dwc/pcie-designware.h
+>>> index 347ab74ac35a..bf036e66717e 100644
+>>> --- a/drivers/pci/controller/dwc/pcie-designware.h
+>>> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+>>> @@ -330,6 +330,7 @@ enum dw_pcie_ltssm {
+>>>    	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
+>>>    	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
+>>>    	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
+>>> +	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
+>>>    	DW_PCIE_LTSSM_L0 = 0x11,
+>>>    	DW_PCIE_LTSSM_L2_IDLE = 0x15,
+>>>
 
