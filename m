@@ -1,78 +1,171 @@
-Return-Path: <linux-kernel+bounces-416313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B009D4329
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:36:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9739D432D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B9A2284103
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:36:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C6E2842E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2B31C4A3F;
-	Wed, 20 Nov 2024 20:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E513C1BE23C;
+	Wed, 20 Nov 2024 20:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="enUlTRW2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TeAx1EkN"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A8D1C4A00
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EED619DF9E;
+	Wed, 20 Nov 2024 20:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732134964; cv=none; b=IJvzPUfI7DikhvYOqc+UCUHxDiOtWB6/4CEQUA8gYM7WJW0aFK6EtR8xRYeOj7dwDyIpqx1snPUtMIC179fQrJC42oLMFzX+KPkdoKhEBFNFBIGohx36Gdh+37Cwz/ly37/nzgyf2DsepTwgVLmSu7f09Ewo5X1joFNuQLdmajo=
+	t=1732134987; cv=none; b=WZoolGAYLHFy3iUFp60UPrlOXxz0Wrpr7YPl3XJFAioYlFfpGzC0sQYa0vjzyWDkfvanKNQa5pkHCgMSx4ICECTV1q5np5jjvGAcXpl00eQPGDSzE10950LWxp0fx92FMiXtS9vCprUqXkBGlQCWtrPjY5N9pCBbneRKwltoqP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732134964; c=relaxed/simple;
-	bh=NCsVE52jJA4OfOi8kdXyjBOcqSAtUnl+RBeRawGhIqI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JFFU/4iv89oKIZ6oHBmoCeJU+kmp0wrsFUjyut8SxOt30VscgKqCPKRfJ73hOzV1uQ9aUVA4b03zmM9rHyKA0QdmpMgRurUh3DywZ6LTSDEZVJa/Hr7nUel7a9WBXuCCH1N+wOLGVg/EXNc3prBZVFx1kvtQPA4bUH3c3czNPaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=enUlTRW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 325DEC4CED2;
-	Wed, 20 Nov 2024 20:36:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732134964;
-	bh=NCsVE52jJA4OfOi8kdXyjBOcqSAtUnl+RBeRawGhIqI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=enUlTRW2rJA0nU3s0BKDfQY+isJXMEyLyYEZ12zs/gOk7UqpRATT+/wm+W9qLdmUB
-	 2y0DuaR22S0okkciAUzlfl/v7RrVURpGP+E+jJfSuED0QZZkHE+/F29AC/tpNLx5mp
-	 p5N9H7OImIirMgqdLRVNIQ7gM/oJwqaD46vsudCyTbsQ+llw8G3ioqjLRJbKxw6Qhn
-	 r1eMqSlQPwaZqM3FjpiMsYwCs6ieckPzbY8BOQJiFICT9OpNYmWltEWEuaG83avtSG
-	 zaLJ90Hh1qdXDyDrsWim28gz+TssVbHY4x2PGUgbglM1Co87nocX1qhfrZqOmQHF6h
-	 Vbikd74pxpSUA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33AEF3809A80;
-	Wed, 20 Nov 2024 20:36:17 +0000 (UTC)
-Subject: Re: [GIT PULL] regulator updates for v6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <bd78e37c1570dc055bb19e393670d9a7.broonie@kernel.org>
-References: <bd78e37c1570dc055bb19e393670d9a7.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <bd78e37c1570dc055bb19e393670d9a7.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.13
-X-PR-Tracked-Commit-Id: 21ccadc64dae18bd092f1255bdbaf595f53381d5
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4bd37a902ab66d63f20e75d42f17aaec81de2263
-Message-Id: <173213497581.1342014.2175157073176635860.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Nov 2024 20:36:15 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=arc-20240116; t=1732134987; c=relaxed/simple;
+	bh=3pTF8HtboJNXamrbK2zTKYm6YaLD0WCIOPJbeAO1+kA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mal/QWaD59ZudV5oQHhJXtroqCzNvyCJTMWAIgNiWmG6jmhf4xD+EQZtsAc6tZtTYeMTi+pba4+LKjuvShMdfXU8cV86aDGyIfdaAoS5K3G4BXxx5RoT9qz8yE+1ogweUHA0sy8Ih0BXk+W3HEUYqydH2TyhuCAR83/U5FJer78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TeAx1EkN; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38231f84dccso84029f8f.1;
+        Wed, 20 Nov 2024 12:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732134984; x=1732739784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x3or1iEimUGIRqJLaR9LmxWG/5ydCrarknTWSiPGeos=;
+        b=TeAx1EkNlP/8Vwv0hpV+H3sein5F/g1gGRMdusuIywEgYzB4twXdPzzFaoMB5ncoAw
+         c533HHpY09Og3c+CC2ebzxT0bv+W67TRAhFvSZBGPNyoUZWdtdeLcN7xf8UIT74/EZAM
+         XsPLstLx5uCNNG4TybneJjuqVUBB7BD1iYsfA6P/U4O4/5znJd8F9T718vXZj0h+3qO3
+         +bYHqqbxDwZn6eBwsusz2Cm3W6/xC/Gw8tjvc0Z7E0wQqa8bK/172aGTqYHqFqTu5nNe
+         3Ktcc9UEC7xwyVoWqBhs426zxKRXq/1C0ULbfnsEq9jPOyTMMD6n5NKh/+09nIH1td3c
+         wFyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732134984; x=1732739784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3or1iEimUGIRqJLaR9LmxWG/5ydCrarknTWSiPGeos=;
+        b=k6irMUp1dLBfqHfbFosNSgJZbseDPVQ1O9n/ABLQ7DE1HOrHUpOtCekDZhT77NHZ2O
+         GXPfGuR70Si6lEKblpwx74swS3tYb54jsypQx5SC5zRkZ1eMXcHEjY4X9ydywkUKMYvN
+         etg6ruS7QRtcI20FRO30h2R0/ZMFl+fkF2F0iA6I+kQe+a1NT28IvWsN050+udFp+1Ga
+         m2fxTipDX7ItyYzv9Dcho+W8XJEwR7e30R2tdMZrSncnRm9Om+6MAOfQkYUdix4hrMWL
+         qF914DDcAVsrDMO87YzviffTjbVVgAC1anxTnu/8YoEPGffkJNMvubtQ410g98mzOnFi
+         88nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxUNi1Gip+Zg7nex7T5QI/WwB7tPmXaKnWQMMhw1BWe+YqQZ2cuP/AXEJD/vCgBAEpdyLoXwpGd9MkYz0Q@vger.kernel.org, AJvYcCXVwE68f3QkJwpwa4WUgJ+aACS242MYTInShHx1sRVYU09q1DhpFElZdD85s7zKxAkzz6+84eV6lq8WJi9I@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOhZ/zKvyMJ90dcnHz1B5P0OtMFtsbEQeaCGadcvHRF0o65DYx
+	CwjX1B6ePLP+5YcO0FJmhQpxtVnZxJZco7zXaWXWjSJQzwQs8B7q
+X-Gm-Gg: ASbGncvyqsRalVmT788cwMcMRCIBNTyYmLkgvv7pwzzgftds2+3OFVTMMJK+IJGNxXQ
+	J8eQXNyR4pvNnqDj9jbTVNLllEjXhCqai1Xo+jANdRjIRgcc+e/vMeVbSy4Eo+0X+ZHTrkkSOvc
+	zYLdi06WwNINfk/8UDW/ZAWGzdGzCemsdyVYyjK2nhMMUcxubVuaNKF7ofCMAmmXKVTuHCgvJnF
+	NykyIEjUKadfFQxYgHxsafnS9X7XDSLa+E+C+uAutf3P69i8sU=
+X-Google-Smtp-Source: AGHT+IECZF5CB7ww/8uLBoheSaSo8qyLeRSAQ+EmDMpZQZa/pX+WHMDslgstSLfXg4Lqs8NFX60nxQ==
+X-Received: by 2002:a05:6000:2a8:b0:382:3f31:f3b9 with SMTP id ffacd0b85a97d-38254b20749mr2491140f8f.56.1732134983501;
+        Wed, 20 Nov 2024 12:36:23 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463af68sm30560835e9.40.2024.11.20.12.36.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 12:36:23 -0800 (PST)
+Message-ID: <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com>
+Date: Wed, 20 Nov 2024 22:36:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
+To: Jerry Meng <jerry.meng.lk@quectel.com>, loic.poulain@linaro.org,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Mon, 18 Nov 2024 13:32:49 +0000:
++Manivannan
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.13
+Hello Jerry,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4bd37a902ab66d63f20e75d42f17aaec81de2263
+this version looks a way better, still there is one minor thing to 
+improve. See below.
 
-Thank you!
+Manivannan, Loic, could you advice is it Ok to export that SAHARA port 
+as is?
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On 20.11.2024 11:39, Jerry Meng wrote:
+> Add a Sahara protocol-based interface for downloading ramdump
+> from Qualcomm modems in SBL ramdump mode.
+> 
+> Signed-off-by: Jerry Meng <jerry.meng.lk@quectel.com>
+> ---
+> v1 -> v2:
+> 	- Fix errors checked by checkpatch.pl, mainly change indentation from space to tab
+> 	- change my email acount to fit git-send-email
+> 
+>   drivers/net/wwan/mhi_wwan_ctrl.c | 1 +
+>   drivers/net/wwan/wwan_core.c     | 4 ++++
+>   include/linux/wwan.h             | 2 ++
+>   3 files changed, 7 insertions(+)
+> 
+> diff --git a/drivers/net/wwan/mhi_wwan_ctrl.c b/drivers/net/wwan/mhi_wwan_ctrl.c
+> index e9f979d2d..082090ae5 100644
+> --- a/drivers/net/wwan/mhi_wwan_ctrl.c
+> +++ b/drivers/net/wwan/mhi_wwan_ctrl.c
+> @@ -263,6 +263,7 @@ static const struct mhi_device_id mhi_wwan_ctrl_match_table[] = {
+>   	{ .chan = "QMI", .driver_data = WWAN_PORT_QMI },
+>   	{ .chan = "DIAG", .driver_data = WWAN_PORT_QCDM },
+>   	{ .chan = "FIREHOSE", .driver_data = WWAN_PORT_FIREHOSE },
+> +	{ .chan = "SAHARA", .driver_data = WWAN_PORT_SAHARA},
+                                                            ^
+The space is still missing between WWAN_PORT_SAHARA and trailing '}'. 
+Please follow the format of existing table entries.
+
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(mhi, mhi_wwan_ctrl_match_table);
+> diff --git a/drivers/net/wwan/wwan_core.c b/drivers/net/wwan/wwan_core.c
+> index a51e27559..5eb0d6de3 100644
+> --- a/drivers/net/wwan/wwan_core.c
+> +++ b/drivers/net/wwan/wwan_core.c
+> @@ -342,6 +342,10 @@ static const struct {
+>   		.name = "MIPC",
+>   		.devsuf = "mipc",
+>   	},
+> +	[WWAN_PORT_SAHARA] = {
+> +		.name = "SAHARA",
+> +		.devsuf = "sahara",
+> +	},
+>   };
+>   
+>   static ssize_t type_show(struct device *dev, struct device_attribute *attr,
+> diff --git a/include/linux/wwan.h b/include/linux/wwan.h
+> index 79c781875..b0ea276f2 100644
+> --- a/include/linux/wwan.h
+> +++ b/include/linux/wwan.h
+> @@ -19,6 +19,7 @@
+>   * @WWAN_PORT_FASTBOOT: Fastboot protocol control
+>   * @WWAN_PORT_ADB: ADB protocol control
+>   * @WWAN_PORT_MIPC: MTK MIPC diagnostic interface
+> + * @WWAN_PORT_SAHARA: Sahara protocol-based interface for downloading ramdump from Qualcomm modems
+>   *
+>   * @WWAN_PORT_MAX: Highest supported port types
+>   * @WWAN_PORT_UNKNOWN: Special value to indicate an unknown port type
+> @@ -34,6 +35,7 @@ enum wwan_port_type {
+>   	WWAN_PORT_FASTBOOT,
+>   	WWAN_PORT_ADB,
+>   	WWAN_PORT_MIPC,
+> +	WWAN_PORT_SAHARA,
+>   
+>   	/* Add new port types above this line */
+>   
+
 
