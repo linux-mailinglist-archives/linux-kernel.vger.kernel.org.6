@@ -1,97 +1,131 @@
-Return-Path: <linux-kernel+bounces-415570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8769D382F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:19:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAB49D383F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2651F2306D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4171F23275
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61119D8A8;
-	Wed, 20 Nov 2024 10:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7990B19CC1C;
+	Wed, 20 Nov 2024 10:22:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG2BqxTe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ud7ivUQk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABA719C561
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE80B146D53;
+	Wed, 20 Nov 2024 10:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732097935; cv=none; b=c0B9tKeS6bbdQKG8ypjJ4d9NAvRxhL9mnmD64M48cwUUHVqlZzDxnhhuUkd6+vev9OCaFPE0irkM696wyHSs2vzGE/mkLR/8RviqDZVAo02JjEOiIfUSWie5Q68g4g3jXMTQ+uGhsGqjhpdwgWXKsECdqR1d7u/wOBhLqFTnwEk=
+	t=1732098144; cv=none; b=r9MIevaYhvbRcjSlfAOtm64MYA7IT19DEHCBoW+VSBzYOEBU7LQjwO8sXhhqJLCUAA4Lru/RCF9DY2kqE/gZE1Zawq7zhlrApIVSUBfbsTTbIW0egqC4vA5r58JDH0maIvge+J7WEwMa9q4wjY8ROJpGIZlkZxnk8fDRVW2VvtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732097935; c=relaxed/simple;
-	bh=5Thvdj4LZp0/89Y9nB/eA+4SIafyW+S6X8Sg9pfd55c=;
+	s=arc-20240116; t=1732098144; c=relaxed/simple;
+	bh=kJQDEeMh5yQymd7/4zNyXAyvNMvAn8pbTvK9MW3F1j4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuwAOHAyhTVf1vCQXF91Uho1Qpg2gACSFtA4aSkmVQuMQrGGE1+4XczzumjBYS2+DMn7OcMZeVWSQ69B7Pg7yoY7TeBz7K20yeOnyLBNELvDKyY36Jvj4rpVuVbO9tIdI3jQkfMe8r762ew4BPTERwblmp6zQh9IB9YDPmk1oJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG2BqxTe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D046C4CECD;
-	Wed, 20 Nov 2024 10:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732097935;
-	bh=5Thvdj4LZp0/89Y9nB/eA+4SIafyW+S6X8Sg9pfd55c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jG2BqxTeyMIdfRMoUE1DhKUmJM4a4hTmIuEpzJBUn9E4yG6FjGmNg+IaoEGejrQwE
-	 78h1phNAngTjpFSUk/UvZMqN/TH3m6g54pK+6ZETRBqKocbV7aoB+r6A2Iv5401WeV
-	 w8vgEOTQZ4FOE/rn/0LWglf0AIpU4UoICP0i60vGosVjGq5nqa2MYoNeRiDAlrS726
-	 KxvbFvi99COGtWpf+PrdVkPnM5qfoQwJLK88PhtwYre6xfFL8/r2ozt7LvIajCo/Jn
-	 pTKsXY3JR70u8xmMf2eub8HmPQOrcS++F5Inbg6gHlHu1Kv8tzpFvgv3WAW1M7s2u9
-	 9ajAUDGrCtZbA==
-Date: Wed, 20 Nov 2024 11:18:50 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org
-Subject: Re: [GIT pull] timers/core for v6.13-rc1
-Message-ID: <20241120-backwaren-faible-99807b4768bb@brauner>
-References: <173195757899.1896928.6143737920583881655.tglx@xen13>
- <173195758632.1896928.11371209657780930206.tglx@xen13>
- <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1ceEiXzERU9M72UwiT+gQJZQDpcD1vFAo2yEWOzV9bIFzwkcPB6qSUasV0hEUxEqxqh655Ly8zv0k7214q8WG6q6SvaW31gsjSlTrEAjQEVOQ+PMEuoW4u+HfEsI9mt3S0nQvsZ0w+IEFBRVEQwD7L9h40wXOTUnG+FnPKmaL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ud7ivUQk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6BHYRXy9lLaaBbd09VImTq6Rn50W4X4567EqZRkeTsQ=; b=Ud7ivUQkqoJelXj28zCQsU+gIU
+	rPNqESkMj9Dvu0GcK3GwMBeifTq00wVepK50OM0ITEOdtka/jqFErp6Jd8j999ZICXAW3mvcrtkvK
+	CusDuiYnEJ629rY55UUL/cBOjUKRFBuX/QQ0VICN6+DrH4L+Ho55jjI7IoNjs/cWvfyFbmptF1Klx
+	vEhnAtqlle6ozdCc/aMWBNbBq7u2ct3VCOEy18Xvn1aIkiTLeG6uKCbmVgjwRnFMZT4eAurE+BZ5H
+	x1Ct2ikx1ujlCMCd31kJ29lLgD5iVA3BgXaBQ3K/vEe5Jd7aBT4P21yj4cyyY2YhFQ7RnlBQHq7Pn
+	jj1hI06g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDhql-0000000582g-0cwS;
+	Wed, 20 Nov 2024 10:22:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 04D013006AB; Wed, 20 Nov 2024 11:22:20 +0100 (CET)
+Date: Wed, 20 Nov 2024 11:22:19 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Juerg Haefliger <juerg.haefliger@canonical.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
+	Chuang Wang <nashuiliang@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
+	Julian Pidancet <julian.pidancet@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
+Message-ID: <20241120102219.GF19989@noisy.programming.kicks-ass.net>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-7-vschneid@redhat.com>
+ <20241120000532.maqzgsn7m34lti6u@jpoimboe>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
+In-Reply-To: <20241120000532.maqzgsn7m34lti6u@jpoimboe>
 
-On Tue, Nov 19, 2024 at 04:33:45PM -0800, Linus Torvalds wrote:
-> On Mon, 18 Nov 2024 at 11:22, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
+On Tue, Nov 19, 2024 at 04:05:32PM -0800, Josh Poimboeuf wrote:
+> On Tue, Nov 19, 2024 at 04:34:53PM +0100, Valentin Schneider wrote:
+> > +++ b/include/linux/jump_label.h
+> > @@ -200,7 +200,8 @@ struct module;
+> >  #define JUMP_TYPE_FALSE		0UL
+> >  #define JUMP_TYPE_TRUE		1UL
+> >  #define JUMP_TYPE_LINKED	2UL
+> > -#define JUMP_TYPE_MASK		3UL
+> > +#define JUMP_TYPE_FORCEFUL      4UL
+> > +#define JUMP_TYPE_MASK		7UL
 > 
-> >   - Core infrastructure for VFS multigrain timestamping
-> >
-> >     This is required to allow the kernel to use coarse grained time stamps
-> >     by default and switch to fine grained time stamps when inode attributes
-> >     are actively observed via getattr().
-> >
-> >     These changes have been provided to the VFS tree as well, so that the
-> >     VFS specific infrastructure could be built on top.
-> 
-> Bah. Except the vfs tree didn't take it as a shared branch, but
-> instead cherry-picked the commits and as a result they are duplicate
-> and caused a (trivial) merge conflict.
+> Hm, I don't think we can (ab)use this pointer bit on 32-bit arches, as
+> the address could be 4 byte aligned?
 
-Wait, I'm confused. I definitely pulled that branch the day after Thomas
-gave it to me and in my vfs.mgtime branch I clearly see:
-
-commit d7c898a73f875bd205df53074c1d542766171da1
-Merge: 8cf0b93919e1 2a15385742c6
-Author:     Christian Brauner <brauner@kernel.org>
-AuthorDate: Mon Oct 7 12:47:19 2024 +0200
-Commit:     Christian Brauner <brauner@kernel.org>
-CommitDate: Thu Oct 10 10:20:57 2024 +0200
-
-    Merge tag 'timers-core-for-vfs' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip into vfs.mgtime
-
-    Timekeeping interfaces for consumption by the VFS tree.
-
-    Signed-off-by: Christian Brauner <brauner@kernel.org>
-
-Unless I did something odd during the pull?
+Right, you can force the alignment of the thing, workqueues do similar
+hacks to get more bits.
 
