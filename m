@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-415368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA34D9D3516
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:12:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9819D351D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9941128218E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:12:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C5C282E24
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47EA171E49;
-	Wed, 20 Nov 2024 08:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6001714D3;
+	Wed, 20 Nov 2024 08:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H52j9Svc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMhZmW39"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8E11586DB;
-	Wed, 20 Nov 2024 08:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F351607AC;
+	Wed, 20 Nov 2024 08:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732090356; cv=none; b=R+MS66Jbj5Pwgy2bBJjM0t4PIkHMUHVoJ1hgJkojNcWAHoUMfaASZQEgMlgaByJzCOB2UutL0bc5xLvouc1hJIVPWN3UOFmgdjJ2lD2/t0EY9nYfMZ11Dc7oYjXBqT32T7onGxHCZuODQyqrTACXVzRjdRaeULWKqblOfiuyxTk=
+	t=1732090492; cv=none; b=etiIws4xhSA5pZyAlVy34ZdG3aabba0cW/8lx6A7Fu590S3M9RMv6SsZtbeqhRHbARsSYfxMefj9AocXV48j5k+RGVE42Rb0FjmBRCENnPdv0Kxk3t0LkCzpDOsyMRNqr/756dkRks9gKUoWf5ZtH2q8QeORNHoTcjzO1KDGtG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732090356; c=relaxed/simple;
-	bh=ty/S4gauAhtzgOdL7+3lbsv+AiMkOi0u4zHGD4rkM34=;
+	s=arc-20240116; t=1732090492; c=relaxed/simple;
+	bh=Pa5Yk/HnUg5MvoN8XrOEvIq+CxCgif9sO1+RXnFkcJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5TpNIZadTy66+DTN5mNGX0fJhKB3Vo8fMQwsVBLAb4K66pAyBGGxEbErlTJA93/xyTmH037uHisLBDlSui3xhuujyLorDl5aNWZmHDv+Ls3ZpHgLHJhT69QdLmHxDMd7rNrlwwj9UBuMJqRzwNfktTqP/UvRUqw6BMSED2akRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H52j9Svc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1002BC4CED7;
-	Wed, 20 Nov 2024 08:12:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXscmVNXffgY0JUSCLHkXIGFvNXPH3ysxRHN6DjpuKfkfnyx/vNmcvlTimasgdolCuMeb1fn6I+BuCYKg28IzqD6sRQv9DgT2q1VXd7d3DPXyfLuSxmR8hZY7UFUDqgEvKsrXfpCDzHSyNTMC1Agkhg2U4YFdu74CTbI0Wb1O5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMhZmW39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C35C4CED0;
+	Wed, 20 Nov 2024 08:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732090355;
-	bh=ty/S4gauAhtzgOdL7+3lbsv+AiMkOi0u4zHGD4rkM34=;
+	s=k20201202; t=1732090491;
+	bh=Pa5Yk/HnUg5MvoN8XrOEvIq+CxCgif9sO1+RXnFkcJs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H52j9Svc7q9EL5E4/cBNawNgHi4DRKDFmkZHTPZQqsLqbBOiTKmkGsUmWqcrBHdGT
-	 q1ldS+d+RwXWCXznSO96Sy8xESWdVuubgqBAM91MwfkamMFUa4wtJVzBLidliCM4Rk
-	 jAsFtWr/SdOih3Yw0qy+O3gi9sA4fBP8CTfx58nqleTay4bAYYTKtJq0fGomXcfTP8
-	 ieKFXUPiCq6b6pswhdGLPAdjg1xXLqHkPAtFHkFrz/IJ0aw7NESF0haGaoNRM6y6yq
-	 NaND/dbfKyPxV0kHf9ZETMAkJJ6cpo1FPfOHmbtlgwBMLZ2vY4YTq3JwvoP7g3zWpE
-	 rsnmLjLjn8yAQ==
-Date: Wed, 20 Nov 2024 09:12:32 +0100
+	b=BMhZmW39NqRKgsEWAhiU1mubH/U8UbcXZXtVyLN3LXyosLAQNCt9mOXNgQeImwiZs
+	 LgOhnWDMOiGIfjxjaeJ8RTEziWWFvIPsatgRPoL7M9R8tykr67pmS13jKgRUi/XLkC
+	 1ajCYkr++DcReFij4XyBQyAKA2sCH3LmdIM550tOXx2CbtpMOrEMgDSu/Rci5F85p6
+	 mVSy8GXiseCyL/rrNm67eK0xe9RlU6CAfNc5JfXf7fo5+BiXwwKaBzBj7+iY/ryo3Q
+	 58IQaDLU5fUehx21Boa8V+R5jKltJQSS28oF61gD5vTWYoSnuWUdvn5fZ32i5KUF4X
+	 zxE/fVchoJlTQ==
+Date: Wed, 20 Nov 2024 09:14:47 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v3 1/2] dt-bindings: power/supply: Add ltc4162-f/s and
- ltc4015
-Message-ID: <bwn36yetahe7bjwsrcx4lljn6r7ta4d2r6pacq4ccmxbkkurpo@vkgjle4ckl6b>
-References: <20241119032304.23588-1-kimseer.paller@analog.com>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Message-ID: <5kz6ghe56yiprlvhyduv7olcrajvejyvulcpjav6doiyvr6dcl@6qlt4nebp4gb>
+References: <cover.1732020224.git.marcelo.schmitt@analog.com>
+ <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +59,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119032304.23588-1-kimseer.paller@analog.com>
+In-Reply-To: <dd7fd54585e1230d2da86b5e3d4ed770256b0af2.1732020224.git.marcelo.schmitt@analog.com>
 
-On Tue, Nov 19, 2024 at 11:23:03AM +0800, Kim Seer Paller wrote:
-> Add LTC4162-F/S and LTC4015 to the supported devices of LTC4162-L.
-> They share a common set of registers. The only differences lie in the
-> resolution value of the scaling factor for battery voltage and battery
-> current measurement, input voltage, and input current for different
-> battery chemistries. The differences also include the calculation of
-> setting and getting the actual voltage applied to the charge voltage,
-> as well as getting the die temperature.
+On Tue, Nov 19, 2024 at 09:53:40AM -0300, Marcelo Schmitt wrote:
+> Extend the AD4000 series device tree documentation to also describe
+> PulSAR devices.
 > 
-> This add compatible entries for ltc4162-f/s and ltc4015 and include
-> datasheets for new devices.
-> 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
-> V2 -> V3: Described differences in the programming model between variants/devices.
-> V1 -> V2: Modified commit message describing differences between
->           variants/devices.
+> No changes from v2 -> v3.
 > 
->  .../devicetree/bindings/power/supply/ltc4162-l.yaml         | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../bindings/iio/adc/adi,ad4000.yaml          | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> index 29d536541..9b546150d 100644
-> --- a/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/ltc4162-l.yaml
-> @@ -17,12 +17,18 @@ description: |
->    panels, etc., and a rechargeable Lithium-Ion/Polymer battery.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> index e413a9d8d2a2..4dbb3d2876f9 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> @@ -19,6 +19,20 @@ description: |
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
+> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
 >  
->    Specifications about the charger can be found at:
-> +    https://www.analog.com/en/products/ltc4162-l.html
-> +    https://www.analog.com/en/products/ltc4162-f.html
->      https://www.analog.com/en/products/ltc4162-s.html
-> +    https://www.analog.com/en/products/ltc4015.html
+>  $ref: /schemas/spi/spi-peripheral-props.yaml#
 >  
->  properties:
->    compatible:
->      enum:
->        - lltc,ltc4162-l
-> +      - lltc,ltc4162-f
-> +      - lltc,ltc4162-s
-> +      - lltc,ltc4015
+> @@ -63,6 +77,37 @@ properties:
+>  
+>        - const: adi,adaq4003
+>  
+> +      - const: adi,ad7946
+
+All such cases are just one enum. That's the preferred syntax.
+
+
+> +      - items:
+> +          - enum:
+> +              - adi,ad7942
+> +          - const: adi,ad7946
+> +
+> +      - const: adi,ad7983
+> +      - items:
+> +          - enum:
+> +              - adi,ad7980
+> +              - adi,ad7988-5
+> +              - adi,ad7686
+> +              - adi,ad7685
 
 Keep alphabetical order.
 
-I assume these are not compatible.
+> +              - adi,ad7988-1
+> +          - const: adi,ad7983
+> +
+> +      - const: adi,ad7688
+> +      - items:
+> +          - enum:
+> +              - adi,ad7693
+> +              - adi,ad7687
+> +          - const: adi,ad7688
+> +
+> +      - const: adi,ad7984
+> +      - items:
+> +          - enum:
+> +              - adi,ad7982
+> +              - adi,ad7690
+> +              - adi,ad7691
+> +          - const: adi,ad7984
+> +
+>    reg:
+>      maxItems: 1
+>  
+> @@ -133,6 +178,32 @@ required:
+>    - ref-supply
+>  
+>  allOf:
+> +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - adi,ad7685
+
+Why do you need this? It's fallback is already here.
+
+> +              - adi,ad7686
+> +              - adi,ad7687
+> +              - adi,ad7688
+> +              - adi,ad7690
+> +              - adi,ad7691
+> +              - adi,ad7693
+> +              - adi,ad7942
+> +              - adi,ad7946
+> +              - adi,ad7980
+> +              - adi,ad7982
+> +              - adi,ad7983
+> +              - adi,ad7984
+> +              - adi,ad7988-1
+> +              - adi,ad7988-5
 
 Best regards,
 Krzysztof
