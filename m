@@ -1,62 +1,59 @@
-Return-Path: <linux-kernel+bounces-415415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB169D35C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:45:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA129D35C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4089F28352E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:45:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28592836AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E9018A6C2;
-	Wed, 20 Nov 2024 08:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53C818453F;
+	Wed, 20 Nov 2024 08:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyPTUCv1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ENQOLDc9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E20A187844;
-	Wed, 20 Nov 2024 08:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2547E15B0EE;
+	Wed, 20 Nov 2024 08:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092309; cv=none; b=JOm6s4DLU/FoQ2yjnTDEPyU2Nh3occWN8L++OUnVaBbG3nSbho36HI6YhxvJRSoQtIrzyjTBHTpAhg3Ozzsz4joclgVWzKbvFM4/bzfxft/0D7b9p9dB4C3wsG8+Myu5kq7F8o0d9vK0U95pimn7pWoxRqrGneeLxdRftad48OE=
+	t=1732092339; cv=none; b=evAUTE/YQlNbo94pZzGal0/eIGzmfLqE8my9vt7yKIEWIiP1YmdPVS6iyV+MS6ue8xiUuI8TZpu+jt+blBGJsy0DBTZpIhYB1gHZtYcPvWcG4qeroGwD0iM0CWo4CW6K3S4zCG7Wb0todYrgL1Frhc8KnMOe9aozOy35coRBv3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092309; c=relaxed/simple;
-	bh=ER8VTQjXlCy4Gtz19zbr9xUxz4zX8GUYwLtW74f+WX8=;
+	s=arc-20240116; t=1732092339; c=relaxed/simple;
+	bh=o708dW0zpekdr4qHK55sfqdl8wG5Nu/+g3DIktqbevs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLU9f8vRWB1idmzrXBXuJ799k85pItLzFpTBJdFVWAJFoTZnUHeVYWUyaBMpcUK47GXQ88bZ+RptNgHLyuxyZ3UCkikzSOQwE5hFwLPOar5Vf2rjh7Mmk5ae3Hu/6CoouaKn7q+F3+t8DeWJMlJyW+r3rBjyQVH32HMNz8YBMvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyPTUCv1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747CEC4CECD;
-	Wed, 20 Nov 2024 08:45:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rSxjybGMj0FcMWCc3b88x57cl/ISDUwldXstcZ5T8+ijjZKQTtrnhptB4pF6A3AIryeyDq1opMj0RrgfNER37IEK/Pla3itniYM8A/eJLyqWKQw/SNBiOqPRq7H1tSwOpq+RBgfcVCH8bNWEBPBDUwuOJ1AQYGltPUIiKUK1SoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ENQOLDc9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B2CC4CECD;
+	Wed, 20 Nov 2024 08:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732092309;
-	bh=ER8VTQjXlCy4Gtz19zbr9xUxz4zX8GUYwLtW74f+WX8=;
+	s=k20201202; t=1732092338;
+	bh=o708dW0zpekdr4qHK55sfqdl8wG5Nu/+g3DIktqbevs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NyPTUCv1MRqBxEaO6k8YrsKQ+xO11VNYo157Fi4abm42iDt2wnakdkXhleOacMJ/G
-	 Zg2Z93GUUt37lrKVfJ8EldZ8mbZIni2q//EQpv3TiQ2BUd/a1YoFMxGRzJpLgE3+QX
-	 rsVeGttAjMnZrR+fjfqpjc6A+8XZ/h7cUeQXON2gzSQU9rnljltoERAASsRC50i110
-	 vUiRxm/oKZK1O+kYf+3m5PqI1k5cZ+fdYpitk8Jtb3WAiLVJkrYNXOzBnq6eBg2hOf
-	 1/IQ/v7brumbNUdQ4naF6VS/tpNdUKW1hHLYjZ+U+Z9WwcOlNcHtBxY/OGKCDQQZkW
-	 3CrLXDBzqhQUA==
-Date: Wed, 20 Nov 2024 09:45:05 +0100
+	b=ENQOLDc9QlSnqdhpi5D3zXCMMfPjp+W242ba0E8V20RP4FD0uAEbL1XjgeTcXw5rR
+	 ZMp+mkKdTDwaJb+uuhLbkI46ajEPAR0PxWOa1Y9DBLiZwYLDxmgm3aVHjRuUJgJ6cZ
+	 HH0Y146jPZ/3JXkBZq00o7riCQaKfAlKMv/kealJDq7YwCkng/jvMRZwe00H5ALxcy
+	 q4XVXfT7XYRXqF7hWjeRbsKFRWXxNAxv1eQduNpqx7Qv2G0DjLSEMSEDUoXKvGrKNo
+	 ob7Yi6O+uC6vp4o+QggxaLzv+gAUjuy8A39xd2Ji1AdUisDBgDv/9cnXcugH6FL4bH
+	 bw3j4mq4W04WA==
+Date: Wed, 20 Nov 2024 09:45:35 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, NXP Linux Team <s32@nxp.com>, 
-	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>
-Subject: Re: [PATCH 1/3] dt-bindings: can: fsl,flexcan: add S32G2/S32G3 SoC
- support
-Message-ID: <o4uiphg4lcmdmvibiheyvqa4zmp3kijn7u3qo5c5mofemqaii7@fdn3h2hspks7>
-References: <20241119081053.4175940-1-ciprianmarian.costea@oss.nxp.com>
- <20241119081053.4175940-2-ciprianmarian.costea@oss.nxp.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	kernel@pengutronix.de, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Leonard =?utf-8?B?R8O2aHJz?= <l.goehrs@pengutronix.de>
+Subject: Re: [PATCH 4/6] dt-bindings: arm: stm32: add compatible strings for
+ Linux Automation LXA TAC gen 3
+Message-ID: <4t2tmuntv24lffk3ikgbsz7tbvkqosmd2xwurnzvk346daah22@wegcc3wreqpr>
+References: <20241119-lxa-tac-gen3-v1-0-e0ab0a369372@pengutronix.de>
+ <20241119-lxa-tac-gen3-v1-4-e0ab0a369372@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,34 +62,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119081053.4175940-2-ciprianmarian.costea@oss.nxp.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241119-lxa-tac-gen3-v1-4-e0ab0a369372@pengutronix.de>
 
-On Tue, Nov 19, 2024 at 10:10:51AM +0200, Ciprian Costea wrote:
->    reg:
->      maxItems: 1
-> @@ -136,6 +138,23 @@ required:
->    - reg
->    - interrupts
->  
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nxp,s32g2-flexcan
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 4
-> +          maxItems: 4
+On Tue, Nov 19, 2024 at 12:35:01PM +0100, Marc Kleine-Budde wrote:
+> From: Leonard G=C3=B6hrs <l.goehrs@pengutronix.de>
+>=20
+> The Linux Automation LXA TAC generation 3 is built around an
+> OSD32MP153x SiP with CPU, RAM, PMIC, Oscillator and EEPROM.
+>=20
+> LXA TACs are a development tool for embedded devices with a focus on
+> embedded Linux devices.
+>=20
+> Add compatible for the generation 3 based on the STM32MP153c.
+>=20
+> Signed-off-by: Leonard G=C3=B6hrs <l.goehrs@pengutronix.de>
+> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/arm/stm32/stm32.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
-Top level says max is 1. You need to keep there widest constraints.
-
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 1
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
