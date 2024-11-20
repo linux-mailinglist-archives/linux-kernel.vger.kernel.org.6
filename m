@@ -1,176 +1,115 @@
-Return-Path: <linux-kernel+bounces-416048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6709D3F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:58:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114399D40B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:00:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E27428210D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63EAB37227
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD571BBBCF;
-	Wed, 20 Nov 2024 15:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8891BC061;
+	Wed, 20 Nov 2024 15:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxEb/bkq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4kQaOvR"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A171B5827;
-	Wed, 20 Nov 2024 15:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B54482EF;
+	Wed, 20 Nov 2024 15:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118165; cv=none; b=br+Ub0MBJOYis5BYUj3JMR8v758ARaun0A9XL/LFn/44h10+YWy++PZErs/N86TWj0nlXgrCiCJjIivca41DrOS4dXjHv1h8Zl2e/0kZZq3jnLyA0GF7XYw7kts2nwds1QFAia76eaD0HR4cidQRkI05WJXH0w1qf3y5yvoZV6M=
+	t=1732118179; cv=none; b=jd7B7Gy+zElvb0X5MB5LrnGnzik8AooTMm6pCOt9OGh1of97fBCqfgxJ7nRdwAywsPVpVFISLpEekiKXRY0qtDrtD2rGHR3AGw/lFrhCOHyoHsNYyc67M+/l2OytO3pdCvllHy8aoj39WbZSDToZfgGIdaNQUj361g//kV3rz5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118165; c=relaxed/simple;
-	bh=dTJy5yTaJCywCkIvTApsDa6gTTCYEhUQN23orW3/WDo=;
+	s=arc-20240116; t=1732118179; c=relaxed/simple;
+	bh=odxh1O8sYaBXlTCV5VWBnFUkceLn1wmJQ32B3envRV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r3QhitN41pgAi6HhIp8XWcEXst8XBehEBRgUNI1NetSIMoJoKET52N0CWdav4SbYYRApXKsqhCD5FLEu4E3G+njR1w44NYdA1rCwZUb5N00rFExNZDohmTtZQyZ21wiV8BeEUkY4di/OC7sbAsQIOSjxfGCNAx7fGtp3swEqmos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxEb/bkq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01076C4CECD;
-	Wed, 20 Nov 2024 15:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118165;
-	bh=dTJy5yTaJCywCkIvTApsDa6gTTCYEhUQN23orW3/WDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BxEb/bkqBfGFJoP3WnWDQ1Ve0VkLDvG7ASQST/odICAMqQwl2qv0/prT5iHfa55aK
-	 WoSLIalsGlyZ6vMZTrZoL7TrylF/EQXmMGf8fyVmmdGITDXnWNVWq8XKfMHpXOnoVR
-	 aKF/GuWgFysXsawoOaDy/E9YT3tRca4M+sCSUl4uCPYhR6/ONkvUfmdP42ZLs8Hrgk
-	 j5n60HlhjHWJ4P8W4AxEyKyRuem2gyj4iukVtQerx0KV1Bb7VtOxFbWRbxrA8kLIuv
-	 mjEXhJItT2tL4Mn1uLSmumS23QQcGgj2GAREMVLZqkZVB8OW1wO04DQsjrquFODggA
-	 sjcLESVkroPVA==
-Date: Wed, 20 Nov 2024 08:56:03 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	Raphael Isemann <teemperor@gmail.com>,
-	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
-	Herbert Bos <h.j.bos@vu.nl>, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [RFC v2 0/2] dmapool: Mitigate device-controllable mem.
- corruption
-Message-ID: <Zz4GkyBC--Sb9ta4@kbusch-mbp>
-References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
- <Zz2r73CFtfuRmjup@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7Yvq1Df9U6tvzQs5VZFfm2R4JyNBORLXVBxRKQtPxWUbF4646y0R8O+lvSfvP2RZghPwsT5oEFKXXH0wjpnUml5qSO2diHZhUorXpguEvtFD6DFB02xudbVDe9BWNDxp5Ej7Fkxfn4BTJVws4/AvmtP5T7CgMRw+XVAeltPr2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4kQaOvR; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so3765684a12.1;
+        Wed, 20 Nov 2024 07:56:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732118178; x=1732722978; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=u1nf5X6vhX4nOgwl5tzo7301CPOl7HpWw/+s1b3KJ7s=;
+        b=P4kQaOvRdxkIW46A8qSAxUqz3zjEbPxbSI2VAoP0t0Ksyx6NNSqiBFPCSOmnKgM1Pk
+         +NZzi7PvUVPv/79/CdnJ9N8zCp4/lZRKkBm4yZU5i755Wk+AcJlYGLMR1PZLwcXWskue
+         d32ts0kZTf0hY4RqZaiK/3uLqhdU+u2Dk6SEfYmSosyiO0V1FbaF0V3b8hC4YuHHAIrB
+         2XOqX3BEm0E1Ni9A4IpciL3SbRsXCyP8Qy8M4hYjzGt2LE7UpVqk9Uldr4KVFytVh3X8
+         Q534OfXkag8dO2aiUbnDfARZnrn1cDKxI17XIRpBCSjo74HpXjzDooJadWrL/8Lu6Wp1
+         lWDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732118178; x=1732722978;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1nf5X6vhX4nOgwl5tzo7301CPOl7HpWw/+s1b3KJ7s=;
+        b=w6e+7CJgJ79HRXswYNzVU5oLhhrNn6aqG9/Qq+1rFNeDI5kJcVcxr2InuzjmkA/V4f
+         RTU2VfcEik1p0MFUFTIhwR1+1NrBfIjzF240jc3+0yXtHTF5S3TpVg/Srmdjv+mcL3sk
+         mpnwGURtPESZRNwpyRMbSQU1l7am6QvYb/FXa4pBeVVmlsgQuYjSEbaJEv46dFmgHANe
+         S1SFMxUe75ECPMQqGrcbQIJqWVQz7s6eCiaw99UEe+5gTDPC7AkVBsIvH15y2qAUtt8n
+         x3RijWMzA2Yt7BPw7OFVmeNbuFXomt0hP8R5PaE0wt7vF1SOQgGBI2g+/M6Kd1tt9dSD
+         6rNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEOAzXCymUOlegcEgupzcW0NOf2yzM7vI92lvFWJkWAhUJM83V9+FqH7ONGGZGQl2y6yBAx9jWspOtvW20@vger.kernel.org, AJvYcCVRZyKGq7ECcRt3PTsrUrRQYf7a71H06Zi5Hgzuo+sdXAMwH09heoKclFq2LxYFtCtGYIuRLTae@vger.kernel.org, AJvYcCWNJvy/L9F9e5cMUqa9N9eEtP6wSojQLQS+zql1LrOdgm1RL9K/ikwum63j/4DgqYqf22tYAkTnwuZEh9LSpY6e@vger.kernel.org, AJvYcCXrccE08q38U2wb6x317XORiOjJiPn0oxek8GRrP27gMq80BPkL0lPraQmG9ed8WU708CA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyt1X5yOHvCi780PEoIvLKHKK9oHo2AAtrI+wMzFTGGPpWw7xq
+	QYPg1W6iamZ10srX6TWm1cqxXZE4HxL7j+YcUptVMH2Yy481iJY=
+X-Google-Smtp-Source: AGHT+IEP72FX2YezO8seIUdQnfo78xPLL3gwt1XYDtelmvHl2jy/UQwa26DQEhEViKwapnTmel83Lg==
+X-Received: by 2002:a05:6a20:2d0b:b0:1dc:3024:5edb with SMTP id adf61e73a8af0-1ddb10e3497mr4221378637.45.1732118177892;
+        Wed, 20 Nov 2024 07:56:17 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befea7adsm1851567b3a.189.2024.11.20.07.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 07:56:17 -0800 (PST)
+Date: Wed, 20 Nov 2024 07:56:16 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Alexis =?utf-8?Q?Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH bpf-next v3 12/14] selftests/bpf: add network helpers to
+ generate udp checksums
+Message-ID: <Zz4GoCSLbfW-SauP@mini-arch>
+References: <20241120-flow_dissector-v3-0-45b46494f937@bootlin.com>
+ <20241120-flow_dissector-v3-12-45b46494f937@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zz2r73CFtfuRmjup@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241120-flow_dissector-v3-12-45b46494f937@bootlin.com>
 
-On Wed, Nov 20, 2024 at 01:29:19AM -0800, Christoph Hellwig wrote:
-> On Tue, Nov 19, 2024 at 09:55:27PM +0100, Brian Johannesmeyer wrote:
-> > We discovered a security-related issue in the DMA pool allocator.
-> > 
-> > V1 of our RFC was submitted to the Linux kernel security team. They
-> > recommended submitting it to the relevant subsystem maintainers and the
-> > hardening mailing list instead, as they did not consider this an explicit
-> > security issue. Their rationale was that Linux implicitly assumes hardware
-> > can be trusted.
+On 11/20, Alexis Lothoré (eBPF Foundation) wrote:
+> network_helpers.c provides some helpers to generate ip checksums or ip
+> pseudo-header checksums, but not for upper layers (eg: udp checksums)
 > 
-> You should probably Cc Keith as the person who most recently did major
-> work on the dmpool code and might still remember how it works.
+> Add helpers for udp checksum to allow manually building udp packets.
+> 
+> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 
-Thanks.
-
-The intrusive list was overlayed in the freed blocks for spatial
-optimizations. If you're moving these field outside of it (I'll have to
-review the patch on lore), you can probably relax the minimum dma block
-size too since we don't need to hold the data structure information in
-it.
- 
-> > **Threat Model**: While Linux drivers typically trust their hardware, there
-> > may be specific drivers that do not operate under this assumption. Hence,
-> > this threat model assumes a malicious peripheral device capable of
-> > corrupting DMA data to exploit the kernel. In this scenario, the device
-> > manipulates kernel-initialized data (similar to the attack described in the
-> > Thunderclap paper [0]) to achieve arbitrary kernel memory corruption. 
-> > 
-> > **DMA pool background**. A DMA pool aims to reduce the overhead of DMA
-> > allocations by creating a large DMA buffer --- the "pool" --- from which
-> > smaller buffers are allocated as needed. Fundamentally, a DMA pool
-> > functions like a heap: it is a structure composed of linked memory
-> > "blocks", which, in this context, are DMA buffers. When a driver employs a
-> > DMA pool, it grants the device access not only to these blocks but also to
-> > the pointers linking them.
-> > 
-> > **Vulnerability**. Similar to traditional heap corruption vulnerabilities
-> > --- where a malicious program corrupts heap metadata to e.g., hijack
-> > control flow --- a malicious device may corrupt DMA pool metadata. This
-> > corruption can trivially lead to arbitrary kernel memory corruption from
-> > any driver that uses it. Indeed, because the DMA pool API is extensively
-> > used, this vulnerability is not confined to a single instance. In fact,
-> > every usage of the DMA pool API is potentially vulnerable. An exploit
-> > proceeds with the following steps:
-> > 
-> > 1. The DMA `pool` initializes its list of blocks, then points to the first
-> > block.
-> > 2. The malicious device overwrites the first 8 bytes of the first block ---
-> > which contain its `next_block` pointer --- to an arbitrary kernel address,
-> > `kernel_addr`.
-> > 3. The driver makes its first call to `dma_pool_alloc()`, after which, the
-> > pool should point to the second block. However, it instead points to
-> > `kernel_addr`.
-> > 4. The driver again calls `dma_pool_alloc()`, which incorrectly returns
-> > `kernel_addr`. Therefore, anytime the driver writes to this "block", it may
-> > corrupt sensitive kernel data.
-> > 
-> > I have a PDF document that illustrates how these steps work. Please let me
-> > know if you would like me to share it with you.
-> > 
-> > **Proposed mitigation**. To mitigate the corruption of DMA pool metadata
-> > (i.e., the pointers linking the blocks), the metadata should be moved into
-> > non-DMA memory, ensuring it cannot be altered by a device. I have included
-> > a patch series that implements this change. Since I am not deeply familiar
-> > with the DMA pool internals, I would appreciate any feedback on the
-> > patches. I have tested the patches with the `DMAPOOL_TEST` test and my own
-> > basic unit tests that ensure the DMA pool allocator is not vulnerable.
-> > 
-> > **Performance**. I evaluated the patch set's performance by running the
-> > `DMAPOOL_TEST` test with `DMAPOOL_DEBUG` enabled and with/without the
-> > patches applied. Here is its output *without* the patches applied:
-> > ```
-> > dmapool test: size:16   align:16   blocks:8192 time:3194110
-> > dmapool test: size:64   align:64   blocks:8192 time:4730440
-> > dmapool test: size:256  align:256  blocks:8192 time:5489630
-> > dmapool test: size:1024 align:1024 blocks:2048 time:517150
-> > dmapool test: size:4096 align:4096 blocks:1024 time:399616
-> > dmapool test: size:68   align:32   blocks:8192 time:6156527
-> > ```
-> > 
-> > And here is its output *with* the patches applied:
-> > ```
-> > dmapool test: size:16   align:16   blocks:8192 time:3541031
-> > dmapool test: size:64   align:64   blocks:8192 time:4227262
-> > dmapool test: size:256  align:256  blocks:8192 time:4890273
-> > dmapool test: size:1024 align:1024 blocks:2048 time:515775
-> > dmapool test: size:4096 align:4096 blocks:1024 time:523096
-> > dmapool test: size:68   align:32   blocks:8192 time:3450830
-> > ```
-> > 
-> > Based on my interpretation of the output, the patch set does not appear to
-> > negatively impact performance. In fact, it shows slight performance
-> > improvements in some tests (i.e., for sizes 64, 256, 1024, and 68).
-> > 
-> > I speculate that these performance gains may be due to improved spatial
-> > locality of the `next_block` pointers. With the patches applied, the
-> > `next_block` pointers are consistently spaced 24 bytes apart, matching the
-> > new size of `struct dma_block`. Previously, the spacing between
-> > `next_block` pointers depended on the block size, so for 1024-byte blocks,
-> > the pointers were spaced 1024 bytes apart. However, I am still unsure why
-> > the performance improvement for 68-byte blocks is so significant.
-> > 
-> > [0] Link: https://www.csl.sri.com/~neumann/ndss-iommu.pdf
-> > 
-> > Brian Johannesmeyer (2):
-> >   dmapool: Move pool metadata into non-DMA memory
-> >   dmapool: Use pool_find_block() in pool_block_err()
-> > 
-> >  mm/dmapool.c | 96 ++++++++++++++++++++++++++++++++++------------------
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 
