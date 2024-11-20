@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-415902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C2C9D3DD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:44:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7729D3DD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E2C284832
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD45FB2524C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3981AD9EE;
-	Wed, 20 Nov 2024 14:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2171AB515;
+	Wed, 20 Nov 2024 14:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fIfp9bWk"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PMbEnRBE"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6890916D9B8;
-	Wed, 20 Nov 2024 14:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846A91684B0
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113884; cv=none; b=BMQAAmwauwLIrOrtZvFlCKv/tYaRD4VySEu0iyM8n2epcKCfj4+DKU6QKCCv3bpadj+Mu/6Q74EmP81yuVJ6kscEz0PfmXXzveK/339bCH7QG2PmiT6ElgvNYcGq6eD81CnsuUUajEntr/Md7tH3Hm6xRzJLyNVRnRTwNCiOy1U=
+	t=1732113927; cv=none; b=CKqoR7VOlkyenewNx6f4zj0DkOVwBERjSY6amXDfQCF779T5EnTM3vzM5uyOSb0fGC+UkZaTrTn/o62XqWfqLgqfy0MuQh3422HrfixwZi95Vjbo7Nm1W87ScXeySKPhItkpPNMhAuB8gg5rk2kPk9RvcPF0BIsKN3A8EKbsX/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113884; c=relaxed/simple;
-	bh=5CCbvKv+VIzsR7QI6BcLoEt1IdbnLtAcVPyElZFExMU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTuZ3lm1j1HmasQ8t5O8mN1Jeo4IIKzQNui2bnSDwLkrsVso4R/RJwQdzSfER8pvcGktu2UMPVu7Bc17mUIU1X4CcUA+zlzL9b786zMlPSwLFPhKMkCgHDzTJOEsTBuMpWeI4W8dlkDer5ED0UisMO2amgePwR3ZPwCRdkRMg9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fIfp9bWk; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AKEiSh54137450
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 08:44:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732113868;
-	bh=SmGRAQNzr9IbhEOimZwTw8lIUi3ybRW4Cu3nzQgFFX8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=fIfp9bWkeIRSAsrfQv74AZsEIHLWPZfK+OJ2om1FYn5//e7jYRu/zl5D/Q/G96TWF
-	 uRnpksVkY2gLoy4hijKqUw6oRCsPvpenq8mr5Wedb6UXlWQH4FJpVEei/tcM3yJzgL
-	 AANTEPNi/JNok7RkBsb8QtvRHlHDDlNutSvx/DkA=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AKEiSfU092708
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 20 Nov 2024 08:44:28 -0600
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 20
- Nov 2024 08:44:28 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 20 Nov 2024 08:44:28 -0600
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AKEiSBc009121;
-	Wed, 20 Nov 2024 08:44:28 -0600
-Date: Wed, 20 Nov 2024 08:44:28 -0600
-From: Bryan Brattlof <bb@ti.com>
-To: Andrew Davis <afd@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am62l: add initial infrastructure
-Message-ID: <20241120144428.xp5lscjl652qexd2@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20241117-am62lx-v1-0-4e71e42d781d@ti.com>
- <20241117-am62lx-v1-1-4e71e42d781d@ti.com>
- <19223ad9-1f92-4688-9efd-b6aadb250d9d@ti.com>
+	s=arc-20240116; t=1732113927; c=relaxed/simple;
+	bh=itt3ykCXSp04bD1HY7ifpkmmieDGS5TkTnifzBexpCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcUv6CrVywiNP1IFW0/XQBC4MHmDTaRiJQ7/j0xcdD+R1AOeCbw3M6FpXzvq045hwH/Sub6nlaFoyc9XbvMR77JGn9bMO6aX0j6aExbse5vLtLqi2aEh+Suux8UObvxHGrw4dZQ5eKLCOHeo26KtLuOncB76cKR2XZEf0MEwIp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PMbEnRBE; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43163667f0eso39573475e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1732113923; x=1732718723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tsw+2ZqyGm2ytU+C3+p8h/86m2O0idGE19yYQgijiHw=;
+        b=PMbEnRBEuSRps+ueKYQ35n/89KwOR+T2ZH+SGMX7yYgHDs9uAoRqtj79fqmGWKSuwR
+         jCt6EAHsM3Cv87zys7pmO3N2qJmVOYDgZIgaUP2UMwDn7Eg3fprl2W1alNtxSRKf+hX1
+         Si2tvmgBEwf5kW3HFc84horwYAJjhmaeKFhhKR26lCu6kCWpRN+U3ocN8HIv7ja956gr
+         BT7dNpkZlyVcscHz6OMKXpyyUO8DG8tKuqInG62TibHqsId+xOwtp68ZVTjHVdsWov5Z
+         VKKOTQhp/ASuOn9wO50QYVhjE0qWyGiCvcO8q6rS/rEJCpZYPxMRlQH29zKJgxKTUCnM
+         kDjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732113923; x=1732718723;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tsw+2ZqyGm2ytU+C3+p8h/86m2O0idGE19yYQgijiHw=;
+        b=RF16+B2nKGhNvxS0ifONQOErX32bIhB+AtBrEcmf7sn4eLl9c5guaYVRsUtZGiqmli
+         WV5HpFhBxFhEK/QRBH3aAbUwyNnanfeqJys+yidlEcoqrbbnlkcfCIw1POG5JO5Soo5a
+         uwwQGk3Ld/epcnzfjzSG3KchpdaAL54dzsMn90uTNqN3ModIMRy7FE9AeGzw87sToQ/O
+         FfDfwOemHzUgg4qYxIRTeg/LDN5bdTyhpS0Nn9eHuSv4LEAUk0XgFhNjoRwmRMGBJ/lT
+         Lqtv/SCUG8++qri4fz87saMbHJtqS4gblVJBdmblUp0PkboqmjJ//j+ciYfapt6DPuZk
+         llOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVIcb6x8/i/5p2WWcfMc303Hpjd5ATQ4mxMvjsfROa/huHBmDyHlUa5h1VTuymxhCAtXRt/hrqZyCsGSs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmNrZKncC4gpj8+ewXTL2Icsbl9MJUoplpz/SlhmLMKyrogOQ7
+	vFrkfyPlROR/AQ93xP9B2Lnk3KV0p7qQsBolk5KmZZMC/f4jPtzG53ru1ENOo+4=
+X-Google-Smtp-Source: AGHT+IHTsDtr37+GY/NVaATYfurLPl1dtLFxV/QhHOBHWevYVWU8krDxBDAu1Wi7DXHM0P/ojs1bkw==
+X-Received: by 2002:a05:600c:3b0c:b0:432:d875:c298 with SMTP id 5b1f17b1804b1-433489b820emr28159835e9.14.1732113922827;
+        Wed, 20 Nov 2024 06:45:22 -0800 (PST)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45bdba0sm21420895e9.14.2024.11.20.06.45.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 06:45:22 -0800 (PST)
+Date: Wed, 20 Nov 2024 15:45:20 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: [PATCH v6 06/11] printk: console: Introduce sysfs interface for
+ per-console loglevels
+Message-ID: <Zz32AF4l3MZiQAzM@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
+ <2024111508-native-subtype-2990@gregkh>
+ <Zz1tOxW6PO_2OeSA@chrisdown.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <19223ad9-1f92-4688-9efd-b6aadb250d9d@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <Zz1tOxW6PO_2OeSA@chrisdown.name>
 
-On November 18, 2024 thus sayeth Andrew Davis:
-> On 11/17/24 11:34 PM, Bryan Brattlof wrote:
-> > From: Vignesh Raghavendra <vigneshr@ti.com>
+On Wed 2024-11-20 05:01:47, Chris Down wrote:
+> Thanks for looking this over :-) All not mentioned points in this reply are
+> acked.
+> 
+> Greg Kroah-Hartman writes:
+> > > diff --git a/Documentation/ABI/testing/sysfs-class-console b/Documentation/ABI/testing/sysfs-class-console
+> > > new file mode 100644
+> > > index 000000000000..40b90b190af3
+> > > --- /dev/null
+> > > +++ b/Documentation/ABI/testing/sysfs-class-console
+> > > @@ -0,0 +1,47 @@
+> > > +What:		/sys/class/console/
+> > > +Date:		October 2024
 > > 
-> > Add the initial infrastructure needed for the AM62L. All of which can be
-> > found in the Technical Reference Manual (TRM) located here:
+> > It's no longer October 2024 :(
+
+I am not sure what people do. But I suggest to use whatever is the
+actual month. I could update it when pushing the patch.
+
+
+> What would you recommend? When I sent them it was, and it doesn't seem
+> realistic to think that it's going to be less than one month from me sending
+> the patches to when it gets merged, no?
+> 
+> > > +What:		/sys/class/console/<C>/loglevel
+> > > +Date:		October 2024
+> > > +Contact:	Chris Down <chris@chrisdown.name>
+> > > +Description:	Read write. The current per-console loglevel, which will take
+> > > +		effect if not overridden by other non-sysfs controls (see
+> > > +		Documentation/admin-guide/per-console-loglevel.rst). Bounds are
+> > > +		0 (LOGLEVEL_EMERG) to 8 (LOGLEVEL_DEBUG + 1) inclusive. Also
+> > > +		takes the special value "-1" to indicate that no per-console
+> > > +		loglevel is set, and we should defer to the global controls.
 > > 
-> >      https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+> > -1 is odd, why?  That's going to confuse everyone :(
 > 
-> We usually use the non-direct links, that way they can be updated
-> to the latest, so here and everywhere below:
-> 
-> https://www.ti.com/lit/pdf/sprujb4
-> 
-> Also might be good to get the TRM folks to now drop the
-> "Confidential NDA" watermarks..
-> 
+> I originally had it that you had to send "unset" instead of -1, but in
+> discussion with Petr it was suggested to change it to -1.
+>
+> Petr, what do you think?
 
-That's a good point. I'll use the non-direct link
+I personally prefer -1. It is a number attribute. And I think that -1
+is self explanatory enough.
 
-..
-
-> > +		 cbass_wakeup:  bus@43000000 {
-> 
-> Some odd whitespace indent here and below in this node.
-> 
-
-Nice! I'll fix this up in the next revision
-
-~Bryan
+Best Regards,
+Petr
 
