@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-415406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73849D35A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:39:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF289D35A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:39:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95A53282F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E9128317D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A468017625C;
-	Wed, 20 Nov 2024 08:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC6A17DFFA;
+	Wed, 20 Nov 2024 08:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O8IJJmf9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXV7Z/pm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599171422C7;
-	Wed, 20 Nov 2024 08:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D916DEB5;
+	Wed, 20 Nov 2024 08:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732091944; cv=none; b=Cq2+Ihsabb/W+3Y3zj1Mv517wvEg+gcQOqxPBF7fLD31eYco/drwOqr+QeFOLC4FisbdhuONDReTt1RvOeNoVdJ3LSlQMuirALi6qrLwMC224rt3vxK69FfJg6mhte+FjHQHKE0D6+801CKoyiWTGgAru5l9dR5bsTs7sIux9Fo=
+	t=1732091978; cv=none; b=Eyp48xyKphVF4hfFJjoHchSef9UBRUApLZ33AuvjQbwpIQ16Q48rPz8ubwOSkRM6rMTnvfYVFIn+4/FbSDLB7t3cmhdsLiXPDvjpo+7stB3ZwkgeBxbYLcQPAzEC70gpjwUpZ8b5oojEoxmdxV3zKvZOUHp1VBedpSfonLkS2xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732091944; c=relaxed/simple;
-	bh=Ju3HdLFruvE1TxsgSL4HDmmuhZmrCfLaoDXxyMk3h08=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dbRpq4AribE2GiahtWP2KJXYIPPEMdf2BINcBqKgeDY6lEtISVnUmCK/j4lT0gn1/2wtO+HzZsPo7t+EJp3RQLzqZiuvh3ssMkwPg+BpqNsI4O0sCJKlsj0zNaadR/HL1Xv2wUreInyrsD6Av02brOto5kQR84vtZhs11Q5zRZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O8IJJmf9; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732091943; x=1763627943;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Ju3HdLFruvE1TxsgSL4HDmmuhZmrCfLaoDXxyMk3h08=;
-  b=O8IJJmf9P5yGaVCZBJcX4UPRqP5EeteTcADMWHXBKhy10TnzfnU4cSpy
-   k8lDOG/ofjga32vZ/m+W9eUxu89Q8N1MSQ3D1eQs7IBaDsN8YpfSnMwj6
-   OPDAaBEw2nBRNWFfqV5AJMNlqQ/u9u9WoBfochM+Odp7p+wM1bkbsoTbP
-   Qni6Ik4pEV7JuvTg4FdSuNpQwt153zmXIEHEPNL8QTrUgbgEM9yAAjo8A
-   kBqRJtC9nrMZ5M6NsdxH4+vr4lcDog0vrNS3nDIvUuhwFOOvlCXInzQsd
-   Ehxa+d84edoz7Q/d62mAQ/gfR6DFtYEprv6AJLcCyzi12obe4nFS8UU5K
-   w==;
-X-CSE-ConnectionGUID: 4fO6yhLWSPOSdz4waAYC7g==
-X-CSE-MsgGUID: OZWTAB5BSkCSkwX6C10JaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="43205711"
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="43205711"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 00:39:01 -0800
-X-CSE-ConnectionGUID: cauhdcDOSv62S1GL+vEbmw==
-X-CSE-MsgGUID: vruHfDFvR26AJFa6jwC9wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="89994218"
-Received: from unknown (HELO YongLiang-Ubuntu20-iLBPG12.png.intel.com) ([10.88.229.33])
-  by fmviesa008.fm.intel.com with ESMTP; 20 Nov 2024 00:38:58 -0800
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH net 1/1] net: stmmac: set initial EEE policy configuration
-Date: Wed, 20 Nov 2024 16:38:18 +0800
-Message-Id: <20241120083818.1079456-1-yong.liang.choong@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732091978; c=relaxed/simple;
+	bh=uCabY3aXdU8knrzyUvKDoBC/ts+x8ZTTZaaPEX0zYC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IUyiA3qGWTHdM2E9I6JQLwChaa5pZk2D3K7RduXEzAbdzPwV/Gpi9jKi4iyI5sFnf8XYjKSdUkTo+OsUeNdNut9HzD758SZHz/hcbQUG7N6Bl1OYA0rn93CRoBOvN/+5WLaIWAsdm3LvzUas0XZI817LbizpfyJkKCEuZrVRCEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXV7Z/pm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11A8EC4CECD;
+	Wed, 20 Nov 2024 08:39:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732091978;
+	bh=uCabY3aXdU8knrzyUvKDoBC/ts+x8ZTTZaaPEX0zYC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dXV7Z/pm3H/r3AO4Tq9FfR6TpXz+12dGVNcVBe4YnWLALAydN5KQPUMUuyqP+lzGc
+	 6pS5yeOLEaQCj9p+3eAP2Up0tsIR/2X3YGP8WwavkFt/ebx2YOXWau1ZoMNTzhIL0J
+	 CSS/EhklqMdNOKXRwDg1CR+A8/3cumO0ZcW5fBY/G24NJgjXhbmXVSnrCvD/LQIf6f
+	 pDcGUqoBhfz9LqAWWJnalmmhYtPVxk/ZNYl7W1+c3Cmop1xfglJ4rRo9Wv+fNQYlV6
+	 uki1XOe5gh/lex7JBneDXof+3DxhhFljG2uhkIMBoMeaw88+NpD7XSILNWFkP9TYsK
+	 1xlZ63Jhz8Izg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tDgFD-000000007wu-3WTl;
+	Wed, 20 Nov 2024 09:39:27 +0100
+Date: Wed, 20 Nov 2024 09:39:27 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Jeykumar Sankaran <jsanka@codeaurora.org>, stable@vger.kernel.org,
+	Leonard Lausen <leonard@lausen.nl>
+Subject: Re: [PATCH v2 1/2] drm/msm/dpu1: don't choke on disabling the
+ writeback connector
+Message-ID: <Zz2gP5jDr4Jq1OyP@hovoldconsulting.com>
+References: <20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org>
+ <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240802-dpu-fix-wb-v2-1-7eac9eb8e895@linaro.org>
 
-Set the initial eee_cfg values to have 'ethtool --show-eee ' display
-the initial EEE configuration.
+On Fri, Aug 02, 2024 at 10:47:33PM +0300, Dmitry Baryshkov wrote:
+> During suspend/resume process all connectors are explicitly disabled and
+> then reenabled. However resume fails because of the connector_status check:
+> 
+> [ 1185.831970] [dpu error]connector not connected 3
 
-Fixes: 49168d1980e2 ("net: phy: Add phy_support_eee() indicating MAC support EEE")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+Please also include the follow-on resume error. I'm seeing:
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 7bf275f127c9..766213ee82c1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1205,6 +1205,9 @@ static int stmmac_init_phy(struct net_device *dev)
- 			return -ENODEV;
- 		}
- 
-+		if (priv->dma_cap.eee)
-+			phy_support_eee(phydev);
-+
- 		ret = phylink_connect_phy(priv->phylink, phydev);
- 	} else {
- 		fwnode_handle_put(phy_fwnode);
--- 
-2.34.1
+	[dpu error]connector not connected 3
+	[drm:drm_mode_config_helper_resume [drm_kms_helper]] *ERROR* Failed to resume (-22)
 
+and say something about that this can prevent displays from being
+enabled on resume in some setups (preferably with an explanation why if
+you have one).
+
+> It doesn't make sense to check for the Writeback connected status (and
+> other drivers don't perform such check), so drop the check.
+> 
+> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu_writeback.c")
+
+I noticed that the implementation had this status check also before
+71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to
+dpu_writeback.c").
+
+Why did this not cause any trouble back then? Or is this not the right
+Fixes tag?
+
+> Cc: stable@vger.kernel.org
+> Reported-by: Leonard Lausen <leonard@lausen.nl>
+> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/57
+
+Perhaps you can include mine an György's reports here too.
+
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+With the above addressed:
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
