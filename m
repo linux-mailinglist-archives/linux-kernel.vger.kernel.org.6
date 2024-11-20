@@ -1,154 +1,148 @@
-Return-Path: <linux-kernel+bounces-416420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F429D447E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:31:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E739D4480
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B032832DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DE842832BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC72197531;
-	Wed, 20 Nov 2024 23:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D0D197531;
+	Wed, 20 Nov 2024 23:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="dBoYJX1B"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cwHUpPG1"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4144175D35
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCE5175D35
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732145489; cv=none; b=jF6DSXLMztIMAQAp/TjJFaMPS/1IUcYqjoF23oewuPrItP0Supk+MXFd3uZe4Jzc8HeAnwQp7cmScWFaQnX38kmduSPYP9+HMe0SkS/cIbIiZ+NmSufc2RSYWeMPSj4yGUtU+2awzlOoGtRBR4etEsd37hCokqrENOT+OWAsUjA=
+	t=1732145586; cv=none; b=GMt5futDm/FC7aZgYAvnBZnV0swb55GwphD+5D/wGN8+0cWTivRZk6NSltHc8WoOS3IdJARqBMLX6hRpcy3UtQcvb2VOHfiXy+vEkn/7x4elmkHtDmSbO/juwJBzc3h2064sJNdvb5vy5nU3rS1hp+6BxNjFWSuYdVNWqNeWeTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732145489; c=relaxed/simple;
-	bh=zNNjCjHxAKV7W/tDatRt9BVWmQmRJtpdS1cMtjJM+Y4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AIozxLqwgj3amtszsZFS1jYulJ4V1fyV2GsUvp/uQiT7MZoGO9OfyEExb7iFJcmPUEKhsqElB4TRVdyShwhMABbsTpdoE4xzSWtNgFLp+5aP2m9me6w3EZZjFeblh5MvAykjdmdP8AfpVa9laArvflRdEfdrxvs28c67cYifxOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=dBoYJX1B; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-212884028a3so632395ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:31:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1732145487; x=1732750287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fSqv89uy0nwc5dDPbI4XvXjKwme8rpzvHxwcukveaqQ=;
-        b=dBoYJX1BqgAcE9tq1mdaPHv3XjX+F+kMjp/Afx1s86yBOsRONCza/2pBlyxvTtXF1h
-         k1ZRDpcVn/M50UHOfWSB60Z0PKg+KlA/sdWobIJ3/0IM0C+uJYf00EEH3eURq8Z8gmv2
-         gjXYK0Vd4LstOezz6SyTpHs1/jLDj8ICuzwiLTus754xs1StXKWYV5rWmhPOuU6dhcyk
-         LYdDV+xmnA4VWL3nZi+fCFAyxe2TZ3EHmKI4tfmvN4TwnGBxkNHNiyP12OrR113OsWFe
-         37yihpvjeR3EZxTrgSFC0rl3WFXEJK2T47a0mRorKmGIVCMUedeJTN8PQ8jE1jj3MlQe
-         3wLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732145487; x=1732750287;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fSqv89uy0nwc5dDPbI4XvXjKwme8rpzvHxwcukveaqQ=;
-        b=oPzzs75yXwDpz+BN910aY4SUFVJGNBNsasVaEsAnBx09cZCEVo19M5hF1Mo1aZHY7f
-         EPEAIy/Yf8CW9v9sSe1Mqk/JFtlW6NE4vB2W06der2V/KnDj+eGCUUCIMVdeBiu7j8MR
-         +n74z/8mFcgdaJwYjhhsAZdDVEcxLEAk3p8TBl9Z7PwcBlFLiIUSCeeKJERSHix5wA/0
-         5LPmGMjxhYDPeJZ9dbuQavQpZ0KNcYdfau6lLETC/CzZ+Y5DEocA1YLNTHVSqBTP5ipy
-         1Ys5WyFa0pJXEMaCy+DJZwfX2EWYQw8GPk6nNOEbn05cuo03xPDawwV+6LDd7aijtOiu
-         eH9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKyaMnonDQbibUhUnPtVEyspT2MqxH6UwGm/1IgxkEh/j27CMF/C/ejLYln/A9ELCjcWi0cTnXT0fJ3Ts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzFRolPoMpFzgXrqOQbStvVBAFXYwqQO4EeUKK8f0xALEk+YVK
-	tPSTOIbSfyiiPIXrs7iFul2SSeOhw1iOoifZPI8TIYis/K8Peab2oHfkEtxmgfw=
-X-Google-Smtp-Source: AGHT+IG8+Dhf9R1FFvZlRBlQQYlb3BPblu14O9UczA4OS58b9VvtlNwVw8oEoDe5/zYh/oqsLmntZQ==
-X-Received: by 2002:a17:902:eccb:b0:205:8b84:d5e8 with SMTP id d9443c01a7336-21283ca84ebmr14588725ad.18.1732145487286;
-        Wed, 20 Nov 2024 15:31:27 -0800 (PST)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212880d0761sm1078525ad.132.2024.11.20.15.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 15:31:26 -0800 (PST)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: Anup Patel <apatel@ventanamicro.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Marc Zyngier <maz@kernel.org>,
-	stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Thierry Reding <treding@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] of: property: fw_devlink: Do not use interrupt-parent directly
-Date: Wed, 20 Nov 2024 15:31:16 -0800
-Message-ID: <20241120233124.3649382-1-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.45.1
+	s=arc-20240116; t=1732145586; c=relaxed/simple;
+	bh=slB9hAQ2KQOolIaeaDoO8zuNwTG21C1fXRqaDI0Whus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ruC2rlxJEc3xhIWr/34z0gCD9heDmtVCM1qLIw9w6b4MYC23QHrt/T32PFsdZUtkRr9aqGMm6g8FGTMajANzR36o16evJF96XrKj72hLtQaFQJij/2fdvjnf/dB3v6kRngGPVrFXeZ92DuWE8r7PYaXTl1TrSzKh7hMdW9uD6QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cwHUpPG1; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 15:32:53 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732145582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZUJ4vT4Ev2xEsGw1E2zk4jxanqmeSvQ/TmbjsSxUcJ0=;
+	b=cwHUpPG1lD+rR862ml7ejaG6HIZPrb7H8/Bly23BzEXpadR1vB/Wtz7fXKfzBDBfsQ9nHu
+	ph9b85ad81NHJB2VGmxsLJ/LxEKub1yy/xUBd/A8AZEMoE2dMLfA+cxhMpTiCA5HSahm8E
+	aAKDh/v9vs6/E2GX4719ks7ZONEiHfw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, 
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, oleg@redhat.com, 
+	dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
+	hdanton@sina.com, hughd@google.com, minchan@google.com, jannh@google.com, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Subject: Re: [PATCH v4 2/5] mm: move per-vma lock into vm_area_struct
+Message-ID: <zfd7xdkr5dkvvx3caqao3oorh2pxxifhdhwsw2iyxcuzbevo3n@sobu7xhw24vv>
+References: <20241120000826.335387-1-surenb@google.com>
+ <20241120000826.335387-3-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120000826.335387-3-surenb@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-commit 7f00be96f125 ("of: property: Add device link support for
-interrupt-parent, dmas and -gpio(s)") started adding device links for
-the interrupt-parent property. commit 4104ca776ba3 ("of: property: Add
-fw_devlink support for interrupts") and commit f265f06af194 ("of:
-property: Fix fw_devlink handling of interrupts/interrupts-extended")
-later added full support for parsing the interrupts and
-interrupts-extended properties, which includes looking up the node of
-the parent domain. This made the handler for the interrupt-parent
-property redundant.
+On Tue, Nov 19, 2024 at 04:08:23PM -0800, Suren Baghdasaryan wrote:
+> Back when per-vma locks were introduces, vm_lock was moved out of
+> vm_area_struct in [1] because of the performance regression caused by
+> false cacheline sharing. Recent investigation [2] revealed that the
+> regressions is limited to a rather old Broadwell microarchitecture and
+> even there it can be mitigated by disabling adjacent cacheline
+> prefetching, see [3].
+> Splitting single logical structure into multiple ones leads to more
+> complicated management, extra pointer dereferences and overall less
+> maintainable code. When that split-away part is a lock, it complicates
+> things even further. With no performance benefits, there are no reasons
+> for this split. Merging the vm_lock back into vm_area_struct also allows
+> vm_area_struct to use SLAB_TYPESAFE_BY_RCU later in this patchset.
+> Move vm_lock back into vm_area_struct, aligning it at the cacheline
+> boundary and changing the cache to be cacheline-aligned as well.
+> With kernel compiled using defconfig, this causes VMA memory consumption
+> to grow from 160 (vm_area_struct) + 40 (vm_lock) bytes to 256 bytes:
+> 
+>     slabinfo before:
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vma_lock         ...     40  102    1 : ...
+>      vm_area_struct   ...    160   51    2 : ...
+> 
+>     slabinfo after moving vm_lock:
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vm_area_struct   ...    256   32    2 : ...
+> 
+> Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 pages,
+> which is 5.5MB per 100000 VMAs. Note that the size of this structure is
+> dependent on the kernel configuration and typically the original size is
+> higher than 160 bytes. Therefore these calculations are close to the
+> worst case scenario. A more realistic vm_area_struct usage before this
+> change is:
+> 
+>      <name>           ... <objsize> <objperslab> <pagesperslab> : ...
+>      vma_lock         ...     40  102    1 : ...
+>      vm_area_struct   ...    176   46    2 : ...
+> 
+> Aggregate VMA memory consumption per 1000 VMAs grows from 54 to 64 pages,
+> which is 3.9MB per 100000 VMAs.
+> This memory consumption growth can be addressed later by optimizing the
+> vm_lock.
+> 
+> [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.com/
+> [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
+> [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com/
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-In fact, creating device links based solely on interrupt-parent is
-problematic, because it can create spurious cycles. A node may have
-this property without itself being an interrupt controller or consumer.
-For example, this property is often present in the root node or a /soc
-bus node to set the default interrupt parent for child nodes. However,
-it is incorrect for the bus to depend on the interrupt controller, as
-some of the bus's children may not be interrupt consumers at all or may
-have a different interrupt parent.
+Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Resolving these spurious dependency cycles can cause an incorrect probe
-order for interrupt controller drivers. This was observed on a RISC-V
-system with both an APLIC and IMSIC under /soc, where interrupt-parent
-in /soc points to the APLIC, and the APLIC msi-parent points to the
-IMSIC. fw_devlink found three dependency cycles and attempted to probe
-the APLIC before the IMSIC. After applying this patch, there were no
-dependency cycles and the probe order was correct.
+One question below.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-Cc: stable@vger.kernel.org
-Fixes: 4104ca776ba3 ("of: property: Add fw_devlink support for interrupts")
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -716,8 +716,6 @@ struct vm_area_struct {
+>  	 * slowpath.
+>  	 */
+>  	unsigned int vm_lock_seq;
+> -	/* Unstable RCU readers are allowed to read this. */
+> -	struct vma_lock *vm_lock;
+>  #endif
+>  
+>  	/*
+> @@ -770,6 +768,10 @@ struct vm_area_struct {
+>  	struct vma_numab_state *numab_state;	/* NUMA Balancing state */
+>  #endif
+>  	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> +#ifdef CONFIG_PER_VMA_LOCK
+> +	/* Unstable RCU readers are allowed to read this. */
+> +	struct vma_lock vm_lock ____cacheline_aligned_in_smp;
+> +#endif
+>  } __randomize_layout;
 
-Changes in v2:
- - Fix typo in commit message
- - Add Fixes: tag and CC stable
-
- drivers/of/property.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 11b922fde7af..7bd8390f2fba 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1213,7 +1213,6 @@ DEFINE_SIMPLE_PROP(iommus, "iommus", "#iommu-cells")
- DEFINE_SIMPLE_PROP(mboxes, "mboxes", "#mbox-cells")
- DEFINE_SIMPLE_PROP(io_channels, "io-channels", "#io-channel-cells")
- DEFINE_SIMPLE_PROP(io_backends, "io-backends", "#io-backend-cells")
--DEFINE_SIMPLE_PROP(interrupt_parent, "interrupt-parent", NULL)
- DEFINE_SIMPLE_PROP(dmas, "dmas", "#dma-cells")
- DEFINE_SIMPLE_PROP(power_domains, "power-domains", "#power-domain-cells")
- DEFINE_SIMPLE_PROP(hwlocks, "hwlocks", "#hwlock-cells")
-@@ -1359,7 +1358,6 @@ static const struct supplier_bindings of_supplier_bindings[] = {
- 	{ .parse_prop = parse_mboxes, },
- 	{ .parse_prop = parse_io_channels, },
- 	{ .parse_prop = parse_io_backends, },
--	{ .parse_prop = parse_interrupt_parent, },
- 	{ .parse_prop = parse_dmas, .optional = true, },
- 	{ .parse_prop = parse_power_domains, },
- 	{ .parse_prop = parse_hwlocks, },
--- 
-2.45.1
+Do we just want 'struct vm_area_struct' to be cacheline aligned or do we
+want 'struct vma_lock vm_lock' to be on a separate cacheline as well?
 
 
