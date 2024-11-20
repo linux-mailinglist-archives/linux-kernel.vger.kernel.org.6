@@ -1,83 +1,112 @@
-Return-Path: <linux-kernel+bounces-415351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487519D34E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:56:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C0D9D34E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:57:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E2C1F23E30
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73D01F2411E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D4317E46E;
-	Wed, 20 Nov 2024 07:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F671684A0;
+	Wed, 20 Nov 2024 07:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eH2seDIJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="V0zhzWaG"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE8D15B551;
-	Wed, 20 Nov 2024 07:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597E1155325;
+	Wed, 20 Nov 2024 07:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732089339; cv=none; b=cTAk8Kk2ibitNIPhS0jGIWgoyniAZgxfD8yPplJctLi6xwLKYxTlzXwrDa58mDPncCgUEFQ48EtFHwnGkRZ/2/kDRpGwiJ5ASYUiaPSejB4LDdC5b4PAeS0dfBfWmThYnq4x8mEpWHAfx8O1CilvRe+NGfw9oGq2sNequmU0Sok=
+	t=1732089431; cv=none; b=ftk0/6e0+2RyGpug62dl04/OFrJg/9sejcdamJv9kUsiHg+0uiLXV9cgYl92amHFvMciBjUG1G6etXgl1kIFUwrz82tG8CTXhXDZwWHuPYFvl/RjJKFlIKqFfDL0IiNjnMH7RznfBRtx6OV8KHFnHH9PetolCXOFLmWvEgI09rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732089339; c=relaxed/simple;
-	bh=raeV6DEnj9l1hDSOdgLKalbTNUVTi99NZdmvLIgjCeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4T1oEtZKKis7U3HZgBwxikP0hJOmNGKs1Qb83YnEO4x6m/9Uor1LdPiBh7sBspEBALPRP6NCgGa6EAyfhMwDmjfZRGolkrayGVGmN0RIrSyF9nTAXwIYuw8ywLoPWEoEuRVtx9P0CPoEt70U0zGywbb9BNjHR1ft7HNIeRwnJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eH2seDIJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF763C4CECD;
-	Wed, 20 Nov 2024 07:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732089337;
-	bh=raeV6DEnj9l1hDSOdgLKalbTNUVTi99NZdmvLIgjCeA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eH2seDIJ3qYZXqqY1veyusE4m/aCrTRY5GZH6NBW2rpEywusid0IJ39Xwp0PFplOg
-	 T40QngD3t/uBs/PCdLfpti8Jg12Wkue3oPD8Ug+AY4XszaekITbQV+QnRr7qSW1F/7
-	 OAH3ZcENGcTBhPG4XvwJtLRKgAwvFLDzWUo6dROu0t6AztTVAvJdQaE29aBhEu7E31
-	 BjGDvcstcA8ph9Kj6xQIbFCzg/PjQdrTBzk5RtzgSdj9QrE1ItIoITTRIZEeiQQK7C
-	 1eM6JE0rVfiJNuOioYPKjHBU/+hS/18BgzXjvcxdjAVTaDooOZMbmPzq6J+S4c2DPp
-	 CqXCYmX7qdMFA==
-Date: Wed, 20 Nov 2024 08:55:34 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v8 2/3] dt-bindings: leds: Add LED1202 LED Controller
-Message-ID: <po4rxi6spypwg5rd7fsubn3rohvgeach7uynverd6nuxsppquf@5kszzlvk6ics>
-References: <20241118151246.7471-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241118151246.7471-3-vicentiu.galanopulo@remote-tech.co.uk>
+	s=arc-20240116; t=1732089431; c=relaxed/simple;
+	bh=w8HKr7mHvGUeZYvGZ9jSxlUl2wzwUTO1cmkE/Z005TU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bKjmLGQMMtP5fMQx1roOF1YgYHPgQEMjX3vxK6XXaXJCSuxp2wfIno8NrMWoR4KOPlOz7b5WQ5Hvmf6UeJNahwjkDQiRMfQWdvm/2VWnELSNMPbBf2PGB167Wldg3Y1cgmI3qNOtzgNnVlNhrUsKqxlJg3vTO7EgXAdubNXs/AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=V0zhzWaG; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AK7uWZc93743917, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1732089392; bh=w8HKr7mHvGUeZYvGZ9jSxlUl2wzwUTO1cmkE/Z005TU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=V0zhzWaGkJZC5/ZkqqBRO6Vn7yeu5p6qvPKEDUwJoKAbxCqyBO5U7Lwz4486ty6sB
+	 eVc8ws5WGqzMw5tOM1deW1zEtHJfcQ/CwGSxU1JWu6CgRH1glGbTw3/tcof9vw5a+w
+	 Gn0mMALHpZcMAvDTsUBoSpUU1OGzGTDrbAIbXy0GaPo64zanxiGmd5U9qEoSVCoCQ2
+	 8hnhDLzcjrZ6ZMfNn3WQ3zgLTE4Oy6O/SMGxj+pixW8YAr4GE00ASE/6VSfUJvCGyQ
+	 p2HmH5iq391NWWrzsPgTkrzlcs9Qg6b9Akz3Xkc83Br1VHD6xsH7dbT30fSe411/0P
+	 N9o7AXjOtvwag==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AK7uWZc93743917
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 15:56:32 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 20 Nov 2024 15:56:32 +0800
+Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 20 Nov
+ 2024 15:56:31 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: <kuba@kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <horms@kernel.org>,
+        <michal.kubiak@intel.com>, <pkshih@realtek.com>,
+        <larry.chiu@realtek.com>, Justin Lai
+	<justinlai0215@realtek.com>
+Subject: [PATCH net v5 0/3] Correcting switch hardware versions and reported speeds
+Date: Wed, 20 Nov 2024 15:56:21 +0800
+Message-ID: <20241120075624.499464-1-justinlai0215@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241118151246.7471-3-vicentiu.galanopulo@remote-tech.co.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Mon, Nov 18, 2024 at 03:12:42PM +0000, Vicentiu Galanopulo wrote:
-> The LED1202 is a 12-channel low quiescent current LED driver with:
->   * Supply range from 2.6 V to 5 V
->   * 20 mA current capability per channel
->   * 1.8 V compatible I2C control interface
->   * 8-bit analog dimming individual control
->   * 12-bit local PWM resolution
->   * 8 programmable patterns
-> 
-> If the led node is present in the controller then the channel is
-> set to active.
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+This patch set mainly involves correcting switch hardware versions and
+reported speeds.
+Details are as follows:
+1. Refactor the rtase_check_mac_version_valid() function.
+2. Correct the speed for RTL907XD-V1
+3. Corrects error handling of the rtase_check_mac_version_valid()
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+v1 -> v2:
+- Add Fixes: tag.
+- Add defines for hardware version id.
+- Modify the error message for an invalid hardware version ID.
 
-Best regards,
-Krzysztof
+v2 -> v3:
+- Remove the patch "Add support for RTL907XD-VA PCIe port".
+
+v3 -> v4:
+- Modify commit message to describe the main reason for the fix.
+
+v4 -> v5
+- Integrate the addition of defines for hardware version ID into the patch
+"rtase: Refactor the rtase_check_mac_version_valid() function."
+
+Justin Lai (3):
+  rtase: Refactor the rtase_check_mac_version_valid() function
+  rtase: Correct the speed for RTL907XD-V1
+  rtase: Corrects error handling of the rtase_check_mac_version_valid()
+
+ drivers/net/ethernet/realtek/rtase/rtase.h    |  7 ++-
+ .../net/ethernet/realtek/rtase/rtase_main.c   | 43 +++++++++++++------
+ 2 files changed, 36 insertions(+), 14 deletions(-)
+
+-- 
+2.34.1
 
 
