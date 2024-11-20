@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-416013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE9C9D3F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:34:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4A89D3F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45472855AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C0F1F24CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B044A4690;
-	Wed, 20 Nov 2024 15:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB6D4690;
+	Wed, 20 Nov 2024 15:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dCmL0YzI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="i0VGvw7N"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7695684037
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928684B5C1
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732116882; cv=none; b=WEU2r09DECYc6UtH4ZR1fgCy3THbIaxPuVgVqeO7r/RqIMFOC4Bh3eCF991algrFbhRBNFeKMXwiEpWDJGDjZmoZCqUYhyEzDeWECINacE0L/DFrxpLGbYy8owNvLxm2Qzb6iLeO6LldSjzvWo70KrCAElTEgG19J3JJwm6BlkI=
+	t=1732116856; cv=none; b=W9FFg3HxIbTpfqdVGkqwFElZZGblxvNr3/X9zPYQEgE9rzQ7+n4nVJkbRMr9D8Ld/ovmmE8/56Vtyey4cnyM518HvwyaQ1vYHdDUdokALVv18EhYjH5OEwDMa6jUwWLkraiU8JjOjyW/tQVSgbxLqMkyySkLqo11temLqieifaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732116882; c=relaxed/simple;
-	bh=9BbNjf2dYDzMP2fE4iDugHcRs8M6ZP5S18XzWK6IgOc=;
+	s=arc-20240116; t=1732116856; c=relaxed/simple;
+	bh=tapspqOc3LuINmsY9rmIJdgI/iII+12IiBiFvTeBICM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XahLRWwDXRpqQxJ17542SejTaEwptRzGcob5VjCGtiRk2m3jNj5AHvw3CdjFidg17/qLEyj7ilsTRmgxLIv5PGc3kdCxogCfISID5kPLoEMGTh+OkoCQYRPfmmvCyd35wyw4WMV88yyIGmDSbLWRDzQwZc9YdyENH1UTsQH87eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dCmL0YzI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKEx2lm026174;
-	Wed, 20 Nov 2024 15:33:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Bh8MRm
-	v0pX9jmFl/6GWRY8seqCjGSEKE6C1pTn7rS0Y=; b=dCmL0YzIJtaw3kYOvtWw1B
-	TUoOLdeOA/NRuCw+hJPlqnv8/OfEQs/mmphSfcM+s5kDs5R34nDii4JapXBIDVjl
-	18CU693Mc2vJF6ifaAPRVujHnIYuNss0HfCX9op79Hm4OSffCiDDjifXeKo2NDdD
-	q81aCdCuaEbp5NS0Lo/AQ7Dy+A1Vwi28W3wzyGhfjGJwVmhOxetM4Fkwzr9BAVKs
-	NnbQfInejp/3cd+hREdcJ9kHxr4FhWvaZlPq0mW2o9sXAfpD0AM8fUIdGH7j1uaC
-	ynVB5oGBfL0HPunsxKm26QPAMX6hrra82F8stXVqIsoZ93TBworO8nXZO4elv1fg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1vkku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 15:33:18 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AKFRdR3016149;
-	Wed, 20 Nov 2024 15:33:17 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1vkkp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 15:33:17 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9tOVD011836;
-	Wed, 20 Nov 2024 15:33:16 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y7xjps2a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 15:33:16 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKFXEa956689076
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 15:33:14 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEECE2004D;
-	Wed, 20 Nov 2024 15:33:14 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B66B20043;
-	Wed, 20 Nov 2024 15:33:12 +0000 (GMT)
-Received: from [9.39.17.146] (unknown [9.39.17.146])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 20 Nov 2024 15:33:12 +0000 (GMT)
-Message-ID: <b98b7795-070a-4d9c-9599-445c2ff55fd7@linux.ibm.com>
-Date: Wed, 20 Nov 2024 21:03:11 +0530
+	 In-Reply-To:Content-Type; b=VapFR7CGt65Pj7EoltRGnMAdlunVWTpkHS3HFAesKcbj8OVPWuRxZKppl1Q+y08L4pGJMzF2tx07LoBF7ve+2rc6shI1cEXZL064uQge8l4O8vzNu/aqynoSfx3lL6puRsbtFVolugGEnHwy65EdQtOmmpc/kZL4uFNqCa2Z7Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=i0VGvw7N; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a77c066a15so7320835ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:34:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1732116853; x=1732721653; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NcM59+8TfsvtZUlPOhwHkunXZn/aPvaA5x4RA/2fbaw=;
+        b=i0VGvw7NmCLy5l2LcWFsVbSw9GAYY9lzJgPyKqR/t4BFu3CQdHS8nKUiYc60FIkSf9
+         hgv14hx5z8pXqdbter8gk01LBV1TXrJkZ5Zxtw6K9e+VanHCUW4EhxLxJgcNZWPaXir0
+         7yz8jmfkfesvZpFrkC19OyGQwSf1lZNPcJh3X7B2s3Ln5/QC3fu1gFOK6REYQC/GoEW5
+         3HnKygrC7Rv6Ygo+wY4Bt1mz9dqnuDU8K8oTm8+VSrCl2VJ5XUJM6+5Ym/6caJISL5Th
+         3avqh9GfqzCiINHKFY4GWuIFxwVYbOnUzmOYF7yA730sBWgvSDoDgYio3Op2zHj4v794
+         A4oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732116853; x=1732721653;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NcM59+8TfsvtZUlPOhwHkunXZn/aPvaA5x4RA/2fbaw=;
+        b=P/OaByLP3CEa3bhTCGzygmBL+xVmWdPAQ7lQA4/7JQi19FB+9vEYyzEPujx+0cgFkL
+         czS6ZsXcTRoH3hBuvrnhmwwzu8LFha92KODHHzlisDSUqdD/Iq4tZMwjE1GiMfdQVhwz
+         V2XoAs2usF7ZsyowRMcm9izKKNmcS3ZyEQI7hKdDcRjWGPnrwCo5cFT2lOD5e90OefTu
+         cq6UjkC0uqFk0x9UK0niMcZPGzBZlhmNtdfT/2FJMy4zNdZzEAmGa38i0IZdAlyjeaXA
+         ltWZyJf/hv5RixI6YohXlPqKw+V4fVlyrcglbmWNYActSYYyntC8EeMMXxVb+LXEfcwG
+         Y0jg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMoblQFxcI0Ju3hkWiGAwQ2S101w/3CAmIv7T1ZgjWSBVDJtHmjHdyacAwaGCJjXCDQzAmD5kOYLaHz8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweGIotX5J579nUYo8J0GRgQq5tigEJn73+pJNk27b4NXnanJJ5
+	dR8PO05slm78+Dxz8BOBeZIegKiNQjS2U3ABN7pXS+xTIY178II1UlR13pSmAi0=
+X-Google-Smtp-Source: AGHT+IFPsi16Sc1ScQxHAt2zv4mWqJHo5ZB3ZAX2DX28qdi/G7PLyBH6ZUWtH19EKbUwdn26IKCIXg==
+X-Received: by 2002:a05:6e02:1a85:b0:3a7:8ee6:cd6e with SMTP id e9e14a558f8ab-3a78ee6ce0emr7280365ab.8.1732116853354;
+        Wed, 20 Nov 2024 07:34:13 -0800 (PST)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a748115b79sm30804095ab.53.2024.11.20.07.34.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 07:34:12 -0800 (PST)
+Message-ID: <ad32f0aa-79df-41b2-90d0-9d98de695a18@riscstar.com>
+Date: Wed, 20 Nov 2024 09:34:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,85 +75,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] powerpc: Large user copy aware of full:rt:lazy
- preemption
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Ankur Arora <ankur.a.arora@oracle.com>
-Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, maddy@linux.ibm.com,
-        linux-kernel@vger.kernel.org, vschneid@redhat.com,
-        mark.rutland@arm.com
-References: <20241116192306.88217-1-sshegde@linux.ibm.com>
- <20241116192306.88217-3-sshegde@linux.ibm.com> <874j43hqy8.fsf@oracle.com>
- <20241120080312.uHw4eJcQ@linutronix.de>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
+To: Uros Bizjak <ubizjak@gmail.com>, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Chandan Babu R <chandan.babu@oracle.com>,
+ "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig
+ <hch@infradead.org>, Dave Chinner <dchinner@redhat.com>
+References: <20241120150725.3378-1-ubizjak@gmail.com>
 Content-Language: en-US
-In-Reply-To: <20241120080312.uHw4eJcQ@linutronix.de>
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20241120150725.3378-1-ubizjak@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Lxn4TwimSjF5ZDmHrDVncIqTmAArPk-q
-X-Proofpoint-ORIG-GUID: PGvuBsbHrGTCCltdKFKc1bebG_OZGQjr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411200104
 
+On 11/20/24 9:06 AM, Uros Bizjak wrote:
+> try_cmpxchg() loop with constant "new" value can be substituted
+> with just xchg() to atomically get and clear the location.
 
+You're right.  With a constant new value (0), there is no need
+to loop to ensure we get a "stable" update.
 
-On 11/20/24 13:33, Sebastian Andrzej Siewior wrote:
-> On 2024-11-19 13:08:31 [-0800], Ankur Arora wrote:
->>
->> Shrikanth Hegde <sshegde@linux.ibm.com> writes:
->>
+Is the READ_ONCE() is still needed?
 
-Thanks Ankur and Sebastian for taking a look.
+					-Alex
 
->>> Large user copy_to/from (more than 16 bytes) uses vmx instructions to
->>> speed things up. Once the copy is done, it makes sense to try schedule
->>> as soon as possible for preemptible kernels. So do this for
->>> preempt=full/lazy and rt kernel.
->>
->> Note that this check will also fire for PREEMPT_DYNAMIC && preempt=none.
->> So when power supports PREEMPT_DYNAMIC this will need to change
->> to preempt_model_*() based checks.
-
-Yes. This and return to kernel both needs to change when PowerPC support PREEMPT_DYNAMIC.
-I have a patch in work in which I essentially do check for the preemption model.
-Either below or based on static key.
-
--	if (IS_ENABLED(CONFIG_PREEMPTION) && need_resched())
-+	if (preempt_model_preemptible() && need_resched())
-
-
-
-+mark +valentin
-
-More looking into how PREEMPPT_DYNAMIC works with static key, I have one query.
-This is more on PREEMPT_DYNAMIC than anything to with LAZY.
-
-I see many places use static_key based check instead of using preempt_model_preemptible such as
-dynamic_preempt_schedule, is it because static_key is faster?
-
-On the other hand, using preempt_model_preemptible could make the code simpler.
-
->>
->>> Not checking for lazy bit here, since it could lead to unnecessary
->>> context switches.
->>
->> Maybe:
->> Not checking for lazy bit here, since we only want to schedule when
->> a context switch is imminently required.
+> The code on x86_64 improves from:
 > 
-> Isn't his behaviour here exactly what preempt_enable() would do?
-> If the LAZY bit is set, it is delayed until return to userland or an
-> explicit schedule() because it is done. If this LAZY bit turned into an
-> actual scheduling request then it is acted upon.
+>      1e7f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+>      1e84:	48 03 14 c5 00 00 00 	add    0x0(,%rax,8),%rdx
+>      1e8b:	00
+> 			1e88: R_X86_64_32S	__per_cpu_offset
+>      1e8c:	8b 02                	mov    (%rdx),%eax
+>      1e8e:	41 89 c5             	mov    %eax,%r13d
+>      1e91:	31 c9                	xor    %ecx,%ecx
+>      1e93:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
+>      1e97:	75 f5                	jne    1e8e <xlog_cil_commit+0x84e>
+>      1e99:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+>      1e9e:	45 01 e9             	add    %r13d,%r9d
 > 
-> Sebastian
+> to just:
+> 
+>      1e7f:	48 03 14 cd 00 00 00 	add    0x0(,%rcx,8),%rdx
+>      1e86:	00
+> 			1e83: R_X86_64_32S	__per_cpu_offset
+>      1e87:	31 c9                	xor    %ecx,%ecx
+>      1e89:	87 0a                	xchg   %ecx,(%rdx)
+>      1e8b:	41 01 cb             	add    %ecx,%r11d
+> 
+> No functional change intended.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Chandan Babu R <chandan.babu@oracle.com>
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Cc: Dave Chinner <dchinner@redhat.com>
+> ---
+>   fs/xfs/xfs_log_cil.c | 5 +----
+>   1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+> index 80da0cf87d7a..9d667be1d909 100644
+> --- a/fs/xfs/xfs_log_cil.c
+> +++ b/fs/xfs/xfs_log_cil.c
+> @@ -171,11 +171,8 @@ xlog_cil_insert_pcp_aggregate(
+>   	 */
+>   	for_each_cpu(cpu, &ctx->cil_pcpmask) {
+>   		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
+> -		int			old = READ_ONCE(cilpcp->space_used);
+>   
+> -		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
+> -			;
+> -		count += old;
+> +		count += xchg(&cilpcp->space_used, 0);
+>   	}
+>   	atomic_add(count, &ctx->space_used);
+>   }
 
 
