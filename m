@@ -1,140 +1,199 @@
-Return-Path: <linux-kernel+bounces-415312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF6A89D3433
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:38:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13E889D343B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953BD28340C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4561F22CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3E015B0E2;
-	Wed, 20 Nov 2024 07:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1F166F07;
+	Wed, 20 Nov 2024 07:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6dbx5qo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqrH7D1W"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9EB156676;
-	Wed, 20 Nov 2024 07:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1475615DBAE;
+	Wed, 20 Nov 2024 07:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088306; cv=none; b=pfpVs9IZh8IeXwa/rbMXqODCMvwrsT4J5t94NbFdo+GHFdj/W3wUNalASvBDFThPSEqkiyOjvk9hAANVg4boXeUIM/QpSvXcq4aqE+sT+ewSy3metMWzYyPk/X5TtIhTtRR4OxafmDBMAmzKE29SbRH4O2z4PDdw9eyf+qieKDw=
+	t=1732088414; cv=none; b=n/GNrrDM1kqEhFBYwFXFleAqY2VlIQFgbYxoYKq5oaHdZ9LR/uuEJdry6RuGaifDJg8IJ6vRB68Ub7vrs7hQhA2CX2x3Jp90bdvxVikn+8mfIaa4YkhXb8yiryd8kxsKR+E2xxFcbO4UIF/NvRQO6JX4CpYtF+yav8MYyKxuILU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088306; c=relaxed/simple;
-	bh=hwd1mc/hlGAx6mR2RGmfLQm/PRsiMDhfOr0kBN/H+X8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ou7HMY9F97PaUjyh5EkaHk9hEY7uQL0Qu63uSnasGv8KNz2jCdItLkRnbZzKlps5UvwDP8za5pPvLexJTXsj9Z9mnLPRIGEHHzOYgYJoLrJXpT9tp2+rgsn+y0khvstPbul8JdqihRvt4II8n/LDPmLZZe77JDtDePZSXPxufLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6dbx5qo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89DE4C4CED0;
-	Wed, 20 Nov 2024 07:38:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732088306;
-	bh=hwd1mc/hlGAx6mR2RGmfLQm/PRsiMDhfOr0kBN/H+X8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R6dbx5qoP8BMYwsY5l3/+0UmVwR3Pny1NxP38lixmmnkdHFqa36GgstXCDUZry0Ez
-	 AY8IHqXMgKctmz48aw2vMsksU4hB8GF7Ri1xw3uMm338X9YqDS1oWmuQLx7gEUnGc+
-	 POYYG8HLtdk9Vg6/cdo940PziXXFkfjE01Cxg5H9+R9aP1WP+SF35QrEAj+GRNs6hd
-	 PEj78nnTX2mxNym+kAwAs9PG2iZnf7fGzmngydDBUo13Wz4kxY4O/GlnbdgxjXXvDt
-	 XT/cPFapXDK6pquzyIvHIsw+eNqbPeAWLxqI38MMgSb5FHvcK/BQe5H6EWz7G0aP1T
-	 E9wg4FD4SGC6w==
-Message-ID: <410ebbd0-2304-4d9e-8d4a-5e63ab29ada8@kernel.org>
-Date: Wed, 20 Nov 2024 08:38:15 +0100
+	s=arc-20240116; t=1732088414; c=relaxed/simple;
+	bh=BmE0p7mm5HCQjrvucM4FO0Tiw8oj1KVX1AaQUJLFyuc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h3oSfqCbHL/a7aH4TueUeEoDdKEtuoaAjb2v85WbfyDhDJMU5Cd8fxPZejilbumUhrdrq2KNhWbb7KAXT26Cm2CUGZOYM45qzKVuHU+1N1QqYB9bJTvXT7GZnx0LGMijFqIi9zHV/i1WPTsuz2wNi5fEsWXVhOMjsYMw7wFD0z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqrH7D1W; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfbeed072dso4776823a12.3;
+        Tue, 19 Nov 2024 23:40:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732088411; x=1732693211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=llUfhdVZIco/FslmDl/EI8VgKcRfAJLjq/jSTC/0S+0=;
+        b=nqrH7D1WJ6gP8/eKC56ALbqS2qM3jHbSFjMXSuuEb5T0VaEITIRSA4qibeg6rzYOUS
+         95juwDPQ6pymiiLlQ2ACvNmTKF/BEvT3ogkkWEINAoxPfs+hAqeGLL0SFqmjGrLDD/dw
+         tOSHNDqh6QK2Ghp9ajRWCF9fVTlPbwTirzpKEATZ8Md9KAk4APUZCcSE6nR4RYnNWT7R
+         Gp3jiQA9nSZJjktowB3QB3Te1Ol06ZOMJRvLdP0oE/4PCcnpmQHrYfIcpa5UBW0PnLRs
+         80HDdX9M4ViNj4JGk15g9SqCjNA0w3qy0M41eK9IrqMmr8wtd+74DFEfIJnXtrQ7QXi5
+         oCzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732088411; x=1732693211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=llUfhdVZIco/FslmDl/EI8VgKcRfAJLjq/jSTC/0S+0=;
+        b=BvP8IOXMvH3zHZdcIZ8/YfkqPi7Gbz/gsD+wyuK29lNSCvKh+6SJeUQyJra1d/RoCl
+         gA1/RokNv6KKXPdndONKHKG5ruEhC42NWoIh25xH0op2EGK1L0rVOwe/TTbxpjUC/aN7
+         4efJ8cvQGwNGNJefbKk8RaQWBhib8syb8RFG2kZo9ejczjPqIHlaidAnpPnRWzLQdIOT
+         WWyp1xtS3sZTc+pivqQGBX0z5A3eXCxiiOh4qUsWBSXoV/vNutk71ecIuGgM1mIxAPpr
+         48Sncg4e7rnPk88xRpZSvMzCDjapdcnljElDKKJ24jmySRP78AfgL/PIzfKaC4TXNIui
+         Ek1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVRf6VthEFR73+GZPAUKLWYFyerbdcKATa0PJUPyciws1IcHPr1nRaKKYAUrb2cmWpE8Ulam2c01kO3rcs=@vger.kernel.org, AJvYcCVgEk09TKQ+TJ5Z/t04jCZOLX8p9bxQWzZArvbELjKlKei6O3tCbManR+zzRPzAmbDNDgWT9r7Jpi5FyrEvv2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0vAdEt29qAPEqy0bJC/klXykb+LTEmlbr79BvFxhgmelPTI1k
+	ZnubmfUhMDSMfJrAeUeERJM5bXbUXJUEJnrEFV8Bxsh95zHupYga1HHVQewW/48M8NXBbTKl0lM
+	Y4we9r/JeUt/RHyJsh0DXBZewijc=
+X-Google-Smtp-Source: AGHT+IE6uWUsrgFjiF0arFsc0SzpGZxgNX1E2jtXKQFzzga+tCD0muwzP9oOmLAiaoegFhdhFyr/8iYYMAyqku1wz08=
+X-Received: by 2002:a05:6402:845:b0:5cf:d154:8360 with SMTP id
+ 4fb4d7f45d1cf-5cff4b2b39amr956280a12.14.1732088411217; Tue, 19 Nov 2024
+ 23:40:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
-To: keith zhao <keith.zhao@starfivetech.com>, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- p.zabel@pengutronix.de, changhuang.liang@starfivetech.com,
- jack.zhu@starfivetech.com, linux-kernel@vger.kernel.org
-References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
- <20241120061848.196754-4-keith.zhao@starfivetech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241120061848.196754-4-keith.zhao@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CALXu0Udop9Qx_N8KwScmGk+j3NrfDry1r-Fk=5bc+9EXsfnB=w@mail.gmail.com>
+ <20241104132412.dFx8w7ZH@linutronix.de> <6aadadc1-63f3-4300-9ceb-0475e0203ea7@oracle.com>
+ <CALXu0UdCqYJpDGKcvZ9ZvXeUkYtVW_7thGuQy4gMjgO6uo4Rew@mail.gmail.com>
+ <d370e7e6-9b33-4901-b49b-699e1932dc49@oracle.com> <595e91af-7737-4567-94e6-6f97a281354f@oracle.com>
+In-Reply-To: <595e91af-7737-4567-94e6-6f97a281354f@oracle.com>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Wed, 20 Nov 2024 08:39:00 +0100
+Message-ID: <CALXu0Uf1nNNKnyY9yeL-EZ5uFMOvt9LQr1iKdh6MpHqq2PH=6A@mail.gmail.com>
+Subject: Re: [External] : Re: Linux 5.15-rt still misses commit "NFSD: Fix
+ NFSv4's PUTPUBFH operation"
+To: Joseph Salisbury <joseph.salisbury@oracle.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Joseph Salisbury <jsalisbury@kernel.org>, 
+	Dan Shelton <dan.f.shelton@gmail.com>, Martin Wege <martin.l.wege@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org, 
+	chuck.lever@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/11/2024 07:18, keith zhao wrote:
-> +	/* Unmute hotplug interrupt */
-> +	hdmi_modb(hdmi, HDMI_STATUS, m_MASK_INT_HOTPLUG, v_MASK_INT_HOTPLUG(1));
-> +
-> +	ret = devm_request_threaded_irq(hdmi->dev, irq, inno_hdmi_hardirq,
-> +					inno_hdmi_irq, IRQF_SHARED,
-> +					dev_name(hdmi->dev), hdmi);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(inno_hdmi_bind);
-> +
-> +MODULE_AUTHOR("Keith Zhao <keithzhao@starfivetech.com>");
-> +MODULE_DESCRIPTION("INNO HDMI transmitter driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:inno-hdmi");
+Joe, thank you
 
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
+Ced
+
+On Tue, 5 Nov 2024 at 21:42, Joseph Salisbury
+<joseph.salisbury@oracle.com> wrote:
+>
+>
+>
+>
+> On 11/4/24 12:10, Joseph Salisbury wrote:
+> >
+> >
+> >
+> > On 11/4/24 09:06, Cedric Blancher wrote:
+> >> On Mon, 4 Nov 2024 at 14:53, Joseph Salisbury
+> >> <joseph.salisbury@oracle.com> wrote:
+> >>>
+> >>>
+> >>>
+> >>> On 11/4/24 08:24, Sebastian Andrzej Siewior wrote:
+> >>>> On 2024-11-04 13:01:42 [+0100], Cedric Blancher wrote:
+> >>>>> Good lunchtime!
+> >>>> Hi,
+> >>>>
+> >>>>> Linux 5.15-rt in linux-stable-rt.git still misses commit "NFSD: Fix
+> >>>>> NFSv4's PUTPUBFH operation":
+> >>>>> Title: "NFSD: Fix NFSv4's PUTPUBFH operation"
+> >>>>> commit 202f39039a11402dcbcd5fece8d9fa6be83f49ae upstream.
+> >>>>>
+> >>>>> Could you please add this missing commit to the 5.15-RT branch in
+> >>>>> linux-stable-rt.git? Thank you!
+> >>>>>
+> >>>>> References:
+> >>>>> https://urldefense.com/v3/__https://git.kernel.org/pub/scm/linux/ke=
+rnel/git/stable/linux.git/commit/?h=3Dv5.15.170&id=3D2f8f226f4d56fae0fabec2=
+3cf0af82c43cb4dce0__;!!ACWV5N9M2RV99hQ!J_i5oEOgM6dLLOAkgjiM9ncalWBDCr_5-CaH=
+ZBZI8r2RU3TtvlTNnrOBlTBiS6Z0M3ETfv4emw1N632COpow2bNbsDE$
+> >>>>>
+> >>>> The v5.15-RT series is based on v5.15.167. The 170 minor release is
+> >>>> from
+> >>>> 2024-11-01. The commit will be picked as part of the update to 170.
+> >>>>
+> >>>> There is v5.15.167-rt80-rc1 is preparation, I guess 170 will be next=
+.
+> >>> What Sebastian says is correct. v5.15.167-rc80-rc1 is out for testing=
+.
+> >>> This version has a release candidate, since it introduces a new patch=
+:
+> >>> 4a1d3acd6ea8 ("netfilter: nft_counter: Use u64_stats_t for
+> >>> statistic.").
+> >>>
+> >>> Version v5.15.167-rc80 should be released the end of this week.
+> >>> Currently v5.15.170 is the latest stable release.  I should be
+> >>> releasing
+> >>> v5.15.170-rc81 next week (Or whichever is the latest stable release i=
+s,
+> >>> if a newer than 170 one comes out prior to my release).
+> >>>
+> >> Could you please just manually pull this patch in?
+> > We generally don't create releases for individual patches that come in
+> > via stable releases.
+> >
+> > If you need this patch due to a time constraint, I can release
+> > v5.15.170-rc81, which includes this patch, immediately following
+> > v5.15.167-rt80. That would be towards the end of the week to ensure
+> > proper testing and allowing for feedback of v5.15.167-rt80-rc1.
+> >
+> >>
+> >> Ced
+> >
+> Hi Cedric,
+>
+> The v5.15.170-rt81 patchset is now available.  This release has the
+> commit you were interested in:
+> 2f8f226f4d56f ("NFSD: Fix NFSv4's PUTPUBFH operation")
+>
+>
+> You can get this release via the git tree at:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+>
+>    branch: v5.15-rt
+>    Head SHA1: 67017c496f78e15598f48bb3115e3641a82ae507
+>
+> Or to build 5.15.170-rt81 directly, the following patches should be appli=
+ed:
+>
+>    https://www.kernel.org/pub/linux/kernel/projects/rt/5.15
+>
+>    https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
+>
+>    https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.15.170.xz
+>
+> https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.170-r=
+t81.patch.xz
+>
+>
+> Thanks,
+>
+> Joe
 
 
-Best regards,
-Krzysztof
+
+--=20
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
