@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-416136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9CF69D411F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:26:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24809D40B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECBC6B2B63C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:02:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A0B1F21DF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F8B156257;
-	Wed, 20 Nov 2024 17:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0453E156F21;
+	Wed, 20 Nov 2024 17:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAxrkwWs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QPD4+th3"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B01146593;
-	Wed, 20 Nov 2024 17:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93AD19C543;
+	Wed, 20 Nov 2024 17:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122137; cv=none; b=agyTipXW1gzeLKlHL6mW5jpRkmwMxNIXW+FKQJTpB2SIswRUd5VED0G3yQ3m/yPO6ybstHotq1uhi/ibq1DTxVdbW9U5aUO1c0xY4IxG7xhF3X3EfCaO5SufHCZcBgvOGMbtBMc5WRhxw1j2c9/DnFyMesq1wDPfwuKqz4qW0wk=
+	t=1732122141; cv=none; b=JTqD/Y/nMJUfWhoRb7C+dWCsoEY/7l+e19TIvOtIXAk4OW2B0BURKggifxo/BiPhyIfp0/SfIt0EoovThfh0LXs+wD4hcW9pLNsqJRBefuxrnZ97DNfCLBvuvVAox9Na8vyBX9btCPMJPdYTapv5gT7ct33LrNedWTl3hcYHQJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122137; c=relaxed/simple;
-	bh=rPj7c6XkgTyMaLeDFKMtm3WS5U51tHxoI8+nJxdf5ag=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IQxn6ZE3EBwLqSqthKj97epHNko9A3m3AKlia+VucHzNnlxTvpgVSttM/mBFsWOaqB8TP9cF22xk2sHj5mVLZwaGLfi9hoj/8ojVwJllTEioac50noGpEDxPTCddKQ1E9g7maUc4s/7E2q4UWqiJ7g4GVqixyI1DUiNaGaQCLA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZAxrkwWs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F6B8C4CECD;
-	Wed, 20 Nov 2024 17:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732122134;
-	bh=rPj7c6XkgTyMaLeDFKMtm3WS5U51tHxoI8+nJxdf5ag=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZAxrkwWsX50W7OrSqe3iRMKC5QGNrPOuCVAxqrthBXHm3O+OoQ75vPH1RlQjVGheZ
-	 O4eozhDoZU8NbYwxKU0B/vzZmXohyESVJ46KyvqsYYcYR6FjeGEydUCLY2gL6ALwtU
-	 n2dtEw/KBb4pCQpdUzYThhzgtYu/lTKT4q3KUdj56ZmRg8G45Y07vu3jmKFwPTQaNk
-	 097SIcL1ETsmhmtuaTD5qTgvNCK2BSyccFU2oi8taAPGkcxHrOZ9icFswQwh8uf4SM
-	 IC+rsWJCndK4kPeD/6n5OWdrkbPhoUQrDgnybVQ+yrmOhIF1wYKYegPiVdReIFugtn
-	 z+aw9+e0yHPGQ==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
-Date: Wed, 20 Nov 2024 09:02:11 -0800
-Message-Id: <20241120170211.69434-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1732122141; c=relaxed/simple;
+	bh=cuZreQyOoH1OuzZFnRAMY0hUSMFFrHwTGswopfEe+Bg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QcrodmcysoV75Iywt5hUW/kbvO9Ee5frJjxZuCtjhMiatBTOOshpKlMSPDhVFLLSwwjZoceM19mWPV7/VZ7VmqQzeo0TeNXhCas3zyS8jDUeA8dXvuLy27d0WuKpSI/EKEMXoyMNCkjNozbWeF3AgGAnFMktosJZhnJSR//HF3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QPD4+th3; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=zYAMajNMtocU0CffdSuW1w5BhKd5VeQZLt1Tp6ZRjHg=; b=QPD4+th3XvJ/Zv02g13zjI3s5V
+	L8VxOyPaPSlG1Sbd2k/rpk3aVcZ7glBSuv4nzP4vmqtVwBsm1VQEZqvTNZKOwRElx+Lv5MMyuo4Jn
+	IxEUComnwuqO3SPte5+1HPPMBwlqAnCpD3P+tD7IKXRjW9Oa/84gVu3NAX6t1A/1MbMoSY5gO0ZFi
+	OQMSurxwYvDAQXIn3uji2saB+6Dwk3AbBI/dUPkUFCy2Y8ZeFZV2g0dbDztpv++HDWqu4dvxmVfcQ
+	7+pz8lyevbXNUba4X0fPaGbw7AI2QA6z/UJsI+2ytco/sMFMGOzu+MUI/JMpdxNmijCuV9Xu3Sg6z
+	LoKpCrEA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDo5n-00000005THA-07M3;
+	Wed, 20 Nov 2024 17:02:15 +0000
+Date: Wed, 20 Nov 2024 17:02:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	airlied@redhat.com
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
+ mappings
+Message-ID: <Zz4WFnyTWUDPsH4m@casper.infradead.org>
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <Zz1sHZLruF5sv7JT@casper.infradead.org>
+ <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
+ <Zz4MQO79vVFhgfJZ@tardis.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zz4MQO79vVFhgfJZ@tardis.local>
 
-Hello,
-
-On Wed, 20 Nov 2024 13:56:10 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.6.63 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Nov 20, 2024 at 08:20:16AM -0800, Boqun Feng wrote:
+> On Wed, Nov 20, 2024 at 10:10:44AM +0100, Alice Ryhl wrote:
+> > On Wed, Nov 20, 2024 at 5:57 AM Matthew Wilcox <willy@infradead.org> wrote:
+> > >
+> > > On Tue, Nov 19, 2024 at 01:24:01PM +0200, Abdiel Janulgue wrote:
+> > > > This series aims to add support for pages that are not constructed by an
+> > > > instance of the rust Page abstraction, for example those returned by
+> > > > vmalloc_to_page() or virt_to_page().
+> > > >
+> > > > Changes sinve v3:
+> > > > - Use the struct page's reference count to decide when to free the
+> > > >   allocation (Alice Ryhl, Boqun Feng).
+> > >
+> > > Bleh, this is going to be "exciting".  We're in the middle of a multi-year
+> > > project to remove refcounts from struct page.  The lifetime of a page
+> > > will be controlled by the memdesc that it belongs to.  Some of those
+> > > memdescs will have refcounts, but others will not.
+> > >
 > 
-> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
-> Anything received after that time might be too late.
+> One question: will the page that doesn't have refcounts has an exclusive
+> owner? I.e. there is one owner that's responsible to free the page and
+> make sure other references to the page get properly invalidated (maybe
+> via RCU?)
 
+It's up to the owner of the page how they want to manage freeing it.
+They can use a refcount (folios will still have a refcount, for example),
+or they can know when there are no more users of the page (eg slab knows
+when all objects in a slab are freed).  RCU is a possibility, but would
+be quite unusual I would think.  The model I'm looking for here is that
+'page' is too low-level an object to have its own lifecycle; it's always
+defined by a higher level object.
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+> > > We don't have a fully formed destination yet, so I can't give you a
+> > > definite answer to a lot of questions.  Obviously I don't want to hold
+> > > up the Rust project in any way, but I need to know that what we're trying
+> > > to do will be expressible in Rust.
+> > >
+> > > Can we avoid referring to a page's refcount?
+> > 
+> > I don't think this patch needs the refcount at all, and the previous
+> > version did not expose it. This came out of the advice to use put_page
+> > over free_page. Does this mean that we should switch to put_page but
+> > not use get_page?
 
-Tested-by: SeongJae Park <sj@kernel.org>
+Did I advise using put_page() over free_page()?  I hope I didn't say
+that.  I don't see a reason why binder needs to refcount its pages (nor
+use a mapcount on them), but I don't fully understand binder so maybe
+it does need a refcount.
 
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 2c6a63e3d044 ("Linux 6.6.63-rc1")
+> I think the point is finding the exact lifetime model for pages, if it's
+> not a simple refcounting, then what it is? Besides, we can still
+> represent refcounting pages with `struct Page` and other pages with a
+> different type name. So as far as I can see, this patch is OK for now.
 
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 2 selftests: damon: debugfs_schemes.sh
-ok 3 selftests: damon: debugfs_target_ids.sh
-ok 4 selftests: damon: debugfs_empty_targets.sh
-ok 5 selftests: damon: debugfs_huge_count_read_write.sh
-ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 7 selftests: damon: debugfs_rm_non_contexts.sh
-ok 8 selftests: damon: sysfs.sh
-ok 9 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 10 selftests: damon: reclaim.sh
-ok 11 selftests: damon: lru_sort.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+I don't want Page to have a refcount.  If you need something with a
+refcount, it needs to be called something else.
 
