@@ -1,90 +1,82 @@
-Return-Path: <linux-kernel+bounces-416052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DAC59D3FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C329D3F91
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A47DB3B975
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:00:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0F0A1F250EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60DE1537AA;
-	Wed, 20 Nov 2024 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAdDTUaJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213E2145FE0;
+	Wed, 20 Nov 2024 15:59:52 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4020514B077;
-	Wed, 20 Nov 2024 15:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5172D13B59E;
+	Wed, 20 Nov 2024 15:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118337; cv=none; b=dlJwcxrwSXet5DEsrDYUHnUshgqT3cBeTD2890fDMgljcJ6cKN7vdLAbWS6DTsHGyTQdtiJAeJm+wiYS/M7wNwHhEjYqSvqWw1Go2uyRD+XjN0v2e9gpa17wMOQUke5YEeAJrfD85HORygUwb83BNHvArGwcxISBiIoJqFhqdlw=
+	t=1732118391; cv=none; b=SSycn1Rv+KOMN1nBdWB4BpesVM5dQ693BLtsGwaeupkeCov3tnb7QB7p81fTsiQRsDFOgVUNlfwaEzKAFT3n8H/WsjMqeYaFjem+xz0AC+dSYgVPEOvlKxyRCjcnV10Wrd67IdxLCM0MPyKyCNqfLjmYE/InGTLkprashahZ09c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118337; c=relaxed/simple;
-	bh=PBO+6ywj2PcgEksLd2QnUclp4cCButUpCEqwidE/yfE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MBrg1ej5jnZHiWm9n/DNjCEfLLMVLs4CHARci3Q7uji91x1OIBnkQeJUTtzcT+RleeCtONEfGAlgREic1XxGLIgZLRXl0MmA73/qiskZ7ikjCxdab64IjOuUbHaG3KsZYfAqJxidBHrO+TP29RPIrgUfyNdwxnBBW+NF7IjDeMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAdDTUaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC64C4CECD;
-	Wed, 20 Nov 2024 15:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732118336;
-	bh=PBO+6ywj2PcgEksLd2QnUclp4cCButUpCEqwidE/yfE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UAdDTUaJvZ8iVJrkMsWXcRaIIhFDT4qOfS+nRrPbQc0r8wUFLbg7i9MJve+ldQdOg
-	 MFS3yzaYbnQy3Ymlnbux4JDHJ592hPmMuEVPysq5PJPvX2G00+wFqDNgsmyTqviESh
-	 1Kr3fh1NEoqxtz1gmEwDR1C1Qa3AcgTXvocRBNb+U1yJS6DzJvEChscM8I68TTpUJJ
-	 oGv9O+/J+sZ+1ZBFtM/tcg0MgkEWTmXIOV6jzTRGq9SmkKy7sS6Z5JrYVtZFw1My01
-	 YUjTJtS4suVGGnKNlldCDn/l+iioZg1eVINnQh2I4vuqzBPQArcRUqsRlcnSlb6nFG
-	 VGfHbP4v9cOQA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 00/13] hrtimer Rust API
-In-Reply-To: <8fa20279fe8067602fbb106329a0f7d9c4146b3b.camel@redhat.com>
-	(Lyude Paul's message of "Wed, 13 Nov 2024 18:39:53 -0500")
-References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-	<KuX-uY44Td6jpb3dtlR-S5Eo-KEFXad0UorWcwaspcNfH75QUPklyMfQmAsCPuLVV3PM3iNrDKdXJNhyzZm4cQ==@protonmail.internalid>
-	<8fa20279fe8067602fbb106329a0f7d9c4146b3b.camel@redhat.com>
-Date: Wed, 20 Nov 2024 16:58:42 +0100
-Message-ID: <87msht3nil.fsf@kernel.org>
+	s=arc-20240116; t=1732118391; c=relaxed/simple;
+	bh=7/X5Xivc21sxmq/pddnef6GucgqkKACN4Z84sH7HnEw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qZopL0GQleVpbr8dWD9r267HXnIFgN9paf0kLAlWNPRckR1kNCT/EyvzU89bJ938tMm83jsrOu1AtUmTBZkKSnqyuiKMdRMunfF0+4cgWP8APHzZUjm/h8qhSDQzlnAu/i6vTd0BCJHq4kdrlz+JNz7phV3u0Ob5t0qNkqzLGAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id DD979102FAE;
+	Wed, 20 Nov 2024 15:59:38 +0000 (UTC)
+Message-ID: <f6baf8dd-4652-450e-a08b-157a806d4459@enpas.org>
+Date: Thu, 21 Nov 2024 00:59:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] can: can327: Clean up payload encoding in
+ can327_handle_prompt()
+From: Max Staudt <max@enpas.org>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241119003815.767004-1-max@enpas.org>
+ <84998b1d-8b3e-4956-b7fd-323e4999dc7c@wanadoo.fr>
+ <4621cc30-92d7-4b07-8058-a1d677f28135@enpas.org>
+Content-Language: en-US
+In-Reply-To: <4621cc30-92d7-4b07-8058-a1d677f28135@enpas.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On 11/20/24 02:15, Max Staudt wrote:
+> A bit off-topic, but since CAN_RAW came up: Why does CAN_RAW even 
+> sanitise anything at all, instead of relying on checks on later layers? 
+> It seems like quite a few checks are duplicated. And all the while it's 
+> possible for userspace to do weird stuff like seemingly enabling CAN FD 
+> on the socket via setsockopt() CAN_RAW_FD_FRAMES, but that's only 
+> flipping a bit on the CAN_RAW socket, yet changes nothing underneath. It 
+> was quite confusing to read. I suppose the explanation is "legacy"?
 
-> With the comments I left addressed:
->
-> Reviewed-by: Lyude Paul <lyude@redhat.com>
+Answering my own question here:
 
-Thanks for the review!
+CAN_RAW_FD_FRAMES modifies what frames are allowed to pass through the 
+CAN_RAW socket towards userspace. This way, simple software handling 
+only CAN 2.0 frames may assume that reading anything other than CAN_MTU 
+bytes from the socket is an error. This keeps the code simple, and old 
+programs have to be written this way, because there is no way for them 
+to guess what not yet implemented CAN versions will look like.
 
-> (I'll have to rereview it soon when you rebase I assume, but I have a rebased
-> version locally (can send to you if you want) so I know the changes won't be
-> too difficult ;)
-
-I did not rebase on the new C API yet actually, but I will very soon.
+So, this option makes a lot more sense to me now, sorry for the extra 
+noise :)
 
 
-
-Best regards,
-Andreas Hindborg
-
+Max
 
 
