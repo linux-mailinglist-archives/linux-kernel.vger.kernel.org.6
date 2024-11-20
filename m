@@ -1,142 +1,131 @@
-Return-Path: <linux-kernel+bounces-415976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B19D3F63
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:52:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F3E9D3EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C477B37DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:13:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0677282CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0241BC061;
-	Wed, 20 Nov 2024 15:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCgK8OqQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DA71C729E;
+	Wed, 20 Nov 2024 15:01:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE761EB3D;
-	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5BC1BC9E5
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114876; cv=none; b=CYH+ntTW3NPJbz97chTdgkN0gwxr7kkeDgB3jNA+d8LyNM6WC7cnBB8Rg58Fam3+/Mr+WEPtT9bRmRgAPr4p1GE7oj8xmsnDNmXmcfhDdpTJUKdqWLtR9MCpuoVscvCJ1qWSHYrphuugcn8iNxadfAR4/RmCo1fEH8wEJY1oAUQ=
+	t=1732114885; cv=none; b=XtcbITqRAIgvlBximZTg2DIkxD6csYH23QE/7C6f6Dln1P9NMBpC1FCZl3cN2CrLNX/tXVxaNmLyeSp1g6Af5AX14sEJavsMpjp3/2Qs+99bVYfsC6/xbDejn1ep77KMAqnzifCKb2SV4iWcUpce4mHT0V0D07jEwbZ2EV7aQ24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114876; c=relaxed/simple;
-	bh=9PHHaga7qdizbZvNAUY9ymsRQ2ooNPqub9YJW56h3qo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FjooauzBt9GcIj7teNhWV3Mn54IrlJmJx4eNYD5wCkjGZ/+H1eWXrLH2+i3xfbPKpW6DzylhlckFEYSi1wEE3gWXBRmPvswd3d/mbSzPBvQQcAWzfHzuOcTq0V4Ksy4HWmwteqUwpvKBrfYrMuHCjgRyGa+PsIcmBBaY1VSXF8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCgK8OqQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 93959C4CECD;
-	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732114875;
-	bh=9PHHaga7qdizbZvNAUY9ymsRQ2ooNPqub9YJW56h3qo=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=JCgK8OqQcukJuFdvCEamxuF8FRP0ALaJfShK1alyCkI9pE567w8EL6hovidWUf7Kq
-	 iCaKt9Hf/G8Duke6dldLjeGGPKOy50F1RhLF8WFt6c/Tol2uyJWutt4qiOUEboiGUJ
-	 uhZc7z09LMtTaiZv6ezoIFaf4LQ78FrfAaz9TNGBsBwkcjkAoJqr1R9HYR+H0vqfxC
-	 gFpWand3PtTHwFEK2sI+nYG2g2exfWjvaEU+Xr0XGdTupSK6na2vAyaIekCE67C9cR
-	 KJBMy6hXV7KxO8wIfBm4fF8sjdQYzvSoASqSn2hNL72W7J9dMuEikUd+z1fk7gzna0
-	 3D2kWvzvuFeLQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876B8D711AA;
-	Wed, 20 Nov 2024 15:01:15 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Wed, 20 Nov 2024 20:31:13 +0530
-Subject: [PATCH net-next v2] net/smc: Remove unused function parameter in
- __smc_diag_dump
+	s=arc-20240116; t=1732114885; c=relaxed/simple;
+	bh=GdRAwWuiYbi6EugybkHrLMuAJvQwG9769/GB/p7t0Ts=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nfS8qV3sya8V6NY0kLq3Gjf6JSzo9dFsyQWzsHFacv8qa3abLMBymMbelVSKNlAdcQFDFvyeHv11XXnYKaN14EdEesyS4y5hFC5ZmTpy2SiJ9aD6SkJF+42RJA8kIKdwHJ5UfE9B0BZcGQFXVmpUL2hTxJ6MvXEeHOSwhD552WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xtl164f4zz6LD6c;
+	Wed, 20 Nov 2024 23:00:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 38094140B55;
+	Wed, 20 Nov 2024 23:01:21 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
+ 2024 16:01:20 +0100
+Date: Wed, 20 Nov 2024 15:01:19 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH 5/6] acpi/generic_event_device: Update GHES migration to
+ cover hest addr
+Message-ID: <20241120150119.00007d3d@huawei.com>
+In-Reply-To: <6391dfec0a26b83641c2b2062115b839490cc902.1731486604.git.mchehab+huawei@kernel.org>
+References: <cover.1731486604.git.mchehab+huawei@kernel.org>
+	<6391dfec0a26b83641c2b2062115b839490cc902.1731486604.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241120-fix-oops-__smc_diag_dump-v2-1-9703b18191e0@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIALj5PWcC/4WNQQqDMBREryJ/3S8mxoJd9R5FQpp89S9MJEnFI
- t69wQuUWQ0z8+aARJEpwaM6INLGiYMvRt4qsLPxEyG74kE2UgnR9DjyjiGsCbVOi9WOzaTdZ1m
- xuZt3S71r+1FBma+RSvdCv8BTRk97hqEkM6cc4vf63MSV/8dvAots15mWOmWcejJzdrWxNXsYz
- vP8AQMX4onMAAAA
-X-Change-ID: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>, 
- "D. Wythe" <alibuda@linux.alibaba.com>, Tony Lu <tonylu@linux.alibaba.com>, 
- Wen Gu <guwen@linux.alibaba.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>, 
- linux-s390@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732114874; l=1964;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=RbsJs9xT5OEaPMfZxEp4gByrXVK8Tp/HwiFKPToZuMU=;
- b=yfq/MghKcAbWF2qD5/LJadh+UeQjXsDoTsZHgqNhsXBu6xgQOkxlNUQcm72cf00XWAsS1LtfI
- zJETk+AZQLPBFg9IetHj1TxzztZw8rKQKxbrxrGK0GKQFYphxDoB8eP
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Manas <manas18244@iiitd.ac.in>
+On Wed, 13 Nov 2024 09:37:02 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
-There is only one instance of this function being called and its passed
-with a NULL value in place of bc.
+> The GHES migration logic at GED should now support HEST table
+> location too.
+> 
+> Increase migration version and change needed to check for both
+> ghes_addr_le and hest_addr_le.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
-Changes in v2:
-- Added target tree and prefix
-- Carried forward Reviewed-by: tag from v1
-- Link to v1: https://lore.kernel.org/r/20241109-fix-oops-__smc_diag_dump-v1-1-1c55a3e54ad4@iiitd.ac.in
----
- net/smc/smc_diag.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Where is the migration version increased?  Maybe I'm misunderstanding
+the comment.
 
-diff --git a/net/smc/smc_diag.c b/net/smc/smc_diag.c
-index 6fdb2d96777ad704c394709ec845f9ddef5e599a..8f7bd40f475945171a0afa5a2cce12d9aa2b1eb4 100644
---- a/net/smc/smc_diag.c
-+++ b/net/smc/smc_diag.c
-@@ -71,8 +71,7 @@ static int smc_diag_msg_attrs_fill(struct sock *sk, struct sk_buff *skb,
- 
- static int __smc_diag_dump(struct sock *sk, struct sk_buff *skb,
- 			   struct netlink_callback *cb,
--			   const struct smc_diag_req *req,
--			   struct nlattr *bc)
-+			   const struct smc_diag_req *req)
- {
- 	struct smc_sock *smc = smc_sk(sk);
- 	struct smc_diag_fallback fallback;
-@@ -199,7 +198,6 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
- 	struct smc_diag_dump_ctx *cb_ctx = smc_dump_context(cb);
- 	struct net *net = sock_net(skb->sk);
- 	int snum = cb_ctx->pos[p_type];
--	struct nlattr *bc = NULL;
- 	struct hlist_head *head;
- 	int rc = 0, num = 0;
- 	struct sock *sk;
-@@ -214,7 +212,7 @@ static int smc_diag_dump_proto(struct proto *prot, struct sk_buff *skb,
- 			continue;
- 		if (num < snum)
- 			goto next;
--		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh), bc);
-+		rc = __smc_diag_dump(sk, skb, cb, nlmsg_data(cb->nlh));
- 		if (rc < 0)
- 			goto out;
- next:
-
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241109-fix-oops-__smc_diag_dump-06ab3e9d39f4
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
-
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/generic_event_device.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> index 17baf36132a8..c1116dd8d7ae 100644
+> --- a/hw/acpi/generic_event_device.c
+> +++ b/hw/acpi/generic_event_device.c
+> @@ -387,6 +387,34 @@ static const VMStateDescription vmstate_ghes_state = {
+>      }
+>  };
+>  
+> +static const VMStateDescription vmstate_hest = {
+> +    .name = "acpi-hest",
+> +    .version_id = 1,
+> +    .minimum_version_id = 1,
+> +    .fields = (const VMStateField[]) {
+> +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
+> +        VMSTATE_END_OF_LIST()
+> +    },
+> +};
+> +
+> +static bool hest_needed(void *opaque)
+> +{
+> +    AcpiGedState *s = opaque;
+> +    return s->ghes_state.hest_addr_le;
+> +}
+> +
+> +static const VMStateDescription vmstate_hest_state = {
+> +    .name = "acpi-ged/hest",
+> +    .version_id = 1,
+> +    .minimum_version_id = 1,
+> +    .needed = hest_needed,
+> +    .fields = (const VMStateField[]) {
+> +        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
+> +                       vmstate_hest, AcpiGhesState),
+> +        VMSTATE_END_OF_LIST()
+> +    }
+> +};
+> +
+>  static const VMStateDescription vmstate_acpi_ged = {
+>      .name = "acpi-ged",
+>      .version_id = 1,
+> @@ -399,6 +427,7 @@ static const VMStateDescription vmstate_acpi_ged = {
+>          &vmstate_memhp_state,
+>          &vmstate_cpuhp_state,
+>          &vmstate_ghes_state,
+> +        &vmstate_hest_state,
+>          NULL
+>      }
+>  };
 
 
