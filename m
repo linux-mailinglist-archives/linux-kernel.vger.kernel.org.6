@@ -1,92 +1,80 @@
-Return-Path: <linux-kernel+bounces-415782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF0A9D3C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:08:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A730E9D3C5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9B5287CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD0D9B2616C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219EA1AAE0C;
-	Wed, 20 Nov 2024 13:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88991AE006;
+	Wed, 20 Nov 2024 13:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="g5Q+/BUq"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXEFli8S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87511AAE00
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AA41AAE3A;
+	Wed, 20 Nov 2024 13:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732107933; cv=none; b=tf8+E00//uTZS0ES/B/EDo1Xq6/pRFJgq2q6wZmi17zlWauC4siUSibjv2C8RihOzNWFAcmgDrk7cRiNrRmtEYMzCDD5Keo9EzU9O2C3KDpSkOmecJwNYZ9hFPTJBE/78/Kl0MgfvFq+lcgjevNQAjfD5WWDTBpz4RZYRO1DOUg=
+	t=1732107950; cv=none; b=cWUabTCFSm5OBgGyxr0X+W1JiPhJC9PBDtExKWZ4voEwju2NWhLSMQqR7mEZj7fnnEzOAK8o4Dg4ECZIGN39Qgm9CL+KshKqfOVn2ZG4L87PUmiTmCEHOco3WtJANoxmCjIwb6+J5AJuIWkCh5gQGysX2hjp5xu67EMzW4TU9Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732107933; c=relaxed/simple;
-	bh=KBffu/dejV66mtn99IVVjRLvR+lCkIRbYLQn9mLvpmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rTbC3a/A+7mH7aEJ/SIp9bflbC7jbEazOu3rD5mONazL4ZFx+oZilA18O8WnbTTJz9e1PiJkCdrRrxpSOg6hn4DhLY8rhfGhVJiugrRfNeX1joe7Vogq8dpMi0kCUd4TOOZcReGSBlm/Qx5kkc0N+gYDDbgJE04SV0SNEHCN/Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=g5Q+/BUq; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6056ea19-acf9-4ba9-bb27-d18598d22a2e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732107924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CId5N/ufcuAL77pVCfhtuI+j2MsmhTA8i0CzPZcEl9o=;
-	b=g5Q+/BUqi3osUCk+yWj4lJwQkfEt8Kuu+TNBM/VOVKmxATfYCQV/z6jRKJ5ir5YAbs08Qm
-	P3IHaCYVnRmHqOpqLcoJ5qYI/q+Xhdn1vz1s+ob+dWUOOMMLeBIKRZAygXGMp0lyFnF5ks
-	q4Wbmj/tFC9SuSBY43WknoLrqO28rMc=
-Date: Wed, 20 Nov 2024 05:05:19 -0800
+	s=arc-20240116; t=1732107950; c=relaxed/simple;
+	bh=OrZhBNtRFLPlaGhj+G686tbV9mW4nzFS5Z4fiD5DDbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oldr6ZN5KRuC07IW5WWV/tG2EaIVdd+rBr5EnNG21nmu0jg4M0jbW5Vsy1oIDuBR73f8fvn4xx/tpeAccECtS5gA1a6iRd8juVU3PJ/1H357e6OYFztEGamc9mnD0XTAavxegU6E+rYxXOsJr2TtMWRHvpSP4r9pI0ymIRsN7og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXEFli8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E783DC4CECD;
+	Wed, 20 Nov 2024 13:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732107950;
+	bh=OrZhBNtRFLPlaGhj+G686tbV9mW4nzFS5Z4fiD5DDbk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kXEFli8S0S0RY0bHvO/X0Uk41xKM3YJEZz7yiloTnieO0v59BEHVon1+EJJjI1Tj2
+	 dJh00zqR2gqq83o+wTVOPExHEh03ImPVTF+Tk0/pnDcXkbhHOqYI+9yrtrR15LeEOg
+	 D36Dn95UmDcZeEw+sKdusdaNDWz0gOlWHssg7/cqK1MaggCFYsyd0nBcr8NrzVU8jt
+	 8JmJwuVTKvVE7Flk6Z/wl8JI3nueLeDwfjizU5Fv77KTX52/Nef4KB4j6k7eKrlDpi
+	 SH1A8KlHYZ+WqCS1w4WIfpgeoM14ELE16LJ80HRm3b68rGHP6z9BTBv3QzRs9oB2aX
+	 l6gKhI8yGj+Jw==
+Date: Wed, 20 Nov 2024 07:05:48 -0600
+From: Rob Herring <robh@kernel.org>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] arm64: dts: sprd: sp9860g-1h10: fix
+ constant-charge-voltage-max-microvolt property
+Message-ID: <20241120130548.GA399236-robh@kernel.org>
+References: <cover.1730918663.git.stano.jakubek@gmail.com>
+ <aa557091d9494fdaa3eda75803f9ea97014c8832.1730918663.git.stano.jakubek@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] ptp: ocp: Fix the wrong format specifier
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, jonathan.lemon@gmail.com
-Cc: richardcochran@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241120062605.35739-1-zhangjiao2@cmss.chinamobile.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241120062605.35739-1-zhangjiao2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa557091d9494fdaa3eda75803f9ea97014c8832.1730918663.git.stano.jakubek@gmail.com>
 
-On 19/11/2024 22:26, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On Wed, Nov 06, 2024 at 08:05:29PM +0100, Stanislav Jakubek wrote:
+> This property has hyphens/dashes, not underscores.
 > 
-> Use '%u' instead of '%d' for unsigned int.
-> 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-
-This is net-next material, but the merge window has started and
-therefore net-next is closed, please repost in 2 weeks.
-
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 > ---
->   drivers/ptp/ptp_ocp.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes in V2:
+> - collect Baolin's R-b
 > 
-> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
-> index 5feecaadde8e..52e46fee8e5e 100644
-> --- a/drivers/ptp/ptp_ocp.c
-> +++ b/drivers/ptp/ptp_ocp.c
-> @@ -1455,7 +1455,7 @@ ptp_ocp_verify(struct ptp_clock_info *ptp_info, unsigned pin,
->   		 * channels 1..4 are the frequency generators.
->   		 */
->   		if (chan)
-> -			snprintf(buf, sizeof(buf), "OUT: GEN%d", chan);
-> +			snprintf(buf, sizeof(buf), "OUT: GEN%u", chan);
->   		else
->   			snprintf(buf, sizeof(buf), "OUT: PHC");
->   		break;
+>  arch/arm64/boot/dts/sprd/sp9860g-1h10.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
+Acked-by: Rob Herring <robh@kernel.org>
 
