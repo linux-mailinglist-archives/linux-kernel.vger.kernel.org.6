@@ -1,340 +1,187 @@
-Return-Path: <linux-kernel+bounces-415192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3279C9D32C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:45:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88F69D32C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:46:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8152B232A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:45:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D95D284EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D94156F2B;
-	Wed, 20 Nov 2024 03:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C7E450EE;
+	Wed, 20 Nov 2024 03:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FDMexpuL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdswonzX"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B95156885;
-	Wed, 20 Nov 2024 03:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732074310; cv=fail; b=Qk/rABTYgYsLO3sstIa0MtvXda5vNNcZMTz7xRA8W6z6mgrYN1VuSmbab6Leh3rC/JrzcLEoZfWOTjTIwwZSrSrsRZhA3C12Phw/3dmWG7qAj8HyLsDGv3L6kAr6u5P8DTcaR6wNXM9gdTysBaAqvB6eHdJZIs6opBnOufsMLhc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732074310; c=relaxed/simple;
-	bh=+zTRJZbojFuGefbu3RDIcps9VUfFb53uBK+bYCcTwPk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lNfos+/ARymbP7MLaScBjLFsFP26c6czkuBUtqGKRDWjG1r6ID/hgzXggmL9zjWlknVy5v7krJknQ2SwUUMPzIdja/88rJGFCJAVrD2OpOzocivbyON7VbwRTaPwPn10Et2qUrMaHnZned9mdlwiZ28jH0InPdhpdk32J67V4V4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FDMexpuL; arc=fail smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732074309; x=1763610309;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=+zTRJZbojFuGefbu3RDIcps9VUfFb53uBK+bYCcTwPk=;
-  b=FDMexpuL9XyWUpGcC16iExk087FmAW2H5SeaDZh70JmTm8TNeo1fFhSb
-   nGySFsV9H5cupXDFHpqpqJXW+a/36uIuiBzZDU59vQ9rl11LnNIoqG6OQ
-   owexTvsvTvdF0ulBgCO5zqrBHSElk3ZB7Q7UzMJM1Cr3slWb+rmgKx4h9
-   Oh8y7MrGSv3+9XJ+Y3ISC7dmIiyZ5a6szQeqC4ukpPEtxB1By9j0N/vtg
-   DXOXj1IUE585rPEnrwLJG7LsDUf838dlyK80n3CxRA5qBDrZechXZx9q/
-   2XiUiPiMBvK/3pvhkA4Vd78Z8WIYDBi+V5lfvRppjRtghWb/YKNDRKP8q
-   w==;
-X-CSE-ConnectionGUID: ElXiSmXERvK6R/CtwomLDQ==
-X-CSE-MsgGUID: q7h4YhFOTPijTIgx7tyfTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="32222506"
-X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
-   d="scan'208";a="32222506"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 19:45:08 -0800
-X-CSE-ConnectionGUID: SbygzzXkRxSB79CmYx8K3g==
-X-CSE-MsgGUID: SXuiwYsZQKylKvVf8C7sWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,168,1728975600"; 
-   d="scan'208";a="127321019"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 19 Nov 2024 19:45:08 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 19 Nov 2024 19:45:07 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 19 Nov 2024 19:45:07 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 19 Nov 2024 19:45:06 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wyyLNRbVmAeOneza8+VqfgQMYDs0zfPBStfHRY5Exuf2AWGa4ecCCWihm9NQcfTsEUya4CcwWlcu1VIIbGCQ6U79qlzXbs/ZjQS8LI8HIb5ZaeZJun048HwZYSyapjS0iYZJi+9fcYYNGBrph+2X7gDM6QtSDTQ9gUl52ryWFbo7vHImWV86gaX3KLK0q5O/q9mICwE4CvJwX14yieyIHJnm5iG+tOLgOnejk0yiBj70OkkJ1a6d3GIJmXHx6+jlt5BS+fFFs8EU0R5vY3aQzmSQsJNy2vukg9zNjUmJ1pfgwJlZW7abSfeo4A0Ng3BuUxC7fWcs75PqKl6WoLyKLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ewwvs6rnsfbIslKaaijreTQ98+hp3VYUR6CHV24PwXA=;
- b=E1qA3Z0sUTakumERE8l3yD4UgZr32XJQZo9Y8PFGb2HZbY6bEBtkA1IsJScqgdxLjZdIZsPUGqXjhyey+HkKtB/eYOev5Yg1+h1hSc5+ZSzlY/kktaQnEdajPq8x8u2RjBGNx9qeBctcTxs1z2NAV3LpQYvgd3pzAjL/8MBZ9q6027Dec/urcMHa+lc8Il66jxtYooF0P23PvkSLxrRuIb5B4l2HLuMDjmJeBvhkjtgkgySrAtY7sygpaevPnrzVkPnbz44E7jlDIozuFkosl0GqI36yGLY+qamGIx/y+kmi9Ngxia0JvPXe7vQnDs7P9j4sFyB0q9GNalMZSfKD8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by BL1PR11MB6004.namprd11.prod.outlook.com (2603:10b6:208:390::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Wed, 20 Nov
- 2024 03:45:03 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8158.019; Wed, 20 Nov 2024
- 03:45:03 +0000
-Message-ID: <6fada5bb-7ca2-4f6b-9174-109c429e8d68@intel.com>
-Date: Tue, 19 Nov 2024 19:45:01 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/9] x86/resctrl: Compute memory bandwidth for all
- supported events
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, "Peter
- Newman" <peternewman@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	<x86@kernel.org>
-CC: James Morse <james.morse@arm.com>, Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>, Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20241114001712.80315-1-tony.luck@intel.com>
- <20241114001712.80315-5-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20241114001712.80315-5-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0368.namprd04.prod.outlook.com
- (2603:10b6:303:81::13) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CDF28EC;
+	Wed, 20 Nov 2024 03:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732074373; cv=none; b=uSh+lHF80ohKu26rziAJhx8Zt3dpKY4sITTpatiHbX5BCqLWpRxF/CT1i45PbGJL1oatgk0ux/uNo1MTsbAuO2F/3pymmguabOLAU3v4/l+sD9qnsGVvpk4vjz2R06J0yPzmMqFmx/VrzCy3x+akF2gv6VML59yLA6UjSUMlTmU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732074373; c=relaxed/simple;
+	bh=yRv/tKkIxw7/PgCT7gTfrWds7b10frLZZ6468UJWe/w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Su88kiL1HQFlYqZFM1aiStxjeNN53196iYazDO52QUdO0B3bOgnp7Dg5u99PypmBcyR7QFnDh6ehcxfpWkSXHFfyGgccf4eC6yQxR776Wkx4KmtpgByS4Qk3cGfCKqpCSLvfEyzD0X9oBmNAD7lQAYOS5a15vRQdDePCyV9xRbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdswonzX; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a76df43746so10439525ab.1;
+        Tue, 19 Nov 2024 19:46:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732074371; x=1732679171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1jtk1zl4aSk9+lvWPZY5UumKAQmiBiNYz2jEHrbWkiE=;
+        b=EdswonzXe6QRK+A6IDUDcD5mdCbbLVhcZ1eMrYcGMRHmMTOhzMHLPK6qqrRRurSaMx
+         kN/h556ZUA1PL5p3qoYkfNxWt2Pop0wAQvI20c4GOtREGCLmC1AfxMpH3H/R6zfPBhJ+
+         g0Y4veoaNpULWJepbmfI3teXE/bYuYvabXxit69V8uMvTar/Q9RPdGnTlMHgDv5orqx9
+         698e9R5cJPZuR8PPHQVxnrnB6PxgggIVI8jeqvlIBMnswApMshgBKSuy107rir3xG+9r
+         MBKla8OCYsTc7R7h9K6xlm1FsPuu/3i1ioKTQ0bdwLCnt4oQuw1W5cs/s32B6mH9kJ0D
+         qBFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732074371; x=1732679171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1jtk1zl4aSk9+lvWPZY5UumKAQmiBiNYz2jEHrbWkiE=;
+        b=R30Scue2mob6ZRrWIyNBP3NoPOvpluqxQ/reZgCKZoYXS40aaGU5CHKO2y2Ojyzp28
+         omuqijksqacT9Zgrwaz+1g94focFHaHGVyDrgqB+Gi2SY1e3Lf+xWC5EImXlkvc9Af9p
+         DgP1bURbZDsWzeBHR/95dfjvqcRfaoydFTC6o1wA0vTiXPhtHw8aF2bBJMRspIDzVX3o
+         LcecYTIyPalqPoK/ocuWdazzEwXmZGsEj0vaNwzHETR73X2UKNWYyee4+FBWizzCTddv
+         VsxkkBMuyPe3BwtmQH8J/nIQSH6rP6R8woXFIbX0YHMrxQb4/+n/naXmmYbK0qE5Fugq
+         2/gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjXaCuBoSp27A6ILrzX4qbzITlpZq+iJzx6Sg9umxFxUPzOLCsm4Cnh9ibvkUWQy1y4ypPd2QvKw==@vger.kernel.org, AJvYcCWfTibfsQPpQnTbU+J0avlevqwi1Hph1faRc7KiBDPBFJ/LPMgDt9Dq68PcNNQPpJpdVDMwI+orT8jwaOvb@vger.kernel.org, AJvYcCXvpM/U1ZBU0t6eTgQXs7ZeukIlU1u1A0s3boUoq5DY+oCihHG/a0Q48QZGTajxfuPvb+1/odN9RBJ4I/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4/Wm4wE5b28/L8MX/5/lZaWa1d8u5kheD/+78+8lruEmT5lpo
+	bLmI+UNwkoKcgGNr1ioECe4ERKbMlbNWiWBmR2oe6zXZsE+DJFwPClNuV0Y9nK8UNL+wuvTdh/x
+	vophmbvPtkeBJKac3YNbnok78Dp8=
+X-Google-Smtp-Source: AGHT+IGhh4aSgpURVT3OET61N9X1zKakDzkHXxCrO7/9x2Fw8GYnbqDbAbC3nVPeDgWEHh7NOxcLBWPVrQEE4C9TbXU=
+X-Received: by 2002:a05:6602:1645:b0:82c:d768:aa4d with SMTP id
+ ca18e2360f4ac-83eb5fefbefmr225028639f.9.1732074371282; Tue, 19 Nov 2024
+ 19:46:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|BL1PR11MB6004:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28838291-ae99-49c1-7772-08dd0915b7a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?VTFIU08xcWd2YlMyemJLTWpNL2w3QzdPc2hKRkVzSnB2S1loQ2pJVmpQRkIv?=
- =?utf-8?B?N1lRaEdoY0VjM21KUFNMaE8vN2VueVQxdE1yUG9MM1R0RWZoblBTVC9vYmF3?=
- =?utf-8?B?ZHM0SUJUUGJybVRzQUZtbGNOWEhZTGRoNnVyMFBPNUlmVkEyY2g0d1NkZitD?=
- =?utf-8?B?endMRzJHNGZ3WDlCVC9jL0ZuSXBGM2c1MzRsQUVHdHdoVjRraURkWVlGWU13?=
- =?utf-8?B?RzNMbVE1bXlPNmVmOG9HVTMzcDNxUThEa2sxOHNGRWxZZDQwNmRXWXNSMEtw?=
- =?utf-8?B?b0dKUHhEL1R3VjJrVGxjVFFmSWx5a3MycHErSVo5VmdhUDlRakpXR3NuS3Uy?=
- =?utf-8?B?SmZQemJSZHU3dGRsbmxVTmNKTi9oNXRYVHB4RGU5bHdRemhmUzNLZEJBb0E4?=
- =?utf-8?B?QzhwSzhUNk96Z2dZQ1RCRjJ6bFpDN2tIVWZNUE13QUhPd2xEQVU3d0RyZjNx?=
- =?utf-8?B?Z1ovQmVRTWwyQi9aRFQ2emozY21WUVB5Q3hqeTdiY1h2KzlDVVVPZXhFNTBl?=
- =?utf-8?B?aVhtZ3dOdnExWGFGelh3VCtRNHkxc05pY1lOUjlsSXpaa3BiQXZNTXAxU0VS?=
- =?utf-8?B?OGNGWjBlNnQ5ajk3SG5TdUw2UEhsVWdVTWZpYTBvZ2JjeTFZbnBsaC9rdXJj?=
- =?utf-8?B?K1JHMElzcnk4eW4wOG1LcFVjUFd1UloxenI0Ym9WTEVmZHljbFFCSGFDLzN4?=
- =?utf-8?B?OEYyUFdPUWxicndkNk5LUnphMXpWeFh4REdQU2lFM2NHbENzQ0ZBblYrVHdB?=
- =?utf-8?B?OUtBREhtLzlVVkVuZUJSQXVzbzlVRjcwMXdMVHZ3ZTcxOVpZOEd2VzlQSDlZ?=
- =?utf-8?B?VFI4OHdFYlhDWVdZcVdpL29UNy9TU2gwRzRCME1YS3F1TlhydjFGeXVZNjR1?=
- =?utf-8?B?TGpuREVvU2J4b0d2QnFPWU5NenBJREpUR3ZWWkNmYVNWc3A0dHQ4b3EzN3pi?=
- =?utf-8?B?OVR1L04zQW0wZEdYb0N6L1BQQmp6UDR1SnpaOG1Nbi9lcXJNRHE5NTZLTGdN?=
- =?utf-8?B?R3VPekkzYXI1empVZ2dCM1hBOEZ5ZGkzRW9uekZOTzVCamZPZ0hLZmEyWklW?=
- =?utf-8?B?SW51eHRzdTA0anFaNDJudmwyN240S0hkcFZpRDMwV2xxOUFhenRBTXl2SWVp?=
- =?utf-8?B?TWRMYnpZd2hFQnFNUFRhQkRwbzk5bDRvRmtVa0JaVW1peGdkNWRVaVI0OFB6?=
- =?utf-8?B?b0N2RjhUMkFHZkNmaUl1aFR0RGJ4K2JHSmptVTBHT1dMY0I3M05Odmo4bkZz?=
- =?utf-8?B?Q1NLanpJdUl1aS9Xb0NpZm85a282b09uQ2pjcU5KMDVKTHFnNjlwTGR6NWI0?=
- =?utf-8?B?aVlEM241c2R6UTFqZFhXMEN5b3o5eUw1QVZLNjA2ZGdkR29BYld1aEN0TzNt?=
- =?utf-8?B?ck1vMFRFN0k3SEd4dE9kMVJzWXVrbzM3enVoQzd5VWhXS3loZXZSZG11clNL?=
- =?utf-8?B?Qis4aGoycHZxeFRhclNBOUREWWlnS2FHRXBPeE9sR3JVUDRHU243Y3lMejVU?=
- =?utf-8?B?ZXRDcE1LQUxiQ1lDdHl5VFZMalpzdWVYUWRSaXBQdDl6dnc1ZnFrVVM4S3Jv?=
- =?utf-8?B?TmF2YkdoczdYampwbEsrcGNkbkd0TE0xYVY4K1l5Vzd1VU44QlI4NC9aWk5I?=
- =?utf-8?B?OWFHcW1rQ0xqN2pjN0VWaFppUHNueXlBOVc3Sm1kSEw0M0VJalFLb1NDWjVs?=
- =?utf-8?B?Tm9VRVpTKzVlcWVLaHR4M0I1WG5SYVlxTllWdXlHSHpMeW1VS2xxVlRxcnZD?=
- =?utf-8?Q?1zUHFasBhnTve0g8ptBwVq/adgONTWAagm9mDZI?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dndlK014U2p4Vkw2bTcwOFBXZ1A2eVBGNks1OGFYNHZXUEtpZGcxRmVOd3I2?=
- =?utf-8?B?b2IwSEFyRjg2TUpXNmxZeGtkaFlSZEhOZk9tVzRiazBvRjRkcnp1TjhWS2U1?=
- =?utf-8?B?bU55T2lLZ1YvUmx4cUllRzJIWDlmbXU5b2RUM1JqY3JOYTBSbmphUGc0dTBn?=
- =?utf-8?B?SFZKeHhuOFZQcHp3ZXlzaW55b3hJbnVKRWIwMVNvY0xZTFc2cml4UHZHb3dY?=
- =?utf-8?B?RmwrNSs1OHozc3FjMDZtZktFamU5bjZITGdTOEp3bXFEYlUxNGovQjY5RUxm?=
- =?utf-8?B?WTJGQjdJWWt2SVNCdlorRmZ2YXNMemcrSGIzQUxZSzIvS2lmdWlzNHlDWklp?=
- =?utf-8?B?OE5SQkExTWdoMmZxUlBQRHRyalpiSXhialk2bWxJV29RbG45Sm9DUGVjQlI3?=
- =?utf-8?B?cW5MY3A0d2g5NCs4WDl2dmFnYTkyTU9LVkE5ZitpT2w3OGszTXh2cXZXVnFy?=
- =?utf-8?B?cHJvM3Bsb0lBZW15MDJ4b1dhVW1hT3dWL2R2b3A5RlptRkRCeSsvMmNLQzRy?=
- =?utf-8?B?SHFxbmtCWnh6ZnNtVXdkQ1RzK29ucmFta0J0Z09TL3p0QnY2d1cxUG9aZWVr?=
- =?utf-8?B?U0dGaHB1M0p4YUprbTNPNFU2dHl2cjNoN2xjZW5qNkdPT1BBUWZGQUVQOXM5?=
- =?utf-8?B?R1NFdEpIYzYxS1R2b0NaSWQxd0lDRGozVGVhN0c1a3VXRVJJanZTdG5CREVZ?=
- =?utf-8?B?Vk9EMEVUQ0FjbUZndHlvSmNsRU1TMmNuTmpSVmRpREpVcGNaTlhqdmIvNEE1?=
- =?utf-8?B?NTlVM3dqWU1UNVdKUHBrYkZCWG9wZUN1bStQd1JYOTBTTnZidHQ1MVZhOTZM?=
- =?utf-8?B?cVd1Q1B1dmtCSXRzL21zOHJlQW1oSHI5emNTSGRoOUo1WlV6cEpTZmtBYXlp?=
- =?utf-8?B?NGtldjBkYndIcytjaEs0ZlBFaFl2TXVTcGJMVVZjTElnKzcvTFNUUGVOU2Js?=
- =?utf-8?B?YitzYnU0MTRRTWk4VWZURGhudzRIdk5yZVBlRVhteGxSYlFoT3VDSUsrM3hO?=
- =?utf-8?B?YitEMlZWbnpPTkdLdFhQTjV5SVdaVDVuc1czem94U1ROVjJFZngydXdMWXY1?=
- =?utf-8?B?K2RSeGN3NUNPY1dxRkswMkloZFByd25yY3ByakcrUUJDZzVsRitoeFA0ZGVR?=
- =?utf-8?B?OG1zTjVqRmczRGVYMXJNaUpjYWU2TmZRWXNwQkt5Nlc3VElBTkhrT2JhNUM1?=
- =?utf-8?B?aUluTUdzMWdYZ2xjSzR5b1VtRmQ4ODdBQ2RpVjc1aldpSHlQNmNBbnlzdy8y?=
- =?utf-8?B?aEJWRy9iZDhxM0JhSkt2TjA4dUNOYVYzOFE2SVlaZDN3a2dsellsTjZFZFRE?=
- =?utf-8?B?VHU4K1VvajhKYnF2UjJXU25wSGlpQUtwME5INW9ad3lERGMwc09WdVJvc3VQ?=
- =?utf-8?B?RXJnd3A2azJFdEZiTkJtNjVXb3ZKVk5yblhycUtHZzZCb1FnUk1ISUsvV3pT?=
- =?utf-8?B?MThhQ0xacVA4OVVjdWlPbk02TnZCZGZLanVPYVo0aVlSZ2hZMUIyVG13TFFY?=
- =?utf-8?B?QXNLbENCeXJrVXBUSDEzVkwzODNISm1XWFk2L080cGdIcmVhSHBqWjdtQXVH?=
- =?utf-8?B?WnhKZTFJSFYrVTgzQUFaTTByaXJpTVhYajZjaHlZSU1xbEp1L1J6MG02MlZ4?=
- =?utf-8?B?WGgvanMvczFrbTU0dWtqY0EyTENvbGtiUVp4dGVxY1BlT0lVZ1F6RmUzdVYr?=
- =?utf-8?B?QWpxeUp3bjdFT25TZU9DNGZpeUM3RjNMWXFFamxhMm9qbngvTlk5cUFTQmZj?=
- =?utf-8?B?OWd2ZkdMeXU5bHlPemMzMlBteXJNV1hqK2VyMWs5SytiVkhGM1ZPQVRrbmhi?=
- =?utf-8?B?LzVWL2JBNUQ0a2FBL0dmeHcyRElyQnU5V1pkVGc5ZFYyb1RUWjJTR2ZoUkxY?=
- =?utf-8?B?UVFVYW9YVmR6TzduMjhGU2tBVXZCVVBKR2JFN2ZlekRUbGlOYm1wZmZRVWQ3?=
- =?utf-8?B?bzJWZjNYR3ZTRC92NFkranRYbVBDU0RvNTlGc1FObnk1ZTRMZ1l0bndySnE3?=
- =?utf-8?B?VzB4NjFoZTcwMnlNTnRQbWxCWHZpVWFIQ09VbHA1NmIrbUd6QzBYQVJ4dVhh?=
- =?utf-8?B?R2Y5VXZLY0FYUS9xYnlGT0kyLzZzR1J1cnJOb3JJM3p1Q0tiV09qOEhYZ0pR?=
- =?utf-8?B?Qi9ZaXB0Z0pkQnV3Q2FSb2ZZVDU0MlBBMXUrTEx0VnRad3pHZG02c2RFRUZ5?=
- =?utf-8?B?OHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28838291-ae99-49c1-7772-08dd0915b7a5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 03:45:03.7821
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: M5QyQ4hRcAZAGqyz1D31KkDpOKUdFSj4vI21980EaIf/eCpH8HyDnkVMCaAn6K6CeEC6S6gTPaqUqyRctwCnnnEnB2jhR5KFBhi0jbZXd9E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6004
-X-OriginatorOrg: intel.com
+References: <20241115230555.2435004-1-arnd@kernel.org>
+In-Reply-To: <20241115230555.2435004-1-arnd@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 20 Nov 2024 11:45:59 +0800
+Message-ID: <CAA+D8AO8=NaNM0jPuSa68yvNa5pJQ7r207_-y06sxB__kqWdGw@mail.gmail.com>
+Subject: Re: [PATCH] firmware: arm_scmi: fix i.MX build dependency
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Mark Brown <broonie@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Cristian Marussi <cristian.marussi@arm.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Peng Fan <peng.fan@nxp.com>, arm-scmi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Tony,
+On Sat, Nov 16, 2024 at 7:08=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> The newly added SCMI vendor driver references functions in the
+> protocol driver but needs a Kconfig dependency to ensure it can link,
+> essentially the Kconfig dependency needs to be reversed to match the
+> link time dependency:
+>
+> arm-linux-gnueabi-ld: sound/soc/fsl/fsl_mqs.o: in function `fsl_mqs_sm_wr=
+ite':
+> fsl_mqs.c:(.text+0x1aa): undefined reference to `scmi_imx_misc_ctrl_set'
+> arm-linux-gnueabi-ld: sound/soc/fsl/fsl_mqs.o: in function `fsl_mqs_sm_re=
+ad':
+> fsl_mqs.c:(.text+0x1ee): undefined reference to `scmi_imx_misc_ctrl_get'
+>
+> This however only works after changing the dependency in the SND_SOC_FSL_=
+MQS
+> driver as well, which uses 'select IMX_SCMI_MISC_DRV' to turn on a
+> driver it depends on. This is generally a bad idea, so the best solution
+> is to change that into a dependency.
+>
+> To allow the ASoC driver to keep building with the SCMI support, this
+> needs to be an optional dependency that enforces the link-time
+> dependency if IMX_SCMI_MISC_DRV is a loadable module but not
+> depend on it if that is disabled.
+>
+> Fixes: 61c9f03e22fc ("firmware: arm_scmi: Add initial support for i.MX MI=
+SC protocol")
+> Fixes: 101c9023594a ("ASoC: fsl_mqs: Support accessing registers by scmi =
+interface")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-On 11/13/24 4:17 PM, Tony Luck wrote:
-> Computing the bandwidth for an event is cheap, and only done once
-> per second. Doing so simplifies switching between events and allows
-> choosing different events per ctrl_mon group.
+Acked-by: Shengjiu Wang <shengjiu.wang@gmail.com>
 
-This just reads like some a general statement. There surely can be
-some context, problem and *some* description about how this patch goes
-about addressing the problem?
-
-> 
-> Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+Best regards
+Shengjiu Wang
 > ---
->  arch/x86/kernel/cpu/resctrl/monitor.c | 72 ++++++++++++---------------
->  1 file changed, 33 insertions(+), 39 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-> index 2176e355e864..da4ae21350c8 100644
-> --- a/arch/x86/kernel/cpu/resctrl/monitor.c
-> +++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-> @@ -663,9 +663,12 @@ static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
->   */
->  static void mbm_bw_count(u32 closid, u32 rmid, struct rmid_read *rr)
->  {
-> -	u32 idx = resctrl_arch_rmid_idx_encode(closid, rmid);
-> -	struct mbm_state *m = &rr->d->mbm_local[idx];
->  	u64 cur_bw, bytes, cur_bytes;
-> +	struct mbm_state *m;
-> +
-> +	m = get_mbm_state(rr->d, closid, rmid, rr->evtid);
-> +	if (WARN_ON_ONCE(!m))
-> +		return;
->  
->  	cur_bytes = rr->val;
->  	bytes = cur_bytes - m->prev_bw_bytes;
-> @@ -826,54 +829,45 @@ static void update_mba_bw(struct rdtgroup *rgrp, struct rdt_mon_domain *dom_mbm)
->  	resctrl_arch_update_one(r_mba, dom_mba, closid, CDP_NONE, new_msr_val);
->  }
->  
-> -static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> -		       u32 closid, u32 rmid)
-> +static void mbm_update_one_event(struct rdt_resource *r, struct rdt_mon_domain *d,
-> +				 u32 closid, u32 rmid, enum resctrl_event_id evtid)
->  {
->  	struct rmid_read rr = {0};
->  
->  	rr.r = r;
->  	rr.d = d;
-> +	rr.evtid = evtid;
-> +	rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> +	if (IS_ERR(rr.arch_mon_ctx)) {
-> +		pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> +				    PTR_ERR(rr.arch_mon_ctx));
-> +		return;
-> +	}
-> +
-> +	__mon_event_count(closid, rmid, &rr);
->  
->  	/*
-> -	 * This is protected from concurrent reads from user
-> -	 * as both the user and we hold the global mutex.
-> +	 * If the software controller is enabled, compute the
-> +	 * bandwidth for this event id.
->  	 */
-> -	if (is_mbm_total_enabled()) {
-> -		rr.evtid = QOS_L3_MBM_TOTAL_EVENT_ID;
-> -		rr.val = 0;
-> -		rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> -		if (IS_ERR(rr.arch_mon_ctx)) {
-> -			pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> -					    PTR_ERR(rr.arch_mon_ctx));
-> -			return;
-> -		}
-> -
-> -		__mon_event_count(closid, rmid, &rr);
-> +	if (is_mba_sc(NULL))
-> +		mbm_bw_count(closid, rmid, &rr);
->  
-> -		resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> -	}
-> -	if (is_mbm_local_enabled()) {
-> -		rr.evtid = QOS_L3_MBM_LOCAL_EVENT_ID;
-> -		rr.val = 0;
-> -		rr.arch_mon_ctx = resctrl_arch_mon_ctx_alloc(rr.r, rr.evtid);
-> -		if (IS_ERR(rr.arch_mon_ctx)) {
-> -			pr_warn_ratelimited("Failed to allocate monitor context: %ld",
-> -					    PTR_ERR(rr.arch_mon_ctx));
-> -			return;
-> -		}
-> -
-> -		__mon_event_count(closid, rmid, &rr);
-> +	resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> +}
->  
-> -		/*
-> -		 * Call the MBA software controller only for the
-> -		 * control groups and when user has enabled
-> -		 * the software controller explicitly.
-> -		 */
-> -		if (is_mba_sc(NULL))
-> -			mbm_bw_count(closid, rmid, &rr);
-> +static void mbm_update(struct rdt_resource *r, struct rdt_mon_domain *d,
-> +		       u32 closid, u32 rmid)
-> +{
-> +	/*
-> +	 * This is protected from concurrent reads from user
-> +	 * as both the user and we hold the global mutex.
-
-I understand that you are just copy&pasting a comment here but could you please
-help to avoid any obstacles by removing the code impersonation? Perhaps something like:
-
-	 * This is protected from concurrent reads from user
-	 * as both the user and overflow handler hold the global mutex.
-
-(please feel free to improve)
-
-> +	 */
-> +	if (is_mbm_total_enabled())
-> +		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_TOTAL_EVENT_ID);
->  
-> -		resctrl_arch_mon_ctx_free(rr.r, rr.evtid, rr.arch_mon_ctx);
-> -	}
-> +	if (is_mbm_local_enabled())
-> +		mbm_update_one_event(r, d, closid, rmid, QOS_L3_MBM_LOCAL_EVENT_ID);
->  }
->  
->  /*
-
-Reinette
+> I'm not sure this is the version we want to go with in the end, without
+> having read the code in detail, but the version in linux-next is clearly
+> wrong in multiple ways and this is the best I could come up with so far.
+>
+> If we can agree on this approach, it needs to go through the ASoC tree
+> as that contains the 101c9023594a commit at the moment.
+> ---
+>  drivers/firmware/arm_scmi/vendors/imx/Kconfig | 1 +
+>  drivers/firmware/imx/Kconfig                  | 1 -
+>  sound/soc/fsl/Kconfig                         | 2 +-
+>  3 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/firmware/arm_scmi/vendors/imx/Kconfig b/drivers/firm=
+ware/arm_scmi/vendors/imx/Kconfig
+> index 2883ed24a84d..a01bf5e47301 100644
+> --- a/drivers/firmware/arm_scmi/vendors/imx/Kconfig
+> +++ b/drivers/firmware/arm_scmi/vendors/imx/Kconfig
+> @@ -15,6 +15,7 @@ config IMX_SCMI_BBM_EXT
+>  config IMX_SCMI_MISC_EXT
+>         tristate "i.MX SCMI MISC EXTENSION"
+>         depends on ARM_SCMI_PROTOCOL || (COMPILE_TEST && OF)
+> +       depends on IMX_SCMI_MISC_DRV
+>         default y if ARCH_MXC
+>         help
+>           This enables i.MX System MISC control logic such as gpio expand=
+er
+> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+> index 477d3f32d99a..907cd149c40a 100644
+> --- a/drivers/firmware/imx/Kconfig
+> +++ b/drivers/firmware/imx/Kconfig
+> @@ -25,7 +25,6 @@ config IMX_SCU
+>
+>  config IMX_SCMI_MISC_DRV
+>         tristate "IMX SCMI MISC Protocol driver"
+> -       depends on IMX_SCMI_MISC_EXT || COMPILE_TEST
+>         default y if ARCH_MXC
+>         help
+>           The System Controller Management Interface firmware (SCMI FW) i=
+s
+> diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+> index 8e88830e8e57..678540b78280 100644
+> --- a/sound/soc/fsl/Kconfig
+> +++ b/sound/soc/fsl/Kconfig
+> @@ -29,8 +29,8 @@ config SND_SOC_FSL_SAI
+>  config SND_SOC_FSL_MQS
+>         tristate "Medium Quality Sound (MQS) module support"
+>         depends on SND_SOC_FSL_SAI
+> +       depends on IMX_SCMI_MISC_DRV || !IMX_SCMI_MISC_DRV
+>         select REGMAP_MMIO
+> -       select IMX_SCMI_MISC_DRV if IMX_SCMI_MISC_EXT !=3Dn
+>         help
+>           Say Y if you want to add Medium Quality Sound (MQS)
+>           support for the Freescale CPUs.
+> --
+> 2.39.5
+>
+>
 
