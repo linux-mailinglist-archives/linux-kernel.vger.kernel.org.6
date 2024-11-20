@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-415310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26659D342E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3BC9D342F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A0B1F233CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0401D2837A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 07:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6658315A85E;
-	Wed, 20 Nov 2024 07:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA2B15A86B;
+	Wed, 20 Nov 2024 07:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gube/4re"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q/FEoeL2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T3TOYwg9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FA615533F
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A415B15533F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 07:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732088152; cv=none; b=iW1YIJB5eFciVo5Ay9ucASNxidZ6TdHOYRLVXn1NLUR8r5YjtQJ0Q03nNxQ7xKF9QpTTgDgQOkNOZma31Hq1rOVpdjv0HYv45yUL0BokmCFK67QLBDeUl+ajugYpSq35/AfFZQYyrb26e3mkL1hn3quOI2wIvUeIecsf2T36Tlw=
+	t=1732088208; cv=none; b=EXMWuklghQzwvBzHjlwKarBTaWzwmAcA1mpr96f9vu/nIR40wDbPTi4kBDz/s2hBGT3uhzyoRQqH7WF8+3hij51yqBCF0ZaWZIxqFU7nExBCznYX9uxn9fElRMKUkPgn2Q+YL3ezb3PH7i2qCjYBttOcozH9zWACQFZdlgV3bTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732088152; c=relaxed/simple;
-	bh=JKSJqxGDbiLgwxdlepXXqCf3WXM9QgPafwIjc7kN2GQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X8jltImKbuqEe27bWC7Zb3f5Hr8dyYkhRi3xx1zgMZxaSEdHSpkNIlyWzxWnIayLXccPZXw2FoL4T+2G3Zlv3qzCxibNGp/7EbkW1SkTJncu8fk9IyPBIKHHOwOU1cMshrWfsaQ10uQH3YH4jzn+gIDVeTZI7SIVYBHkRKbYP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gube/4re; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53da209492cso6303525e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 23:35:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732088149; x=1732692949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bVdt7me2BL/1fsMZfkqd2rx53sv6P4dXB86USYdpOEM=;
-        b=gube/4rer9PLcsI6AmV14GR7H9ocmCXp6NwZTNkJ9YtGQjZF0dQihvM57EvBm0ffQa
-         4BBnE/XmlsL1aNr28zHT+lTtS/YJfjHfCUbpTx5f1IAoNXkWYUpk8Df5HgT5E4GGrWZ5
-         MAOuU1RMB7H2rxGU9oRqC+ezW/dx49PG6CkyOHM0wULAefGQP/yBsuRmjyBBGTSQEWpM
-         F/+6BuR3GjaN0EVlX2iJrrW5BVvyGcn+hTo+HiZo9G4Fz41r7MvByo2P2SVe56r3gE/a
-         eyYBcP1e/o3S2U4uM1msILRXh1zynRJ5dlz97GTSRJ1mDOs90Sj58pI1O75o211UJ1UH
-         WrMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732088149; x=1732692949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bVdt7me2BL/1fsMZfkqd2rx53sv6P4dXB86USYdpOEM=;
-        b=Y0Sdipvhkpz3sk3HF0O2zkTMce5Z+3clblHGZhW0BoRwbbxOQ9QzRq0AZ7jHAaHK3V
-         XSAsGiJrs4bNXgkPK4wmDu584fxI6qFEZLYbdUXepqWa73VDiIayruS2XEO03p8zWVPA
-         NnoovOUD/6n/2MYYJkqvafyLMsJU/2RDn2sj1rv3jjOtnwsy/bYzZUM06Dbf+M4+/K/X
-         22RefpXMxkcXZ2HPb7WDMwuhf4+CfazINGFHv1aXktOH5f8Ep/e6b5QFKGOy8nHFRabz
-         geTotjvVQMapz6PmzZHz1FEMpHEQeCi6565xup3V+Ap6qvTYVtEtjcc4zTENiA78w+7Q
-         Lvpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3zacdm+fqwoDkTNtmPwR8Bdc6DSmcxQJo+2OfvDk0WSMC2U1RLlaojHqZW6SYN8TIQJiWQXlakctGMJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGgfV/4iz5eABY9NTs2rjMdGD1uZEJ77A+JvxDhtKHPo6eHt+n
-	mhGTO77GEzdo+geEKoe4JGhDa8hLzyJhBWJqWrNTuzzcR1ePcftGqQS7dLHIGkyZEcEVoatC3BN
-	gEmiQ1hNb5p8FdOWmfW8SEPd9z0gFZqa1+kuX5g==
-X-Google-Smtp-Source: AGHT+IFhQwU+3f9jL5bp/lYeAYqWZlBwDx6zgv89CNCtOeVal/X2CJMoACyYoC+2s8VaM4/eB5xVe1ULuCvFi6rF4uM=
-X-Received: by 2002:a05:6512:118c:b0:539:f1ce:5fa8 with SMTP id
- 2adb3069b0e04-53dc136debcmr552235e87.49.1732088149001; Tue, 19 Nov 2024
- 23:35:49 -0800 (PST)
+	s=arc-20240116; t=1732088208; c=relaxed/simple;
+	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQ9s6SaYm2jf97wTdWb1IMs6L87CL6iXb35LUlNrMG6axN5uqvbLZ0k/RVRRBIVk8MgVwnmXfqgrx9BKwSf1CU6L19Hvu4+MLU25lkyFte5h4Q/x2xymMyQfCM4yGhPseY7TwsFM4Q//6a6cBrWZY/sU+rtqF7bCQ80JY+4QE1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q/FEoeL2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T3TOYwg9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 20 Nov 2024 08:36:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732088199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
+	b=Q/FEoeL2n3rPOA3BjimAeMTo1U6LuQneHGWVC/Xj7SFK+piscwl/jb0syV49xRcJUQ+/bV
+	5HJ1H9EdvyGA5DUIMpWJg4Q4Bsv3+qQl3W52U258+H3uFvQ3WB0QdtPsJrW4kiRncQy1M2
+	xaIYfJpr+8ruyTuFLK3EQfTZbRCzYWTYiJZaTTsukW3Lndq7jnwFmQCDxmsMZuXqLH5odM
+	geWhU0cXZvPbzZ40YEPBd2ohdsX5PcrwkCYk4T7RpAFItREWF69uUktFdd412Y5sETyRmS
+	j6LxbZeXGrGg6/CBaDYsJGsgVm+KDoS37Q2niJyd8KzlU71FozYMrH9svs+daw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732088199;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WOBjE9kTd2QqaeB+8CLez4fjd6LlTtEZDmP3EAaO+OQ=;
+	b=T3TOYwg9QCc9ArJ8tzo8otiKD6Kn24s+oPAKwTTYPZ2uESkXucu4HsyRPe+2nHjEJ5XIBn
+	ryVjf3ru52o4RbDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Clark Williams <clark.williams@gmail.com>
+Cc: Clark Williams <clrkwllms@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241120073637.iwQyy4q7@linutronix.de>
+References: <20241114103111.5W5ZY0D4@linutronix.de>
+ <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+ <20241114111409.LWKp5YEg@linutronix.de>
+ <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
+ <20241114113018.Ilo9ZsQo@linutronix.de>
+ <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
+ <20241114132956.wafcHvaB@linutronix.de>
+ <ZzYMie7ktV8ByaQF@demetrius>
+ <20241118073659.MGircGsm@linutronix.de>
+ <CAPAFJkp_MQ8rNsTTY3xfYMhdtiWQunN65Yfft1SqZLptG2J5cw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120053055.225195-1-00107082@163.com>
-In-Reply-To: <20241120053055.225195-1-00107082@163.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 20 Nov 2024 08:35:38 +0100
-Message-ID: <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com>
-Subject: Re: [PATCH] Fix a potential abuse of seq_printf() format string in drivers
-To: David Wang <00107082@163.com>, Kees Cook <kees@kernel.org>
-Cc: brgl@bgdev.pl, tglx@linutronix.de, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, geert@linux-m68k.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAPAFJkp_MQ8rNsTTY3xfYMhdtiWQunN65Yfft1SqZLptG2J5cw@mail.gmail.com>
 
-On Wed, Nov 20, 2024 at 6:31=E2=80=AFAM David Wang <00107082@163.com> wrote=
-:
+On 2024-11-20 02:17:53 [+0000], Clark Williams wrote:
+> On Mon, Nov 18, 2024 at 7:37=E2=80=AFAM Sebastian Andrzej Siewior <
+> bigeasy@linutronix.de> wrote:
+>=20
+> > On 2024-11-14 08:43:21 [-0600], Clark Williams wrote:
+> > > We see similar problems with chronyd accessing the RTC on aarch64
+> > > systems that use UEFI. Accessing anything via the EFI Runtime is very
+> > > slow. Probably going to turn off 'rtcsync' in chronyd when running
+> > > low-latency workloads.
+> >
+> > But isn't "we call into EFI and have no clue what happens" exactly the
+> > reason why we disable EFI runtime services?
+> >
+> >
+> I've had customers want access to EFI variables. I believe we default EFI
+> runtime to be off and allow it to be turned on.
 
-> Using device name as format string of seq_printf() is proned to
-> "Format string attack", opens possibility for exploitation.
-> Seq_puts() is safer and more efficient.
->
-> Signed-off-by: David Wang <00107082@163.com>
+So the efi-rtc is accessed via functions calls into EFI. So you call in
+there and they do (probably) access the RTC via i2c and remain in EFI
+(block) for the entire process. That is why the access is disabled. The
+difference here is that the bus access is slow so every read/ write
+seems to take a while.
 
-Okay better get Kees' eye on this, he looks after string vulnerabilities.
-(But I think you're right.)
+The EFI variable access by itself is fine however the variables might be
+saved in NAND flash. The write access may trigger an erase process and
+relocate the data and so may the read if too many bit flips were
+detected.
 
->  drivers/gpio/gpio-aspeed-sgpio.c            | 2 +-
->  drivers/gpio/gpio-aspeed.c                  | 2 +-
->  drivers/gpio/gpio-ep93xx.c                  | 2 +-
->  drivers/gpio/gpio-hlwd.c                    | 2 +-
->  drivers/gpio/gpio-mlxbf2.c                  | 2 +-
->  drivers/gpio/gpio-omap.c                    | 2 +-
->  drivers/gpio/gpio-pca953x.c                 | 2 +-
->  drivers/gpio/gpio-pl061.c                   | 2 +-
->  drivers/gpio/gpio-tegra.c                   | 2 +-
->  drivers/gpio/gpio-tegra186.c                | 2 +-
->  drivers/gpio/gpio-tqmx86.c                  | 2 +-
->  drivers/gpio/gpio-visconti.c                | 2 +-
->  drivers/gpio/gpio-xgs-iproc.c               | 2 +-
->  drivers/irqchip/irq-gic.c                   | 2 +-
->  drivers/irqchip/irq-mvebu-pic.c             | 2 +-
->  drivers/irqchip/irq-versatile-fpga.c        | 2 +-
->  drivers/pinctrl/bcm/pinctrl-iproc-gpio.c    | 2 +-
->  drivers/pinctrl/mvebu/pinctrl-armada-37xx.c | 2 +-
->  drivers/pinctrl/pinctrl-mcp23s08.c          | 2 +-
->  drivers/pinctrl/pinctrl-stmfx.c             | 2 +-
->  drivers/pinctrl/pinctrl-sx150x.c            | 2 +-
->  drivers/pinctrl/renesas/pinctrl-rzg2l.c     | 2 +-
+> Clark
 
-Can you split this in three patches per-subsystem?
-One for gpio, one for irqchip and one for pinctrl?
-
-Then send to each subsystem maintainer and CC kees on
-each.
-
-I'm just the pinctrl maintainer. The rest can be found with
-scripts/get_maintainer.pl.
-
-Yours,
-Linus Walleij
+Sebastian
 
