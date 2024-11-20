@@ -1,190 +1,195 @@
-Return-Path: <linux-kernel+bounces-415804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6A49D3CC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:53:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F029D3CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3CF2847B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7FB1F22A95
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365581A0AF5;
-	Wed, 20 Nov 2024 13:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5183B1B6541;
+	Wed, 20 Nov 2024 13:52:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="CSrzyvwe"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4v0JyRq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AC31A2C19
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1893D1AAE38;
+	Wed, 20 Nov 2024 13:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732110748; cv=none; b=Pj3M7ZMbPg4L4JYEjk+z0l47iL5T0RDhgqhTNvCNSOFmhGlEBcEp7xFeHlpjvYpds38of9am5Ybw/3VhyHN5usRIqOIhYtJROiZ/r0UMkxdfSygmxuKE6NM7IGj+yzW+sXm3sta1Z7H8LT6CmR/GxT/50CNR+BVWpmq0lJ3MpnM=
+	t=1732110750; cv=none; b=Wo8aZ/NdCE9sn6vUpPgN0k2iWtN0IT9XmC/YQ+7ul5DR1qL0S3SlI2eHmezS6oaibIJYTR2+w8ILWrZNZ56KKoWeqj0XDD/kg6xnoSzY9N/CkOOCnCYw3KbBcXEng7YO5epZ8lZumH8EIM1xVrl0Z7A8EzXP/P9S6HF7CAPlhOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732110748; c=relaxed/simple;
-	bh=DOSQQjHa5fYjdBFPaZqktVFE57KFQTPVxcxUoIrmOe8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JfpcbJmxhHElOEwHHjJfvrR0KSzPma1XunhFreJlttcpeuaBFCvT033KC1VZ99vQTFimhnZPw7P9hbWvVy6zYcZhhbFHEX5v7Ro7UDnh79Zz/T3v7+24fDkGNTTwmjB2WyE35H0ZoiwWOeGZwDfocqPoVxxhpydk25mVENSWQXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=CSrzyvwe; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9eb3794a04so812606266b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:52:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1732110744; x=1732715544; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oF1WJd5o8NNk5bxo210yPA8z3YQUEtaEDUj0L4ZArio=;
-        b=CSrzyvweCuGbm4hPJ6EOxOiLc/4EQ40loA3Q8zpgMlLMjV1MkAtH6e9sb0dHEARNJv
-         U1FHDHng00Ozo1HczbCXnsi7uoe/S2a4Zjv+QTbbZByA2oOH1hT6QajssMjLhKX+2jx/
-         AeEJ9rAIzPkNa+WRfUh1V9vtalsWrJ04504zZsy5geB8CGjrUR71I7L3KmElwnMxPEgX
-         n6Y+5Gi3hFyDHigl58I3EdYJPRwvQwQ6QSP07wzGWUXtNnMRZpVZFUVbDldu4+HMVSGO
-         TaC0hAeqhJAoTGGEgnuWZh6U5mvsDcOBy81efhHZap+6erX0fWDBxDODDy+KyKeEPVte
-         GFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732110744; x=1732715544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oF1WJd5o8NNk5bxo210yPA8z3YQUEtaEDUj0L4ZArio=;
-        b=OqzUFSdBVeTVObylip8GLb5aUUjCoOo7W6qKCxcz/P5CSiKPUXU47hoLD40b7a3a+Z
-         og2Mlm+MNCLQlXzA93ko+Hs4gMiGjFjyYuFEFI6+4Mbw1TnOKhvQG9ModbdYcSHwLqYf
-         W4XkDNCb8RAukpVaS5Vzv1yLvUHlCYEwnCFGymWGlfy7GlFutVYn039PhluZ3ZxI20yx
-         +CO8UswWAB+shzYSC02262QOTmI6bk8EEQgxYvxD7nFrHs8TOR+zGgYoVt2VlsO+4pdt
-         iSxAeOnbfLF6tKddrQLOYESvaKTKaMDQJaXXAxpH0M98us6v89xltuQULBdZZYN2Ry/F
-         BXaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUks8dWR0ydpOKoO9+HWzxsmNpI53KaUGc8ahQC/oWRxzuQ0eq1G3rxYMdZYdxxKyrlCxXV+IT5g5Gy6IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5OSzosZGf4kzJduqZ/QQSWJvbXzXF+4XIb7fcCK2XnXFvxvBc
-	Sq3pcV6cfKsLd8tHzuB7erdNNd5pSlwl6Ka6DEtO57BYYfrZ7Sss6xNo9KLq2wVsdklJvCn0fhp
-	MJotULiGaxLcbtAg4UzfTs6hnW5FCfa3zltEd4A==
-X-Google-Smtp-Source: AGHT+IHQbSPmIRk+nyxcCDhL6psKoFpre2KnuKJw0d51DE1Qt3M4MVBURAlZdsR8Cf/ZQ8CcHiCj6EIuYVVKQP3ds8U=
-X-Received: by 2002:a17:906:dac8:b0:a9a:6b4c:9d2c with SMTP id
- a640c23a62f3a-aa4dd761c7dmr250067266b.59.1732110744083; Wed, 20 Nov 2024
- 05:52:24 -0800 (PST)
+	s=arc-20240116; t=1732110750; c=relaxed/simple;
+	bh=PQrcyJYdhYqVRHp1hFJ6nsEgP+ywNZS0Nb4DS9YUiyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKVDZc3lj/7NI6INANoBGyhSKONNlx6odZxoXRgxvktamTXyciL7cAqpbDBGS6OE/7DJu6bFESFrQP65lr23BYq/7maOYGJSJkbzLQEekX8F3MV1LaBeVppqhECQxXC4oz6mnUKvElZTqgXNOrZbT9cChPFGLk4it+8c8M+ipGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4v0JyRq; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732110749; x=1763646749;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PQrcyJYdhYqVRHp1hFJ6nsEgP+ywNZS0Nb4DS9YUiyk=;
+  b=d4v0JyRqzVOpyXBXV6plXgeKV4TLLnAnPIDumP626OEQcFXv58HhQ2na
+   rjZfj4mpxcpjwU+Kv8EDBCP8D2GIs2DDlIU9LI9ept6WjkYej9G8buDht
+   a/QHEOtTcvsCmMLXzMqmN+nPNgXkzobpfmgWByshyIhdZDan2HOLIDsCc
+   WvkW/snUIk5Gr9clGbXQ7//94WMkwHluSp6ZWuWJyua1S1dXK2FTo9bkt
+   3e7GO3cR4Lza9qiG/5797w8bqDte/OSROl0qNMq0p/70Uc4YMfCG1QR7C
+   SVvkNbX4h/5sCh3s4YZ5AxJPfygnKhm3Kj7K7gvLSl2tVMpMkP/2aZWf/
+   w==;
+X-CSE-ConnectionGUID: wzH90gTlTYG4/mhsXQ9elA==
+X-CSE-MsgGUID: FbB2pMccRpm8dhRi8nYrPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="35950582"
+X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
+   d="scan'208";a="35950582"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 05:52:29 -0800
+X-CSE-ConnectionGUID: ewyTpNRjTmiV5Njm8LNmjg==
+X-CSE-MsgGUID: gcsYJZEzQxOLfSRDFTU9kQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
+   d="scan'208";a="94378389"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 05:52:25 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tDl82-0000000Gj02-0ORK;
+	Wed, 20 Nov 2024 15:52:22 +0200
+Date: Wed, 20 Nov 2024 15:52:21 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Radu Sabau <radu.sabau@analog.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051,
+ adp1055 and ltp8800
+Message-ID: <Zz3plZOyMcxn54_h@smile.fi.intel.com>
+References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
+ <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927-dev-maxh-svukte-rebase-2-v2-0-9afe57c33aee@sifive.com>
- <20240927-dev-maxh-svukte-rebase-2-v2-3-9afe57c33aee@sifive.com>
- <CAAhSdy0ncLTAjEE1s-GWL95sscxwQFsKn1rXyA1_VVfk1bQBiw@mail.gmail.com>
- <CAHibDywpKUE7r4UfcudDSBZCM=JAC5s40uf+PwQE+oMvZy4aVA@mail.gmail.com> <CAK9=C2WEU53TD+tnWRLC1iLRf+j607s=bZXevkogTnr-cmhPGw@mail.gmail.com>
-In-Reply-To: <CAK9=C2WEU53TD+tnWRLC1iLRf+j607s=bZXevkogTnr-cmhPGw@mail.gmail.com>
-From: Max Hsu <max.hsu@sifive.com>
-Date: Wed, 20 Nov 2024 21:52:13 +0800
-Message-ID: <CAHibDyxWBHeKOx=sT63EmEwhwyAYMQ3TE2tkOSK8V45PhjztPA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 3/3] riscv: KVM: Add Svukte extension support for Guest/VM
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@sifive.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Anup,
+On Wed, Nov 20, 2024 at 11:58:26AM +0800, Cedric Encarnacion wrote:
 
-From your reply, I think my commit message was misleading.
-Therefore, I will send RFC v3 patches and explain the guest scenario in the
-cover letter.
+I would start the commit message with the plain English sentence that describes
+the list given below. E.g., "Introduce support for the following components:".
 
-Thanks for the suggestion.
+>     ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
+>     ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
+>     LTP8800-1A/-2/-4A: 150A/135A/200A DC/DC µModule Regulator
+> 
+> The LTP8800 is a family of step-down μModule regulators that provides
+> microprocessor core voltage from 54V power distribution architecture.
+> LTP8800 features telemetry monitoring of input/output voltage, input
+> current, output power, and temperature over PMBus.
 
-Best regards,
-Max Hsu
+...
 
-On Mon, Nov 4, 2024 at 9:19=E2=80=AFPM Anup Patel <apatel@ventanamicro.com>=
- wrote:
->
-> On Mon, Nov 4, 2024 at 1:14=E2=80=AFPM Max Hsu <max.hsu@sifive.com> wrote=
-:
-> >
-> > Hi Anup,
-> >
-> > Thank you for the suggestion.
-> >
-> > I=E2=80=99m not entirely sure if I fully understand it, but I believe t=
-he
-> > hypervisor should be able to disable the Svukte extension.
-> >
-> > Inside the switch-case of kvm_riscv_vcpu_isa_disable_allowed(),
-> > the default case breaks and returns true.
-> >
-> > So that means when the KVM_RISCV_ISA_EXT_SVUKTE passed into
-> > kvm_riscv_vcpu_isa_disable_allowed() it will return true.
-> >
-> > If I've misunderstood, please let me know.
->
-> I don't see any code in this patch which disables/enables Svukte for
-> Guest based on KVM ONE_REG interface.
->
-> Regards,
-> Anup
->
-> >
-> > Best regards,
-> > Max Hsu
-> >
-> > On Fri, Oct 25, 2024 at 3:17=E2=80=AFAM Anup Patel <anup@brainfault.org=
-> wrote:
-> > >
-> > > On Fri, Sep 27, 2024 at 7:12=E2=80=AFPM Max Hsu <max.hsu@sifive.com> =
-wrote:
-> > > >
-> > > > Add KVM ISA extension ONE_REG interface to allow VMM tools to
-> > > > detect and enable Svukte extension for Guest/VM.
-> > > >
-> > > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> > > > Signed-off-by: Max Hsu <max.hsu@sifive.com>
-> > > > ---
-> > > >  arch/riscv/include/uapi/asm/kvm.h | 1 +
-> > > >  arch/riscv/kvm/vcpu_onereg.c      | 1 +
-> > > >  2 files changed, 2 insertions(+)
-> > > >
-> > > > diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include=
-/uapi/asm/kvm.h
-> > > > index e97db3296456e19f79ca02e4c4f70ae1b4abb48b..41b466b7ffaec421e83=
-89d3f5b178580091a2c98 100644
-> > > > --- a/arch/riscv/include/uapi/asm/kvm.h
-> > > > +++ b/arch/riscv/include/uapi/asm/kvm.h
-> > > > @@ -175,6 +175,7 @@ enum KVM_RISCV_ISA_EXT_ID {
-> > > >         KVM_RISCV_ISA_EXT_ZCF,
-> > > >         KVM_RISCV_ISA_EXT_ZCMOP,
-> > > >         KVM_RISCV_ISA_EXT_ZAWRS,
-> > > > +       KVM_RISCV_ISA_EXT_SVUKTE,
-> > > >         KVM_RISCV_ISA_EXT_MAX,
-> > > >  };
-> > > >
-> > > > diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_one=
-reg.c
-> > > > index b319c4c13c54ce22d2a7552f4c9f256a0c50780e..67237d6e53882a9fcd2=
-cf265aa1704f25cc4a701 100644
-> > > > --- a/arch/riscv/kvm/vcpu_onereg.c
-> > > > +++ b/arch/riscv/kvm/vcpu_onereg.c
-> > > > @@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] =3D =
-{
-> > > >         KVM_ISA_EXT_ARR(SVINVAL),
-> > > >         KVM_ISA_EXT_ARR(SVNAPOT),
-> > > >         KVM_ISA_EXT_ARR(SVPBMT),
-> > > > +       KVM_ISA_EXT_ARR(SVUKTE),
-> > > >         KVM_ISA_EXT_ARR(ZACAS),
-> > > >         KVM_ISA_EXT_ARR(ZAWRS),
-> > > >         KVM_ISA_EXT_ARR(ZBA),
-> > >
-> > > The KVM_RISCV_ISA_EXT_SVUKTE should be added to the
-> > > switch-case in kvm_riscv_vcpu_isa_disable_allowed() because
-> > > hypervisor seems to have no way to disable Svukte for the Guest
-> > > when it's available on the Host.
-> > >
-> > > Regards,
-> > > Anup
-> >
+>    - Radu Sabau <radu.sabau@analog.com>
+>  
+> -
+>  Description
+>  -----------
+
+Stray change.
+
+...
+
+> -This driver supprts hardware monitoring for Analog Devices ADP1050 Digital
+> -Controller for Isolated Power Supply with PMBus interface.
+> +This driver supports hardware monitoring for Analog Devices ADP1050, ADP1051, and
+> +ADP1055 Digital Controller for Isolated Power Supply with PMBus interface.
+>  
+> -The ADP1050 is an advanced digital controller with a PMBus™
+> +The ADP105X is an advanced digital controller with a PMBus™
+
+Can we use small x to make it more visible that it's _not_ the part of the
+name, but a glob-like placeholder?
+
+>  interface targeting high density, high efficiency dc-to-dc power
+>  conversion used to monitor system temperatures, voltages and currents.
+
+...
+
+> +#if IS_ENABLED(CONFIG_SENSORS_ADP1050_REGULATOR)
+
+Why? Is the data type undefined without this?
+
+> +static const struct regulator_desc adp1050_reg_desc[] = {
+> +	PMBUS_REGULATOR_ONE("vout"),
+> +};
+> +#endif /* CONFIG_SENSORS_ADP1050_REGULATOR */
+
+Note, this can be dropped anyway in order to use PTR_IF() below, if required.
+
+...
+
+> +#if IS_ENABLED(CONFIG_SENSORS_ADP1050_REGULATOR)
+> +	.num_regulators = 1,
+> +	.reg_desc = adp1050_reg_desc,
+> +#endif
+
+Ditto, are the fields not defined without the symbol?
+
+...
+
+>  static int adp1050_probe(struct i2c_client *client)
+>  {
+> -	return pmbus_do_probe(client, &adp1050_info);
+> +	const struct pmbus_driver_info *info;
+> +
+> +	info = device_get_match_data(&client->dev);
+
+Why not i2c_get_match_data()?
+
+> +	if (!info)
+> +		return -ENODEV;
+> +
+> +	return pmbus_do_probe(client, info);
+>  }
+
+...
+
+>  static const struct i2c_device_id adp1050_id[] = {
+> -	{"adp1050"},
+> +	{ .name = "adp1050", .driver_data = (kernel_ulong_t)&adp1050_info},
+
+Please, split this patch to at least two:
+1) Introduce chip_info;
+2) add new devices.
+
+> +	{ .name = "adp1051", .driver_data = (kernel_ulong_t)&adp1051_info},
+> +	{ .name = "adp1055", .driver_data = (kernel_ulong_t)&adp1055_info},
+> +	{ .name = "ltp8800", .driver_data = (kernel_ulong_t)&ltp8800_info},
+>  	{}
+>  };
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
