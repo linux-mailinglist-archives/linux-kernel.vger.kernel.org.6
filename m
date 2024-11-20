@@ -1,173 +1,102 @@
-Return-Path: <linux-kernel+bounces-416304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6EF9D42FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:25:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E2F9D4300
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D1CF1F21EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966FEB29A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9DF1C761F;
-	Wed, 20 Nov 2024 20:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5171BD9D7;
+	Wed, 20 Nov 2024 20:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ggkAmiP9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bbCw2Gej"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F331C4622
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D939C1581EE
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732134256; cv=none; b=pjgmWd/xC2yveBWnFVZMzRH3yLuThYGOrnOTk4DiXVz1VohDy1l81j0RWEWhmEMQbAKrHlgd9Lqx/uyZmd/CX90wUiHUT6HvOkvKw/Dcjtu5lOCSSqFha4jVTnuUwo+iD2ovXqYKNcQ1KSuRyierAz5/OTMsxDcjA+MpQN7V7UM=
+	t=1732134291; cv=none; b=GJQBQEe9QkQpBXQz7wyd5KPVDw342aeNUE1veGTsEaVf3JuvB7B3rKXhRgxRULOCQw/QuqlKWvdABjef386vqyvrRpza/mNSLV8qDGD4j/dDA4pzYpdqIh5HBll9ma2Jm+xa/6xtltw4cpF/hxgPCEfFVs7IPsckEqeY6c83dTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732134256; c=relaxed/simple;
-	bh=Q2IbSZiOEojJfhzTe2spo/usBI2+YFImLOhMxgTYU6I=;
-	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=YRgvbjI+YqFVSyXk1m0BCDvS8JJJTFl/2z7F4kZImDzS1juBz8oVEjv2GTNaEAsjQVvKfCgb+QaTjk7FraLmtPHdm+8hf+LMsKqOOw4VrR4tjGbiV4YaegtwWjM/o7TFc1r2Mw3V/gFxfGbmsBU54jgMztbPy6CMp0/BQQHBzUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ggkAmiP9; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732134255; x=1763670255;
-  h=subject:to:cc:from:date:references:in-reply-to:
-   message-id;
-  bh=Q2IbSZiOEojJfhzTe2spo/usBI2+YFImLOhMxgTYU6I=;
-  b=ggkAmiP9RvXFCqkgwtNb8SGzqaPTse7AwmHEnP/rdxA2XhpdnDNk7gXC
-   M/HM3siT04VODpNOEDUwksM8g/nJoA4EmMwgXIHd0htRlUtj9iTbiL2Z2
-   3AOdiZCf4rW2k7EsLDJMI5kLxQ5KKzLaThlgNabEgFQEUAzxJrrdLn2Hh
-   p5BnaSKKVjDlvbrF0VkijUvGAlBMqPhCvdDbvOoiTVd6WJEk1QAXsL3a+
-   bfGcY6ro9lK9EtjktnRne1POqhVBqF6tdQm61YIY+PjRy4tL7ThPRH8QN
-   +DDIerVg2MfU0wzZcLvaN34OgcQKaImxwmC+oOGBfhQoLc5zH9yC3e05Q
-   g==;
-X-CSE-ConnectionGUID: NSIKlApcRmawXWy+a/8cBw==
-X-CSE-MsgGUID: lsQ/CvSVSBuVNXAXXCJobw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="42855784"
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="42855784"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 12:24:15 -0800
-X-CSE-ConnectionGUID: nVty1wqsS8yDwIeE40oo3A==
-X-CSE-MsgGUID: rmhXIEKVTCqDK+vJ8rdJVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="90407616"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by fmviesa010.fm.intel.com with ESMTP; 20 Nov 2024 12:24:16 -0800
-Subject: [RFC][PATCH 4/4] x86/cpu: Remove 'x86_cpu_desc' infrastructure
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org,tglx@linutronix.de,bp@alien8.de,kan.liang@linux.intel.com,Dave Hansen <dave.hansen@linux.intel.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Wed, 20 Nov 2024 12:24:14 -0800
-References: <20241120202408.0A7215EF@davehans-spike.ostc.intel.com>
-In-Reply-To: <20241120202408.0A7215EF@davehans-spike.ostc.intel.com>
-Message-Id: <20241120202414.071D4237@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1732134291; c=relaxed/simple;
+	bh=+rDU1z69SalK6JzR8mTFd+A6eY5KNtddrtHed7iEQks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fA7giBYdPcrVBGP7/NNUufYFbLdCymsQPC/ODQGxAf80DBP1dijPCLkTJXOJ9apPVcY/agHZjOrkyMh9UQd2iRUvyY52ebzhqa9ni93YU7QWLFhv7ErVNnRPqw8QVWKT3oXMPoUw5hAr5GFAV3QXqZVOX7duyQIS3vcQWy6+pIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bbCw2Gej; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso29516966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732134287; x=1732739087; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bg+6xm5brW/79ZZOgxi+hS8YyznFJJFaoQ16T8rJB3g=;
+        b=bbCw2Gejs3vwc+2M6S7nHlscp+CH3UkD8FYglZztXnWVbhTWa+7SSsHAVWq12KG9GT
+         jenjCqKFlb1iOQKNKysh4ZmK23tIMfriQpNF2UN8eeuW7TyeQTMlDRmJNsOI8YHKUkkh
+         kpw+JfdpZThczw8U6sZOWnvuT15vtwFt9g94g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732134287; x=1732739087;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bg+6xm5brW/79ZZOgxi+hS8YyznFJJFaoQ16T8rJB3g=;
+        b=jbVlXtunDgtG3rTJE+yv+v8Qiz7PP9+2uhsmt/APnOKsDJ4//bc8ZNcQtfs3dwv02W
+         6fe1+WPWCLNnNuQnQBQafARnRY6Q6Fga5kBlhF8O97jwdD4/eO8PCQIrc5rP31fP0sae
+         BDimjk5T/zevdNIPmlRbBVDWzoPkxZWLJOiTAI86EcONXBjvrkqpeBcaVeo9SJP+gu+b
+         JleufiTFBMD//5Lm95SdqthtHeMmvPgKPVHq4A9dqSJolsWpvZ5mU0xwsNhz/e2jsYOY
+         YcnH41lHlJWDvyM/OVHTGxPyCnSuxgJri2xSZ5ewGC2XODvex/RVYXl5UKBBwConNSoI
+         zp/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUa72NfUViq1+/QFpnLz7jyqoYNFiqQAabJLqUIAv7Y/H8Z+yOTP6DBR78CVC6kP5hcaGkssNx7RvUn+sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjqk418GLSEeDzj5HqnWVSt6GT9JA/wKgiUnRCBuCiL9X5+Gsd
+	X1ptUhnEcXZGzbZuwtXpghR8oXxpPkjUzUaV4AQNgKEbg3cIORl7J9DtpAOnX0HAzlhYAKFV9qB
+	LC54gSw==
+X-Gm-Gg: ASbGnctABDF5CEUl2KrhPZKDsRX9c+Ke148BLz0fALiO4DrabR0tzVkodOvdRkS4f14
+	v7Mx2xagKQ81dSMq10YJifaC6Z4RlC3TccdmTdXQoF79HmAcsQcU0nOrb/6mIeHLMXKECO5I6us
+	dJyTj+U/shh5F+9v0l7bw0B06niSpgjJCtoLFug/kgfvKqzhwsun5wiiTfqW3TUzZl3r7+KCzbx
+	RhhFDv4rKj0gvrsrFQ+gwZJ4Jr6iap0x59RSv/UmrQ/RqV8DRxWx82WrxKzwo68FawMhAeirK8k
+	wMdRGrsgVaqkngDx4OzhJtVT
+X-Google-Smtp-Source: AGHT+IGTPFdtLwJhvX4mxXCIyF0+DGvs7kh9JdzGYUKowiLGoLlJ0u75SfUhwcjAf0XQQSgrAdck9g==
+X-Received: by 2002:a17:907:3f86:b0:aa4:c721:fac0 with SMTP id a640c23a62f3a-aa4dd70a23bmr371589166b.40.1732134286855;
+        Wed, 20 Nov 2024 12:24:46 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e086063sm822512966b.189.2024.11.20.12.24.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 12:24:46 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ed49edd41so30335966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 12:24:46 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVQF7pq+P7D9c8YwmadUxD6hMQ3xHa/HEdNdeY8NWlCdDdFfXqzyKkoN4t+EY8vYejT4gmL8btBxtfhl/Y=@vger.kernel.org
+X-Received: by 2002:a17:907:2cc2:b0:a9a:bbcd:e63 with SMTP id
+ a640c23a62f3a-aa4dd54842cmr423495466b.14.1732134285864; Wed, 20 Nov 2024
+ 12:24:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <1c6bb542f52ef9a8428a0f35dc21dfc7.broonie@kernel.org>
+In-Reply-To: <1c6bb542f52ef9a8428a0f35dc21dfc7.broonie@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 20 Nov 2024 12:24:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg9TZSLX0Dtbh5_oQK7temAjQCScVFnEY86NYSAO83pQQ@mail.gmail.com>
+Message-ID: <CAHk-=wg9TZSLX0Dtbh5_oQK7temAjQCScVFnEY86NYSAO83pQQ@mail.gmail.com>
+Subject: Re: [GIT PULL] SPI updates for v6.13
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 18 Nov 2024 at 05:33, Mark Brown <broonie@kernel.org> wrote:
+>
+> The Rockchip cleanups
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+Ooh. Cliffhanger. Continued in the next PR?
 
-All the users of 'x86_cpu_desc' are gone.  Zap it from the tree.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
----
-
- b/arch/x86/include/asm/cpu_device_id.h |   36 ---------------------------------
- b/arch/x86/kernel/cpu/match.c          |   31 ----------------------------
- 2 files changed, 67 deletions(-)
-
-diff -puN arch/x86/include/asm/cpu_device_id.h~zap-x86_cpu_desc-3 arch/x86/include/asm/cpu_device_id.h
---- a/arch/x86/include/asm/cpu_device_id.h~zap-x86_cpu_desc-3	2024-11-20 12:22:06.484439538 -0800
-+++ b/arch/x86/include/asm/cpu_device_id.h	2024-11-20 12:22:06.488439691 -0800
-@@ -260,42 +260,6 @@
- 		VFM_MODEL(vfm),				\
- 		X86_STEPPING_ANY, feature, data)
- 
--/*
-- * Match specific microcode revisions.
-- *
-- * vendor/family/model/stepping must be all set.
-- *
-- * Only checks against the boot CPU.  When mixed-stepping configs are
-- * valid for a CPU model, add a quirk for every valid stepping and
-- * do the fine-tuning in the quirk handler.
-- */
--
--struct x86_cpu_desc {
--	u8	x86_family;
--	u8	x86_vendor;
--	u8	x86_model;
--	u8	x86_stepping;
--	u32	x86_microcode_rev;
--};
--
--#define INTEL_CPU_DESC(vfm, stepping, revision) {		\
--	.x86_family		= VFM_FAMILY(vfm),		\
--	.x86_vendor		= VFM_VENDOR(vfm),		\
--	.x86_model		= VFM_MODEL(vfm),		\
--	.x86_stepping		= (stepping),			\
--	.x86_microcode_rev	= (revision),			\
--}
--
--#define AMD_CPU_DESC(fam, model, stepping, revision) {		\
--	.x86_family		= (fam),			\
--	.x86_vendor		= X86_VENDOR_AMD,		\
--	.x86_model		= (model),			\
--	.x86_stepping		= (stepping),			\
--	.x86_microcode_rev	= (revision),			\
--}
--
--extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
--extern bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table);
- extern bool x86_match_min_microcode_rev(const struct x86_cpu_id *table);
- 
- #endif /* _ASM_X86_CPU_DEVICE_ID */
-diff -puN arch/x86/kernel/cpu/match.c~zap-x86_cpu_desc-3 arch/x86/kernel/cpu/match.c
---- a/arch/x86/kernel/cpu/match.c~zap-x86_cpu_desc-3	2024-11-20 12:22:06.484439538 -0800
-+++ b/arch/x86/kernel/cpu/match.c	2024-11-20 12:22:06.488439691 -0800
-@@ -56,37 +56,6 @@ const struct x86_cpu_id *x86_match_cpu(c
- }
- EXPORT_SYMBOL(x86_match_cpu);
- 
--static const struct x86_cpu_desc *
--x86_match_cpu_with_stepping(const struct x86_cpu_desc *match)
--{
--	struct cpuinfo_x86 *c = &boot_cpu_data;
--	const struct x86_cpu_desc *m;
--
--	for (m = match; m->x86_family | m->x86_model; m++) {
--		if (c->x86_vendor != m->x86_vendor)
--			continue;
--		if (c->x86 != m->x86_family)
--			continue;
--		if (c->x86_model != m->x86_model)
--			continue;
--		if (c->x86_stepping != m->x86_stepping)
--			continue;
--		return m;
--	}
--	return NULL;
--}
--
--bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table)
--{
--	const struct x86_cpu_desc *res = x86_match_cpu_with_stepping(table);
--
--	if (!res || res->x86_microcode_rev > boot_cpu_data.microcode)
--		return false;
--
--	return true;
--}
--EXPORT_SYMBOL_GPL(x86_cpu_has_min_microcode_rev);
--
- bool x86_match_min_microcode_rev(const struct x86_cpu_id *table)
- {
- 	const struct x86_cpu_id *res = x86_match_cpu(table);
-_
+            Linus
 
