@@ -1,186 +1,159 @@
-Return-Path: <linux-kernel+bounces-415704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4410F9D3A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:56:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50E019D3A06
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09430281E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:56:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 162BC28061E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750AA1A38EC;
-	Wed, 20 Nov 2024 11:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA49E1A706F;
+	Wed, 20 Nov 2024 11:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgWvGCsH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EHLA8DMg"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE3019F41D;
-	Wed, 20 Nov 2024 11:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEAD19F41D;
+	Wed, 20 Nov 2024 11:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732103738; cv=none; b=tAfag9V4oL1O1+kEQXKlwpXrT+Hmx7ctYt/3artevdK5lIKA3s1iiQg+Zp08AkIyLBg2TsPKHn+spnEAiZmcOeUPLgr1VvXLMVEEw1d9y2mEvrMRu92JWaRuTobq6D2bHVaqTpdXa70B/xwEhHX64tontnQOwuEeh0Tb8aOPiSs=
+	t=1732103751; cv=none; b=emz72XEUd/wCQNNZSaufwKf7KTmcpvXmqVQ1HYS9ZeAP43NbTK9VRVaAosyznEulstq+gjlXxA0Lrd1npMnXKYOiB37885DnlqFYik4TVa8Plu/Ajy6b3Klc2FBz2UR6mlSusW4cEW89tX089BOVJMJa3lFuoR5UQflzNL3MGoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732103738; c=relaxed/simple;
-	bh=4iNBk7LC9TBZYuo0MXULQ9ayjztNWrRDsjTo4k/+edQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFeHM4W2PvTUk1536TKP5Uxm37Kwj6Uq8/mC7x2fpzMniDG0o+rEFk1VHMcCB4XRsiHLXrZfJRHDkExs6CzL+g0bfncOVefBFA1N5ic3o5/vB+RiNETxBsgOAbZgVNbeCcj7W/RbOSyKaj4lyf8/iB0uEyYF86+1d/Y8s6Tac2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgWvGCsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48165C4CECD;
-	Wed, 20 Nov 2024 11:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732103738;
-	bh=4iNBk7LC9TBZYuo0MXULQ9ayjztNWrRDsjTo4k/+edQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CgWvGCsHjyFVOTC96wfamrt4sOOgTlSoVorRBJ6/K1dombsbJkqD/MOFkhPecxZS/
-	 lu9zfHTuItNbK19LcgKaf+/imv5yAWabYtabqZQnWX1F5a51Zsf2qaf+8wCaxHf6kq
-	 xNmAF0uZpEt0qvo0SRHkvRMrwKRBPNwkBgl9LaV5gGCNT/zjbUMdwwlHNZTrkNxeCL
-	 DDGQNQ31ENSaO5bEAPqiqSqbr1WzoTY269ChZCcJArjbak0caAgdBquxAFweHp6xs+
-	 3gIjqMlWegWF1849MdnqdWx4pZIMTrssIet+O3Ajbgd6aBb7ST/XEJP1mVyZySfg7X
-	 BsPyVPAnSzyGQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so5089485e87.2;
-        Wed, 20 Nov 2024 03:55:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVAh2Gd0xUJGBB6Xl/n751WiQTZR753kyUmRreHzjUJMjz2HvJRIwwnlX351rns3cVY3l0IF2zeEXbOrXA=@vger.kernel.org, AJvYcCVcUFS7B7LrcP40NnLr8KCigeOEkI/ZgAOSrAPay77IHYCxkOFSqN3qxMgWgFdgZy76Zmw7TAw2Y39eVIFh@vger.kernel.org, AJvYcCVkd/4aDyIq8h5+G8jRX+eNSSayHvkQqdwJ2hd1/y5EAq+CRy5IjCOvwuNKJ3+xJ2ToeHr7o/hqpA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxclzsF+KTxfO4K6jj5LSP9tcZHqBL/ICOyv2gbs/0KwfKTdqTx
-	I/l68fOVfQhyu4M3HyHxPymiuVGX54aquwKsgsxf/VYHV0Apdr5Fo/uVlTsoJ/mdbIt938A2PtD
-	vbL5mEYp/yu6ZDa+0SvboM9fLDk0=
-X-Google-Smtp-Source: AGHT+IHG318RoJAh5CCrn2UIYr+ZKfZsLdJ+iqL7RCmLwigjuBULnm1HPMkT53qRCaItAM3pDWyEF+zB7dD+9Cd7O08=
-X-Received: by 2002:a05:6512:10cd:b0:53d:a012:eed4 with SMTP id
- 2adb3069b0e04-53dc1374266mr1023236e87.52.1732103736977; Wed, 20 Nov 2024
- 03:55:36 -0800 (PST)
+	s=arc-20240116; t=1732103751; c=relaxed/simple;
+	bh=LKKBBEfzE2cUMCjgNuOL1nYgkM/Aqi5ZPzy8Ibang1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2YpJjBuFFpH0uN5wkM3m6MyvD01JjWYxJbWGS2GilU/MPLPp50PdaAkoDPul0K+V12oqQeVrHcAMdf9lNGYPgNl43qXcVOj4/C+h7XqTRNUg7xfmhxZwlhN/EauRC9EkT6H3YmPJ4Sm0iaTMm2Z7l+G+DTNPyUyd6fHjN6L844=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EHLA8DMg; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732103747;
+	bh=LKKBBEfzE2cUMCjgNuOL1nYgkM/Aqi5ZPzy8Ibang1w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EHLA8DMg8yHXcCZHC1W/0qb5Gd5PgwuGQP4kztP6cAfyrDec5pQMq+e2rzxDFWWYK
+	 BRy+2eZD0AHqu85dHUvMXdJD9IYjU8E+oFwH6QVZK3ubl5b7xWEW6oAOTJ0WYErzMT
+	 USm50NxflDXbHnaQDvl7HVtt/0ncOBoJ66dTs0NJdXFaTzyPaiyvcZPn0jN5fD8IOm
+	 5n2tS4TAXd4lHOz6UehGpFmtJoNjc4YORuFaSqxPAGez5dtIAnJeW/X5Gc/+6IwQYH
+	 OL5568NmacG/oAEmZYgRn+U0Fn8V59UDqwkUhRTdJ2kh/+Vd/zRu5x8Iyh38gcYnbq
+	 8Z7BG3v3lJjhQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id DFE3D17E3632;
+	Wed, 20 Nov 2024 12:55:46 +0100 (CET)
+Message-ID: <e1aa2b69-5c40-44a5-b0b5-2a262bcc72f3@collabora.com>
+Date: Wed, 20 Nov 2024 12:55:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
-In-Reply-To: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 20 Nov 2024 20:55:00 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
-Message-ID: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
-Subject: Re: [PATCH] selinux: explicitly clean generated av_permissions.h
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000f51c87062756d36c"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: mediatek: Add mt8188 SMI reset
+ control binding
+To: Friday Yang <friday.yang@mediatek.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20241120063305.8135-1-friday.yang@mediatek.com>
+ <20241120063305.8135-2-friday.yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241120063305.8135-2-friday.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---000000000000f51c87062756d36c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 20, 2024 at 6:15=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> av_permissions.h is not declared as a target and therefore won't be
-> added to clean-files automatically by kbuild.
-> For details why it is not a target see the Makefile itself.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Il 20/11/24 07:32, Friday Yang ha scritto:
+> From: "Friday Yang" <friday.yang@mediatek.com>
+> 
+> To support SMI clamp and reset operation in genpd callback, add
+> SMI LARB reset controller in the bindings. Add index in
+> mt8188-resets.h to query the reset signal in the SMI reset
+> control driver.
+> 
+> Signed-off-by: Friday Yang <friday.yang@mediatek.com>
 > ---
->  security/selinux/Makefile | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-> index 86f0575f670da66a9dc57e13a236d6a5551af38e..58129a7c8cfa08f9caf5444f7=
-df776f41056b77a 100644
-> --- a/security/selinux/Makefile
-> +++ b/security/selinux/Makefile
-> @@ -41,5 +41,8 @@ targets +=3D flask.h
->  $(obj)/flask.h: $(obj)/genheaders FORCE
->         $(call if_changed,genhdrs)
->
-> +# see the note above, remove this line
-> +clean-files +=3D av_permissions.h
+>   .../bindings/reset/mediatek,smi-reset.yaml    | 53 +++++++++++++++++++
+>   include/dt-bindings/reset/mt8188-resets.h     | 11 ++++
+>   2 files changed, 64 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/reset/mediatek,smi-reset.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/mediatek,smi-reset.yaml b/Documentation/devicetree/bindings/reset/mediatek,smi-reset.yaml
+> new file mode 100644
+> index 000000000000..77a6197a9846
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/mediatek,smi-reset.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright (c) 2024 MediaTek Inc.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/mediatek,smi-reset.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  hostprogs :=3D genheaders
->  HOST_EXTRACFLAGS +=3D -I$(srctree)/security/selinux/include
+> +title: MediaTek SMI Reset Controller
+> +
+> +maintainers:
+> +  - Friday Yang <friday.yang@mediatek.com>
+> +
+> +description: |
+> +  This reset controller node is used to perform reset management
+> +  of SMI larbs on MediaTek platform. It is used to implement various
+> +  reset functions required when SMI larbs apply clamp operation.
+> +
+> +  For list of all valid reset indices see
+> +    <dt-bindings/reset/mt8188-resets.h> for MT8188.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt8188-smi-reset
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +    description:
+> +      The cell should be the device ID. SMI reset controller driver could
+> +      query the reset signal of each SMI larb by device ID.
+> +
+> +  mediatek,larb-rst:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle of each subsys clock controller. SMI larbs are located in
+> +      these subsys. SMI needs to parse the node of each subsys clock
+> +      controller to get the register address, and then apply the reset
+> +      operation.
+> +
+> +required:
+> +  - compatible
+> +  - "#reset-cells"
+> +  - mediatek,larb-rst
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    reset-controller {
+> +        compatible = "mediatek,mt8188-smi-reset";
+> +        #reset-cells = <1>;
+> +        mediatek,larb-rst = <&imgsys1_dip_top>;
 
+I don't understand why would you be unable to add the SMI resets to the already
+currently supported reset code in the clock-controller driver itself, like done
+with literally all of the other clock controllers.
 
+Please clarify.
 
-Presumably, the attached fixup.diff (comment in 'targets' assignment)
-would align with the intention of the maintainer of this Makefile
-because you can do
+Regards,
+Angelo
 
-  targets +=3D $(genhdrs)
-
-without the need of the grouped target feature.
-'make clean' removes files listed in 'targets'.
-
-
-
-BTW, the NOTE in this Makefile is not true.
-  https://github.com/torvalds/linux/blob/v6.12/security/selinux/Makefile#L7
-
-
-Even if you use GNU Make 4.3, the grouped target does not work with
-the if_changed macro.
-
-With GNU Make 4.4, it will work as a side-effect of commit
-fabb03eac412b5ea19f1a97be31dc8c6fa7fc047
-
-
-I asked about this behavior some time ago in GNU Make ML.
-
-https://lists.gnu.org/archive/html/help-make/2024-08/msg00001.html
-  or
-https://savannah.gnu.org/bugs/index.php?66073
-
-
-The combination of the grouped target and if_changed
-is working with GNU Make 4.4+, but I do not know if
-it is future promising.
-
-
-
-IMHO, I do not see much benefits for using the group target in this case
-because you can still generate flask.h and av_permissions.h
-separately.
-
-
-
-
-
-
->
-> ---
-> base-commit: bf9aa14fc523d2763fc9a10672a709224e8fcaf4
-> change-id: 20241120-selinux-clean-dfcd0e7a344b
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
-
-
---=20
-Best Regards
-Masahiro Yamada
-
---000000000000f51c87062756d36c
-Content-Type: text/x-patch; charset="US-ASCII"; name="fixup.diff"
-Content-Disposition: attachment; filename="fixup.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3ptnxzt0>
-X-Attachment-Id: f_m3ptnxzt0
-
-ZGlmZiAtLWdpdCBhL3NlY3VyaXR5L3NlbGludXgvTWFrZWZpbGUgYi9zZWN1cml0eS9zZWxpbnV4
-L01ha2VmaWxlCmluZGV4IDg2ZjA1NzVmNjcwZC4uYmVkZWYwMzczZWY5IDEwMDY0NAotLS0gYS9z
-ZWN1cml0eS9zZWxpbnV4L01ha2VmaWxlCisrKyBiL3NlY3VyaXR5L3NlbGludXgvTWFrZWZpbGUK
-QEAgLTMzLDExICszMywxMCBAQCAkKGFkZHByZWZpeCAkKG9iaikvLCQoc2VsaW51eC15KSk6ICQo
-b2JqKS9mbGFzay5oCiBxdWlldF9jbWRfZ2VuaGRycyA9IEdFTiAgICAgJChhZGRwcmVmaXggJChv
-YmopLywkKGdlbmhkcnMpKQogICAgICAgY21kX2dlbmhkcnMgPSAkPCAkKGFkZHByZWZpeCAkKG9i
-aikvLCQoZ2VuaGRycykpCiAKLSMgc2VlIHRoZSBub3RlIGFib3ZlLCByZXBsYWNlIHRoZSAkdGFy
-Z2V0cyBhbmQgJ2ZsYXNrLmgnIHJ1bGUgd2l0aCB0aGUgbGluZXMKK3RhcmdldHMgKz0gJChnZW5o
-ZHJzKQorIyBzZWUgdGhlIG5vdGUgYWJvdmUsIHJlcGxhY2UgdGhlICdmbGFzay5oJyBydWxlIHdp
-dGggdGhlIGxpbmVzCiAjIGJlbG93OgotIyAgdGFyZ2V0cyArPSAkKGdlbmhkcnMpCiAjICAkKGFk
-ZHByZWZpeCAkKG9iaikvLCQoZ2VuaGRycykpICY6ICQob2JqKS9nZW5oZWFkZXJzIEZPUkNFCi10
-YXJnZXRzICs9IGZsYXNrLmgKICQob2JqKS9mbGFzay5oOiAkKG9iaikvZ2VuaGVhZGVycyBGT1JD
-RQogCSQoY2FsbCBpZl9jaGFuZ2VkLGdlbmhkcnMpCiAK
---000000000000f51c87062756d36c--
 
