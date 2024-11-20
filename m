@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-416355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BC09D43A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:49:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A0169D43A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78A0283D2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61EF1F2207E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA821BDAB5;
-	Wed, 20 Nov 2024 21:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581F61C07C9;
+	Wed, 20 Nov 2024 21:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XhOXPBLP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nR6Tdwwc"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ACD16F0CA;
-	Wed, 20 Nov 2024 21:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89716EC19
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732139334; cv=none; b=Q96GzEVA+MEUodmHLJjsYRCQQ2Q7BmAiwin1aAah3xWrrm9/mg1rgnOQpDSD9/veQfWdn/QnAI3+Cvbs+ozHGmakIfzHETRZMRmtpcGFYIGKFad66NHF/Gb26aQ5DWR7RQzOWIch7t9X8lfrrrTT4hPRPSuDAAPcNw4oviNKifE=
+	t=1732139626; cv=none; b=a+UGHfuQ4NchrANA/U6qzw2SUjUNvgGTLmrpZGVLOsmZzowJCEwNYaHpExhuPCURrP6Eg8aE0nB9WU+ut74f4E+S0mdojW8JSk1TbTXcpQM+BgZ3uEpjODXQM1ndH0mQ7cmtboC08aTlFAITo7Qqvwa4fNziNarwPWWpl/Rz5s4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732139334; c=relaxed/simple;
-	bh=MCCVk9QeEf65CLnIkhrYJ6SaHER11M7n5GE6mlwgDZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pMstXh4HguF4vV7KjI5QeQurdKhbywiV72WE0uyYiS5MC+ZU9z4TQqPjkyHBDidQYvKXZ/3BbJ8zgswxYNhUf7HvvfyxmppQ+2nD3v2bP7TotjzQt/qAO0YFauZD1HyZtF1Qt9giNqg2sQaHDVkJvWJN8r9EXXajDhYKbCWFr9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XhOXPBLP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJpaJB005741;
-	Wed, 20 Nov 2024 21:48:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HbzXMMBGeHBIuLI+O1/0RSTNzqyyDni0fx8RrTrpu98=; b=XhOXPBLPQp0j0CdC
-	3aXhN6Rjo1SzsJQJcqa0pTDZ+Wc7NZjbdWFgvksg7Vl7EOuKtTqoL/+Tunrxlq7M
-	uZPDKLlRFAtGtQBe8U1XCL7+INSwJtkB+r8mQtWftlUYdfvuSRT6wE0bHooIL0Is
-	OCDaIU15KGCB5+T1IU4thVi8H205bFFab8Fg1TW0tbCW5u82fRVMQ7ReU0RObEAS
-	HXmnkNaWbQciyJm9JmKx7uPjWVLJKiKb0rBjcpeFAp70MBnnCi2PfS1S8r/tQCMN
-	EDt2wA/4nMV+oQmwsAAGSb9MDGED3TfHc6hW6OWxfethZJJMHivqm774RXeyNZqP
-	qIvSjw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7y8dw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 21:48:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKLmjsb017752
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 21:48:45 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 13:48:44 -0800
-Message-ID: <fbb61e9f-ad1f-b56d-3322-b1bac5746c62@quicinc.com>
-Date: Wed, 20 Nov 2024 14:48:43 -0700
+	s=arc-20240116; t=1732139626; c=relaxed/simple;
+	bh=r/VcHayKG4EaOZI8wo3ko4simcXIJKTk2WkBMfnIa5g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Q9c97e/RAcx/FIsxup6xXwfvXlOrRlveF1qTjgRq2kbaq679zWMOWZcaL4xCrlHUOc/PmvYFeC4pSbyLqCISZ0++Cs+QECWjEy1zWt9ufOKakkLMO8nDyaTK6x0UCNZY/3FtYxfUenVnBVsPxw5cc9FhlgBQ3A89a2GriQ1/ePg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nR6Tdwwc; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e38dbc5d05bso359148276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:53:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732139624; x=1732744424; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZP9uLmhESgaddk7OpYGm45ZV5lLwiTS6B5XdgU7dFY=;
+        b=nR6TdwwcVlNYiN+XzdHpJcYmiXEvN7vVrlvIRK09BUPxQlwCB4Bs4Z6UDvotL+ohNE
+         w6QQftMa1TVqQK1cTCTQFkhbkLOgrgy1MLYDxCnk57y3sMtLg1QcYcIzsWzItWneEA/s
+         RjJg7rS1kToT51iZPH1CkHLDeFxbMPJCxRXtZDzYWi8dri2JdixXJSLHgRJqhbokrNBO
+         qa3qqIikYrRBgxepZEF1mvbPegJ4hTlCppIrBZSr1wwC9sSQHLZJWQw9p2/5sQ8A/Q7q
+         TrwpNDc5ce5dKKij1RaAw1Y9lyPEmuDcZsMFmEGR33FwX3wUp+RCFRRJTpyCJSl4Prxg
+         WZow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732139624; x=1732744424;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZP9uLmhESgaddk7OpYGm45ZV5lLwiTS6B5XdgU7dFY=;
+        b=s/5Y7u5Zgqw6lSwT/CGziYlf3kSEqbNBBkEs+74vi1lTFeuQfw3YhEgJEdG71oDuE7
+         i5arNoiz42DpaSz6NpFwlVTbfmLJyVVTbvhEYooeomPGHYHhLfzitECoyyhy14NGCMAn
+         6OgLtHnMBAD8tL2PJyhOPk4v6JhR+duCR4o34EZN6xsGXgItqg836NIW8a/axFc+QMqq
+         8dJkoWWEe+16lRzt8qEBILHvVQ7Yx4O306/pklalnhIy3ZLdlI9xv9ewYRxQnKZpTZps
+         aRTknv8QEMQCa5L8BX6xdUltGmHbrqv6pC2IpxLgFnLyQ2nBcFTm3bTeyDRuRnSCDyLA
+         otbA==
+X-Forwarded-Encrypted: i=1; AJvYcCW8s3wC/Vwi8k4v3diZAkg9RDcCn1JpV0DbxyjBg1mUNybLS98+MZSmpBISuo+GN3n9k3RDX00JG87oTLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrs1HaAjPmtZNVe18CxY2TnkS/o1wJUorL09n5VilOFj15j1xu
+	4uOsTSS3Yaz/3OGbsyaTRQKAomE5DFZ2LlJEBYKPcGF1gYQFT3av/e6pG1c2i5jNnDz6U9xlZW3
+	ujw==
+X-Google-Smtp-Source: AGHT+IGffkcftOgF2KIRVjjRpawSwB9GtSSiFJjON/BGaimJ3oaflhdxoE6c2aPgB0fEGghARktE6MhGvsI=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:d601:0:b0:e30:d445:a7c with SMTP id
+ 3f1490d57ef6-e38cb5470c0mr1664276.1.1732139623994; Wed, 20 Nov 2024 13:53:43
+ -0800 (PST)
+Date: Wed, 20 Nov 2024 13:53:42 -0800
+In-Reply-To: <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
-Content-Language: en-US
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
-        Jerry Meng
-	<jerry.meng.lk@quectel.com>, <loic.poulain@linaro.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
- <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3dd5OcwDBucLlhiiyO3ggAhMH_df5lX-
-X-Proofpoint-GUID: 3dd5OcwDBucLlhiiyO3ggAhMH_df5lX-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- mlxlogscore=736 clxscore=1011 suspectscore=0 adultscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411200154
+Mime-Version: 1.0
+References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+ <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
+ <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com> <ZwlMojz-z0gBxJfQ@google.com> <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com>
+Message-ID: <Zz5aZlDbKBr6oTMY@google.com>
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <ashish.kalra@amd.com>
+Cc: Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
+	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 11/20/2024 1:36 PM, Sergey Ryazanov wrote:
-> +Manivannan
+On Tue, Nov 19, 2024, Ashish Kalra wrote:
+> On 10/11/2024 11:04 AM, Sean Christopherson wrote:
+> > On Wed, Oct 02, 2024, Ashish Kalra wrote:
+> >> Yes, but there is going to be a separate set of patches to move all ASID
+> >> handling code to CCP module.
+> >>
+> >> This refactoring won't be part of the SNP ciphertext hiding support patches.
+> > 
+> > It should, because that's not a "refactoring", that's a change of roles and
+> > responsibilities.  And this series does the same; even worse, this series leaves
+> > things in a half-baked state, where the CCP and KVM have a weird shared ownership
+> > of ASID management.
 > 
-> Hello Jerry,
+> Sorry for the delayed reply to your response, the SNP DOWNLOAD_FIRMWARE_EX
+> patches got posted in the meanwhile and that had additional considerations of
+> moving SNP GCTX pages stuff into the PSP driver from KVM and that again got
+> into this discussion about splitting ASID management across KVM and PSP
+> driver and as you pointed out on those patches that there is zero reason that
+> the PSP driver needs to care about ASIDs. 
 > 
-> this version looks a way better, still there is one minor thing to 
-> improve. See below.
+> Well, CipherText Hiding (CTH) support is one reason where the PSP driver gets
+> involved with ASIDs as CTH feature has to be enabled as part of SNP_INIT_EX
+> and once CTH feature is enabled, the SEV-ES ASID space is split across
+> SEV-SNP and SEV-ES VMs. 
+
+Right, but that's just a case where KVM needs to react to the setup done by the
+PSP, correct?  E.g. it's similar to SEV-ES being enabled/disabled in firmware,
+only that "firmware" happens to be a kernel driver.
+
+> With reference to SNP GCTX pages, we are looking at some possibilities to
+> push the requirement to update SNP GCTX pages to SNP firmware and remove that
+> requirement from the kernel/KVM side.
+
+Heh, that'd work too.
+
+> Considering that, I will still like to keep ASID management in KVM, there are
+> issues with locking, for example, sev_deactivate_lock is used to protect SNP
+> ASID allocations (or actually for protecting ASID reuse/lazy-allocation
+> requiring WBINVD/DF_FLUSH) and guarding this DF_FLUSH from VM destruction
+> (DEACTIVATE). Moving ASID management stuff into PSP driver will then add
+> complexity of adding this synchronization between different kernel modules or
+> handling locking in two different kernel modules, to guard ASID allocation in
+> PSP driver with VM destruction in KVM module.
 > 
-> Manivannan, Loic, could you advice is it Ok to export that SAHARA port 
-> as is?
+> There is also this sev_vmcbs[] array indexed by ASID (part of svm_cpu_data)
+> which gets referenced during the ASID free code path in KVM. It just makes it
+> simpler to keep ASID management stuff in KVM. 
+> 
+> So probably we can add an API interface exported by the PSP driver something
+> like is_sev_ciphertext_hiding_enabled() or sev_override_max_snp_asid()
 
-I'm against this.
-
-There is an in-kernel Sahara implementation, which is going to be used 
-by QDU100.  If WWAN is going to own the "SAHARA" MHI channel name, then 
-no one else can use it which will conflict with QDU100.
-
-I expect the in-kernel implementation can be leveraged for this.
-
--Jeff
+What about adding a cc_attr_flags entry?
 
