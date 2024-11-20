@@ -1,141 +1,148 @@
-Return-Path: <linux-kernel+bounces-415980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E6579D3FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3F89D3EDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D4CEB3874D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED04EB38F3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC741BD509;
-	Wed, 20 Nov 2024 15:04:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E1C1CB323;
+	Wed, 20 Nov 2024 15:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUcPtb5r"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AEC1A9B3B;
-	Wed, 20 Nov 2024 15:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAC91CB31A;
+	Wed, 20 Nov 2024 15:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115091; cv=none; b=ITG9E41qmBFFxxzVNnizvaLen6ajWPLEXn8x1Y2m7SYCgBLAdDcr+4IdjRataXCoCTJa9qUI0T3SGNVTFz0rfN4RpCf5x5d5pD5ULJg0+8STxTwSt8XUv6+mpsErvxjv+N0NdLAS/EjPUVyWxCoiclIkeyv1nJtGwyr7aMpVBR0=
+	t=1732115260; cv=none; b=DSIa2jaNYu9YFmRvO323kHwr3+VnHT+OaG8p3oLw3C6IyzOEDK/3Lnzclk/uZ99Af+wV9r7Y5cCkdSoxmKrKpLT7Xls/g6pt0uEhRt2yPzoQZc1oKsw/Pmni40yScfKCMqQWkGYMfSF7dq0SeU/P5wx6lRh5M+XPfT6i7iKh5DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115091; c=relaxed/simple;
-	bh=hDeJYjycHF77ZLbMNTQlumwoqT3rg0rRLzelRS/sr8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LqjLZ8k+imW3kdZQgYvqHX05ugOYMnaL+pdAHtB//lrxp7xBuPMF2gJpYfUBc0APiYEW6qKy016KaOoU9oX95P7F+k0xSaeOdHquDKpZ1MXSWZ9PPRI+3eoTTYhv8C3hOQsH6aaMzh0ZHSC1YKCBTs4zsaLgBEXTQ8AJb+2ffb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16FFCC4CECD;
-	Wed, 20 Nov 2024 15:04:50 +0000 (UTC)
-Date: Wed, 20 Nov 2024 10:05:26 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, Paolo
- Bonzini <pbonzini@redhat.com>
-Subject: Re: arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse: sparse: incorrect
- type in assignment (different base types)
-Message-ID: <20241120100526.26705a95@gandalf.local.home>
-In-Reply-To: <202411201356.pXoYlKFB-lkp@intel.com>
-References: <202411201356.pXoYlKFB-lkp@intel.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732115260; c=relaxed/simple;
+	bh=mFSbYXPV+v2cwEB3jjz+Ldk/O/kX3CN9PCSnFH0JjLc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnqhc6TO1GX4D3VRVDDNpY2dVRFjoaSwFZ5oZwRfrJ4pPjmNYH+n3BzriWiTkBwkgCB4399QpXgD2YSqiD9L/L9DG24X48KOLGpvnLfVlZpGCnYhiqzIfGU3IUx9hzfz4GngfZ291dR1DFLNuGx5g9qaMdh+bH81DdBF548Q9zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUcPtb5r; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ed49edd41so416336666b.0;
+        Wed, 20 Nov 2024 07:07:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732115256; x=1732720056; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T15rz/YcFvzeWIWmYn0gRMt/pqbI9YM62Hb9AUjRP4Y=;
+        b=GUcPtb5rUN7Jb/JbJ1LWKCbUUk31pbk1Oo4e4urLmH9a1ZRGvpFjOUQZzPf/eXJerH
+         PO9IsToeiNi1i4rUpWzIJ2Zj540tmV39A0S7opeFGkhTApq8a8Z7AO+ZOuM45+nXosUm
+         YttjTvws3EKcqLECeIfDJ/QIk7cQJAQQHkp5N0gfRq85ngBvx8OGVPLayqqxyYYRqqci
+         mr003qIzfwPGOSMarBgVBPZZYUT1vSlW4pZ1JSogsCBEv1RoR0rHUXIPPoBNaH2D6UyQ
+         dBQiHXkhiPJJDHHr/IHpr8Cp6n3Sc4ODLSdghRrta1X0QMqDp4ZaF6NQImEa7efOCPnp
+         H/2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732115256; x=1732720056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T15rz/YcFvzeWIWmYn0gRMt/pqbI9YM62Hb9AUjRP4Y=;
+        b=QwjAJ1/p2eyCYTijtAmhh0Ktue1sNJPsVBnum51YMDM5EUGoh2y1UmSh+p5By0ionw
+         zHIzjadlEg8aP6ubBNSpjg/j0OvkdvNFVciJRKGAUIPS1n1EdbupwYxzKZdhmUeYU1M2
+         9qSgfYYKlioeXgB+2n1En3np99hl/OwmOjU0GYGSqrFJVGZI873xI4y+mrgHebGC9ev4
+         RvuLZae6vCK4rLqZJR7YS3TQMb1MxI4qOoZEb8Ck3ZBcfWlt4e9+Chi3uon7tefXSVY1
+         ztDRzF8hd2Bp+7PfXrwPnsFO3ZqiXk+Ltf3wX+p+Ks8yuNreN5ngNy+1Aa7B4I/9XXKZ
+         HRhg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgDcJwQSyozTlb7774GBgYQ8/4MKDhy7e83H7QkgvXo9JepVqifBgHH4pI4L+lURPn3U1YEZ4T5+q9DLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8q2L8393dT0w3ahX2LNmCLoLGwznz83h6oVocBlNp7eAE1AGF
+	MHN2M0/EzTfAeIbbdYh+FdIZD8dwcdHkCiE9slFmhG0/jaPyDfEtpHgNiH4+
+X-Gm-Gg: ASbGnctCz2EslW/kUTmW1HGLtCrJmJDxbQLcaKIxktdeVyjLG5m2Q3niNl626Z3tIm+
+	airwU1vuq5MrCClG4SI9eUs9VRJNdDDIIAmtF7gdDGDEvKOnMKUHiSDYhdJwQBuuxJfvE5X8MZB
+	spejMsVXtLHuBgn//pzsTCHJ6A1nRkdZ8GfNZ5H7jqBFnLnB8uPQLB7VWPhK6ULz0F8Vk2NZoWW
+	HmjR2Oxfrn2WQ6X+saM9xCcrq7YYNBDe5z8u6f2G4NrMZNnEe6bj1TI2v4=
+X-Google-Smtp-Source: AGHT+IHxCToREO2TMV86vV4m4GDNa+70BqrbVmzPWlTxmGJXunTC4Zuj7RZBEiF1IRyh8zHh/fbiXQ==
+X-Received: by 2002:a17:907:6eab:b0:aa3:e9a6:a5bf with SMTP id a640c23a62f3a-aa4dd70b960mr330519966b.47.1732115255713;
+        Wed, 20 Nov 2024 07:07:35 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e08624fsm792677466b.183.2024.11.20.07.07.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 07:07:35 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
+Date: Wed, 20 Nov 2024 16:06:22 +0100
+Message-ID: <20241120150725.3378-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Nov 2024 13:59:39 +0800
-kernel test robot <lkp@intel.com> wrote:
+try_cmpxchg() loop with constant "new" value can be substituted
+with just xchg() to atomically get and clear the location.
 
-> Hi Steven,
-> 
-> First bad commit (maybe != root cause):
+The code on x86_64 improves from:
 
-Does not look to be root cause.
+    1e7f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
+    1e84:	48 03 14 c5 00 00 00 	add    0x0(,%rax,8),%rdx
+    1e8b:	00
+			1e88: R_X86_64_32S	__per_cpu_offset
+    1e8c:	8b 02                	mov    (%rdx),%eax
+    1e8e:	41 89 c5             	mov    %eax,%r13d
+    1e91:	31 c9                	xor    %ecx,%ecx
+    1e93:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
+    1e97:	75 f5                	jne    1e8e <xlog_cil_commit+0x84e>
+    1e99:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
+    1e9e:	45 01 e9             	add    %r13d,%r9d
 
--- Steve
+to just:
 
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   bf9aa14fc523d2763fc9a10672a709224e8fcaf4
-> commit: 59cbd4eea48fdbc68fc17a29ad71188fea74b28b KVM: Remove HIGH_RES_TIMERS dependency
-> date:   3 months ago
-> config: x86_64-randconfig-r133-20241119 (https://download.01.org/0day-ci/archive/20241120/202411201356.pXoYlKFB-lkp@intel.com/config)
-> compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241120/202411201356.pXoYlKFB-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202411201356.pXoYlKFB-lkp@intel.com/
-> 
-> sparse warnings: (new ones prefixed by >>)
-> >> arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse: sparse: incorrect type in assignment (different base types) @@     expected int [assigned] ret @@     got restricted vm_fault_t @@  
->    arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse:     expected int [assigned] ret
->    arch/x86/kernel/cpu/sgx/virt.c:59:13: sparse:     got restricted vm_fault_t
-> >> arch/x86/kernel/cpu/sgx/virt.c:60:20: sparse: sparse: restricted vm_fault_t degrades to integer
-> >> arch/x86/kernel/cpu/sgx/virt.c:354:36: sparse: sparse: cast removes address space '__user' of expression  
->    arch/x86/kernel/cpu/sgx/virt.c:385:24: sparse: sparse: cast removes address space '__user' of expression
->    arch/x86/kernel/cpu/sgx/virt.c:385:43: sparse: sparse: cast removes address space '__user' of expression
->    arch/x86/kernel/cpu/sgx/virt.c:385:58: sparse: sparse: cast removes address space '__user' of expression
->    arch/x86/kernel/cpu/sgx/virt.c: note: in included file (through include/linux/miscdevice.h):
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
->    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-> 
-> vim +59 arch/x86/kernel/cpu/sgx/virt.c
-> 
-> 540745ddbc70eab Sean Christopherson 2021-03-19  32  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  33  static int __sgx_vepc_fault(struct sgx_vepc *vepc,
-> 540745ddbc70eab Sean Christopherson 2021-03-19  34  			    struct vm_area_struct *vma, unsigned long addr)
-> 540745ddbc70eab Sean Christopherson 2021-03-19  35  {
-> 540745ddbc70eab Sean Christopherson 2021-03-19  36  	struct sgx_epc_page *epc_page;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  37  	unsigned long index, pfn;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  38  	int ret;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  39  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  40  	WARN_ON(!mutex_is_locked(&vepc->lock));
-> 540745ddbc70eab Sean Christopherson 2021-03-19  41  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  42  	/* Calculate index of EPC page in virtual EPC's page_array */
-> 540745ddbc70eab Sean Christopherson 2021-03-19  43  	index = vma->vm_pgoff + PFN_DOWN(addr - vma->vm_start);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  44  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  45  	epc_page = xa_load(&vepc->page_array, index);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  46  	if (epc_page)
-> 540745ddbc70eab Sean Christopherson 2021-03-19  47  		return 0;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  48  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  49  	epc_page = sgx_alloc_epc_page(vepc, false);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  50  	if (IS_ERR(epc_page))
-> 540745ddbc70eab Sean Christopherson 2021-03-19  51  		return PTR_ERR(epc_page);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  52  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  53  	ret = xa_err(xa_store(&vepc->page_array, index, epc_page, GFP_KERNEL));
-> 540745ddbc70eab Sean Christopherson 2021-03-19  54  	if (ret)
-> 540745ddbc70eab Sean Christopherson 2021-03-19  55  		goto err_free;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  56  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  57  	pfn = PFN_DOWN(sgx_get_epc_phys_addr(epc_page));
-> 540745ddbc70eab Sean Christopherson 2021-03-19  58  
-> 540745ddbc70eab Sean Christopherson 2021-03-19 @59  	ret = vmf_insert_pfn(vma, addr, pfn);
-> 540745ddbc70eab Sean Christopherson 2021-03-19 @60  	if (ret != VM_FAULT_NOPAGE) {
-> 540745ddbc70eab Sean Christopherson 2021-03-19  61  		ret = -EFAULT;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  62  		goto err_delete;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  63  	}
-> 540745ddbc70eab Sean Christopherson 2021-03-19  64  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  65  	return 0;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  66  
-> 540745ddbc70eab Sean Christopherson 2021-03-19  67  err_delete:
-> 540745ddbc70eab Sean Christopherson 2021-03-19  68  	xa_erase(&vepc->page_array, index);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  69  err_free:
-> 540745ddbc70eab Sean Christopherson 2021-03-19  70  	sgx_free_epc_page(epc_page);
-> 540745ddbc70eab Sean Christopherson 2021-03-19  71  	return ret;
-> 540745ddbc70eab Sean Christopherson 2021-03-19  72  }
-> 540745ddbc70eab Sean Christopherson 2021-03-19  73  
-> 
-> :::::: The code at line 59 was first introduced by commit
-> :::::: 540745ddbc70eabdc7dbd3fcc00fe4fb17cd59ba x86/sgx: Introduce virtual EPC for use by KVM guests
-> 
-> :::::: TO: Sean Christopherson <sean.j.christopherson@intel.com>
-> :::::: CC: Borislav Petkov <bp@suse.de>
-> 
+    1e7f:	48 03 14 cd 00 00 00 	add    0x0(,%rcx,8),%rdx
+    1e86:	00
+			1e83: R_X86_64_32S	__per_cpu_offset
+    1e87:	31 c9                	xor    %ecx,%ecx
+    1e89:	87 0a                	xchg   %ecx,(%rdx)
+    1e8b:	41 01 cb             	add    %ecx,%r11d
+
+No functional change intended.
+
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Chandan Babu R <chandan.babu@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Dave Chinner <dchinner@redhat.com>
+---
+ fs/xfs/xfs_log_cil.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+index 80da0cf87d7a..9d667be1d909 100644
+--- a/fs/xfs/xfs_log_cil.c
++++ b/fs/xfs/xfs_log_cil.c
+@@ -171,11 +171,8 @@ xlog_cil_insert_pcp_aggregate(
+ 	 */
+ 	for_each_cpu(cpu, &ctx->cil_pcpmask) {
+ 		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
+-		int			old = READ_ONCE(cilpcp->space_used);
+ 
+-		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
+-			;
+-		count += old;
++		count += xchg(&cilpcp->space_used, 0);
+ 	}
+ 	atomic_add(count, &ctx->space_used);
+ }
+-- 
+2.42.0
 
 
