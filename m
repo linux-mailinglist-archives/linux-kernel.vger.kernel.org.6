@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-415895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF029D3DBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:39:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126F99D3DCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:43:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1502848BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:39:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB066B2AA3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703FB19D8A0;
-	Wed, 20 Nov 2024 14:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F6A1BBBED;
+	Wed, 20 Nov 2024 14:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fra+lEI8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hod7eXOf"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1A731A9B20
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97CD1A9B20;
+	Wed, 20 Nov 2024 14:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113576; cv=none; b=g0ZwXRG/60C1BQOjH6t2uyRL/YZhZ4ENucZBh3XjRYdPYtf/CVNJZPX+zoGpuXRX81B9udhJlNvAmx3Io2wR1a+NnzYwULpYf7sSaNWLOL0cnLFMinrjrcN/fiN0XVHvjqX0uGy0xCmY1K4U4cKKhP7ATIUPXQAg7Vy01lDpfFM=
+	t=1732113584; cv=none; b=TDdV1jeH0tBjenImpHy35MuO73QXga5p4Jcr0DGBOxpUKY2Cm/Xb/0OyUNgrJSSXAAwQiM44zXAf5viOXB8vu0fx6AmJlcwg4AGwPSswsAJk97K9ysQYEyDjjLNoUKs2f4EH1WL01yHYxsHM2AiZbpd3FZu+lMqbBiVTm9Yl4Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113576; c=relaxed/simple;
-	bh=btSNVYwlC8RJUtn0GBIme5+bVVj7TfwEc6LV82NkhM0=;
+	s=arc-20240116; t=1732113584; c=relaxed/simple;
+	bh=jCOqnJI1jSfMbdikbviwyyXbQRNLkjTouIoyWIbfo1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGKDZM7VrmJd01DhkLm653+C8i5SeEQ2dDY5Hk0qy9nYswnbbavT5L20AW3+cvoMqALaJda71BuCVomzfQB1gBJT6Sm/vxLsKAdwZvxFFj8ahyz4O+cvyEvCM8dc4gXs7d91k3bOH4g65j7orS0XwWvgKfpn6NuIGzcg1gUNFek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fra+lEI8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732113573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h3VNC3b6pyuHC0GRlERPYXF58+ZikMBaiQzrtXGN3kc=;
-	b=fra+lEI86i0iAislvCJZ6jMe46dqRCAYdd8eG03t0CXmO49Dv0zmUeSYKQQFZRRjCKWSvz
-	SedOVB1o5V1dJXfU4M6mc/PfgbWEGUeHXh8ib/QbeAKO0nsgRDQoYk8FpjsYyrAIdNU9y+
-	hDVXqacJnpyGip5KhafEeWbgguFjlXU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-580-OLPWTXjKOn-7QvcxMs5pXA-1; Wed, 20 Nov 2024 09:39:31 -0500
-X-MC-Unique: OLPWTXjKOn-7QvcxMs5pXA-1
-X-Mimecast-MFC-AGG-ID: OLPWTXjKOn-7QvcxMs5pXA
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3822ebe9321so3168693f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 06:39:31 -0800 (PST)
+	 In-Reply-To:Content-Type; b=rmEojRS1qI/B+82qZ1ERiszHcQcSzOT3MRh22rS47JsDqwHERT6H0InxvqMoWDb1CFbvawYizYREwpMyjfhymv2YT+DkEoAg+yuaHGBrJegrJT7wn9bk1xSRizJwtWOxFUejrIgwWiGpRYIjFCumaDYj+90cV7c5KPtxduRCgHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hod7eXOf; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21207f0d949so42397885ad.2;
+        Wed, 20 Nov 2024 06:39:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732113581; x=1732718381; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=zabGifVxpVy+avsG3rCPsHo6MQzgl8H9BAM18fNKYAU=;
+        b=hod7eXOf930nJiau4zfm8AMUEribF5ND0eWAOBK73GrLhOgiGkui2LzdQcNWsCro2S
+         9rub3BaTUZ6NBlkBVbiVLgoUmx3sP2AhV4GHab4Xq2T/CPZndX9AUgdo9ZoceQk9va/x
+         BxS/DRQtkfM8hc1A30ogMLAfBiUCGkxZXIHIFBS5ENgkd8NoUROfHlNeyXfE0F2tHjLR
+         VEax5722Ih4TqlYUR7KHZabfcA+8y3cngV5npfuPT9IaZCG0VAKiCTZ5FZ2Joz+aBH2U
+         ha6Ukc7Y6xxEtrGHTaNHAg7gefm1jgxX6MvcVffOPPZ6Q9h7TEgDjzCzV5n/eztL+YrE
+         hgQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732113571; x=1732718371;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h3VNC3b6pyuHC0GRlERPYXF58+ZikMBaiQzrtXGN3kc=;
-        b=ul5RUCzpjJMgyZ7gDCnLizbMSDC6k9wk4a9MIy41ZfWsWJxF+ME5nnXjLXa295TgGN
-         5F5ELVKKL2TRNXqTOBMATGATaFmvcLceUd2AA5EwcYvmpRzg6Q+sYoCtC0GLQtfIS66a
-         euYNNqvVZMOpcciDRS55AjN6wpE/igTJP4D4YCfNEYTl5mWIp3MvVjOvMG7CBJS5zP3x
-         F6P7q9K1+SRWtwbCGfsF1R6W7vStPLEazB3VkKq2z2pkQ9JVIZ309RRLyQSPchk1rkf1
-         2bO2lb8lgb7DwJhLMTeaYJeXnomZKaHnr9s7sGfZjkWPI+ViAl7pkcK7Lf+psNSSmMQR
-         er+g==
-X-Gm-Message-State: AOJu0YzBfQxRrrS/isf+YFcLKeIIrq9DFASspgepr8C0e866Mm6w/H3f
-	9qv5u4oPQ6kSkTweemTmxn85ZKlRzKCYqXjevY2L44B53UxDcSGQDpFW/BLEzVYg/6S4rPlqWvX
-	qLVrU4IlMqt0PfrqhzNO7IuKp5CNjrbwgQeb8i6/nePADQKEo7UZQAMX9EvxRvw==
-X-Received: by 2002:a05:6000:2d01:b0:382:5284:995 with SMTP id ffacd0b85a97d-38254af52edmr1741478f8f.16.1732113570646;
-        Wed, 20 Nov 2024 06:39:30 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3PCfqnU0zEBWkF3nAGnG0ftAq5fWrullBMMZxuX6xEoDVnbaIbozVyZf2Yd0u6zKlmX8E6w==
-X-Received: by 2002:a05:6000:2d01:b0:382:5284:995 with SMTP id ffacd0b85a97d-38254af52edmr1741442f8f.16.1732113570280;
-        Wed, 20 Nov 2024 06:39:30 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d4c68sm21058255e9.22.2024.11.20.06.39.28
+        d=1e100.net; s=20230601; t=1732113581; x=1732718381;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zabGifVxpVy+avsG3rCPsHo6MQzgl8H9BAM18fNKYAU=;
+        b=vNinHtGuaFX+HQNEiqp/hCbzRHHjhPi8WvoSV6jbeCRmc4sdj6mdPlBjAZRWVTMMPh
+         cTCsfqeQWbPQUdrYjRuc2/xBFVsQDMtqH/nLlafEsMZjRPUpgGpXKMX99LQ6jxGe0e0b
+         lAL4C8TSkTYJJfsX+y+iW+VdP51JuHP6NFBNpH69CuMn6Lf/93BK5kwFj/GkQT4D5zbT
+         UJ767YBk7rVRyZf/mpy0P4wOyOgpMT1KTHXKfvlfJbIFprg+Uj3a9D1DUqjlgoOTRRfl
+         ROwJJXQPl7ll9Cegem23eklp/2pIEadU7dX5XJ/NGY9jG21igqJhEw9Z5S3AnqMWcO42
+         fkgw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6GbcHQku7IY4ZAeV1I0BuuBl7BC3WF8nQDIVU39PZFsB7KG9vC+qj3EKR1VZT1kbL9stnuekLTaZU@vger.kernel.org, AJvYcCVXxm3wwvdHDQjfWFVH52mKGiF8GdcNr0n1ponBqi6sTVyoIte/p1OBBC31BbnCWocnggR0XJ/qSYoP194l@vger.kernel.org, AJvYcCVsowFz3B7gKy5C7JTynrXoMsUprjHAYtybvMPxczRCFO4ynPzJw6c7NAQcJV3FXe+0HJlyI7ko2fze@vger.kernel.org, AJvYcCVyGHIjPeDjh9iff5rxtXK+MMFct+YNSCikYjy5evGDX90Ovdqee5jSdR67E2/54bvGoWWz8Tkg92wD@vger.kernel.org, AJvYcCW+zCXjUYTQwdIpctE0nQyhCJFsFz+KQd11iX8Pgz1wtHkMOupmxDbWiS2qJduGy7wMWWwRehCMu11VBKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjay+rJPRB51VCxYPJmr91PxhhyM5ONAb0rScrSPWafLo/ZxPm
+	4BGR5lGkQRDrPngZThyVC/ZbmyDs3p4KvvxDTF2zgNz//3UiTuq+
+X-Google-Smtp-Source: AGHT+IHRii0hD75xSkktHp2W+X5T+R33piATj8nmXJpALNeeMbH64uAdw6Rbga1ucavvsOxTjAgFvQ==
+X-Received: by 2002:a17:902:ccc9:b0:20c:8dff:b4ed with SMTP id d9443c01a7336-2126fb34cabmr25636265ad.16.1732113580802;
+        Wed, 20 Nov 2024 06:39:40 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212037e004asm65327835ad.205.2024.11.20.06.39.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 06:39:29 -0800 (PST)
-Message-ID: <3ed18ba1-e4b1-461e-a3a7-5de2df59ca60@redhat.com>
-Date: Wed, 20 Nov 2024 15:39:27 +0100
+        Wed, 20 Nov 2024 06:39:39 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <f1b338a0-fe51-48a1-a35e-41041df79b63@roeck-us.net>
+Date: Wed, 20 Nov 2024 06:39:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,199 +77,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce PROC_VMCORE_DEVICE_RAM
- to detect device RAM ranges in 2nd kernel
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
- =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
- Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
- <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-8-david@redhat.com> <Zz22ZidsMqkafYeg@MiWiFi-R3L-srv>
- <4b07a3eb-aad6-4436-9591-289c6504bb92@redhat.com>
- <Zz3sm+BhCrTO3bId@MiWiFi-R3L-srv>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051,
+ adp1055 and ltp8800
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Radu Sabau <radu.sabau@analog.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Alexis Czezar Torreno <alexisczezar.torreno@analog.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
+ <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zz3sm+BhCrTO3bId@MiWiFi-R3L-srv>
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20.11.24 15:05, Baoquan He wrote:
-> On 11/20/24 at 11:48am, David Hildenbrand wrote:
->> On 20.11.24 11:13, Baoquan He wrote:
->>> On 10/25/24 at 05:11pm, David Hildenbrand wrote:
->>>> s390 allocates+prepares the elfcore hdr in the dump (2nd) kernel, not in
->>>> the crashed kernel.
->>>>
->>>> RAM provided by memory devices such as virtio-mem can only be detected
->>>> using the device driver; when vmcore_init() is called, these device
->>>> drivers are usually not loaded yet, or the devices did not get probed
->>>> yet. Consequently, on s390 these RAM ranges will not be included in
->>>> the crash dump, which makes the dump partially corrupt and is
->>>> unfortunate.
->>>>
->>>> Instead of deferring the vmcore_init() call, to an (unclear?) later point,
->>>> let's reuse the vmcore_cb infrastructure to obtain device RAM ranges as
->>>> the device drivers probe the device and get access to this information.
->>>>
->>>> Then, we'll add these ranges to the vmcore, adding more PT_LOAD
->>>> entries and updating the offsets+vmcore size.
->>>>
->>>> Use Kconfig tricks to include this code automatically only if (a) there is
->>>> a device driver compiled that implements the callback
->>>> (PROVIDE_PROC_VMCORE_DEVICE_RAM) and; (b) the architecture actually needs
->>>> this information (NEED_PROC_VMCORE_DEVICE_RAM).
->>>>
->>>> The current target use case is s390, which only creates an elf64
->>>> elfcore, so focusing on elf64 is sufficient.
->>>>
->>>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>>> ---
->>>>    fs/proc/Kconfig            |  25 ++++++
->>>>    fs/proc/vmcore.c           | 156 +++++++++++++++++++++++++++++++++++++
->>>>    include/linux/crash_dump.h |   9 +++
->>>>    3 files changed, 190 insertions(+)
->>>>
->>>> diff --git a/fs/proc/Kconfig b/fs/proc/Kconfig
->>>> index d80a1431ef7b..1e11de5f9380 100644
->>>> --- a/fs/proc/Kconfig
->>>> +++ b/fs/proc/Kconfig
->>>> @@ -61,6 +61,31 @@ config PROC_VMCORE_DEVICE_DUMP
->>>>    	  as ELF notes to /proc/vmcore. You can still disable device
->>>>    	  dump using the kernel command line option 'novmcoredd'.
->>>> +config PROVIDE_PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool n
->>>> +
->>>> +config NEED_PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool n
->>>> +
->>>> +config PROC_VMCORE_DEVICE_RAM
->>>> +	def_bool y
->>>> +	depends on PROC_VMCORE
->>>> +	depends on NEED_PROC_VMCORE_DEVICE_RAM
->>>> +	depends on PROVIDE_PROC_VMCORE_DEVICE_RAM
->>>
->>> Kconfig item is always a thing I need learn to master.
->>
->> Yes, it's usually a struggle to get it right. It took me a couple of
->> iterations to get to this point :)
->>
->>> When I checked
->>> this part, I have to write them down to deliberate. I am wondering if
->>> below 'simple version' works too and more understandable. Please help
->>> point out what I have missed.
->>>
->>> ===========simple version======
->>> config PROC_VMCORE_DEVICE_RAM
->>>           def_bool y
->>>           depends on PROC_VMCORE && VIRTIO_MEM
->>>           depends on NEED_PROC_VMCORE_DEVICE_RAM
->>>
->>> config S390
->>>           select NEED_PROC_VMCORE_DEVICE_RAM
->>> ============
+On 11/19/24 19:58, Cedric Encarnacion wrote:
+>      ADP1051: 6 PWM for I/O Voltage, I/O Current, Temperature
+>      ADP1055: 6 PWM for I/O Voltage, I/O Current, Power, Temperature
+>      LTP8800-1A/-2/-4A: 150A/135A/200A DC/DC µModule Regulator
 > 
-> Sorry, things written down didn't correctly reflect them in my mind.
+> The LTP8800 is a family of step-down μModule regulators that provides
+> microprocessor core voltage from 54V power distribution architecture.
+> LTP8800 features telemetry monitoring of input/output voltage, input
+> current, output power, and temperature over PMBus.
 > 
-> ===========simple version======
-> fs/proc/Kconfig:
-> config PROC_VMCORE_DEVICE_RAM
->          def_bool y
->          depends on PROC_VMCORE && VIRTIO_MEM
->          depends on NEED_PROC_VMCORE_DEVICE_RAM
+> Co-developed-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
+> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> ---
+>   Documentation/hwmon/adp1050.rst | 63 +++++++++++++++++++++++++++--
+>   drivers/hwmon/pmbus/Kconfig     |  9 +++++
+>   drivers/hwmon/pmbus/adp1050.c   | 72 +++++++++++++++++++++++++++++++--
+>   3 files changed, 137 insertions(+), 7 deletions(-)
 > 
-> arch/s390/Kconfig:
-> config NEED_PROC_VMCORE_DEVICE_RAM
->          def y
-> ==================================
+> diff --git a/Documentation/hwmon/adp1050.rst b/Documentation/hwmon/adp1050.rst
+> index 8fa937064886..1692373ee5af 100644
+> --- a/Documentation/hwmon/adp1050.rst
+> +++ b/Documentation/hwmon/adp1050.rst
+> @@ -13,18 +13,43 @@ Supported chips:
+>   
+>       Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1050.pdf
+>   
+> +  * Analog Devices ADP1051
+> +
+> +    Prefix: 'adp1051'
+> +
+> +    Addresses scanned: I2C 0x70 - 0x77
+> +
+> +    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1051.pdf
+> +
+> +  * Analog Devices ADP1055
+> +
+> +    Prefix: 'adp1055'
+> +
+> +    Addresses scanned: I2C 0x4B - 0x77
+> +
+> +    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADP1055.pdf
+> +
+> +  * Analog Devices LTP8800-1A/-2/-4A
+> +
+> +    Prefix: 'ltp8800'
+> +
+> +    Addresses scanned: -
+> +
+> +    Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-1A.pdf
+> +         https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-2.pdf
+> +         https://www.analog.com/media/en/technical-documentation/data-sheets/LTP8800-4A.pdf
+> +
+>   Authors:
+>   
+>     - Radu Sabau <radu.sabau@analog.com>
+>   
+> -
 
-That would work, but I don't completely like it.
+Unrelated
 
-(a) I want s390x to select NEED_PROC_VMCORE_DEVICE_RAM instead. Staring 
-at a bunch of similar cases (git grep "config NEED" | grep Kconfig, git 
-grep "config ARCH_WANTS" | grep Kconfig), "select" is the common way to 
-do it.
+>   Description
+>   -----------
+>   
+> -This driver supprts hardware monitoring for Analog Devices ADP1050 Digital
+> -Controller for Isolated Power Supply with PMBus interface.
+> +This driver supports hardware monitoring for Analog Devices ADP1050, ADP1051, and
+> +ADP1055 Digital Controller for Isolated Power Supply with PMBus interface.
+>   
+> -The ADP1050 is an advanced digital controller with a PMBus™
+> +The ADP105X is an advanced digital controller with a PMBus™
 
-So unless there is a pretty good reason, I'll keep 
-NEED_PROC_VMCORE_DEVICE_RAM as is.
+Please refrain from using device name wildcards, There is no guarantee that
+all chips in the name range of ADP105[0-9] will have the same functionality.
+Either name the chips, or say something like "The supported chips are ...".
 
-
-(b) In the context of this patch, "depends on VIRTIO_MEM" does not make 
-sense. We could have an intermediate:
-
-config PROC_VMCORE_DEVICE_RAM
-          def_bool n
-          depends on PROC_VMCORE
-          depends on NEED_PROC_VMCORE_DEVICE_RAM
-
-And change that with VIRTIO_MEM support in the relevant patch.
-
-
-I faintly remember that we try avoiding such dependencies and prefer 
-selecting Kconfigs instead. Just look at the SPLIT_PTE_PTLOCKS mess we 
-still have to clean up. But as we don't expect that many providers for 
-now, I don't care.
-
-Thanks!
-
--- 
-Cheers,
-
-David / dhildenb
+Guenter
 
 
