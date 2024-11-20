@@ -1,62 +1,53 @@
-Return-Path: <linux-kernel+bounces-415428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536539D35F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:53:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 492C99D35FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01A071F233FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:53:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4890B2381B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE2D1953A9;
-	Wed, 20 Nov 2024 08:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A698318660C;
+	Wed, 20 Nov 2024 08:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS3fVpfi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4HOON5g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BD0189F54;
-	Wed, 20 Nov 2024 08:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B00E15B0EE;
+	Wed, 20 Nov 2024 08:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732092781; cv=none; b=SEYewIF+hyy7Rgy9WPLDwq5RkKEzrm8cLprmL9NEk3E9GLPtk9WqZ2Hzulh5q3PG6zlUaxX858WvofUcz7ZdKDvKjO/Los0R4NsEW7gmSLUoS4Wk01Lc5t7A0U2QFr0rTB8h00rauN60/rG1jlojzmfeDtvIHDZgi+dczVJ1DO0=
+	t=1732092852; cv=none; b=HFnbhKHn+H3lhWzT1g49g9FUIX7z2RqH2hDpcIUUcK+NhRSbPxHoxGBdPLSeU2wHG2lrzO0WQ4w9B8xaTCn3De85c3bHXUohfpXrxOh1dOeLLB7ygcs0m8zAVC2At1m6NLGgNR4znoWlca45Bv0alVLN1XOWPKDmqdzpYoOyLeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732092781; c=relaxed/simple;
-	bh=Hn6npxFVYkALgkljMWG2aKs+3PZdGymydRwuopKUxxo=;
+	s=arc-20240116; t=1732092852; c=relaxed/simple;
+	bh=XGBGHJ1UrQTa4nLheK/M4FsN7lw4iA53sAEYC2MpFe8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxG9f/c95TH6xgSLFLsdrUF//OWVo7mjfgU4amB75D/f18dNzH+ktd4GxRVw6pQTiuE9eoyWKdUGbVNeYrdEXcZgEvQHSwWzXmNYFy4YE2F98OmKlMAZt3Pu4l2Z0ejFgowJXlLESniBcwj3/SzyuX2ydi0hX9eRHh+bKVi1zG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS3fVpfi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B30E4C4CED7;
-	Wed, 20 Nov 2024 08:53:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IsvHgX2QgIADpV1zMnxJjdQ8i7GIZ0S0G1nrjOqo7Txu6ci2w9AaCDtmHLd6fzH7DH5ZUB/r81Ou03WRj7cikNZ4Um3gX7ekkREa9+iqZ1t/a4SXTsNEkim/hQoEqDRZgNYVcJz73lMoTLwIIZtNtSzeqK8JR8W4pg1J/KV8Toc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4HOON5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 458BEC4CECD;
+	Wed, 20 Nov 2024 08:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732092781;
-	bh=Hn6npxFVYkALgkljMWG2aKs+3PZdGymydRwuopKUxxo=;
+	s=k20201202; t=1732092851;
+	bh=XGBGHJ1UrQTa4nLheK/M4FsN7lw4iA53sAEYC2MpFe8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nS3fVpfipJGRTqGyEO4Kk0eskgpQElJA19ceS29wy5S9oOT3oxrP6GtYJZg05f9Qy
-	 aZ9hs+vBrc1bjJ994xpW6Kr77lD2lC36HghIVWt4GFZeoXck35lOb3Pbq9WjWxZtnq
-	 cFlEvwuUVYoyyK7nuvvEzkLvNixMKo3bthEh9EnVSke0Nof3WMsmFQDxyZeME2B4+N
-	 F1+f0o8oa6IA3Z6xJx5wFGu4c0ximz8m1FKlE+CSvsuInGq7tagASAi7vwuUzFWH9Y
-	 vlG4DZROcfCPBiTCHlmqwOvplsVhJyVGtjBySpZqLgGS4aV1KcpLyIV+oHbdFwE8ga
-	 gcMONahdMPHqA==
-Date: Wed, 20 Nov 2024 09:52:57 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: x1e80100: Add CAMSS block
- definition
-Message-ID: <vh6fvvminsq7eeovz6su336awgq56kc2r54mldmihgqxo2wkgt@wxciyxacp2ov>
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-6-54075d75f654@linaro.org>
+	b=Z4HOON5gcw8ibSmu12PZAr6y10tAigi2d3qTzAQAwOV9S8ICHFdqPppJQET7mK9Bf
+	 eh+HvzaPFPl8N9waCrT13mIRkIexTLUz5+ej+BvRpGaSnRQFUOG7VmPb/9cMV7RAmA
+	 FFQ5NHK65fBXBV23W/Z9VeTyDOwWAI2v5WkR4rgn7ZR0xWvMTWIHPwL2UwY1lUG21G
+	 EO0IEFLp1GzqXMqzj2NiwyeKo8hvSh1lZipp5cVMOHv0K3GDLFA18vDNosQqwHY2SY
+	 Ch5eeq3DtRh9vbT2NH8W32727Qaqi2MzML9ouUuItvdd0IXVhI1qYkKMwgX12SOzVH
+	 kVPQe6xlF7R4Q==
+Date: Wed, 20 Nov 2024 09:54:06 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] vfs tmpfs
+Message-ID: <20241120-annahme-tilgen-cfa206be31ce@brauner>
+References: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+ <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,42 +56,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-6-54075d75f654@linaro.org>
+In-Reply-To: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 01:10:35PM +0000, Bryan O'Donoghue wrote:
-> Add dtsi to describe the xe180100 CAMSS block
+On Mon, Nov 18, 2024 at 11:26:12AM -0800, Linus Torvalds wrote:
+> On Fri, 15 Nov 2024 at 06:07, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > This adds case-insensitive support for tmpfs.
 > 
-> 4 x CSIPHY
-> 2 x CSID
-> 2 x CSID Lite
-> 2 x IFE
-> 2 x IFE Lite
+> Ugh.
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 180 +++++++++++++++++++++++++++++++++
->  1 file changed, 180 insertions(+)
+> I've pulled this, but I don't love it.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index c19754fdc7e0fa4f674ce19f813db77fe2615cf3..f23352493cb270c0fdc3c42add032286601db1e9 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4730,6 +4730,186 @@ cci1_i2c1: i2c-bus@1 {
->  			};
->  		};
->  
-> +		camss: camss@ac62000 {
-> +			compatible = "qcom,x1e80100-camss";
-> +
-> +			reg = <0 0x0acb7000 0 0x2000>,
+> This pattern:
+> 
+>     if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+>         d_add(dentry, inode);
+>     else
+>         d_instantiate(dentry, inode);
+> 
+> needs an explanation, and probably a helper.
 
-It does not look like you tested the DTS against bindings. Please run
-'make dtbs_check W=1' (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
+I think we had this discussion before where we decided to move all the
+checks inline. But yes, this could probably be refactored to be easier
+to understand.
 
-Best regards,
-Krzysztof
+> 
+> And
+> 
+> >  include/linux/shmem_fs.h            |   6 +-
+> >  mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
+> 
+> I'm starting to think this should be renamed and/or possibly split up
+> a bit. The actual path component handling functions should be moved
+> out of mm/shmem.c.
+> 
+> The whole "mm/shmem.c" thing made sense back in the days when this was
+> mainly about memory management functions with some thing wrappers for
+> exposing them as a filesystem, and tmpfs was kind of an odd special
+> case.
+> 
+> Those thin wrappers aren't very thin any more, and "shmem" is becoming
+> something of a misnomer with the actual filesystem being called
+> "tmpfs".
+> 
+> We also actually have *two* different implementations of "tmpfs" -
+> both in that same file - which is really annoying. The other one is
+> based on the ramfs code.
+> 
+> Would it be possible to try to make this a bit saner?
 
+So one possibility would be to move tmpfs into fs and have fs/tmpfs/ (or
+mm/tmpfs/) which would also be nice because mm/shmem.c is actively
+confusing when you're looking for the tmpfs code. And then it could
+simply be split up. I'm all for it.
 
