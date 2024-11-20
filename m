@@ -1,117 +1,155 @@
-Return-Path: <linux-kernel+bounces-415885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DA09D3D92
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 893F79D3D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135291F2273F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:29:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3846C1F2174F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AD2174EDB;
-	Wed, 20 Nov 2024 14:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2A21AF0CC;
+	Wed, 20 Nov 2024 14:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2v+6I6S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="B5ffanFm"
+Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7C21A76C4;
-	Wed, 20 Nov 2024 14:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AC61AAE38;
+	Wed, 20 Nov 2024 14:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732112989; cv=none; b=LGZI2YCgPuPv8Qzmu0oJX+aBKZc7GRy4f5THMkvxvX+K18aplnkPw4MUAg0ptXygKPCfWwqhWIJRMTAUhCovMfSooq/oZw7bBnpLZylEXx8ekEbQmOcB5k0/dwNS/0zDPKdg2NmPsSbpDQ1AptMwx3HYmmeppOMQze7tbaF6Leg=
+	t=1732113030; cv=none; b=tYunhDDlTpOhC3YXm2qbW6oBzy8elrMm9iQ+t5Smob0e0LFNxqUcVaAatOI684qkLGPe5kW/yo63meyF6l7Ae1vSlO9yObjr27oWd0aOEjD2HSs0suaZI2u1Il5R9UQDcd6FW+xYGlTgtRODeJsbiWzg4R4Qqgow26kSGLlQTx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732112989; c=relaxed/simple;
-	bh=E3SCFt2aP8soC2dbkMLFMLoGhCfGpNlFOSTRpOtTPrE=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ncxp1diqSn3gjlKawLZzc3f6pTXMNYyQ9Yr/8rfM9PV2Hffy4oYjyaNZ89hoTszFPrklrGBbJWgn8Zj5un2z3CZK+OYmpqgY47xHB0YFLZ9c6yDL+Vm85doT6R5VUxeptt5AHuYhyLWBkqIfpbAcgvlSGItCUBFw2pOxVVpOas8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2v+6I6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82D1C4CECD;
-	Wed, 20 Nov 2024 14:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732112988;
-	bh=E3SCFt2aP8soC2dbkMLFMLoGhCfGpNlFOSTRpOtTPrE=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=Y2v+6I6SsDvnrNk8t/oeMHqMxN6BB6bya1x4af5bacX9K1VRoCuOCrdbxeXywPhlj
-	 +Kfun/G8dCd7C/UXNWavt9g7BWaJOCX0adhXbd0PV3UedjjlP2uNfAyBtPxlWqn33i
-	 zdw8J+j2mPeiq7V2dcdk2t+upnzSN7JYYnXgAokVSOLikqsTjbczWCwjqXW8NH6Iag
-	 wP9TDlAU+NNk+G4jaOQfXeVEFFaCMhGi7w0KRKbQtHP0PI5VT1k46CvVZFdpmXogLB
-	 1PaQbAGdOC4DWu714UMmgdt+4zW48n+bZ1lKHAoe8a4AdIulorZ4Z/GbxXSbCg/VmR
-	 TnmKzPb3FSaQQ==
-Date: Wed, 20 Nov 2024 08:29:47 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1732113030; c=relaxed/simple;
+	bh=W7OWA8tVFTiKEF42Oieigl4nxZ6o8b064cist9uE5fg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=poXDhnkIVMbc/K/PMw76e5WjXInjzOfRMGkCYp5p4dy8fsaFAS3NpFHI6Dx/KoIh8OCAO3S2s/nnhm9YD/tmHpacaAGP2jTovHMspihQIYn3yXAy1odun8tKWWhGjTcSgzrlgVKur4a6U051QsbzW6DaJN5AC+ovRabfMPCpiUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=B5ffanFm; arc=none smtp.client-ip=202.61.224.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CEA4C2805FA;
+	Wed, 20 Nov 2024 15:30:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
+	t=1732113024; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=7apzaMS1lO1lrCYhLj60cV0wpNtVOKl6ln57IHdgp6I=;
+	b=B5ffanFmWap08QD1Oh+ynGU2/40mw16ZjqA3/1S67ev/gR6Jk+lhIZ4nHmYjYb428KlAti
+	Tg/tR51V98cX90+K5MSjFhmL51O87QxrgW+WJ4H+jZ40vjCGhmlfHcr2Tp2fvgahiVWqCP
+	qc3mMGKGJne8qaq9XSkdEz5T3QPCClR2lEVYHB7StVz142/hZh34u9Br2IszmJYg3xRbnY
+	4fjlsv9Q8numT1L5mhzmscwGX37T/nIUh80YnbeVPVz8Hoh3GssK/UsnAVjIfNxMAB+q7f
+	Z+0gvQe0kS+Ur7uLh/atFOYSgD9Jt1VM0ESG9Uk7Q34+zjlvM+DK1/XzU4HN0Q==
+Message-ID: <f90ee4f3-704d-4776-99e7-04f30969d93e@cachyos.org>
+Date: Wed, 20 Nov 2024 15:30:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: tzimmermann@suse.de, conor+dt@kernel.org, matthias.bgg@gmail.com, 
- airlied@gmail.com, simona@ffwll.ch, linux-mediatek@lists.infradead.org, 
- p.zabel@pengutronix.de, mripard@kernel.org, chunkuang.hu@kernel.org, 
- ck.hu@mediatek.com, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org, 
- maarten.lankhorst@linux.intel.com, dri-devel@lists.freedesktop.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20241120124512.134278-3-angelogioacchino.delregno@collabora.com>
-References: <20241120124512.134278-1-angelogioacchino.delregno@collabora.com>
- <20241120124512.134278-3-angelogioacchino.delregno@collabora.com>
-Message-Id: <173211298701.771700.9734039519570659117.robh@kernel.org>
-Subject: Re: [PATCH v1 2/7] dt-bindings: display: mediatek: Add binding for
- MT8195 HDMI-TX v2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/10] perf/x86/rapl: Add core energy counter support
+ for AMD CPUs
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, peterz@infradead.org,
+ mingo@redhat.com, rui.zhang@intel.com, irogers@google.com,
+ kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.dei,
+ gautham.shenoy@amd.com
+Cc: kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241115060805.447565-1-Dhananjay.Ugwekar@amd.com>
+ <20241115060805.447565-11-Dhananjay.Ugwekar@amd.com>
+ <a7159bad-92a1-47e8-b892-2ae0dd9a94f6@cachyos.org>
+ <7eaf557d-7e85-4fd3-abee-f84ac01d92c1@amd.com>
+Content-Language: en-US
+From: Peter Jung <ptr1337@cachyos.org>
+Organization: CachyOS
+In-Reply-To: <7eaf557d-7e85-4fd3-abee-f84ac01d92c1@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Dhananjay,
 
-On Wed, 20 Nov 2024 13:45:07 +0100, AngeloGioacchino Del Regno wrote:
-> Add a binding for the HDMI TX v2 Encoder found in MediaTek MT8195
-> and MT8188 SoCs.
+On 20.11.24 14:58, Dhananjay Ugwekar wrote:
+> Hello Peter Jung,
 > 
-> This fully supports the HDMI Specification 2.0b, hence it provides
-> support for 3D-HDMI, Polarity inversion, up to 16 bits Deep Color,
-> color spaces including RGB444, YCBCR420/422/444 (ITU601/ITU709) and
-> xvYCC, with output resolutions up to 3840x2160p@60Hz.
+> Thanks for trying out the patchset,
 > 
-> Moreover, it also supports HDCP 1.4 and 2.3, Variable Refresh Rate
-> (VRR) and Consumer Electronics Control (CEC).
+> On 11/20/2024 1:28 PM, Peter Jung wrote:
+>> Hi together,
+>>
+>> This patch seems to crash the kernel  and results into a not bootable system.
+>>
+>>
+>> The patch has been applied on base 6.12.rc7 - I have not tested it yet on linux-next.
+>>
+>> I was able to reproduce this issue also on the v6 and the only "good" version was the v4.
+>> This has been reproduced on several zen3+ machines and also on my 9950X.
+>>
+>> Bisect log:
+>> ```
+>> git bisect start
+>> # status: waiting for both good and bad commits
+>> # good: [2d5404caa8c7bb5c4e0435f94b28834ae5456623] Linux 6.12-rc7
+>> git bisect good 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+>> # status: waiting for bad commit, 1 good commit known
+>> # bad: [372e95a40e04ae6ebe69300b76566af6455ba84e] perf/x86/rapl: Add core energy counter support for AMD CPUs
+>> git bisect bad 372e95a40e04ae6ebe69300b76566af6455ba84e
+>> # good: [fd3c84b2fc8a50030e8c7d91983f50539035ec3a] perf/x86/rapl: Rename rapl_pmu variables
+>> git bisect good fd3c84b2fc8a50030e8c7d91983f50539035ec3a
+>> # good: [96673b2c940e71fde50a54311ecdce00ff7a8e0b] perf/x86/rapl: Modify the generic variable names to *_pkg*
+>> git bisect good 96673b2c940e71fde50a54311ecdce00ff7a8e0b
+>> # good: [68b214c92635f0b24a3f3074873b77f4f1a82b80] perf/x86/rapl: Move the cntr_mask to rapl_pmus struct
+>> git bisect good 68b214c92635f0b24a3f3074873b77f4f1a82b80
+>> # first bad commit: [372e95a40e04ae6ebe69300b76566af6455ba84e] perf/x86/rapl: Add core energy counter support for AMD CPUs
+>> ```
+>>
+>> Nov 17 12:17:37 varvalian kernel: RIP: 0010:internal_create_group+0x9a/0x4e0
+>> Nov 17 12:17:37 varvalian kernel: Code: 7b 20 00 0f 84 cb 00 00 00 48 8d 74 24 1c 48 8d 54 24 18 4c 89 ff e8 15 8a 99 00 48 83 3b 00 74 59 48 8b 43 18 48 85 c0 74 11 <48> 8b 30 48 85 f6 74 09 4c 8b 5b 08 4d 85 db 75 1a 48 8b 43 20 48
+>> Nov 17 12:17:37 varvalian kernel: RSP: 0018:ffffaa5281fe7868 EFLAGS: 00010202
+>> Nov 17 12:17:37 varvalian kernel: RAX: 796772656e650073 RBX: ffffffffc2a642aa RCX: f781ec27a963db00
+>> Nov 17 12:17:37 varvalian kernel: RDX: ffffaa5281fe7880 RSI: ffffaa5281fe7884 RDI: ffff90c611dc8400
+>> Nov 17 12:17:37 varvalian kernel: RBP: 000000000000000f R08: 0000000000000000 R09: 0000000000000001
+>> Nov 17 12:17:37 varvalian kernel: R10: 0000000002000001 R11: ffffffff8e86ee00 R12: 0000000000000000
+>> Nov 17 12:17:37 varvalian kernel: R13: ffff90c6038469c0 R14: ffff90c611dc8400 R15: ffff90c611dc8400
+>> Nov 17 12:17:37 varvalian kernel: FS:  00007163efc54880(0000) GS:ffff90c8efe00000(0000) knlGS:0000000000000000
+>> Nov 17 12:17:37 varvalian kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> Nov 17 12:17:37 varvalian kernel: CR2: 00005c1834b98298 CR3: 0000000121298000 CR4: 0000000000f50ef0
+>> Nov 17 12:17:37 varvalian kernel: PKRU: 55555554
+>> Nov 17 12:17:47 varvalian kernel: ------------[ cut here ]------------
+>> ```
+>>
+>> Ill do on the weekend some additonal tests based on the latest linux-next snapshot and provide some more logs.
+> Can you please try with the below diff once,
 > 
-> This IP also includes support for HDMI Audio, including IEC60958
-> and IEC61937 SPDIF, 8-channel PCM, DSD, and other lossless audio
-> according to HDMI 2.0.
+> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+> index e9be1f31163d..d3bb3865c1b1 100644
+> --- a/arch/x86/events/rapl.c
+> +++ b/arch/x86/events/rapl.c
+> @@ -699,6 +699,7 @@ static const struct attribute_group *rapl_attr_update[] = {
 > 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../mediatek/mediatek,mt8195-hdmi.yaml        | 150 ++++++++++++++++++
->  1 file changed, 150 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.yaml
+>   static const struct attribute_group *rapl_core_attr_update[] = {
+>          &rapl_events_core_group,
+> +       NULL,
+>   };
+> 
+>   static int __init init_rapl_pmu(struct rapl_pmus *rapl_pmus)
+> 
+> Regards,
+> Dhananjay
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
 
-yamllint warnings/errors:
+Thanks! This patch appears to fix the issue, when the kernel is built 
+with clang. Thanks for providing such fast fix! :)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/mediatek/mediatek,mt8195-hdmi.example.dtb: hdmi-tx@1c300000: Additional properties are not allowed ('#sound-dai-cells' was unexpected)
-	from schema $id: http://devicetree.org/schemas/display/mediatek/mediatek,mt8195-hdmi.yaml#
+Peter
 
-doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241120124512.134278-3-angelogioacchino.delregno@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+>> Regards,
+>>
+>> Peter
 
 
