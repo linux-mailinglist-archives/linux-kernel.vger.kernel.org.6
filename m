@@ -1,130 +1,176 @@
-Return-Path: <linux-kernel+bounces-415798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566949D3CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:45:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC0E9D3CB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:45:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BC112880B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A012881AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5FC1AAE0C;
-	Wed, 20 Nov 2024 13:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MNzRVDMS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F01ABEB5;
+	Wed, 20 Nov 2024 13:45:32 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E351A2C0E;
-	Wed, 20 Nov 2024 13:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564A71A2C0E
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732110326; cv=none; b=mlQCZmPwqTh3c94UzTo2BnxaZvwI7k17B6hS867qjoZJdTYdJu0APxtQA4/4RNThSATcFQuuylEr74smQkA6iR/sjT1cuagpex4gYNMZpoDWYyBDgZ8RkMR2lmfyP+as1MAksQ2zfUhbw1vCCYwfJ0I+qZqZT0vJn8wseD/hHI0=
+	t=1732110332; cv=none; b=rG9tPDpl33fX0UIwAtGMzRGOLJ0WPLvcLYPRo8+Sy51D22BqsgzbMQjlYDkICxCfYj1DjtfbgzEtmMOcl7i+OCvyVOT0Vl2Fd2TvTMI1SgPbgk7nRNjfgJM7ReMdDZbyiEpTaO5TSwyvovoDuJc40ACG/Y1UCQCjAhLu91epRmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732110326; c=relaxed/simple;
-	bh=jhRxJ1OvazakiB3N14Kmm9lyLfmW7hvqPJ5VI0xlsxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JvvWzuHXec8vkID6ofhjTGm3djC2ZmvE70mI40+GYkEInPkKr/kXsKzYKIJnx8YbTK1YM3Qge/ENz2gwl8YGvxY1fLo2YgVOJpnwmK0sz6LqeYOaZSuNG6YMJRwGyNFeVmt7xpYwntnSUewJIC6NWflYYiqm5O5N9u4T7E6r6pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MNzRVDMS; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732110325; x=1763646325;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jhRxJ1OvazakiB3N14Kmm9lyLfmW7hvqPJ5VI0xlsxA=;
-  b=MNzRVDMS+GAicc67deXMjl0RJ0wNUcvyTNF/LU0cCh9D4NaIOpCohldC
-   V9CjSnTD52e5Ve0ibkcvPH+zSS23Ft2S9oWEwCpOuLxO2Ndg6q8ELOxTN
-   HIIZWfW3DOj6Dk0iN30OZmQ9e07eMgUJCUlFnDCvaToSObppRN3yHbLjY
-   q08NaiMY6X8sQ2O/p56MnzPIqZlqBm92YLB7NIxX/rtBiA4E3wnqcYTkh
-   UicpjlYiNSr+AS0nzk7GAJrmHntnO8HZ+fQsurnrnjyUTxz19NpqhNgNp
-   t838c0KMBRrMmlDC5H3VY0wL+Alc1HlHjTDYcAqk9sW1TdcGq30yRXP3y
-   A==;
-X-CSE-ConnectionGUID: btArdX5BRB23tXWouYGzWg==
-X-CSE-MsgGUID: J4BsryVoQXmEDOUjdCDT7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="54669515"
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="54669515"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 05:45:24 -0800
-X-CSE-ConnectionGUID: 86xaPbn1T6Cfa0pRt7M8Jg==
-X-CSE-MsgGUID: 9XOE3H3qRRSXb6yjPTfQiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,169,1728975600"; 
-   d="scan'208";a="120857080"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 05:45:21 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tDl1B-0000000Gisy-3QTr;
-	Wed, 20 Nov 2024 15:45:17 +0200
-Date: Wed, 20 Nov 2024 15:45:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Radu Sabau <radu.sabau@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051,
- adp1055 and ltp8800
-Message-ID: <Zz3n7afQgdW9nsEz@smile.fi.intel.com>
-References: <20241120035826.3920-1-cedricjustine.encarnacion@analog.com>
- <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
- <4c13b4dc-da2c-4548-910a-cf4138d8422a@infradead.org>
+	s=arc-20240116; t=1732110332; c=relaxed/simple;
+	bh=HHaoBCC8MK64RwHit1JQhYwaHeQLH9QM8pOD53gKPRI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DPBnss8LNOVPyA4SpXCPIYsQAwllwJSSAFGp/8M6cTGPsdq65Dn5ls8PUPsUnVrhSGfSjyNHUdwuxVIrUlbu4KRLGcOxfRS0CN7z+/MkWi7BYfxdxO+Ad4Zcwo1XQTDeLBMImR4YvWa2vTskemjyCN9VS/AMUnlLvKnOdLMB0DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a77a0ca771so18853525ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 05:45:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732110329; x=1732715129;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ycQjTfS2NOM91awP/bXrJt0XnXXfKhyI2pL/uuArTSY=;
+        b=HePSMrkTzJJovU/zgb3AllBlx4OnQEcyEjHzaAxoTHMApBP4iwIwTIsoj/auzFHNKb
+         HvzNv+SnED9NPAUXrHmRZboEQt8p2JsGs2KPzWEqNzpEVtEPUdKAhPAbn0j39sDVPOEj
+         uPEDDReyiau/HtIEz0i5gfSzExzr/6lQgXIveoln5qBb4nA+s93JfE3nKQaapA4nnwtu
+         i+zbZ+mtgbm1zMvC8u1Acin/vfM3UIkTMwFxkI8JO1JvIlQWkx8GEKQg7UYdUTDZqoUy
+         VyA0NqY+SHvs+Ub696QFD2GzsVDirwhgRZ2WUx0reW2admY8OChBu5Q+O4iKFyseqOee
+         xsmw==
+X-Gm-Message-State: AOJu0YxzlAQ9YTiPCpi1AAwycFQRLzGecOJzBRjojeThMlX10JYt1L3V
+	bL857ACs/UR45F6krltXufhhhkEy3qMd1z/ZkLQMKx/eCP5t432QC3Rp+16foUK2FI9EJcJijaH
+	hiHu8gT571DMLiRdx5wZaf9JmT+aVs7iWYAx2qHNmAMwm4pQfSvsAJks=
+X-Google-Smtp-Source: AGHT+IH3ad3T4hqc4asFT+D/H0cLBeVbVwxflb+dKyaNJA3S9UIzmGps4B/nbsOee5ELbKoSC1Rbu6wLAQc02EMCjv44hZeJstqA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4c13b4dc-da2c-4548-910a-cf4138d8422a@infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:1b03:b0:3a7:7ee3:108d with SMTP id
+ e9e14a558f8ab-3a7865a9107mr32230585ab.23.1732110329481; Wed, 20 Nov 2024
+ 05:45:29 -0800 (PST)
+Date: Wed, 20 Nov 2024 05:45:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673de7f9.050a0220.363a1b.0011.GAE@google.com>
+Subject: [syzbot] [media?] [usb?] WARNING in iguanair_get_features/usb_submit_urb
+From: syzbot <syzbot+e3ae1e7f4b88f3e696f5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-usb@vger.kernel.org, mchehab@kernel.org, sean@mess.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 19, 2024 at 09:00:28PM -0800, Randy Dunlap wrote:
-> On 11/19/24 7:58 PM, Cedric Encarnacion wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> > +config SENSORS_ADP1050_REGULATOR
-> > +	bool "Regulator support for ADP1050 and compatibles"
-> > +	depends on SENSORS_ADP1050 && REGULATOR
-> > +	help
-> > +	  If you say yes here you get regulator support for Analog Devices
-> > +	  LTP8800-1A, LTP8800-4A, and LTP8800-2. LTP8800 is a family of DC/DC
-> > +	  µModule regulators that can provide microprocessor power from 54V
-> > +	  power distribution architecture.
+HEAD commit:    f868cd251776 Merge tag 'drm-fixes-2024-11-16' of https://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=175892c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=e3ae1e7f4b88f3e696f5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10edf1a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d892c0580000
 
-> FYI:
-> 
-> The 'micro' symbol displays as a blank space in 'menuconfig' or 'nconfig'.
-> (It shows up correctly in gconfig and xconfig.)
-> 
-> This problem is not unique to this driver entry.
-> See https://lore.kernel.org/all/20231006202942.GA865945@bhelgaas/ from 2023.
-> 
-> AFAIK no one is working on this issue.
-> Feel free to change the help text or leave it...
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/50674231b58f/disk-f868cd25.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c6a8d7f6f69f/vmlinux-f868cd25.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5b4f3e883f4a/bzImage-f868cd25.xz
 
-If it's part of the commercial / official name, I would leave it.
-The bug is not in the help text anyway.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e3ae1e7f4b88f3e696f5@syzkaller.appspotmail.com
 
--- 
-With Best Regards,
-Andy Shevchenko
+usb 1-1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+usb 1-1: Product: syz
+usb 1-1: Manufacturer: syz
+usb 1-1: SerialNumber: syz
+usb 1-1: config 0 descriptor??
+------------[ cut here ]------------
+URB ffff88802128ea00 submitted while active
+WARNING: CPU: 0 PID: 972 at drivers/usb/core/urb.c:379 usb_submit_urb+0x1039/0x1930 drivers/usb/core/urb.c:379
+Modules linked in:
+CPU: 0 UID: 0 PID: 972 Comm: kworker/0:2 Not tainted 6.12.0-rc7-syzkaller-00187-gf868cd251776 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:usb_submit_urb+0x1039/0x1930 drivers/usb/core/urb.c:379
+Code: 00 eb 66 e8 f9 b9 5b fa e9 79 f0 ff ff e8 ef b9 5b fa c6 05 4c a6 cd 08 01 90 48 c7 c7 80 21 b1 8c 4c 89 ee e8 48 b0 1c fa 90 <0f> 0b 90 90 e9 40 f0 ff ff e8 c9 b9 5b fa eb 12 e8 c2 b9 5b fa 41
+RSP: 0018:ffffc9000378ec50 EFLAGS: 00010246
+RAX: 60687f36e4038100 RBX: 0000000000000cc0 RCX: ffff88802606bc00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff88802128ea08 R08: ffffffff8155e312 R09: fffffbfff1cf9fd0
+R10: dffffc0000000000 R11: fffffbfff1cf9fd0 R12: ffff88802fb894a8
+R13: ffff88802128ea00 R14: dffffc0000000000 R15: ffff88802fb89400
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005653c9143738 CR3: 0000000028d30000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iguanair_send drivers/media/rc/iguanair.c:193 [inline]
+ iguanair_get_features+0x1c8/0x7c0 drivers/media/rc/iguanair.c:218
+ iguanair_probe+0xb1c/0x1540 drivers/media/rc/iguanair.c:438
+ usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3672
+ usb_set_configuration+0x1976/0x1fb0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x88/0x140 drivers/usb/core/generic.c:254
+ usb_probe_device+0x1b8/0x380 drivers/usb/core/driver.c:294
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
+ bus_for_each_drv+0x24e/0x2e0 drivers/base/bus.c:459
+ __device_attach+0x333/0x520 drivers/base/dd.c:1030
+ bus_probe_device+0x189/0x260 drivers/base/bus.c:534
+ device_add+0x856/0xbf0 drivers/base/core.c:3672
+ usb_new_device+0x104a/0x19a0 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x2d6d/0x5150 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
