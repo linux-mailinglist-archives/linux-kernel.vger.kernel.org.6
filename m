@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-416139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7A999D40BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:03:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB45E9D4120
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651541F218CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:03:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6712B37F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2071A08DF;
-	Wed, 20 Nov 2024 17:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FE11AAE00;
+	Wed, 20 Nov 2024 17:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2in1Zcb"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed9/Io31"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACFF156654
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682281A9B57;
+	Wed, 20 Nov 2024 17:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122166; cv=none; b=pu2hzSWQZ7KqXmIYyO+5kvwUoS8vcbdC+/8axjlRy+GQU1+DkQUMJPLXtKnFlOTFoETW3sNonlenLN3LEgvoeCvTFfOljTVC0tY8lH01Bw1dWvF3+0IXrKklEnCFuV8FvnQfax0PylM0T93e60iJya2yMHgwwT42VbO99zlJrnQ=
+	t=1732122177; cv=none; b=QpoP77nKKTNUOJ7ehElP9xJYVd6JqxA+hII/WOSO6L/S3QgzJ9oaALoMhq45KUqjUkfJBANkgwLZ7jf6g6jO8jnbFX2zF9uTjM6fwD1lXkEIHWAH9VUtOp+cN7mZ9zAuThpmI7tnQmh6VC0Su0s47ABr2XI4AAQDOEhDPSDrVP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122166; c=relaxed/simple;
-	bh=/f8uYPuQX/ROszRbmQFmcbDG3zmYAvpDx4QiLFxHXMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JEwtc/SXKyuclyngA2VfFpGzMtwmmRyj5GgW4UOVsfJvUHgx4ye7OnxJ0GC6qM1hys1WbxGnvH+4eS8Lta2YGEtxvIdkHwg5MfUiKjvnvxCx5jAB2J7/JMNTjaYperDUFiLKijqaHa+zaAQdV9ZaxCdolHuUY0S6NbojpwJwHZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2in1Zcb; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7206304f93aso22401b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:02:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732122164; x=1732726964; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ctM3iStXVQXWRldjhr5j1F7CLkwdxNQDSi2rfTsbrIo=;
-        b=j2in1ZcbinVKOVt+IiwmC86MkvxdqvVtuGtNUIRRM3tSHPOcmOms9XxBVU8CnJIGGi
-         zjWEUyHqwz9HOSz1h6ZWoQaWgGqhXC3DDMaZ22ol1ykG5eByR/ENzbQt7M5bW8IL8Nxo
-         RKUe4pua4lV0qu0D4CvjHuH+Pcg7F2iGnRanQSg6E/ARGcGP5HpXTxpslRVcjrZXa3qD
-         DoKXV94ierumvr+dLTEQ5soFmFNLm72QGwRnavVMUil2EgKeY2J7B9mDUcohekMq2wME
-         +Z1R4MI5Pd2S58sof045t0ysRevRgu1T8AofdyqDtuukHJQkUqe8Xw1r4ljPrqHEM4Of
-         reIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732122164; x=1732726964;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ctM3iStXVQXWRldjhr5j1F7CLkwdxNQDSi2rfTsbrIo=;
-        b=J7Y2DmhLa9TPQRwClSzkhPayJ1PSXFHy2IIZ0O5y1rsj3yhy5z2K3u2QUktaaf2ry7
-         Kp2118PoyNlkWXt8cL3shvGHXC2y+LjMQ/yLtfMS6noQ3akR09Ek70hqzl6pkDH0pZCi
-         FpHzCnUGF4EwmK69saBTpi4b3znI/TPsEH/YT+38PITetH5Vv31z1S30gucG2L4L+W1S
-         7kunKH6jJWXIc6vTptUkRgV0SPa6qFwcdnpDIvv3cVMBnO33PeUV8LakCCc6BAefGPCy
-         CN7JcQp9HxqjYzdrvhw/RTOosRoSxXl/O2Vm12/UUl35PywuXv1qnYln+FqKkDTJedjX
-         Huag==
-X-Forwarded-Encrypted: i=1; AJvYcCXNrSUM0zdPLJg7leV94bRo0Vajuk0W3HVSBHcnx/hSDF51OnyGDh/3mfpPVqPfXR5h8sEcQOWvg4KSZ4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Db543rcwWpzgSRTkHqYTvV2hWiEQpuWmHIqw0IKKqzIZkL0K
-	Fcnz72FMFnF7gbx+QHwK7oEEdXpTuLxoydTFBHRYdco9/AqBeYlpgURHxrGTRA==
-X-Google-Smtp-Source: AGHT+IHIik/zRYPgkopkspcV4s4tfBgXsrtFiGJpzprYeAmSSfSz+DgK3mZhO54pdUyDOXUVB0Ac3g==
-X-Received: by 2002:a17:903:2348:b0:20b:861a:25c7 with SMTP id d9443c01a7336-21270463234mr27106695ad.54.1732122164353;
-        Wed, 20 Nov 2024 09:02:44 -0800 (PST)
-Received: from thinkpad ([120.60.72.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2124aed0fbbsm36204065ad.18.2024.11.20.09.02.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 09:02:43 -0800 (PST)
-Date: Wed, 20 Nov 2024 22:32:32 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1732122177; c=relaxed/simple;
+	bh=jAZjr6uZmIpn8znH1f7+i/DoO9TQa5nzhIeLcjQqb/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PjcfQyViIUigyEjrraq0HWRiPP6e9iuU1CIakYHFLf7KE+80mXoIyQAWfDxNdlgSlI1qKZzXdLSQrqvu/gJPvmVRi8helFxXklz15P01f3WhTA8IziGHvqAGLRQjWP4Fl2G5Scjm+VyzmzrYFY59HyXFk+K+Au545nZZSFdlFsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed9/Io31; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DBAC4CECD;
+	Wed, 20 Nov 2024 17:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732122176;
+	bh=jAZjr6uZmIpn8znH1f7+i/DoO9TQa5nzhIeLcjQqb/M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ed9/Io31TbUaY0/i/6oc8vGK556Ha1ErkaKHjp/vdBstUO4lsvfFKIiw21wYFxO44
+	 eVsL+LruUm456uQlfE4u8y1gTMCFHKC6Q/JwdOxmgOSzEMYc2j0sXjLQmgBVD54nvE
+	 EsFqSVXlKyUgt6auoXf74My1cwNqWDZajpIvHhUaa5LEefPQx3A/C5JT2q3s4y2t46
+	 b4Bxg7k4FVY6qKOYqyivsKIOhRINeHkaV5Dx9ta8CoC0PFdMay3f9Y/ffFrDawj7i3
+	 ZK+g45vmH3Sa6BGLTk1keFMZFCVvAEmN1lJvrwQNFH0s4Et00ar27KFDLvljPAxh07
+	 PUtwTI8MBq2kA==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	stable+noautosel@kernel.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 3/5] PCI/pwrctl: Ensure that the pwrctl drivers are
- probed before the PCI client drivers
-Message-ID: <20241120170232.flllyqcycsrsk6cj@thinkpad>
-References: <20241025-pci-pwrctl-rework-v2-3-568756156cbe@linaro.org>
- <20241120161047.GA2325953@bhelgaas>
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+Date: Wed, 20 Nov 2024 09:02:52 -0800
+Message-Id: <20241120170252.69500-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241120161047.GA2325953@bhelgaas>
 
-On Wed, Nov 20, 2024 at 10:10:47AM -0600, Bjorn Helgaas wrote:
-> On Fri, Oct 25, 2024 at 01:24:53PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > 
-> > As per the kernel device driver model, pwrctl device is the supplier for
-> > the PCI device. But the device link that enforces the supplier-consumer
-> > relationship is created inside the pwrctl driver currently. Due to this,
-> > the driver model doesn't prevent probing of the PCI client drivers before
-> > probing the corresponding pwrctl drivers. This may lead to a race condition
-> > if the PCI device was already powered on by the bootloader (before the
-> > pwrctl driver).
+Hello,
+
+On Wed, 20 Nov 2024 13:55:35 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> > +	 * Create a device link between the PCI device and pwrctl device (if
-> > +	 * exists). This ensures that the pwrctl drivers are probed before the
-> > +	 * PCI client drivers.
-> > +	 */
-> > +	pdev = of_find_device_by_node(dn);
-> > +	if (pdev) {
-> > +		if (!device_link_add(&dev->dev, &pdev->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
-> > +			pci_err(dev, "failed to add device link between %s and %s\n",
-> > +				dev_name(&dev->dev), pdev->name);
-> 
-> This prints the name for "dev" twice (once by pci_err(dev) and again
-> from dev_name(&dev->dev)).  Is it helpful to see it twice here?
+> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
+> Anything received after that time might be too late.
 
-Hmm, not very much. It could be reworded as below:
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-	pci_err(dev, "failed to link: %s\n", pdev->name);
+Tested-by: SeongJae Park <sj@kernel.org>
 
-- Mani
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] c9b39c48bf4a ("Linux 6.11.10-rc1")
 
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks,
+SJ
+
+[...]
+
+---
+
+ok 9 selftests: damon: damos_tried_regions.py
+ok 10 selftests: damon: damon_nr_regions.py
+ok 11 selftests: damon: reclaim.sh
+ok 12 selftests: damon: lru_sort.sh
+ok 13 selftests: damon: debugfs_empty_targets.sh
+ok 14 selftests: damon: debugfs_huge_count_read_write.sh
+ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 16 selftests: damon: debugfs_rm_non_contexts.sh
+ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
+ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
+ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
