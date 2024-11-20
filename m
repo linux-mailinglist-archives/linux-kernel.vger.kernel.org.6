@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-415219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6159D3305
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:56:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01859D3307
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194A9284323
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB961F23889
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281E1156F2B;
-	Wed, 20 Nov 2024 04:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBC3156C69;
+	Wed, 20 Nov 2024 04:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2KHWw+QX"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="seo2NImb"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F106F1494DF
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 04:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44C93F9C5;
+	Wed, 20 Nov 2024 04:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732078555; cv=none; b=cMkCNsQwz7v1VLyWPAQeFe2Hy+YsR44FoybLvbeZ3Bf5IvkQRL+PoXuNZioDUXOWla7JCNcs3rLkc6PDP3DS8ZQlCYFr52Q8alzd7h5pRJD2Z98pCvBPvfNCJk/X24Cpf8a9RWS3yfoGygIobpqrTOgIYF3OEXGcctXxAI9gFUg=
+	t=1732078628; cv=none; b=fh+KkiiW/sTTiG1it4j+DpZdyZc1L7IWwtpakIPJVlw08iqpQnhga1KKW4TO6U7+2F/B2ELBx7r85s1rGN/0aXfrFBe60+HvB240L8q8dyt3jmilwOkE6cvzOQ3ik96PDGy4zXbkf+LvBv0VMPJCfzeyvxqbHAuSgNfqTWO7YWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732078555; c=relaxed/simple;
-	bh=qidyDdoPMSrLqOEPcAD7Fm10v61MJZnJnKYjl/6vk68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oxBoUeDFHBCAl5ahJB2ufcTDzqFAOczUAg5tn+8lKClfngaV/8ZS64nPmcR/CyPqbZIdM6W0p9i7t1+6MWYpPqSLDzewOpcgV5ixjyBFjRliA047/lbprHOTyJuA5+aBXiJEtbMnLDqyXFmkglY2Qap11Fi8B8YvmpDPhJiujk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2KHWw+QX; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ec267b879so845215366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732078552; x=1732683352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rLsyLORpZtZ6b2mAwzZkeZQ6i4pKu4Ce89IT06ouUsE=;
-        b=2KHWw+QXDv6nUb3d+NKqaevr/+grlnuz8jQjJ+j+FMPgBK/cVUJyNDSFRA6IyeQWhm
-         mDOucjhkUXSm2J1z6IQyKqaLsFNfmywSyjUmIyqkMb19nK2Il9vkqB7SSBw4ACi/WnZK
-         URrFbgj36nbc7fOOoXJdParYew5Xd9df8/J/cagsyIDFALwo05rjFUpoMp4wj9JgaLTG
-         nTcE/Qks39+gYiaLkrUDnOIFeyWTER1OEsgyYTzzZDlmWUqaPrsyPm/8eCsFVWKYD7pT
-         xQuuZzR0Q1/zHC/lEbrY+WAPAwEFNn6nYRD4CZJW/7aSkj5sXnzBc3jP0wGCrZlTTh1y
-         KMbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732078552; x=1732683352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rLsyLORpZtZ6b2mAwzZkeZQ6i4pKu4Ce89IT06ouUsE=;
-        b=A6a05XGd7GQIiWOnU2qD1gfIJm1QZhkOP1/XrFFhBhjcQUpnOlwXlM6ho4W1h+OF/v
-         jhyGBKfw+uEbNZtV4TX9h7CssFf6jjHjVFD9UxhfwO4BWLi11FLsBNTnUjvTfbnWCqge
-         JTYtGv5X1RN6DauZq6RkPRvaF8K5dCCBLO7MeW8eD19KReC/ycDWhK4gBR3MHLoy1lT6
-         eTzkjb6hu7Vh/kZaBdnA6DkF4izCvvTA1c2fnQJfKrY0eWPHWdDphioKhIXJaP4CGkLr
-         iymO7mIy7w/W0GOP0Oimqc6MiHH5Mv6LfbA079SrKyPDIc09uEGdzYzHfF+kzW8rijSw
-         VcyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDtDLN4fniVh9vQ58/uGbH9JXxqvfZ/ekZV7PPv1jwGqqFD3xWe1iygEqIKlAjR3J1Wq5RwwLe+21SR7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqDOQwg4zDYmMt7yeOPqP7mSaPp5L6Zvah+IERquOSjRWwJ+kr
-	g83rYefT8kICSPRQb44be3p0aBmP9vRv2osbCG4z5Ern9rh3U/YUCIB9XVunFsxRW6fX+yytt4T
-	WCKfJnz7XtyxoUjUEygdqnI7vzX2jlO7tDndB
-X-Google-Smtp-Source: AGHT+IGineP2bUXtNwD1Ct4msCtFonm9FZ5ffyQckr3P3Efc8YypLgUph8KTFI3sRkQXjSxM5eevi7MkccDQbnEgqmo=
-X-Received: by 2002:a17:907:961e:b0:aa4:777d:7394 with SMTP id
- a640c23a62f3a-aa4dd52feabmr116533166b.11.1732078552227; Tue, 19 Nov 2024
- 20:55:52 -0800 (PST)
+	s=arc-20240116; t=1732078628; c=relaxed/simple;
+	bh=in9rf0KMkbvGfFzwgRKs4N5iiZNsbwTbxmK2iORJtDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=krPrBqbauaN3Zm8N7lVk+Uuajq3C1UsVLSkFEE4ij94iY7sPpK5E9ntqLNkc0wum7jBADouBlwZExwjnAYkjLhKmJ8LcB+5e4dX9maHsXhmkK9RyvtFmhJvlA2lItImewlp+b72ezlBciZz/tjqxR8sN2PnHWOsPjcBwEdQJmZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=seo2NImb; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=I/P/E1mTF7l9r/I4oklTVyXLlBinMJv55qNUKb4iWuk=; b=seo2NImbxcoGX+KPaqpLm0bG8+
+	vr4+60f/7XdGWo4oVr90gmbg6Oo08eBACGBx6VqY3JvoGXpZGOXcKtgpHWotI7Kj1QS6RcA+UBBU4
+	+POSQd0+qVHYw3jiXk5wIrZ29JyT6jHBSMSIZi+dc5OPIm+kexGu8Eb6TcS8wthF6GAojmG/zVqsY
+	TJHk/Z1FaT7EeL8OJCzBZI/7EqopxbOkPA51IwCvyNR74/Y/9pemqP+HtRWCqLceYrQ+A6N0kph4c
+	c+rC+cLNsIe7heVneM/VObsBnts5ikDErerl/tky89iRc09kRX15XDempZPPGt2djVmkLv9KExWqq
+	P4FdK3tw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDclx-00000004rno-3GHX;
+	Wed, 20 Nov 2024 04:57:01 +0000
+Date: Wed, 20 Nov 2024 04:57:01 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	airlied@redhat.com
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
+ mappings
+Message-ID: <Zz1sHZLruF5sv7JT@casper.infradead.org>
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119133513.3612633-1-michael.roth@amd.com>
- <20241119133513.3612633-2-michael.roth@amd.com> <CAAH4kHZ_A7-dNyMiyrZ2p46te=Xi7SRosS_kSjYvG6sJTcmb7A@mail.gmail.com>
-In-Reply-To: <CAAH4kHZ_A7-dNyMiyrZ2p46te=Xi7SRosS_kSjYvG6sJTcmb7A@mail.gmail.com>
-From: Dionna Amalie Glaze <dionnaglaze@google.com>
-Date: Tue, 19 Nov 2024 20:55:40 -0800
-Message-ID: <CAAH4kHYncFsa=5NZVX35jk3jicx1fnYTHsLwapHmJ03+TNKa9w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] KVM: Introduce KVM_EXIT_COCO exit type
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com, 
-	seanjc@google.com, jroedel@suse.de, thomas.lendacky@amd.com, 
-	pgonda@google.com, ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com, 
-	liam.merwick@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
 
-On Tue, Nov 19, 2024 at 8:54=E2=80=AFPM Dionna Amalie Glaze
-<dionnaglaze@google.com> wrote:
->
-> On Tue, Nov 19, 2024 at 5:51=E2=80=AFAM Michael Roth <michael.roth@amd.co=
-m> wrote:
-> >
-> > +struct kvm_exit_coco {
-> > +#define KVM_EXIT_COCO_REQ_CERTS                0
-> > +#define KVM_EXIT_COCO_MAX              1
-> > +       __u8 nr;
-> > +       __u8 pad0[7];
-> > +       __u32 ret;
-> > +       __u32 pad1;
-> > +       union {
-> > +               struct {
-> > +                       __u64 gfn;
-> > +                       __u32 npages;
->
-> Should this not also include a vmm_err code to report to the guest? We
-> need some way for user space to indicate that KVM should write the
-> vmm_err to the upper 32 bits of exit_info_2.
-> I don't think we have a snapshot of the GHCB accessible to userspace.
->
-> I'm still not quite able to get a good test of this patch series
-> ready. Making the certificate file accessible to the VMM process has
-> been unfortunately challenging due to how we manage chroots and VMM
-> upgrades.
-> Still, I'm stuck in the VMM implementation of grabbing the file lock
-> for the certificates and asking myself "how do I tell KVM to write
-> exit_info_2 =3D (2 << 32) | (exit_info_2 & ((1 << 32)-1) before entering
-> the guest?"
-> A __u32 vmm_err field of this struct would nicely make its size 64-bit al=
-igned..
+On Tue, Nov 19, 2024 at 01:24:01PM +0200, Abdiel Janulgue wrote:
+> This series aims to add support for pages that are not constructed by an
+> instance of the rust Page abstraction, for example those returned by
+> vmalloc_to_page() or virt_to_page().
+> 
+> Changes sinve v3:
+> - Use the struct page's reference count to decide when to free the
+>   allocation (Alice Ryhl, Boqun Feng).
 
-retracted. I needed to look 2 lines lower. I need to stop working this late=
-.
->
-> --
-> -Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Bleh, this is going to be "exciting".  We're in the middle of a multi-year
+project to remove refcounts from struct page.  The lifetime of a page
+will be controlled by the memdesc that it belongs to.  Some of those
+memdescs will have refcounts, but others will not.
 
+We don't have a fully formed destination yet, so I can't give you a
+definite answer to a lot of questions.  Obviously I don't want to hold
+up the Rust project in any way, but I need to know that what we're trying
+to do will be expressible in Rust.
 
-
---=20
--Dionna Glaze, PhD, CISSP, CCSP (she/her)
+Can we avoid referring to a page's refcount?
 
