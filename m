@@ -1,137 +1,203 @@
-Return-Path: <linux-kernel+bounces-416200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AA99D41FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:20:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2312C9D4202
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:29:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEF661F23351
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:20:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EEEBB21D0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4E7153801;
-	Wed, 20 Nov 2024 18:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F1319D8A8;
+	Wed, 20 Nov 2024 18:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R6GhLKYA"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kw/Trhai"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EAF4437C
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7F013D897
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732126807; cv=none; b=JkKIImYyC9ZwTh+CjLF0o9yMy1Og+cV7BqjMpuBVSE6d7C9EDx7G+N1HFDjuNG2P96SnvGzMHtuZPBKrw85hcDRIPrsqOIYjVmUR6JlKcx19Q8TnpE2O6GvDBstXd0EHmqzJ9QVpPyOppuLZKC+/9nJU5RJ3nuUePu2kOCz8Kgc=
+	t=1732127365; cv=none; b=EDlUQoe/0BteeVo/sG21/h6h6odQMs4km9/9jsdh65iblZxGek1HWc6Y/6GWU/HwR+iy/LcTn0CJ5eMQG4HLaZXLM81BotGracAiyDilpOx+z8DlszZl6hUkDdSXgU4+mwehvYx8DUBprIjbL4B4bS+CC+0Cov+Eskpj3s8EdeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732126807; c=relaxed/simple;
-	bh=42/CjzlZIyAA1TAMBE2KQmRakBTN41uBW33c2VtKYU4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lpaHy2KkVXwYjcMPqBkLOx8MDoc8cQQKeFAz1rDbjwPOV17zN4Q4mQ2t9dS8fN/AEmkJB0FAxEIX6jZEqGiWVdpp3TjtJpoQV8iQKEcTHqxqGPY0E4IpKTboFCJiBHJUiokL8XdbgmE1qiFuIMBphfm3hmSIc9vA86WFkxKqXN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R6GhLKYA; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso951701fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:20:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732126803; x=1732731603; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5B+OR9UgCUqhI32g2+Mi2pzS+m7fzAprX5iLB+aMNVk=;
-        b=R6GhLKYAhphMuiWyBk8NMJHVBgtDn84x4iqLLJXVnar6gTHuiwaVb5Ujj85N9qo1Tr
-         1WbmEJrh6eqoMNYUgU8FB368yPRZMu2vn7vlzZYDfySWAgMnQvPgr+tzSjS8+0v2DEM/
-         EHZq0F9CtxwbyG5Mjwx2LixFVdn8kIGywPoKE=
+	s=arc-20240116; t=1732127365; c=relaxed/simple;
+	bh=cM3JcCkCVDZj2/LIzkmgPx17zG3hge8L4eJu13ALF5c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7a0TyRf+1Xpa9KY7toRPXuinPaUbFD94wZWacJOnfKyylhoyVn+cW2QJ9oJSG93RyzpwR6qIotUgGPAUG7QBNmfy1lKgqw89tpfDfkmw8MitqoBllYDN/Kp1vmDp7HMXVSz6eLHb5CVAewcUbgbb45VlZgsUflECZyWXDvbQow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kw/Trhai; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732127363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xCs7iTIJNkzy1KhjvLmAaqevnqcTQGBiRk9bohfxGPs=;
+	b=Kw/Trhai/5gJwyT/LwwqsLpopza3s8dvMx5hREVi6vV/fCEZEAQvhmDxZCL9KsrHoLyXU8
+	Ry/RlhR3Yw/eVhLIr6la99v8wfQjMlVqoReWjX4EcoBjc5QkiZhXdP++5x5xEJJRLeMe76
+	NNnzNP+sKU4eZgnNDq+8wnd8nHBZUC0=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-GkGLkqFKOAOdHmByQl6UVA-1; Wed, 20 Nov 2024 13:29:22 -0500
+X-MC-Unique: GkGLkqFKOAOdHmByQl6UVA-1
+X-Mimecast-MFC-AGG-ID: GkGLkqFKOAOdHmByQl6UVA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4315b7b0c16so18555915e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:29:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732126803; x=1732731603;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5B+OR9UgCUqhI32g2+Mi2pzS+m7fzAprX5iLB+aMNVk=;
-        b=LjJR4y+4BKyg5o2nEIl9stfduvGjXOxM+dZjsJI/i9M1VoODSGqyxBeptHNyRVs9zu
-         0DSh8WZuyxpQTrqBA02+ynTvnUsHkAWAQE2uhrBmnfRXCIFHgknRnlFKP0DicK7L+8GG
-         OjxNQ5nKo/nKv7n2g1uu3Yz2nrGfXyLeo9a4lMvHncYE9AwnOU7Jdc1bTsvnlwTlFDBC
-         QIcn5JVrg2WYg2b1gbO/rmgfHENiPkci5qY8PPcn89muMa0RZedsbk3o8sDJcM4AzeAk
-         dU8C4T4sGWVNCnkx4G79Obj9aR7MTolQorTDthq/6mnhPGPPtvvhMgEYowutoond5rq4
-         A2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrtR1iUjTOte85eTe8L0YgaYhIcydHErb6ILRS6pvEfw14R/rvztuSd0E/Bldj23M8zzQKAilh4tZb+kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4JDa3CS4UTtYiuVqQpYCZC64t9A++RM0QxM7tjwEtT7RUN/4a
-	uLhbgJOWn3cVHxs6oZ4tMczGfh/mOkoAGljaOoPIK/Zouujx4aH/iJjnTGe1Cmr9MDPyqstQI33
-	3e8MqBA==
-X-Gm-Gg: ASbGncsaovhlTFZkV1NDfSKEkVq5Z6QjMhlENwL843+kxxc/AULKIIl/w6jtcmNd/hE
-	0lvSM7ZGfD9ag5d41h9JhcrW9Ll48uBDZ658YSWQ6GKY9lqWncviEYaMbqQcUu5gXiVhBG2x3sR
-	WqQQyTvEj/+o1Sc/spKa9WJxVTZCPGbkt0/OcoHB9P5774yrf8XVs+5d/OYTql3Rwa/3m2DIKQm
-	dp2Ylts1ZLhdMQhfU51KxtKCRWhI9ISoDiLwwNNLTBo2nU3BvDIE/2LbAIGgbS+fxne9gHZca8h
-	5iZOQ5FVxzgDCl/e/nrHStgS
-X-Google-Smtp-Source: AGHT+IHQwr7+hoVq2QwMwwaFC3S6MEKs+efLWmbXBqsIFXa8SkON28lsa1UQHn7/ycMt+a71/2V0bQ==
-X-Received: by 2002:a2e:22c6:0:b0:2fb:565a:d918 with SMTP id 38308e7fff4ca-2ff8dc22534mr15106721fa.12.1732126803115;
-        Wed, 20 Nov 2024 10:20:03 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff4501a1bsm1052980a12.48.2024.11.20.10.20.02
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1732127361; x=1732732161;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xCs7iTIJNkzy1KhjvLmAaqevnqcTQGBiRk9bohfxGPs=;
+        b=l+KSeNYPyrFqeaxTxVgZguhipRZwsqRSHUTGJcEXKYUZO5+up4QQgIsqAJPDMKf9Nh
+         Dlr93vzytCwb2Qn6GjqIXePNvw02M6qFCPNO8vaLuc2E35RTs0nRdiz6d99bdLdsZpyP
+         RtCjztTO0FM5kmqHxyUx9dk/4sQWBdm4cIJzJWKSl7Y33ry6MtNumZy0CH2ApE5tfDua
+         PcGPOAG+4tG3EIGDi2DUk4YzASZJNb/73aQTIUcWroUKc2QVdcZlm1bz+TfaXNIas7Xy
+         9Y4DwHqaw6ZJxrI89FKjuWln0UnLebVd1iNVp3t0+mxoJKnB8J/9qMrjJgisxUG7QCAE
+         nnvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY1p8lC8+haM9C1+QtyIIuSiuUWsg/1viIXGLhidq3PGzmhCr311d+VXtXobEsmheNiDpEIgmM3EFTIn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwCP5Tp925oCgAE0+0QmE3bb47ukwyAwMNF2wH9dsQzfmHWceh
+	GNrOg0jTtql1ysUGFScIQg7rmqPDe1MoLOLYOkmxPeHQz9Qr601PAuO+3nSKqeyoNA8LAJknPj4
+	XG9JPlUdkmJ+fLWXoyTNAN95FB0fBBRI67Rorj3GZa9QV+W9x+ZqEfJe1DMoAkg==
+X-Gm-Gg: ASbGncuStHc/cueYTnhM17u6TRdRIOQ+SfAiVaf52cEdYEY7hbDhJ/WSsSUT/znfjIK
+	5vUjW9MOJL0UmcdmQOKRMzX0roTD4+DRiVGYgWd4+FhuxMWrKDKrTeUm+7/SyBmBuLnjLHoH55E
+	rqlCTO+DmP1iSrHB1agNq3kTbcDDq+uCCuWBu2pSU/BzBJiBiIbgidQkDAyGNqGy2aCQKYFo2Xb
+	kiFuLE8oDhMFaApBiGZggvnsvFiaoJFVbADrqBueTkTe6K7VbuWGQoLJbSpnNknLi9x4x4n3wgD
+	yfdI3hfQ0S78/nNkvlvUbNOWO+eG7R3k+jHOuttKscrfFPcZcG0N1JbF+guR1I2rBqsQlGrurr6
+	3BQ==
+X-Received: by 2002:a05:600c:4504:b0:430:5654:45d0 with SMTP id 5b1f17b1804b1-433489b3dc4mr36321165e9.14.1732127360849;
+        Wed, 20 Nov 2024 10:29:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEVhH45DncZkRLkGWEYic5HXC4ydjlOUpFmVslfUz0dJd4CdqCHxs+qDbL17KG8YydFigfirQ==
+X-Received: by 2002:a05:600c:4504:b0:430:5654:45d0 with SMTP id 5b1f17b1804b1-433489b3dc4mr36320935e9.14.1732127360476;
+        Wed, 20 Nov 2024 10:29:20 -0800 (PST)
+Received: from ?IPV6:2003:cb:c705:4200:ce79:acf6:d832:60df? (p200300cbc7054200ce79acf6d83260df.dip0.t-ipconnect.de. [2003:cb:c705:4200:ce79:acf6:d832:60df])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45fa706sm28765815e9.16.2024.11.20.10.29.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 10:20:02 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa1f73966a5so8891766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:20:02 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXdWm6ah379UbNRr7/0KPsY3C4MAcMkMBghUnCCyyiWJJIjhETuZ4KVn1erGdBk9UtDR0L+sQRdIFUaF+w=@vger.kernel.org
-X-Received: by 2002:a17:907:dac:b0:a99:8a5c:a357 with SMTP id
- a640c23a62f3a-aa4dd766d81mr365261266b.58.1732126801791; Wed, 20 Nov 2024
- 10:20:01 -0800 (PST)
+        Wed, 20 Nov 2024 10:29:19 -0800 (PST)
+Message-ID: <74cbda4a-7820-45a9-a1b2-139da9dae593@redhat.com>
+Date: Wed, 20 Nov 2024 19:29:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZzsC7HOiJ8Mwk8D6@gmail.com> <CAHk-=wi8C2yZF_y_T180-v+dSZAhps5QghS_2tKfn-+xAghYPQ@mail.gmail.com>
- <Zz3Jsn7Vf8X9ICva@gmail.com> <6499c178-b34d-47f9-8b1e-c87852d8426e@baylibre.com>
-In-Reply-To: <6499c178-b34d-47f9-8b1e-c87852d8426e@baylibre.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 20 Nov 2024 10:19:45 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whn07tnDosPfn+UcAtWHBcLg=KqA16SHVv0GV4t8P1fHw@mail.gmail.com>
-Message-ID: <CAHk-=whn07tnDosPfn+UcAtWHBcLg=KqA16SHVv0GV4t8P1fHw@mail.gmail.com>
-Subject: Re: [PATCH] headers/cleanup.h: Fix if_not_guard() fragility
-To: David Lechner <dlechner@baylibre.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+To: kalyazin@amazon.com, pbonzini@redhat.com, corbet@lwn.net,
+ kvm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jthoughton@google.com, brijesh.singh@amd.com, michael.roth@amd.com,
+ graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
+ nsaenz@amazon.es, xmarcalx@amazon.com,
+ Sean Christopherson <seanjc@google.com>, linux-mm@kvack.org
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
+ <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
+ <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
+ <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
+ <9286da7a-9923-4a3b-a769-590e8824fa10@redhat.com>
+ <f55d56d7-0ab9-495f-96bf-9bf642a9762d@redhat.com>
+ <03a12598-74aa-4202-a79a-668b45dbcc47@amazon.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <03a12598-74aa-4202-a79a-668b45dbcc47@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 20 Nov 2024 at 09:57, David Lechner <dlechner@baylibre.com> wrote:
->
->         cond_guard(mutex_intr, &st->lock, &ret);
->         if (ret)
->                 return ret;
+On 20.11.24 18:21, Nikita Kalyazin wrote:
+> 
+> 
+> On 20/11/2024 16:44, David Hildenbrand wrote:
+>>> If the problem is the "pagecache" overhead, then yes, it will be a
+>>> harder nut to crack. But maybe there are some low-hanging fruits to
+>>> optimize? Finding the main cause for the added overhead would be
+>>> interesting.
+> 
+> Agreed, knowing the exact root cause would be really nice.
+> 
+>> Can you compare uffdio_copy() when using anonymous memory vs. shmem?
+>> That's likely the best we could currently achieve with guest_memfd.
+> 
+> Yeah, I was doing that too. It was about ~28% slower in my setup, while
+> with guest_memfd it was ~34% slower. 
 
-I'm not convinced that improves on anything.
+I looked into uffdio_copy() for shmem and we still walk+modify page 
+tables. In theory, we could try hacking that out: for filling the 
+pagecache we would only need the vma properties, not the page table 
+properties; that would then really resemble "only modify the pagecache".
 
-You just replace one disgusting syntax with another, and force people
-to have a variable that they may not want to have (even if they have
-an error return variable, it might commonly be an error pointer, for
-example)
+That would likely resemble what we would expect with guest_memfd: work 
+only on the pagecache and not the page tables. So it's rather surprising 
+that guest_memfd is slower than that, as it currently doesn't mess with 
+user page tables at all.
 
-I really think the basic issue is that "cond_guard" itself is a pretty
-broken concept. It simply doesn't work very well in the C syntax.
+  The variance of the data was quite
+> high so the difference may well be just noise.  In other words, I'd be
+> much happier if we could bring guest_memfd (or even shmem) performance
+> closer to the anon/private than if we just equalised guest_memfd with
+> shmem (which are probably already pretty close).
 
-I wish people just gave up on it entirely rather than try to work
-around that fundamental fact.
+Makes sense. Best we can do is:
 
-Not that long ago, Mathieu wanted to introduce "inactive guards" for
-some similar reasons - kind of "conditional guards, except the
-conditional is outside the guard". And I pointed out that the fix was
-to rewrite the disgusting code so that THEY WEREN'T NEEDED in the
-place he wanted to use them. Rewriting things to "Just Don't Do That,
-Then" actually just improved code entirely:
+anon: work only on page tables
+shmem/guest_memfd: work only on pageacache
 
-   https://lore.kernel.org/all/CAHk-=wgRefOSUy88-rcackyb4Ss3yYjuqS_TJRJwY_p7E3r0SA@mail.gmail.com/
+So at least "only one treelike structure to update".
 
-and honestly, I suspect the same is often true of this whole
-"if_not_guard()" thing. It's not *hugely* often needed, and I strongly
-suspect that the explicitly scoped version would be a *lot* safer.
+-- 
+Cheers,
 
-The "if_not_guard()" model may be great for mindless conversions of
-existing code. But I'm not convinced it's a great interface in itself,
-or that "mindless conversions" of conditional locking is actually a
-good thing.
+David / dhildenb
 
-          Linus
 
