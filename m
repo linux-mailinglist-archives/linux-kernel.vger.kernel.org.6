@@ -1,218 +1,250 @@
-Return-Path: <linux-kernel+bounces-416380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A62DE9D43FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:37:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9E09D43FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:39:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D1791F2240D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:37:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79278B21E5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FC01C6F54;
-	Wed, 20 Nov 2024 22:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB981BDA80;
+	Wed, 20 Nov 2024 22:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HfGTMpzk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kMpmUr7t"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44744188717;
-	Wed, 20 Nov 2024 22:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B00155A34
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 22:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732142211; cv=none; b=A/ufDZiCFTDIOg9Jdkm6V7hVWMvofmw/2Sh99SJflxhwgBxMDrKDq8rj9pQS0r2/zOiV3CIoW2v/6Sh0kiTwU66NTj25fCn+iaEBDQWFt7bmI19KCWm1iIhP9DNVCu/RvaI9Id+3p/agcUTRhh113+wu6TvThyBVASrLqbexdWU=
+	t=1732142365; cv=none; b=VtLmqR4UAXKdmfs1fJmLmsVcIKqDQZD8gY/XYpUFOXwGzwTpBe4wjYNzngcA4VVaP0NvZkRVkCE4//GAKcYreBWThc/1qRB1FCSyqkhCOhr/6mMN7uI2vcQ4N1yV9qhxERGJBtlK4YZgH99JCisIBYY0rmPTTHtfaF3lDyc9wkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732142211; c=relaxed/simple;
-	bh=2Cp5aaXjkP+a168HGxSLsBZhGl2+scjhbt48AyM8k80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qhr9JcHpZEsc0WCPYftHknVKCudJ5yMhb2Jm6ekdXVMj5jbjc7BXgoVAwv61GaQdxeDJFAW0JBK6j4s8IxiyeR/BitRbLUObQe5RFF29td+JzP0ABhGfhMLK7WQ9BvuZLl/fQq7LFNw5nXNLejgWGKXzZBdcyOEfMcE7vGyYvbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HfGTMpzk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJn2dx025955;
-	Wed, 20 Nov 2024 22:36:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lUU8Tt86LNQJ0csNs06y2W4/lu/ueaR7HRud2/xtk6Y=; b=HfGTMpzkwigxCuQq
-	ewzf9kMNpccplf6sNLzhFq4qtqXH+wzWMzyKeKgJHvv+RPI7Fm0gg5wU0zZof8up
-	KNDodGyYRu8bBJCAOYcBTXfd3a/3L3kgFJkXbPpgriEXVyUVzlhamDWh5c6kg32W
-	W0o3JOLyS4BEvXKhFWmg5qxftCiW2PIJ5hjvrC6PrtlGoGRuucFLFTWEw1yN6PL1
-	XjL2GSUvSwPiiPItVj2xw5Z0ko7Nb//rfB3IHqIzNCWoOmQTnfYtft9Wxl+2fSLT
-	moOv/sSJzaqBCRuKrPYuCgn8/yInL5M6q4FdJvo21OXNKNYgLyl/mMoaQJ+rxV+i
-	JnOQVg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431byjj4vv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 22:36:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKMaUmn016740
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 22:36:30 GMT
-Received: from [10.110.30.192] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 14:36:30 -0800
-Message-ID: <28302a54-d33a-45eb-be73-fcf3bfe45f90@quicinc.com>
-Date: Wed, 20 Nov 2024 14:36:29 -0800
+	s=arc-20240116; t=1732142365; c=relaxed/simple;
+	bh=bgMH5E7Vvil8Bv1qxkERoJnxSVcPnJjjrH8D/t7UMqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kn7eEP1xSycebsi+7PzDtUNlJfWVBx0j3aOhjUL9D1DMpbEb0BpXZvfGJYAPsekldmaUTG2mYhFitozpW8RJRc9wVwnzWFdv2GRUGF4NGOWir0mjxkQiRXT5ng2VH6/TnSQQ+KVzs1Jliz8shNMJg7Fq+AkZ10eL2dgMac4RkNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kMpmUr7t; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 17:39:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732142359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X2/JeZijvoPKUZZfcLuuRPDgYIeN9xurOmrCA6EJFa8=;
+	b=kMpmUr7t4bgG7YPKba5Iuk2UD7FPX2bdqFmQPjWPVckFVFA37h44btxWbCc7DnYPBJUIRy
+	6perO+IqUOjNupf7rGj6JWeYjy4cSAVUnDL9dOuu2Lo2iKXhN6/uy9w//9u/eOE0HLMVew
+	p0SVw4EFbF7TaYVqOAwJeUB8FycwDxo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+References: <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 15/30] ASoC: usb: Fetch ASoC card and pcm device
- information
-To: Takashi Iwai <tiwai@suse.de>
-CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <20241106193413.1730413-16-quic_wcheng@quicinc.com>
- <878qte3xgo.wl-tiwai@suse.de>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <878qte3xgo.wl-tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: O7wmN2mmlr7Akp3bt07XtRk4PbPO3_Os
-X-Proofpoint-ORIG-GUID: O7wmN2mmlr7Akp3bt07XtRk4PbPO3_Os
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411200161
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Takashi,
+On Wed, Nov 20, 2024 at 03:21:06PM -0700, Shuah Khan wrote:
+> On 11/20/24 14:37, Shuah Khan wrote:
+> > On 11/20/24 14:20, Kent Overstreet wrote:
+> > > On Wed, Nov 20, 2024 at 02:12:12PM -0700, Shuah Khan wrote:
+> > > > On 11/20/24 13:34, Kent Overstreet wrote:
+> > > > > On Wed, Sep 04, 2024 at 12:01:50PM -0600, Shuah Khan wrote:
+> > > > > > On 9/2/24 03:51, Kent Overstreet wrote:
+> > > > > > > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> > > > > > > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > > > > > > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > > > > > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+> > > > > > > > > > [...]
+> > > > > > > > > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
+> > > > > > > > > > > in the case of bugs, because that's going to be an improvement w.r.t.
+> > > > > > > > > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
+> > > > > > > > > > > something that we can't guarantee won't happen in the wild - we WARN()
+> > > > > > > > > > > and try to handle the error as best we can.
+> > > > > > > > > > 
+> > > > > > > > > > We have discussed that in a different email thread. And I have to say
+> > > > > > > > > > that I am not convinced that returning NULL makes a broken code much
+> > > > > > > > > > better. Why? Because we can expect that broken NOFAIL users will not have a
+> > > > > > > > > > error checking path. Even valid NOFAIL users will not have one because
+> > > > > > > > > > they _know_ they do not have a different than retry for ever recovery
+> > > > > > > > > > path.
+> > > > > > > > > 
+> > > > > > > > > You mean where I asked you for a link to the discussion and rationale
+> > > > > > > > > you claimed had happened? Still waiting on that
+> > > > > > > > 
+> > > > > > > > I am not your assistent to be tasked and search through lore archives.
+> > > > > > > > Find one if you need that.
+> > > > > > > > 
+> > > > > > > > Anyway, if you read the email and even tried to understand what is
+> > > > > > > > written there rather than immediately started shouting a response then
+> > > > > > > > you would have noticed I have put actual arguments here. You are free to
+> > > > > > > > disagree with them and lay down your arguments. You have decided to
+> > > > > > > > 
+> > > > > > > > [...]
+> > > > > > > > 
+> > > > > > > > > Yeah, enough of this insanity.
+> > > > > > > > 
+> > > > > > > > so I do not think you are able to do that. Again...
+> > > > > > > 
+> > > > > > > Michal, if you think crashing processes is an acceptable alternative to
+> > > > > > > error handling _you have no business writing kernel code_.
+> > > > > > > 
+> > > > > > > You have been stridently arguing for one bad idea after another, and
+> > > > > > > it's an insult to those of us who do give a shit about writing reliable
+> > > > > > > software.
+> > > > > > > 
+> > > > > > > You're arguing against basic precepts of kernel programming.
+> > > > > > > 
+> > > > > > > Get your head examined. And get the fuck out of here with this shit.
+> > > > > > > 
+> > > > > > 
+> > > > > > Kent,
+> > > > > > 
+> > > > > > Using language like this is clearly unacceptable and violates the
+> > > > > > Code of Conduct. This type of language doesn't promote respectful
+> > > > > > and productive discussions and is detrimental to the health of the
+> > > > > > community.
+> > > > > > 
+> > > > > > You should be well aware that this type of language and personal
+> > > > > > attack is a clear violation of the Linux kernel Contributor Covenant
+> > > > > > Code of Conduct as outlined in the following:
+> > > > > > 
+> > > > > > https://www.kernel.org/doc/html/latest/process/code-of-conduct.html
+> > > > > > 
+> > > > > > Refer to the Code of Conduct and refrain from violating the Code of
+> > > > > > Conduct in the future.
+> > > > > 
+> > > > > I believe Michal and I have more or less worked this out privately (and
+> > > > > you guys have been copied on that as well).
+> > > > 
+> > > > Thank you for updating us on the behind the scenes work between you
+> > > > and Michal.
+> > > > 
+> > > > I will make one correction to your statement, "you guys have been copied on
+> > > > that as well" - which is inaccurate. You have shared your email exchanges
+> > > > with Michal with us to let us know that the issue has been sorted out.
+> > > 
+> > > That seems to be what I just said.
+> > > 
+> > > > You might have your reasons and concerns about the direction of the code
+> > > > and design that pertains to the discussion in this email thread. You might
+> > > > have your reasons for expressing your frustration. However, those need to be
+> > > > worked out as separate from this Code of Conduct violation.
+> > > > 
+> > > > In the case of unacceptable behaviors as defined in the Code of Conduct
+> > > > document, the process is to work towards restoring productive and
+> > > > respectful discussions. It is reasonable to ask for an apology to help
+> > > > us get to the goal as soon as possible.
+> > > > 
+> > > > I urge you once again to apologize for using language that negatively impacts
+> > > > productive discussions.
+> > > 
+> > > Shuah, I'd be happy to give you that after the discussion I suggested.
+> > > Failing that, I urge you to stick to what we agreed to last night.
+> The only thing we agreed upon is that you would respond the thread
+> to update your sorting things out with Michal.
 
-On 11/20/2024 4:23 AM, Takashi Iwai wrote:
-> On Wed, 06 Nov 2024 20:33:58 +0100,
-> Wesley Cheng wrote:
->> USB SND needs to know how the USB offload path is being routed.  This would
->> allow for applications to open the corresponding sound card and pcm device
->> when it wants to take the audio offload path.  This callback should return
->> the mapped indexes based on the USB SND device information.
->>
->> Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>  include/sound/soc-usb.h | 16 ++++++++++++++++
->>  sound/soc/soc-usb.c     | 34 ++++++++++++++++++++++++++++++++++
->>  2 files changed, 50 insertions(+)
->>
->> diff --git a/include/sound/soc-usb.h b/include/sound/soc-usb.h
->> index 587ea07a8cf5..c3d3e8d62ac5 100644
->> --- a/include/sound/soc-usb.h
->> +++ b/include/sound/soc-usb.h
->> @@ -36,6 +36,11 @@ struct snd_soc_usb_device {
->>   * @list - list head for SND SOC struct list
->>   * @component - reference to ASoC component
->>   * @connection_status_cb - callback to notify connection events
->> + * @update_offload_route_info - callback to fetch mapped ASoC card and pcm
->> + *				device pair.  This is unrelated to the concept
->> + *				of DAPM route.  The "route" argument carries
->> + *				an array used for a kcontrol output and should
->> + *				contain two integers, card and pcm device index
->>   * @priv_data - driver data
->>   **/
->>  struct snd_soc_usb {
->> @@ -44,6 +49,9 @@ struct snd_soc_usb {
->>  	int (*connection_status_cb)(struct snd_soc_usb *usb,
->>  				    struct snd_soc_usb_device *sdev,
->>  				    bool connected);
->> +	int (*update_offload_route_info)(struct snd_soc_component *component,
->> +					 int card, int pcm, int direction,
->> +					 long *route);
->>  	void *priv_data;
->>  };
->>  
->> @@ -61,6 +69,8 @@ int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
->>  int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component);
->>  int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
->>  				    struct snd_soc_jack *jack);
->> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
->> +				     int direction, long *route);
->>  
->>  struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
->>  					      void *data);
->> @@ -109,6 +119,12 @@ static inline int snd_soc_usb_enable_offload_jack(struct snd_soc_component *comp
->>  	return 0;
->>  }
->>  
->> +static int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
->> +					    int direction, long *route)
->> +{
->> +	return -ENODEV;
->> +}
->> +
->>  static inline struct snd_soc_usb *
->>  snd_soc_usb_allocate_port(struct snd_soc_component *component, void *data)
->>  {
->> diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
->> index ab914878e101..e56826f1df71 100644
->> --- a/sound/soc/soc-usb.c
->> +++ b/sound/soc/soc-usb.c
->> @@ -145,6 +145,40 @@ int snd_soc_usb_enable_offload_jack(struct snd_soc_component *component,
->>  }
->>  EXPORT_SYMBOL_GPL(snd_soc_usb_enable_offload_jack);
->>  
->> +/**
->> + * snd_soc_usb_update_offload_route - Find active USB offload path
->> + * @dev - USB device to get offload status
->> + * @card - USB card index
->> + * @pcm - USB PCM device index
->> + * @direction - playback or capture direction
->> + * @route - pointer to route output array
->> + *
->> + * Fetch the current status for the USB SND card and PCM device indexes
->> + * specified.  The "route" argument should be an array of integers being
->> + * used for a kcontrol output.  The first element should have the selected
->> + * card index, and the second element should have the selected pcm device
->> + * index.
->> + */
->> +int snd_soc_usb_update_offload_route(struct device *dev, int card, int pcm,
->> +				     int direction, long *route)
->> +{
->> +	struct snd_soc_usb *ctx;
->> +	int ret = -EINVAL;
->> +
->> +	ctx = snd_soc_find_usb_ctx(dev);
->> +	if (!ctx)
->> +		return -ENODEV;
->> +
->> +	mutex_lock(&ctx_mutex);
->> +	if (ctx && ctx->update_offload_route_info)
->> +		ret = ctx->update_offload_route_info(ctx->component, card, pcm,
->> +						     direction, route);
->> +	mutex_unlock(&ctx_mutex);
-> The second ctx check is redundant.  And the locking scheme looks
-> dubious -- as ctx isn't protected by ctx_mutex after its retrieval via
-> snd_soc_find_usb_ctx(), even if you reacquire ctx_mutex, it may point
-> to an already released object (in theory).
->
-> IOW, for a safer protection, you'd need to cover the whole
-> find-and-exec procedure via a single ctx_mutex lock action.
->
-That's fair, will make the change to move the mutexes around.
+...Shall I quote you?
 
-Thanks
+> 
+> As for the discussion, I will repeat what I said in our conversation
+> that the discussion will be lot more productive after making amends
+> with the community. I stand by that assessment.
+> 
+> I will also repeat what I said that the discussion and debate is
+> outside the scope of the current issue the Code of Conduct Committee
+> is trying to resolve.
+> 
+> I didn't pick up on your desire to apologize after the discussion in
+> our conversation.
+> 
+> Are you saying you will be happy to make amends with an apology after
+> the discussion and debate?
 
-Wesley Cheng
+Look, I just want to be done with this, so let me lay it all out as I
+see it, starting from the beginning of where things went off the rails
+between myself and Michal:
 
+Michal's (as well as Steve's) behaviour in the memory allocation
+profiling review process was, in my view, unacceptable (this included
+such things as crashing our LSF presentation with ideas they'd come up
+with that morning, and persistent dismissive axegrinding on the list).
+The project was nearly killed because of his inability to listen to the
+reasons for a design and being stubbornly stuck on his right to be heard
+as the maintainer.
+
+In my view, being a good maintainer has a lot more to do with
+stewardship and leadership, than stubbornly insisting for - whatever
+that was. In any event, that was where I came to the conclusion "I just
+cannot work that guy".
+
+Next up, PF_MEMALLOC_NORECLAIM over Michal's nack - I was wrong there, I
+only did it because it really seemed to me that Michal was axe grinding
+against _anything_ I was posting, but I still shouldn't have and that
+was more serious infraction in my view; that sort of thing causes a real
+loss of trust, and no I will not do it again.
+
+The subsequent PF_MEMALLOC_NORECLAIM discussion was such a trainwreck
+that I don't think I will go into it. Except to say that yes, if it
+makes you happy, I shouldn't have used that language and I won't do it
+again.
+
+But I do have to call out you, the CoC board's behaviour, and I think
+that ony fair since you call out other people's behaviour publically.
+
+Greg's behaviour when he approached me at Plumbers was beyond
+unprofessional, and since it wasn't exactly public and you guys have
+already heard about it privately I won't repeat exactly what happened,
+but it is an issue.
+
+Shuah, you weren't much better.
+
+There were concerns raised in the recent CoC enforcement thread, by
+someone with experience in such matters, that your aproach seemed
+extremeely heavy handed and I find myself in 100% agreement.
+
+The approach you take is that of a bad HR department: all about image,
+no understanding. When tensions arise, it's important get to the bottom
+of things, to at least try to take the time to listen with an open mind.
+People have real frustrations, and it's amazing what you can learn and
+what you can accomplish by having real conversations.
+
+But that's not what you guys do: you say "Ok, if someone's being too
+much of an asshole, we'll just be an even bigger asshole!".
+
+No. Cut that out.
+
+I've done the hard work of stepping in and building bridges when
+relations have broken down (on quite a large scale), so I'm offended by
+what you guys do.
 
