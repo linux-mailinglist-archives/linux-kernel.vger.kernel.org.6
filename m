@@ -1,200 +1,162 @@
-Return-Path: <linux-kernel+bounces-416032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F4419D3F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:52:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140A99D3F55
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E341F2357E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD99A2846EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEC114F10E;
-	Wed, 20 Nov 2024 15:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAE413B7A3;
+	Wed, 20 Nov 2024 15:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4hf7XU7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVCYRtZ6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F0914C5AE;
-	Wed, 20 Nov 2024 15:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CDB13B58A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117928; cv=none; b=YLE+4O5E3et9cvIvyuHciukIlP8Te7RCWDz4wF++wniLd17UMiMlcaZ06DXeIelAK89EZh3n1ZP4KJdg3KPb3f2TcJwVlpw4/syKdiXRjEQpGaZcgmahwIKDGCaL6sjyVvgApztpk3DpjdxAe266S7hqvRQzLcssIaHq5bJ190g=
+	t=1732117696; cv=none; b=H9gnhi/XJcFyvPNSUMBo0AgeQngxqba3Iaxhd+N8BHB/qKrsEG5RRd8xkj2Zk/ioJzeEx+dYPcKKQxEyGZZKQ05AcYnG0XWnflc5cIX5QedTuNlwBz+SL1nSNkeLmYUOfxGsZQN4ArbWJGxrguNn/979Y6n14bv5GiRNfL7ORKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117928; c=relaxed/simple;
-	bh=6sl/hLhDAqd6o+eAytT6pnSBd2n8Gpaj7e9r8RvqjBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Yy6xiZWS5jhVTt7ETATq9wbRrX9qSOh+5e/7AmA9/NoaqaDU+zoZm+QBoHimyK8fs3rjDswizrhQaUQndusCFquYN7qvIu6sdODezrQPaIp1yo3ZJBSWlkop/51IgwVL+RhByQJE2slxhzSc/e48facM7HY91XVg10T1SZk+tvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4hf7XU7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C544C4CECD;
-	Wed, 20 Nov 2024 15:52:03 +0000 (UTC)
+	s=arc-20240116; t=1732117696; c=relaxed/simple;
+	bh=zJdOLH17uHs9cCf5Ktv/Iw+P6Co6A948bLVb04sdEQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyOfzOG2392Vs/igLl7neuFz5dPv1VkU4fRYZpwPpPl5362rvglw3N/kmC3x7JDBl1qvJLMa0EF3E/37blO/tc8pOKL+XqDrM45+SlIXCjQDKoXKatXsiRPJoDw1W9U6Kh/7zU5uEnfv92fUP6K12MYPAsIS25cUyfzeGcJgRr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVCYRtZ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4CAC4CECD;
+	Wed, 20 Nov 2024 15:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732117926;
-	bh=6sl/hLhDAqd6o+eAytT6pnSBd2n8Gpaj7e9r8RvqjBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=J4hf7XU7fVyNLaI5lOBa2AVW8PZ4aLSVmiJGeZS2FUyA4HpJKeMI0TZN4sHOD1605
-	 dPD4rwZb7ut1Bv7L41EsnrUU1kels9bgCyOdD9Cqp2WTJUmzUwcVHy+gznObfxiQ+e
-	 cEwUck+ppV4h4ZA/j6/7HLKOC+RnzLDyVese5ENYT5oiOtXWfx0uqvioZ9A1nm5e64
-	 hgUL6yuCOL3OmfTKW97u7g7TmBJCjG0Z1vG4K2dVUXtYdZX/45H4SexSfWa4Dw5yx9
-	 3N0Gb4AHCaXjg9v/zM9rMhd1xR2yvJQ60aOA+rVAyEoMhopJqT8nyeXwKDioMU8aGQ
-	 /Z+Rc2QCC3Ylw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Lyude Paul" <lyude@redhat.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 07/13] rust: hrtimer: implement `UnsafeTimerPointer`
- for `Pin<&T>`
-In-Reply-To: <4a1ee5fff788d6624234f7e6df992406952ddb1d.camel@redhat.com>
-	(Lyude Paul's message of "Wed, 13 Nov 2024 18:30:42 -0500")
-References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
-	<20241017-hrtimer-v3-v6-12-rc2-v3-7-59a75cbb44da@kernel.org>
-	<jHA_jGNaF2hHo2a_74AwFcLGTGjFLasx1dKROtdfw1QjgncwXCymfXB0F8JC2z3jSg-kaWSa7a_ATsVXaPDzBQ==@protonmail.internalid>
-	<4a1ee5fff788d6624234f7e6df992406952ddb1d.camel@redhat.com>
-Date: Wed, 20 Nov 2024 16:48:07 +0100
-Message-ID: <87v7wh3o08.fsf@kernel.org>
+	s=k20201202; t=1732117696;
+	bh=zJdOLH17uHs9cCf5Ktv/Iw+P6Co6A948bLVb04sdEQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jVCYRtZ6wRXnIyAJ3aT5MrfzXBVFTM0adB2XgfYyupLMHF+iJJdxz2ecl9iwIuGJ9
+	 kj0Uqj+jkzhdd3aWmjEwhkmaED/gyP5O+qY/oKzG9FmSLrH9Qb8vqQ9qL/tynbWhwo
+	 l0sGNzpsr+kX+a+OiDearJkyuma/9NJ6ADcIHJwA7vZdCSjnJ2S21JWKSbQOdKv/TO
+	 jPdawuCXs3RZyxNXGlUNRx7Dyb5vsNn8NwscfvaHjc4OY1Uk7VtuRJwfutX9ui1Zrk
+	 mUxe8bOh+9CE9NWG1uNxJ8FiZrBo+4tZ2sSDKGTmvgRqLPs4itjIGQAoeDpK+4ifiJ
+	 C2gkb/CUE+ZPw==
+Date: Wed, 20 Nov 2024 16:48:11 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [GIT pull] timers/core for v6.13-rc1
+Message-ID: <20241120-nennwert-hausfassade-e515eddb6198@brauner>
+References: <173195757899.1896928.6143737920583881655.tglx@xen13>
+ <173195758632.1896928.11371209657780930206.tglx@xen13>
+ <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
+ <20241120-backwaren-faible-99807b4768bb@brauner>
+ <Zz3SLAW-97Zhjfhv@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zz3SLAW-97Zhjfhv@gmail.com>
 
-"Lyude Paul" <lyude@redhat.com> writes:
+On Wed, Nov 20, 2024 at 01:12:28PM +0100, Ingo Molnar wrote:
+> 
+> * Christian Brauner <brauner@kernel.org> wrote:
+> 
+> > On Tue, Nov 19, 2024 at 04:33:45PM -0800, Linus Torvalds wrote:
+> > > On Mon, 18 Nov 2024 at 11:22, Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > >
+> > > 
+> > > >   - Core infrastructure for VFS multigrain timestamping
+> > > >
+> > > >     This is required to allow the kernel to use coarse grained time stamps
+> > > >     by default and switch to fine grained time stamps when inode attributes
+> > > >     are actively observed via getattr().
+> > > >
+> > > >     These changes have been provided to the VFS tree as well, so that the
+> > > >     VFS specific infrastructure could be built on top.
+> > > 
+> > > Bah. Except the vfs tree didn't take it as a shared branch, but
+> > > instead cherry-picked the commits and as a result they are duplicate
+> > > and caused a (trivial) merge conflict.
+> > 
+> > Wait, I'm confused. I definitely pulled that branch the day after Thomas
+> > gave it to me and in my vfs.mgtime branch I clearly see:
+> > 
+> > commit d7c898a73f875bd205df53074c1d542766171da1
+> > Merge: 8cf0b93919e1 2a15385742c6
+> > Author:     Christian Brauner <brauner@kernel.org>
+> > AuthorDate: Mon Oct 7 12:47:19 2024 +0200
+> > Commit:     Christian Brauner <brauner@kernel.org>
+> > CommitDate: Thu Oct 10 10:20:57 2024 +0200
+> > 
+> >     Merge tag 'timers-core-for-vfs' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip into vfs.mgtime
+> > 
+> >     Timekeeping interfaces for consumption by the VFS tree.
+> > 
+> >     Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > 
+> > Unless I did something odd during the pull?
+> 
+> The problem was caused by two commits which got rebased in the VFS 
+> tree:
+> 
+> Commit 1:
+> 
+>   ee3283c608df ("timekeeping: Add interfaces for handling timestamps with a floor value")
+> 
+>   commit ee3283c608dfa21251b0821d7bb198c7ae3189f6
+>   Author:     Jeff Layton <jlayton@kernel.org>
+>   AuthorDate: Wed Oct 2 17:27:16 2024 -0400
+>   Commit:     Christian Brauner <brauner@kernel.org>
+>   CommitDate: Thu Oct 10 10:20:46 2024 +0200
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> Which is a rebase of Thomas's original commit:
+> 
+>   70c8fd00a9bd ("timekeeping: Add interfaces for handling timestamps with a floor value")
+> 
+>   commit 70c8fd00a9bd0509bbf7bccd9baea8bbd5ddc756
+>   Author:     Jeff Layton <jlayton@kernel.org>
+>   AuthorDate: Wed Oct 2 17:27:16 2024 -0400
+>   Commit:     Thomas Gleixner <tglx@linutronix.de>
+>   CommitDate: Sun Oct 6 20:56:07 2024 +0200
+> 
+> And commit 2:
+> 
+>   2a15385742c6 ("timekeeping: Add percpu counter for tracking floor swap events")
+> 
+>   commit 2a15385742c689a271345dcbb4c28b9c568bc7ce
+>   Author:     Jeff Layton <jlayton@kernel.org>
+>   AuthorDate: Wed Oct 2 17:27:17 2024 -0400
+>   Commit:     Christian Brauner <brauner@kernel.org>
+>   CommitDate: Thu Oct 10 10:20:46 2024 +0200
+>               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> Which is a rebase of Thomas's original commit:
+> 
+>   96f9a366ec8a timekeeping: Add percpu counter for tracking floor swap events
+> 
+>   commit 96f9a366ec8abe027326d7aab84d64370019f0f1 (tag: timers-core-for-vfs)
+>   Author:     Jeff Layton <jlayton@kernel.org>
+>   AuthorDate: Wed Oct 2 17:27:17 2024 -0400
+>   Commit:     Thomas Gleixner <tglx@linutronix.de>
+>   CommitDate: Sun Oct 6 20:56:07 2024 +0200
 
-> On Thu, 2024-10-17 at 15:04 +0200, Andreas Hindborg wrote:
->> Allow pinned references to structs that contain a `Timer` node to be
->> scheduled with the `hrtimer` subsystem.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->>  rust/kernel/hrtimer.rs     |  1 +
->>  rust/kernel/hrtimer/pin.rs | 97 ++++++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 98 insertions(+)
->>
->> diff --git a/rust/kernel/hrtimer.rs b/rust/kernel/hrtimer.rs
->> index e97d7b8ec63ce6c9ac3fe9522192a28fba78b8ba..ceedf330a803ec2db7ff6c25713ae48e2fd1f4ca 100644
->> --- a/rust/kernel/hrtimer.rs
->> +++ b/rust/kernel/hrtimer.rs
->> @@ -362,3 +362,4 @@ unsafe fn raw_get_timer(ptr: *const Self) ->
->>  }
->>
->>  mod arc;
->> +mod pin;
->> diff --git a/rust/kernel/hrtimer/pin.rs b/rust/kernel/hrtimer/pin.rs
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..a2c1dbd5e48b668cc3dc540c5fd5514f5331d968
->> --- /dev/null
->> +++ b/rust/kernel/hrtimer/pin.rs
->> @@ -0,0 +1,97 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +use super::HasTimer;
->> +use super::RawTimerCallback;
->> +use super::Timer;
->> +use super::TimerCallback;
->> +use super::TimerHandle;
->> +use super::UnsafeTimerPointer;
->> +use crate::time::Ktime;
->> +use core::pin::Pin;
->> +
->> +/// A handle for a `Pin<&HasTimer>`. When the handle exists, the timer might be
->> +/// running.
->> +pub struct PinTimerHandle<'a, U>
->> +where
->> +    U: HasTimer<U>,
->> +{
->> +    pub(crate) inner: Pin<&'a U>,
->> +}
->> +
->> +// SAFETY: We cancel the timer when the handle is dropped. The implementation of
->> +// the `cancel` method will block if the timer handler is running.
->> +unsafe impl<'a, U> TimerHandle for PinTimerHandle<'a, U>
->> +where
->> +    U: HasTimer<U>,
->> +{
->> +    fn cancel(&mut self) -> bool {
->> +        let self_ptr = self.inner.get_ref() as *const U;
->> +
->> +        // SAFETY: As we got `self_ptr` from a reference above, it must point to
->> +        // a valid `U`.
->> +        let timer_ptr = unsafe { <U as HasTimer<U>>::raw_get_timer(self_ptr) };
->> +
->> +        // SAFETY: As `timer_ptr` is derived from a reference, it must point to
->> +        // a valid and initialized `Timer`.
->> +        unsafe { Timer::<U>::raw_cancel(timer_ptr) }
->> +    }
->> +}
->> +
->> +impl<'a, U> Drop for PinTimerHandle<'a, U>
->> +where
->> +    U: HasTimer<U>,
->> +{
->> +    fn drop(&mut self) {
->> +        self.cancel();
->> +    }
->> +}
->> +
->> +// SAFETY: We capture the lifetime of `Self` when we create a `PinTimerHandle`,
->> +// so `Self` will outlive the handle.
->> +unsafe impl<'a, U> UnsafeTimerPointer for Pin<&'a U>
->> +where
->> +    U: Send + Sync,
->> +    U: HasTimer<U>,
->> +    U: TimerCallback<CallbackTarget<'a> = Self>,
->> +{
->> +    type TimerHandle = PinTimerHandle<'a, U>;
->> +
->> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle {
->> +        use core::ops::Deref;
->
-> I'm sure this is valid but this seems like a strange place to put a module use
-> (also - do we ever actually need to import Deref explicitly? It should always
-> be imported)
+I was just looking through my reflog and I realised that I did a rebase
+onto v6.12-rc2 (v6.12-rc1 had a horribly virtqueue bug that made testing
+in a vm a giant pain). Sorry about that I should've noticed that
+earlier.
 
-`core::ops::Deref` is not in scope. So if we want to use
-`Deref::deref()`, we must import the trait first.
+Though I'm confused why -next didn't catch this. When that happens -next
+usually reports duplicate commits. Hm... Did I miss the report?
 
-My first intuition for writing this expression was:
-
- `(*self) as *const U;`
-
-because `*self` should invoke `Deref::deref()`, right?
-
-But the compiler does not do what I thought it would do. I am not sure
-why it does not work. It thinks the result of `(*self)` is not a
-reference, but a value expression:
-
-> error[E0605]: non-primitive cast: `U` as `*const U`
->   --> /home/aeh/src/linux-rust/hrtimer-v4-wip/rust/kernel/hrtimer/pin.rs:62:24
->    |
-> 62 |         let self_ptr = (*self) as *const U;
->    |                        ^^^^^^^^^^^^^^^^^^^ invalid cast
->    |
-> help: consider borrowing the value
->    |
-> 62 |         let self_ptr = &(*self) as *const U;
->    |                        +
-
-
-Another option to consider is:
-
- `<Self as core::ops::Deref>::deref(&self) as *const U;`
-
-That is also fine for me. Which one do you like better?
-
-
-Best regards,
-Andreas Hindborg
-
-
+9fed2c0f2f07 (HEAD -> vfs.mgtime, tag: vfs-6.13.mgtime, origin-all/vfs.mgtime) HEAD@{0}: am: fs: reduce pointer chasing in is_mgtime() test
+b40508ca5d5c HEAD@{1}: rebase (finish): returning to refs/heads/vfs.mgtime
+b40508ca5d5c HEAD@{2}: rebase (reset): 'onto': Merge patch series "timekeeping/fs: multigrain timestamp redux"
+d7c898a73f87 HEAD@{3}: rebase (reset): 'onto': Merge tag 'timers-core-for-vfs' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip into vfs.mgtime
+8cf0b93919e1 (tag: v6.12-rc2, master.v6.12-rc2) HEAD@{4}: rebase (reset): 'onto'
 
