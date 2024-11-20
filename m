@@ -1,119 +1,151 @@
-Return-Path: <linux-kernel+bounces-415479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845D19D36DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8909D36E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A2B32842C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A211E281A1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144AA19CC20;
-	Wed, 20 Nov 2024 09:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="FelG8r3b"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F423919AD48
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D741A0AE9;
+	Wed, 20 Nov 2024 09:18:30 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB6119F118;
+	Wed, 20 Nov 2024 09:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094252; cv=none; b=p80UXudnc+H6RSJRKjE6n/kixqUdcpaTooYRxFJisCfuTVwr0odAO9/jWu9ej10yrNnjiMnouvoh2N6KfUdexlWe/JbeixBt/RZ33zO6iBGFaEGOJZvgLtIqLssmOcrtIgAywkOtaxa8sCj7AyeeKfcHKDUtVFP0lF6uigGQ5Z8=
+	t=1732094310; cv=none; b=HIdK5GboX9DCG3wgeHuIJYTRy/rXpHng1mRLS4X9oJedw5ulGZOyXGtJccI1G/+1CldO9zqjEGg6b0txTmW7GiP2QeVI8rGSV3hhtVvnPd0cCRVRvwJ013fv42NXxnAUvg5nJf32W7d9EahuuGmM9ZFNL6n+FwcuDvRV7h/VmTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094252; c=relaxed/simple;
-	bh=pamlAT7YrMUBTKbqo+eOUtuarnXN54r8/hz9pNEgvVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZtBu3IS+ivUqx9sG+bgXkbqmnPYT+2zmt9vVChLuxXLfTUSKDLSMTGOz2UvQhMOH/IULa+YtPljyG0hZ9jsqplB5ZVOPkywJt9i256TSTF01fQnwQ8UAR+fCFCigobeVIdME7/d2Fubf8H3dZspjpT0dTgHfyAN56RAZVrSIki8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=FelG8r3b; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=pASy3
-	Hri0XiR5e82slCk+94XiuRqLmmyYyxOiSXMmaY=; b=FelG8r3b6+TLxImX27860
-	YA1IPhNQ0ZNn9WTrLK5hfJgVqewLwtYj+wS92p4Ic2yUFBkjtbTJScwC0f9vyY2O
-	Fx0u5W0Rev/t5D2oClAolfJJArapj5WzaSCDEd8B/JH9hxSaQoCs7omBjzxRyIvq
-	IPD3uwVbGhzJMYH7Xt0hek=
-Received: from localhost.localdomain (unknown [111.35.191.191])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wDn71UUqT1nUk5JGQ--.8558S4;
-	Wed, 20 Nov 2024 17:17:15 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: tglx@linutronix.de
-Cc: kees@kernel.org,
-	linux-kernel@vger.kernel.org,
-	geert@linux-m68k.org,
-	David Wang <00107082@163.com>
-Subject: [PATCH 2/3] irqchip: Fix a potential abuse of seq_printf() format string
-Date: Wed, 20 Nov 2024 17:17:06 +0800
-Message-Id: <762e88c3e940bd6087c35b599f2c88baff775c6b.1732093745.git.00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
-References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+	s=arc-20240116; t=1732094310; c=relaxed/simple;
+	bh=508NFvW1FNQrfYLUCBjE2iq9wBGdecb4e7K/EzX0AG8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mrjxWhhroM5dvdvMSbKzkxYdU3iOdhI0/IQfa3eF7pLm8KgwHx3tKkEGcM6XKwnOUeDV+/j0yr2XR6HBrPgB2UXp6Fb0f/zBsqHlik3vdnV1oV3RH+ZLn3ySS+6/qBcgeQL/g1Rk2X7nbgaZQqP7LAGTvAp8CEu4aPtWSDgk9R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XtZxg5BGDz9v7Hs;
+	Wed, 20 Nov 2024 16:57:27 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 204001407FC;
+	Wed, 20 Nov 2024 17:18:22 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwB33XxLqT1nJB74AQ--.3896S2;
+	Wed, 20 Nov 2024 10:18:21 +0100 (CET)
+Message-ID: <9c68676cd810d6f6f9bb2bce0939ba2a04a4f8d2.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 02/15] module: Introduce ksys_finit_module()
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
+ samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
+ paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
+ shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
+ linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
+ linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl,  mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
+ mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Wed, 20 Nov 2024 10:18:01 +0100
+In-Reply-To: <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <20241119104922.2772571-3-roberto.sassu@huaweicloud.com>
+	 <20241119121402.GA28228@lst.de> <ZzzwxdHbG9HynADT@bombadil.infradead.org>
+	 <70952351d25817211509bf1cf43d3e665aef1481.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn71UUqT1nUk5JGQ--.8558S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CrWDKw4rZFWruF45ZF4UXFb_yoW8ur4kpa
-	y5Jas2vws3C3WUWF1UCanrZFy5J3Z0krW7KayfJwnIvF98G39FkF12yry7ZFsYqrW7G3WY
-	kF40qFyUWFy7CFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_KZXUUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRGdqmc9oqUyfQAEsZ
+X-CM-TRANSID:GxC2BwB33XxLqT1nJB74AQ--.3896S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4kur47trW3uFy7ZryxKrg_yoW8KryrpF
+	WrAan8tF4kXr1kAFWkKw18ZryIg3y3AF4aqasYvr1fZr9I9r4UuF1Ikr43Wa4DWr18Kw1j
+	krWYvFWxC34DAa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
+	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUsPfHUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBGc9SXICEwAAs7
 
-Using device name as format string of seq_printf() is prone to
-"Format string attack", opens possibility for exploitation.
-Seq_puts() is safer and more efficient.
+On Wed, 2024-11-20 at 10:16 +0100, Roberto Sassu wrote:
+> On Tue, 2024-11-19 at 12:10 -0800, Luis Chamberlain wrote:
+> > On Tue, Nov 19, 2024 at 01:14:02PM +0100, Christoph Hellwig wrote:
+> > > On Tue, Nov 19, 2024 at 11:49:09AM +0100, Roberto Sassu wrote:
+> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > > >=20
+> > > > Introduce ksys_finit_module() to let kernel components request a ke=
+rnel
+> > > > module without requiring running modprobe.
+> > >=20
+> > > That does sound more than sketchy, even more so because the commit lo=
+g
+> > > completely fails to explain why you'd need to do that.
+> >=20
+> > I also don't think the commit log is correct, I don't see how the
+> > code is preventing calling modprobe, the indepotent check is intended
+> > to prevent duplicate module init calls which may allocate extra vmalloc
+> > space only to release it. You can test to see if your patch has any
+> > improvments by enabling MODULE_STATS and MODULE_DEBUG_AUTOLOAD_DUPS
+> > and check before / after results of /sys/kernel/debug/modules/stats  ,
+> > right now this patch and commit log is not telling me anything useful.
+>=20
+> Maybe I misunderstood the code, but what causes modprobe to be executed
+> in user space is a call to request_module().
+>=20
+> In my patch, I simply ported the code of the finit_module() system call
+> to _ksys_finit_module(), net the conversion from struct fd to struct
+> file, which is kept in the system call code.
+>=20
+> Also, from the kernel side, I'm providing a valid address for module
+> arguments, and duplicating the string either with kmemdup() or
+> strndup_user() in load_module(), depending on where the memory belongs
+> to.
+>=20
+> Again, maybe I misunderstood, but I'm not introducing any functional
+> change to the current behavior, the kernel side also provides a file
+> descriptor and module arguments as user space would do (e.g. by
+> executing insmod).
+>=20
+> As for the motivation, please have a look at my response to Christian:
 
-Signed-off-by: David Wang <00107082@163.com>
----
- drivers/irqchip/irq-gic.c            | 2 +-
- drivers/irqchip/irq-mvebu-pic.c      | 2 +-
- drivers/irqchip/irq-versatile-fpga.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Christoph, of course.
 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 3be7bd8cd8cd..8fae6dc01024 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -400,7 +400,7 @@ static void gic_irq_print_chip(struct irq_data *d, struct seq_file *p)
- 	struct gic_chip_data *gic = irq_data_get_irq_chip_data(d);
- 
- 	if (gic->domain->pm_dev)
--		seq_printf(p, gic->domain->pm_dev->of_node->name);
-+		seq_puts(p, gic->domain->pm_dev->of_node->name);
- 	else
- 		seq_printf(p, "GIC-%d", (int)(gic - &gic_data[0]));
- }
-diff --git a/drivers/irqchip/irq-mvebu-pic.c b/drivers/irqchip/irq-mvebu-pic.c
-index 08b0cc862adf..b815a60f930c 100644
---- a/drivers/irqchip/irq-mvebu-pic.c
-+++ b/drivers/irqchip/irq-mvebu-pic.c
-@@ -71,7 +71,7 @@ static void mvebu_pic_print_chip(struct irq_data *d, struct seq_file *p)
- {
- 	struct mvebu_pic *pic = irq_data_get_irq_chip_data(d);
- 
--	seq_printf(p, dev_name(&pic->pdev->dev));
-+	seq_puts(p, dev_name(&pic->pdev->dev));
- }
- 
- static const struct irq_chip mvebu_pic_chip = {
-diff --git a/drivers/irqchip/irq-versatile-fpga.c b/drivers/irqchip/irq-versatile-fpga.c
-index ca471c6fee99..0abc8934c2ee 100644
---- a/drivers/irqchip/irq-versatile-fpga.c
-+++ b/drivers/irqchip/irq-versatile-fpga.c
-@@ -69,7 +69,7 @@ static void fpga_irq_print_chip(struct irq_data *d, struct seq_file *p)
- {
- 	struct fpga_irq_data *f = irq_data_get_irq_chip_data(d);
- 
--	seq_printf(p, irq_domain_get_of_node(f->domain)->name);
-+	seq_puts(p, irq_domain_get_of_node(f->domain)->name);
- }
- 
- static const struct irq_chip fpga_chip = {
--- 
-2.39.2
+Roberto
+
+
+> https://lore.kernel.org/linux-integrity/ZzzvAPetAn7CUEvx@bombadil.infrade=
+ad.org/T/#ma8656b921bb5bfb60e7f10331061d462a87ce9f4
+>=20
+>=20
+> In addition, you could also see how ksys_finit_module() is used here:
+>=20
+> https://lore.kernel.org/linux-integrity/20241119104922.2772571-8-roberto.=
+sassu@huaweicloud.com/
+>=20
+> Thanks
+>=20
+> Roberto
 
 
