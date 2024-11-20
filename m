@@ -1,137 +1,130 @@
-Return-Path: <linux-kernel+bounces-415087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB489D3164
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:30:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAA89D3167
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB13EB2239F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3781F23089
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 00:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A6FA939;
-	Wed, 20 Nov 2024 00:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0291D555;
+	Wed, 20 Nov 2024 00:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jobyaviation.com header.i=@jobyaviation.com header.b="hzZc2lHz"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mc2JLndg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A01749A
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 00:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D53FF9FE;
+	Wed, 20 Nov 2024 00:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732062616; cv=none; b=P8rk/FFD/OetXLNBbYUOeQGFa8+wH0aiP7HwRPMoB7iwhDk04KFutljFqP1sTSj2qm51PWw1PwzLmSJdqRaYqX2YCn92kjsk+bxr9lDAceiuEhhFmIazEZYrVcewmuohZRNn37e/oxn/GQWvmQXxKDfHwhO7CAABmJXJm/2nbGc=
+	t=1732062626; cv=none; b=EMl29rcmeCdJl8WcqUo+4mIKTdlH93qMXLZjPl/UadcYKPhwLb/8s08kqI0tCZod5ufv1pJhR3xosPMepntGlZdyK0VGjDUX+ukbB5ILwNFIAhInZAlEssTsG3/0JmlbYd0TP+YRAc5qOUJLxfrMHq5FxH77jQH0Y+yY+aKRLZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732062616; c=relaxed/simple;
-	bh=d+BVKrZpfVweKPv9g43tqBXKWhOygTcYMhNhb0Q5Pms=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=W63Xc6BqYC1IUq+sEdDfQkMDuvCDXxmYE92JxUNwPL0myC83k2fRYo63AKMwVQVd9iFgIItlgrXUJ5U52GaiP/xWbqmBNATjolzL6SsHV46CaCYIL3Fnxf8j+2ctGiY//HQs4cgXCAfT31mu4FyAUXoeQ7yZDKFBhRILuzQzwdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jobyaviation.com; spf=pass smtp.mailfrom=jobyaviation.com; dkim=pass (2048-bit key) header.d=jobyaviation.com header.i=@jobyaviation.com header.b=hzZc2lHz; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jobyaviation.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jobyaviation.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ea568d8216so2583998a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jobyaviation.com; s=google; t=1732062613; x=1732667413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+BVKrZpfVweKPv9g43tqBXKWhOygTcYMhNhb0Q5Pms=;
-        b=hzZc2lHzIu7b7OwKUdtpVeUqT/fyXHlX6Rjz1qimJ3rUEX5A9hMPq4VR9e1NQGJtL5
-         9lwNGwjkkkny80FCIuYjlFr7WHNTbJgp+MkXFINQUSRyRzVmzKyyfkdEExn/8FlE05Hx
-         fF3g0GSMmwopFPVOON2loTLof95Ao1VP+KNIgcgRuhLomc1Si07OKM7tHkdLeEYDwvPo
-         Ovhofr4xFckxEvbB/X2w85689Sn1hBOZMKe6NtFbZ6Rej30DTo4UziZVboB+v7Lxvt9D
-         Z4u4gmttVUVlKABDB3uRqmtnIlUxotlKax3s0l5M4T+8CxfzOpauSgqtGT9qk+ZUZX/R
-         EEqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732062613; x=1732667413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=d+BVKrZpfVweKPv9g43tqBXKWhOygTcYMhNhb0Q5Pms=;
-        b=K1N0bojf+NjsQd4vii4yPZYnbqbvcQC3Ro/v4CS0NAXz0A3kGv25sxgyKAQiH0VFK7
-         yna5XEGA6CAd3J0T8/T/Tn2a2KBH6OL0gitmoeDmn36A4DJUw/48ZkY+uUSwJMDDdgCM
-         921Dj7jf1qyKiJgi5UgXPgo3h4vWsmjRjzZcRV404ivHCJR+9uYHAvS4DX9BE4whGemd
-         TDJKGtypDKhlIsK8c69pBEzDQ6abxsRMi6Mt9tJyujMXpWoC8AxyzkNQj/qCbRt2YExl
-         Zrh79YtZLJwnIm5AadJYcrJ1IQuKZ+m1jLUxfew9x7T8Dmb4Dwj0mGyuE2akg/bp7877
-         k2Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCUg6ypvpFOh7Eom9mawGZwRJBadrAhh+crer77op3RxjE1me/x1LhdVgsYGdJtzjWXW4BWjRIhia7Jn5B4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLbXMgFkSTM5HXQuYabhn9kuSE0ktowhXx5po4VC7CgT2nUjNd
-	1tyrALhnaU8rWKAO7fqMiIiXtLDYnkZirxZXPWPssWmYgeoSqyHzQQXjEahVbHuFKIdLjEplmAk
-	tI+KvchYCMMnsWWYTGG9JUeVd+5bs0Doa/Ib6S4qI6GyQw2DdssLNAOTo38kh23LX4WjThgFrzl
-	KXy8kmrE7o+3qC1bV4DEZY8MHjh5ef
-X-Google-Smtp-Source: AGHT+IHu9jrG/J8KeaPlX/LhlcBm4XHfdDXQTx3GImlfZVKS2/WywDBk8jc+b0UcXIXPSYPJO1YtWXaskuNq95WNG0I=
-X-Received: by 2002:a17:90a:d410:b0:2ea:5823:c150 with SMTP id
- 98e67ed59e1d1-2eaca7c5872mr1011629a91.30.1732062613481; Tue, 19 Nov 2024
- 16:30:13 -0800 (PST)
+	s=arc-20240116; t=1732062626; c=relaxed/simple;
+	bh=Tj39gEQRUnuZujqX2/SNkK2rF5SE+IM6h9lUEGWn254=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lG/8RRa2c7qhNal61PZq0swEVbu+fDQTVrHHrh7my7VjDHft0Y1Jn6A7XxZVWHFRUrF39Lh7HlwH4Kx81C3GBRDkQNDbzo4KTKUjVnPjvwfWcjgXxEOnX4hg4lUPb44PB5kxQ2y6SIdaDB/ib31lUa40kD0IIA+o7jJJmCsfm2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mc2JLndg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732062614;
+	bh=xgE8VEddh66b6D5zGoRX/UR/hABPOyWddRiDV3o9Iqc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mc2JLndgDTR8x68KMC8rykavNvJ3fiwGig9qJ0Mx9UA5PA4C7DQ6dOlU2Cgwykfg1
+	 7pmf3wKU3QJl5Os4iSFtV/DGVXptML1tYstxxm9CI1MKdFREMdHMKR9wFy2mpUqwQX
+	 pJvCOFNg+dqXyQME9QxnPhccO8Njb1BzJ0AnjodP4Y/s05dDTmRWYsFci5/1byFj4R
+	 yVdXFleOrbSOwtMyGrYjePp0y7hDjIAO7/3GE02C6BfBlYduzWZGafwjCF+/zDefdH
+	 eLPx2l2P6EGC5WMU+IUnxbasmQOo06zaU9fJyP3f6Sas1EtrrjRWraKuOxK/SbJUKj
+	 KoB0H+BlAGX8w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XtMhP2JjKz4w2L;
+	Wed, 20 Nov 2024 11:30:13 +1100 (AEDT)
+Date: Wed, 20 Nov 2024 11:30:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ceph tree with the net tree
+Message-ID: <20241120113015.294cf1d2@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Chenbo Lu <chenbo.lu@jobyaviation.com>
-Date: Tue, 19 Nov 2024 16:30:02 -0800
-Message-ID: <CACodVevaOp4f=Gg467_m-FAdQFceGQYr7_Ahtt6CfpDVQhAsjA@mail.gmail.com>
-Subject: Performance Degradation After Upgrading to Kernel 6.8
-To: stable@vger.kernel.org
-Cc: regressions@lists.linux.dev, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/DaF8sq.aa1GmhT4rubJOvbh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/DaF8sq.aa1GmhT4rubJOvbh
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi all,
 
-I am experiencing a significant performance degradation after
-upgrading my kernel from version 6.6 to 6.8 and would appreciate any
-insights or suggestions.
+Today's linux-next merge of the ceph tree got a conflict in:
 
-I am running a high-load simulation system that spawns more than 1000
-threads and the overall CPU usage is 30%+ . Most of the threads are
-using real-time
-scheduling (SCHED_RR), and the threads of a model are using
-SCHED_DEADLINE. After upgrading the kernel, I noticed that the
-execution time of my model has increased from 4.5ms to 6ms.
+  MAINTAINERS
 
-What I Have Done So Far:
-1. I found this [bug
-report](https://bugzilla.kernel.org/show_bug.cgi?id=3D219366#c7) and
-reverted the commit efa7df3e3bb5da8e6abbe37727417f32a37fba47 mentioned
-in the post. Unfortunately, this did not resolve the issue.
-2. I performed a git bisect and found that after these two commits
-related to scheduling (RT and deadline) were merged, the problem
-happened. They are 612f769edd06a6e42f7cd72425488e68ddaeef0a,
-5fe7765997b139e2d922b58359dea181efe618f9
-After reverting these two commits, the model execution time improved
-to around 5 ms.
-3. I revert two more commits, and the execution time is back to 4.7ms:
-63ba8422f876e32ee564ea95da9a7313b13ff0a1,
-efa7df3e3bb5da8e6abbe37727417f32a37fba47
+between commit:
 
-My questions are:
-1.Has anyone else experienced similar performance degradation after
-upgrading to kernel 6.8?
-2.Can anyone explain why these two commits are causing the problem? I
-am not very familiar with the kernel code and would appreciate any
-insights.
-3.Are there any additional settings or configurations I need to apply
-when using kernel 6.8 to avoid this issue?
+  4262bacb748f ("MAINTAINERS: exclude can core, drivers and DT bindings fro=
+m netdev ML")
 
-My CPU is AMD Ryzen Threadripper 3970X, and my desktop uses Ubuntu 24.04.
+from the net tree and commit:
 
-Thanks again for any insights or suggestions. Please let me know if
-any other information is needed.
+  6779c9d59a07 ("MAINTAINERS: exclude net/ceph from networking")
 
-Best,
-Chenbo
+from the ceph tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
-This email and any relevant attachments may include confidential and/or=20
-proprietary information.=C2=A0 Any distribution or use by anyone other than=
- the=20
-intended recipient(s) or other than for the intended purpose(s) is=20
-prohibited and may be unlawful.=C2=A0 If you are not the intended recipient=
- of=20
-this message, please notify the sender by replying to this message and then=
-=20
-delete it from your system.
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 54fc0c1232b8,3771691fa978..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -16235,7 -16179,7 +16236,8 @@@ X:	include/net/mac80211.
+  X:	include/net/wext.h
+  X:	net/9p/
+  X:	net/bluetooth/
+ +X:	net/can/
++ X:	net/ceph/
+  X:	net/mac80211/
+  X:	net/rfkill/
+  X:	net/wireless/
+
+--Sig_/DaF8sq.aa1GmhT4rubJOvbh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc9LZcACgkQAVBC80lX
+0GyhAgf/XHLwOcd9hP83RfBiS+nYp/gLhU5fkhsyd8y6YM/RHAhgpEj0+TzFrW+O
+ClwWaVIebEE3x2KOgw6QuPXQmvi+AJ0YJz+ZNTkxGXVb8cAL8Gi6RnP8xwlepxoE
+jAVH93XesiKQIrzTOMxdhP7+3De+Bs42Zz/nO/V2GqGbcSDOm/p7RnLgZE5Hv8ZG
+bn6rpZLS1SFjqcCc/TxnxjT1g0kLIwNUBZ7s/CTugcKQ9LAmQ+nQ/k7zzriNqbPb
+rBbI2tHM8x9JrDhahrItOcS3bedhayknnG48kKBG3mAtR8/ZVQ+eZst37kKMKclJ
+uBhxbupBrVkiFjYWK5LfMolRA2+J2g==
+=Dpml
+-----END PGP SIGNATURE-----
+
+--Sig_/DaF8sq.aa1GmhT4rubJOvbh--
 
