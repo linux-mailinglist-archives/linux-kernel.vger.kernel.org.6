@@ -1,165 +1,118 @@
-Return-Path: <linux-kernel+bounces-415134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1899D31DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:20:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6928B9D31DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F9F283756
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:20:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11226B23A0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 01:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4751D555;
-	Wed, 20 Nov 2024 01:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A325818E1F;
+	Wed, 20 Nov 2024 01:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CWrJvMkK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i/MucsA+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YomFSEje"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDB7EED8;
-	Wed, 20 Nov 2024 01:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AFDA920;
+	Wed, 20 Nov 2024 01:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732065609; cv=none; b=Zdnb+Lu6aiER7FjB8HVMZjp54u9YM42FnlaUYM2JEqH1eqoGEilUhKbWjS9VXKChyk0Dn1mXdQG36VsiMRoOVXRfapd0j+C8RmkP3lyeh52jZJT8JWzWNlAwxtc7SWkM6CGUUPCsSdLQDKW5lucJ55V1gAtqliKXwqtL1nnLTIw=
+	t=1732065667; cv=none; b=lu2paCaslgug0zSDCX5DG4VZoB7JQlUAw4eU1RyO8S7WNo8KumsONbwwIjr9l0izqPMnHBmmevgx+IKqVjZ55aQsivqRi9BYHqJ2VZ1ANBFxCZu34VJMWw5GBNZpD3775LFrBucRn2bow2/wt6twOK4PH4T7B/IUQ1zGkNUOs0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732065609; c=relaxed/simple;
-	bh=IJ1MYQeEStQoTeW52aS7iwwtNzVJbKWAwJZO6s1lDwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qq0BX0Vv9KIMPOb2Vh6u44bnyTRE3dTcYq6+wnve8fkf+iIeqWHy0Mtpw4nUZ7kiCJGrsS9DGlzI1vBqhDoBo5VxKPQjhDV7AWsjIckgGhEgHuok/yE1h0qIg+QST6HBGaOAxnIM7mpnKzoZITsJLJb4shhjUsdlSHTQ1WzqRN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CWrJvMkK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732065601;
-	bh=IpG8tDW9URWR1Td9JTIYwXZIcSQ4SdxH/NBzMahil7s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CWrJvMkKHqAtbtCGdIFmUb0t66zG9BZeJ3MIrkp6LgUmVBEQZ3Q+m/5K46C6qOcZQ
-	 VGH2Fm2ed+xkzhiFF2mWhRWbtR7y0it9Fu5io4fNGJiBD33O1G1XpCsWLSMeAleK1b
-	 DlcMHQ7YcUHrSyryF3G3e/C2XqwhoCSP/MOBIwREA+7s1QspEGv+W26hHoBmvznt+j
-	 +Mhqbj0X58uVfP1N/S+3dXwBBXPJmGcdjH02p/94Jr1AZ7jdLzHADKPhy6GBuWcHNk
-	 sUhcV93QHlOWDz35HiwACxYCk/aFAQlugrh6U94rO/ARbeq7Cp68Kx+qI7Th/3VExT
-	 sRboDzn+WFSjw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XtNns611Yz4wc3;
-	Wed, 20 Nov 2024 12:20:01 +1100 (AEDT)
-Date: Wed, 20 Nov 2024 12:20:04 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-Subject: Re: linux-next: manual merge of the s390 tree with the mm-stable
- tree
-Message-ID: <20241120122004.3131dcc2@canb.auug.org.au>
-In-Reply-To: <20241114101639.282d82a8@canb.auug.org.au>
-References: <20241114101639.282d82a8@canb.auug.org.au>
+	s=arc-20240116; t=1732065667; c=relaxed/simple;
+	bh=bbYZ2mME8c1HJ9soDMq3PU6zLnUuLDKQhVd2HSR6sPI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MmT/Sz4ShSTR0y6IrGDV1x5zyjpkKq31y7PAQifK4m+dtDPCOeSCqCEZMeTmQ3SAzhWepmjnBTEHlfYLFwc//vFw0vFKyhSWfTblXLwxnHEIDqEYLmuKsg7EaJB2xdlTBrOLLKW8ksrZvcJO9WWH+jJTygWh3JR0NKPRqSRG62M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i/MucsA+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YomFSEje; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732065663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lt23iJBjVKhB5ryiui6aMnkrpdaYobrfN91IiZPhtyM=;
+	b=i/MucsA+sEIpVOM02qlqKiGUi+zowVAA1rjdfEwffvsYNjXJkEE8CLmpL1sljRl/QQSqZr
+	0+NgBwWRzkrq6M0XnKtlbQH+dAxVEzvawZTrrC3/20wzFGIM7sR2uqQSMDju8oqbYLlScT
+	BDUD7+bHSe/alJuzSKTsK0wqmEANE+QbPw2SORBORCr/aOVDgc5duqo7PtuuYcOpXpOrfx
+	AC35fBGmPLzZc4ab9pe4JZrycRG25XUMmv1ekkZ/tUEQG9m0Utpxh5XEFRoTFPaIgjXtB/
+	qUFWT/xbgXC07mbxXBMvnkUs3UgryhV/tU9GAr1M84GJ5233hlhumw0l7olhEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732065663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lt23iJBjVKhB5ryiui6aMnkrpdaYobrfN91IiZPhtyM=;
+	b=YomFSEjeM3+TdF5On3S0b4YHy+BrdpB9vIMdu9WAZSQS6CqNch47FHOpaZ/WQI1u02WPts
+	axmsOJjb+067J4Dg==
+To: Geert Uytterhoeven <geert@linux-m68k.org>, David Wang <00107082@163.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
+ for decimal values
+In-Reply-To: <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org>
+References: <20241108160717.9547-1-00107082@163.com>
+ <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org>
+Date: Wed, 20 Nov 2024 02:20:59 +0100
+Message-ID: <87ed36zon8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/i4VGi9YVWCK7o4==be+_/fh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/i4VGi9YVWCK7o4==be+_/fh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Thu, 14 Nov 2024 10:16:39 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On Tue, Nov 19 2024 at 20:55, Geert Uytterhoeven wrote:
+> E.g. on Koelsch (R-Car M-W), the output changes from:
 >
-> Today's linux-next merge of the s390 tree got a conflict in:
->=20
->   arch/s390/mm/pageattr.c
->=20
-> between commit:
->=20
->   0c6378a71574 ("arch: introduce set_direct_map_valid_noflush()")
->=20
-> from the mm-stable tree and commit:
->=20
->   2835f8bf5530 ("s390/pageattr: Implement missing kernel_page_present()")
->=20
-> from the s390 tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc arch/s390/mm/pageattr.c
-> index 4c7ee74aa130,4a0f422cfeb6..000000000000
-> --- a/arch/s390/mm/pageattr.c
-> +++ b/arch/s390/mm/pageattr.c
-> @@@ -406,17 -407,21 +407,33 @@@ int set_direct_map_default_noflush(stru
->   	return __set_memory((unsigned long)page_to_virt(page), 1, SET_MEMORY_D=
-EF);
->   }
->  =20
->  +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool v=
-alid)
->  +{
->  +	unsigned long flags;
->  +
->  +	if (valid)
->  +		flags =3D SET_MEMORY_DEF;
->  +	else
->  +		flags =3D SET_MEMORY_INV;
->  +
->  +	return __set_memory((unsigned long)page_to_virt(page), nr, flags);
->  +}
-> ++
-> + bool kernel_page_present(struct page *page)
-> + {
-> + 	unsigned long addr;
-> + 	unsigned int cc;
-> +=20
-> + 	addr =3D (unsigned long)page_address(page);
-> + 	asm volatile(
-> + 		"	lra	%[addr],0(%[addr])\n"
-> + 		CC_IPM(cc)
-> + 		: CC_OUT(cc, cc), [addr] "+a" (addr)
-> + 		:
-> + 		: CC_CLOBBER);
-> + 	return CC_TRANSFORM(cc) =3D=3D 0;
-> + }
-> +=20
->   #if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_KFENCE)
->  =20
->   static void ipte_range(pte_t *pte, unsigned long address, int nr)
+>  	       CPU0       CPU1
+>       27:       1871       2017 GIC-0  27 Level     arch_timer
+>       29:        646          0 GIC-0 205 Level     e60b0000.i2c
+>       30:          0          0 GIC-0 174 Level     ffca0000.timer
+>       31:          0          0 GIC-0  36 Level     e6050000.gpio
+>       32:          0          0 GIC-0  37 Level     e6051000.gpio
+>       [...]
+>
+> to
+>
+>  	       CPU0       CPU1
+>       27:       1966       1900GIC-0  27 Level     arch_timer
+>       29:        580          0GIC-0 205 Level     e60b0000.i2c
+>       30:          0          0GIC-0 174 Level     ffca0000.timer
+>       31:          0          0GIC-0  36 Level     e6050000.gpio
+>       32:          0          0GIC-0  37 Level     e6051000.gpio
+>       [...]
+>
+> making the output hard to read, and probably breaking scripts that parse
+> its contents.
+>
+> Reverting the commit fixes the issue for me.
 
-This is now a conflict between the mm-stable tree and Linus' tree.
+Interestingly enough the generic version and quite some of the chip
+specific print functions have a leading space, but GIC does not.
 
---=20
-Cheers,
-Stephen Rothwell
+The below should restore the original state.
 
---Sig_/i4VGi9YVWCK7o4==be+_/fh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc9OUQACgkQAVBC80lX
-0GwlYgf/YuG5QOLqpG3v1vtjGVRH5hRxpa3w0bd6Q8kvWvh0vUv4vpuUzZdvR3BW
-BBXN1x+34bjdJ0SADlzmupdjrGY4S2lwgN0XOBcntEtgOEbLpK5p9Seg961tyY+A
-NcjqUpXPCP3MoilXjTEWJwXdPzS8iMnAV7yrj2VQlRLdFssYD77Dl6Ojs/OVOt+1
-rdT7YH0uxVI6HLJV56/WrUZRoFoH6F5zavb4cYwZfg/pKK/9Md2dl2nO03Wgrow4
-QhZB9UZlDKKhgiwQtZLBLHp5jVJrjBMZNdk8sMFerEYU8vrtDUf9JnzwWLTfX0wW
-Fk7EKDwiIZN+OksrPKqh0iztPX/vvQ==
-=lXNm
------END PGP SIGNATURE-----
-
---Sig_/i4VGi9YVWCK7o4==be+_/fh--
+        tglx
+---
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index f36c33bd2da4..9b715ce8cf2e 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -501,6 +501,7 @@ int show_interrupts(struct seq_file *p, void *v)
+ 
+ 		seq_put_decimal_ull_width(p, " ", cnt, 10);
+ 	}
++	seq_putc(p, ' ');
+ 
+ 	raw_spin_lock_irqsave(&desc->lock, flags);
+ 	if (desc->irq_data.chip) {
 
