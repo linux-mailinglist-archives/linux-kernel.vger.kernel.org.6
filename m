@@ -1,71 +1,87 @@
-Return-Path: <linux-kernel+bounces-416004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB5229D3F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:31:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F30E9D3F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71DA5B25581
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:29:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74F97B2DA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327CE19F424;
-	Wed, 20 Nov 2024 15:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9A1B85CF;
+	Wed, 20 Nov 2024 15:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="s0udoYSb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YGriwE2r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FB60EKDD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164E61F931
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FD1156F39;
+	Wed, 20 Nov 2024 15:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732116576; cv=none; b=dpyiumRqjHSS/ZN2tnLvJ1mQtNdwDkxqN3jC9cm6JVtgyzm/sZNV/sWijXDwlJifjV5mj+RS/gDJ1JBiTXg1ERRW+Xp2JfSg9XCEVdBoiF14csgIi5i6Z4r9eeAQq53ouZ3Cslt5uKIjI7Rctf8nYaGUdcOG/RlGxSd00by91wk=
+	t=1732116578; cv=none; b=ASwBJjPalQIps6kYYyFnxQAuVHxcWKJZ9bdRiym9kvV9kQRC3rwDbyT1yEFIDI4V26b4upeSrKWCMDWp6iEubVo7TBHKayDfaQZ1JAcvxw0sMztAvWWf0cX+eStP/A6vAZt8B8geKpninU3flMHauot5hoyrEf8koGa1Drwi+AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732116576; c=relaxed/simple;
-	bh=0sYuBJXRBlYh1MBKqXti/QWl9Ne4kI9jLLhLsWs+AMw=;
+	s=arc-20240116; t=1732116578; c=relaxed/simple;
+	bh=GMJRSIN/jwN1mEeXDPhC5UQ+MYY/wdAISwzlBog0b14=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Oh0GO6npLWKfiAhAjhQWKZ+e5jIXMbJAv0wQlc1nIw2Y7PWud9BBSVEFGodvQl+Aw9nhZKctMZHGdUNmu66X4g97ywnB45w2nB2SuzEcCuqVsvSvbVBRFiHxr3UYtiKG0Ig/7uKkBBZC3WLaJgQ4lio/laXhcYeaqHqnectqE4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=s0udoYSb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YGriwE2r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732116573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sq0OSJ3Aw1pI3hgGt8CPbUUUOS/N62zZGOchTV9fwq8=;
-	b=s0udoYSbo/88vPy4sONXi3EHUB3HGgcJKHD1U8WWrilQbQAi22LgL4I417P7Gcu498JgJ+
-	mlHxNr9xklnawlcfBEoANvF0G+BLfxUsAc79WqeLUnZ8BBkFJYhHVPIlQI7SJ8zDzxMnTK
-	eNipax3+44OueE08L+bC8bdP/yq+yp1vtfDcI+XDTb4FkaBn586FXCJ1T1m7iL071jhAty
-	G8amjxq7a82Vvai29o/++TT6s09idwWqkI1YbHLadXKBIh0kp7zmbk36+NFgp+aS/S7W3O
-	pb6D7iFYux7qhxMfdjjlsCyQVnRgvGXQA+m957fLlmr0MKlxRNOHgvRjFxI8Tw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732116573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sq0OSJ3Aw1pI3hgGt8CPbUUUOS/N62zZGOchTV9fwq8=;
-	b=YGriwE2rVRVnCZ7zp4voApsaNn0jKnhDVcCckr1xZBYGOyOeU9TnsMtxfrEJHglQkz1z0h
-	iDIf2VoMjmJifoBg==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Chris Down <chris@chrisdown.name>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Sergey
- Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Tony
- Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 06/11] printk: console: Introduce sysfs interface for
- per-console loglevels
-In-Reply-To: <Zz34GgmFbuZKQOzG@pathway.suse.cz>
-References: <cover.1730133890.git.chris@chrisdown.name>
- <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
- <2024111508-native-subtype-2990@gregkh> <Zz1tOxW6PO_2OeSA@chrisdown.name>
- <84frnms3c3.fsf@jogness.linutronix.de> <Zz34GgmFbuZKQOzG@pathway.suse.cz>
-Date: Wed, 20 Nov 2024 16:35:32 +0106
-Message-ID: <84ed35rkir.fsf@jogness.linutronix.de>
+	 MIME-Version:Content-Type; b=ZgH2xvaIENCtMoxTSDThkex3u8pfzFGuFpplYh/h/gxPNzGjUyRTRJwUtSZnWd2W8F+K0URQ8nZ7iZ+E3CwD8qFV4WBr46rsYfc5OtleK8z8Ui6Kjd5KFkP8R5HnBVVjRcyEjNBMQB9HDXS7zT1mWVcsbtil0fBSDM2m1QxRPJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FB60EKDD; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732116577; x=1763652577;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GMJRSIN/jwN1mEeXDPhC5UQ+MYY/wdAISwzlBog0b14=;
+  b=FB60EKDD8Uq6AkLoz0qzIidGVOBPGXv72SQL0hFB1F0epi5aeCe7CKOr
+   S+Ig+Z4c711LcptxkuQLid1FjZmK3828IRE/2XMV7F+DMvIiN9aib3gIK
+   YDUblHFFU1n1wl5/7S4x8bblVYsNh8RlLRW8289EVHYzMTQSrG2KTxJIX
+   +hpgAN0pNoGUpPHEC7mOy3Q1k/gIunhLSsvbD83JLIqUY1ppIalGqb4L6
+   Z/gMC3q+BuXdYq28zV5UMgbQ8DtZoi8Zcefv22LAt8+pyoxEeUxt2T4Vo
+   fe4/JBtoqdwvYlbHpFrW1sGRa+PgT38SCkcdVh/x2Q/dXNZTy51R4DatP
+   w==;
+X-CSE-ConnectionGUID: 6jH+taCjT8unZgVUUKRdQg==
+X-CSE-MsgGUID: HCYBXT2mRky1SBYXQ3ecXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="35856478"
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="35856478"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 07:29:36 -0800
+X-CSE-ConnectionGUID: JioBrdkvQk2Y5jNMYdMdmw==
+X-CSE-MsgGUID: ev1M0HImQeKcY4srIRu0nQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
+   d="scan'208";a="89533919"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa006.fm.intel.com with ESMTP; 20 Nov 2024 07:29:35 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id C65E8301B9F; Wed, 20 Nov 2024 07:29:34 -0800 (PST)
+From: Andi Kleen <ak@linux.intel.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
+  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  cgroups@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  akpm@linux-foundation.org,  corbet@lwn.net,  derek.kiernan@amd.com,
+  dragan.cvetic@amd.com,  arnd@arndb.de,  gregkh@linuxfoundation.org,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,
+  tj@kernel.org,  hannes@cmpxchg.org,  mhocko@kernel.org,
+  roman.gushchin@linux.dev,  shakeel.butt@linux.dev,
+  muchun.song@linux.dev,  Liam.Howlett@oracle.com,
+  lorenzo.stoakes@oracle.com,  vbabka@suse.cz,  jannh@google.com,
+  shuah@kernel.org,  vegard.nossum@oracle.com,  vattunuru@marvell.com,
+  schalla@marvell.com,  david@redhat.com,  willy@infradead.org,
+  osalvador@suse.de,  usama.anjum@collabora.com,  andrii@kernel.org,
+  ryan.roberts@arm.com,  peterx@redhat.com,  oleg@redhat.com,  tandersen@
+Subject: Re: [RFCv1 0/6] Page Detective
+In-Reply-To: <20241116175922.3265872-1-pasha.tatashin@soleen.com> (Pasha
+	Tatashin's message of "Sat, 16 Nov 2024 17:59:16 +0000")
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+Date: Wed, 20 Nov 2024 07:29:34 -0800
+Message-ID: <87wmgxvs81.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,27 +90,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On 2024-11-20, Petr Mladek <pmladek@suse.com> wrote:
->> +static ssize_t loglevel_show(struct device *dev, struct device_attribute *attr,
->> +			     char *buf)
->> +{
->> +	struct console *con = dev_get_drvdata(dev);
->> +
->> +	return sysfs_emit(buf, "%d\n", READ_ONCE(con->level));
+Pasha Tatashin <pasha.tatashin@soleen.com> writes:
+
+> Page Detective is a new kernel debugging tool that provides detailed
+> information about the usage and mapping of physical memory pages.
 >
-> Honestly, it seems that everyone agrees that the READ_ONCE() makes
-> some sense. I do not understand why some many people wants to remove
-> it. I personally prefer to be on the safe side.
+> It is often known that a particular page is corrupted, but it is hard to
+> extract more information about such a page from live system. Examples
+> are:
+>
+> - Checksum failure during live migration
+> - Filesystem journal failure
+> - dump_page warnings on the console log
+> - Unexcpected segfaults
+>
+> Page Detective helps to extract more information from the kernel, so it
+> can be used by developers to root cause the associated problem.
+>
+> It operates through the Linux debugfs interface, with two files: "virt"
+> and "phys".
+>
+> The "virt" file takes a virtual address and PID and outputs information
+> about the corresponding page.
+>
+> The "phys" file takes a physical address and outputs information about
+> that page.
+>
+> The output is presented via kernel log messages (can be accessed with
+> dmesg), and includes information such as the page's reference count,
+> mapping, flags, and memory cgroup. It also shows whether the page is
+> mapped in the kernel page table, and if so, how many times.
 
-OK, then please also annotate the data race to keep KCSAN happy:
+A lot of all that is already covered in /proc/kpage{flags,cgroup,count)
+Also we already have /proc/pid/pagemap to resolve virtual addresses.
 
-	data_race(READ_ONCE(con->level));
+At a minimum you need to discuss why these existing mechanisms are not
+suitable for you and how your new one is better.
 
-From the data_race kerneldoc:
+If something particular is missing perhaps the existing mechanisms
+can be extended?
 
-   If the access must be atomic *and* KCSAN should ignore the access,
-   use both data_race() and READ_ONCE(), for example,
-   data_race(READ_ONCE(x)).
+Outputting in the dmesg seems rather clumpsy for a production mechanism.
 
-John
+I personally would just use live crash or live gdb on /proc/kcore to get
+extra information, although I can see that might have races.
+
+-Andi
 
