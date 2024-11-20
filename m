@@ -1,136 +1,98 @@
-Return-Path: <linux-kernel+bounces-415365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B069D3505
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:06:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A72129D350D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:09:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9CE41F22021
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:06:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B541F21525
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 08:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEB91714D3;
-	Wed, 20 Nov 2024 08:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A881170A15;
+	Wed, 20 Nov 2024 08:09:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBFXlqxC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SN43AKKv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D64B15B551;
-	Wed, 20 Nov 2024 08:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DE715B551;
+	Wed, 20 Nov 2024 08:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732089967; cv=none; b=QymdmHB4MUoGXGz0Jw4ibTKYJ67LLZjCHEFUs85owztXyYVR+TdrLXxh+Tsnj313OTxqS30X9mJ3wOYwVzHWDum2uze0i9mCK+GbIvYj8egBb98+PKmEmqW9evkVUf+7Kd8BzDuXzWNhnjVmh08LWVCaczeDYkA+IrdCjsHOkhM=
+	t=1732090139; cv=none; b=GZyW+nz6Tr24z7Bj9xx2vrOVBc6yCa3Uw48pbCTiCAIB80pemfXdzeWLZE2qH+Kl9HEScb9upxZWqD2lDLU39SXgvmEuDuqgLhCjVDT/nqMO0ZX5jN/2wBEjN06s5fx8qShhpH8U4sTgCCmmR1w3vdiWj13BC/PYDI5/rXWNmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732089967; c=relaxed/simple;
-	bh=4XpgWRwxRQX8N4sCs+G1yqWwX0N+g8TGTG4+ywFNqTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nJA12jfFhKGNfH/02054WCZq4fbNkjf4Xw2eucHksQ0/p24bZP4SktyRIumezIkc5eiQZf+x/hiqOMY7UnTvxUvaoSzy8nu5N2xFzPBbkT8p0mz0uqdjsxkWZ2OYlPgrW7k9oIe0CMV9AoSE7KVCCYnPxVv206DBgxNcZEsLJj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QBFXlqxC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4273AC4CECD;
-	Wed, 20 Nov 2024 08:06:06 +0000 (UTC)
+	s=arc-20240116; t=1732090139; c=relaxed/simple;
+	bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q648i8pV71l1BNiC4kHfk+is8wXhPX3Uyp1AKlIfc9Zz5zuualXEf1PDMlPCE2KQJCDGS/FnxmbnhVqAo7J1mZ7p6Hi78gBGH5bhy21QB4ZuTnf9eQJnXi+luA2tYGYZZpLBMA6/qwDbe68fUBExvLF4zAxZlnPYfZjrDw7iCsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SN43AKKv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43220C4CECD;
+	Wed, 20 Nov 2024 08:08:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732089967;
-	bh=4XpgWRwxRQX8N4sCs+G1yqWwX0N+g8TGTG4+ywFNqTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QBFXlqxC4rM78DDgViewI8/dKlQaxXqNEHoFtPKzouuOYFG7SkBH7iBRBo5wYmTsJ
-	 /UbMoKqzxONL293iN90t76vu5Q8XJTwtaMZKf4bTZ55d9DtZxyJcW4eCQJy925ZVc0
-	 gBgYF37HE3JAEZe2cPTtpFOYEnyJYm0AjFqnQQ+PZbRAoYryhlgXFrsY7lHqa45lqN
-	 7ga4XGm8PgZJVaQSn/ufDk9z/+G+h4Bp0roZU2mkaELv6MsTyk+QdUxnXVFgLUx4xL
-	 UZGqMMdGJMWzuK4mYcH5CpibI/anrEB5Zkmied7DiK+Key5iki/TV8GV2jiwJySj6i
-	 RHHcBF7AIAL6w==
-Date: Wed, 20 Nov 2024 09:06:03 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
-	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
- qps615
-Message-ID: <ngjwfsymvo2sucvzyoanhezjisjqgfgnlixrzjgxjzlfchni7y@lvgrfslpnqmo>
-References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
- <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+	s=k20201202; t=1732090138;
+	bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SN43AKKvadsCBNddFXvFQxupeDFVL3qWSHJIScRnUHVuXqqo9Ho3GQ8G+aBrzwBSv
+	 HSa1Mnsm8Pzx2frjaZoSXZTHD2MmxAHBveG6K1TQOAR4s34F61+3r7VYHsl5tYzT3e
+	 0hh4lr75uT87HF5uZlsEZhxJZxECWH7YP8mgkX7aie1r+xFwypHItvCvVC+KBykych
+	 63z9FBWq1f8n6YndF9xtxkYYac95JPST3wCNlTHlnrfirzDvrHTs7bbiIFciDyPeJD
+	 wMRyIqkp2Ue6KMA76N4iMerz3PFXufczQSVJr31mNnB1vm25XGHQ3nxc4g7OAoS4F8
+	 S7Zv8z5Ett88Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: delay sysctl_nr_open check in expand_files()
+Date: Wed, 20 Nov 2024 09:08:50 +0100
+Message-ID: <20241120-obstgarten-vorne-f918e84076e2@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241116064128.280870-1-mjguzik@gmail.com>
+References: <20241116064128.280870-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1445; i=brauner@kernel.org; h=from:subject:message-id; bh=QizDTXvqjbBtCmUXn7PUSAsmsMC2qT5IcgGZHZ/CgUE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbzhTp2j9b7VPoai6Xs7fmP39i4cC+wkswNKjrVMSGy 6fam7z9OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZif5OR4QWLTdrGLpa5SxZ3 7r6vl5p2Ssp28+rw6CcTmg9JbbOVXsLIsHiqtvhczpZNcrmL9lqrGVkd8DfZoz+vj99A5k/mipA tzAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 12, 2024 at 08:31:34PM +0530, Krishna chaitanya chundru wrote:
-> Add QPS615 PCIe switch node which has 3 downstream ports and in one
-> downstream port two embedded ethernet devices are present.
+On Sat, 16 Nov 2024 07:41:28 +0100, Mateusz Guzik wrote:
+> Suppose a thread sharing the table started a resize, while
+> sysctl_nr_open got lowered to a value which prohibits it. This is still
+> going to go through with and without the patch, which is fine.
 > 
-> Power to the QPS615 is supplied through two LDO regulators, controlled
-> by two GPIOs, these are added as fixed regulators. And the QPS615 is
-> configured through i2c.
+> Further suppose another thread shows up to do a matching expansion while
+> resize_in_progress == true. It is going to error out since it performs
+> the sysctl_nr_open check *before* finding out if there is an expansion
+> in progress. But the aformentioned thread is going to succeded, so the
+> error is spurious (and it would not happen if the thread showed up a
+> little bit later).
 > 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 115 +++++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi         |   2 +-
->  2 files changed, 116 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 0d45662b8028..0e890841b600 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -202,6 +202,30 @@ vph_pwr: vph-pwr-regulator {
->  		regulator-min-microvolt = <3700000>;
->  		regulator-max-microvolt = <3700000>;
->  	};
-> +
-> +	vdd_ntn_0p9: regulator-vdd-ntn-0p9 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VDD_NTN_0P9";
-> +		gpio = <&pm8350c_gpios 2 GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt = <899400>;
-> +		regulator-max-microvolt = <899400>;
-> +		enable-active-high;
-> +		pinctrl-0 = <&ntn_0p9_en>;
-> +		pinctrl-names = "default";
-> +		regulator-enable-ramp-delay = <4300>;
-> +	};
-> +
-> +	vdd_ntn_1p8: regulator-vdd-ntn-1p8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "VDD_NTN_1P8";
-> +		gpio = <&pm8350c_gpios 3 GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		enable-active-high;
-> +		pinctrl-0 = <&ntn_1p8_en>;
-> +		pinctrl-names = "default";
-> +		regulator-enable-ramp-delay = <10000>;
-> +	};
->  };
->  
->  &apps_rsc {
-> @@ -684,6 +708,75 @@ &mdss_edp_phy {
->  	status = "okay";
->  };
->  
-> +&pcie1_port {
-> +	pcie@0,0 {
-> +		compatible = "pci1179,0623";
+> [...]
 
-The switch is part of SoC or board? This is confusing, I thought QPS615
-is the SoC.
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Best regards,
-Krzysztof
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] fs: delay sysctl_nr_open check in expand_files()
+      https://git.kernel.org/vfs/vfs/c/bb35f8709172
 
