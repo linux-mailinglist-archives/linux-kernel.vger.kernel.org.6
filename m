@@ -1,132 +1,156 @@
-Return-Path: <linux-kernel+bounces-417287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6481E9D5207
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:43:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7C09D5209
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC73B296B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA02282C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B021D9324;
-	Thu, 21 Nov 2024 17:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49AE1BDAA5;
+	Thu, 21 Nov 2024 17:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YXANeOT4"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTTTOVg2"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423541C232B;
-	Thu, 21 Nov 2024 17:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0344A1BB6B5
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210911; cv=none; b=I9jFv/41LIodkRSiMhUncYOIxj+9LgP2Vf67Nj2osIWt7yxJpXXo1h6s3PXOjD8IKXwchbihFir3GKJ1J+OTG5u0OIyeP8UA6fzY9R3Tybz8g39vqQlluxYio6wmMp0aSdBLMy0q/HjM+vx4O9a85gaslVoENV9FvYNWQoRjwaI=
+	t=1732210927; cv=none; b=nupO6ZPcDKdB5a6ZN8J/9Vw50lF6r5eCgAAVg0TIutL4M2OccfZlxAxjX/0sVSXeAfeHADdwKBwjyTg+QQ6p5koIeP2mgBlOPqiKONBPIhAzoeKKjSichYZr+B+Q8mZe9NW6M8mHK5vr3Pt4EAqEZ/JJT1VT+C7LUQuCx5kAksM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210911; c=relaxed/simple;
-	bh=IcrPSViR+yiWs8qrdfWw39zhusSDcUZoFPdhy7zFaA0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qNLTSKRJzV1MNaspJpYgPxbnJzg2ILmOqaBBhOWcr7OVzFhOKHeO7QD9qO+M+xsWWkQ0QRvSiFx4E1dDLDorqjKXaUULDvqR7+SKvu2VfK4pa6xFdFY7y3TgmYh9Q/syhwcdTk9DPJI9tvsKn3HDesIYwW89WmMZorN5fl0u0u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YXANeOT4; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 657C62000F;
-	Thu, 21 Nov 2024 17:41:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732210902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yAUih0Mkszte9aiN7a8UUEUbUpUNBM3lVZGf6CK9gUM=;
-	b=YXANeOT4VuQZKlUaFu1md2+8wKVPZNqSyV6u5suvZvIIrDJiDs/LUj13Wt89/OPEjRHOdq
-	nO7m0KyEqW9lvmbiHodz6wikxK6g2+GOCZUpv/vNZ3SLeZoBavJDaigf3xgKj3YcpOjkfv
-	AWmQks+Pez8OMjPWuGensS8q9N0MfyN/RhODto4VC1uYBiNrgmYwxcEI7IqQNQTbkASTdc
-	dDalVzIMsMkQEZuTZKL+3LG9wz11qD7ZWlh0d4NvnvtlnDJUvpOEXrFDLhhfwNaFA4mrir
-	tpz0WxKAshbYlKBcV3QDfWrMq64FXzEZXz7x7vHHgOf9r00+s5X1AfoJKnpvWA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Thu, 21 Nov 2024 18:41:15 +0100
-Subject: [PATCH 5/5] clk: imx: imx8mp: Prevent media clocks to be
- incompatibly changed
+	s=arc-20240116; t=1732210927; c=relaxed/simple;
+	bh=oXFkZxIE0Oi6N4As1P6ZRkKGfXKz4LuGRbnSKRPtroI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sN5M2FGRNPtzMKUEeYdXZWPrVp93r2Pg1E9nTjxLmEYSUtkF28oZ2Jqdt1g25aUOSUAUZkGar7zftIy7Ve/GA+hht1Pb+kF9zIZnxZdofVbqyjOs7DJrUT0EczT1Zx/+g7HfCgajJirHAFd8j2FUm78CvW1uMx/XTuh4rz0/fuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTTTOVg2; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eeb2b305efso29315477b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:42:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732210925; x=1732815725; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RwZmK6L5i6ITrmKBxlG4fTIrOa1+fXmBLZLshHxbeSk=;
+        b=DTTTOVg2Zmtmq5vjrf37u938uuvdroAJYWrbr5ckrZGGT8z5ssmL5Uz/V99BJR7I+z
+         CVaHaOsnaZG47F3maNEjcXjFCJQ7X+tszK/HnfkZRaUqfPHjcJSTXQzRM8fkLktc80BX
+         xDzspSiSMwN79WIlAv7tiqMLj06xCnoqzzsaAd7W9+uSfd90wp4BVRCq9l0Uy7OVzwl2
+         TNbLQkdBSPE8AbaU9uQBzO8DOJvc3YghzhwCg7Mp77eRFtIlL3OO138aaXm+bcFH3nc+
+         Z8FLn1cbMS/GA1QcHkFB0WHVj87H/XyTBgSqWhQQ/ktiJxCMb5usbW3VgAuqdYqI0nzi
+         /pQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732210925; x=1732815725;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RwZmK6L5i6ITrmKBxlG4fTIrOa1+fXmBLZLshHxbeSk=;
+        b=iQJBkZbPxgOs+QTuNE/5FRglhM/Sw4ulMXYntWQ5xDY70c/+I0UAiJUmJqHt2VNOex
+         3aXWMO9XXxnbyUqTDyjQ04TKUrJghMlwy2ujHSnYgN2sAD2lhwjdfKA3kbPgTpdRf+KU
+         RfQP6+vrKHmRxut5tf30KSaohVX6QxzWjep7CNU2/MR8A9vRGCt9BTl6w1F0H8+b+pzC
+         Jx/drOyq5zCv3HJEYZQvv7cH7oY2ulpIV0jVPdIzSWyrGvD29AZX8SYy2qlZW68IKLaa
+         iRbEZaFSSjF//tD59PWOkrLdf4Us0LRurzmPBi8Wh8s4E7ctMV06bbYo8YXd1c2Fa3Zb
+         /H+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUY6y0B0RS6M/3/VTD9tQlQexj5RrxQmmYuROFAcarOExBZSnFxwldbkjmrGQH36/Xlc7oV6aFnb2V6Cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmwXexpYWA4MuC5MxH/cE9HwBL5m764zNwtOduXW6b9ku5sS5e
+	RUoiK1Xxl6vYtR5Y1C6UkcqGtSqc2EJLzOT701lz6K18ICXI7BN9s14fm30txViaLJ0fiLOXzYs
+	sHA==
+X-Google-Smtp-Source: AGHT+IHuElYuHVEN+YhgX7s/c+tdZRN29qEHHm04YMZ6V+lminlkgWG0Zi1wJVFCail9JOLgLm7Mgi69Xts=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:72f:b0:e26:3788:9ea2 with SMTP id
+ 3f1490d57ef6-e38f6c6a7a2mr83276.0.1732210924917; Thu, 21 Nov 2024 09:42:04
+ -0800 (PST)
+Date: Thu, 21 Nov 2024 09:42:03 -0800
+In-Reply-To: <cb62940c-b2f7-0f3e-1710-61b92cc375e5@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-ge-ian-debug-imx8-clk-tree-v1-5-0f1b722588fe@bootlin.com>
-References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Ying Liu <victor.liu@nxp.com>, 
- Marek Vasut <marex@denx.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- linux-clk@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, Abel Vesa <abel.vesa@linaro.org>, 
- Herve Codina <herve.codina@bootlin.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>, 
- stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-GND-Sasl: miquel.raynal@bootlin.com
+Mime-Version: 1.0
+References: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+ <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
+ <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com> <ZwlMojz-z0gBxJfQ@google.com>
+ <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com> <Zz5aZlDbKBr6oTMY@google.com>
+ <d3e78d92-29f0-4f56-a1fe-f8131cbc2555@amd.com> <d3de477d-c9bc-40b9-b7db-d155e492981a@amd.com>
+ <Zz9mIBdNpJUFpkXv@google.com> <cb62940c-b2f7-0f3e-1710-61b92cc375e5@amd.com>
+Message-ID: <Zz9w67Ajxb-KQFZZ@google.com>
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ashish Kalra <ashish.kalra@amd.com>, Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au, 
+	x86@kernel.org, john.allen@amd.com, davem@davemloft.net, michael.roth@amd.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Having set the CLK_SET_RATE_PARENT flag to gain accuracy to the i.MX8
-media related clocks (media_ldb, media_disp1_pix, media_disp2_pix) broke
-most simple setups using the LDB and one LCDIF. Indeed, pixel
-frequencies being set first, the top level PLL (video_pll1) was tuned to
-achieve the perfect frequency, and the media_disp*_pix divisor was set
-to 1 (acting like a passthrough). But shortly later, when setting the
-LDB clock to 7 times the pixel clock, the PLL machinery was recomputed,
-leaving the pixel divisors untouched. As a result, the attempted factor
-of 7 between the two clocks could never be observed.
+On Thu, Nov 21, 2024, Tom Lendacky wrote:
+> On 11/21/24 10:56, Sean Christopherson wrote:
+> > On Thu, Nov 21, 2024, Ashish Kalra wrote:
+> > Actually, IMO, the behavior of _sev_platform_init_locked() and pretty much all of
+> > the APIs that invoke it are flawed, and make all of this way more confusing and
+> > convoluted than it needs to be.
+> > 
+> > IIUC, SNP initialization is forced during probe purely because SNP can't be
+> > initialized if VMs are running.  But the only in-tree user of SEV-XXX functionality
+> > is KVM, and KVM depends on whatever this driver is called.  So forcing SNP
+> > initialization because a hypervisor could be running legacy VMs make no sense.
+> > Just require KVM to initialize SEV functionality if KVM wants to use SEV+.
+> 
+> When we say legacy VMs, that also means non-SEV VMs. So you can't have any
+> VM running within a VMRUN instruction.
 
-Set the CLK_NO_RATE_CHANGE_DURING_PROPAGATION flag to the LDB and LCDIF
-pixel clocks to force them to be kept as close as their initial target
-rate as possible across subtree walks.
+Yeah, I know.  But if KVM initializes the PSP SEV stuff when KVM is loaded, then
+KVM can't possibly be running VMs of any kind.
 
-Fixes: ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
---
-All patches in this series must be backported for this one to apply.
----
- drivers/clk/imx/clk-imx8mp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Or...
+> 
+> > 
+> > 	/*
+> > 	 * Legacy guests cannot be running while SNP_INIT(_EX) is executing,
+> > 	 * so perform SEV-SNP initialization at probe time.
+> > 	 */
+> > 	rc = __sev_snp_init_locked(&args->error); 
+> > 
+> > Rather than automatically init SEV+ functionality, can we instead do something
+> > like the (half-baked pseudo-patch) below?  I.e. delete all paths that implicitly
+> > init the PSP, and force KVM to explicitly initialize the PSP if KVM wants to use
+> > SEV+.  Then we can put the CipherText and SNP ASID params in KVM.
+> 
+> ... do you mean at module load time (based on the module parameters)? Or
+> when the first SEV VM is run? I would think the latter, as the parameters
+> are all true by default. If the latter, that would present a problem of
+> having to ensure no VMs are active while performing the SNP_INIT.
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 2e61d340b8ab7f626155563c46e0d4142caf3fa9..2b916a4df97141dce46cefeb22ff584178a3929b 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
- 	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
- 	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
--	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 
- 	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
- 
-@@ -609,9 +609,9 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
- 	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
--	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
--	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
-+	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT | CLK_NO_RATE_CHANGE_DURING_PROPAGATION);
- 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
- 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
- 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
+kvm-amd.ko load time.
 
--- 
-2.47.0
+> > That would also allow (a) registering the SNP panic notifier if and only if SNP
+> > is actually initailized and (b) shutting down SEV+ in the PSP when KVM is unloaded.
+> > Arguably, the PSP should be shutdown when KVM is unloaded, irrespective of the
+> > CipherText and SNP ASID knobs.  But with those knobs, it becomes even more desirable,
+> > because it would allow userspace to reload *KVM* in order to change the CipherText
+> > and SNP ASID module params.  I.e. doesn't require unloading the entire CCP driver.
+> > 
+> > If dropping the implicit initialization in some of the ioctls would break existing
+> > userspace, then maybe we could add a module param (or Kconfig?) to preserve that
+> > behavior?  I'm not familiar with what actually uses /dev/sev.
+> > 
+> > Side topic #1, sev_pci_init() is buggy.  It should destroy SEV if getting the
+> > API version fails after a firmware update.
+> 
+> True, we'll look at doing a fix for that.
+> 
+> > 
+> > Side topic #2, the version check is broken, as it returns "success" when
+> > initialization quite obviously failed.
+> 
+> That is ok because you can still initialize SEV / SEV-ES support.
 
+Right, but as I've complained elsewhere, KVM shouldn't think SNP is supported
+when in reality firmware is effectively too old.
 
