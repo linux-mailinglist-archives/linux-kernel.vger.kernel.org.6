@@ -1,172 +1,99 @@
-Return-Path: <linux-kernel+bounces-416927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D0949D4C78
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:01:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168DF9D4C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D681F21543
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE735280F82
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBFD1D47A3;
-	Thu, 21 Nov 2024 12:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A24A1D3627;
+	Thu, 21 Nov 2024 12:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AV9Tk90u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YGJwp7Gc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AV9Tk90u";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YGJwp7Gc"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFNqVrnL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E19E1D151F;
-	Thu, 21 Nov 2024 12:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724161CB331;
+	Thu, 21 Nov 2024 12:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190494; cv=none; b=GdWLs59knyGsvqbsr+ZRdIQH2UcaIwCtgHkYfPxy29grCmS8t2VMR2N6H+A/uSJhovMYsHaJFKPqqphAKrOqs28UPPyC39vXK5nTjblLh+Ex8Um4gDesyZ2SX6boAI9UHA6x17m8QF+mt+CdzCx2ZhJGj/tqQQpNjk+Bx7eS8/I=
+	t=1732190540; cv=none; b=c22k45th28euSY/YI8UZ9vxEFZC3wxGPU3Qgr3Z6uS+k7PwfAk+7sFWWrD+0GJ5SLhmuEUuoE36rSJqDaP1OZL8PolRGPwMMV5ZJB7+EEaqeVJENBi/WUssFISVtZbMT1MyrUZRIkzqQo5hS7VFGHL0U/Cs6A9l5ax/62aLsaeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190494; c=relaxed/simple;
-	bh=PitWbxnrL3aZYw6vmt7mJkFGNEstgDny5hDwRsO5ikY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f49LzEA32dKeaH2Zfa34I1dCcykHWtIP8GQCEh2KXhjzkmLfnvinLs5nJcMrLJGq6gA5tHo5xEtfaBD/wQyiEDFlDgcuC1X5Qx8RriG7k67Si4rdQ/V1v4wYjyQC+oysIdgNPdyfS/W762kW8SxFh82h3F5usSkq7zntamwkW5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AV9Tk90u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YGJwp7Gc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AV9Tk90u; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YGJwp7Gc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FC6221A14;
-	Thu, 21 Nov 2024 12:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732190491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cqudnxx7QhMg21RnzN/JlCktLvQ8S8xJx9uySb2H+7U=;
-	b=AV9Tk90uD8l1aeZUmclFngo69O4Whbzmr9/wKwXQ4nwADzz9vnQuDngw9uGIfWvxPW0rKO
-	J8sJf/npH+X4r/bxRZTL6tORY5/H/4awzzwtLSOrtef3BS6t0iIJD2RQ7SIPqKk01EvqbP
-	vQv0yKR8qd0G9wUUph4bN8TuKl++oeo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732190491;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cqudnxx7QhMg21RnzN/JlCktLvQ8S8xJx9uySb2H+7U=;
-	b=YGJwp7GctzpZ2oWi96BFxiNlt0kaiwV96iQmhlYHvuuLA6yCR8FkYjJdoJsZ6dFCFM3gbt
-	kkHIQsD222ciIwCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732190491; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cqudnxx7QhMg21RnzN/JlCktLvQ8S8xJx9uySb2H+7U=;
-	b=AV9Tk90uD8l1aeZUmclFngo69O4Whbzmr9/wKwXQ4nwADzz9vnQuDngw9uGIfWvxPW0rKO
-	J8sJf/npH+X4r/bxRZTL6tORY5/H/4awzzwtLSOrtef3BS6t0iIJD2RQ7SIPqKk01EvqbP
-	vQv0yKR8qd0G9wUUph4bN8TuKl++oeo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732190491;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cqudnxx7QhMg21RnzN/JlCktLvQ8S8xJx9uySb2H+7U=;
-	b=YGJwp7GctzpZ2oWi96BFxiNlt0kaiwV96iQmhlYHvuuLA6yCR8FkYjJdoJsZ6dFCFM3gbt
-	kkHIQsD222ciIwCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 895F613927;
-	Thu, 21 Nov 2024 12:01:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0ow8HxohP2czDQAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Thu, 21 Nov 2024 12:01:30 +0000
-Date: Thu, 21 Nov 2024 13:01:27 +0100
-From: Jean Delvare <jdelvare@suse.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Leon Romanovsky <leonro@nvidia.com>,
- Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
- linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>, Aditya Prabhune
- <aprabhune@nvidia.com>, Hannes Reinecke <hare@suse.de>, Heiner Kallweit
- <hkallweit1@gmail.com>, Arun Easi <aeasi@marvell.com>, Jonathan Chocron
- <jonnyc@amazon.com>, Bert Kenward <bkenward@solarflare.com>, Matt Carlson
- <mcarlson@broadcom.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, Alex
- Williamson <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, Thomas
- =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>, Stephen Hemminger
- <stephen@networkplumber.org>
-Subject: Re: [PATCH v2] PCI/sysfs: Change read permissions for VPD
- attributes
-Message-ID: <20241121130127.5df61661@endymion.delvare>
-In-Reply-To: <61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org>
-References: <61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1732190540; c=relaxed/simple;
+	bh=y0Ec7Up5fRAMcaQYvRthElk+doTpQoQsvztHHkEYjNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+dDWUCKHh6FB61HMj9RzUpP7h2VJgLwmPOEXVSYN1+MDtac2Pd+1aUTGbQLgzyZI+DkwBEaYmX6J73R9hm5/qkDdSfJu2VFJM7+gN4Y824YXoEJHBPpdzJ4oYZPenvp2wpEutHSnDE7DKwK4hDE05e9SH7t0b8Uz7y8oKU/Bcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFNqVrnL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609EAC4CECC;
+	Thu, 21 Nov 2024 12:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732190540;
+	bh=y0Ec7Up5fRAMcaQYvRthElk+doTpQoQsvztHHkEYjNI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MFNqVrnLsrVLum0qFjpzKTHDdMI9/QuVClCFWkvT/Fy6jIdhl7HS6c4tYPAvu1MwF
+	 cmZ9n6WjlXsIvautB+2ckgwbwzYATw+reS+nFj7VbLAeQU2D/MKV9CTUIr3JRYLbBH
+	 XrtFpwg3ddyy8A9FGQxfvLvVUdJIj9TKZJeffhjTfFBAch0Mt3li70jcJuQHUjp56g
+	 dugWhC7Mkfn4TtcgpVPSCXDZJfnC2U8c/MjA52SatSB32BMIRVvcGbirBvdEGCgS7b
+	 Dq0uei5qaZVAxv3MmKCKQwZSbHysQ0XVnMMSObXOC4cwdZaZ8PKaTWzMHLlZWB0CGp
+	 a+HkHe8ntizIA==
+Date: Thu, 21 Nov 2024 12:02:13 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, quic_msavaliy@quicinc.com,
+	quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v1 0/1] Add immediate DMA support
+Message-ID: <073ae0ed-32bf-4097-850c-832cccda6b58@sirena.org.uk>
+References: <20241121115201.2191-1-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,nvidia.com,linux.com,vger.kernel.org,suse.de,gmail.com,marvell.com,amazon.com,solarflare.com,broadcom.com,canonical.com,redhat.com,weissschuh.net,networkplumber.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8S1pNuwrKQcjGCnD"
+Content-Disposition: inline
+In-Reply-To: <20241121115201.2191-1-quic_jseerapu@quicinc.com>
+X-Cookie: Fortune favors the lucky.
 
-Hi Leon,
 
-On Wed, 13 Nov 2024 14:59:58 +0200, Leon Romanovsky wrote:
-> --- a/drivers/pci/vpd.c
-> +++ b/drivers/pci/vpd.c
-> @@ -332,6 +332,14 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
->  	if (!pdev->vpd.cap)
->  		return 0;
->  
-> +	/*
-> +	 * Mellanox devices have implementation that allows VPD read by
-> +	 * unprivileged users, so just add needed bits to allow read.
-> +	 */
-> +	WARN_ON_ONCE(a->attr.mode != 0600);
-> +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
-> +		return a->attr.mode + 0044;
+--8S1pNuwrKQcjGCnD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-When manipulating bitfields, | is preferred. This would make the
-operation safe regardless of the initial value, so you can even get rid
-of the WARN_ON_ONCE() above.
+On Thu, Nov 21, 2024 at 05:22:00PM +0530, Jyothi Kumar Seerapu wrote:
+> The DMA TRE(Transfer ring element) buffer contains the DMA
+> buffer address. Accessing data from this address can cause
+> significant delays in SPI transfers, which can be mitigated to
+> some extent by utilizing immediate DMA support.
 
-> +
->  	return a->attr.mode;
->  }
->  
+Please don't send cover letters for single patches, if there is anything
+that needs saying put it in the changelog of the patch or after the ---
+if it's administrative stuff.  This reduces mail volume and ensures that=20
+any important information is recorded in the changelog rather than being
+lost.=20
 
--- 
-Jean Delvare
-SUSE L3 Support
+--8S1pNuwrKQcjGCnD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc/IUQACgkQJNaLcl1U
+h9DqdAf/YMnZEQeC93n9uvgxN5KbXCZMOWabzwsVIZcBggeh7+ifqfXS5cRGJPFD
+F+ioaVQo6LiIXPwQw3RxS7YK+EWMNv8yj5zCFk/cCumH7dhj7v8GanKeLI6ICcLL
+qeHK2XYf+IBmA+J0g1GQ2LaucI8a2oIUlmEilsuJJS5nPjrnI2g0HPriZ+NsXkFq
+wP4hGjtRIS1N3ThG1rTaAZVJISW6lPAVoObL681KDYMlfG+rST4iVrtiaewguOAT
+yjkFhXpt8c5S41bWD4Mh0Smlf7Md41aSy5PRVTWEAeZ5sk7cBgwbFGfsCyXISHPc
+JvLLgikUwlb6Dr9akXHHOlQZvrRw4Q==
+=eMYP
+-----END PGP SIGNATURE-----
+
+--8S1pNuwrKQcjGCnD--
 
