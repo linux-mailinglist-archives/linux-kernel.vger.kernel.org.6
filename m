@@ -1,193 +1,159 @@
-Return-Path: <linux-kernel+bounces-417036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF8E9D4E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:51:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92FF49D4E23
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D13A1F22679
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51CFB282AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBB91D86CB;
-	Thu, 21 Nov 2024 13:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C211D88DD;
+	Thu, 21 Nov 2024 13:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDXgzCby"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CP6QsN20"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A6A1C7B99
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933151B0F0C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197064; cv=none; b=V2oqSWscAfQm/BAsi2HbPOZs5sfcyoZQ1dhEadJ7GRBdETvUGLdKbIFoyFaM073R5ykQOSSK31YJgvyW8ppGdH36gubXoj+6T9qRqr1t41WbE593M/kmlpQ8iRaV0uAxPJ3oQLySC4DSfMeDBvrySilfqqa+BWZABUT0aKR7I3A=
+	t=1732197217; cv=none; b=V5OeGkIVfYIQELXtWIopFZXe+adHG3rmkl6tNY2ZbjAZLfU3vd3ROandD5+0iQPkP1wokYdxomy7w150L3dm7reBppwBw9jTZ9Qx0IZGqL8HR/O0+XfCU7bPs7//iHYpLCrgn8o/qWCz2cl8bIewrzziRDUveQBoc5L7Gk4BntU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197064; c=relaxed/simple;
-	bh=4d40igTiPLwx48bZDZOhhhi9XJf/WmCL9uv24wl5Ujs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SYYD5LZ1bACL3GoBxRwwN+zQ4aCYPcvppVAjTR+CaNNpnGEZ7Ngu7DlM/FFF5iWLQ3lXIZ9mTEpCbt7mc7PyrFr7jBzIi5EXqghp4YOpsek4ltNMAObcZXYYReCFPYygvJ3lACBOkHd/CMqAyfRR69/Qb+AjcrzyWF+gM8fvfZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDXgzCby; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732197062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WAsLa1es1p3tVD2xuZw9teX+HJV0RZHqbPvj3c6eKSE=;
-	b=VDXgzCby1+xBR1fY+Z9sPwTPv1bN6sPgNm0DaEGMH2eBgLYDqWO62EVEvFdrJ9QPzhxzSQ
-	Z7rbjiQ6ZOPEynwv9YNLerLF8AcUsYrKlawp5J74+GRiod5bx7xsV7UzuIh5eC4q0FdAEv
-	EIgKbbEmlvkuDcITZF7vpn92k0qk3gk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-157-Hj7sGrkDOE6PISk1-KDr8Q-1; Thu, 21 Nov 2024 08:51:00 -0500
-X-MC-Unique: Hj7sGrkDOE6PISk1-KDr8Q-1
-X-Mimecast-MFC-AGG-ID: Hj7sGrkDOE6PISk1-KDr8Q
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4316655b2f1so6197825e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:51:00 -0800 (PST)
+	s=arc-20240116; t=1732197217; c=relaxed/simple;
+	bh=r6MspEvresOTn3QxXgxDqAj09zu2cS0aBe2ZP+i59J0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHESE228RGj64XRPV9MM2ncz88WRX0R9i+ONYBMfbqu3O+NW6ixZP2p6cPCXUmfHA2+WJB+QWDl3ZjlBXNJDyl+Vc6dppr6uFpmOr8F/t5YKG3675iTOrEQg3T/0hlEyV81mPAcLDXGz7lB7w9Qzohcn4g8Dl+vifEqOGgu0ULs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CP6QsN20; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b13fe8f4d0so53253185a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:53:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1732197214; x=1732802014; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A4uQC+61RQiOUY1Dl95bxhptVZ9V560RrMjbg6Uiw7E=;
+        b=CP6QsN20xGYCOUBiBfPxodSVTpO0Hl2JvaHTqr6Xx1mxxOIs/VCF8NuJnZzc2foJfq
+         C5EQmU6NKnq0s4KuU8Xdyjt06mnM9P4oHzAUe8N76aAk/uGTUIGgKjxVYS3fo8r7K9kp
+         574kaK/3U+mPnZp0di90iKE/Bxw4VaxItKXu7zPGVIRtVC6m4qibIGCDZKQhl0mUoeIH
+         8aSFbjNnrgrNhGlNQ+a/vD7UUuw8JqTF0TtzmxIWqN2o0V7dgGtKbrRmKeQZbaVhTBuK
+         KmcqB4Ntp/oMt/2IHSRlcd49r78eQF8ZhQCCcNCDZpmuG0V44Q39mBGQp8f2jbOc7CK0
+         8MOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197059; x=1732801859;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WAsLa1es1p3tVD2xuZw9teX+HJV0RZHqbPvj3c6eKSE=;
-        b=WkWaMsOiXXMdUgrTLp5bgi/APL/dJrV4JB+2voekvmBQp2v1h5AKWlOW+Cx4+egAKq
-         eOI53i64i3NuKKLp2INbNc6Gb1qeX6UGCNVq24fvpR+leLOLI3hdZaRubL3jhg1FnChT
-         fhMJVeKKPUhDEEggV5nlxC2mNcs1bXltoi4PCExDoY5keHmOKOJnOVHOzSdLYzJmYzaH
-         u8iS/eqtUFBpsd6DpiJ78GqmbOnb+nFCGEFU7dOff02pUerdiVu9sLERK7sdHVz36eTH
-         JQhCyD6XhCO4L9Rdnx6fBPUoE3hKNukWvvarTqocW85Q9nr2vCotQDbQ/RkOJvvgYWK3
-         2M7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWG7Bp0y80yasFycP01ZWJUaS4iXLJqcEsi3vqAO7rGG4TupMOODALXzBXW6t0+ISo5I8NyPZiQecx13Tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2zA+z0HWKHKglepMWAnRtOK6E7qhQgzvckj8i3eD82Lf6+/oZ
-	uCn1zfhJTl3o1mQetiHY3ZMZz4kncUWKiVX9ugK7sOieH7gXSdcud3Fhu+Fz9DrEtCExgI/xVpH
-	xQd3qg9vHpE7NtMW4d1Aa3zGhqFMvuzGcmfXN14GU5mfeKYSJdBKfYlveyP0zVQ==
-X-Gm-Gg: ASbGnctznmllvenDEivVeGjck8XL6FJDNb1Q9AFRarTF0CzQWGUg77uN03q5BDaVYhN
-	mc1m8cZGA6QHGDk4Gi6UCTgGY0kn6NxgUvRSS/xp8R34PpjELkS1iihvXzG3pIfBolLdAIqDxA2
-	ieA9xdXhwbdYqprWuXs70w0uCEUmv4dwt4a+Xqnr3Mv43CqSLTf6phMi3MUg4nxgR/hPXZ3gzPd
-	v9K8ym6HigGzGvll4v7tzxgWVx9MCOTFvYzt8TkQaOrU6vZlK7rAeVJwTkc1xmTW67TzGhUn+d5
-	0gpjz1ZhWuqXejkOXYEUUyDpwKyChFhiv0LHapxmSomt5DHX8nOeqFijrnnSUouEX5kr4X10ywg
-	=
-X-Received: by 2002:a05:6000:1ac8:b0:382:4503:728a with SMTP id ffacd0b85a97d-38254b20a01mr6145071f8f.53.1732197059624;
-        Thu, 21 Nov 2024 05:50:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGSw+20gWEiAkvgehCCjoS5ixieY+L2WLbKow5IUX9mwzcqyh+s8ZyTE30Q7sOmQlFHcyhrlA==
-X-Received: by 2002:a05:6000:1ac8:b0:382:4503:728a with SMTP id ffacd0b85a97d-38254b20a01mr6145054f8f.53.1732197059312;
-        Thu, 21 Nov 2024 05:50:59 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933d52sm5232332f8f.80.2024.11.21.05.50.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 05:50:58 -0800 (PST)
-Message-ID: <25ead85f-2716-4362-8fb5-3422699e308c@redhat.com>
-Date: Thu, 21 Nov 2024 14:50:57 +0100
+        d=1e100.net; s=20230601; t=1732197214; x=1732802014;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4uQC+61RQiOUY1Dl95bxhptVZ9V560RrMjbg6Uiw7E=;
+        b=V0k2CbHgizwj7H69r8XcQjlbPv+BuN6pkmnF3++rezdDfjG4WVU2ELNZ5HxjepMM/v
+         MD9Mg/c/NTOQ0N3tI2FedP1hqPB42TunwfbRDxLcFSQY442MeVNlnfXur3tlxtqWS5mo
+         dEEWgSnemO9j2/rnwL2mqX2COj/8PsK9Vq5VMTb/n1aggTjbMFY5sK+rQ9RGWO6p2FBi
+         cAGFQrMg/A+2fcjz9/tbtslKIm9owDMYKgHFCEr/OCQ7Weuj8OO8c+0EYVh6BGVXhxM/
+         ENWicqNdXLIgdsvxqsTLcVmz4QpOHKjGxpbyorGtWiCcYc8ow1vJf6i9wPyw+39Imwza
+         AAyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhtvnyRbVa61+QW08hl3viCDlO/fcKR/CQhXc2S2k/7dwalRmEDIjDJDrkP61u8V3KK1T8Gk34cN91ywY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKbcI7c4bi6/nf1Kf94+MSoroelfMz3xKDdOkbCSQf9vPdZCH0
+	rdR2R4iThmGa8qNhJerD9OMasbPwWFp6+loUtSyAflAUCsz+xP/dMZBF30v2NqyWPfJbJ6JyiZn
+	4
+X-Gm-Gg: ASbGncu26R8FFGzieHHuFR6FXxQTZU/J5iQ4+afXDC95prCoVYdlNgY0xmAou98fi9F
+	0Zve69JBxRa7jJm6zq4q01YntyU/0YE5NHo0NF/LKvxoRyh+aeFrm7v5L2oCAV12Hqy0vw304zT
+	nNdd7GfhFa2iqzKORK3dLBoRPGvma5w2D3kUUF7/R22eMHhv0lNtKdMqJ4LK3O9qssuAkQM5hDi
+	NOdmo6KLEcQFYKNp5uZu/5Ua7d/0micCWe7PrXErSvC/xbKeD/wj1H4j45Yb8xRz69g16nXbzOQ
+	wmXRtFRuwAkHooQ6lx2rCsQ=
+X-Google-Smtp-Source: AGHT+IHDmI9hye5XOi6YSrGUXA+r63Ly14kAASwQM2O8Pu1R5EQHAMNGo2bLTDb9eyt1MuS1FkFoHQ==
+X-Received: by 2002:a05:620a:4042:b0:7b1:48ff:6b48 with SMTP id af79cd13be357-7b42edbe9e0mr773356585a.14.1732197214343;
+        Thu, 21 Nov 2024 05:53:34 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b485226511sm211401085a.90.2024.11.21.05.53.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 05:53:33 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tE7cj-00000003msa-01KT;
+	Thu, 21 Nov 2024 09:53:33 -0400
+Date: Thu, 21 Nov 2024 09:53:32 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Zelong Yue <yuezelong@bytedance.com>
+Cc: leon@kernel.org, linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] RDMA/core: Fix IPv6 loopback dst MAC address lookup logic
+Message-ID: <20241121135332.GB773835@ziepe.ca>
+References: <20241110123532.37831-1-yuezelong@bytedance.com>
+ <b044faad-1e3f-4c65-b2e6-fc418aebd22e@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use
- find_vma() correctly
-From: David Hildenbrand <david@redhat.com>
-To: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org
-Cc: dave@stgolabs.net, willy@infradead.org, Liam.Howlett@oracle.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-References: <20241121124113.66166-1-aha310510@gmail.com>
- <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b044faad-1e3f-4c65-b2e6-fc418aebd22e@bytedance.com>
 
-On 21.11.24 14:44, David Hildenbrand wrote:
-> On 21.11.24 13:41, Jeongjun Park wrote:
->> vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
->> the returned pointer without any verification, even though it may return NULL.
->> In this case, NULL pointer dereference may occur, so to prevent this,
->> vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
->>
->> Cc: <stable@vger.kernel.org>
->> Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
+On Thu, Nov 21, 2024 at 05:22:36PM +0800, Zelong Yue wrote:
+> Gently ping. Do I need to provide more detailed information on how to
+> reproduce the issue?
 > 
-> If that's an issue, wouldn't it have predated that commit?
-> 
-> struct vm_area_struct *next = vma->vm_next;
-> unsigned long nstart = next->vm_start;
-> 
-> Would have also assumed that there is a next VMA that can be
-> dereferenced, no?
-> 
+> On 11/10/24 8:35 PM, yuezelong wrote:
+> > Imagine we have two RNICs on a single machine, named eth1 and eth2, with
+> > 
+> > - IPv4 addresses: 192.168.1.2, 192.168.1.3
+> > - IPv6 addresses (scope global): fdbd::beef:2, fdbd::beef:3
+> > - MAC addresses: 11:11:11:11:11:02, 11:11:11:11:11:03,
+> > 
+> > they all connnected to a gateway with MAC address 22:22:22:22:22:02.
+> > 
+> > If we want to setup connections between these two RNICs, with RC QP, we
+> > would go through `rdma_resolve_ip` for looking up dst MAC addresses. The
+> > procedure it's the same as using command
+> > 
+> > `ip route get dst_addr from src_addr oif src_dev`
+> > 
+> > In IPv4 scenario, you would likely get
+> > 
+> > ```
+> > $ ip route get 192.168.1.2 from 192.168.1.3 oif eth2
+> > 
+> > 192.168.1.2 from 192.168.1.3 via 192.168.1.1 dev eth2 ...
+> > ```
+> > 
+> > Looks reasonable as it would go through the gateway.
+> > 
+> > But in IPv6 scenario, you would likely get
+> > 
+> > ```
+> > $ ip route get fdbd::beef:2 from fdbd::beef:3 oif eth2
+> > 
+> > local fdbd::beef:2 from fdbd::beed:3 dev lo table local proto kernel src fdbd::beef:2 metric 0 pref medium
+> > ```
+> > 
+> > This would lead to the RDMA route lookup procedure filling the dst MAC
+> > address with src net device's MAC address (11:11:11:11:11:03),  but
+> > filling the dst IP address with dst net device's IPv6 address
+> > (fdbd::beef:2), src net device would drop this packet, and we would fail
+> > to setup the connection.
+> > 
+> > To make setting up loopback connections like this possible, we need to
+> > send packets to the gateway and let the gateway send it back (actually,
+> > the IPv4 lookup result would lead to this, so there is no problem in IPv4
+> > scenario), so we need to adjust current lookup procedure, if we find out
+> > the src device and dst device is on the same machine (same namespace),
+> > we need to send the packets to the gateway instead of the src device
+> > itself.
 
-And looking into the details, we only assume that there is a next VMA if 
-we are explicitly told to by the caller of vma_adjust_trans_huge() using 
-"adjust_next".
+We can't just override the routing like this, if you want that kind of
+routing you need to setup the routing table to deliver it. For ipv4
+these configurations almost always come with policy routing
+configurations that avoid returning lo as a route. I assume ipv6 is
+the same.
 
-There is only one such caller, 
-vma_merge_existing_range()->commit_merge() where we set adj_start -> 
-"adjust_next" where we seem to have a guarantee that there is a next VMA.
+I'm not sure why your ipv4 example doesn't use lo either, by default
+it should have. It suggests to me there is alread some routing
+overrides present.
 
-So I don't think there is an issue here (although the code does look 
-confusing ...).
-
-Not sure, though, if a
-
-if (WARN_ON_ONCE(!next))
-	return;
-
-would be reasonable.
-
--- 
-Cheers,
-
-David / dhildenb
-
+Jason
 
