@@ -1,95 +1,125 @@
-Return-Path: <linux-kernel+bounces-417120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2599D4F41
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:56:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BFF9D4F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:56:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63E591F2153A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CFC1F2287F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F661DE891;
-	Thu, 21 Nov 2024 14:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FD71DDA2F;
+	Thu, 21 Nov 2024 14:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ifi4ZNoh"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YqnH8PRG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67471DE4FE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA161DD87D
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732200717; cv=none; b=rlyt6eNzqk2+8NtGh5CW2eph51xuCU6NFjQ1aOV9UeiXzVXdObjRHPsOzlEKrbEbZQ9t3vSwsXKecB2s9lgIgraeF8Q78XaYit2dkQU1HxJH0/23JrwPqBkVfOYi/cVP5S6rFMFrvFODD/xQ4fG8uyiTh0HZYh7KzD2RLgu1QFE=
+	t=1732200801; cv=none; b=f3DklZYyblkXYWHz+eoJsRj/py+379X8U3iSlu2V4QMimWRQj4v1CNUP/i40WB0nT4V5+ZBKlIBJJiDwH6ZfhNawDQopjpFiZBxWIBKAWfy4AtKrjOMded3OtE6Uz9WmTYxx3mQiHpjZnNvW//fWguFw5RaSNAICrJ5KGTMl0Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732200717; c=relaxed/simple;
-	bh=L70ih0b5CGIYxQxsmUvq4AV/q7xqEhUmZA/jzOP0hCM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dKMZ6nsCTlt+T5qP/sZZDvGs+1+1FFnKM9nzGqov5jdzwEcH2RaFZeyv0n6GM64+M0/pjBcrR2p6sY9wqzWdzHE8IvVdjfu++llLoxQ4gRNoY9M3bBJjAafkGayt/wJ5Ih+Q6VtW1GNmsNRFGi16wHCqBTph9vXRkk4RfKSW2CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ifi4ZNoh; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 21D37FF809;
-	Thu, 21 Nov 2024 14:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732200714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L70ih0b5CGIYxQxsmUvq4AV/q7xqEhUmZA/jzOP0hCM=;
-	b=Ifi4ZNohp5429Hhl6OSzm3pxgOJVPc4rEMMeytYsEMwjgUIR5PUzdEcPXTCnGcAmASqpxv
-	Z3hdqsRr6daakAMQGVDu4bCuK1c2+U68Nolg07pU4x1x7qP4SKUwUoXqx6G+JGT6OeOMug
-	T4bWxbFJIw93ti+/UQjcxjcTZyg+WEBkUQbE+hTMZb2V08bTsCuMQ5kIq57IaZR+/rm3vD
-	L7G9ek1h84LmjvWdc0dez6LxDNivrXf0ucNtyBPIBNPZGd3nKZ+vUNPWGmns8G5KuJkgCr
-	MckBL+M0S4OWh/A2s7DPRSXRj3wCdtD4cPhkCZ/bx/XjgLStgEXoPqnHLO6qBA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Bastien Curutchet <bastien.curutchet@bootlin.com>,  Santosh Shilimkar
- <ssantosh@kernel.org>,  Richard Weinberger <richard@nod.at>,  Vignesh
- Raghavendra <vigneshr@ti.com>,  linux-kernel@vger.kernel.org,
-  linux-mtd@lists.infradead.org,  Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>,  Herve Codina <herve.codina@bootlin.com>,
-  Christopher Cordahi <christophercordahi@nanometrics.ca>
-Subject: Re: [PATCH v4 00/10] Implement setup_interface() in the DaVinci
- NAND controller
-In-Reply-To: <72a0e0a5-c44c-4e92-9f91-e200900e3eed@kernel.org> (Krzysztof
-	Kozlowski's message of "Thu, 21 Nov 2024 11:23:51 +0100")
-References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
-	<72a0e0a5-c44c-4e92-9f91-e200900e3eed@kernel.org>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 21 Nov 2024 15:51:51 +0100
-Message-ID: <87ed34vdvc.fsf@bootlin.com>
+	s=arc-20240116; t=1732200801; c=relaxed/simple;
+	bh=vQjjBK6BgJm1LCyLVxi6jPRZKYDYNzHkgDmoWaypjYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=n9NUg70NZnsgNF/nGQmyZq0PBplvg7XIKC6mhRwLDbJaUE4tUSLn8VZMkP4o2o+mALYDpnOuHYt/Sj4HXODsY11Ix7oQkUupzChc/EE/kH1XZAPlEh5vlzWVSbWXdd6QBKqAijQXYDH/4k4dZVsPcAPew1Z7wWVNvMREXcPwJxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YqnH8PRG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B8A6C4CECC;
+	Thu, 21 Nov 2024 14:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732200800;
+	bh=vQjjBK6BgJm1LCyLVxi6jPRZKYDYNzHkgDmoWaypjYE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YqnH8PRGKmsnJIaoame6duItN0bSytKcgikENbKTFAyLj8VsffUW7RzgsTQwf7sfm
+	 AGfS8pPsuLRw/OCr78z3yKTqTtC8t2hFMJ+hW93RqA5e1nzoaxyMQVtIwu59Mz/7bU
+	 6/i8Nx9h2WuULPXtQMgYZiVdlzflQ1nZm/6aGMX/SFux5QnPajiQWv2USHOm3sqfx+
+	 VNLmJvWEv6InCzaEEEKRQYWijV6PgJRzUu+Ob4lL44JM4TTZgEsIYpdA1oZdRoGNaA
+	 rXL3PEn+qqNxSZeuIvyzo0R7TmGDRV8tzB8sxVtfbZTZPMs76AGu6alRALOPkIg6vh
+	 DU+DNrcUwfyMQ==
+Date: Thu, 21 Nov 2024 06:53:17 -0800
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>, Nir Lichtman <nir@lichtman.org>,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: [GIT PULL] execve updates for v6.13-rc1 (take 2)
+Message-ID: <202411210651.CD8B5A3B98@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello Krzysztof,
+Hi Linus,
 
-On 21/11/2024 at 11:23:51 +01, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+Please pull these execve updates for v6.13-rc1 (take 2). I've dropped
+the argv[0] vs "comm" setting patches. We'll work on the better solution
+for the next merge window.
 
-> On 15/11/2024 14:26, Bastien Curutchet wrote:
->> Hi all,
->>=20
->> This patch series aims to implement the setup_interface() operation in
->> the DaVinci NAND controller to enable the use of all ONFI modes and
->> improve the NAND access speed.
->>=20
->> PATCH 6 depends on PATCH 1-2-3-4-5
->> PATCH 10 depends on PATCH 6-8-9
->
-> That's a bit too many to go via separate tree, so I'll provide them via
-> stable tag to Miquel/MTD.
+Thanks!
 
-Yep, works perfectly for me.
+-Kees
 
-Cheers,
-Miqu=C3=A8l
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.13-rc1-take2
+
+for you to fetch changes up to 45bf05a51842c4c274f94514195c2e99cc1c200c:
+
+  exec: remove legacy custom binfmt modules autoloading (2024-11-21 06:44:02 -0800)
+
+----------------------------------------------------------------
+execve updates for v6.13-rc1 (take2)
+
+- binfmt_misc: Fix comment typos (Christophe JAILLET)
+
+- exec: move empty argv[0] warning closer to actual logic (Nir Lichtman)
+
+- exec: remove legacy custom binfmt modules autoloading (Nir Lichtman)
+
+- coredump: Do not lock when copying "comm"
+
+- MAINTAINERS: add auxvec.h and set myself as maintainer
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      fs: binfmt: Fix a typo
+
+Kees Cook (3):
+      coredump: Do not lock during 'comm' reporting
+      MAINTAINERS: exec: Add auxvec.h UAPI
+      MAINTAINERS: exec: Mark Kees as maintainer
+
+Nir Lichtman (1):
+      exec: remove legacy custom binfmt modules autoloading
+
+Tycho Andersen (1):
+      selftests/exec: add a test for execveat()'s comm
+
+nir@lichtman.org (1):
+      exec: move warning of null argv to be next to the relevant code
+
+ MAINTAINERS                             |  3 +-
+ fs/binfmt_misc.c                        |  2 +-
+ fs/exec.c                               | 22 ++--------
+ include/linux/coredump.h                |  4 +-
+ tools/testing/selftests/exec/execveat.c | 77 +++++++++++++++++++++++++++++++--
+ 5 files changed, 83 insertions(+), 25 deletions(-)
+
+-- 
+Kees Cook
 
