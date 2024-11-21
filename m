@@ -1,114 +1,176 @@
-Return-Path: <linux-kernel+bounces-417065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342A49D4E7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:17:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0819D4E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E2EB25CAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:17:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A923C1F2591A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8AB41D89FE;
-	Thu, 21 Nov 2024 14:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884C31D89E2;
+	Thu, 21 Nov 2024 14:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnHV29lO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="sbpl/LPi"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14621CD1EE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D9D1369B4;
+	Thu, 21 Nov 2024 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198589; cv=none; b=YJ3fwKHM8fr/ZVs0yJAL15pwwgGoctnix3bod1nTd8qjr085zqnM5aSjUE55FkGLekOoMGENdLGUve0DUv/ZNjvr4PPBXNGCMrw4jf/83R4qs/Y8gNSNOFb+CFph+xGmdW2hS1SfmUWTIXsAfYMH6hJalGvDeavjxF8Au+G9/hQ=
+	t=1732198851; cv=none; b=fK3wRagZK836HDreDuS4oB7k7Ew+c/X6ggfUlQ/23KStMqV3+CiAkPTBVgk/TTZVBrisZ1JjvOmE0h/wStk2Erx21KnGAzDa069PsdkiAMqTYt1CnhofsbkBqU8o8YNoW/OkyDv0G/OvFs6BRq5cAd9WZUZ5UFQqD+3lQf2/0ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198589; c=relaxed/simple;
-	bh=Zf0ckhvMDzyegzJkvpWfNHi1jR+3a6yBisD5pHDxhoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kpoEhcqKr0nNbcRM7fqfL+BJi28EpTJtK1xPR/JeYA4shIH1dmtcJYgVvBLykZoCmum4pmr614omJ3/PVedyVvFwiXbhm7JUfhgrCqSL12AATT6hnMUXlagoLQh6yfBCSC4asAd2g3qiQqkvSI7tgeuZcCxnKQ9K71GoSJ5SKHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnHV29lO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732198588; x=1763734588;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Zf0ckhvMDzyegzJkvpWfNHi1jR+3a6yBisD5pHDxhoQ=;
-  b=QnHV29lOo2DwE5KS80c0zPC2AQ3FJeQ6q0tY/yp2rlsqzQoZWC8KnTFt
-   v1xEpthRemYr6DDak0J1ykPCj3pUGjpEu+2HgAbdTfnvoly3SptleNTUE
-   q4liReKNCf7dUuI6XZKzWHW3411ei7D+lndtayxDb9472COE6T7heD/J3
-   P4oYSfafk7Dwz5/qbPJGUNRVilJi8c/mToDv1pa8SydiVMtMkzEegoDKi
-   RnFCsz/dT9j4ASoFW7hCELKHctRQn6uh0b8h5Ur7T6XCEPl9ZPvGDi+PC
-   fcAttVUlM4zuwHdb06rWYksSezvAtCEPIzOkhc59BmkDMY2o6MMMot8Vu
-   Q==;
-X-CSE-ConnectionGUID: UtBPxUhaT52i77pBI8ZURA==
-X-CSE-MsgGUID: 8mYZnK+lQS+BscMMQDdncA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43707502"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="43707502"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:16:27 -0800
-X-CSE-ConnectionGUID: RG/0PXksS8iaVe+KoV/OYQ==
-X-CSE-MsgGUID: GULi1l89RdmpX9kQbRWt+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="89867856"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:16:26 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tE7yq-0000000H5L8-0pAz;
-	Thu, 21 Nov 2024 16:16:24 +0200
-Date: Thu, 21 Nov 2024 16:16:23 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Marco Elver <elver@google.com>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v1 1/1] kcsan: debugfs: Use krealloc_array() to replace
- krealloc()
-Message-ID: <Zz9AtzWWXW_mgjR6@smile.fi.intel.com>
-References: <20241121135834.103015-1-andriy.shevchenko@linux.intel.com>
- <CANpmjNNzFykVmjM+P_1JWc=39cf7LPuYsp0ds0_HQBCzR+xOvQ@mail.gmail.com>
- <CANpmjNO8CRXPxBDFVa5XLYpPuU8Zof=7uvUam9ZFVPP9j8+TEQ@mail.gmail.com>
+	s=arc-20240116; t=1732198851; c=relaxed/simple;
+	bh=TMcvAxcUInwde+Vl6F4hkgr/2nSkXZTrn99Ur+TK0Uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GdPRubK6hrgkmWmjUnkrdayocvzo5ImAlLr7uR2+qffvO9tJDGa1mdi5Encou7VcdKP7DpCfBbjuxKv27lgSfW4H6Oj+4NRpVZk8uBOdkfflWUj2UF0A/Q+L8GaTI/P01qc8tZ/CuRZ9paDpqgRmhUUmts9mTboPfirpR3p7gqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=sbpl/LPi; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALA95BP028349;
+	Thu, 21 Nov 2024 15:20:18 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	JAlbkjqBlD0R3FSv5bX889vfuMU5j/rR8gfcpzLu/u0=; b=sbpl/LPiBr3D4gPg
+	/K8PcSO2DSu650saG5zzqbJeDCpFlqysf98wDAZP5pxSfKeqK14PEK7ZkP778mtM
+	NWHfndCwMrgNgej4wfQ4OzKyNmITFvbKSu6Fb3bbnexoFvZb1ZXi2uPz4/S7XGrb
+	zZMFOA6Friu12I7rzLjB8rUDO1m9SRGrmJWkaxJm2W1dU5fdpYlITvCEX7id04F4
+	ccW6yQkfDlbYzacvJvVmbiKajZrhaHpKPwrWND5BAyI5CMxsFgz4nyTgFqBlhL/9
+	CJV1BvgvvvPzrlJFqdmN96OxBN4ICUnYFHuslXTafavZiU1h+y6JCgiSmR0dVLP7
+	VsBwxQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xkqf713x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 15:20:18 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 86B6340046;
+	Thu, 21 Nov 2024 15:18:33 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5C0A828D457;
+	Thu, 21 Nov 2024 15:16:43 +0100 (CET)
+Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 21 Nov
+ 2024 15:16:42 +0100
+Message-ID: <86907cc9-5339-435a-a346-08beea21b886@foss.st.com>
+Date: Thu, 21 Nov 2024 15:16:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNO8CRXPxBDFVa5XLYpPuU8Zof=7uvUam9ZFVPP9j8+TEQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/3] Add WebP support to hantro decoder
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ezequiel Garcia
+	<ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Sebastian Fricke
+	<sebastian.fricke@collabora.com>,
+        Ricardo Ribalda <ribalda@chromium.org>,
+        Erling Ljunggren <hljunggr@cisco.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+        Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+        Benjamin
+ Gaignard <benjamin.gaignard@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20241121131904.261230-1-hugues.fruchet@foss.st.com>
+Content-Language: en-US
+From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
+In-Reply-To: <20241121131904.261230-1-hugues.fruchet@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Thu, Nov 21, 2024 at 03:11:41PM +0100, Marco Elver wrote:
-> On Thu, 21 Nov 2024 at 15:04, Marco Elver <elver@google.com> wrote:
-> > On Thu, 21 Nov 2024 at 14:58, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > Use krealloc_array() to replace krealloc() with multiplication.
-> > > krealloc_array() has multiply overflow check, which will be safer.
-> > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > Reviewed-by: Marco Elver <elver@google.com>
+Hi all,
+
+The corresponding GStreamer code has been pushed here (v4l2slwebpdec):
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7939
+
+BR,
+Hugues.
+
+On 11/21/24 14:19, Hugues Fruchet wrote:
+> Add WebP image decoding support to stateless V4L2 VP8 decoder.
 > 
-> Unreview.
+> This have been tested on STM32MP257-EV board using GStreamer.
 > 
-> > Do you have a tree to take this through? Otherwise I'll take it.
+> Simple basic test:
+> $> wget https://www.gstatic.com/webp/gallery/1.webp
+> $> gst-launch-1.0 filesrc location= 1.webp ! typefind ! v4l2slwebpdec ! imagefreeze num-buffers=20 ! waylandsink fullscreen=true
 > 
-> Whoops. We got rid of that krealloc() in 59458fa4ddb4 ("kcsan: Turn
-> report_filterlist_lock into a raw_spinlock"). And the replacement
-> kmalloc() is already a kmalloc_array(). I suppose this patch is
-> therefore obsolete.
-
-Ah, I made this on top of v6.12 + something most likely unrelated.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> Slideshow of a set of WebP pictures and WebM video files:
+> $> wget https://www.gstatic.com/webp/gallery/2.webp
+> $> wget https://www.gstatic.com/webp/gallery/3.webp
+> $> wget https://www.gstatic.com/webp/gallery/4.webp
+> $> wget https://www.gstatic.com/webp/gallery/5.webp
+> $> wget https://samplemedia.linaro.org/VP8/big_buck_bunny_480p_VP8_VORBIS_25fps_1900K_short.WebM
+> $> gst-play-1.0 *.webp *.webm *.WebM --wait-on-eos
+> <hit key ">" to display next file >
+> 
+> Large WebP image > 16777215 (size > 2^24)
+> $> gst-launch-1.0 fakesrc num-buffers=1 format=4 do-timestamp=true filltype=3 sizetype=2 sizemax=25165824 blocksize=25165824 ! video/x-raw, format=I420, width=4096, height=3072, framerate=1/1 ! webpenc quality=100 ! filesink location=4096x3072_HQ_random.webp
+> $> ls -l 4096x3072_HQ_random.webp
+> [...] 16877404 Nov 20 11:40 4096x3072_HQ_random.webp
+> $> gst-launch-1.0 filesrc location= 4096x3072_HQ_random.webp blocksize=16876610 ! image/webp, width=1, height=1, framerate=0/1 ! v4l2slwebpdec ! imagefreeze num-buffers=20 ! waylandsink fullscreen=true
+> 
+> Large WebP image decoding using post-processor is untested because of lack
+> of hardware support on this platform, nevertheless support is provided in
+> this serie for further testing on another platform having post-processor
+> support.
+> 
+> ===========
+> = history =
+> ===========
+> version 3:
+>     - Fix remarks from Nicolas Dufresne:
+>      - Document constraint about key frame only for WebP
+>      - Fix rebase issue
+>     - Fix typo detected by Diederik de Haas
+> 
+> version 2:
+>     - Fix remarks from Nicolas Dufresne:
+>      - Use bytesperline helper to compute chroma size
+>      - Introduce a new explicit WEBP frame compressed format
+>        instead of relying on VP8 + WebP flag
+>      - 4K support in both decoder and post-proc
+> 
+> version 1:
+>    - Initial submission
+> 
+> Hugues Fruchet (3):
+>    media: uapi: add WebP uAPI
+>    media: verisilicon: add WebP decoding support
+>    media: verisilicon: postproc: 4K support
+> 
+>   .../userspace-api/media/v4l/biblio.rst          |  9 +++++++++
+>   .../media/v4l/pixfmt-compressed.rst             | 17 +++++++++++++++++
+>   drivers/media/platform/verisilicon/hantro.h     |  2 ++
+>   .../media/platform/verisilicon/hantro_g1_regs.h |  3 ++-
+>   .../platform/verisilicon/hantro_g1_vp8_dec.c    | 14 ++++++++++++++
+>   .../platform/verisilicon/hantro_postproc.c      |  6 +++++-
+>   .../media/platform/verisilicon/hantro_v4l2.c    |  2 ++
+>   .../platform/verisilicon/stm32mp25_vpu_hw.c     | 17 +++++++++++++++--
+>   drivers/media/v4l2-core/v4l2-ioctl.c            |  1 +
+>   include/uapi/linux/videodev2.h                  |  1 +
+>   10 files changed, 68 insertions(+), 4 deletions(-)
+> 
 
