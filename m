@@ -1,200 +1,249 @@
-Return-Path: <linux-kernel+bounces-416540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0C9D4692
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:16:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47DF09D45D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD541F2186B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:16:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDFCC283B10
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C113C3D6;
-	Thu, 21 Nov 2024 04:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wCBSNVwy"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F8713BAE2;
+	Thu, 21 Nov 2024 02:46:30 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD412DD88;
-	Thu, 21 Nov 2024 04:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127F543AA1
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732162596; cv=none; b=W6sP4mYaJ2MuGaSZGpvT5BrZsXITbJnNXD2Y9Tkz/db1OERc3QSHZOh2RjkHfHi40vxC52LNkpcjWDsKSNLgRXMkjnJ21IW60sVJDFDeDcIoZiPUWQrk3fjL1h2E+w3hJNYYX6GeTgP8AnMxg3oTf752iBCSUw0YctBk1rvvzaA=
+	t=1732157189; cv=none; b=KQSLCaKdHXzyk7gW5XbtT/Qv/0ArCOPtJeZXVjMMYGnDhJ8LaZ83W4euDHBByA/21zVc66UUJSdS69p4LmSmye/oTq+Ya5l87ZEA23O/dg3CjI8+2Lfwk9BBHQ+XTd/1GoQvgJaDEClu6caPTsXdcCPZXppmB2L/unpLt+hha4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732162596; c=relaxed/simple;
-	bh=1kB6/fvKOs03QKjHRmLNEhIfZK0odXkAbCqWPjmEIHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cxy60zrZpiFEvykFvmiSxyfNhI3cikS+pR+24MCQN05fB1CytZYNws3nlAhFa1b8T2Q/LGubxG8A5tVmY4RefhzxpudhtH4v8RBqLoZz1Y/ibD7KL1qBnO6Mh7y2OMuatQGKpGymwcdIWGiTR1Vl0EMu3c4mcP8lbXL84zAlhTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wCBSNVwy; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 634C089649;
-	Thu, 21 Nov 2024 05:16:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1732162587;
-	bh=2fodjiAgYPDtTdtLZpHcgtZf3CNy/SOSXhvCQwtxCgw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wCBSNVwyMCtyV+EJz0s8mS+rd+v36qvA6mFZGmMq5phZpHsR8dVcwGXv1+Rb9y2at
-	 vsjlPVwrsU5S4f4P5xYBBa5K0xb+uVxFaxY7j/z/l1UpozYFVIqww/Udrm5fpNjGT/
-	 LbUI5mQUyf6oWpXEpUbfI2rEWAl3jIx6jj1pSecUModI1Te5cxyi0666k4EfbEdKsA
-	 KPriDe1TbHoQXl52Y/tIL/T5YMdrjSuQAZir/s1AX/Jg+yTV3aAHfGwikJ3zcX2RAq
-	 Vr5rmPHGPGtbL4MU9z4M22mTSqhbimd8GZkUQxOTzmD53oJgF6xTxjvAcB6aM3CuRO
-	 tWMS71DS4zVPw==
-Message-ID: <c5ab63da-21ec-4c0d-8ecc-3745943d806f@denx.de>
-Date: Thu, 21 Nov 2024 03:45:57 +0100
+	s=arc-20240116; t=1732157189; c=relaxed/simple;
+	bh=QIE3RsZU6Ofg43CF+68PquFTXyvarykYKBh/yCUbkyw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KkKVs0TsDQCJ5NxdQAvhUEMeA1enwLqASJrcfVON3dUm4JZn1KVN5j2NnoA7RlGU5V8342UIzF3O7F1BH3kiWjv9iP98BWz1NLawV8jSUXe1mF0NNwtxAS5DgboXgcgWIQ6p2weFiMqrBFikP5a2E5yCkbhK+O6ST3iGL2PZmo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so49782739f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:46:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732157187; x=1732761987;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4cWV0TB3RbAdwpZhe94gjfFz4YWvUifGVnrDyaH+TfM=;
+        b=Nfe/7s36+f8VBCKzSKq0+S89sc7RkWlAcis45dL7s7uCLfGrv/N1Rcnk89HKCCGeTR
+         lBq4BOuDTTqRPTYG9+ya4kLDivGXIZkyj8SjB+OvjJxPXXqp7X0jVAl3e43ZG1Xbhnbq
+         207Fg0id7mW5uES2oqkbjHD4uyzMEr3RZw4njAo0DNGB7xdA2X0eGhq0NuOdRhVjIKCs
+         BrZ/QUWpd9nbCopS6DVQIuciU46/3vdcbzQFIy96fWcXKKE7m8zH2C6sKpXHfj96o+1P
+         sWfuF+z6JwA0ACIUXJxe6hUTUEYClyXBpTm4OKGDF7XOvKx/9uinYOTtbixX6E1WkvH/
+         zvXA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3xwCA81gTGepaiYuC0qSoUxI08s+ZrRGdvrjgBBoN+2/yKvmZrQJ0F9VornZwkV0K+IwnN+UhSBmLN/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz20kvkblBv270WjTQHHIPIN4YaAAuKhY/YGLAXPgkRlprZIhl6
+	YbiDjOu48iAcr/wpMxvfsvtIE5tr1+Sk+/JCvaVglBljmklXApW9wijNuQieW0KinzBO5L0GfHT
+	fwMvsaUKVTVk07gq9HqSI/tcFJB6LjEisqEyOXV2UxQDfCrTHI9FdR4M=
+X-Google-Smtp-Source: AGHT+IFQGh1oVRrx1tklJQMMYS2fod8ToZ3fhlNnKer7zGFxS1mMCVmTap/8Hbu74PikTeQUfn/Ni7rfK3H56QI7b029QSCxTSu2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
- pixel clock reconfigure parent rate"
-To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
- <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "rfoss@kernel.org" <rfoss@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- "jonas@kwiboo.se" <jonas@kwiboo.se>,
- "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "nfraprado@collabora.com" <nfraprado@collabora.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Miquel Raynal <miquel.raynal@bootlin.com>
-References: <20241114065759.3341908-1-victor.liu@nxp.com>
- <20241114065759.3341908-3-victor.liu@nxp.com>
- <df6ebdde-65f8-4aad-93c7-b1df695bd2ef@denx.de>
- <AM7PR04MB7046546A882A8D48E135D84698272@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <8a4fd234-4c7b-4a04-990d-3222aaa5172d@denx.de>
- <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
- <83be0a27-6b6c-4ba6-b9dc-f914a10abace@denx.de>
- <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-Received: by 2002:a05:6e02:18cf:b0:3a7:7558:a6ea with SMTP id
+ e9e14a558f8ab-3a786486002mr65427875ab.10.1732157187082; Wed, 20 Nov 2024
+ 18:46:27 -0800 (PST)
+Date: Wed, 20 Nov 2024 18:46:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673e9f03.050a0220.363a1b.0081.GAE@google.com>
+Subject: [syzbot] [netfilter?] KASAN: slab-out-of-bounds Read in led_tg_check
+From: syzbot <syzbot+6c8215822f35fdb35667@syzkaller.appspotmail.com>
+To: coreteam@netfilter.org, davem@davemloft.net, edumazet@google.com, 
+	fw@strlen.de, horms@kernel.org, kadlec@netfilter.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/20/24 7:38 AM, Ying Liu wrote:
+Hello,
 
-[...]
+syzbot found the following issue on:
 
->>> If the DP monitors support typical video modes like 1080p60 with
->>> 148.5MHz pixel clock rate, I assume these typical video modes work
->>> still ok with this patch at least.  Please help confirm this, since if the
->>> alternative solution(*) doesn't stand, we would know those video
->>> modes still work ok with my solution(fixed PLL rate).
->>
->> They do not work with the fixed PLL setting.
-> 
-> Why?  Did you assign a sensible fixed PLL rate in DT?
+HEAD commit:    38f83a57aa8e Merge branch 'virtio-net-support-af_xdp-zero-..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13f19378580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e6d63a300b6a84a4
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c8215822f35fdb35667
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169dd2c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=130552e8580000
 
-Whatever was in imx8mp.dtsi does not really work for all the panels.
-Please keep in mind that the use case I have does not include only 
-1920x1080 "standard" panels, but also other resolutions.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a7abf65d2870/disk-38f83a57.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2958de0862bb/vmlinux-38f83a57.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/404efcb8d16f/bzImage-38f83a57.xz
 
-> Can you please compare clk_summary output for the failing cases
-> before and after this patch is applied? I assume that if you use
-> the fixed PLL rate same to the rate which works before this patch is
-> applied, the typical video modes still just work after this patch is
-> applied.
+The issue was bisected to:
 
-I'm afraid I do not need to support only typical video modes, but also 
-the other "atypical" modes.
+commit 6001a930ce0378b62210d4f83583fc88a903d89d
+Author: Pablo Neira Ayuso <pablo@netfilter.org>
+Date:   Mon Feb 15 11:28:07 2021 +0000
 
-[...]
+    netfilter: nftables: introduce table ownership
 
->> One really nasty way I can think of is -- use find_node_by_compatible(),
->> look up all the relevant DT nodes, parse their clock properties, and
->> check whether they all point to the Video PLL or not.
-> 
-> That's nasty.  It looks even more nasty when considering the fact that
-> i.MX93 LCDIF is also driven by imx-lcdif DRM while only i.MX8MP LCDIF
-> needs the nasty check, because i.MX93 SoC embeds only one LCDIF.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172932e8580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14a932e8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a932e8580000
 
-The check can be skipped based on compatible string.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6c8215822f35fdb35667@syzkaller.appspotmail.com
+Fixes: 6001a930ce03 ("netfilter: nftables: introduce table ownership")
 
-I agree it is nasty, but it is a start. Are there better ideas ?
+==================================================================
+BUG: KASAN: slab-out-of-bounds in strlen+0x58/0x70 lib/string.c:402
+Read of size 1 at addr ffff8881422aa1c8 by task syz-executor355/5842
 
->> Maybe the clock subsystem has a better way, like list "neighbor"
->> consumers of some specific parent clock or something like that.
-> 
-> What will imx-lcdif DRM look like by using this way? Get the ancestor PLL
-> clock of pixel clock(media_disp{1,2}_pix_root_clk), list all child clocks
-> (media_disp1_pix and/or media_disp2_pix + other possible clocks) of the
-> PLL clock in a string array and find media_disp1_pix + media_disp2_pix
-> in it?
-> 
-> Doesn't look nice, either.
+CPU: 1 UID: 0 PID: 5842 Comm: syz-executor355 Not tainted 6.12.0-rc7-syzkaller-01681-g38f83a57aa8e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ strlen+0x58/0x70 lib/string.c:402
+ kstrdup+0x20/0x80 mm/util.c:63
+ led_tg_check+0x18b/0x3c0 net/netfilter/xt_LED.c:115
+ xt_check_target+0x3b9/0xa40 net/netfilter/x_tables.c:1038
+ nft_target_init+0x82d/0xc30 net/netfilter/nft_compat.c:267
+ nf_tables_newexpr net/netfilter/nf_tables_api.c:3444 [inline]
+ nf_tables_newrule+0x185e/0x2980 net/netfilter/nf_tables_api.c:4272
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:524 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
+ nfnetlink_rcv+0x14e3/0x2ab0 net/netfilter/nfnetlink.c:665
+ netlink_unicast_kernel net/netlink/af_netlink.c:1316 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1342
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1886
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2609
+ ___sys_sendmsg net/socket.c:2663 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2692
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f56d8509729
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc32fd10f8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007ffc32fd12c8 RCX: 00007f56d8509729
+RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 00007f56d857c610 R08: 0000000000000011 R09: 00007ffc32fd12c8
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc32fd12b8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
 
-One other option came to my mind -- place a virtual clock between the 
-Video PLL and consumers (LCDIF1/2/LDB), and then have the virtual clock 
-driver do the clock rate negotiation in some .round_rate callback. That 
-is also nasty, but it is another idea. If there is a clock specifically 
-implemented to negotiate best upstream clock rate for all of its 
-consumers, and it is aware of the consumer behavior details and 
-requirements, maybe that could work ?
+Allocated by task 5842:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ nf_tables_newrule+0x1609/0x2980 net/netfilter/nf_tables_api.c:4254
+ nfnetlink_rcv_batch net/netfilter/nfnetlink.c:524 [inline]
+ nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
+ nfnetlink_rcv+0x14e3/0x2ab0 net/netfilter/nfnetlink.c:665
+ netlink_unicast_kernel net/netlink/af_netlink.c:1316 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1342
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1886
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2609
+ ___sys_sendmsg net/socket.c:2663 [inline]
+ __sys_sendmsg+0x292/0x380 net/socket.c:2692
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
->> [...]
->>
->>>> Can something like (*) above be implemented instead, so both Shared
->> and
->>>> separate PLLs would be supported ? That should solve both of our use
->>>> cases, right ?
->>>
->>> I don't see any clear way to implement something like(*).
->>>
->>> Take the 3 i.MX8MP LCDIFs as one graphic card driven by one imx-lcdif
->>> DRM instance?  Would it be too intrusive?
->>
->> Yes, and I think unnecessary, one can simply traverse and parse the DT
->> to determine the clock assignment?
-> 
-> Yes, people can traverse and parse DT, but it's nasty.
-> 
-> In addition, one may argue that now that CLK_SET_RATE_PARENT flag
-> is set for the pixel clocks, all potential video modes read from EDID
-> should be supported when only either LVDS display pipeline or MIPI DSI
-> display pipeline is active in the shared PLL case.  This requires one
-> single DRM instance to detect single or dual active display pipelines
-> dynamically, hence this single DRM instance becomes necessary.
+The buggy address belongs to the object at ffff8881422aa180
+ which belongs to the cache kmalloc-cg-96 of size 96
+The buggy address is located 0 bytes to the right of
+ allocated 72-byte region [ffff8881422aa180, ffff8881422aa1c8)
 
-Would single virtual clock which do the frequency negotiation between 
-multiple DRM consumers work too ?
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1422aa
+flags: 0x57ff00000000000(node=1|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 057ff00000000000 ffff88801ac4d640 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 2682440014, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4750
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ __register_sysctl_table+0x65/0x1550 fs/proc/proc_sysctl.c:1368
+ net_sysctl_init+0x20/0x90 net/sysctl_net.c:103
+ sock_init+0x6b/0x1c0 net/socket.c:3293
+ do_one_initcall+0x248/0x880 init/main.c:1269
+ do_initcall_level+0x157/0x210 init/main.c:1331
+ do_initcalls+0x3f/0x80 init/main.c:1347
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+page_owner free stack trace missing
 
-I do not have much to add to the points below.
+Memory state around the buggy address:
+ ffff8881422aa080: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+ ffff8881422aa100: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+>ffff8881422aa180: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+                                              ^
+ ffff8881422aa200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8881422aa280: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
