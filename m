@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-416443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B87129D44D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:10:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439B99D44D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5614EB227EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E415B1F222F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA394C66;
-	Thu, 21 Nov 2024 00:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4251BF58;
+	Thu, 21 Nov 2024 00:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OZZKXe1w"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MgTLeOZ1"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2365E63A9;
-	Thu, 21 Nov 2024 00:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA04846C;
+	Thu, 21 Nov 2024 00:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732147834; cv=none; b=DuKyNNfUN4OmNCyZwGX+Nh+jNDJd5sm1zgnS6FriRq64RkzwPQcaWSe3KBGser32ymdiIJcgrv6vQQI9QwS9w3vti3jXIIgflyVaIUAi2/5vjjF08R5Aq1hRGLarB383gCHZmJig812C6Qu0O/6+XQnm8q6Y8VOPNmtu6xdwICY=
+	t=1732147837; cv=none; b=XVLahBy2ka2kfcaLWIkFRcO9NVAQ5mZPcoemPJw7mGN/qUaCfZoB0Mp7ETz2bB45MIQQKvV+fXOMIZCJRv8MNT2nqW9JIpkWwRanWY0kYg9ahSrEEb/aJd9PXE4mm1q0lSg/dhSnfyMMLUH9HJwBfir7G0eNcXcu71nqsOQoru0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732147834; c=relaxed/simple;
-	bh=52vl+/hj+YqKACiJKGmD1zj236nSYaUQRdFwvrJZXHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hAVnNNtGNaankCKqOGK6z5kx+jWpxaL2JhqFYhZ8bFKaSqdtwQlOajab77wDltib7GXDpwMAcuHPUngI4jeD1a4a/A+IhdFSKL1D9ZHQEBml5ttJjSrmfsFwTOustO5LRz0nKVkwhDlGrRskVm83UjHwVP/GMRPXK833eNexX7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OZZKXe1w; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2eacc4c9164so332125a91.0;
-        Wed, 20 Nov 2024 16:10:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732147832; x=1732752632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Io1oydagJA/XDlS4jBwlR6rqktOSTtIcBlfECrFRe4=;
-        b=OZZKXe1wo4K9LLfF9WNfF/I+rYavYbLWlhlIOVicX8wqSoG3X7ZMvt1rNn8ujD5Bg7
-         zC0AQNkKq9ztjEWW+kSgY9nyJLvzaJd2NC1BBkneYwc/iPj1IiMlAZJ4GGL6S0nts1NR
-         aXXO0eAdDF9BHG2z6ny/cYiCdnvPKVDa7aMWQziVBZtZNqOXOh/X82yyxbgYEBpR1oiA
-         BpMSNkWz/4PHzecmnMCR0dra2UsABps/GkHaZfPCCNeIsvX3ZaBrqQY4xUhdPff7/oLa
-         om00cRd8jFtQrNepYAIpxVEmGi6exCp3kpxHmpACHGFyD/s6TOjNSw2b/ELGGF+TuYzv
-         F7kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732147832; x=1732752632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Io1oydagJA/XDlS4jBwlR6rqktOSTtIcBlfECrFRe4=;
-        b=JGFi8vSJI6/KCweln94F+ksyfTgGpQPObSBgiB/yrmJbpRDPcVNWGVGwnyYZ/RAePI
-         xHoGWZNkSAy8NhXXcOOkYP0u8n7Vi8ErBAXHZNRWFydtTBCBCsY3h5Nn6VKwEe3xNaSQ
-         6ITJ6rBqNvfxAlhmIwkKAdb9PKY53ttkHwCXEecq+JqM/Sw47wvGUCLiAso4ejU1wmhb
-         e5sJdpevXOFlPLKBexOMKWvQM2VDExxnCBvUx0QcAKTxAP05piOjF3KBLsCXqVh+suC1
-         rOGXQJW4LWzpE0zENN6mCLo2ZeWHYXnYa/rVQb1uKm4GZUcRRzmoOsD4GKraVb3fxap6
-         Ky1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHHr4aBgYfdLNcaYYyFgwUJ/4aHznO+u4AfUo5QANYuetzrUUPZ3i+xqyCLq2sWDYVITvU9X+45eXhvnb@vger.kernel.org, AJvYcCWQ2NWSngIV9ymS+6pTfeJ8sHnpd2r7yCSENUhipUHF+jSR/ILWxo4UfIKLFDr+P8lFiwUDapOywjKpJuWwpJGKnmVg@vger.kernel.org, AJvYcCWj2beuX+CQSo9LzyhqcpsMza1kOVxh56G090fuorS/xq4xDi/7aY7ZKPTa5AAF9bUXlpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRqsXXwvoU/kxHJzlUbla+UUbdqIGUJSIvahz/PGddkG32IL0g
-	xG3qG9C5W9bR6zT8ZCLM5GYI44snzW0jeF8Uzl2vFCDz1RQ+l17yGcyohM7IPnpMDEBcOKvrDgV
-	x/f9Vc5fgcEf3cRdom87G+EnleOk=
-X-Gm-Gg: ASbGncvcjEcOKeRIDn3rpy46LKYbQbmnFv4Rj857M3X8nX/QOUEmhMLdP4Uj7KYajmD
-	6SzzMzvATWo8ZpG+IsUk9/Y8w791HtvDcBhkFbJ9u9JtaMOk=
-X-Google-Smtp-Source: AGHT+IEKO0ZnRsai5bDHwR4ClElexQx5+ms8gESZvc4s0aQnDFQKAJ35jYk1jcGtFIyBjVmkB9iGLiNA6jfsozRefeA=
-X-Received: by 2002:a17:90b:4d0a:b0:2ea:94a1:f653 with SMTP id
- 98e67ed59e1d1-2eaca7ddfd1mr5197536a91.31.1732147832197; Wed, 20 Nov 2024
- 16:10:32 -0800 (PST)
+	s=arc-20240116; t=1732147837; c=relaxed/simple;
+	bh=ib64hTV/S9sfhLEnicNuXT07IKzScNUMPYYtcgzyQbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VMH7XCrMfxRVszyce/ZoE19nI4QGh5nX7dp8UgBB3/VrjwDcX3V+XPI1GCmZi2tk/DsrECsl9WWACxjRNTrHU/XfoHlHGQ4AyBmjNDwtcEQQyw6CWqProJBBJtcUmLySD+S1TqTxU1QcB6ylbd6l6peZazyiPey6lIQGkCl7JlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MgTLeOZ1; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 19:10:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732147833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BvGUvvPHTEAKOGb7P1+ozrjOYaiPmM61awo8yb0kUNQ=;
+	b=MgTLeOZ1bUIQKcLSwzg9uruYdttWJBlwp+C6jyewYEuqOyMv5gbq0l6qVvO3fFDfJCR1Gc
+	R0aLrn08Z/EtKE7Vpn8PLyc47HfCrMCcgWJA3gFWmN7IN4T2yBRNccOQsLtPxhgyVJfWE6
+	nHQagbk95P0kS4ON7fKgRqJ93Lsopxg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Michal Hocko <mhocko@suse.com>, 
+	Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <3ij22qnqpndxyckrdreswyxjaan3zudzdkv62vjeeytsep5bmz@5el2tljyx7wc>
+References: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-6-jolsa@kernel.org>
- <CAEf4BzYycU7_8uNgi9XrnnPSAvP7iyWwNA7cHu0aLTcAUxsBFA@mail.gmail.com>
- <ZzkSOhQIMg_lzwiT@krava> <CAEf4BzYBRtK-U_SLY-qYDGf2pc4YzBOeKgyjFbzv-EHXrdNANg@mail.gmail.com>
- <ZzyrQWLrPYzUqLGq@krava>
-In-Reply-To: <ZzyrQWLrPYzUqLGq@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 20 Nov 2024 16:10:20 -0800
-Message-ID: <CAEf4BzYN4LzOFqFKQTGiN8H6ANqY0cpA5LgEfnBGx+EMWy=K8g@mail.gmail.com>
-Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe trampolines
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120234759.GA3707860@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Nov 19, 2024 at 7:14=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Mon, Nov 18, 2024 at 10:05:41PM -0800, Andrii Nakryiko wrote:
-> > On Sat, Nov 16, 2024 at 1:44=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> =
-wrote:
-> > >
-> > > On Thu, Nov 14, 2024 at 03:44:14PM -0800, Andrii Nakryiko wrote:
-> > > > On Tue, Nov 5, 2024 at 5:35=E2=80=AFAM Jiri Olsa <jolsa@kernel.org>=
- wrote:
-> > > > >
-> > > > > Adding interface to add special mapping for user space page that =
-will be
-> > > > > used as place holder for uprobe trampoline in following changes.
-> > > > >
-> > > > > The get_tramp_area(vaddr) function either finds 'callable' page o=
-r create
-> > > > > new one.  The 'callable' means it's reachable by call instruction=
- (from
-> > > > > vaddr argument) and is decided by each arch via new arch_uprobe_i=
-s_callable
-> > > > > function.
-> > > > >
-> > > > > The put_tramp_area function either drops refcount or destroys the=
- special
-> > > > > mapping and all the maps are clean up when the process goes down.
-> > > > >
-> > > > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > > > > ---
-> > > > >  include/linux/uprobes.h |  12 ++++
-> > > > >  kernel/events/uprobes.c | 141 ++++++++++++++++++++++++++++++++++=
-++++++
-> > > > >  kernel/fork.c           |   2 +
-> > > > >  3 files changed, 155 insertions(+)
-> > > > >
-> > > > > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> > > > > index be306028ed59..222d8e82cee2 100644
-> > > > > --- a/include/linux/uprobes.h
-> > > > > +++ b/include/linux/uprobes.h
-> > > > > @@ -172,6 +172,15 @@ struct xol_area;
-> > > > >
-> > > > >  struct uprobes_state {
-> > > > >         struct xol_area         *xol_area;
-> > > > > +       struct hlist_head       tramp_head;
-> > > > > +       struct mutex            tramp_mutex;
-> > > > > +};
-> > > > > +
-> > > > > +struct tramp_area {
-> > > > > +       unsigned long           vaddr;
-> > > > > +       struct page             *page;
-> > > > > +       struct hlist_node       node;
-> > > > > +       refcount_t              ref;
-> > > >
-> > > > nit: any reason we are unnecessarily trying to save 4 bytes on
-> > > > refcount (and we don't actually, due to padding)
-> > >
-> > > hum, I'm not sure what you mean.. what's the alternative?
-> >
-> > atomic64_t ?
->
-> hum, just because we have extra 4 bytes padding? we use refcount_t
-> on other places so seems like better fit to me
+On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+> On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+> > Shuah, would you be willing to entertain the notion of modifying your...
+> 
+> Kent, I'd like to gently remind you that Shuah is not speaking in her
+> personal capacity, but as a representative of the Code of Conduct
+> Committee[1], as she has noted in her signature.  The Code of Conduct
+> Committee is appointed by, and reports to, the TAB[2], which is an
+> elected body composed of kernel developers and maintainers.
+> 
+> [1] https://www.kernel.org/code-of-conduct.html
+> [2] https://www.kernel.org/doc/html/latest/process/code-of-conduct-interpretation.html
+> 
+> Speaking purely in a personal capacity, and not as a member of the TAB
+> (although I do serve as vice-chair of that body) I am extremely
+> grateful of the work of Shuah and her colleages (listed in [1]).  I
+> believe that their work is important in terms of establishing guard
+> rails regarding the minimum standards of behavior in our community.
+> 
+> If you look at the git history of the kernel sources, you will see
+> that a large number of your fellow maintainers assented to this
+> approach --- for example by providing their Acked-by in commit
+> 1279dbeed36f ("Code of Conduct Interpretation: Add document explaining
+> how the Code of Conduct is to be interpreted").
 
-My (minor) concern was that tramp_area is a very long-living object
-that can be shared across huge amounts of uprobes, and 2 billion
-uprobes is a lot, but still a number that one can, practically
-speaking, reach (with enough effort). And so skimping on refcount to
-save 4 bytes for something that we have one or two per *some*
-processes seemed (and still seems) like wrong savings to pursue.
+And Ted, I don't think you realize just how at my limit I am here with
+what I'm willing to put up with.
 
->
-> jirka
+I'm coming off of, what, 6+ months of getting roasted and having my work
+quested by Linus every pull request (and he did stop that, but not
+before it had done real damage, both completely changing the tone of
+public conversations and nearly scaring off people I've been trying to
+hire).
+
+It's gotten harder and harder, not easier, for me to get work done in
+other parts of the kernel; I gave up long ago in the block layer after
+the two people in charge there had repeatedly introduced silent data
+corruption bugs into core block layer code that I'd written, without
+CCing me, which I then had to debug, which they then ignored or put up
+ridiculous fights over when reported, and now have turned petty on
+subsequent block layer patches.
+
+Filesystem people have been good to work with, thank god, but now
+getting anything done in mm is looking like more and more of what the
+block layer has turned into.
+
+And you guys, because the system works for you, keep saying "nah,
+everything is fine and this has already been decided, you don't get any
+say".
+
+Meanwhile, I'm seeing more and more heisenbugs in the rest of the kernel
+as I'm stabilizing bcachefs, and my users are reporting the same - in
+compaction, in the block layer, now in the scheduler or locking, I'm not
+sure on the last one.
+
+And I'm sitting here wondering how the hell I'm supposed to debug my own
+code when I don't even have a stable base to work on anymore.
+
+This is turning into an utter farce.
 
