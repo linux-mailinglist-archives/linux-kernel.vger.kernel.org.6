@@ -1,226 +1,198 @@
-Return-Path: <linux-kernel+bounces-417428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760C99D53F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:24:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C0B9D53FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B09FB230ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E019B1F227F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95041CB9F4;
-	Thu, 21 Nov 2024 20:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F351DA2F1;
+	Thu, 21 Nov 2024 20:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Jv/WT8Pv"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E+qGCi6h"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A14E1BF58;
-	Thu, 21 Nov 2024 20:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732220667; cv=fail; b=p9dRBZKwj0ylw5EbJYQZkFomB4rH7IoDu1QJCBsaxXtBoUeGzzDvoBQSX4g8xHFhmylMtzVk7hgQ1f+6Ai6ygOIAOY5eYSzKLz77TU8Lvk0gwzVej/xY05AgIrI5IfXc13TAGQgNC+A3yM2mAaWSDo0H7i4hM1TmB5XJlqET8vE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732220667; c=relaxed/simple;
-	bh=X5GV0FILgsWrVLRyU8JTmAcoAjCMlFjLZ1inUOO75Ec=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=U1vsKhrqOjQHysJBa1I76lTFo/LRygiXrO1ouCjPbvHwtYnedD7o6yN6uLRASfWiTISL+ZH10t1qWKsZLYy3pQDj936TJD6wDgcrcafnW/9Yc755gG1kD/gqqQcU5QfCPYLMfXyjbULv57qPOPcmZpOVAezoPzH+4HJSYam5SUI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Jv/WT8Pv; arc=fail smtp.client-ip=40.107.220.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZNXd5KM/1y8O9D45aShR+QKasejm/88R+3blmmVU6s/zv3gTteSgadcE1MD2GFxPd4zWFa6bFVa1wgBVf70i28Qw5GRqfp9qLmUD6KDYnuDtajB9KoO1wDzm8VqPLybK4N8Q43Qm4SkPet7MUo8r5lVUSNDnVBefoZkoIk3+fmxcOBbsgbGlBxdrFA6X3fc8CGAWjU++kBHTR+16F9HGwRZZa2T5TFF0WqzTi9j87SZ/5ErZhws84lgCL9ESI5MAJQAJc/2/1tXS920vjYt/nsCDIY7B/slj3KYwPXI5qxQ+PJULEVAep60rXDEiL/yvmPCvOjZduuM+nALdMkvIcA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xvRO5oFy2/gjeCekXRje7OtYGK0H+hcV5HVLjhlAPYo=;
- b=F9kVQlUybZZWrjXWAHWGMhZ9cDeKwi1t297QFpK3dCUzEKkbpu7HRDVOwXV9nUWa7PukmrYiuPxg25ud5awMedox5+BDB2CMHIULoHjkXyj3XpukkeIB4KaROD93srJDk2gOwEgqZZS/rFufcU629H8kANj6Jf3NztCKnmwbn7hWVLf0ceVPboOpqBiapqaLM+ng74gLepGwjhtb91Ctrmf6UvGN9dlDqMSL1WjGs90Q9UTjeUWdyzKdaU+ZNvgOYXsnwwpwxft3u1ofBCxynOsHPhACoixyRSp/xi48viG/KJAnLEjGTatE516jPIoh6MMcTl2SS/oart44B3yNzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xvRO5oFy2/gjeCekXRje7OtYGK0H+hcV5HVLjhlAPYo=;
- b=Jv/WT8PvuyJSoR1j4wRw/CmHqyES8iNyaqOZtfiCprkP97dP/4p/qa3lnzTOVfNeWxMUC/8SV2TFeQ2EMO/XyBK9OU2L2AHV0gOPjgqX0p26K17AV4e1vj/bCuvVOp1HhraxQiMVLmWdwpQJ/G5li5qaRdzyIq07TH77y3DDdK8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
- MN6PR12MB8471.namprd12.prod.outlook.com (2603:10b6:208:473::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.14; Thu, 21 Nov
- 2024 20:24:22 +0000
-Received: from DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
- ([fe80::38ec:7496:1a35:599f%3]) with mapi id 15.20.8158.023; Thu, 21 Nov 2024
- 20:24:22 +0000
-Message-ID: <c7c9d417-5c32-4354-825e-58f736726114@amd.com>
-Date: Thu, 21 Nov 2024 14:24:17 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/15] PCI/AER: Change AER driver to read UCE fatal
- status for all CXL PCIe port devices
-To: Lukas Wunner <lukas@wunner.de>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
- dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
- alison.schofield@intel.com, vishal.l.verma@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
- ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
- rrichter@amd.com, nathan.fontenot@amd.com,
- Smita.KoralahalliChannabasappa@amd.com,
- Shuai Xue <xueshuai@linux.alibaba.com>, Keith Busch <kbusch@kernel.org>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
- <20241113215429.3177981-7-terry.bowman@amd.com> <ZzcVzpCXk2IpR7U3@wunner.de>
-Content-Language: en-US
-From: "Bowman, Terry" <terry.bowman@amd.com>
-In-Reply-To: <ZzcVzpCXk2IpR7U3@wunner.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0149.namprd13.prod.outlook.com
- (2603:10b6:806:27::34) To DS0PR12MB6390.namprd12.prod.outlook.com
- (2603:10b6:8:ce::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D81BF58;
+	Thu, 21 Nov 2024 20:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732220717; cv=none; b=RkwBtGpeyvI24yqnVzmsDB6ZcSwl8K2swhWt5I0w9t2oLm0qw+uGtYn73LZEnAx0FX5hQHUWDFcZD3LDE2JRu+/BMtqPE7RVCSxk8AQnPrK3/iuNok6lBy5jU044HjBWjCOruLw59DznXimrF6V8Et7qENf1ouCHaBriaTwNx1w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732220717; c=relaxed/simple;
+	bh=xt/N1u7xQDP3nA0PEqU+LzyDhnsawogKcVfQNRe9l4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WYkp2iqHioGreijgFzWKaG+CVRmLk31nTPLer00QIa+49x0dXxnzmtMuhuSXMJoBk7jo7iP1N5hcZXJICFeijctnDySLCoW9VL9AGy10MfVlHt16tLT8rUKVetfwwEV5HJ3B3EdHtTxsk3BMSw2fMmv6sRHOrEizkx2omBQytKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E+qGCi6h; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALH7B7C015590;
+	Thu, 21 Nov 2024 20:24:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xt/N1u7xQDP3nA0PEqU+LzyDhnsawogKcVfQNRe9l4s=; b=E+qGCi6hCsvn9XAL
+	RCJDDuwVGYHi4vOG4kOhtX3FVFQvm3WGpZTf8BLzXF7uPla8i9Oxef8F63heXXnZ
+	cUUQ+fOy8VTsMfbQuU2LmEJy9T7va/7o3Q8SFCn2t1CE8gi/2s3xzmiAS8j0gUP/
+	XjrNwS+GPR7//F9SXMaf3OvVt/44LoW7ROyGnvsIYcueT+s7VCcNT84eeFMX4awS
+	vTpMFeSPJZjVEwe/BgBUUrfkxCjxdp3QTu/6ju/SpzPALE5DQlC0nZrmOtAP9aiQ
+	iREOo/p/kg/O4U8n+0zEeoiu9d8FmaIR+leSPGXZ8Qfzl9ipnTs4KdxiKk3S4XRj
+	wIUrXA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9j1jt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 20:24:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALKOtkf018777
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 20:24:55 GMT
+Received: from [10.71.112.120] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 12:24:54 -0800
+Message-ID: <c30b77dc-0a34-4ea7-a4c0-37a5d3065ee7@quicinc.com>
+Date: Thu, 21 Nov 2024 12:24:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|MN6PR12MB8471:EE_
-X-MS-Office365-Filtering-Correlation-Id: bcfa8787-ebaf-4857-3922-08dd0a6a7c11
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T0pZcmhFanZwYlhQSlE0ekVZcHA4K1Z5WTl0bmNFamRZSHozVGxXZUdRRVlz?=
- =?utf-8?B?RjZGSnh6NUZFQ2J6SVcrTWl2Sk5SU2I3R3Y0THZmZVFCWnVwZzIxSDQzYk1i?=
- =?utf-8?B?NTZHNUZQM2ZTbVRtS1JuWWlTU2hhMSs1b3dGMDBrMlBhcURmZTgveVNiWWdm?=
- =?utf-8?B?U0hIVE4wZFY0QkloWHBpaEZUM29ENFVvRWIvMU9RaWZ2QU5xalF4d3MyVFh5?=
- =?utf-8?B?dFZKZFdLeGtxZTd2b2JQOFhMQmdYYlZ5bFdBR1FNOUtFNnJad2cxaGxrTFNq?=
- =?utf-8?B?ejZHbEVHdDJ1Ri9SSDRuV3k0Yk9VZ2M0N05aRXFWaG5OT3ZrUmc0eno0Rng2?=
- =?utf-8?B?L3RHWHQ3WERDY1BKWHVpRyt2SlQ4SWpzWndZNFdiZmpmVTJYK2lNeDkyM0Ni?=
- =?utf-8?B?T0Z1eGx6NE1LV0RadFRkOTZreE1ERzh5ckViWmFxd3o5SEV5aWlQa1hrUEtU?=
- =?utf-8?B?R2dVaE9pamUwTWdZOUEwbUF6WjFtNkM3d0dic1NZdHpWTUxPOG1NaG5oa01W?=
- =?utf-8?B?azhicENMaDRndUpnZSt4SVltdU9KTklxRVdwRUw3cHp2WWplcU5MQXlpTUVU?=
- =?utf-8?B?MGJiVlRLa0JaSVNPWUl5dWJLcGZMdWwrZ2hJb1FsRVJBSThKSjZueVoxRzlD?=
- =?utf-8?B?ay9ra0xWek43WHlXczVLVVZrOHNxQXNrQWcwTTU1Q2R6TjFMaC9LU1RSMEdM?=
- =?utf-8?B?ZjJOa1g5MjA5bjBtbnJVdjhDY05La2VHNDNLWStVMmh3MnB4b1RmOXNXQ2JE?=
- =?utf-8?B?TmgvczhBTldKbWZOZ0lIRmVSK2JJd01lcmhVa1hEVHRaSlNkRVpCUm5YRkpH?=
- =?utf-8?B?SWhLWUhYd2h0bVBuU09rZ3kzUjRSWDB4ejBWaGlRbEE4bTVPYnBqbWFmVkhP?=
- =?utf-8?B?KzhqdGxGbHlGWlkyazhQUVJBMWRWbEdZVFNPSzE1emYzNGNxVHdPS2p6MThq?=
- =?utf-8?B?dXE3MDB2VEs1VDY5cVd2RWd0UzBBUXNOZTR6KzlVdUdtc1puelhtTnNtb0tz?=
- =?utf-8?B?WjdLcXdMVzBSTWhqYitRb3FkeHlEaFJpSkowR0VRcGEwRkFram5UdWF0WVhO?=
- =?utf-8?B?em9id0ZDMDVoRWJOSTJMRkIwNzE5R2tEbFpXMWY2WndzNjNXclR0bzR6OFdI?=
- =?utf-8?B?WHZyc1NDRmhBcUgyanVnclF2MmxOTWwxTzc3TXp0T3ZqTTV3VVk5M1E5R0N5?=
- =?utf-8?B?cWJMTjdabCthOVl6ZDM1ZG1mME1LVVl3SWhycHdxTUFvMytKMnVONjYwd2Nt?=
- =?utf-8?B?Nnh2M2ZHUGlWMHpLeEJNN01haGw3VDlMaU4zQkQ3ZWNITjBJeW0yckxya1JK?=
- =?utf-8?B?d0NudWRpd2V1WVNhTkJNdGtYd0VxWlFyZ3J0eTlQZDZwQW84Vldqc3pFc3gw?=
- =?utf-8?B?YWM3ZEo1UWZ3N0ZlYWpBaWMwQ1NLU0dnQXo2bTdpK1B0UTNKZHRsVVkzMzgv?=
- =?utf-8?B?UlgrR1g4NEpZRUFIcjJqcU1jRktuUGl4TjIyck9iSU9takRZOXd5aWNLNWVF?=
- =?utf-8?B?RnJPMFNUbG00NHdrWk5iUmZTQmsrNlNMc3ZPRmpLMGRSNEl0L2lUN1RQdkZ6?=
- =?utf-8?B?ZkpUKzBXcUwwT3Y1VVFGeFptUG85cFlHZTlRbC9Ddk03Uk9HNmR4N1RidWFo?=
- =?utf-8?B?WFpnQWYwdk52dWw2R3E5WDhMZUp4Z0dCaHhuL0NPMmJRZ3ZzV1JMbFhyQ0I4?=
- =?utf-8?Q?hjR32TAkn5dErOtWLe5p?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bjNsYkNBRElHTzBiLzQ2MkhhSmFCRUE1ejVIa2JZWU8yekVTdU02WUZlQW9V?=
- =?utf-8?B?WStJWmNZUVJtTGdKdGw3WU41QnB3M0g4eDJSTU5waWEyWnZIVFBzQVM1SER6?=
- =?utf-8?B?S1ZaL09MdjVtSExnYWxLM2NOTmJrS1doM3ZVZlRENWFkWklDODlZNXJaMTZh?=
- =?utf-8?B?ZkloRmpIMGI3WG9IMXpHYTBEQmdUeW51Y0x5V0NqODA3TThKTnBSeE9KbVRv?=
- =?utf-8?B?aUk1eDN3eFIzTzlHTW1CUjNXTDMzMjI3OFdWbXl2L0hpcWFKNDduN2tpNG5V?=
- =?utf-8?B?bmN5R2tJak0rNUQxYThjeVFKYmV3R2ZuSC9TV1d4enNTQjZpQjJrMXZxbVhY?=
- =?utf-8?B?clkwcmRkbDBndy9Dcnh1OFJHeGw4V0UvV1pTNHZrZUxYcnE3WjZxWi9rV3pK?=
- =?utf-8?B?NEpyNVAzUlAvd2d1UDNEYVZNUjgvZW5tdUtmN3dVMHJvM1NrT2FJbmlGcC9m?=
- =?utf-8?B?bGVWU2xlMWt6UllwbGdkUnhPZXgyZ3pxQnNHNWZWMWxVZmNjK0NsMndKZkdH?=
- =?utf-8?B?ejdzd3djSVc4RUxFTmxXSGw0dURCaEFndnhvYXZKaXUyWFhEMEczcWVMTEJL?=
- =?utf-8?B?WjhObG1jWkxNMlNKc0M2Q0VFbHpieHZWb0RiTTdnMVZTa3N0Q3ZTQTR2VlVy?=
- =?utf-8?B?bk1CYVBid0pZRTE3VHZLSUhGWFJyajZTS3RiRnBWY1diV3V4eG9sMHNFU0hZ?=
- =?utf-8?B?RzV0dWpkSUFWMzhpbWZjSHZ0WnBVcEFtV216UWZGbTl6UHhuLzFwbmxPNnZm?=
- =?utf-8?B?Qlp3V1JkYnljU2JDdmZvZzBnTGFiUWVHT1dzdFVwVUlBT083VlgrUFg2SXFO?=
- =?utf-8?B?R29CeGVLYktXczJEQnMrZUM3aE5wSllVdllsaDF2YkpyaTA4a1JDWlorRmRQ?=
- =?utf-8?B?YjJOWHdCbHplOGVlWlVFb09CSEI2cnZwcUIra3BNRkxVUDIwQ2Z6VktycnY2?=
- =?utf-8?B?bEtUZUMwWmlqdkVJaDRkNStMemtGOHpKc24wODVjOEdrMnY2YXRNa2ovdGF0?=
- =?utf-8?B?bi9BSUNkdmJBRE9QdkhsY1MyYlZzNEoydFN6M3RsL2Q0ckEvczdRd05pMyt1?=
- =?utf-8?B?OEcrUjBLT3dmU0NUWkJsN2JKYkFOb3RwZWtzQ1JZbkIrY3FqVW1YNXVQNjhp?=
- =?utf-8?B?YzcxSGZLUzhuQ2FFclYyK2RjVlo5VXEvRFBWamlRa2ZjSGthWDdaS2NicmUz?=
- =?utf-8?B?b2VYU3djVEpQb3Fwem9YcHgzVEpsT3hja2xCYWh5Z1ZVdGtLdG5seGdWN0RJ?=
- =?utf-8?B?STd2cWZuN3pXQTBlak11c3A5VjlJdVMyMnNRYlVPc2h3N1ByMjl4OEtScTV4?=
- =?utf-8?B?c0RzM2V0RWhaRmFzSnZMOURGc3hqdU9lM2hxWGdiUXZsbmNLaVdDNXF4eTJF?=
- =?utf-8?B?Z2ZWandnSE8rcWFVNWlQYkdETXNKYUhpdHRJbEU2bGttZFBnUjJrTWRwUTdC?=
- =?utf-8?B?dXhCZjFtOFlxdnF0bmZxWVpuYkNGUmYzMUMxejd5ZjduUWl3TmpwajIwVTdV?=
- =?utf-8?B?aytCY3MwTkNEU1Nsbm04b0p0VkVOR1JKTlJBSU4ydHNrWjFmaEJqRWtzRXh2?=
- =?utf-8?B?Y25WamtnbHhQcUd6bVJRTFB4SWhuT0ZPRTFVNC9yTGlVeGNjenlXVDdyblZq?=
- =?utf-8?B?Z2xpcDFzdUtuOFJEKzEwUjhib0tuQ0trb3ZmMDFMMTFEU0FBTmZKY0JFRHpk?=
- =?utf-8?B?NGZJMm5Gc0oxSWdobFkyYVVUZTNrV3FuY05uKzZLVUN5WW8yZ3RINmJDdEhU?=
- =?utf-8?B?QVVxZnZyVFluSnBtYlQ0QWlwSkd5T1FkZlZZSmV5UVl0ck81SHhrZXBvd280?=
- =?utf-8?B?OHRnN3lxY2p5dVhyYzRXUThTQWNQQ2Y4WDBPdG1BR3VQbVBVcVd1NkJwbFpE?=
- =?utf-8?B?ajc1dEJoUnpJSDRlR1d1cGk1akduYmVsc2VyWVg5aW1iY3VBbHJuV2lHeTRq?=
- =?utf-8?B?RHBUcy9hb0EveW4rYmVVTmhOMlc3aEx0MjBXY1oyK1hxNlpIUjFHbGZnUlR0?=
- =?utf-8?B?RVpJOVFUWjFjaHV4S2dwOGpwekJyM1VFV0NJNFFTT0Vta1R0TVBRZThYS1hO?=
- =?utf-8?B?QUMzakhEd3dDRmR4ajA4OVpuc3pZSmR2Y2ZTNDhHSXFzbkJjSUJPMURMQVhM?=
- =?utf-8?Q?0CdK0IsOiVog7R7xov/ChXFea?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bcfa8787-ebaf-4857-3922-08dd0a6a7c11
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 20:24:22.2646
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aJVUB40CJJtTxVSpSlamJeZYSvM94bJjKseUQ8E7CcVCalr4Egkv3wH7qSbl3Gelzg7zy/pJhHI6DOSsakzMhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8471
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v30 02/30] xhci: sec-intr: add initial api to register a
+ secondary interrupter entity
+To: Mathias Nyman <mathias.nyman@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
+        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
+        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
+        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
+        <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
+ <20241106193413.1730413-3-quic_wcheng@quicinc.com>
+ <9b86a2c9-de7f-46b7-b63d-451ebc9c87dd@linux.intel.com>
+ <2384956c-7aae-4890-8dca-f12e9874709f@quicinc.com>
+ <17890837-f74f-483f-bbfe-658b3e8176d6@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <17890837-f74f-483f-bbfe-658b3e8176d6@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7bB-EHy_Uf1hGCZKbwD638GxX6IKNyiW
+X-Proofpoint-ORIG-GUID: 7bB-EHy_Uf1hGCZKbwD638GxX6IKNyiW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
+ adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411210153
 
+Hi Mathias,
 
-
-On 11/15/2024 3:35 AM, Lukas Wunner wrote:
-> On Wed, Nov 13, 2024 at 03:54:20PM -0600, Terry Bowman wrote:
->> The AER service driver's aer_get_device_error_info() function doesn't read
->> uncorrectable (UCE) fatal error status from PCIe upstream port devices,
->> including CXL upstream switch ports. As a result, fatal errors are not
->> logged or handled as needed for CXL PCIe upstream switch port devices.
+On 11/21/2024 11:15 AM, Mathias Nyman wrote:
+> On 21.11.2024 3.34, Wesley Cheng wrote:
+>> Hi Mathias,
 >>
->> Update the aer_get_device_error_info() function to read the UCE fatal
->> status for all CXL PCIe port devices. Make the change to not affect
->> non-CXL PCIe devices.
+>> On 11/20/2024 6:36 AM, Mathias Nyman wrote:
+>>> On 6.11.2024 21.33, Wesley Cheng wrote:
+>>>> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>>>
+>>>> Introduce XHCI sec intr, which manages the USB endpoints being requested by
+>>>> a client driver.  This is used for when client drivers are attempting to
+>>>> offload USB endpoints to another entity for handling USB transfers.  XHCI
+>>>> sec intr will allow for drivers to fetch the required information about the
+>>>> transfer ring, so the user can submit transfers independently.  Expose the
+>>>> required APIs for drivers to register and request for a USB endpoint and to
+>>>> manage XHCI secondary interrupters.
+>>>>
+>>>> Driver renaming, multiple ring segment page linking, proper endpoint clean
+>>>> up, and allowing module compilation added by Wesley Cheng to complete
+>>>> original concept code by Mathias Nyman.
+>>>>
+>>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>>> Co-developed-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>>>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>>>> ---
+>>>>    drivers/usb/host/Kconfig          |  11 +
+>>>>    drivers/usb/host/Makefile         |   2 +
+>>>>    drivers/usb/host/xhci-sec-intr.c  | 438 ++++++++++++++++++++++++++++++
+>>>>    drivers/usb/host/xhci.h           |   4 +
+>>>>    include/linux/usb/xhci-sec-intr.h |  70 +++++
+>>>>    5 files changed, 525 insertions(+)
+>>>>    create mode 100644 drivers/usb/host/xhci-sec-intr.c
+>>>>    create mode 100644 include/linux/usb/xhci-sec-intr.h
+>>>>
+>>>> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+>>>> index d011d6c753ed..a2d549e3e076 100644
+>>>> --- a/drivers/usb/host/Kconfig
+>>>> +++ b/drivers/usb/host/Kconfig
+>>>> @@ -104,6 +104,17 @@ config USB_XHCI_RZV2M
+>>>>          Say 'Y' to enable the support for the xHCI host controller
+>>>>          found in Renesas RZ/V2M SoC.
+>>>>    +config USB_XHCI_SEC_INTR
+>>>> +    tristate "xHCI support for secondary interrupter management"
+>>>> +    help
+>>>> +      Say 'Y' to enable the support for the xHCI secondary management.
+>>>> +      Provide a mechanism for a sideband datapath for payload associated
+>>>> +      with audio class endpoints. This allows for an audio DSP to use
+>>>> +      xHCI USB endpoints directly, allowing CPU to sleep while playing
+>>>> +      audio.  This is not the same feature as the audio sideband
+>>>> +      capability mentioned within the xHCI specification, and continues
+>>>> +      to utilize main system memory for data transfers.
+>>>
+>>> This same API should be used for the hardware xHCI sideband capability.
+>>> We should add a function that checks which types of xHC sideband capability xHC
+>>> hardware can support, and pick and pass a type to xhci xhci_sec_intr_register()
+>>> when registering a sideband/sec_intr
 >>
->> The fatal error status will be used in future patches implementing
->> CXL PCIe port uncorrectable error handling and logging.
-> [...]
->> --- a/drivers/pci/pcie/aer.c
->> +++ b/drivers/pci/pcie/aer.c
->> @@ -1250,7 +1250,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->>  	} else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->>  		   type == PCI_EXP_TYPE_RC_EC ||
->>  		   type == PCI_EXP_TYPE_DOWNSTREAM ||
->> -		   info->severity == AER_NONFATAL) {
->> +		   info->severity == AER_NONFATAL ||
->> +		   (pcie_is_cxl(dev) && type == PCI_EXP_TYPE_UPSTREAM)) {
->>  
->>  		/* Link is still healthy for IO reads */
->>  		pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
-> Just a heads-up, there's another patch pending by Shuai Xue (+cc)
-> which touches the same code lines.  It re-enables error reporting
-> for PCIe Upstream Ports (as well as Endpoints) under certain
-> conditions:
+>> Just to make sure we're on the same page, when you mention the term sideband capability, are you referring to section 7.9 xHCI Audio Sideband Capability in the xHCI spec?  If so, I'm not entirely sure if that capability relies much on secondary interrupters.  From reading the material, it just seems like its a way to map audio endpoints directly to another USB device connected to the controller? (I might be wrong, couldn't find much about potential use cases)
 >
-> https://lore.kernel.org/all/20241112135419.59491-3-xueshuai@linux.alibaba.com/
+> Yes, that is the one, 7.9 xHCI Audio Sideband Capability.
 >
-> That was originally disabled by Keith Busch (+cc) with commit
-> 9d938ea53b26 ("PCI/AER: Don't read upstream ports below fatal errors").
+> I had that in mind when I started writing the sideband API.
+> This is why registering a sideband and requesting a secondary interrupter
+> are done in separate functions.
+> The concept if still similar even if '7.9 Audio Sideband Capability' doesn't
+> need a secondary interrupter, we want to tell xhci driver/xHC hardware that
+> one connected usb device/endpoint handling is offloaded somewhere else.
 >
-> There's some merge conflict potential here if your series goes into
-> the cxl tree and Shuai's patch into the pci tree in the next cycle.
->
-> Thanks,
->
-> Lukas
-Thanks Lukas I took a look at the patchset and reached out to Shuai (you're CC'd). Sorry, I thought
-I responded here earlier.
 
-Regards,
-Terry
+Ah, ok...now I understand a bit more on what you were trying to do.  When you do eventually introduce the audio sideband capability, you'd need to modify the endpoint APIs to also issue the 'Set Resource Assignment' command with the proper device/endpoint being offloaded.  Initially, when Thinh brought up this section in the xHCI spec, I couldn't find any use cases that utilized that capability, so it was a bit unclear to me what it was meant for.  Now you've explained it a bit more, I think I can get the gist of it.
+
+
+> I don't think we should write another API for that one just because more is
+> done by firmware than by xhci driver.
+>
+> The only change for now would be to add some "sideband_type" parameter to
+> xhci_sec_intr_register(struct usb_device *udev, enum sideband_type), fail the
+> registration if isn't "software", and save the type in struct xhci_sec_intr
+>
+> I'll add hardware sideband support (7.9 Audio Sideband) later, but it would be
+> nice to not change the API then.
+>
+> The name change from sideband to sec-intr is a bit unfortunate with this in
+> mind. Was there some reason for it?
+>
+
+This was because I wasn't too sure how the audio sideband and this driver was related, but I get what you are trying to do now.  I can change it back to the original xhci-sideband, as the name change was something that happened on this revision.  I will fix the corner case I mentioned WRT the xhci_discover_or_reset_device() scenario, add the basic sideband type handling and rename this back to xhci-sideband in the next rev.
+
+Thanks
+
+Wesley Cheng
+
 
