@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-417288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7C09D5209
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:43:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8829D520E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FA02282C71
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:43:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F66BB2A0C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49AE1BDAA5;
-	Thu, 21 Nov 2024 17:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B171C3F0E;
+	Thu, 21 Nov 2024 17:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DTTTOVg2"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OMevH85j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0344A1BB6B5
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9A41C3319;
+	Thu, 21 Nov 2024 17:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210927; cv=none; b=nupO6ZPcDKdB5a6ZN8J/9Vw50lF6r5eCgAAVg0TIutL4M2OccfZlxAxjX/0sVSXeAfeHADdwKBwjyTg+QQ6p5koIeP2mgBlOPqiKONBPIhAzoeKKjSichYZr+B+Q8mZe9NW6M8mHK5vr3Pt4EAqEZ/JJT1VT+C7LUQuCx5kAksM=
+	t=1732210937; cv=none; b=UfcmWkf/5MaNRDAvY4BDmwzfYE4+s5vGv8nN4KIGI6wQ/nbUdomUSLLZK5UXX8+p3FUZ6+C1MXPlje7Ag2t/w7HuzUwx5eF3RS2aFjy45C6CA8j6D/aGPn7dBCw048SZ6e7bTaLaFNPp39Y0H/PCVxjC5mAtK2F/KrWTJvmS8JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210927; c=relaxed/simple;
-	bh=oXFkZxIE0Oi6N4As1P6ZRkKGfXKz4LuGRbnSKRPtroI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sN5M2FGRNPtzMKUEeYdXZWPrVp93r2Pg1E9nTjxLmEYSUtkF28oZ2Jqdt1g25aUOSUAUZkGar7zftIy7Ve/GA+hht1Pb+kF9zIZnxZdofVbqyjOs7DJrUT0EczT1Zx/+g7HfCgajJirHAFd8j2FUm78CvW1uMx/XTuh4rz0/fuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DTTTOVg2; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eeb2b305efso29315477b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:42:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732210925; x=1732815725; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwZmK6L5i6ITrmKBxlG4fTIrOa1+fXmBLZLshHxbeSk=;
-        b=DTTTOVg2Zmtmq5vjrf37u938uuvdroAJYWrbr5ckrZGGT8z5ssmL5Uz/V99BJR7I+z
-         CVaHaOsnaZG47F3maNEjcXjFCJQ7X+tszK/HnfkZRaUqfPHjcJSTXQzRM8fkLktc80BX
-         xDzspSiSMwN79WIlAv7tiqMLj06xCnoqzzsaAd7W9+uSfd90wp4BVRCq9l0Uy7OVzwl2
-         TNbLQkdBSPE8AbaU9uQBzO8DOJvc3YghzhwCg7Mp77eRFtIlL3OO138aaXm+bcFH3nc+
-         Z8FLn1cbMS/GA1QcHkFB0WHVj87H/XyTBgSqWhQQ/ktiJxCMb5usbW3VgAuqdYqI0nzi
-         /pQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732210925; x=1732815725;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RwZmK6L5i6ITrmKBxlG4fTIrOa1+fXmBLZLshHxbeSk=;
-        b=iQJBkZbPxgOs+QTuNE/5FRglhM/Sw4ulMXYntWQ5xDY70c/+I0UAiJUmJqHt2VNOex
-         3aXWMO9XXxnbyUqTDyjQ04TKUrJghMlwy2ujHSnYgN2sAD2lhwjdfKA3kbPgTpdRf+KU
-         RfQP6+vrKHmRxut5tf30KSaohVX6QxzWjep7CNU2/MR8A9vRGCt9BTl6w1F0H8+b+pzC
-         Jx/drOyq5zCv3HJEYZQvv7cH7oY2ulpIV0jVPdIzSWyrGvD29AZX8SYy2qlZW68IKLaa
-         iRbEZaFSSjF//tD59PWOkrLdf4Us0LRurzmPBi8Wh8s4E7ctMV06bbYo8YXd1c2Fa3Zb
-         /H+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUY6y0B0RS6M/3/VTD9tQlQexj5RrxQmmYuROFAcarOExBZSnFxwldbkjmrGQH36/Xlc7oV6aFnb2V6Cc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmwXexpYWA4MuC5MxH/cE9HwBL5m764zNwtOduXW6b9ku5sS5e
-	RUoiK1Xxl6vYtR5Y1C6UkcqGtSqc2EJLzOT701lz6K18ICXI7BN9s14fm30txViaLJ0fiLOXzYs
-	sHA==
-X-Google-Smtp-Source: AGHT+IHuElYuHVEN+YhgX7s/c+tdZRN29qEHHm04YMZ6V+lminlkgWG0Zi1wJVFCail9JOLgLm7Mgi69Xts=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6902:72f:b0:e26:3788:9ea2 with SMTP id
- 3f1490d57ef6-e38f6c6a7a2mr83276.0.1732210924917; Thu, 21 Nov 2024 09:42:04
- -0800 (PST)
-Date: Thu, 21 Nov 2024 09:42:03 -0800
-In-Reply-To: <cb62940c-b2f7-0f3e-1710-61b92cc375e5@amd.com>
+	s=arc-20240116; t=1732210937; c=relaxed/simple;
+	bh=jOFQHTKYUkPfNsXrd9VoXZV858hzfj/YVhEOk2Y5duU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bLZn482TMvSGLZBSzFoVK/0cfyO9auCFN+dk1pAsB85/IEy6Q3VpyebQwChPJzs149z5J0OqQZ2uxP0Hrw57bFz7PhKgELmQxWqCEDnAwaGeFwPvwt7r4sqVjm7qoq1mtDgZ0AElKXiFaY1/pI2maLl5TbJAfw/F7HJelqjJxms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OMevH85j; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732210936; x=1763746936;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jOFQHTKYUkPfNsXrd9VoXZV858hzfj/YVhEOk2Y5duU=;
+  b=OMevH85jAomir2+gqiH2N5qcyAQv8wqhE221jwcp7dsQyp9nSiPB6gxs
+   ag/xrD/d8rd/7O1vvWnrI3ZImsw9bfIFWrPoqBuTgVn0lmaiw7P533Uuk
+   KWQ0l9ENcuhMXJT/HYoBym4WlP7ii6mQUWTH4FQlQjO8PHg6O1SkeVbok
+   eBqwKz1dTp1/GTQICnqrbGXvi7hpViVUVYCoPJI9YiGqrsdPKz/S4mzxT
+   WljvSudZO+l4LY07+IxIwzKauwJtfYSneYz+KtFxYUDyjHVrSDbDgQ2r8
+   PMmQ9ouCT5iKxalzS5XVAj9Iq8RCkhmiWzjUTpSn2TrCow031y9aYEJ4v
+   w==;
+X-CSE-ConnectionGUID: 0QNqnL9iSgyh8WGaif9POw==
+X-CSE-MsgGUID: yhbtV0nhS5u4jag6Hw5HTw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43405151"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="43405151"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:42:14 -0800
+X-CSE-ConnectionGUID: aQY4trkfR3i3hpRXS4MZfg==
+X-CSE-MsgGUID: Ao+P2QtZQiKI4tfyTNWfbg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90125950"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:42:13 -0800
+Date: Thu, 21 Nov 2024 09:42:12 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v9 6/9] x86/resctrl: Add "mba_MBps_event" file to
+ ctrl_mon directories
+Message-ID: <Zz9w9FYAqbgu2aOq@agluck-desk3>
+References: <20241114001712.80315-1-tony.luck@intel.com>
+ <20241114001712.80315-7-tony.luck@intel.com>
+ <4796ded1-a988-4038-bdbb-fc9a93da0c55@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
- <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
- <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com> <ZwlMojz-z0gBxJfQ@google.com>
- <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com> <Zz5aZlDbKBr6oTMY@google.com>
- <d3e78d92-29f0-4f56-a1fe-f8131cbc2555@amd.com> <d3de477d-c9bc-40b9-b7db-d155e492981a@amd.com>
- <Zz9mIBdNpJUFpkXv@google.com> <cb62940c-b2f7-0f3e-1710-61b92cc375e5@amd.com>
-Message-ID: <Zz9w67Ajxb-KQFZZ@google.com>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ashish Kalra <ashish.kalra@amd.com>, Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au, 
-	x86@kernel.org, john.allen@amd.com, davem@davemloft.net, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4796ded1-a988-4038-bdbb-fc9a93da0c55@intel.com>
 
-On Thu, Nov 21, 2024, Tom Lendacky wrote:
-> On 11/21/24 10:56, Sean Christopherson wrote:
-> > On Thu, Nov 21, 2024, Ashish Kalra wrote:
-> > Actually, IMO, the behavior of _sev_platform_init_locked() and pretty much all of
-> > the APIs that invoke it are flawed, and make all of this way more confusing and
-> > convoluted than it needs to be.
-> > 
-> > IIUC, SNP initialization is forced during probe purely because SNP can't be
-> > initialized if VMs are running.  But the only in-tree user of SEV-XXX functionality
-> > is KVM, and KVM depends on whatever this driver is called.  So forcing SNP
-> > initialization because a hypervisor could be running legacy VMs make no sense.
-> > Just require KVM to initialize SEV functionality if KVM wants to use SEV+.
+On Tue, Nov 19, 2024 at 08:03:06PM -0800, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> When we say legacy VMs, that also means non-SEV VMs. So you can't have any
-> VM running within a VMRUN instruction.
+> On 11/13/24 4:17 PM, Tony Luck wrote:
+> > The "mba_MBps" mount option provides an alternate method to
+> > control memory bandwidth. Instead of specifying allowable
+> > bandwidth as a percentage of maximum possible, the user
+> > provides a MiB/s limit value.
+> > 
+> > Historically the limit was enforced by a feedback loop from
+> 
+> "Historically the limit was enforced" no history needed since
+> this is still the case at the time of this patch.
+> 
+> > the measure local bandwidth to adjust the memory bandwidth
+> > allocation controls.
+> 
+> I am not sure what is meant by "a feedback loop from the measure
+> local bandwidth" (that was copy&pasted to next patch).
 
-Yeah, I know.  But if KVM initializes the PSP SEV stuff when KVM is loaded, then
-KVM can't possibly be running VMs of any kind.
-
-> Or...
+Dropped the whole of the "Historically" paragraph.
 > 
 > > 
-> > 	/*
-> > 	 * Legacy guests cannot be running while SNP_INIT(_EX) is executing,
-> > 	 * so perform SEV-SNP initialization at probe time.
-> > 	 */
-> > 	rc = __sev_snp_init_locked(&args->error); 
-> > 
-> > Rather than automatically init SEV+ functionality, can we instead do something
-> > like the (half-baked pseudo-patch) below?  I.e. delete all paths that implicitly
-> > init the PSP, and force KVM to explicitly initialize the PSP if KVM wants to use
-> > SEV+.  Then we can put the CipherText and SNP ASID params in KVM.
+> > In preparation to allow the user to pick the memory bandwidth
+> > monitoring event used as input to the feedback loop, provide
+> > a file in each ctrl_mon group directory that shows the event
 > 
-> ... do you mean at module load time (based on the module parameters)? Or
-> when the first SEV VM is run? I would think the latter, as the parameters
-> are all true by default. If the latter, that would present a problem of
-> having to ensure no VMs are active while performing the SNP_INIT.
+> In the documentation the custom is to use CTRL_MON.
 
-kvm-amd.ko load time.
+Fixed here (and in several other places in the series).
 
-> > That would also allow (a) registering the SNP panic notifier if and only if SNP
-> > is actually initailized and (b) shutting down SEV+ in the PSP when KVM is unloaded.
-> > Arguably, the PSP should be shutdown when KVM is unloaded, irrespective of the
-> > CipherText and SNP ASID knobs.  But with those knobs, it becomes even more desirable,
-> > because it would allow userspace to reload *KVM* in order to change the CipherText
-> > and SNP ASID module params.  I.e. doesn't require unloading the entire CCP driver.
-> > 
-> > If dropping the implicit initialization in some of the ioctls would break existing
-> > userspace, then maybe we could add a module param (or Kconfig?) to preserve that
-> > behavior?  I'm not familiar with what actually uses /dev/sev.
-> > 
-> > Side topic #1, sev_pci_init() is buggy.  It should destroy SEV if getting the
-> > API version fails after a firmware update.
+> > currently in use.
 > 
-> True, we'll look at doing a fix for that.
-> 
-> > 
-> > Side topic #2, the version check is broken, as it returns "success" when
-> > initialization quite obviously failed.
-> 
-> That is ok because you can still initialize SEV / SEV-ES support.
+> Much better changelog. I think it will help to add a snippet that
+> mentions the file is only visible to user space if resctrl
+> was mounted with mba_MBps, and thus only visible when mba_sc is
+> enabled, and thus reinforcing that this maintains the contract
+> that rdtgrp->mba_mbps_event is only accessed when mba_sc is enabled.
 
-Right, but as I've complained elsewhere, KVM shouldn't think SNP is supported
-when in reality firmware is effectively too old.
+Added text to commit message about this file only being visible
+when the "mba_MBps" mount option is in use.
+
+> > 
+> > Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > ---
+> 
+> Reinette
+
+-Tony
 
