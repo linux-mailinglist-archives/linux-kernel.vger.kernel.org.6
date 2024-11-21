@@ -1,154 +1,211 @@
-Return-Path: <linux-kernel+bounces-417521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981019D551C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:01:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5189D5527
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFFF282F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8862835C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966281DD0F6;
-	Thu, 21 Nov 2024 22:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633001DD877;
+	Thu, 21 Nov 2024 22:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kXfaX916"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="dy884cPf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306021DC05D;
-	Thu, 21 Nov 2024 22:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594031DC05D;
+	Thu, 21 Nov 2024 22:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226491; cv=none; b=Z9nyh5umpJw+jAAutAF8YmjVV1in7TQ104eePfguQFGuxDxJ7mUKgWHORZ09z1OThzkyX9xZ3zKYcdjjOEWfoWK77RMXNbkNZTie8nrLwspWv4fkSxyj4vyWEb2zDIsgAhfw0ylWBckmS2DBb2r9v+aZQJfpoFx0b86Pb/3rcEo=
+	t=1732226593; cv=none; b=ARMFQN4dqAsq05WEHxOftJa9UpOf4wdLzg5F+7QrJgaFP8jHIFDIu5A9PBdLVQ0x9xnPACzMW1JYHRdSfOZz3SX1PkMQ1TPUTb7qA00R1QClNFAxmsKXQRVcvXqteelZ5d5BwBIoTr8jwJWL4pnO4H0uzjaltew0unHaX880yUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226491; c=relaxed/simple;
-	bh=pqEyDF5LLO1VwH1MXzcryDaT3vlXiFcbp4M1sDFbPsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N2bcK2xuiuOQF/mWrBro7h6Ukn4Vh/HNToW3UgkTyLOMFUjDYPdkZo3uqgr0kc6T0RZVr3Is+W+IZrGIeg8B17zZXgrWF+HmUz+CLpFOL1yggfeJM3PNayHTLPYw90S7kioA44C4XYRTrdCTUxc2iK7fn0CD/CgVuLq7kAei8ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kXfaX916; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OElOW/ym0iS6wv612P7RpAETtR98Co4NnCdEquW2kPI=; b=kXfaX916eTmUA8NIJkVhCtVOj9
-	6/ZNIImqz2m3g+qE4BcfIGRDfrlySGNVRElRXrnE+/ONgXWXilGEVrMOcFnIyBMd9ClOfVocOQmQL
-	eS9U6riV8LMWsruPnyXth28UhQAl1tE25R3UghuB43etl8byhT3QIlQ4RfkGCe2aXcMcafDILpkk0
-	Ia4q5UTtAGCON/jH9YRRO6A+2sdgVymtGnT9V9z5rovnwMOkjqY/v2U2ao1gtrcKmwa7GVSot6qIB
-	3GdMIWds0oIqKblJ5iicpvC06OQmnwbuq1hSgOWUEyVJTuBh2MdTJoTZ1g65+s3NnCKBNY3MoQMqh
-	Qewqq69A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEFEp-00000006re3-21QZ;
-	Thu, 21 Nov 2024 22:01:23 +0000
-Date: Thu, 21 Nov 2024 22:01:23 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-	airlied@redhat.com, Kairui Song <ryncsn@gmail.com>
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
- mappings
-Message-ID: <Zz-ts0s3jHsNP73f@casper.infradead.org>
-References: <Zz1sHZLruF5sv7JT@casper.infradead.org>
- <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
- <Zz4MQO79vVFhgfJZ@tardis.local>
- <Zz4WFnyTWUDPsH4m@casper.infradead.org>
- <Zz4boXyYpdx4q35I@tardis.local>
- <98a46b27-c4bb-4540-8f75-f176c3f2fae1@gmail.com>
- <Zz59qgqKruqnouTl@tardis.local>
- <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
- <Zz-FtcjNm0TVH5v9@tardis.local>
- <Zz-GHlkhrz35w2YN@tardis.local>
+	s=arc-20240116; t=1732226593; c=relaxed/simple;
+	bh=Ros+bwO9Q/78EujOU7Y6eyGXbq2ExfNBOnLKVTgOVVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/3OUv7LrPyrFvID1qLzgVpyrd1zkJu+I1TXg+O03UamGExSFYqjE6P83PRQUZF/OtTmV7Fb8GYl/x5mrjo/dd7KT/q19zd1bUtNjSs4jxavr4fuG1jLIE0u4oi4gLY78NKOIoSPRWL41n5nx0nBxtQV6nqMd/XvRD0ME0s/+wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=dy884cPf; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732226522; x=1732831322; i=w_armin@gmx.de;
+	bh=MEp8dGg1PO0r/R+78/I2+LfYJ53XS9xvmlLw7gkP+JE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=dy884cPf6L2VLJdZkaNYYZMrj13pkufR7cAqgO5v6t0qpWfSXk32fBNtlSHyQRV2
+	 qUIpo72RewCg/sQEALSCJ9Sjl/mkYCSuPG72/URNXwVuOXl+QFdcdK3qFBOFxHI8E
+	 L3WwJx+3iIy6ZmwLD1kCDehQuH3hXj5VrCwchXmUY5rtEUQIZY2LgQZr8YQpjjukM
+	 eQrOwaw/sJZDQXxQQSC7w+e2dBch6ee/g1eSspCWySlyycHLRf/+AfSU7kK6GyffH
+	 3x824e+4dGiE9vvvDjn/CqBXh4AgSFI1vnf2knVz2gnMAJltOMcGUwFy7275u3IXK
+	 rhKBvxRuubhERxGoOg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtOGa-1u16yV3zf4-012Yc4; Thu, 21
+ Nov 2024 23:02:02 +0100
+Message-ID: <2a652c79-daaa-4ef7-9b92-4512a26d633a@gmx.de>
+Date: Thu, 21 Nov 2024 23:01:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zz-GHlkhrz35w2YN@tardis.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 02/22] platform/x86/dell: dell-pc: Create platform
+ device
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241119171739.77028-1-mario.limonciello@amd.com>
+ <20241119171739.77028-3-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241119171739.77028-3-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GYS5AOoGxqF0wXWDWQbStEiONjvFlvQC7x/UDdLufe4mr+RYYs6
+ 4RNr2/1T5EfL0VyJgzs3rPF1aw0rG2eBS8vJFTBHjElziSSc/THZLsEfDwFr3/2QRNiWqmt
+ ZEhKawoSNkLUrvwoj04+7Uq1E4UYLS400uOiP9FtykNwYT2+V5FjnOh+IkjuvClznHBvWHH
+ s/A5mUDarqNljjUmwmZEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wZgpFk+F8Ds=;sZBT09GJoZLUuLjWxAXIxp1RT2U
+ iGLfb0OizrnkcdTLQDgu7dNKerwlrBBf7AthLq+f768/6dgGyGy/X+AjdKbSdJD8JfSv4yyuv
+ GqFDcp5q2v77jIVOfpcOV24jZl3vtQcUwZVm5BOJBlB+nysOrpsS59ttlzYQZjY6ogXJdsND9
+ H8woKwhRXBenCV3ds7iZsXqqGQL2FwUymc/l2PUVNQ1QPwRUf7qfCdF9qWmBIU118fg/5iYHw
+ uRNuuq8FUdGhqpWcavSSTNidW6RGkyDpnZbIY4k5lEdhjwYoO1XeDJSnaa3LySsfHfjYK7ZVR
+ tXOkXMeHq4yXqhoKYWQI8XakyjhfH2PbW0/Jyn44Lvxx5WLh7xeveDRINp+F+3FBIbwl6F9e/
+ N4Q/XpOWlhziw8EuIgws9JWiHwOrkVKdroeg70bmmnCO7TCSNxAS5mzcqgaZ4O3M/OK/vVlSI
+ lq3tX6UZ5vK4jbZhluOcIuDDMCL45Npew2DVMlWW5/XAmkNAXtY1TYCFDciX5KST94PbVcB0Y
+ XR9yr69OdyaVjSx55Gtd086pwBeBKts8fxBwewJ7t169WwSDheWuaFgIKazEOi3B4q3fxg/u8
+ zFU4TRItgrQS/f5ns/35J/AP2i5wcen7/nYc+oUl+t1oByomOiXRuiEFcqputqU0w7kXvHdUY
+ tfCCkwM7bRRlK3Ivnt+QpsIYvhDAuoNXTNe4z5kmA6UKgnww8bkybVwS4Ttch0D6/8J9YKnZY
+ 3Jy4nJRryB6ApplPehAMz8STmLwoXFvMZa1Gl4gsKID14ZFoYeMveuYDP63JHcRt2B5tjEpAW
+ JB/H7Tju9WpkfuE3fFn85NbtgF9FHkKXM2wqHdVHiKcKyvkU9nC8tyh4JX/WDIBN3NW9jm3e7
+ lCzbtMqM3Hi1v8aMKqFAiJW4uT1rfMVCm2i2Sw+SOEG6nM5pTK2fInJA9
 
-On Thu, Nov 21, 2024 at 11:12:30AM -0800, Boqun Feng wrote:
-> On Thu, Nov 21, 2024 at 11:30:13AM +0200, Abdiel Janulgue wrote:
-> > Hi Boqun, Matthew:
-> > 
-> > On 21/11/2024 02:24, Boqun Feng wrote:
-> > > > > So if I understand correctly, what Abdiel needs here is a way to convert
-> > > > > a virtual address to the corresponding page, would it make sense to just
-> > > > > use folio in this case? Abdiel, what's the operation you are going to
-> > > > > call on the page you get?
-> > > > 
-> > > > Yes that's basically it. The goal here is represent those existing struct
-> > > > page within this rust Page abstraction but at the same time to avoid taking
-> > > > over its ownership.
-> > > > 
-> > > > Boqun, Alice, should we reconsider Ownable and Owned trait again? :)
-> > > > 
-> > > 
-> > > Could you use folio in your case? If so, we can provide a simple binding
-> > > for folio which should be `AlwaysRefcounted`, and re-investigate how
-> > > page should be wrapped.
-> > > 
-> > 
-> > I'm not sure. Is there a way to get the struct folio from a vmalloc'd
-> > address, e.g vmalloc_to_folio()?
-> > 
-> 
-> I think you can use page_folio(vmalloc_to_page(..)) to get the folio,
-> but one thing to notice is that folio is guaranteed to be a non-tail
-> page, so if you want to do something later for the particular page (if
-> it's a tail page), you will need to know the offset of the that page in
-> folio. You can do something like below:
+Am 19.11.24 um 18:17 schrieb Mario Limonciello:
 
-This is one of those things which will work today, but will stop
-working in the future, and anyway will only appear to work for some
-users.
+> In order to have a device for the platform profile core to reference
+> create a platform device for dell-pc.
+>
+> While doing this change the memory allocation for the thermal handler
+> to be device managed to follow the lifecycle of that device.
+>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v6:
+>   * Use PLATFORM_DEVID_NONE (Armin)
+> v5:
+>   * use platform_device_register_simple()
+> ---
+>   drivers/platform/x86/dell/dell-pc.c | 32 +++++++++++++++++++++--------
+>   1 file changed, 23 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
+dell/dell-pc.c
+> index 3cf79e55e3129..805497e44b3a5 100644
+> --- a/drivers/platform/x86/dell/dell-pc.c
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -18,10 +18,13 @@
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_profile.h>
+> +#include <linux/platform_device.h>
+>   #include <linux/slab.h>
+>
+>   #include "dell-smbios.h"
+>
+> +static struct platform_device *platform_device;
+> +
+>   static const struct dmi_system_id dell_device_table[] __initconst =3D =
+{
+>   	{
+>   		.ident =3D "Dell Inc.",
+> @@ -244,9 +247,15 @@ static int thermal_init(void)
+>   	if (!supported_modes)
+>   		return 0;
+>
+> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
+> -	if (!thermal_handler)
+> +	platform_device =3D platform_device_register_simple("dell-pc", PLATFOR=
+M_DEVID_NONE, NULL, 0);
+> +	if (!platform_device)
+>   		return -ENOMEM;
 
-For example, both vmalloc and slab allocations do not use the refcount
-on the struct page for anything.  eg this will be a UAF (please excuse
-me writing in C):
+Sorry for taking so long to notice that, but the documentation for platfor=
+m_device_register_simple() says:
 
-	char *a = kmalloc(256, GFP_KERNEL);
-	struct page *page = get_page(virt_to_page(a));
-	char *b = page_address(page) + offset_in_page(a);
-	// a and b will now have the same bit pattern
-	kfree(a);
-	*b = 1;
+	"Returns &struct platform_device pointer on success, or ERR_PTR() on
+error." So please use IS_ERR() for checking the platform_device pointer,
+since a simple NULL-check is not enough. Thanks, Armin Wolf
 
-Once you've called kfree(), slab is entitled to hand that memory out
-to any other user of kmalloc().  This might actually work to protect
-vmalloc() memory from going away under you, but I intend to change
-vmalloc so that it won't work (nothing to do with this patch series,
-rather an approach to make vmalloc more efficient).
-
-One reason you're confused today is that we have a temporary ambiguity
-around what "folio" actually means.  The original definition (ie mine) was
-simply that it was a non-tail page.  We're moving towards the definition
-Johannes wanted, which is that it's only the memdesc for anonymous &
-file-backed memory [1].  So while vmalloc_to_folio() makes sense under
-the original definition, it's an absurdity under the new definition.
-
-So, Abdiel, why are you trying to add this?  What are you actually
-trying to accomplish in terms of "I am writing a device driver for XXX
-and I need to ..."?  You've been very evasive up to now.
-
-[1] Actually Johannes wants to split them apart even further so that
-anon & file memory have different types, and we may yet get there.
-One step at a time.
+> +
+> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
+l_handler), GFP_KERNEL);
+> +	if (!thermal_handler) {
+> +		ret =3D -ENOMEM;
+> +		goto cleanup_platform_device;
+> +	}
+>   	thermal_handler->name =3D "dell-pc";
+>   	thermal_handler->profile_get =3D thermal_platform_profile_get;
+>   	thermal_handler->profile_set =3D thermal_platform_profile_set;
+> @@ -262,20 +271,25 @@ static int thermal_init(void)
+>
+>   	/* Clean up if failed */
+>   	ret =3D platform_profile_register(thermal_handler);
+> -	if (ret) {
+> -		kfree(thermal_handler);
+> -		thermal_handler =3D NULL;
+> -	}
+> +	if (ret)
+> +		goto cleanup_thermal_handler;
+> +
+> +	return 0;
+> +
+> +cleanup_thermal_handler:
+> +	thermal_handler =3D NULL;
+> +
+> +cleanup_platform_device:
+> +	platform_device_unregister(platform_device);
+>
+>   	return ret;
+>   }
+>
+>   static void thermal_cleanup(void)
+>   {
+> -	if (thermal_handler) {
+> +	if (thermal_handler)
+>   		platform_profile_remove();
+> -		kfree(thermal_handler);
+> -	}
+> +	platform_device_unregister(platform_device);
+>   }
+>
+>   static int __init dell_init(void)
 
