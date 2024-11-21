@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-416823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E139D4ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:22:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A92F89D4AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADB61F21C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:22:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608FF1F22AFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BA61D3564;
-	Thu, 21 Nov 2024 10:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C045F1D6DAD;
+	Thu, 21 Nov 2024 10:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqOkMim7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBP8yMmf"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD081CB9E1;
-	Thu, 21 Nov 2024 10:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66DF1D4323;
+	Thu, 21 Nov 2024 10:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184383; cv=none; b=gG93YckqkmpTI2NRseVyuWiIOAnkAAAzX5tqfz2MEEe/vKORRYfjy0xkm8gomSIVRuQJztACa38N54PFSJf7T6GgAFtY8MChG3jLFaa2cFXvGsCBNG7GGRxSIaQ6sx68TeehdP629nbC276hrfPyOiqj+8T5nEdvMR45zaKdm18=
+	t=1732184453; cv=none; b=n5XZ5xAQPcC/AgykXUJoZLWd3tvz4G3fWSf59uNyKgf4JKvjBEkYhszLmeQIDWPcEHdsCVE9XJ9BzD0Rc0IWsCBGlaY8+wALZuHq7qR+y1evepVCuBRxdGgbRnp6Lc2U+a4mmyB3pd23OelZuLGfII4zUly71VzeoyEmrdoNNUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184383; c=relaxed/simple;
-	bh=3rViafojyY8+otxEE07sKhwI/B2GOnjuVj2UxFUbVHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oPql6ZKv3a9OS5+r5lvIBbKDng/XTrSYwlm029ilrt+Fj5zI2zD/8+7O2Jc6LYvDmgQwuxrECCYcMD5El7D499303UM6hLsLsSbvaXAsttW61p/+oaUc1m7yFD2EAEigRK/+hl8bsEy947FJag4MMqTdbFDcD1C9rXxoO7WYAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqOkMim7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A8C4CED0;
-	Thu, 21 Nov 2024 10:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732184382;
-	bh=3rViafojyY8+otxEE07sKhwI/B2GOnjuVj2UxFUbVHg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fqOkMim71pALJn1pWygzadHLdEYjUmG8Cby7SS7bZHGnfp8o0LInuEMye2p27G6DS
-	 FFKoS1lTG1Tsby+gg7758ZUIIrMMRvXS7ZTzAaXxqSVhnkFsSnJMbNy75TmTtw45rD
-	 ZykSYadMT7ZmFOe4IHT5pSYrzVr0DVQTj9vefx651NTeFeiTNZ7/upGkFu73+tQL0j
-	 69xEK7Ey2TPrNZIB+T4WWCQ7UmJ310hISJdVyiCkAlQzxItkKA4MZVqgj114aazVXP
-	 aOfWB33/Dx12zmOCzkym9XcZkoS3Wvjg+dDRuYlbkLBnMRPRPhvZBBcOON+JseZChL
-	 aR5cKUkJ0cRDg==
-Message-ID: <a1dde768-aeb8-4777-b4f9-d3c52b046fbd@kernel.org>
-Date: Thu, 21 Nov 2024 11:19:36 +0100
+	s=arc-20240116; t=1732184453; c=relaxed/simple;
+	bh=r8l8Guvg+pRpg11zsFVkjjS0LsXXaYLn80593k5Vr34=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=G3GLkv/3AeFwj5JSjLISVpq93je7TVlG18BDTG9zAW+PK2O1ayzhggvUxRiEbP8NJpbLdkalL3r9YK5Tvx3UlIOwj1G71DcaRWleP0w+I/5OcZEAooEh3VQuWjG5ZGX8jBWDUR1naFPAz9ZTUv0vU602X187NiTpQ28ZM9flIPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iBP8yMmf; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so547140b3a.1;
+        Thu, 21 Nov 2024 02:20:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732184451; x=1732789251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fFKaQJ5wKCRONLmaMfXTjFMeyMJYF8DGbAeQN6+N0hA=;
+        b=iBP8yMmfpDcls8yYnFOgEyQvxiI5FpaLvZbsjDHWwqsw0O92+n00dgWkeggTopZBQK
+         Qlwiz2oVmiTeEKBJ9DQlwUobYMtLhojm6fHh90V6vEEGjXg+MDFnRzwat4Zya3StfVKx
+         b68sjJeTCrL8tv4xX4Vm12dyQghoo6rK1vv/ipeg2kYwwjUUAqACnDgvAlbXQCenM8Po
+         PVLnGpgNwmhQGLpBOtkYqwoNWWk05opb8L7H4WEh5/Ka3reQxOofWg9SA2N8nhAaT3y6
+         eVwYi4YZpswgXWJG1i1vwDuFKgjEwepL09DhVVYO8wjgzKnrbXh0O5VJ9Zq8008dOnEQ
+         3fdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732184451; x=1732789251;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fFKaQJ5wKCRONLmaMfXTjFMeyMJYF8DGbAeQN6+N0hA=;
+        b=ZvcppE0FHme/ygpqtwvVnBwzUPrqhZj9iMwYeLP3q1b2P/tsXDdjnNhAFHR4XD5p5J
+         yLB+LRGKObMwvSXOaUigpghkgVdIWtXCzbcS+i6xUIbVrBu8rf4hSMbZZEigcaca5Pvu
+         F8WaO/n2RtXhwsPWPmNRxpOkN4PTt5dcz/kp0QTZuyvHShrrE4dtFkdZfVvBgDf1fcH/
+         pn7SJh57lvewZoKWWZqulkFhTuG/s0SruT8T4AERZlMhw6dLCVLqGz3DzOVSdY+R15wc
+         YtQPIiyXywpdpuPCUzO8fNz6FmDNo22yD7YUfY/B8TRugptQbogvFbPISJ0aSK5MjYHC
+         OxLg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4q0taFbRUxuSScdpMcTg9CyxG7TbEtrT6rRtmzS6FCcbazg36jKP8vmwU4ufpWEuGGXvFyDMCO/q5asmW@vger.kernel.org, AJvYcCWIm8zRTao+cX+Pgjm3aGFuLNW7l42sJ255Wk8YhZUwwHAyW8t7uSk+GMSd6Za3s0K47wMhNg5Ayz3/Mtih@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg/SxXpQQvjI6BNhUwXbYYlBb1Km2snboL8eE0nCIWGm5P9H0p
+	2yjduRFQU5LpGhdQeLyGkRpRppxMx3nlr4Wm/OwGBnSUQfcfXcDB
+X-Google-Smtp-Source: AGHT+IH5idc+duKEBmcHZ8WCavEtCgrW2+wGsc3I6OeXvDX0AWBqaokS1ncGgHEjyWAUqVtWcbcVwQ==
+X-Received: by 2002:a05:6a00:2308:b0:721:19bc:4bf4 with SMTP id d2e1a72fcca58-724bed5a66amr8103271b3a.23.1732184450990;
+        Thu, 21 Nov 2024 02:20:50 -0800 (PST)
+Received: from localhost.localdomain ([43.154.34.99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befa6167sm3219860b3a.131.2024.11.21.02.20.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 02:20:50 -0800 (PST)
+From: Jim Zhao <jimzhao.ai@gmail.com>
+To: jack@suse.cz,
+	akpm@linux-foundation.org
+Cc: jimzhao.ai@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	shikemeng@huaweicloud.com,
+	willy@infradead.org
+Subject: Re: [PATCH v2] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
+Date: Thu, 21 Nov 2024 18:20:47 +0800
+Message-Id: <20241121102047.610700-1-jimzhao.ai@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241120115731.gzxozbnb6eazhil7@quack3>
+References: <20241120115731.gzxozbnb6eazhil7@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
-To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_jiegan@quicinc.com,
- quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com
-References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
- <20241119102315.3167607-4-quic_liuxin@quicinc.com>
- <5d670f55-1ebe-4034-a6a5-e68417c6e486@kernel.org>
- <64ec97a7-8e91-44d7-85ff-8b00304214fc@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <64ec97a7-8e91-44d7-85ff-8b00304214fc@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 21/11/2024 10:44, Xin Liu wrote:
-> 
-> 
-> 在 2024/11/21 0:59, Krzysztof Kozlowski 写道:
->> On 19/11/2024 11:23, Xin Liu wrote:
->>> Add watchdog clock on the Qualcomm QCS8300 Ride platform.
->>>
->>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 4 ++++
->>>   1 file changed, 4 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>> index 7eed19a694c3..3024338bcfbc 100644
->>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>> @@ -265,3 +265,7 @@ &ufs_mem_phy {
->>>   	vdda-pll-supply = <&vreg_l5a>;
->>>   	status = "okay";
->>>   };
->>> +
->>> +&watchdog {
->>> +    clocks = <&sleep_clk>;
->>> +};
->>> \ No newline at end of file
->>
->> Look, your patches have errors...
->>
-> This is the information when I apply my patch.
-> ../linux-next$ git am ./wdt/test.patch
-> Applying: arm64: dts: qcom: qcs8300-ride: Add watchdog node
-> ../linux-next$
-> 
-> There are no error messages here.
+> On Tue 19-11-24 20:29:22, Jim Zhao wrote:
+> > Thanks, Jan, I just sent patch v2, could you please review it ?
+>
+> Yes, the patch looks good to me.
+>
+> >
+> > And I found the debug info in the bdi stats.
+> > The BdiDirtyThresh value may be greater than DirtyThresh, and after
+> > applying this patch, the value of BdiDirtyThresh could become even
+> > larger.
+> >
+> > without patch:
+> > ---
+> > root@ubuntu:/sys/kernel/debug/bdi/8:0# cat stats
+> > BdiWriteback:                0 kB
+> > BdiReclaimable:             96 kB
+> > BdiDirtyThresh:        1346824 kB
+>
+> But this is odd. The machine appears to have around 3GB of memory, doesn't
+> it? I suspect this is caused by multiple cgroup-writeback contexts
+> contributing to BdiDirtyThresh - in fact I think the math in
+> bdi_collect_stats() is wrong as it is adding wb_thresh() calculated based
+> on global dirty_thresh for each cgwb whereas it should be adding
+> wb_thresh() calculated based on per-memcg dirty_thresh... You can have a
+> look at /sys/kernel/debug/bdi/8:0/wb_stats file which should have correct
+> limits as far as I'm reading the code.
 
-So I made up that above error message? You sent patch with an error
-message. I responded directly under it, so what can I say more?
+Thanks for review!
+Yes, It should be caused by multiple cgroup-writeback with bdi_collect_stats issue.
 
-You refuse to fix this, so I NAK this patch.
-Best regards,
-Krzysztof
+@Andrew, 
+I sent patch v2 according Jan's suggestion. 
+Since patch v1 already in tree. So I sent out the diff of v1 -> v2:
+https://lore.kernel.org/all/20241121100539.605818-1-jimzhao.ai@gmail.com/
+Could you please review it, thanks!
+
+Jim Zhao
 
