@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-417591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2155D9D5650
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:43:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEAA89D5666
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C25401F2399A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5092FB24BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBD51DE88A;
-	Thu, 21 Nov 2024 23:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF541DED55;
+	Thu, 21 Nov 2024 23:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iO3TPWM/"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1TeXAbXc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653B21DE4D3;
-	Thu, 21 Nov 2024 23:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A131DED4B;
+	Thu, 21 Nov 2024 23:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732232553; cv=none; b=NWYotoQhyP26kWAqRbh6m8kVD5PbLK9nRI9gFG+bIIL3oE/nDXHnz1k76d9VheeWL8BP+K5UyG/3uSqrn56eyDXxWQYR3ZWVPjD1pZRujfYfokprhLgFhzr+MDP/ZAZiP1atkKqzPe5gZoowufyt6UTEgBNeNzGQukuHoXJ83R4=
+	t=1732232685; cv=none; b=eeQsojStD46C3dcrDV5Jj6CYiMa3j2RYOBOWQ4guq4PoI9SjD6tnU5SE+pzfddvQfdpRUtrAwUU9G6fwkZin74NKWGzjmfMgZ3iYvcXyqME5OXmme8XRMOxXwNkBU9xDBws3OZFUc7JPk9EZgBy2YtRFSbrtBBW0zk7leWn0cQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732232553; c=relaxed/simple;
-	bh=8y9YLZfA/j4D+Wc81B7+9U0hAhDA8nNRAzL1uJgTbX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NkLjaCVQpcw2DsReSvqFnqAWFM5myMEYmaBdVcUJ4YD1RHzJlMbQyvA8cy+Hnh3TvKb7h5EP9Dml/sVoz0WrPi81egGdfmXUJObwfS97ifIVoHpteyUcAp/Ux4+V+W218lQRguSm5npt48CsVg4+PwbCbwCyPZTrHpOJh4tI9JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iO3TPWM/; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382325b0508so1054273f8f.3;
-        Thu, 21 Nov 2024 15:42:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732232550; x=1732837350; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ccV/yshE7H2smC4scGTK8g83YpYG6AVCznLkmoOvLTY=;
-        b=iO3TPWM/OxZHrjSAEWVMxEoSlbFQ+9hjOGf7BbEZtqB5jMNY2f3BYLSwuBhGz9WXyJ
-         ubby+/r/h7ISoI2EszopCGsmgnEoXF+k2W8fhrJoAzN0fXZUN8eNg/upCNsYz7zITZDO
-         J7eQWOnokeVR5u2BQJ/vcvQmB5Smji1/2S+SKa2mKs2yGsgPXHRK2BNbSPc07/nUPZOb
-         SG19Z2njS64ypEs2uUDPQ4l9rbFVmHIbOk957WaK4uZ3LwuF7O3eNty+4gnjKGIt8Aut
-         eLhu+MAuprFIdgcruiFx1s7UEuUP69ktB4eUpmO69z9O/dZt/gI2u1My1PCzmZSzJkK9
-         PaFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732232550; x=1732837350;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccV/yshE7H2smC4scGTK8g83YpYG6AVCznLkmoOvLTY=;
-        b=XRs+GJCqgh+ktZE8H9ZoY2jERujQ956gUlLwhncMjWJOCLGgflSTIl7yyNcN6NKost
-         aR+AwdLvp8vyJNQq5T6/dTxjFozRW8DGxvllMhvl+bZJgpfhlpXP8FxXvZqaSwB4T0lP
-         CrF0F5UnCiNngWxzdyuXuUG0H0slIEn4MZXkhtGhrxVx4RnD566pwGSHjxxyDbd5ogUH
-         uwToJIKOLhf768K0nOdnbkFCuHNfybETcP7SJWkTXL1RRo5TkKalLgTSnWAZC8102P8M
-         tUAWXwsmgOmMqSH7i8oSW5hCt/rdqtqHQFDzAsZwg1RhAfa6Gjmrj+sw/oPfynjy8w2S
-         lJTg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0EL/MFhU4KUyCJWLrC8mCksgIDwZKBGX7SoHbPt+wsls7uJRYRMD1gqx+gc2Sayu1s2UyDzjWPk2v6rLd@vger.kernel.org, AJvYcCV0bGUIdgzzvlGnlUe0l/rEa3kwidNzj0kqyR6OBX/eQJWUorWLWcVjlmNqNGeBwsyj0SkXGe+Q@vger.kernel.org, AJvYcCXQ7hKbAQRCog02FrOtHqmIcfXp8giEOvqrNY9ofxRv6seYeeqfL2GJRBKX0aRD7EvLOSey5tOyNz7k6TVV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzo3KwPJgWnj27Gb6/hsHMYp1hipgwH6/ALE3Eozh9gqQqaAWZp
-	P+n7u3TfKAts/o6Udikx3MTx5UlI/O+e+OlFHgL2g9FcjpFuWu84
-X-Gm-Gg: ASbGncsqTMoV4SUIafJiukk1ECRSpCLgrJWERchHGhbkcxaYSwmqi7RPOtIHaUVbg5R
-	CmybGloQ1ilClmdD3UboEtfDr6ZbR7LiychiY0g0TZG+7kBroM87yB36JsmZ1io1IvQUmW6GciJ
-	z3ZjyekEv5d71fCSHHVfU0oTNPGgMleM3mBL77dt9AV1P3sRDw2dTLuoxA9gd2zRXmLx7vMovqM
-	V1MJKF/+7SpVyJfrv/+I8vNB/obUw5wXDEzAgguHIxFTTPoT7Q=
-X-Google-Smtp-Source: AGHT+IFl26rdc0Msco1PLwttztV/3s0UQWBR7NApcuiOreI25Qfwe01ytYEWSRSuWB1714GsnV01Nw==
-X-Received: by 2002:a05:6000:1543:b0:382:4b9a:f500 with SMTP id ffacd0b85a97d-38260b5bb7amr650832f8f.18.1732232549591;
-        Thu, 21 Nov 2024 15:42:29 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463abb4sm75592645e9.31.2024.11.21.15.42.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 15:42:29 -0800 (PST)
-Message-ID: <33d70ece-15db-4c83-90a4-3daa2f4032fd@gmail.com>
-Date: Fri, 22 Nov 2024 01:43:06 +0200
+	s=arc-20240116; t=1732232685; c=relaxed/simple;
+	bh=jFzdPwj/6oVwYBRtFO5oaQqM6+nbohwp4izwYQoiQVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p1jHsgU2Dse267Kd45UfPjU1ZxVjuu7H84iEMTVL2MPHPJklLq6ORpr7LH2ljEYNTLCrWYCU3inmzUaMg0t4Q/Bq3EBRiNvqiqcyCK1O1iCbZjOGDUHm1SZmUfBmdKnCO69tciHqeaHfx8MUas9eYPHEpdcUzVPAhVDa+n1m4jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1TeXAbXc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B1BC4CECC;
+	Thu, 21 Nov 2024 23:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732232685;
+	bh=jFzdPwj/6oVwYBRtFO5oaQqM6+nbohwp4izwYQoiQVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1TeXAbXcu9nriKPMZsQyAmMuTBrAeOHxq4gl6dJ0gQ3xp1Bs8LWsO59aSB+eI0lhz
+	 qKuUVVqGNrwu5xpqJSRdAt0nGBU4jxpVOfh57kE/Z3TkBRr6BSO7FXA0IWFV8cnUuT
+	 Cb3bzUdI4TMrz4Iw73jUtqw3M6Jgke7tomaQeaJs=
+Date: Fri, 22 Nov 2024 00:44:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vyshnav Ajith <puthen1977@gmail.com>
+Cc: corbet@lwn.net, linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Fixing Grammatical Error
+Message-ID: <2024112255-grueling-glancing-2764@gregkh>
+References: <20241121233829.14779-1-puthen1977@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Cc: Jerry Meng <jerry.meng.lk@quectel.com>, loic.poulain@linaro.org,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
- <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com>
- <fbb61e9f-ad1f-b56d-3322-b1bac5746c62@quicinc.com>
- <7c263cbf-0a2f-4ce9-ac81-359ab69e6377@gmail.com>
- <022f6596-3b4c-6c19-f918-8dc1cce509ba@quicinc.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <022f6596-3b4c-6c19-f918-8dc1cce509ba@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121233829.14779-1-puthen1977@gmail.com>
 
-On 22.11.2024 01:02, Jeffrey Hugo wrote:
-> On 11/21/2024 3:53 PM, Sergey Ryazanov wrote:
->> On 20.11.2024 23:48, Jeffrey Hugo wrote:
->>> On 11/20/2024 1:36 PM, Sergey Ryazanov wrote:
->>>> +Manivannan
->>>>
->>>> Hello Jerry,
->>>>
->>>> this version looks a way better, still there is one minor thing to 
->>>> improve. See below.
->>>>
->>>> Manivannan, Loic, could you advice is it Ok to export that SAHARA 
->>>> port as is?
->>>
->>> I'm against this.
->>>
->>> There is an in-kernel Sahara implementation, which is going to be 
->>> used by QDU100.  If WWAN is going to own the "SAHARA" MHI channel 
->>> name, then no one else can use it which will conflict with QDU100.
->>>
->>> I expect the in-kernel implementation can be leveraged for this.
->>
->> Make sense. Can you share a link to this in-kernel implementation? 
->> I've searched through the code and found nothing similar. Is it merged 
->> or has it a different name?
+On Fri, Nov 22, 2024 at 05:08:29AM +0530, Vyshnav Ajith wrote:
+> 'Worst case' being singular needs 'is' instead of 'are'.
 > 
-> drivers/accel/qaic/sahara.c
+> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+> ---
+>  Documentation/usb/dwc3.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/usb/dwc3.rst b/Documentation/usb/dwc3.rst
+> index f94a7ba16573..12989d126a8a 100644
+> --- a/Documentation/usb/dwc3.rst
+> +++ b/Documentation/usb/dwc3.rst
+> @@ -20,7 +20,7 @@ Please pick something while reading :)
+>      to the device. If MSI provides per-endpoint interrupt this dummy
+>      interrupt chip can be replaced with "real" interrupts.
+>    - interrupts are requested / allocated on usb_ep_enable() and removed on
+> -    usb_ep_disable(). Worst case are 32 interrupts, the lower limit is two
+> +    usb_ep_disable(). The worst case is 32 interrupts, the lower limit is two
+>      for ep0/1.
+>    - dwc3_send_gadget_ep_cmd() will sleep in wait_for_completion_timeout()
+>      until the command completes.
+> -- 
+> 2.43.0
+> 
 
-I was searching for SAHARA and for sahara in the log, however it was 
-introduced as Sahara. Next time will use case insensitive search :) 
-Thank you for the clue.
+Hi,
 
---
-Sergey
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
