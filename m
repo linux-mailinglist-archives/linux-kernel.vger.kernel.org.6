@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-416938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C309D4C9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:13:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303479D4C98
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAFC0B276F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1231F21E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938D71D3627;
-	Thu, 21 Nov 2024 12:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="FRSSjgM8"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205D21D5CE0;
+	Thu, 21 Nov 2024 12:12:29 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BA31D041B;
-	Thu, 21 Nov 2024 12:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C7D1D47DC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732191109; cv=none; b=dWRqYxA1F2LuLVLHvl9b/kDX4YdexvhTSQUOaewojL/PiNu5NhwlbTrPKfjEhNfPIQwtx15lgssw9CNoFC/1Ykf6RhLg9P4jAXFbaYeQu38jJUVs9Io2QpNkbJykZRBHS60Dpj4YkUEraSZm1DA2MgrItXQ1LMoq7rtRtJPcxSI=
+	t=1732191148; cv=none; b=JcABtooI4n/pcuranlWwR/TvQMQ9Loc++dodhnvsTEFKri92T330dpHsvJg8aFviHLF2OvHyIz4a8UQxqbQ/EJs/RD67MvZ3RUlO7S267IdkD8svKze6Guj6QK/LJeNpxlw5NnRb+RiJrVFAbdtqVcsDzWJYw7ro8nLhobT4bw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732191109; c=relaxed/simple;
-	bh=wQ9OpX335ixfUj8FEv2+T/bYoEUXVSavSukXE42175s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lHHqTO6Us1nVhyXHPwapUnv/qrIC4tzGM+4rsfn7cwWZfdVD3mbV3bFenTurRvLw1XztClKPdqW20V8w7wcu0s7TlvqYvsi2EJfV9bdZ6JGQfcopDfo3orHausWsTTNJiWPBpeEAIfWmtkCcO7jl0wCc+cVOqwIx+TnBDjfwuOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=FRSSjgM8; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DB54412000F;
-	Thu, 21 Nov 2024 15:11:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DB54412000F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1732191085;
-	bh=J4W2mJXLjt28JulEEpFJn6JFqKuZowV4q6kYlMnsiRQ=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version:From;
-	b=FRSSjgM8Rn/theZ99aPKMADnssoVEl6KXXmgIfH6pOfn6cbLrDiKuYscmhlmUSn2Z
-	 ahggGbDgq7tf7e1N+viZIj+piwGzyGATmxg08yS6uyOQrPaOuy+NVHzlB0joT8GfdL
-	 GbPrz0F7d5mOn0lVJEdbGYjS0eHARj9dlK02ygHrPYl/2Mx4HwPPEoUTD3y0pB864Q
-	 4nTllgk2ldQpfI7ndiecR0yENPM73lKnrMhLIpLOpsUoGAcUoM1ggUQYv3/1N21eJ7
-	 8+91+pbC5rWVjhLwBYLC5xh3KlknCbTGamb9gJhJcZEq9PgomlC86ej8FYWNUkeCSd
-	 axmxwf0UP8PtQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 21 Nov 2024 15:11:25 +0300 (MSK)
-From: Alexey Romanov <avromanov@salutedevices.com>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-CC: "minchan@kernel.org" <minchan@kernel.org>, "axboe@kernel.dk"
-	<axboe@kernel.dk>, "terrelln@fb.com" <terrelln@fb.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: [PATCH v1 0/3] zram: introduce crypto-backend api
-Thread-Topic: [PATCH v1 0/3] zram: introduce crypto-backend api
-Thread-Index: AQHbOn5tER/mherIIkCwEQstBnX117K/TZ+AgAIoDAA=
-Date: Thu, 21 Nov 2024 12:11:24 +0000
-Message-ID: <20241121121120.ch4qbmbiuje2cjog@cab-wsm-0029881.sigma.sbrf.ru>
-References: <20241119122713.3294173-1-avromanov@salutedevices.com>
- <20241120031529.GD2668855@google.com>
-In-Reply-To: <20241120031529.GD2668855@google.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <06ACB912F633C14F809BD685F34F5543@sberdevices.ru>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1732191148; c=relaxed/simple;
+	bh=N41w2X+8pE+ZSJ1A6dLwZKSsnwg06n0TPP7261slhTs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Uml5eoBHEJBisxdUcoGri2nlgeTp8+Lmr8DUyUjaowazkkJxhOiaEwN6P6BYduPq5QcdpTTjdEafSfA5A3Vcun0TQZusikf3s4eReeGMtLxbV3MqfvLDacrx6zyOkIRmqjq54x5valeT96hW6BxMKIDsvybl/FEcAnre9Wj3acU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tE62j-0003Al-4y
+	for linux-kernel@vger.kernel.org; Thu, 21 Nov 2024 13:12:17 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tE62i-001ty4-31
+	for linux-kernel@vger.kernel.org;
+	Thu, 21 Nov 2024 13:12:16 +0100
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id 9B8CB3788C4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:12:16 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 58AC33788BF;
+	Thu, 21 Nov 2024 12:12:15 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id ca082c11;
+	Thu, 21 Nov 2024 12:12:14 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Thu, 21 Nov 2024 13:12:12 +0100
+Subject: [PATCH can] can: dev: can_set_termination(): allow sleeping GPIOs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189328 [Nov 21 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 42 0.3.42 bec10d90a7a48fa5da8c590feab6ebd7732fec6b, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;cab-wsm-0029881.sigma.sbrf.ru:5.0.1,7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/21 09:49:00 #26878913
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241121-dev-fix-can_set_termination-v1-1-41fa6e29216d@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAJsjP2cC/x2M0QpAQBAAf0X7bMtulPyKpHMW++Do7pKSf7d5n
+ JqZB5JElQRd8UCUS5MewYDKAvzmwiqoszFwxTURE85y4aI3ehfGJHnMEncNLluHC7m2Jp6YfQN
+ 2OKOY+t97sACG9/0AmXidgXIAAAA=
+X-Change-ID: 20241121-dev-fix-can_set_termination-f1a8412b22c5
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, 
+ =?utf-8?q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-355e8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1456; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=N41w2X+8pE+ZSJ1A6dLwZKSsnwg06n0TPP7261slhTs=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBnPyOcVCx49fS2p7p2xIYffu1mLTYmamC/zYeni
+ 3+GDml5RvWJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZz8jnAAKCRAoOKI+ei28
+ b71UB/wPWq6PY/Ug4OdcsZa5Ap7ejPPR/wcO1X5Umk7hZ3EV9a0EwmcKBEcpFKIIpp6x6tHRSCF
+ hL1MctqjN6Y6CFhstKfufDXh4uwyJyc41L8CdMcUbKLrU50F7NbOwA2ETtDb4gJfDqmp0HxemH3
+ 5Th9G/TiDKXinZ7ckgVkPuoXLJFqx36PP4aYzqVAKeZFQ/aUJNJpWr/o2/sr6VNHHOUR0SxhvxG
+ jk/D1wBE6GMBMApLLujRlokVOotiDm9b4S7GyGCi7WnuqqOwU7lPHyNQBr3AiRw891JuXyfnybO
+ NUA1J0eSnZzAboDD3TgF+DAdVDC6EEaJNMXMC5JPGTXQnSuN
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Sergey,
+In commit 6e86a1543c37 ("can: dev: provide optional GPIO based
+termination support") GPIO based termination support was added.
 
-On Wed, Nov 20, 2024 at 12:15:29PM +0900, Sergey Senozhatsky wrote:
-> On (24/11/19 15:27), Alexey Romanov wrote:
-> > Since we use custom backend implementation, we remove the ability
-> > for users to use algorithms from crypto backend. This breaks
-> > backward compatibility, user doesn't necessarily use one of the
-> > algorithms from "custom" backends defined in zram folder.
->=20
-> Sorry, no, we are not adding this for a hypothetical scenario.
->=20
-> > For example, he can use some driver with hardware compression support.
->=20
-> Such as?  Pretty much all H/W compression modules (I'm aware of)
-> that people use with zram are out-of-tree.
+For no particular reason that patch uses gpiod_set_value() to set the
+GPIO. This leads to the following warning, if the systems uses a
+sleeping GPIO, i.e. behind an I2C port expander:
 
-At least we have this:
+| WARNING: CPU: 0 PID: 379 at /drivers/gpio/gpiolib.c:3496 gpiod_set_value+0x50/0x6c
+| CPU: 0 UID: 0 PID: 379 Comm: ip Not tainted 6.11.0-20241016-1 #1 823affae360cc91126e4d316d7a614a8bf86236c
 
-drivers/crypto/nx/nx-common-powernv.c:1043:    .cra_flags        =3D CRYPTO=
-_ALG_TYPE_COMPRESS,
-drivers/crypto/nx/nx-common-pseries.c:1020:    .cra_flags        =3D CRYPTO=
-_ALG_TYPE_COMPRESS,
-drivers/crypto/cavium/zip/zip_main.c:377:    .cra_flags        =3D CRYPTO_A=
-LG_TYPE_COMPRESS,
-drivers/crypto/cavium/zip/zip_main.c:392:    .cra_flags        =3D CRYPTO_A=
-LG_TYPE_COMPRESS,
+Replace gpiod_set_value() by gpiod_set_value_cansleep() to allow
+sleeping GPIO.
 
-Anyway, if we want to completely abandon Crypto API, these modules
-still need to be supported in zram.
+Reported-by: Leonard Göhrs <l.goehrs@pengutronix.de>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ drivers/net/can/dev/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Thank you,
-Alexey=
+diff --git a/drivers/net/can/dev/dev.c b/drivers/net/can/dev/dev.c
+index 6792c14fd7eb009d551ac22bab1f0ee2cd0f0398..681643ab37804e9904cc4a899d44c55cefab7b6e 100644
+--- a/drivers/net/can/dev/dev.c
++++ b/drivers/net/can/dev/dev.c
+@@ -468,7 +468,7 @@ static int can_set_termination(struct net_device *ndev, u16 term)
+ 	else
+ 		set = 0;
+ 
+-	gpiod_set_value(priv->termination_gpio, set);
++	gpiod_set_value_cansleep(priv->termination_gpio, set);
+ 
+ 	return 0;
+ }
+
+---
+base-commit: 66418447d27b7f4c027587582a133dd0bc0a663b
+change-id: 20241121-dev-fix-can_set_termination-f1a8412b22c5
+
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
+
+
 
