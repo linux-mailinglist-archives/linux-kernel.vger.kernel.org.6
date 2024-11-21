@@ -1,244 +1,220 @@
-Return-Path: <linux-kernel+bounces-416819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 473739D4AB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:21:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1807C9D4AB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF1B2225A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:21:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9E60B2274C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BAE1D89E5;
-	Thu, 21 Nov 2024 10:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DykALw7/"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC6F1D0F5A;
+	Thu, 21 Nov 2024 10:18:59 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9025D1D432A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F091D0E00;
+	Thu, 21 Nov 2024 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184319; cv=none; b=o/7zVX9EhzuzR6+IHK+Rg/VSgM52En23BcfawH9aN/vVK8TtxAINMFIo/Lx58QfxBAeVMubxHuKlD8zapQ4/2M+HKtw8mo5BvbLxilFdtsbGvphN5dm99rpDpNKvMJgVMG6FxcN8MOYndfmM041mK/Sy1lBl3OxoFQUynWtGkeI=
+	t=1732184339; cv=none; b=CAnDlOISQ8oWd5GIhlVhQrkBUR73Tp/z2Q8v08d6Suha11iVKXPCMqqnqlmuQKC51uiHgcUIIzJi2l+DrVHhbBuXyR7XRBF+qyUde8EYDK4bfNP9iBSwlzrQXFHZEgAtHz5pZB3BuvYyRuEpmqanD2K9bMHZ9zZwDdQNNTsTK98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184319; c=relaxed/simple;
-	bh=tdpf/A32vha/ko+aQ4RiDlCU44C08sRlPZcE4GA5DLw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hWbcqtBFPquW1q1hPW51/AQ4MrwMvCdL1c+8q8n3HBO+l3AqTggflnXoSGXvw32XU3lG73WByXEGuaCGh9cv2PYjwa1OamtfONr2rNFCzDc+JUTGo5eNZODX6N0FKuQxYqM4qOSZ0tbhpHKVugXlfYFhwhqs4nKBA0ptZdC5Uus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DykALw7/; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53da2140769so731749e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:18:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732184314; x=1732789114; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oRi3cIGaDlxTwStqxhJi+pjnXvvxLtR6kDzgcy0nvWU=;
-        b=DykALw7/frZ4guuLjcJy3QLI27TsYnjlBF+Rp26TY0HOr++EB8A492iHO1HMMlSuvT
-         ECioZDo0EtB47ArSfNy3Zx5MshJwOPADKbwjk2cbjbAp/desRpNEeZJPBcWMPkonU1T8
-         CbhWyz8VXpbY/rv71T/7rulwOffJfYoj0lG+84JavTWxa5c4ayfPkBYUD2mO82WKryWz
-         KW8wNahBNtUVMRkSLoAtMjOlOKPfqrU27gkSAXTy6igFG+vo+XTHISimcw4SefuRc7M4
-         oJYG+mPGTna0hDTAS6vVWp+F/4Dc/M/VbVbNroocfbl2A4mezBpT8cmOJHcGIPk3PzsP
-         zf2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732184314; x=1732789114;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oRi3cIGaDlxTwStqxhJi+pjnXvvxLtR6kDzgcy0nvWU=;
-        b=gMq+qcbiU+z60o+pD/2oE1ropUydZxdULA/kflOUZ90Ofz8lla7xQjhPHef7rsyy0Z
-         FeBtgoHRD3xrxqKDWlsxDiA8KwYfch8uy4eQSnACeojAqQCPc34cfUTlPGOXbY3zP/ji
-         xgxG3bcYoqsZN0lCIJLkjsUobGNB9Hkzg3iiLaovMhX9HTMHirwkkVTvqQQBvx+wKJtg
-         Dj5BVzKh7rQVzyijrI6TsMWW1Xrr+gDetOYWhgt36H+Y2c0vzFphMaybqs5yak6Ogrv+
-         neQDOLnZHi+ElpTsweWjvA49Z+PixqsS0izG1FwGvKHfXrQmCk3vJguPPPZs80bqnpGI
-         KmzA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0TEqEZwS8Fftj7zwURTobj37jWJqfxbqskXP+XOyGbD5ajJfAGUhdYrDJHxjZK9arc/NDH07mEJI+IpI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6Wqvc06DfusKLZ6+sxQZETinGmw0owghPiLOskDaFc3Mf38sV
-	kHIsoEJFRCeUtg9hc9S2TdE1mZhjqZ6OJ2R+lNogsBurXkdc586dp82V1z0VjkShNbgfWh2r6OI
-	o
-X-Google-Smtp-Source: AGHT+IFd0X5sd0gLrWTrdWHzSVGz3bjzzQ0tWK2LA5BLwCGIn3GL8B7rGGMHcyvlWsAO9re9qR5F2w==
-X-Received: by 2002:a05:6512:53c:b0:53d:a309:7fa3 with SMTP id 2adb3069b0e04-53dc1368c75mr2424566e87.41.1732184313217;
-        Thu, 21 Nov 2024 02:18:33 -0800 (PST)
-Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254910796sm4598065f8f.47.2024.11.21.02.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 02:18:32 -0800 (PST)
-From: Guillaume Stols <gstols@baylibre.com>
-Date: Thu, 21 Nov 2024 10:18:31 +0000
-Subject: [PATCH 9/9] iio: adc: ad7606: Add support for writing registers
- when using backend
+	s=arc-20240116; t=1732184339; c=relaxed/simple;
+	bh=UTiwnatRcmow/TKEAUjy5NMRcM2d9cuIpujHrnkOFdo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MzfyMge6bYU4WT2mZnd3giPEpPCIoS1mrr15rDkfMrtdj7xlRa0gHHtEks3HzSPRuea2sCBYX7bBRDTCAEV5upOci3kmUi6UHjltiZTP/fd9q1O0D25SyVgG/wsa99Z7/5P6ppj20GNBKmu3g+DjRaoVDDk1KROXgl1Cv98sSXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvDcx48K9z6K6CQ;
+	Thu, 21 Nov 2024 18:15:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C0276140A86;
+	Thu, 21 Nov 2024 18:18:47 +0800 (CST)
+Received: from SecurePC-101-06.china.huawei.com (10.122.19.247) by
+ frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 21 Nov 2024 11:18:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <linux-cxl@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linuxarm@huawei.com>, <tongtiangen@huawei.com>, Yicong Yang
+	<yangyicong@huawei.com>, Niyas Sait <niyas.sait@huawei.com>,
+	<ajayjoshi@micron.com>, Vandana Salve <vsalve@micron.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+	<alison.schofield@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Gregory Price <gourry@gourry.net>, Huang
+ Ying <ying.huang@intel.com>
+Subject: [RFC PATCH 0/4] CXL Hotness Monitoring Unit perf driver
+Date: Thu, 21 Nov 2024 10:18:41 +0000
+Message-ID: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-ad7606_add_iio_backend_software_mode-v1-9-8a693a5e3fa9@baylibre.com>
-References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
-In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- devicetree@vger.kernel.org, dlechner@baylibre.com, jstephan@baylibre.com, 
- aardelean@baylibre.com, adureghello@baylibre.com, 
- Guillaume Stols <gstols@baylibre.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732184304; l=4035;
- i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=tdpf/A32vha/ko+aQ4RiDlCU44C08sRlPZcE4GA5DLw=;
- b=IG8R0F6BS7ExulQfzVIBxrGS6fS4qof4AM1NKLiCQyCH0n6OvosUfzcczsrHesp1cJt3Lyfo+
- apRxWf5SaiKAiTV14WHE7FXNgmJPpz53QR3HGCdb4Gc/yULdOclYON/
-X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
- pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Adds the logic for effectively enabling the software mode for the
-iio-backend, i.e enabling the software mode channel configuration and
-implementing the register writing functions.
+The CXL specification release 3.2 is now available under a click through at
+https://computeexpresslink.org/cxl-specification/ and it brings new
+shiny toys.
 
-Signed-off-by: Guillaume Stols <gstols@baylibre.com>
----
- drivers/iio/adc/ad7606.h     | 15 ++++++++++++
- drivers/iio/adc/ad7606_par.c | 58 +++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 72 insertions(+), 1 deletion(-)
+RFC reason
+- Whilst trace capture with a particular configuration is potentially useful
+  the intent is that CXL HMU units will be used to drive various forms of
+  hotpage migration for memory tiering setups. This driver doesn't do this
+  (yet), but rather provides data capture etc for experimentation and
+  for working out how to mostly put the allocations in the right place to
+  start with by tuning applications.
 
-diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index 74896d9f1929..a54dc110839f 100644
---- a/drivers/iio/adc/ad7606.h
-+++ b/drivers/iio/adc/ad7606.h
-@@ -96,6 +96,21 @@
- 		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),  \
- 		0, 0, 16)
- 
-+#define AD7606_BI_SW_CHANNEL(num)			\
-+	AD760X_CHANNEL(num,				\
-+		/* mask separate */			\
-+		BIT(IIO_CHAN_INFO_SCALE),		\
-+		/* mask type */				\
-+		0,					\
-+		/* mask all */				\
-+		BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+		/* mask separate available */		\
-+		BIT(IIO_CHAN_INFO_SCALE),		\
-+		/* mask all available */		\
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+		16)
-+
- struct ad7606_state;
- 
- typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
-diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
-index a25182a3daa7..0c1177f436f3 100644
---- a/drivers/iio/adc/ad7606_par.c
-+++ b/drivers/iio/adc/ad7606_par.c
-@@ -13,12 +13,14 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
-+#include <linux/pwm.h>
- #include <linux/types.h>
- 
- #include <linux/iio/backend.h>
- #include <linux/iio/iio.h>
- 
- #include "ad7606.h"
-+#include "ad7606_bi.h"
- 
- static const struct iio_chan_spec ad7606b_bi_channels[] = {
- 	AD7606_BI_CHANNEL(0),
-@@ -31,6 +33,17 @@ static const struct iio_chan_spec ad7606b_bi_channels[] = {
- 	AD7606_BI_CHANNEL(7),
- };
- 
-+static const struct iio_chan_spec ad7606b_bi_sw_channels[] = {
-+	AD7606_BI_SW_CHANNEL(0),
-+	AD7606_BI_SW_CHANNEL(1),
-+	AD7606_BI_SW_CHANNEL(2),
-+	AD7606_BI_SW_CHANNEL(3),
-+	AD7606_BI_SW_CHANNEL(4),
-+	AD7606_BI_SW_CHANNEL(5),
-+	AD7606_BI_SW_CHANNEL(6),
-+	AD7606_BI_SW_CHANNEL(7),
-+};
-+
- static int ad7606_bi_update_scan_mode(struct iio_dev *indio_dev, const unsigned long *scan_mask)
- {
- 	struct ad7606_state *st = iio_priv(indio_dev);
-@@ -70,7 +83,7 @@ static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev *indio
- 	if (ret)
- 		return ret;
- 
--	ret = devm_iio_backend_enable(dev, st->back);
-+	ret = devm_iio_backend_enable(st->dev, st->back);
- 	if (ret)
- 		return ret;
- 
-@@ -86,9 +99,52 @@ static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev *indio
- 	return 0;
- }
- 
-+static int ad7606_bi_reg_read(struct iio_dev *indio_dev, unsigned int addr)
-+{
-+	struct ad7606_state *st = iio_priv(indio_dev);
-+	int val, ret;
-+	struct ad7606_platform_data *pdata =  st->dev->platform_data;
-+
-+	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-+		ret = pdata->bus_reg_read(st->back,
-+					addr,
-+					&val);
-+	}
-+	if (ret < 0)
-+		return ret;
-+
-+	return val;
-+}
-+
-+static int ad7606_bi_reg_write(struct iio_dev *indio_dev,
-+			       unsigned int addr,
-+			       unsigned int val)
-+{
-+	struct ad7606_state *st = iio_priv(indio_dev);
-+	struct ad7606_platform_data *pdata =  st->dev->platform_data;
-+	int ret;
-+
-+	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-+	ret = pdata->bus_reg_write(st->back,
-+					addr,
-+					val);
-+	}
-+	return ret;
-+}
-+
-+static int ad7606_bi_sw_mode_config(struct iio_dev *indio_dev)
-+{
-+	indio_dev->channels = ad7606b_bi_sw_channels;
-+
-+	return 0;
-+}
-+
- static const struct ad7606_bus_ops ad7606_bi_bops = {
- 	.iio_backend_config = ad7606_bi_setup_iio_backend,
- 	.update_scan_mode = ad7606_bi_update_scan_mode,
-+	.reg_read = ad7606_bi_reg_read,
-+	.reg_write = ad7606_bi_reg_write,
-+	.sw_mode_config = ad7606_bi_sw_mode_config,
- };
- 
- static int ad7606_par16_read_block(struct device *dev,
+CXL r3.2 introduces a CXL Hotness Monitoring Unit definition. The intent
+of this is to provide a way to establish which units of memory (typically
+pages or larger) in CXL attached memory are hot. The implementation details
+and algorithm are all implementation defined. The specification simply
+describes the 'interface' which takes the form of ring buffer of hotness
+records in a PCI BAR and defined capability, configuration and status
+registers.
+
+The hardware may have constraints on what it can track, granularity etc
+and on how accurately it tracks (e.g. counter exhaustion, inaccurate
+trackers). Some of these constraints are discoverable from the hardware
+registers, others such as loss of accuracy have no universally accepted
+measures as they are typically access pattern dependent. Sadly it is
+very unlikely any hardware will implement a truly precise tracker given
+the large resource requirements for tracking at a useful granularity.
+
+There are two fundamental operation modes:
+
+* Epoch based. Counters are checked after a period of time (Epoch) and
+  if over a threshold added to the hotlist.
+* Always on. Counters run until a threshold is reached, after that the
+  hot unit is added to the hotlist and the counter released.
+
+Counting can be filtered on:
+
+* Region of CXL DPA space (256MiB per bit in a bitmap).
+* Type of access - Trusted and non trusted or non trusted only, R/W/RW
+
+Sampling can be modified by:
+
+* Downsampling including potentially randomized downsampling.
+
+The driver presented here is intended to be useful in its own right but
+also to act as the first step of a possible path towards hotness monitoring
+based hot page migration. Those steps might look like.
+
+1. Gather data - drivers provide telemetry like solutions to get that
+   data. May be enhanced, for example in this driver by providing the
+   HPA address rather than DPA Unit Address. Userspace can access enough
+   information to do this so maybe not.
+2. Userspace algorithm development, possibly combined with userspace
+   triggered migration by PA. Working out how to use different levels
+   of constrained hardware resources will be challenging.
+3. Move those algorithms in kernel. Will require generalization across
+   different hotpage trackers etc.
+
+So far this driver just gives access to the raw data. I will probably kick
+of a longer discussion on how to do adaptive sampling needed to actually
+use these units for tiering etc, sometime soon (if no one one else beats
+me too it).  There is a follow up topic of how to virtualize this stuff
+for memory stranding cases (VM gets a fixed mixture of fast and slow
+memory and should do it's own tiering).
+
+More details in the Documentation patch but typical commands are:
+
+$perf record -a  -e cxl_hmu_mem0.0.0/epoch_type=0,access_type=6,\
+ hotness_threshold=1024,epoch_multiplier=4,epoch_scale=4,range_base=0,\
+ range_size=1024,randomized_downsampling=0,downsampling_factor=32,\
+ hotness_granual=12
+
+$perf report --dump-raw-traces
+
+Example output.  With a counter_width of 16 (0x10) the least significant
+4 bytes are the counter value and the unit index is bits 16-63.
+Here all units are over the threshold and the indexes are 0,1,2 etc.
+
+. ... CXL_HMU data: size 33512 bytes
+Header 0: units: 29c counter_width 10
+Header 1 : deadbeef
+0000000000000283
+0000000000010364
+0000000000020366
+000000000003033c
+0000000000040343
+00000000000502ff
+000000000006030d
+000000000007031a
+
+Which will produce a list of hotness entries.
+Bits[N-1:0] counter value
+Bits[63:N] Unit ID (combine with unit size and DPA base + HDM decoder
+  config to get to a Host Physical Address)
+
+Specific RFC questions.
+- What should be in the header added to the aux buffer.
+  Currently just the minimum is provided. Number of records
+  and the counter width needed to decode them.
+- Should we reset the counters when doing sampling "-F X"
+  If the frequency is higher than the epoch we never see any hot units.
+  If so, when should we reset them?
+
+Note testing has been light and on emulation only + as perf tool is
+a pain to build on a striped back VM,  build testing has all be on
+arm64 so far.  The driver loads though on both arm64 and x86 so
+any problems are likely in the perf tool arch specific code
+which is build tested (on wrong machine)
+
+The QEMU emulation needs some cleanup, but I should be able to post
+that shortly to let people actually play with this.  There are lots
+of open questions there on how 'right' we want the emulation to be
+and what counting uarch to emulate.
+
+Jonathan Cameron (4):
+  cxl: Register devices for CXL Hotness Monitoring Units (CHMU)
+  cxl: Hotness Monitoring Unit via a Perf AUX Buffer.
+  perf: Add support for CXL Hotness Monitoring Units (CHMU)
+  hwtrace: Document CXL Hotness Monitoring Unit driver
+
+ Documentation/trace/cxl-hmu.rst     | 197 +++++++
+ Documentation/trace/index.rst       |   1 +
+ drivers/cxl/Kconfig                 |   6 +
+ drivers/cxl/Makefile                |   3 +
+ drivers/cxl/core/Makefile           |   1 +
+ drivers/cxl/core/core.h             |   1 +
+ drivers/cxl/core/hmu.c              |  64 ++
+ drivers/cxl/core/port.c             |   2 +
+ drivers/cxl/core/regs.c             |  14 +
+ drivers/cxl/cxl.h                   |   5 +
+ drivers/cxl/cxlpci.h                |   1 +
+ drivers/cxl/hmu.c                   | 880 ++++++++++++++++++++++++++++
+ drivers/cxl/hmu.h                   |  23 +
+ drivers/cxl/pci.c                   |  26 +-
+ tools/perf/arch/arm/util/auxtrace.c |  58 ++
+ tools/perf/arch/x86/util/auxtrace.c |  76 +++
+ tools/perf/util/Build               |   1 +
+ tools/perf/util/auxtrace.c          |   4 +
+ tools/perf/util/auxtrace.h          |   1 +
+ tools/perf/util/cxl-hmu.c           | 367 ++++++++++++
+ tools/perf/util/cxl-hmu.h           |  18 +
+ 21 files changed, 1748 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/trace/cxl-hmu.rst
+ create mode 100644 drivers/cxl/core/hmu.c
+ create mode 100644 drivers/cxl/hmu.c
+ create mode 100644 drivers/cxl/hmu.h
+ create mode 100644 tools/perf/util/cxl-hmu.c
+ create mode 100644 tools/perf/util/cxl-hmu.h
 
 -- 
-2.34.1
+2.43.0
 
 
