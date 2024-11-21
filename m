@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-416832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1999D4AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:25:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C657C9D4AD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74E3287BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EA151F21C0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9009B1D0405;
-	Thu, 21 Nov 2024 10:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C40D1C9B98;
+	Thu, 21 Nov 2024 10:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzLmgXIH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HK0wqAnc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28C91C3046
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01067169AE4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184706; cv=none; b=TdqgGcipUOtnj34YsFg6PypZq87G8W4fVPiY66JNuEzdccYw2rNapxLz9LcdqOXJWq86FzRvIDNCadglGOq/BT74O0ANn8Mc8hvRix1bUn4TBoMDocufCLN0GRyRRTpk6eE48775k9C0me7XceZhJjNLzsmh3ADUBPRVVQdr6TQ=
+	t=1732184779; cv=none; b=AI63vfRTqGJXxdloyos3ZiHEZHg1J1g1mxoPtbIq7wHXYBCXKf6oUnF5ubsrnhyQ67pl9TcMvsd+uC4RnJ6o4Ryq3RKPKBNPr11AMDxhOSCVY+kqW/M+sXW8MAeB5vtLRSn9woMkStdemTHCLlUlQwjkt2PhRsnqc0gocDtR+IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184706; c=relaxed/simple;
-	bh=uTUGn2iQmB7yPEXNTqyE13jq3MolpgNw7N7yDtmNDjU=;
+	s=arc-20240116; t=1732184779; c=relaxed/simple;
+	bh=akoykGtAcNwr5JOB3J5O/Unuk7WysQAlSwDQxOvJC/U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tTuu7VFw3GdYmik4RDfnGDch350GQ1exXqGC1V2LaSrGPpfaZF0OlFPT+XY6R0PMhYMgr4gcnJ4UV8cspjo6VB6CpG4dlzEJ1p13Eh5RRXvortH/3wmc3oJkdVcd84Gj5fGygcHYIDsTp4Os30JvjeIbYJ15kcLTyxRSO7Yj+pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzLmgXIH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7500AC4CECC;
-	Thu, 21 Nov 2024 10:25:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=mmUj4M4BmWa4DAUReIP/HuFqvftFEG2CAR+tGxGzdEjNpwHrCaL2+YxC8EVvQcwWIIVvqPjEofTTYnPGYcEzKLGMgb28Nuk952DwYqSDlw94hu2kaWrzWnEzkvgki9tMgPK0I+FGXdDranSo2DrxqJdWjhRyX2o+xH7gMoqbp44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HK0wqAnc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98085C4CECC;
+	Thu, 21 Nov 2024 10:26:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732184705;
-	bh=uTUGn2iQmB7yPEXNTqyE13jq3MolpgNw7N7yDtmNDjU=;
+	s=k20201202; t=1732184776;
+	bh=akoykGtAcNwr5JOB3J5O/Unuk7WysQAlSwDQxOvJC/U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jzLmgXIHeJjNAlQzUwYbM/2HpugkItmTXES1aGt3QlzROXHTPiAwOt7c37PM+bGdp
-	 9L3hdk3ZJRlfldueTP2Ely9U0px0XibPiyVaJmF09jfNLN4VZWLgoOtUrZXQZ7nf4Z
-	 PDKBB3T5kPsCNi1X76gosubGeIDJqyrYYWtG2OIgKF1VLQ3Gd8+bZyZgsQ8Hkm8g8T
-	 ho/946b6RyLxfUSeQ4fPdd5u8J1DaM+BvM+M6h97NVqx1p1AmRKJhTMfkNmzl3MJWp
-	 Dz/owWv6cZnCnbj/hrUEB2bbIQssB3qZhwW7sd3ik8K4IJm4ZQ2RB+KP36Z4Xl+Ide
-	 ILkd/KJffNB4g==
-Message-ID: <4bff3f3e-9e32-45b1-91b1-6c9faf36d416@kernel.org>
-Date: Thu, 21 Nov 2024 11:25:00 +0100
+	b=HK0wqAncf6gqx52eVOrxn6j/FermG1HcnYozLVNT+kxxEuGqffvQmroX7SpBcZqWf
+	 0+Sv2yKH0qrDXXfyF2XpyfbOndqHPEOfQYy48DUpZULfkIfxdyAynk+Yia5CbHgY2D
+	 exK7V4/h1ghSOghdWhih0sr6//vYdy6HeGUSsORu5ATsc7aPbHjwH+vG7UtNyB8EWf
+	 0Ufv7JEskTeafOklUIh7hF6AObdp4yKfT64yUJrzHsQJ399RC0cc0MS/vlFaSxtbfI
+	 qW9s0ojj5Oiso5B/+VNBy54o6mnTbiQkLgAkdaihnyEqadmG8OIqhcaEG7xFLwC1P5
+	 enWZ2bThoSR7A==
+Message-ID: <999de9d7-055e-4659-b1b2-b50b2b6dfe7a@kernel.org>
+Date: Thu, 21 Nov 2024 11:26:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/10] memory: ti-aemif: Wrap CS timings into a struct
+Subject: Re: [PATCH v4 01/10] memory: ti-aemif: Store timings parameter in
+ number of cycles - 1
 To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
  Santosh Shilimkar <ssantosh@kernel.org>,
  Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -59,7 +60,7 @@ Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
  Herve Codina <herve.codina@bootlin.com>,
  Christopher Cordahi <christophercordahi@nanometrics.ca>
 References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
- <20241115132631.264609-4-bastien.curutchet@bootlin.com>
+ <20241115132631.264609-2-bastien.curutchet@bootlin.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,50 +106,40 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241115132631.264609-4-bastien.curutchet@bootlin.com>
+In-Reply-To: <20241115132631.264609-2-bastien.curutchet@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/11/2024 14:26, Bastien Curutchet wrote:
-> CS timings are store in the struct aemif_cs_data along with other CS
-> parameters. It isn't convenient for exposing CS timings to other drivers
-> without also exposing the other parameters.
+> The CS configuration register expects timings to be expressed in
+> 'number of cycles - 1' but they are stored in ns in the struct
+> aemif_cs_data. So at init, the timings currently set are converted to ns
+> by aemif_get_hw_params(), updated with values from the device-tree
+> properties, and then converted back to 'number of cycles - 1' before
+> being applied.
 > 
-> Wrap the CS timings in a new the struct aemif_cs_timings to simplify
-> their export in upcoming patches.
+> Store the timings directly in 'number of cycles - 1' instead of
+> nanoseconds.
+> Perform the conversion from nanosecond during the device-tree parsing.
+> Remove aemif_cycles_to_nsec() as it isn't used anymore.
 > 
 > Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
 > ---
->  drivers/memory/ti-aemif.c | 58 ++++++++++++++++++++++-----------------
->  1 file changed, 33 insertions(+), 25 deletions(-)
+>  drivers/memory/ti-aemif.c | 137 ++++++++++++++++++++++----------------
+>  1 file changed, 80 insertions(+), 57 deletions(-)
 > 
 > diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-> index 6a751a23d41a..aec6d6464efa 100644
+> index d54dc3cfff73..bd0c49ba1939 100644
 > --- a/drivers/memory/ti-aemif.c
 > +++ b/drivers/memory/ti-aemif.c
-> @@ -78,10 +78,8 @@
->  				WSETUP(WSETUP_MAX) | \
->  				EW(EW_MAX) | SSTROBE(SSTROBE_MAX) | \
+> @@ -80,28 +80,28 @@
 >  				ASIZE_MAX)
-> -
-
-This does not look related change.
-
+>  
 >  /**
-> - * struct aemif_cs_data: structure to hold CS parameters
-> - * @cs: chip-select number
-> + * struct aemif_cs_timings: structure to hold CS timings
->   * @wstrobe: write strobe width, number of cycles - 1
->   * @rstrobe: read strobe width, number of cycles - 1
->   * @wsetup: write setup width, number of cycles - 1
-> @@ -89,12 +87,8 @@
->   * @rsetup: read setup width, number of cycles - 1
->   * @rhold: read hold width, number of cycles - 1
->   * @ta: minimum turn around time, number of cycles - 1
-> - * @enable_ss: enable/disable select strobe mode
-> - * @enable_ew: enable/disable extended wait mode
-> - * @asize: width of the asynchronous device's data
+> - * struct aemif_cs_data: structure to hold cs parameters
+> + * struct aemif_cs_data: structure to hold CS parameters
 
+You are changing this line in next patch, so just do it there.
 
 Best regards,
 Krzysztof
