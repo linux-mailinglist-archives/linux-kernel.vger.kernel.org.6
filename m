@@ -1,130 +1,108 @@
-Return-Path: <linux-kernel+bounces-417041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C949D4E2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:57:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5A09D4E31
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACDD2834A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F65C283366
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E71D8A08;
-	Thu, 21 Nov 2024 13:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE581D86F6;
+	Thu, 21 Nov 2024 13:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqbbM5a6"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CKiP7tqS"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C11474068;
-	Thu, 21 Nov 2024 13:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE8274068
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197412; cv=none; b=dCV57xgL8sja/bp60RB+Y1oYfvF8NPAFW4cjhmIYvx3cAFxN1jQi2hlWytOn7VTJFwaOmVIwCMmkHu1EQH0J1xPNub27e/irn3h2rmot9QIxd0eoFbCk168X+6lSbRL8V1gAoWkqnlI8OrgtFyrPHziLDOxgbzWCWpWqcHyLw+M=
+	t=1732197521; cv=none; b=s2anwWuWdojTW7JOxDlwzD/jkeEZ8qmrfOaFVlR/ndi/fGsPqIVAXPPMYUpLNFPQ5r8bP2j3AGnX2izjpdZTErH0j16mhrzkLMsFZZbfODHulVnX6pl7X6lSNUKadPkb0nW+TMOabG9xiukRC474rrVyTgihVIZURRbxxVSGAdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197412; c=relaxed/simple;
-	bh=ePTbVWGeSfRNtNOCTV+I6F4vSdmqOaS362+3xuGclys=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aNqdaDrnIR5Ew0IGFJ16jpN0kfkBQ/nlHtez6iV5Q8JYpiJeaBrCJCryT4n0IJRw+QwFHgch1DQFb5ulTKVy194FR96Z/Dwceym79nEdhtYhQyOTD2JJdyFtvBW5OZc27tpTM5pRwqxlxwBJ59FmjMtjkkj6/a6USRn/K81ymcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqbbM5a6; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso1212456a12.1;
-        Thu, 21 Nov 2024 05:56:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732197409; x=1732802209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6VTsKEKFH+lx7r6h+YAEcJh+xm3cvslfQa17q41ek0=;
-        b=QqbbM5a6O9BeuJKdKj/2ZesKJSG3yPDr8twocT4YLbdppmelkI7d1yL3XkI3ZnGzIJ
-         15G0KZlfa3PhHF2g7tCFUAFmo6FVB9lA2noghmIVz7+2t9Ef6epnuTKKKk02K+rTHO0I
-         y/3pWRKVe6LS2++pkLr5lv1TW7a7VLhcUYtEj4Gjx7KqpmKv+jTitSdDL85Ae2o/j/om
-         mp2Yrq3VBWaMAQfIM72kuAWWRD1CeW/xSOvxdUqFh5NxvewkN7N+JcUuh98AVMw9Zoup
-         zL1u/C2Lc2tBmuGxnL5+OpOyhFnWHdTjSpy/ULmNyJFJVbMCDjGhCfsckV42+J7g2BHj
-         +n6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197409; x=1732802209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H6VTsKEKFH+lx7r6h+YAEcJh+xm3cvslfQa17q41ek0=;
-        b=TXEDCFsApIH/HQT3O8EPRTDJZUjzaisVlO0tf1mhoaDgVwgEfgHzCpc99Sf+AydCTX
-         tNBNDHjbhN0DREga9uFvYDmZn8MVTcXkt/q6w0XS83WeIMLLFG0QL9b6NFmyS6n4w+Vc
-         HHmRp+pGlmxSvFHG9yDoo5xW4RmTMJUyE36LsE3PHnevN55teUYh7OdSpbjN7CVr544o
-         +6kNsnWM1abGVoctQ0p82Y693wpb8vYgfLIAJcO/BHH8HhXyPTzhj3bsIlqa/KQTg0Yb
-         kNZaY0haChVzuYMaoNByHqwjoS9bRoiTwFY4HEG3bvseN662dzWkz7VGLAbfshD5OZVJ
-         DqVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUA7BfLhgHIliaen2iFjluFgXJxn9V9+4utKa/9LdTJi52157GzP2YHSSS/ObdeVDZ9RZs80R4j9cLk@vger.kernel.org, AJvYcCUwC5Rh2prUsOQpWtxdVixpkWdSplkR9AHh7vp0WnaxzQkjahAgjos9dayz3cH8Gxy3K/2OsIpu/f67TcugUQ==@vger.kernel.org, AJvYcCWcWIZtuOLzGWMggJVJ+zlBo6gk06Fvws5GXo58YGtV8qWok+e2teuv3g20etnh/jjij0KneJNLYhXUbDv7@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsfCflKZEjq6k0bRhQGdau96lb6Hnh5u3WRXprQI7aeIubqmXh
-	cTYtvbSCrKSee3kd7SNRG3Xg054lpLQ7b/1Ovxjhb5BXRSQfYpXTrlq8vtVIAigIneWHyvKFgNq
-	r+yS8DYGyQp1ser6PZNj3qJOHZyg=
-X-Gm-Gg: ASbGncsKjmXHeiQMm6a9HiEyJnaydrDp7IDptgyCWV4rFMMmo5loyaG9A/L1yP+F3C7
-	eRb97OgyinYpLVJEF9DznWHcve5RRLw==
-X-Google-Smtp-Source: AGHT+IHbmuJ7KgininVEU/ALyo+nC03rV8ASRUHLBsEK8cAvNbVaYmbKGLO9xiUHXWLwlDvA3LbY4pqkbb8Fahimsy8=
-X-Received: by 2002:a05:6402:5108:b0:5cf:d078:c9dc with SMTP id
- 4fb4d7f45d1cf-5cff4ccfa11mr4811055a12.22.1732197408592; Thu, 21 Nov 2024
- 05:56:48 -0800 (PST)
+	s=arc-20240116; t=1732197521; c=relaxed/simple;
+	bh=1XDV6Qj7eyNs2FZm81waRioZ1tN6Wz3fQrqKYvnRq3s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mrXFFgdvBbM9tv1kT77+1w9o/iShKGAjh2FQKBFui4O9kjoZ8wuhS9vcdbr4fjqtlhW8WyV9p7mrYhJiBNSYpTbhthITMR0f21f45ziSH8pMmHnjLmZW89UtNqlyxZUNW/DtCPTWzfgVA0mMIzG5HgTIiSFKS6vfkhJiOjFlGCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CKiP7tqS; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732197519; x=1763733519;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=1XDV6Qj7eyNs2FZm81waRioZ1tN6Wz3fQrqKYvnRq3s=;
+  b=CKiP7tqSUAuzirssJ0JhRw2BZ5XOFkIk+S0RpVC1DcZxymm4a69Z+Woz
+   Ggb/q0Mv+qdeHCSRnaLKlTxGYu6+OvKdrkF2zHMGOn8dh6i9UTtPPym38
+   sD3NivjdhIp5wGDB4nzYj3h0GuDQu7xzaZD7rzna2b6TUwxR7gJDZGWry
+   J88vk7GK+1tTfcwgMUDmaiNg/oQxEaGXEAFxZ7BCF0Yg2C2FSPnttqSqj
+   U+c8y8Rj2C9LzNBfe5J2SabAb+FmQ3ToJfn4ZJVDudl9q9eH4Klq/OZIy
+   57QMIYtImUAoeHaMkHA0j8q2UEtR59TV8n3wpBXZ+6tooDFI7rJIl8B0s
+   w==;
+X-CSE-ConnectionGUID: pG0UI7BfQVy5uSOxpfCHiA==
+X-CSE-MsgGUID: /JN0+EbiQjin3jIUrJq5tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="49732496"
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="49732496"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 05:58:39 -0800
+X-CSE-ConnectionGUID: wpAzhqApSWqWuZlm0e00gw==
+X-CSE-MsgGUID: 8Ul0LmMCSC6tv0pPYeQs9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="94706865"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 21 Nov 2024 05:58:37 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 1E9ED2CA; Thu, 21 Nov 2024 15:58:36 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Cc: Marco Elver <elver@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH v1 1/1] kcsan: debugfs: Use krealloc_array() to replace krealloc()
+Date: Thu, 21 Nov 2024 15:58:34 +0200
+Message-ID: <20241121135834.103015-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120112037.822078-1-mjguzik@gmail.com> <20241120112037.822078-2-mjguzik@gmail.com>
- <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
-In-Reply-To: <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 21 Nov 2024 14:56:36 +0100
-Message-ID: <CAGudoHFDHbN9Zo4z9BPu5TbhNYa4sSYeVHD9UShnWNrY-Cr3eA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] vfs: support caching symlink lengths in inodes
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, 
-	tytso@mit.edu, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 11:12=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> I think that i_devices should be moved into the union as it's really
-> only used with i_cdev but it's not that easily done because list_head
-> needs to be initialized. I roughly envisioned something like:
->
-> union {
->         struct {
->                 struct cdev             *i_cdev;
->                 struct list_head        i_devices;
->         };
->         struct {
->                 char                    *i_link;
->                 unsigned int            i_link_len;
->         };
->         struct pipe_inode_info          *i_pipe;
->         unsigned                        i_dir_seq;
-> };
->
-> But it's not important enough imho.
+Use krealloc_array() to replace krealloc() with multiplication.
+krealloc_array() has multiply overflow check, which will be safer.
 
-I thought about doing that, but decided not to. I mentioned some time
-ago that the layout of struct inode is false-sharing friendly and the
-kernel is not in shape where this can be sensibly fixed yet and it may
-or may not affect what to do with the above.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ kernel/kcsan/debugfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On the stock kernel the issues are:
-- a spurious lockref acquire/release -- I posted a patch for it, Al
-did not like it and wrote his own, does not look like it landed though
-- apparmor -- everything serializes on label ref management (this *is*
-used by ubuntu for example, but also the lkp machinery). Other people
-posted patchsets to get rid of the problem, but they ran into their
-own snags. I have a wip with of my own.
+diff --git a/kernel/kcsan/debugfs.c b/kernel/kcsan/debugfs.c
+index 53b21ae30e00..be7051d0e7f4 100644
+--- a/kernel/kcsan/debugfs.c
++++ b/kernel/kcsan/debugfs.c
+@@ -166,10 +166,10 @@ static ssize_t insert_report_filterlist(const char *func)
+ 	} else if (report_filterlist.used == report_filterlist.size) {
+ 		/* resize filterlist */
+ 		size_t new_size = report_filterlist.size * 2;
+-		unsigned long *new_addrs =
+-			krealloc(report_filterlist.addrs,
+-				 new_size * sizeof(unsigned long), GFP_ATOMIC);
++		unsigned long *new_addrs;
+ 
++		new_addrs = krealloc_array(report_filterlist.addrs,
++					   new_size, sizeof(*new_addrs), GFP_ATOMIC);
+ 		if (new_addrs == NULL) {
+ 			/* leave filterlist itself untouched */
+ 			ret = -ENOMEM;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Anyhow, with these eliminated it will be possible to evaluate what
-happens with inode rearrengements. Until then I think any messing with
-the layout is best avoided.
-
-thanks for taking the patchset
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
