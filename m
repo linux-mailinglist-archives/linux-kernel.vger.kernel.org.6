@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-417336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10F09D52C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:48:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0BF9D52C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A72D5281F9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BAEA1F2236A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B263A1C304F;
-	Thu, 21 Nov 2024 18:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40C31C304F;
+	Thu, 21 Nov 2024 18:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mWrJndSj"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="pWhZbz89"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B1D1AAE13
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D60215B13B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732214927; cv=none; b=G8z+HgLw3rah7WW5tLwFT18BIQFFIk5mPEltfiZYPdQBSpa0w0riA912ro+hhwXm5p2RaMrUclUyltnLop6TUcWZ9n9VLVSbA9rwpjo0BQUnQJDne9itnh13THZwtAeL3cUVIX/270az0jsFuCPj8glV2TuvjZILpBEZR6v9c1s=
+	t=1732214978; cv=none; b=EMwMQbpgCWXtJ+BVwMrFWanWm6Kocy4AAP5Er86Eiej0BBL14aDCaCBGZ5ZLS81ajpi4RIXpm7kDmC7AfvpM0Ntla8ZcZKK7HuzoMCMYBd20d6GzIPdXiitVa2naD377pMRLzQGv5O3CxL/o3P0v+RcYpjYJfynmYjkNqlkTRHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732214927; c=relaxed/simple;
-	bh=twaM33SaQzki/mmDs2cZN8TuvvcI8JhAgJC6bESQIXw=;
+	s=arc-20240116; t=1732214978; c=relaxed/simple;
+	bh=Wc0ZKcB3iv9MPXZcE0WjkapIvTRG8IXCHkhb9YPVfQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q9KNrlz7x9nVBIwjIvNWcuci0QUM1QTc+WhjwG0wHsHfucN3xQOuvBZf2yz1ZgaUMxc+8rlIL8+6jOt1p+Sm6q7Vq0A0wc7pjpsVKawnxOFDdE222rMIJrjNG/3NE5DVmGtwdWucPiXjxCzC+YrDt9l6YoXdIfdntvLJSa3Wvts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mWrJndSj; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53d9ff92edaso1364384e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:48:44 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qX2xMTs+lza14RGQ5PXKHidH3ZXQ6z40Qj59mstfZHxSlzpfTPBeKQL+ard9a48ADvb0kApfe0mGOfcGGhap45/LZXZylcMWmORWTRbP8yfIAmj8yWKC1cckOZRVoTslzkRKZAs3aMZe7o4AWIG2OD20RapG2Mki5KmbZuv3ROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=pWhZbz89; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-212583bd467so12752665ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:49:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732214922; x=1732819722; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/jkkR8nMbERvoxQEZT3BdxCqkHgcqUYdGB2wwBhahU=;
-        b=mWrJndSj6chWJ7J+akrcHlGg3IctTUZh7fNv3B8eYSlMN3amTvYGyGJC6ZPzX6qp5W
-         L6Q8pTC5SDj2j5ckw3QiqpnZP6IA3B9gJv+1rL+PR5mf3ZN3IcIC7DUSfOQRiVBH/ucC
-         0t2/L8R13nk2nA9Aq4mJ4Up2VBuhZL7WJD3sUAd3FZwSQpxBqU3jOtuixHKI6kXMzObj
-         dDJ/5Bwy3/9e/NGZQuQGE6iw0iwuz+H0xln+A7EcsnhuDq9mNb3h9P3TsjSBzN1zsrRX
-         CotTWskpY2lk+Vo/t7YyxVFwtapPsLQFAd3DWOwjgnHGHdbv4ZLQyf1xfWnrTw3Kr8CL
-         q/lA==
+        d=fastly.com; s=google; t=1732214975; x=1732819775; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tQMI0hSDvVmdQQ1OGP+fb8BXhpmdoFrOTrzPs1hsETI=;
+        b=pWhZbz893dbf9r0P01WFGLbVEPpwOFVzrPaOy3V7xqNCKk4MKUEbgq2rE2h9sq7ugC
+         Hs9GjU5fZCIZ/LbuCdV0GHkO/r9Gvk3YKTLBFrl7C765T1x0dEZxD36RmpZAlZeFTfsg
+         FqgjlBEdrXt7Qmyl0kxedIzsKZFYNsb2Kp0ag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732214922; x=1732819722;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N/jkkR8nMbERvoxQEZT3BdxCqkHgcqUYdGB2wwBhahU=;
-        b=q2NAhAK5AWOQGW3NMLnZvtFB6QfY3ls/of9jEZgxUr3i5QhYl/0i8x4UWqk9fVme+v
-         Mqsa9Lwd8CPJoISvl957ad7kND8kS4HnDB2s+vs29wm1xJ9QjDaZBZ0BJni2YyMu8NIX
-         6i2gvqNndnV+BXLnZFquGgHmhYmwkSvkF51X4XHCEZ126YPkCiF+TBP5kVLCAuKlN7fo
-         EcSb1ZmaJLr5/Zmb5q8nxNhg8a4tko5PMKRASJQyXzKoxs3rTni6nsv4gMu/MeS1/47C
-         SrICsV3Kju6NibiAcYxjow7FfrUYxEjgSgPSW9Sif7sblErkGgyJx27JDZiZYAGuatUk
-         +3Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVH0EDg/KPQhJ+6+s3UrUU+ty1KYgC6pxbYq/rRiizlAKFBSlcRSgcfxtiEFUMZ1NQ3S/q6xBSsE3oVPGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOptKnjA3EFS8NM0DMQmdioL6qfdDOOzgJ/R2hixxtljiW6TTK
-	ca91v2sGL38Lux/TjMKXPwini+XL2T4GkYDhh/6S1XVyKHoD06NTbBpe0LaEuyeHgcvoH/ROft8
-	4
-X-Gm-Gg: ASbGncuBcikzSpb9NaA+ah+QNg3YYDoFGHYUbi9GqWULjTbKxnF6e9mnEO1C3dTbF+5
-	LhVxd+6jjATZM0QJcL2ICpPoy2siOitC+n8UyM5rmcAd8bvYwx2fmBi6gh+z9S/hTo7fZyhvmsw
-	JQx9PujxIr4V6/FLSNMGgZ3q6d2Iwza0WIxwmjiUzJJYO8f8J3L7ZEMp+8YJ7qtqMYRt57YSwCu
-	nrWxuzdPXEmJl+wRsfLPyEHYfrcxSObuQJhuYVUhrv6QK8TtO1nFxtGWbRXeevvdg7N21k4t4/S
-	F2Vfgj8byQ11/xI8zKG7r9SYuH8uQA==
-X-Google-Smtp-Source: AGHT+IF1mBAeJ4BI45Mi1UjCjlUsGJoAnHv/OqqK+iLPphGw3fRqlEgh+3glph/5g5che2HoDtNuuQ==
-X-Received: by 2002:a05:6512:3d22:b0:53d:ab10:c273 with SMTP id 2adb3069b0e04-53dc136aa3bmr4136200e87.40.1732214922608;
-        Thu, 21 Nov 2024 10:48:42 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489d33sm44989e87.194.2024.11.21.10.48.41
+        d=1e100.net; s=20230601; t=1732214975; x=1732819775;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tQMI0hSDvVmdQQ1OGP+fb8BXhpmdoFrOTrzPs1hsETI=;
+        b=jlFnn1VxQYq65I8PUjkvQ70qm30a1xiFSDGzGZz3JBv6l+ETGR6gWlP4Ex4EoPGB7s
+         F1oPcW324j1s6e48qpk9O5IoWKiBns+nCQ77rN93JG0LMypbns6haVtYbzraJJvhq8Zz
+         xYTzcp+OZcUu8884F8HYzhkUF7BUUCK/YAYKgYE3YEJsOJNAHbCBpwGSkWp1L/nnot35
+         yJag4hAShO7ozB2k15akPzok/0AFzRKz4umRRDAWuWZ2nRX0WeYV3EcqGud4ba+0E/uV
+         YcL75fyzh71SRbYHveDVd8TH3C1N/5DtIS8WjFnjSa4C442sBIZnJ6dvY8yYEv5Onv75
+         QWHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXT5iGsxtjU225TdJXDPdYkHzS4SIWNBpYuYGH+qroLyyPypDsfTWSh3NPeTje/7YGgyWMd8K3R6laWWuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnywil//y8UP8H5rgYZ1cRdhzT0qoW8I/bbTmxvH9XBs3/sO3I
+	xlJYbYYiu2x2Rk0TszK2RvklWl6F3uiWn4yyyJW+oka12X4bos66+G7eV0CPS54=
+X-Gm-Gg: ASbGncsHN8JHfHxaegYvgQ2NwKQoMdckLSKhuR6n281Eq4YnAud0vwySvvSgWyj5/b3
+	3a7NEJ8ShO38KmpVnmKVzodbFkgOj8quIIHF4mAemcoHrXzrU3ioHxmxVEvxD68tifVeotO66Cm
+	8pQe/p8IDhp8HPtPockVLR0hfOmLm0+ZdFeRoxgQ1mt3DLjHX9ZTcjyolGPyYsBZAObfQVPJzR+
+	v7oQKNJK0CXLhacvaAU4N5tCOPB7jpSyn0UZJCAb2K+6WHg7riUEBJnpzJdkzIQaFeeN2c3vrpS
+	kDTj+aO+06QuAfM1
+X-Google-Smtp-Source: AGHT+IEWdxqb7Z8B6G2oePuz9oXeL7SHrZGIzmst0Bh+eGzwmiufVjtTHE05ckkF2orkBNLRL1Pe8g==
+X-Received: by 2002:a17:902:d4c8:b0:212:26e:cf9 with SMTP id d9443c01a7336-2129f3be7bemr962115ad.16.1732214975505;
+        Thu, 21 Nov 2024 10:49:35 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c9a5sm1643585ad.46.2024.11.21.10.49.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 10:48:42 -0800 (PST)
-Date: Thu, 21 Nov 2024 20:48:40 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Xin Liu <quic_liuxin@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_jiegan@quicinc.com, 
-	quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
-Message-ID: <iwofebhajxvjliqwn32gnubrvkjyycidkfrlu4w24tw62v4kor@ksxzcmmymhgg>
-References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
- <20241119102315.3167607-4-quic_liuxin@quicinc.com>
- <5d670f55-1ebe-4034-a6a5-e68417c6e486@kernel.org>
+        Thu, 21 Nov 2024 10:49:35 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:49:32 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: admiyo@os.amperecomputing.com
+Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH v8 2/2] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <Zz-AvBwUgNzMJb7-@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	admiyo@os.amperecomputing.com,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+References: <20241120190216.425715-1-admiyo@os.amperecomputing.com>
+ <20241120190216.425715-3-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,40 +105,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d670f55-1ebe-4034-a6a5-e68417c6e486@kernel.org>
+In-Reply-To: <20241120190216.425715-3-admiyo@os.amperecomputing.com>
 
-On Wed, Nov 20, 2024 at 05:59:21PM +0100, Krzysztof Kozlowski wrote:
-> On 19/11/2024 11:23, Xin Liu wrote:
-> > Add watchdog clock on the Qualcomm QCS8300 Ride platform.
-> > 
-> > Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > index 7eed19a694c3..3024338bcfbc 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > @@ -265,3 +265,7 @@ &ufs_mem_phy {
-> >  	vdda-pll-supply = <&vreg_l5a>;
-> >  	status = "okay";
-> >  };
-> > +
-> > +&watchdog {
-> > +    clocks = <&sleep_clk>;
-> > +};
-> > \ No newline at end of file
+FWIW, net-next is currently closed so this would have to be resent
+once it has reopened:
+
+https://lore.kernel.org/netdev/20241118071654.695bb1a2@kernel.org/
+
+I don't know much about MCTP, so my apologies that my review is
+mostly little nits and a question/comment about stats below.
+
+I don't think any of these are worth holding this back, but since
+net-next is closed this needs to be resent, maybe worth considering?
+
+On Wed, Nov 20, 2024 at 02:02:15PM -0500, admiyo@os.amperecomputing.com wrote:
+> From: Adam Young <admiyo@os.amperecomputing.com>
 > 
-> Look, your patches have errors...
+> Implementation of network driver for
+> Management Control Transport Protocol(MCTP) over
+> Platform Communication Channel(PCC)
+> 
+> DMTF DSP:0292
+> https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
+> 
+> MCTP devices are specified by entries in DSDT/SDST and
+> reference channels specified in the PCCT.
+> 
+> Communication with other devices use the PCC based
+> doorbell mechanism.
+> 
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> ---
+>  drivers/net/mctp/Kconfig    |  13 ++
+>  drivers/net/mctp/Makefile   |   1 +
+>  drivers/net/mctp/mctp-pcc.c | 321 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 335 insertions(+)
+>  create mode 100644 drivers/net/mctp/mctp-pcc.c
 
-But it's not an error, it is a part of the patch format, telling that
-there was no \n on the last line. We might prefer having files with tail
-\n, but I'd not call it an error.
+[...]
 
-Nevertheless, I agree, it should be fixed.
+It seems like below there are a few places where unnecessary double
+spaces are included. Not necessarily a reason to hold this back, but
+since net-next is closed and you need to resend anyway...
 
--- 
-With best wishes
-Dmitry
+> --- /dev/null
+> +++ b/drivers/net/mctp/mctp-pcc.c
+> @@ -0,0 +1,321 @@
+
+[...]
+
+> +static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *buffer)
+> +{
+> +	struct mctp_pcc_ndev *mctp_pcc_dev;
+> +	struct mctp_pcc_hdr mctp_pcc_hdr;
+> +	struct mctp_skb_cb *cb;
+> +	struct sk_buff *skb;
+> +	void *skb_buf;
+> +	u32 data_len;
+> +
+> +	mctp_pcc_dev = container_of(c, struct mctp_pcc_ndev, inbox.client);
+> +	memcpy_fromio(&mctp_pcc_hdr, mctp_pcc_dev->inbox.chan->shmem,
+> +		      sizeof(struct mctp_pcc_hdr));
+> +	data_len = mctp_pcc_hdr.length + MCTP_HEADER_LENGTH;
+> +
+> +	if (data_len > mctp_pcc_dev->mdev.dev->mtu) {
+> +		mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
+
+I'm not an expert on rtnl stats, but maybe this should be
+accounted for as rx_length_errors ?
+
+And when rx_dropped is accounted in the stats callback it can add
+rx_length_errors in as well as setting rtnl_link_stats64's
+rx_length_errors?
+
+You've probably read this already, but just in case:
+
+https://docs.kernel.org/networking/statistics.html#struct-rtnl-link-stats64
+
+> +		return;
+> +	}
+> +
+> +	skb = netdev_alloc_skb(mctp_pcc_dev->mdev.dev, data_len);
+> +	if (!skb) {
+> +		mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
+> +		return;
+> +	}
+> +	mctp_pcc_dev->mdev.dev->stats.rx_packets++;
+> +	mctp_pcc_dev->mdev.dev->stats.rx_bytes += data_len;
+> +	skb->protocol = htons(ETH_P_MCTP);
+> +	skb_buf = skb_put(skb, data_len);
+> +	memcpy_fromio(skb_buf, mctp_pcc_dev->inbox.chan->shmem, data_len);
+> +
+> +	skb_reset_mac_header(skb);
+> +	skb_pull(skb, sizeof(struct mctp_pcc_hdr));
+> +	skb_reset_network_header(skb);
+> +	cb = __mctp_cb(skb);
+> +	cb->halen = 0;
+> +	netif_rx(skb);
+> +}
+> +
+> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
+> +{
+> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
+> +	struct mctp_pcc_hdr  *mctp_pcc_header;
+
+Extra space after mctp_pcc_hdr ?
+
+[...]
+
+> +
+> +static void  mctp_pcc_setup(struct net_device *ndev)
+
+Extra space after void?
+
+[...]
+
+> +
+> +static acpi_status lookup_pcct_indices(struct acpi_resource *ares,
+> +				       void *context)
+> +{
+> +	struct  mctp_pcc_lookup_context *luc = context;
+
+extra space after struct ?
+
+[...]
+
+> +
+> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
+> +{
+> +	struct mctp_pcc_lookup_context context = {0, 0, 0};
+> +	struct mctp_pcc_ndev *mctp_pcc_ndev;
+> +	struct device *dev = &acpi_dev->dev;
+> +	struct net_device *ndev;
+> +	acpi_handle dev_handle;
+> +	acpi_status status;
+> +	int mctp_pcc_mtu;
+> +	char name[32];
+> +	int rc;
+> +
+> +	dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
+> +		acpi_device_hid(acpi_dev));
+> +	dev_handle = acpi_device_handle(acpi_dev);
+> +	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
+> +				     &context);
+> +	if (!ACPI_SUCCESS(status)) {
+> +		dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	//inbox initialization
+
+I'm not sure but in net/ the general comment style seems to be /*
+*/, I grepped around a bit and didn't notice many comments of this
+style (except SPDX lines).
+
+Maybe this should be a /* */ ?
+
+> +	snprintf(name, sizeof(name), "mctpipcc%d", context.inbox_index);
+> +	ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_ENUM,
+> +			    mctp_pcc_setup);
+> +	if (!ndev)
+> +		return -ENOMEM;
+> +
+> +	mctp_pcc_ndev = netdev_priv(ndev);
+> +	rc =  devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
+
+extra space after = ?
+
+> +	if (rc)
+> +		goto cleanup_netdev;
+> +	spin_lock_init(&mctp_pcc_ndev->lock);
+> +
+> +	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
+> +					 context.inbox_index);
+> +	if (rc)
+> +		goto cleanup_netdev;
+> +	mctp_pcc_ndev->inbox.client.rx_callback = mctp_pcc_client_rx_callback;
+> +
+> +	//outbox initialization
+
+Same as above on comment style
 
