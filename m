@@ -1,190 +1,99 @@
-Return-Path: <linux-kernel+bounces-417576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5774D9D561E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:18:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEF89D5620
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD3A1F23A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:18:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3AEB216A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579911DE2B5;
-	Thu, 21 Nov 2024 23:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B21DE3AB;
+	Thu, 21 Nov 2024 23:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeS6JsRX"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="LdRl9LHr"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D748119F410;
-	Thu, 21 Nov 2024 23:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D6F19F410;
+	Thu, 21 Nov 2024 23:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231115; cv=none; b=khrdNHk7fG2p6i9HCaO0H4eiaQpeK1JyqRsR1EGDzT6osiDbwxhnMpC6Jbty8/goJnHOZz4cwznoPkb85OI7u2NO/XYPawK2kCgiFpw0GsXIepQJh2oz/MdqjJr69xSZSeiZdj/6tyPAp1LjP9AM9H1/QfVe09lc88qQ3tR01hE=
+	t=1732231165; cv=none; b=PXcTwu8iE8l5METy+eoLjSby38LFgSOOhWWTq+VddwQ2jrFnux4Fbl4sJ2aaLUZ7vDiGIFuEQ4f45wKMU0lZY0Hx6Y8yMWTgv2W2txK6+HMllcOrIRF8WT4+DuqCona2KqBklVoDVGaiB2lHs2BRfvYq5d3Ap0DSiJ7l0A8uhos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231115; c=relaxed/simple;
-	bh=Jd4PH0eLCKPO1Re8CCzf7GW2qghj9z74BdPmIq+OKDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGmpf0fXjPwdMkSXBQQVca5GrXjMXfsGAXmqMXXRBfu+XoUUeN0dvSl9ZJERZwsmTpldQ/C2sKyIT0uNiOmsBseIwbkrpJGI+lIHFeh7+qkJl/ZQpr1TcqHaas6SKnGILelqy0d45u34kDAwD7nYv4yxd7h6GSDowSTrUbFRI7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeS6JsRX; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53da24e9673so1590379e87.2;
-        Thu, 21 Nov 2024 15:18:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732231112; x=1732835912; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OL9X8Kvpun/SWWLLZPeJ5t6X+R0QyKBPzXrsZ+HbodE=;
-        b=HeS6JsRXdTVDWDO/VNRw/ShUJtKH4mVsfVvjqhhiBY4scDKybOjfdiWEudQiMgAkmr
-         s3lXbk/LKowQVDTkIFJc3jjE5eeUvPvSgmLfErWjjdoCAiPyV63s6YDFdxqycG2BBnvk
-         O3Xe53VxUnhcEDFZfn+unfJJUk8IjyxZSDwEnW9UT7oCrcxbBkh+whA9o8VLDbnAlb1a
-         LT8vBaAdQHElbsh4GJ41gyLX7g7FesVsxfX85Qo/0wYbsjhlEb+h6iA8G98sSimEghRk
-         3prromXHdxY/wMVj8HWma5J5pYctZr+QOJCqZcyrjSFn+vWnp7g/Lo4uMTlDip9Gs+2H
-         9mnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732231112; x=1732835912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OL9X8Kvpun/SWWLLZPeJ5t6X+R0QyKBPzXrsZ+HbodE=;
-        b=pRtqibDV2htX3xA/gKUHCbFjBKGpD1j/cx2eiU+jwi22fibyXT2/QoRy6hPGMlE8H1
-         JQ4vI1JI09JLYV0jORXJ712iZfCn814VZPStFTQy2ralmn9KBPknpXKUL0InESwt2EpV
-         PXARRPp76ERYEgUXRrfzXMLot37dVGA4B6LUzm9dQYxqQyH/gi+VVVJHymCa5Np6awoO
-         tBwoEySI1ULJimG6SDUlUDh56maS45yQBFD92saSYWO539kUKjt1mZJc9BsRDUy+Iuqh
-         x7jcmKhuySVwKcYETrxpqKSBLr8VxstGYRngz9OaJKcYNOj/uzA1fZ4Ix2jjzohex3jF
-         puEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbr3CphvHQILBUaHT9Fy0HfGnOIphe1Ywp5UGe5TiRimxQp/cYrNErGDZOj7HDCJouiDA2DTTlfC/l+baLemw=@vger.kernel.org, AJvYcCXbwhiIvMchO6PzgIaDGGf275D+/A2sL7PxUc0Auv8R0Pt29/GghjM7JMHinHu1tYGDXM2wJ6VuuvDe9xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSf+qL4q8WdtKnABSd3j4zJ8LvI9a+XUymq8B3lIcFjl1C6s8E
-	V06EqvNmmeF8k4Mh//Mb3Tr5ndXKGbBQwMzpiwcc5USWSl7RfN1l
-X-Gm-Gg: ASbGncvr8O8npaWP5nklXDJgMBfUsaY0PXeYC0Tm8SGg+y8Jlc6qRTHSkgj3IkfusGa
-	WNugBOaLP/xD2FtyacRprirEEN+eCtaQze6B04Ltj0VAVnb/haEZyIaLVdjOm1rrv74MgZ7bynt
-	901vtlsj7FhAe2t2SX4QBKOZKGB+8y0H+oMoWWrPKMU9Le0sv7bFb2/VqqJ5fKOHJWIPhqdmjGD
-	tHIccQp7YGeluhPSaDJTrveM2LH7tfNwwrkUwyzyM4rqUGVX0WVyF1PZQfp6zD0uFzp3tQbqwyg
-	ujVrk6K64lQNoS5QvNH0
-X-Google-Smtp-Source: AGHT+IFBaOmLQRpRczqhiz1RGt8haQlGaTHwb+yghySwACcam9Nx+3MpjLfSASNv2RxM49KxOTq4lw==
-X-Received: by 2002:a05:6512:3ba2:b0:53d:a883:5a3e with SMTP id 2adb3069b0e04-53dd39b0e57mr331517e87.39.1732231111612;
-        Thu, 21 Nov 2024 15:18:31 -0800 (PST)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd248997esm110198e87.181.2024.11.21.15.18.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 15:18:30 -0800 (PST)
-Message-ID: <0195fb77-c55a-40d5-8fe2-5844158f4f63@gmail.com>
-Date: Fri, 22 Nov 2024 01:18:28 +0200
+	s=arc-20240116; t=1732231165; c=relaxed/simple;
+	bh=lypCQLHdxHaBu432IbmR6/kD0jI5ZG968AuxFBOBcFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o2A/7VlXO8pCQJFCnanQPBgb56EDp7IdQtx63Jjri/zccjX5SkUNgXknmP5nhD2GyFRn8oyyTTwEEmPoXGrxxwuYjw9SO32RMOIgg5hHk0GyI0EoWB8oK6VWzK86g1Qt7yWw0kcfip8MdIOL1jg21a+md+mvYPSl6J6QJJL9IZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=LdRl9LHr; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=96KNAgEZKYTBkhwHVr8dFUlI4/ybeiMP1elBVeu9dx4=; b=LdRl9LHrohGG6tMagH5yftvd5t
+	lrNDEZNhszNp9qPHUxY76/gc3mi8rrgoqs21Sqb1/6tv7nnTbkSphe3wbSWiThQ8VQc+sQ7zStUAl
+	K1zED3UAWiLARfGkJVlumGM4GV5oZaJk3S9U7Hw3WOGImCf8Q5mV5KwKQhneHnMxR5JwESWE9jZ+b
+	OYO7393QsXfOPJ5tzbhDjd1r3rsbvmoaiCby3ti/f/hlx69tSZCPh0abzW4SWMBuUgCGdqVjV7Cv3
+	ZVoRleybl0/CrP1jouCzxS0uFBx+sw1+68VDSuh8jrPEPieC6PQUcb0lFh0oSISlDc7A04hB1PBgg
+	QaFu3I7A==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tEGRj-000qOI-1b;
+	Fri, 22 Nov 2024 07:18:48 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 22 Nov 2024 07:18:47 +0800
+Date: Fri, 22 Nov 2024 07:18:47 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Michal Kubiak <michal.kubiak@intel.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH net] netpoll: Use rtnl_dereference() for npinfo pointer
+ access
+Message-ID: <Zz-_15xseWSPHLqg@gondor.apana.org.au>
+References: <20241121-netpoll_rcu_herbet_fix-v1-1-457c5fee9dfd@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
- mappings
-To: Matthew Wilcox <willy@infradead.org>, Boqun Feng <boqun.feng@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho
- <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com,
- Kairui Song <ryncsn@gmail.com>
-References: <Zz1sHZLruF5sv7JT@casper.infradead.org>
- <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
- <Zz4MQO79vVFhgfJZ@tardis.local> <Zz4WFnyTWUDPsH4m@casper.infradead.org>
- <Zz4boXyYpdx4q35I@tardis.local>
- <98a46b27-c4bb-4540-8f75-f176c3f2fae1@gmail.com>
- <Zz59qgqKruqnouTl@tardis.local>
- <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
- <Zz-FtcjNm0TVH5v9@tardis.local> <Zz-GHlkhrz35w2YN@tardis.local>
- <Zz-ts0s3jHsNP73f@casper.infradead.org>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <Zz-ts0s3jHsNP73f@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121-netpoll_rcu_herbet_fix-v1-1-457c5fee9dfd@debian.org>
 
-On 22/11/2024 00:01, Matthew Wilcox wrote:
-> On Thu, Nov 21, 2024 at 11:12:30AM -0800, Boqun Feng wrote:
->> On Thu, Nov 21, 2024 at 11:30:13AM +0200, Abdiel Janulgue wrote:
->>> Hi Boqun, Matthew:
->>>
->>> On 21/11/2024 02:24, Boqun Feng wrote:
->>>>>> So if I understand correctly, what Abdiel needs here is a way to convert
->>>>>> a virtual address to the corresponding page, would it make sense to just
->>>>>> use folio in this case? Abdiel, what's the operation you are going to
->>>>>> call on the page you get?
->>>>>
->>>>> Yes that's basically it. The goal here is represent those existing struct
->>>>> page within this rust Page abstraction but at the same time to avoid taking
->>>>> over its ownership.
->>>>>
->>>>> Boqun, Alice, should we reconsider Ownable and Owned trait again? :)
->>>>>
->>>>
->>>> Could you use folio in your case? If so, we can provide a simple binding
->>>> for folio which should be `AlwaysRefcounted`, and re-investigate how
->>>> page should be wrapped.
->>>>
->>>
->>> I'm not sure. Is there a way to get the struct folio from a vmalloc'd
->>> address, e.g vmalloc_to_folio()?
->>>
->>
->> I think you can use page_folio(vmalloc_to_page(..)) to get the folio,
->> but one thing to notice is that folio is guaranteed to be a non-tail
->> page, so if you want to do something later for the particular page (if
->> it's a tail page), you will need to know the offset of the that page in
->> folio. You can do something like below:
+On Thu, Nov 21, 2024 at 06:58:58AM -0800, Breno Leitao wrote:
+> In the __netpoll_setup() function, when accessing the device's npinfo
+> pointer, replace rcu_access_pointer() with rtnl_dereference(). This
+> change is more appropriate, as suggested by Herbert Xu.
 > 
-> This is one of those things which will work today, but will stop
-> working in the future, and anyway will only appear to work for some
-> users.
+> The function is called with the RTNL mutex held, and the pointer is
+> being dereferenced later, so, dereference earlier and just reuse the
+> pointer for the if/else.
 > 
-> For example, both vmalloc and slab allocations do not use the refcount
-> on the struct page for anything.  eg this will be a UAF (please excuse
-> me writing in C):
+> The replacement ensures correct pointer access while maintaining
+> the existing locking and RCU semantics of the netpoll subsystem.
 > 
-> 	char *a = kmalloc(256, GFP_KERNEL);
-> 	struct page *page = get_page(virt_to_page(a));
-> 	char *b = page_address(page) + offset_in_page(a);
-> 	// a and b will now have the same bit pattern
-> 	kfree(a);
-> 	*b = 1;
-> 
-> Once you've called kfree(), slab is entitled to hand that memory out
-> to any other user of kmalloc().  This might actually work to protect
-> vmalloc() memory from going away under you, but I intend to change
-> vmalloc so that it won't work (nothing to do with this patch series,
-> rather an approach to make vmalloc more efficient).
-> 
-> One reason you're confused today is that we have a temporary ambiguity
-> around what "folio" actually means.  The original definition (ie mine) was
-> simply that it was a non-tail page.  We're moving towards the definition
-> Johannes wanted, which is that it's only the memdesc for anonymous &
-> file-backed memory [1].  So while vmalloc_to_folio() makes sense under
-> the original definition, it's an absurdity under the new definition.
-> 
-> So, Abdiel, why are you trying to add this?  What are you actually
-> trying to accomplish in terms of "I am writing a device driver for XXX
-> and I need to ..."?  You've been very evasive up to now.
+> Fixes: c75964e40e69 ("netpoll: Use rtnl_dereference() for npinfo pointer access")
+> Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  net/core/netpoll.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Background behind this is that we need this for the nova rust driver [0].
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-We need an abstraction of struct page to construct a scatterlist which 
-is needed for an internal firmware structure. Now most of pages needed 
-there come from vmalloc_to_page() which, unlike the current rust Page 
-abstraction, not allocated on demand but is an existing mapping.
-
-Hope that clears things up!
-
-Regards,
-Abdiel
-
-[0] https://rust-for-linux.com/nova-gpu-driver
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
