@@ -1,267 +1,360 @@
-Return-Path: <linux-kernel+bounces-416639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087E99D481D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:17:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF19F9D4822
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66458B217CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F78E281180
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7981AC8A2;
-	Thu, 21 Nov 2024 07:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4EA1A76C4;
+	Thu, 21 Nov 2024 07:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgJEhy/N"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gbfnsFOB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8B4230986;
-	Thu, 21 Nov 2024 07:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B090B230986
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732173464; cv=none; b=taIWoQjzFWVCc1f1AxdGXdHDHHgHG3aVjjilk1FKz1TQeEy+zX4EL8AK3nLrOjUdJoA2hqS3A7O7vbb3TGqP6xhiW7uPCpbklJ+Q55n00MX6grNWMBYrWJW9yTKmS4uOhitHKB/SCkW+whn6chiSCrVBHkQWcRZoK7FI41SEaRg=
+	t=1732173502; cv=none; b=NTJwgdXpgwkKubJ55di1zECvgjhdc8vIEXGhxoSSYfOW7IwrS6kcKkd/GXibSL2k4pH94C46VudWeLTAiJsQhnHGUaU/CLQTg/2wCW3nWyjBWjpd27mSin4XLCdCM+O/uo09DwRFb4Eq9oWUqX+t8hQnO/M0tJwH27Vc6bVbk4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732173464; c=relaxed/simple;
-	bh=2N8FrdIFlf5Axb5OQYHDkS+Vjtnc6Esv4DvBsTmfKSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hH4dQPR4QJyp+CV8dRP0YaTvYPGWJxMnnDL6sEAxUkJS5dU3oxKDsdeLFrmZLT1xlCRXqFN2jXHhXrT17lJtN01SLgMu7ehIbKgLJGIcbULAI19fCMFQXY7CvnwCmKDShS93Fi+GdozddVXsZoba1H68HfT0MfDkZxdgfUMfjCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgJEhy/N; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-460ad0440ddso3487191cf.3;
-        Wed, 20 Nov 2024 23:17:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732173461; x=1732778261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wcRCVij+jy1yzybGIl/QjepmiE3gRZ552VqPD/9QysU=;
-        b=jgJEhy/NT9/rpqGeaM5XU4E2J8BrOACHmzyQuGkCRE3LP1P/44xfO9C66D9abiHKDK
-         UoUC4IqW9yus6ALVDgZjI6JaBhVVWPRtaxYWbHVHNwBcCK7vy2vmYXTaUxCrtBoV23Rl
-         Riu4FtdPmxF8oWDjpC1vj7VxguY/pd0ldRrMcaHEdyIuo1EG2yAA7tQ0UwzNBNdc2iZJ
-         vbOCEimWgapbxGkuGclaQcnAcvTfBlApj749z1JVb0lYrlGVYXfxWGxzdqCD5twLOhmV
-         LfzTWRoFlejoLHyQXZkzJby87+H+KlVLKMW0nBhdzfEX7/9J+vRZdl8OiS1q/Jk8BAZ8
-         02Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732173461; x=1732778261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wcRCVij+jy1yzybGIl/QjepmiE3gRZ552VqPD/9QysU=;
-        b=a0Rui/E10aZC+Nmd8fZCQkLENoI+YY0DE0XiLU+b8wija16SmtIb8LgQRRubGGfWsO
-         Bx1WvLV6diLM65eqIR8eBjDipltYGKpwjuq7Zs+PCcTlDXCyY/0XAUbm1oyiQKh6Zr1V
-         KjZf0I2CyHYqlK/A02eudtp0SW4oafJT3EyKg294s4I3zlCU7yXqc3WfpkEh30mxV1Wo
-         BDTAPuQBJkNUlxuoZdvtW1IKa0Z6cgDLqIVWItqrfp1LVO4DHlXGpmGmBzGjvn8/qG31
-         j6MGVrIvRQVDJ9oeSSnWPe+3aSyVvBGp9p5HgW65q+sqWk87//cK8fORzpgT9zQedNIC
-         YjpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJogNT+aNzvqFMUyNGJZnk2g6yF6nuCcdIz1EuHZo4SFJaAPsiUAt98trlaSfuHAQhOwUnATBOVb3msSY=@vger.kernel.org, AJvYcCWPDJA0fX4FbPTfC8Jy+Hnoo7/SfY4pVQu2pmUwHLdpGeIl5kqVxNHAjf+znwMfj/7x++x0BtTKWJyg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxGyWJ2eABnuqJc8qOnUzFWJBdkHl7VTjRjUxDp9rC/P+aVMTw
-	aaSnT8sEuYgUgFPnQFci6IYT1bjbJcexDXCbIZsz3ZM1XINZ62opYccdrnvmetGug1dBBt1H0q1
-	s/EsCSPhiS3sotTCQL+2os1fBUDo=
-X-Gm-Gg: ASbGncvVWj0ijT03CL8ZczIUPJp7jhbCzw++LahetejqUWSAqI8yBGzd0UUPmUuu5YA
-	B2iAr6mAsczzwEQmiA03x0+CfMbCFnKtwuG+ykEF1tQk6X+MjwIYeDaJgSqE=
-X-Google-Smtp-Source: AGHT+IHX1nuY98ydbt+1WK+bi4CS1S3L5AXrldWDKn7ID7lfYu+4teRDO08ye48dfIWFIw3wir83jj7NX4iLrNiKOc4=
-X-Received: by 2002:a05:622a:424b:b0:460:e8d3:7bc6 with SMTP id
- d75a77b69052e-46479d2ce53mr66398261cf.46.1732173460963; Wed, 20 Nov 2024
- 23:17:40 -0800 (PST)
+	s=arc-20240116; t=1732173502; c=relaxed/simple;
+	bh=1USHLF7Nt8jO0EXqOCPkzUsLHu3r2P17RWBvuS5otIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFZe/2XFBInZVB97mFC/uXc9H69GIgXWqJC7z552jvkmqpAAN+8z912Yo4+wKLUEIPwp6cORo5CttCmWq7YvSwxw9YU7O67U+//bZi12fHRx6RwTmaB0qIw0D705gfbnMxbUKOmvxKm8QNGZ5/ihkti79GklS17GNQXdUE5rdEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gbfnsFOB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF833C4CECC;
+	Thu, 21 Nov 2024 07:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732173502;
+	bh=1USHLF7Nt8jO0EXqOCPkzUsLHu3r2P17RWBvuS5otIw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gbfnsFOBsmPwj1lkF2VT+gLd+aYl12vlM/CTfYWsQKWC5xf8dyFLtHMunIM7Nn+H+
+	 fzCOw09YN+al9BUGTbmkm6vUfQd9M6LiwygMV618ljIV6G4xCd6mX2UVSZ1TOP0Ezf
+	 WAqBqSOcpiNEJqhh7DgHK0Gi3DCau0c6xi8HoNHyHS6uDV+1+sHhE7hgzH43cS/WJo
+	 PTpvuTMH6kCixryygro/qBGIKeHZlu8DTUohUHV8HOpjaE99dcl0ur/1r54rjlpffG
+	 7lXy4YYriUnnrKhxJGPLEUErTaLsClDgMVI78zYWJbpSTYf5VZtUwUcyezi32lX/OI
+	 rPVLHYLxC6s4w==
+Date: Wed, 20 Nov 2024 23:18:20 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH] perf lock: Fix parse_lock_type which only retrieve one
+ lock flag
+Message-ID: <Zz7evEkguMdglxdZ@google.com>
+References: <20241121044551.3899270-1-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
- <ZyhAOEkrjZzOQ4kJ@dread.disaster.area> <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
- <Zyi683yYTcnKz+Y7@dread.disaster.area> <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
- <ZzFmOzld1P9ReIiA@dread.disaster.area> <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
- <Zz5ogh1-52n35lZk@dread.disaster.area>
-In-Reply-To: <Zz5ogh1-52n35lZk@dread.disaster.area>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Thu, 21 Nov 2024 15:17:04 +0800
-Message-ID: <CANubcdX2q+HqZTw8v1Eqi560X841fzOFX=BzgVdEi=KwP7eijw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
-To: Dave Chinner <david@fromorbit.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com, 
-	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org, 
-	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241121044551.3899270-1-ctshao@google.com>
 
-Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=8821=E6=
-=97=A5=E5=91=A8=E5=9B=9B 06:53=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Sun, Nov 17, 2024 at 09:34:53AM +0800, Stephen Zhang wrote:
-> > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=8811=
-=E6=97=A5=E5=91=A8=E4=B8=80 10:04=E5=86=99=E9=81=93=EF=BC=9A
-> > >
-> > > On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
-> > > > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=
-=884=E6=97=A5=E5=91=A8=E4=B8=80 20:15=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
-> > > > > > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=
-=9C=884=E6=97=A5=E5=91=A8=E4=B8=80 11:32=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
-> > >
-> > > [snip unnecessary stereotyping, accusations and repeated information]
-> > >
-> > > > > AFAICT, this "reserve AG space for inodes" behaviour that you are
-> > > > > trying to acheive is effectively what the inode32 allocator alrea=
-dy
-> > > > > implements. By forcing inode allocation into the AGs below 1TB an=
-d
-> > > > > preventing data from being allocated in those AGs until allocatio=
-n
-> > > > > in all the AGs above start failing, it effectively provides the s=
-ame
-> > > > > functionality but without the constraints of a global first fit
-> > > > > allocation policy.
-> > > > >
-> > > > > We can do this with any AG by setting it up to prefer metadata,
-> > > > > but given we already have the inode32 allocator we can run some
-> > > > > tests to see if setting the metadata-preferred flag makes the
-> > > > > existing allocation policies do what is needed.
-> > > > >
-> > > > > That is, mkfs a new 2TB filesystem with the same 344AG geometry a=
-s
-> > > > > above, mount it with -o inode32 and run the workload that fragmen=
-ts
-> > > > > all the free space. What we should see is that AGs in the upper T=
-B
-> > > > > of the filesystem should fill almost to full before any significa=
-nt
-> > > > > amount of allocation occurs in the AGs in the first TB of space.
-> > >
-> > > Have you performed this experiment yet?
-> > >
-> > > I did not ask it idly, and I certainly did not ask it with the intent
-> > > that we might implement inode32 with AFs. It is fundamentally
-> > > impossible to implement inode32 with the proposed AF feature.
-> > >
-> > > The inode32 policy -requires- top down data fill so that AG 0 is the
-> > > *last to fill* with user data. The AF first-fit proposal guarantees
-> > > bottom up fill where AG 0 is the *first to fill* with user data.
-> > >
-> > > For example:
-> > >
-> > > > So for the inode32 logarithm:
-> > > > 1. I need to specify a preferred ag, like ag 0:
-> > > > |----------------------------
-> > > > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > > > +----------------------------
-> > > > 2. Someday space will be used up to 100%, Then we have to growfs to=
- ag 7:
-> > > > +------+------+------+------+------+------+------+------+
-> > > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > > > +------+------+------+------+------+------+------+------+
-> > > > 3. specify another ag for inodes again.
-> > > > 4. repeat 1-3.
-> > >
-> > > Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
-> > > entire lower 1TB of the filesystem. Hence if we get to all AGs full
-> > > the entire inode32 inode allocation space is full.
-> > >
-> > > Even if we grow the filesystem at this point, we still *cannot*
-> > > allocate more inodes in the inode32 space. That space (AGs 0-1) is
-> > > full even after the growfs.  Hence we will still give ENOSPC, and
-> > > that is -correct behaviour- because the inode32 policy requires this
-> > > behaviour.
-> > >
-> > > IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
-> > > when the inode space is exhausted. Only physically moving data out
-> > > of the lower AGs can fix that problem...
-> > >
-> > > > for the AF logarithm:
-> > > >     mount -o af1=3D1 $dev $mnt
-> > > > and we are done.
-> > > > |<-----+ af 0 +----->|<af 1>|
-> > > > |----------------------------
-> > > > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > > > +----------------------------
-> > > > because the af is a relative number to ag_count, so when growfs, it=
- will
-> > > > become:
-> > > > |<-----+ af 0 +--------------------------------->|<af 1>|
-> > > > +------+------+------+------+------+------+------+------+
-> > > > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > > > +------+------+------+------+------+------+------+------+
-> > > > So just set it once, and run forever.
-> > >
-> > > That is actually the general solution to the original problem being
-> > > reported. I realised this about half way through reading your
-> > > original proposal. This is why I pointed out inode32 and the
-> > > preferred metadata mechanism in the AG allocator policies.
-> > >
-> > > That is, a general solution should only require the highest AG
-> > > to be marked as metadata preferred. Then -all- data allocation will
-> > > then skip over the highest AG until there is no space left in any of
-> > > the lower AGs. This behaviour will be enforced by the existing AG
-> > > iteration allocation algorithms without any change being needed.
-> > >
-> > > Then when we grow the fs, we set the new highest AG to be metadata
-> > > preferred, and that space will now be reserved for inodes until all
-> > > other space is consumed.
-> > >
-> > > Do you now understand why I asked you to test whether the inode32
-> > > mount option kept the data out of the lower AGs until the higher AGs
-> > > were completely filled? It's because I wanted confirmation that the
-> > > metadata preferred flag would do what we need to implement a
-> > > general solution for the problematic workload.
-> > >
-> >
-> > Hi, I have tested the inode32 mount option. To my suprise, the inode32
-> > or the metadata preferred structure (will be referred to as inode32 for=
- the
-> > rest reply) doesn't implement the desired behavior as the AF rule[1] do=
-es:
-> >         Lower AFs/AGs will do anything they can for allocation before g=
-oing
-> > to HIGHER/RESERVED AFs/AGS. [1]
->
-> This isn't important or relevant to the experiment I asked you to
-> perform and report the results of.
->
-> I asked you to observe and report the filesystem fill pattern in
-> your environment when metadata preferred AGs are enabled. It isn't
-> important whether inode32 exactly solves your problem, what I want
-> to know is whether the underlying mechanism has sufficient control
-> to provide a general solution that is always enabled.
->
-> This is foundational engineering process: check your hypothesis work
-> as you expect before building more stuff on top of them. i.e.
-> perform experiments to confirm your ideas will work before doing
-> anything else.
->
-> If you answer a request for an experiment to be run with "theory
-> tells me it won't work" then you haven't understood why you were
-> asked to run an experiment in the first place.
->
+Hi CT,
 
-If I understand your reply correctly, then maybe my expression is the
-problem. What I replied before is:
-1. I have tested the inode32 option with the metadata preferred AGs
-enabled(Yeah, I do check if the AG is set with
-XFS_AGSTATE_PREFERS_METADATA). And with the alternating-
-punching pattern, I observed that the preferred AG will still get fragmente=
-d
-quickly, but the AF will not.
-(That's what I meant in the first sentence of my previous reply...)
-2. Then I tried to explain why it doesn't work in theory.
+On Thu, Nov 21, 2024 at 04:45:51AM +0000, Chun-Tse Shao wrote:
+> `parse_lock_type` can only add the first lock flag in `lock_type_table`
+> given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
+> into this perf session. Another example is for `-Y mutex`, it only adds
+> the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
+> sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
+> so on.
 
-Sorry for any misunderstanding because of my unclear reply.
+Thanks for working on this.  I think I broke it at some point.
 
-Cheers,
-Shida
+> 
+> Testing:
+>   $ ./perf lock con -ab -Y rwlock,mutex -- perf bench sched pipe
+>   # Running 'sched/pipe' benchmark:
+>   # Executed 1000000 pipe operations between two processes
+> 
+>        Total time: 7.870 [sec]
+> 
+>          7.870224 usecs/op
+>            127061 ops/sec
+>    contended   total wait     max wait     avg wait         type   caller
+> 
+>          122      1.01 ms     18.73 us      8.32 us        mutex   pipe_read+0x57
+>           33    149.06 us      8.88 us      4.52 us        mutex   pipe_write+0x50
+>            5     56.06 us     15.07 us     11.21 us        mutex   do_epoll_wait+0x24d
+>            2     26.43 us     14.62 us     13.22 us        mutex   do_epoll_wait+0x24d
+>            2     21.51 us     15.68 us     10.76 us        mutex   pipe_read+0x282
+>            2     20.57 us     10.74 us     10.29 us        mutex   do_epoll_ctl+0x3d4
+>            1      8.58 us      8.58 us      8.58 us     rwlock:W   do_epoll_wait+0x255
+>            1      8.38 us      8.38 us      8.38 us     rwlock:W   do_epoll_ctl+0xb65
+>            1      8.11 us      8.11 us      8.11 us     rwlock:R   ep_poll_callback+0x35
+>            1      5.49 us      5.49 us      5.49 us        mutex   do_epoll_ctl+0x6c1
 
-> If you can't run requested experiments or don't understand why an
-> expert might be asking for that experiment to be run, then say so.
-> I can explain in more detail, but I don't like to waste time on
-> ideas that I can't confirm have a solid basis in reality...
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+It should have
+
+Fixes: d783ea8f62c4 ("perf lock contention: Simplify parse_lock_type()")
+
+> 
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> ---
+>  tools/perf/builtin-lock.c | 118 +++++++++++++++++++++++---------------
+>  1 file changed, 71 insertions(+), 47 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 062e2b56a2ab..2692b8e9eb9a 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -1575,61 +1575,57 @@ static void sort_result(void)
+>  
+>  static const struct {
+>  	unsigned int flags;
+> -	const char *str;
+> +	/* Name of the lock, it is unique and 1-1 mapping to flags */
+>  	const char *name;
+> +	/*
+> +	 * Name of the group this lock belongs to.
+> +	 * For example, both rwlock:R and rwlock:W belong to rwlock.
+> +	 * This is used for reverse parsing while user specify the group name (ex. mutex/rwlock),
+> +	 * And for symbol name in LOCK_AGGR_ADDR mode.
+> +	 */
+> +	const char *affiliated_group_name;
+> +	/*
+> +	 * This is used for caller type in LOCK_AGGR_CALLER mode.
+> +	 */
+> +	const char *caller_type;
+
+I admit that the 'str' and 'name' are not good but I'm not sure if we
+need those 3 different names because they are mostly the same.  Maybe we
+have rename the original fields to 'name' and 'group'?
+
+
+>  } lock_type_table[] = {
+> -	{ 0,				"semaphore",	"semaphore" },
+> -	{ LCB_F_SPIN,			"spinlock",	"spinlock" },
+> -	{ LCB_F_SPIN | LCB_F_READ,	"rwlock:R",	"rwlock" },
+> -	{ LCB_F_SPIN | LCB_F_WRITE,	"rwlock:W",	"rwlock" },
+> -	{ LCB_F_READ,			"rwsem:R",	"rwsem" },
+> -	{ LCB_F_WRITE,			"rwsem:W",	"rwsem" },
+> -	{ LCB_F_RT,			"rt-mutex",	"rt-mutex" },
+> -	{ LCB_F_RT | LCB_F_READ,	"rwlock-rt:R",	"rwlock-rt" },
+> -	{ LCB_F_RT | LCB_F_WRITE,	"rwlock-rt:W",	"rwlock-rt" },
+> -	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"percpu-rwsem" },
+> -	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem" },
+> -	{ LCB_F_MUTEX,			"mutex",	"mutex" },
+> -	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
+> -	/* alias for get_type_flag() */
+> -	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex" },
+> +	{ 0,				"semaphore",	"semaphore",	"semaphore" },
+> +	{ LCB_F_SPIN,			"spinlock",	"spinlock",	"spinlock" },
+> +	{ LCB_F_SPIN | LCB_F_READ,	"rwlock:R",	"rwlock",	"rwlock:R" },
+> +	{ LCB_F_SPIN | LCB_F_WRITE,	"rwlock:W",	"rwlock",	"rwlock:W" },
+> +	{ LCB_F_READ,			"rwsem:R",	"rwsem",	"rwsem:R" },
+> +	{ LCB_F_WRITE,			"rwsem:W",	"rwsem",	"rwsem:W" },
+> +	{ LCB_F_RT,			"rt-mutex",	"rt-mutex",	"rt-mutex" },
+> +	{ LCB_F_RT | LCB_F_READ,	"rwlock-rt:R",	"rwlock-rt",	"rwlock-rt:R" },
+> +	{ LCB_F_RT | LCB_F_WRITE,	"rwlock-rt:W",	"rwlock-rt",	"rwlock-rt:W" },
+> +	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"percpu-rwsem",	"pcpu-sem:R" },
+> +	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem",	"pcpu-sem:W" },
+
+I've realized that it doesn't match with the documentation.  It should
+match with 'pcpu-sem'.  Maybe we can replace the 'pcpu-sem' string in
+the parse_lock_type() to 'percpu-rwsem'.
+
+> +	{ LCB_F_MUTEX,			"mutex-nospin",	"mutex",	"mutex" },
+> +	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex",	"mutex" },
+
+These are not for users and we don't track mutex-spinning precisely
+(yet).  So I think we can name both of them simply as "mutex".
+
+  { LCB_F_MUTEX,		"mutex", "mutex" },
+  { LCB_F_MUTEX | LCB_F_SPIN	"mutex", "mutex" },
+ 
+And remove the last alias entry.
+
+>  };
+>  
+> -static const char *get_type_str(unsigned int flags)
+> +static const char *get_lock_caller_type(unsigned int flags)
+>  {
+>  	flags &= LCB_F_MAX_FLAGS - 1;
+>  
+>  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+>  		if (lock_type_table[i].flags == flags)
+> -			return lock_type_table[i].str;
+> +			return lock_type_table[i].caller_type;
+>  	}
+>  	return "unknown";
+>  }
+>  
+> -static const char *get_type_name(unsigned int flags)
+> +static const char *get_lock_affiliated_group_name(unsigned int flags)
+>  {
+>  	flags &= LCB_F_MAX_FLAGS - 1;
+>  
+>  	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+>  		if (lock_type_table[i].flags == flags)
+> -			return lock_type_table[i].name;
+> +			return lock_type_table[i].affiliated_group_name;
+>  	}
+>  	return "unknown";
+>  }
+>  
+> -static unsigned int get_type_flag(const char *str)
+> -{
+> -	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -		if (!strcmp(lock_type_table[i].name, str))
+> -			return lock_type_table[i].flags;
+> -	}
+> -	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> -		if (!strcmp(lock_type_table[i].str, str))
+> -			return lock_type_table[i].flags;
+> -	}
+> -	return UINT_MAX;
+> -}
+> -
+>  static void lock_filter_finish(void)
+>  {
+>  	zfree(&filters.types);
+> @@ -1732,7 +1728,8 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
+>  
+>  	switch (aggr_mode) {
+>  	case LOCK_AGGR_CALLER:
+> -		fprintf(lock_output, "  %10s   %s\n", get_type_str(st->flags), st->name);
+> +		fprintf(lock_output, "  %10s   %s\n",
+> +			get_lock_caller_type(st->flags), st->name);
+>  		break;
+>  	case LOCK_AGGR_TASK:
+>  		pid = st->addr;
+> @@ -1742,7 +1739,7 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
+>  		break;
+>  	case LOCK_AGGR_ADDR:
+>  		fprintf(lock_output, "  %016llx   %s (%s)\n", (unsigned long long)st->addr,
+> -			st->name, get_type_name(st->flags));
+> +			st->name, get_lock_affiliated_group_name(st->flags));
+>  		break;
+>  	case LOCK_AGGR_CGROUP:
+>  		fprintf(lock_output, "  %s\n", st->name);
+> @@ -1783,7 +1780,8 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
+>  
+>  	switch (aggr_mode) {
+>  	case LOCK_AGGR_CALLER:
+> -		fprintf(lock_output, "%s%s %s", get_type_str(st->flags), sep, st->name);
+> +		fprintf(lock_output, "%s%s %s",
+> +			get_lock_caller_type(st->flags), sep, st->name);
+>  		if (verbose <= 0)
+>  			fprintf(lock_output, "\n");
+>  		break;
+> @@ -1795,7 +1793,7 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
+>  		break;
+>  	case LOCK_AGGR_ADDR:
+>  		fprintf(lock_output, "%llx%s %s%s %s\n", (unsigned long long)st->addr, sep,
+> -			st->name, sep, get_type_name(st->flags));
+> +			st->name, sep, get_lock_affiliated_group_name(st->flags));
+>  		break;
+>  	case LOCK_AGGR_CGROUP:
+>  		fprintf(lock_output, "%s\n",st->name);
+> @@ -2333,6 +2331,7 @@ static int parse_max_stack(const struct option *opt, const char *str,
+>  	return 0;
+>  }
+>  
+> +
+>  static bool add_lock_type(unsigned int flags)
+>  {
+>  	unsigned int *tmp;
+> @@ -2350,29 +2349,54 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
+>  			   int unset __maybe_unused)
+>  {
+>  	char *s, *tmp, *tok;
+> -	int ret = 0;
+>  
+>  	s = strdup(str);
+>  	if (s == NULL)
+>  		return -1;
+>  
+>  	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
+> -		unsigned int flags = get_type_flag(tok);
+> +		bool found = false;
+>  
+> -		if (flags == -1U) {
+> -			pr_err("Unknown lock flags: %s\n", tok);
+> -			ret = -1;
+> -			break;
+> +		/* Traverse lock name first. */
+> +		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> +			if (!strcmp(lock_type_table[i].name, tok)) {
+> +				if (add_lock_type(lock_type_table[i].flags)) {
+> +					found = true;
+> +					break;
+> +				}
+> +				pr_err("Failed to alloc lock: %s\n", tok);
+> +				free(s);
+> +				return -1;
+> +			}
+>  		}
+> +		if (found)
+> +			continue;
+
+Then I think the logic can be like this.
+
+		if (strchr(tok, ':')) {
+			flags = get_type_flag(tok);
+			add_lock_type(flag);
+			continue;
+		}
+
+		if (!strcmp(tok, "pcpu-sem"))
+			tok = "percpu-rwsem";
+
+		for (i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+			if (!strcmp(lock_type_table[i].group, tok))
+				add_lock_type(...);
+		}
+
+Thanks,
+Namhyung
+
+>  
+> -		if (!add_lock_type(flags)) {
+> -			ret = -1;
+> -			break;
+> +		/*
+> +		 * If `tok` can not be found in lock name, look up the lock affiliated group
+> +		 * instead. A group would contain more than one lock flag.
+> +		 */
+> +		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
+> +			if (!strcmp(lock_type_table[i].affiliated_group_name, tok)) {
+> +				if (add_lock_type(lock_type_table[i].flags)) {
+> +					found = true;
+> +				} else {
+> +					pr_err("Failed to alloc lock: %s\n", tok);
+> +					free(s);
+> +					return -1;
+> +				}
+> +			}
+> +		}
+> +
+> +		if (!found) {
+> +			pr_err("Unknown lock flags: %s\n", tok);
+> +			free(s);
+> +			return -1;
+>  		}
+>  	}
+>  
+>  	free(s);
+> -	return ret;
+> +	return 0;
+>  }
+>  
+>  static bool add_lock_addr(unsigned long addr)
+> -- 
+> 2.47.0.371.ga323438b13-goog
+> 
 
