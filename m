@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-416891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ABB79D4C13
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDAB9D4C14
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AB01F2114A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:36:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B86AAB24500
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E561CEAAC;
-	Thu, 21 Nov 2024 11:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AA51D174C;
+	Thu, 21 Nov 2024 11:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+I3rVhZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bql3r4NW"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DFE1C3046;
-	Thu, 21 Nov 2024 11:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAD1E52D;
+	Thu, 21 Nov 2024 11:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732188988; cv=none; b=g+l7dRUGBI5cbefGihKSFv/+G3Nfne3Ubj8jtLkLa4LF8ne3vPxhAHu6oxB0Uov0l2MgeXARCR8D1wXGj52+g5V4QvjVzEAZzaKHEU7m36LLMyiwV8zNBp8ruYzyjZWedksmD7C96OhU2ZWm0G/RQAjp341Wo9bddARhZtoRVHE=
+	t=1732189000; cv=none; b=eL6lFaxmxvRoDeGgJEq5s3ad8nqFo7RTgZZRIDRAPwIppR6quMC4Kg6qGWvGobEevP0e239hmdGL5/VkTxq0NfmeRU63W7+/IWFHzPBRJYojxU9zz5W7TsYke7Sv8Cvs9ValFJhu4vqzFZ2KCQddzblwvpQnwN8v95Zb+y/MDKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732188988; c=relaxed/simple;
-	bh=cM8frLWLkX23eGShDOZ4lAAKAr+0zQogfii33AqdZsc=;
+	s=arc-20240116; t=1732189000; c=relaxed/simple;
+	bh=LbZQYk84BXacNPIxR5ZjcaQUtezDv/lcCXofOdgV4Zg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdHLzGi+V1+C2XVG+WYqzOI5gXkjfwyp7qQRFWQvCbm732I2AzoR6CpyJoNyNr2yZ5/+LI1+oi/oTTs8ERV43YKFPvVXsLdUKm8BdzNowbrljvYzYaIlEtU1WatHd0DELDVKoW84WCgSJm/MbTpD0mRH8lJuGFcM6xrGfyZNqQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+I3rVhZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8C6C4CECC;
-	Thu, 21 Nov 2024 11:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732188988;
-	bh=cM8frLWLkX23eGShDOZ4lAAKAr+0zQogfii33AqdZsc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+I3rVhZ37SjdeoKWrZhZpMBlCRFcw22QerkKPTF4jjlgbM8OlqnOJemB4sEzwVt9
-	 hjIAYMxk84m/hVT9nQDLsXoWfwid4fyRrcdSdTDLkv1sgZVyEYqlWIAWmmbKSGtyrj
-	 Qa0Y1aWORZuhRaIMc723hLtoItMQxaTSFNarDNkGxkWIBb1dGJ3IVo4SpQZiuDfeHe
-	 1q0z+H4S75pweRBGIBOfcSnRA+E9OctiEYlIUZnZ3bDxlhe4wTgH2l/ABn8DkECjaM
-	 WadnPqRcjB7IoPn5+0HFlhZ08iKybW/wGeAmklmjBjfpp34n5VyLWAdTMfkkWvJVIw
-	 XpI5lkniQMdQw==
-Date: Thu, 21 Nov 2024 12:36:25 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] Revert "delay: Rework udelay and ndelay"
-Message-ID: <Zz8bOYgVrFEBPRrd@localhost.localdomain>
-References: <20241121095542.3684712-1-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcVN5faXo01dGgt6rhSBR0IIdp2PBd6z82vchWFczWj/eiFQW7QDLATbF5s4asbPr9VESC+pWOt54HBJgrb/dhWHjkCvtzbuz6CJ7GM+MUrD1sMVNU2FkPSQfv5UTOnjTah4aJTdlyDvpTokAzfi9jMyNAP4l/Vh8GTLzf24PIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bql3r4NW; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LS6+dcL7H0Nwp8T0TKzgyearEgOQ/YIKFVEH6/AJ1c0=; b=Bql3r4NW/oN5F/KLQZCbdU8C7c
+	5yTQugrq9Mc1Jlbtb5Y/umQYQpvy4CE6HpJ/dYffqERxcycWdMkORlR+8eBYSL/5UMUSlHMA26wch
+	e2Trg5Ze9RgmmdqSZzEzI5k9Tn/OO7XQPYo3mmBz9yJztkYB3z19SrlVhXp0cH/hP3hn4raqBOXAY
+	/znOOqKox9jTJw3DIMfVLn0GCYfD7vtCzo3qt+Uj7s/qbxVR/Fp5OcA0akpXS/97dLf7IfTiIuhIT
+	y63ZdlMWHJAF0IqLzyWX9Lu3gvpAmc/ggAged4re91TWxasJB4puDBYST2YRKFjUeLRlTeboDdCqI
+	BPPGSoug==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tE5U5-00000000ZlQ-3pmS;
+	Thu, 21 Nov 2024 11:36:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8AB5430068B; Thu, 21 Nov 2024 12:36:29 +0100 (CET)
+Date: Thu, 21 Nov 2024 12:36:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Davidlohr Bueso <dave@stgolabs.net>, regressions@lists.linux.dev,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RESEND][PATCH] locking: rtmutex: Fix wake_q logic in
+ task_blocks_on_rt_mutex
+Message-ID: <20241121113629.GH24774@noisy.programming.kicks-ass.net>
+References: <20241120184625.3835422-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121095542.3684712-1-wenst@chromium.org>
+In-Reply-To: <20241120184625.3835422-1-jstultz@google.com>
 
-Le Thu, Nov 21, 2024 at 05:55:38PM +0800, Chen-Yu Tsai a écrit :
-> This reverts commit 19e2d91d8cb1f333adf04731f2788ff6ca06cebd.
+On Wed, Nov 20, 2024 at 10:46:15AM -0800, John Stultz wrote:
+> Anders had bisected a crash using PREEMPT_RT with linux-next and
+> isolated it down to commit 894d1b3db41c ("locking/mutex: Remove
+> wakeups from under mutex::wait_lock"), where it seemed the
+> wake_q structure was somehow getting corrupted causing a null
+> pointer traversal.
 > 
-> Journald was recently observed to continuely crash at startup, causing
-> the system to not be able to finish booting. This was observed locally
-> on my MT8195 based Chromebook while doing development, and on KernelCI
-> on a MT8192 based Chromebook [1].
+> I was able to easily repoduce this with PREEMPT_RT and managed
+> to isolate down that through various call stacks we were
+> actually calling wake_up_q() twice on the same wake_q.
 > 
-> A bisect found this commit to be the first bad commit. Reverting it
-> seems to have fixed the issue.
+> I found that in the problematic commit, I had added the
+> wake_up_q() call in task_blocks_on_rt_mutex() around
+> __ww_mutex_add_waiter(), following a similar pattern in
+> __mutex_lock_common().
 > 
-> [1] https://lava.collabora.dev/scheduler/job/16123429
+> However, its just wrong. We haven't dropped the lock->wait_lock,
+> so its contrary to the point of the original patch. And it
+> didn't match the __mutex_lock_common() logic of re-initializing
+> the wake_q after calling it midway in the stack.
 > 
-> Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
-> Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Looking at it now, the wake_up_q() call is incorrect and should
+> just be removed. So drop the erronious logic I had added.
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Qais Yousef <qyousef@layalina.io>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Valentin Schneider <vschneid@redhat.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Benjamin Segall <bsegall@google.com>
+> Cc: Zimuzo Ezeozue <zezeozue@google.com>
+> Cc: Mel Gorman <mgorman@suse.de>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Metin Kaya <Metin.Kaya@arm.com>
+> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
 > Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-arch@vger.kernel.org
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: kernel-team@android.com
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: regressions@lists.linux.dev
+> Cc: Thorsten Leemhuis <linux@leemhuis.info>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::wait_lock")
+> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> Reported-by: Arnd Bergmann <arnd@arndb.de>
+> Closes: https://lore.kernel.org/lkml/6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com/
+> Tested-by: Anders Roxell <anders.roxell@linaro.org>
+> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
+> Signed-off-by: John Stultz <jstultz@google.com>
+> ---
+> Apologies for being noisy, I recognize its only been a week, but
+> I wanted to resend this now as the problematic commit just
+> landed in Linus' tree and I've not seen this get queued yet.
 
-Ah wait, can you please try this instead?
+Right, I picked up the old one a few days ago, but will not be sticking
+it in any git tree until -rc1.
 
-diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
-index 76cf237b6e4c..03b0ec7afca6 100644
---- a/include/asm-generic/delay.h
-+++ b/include/asm-generic/delay.h
-@@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec)
- {
- 	if (__builtin_constant_p(nsec)) {
- 		if (nsec >= DELAY_CONST_MAX)
--			__bad_udelay();
-+			__bad_ndelay();
- 		else
- 			__const_udelay(nsec * NDELAY_CONST_MULT);
- 	} else {
--		__udelay(nsec);
-+		__ndelay(nsec);
- 	}
- }
- #define ndelay(x) ndelay(x)
-
-
-Thanks!
 
