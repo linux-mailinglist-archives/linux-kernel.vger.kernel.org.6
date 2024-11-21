@@ -1,73 +1,64 @@
-Return-Path: <linux-kernel+bounces-417133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7189D4F74
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:11:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC39D4F78
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861FBB2695D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:01:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E421F22003
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353E91DC185;
-	Thu, 21 Nov 2024 15:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA5A1DBB13;
+	Thu, 21 Nov 2024 15:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qw6lUPSE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b="disLpdCS"
+Received: from mail.tipi-net.de (mail.tipi-net.de [194.13.80.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30C21DDA3D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AADAD2C;
+	Thu, 21 Nov 2024 15:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.13.80.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201270; cv=none; b=jZU1uki5BIrA2wMXPrc+O8amFIXu2fkdXOvIb1aA/seWG0pmKTdEVo1GF+lXccgxp1Z1X4R9ois9S7jfti5Bg3BFIydBzqwwJv0oT9VkMQ5C8W50JAkR4c09UJJxCDn7gerg8ABRzTa+l3VIFim4xQaUyxWpBWC9vJeUafllpHE=
+	t=1732201854; cv=none; b=mI4U3f7GiTxIz6R+G5oZFmBtQhLVe4lqLKNRBKZW8w1ljoVx6QMtOSOg9Hp1Dg+pyI6i8bezt/aIcGzWaGFuh7oGPud6bb6M2cHxPf5bKvIzPT5lFJZ5qok0L1nlY4XOhvqyOf7yS8i2MUk86Tb9ttPCpDl9VaVtL2EZr2oyKEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201270; c=relaxed/simple;
-	bh=A3GuQfKrjl1zxHsRqkErZDd3QUP5e+zRugoys5u61lU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RN/tur6llXbOCD22Fdn5sBSvu7bheWmvFOsPV8PxeoSwApoe5TgMpgq/OrSZUdPzsXjdd3I4ZslkHM4lZinfxYiUX8NBnDgJLJiZ8FdJRBbKsGHS0B9cXdvU4Vsr5Qv2MEeZd9z4DpKukrjO/ZQhx/rp/gaUvS5PfpIuWRk1jrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qw6lUPSE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732201267;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7iW2GgQ76FFxiG2vAuE/IlUcKhIYlf2Yr45L9NzM84w=;
-	b=Qw6lUPSEAVnIphqyD+H4x2fpP6mugY0yMMcYrtPEYRDwYoiihNW1k1BHezAt0sCn26buJw
-	fwUCNFnBS2hjbwNPn3Q+s9QuVP5UpG5i0/ZK8mAb6v5zNObhcjFcXHbPP7p+eo2p0gC+/X
-	ajhsCu3vb1WvuV1o29PjqBlaTSiv2PE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-300-1fh2EouHO3iDsZpFdQqq6g-1; Thu,
- 21 Nov 2024 10:01:06 -0500
-X-MC-Unique: 1fh2EouHO3iDsZpFdQqq6g-1
-X-Mimecast-MFC-AGG-ID: 1fh2EouHO3iDsZpFdQqq6g
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 633121956046;
-	Thu, 21 Nov 2024 15:01:05 +0000 (UTC)
-Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.39.194.245])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2971A30000DF;
-	Thu, 21 Nov 2024 15:01:02 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Tomas Glozar <tglozar@redhat.com>,
-	John Kacur <jkacur@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>
-Subject: [PATCH 4/4] verification/dot2k: Add support for name and description options
-Date: Thu, 21 Nov 2024 15:59:57 +0100
-Message-ID: <20241121145957.145700-5-gmonaco@redhat.com>
-In-Reply-To: <20241121145957.145700-1-gmonaco@redhat.com>
-References: <20241121145957.145700-1-gmonaco@redhat.com>
+	s=arc-20240116; t=1732201854; c=relaxed/simple;
+	bh=Fsv+ibVAuy4YeC1yXQYyMt16jEc4zoDQgrkmeHJTbNQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DArIpTfbEzz00Mj618qEDWdQkKlOQM/+4d1ZHA4Zpj709TqmbY6a2ofGYfg0Qi6pCv5zYU+qo87xAgUGUo7xkMCiUxyLcPMWtPqaBf8j2g5AYpDMRHLrdJ6YCLYBgvCjWuQjxX8sFPMrIdrutEbPI6toZkC6oI3fFLGCuUZwo3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de; spf=pass smtp.mailfrom=tipi-net.de; dkim=pass (2048-bit key) header.d=tipi-net.de header.i=@tipi-net.de header.b=disLpdCS; arc=none smtp.client-ip=194.13.80.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tipi-net.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tipi-net.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 854D7A0924;
+	Thu, 21 Nov 2024 16:02:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tipi-net.de; s=dkim;
+	t=1732201360; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=WrO4T4UVI2X+bB9SyM1ptlkOM20Ma2hyAUKzkpwbjGc=;
+	b=disLpdCSl9nyHwdEoL9yrVRamZLn97XS/sHafhyRi5rIFK8wBb681+mh71xTeFr401/3V3
+	8NaeyErTILWi4Wbu4rOVhxitVkVMGSawvQDTG7XJKmXhVKaCKtqkcBodG4Q5AR/a4Y9QHQ
+	IR5MrOlnAOMIoPQAolkiinbJJkc6xRrdqn9ApZoGfZEwFjEorRq3YfP3LUeMpIhLvQSR3B
+	tH21WbrhEeDCk/8HwluPkdU4DZ7/lLdK9uhAGG5t8hlRhUKMZV1nh8GJhzYc5HDWrO7TB0
+	rjFfjtJKrWhrz/wzTEpHOOFHLnIYJBYejJZy4756pqVqg5wN/nObEOhW+nADJA==
+From: Nicolai Buchwitz <nb@tipi-net.de>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: n.buchwitz@kunbus.com,
+	l.sanfilippo@kunbus.com,
+	p.rosenberger@kunbus.com,
+	stable@vger.kernel.org,
+	Nicolai Buchwitz <nb@tipi-net.de>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] can: dev: can_set_termination(): Allow gpio sleep
+Date: Thu, 21 Nov 2024 16:02:09 +0100
+Message-Id: <20241121150209.125772-1-nb@tipi-net.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,118 +66,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Last-TLS-Session-Version: TLSv1.3
 
-The dot2k command allows specifying a model name with -n and a
-description with -D, however those are not used in practice.
-This patch allows to specify a custom model name (by default the name of
-the dot file without extension) and a description which overrides the
-one in the C file.
+The current implementation of can_set_termination() sets the GPIO in a
+context which cannot sleep. This is an issue if the GPIO controller can
+sleep (e.g. since the concerning GPIO expander is connected via SPI or
+I2C). Thus, if the termination resistor is set (eg. with ip link),
+a warning splat will be issued in the kernel log.
 
-Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+Fix this by setting the termination resistor with
+gpiod_set_value_cansleep() which instead of gpiod_set_value() allows it to
+sleep.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
 ---
- tools/verification/dot2/automata.py            | 4 ++--
- tools/verification/dot2/dot2c.py               | 4 ++--
- tools/verification/dot2/dot2k                  | 6 +-----
- tools/verification/dot2/dot2k.py               | 6 ++++--
- tools/verification/dot2/dot2k_templates/main.c | 2 +-
- 5 files changed, 10 insertions(+), 12 deletions(-)
+ drivers/net/can/dev/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/verification/dot2/automata.py b/tools/verification/dot2/automata.py
-index bdeb98baa8b0..2c4639a73474 100644
---- a/tools/verification/dot2/automata.py
-+++ b/tools/verification/dot2/automata.py
-@@ -19,9 +19,9 @@ class Automata:
+diff --git a/drivers/net/can/dev/dev.c b/drivers/net/can/dev/dev.c
+index 6792c14fd7eb..681643ab3780 100644
+--- a/drivers/net/can/dev/dev.c
++++ b/drivers/net/can/dev/dev.c
+@@ -468,7 +468,7 @@ static int can_set_termination(struct net_device *ndev, u16 term)
+ 	else
+ 		set = 0;
  
-     invalid_state_str = "INVALID_STATE"
+-	gpiod_set_value(priv->termination_gpio, set);
++	gpiod_set_value_cansleep(priv->termination_gpio, set);
  
--    def __init__(self, file_path):
-+    def __init__(self, file_path, model_name=None):
-         self.__dot_path = file_path
--        self.name = self.__get_model_name()
-+        self.name = model_name if model_name is not None else self.__get_model_name()
-         self.__dot_lines = self.__open_dot()
-         self.states, self.initial_state, self.final_states = self.__get_state_variables()
-         self.events = self.__get_event_variables()
-diff --git a/tools/verification/dot2/dot2c.py b/tools/verification/dot2/dot2c.py
-index 87d8a1e1470c..fa2816ac7b61 100644
---- a/tools/verification/dot2/dot2c.py
-+++ b/tools/verification/dot2/dot2c.py
-@@ -22,8 +22,8 @@ class Dot2c(Automata):
-     struct_automaton_def = "automaton"
-     var_automaton_def = "aut"
- 
--    def __init__(self, file_path):
--        super().__init__(file_path)
-+    def __init__(self, file_path, model_name=None):
-+        super().__init__(file_path, model_name)
-         self.line_length = 100
- 
-     def __buff_to_string(self, buff):
-diff --git a/tools/verification/dot2/dot2k b/tools/verification/dot2/dot2k
-index d4d7e52d549e..2d580f26d7c0 100644
---- a/tools/verification/dot2/dot2k
-+++ b/tools/verification/dot2/dot2k
-@@ -25,16 +25,12 @@ if __name__ == '__main__':
- 
-     print("Opening and parsing the dot file %s" % params.dot_file)
-     try:
--        monitor=dot2k(params.dot_file, params.monitor_type)
-+        monitor=dot2k(params.dot_file, params.monitor_type, params.model_name, params.description)
-     except Exception as e:
-         print('Error: '+ str(e))
-         print("Sorry : :-(")
-         sys.exit(1)
- 
--    # easier than using argparse action.
--    if params.model_name != None:
--        print(params.model_name)
--
-     print("Writing the monitor into the directory %s" % monitor.name)
-     monitor.print_files()
-     print("Almost done, checklist")
-diff --git a/tools/verification/dot2/dot2k.py b/tools/verification/dot2/dot2k.py
-index c88b3c011706..f5f829a03f84 100644
---- a/tools/verification/dot2/dot2k.py
-+++ b/tools/verification/dot2/dot2k.py
-@@ -17,8 +17,8 @@ class dot2k(Dot2c):
-     monitor_templates_dir = "dot2/dot2k_templates/"
-     monitor_type = "per_cpu"
- 
--    def __init__(self, file_path, MonitorType):
--        super().__init__(file_path)
-+    def __init__(self, file_path, MonitorType, model_name=None, description=None):
-+        super().__init__(file_path, model_name)
- 
-         self.monitor_type = self.monitor_types.get(MonitorType)
-         if self.monitor_type is None:
-@@ -28,6 +28,7 @@ class dot2k(Dot2c):
-         self.__fill_rv_templates_dir()
-         self.main_c = self.__open_file(self.monitor_templates_dir + "main.c")
-         self.enum_suffix = "_%s" % self.name
-+        self.description = description if description is not None else self.name
- 
-     def __fill_rv_templates_dir(self):
- 
-@@ -114,6 +115,7 @@ class dot2k(Dot2c):
-         main_c = main_c.replace("%%TRACEPOINT_HANDLERS_SKEL%%", tracepoint_handlers)
-         main_c = main_c.replace("%%TRACEPOINT_ATTACH%%", tracepoint_attach)
-         main_c = main_c.replace("%%TRACEPOINT_DETACH%%", tracepoint_detach)
-+        main_c = main_c.replace("%%DESCRIPTION%%", self.description)
- 
-         return main_c
- 
-diff --git a/tools/verification/dot2/dot2k_templates/main.c b/tools/verification/dot2/dot2k_templates/main.c
-index 4a05fef7f3c7..0987c5e56ec8 100644
---- a/tools/verification/dot2/dot2k_templates/main.c
-+++ b/tools/verification/dot2/dot2k_templates/main.c
-@@ -88,4 +88,4 @@ module_exit(unregister_%%MODEL_NAME%%);
- 
- MODULE_LICENSE("GPL");
- MODULE_AUTHOR("dot2k: auto-generated");
--MODULE_DESCRIPTION("%%MODEL_NAME%%");
-+MODULE_DESCRIPTION("%%DESCRIPTION%%");
+ 	return 0;
+ }
 -- 
-2.47.0
+2.39.5
 
 
