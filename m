@@ -1,231 +1,114 @@
-Return-Path: <linux-kernel+bounces-417199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BFB9D505D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:04:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356E89D5056
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D171F2416C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:04:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6A8283014
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DED19F101;
-	Thu, 21 Nov 2024 16:04:04 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D392F55C29;
-	Thu, 21 Nov 2024 16:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1058157476;
+	Thu, 21 Nov 2024 16:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTYmVzA3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE18487A7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732205043; cv=none; b=KYcZNrwTfkPnVkWKUoY9o0fJLSfujUYqapEQOkaBp5n2kV7kzZLtBUhER1efkwd6zsgRP/SZwv42uizJfkU32am/rxgXdHBalLhlL+ulsJ1/4sLhsgND4L0OYbsi9Iraos87vobM+gSqnvMBIWPtC3pdhCk7oyZfeNwyxVLD2d4=
+	t=1732205012; cv=none; b=sgdDMaZ/TVKtUddQCqtL+1LPszKndHuKfltUnazlk7OcSbPJ6KWkdYmuhOJ12iTji3Hz2OLL8CSWY9ZABtxaY780GAvDZkx2NwoXjpoHU9fbSNvlt5wZGLaKGXTRQ9rUH9GvZT30cY3TlCDA/i8TFq8kv9zCHqAiv4aWWy1UpOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732205043; c=relaxed/simple;
-	bh=hysRP7nV2W65xic8G5nFrdP9jHXY2FnLQvuPVR4M7ws=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQnfg+CzDmRC846rbHJaOLBbQjhoW0FL6h0biURgQxJuwlj8zc37l/713Z+SrcsaeJkqYYDsTSKRe/Yq8juJ+R/u3GT8u5QaFIbx5MkB/yOAJ/P5hChSr8m7pmbuFpZpDllXRwwMyYM6XHcimxxiZ/dyWv0+h7nNwioQJwc6VhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4ALG31wD010258;
-	Thu, 21 Nov 2024 10:03:01 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4ALG2xqo010256;
-	Thu, 21 Nov 2024 10:02:59 -0600
-Date: Thu, 21 Nov 2024 10:02:59 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Song Liu <songliubraving@meta.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241121160259.GA9933@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com> <20241120165425.GA1723@wind.enjellic.com> <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
+	s=arc-20240116; t=1732205012; c=relaxed/simple;
+	bh=C8vJ8qggLtWzD+4pWCb0BepOavKWkMVHadcpxi6E8SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XRiYdKTwM5h9TPRXQEHoGVSdgy+IPqXVa26cW96T3A2qlI9lMbMgleL443W7CtNsSNBZmsKiIa1wdIvOa2XSUeZOaLhTpm6XPlCSLpMf2FUstG/jsyB/DQZakIG5YmOQqO2pEjmeOAZQOSaX8rELk2EBUTjTQmbKGmBeSbrWA/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTYmVzA3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732205009;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ikxJGaHMDVtELpb2AD5zG6Lr+OC44aX1EesfMQD2K0E=;
+	b=RTYmVzA37rrZg29XM2MEETlJdhVHFHdYUBBP+zG4hkCEFv1doz/1lViXbI1/Pike4MaPBN
+	ENK17ivdbmN0pjfat4WmZaxUWrDcMLikRwmOwjinzKDAM2P26SJWVns00hgMqj2m0uLYKv
+	XRnLMUPMry1YW1+tvZUSaQSQWQG4kLk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-CTo-EI5dNBW7-cdnyn7IfA-1; Thu,
+ 21 Nov 2024 11:03:27 -0500
+X-MC-Unique: CTo-EI5dNBW7-cdnyn7IfA-1
+X-Mimecast-MFC-AGG-ID: CTo-EI5dNBW7-cdnyn7IfA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7FF8A195395F;
+	Thu, 21 Nov 2024 16:03:26 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.82.7])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 960E51956056;
+	Thu, 21 Nov 2024 16:03:25 +0000 (UTC)
+Date: Thu, 21 Nov 2024 10:03:22 -0600
+From: David Teigland <teigland@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, gfs2@lists.linux.dev
+Subject: [GIT PULL] dlm updates for 6.13
+Message-ID: <Zz9Zyoho_wbCImkJ@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Nov 2024 10:03:01 -0600 (CST)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Nov 21, 2024 at 08:28:05AM +0000, Song Liu wrote:
+Hi Linus,
 
-> Hi Dr. Greg,
-> 
-> Thanks for your input!
+Please pull dlm updates from tag:
 
-Good morning, I hope everyone's day is going well.
+git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.13
 
-> > On Nov 20, 2024, at 8:54???AM, Dr. Greg <greg@enjellic.com> wrote:
-> > 
-> > On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
-> 
-> [...]
-> 
-> > 
-> >>> 2.) Implement key/value mapping for inode specific storage.
-> >>> 
-> >>> The key would be a sub-system specific numeric value that returns a
-> >>> pointer the sub-system uses to manage its inode specific memory for a
-> >>> particular inode.
-> >>> 
-> >>> A participating sub-system in turn uses its identifier to register an
-> >>> inode specific pointer for its sub-system.
-> >>> 
-> >>> This strategy loses O(1) lookup complexity but reduces total memory
-> >>> consumption and only imposes memory costs for inodes when a sub-system
-> >>> desires to use inode specific storage.
-> > 
-> >> SELinux and Smack use an inode blob for every inode. The performance
-> >> regression boggles the mind. Not to mention the additional
-> >> complexity of managing the memory.
-> > 
-> > I guess we would have to measure the performance impacts to understand
-> > their level of mind boggliness.
-> > 
-> > My first thought is that we hear a huge amount of fanfare about BPF
-> > being a game changer for tracing and network monitoring.  Given
-> > current networking speeds, if its ability to manage storage needed for
-> > it purposes are truely abysmal the industry wouldn't be finding the
-> > technology useful.
-> > 
-> > Beyond that.
-> > 
-> > As I noted above, the LSM could be an independent subscriber.  The
-> > pointer to register would come from the the kmem_cache allocator as it
-> > does now, so that cost is idempotent with the current implementation.
-> > The pointer registration would also be a single instance cost.
-> > 
-> > So the primary cost differential over the common arena model will be
-> > the complexity costs associated with lookups in a red/black tree, if
-> > we used the old IMA integrity cache as an example implementation.
-> > 
-> > As I noted above, these per inode local storage structures are complex
-> > in of themselves, including lists and locks.  If touching an inode
-> > involves locking and walking lists and the like it would seem that
-> > those performance impacts would quickly swamp an r/b lookup cost.
+Summary:
 
-> bpf local storage is designed to be an arena like solution that
-> works for multiple bpf maps (and we don't know how many of maps we
-> need ahead of time). Therefore, we may end up doing what you
-> suggested earlier: every LSM should use bpf inode storage. ;) I am
-> only 90% kidding.
+- Fix recovery of locks that are being converted between PR/CW modes.
+- Fix cleanup of rsb list if recovery is interrupted during recover_members.
+- Fix null dereference in debug code if dlm api is called improperly.
+- Fix wrong args passed to trace function.
+- Move error checks out of add_to_waiters so the function can't fail.
+- Clean up some code for configfs.
 
-I will let you thrash that out with the LSM folks, we have enough on
-our hands just with TSEM.... :-)
+Thanks,
+Dave
 
-I think the most important issue in all of this is to get solid
-performance measurements and let those speak to how we move forward.
 
-As LSM authors ourself, we don't see an off-putting reason to not have
-a common arena storage architecture that builds on what the LSM is
-doing.  If sub-systems with sparse usage would agree that they need to
-restrict themselves to a single pointer slot in the arena, it would
-seem that memory consumption, in this day and age, would be tolerable.
+Alexander Aring (9):
+      dlm: fix swapped args sb_flags vs sb_status
+      dlm: fix possible lkb_resource null dereference
+      dlm: disallow different configs nodeid storages
+      dlm: handle port as __be16 network byte order
+      dlm: use dlm_config as only cluster configuration
+      dlm: dlm_config_info config fields to unsigned int
+      dlm: make add_to_waiters() that it can't fail
+      dlm: fix recovery of middle conversions
+      dlm: fix dlm_recover_members refcount on error
 
-See below for another idea.
 
-> >>> Approach 2 requires the introduction of generic infrastructure that
-> >>> allows an inode's key/value mappings to be located, presumably based
-> >>> on the inode's pointer value.  We could probably just resurrect the
-> >>> old IMA iint code for this purpose.
-> >>> 
-> >>> In the end it comes down to a rather standard trade-off in this
-> >>> business, memory vs. execution cost.
-> >>> 
-> >>> We would posit that option 2 is the only viable scheme if the design
-> >>> metric is overall good for the Linux kernel eco-system.
-> > 
-> >> No. Really, no. You need look no further than secmarks to understand
-> >> how a key based blob allocation scheme leads to tears. Keys are fine
-> >> in the case where use of data is sparse. They have no place when data
-> >> use is the norm.
-> > 
-> > Then it would seem that we need to get everyone to agree that we can
-> > get by with using two pointers in struct inode.  One for uses best
-> > served by common arena allocation and one for a key/pointer mapping,
-> > and then convert the sub-systems accordingly.
-> > 
-> > Or alternately, getting everyone to agree that allocating a mininum of
-> > eight additional bytes for every subscriber to private inode data
-> > isn't the end of the world, even if use of the resource is sparse.
+ fs/dlm/ast.c      |   2 +-
+ fs/dlm/config.c   | 170 +++++++++++++++++++++++++++++-------------------------
+ fs/dlm/config.h   |  26 ++++-----
+ fs/dlm/lock.c     |  73 ++++++++++-------------
+ fs/dlm/lowcomms.c |   8 +--
+ fs/dlm/member.c   |   2 +-
+ fs/dlm/recover.c  |  35 ++++++-----
+ fs/dlm/recoverd.c |   2 +-
+ 8 files changed, 165 insertions(+), 153 deletions(-)
 
-> Christian suggested we can use an inode_addon structure, which is 
-> similar to this idea. It won't work well in all contexts, though. 
-> So it is not as good as other bpf local storage (task, sock,
-> cgroup). 
-
-Here is another thought in all of this.
-
-I've mentioned the old IMA integrity inode cache a couple of times in
-this thread.  The most peacable path forward may be to look at
-generalizing that architecture so that a sub-system that wanted inode
-local storage could request that an inode local storage cache manager
-be implemented for it.
-
-That infrastructure was based on a red/black tree that used the inode
-pointer as a key to locate a pointer to a structure that contained
-local information for the inode.  That takes away the need to embed
-something in the inode structure proper.
-
-Since insertion and lookup times have complexity functions that scale
-with tree height it would seem to be a good fit for sparse utilization
-scenarios.
-
-An extra optimization that may be possible would be to maintain an
-indicator flag tied the filesystem superblock that would provide a
-simple binary answer as to whether any local inode cache managers have
-been registered for inodes on a filesystem.  That would allow the
-lookup to be completely skipped with a simple conditional test.
-
-If the infrastructure was generalized to request and release cache
-managers it would be suitable for systems, implemented as modules,
-that have a need for local inode storage.
-
-It also offers the ability for implementation independence, which is
-always a good thing in the Linux community.
-
-> Thanks,
-> Song
-
-Have a good day.
-
-> > Of course, experience would suggest, that getting everyone in this
-> > community to agree on something is roughly akin to throwing a hand
-> > grenade into a chicken coop with an expectation that all of the
-> > chickens will fly out in a uniform flock formation.
-> > 
-> > As always,
-> > Dr. Greg
-> > 
-> > The Quixote Project - Flailing at the Travails of Cybersecurity
-> >              https://github.com/Quixote-Project
-> 
-> 
 
