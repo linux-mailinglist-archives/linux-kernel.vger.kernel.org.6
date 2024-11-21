@@ -1,251 +1,148 @@
-Return-Path: <linux-kernel+bounces-417517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A379D550B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:51:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D579D5513
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02A21F22FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172CF1F22DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810451D89FE;
-	Thu, 21 Nov 2024 21:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA461DA103;
+	Thu, 21 Nov 2024 21:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEIqPTG1"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QGlu0Iby"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B2200A3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DE583CDA;
+	Thu, 21 Nov 2024 21:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732225902; cv=none; b=E3588zR7GgVwFRDMNsOADHIPqipKeU/PJUTdfVzvHCa2byb9+bw+lSmR7LclvykH1/O3NgSmHOBHx6j/OU7ZpGJhTkSk2OWA1yTHKfsIrKXP2RYQWjuMwfzR6GXhokS0CV8FIV6vDz4LjlEdfjG0T6+Dmd7RT5Exwa29UpmhJSk=
+	t=1732226163; cv=none; b=tqUQMmC7Uojpohy860LMyzHwcES4zjh+AKbT+ZmFK5yYHYAETIOVc1sI0uH8KNhFfEi4PGpajqsg6Sgr9S4761J1u2+yvFWphYi4WtUUNHTBQadMsHL53NznW9JVmOCnckfZakcMO3PeNekMpr4ExRTelStDEdV3TyFtAtDfWds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732225902; c=relaxed/simple;
-	bh=CUHno2R/nqM+vBmK7dZ3xoXb1J1KeGJmhbGs1sQeZCk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vv4jtXAHnndR7MlkvLcZ03h6Zapheu9YGpkCpFwXsoy7NO9wLNfvX4cGpTAgsa9ISuxGco6OoTuX3qbyDRMN4/Rnj1GsqTtRhXD8yTJjgsuh0jA83nG9rFqp7H/bAflP1NXWFtKBy8KwggDbZjcc+lmjT8Hliey55pg148S6OtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEIqPTG1; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so900a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:51:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732225899; x=1732830699; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PHKKmDtuZBsmU0fuCBMeHOOxdDx2/H6XhfP9M3Cqc2M=;
-        b=kEIqPTG1CrpRFE7rljT36R+QGJJRvQbOsXgc6y6bNvGCNHni43f3mM3MT6Oc7/s63H
-         zLjcfQ57L6CaYZi5lyWy6SYSmmgt/u6ZU5qWC99X6XuONXmJCcqbM4HpDPEUeKQ2gmxX
-         BRrTaZBlnVGBdJ1vywdy7Y724MycmflrwQn8ljQ4zJrZ2+/JwOdgknsLMm44FhFZrTiR
-         TXT54MhQyjlQiqG+rBU/DxTx8bMaxzgJ1Mkoc04ULDAV4b3kgjDNpwvSEDsoBm9kW6+W
-         urLgndy088FSRM8FzgOSji1mzdsQMf9NJFARM5Jz+hpDYVBELN+CWPGwc21M50kwU1fm
-         b2og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732225899; x=1732830699;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PHKKmDtuZBsmU0fuCBMeHOOxdDx2/H6XhfP9M3Cqc2M=;
-        b=Hq8HFASQ/Pq+Wc8LT0btYJhSt3Aq0ropZ/5PzpzubyzZC/gbEsD4SYiV8HNwIBSsNa
-         012NkIILZgyhqY1t+P4A14Oh6iX6NXrY51+4V2KuHGHN39771N2vZPaw6MbzOMUrhCZY
-         TGEFUvgdwTHFfUtAPTtQ4e3Bk/6Nxbuy4biG8trXDwFFxxv+tgw2MX4LateX6ZBAy9Cf
-         duj2oYfKO1upNIeR4IXbzw58pZG2ia64c2AMSqDutci6uRQ1oVD0MFhGYkc0D8XfiKTd
-         My+g0O4epwH+xXufHaXq0xEYMH+Iiif3pfrcZPKsJ0H+c3bGjI3i5LoSr4+LaL8Hoqp+
-         61rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZElH2pTKdU6lKKuFtlMU7CdUAZnEWM5pMhghbVSElPh+5jrYXRKBsft8z4XO1sQTnw+4h130X1TydijA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR+EHC7ZvxV1qBgus9TuzdCWmYt9zeWz7A7bq3e44VXvXmy2v5
-	bhCQfHCmirbV3yId/PXvEcvfQ8Mi9xYlXo2yLNJ6SQkcBstQxdAftJt7bI+73X0eInTqkr6AoHC
-	jjnAsEGebB1VwabK59GeNS2qJzGKMJjFxhHgw
-X-Gm-Gg: ASbGncsyTC7/eWk8FMqp36YGULdw0Xffm7eP2HRderDiXF8APLWl6A3YGRuPcluNk/f
-	nORBioi/0LfWzj2rf+cVgQITqGXQF0F/+r6e4q4jWKKeesfJ+T79LVZsk0srUg+6p
-X-Google-Smtp-Source: AGHT+IHZXqsbw6LTrWSKQk3j6sgwFD4xI5UHXnS7pvVevPPLF9iib3NRzS9gCFTmnjvbHI8Vhd+KqI0rHViR8+rmNRI=
-X-Received: by 2002:aa7:d6cd:0:b0:5cf:bd9a:41ec with SMTP id
- 4fb4d7f45d1cf-5d01dcbf0c4mr18135a12.2.1732225899042; Thu, 21 Nov 2024
- 13:51:39 -0800 (PST)
+	s=arc-20240116; t=1732226163; c=relaxed/simple;
+	bh=ATxtgNT34FvQqkHxvnc3dDn3NIUe4BGii5/L3CVbL5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gsGf6wS1WUtofrNlq63n9PTwBjGNQN9NS0yuKlU4mJ97gOtIc1PCy1CPkB5np5u96NzADHrrwruseJNRoH6ff6r0HBNSlOHh2XglFUX6hIpL6LFkLeafj8H7XY7BoQcwAwUkY7BrrS6pe7juY5BxXuMO9g33ZmoEuSm9NAGOZAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QGlu0Iby; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732226162; x=1763762162;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ATxtgNT34FvQqkHxvnc3dDn3NIUe4BGii5/L3CVbL5Q=;
+  b=QGlu0IbyLJU2/RNwn29EG7ENIsVehgsxdkFe1gzeyvRDAEB60Ryvrn2S
+   7C1zP8+Predzx48hxwd1j/M6XLnbAenf5IFmb/h3X07nS/16yAdErJaRX
+   4+Oltzzv5wvp5G5T52tY/xJ8lZM4P3IXLGEMG94vFVanIsNef8Iv6VNbi
+   rX/QBuG+DNGjixn8xk8pWuQsvFmhRUwVamdH2MG2a0lF2GnsoICXeGD73
+   RppeZXGVoIFY4iAdOH/8XKFN/92XA7w9lAgCuohG/yy0epJIhOx+2qt68
+   9xHknFnDHJfYzpGzhg2TxEtxnnuvvqszC76gK1E+vCr8YPCFJWdDZ8uoQ
+   A==;
+X-CSE-ConnectionGUID: W6XjVuczQ9m2rp/ObaKBoQ==
+X-CSE-MsgGUID: YjH2JAfhT9S4ewyGNSl/Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="36146985"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="36146985"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 13:56:01 -0800
+X-CSE-ConnectionGUID: umi9aa9ESiO+m450r70/Og==
+X-CSE-MsgGUID: ssMEiMNuSPSKEiEAD/cNgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90183953"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 21 Nov 2024 13:55:56 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEF9W-0003Od-17;
+	Thu, 21 Nov 2024 21:55:54 +0000
+Date: Fri, 22 Nov 2024 05:54:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Guenter Roeck <linux@roeck-us.net>,
+	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Radu Sabau <radu.sabau@analog.com>,
+	Uwe =?unknown-8bit?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Alexis Czezar Torreno <alexisczezar.torreno@analog.com>,
+	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051,
+ adp1055 and ltp8800
+Message-ID: <202411220500.414mHL27-lkp@intel.com>
+References: <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
- <ZyNr--iMz_6Fj4yq@bombadil.infradead.org> <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
- <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org> <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
- <ZyrRYUD0K1f7SwWg@bombadil.infradead.org> <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
- <Zy1BVXgnT72Jt_HE@bombadil.infradead.org>
-In-Reply-To: <Zy1BVXgnT72Jt_HE@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Thu, 21 Nov 2024 13:51:26 -0800
-Message-ID: <CAGSQo03nq5tnqyp8eDZYA7CbjUPZeKs+A33oeSw3znTO9GRF_g@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000638ddf062773456e"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120035826.3920-3-cedricjustine.encarnacion@analog.com>
 
---000000000000638ddf062773456e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hi Cedric,
 
-On Thu, Nov 7, 2024 at 2:38=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org>=
- wrote:
->
-> On Wed, Nov 06, 2024 at 02:19:38PM -0800, Matthew Maurer wrote:
-> > >
-> > > > If booted against an old kernel, it will
-> > > > behave as though there is no modversions information.
-> > >
-> > > Huh? This I don't get. If you have the new libkmod and boot
-> > > an old kernel, that should just not break becauase well, long
-> > > symbols were not ever supported properly anyway, so no regression.
-> >
-> > Specifically, if you set NO_BASIC_MODVERSIONS, build a module, and
-> > then load said module with a kernel *before* EXTENDED_MODVERSIONS
-> > existed, it will see no modversion info on the module to check. This
-> > will be true regardless of symbol length.
->
-> Isn't that just the same as disabling modverisons?
->
-> If you select modversions, you get the options to choose:
->
->   - old modversions
->   - old modversions + extended modversions
->   - extended modversions only
+kernel test robot noticed the following build warnings:
 
-Yes, what I'm pointing out is that kernels before the introduction of
-extended modversions will not know how to read extended modversions,
-and so they will treat modules with *only* extended modversions as
-though they have no modversions.
+[auto build test WARNING on groeck-staging/hwmon-next]
+[also build test WARNING on linus/master v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> > > I'm not quite sure I understood your last comment here though,
-> > > can you clarify what you meant?
-> > >
-> > > Anyway, so now that this is all cleared up, the next question I have
-> > > is, let's compare a NO_BASIC_MODVERSIONS world now, given that the
-> > > userspace requirements aren't large at all, what actual benefits does
-> > > using this new extended mod versions have? Why wouldn't a distro end
-> > > up preferring this for say a future release for all modules?
-> >
-> > I think a distro will end up preferring using this for all modules,
-> > but was intending to put both in for a transitional period until the
-> > new format was more accepted.
->
-> The only thing left I think to test is the impact at runtime, and the
-> only thing I can think of is first we use find_symbol() on resolve_symbol=
-()
-> which it took me a while to review and realize that this just uses a
-> completely different ELF section, the the ksymtab sections which are spli=
-t up
-> between the old and the gpl section. But after that we use check_version(=
-).
-> I suspect the major overhead here is in find_symbol() and that's in no wa=
-y shape
-> or form affected by your changes, and I also suspect that since the
-> way you implemented for_each_modversion_info_ext() is just *one* search
-> there shouldn't be any penalty here at all. Given it took *me* a while
-> to review all this, I think it would be good for you to also expand your
-> cover letter to be crystal clear on these expectations to users and
-> developers and if anything expand on the Kconfig / and add documentation
-> if we don't document any of this.
+url:    https://github.com/intel-lab-lkp/linux/commits/Cedric-Encarnacion/dt-bindings-hwmon-pmbus-adp1050-Add-bindings-for-adp1051-adp1055-and-ltp8800/20241121-144856
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-next
+patch link:    https://lore.kernel.org/r/20241120035826.3920-3-cedricjustine.encarnacion%40analog.com
+patch subject: [PATCH 2/2] hwmon: (pmbus/adp1050): add support for adp1051, adp1055 and ltp8800
+config: loongarch-randconfig-r064-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220500.414mHL27-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220500.414mHL27-lkp@intel.com/reproduce)
 
-I can add a commit extending modules.rst, but it's not clear to me
-what piece was surprising here - the existing MODVERSIONS format is
-*also* in a separate section. Nothing written in the "Module
-Versioning" section has been invalidated that I can see.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411220500.414mHL27-lkp@intel.com/
 
-Things I could think to add:
+All warnings (new ones prefixed by >>):
 
-* Summary of the internal data format (seems odd, since the previous
-one isn't here, and I'd think that an implementation detail anyways)
-* A warning about the effects of NO_BASIC_MODVERSIONS (probably better
-in Kconfig, isn't in the current changeset because the flag isn't
-there)
+   drivers/hwmon/pmbus/adp1050.c: In function 'adp1050_probe':
+>> drivers/hwmon/pmbus/adp1050.c:88:39: warning: passing argument 2 of 'pmbus_do_probe' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+      88 |         return pmbus_do_probe(client, info);
+         |                                       ^~~~
+   In file included from drivers/hwmon/pmbus/adp1050.c:12:
+   drivers/hwmon/pmbus/pmbus.h:541:73: note: expected 'struct pmbus_driver_info *' but argument is of type 'const struct pmbus_driver_info *'
+     541 | int pmbus_do_probe(struct i2c_client *client, struct pmbus_driver_info *info);
+         |                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
 
->
-> I'd still like to see you guys test all this with the new TEST_KALLSYMS.
 
-I've attached the results of running TEST_KALLSYMS - it appears to be
-irrelevant to performance, as you expected.
+vim +88 drivers/hwmon/pmbus/adp1050.c
 
->
->   Luis
+    79	
+    80	static int adp1050_probe(struct i2c_client *client)
+    81	{
+    82		const struct pmbus_driver_info *info;
+    83	
+    84		info = device_get_match_data(&client->dev);
+    85		if (!info)
+    86			return -ENODEV;
+    87	
+  > 88		return pmbus_do_probe(client, info);
+    89	}
+    90	
 
---000000000000638ddf062773456e
-Content-Type: application/octet-stream; name=extended-log
-Content-Disposition: attachment; filename=extended-log
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3rujd550>
-X-Attachment-Id: f_m3rujd550
-
-VEFQIHZlcnNpb24gMTMKMS4uMQojIHRpbWVvdXQgc2V0IHRvIDQ1CiMgc2VsZnRlc3RzOiBtb2R1
-bGU6IGZpbmRfc3ltYm9sLnNoCiMKIyAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9z
-YmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAgICAgMjg4OTgwMzIgbnMg
-ICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAyMzY2MDAwIG5zICAgdXNlcl90aW1lCiMgICAg
-ICAgICAgICAgICAgMjA3ICAgICAgcGFnZS1mYXVsdHMKIwojICAgICAgICAwLjAyMDA4NTk5MSBz
-ZWNvbmRzIHRpbWUgZWxhcHNlZAojCiMgICAgICAgIDAuMDAyMzY2MDAwIHNlY29uZHMgdXNlcgoj
-ICAgICAgICAwLjAwMDAwMDAwMCBzZWNvbmRzIHN5cwojCiMKIwojICBQZXJmb3JtYW5jZSBjb3Vu
-dGVyIHN0YXRzIGZvciAnL3NiaW4vbW9kcHJvYmUgdGVzdF9rYWxsc3ltc19iJzoKIwojICAgICAg
-ICAgICAyNTMzMzY0MCBucyAgIGR1cmF0aW9uX3RpbWUKIyAgICAgICAgICAgICAgMzIwMDAgbnMg
-ICB1c2VyX3RpbWUKIyAgICAgICAgICAgIDIzNTcwMDAgbnMgICBzeXN0ZW1fdGltZQojICAgICAg
-ICAgICAgICAgIDIwNyAgICAgIHBhZ2UtZmF1bHRzCiMKIyAgICAgICAgMC4wMjQwODM5NTcgc2Vj
-b25kcyB0aW1lIGVsYXBzZWQKIwojICAgICAgICAwLjAwMDAzMjAwMCBzZWNvbmRzIHVzZXIKIyAg
-ICAgICAgMC4wMDIzNTcwMDAgc2Vjb25kcyBzeXMKIwojCiMKIyAgUGVyZm9ybWFuY2UgY291bnRl
-ciBzdGF0cyBmb3IgJy9zYmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAg
-ICAgMjUzOTg2MDAgbnMgICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAgIDMwMDAwIG5zICAg
-dXNlcl90aW1lCiMgICAgICAgICAgICAyMjY5MDAwIG5zICAgc3lzdGVtX3RpbWUKIyAgICAgICAg
-ICAgICAgICAyMDggICAgICBwYWdlLWZhdWx0cwojCiMgICAgICAgIDAuMDI0MDk1MjA0IHNlY29u
-ZHMgdGltZSBlbGFwc2VkCiMKIyAgICAgICAgMC4wMDAwMzAwMDAgc2Vjb25kcyB1c2VyCiMgICAg
-ICAgIDAuMDAyMjY5MDAwIHNlY29uZHMgc3lzCiMKIwpvayAxIHNlbGZ0ZXN0czogbW9kdWxlOiBm
-aW5kX3N5bWJvbC5zaAovc2VsZnRlc3RzICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIEVY
-VEVOREVECiMgQ09ORklHX1g4Nl9FWFRFTkRFRF9QTEFURk9STSBpcyBub3Qgc2V0CkNPTkZJR19F
-WFRFTkRFRF9NT0RWRVJTSU9OUz15CiMgQ09ORklHX05FVENPTlNPTEVfRVhURU5ERURfTE9HIGlz
-IG5vdCBzZXQKQ09ORklHX1NFUklBTF84MjUwX0VYVEVOREVEPXkKL3NlbGZ0ZXN0cyAjCg==
---000000000000638ddf062773456e
-Content-Type: application/octet-stream; name=noextend-log
-Content-Disposition: attachment; filename=noextend-log
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3rujd5y1>
-X-Attachment-Id: f_m3rujd5y1
-
-VEFQIHZlcnNpb24gMTMKMS4uMQojIHRpbWVvdXQgc2V0IHRvIDQ1CiMgc2VsZnRlc3RzOiBtb2R1
-bGU6IGZpbmRfc3ltYm9sLnNoCiMKIyAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9z
-YmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAgICAgMzA0NzczNDggbnMg
-ICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAyNDk0MDAwIG5zICAgdXNlcl90aW1lCiMgICAg
-ICAgICAgICAgICAgMjA2ICAgICAgcGFnZS1mYXVsdHMKIwojICAgICAgICAwLjAyNDA3ODUyNyBz
-ZWNvbmRzIHRpbWUgZWxhcHNlZAojCiMgICAgICAgIDAuMDAyNDk0MDAwIHNlY29uZHMgdXNlcgoj
-ICAgICAgICAwLjAwMDAwMDAwMCBzZWNvbmRzIHN5cwojCiMKIwojICBQZXJmb3JtYW5jZSBjb3Vu
-dGVyIHN0YXRzIGZvciAnL3NiaW4vbW9kcHJvYmUgdGVzdF9rYWxsc3ltc19iJzoKIwojICAgICAg
-ICAgICAyNTI2NDM4NSBucyAgIGR1cmF0aW9uX3RpbWUKIyAgICAgICAgICAgICAgMzQwMDAgbnMg
-ICB1c2VyX3RpbWUKIyAgICAgICAgICAgIDIzNTEwMDAgbnMgICBzeXN0ZW1fdGltZQojICAgICAg
-ICAgICAgICAgIDIwNyAgICAgIHBhZ2UtZmF1bHRzCiMKIyAgICAgICAgMC4wMjQwODE5ODAgc2Vj
-b25kcyB0aW1lIGVsYXBzZWQKIwojICAgICAgICAwLjAwMDAzNDAwMCBzZWNvbmRzIHVzZXIKIyAg
-ICAgICAgMC4wMDIzNTEwMDAgc2Vjb25kcyBzeXMKIwojCiMKIyAgUGVyZm9ybWFuY2UgY291bnRl
-ciBzdGF0cyBmb3IgJy9zYmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAg
-ICAgMjUzMDA2NDQgbnMgICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAgIDMzMDAwIG5zICAg
-dXNlcl90aW1lCiMgICAgICAgICAgICAyMzA3MDAwIG5zICAgc3lzdGVtX3RpbWUKIyAgICAgICAg
-ICAgICAgICAyMDcgICAgICBwYWdlLWZhdWx0cwojCiMgICAgICAgIDAuMDI0MTA5NDA5IHNlY29u
-ZHMgdGltZSBlbGFwc2VkCiMKIyAgICAgICAgMC4wMDAwMzMwMDAgc2Vjb25kcyB1c2VyCiMgICAg
-ICAgIDAuMDAyMzA3MDAwIHNlY29uZHMgc3lzCiMKIwpvayAxIHNlbGZ0ZXN0czogbW9kdWxlOiBm
-aW5kX3N5bWJvbC5zaAovc2VsZnRlc3RzICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIEVY
-VEVORAojIENPTkZJR19YODZfRVhURU5ERURfUExBVEZPUk0gaXMgbm90IHNldAojIENPTkZJR19F
-WFRFTkRFRF9NT0RWRVJTSU9OUyBpcyBub3Qgc2V0CiMgQ09ORklHX05FVENPTlNPTEVfRVhURU5E
-RURfTE9HIGlzIG5vdCBzZXQKQ09ORklHX1NFUklBTF84MjUwX0VYVEVOREVEPXkKL3NlbGZ0ZXN0
-cyAjCgo=
---000000000000638ddf062773456e--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
