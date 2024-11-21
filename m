@@ -1,121 +1,245 @@
-Return-Path: <linux-kernel+bounces-416968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921499D4D0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:41:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5AA9D4D11
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498691F238B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4075283FE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31391D79A7;
-	Thu, 21 Nov 2024 12:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8BE1D7E4C;
+	Thu, 21 Nov 2024 12:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHeafUcQ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLgq2nzD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD92D1D47A0;
-	Thu, 21 Nov 2024 12:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788291D63D5
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192887; cv=none; b=qCDPINhVYzUCvGN50dm4FuPEr9mdg5EyhLmzMS40uWIfI7/gX81RW0sBfTYpj2879+ePTCu0gpjkom2YQ22JiDWX9Q6ZHtmaaEJ5R++DFJuVb/gZMJRqVWW3iDbhn1gKWSg9FXUgg/BTmR1F2ocKol0PoqdgEhpSLZqeW0SXYbw=
+	t=1732192895; cv=none; b=AzAagu/M0aHi6eweeq2MUEpp3byPtAZNys23UE/k5e1emut+xJtqLquQVTo+z+8QdelZYzjsrnOCCKxMdJW2LUM3PkHSoEPZT9ZAQWJ1bfkzTkd6VaXTBIjJ0RgBvr7gSFMFX6IrClKhH9YicVrhOm+WHOHRcwDjDcjh9KhdIrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192887; c=relaxed/simple;
-	bh=g3tfuA/UG+Z4V3lBLAMG7NiB9Eo1EihREvq4FOeAhSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LL97B8Gqyr3Xf5NoOgSJjleHBUqMWcOUBj8ZDP/eZpkfab7TG91+CWMXEd8wh1C2auJfX3wzX+dcz3eK3GdjRbhgWMrqZ2FJZL4iTTvRqTzkKZ9IH6d/huLbeJSTjw8uJS/BzM/8o7+QPyYYHDMY2rPL2m06mQqHUTu1KBahPRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHeafUcQ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21269c8df64so8636775ad.2;
-        Thu, 21 Nov 2024 04:41:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732192885; x=1732797685; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=saHVPgloWCW73BS5krIAOvOiq0B6Gy9Xs2EnFsiEW50=;
-        b=QHeafUcQMVTS3MWMvK+hohuiYqj5t981MYc0VXAPXMuuyfqaqjAE3pzuxzMZAOzYRH
-         ru+XjZwUibwW5AQwPLKQT44KbK5WMMVxdBidiJQDD+8kkNNXEt7dD5pYYdQ4nUC/xSYP
-         zsKnJven/oz+Z9c65GzsN072hh3q1VF2XzLY/INeL/6gXgna0TmANMaEqgUBQ0HlbOfT
-         ya5TUO59WhVKYkHUfsv0DNplHyp1Z2mxmDKrrQnOQGCZZiQPtgOaVYtDmvH9smlzIhTX
-         2B+R/BrFBekm0lo3zl/PXHJ/EUaM8AIfY6UZlu+DM1LVfmeKm/dLjWDX+R/xUorI1Enx
-         zG5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732192885; x=1732797685;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=saHVPgloWCW73BS5krIAOvOiq0B6Gy9Xs2EnFsiEW50=;
-        b=mOmK0UbW1/vhUuwkdTSmjxzfJqisbXWELFtK5X8PxTtxdxKgVJUxmJbEK8bpfAQDkI
-         EhipT+/1LlPCOVp2ERdIrUjy7nN5OyECvsaOAP5rmXuficRCsoCOwBWD3YFi9wayT9tH
-         SfvXF/JO9678Wn8YSy9Oumo3pXQXVU4tbBna/BHMPnyeP2zHXNq+42xkBBQ4sJSad6qr
-         hjvSAZNW/S27LaoENFCIfdSMHD+OfFmiqIU36Y4aauqTbqhyR/YDYJPpQuN0ETnVtW1o
-         Qgt+x77CLGhuKPhQR2ZH261lWneTjdxjcWv++5eHgVqlw2XfyNV5eb6wRITJMsXDeJu4
-         HT3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVsv4wrV8uvhE8ZgD+jtyVORZVlrG+x3a0uKAeG9PEvUssG0bJpR4gKnXobe5VGvXEu972D8wGA@vger.kernel.org, AJvYcCXoGnoxDVUgpQuDZs/D6WPg05pS/WB0c4c+8ULJB4lUnYX2z0Rdprtdfws9QEl6Cn28TrWenhCyGQbTn+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlGNAzYxVf7Qw2xVPjkVUFkMMUrRo235brP0GFMpNYF7MrcUUY
-	c/X7Rgsdo4NTklwKfdTjbey9UNs5Gzsx8tmIJkdpXSowhZtTvMjT
-X-Google-Smtp-Source: AGHT+IHl71Cge81GkaeyNHyHp3L72kyzIqbjDHv1+AQUG60ivlEurQACwb+xPMKLWp5j7BQriPcwtw==
-X-Received: by 2002:a17:902:f652:b0:20c:d428:adf4 with SMTP id d9443c01a7336-2126a435e67mr96831535ad.38.1732192884795;
-        Thu, 21 Nov 2024 04:41:24 -0800 (PST)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212883f3298sm12589775ad.244.2024.11.21.04.41.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 04:41:24 -0800 (PST)
-From: Jeongjun Park <aha310510@gmail.com>
-To: akpm@linux-foundation.org
-Cc: dave@stgolabs.net,
-	willy@infradead.org,
-	Liam.Howlett@oracle.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use find_vma() correctly
-Date: Thu, 21 Nov 2024 21:41:13 +0900
-Message-Id: <20241121124113.66166-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732192895; c=relaxed/simple;
+	bh=DeN8zvbfqSKGmLsH0Xup7/rqdjcaoWdJdn+y4qfjH4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LeP2mbzHkP/9N9zegYdA344QrYCEMRKeDtKgu8TC5BZCoQHkPSg5JN1yiGFJ5x0Gf+TO9HNEjYib0+0LPPGIq68krGgwwYijawXl6s13tCRO+BvTfxoGt8LiP5PyiAe8hU6NTwiI3+EX4RzdJ+ZcqcPo96l6tDkwQlE9zhoeU4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLgq2nzD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18CCEC4CECC;
+	Thu, 21 Nov 2024 12:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732192894;
+	bh=DeN8zvbfqSKGmLsH0Xup7/rqdjcaoWdJdn+y4qfjH4I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=QLgq2nzDWS5sier59fqDYLie8bmNnuu/OEbmLFbvAef0XmKAXiFsq8rzca/Y1B10b
+	 WIDLU9wIIsx/jOUFU6f7QMBmtziKrZzO8dqAaZLnEuTXDEgw60Z5w4R2egZdA7TM38
+	 3E1iUKzI8Il0P0rfziOkX6yHe/rVFPnYqvY7LG1+lRFRRRSagD0f2Ijh88SUKHT5Wx
+	 a6mb13eT7Gb+IHauz5AWs9uQgi2vWK0NPEHqJifhIZKY0A/9ie6+N0T0rsZVBDn+rw
+	 iWukxTjJyCXm9lgKKX1wK0flybwGQ8fvSmDQF9Nv4CRxipQTbqe4Vl/gmww3Rg1ah8
+	 55TQEHEgKneoQ==
+Date: Thu, 21 Nov 2024 12:41:31 +0000
+From: Lee Jones <lee@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Pavel Machek <pavel@ucw.cz>
+Subject: [GIT PULL] LEDs for v6.13
+Message-ID: <20241121124131.GB7052@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
-the returned pointer without any verification, even though it may return NULL.
-In this case, NULL pointer dereference may occur, so to prevent this,
-vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
+Good afternoon Linus,
 
-Cc: <stable@vger.kernel.org>
-Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- mm/huge_memory.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 5734d5d5060f..db55b8abae2e 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2941,9 +2941,12 @@ void vma_adjust_trans_huge(struct vm_area_struct *vma,
- 	 */
- 	if (adjust_next > 0) {
- 		struct vm_area_struct *next = find_vma(vma->vm_mm, vma->vm_end);
--		unsigned long nstart = next->vm_start;
--		nstart += adjust_next;
--		split_huge_pmd_if_needed(next, nstart);
-+
-+		if (likely(next)) {
-+			unsigned long nstart = next->vm_start;
-+			nstart += adjust_next;
-+			split_huge_pmd_if_needed(next, nstart);
-+		}
- 	}
- }
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/leds.git tags/leds-next-6.13
+
+for you to fetch changes up to e8501858035b1f95468da525e7357c8c33811b88:
+
+  leds: ss4200: Fix the wrong format specifier for 'blinking' (2024-11-12 14:39:26 +0000)
+
+----------------------------------------------------------------
+- Removed unused local header files from various drivers.
+- Reverted platform driver removal to the original method for consistency.
+- Introduced ordered workqueues for LED events, replacing the less efficient system_wq.
+- Switched to a safer iteration macro in several drivers to prevent potential memory leaks.
+- Fixed a refcounting bug in the mt6360 flash LED driver.
+- Fixed an uninitialized variable in the mt6370_mc_pattern_clear() function.
+- Resolved Smatch warnings in the leds-bcm6328 driver.
+- Addressed a potential NULL pointer dereference in the brightness_show() function.
+- Fixed an incorrect format specifier in the ss4200 driver.
+- Prevented a resource leak in the max5970 driver's probe function.
+- Added support for specifying the number of serial shift bits in the device tree for the BCM63138 family.
+- Implemented multicolor brightness control in the lp5562 driver.
+- Added a device tree property to override the default LED pin polarity.
+- Added a property to specify the default brightness value when the LED is initially on.
+- Set missing timing properties for the ktd2692 driver.
+- Documented the "rc-feedback" trigger for controlling LEDs based on remote control activity.
+- Converted text bindings to YAML for the pca955x driver to enable device tree validation.
+- Removed redundant checks for invalid channel numbers in the lp55xx driver.
+- Updated the MAINTAINERS file with current contact information.
+
+----------------------------------------------------------------
+Benedikt Niedermayr (1):
+      MAINTAINERS: Replace Siemens IPC related bouncing maintainers
+
+Daniel Golle (1):
+      dt-bindings: leds: Add 'active-high' property
+
+Dipendra Khadka (1):
+      leds: bcm6328: Replace divide condition with comparison for shift value
+
+Dmitry Rokosov (1):
+      leds: Introduce ordered workqueue for LEDs events instead of system_wq
+
+George Stark (2):
+      dt-bindings: leds: pwm: Add default-brightness property
+      leds: pwm: Add optional DT property default-brightness
+
+Heiko Stuebner (1):
+      dt-bindings: leds: Document "rc-feedback" trigger
+
+Javier Carrasco (25):
+      leds: flash: mt6360: Fix device_for_each_child_node() refcounting in error paths
+      leds: flash: mt6370: Switch to device_for_each_child_node_scoped()
+      leds: flash: leds-qcom-flash: Switch to device_for_each_child_node_scoped()
+      leds: aw200xx: Switch to device_for_each_child_node_scoped()
+      leds: cr0014114: Switch to device_for_each_child_node_scoped()
+      leds: el15203000: Switch to device_for_each_child_node_scoped()
+      leds: gpio: Switch to device_for_each_child_node_scoped()
+      leds: lm3532: Switch to device_for_each_child_node_scoped()
+      leds: lm3697: Switch to device_for_each_child_node_scoped()
+      leds: lp50xx: Switch to device_for_each_child_node_scoped()
+      leds: max77650: Switch to device_for_each_child_node_scoped()
+      leds: ns2: Switch to device_for_each_child_node_scoped()
+      leds: pca963x: Switch to device_for_each_child_node_scoped()
+      leds: pwm: Switch to device_for_each_child_node_scoped()
+      leds: sun50i-a100: Switch to device_for_each_child_node_scoped()
+      leds: tca6507: Switch to device_for_each_child_node_scoped()
+      leds: rgb: ktd202x: Switch to device_for_each_child_node_scoped()
+      leds: rgb: mt6370: Switch to device_for_each_child_node_scoped()
+      leds: flash: Remove unused local leds.h
+      leds: multicolor: Remove unused local leds.h
+      leds: gpio: Remove unused local leds.h
+      leds: lp50xx: Remove unused local leds.h
+      leds: pwm: Remove unused local leds.h
+      leds: turris-omnia: Remove unused local leds.h
+      leds: max5970: Fix unreleased fwnode_handle in probe function
+
+Julia Lawall (1):
+      leds: leds-gpio-register: Reorganize kerneldoc parameter names
+
+Linus Walleij (4):
+      dt-bindings: leds: bcm63138: Add shift register bits
+      leds: bcm63138: Use scopes and guards
+      leds: bcm63138: Handle shift register config
+      leds: bcm63138: Add some register defines
+
+Michal Vokáč (2):
+      leds: lp5562: Add multicolor brightness control
+      leds: lp55xx: Remove redundant test for invalid channel number
+
+Mukesh Ojha (1):
+      leds: class: Protect brightness_show() with led_cdev->led_access mutex
+
+Raymond Hackley (1):
+      leds: ktd2692: Set missing timing properties
+
+Ricky CX Wu (1):
+      dt-bindings: leds: pca955x: Convert text bindings to YAML
+
+Suraj Sonawane (1):
+      leds: rgb: leds-mt6370-rgb: Fix uninitialized variable 'ret' in mt6370_mc_pattern_clear
+
+Uwe Kleine-König (1):
+      leds: Switch back to struct platform_driver::remove()
+
+WangYuli (1):
+      leds: rgb: leds-group-multicolor: Correct the typo 'acccess'
+
+Zhu Jun (1):
+      leds: ss4200: Fix the wrong format specifier for 'blinking'
+
+ Documentation/devicetree/bindings/leds/common.yaml |  16 +++
+ .../devicetree/bindings/leds/leds-bcm63138.yaml    |  11 ++
+ .../devicetree/bindings/leds/leds-pca955x.txt      |  89 ------------
+ .../devicetree/bindings/leds/leds-pwm.yaml         |   6 +
+ .../devicetree/bindings/leds/nxp,pca955x.yaml      | 158 +++++++++++++++++++++
+ MAINTAINERS                                        |  12 +-
+ drivers/leds/blink/leds-bcm63138.c                 |  29 ++--
+ drivers/leds/blink/leds-lgm-sso.c                  |   2 +-
+ drivers/leds/flash/leds-aat1290.c                  |   2 +-
+ drivers/leds/flash/leds-ktd2692.c                  |   3 +-
+ drivers/leds/flash/leds-max77693.c                 |   2 +-
+ drivers/leds/flash/leds-mt6360.c                   |   5 +-
+ drivers/leds/flash/leds-mt6370-flash.c             |  11 +-
+ drivers/leds/flash/leds-qcom-flash.c               |   6 +-
+ drivers/leds/flash/leds-rt8515.c                   |   2 +-
+ drivers/leds/flash/leds-sgm3140.c                  |   2 +-
+ drivers/leds/led-class-flash.c                     |   1 -
+ drivers/leds/led-class-multicolor.c                |   2 -
+ drivers/leds/led-class.c                           |  26 +++-
+ drivers/leds/led-core.c                            |   6 +-
+ drivers/leds/leds-88pm860x.c                       |   2 +-
+ drivers/leds/leds-adp5520.c                        |   2 +-
+ drivers/leds/leds-aw200xx.c                        |   7 +-
+ drivers/leds/leds-bcm6328.c                        |   4 +-
+ drivers/leds/leds-cht-wcove.c                      |   2 +-
+ drivers/leds/leds-clevo-mail.c                     |   2 +-
+ drivers/leds/leds-cr0014114.c                      |   4 +-
+ drivers/leds/leds-da903x.c                         |   2 +-
+ drivers/leds/leds-da9052.c                         |   2 +-
+ drivers/leds/leds-el15203000.c                     |  14 +-
+ drivers/leds/leds-gpio-register.c                  |   2 +-
+ drivers/leds/leds-gpio.c                           |  11 +-
+ drivers/leds/leds-lm3532.c                         |  18 +--
+ drivers/leds/leds-lm3533.c                         |   2 +-
+ drivers/leds/leds-lm3697.c                         |  18 +--
+ drivers/leds/leds-lp50xx.c                         |  23 +--
+ drivers/leds/leds-lp5562.c                         |  25 ++++
+ drivers/leds/leds-lp55xx-common.c                  |   3 -
+ drivers/leds/leds-max5970.c                        |   5 +-
+ drivers/leds/leds-max77650.c                       |  18 +--
+ drivers/leds/leds-mc13783.c                        |   2 +-
+ drivers/leds/leds-mt6323.c                         |   2 +-
+ drivers/leds/leds-ns2.c                            |   7 +-
+ drivers/leds/leds-pca963x.c                        |  11 +-
+ drivers/leds/leds-powernv.c                        |   4 +-
+ drivers/leds/leds-pwm.c                            |  33 +++--
+ drivers/leds/leds-rb532.c                          |   2 +-
+ drivers/leds/leds-regulator.c                      |   2 +-
+ drivers/leds/leds-sc27xx-bltc.c                    |   2 +-
+ drivers/leds/leds-ss4200.c                         |   2 +-
+ drivers/leds/leds-sun50i-a100.c                    |  29 ++--
+ drivers/leds/leds-sunfire.c                        |   4 +-
+ drivers/leds/leds-tca6507.c                        |   7 +-
+ drivers/leds/leds-turris-omnia.c                   |   1 -
+ drivers/leds/leds-wm831x-status.c                  |   2 +-
+ drivers/leds/leds-wm8350.c                         |   2 +-
+ drivers/leds/rgb/leds-group-multicolor.c           |   2 +-
+ drivers/leds/rgb/leds-ktd202x.c                    |   8 +-
+ drivers/leds/rgb/leds-mt6370-rgb.c                 |  39 ++---
+ .../leds/simple/simatic-ipc-leds-gpio-apollolake.c |   2 +-
+ .../simple/simatic-ipc-leds-gpio-elkhartlake.c     |   2 +-
+ drivers/leds/simple/simatic-ipc-leds-gpio-f7188x.c |   2 +-
+ include/linux/leds.h                               |   3 +-
+ 63 files changed, 397 insertions(+), 330 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/leds-pca955x.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/nxp,pca955x.yaml
  
---
+-- 
+Lee Jones [李琼斯]
 
