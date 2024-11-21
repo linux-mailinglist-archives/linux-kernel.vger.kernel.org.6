@@ -1,108 +1,237 @@
-Return-Path: <linux-kernel+bounces-417070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5E09D4E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:20:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689B29D4E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F37A1F25845
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:20:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC256B2622F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322CE1D88D1;
-	Thu, 21 Nov 2024 14:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C111D90B6;
+	Thu, 21 Nov 2024 14:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EpRH4+yu"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hkCQDWla"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCD6433D9
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E427A1D88D1;
+	Thu, 21 Nov 2024 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198829; cv=none; b=T6EZuruHLIuOpjVggGKn8PDkQ39FNcVH8Vjo4e9jx/t8mEQd54jsV/FSevp3/yL+Di32IMtyPFlreIGJx534d8nPCmxZX4LCHVgoE92qzTSHFqADVhX7qyS/WjO8bjyubegXEXBhjA8q4wdkG1jGLXPUCf2K4dlfctG2d9MC50s=
+	t=1732198866; cv=none; b=ovGcugNP3Lg9u5Rmp5k20AyVK1SIk1jioYGuoFzOua0PXFWoZN2RWc8w6uLS079+NcmJmWSJZftR61i/0MH5exeUuTdY6vdvUY5mUWe8HcxlZK02BWYFAOIGI6Ic+UzdASyXY79aZ9G6b9yE81u51EuA5x7uk7mCVw58LC5kX7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198829; c=relaxed/simple;
-	bh=Yg61T25n0JyEDgajFQezx7ulax+BxvUMrjfK61A6WP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H6EfOtVQI8QkOqi+O9htGXZuRaV7svp9RMrkBVplwKCwRxwosiT+Azqgb821tIekpnXBPoN/SG8XTeI8QVT0cgekuRGz1ws79JNB91kqSWvN3Zi9vfiui0ydtfrcjCeWsBDgBULK08UckHR0ts77MfPdLGCuBHee4TgmAnwyWY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EpRH4+yu; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724d8422dbaso228935b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:20:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732198827; x=1732803627; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yg61T25n0JyEDgajFQezx7ulax+BxvUMrjfK61A6WP4=;
-        b=EpRH4+yuAGJaPEUmzoRSOqPX4YQUHyxXUMFzZ8h6HSYwKo7H9osVPTaJltJd2XSf/k
-         xVZGPU+4Oc7/zbL6uqR/Yx/QupOe0IFgU2oL/u3hiKfQ8AEnm0BYHY5rzgDQuxnZFm/6
-         X/NPx5S8s08XKrUruM+1oWADVFqpg01JP9Xde39GHBF8zJR5lAjUbzqUkHaIpazL8CoB
-         y+FT8sTGuTvjMlzxfHIDv5l/puCnDO/9LWtH2zxRNQsxqjEFYgnNRYVK3yWC0RaDnQdA
-         Q9AfL5MF1ODtnBLMUHk/B03RqEA9UN5UwYRJ+qmxLRNKeJW8GblweygPubiYqgRI7eo3
-         CWxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732198827; x=1732803627;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Yg61T25n0JyEDgajFQezx7ulax+BxvUMrjfK61A6WP4=;
-        b=YwbqarbF8jCFOnNFdg3VgV9m2oejJWLc7u7vrWhCsRQ6cWIBt0G+RVQctJGqvbHImf
-         7TN1hZiOSseFK846deCXJxNfjJjEpk53zuG0tBuCTpiV46p3v5o4Yf7FTbigIkJ8oJF4
-         btnYxRrfgTrXQqJ8nwr6oGpbaOLfHieEc8a9HcvkLpjZ98yOhSrWZgFslPfuDxBV3Jtc
-         0B8Nj7rxR6Q9bk8Wkvpy1L53c16TAtGsBrABErLFOsl8qE5OUDS8xI5pTUH4qmmyddnZ
-         OP5gVDWOL0/yYDDTfgR31deZ79dnWXK/G2aBqRRwMUhUcK+BNu2J7PlSW2Cw2YEp+Fby
-         UXYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFbMPMTRSLTUTSUrjpDoND8/3NO0RkJ6LQeYPPmk0mOCZf7YIlq6ATdTXjXZRKGFKObr+7bwzN+5BCPrc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzRyO8fTQ+JKJrWOxJ8rH4CPqxalA5HIqvPrSa7JOvvd3iezqU
-	KL04wdBqhgS3lDALmnB6JFiFj3HJKV+C3ExLOd69L+Crp3ebN2VGBeU0NzcbwZJltlmfleAglww
-	DCBUhrKM59yBAxVvW+BoTEXGhB1O0ScjI0JhE
-X-Gm-Gg: ASbGncsdPEMVBaF6OtS2Ou08VUxxw7I2EqlStNs/tv3zU9r/0cBC2GNU3n491KKIsRK
-	j/VwDyPfXfn+FCkbMjFJnEBd2vqBzXb8UhgfjuS5HQLVpf43VARWBVUf/vQw59Q==
-X-Google-Smtp-Source: AGHT+IH6DAzp75Ub4R9d9M9MJco9pUmZ9APNot+eAB22u1Roysw5MqTYRjVhwyyCf12LMYer0D9VhLOwlaxYrNoULmw=
-X-Received: by 2002:a05:6a00:997:b0:71e:16b3:e5dc with SMTP id
- d2e1a72fcca58-724bed16a4emr8978740b3a.19.1732198827162; Thu, 21 Nov 2024
- 06:20:27 -0800 (PST)
+	s=arc-20240116; t=1732198866; c=relaxed/simple;
+	bh=XrWNbUaQHxdhVGLsaRR8H43ccZOPiVT7ZhEp9+0lG/g=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kjcTc4eO48bpDcZb8up9BO6Sh+uti9jQwG/00hI67hsWxYMXD5lVGzPgZjVbNEM6huPu+BFKMC/XNjh3JpDYL2fHxPNalRPe5HlefsLCJBhK6pvW9lkuvL5slr5tjETmIop4JfT2IFz2jORFn/SQYLKOImggaHjxSFPBcE97GNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hkCQDWla; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732198855;
+	bh=XrWNbUaQHxdhVGLsaRR8H43ccZOPiVT7ZhEp9+0lG/g=;
+	h=Subject:From:To:Date:In-Reply-To:References:From;
+	b=hkCQDWlaMSNNUraJPT4ZbovKwKwtSdjoGf2KYIXNRxoGTf7nYTXBlfueOPIsi/HAC
+	 sOFYoLwdfFJwNdN1X6mweGfkcwsz8Oiys+2AGowHXgarFYtod23BW1WDm+hTdcY1cg
+	 Drf4G6eL+JuUlQ1aCXb1KAvRei5N6GaWFritjKVy8OsnHQY3QXEJznS+bWLKlO5lb1
+	 XZtWUW0RuUd+PAfTT6CyYQCQjr3HXabYULDOa6R6y0xApX3Bn5kgRXp5S44nFYh1FG
+	 jub+J2k29eLCGBXDC+TsnxyCZ9b4zkDfJCAq6GG0UjbKGbfcafS45wC8jUUAU9AjU5
+	 UoB1otOh5MwPA==
+Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::7a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 145C317E3684;
+	Thu, 21 Nov 2024 15:20:53 +0100 (CET)
+Message-ID: <41310959a7b40f8e28fb324e00c4a51966bec803.camel@collabora.com>
+Subject: Re: [PATCH v2 2/3] media: verisilicon: add WebP decoding support
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Hugues FRUCHET <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, Fritz Koenig	 <frkoenig@chromium.org>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,  Daniel Almeida
+ <daniel.almeida@collabora.com>, Andrzej Pietrasiewicz
+ <andrzej.p@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com
+Date: Thu, 21 Nov 2024 09:20:52 -0500
+In-Reply-To: <cf81e5f2-45a4-4c82-890c-c8a4d17b22df@foss.st.com>
+References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
+	 <20241120110105.244413-3-hugues.fruchet@foss.st.com>
+	 <c9f19faacccd47b8a72fc4a29a0f75b30bce1aa1.camel@collabora.com>
+	 <cf81e5f2-45a4-4c82-890c-c8a4d17b22df@foss.st.com>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121141412.107370-1-andriy.shevchenko@linux.intel.com> <Zz9A59XQdiHJ8oLp@smile.fi.intel.com>
-In-Reply-To: <Zz9A59XQdiHJ8oLp@smile.fi.intel.com>
-From: Marco Elver <elver@google.com>
-Date: Thu, 21 Nov 2024 15:19:51 +0100
-Message-ID: <CANpmjNOQpQdjipRQn-H=noPhDW1pfR--h5hQ+DVXyHTZcKhoJg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] kcsan: debugs: Refactor allocation code
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Nov 2024 at 15:17, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Thu, Nov 21, 2024 at 04:12:50PM +0200, Andy Shevchenko wrote:
-> > Refactor allocation code to be more robust against overflows
-> > and shorted in terms of LoCs.
-> >
-> > In v2:
-> > - collected tags (Marco)
-> > - added patch 2
->
-> Okay, it seems I have to check the Linux Next for the current state of
-> affairs...
+Hi Hugues,
 
-Right. Please double check this still applies after 59458fa4ddb4
-("kcsan: Turn report_filterlist_lock into a raw_spinlock") in latest
-mainline (or -next). I had to rework that code to make PREEMPT_RT
-happy, and at the same time got rid of all this old code. I suppose a
-side-effect was switching over to kmalloc_array() and making it look a
-bit cleaner as well.
+Le jeudi 21 novembre 2024 à 11:07 +0100, Hugues FRUCHET a écrit :
+> Hi Nicolas,
+> 
+> On 11/20/24 15:25, Nicolas Dufresne wrote:
+> > Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
+> > > Add WebP picture decoding support to VP8 stateless decoder.
+> > > 
+> > > Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+> > > ---
+> > >   .../media/platform/verisilicon/hantro_g1_regs.h |  1 +
+> > >   .../platform/verisilicon/hantro_g1_vp8_dec.c    | 14 ++++++++++++++
+> > >   .../media/platform/verisilicon/hantro_v4l2.c    |  2 ++
+> > >   .../platform/verisilicon/stm32mp25_vpu_hw.c     | 17 +++++++++++++++--
+> > >   4 files changed, 32 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > > index c623b3b0be18..e7d4db788e57 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > > +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
+> > > @@ -232,6 +232,7 @@
+> > >   #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
+> > >   #define G1_REG_ADDR_STR					0x030
+> > >   #define G1_REG_ADDR_DST					0x034
+> > > +#define G1_REG_ADDR_DST_CHROMA				0x038
+> > >   #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
+> > >   #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
+> > >   #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > > index 851eb67f19f5..c83ee6f5edc8 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > > +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
+> > > @@ -307,6 +307,12 @@ static void cfg_parts(struct hantro_ctx *ctx,
+> > >   			   G1_REG_DEC_CTRL3_STREAM_LEN(dct_part_total_len),
+> > >   			   G1_REG_DEC_CTRL3);
+> > >   
+> > > +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
+> > > +		vdpu_write_relaxed(vpu,
+> > > +				   G1_REG_DEC_CTRL3_STREAM_LEN_EXT
+> > > +					(dct_part_total_len >> 24),
+> > > +				   G1_REG_DEC_CTRL3);
+> > > +
+> > >   	/* DCT partitions base address */
+> > >   	for (i = 0; i < hdr->num_dct_parts; i++) {
+> > >   		u32 byte_offset = dct_part_offset + dct_size_part_size + count;
+> > > @@ -427,6 +433,12 @@ static void cfg_buffers(struct hantro_ctx *ctx,
+> > >   
+> > >   	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
+> > >   	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
+> > > +
+> > > +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
+> > > +		vdpu_write_relaxed(vpu, dst_dma +
+> > > +				   ctx->dst_fmt.plane_fmt[0].bytesperline *
+> > > +				   ctx->dst_fmt.height,
+> > > +				   G1_REG_ADDR_DST_CHROMA);
+> > >   }
+> > >   
+> > >   int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+> > > @@ -471,6 +483,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
+> > >   		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
+> > >   	if (hdr->lf.level == 0)
+> > >   		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
+> > > +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
+> > > +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
+> > >   	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
+> > >   
+> > >   	/* Frame dimensions */
+> > > diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > index 2513adfbd825..7075b2ba1ec2 100644
+> > > --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+> > > @@ -470,6 +470,7 @@ hantro_update_requires_request(struct hantro_ctx *ctx, u32 fourcc)
+> > >   		break;
+> > >   	case V4L2_PIX_FMT_MPEG2_SLICE:
+> > >   	case V4L2_PIX_FMT_VP8_FRAME:
+> > > +	case V4L2_PIX_FMT_WEBP_FRAME:
+> > >   	case V4L2_PIX_FMT_H264_SLICE:
+> > >   	case V4L2_PIX_FMT_HEVC_SLICE:
+> > >   	case V4L2_PIX_FMT_VP9_FRAME:
+> > > @@ -492,6 +493,7 @@ hantro_update_requires_hold_capture_buf(struct hantro_ctx *ctx, u32 fourcc)
+> > >   	case V4L2_PIX_FMT_JPEG:
+> > >   	case V4L2_PIX_FMT_MPEG2_SLICE:
+> > >   	case V4L2_PIX_FMT_VP8_FRAME:
+> > > +	case V4L2_PIX_FMT_WEBP_FRAME:
+> > >   	case V4L2_PIX_FMT_HEVC_SLICE:
+> > >   	case V4L2_PIX_FMT_VP9_FRAME:
+> > >   		vq->subsystem_flags &= ~(VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF);
+> > > diff --git a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
+> > > index 833821120b20..48d6912c3bab 100644
+> > > --- a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
+> > > +++ b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
+> > > @@ -22,10 +22,10 @@ static const struct hantro_fmt stm32mp25_vdec_fmts[] = {
+> > >   		.codec_mode = HANTRO_MODE_NONE,
+> > >   		.frmsize = {
+> > >   			.min_width = FMT_MIN_WIDTH,
+> > > -			.max_width = FMT_FHD_WIDTH,
+> > > +			.max_width = FMT_4K_WIDTH,
+> > >   			.step_width = MB_DIM,
+> > >   			.min_height = FMT_MIN_HEIGHT,
+> > > -			.max_height = FMT_FHD_HEIGHT,
+> > > +			.max_height = FMT_4K_HEIGHT,
+> > 
+> > I'm a little surprised of this change, since this is modifying VP8_FRAME, while
+> > we should instead introduce WEBP_FRAME.
+> 
+> This is the resolution of the YUV output of decoder, not the WebP input, 
+> and because of lack of post-processor, the output is not scaled, so can 
+> go up to 4K with WebP.
+> Before WebP introduction, the maximum output resolution was FHD for all 
+> codecs. Now WebP allows up to 4K but FHD constraint remains for 
+> H264/VP8. I don't see real problems because VP8/H264 compressed inputs 
+> are well limited to FHD and only WebP allows 4K...
 
-Thanks,
--- Marco
+Good point. Would you mind adding a justification for this change within the
+commit message in v3 ?
+
+> 
+> > 
+> > >   			.step_height = MB_DIM,
+> > >   		},
+> > >   	},
+> > > @@ -68,6 +68,19 @@ static const struct hantro_fmt stm32mp25_venc_fmts[] = {
+> > >   		.codec_mode = HANTRO_MODE_NONE,
+> > >   		.enc_fmt = ROCKCHIP_VPU_ENC_FMT_YUV420SP,
+> > >   	},
+> > > +	{
+> > > +		.fourcc = V4L2_PIX_FMT_WEBP_FRAME,
+> > > +		.codec_mode = HANTRO_MODE_VP8_DEC,
+> > > +		.max_depth = 2,
+> > > +		.frmsize = {
+> > > +			.min_width = FMT_MIN_WIDTH,
+> > > +			.max_width = FMT_4K_WIDTH,
+> > > +			.step_width = MB_DIM,
+> > > +			.min_height = FMT_MIN_HEIGHT,
+> > > +			.max_height = FMT_4K_HEIGHT,
+> > > +			.step_height = MB_DIM,
+> > > +		},
+> > > +	},
+> > 
+> > This is venc_fmt (encoder), this shouldn't be there.
+> 
+> All apologizes for this rebase issue, it is of course part of 
+> stm32mp25_vdec_fmts.
+
+Ack, let's get this right in v3 :-D
+
+> 
+> > 
+> > >   	{
+> > >   		.fourcc = V4L2_PIX_FMT_YUYV,
+> > >   		.codec_mode = HANTRO_MODE_NONE,
+> > 
+> 
+> BR,
+> Hugues.
+
 
