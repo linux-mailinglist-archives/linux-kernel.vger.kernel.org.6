@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-417056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADA159D4E5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:12:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F579D4E66
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D913EB23B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B3C42824ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100311D9587;
-	Thu, 21 Nov 2024 14:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610FD1D7E5C;
+	Thu, 21 Nov 2024 14:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BcmDtIa4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fksCXW1x"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013191D0B8B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5C71D0B8B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198333; cv=none; b=BLf85mBArn+1c/PyOVTnBAtWmjlJnHBc+TehO/N5d5NKdQxkkuK+T4oFfqEB3hIiWJ46/GweO9pSO2nZ/chCSlPmGb1xrc880ul4d5korUX6yHUQYdykxDVcNfsWXCesPIRNsSkPxsHeetkuqxJIjSDQ9ZL18/2Gl2QiNfXZyQA=
+	t=1732198462; cv=none; b=UxI/vasisRUmSbtYjX9J0WWhTjKGIu2W1l2lOQyYZ9DJaEujLFD4sTdQDuMfB4e5GleggTLIWaho1MT5kWNNdKNoqn1/1B6oaN14XH/5o62azmehQbNSPi3uRHAeolmCm4ocOmmtxwc9qUIzqudmFTlJ1226HiiSKdE2n7gZ6og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198333; c=relaxed/simple;
-	bh=JgHeIYXjzz4ilaITYDtLadzcLOhLqsptz8uzjN1y7fM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubmyb2mrFySJwVy22vHaBx8jv6WXk5hunHHhNAX/Q4rOaa0y8I/VzXGsg7gL0af/cMxMD+DlHO4YWugiBnwu233guqxme3Js7JWzXPUE9VBL7HKv71csSk8hLzLhPArtKvwDlIFHz/CKYMWXogJ7+7eLToMWs0m9fAHqJtE7aKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BcmDtIa4; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1732198462; c=relaxed/simple;
+	bh=h9R00gX+uUFixhB2o0vnFzvWl2L9ZuugrWhKGhOGrh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O7S73QdUiGU02jC19YBCKMXtQo/qnyZ+oqRowRVlGerIERkjPmsFXk85NTJ97uWBh43OGZa+Hh4FRx0m3BBtS1JVQ6WvXe3WImQVB8M9TD/fUULVjjCP248Omws0sQkDy+n6e8mONAt0o1EVl1MR27XTerRcwo256jaq5Xyc0LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fksCXW1x; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732198333; x=1763734333;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JgHeIYXjzz4ilaITYDtLadzcLOhLqsptz8uzjN1y7fM=;
-  b=BcmDtIa4eVuWRNc9edLBdUaHQPdhw2JD0P3QBsKY75Ej1RKYgESFxtXt
-   0FE+ppIbDc381AkbMsQrCsvRu+8czZTFMlvGX0cYV/FMWdC1CI76tghQ0
-   QMh5ERkTWIhquKNFujA8pYoLGa/vihFCYmxwoDMX9IE+0Km1O23DFlmCZ
-   lqsDaFvtt5M/JD6P4HPVvbUcU9dubu5PiUur8I+j/rbEt0gLyEYw+Nq0V
-   /LNgxVCSeB6lrND5eI4gW0YPIleY56ztQGS1PDJsCC7u3Xbkq8H0tLJyK
-   /TmnJvZqM66pdwVZg6/x4mPgObVsXLg08actw88wge/Yl3B4aC/9WiHlN
-   A==;
-X-CSE-ConnectionGUID: zNdw2rvBS6ecUcsTlkDQMQ==
-X-CSE-MsgGUID: 9BdBH5TPQxGqJBsTZI58cA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32456643"
+  t=1732198461; x=1763734461;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=h9R00gX+uUFixhB2o0vnFzvWl2L9ZuugrWhKGhOGrh8=;
+  b=fksCXW1xndU2VGM7YASwiDpkN0zwzWqcK2C1rMW52RR4tl+t7ps1wV0e
+   rdLDJWr0qkoGgc56IgegScEutpXEaEtchjdC39y64qfz1AUOtPmMEH509
+   BPFLUuXkdUZnuWyoZRNqFU/KqT/xoChXEc5F5cIVxGq/Dv+DZcXhE4Se1
+   hRemiudNI6DbYKsS0AHE6XjTq9vQN/T4I4caM4UmMDD0kwlvA8QxTVwUs
+   E6M5xlEOfCY9ljlD+P1mo/qkF551IZEVQxGzpNgC4EzQwDv7GrzGbedtN
+   c+qbhPLSIr8B19z9SjeFWIPpRSX+t6vE08ZDSf+j52oPgJnERW9KofboH
+   g==;
+X-CSE-ConnectionGUID: c4iTrqkEQ6G/u9kWfif2Mg==
+X-CSE-MsgGUID: JWU4isI6RqmQumNi7F+Rvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43707171"
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32456643"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:12:12 -0800
-X-CSE-ConnectionGUID: NE3iqxIcT+28S9Ztl1Q9/g==
-X-CSE-MsgGUID: wC1j1mVuS02DgIto8YIOlQ==
+   d="scan'208";a="43707171"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:14:20 -0800
+X-CSE-ConnectionGUID: ThFwL1k/Qg+gBsWkB6sdQA==
+X-CSE-MsgGUID: LKK6tNodS0KGm7gk5wEEaA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90674871"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:12:10 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tE7uh-0000000H5G4-296C;
-	Thu, 21 Nov 2024 16:12:07 +0200
-Date: Thu, 21 Nov 2024 16:12:07 +0200
+   d="scan'208";a="89867595"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 21 Nov 2024 06:14:19 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 4B2A918E; Thu, 21 Nov 2024 16:14:18 +0200 (EET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Marco Elver <elver@google.com>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Cc: Marco Elver <elver@google.com>,
 	Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v1 1/1] kcsan: debugfs: Use krealloc_array() to replace
- krealloc()
-Message-ID: <Zz8_t3vn4SXTNHH3@smile.fi.intel.com>
-References: <20241121135834.103015-1-andriy.shevchenko@linux.intel.com>
- <CANpmjNNzFykVmjM+P_1JWc=39cf7LPuYsp0ds0_HQBCzR+xOvQ@mail.gmail.com>
+Subject: [PATCH v2 0/2] kcsan: debugs: Refactor allocation code
+Date: Thu, 21 Nov 2024 16:12:50 +0200
+Message-ID: <20241121141412.107370-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNNzFykVmjM+P_1JWc=39cf7LPuYsp0ds0_HQBCzR+xOvQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 03:04:04PM +0100, Marco Elver wrote:
-> On Thu, 21 Nov 2024 at 14:58, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > Use krealloc_array() to replace krealloc() with multiplication.
-> > krealloc_array() has multiply overflow check, which will be safer.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Reviewed-by: Marco Elver <elver@google.com>
+Refactor allocation code to be more robust against overflows
+and shorted in terms of LoCs.
 
-Thank you!
+In v2:
+- collected tags (Marco)
+- added patch 2
 
-> Do you have a tree to take this through? Otherwise I'll take it.
+Andy Shevchenko (2):
+  kcsan: debugfs: Use krealloc_array() to replace krealloc()
+  kcsan: debugfs: Use krealloc_array() for initial allocation as well
 
-No, but please, wait a bit, I have a sequential dependent patch.
-I'll send a v2 soon.
+ kernel/kcsan/debugfs.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0.rc1.1336.g36b5255a03ac
 
 
