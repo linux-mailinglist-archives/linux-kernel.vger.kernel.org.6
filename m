@@ -1,213 +1,156 @@
-Return-Path: <linux-kernel+bounces-416463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37DD9D454F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:36:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6FF9D4554
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D2B41F219B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA2C41F224F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0C43ACB;
-	Thu, 21 Nov 2024 01:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055B182890;
+	Thu, 21 Nov 2024 01:37:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYucG0++"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m2rDk5SE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F52719A;
-	Thu, 21 Nov 2024 01:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7896A19A;
+	Thu, 21 Nov 2024 01:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732153006; cv=none; b=lwbTsxfkQOadmHMX3+Z3ehKxh3J02l5ZDYqgMfvmHVVFQssnP2xs/youelNfo3nvltLs87TSV6PgfdTi73mLoTDKrc87mdf+ID975L6LWz7s/NmA9Ce62n0gmL4PbaLgu/I0nTzOplUvOQw1AkECbC2iWPNdDad4FEXCGqw5vsM=
+	t=1732153067; cv=none; b=IA2az008/DpoVAoMf/wRpjyNP8AA+ftC198i3l9yHLO9NzruaqPSP4ZH0usEfr2Ie0KxcyOz3kpRz4G9W/iWVQVqYeii1q3l8+FG7tUm9tTIJEvR9arIfcMzYoJPkeT2eXfqBT/IiaNGj/uSj7OZGerCbplgH7swwvGBPZbOsU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732153006; c=relaxed/simple;
-	bh=g3Z3B4+ahzCJQmWUhzm8VXWkQS1OUZc9o2n9s7IYGdc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=eu1N/Q1QMsgLuYJHVH2dhcJuM5koPJ8/moXNNOH2wd3Q/bzzILw/Mv56nFQVAZOgnvpHUjfP8YDbVVuxmPTh+I0vq6EpyOKSzstVrgjC+nDNMwYggpuwOJ3Fw7a9rCeoxas+n19sEg/cHME9SvL7uIjjXVkvMur4URDA14iKFuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYucG0++; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fbb47b1556so280504a12.0;
-        Wed, 20 Nov 2024 17:36:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732153004; x=1732757804; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iDIdDARj6chowZd9UqB5N0LI7no7eIEOQkkAwjkWPRI=;
-        b=nYucG0++Qo1Wx7n/kieGHGu3vWWXhUefcJv2RIRd5DiFikcfDFjC9AmMcogU0ShGp2
-         8wfTIyN2kdlKWYLk8UIcnmEwIC6EusFfp5mzEJqiyXTtslArFJHODh8I+wQbymXJNLJv
-         yS3o2C3Nq/KlAdpGyrCLXprIoB1pV2g6fRArO75kcHsUxPbUNvad96ba7BMQ5y3d06e/
-         E9acVOecMYOLIIfF6XqlUyrm6fgs3m0tJftTZl7PuZQpf/K/PpHfQWy9C9pvavZv+MWx
-         0QXBjFUbJaqcCPMbPaVk+xp74nx96bY752BiHZK2s4y0Pr1tE6JU95lgHW+eIWquSyNx
-         nwyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732153004; x=1732757804;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iDIdDARj6chowZd9UqB5N0LI7no7eIEOQkkAwjkWPRI=;
-        b=P47tX+aNu0Sse3ZNTv3wWPrjyq5mNbVtPArjBY7anxXcIkxbTVc1IKaysub1bF9Srd
-         ErgoXxLd2n3r03N6dtsoK4sJ6rJI1/ZATG1xlDFraqvNPyldkBzKa+vx15+IWkerqd+A
-         M4wk0gPgBOWddh6h8CIPjtr+NRd6czFFU2j/B1ay1tN2C0a1iyOT81fYERbAeMD1qh+2
-         bvw7ed0MCIlSEpGdhE10CogFC7SiEWzXHiJMRlqFi95Kc79Yjb92lv2hoHhjMb7/USys
-         wpkV4bQmEWin0QfnrBYp9TTVbH8gRvRm0XefDX6ksxPHugWlnim3KsW7spZ+xRidPGGY
-         jN0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnU6rfHiiRAxnUHYY7kuIB0PkxygC+m7J3/BiMMJE54ygFAmx9S6GCzfhaTbSV09MH24YFKRlbQYH7VGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBuzr2gfbbb0ekWbJytKL8jFaEYW7C8oZVU6C468TIoo6Mpt04
-	jfYB3boi5/iPuQBI+hvGZ1jeRRlhS+5JmG+A55VqfwAt91RBNDKL
-X-Google-Smtp-Source: AGHT+IHeFnz7miwRgA/C3xTsDp+jGzVOv2q2XaleKGTM5pI1wqGKirYEuoWLDY5LFpm+ZoHlyu+b/w==
-X-Received: by 2002:a17:90b:124d:b0:2ea:9e36:980e with SMTP id 98e67ed59e1d1-2eaebf051a0mr2372399a91.13.1732153003646;
-        Wed, 20 Nov 2024 17:36:43 -0800 (PST)
-Received: from smtpclient.apple ([198.11.176.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21287ee2a12sm2104435ad.157.2024.11.20.17.36.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 20 Nov 2024 17:36:43 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1732153067; c=relaxed/simple;
+	bh=+vmL86ts9Co+irvYEylTwUr6wNcIrbRbnUB+re4UPbM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=txBeFM5Uz3X+xojX+dZAF4KMSq6Y3aCZkzOWPo17cqKlTKz1tIxcd3Sw/gnRQfLAH26bC/Q7YWluwIC/lR3RwwEADF18crHzA+G5XVRSbxl3jZCMGE/t8FSlgYi+buCQWz3PA6iyFadp9juPZQxydHO2UathVR6z1fuHMC+4EkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m2rDk5SE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKKUxNF005756;
+	Thu, 21 Nov 2024 01:37:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ETGvAeeuzW563BAxL0pFZT
+	DphVnsVcwKs8JXU9eOI9g=; b=m2rDk5SE/U6XDXPvo4DJZkI9bsW5YlQWlCflCS
+	QrWFyhy3+QW5dGi6YEgTerC12eZa40qUBs2LPEQMNAf16Der2+T0CtE0DYRJYKU0
+	SJsCNfqwwca6euepVFbwKQWM99CCc3bnObya3G40L/Tvn24QRya9uE4VjkOj+JNO
+	KE+pWnUD6iyJL3C5+iOYAanjEyLgdZqdVigsHFxiVcLOH/1RnozNj0da0KqV912y
+	Rb0HesitgNolrvYV8e/+hy6BxbiLVm1i1Ksny69aVpZb9X1Ysb1Xx6NagseTy1ez
+	YOBj0V+84ReklFoyRZ7GHx2yG4NGAo3ShANK2D3Jl6J7iClQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7ynct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 01:37:42 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL1bf4x010355
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 01:37:41 GMT
+Received: from hu-azarrabi-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 20 Nov 2024 17:37:41 -0800
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Subject: [PATCH RFC 0/3] Introduce orphan tee_shm and default tee_context
+Date: Wed, 20 Nov 2024 17:37:14 -0800
+Message-ID: <20241120-fix-tee_shm-refcount-upstream-v1-0-5da97f584fcd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
-Subject: Re: [PATCH V3] selftests: livepatch: add test cases of stack_order
- sysfs interface
-From: zhang warden <zhangwarden@gmail.com>
-In-Reply-To: <20241024083530.58775-1-zhangwarden@gmail.com>
-Date: Thu, 21 Nov 2024 09:36:25 +0800
-Cc: live-patching@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <CD7BF255-7128-412C-86EB-305CEC7FF2B7@gmail.com>
-References: <20241024083530.58775-1-zhangwarden@gmail.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>,
- Jiri Kosina <jikos@kernel.org>,
- Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>
-X-Mailer: Apple Mail (2.3774.500.171.1.1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMuOPmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyMD3bTMCt2S1NT44oxc3aLUtOT80rwS3dKC4pKi1MRc3WQzc8MkC8u
+ 0pFQzcyWgGQVAJZkVYPOjlYLcnJVia2sBFYBUHXQAAAA=
+To: Jens Wiklander <jens.wiklander@linaro.org>,
+        Sumit Garg
+	<sumit.garg@linaro.org>
+CC: <op-tee@lists.trustedfirmware.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: TcM5-H28dH-ebf7nWeuxBmsT-sADeSjD
+X-Proofpoint-GUID: TcM5-H28dH-ebf7nWeuxBmsT-sADeSjD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1011 suspectscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411210011
 
+The TEE subsystem manages three main structures: tee_device, the device
+that represents the TEE; tee_context, the context that represents the
+TEE client; and tee_shm, which represents the shared memory with the
+TEE. When a tee_device is opened, it creates a tee_context instance. The
+tee_shm is created for the tee_device when allocating shared memory with
+the TEE but is linked to a context. The lifespan of the device is
+determined by the presence of context and shared memory, while the
+lifespan of a context depends on the client closing the device.
 
+This behavior has been modified, making the lifespan of context
+dependent on shared memory. If a client closes the device but doesn’t
+release the shared memory, the linked context will remain active,
+preventing the release callback from freeing resources in the TEE. This
+could lead to a deadlock if the TEE holds a reference to the shared
+memory and relies on the release callback to remove the reference.
 
-> On Oct 24, 2024, at 16:35, Wardenjohn <zhangwarden@gmail.com> wrote:
->=20
-> Add selftest test cases to sysfs attribute 'stack_order'.
->=20
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
-> ---
-> .../testing/selftests/livepatch/test-sysfs.sh | 71 +++++++++++++++++++
-> 1 file changed, 71 insertions(+)
->=20
-> diff --git a/tools/testing/selftests/livepatch/test-sysfs.sh =
-b/tools/testing/selftests/livepatch/test-sysfs.sh
-> index 05a14f5a7bfb..e44a051be307 100755
-> --- a/tools/testing/selftests/livepatch/test-sysfs.sh
-> +++ b/tools/testing/selftests/livepatch/test-sysfs.sh
-> @@ -5,6 +5,8 @@
-> . $(dirname $0)/functions.sh
->=20
-> MOD_LIVEPATCH=3Dtest_klp_livepatch
-> +MOD_LIVEPATCH2=3Dtest_klp_callbacks_demo
-> +MOD_LIVEPATCH3=3Dtest_klp_syscall
->=20
-> setup_config
->=20
-> @@ -19,6 +21,8 @@ check_sysfs_rights "$MOD_LIVEPATCH" "enabled" =
-"-rw-r--r--"
-> check_sysfs_value  "$MOD_LIVEPATCH" "enabled" "1"
-> check_sysfs_rights "$MOD_LIVEPATCH" "force" "--w-------"
-> check_sysfs_rights "$MOD_LIVEPATCH" "replace" "-r--r--r--"
-> +check_sysfs_rights "$MOD_LIVEPATCH" "stack_order" "-r--r--r--"
-> +check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
-> check_sysfs_rights "$MOD_LIVEPATCH" "transition" "-r--r--r--"
-> check_sysfs_value  "$MOD_LIVEPATCH" "transition" "0"
-> check_sysfs_rights "$MOD_LIVEPATCH" "vmlinux/patched" "-r--r--r--"
-> @@ -131,4 +135,71 @@ livepatch: '$MOD_LIVEPATCH': completing =
-unpatching transition
-> livepatch: '$MOD_LIVEPATCH': unpatching complete
-> % rmmod $MOD_LIVEPATCH"
->=20
-> +start_test "sysfs test stack_order value"
-> +
-> +load_lp $MOD_LIVEPATCH
-> +
-> +check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
-> +
-> +load_lp $MOD_LIVEPATCH2
-> +
-> +check_sysfs_value  "$MOD_LIVEPATCH2" "stack_order" "2"
-> +
-> +load_lp $MOD_LIVEPATCH3
-> +
-> +check_sysfs_value  "$MOD_LIVEPATCH3" "stack_order" "3"
-> +
-> +disable_lp $MOD_LIVEPATCH2
-> +unload_lp $MOD_LIVEPATCH2
-> +
-> +check_sysfs_value  "$MOD_LIVEPATCH" "stack_order" "1"
-> +check_sysfs_value  "$MOD_LIVEPATCH3" "stack_order" "2"
-> +
-> +disable_lp $MOD_LIVEPATCH3
-> +unload_lp $MOD_LIVEPATCH3
-> +
-> +disable_lp $MOD_LIVEPATCH
-> +unload_lp $MOD_LIVEPATCH
-> +
-> +check_result "% insmod test_modules/$MOD_LIVEPATCH.ko
-> +livepatch: enabling patch '$MOD_LIVEPATCH'
-> +livepatch: '$MOD_LIVEPATCH': initializing patching transition
-> +livepatch: '$MOD_LIVEPATCH': starting patching transition
-> +livepatch: '$MOD_LIVEPATCH': completing patching transition
-> +livepatch: '$MOD_LIVEPATCH': patching complete
-> +% insmod test_modules/$MOD_LIVEPATCH2.ko
-> +livepatch: enabling patch '$MOD_LIVEPATCH2'
-> +livepatch: '$MOD_LIVEPATCH2': initializing patching transition
-> +$MOD_LIVEPATCH2: pre_patch_callback: vmlinux
-> +livepatch: '$MOD_LIVEPATCH2': starting patching transition
-> +livepatch: '$MOD_LIVEPATCH2': completing patching transition
-> +$MOD_LIVEPATCH2: post_patch_callback: vmlinux
-> +livepatch: '$MOD_LIVEPATCH2': patching complete
-> +% insmod test_modules/$MOD_LIVEPATCH3.ko
-> +livepatch: enabling patch '$MOD_LIVEPATCH3'
-> +livepatch: '$MOD_LIVEPATCH3': initializing patching transition
-> +livepatch: '$MOD_LIVEPATCH3': starting patching transition
-> +livepatch: '$MOD_LIVEPATCH3': completing patching transition
-> +livepatch: '$MOD_LIVEPATCH3': patching complete
-> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH2/enabled
-> +livepatch: '$MOD_LIVEPATCH2': initializing unpatching transition
-> +$MOD_LIVEPATCH2: pre_unpatch_callback: vmlinux
-> +livepatch: '$MOD_LIVEPATCH2': starting unpatching transition
-> +livepatch: '$MOD_LIVEPATCH2': completing unpatching transition
-> +$MOD_LIVEPATCH2: post_unpatch_callback: vmlinux
-> +livepatch: '$MOD_LIVEPATCH2': unpatching complete
-> +% rmmod $MOD_LIVEPATCH2
-> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH3/enabled
-> +livepatch: '$MOD_LIVEPATCH3': initializing unpatching transition
-> +livepatch: '$MOD_LIVEPATCH3': starting unpatching transition
-> +livepatch: '$MOD_LIVEPATCH3': completing unpatching transition
-> +livepatch: '$MOD_LIVEPATCH3': unpatching complete
-> +% rmmod $MOD_LIVEPATCH3
-> +% echo 0 > /sys/kernel/livepatch/$MOD_LIVEPATCH/enabled
-> +livepatch: '$MOD_LIVEPATCH': initializing unpatching transition
-> +livepatch: '$MOD_LIVEPATCH': starting unpatching transition
-> +livepatch: '$MOD_LIVEPATCH': completing unpatching transition
-> +livepatch: '$MOD_LIVEPATCH': unpatching complete
-> +% rmmod $MOD_LIVEPATCH"
-> +
-> exit 0
-> --=20
-> 2.43.5
->=20
+In this pachset we introduce orphan tee_shm and default tee_context.
 
-Hi, Petr.
+When a shared memory becomes orphan because its associated context is
+released, it no longer has a tee_context. One method to differentiate
+between orphaned and regular shared memory is to use NULL as the linked
+context. However, this can cause issues if releasing the shared memory
+triggers additional calls, like those to the supplicant, which require a
+valid context. Instead of using NULL, an internal tee_context for the
+driver can be used.
 
-Here to remind you not to forget this attribute for linux-6.13.
+The driver relies on tee_device_unregister which is a blocking calls
+waiting for all context to be released and all shared memory to be freed
+before unloading the driver. This means that all contexts, including
+internal context, should be closed before tee_device_unregister can
+proceed. This can introduce a short window where there is no valid
+context to use when releasing the shared memory. The default tee_context
+has lifespan similar to the device.
 
-Thanks.
-Wardenjohn=
+For an orphan tee_shm, default context is used.
+
+This has not been tested. Looking for feedback if this is a reasonable
+change.
+
+Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+---
+Amirreza Zarrabi (3):
+      tee: revert removal of redundant teedev in struct tee_shm
+      tee: revert removal of linked list of struct tee_shm
+      tee: introduce orphan tee_shm and default context
+
+ drivers/tee/optee/core.c    |  2 +-
+ drivers/tee/optee/ffa_abi.c |  2 +-
+ drivers/tee/optee/smc_abi.c |  2 +-
+ drivers/tee/tee_core.c      | 84 +++++++++++++++++++++++++++++----------------
+ drivers/tee/tee_private.h   |  3 --
+ drivers/tee/tee_shm.c       | 41 ++++++++++++----------
+ include/linux/tee_core.h    | 15 ++++++++
+ include/linux/tee_drv.h     | 13 ++++---
+ 8 files changed, 100 insertions(+), 62 deletions(-)
+---
+base-commit: ae58226b89ac0cffa05ba7357733776542e40216
+change-id: 20241120-fix-tee_shm-refcount-upstream-c671b89fbe67
+
+Best regards,
+-- 
+Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+
 
