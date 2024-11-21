@@ -1,51 +1,53 @@
-Return-Path: <linux-kernel+bounces-417282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE84F9D51FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:41:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5CF59D51FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:42:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ED61282DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B48B28D9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E621B17333A;
-	Thu, 21 Nov 2024 17:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B5614A0AA;
+	Thu, 21 Nov 2024 17:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XPJhU6Aw"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KwoxBPvC"
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D3A188907;
-	Thu, 21 Nov 2024 17:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC44E1A01CD;
+	Thu, 21 Nov 2024 17:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210907; cv=none; b=kL8y/tIziA9JAj9raAsh4959aFNO+STbJpETWiQpTssTCMEYvxhul4+RscVLc9NkeRk5PCoi9j1OTZz64nPSPONWat9fDofIq8JaJU9qx4Oar7fqr8s3Yw7A+dGSwGSKUcQ/rz17X0sYL3cVsxesBXM7ZVUT1I18NmU8oD+OdXg=
+	t=1732210907; cv=none; b=IiMrzIsU3vZn3BXGQOjyJ6nrOC+EQqxpTAGk90NM9opqe20jfBYxv7Z0X+A0eRBdtq3k61n/bOGDyP9injBMPbrHhsoh+S0+nzvjI/StEWuzNFnkw86ViHZUIjg1xfv45iQdyjtHTfyN81BKyfo7ZabKm4u2KOY1qv44Tlwz1lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732210907; c=relaxed/simple;
-	bh=3MDNYNBVQxoC/C2zKV4LcrVyC0GAlf77KRLnvIIXazo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=iIQQltjFGKCLTRHtULSu9CFiCr2ic9O7FZV3LjL+hR5aYfKygtOEMJE2TTf+G+oP4aGchTMmXfLqX4l06/HCLXXK5lbF09gzrVvedDUjrIoObBupwfcooa/UPfkWKTP8cG64tPUQDGvH8rDpjE9C2iwmXa2H4QZQ3/t7qWCfWGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XPJhU6Aw; arc=none smtp.client-ip=217.70.183.200
+	bh=vZMGVlzPw/7v2ZFp7bgQck20bK9sg0BZJrP7XmQ9X5Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=rM/O5o+K54FzY/SkEiLV59RhpjwUKSyvb6AmURZh84kHjoYksQJbvTQ3UCGy328LHwfllt2rJhD50GI98cHfHgDOQs1ZsGouxaBXi+m/7VwdOJrrBKgQGLcr0XH0SiW40W1vOnwjGsfkuzXe+iPZIM4Adf2/PitJCn4Uhe/ek1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KwoxBPvC; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CD1472000A;
-	Thu, 21 Nov 2024 17:41:34 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B06972000C;
+	Thu, 21 Nov 2024 17:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732210896;
+	t=1732210897;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rt80qnAyyepZvbd8DfB3ShuvRFOqvgROOwcu9fM6x3U=;
-	b=XPJhU6AwXFGRUUnfGQvejV+oHxkMvweUkwv9ULqvHbQa8KI16HGZgTZzN7fv0AWbOGlv9k
-	Ykr621Z3EWSQFd0/Eh4GQ5JaBq19W19D1tx0V82mCLr56bacduLtP9ITRqEX3GjJvSvt9V
-	uixNsJpbWe4tnkysNvTuVA+/5DnMevlnv6uLbVS+q4olykwKN8OSRYr5av9Ycaaytja792
-	vvAB1aZOjvs8cZtuR+kon8EIZ89Mk6DHMm3EEXEKzpHJjptxGjMGNM2FVEnDLEVi4ljdD8
-	zb6YH3vlOoQTG6XstKJeBVuEHA85FLbEQoTmTtKrLn9gRCEAo4310ZykbKN5qQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HNSGIUDWKtHK2V3krzyRKB3CsE+LudVK/AtAMHaXQPM=;
+	b=KwoxBPvC0Zrft6aR7f763oIRvd7CMINTpkCKQP/bHCyzyolyQ5scMkb+NAdB7DBIqOVf3u
+	Xlz3JO4Wu29Ce5OBWtm1j8aMzum1QQQ6tmCz2blMejXb6VzQH8b5aVoFgeLG2OtB4DAYTv
+	b4ldBapMLak5ZXgUDWFzMm6rhwlllZ0GY1J7NOF/ONOOOX5auLPJ0oY7llWLk6kC6V8KSc
+	8FQ5aUTIt8ouNKfTUAjx6M6otK8zTYlRYFrqVHYhu1UF4Oe7/Zkr717Dp1YXjZOQ8dH/kD
+	3jbvJcIzy3wSucOaOWnK/ywWQ5pJcTI74TZ+u4DV9UN+JGOKredQvaCh6C0F/A==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 0/5] clk: Fix simple video pipelines on i.MX8
-Date: Thu, 21 Nov 2024 18:41:10 +0100
-Message-Id: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
+Date: Thu, 21 Nov 2024 18:41:11 +0100
+Subject: [PATCH 1/5] clk: imx: clk-imx8mp: Allow LDB serializer clock
+ reconfigure parent rate
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +56,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIALZwP2cC/x3MTQ5AMBBA4avIrE1i6ifiKmJROpigpEUk4u7K8
- nuLd4NnJ+yhim5wfIqX1QZQHEE3ajswigkGlaiMSBF+RVs03B4DynKV2M0T7o4ZW5OqXOuyKHq
- CMNgc93L987p5nhenn/rUbAAAAA==
-X-Change-ID: 20241121-ge-ian-debug-imx8-clk-tree-bd325aa866f1
+Message-Id: <20241121-ge-ian-debug-imx8-clk-tree-v1-1-0f1b722588fe@bootlin.com>
+References: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
+In-Reply-To: <20241121-ge-ian-debug-imx8-clk-tree-v1-0-0f1b722588fe@bootlin.com>
 To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
@@ -72,91 +73,40 @@ Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
  Herve Codina <herve.codina@bootlin.com>, 
  Luca Ceresoli <luca.ceresoli@bootlin.com>, 
  Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Ian Ray <ian.ray@ge.com>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, stable@vger.kernel.org
+ Miquel Raynal <miquel.raynal@bootlin.com>
 X-Mailer: b4 0.15-dev
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-Recent changes in the clock tree have set CLK_SET_RATE_PARENT to the two
-LCDIF pixel clocks. The idea is, instead of using assigned-clock
-properties to set upstream PLL rates to high frequencies and hoping that
-a single divisor (namely media_disp[12]_pix) will be close enough in
-most cases, we should tell the clock core to use the PLL to properly
-derive an accurate pixel clock rate in the first place. Here is the
-situation.
+From: Marek Vasut <marex@denx.de>
 
-[Before ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")]
+The media_ldb_root_clk supply LDB serializer. These clock are usually
+shared with the LCDIFv3 pixel clock and supplied by the Video PLL on
+i.MX8MP, but the LDB clock run at either x7 or x14 rate of the LCDIFv3
+pixel clock. Allow the LDB to reconfigure Video PLL as needed, as that
+results in accurate serializer clock.
 
-Before setting CLK_SET_RATE_PARENT to the media_disp[12]_pix clocks, the sequence of events was:
-- PLL is assigned to a high rate,
-- media_disp[12]_pix is set to approximately freq A by using a single divisor,
-- media_ldb is set to approximately freq 7*A by using another single divisor.
-=> The display was working, but the pixel clock was inaccurate.
-
-[After ff06ea04e4cf ("clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate")]
-
-After setting CLK_SET_RATE_PARENT to the media_disp[12]_pix clocks, the
-sequence of events became:
-- media_disp[12]_pix is set to freq A by using a divisor of 1 and
-  setting video_pll1 to freq A.
-- media_ldb is trying to compute its divisor to set freq 7*A, but the
-  upstream PLL is to low, it does not recompute it, so it ends up
-  setting a divisor of 1 and being at freq A instead of 7*A.
-=> The display is sadly no longer working
-
-[After applying PATCH "clk: imx: clk-imx8mp: Allow LDB serializer clock reconfigure parent rate"]
-
-This is a commit from Marek, which is, I believe going in the right
-direction, so I am including it. Just with this change, the situation is
-slightly different, but the result is the same:
-- media_disp[12]_pix is set to freq A by using a divisor of 1 and
-  setting video_pll1 to freq A.
-- media_ldb is set to 7*A by using a divisor of 1 and setting video_pll1
-  to freq 7*A.
-  /!\ This as the side effect of changing media_disp[12]_pix from freq A
-  to freq 7*A.
-=> The display is still not working
-
-[After applying this series]
-
-The goal of the following patches is to prevent clock subtree walks to
-"just recalculate" the pixel clocks, ignoring the fact that they should
-no longer change. They should adapt their divisors to the new upstream
-rates instead. As a result, the display pipeline is working again.
-
-Note: if more than one display is connected, we need the LDB driver to
-act accordingly, thus the LDB driver must be adapted. Also, if accurate
-pixel clocks are not possible with two different displays, we will still
-need (at least for now) to make sure one of them is reparented to
-another PLL, like the audio PLL (but audio PLL are of a different kind,
-and are slightly less accurate).
-
-So this series aims at fixing the i.MX8MP display pipeline for simple
-setups. Said otherwise, returning to the same level of support as
-before, but with (hopefully) more accurate frequencies. I believe this
-approach manages to fix both Marek situation and all people using a
-straightforward LCD based setup. For more complex setups, we need more
-smartness from DRM and clk, but this is gonna take a bit of time.
-
+Signed-off-by: Marek Vasut <marex@denx.de>
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
-Marek Vasut (1):
-      clk: imx: clk-imx8mp: Allow LDB serializer clock reconfigure parent rate
+ drivers/clk/imx/clk-imx8mp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Miquel Raynal (4):
-      clk: Add a helper to determine a clock rate
-      clk: Split clk_calc_subtree()
-      clk: Add flag to prevent frequency changes when walking subtrees
-      clk: imx: imx8mp: Prevent media clocks to be incompatibly changed
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index 516dbd170c8a356f293621b371b9ef9b9bec90a4..2e61d340b8ab7f626155563c46e0d4142caf3fa9 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -611,7 +611,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+ 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+-	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
++	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite_bus_flags("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00, CLK_SET_RATE_PARENT);
+ 	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+ 	hws[IMX8MP_CLK_MEDIA_MIPI_TEST_BYTE] = imx8m_clk_hw_composite("media_mipi_test_byte", imx8mp_media_mipi_test_byte_sels, ccm_base + 0xc100);
+ 	hws[IMX8MP_CLK_ECSPI3] = imx8m_clk_hw_composite("ecspi3", imx8mp_ecspi3_sels, ccm_base + 0xc180);
 
- drivers/clk/clk.c            | 39 ++++++++++++++++++++++++++++++++-------
- drivers/clk/imx/clk-imx8mp.c |  6 +++---
- include/linux/clk-provider.h |  2 ++
- 3 files changed, 37 insertions(+), 10 deletions(-)
----
-base-commit: 62facaf164585923d081eedcb6871f4ff3c2e953
-change-id: 20241121-ge-ian-debug-imx8-clk-tree-bd325aa866f1
-
-Best regards,
 -- 
-Miquel Raynal <miquel.raynal@bootlin.com>
+2.47.0
 
 
