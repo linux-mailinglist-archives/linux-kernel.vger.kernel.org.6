@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-417039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53BD9D4E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:54:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C949D4E2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58F11B23452
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACDD2834A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D7E1D89E3;
-	Thu, 21 Nov 2024 13:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E71D8A08;
+	Thu, 21 Nov 2024 13:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpePayAR"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqbbM5a6"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD881B0F0C;
-	Thu, 21 Nov 2024 13:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C11474068;
+	Thu, 21 Nov 2024 13:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197256; cv=none; b=LCQHL3GAnK4tIIUkASlgevbBBpeQpwgryukxebqFAQtN4ES9VN41AnPgz7mxmKNsTz6QzqVUgcMuZWdNGYu/VBgDEQjeiDjRXes1DQP1SkPQvL2khNhtoKh09m6BVPw0elDq+RFNK+4osDVRE9PrRVdxHvWRJM3ZR4C2Ix/MkO4=
+	t=1732197412; cv=none; b=dCV57xgL8sja/bp60RB+Y1oYfvF8NPAFW4cjhmIYvx3cAFxN1jQi2hlWytOn7VTJFwaOmVIwCMmkHu1EQH0J1xPNub27e/irn3h2rmot9QIxd0eoFbCk168X+6lSbRL8V1gAoWkqnlI8OrgtFyrPHziLDOxgbzWCWpWqcHyLw+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197256; c=relaxed/simple;
-	bh=4F2uPZDhl79s/b3GeeUWm0C4ymSo6yl2Vh00rx1jd0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kYrFhz2AfWAHCATEPaloKYfKI4nfM700hKodksQ2WaS/F5yFp80Lnc+nqMgkEOPyK6Xc4UbK/yl0BZEJy6FzqXZ/XNnG8pSvWQxjFe/U/IeK2dn35uEYKyFEpOwN8oleFGZfGXWxbDUpQjzhNa+JpR6a1mBZrT/2CmQHYBW4mVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpePayAR; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1732197412; c=relaxed/simple;
+	bh=ePTbVWGeSfRNtNOCTV+I6F4vSdmqOaS362+3xuGclys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aNqdaDrnIR5Ew0IGFJ16jpN0kfkBQ/nlHtez6iV5Q8JYpiJeaBrCJCryT4n0IJRw+QwFHgch1DQFb5ulTKVy194FR96Z/Dwceym79nEdhtYhQyOTD2JJdyFtvBW5OZc27tpTM5pRwqxlxwBJ59FmjMtjkkj6/a6USRn/K81ymcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqbbM5a6; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e8607c2aso989156e87.3;
-        Thu, 21 Nov 2024 05:54:14 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso1212456a12.1;
+        Thu, 21 Nov 2024 05:56:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732197252; x=1732802052; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JwmcWq/IQwazom5lTDenZTbI3rb/SZ+QRK2h1hXK7aw=;
-        b=LpePayARxIyf5WK62Gg7p+agNjzokxOI+ucQ/YUhMSEVG9W+Ro81TO3ikS3q2y8Pj7
-         Bp3VSsdfPIuZ0jRRGqH3Nfdw/lqxXoiQRb8ubLsX9VRtr4ZcmxuEYY9Qm+OvGxfLvWSA
-         coY0ZL5LB2Cj3G4zLFLmvIxONMKlqMVf9N+yq8knS9+lFehX0CiMGflnV7rA9FIOgdEr
-         a/c7ApXI3zoazQLvpfYlQ9J09kHdtDhpXGamPId+srdgVUjg+3DWrV1iIe7gWF2R5+2d
-         NiKpNW9LC8BgofFEbiIvF4CwZsnZi8g+h0WLzKbGQoRMuirvELiz5uQ6uRi724GIZ2VX
-         SDTQ==
+        d=gmail.com; s=20230601; t=1732197409; x=1732802209; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6VTsKEKFH+lx7r6h+YAEcJh+xm3cvslfQa17q41ek0=;
+        b=QqbbM5a6O9BeuJKdKj/2ZesKJSG3yPDr8twocT4YLbdppmelkI7d1yL3XkI3ZnGzIJ
+         15G0KZlfa3PhHF2g7tCFUAFmo6FVB9lA2noghmIVz7+2t9Ef6epnuTKKKk02K+rTHO0I
+         y/3pWRKVe6LS2++pkLr5lv1TW7a7VLhcUYtEj4Gjx7KqpmKv+jTitSdDL85Ae2o/j/om
+         mp2Yrq3VBWaMAQfIM72kuAWWRD1CeW/xSOvxdUqFh5NxvewkN7N+JcUuh98AVMw9Zoup
+         zL1u/C2Lc2tBmuGxnL5+OpOyhFnWHdTjSpy/ULmNyJFJVbMCDjGhCfsckV42+J7g2BHj
+         +n6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197252; x=1732802052;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JwmcWq/IQwazom5lTDenZTbI3rb/SZ+QRK2h1hXK7aw=;
-        b=PfcHzDfbgjWbwZF2qCwR7Ox0nN/HXzmISGd3+2bhR3k6LFLEOC3INRYaM7afJegESJ
-         n0UR5RxhFUmkp2wcWfkEe2OoBQMfsYd6ny2RJO+/m9R4baBntdyX6V7EDUuNfqIIe/uH
-         xVmNSZcOIOTGdX5t5fscc8qFyCj5FdGJArZnffPyFxpC5PtsnT2K8uxiXRJq0stdRQ07
-         H2dfOe2YsvWAdHU+rDwX5w9Ljl69ig+DUmmzfxZkKCWwS0PqqLC/SShXXXvImE/pbXGq
-         Ot1znzhVicnhYWGcHZQ28b9Jkub1RZciDTdNw2tly+cSpP4OxSAFZmh2u03VOJTcSA7c
-         2kBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGWnKNztFxcaf6Nv/o5vMTd+Z3i/hEsP4+PbrlxoqGcYmdpZe5M5K1LKLig5mXjVR0FqthCBa7iFy4OQcL@vger.kernel.org, AJvYcCXbnprjX6/KvbRwDJxPQhNxFLwRLD/0j/M1M5GybKaMmV6nTbWHnNDmOgnGDVywSpE9C6vJDPEXXm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0fQxFVkB6p7I7q5S/PQ2DY0BMh54kWYWSOYIGf/Ja6UrEyHK
-	Lm0apU20EZ2PyBRdCnhE4r6zNLjcHVY6y1iLtziR0ZxfCubyHNHsdCAMgQ==
-X-Gm-Gg: ASbGncspNVlZ2xapTpLrhspPcb4flJ+jJkm5dTnel71Ibk9Z++f4C8WKr1thrp5TILm
-	52jPtY2fIfJ6Qs52O34oHmbtIJav+FMrMdUf7B7VmG0PIWIxeIiEHQIPoao1P01ilS2Y38E+S9Y
-	a31CHUA/WmI7jxbxRJ+6R7uTU3H2T2hXf9VBDvu9PxOyM7/LN1OqLfE3T+hXBgbJWM1W25AbGHR
-	hH2PQC8PdvuxbGv6H2Z6VQlRp4zIBD1uLztBP4oC5RZrwyWe538HFwhTCd91CbCb+MLCUQOk0Fv
-	LzF8cTLm4+E22IJzMZtTsK6X9FSq
-X-Google-Smtp-Source: AGHT+IFnvckvHnQVhH3o7rsxtGMkea8ghpFCZHEKE9KCGQ72vQv0aiXs+A4cfd8QImS86LgLcn+6bA==
-X-Received: by 2002:a05:6512:32a5:b0:53d:bf13:49de with SMTP id 2adb3069b0e04-53dc1346858mr2699914e87.34.1732197251996;
-        Thu, 21 Nov 2024 05:54:11 -0800 (PST)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44efaf8sm1888225a12.33.2024.11.21.05.54.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 05:54:11 -0800 (PST)
-Message-ID: <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
-Date: Thu, 21 Nov 2024 14:54:10 +0100
+        d=1e100.net; s=20230601; t=1732197409; x=1732802209;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H6VTsKEKFH+lx7r6h+YAEcJh+xm3cvslfQa17q41ek0=;
+        b=TXEDCFsApIH/HQT3O8EPRTDJZUjzaisVlO0tf1mhoaDgVwgEfgHzCpc99Sf+AydCTX
+         tNBNDHjbhN0DREga9uFvYDmZn8MVTcXkt/q6w0XS83WeIMLLFG0QL9b6NFmyS6n4w+Vc
+         HHmRp+pGlmxSvFHG9yDoo5xW4RmTMJUyE36LsE3PHnevN55teUYh7OdSpbjN7CVr544o
+         +6kNsnWM1abGVoctQ0p82Y693wpb8vYgfLIAJcO/BHH8HhXyPTzhj3bsIlqa/KQTg0Yb
+         kNZaY0haChVzuYMaoNByHqwjoS9bRoiTwFY4HEG3bvseN662dzWkz7VGLAbfshD5OZVJ
+         DqVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA7BfLhgHIliaen2iFjluFgXJxn9V9+4utKa/9LdTJi52157GzP2YHSSS/ObdeVDZ9RZs80R4j9cLk@vger.kernel.org, AJvYcCUwC5Rh2prUsOQpWtxdVixpkWdSplkR9AHh7vp0WnaxzQkjahAgjos9dayz3cH8Gxy3K/2OsIpu/f67TcugUQ==@vger.kernel.org, AJvYcCWcWIZtuOLzGWMggJVJ+zlBo6gk06Fvws5GXo58YGtV8qWok+e2teuv3g20etnh/jjij0KneJNLYhXUbDv7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsfCflKZEjq6k0bRhQGdau96lb6Hnh5u3WRXprQI7aeIubqmXh
+	cTYtvbSCrKSee3kd7SNRG3Xg054lpLQ7b/1Ovxjhb5BXRSQfYpXTrlq8vtVIAigIneWHyvKFgNq
+	r+yS8DYGyQp1ser6PZNj3qJOHZyg=
+X-Gm-Gg: ASbGncsKjmXHeiQMm6a9HiEyJnaydrDp7IDptgyCWV4rFMMmo5loyaG9A/L1yP+F3C7
+	eRb97OgyinYpLVJEF9DznWHcve5RRLw==
+X-Google-Smtp-Source: AGHT+IHbmuJ7KgininVEU/ALyo+nC03rV8ASRUHLBsEK8cAvNbVaYmbKGLO9xiUHXWLwlDvA3LbY4pqkbb8Fahimsy8=
+X-Received: by 2002:a05:6402:5108:b0:5cf:d078:c9dc with SMTP id
+ 4fb4d7f45d1cf-5cff4ccfa11mr4811055a12.22.1732197408592; Thu, 21 Nov 2024
+ 05:56:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] iio: Use __cleanup for a few ROHM sensors
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732193263.git.mazziesaccount@gmail.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <cover.1732193263.git.mazziesaccount@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241120112037.822078-1-mjguzik@gmail.com> <20241120112037.822078-2-mjguzik@gmail.com>
+ <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
+In-Reply-To: <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 21 Nov 2024 14:56:36 +0100
+Message-ID: <CAGudoHFDHbN9Zo4z9BPu5TbhNYa4sSYeVHD9UShnWNrY-Cr3eA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] vfs: support caching symlink lengths in inodes
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, 
+	tytso@mit.edu, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/11/2024 14:04, Matti Vaittinen wrote:
-> Use __cleanup.
-> 
-> The series converts the rest of the ROHM sensors (maintained by me) to
-> use guard(mutex). This simplifies the error paths.
-> 
-> As a note, kx022a accelerometer driver is handled in another series,
-> which also adds support for two new accelerometers. I did also patch the
-> driver for the BU27008 and BU27010 - but when I was testing the changes
-> I found that the BU27008 status is set to "obsolete". I'll try to dig
-> some information about the BU27010 and decide if having the driver
-> in-tree is still worth the effort, or if I should just send out patches
-> to drop it all. Hence patch to rohm-bu27008.c is not included in the
-> series. If someone is actually using the BU27008 or BU27010 and wants
-> to patch it - feel free to pick
-> 131315de97ff ("iio: bu27008: simplify using guard(mutex)")
-> from
-> https://github.com/M-Vaittinen/linux/tree/bu27008-cleanup
-> 
-> ---
-> 
-> Matti Vaittinen (2):
->   iio: bu27034: simplify using guard(mutex)
->   iio: bm1390: simplify using guard(mutex)
-> 
->  drivers/iio/light/rohm-bu27034.c   | 73 ++++++++++------------------
->  drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
->  2 files changed, 55 insertions(+), 96 deletions(-)
-> 
-> 
-> base-commit: adc218676eef25575469234709c2d87185ca223a
+On Thu, Nov 21, 2024 at 11:12=E2=80=AFAM Christian Brauner <brauner@kernel.=
+org> wrote:
+> I think that i_devices should be moved into the union as it's really
+> only used with i_cdev but it's not that easily done because list_head
+> needs to be initialized. I roughly envisioned something like:
+>
+> union {
+>         struct {
+>                 struct cdev             *i_cdev;
+>                 struct list_head        i_devices;
+>         };
+>         struct {
+>                 char                    *i_link;
+>                 unsigned int            i_link_len;
+>         };
+>         struct pipe_inode_info          *i_pipe;
+>         unsigned                        i_dir_seq;
+> };
+>
+> But it's not important enough imho.
 
-Hi Matti,
+I thought about doing that, but decided not to. I mentioned some time
+ago that the layout of struct inode is false-sharing friendly and the
+kernel is not in shape where this can be sensibly fixed yet and it may
+or may not affect what to do with the above.
 
-Both patches look good to me, but I noticed that you kept a few
-mutex_lock() + mutex_unlock() in both drivers, in particular in the
-cases where a scoped_guard() could simplify the code. Did you leave
-those cases untouched on purpose?
+On the stock kernel the issues are:
+- a spurious lockref acquire/release -- I posted a patch for it, Al
+did not like it and wrote his own, does not look like it landed though
+- apparmor -- everything serializes on label ref management (this *is*
+used by ubuntu for example, but also the lkp machinery). Other people
+posted patchsets to get rid of the problem, but they ran into their
+own snags. I have a wip with of my own.
 
-Best regards,
-Javier Carrasco
+Anyhow, with these eliminated it will be possible to evaluate what
+happens with inode rearrengements. Until then I think any messing with
+the layout is best avoided.
+
+thanks for taking the patchset
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
