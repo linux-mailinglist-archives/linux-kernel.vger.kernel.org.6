@@ -1,110 +1,135 @@
-Return-Path: <linux-kernel+bounces-417592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEAA89D5666
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:46:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A4389D5667
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5092FB24BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:46:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C330B222C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF541DED55;
-	Thu, 21 Nov 2024 23:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633B91DF240;
+	Thu, 21 Nov 2024 23:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1TeXAbXc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A131DED4B;
-	Thu, 21 Nov 2024 23:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="TCI0vHQC"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88081DF971
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732232685; cv=none; b=eeQsojStD46C3dcrDV5Jj6CYiMa3j2RYOBOWQ4guq4PoI9SjD6tnU5SE+pzfddvQfdpRUtrAwUU9G6fwkZin74NKWGzjmfMgZ3iYvcXyqME5OXmme8XRMOxXwNkBU9xDBws3OZFUc7JPk9EZgBy2YtRFSbrtBBW0zk7leWn0cQY=
+	t=1732232719; cv=none; b=heFq6xfvSCqUkuFAxFtXakFKlvajHKI2g2WVR3tpvQUCHli1l7yafwKlLXyrzkdwvxSQTo+ZzhFqqE8lOZgyGj2EZJe6KgcvyuFx7NRJP6IjM2M8QHyUfJl1s4Pi1qk+KESr1NIaqGDHez9nF7BNoHnmxLifxWc0dQlsirjzqo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732232685; c=relaxed/simple;
-	bh=jFzdPwj/6oVwYBRtFO5oaQqM6+nbohwp4izwYQoiQVY=;
+	s=arc-20240116; t=1732232719; c=relaxed/simple;
+	bh=WJ8aHAPGOPGpnIyH9WyYZ9xcgXjeq4iYAKKItBFKKzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p1jHsgU2Dse267Kd45UfPjU1ZxVjuu7H84iEMTVL2MPHPJklLq6ORpr7LH2ljEYNTLCrWYCU3inmzUaMg0t4Q/Bq3EBRiNvqiqcyCK1O1iCbZjOGDUHm1SZmUfBmdKnCO69tciHqeaHfx8MUas9eYPHEpdcUzVPAhVDa+n1m4jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1TeXAbXc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B1BC4CECC;
-	Thu, 21 Nov 2024 23:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732232685;
-	bh=jFzdPwj/6oVwYBRtFO5oaQqM6+nbohwp4izwYQoiQVY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1TeXAbXcu9nriKPMZsQyAmMuTBrAeOHxq4gl6dJ0gQ3xp1Bs8LWsO59aSB+eI0lhz
-	 qKuUVVqGNrwu5xpqJSRdAt0nGBU4jxpVOfh57kE/Z3TkBRr6BSO7FXA0IWFV8cnUuT
-	 Cb3bzUdI4TMrz4Iw73jUtqw3M6Jgke7tomaQeaJs=
-Date: Fri, 22 Nov 2024 00:44:19 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vyshnav Ajith <puthen1977@gmail.com>
-Cc: corbet@lwn.net, linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Fixing Grammatical Error
-Message-ID: <2024112255-grueling-glancing-2764@gregkh>
-References: <20241121233829.14779-1-puthen1977@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+2zHMvBENabxrT02qHQAc8MR3idgmpVif94MlwmvAAiozbMozvJd8tMKIY2PMCfT3bRlYk7hM58WpYV4JX9sHCC4DC499y/qD0LnWtlSWccxkcDB68IL+BA72svxxZK0AKJZ353XjJ/Lq8P+SNuAe5baWf1EIZZuguuNu9h91w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=TCI0vHQC; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 3FFB014C1E1;
+	Fri, 22 Nov 2024 00:45:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1732232715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u8f+LwLszrHbolnXZg0ayVqT0diIxwr+pKK0O36nMkc=;
+	b=TCI0vHQCYt9Ne5WwZakn3LuGnVwTUvRvp9HbK3hL08JRMIEqVU4Z7hNN4kzh0FVPwjAywi
+	6O2LwTnY39QT6MRKEFrIm9uGYcDoWuq4dQf0a4aUjR833EJy/yeN2Mdk8c+bfe2WcqtUeu
+	oAYPLqA2/lsSbaWQOfoekEjym6gncUNJbeT54wSJJvPfhpDFgN9l3WaVuyX2dFabERrGS9
+	Hm2w+ZiwnSt5fGV+olA5QUn3EqcgnwI7F/z4A5HpQYVV1rFbMGUrylqptro+d5JCF2kNcv
+	iWbMtn1rwVDyyXM3q1xNGfag91TQzAA8bQAcpofwEFJ6sMQy33q0gAVyvIJNsw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4c7bd5de;
+	Thu, 21 Nov 2024 23:45:10 +0000 (UTC)
+Date: Fri, 22 Nov 2024 08:44:55 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Alexander Merritt <alexander@edera.dev>
+Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Alex Zenla <alex@edera.dev>, Ariadne Conill <ariadne@ariadne.space>
+Subject: Re: [PATCH] 9p/xen: fix release of IRQ
+Message-ID: <Zz_F9wMda68xhvKa@codewreck.org>
+References: <20241121225100.5736-1-alexander@edera.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241121233829.14779-1-puthen1977@gmail.com>
+In-Reply-To: <20241121225100.5736-1-alexander@edera.dev>
 
-On Fri, Nov 22, 2024 at 05:08:29AM +0530, Vyshnav Ajith wrote:
-> 'Worst case' being singular needs 'is' instead of 'are'.
+Alexander Merritt wrote on Thu, Nov 21, 2024 at 10:51:00PM +0000:
+> From: Alex Zenla <alex@edera.dev>
 > 
-> Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+> Kernel logs indicate an IRQ was double-freed.
+
+Nit: if you still have the log it'd be great to include it in the commit
+message, rather than paragraphing it.
+
+The rationale is that someone with the same problem will likely just
+search for the error as is first, and having it in the commit log will
+be an easy hit.
+
+(This alone wouldn't need a resend, I can add it if you just reply to
+the mail with it; it's also fine if you no longer have the log, that'll
+be a remark for the next patch)
+
+
+> 
+> Pass correct device ID during IRQ release.
+> 
+> Fixes: 71ebd71921e45 ("xen/9pfs: connect to the backend")
+> Signed-off-by: Alex Zenla <alex@edera.dev>
+> Signed-off-by: Alexander Merritt <alexander@edera.dev>
+> Signed-off-by: Ariadne Conill <ariadne@ariadne.space>
+
+
+
 > ---
->  Documentation/usb/dwc3.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  net/9p/trans_xen.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/usb/dwc3.rst b/Documentation/usb/dwc3.rst
-> index f94a7ba16573..12989d126a8a 100644
-> --- a/Documentation/usb/dwc3.rst
-> +++ b/Documentation/usb/dwc3.rst
-> @@ -20,7 +20,7 @@ Please pick something while reading :)
->      to the device. If MSI provides per-endpoint interrupt this dummy
->      interrupt chip can be replaced with "real" interrupts.
->    - interrupts are requested / allocated on usb_ep_enable() and removed on
-> -    usb_ep_disable(). Worst case are 32 interrupts, the lower limit is two
-> +    usb_ep_disable(). The worst case is 32 interrupts, the lower limit is two
->      for ep0/1.
->    - dwc3_send_gadget_ep_cmd() will sleep in wait_for_completion_timeout()
->      until the command completes.
-> -- 
-> 2.43.0
-> 
+> diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
+> index dfdbe1ca5338..198d46d79d84 100644
+> --- a/net/9p/trans_xen.c
+> +++ b/net/9p/trans_xen.c
+> @@ -286,7 +286,8 @@ static void xen_9pfs_front_free(struct xen_9pfs_front_priv *priv)
+>  		if (!priv->rings[i].intf)
+>  			break;
+>  		if (priv->rings[i].irq > 0)
+> -			unbind_from_irqhandler(priv->rings[i].irq, priv->dev);
+> +			unbind_from_irqhandler(priv->rings[i].irq, ring);
+> +		priv->rings[i].evtchn = priv->rings[i].irq = 0;
 
-Hi,
+(style) I don't recall seeing much `a = b = 0` in the kernel, and
+looking at it checkpatch seems to complain:
+CHECK: multiple assignments should be avoided
+#114: FILE: net/9p/trans_xen.c:290:
++		priv->rings[i].evtchn = priv->rings[i].irq = 0;
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Please run checkpatch on the patches you send (b4 can do it for you if
+you want to start using it)
 
-You are receiving this message because of the following common error(s)
-as indicated below:
 
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
+code-wise,
+I also don't see where unbinf_from_irqhandler would free the evtchn, so
+is it leaking here, or is it implicit from something else?
+We only free it explicitly on error binding the irq.
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
 
-thanks,
 
-greg k-h's patch email bot
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
