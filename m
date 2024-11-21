@@ -1,235 +1,135 @@
-Return-Path: <linux-kernel+bounces-417049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A595E9D4E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:07:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939719D4E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:09:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6596D28328B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD471F22E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACC01D932F;
-	Thu, 21 Nov 2024 14:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1090A1D932F;
+	Thu, 21 Nov 2024 14:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ecn6E2ar"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="cW2UUk8U"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4878D1D0B8B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61441CD3F;
+	Thu, 21 Nov 2024 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198031; cv=none; b=sZQvhghN8x1nOPDzVaej2af5owkRM5+PJ9CTJqls1p5RJbpO8Rf/D9L1zaOBIDdLXdlAd5zP42k+eibYRo3rphabsqvFjOBbgRMeEBF1gzqP5HmM4EbPhUv2B/mHqneAHHAlVtapUHC70juwDGUP5/M+coAP0rzJ46UEnHa8Nro=
+	t=1732198147; cv=none; b=qknsUFj6u25qogOjbcIcDzoqioh1Pt3y1hRM0CQNH7cMCFnQXgokY5dEzAdn4vhQDDp71TLIcMPC0edI3kcaKynxFionMLzw8uHMq0iRGYY9l9Eh7i9pBU8tPaoiJYIRVhbAvBedSlbZ0vA6+UdLjitZRll00A/Gwy8UmPBjVJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198031; c=relaxed/simple;
-	bh=9uW5Dudj+swqaGbCjUsjteU63w49eLJj7HUQPfq++9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dNkJg1IIRNjX45yt38WVpyttQhl3Mk0hJOwnYumDiXaWgVDvtNDLIbwUFfFCmL/w/dsq34H/kjEsklUj7DdFKef1RGCEfrz2JiaXe/0WCNjag/V9AXzFDY2wh3JigWaTMhs3v67jlgmSxp1RVEWp5mTD9iwjnZ1+21CpwRUnGAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ecn6E2ar; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732198028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=C7tRH6nT8tzUEIZ5n33ADSmY1zfI1f6F5ul499NjvQI=;
-	b=Ecn6E2arKsjyCBjrEZKI2sw6RVeNMx+DMgn6+Xz6lOQsiy/1cLtx37Q+kgG/Gbm+Vs8XU7
-	nePNOIFlwxg9YDOyijVwDkGfP7fv8SD7TB6K0Oud5RK0rXTiU5S/Pgtuwp7hExwqscjtqa
-	uy8T1a883A/6ka1DFkCUraETq9MBIlU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-446-ckzlXM3LMouqwEn5-d0s5Q-1; Thu, 21 Nov 2024 09:07:06 -0500
-X-MC-Unique: ckzlXM3LMouqwEn5-d0s5Q-1
-X-Mimecast-MFC-AGG-ID: ckzlXM3LMouqwEn5-d0s5Q
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316e2dde9eso8355885e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:07:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732198025; x=1732802825;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C7tRH6nT8tzUEIZ5n33ADSmY1zfI1f6F5ul499NjvQI=;
-        b=J/G3qHY2/AQK8Nb4rAz/qlnTHwy4jYvT+vbVLJAGEUdStPRKRV3Zbuc+l2iY16dJxn
-         8ulR/n5A1Xh4RzTUs/Vj1SpVzHg+JONSBJ8vekAAYIXmRzjP3RTk6x0ISYcYn4mVZR7Z
-         HWTyEVV+d05FS+jzNiGYZ8JDlGxnm7bHoRHFcyJ/DCfkUpxuY2ql8n7ToAomdHAt9Qp0
-         OhUFM0T6fSNSQH+nRkS8K1LXjcgu3v0AYx+joWonAVoROfPB+5EJROpC3Jg7fNda1ma3
-         /OI0DgSc+66CJ476DFLTBKQghR+dlNb8YRQMY9lhFSMMgVGSatMcnFiPAxp7pmnH4Vxm
-         S/cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiy2wfH5pHdtFoehBvsjQN/dtM2I3tfNXpJLVyuUGdc34OAO9+0WwOKW3r9AMLL+KYh2uYvNFEuY6bvT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8dXKC4FWjWubQ4CMy1BztxQ7ifaFQtXHJuZlKCS8CUPgFUIl8
-	Aa1Hs4AekAIKmhyrHOgq9ts9+UuvkMFg7vy1XubxLj+t2mbYvIG2tAe2Cdf3ri1rjEcx1LWtVrV
-	Qfm3CwVQsyCEx3isvOBlFy95aI3DLUwXiystMNuuL5/mxa9G3OrZK8knOBTN0tA==
-X-Gm-Gg: ASbGncuVaI2aarKIQDObEvdBs0ZUAOjp2lHPkSubvuyHJ7/bqOCBNOvAkBF2qLOWZYD
-	iXcE3AihmRIwMTDjcVZ2lIbJKX1fY5OpiIpShW1wa+BWI8kY0G9HvPvQI9FNeTYRLquwUD3VAMr
-	1kiZcW9onejScnl1ktQsvQN1WxVoElAIBGJ6t8pRnosO/K4k8jZcKQz02HndK6lCS0goj4PX9t3
-	hkVZ1/RwnwMZWuxqOpTXzNsZ41ASMdx4HJRTZwpfJkviLqqf6nA
-X-Received: by 2002:a05:600c:a01:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-433489a02f2mr70066505e9.8.1732198025403;
-        Thu, 21 Nov 2024 06:07:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGErVlXnz0iTStRiT3lm2XztCeR4j5PanjVYk+18Bw5BOFsvkHxWCMSfhXHKVKZNlEzY/r/6w==
-X-Received: by 2002:a05:600c:a01:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-433489a02f2mr70065855e9.8.1732198024879;
-        Thu, 21 Nov 2024 06:07:04 -0800 (PST)
-Received: from [192.168.10.3] ([151.49.91.173])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432f642f15esm85373565e9.0.2024.11.21.06.07.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 06:07:04 -0800 (PST)
-Message-ID: <901c7d58-9ca2-491b-8884-c78c8fb75b37@redhat.com>
-Date: Thu, 21 Nov 2024 15:07:03 +0100
+	s=arc-20240116; t=1732198147; c=relaxed/simple;
+	bh=g1rwzESXivDkv7cCFGj4dT0bWSWh+LNVXIJ81A9nmcU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPtkK9zOVpQi4arqKx/Ed2A7gUkxkvRGnCSS2kbFFb+lI5vll/LNKvtonut+QTdiaMnpMf9zDL1mfjVtxNrMNhbhKbRlV0lqedwQdzRqCavVF/qbH2oDuxS2YkXDnzxUCguwLtpt+ezZmcL+zjttyvIqHGICyuBzP/ecwL8H/m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=cW2UUk8U; arc=none smtp.client-ip=212.227.126.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1732198091; x=1732802891; i=christian@heusel.eu;
+	bh=uBEcrrM2FNBINt3gRIVBxDSXWMqMDQ3vGFG2CCfV/DY=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=cW2UUk8U9HJn2imUhgUr0yBmTUxAE6gpjyEZg1c4pHFUpqhgBvVf/+eseIGUP8Ef
+	 CY3gHAi7RoqXe2gP/E9BsEW5yO4OleJvp+OnuxSKDuyGRUlsfonrgJz0QYHO58HxU
+	 mv+348ZoIoyxidCQYkGJjpp4SFu+goCnHlYZZKF6BfH//hNZuLZuRzHZVNzyLL6+U
+	 +F+bjVfc+JZZBzopqM4ikmvSToBHUp8BTCxZakcAda7KYCaDyDYxE/vRYacWZ6POC
+	 URjRqIvthVMX7Ms4k31c1PBILw9kza3PZlWzA2ceWCVq7H2RNUmFUY7zF9peQ4aGr
+	 KnurUZtEIJp+K5GgZQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue012
+ [212.227.15.167]) with ESMTPSA (Nemesis) id 1MNfgZ-1tOLFA0JP1-00Sjye; Thu, 21
+ Nov 2024 15:08:11 +0100
+Date: Thu, 21 Nov 2024 15:08:08 +0100
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 0/3] 6.12.1-rc1 review
+Message-ID: <cd96588e-ee42-48cd-bb68-b7e7fd7c6f15@heusel.eu>
+References: <20241120124100.444648273@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] First batch of KVM changes for Linux 6.13 merge window
-To: Nathan Chancellor <nathan@kernel.org>, Sasha Levin <sashal@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-References: <20241120135842.79625-1-pbonzini@redhat.com>
- <Zz8t95SNFqOjFEHe@sashalap> <20241121132608.GA4113699@thelio-3990X>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <20241121132608.GA4113699@thelio-3990X>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 11/21/24 14:26, Nathan Chancellor wrote:
-> On Thu, Nov 21, 2024 at 07:56:23AM -0500, Sasha Levin wrote:
->> Hi Paolo,
->>
->> On Wed, Nov 20, 2024 at 08:58:42AM -0500, Paolo Bonzini wrote:
->>>       riscv: perf: add guest vs host distinction
->>
->> When merging this PR into linus-next, I've started seeing build errors:
->>
->> Looks like this is due to 2c47e7a74f44 ("perf/core: Correct perf
->> sampling with guest VMs") which went in couple of days ago through
->> Ingo's perf tree and changed the number of parameters for
->> perf_misc_flags().
-
-Thanks Sasha. :(  Looks like Stephen does not build for risc-v.
-
-> There is a patch out to fix this but it seems like it needs to be
-> applied during this merge?
-> 
-> https://lore.kernel.org/20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
-
-Yes, this works.  To test it after the merge I did it.
-
-   curl https://lore.kernel.org/linux-riscv/20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com/raw | patch -p1
-   git add -p
-   git commit --amend
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lkaeemx33m2gftfe"
+Content-Disposition: inline
+In-Reply-To: <20241120124100.444648273@linuxfoundation.org>
+X-Provags-ID: V03:K1:yLQo9LvKV8jI/sXtRg454Qe92i8uZWbeEabu45DSTb5T5MvjSKz
+ 6VvRn5iTNvgWPu2gnVcEpWAIcJAOa0CI4g2jV/hhRsWsfIeMYnXdU1tahXO27kZEUFN6/lI
+ gj1+E8YsM1y8MgXjRwrR5Jj/rredmZtssergOIOYdUFIoAMKNupYQi3EvSAQz70GPWc/Auo
+ uOLLWo8tDqHjjetUZdnRQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:3IoPf8XdMdU=;XsN1V10/ovgE16+Dd48m4KwyykI
+ hrW9ZwzOGCVlCxDKltk/8tIlaMS8p5hBwXweiI6XIr9644IWovyBPy7vtOwJMWtFTo/CK1xV2
+ y4jhQ5cw5KTAOu5bkac6KdzGVM861lrIcnKbWzhMJ3XAo3ZNbK4k5xEEQ1VnuJyMQa/9WWnUS
+ AXMAKnToKxe6vZ/PJf4tY7eLLycOGEVJ/TNxPj1tnWmHZBZgy9VuO7D2wcmSq1fwazOD8Hepw
+ UQ9WAr8keNCqttJNlVpoLXSJOcWe/TbdljBeMV/pj/Uun+4jLB2BMknjkNHmymUhV8PbaT6j1
+ s24xa7oudcs85JT/h9zaVIqj5wxXt64FCXmh7RQ1GSZtk8d4Gqf150MsHBaHdTQV7mMPIjovG
+ aVtnBdSkD1csmT4EaWkIHQ2FEFpsKzCw45kTJyhUNNvyJYiiCA3O+uH2pdniRYlmu5j1F5Ws1
+ 930j8Zz4/iMy7IVSVCyiaNANtbI1Dw65Ff3asMPbG8KgjZazsqxxcy9DKBTXamL0IE0bWBc0W
+ cmnqlNMWqSsfL8Dk/ADvGzWb/u9cVA3uXaENHFrGP+kRPMsZCC/fn+UiG0N743Kj55v1XnypL
+ PUlSprk+wxpYYcfCYYp0WuA2pPXHMQRF1628M6Nt8M3tXiV5z/EfEDdj6TZh6sMnpuHY53MB5
+ z0J0dSTtkxI47bOm1FVTGvWq12LcL49U++HmsXcXjYpz1ijJaqqoMNBBBPEI3aw4eyfTQazJv
+ pxLwGJMhUF8Q99a4hEaULzppOjAJ9HL7HFpGAHoM11TxBJzxl10QnqhIjUv+UHt8l7Ve+LvgV
+ n2Hb8Rj9g4wjGUFrYWwlIIsy9IZXjNCfB3CkV/55pCMowjTk4D4uoPKmpr3yNe74Uu
 
 
-This should have been handled with a topic branch, and there is another
-nontrivial conflict with Catalin's tree that should have been handled
-with a topic branch.  (I knew about that one, but his topic branch also
-had a conflict with something else; so I un-pulled it and then forgot
-about it).
+--lkaeemx33m2gftfe
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.12 0/3] 6.12.1-rc1 review
+MIME-Version: 1.0
 
+On 24/11/20 01:55PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.1 release.
+> There are 3 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Fri, 22 Nov 2024 12:40:53 +0000.
+> Anything received after that time might be too late.
+>=20
 
-Linus,
+Tested-by: Christian Heusel <christian@heusel.eu>
 
-if you prefer to get a reviewed pull request with the topic branches
-included, then the changes since commit 2c47e7a74f445426d156278e339b7abb259e50de:
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
+Steam Deck (LCD variant)=20
 
-   perf/core: Correct perf sampling with guest VMs (2024-11-14 10:40:01 +0100)
+--lkaeemx33m2gftfe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-are available in the Git repository at:
+-----BEGIN PGP SIGNATURE-----
 
-   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus-with-topic-branches-6.13
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmc/PsgACgkQwEfU8yi1
+JYULOQ/+KI8jCz3zHVYYj6ee5T9ZA6+PsHLu/iWqtlLg6PX9jt+dbfPyicLmoGT/
+lBtve513WsnGwbecXpCjBqjXfWSfH2EqLfsKaL86RWcJmhPzkHw1CG/PEyI046px
+HFrEMFgn7o1+GWie+vyWlFvlv/M1ODCxAgww8Wq765AqALdJcfF+HyZueqQ6777e
+MjztluqEoeczT8yVQkfv16xWOaQUl7UzJZhMmozx0KXGuONRo2cpvPwOKcWLd82y
+7CdHDpZ/nVfV5mNwzzHDlK80Bp5F7J13WFxd8p3RB9bT0cRM6t6ju+1S9Rh8X74R
+ZloktyMnYivcRZhDsmZiUNm5OuL+MIx/AskP08ZolapPiqhAfGEKz4Gaw6uT/s/n
+rQOF0tOlv/ZodrXydFRJeEoi8jqy6B0I2PUO7NDeYrBWBT42PKo2lbtYgw3Wz7XT
+m2j7hkRJIli4Ay0/V+q6cTXIydGUxngroHfOf2SLkCWlCXOzPNl/z2oYn5UYT3Zq
+DZnAQz7f4WNAIk1D8JUU+UVRMnEDPDE2RRQoscH5X+ePoiutKdj7Ajx9PvljQ1lL
+Kcj91vuggu1jpuO9HpasoiDN79Q427T0pd+3qFTfwW8ofm4BUVvOVvtzNU08sUDB
+b3DuY4fZdBJqjNDYqEHeEWvGQwhXpcp0XwdmVKROxc3qNho1llk=
+=sBNF
+-----END PGP SIGNATURE-----
 
-for you to fetch changes up to bde387a8d81735a93c115ee4f1bd99718e5d30b0:
-
-   Merge branch 'for-next/mte' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux into HEAD (2024-11-21 08:53:23 -0500)
-
-
-Alternatively,
-
-the best way to get the RISC-V fix is the curl invocation above, and after
-my signature is the conflict resolution for Catalin's tree.
-
-
-Thanks,
-
-Paolo
-
-
-diff --cc arch/arm64/kvm/guest.c
-index 4cd7ffa76794,e738a353b20e..12dad841f2a5
---- a/arch/arm64/kvm/guest.c
-+++ b/arch/arm64/kvm/guest.c
-@@@ -1051,11 -1051,13 +1051,12 @@@ int kvm_vm_ioctl_mte_copy_tags(struct k
-   	}
-   
-   	while (length > 0) {
-  -		kvm_pfn_t pfn = gfn_to_pfn_prot(kvm, gfn, write, NULL);
-  +		struct page *page = __gfn_to_page(kvm, gfn, write);
-   		void *maddr;
-   		unsigned long num_tags;
-  -		struct page *page;
-+ 		struct folio *folio;
-   
-  -		if (is_error_noslot_pfn(pfn)) {
-  +		if (!page) {
-   			ret = -EFAULT;
-   			goto out;
-   		}
-@@@ -1090,8 -1099,12 +1097,12 @@@
-   			/* uaccess failed, don't leave stale tags */
-   			if (num_tags != MTE_GRANULES_PER_PAGE)
-   				mte_clear_page_tags(maddr);
-- 			set_page_mte_tagged(page);
-+ 			if (folio_test_hugetlb(folio))
-+ 				folio_set_hugetlb_mte_tagged(folio);
-+ 			else
-+ 				set_page_mte_tagged(page);
-+
-  -			kvm_release_pfn_dirty(pfn);
-  +			kvm_release_page_dirty(page);
-   		}
-   
-   		if (num_tags != MTE_GRANULES_PER_PAGE) {
-
+--lkaeemx33m2gftfe--
 
