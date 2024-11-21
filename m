@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-416731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEB19D4957
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0146D9D495B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC60B21460
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:56:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1AF71F21448
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE14A1CD20B;
-	Thu, 21 Nov 2024 08:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6951C9DC9;
+	Thu, 21 Nov 2024 08:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BtkEgbv1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b="oE6nIN0p";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iZfWm76l"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E5C1CB30B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A32230983;
+	Thu, 21 Nov 2024 08:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732179356; cv=none; b=IigBBuNhzfC/NVmlRSERwUyBloGEHFDdW9alq+GAmdhzJzGI1REsv9Gge2LBS/+WZz8p5RELEslIGq0XZi64lic/VTOiwxHwSwEh+84juHQLkoxT5ASKqFt0IB6KMlltdCfJS10g+Fv98OX72nJXTqnGo9hUgP+Qx/0TKGkEPrE=
+	t=1732179483; cv=none; b=pn/DKcgm/90F5+Yo6VM3Iua19KrYbQzs6t307UaE9UbiL4NjUISXG+4a+NkALcw3A3ApCzY7/jFBwc7uwne9UYXR2Q2ZlDIQH3OW44CfluWxeetcjuq0wur9FptVHY0tmyvfcbYCy+0WRNFeoQHwl3C+Bz1dQIC8ZAZJ5VkHPbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732179356; c=relaxed/simple;
-	bh=K7AkL0tto6CDdGlimdcgf6Xn1JT1cRBDjbJ0bR7LQ/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tcmr6V2MgJhVAvaY3JMmhyhvWLUCz1FbWJ7oIDRvxa3Fm1eZKZt3hqpqBFWEfBp4soAj/RpmwY7S8f6o6zaC0M7dBW7okkPQqLX2SHC1Y2bfv4Z94Nbn2RzI3vnd12RvmZGpQz6uIGWULwzAxgzm2EMq54Lk2uYotYMeRz/4nO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BtkEgbv1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732179353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JlA/Dao4HWIor+ViY9VXGE+zRi2NDg4RCE9H6BNgMBg=;
-	b=BtkEgbv1pkpgWk9l3nU5Rqnnkzu5Tww5JZjq/6v+qANqrZozbbZLHGfiB1AJs6G9b6W8MJ
-	c8z1FzVGSEBEN8tFgQoKzxlU6lQWpk9Epfv4FwHgd3SMFmQA5JIggAnyyJ5dulg7wRK4hu
-	6cKrwUQw6/h/HaZLIHolcK7JcSJ7wuo=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-46-TaSOZGnIOX6x135G7cF5Ig-1; Thu, 21 Nov 2024 03:55:51 -0500
-X-MC-Unique: TaSOZGnIOX6x135G7cF5Ig-1
-X-Mimecast-MFC-AGG-ID: TaSOZGnIOX6x135G7cF5Ig
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3823326e95aso355123f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:55:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732179350; x=1732784150;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JlA/Dao4HWIor+ViY9VXGE+zRi2NDg4RCE9H6BNgMBg=;
-        b=RErP9NaMvlso0WmN9dq4ShkMfoNEVF1fAFhikjIHd76p0yd+gcBppu+/4g+T8+aC9Y
-         0ROniMCcSB4P4Qe2F/IfJtAA2LJn4QOmlG1eZif6qyljGgJd+Yc08ZAFz1dR9Y9t9D15
-         174hfbCz4smox0b8HY63v53q2EjDK3a7UGudseaayIJSfRala/PsP19yVOWYl2HUt3fM
-         O6MGavdQujxu88N1Wtf7IrY5IQYWTcKw2QZfLZwNyfZb3LuSIRLm58ehS/pLUaE+7ujL
-         QlFW5VaJ6PtLMILVQ+5f9RkpnEvlqdQ7UPx/8xu6LPoL6GEuneMyFVbju76Nyw5ysLny
-         UubQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxMJN4x6HPKCYe1RsVVf+8YEDIvqU/Wk+c70RpSZqydL1zy7197uCp/HO7flysNwav1QpdPTzkbutJTeY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv2HJ8pEvTrIZbrPW/FIlNG5V5W4JIAOXs60LdMgSOjvj38gRv
-	+SbA5P/PJPmQ5/w36OzmWrHdI+TVouefGDAIWhJgB00DjUU3SIPr/hfvIVArV9/4uCpF1TAJ8EB
-	U/uihEg46085NQvXCTmelns1uME+OdUd/6qlKHYqa50W8yJRC8G9wZ/9wGoljnQ==
-X-Received: by 2002:a05:6000:18a2:b0:382:3cc2:537c with SMTP id ffacd0b85a97d-38254afacf3mr5058451f8f.26.1732179350526;
-        Thu, 21 Nov 2024 00:55:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGS5uZ0+VI315ZPetn9/2pNfe8s+g3uPtxT0kC/eI2N51ikDPk7/rCHoqVcvf29z/wcQT0Z1A==
-X-Received: by 2002:a05:6000:18a2:b0:382:3cc2:537c with SMTP id ffacd0b85a97d-38254afacf3mr5058426f8f.26.1732179350210;
-        Thu, 21 Nov 2024 00:55:50 -0800 (PST)
-Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933d1asm4348786f8f.71.2024.11.21.00.55.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 00:55:49 -0800 (PST)
-Message-ID: <a292cdfe-e319-4bbd-bcc0-a74c16db9053@redhat.com>
-Date: Thu, 21 Nov 2024 09:55:47 +0100
+	s=arc-20240116; t=1732179483; c=relaxed/simple;
+	bh=dNpESR7SOha5Fc3Svey2AgzTpApPcqbiWLit69d56Uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A9LLakwLw+jq9ysNb3z0VY9/SxcXoAnC2L9N6WRBjFiUMrr5zNU+KLbJWfnox3WYvF5hzXExO7nyuU2G6TXdQngjQ+OQ6R15r+VGJ6CW3cYteh/BLQb4z/MTv+2o6kERo8ZsCJ1I5Mvo2csaoYipgoCH5edfgzK40XafLoHUxdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev; spf=pass smtp.mailfrom=pbarker.dev; dkim=pass (2048-bit key) header.d=pbarker.dev header.i=@pbarker.dev header.b=oE6nIN0p; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iZfWm76l; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pbarker.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pbarker.dev
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E8C5D11400D4;
+	Thu, 21 Nov 2024 03:57:57 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Thu, 21 Nov 2024 03:57:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pbarker.dev; h=
+	cc:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1732179477; x=1732265877; bh=Fl8IfjPeTMcld8rU8oF/6
+	PMpOsrSYIJKaF2EMCqAW10=; b=oE6nIN0pwg8+2rN+mXN4LT4VoJ1kdbvcitsKr
+	r1Z9T11RHSnB7qWEGj1lSItKHLzYpoeEhO5iTRyw/EIbxN8att/2Qy8p2/mwI10V
+	hZ65P7wuxT/65f8n4tf7tpiCm0PGcYZPqLJSsNQeffJVvqPpfnt4qzWTNDPMfyo0
+	aMTYIOlu97W8vefejr+4QJR+AdEcr+egeJ6MwziXMvwRGn9vh8F7dVkTIM4v4Wp9
+	rPpsASE6xZdfBnEupctALIrg/EnoGLYB2oT+V4UWZBRRDtoQe52yECakS2EBawmV
+	f14qQ1Vc6yDgwKAdDrVfpw8YIOOD5XmRP92I0AQNTU6mYYwKQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732179477; x=1732265877; bh=Fl8IfjPeTMcld8rU8oF/6PMpOsrSYIJKaF2
+	EMCqAW10=; b=iZfWm76ljDyB9NJJm+VVyXwQP0LdNTRBnbCr2F5ReaxQmq2YaCU
+	QA0VVigsYu7ss1KB5qv/OscXj1K9uhG/HUBgHxVp4/2/BdEz5WxgBi28vDHUXKej
+	0A3UyDC/60C7iaUnJMVxGDikoR9VMZD8OHyTcJmXHJzNcvQYt1tpu0pcDxzDUZ/q
+	mc895k8D2Au0KKZKMx+PmXxEatR42aC9WYr2n8RVp/4+eoHuzbuX1E6HMQCzzd79
+	Lglda9GWcf4dOsvPR9NWkhTuzGaDUFS0HpFJQ2yllkgdccNIECv1sErd0Gd4vuVJ
+	RDV6b0ro+xbMXfTVzJehz6wnG6y9HuTIc/A==
+X-ME-Sender: <xms:FfY-Z6ur7r4ff3WceLR22U6VdObd_BN4WRYuny9HZ3E7l4JQYb79YA>
+    <xme:FfY-Z_fVdI3Taq6Qftp9M1ciEltBTXjRtreG3ZTAaMDZHAIDHHLco-IID-C8U9h9C
+    pCcf0Ssu3vsr8ycNos>
+X-ME-Received: <xmr:FfY-Z1xcD5wXJwvFmBdGIcFRCPUtL8seZNjkxrcwvNS9U1-PHOxGWqqU3Wqi8Af7UINWBPDgBQVUR-m6yJCnVC6GXI-L9jqYVg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgdduvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomheprfgruhhluceurghrkhgvrhcuoehprghulhesphgsrghrkhgvrhdruggvvheqne
+    cuggftrfgrthhtvghrnheptedvudefvdeihfeivdeufeeugfevheejgffhfeeileelveeg
+    vefgtdefiedtieeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepphgruhhlsehpsggrrhhkvghrrdguvghvpdhnsggprhgtphhtthhopeehpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehtohhnhiesrghtohhmihguvgdrtghomh
+    dprhgtphhtthhopehprghulhesphgsrghrkhgvrhdruggvvhdprhgtphhtthhopehlihhn
+    uhigqdhomhgrphesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrghr
+    tgdrmhhurhhphhihsehsrghntghlohhuugdrtghomh
+X-ME-Proxy: <xmx:FfY-Z1NnOHGvC72ujkE2SMcSQm_x6PLK9BOEYMCkmzEynwvxT1pjdA>
+    <xmx:FfY-Z69UoFg-j3jZL4gRj_zZ6HzCoI3EQIcNlW8HKF7gNYF_Nlqzog>
+    <xmx:FfY-Z9Xkkxzbo0vksN_aPd0Z2ohJMPrj-GKoYxbIrLc9YZT-44BChg>
+    <xmx:FfY-ZzdeiScJ98db7qC9eeKvQKXubbCkFO4SKiVsBeWYkR7wjoWSHA>
+    <xmx:FfY-ZxmofjsZ6i_GjPD0onAWyEHFDGZZbNpEBl8xBNpufsbQCGIlKba6>
+Feedback-ID: i51494658:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Nov 2024 03:57:56 -0500 (EST)
+From: Paul Barker <paul@pbarker.dev>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Paul Barker <paul@pbarker.dev>,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marc Murphy <marc.murphy@sancloud.com>
+Subject: [PATCH] MAINTAINERS: Update email & status for SanCloud BBE dts files
+Date: Thu, 21 Nov 2024 08:57:42 +0000
+Message-Id: <20241121085742.3037946-1-paul@pbarker.dev>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] PCI/MSI: Add MSIX option to write to ENTRY_DATA
- before any reads
-To: dullfire@yahoo.com, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Jacob Keller
- <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Mostafa Saleh <smostafa@google.com>,
- Marc Zyngier <maz@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20241117234843.19236-1-dullfire@yahoo.com>
- <20241117234843.19236-2-dullfire@yahoo.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241117234843.19236-2-dullfire@yahoo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+I am no longer employed by SanCloud, but I will continue to look after
+the BBE device tree files using my own email address.
 
+Signed-off-by: Paul Barker <paul@pbarker.dev>
+Acked-by: Marc Murphy <marc.murphy@sancloud.com>
+---
+ MAINTAINERS | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On 11/18/24 00:48, dullfire@yahoo.com wrote:
-> From: Jonathan Currier <dullfire@yahoo.com>
-> 
-> Commit 7d5ec3d36123 ("PCI/MSI: Mask all unused MSI-X entries")
-> introduces a readl() from ENTRY_VECTOR_CTRL before the writel() to
-> ENTRY_DATA. This is correct, however some hardware, like the Sun Neptune
-> chips, the niu module, will cause an error and/or fatal trap if any MSIX
-> table entry is read before the corresponding ENTRY_DATA field is written
-> to. This patch adds an optional early writel() in msix_prepare_msi_desc().
-
-Why the issue can't be addressed into the relevant device driver? It
-looks like an H/W bug, a driver specific fix looks IMHO more fitting.
-
-A cross subsystem series, like this one, gives some extra complication
-to maintainers.
-
-Thanks,
-
-Paolo
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a27407950242..0b20b60a212c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20451,9 +20451,9 @@ F:	drivers/phy/samsung/phy-samsung-usb2.c
+ F:	drivers/phy/samsung/phy-samsung-usb2.h
+ 
+ SANCLOUD BEAGLEBONE ENHANCED DEVICE TREE
+-M:	Paul Barker <paul.barker@sancloud.com>
++M:	Paul Barker <paul@pbarker.dev>
+ R:	Marc Murphy <marc.murphy@sancloud.com>
+-S:	Supported
++S:	Maintained
+ F:	arch/arm/boot/dts/ti/omap/am335x-sancloud*
+ 
+ SC1200 WDT DRIVER
+-- 
+2.39.5
 
 
