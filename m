@@ -1,152 +1,231 @@
-Return-Path: <linux-kernel+bounces-417195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A349D5070
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:05:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14BFB9D505D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:04:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B80AEB257B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:02:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D171F2416C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D61A19EEC4;
-	Thu, 21 Nov 2024 16:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="TWPDTvVP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JsoRE5mx"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE6B158A33;
-	Thu, 21 Nov 2024 16:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DED19F101;
+	Thu, 21 Nov 2024 16:04:04 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D392F55C29;
+	Thu, 21 Nov 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204943; cv=none; b=ar9CknIm75CXPGKB5nLmdtryM0gsHZwCv9RODjgYvuoZ2TI816c1RtFzs5wF60NNCo/azM4hBIfXjzKQWeRSfq5l+wDlRiLE5QzpmHwakEVwvL4LQd4PAnCdTgQx/j9mnEmZj2kET9InO9keTCGkGsAfELZ8VA496+Ybk/EDNnA=
+	t=1732205043; cv=none; b=KYcZNrwTfkPnVkWKUoY9o0fJLSfujUYqapEQOkaBp5n2kV7kzZLtBUhER1efkwd6zsgRP/SZwv42uizJfkU32am/rxgXdHBalLhlL+ulsJ1/4sLhsgND4L0OYbsi9Iraos87vobM+gSqnvMBIWPtC3pdhCk7oyZfeNwyxVLD2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204943; c=relaxed/simple;
-	bh=dBHlf6+aZ1hAOrvQPwSccNRc472d+mPq6Pqy8pnvfqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTez54ssCs/Dd/tEl0s04ydXTsWl+D6l74I5yeKaa6eX2qC+vFs5zydd89O7DC8cQyxxzc0VU9yAZbOKofdK+hHhm62hkFL/P97SXrGzkNHaJu3c7FUP0+qq4Oj8m6SRk0pHr9AECkAuoT6tmmuI7bZeIZr9zPuEs/j+YIl0J3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=TWPDTvVP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JsoRE5mx; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id EEB67200637;
-	Thu, 21 Nov 2024 11:02:18 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Thu, 21 Nov 2024 11:02:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1732204938; x=
-	1732208538; bh=pO3PALF2awA+eBkc4VARw2inhjxAJiO5t86BEffGEBw=; b=T
-	WPDTvVPJ6FmJbTIVJ9cjEwSdbk+CQXtbYOIod/ngJcXW4TWzv8qJlZTYYFak6mGn
-	KGTsig9Hs8eAtEMHVLfaTIcH3qdySAKtLCXx1ukd+ikhGODWIlgkebyY5vQnkp2b
-	qPdIRjyy4rtk5lGMgQLTnOcxcIC8MietnDM9xfW6Q5iFjgzuPN4lw/GpeCS5RvFl
-	/zfIgRwIos7ZmN3/WD13n8g3G24l0bk3rxfvk5Efkd85iWkyy1Jrku24hx6A+afQ
-	NA4nMTRAPSneMcclwaU6ZCcIin80Bq8bWFIY3e1S92rizQBHcaXSyFbdBspvdEIE
-	IWXze/N0lWC4d+Mp7nq1w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732204938; x=1732208538; bh=pO3PALF2awA+eBkc4VARw2inhjxAJiO5t86
-	BEffGEBw=; b=JsoRE5mxhUvnoibuHggM8f9j0HS3wCPZT3oK+JNDED+a5Io456B
-	2P41QTC3Xz3PJQovzdxpoc6bYbT22dWh1BKU9fSIinuMJ+Z1eyTaBmBcyOxSdVvt
-	PWM2JrzWS3mqaPBERNu1j3lORoSLcCI7MIHzXo0DStbrChajPHuhFkG7rh41zIf5
-	BhAfmtA6a7/+zETJB48Vo4KkcDWKyXd2mrXbaCEBVtWQ62AYVuarA7hFE/NKCD4q
-	an68PAZqGQ6BzmyYWfzdIOWlyp+73kPJIqtYP2cEmSvM1MKW6rq0iICIB0XYsgQp
-	KAi0izO2lzizHWr7hauK10svFfeBmZqy6/A==
-X-ME-Sender: <xms:ilk_Zzo0kvxi0-8n6fCkCA24K5CkyUYcMk7atmcZrkPozFaxQ1PxuQ>
-    <xme:ilk_Z9p0mp4zrGaZJT-kz2gf6XsTOJET8TTJ-n63m-De-WQuC-E5SkE-LPh5_WrDJ
-    1h5a4joHZP4Xn7d84U>
-X-ME-Received: <xmr:ilk_ZwP1FwnkqlDMWvWy2roaQHiqTRmSZ2ZxwVOHe-hqE8ALy9_E5eQqj4XS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdekvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
-    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
-    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
-    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
-    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
-    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhu
-    nhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhr
-    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ilk_Z25w-yK-e58Q3JfDsVJIFxeV6ELe7jvji-q9k3hnHgEwnTMLUQ>
-    <xmx:ilk_Zy53vRHhMrOHg3FZEcQfMJxA_EVBqx2w2OqKgL01p7XiBkBfHA>
-    <xmx:ilk_Z-iuDQpl-psr7P3DlL8Eqj9AmNeM8NUqs-UuRNwIxN5dpVe6Kg>
-    <xmx:ilk_Z056dXOzePiJl8WqbSw9XDqPJrSJ4mRxQP5aunuXly-DHtXOgg>
-    <xmx:ilk_Z0skCtz4O2b9xjq7tt7lay1y8a72X5c38yerGPvt4f4IhyScrpsS>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Nov 2024 11:02:17 -0500 (EST)
-Date: Thu, 21 Nov 2024 17:02:15 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
- add/get/dump/delete via netlink
-Message-ID: <Zz9Zh-5hZrbal5Ww@hog>
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+	s=arc-20240116; t=1732205043; c=relaxed/simple;
+	bh=hysRP7nV2W65xic8G5nFrdP9jHXY2FnLQvuPVR4M7ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQnfg+CzDmRC846rbHJaOLBbQjhoW0FL6h0biURgQxJuwlj8zc37l/713Z+SrcsaeJkqYYDsTSKRe/Yq8juJ+R/u3GT8u5QaFIbx5MkB/yOAJ/P5hChSr8m7pmbuFpZpDllXRwwMyYM6XHcimxxiZ/dyWv0+h7nNwioQJwc6VhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4ALG31wD010258;
+	Thu, 21 Nov 2024 10:03:01 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4ALG2xqo010256;
+	Thu, 21 Nov 2024 10:02:59 -0600
+Date: Thu, 21 Nov 2024 10:02:59 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Song Liu <songliubraving@meta.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "eddyz87@gmail.com" <eddyz87@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "martin.lau@linux.dev" <martin.lau@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "mattbobrowski@google.com" <mattbobrowski@google.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "repnop@google.com" <repnop@google.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+Message-ID: <20241121160259.GA9933@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com> <20241120165425.GA1723@wind.enjellic.com> <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
+In-Reply-To: <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Nov 2024 10:03:01 -0600 (CST)
 
-[I'm still thinking about the locking problems for ovpn_peer_float,
-but just noticed this while staring at the rehash code]
+On Thu, Nov 21, 2024 at 08:28:05AM +0000, Song Liu wrote:
 
-2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
-> +void ovpn_peer_hash_vpn_ip(struct ovpn_peer *peer)
-> +	__must_hold(&peer->ovpn->peers->lock)
-> +{
-> +	struct hlist_nulls_head *nhead;
-> +
-> +	if (peer->vpn_addrs.ipv4.s_addr != htonl(INADDR_ANY)) {
-> +		/* remove potential old hashing */
-> +		hlist_nulls_del_init_rcu(&peer->hash_entry_transp_addr);
+> Hi Dr. Greg,
+> 
+> Thanks for your input!
 
-s/hash_entry_transp_addr/hash_entry_addr4/ ?
+Good morning, I hope everyone's day is going well.
 
+> > On Nov 20, 2024, at 8:54???AM, Dr. Greg <greg@enjellic.com> wrote:
+> > 
+> > On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
+> 
+> [...]
+> 
+> > 
+> >>> 2.) Implement key/value mapping for inode specific storage.
+> >>> 
+> >>> The key would be a sub-system specific numeric value that returns a
+> >>> pointer the sub-system uses to manage its inode specific memory for a
+> >>> particular inode.
+> >>> 
+> >>> A participating sub-system in turn uses its identifier to register an
+> >>> inode specific pointer for its sub-system.
+> >>> 
+> >>> This strategy loses O(1) lookup complexity but reduces total memory
+> >>> consumption and only imposes memory costs for inodes when a sub-system
+> >>> desires to use inode specific storage.
+> > 
+> >> SELinux and Smack use an inode blob for every inode. The performance
+> >> regression boggles the mind. Not to mention the additional
+> >> complexity of managing the memory.
+> > 
+> > I guess we would have to measure the performance impacts to understand
+> > their level of mind boggliness.
+> > 
+> > My first thought is that we hear a huge amount of fanfare about BPF
+> > being a game changer for tracing and network monitoring.  Given
+> > current networking speeds, if its ability to manage storage needed for
+> > it purposes are truely abysmal the industry wouldn't be finding the
+> > technology useful.
+> > 
+> > Beyond that.
+> > 
+> > As I noted above, the LSM could be an independent subscriber.  The
+> > pointer to register would come from the the kmem_cache allocator as it
+> > does now, so that cost is idempotent with the current implementation.
+> > The pointer registration would also be a single instance cost.
+> > 
+> > So the primary cost differential over the common arena model will be
+> > the complexity costs associated with lookups in a red/black tree, if
+> > we used the old IMA integrity cache as an example implementation.
+> > 
+> > As I noted above, these per inode local storage structures are complex
+> > in of themselves, including lists and locks.  If touching an inode
+> > involves locking and walking lists and the like it would seem that
+> > those performance impacts would quickly swamp an r/b lookup cost.
 
-> +		nhead = ovpn_get_hash_head(peer->ovpn->peers->by_vpn_addr,
-> +					   &peer->vpn_addrs.ipv4,
-> +					   sizeof(peer->vpn_addrs.ipv4));
-> +		hlist_nulls_add_head_rcu(&peer->hash_entry_addr4, nhead);
-> +	}
-> +
-> +	if (!ipv6_addr_any(&peer->vpn_addrs.ipv6)) {
-> +		/* remove potential old hashing */
-> +		hlist_nulls_del_init_rcu(&peer->hash_entry_transp_addr);
+> bpf local storage is designed to be an arena like solution that
+> works for multiple bpf maps (and we don't know how many of maps we
+> need ahead of time). Therefore, we may end up doing what you
+> suggested earlier: every LSM should use bpf inode storage. ;) I am
+> only 90% kidding.
 
-s/hash_entry_transp_addr/hash_entry_addr6/ ?
+I will let you thrash that out with the LSM folks, we have enough on
+our hands just with TSEM.... :-)
 
+I think the most important issue in all of this is to get solid
+performance measurements and let those speak to how we move forward.
 
-> +		nhead = ovpn_get_hash_head(peer->ovpn->peers->by_vpn_addr,
-> +					   &peer->vpn_addrs.ipv6,
-> +					   sizeof(peer->vpn_addrs.ipv6));
-> +		hlist_nulls_add_head_rcu(&peer->hash_entry_addr6, nhead);
-> +	}
-> +}
+As LSM authors ourself, we don't see an off-putting reason to not have
+a common arena storage architecture that builds on what the LSM is
+doing.  If sub-systems with sparse usage would agree that they need to
+restrict themselves to a single pointer slot in the arena, it would
+seem that memory consumption, in this day and age, would be tolerable.
 
--- 
-Sabrina
+See below for another idea.
+
+> >>> Approach 2 requires the introduction of generic infrastructure that
+> >>> allows an inode's key/value mappings to be located, presumably based
+> >>> on the inode's pointer value.  We could probably just resurrect the
+> >>> old IMA iint code for this purpose.
+> >>> 
+> >>> In the end it comes down to a rather standard trade-off in this
+> >>> business, memory vs. execution cost.
+> >>> 
+> >>> We would posit that option 2 is the only viable scheme if the design
+> >>> metric is overall good for the Linux kernel eco-system.
+> > 
+> >> No. Really, no. You need look no further than secmarks to understand
+> >> how a key based blob allocation scheme leads to tears. Keys are fine
+> >> in the case where use of data is sparse. They have no place when data
+> >> use is the norm.
+> > 
+> > Then it would seem that we need to get everyone to agree that we can
+> > get by with using two pointers in struct inode.  One for uses best
+> > served by common arena allocation and one for a key/pointer mapping,
+> > and then convert the sub-systems accordingly.
+> > 
+> > Or alternately, getting everyone to agree that allocating a mininum of
+> > eight additional bytes for every subscriber to private inode data
+> > isn't the end of the world, even if use of the resource is sparse.
+
+> Christian suggested we can use an inode_addon structure, which is 
+> similar to this idea. It won't work well in all contexts, though. 
+> So it is not as good as other bpf local storage (task, sock,
+> cgroup). 
+
+Here is another thought in all of this.
+
+I've mentioned the old IMA integrity inode cache a couple of times in
+this thread.  The most peacable path forward may be to look at
+generalizing that architecture so that a sub-system that wanted inode
+local storage could request that an inode local storage cache manager
+be implemented for it.
+
+That infrastructure was based on a red/black tree that used the inode
+pointer as a key to locate a pointer to a structure that contained
+local information for the inode.  That takes away the need to embed
+something in the inode structure proper.
+
+Since insertion and lookup times have complexity functions that scale
+with tree height it would seem to be a good fit for sparse utilization
+scenarios.
+
+An extra optimization that may be possible would be to maintain an
+indicator flag tied the filesystem superblock that would provide a
+simple binary answer as to whether any local inode cache managers have
+been registered for inodes on a filesystem.  That would allow the
+lookup to be completely skipped with a simple conditional test.
+
+If the infrastructure was generalized to request and release cache
+managers it would be suitable for systems, implemented as modules,
+that have a need for local inode storage.
+
+It also offers the ability for implementation independence, which is
+always a good thing in the Linux community.
+
+> Thanks,
+> Song
+
+Have a good day.
+
+> > Of course, experience would suggest, that getting everyone in this
+> > community to agree on something is roughly akin to throwing a hand
+> > grenade into a chicken coop with an expectation that all of the
+> > chickens will fly out in a uniform flock formation.
+> > 
+> > As always,
+> > Dr. Greg
+> > 
+> > The Quixote Project - Flailing at the Travails of Cybersecurity
+> >              https://github.com/Quixote-Project
+> 
+> 
 
