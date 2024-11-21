@@ -1,76 +1,110 @@
-Return-Path: <linux-kernel+bounces-416572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92BE9D4700
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:57:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25BDD9D4706
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989A71F21A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:57:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94A0B245D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEFF1547E0;
-	Thu, 21 Nov 2024 04:57:21 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA8A1A727D;
+	Thu, 21 Nov 2024 04:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/F/h8kp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0E1849C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4113142905;
+	Thu, 21 Nov 2024 04:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732165041; cv=none; b=pfVhipxLpvE0JgimvxcH0657Kysh9RDKKSgIt/aCNL/Gbtj171izZRpbWfM8nVCphtKB+g1YrP1qzbjlczTEFNhYbYBkSlcFbN8b6il1KCUItXSrVipProiQ0w/ZzBxyaI4HiWKkVhEuFHPBmnHzyZhlr0JDeMfvOhIEY47ln8Q=
+	t=1732165089; cv=none; b=SfwP0BLx29a3cpOwSFpYKcSIuywEQflxIWQCTeGh/FCk+NEiHMbDuit65yH7K+pf1kbgFefu6Ul+rP1lfxJpBoYJmUB+UznO+B/cSfbdYNGE36o2DDaO3nPnQ4yFtpOp8e0w8f+oFatB/eSkc+DRG6svE8rkYV3FQTlQ4tLlpIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732165041; c=relaxed/simple;
-	bh=6Z2AU7YhC5tmjXwQ88AWETqN0BUdsHTSCxuB7Ig9lkU=;
+	s=arc-20240116; t=1732165089; c=relaxed/simple;
+	bh=c6rhhlX6C6sMwTixfQKzXMumtrvXwwsznHRKBDKr7Ko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JcxPp5DJAAt30ty8BBTxgDgFwZQleFQh0e631WBJguNKteM9ZmWimaxAY40mYhKf+PWVKZ1QMtlRqmTSdQivgha23N7nGIaTzKcoHyzRitD6mjc3JlVZov0+pjPl3RFa4Osp5drglyhzXOQzl7uVqgjLp+ctBoIC6lWl1CoFzCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id CC6E968BEB; Thu, 21 Nov 2024 05:57:14 +0100 (CET)
-Date: Thu, 21 Nov 2024 05:57:14 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Paul Webb <paul.x.webb@oracle.com>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [bug-report] 5-9% FIO randomwrite ext4 perf regression on
- 6.12.y kernel
-Message-ID: <20241121045714.GA20680@lst.de>
-References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com> <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com> <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OrmBm8Ikbfj24/121+Y2tac/7i0H48w9H4CLo21o2NDZG7i+duA3zXZap2M8f8Bng7MRUyWmVr+GoxBsL9jnQA3FYncqCMWF37Q9RTemZa8wibHtVQDVsZkXTgaQVOCmJ0aDKysVe6Wvkt7bw70oSOrVoIRsDLt7pqIzqDHpUlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/F/h8kp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A58C4CECD;
+	Thu, 21 Nov 2024 04:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732165088;
+	bh=c6rhhlX6C6sMwTixfQKzXMumtrvXwwsznHRKBDKr7Ko=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/F/h8kpI5y0B4769xkdKZI2LxgM0Jw89F4MVGdHO6TXieDOYdmzkN6U24571GjP/
+	 9H9nniomx9sYtTuqO2PYF7HfOzfDFrFT8NBo6oCkGT9ausiYJ9Cp9V63oJ5dyjzZ7e
+	 yq/NK2BZDjQZ6lVnXcmZyEMeWYZyBxFfMT8xdRPJlb25KPFu/72V2MyQ7aLWmmBuwl
+	 DTJgMraRNniSqErdLyhzfXOp9dQOljUwkvAtwZg0ByiuRcBdMVHHeQ96l7y0bYJRJO
+	 ANthrsa/sYaTs85mVjfeCapW8UUId+0B1M7TWJI4kve3wX5c6u1TRDkRACS/cFNfw9
+	 gWQepXlr3iNTg==
+Date: Wed, 20 Nov 2024 20:58:04 -0800
+From: Kees Cook <kees@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	Yin Fengwei <fengwei.yin@intel.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v21 0/6] Script execution control (was O_MAYEXEC)
+Message-ID: <202411202057.82850EDE@keescook>
+References: <20241112191858.162021-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241112191858.162021-1-mic@digikod.net>
 
-On Wed, Nov 20, 2024 at 06:20:12PM -0700, Jens Axboe wrote:
-> There's no way that commit is involved, the test as quoted doesn't even
-> touch write zeroes. Hence if there really is a regression here, then
-> it's either not easily bisectable, some error was injected while
-> bisecting, or the test itself is bimodal.
+On Tue, Nov 12, 2024 at 08:18:52PM +0100, Mickaël Salaün wrote:
+> Kees, would you like to take this series in your tree?
 
-ext4 actually has some weird lazy init code using write zeroes.  So
-if the test actually wasn't a steady state one but only run for a short
-time after init, and the mentioned commit dropped the intel hack for
-deallocate as write zeroes it might actually make a difference.
+Yeah, let's give it a shot for -next after the merge window is closed,
+assuming review is clean.
 
-To check for that do a :
-
-/sys/block/nvmeXn1/queue/write_zeroes_max_bytes
-
-with and without that commit.
- 
+-- 
+Kees Cook
 
