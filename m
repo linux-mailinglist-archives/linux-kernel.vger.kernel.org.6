@@ -1,72 +1,86 @@
-Return-Path: <linux-kernel+bounces-416951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8662C9D4CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:28:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63F19D4CD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3008B24E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEC828367B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6618E1D54E7;
-	Thu, 21 Nov 2024 12:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270561D2B13;
+	Thu, 21 Nov 2024 12:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="FXGODWnF";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="njwRCcco"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxngL843"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977441D07B2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0609E16F288
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192078; cv=none; b=DdxUGZ5odpQJtxo64OHiUbSjz1bTDQ6AfPzCMYprLt5m1aN5gt69Kvbyzo147a5znoV9lNt7dY8SDz4Y6aXeHvcsx97EaOqPy/xJ/ghce66gVbKG6gilnhdDiB885M4cMM46IQE7pOoroJAIzBRsIpwTDHfWUT7O1MGwOOcwkBM=
+	t=1732192347; cv=none; b=dhcYs/l6VWWdu8fqpg8lA5R3jO0moDPXBmaPnPL2FvOZYYNK2+nQsuNhAq4pDGpmRTRHyYK++BghODC877USJ6ciEZVGt4TsCWMzB7eQDWJJd/IqwXyd8wUp2DibcKM/THMme69WNTdYx0nQNJ9jndhqJrzKfjnBAr9d3DrdXd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192078; c=relaxed/simple;
-	bh=qwpG+MzRFnosETW0RsDUt6W6ccUKwupUoSfDi5RaLvg=;
+	s=arc-20240116; t=1732192347; c=relaxed/simple;
+	bh=QwZdl4lGg0mEF50f83leK+b8rgaWY7VFme1mK70Es38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jm8+zbU+gChYT2TkY7MVFTq85tAlUYYpRAiXDwW/YP/E11HvqA6xzdsbdmtgK/Qx0tAziJeezI0tbn0rmPxrHVMpe9364o/XyjIW98/h+fTrnPwfmBC1xnUCx1KFhRGkopFM9C1PYu6IEmrvrQtUvB+QeE+n6RFoejZAEFbxebQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=FXGODWnF; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=njwRCcco; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A517B1F802;
-	Thu, 21 Nov 2024 12:27:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1732192074; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qwpG+MzRFnosETW0RsDUt6W6ccUKwupUoSfDi5RaLvg=;
-	b=FXGODWnFAQy1W0OCEnytAT8+pRVLpp+CQ59D80qn9WDccvPmNKbQ12bakCs/CE2RL44R8u
-	CfFzhBR9VXdfXNdDL93DaOgPy3qycrCAnQdCgQn9YyZaS/kGs5j7e3i5FuLP55L3iEaads
-	6K0dJikDZ2sLLCThMlyVmYXGr0+n2yU=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=njwRCcco
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1732192073; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qwpG+MzRFnosETW0RsDUt6W6ccUKwupUoSfDi5RaLvg=;
-	b=njwRCcco0X4Wn294nGdYJVOhBxqZF19ndmAw704eRoHbnyOBc9HRZeD81k05H1JLkH741T
-	O/iP1wUWpVAlHGazWgRrvvbtC7P8RXSiAEfjougPBi288LT89hfo0rhDnxJiewuu3Vowar
-	MKnpFApQiLFFqPDyBLIS5I3fbD1l5jI=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3F5D5137CF;
-	Thu, 21 Nov 2024 12:27:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 68ZaDUknP2cFFQAAD6G6ig
-	(envelope-from <jgross@suse.com>); Thu, 21 Nov 2024 12:27:53 +0000
-Message-ID: <a15245c9-9be6-4de7-84a8-693931b1b3aa@suse.com>
-Date: Thu, 21 Nov 2024 13:27:52 +0100
+	 In-Reply-To:Content-Type; b=f2i6tbCJe4aaiRZ7Bbe40yN+JAGVYQEZqdES1FX4/q1Akp4hWptELWvSGyjVkR/jvw8jBTwmAzckcGe0PAbBWk56P4wPmL81GIL+nEKdLdzUFK2Mw/qKiPlL6iP147+2mpzVFcW99JvUeG68mHPb6f5W8u9f7bvJ2/ual408jks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxngL843; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732192344;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KxfyKUiZJ1KBeMytmHKG09V4n3aOdLmHKG61uu7Jj/4=;
+	b=QxngL843ME7KkV6YpIbDe4DhM9bAlQu4Clrm9pPwxhhBSLaADIYYFQ3ym3zGWiknaJx1TY
+	PkHq1rI8BFNIRJ7zk4f7XaYJG6Kkw0PwaQ8HS3nb1DBq5k1CkVsIp+2HWZPl3Y6kOABHuN
+	twODJI/d+/QNFJE6YhYNLpFg8akABqE=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-384-SGvLdEpQMcCcx4dwCgxWyQ-1; Thu, 21 Nov 2024 07:32:23 -0500
+X-MC-Unique: SGvLdEpQMcCcx4dwCgxWyQ-1
+X-Mimecast-MFC-AGG-ID: SGvLdEpQMcCcx4dwCgxWyQ
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a9a2a81ab82so71698666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:32:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732192342; x=1732797142;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KxfyKUiZJ1KBeMytmHKG09V4n3aOdLmHKG61uu7Jj/4=;
+        b=fhCGssxf5ybyp+678Z3CLu24ZV0z4dh7Omt4apMvXwsM6yIn4mjCdaOhNoWnhLo6iM
+         1AjIoJtamSv0rAYgGZu7HqDi//EuuuHyXBLhWiMZ2tqJRgAD191OjVITCikpu/J4ug0u
+         Bli2zoP9+yrcfMevFHrk/p7DJYN7p6g6V2sTVUPakwro0EvFYweHHTPqSKUM7pg1kXA1
+         D3wawLyoqu2oaQBXqkhUviQny1DVqmNBooAWmcZ/SQymRxlNTkMhFPO7z9i12OgXtXPK
+         /bS9qDEHM7XnRrXAGJxt2mUBpybE07WeReNWUGvBgnTIGihZ8OQqCfIouu/a/0sfB2PN
+         4kiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULg7jWkY3oJjDLMzjurWl+XEMydyyaeKMElKCZLLJ+kt/gcagfGbcbffzsnmOYr0Umho8jEz9MgTI7c/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5IQptn8GcZwIz/MzcFPAdxnz5mo1pd7sWqteW12ApjFXd9G33
+	PykM5EeTVzkBH+TkK1iAOp5m6pQ0dDvtiGf/7tLYhf/9dRnyZld+OAjtyV+mOXqHLCQBXz5kNTU
+	f4d+/EBo5VIQjY+Wel5cGvgjyHHUYF7wCsJtR4zrhuufBL4cpT0m0Vjd78amGZH+eaGXMTw==
+X-Gm-Gg: ASbGncv1/BAGBFFkZNaG9SD/JDtODyUh/lJk1zv/viiWRCO7Z4uToVEqIG+XQnqIbUW
+	4qt7U7+DaXg/LLo2UGazYkrDUf4eV2shxDZPUgz/EjrZHb/E2YJytQCfv2H47wwKteL/LOez9U+
+	Kf03UbSl1A8l6e5Yq3LFVm6ETP7GEjxARhTKbYKGWrc+HvyhhEiLNRZfZyNq5WMJBucWbXiS/Gl
+	UMBAxEXF/l1fRQ8yfMiWIuSg5/RdDyUA0ySez3embfAfwpRCBpK5FWUiLTRd+sDilA0gSsusa/1
+	cTspX56Ekj4NrKawKXSQ3fsoOOmRCl93f3I85+K0w+jQcvw26CkGSWCMz4kYHmWZwA8nk0spShy
+	y9ufMkJFhQjIod35nNnRd6uq6
+X-Received: by 2002:a17:907:3f86:b0:aa4:c721:fac0 with SMTP id a640c23a62f3a-aa4dd70a23bmr576556766b.40.1732192342082;
+        Thu, 21 Nov 2024 04:32:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFh1VyObGO8bboXNJYexUhCB0NWAlGuUkabDTjrSZWwxnNUX+JXmWIlviX9WQrffuLClyMCkQ==
+X-Received: by 2002:a17:907:3f86:b0:aa4:c721:fac0 with SMTP id a640c23a62f3a-aa4dd70a23bmr576554066b.40.1732192341714;
+        Thu, 21 Nov 2024 04:32:21 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f4180201sm77296866b.67.2024.11.21.04.32.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 04:32:21 -0800 (PST)
+Message-ID: <fd19d849-de80-4806-9757-b74bb373ad0e@redhat.com>
+Date: Thu, 21 Nov 2024 13:32:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,209 +88,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] 9p/xen: fix init sequence
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Alexander Merritt <alexander@edera.dev>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Simon Horman <horms@kernel.org>, Alex Zenla <alex@edera.dev>,
- Ariadne Conill <ariadne@ariadne.space>
-References: <20241119211633.38321-1-alexander@edera.dev>
- <Zz8mWwLQBNq6eopG@codewreck.org>
-Content-Language: en-US
-From: Juergen Gross <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <Zz8mWwLQBNq6eopG@codewreck.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------pWhOdIHTfcriqb5dR0RO5EIB"
-X-Rspamd-Queue-Id: A517B1F802
-X-Spam-Score: -5.41
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.41 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	MIME_BASE64_TEXT_BOGUS(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_BASE64_TEXT(0.10)[];
-	MIME_UNKNOWN(0.10)[application/pgp-keys];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	HAS_ATTACHMENT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,edera.dev:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Subject: Re: [PATCH] platform/x86: x86-android-tablets: make platform data be
+ static
+To: Pei Xiao <xiaopei01@kylinos.cn>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: kernel test robot <lkp@intel.com>
+References: <202410160432.oJAPbrW9-lkp@intel.co>
+ <daafd1371e7e9946217712ce8720e29cd5c52f7a.1732161310.git.xiaopei01@kylinos.cn>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <daafd1371e7e9946217712ce8720e29cd5c52f7a.1732161310.git.xiaopei01@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------pWhOdIHTfcriqb5dR0RO5EIB
-Content-Type: multipart/mixed; boundary="------------9tX3PFuueVCcM4XprYP4c0qq";
- protected-headers="v1"
-From: Juergen Gross <jgross@suse.com>
-To: Dominique Martinet <asmadeus@codewreck.org>,
- Alexander Merritt <alexander@edera.dev>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
- xen-devel@lists.xenproject.org, Eric Van Hensbergen <ericvh@kernel.org>,
- Latchesar Ionkov <lucho@ionkov.net>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Simon Horman <horms@kernel.org>, Alex Zenla <alex@edera.dev>,
- Ariadne Conill <ariadne@ariadne.space>
-Message-ID: <a15245c9-9be6-4de7-84a8-693931b1b3aa@suse.com>
-Subject: Re: [PATCH] 9p/xen: fix init sequence
-References: <20241119211633.38321-1-alexander@edera.dev>
- <Zz8mWwLQBNq6eopG@codewreck.org>
-In-Reply-To: <Zz8mWwLQBNq6eopG@codewreck.org>
+Hi,
 
---------------9tX3PFuueVCcM4XprYP4c0qq
-Content-Type: multipart/mixed; boundary="------------57mrBXBXago0ujHXGEypnBxv"
+On 21-Nov-24 4:55 AM, Pei Xiao wrote:
+> make lenovo_yoga_tab2_1380_bq24190_pdata and lenovo_yoga_tab2_1380_modules
+> to be static
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202410160432.oJAPbrW9-lkp@intel.com/
+> Fixes: 3eee73ad42c3 ("platform/x86: x86-android-tablets: Add Lenovo Yoga Tablet 2 Pro 1380F/L data")
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 
---------------57mrBXBXago0ujHXGEypnBxv
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Thanks, patch looks good to me:
 
-T24gMjEuMTEuMjQgMTM6MjMsIERvbWluaXF1ZSBNYXJ0aW5ldCB3cm90ZToNCj4gQWxleGFu
-ZGVyIE1lcnJpdHQgd3JvdGUgb24gVHVlLCBOb3YgMTksIDIwMjQgYXQgMDk6MTY6MzNQTSAr
-MDAwMDoNCj4+IEZyb206IEFsZXggWmVubGEgPGFsZXhAZWRlcmEuZGV2Pg0KPj4NCj4+IExh
-cmdlIGFtb3VudCBvZiBtb3VudCBoYW5ncyBvYnNlcnZlZCBkdXJpbmcgaG90cGx1Z2dpbmcg
-b2YgOXBmcyBkZXZpY2VzLiBUaGUNCj4+IDlwZnMgWGVuIGRyaXZlciBhdHRlbXB0cyB0byBp
-bml0aWFsaXplIGl0c2VsZiBtb3JlIHRoYW4gb25jZSwgY2F1c2luZyB0aGUNCj4+IGZyb250
-ZW5kIGFuZCBiYWNrZW5kIHRvIGRpc2FncmVlOiB0aGUgYmFja2VuZCBsaXN0ZW5zIG9uIGEg
-Y2hhbm5lbCB0aGF0IHRoZQ0KPj4gZnJvbnRlbmQgZG9lcyBub3Qgc2VuZCBvbiwgcmVzdWx0
-aW5nIGluIHN0YWxsZWQgcHJvY2Vzc2luZy4NCj4+DQo+PiBPbmx5IGFsbG93IGluaXRpYWxp
-emF0aW9uIG9mIDlwIGZyb250ZW5kIG9uY2UuDQo+IA0KPiBJJ20gbm90IGZhbWlsaWFyIHdp
-dGggdGhlIHhlbiBicmluZ3VwIHNvIEkgZG9uJ3QgdW5kZXJzdGFuZCBob3cgdGhlDQo+IHBh
-dGNoIGd1YXJhbnRlZXMgdGhpcyAtLSBvdGhlcmVuZF9jaGFuZ2VkIGNhbGxzIGFyZSBndWFy
-YW50ZWQgdG8gYmUNCj4gc2VyYWxpemVkIGZvciBhIGdpdmVuIGZyb250ZW5kPw0KDQpZZXMu
-IFRoZXkgYXJlIGFsbCBleGVjdXRlZCBieSBhIHNpbmdsZSBrZXJuZWwgdGhyZWFkLg0KDQoN
-Ckp1ZXJnZW4NCg==
---------------57mrBXBXago0ujHXGEypnBxv
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Regards,
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+Hans
 
---------------57mrBXBXago0ujHXGEypnBxv--
 
---------------9tX3PFuueVCcM4XprYP4c0qq--
 
---------------pWhOdIHTfcriqb5dR0RO5EIB
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> ---
+>  drivers/platform/x86/x86-android-tablets/lenovo.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/x86-android-tablets/lenovo.c b/drivers/platform/x86/x86-android-tablets/lenovo.c
+> index ae087f1471c1..a60efbaf4817 100644
+> --- a/drivers/platform/x86/x86-android-tablets/lenovo.c
+> +++ b/drivers/platform/x86/x86-android-tablets/lenovo.c
+> @@ -601,7 +601,7 @@ static const struct regulator_init_data lenovo_yoga_tab2_1380_bq24190_vbus_init_
+>  	.num_consumer_supplies = 1,
+>  };
+>  
+> -struct bq24190_platform_data lenovo_yoga_tab2_1380_bq24190_pdata = {
+> +static struct bq24190_platform_data lenovo_yoga_tab2_1380_bq24190_pdata = {
+>  	.regulator_init_data = &lenovo_yoga_tab2_1380_bq24190_vbus_init_data,
+>  };
+>  
+> @@ -726,7 +726,7 @@ static const struct platform_device_info lenovo_yoga_tab2_1380_pdevs[] __initcon
+>  	},
+>  };
+>  
+> -const char * const lenovo_yoga_tab2_1380_modules[] __initconst = {
+> +static const char * const lenovo_yoga_tab2_1380_modules[] __initconst = {
+>  	"bq24190_charger",            /* For the Vbus regulator for lc824206xa */
+>  	NULL
+>  };
 
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmc/J0gFAwAAAAAACgkQsN6d1ii/Ey+m
-3gf/ccmyB0yN+92nNEjRCgrB1RxEW9RyRgoR2jbQX6Th4UAMvGOGCSvLgtaWT/f1zVvKRyma2io7
-/v0G+HQ5l5Wl7JmHjnF2OJk3QP7ZJ7XkSM1gHvhuBtvtighvyTT4gbogsqAJimtQbGlNnKqziWKu
-VSXWg488p20RpW5/6Kq7omRqXPZm2mX7CF1AjY9tPCZ5kNrxUlYfx56R3iydI3SBJJF7lfo4cRM5
-rta8fE7CfTJkmuT/9+L/woBsDF00rCr2c3pYzwJR2zyYf5I4eoBsASBwrzfj7WHOLVDN3UybDkb7
-7mIwHtGeHuZPRTcoHcj/mew57WMzl8pG+PeOtzB30w==
-=W35D
------END PGP SIGNATURE-----
-
---------------pWhOdIHTfcriqb5dR0RO5EIB--
 
