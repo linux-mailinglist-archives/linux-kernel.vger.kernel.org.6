@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-416530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F7E9D4674
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:06:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FFD9D4676
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:07:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68501F22719
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D521F226E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223581428F3;
-	Thu, 21 Nov 2024 04:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B28013BAE2;
+	Thu, 21 Nov 2024 04:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UnAhUTr/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="4ZicuOTL"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24302309B6;
-	Thu, 21 Nov 2024 04:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E936E74068
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732161999; cv=none; b=vDyn2Fvj1hvXKh3H5IWu5mDJjfnIQ2HJ8xuGASXHzprJwqI08NYJnV20frnGdWuX+2wxihy5lhIR48h/a0nDC+1+IHNc7rxSKUFQtPG0AAcbrDmnfpxxj1M8jLL5sq84KNoNzJxVXadVGWHL5uvW9eynpCdy54lJmR/T4mbR6yc=
+	t=1732162035; cv=none; b=oxR9fD11jDviNtZqqs4MWizLCRUfxygWK1zwJWtanGtDOhN5q6vQLJPotm2YiD64vWnf4VaDQLpdQ6RCA7t1eGsFhTm1blDWvIMcma/gVrJ4Jcc8eHhC56aUfY/+hqBsBVNhDyNDm7bNHkcMI4IfUhUW0lumT6Z79tgVr7znfR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732161999; c=relaxed/simple;
-	bh=66fXLuECvlddQ+6m0bmhm4Te9rrzvORhHhSsJOmsMOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=REqdroTohLxPq8eX0pgCoSjv4LxTUaE/SqSHUtOe+phrFYNkcue/gxrfG9flpawlG9kLz+146KeEvJMnz1bpAFKzQPol9XprCtv+lP2wjQiNtF+s59MLrCljpVYV9/emEIPe/p+cMoRrYj/IX0mMo9QbuWTyLggqeruYM5SfVQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UnAhUTr/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKNvASq023455;
-	Thu, 21 Nov 2024 04:06:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lMYIYE9ei/enmSIZ9OINW2gwxGaG9eomPbB/VHIsZ48=; b=UnAhUTr/H6ERfy5Y
-	vxgyDXNK3Ay9F70gU6GhkgMKQz/X5iwF33KXPRfVi8FWFTcmPaSjuOgerk1MpKfy
-	uGXoimQyupYbCz9BRfP11cf5bSMefiZsYtLHawlprTmtLdm41MFpPXtfFoo+Urtr
-	W1vhlIHS86tVTiahnuWx1CsfGPn2y7qYKwb+TEn7UzTIS+Rhze7Pi1e5+7XpdqbO
-	BFcEteth/Mu57U3iRY0Iu6mJQ4t1pexXM7iOxnog/0MIBV8hGKe8xwmZJE3f+QVe
-	n+4sWPtPE6dr8Ii0zH1I/8hC/ZXrrfYML99SuUzogLgm/E7B5E8vKYGmrqGdqaKD
-	SZAkXQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431sv2gf1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 04:06:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL46TJp014883
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 04:06:29 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 20:06:24 -0800
-Message-ID: <0b0b55a2-ab80-4f6d-a4cf-c04acc94a989@quicinc.com>
-Date: Thu, 21 Nov 2024 12:06:21 +0800
+	s=arc-20240116; t=1732162035; c=relaxed/simple;
+	bh=ERffJn60KeZxUuTpwiuizCps0p3OfPLgk9YJ/nzt/MA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZJdBbKcRwQSy8MMJL12SosDeQBs+aTNwuQV+wQieUzHrTamOBnM15ynq9WK3gQXvAvoFEAyz2cpNf5YwO7IolEJ0MuDdHkABRNEAP3IW7eVTCsG0SsdTtno4iDyf8nXzdyvZ78PQYEtTK7LPx4MPYJoQVgN8h8HJHSIwmCpIEUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=4ZicuOTL; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
+	by cmsmtp with ESMTPS
+	id Dsk2txt4krKrbDyTCtVsp3; Thu, 21 Nov 2024 04:07:06 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id DyTAtNwZ0cEKuDyTBtQQiZ; Thu, 21 Nov 2024 04:07:05 +0000
+X-Authority-Analysis: v=2.4 cv=Z7YnH2RA c=1 sm=1 tr=0 ts=673eb1e9
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=u4wymUDdFjS2QedViv0A:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=klnTPdvsvSnFhe25dTAPVQHCchV9mup2zE31aItoC8U=; b=4ZicuOTLvY6/p6kq7o8jXLcRer
+	cKzyWeITVmJ0jIu9MQuvgFdmDyciAyadD/WZZewCybQO2EMyO2iYDy4StlIffgKlhCoPSJQFtVLRo
+	iTyk1YyRs5uEbY95N7bK+saGABLAwk/cIqBnn1kndjCRtfSWFl+vVYVRwDWFLlAp2pCT7Ivyfb8e8
+	1KOIft8Rg2kwYK0On1tBad2hvDIcrU1bJWPNBDCKAfptbFo59JtF1ZL23FVDF/5PJoJAkdZHqCgSi
+	ibhLdARa3WCzKeZZs0I01LPVCxERagUlPdbOaMHG9t680LH15xdjdCh98iKOjpTxvBRc78jqeqvU/
+	9ZXKzI3w==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:36288 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tDyT9-003BsK-25;
+	Wed, 20 Nov 2024 21:07:03 -0700
+Message-ID: <ff346263-8187-4b11-873b-193aebb51cd5@w6rz.net>
+Date: Wed, 20 Nov 2024 20:07:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,119 +68,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Balakrishna Godavarthi
-	<quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-2-quic_chejiang@quicinc.com>
- <c8ae761a-732c-4def-ac6e-5e1b16a21ada@kernel.org>
+Subject: Re: [PATCH 6.12 0/3] 6.12.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241120124100.444648273@linuxfoundation.org>
 Content-Language: en-US
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <c8ae761a-732c-4def-ac6e-5e1b16a21ada@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241120124100.444648273@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NAcC7glnuBMOo1zEnVJQr-rdZK-reS-b
-X-Proofpoint-ORIG-GUID: NAcC7glnuBMOo1zEnVJQr-rdZK-reS-b
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0
- spamscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210029
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tDyT9-003BsK-25
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:36288
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfE+SSF8Mr9Bcf1q662B1DhKqH/it+o5VXXV11liR6JFzqVCovsdmq3e51UT9+7rob7snmICKlfBFMGMIkgBUMgwN3lAkgj37HnbKczz74+DmShRKKtGg
+ L2PbhswzUU6QPrme1NfqD9biMNlswcOy6YrK3tx3Pg7dgcHXBVOEXxMGNW4UDOus0NiVAeaTc8kmeDeWuB5uNfzvdZzPEJKL4DI=
 
-Hi Krzysztof,
+On 11/20/24 04:55, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.1 release.
+> There are 3 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 22 Nov 2024 12:40:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-On 11/21/2024 12:47 AM, Krzysztof Kozlowski wrote:
-> On 20/11/2024 10:54, Cheng Jiang wrote:
->> Several Qualcomm projects will use the same Bluetooth chip, each
->> focusing on different features. For instance, consumer projects
->> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
->> SINK feature, which may have more optimizations for coexistence when
->> acting as a SINK. Due to the patch size, it is not feasible to include
->> all features in a single firmware.
->>
->> Therefore, the 'product-variant' devicetree property is used to provide
->> product information for the Bluetooth driver to load the appropriate
->> firmware.
->>
->> If this property is not defined, the default firmware will be loaded,
->> ensuring there are no backward compatibility issues with older
->> devicetrees.
->>
->> The product-variant defines like this:
->>   0 - 15 (16 bits) are product line specific definitions
->>   16 - 23 (8 bits) are for the product line.
->>   24 - 31 (8 bits) are reserved for future use, 0 currently
->>
->> |---------------------------------------------------------------------|
->> |                       32 Bits                                       |
->> |---------------------------------------------------------------------|
->> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
->> |---------------------------------------------------------------------|
->> |   Reserved        |    0: default       | 0: default                |
->> |                   |    1: CE            |                           |
->> |                   |    2: IoT           |                           |
->> |                   |    3: Auto          |                           |
->> |                   |    4: Reserved      |                           |
->> |---------------------------------------------------------------------|
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> index 7bb68311c609..9019fe7bcdc6 100644
->> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> @@ -110,6 +110,12 @@ properties:
->>      description:
->>        boot firmware is incorrectly passing the address in big-endian order
->>  
->> +  qcom,product-variant:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    description:
->> +      specify the product information for driver to load the appropriate firmware
-> 
-> Nah, you have firmware-name for this.
-> 
-Currently "firmware-name" is used to specifythe nvm (config) file only,
-we also need to specify the rampatch file (TLV). 
- 
-Can we re-use the "firmware-name"? add two segments like the following?
-firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
-
-Or add a new property to specify the rampatch file? 
-rampatch-name = "rampatch_xx.tlv";
-
-Thanks!
-> 
->> +
->> +
-> No clue why two blank lines...
-> 
-> Best regards,
-> Krzysztof
+Tested-by: Ron Economos <re@w6rz.net>
 
 
