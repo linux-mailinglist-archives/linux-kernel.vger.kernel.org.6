@@ -1,203 +1,143 @@
-Return-Path: <linux-kernel+bounces-416649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54919D483A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:39:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4AC9D483F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39DB1B21D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DFC282FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0E01AAE38;
-	Thu, 21 Nov 2024 07:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7861BE870;
+	Thu, 21 Nov 2024 07:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DGvKlbka";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PxXPMGND"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHqY7qUi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E2F74068;
-	Thu, 21 Nov 2024 07:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DB94317E;
+	Thu, 21 Nov 2024 07:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732174748; cv=none; b=LNDKP58CCPMp5UNvedchr0qdsyBzYWsKBEuCRt5qm6XopFFy2b1K+jzj4cB60uqZWPb0s3zyilp0f/iME2ZDAJ+c5UlwRYZEfnkdMJSMT+cjl7/nw+YyZetdgTKDlAEfaHQ9xw0PvkToeI8Y7Ge5k6B3t1k58xdidg3CX9tQw8c=
+	t=1732174839; cv=none; b=SdWT2C9uZ18vTFOkzWms65s7FNKEszcsWraVaEg6/9vgZPtCnwiTVdLNsRt/b0j3R3GKbk0Ho6nrGjBHZRukeeAAfsk2oTjrFS1Kk8Hy7DD3HAFKdiZaVBMOlE/bwB7C67S12pPA8ILWMejt9S7MBy0BjYjGvfBcBBIgSo2v9yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732174748; c=relaxed/simple;
-	bh=0mNbvn1SFyjy2OOqBy9OO9VK2ZbbcJPMtV0ZKO8QwvY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rS+Kz5NIm6ojk0BlXPsOBINt/XT7s2lXcDbYCKd+r71AymIrH1N7HQZA2HSJB/DmA1ng6Dx73CVaBNI2/jvjlgQiPe9ZydSibMGVZrZFWyY/+BYLZ3pC7cyqsiGBt7A7QhDmdvlI00NPzYjrKMnkX6gcg+gB8nGXATb+n3NtA+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DGvKlbka; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PxXPMGND; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732174736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xn0nijE3Gdm1C3OOWwYkq9mZCdk+DfIymWGjrWpc1L0=;
-	b=DGvKlbkaZESL2BDPHwxlsem3KaSSGLL/Wqi/0jZqiR2tlqiH6YdiA1/88hCfzfJtBm2fV6
-	SvwCEcMcHPvPP2KcXHI/SVR+/dTqPLlee7qIq4KaJ/khs63BRWe/bZ+KdukVrqUy7oYA9u
-	ISYS3bH52yR1UKaomc+yDmi42DStMDOto2/vIygYQxatSTmz58NoaLKb4j7kf8yv9Vrr2k
-	LDAyAOraDmaMQQG72+EfPP47QG3z7O8KhATpCR5yRtZQDD5np8vnU5TTrd7G7nLnFzOfCt
-	jX5NyNn9HlWK/XZmAQNbJUlo10Q8QwWmpsEa5TolJa/Ne9zkz5ntVHsLRbSdbw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732174736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xn0nijE3Gdm1C3OOWwYkq9mZCdk+DfIymWGjrWpc1L0=;
-	b=PxXPMGNDyh4uQu0sfU5R5dn6qxE6jBGsomBOpLLWV3uYCx7TE2J1VrqIHOZPWmiETtbjfN
-	O573Q19HLExh8wBg==
-Date: Thu, 21 Nov 2024 08:38:08 +0100
-Subject: [PATCH] kprobes: Reduce preempt disable scope in
- check_kprobe_access_safe()
+	s=arc-20240116; t=1732174839; c=relaxed/simple;
+	bh=piHP2NesSEkc/KD2xC1WcuLZkBEuN7Qzn8qXkrknO4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SsgXVG29xQ5gq6zyRFOTUJt7QMiXcYmmzAMHZ3ownV71A05XFjpC1FhevUvZ64ofwB0dXlWM4Jx+7PwKfzurcAkTSrF7iau+gLHEJA8TLEhwwwgUTzCn5LMBeZx2KII/IcOu01LITJtV+rRrScYR6j+BFGkAq/wpF7b5SCXUTHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHqY7qUi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 675CBC4CECC;
+	Thu, 21 Nov 2024 07:40:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732174838;
+	bh=piHP2NesSEkc/KD2xC1WcuLZkBEuN7Qzn8qXkrknO4s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gHqY7qUibmEepixtENPDydu5WUuSKf4YjPvsAkTbepouywa2opdQxQxMtnzwOEZlm
+	 8OOeJwshnizsukiQmFoN6XWaZ1XfgQQ86o4wbDkf6wHbTOybIOJtVDqwBTlokO8QvW
+	 rYil275ljR27korW9tcTeTE2/l32lxfpDHTm55AeUCdFzAfj9YEDTM0Fyvdo3Nt4rq
+	 UqPThVJFFa+LwmP95Kb0IJ7zieb8B9iwlDhXGtIxoIA8+5pAQsdmkqLo9WWQmIqSqg
+	 92/ckbVs1Nrduuyk0InlQ24f9P88TS4NY+uTuYVuTgKS/80Hq5e2/YNG2lvyI3rA1x
+	 ZcO68aILWkZMA==
+Message-ID: <eae9d141-9c88-4856-9287-2ba6ea6f4a06@kernel.org>
+Date: Thu, 21 Nov 2024 08:40:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241121-kprobes-preempt-v1-1-fd581ee7fcbb@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAF/jPmcC/x2MWwqAIBAArxL7naBSkV0l+uix1hKVuBGBePeWP
- mdgJgFjJGToigQRH2K6TgFTFjBv47miokUYrLaVMVarPcRrQlYhIh7hVtq1tvE11oubQSrxnt7
- /2A85f2EJ5aBhAAAA
-X-Change-ID: 20241120-kprobes-preempt-09826f5e5d9c
-To: Naveen N Rao <naveen@kernel.org>, 
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- linux-rt-devel@lists.linux.dev, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732174733; l=3905;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=0mNbvn1SFyjy2OOqBy9OO9VK2ZbbcJPMtV0ZKO8QwvY=;
- b=0/TI3xrXhoMu8f4MLWUEecTzN5qTwekglXesD5hXPBW0zgprOOY5TJlu77HnFvZtH2feUt9nl
- A8DxuuU5eyFDCkU18dDNjsrowncAgxh0wFczEbILmRKiGlVruP/Qa0S
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: ufs: qcom: Add UFS Host Controller
+ for QCS615
+To: Xin Liu <quic_liuxin@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ quic_jiegan@quicinc.com, quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com,
+ quic_sayalil@quicinc.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
+ <20241119022050.2995511-2-quic_liuxin@quicinc.com>
+ <d9c3dc82-24e5-465d-bd1c-7a7c97e17136@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <d9c3dc82-24e5-465d-bd1c-7a7c97e17136@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit a189d0350f387 ("kprobes: disable preempt for module_text_address() and kernel_text_address()")
-introduced a preempt_disable() region to protect against concurrent
-module unloading. However this region also includes the call to
-jump_label_text_reserved() which takes a long time;
-up to 400us, iterating over approx 6000 jump tables.
+On 20/11/2024 17:57, Krzysztof Kozlowski wrote:
+> On 19/11/2024 03:20, Xin Liu wrote:
+>> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+>>
+>> Document the Universal Flash Storage(UFS) Host Controller on the Qualcomm
+>> QCS615 Platform.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> That's a bit odd SoB chain. First, these are just one-liners. Second,
+> who authored the patches?
+To be clear: SoB regarding authorship is correct, but regarding Acks and
+Reviews is not. Savali did not receive these tags. If so, please point
+to lore discussion with it.
 
-The scope protected by preempt_disable() is largen than necessary.
-core_kernel_text() does not need to be protected as it does not interact
-with module code at all.
-Only the scope from __module_text_address() to try_module_get() needs to
-be protected.
-By limiting the critical section to __module_text_address() and
-try_module_get() the function responsible for the latency spike remains
-preemptible.
-
-This works fine even when !CONFIG_MODULES as in that case
-try_module_get() will always return true and that block can be optimized
-away.
-
-Limit the critical section to __module_text_address() and
-try_module_get(). Use guard(preempt)() for easier error handling.
-
-While at it also remove a spurious *probed_mod = NULL in an error
-path. On errors the output parameter is never inspected by the caller.
-Some error paths were clearing the parameters, some didn't.
-Align them for clarity.
-
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- kernel/kprobes.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index da59c68df8412c4662d39d3e286d516e8cee9a69..369020170e832a34ea9c05eda6693bded02ec505 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -39,6 +39,7 @@
- #include <linux/static_call.h>
- #include <linux/perf_event.h>
- #include <linux/execmem.h>
-+#include <linux/cleanup.h>
- 
- #include <asm/sections.h>
- #include <asm/cacheflush.h>
-@@ -1570,16 +1571,25 @@ static int check_kprobe_address_safe(struct kprobe *p,
- 	if (ret)
- 		return ret;
- 	jump_label_lock();
--	preempt_disable();
- 
- 	/* Ensure the address is in a text area, and find a module if exists. */
- 	*probed_mod = NULL;
- 	if (!core_kernel_text((unsigned long) p->addr)) {
-+		guard(preempt)();
- 		*probed_mod = __module_text_address((unsigned long) p->addr);
- 		if (!(*probed_mod)) {
- 			ret = -EINVAL;
- 			goto out;
- 		}
-+
-+		/*
-+		 * We must hold a refcount of the probed module while updating
-+		 * its code to prohibit unexpected unloading.
-+		 */
-+		if (unlikely(!try_module_get(*probed_mod))) {
-+			ret = -ENOENT;
-+			goto out;
-+		}
- 	}
- 	/* Ensure it is not in reserved area. */
- 	if (in_gate_area_no_mm((unsigned long) p->addr) ||
-@@ -1588,21 +1598,13 @@ static int check_kprobe_address_safe(struct kprobe *p,
- 	    static_call_text_reserved(p->addr, p->addr) ||
- 	    find_bug((unsigned long)p->addr) ||
- 	    is_cfi_preamble_symbol((unsigned long)p->addr)) {
-+		module_put(*probed_mod);
- 		ret = -EINVAL;
- 		goto out;
- 	}
- 
- 	/* Get module refcount and reject __init functions for loaded modules. */
- 	if (IS_ENABLED(CONFIG_MODULES) && *probed_mod) {
--		/*
--		 * We must hold a refcount of the probed module while updating
--		 * its code to prohibit unexpected unloading.
--		 */
--		if (unlikely(!try_module_get(*probed_mod))) {
--			ret = -ENOENT;
--			goto out;
--		}
--
- 		/*
- 		 * If the module freed '.init.text', we couldn't insert
- 		 * kprobes in there.
-@@ -1610,13 +1612,11 @@ static int check_kprobe_address_safe(struct kprobe *p,
- 		if (within_module_init((unsigned long)p->addr, *probed_mod) &&
- 		    !module_is_coming(*probed_mod)) {
- 			module_put(*probed_mod);
--			*probed_mod = NULL;
- 			ret = -ENOENT;
- 		}
- 	}
- 
- out:
--	preempt_enable();
- 	jump_label_unlock();
- 
- 	return ret;
-
----
-base-commit: adc218676eef25575469234709c2d87185ca223a
-change-id: 20241120-kprobes-preempt-09826f5e5d9c
+All this needs fixing.
 
 Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+Krzysztof
 
