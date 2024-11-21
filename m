@@ -1,120 +1,79 @@
-Return-Path: <linux-kernel+bounces-416866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811E79D4B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:15:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A309D4B72
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FF571F23CC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E04EC2817E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11BE1D27A0;
-	Thu, 21 Nov 2024 11:15:15 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505D51D2207;
-	Thu, 21 Nov 2024 11:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803AD1D172C;
+	Thu, 21 Nov 2024 11:18:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iV7HlaTJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFA551CACDB;
+	Thu, 21 Nov 2024 11:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732187715; cv=none; b=CasB0wWHvpEF34Xu/g4qrqjgOQr+edaW0rw2f3Hx/g0q2zSNvxM6X8HiBn7rTiLEXYbXW9dhYMk8ZVcg+obAJwSxkyvGZdF9uZXWqZeZJ4U/yGEa0KWCA08uM69UE9aHa3XKHd6KkGatMlXMkrSGYddN/kTuhIIjd82+Ig/W5MI=
+	t=1732187919; cv=none; b=pWQ36+P7PId/XSCGXvsEI4bSyC9DEpbiWepsSUCK2D60eo+4x10njIhnGOV5S32uYrQBiA1eRvqy1MgdmmJUKWsNLcXO6ok5pw1XM+VrhbGyECteM/nWndZAcJ10oTrQ/4EsaIh4kvYTK6TCXdL61QtqYefNthOP5dj1FLyIES8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732187715; c=relaxed/simple;
-	bh=RnWVzHR5TCfOE5svzQfEVVgpKgNQOAMf36h8UEyZ8yM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X8NPssSW2njmsDa8101+NgCyLX1vzj/4F6W4Y6+UXZ97ozJeUgEURhWlMMktOEZGk0q5jRyEvBJ98YYOVGmNjEzJSTkVuWT0orVzSkMzlM2qU8/0ksWoi7/6wHiSieysp4FfiI1yEiaBrvCdMTrvLw19MxF9FYaplzNO9w8RBVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1673f163ad5a-2f671;
-	Thu, 21 Nov 2024 19:15:06 +0800 (CST)
-X-RM-TRANSID:2ee1673f163ad5a-2f671
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr07-12007 (RichMail) with SMTP id 2ee7673f161c652-dd941;
-	Thu, 21 Nov 2024 19:15:06 +0800 (CST)
-X-RM-TRANSID:2ee7673f161c652-dd941
-From: guanjing <guanjing@cmss.chinamobile.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	algonell@gmail.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanjing <guanjing@cmss.chinamobile.com>
-Subject: [PATCH v2] perf intel-pt: cleanup unneeded return variable in intel_pt_text_poke()
-Date: Thu, 21 Nov 2024 19:14:14 +0800
-Message-Id: <20241121111414.33760-1-guanjing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1732187919; c=relaxed/simple;
+	bh=9/6EY2QPejgJaoCd8eS7IdDf1nk/mIZfnq1lnC3NuZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U92PIH1BPGa1zHvRti7TPhsp1cct5RMmhzrG/xZwQKit0lpPYc8uwgebcU+OVUi/jIyXXdq1miYLZhEh4U+wpdDm4MpFms2va/6zC/teo5h2pSjkgLE3QpeyDyVc1F1ztrc0nP8hYXWE3cdZzEAhHGYah+AkTnnlMy1y3aL9PI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iV7HlaTJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5CCEC4CECC;
+	Thu, 21 Nov 2024 11:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732187919;
+	bh=9/6EY2QPejgJaoCd8eS7IdDf1nk/mIZfnq1lnC3NuZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iV7HlaTJhE8eQx0wuz7Ijcl73ujIrEwhmCFHvukRUIGOkRvJL/NFDqKWJ8Vwncvez
+	 IOUN3AGAbSpPgnVxS298X7uvFYK3lV3K8S+BCUI1EJQpEAGc8ZMvg15/Mwa5AS9ht8
+	 S29U99hhCD9SLQRaEmzr7iXjt+XIH0aWS/Sa34ifDC8PD2Qd8UE8eX89r6X2mYnggo
+	 +gWU3N4lsT1r3qVccg31kVESxYKnyv4wnMZhkkdYvKWxO9Wqn/xljRJAenCyxoii/k
+	 obOQzypJ0QAperLJRKl0MxUsbdjx/Ha04X1cIg40LnsF5sxYQFFthbp15uuOhGmQ+N
+	 YPslbwYCwBaHQ==
+Message-ID: <3ec0fb06-79a4-403c-8ff8-84f7477ddf1f@kernel.org>
+Date: Thu, 21 Nov 2024 11:18:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] bpftool: fix potential NULL pointer dereferencing in
+ prog_dump()
+To: Amir Mohammadi <amirmohammadi1999.am@gmail.com>, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
+References: <47225498-12ab-4e69-ac50-2aab9dbe62c0@kernel.org>
+ <20241121083413.7214-1-amiremohamadi@yahoo.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20241121083413.7214-1-amiremohamadi@yahoo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Removed Unneeded variable: "ret".
+2024-11-21 12:04 UTC+0330 ~ Amir Mohammadi <amirmohammadi1999.am@gmail.com>
+> A NULL pointer dereference could occur if ksyms
+> is not properly checked before usage in the prog_dump() function.
+> 
+> Fixes: b053b439b72a ("bpf: libbpf: bpftool: Print bpf_line_info during prog dump")
+> Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
 
-Since the function intel_pt_text_poke() always returns zero,
-drop the return value and change the function to the void type.
+Reviewed-by: Quentin Monnet <qmo@kernel.org>
 
-Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
----
- tools/perf/util/intel-pt.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-index 30be6dfe09eb..a13add0e0be4 100644
---- a/tools/perf/util/intel-pt.c
-+++ b/tools/perf/util/intel-pt.c
-@@ -3391,7 +3391,7 @@ static int intel_pt_find_map(struct thread *thread, u8 cpumode, u64 addr,
- }
- 
- /* Invalidate all instruction cache entries that overlap the text poke */
--static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
-+static void intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
- {
- 	u8 cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
- 	u64 addr = event->text_poke.addr + event->text_poke.new_len - 1;
-@@ -3402,7 +3402,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
- 	struct machine *machine = pt->machine;
- 	struct intel_pt_cache_entry *e;
- 	u64 offset;
--	int ret = 0;
- 
- 	addr_location__init(&al);
- 	if (!event->text_poke.new_len)
-@@ -3443,7 +3442,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
- 	}
- out:
- 	addr_location__exit(&al);
--	return ret;
- }
- 
- static int intel_pt_process_event(struct perf_session *session,
-@@ -3522,7 +3520,7 @@ static int intel_pt_process_event(struct perf_session *session,
- 		err = intel_pt_context_switch(pt, event, sample);
- 
- 	if (!err && event->header.type == PERF_RECORD_TEXT_POKE)
--		err = intel_pt_text_poke(pt, event);
-+		intel_pt_text_poke(pt, event);
- 
- 	if (intel_pt_enable_logging && intel_pt_log_events(pt, sample->time)) {
- 		intel_pt_log("event %u: cpu %d time %"PRIu64" tsc %#"PRIx64" ",
--- 
-2.33.0
-
-
-
+Thanks!
 
