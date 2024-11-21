@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-417527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B5E9D552A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:06:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0B69D5531
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 603F5B225D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:06:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79AD283747
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A34D1DC054;
-	Thu, 21 Nov 2024 22:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A551DD873;
+	Thu, 21 Nov 2024 22:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k2Cf1gP5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kNFoYxws"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93121176AC7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A761DD0E7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226763; cv=none; b=RYnArnDB74Mcqg3rzs1yU0cQ3shNyebItf8XpEd8bAowNlWVcQpMnnMaChReSECmjnXl2uv/KSBT4emH4JcBwrJeHMqtE70j3OA8hiYjxzXixowHdo8NKtrXZJJswPC73opltMQcE058vIJat3fR1t1syV6fhRanq2gVydEbi5E=
+	t=1732226929; cv=none; b=BNcyIl2KuRN83ccqLka4yyA5t9MI8kIPiafsipMroirc53I3HWdwiwK4uWMPpKy7KD25FxR2IWAe35nreNNXqviApeny3cL+eqQRI3RDWhbP3hChEtvRxkVorV9Xu2xDxLyLO2EAmPRel5ACpsqz4ycx0NhjBZyXTAsTcQReOlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226763; c=relaxed/simple;
-	bh=+5feOPw/FgR2n5SUw0ttWi09RQYbsgXOgGG63d1u/OE=;
+	s=arc-20240116; t=1732226929; c=relaxed/simple;
+	bh=rAzXnHe2SBhDMw27QAAIXDlh7GeOePkPJvRWdVpqQz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMfNbgBoJFYO982l6t+f6kVQrjhRpBCiTYwdjyfZwOYzgFPZ0akzmMWdLB0V1bZQMToWnkaGDQKwPkw3gBruSBD18h6ADoQfVzwGEsnqCSYtqifYqfThUpor37bqv0nqmoFSFCsWXG61RcuQwYb/ecpCRfHMUjZFP3qZG+81jCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k2Cf1gP5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177A3C4CECC;
-	Thu, 21 Nov 2024 22:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732226763;
-	bh=+5feOPw/FgR2n5SUw0ttWi09RQYbsgXOgGG63d1u/OE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k2Cf1gP5M2qTFU7nfQYFhlunQ8t/Jl2aihHfZmgycjRL3CRl6uc4Ibtgt6jnHIyCt
-	 sSz8P+cFv8ttxlfCkxZc1wtfblglkHr4bpTFTBcxovVtyLBGB/RgEtL+pAn/ZqFVVt
-	 PKiCw7YeMpyKDJVW2tGuiGkK9iUOhfhpxYw+79sugz3VZX7TGHPQws5oh9w5HvpKTn
-	 tPG7TbQpL1CnIhmfP5HizYFthzoQOj+12gCEBJrZ9Xs0RaCf61+ZAtLyhKHkIJ+5xq
-	 BcZwM2nTCSn/0qpATrpieVBPICMjA52uzwmar+kwlqEyXg0ZJb/d20+B9WRhCVky5L
-	 yOs36/GLTnAGg==
-Date: Thu, 21 Nov 2024 14:06:00 -0800
-From: Kees Cook <kees@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Nir Lichtman <nir@lichtman.org>,
-	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
-	Tycho Andersen <tandersen@netflix.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-Message-ID: <202411211302.08EEE6D395@keescook>
-References: <202411190900.FE40FA5@keescook>
- <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org>
- <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
- <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
- <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
- <Zz91LyHzxxOLEma_@kawka3.in.waw.pl>
- <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
- <202411211011.C2E3ABEAB@keescook>
- <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KvGi3IKFBFY0jPfRDSaaDCkCa3LytsKh/6mZmow1RLYxLmtOChkzYtoXjuyTGEAalGArCks/lyoCzP9m4lA/CocLQVQlmpowfxQP6V2mn4MmuEUAByoRqxLe9e2tP5D3qxSwSblvQz23yZyi6pxbwNb1NS+xwXoYv0QSbibltEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kNFoYxws; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53dd1829b56so940881e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:08:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732226926; x=1732831726; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OkX+U05RiYpd3FpHw3ImL6zcHYL+a4J2Aov+jcxxZh4=;
+        b=kNFoYxwsnIgeumw31gwWeCytcWiOZclfqX3hbV+mUbo9IToAEr9Buyuedg4p+3Y3e3
+         4FDFgRgbc9oio2lNcXW0ky9yY+16h8bPE7SPo+t1M7eqwVlwV+2CQyvLEvDnjUJSyQrP
+         Th+TGSOQpsfP9/oiFAKVMVrj74aoW6qSqDkm+zViL4Mkfc7qjli89nIamZzncvNWNgam
+         uknBmNZsLcmhl9tJI4G2bq7VfsekYylRh08K+vBZam+bQsGOApHNcaUWOfd1X5alAK07
+         H/T+mKLlHCH+Rsu2QCaptt7Hz/BnnV9nXx2VIzTJEGkdBTtbqZA9MhtmKO0nRER3Kp5x
+         kVwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732226926; x=1732831726;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OkX+U05RiYpd3FpHw3ImL6zcHYL+a4J2Aov+jcxxZh4=;
+        b=msPa94R16JsR6mPWrOm05vzo6SWiZ/pj08aY72JOUF/pgzNZLLx2ordfmaJSFqysGj
+         kBGmygKggm2v0CPBXdY5OjXHZGWlJ2yripoKYsU02FeokdQAwAXmQIMsO7MldpGlLB4W
+         dgqDGlSmki5o7uKI5DpPiON5BpSEB7MPKOtUBrzP7QZVjp4yQRjAzwSeefKNpoa6M14d
+         2i39lLTK/1H8vZNvlhsYTTToyb1nQyuad/92Y5Wh8iIsykzDulZ+F85rCw5OKJUL/U6f
+         gD9KJHre/CLEG279V7lhQkG8JrbdXtFX/XN6dukxok7XZPRRRSFZ0G5uKuRGphWXhm6j
+         vH0g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/nK+PNcoXWPiQ22LI1PbjVVzPXLihiyhFVRpucM4ys9yl19GQcTB8a1yWk6C/3mNS56axuIQ7gbDxBRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8aTxTzGOw9bOu5gqaBlZfpjyMpGCR478LsJPXnq/jbq5q1NTb
+	FJj1tBlAijFTJmndP9yIe11fqHA7WHPHSbz8ZMdd0Op9Z4trt23yAl5tBgKklrU=
+X-Gm-Gg: ASbGncv4P2pwTj2u/WywxUb/y+avKr/e38H6q6RJzeWW23RDDd1CPq9ywoFRbwOo3FS
+	TvPYlkP5vQ1M7kWN5MErgmIjJeNMdY4zHRMZlfjR7ykgEbKxwhuZ28pKNEOu57GDk5xbZM+F9B/
+	CSD5feRlwaAH6YeNzuH17mJyPqcVvOqdYTF//tu2XvFgSCyWy2o6M7QlUQa1JwvYISwMCPhh2x2
+	0MYC+I4Xz2Ukp74uQBUUaPlEey1a9+akdg1IOcFio2EDPOb8ApIWahnhMCEcX0FiNh3PCLBqwF3
+	giJid7/venpiY3yPKgilBPRGRDTvoA==
+X-Google-Smtp-Source: AGHT+IFuSwv+GpzK+sOK+hKbldDpyos/a2WLCYStBI83LunKlMjHra2urT+tQtcpGQjiSTEPq3cXng==
+X-Received: by 2002:a05:6512:1111:b0:53d:cfd6:d49c with SMTP id 2adb3069b0e04-53dd36a0314mr255859e87.14.1732226925721;
+        Thu, 21 Nov 2024 14:08:45 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2451862sm94277e87.78.2024.11.21.14.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 14:08:44 -0800 (PST)
+Date: Fri, 22 Nov 2024 00:08:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-spi@vger.kernel.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v1 1/1] spi: spi-geni-qcom: Add immediate DMA support
+Message-ID: <d2ybuvo676ouxhj2rejx6swlwkofycms2iwqsfcnwbfl3llbdr@4yoxxbmalpyf>
+References: <20241121115201.2191-1-quic_jseerapu@quicinc.com>
+ <20241121115201.2191-2-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,162 +88,175 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+In-Reply-To: <20241121115201.2191-2-quic_jseerapu@quicinc.com>
 
-On Thu, Nov 21, 2024 at 11:23:46AM -0800, Linus Torvalds wrote:
-> I'm done with this discussion that apparently was brought on by people
-> not knowing what the hell they were doing.
-
-This is disrespectful. If you're frustrated you can just say so. I'm
-certainly frustrated.
-
-> For user space, comm[] is basically the fallback for when cmdline
-> fails for some reason (for example, /proc/*/cmdline will be empty for
-> kworkers, but there are other situations too)
+On Thu, Nov 21, 2024 at 05:22:01PM +0530, Jyothi Kumar Seerapu wrote:
+> The DMA TRE(Transfer ring element) buffer contains the DMA
+> buffer address. Accessing data from this address can cause
+> significant delays in SPI transfers, which can be mitigated to
+> some extent by utilizing immediate DMA support.
 > 
-> The reason? comm[] has *always* been much too limited for 'ps' output. ALWAYS.
+> QCOM GPI DMA hardware supports an immediate DMA feature for data
+> up to 8 bytes, storing the data directly in the DMA TRE buffer
+> instead of the DMA buffer address. This enhancement enables faster
+> SPI data transfers.
+
+Is it supported on all GPI DMA platforms, starting from SDM845?
+
 > 
-> Yes, you can literally *force* ps to not do that (eg "ps -eo comm")
-> but if you do that, you get the very limited comm[] output that nobody
-> has ever wanted ps to give exactly because it's so limited.
+> This optimization reduces the average transfer time from 25 us to
+> 16 us for a single SPI transfer of 8 bytes length, with a clock
+> frequency of 50 MHz.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+>  drivers/dma/qcom/gpi.c           | 32 +++++++++++++++++++++++++++-----
+>  drivers/spi/spi-geni-qcom.c      |  7 +++++++
+>  include/linux/dma/qcom-gpi-dma.h |  7 +++++++
 
-I think I finally figured out why you keep saying this. I think you mean
-to imply "ps -e" (or similar), not "ps". Asking for more process details
-("ps a", "ps -f", "ps -e", etc) uses cmdline. Without options that turn
-on more details, the default is comm. If you run just "ps", it shows comm:
+How is this supposed to be merged? Please try to separate the patches by
+the subsystem, letting maintainers to handle possible dependencies.
 
-$ strace ps 2>&1 | grep /cmdline | wc -l
-0
+>  3 files changed, 41 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+> index 52a7c8f2498f..a8df1e835e27 100644
+> --- a/drivers/dma/qcom/gpi.c
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -27,6 +27,7 @@
+>  #define TRE_FLAGS_IEOT		BIT(9)
+>  #define TRE_FLAGS_BEI		BIT(10)
+>  #define TRE_FLAGS_LINK		BIT(11)
+> +#define TRE_FLAGS_IMMEDIATE_DMA	BIT(16)
+>  #define TRE_FLAGS_TYPE		GENMASK(23, 16)
+>  
+>  /* SPI CONFIG0 WD0 */
+> @@ -64,6 +65,7 @@
+>  
+>  /* DMA TRE */
+>  #define TRE_DMA_LEN		GENMASK(23, 0)
+> +#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+>  
+>  /* Register offsets from gpi-top */
+>  #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+> @@ -1711,6 +1713,8 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>  	dma_addr_t address;
+>  	struct gpi_tre *tre;
+>  	unsigned int i;
+> +	u8 *buf;
+> +	int len = 0;
+>  
+>  	/* first create config tre if applicable */
+>  	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+> @@ -1763,14 +1767,32 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+>  	tre_idx++;
+>  
+>  	address = sg_dma_address(sgl);
+> -	tre->dword[0] = lower_32_bits(address);
+> -	tre->dword[1] = upper_32_bits(address);
+> +	len = sg_dma_len(sgl);
+>  
+> -	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
+> +	/* Support Immediate dma for write transfers for data length up to 8 bytes */
+> +	if ((spi->flags & QCOM_GPI_IMMEDIATE_DMA) && direction == DMA_MEM_TO_DEV) {
+> +		buf = (u8 *)sg_virt(sgl);
+>  
+> -	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+> -	if (direction == DMA_MEM_TO_DEV)
+> +		/* memcpy may not always be length of 8, hence pre-fill both dword's with 0 */
+> +		tre->dword[0] = 0;
+> +		tre->dword[1] = 0;
+> +		memcpy((u8 *)&tre->dword[0], buf, len);
 
-If you run with detail options it shows cmdline:
+Drop all type conversions, they should not be necessary. memcpy()
+functions accepts void pointers.
 
-$ strace ps a 2>&1 | grep /cmdline | wc -l
-1266
-$ strace ps -f 2>&1 | grep /cmdline | wc -l
-1266
+> +
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
+> +
+> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+>  		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+> +		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IMMEDIATE_DMA);
+> +	} else {
+> +		tre->dword[0] = lower_32_bits(address);
+> +		tre->dword[1] = upper_32_bits(address);
+> +
+> +		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
+> +
+> +		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+> +		if (direction == DMA_MEM_TO_DEV)
+> +			tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
+> +	}
+>  
+>  	for (i = 0; i < tre_idx; i++)
+>  		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
+> index 768d7482102a..53c8f6b7f3c5 100644
+> --- a/drivers/spi/spi-geni-qcom.c
+> +++ b/drivers/spi/spi-geni-qcom.c
+> @@ -472,11 +472,18 @@ static int setup_gsi_xfer(struct spi_transfer *xfer, struct spi_geni_master *mas
+>  		mas->cur_speed_hz = xfer->speed_hz;
+>  	}
+>  
+> +	/*
+> +	 * Set QCOM_GPI_IMMEDIATE_DMA flag if transfer length up to 8 bytes.
+> +	 */
+>  	if (xfer->tx_buf && xfer->rx_buf) {
+>  		peripheral.cmd = SPI_DUPLEX;
+> +		if (xfer->len <= QCOM_GPI_IMMEDIATE_DMA_LEN)
+> +			peripheral.flags |= QCOM_GPI_IMMEDIATE_DMA;
+>  	} else if (xfer->tx_buf) {
+>  		peripheral.cmd = SPI_TX;
+>  		peripheral.rx_len = 0;
+> +		if (xfer->len <= QCOM_GPI_IMMEDIATE_DMA_LEN)
+> +			peripheral.flags |= QCOM_GPI_IMMEDIATE_DMA;
+>  	} else if (xfer->rx_buf) {
+>  		peripheral.cmd = SPI_RX;
+>  		if (!(mas->cur_bits_per_word % MIN_WORD_LEN)) {
+> diff --git a/include/linux/dma/qcom-gpi-dma.h b/include/linux/dma/qcom-gpi-dma.h
+> index 6680dd1a43c6..0eb96e62a1f1 100644
+> --- a/include/linux/dma/qcom-gpi-dma.h
+> +++ b/include/linux/dma/qcom-gpi-dma.h
+> @@ -15,6 +15,11 @@ enum spi_transfer_cmd {
+>  	SPI_DUPLEX,
+>  };
+>  
+> +#define QCOM_GPI_BLOCK_EVENT_IRQ	BIT(0)
 
-This is procps-ng found on all Debian and Ubuntu systems. AFAICT
-procps-ng is used on Fedora too.
+Unrelated, please drop.
 
-Note I'm not saying comm is GOOD or anything. I'm just saying that it
-IS regularly visible.
+> +#define QCOM_GPI_IMMEDIATE_DMA		BIT(1)
 
-> And yes, 'top' will give comm[] output because it's so much faster.
+Can GPI driver deduce whether it should use immediate DMA based on the
+transfer length?
 
-Exactly. By default, top and ps both show comm, which in the vast
-majority of cases is identical to argv[0]. I don't understand why this
-is causing such angst -- it's just the observable facts: many things in
-userspace expose comm and many also expose cmdline. Having them be
-mismatched due to fexecve() is the whole issue.
-
-Nobody blinks at:
-
-    $ ps
-        PID TTY          TIME CMD
-    4125309 pts/1    00:00:47 bash
-    4171960 pts/1    00:00:00 bash
-    4171962 pts/1    00:00:00 vim
-    4171997 pts/1    00:00:00 ps
-
-vs
-
-    $ ps -f
-    UID          PID    PPID  C STIME TTY          TIME CMD
-    kees     4125309    3947  0 Jul11 pts/1    00:00:47 -bash
-    kees     4171960 4125309  0 13:30 pts/1    00:00:00 -bash
-    kees     4171962 4171960  0 13:30 pts/1    00:00:00 vim
-    kees     4172004 4125309  0 13:30 pts/1    00:00:00 ps -f
-
-But if fexecve() were used now, "ps" would show:
-
-    $ ps
-        PID TTY          TIME CMD
-    4125309 pts/1    00:00:47 3
-    4171960 pts/1    00:00:00 3
-    4171962 pts/1    00:00:00 3
-    4171997 pts/1    00:00:00 3
-
-This is obviously horrible.
-
-Using f_path, we'd get close, but symlink destinations (or weird stuff
-like "memfd:name-here") are shown:
-
-    $ realpath $(which vim)
-    /usr/bin/vim.basic
-
-    $ ps
-        PID TTY          TIME CMD
-    4125309 pts/1    00:00:47 bash
-    4171960 pts/1    00:00:00 bash
-    4171962 pts/1    00:00:00 vim.basic
-    4171997 pts/1    00:00:00 ps
-
-Using argv[0], we'd get the original output:
-
-    $ ps
-        PID TTY          TIME CMD
-    4125309 pts/1    00:00:47 bash
-    4171960 pts/1    00:00:00 bash
-    4171962 pts/1    00:00:00 vim
-    4171997 pts/1    00:00:00 ps
-
-IMO, switching to fexecve() shouldn't regress this basic piece of
-information.
-
-Now, I think we have three choices:
-
-1) Leave it as-is. (comm is useless)
-
-2) Use argv[0]. (comm matches what would show with execve() in most cases)
-
-3) Use f_path (comm exposes f_path dentry name, which matches
-   basename(readlink(/proc/*/exe)), but doesn't always match what execve()
-   would show).
-
-I think everyone agrees "1" should go away.
-
-So it comes down to trying to stay looking more like execve()'s comm, or
-more like /proc/*/exe's value.
-
-Since comm is mutable anyway, I feel like the "friendlier" default for
-userspace would be option 2.
-
-If you still conclude differently, I guess the discussion is over, and
-we go with 3:
-
-diff --git a/fs/exec.c b/fs/exec.c
-index e0435b31a811..8688bbbaf4af 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1347,7 +1347,21 @@ int begin_new_exec(struct linux_binprm * bprm)
- 		set_dumpable(current->mm, SUID_DUMP_USER);
- 
- 	perf_event_exec();
--	__set_task_comm(me, kbasename(bprm->filename), true);
-+
-+	/*
-+	 * If fdpath was set, alloc_bprm() made up a path that will
-+	 * probably not be useful to admins running ps or similar.
-+	 * Let's fix it up to be something reasonable.
-+	 */
-+	if (bprm->fdpath) {
-+		rcu_read_lock();
-+		__set_task_comm(me, smp_load_acquire(&bprm->file->f_path.dentry->d_name.name),
-+				true);
-+		rcu_read_unlock();
-+	}
-+	else {
-+		__set_task_comm(me, kbasename(bprm->filename), true);
-+	}
- 
- 	/* An exec changes our domain. We are no longer part of the thread
- 	   group */
-
-
-I've minimally tested this.
-
--Kees
+> +
+> +#define QCOM_GPI_IMMEDIATE_DMA_LEN	8
+> +
+>  /**
+>   * struct gpi_spi_config - spi config for peripheral
+>   *
+> @@ -30,6 +35,7 @@ enum spi_transfer_cmd {
+>   * @cs: chip select toggle
+>   * @set_config: set peripheral config
+>   * @rx_len: receive length for buffer
+> + * @flags: flags for immediate dma and block event interrupt support
+>   */
+>  struct gpi_spi_config {
+>  	u8 set_config;
+> @@ -44,6 +50,7 @@ struct gpi_spi_config {
+>  	u32 clk_src;
+>  	enum spi_transfer_cmd cmd;
+>  	u32 rx_len;
+> +	u8 flags;
+>  };
+>  
+>  enum i2c_op {
+> -- 
+> 2.17.1
+> 
 
 -- 
-Kees Cook
+With best wishes
+Dmitry
 
