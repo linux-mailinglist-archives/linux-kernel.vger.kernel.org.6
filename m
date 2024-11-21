@@ -1,146 +1,140 @@
-Return-Path: <linux-kernel+bounces-417530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9DF9D5534
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:10:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EDDB9D553B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C00DB218CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:10:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94E35B22ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38641DC1BA;
-	Thu, 21 Nov 2024 22:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4581DDC14;
+	Thu, 21 Nov 2024 22:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJWLzhuX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H9P1RY7q"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2200F1DA103;
-	Thu, 21 Nov 2024 22:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2F31BD031
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732227020; cv=none; b=kd9gY4AA4vQBVytyT+M7k3O3jy/JSwjLmwUv3zRJ9AFy/JgHCDDweSa4ghuzCCLuFagkOHqLYPhk30UcckeXYyb5FnDK+/c5aJ3B7P1bVKzpzNcCET2sik4uyfmXmsXxPn7xc2zTGxZ3zVuGFWbX2l5r9vavbML9e5Ude3PhgUs=
+	t=1732227043; cv=none; b=rnDM7iKs2oKf63guxp0XG8kzq368qvZMdIRoSuBattJSuCA+yoHZal6XlYGsWCstSdGWcoSj8olUGHQi1b+y1a8eDfS8fw1k4mg6mXlou2CaAJBilig3QYEfHejP/PPCsjUtp39tsHoFOObmoDKhOhMRVba03uyVzC5Gq/jBrpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732227020; c=relaxed/simple;
-	bh=P8Qd/MRAyy/b/gU33MQSGIBjufUiMMrQJ42bPKEfkWk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pq4nGqljnS3HnwS6LrJlW265UygRHdwiDWt3+dOH3e9zaKU6c2uoVW34I2TEcINbhtLnfDgYBKtHcuqsYjPTfM2cIqly3Q7KXJeml3GTVAXbMGTU1vkxynKzlpN6Lm6g4nApmRAx1FKf8tj1tAxmd3RbnNYyoGlsOqi4fUPFNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJWLzhuX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910A4C4CECC;
-	Thu, 21 Nov 2024 22:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732227018;
-	bh=P8Qd/MRAyy/b/gU33MQSGIBjufUiMMrQJ42bPKEfkWk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qJWLzhuXblhGHrc/UdhNMI/aMPQ4f+rWm1uLJUpLV/vlCbtu7bE6Cx/guToc4eGqt
-	 yg6DKpXgmiSdb2o8t0eDbW2765Pyv21LAPOYeZ5eP7sborjvW6sOAZ7HgymHWbAvuQ
-	 rrfwAgl6zTPQO54aaGiCOzOfFsGACb0WgAErIMCM9Bzwvis+3emIVfIAX9Eltbj8rb
-	 cV8PgzC0CpN28z4EL+qmyHGwCF5YRfAlG9wGbYwcECwcYVaZUnOluv5sav2JYebTsV
-	 AfraWN1mO9wk13MXtVOgdk6pHgiezjbBrpON/OLtlqwX4PJva87MPwHsTTypGsVuFA
-	 tnhG+SeNpP5wg==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539ee1acb86so1525293e87.0;
-        Thu, 21 Nov 2024 14:10:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVqXSVQ4FMF7YRIVFnO/Frh/bD8f1eSfvA/b6Kq8qvCUnQc8Zj3RJyNktTO8HnATh0LuIwkXz77wsOu/1GY@vger.kernel.org, AJvYcCXuwwMI/YDwvIceQ4hoMV32QVcWhoq9ezMq13sIlNGGPKzLqyB39G6ER1N4LVDDRpMrR5cmB1aVvuJjl6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuS4LOZ+K96SlfHXL7F5aurEcI447DsxliiNnqy8LaR4lD5Gf0
-	mLCitYmtbdkRCD+W/RIp+Nye53RMwyGfYQF3HJVr99ct7CpahN1hGIXo6mmtSPUmzp0Dxi2Ets2
-	ivcUrygQaDifoueaajeRnLeUxLBk=
-X-Google-Smtp-Source: AGHT+IFzJA2JGKgzD7q4s8J77+zJtSvedW7tV0Gczz0OSUyzXKCpXkShpj+6t0JHVapFkxxPqHLVJ/O0fxFMYlOy+C8=
-X-Received: by 2002:a05:6512:31ce:b0:536:a583:2777 with SMTP id
- 2adb3069b0e04-53dd35a4ce4mr184353e87.9.1732227017219; Thu, 21 Nov 2024
- 14:10:17 -0800 (PST)
+	s=arc-20240116; t=1732227043; c=relaxed/simple;
+	bh=yeWBaZyskmHQQzGoYf4eQzjnS5JlEV8qt70IgjYzCIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTLN57Rra1uuPz3f4u5GYK+VX3HysGqSRCYnJ5UcjLp4w0NJDPnCYSta6xvKyHEHKXxh4mh1cycTtlE/naAh3EnKHjrtmxIXdwp6blbuAu7CR0QTL1faEv50o9iT/WXH12n/uJRprl+eC/JDPYsyOl4vNjs2Zys5M7LLppOF17M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H9P1RY7q; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso15277141fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:10:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732227040; x=1732831840; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFDuP7IjDwDMv6NR+DnprUqGpxBiP59fQ/sq6qPsJrg=;
+        b=H9P1RY7qOTOzBIoE9oqgJcctr5IqJ9f3UvXdpcBOJrQ+nVf0lLCpWjh477uvHWFek6
+         GyU8h2ELHq2Z3bMc47zDNEd79WT3cBbSUGXDV2djQlMm65J/kXFUkNlg1wU3Dtz0R5Wd
+         5G2b8/aIRkJFmuwAcotlk1VyuJ43aCcl8b1nlQ4Ly3nfcfIOaJfMO3YoP0vw/xNJbElc
+         QFw9qUhPOH90ZGVpph3XJiYDtXcUrUsjVEa14Ug9bKk2KoiaYzPUdsaTNxfvMfdH7FoT
+         +qwyDMnMDRRcVGZIpqyT8K+DLrUUCIIGpgsYuv1UkA/0jSSNliFxe1LGWb4EtXbxVsFQ
+         eT+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732227040; x=1732831840;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gFDuP7IjDwDMv6NR+DnprUqGpxBiP59fQ/sq6qPsJrg=;
+        b=UQdSol1dwacz3dCO//g7QcWhEBfZDnh1evN1uA+9Y2Ha94NvDJaUuCYKpad1InOXjQ
+         Xex4AO92kBTnHNk8juKpOOtbZZBUa+GgcaMduTBfgf66E9PHSnggCj7eQkeHg0Cv030V
+         9f4cUn4bwUSEgh0ErbuOx/6NmrELLqqwj+aK8OfD1Zje7nMIiaLi5jbS8XeK8BRuaRHh
+         /Y5r5wKgDsIaHIjIsHG1Jr548OPhURMTZ0QWQuKOe9nLY7mk7TvsE7Qquf6REPje9ZjD
+         Thit1S9hR4C6V3td3ziIsVZbXck+Avoukjd4/KZzmoh/174Np7FAbM/UZHgSD88J8OnU
+         fqog==
+X-Forwarded-Encrypted: i=1; AJvYcCVGdU8oG2zXzMCKrtfytETjBU1WOW9oQ10oLkOWQtFvGeN51y0wuvTt5SPafUS41Y1kysm5bkA7FhKwqG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyAJNTVrtL73N9RidgjifYGhEh+uKXg+jDJiIMXAfYurwq267w
+	J7euIl6gF4PXe0fBp3PDdlrk8Fk6g8rukyzjHZBOVfn/8yut/4pJ8YtJ8U+YspU=
+X-Gm-Gg: ASbGncvptejPCMKhvm2mhYEz49hRMLSu01cvYvsE17y6al4ZP8wM+FiRqent8sJwblT
+	TMW5l+qu+B+tF7/ZH4KMWraTat6kH4nobaupVve0nL3syiGHszr/w35JHKN9r8ZSasFWNBU24tK
+	cLL0GzYTc5xBxhXqQIlXu9Vv8uqluAuKb38xyJP3o9/cPB5UFXLbVY+cQLv7+Mxz9TC7OWmUn65
+	HI67samQcuwcm5hCu5SiH0M2VTmSaJxrrQKTLdPhknJ3gO+0s/VEW4qYV9poTks04aN16rwE5xA
+	C0RTiADo+jQokZzTRyZBsZeu0ho4cg==
+X-Google-Smtp-Source: AGHT+IF5UEvVH8EwlVFvDbA8yqDXP2EnIvz85XTHp+jyVxMS03tfkpla0bwll8dc1ETCUfCWi+KKfg==
+X-Received: by 2002:a05:651c:2208:b0:2f4:3de7:ac4c with SMTP id 38308e7fff4ca-2ffa70f0968mr1996351fa.8.1732227039935;
+        Thu, 21 Nov 2024 14:10:39 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa538f100sm593151fa.103.2024.11.21.14.10.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 14:10:38 -0800 (PST)
+Date: Fri, 22 Nov 2024 00:10:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, quic_msavaliy@quicinc.com, quic_vtanuku@quicinc.com
+Subject: Re: [PATCH v3 3/3] i2c: i2c-qcom-geni: Update compile dependenices
+ for I2C GENI driver
+Message-ID: <zfkhbjm6wrmcocqcvluov3nbrpb2ozbo52c6nlwxro44gublcw@5645ksz4cfm2>
+References: <20241121130134.29408-1-quic_jseerapu@quicinc.com>
+ <20241121130134.29408-4-quic_jseerapu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
-In-Reply-To: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 22 Nov 2024 07:09:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
-Message-ID: <CAK7LNAQuE_e2XrRA7r=o8p-Vjqi3OAii1z99E+GdacvMdw6-5w@mail.gmail.com>
-Subject: Re: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build
- dependencies: libssl-dev) in 6.12
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: re@w6rz.net, nicolas@fjasle.eu, nathan@kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121130134.29408-4-quic_jseerapu@quicinc.com>
 
-On Fri, Nov 22, 2024 at 2:09=E2=80=AFAM Frank Wunderlich
-<frank-w@public-files.de> wrote:
->
-> Hi,
->
-> i noticed this issue with debian package build-system in final 6.12.
->
-> LOCALVERSION=3D-main board=3Dbpi-r2 ARCH=3Darm CROSS_COMPILE=3Dccache arm=
--linux-gnueabihf-
-> make[1]: Entering directory '/media/data_ext/git/kernel/build'
->   GEN     debian
-> dpkg-buildpackage --build=3Dbinary --no-pre-clean --unsigned-changes -R'm=
-ake -f debian/rules' -j1 -a$(cat debian/arch)
-> dpkg-buildpackage: info: source package linux-upstream
-> dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
-> dpkg-buildpackage: info: source distribution noble
-> dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
-> dpkg-buildpackage: info: host architecture armhf
->  dpkg-source --before-build .
-> dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
+On Thu, Nov 21, 2024 at 06:31:34PM +0530, Jyothi Kumar Seerapu wrote:
+> I2C functionality has dependencies on the GPI driver.
+> Ensure that the GPI driver is enabled when using the I2C
+> driver functionality.
+> Therefore, update the I2C GENI driver to depend on the GPI driver.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+> v2 -> v3:
+>    - Moved this change to patch3.
+>    - Updated commit description.
+> 
+> v1 -> v2:
+>    -  This patch is added in v2 to address the kernel test robot
+>       reported compilation error.
+>       ERROR: modpost: "gpi_multi_desc_process" [drivers/i2c/busses/i2c-qcom-geni.ko] undefined!
+> 
+>  drivers/i2c/busses/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index 0aa948014008..87634a682855 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -1049,6 +1049,7 @@ config I2C_QCOM_GENI
+>  	tristate "Qualcomm Technologies Inc.'s GENI based I2C controller"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+>  	depends on QCOM_GENI_SE
+> +	depends on QCOM_GPI_DMA
 
-This error message means, you need to install "libssl-dev:armhf"
+So... without this change the previous patch is broken, which is a
+no-go. And anyway, adding dependency onto a particular DMA driver is a
+bad idea. Please make use of the DMA API instead.
 
+>  	help
+>  	  This driver supports GENI serial engine based I2C controller in
+>  	  master mode on the Qualcomm Technologies Inc.'s SoCs. If you say
+> -- 
+> 2.17.1
+> 
 
-> dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; abo=
-rting
-> dpkg-buildpackage: warning: (Use -d flag to override.)
-> make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.pac=
-kage:126: bindeb-pkg] Error 3
->
-> it was ok in at least rc1 and libssl-dev is installed
-
-
-Presumably, you already installed libssl-dev for your build machine
-(i.e. "libssl-dev:amd64" if your build machine is x86_64).
-
-But, you have not installed "libssl-dev" for the architecture
-your are building for (i.e, "libssl-dev:armhf")
-
-
-
-
-
-
-
-
-
-
-
-
-
->
-> basicly i use this command after setting crosscompiler
->
-> LOCALVERSION=3D"${gitbranch}" board=3D"$board" KDEB_COMPRESS=3Dgzip make =
-bindeb-pkg
->
-> if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders buil=
-d profile"
->
-> i can compile again..any idea why this happens? my build-system is ubuntu=
- 24.4 and github actions with ubuntu-latest.
->
-> https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/=
-33327423877
->
-> regards Frank</frank@frank-u24>
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+-- 
+With best wishes
+Dmitry
 
