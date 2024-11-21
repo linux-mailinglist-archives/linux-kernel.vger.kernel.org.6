@@ -1,103 +1,97 @@
-Return-Path: <linux-kernel+bounces-417186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882BF9D5022
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 721A09D4FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:30:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D66A2837C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:52:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35446283BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833919CC29;
-	Thu, 21 Nov 2024 15:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F281DD0DC;
+	Thu, 21 Nov 2024 15:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IkQk+h08"
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3xC5VWd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8AB15D5C3;
-	Thu, 21 Nov 2024 15:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6721DBB19
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204311; cv=none; b=jZvuC5lLozLzvYEEqu14yHRoGx7O1TFCV2ofdNcVykV3Czy5qxSuGEtM10URQGiXJtWuQDRNElla+p/Ccf7gc5FtuFgemH2+EIyROmPcn7o4eC8wbw7yw1CUhhwFRy4Tus0vBbFjxhD6F/Ep3KlZmJO4+PpMUfERVxJgdsU6Ioc=
+	t=1732202999; cv=none; b=QiDmZRhZCWPFUARQoryN5y9eFEUWw9aIug4QeSCa5g2RTz+1gLPHMtM+zbigwq1qd1Hm1b6p1c4Tln7LKMD0uHIf/8NehhbywwLkLDmCmF96RMxCY1j6QhUIEU8OC3sd4VmobleIo7Qw/ojbAkq0IZXfgiB35jBulfYrVEyjDiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204311; c=relaxed/simple;
-	bh=X7hwPZmjY8q8t6ar3X/nRv/1vY7FPM9xlv+jJsMT4L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IyXKrZ+1ZP94I4JZn2AlOEm+jq/BdJBPYlK3VdmOSIxFWKionM3QhFusOzyELTxa1eeVb+W25ki2UuFNih34vM55o1kRfA9ontjoOlUK9DdFRiNuTv83otu7l8mOE70JFCNdKSLhuZhLyD6DOvky3WMrRJvMT6AVfev4FArmiik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IkQk+h08; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id 16AE2C351D;
-	Thu, 21 Nov 2024 15:27:52 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4498CE0015;
-	Thu, 21 Nov 2024 15:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732202864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7vNUEM2nqa5ru8I3224DdW8toFKm1983QOZjCOpdhak=;
-	b=IkQk+h08kyzyl0ixQitvGKYANR/xMCGTYLxz+REOBqQ2sHLSvUez5TvQC8OF9DmBr2MHXp
-	liDAmVLJzuMzHMGk7B/aD8IhuMo2Qy859j28+aN0UyuBZepcKG7X65GSToOn8Hksg/NHy8
-	3TCmAmr76JWvf0ym9NkKxgatvqCq4CnYLKiCjCf14pIKyE0GketAiOH3CHCtt1m3PsKoE5
-	K7OkzjtQMjXPVtYthRtTdDifYI/PvOfzQRYULXMQMNGC8/4sls67l/2oNREMiTckwx1lwa
-	4py66em/riyMwXy4OOo7+eEygZZGNzaRVzYOC6llfdg7B+2eWTOTgVrmF9coAg==
-Date: Thu, 21 Nov 2024 16:27:39 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
- <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Liam Girdwood
- <lgirdwood@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH RFC net-next v3 17/27] regulator: dt-bindings: Add
- regulator-power-budget property
-Message-ID: <20241121162739.6c566d85@kmaincent-XPS-13-7390>
-In-Reply-To: <9b5c62aa-fc01-4391-9fab-219889fa0cf6@sirena.org.uk>
-References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
-	<20241121-feature_poe_port_prio-v3-17-83299fa6967c@bootlin.com>
-	<9b5c62aa-fc01-4391-9fab-219889fa0cf6@sirena.org.uk>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732202999; c=relaxed/simple;
+	bh=F5igAvDvGxe5zSohUU0aBj7vqkvV7yrcGAfEW1EiIq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAs5Br4h07/N5SOfv2gZGKopw3s03OFd9MzMt6Dz2sFkmYMj1R5yNeqOjVDe4JqvlbFpkMckA7hgLpx1XLx8gsAoiSWHQBiqPQwm17mR2YBnKf3OADS6+1XYEckXkdn/fBmwuM/p609RCQ8k/5ZU7wVAjpy8wPKABGAep2K6AGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3xC5VWd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E69A0C4CECC;
+	Thu, 21 Nov 2024 15:29:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732202999;
+	bh=F5igAvDvGxe5zSohUU0aBj7vqkvV7yrcGAfEW1EiIq4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=V3xC5VWdxChbC1RKGEgCmkK1MgbPvKMFuXG4p/BVtvLZzedPb0RvxevRyDzSAr2Wh
+	 5MWaWTkBBNfjSGxR5OWqoATzeFF7eGHs0xOBH8Krh/8gtb0DB+rxQ7L9gZtXezZ5Zp
+	 sp/6rOMC1xQNR9YjVzXNPmEU1bneMsCn8e9Y2vW639/XvjlxtQIyuE3UW/XpCOWlGd
+	 SC+gi0Ill+ZV/Gb2SxsYvCf34EL3AJx2gya3zLhlnTDpEuWFQrQXdxHENIe/H2bcvJ
+	 JHoVYgOsH/AEU5QcH71X9MJ3vYv4mPYPzkviTv28qn3SFC6uFOATPpgvbDlJ7K4V3e
+	 +3z91jfATJZXw==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [PATCH] delay: Fix ndelay() spuriously treated as udelay()
+Date: Thu, 21 Nov 2024 16:29:31 +0100
+Message-ID: <20241121152931.51884-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On Thu, 21 Nov 2024 14:58:06 +0000
-Mark Brown <broonie@kernel.org> wrote:
+A recent rework on delay functions wrongly ended up calling __udelay()
+instead of __ndelay() for nanosecond delays, increasing those by 1000.
 
-> On Thu, Nov 21, 2024 at 03:42:43PM +0100, Kory Maincent wrote:
-> >    regulator-input-current-limit-microamp:
-> >      description: maximum input current regulator allows
-> > =20
-> > +  regulator-power-budget:
-> > +    description: power budget of the regulator in mW
-> > + =20
->=20
-> Properties are supposed to include the unit in the name.
+As a result hangs have been observed on boot
 
-Oh ok, thanks!
+Restore the right function calls.
 
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
+Reported-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ include/asm-generic/delay.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
+index 76cf237b6e4c..03b0ec7afca6 100644
+--- a/include/asm-generic/delay.h
++++ b/include/asm-generic/delay.h
+@@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec)
+ {
+ 	if (__builtin_constant_p(nsec)) {
+ 		if (nsec >= DELAY_CONST_MAX)
+-			__bad_udelay();
++			__bad_ndelay();
+ 		else
+ 			__const_udelay(nsec * NDELAY_CONST_MULT);
+ 	} else {
+-		__udelay(nsec);
++		__ndelay(nsec);
+ 	}
+ }
+ #define ndelay(x) ndelay(x)
+-- 
+2.46.0
+
 
