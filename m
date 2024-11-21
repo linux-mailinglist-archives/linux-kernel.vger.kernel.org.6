@@ -1,153 +1,138 @@
-Return-Path: <linux-kernel+bounces-417424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5893B9D53DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:18:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC019D53DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E712842C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98AD01F22C85
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CBC1DC05D;
-	Thu, 21 Nov 2024 20:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4856C1DA0FE;
+	Thu, 21 Nov 2024 20:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xvRLxUax"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lXmURCcR"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AD11D9A40
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE2E1CB9F4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732220288; cv=none; b=Sqefm4XsinaqMTDJYo57uJb31Jlvt3sXwDm+djCIxyYavvUurPlj8w5PducnVbEQDKQ365pDPKzDZrHyZKOXjCX4BctX5X9FM9Sm6fkLVfon5wEqM9jca0C0Sl55jwXfF8c3nrRghSsszQ4IYdPznwkY0+w5t0iPjF0VYOId/Dw=
+	t=1732220286; cv=none; b=NyL9nsfhao0dpjqu735pDH+WUN9jYYhZw/L4zzWmCHe84AgEBORMFGRjJ2EenMfQisMjpxTKj/YpNPBmuSIooXrQYmnWkyuoQniAdAjn0neM2IDfJBxiqz6Olo3H0nZ8KKL//JQJ9rJfq/l/LX6sQpWd6VMzlOiiwC5H1arQBdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732220288; c=relaxed/simple;
-	bh=98cSwaFxCRGFRUwjUPD3e4lx7JgzTQnwUJ6h05gwh4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GxV4IzidtJoVFhYIZWMmu0IjuBNSR/hU+EqpF+mCjNE3LfCKE2vLgFgqLN/ISqc2jBXuDg3gERIILW+cBn02A/XfzVD1J+N2K0iRc6y23QMru9wX1zfjlx2VE+uXAFm9QyIOYeFf/TUtyHdbqtVlhDeu41wVycWnSO5F8nZ94sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xvRLxUax; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d00ecd97beso1903a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:18:06 -0800 (PST)
+	s=arc-20240116; t=1732220286; c=relaxed/simple;
+	bh=PoQ6xe9gEBhTT4I8U11K3X6ngcSjvsKe9RH1AZSUE18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g75UJ6hO6PjVqOjoaqR4cKXNeL9uUaPql++YS/bnHCiQ7J2T1cqMfzVis+4pKQZ5+vvV+Ib0TQnjGapGXTpWmuKnej3TimI/ACwg8fa1rIQ6oxW61aITdZTRtnFh/wh2maJjh/ejaJz17tO74gXjqP6Z0kkV5L0oTDMNyoVxDwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lXmURCcR; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-382442b7d9aso1142636f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:18:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732220284; x=1732825084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QsRAQ6t08WPFqqtrK9Y/yi/Kj5TOA65Z3KS9Ukbgptk=;
-        b=xvRLxUaxk+JxLRSC9i3a8sESZK4SaCTtKc9guTb2u9Rd3ZMoSJC+AkGoTnG4ZoxJwz
-         8ZdMIiZ0PzccwPopxdw+i4IkpUyZlzd/o933LHrNod9kXXQGF9aM82VCDVG7OCqoq4ZJ
-         5SmJKXT9s4xyQyegwicahiAc8zVE0Vl9MuajGkW6hwqSGCb3qt+yTounm8C+EY/bCHge
-         vNimrBZxA2sQcXT0zbr4JdUJUioQG9pmHouCWSzu8l1rWvVR7lYkfte6mAsT2aooToqC
-         aMT55cFpyd+aLxajvwynheARA0AsBAsIhb5U2cQ4R45oKpFEk7uRuMdsuNb2fHGuN9AR
-         N6sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732220284; x=1732825084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1732220283; x=1732825083; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QsRAQ6t08WPFqqtrK9Y/yi/Kj5TOA65Z3KS9Ukbgptk=;
-        b=C+S0O9JPHTz33H8V/M7GwuG128aVih4SfKGNbtgqi+09pb5kNrZFkdwpl7/met043t
-         nn5GrSS41WKw8QQjl+KAlBsWBtkGRcngHFdOIXrfoAPR3UGmGTD4BoJy3+gmrMvG+yEm
-         V+VhdRCtbRCt2Z+3siPey2u+k/5wyKP61lDiDlwa19P7pznQ3F3QZbfZQyzo/d6XhDIb
-         Idqy7tzlAq5gUxdMUE8cI0d6SkeFWZ6bqJrAtv1SBbwvrc2BQAG0z/TB2eqKsuuFMITb
-         Nmz0lBQ/HzKIj99KyLBnc8v6HdYhfN+5qk4SFJMw4QB5yiVX1NLiqm4Jmcrt9/FaY3Gc
-         sjyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWALaujWX8XiTS64tvdP+Rz5sI0qLZxO73YN1xpXth7vdsEcuDcb/9KJBa7Sj4jdYCklv9H3+mC04e/BrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7ivZgOJGXjNOMSdUUxF/fAACBPcRzGB2iwg7tKIkdndmNHPWG
-	zar0D5obOLTD38fCVRXGp7tapLULAm0zo24tfCy/4OwAG7HU8c8Kn1LQikXPr6+XmSHd4gfl6u1
-	Mc1k/gGaZgI+Y2ArQkYpR50OWVRKpKSHLQ1m8
-X-Gm-Gg: ASbGnct8LqxE1rpUeeHCmgccza61NPcr4aeAEJ1DSlaGhundEsZwCDWZDjRBeuTx+aP
-	/mUc3Z15bAxMhGj9V/p9FytqNBxxuOWNacECHX03HjS1nnvym0g9cBKAEKMU=
-X-Google-Smtp-Source: AGHT+IFvnfJzTTJ/+eR3Vxjo7zD5SinHcpQMhmMje2i6LAznZGVS+bpiK7Ig3Hi4h3GcgmluFEyuti7p0HNlUHLa6I0=
-X-Received: by 2002:a05:6402:5158:b0:5d0:a5a:6ffc with SMTP id
- 4fb4d7f45d1cf-5d01e4fe710mr7807a12.6.1732220284214; Thu, 21 Nov 2024 12:18:04
- -0800 (PST)
+        bh=K2mZwNr3eW1Z9Vp+PcgzzHwsSK7NqM3DGZ9Ok0Kn/lA=;
+        b=lXmURCcR2y2JM11ebEG56j0PKzDY/qy+47ocVFpemLSlClkU1wTpZwLL/QhhLPyW3s
+         iF9Jsy6KQ+oxhvR8qRApsLH9BZhYuBrwPyfpf3YbRgcHt4ris8boO3EV5a3OzwR0hHu6
+         GaATFgXOi3cHSpHOnsafal4zQvELNEmOZHVFM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732220283; x=1732825083;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K2mZwNr3eW1Z9Vp+PcgzzHwsSK7NqM3DGZ9Ok0Kn/lA=;
+        b=YWehoM6DONlJV45bmStOIU2rDeqST6VBscqXcXtOBserChNDDB3ptr8VDWUxkMbbvc
+         EBQRfghHkHL7JmBTjS4n4M1buoQuoorcD4tIQnddB9KRGNcSwQKJpl0f1euUpXB0I5ix
+         8jPkk9qFqwSvghT86wxhGIiW+wV+sRvgWCgl4Z5QUa29RdeNv9aoJdrvZyLDTpjdvL+l
+         1vKAUH8BVf815raYTJG1NoC/5Lsiu689CsaTFQJPmvDQy8asWYRSBLKHcsDUGI2hiNoK
+         K3wEotWcIwWVmvRiOs9/oO4jyrhkDBgdKM76tNG7KS0tOxVDJROfqiy22TIaF4koq5Iw
+         wpxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXa6D2UtA1B14X1KWJlhd29jl57ZvXtAJUAWZ9sT9rus/CGsEQFS77CjrGDIcgeB43BZ/pqDl0azQRnahQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrJ+2HDmHbO6RBCb8APqcBqgUcHIcwotcAInPVQUws4nib2jHo
+	nT5DSTfK6QcjvUpXM4NV4R7egsDgMaTxr8knehGKJl3OQgfhUzEJjyklIz2ZxBk=
+X-Gm-Gg: ASbGnctBvmO8hwtSs15cVOg25dipQC0BLPWZykQc1bd3T4M+J2TQkjuSpKBzuudGbut
+	1uqPfLdLTVGlQ2dq/x4LNn9KySlWTY+Mbn9j/pVIGq2PJ3udDPjwe4U0KAC/lQuX8ZzENHCeJSP
+	QAgYFq+oq/buwf81mNrmh6KbiUasCA4ocTUZtRr4PEBuHn6+NX/ew2RZvxPYX+Y+hPhI9NCjNqX
+	Y5Z0JyCBwsOObDSbZBwx3KxzaZ7wZ0xw1A9BG3e7JQvlxdryJku8aBkfsKWiw==
+X-Google-Smtp-Source: AGHT+IFIAEZgwOdLKe2aLVeTOHcS+P2fVWqmTMpDKu9ZFOYWSBuKw3u5Or2kbjFemduSGbeJqRdGPA==
+X-Received: by 2002:adf:e18c:0:b0:382:5aae:87ac with SMTP id ffacd0b85a97d-38260b8966dmr360789f8f.32.1732220282992;
+        Thu, 21 Nov 2024 12:18:02 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb271ffsm455908f8f.53.2024.11.21.12.18.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 12:18:02 -0800 (PST)
+Date: Thu, 21 Nov 2024 21:17:59 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, Michal Hocko <mhocko@suse.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"conduct@kernel.org" <conduct@kernel.org>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	Dave Airlie <airlied@gmail.com>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <Zz-VdwLPBUV9d_Sj@phenom.ffwll.local>
+Mail-Followup-To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
+	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"conduct@kernel.org" <conduct@kernel.org>,
+	DRI Development <dri-devel@lists.freedesktop.org>,
+	Dave Airlie <airlied@gmail.com>
+References: <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
- <20241119112408.779243-3-abdiel.janulgue@gmail.com> <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
- <43a07c04-2985-4999-b6d6-732794906a36@gmail.com>
-In-Reply-To: <43a07c04-2985-4999-b6d6-732794906a36@gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 21 Nov 2024 21:17:28 +0100
-Message-ID: <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page mappings
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+X-Operating-System: Linux phenom 6.11.6-amd64 
 
-On Wed, Nov 20, 2024 at 11:56=E2=80=AFPM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
-> On 19/11/2024 19:07, Jann Horn wrote:
-> >> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a Sel=
-f>
-> >
-> > Sorry, can you explain to me what the semantics of this are? Does this
-> > create a Page reference that is not lifetime-bound to the PageSlice?
->
-> This creates a Page reference that is tied to the lifetime of the `C
-> struct page` behind the PageSlice buffer. Basically, it's just a cast
-> from the struct page pointer and does not own that resource.
+On Wed, Nov 20, 2024 at 05:39:09PM -0500, Kent Overstreet wrote:
+> There were concerns raised in the recent CoC enforcement thread, by
+> someone with experience in such matters, that your aproach seemed
+> extremeely heavy handed and I find myself in 100% agreement.
 
-How is the Page reference tied to the lifetime of the C "struct page"?
+Ehrm ...
 
-I asked some Rust experts to explain to me what this method signature
-expands to, and they added the following to the Rust docs:
+Yes, I did quite strongly criticize the new coc enforcement process.
 
-https://github.com/rust-lang/reference/blob/master/src/lifetime-elision.md
-```
-fn other_args1<'a>(arg: &str) -> &'a str;             // elided
-fn other_args2<'a, 'b>(arg: &'b str) -> &'a str;      // expanded
-```
-
-Basically, my understanding is that since you are explicitly
-specifying that the result should have lifetime 'a, but you are not
-specifying the lifetime of the parameter, the parameter is given a
-separate, unrelated lifetime by the compiler? Am I misunderstanding
-how this works, or is that a typo in the method signature?
-
-> >> +fn to_vec_with_allocator<A: Allocator>(val: &[u8]) -> Result<Vec<Page=
-Slice, A>, AllocError> {
-> > Do I understand correctly that this can be used to create a kmalloc
-> > allocation whose pages can then basically be passed to
-> > page_slice_to_page()?
-> >
-> > FYI, the page refcount does not protect against UAF of slab
-> > allocations through new slab allocations of the same size. In other
-> > words: The slab allocator can internally recycle memory without going
-> > through the page allocator, and the slab allocator itself does not
-> > care about page refcounts.
-> >
-> > If the Page returned from calling page_slice_to_page() on the slab
-> > memory pages returned from to_vec_with_allocator() is purely usable as
-> > a borrow and there is no way to later grab a refcounted reference to
-> > it or pass it into a C function that assumes it can grab a reference
-> > to the page, I guess that works.
->
-> Yes, I think that is the intent. I appreciate your help in pointing out
-> the issues with using refcounts in slab memory pages. As you can see,
-> page_slice_to_page() only returns a Page reference (not a refcounted
-> Page). Hopefully that addresses your concern?
-
-Does Rust also prevent safe code from invoking inc_ref() on the
-returned Page reference? Normally, the AlwaysRefCounted trait means
-that safe code can create an owned reference from a shared reference,
-right?
+No, you would not appreciate what I'd do instead, not at all.
+-Sima
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
