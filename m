@@ -1,202 +1,134 @@
-Return-Path: <linux-kernel+bounces-417457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B100A9D544C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:49:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061C29D53B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BA12819EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:49:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83BDEB22AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1781B1D041B;
-	Thu, 21 Nov 2024 20:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B7D1C9B7A;
+	Thu, 21 Nov 2024 20:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLMAcM4q"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="FghJhjBV"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3581C1F24
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1644D1DDA32;
+	Thu, 21 Nov 2024 20:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732221949; cv=none; b=JK5QIlSNOe8yqekQcBU0mmC7KXUv4rS9mby4iGD6eSN+drkdY9jN6dNWpJuDPUcgeI1cLAeJr5Xv9w48CtimutTw8CL/HZRHfmA1o5exoVTQ5fT+plJ27zP31H0qHkPFAGWpdc2aqPD/mEeP5lAjGPo+15YGnOBfhSL2qBWlFRM=
+	t=1732219661; cv=none; b=WQpOZz4GVovcdLLPHCprR3jK3W2qPHOpTeJV/qB5m+yNoa7xQ5CTQXafLlWXWN71KY2k7YlaRh/Fh4EZcFAZTwkmR3e1PdHlWm0Y8F/mljjJUx+qKZCv/TcpP2bGa+u5yFXPWGmmsl0OiJTd8f4JPY6qetULZBKTxN9pypYQFYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732221949; c=relaxed/simple;
-	bh=+PjyAmyi4nMTZ2JOJskb4rrvBLr7SK4h92YxZvH4bJI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=TJz0MiLshB+cx3mBrjpNW9MQnSUm17aEtzoKBgR8GHMy58uPzLLXMEG51PXLYNGwZCLsa4hidFPo/MMI5RDjJzbdjSZsfynefKM8NkdFOLksKLerNLEwlb9jlVXnOBfiex3a4F+SswGY3207rQARuOkvbpMJZKh1aQuIHhswHgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLMAcM4q; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-72410cc7be9so1327592b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:45:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732221945; x=1732826745; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=VtSRjuJwza2RH5ehpU7qNEh2YcxlKoG/hB48tQGalvQ=;
-        b=DLMAcM4q5yYu5Cj7SntvcY0YLc8dydpfIiqB4FqvwdxkRgja3kj3whIoRDbbJ9h0Jn
-         LdhsO2oKcouhihyBiGRVAwsLgANRJUA5CWAXGP3qCDxW5oaCw3wKfjHGPij97/ke+dfj
-         56nvFKduT/GoF5EbDWUZEMoma47l0lZU/ICPrOxQUHCoaSNRmPgQpx+B2DDWltSq2aXh
-         le2xKkjemFDRhST847ER1W3Rz3tnXWIioAzeJnpvhMmTlNL8aAnRw7Xwyw82VrFodinB
-         RsGQpEPzDyl/7vRsJooJrZu3mDh5jvBplhwKyq4+xfEW9YPqPjsbYZURxzZiw/sha7hU
-         ylGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732221945; x=1732826745;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VtSRjuJwza2RH5ehpU7qNEh2YcxlKoG/hB48tQGalvQ=;
-        b=dUwcBaqh+aOhqyQxImfWOpDX/BEq3FvyfTu87iFD1y9VG43bIvjmtNh7lVLr34hPzC
-         sagq10ppVdXhKmnS2wDBNdJ2izWTuavCyRDV+YGwUAlmR3MsM628aCJL1QVz48HHb9m8
-         oSlG30MPVV46MSDoTn0PCEsAD+wUhNxXv0WwpwgSXw4TFQE9o3XNFFburnYA3f1kCl12
-         SxqjlErOHaRY5Tg8HfFGjRH2SU96JZefMSiwg3/IBqtpCJ2y05CHieHEWFhCJQCMryvE
-         yAmd3CLKhEitvpdG+3e60fEPR58t7fpfnIzIngwmrj/QRoY9hkoyM3NwTORLvWR5ue+S
-         5fqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAVqrYpEMmEl0ufkya9ZJuOggFVDJbmzZW+3jRzo43oyuHtJvpjsBK4p1puDmE8PKDJGKj/CLo7s18iCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi5UP9BcEnzRna5tTWshRx4yhHN1A+VH0PlqYm3jZvG1LP2vYp
-	pqDcGyHA0oQskE15JPCqfb89tjRPMHps6OKBp1Lg8+MgP05E/tbGUgHmfhHI
-X-Gm-Gg: ASbGncuEWWFjkSs3jyd/zBxl/za471jQctk5KMfd5XVLldPIx+Fr2WuGt7EhGvNEp1W
-	cy/F+0uvAgYLIyD6XwkswypPS+rgqxr2zxI/IyqSkcaEAGsD1tyv3YelOEtJ57rRYynvmxexupy
-	RrscE10ck5pudUt+ZDirIOWPiNgbtZiwVeT2yqmQgNNz49Zi2POEit1UrclTRrdKJfyiN9SJGXH
-	IlJuUSPPmtDFCSF/0hPJd2lhsE/oed9ei/KYLIh3yQ=
-X-Google-Smtp-Source: AGHT+IGezdLw8pd5bAJJH2FxWUd5eSOKARsWYuo+GBjewBEIPtsbxv5xI7Rxnto/ZjiKV3i5xG02Gw==
-X-Received: by 2002:a05:6a00:1388:b0:71d:eb7d:20d5 with SMTP id d2e1a72fcca58-724df5eed0cmr750905b3a.8.1732221944478;
-        Thu, 21 Nov 2024 12:45:44 -0800 (PST)
-Received: from dw-tp ([171.76.85.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de532d27sm186502b3a.118.2024.11.21.12.45.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 12:45:43 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Vaibhav Jain <vaibhav@linux.ibm.com>, Narayana Murty N <nnmlinux@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, linux-kernel@vger.kernel.org
-Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org, ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
-Subject: Re: [PATCH] powerpc/pseries/eeh: Fix get PE state translation
-In-Reply-To: <87cyiq3px0.fsf@vajain21.in.ibm.com>
-Date: Fri, 22 Nov 2024 01:26:56 +0530
-Message-ID: <87zflswebb.fsf@gmail.com>
-References: <20241107042027.338065-1-nnmlinux@linux.ibm.com> <87ttc8d0vf.fsf@gmail.com> <87cyiq3px0.fsf@vajain21.in.ibm.com>
+	s=arc-20240116; t=1732219661; c=relaxed/simple;
+	bh=6WLBZ5oLh4c1F5I8IkxBtObd6DgFvu5p7Pko9ptaCTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZNmcFuT+RTPyOvXnlWZwgfVMz3lgVVgTijb+DtIZZ8bx7t6RqL9EZzOwPRtD3PGEYaii4kDRdW32yLMRxUKAyZPCO2X21ZRuVcni/9NKu+EKSf6d4lX4J57TJ9j+HNtM/c1dwQyvn2tuwvnAwlVt6R2b/8so9TNMXICbvPYudhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=FghJhjBV; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 936E740777A2;
+	Thu, 21 Nov 2024 20:07:33 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 936E740777A2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1732219653;
+	bh=I42YNcC0Gzw8hiwK4fNvWO8XT241TcT3a5+brZAF+Vk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FghJhjBVgpooEeDAdGwRoC5rEW6QyAQUxPShsBpd90eX89DaHqAsI6B1ZPRM+DA/d
+	 DKtMfeLsvkeXpJgRqM+lTE3ZEKb+AyCfg7qEtbzu2CNXtw4y79IKuu6jjltIUFDKwd
+	 fOvEoCH1PqmUv20ltgxLGiwnk1+yAwiVuexvpQS0=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>
+Subject: [PATCH net] marvell: pxa168_eth: fix call balance of pep->clk handling routines
+Date: Thu, 21 Nov 2024 23:06:58 +0300
+Message-Id: <20241121200658.2203871-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Vaibhav Jain <vaibhav@linux.ibm.com> writes:
+If the clock pep->clk was not enabled in pxa168_eth_probe,
+it should not be disabled in any path.
 
-> Hi Ritesh,
->
-> Thanks for looking into this patch. My responses on behalf of Narayana
-> below:
->
-> "Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
->
->> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
->>
->>> The PE Reset State "0" obtained from RTAS calls
->>> ibm_read_slot_reset_[state|state2] indicates that
->>> the Reset is deactivated and the PE is not in the MMIO
->>> Stopped or DMA Stopped state.
->>>
->>> With PE Reset State "0", the MMIO and DMA is allowed for
->>> the PE.
->>
->> Looking at the PAPR spec - I do agree that it states the same. i.e.
->> The "0" Initial PE state means the "Not Reset", "Load/Store allowed" &
->> "DMA allowed" (Normal Operations). 
->>
->>> The function pseries_eeh_get_state() is currently
->>> not indicating that to the caller because of  which the
->>> drivers are unable to resume the MMIO and DMA activity.
->>
->> It's new to me, but could you help explain the user visible effect
->> of what gets broken. Since this looks like pseries_eeh_get_state() has
->> always been like this when it got first implemented.
->> Is there also a unit test somewhere which you are testing?
-> Without this patch a userspace process performing VFIO EEH-Recovery wont
-> get the correct indication that EEH recovery is completed. Test code at
-> [2] has an example test case that uses VFIO to inject an EEH error on to
-> a pci-device and then waits on it to reach 'EEH_PE_STATE_NORMAL' state
-> . That state is never reached without this patch.
->
-> [2] :
-> https://github.com/nnmwebmin/vfio-ppc-tests/commit/006d8fdc41a4
->
+Conversely, if it was enabled in pxa168_eth_probe, it must be disabled
+in all error paths to ensure proper cleanup.
 
-Right. Thanks for helping with that test code. It's much clearer now. So
-after the error inject and/or the PE hot reset, the PE is never reaching
-it's normal state. That is due to this kernel bug in the pseries EEH
-handling, where it fails to advertise the MMIO & DMA enabled capability
-flag back to the caller. This therefore can cause the userspace VFIO
-driver to incorrectly assume that MMIO/DMA operations cannot be done. 
+Use the devm_clk_get_enabled helper function to ensure proper call balance
+for pep->clk.
 
->>
->> IIUC eeh_pe_get_state() was implemented[1] for supporting EEH for VFIO PCI
->> devices. i.e. the VFIO_EEH_PE_GET_STATE operation of VFIO EEH PE ioctl op
->> uses pseries_eeh_get_state() helper to query PE state on pseries LPAR.
->> So are you suggesting that EEH functionality for VFIO PCI device was
->> never enabled/tested before on pseries?
-> VFIO-EEH had been broken for pseries for a quite some time and was
-> recently fixed in kernel. So this issue was probably not discovered
-> until recently when we started testing with userspace VFIO.
->
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-ohk right, then maybe we might have started testing it after the eeh
-error inject op was implemented for pseries here [1].
+Fixes: a49f37eed22b ("net: add Fast Ethernet driver for PXA168.")
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/net/ethernet/marvell/pxa168_eth.c | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-[1]: https://lore.kernel.org/linuxppc-dev/20240909140220.529333-1-nnmlinux@linux.ibm.com/#t
+diff --git a/drivers/net/ethernet/marvell/pxa168_eth.c b/drivers/net/ethernet/marvell/pxa168_eth.c
+index 1a59c952aa01..45f115e41857 100644
+--- a/drivers/net/ethernet/marvell/pxa168_eth.c
++++ b/drivers/net/ethernet/marvell/pxa168_eth.c
+@@ -1394,18 +1394,15 @@ static int pxa168_eth_probe(struct platform_device *pdev)
+ 
+ 	printk(KERN_NOTICE "PXA168 10/100 Ethernet Driver\n");
+ 
+-	clk = devm_clk_get(&pdev->dev, NULL);
++	clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 	if (IS_ERR(clk)) {
+-		dev_err(&pdev->dev, "Fast Ethernet failed to get clock\n");
++		dev_err(&pdev->dev, "Fast Ethernet failed to get and enable clock\n");
+ 		return -ENODEV;
+ 	}
+-	clk_prepare_enable(clk);
+ 
+ 	dev = alloc_etherdev(sizeof(struct pxa168_eth_private));
+-	if (!dev) {
+-		err = -ENOMEM;
+-		goto err_clk;
+-	}
++	if (!dev)
++		return -ENOMEM;
+ 
+ 	platform_set_drvdata(pdev, dev);
+ 	pep = netdev_priv(dev);
+@@ -1523,8 +1520,6 @@ static int pxa168_eth_probe(struct platform_device *pdev)
+ 	mdiobus_free(pep->smi_bus);
+ err_netdev:
+ 	free_netdev(dev);
+-err_clk:
+-	clk_disable_unprepare(clk);
+ 	return err;
+ }
+ 
+@@ -1542,7 +1537,6 @@ static void pxa168_eth_remove(struct platform_device *pdev)
+ 	if (dev->phydev)
+ 		phy_disconnect(dev->phydev);
+ 
+-	clk_disable_unprepare(pep->clk);
+ 	mdiobus_unregister(pep->smi_bus);
+ 	mdiobus_free(pep->smi_bus);
+ 	unregister_netdev(dev);
+-- 
+2.25.1
 
->>
->> [1]: https://lore.kernel.org/all/1402364517-28561-3-git-send-email-gwshan@linux.vnet.ibm.com/
->>
->> Checking the powernv side of implementation I do see that it does
->> enables the EEH_STATE_[MMIO|DMA]_ENABLED flags in the result mask for
->> the callers. So doing the same for pseries eeh get state implementation
->> does look like the right thing to do here IMO.
->>
->>> The patch fixes that by reflecting what is actually allowed.
->>
->> You say this is "fixes" so I am also assuming you are also looking for
->> stable backports of this? If yes - could you please also add the "Fixes"
->> tag and cc stable?
-> Yes, agree will re-send adding the fixes tag.
->
-
-Yes and maybe let's also add some more context & information to the
-commit message from this discussion.
-
--ritesh
-
->>
->> -ritesh
->>
->>>
->>> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
->>> ---
->>>  arch/powerpc/platforms/pseries/eeh_pseries.c | 6 ++++--
->>>  1 file changed, 4 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
->>> index 1893f66371fa..b12ef382fec7 100644
->>> --- a/arch/powerpc/platforms/pseries/eeh_pseries.c
->>> +++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
->>> @@ -580,8 +580,10 @@ static int pseries_eeh_get_state(struct eeh_pe *pe, int *delay)
->>>  
->>>  	switch(rets[0]) {
->>>  	case 0:
->>> -		result = EEH_STATE_MMIO_ACTIVE |
->>> -			 EEH_STATE_DMA_ACTIVE;
->>> +		result = EEH_STATE_MMIO_ACTIVE	|
->>> +			 EEH_STATE_DMA_ACTIVE	|
->>> +			 EEH_STATE_MMIO_ENABLED	|
->>> +			 EEH_STATE_DMA_ENABLED;
->>>  		break;
->>>  	case 1:
->>>  		result = EEH_STATE_RESET_ACTIVE |
->>> -- 
->>> 2.45.2
->>
->
-> -- 
-> Cheers
-> ~ Vaibhav
 
