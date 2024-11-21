@@ -1,94 +1,171 @@
-Return-Path: <linux-kernel+bounces-416739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007109D4973
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:03:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA1B9D4977
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAA7128557C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13565285F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584181CBE81;
-	Thu, 21 Nov 2024 09:03:08 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1BE1CBE81;
+	Thu, 21 Nov 2024 09:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HiOO3Ibu"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EC51CB33D;
-	Thu, 21 Nov 2024 09:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE11BE239
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732179788; cv=none; b=gj8lXcw1ikLcohSuoVhXh0Lb4wcX6og5YOKZY0q2Rw6QCgASM/OJMk3eRdWyH/u4HlFt+JQfFKCQgt+2m4eh6ylLtGgh7KveWsI8jvYVIQ1sxVji1cveKzyneZsyCizC4sHYtKgbTNoy3pTF7n4aVHyRrK7VA2YNciKtwQzSg1s=
+	t=1732179838; cv=none; b=CWUtsZmsZqMgO1GTci9WpuMU2x/VEp3ywOOWv+pf3x9ob60z8DikLae4T1cUmpzUGXDiy00MrOQwf0mXgU3xiBM5vI4qzyabt70mRGM2UmwuChcsR2Zx6JQkacMJDNpM3WLB1ee8g9uB5hEvYPhXxHXMtPHttFo1H0SwdiMxIPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732179788; c=relaxed/simple;
-	bh=dkWaQ47ElqK/IVAD/NkPs8IzwV9bOvbZlyOJXgqc/DQ=;
+	s=arc-20240116; t=1732179838; c=relaxed/simple;
+	bh=gB3nR5R4h8gsTpxvHF/nfyuNGADmt8PUmyGd/Q0jLrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdYriTNsnbZv8jF2VtQEBbQo5+fB/aep33a7y6m0TSgVxdqb6/tukyo2IEexTrpKaYj9fAxr2MBrlFji4s7nd18RUqRX/OHyNgDUfV58cNZXKiw3r/5tfwTvaefAwQn3PwWXqAfs6epKTVsrhV9Rf6fR7XTz9dNf16to+rOwDB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id B22031C00A8; Thu, 21 Nov 2024 10:02:57 +0100 (CET)
-Date: Thu, 21 Nov 2024 10:02:57 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/73] 6.1.119-rc1 review
-Message-ID: <Zz73QRGLDU8xreEa@duo.ucw.cz>
-References: <20241120125809.623237564@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKyEbtH6Kg8gIWa0oQ6gsSHC2CKaCILXg+WnY28gCwfppQN9ZpHz7ikz/AEs3i19pq0S0dSCkDzzTFiVxrtQvNzNnAB+pXaHoJJlg/d8gU29eWpbxxb4P9yAJnrzGsi+DlzUCv2vTQWFnFa0f5nQGfo6pZuxUkiK+xxIEpT93UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HiOO3Ibu; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 21 Nov 2024 04:03:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732179833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FRLw+DGKdwBq59yleVzq1+0cEo5aRODfgmqZBbkpOO8=;
+	b=HiOO3Ibumb6pS42WpgNsTAOgm0t1JNKUQXlVy4TDWQpC6qMR5Mu2auqGAp/9UcRs4mpQqg
+	BTWLfzZkEJLvYUAnXH3M3QzIZgaLoNBtZfZU53hBdNRFeHRYX2v0Ve7bDDqF0uCtR1qI3I
+	NG98hydgjDXFeWfNtktWDltia42/XJ0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+	Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: review process (was: underalated stuff)
+Message-ID: <nfui5woq5n4lc4xggsflvjqr3gmukfzo64ejxrg4o6iq6ud4ju@rctq63kb43wb>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <Zz7yqeI0RatH4ao5@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AtKEwY1kABgNV0nU"
-Content-Disposition: inline
-In-Reply-To: <20241120125809.623237564@linuxfoundation.org>
-
-
---AtKEwY1kABgNV0nU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zz7yqeI0RatH4ao5@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-Hi!
+On Thu, Nov 21, 2024 at 09:43:21AM +0100, Michal Hocko wrote:
+> On Wed 20-11-24 17:39:09, Kent Overstreet wrote:
+> > Michal's (as well as Steve's) behaviour in the memory allocation
+> > profiling review process was, in my view, unacceptable (this included
+> > such things as crashing our LSF presentation with ideas they'd come up
+> > with that morning, and persistent dismissive axegrinding on the list).
+> > The project was nearly killed because of his inability to listen to the
+> > reasons for a design and being stubbornly stuck on his right to be heard
+> > as the maintainer.
+> 
+> Couple of entry points that might be helful for that.
+> https://lore.kernel.org/all/YxBc1xuGbB36f8zC@dhcp22.suse.cz/
+> I have expressed my concerns and set expectations to move the
+> work forward. I've had couple of back and forth with Suren about
+> specifics of overhead assumptions from the stack unwinding IIRC. 
+> 
+> For the first non-RFC version my feedback was
+> https://lore.kernel.org/all/ZFIMaflxeHS3uR%2FA@dhcp22.suse.cz/#t
+> not really "maintenance burden only" but a request to show that alternative
+> approaches have been explored. It was not particularly helpful that you
+> had expected tracing people would implement the feature for you.
+> https://lore.kernel.org/all/20230503092128.1a120845@gandalf.local.home/
+> Other people have also expressed that this is not completely impossible
+> https://lore.kernel.org/all/ZFKNZZwC8EUbOLMv@slm.duckdns.org/
+> The rest of the email thread is mostly a combat zone that I have avoided
+> participating as much as possible.
+> 
+> I didn't have any reaction to v2 at all.
+> 
+> v3 was aiming to be merged and I've stepped up as there was no single
+> review at the time https://lore.kernel.org/all/Zctfa2DvmlTYSfe8@tiehlicka/
+> 
+> I admit that I was really open that I do not like the solution and I've
+> said reasons for that. Allocator APIs have always been a large mess of
+> macros, static inlines that makes it really far from free to maintain
+> and alternative ways should be considered before going that route.
+> 
+> I was also clear that support by MM people was necessary to get this
+> merged. I have explicitly _not_ NAKed the series and backed off for you
+> guys to gain that support. 
+> 
+> So essentially there was a clear outline for you and Sure how to achieve
+> that.
+> 
+> I would really like to hear from other maintainers. Is tnis really
+> unacceptable maintainer behavior? I am OK to apologize but the above is
+> in line of my understanding of how to ack properly.
 
-> This is the start of the stable review cycle for the 6.1.119 release.
-> There are 73 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+I wonder if I was reading too much into what you were saying in the
+off-list thread, when I said "argument to authority". Can you tell me if
+this might be closer to the mark?
 
-CIP testing did not find any problems here:
+If I read you correctly, when you said you were "voicing your concerns",
+I took it as you being pushy because that was the effects: I need you to
+take me at my word, because you didn't see everything behind the scenes,
+that this did derail and nearly kill the project.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+But I should've been taking you at your word, that you just really were
+that concerned.
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+I think the best way I can explain this issue is with an analogy to
+parenting: when we're parenting, our first and foremost job isn't really
+to make sure there's a roof, shelter, food - that part is easy in
+today's world. The main job really is to make sure that people feel
+safe, that they can go out and explore the world without being
+terrified.
 
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+In order to do that, we have to master our own fears, we can't be
+projecting them all the time.
 
---AtKEwY1kABgNV0nU
-Content-Type: application/pgp-signature; name="signature.asc"
+Being a maintainer, or any kind of leader, is the exact same thing. My
+big lesson on this was watching Andrew, back during the process of
+merging MGLRU - I couldn't believe at the time how chill he was about
+it. But he understood the process, and he's a master at this.
 
------BEGIN PGP SIGNATURE-----
+Part of mastering our fears in a group setting like this is learning to
+trust other people.
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZz73QQAKCRAw5/Bqldv6
-8q/UAKCqikcVHQSDaazAY35gv5DmUQFhwQCghXWes2GOgAjwSW1iFj1EiRAm6Q4=
-=yCwM
------END PGP SIGNATURE-----
+It's not that your concerns didn't have any validity - but we were
+already doing as much as we could to address them, and you didn't show
+any trust that we, I especially, knew what we were doing. And that led
+to a _lot_ of wasted effort down blind alleys that I already knew
+weren't going to work.
 
---AtKEwY1kABgNV0nU--
+I think that may be what this is really about, sometimes you do have to
+trust that people know what they're doing; you share your knowledge if
+you have knowledge to share, otherwise you have to back off and let
+people do their work. Otherwise the whole thing breaks down and no one
+can get anything done.
+
+The main thing is I just want to ask yourself if you could have done
+anything better in the memory allocation profiling process. I don't need
+you to apologize for anything specific, if you can just try to work
+better together in the future that's all I need.
 
