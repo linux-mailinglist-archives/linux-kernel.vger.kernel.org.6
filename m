@@ -1,176 +1,128 @@
-Return-Path: <linux-kernel+bounces-417009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C43379D4D96
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:16:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5409E9D4D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:18:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B77BB21481
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:16:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1461F215C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BE51D79A7;
-	Thu, 21 Nov 2024 13:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089551D5ADE;
+	Thu, 21 Nov 2024 13:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MEG5jByR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0dMoycn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MEG5jByR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0dMoycn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dzgLQKAD"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DE214BF87;
-	Thu, 21 Nov 2024 13:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02781369B4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732195007; cv=none; b=ucnzMKMJmUhbGdG8Lxyy1TtjPnmTMD+5bdoq4QcJdy2+RzXm3eGDkzgJPj+6OpG7AP3zRK3Z34P4uW56qEt4vVGbP9md6gzWndMEDpjMneSFkiwLNDgg2M/b/PKSMarNH1wyBiVv7ZXhzdhdJLYTx5VhdMubfpHG1RO/kaolO+8=
+	t=1732195094; cv=none; b=GCycB1klEe3Mm8HamIPLmcZ6J16QvX5NIZ3uo6OvuRJ5iZB95XHnh0JplqM2G5mhO1bQG/fOd95n554nIV2n2jvZO8le1bcvPoUy+/Q1bFj8LuIZ0Reo2YLmLrxEkdYzurgOZnzVomKZc68mDpP7VPbeoXq4TOPhKxxwgCXKXJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732195007; c=relaxed/simple;
-	bh=7XHWyvWXbr2LJZIelM99SG1GYm/RcFWHYMS7xIgK4jk=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZM+FyYndqZfbTdZ3Cq7YD1soOLvye2Rb4QfZAycvZOL1ZqKDiHRme946W2okw65+IIvkCJJJqU9jrRrisbo2Dhgi3nJFlZWC8Ehxdt9Fiaf+1jfqYBAADqYPDob2A4QEDybBwxBxsCdyVF15EI5Jz2DeanS222hYble8g+sq9P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MEG5jByR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0dMoycn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MEG5jByR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0dMoycn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3391321A08;
-	Thu, 21 Nov 2024 13:16:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732195003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
-	b=MEG5jByR+NcMAEhMIIhFIrOgZUlazDP3xMPzE8FufTGlX3hMeUtBwRlrzqUdqz6bbVVGLX
-	D6WLDdmL3gn6EmhzkwJmScAGixC7Ci9rXEbLEBPbZllRtsRyMU2gq5Eu0e9Puow6ccb68q
-	chX/2dve3nolCfF9At5DKdV6Xy1lPnY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732195003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
-	b=r0dMoycnkB8G4vPTsVGog+tnhIWAi415a+UX0LLEoLCM1MwCFzUxXFqedE+6M9dDvF/yH3
-	brFUDHJl4WmMvxBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732195003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
-	b=MEG5jByR+NcMAEhMIIhFIrOgZUlazDP3xMPzE8FufTGlX3hMeUtBwRlrzqUdqz6bbVVGLX
-	D6WLDdmL3gn6EmhzkwJmScAGixC7Ci9rXEbLEBPbZllRtsRyMU2gq5Eu0e9Puow6ccb68q
-	chX/2dve3nolCfF9At5DKdV6Xy1lPnY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732195003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
-	b=r0dMoycnkB8G4vPTsVGog+tnhIWAi415a+UX0LLEoLCM1MwCFzUxXFqedE+6M9dDvF/yH3
-	brFUDHJl4WmMvxBQ==
-Date: Thu, 21 Nov 2024 14:16:43 +0100 (CET)
-From: Miroslav Benes <mbenes@suse.cz>
-To: George Guo <dongtai.guo@linux.dev>
-cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
-    joe.lawrence@redhat.com, shuah@kernel.org, live-patching@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    George Guo <guodongtai@kylinos.cn>
-Subject: Re: [PATCH livepatch/master v1 1/6] selftests/livepatch: fix
- test-callbacks.sh execution error
-In-Reply-To: <20241121111135.2125391-1-dongtai.guo@linux.dev>
-Message-ID: <alpine.LSU.2.21.2411211414400.8938@pobox.suse.cz>
-References: <20241121111135.2125391-1-dongtai.guo@linux.dev>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1732195094; c=relaxed/simple;
+	bh=15i1WktIl2KSpKfkj8m8R2HteoZW8sYnp0iJQN5NkTg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYuKUSj42cCYIGNXo85siTQDNcEGjSa3ClvwU9GrirjKsO8ThHU1cGEAffZKpIZ7LoqEZDIiNVglAenjfCjkoNckwoQ/1GCeFG2yeLFSL/pFKLoyoD0mbE805p5mWqn3Ga/QL/+SnwgmehQM2iKoMtTYaCTtmIeemJzagKr9jWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dzgLQKAD; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732195083; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=4/4L/e3c2lZHi8VYGOvKz5ppJseHg1VEkeDC1yE+jks=;
+	b=dzgLQKADr5UtwyVYkX8Yu9r5H1uv5h/GZA4M+ZT103OaG8b6xIto0yURhM+orZz8VuEf5R+J2OsOX/zLc4P40rsPmq2zXvLB45fk1HvBZF3vwX6VaU843BwuJVSFE/g4IAMcaGI+fqGaMaxIM7hDKox8tcEAdpDuDa+Sfji7Byo=
+Received: from 30.244.109.101(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WJxBgwA_1732195081 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 21 Nov 2024 21:18:02 +0800
+Message-ID: <b8681f80-f2c5-44a0-b306-9f566dad65a6@linux.alibaba.com>
+Date: Thu, 21 Nov 2024 21:18:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_COUNT_ZERO(0.00)[0];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
+To: Max Kellermann <max.kellermann@ionos.com>, Christoph Hellwig <hch@lst.de>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org
+References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
+ <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
+ <CAKPOu+-DdwTCFDjW+ykKM5Da5wmLW3gSx5=x+fsSdaMEwUuvJw@mail.gmail.com>
+ <CAJuCfpGDw7LLs2dTa+9F4J8ZaSV2YMq=-LPgOmNgrgL4P84V_Q@mail.gmail.com>
+ <CAKPOu+8tvSowiJADW2RuKyofL_CSkm_SuyZA7ME5vMLWmL6pqw@mail.gmail.com>
+ <CAJuCfpEBs3R8C910eiaXcSMPPrtbMjFLNYzYdPGJG+gw4WHM8A@mail.gmail.com>
+ <20241121045109.GA20615@lst.de>
+ <CAKPOu+-_X9cc723v_f_BW4CwfHJe_mi=+cbUBP2tZO-kEcyoMA@mail.gmail.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <CAKPOu+-_X9cc723v_f_BW4CwfHJe_mi=+cbUBP2tZO-kEcyoMA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Max!
 
-On Thu, 21 Nov 2024, George Guo wrote:
-
-> From: George Guo <guodongtai@kylinos.cn>
+On 2024/11/21 16:43, Max Kellermann wrote:
+> On Thu, Nov 21, 2024 at 5:51 AM Christoph Hellwig <hch@lst.de> wrote:
+>> Something seems to be going wrong here, though, but the trace below
+>> doesn't really tell me anything about the workload or file system
+>> used, and if this is even calling into readahead.
 > 
-> The script test-callbacks.sh fails with the following error:
-> $ sudo ./test-callbacks.sh
-> TEST: target module before livepatch ... not ok
-> 
-> - expected
-> + result
->  test_klp_callbacks_mod: test_klp_callbacks_mod_init
->  % insmod test_modules/test_klp_callbacks_demo.ko
->  livepatch: enabling patch 'test_klp_callbacks_demo'
-> -livepatch: 'test_klp_callbacks_demo': initializing patching transition
-> +transition: 'test_klp_callbacks_demo': initializing patching transition
->  test_klp_callbacks_demo: pre_patch_callback: vmlinux
->  test_klp_callbacks_demo: pre_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
-> -livepatch: 'test_klp_callbacks_demo': starting patching transition
-> -livepatch: 'test_klp_callbacks_demo': completing patching transition
-> +transition: 'test_klp_callbacks_demo': starting patching transition
-> +transition: 'test_klp_callbacks_demo': completing patching transition
->  test_klp_callbacks_demo: post_patch_callback: vmlinux
->  test_klp_callbacks_demo: post_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
-> -livepatch: 'test_klp_callbacks_demo': patching complete
-> +transition: 'test_klp_callbacks_demo': patching complete
->  % echo 0 > /sys/kernel/livepatch/test_klp_callbacks_demo/enabled
-> -livepatch: 'test_klp_callbacks_demo': initializing unpatching transition
-> +transition: 'test_klp_callbacks_demo': initializing unpatching transition
->  test_klp_callbacks_demo: pre_unpatch_callback: vmlinux
->  test_klp_callbacks_demo: pre_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
-> -livepatch: 'test_klp_callbacks_demo': starting unpatching transition
-> -livepatch: 'test_klp_callbacks_demo': completing unpatching transition
-> +transition: 'test_klp_callbacks_demo': starting unpatching transition
-> +transition: 'test_klp_callbacks_demo': completing unpatching transition
->  test_klp_callbacks_demo: post_unpatch_callback: vmlinux
->  test_klp_callbacks_demo: post_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
-> -livepatch: 'test_klp_callbacks_demo': unpatching complete
-> +transition: 'test_klp_callbacks_demo': unpatching complete
->  % rmmod test_klp_callbacks_demo
->  % rmmod test_klp_callbacks_mod
->  test_klp_callbacks_mod: test_klp_callbacks_mod_exit
-> 
-> ERROR: livepatch kselftest(s) failed
-> 
-> The issue arises due to a mismatch in expected log output during livepatch
-> transition. Specifically, the logs previously contained "livepatch:" but have
-> now been updated to "transition:". This results in test failures when comparing
-> the output with the expected values.
-> 
-> This patch updates the expected test output to reflect the new log format.
+> In case you were asking :-) these are web servers (shared webhosting),
+> running PHP most of the time. The host itself runs on an ext4, but I
+> don't think the ext4 system partition has anything to do with this.
+> PHP runs in containers that are erofs, the PHP sources plus
+> memory-mapped opcache files are in btrfs (read-only snapshot) and the
+> runtime data is on NFS or Ceph (there have been stalls on both server
+> types).
+> My limited experience with Linux MM suggests that this happens during
+> the page fault of a memory mapped file. PHP processes usually mmap
+> only files from erofs and btrfs.
+> The servers are always somewhat under memory pressure; our container
+> manager keeps as many containers alive as possible and only shuts them
+> down when the server reaches the memory limit. At any given time,
+> there are thousands of containers.
 
-are you sure? I have just run livepatch selftests on v6.12 and everything 
-was fine.
+Just saw this. I guess your _recent_ 6.11.9 bug is actually
+related to EROFS since EROFS uses readahead_expand().  I think
+your recent report was introduced by a recent backport fix
+commit 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=v6.11.9&id=9cfa199bcbbbba31cbf97b2786f44f4464f3f29a
 
-The above suggests that something happened to KBUILD_MODNAME in your case 
-(which would also mean that the fix should be different). Could you 
-verify or provide more information, please?
+bio can be NULL after this patch and causes
+unbalanced psi_memstall_{enter,leave}().  It can be fixed as
+(the diff below could be damaged due to my email client):
 
-Miroslav
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 01f147505487..19ef4ff2a134 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1792,9 +1792,9 @@ static void z_erofs_submit_queue(struct z_erofs_decompress_frontend *f,
+                         erofs_fscache_submit_bio(bio);
+                 else
+                         submit_bio(bio);
+-               if (memstall)
+-                       psi_memstall_leave(&pflags);
+         }
++       if (memstall)
++               psi_memstall_leave(&pflags);
+
+         /*
+          * although background is preferred, no one is pending for submission.
+
+But your original report is without the very recent
+commit 9e2f9d34dd12, before this commit bio cannot
+be NULL so I don't think they are the same issue.
+
+I will submit a formal fix for the recent bug later,
+thanks!
+
+Thanks,
+Gao Xiang
+
 
