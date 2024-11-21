@@ -1,153 +1,234 @@
-Return-Path: <linux-kernel+bounces-417050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18479D4E4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:08:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 582ED9D4E50
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:10:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BACC283307
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D020283269
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44581D88D5;
-	Thu, 21 Nov 2024 14:08:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E58F1D90B6;
+	Thu, 21 Nov 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKIaOVPF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7JXJbPce";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKIaOVPF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7JXJbPce"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6E71D86C7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292751D86C3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198108; cv=none; b=C3s719YiPs53gmuJXQPJjtE45qZufzO7iAg/M4vLtj/am0FZyv3hL0yhZFBhZAtBPs3viWvPIn8LbxynzqAsnte9CJ588g4ghjw6epnguN5+1ro5otMgpz8R0uvdhDY2lFXSo4Hd4GJIUxbmuYnp9SSJonrsfAPIRBGtoB2+r3M=
+	t=1732198207; cv=none; b=XzIzg/XnPo1mwAaAqzPCEZrRXdrofqXiW7jZy5ZSMfUSyeuYaa1fEdZvVZw/gJddHEU75aEvuE9uxTJu/GELb6c1l1cjF0gsyjzQZSGO5ba3eDACCEEhlSRVmVPEQpA5tCaiMxGzXgTH4+dgg7Zqa2NcbLxdCFxYuNMKg5YOse8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198108; c=relaxed/simple;
-	bh=m5jq80BC7DofVIBQ6U6Pjti1+INudzR2S00C1oURiMY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JvZcAiQD7WjNl0EpgJKlzBdjkmBY8O6NQvLLQv+0NHjypaqqIGudsgZqCPKAo8AksxX8gQOX9pMCyIPebl0hq4M7CzqWOCZSvQcJ8nDgCAbpVgPvp/Z8N3scHwq/tq3E5vqhLan5crvtlnPW7XXdEKzIUH2A62qcWSDdKzogs2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a78421a2e1so9362485ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:08:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732198106; x=1732802906;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kwNx5NRVwm5OzIE0GXZM0zaelGjldEUociQ77SD6NL0=;
-        b=Uyv9JdrNEBVKs9YA5an3b5yCOjynbO0sgCZCx86tnLSaBfSJHt8LU/T4oD7JUfC/33
-         L9sKjx9wgGfoe53oM8D4bLyuz+Ntm9sr6t/+TDLmha92vNFO91Tay+/tit9eGEbpvaDe
-         lcjwGESPn5+xxliw9m4Bt6WYglu2CcahDrKrqlwMXXPfhoFy8dW4lRfn3pPeI0c/5T08
-         BrhWH2sF2IzWVuSbvNR9Exrdu8/HFlaW42WpIFUiFDg0p7+/tY40E0s8g2aBgxCDaXMk
-         6Q+556P94E01223dl1vTF88ktzgin8UTrz+177KWVSNMXlN99vtua/xLjxUhHL0Quh3y
-         d4Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLwpNXHZJfhqfj9c76uxC9DWm0RdIA1w6OY9fhWz+5CUeWgFs7qN1C2PoHpvYj8y+QuxCrslnPk54xBn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOsWzVscO4VTIYZkkjV9b2ISDsyJOFyBaVUWOA42NeM3dQ2MsS
-	kID2g5ioT+8xBRR31VwgUMesPGimNJdTY1uqHjG8WBYHUz5tG/sHHXzX6XXSfbDV/0VK5ytwraD
-	h7i0wI0nhPoTV/e0S2U4hZG9v0XfKMv2vKetgYj6SvunnyPZmxLftOl4=
-X-Google-Smtp-Source: AGHT+IHhru2X680bepaUwT3rHuUhfCIw7DiKsJn1IMPr+OHLTjoA9F6bGjqbOoygqrRYm+3AcCOGTewOYu21taD7T1qxMIqjzbiA
+	s=arc-20240116; t=1732198207; c=relaxed/simple;
+	bh=kjzxQw9Jgk0GhcXGPGJ27l2cm0VJN+00QAw5KAQ2Dr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L9uRMzRLU5eM6OqCYCK3xDH4k0uh5u5zCC5SyhG5ayD045dLf+Ifk6lPb52vwkzAlQfnL7XwIF0RcSRUDrXJyi5EoBjI8yoIPYMekc9FgIXs/TZYn/9avl+ydHjjUaBrQzt1Kddl4Bj7lYX1htJXsGmLaw1x1hfUoQ4Rp2OiOYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKIaOVPF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7JXJbPce; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKIaOVPF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7JXJbPce; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6A30F1F810;
+	Thu, 21 Nov 2024 14:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732198203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
+	b=zKIaOVPFD/apt6TjsVvNNc/kvTMJDYuDRVFcsxHmblw4Ro030TAZwwO72qssR/tDq8MjGZ
+	lNIsZ2nDxytx81vofIe3mvwYJzOb/fMlgXgZYd9X+jWRScZdXfsBm0kg4FXOKeHe4abc3I
+	ycv+7ZZXAuSbV7px7PnPAnKA/xr5RLg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732198203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
+	b=7JXJbPcezroNAGSYg4HEK9+DC8rfsnRw3ylMWmjQ9F0B+50wvLEoKDR5b1SXHZq3Qmr+5Z
+	Y2quMFVjwq95+8AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1732198203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
+	b=zKIaOVPFD/apt6TjsVvNNc/kvTMJDYuDRVFcsxHmblw4Ro030TAZwwO72qssR/tDq8MjGZ
+	lNIsZ2nDxytx81vofIe3mvwYJzOb/fMlgXgZYd9X+jWRScZdXfsBm0kg4FXOKeHe4abc3I
+	ycv+7ZZXAuSbV7px7PnPAnKA/xr5RLg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1732198203;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
+	b=7JXJbPcezroNAGSYg4HEK9+DC8rfsnRw3ylMWmjQ9F0B+50wvLEoKDR5b1SXHZq3Qmr+5Z
+	Y2quMFVjwq95+8AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00F9113927;
+	Thu, 21 Nov 2024 14:10:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vVlEOjo/P2cHNQAAD6G6ig
+	(envelope-from <pperego@suse.de>); Thu, 21 Nov 2024 14:10:02 +0000
+Date: Thu, 21 Nov 2024 15:10:02 +0100
+From: Paolo Perego <pperego@suse.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kees Bakker <kees@ijzerbout.nl>, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Dave Penkler <dpenkler@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] staging:gpib: Fix a dereference before null check issue
+Message-ID: <wgcv5wesq3q3xank6elouewntisernnw4agfziqekkeirftx6i@ajucs5yqsvus>
+X-Responsible-Disclosure: https://en.opensuse.org/openSUSE:Security_disclosure_policy
+References: <20241120144653.377795-1-pperego@suse.de>
+ <a0807e04-b2c9-4261-9b3f-7660fe258f56@stanley.mountain>
+ <6ca90e87-965a-4895-ba72-8144540f6e4c@ijzerbout.nl>
+ <b843f8a9-1562-458c-8f6a-c59b1037b756@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a88:b0:3a7:2b14:add8 with SMTP id
- e9e14a558f8ab-3a786564165mr62730805ab.18.1732198105814; Thu, 21 Nov 2024
- 06:08:25 -0800 (PST)
-Date: Thu, 21 Nov 2024 06:08:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673f3ed9.050a0220.3c9d61.0173.GAE@google.com>
-Subject: [syzbot] [io-uring?] KMSAN: uninit-value in io_nop
-From: syzbot <syzbot+9a8500a45c2cabdf9577@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    43fb83c17ba2 Merge tag 'soc-arm-6.13' of git://git.kernel...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=134feb78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f17942989df952c
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a8500a45c2cabdf9577
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f767f7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f50ec0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e1e82262b7ac/disk-43fb83c1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7ca6e1c46dc5/vmlinux-43fb83c1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/63aaea837532/bzImage-43fb83c1.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9a8500a45c2cabdf9577@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in io_nop+0x549/0x8a0 io_uring/nop.c:55
- io_nop+0x549/0x8a0 io_uring/nop.c:55
- io_issue_sqe+0x420/0x2130 io_uring/io_uring.c:1712
- io_queue_sqe io_uring/io_uring.c:1922 [inline]
- io_submit_sqe io_uring/io_uring.c:2177 [inline]
- io_submit_sqes+0x11bc/0x2f80 io_uring/io_uring.c:2294
- __do_sys_io_uring_enter io_uring/io_uring.c:3365 [inline]
- __se_sys_io_uring_enter+0x423/0x4aa0 io_uring/io_uring.c:3300
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3300
- x64_sys_call+0xce5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2345
- alloc_slab_page mm/slub.c:2412 [inline]
- allocate_slab+0x320/0x12e0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3818
- __kmem_cache_alloc_bulk mm/slub.c:4895 [inline]
- kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4967
- __io_alloc_req_refill+0x84/0x5b0 io_uring/io_uring.c:958
- io_alloc_req io_uring/io_uring.h:411 [inline]
- io_submit_sqes+0x9a2/0x2f80 io_uring/io_uring.c:2283
- __do_sys_io_uring_enter io_uring/io_uring.c:3365 [inline]
- __se_sys_io_uring_enter+0x423/0x4aa0 io_uring/io_uring.c:3300
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3300
- x64_sys_call+0xce5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 5798 Comm: syz-executor426 Not tainted 6.12.0-syzkaller-03657-g43fb83c17ba2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="usyxdlybbhffcxno"
+Content-Disposition: inline
+In-Reply-To: <b843f8a9-1562-458c-8f6a-c59b1037b756@stanley.mountain>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.90 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[ijzerbout.nl,lists.linux.dev,vger.kernel.org,gmail.com,linuxfoundation.org,arndb.de];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -5.90
+X-Spam-Flag: NO
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--usyxdlybbhffcxno
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Thu, Nov 21, 2024 at 10:37:30AM GMT, Dan Carpenter wrote:
+> On Wed, Nov 20, 2024 at 08:54:16PM +0100, Kees Bakker wrote:
+> > Op 20-11-2024 om 18:04 schreef Dan Carpenter:
+> > > On Wed, Nov 20, 2024 at 03:46:53PM +0100, Paolo Perego wrote:
+> > > > This commit fixes a dereference before null check issue discovered =
+by
+> > > > Coverity (CID 1601566).
+> > > >=20
+> > > > The check ad line 1450 suggests that a_priv can be NULL, however it=
+ has
+> > > > been derefenced before, in the interface_to_usbdev() call.
+> > > >=20
+> > > > Signed-off-by: Paolo Perego <pperego@suse.de>
+> > > > ---
+> > > You need a Fixes tag.  But I'm pretty sure the correct fix is to remo=
+ve the NULL
+> > > check.
+> > In the whole agilent_82357a.c module there is no consistency whether
+> > board->private_data needs to be checked for a NULL or not.
+> >=20
+> > If Dan is correct then it is better to drop the NULL check, not only he=
+re
+> > but in a few more places as well. There are at least 10 functions were
+> > there is no NULL check for private_data.
+> >=20
+> > Run this command and you'll see what I mean
+> > git grep -3 -e '->private_data' -- drivers/staging/gpib/agilent_82357a
+> >=20
+>=20
+> I had looked at similar issue in a different driver:
+> https://lore.kernel.org/all/2d99b7a6-f427-4d54-bde7-fb3df5e19e53@stanley.=
+mountain/
+>=20
+> Here the NULL check we are discussing is the same thing.  The private dat=
+a is
+> allocated in attach() and freed in detach().  The detach has no need to c=
+heck
+> for NULL because we can't detach something which isn't attached.
+>=20
+> The other NULL checks are in agilent_82357a_driver_disconnect(),
+> agilent_82357a_driver_suspend() and agilent_82357a_driver_resume().  And =
+there
+> the NULL checks are required because it could happen when the driver isn't
+> attached.
+>=20
+> I also did a quick glance through to see if any of the functions which di=
+dn't
+> check for NULL should get a NULL check but they all seemed okay because e=
+ither
+> the board was attached or the caller had a NULL check.
+>=20
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Hi all and thanks for the fruitful discussion.=20
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> So I think we can just remove this one NULL check and everything else mak=
+es
+> sense.
+Please, apologise if I'm too newbie here to understand next step on my
+own. Am I asked to do something, to submit a V2 with the correct Tag or
+the patch is good as is?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+( No pressure to be accepted, it's just my willing to understand and go
+into the process :-) )
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Thanks
+Paolo
+--=20
+(*_  Paolo Perego                           @thesp0nge
+//\  Software security engineer               suse.com
+V_/_ 0A1A 2003 9AE0 B09C 51A4 7ACD FC0D CEA6 0806 294B
 
-If you want to undo deduplication, reply with:
-#syz undup
+--usyxdlybbhffcxno
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEad0ki8u8+tnCnxjUEWmTq+eyM3gFAmc/PzQACgkQEWmTq+ey
+M3h+jg//T4XH1hcC2mL9nmPOlAz9d0mB2Di090O279J3rt8P6+9qoGToyu+9zXMT
+Wf74fmdy0osMHGxPL/1QtwaD0aX00aygJBq2icmzkLOkNs+o7G38wdCqsNSAYunN
+328TE2U5PJWiEvc1/LAtuQ29FohO0vxe1baP4TtyLUXfXS9J1/mVC8oj+hYC1Pgl
+UEeAV7d7dvjgpCSlwFncXFJ7CQZ0S0/a8l8ziN9QoBm5MQjPwdn2GH9Jr34H1MDM
+0IgQjBBnMohpQ8Pcs7N4L02+vcbJoP6JMAdd0ew/p74zU2kwSL5qdUjHTCA3O18p
+B6VKQVBVr4vo+CJ1PnjU6ixSu7PVGTaeRxIU4bZ+xonqiAXdAJcsoS8eIAK2zisb
+Ar4NU2wrcL2thMxZGBPwL10qrzah0w6LnuUNC0kI78u/z/FOYjh8YD8HU7/+oOua
+XFM9vMiTcp4fk7VNw7Fh5duulzJ2pVguFbl/J/JiePI8r0P7zTslr+Bas6vTIOGj
++RiB4OUw4THsad+CRfrygEr4XnP8420oQMcbq/aFWy3Y/V3lhxnYWnhkCDxr80Ey
+K8WecqHaAa0115wSDwVe61811fG01fTRDNa6/Qevm8/vcppXz7lHftc9tpUAhr8c
+PFC1ocvQpB4H36itoWg4/f1FzQDg89KsHlBQLqTGJEuiM+hb+Pc=
+=KOHf
+-----END PGP SIGNATURE-----
+
+--usyxdlybbhffcxno--
 
