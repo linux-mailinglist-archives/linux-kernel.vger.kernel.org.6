@@ -1,204 +1,137 @@
-Return-Path: <linux-kernel+bounces-416844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73979D4B09
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:45:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C579D4B0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBC428654B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6657F1F215EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B41CB528;
-	Thu, 21 Nov 2024 10:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED5C1CD1E2;
+	Thu, 21 Nov 2024 10:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xAVtialq"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BwOJFdpN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA0E1D0B8B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE39C13AD20
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732185908; cv=none; b=GNdlcuphPLQxplXBxHw99qRxM+1Z/r45K5ckfzr2jdDo7PiPyIIxGAmj/DicrFUrsrozaPRCZdS6TxHuM8NhWh8xF2CZITWMmjFaG360uc2aokcIAwEmvljc2l1jZ0EC0yjUfl/ET9nBKWYdu5fUISSFyJQiBEtu1Qg8t24ra1A=
+	t=1732186104; cv=none; b=P0LFW4a5xrDgcUbLOBnpgYKpWNecl78ms8OhRTqslHGof3dqjFYY22dq2LRNf27GbhwnIzsM/yhHgdVfsVgsfL2EH6PAoh7qJaK2aeMgYG/HdHS9RskJycqFg2N7lnX3USXzdDoeaxt9IW4jrWAvvJ9nyRrajihXC+e9/4HaHZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732185908; c=relaxed/simple;
-	bh=CwIShjUsfcnOqesiDbb35NKm4hTygyydM61hfALVz0c=;
+	s=arc-20240116; t=1732186104; c=relaxed/simple;
+	bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A3hEraUsrd+FTzcz6WQKUrhqqLsdM0wScb79NJ4lVMNKwS9IlZRWv7t2uT4VNntKUt2/4QPBCbAWh2lznYkuv2aaK1/9zzHPa/OGYUCHJRYu2kCs5WHXMb4iyNjB0KOLlN4S0K3v8tH2MJa/uSLTpziAIDJqPIWuso5vVLUWyHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xAVtialq; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3823cf963f1so426953f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:45:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732185904; x=1732790704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xK4Cfg9DlwufnPePVmxDaoaAvTYsonxko5dLjDtr1k8=;
-        b=xAVtialqQzD68QZEOQHJDmZf3qmHqdQ8bp91F5fe9qhXoRabP9C70i6mCgXZKyXqOt
-         ydh/Rg/x/4d0A1kbEJesdDir49SzkB6aYTqTek+xekz64Q4r7sgM+yFq5uKTV8gGXWXw
-         xAswTAL09qpNQBqNc9DSBQHNiiHl1Dyckrpy7tShGYvLSb+uRlOZk+1zAb+ZmhTMnj2M
-         /r4cM726rD6tkwMwI9sjR4C4wGGlSe9bzCGA6Lgye3hT3ejgq2clB8UjdrBN8rmo65KO
-         /a37wCnbi+TkIr13jcF2vOZirZ+OqtYCKlOilCzL15IjMO9g9SCsEnq8XckO8H02wMBP
-         gCbA==
+	 To:Cc:Content-Type; b=EqhFvUDXK2lny/CXEJacnewgpZbAUIt6HqbsrUF0jft+BQYqN1KQcf51TIHvcF0MpWiNx615rHd/uljQ3/RjEH9JSO3ou3ab/TmJMTnxAqq8W/C3aLTYVtXkhNz6P+9Hi2Cp+A+4KHbDQoCzEWPC9bt1hJoSWXAQtfYQiuxfLi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BwOJFdpN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732186101;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
+	b=BwOJFdpNrgkE/8PkPPSLQk/5Q5UG01g3m9CYnLlL/M3RBRXkWOzcQpTeUyv8+JRD+ijsN0
+	Ro6KHhlUjXKlWENP6JAbM3QewRI4xAhdhHWhA2n/w2huThHWU3fY9hRJs3Q11shNnL8xAM
+	5jpLSxwnlP5Z57+rTroyiULEXTOqtTA=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-2SodxoRZNDCc6n_XnHjphA-1; Thu, 21 Nov 2024 05:48:20 -0500
+X-MC-Unique: 2SodxoRZNDCc6n_XnHjphA-1
+X-Mimecast-MFC-AGG-ID: 2SodxoRZNDCc6n_XnHjphA
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5cfc93ee587so524424a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:48:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732185904; x=1732790704;
+        d=1e100.net; s=20230601; t=1732186099; x=1732790899;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xK4Cfg9DlwufnPePVmxDaoaAvTYsonxko5dLjDtr1k8=;
-        b=sxGEqSthch4PtGcFjGz8O6jI9p2mK7BQC7nX0t5nG1Z9yU0ltgfTOrqnCbUvQDYw7Z
-         4ivj2XI6zZzeJ9BkntThUDSJydHfeRGRQk7sR9nkljknUpmXQenIws/Z22+RI2uBOGDo
-         Q18Ue9RHi9qWanEiuXV1YKU+pWLuZxI1uRYI8MLYB9jG6k2qyBHCyykhHIjGOUbDdCfo
-         1WZTzqYIPIWmBb9hxUJAmb3+iCiSv28S4X+nvAccsc1n88bwq9Crcvahk5WWZYR4qEnr
-         u0rFdnZmbElHKYGP+c/IaRkBzX19Mtpdl26te2YhVY8tYxSWtF5uiOLHlaVJTgeWY7L6
-         lhIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPodRKCrScZm0tatwNNsARTjiTU0g4Sfg0E6bXKWyUrFwMN9KKO8f8chDP0slWOZG/FU+Rql+yq1F55Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyDcofAC+sFPMz4xhfa2Zs1EqzdZpt09DKvYTeq3Xuwdxa2G3w
-	ZSLd1zSJyQVV87STWaEhoUFgZZezZfpRy8lLiGoSTPiqCzQgF1WpnOZtDc5EpLlJCGX5K0KvUgB
-	56T946mcqhjRk8A0YjQx2CKwOQAOs7sYpikmD
-X-Gm-Gg: ASbGnctxwawX5XRzp+zAD0s4pnnmvX/7eVgxbDD2J1Nvg44Hh7hBoPzUYCpINWdMBYq
-	T/jZzIOjcdc76Amy3gS8P2Zj3prXqFgStxiQrHdUsHxSSv7IugL1bPSJaX6oQAQ==
-X-Google-Smtp-Source: AGHT+IFNLFXfFTPNcf0Jy6eL0FhPoWe5bssVRl6BmWr16Rlaom5gN2QQBv1a2lad6azAjMDYL8YEC8lFmavr2ot49Tw=
-X-Received: by 2002:a5d:5f86:0:b0:382:5393:43cf with SMTP id
- ffacd0b85a97d-38254af6394mr4794445f8f.13.1732185904176; Thu, 21 Nov 2024
- 02:45:04 -0800 (PST)
+        bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
+        b=aqRTs3frAkWlVcmk3bzRZIhnnVi2IMjWW0xok51IpPSVf2JELkrAAhiuCPL68Ib6g2
+         d06V/7ItXhPJhGPQOpojliH/79FNmXbFwA9NJKgmafc8GZpgWsHkB5re/kAPGLjoZNuO
+         Zcnhh8DhWkBR5vopB8lZsGKmbIH4D2tY1xH6+28lgBD6hyzF+KogCyf0xjfrGZorI8FX
+         y1CI08VJT5UG40GjhUFpj9wlJa4lR3Tp4IE8APBVBJ40qe/9HBUzOHJpPN6SS+2h756l
+         rhr6q6Qv4bNJ8qPvQGt5rHvwiD6hcwiesX+OE7JH0mgEwronTF9W6Qk0rIa1UYr8ZuNB
+         0s/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUryptToKXGUVVdsWAXuOvU8Px9WI3OH9dVdzMkQgAHTR8EdhcsQzi49hPwOltfDhMOJGdp3QsOdcy552g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNSP+BgBw7bZR7LNa7nKXlpzyYHunc3Yf1UII+OHv59Z1u1oB5
+	AtO/V7d02lYnH2iiBhdx54hl2VcobMzPDawytYO+eAiooez6iyeT6BUU14OI/TxPxAtGwNABwyV
+	b1QqVijlPbCFrRfBOC9xFk/7eTgIrYJlEfFuG5c2/bBd2mk7I5+m8jN2gjr3h8R0zrNw2y6xSFZ
+	dtq/m+LDfqGT5dkgbRVubYjb1MjA3hclmo1hi8
+X-Received: by 2002:a05:6402:42c7:b0:5cf:de9c:9b4a with SMTP id 4fb4d7f45d1cf-5cff4ce4070mr5293722a12.28.1732186099107;
+        Thu, 21 Nov 2024 02:48:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGmXdB0HEkcU2syXmIrZsaNM5eevZc1PCVj6O2kU6gC46bTp8zQWRPl44RvEDWYjsCEUZpJa2ogiFJBnhxSGNE=
+X-Received: by 2002:a05:6402:42c7:b0:5cf:de9c:9b4a with SMTP id
+ 4fb4d7f45d1cf-5cff4ce4070mr5293709a12.28.1732186098821; Thu, 21 Nov 2024
+ 02:48:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-vma-v8-0-eb31425da66b@google.com> <20241120-vma-v8-4-eb31425da66b@google.com>
- <40be19b0-4c32-4554-a01f-649c12f889da@lucifer.local>
-In-Reply-To: <40be19b0-4c32-4554-a01f-649c12f889da@lucifer.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 21 Nov 2024 11:44:52 +0100
-Message-ID: <CAH5fLggw4Ca59-AA+ArHYD0QrKH8cGd_i0EN83MnYYZK1bmTGQ@mail.gmail.com>
-Subject: Re: [PATCH v8 4/7] mm: rust: add lock_vma_under_rcu
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
+ <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+ <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+ <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com> <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+In-Reply-To: <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 21 Nov 2024 12:48:07 +0200
+Message-ID: <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Patrick Donnelly <pdonnell@redhat.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>, Jeff Layton <jlayton@kernel.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 8:29=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+IMHO, we should first have a solution for the immediate problem,
+remove infinite retries and fail early, and cap it at 3 retries in
+case there is a temporary issue here.
+I would use ENAMETOOLONG as the primary error code, as it is the most
+informative, and couple it with a rate-limited kernel log
+(pr_warn_once) for debugging without flooding.
+I would also open a bug/feature request for a dynamic buffer
+allocation that bypasses PATH_MAX for protocol-specific paths.
+
+On Tue, Nov 19, 2024 at 5:17=E2=80=AFPM Patrick Donnelly <pdonnell@redhat.c=
+om> wrote:
 >
-> On Wed, Nov 20, 2024 at 02:49:58PM +0000, Alice Ryhl wrote:
-> > All of Rust Binder's existing calls to `vm_insert_page` could be
-> > optimized to first attempt to use `lock_vma_under_rcu`. This patch
-> > provides an abstraction to enable that.
->
-> I think there should be a blurb about what the VMA locks are, how they av=
-oid
-> contention on the mmap read lock etc. before talking about a use case (th=
-ough
-> it's useful to mention the motivating reason!)
->
+> On Tue, Nov 19, 2024 at 9:54=E2=80=AFAM Max Kellermann <max.kellermann@io=
+nos.com> wrote:
 > >
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/helpers/mm.c |  5 +++++
-> >  rust/kernel/mm.rs | 56 +++++++++++++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 61 insertions(+)
+> > On Tue, Nov 19, 2024 at 2:58=E2=80=AFPM Patrick Donnelly <pdonnell@redh=
+at.com> wrote:
+> > > The protocol does **not** require building the full path for most
+> > > operations unless it involves a snapshot.
 > >
-> > diff --git a/rust/helpers/mm.c b/rust/helpers/mm.c
-> > index 7b72eb065a3e..81b510c96fd2 100644
-> > --- a/rust/helpers/mm.c
-> > +++ b/rust/helpers/mm.c
-> > @@ -43,3 +43,8 @@ struct vm_area_struct *rust_helper_vma_lookup(struct =
-mm_struct *mm,
-> >  {
-> >       return vma_lookup(mm, addr);
-> >  }
-> > +
-> > +void rust_helper_vma_end_read(struct vm_area_struct *vma)
-> > +{
-> > +     vma_end_read(vma);
-> > +}
-> > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-> > index ace8e7d57afe..a15acb546f68 100644
-> > --- a/rust/kernel/mm.rs
-> > +++ b/rust/kernel/mm.rs
-> > @@ -13,6 +13,7 @@
-> >  use core::{ops::Deref, ptr::NonNull};
+> > We don't use Ceph snapshots, but before today's emergency update, we
+> > could shoot down an arbitrary server with a single (unprivileged)
+> > system call using this vulnerability.
 > >
-> >  pub mod virt;
-> > +use virt::VmAreaRef;
-> >
-> >  /// A wrapper for the kernel's `struct mm_struct`.
-> >  ///
-> > @@ -170,6 +171,32 @@ pub unsafe fn from_raw<'a>(ptr: *const bindings::m=
-m_struct) -> &'a MmWithUser {
-> >          unsafe { &*ptr.cast() }
-> >      }
-> >
-> > +    /// Try to lock the vma read lock under rcu.
+> > I'm not sure what your point is, but this vulnerability exists, it
+> > works without snapshots and we think it's serious.
 >
-> This reads oddly, I'd say 'try to acquire the VMA read lock'. It's not re=
-ally
-> necessary to mention RCU here I'd say, as while lock_vma_under_rcu() acqu=
-ires
-> the RCU lock in order to try to get the VMA read lock, it releases it aft=
-erwards
-> and you hold the VMA read luck until you are done with it and don't need =
-to hold
-> an RCU lock.
+> I'm not suggesting there isn't a bug. I'm correcting a misunderstanding.
 >
-> A reader might otherwise be confused and think an RCU read lock is requir=
-ed to
-> be held throughout too which isn't the case (this is maybe a critique of =
-the
-> name of the function too, sorry Suren :P).
+> --
+> Patrick Donnelly, Ph.D.
+> He / Him / His
+> Red Hat Partner Engineer
+> IBM, Inc.
+> GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
 >
-> > +    /// If this operation fails, the vma may still exist. In that case=
-, you should take the mmap
-> > +    /// read lock and try to use `vma_lookup` instead.
 >
-> This also reads oddly, you're more likely (assuming you are not arbitrari=
-ly
-> trying to acquire a lock on an address likely to be unmapped soon) to hav=
-e
-> failed due to lock contention.
->
-> So I'd say 'this is an optimistic try lock operation, so it may fail, in =
-which
-> case you should fall back to taking the mmap read lock'.
->
-> I'm not sure it's necessary to reference vma_lookup() either, especially =
-as in
-> future versions of this code we might want to use a VMA iterator instead.
 
-Thanks for the doc suggestions, they sound great.
-
-> > +    ///
-> > +    /// When per-vma locks are disabled, this always returns `None`.
-> > +    #[inline]
-> > +    pub fn lock_vma_under_rcu(&self, vma_addr: usize) -> Option<VmaRea=
-dGuard<'_>> {
->
-> Ah I love having lock guards available... Something I miss from C++ :>)
-
-I've heard that C is starting to get lock guards recently!
-
-> > +        #[cfg(CONFIG_PER_VMA_LOCK)]
->
-> Ah interesting, so we have an abstraction for kernel config operations!
-
-Yeah, it's basically an #ifdef, but the block must still parse even if
-the config is disabled.
-
-Alice
 
