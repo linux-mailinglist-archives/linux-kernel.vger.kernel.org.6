@@ -1,235 +1,204 @@
-Return-Path: <linux-kernel+bounces-417134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72219D4F5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:04:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A97E89D4F60
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4D98B26B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699CE2820BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC6E1DBB13;
-	Thu, 21 Nov 2024 15:03:27 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48811D959E;
+	Thu, 21 Nov 2024 15:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csoXk8dE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9AF1CB9F4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E21C728F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201407; cv=none; b=VnsWUQmW0M9ZCIKsM6IQkHVWwu3tdORBB+WKGODWSRq8MWU1O6F6ae8XCz9p6nIMRsCDnf+Ov2UdlheOmaRkK8jJxE87iVqRT+uoTQIDX72FP8IdFwHbUFmUSfPjhr7bP2FdQpz4P7UaBzimp60zrY7yL+SpBz9SJ6pMdYpaY1M=
+	t=1732201482; cv=none; b=hb49xokW8F74AupU+l6cCCbmdVkfjOIL89Pm5nIyzvc2l+RAdcnQWe6hfgIlQedbzqsVKM/33amvmYYrQ2SqiZaPLqa1e/ObYssXVuDOHxrg7EjfYqYFPKi4MTapIbiUyK5His+n0oIfCCv+pj90q0V8sqH9gIdjMhEc0I9G5RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201407; c=relaxed/simple;
-	bh=n8JMPzBy5biQgHgSNPwGSUix++KBUT5PDaBB7sFLVAk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=D/6Crf7YGnBJYylR+DrhCPAbfkrm7OOBL6Evmfc22N6bYy++AB3fLZwPynFxe71vealJb8S/oBiGkGpCJVowsUwPNCOPYTuXTPgQvFrEIidqdo4JjS13fIZMUiIAv++hdBAahVBlL9nIA2ao8kaAyDnrTfPk6p6l53cdn0HXGNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a71bdd158aso10279295ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:03:25 -0800 (PST)
+	s=arc-20240116; t=1732201482; c=relaxed/simple;
+	bh=Hc4o4tFcNVn7jqfs9MJy4/6SXEgHVb5psHg4B5qW/m8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XeKjbyat7YULTWYmiahU+/p3EbI2oT4zFKtDPciuOT9d7xe3TQi63RlJZuvcOR5Q0lFPkvRQGZIB4ks3HkVgjNmvDNeLt+PLvTDmeMfArAdKmOPIr7CA7PMsMbO0B9ZFpCZdUMjncI4NRxQ73MJc7R3RxyNcVoh9oSRQsGSOYQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csoXk8dE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732201479;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3Nq1kII2UB+9ENt//6WMlEnfZsLsEAnBwTFsduCKCB8=;
+	b=csoXk8dEzYNE4V1HnEbWXJr+yM1qPEgJ6Lby326cKpEe9meT/KEQ3I0CCPn2LcM3nD3nx9
+	arqIcRAw82Kpw2AVlmvMDEoXxx9PWevmNJf4uSiUcqqqaGh8ppn0v5F9dC0VIz7wnWpW90
+	zQB6Qb/0sNbzaNlFkzMLj+F4TZMir6w=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-693-8KyPY0GsMrCuMjUWriK_TA-1; Thu, 21 Nov 2024 10:04:37 -0500
+X-MC-Unique: 8KyPY0GsMrCuMjUWriK_TA-1
+X-Mimecast-MFC-AGG-ID: 8KyPY0GsMrCuMjUWriK_TA
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314f1e0f2bso7359665e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:04:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732201404; x=1732806204;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GEHQBx3R5MVs+IGTTjeVS5dq/RGKc660S5q/ISPuTqE=;
-        b=ofUJY6VOUUyG0i+h8Hbc+1PkVcBTgU2q5sE6wgjvB/09fnByqGmhMv5Z8qZdwnezNx
-         eeinZyKDb/7UNPDnCGPFEw0f199bhXIBVY0sxY3SRnCHJTi8IFlkCDDB68HRRcxjR2gx
-         pZyZSy3l9RMl24IJ29wfLmGq++rHve/e8jlPV2X9G5yXB40nwt4afCMkqBILTcOK/W4D
-         yKyODWvx+SDGYuJjV+PoiT5vUygKRr6d/WaEj7ZE5Z+qArZrE3o6GCRQs1MsZNe25mIH
-         mAHA6pqNWIABUWkKUn9nd2MQ2yAVjw6cOJVpXTzArShMmpqlhf6bdFpbzTg8WnjEQ2t3
-         +Agg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIw+GVZVoAW/qEQP++g7f4INQ+K6kBIKhQt42UBHgLyM7edgZuqaPBgELOs+LkE0luYbQgVOt5rMwfKBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2/HatxeghKpk4GZMGOUnYxolk9N8TmLYXIKKggj9CjAKLRdUh
-	RPkFVFZiacKHi/QAEdPbdo4Onz4NZ+x7eWv0YNtk+QRnRrJhjxOxXQOiFBpPOV7XESNop8tlfzN
-	cuNIFYrHLN37NkTd/n7eUMsjnKdQVTWjwIGnHySjtEirjuJTVpIelhj0=
-X-Google-Smtp-Source: AGHT+IFjdrLE5PgdR17FT+Rs7y3X5+wDvgL+ROtk4b883hLiSo6EDDtDYBUiKi3N+jUck/PdC8rfzemHac8TJ8l2T21prD0J/++1
+        d=1e100.net; s=20230601; t=1732201476; x=1732806276;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Nq1kII2UB+9ENt//6WMlEnfZsLsEAnBwTFsduCKCB8=;
+        b=o5FavQOGbs7djfgQbCeQpspLa9WHuEmM5B8UYvmZjWFgiZ5YGapDGRhHCXBsh1W4wF
+         KgYqeuKZHdqjzqtAot0htXMzoQsz5C8D3iwsXdOKUaS/sfWAhA66EZwT3caJN8SoVkvw
+         tqYjwUQP+DLksLft3mZMRHe5kumd4dCl+9MA/6z5ErHe9lUCebeix1liGNJJApZo9RRv
+         NNObshlSTGLjaBd1YkKpkavloJuBDmpwAxZV6CNTKjEAptOsBsgFjHqaXe4cWJqBGhYB
+         2PIFg6KGllw8YQh49NwwLliiU4fzz84qwBqn1dho5pZt6nso1keJRyGtapwZdB/5VE2R
+         Qwfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXARJ8rEC0sISS0UiSRVcBs9QzJQiTgdOCwJWic3uZd5iY4kZ/Iy0nsBX/FK63lgI22tjz1kgD4cbAHjb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMu+qhfJ+baLxVZuqCqeaXns8znWfMps4rVJYmB1RyCY6cU5uP
+	7o6HVGU6D9LT4ksdT5+Sx6XqrFAL/suV17S+T+NMz/NSQsc2C+hqNfFr5li/ri7fCJ+sRugkERm
+	IF8VWUL2xGeHf9W1cgkr3K7YuH5f5ppu3V8Y2k/O2FvOeyHCXbfjqQzwGmDwwQg==
+X-Gm-Gg: ASbGncuwnpZJwwxYKEEun1jI+VByo06WSpDJ2Or3eNjMPd5QpC7AuWLiEsZMt88PivQ
+	9CAnj0d60p0S08fDOmNXs2DxdlmnY4iYlwIWsL+ZyCuNFxQD88OYP4B95tSsX8nkXHJu5pfurHw
+	JGUzMbF0LSPwuCKxx5/OMN6tZ842QkxnbdrKTN1BJrI7zixeIIXfjGjoeu/7+x+y2VhiumJxllY
+	O6Nv7LkDBNpDo8Bz7DV/kxTm66rDW26IiJ47h+laKPuMMXPM5VE/wA3jym+tne9JUXQNs5C06CE
+	eBGJ9KZyuXLxrLMjUZd/wJGk60mfdomPoaBQ+hGymGEDYq/Fx+ZiXoup8gA1V4K21eODOO255D8
+	=
+X-Received: by 2002:a05:600c:3b8d:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4334899712dmr59724145e9.7.1732201476198;
+        Thu, 21 Nov 2024 07:04:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHvdmgV40iceBFhDPE6uUMsEeLIuOuf5e3raKKjMPeU6dfpAjM249m4BWtVHDX7rkMEbjfpXA==
+X-Received: by 2002:a05:600c:3b8d:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4334899712dmr59723405e9.7.1732201475521;
+        Thu, 21 Nov 2024 07:04:35 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1046sm61538025e9.4.2024.11.21.07.04.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 07:04:35 -0800 (PST)
+Message-ID: <3affa5da-469e-4a25-8c75-dfc783ed2919@redhat.com>
+Date: Thu, 21 Nov 2024 16:04:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0f:b0:3a7:9082:9be8 with SMTP id
- e9e14a558f8ab-3a790829e21mr44879085ab.1.1732201404354; Thu, 21 Nov 2024
- 07:03:24 -0800 (PST)
-Date: Thu, 21 Nov 2024 07:03:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673f4bbc.050a0220.3c9d61.0174.GAE@google.com>
-Subject: [syzbot] [kvm?] WARNING: locking bug in kvm_xen_set_evtchn_fast
-From: syzbot <syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com>
-To: bp@alien8.de, dave.hansen@linux.intel.com, dwmw2@infradead.org, 
-	hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, paul@xen.org, pbonzini@redhat.com, seanjc@google.com, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use
+ find_vma() correctly
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: akpm@linux-foundation.org, dave@stgolabs.net, willy@infradead.org,
+ Liam.Howlett@oracle.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+References: <20241121124113.66166-1-aha310510@gmail.com>
+ <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
+ <25ead85f-2716-4362-8fb5-3422699e308c@redhat.com>
+ <CAO9qdTE8WO100AJo_bgM+J5yCpTtv=tRniNV2Rq3YAwQjx3JrA@mail.gmail.com>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAO9qdTE8WO100AJo_bgM+J5yCpTtv=tRniNV2Rq3YAwQjx3JrA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 21.11.24 15:18, Jeongjun Park wrote:
+> David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 21.11.24 14:44, David Hildenbrand wrote:
+>>> On 21.11.24 13:41, Jeongjun Park wrote:
+>>>> vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
+>>>> the returned pointer without any verification, even though it may return NULL.
+>>>> In this case, NULL pointer dereference may occur, so to prevent this,
+>>>> vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
+>>>>
+>>>> Cc: <stable@vger.kernel.org>
+>>>> Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
+>>>
+>>> If that's an issue, wouldn't it have predated that commit?
+>>>
+>>> struct vm_area_struct *next = vma->vm_next;
+>>> unsigned long nstart = next->vm_start;
+>>>
+>>> Would have also assumed that there is a next VMA that can be
+>>> dereferenced, no?
+>>>
+>>
+>> And looking into the details, we only assume that there is a next VMA if
+>> we are explicitly told to by the caller of vma_adjust_trans_huge() using
+>> "adjust_next".
+>>
+>> There is only one such caller,
+>> vma_merge_existing_range()->commit_merge() where we set adj_start ->
+>> "adjust_next" where we seem to have a guarantee that there is a next VMA.
+> 
+> I also thought that it would not be a problem in general cases, but I think
+> that there may be a special case (for example, a race condition...?) that can
+> occur in certain conditions, although I have not found it yet.
 
-syzbot found the following issue on:
+If we're working on VMAs in that way (merging!) we need the mmap lock in 
+write mode, so no races are possible.
 
-HEAD commit:    8f7c8b88bda4 Merge tag 'sched_ext-for-6.13' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103d275f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b2ddebc25a60ddb
-dashboard link: https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> In addition, most functions except this one unconditionally check the return
+> value of find_vma(), so I think it would be better to handle the return value
+> of find_vma() consistently in this function as well, rather than taking the
+> risk and leaving it alone just because it seems to be okay.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Your patch is silently hiding something that should never happen such 
+that we wouldn't handle our operation as intended. So no, that's even worse.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-8f7c8b88.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a91bdc4cdb5d/vmlinux-8f7c8b88.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/35264fa8c070/bzImage-8f7c8b88.xz
+-- 
+Cheers,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+919877893c9d28162dc2@syzkaller.appspotmail.com
+David / dhildenb
 
-=============================
-[ BUG: Invalid wait context ]
-6.12.0-syzkaller-01892-g8f7c8b88bda4 #0 Not tainted
------------------------------
-kworker/u32:4/73 is trying to lock:
-ffffc90003a90460 (&gpc->lock){....}-{3:3}, at: kvm_xen_set_evtchn_fast+0x248/0xe00 arch/x86/kvm/xen.c:1755
-other info that might help us debug this:
-context-{2:2}
-7 locks held by kworker/u32:4/73:
- #0: ffff88810628e948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90000fbfd80 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffffffff8feec868 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0xcf/0x14d0 net/ipv6/addrconf.c:4196
- #3: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #3: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #3: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: ndisc_send_skb+0x864/0x1c30 net/ipv6/ndisc.c:507
- #4: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #4: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #4: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: ip6_finish_output2+0x3da/0x1a50 net/ipv6/ip6_output.c:126
- #5: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: local_lock_release include/linux/local_lock_internal.h:38 [inline]
- #5: ffffffff8e1bb1c0 (rcu_read_lock){....}-{1:3}, at: process_backlog+0x3f1/0x15f0 net/core/dev.c:6113
- #6: ffffc90003a908c8 (&kvm->srcu){.?.?}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:158 [inline]
- #6: ffffc90003a908c8 (&kvm->srcu){.?.?}-{0:0}, at: srcu_read_lock include/linux/srcu.h:249 [inline]
- #6: ffffc90003a908c8 (&kvm->srcu){.?.?}-{0:0}, at: kvm_xen_set_evtchn_fast+0x22e/0xe00 arch/x86/kvm/xen.c:1753
-stack backtrace:
-CPU: 1 UID: 0 PID: 73 Comm: kworker/u32:4 Not tainted 6.12.0-syzkaller-01892-g8f7c8b88bda4 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: ipv6_addrconf addrconf_dad_work
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
- check_wait_context kernel/locking/lockdep.c:4898 [inline]
- __lock_acquire+0x878/0x3c40 kernel/locking/lockdep.c:5176
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- __raw_read_lock_irqsave include/linux/rwlock_api_smp.h:160 [inline]
- _raw_read_lock_irqsave+0x46/0x90 kernel/locking/spinlock.c:236
- kvm_xen_set_evtchn_fast+0x248/0xe00 arch/x86/kvm/xen.c:1755
- xen_timer_callback+0x1dd/0x2a0 arch/x86/kvm/xen.c:140
- __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
- __hrtimer_run_queues+0x5fb/0xae0 kernel/time/hrtimer.c:1803
- hrtimer_interrupt+0x392/0x8e0 kernel/time/hrtimer.c:1865
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
- __sysvec_apic_timer_interrupt+0x10f/0x400 arch/x86/kernel/apic/apic.c:1055
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0x52/0xc0 arch/x86/kernel/apic/apic.c:1049
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0x31/0x80 kernel/locking/spinlock.c:194
-Code: f5 53 48 8b 74 24 10 48 89 fb 48 83 c7 18 e8 26 dc 41 f6 48 89 df e8 9e 5b 42 f6 f7 c5 00 02 00 00 75 23 9c 58 f6 c4 02 75 37 <bf> 01 00 00 00 e8 35 52 33 f6 65 8b 05 36 f8 da 74 85 c0 74 16 5b
-RSP: 0018:ffffc900008b0758 EFLAGS: 00000246
-RAX: 0000000000000012 RBX: ffffffff9a9e1520 RCX: 1ffffffff2dc9676
-RDX: 0000000000000000 RSI: ffffffff8b6cd740 RDI: ffffffff8bd1db00
-RBP: 0000000000000286 R08: 0000000000000001 R09: fffffbfff2dc8999
-R10: ffffffff96e44ccf R11: 0000000000000006 R12: ffffffff9a9e1518
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff88801eec3040
- __debug_check_no_obj_freed lib/debugobjects.c:1108 [inline]
- debug_check_no_obj_freed+0x327/0x600 lib/debugobjects.c:1129
- slab_free_hook mm/slub.c:2273 [inline]
- slab_free mm/slub.c:4579 [inline]
- kmem_cache_free+0x29c/0x4b0 mm/slub.c:4681
- kfree_skbmem+0x1a4/0x1f0 net/core/skbuff.c:1148
- __kfree_skb net/core/skbuff.c:1205 [inline]
- sk_skb_reason_drop+0x136/0x1a0 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core.constprop.0+0x592/0x4330 net/core/dev.c:5644
- __netif_receive_skb_one_core+0xb1/0x1e0 net/core/dev.c:5668
- __netif_receive_skb+0x1d/0x160 net/core/dev.c:5783
- process_backlog+0x443/0x15f0 net/core/dev.c:6115
- __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6779
- napi_poll net/core/dev.c:6848 [inline]
- net_rx_action+0xa92/0x1010 net/core/dev.c:6970
- handle_softirqs+0x213/0x8f0 kernel/softirq.c:554
- do_softirq kernel/softirq.c:455 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:442
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- rcu_read_unlock_bh include/linux/rcupdate.h:919 [inline]
- __dev_queue_xmit+0x887/0x4350 net/core/dev.c:4459
- dev_queue_xmit include/linux/netdevice.h:3094 [inline]
- neigh_connected_output+0x45c/0x630 net/core/neighbour.c:1594
- neigh_output include/net/neighbour.h:542 [inline]
- ip6_finish_output2+0x6a7/0x1a50 net/ipv6/ip6_output.c:141
- __ip6_finish_output net/ipv6/ip6_output.c:215 [inline]
- ip6_finish_output+0x3f9/0x1300 net/ipv6/ip6_output.c:226
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip6_output+0x1f8/0x540 net/ipv6/ip6_output.c:247
- dst_output include/net/dst.h:450 [inline]
- NF_HOOK include/linux/netfilter.h:314 [inline]
- ndisc_send_skb+0xa2d/0x1c30 net/ipv6/ndisc.c:511
- ndisc_send_ns+0xc7/0x150 net/ipv6/ndisc.c:669
- addrconf_dad_work+0xc80/0x14d0 net/ipv6/addrconf.c:4284
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	f5                   	cmc
-   1:	53                   	push   %rbx
-   2:	48 8b 74 24 10       	mov    0x10(%rsp),%rsi
-   7:	48 89 fb             	mov    %rdi,%rbx
-   a:	48 83 c7 18          	add    $0x18,%rdi
-   e:	e8 26 dc 41 f6       	call   0xf641dc39
-  13:	48 89 df             	mov    %rbx,%rdi
-  16:	e8 9e 5b 42 f6       	call   0xf6425bb9
-  1b:	f7 c5 00 02 00 00    	test   $0x200,%ebp
-  21:	75 23                	jne    0x46
-  23:	9c                   	pushf
-  24:	58                   	pop    %rax
-  25:	f6 c4 02             	test   $0x2,%ah
-  28:	75 37                	jne    0x61
-* 2a:	bf 01 00 00 00       	mov    $0x1,%edi <-- trapping instruction
-  2f:	e8 35 52 33 f6       	call   0xf6335269
-  34:	65 8b 05 36 f8 da 74 	mov    %gs:0x74daf836(%rip),%eax        # 0x74daf871
-  3b:	85 c0                	test   %eax,%eax
-  3d:	74 16                	je     0x55
-  3f:	5b                   	pop    %rbx
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
