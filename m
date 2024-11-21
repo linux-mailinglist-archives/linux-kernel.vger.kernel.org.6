@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-417391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30DB79D535C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:23:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D289D5368
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77D11F23209
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB681F22EA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819021C304F;
-	Thu, 21 Nov 2024 19:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7281BD9F3;
+	Thu, 21 Nov 2024 19:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjBKAZ7v"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LHNJn3kg"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651B76F06B;
-	Thu, 21 Nov 2024 19:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4708C19D8BC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732216982; cv=none; b=rk+XzwLlKUJxccjxekItdkhUR57KV7op2eJsKR4xtOqiIArg0vZPxbrbzQSIcP+JZtIR8yMf9ePZ1WNfHBNAk6djcf0mPuWulXhLVdBDg/jgf/0RntUc9JyR6HmvDSC9F8I0YckvjOEquNuc2kbk/g05WocEQrWnQmr42MTbPO8=
+	t=1732217050; cv=none; b=MA+NXrRMu66RQBgJ3yRGqg+3ptxQB6RWNBsRDZ5PXBjedqyfKWa7PgfnjCWFwcA7UzCZpWJDFz4YBMOV+rTbPJZrpr5hDZQhBdUVvyyoUEHKAQ8SZYZaqDGvhHW3fh31wSU61roryMyYyYa+7pVWU9Xzoup/si0vrAgJ3xgczrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732216982; c=relaxed/simple;
-	bh=UPoyReQdMmfcqLMHWBo+CpgHM6WoKSWI2eR30CAMYQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LuOxnpHUSFTMwbMYv7VBLt61SGb8pIE5vYoGcV3ewJyG5Cb0S+EdNcLDJOS/gd7IlywEv2JlJ+bm0BxjTUOlECwzfYk6s0yv7Xp04xbLiyljP6hmG0W1+4ryOJywECZGVTh0pi9SFY0OK4wHOW5BKE1jPa5CvwBCcgZUbogVeIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjBKAZ7v; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e4e481692so1163884b3a.1;
-        Thu, 21 Nov 2024 11:23:01 -0800 (PST)
+	s=arc-20240116; t=1732217050; c=relaxed/simple;
+	bh=Xg1fgeBbAsDK6Y/CLnzO4RgQDMB76MFCtSM/vCs4ERk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=caVTOzBTzneMpft0jyrsTbDW5yWKFzjoGGHtQ1m+UPp7oz0026pOORlEE02U7pUuZVLoLUvpQuPqggQhkococ6BR4s8mfVDScxoBFuM/q2olC36uuwRKQzvA1Nkgf8E3Tq1JQRS4egi8cEA01YlCrKLWeYj5m0nKylq3t9950NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LHNJn3kg; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfabc686c8so1614306a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:24:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732216980; x=1732821780; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jMXPl1e6luieU7Y9N+10kogflMGEnR+4YH0MSEtHxas=;
-        b=CjBKAZ7vk4KuKXz58LR4rsAc2rmpaiMDHwEyyaYPp8MWfDiMGMrSnohj8gYuDXW583
-         2GHog99XleXctdFD9T48fAhUmsZeOBAqriV2DbJKc8NXpPmkPIzXgcdOBae/nPE7R1u6
-         YEWn1B6BaTYtLF+LIjwQNfrNUBK+TydERU71KXex30pDUHNqocuJMRrar41VetyD/9ai
-         ayPxa9XZea80zkP4RfW32RmUbE0R50SOkAyj+8ubBTWGiMVov1pd5ME5IFerVBhA26ir
-         yofcMA76edz+RJmras857Ih0FHVCFTQBAURCsLvYqcc81oNyosyYiflocTdp6om8kB0F
-         C4Eg==
+        d=linux-foundation.org; s=google; t=1732217046; x=1732821846; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=39w/ZSjOangyNUJkD3wOqGR3yOOmw3l3G4u/GX0sCFI=;
+        b=LHNJn3kgcvJrsyitGdvlbBHPjh6/X2ntSxXtmcB4WFF/NOOlaST7GgSyip7IbXj7qb
+         uw4n+FjC0LsOaKVtwzSB5PE6wVNoUCdwwmTcUK9kUusy2QwBPqjz0PSbkdcwQuY3dckW
+         aR06emiryWnSrny9Rb4PhoqNWmedH8v1hSixM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732216980; x=1732821780;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jMXPl1e6luieU7Y9N+10kogflMGEnR+4YH0MSEtHxas=;
-        b=eo95uwpH9ccuTyD1BrIAxdfktL/bdMAiHKh3wcdHF654NcPgIqDLr7IWMM3zuAEcuA
-         O/NnMXZVQWQUu9eASf+c8BBs0d17+3IEk9wSFLfC5KBvzWL1VZx6kE6ArN3GX//7vCu6
-         cAs5F/Jag7WuMg4s6uK17V/ZK2p6svNie92E8qeSPuw2iG1vDlkVpncDNr+mRLi4hwW8
-         Vyd0RbJUcpay0oKcdYzjARRNyIR1AhVMfzoq4afQZb2All5NFKMGzZkthLh9Aw1tluFu
-         bEc3KCIPVLTI6lFA7AasVgev2j2R96BPfWwg0a7lXEoRKXrY9i3igOxUx33l+XkpTkc1
-         lAxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU91SFjIRRG8WvXYDhrBQmBO7ccwgyDsl3j2RmTFOqxaNoeZPuHE1qkglhgvzEqMxBL9XBQxt4Hsg==@vger.kernel.org, AJvYcCWkSjeCzZm+HVNgERRr/rpJsmgObU3GnZMszh68YvXerUC6PJKVAG8vUWGo8i/ApHRmRq0fFq76G9dQ3dne@vger.kernel.org, AJvYcCXiiwaHB3JOFzhaCcLPYvB0jZNUPdzU9H3SoXJB9g+GKfGSp9385edkcF9tH46JqlLIP1LGixAKPei3Yg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH9J48ZqGmBlJfHZp6lgCbzha4PYU+pP7XjAfH1oiftTsgPzhz
-	abIPUafGWrk+WTxDW3l6jwhhksM0VxztkvI9SAo1wVutJjl9sGSv
-X-Gm-Gg: ASbGncumRgqz2QlzAD62ZG4QZ5cawcSbOPrKfNRuk3qXEdfkUitNARCzFOLLkkQfMdu
-	Zo3U94gzh+RFk6BTTHFvyiU7qXsoLrASFeQ0nBJqkXUCa2co6UgLTeHr1AituPTw/ynLhpfcaH8
-	VUGohfWSjnPtUU/NWyTcI7UItHhJ7RN39lu+G8tR1R5ZxWSSc5tR31FN5bJ1Hw8nM3499yVCoLk
-	Y/cg7q9uE3quqE8WYWLEa7nnr6I3C9dk238fF9YezpVA1SLJ1cLmUdzRM1nMSY=
-X-Google-Smtp-Source: AGHT+IFeU+EeHn8aEsc8Xfk+MY5CRBA5V7KZ4Htnq0QrwacyN/wmUAYcZvwIq/4yFCBV76yCHJxspQ==
-X-Received: by 2002:a05:6a00:9287:b0:724:d503:87a1 with SMTP id d2e1a72fcca58-724df5fcd72mr213508b3a.7.1732216980456;
-        Thu, 21 Nov 2024 11:23:00 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724df8b04f2sm29739b3a.66.2024.11.21.11.22.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 11:22:59 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 21 Nov 2024 11:22:58 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-Message-ID: <4535df8b-0ca2-4c3c-9523-d27d3de2b9c7@roeck-us.net>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
- <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
- <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
- <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
- <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
- <CAMuHMdXDmLoNAcKHpjp2O4D05nAd5SOZ=Xqdbb2O_3B09yU1Gw@mail.gmail.com>
- <508aa9c4-4176-4336-8948-a31f9791dd39@roeck-us.net>
+        d=1e100.net; s=20230601; t=1732217046; x=1732821846;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=39w/ZSjOangyNUJkD3wOqGR3yOOmw3l3G4u/GX0sCFI=;
+        b=jLdqfq/VEUbgMtoWGtFPIvalijg4aXLyysDYvQHCdAYwoFZEs4zqahN6gp59ZeUPUo
+         yBlwlExZGWUL5FboD0fu4Tbon0B9++Wycmiv0w59F1jwnsh+K0wL7usoV2cd7xVVKKOw
+         7iRsustuFtogPHbcvsSVqh9kLRz52niQJ9ptNQ3aIRrl87LUYYOxxhhwejhgHPdo1hTq
+         BxUvNEAYFkwsAyllAqV+SjAEKq9QdvOXyB8O7pMB6bNaFas+/MsUrDDaEaZMtRcVAUuq
+         tMpFiiQ9zkN/Di81jm92FRGOh/Fl8SYTeZ9Bd2/lqVA7qi0zSSNYjV6MO8n/4tSomU+x
+         4fJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNWEz53NzhxIj7bpLfqnu577IW3QO7/BRjeiL1jeCaC60F8dEtBSiH7Ix+ILyZNWBD/NcE+3huwfXsEC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym3qzcIqnWT4sVdQkeIRUiOgLEGkCchVHnb1lq4Hp9b2VLmEhg
+	cyRPDJvUDnFLP3T+8gaxtrP2Mmjh9Vi0eW/uBQNpidtK4sz9E6Axvqb3BJz2azSvrFXivn6khcH
+	IMGA=
+X-Gm-Gg: ASbGncvPk/SL716JEE/3Bvc/yAJ3B6TWT1CxTGmNw9fkkjBxEfk8Oqxm7GYKAggXdOp
+	jpBPCoPTMc08Qi8mNA9pNta9AfyiZnWq855HzeIqhEmYRjF5/1v3/EaaqvTpldeXCaRq3QhxAIc
+	2S1BGEu+VW8DZKSk71SOjuArFEDhykomVzurTwsdYfGfeLF9tJllMOplJjIN2L6b/Qb89pMz++8
+	fgj35LJYUOmLW3tHtFdUvg8I1nYtdUtK92/V/ZOiHmIXFN/Q8xj+h32AusO7c79cuZB/ax7QhOf
+	EQyC03Wjv5lhpLHhnDio8PlF
+X-Google-Smtp-Source: AGHT+IHJE1IsXyudoByz8PdkYv1j5c75N9e6qwY0QIEn7oAnMY94sKDQFNzaGJPQT5APhTNPLb9gwg==
+X-Received: by 2002:a50:ee02:0:b0:5cd:5494:848a with SMTP id 4fb4d7f45d1cf-5cff4ce4d78mr5039406a12.33.1732217046384;
+        Thu, 21 Nov 2024 11:24:06 -0800 (PST)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d41af02sm96756a12.87.2024.11.21.11.24.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 11:24:05 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa3a79d4d59so197815266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:24:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVc3AeZcmhd2cwj0c0O0hBGyYJ8fqHoJOymXHPLpMe0lffkpMTthNThpXkjm/Dl5KWVUQMZU3EMfdYzea4=@vger.kernel.org
+X-Received: by 2002:a17:906:9d2:b0:a99:4261:e9f7 with SMTP id
+ a640c23a62f3a-aa509d3bad2mr24129066b.39.1732217043149; Thu, 21 Nov 2024
+ 11:24:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <508aa9c4-4176-4336-8948-a31f9791dd39@roeck-us.net>
+References: <202411190900.FE40FA5@keescook> <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org> <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl> <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
+ <Zz91LyHzxxOLEma_@kawka3.in.waw.pl> <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
+ <202411211011.C2E3ABEAB@keescook>
+In-Reply-To: <202411211011.C2E3ABEAB@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 21 Nov 2024 11:23:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+Message-ID: <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+To: Kees Cook <kees@kernel.org>
+Cc: =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Nir Lichtman <nir@lichtman.org>, syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
+	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Nov 21, 2024 at 11:08:54AM -0800, Guenter Roeck wrote:
-> On Thu, Nov 21, 2024 at 07:50:33PM +0100, Geert Uytterhoeven wrote:
-> > On Thu, Nov 21, 2024 at 7:30 PM Guenter Roeck <linux@roeck-us.net> wrote:
-> > > On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrote:
-> > > > On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
-> > > > > Linux has supported m68k since last century.
-> > > >
-> > > > Yeah I fondly remember the 80s where 68K systems were always out of reach
-> > > > for me to have. The dream system that I never could get my hands on. The
-> > > > creme de la creme du jour. I just had to be content with the 6800 and
-> > > > 6502 processors. Then IBM started the sick road down the 8088, 8086
-> > > > that led from crap to more crap. Sigh.
-> > > >
-> > > > > Any new such assumptions are fixed quickly (at least in the kernel).
-> > > > > If you need a specific alignment, make sure to use __aligned and/or
-> > > > > appropriate padding in structures.
-> > > > > And yes, the compiler knows, and provides __alignof__.
-> > > > >
-> > > > > > How do you deal with torn reads/writes in such a scenario? Is this UP
-> > > > > > only?
-> > > > >
-> > > > > Linux does not support (rate) SMP m68k machines.
-> > 
-> > s/rate/rare/
-> > 
-> > > > Ah. Ok that explains it.
-> > > >
-> > > > Do we really need to maintain support for a platform that has been
-> > > > obsolete for decade and does not even support SMP?
-> > >
-> > > Since this keeps coming up, I think there is a much more important
-> > > question to ask:
-> > >
-> > > Do we really need to continue supporting nommu machines ? Is anyone
-> > > but me even boot testing those ?
-> > 
-> > Not all m68k platform are nommu.
-> > 
-> Yes, I wasn't trying to point to m68k, but to nommu in general.
-> 
+On Thu, 21 Nov 2024 at 10:50, Kees Cook <kees@kernel.org> wrote:
+>
+> The only flip side I can see is that "ps" etc, should just never use comm
+> at all, and instead use argv[0] from cmdline
 
-For some more context: I think it is highly unlikely that anyone is really
-using a recent version of Linux on a nommu machine. Maybe that was the case
-10 or 20 years ago, but nowadays there are other operating systems which are
-much better suited than Linux for such systems. Yet, there is a _lot_ of
-nommu code in the kernel. In comparison, supporting m68k (mmu based) is a no
-brainer, plus there are actually people like Geert actively supporting it.
+Gods people, what are you all on about?
 
-If we are talking about dropping m68k support, we should really talk about
-dropping nommu support first to get some _real_ benefit.
+THIS IS WHAT PS ALREADY DOES.
 
-Guenter
+Stop this completely inane discussion. It's literally like you don't
+even know what you are talking about.
+
+For user space, comm[] is basically the fallback for when cmdline
+fails for some reason (for example, /proc/*/cmdline will be empty for
+kworkers, but there are other situations too)
+
+The reason? comm[] has *always* been much too limited for 'ps' output. ALWAYS.
+
+Yes, you can literally *force* ps to not do that (eg "ps -eo comm")
+but if you do that, you get the very limited comm[] output that nobody
+has ever wanted ps to give exactly because it's so limited.
+
+People who want 'argv[0]' will typically want argv[1] etc too, because
+argv[0] simply IS NOT SPECIAL.
+
+And yes, 'top' will give comm[] output because it's so much faster.
+
+I'm done with this discussion that apparently was brought on by people
+not knowing what the hell they were doing.
+
+                Linus
 
