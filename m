@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-416904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2119D4C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:48:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE209D4C33
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F16128303E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF7F1F22DFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194811D4323;
-	Thu, 21 Nov 2024 11:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18431D27A0;
+	Thu, 21 Nov 2024 11:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oo9zh+V3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXJJsP+W"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736541D3593;
-	Thu, 21 Nov 2024 11:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB00169AE4;
+	Thu, 21 Nov 2024 11:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189673; cv=none; b=Yj0eyovBe2YDx8SXY2aXfDmejmpCB5ntoGddIaNsIS0hwIhEabbF1PCQI2sKzLXaR/Gk9gLPNpCMOGAkxuF3gwNrL/ixYm/I6AmxrDeLfsOzaeGBkRwmO8mjp+m/nUoEOa6zG1e04JVXY+Hn9B5v3sjwfyPRHkqHJlyTygmFt1s=
+	t=1732189630; cv=none; b=u8Tsfi9JzvBATAyB2yi4EApk1D65wfIyOpkumIya20fovXJvQzfr7j9w13Ma9jWlZMxycXYmOAIGCPI34JHtup/Q4/utXpta39Sx+cNM9sBlKCCbi1E0160dr7S/lsFSndrF7FDCdSzUu9Tsv95vHQJKsvvahrJz7GqYMqdEPoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189673; c=relaxed/simple;
-	bh=9oi8lTShNUn6ovs0+7mk6EL3IlT8HCUgNaHDFX8ZauY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K4T5FpTZP+McswbpwnfWkA6Xgt/1VAo6lGpF8Ew5iv05bHqHY9pVz6bfNSAiMNo7zzWEnjlH9WZiBPPZ5dXT1GVAAR8YyasnXciIpjj7vB66nVBoEEERrXyQbtqM03GG77sQ7A9Gbh/VnqGCOFWrlGQJEIlLjqBl9+TleFJz5sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oo9zh+V3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18B21C4CECC;
-	Thu, 21 Nov 2024 11:47:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732189673;
-	bh=9oi8lTShNUn6ovs0+7mk6EL3IlT8HCUgNaHDFX8ZauY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oo9zh+V3AoBEcSamfTJpVc2VOBrAre+y8KssEasXtkxblmHASYwad3a/g3qI10DMB
-	 ilL43XG8eS0TZ4VgWnoOBLpeGJJ3ZqR+g/CQvsJXgAkumi6Y1jjUW9nPjL51W5K6k0
-	 a6yJXI0j55KAwIxrjdKqxnTaBMEA9pqapqeuVnUEzXhfVc5IJK9EJWertWM/yKL2lU
-	 rMDZg2aFnMy4Qk35av1no0XdOAUxrgkZ+L4bPbGfIaoAEttxldjNsnkJfBcwASglK8
-	 aWjParcUa+ttPc+6lx+dVbYtcsBWWMRGOUePLH3T+UMitLSTk4j/1N0Rv0r4GXJk+m
-	 eCo9fbGxVbstA==
-Message-ID: <c5d6effa-bdcf-49e3-a4bf-3713db889b70@kernel.org>
-Date: Thu, 21 Nov 2024 12:47:47 +0100
+	s=arc-20240116; t=1732189630; c=relaxed/simple;
+	bh=6tBTumqtBmtyr65OhXGkI6NGqtaXNa4Lrl0W95sKHkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h7Q0kTvfCy4Ls4BvqcjxHQgOoif+cU/W35fgiohPvUswhKX5lc1nvUwMFZXVnYv3q6B22oR/hMuVtkRTxgnz8qwJ9t4HzKZE0fDt2F3fUni4KGtamjoSY7EeZJSlL6pcgOz4ZCEOruAdyuzkRQI5RwQMAPKh3WoJh71GrBZQdnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXJJsP+W; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724d23df764so290857b3a.1;
+        Thu, 21 Nov 2024 03:47:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732189628; x=1732794428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+oKpoaoKlTteKRfatjC6kRGeLlyxZzmGL1dkD3YQ10E=;
+        b=cXJJsP+WYxgihrO1X3K9OJYQtmIU3y4LyK4OdsFzRS9demiELZsDYAbiLaMR+kaqz9
+         GmIlTddoOdGX6WXEYlp8EhNUCEJLQOK/CCJHEEuhx9yXnExFIrisefBESvwOHffwCI7l
+         27FhEu5qolahxk+fCDT7YtDj575AJHhVa0K8QkLnlmMJ7rfU2Ry2JGR2ye5Zp6x5zw9F
+         kyz+s1yejm77wjNUAwqePiXQSYF2CpJ1cGV+kDPwQMMz4soeKxLQFsoQiX3/8CdH34sr
+         IrzmmyeTdhHso25/UndSx7Rp7Naok4PcOotQz67tOzKw0sVssWoE36AkJ2aNuGOMCEn1
+         wY3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732189628; x=1732794428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+oKpoaoKlTteKRfatjC6kRGeLlyxZzmGL1dkD3YQ10E=;
+        b=FLoNeYtrXEF9gHEbCPOdIQpQF0S/GW4j/F56qfUJVVd2GNXHvucWHsJ/YZdF1XuoUB
+         Q7ZfAGwxPR8Jj2/Szpd9Z20Qkrf9g8B1QJJUQbxcVhDYyXijBV1CWTuy1czvGfb8Ceu4
+         uEXneWjQXPufbR79R7JHGaxq8ZSZg3HNMuqy95KDnSkoeOcm8N4hSf5EpERouSCjWQB6
+         eE2HjQDPPUaDnvu3deHX2iXOBBFaRcgHzo+W3YC0uemo70yhag3Kp8ezvxTNukHyjz5C
+         y0rxIrhYxG2s0vzRWjcFku5ZVCQ8P+/iZlV+cSWRnpA0PPl1PhtKbyD6Dg8FbJK3sJ/w
+         tAkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4ZivFXROYBmrePwS2Mmzo/MyGjT7YZ5UsNQdhLC6mADfCifPkQNO1+3wbBQqgWzMBfD5RZcIgTR4QDFR4@vger.kernel.org, AJvYcCXjmDApHNqsLJgloPdPq8Jb2gcUEKLPGXbyqZjvKykMAGY1x95NkIIoSyQvLI5HduAK4Hq0yxqFeZZX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQXy05b+vPDwqoknM78q+aHaPAwCdLk5BU8pnWaQ/nG3C5Fj7+
+	C9yF3NnKOFR8VLaL9IldGTMTvEPhcHKHXJZkJPqOCHoA1fZ9rU+2buPhRPyC9I3E9MjGd0nUx5Y
+	QJFIj7xJgHqMRn/9RxbcUMZhtJ18=
+X-Gm-Gg: ASbGncvtApZrTCq3cT8FlGesZbyHdxKQNaRyKrzS+U8aO3CpK+OvYvhWdt29yM6TdNC
+	NsXI84Qh+R2o7EAeZjZameeHTF2Cc
+X-Google-Smtp-Source: AGHT+IE2h2M+qxLCspBarhNsj5yqwS/EMhkBWxXjcDD9u0KTCey5QLScBBICtmjBrds0ZAtA4MlEHX5fwedUO4F3uCA=
+X-Received: by 2002:a05:6a00:2284:b0:724:5d26:d904 with SMTP id
+ d2e1a72fcca58-724bed2f146mr8063161b3a.18.1732189627973; Thu, 21 Nov 2024
+ 03:47:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: zynqmp: add clock-output-names property in clock
- nodes
-To: Naman Trivedi <naman.trivedimanojbhai@amd.com>, robh@kernel.org,
- michal.simek@amd.com, krzk+dt@kernel.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- senthilnathan.thangaraj@amd.com
-Cc: linux-kernel@vger.kernel.org
-References: <20241121113512.992747-1-naman.trivedimanojbhai@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241121113512.992747-1-naman.trivedimanojbhai@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241120135859.3133984-1-daniel.baluta@nxp.com>
+ <20241120135859.3133984-5-daniel.baluta@nxp.com> <DB9PR04MB84616B3F5A76AA1C588DC0ED88222@DB9PR04MB8461.eurprd04.prod.outlook.com>
+In-Reply-To: <DB9PR04MB84616B3F5A76AA1C588DC0ED88222@DB9PR04MB8461.eurprd04.prod.outlook.com>
+From: Daniel Baluta <daniel.baluta@gmail.com>
+Date: Thu, 21 Nov 2024 13:48:11 +0200
+Message-ID: <CAEnQRZCSvOE5jQtSoL0xGJNpx_94V29TbidR8iSDC5jOwy6xQw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] arm64: dts: imx8mp: Add fsl,dsp-ctrl property for dsp
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, 
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de" <kernel@pengutronix.de>, 
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Frank Li <frank.li@nxp.com>, 
+	Aisheng Dong <aisheng.dong@nxp.com>, Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, 
+	"S.J. Wang" <shengjiu.wang@nxp.com>, Iuliana Prodan <iuliana.prodan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 21/11/2024 12:35, Naman Trivedi wrote:
-> Add clock-output-names property to all clock nodes, so that the resulting
-> clock name do not change when clock node name is changed.
+On Thu, Nov 21, 2024 at 1:33=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: [PATCH 4/5] arm64: dts: imx8mp: Add fsl,dsp-ctrl property for
+> > dsp
+> >
+> > Audio block control contains a set of registers some of them used for
+> > DSP configuration.
+> >
+> > Drivers (rproc, SOF) are using fsl,dsp-ctrl property to access those
+> > registers in order to control the operations of the DSP (e.g for start,
+> > reset, etc).
+> >
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > index 41ff40ab5da2..fa4ff75af12d 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > @@ -1616,7 +1616,7 @@ sdma2: dma-controller@30e10000 {
+> >                       };
+> >
+> >                       audio_blk_ctrl: clock-controller@30e20000 {
+> > -                             compatible =3D "fsl,imx8mp-audio-blk-
+> > ctrl";
+> > +                             compatible =3D "fsl,imx8mp-audio-blk-
+> > ctrl", "syscon";
+>
+> This requires binding update as I recall.
 
-So fix the node names here...
-
-Best regards,
-Krzysztof
+Yes, indeed. Will update in v2.
 
