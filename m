@@ -1,145 +1,128 @@
-Return-Path: <linux-kernel+bounces-416930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBEDB9D4C86
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE109D4C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E921F222BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:06:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7051F21D6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03271D319B;
-	Thu, 21 Nov 2024 12:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297361D130B;
+	Thu, 21 Nov 2024 12:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laCwdI/y"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AqIegkIu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353A155330
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988651CDA18
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190806; cv=none; b=PpjdlCB3dmCQ0i0OXDyVjtXZuJGeilXLIUG8j8n5kpcYl6Wrr5klXbYv4Kshfz1yVLOiNXtxupFib1JCK97sqDYZfqnjeP/TQqz2yJborBvro1C5/9LSXYpRDh82R2slH91Z0mkSPsaYLquZJr025HObj3oQ90hsmaTGFIT5dWo=
+	t=1732190839; cv=none; b=N2ffNgEgFVOjoj8PeGEh6xIVL02grDFBaulLPuCYJc6wE0k3tw1rrOMi/GjdlBy9K6GyVSKPfNN/tlACQJk8dsw3D2KueJlZ0rvOCVZXfi9gExLE8mIzS6w5SR3lcCQah0TrmJZKJJbc5gPvW7IfbxotLAHtfXRRx+0BtNpUpCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190806; c=relaxed/simple;
-	bh=jdyS7l/nToraMU8DwFUS/jMddkId5ELk7bSNl9XwrEM=;
+	s=arc-20240116; t=1732190839; c=relaxed/simple;
+	bh=rsxudbseoW9XX0qecRc26AyYl3AoYbImcWM51vQj8KA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OxSmOui7mA0XXhoGigCmZ+vaP8wFIIZGQ7/4+US9wXVMSuv+D17o03kpb9NUfplter5h6yxrEiwi4E1cqD7vcp9y/XVrwvLtyU5clWvhSLOYHMJoKAp7xCmZnKtS88jfctwHCADk/akB+TKOHJKM91yIxYLsrhnjx6CTLBIY4Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laCwdI/y; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d5ada03cso844059b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:06:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732190804; x=1732795604; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QeJkQl4NZCb42aF1EDykjOMDqurfKMx1jJdti4mmSYI=;
-        b=laCwdI/y3CDQN+7IZYs2Dp5NHh9HjE8RCWdJuGSKOwhO6AkBgFoNOnYyAnpFW5KDku
-         jHojinyd/6ct1UkK0+imUUDK5B73ZHU0Wv6+BfeGu7RekaH9m1KU6+A3NMWkvP51xRsc
-         gqel4l5EpLBRTghCuje0EQjsiPV8hETuCge6tTRVP4NKnEwqmsepNFJHpQps6wI4HN1F
-         unfbLob1mlCSK3oHwmHN0M7u0zA7U8z+RjVsU/seiccFiQe4YkFPKBrSbjR+9HMhuJ67
-         rCAlTBigarfMPWOve6RBCO/uOJuJJbmjuR+Woriv6K+ygk7yYbYM6m1hGLVkpvVZPToI
-         +dHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732190804; x=1732795604;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QeJkQl4NZCb42aF1EDykjOMDqurfKMx1jJdti4mmSYI=;
-        b=gUUzLuiZA1mkjSZ0ohlrEAjixsns9r3Ip+d5d6KHg+5LZVehn9xwPjc5YjBdoy9scu
-         I10zK2WrAQa+HpsJVkjed6wzvoIID57tIM4arp26Mkn04JSs4qSU8Xe3bjHOPX8NWhdI
-         mbf7Y0MRNUdgDNTAVUErLxvHTfAT+xxAnU3V11EyiLHmNNJoYMk7g+HmO+TVj8MO5IFY
-         F9QlJA7ejptHAmK8B21E6nb9z1vl6hxmijBhb2/LQb6zqDQ/FDEwvgNCEUyzg32s870J
-         TN1QLfPtIyGDLeDH9x/xUenmXaWCrqfvKHRUi3SEiR6nda2G1H6U17p8N3jiq7xG+kZh
-         Z9UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVg7arN+Cx/Z9jNFMzixcXTBpfmFEv5qfA5qR2I2MYOgmQlgaPu4fmZXU3z4Dz7bPNKfiJ35r71B0EhWYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOsqFWbeCFxDqaAzWKU5OF0SJrl9bvo2a04fyRtQs5VE42R0xk
-	eniFuXMVORocoNprX+N8Ky/4XgnfS6CPRoIXgZf+wxChjKoqC9G/um2e8XYFMQ==
-X-Google-Smtp-Source: AGHT+IFJrKxqS/drFBULdAcXuufWwk/0qbcFmu12EETGZqfH/I2ea8PwOKdoyNwUd6BRtkdHSGeCZw==
-X-Received: by 2002:a05:6a00:c87:b0:71e:7604:a76 with SMTP id d2e1a72fcca58-724bec8a716mr8148779b3a.1.1732190804093;
-        Thu, 21 Nov 2024 04:06:44 -0800 (PST)
-Received: from thinkpad ([120.60.55.63])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befac2c6sm3450562b3a.150.2024.11.21.04.06.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 04:06:43 -0800 (PST)
-Date: Thu, 21 Nov 2024 17:36:37 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	stable+noautosel@kernel.org
-Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
-Message-ID: <20241121120637.76ircbsfayjebdvr@thinkpad>
-References: <20241121094020.3679787-1-wenst@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmr8qtijvpV7d3CrHXMPwZX+HfqMmRvNVW29iamPBexGBAfWJGxUpjT3fHhZ1p5umJvKLHkPq3WqkNZbJfSNEV+QVbkBhTvvOGWC3lF1DqbDirJTzNiUpWQ7F22eQUQmlvY9jJRKR0ut/sx3WwIh2MecaGLaYgoBV3IURz9G3Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AqIegkIu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732190836;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qcmsPXReTxPDhWrLsk2GcwWTzmBDcRxHULeh3GulGd8=;
+	b=AqIegkIui7Cb7BgaLLX9yx26IeNuO0oxybppAzRnEJaxsFWjT3eYyQTenjpue53PFi60nD
+	i0lX2m/AaVEQk8I45J4ZSUC6r+3r0gEOz1JfxQ2ssF6pGBJK7GfeioScCSPA1FuPskmocs
+	AocxvqWZ8RxJXm7ladS7ic8xUvIY3d0=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-198-vdqdNoU_N3mDIFLrhrAsRg-1; Thu,
+ 21 Nov 2024 07:07:13 -0500
+X-MC-Unique: vdqdNoU_N3mDIFLrhrAsRg-1
+X-Mimecast-MFC-AGG-ID: vdqdNoU_N3mDIFLrhrAsRg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1DBB1955F77;
+	Thu, 21 Nov 2024 12:07:10 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.80.137])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0295A195607C;
+	Thu, 21 Nov 2024 12:07:06 +0000 (UTC)
+Date: Thu, 21 Nov 2024 07:07:04 -0500
+From: Phil Auld <pauld@redhat.com>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de
+Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
+ busy CPU
+Message-ID: <20241121120704.GC394828@pauld.westford.csb>
+References: <20241112124117.GA336451@pauld.westford.csb>
+ <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
+ <20241112154140.GC336451@pauld.westford.csb>
+ <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
+ <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
+ <20241114112854.GA471026@pauld.westford.csb>
+ <20241119113016.GB66918@pauld.westford.csb>
+ <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
+ <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
+ <20241121115628.GB394828@pauld.westford.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121094020.3679787-1-wenst@chromium.org>
+In-Reply-To: <20241121115628.GB394828@pauld.westford.csb>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
-> A PCI device normally does not have a device node, since the bus is
-> fully enumerable. Assuming that a device node is presence is likely
-> bad.
+On Thu, Nov 21, 2024 at 06:56:28AM -0500 Phil Auld wrote:
+> On Wed, Nov 20, 2024 at 07:37:39PM +0100 Mike Galbraith wrote:
+> > On Tue, 2024-11-19 at 12:51 +0100, Mike Galbraith wrote:
+> > > On Tue, 2024-11-19 at 06:30 -0500, Phil Auld wrote:
+> > > >
+> > > > This, below, by itself, did not do help and caused a small slowdown on some
+> > > > other tests.� Did this need to be on top of the wakeup change?
+> > >
+> > > No, that made a mess.
+> > 
+> > Rashly speculating that turning mobile kthread component loose is what
+> > helped your write regression...
+> > 
+> > You could try adding (p->flags & PF_KTHREAD) to the wakeup patch to
+> > only turn hard working kthreads loose to try to dodge service latency.
+> > Seems unlikely wakeup frequency * instances would combine to shred fio
+> > the way turning tbench loose did.
+> >
 > 
+> Thanks, I'll try that. 
+>
 
-I missed the fact that NULL ptr check is removed from of_pci_supply_present().
+Also, fwiw, I think there is another report here
 
-> The newly added pwrctl code assumes such and crashes with a NULL
-> pointer dereference. Besides that, of_find_device_by_node(NULL)
-> is likely going to return some random device.
-> 
+https://lore.kernel.org/lkml/392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com/
 
-Yeah, good catch.
+which seems to be the same thing but mis-bisected. I've asked them to try
+with NO_DELAY_DEQUEUE just to be sure.  But it looks like a duck.
 
-> Reported-by: Klara Modin <klarasmodin@gmail.com>
-> Closes: https://lore.kernel.org/linux-pci/a7b8f84d-efa6-490c-8594-84c1de9a7031@gmail.com/
-> Fixes: cc70852b0962 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: stable+noautosel@kernel.org         # Depends on power supply check
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Thanks for the fix!
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/bus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 98910bc0fcc4..eca72e0c3b6c 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -405,7 +405,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->  	 * before PCI client drivers.
->  	 */
->  	pdev = of_find_device_by_node(dn);
-> -	if (pdev && of_pci_supply_present(dn)) {
-> +	if (dn && pdev && of_pci_supply_present(dn)) {
->  		if (!device_link_add(&dev->dev, &pdev->dev,
->  				     DL_FLAG_AUTOREMOVE_CONSUMER))
->  			pci_err(dev, "failed to add device link to power control device %s\n",
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+Cheers,
+Phil
 
 -- 
-மணிவண்ணன் சதாசிவம்
+
 
