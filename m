@@ -1,237 +1,138 @@
-Return-Path: <linux-kernel+bounces-417597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7A79D5673
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:54:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF03A9D5672
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67DC71F23D29
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EB5282408
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE3D1CACE9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBE71DDC08;
 	Thu, 21 Nov 2024 23:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vNkkLBX+"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zepq4qXS"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C021C9DC9
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF3C1CB506
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732233233; cv=none; b=YMBnoQwwb/dQ4daIvOUHmB3lGY85T0qQYv5OmAWFHU/WPPy0/it8vQU/nbCUd/g6abg8+O18zth8rpKfP6mbbrSAa7wxhJjKDbbIxBAjl38Ts70tUq3hHBhn7fx/QNSRN1Khyn/4+nDwbppC36Gwo5J6trP/6tu3v8KdU0LAxa4=
+	t=1732233232; cv=none; b=bc8mqz174FtkwyLo5jykcDqs7Vjg8y9R0QnwqasIkWR0Tz+lIhIiaV/Vh1BulGgRrspT6m/o7bPQhJBd5wA+/LMpRUxbnJR7LOGLK6erfeZSlIJ4ut0tszgz9AZd3zoHsBmaazOl8GqzuofahDz0773xqACRrJdLAWd5tvfCHYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732233233; c=relaxed/simple;
-	bh=iRQjNllQOAzzZ/cUbX8ekd1erp5vq0DrBRgI2zgDUPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LSiJEehLAJ3xqrij4jyP3k4y45kJVjE7V482z1/ZYY5gG8fm2cSJtK6KSxWxHd2x9yL3PF5cQu6iK36Fj7NwYXi1md8ncPD/r5r3BoUXBBmVaTfc4bs1u6w97Jq6r4af0N+MirJcnTx7VeZyl/sNgkclVgntHnBqzZniALee9aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vNkkLBX+; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso26627591fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:53:49 -0800 (PST)
+	s=arc-20240116; t=1732233232; c=relaxed/simple;
+	bh=j8HtVc2jXBan6FbqE277Xt6/3C49W0fYTo4fzxzIsb0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZJI7ot8t10OaXmMX16uJ3LQNzT5z6Xz+3CPERjMkxP6f9A/Y3BGVIY9nOdILeOGIIai/8B2a3nurJGBoe7W9dDIH8BJUZ9Y11wcUPN5kgV65xAVsmTFMz6KpLcxwUQ0pn4lVLPOmO0m8YooaesDOMYjf0MVswcldAjosNP3OVXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zepq4qXS; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83ab5b4b048so52674939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:53:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732233228; x=1732838028; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rW4FHPt7LjmFH4gYgk/9ZboeDDlIoBJNyfpaoR1qrpc=;
-        b=vNkkLBX++oLTqOFJLfpe29Jrhgj1M+fUkaAG2EGk3PCgDRzH7yu0/Ce1tNyqU9AfKz
-         vYAjG41UrApcEgCoM1KPL0DomobSajG4z+UVu9t3j8ieRowG6fv+Toj2/EMAlM1n5tRc
-         Yvo85s52/MhzOVheEbkX5qMHUAUw2VakIFa7aTBH4w34Qp2dRkXt9VJBeCMaAlFC52i2
-         DvvPCIKM1/ClFJk2iF/oAHAh1RVFP6xTXTep9FoF7IfCCAt9LQZUriCsDgrKXTH12LaP
-         m44hbgQyN7VDshbLAKEgbeoEgoz/WVkglJh3kG7bcat8nfLgmN/GXX7jaKTUnS2D6cfW
-         pcAw==
+        d=linuxfoundation.org; s=google; t=1732233230; x=1732838030; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ljvFTLckgMBXyc/hCWJm3TmPmL56Vi1djSJCVHusK+0=;
+        b=Zepq4qXS4bnFi4qOXhrW+Tdl6Bs9VtX8EKZEdpU8FGyHf0F/IwzVsKarg0m4q3LHCx
+         rhFC2JhI5GH9RFGKa6xZWRv6Xqo9KV5LMenF7UcIodxREy6axtFlmWRzmrsa8CJ0xWWY
+         q4fIhhe+FknbBqFgdtcEBOQfDpCQcP3zW9vk8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732233228; x=1732838028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rW4FHPt7LjmFH4gYgk/9ZboeDDlIoBJNyfpaoR1qrpc=;
-        b=axCmCok800skZXeKZ00dEf4PcHexeu/kk7J1EUuVwCsGfP1lqeLzUJmDuLa1eOgqNz
-         k00kpn3VEssuG7axupKYtrhM9Yw/ndPACEk7E5yPr3P1p3se3AsoRGydf34z5zISc88y
-         atojDTv7pA5/1sjV4NMeqDUveT8pKEfLHQ89TXlEbmZ0V6sonkQNceVZa9NUKFDEq6oS
-         m1uM4S8keFjkDNygIfp4abtRA8bmXC2BfaPFZRUj54i4I9r6gpNLBgbav/3oF2J1dHNr
-         fWWc1N9KExZE3+s1fio1jjlgEgF/5k3ICa+Uah7bWSsmTnvrRGo3/gRxWcjZLWDC2H3u
-         rdxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWPKS2Y2uQQems3Uk7MtdgBj8/thDZcw1KNN7Xlq+tt1Qahbte+kK+6S+eEybSu/8aco8ylgwiepw7Ahp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeMr/4KEuGks4175bWgZotoHdAwoc2mGkb0VUksG/+N1KKh12j
-	wuyFctAgJpzhcMgHonql/Vcd/Y/XBmUTq/wHPrC/CRB7FXk64bfFxF083PIs5rc=
-X-Gm-Gg: ASbGncu8yevwhKZ03xQf/ZHoo2iz36ASUr/L7dUXG5KFM/xBX+x1R91ZsOO1St1J2du
-	wbUn6UiA8Cm/mIX2eKazoJl6m91ed+hm5E4rxBJqqbdr9YPkfV3LAQc3Ehk9B5G8LTsrWy4IsQ6
-	Rmu/Fd45QlPdQbDYZnz1/htRT8XPs55ieCtjLZTtdv9WqGm8lW784BHy/TcOCoxo8//PSKt9rfc
-	6GvmPmQW1SN3gz720VqvhRSh8SuujnCtsaGveg34I0FjfYpVzf1xTbvYLhidlnYyJSR451rZuuD
-	4sdork99shvqn9iMHn9KKWuPJppAOA==
-X-Google-Smtp-Source: AGHT+IEKFx5rkvWucHRO2zn/USpeu8y9JV60QFsZKo6nRTS2RPOH5OFs4cMCGnsdocitEz0+L01gtg==
-X-Received: by 2002:a2e:a58d:0:b0:2fb:6110:c5df with SMTP id 38308e7fff4ca-2ffa716d343mr3992251fa.31.1732233228136;
-        Thu, 21 Nov 2024 15:53:48 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa7587d0esm359121fa.61.2024.11.21.15.53.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 15:53:46 -0800 (PST)
-Date: Fri, 22 Nov 2024 01:53:45 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: keith zhao <keith.zhao@starfivetech.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
-	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
-Message-ID: <djnuoqr5mj576xzbhs72vuz6ji4ayluinb4fr257okik2l762x@ocd4cm7f65pl>
-References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
- <20241120061848.196754-4-keith.zhao@starfivetech.com>
+        d=1e100.net; s=20230601; t=1732233230; x=1732838030;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljvFTLckgMBXyc/hCWJm3TmPmL56Vi1djSJCVHusK+0=;
+        b=dC+aDnUVZHcprWv2I36Z6RBL9ZewRhc0QsR4o9x8ERBENYctk6ylHZIIhFQ3CblLqb
+         4gHgjgwbD5ecU43wSlmvYNW6zOhbiVAZb5rnTT8/yxnN1Vd1AQrjPM84nqcZEbQy+2Pn
+         636P6vrxUinXWvDc0NrA46MNnSK6s8FT9MJgmVUbb9ncINFcPry2kPcNYZCeAvBSGf9D
+         AI8l4HpKaLBfZbg8hD7oFv6w8uTKbsfBjoVjzne2P2u/eoKISrgpksyqGz4MrFWv2sT4
+         VPAxVwNMYNrTbUMfLcY4k9XdfPKd+c62f+15zEhjvFkHFSua4BFJOUrZe/F6UxgOn0Nv
+         bJ9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXzIUC/qNZY0nwWbhmBbWwGp4uVVe2Id9ctSXUjeZINagSLJmvGf+Fums7UU98PfsN2dRp7dLZS7LUPiqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNmVVzbKx7+60JZTipDXiYIS6bbysvaid9OgcAG50+eiSYsat6
+	+pKXjw3IWUoDDSUHURbexnaQDRBrguzkibyDqf80XWpFDrdluwXr8ltfPaAYZlo=
+X-Gm-Gg: ASbGncvMOV1wxg89dR8ctFkKRgw+INpt6YqzLZMJC+gMcdCgoyTXctDck6VuFEz0xDe
+	e2Qy0cR73Cv2lMY8ZhbtNeRqWhMQTgd+aWaL8cxW1HAWrctderF+xISuPROH7r/Fbz+8Uv6W2/K
+	9/1llwxNbL5fLmH1fjozaQGt/C4O71FwFQ8hjYOZnhoLpMzDNjD4CDPNlakHflRRM+pTMuEuUMQ
+	lcK7yzjNckFWc1t1rlVhdrPOjjRKJXwCBRh0QurzTS0y6YdxEQ8OSKwvFWcgg==
+X-Google-Smtp-Source: AGHT+IF96MGQRTP0elvAz6sBTHwpiq8D9SyOiWFimZgfz4bG069DfMpMT/a7a5sO+nbaJTtWXJBa8g==
+X-Received: by 2002:a05:6602:6405:b0:837:7e21:1688 with SMTP id ca18e2360f4ac-83ecdcf315cmr96081939f.11.1732233230456;
+        Thu, 21 Nov 2024 15:53:50 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e1cfe19f0fsm359847173.12.2024.11.21.15.53.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 15:53:49 -0800 (PST)
+Message-ID: <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
+Date: Thu, 21 Nov 2024 16:53:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120061848.196754-4-keith.zhao@starfivetech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+To: Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Yafang Shao
+ <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner
+ <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "conduct@kernel.org" <conduct@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu> <20241121042558.GA20176@lst.de>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241121042558.GA20176@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 02:18:42PM +0800, keith zhao wrote:
-> move rochchip inno hdmi connector to a newly created directory named
-> inno-hdmi.c, and rename rockchip/inno_hdmi.c to
-> rockchip/inno_hdmi-rockchip.c
+On 11/20/24 21:25, Christoph Hellwig wrote:
+> On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+>> On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+>>> Shuah, would you be willing to entertain the notion of modifying your...
+>>
+>> Kent, I'd like to gently remind you that Shuah is not speaking in her
+>> personal capacity, but as a representative of the Code of Conduct
+>> Committee[1], as she has noted in her signature.  The Code of Conduct
+>> Committee is appointed by, and reports to, the TAB[2], which is an
+>> elected body composed of kernel developers and maintainers.
 > 
-> This patch refines the Innosilicon HDMI architecture by abstracting
-> the existing connector into a bridge architecture.
-> The drm_bridge_connector_init function is used to create the connector.
-> 
-> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
-> ---
->  MAINTAINERS                                   |    2 +
->  drivers/gpu/drm/bridge/Kconfig                |    2 +
->  drivers/gpu/drm/bridge/Makefile               |    1 +
->  drivers/gpu/drm/bridge/innosilicon/Kconfig    |    6 +
->  drivers/gpu/drm/bridge/innosilicon/Makefile   |    2 +
->  .../gpu/drm/bridge/innosilicon/inno-hdmi.c    |  376 ++++++
->  .../gpu/drm/bridge/innosilicon/inno-hdmi.h    |   34 +
->  drivers/gpu/drm/rockchip/Kconfig              |    1 +
->  drivers/gpu/drm/rockchip/Makefile             |    2 +-
->  drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c |  690 +++++++++++
->  .../{inno_hdmi.h => inno_hdmi-rockchip.h}     |    0
->  drivers/gpu/drm/rockchip/inno_hdmi.c          | 1025 -----------------
->  include/drm/bridge/inno_hdmi.h                |   56 +
->  13 files changed, 1171 insertions(+), 1026 deletions(-)
->  create mode 100644 drivers/gpu/drm/bridge/innosilicon/Kconfig
->  create mode 100644 drivers/gpu/drm/bridge/innosilicon/Makefile
->  create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
->  create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.h
->  create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
->  rename drivers/gpu/drm/rockchip/{inno_hdmi.h => inno_hdmi-rockchip.h} (100%)
->  delete mode 100644 drivers/gpu/drm/rockchip/inno_hdmi.c
->  create mode 100644 include/drm/bridge/inno_hdmi.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f787dd625497..7766ee0bdd74 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7439,6 +7439,8 @@ S:	Maintained
->  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->  F:	Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
->  F:	Documentation/devicetree/bindings/display/starfive/
-> +F:	drivers/gpu/drm/bridge/innosilicon/
-> +F:	include/drm/bridge/inno_hdmi.h
->  
->  DRM DRIVER FOR SYNAPTICS R63353 PANELS
->  M:	Michael Trimarchi <michael@amarulasolutions.com>
-> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> index 683cb33805b2..37be5dd5213f 100644
-> --- a/drivers/gpu/drm/bridge/Kconfig
-> +++ b/drivers/gpu/drm/bridge/Kconfig
-> @@ -423,6 +423,8 @@ source "drivers/gpu/drm/bridge/cadence/Kconfig"
->  
->  source "drivers/gpu/drm/bridge/imx/Kconfig"
->  
-> +source "drivers/gpu/drm/bridge/innosilicon/Kconfig"
-> +
->  source "drivers/gpu/drm/bridge/synopsys/Kconfig"
->  
->  endmenu
-> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> index 3daf803ce80b..866d1e0fd8aa 100644
-> --- a/drivers/gpu/drm/bridge/Makefile
-> +++ b/drivers/gpu/drm/bridge/Makefile
-> @@ -41,4 +41,5 @@ obj-$(CONFIG_DRM_ITE_IT66121) += ite-it66121.o
->  obj-y += analogix/
->  obj-y += cadence/
->  obj-y += imx/
-> +obj-y += innosilicon/
->  obj-y += synopsys/
-> diff --git a/drivers/gpu/drm/bridge/innosilicon/Kconfig b/drivers/gpu/drm/bridge/innosilicon/Kconfig
-> new file mode 100644
-> index 000000000000..73dbed3b1c4d
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/innosilicon/Kconfig
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config DRM_INNO_HDMI
-> +	tristate
-> +	help
-> +	  Support the common interface which is part of the INNO
-> +	  Designware HDMI block.
-> diff --git a/drivers/gpu/drm/bridge/innosilicon/Makefile b/drivers/gpu/drm/bridge/innosilicon/Makefile
-> new file mode 100644
-> index 000000000000..3b3a961ab9fb
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/innosilicon/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_DRM_INNO_HDMI) += inno-hdmi.o
-> diff --git a/drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c b/drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
-> new file mode 100644
-> index 000000000000..c26132b41bdf
-> --- /dev/null
-> +++ b/drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
-> @@ -0,0 +1,376 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
-> + *    Zheng Yang <zhengyang@rock-chips.com>
-> + *    Yakir Yang <ykk@rock-chips.com>
-> + * Copyright (C) StarFive Technology Co., Ltd.
-> + */
-> +
-> +#include <linux/irq.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <drm/bridge/inno_hdmi.h>
-> +#include <drm/display/drm_hdmi_state_helper.h>
-> +#include <drm/drm_atomic.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_edid.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_print.h>
-> +#include <drm/drm_probe_helper.h>
-> +#include <drm/drm_bridge.h>
-> +#include <drm/drm_bridge_connector.h>
-> +
-> +#include "inno-hdmi.h"
-> +
-> +u8 hdmi_readb(struct inno_hdmi *hdmi, u16 offset)
-> +{
-> +	return readl_relaxed(hdmi->regs + (offset) * 0x04);
-> +}
-> +EXPORT_SYMBOL_GPL(hdmi_readb);
+> FYI, without taking any stance on the issue under debate here, I find the
+> language used by Shuah on behalf of the Code of Conduct committee
+> extremely patronising and passive aggressive.  This might be because I
+> do not have an American academic class background, but I would suggest
+> that the code of conduct committee should educate itself about
+> communicating without projecting this implicit cultural and class bias
+> so blatantly.
 
-Not to mention that hdmi_foo() is too generic. Please use some common
-prefix through the file. At least inno_hdmi_foo() will be much better.
+I tend to use formal style when I speak on behalf of the Code of Conduct
+committee. I would label it as very formal bordering on pedantic.
+  
+Would you prefer less formal style in the CoC communication?
 
--- 
-With best wishes
-Dmitry
+I am open to educating myself.
+
+thanks,
+-- Shuah
+
+
 
