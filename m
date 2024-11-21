@@ -1,121 +1,117 @@
-Return-Path: <linux-kernel+bounces-417045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC729D4E39
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:02:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68F659D4E3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:03:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E291F2316E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E4281E2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0F1D9A6D;
-	Thu, 21 Nov 2024 14:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52AD1D90DC;
+	Thu, 21 Nov 2024 14:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ROXAOxvk"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pW1jKepJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4554F1D932F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D9C1D79B0;
+	Thu, 21 Nov 2024 14:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197743; cv=none; b=oak2VPmLplqX+CNmiGo3/Txyp8CrxWLGrORTdXOntU0vsQ3jZEiqH+m7BNWEzjANLg3kIJ3XCkBVxP3fYbuSdhODNdrp9UH0uqhpzGOcx0NelaaQ9T0eRK707WkUaqiP6z48/V5UuqjO0Gm0FVkKD3xkOaZBqGYJGqICWJFODec=
+	t=1732197789; cv=none; b=s7NGYA5f2yfditsJuZ4kJmEU+wvCS67Wcz5j+p4UXBoULu9rqNinHc1uSV0/aa2YPNi3jaoB0mtSLr1rESDmUP2qdTAdHBRol1DyIKARG+yPPd+xpEhDVO2HUuP/c39CJQIyZLeazb03dG4iIk5N+uorRNV2AeHJ/tw2kuGzh4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197743; c=relaxed/simple;
-	bh=5Oh/o/XpH8bZVGM+tUQ6gST6nT2DOSuTqrYyQ8HuFRk=;
+	s=arc-20240116; t=1732197789; c=relaxed/simple;
+	bh=EqoX93a7SSSutDSrjFHpMZeVK/vypQ6MnjJTLZXO/IA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=roDMmv8Eax+dVGJ62wLHpsixS8qHRubVpqqarNQ2/qkEW6HzBRKKA8228FS5boFb2Gm0082xNq15NWNjHShqdUtSdikcOgxxbPU+uWDYQNgW6nlHyirArFN280eJlhsNyb5iksGq/CA82RBHWlIvirf86l6/Xb1Vjon7Ggpl1D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ROXAOxvk; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3822ec43fb0so688089f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732197739; x=1732802539; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pAE+A77cEW+RSvRAmSY+g8z45cph7MbMcujqpsZd4q4=;
-        b=ROXAOxvkFT7Ajg2S9YS9Aa2yxi5pL/q17/Q1QDXT4urcjz5u0UtrDg4gTxWrDXha66
-         TnG+zW85YMKOtdeKLMurHP2/c57ieofm1VWzyc+hIME5RfLUCRLnFRQ8HPGRT19RZI8B
-         i9UvRo6WBg6fKtQZP52NHivoDK3C615Hd3JWYPEudBd4q2+jN4BBzXnHw8WOZNDTF1M3
-         PMGzeLFsnvOHOuAY3jSDn5WTNDm9JzCIo02tL3yf8N+Gj9rzdUfQ2CGUo9LgEKgkZ6j/
-         8/LNbQ4J+3eX5Zi+5m89/3TZaEwdR0jlvXf2SA79APk5KupMiT63p2vZ/FcrKhH0ztHE
-         WZwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197739; x=1732802539;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pAE+A77cEW+RSvRAmSY+g8z45cph7MbMcujqpsZd4q4=;
-        b=KsBQ/kyQSOV3TseJahfB4fsdbuRjJ+1iUsKQR0yVi9PQDas2UEWcbgLA01aocU5EM1
-         xKa7ezdHoAzhS8bo5lEFlTkF2qS/0fhY9MjPmLpbSFIjjJxTPLycOJliLXDdNxSB9xfF
-         79ocq+mid0wCbqnW+u5eP+Bgxtc3bQbF1BGx6vwRRlzaa+guemliURDp+qEJXY4BEKvA
-         XXraRz1bx4e7dFJ/dKmWkPcunMFUSd1Kt6nYvnvQJxP+jjqSgin+JRddFT+tfVblYRGB
-         2KQAD1W81ZxoEuCRLkNrP0PEyBxbanA+2Vah4rtqrHC5wrAEE3lyauttPh1E3Bk/eblL
-         yJQw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8xyEfDmagMT5aoiqF7alQf9ZmgrIsBDY4qDYb9rc6onzPVZhs81/T3D19gXq8l8G/59JcC4+VYsUD/Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza8stoyhbSZXjfUpzbQfQ/FQUGfLKdNoZFEyjuGW3LgQ/dNemC
-	Za5/lFmzeS9/0ViXer9v36QOvy4E8JcjrGhbjWVJxXRGs/PNCGqCPhv4zBQ3Hf8=
-X-Gm-Gg: ASbGncurPVe3BBm5kTUNXoGqyWGhhJhFRpHkyzEjlHwtV+2YxK43X+bsqLDP+bsi1T3
-	48pfZR3DlEGCfJ0YQGumOYrHT6e7TMecBtTrarox2UiAfSXfK/7DBctfz46FuXmy8argnoBtEqe
-	Oq5sf/L3m3EKmlOB1T35slVkmcP3u64HOT1KnLtT9G3VR8WHBt8eP6Wrn4XO+ThYIhpoTMf3mz0
-	/GdHJE1mxbZor50w8MmQSXl/oGrdr28pT9DquA8cn1aNuPcI5EQqjo=
-X-Google-Smtp-Source: AGHT+IGXHHsC3lb110ltSt3NkQeKjUO+qIDnI9Se0KIThUXBQ1o/5uVK01vMM3fGteaPzmjmgPzfgQ==
-X-Received: by 2002:a5d:64cb:0:b0:382:4c57:c415 with SMTP id ffacd0b85a97d-38254b20bc9mr5002355f8f.56.1732197737685;
-        Thu, 21 Nov 2024 06:02:17 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493f36fsm5104693f8f.97.2024.11.21.06.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 06:02:16 -0800 (PST)
-Date: Thu, 21 Nov 2024 17:02:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, jasowang@redhat.com,
-	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com,
-	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Satha Rao <skoteshwar@marvell.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] vdpa/octeon_ep: enable support for multiple
- interrupts per device
-Message-ID: <2d7c846c-31fa-4f63-984e-d46670c1dfed@stanley.mountain>
-References: <20241121134002.990285-1-sthotton@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EJTECjH0NF2ULKfivMv6BZ2yzc0xsatGyEEriGuhxOL9Lr0DgBEd6/1TcXdp5h4h12tPNDLz197ao9hZMHQDBkJnoBYmvFtYaW6zRGq6dkV1fgyQQ3DSVkUp489jucV/sq/adf+5E2qWm980zTs/CgMcqNdhDOpyMxKHh3qO9VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pW1jKepJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C56C4CED0;
+	Thu, 21 Nov 2024 14:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732197788;
+	bh=EqoX93a7SSSutDSrjFHpMZeVK/vypQ6MnjJTLZXO/IA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pW1jKepJgOpBBBEEItFDTaXkV9FaIP2tlsyxiTZWrMQ/M3SXodJdqtyVipI9mepc3
+	 1BfUi2k94k+W8epnfmcIt5APqxW5//gHUvzgiEKQu1oIVcAmABsCSlRYUHPXFjMXM9
+	 2EcPgCTYH2MckodRKgshyh0Ex8AarCVNx6YXjkgIGSLmsEfuqJgjpFPbMOxjux6Xlm
+	 jk9srdRE9XX6fmmeWNBylz4eQn1HX1+uBHgxH55gXmBcUL7HH/4UDNzA9FFZO+dn8d
+	 sR4MnLdWouSihaOX60ni0lccvUgFeUagbbVALjHdjskbFYBDnl4mS7kq7rEEIpfLde
+	 ljd5HLRZusgyg==
+Date: Thu, 21 Nov 2024 14:03:03 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Stephan Gerhold <stephan@gerhold.net>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH] ASoC: qcom: apq8016_sbc: Fix second argument of
+ apq8016_dai_init()
+Message-ID: <387c84aa-dab1-44ca-8d42-bc19abc79434@sirena.org.uk>
+References: <20241117232100.23760-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BVF4aMiMiHWSAYi5"
 Content-Disposition: inline
-In-Reply-To: <20241121134002.990285-1-sthotton@marvell.com>
+In-Reply-To: <20241117232100.23760-1-spasswolf@web.de>
+X-Cookie: Remember the... the... uhh.....
 
-On Thu, Nov 21, 2024 at 07:09:43PM +0530, Shijith Thotton wrote:
-> Updated the driver to utilize all the MSI-X interrupt vectors supported
-> by each OCTEON endpoint VF, instead of relying on a single vector.
-> Enabling more interrupts allows packets from multiple rings to be
-> distributed across multiple cores, improving parallelism and
-> performance.
-> 
-> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> ---
-> v1:
-> - https://lore.kernel.org/virtualization/20241120070508.789508-1-sthotton@marvell.com
-> 
-> Changes in v2:
-> - Handle reset getting called twice.
-> - Use devm_kcalloc to allocate irq array.
-> - IRQ is never zero. Adjusted code accordingly.
-> 
 
-Thanks.  That takes care of all the issues that I saw so I'm okay with this now,
-but I'm not a domain expert.
+--BVF4aMiMiHWSAYi5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+On Mon, Nov 18, 2024 at 12:20:58AM +0100, Bert Karwatzki wrote:
+> Since commit a78a42fb48b8 the second argument of apq8016_dai_init() has
+> to be an lpass id returned by qdsp6_dai_get_lpass_id().
 
-regards,
-dan carpenter
+This breaks the build:
 
+/build/stage/linux/sound/soc/qcom/apq8016_sbc.c: In function =E2=80=98apq80=
+16_sbc_dai_in
+it=E2=80=99:
+/build/stage/linux/sound/soc/qcom/apq8016_sbc.c:153:38: error: implicit dec=
+larat
+ion of function =E2=80=98qdsp6_dai_get_lpass_id=E2=80=99 [-Werror=3Dimplici=
+t-function-declaration]
+  153 |         return apq8016_dai_init(rtd, qdsp6_dai_get_lpass_id(cpu_dai=
+));
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+/build/stage/linux/sound/soc/qcom/apq8016_sbc.c: At top level:
+/build/stage/linux/sound/soc/qcom/apq8016_sbc.c:165:12: error: static decla=
+ratio
+n of =E2=80=98qdsp6_dai_get_lpass_id=E2=80=99 follows non-static declaration
+  165 | static int qdsp6_dai_get_lpass_id(struct snd_soc_dai *cpu_dai)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+/build/stage/linux/sound/soc/qcom/apq8016_sbc.c:153:38: note: previous impl=
+icit=20
+declaration of =E2=80=98qdsp6_dai_get_lpass_id=E2=80=99 with type =E2=80=98=
+int()=E2=80=99
+  153 |         return apq8016_dai_init(rtd, qdsp6_dai_get_lpass_id(cpu_dai=
+));
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+--BVF4aMiMiHWSAYi5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc/PZYACgkQJNaLcl1U
+h9D/Swf/d78eojqXzZ5VOkYr+QjU1ZK0Dbvd72wJ41o23kHzspDvY5OCw/NIU1RP
+OGkyFIDnLqEsJ6bNy05h7HdR5gGNDzYBHN+DsvVpGstCmVIZ8JRC3R/Iwym9e8th
+tMvCj/I9tsezLwOa9esB5gvQDjLNLKrt/DPyI2ORKEnoS0G1xWwoA0gvldD0iwNa
+fIz71HhzFfGCwDqTGIwhqnfggnnNLLYONsiocDIaWIHMWcQzznRuy7kKM8IRgUaS
+cDVQt7QFGInhOpIE7mAH5iPq797YnQ05pen+hoGV8DQsGvfkFAZIrhgA/KcyTWrt
+PojNfqnAOvOLurJzoA11kK+hvDzaNg==
+=LL8L
+-----END PGP SIGNATURE-----
+
+--BVF4aMiMiHWSAYi5--
 
