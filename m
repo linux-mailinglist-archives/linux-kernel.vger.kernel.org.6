@@ -1,195 +1,219 @@
-Return-Path: <linux-kernel+bounces-417549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580429D5583
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 638A19D558C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB70E1F2474D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C611F24812
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7B01DE2B6;
-	Thu, 21 Nov 2024 22:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D50E1DD877;
+	Thu, 21 Nov 2024 22:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfplOAE2"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jVKzZhxO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2805695;
-	Thu, 21 Nov 2024 22:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DC1CBE81;
+	Thu, 21 Nov 2024 22:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228364; cv=none; b=HRRQlJWSzobYtnxoXMOsnLwDPyPBsUs52dwsyyzcUyNT9oX2ZPnYrPYlZ7OqJCa6K9in81egXy9UXfnhUQgiwWrnaXedMPk4/gEgDMDlfZN4OLSinRS4IH+N95NZhEvsIl+3zNFSzzm0dZpltieIGpFf+E1gkdD3fedQ+h5YCZM=
+	t=1732228626; cv=none; b=altGW6yQGR+T1LAuBBTcRnCYxMUHKZZDVo5pifgsB2H/QcXU3WZ4vgjFQFXCEZQ1wm9KhM091jt7yKqKvVcP1mJ2JeiibvFWzgInIdma/YiXnXbi+dLmReRndR4bdUyYzJ9JLIEVMsaWzy5TvBbq0EH9IFE1jkBqtifva/m4ZMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228364; c=relaxed/simple;
-	bh=MWEu9cfHsGXDOOV+9gWbv6oRO8BAoH5LyyrcIXWo1DY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IcKnlhRmrtD9ijj0sd62Vad7QqilBZNs+S+4peLBrcvh2yjgRYvHpieDTzeWs9U8WM3aRP7mgJHBg25LWAN/4B2q9Ase3QyDdC7pZuJdQObHvBH19GoE4+RnJvXXzrm4BDT1UwXetggyLTtQnA6Nd7SJIIOCQ83C42nZnVfT8+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfplOAE2; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-856ec390e30so535001241.0;
-        Thu, 21 Nov 2024 14:32:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732228360; x=1732833160; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fecMMpAR9aqzU6pxDcgMObsjfCOyyy7qj+VlEzyRjtk=;
-        b=bfplOAE2EUYbEN8MDTAhhWArb2WChQnHqJ92vDTRo3hZz2yn2OyO2csfz7Yo1KckDg
-         7hXxBsUXZvryRNNz9xRyYOuX+43OmKOcOKiqbks/QW7sg8YNZb1U97mqKMBtcJqXb4NF
-         /HUQYJAuuuXzSsTA9va2JS02SkYpa3eF3Yz4BE9Qv97TdiSNRFh3xT1Zx6ygpve0aYUz
-         DKR2zhC58ZaWkKoy7/gdK7LonjmYPAI7Pmr5FdQW60c2MQzfplTOmFrsdNFEfK1sCCme
-         EJYoIqPXqfqKQv1nUWseTg7/8RCs41kXwdpXnDikbFgitRp4ohnChtTfbhwRH2kBLwqQ
-         YnfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732228360; x=1732833160;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fecMMpAR9aqzU6pxDcgMObsjfCOyyy7qj+VlEzyRjtk=;
-        b=P/2ahm+qXSxWbTfJrmLvIz7Pvh5NhTmXHc9NBca1Eb3EkVKf/vjwT4cFzDD2fn5AKJ
-         4NFiG0KcxNHX0A7OHjfoiysXPRrAkOF7ns6PZX2PHViHfFSeOQOq2J0tWyxSSJUyUv6+
-         Ztsea2PQzthBQBl8HhtDwBNbh+8iGGjz5p4Nfepu31SU2hLQ05kV467WN8nUTJeGhLwe
-         GNgBzGP9pNZ6F1jdNrVhgYl8CkYp4vs5kxWEO2PaXyg6mH4jkSaTGCP8JjDDcTZfXRzN
-         PHEJJSjim/zo6BpYu+AIaNhCvPTNimQQWhPXS3FzrBWLzl+y0zK6+phB63mdbAe9VeoA
-         +N5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU7vbekv5w+Sl8+aJfy8gYMeeEvxGXkRBjht508SrF7uPUe1X7O3NH6KKY8XguxscRWLjwgxCX1gY+BMPCo@vger.kernel.org, AJvYcCXI/uDgA7uhCOnjJdJHKHElUhj4s631iPicEVWBr9U+tOXQ1EazzJSS6Gs/0aYnh5OEQsTIzyL9kKc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFYsZYEFZe2dpm71ed+f4U+zeR3Qd+6ATr1iDw3nUBeUyE8DaB
-	TozKq0/9ET9na16PmR7FYqWoJ4bxt/JcYi8K2RqDwK0iFXUW3Mbq2lpFSsozII4WSH1mUFlKoGl
-	3N/r0Ff1GUwMsfVTkIb4CCl+YI8s=
-X-Gm-Gg: ASbGncsvL8Spb+aYDHy2AtAmbRY0Cq2TG4EtdDC/ZMhAy/7UrYGnmweCQfk4HwMo/Hh
-	WfAiR21Fr1cjfWYx/gQGr1LHwfAT9NVVpcpjiHXWrpuREMTWDCXiim9KHttmVUWXrOg==
-X-Google-Smtp-Source: AGHT+IGgunDBgS+MIXIJS8JIq4LltSSNvVyN5cWRKL8zjPcJ8TkEBGYXARRTDgIkpQoqzFsDekilngXfYGJ4SmNAiPs=
-X-Received: by 2002:a05:6122:4b1a:b0:50d:66e1:826c with SMTP id
- 71dfb90a1353d-51500ae1095mr632049e0c.11.1732228360131; Thu, 21 Nov 2024
- 14:32:40 -0800 (PST)
+	s=arc-20240116; t=1732228626; c=relaxed/simple;
+	bh=MUGLVwS75jQUSL12uOeu0NQbPRYbChsHCYEPGyBY20A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FVKv86E4DAXSd9RVoX7XHsf/3HCZ+RTAxcYYcwfP1b7f0DQrO0VfHeN/ynNybSvDy59smEGZws2gTgmHyBUBZxO/diSLL8OkZz/FTpF9007VZsgKrDqg8YYRhQP3p4UK6ZkLj4uOVo7RkUMmqN4JmL03B5QUbzCE2S6LHv7R1ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jVKzZhxO; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732228625; x=1763764625;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MUGLVwS75jQUSL12uOeu0NQbPRYbChsHCYEPGyBY20A=;
+  b=jVKzZhxOfnSlhdcN3BiOmzxPAyohDCSnZIYmGzYYVomBL7a+LH6H3++7
+   RXjlMT7BMYPJC9Wzn0ep2K3ikDcKk4WNstjUOuJ4lrMGSTuKJL8SbbJP5
+   qMRMzIHYNm7fPDLE9XKkJyZoIpGNlJgZXH5YGfWISBe1CmOxwcX5JSWaa
+   TBGYy6JEjYqmfavS0QLgSDRQuHk8l1jqHxI1LdD6TDAyTkYVbKhhipfM5
+   kIoX3Ur6bQTIJ4Aewb18xUjxDRRejv71gS6ddjgW1yva/ErCSY3Ked4gp
+   N0fV7RoPhJ5OTrq+RbNxX55IzIzE1L7dR5WtbmVvN+XBY9LrpRS8beZ8f
+   w==;
+X-CSE-ConnectionGUID: Z2O2Dn8WQ1KzzJdbibXsvg==
+X-CSE-MsgGUID: RTm4L1kIQaKZ/kaqBOFAeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="49889254"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="49889254"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 14:37:04 -0800
+X-CSE-ConnectionGUID: u4lzi55QQtuEqcueIDQ7aA==
+X-CSE-MsgGUID: HC93Hgp/RFyhgB78eC/uvQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="94480413"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 21 Nov 2024 14:37:00 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEFnG-0003QJ-0N;
+	Thu, 21 Nov 2024 22:36:58 +0000
+Date: Fri, 22 Nov 2024 06:36:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, NXP S32 Linux <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: Re: [PATCH v5 2/2] serial: fsl_linflexuart: add clock management
+Message-ID: <202411220621.UfubUV0X-lkp@intel.com>
+References: <20241118154449.3895692-3-ciprianmarian.costea@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121162735.9558-1-haowenchao22@gmail.com>
-In-Reply-To: <20241121162735.9558-1-haowenchao22@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Fri, 22 Nov 2024 11:32:29 +1300
-Message-ID: <CAGsJ_4yA-jaeUG-4i7eWwnrv1=P7ujivYq37btOFg8LwnhQAmw@mail.gmail.com>
-Subject: Re: [PATCH] mm: add per-order mTHP swap-in fallback counters
-To: Wenchao Hao <haowenchao22@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Usama Arif <usamaarif642@gmail.com>, 
-	Lance Yang <ioworker0@gmail.com>, Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Chuanhua Han <hanchuanhua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118154449.3895692-3-ciprianmarian.costea@oss.nxp.com>
 
-On Fri, Nov 22, 2024 at 5:28=E2=80=AFAM Wenchao Hao <haowenchao22@gmail.com=
-> wrote:
->
-> Now large folio swap-in is supported, but we do not have a method
-> to analyze the success ratio of large folio swap-ins. Similar to
-> anon_fault_fallback, we add a per-order mTHP swpin_fallback to help
-> calculate the success ratio. The new counter is located at:
->
-> /sys/kernel/mm/transparent_hugepage/hugepages-<size>/stats/swpin_fallback
+Hi Ciprian,
 
-Well,  this could be useful for profiling, but why not also add
-MTHP_STAT_SWPIN_FALLBACK_CHARGE ?
+kernel test robot noticed the following build errors:
 
->
-> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
-> CC: Chuanhua Han <hanchuanhua@oppo.com>
-> ---
->  Documentation/admin-guide/mm/transhuge.rst | 5 +++++
->  include/linux/huge_mm.h                    | 1 +
->  mm/huge_memory.c                           | 3 +++
->  mm/memory.c                                | 1 +
->  4 files changed, 10 insertions(+)
->
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index 5034915f4e8e..f5c775457913 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -561,6 +561,11 @@ swpin
->         is incremented every time a huge page is swapped in from a non-zs=
-wap
->         swap device in one piece.
->
-> +swpin_fallback
-> +       is incremented if a huge page swapin fails to allocate a huge pag=
-e
-> +       and instead falls back to using huge pages with lower orders or
-> +       small pages.
-> +
->  swpout
->         is incremented every time a huge page is swapped out to a non-zsw=
-ap
->         swap device in one piece without splitting.
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index b94c2e8ee918..dcf08f8fdf52 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -121,6 +121,7 @@ enum mthp_stat_item {
->         MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
->         MTHP_STAT_ZSWPOUT,
->         MTHP_STAT_SWPIN,
-> +       MTHP_STAT_SWPIN_FALLBACK,
->         MTHP_STAT_SWPOUT,
->         MTHP_STAT_SWPOUT_FALLBACK,
->         MTHP_STAT_SHMEM_ALLOC,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index ee335d96fc39..6b089a41acef 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -617,6 +617,7 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_=
-ANON_FAULT_FALLBACK);
->  DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_F=
-ALLBACK_CHARGE);
->  DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
->  DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
-> +DEFINE_MTHP_STAT_ATTR(swpin_fallback, MTHP_STAT_SWPIN_FALLBACK);
->  DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
->  DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
->  #ifdef CONFIG_SHMEM
-> @@ -637,6 +638,7 @@ static struct attribute *anon_stats_attrs[] =3D {
->  #ifndef CONFIG_SHMEM
->         &zswpout_attr.attr,
->         &swpin_attr.attr,
-> +       &swpin_fallback_attr.attr,
->         &swpout_attr.attr,
->         &swpout_fallback_attr.attr,
->  #endif
-> @@ -669,6 +671,7 @@ static struct attribute *any_stats_attrs[] =3D {
->  #ifdef CONFIG_SHMEM
->         &zswpout_attr.attr,
->         &swpin_attr.attr,
-> +       &swpin_fallback_attr.attr,
->         &swpout_attr.attr,
->         &swpout_fallback_attr.attr,
->  #endif
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 209885a4134f..7cda8b65e0c9 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4191,6 +4191,7 @@ static struct folio *alloc_swap_folio(struct vm_fau=
-lt *vmf)
->                                 return folio;
->                         folio_put(folio);
->                 }
-> +               count_mthp_stat(order, MTHP_STAT_SWPIN_FALLBACK);
->                 order =3D next_order(&orders, order);
->         }
->
-> --
-> 2.45.0
->
+[auto build test ERROR on tty/tty-testing]
+[also build test ERROR on tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus robh/for-next linus/master v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
-Barry
+url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-serial-fsl-linflexuart-add-clock-definitions/20241121-130303
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20241118154449.3895692-3-ciprianmarian.costea%40oss.nxp.com
+patch subject: [PATCH v5 2/2] serial: fsl_linflexuart: add clock management
+config: arm64-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220621.UfubUV0X-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220621.UfubUV0X-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411220621.UfubUV0X-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/platform_device.h:13,
+                    from drivers/tty/serial/fsl_linflexuart.c:15:
+   drivers/tty/serial/fsl_linflexuart.c: In function 'linflex_probe':
+>> drivers/tty/serial/fsl_linflexuart.c:904:40: error: 'linflex_disable_clks' undeclared (first use in this function)
+     904 |                                        linflex_disable_clks, lfport);
+         |                                        ^~~~~~~~~~~~~~~~~~~~
+   include/linux/device.h:421:41: note: in definition of macro 'devm_add_action_or_reset'
+     421 |         __devm_add_action_or_reset(dev, action, data, #action)
+         |                                         ^~~~~~
+   drivers/tty/serial/fsl_linflexuart.c:904:40: note: each undeclared identifier is reported only once for each function it appears in
+     904 |                                        linflex_disable_clks, lfport);
+         |                                        ^~~~~~~~~~~~~~~~~~~~
+   include/linux/device.h:421:41: note: in definition of macro 'devm_add_action_or_reset'
+     421 |         __devm_add_action_or_reset(dev, action, data, #action)
+         |                                         ^~~~~~
+
+
+vim +/linflex_disable_clks +904 drivers/tty/serial/fsl_linflexuart.c
+
+   835	
+   836	static int linflex_probe(struct platform_device *pdev)
+   837	{
+   838		struct device_node *np = pdev->dev.of_node;
+   839		struct linflex_port *lfport;
+   840		struct uart_port *sport;
+   841		struct resource *res;
+   842		int i, ret;
+   843	
+   844		lfport = devm_kzalloc(&pdev->dev, sizeof(*lfport), GFP_KERNEL);
+   845		if (!lfport)
+   846			return -ENOMEM;
+   847	
+   848		ret = of_alias_get_id(np, "serial");
+   849		if (ret < 0) {
+   850			dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
+   851			return ret;
+   852		}
+   853		if (ret >= UART_NR) {
+   854			dev_err(&pdev->dev, "driver limited to %d serial ports\n",
+   855				UART_NR);
+   856			return -ENOMEM;
+   857		}
+   858	
+   859		sport = &lfport->port;
+   860		sport->line = ret;
+   861	
+   862		lfport->devtype_data = of_device_get_match_data(&pdev->dev);
+   863		if (!lfport->devtype_data)
+   864			return dev_err_probe(&pdev->dev, -ENODEV,
+   865					"Failed to get linflexuart driver data\n");
+   866	
+   867		sport->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+   868		if (IS_ERR(sport->membase))
+   869			return PTR_ERR(sport->membase);
+   870		sport->mapbase = res->start;
+   871	
+   872		ret = platform_get_irq(pdev, 0);
+   873		if (ret < 0)
+   874			return ret;
+   875	
+   876		sport->dev = &pdev->dev;
+   877		sport->iotype = UPIO_MEM;
+   878		sport->irq = ret;
+   879		sport->ops = &linflex_pops;
+   880		sport->flags = UPF_BOOT_AUTOCONF;
+   881		sport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE);
+   882	
+   883		lfport->clks = devm_kmalloc_array(&pdev->dev, lfport->devtype_data->n_clks,
+   884						  sizeof(*lfport->clks), GFP_KERNEL);
+   885		if (!lfport->clks)
+   886			return -ENOMEM;
+   887	
+   888		for (i = 0; i < lfport->devtype_data->n_clks; i++)
+   889			lfport->clks[i].id = lfport->devtype_data->clks_names[i];
+   890	
+   891		ret = devm_clk_bulk_get_optional(&pdev->dev,
+   892						 lfport->devtype_data->n_clks, lfport->clks);
+   893		if (ret)
+   894			return dev_err_probe(&pdev->dev, ret,
+   895					"Failed to get linflexuart clocks\n");
+   896	
+   897		ret = clk_bulk_prepare_enable(lfport->devtype_data->n_clks,
+   898					      lfport->clks);
+   899		if (ret)
+   900			return dev_err_probe(&pdev->dev, ret,
+   901					"Failed to enable linflexuart clocks\n");
+   902	
+   903		ret = devm_add_action_or_reset(&pdev->dev,
+ > 904					       linflex_disable_clks, lfport);
+   905		if (ret)
+   906			return ret;
+   907	
+   908		linflex_ports[sport->line] = sport;
+   909		platform_set_drvdata(pdev, lfport);
+   910	
+   911		return uart_add_one_port(&linflex_reg, sport);
+   912	}
+   913	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
