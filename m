@@ -1,108 +1,111 @@
-Return-Path: <linux-kernel+bounces-416942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895579D4CA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:16:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85EAC9D4CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325BA1F22DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52723B224A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE091D4336;
-	Thu, 21 Nov 2024 12:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQy8ElbA"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341171CEAB8;
-	Thu, 21 Nov 2024 12:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73821D31AE;
+	Thu, 21 Nov 2024 12:17:27 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74ADC1369AA;
+	Thu, 21 Nov 2024 12:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732191354; cv=none; b=IGURV2DcBEW9Yy4k3WMazAF8B2A1gz+cw54NFNVkzs76d3rfJleQYdF6sqbHC/XUtib+QyUPwvaxC2GMBKmmKcnWtIIsWMfWj0Cbj2KNa65oQnD3Z83O8bdFHIErfRrZpilMvaTBPIZdNUUitg28lwNOZdo1Vd/K37CJtwj0GfQ=
+	t=1732191447; cv=none; b=cTBVSGe6IodOyi7CEfWFpsFE1zs8lgjycKGfq9cztYNlvIa3wPLLA3l2aWTI4AcKNEH9OGp0WH/MtBquHpa7HQgWsm8bP8OgPM7eW3L94ToHCjbP73JN67jFP1LelefarCgCAI4uITeyxOBG+eL0yfWpAwYxxEgulp3HGVXfMao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732191354; c=relaxed/simple;
-	bh=SDIsbIJw3gxkYLO9xc7OQIkC2OhZhRUpQhL6fssipQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VETafWG8rNgYLTiCfwfC8oo0WcqVo/UfXNjQdLH68MdPycotkGpzFnUYc/T7wAzF1nliooBlmja9IwiZvmq1wxXbc7cfUq8xQsHHj0FDZ521vgGOyFxHcaaTXW7B4SHPmnvjE+CMDppAaxGcrWeFXar2YnCly9yFbk0F8quHpUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQy8ElbA; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43152fa76aaso384235e9.1;
-        Thu, 21 Nov 2024 04:15:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732191351; x=1732796151; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EsqmlGkU160gyu0B5J8qHuqRhq9RtAQjZILv1YpjDWY=;
-        b=aQy8ElbAu9k8/Km1ooyxC1cxSIjCYq4H2GF7Px0RJK7FIcQvjM7m9m/CJf5nEHOrmf
-         R8uXf7/3WS6UAf2knMaPXFf2GP5L0VKtetsj05X0Wy0G0hjpcPLhJmv+T7EaCP1ewCmy
-         2aAwgDK3TuNEItlT2iWdMAWLom/AcqqLsIEYaKYIOg/k2tM7NPDUFu40NRWaoBeVY3b0
-         lUzRH+Nc9h22dFTGD/uDFFmvqEiDIqDbw0OeRXDgdeKmMXmCOHnh4qAcF0+PL1Zi1eD6
-         CfCgfNTgRjlvmcVRYa/47GSg2iizyXplHppm2LJ0K1Ysk/2P1GnB02cX6HBwBcGxtm6r
-         SBvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732191351; x=1732796151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EsqmlGkU160gyu0B5J8qHuqRhq9RtAQjZILv1YpjDWY=;
-        b=YZ6pcrhaHyxOYugEMbXNHpoqO7Ra3mcQW4/FhBtz+KcfdMI/hr3/wxKZ4/JV9ReU82
-         ajgUtUUMxUQn4ZGTc9eOnJdNg2ktjU12P0rDoxZpvuQI2OsojtmFsz+cfeu7JKJ5mnRX
-         k4DCPcRayTWfXKiExwS8YpV1g+Cxr6V86kSOj4F+NywkgY+VByQZGyPBq+gXdN6mouzZ
-         qCzqTVVOsQoU0PbTamfKSGDdsspi++1IE8AZxSs1LTOHzbwQmGBDI2k3NJhE6sMCscDa
-         afV8hHwWz99s6Fb37YRS6czYhSAdwOo0n2mFy4Crks1urrW38ZD7DoA/ZH664FlIGHS3
-         ojDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVexJO4aII0LcE/SKu7Hu8UvmL/eSY/WEf947CbI9pYlfNWgNpNF1z0HBtjTnpSNT0zjhF//8nys7yZbsQ=@vger.kernel.org, AJvYcCVi0lI7+iDIYkDxYax8ZcrBdKwGdtLusd1Ucx48Ib77S0JKKRqwHzLpEUrhtgY5jM2g/G0PGrDQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYjEd8qMkE/G5eTKpDRAKd4tFMy3gqMQJSNNWWQwSSSolPG0N1
-	s6PaexZ6gaeBtiSWFtqCg0k5kXJFbaiclp2HSrlWbOS6PEttlY73
-X-Gm-Gg: ASbGncv/Re0Yg6JgNvTx8zqNZSwXT6t8PHU2ffv5HD/p7K4i9RNOlZajVpEgZC1lIxR
-	7re8oeh482XcsnpY4ADxp8Wr/mNQ9GAmWiPLWHRWT7hNyxKVnorXZ6y6zYH+dTbd508+bXp6qGW
-	RW52fCxOYvQgefiV38OQWXlzYGHqtMTludcEeKhygFmbz4XajCfRN5QlHe+zv6H8aNg/SEj/S0i
-	89ZZQNQ7XzK6oX6FhLOwWpH3F7wSINTZBaGkqc=
-X-Google-Smtp-Source: AGHT+IEoGCN9chsc5RwTfzAgurnmlEprVGtYfnhVSkjIglYAd861gpQP3mOWcX1SbRN7wDA77XH29Q==
-X-Received: by 2002:a05:600c:1d1f:b0:42c:aeee:80b with SMTP id 5b1f17b1804b1-4334f0230ffmr23047205e9.8.1732191351152;
-        Thu, 21 Nov 2024 04:15:51 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1046sm56866425e9.4.2024.11.21.04.15.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 04:15:50 -0800 (PST)
-Date: Thu, 21 Nov 2024 14:15:48 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Cong Yi <yicong.srfy@foxmail.com>, andrew@lunn.ch, hkallweit1@gmail.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for
- improving code readability
-Message-ID: <20241121121548.gcbkhw2aead5hae3@skbuf>
-References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
- <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
- <20241121105044.rbjp2deo5orce3me@skbuf>
- <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
- <20241121115230.u6s3frtwg25afdbg@skbuf>
- <Zz8jVmO82CHQe5jR@shell.armlinux.org.uk>
+	s=arc-20240116; t=1732191447; c=relaxed/simple;
+	bh=+oRS4ZYMrcGbdaOnmvCzJQ96i8DmAEY38eqO/d+/zx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Bn/NhAtIy0Zb0dYF5jH1W8ODANHGGHS9HlyyJh0lslTQ0xO+BUtHxHEg3pK8XzQzvtpJOrnyXBO0UcKWEIGzrdt5MdC5XNSIExOE1uQ2k2ic73v9cqsKNTvxra93uG/ol245AkyJGMjiHDWQY+PYLCfWgNfRiIFzbWYaXN+JJP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee4673f24cbc81-3058b;
+	Thu, 21 Nov 2024 20:17:15 +0800 (CST)
+X-RM-TRANSID:2ee4673f24cbc81-3058b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.69])
+	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5673f24c9270-d6802;
+	Thu, 21 Nov 2024 20:17:14 +0800 (CST)
+X-RM-TRANSID:2ee5673f24c9270-d6802
+From: liujing <liujing@cmss.chinamobile.com>
+To: qmo@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] bpftool: Fix the wrong format specifier
+Date: Thu, 21 Nov 2024 20:17:12 +0800
+Message-Id: <20241121121712.5633-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zz8jVmO82CHQe5jR@shell.armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 12:11:02PM +0000, Russell King (Oracle) wrote:
-> On Thu, Nov 21, 2024 at 01:52:30PM +0200, Vladimir Oltean wrote:
-> > I don't understand what's to defend about this, really.
-> 
-> It's not something I want to entertain right now. I have enough on my
-> plate without having patches like this to deal with. Maybe next year
-> I'll look at it, but not right now.
+The type of lines is unsigned int, so the correct format specifier should be
+%u instead of %d.
 
-I can definitely understand the lack of time to deal with trivial
-matters, but I mean, it isn't as if ./scripts/get_maintainer.pl
-drivers/net/phy/phylink.c lists a single person...
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+
+V1 -> V2: Fixed two other wrong type outputs about lines
+
+diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+index 08d0ac543c67..84f723b275e3 100644
+--- a/tools/bpf/bpftool/main.c
++++ b/tools/bpf/bpftool/main.c
+@@ -370,7 +370,7 @@ static int do_batch(int argc, char **argv)
+ 		while ((cp = strstr(buf, "\\\n")) != NULL) {
+ 			if (!fgets(contline, sizeof(contline), fp) ||
+ 			    strlen(contline) == 0) {
+-				p_err("missing continuation line on command %d",
++				p_err("missing continuation line on command %u",
+ 				      lines);
+ 				err = -1;
+ 				goto err_close;
+@@ -381,7 +381,7 @@ static int do_batch(int argc, char **argv)
+ 				*cp = '\0';
+ 
+ 			if (strlen(buf) + strlen(contline) + 1 > sizeof(buf)) {
+-				p_err("command %d is too long", lines);
++				p_err("command %u is too long", lines);
+ 				err = -1;
+ 				goto err_close;
+ 			}
+@@ -423,7 +423,7 @@ static int do_batch(int argc, char **argv)
+ 		err = -1;
+ 	} else {
+ 		if (!json_output)
+-			printf("processed %d commands\n", lines);
++			printf("processed %u commands\n", lines);
+ 	}
+ err_close:
+ 	if (fp != stdin)
+-- 
+2.27.0
+
+
+
 
