@@ -1,263 +1,162 @@
-Return-Path: <linux-kernel+bounces-416451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E909D44EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:30:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A205E9D44E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57AA9282DAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:30:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB380B219B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46706AD2C;
-	Thu, 21 Nov 2024 00:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662D6AD21;
+	Thu, 21 Nov 2024 00:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QNN0F4v4"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8bXj084"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E416370801
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF9023098E;
+	Thu, 21 Nov 2024 00:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732148960; cv=none; b=MvtLVNs0fNfzMjCqBilHqLbU9/CU23KBLRx0sTDDZ5ncEVpY8G4by1FZrlciOf/v94e5wL6JNZAk14K7IRDh04vXkvOx9/m7xEu5k8g68Yu8IhmsYV9zG9glPA8ma4h5rzUqbAspXK82xap/oWwmH0K+yeg1eUULkpFnX+QALOI=
+	t=1732148948; cv=none; b=aZwrkJgYsLmywYI5/dijys+nl8x9fmHKXEskqY3yfzRJlFdxsMZYtgv+/9B7bH5zNl4ctTynHNkwiJ6QJBzSAi6yC6Kre4BKizlZrwQec9TTnfvT28wnwVqo/5WOI6KphPo+9PpwvWPIGCDEpBhhFM7GbGKezzTyRFY0QPMoOFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732148960; c=relaxed/simple;
-	bh=FWiIcYFpfnIOckfKm46vnv7yodm9kc7vmZ3xSFEEu2A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H5bUi4yiBZutswtmdkyjfKX+oynAvAYJ8u/OWshxxb2JTGRnSkrBeidCXwVmCV0zO+DQsAfVaPTnNjSRCAwKfDVLjubZXUEc0hmLM8sFDZDpzrP0cV1EwnG8UbIkjBwsZp92/XQiiAeEAarjQoJ5tzrv2LyR3L1DIs0rHfQFjTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QNN0F4v4; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20d15285c87so2909945ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:29:18 -0800 (PST)
+	s=arc-20240116; t=1732148948; c=relaxed/simple;
+	bh=ADwrhXPHxiG/lWbdGMI7aKDtnfo7BJH5nHp+YJOCkes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNUau9sqgzZj7VkksjMBD9qf3fNYuO/ti2nVUrtZztDqL9m0OyyH7JkO9wKz7MdRHyIN4/ZsdMhukP+NAZCOI0/rImUKNXUoor59YrEtFOeBZvOfCze6YGLAJdbvD8+5BYNCA02d8u1I4CPUVJAjXkAr9oOxD1o4dis22PBJymc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8bXj084; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso168092f8f.0;
+        Wed, 20 Nov 2024 16:29:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732148958; x=1732753758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yaq4pkjzDY4CwQXdUFb+TCwYFBRLtW6PERcuUhVZR0I=;
-        b=QNN0F4v4e21npo3IpTvpttKjnzO+EF1ivP9E96RrGxf7iPR81A/uRR+FM0G7SUWqO4
-         aTuLc05QPeW5XDTQK8sNyLhInwxQVbdbFgql5saLLgUP9EZLLqBZppeqEw7Zt1kcIp6X
-         jxapjWAJ1fhtQcRC9gQFeK707erDWOBzJb501IN+0dQ62v9vcBpWudFdSWG0fBNpI/1u
-         x9pl6AO+rZWsQhsLfboxak+pT8LYCKuJyvyMu76N+sc7zgT5HdmP/mdxreoKJ+8rXf1T
-         x8vUxYD21dv+ANwiH6ZGMvNAkBO9fBhRZWKh7D2GZuhCZqmKV4iF3VI+FT8CpZmn8w2y
-         NJ9Q==
+        d=gmail.com; s=20230601; t=1732148945; x=1732753745; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nNFqJNwdtTIM52uDabF+RixwG4yWSl0dwHZ/Bz5L1s8=;
+        b=l8bXj084l7s47amLmgoHrCjH9QRA1jbSInl6eUlxNarVb1z5TOpDKrRfIi/C97fRl9
+         plIrtiq5VfUDTB9TMaujpNumE4U8G7M67fr2yhzenykps0HB+R/QCsOgoE1Jxiu8UITI
+         COpZP20jmPn29Px0c4wB9tJbQuDjl30/p4o/olIyBhcoy65BdF92/1A9QRsk0TvbcU1P
+         k/JLTAYGQ/tX0tB+FHTuQPt64Ym/C1Lot1zVsCHbwOejJqpVSMZCkHYCypEyxjMjr1o6
+         4zpI/sW98rod8zhaJW1SbsVZNYs+SR7sNFfYaW0LyH9UcOjSxh/V8K5ixFtplWMmzZGL
+         mraA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732148958; x=1732753758;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yaq4pkjzDY4CwQXdUFb+TCwYFBRLtW6PERcuUhVZR0I=;
-        b=DoS4ftbyG/l1VJuyPuVIJGbHOKQJm8Mbo5pt3/46N3ltWRjEh+vytAR5QtF7FBWfst
-         RIzE/DgbKLJ+2lh5qw6zw3YEP81blH0RyDdz5fhZWCaXzdqX+Fc8ikpkPwlCKxJo59/q
-         Bm5YazX4blgKTWJt6XRbcWFyPjoPGEYczC0O2hpSMLPDivUiBT1TnOKtbGwIr7T4I2un
-         7YWBTbTitKODrmypB2wxErwlc4PziMhd+FgZ3Mudw2pl73Z+2NNsGXrMAWtmfYLBvq9E
-         +K1TvRNYTH//RkicUtrfU8VE/y3fgrcvhAZSDLi1lA7scLnHakwOTEeaKBJ/LZURuzKi
-         Cwzw==
-X-Forwarded-Encrypted: i=1; AJvYcCXo8CCjOdPs9yfww2ENxRE3vedbjq1uUfaZAORreYkhKxhrzylYGEdzsZmY2Mr6nd4ZgBje8WwM5luaYw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6Z9lPN8WljdxKc5oZ7YYFbAEvVNQurzImCVvsfp4/6oNLB+bI
-	xgibAOeWoqcX4h4cy9pXLx6FEc+nFeaBS8nLyiJSk6X36btU8wVUPOPwA/svqssojs4kQQnenMG
-	kWA==
-X-Google-Smtp-Source: AGHT+IEo3SsZK3GD4ZcR6dZRBQukGq0A2fKygifFSwayRaQbB5hqp/jWvkHnbijR91Fktwts9Qc8xXjY/nM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:facb:b0:20b:b7b2:b6ef with SMTP id
- d9443c01a7336-2126a342d20mr18935ad.4.1732148957811; Wed, 20 Nov 2024 16:29:17
- -0800 (PST)
-Date: Wed, 20 Nov 2024 16:29:16 -0800
-In-Reply-To: <20241115211523.GB599524.vipinsh@google.com>
+        d=1e100.net; s=20230601; t=1732148945; x=1732753745;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNFqJNwdtTIM52uDabF+RixwG4yWSl0dwHZ/Bz5L1s8=;
+        b=St3gqnxLvT5xt5KOKYlkI6C+jCRr87wfl9qsnOwAJ3wp2RkJDCrqESAjgdoPTfo6tz
+         7aHqTcNOEFBpvfqI3mrKO8TCRzUt8AHJ8LrFyBVLXAiacJsk+w0Ps5KA4+2r5jzdzBKt
+         UuJZtSwCiD9ng55E7vzYAwUsUnSwJkbp+tzepmAWpHozKs685eWJTC+m6M59WLl9PZe8
+         R2J4kZ8HTk9Z06xpU4+UL3BH42q15n8PgYPeWvFf8C5FBIpA33AyydEY/9vxn4YagsXL
+         LucRP3KO+1tfY5TiOk3ywpVwTqSx7500VaYVHlLF7KdKVz1h6+92NjBZzalS7ZQf6Mex
+         7hvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUQE10yCbgoGh6uRTexi6u482rLM6PKY8fTtTnDIGWgR/2/uZcXqBKyNWxFghm7XV54j11Z8JoK@vger.kernel.org, AJvYcCUwxZn8/iiQYniNm/it1k2zMPKzINKJuhve3SpaAiRjEoUX/p7RRN1LGsoJ61Xj8VgjSn5g03wEeGWccfD19TWN@vger.kernel.org, AJvYcCXPYJRXg8OwkEoStl0v52/c3krvHXRMwsyty7Xev5brhSL55qAepty5789cF30R4bI5z/4OHW1PZl0z6a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXKvDkghOYSRQCcb0n4ArWBDa1M+xBC4+DQx+rMmuIWTVtgXeb
+	Bp+HpwPw3YBGTYrrftLB5vrFFgn+0bZzme5HdTNQgDaWsGeeD5kN
+X-Google-Smtp-Source: AGHT+IHwrxS7Q3wPuiO3CIM8LKgPUIos8L4eyZFj2A2FlBmlQwt9D7cuEebrGVqCQWqGXFrooaiQqQ==
+X-Received: by 2002:a5d:6c63:0:b0:382:43ee:9f70 with SMTP id ffacd0b85a97d-38254ae44a7mr3730200f8f.22.1732148945289;
+        Wed, 20 Nov 2024 16:29:05 -0800 (PST)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493ee59sm3343620f8f.103.2024.11.20.16.29.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 16:29:03 -0800 (PST)
+Message-ID: <7d221595-bd57-4b8d-9c2a-007ad1e33ba1@gmail.com>
+Date: Thu, 21 Nov 2024 02:29:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240821223012.3757828-1-vipinsh@google.com> <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
- <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
- <ZyuiH_CVQqJUoSB-@google.com> <20241108-eaacad12f1eef31481cf0c6c@orel>
- <ZzY2iAqNfeiiIGys@google.com> <20241115211523.GB599524.vipinsh@google.com>
-Message-ID: <Zz5-3A36cckhYu9K@google.com>
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just default
-From: Sean Christopherson <seanjc@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	kvm-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Anup Patel <anup@brainfault.org>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 08/23] ovpn: implement basic TX path (UDP)
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
+ Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-8-de4698c73a25@openvpn.net>
+ <4fe9f0d5-a8ac-4f2e-aee7-00cbeaf2f0aa@gmail.com>
+ <387d3fc5-9ff6-4a8e-b766-5e30d0aef4a4@openvpn.net>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <387d3fc5-9ff6-4a8e-b766-5e30d0aef4a4@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024, Vipin Sharma wrote:
-> On 2024-11-14 09:42:32, Sean Christopherson wrote:
-> > On Fri, Nov 08, 2024, Andrew Jones wrote:
-> > > On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
-> > > > On Fri, Nov 01, 2024, Vipin Sharma wrote:
-> > > > > Phase 3: Provide collection of interesting configurations
-> > > > >=20
-> > > > > Specific individual constructs can be combined in a meaningful wa=
-y to
-> > > > > provide interesting configurations to run on a platform. For exam=
-ple,
-> > > > > user doesn't need to specify each individual configuration instea=
-d,
-> > > > > some prebuilt configurations can be exposed like
-> > > > > --stress_test_shadow_mmu, --test_basic_nested
-> > > >=20
-> > > > IMO, this shouldn't be baked into the runner, i.e. should not surfa=
-ce as dedicated
-> > > > command line options.  Users shouldn't need to modify the runner ju=
-st to bring
-> > > > their own configuration.  I also think configurations should be dis=
-coverable,
-> > > > e.g. not hardcoded like KUT's unittest.cfg.  A very real problem wi=
-th KUT's
-> > > > approach is that testing different combinations is frustratingly di=
-fficult,
-> > > > because running a testcase with different configuration requires mo=
-difying a file
-> > > > that is tracked by git.
->=20
-> I was thinking of folks who send upstream patches, they might not have
-> interesting configurations to run to test. If we don't provide an option
-> then they might not be able to test different scenarios.
+On 15.11.2024 16:39, Antonio Quartulli wrote:
+> On 11/11/2024 00:54, Sergey Ryazanov wrote:
+>> Another one forgotten question, sorry about this. Please find the 
+>> question inlined.
+>>
+>> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>>   /* Send user data to the network
+>>>    */
+>>>   netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
+>>>   {
+>>> +    struct ovpn_struct *ovpn = netdev_priv(dev);
+>>> +    struct sk_buff *segments, *curr, *next;
+>>> +    struct sk_buff_head skb_list;
+>>> +    __be16 proto;
+>>> +    int ret;
+>>> +
+>>> +    /* reset netfilter state */
+>>> +    nf_reset_ct(skb);
+>>> +
+>>> +    /* verify IP header size in network packet */
+>>> +    proto = ovpn_ip_check_protocol(skb);
+>>> +    if (unlikely(!proto || skb->protocol != proto)) {
+>>> +        net_err_ratelimited("%s: dropping malformed payload packet\n",
+>>> +                    dev->name);
+>>> +        dev_core_stats_tx_dropped_inc(ovpn->dev);
+>>> +        goto drop;
+>>> +    }
+>>
+>> The above check implies that kernel can feed a network device with 
+>> skb-  >protocol value mismatches actual skb content. Can you share any 
+>> example of such case?
+>>
+>> If you just want to be sure that the user packet is either IPv4 or 
+>> IPv6 then it can be done like this and without error messages:
+>>
+>> /* Support only IPv4 or IPv6 traffic transporting */
+>> if (unlikely(skb->protocol == ETH_P_IP || skb->protocol == ETH_P_IPV6))
+>>      goto drop;
+> 
+> It look good, but I will still increase the drop counter, because 
+> something entered the interface and we are trashing it.
 
-Yeah, I'm not saying upstream can't provide testcases, just that the existe=
-nce of
-testcases shouldn't be hardcoded into the runner.
+Sure. I just shared a minimalistic example and don't mind if the case 
+will be counted. Just a small hint, the counter can be moved to the 
+'drop:' label below.
 
-> I do agree command line option might not be a great choice here, we
-> should keep them granular.
->=20
-> What if there is a shell script which has some runner commands with
-> different combinations? There should be a default configuration provided
-> to ease testing of patches for folks who might not be aware of the
-> configurations which maintainers generally use.
->=20
-> End goal is to provide good confidence to the patch submitter that they h=
-ave
-> done good testing.
 
-As discussed off-list, I think having one testcase per file is the way to g=
-o.
+And sorry for misguiding, the '->protocol' field value has network 
+endians, so constants should be wrapped in htons():
 
-  - Very discoverable (literally files)
-  - The user (or a shell script) can use regexes, globbing, etc., to select=
- which
-    tests to run
-  - Creating "suites" is similarly easy, e.g. by having a list of files/tes=
-tscase,
-    or maybe by directory layout
+if (unlikely(skb->protocol == htons(ETH_P_IP) ||
+              skb->protocol == htons(ETH_P_IPV6)))
+     goto drop;
 
-Keeping track of testcases (and their content), e.g. to avoid duplicates, m=
-ight
-be an issue, but I think we can mitigate that by establishing and following
-guidelines for naming, e.g. so that the name of a testcase gives the user a
-decent idea of what it does.
+> Why not printing a message? The interface is not Ethernet based, so I 
+> think we should not expect anything else other than v4 or v6, no?
 
-> > > Could also use an environment variable to specify a file which contai=
-ns
-> > > a config in a test-specific format if parsing environment variables i=
-s
-> > > insufficient or awkward for configuring a test.
-> >=20
-> > There's no reason to use a environment variable for this.  If we want t=
-o support
-> > "advanced" setup via a test configuration, then that can simply go in c=
-onfiguration
-> > file that's passed to the runner.
->=20
-> Can you guys specify What does this test configuration file/directory
-> will look like? Also, is it gonna be a one file for one test? This might
-> become ugly soon.
+Non-Ethernet encapsulation doesn't give any guaranty that packets will 
+be IPv4/IPv6 only. There are 65k possible 'protocols' and this is an 
+interface function, which technically can be called with any protocol type.
 
-As above, I like the idea of one file per testcase.  I'm not anticipating t=
-housands
-of tests.  Regardless of how we organize things, mentally keeping track of =
-that
-many tests would be extremely difficult.  E.g. testcases would likely bitro=
-t and/or
-we'd end up with a lot of overlap.  And if we do get anywhere near that num=
-ber of
-testcases, they'll need to be organzied in some way.
+With this given, nobody wants to flood the log with messages for every 
+MPLS/LLDP/etc packet. Especially with messages saying that the packet is 
+malformed and giving no clue, why the packet was considered wrong.
 
-One idea would be create a directory per KVM selftest, and then put testcas=
-es for
-that test in said directory.  We could even do something clever like fail t=
-he
-build if a test doesn't have a corresponding directory (and a default testc=
-ase?).
-
-E.g. tools/testing/selftests/kvm/testcases, with sub-directories following =
-the
-tests themsleves and separated by architecture as appropriate.
-
-That us decent organization.  If each test has a testcase directory, it's e=
-asy to
-get a list of testcases.  At that point, the name of the testcase can be us=
-ed to
-organize and describe, e.g. by tying the name to the (most interesting) par=
-ameters.
-
-Hmm, and for collections of multiple testscases, what if we added a separat=
-e
-"testsuites" directory, with different syntax?  E.g. one file per testuite,=
- which
-is basically a list of testcases.  Maybe with some magic to allow testsuite=
-s to
-"include" arch specific info?
-
-E.g. something like this
-
-$ tree test*
-testcases
-=E2=94=94=E2=94=80=E2=94=80 max_guest_memory_test
-    =E2=94=94=E2=94=80=E2=94=80 128gib.allvcpus.test
-testsuites
-=E2=94=94=E2=94=80=E2=94=80 mmu.suite
-
-3 directories, 2 files
-$ cat testsuites/mmu.suite=20
-$ARCH/mmu.suite
-max_guest_memory_test/128gib.allvcpus.test
-
-> This brings the question on how to handle the test execution when we are =
-using
-> different command line parameters for individual tests which need some
-> specific environmnet?
->=20
-> Some parameters will need a very specific module or sysfs setting which
-> might conflict with other tests. This is why I had "test_suite" in my
-> json, which can provide some module, sysfs, or other host settings. But
-> this also added cost of duplicating tests for each/few suites.
-
-IMO, this should be handled by user, or their CI environment, not by the up=
-stream
-runner.  Reconfiguring module params or sysfs knobs is inherently environme=
-nt
-specific.  E.g. not all KVM module params are writable post-load, and so ch=
-anging
-a param might require stopping all VMs on the system, or even a full kernel=
- reboot
-if KVM is built-in.  There may also be knobs that require root access, that=
- are
-dependent on hardware and/or kernel config, etc.
-
-I really don't want to build all that into the upstream test runner, certai=
-nly not
-in the first few phases.  I 100% think the runner should be constructed in =
-such a
-way that people/organizations/CI pipeines can build infrastructure on top, =
-I just
-don't think it's a big need or a good fit for upstream.
-
-> I guess the shell script I talked about few paragraphs above, can have
-> some specific runner invocations which will set specific requirements of
-> the test and execute that specific test (RFC runner has the capabilty to =
-execute
-> specific test).
->=20
-> Open to suggestions on a better approach.
+--
+Sergey
 
