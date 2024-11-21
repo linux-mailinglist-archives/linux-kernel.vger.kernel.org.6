@@ -1,239 +1,144 @@
-Return-Path: <linux-kernel+bounces-416893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B4949D4C15
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:38:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2229D4C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:38:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91FE1F21DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75CD281A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFCB1CDA18;
-	Thu, 21 Nov 2024 11:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C71D358F;
+	Thu, 21 Nov 2024 11:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skISQ7z6"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gcrE9/67"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6F3C47B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2F3C47B;
+	Thu, 21 Nov 2024 11:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189107; cv=none; b=fmdL2vRU/8/46QF5necG3RPch3mq4nFFII4Z07qsdR6IE40FYjgBA6T/QzzZ8q2Jmfffd5hhzt+AJZMMQJc5ZgNoLiifETyrZomRzDG66dI8bOHpFb6XHpt/fAYhgRd5wPbWRKcKF+v04sSLi9qmD5YigUL0UPd+C48JMng29UI=
+	t=1732189115; cv=none; b=LKdiTt6g7h7un0h87VOOJOJyRgtP3mxHf6egg7s6hvIf75PE3+0kmRTBnhq2OqwRSmdrIzr1v/vJZUCGKPZHSfoE7CdAW2h6MpB5jLJRS5eik4kPiQo132UZi2gN5DRElWxLfndPrqFTb9fmJnIp/HWlsEbGouaIdoNCIMuXRWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189107; c=relaxed/simple;
-	bh=GoTq39iPiD/MsBXuMgTX/y+bT00dhL9Tn6diA5FsVT0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nZiXBcbNHkWYguKW7Z+3J3EiIWhJKCy5MKd8y8mEq4w6NIZF45p8kkZsuXWxOcJna/eSc4+QJ+6haOKQ8LZcqNwjEJPr4gD/03eS8CIpCe7Ki92w3e5wqdYZ2qSXmVx+79os2RWCBIz9j0AuEObjL67QQ14tGM9AFLK0j5rsGlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skISQ7z6; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5148381f2a4so368988e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:38:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732189104; x=1732793904; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F7ukX8ZlTj96KIQhfZzpEJEoiPzLwIJpbM5cfdfMhxs=;
-        b=skISQ7z6dE8itZoqKWTJDXxDCcYQbP46Dl8EdiRMNDG4UyGCEgd0hPjCTcD5kgm3fJ
-         ssy33UZdHwr94FbuCJFspS3p0GtYNbwR+BEj0467tSmhudwgXpZrEyKTsGwaq1OiPpfS
-         sXwr7n5ccnMAMpvtQgnRC15n7OWodjxwRjCafjd/luW4MdhE9ggRkMYfU40dnrRcXXUn
-         jEoH02i5dYQii4r/rRRjSNCOPnQsH9DwrI+c6+zhyi5mTuo/ls0ZzpzdjTbEWmmIdsAK
-         TB3UQKHndQ8ZBkS+phtcvjd1f9q/ri3nWQUxUTD0AA+hldVD8rBZJ4plK0mxMrNRdI+k
-         SjdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732189104; x=1732793904;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7ukX8ZlTj96KIQhfZzpEJEoiPzLwIJpbM5cfdfMhxs=;
-        b=o7nzDdnpyQYV60THpf8/HVXO4QEGnz5qujloHPx7+lXRKEdzjZpJiM5Bn5BlEstApE
-         TDHuNYEctZXj/Q1bziXGrrs+F8X9U6+y1I4QHaAIbT4JVFkYahe6Ybgf2n2HIEGM/P82
-         vnVC0F4y8eo9JTQ2T6s9lAHNe0WR8YItsASv1zTni00Cp7bS9U1BWSr9kAL89xWKuLfC
-         F/JHv8htnt9YMlzLa3OyD2Iugge8Ba9JmgNZgqxxbkA+eDy2qINR1rzO+6m3Y9x/z5JI
-         k4a/fOgWh7RWZDV4CdN5oj8a6QvIZTDAw3W2fyEF/MiPKQlOS8VY0dDtvkTS+bU9tHYf
-         ygmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXje+uXIOzALqKzyc/bYJ5Ms5vNEfsEoLCJkzz/5AC6C71VBrxyihOjpDFgYzBb27VtJQhxHx0xrsoaec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXHDZueA6PRN41O4umlCXPKAM1uzV08VWzSgI0tDUimarPtotc
-	1mKW8Tn0rY3uCXeudy4p7JtoReEJ/ROiK4Gzx/2zplbHnx05eeJCuTa7RE6Vd9wFAK7thm/XbeJ
-	fWw5IPIFq+/0JOoRjKxp6Chmn69alqcRFGRGnHA==
-X-Gm-Gg: ASbGncvqcNMrkDseP1XiMFI/H8a89T1cETMkfsKzYqSDLmxr6a0bQs6XM+e1x3XejkO
-	kmfyUINhRVh6k3CA1NzWJGomLwCX6oV5GKIIqvZdaPhb6Rmj7wWrVB6tgCAw3epyh
-X-Google-Smtp-Source: AGHT+IEmTnYwUS/GoFS5lHtmsk6MPCKN7/BBErYWheG+A2g8DHXNCtrFTmlMdEgbpvkK0+ZlnzCUB4v1D+drV8T/SYU=
-X-Received: by 2002:a05:6122:640c:20b0:514:ea11:4ee5 with SMTP id
- 71dfb90a1353d-514ea11529fmr708139e0c.1.1732189104384; Thu, 21 Nov 2024
- 03:38:24 -0800 (PST)
+	s=arc-20240116; t=1732189115; c=relaxed/simple;
+	bh=TktO2GCT6OnXrOXfOCRgOrtOaCnVDQkqu89HI9z1htE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VQOubSZZ8GZYQzNzT0YdUi3FH0hXXsr1SC4kqqOaLO98M4z3zCdBTUeWv1ufYb1Lv2oKFLDOzU8HMeOwetBaYlFKf42CTa3jN64WVu3fAd3S+oQobeEKELLIVrX5YSc/yIVYgCanNedrTmYJsHymjkyd+0Z8fQunKkOz/+X2/5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gcrE9/67; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL8uUPY003935;
+	Thu, 21 Nov 2024 11:38:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4YRcO6b70jf15iw+nKaeBYvuDjp5NyM+Lyd4fqDywlU=; b=gcrE9/67B6ifTCMk
+	nKQU5EwKN8AY3Ag3Zbj3FT2LDBhFSYv2XMWiaryj301sBs+t4/cYys5vD1wYoJLT
+	ANeZyynnpPXgwNjj7EZG3gd9jW9gh9azdAq4s3aEGQRz7bhQ6VRTZ3WchPodd+Lq
+	I9nRzhdWD/jLygI2drBJhFJtktwn/nc08yD8mimwXXrinvUPZCX3JVXInKZb6Xgz
+	Zd3+R9xwiyyy5bvH1VC+f2edcWNmtnDwPJYvvOuapWMFYByCP8/X7WOweaMdwaSC
+	oA9al3OozE6R76Gwvl40brnLmYTRxN3edj7P6EbKo0cgBT8lqoIGz3rbmxkaragL
+	RKlfRw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3bvrk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 11:38:32 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALBcVtL025920
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 11:38:31 GMT
+Received: from [10.216.44.227] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 03:38:26 -0800
+Message-ID: <f123a993-0cd5-4747-80fb-88acb2434880@quicinc.com>
+Date: Thu, 21 Nov 2024 17:08:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120125629.681745345@linuxfoundation.org>
-In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 21 Nov 2024 17:08:12 +0530
-Message-ID: <CA+G9fYsaZNm2VKnm10tR4dy0DfnE3_FQtkj-E9-SPR-RacXxcw@mail.gmail.com>
-Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
+ Ride and QCS9100 Ride Rev3
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Kuldeep Singh
+	<quic_kuldsing@quicinc.com>
+CC: Bjorn Andersson <bjorn.andersson@example.com>,
+        Konrad Dybcio
+	<konrad.dybcio@example.com>,
+        Rob Herring <rob.herring@example.com>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@example.com>,
+        Conor Dooley
+	<conor.dooley@example.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tengfan@quicinc.com>,
+        <quic_shashim@quicinc.com>, <quic_kbajaj@quicinc.com>
+References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
+ <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
+ <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
+Content-Language: en-US
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+In-Reply-To: <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9n3Lo9Y5RQJnNB6QxYxqUc_ugdjnYlle
+X-Proofpoint-ORIG-GUID: 9n3Lo9Y5RQJnNB6QxYxqUc_ugdjnYlle
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=898
+ suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411210091
 
-On Wed, 20 Nov 2024 at 18:28, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.11.10 release.
-> There are 107 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.11.10-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
 
+On 11/20/2024 5:24 PM, Dmitry Baryshkov wrote:
+> On Wed, Nov 20, 2024 at 01:41:03AM +0530, Kuldeep Singh wrote:
+>>
+>> On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
+>>> This patch series is based on Tengfei Fan's patches [1] which adds support
+>>> for QCS9100 Ride and QCS9100 Ride Rev3 boards.
+>>>
+>>> Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
+>>> introduced and the size and base addresses have been updated for
+>>> a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
+>>> and its corresponding scm reference has been removed as it is not required
+>>> for these boards. Incorporate these changes in the updated memory map
+>>> for QCS9100 Ride and QCS9100 Rev3 boards.
+>>>
+>>> [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
+>>>
+>>> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+>> The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
+>> A good churn you are first deleting(based on sa8775p) and then re-adding
+>> for qcs9100-ride*.
+>>
+>> I think it's better to move common qcs9100-ride* to a common file ex:
+>> qcs9100-ride.dtsi and keep specifics further to .dts files?
+>>
+>> This will ensure common entities are present at same place with no
+>> duplicates.
+> I'd second this proposal.
+Ok then, I see that there are some thermal and gpu enablement changes as 
+well in the pipeline to be posted.
+Having a common dtsi file for these iot socs would help in reducing the 
+duplication at board
+dts file level for all these changes. In that regard, does naming it
+"sa8775-iot.dtsi" sound good? The board files can include this dtsi.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+-- 
+Thanks and Regards
+Pratyush Brahma
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.11.10-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: c9b39c48bf4a40a9445a429ca741a25ba6961cca
-* git describe: v6.11.9-108-gc9b39c48bf4a
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
-.9-108-gc9b39c48bf4a
-
-## Test Regressions (compared to v6.11.7-249-g0862a6020163)
-
-## Metric Regressions (compared to v6.11.7-249-g0862a6020163)
-
-## Test Fixes (compared to v6.11.7-249-g0862a6020163)
-
-## Metric Fixes (compared to v6.11.7-249-g0862a6020163)
-
-## Test result summary
-total: 154549, pass: 128415, fail: 1847, skip: 24287, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 130 total, 128 passed, 2 failed
-* arm64: 42 total, 42 passed, 0 failed
-* i386: 18 total, 16 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 30 passed, 1 failed, 1 skipped
-* riscv: 16 total, 15 passed, 1 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 34 total, 34 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs[
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tr[
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
