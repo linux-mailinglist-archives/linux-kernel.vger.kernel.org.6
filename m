@@ -1,122 +1,134 @@
-Return-Path: <linux-kernel+bounces-417470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193B09D5476
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A342F9D547C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D2BDB21A2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586EC1F22399
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4171CB512;
-	Thu, 21 Nov 2024 21:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A54E1DBB13;
+	Thu, 21 Nov 2024 21:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x8/WOB1N"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2mxlRNz"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11121C4A37
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1FE1D47DC;
+	Thu, 21 Nov 2024 21:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732223134; cv=none; b=duxl7qtmYizeSK+hjhNJxyjXvqvgr1/kBa1dyPuisvd0llmD4LR1czXMiGikxOBhNYB6bPUO+iadDD9E3CfAWV6B4YRNfDm2/qH1T+xsu2ECTFHesnzuoCSpx+jYYAcZW0UEDd59cL9yq1mxAZQ+Fq8GO8u4pGud88hzZKB73lQ=
+	t=1732223149; cv=none; b=LOFq77+muxsTjv6Y7Zb1tRHBpwjAuy7eLmzv6rwAVh2Js40qC7C143vD+XRlEQ/Pmy2VLNlm8MgwIF5Rjne0ZQpv0souub6lXSl50h8miZgW0mPcv5YuSkafKjim4FW6vAlC9T4LUMCCydjNBHnEzX2YzJAuALJzSkCd6hr9+Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732223134; c=relaxed/simple;
-	bh=vyjd2G/poPUNHJ7AgfmFwVQ4NgJflJ0Gzqnpxwe2gcQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XWx1ptTphIPJZX2Pzh6IwbjvIZM5ljp+/Q07ot4Kp3v+ZegopwOt1szNNH/Sbhv2IZY2pmSVhboF1LUXaAfLw9A4j0ap9ee3/JuoASSnNEwmjvjteW133E0fS1PjUIKnWVHWaRqYN1GHOaRFk+uKzDVZNBLoVQuKYs1gh2ZD/6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x8/WOB1N; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7203cdc239dso1529769b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:05:32 -0800 (PST)
+	s=arc-20240116; t=1732223149; c=relaxed/simple;
+	bh=E/5sdOL/jkUCbV3WEL3b/0KOfVk/fXbHHdo2d90g7Q4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BaPrtcEdOtA3OVdXYxBOAbuDyR+un0TLWSYeLsdJYhEuWUWodOUN7AvmMsAhGqYnHRweI/mCjqISp13MeGGkBYS/SjwiEcHnbxSBJTnjlxH5bBR+2kduMhfBKF+TIvgPBJ8/k8/bQCiqEbrmv5DW3u/OIbpfXOET0i1+HRUBTfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2mxlRNz; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d4035f2d18so8914966d6.1;
+        Thu, 21 Nov 2024 13:05:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732223132; x=1732827932; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVK84h+cRkKm7y5j10sbeKMXM6R17PysvQBrN7p5PNc=;
-        b=x8/WOB1NHCZ7zRQUcb/LFI5nwstEWasp+R0mWXaFc39GvYOoAM4IS5+2If3oXMCALe
-         bVj2zfZ5dsqLIh/XM/7xtHES8y60CmUerJxceDz3Oq+Op4x74gwu3+WxcND12xeRwTI4
-         lycW9J2wP4KD+Sql14qgZvEAoe29AOS0Wd2YfWCKJ4n7pBXdCHmh7vHQDgRIaVIY4JAP
-         ivvbXPRx/r+F9daUhkYsG9PiDGHgKeuZx04AucxWyiO/G4tUpNTWbHqfx/goVxYTO886
-         3M43lPt4YkbDTqihzJkjviLTbBLnZX5ccRjqgIOatgPpzPEn4UTLaIFCgyUR0xqkkNpc
-         fc+g==
+        d=gmail.com; s=20230601; t=1732223147; x=1732827947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m8k+BU9sp4jwI3J04BZciS+UktHrfNJa8h5d00+WG0I=;
+        b=G2mxlRNzaXdlx8fbRQR2TECVkNVsPx2FnmeyCulGwJ+hYeFcAA5mghjuBNwZfqbh/U
+         lP2YaGuQ5X20xmkYOmg2cj6e/MHH5aJ0+ImaIfqaOvdK1dVf13Ri0wYxtLDYCrtraglk
+         3kA0Bn+6bIlS0MLvFSldWC9TaqXGkG2cPudIpVE++bl6ej8AYb4l8Gtohc4wBORj65q2
+         lZ3A+rP6cbiHOnN5Fyn8+P2LsNqaxf/w1iwAtlCe/wmg6K424GP8+bA3rd44nU5K6+6h
+         3MF+UGHhA/8ZSMWP8xKHRom1oWvLRmuPBXHTuXYxycRiwL0ck7UAOZqP2gekmqHDIw3e
+         HegQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732223132; x=1732827932;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVK84h+cRkKm7y5j10sbeKMXM6R17PysvQBrN7p5PNc=;
-        b=n8Nk/dOAXcgZg2t5J+idUBeScn8gLfGHGHxXD5AH8CQQZccesnM+PV+Q0k+jYUI3j/
-         vOLZ8rySiCR+xsPjBmVPEqUZZcFdcuH3Cd/xB/FtsyLJ2bbkEkVFRfKmIGIxzZIjr5ow
-         BdCFhFhC0v6yfyBd6HEl7DH+AjWkjZlYl518VLwIrkbqCXoi5q02gYjvWDW1dcwZzT3m
-         UeRQHAIOuWvBUdEtIV0nd1LGLd2RMO9/Fl8rFfi4ItQtAYKbDTc1RswPKHVWm8MPMG59
-         jFiTzy6G+3v+RfpU9M5B2aKroh+Cj90hWb2JQ5KneWHoTufdWItV+NIbattCEQexZvyZ
-         MIKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2VeRV4R968O0d79J7cdX6ueJ+f85xzCOYb9QXWPDlma83AFOuqe6PISBFnaIYm39VLwv+crqGrtSkdFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyPSHanW/lv6DWCMx2dMIzcYT8pVfudEaBDTwbramE5keVpsfn
-	HxsD8BfVtq9gXbTOYuqLH5bpP1MR85NJeZsMZYCau8CTYdMEUqROWa0l1kSHw7F8UQ2bBZdeHNe
-	e+Q==
-X-Google-Smtp-Source: AGHT+IEZJHOQOby4QohXqqy90JcclwkUdaYqwtd1ld+r6QqFqDnTGy4TzDHLisEZ5MjJRibuGnXEc0/0VMc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:90a:cb0b:b0:2ea:1a5a:dacd with SMTP id
- 98e67ed59e1d1-2eb0e020087mr179a91.1.1732223131841; Thu, 21 Nov 2024 13:05:31
- -0800 (PST)
-Date: Thu, 21 Nov 2024 13:05:30 -0800
-In-Reply-To: <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+        d=1e100.net; s=20230601; t=1732223147; x=1732827947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m8k+BU9sp4jwI3J04BZciS+UktHrfNJa8h5d00+WG0I=;
+        b=pbZQxM8/a+RbfIA0w2SPolNRUEYZ7hmqtPAxPuwXrVAobK8BCdTsrwzTQv6/eab1E4
+         Z9AjxpCMc0QLk+1Bv2OCPs1rxS33l67wI6QaLv+iCA71Bc0zrg8fj6GOWa7DhIWwgSio
+         Z8ftVi83YOjso3IxNgxAN1SZjGLx3th452OCuNqwAFdpK57GSaN9ueQ8bqtCIHzi5K1f
+         DKtsxDZGwE75k0XmWbOvw/+Ctd1GLQbYy725Mc4bskUb86mSCpGPaEJah+IMBFK/L8p5
+         U2mTw+iROEhWeIksUSANgbI9PDTGcG26Gv2xoON4r9ZuCYL/59pHUvS0VcRztf7xeq82
+         HJPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZLkc0COQohlGShjvQ+dNbYNhtfKQT7SdCaMxM7CsjnDA8irIKwNh36YkdDoviQYxwyPrlqDIrxY2L/k=@vger.kernel.org, AJvYcCXbA+GDZHnnafEYWAYAENDdPTz/C+R2sKESVJC52zMpPXeRB8/TpGUD+rWAHeqVjXwZ08i7YnqgT3OdohBcp24TVFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZYjvWv5RVrjT6wju5lCK9t9npuiuCrNflMvx7TFkJ+CKHDiN9
+	towOVqXrOlLGjnkjaGjBqYBKsiCUYb0q9ZQY7eG6j2cQ24jBKR/k
+X-Gm-Gg: ASbGnctXtux+8/WxOmeSCiIgrzq8rfI8b1L+03IMW7hJTuqK6m6q1WZW83JGlGArjCv
+	W4KmQlWsT7ezA97s8gJ9BU1013g19WowdzqHgrsjeOZ82CeKrE/Ifirs/ojPORakh9wG1tn0mG4
+	LtGrF6tW+oXhH3bv161s+iVoqMG2mM+SSkb0oEf/VV2Pdho1PjliaAuML1a2IjGoNPvRk/dZuQV
+	U/TbhZMB4pJik5AmeZze3Ecp8EDhMRekcQ3kmoi9c0FXI5QPb5uBiMFCSAI4EUQzUcO+wU1
+X-Google-Smtp-Source: AGHT+IFG6Tff0/6lSGz4mSGoJUTTqX9fqp3fbXsR49SyMJyG9/0yxbeEdav0LyDICHYyhjtCi5eHNQ==
+X-Received: by 2002:ad4:5c89:0:b0:6d4:35f5:1f98 with SMTP id 6a1803df08f44-6d450e9899dmr8796626d6.24.1732223146558;
+        Thu, 21 Nov 2024 13:05:46 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451b4a11dsm1658506d6.102.2024.11.21.13.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 13:05:46 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: sylvester.nawrocki@gmail.com,
+	mchehab@kernel.org,
+	dron0gus@gmail.com,
+	tomasz.figa@gmail.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	kyungmin.park@samsung.com,
+	laurent.pinchart@ideasonboard.com
+Cc: linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH 2/2] media: camif-core: Add check for clk_enable()
+Date: Thu, 21 Nov 2024 21:05:42 +0000
+Message-Id: <20241121210543.8190-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241118130403.23184-1-kalyazin@amazon.com> <ZzyRcQmxA3SiEHXT@google.com>
- <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
-Message-ID: <Zz-gmpMvNm_292BC@google.com>
-Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
-From: Sean Christopherson <seanjc@google.com>
-To: Nikita Kalyazin <kalyazin@amazon.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, graf@amazon.de, 
-	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es, 
-	xmarcalx@amazon.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
-> On 19/11/2024 13:24, Sean Christopherson wrote:
-> > None of this justifies breaking host-side, non-paravirt async page faults.  If a
-> > vCPU hits a missing page, KVM can schedule out the vCPU and let something else
-> > run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
-> > even enter a low enough sleep state to let other cores turbo a wee bit.
-> > 
-> > I have no objection to disabling host async page faults, e.g. it's probably a net
-> > negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
-> > userspace.
-> 
-> That's a good point, I didn't think about it.  The async work would still
-> need to execute somewhere in that case (or sleep in GUP until the page is
-> available).
+Add check for the return value of clk_enable() to gurantee the success.
 
-The "async work" is often an I/O operation, e.g. to pull in the page from disk,
-or over the network from the source.  The *CPU* doesn't need to actively do
-anything for those operations.  The I/O is initiated, so the CPU can do something
-else, or go idle if there's no other work to be done.
+Fixes: babde1c243b2 ("[media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera interface")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ .../media/platform/samsung/s3c-camif/camif-core.c   | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-> If processing the fault synchronously, the vCPU thread can also sleep in the
-> same way freeing the pCPU for something else,
+diff --git a/drivers/media/platform/samsung/s3c-camif/camif-core.c b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+index de6e8f151849..221e3c447f36 100644
+--- a/drivers/media/platform/samsung/s3c-camif/camif-core.c
++++ b/drivers/media/platform/samsung/s3c-camif/camif-core.c
+@@ -527,10 +527,19 @@ static void s3c_camif_remove(struct platform_device *pdev)
+ static int s3c_camif_runtime_resume(struct device *dev)
+ {
+ 	struct camif_dev *camif = dev_get_drvdata(dev);
++	int ret;
++
++	ret = clk_enable(camif->clock[CLK_GATE]);
++	if (ret)
++		return ret;
+ 
+-	clk_enable(camif->clock[CLK_GATE]);
+ 	/* null op on s3c244x */
+-	clk_enable(camif->clock[CLK_CAM]);
++	ret = clk_enable(camif->clock[CLK_CAM]);
++	if (ret) {
++		clk_disable(camif->clock[CLK_GATE]);
++		return ret;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.25.1
 
-If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
-out doesn't support PV async #PF, or the fault happened while the guest was in an
-incompatible mode, etc.
-
-If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
-the I/O completes and the page is ready.
-
-> so the amount of work to be done looks equivalent (please correct me
-> otherwise).  What's the net gain of moving that to an async work in the host
-> async fault case? "while allowing interrupt delivery into the guest." -- is
-> this the main advantage?
 
