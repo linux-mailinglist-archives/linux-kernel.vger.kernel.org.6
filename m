@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-417301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5599A9D5235
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:59:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056359D5238
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B731F22AA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78053B25A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C5F1C232B;
-	Thu, 21 Nov 2024 17:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="oxE8joED"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A38A1BDAA5;
+	Thu, 21 Nov 2024 18:00:20 +0000 (UTC)
+Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CED36CDAF;
-	Thu, 21 Nov 2024 17:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F261BC9ED
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732211964; cv=none; b=S8VeNOmsK14ITfCtUB6xDNfu5AMezOwt+FPyln3A4ohE/Is8hlbc/S6zgBWdQyogJShZ1UJJC818K39T06ffPW1OzXa3B0y/AuAVEuR6e/yZGDE4mVLEMcR44L4J4neH1684phoJHR7uHJRCJ6qBNWD+MqaDqRgdJryYpuLMgJo=
+	t=1732212019; cv=none; b=ktu99q+YVZ+O5m4ivASz2KT/UPEtij/08yAQL/dzLAYn+8dblhi2HB+BiCExYOGZ9c6fCHfdpM/VEKzP8iGi/HEBoNEXOV2UHncVSDM4IATa3WuSbwvvhdgwFIKLV7GYp2Hxdgi0h2n/RBfCAwRGaPdrEFdY1BCM1cl/R7I/V78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732211964; c=relaxed/simple;
-	bh=zeFYhMICWHfr3eAXY+whaVGKw3m24BGN4aGc9t95zps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FBQgLl160iRl4s4Qee5ypl3AlSxi7HDA46u2xNfl2RyJb/RBhqZ5whssV5wBnnFMVBSmIQ7bEQ9LmuuPo5wYkXb81uMBPF7ukBRGlRcrbQwqaH3nJl5LbB3R4HGMdJEY0riFDt212A+YQgy+axUkjJhRxC9lnk8eHpFSJPJYE60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=oxE8joED; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732211963; x=1763747963;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=Q6L+gDMY6SSVxys36wX+g9uo/y0GD3cJbqHoxBuTNeE=;
-  b=oxE8joEDG58fGVYPIaBBZM7OJ9QEWi6GgX5y9fne1F/swwcf23mWE7JH
-   WGuDa82vwV2mony3XScpfAal7MQy1HYxb8VMR8kb6WdyF6yTPstZYEuHz
-   Cyaou0RW7loZubYCifYCDg3e1iSftVIbkgfHboCaiX9gkQFytjKb6QUHr
-   E=;
-X-IronPort-AV: E=Sophos;i="6.12,173,1728950400"; 
-   d="scan'208";a="149683278"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 17:59:20 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:60036]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.207:2525] with esmtp (Farcaster)
- id c63636fb-6fa6-4115-94d2-2afc1b700741; Thu, 21 Nov 2024 17:59:19 +0000 (UTC)
-X-Farcaster-Flow-ID: c63636fb-6fa6-4115-94d2-2afc1b700741
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 21 Nov 2024 17:59:18 +0000
-Received: from [192.168.3.109] (10.106.83.32) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 21 Nov 2024
- 17:59:17 +0000
-Message-ID: <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
-Date: Thu, 21 Nov 2024 17:59:16 +0000
+	s=arc-20240116; t=1732212019; c=relaxed/simple;
+	bh=OknCLb0NUSx8T5vgw3iBhAt0qP+8nRZAKtKKWDq5Vnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=asbXZ7w2F+gAqDXjmICE4tdA8EH+Ultriy1aDMb+pStZEPZpmMJfGrnznBGOWHgmU59qXVkTnwsJihEsrEvssZeAwkFE3ykk9q3tT06UEGCuOfxK+SjDbPclEtC10ol/mtttyGUsY0v7BGtf2Rl6NxVneqLMTLgl9TafeC+2Qz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
+Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
+	id EF5075A39D2; Thu, 21 Nov 2024 18:00:15 +0000 (UTC)
+Date: Thu, 21 Nov 2024 18:00:15 +0000
+From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+Message-ID: <Zz91LyHzxxOLEma_@kawka3.in.waw.pl>
+References: <202411190900.FE40FA5@keescook>
+ <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
+ <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
-To: Sean Christopherson <seanjc@google.com>
-CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
-	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
-	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
-	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
-	<xmarcalx@amazon.com>
-References: <20241118130403.23184-1-kalyazin@amazon.com>
- <ZzyRcQmxA3SiEHXT@google.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <ZzyRcQmxA3SiEHXT@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D010EUA002.ant.amazon.com (10.252.50.108) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
 
-
-
-On 19/11/2024 13:24, Sean Christopherson wrote:
->> This patch avoids the overhead above in case of kernel-originated faults
+On Thu, Nov 21, 2024 at 09:28:09AM -0800, Linus Torvalds wrote:
+> On Thu, 21 Nov 2024 at 09:22, Zbigniew Jędrzejewski-Szmek
+> <zbyszek@in.waw.pl> wrote:
+> >
+> > It'll "break userspace" in the sense the the resulting program name
+> > visible in /proc/self/{comm,stat,status} would be different than the
+> > expected value. Currently userspace is not using fexecve because this
+> > string is "just garbage". We'd very much like to start using fexecve,
+> > but we cannot do this (in the general case) if that'll result in a
+> > changed program name. If we change the value from the current
+> > (garbage) value to something that doesn't provide identical behaviour
+> > between execve and fexecve, fexecve will unused.
 > 
-> Please avoid "This patch".
+> Well, then you had better not use fexecve(), because that "identical
+> behavior" is fundamentally impossible.
 
-Ack, thanks.
+Identical — as far as the callee is concerned.
+Basically, we'd like to switch the execve() that we use in systemd
+to start everything with fexecve(), but this should be invisible to
+both the programs that are started and users who call ps/pgrep/….
 
->> by moving the `kvm_can_deliver_async_pf` check from
->> `kvm_arch_async_page_not_present` to `__kvm_faultin_pfn`.
->>
->> Note that the existing check `kvm_can_do_async_pf` already calls
->> `kvm_can_deliver_async_pf` internally, however it only does that if the
->> `kvm_hlt_in_guest` check is true, ie userspace requested KVM not to exit
->> on guest halts via `KVM_CAP_X86_DISABLE_EXITS`.  In that case the code
->> proceeds with the async fault processing with the following
->> justification in 1dfdb45ec510ba27e366878f97484e9c9e728902 ("KVM: x86:
->> clean up conditions for asynchronous page fault handling"):
->>
->> "Even when asynchronous page fault is disabled, KVM does not want to pause
->> the host if a guest triggers a page fault; instead it will put it into
->> an artificial HLT state that allows running other host processes while
->> allowing interrupt delivery into the guest."
-> 
-> None of this justifies breaking host-side, non-paravirt async page faults.  If a
-> vCPU hits a missing page, KVM can schedule out the vCPU and let something else
-> run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
-> even enter a low enough sleep state to let other cores turbo a wee bit.
-> 
-> I have no objection to disabling host async page faults, e.g. it's probably a net
-> negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
-> userspace.
+> The thing is, "argv[0]" can - and will be - complete garbage. Yes,
+> it's *often* the same as the filename, but there is actually zero
+> guarantee of that. It can be any random thing - it's literally just a
+> user space argument.
 
-That's a good point, I didn't think about it.  The async work would 
-still need to execute somewhere in that case (or sleep in GUP until the 
-page is available).  If processing the fault synchronously, the vCPU 
-thread can also sleep in the same way freeing the pCPU for something 
-else, so the amount of work to be done looks equivalent (please correct 
-me otherwise).  What's the net gain of moving that to an async work in 
-the host async fault case?  "while allowing interrupt delivery into the 
-guest." -- is this the main advantage?
+Eh, no. I think you're trying to say that argv[0] is user-controlled.
+Sure, this is a feature. Systemd even exposes this as
+  ExecStart=@program argv0 argv1 argv2…
+It can be overridden, but it's not "garbage".
+
+> And the dentry name *will* be the name of the underlying executable.
+> Again, it is *often* the same as the filename, but symlinks have
+> already been brought up as an example when it isn't.
+Exactly. This is the crux of the problem. We think that fd-based
+syscalls are great, and would like to use fexecve as a drop-in
+replacement, but currently can't. I would love to tell the rest
+of the userspace to stop ever looking at COMM, but, as you very
+well know, once an API is made public and widely used, it's very
+hard to redefine it.
+
+> See? There is no single solution, but at least the dentry name is a
+> *reliable* thing, not a random garbage thing passed in by user space.
+
+Reliable – yes. Useful – no.
+
+Zbyszek
 
