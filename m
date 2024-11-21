@@ -1,90 +1,71 @@
-Return-Path: <linux-kernel+bounces-417270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBCE89D51CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:30:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3078B9D51B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 919D928234A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:30:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65311F21C18
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C93B1AB6FB;
-	Thu, 21 Nov 2024 17:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D811BC070;
+	Thu, 21 Nov 2024 17:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxDUa83R"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kBu9bAdf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B6D6CDBA;
-	Thu, 21 Nov 2024 17:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DF610A3E;
+	Thu, 21 Nov 2024 17:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210194; cv=none; b=Nu4jkNb/C7cCWdOUJFWq+hyMXuM8gr3piqQN6spTlwRB3z+zT1qBEE8UEnsFqauYAX0Q6fvvLzJeBwKD5BR+1+V7eBjeZMBxdI5KXIEvRPAVjnKzrVyTTShgQlewv0fHjDSgKcMrgcjpQdE8RQJRQ+IbuVUwb57PH/rGyKE5QHQ=
+	t=1732210083; cv=none; b=jAecohOapAAug1j0tLzdrrUOE6cBTcJQXj07l22BI9KPsfbgTB084QGyFcEjN0ToRDmiqqWo+/+l+Ealw8QxJLK+85a+1eWAxhnaBb1ZwXXD9ETVShLhwNn4omkJ4jVyq5beKKnVIIZGj5wnzwKEhSevaKEPPhQ4RnBO4ukunW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210194; c=relaxed/simple;
-	bh=pwFx0/X8PtHlmudeayYhqBhhT+wJBbl9lv31lLjUFiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JOQrhozVT2yvef2rE+zmAZSB0PZainjZzYdDCG+vM1xpGzXwazCJI8Lr0mQXQNwUQ+vHrIlyYWDfqsRQTGkKEfFUoX5xEAcxHzOrurJZ5EaAYb8XTnwVqoxUh8KZ9FTbxYORnKNzbblVrh47J1NfE3ex0YESj0ZPzFwEXwrT6C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxDUa83R; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315eac969aso6784565e9.1;
-        Thu, 21 Nov 2024 09:29:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732210191; x=1732814991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTbAdxp0GTcyL45H6qzLKqwHog1M83ap9N15e36oQyI=;
-        b=RxDUa83RmrJRkapiKr3VFbzyI7yf+tMVIT9owk8a8F5beMrt0NFirOsrNWJbO6p+TY
-         xrSU0AAfmhhWhYtw3WOewI8320W64bTxEFXwhYJ+MtIiwBcPRHRxsOSGaUGhAkfZsNl4
-         LC2PU7j2IigMTUuZGfs2nV6UUnvqobl/MslV1xpEKLGnT7xrfr0HE0k4p/9rMZQDPMKX
-         xHkItPPwq+wcQQYSzjogi+On7S5YPOn1XETvBaRLMk7bamJwjqiXBW+XWUFNXposNzsu
-         pZ+rVuzHCXyjU6iIJ7sLTk/42wFtedERFFygOzbs1uVR2f1dEuS69/ZxIeoShu+ppBaf
-         e79w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732210191; x=1732814991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GTbAdxp0GTcyL45H6qzLKqwHog1M83ap9N15e36oQyI=;
-        b=dPEVDUe9ssoINAy+6RijsoTCCWYiS6naaFpXBpwZ/7hGD+gQbBmeT+WczVq+HFTUzy
-         7RRr2flEw4BlAqeVUu/SqPeujtLcrat3lNUnolgkCoITozLE9y5TUkX4LJQ/0gLNitVr
-         r/V2PkDQ5kwudFNStd31O1CKEv/e1ujEbCRxrgf0DAi5lw0dXkSS/ZroeXkJGT0xuN+t
-         TdQYOZI4q2rP4k7za1Dh3QeCYU+e+yMnUgKce3zK1O5lxgTB42du7dIw3k4jpnlJTTvk
-         T1cvh9w65YLXpZj29ZgmYo3J9Ula+qG3/uct1wzjqBfxQWtWlJBgy583rPupjkQAG1d3
-         Cc8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXa2/pBh50Y8ShaG7mv2WrgVVtOwygf3qqf7ZUUGzv07Cxj1kxEovJtr3FbNC3gVyJL6zAghe0fuSsiUAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK1iUw+EpcRidRBxadNaTwDjOrLlfBDMDKaKk0yIvKFk6qxbka
-	WUSGz2pwGU/15sv0gGdF0fxPm+j4FQxG4/UuNaX/AaRXZXpfozY=
-X-Gm-Gg: ASbGnctT211nORN7veBGwlItCT34oecErMitBOSTX+LEZ8r7HZO/y3orIfvUcWRAHRt
-	I0l5tVHCGHU6WaSkgEyGlrYQ2EHnCFJ4AI926Ia/dIkRQorPObcY7pyfqKAzMCuXYjJHrzAGYLq
-	vlKrtZtB2heDdDb9MrQD4b3EG2Za9BTSyr/U68jByEq7gn7zPmYwSO+47O8nizdBs0ix7TTaivK
-	io5Q6+BOZ28mcw2yLme+n0DO+ehc/Pt5rL/0hmKcaYHh0YABkm3LZH4hcY95dW67U7ouTS4kd4q
-	CTqFWldO
-X-Google-Smtp-Source: AGHT+IE6bYWFl3d5aGKXnTjwGCIMDgTOZ6TkNAXbUC44rGmzgLLKpr3hJ9Ygx1WAw+p2DLbF4FwF/Q==
-X-Received: by 2002:a05:600c:4f09:b0:431:4e25:fe31 with SMTP id 5b1f17b1804b1-433c5cd3921mr35516805e9.12.1732210190924;
-        Thu, 21 Nov 2024 09:29:50 -0800 (PST)
-Received: from LINUX-DQNM303.production.priv ([2a01:cb14:893d:6d40:f84:32a1:fa27:9eea])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45f6b78sm65206385e9.12.2024.11.21.09.29.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 09:29:50 -0800 (PST)
-Sender: Louis Leseur <louisleseur@gmail.com>
-From: Louis Leseur <louis.leseur@gmail.com>
-To: Manish Chopra <manishc@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Louis Leseur <louis.leseur@gmail.com>,
-	Florian Forestier <florian@forestier.re>
-Subject: [PATCH] net/qed: allow old cards not supporting "num_images" to work
-Date: Thu, 21 Nov 2024 18:26:22 +0100
-Message-ID: <20241121172821.24003-1-louis.leseur@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1732210083; c=relaxed/simple;
+	bh=CeEJClo5Z/NtuX0n68qqkqchg0lGopZGBLg2yU4rPps=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=e1eA4NBiFr1MQDx99vyFNCk94d7yzYhsQI9dy99oCIOM4zTtf+VjJnR9GlmWhXIuvxg/upVR13+140BtwZ43KWuPWbCaX6eu80otobPyO9m/l3k4akoCoxUBpLHuIPUvIO9KZcQwKZrwwtSd7EQ2/s4MRfHYqjNFh7GYIJ/7Ayo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kBu9bAdf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL9tYto026218;
+	Thu, 21 Nov 2024 17:27:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=N8U1/ZzihtIK6IWiNh06Q/
+	XYTz9DAnqy/GDTGkzugts=; b=kBu9bAdfB9CyKcfEeAco/dQIF9jcjc0M7CcVB9
+	eexIUzB8CwckKbNelHs+n5PAzQAPqHOoiVOL4N1DxkgSVGmQ0SqOArsUbRDHUMCr
+	x6orDcMTqCZq/u+FDWyJqF1ytDGeKn7I6UvJp7oLO9EGKaapU+yBjfCEzZidP3kz
+	6XvFBQVBWuI2e7fsno0ZWz7h/KaqfOPYv/XoSyQmnvs01EOmUm4pjKcAN8oX1a87
+	f+RWg8+GP49vQQh79AkQMOlBx9Et4pl29pt9akDQJDDA0I1Ybg/Z0baOssFoe4cB
+	b9MRN3U6h+gohbC9q4zuLHcZwdU8q0NDPEJWvkZomg1zW+Cw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ebycfc9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 17:27:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALHRwOW022154
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 17:27:58 GMT
+Received: from a629a2d9ebad.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 21 Nov 2024 09:27:54 -0800
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton
+	<quic_mdtipton@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] Drop QPIC related interconnect and BCM nodes on
+Date: Thu, 21 Nov 2024 17:27:35 +0000
+Message-ID: <20241121172737.255-1-quic_rlaggysh@quicinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,39 +73,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iaQVliiSMNgyrg30drhFUkPcQQYj4e4b
+X-Proofpoint-ORIG-GUID: iaQVliiSMNgyrg30drhFUkPcQQYj4e4b
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=834
+ spamscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411210132
 
-Commit 43645ce03e0063d7c4a5001215ca815188778881 added support for
-populating flash image attributes, notably "num_images". However, some
-cards were not able to return this information. In such cases, the
-driver would return EINVAL, causing the driver to exit.
+QPIC scaling is managed by clock framework on SDX75 SoC, hence dropping
+the QPIC related interconnect and BCM nodes from topology to avoid the
+risk of overriding the votes placed on QPIC resource by clock framework.
 
-We added a check to return EOPNOTSUPP when the card is not able to
-return these information, allowing the driver continue instead of
-returning an error.
+Raviteja Laggyshetty (2):
+  dt-bindings: interconnect: qcom: drop QPIC_CORE IDs
+  interconnect: qcom: sdx75: Drop QP0 related interconnect and BCM nodes
 
-Co-developed-by: Florian Forestier <florian@forestier.re>
-Signed-off-by: Florian Forestier <florian@forestier.re>
-Signed-off-by: Louis Leseur <louis.leseur@gmail.com>
----
- drivers/net/ethernet/qlogic/qed/qed_mcp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/interconnect/qcom/sdx75.c             |  25 ----
+ drivers/interconnect/qcom/sdx75.h             | 118 +++++++++---------
+ include/dt-bindings/interconnect/qcom,sdx75.h |   6 +-
+ 3 files changed, 60 insertions(+), 89 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_mcp.c b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-index 16e6bd466143..6218d9c26855 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_mcp.c
-@@ -3314,7 +3314,9 @@ int qed_mcp_bist_nvm_get_num_images(struct qed_hwfn *p_hwfn,
- 	if (rc)
- 		return rc;
- 
--	if (((rsp & FW_MSG_CODE_MASK) != FW_MSG_CODE_OK))
-+	if (((rsp & FW_MSG_CODE_MASK) == FW_MSG_CODE_UNSUPPORTED))
-+		rc = -EOPNOTSUPP;
-+	else if (((rsp & FW_MSG_CODE_MASK) != FW_MSG_CODE_OK))
- 		rc = -EINVAL;
- 
- 	return rc;
 -- 
-2.45.2
+2.39.2
 
 
