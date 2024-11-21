@@ -1,194 +1,251 @@
-Return-Path: <linux-kernel+bounces-417063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D729D4E79
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:16:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D337D9D4E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A450F2842BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2ECB6B256DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740D21CD1EE;
-	Thu, 21 Nov 2024 14:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DEB1D9A79;
+	Thu, 21 Nov 2024 14:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="z8WWJGmR"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teYXSNKx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF58C1CB9F4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4A31D3656;
+	Thu, 21 Nov 2024 14:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198580; cv=none; b=eN65+SAgibTEEVnGQwIdQKbsfmvfkRvZK2+4UxX4Kk6Vo6i7IBX0lDZPGodMqR6L0U25cVoekmQzrY9G36U+5HZfshdF4k7B+rMtZ26VxyjSvso7DgYilO7GRXJVEOjGSulbw659qFwruSCxaBOiQZUlDn3IAJGwOzvrSjOotQQ=
+	t=1732198581; cv=none; b=WVgN3S9dcgzWHaydWYeT/BTw0gK8o1bhh15JK9olFrSr8XuLDJ1Ney+XNy29qJn/4FRIggkABrfUQm/dPpzHEScOcSpakzBqmf34aEWQB056VzPBYFj4ra7T1S4lYMhcqnQxV2tGLavCn+POn+YUSwZGnr12y4KRob1u+sc2RMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198580; c=relaxed/simple;
-	bh=aiSE4dsbDfmupJ74pzVvVvTOYDpsSKb45SvSN69Z9dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=R6sx0Svg/VjHOqbGQC/dLg008vjYjZsPfhV0So7ANE5EUuqAJvsCtc5z8Kp+Lk+80yp5iKZKviTHbbxCpogHRyejAGFeo/EZfH1QLrsQoqp8PBLBsREA7mMoAVx46h3cnncuL3/0nqXFEwu5YgUZ8xBPqw4QLPhQG8NgEpJAbYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=z8WWJGmR; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-296539a58b4so529810fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:16:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732198575; x=1732803375; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=JOlVBIHljF4u2JAmVbNNZ3eDQhQq/LHtaPhWtJKVk94=;
-        b=z8WWJGmRvNEtKpkSLzFfWAOOn24yg7f58HVjCUlmZET0jEwG0eNElh7g2sVkeLZJdR
-         S5RxaVMtniImvtzISV+UXdz1YeY8sp2cNWbiXfarf4Okbe/fziFMpFwuPtK/cRiC7Ubn
-         KPSu5h8ShTZMPHFio6C2XUkCpGcdsH0cvUOAxlUcx+5uNaxK3+zOyJU4k4rDjPRtkrnK
-         UpKKYcbuYVED/U303g9juT1q3fMqHXgj/YNVO4PX0Ts2Hzo+aQgaohmOegN83NnLbLVH
-         IIOIrREn4uEEordsGTvshWWM7ZZYNzXLOLW9JkQm8/0abgBdsg5jkLwSigfghRMhsJ5N
-         3EYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732198575; x=1732803375;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOlVBIHljF4u2JAmVbNNZ3eDQhQq/LHtaPhWtJKVk94=;
-        b=rAUdw9DSbLhgpK4510bdBpzjBCZIuONBjsq0+M5P7O8cLSpVJmOJ/TmgRkTVCVCl6R
-         hS+5OYfvA2yzY8kLyshI0pZZ2Pt5fM+bjU5swqwrWWOnixnfwZYHTkS+Os95ZTVghxFT
-         +1cYlk1XXzNGh4KXOq2p9MAl7ABYqyNUsB6ECh2PUlvJ5B1gPmxtEVCyiwu3kC5o05oS
-         Qz7Txq4jQnF38dG8ztStKcDE7KAd2PyEPyQ7KJmeAIsKlPFkwuUgm4VdnRdGPtHBE9JT
-         iNvKMxqIzibXdQxC9r/oYhR18izKSkb74KfesJpiDPFkXmGtZotPe6e4XNOwcX2pIe+x
-         rADQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhyJw9rDbD7PA549JIqtgIEZPMpTifb7bEpKRkecka0Q9zgPws4C9naaTR9pMz9TN3NhaSHXIIS4ytxWM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxonrTCZmF5YiNdgwezH57EKx4f/ua5rWG6Mxkdl6NmM794OiJX
-	hGCOdkrf1FmAtGdnnerCE6SkIQAiviZS3oj39cXRj+QR9BqAtKgxQPeoG+zn4bE=
-X-Gm-Gg: ASbGnct8pm2eB7gOi6GUtKUWmI+VkRH9phRHISDhi1sjsnCp6jT5DX9hmjDEMrNoC/I
-	W4yEDtsvpySQ6YvnM7kgbNagXBXWrydl1lhJbRJkt3acIadjbFJHsloInI5u3edcVIaGveLcu2t
-	UhTJ8NwLpuElMxrh+tfPsbUZBDB4RAxIrgcwnQs9Axsa5RVWm76fXiUW1k41zsTpO7XmBhAO7eo
-	J4lXngkJsN3cjrEwC/CtkWQi2qxE1hXvuZt2fDe/vqr0w==
-X-Google-Smtp-Source: AGHT+IEDj5Gg5HiQM0ovHlm8I1W3F4tiOvYRBuvSVdQb7fmGQDlsMjTmpPRmehDFi9GfX/SIes3gsQ==
-X-Received: by 2002:a05:6870:a414:b0:277:f722:45e1 with SMTP id 586e51a60fabf-296d9b65ff6mr6141019fac.17.1732198575567;
-        Thu, 21 Nov 2024 06:16:15 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-296519331c1sm4836488fac.23.2024.11.21.06.16.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 06:16:15 -0800 (PST)
-Message-ID: <d813e99f-d532-4521-a018-70e11617e1c0@kernel.dk>
-Date: Thu, 21 Nov 2024 07:16:14 -0700
+	s=arc-20240116; t=1732198581; c=relaxed/simple;
+	bh=jpRTGVKAEwCkyxmVL8MPJVCxOWSyQ5Jpjt2erQeCglE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eLqfnPE3Tz9Ek2Af5MR+CpxjbuuhqW9g7Qzl80pFBzgSt3R2JtGLlMC3/VA/qjD6FKAqvpbELwESwYa8kBvvYqMzH8h8BxmdohzG9C3WwUSuvVt8F9dJnquZU3UW6ZJj6ZaJRN7/aRn4L/Rr2/4mSOXWblFbGMyjRKOeOgN7uFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teYXSNKx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58E5DC4CECC;
+	Thu, 21 Nov 2024 14:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732198581;
+	bh=jpRTGVKAEwCkyxmVL8MPJVCxOWSyQ5Jpjt2erQeCglE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=teYXSNKxIyi6O6wd2h+LHvtdEYDtZwLIlqUt8YXWePyEECs0IaLvLSQlOdXoZb9Xp
+	 PezHAUIZ7tHwYZPHuQdb+zU2/hGlk3QjhcsqBxaMkDkJnpq+yXgpu7Cn5L7bmUjDxs
+	 igIX1HpdvKd+47U6ZI9KIJy6mhD2NsrbxgN47911G3IZyRbuvpvyu6PbwXMgZ/7bR3
+	 wMAYcP2mzqi6VAvUF6ynWnR9XxvNuFR1CYxibCSbKPcPpwQud7Q3wblVPqIFV7UlhI
+	 s/NUYPx7/q62XqXTaS03BhkzApQDLrhGvSYizpt2jNo3PFuxX2Oh3vws+ChPkesIak
+	 C2EIbijWTn5tg==
+Message-ID: <bdc38296b22456be4dabde2efbf9bf144c544aa4.camel@kernel.org>
+Subject: Re: [PATCH v3 0/3] symlink length caching
+From: Jeff Layton <jlayton@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, hughd@google.com,
+ linux-ext4@vger.kernel.org,  tytso@mit.edu, linux-mm@kvack.org
+Date: Thu, 21 Nov 2024 09:16:19 -0500
+In-Reply-To: <20241120112037.822078-1-mjguzik@gmail.com>
+References: <20241120112037.822078-1-mjguzik@gmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_nop
-To: syzbot <syzbot+9a8500a45c2cabdf9577@syzkaller.appspotmail.com>,
- asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <673f3ed9.050a0220.3c9d61.0173.GAE@google.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <673f3ed9.050a0220.3c9d61.0173.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 11/21/24 7:08 AM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    43fb83c17ba2 Merge tag 'soc-arm-6.13' of git://git.kernel...
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=134feb78580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9f17942989df952c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9a8500a45c2cabdf9577
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f767f7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f50ec0580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/e1e82262b7ac/disk-43fb83c1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/7ca6e1c46dc5/vmlinux-43fb83c1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/63aaea837532/bzImage-43fb83c1.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9a8500a45c2cabdf9577@syzkaller.appspotmail.com
-> 
-> =====================================================
-> BUG: KMSAN: uninit-value in io_nop+0x549/0x8a0 io_uring/nop.c:55
->  io_nop+0x549/0x8a0 io_uring/nop.c:55
->  io_issue_sqe+0x420/0x2130 io_uring/io_uring.c:1712
->  io_queue_sqe io_uring/io_uring.c:1922 [inline]
->  io_submit_sqe io_uring/io_uring.c:2177 [inline]
->  io_submit_sqes+0x11bc/0x2f80 io_uring/io_uring.c:2294
->  __do_sys_io_uring_enter io_uring/io_uring.c:3365 [inline]
->  __se_sys_io_uring_enter+0x423/0x4aa0 io_uring/io_uring.c:3300
->  __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3300
->  x64_sys_call+0xce5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:427
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> 
-> Uninit was created at:
->  __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4774
->  alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
->  alloc_pages_noprof+0x1bf/0x1e0 mm/mempolicy.c:2345
->  alloc_slab_page mm/slub.c:2412 [inline]
->  allocate_slab+0x320/0x12e0 mm/slub.c:2578
->  new_slab mm/slub.c:2631 [inline]
->  ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3818
->  __kmem_cache_alloc_bulk mm/slub.c:4895 [inline]
->  kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4967
->  __io_alloc_req_refill+0x84/0x5b0 io_uring/io_uring.c:958
->  io_alloc_req io_uring/io_uring.h:411 [inline]
->  io_submit_sqes+0x9a2/0x2f80 io_uring/io_uring.c:2283
->  __do_sys_io_uring_enter io_uring/io_uring.c:3365 [inline]
->  __se_sys_io_uring_enter+0x423/0x4aa0 io_uring/io_uring.c:3300
->  __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3300
->  x64_sys_call+0xce5/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:427
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Wed, 2024-11-20 at 12:20 +0100, Mateusz Guzik wrote:
+> quote:
+>     When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
+>     speed up when issuing readlink on /initrd.img on ext4.
+>=20
+> The size is stored in a union with i_devices, which is never looked at
+> unless the inode is for a device.
+>=20
+> Benchmark code at the bottom.
+>=20
+> ext4 and tmpfs are patched, other filesystems can also get there with
+> some more work.
+>=20
+> Arguably the current get_link API should be patched to let the fs return
+> the size, but that's not a churn I'm interested into diving in.
+>=20
+> On my v1 Jan remarked 1.5% is not a particularly high win questioning
+> whether doing this makes sense. I noted the value is only this small
+> because of other slowdowns.
+>=20
+> To elaborate here are highlights while benching on Sapphire Rapids:
+> 1. putname using atomics (over 3.5% on my profile)
+>=20
+> sounds like Al has plans to do something here(?), I'm not touching it if
+> it can be helped. the atomic definitely does not have to be there in the
+> common case.
+>=20
+> 2. kmem_cache_alloc_noprof/kmem_cache_free (over 7% combined)=20
+>=20
+> They are both dog slow due to cmpxchg16b. A patchset was posted which
+> adds a different allocation/free fast path which should whack majority
+> of the problem, see: https://lore.kernel.org/linux-mm/20241112-slub-percp=
+u-caches-v1-0-ddc0bdc27e05@suse.cz/
+>=20
+> If this lands I'll definitely try to make the pathname allocs use it,
+> should drop about 5-6 percentage points on this sucker.
+>=20
+> 3. __legitimize_mnt issues a full fence (again over 3%)
+>=20
+> As far as avoiding the fence is concerned waiting on rcu grace period on
+> unmount should do the trick. However, I found there is a bunch
+> complexity there to sort out before doing this will be feasible (notably
+> there are multiple mounts freed in one go, this needs to be batched).
+> There may be other issues which I missed and which make this not worth
+> it, but the fence is definitely avoidable in principle and I would be
+> surprised if there was no way to sensibly get there. No ETA, for now I'm
+> just pointing this out.
+>=20
+> There is also the idea to speculatively elide lockref, but when I tried
+> that last time I ran into significant LSM-related trouble.
+>=20
+> All that aside there is also quite a bit of branching and func calling
+> which does not need to be there (example: make vfsuid/vfsgid, could be
+> combined into one routine etc.).
+>=20
+> Ultimately there is single-threaded perf left on the table in various
+> spots.
+>=20
+> v3:
+> - use a union instead of a dedicated field, used up with i_devices
+>=20
+> v2:
+> - add a dedicated field, flag and a helper instead of using i_size
+> https://lore.kernel.org/linux-fsdevel/20241119094555.660666-1-mjguzik@gma=
+il.com/
+>=20
+> v1 can be found here:
+> https://lore.kernel.org/linux-fsdevel/20241118085357.494178-1-mjguzik@gma=
+il.com/
+>=20
+> benchmark:
+> plug into will-it-scale into tests/readlink1.c:
+>=20
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <fcntl.h>
+> #include <assert.h>
+> #include <string.h>
+>=20
+> char *testcase_description =3D "readlink /initrd.img";
+>=20
+> void testcase(unsigned long long *iterations, unsigned long nr)
+> {
+>         char *tmplink =3D "/initrd.img";
+>         char buf[1024];
+>=20
+>         while (1) {
+>                 int error =3D readlink(tmplink, buf, sizeof(buf));
+>                 assert(error > 0);
+>=20
+>                 (*iterations)++;
+>         }
+> }
+>=20
+> Mateusz Guzik (3):
+>   vfs: support caching symlink lengths in inodes
+>   ext4: use inode_set_cached_link()
+>   tmpfs: use inode_set_cached_link()
+>=20
+>  fs/ext4/inode.c                |  3 ++-
+>  fs/ext4/namei.c                |  4 +++-
+>  fs/namei.c                     | 34 +++++++++++++++++++---------------
+>  fs/proc/namespaces.c           |  2 +-
+>  include/linux/fs.h             | 15 +++++++++++++--
+>  mm/shmem.c                     |  6 ++++--
+>  security/apparmor/apparmorfs.c |  2 +-
+>  7 files changed, 43 insertions(+), 23 deletions(-)
+>=20
 
-Yep that's a bug introduced in this merge window, the below should
-fix it:
+Nice work, Mateusz!
 
-commit ee116574de8415b0673c466e6cd28ba5f70c41a2
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Thu Nov 21 07:12:17 2024 -0700
-
-    io_uring/nop: ensure nop->fd is always initialized
-    
-    A previous commit added file support for nop, but it only initializes
-    nop->fd if IORING_NOP_FIXED_FILE is set. That check should be
-    IORING_NOP_FILE. Fix up the condition in nop preparation, and initialize
-    it to a sane value even if we're not going to be directly using it.
-    
-    While in there, do the same thing for the nop->buffer field.
-    
-    Reported-by: syzbot+9a8500a45c2cabdf9577@syzkaller.appspotmail.com
-    Fixes: a85f31052bce ("io_uring/nop: add support for testing registered files and buffers")
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
-diff --git a/io_uring/nop.c b/io_uring/nop.c
-index 6d470d4251ee..5e5196df650a 100644
---- a/io_uring/nop.c
-+++ b/io_uring/nop.c
-@@ -35,10 +35,14 @@ int io_nop_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 		nop->result = READ_ONCE(sqe->len);
- 	else
- 		nop->result = 0;
--	if (nop->flags & IORING_NOP_FIXED_FILE)
-+	if (nop->flags & IORING_NOP_FILE)
- 		nop->fd = READ_ONCE(sqe->fd);
-+	else
-+		nop->fd = -1;
- 	if (nop->flags & IORING_NOP_FIXED_BUFFER)
- 		nop->buffer = READ_ONCE(sqe->buf_index);
-+	else
-+		nop->buffer = -1;
- 	return 0;
- }
- 
--- 
-Jens Axboe
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
