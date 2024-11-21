@@ -1,162 +1,237 @@
-Return-Path: <linux-kernel+bounces-416449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A205E9D44E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:29:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EBB9D44ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB380B219B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:29:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16606282AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662D6AD21;
-	Thu, 21 Nov 2024 00:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1238D5234;
+	Thu, 21 Nov 2024 00:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8bXj084"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OzzDboaO"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF9023098E;
-	Thu, 21 Nov 2024 00:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A4023098C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732148948; cv=none; b=aZwrkJgYsLmywYI5/dijys+nl8x9fmHKXEskqY3yfzRJlFdxsMZYtgv+/9B7bH5zNl4ctTynHNkwiJ6QJBzSAi6yC6Kre4BKizlZrwQec9TTnfvT28wnwVqo/5WOI6KphPo+9PpwvWPIGCDEpBhhFM7GbGKezzTyRFY0QPMoOFI=
+	t=1732149231; cv=none; b=PlFzylH96K211dEq3tYRTZFPYaOdyxJj159cscBbM4rZTLVGXIEUKv1hL4MVTlh1/Rgfw/By8UdVIY29rG3YZOadApK3dXNcqshvS5p31cv6UN45OQ5bCjQVQ5nduK2g26Kk/mVAVsgNmQihlzkHyazz9Tkd6HPp++2MJ8LM38M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732148948; c=relaxed/simple;
-	bh=ADwrhXPHxiG/lWbdGMI7aKDtnfo7BJH5nHp+YJOCkes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aNUau9sqgzZj7VkksjMBD9qf3fNYuO/ti2nVUrtZztDqL9m0OyyH7JkO9wKz7MdRHyIN4/ZsdMhukP+NAZCOI0/rImUKNXUoor59YrEtFOeBZvOfCze6YGLAJdbvD8+5BYNCA02d8u1I4CPUVJAjXkAr9oOxD1o4dis22PBJymc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8bXj084; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso168092f8f.0;
-        Wed, 20 Nov 2024 16:29:06 -0800 (PST)
+	s=arc-20240116; t=1732149231; c=relaxed/simple;
+	bh=2hIBDyppP+989TTRPQ9tHS6PzGNn5GnwulBsDMjTvLo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bbb3YkWrBWAzJ4H4+16TATDZ5PbjTx7h22RC0wDCqTIfQl2SmjyqJaAKblnC7M5HGOInxY1GMn8kRxROxLBUnkkOZqpql4XZOiZNEAyXQkYwJhBS0msgwieVVRowjMHLN3VOI8t4t8Ih3PO36UzozWox5uY3MS6rcSN/ZG8uQ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OzzDboaO; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608dddaa35so161351cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:33:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732148945; x=1732753745; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nNFqJNwdtTIM52uDabF+RixwG4yWSl0dwHZ/Bz5L1s8=;
-        b=l8bXj084l7s47amLmgoHrCjH9QRA1jbSInl6eUlxNarVb1z5TOpDKrRfIi/C97fRl9
-         plIrtiq5VfUDTB9TMaujpNumE4U8G7M67fr2yhzenykps0HB+R/QCsOgoE1Jxiu8UITI
-         COpZP20jmPn29Px0c4wB9tJbQuDjl30/p4o/olIyBhcoy65BdF92/1A9QRsk0TvbcU1P
-         k/JLTAYGQ/tX0tB+FHTuQPt64Ym/C1Lot1zVsCHbwOejJqpVSMZCkHYCypEyxjMjr1o6
-         4zpI/sW98rod8zhaJW1SbsVZNYs+SR7sNFfYaW0LyH9UcOjSxh/V8K5ixFtplWMmzZGL
-         mraA==
+        d=google.com; s=20230601; t=1732149228; x=1732754028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UlniKgym+Q90GvuHd3GoZB7/NP0pryZ3yXdMK0RESg4=;
+        b=OzzDboaOJORqBWXpsaT6tus7RJbQSemghgiV3WNGr08tHtJNggF6Gj3pmeQdWvHGxn
+         4gIQfz9ubVgk3IqnpM4noiEpyEeBBvXpoYmyOZ1LxF9iSd29V3iaNPXc8vCUaxMYznh2
+         FWH0GhjLShSZz4PRuvVM0yHOMk5erQV7GJ3lO+iWUUE5JunEawjgMdcsXuEM1hgieWs1
+         YWu4b2gM+Z4RVc1wqjkzx0LQqZiNks2MsIVBeIXmS6g9mX6bGeBbV6PMtA9nw2qHAiab
+         wWmpaWYB+L6Lw1WweIsXAb43YYenUylq3dnvyD0aPfbqVdzdt5YKN8fNxj7donJ9kvGh
+         O+zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732148945; x=1732753745;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nNFqJNwdtTIM52uDabF+RixwG4yWSl0dwHZ/Bz5L1s8=;
-        b=St3gqnxLvT5xt5KOKYlkI6C+jCRr87wfl9qsnOwAJ3wp2RkJDCrqESAjgdoPTfo6tz
-         7aHqTcNOEFBpvfqI3mrKO8TCRzUt8AHJ8LrFyBVLXAiacJsk+w0Ps5KA4+2r5jzdzBKt
-         UuJZtSwCiD9ng55E7vzYAwUsUnSwJkbp+tzepmAWpHozKs685eWJTC+m6M59WLl9PZe8
-         R2J4kZ8HTk9Z06xpU4+UL3BH42q15n8PgYPeWvFf8C5FBIpA33AyydEY/9vxn4YagsXL
-         LucRP3KO+1tfY5TiOk3ywpVwTqSx7500VaYVHlLF7KdKVz1h6+92NjBZzalS7ZQf6Mex
-         7hvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQE10yCbgoGh6uRTexi6u482rLM6PKY8fTtTnDIGWgR/2/uZcXqBKyNWxFghm7XV54j11Z8JoK@vger.kernel.org, AJvYcCUwxZn8/iiQYniNm/it1k2zMPKzINKJuhve3SpaAiRjEoUX/p7RRN1LGsoJ61Xj8VgjSn5g03wEeGWccfD19TWN@vger.kernel.org, AJvYcCXPYJRXg8OwkEoStl0v52/c3krvHXRMwsyty7Xev5brhSL55qAepty5789cF30R4bI5z/4OHW1PZl0z6a0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXKvDkghOYSRQCcb0n4ArWBDa1M+xBC4+DQx+rMmuIWTVtgXeb
-	Bp+HpwPw3YBGTYrrftLB5vrFFgn+0bZzme5HdTNQgDaWsGeeD5kN
-X-Google-Smtp-Source: AGHT+IHwrxS7Q3wPuiO3CIM8LKgPUIos8L4eyZFj2A2FlBmlQwt9D7cuEebrGVqCQWqGXFrooaiQqQ==
-X-Received: by 2002:a5d:6c63:0:b0:382:43ee:9f70 with SMTP id ffacd0b85a97d-38254ae44a7mr3730200f8f.22.1732148945289;
-        Wed, 20 Nov 2024 16:29:05 -0800 (PST)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493ee59sm3343620f8f.103.2024.11.20.16.29.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 16:29:03 -0800 (PST)
-Message-ID: <7d221595-bd57-4b8d-9c2a-007ad1e33ba1@gmail.com>
-Date: Thu, 21 Nov 2024 02:29:37 +0200
+        d=1e100.net; s=20230601; t=1732149228; x=1732754028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UlniKgym+Q90GvuHd3GoZB7/NP0pryZ3yXdMK0RESg4=;
+        b=t6JUs/kEOo7woKV9wYUGsLK7zmzutokoY1PZYalafYOfFXaNU22kvqyl7QURNWT9a3
+         l8Y1ldGE/vB8HEdqkmOpH1Jbei4M4qr3GCmtOMNbs7kALatMJqr+Juke4C56QlT/zCGz
+         08YbMFCLQyCAoHbh+E+eaxM0hJ/uRU4Z7h51XkbXFuofwzqBXVlUhShbg5x5w0Lrmicj
+         U+4kaIhf4dDscs6zMoPVNMTWErzF2fHE5xJp1oVjT+eZ8MxONYgJwCJs0QCxfRkw5Wms
+         obCsYHkSRvYpacLCJcYz1+iAL4XhHsNvg0Oe26wGO5j6ZiSplWjfy9uuUs4uazwNpe8c
+         nezg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGkeJoumKTvQVwukJsMV9jFPMrN8y2qs8jOchL7DE0mRJL6MGYjge/snP29yLXSMTYPnLBakOTYT0H5DQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyOuqdLauVSj6yWvO+bTNnNuozoVEcH+pp1TqZjEbYEzj16xox
+	s0cqrB12KjYfmIdiHW/nN9CjWvTNLgJjNMpTk3MpMUUIaFPYzXm6UWZRMCXmrvQoAH9iqt41Qz6
+	zLUDj5+SlXWYKps4n249yFcQctgmHsR/KCn/E
+X-Gm-Gg: ASbGncs0t+D83IZkkacdjIRgCIVXIjZSRb5fV3y9mDc2TzRiUuKs6i1ZCbClgkh7H/R
+	/c4zWjrjdm1H9Y6Z/SUPZ5YSXub3l3uk=
+X-Google-Smtp-Source: AGHT+IFQ/4vehjWSFCMPc5HZk4dt8N+0X4OiwXr6PNMh/c4OX08XmHwTEq8nAVQsyDRLqHOEJlqtef+ZYaSBMLoAvgU=
+X-Received: by 2002:ac8:5811:0:b0:461:66ea:ea70 with SMTP id
+ d75a77b69052e-465318e24c8mr659041cf.15.1732149228248; Wed, 20 Nov 2024
+ 16:33:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 08/23] ovpn: implement basic TX path (UDP)
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-8-de4698c73a25@openvpn.net>
- <4fe9f0d5-a8ac-4f2e-aee7-00cbeaf2f0aa@gmail.com>
- <387d3fc5-9ff6-4a8e-b766-5e30d0aef4a4@openvpn.net>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <387d3fc5-9ff6-4a8e-b766-5e30d0aef4a4@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241120000826.335387-1-surenb@google.com> <20241120000826.335387-3-surenb@google.com>
+ <zfd7xdkr5dkvvx3caqao3oorh2pxxifhdhwsw2iyxcuzbevo3n@sobu7xhw24vv>
+ <CAJuCfpFAh-gw_BVCaEB4+saedVC6aPB7HfyPikvTujyGRLXPwQ@mail.gmail.com> <wnwfgk32wyvx7tzd522ajwk5uixls7iayksrtho6c3dkvgdpek@25yqv3ohljzc>
+In-Reply-To: <wnwfgk32wyvx7tzd522ajwk5uixls7iayksrtho6c3dkvgdpek@25yqv3ohljzc>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 20 Nov 2024 16:33:37 -0800
+Message-ID: <CAJuCfpGx6LCd7qCOsLc6hm-qMGtyM3ceitYbRdx1yKPHFHT-jQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] mm: move per-vma lock into vm_area_struct
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 15.11.2024 16:39, Antonio Quartulli wrote:
-> On 11/11/2024 00:54, Sergey Ryazanov wrote:
->> Another one forgotten question, sorry about this. Please find the 
->> question inlined.
->>
->> On 29.10.2024 12:47, Antonio Quartulli wrote:
->>>   /* Send user data to the network
->>>    */
->>>   netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
->>>   {
->>> +    struct ovpn_struct *ovpn = netdev_priv(dev);
->>> +    struct sk_buff *segments, *curr, *next;
->>> +    struct sk_buff_head skb_list;
->>> +    __be16 proto;
->>> +    int ret;
->>> +
->>> +    /* reset netfilter state */
->>> +    nf_reset_ct(skb);
->>> +
->>> +    /* verify IP header size in network packet */
->>> +    proto = ovpn_ip_check_protocol(skb);
->>> +    if (unlikely(!proto || skb->protocol != proto)) {
->>> +        net_err_ratelimited("%s: dropping malformed payload packet\n",
->>> +                    dev->name);
->>> +        dev_core_stats_tx_dropped_inc(ovpn->dev);
->>> +        goto drop;
->>> +    }
->>
->> The above check implies that kernel can feed a network device with 
->> skb-  >protocol value mismatches actual skb content. Can you share any 
->> example of such case?
->>
->> If you just want to be sure that the user packet is either IPv4 or 
->> IPv6 then it can be done like this and without error messages:
->>
->> /* Support only IPv4 or IPv6 traffic transporting */
->> if (unlikely(skb->protocol == ETH_P_IP || skb->protocol == ETH_P_IPV6))
->>      goto drop;
-> 
-> It look good, but I will still increase the drop counter, because 
-> something entered the interface and we are trashing it.
+On Wed, Nov 20, 2024 at 4:05=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Wed, Nov 20, 2024 at 03:44:29PM -0800, Suren Baghdasaryan wrote:
+> > On Wed, Nov 20, 2024 at 3:33=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
+x.dev> wrote:
+> > >
+> > > On Tue, Nov 19, 2024 at 04:08:23PM -0800, Suren Baghdasaryan wrote:
+> > > > Back when per-vma locks were introduces, vm_lock was moved out of
+> > > > vm_area_struct in [1] because of the performance regression caused =
+by
+> > > > false cacheline sharing. Recent investigation [2] revealed that the
+> > > > regressions is limited to a rather old Broadwell microarchitecture =
+and
+> > > > even there it can be mitigated by disabling adjacent cacheline
+> > > > prefetching, see [3].
+> > > > Splitting single logical structure into multiple ones leads to more
+> > > > complicated management, extra pointer dereferences and overall less
+> > > > maintainable code. When that split-away part is a lock, it complica=
+tes
+> > > > things even further. With no performance benefits, there are no rea=
+sons
+> > > > for this split. Merging the vm_lock back into vm_area_struct also a=
+llows
+> > > > vm_area_struct to use SLAB_TYPESAFE_BY_RCU later in this patchset.
+> > > > Move vm_lock back into vm_area_struct, aligning it at the cacheline
+> > > > boundary and changing the cache to be cacheline-aligned as well.
+> > > > With kernel compiled using defconfig, this causes VMA memory consum=
+ption
+> > > > to grow from 160 (vm_area_struct) + 40 (vm_lock) bytes to 256 bytes=
+:
+> > > >
+> > > >     slabinfo before:
+> > > >      <name>           ... <objsize> <objperslab> <pagesperslab> : .=
+..
+> > > >      vma_lock         ...     40  102    1 : ...
+> > > >      vm_area_struct   ...    160   51    2 : ...
+> > > >
+> > > >     slabinfo after moving vm_lock:
+> > > >      <name>           ... <objsize> <objperslab> <pagesperslab> : .=
+..
+> > > >      vm_area_struct   ...    256   32    2 : ...
+> > > >
+> > > > Aggregate VMA memory consumption per 1000 VMAs grows from 50 to 64 =
+pages,
+> > > > which is 5.5MB per 100000 VMAs. Note that the size of this structur=
+e is
+> > > > dependent on the kernel configuration and typically the original si=
+ze is
+> > > > higher than 160 bytes. Therefore these calculations are close to th=
+e
+> > > > worst case scenario. A more realistic vm_area_struct usage before t=
+his
+> > > > change is:
+> > > >
+> > > >      <name>           ... <objsize> <objperslab> <pagesperslab> : .=
+..
+> > > >      vma_lock         ...     40  102    1 : ...
+> > > >      vm_area_struct   ...    176   46    2 : ...
+> > > >
+> > > > Aggregate VMA memory consumption per 1000 VMAs grows from 54 to 64 =
+pages,
+> > > > which is 3.9MB per 100000 VMAs.
+> > > > This memory consumption growth can be addressed later by optimizing=
+ the
+> > > > vm_lock.
+> > > >
+> > > > [1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@go=
+ogle.com/
+> > > > [2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9=
+020/
+> > > > [3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP=
+53cT_kbfP_pR+-2g@mail.gmail.com/
+> > > >
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > >
+> > > Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> >
+> > Thanks!
+> >
+> > >
+> > >
+> > > One question below.
+> > >
+> > > > --- a/include/linux/mm_types.h
+> > > > +++ b/include/linux/mm_types.h
+> > > > @@ -716,8 +716,6 @@ struct vm_area_struct {
+> > > >        * slowpath.
+> > > >        */
+> > > >       unsigned int vm_lock_seq;
+> > > > -     /* Unstable RCU readers are allowed to read this. */
+> > > > -     struct vma_lock *vm_lock;
+> > > >  #endif
+> > > >
+> > > >       /*
+> > > > @@ -770,6 +768,10 @@ struct vm_area_struct {
+> > > >       struct vma_numab_state *numab_state;    /* NUMA Balancing sta=
+te */
+> > > >  #endif
+> > > >       struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> > > > +#ifdef CONFIG_PER_VMA_LOCK
+> > > > +     /* Unstable RCU readers are allowed to read this. */
+> > > > +     struct vma_lock vm_lock ____cacheline_aligned_in_smp;
+> > > > +#endif
+> > > >  } __randomize_layout;
+> > >
+> > > Do we just want 'struct vm_area_struct' to be cacheline aligned or do=
+ we
+> > > want 'struct vma_lock vm_lock' to be on a separate cacheline as well?
+> >
+> > We want both to minimize cacheline sharing.
+> >
+>
+> For later, you will need to add a pad after vm_lock as well, so any
+> future addition will not share the cacheline with vm_lock. I would do
+> something like below. This is a nit and can be done later.
+>
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 7654c766cbe2..5cc4fff163a0 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -751,10 +751,12 @@ struct vm_area_struct {
+>  #endif
+>         struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+>  #ifdef CONFIG_PER_VMA_LOCK
+> +       CACHELINE_PADDING(__pad1__);
+>         /* Unstable RCU readers are allowed to read this. */
+> -       struct vma_lock vm_lock ____cacheline_aligned_in_smp;
+> +       struct vma_lock vm_lock;
+> +       CACHELINE_PADDING(__pad2__);
+>  #endif
+> -} __randomize_layout;
+> +} __randomize_layout ____cacheline_aligned_in_smp;
 
-Sure. I just shared a minimalistic example and don't mind if the case 
-will be counted. Just a small hint, the counter can be moved to the 
-'drop:' label below.
+I thought SLAB_HWCACHE_ALIGN for vm_area_cachep added in this patch
+would have the same result, no?
 
-
-And sorry for misguiding, the '->protocol' field value has network 
-endians, so constants should be wrapped in htons():
-
-if (unlikely(skb->protocol == htons(ETH_P_IP) ||
-              skb->protocol == htons(ETH_P_IPV6)))
-     goto drop;
-
-> Why not printing a message? The interface is not Ethernet based, so I 
-> think we should not expect anything else other than v4 or v6, no?
-
-Non-Ethernet encapsulation doesn't give any guaranty that packets will 
-be IPv4/IPv6 only. There are 65k possible 'protocols' and this is an 
-interface function, which technically can be called with any protocol type.
-
-With this given, nobody wants to flood the log with messages for every 
-MPLS/LLDP/etc packet. Especially with messages saying that the packet is 
-malformed and giving no clue, why the packet was considered wrong.
-
---
-Sergey
+>
+>  #ifdef CONFIG_NUMA
+>  #define vma_policy(vma) ((vma)->vm_policy)
 
