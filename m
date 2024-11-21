@@ -1,97 +1,107 @@
-Return-Path: <linux-kernel+bounces-417156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721A09D4FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:30:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13D49D4FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35446283BD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:30:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898E61F22FB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F281DD0DC;
-	Thu, 21 Nov 2024 15:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3xC5VWd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27261DDC23;
+	Thu, 21 Nov 2024 15:30:02 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6721DBB19
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9B61DC734;
+	Thu, 21 Nov 2024 15:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732202999; cv=none; b=QiDmZRhZCWPFUARQoryN5y9eFEUWw9aIug4QeSCa5g2RTz+1gLPHMtM+zbigwq1qd1Hm1b6p1c4Tln7LKMD0uHIf/8NehhbywwLkLDmCmF96RMxCY1j6QhUIEU8OC3sd4VmobleIo7Qw/ojbAkq0IZXfgiB35jBulfYrVEyjDiY=
+	t=1732203002; cv=none; b=Pz1CykM5Q5j+Ce+TtzxMlEZ2WvqH2Meu/Vi+j09DGHQirub6abkynWnjxR6BK7/YWvLyIZxdeO1utOJE67u6Z8SJ4SsCXyeGhBBNwr9U6fMySvQdDlTVQmcumFcxbikw7PxHKgfmdvSvlGqaPy9ctsN5CzaAInoDyQtna2t6zcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732202999; c=relaxed/simple;
-	bh=F5igAvDvGxe5zSohUU0aBj7vqkvV7yrcGAfEW1EiIq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAs5Br4h07/N5SOfv2gZGKopw3s03OFd9MzMt6Dz2sFkmYMj1R5yNeqOjVDe4JqvlbFpkMckA7hgLpx1XLx8gsAoiSWHQBiqPQwm17mR2YBnKf3OADS6+1XYEckXkdn/fBmwuM/p609RCQ8k/5ZU7wVAjpy8wPKABGAep2K6AGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3xC5VWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E69A0C4CECC;
-	Thu, 21 Nov 2024 15:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732202999;
-	bh=F5igAvDvGxe5zSohUU0aBj7vqkvV7yrcGAfEW1EiIq4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=V3xC5VWdxChbC1RKGEgCmkK1MgbPvKMFuXG4p/BVtvLZzedPb0RvxevRyDzSAr2Wh
-	 5MWaWTkBBNfjSGxR5OWqoATzeFF7eGHs0xOBH8Krh/8gtb0DB+rxQ7L9gZtXezZ5Zp
-	 sp/6rOMC1xQNR9YjVzXNPmEU1bneMsCn8e9Y2vW639/XvjlxtQIyuE3UW/XpCOWlGd
-	 SC+gi0Ill+ZV/Gb2SxsYvCf34EL3AJx2gya3zLhlnTDpEuWFQrQXdxHENIe/H2bcvJ
-	 JHoVYgOsH/AEU5QcH71X9MJ3vYv4mPYPzkviTv28qn3SFC6uFOATPpgvbDlJ7K4V3e
-	 +3z91jfATJZXw==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [PATCH] delay: Fix ndelay() spuriously treated as udelay()
-Date: Thu, 21 Nov 2024 16:29:31 +0100
-Message-ID: <20241121152931.51884-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1732203002; c=relaxed/simple;
+	bh=p4wnKBqJt3VMigYlnM1GT80CcM5T433I54GB7JdLdKI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tBwfdKdIjGSYlWeFg3E+HbQYBoudYn/mQ/pJbatZfNBn6cuuYbWJhuIX4ZCko6DRS1s9hJY6NQSegRcfe/t2/+EvXfTled4i65am5c8QYKVvobomnI0j/0OMobK4baaxLd414HiTlwL9hvfoXm7UYw6fMN9AxOg/3FGqRc29Kxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvMYN6wqmz6J9ln;
+	Thu, 21 Nov 2024 23:27:36 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2A55A140A79;
+	Thu, 21 Nov 2024 23:29:57 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 21 Nov
+ 2024 16:29:56 +0100
+Date: Thu, 21 Nov 2024 15:29:55 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <nifan.cxl@gmail.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [PATCH 07/13] rasdaemon: cxl: Update CXL DRAM event to CXL spec
+ rev 3.1
+Message-ID: <20241121152955.000010db@huawei.com>
+In-Reply-To: <20241120095923.1891-8-shiju.jose@huawei.com>
+References: <20241120095923.1891-1-shiju.jose@huawei.com>
+	<20241120095923.1891-8-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-A recent rework on delay functions wrongly ended up calling __udelay()
-instead of __ndelay() for nanosecond delays, increasing those by 1000.
+On Wed, 20 Nov 2024 09:59:17 +0000
+<shiju.jose@huawei.com> wrote:
 
-As a result hangs have been observed on boot
-
-Restore the right function calls.
-
-Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
-Reported-by: Chen-Yu Tsai <wenst@chromium.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- include/asm-generic/delay.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
-index 76cf237b6e4c..03b0ec7afca6 100644
---- a/include/asm-generic/delay.h
-+++ b/include/asm-generic/delay.h
-@@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec)
- {
- 	if (__builtin_constant_p(nsec)) {
- 		if (nsec >= DELAY_CONST_MAX)
--			__bad_udelay();
-+			__bad_ndelay();
- 		else
- 			__const_udelay(nsec * NDELAY_CONST_MULT);
- 	} else {
--		__udelay(nsec);
-+		__ndelay(nsec);
- 	}
- }
- #define ndelay(x) ndelay(x)
--- 
-2.46.0
-
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> CXL spec 3.1 section 8.2.9.2.1.2 Table 8-46, DRAM Event Record has updated
+> with following new fields and new types for Memory Event Type, Transaction
+> Type and Validity Flags fields.
+> 1. Component Identifier
+> 2. Sub-channel
+> 3. Advanced Programmable Corrected Memory Error Threshold Event Flags
+> 4. Corrected Memory Error Count at Event
+> 5. Memory Event Sub-Type
+> 
+> Update the parsing, logging and recording of DRAM event for the above
+> spec rev 3.1 changes.
+> 
+> Example rasdaemon log for CXL DRAM event,
+> 
+> cxl_dram 2024-11-20 00:18:53 +0000 memdev:mem0 host:0000:0f:00.0 serial:0x3 \
+> log type:Informational hdr_uuid:601dcbb3-9c06-4eab-b8af-4e9bfb5c9624 \
+> hdr_handle:0x1 hdr_related_handle:0x0 hdr_timestamp:1970-01-01 00:00:58 +0000 \
+> hdr_length:128 hdr_maint_op_class:1 hdr_maint_op_sub_class:3 dpa:0x18680 \
+> dpa_flags:descriptor:'UNCORRECTABLE EVENT' 'THRESHOLD EVENT' \
+> memory_event_type:Data Path Error memory_event_sub_type:Media Link CRC Error \
+> transaction_type:Internal Media Scrub hpa:0xffffffffffffffff region: \
+> region_uuid:00000000-0000-0000-0000-000000000000 channel:3 rank:17 \
+> nibble_mask:3866802 bank_group:7 bank:11 row:2 column:77
+> correction_mask:21 00 00 00 00 00 00 00 2c 00 00 00 00 00 00 00 37 00 00 \
+> 00 00 00 00 00 42 00 00 00 00 00 00 00 comp_id:01 74 c5 08 9a 1a 0b fc d2 \
+> 7e 2f 31 9b 3c 81 4d comp_id_pldm_valid_flags:'PLDM Entity ID' \
+> PLDM Entity ID:74 c5 08 9a 1a 0b \
+> Advanced Programmable CME threshold Event Flags:'Corrected Memory Errors \
+> in Multiple Media Components' 'Exceeded Programmable Threshold' \
+> CVME Count:0x94
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Also LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
