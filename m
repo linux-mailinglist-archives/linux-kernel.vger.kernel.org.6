@@ -1,189 +1,142 @@
-Return-Path: <linux-kernel+bounces-416459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2077E9D453C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:17:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB049D453E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:20:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E4128130E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1FA2823CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1CA33998;
-	Thu, 21 Nov 2024 01:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1316C2744B;
+	Thu, 21 Nov 2024 01:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTfy/D8l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHoe/EPT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTfy/D8l";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHoe/EPT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="gRNXD9Ms"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136729B0;
-	Thu, 21 Nov 2024 01:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2CA29B0
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732151847; cv=none; b=Ks3yRs5rj6c1aXp/Mg8NtGIJHfD8REf1BIcD6P0KAJ6iUbLVIdlzVft9jXj4fRBgSHVIXIj8TCAyLY8lJsG2rEV/tAUHwCKrbNwNLXRFJb7WFy2GysSJ30hqHvKaz4gb+7d5tus5iEnUeoOOiO1rRJ0mJ/Iu2xVVX3OQDncP/iE=
+	t=1732152017; cv=none; b=pAs31g+fh7eKIrlHqyhfNZIVkFmO9Qia+zPNOnWPbwCaxbyn3JHztz3+3EFa/4aNa0+B5oJNlv52sugfkwJhHVzqaQtWD5GGKFcp/mEnAtSwOrjrAnYaE9M1vOa6dWUgLFbsBZreMl+eWKqbOrImYzYVxpl57eSUulzr7ebNg0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732151847; c=relaxed/simple;
-	bh=vyXbvtxhyPtbV5ayWzvanIDpgaq/AHNMfKErujSAQMo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMZ14QZhB8FN2/5krSssT3jSBx9NwNqxF6mUb4mkf4NxLuyOB57/z8P08xo1YL5MDIGpjQEsx9qzkiEQ65htgBqsb9DUv+UfGrTmTaSuath9tSMHlHkXC6MOW3p9Rd1h45WEfOmhhAQh146gmZseSSImrvLa7ZlA3q3qdr7WUSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTfy/D8l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sHoe/EPT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTfy/D8l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sHoe/EPT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 33ACB218E8;
-	Thu, 21 Nov 2024 01:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732151843;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
-	b=WTfy/D8lXXnS1RCYj/kN8ybXIRGdK9y77RgIIzyC2F+xZxevqn2DN5XCMEVnC/Do6cMl0H
-	M2AJae9CvW7tMxtUVDf0Ipiqi8tjNeii2nWDh9zG2MCCsJ8B8NebR1eH2oOVVAu9q8jRFX
-	271J45VO7uiuqFTr+2DFW7/HtOhaQy4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732151843;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
-	b=sHoe/EPT2FszmRf+WJP9eUtps0tEwuPNJ1TVh409aaJnFORCnA18Tw2+KbajPc5Kla0CRO
-	QcJELP0LMHFpTNDg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732151843;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
-	b=WTfy/D8lXXnS1RCYj/kN8ybXIRGdK9y77RgIIzyC2F+xZxevqn2DN5XCMEVnC/Do6cMl0H
-	M2AJae9CvW7tMxtUVDf0Ipiqi8tjNeii2nWDh9zG2MCCsJ8B8NebR1eH2oOVVAu9q8jRFX
-	271J45VO7uiuqFTr+2DFW7/HtOhaQy4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732151843;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
-	b=sHoe/EPT2FszmRf+WJP9eUtps0tEwuPNJ1TVh409aaJnFORCnA18Tw2+KbajPc5Kla0CRO
-	QcJELP0LMHFpTNDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93B9A1376E;
-	Thu, 21 Nov 2024 01:17:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cNZzHyKKPme0XgAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Thu, 21 Nov 2024 01:17:22 +0000
-Date: Thu, 21 Nov 2024 02:17:20 +0100
-From: Petr Vorel <pvorel@suse.cz>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
-Message-ID: <20241121011720.GA69389@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20241120204125.52644-1-pvorel@suse.cz>
- <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
+	s=arc-20240116; t=1732152017; c=relaxed/simple;
+	bh=SwrayaS9SXI7PTvhF8xvn0J7hiUFeyiRh9Ow7gOPGsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dMnn5sNpPxE/5r90GHwZVJVkDXuFXqDT8Om+eXCgr7wccbGEbBnulSBUF5msnDwEQhTPGfbnpxDclRXWcOzoTTaCZxCnAwFbnpQRwq259c+Scn5IqTg3FabcODnK5dww6xIHkbAMC2VG575HppCHWALs6m3Aaj1xpot9OS6yc9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=gRNXD9Ms; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so359751a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:20:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732152015; x=1732756815; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5zzioji6t5EJYtuRjVDNljcfalXHvMtqqSYFYu6hs34=;
+        b=gRNXD9MsOOOXJG0HYrVryPXW7zud2iiiDXvYJic9ZrfCX0xHJrX1TpkdvjZVp2ombD
+         5Qx1RRjqKPKYHwoJidXGw2ch+E1zk/CxJfKJ3ZYQx7AbL7KhgaFW1Y8rn/cMs5FOBRAw
+         lgH+0vKoAu9Wm3tmzRMXWLtpiO1KtzsluiywpksuNgq8HrL7NStRshTMWdp+PBOZSj/7
+         1YUydcLEu7VS9yp179ubAC11ThXhBH2CR9+p+oIaL4oPQx6O1q2d4CqfH/BwUk2l6g1+
+         X9SrqjzXLt1OWMb/U/xp5IxjVrzQUWXAntyCgg+YIqqtIXdD+5mDrxa0wuaORK8LnoVu
+         CfEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732152015; x=1732756815;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5zzioji6t5EJYtuRjVDNljcfalXHvMtqqSYFYu6hs34=;
+        b=KeU+k4eDFoD9iCX/KbnsirSZrPmswDpFgLyS66rLh/hiiFsqImhRhsRVkIFOZgDY9U
+         rYRHxjy0w4HnEGsee+QBa4egarir0ynYdtqm/q79H6IiOJ1/stlih3X91/tK0Q+7Tzds
+         LdfhbJWL0jiOyxH5dCYbV+JLUz/6vKrqSUOWFqJkzfEwWimxuWGltGeNCOWboyilBhpR
+         H0yMwa11GWYOask/Lu8nMr3XvFD8iNEz+rDFjJ1qjm5z3jXy/enUttvkrUFBM2wHw79H
+         FaxeOJ0SxtrEdVpotF5ZbyXhcl53zpEDmUdFVOrk6tM9PsoxZ2aV/57OK/lcrCrarbuQ
+         5ajg==
+X-Gm-Message-State: AOJu0YzHeqQPgDr6pBmhKh3o1mlM7fBCsBSSz37WhdpS4hvA+fw1S3cC
+	WWdhT3UfCauM/bdG7AO7IDNhbYozE90lNMIyCWZckhopMVDI5I1F/+ok4rrbFgU=
+X-Gm-Gg: ASbGnctE2gJfLYGxlDY+D7chCSN9SJiJziBzyMxv6HUN2oCAFmV6WxLf58UayBZM6vw
+	w7oWzXrl+O8nBFEwB6KqDD448iivZLod5qKAG5C8mo9CLJmqdUkZ1wG98XY3FTnC4R2I1YXHaKp
+	4RVXfqdpdk/RWT2G6yO4OG881x+hkNKzKTzwo6k+U5ak4qql3Yv8Q3+WlF0+ikgDUBYri/pHvy+
+	0T+HzqXPX+kZbREICbhfcfcFa4rzWGeWfv7apkCrVZUPGo=
+X-Google-Smtp-Source: AGHT+IEPMWVWiZ4xgW98q/E3liAMRD6U3r199xc/qsSzLuoWoDnGWtMOom3v8Ddt9yv6CjLmcWTJsQ==
+X-Received: by 2002:a17:90b:1bc3:b0:2ea:5ff8:f325 with SMTP id 98e67ed59e1d1-2eaca6b3c34mr6230031a91.8.1732152014776;
+        Wed, 20 Nov 2024 17:20:14 -0800 (PST)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21287ee19c6sm1895245ad.123.2024.11.20.17.20.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 17:20:14 -0800 (PST)
+Message-ID: <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
+Date: Wed, 20 Nov 2024 18:20:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
-X-Spam-Score: -3.50
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linaro.org,linux-foundation.org,lists.freedesktop.org,gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bug-report] 5-9% FIO randomwrite ext4 perf regression on 6.12.y
+ kernel
+To: Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+ Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
+ Sagi Grimberg <sagi@grimberg.me>, Paul Webb <paul.x.webb@oracle.com>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com>
+ <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> On Thu, Nov 21, 2024 at 5:41 AM Petr Vorel <pvorel@suse.cz> wrote:
+On 11/20/24 5:00 PM, Chaitanya Kulkarni wrote:
+> On 11/20/24 13:35, Saeed Mirzamohammadi wrote:
+>> Hi,
+>>
+>> I?m reporting a performance regression of up to 9-10% with FIO randomwrite benchmark on ext4 comparing 6.12.0-rc2 kernel and v5.15.161. Also, standard deviation after this change grows up to 5-6%.
+>>
+>> Bisect root cause commit
+>> ===================
+>> - commit 63dfa1004322 ("nvme: move NVME_QUIRK_DEALLOCATE_ZEROES out of nvme_config_discard?)
+>>
+>>
+>> Test details
+>> =========
+>> - readwrite=randwrite bs=4k size=1G ioengine=libaio iodepth=16 direct=1 time_based=1 ramp_time=180 runtime=1800 randrepeat=1 gtod_reduce=1
+>> - Test is on ext4 filesystem
+>> - System has 4 NVMe disks
+>>
+> 
+> Thanks a lot for the report, to narrow down this problem can you
+> please :-
+> 
+> 1. Run the same test on the raw nvme device /dev/nvme0n1 that you
+>     have used for this benchmark ?
+> 2. Run the same test on the  XFS formatted nvme device instead of ext4 ?
+> 
+> This way we will know if there is an issue only with the ext4 or
+> with other file systems are suffering from this problem too or
+> it is below the file system layer such as block layer and nvme pci driver ?
+> 
+> It will also help if you can repeat these numbers for io_uring fio io_engine
+> to narrow down this problem to know if the issue is ioengine specific.
+> 
+> Looking at the commit [1], it only sets the max value to write zeroes 
+> sectors
+> if NVME_QUIRK_DEALLOCATE_ZEROES is set, else uses the controller max
+> write zeroes value.
 
-> > It will be used in the next commit for DRM_MSM.
+There's no way that commit is involved, the test as quoted doesn't even
+touch write zeroes. Hence if there really is a regression here, then
+it's either not easily bisectable, some error was injected while
+bisecting, or the test itself is bimodal.
 
-> > Suggested-by: Rob Clark <robdclark@gmail.com>
-> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > ---
-> > Changes v3->v4:
-> > * Move definition to the end of the file
-
-
-> I prefer to not check the tool.
-
-Ack.
-
-> Why don't you install python3?
-
-Everybody installs it when it's required, the question is how to inform about
-the dependency.
-
-There build environments are minimal environments:
-* chroot (e.g. cross compilation)
-* container
-
-These are used by both developers and distros.
-
-Kind regards,
-Petr
-
-> >  init/Kconfig | 3 +++
-> >  1 file changed, 3 insertions(+)
-
-> > diff --git a/init/Kconfig b/init/Kconfig
-> > index fbd0cb06a50a..c77e45484e81 100644
-> > --- a/init/Kconfig
-> > +++ b/init/Kconfig
-> > @@ -2047,3 +2047,6 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-> >  # <asm/syscall_wrapper.h>.
-> >  config ARCH_HAS_SYSCALL_WRAPPER
-> >         def_bool n
-> > +
-> > +config HAVE_PYTHON3
-> > +       def_bool $(success,$(PYTHON3) -V)
-> > --
-> > 2.45.2
+-- 
+Jens Axboe
 
