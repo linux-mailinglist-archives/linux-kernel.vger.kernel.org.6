@@ -1,288 +1,141 @@
-Return-Path: <linux-kernel+bounces-417337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A0BF9D52C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:49:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64E19D52C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BAEA1F2236A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D641F22516
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40C31C304F;
-	Thu, 21 Nov 2024 18:49:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FF51C304F;
+	Thu, 21 Nov 2024 18:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="pWhZbz89"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQBgzsXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D60215B13B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D40139597
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732214978; cv=none; b=EMwMQbpgCWXtJ+BVwMrFWanWm6Kocy4AAP5Er86Eiej0BBL14aDCaCBGZ5ZLS81ajpi4RIXpm7kDmC7AfvpM0Ntla8ZcZKK7HuzoMCMYBd20d6GzIPdXiitVa2naD377pMRLzQGv5O3CxL/o3P0v+RcYpjYJfynmYjkNqlkTRHo=
+	t=1732215024; cv=none; b=VGQECKS9jHKb51FIAhKM2YIxvhimtN+cLDsLE+XMPsJmFzi/vZUV6KwxTQpHoIuOXeW2q65O8xeW3hPxH1rdZvEOQ4UOCURgUhPtt8AdLFeXmmG/J7dmrPiL4gndY8+oSZBETJS/qfnuHDj4OCgSUNRRVezo+84yORmPHcq3uDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732214978; c=relaxed/simple;
-	bh=Wc0ZKcB3iv9MPXZcE0WjkapIvTRG8IXCHkhb9YPVfQM=;
+	s=arc-20240116; t=1732215024; c=relaxed/simple;
+	bh=akCGe1zsFy6AECQ/VowNbM8JTVrfoNhO+i/XqA1MTk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qX2xMTs+lza14RGQ5PXKHidH3ZXQ6z40Qj59mstfZHxSlzpfTPBeKQL+ard9a48ADvb0kApfe0mGOfcGGhap45/LZXZylcMWmORWTRbP8yfIAmj8yWKC1cckOZRVoTslzkRKZAs3aMZe7o4AWIG2OD20RapG2Mki5KmbZuv3ROE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=pWhZbz89; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-212583bd467so12752665ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1732214975; x=1732819775; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tQMI0hSDvVmdQQ1OGP+fb8BXhpmdoFrOTrzPs1hsETI=;
-        b=pWhZbz893dbf9r0P01WFGLbVEPpwOFVzrPaOy3V7xqNCKk4MKUEbgq2rE2h9sq7ugC
-         Hs9GjU5fZCIZ/LbuCdV0GHkO/r9Gvk3YKTLBFrl7C765T1x0dEZxD36RmpZAlZeFTfsg
-         FqgjlBEdrXt7Qmyl0kxedIzsKZFYNsb2Kp0ag=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732214975; x=1732819775;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tQMI0hSDvVmdQQ1OGP+fb8BXhpmdoFrOTrzPs1hsETI=;
-        b=jlFnn1VxQYq65I8PUjkvQ70qm30a1xiFSDGzGZz3JBv6l+ETGR6gWlP4Ex4EoPGB7s
-         F1oPcW324j1s6e48qpk9O5IoWKiBns+nCQ77rN93JG0LMypbns6haVtYbzraJJvhq8Zz
-         xYTzcp+OZcUu8884F8HYzhkUF7BUUCK/YAYKgYE3YEJsOJNAHbCBpwGSkWp1L/nnot35
-         yJag4hAShO7ozB2k15akPzok/0AFzRKz4umRRDAWuWZ2nRX0WeYV3EcqGud4ba+0E/uV
-         YcL75fyzh71SRbYHveDVd8TH3C1N/5DtIS8WjFnjSa4C442sBIZnJ6dvY8yYEv5Onv75
-         QWHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT5iGsxtjU225TdJXDPdYkHzS4SIWNBpYuYGH+qroLyyPypDsfTWSh3NPeTje/7YGgyWMd8K3R6laWWuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnywil//y8UP8H5rgYZ1cRdhzT0qoW8I/bbTmxvH9XBs3/sO3I
-	xlJYbYYiu2x2Rk0TszK2RvklWl6F3uiWn4yyyJW+oka12X4bos66+G7eV0CPS54=
-X-Gm-Gg: ASbGncsHN8JHfHxaegYvgQ2NwKQoMdckLSKhuR6n281Eq4YnAud0vwySvvSgWyj5/b3
-	3a7NEJ8ShO38KmpVnmKVzodbFkgOj8quIIHF4mAemcoHrXzrU3ioHxmxVEvxD68tifVeotO66Cm
-	8pQe/p8IDhp8HPtPockVLR0hfOmLm0+ZdFeRoxgQ1mt3DLjHX9ZTcjyolGPyYsBZAObfQVPJzR+
-	v7oQKNJK0CXLhacvaAU4N5tCOPB7jpSyn0UZJCAb2K+6WHg7riUEBJnpzJdkzIQaFeeN2c3vrpS
-	kDTj+aO+06QuAfM1
-X-Google-Smtp-Source: AGHT+IEWdxqb7Z8B6G2oePuz9oXeL7SHrZGIzmst0Bh+eGzwmiufVjtTHE05ckkF2orkBNLRL1Pe8g==
-X-Received: by 2002:a17:902:d4c8:b0:212:26e:cf9 with SMTP id d9443c01a7336-2129f3be7bemr962115ad.16.1732214975505;
-        Thu, 21 Nov 2024 10:49:35 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c9a5sm1643585ad.46.2024.11.21.10.49.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 10:49:35 -0800 (PST)
-Date: Thu, 21 Nov 2024 10:49:32 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v8 2/2] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <Zz-AvBwUgNzMJb7-@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	admiyo@os.amperecomputing.com,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-References: <20241120190216.425715-1-admiyo@os.amperecomputing.com>
- <20241120190216.425715-3-admiyo@os.amperecomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDB0hL7F5CXEGD7CAu8Pv70dz0OyCUblatR19HV5CROuty3mQIw/TMkzBLV11nBaFoeld41hgipRticvoe+u86lZY3wBiiO7QEYxwQ2SSFylcsZNdwmZh/wCg1X3RAGN9ROQLdJxXaHanR0UBFhC8j58BDUvsgT8vHvxI6y5vpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQBgzsXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED4F2C4CECC;
+	Thu, 21 Nov 2024 18:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732215024;
+	bh=akCGe1zsFy6AECQ/VowNbM8JTVrfoNhO+i/XqA1MTk4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pQBgzsXgZ6gkvc+swEC1p6a+IXps8UPC8xAjCQqCB3a52VeaZkkaHl2S8v2xcYiyB
+	 SyHxRpH/18VVApeLqVkhAe2A2BrWcP3OWxmuOPML+oSvgRPy28TqWJBTCg5ewEae4F
+	 H7ZvEIbI7t+rMPDYMPsuYbM15y5AnwO4QRWh5EVb2DfJHhsgj78NEnaT0iHbneesAA
+	 C1HJGdwRV/7F8NIQRoCHSwmHeWWL6/7pUZTRN0AiZFMoB4DVB9S2HPKMXmyfrAUn50
+	 cDU7ZAfabJCWtMsW8sZoCdfRIwkkyuW2vbpDDy3zpZWyB7y5AhJp6iYcJjdqmnqocf
+	 GBwgliG5M08+w==
+Date: Thu, 21 Nov 2024 10:50:20 -0800
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+Message-ID: <202411211011.C2E3ABEAB@keescook>
+References: <202411190900.FE40FA5@keescook>
+ <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
+ <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
+ <Zz91LyHzxxOLEma_@kawka3.in.waw.pl>
+ <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241120190216.425715-3-admiyo@os.amperecomputing.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
 
-FWIW, net-next is currently closed so this would have to be resent
-once it has reopened:
-
-https://lore.kernel.org/netdev/20241118071654.695bb1a2@kernel.org/
-
-I don't know much about MCTP, so my apologies that my review is
-mostly little nits and a question/comment about stats below.
-
-I don't think any of these are worth holding this back, but since
-net-next is closed this needs to be resent, maybe worth considering?
-
-On Wed, Nov 20, 2024 at 02:02:15PM -0500, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
+On Thu, Nov 21, 2024 at 10:02:03AM -0800, Linus Torvalds wrote:
+> On Thu, 21 Nov 2024 at 10:00, Zbigniew Jędrzejewski-Szmek
+> <zbyszek@in.waw.pl> wrote:
+> >
+> > Identical — as far as the callee is concerned.
+> > Basically, we'd like to switch the execve() that we use in systemd
+> > to start everything with fexecve(), but this should be invisible to
+> > both the programs that are started and users who call ps/pgrep/….
 > 
-> Implementation of network driver for
-> Management Control Transport Protocol(MCTP) over
-> Platform Communication Channel(PCC)
+> I'm not discussing this. If you cannot understand the difference
+> between comm[] and argv[0], this discussion is entirely pointless.
 > 
-> DMTF DSP:0292
-> https://www.dmtf.org/sites/default/files/standards/documents/DSP0292_1.0.0WIP50.pdf
-> 
-> MCTP devices are specified by entries in DSDT/SDST and
-> reference channels specified in the PCCT.
-> 
-> Communication with other devices use the PCC based
-> doorbell mechanism.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> ---
->  drivers/net/mctp/Kconfig    |  13 ++
->  drivers/net/mctp/Makefile   |   1 +
->  drivers/net/mctp/mctp-pcc.c | 321 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 335 insertions(+)
->  create mode 100644 drivers/net/mctp/mctp-pcc.c
+> I'd suggest you just not use fexecve().
 
-[...]
+I think you're talking past each other. Here's my thought process:
 
-It seems like below there are a few places where unnecessary double
-spaces are included. Not necessarily a reason to hold this back, but
-since net-next is closed and you need to resend anyway...
+To Linus's point, comm[] is "garbage" in that a process can change it to
+anything it wants (i.e. PR_SET_NAME). I think everyone understands this,
+but that's not what what I see as the issue.
 
-> --- /dev/null
-> +++ b/drivers/net/mctp/mctp-pcc.c
-> @@ -0,0 +1,321 @@
+What commp[] does have, however, is a "default" (starting) value set by
+execve(), which is that of the basename of the "pathname" argument of
+the syscall (yes, not argv[0], but see below).
 
-[...]
+Most process list analysis tools (i.e. "ps") use /proc/*/comm for the
+short name view of a process. Most process launchers (i.e. shells,
+systemd), tend to use basename(pathname) as argv[0] when running
+programs. Again, I think everyone understands these things too, but I
+think it's worth calling out that while comm[] and argv[0] are obviously
+different things, in most cases they start out with identical values
+after execve().
 
-> +static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *buffer)
-> +{
-> +	struct mctp_pcc_ndev *mctp_pcc_dev;
-> +	struct mctp_pcc_hdr mctp_pcc_hdr;
-> +	struct mctp_skb_cb *cb;
-> +	struct sk_buff *skb;
-> +	void *skb_buf;
-> +	u32 data_len;
-> +
-> +	mctp_pcc_dev = container_of(c, struct mctp_pcc_ndev, inbox.client);
-> +	memcpy_fromio(&mctp_pcc_hdr, mctp_pcc_dev->inbox.chan->shmem,
-> +		      sizeof(struct mctp_pcc_hdr));
-> +	data_len = mctp_pcc_hdr.length + MCTP_HEADER_LENGTH;
-> +
-> +	if (data_len > mctp_pcc_dev->mdev.dev->mtu) {
-> +		mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
+The problem is fexecve(), where the pathname is lost since it was,
+obviously, only passed to open(). Right now, we re-use bprm->fdpath since
+it was already there for scripts, but that unhelpfully just shoves the
+fd number into comm[], making "ps" output unreadable. Nobody likes
+seeing basename(fdpath) in comm[] today.
 
-I'm not an expert on rtnl stats, but maybe this should be
-accounted for as rx_length_errors ?
+I don't think it's unreasonable to want to retain the basename(pathname)
+starting value of comm[] when switching from execve() to fexecve().
 
-And when rx_dropped is accounted in the stats callback it can add
-rx_length_errors in as well as setting rtnl_link_stats64's
-rx_length_errors?
+Using the f_path name is certainly better than basename(fdpath), but it
+doesn't really give userspace what they'd like nor expect. Since comm[]
+is mutable anyway, why not just copy argv[0] for this case, as that
+would give userspace exactly what it was expecting and does no harm?
+i.e. yes, comm[] is "garbage", but let's replicate in fexecve() as close
+to the default behavior we have from execve() as we can. Why expose
+f_path, which doesn't appear in comm[] nor cmdline currently?
 
-You've probably read this already, but just in case:
+The only flip side I can see is that "ps" etc, should just never use comm
+at all, and instead use argv[0] from cmdline. That would get the same
+behavior as described here, but it is much more expensive in that is takes
+the mm lock and has to walk userspace memory. But then we don't need
+to change anything on the kernel side and just leave basename(fdpath)
+alone. I would note, of course, that cmdline can also be changed by the
+process (PR_SET_MM_ARG_START), too, so it is also "garbage". Just more
+expensive garbage than comm[].
 
-https://docs.kernel.org/networking/statistics.html#struct-rtnl-link-stats64
+I still think the original proposal is the most helpful to userspace.
 
-> +		return;
-> +	}
-> +
-> +	skb = netdev_alloc_skb(mctp_pcc_dev->mdev.dev, data_len);
-> +	if (!skb) {
-> +		mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
-> +		return;
-> +	}
-> +	mctp_pcc_dev->mdev.dev->stats.rx_packets++;
-> +	mctp_pcc_dev->mdev.dev->stats.rx_bytes += data_len;
-> +	skb->protocol = htons(ETH_P_MCTP);
-> +	skb_buf = skb_put(skb, data_len);
-> +	memcpy_fromio(skb_buf, mctp_pcc_dev->inbox.chan->shmem, data_len);
-> +
-> +	skb_reset_mac_header(skb);
-> +	skb_pull(skb, sizeof(struct mctp_pcc_hdr));
-> +	skb_reset_network_header(skb);
-> +	cb = __mctp_cb(skb);
-> +	cb->halen = 0;
-> +	netif_rx(skb);
-> +}
-> +
-> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-> +{
-> +	struct mctp_pcc_ndev *mpnd = netdev_priv(ndev);
-> +	struct mctp_pcc_hdr  *mctp_pcc_header;
+-Kees
 
-Extra space after mctp_pcc_hdr ?
-
-[...]
-
-> +
-> +static void  mctp_pcc_setup(struct net_device *ndev)
-
-Extra space after void?
-
-[...]
-
-> +
-> +static acpi_status lookup_pcct_indices(struct acpi_resource *ares,
-> +				       void *context)
-> +{
-> +	struct  mctp_pcc_lookup_context *luc = context;
-
-extra space after struct ?
-
-[...]
-
-> +
-> +static int mctp_pcc_driver_add(struct acpi_device *acpi_dev)
-> +{
-> +	struct mctp_pcc_lookup_context context = {0, 0, 0};
-> +	struct mctp_pcc_ndev *mctp_pcc_ndev;
-> +	struct device *dev = &acpi_dev->dev;
-> +	struct net_device *ndev;
-> +	acpi_handle dev_handle;
-> +	acpi_status status;
-> +	int mctp_pcc_mtu;
-> +	char name[32];
-> +	int rc;
-> +
-> +	dev_dbg(dev, "Adding mctp_pcc device for HID %s\n",
-> +		acpi_device_hid(acpi_dev));
-> +	dev_handle = acpi_device_handle(acpi_dev);
-> +	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices,
-> +				     &context);
-> +	if (!ACPI_SUCCESS(status)) {
-> +		dev_err(dev, "FAILURE to lookup PCC indexes from CRS\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	//inbox initialization
-
-I'm not sure but in net/ the general comment style seems to be /*
-*/, I grepped around a bit and didn't notice many comments of this
-style (except SPDX lines).
-
-Maybe this should be a /* */ ?
-
-> +	snprintf(name, sizeof(name), "mctpipcc%d", context.inbox_index);
-> +	ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_ENUM,
-> +			    mctp_pcc_setup);
-> +	if (!ndev)
-> +		return -ENOMEM;
-> +
-> +	mctp_pcc_ndev = netdev_priv(ndev);
-> +	rc =  devm_add_action_or_reset(dev, mctp_cleanup_netdev, ndev);
-
-extra space after = ?
-
-> +	if (rc)
-> +		goto cleanup_netdev;
-> +	spin_lock_init(&mctp_pcc_ndev->lock);
-> +
-> +	rc = mctp_pcc_initialize_mailbox(dev, &mctp_pcc_ndev->inbox,
-> +					 context.inbox_index);
-> +	if (rc)
-> +		goto cleanup_netdev;
-> +	mctp_pcc_ndev->inbox.client.rx_callback = mctp_pcc_client_rx_callback;
-> +
-> +	//outbox initialization
-
-Same as above on comment style
+-- 
+Kees Cook
 
