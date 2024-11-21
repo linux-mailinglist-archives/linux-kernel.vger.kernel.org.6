@@ -1,88 +1,98 @@
-Return-Path: <linux-kernel+bounces-416675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D159D4895
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:13:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C069D4898
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6952EB21313
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD422831D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AFCD1CB304;
-	Thu, 21 Nov 2024 08:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13C41CB312;
+	Thu, 21 Nov 2024 08:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqkRj3xp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iykhJj5P"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B8146A6B;
-	Thu, 21 Nov 2024 08:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E759B1AA7A6;
+	Thu, 21 Nov 2024 08:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176801; cv=none; b=qhTkHMrZ8iWVGyGIbIdjA4hrYtCk2dX7hRQGGk+SewAwCFGYHfXmX9lQ3EXmtSGl6ol3TuSk4SxHxdnh+qVgWp+1FAlbepqXKr+14NPeZMYzz8Do+t+Axjg/WnRVh4QnARHw1sg8XkT17vK3yF5st5LvUHEebPjEZBKepnxfD6U=
+	t=1732176843; cv=none; b=nwy/5xLiixhAVaQrDxGY1zr7xxlbM51u9BKTJn+pS4/WqJ9qg5EwB5fCf5ej7Frhmhtj4WtSPa8a7HQ1Xq4mZg1DcRS5VEI8QcLbTtHu0h9pnRc07uuvIQhzxo0ojP99DJMwbxltOaq/vI8hp5xrnvkLDhXHQScYPNnEmqNNyxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176801; c=relaxed/simple;
-	bh=yYU77W5hMPwN/8MGum399jtWX0B3yXjlv1mt4BYMu/Q=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=XNTQVhF6JyQh70LfM8cIzrls/CdPxIN8YlMuJ908EFKHV6Zjl/XLvOiatorGBJHn1AC2EFC28b2s3hE4HSaHBxLtgDwtGMCLyoKH/fGdT+vDtE/q11uZu4nLhmluWv6Vc79zdKlTuMUKjTyv3BTEFi1tgTMg4/HtlVC4GOHBy8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QqkRj3xp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D27C4CECC;
-	Thu, 21 Nov 2024 08:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732176799;
-	bh=yYU77W5hMPwN/8MGum399jtWX0B3yXjlv1mt4BYMu/Q=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=QqkRj3xpp/DAV81o0ivaN6X048i7YtJgQF0oHhyNyuTg9bCcdzE+JlHpgZr4IY4OY
-	 6Kpq3aqgSQyLPtxiwINyf5fpEWaay0MTw+cQ0jYm0cnPFuvCyQU9ACtFzDm0wdxrkc
-	 KL0FUu04qAK6+8Y4js0MJ2xt6JwZU0zJEicmZlC/4i38lJgIVdRvRrPeNX6JicNqBR
-	 7n/N0mnAbSWvoCGFrnpbtQkbqSY5Psi36uAtMVKO4bU1ISHV4VcD+aQsHqa4Bu2DhP
-	 ajuAbE7HPkqks+PYo82Xsh3uNR5kbkBrHTlseJ7iuxMyAXdyEIFY+mIyRf4GeJpSz/
-	 NHFBJr36h2CPw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Renjaya Raga Zenta <ragazenta@gmail.com>
-Cc: Arend van Spriel <aspriel@gmail.com>,  Franky Lin
- <franky.lin@broadcom.com>,  Hante Meuleman <hante.meuleman@broadcom.com>,
-  linux-wireless@vger.kernel.org,  brcm80211-dev-list.pdl@broadcom.com,
-  SHA-cyfmac-dev-list@infineon.com,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] brcmfmac: fix brcmf_vif_clear_mgmt_ies when stopping AP
-References: <20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com>
-Date: Thu, 21 Nov 2024 10:13:15 +0200
-In-Reply-To: <20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com> (Renjaya Raga
-	Zenta's message of "Thu, 21 Nov 2024 14:09:27 +0700")
-Message-ID: <8734jlypgk.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1732176843; c=relaxed/simple;
+	bh=CafMYVZ79DZqi/C5+exbASPocFVFWBObt8oXVHiDf3I=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=aWEFmwxmtqv8YZBkFERnh9iklmsqZZ400w4E+uonGYkiceLstE5DNk/aIlGV6gOcwLID/fp83VhWmWnYt4JhqZwjjQSeEI4k4r9U2nrij4tDywD7Kbj9uET+X1NIKb8mwpzcevIMYWwOGi1H1Y7FZcktqx4q1vcfU+gAXhFEdKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iykhJj5P; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C75B2C0002;
+	Thu, 21 Nov 2024 08:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732176831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o/7TdB2V8Qari8AxpRA55wppeVs7piY9IdN4S6uXBi0=;
+	b=iykhJj5P5oKabyN/wbVvS/lWLB59wkctPUKwkPDJ4hcaCH9DkyzaCk9vC+7cINQ32qDIZk
+	JOvrC1fpxMhBSx9scFzhO7+jR9R7DXppEoMCyRoW4ont/6IAIo/NeweCrVVkXzeRfYq6q1
+	HHH5UyV4a7nii78i3zdWexowkO9b9DA/t3gvJfAJqI8kWN62LAD9KHS9468T848n7RRwV8
+	WBQjRnzZi8Uk3K5RyZaoOh+raIDHzkCz+DGEba0aN2woidWTdIxN0P81Z6PaByyU61LwDB
+	EL8+XmnlbP9EAx/CeJoSpdFEwMM2xzfQhD1WUEcCn1h9jWMiC2nG2qZzrc0AAQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Date: Thu, 21 Nov 2024 09:13:49 +0100
+From: Kamel BOUHARA <kamel.bouhara@bootlin.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Russ Weight
+ <russ.weight@linux.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry
+ Torokhov <dmitry.torokhov@gmail.com>, Marco Felsch <kernel@pengutronix.de>,
+ Henrik Rydberg <rydberg@bitmath.org>, Danilo Krummrich <dakr@redhat.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 0/5] Input: Add support for TouchNetix aXiom touchscreen
+In-Reply-To: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+Message-ID: <560bfaab3c6d1fb1190f0b1daa55e797@bootlin.com>
+X-Sender: kamel.bouhara@bootlin.com
+Organization: Bootlin
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: kamel.bouhara@bootlin.com
 
-Renjaya Raga Zenta <ragazenta@gmail.com> writes:
+Le 2024-11-19 23:33, Marco Felsch a écrit :
+> Hi,
+> 
 
-> This removes the following error log when stopping AP:
->
-> ieee80211 phy0: brcmf_vif_set_mgmt_ie: vndr ie set error : -52
->
-> It happened if
-> 1) previously wlan interface was in station mode (wpa_supplicant) and
->    connected to a hotspot
-> 2) then started AP mode (hostapd)
-> 3) and then stopped AP mode.
->
-> The error happened when it tried to clear BRCMF_VNDR_IE_PRBREQ_FLAG.
-> This flag is not set in `brcmf_config_ap_mgmt_ie`, but
-> BRCMF_VNDR_IE_ASSOCRSP_FLAG is set instead.
->
-> Signed-off-by: Renjaya Raga Zenta <ragazenta@gmail.com>
+Hi Marco,
 
-'wifi:' missing but I can fix that, no need to resend because of this.
+> This adds the initial support for the TouchNetix aXiom touchcontroller
+> family.
+> 
+> This series is the successor of [1] (many thanks to Bootlin) but I
+> started from a fresh v1 since I had to rework the driver completely.
+> 
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Thanks for taking over and I honestly think it's good idea to completely
+start it from scratch, I should have done it as well.
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Greetings,
+--
+Kamel Bouhara, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
