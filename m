@@ -1,142 +1,91 @@
-Return-Path: <linux-kernel+bounces-416860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC8519D4B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:12:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB99E9D4B6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EBF98B23E31
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917DF281852
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD9D1D278D;
-	Thu, 21 Nov 2024 11:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAA71CB32F;
+	Thu, 21 Nov 2024 11:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZnnDDvKB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=gpost.dk header.i=@gpost.dk header.b="utp0Fhkh"
+Received: from m204-245.eu.mailgun.net (m204-245.eu.mailgun.net [161.38.204.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F11D12F9;
-	Thu, 21 Nov 2024 11:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FF81C9DC9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.38.204.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732187545; cv=none; b=fy6YIfi87JWiwPnbY4Ausizuw5mb/9iTbVpm8LXfeP+I756jVyJg/U+PU54SHV5yxSJamSRuR5Fsie3lG3bkreIMRtHm026b74iVpngQXbxDBcVqNo+PjvqJn4zDqcYfxI91wWEpN4km9m8CCoJLM5PqoTakbgEgYIXZg7nA+Nc=
+	t=1732187876; cv=none; b=kQeUBQcKY3QnkGq9i7Dg4+/b2haYk9ilTe9EQCUxBCgfzeMHarxcndBdEUtsWkqQsXjsfub7pVIjmXu1heWnCmgz9OmDAoG0SWvmXvkmnOQePN+sdr14xQB7UhPkwCcq6sIrA02FxWsWi7h1QdwMsO+MDqsW6DEdTPYjkq6z0rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732187545; c=relaxed/simple;
-	bh=46rZ8pT6LBDo++XU0X4+ubvk4/TsYvCXkojRMgrCm2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FURfCPbmDZFgieMSS7iDo1dmSjHpuAfrLPC7iH8YTI3SOVlspiwFOmZj/z8Xoq4XmuavEo143DHWsQjJtFnnA5NXO/3fKUFevl9GaAJ1TDwD8jjpbLgFY7MOZBWFsZBOHIUJej9Jj9+6vUu65CnjgyAXp7G1UAZULLBL7PYGKyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZnnDDvKB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=7u6hZNi/XuzFou5ujdfwghsus0DK9jsxshgCxjL09s4=; b=ZnnDDvKBvItXFztIL1wgf8XTMK
-	ewcwZjNRWSYrjZH+rZT6o49FOe/kRo9OZGytGd+voz+HNGUcuH+PP2GaYPZHs4m/S9nn234JQU+s0
-	jcVN8NhToLe9FCA+qM5KpNzoUaPZLKtrF3vHdq2UtRbclGSqWbGDeyTL/5pPoGHMpsaTGnJ6Ar+wJ
-	2CDFUxa1pB5WeOoE/5nHHErJ8ykxvkEDM06/dAOiCtOt+bGYezuZWGNQI8o2HOKhnZqVGCA34MRgT
-	P2M6Z3Vn21k+nDAjOFXWjNQOUddBYU3AChzpcJxfmgAg0CxIN4kwolN9vrfeY3nk6x7i3pwoH4jPE
-	4WMvU03g==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tE56i-00000006J1a-2zVQ;
-	Thu, 21 Nov 2024 11:12:22 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8D85C30068B; Thu, 21 Nov 2024 12:12:21 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:12:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>,
-	Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure to
- defer kernel TLBI
-Message-ID: <20241121111221.GE24774@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-14-vschneid@redhat.com>
- <20241120152216.GM19989@noisy.programming.kicks-ass.net>
- <20241120153221.GM38972@noisy.programming.kicks-ass.net>
- <xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1732187876; c=relaxed/simple;
+	bh=lskpCqARPZ66IGsZu+9xuo/vvvshx0hu6hKhAuvzgo4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JD/C7zC+LocHUNcQErhlJybNGU8rSstMe2YQiqmTYMd1cgXoB74ZPGeLZB5oYnPIy8Sq6/Lj1GAGVplG20drF8gE83nb+ptu4vOkzrODL9+QzaGUJHRCZpW/KWNa0Bemp/Wa98oEW2kdaeNbaNx2D9Wz5GtG3CuVc3E20RTO8Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gpost.dk; spf=pass smtp.mailfrom=gpost.dk; dkim=pass (1024-bit key) header.d=gpost.dk header.i=@gpost.dk header.b=utp0Fhkh; arc=none smtp.client-ip=161.38.204.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gpost.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpost.dk
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=gpost.dk; q=dns/txt; s=mta; t=1732187872; x=1732195072;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Subject: Cc: To: To: From: From: Sender: Sender;
+ bh=oTgoFAGcGKxQkLCwpsqFWVJVat/rKItNxvq2AQgkwGA=;
+ b=utp0FhkhtTjdWzorxDSCmMsLvlq7M1dQ3nRqmT2839maTh35xls7mftEfPVVFb8BzKu4oGLuqT+pXDltZiHATOFsvuvh1p/ZBqyWdYyDSt6AFa+pd+knEcWAZtDw0nWhUFmzlDXUftZQfJ2oSYIEGq6Tkf2PD9jAMW+KB0twJ5c=
+X-Mailgun-Sending-Ip: 161.38.204.245
+X-Mailgun-Sending-Ip-Pool-Name: 
+X-Mailgun-Sending-Ip-Pool: 
+X-Mailgun-Sid: WyJlMDY5ZSIsImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmciLCJmODkzZCJd
+Received: from qubit.home (11.85.120.188.andels.net [188.120.85.11]) by afe10bebdc9e
+ with SMTP id 673f16e05111dcf9bdc000f6; Thu, 21 Nov 2024 11:17:52 GMT
+Sender: gpdev@gpost.dk
+From: Gil Pedersen <gpdev@gpost.dk>
+To: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Gil Pedersen <gpdev@gpost.dk>
+Subject: [PATCH 0/1] Fix to allow more correct isatty()
+Date: Thu, 21 Nov 2024 12:12:53 +0100
+Message-ID: <20241121111506.4717-1-gpdev@gpost.dk>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 06:24:56PM +0100, Valentin Schneider wrote:
+This patch comes from an issue discovered in systemd, where it can fail to
+restore a text TTY session after a GUI session is stopped when compiled
+with musl libc.
 
-> > Oh gawd, just having looked at xen_write_cr3() this might not be
-> > entirely trivial to mark noinstr :/
-> 
-> ... I hadn't even seen that.
-> 
-> AIUI the CR3 RMW is not "enough" if we have PGE enabled, because then
-> global pages aren't flushed.
-> 
-> The question becomes: what is held in global pages and do we care about
-> that when it comes to vmalloc()? I'm starting to think no, but this is x86,
-> I don't know what surprises are waiting for me.
-> 
-> I see e.g. ds_clear_cea() clears PTEs that can have the _PAGE_GLOBAL flag,
-> and it correctly uses the non-deferrable flush_tlb_kernel_range().
+The specific systemd integration issue is currently resolved in the musl
+master branch by closer aligning the implementation with glibc, but the
+underlying isatty() implementation is still flawed since it can return 0
+(false) for something that is definitely a TTY. Essentially both musl
+and glibc give up correctly handling this case on Linux due to
+inadequate/buggy kernel APIs.
 
+Thus I am proposing this patch as a solution to fix the kernel APIs. An
+alternative fix could be to add a new IOCTL to specifically handle this,
+but that seems overkill.
 
-I always forget what we use global pages for, dhansen might know, but
-let me try and have a look.
+Link: https://github.com/systemd/systemd/pull/34039
+Link: https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/70711
+Link: https://www.openwall.com/lists/musl/2024/08/20/2
+Link: https://git.musl-libc.org/cgit/musl/commit/src/unistd/isatty.c?id=c94a0c16f08894ce3be6dafb0fe80baa77a6ff2a
+Link: https://sourceware.org/bugzilla/show_bug.cgi?id=32103
 
-I *think* we only have GLOBAL on kernel text, and that only sometimes.
+Gil Pedersen (1):
+  tty: respond to TIOCGWINSZ when hung
+
+ drivers/tty/tty_io.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+-- 
+2.45.2
+
 
