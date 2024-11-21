@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-417071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0819D4E95
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:21:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC1F9D4E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A923C1F2591A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1E3B2843D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884C31D89E2;
-	Thu, 21 Nov 2024 14:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735A11D89FE;
+	Thu, 21 Nov 2024 14:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="sbpl/LPi"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kVKaI7LL"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D9D1369B4;
-	Thu, 21 Nov 2024 14:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861A017BD3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198851; cv=none; b=fK3wRagZK836HDreDuS4oB7k7Ew+c/X6ggfUlQ/23KStMqV3+CiAkPTBVgk/TTZVBrisZ1JjvOmE0h/wStk2Erx21KnGAzDa069PsdkiAMqTYt1CnhofsbkBqU8o8YNoW/OkyDv0G/OvFs6BRq5cAd9WZUZ5UFQqD+3lQf2/0ns=
+	t=1732198638; cv=none; b=PxfVM3XuOuH/TtodFD2VBR3LqyR8Zbfl91EGQgvXdWXBAh4gbILa8MRzEiUtYua2tqV0ZWtYNDpPJDUVBHbdhgPRP8QFZFQ01YIb60twBHFaysT84XfH7Wb/o9xQqWs5ES9+ZSLXE/R+s9w0h70ZjdXzWmXXVcYlhi+iVmsL4m0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198851; c=relaxed/simple;
-	bh=TMcvAxcUInwde+Vl6F4hkgr/2nSkXZTrn99Ur+TK0Uw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GdPRubK6hrgkmWmjUnkrdayocvzo5ImAlLr7uR2+qffvO9tJDGa1mdi5Encou7VcdKP7DpCfBbjuxKv27lgSfW4H6Oj+4NRpVZk8uBOdkfflWUj2UF0A/Q+L8GaTI/P01qc8tZ/CuRZ9paDpqgRmhUUmts9mTboPfirpR3p7gqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=sbpl/LPi; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALA95BP028349;
-	Thu, 21 Nov 2024 15:20:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	JAlbkjqBlD0R3FSv5bX889vfuMU5j/rR8gfcpzLu/u0=; b=sbpl/LPiBr3D4gPg
-	/K8PcSO2DSu650saG5zzqbJeDCpFlqysf98wDAZP5pxSfKeqK14PEK7ZkP778mtM
-	NWHfndCwMrgNgej4wfQ4OzKyNmITFvbKSu6Fb3bbnexoFvZb1ZXi2uPz4/S7XGrb
-	zZMFOA6Friu12I7rzLjB8rUDO1m9SRGrmJWkaxJm2W1dU5fdpYlITvCEX7id04F4
-	ccW6yQkfDlbYzacvJvVmbiKajZrhaHpKPwrWND5BAyI5CMxsFgz4nyTgFqBlhL/9
-	CJV1BvgvvvPzrlJFqdmN96OxBN4ICUnYFHuslXTafavZiU1h+y6JCgiSmR0dVLP7
-	VsBwxQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xkqf713x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 15:20:18 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 86B6340046;
-	Thu, 21 Nov 2024 15:18:33 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5C0A828D457;
-	Thu, 21 Nov 2024 15:16:43 +0100 (CET)
-Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 21 Nov
- 2024 15:16:42 +0100
-Message-ID: <86907cc9-5339-435a-a346-08beea21b886@foss.st.com>
-Date: Thu, 21 Nov 2024 15:16:41 +0100
+	s=arc-20240116; t=1732198638; c=relaxed/simple;
+	bh=gY4slTsrzigmIW7W5TPf/5NTUCDpLiT/MxahrSWIQEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERXMn3oHYvb6vd/P5TbkVSbI4t/mprke0hKWi5YocSX47tXm2nVpa9sSmE/GjqLfY6Uiuy3ygLwIl1ie7x+cgCvGXXxWD6uAD34Tq/WSBapZ/3L+15JauqNBZH3PGE4HxFPLuBSpOYoBT6Ux6IaVK9lhb+swSBdwlcAqO8u7UXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kVKaI7LL; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cfddb70965so1218815a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:17:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732198635; x=1732803435; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjYV0f9LV8DKVMMDSPPIZsuPEs8fFiR62vH6BjDoHdA=;
+        b=kVKaI7LLN0hNHYNAh64WYFHhT/w/Y54BnpEheuqDNoxlr+b4zAOl37j1X0kbylKOPC
+         UM2ldTPj0GT73LAHQTsMOIhz5CS4HREoCHOA4UsMGGTzsatHyUzh4bobxh+1yIJ1enH6
+         SIKkgLilkIona/oq9V31Q0VyrPAsTVEmY5JE2ZJbPkXVN5L/u0vItWLw3aKWswwY1fnx
+         3QYDFFx+DCiL3x63LNtHyugGB5XOE1bOxqQL1IH0yPdujTeIQethBcRiVyZB3Zym2zvx
+         WUzecFQ40n9VhsFcAV/94LdBPx+B3RZgHNP4z7TgWrhqrPiyEYPcGnDEGFFd3Vtf4mUk
+         Y5yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732198635; x=1732803435;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qjYV0f9LV8DKVMMDSPPIZsuPEs8fFiR62vH6BjDoHdA=;
+        b=BytDsEDPUCKKBIHHN3oIBoeQUbHiZ48OzMKIs5UysAXz5dKQacz7bT98TKCoNOCcyd
+         axkk83c7QTWYGoV/7QXDReRwjdDrNR3PXz/DZAFQswZW0hc1gSw3T8Ui7u8CwJnqmeqq
+         UTQ1tz9NWVETsbMV26Bem7GcDKuIlraqLSWENMl0ZkSBJMwHYNgliWqowUwAgg+1/ntf
+         xVFBafyRVEoDobOsypB9klSxqJq1DG1zqTNh+Nfgvsurtil9GPybbs4kfMsqaTx/r8jz
+         2SEd9r4LYyY35YVnWCdRXL2AD3fiP7rDoq72MG7KP8yi2RM+f9Jr/2q7oFrgmkPHqNfV
+         nFtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKx6iXGDHY3jVoyy+32RVHJeyoGRdCptqSvTujt38S79CSQHADkGUXfiphsnhEdT9rBj+mxyPJcoAxQrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Kt3/BegLQdHrZC+tjf5JFFDuw8ITs7R3qjW2b/HWgSZFvLVg
+	vAu1997ksNlCyCgQ1EtPbA6QDp/4xr8bASHn/GaKJ8bBdbOSOSSwMBSn5Z2hptE=
+X-Gm-Gg: ASbGncsYw45s2lSGtOh8m4JD3QXWrINljsz26Pk8zKLTju/Wiwnsf8vacxxev585sc2
+	aHowlCTV1HZ2z688RX9syAVhCKWjE+B2ecmvaeKtLkcQ3DWYkHOSiVvmb++1Fy2SZZ7Pg2FB/n2
+	G7fKhSdn2P77e5pmXm/RTZWvEIXSQrOCzmhDN/xP1bANW1mgEgAyw5VbBSJFL6FyicROHE4O8Ks
+	vNLvvthjoIMVIKUTPc7oUTIhTWv+ZsRs/PAiLKNJpryWvHkRzaajQ4=
+X-Google-Smtp-Source: AGHT+IFyOr66P+E7C7fnM/4Z3SPEljF0WWGFDrqoTUQ0MA6Kwx1at3Yb3Tko4ioxPpp2Dhuf/ouQLQ==
+X-Received: by 2002:a05:6402:4404:b0:5cf:d5ad:2809 with SMTP id 4fb4d7f45d1cf-5cff4cb51c3mr5195197a12.24.1732198634797;
+        Thu, 21 Nov 2024 06:17:14 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44ef2d7sm1866994a12.19.2024.11.21.06.17.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 06:17:14 -0800 (PST)
+Date: Thu, 21 Nov 2024 17:17:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Paolo Perego <pperego@suse.de>
+Cc: Kees Bakker <kees@ijzerbout.nl>, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] staging:gpib: Fix a dereference before null check issue
+Message-ID: <47c36187-7315-4a32-802c-4909599e36f7@stanley.mountain>
+References: <20241120144653.377795-1-pperego@suse.de>
+ <a0807e04-b2c9-4261-9b3f-7660fe258f56@stanley.mountain>
+ <6ca90e87-965a-4895-ba72-8144540f6e4c@ijzerbout.nl>
+ <b843f8a9-1562-458c-8f6a-c59b1037b756@stanley.mountain>
+ <wgcv5wesq3q3xank6elouewntisernnw4agfziqekkeirftx6i@ajucs5yqsvus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Add WebP support to hantro decoder
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ezequiel Garcia
-	<ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>,
-        Ricardo Ribalda <ribalda@chromium.org>,
-        Erling Ljunggren <hljunggr@cisco.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus
-	<sakari.ailus@linux.intel.com>,
-        Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-        Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-        Benjamin
- Gaignard <benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241121131904.261230-1-hugues.fruchet@foss.st.com>
-Content-Language: en-US
-From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
-In-Reply-To: <20241121131904.261230-1-hugues.fruchet@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wgcv5wesq3q3xank6elouewntisernnw4agfziqekkeirftx6i@ajucs5yqsvus>
 
-Hi all,
+On Thu, Nov 21, 2024 at 03:10:02PM +0100, Paolo Perego wrote:
+> On Thu, Nov 21, 2024 at 10:37:30AM GMT, Dan Carpenter wrote:
+> > On Wed, Nov 20, 2024 at 08:54:16PM +0100, Kees Bakker wrote:
+> > > Op 20-11-2024 om 18:04 schreef Dan Carpenter:
+> > > > On Wed, Nov 20, 2024 at 03:46:53PM +0100, Paolo Perego wrote:
+> > > > > This commit fixes a dereference before null check issue discovered by
+> > > > > Coverity (CID 1601566).
+> > > > > 
+> > > > > The check ad line 1450 suggests that a_priv can be NULL, however it has
+> > > > > been derefenced before, in the interface_to_usbdev() call.
+> > > > > 
+> > > > > Signed-off-by: Paolo Perego <pperego@suse.de>
+> > > > > ---
+> > > > You need a Fixes tag.  But I'm pretty sure the correct fix is to remove the NULL
+> > > > check.
+> > > In the whole agilent_82357a.c module there is no consistency whether
+> > > board->private_data needs to be checked for a NULL or not.
+> > > 
+> > > If Dan is correct then it is better to drop the NULL check, not only here
+> > > but in a few more places as well. There are at least 10 functions were
+> > > there is no NULL check for private_data.
+> > > 
+> > > Run this command and you'll see what I mean
+> > > git grep -3 -e '->private_data' -- drivers/staging/gpib/agilent_82357a
+> > > 
+> > 
+> > I had looked at similar issue in a different driver:
+> > https://lore.kernel.org/all/2d99b7a6-f427-4d54-bde7-fb3df5e19e53@stanley.mountain/
+> > 
+> > Here the NULL check we are discussing is the same thing.  The private data is
+> > allocated in attach() and freed in detach().  The detach has no need to check
+> > for NULL because we can't detach something which isn't attached.
+> > 
+> > The other NULL checks are in agilent_82357a_driver_disconnect(),
+> > agilent_82357a_driver_suspend() and agilent_82357a_driver_resume().  And there
+> > the NULL checks are required because it could happen when the driver isn't
+> > attached.
+> > 
+> > I also did a quick glance through to see if any of the functions which didn't
+> > check for NULL should get a NULL check but they all seemed okay because either
+> > the board was attached or the caller had a NULL check.
+> > 
+> 
+> Hi all and thanks for the fruitful discussion. 
+> 
+> > So I think we can just remove this one NULL check and everything else makes
+> > sense.
+> Please, apologise if I'm too newbie here to understand next step on my
+> own. Am I asked to do something, to submit a V2 with the correct Tag or
+> the patch is good as is?
+> 
+> ( No pressure to be accepted, it's just my willing to understand and go
+> into the process :-) )
+> 
 
-The corresponding GStreamer code has been pushed here (v4l2slwebpdec):
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7939
+Please send a v2 which deletes the NULL check.
 
-BR,
-Hugues.
+regards,
+dan carpenter
 
-On 11/21/24 14:19, Hugues Fruchet wrote:
-> Add WebP image decoding support to stateless V4L2 VP8 decoder.
-> 
-> This have been tested on STM32MP257-EV board using GStreamer.
-> 
-> Simple basic test:
-> $> wget https://www.gstatic.com/webp/gallery/1.webp
-> $> gst-launch-1.0 filesrc location= 1.webp ! typefind ! v4l2slwebpdec ! imagefreeze num-buffers=20 ! waylandsink fullscreen=true
-> 
-> Slideshow of a set of WebP pictures and WebM video files:
-> $> wget https://www.gstatic.com/webp/gallery/2.webp
-> $> wget https://www.gstatic.com/webp/gallery/3.webp
-> $> wget https://www.gstatic.com/webp/gallery/4.webp
-> $> wget https://www.gstatic.com/webp/gallery/5.webp
-> $> wget https://samplemedia.linaro.org/VP8/big_buck_bunny_480p_VP8_VORBIS_25fps_1900K_short.WebM
-> $> gst-play-1.0 *.webp *.webm *.WebM --wait-on-eos
-> <hit key ">" to display next file >
-> 
-> Large WebP image > 16777215 (size > 2^24)
-> $> gst-launch-1.0 fakesrc num-buffers=1 format=4 do-timestamp=true filltype=3 sizetype=2 sizemax=25165824 blocksize=25165824 ! video/x-raw, format=I420, width=4096, height=3072, framerate=1/1 ! webpenc quality=100 ! filesink location=4096x3072_HQ_random.webp
-> $> ls -l 4096x3072_HQ_random.webp
-> [...] 16877404 Nov 20 11:40 4096x3072_HQ_random.webp
-> $> gst-launch-1.0 filesrc location= 4096x3072_HQ_random.webp blocksize=16876610 ! image/webp, width=1, height=1, framerate=0/1 ! v4l2slwebpdec ! imagefreeze num-buffers=20 ! waylandsink fullscreen=true
-> 
-> Large WebP image decoding using post-processor is untested because of lack
-> of hardware support on this platform, nevertheless support is provided in
-> this serie for further testing on another platform having post-processor
-> support.
-> 
-> ===========
-> = history =
-> ===========
-> version 3:
->     - Fix remarks from Nicolas Dufresne:
->      - Document constraint about key frame only for WebP
->      - Fix rebase issue
->     - Fix typo detected by Diederik de Haas
-> 
-> version 2:
->     - Fix remarks from Nicolas Dufresne:
->      - Use bytesperline helper to compute chroma size
->      - Introduce a new explicit WEBP frame compressed format
->        instead of relying on VP8 + WebP flag
->      - 4K support in both decoder and post-proc
-> 
-> version 1:
->    - Initial submission
-> 
-> Hugues Fruchet (3):
->    media: uapi: add WebP uAPI
->    media: verisilicon: add WebP decoding support
->    media: verisilicon: postproc: 4K support
-> 
->   .../userspace-api/media/v4l/biblio.rst          |  9 +++++++++
->   .../media/v4l/pixfmt-compressed.rst             | 17 +++++++++++++++++
->   drivers/media/platform/verisilicon/hantro.h     |  2 ++
->   .../media/platform/verisilicon/hantro_g1_regs.h |  3 ++-
->   .../platform/verisilicon/hantro_g1_vp8_dec.c    | 14 ++++++++++++++
->   .../platform/verisilicon/hantro_postproc.c      |  6 +++++-
->   .../media/platform/verisilicon/hantro_v4l2.c    |  2 ++
->   .../platform/verisilicon/stm32mp25_vpu_hw.c     | 17 +++++++++++++++--
->   drivers/media/v4l2-core/v4l2-ioctl.c            |  1 +
->   include/uapi/linux/videodev2.h                  |  1 +
->   10 files changed, 68 insertions(+), 4 deletions(-)
-> 
 
