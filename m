@@ -1,112 +1,134 @@
-Return-Path: <linux-kernel+bounces-417539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5621F9D5559
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:22:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4A69D555C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:24:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC8C1B21121
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25214283D3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:24:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688A1DA60B;
-	Thu, 21 Nov 2024 22:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D5F1DA2F6;
+	Thu, 21 Nov 2024 22:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MOqVzfvS"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WrrsqeW7"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF4B1CB50D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C642C1ABEB0;
+	Thu, 21 Nov 2024 22:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732227753; cv=none; b=qsYyE9h7Ew+acGlPklBJlPCOfiWES8qEUBviQjwTQpxlayXrE+iZdDin1/ZAC66vT+rDgAJXHoWuqJxA3+j28NfX653TbecU3goiFBeJ6b6+wICU3j8LCrDWl+3v5/kOdeG4Oe9W6pJdZknQqUkAHeU3fdDrVPrWZnUEKYeZvXA=
+	t=1732227855; cv=none; b=t+IgFd96xTuG+Fl8EN9oWfxRxjpmLM5qFM/6SqB5TcJUpG3NTT7Wued23gKXQhVXH1R/T99eFg+BOzV5P2Jj5tWcNGs6w1e+d/4/BuphS0syBsP6wQzaQgW6f63U+1vMiS/gmLzaWFoaTHXsAQzPXYPkmqTkGFXvUCS7Q+d3Q1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732227753; c=relaxed/simple;
-	bh=nVCXXLshd4gwOqlB2npfNg6YomsSuRLIGjj+1pL84Yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdsRXGuQhlz7SV9HdWGEIAwSI6P477KGRTiPy/5AY+p3GNJa2bqJPPlUZcghE5M7d9J5fJVzG4gMTJYwFT93nkeNql97sjEO5BboA5cN5MVggfdvFtdC41XepcsU3haBkPpRwKHatxMths9rilNetwLUM+jCJRBuV0Dwu1ZIvwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MOqVzfvS; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fc96f9c41fso16059921fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:22:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732227749; x=1732832549; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ej8S3vTqvmhNIveEQbgfSoDst8pJaJNYhopo+ceKPlc=;
-        b=MOqVzfvSh7ZZ2+/B83neC3p+Qtlchkw0fMzb9IHoV9e5oxTpQLcS/8wVWWcqEq+ir1
-         c1BpA7gkwdWxPElsZI1TnMjsR8IuWJBHOTjX18AFO9s1Rhm/EU8VeRoBqxm3NUyykdQU
-         8JjSdGCP6rerlDnWJEcXZJNwM7+DSAAGuehjT74A65aN/4rPiW98xJm9ELlkiqxNXInN
-         SHT0nK95QgM8UEnpHOzx8Ntrs3p/1xTb3NUWUZAjE1ylXoKbqsytr2yPsmvAw0hxkgij
-         W+6JCeYyQvh8xhAeffIKZBu7cnKes1LK1xAurVdi0Vx86cDTxCmizjbZlEzVbvf9h2v9
-         k18g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732227749; x=1732832549;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ej8S3vTqvmhNIveEQbgfSoDst8pJaJNYhopo+ceKPlc=;
-        b=S5sFmwvKAsTu+173v94ivF2K4jyByJijs090AwchzQNvHbJpTf/hp12hvLQxXqUcgU
-         7CcQ8ZkcSVpR7U3fvgruq5kOib2anV9UKg3mwco4xAFoam9i4gYxdeiZ3xWXnduSCd4h
-         QZxJvdEta6S/5ty1kSTrz6jjOZpPTltuTcPcqU4LSlIHvP4iiMti7/HE4NMct/TyZaLA
-         nzoTkRyWvxEn3Ok4vfhfm0lLafzAcASJkGfZHMVHbl4boBhHflA/Kz0HcHLrdWIDJDNp
-         Yd8owmBUNTuHBKe4JFjKmKp57pObd9CdZSGr8RH1jmGOnGkjP+AdJnH91phFwfCIENWz
-         DbKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzhTIHVlUl6hGAZ6yWjxmhvplUUlpTtInuHB7klAj3KWmQaTUB6QBFowznBISW6s0fzkwRwf6BLohetb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLVvQvV+bOJsiEa2FzhNokhvoFDZJEAPtJ7+LkS+DJylMGsyOf
-	l5X2bVuf/2Sw0AidvKWNXuHturuQ8+T1wdLVjyKvEC9JvSu7Yr70Qu5aiQsevQc=
-X-Gm-Gg: ASbGncs8kuaMr/Up+OrJAjqJNz3LDKo4zWMU8wxRu2O6XcjrcMAzNXjb8SEE7n4UOJa
-	RmKv2/ZgeX0nsHkBXxMR5QJ8wypyHf1S8lEJBhxnbgzR9BkZ6wHg/s1nc8BvSj3Lu/G8laUYiko
-	5KrzC0N2wxKNcwTa4fgomQ96ckDhk1SguXvnyCNzUxdalpdZw3Rd+CAMw1B5D2QM0CUX9wNsqja
-	oqckxv9rlT0SDfIZoJC+S8QWNh6IYvN3l/3EZaqt9ihVCig8UmBRiPyDHqGqnZjqJA/J1Fe0sKc
-	u1dEcX9PZfAbGZn4m42/if0SF6ji3g==
-X-Google-Smtp-Source: AGHT+IE4DmJhxMe9nKX/xPXS6QUj2KIG9OcMLvY6lKA9hzUZEqv+8puapbezE/MYq4KUI/+HEGfV8A==
-X-Received: by 2002:a2e:9a11:0:b0:2ff:6204:951f with SMTP id 38308e7fff4ca-2ff9697ce7fmr14354211fa.8.1732227749517;
-        Thu, 21 Nov 2024 14:22:29 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa4d3f7f2sm645911fa.44.2024.11.21.14.22.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:22:28 -0800 (PST)
-Date: Fri, 22 Nov 2024 00:22:25 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v4 2/2] misc: fastrpc: Rename tgid and pid to client_id
-Message-ID: <i5aii3fcha3yasqhuiww4rzkfvr4th47lkog4lm5xhnhh3ygac@euhofylhilih>
-References: <20241121084713.2599904-1-quic_ekangupt@quicinc.com>
- <20241121084713.2599904-3-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1732227855; c=relaxed/simple;
+	bh=LbRgVvQZxj7aaCo9OJqHQ/d5TAe2/ZIQDNFZtvSaUYw=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=h8elCvETyQNOHC9BdvdTb1waTT/XshyMOciBS8kwDH0PW97N40vxFsGfvovi0idt4jr2C4MhtJMlxwvuKSsk4LsDmym2NOzwpf63/IP88V+MOpfT3l7XWM6wyUCOz3FkcRptIU/64+q65Ff+turoCpHaFETCmXosSsj38eCAnnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WrrsqeW7; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9FF6511401BA;
+	Thu, 21 Nov 2024 17:24:11 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 21 Nov 2024 17:24:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732227851; x=1732314251; bh=MCnFKlB3Mx4i+GXy8Rv7vHneTCChY5/z+QA
+	XzxW/ABY=; b=WrrsqeW7OWsHAoyf2UXMusNTBhrmKPtFCxTW+5HrJr+hljCj0qj
+	n+Dk5yDtBgzrkwtRx0Lqb0XBT8TcNGRF+sNB1fWqZhjbfA/eCXhW4ZoXvwYsPX39
+	lBpfdaRrOaunp/JwpUAWnU8ohZ4FHa6Vt5obsL+hThfCjIVYkAgBnrBwD7RS+FQ1
+	wZOL0smneA1AgubhBWmKOdQd0F3gWwxc58VPVh8dLDmXgFwKxD+J6gbAEDL3QlE3
+	zAJyZsg/SfwneZU5pzR5EJJmzNU2Z7W1X/l3LNU2etP0/SSDLgnTlTaV6bCwsQng
+	t8DP45ioC4DEqXxAvsQIJ5TP0sohPqKVf1A==
+X-ME-Sender: <xms:CbM_Z1dJchh0Jm26t8yK9bfDLcbItsqVnK5ItKXrn90wZpn2rOGY_A>
+    <xme:CbM_ZzOAt2y9CXYORirjhzT9FIYXVATpRb49nGFL-XPcQcPHygvbjWkMBIwnF-6uo
+    P0QjBsr1IRitnKnqyA>
+X-ME-Received: <xmr:CbM_Z-i_s4eDrggCfVub5KWzPkbGlaIuN4WGf_htexFCdN96q_3FmGAXf39d0fYM7BAFPHD-CWQOmEvHZget1Evbbyu2OBRNxmI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdduheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecu
+    hfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrd
+    horhhgqeenucggtffrrghtthgvrhhnpeefieehjedvtefgiedtudethfekieelhfevhefg
+    vddtkeekvdekhefftdekvedvueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhn
+    sehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddtpdhmohguvgepsh
+    hmthhpohhuthdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohho
+    thhlihhnrdgtohhmpdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorh
+    hgpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthho
+    pegrnhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepuggrnhhivghlse
+    dtgidtfhdrtghomhdprhgtphhtthhopehprghvohhnvgesrhgvthhrohguvghvrdgtohhm
+    pdhrtghpthhtoheplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepshhprghrtghlihhnuhigsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:CbM_Z--RtqQ1Y4Uj7-OYeVidoaJ8EnZwYBEoJTTe27Bzfpl9L_ARTA>
+    <xmx:CbM_ZxuhcC9y9rO-XjiY3EfJldGI6Em_uXpgXyakzMpH-l5VK69Kwg>
+    <xmx:CbM_Z9F2fdMJtSosO7BxLX6tIzwtlSP7jb-Rgu7lT6B3Pi8sS7ScFg>
+    <xmx:CbM_Z4PudP6kHaJ2TCC8f7ZmWNJsMWDbInLA6qd6BSJJeF5uu3OxJg>
+    <xmx:C7M_Z3IM4BwQDYJakFmKQCQBUVNYyi8P3uMVyeMa1mjfvOX10unwvr8X>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Nov 2024 17:24:06 -0500 (EST)
+Date: Fri, 22 Nov 2024 09:24:36 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Andreas Larsson <andreas@gaisler.com>, Daniel Palmer <daniel@0x0f.com>, 
+    Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
+    linux-rtc@vger.kernel.org, sparclinux@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v4 1/2] rtc: m48t59: Use platform_data struct
+ for year offset value
+In-Reply-To: <20241121174630cbc6cfa6@mail.local>
+Message-ID: <e6dbc3e6-5305-7c00-90e7-3d06b1b5e459@linux-m68k.org>
+References: <cover.1731450735.git.fthain@linux-m68k.org> <665c3526184a8d0c4a6373297d8e7d9a12591d8b.1731450735.git.fthain@linux-m68k.org> <173193673970.37302.12055966881506116157.b4-ty@bootlin.com> <8140c873-3456-1469-8bc5-2e94d409cf8a@linux-m68k.org>
+ <20241121174630cbc6cfa6@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121084713.2599904-3-quic_ekangupt@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Nov 21, 2024 at 02:17:13PM +0530, Ekansh Gupta wrote:
-> The information passed as request tgid and pid is actually the
-> client id of the process. This client id is used as an
-> identifier by DSP to identify the DSP PD corresponding to the
-> process. Currently process tgid is getting passed as the
-> identifier which is getting replaced by a custom client id.
-> Rename the data which uses this client id.
+
+On Thu, 21 Nov 2024, Alexandre Belloni wrote:
+
+> On 21/11/2024 09:13:32+1100, Finn Thain wrote:
+> > 
+> > On Mon, 18 Nov 2024, Alexandre Belloni wrote:
+> > 
+> > > On Wed, 13 Nov 2024 09:32:15 +1100, Finn Thain wrote:
+> > > > Instead of hard-coded values and ifdefs, store the year offset in the
+> > > > platform_data struct.
+> > > > 
+> > > > 
+> > > 
+> > > Applied, thanks!
+> > > 
+> > > [1/2] rtc: m48t59: Use platform_data struct for year offset value
+> > >       https://git.kernel.org/abelloni/c/a06e4a93067c
+> > > 
+> > 
+> > Thanks, Alexandre. Would you also take patch 2/2, please? Geert has sent a 
+> > reviewed-by tag for that one too.
 > 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
->  drivers/misc/fastrpc.c | 48 +++++++++++++++++++++---------------------
->  1 file changed, 24 insertions(+), 24 deletions(-)
+> I thought Geert would take it as this only touches arch/m68k
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+That's quite understandable -- I accidentally addressed it "To: Geert". 
+Sorry for any confusion caused.
 
--- 
-With best wishes
-Dmitry
+Anyway, would you please pick up patch 2/2 also? After all, patch 2/2 is 
+the reason why patch 1/2 exists. Indeed, 1/2 was written several years 
+after 2/2, in response to your recent review of 2/2.
 
