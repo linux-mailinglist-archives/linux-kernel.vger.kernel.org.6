@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-416799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1235A9D4A6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:06:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBAF9D4A70
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D7C282BDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:05:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62BD5B21680
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505851CBA1B;
-	Thu, 21 Nov 2024 10:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8C1CD1F7;
+	Thu, 21 Nov 2024 10:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnateCbM"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0ROKMk+"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BF45695;
-	Thu, 21 Nov 2024 10:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95995695;
+	Thu, 21 Nov 2024 10:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732183548; cv=none; b=lTScuyDjQZHRiUSN1jofHHYBqqdglfWIFiHtpspLeBGofrHAmAe4w1wDR2t/mKen9qY+ss+p4MrTmmicihDS0r25/sV07jNS0Y/6iGVO4FI5N9NCatiP0G0fsnZyWFHWA5kQZU1kI9JTettu+YkqbC/zNd1zi7ADe48blSUr6lc=
+	t=1732183604; cv=none; b=aKB2svU4363RZ1CzkzWmHrtUaU1VSKBONzZsIlDxLkQzgWyK0u/Z/czjPK3ZdqrZzdJVQ9eB6k5Ht4hKk+4NT8r2VgcKwLPTAW+G2Xqcu1D2wxnOVwk8TGLKmKQ7fAXPCy47s1P2zg3baGSdKE5/bu94Mz+LZrQKhU6ttnjQGD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732183548; c=relaxed/simple;
-	bh=H9rh7ixMdRmHYOtcOw1jzmgpDuKoxFLFcA7ty6yRJ6Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z4ykXyVDenBM9Or9QEpJf1/3em7dodzPUw1oeSzxUC9a+2A8arJOtAfx20HY3GWW9E97+9lAM9yeB7PFBnAOtymQS7WfWyX2R/G2o3S3cNuM/6raeuibMbkgddAN9Ji3m2CGngzUVCAaCuZkPtjhauyaPDVwLQDjzDcMraY+TvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnateCbM; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-21271dc4084so6290985ad.2;
-        Thu, 21 Nov 2024 02:05:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732183546; x=1732788346; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CUrUVwBo4XxPjlkazoAS4h6kGrnp7h/1FcU9qVjOigg=;
-        b=lnateCbMzuv006jYWljC/Wde8iKRRCuexpqCFysPbcNtNquQB1/I3RxUmYK40nAJiX
-         KJFrMkGRmex/kPDS2k397oVjzB/cmj4shM7qG67qWuHv7+gH5uBasjvlTjQlgpdfE5MW
-         9o1z2Bbaqm25kKnnQGZnfGm9S73ppM9wJh3zwVi64hH3Kp363u9YEKRxSsadjoIhXahT
-         Y+m0TZJSRG87/2yS9yxPT3LO5/WtQ7Nz0BSdBXOAqHQ2kkZlfH8HANIq+ljWSCiUIlFD
-         Xd7GgJOmBUShQiaTzPeIxbm8PuWnHphtDhn3gLAqOKRyK3VEhHp5pOckMj6szO/xlHbm
-         lc1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732183546; x=1732788346;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CUrUVwBo4XxPjlkazoAS4h6kGrnp7h/1FcU9qVjOigg=;
-        b=HMDpmYTsL7wfLuI2ZrOdQKD7Ki/bZQb3O9BwzCrTnufhnVOsKi1xOh/JEdGsgq4lEY
-         KXOwki52zWzIRRkJXS4VuX+/9NKT5aMXBsKpqjtbiANUq3iGGs0d5on3a+lZSAgSoBbI
-         P8Z7RSOHrNFknVOgoKWo+n45E6JceT9rmO74sa+OMS3/Nn5ts0GI5FIb7NFPtmGATrVV
-         I6MLpwJlh+lYyFNXMxjkOw182VJj9shqKX97SKSKrcRQBS09TKGxzU8Gnyja92TQXEll
-         tHHy0j8tTRWJSSgzDqdi0bCThSOQ/YEXHgxvbG1yAGVITIQvi005YExn+tfdGffVTLzs
-         dbxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnFXE0Kyjxy8R9dweqg2wdltWjfiFGPLBR8wyjhUkMy4b4t5ghO27KjQm6pRhBEYPNR2kEX3MKF39BO3z/@vger.kernel.org, AJvYcCXmboJzJ1aLEEQvwG5AQjfIy8ODjlGuzToVRGOhpIIKN7z+rZxitZrEvrwKv/byweVFJT9aW8ENqa1YPFdh@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywsn7/J1/HoIoxWjmTCSFtSMt/La35Rft5GLlcmrq2SIxuB5um8
-	c56pgHWRfbfTgsikJ+xe4ZGoRgFJyngagN0J2ul3SmPE0nbupU7B
-X-Google-Smtp-Source: AGHT+IEmnMMPsdelV/V/PG0DRmKJhSB4OuIOdsqaA4YHEYyzfR7yABVt/N/ruR2LECG+LHaZQ1GuBQ==
-X-Received: by 2002:a17:902:ec82:b0:212:46c2:6329 with SMTP id d9443c01a7336-2126cb371f5mr61197935ad.47.1732183544931;
-        Thu, 21 Nov 2024 02:05:44 -0800 (PST)
-Received: from localhost.localdomain ([43.154.34.99])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21288400139sm10024715ad.252.2024.11.21.02.05.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 02:05:44 -0800 (PST)
-From: Jim Zhao <jimzhao.ai@gmail.com>
-To: akpm@linux-foundation.org
-Cc: jack@suse.cz,
-	willy@infradead.org,
-	jimzhao.ai@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic into __wb_calc_thresh
-Date: Thu, 21 Nov 2024 18:05:39 +0800
-Message-Id: <20241121100539.605818-1-jimzhao.ai@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732183604; c=relaxed/simple;
+	bh=7xRvPQKJiZNj/fVy05mARJFhRfsgg/u+JUF75eGx79g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GkSVwXdYmGO23jSzv+hOGFvBZfv7KareOqAZEhe/dsHPDjl7UIL2YVWiRIUorcie+LGNvLYEQC7SB/eYJSQTtL430LQIEBGR4llvIOq8T5drbMSEA8mgyaGLih4+Fs7NRAwjdDZJjum8ggkUstiaK1EA20Ql+Rg+imPvV1CNxoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0ROKMk+; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKNoJAx004593;
+	Thu, 21 Nov 2024 10:06:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I7eWYK4VpUeRAISJcRupsnAVr6kAA451IJVT2RVjCwU=; b=I0ROKMk+7u1ACLrJ
+	WZGQfakpiUM8kxg8myfKG1LMURm0cF/77VUNdfB8HwIlSBLtI8KDHdP9OU8Bvuoy
+	4b+ybErvLQhGnifoN5oAi04LTeQ1EPmIlFkfi7S0BUdz7Ty2jhctH6TuwhykzSfr
+	zp4uNf3Hcvw0xeSqHU97Phwqk+QfCiM6tFkhejyDgrGQDoA7974DU54d06/EYP1m
+	rtTUwLOIfEdvWy9rCqQ26uDAhrIbBCQ7Umr4NB2Dluzm+2aj3QQApB019I3q7MDV
+	x67AqdRRcGj1gRB8gLq52iZ8gI5NHTl4w/5LvpNOxJiLRFWRLzhcGqPXF6WyyJXO
+	iUErfw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ea739ns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 10:06:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALA6G1t016773
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 10:06:16 GMT
+Received: from [10.64.68.72] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 02:06:09 -0800
+Message-ID: <e3bbd5de-af15-4b23-b956-8c69243b4955@quicinc.com>
+Date: Thu, 21 Nov 2024 18:06:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: ufs: qcom: Add UFS Host Controller
+ for QCS615
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <quic_jiegan@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_sayalil@quicinc.com>
+References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
+ <20241119022050.2995511-2-quic_liuxin@quicinc.com>
+ <d9c3dc82-24e5-465d-bd1c-7a7c97e17136@kernel.org>
+ <eae9d141-9c88-4856-9287-2ba6ea6f4a06@kernel.org>
+ <242451d6-2b77-417c-bd98-4455f739dc0d@quicinc.com>
+ <26392a7f-82c6-4b7b-829e-76f3d78115d1@linaro.org>
+From: Xin Liu <quic_liuxin@quicinc.com>
+In-Reply-To: <26392a7f-82c6-4b7b-829e-76f3d78115d1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: j-5MxRfCbNe_sa-ky-Vi8gcR8UQvWs7Y
+X-Proofpoint-ORIG-GUID: j-5MxRfCbNe_sa-ky-Vi8gcR8UQvWs7Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=889
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411210079
 
-Address the feedback from "mm/page-writeback: raise wb_thresh to prevent
-write blocking with strictlimit"(39ac99852fca98ca44d52716d792dfaf24981f53).
-The wb_thresh bumping logic is scattered across wb_position_ratio,
-__wb_calc_thresh, and wb_update_dirty_ratelimit. For consistency,
-consolidate all wb_thresh bumping logic into __wb_calc_thresh.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
----
- mm/page-writeback.c | 53 ++++++++++++++-------------------------------
- 1 file changed, 16 insertions(+), 37 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index d213ead95675..8b13bcb42de3 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -936,26 +936,25 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
- 	wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
- 
- 	wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
--	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
--	if (wb_thresh > wb_max_thresh)
--		wb_thresh = wb_max_thresh;
- 
- 	/*
--	 * With strictlimit flag, the wb_thresh is treated as
--	 * a hard limit in balance_dirty_pages() and wb_position_ratio().
--	 * It's possible that wb_thresh is close to zero, not because
--	 * the device is slow, but because it has been inactive.
--	 * To prevent occasional writes from being blocked, we raise wb_thresh.
-+	 * It's very possible that wb_thresh is close to 0 not because the
-+	 * device is slow, but that it has remained inactive for long time.
-+	 * Honour such devices a reasonable good (hopefully IO efficient)
-+	 * threshold, so that the occasional writes won't be blocked and active
-+	 * writes can rampup the threshold quickly.
- 	 */
--	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
--		unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
--		u64 wb_scale_thresh = 0;
--
--		if (limit > dtc->dirty)
--			wb_scale_thresh = (limit - dtc->dirty) / 100;
--		wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh / 4));
-+	if (thresh > dtc->dirty) {
-+		if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
-+			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
-+		else
-+			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
- 	}
- 
-+	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-+	if (wb_thresh > wb_max_thresh)
-+		wb_thresh = wb_max_thresh;
-+
- 	return wb_thresh;
- }
- 
-@@ -963,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
- {
- 	struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
- 
-+	domain_dirty_avail(&gdtc, true);
- 	return __wb_calc_thresh(&gdtc, thresh);
- }
- 
-@@ -1139,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
- 	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
- 		long long wb_pos_ratio;
- 
--		if (dtc->wb_dirty < 8) {
--			dtc->pos_ratio = min_t(long long, pos_ratio * 2,
--					   2 << RATELIMIT_CALC_SHIFT);
--			return;
--		}
--
- 		if (dtc->wb_dirty >= wb_thresh)
- 			return;
- 
-@@ -1215,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
- 	 */
- 	if (unlikely(wb_thresh > dtc->thresh))
- 		wb_thresh = dtc->thresh;
--	/*
--	 * It's very possible that wb_thresh is close to 0 not because the
--	 * device is slow, but that it has remained inactive for long time.
--	 * Honour such devices a reasonable good (hopefully IO efficient)
--	 * threshold, so that the occasional writes won't be blocked and active
--	 * writes can rampup the threshold quickly.
--	 */
--	wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
- 	/*
- 	 * scale global setpoint to wb's:
- 	 *	wb_setpoint = setpoint * wb_thresh / thresh
-@@ -1478,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
- 	 * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
- 	 * Hence, to calculate "step" properly, we have to use wb_dirty as
- 	 * "dirty" and wb_setpoint as "setpoint".
--	 *
--	 * We rampup dirty_ratelimit forcibly if wb_dirty is low because
--	 * it's possible that wb_thresh is close to zero due to inactivity
--	 * of backing device.
- 	 */
- 	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
- 		dirty = dtc->wb_dirty;
--		if (dtc->wb_dirty < 8)
--			setpoint = dtc->wb_dirty + 1;
--		else
--			setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
-+		setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
- 	}
- 
- 	if (dirty < setpoint) {
--- 
-2.20.1
+在 2024/11/21 18:01, Krzysztof Kozlowski 写道:
+> On 21/11/2024 09:37, Xin Liu wrote:
+>>
+>>
+>> 在 2024/11/21 15:40, Krzysztof Kozlowski 写道:
+>>> On 20/11/2024 17:57, Krzysztof Kozlowski wrote:
+>>>> On 19/11/2024 03:20, Xin Liu wrote:
+>>>>> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+>>>>>
+>>>>> Document the Universal Flash Storage(UFS) Host Controller on the Qualcomm
+>>>>> QCS615 Platform.
+>>>>>
+>>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>>>> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>>>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+>>>>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>>>>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>>>> That's a bit odd SoB chain. First, these are just one-liners. Second,
+>>>> who authored the patches?
+>>> To be clear: SoB regarding authorship is correct, but regarding Acks and
+>>> Reviews is not. Savali did not receive these tags. If so, please point
+>>> to lore discussion with it.
+>>>
+>>> All this needs fixing.
+>> Thank you for your comments. These are the two reviews I received. One
+>> is your reviewd-by, and the other is Manivannan's acked-by.I have also
+>> cc Sayali on the email.
+>>
+>> https://lore.kernel.org/linux-arm-msm/rv3ukz6rhgp3x32s74nbftmoqmdxjxmoii3zsd4wipmhudyq7q@ha4l2svl5lim/
+>>
+>> https://lore.kernel.org/linux-arm-msm/20241112075619.2ilsccnnk4leqmdy@thinkpad/
+> 
+> I meant order of tags. Who received them? You, not Sayali. Then they
+> cannot be before Sayali SoB.
+> 
+Thank you for your comments. I will fix it next version.
+> 
+> Best regards,
+> Krzysztof
 
 
