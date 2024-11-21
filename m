@@ -1,370 +1,517 @@
-Return-Path: <linux-kernel+bounces-416936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489DE9D4C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:10:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF389D4C8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AAD1F21C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:10:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25555B24DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B4C1D88AD;
-	Thu, 21 Nov 2024 12:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953861D130B;
+	Thu, 21 Nov 2024 12:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lJJ7Akzw"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFICfpEP"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07DD1A3BC8;
-	Thu, 21 Nov 2024 12:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D251CB9F9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190964; cv=none; b=Qk/4YHdQizLysYlHJldMWg9NEqOCuNrO4HTxmFxh871KpySecjzZN+eGOFzNG0hUD8ytj5+oIoJRZU9ukhpRYjuSkU6criuy89PWCYY2HdDw737NNUkXzDpx+AZfPowpTi6M8I1ub7eAQUuBZyOsNhZd9obi+BwVDUt/7Rk7IHw=
+	t=1732190940; cv=none; b=U/GfzHOI5KPiC4zslFBLbn1SiU71OuWzXlFaiYVXrBuINzjkUNoyqE3hy69J28uJpRkMcM12XlO/5ge7TvQZ/8P9TRJR11JahSaWRWm2wqGvAMrUxjIrxeh08FWrXInm3rRrR/tlM/6oVHYIUIQqBdgRJ6N4rY4dNtVbTDhxUv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190964; c=relaxed/simple;
-	bh=6p0goZfRhfmcY+8BF+dgtOTPBYivAv61Hi5k/4sl6I4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BmivuG8goelVCfLJVKqeCguL4V9ut9VIv5VZI/HCKtTf7z/I/orDeTh8K9JS0DpT7Ta7YxIOQIw5tTZMHvMkCVkiKYRwSUP27m1XDcqsdULY/Ky1f0VdJ1uWDyYAvK0R8cCWdRS3IKhjWsTHDFhPOtmsh/tpc/cT59JsuuWZfRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lJJ7Akzw; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:10f2:5b4b:5292:ac46:e988])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E6FF9736;
-	Thu, 21 Nov 2024 13:09:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732190942;
-	bh=6p0goZfRhfmcY+8BF+dgtOTPBYivAv61Hi5k/4sl6I4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lJJ7AkzwqSKSq7PhFA81EHzRBjimXPLwF9aSa2QdW2DImfFkOXm3OVLQVInyol9vJ
-	 EQgBw/4AYY8ye6q4XSzknpCGnHHJXRShEX0wiazFehEnVDLjObMhKvDY9kWYVuZaf6
-	 lHTOXNo70wtfn4PQE7snJltaWyujB45wbFzGY7fA=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Thu, 21 Nov 2024 17:38:04 +0530
-Subject: [PATCH v2 3/3] media: i2c: imx219: Scale the pixel rate for analog
- binning
+	s=arc-20240116; t=1732190940; c=relaxed/simple;
+	bh=E8+B6z6E4P3TjK0lz/AhgaRGgJ/hjjZzSP0yOGMfFWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e7wNhxA9SJU2LCd1ogR9PwTcsgAd+4jFaTFeOKgtcS9tFLctFmu/PugtSwQnWhfUQ56Hz86mzYQSqKkUeqelBEFfXiZCjQH96187DCe/PT6Nktn1QAat9Xv/Kcg70JsR9eVz0zboY9oXxANFI595Y76S0ayXDj0X9SHoclb5ZMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PFICfpEP; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-296539a58b4so456935fac.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:08:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732190937; x=1732795737; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r6PzZJ3DM7uaJxWkI/0n/rESbT0VqvgXcQ+4blsh3O0=;
+        b=PFICfpEPdoZZO1/3kn0kuXY5CI8mz3q6rMF8Soh91lMpf2iqmWUshE8JkMVw8cYoEF
+         sBZogs5VJG9nTgO/lPd4AS5xwxaGlF3NLLWImiN7Q14A7opjWQC8eZfwXIQPrBasoyEk
+         I93tCJmc5nD92/rwxgVCdnewAAobttpyMCxZM7mscvPqcz0y3KKhhXH63A/cLi+GGiVj
+         ebGgDj9AXGmhweechyofvbZNeNqEgIn8pBeH1vhl0fj0W4Xo5Td6iWu/jh24Fmjguwz6
+         y82NPdlfhOGMe/Wav0xmbgYDuKBToGpqmuGzWLyQs/0TWY4FOJz3OGV6QI+/iA5u79XJ
+         4tuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732190937; x=1732795737;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r6PzZJ3DM7uaJxWkI/0n/rESbT0VqvgXcQ+4blsh3O0=;
+        b=EqIKmDyJROVMlgWfxR/ZDCwdIOe4/5PHUgyElaAt7Ameqee1uSijb+L3mwNwe70C3Y
+         4L41waul+WdyJAPhBQms4brdmb5QCcNbiZg0RgbUzA5pMVjOKkPIhkCzcQuHhhT5+f+A
+         DnWlt7X+C6m1pzMGkfcf0JVL3tivmzKUDLfOwS22J6KasNLc37eFdrXi43oecoNkdIW+
+         c+BlV3p6gRIcVw/O4C3g44vs3KRJ+2uPRlff09eAzgE2foAORThtWTvMNAiYgZBEgP/3
+         z12JjE7uLFv9DDobiPfz/fFRLDUrTqZ0Dij79QJj9L3kw3HZW6aYywnqA2kFQAyWeCq3
+         v2AA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQBk+Rukv7o5f86gbgvLCyH/ORLN+5fo5rUhOCbApsWtzyKrW5dRPHmDg/R+WwXh08OUAz/b/aFE1vyCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV6Vt4+AyPdHw78LO/fT6J0GWI2ww03uhy4vuhNl0PEd+wKgjo
+	YzKEJMJx3cZN+mh5qPXDociroULvFHLmc5xbMWASC6PmqOEh37iFAk837zBrSxQbTQv/xaGAEBI
+	pOvS95vXWessp33mkBYPxlMF6f6WycqaCsTjFEA==
+X-Google-Smtp-Source: AGHT+IFO1zgBWmmvvFNRCPnLaEgaUHIElp3JIxkwo8dw9X/ZhrCSOfOWx2UJyJLmLFbQM1g9sXyRKp7JVZg1hhlSiyY=
+X-Received: by 2002:a05:6870:658d:b0:27b:66ea:add7 with SMTP id
+ 586e51a60fabf-296d9ae3ae2mr6107516fac.4.1732190937469; Thu, 21 Nov 2024
+ 04:08:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-imx219_fixes-v2-3-7b068a60ea40@ideasonboard.com>
-References: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
-In-Reply-To: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
- Jai Luthra <jai.luthra@ideasonboard.com>, 
- Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8446;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=6p0goZfRhfmcY+8BF+dgtOTPBYivAv61Hi5k/4sl6I4=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnPyLWfvpJf3Q1ULt1yaEgOD8K55SORH6TnM6QW
- a+SDvEGWYmJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZz8i1gAKCRBD3pH5JJpx
- RYxYEAC4Hp1TeBUEWE51xfjCd828bvGvIT64RVLGXQgn5221iMcV0N93QY7r7l8ct+LPUjGH3h+
- 0Dp7hqblq/jUHpYZz8MQvIjr5qRNSEive1F2o3AVibGhOhO2lcUy9dSfbUW9hNxYwMvDIdLYksn
- 1fhCJuYS9DSS9PgORGQF395pm0RVERI+95BfOLEU5ddtIniau1/7lgqN9y3gFM9EkyfvxlllJEA
- wnlapS2LiLC4ZyC/tdREThq9hK6mQm2IZ3iGCUABeypKf6jb/ifAKgwrRqLVdlPCQWj+a3q+zCh
- 9F80VxTrugb8I9waH8FizPQxVOzhzW/YYVlaheIFEPfYglfdqxnOv2YN1BJlAl2mScOv9Z0Z2wY
- YaS4ALj7LeMHaFq/LjmYBa3QCHVv2WaI1vp+5hSErbeJj/ZS/+WSdnnw1wk86i//XT60dlGJFOR
- y062wo3Cy+UH4ck+ykJUISAedpTpz0vEuoqz/GgUJRz9rrIfhRk46l0he9R/oL8traGd21ZCIim
- 8q1fPc+CBi+S30GMy+OyzkSwDPViUfZXqmtUULwLqeo8dvbiCFAft088ODLZPCE+N1kMYrHYlG1
- J8aGJundeICkIB2/mDdiXqiNiFtAQmB8z4z4GL8jgd+tw4HBgG75O60Y6gPfa60LlwK3rAaAoWM
- v1jWF4CBVwTzOyg==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+References: <20241120-fix-tee_shm-refcount-upstream-v1-0-5da97f584fcd@quicinc.com>
+ <20241120-fix-tee_shm-refcount-upstream-v1-3-5da97f584fcd@quicinc.com>
+In-Reply-To: <20241120-fix-tee_shm-refcount-upstream-v1-3-5da97f584fcd@quicinc.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 21 Nov 2024 13:08:45 +0100
+Message-ID: <CAHUa44Eoxa+NfRF-XCuV-O5uVgtC3UMT0utCLrUZ4rCBREp=pQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 3/3] tee: introduce orphan tee_shm and default context
+To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When the analog binning mode is used for high framerate operation,
-the pixel rate is effectively doubled. Account for this when setting up
-the pixel clock rate, and applying the vblank and exposure controls.
+Hi Amirreza,
 
-The previous logic only used analog binning for 8-bit modes, but normal
-binning limits the framerate on 10-bit 480p [1]. So with this patch we
-switch to using special binning (with 2x pixel rate) for all formats of
-480p mode and 8-bit 1232p.
+On Thu, Nov 21, 2024 at 2:37=E2=80=AFAM Amirreza Zarrabi
+<quic_azarrabi@quicinc.com> wrote:
+>
+> The default context has a lifespan similar to the tee_device.
+> It is used as a context for shared memory if the context to which the
+> shared memory belongs is released, making the tee_shm an orphan.
+> This allows the driver implementing shm_unregister to safely make
+> subsequent calls, such as to a supplicant if needed.
+>
+> It also enables users to free the shared memory while the driver is
+> blocked on unregister_tee_device safely.
+>
+> Preferably, this should be used for all driver internal uses, using
+> teedev_get_def_context rather than calling teedev_open.
+>
+> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+> ---
+>  drivers/tee/optee/core.c    |  2 +-
+>  drivers/tee/optee/ffa_abi.c |  2 +-
+>  drivers/tee/optee/smc_abi.c |  2 +-
+>  drivers/tee/tee_core.c      | 83 +++++++++++++++++++++++++++++----------=
+------
+>  drivers/tee/tee_private.h   |  3 --
+>  drivers/tee/tee_shm.c       | 18 ++--------
+>  include/linux/tee_core.h    | 15 ++++++++
+>  include/linux/tee_drv.h     |  7 ----
+>  8 files changed, 73 insertions(+), 59 deletions(-)
+>
+> diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+> index c75fddc83576..78d43d0c8014 100644
+> --- a/drivers/tee/optee/core.c
+> +++ b/drivers/tee/optee/core.c
+> @@ -173,7 +173,7 @@ void optee_remove_common(struct optee *optee)
+>
+>         optee_notif_uninit(optee);
+>         optee_shm_arg_cache_uninit(optee);
+> -       teedev_close_context(optee->ctx);
+> +
+>         /*
+>          * The two devices have to be unregistered before we can free the
+>          * other resources.
+> diff --git a/drivers/tee/optee/ffa_abi.c b/drivers/tee/optee/ffa_abi.c
+> index f3af5666bb11..6ad94f0788ad 100644
+> --- a/drivers/tee/optee/ffa_abi.c
+> +++ b/drivers/tee/optee/ffa_abi.c
+> @@ -949,7 +949,7 @@ static int optee_ffa_probe(struct ffa_device *ffa_dev=
+)
+>         optee_shm_arg_cache_init(optee, arg_cache_flags);
+>         mutex_init(&optee->rpmb_dev_mutex);
+>         ffa_dev_set_drvdata(ffa_dev, optee);
+> -       ctx =3D teedev_open(optee->teedev);
+> +       ctx =3D teedev_get_def_context(optee->teedev);
+>         if (IS_ERR(ctx)) {
+>                 rc =3D PTR_ERR(ctx);
+>                 goto err_rhashtable_free;
+> diff --git a/drivers/tee/optee/smc_abi.c b/drivers/tee/optee/smc_abi.c
+> index e9456e3e74cc..c77a3e631d04 100644
+> --- a/drivers/tee/optee/smc_abi.c
+> +++ b/drivers/tee/optee/smc_abi.c
+> @@ -1722,7 +1722,7 @@ static int optee_probe(struct platform_device *pdev=
+)
+>         mutex_init(&optee->rpmb_dev_mutex);
+>
+>         platform_set_drvdata(pdev, optee);
+> -       ctx =3D teedev_open(optee->teedev);
+> +       ctx =3D teedev_get_def_context(optee->teedev);
+>         if (IS_ERR(ctx)) {
+>                 rc =3D PTR_ERR(ctx);
+>                 goto err_supp_uninit;
+> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+> index 93f3b330aec8..805e1336089d 100644
+> --- a/drivers/tee/tee_core.c
+> +++ b/drivers/tee/tee_core.c
+> @@ -57,7 +57,6 @@ struct tee_context *teedev_open(struct tee_device *teed=
+ev)
+>                 goto err;
+>         }
+>
+> -       kref_init(&ctx->refcount);
+>         ctx->teedev =3D teedev;
+>         INIT_LIST_HEAD(&ctx->list_shm);
+>         rc =3D teedev->desc->ops->open(ctx);
+> @@ -73,36 +72,43 @@ struct tee_context *teedev_open(struct tee_device *te=
+edev)
+>  }
+>  EXPORT_SYMBOL_GPL(teedev_open);
+>
+> -void teedev_ctx_get(struct tee_context *ctx)
+> +struct tee_context *teedev_get_def_context(struct tee_device *teedev)
+>  {
+> -       if (ctx->releasing)
+> -               return;
+> +       int rc;
+> +       struct tee_context *ctx =3D &teedev->def_ctx;
+>
+> -       kref_get(&ctx->refcount);
+> -}
+> +       ctx->teedev =3D teedev;
+> +       INIT_LIST_HEAD(&ctx->list_shm);
+> +       rc =3D teedev->desc->ops->open(ctx);
+> +       if (rc)
+> +               return ERR_PTR(rc);
 
-To do this cleanly, re-introduce the book-keeping for which binning mode
-is used with which resolution/format.
+I think ctx->teedev and ctx->list_shm must always be initialized or
+&teedev->def_ctx can't be used in teedev_close_context().
+We could initialize teedev->def_ctx on the first call to teedev_open()
+on that tee_device. We need a way to tell the
+teedev->desc->ops->open() to the backed driver that it's initializing
+the default context though, or optee_open() can't handle the
+tee-supplicant case properly.
 
-[1]: https://github.com/raspberrypi/linux/issues/5493
+Should we allow this function to be called more than once for each teedev?
+Do we need serialization in this function if it's called after the
+driver is probed?
 
-Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
-Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
-Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/imx219.c | 138 ++++++++++++++++++++++++++++++---------------
- 1 file changed, 94 insertions(+), 44 deletions(-)
+>
+> -static void teedev_ctx_release(struct kref *ref)
+> -{
+> -       struct tee_context *ctx =3D container_of(ref, struct tee_context,
+> -                                              refcount);
+> -       ctx->releasing =3D true;
+> -       ctx->teedev->desc->ops->release(ctx);
+> -       kfree(ctx);
+> +       return ctx;
+>  }
+> +EXPORT_SYMBOL_GPL(teedev_get_def_context);
+>
+> -void teedev_ctx_put(struct tee_context *ctx)
+> +void teedev_close_context(struct tee_context *ctx)
+>  {
+> -       if (ctx->releasing)
+> +       struct tee_device *teedev =3D ctx->teedev;
+> +       struct tee_shm *shm;
+> +
+> +       if (ctx =3D=3D &teedev->def_ctx)
+>                 return;
+>
+> -       kref_put(&ctx->refcount, teedev_ctx_release);
+> -}
+> +       teedev->desc->ops->release(ctx);
+>
+> -void teedev_close_context(struct tee_context *ctx)
+> -{
+> -       struct tee_device *teedev =3D ctx->teedev;
+> +       mutex_lock(&teedev->mutex);
+> +       list_for_each_entry(shm, &ctx->list_shm, link) {
+> +               /* Context released. However, shm still holding a teedev =
+reference.
+> +                * Replace shm->ctx with the default context so that tee_=
+shm_get_from_id()
+> +                * fails (i.e. it is not accessible from userspace) but s=
+hm still
+> +                * holds a valid context for further clean up, e.g. shm_u=
+nregister().
+> +                */
 
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index 970e6362d0ae3a9078daf337155e83d637bc1ca1..ec795569361987ae30bff234e97fa34600bf5975 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -149,6 +149,18 @@
- #define IMX219_PIXEL_ARRAY_WIDTH	3280U
- #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
- 
-+enum binning_mode {
-+	BINNING_NONE = IMX219_BINNING_NONE,
-+	BINNING_X2 = IMX219_BINNING_X2,
-+	BINNING_ANALOG_X2 = IMX219_BINNING_X2_ANALOG,
-+};
-+
-+enum binning_bit_depths {
-+	BINNING_IDX_8_BIT,
-+	BINNING_IDX_10_BIT,
-+	BINNING_IDX_MAX
-+};
-+
- /* Mode : resolution and related config&values */
- struct imx219_mode {
- 	/* Frame width */
-@@ -158,6 +170,9 @@ struct imx219_mode {
- 
- 	/* V-timing */
- 	unsigned int vts_def;
-+
-+	/* binning mode based on format code */
-+	enum binning_mode binning[BINNING_IDX_MAX];
- };
- 
- static const struct cci_reg_sequence imx219_common_regs[] = {
-@@ -293,24 +308,40 @@ static const struct imx219_mode supported_modes[] = {
- 		.width = 3280,
- 		.height = 2464,
- 		.vts_def = 3526,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_NONE,
-+			[BINNING_IDX_10_BIT] = BINNING_NONE,
-+		},
- 	},
- 	{
- 		/* 1080P 30fps cropped */
- 		.width = 1920,
- 		.height = 1080,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_NONE,
-+			[BINNING_IDX_10_BIT] = BINNING_NONE,
-+		},
- 	},
- 	{
- 		/* 2x2 binned 30fps mode */
- 		.width = 1640,
- 		.height = 1232,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-+			[BINNING_IDX_10_BIT] = BINNING_X2,
-+		},
- 	},
- 	{
- 		/* 640x480 30fps mode */
- 		.width = 640,
- 		.height = 480,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-+			[BINNING_IDX_10_BIT] = BINNING_ANALOG_X2,
-+		},
- 	},
- };
- 
-@@ -337,6 +368,9 @@ struct imx219 {
- 
- 	/* Two or Four lanes */
- 	u8 lanes;
-+
-+	/* Binning mode */
-+	enum binning_mode binning;
- };
- 
- static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
-@@ -362,6 +396,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
- 	return imx219_mbus_formats[i];
- }
- 
-+static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
-+{
-+	switch (format->code) {
-+	case MEDIA_BUS_FMT_SRGGB8_1X8:
-+	case MEDIA_BUS_FMT_SGRBG8_1X8:
-+	case MEDIA_BUS_FMT_SGBRG8_1X8:
-+	case MEDIA_BUS_FMT_SBGGR8_1X8:
-+		return 8;
-+
-+	case MEDIA_BUS_FMT_SRGGB10_1X10:
-+	case MEDIA_BUS_FMT_SGRBG10_1X10:
-+	case MEDIA_BUS_FMT_SGBRG10_1X10:
-+	case MEDIA_BUS_FMT_SBGGR10_1X10:
-+	default:
-+		return 10;
-+	}
-+}
-+
-+static int imx219_get_rate_factor(struct imx219 *imx219)
-+{
-+	switch (imx219->binning) {
-+	case BINNING_NONE:
-+	case BINNING_X2:
-+		return 1;
-+	case BINNING_ANALOG_X2:
-+		return 2;
-+	}
-+	return -EINVAL;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Controls
-  */
-@@ -373,10 +437,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
- 	const struct v4l2_mbus_framefmt *format;
- 	struct v4l2_subdev_state *state;
-+	int rate_factor;
- 	int ret = 0;
- 
- 	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
- 	format = v4l2_subdev_state_get_format(state, 0);
-+	rate_factor = imx219_get_rate_factor(imx219);
- 
- 	if (ctrl->id == V4L2_CID_VBLANK) {
- 		int exposure_max, exposure_def;
-@@ -405,7 +471,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_EXPOSURE:
- 		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
--			  ctrl->val, &ret);
-+			  ctrl->val / rate_factor, &ret);
- 		break;
- 	case V4L2_CID_DIGITAL_GAIN:
- 		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
-@@ -422,7 +488,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_VBLANK:
- 		cci_write(imx219->regmap, IMX219_REG_VTS,
--			  format->height + ctrl->val, &ret);
-+			  (format->height + ctrl->val) / rate_factor, &ret);
- 		break;
- 	case V4L2_CID_HBLANK:
- 		cci_write(imx219->regmap, IMX219_REG_HTS,
-@@ -463,7 +529,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
- 
- static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
- {
--	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
-+	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
-+		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
- }
- 
- /* Initialize control handlers */
-@@ -592,29 +659,12 @@ static int imx219_set_framefmt(struct imx219 *imx219,
- {
- 	const struct v4l2_mbus_framefmt *format;
- 	const struct v4l2_rect *crop;
--	unsigned int bpp;
--	u64 bin_h, bin_v;
-+	u32 bpp;
- 	int ret = 0;
- 
- 	format = v4l2_subdev_state_get_format(state, 0);
- 	crop = v4l2_subdev_state_get_crop(state, 0);
--
--	switch (format->code) {
--	case MEDIA_BUS_FMT_SRGGB8_1X8:
--	case MEDIA_BUS_FMT_SGRBG8_1X8:
--	case MEDIA_BUS_FMT_SGBRG8_1X8:
--	case MEDIA_BUS_FMT_SBGGR8_1X8:
--		bpp = 8;
--		break;
--
--	case MEDIA_BUS_FMT_SRGGB10_1X10:
--	case MEDIA_BUS_FMT_SGRBG10_1X10:
--	case MEDIA_BUS_FMT_SGBRG10_1X10:
--	case MEDIA_BUS_FMT_SBGGR10_1X10:
--	default:
--		bpp = 10;
--		break;
--	}
-+	bpp = imx219_get_format_bpp(format);
- 
- 	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
- 		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
-@@ -625,28 +675,8 @@ static int imx219_set_framefmt(struct imx219 *imx219,
- 	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
- 		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
- 
--	switch (crop->width / format->width) {
--	case 1:
--	default:
--		bin_h = IMX219_BINNING_NONE;
--		break;
--	case 2:
--		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
--		break;
--	}
--
--	switch (crop->height / format->height) {
--	case 1:
--	default:
--		bin_v = IMX219_BINNING_NONE;
--		break;
--	case 2:
--		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
--		break;
--	}
--
--	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
--	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
-+	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, imx219->binning, &ret);
-+	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, imx219->binning, &ret);
- 
- 	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
- 		  format->width, &ret);
-@@ -851,6 +881,21 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 		int exposure_max;
- 		int exposure_def;
- 		int hblank;
-+		int pixel_rate;
-+
-+		/* Update binning mode based on format */
-+		switch (imx219_get_format_bpp(format)) {
-+		case 8:
-+			imx219->binning = mode->binning[BINNING_IDX_8_BIT];
-+			break;
-+
-+		case 10:
-+			imx219->binning = mode->binning[BINNING_IDX_10_BIT];
-+			break;
-+
-+		default:
-+			imx219->binning = BINNING_NONE;
-+		}
- 
- 		/* Update limits and set FPS to default */
- 		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-@@ -879,6 +924,11 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 					 IMX219_PPL_MAX - mode->width,
- 					 1, IMX219_PPL_MIN - mode->width);
- 		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-+
-+		/* Scale the pixel rate based on the mode specific factor */
-+		pixel_rate = imx219_get_pixel_rate(imx219);
-+		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-+					 pixel_rate, 1, pixel_rate);
- 	}
- 
- 	return 0;
+/*
+ * Please format
+ * multiline comments
+ * like this. Please
+ * keep the lines at
+ * max 80 columns
+ * here and at other
+ * places in the patch-
+ * set.
+ */
 
--- 
-2.47.0
+> +               shm->ctx =3D &teedev->def_ctx;
 
+shm->ctx will always point to a valid context, even if it is the
+default context. It seems that we can always get hold of the correct
+teedev via shm->ctx->teedev. Do we need "tee: revert removal of
+redundant teedev in struct tee_shm"?
+
+Shouldn't the shm be removed from the ctx->list_shm and be moved to
+teedev->def_ctx.list_shm?
+
+> +       }
+> +       mutex_unlock(&teedev->mutex);
+>
+> -       teedev_ctx_put(ctx);
+> +       kfree(ctx);
+>         tee_device_put(teedev);
+>  }
+>  EXPORT_SYMBOL_GPL(teedev_close_context);
+> @@ -946,6 +952,8 @@ struct tee_device *tee_device_alloc(const struct tee_=
+desc *teedesc,
+>
+>         teedev->desc =3D teedesc;
+>         teedev->pool =3D pool;
+> +       /* Only open default context when teedev_get_def_context() called=
+. */
+> +       teedev->def_ctx.teedev =3D NULL;
+>
+>         return teedev;
+>  err_devt:
+> @@ -1027,16 +1035,31 @@ EXPORT_SYMBOL_GPL(tee_device_register);
+>
+>  void tee_device_put(struct tee_device *teedev)
+>  {
+> -       mutex_lock(&teedev->mutex);
+> -       /* Shouldn't put in this state */
+> -       if (!WARN_ON(!teedev->desc)) {
+> -               teedev->num_users--;
+> -               if (!teedev->num_users) {
+> -                       teedev->desc =3D NULL;
+> -                       complete(&teedev->c_no_users);
+> -               }
+> +       const struct tee_desc *desc;
+> +
+> +       scoped_guard(mutex, &teedev->mutex) {
+> +               desc =3D teedev->desc;
+> +
+> +               /* Shouldn't put in this state */
+> +               if (WARN_ON(!desc))
+> +                       return;
+> +
+> +               /* If there is still users for teedev */
+> +               if (--teedev->num_users)
+
+Please do teedev->num_users-- first and then check. It makes the code
+easier to read.
+
+> +                       return;
+> +
+> +               /* tee_device_unregister() has been called and there is n=
+o
+> +                * user in userspace or kernel, including orphan shm for =
+teedev.
+> +                * Set teedev->desc to NULL, so that teedev can not be re=
+used.
+> +                */
+> +               teedev->desc =3D NULL;
+>         }
+> -       mutex_unlock(&teedev->mutex);
+> +
+> +       /* Release the default context */
+> +       desc->ops->release(&teedev->def_ctx);
+
+This should only be done if teedev->def_ctx has been initialized.
+
+Cheers,
+Jens
+
+> +       teedev->def_ctx.teedev =3D NULL;
+> +
+> +       complete(&teedev->c_no_users);
+>  }
+>
+>  bool tee_device_get(struct tee_device *teedev)
+> diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+> index 9bc50605227c..6c7bcc308958 100644
+> --- a/drivers/tee/tee_private.h
+> +++ b/drivers/tee/tee_private.h
+> @@ -17,9 +17,6 @@ int tee_shm_get_fd(struct tee_shm *shm);
+>  bool tee_device_get(struct tee_device *teedev);
+>  void tee_device_put(struct tee_device *teedev);
+>
+> -void teedev_ctx_get(struct tee_context *ctx);
+> -void teedev_ctx_put(struct tee_context *ctx);
+> -
+>  struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t s=
+ize);
+>  struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
+>                                           unsigned long addr, size_t leng=
+th);
+> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
+> index c0164c0f4a01..f07274291edf 100644
+> --- a/drivers/tee/tee_shm.c
+> +++ b/drivers/tee/tee_shm.c
+> @@ -59,8 +59,6 @@ static void tee_shm_release(struct tee_shm *shm)
+>                 release_registered_pages(shm);
+>         }
+>
+> -       teedev_ctx_put(shm->ctx);
+> -
+>         kfree(shm);
+>
+>         tee_device_put(teedev);
+> @@ -93,13 +91,6 @@ static struct tee_shm *shm_alloc_helper(struct tee_con=
+text *ctx, size_t size,
+>         shm->flags =3D flags;
+>         shm->teedev =3D teedev;
+>         shm->id =3D id;
+> -
+> -       /*
+> -        * We're assigning this as it is needed if the shm is to be
+> -        * registered. If this function returns OK then the caller expect=
+ed
+> -        * to call teedev_ctx_get() or clear shm->ctx in case it's not
+> -        * needed any longer.
+> -        */
+>         shm->ctx =3D ctx;
+>
+>         rc =3D teedev->pool->ops->alloc(teedev->pool, shm, size, align);
+> @@ -112,7 +103,6 @@ static struct tee_shm *shm_alloc_helper(struct tee_co=
+ntext *ctx, size_t size,
+>         list_add_tail(&shm->link, &ctx->list_shm);
+>         mutex_unlock(&teedev->mutex);
+>
+> -       teedev_ctx_get(ctx);
+>         return shm;
+>  err_kfree:
+>         kfree(shm);
+> @@ -295,12 +285,10 @@ register_shm_helper(struct tee_context *ctx, struct=
+ iov_iter *iter, u32 flags,
+>                 goto err_dev_put;
+>         }
+>
+> -       teedev_ctx_get(ctx);
+> -
+>         shm =3D kzalloc(sizeof(*shm), GFP_KERNEL);
+>         if (!shm) {
+>                 ret =3D ERR_PTR(-ENOMEM);
+> -               goto err_ctx_put;
+> +               goto err_dev_put;
+>         }
+>
+>         refcount_set(&shm->refcount, 1);
+> @@ -313,7 +301,7 @@ register_shm_helper(struct tee_context *ctx, struct i=
+ov_iter *iter, u32 flags,
+>         num_pages =3D iov_iter_npages(iter, INT_MAX);
+>         if (!num_pages) {
+>                 ret =3D ERR_PTR(-ENOMEM);
+> -               goto err_ctx_put;
+> +               goto err_dev_put;
+>         }
+>
+>         shm->pages =3D kcalloc(num_pages, sizeof(*shm->pages), GFP_KERNEL=
+);
+> @@ -361,8 +349,6 @@ register_shm_helper(struct tee_context *ctx, struct i=
+ov_iter *iter, u32 flags,
+>         kfree(shm->pages);
+>  err_free_shm:
+>         kfree(shm);
+> -err_ctx_put:
+> -       teedev_ctx_put(ctx);
+>  err_dev_put:
+>         tee_device_put(teedev);
+>         return ret;
+> diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+> index a38494d6b5f4..13393ddac530 100644
+> --- a/include/linux/tee_core.h
+> +++ b/include/linux/tee_core.h
+> @@ -44,6 +44,7 @@
+>   * @idr:       register of user space shared memory objects allocated or
+>   *             registered on this device
+>   * @pool:      shared memory pool
+> + * @def_ctx:   default context used if there is no context available, e.=
+g. internal driver calls.
+>   */
+>  struct tee_device {
+>         char name[TEE_MAX_DEV_NAME_LEN];
+> @@ -60,6 +61,7 @@ struct tee_device {
+>
+>         struct idr idr;
+>         struct tee_shm_pool *pool;
+> +       struct tee_context def_ctx;
+>  };
+>
+>  /**
+> @@ -309,6 +311,19 @@ static inline bool tee_param_is_memref(struct tee_pa=
+ram *param)
+>   */
+>  struct tee_context *teedev_open(struct tee_device *teedev);
+>
+> +/**
+> + * teedev_get_def_context() - Get default context for a struct tee_devic=
+e
+> + * @teedev:    Device to open
+> + *
+> + * Unlike a context that returned from teedev_open(), the default contex=
+t is static
+> + * and available as long as @teedev has a user ''other then this context=
+''. This context
+> + * can be used for driver internal operation and clean up where a contex=
+t should be
+> + * available, while tee_device_unregister() is waiting for other users t=
+o go away.
+> + *
+> + * @return a pointer to struct tee_context on success or an ERR_PTR on f=
+ailure.
+> + */
+> +struct tee_context *teedev_get_def_context(struct tee_device *teedev);
+> +
+>  /**
+>   * teedev_close_context() - closes a struct tee_context
+>   * @ctx:       The struct tee_context to close
+> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+> index 1b57cddfecc8..9633e14ba484 100644
+> --- a/include/linux/tee_drv.h
+> +++ b/include/linux/tee_drv.h
+> @@ -7,7 +7,6 @@
+>  #define __TEE_DRV_H
+>
+>  #include <linux/device.h>
+> -#include <linux/kref.h>
+>  #include <linux/list.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/tee.h>
+> @@ -25,10 +24,6 @@ struct tee_device;
+>   * @teedev:    pointer to this drivers struct tee_device
+>   * @list_shm:  List of shared memory object owned by this context
+>   * @data:      driver specific context data, managed by the driver
+> - * @refcount:  reference counter for this structure
+> - * @releasing:  flag that indicates if context is being released right n=
+ow.
+> - *             It is needed to break circular dependency on context duri=
+ng
+> - *              shared memory release.
+>   * @supp_nowait: flag that indicates that requests in this context shoul=
+d not
+>   *              wait for tee-supplicant daemon to be started if not pres=
+ent
+>   *              and just return with an error code. It is needed for req=
+uests
+> @@ -41,8 +36,6 @@ struct tee_context {
+>         struct tee_device *teedev;
+>         struct list_head list_shm;
+>         void *data;
+> -       struct kref refcount;
+> -       bool releasing;
+>         bool supp_nowait;
+>         bool cap_memref_null;
+>  };
+>
+> --
+> 2.34.1
+>
 
