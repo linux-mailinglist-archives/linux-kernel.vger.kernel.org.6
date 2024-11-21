@@ -1,71 +1,64 @@
-Return-Path: <linux-kernel+bounces-416718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B119D492D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:48:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286F19D4930
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17CFD1F21C07
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F2B282F48
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133BA1CB33D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80E71CFEC0;
+	Thu, 21 Nov 2024 08:47:46 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75EC01CD209;
 	Thu, 21 Nov 2024 08:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qh1A3DZS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C004E1CCB50;
-	Thu, 21 Nov 2024 08:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178860; cv=none; b=UzILzKgqYU6G/ABO9pB2yqXnJmZM2h5fEJNX0U7BKht69nvmnpzcLi8MpYpp7uktcNhKCTda0CYh8NVewEUmNsli61pR6RU/C9lP9+AJNpszzrbMxAqHkcoU+DhDLGsKzrqy8tbIsxf6X5Hae2bK0j0SDjpjEW/WcACwuX1Zqz4=
+	t=1732178866; cv=none; b=t2HbuCjDjxhGSJOXodx8z+DS73yzV0plzf0ZAioUk44zGqyXtIMCXYpJuywWQdyLrhcu8TTGmT9yR/gJcsxgY+NxNfhD94xEt9upjKdO4Vc8uQpsNdlWhD+nJ4wbT/ASxe8mkd23xLwXWf0V8k8qXePzJdYsAnU3gsJRk2dlg68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178860; c=relaxed/simple;
-	bh=VyUJp9vQ/2LBs2W6+PO/mRg7VDmliVfE8OOG/ZrWTQM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kOvlAcH1GF0OPie8qG8Pf31QKGTd8RLDpefi9GVyRF8YaDppF9MX0OAcTNeHvegs6dQnheidSH96mlDUqkl3cX9CXGQ4QIAP8CWB54S0nnPd64cSKmybhNyjRnIE2uLYGVGYj++w/O9ntzuo0rnUH1RkFS8n50fWiS7HOlWEgdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qh1A3DZS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJpaCW005741;
-	Thu, 21 Nov 2024 08:47:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4AvMX6aXFHbqw/g7dZS4/asi8D2KEz0bf+nG6W9+gv0=; b=Qh1A3DZSqw9E9Eap
-	je26cNK0UwuTLJsQ4luvi+EZ++YfdI01xRDWbJ+rtSfKhr5By1aebF25U5S4PSmv
-	LaLAjNErlMKzSEvcpiQUwUQ/Py73dBGb5mmPBV11scpDzSEBmuu/TSGoZXoypQW2
-	2s8bWdWo2Elb37asAQFSsxwY0vI8lvW0EZw3ibbxqWjvJ1aNeyC5+rD23WXDxyKQ
-	Msmzlq0ZjBbvzkWs7P/dDh5N4Sx5/kelmjTpNohy+CWsMS+ChbNSlzXLh1VQ98U8
-	v+9C48j3u5YAc3dw3bTSi/64wetIwUyRZ5B8jt7mh9Ohc8h9CS16twLwrzNQACIz
-	mXcQMg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y80nrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:47:34 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL8lXJD012526
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:47:33 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 21 Nov 2024 00:47:29 -0800
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
-Subject: [PATCH v4 2/2] misc: fastrpc: Rename tgid and pid to client_id
-Date: Thu, 21 Nov 2024 14:17:13 +0530
-Message-ID: <20241121084713.2599904-3-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241121084713.2599904-1-quic_ekangupt@quicinc.com>
-References: <20241121084713.2599904-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1732178866; c=relaxed/simple;
+	bh=ftzAq4vflAz24cttcvqVsPMPX2K4t6awAwHzg91p1O4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OMu1qqVWDweMEpXHkQK4WSiDCwUH3vbexlwDDMdeK9e9W961dLoXXTRmJ01xos3YVy/KXPtK9Qav4M2sIMxDgloWUAZ23N8d2i0FFccx2yP1lu95WOcgv7/AG4s6TsFRg3RJrbf9dRtlBl8Ae2rzgJSA4RDTJtAhwyFOxRbhRAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3673ef3a67f3-2c01b;
+	Thu, 21 Nov 2024 16:47:34 +0800 (CST)
+X-RM-TRANSID:2ee3673ef3a67f3-2c01b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.69])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8673ef3a4dd8-c4d90;
+	Thu, 21 Nov 2024 16:47:34 +0800 (CST)
+X-RM-TRANSID:2ee8673ef3a4dd8-c4d90
+From: liujing <liujing@cmss.chinamobile.com>
+To: qmo@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing_yewu@cmss.chinamobile.com>,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] bpftool: Fix wrong format output
+Date: Thu, 21 Nov 2024 16:47:31 +0800
+Message-Id: <20241121084731.3570-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,216 +66,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JIzm28MtTpBheIxjUmQtAJghv7yaW2fZ
-X-Proofpoint-GUID: JIzm28MtTpBheIxjUmQtAJghv7yaW2fZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 suspectscore=0 adultscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210067
 
-The information passed as request tgid and pid is actually the
-client id of the process. This client id is used as an
-identifier by DSP to identify the DSP PD corresponding to the
-process. Currently process tgid is getting passed as the
-identifier which is getting replaced by a custom client id.
-Rename the data which uses this client id.
+From: liujing <liujing_yewu@cmss.chinamobile.com>
 
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c | 48 +++++++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 24 deletions(-)
+%d in format string requires 'int' but the argument type
+of pf is 'unsigned int'.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 08f223c95c33..93826de9c191 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -140,14 +140,14 @@ struct fastrpc_mmap_rsp_msg {
- };
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+
+diff --git a/tools/bpf/bpftool/link.c b/tools/bpf/bpftool/link.c
+index 5cd503b763d7..5bc442d93456 100644
+--- a/tools/bpf/bpftool/link.c
++++ b/tools/bpf/bpftool/link.c
+@@ -699,7 +699,7 @@ void netfilter_dump_plain(const struct bpf_link_info *info)
+ 	if (pfname)
+ 		printf("\n\t%s", pfname);
+ 	else
+-		printf("\n\tpf: %d", pf);
++		printf("\n\tpf: %u", pf);
  
- struct fastrpc_mmap_req_msg {
--	s32 pgid;
-+	s32 client_id;
- 	u32 flags;
- 	u64 vaddr;
- 	s32 num;
- };
- 
- struct fastrpc_mem_map_req_msg {
--	s32 pgid;
-+	s32 client_id;
- 	s32 fd;
- 	s32 offset;
- 	u32 flags;
-@@ -157,20 +157,20 @@ struct fastrpc_mem_map_req_msg {
- };
- 
- struct fastrpc_munmap_req_msg {
--	s32 pgid;
-+	s32 client_id;
- 	u64 vaddr;
- 	u64 size;
- };
- 
- struct fastrpc_mem_unmap_req_msg {
--	s32 pgid;
-+	s32 client_id;
- 	s32 fd;
- 	u64 vaddrin;
- 	u64 len;
- };
- 
- struct fastrpc_msg {
--	int pid;		/* process group id */
-+	int client_id;		/* process client id */
- 	int tid;		/* thread id */
- 	u64 ctx;		/* invoke caller context */
- 	u32 handle;	/* handle to invoke */
-@@ -235,7 +235,7 @@ struct fastrpc_invoke_ctx {
- 	int nbufs;
- 	int retval;
- 	int pid;
--	int tgid;
-+	int client_id;
- 	u32 sc;
- 	u32 *crc;
- 	u64 ctxid;
-@@ -615,7 +615,7 @@ static struct fastrpc_invoke_ctx *fastrpc_context_alloc(
- 	ctx->sc = sc;
- 	ctx->retval = -1;
- 	ctx->pid = current->pid;
--	ctx->tgid = user->client_id;
-+	ctx->client_id = user->client_id;
- 	ctx->cctx = cctx;
- 	init_completion(&ctx->work);
- 	INIT_WORK(&ctx->put_work, fastrpc_context_put_wq);
-@@ -1116,11 +1116,11 @@ static int fastrpc_invoke_send(struct fastrpc_session_ctx *sctx,
- 	int ret;
- 
- 	cctx = fl->cctx;
--	msg->pid = fl->client_id;
-+	msg->client_id = fl->client_id;
- 	msg->tid = current->pid;
- 
- 	if (kernel)
--		msg->pid = 0;
-+		msg->client_id = 0;
- 
- 	msg->ctx = ctx->ctxid | fl->pd;
- 	msg->handle = handle;
-@@ -1245,7 +1245,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
- 	int err;
- 	bool scm_done = false;
- 	struct {
--		int pgid;
-+		int client_id;
- 		u32 namelen;
- 		u32 pageslen;
- 	} inbuf;
-@@ -1294,7 +1294,7 @@ static int fastrpc_init_create_static_process(struct fastrpc_user *fl,
- 		}
- 	}
- 
--	inbuf.pgid = fl->client_id;
-+	inbuf.client_id = fl->client_id;
- 	inbuf.namelen = init.namelen;
- 	inbuf.pageslen = 0;
- 	fl->pd = USER_PD;
-@@ -1364,7 +1364,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 	int memlen;
- 	int err;
- 	struct {
--		int pgid;
-+		int client_id;
- 		u32 namelen;
- 		u32 filelen;
- 		u32 pageslen;
-@@ -1396,7 +1396,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 		goto err;
- 	}
- 
--	inbuf.pgid = fl->client_id;
-+	inbuf.client_id = fl->client_id;
- 	inbuf.namelen = strlen(current->comm) + 1;
- 	inbuf.filelen = init.filelen;
- 	inbuf.pageslen = 1;
-@@ -1504,12 +1504,12 @@ static void fastrpc_session_free(struct fastrpc_channel_ctx *cctx,
- static int fastrpc_release_current_dsp_process(struct fastrpc_user *fl)
- {
- 	struct fastrpc_invoke_args args[1];
--	int tgid = 0;
-+	int client_id = 0;
- 	u32 sc;
- 
--	tgid = fl->client_id;
--	args[0].ptr = (u64)(uintptr_t) &tgid;
--	args[0].length = sizeof(tgid);
-+	client_id = fl->client_id;
-+	args[0].ptr = (u64)(uintptr_t) &client_id;
-+	args[0].length = sizeof(client_id);
- 	args[0].fd = -1;
- 	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_RELEASE, 1, 0);
- 
-@@ -1649,11 +1649,11 @@ static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
- static int fastrpc_init_attach(struct fastrpc_user *fl, int pd)
- {
- 	struct fastrpc_invoke_args args[1];
--	int tgid = fl->client_id;
-+	int client_id = fl->client_id;
- 	u32 sc;
- 
--	args[0].ptr = (u64)(uintptr_t) &tgid;
--	args[0].length = sizeof(tgid);
-+	args[0].ptr = (u64)(uintptr_t) &client_id;
-+	args[0].length = sizeof(client_id);
- 	args[0].fd = -1;
- 	sc = FASTRPC_SCALARS(FASTRPC_RMID_INIT_ATTACH, 1, 0);
- 	fl->pd = pd;
-@@ -1805,7 +1805,7 @@ static int fastrpc_req_munmap_impl(struct fastrpc_user *fl, struct fastrpc_buf *
- 	int err;
- 	u32 sc;
- 
--	req_msg.pgid = fl->client_id;
-+	req_msg.client_id = fl->client_id;
- 	req_msg.size = buf->size;
- 	req_msg.vaddr = buf->raddr;
- 
-@@ -1891,7 +1891,7 @@ static int fastrpc_req_mmap(struct fastrpc_user *fl, char __user *argp)
- 		return err;
- 	}
- 
--	req_msg.pgid = fl->client_id;
-+	req_msg.client_id = fl->client_id;
- 	req_msg.flags = req.flags;
- 	req_msg.vaddr = req.vaddrin;
- 	req_msg.num = sizeof(pages);
-@@ -1980,7 +1980,7 @@ static int fastrpc_req_mem_unmap_impl(struct fastrpc_user *fl, struct fastrpc_me
- 		return -EINVAL;
- 	}
- 
--	req_msg.pgid = fl->client_id;
-+	req_msg.client_id = fl->client_id;
- 	req_msg.len = map->len;
- 	req_msg.vaddrin = map->raddr;
- 	req_msg.fd = map->fd;
-@@ -2033,7 +2033,7 @@ static int fastrpc_req_mem_map(struct fastrpc_user *fl, char __user *argp)
- 		return err;
- 	}
- 
--	req_msg.pgid = fl->client_id;
-+	req_msg.client_id = fl->client_id;
- 	req_msg.fd = req.fd;
- 	req_msg.offset = req.offset;
- 	req_msg.vaddrin = req.vaddrin;
+ 	if (hookname)
+ 		printf(" %s", hookname);
 -- 
-2.34.1
+2.27.0
+
+
 
 
