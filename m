@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-417508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9665A9D54E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:45:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C170E9D54F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 313DBB21EB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:45:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69C7D1F218F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81C41DD88B;
-	Thu, 21 Nov 2024 21:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F8C1DE3A5;
+	Thu, 21 Nov 2024 21:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KqaDG6Tf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PpKkT5BE"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D21CB50C;
-	Thu, 21 Nov 2024 21:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16AB1DDA3C;
+	Thu, 21 Nov 2024 21:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732225503; cv=none; b=RyvCp85aCQm50MOMfFD1Pb7QoVz3LuIHPF/CCKdfta8bXIDW/9exPLeX5KNJGzn0IWuqDC7GgeRzTUDHXivwMXAQXrit4bgxBeF1xA5uQXYg0UaJSQFBkJ3THI7n7OeNsp3ExhXH9FzXhENe4Si9VmonzSeP7AraIhdYfXvBXiw=
+	t=1732225506; cv=none; b=gT4J05O7Se9qC+1CRgrrhTcKx+dpqn/GjJgPogujkQIJ+xwar+voKg0AXOv8bIizMwrYk76/onDM9dq7XF5RkIzKRngK37OLpXPEx1aRuboeoTs/7qmZN6+pvpglmBarSULaszf09GgTdHjrElx3RDP3vuLJtkwp4ZwefPRZt2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732225503; c=relaxed/simple;
-	bh=z6SsQwO1xdocyqy0LDzeJjiSEosdlVjnlBC6wCHkbj8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nys7BAKPM3ytKW06Qw4kP82i+l8tQ0RhX3zKumXweFb9IiWGdv39AkiOPZZIcyLLmgzDYmy/SZPhJBEyONEHtK6HEBNtA6ZOkbUjYZg0kSOOISIj3kpm8m0U2L4kIOf5loDWQqCZo8BxCgJ3I8WQU/Ce0NTzq9uN3Yzpx6IiA7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KqaDG6Tf; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732225502; x=1763761502;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z6SsQwO1xdocyqy0LDzeJjiSEosdlVjnlBC6wCHkbj8=;
-  b=KqaDG6TfwQlzaGmIWeVg5y3QkMEpY2p+CZKJKkxfnIPxK6R4YZypeyy2
-   gM1zrMgSb9DmD8yBIyI1ff0Af/NsYVpVLK4bKEqwBOMcD8MrcZ5fNIm6e
-   ndhhatik81YpPtVINMEKGZrazHn/ihHWhGPrdBR3OEV29z6kg7Zi+zR1t
-   sq71crsJBwHStHx9sBxw5TfbundtgzT+jIlsSlrBpt6V8jCEKNY0PX0Lx
-   F0t4BGy7kLhUyA5iuCRSLSeVIM6UJ927vAv9j1xURRrSV/yEg2y/jUr6M
-   Iz5Sx8WIl5G3L0hb8K2DFmVsE4QhdWSCmsk3fprZ5Ah8lBVAUvcdoTumm
-   Q==;
-X-CSE-ConnectionGUID: lxZavyciQ5qTVTcVJh5zUA==
-X-CSE-MsgGUID: z6qs273vTWulcoqviPl/UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32514196"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32514196"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 13:45:01 -0800
-X-CSE-ConnectionGUID: LSoy2AwmSsKRuXTWY52GvA==
-X-CSE-MsgGUID: baquf0K4S/CXW5Q48ljBhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90753181"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 21 Nov 2024 13:44:56 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tEEyr-0003Nz-16;
-	Thu, 21 Nov 2024 21:44:53 +0000
-Date: Fri, 22 Nov 2024 05:43:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?unknown-8bit?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <helgaas@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, quic_vbadigan@quicinc.com,
-	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
-	quic_skananth@quicinc.com, quic_vpernami@quicinc.com,
-	quic_mrana@quicinc.com, mmareddy@quicinc.com,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
-Message-ID: <202411220541.dAciinyb-lkp@intel.com>
-References: <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
+	s=arc-20240116; t=1732225506; c=relaxed/simple;
+	bh=VOQRmfCf0BFv+WjkM03vRFzQtwbS5FU6xRa3ysdE+HM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RoRugSyPO8Rahs0x/pH6YBWpmfnyYzp+fokoTyS7qPch5jazpsXsXo6OpB6i/KkU+Zh8wqxS2YrawgDzpPzUHzE6vlfNkaeW+Us6OwshQVESqUTeQGIZSZWytB/OsPb/PY/Dl+nXCXehXEqVShgYCDniZM0CsTkxSaHrSl/oQQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PpKkT5BE; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431688d5127so11344995e9.0;
+        Thu, 21 Nov 2024 13:45:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732225503; x=1732830303; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vBJIxlTXCdDgKLk0dzLGrsKcGo3+bHCDMJbCtUdOXM=;
+        b=PpKkT5BEOBwgwHyHPoXRXk8yHMDq0dL2f3GuL6DSCQyQFkuOmLrcurpWB7Xd9NCNkP
+         XRycz5brVKc7XMaLKoqzQtUrf30UaCZt1ra3cLs2e7TeIoHgffwuFues1nFFBm0oaStn
+         BdXQAgl8LS03rL4r+Vsa2UJ0dlZru2qTwA5D7Qkl72WAQX0ZxUZxkgvU68MxzsbJkw0A
+         F5wGvHOOe8/6fXBRriOpIs9IUjraWnJJ+adpCsRWapRFhZP7ZiVciBgVTRZGfeYJQQkp
+         HdW047s18L6+xKpQV38DuOrm3xQV7klXePH2IjkA8VDlc22COJNAxUoCYnL1Qv9RN3sM
+         akCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732225503; x=1732830303;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+vBJIxlTXCdDgKLk0dzLGrsKcGo3+bHCDMJbCtUdOXM=;
+        b=tgDPfOUskiKXN8oaG7I3gW6KMGxWM54ECwxyA6dclWYc2OiWQqB8T6GwrPZwiWu6eK
+         exmvTup+LgNkqajA5o0cDLc707zMBDINAEz0EIONiPQdKIWfaq/A/4cpOMQ4uonSHwnz
+         NaY5gcY7jVHOmUR1/3qh9gIwJgqmrbfsvo4ae53kBn2eXkvLUYLZTIQdzP+HenptCNOY
+         KwQGMcXP8SvC1Gj5BQA5dvmaTkIz4WhOZlDxNYahYsz6hYTUGBcrmdTQ1ntWsrl2QSZX
+         DXB3nBCD1f3gaoEpI+VTzPTqjLA9rH1oal5qg7yEF1PlPjz/CFxkjd1nSxyhcUtziteP
+         f+vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfFZFVnJBkRvqDoE9k0TwGnxsjozqy1VK5xcfs0UYBOKB1ROtOCS3G/vZdAYF8SoK+m7umnEtVWf+i5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL9pBj4Fq7t13O5ihJ8dNQkDwM/z6PwYPIFH3Leg4HGgkOCo1i
+	+CguEycjuRSRuVsYUG71oHSpX4YaMkVsx+qo04MurP1nS21/qnUJ
+X-Gm-Gg: ASbGnct7rAlq7H7/B8NnsjaiKAKGiVAeVoBTUkn6At55nYQsDJ6NHwKEXxeWYmpUj34
+	mrwQtRJgOo1zGrcTEBRqihd+GJu7Wh9lvsQ3I5Y4Grfv3ZjnRdaGYiMPtfM4xvds3uqIkWKaTn0
+	pjDMrk1sE9XjoRpfyofGiBV2mCqbQE8i38eCeYgLsNqHfp2mZcV6GdnjRa3k0r5k3jj8CHF7k5y
+	aDpueZyjvvNud1+I6E4vjcjoOfEDhUQHYNPo2llPFOU6otIo7okccBUmbRzNLQ3lBNOzhQJjBN/
+	6vlr/36xz/OyZoeT/ojwJEulrOxlAE9K9IbepWf+SYp8vH8dRoqOYDXXaPLdDGEmKIO17NCR
+X-Google-Smtp-Source: AGHT+IH/hpz9oWNvg+L3wcPu6JUnGofTntSkqo/Z1jfI2l4MR/d472iQlA95pTwX5EBz4DABeSKR/w==
+X-Received: by 2002:a05:600c:3d8d:b0:431:4e25:fe42 with SMTP id 5b1f17b1804b1-433ce4e9e39mr2514675e9.32.1732225503019;
+        Thu, 21 Nov 2024 13:45:03 -0800 (PST)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-7b6a-90cc-9bcd-a2c3.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:7b6a:90cc:9bcd:a2c3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb53858sm636694f8f.62.2024.11.21.13.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 13:45:02 -0800 (PST)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] hwmon: (chipcap2) Drop IIO in MAINTAINERS and simplify
+ with guard()
+Date: Thu, 21 Nov 2024 22:44:54 +0100
+Message-Id: <20241121-chipcap_no_iio-v1-0-6c157848a36f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANapP2cC/x3MQQqAIBBA0avIrBN0KJCuEiFmY85GRSEC6e5Jy
+ 7f4v0OjytRgFR0q3dw4pwE9CfDRpYskn8OACmetUUsfuXhXbMqWOUs6jFqUwyUYhBGVSoGff7j
+ t7/sBxOL4BmAAAAA=
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732225501; l=720;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=VOQRmfCf0BFv+WjkM03vRFzQtwbS5FU6xRa3ysdE+HM=;
+ b=HXplWNbEuG+vTy+WAyzjPbxda8dORC+wfLsK1mRvOnnRYyg2Kp161UoMSU9886lY2RCR2ggif
+ qIthVjvvvfSDcSpOh1sxY/o0OAK35gFPRNV3Zf4fDYiHUa5TYYn03/i
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Hi Krishna,
+Simple series for the chipcap2 driver that I maintain to provide proper
+description in MAINTAINERS and simplify the code with guard().
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      MAINTAINERS: Drop IIO from the title of the Chipcap 2 hwmon driver
+      hwmon: (chipcap2) Switch to guard() for mutext handling
 
-[auto build test ERROR on 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2]
+ MAINTAINERS              |  2 +-
+ drivers/hwmon/chipcap2.c | 63 ++++++++++++++----------------------------------
+ 2 files changed, 19 insertions(+), 46 deletions(-)
+---
+base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+change-id: 20241121-chipcap_no_iio-eb8050a25f82
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-chaitanya-chundru/arm64-dts-qcom-sc7280-Increase-config-size-to-256MB-for-ECAM-feature/20241121-095614
-base:   2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
-patch link:    https://lore.kernel.org/r/20241117-ecam-v1-2-6059faf38d07%40quicinc.com
-patch subject: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
-config: alpha-randconfig-r064-20241121 (https://download.01.org/0day-ci/archive/20241122/202411220541.dAciinyb-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220541.dAciinyb-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411220541.dAciinyb-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   alpha-linux-ld: drivers/pci/controller/dwc/pcie-designware-host.o: in function `dw_pcie_host_deinit':
->> (.text+0x17a4): undefined reference to `pci_ecam_free'
->> alpha-linux-ld: (.text+0x17a8): undefined reference to `pci_ecam_free'
-   alpha-linux-ld: drivers/pci/controller/dwc/pcie-designware-host.o: in function `dw_pcie_host_init':
->> (.text+0x21e4): undefined reference to `pci_generic_ecam_ops'
->> alpha-linux-ld: (.text+0x21e8): undefined reference to `pci_ecam_create'
-   alpha-linux-ld: (.text+0x21f0): undefined reference to `pci_ecam_create'
->> alpha-linux-ld: (.text+0x2240): undefined reference to `pci_generic_ecam_ops'
-   alpha-linux-ld: (.text+0x2834): undefined reference to `pci_ecam_free'
-   alpha-linux-ld: (.text+0x2838): undefined reference to `pci_ecam_free'
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
