@@ -1,217 +1,144 @@
-Return-Path: <linux-kernel+bounces-416790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804AA9D4A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:56:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314709D4A4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04DB21F22660
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB347B20E58
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E981CB329;
-	Thu, 21 Nov 2024 09:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Be30ITyO"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CA71CB331;
+	Thu, 21 Nov 2024 09:57:34 +0000 (UTC)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BD31A3BC8
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FC4169AE4;
+	Thu, 21 Nov 2024 09:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732182962; cv=none; b=RL0QvBZlLhribDbGCzfVz0kJAx9DFc8Rlxg2MULtjitFD1DWOpwRuU+k/pXtSo9xNkKZ32AvwRqdvVtn2ptIrMucPJAoNf1f9BhAQMN773McSCHaEiD2mvVo+g4kRG9iYC9EBsLUgbfTBxEajpuyMndgXGYNJV5Acyx9TycdVjU=
+	t=1732183053; cv=none; b=mP9KkkrfmcEuGdbJsVViQ6mHT5XuViZ8AK3O2AVNZC0jEeKEtoyZiP/uBFSaeWtK2nQf2z839QrItXxfqHVG6v2nPaTOI4BjmgxJjDW7nOc1JP9dyAtW+N/s5kd0MrZW2dHWeZ6pUwThUU18SuTmoypihYTaQirsIpDJEVxnbkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732182962; c=relaxed/simple;
-	bh=ycN9sNEpXXNsr29jBffFhbNrhL2MCKZs9uGkISz6mNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ilgBLvd4aht8ljiyL0He4ksdbwglRzLHzyrcNd/HPe64lbVF+7QAsBWb0JJi/4PGSUgxDSDolo3gesJrUI1ksWq9mI5HipCdiY7b7GiAyl/9zsc2kkyxamr9yZuU2oEYCvvWD8KlOICDM1VjvLO4IfM0PN7X6QmhfFgSrnVxGfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Be30ITyO; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so714380a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:56:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732182960; x=1732787760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iZkpDbhhAmJ31UVSTe6E/iwUO0IjXdxBz12bYKwUfes=;
-        b=Be30ITyOa+Qj4HIx4gQbZeT9EejKbzxrSaoHkjpfBRDguzcJvq9PnvPzVfB8HU7lDa
-         W+ZdFnpKlmCI+BgZjiyiFFlSSfC4XoJjtKKsBQObhUfopmi0Q7ejPFIMOap2Qs/qBloN
-         rq8n0QG+EXqQpQ/97QdZhVGoaqXdAKvxvmPXM=
+	s=arc-20240116; t=1732183053; c=relaxed/simple;
+	bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XkpR7zOA0vK6wcwEvNy5aX93KBuw1x1Np2BLyh6ctZRGJakQsGa0Bo3Ide7Omj89PGHRxWbSKt6bWj3/mvcAcHEW1y3hTqUknBs1Gw3USojCsGxGWajA03YYHHSDYvtAIGVkgFLH5oeVn1PKd3PgbnV8hyTUR6fG8jn/5YZ0yV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso11986861fa.3;
+        Thu, 21 Nov 2024 01:57:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732182960; x=1732787760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732183050; x=1732787850;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iZkpDbhhAmJ31UVSTe6E/iwUO0IjXdxBz12bYKwUfes=;
-        b=HjHTi4N6yL3MXHv97CIWCXfnoddnHQDuO68kXWR4D55l1cnnNiEPEDQnTvYv1GeBJr
-         NuD4Vxrt0EIxrUYQi79S138jsS770jqXHTk/NYCXo9SfRxuqcAMt6WWiG8DAT4oR849F
-         e9GUarhX2/jlyFAcBgoD7yETfM8KxJgNSEkgQkIXaSBRc+mUqP30o9QXmmvmg+5wqfKK
-         5Uo1xGIKJWlIT0EDyDlRZEdkTXuKQIz0YiK6FrjJOABBrsHw1dU+QkUh4opMfifJORn9
-         GuEmxD/uEwiJIWitCH7EPuLLayYFESoxVHkOrcJGKgrFHnf6+KOVZSBIXP2l+fBUA0r7
-         3pqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVw7NUIEiZiHzhuoCXg1cv3G/CMVpjiXuKv4zM+mvmx9O7Fzvvjw+7mynhau8K1ULHo081ayh7va9fRQs0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIzwfOuGW2qErJPIq0NYhiSoAVYQWMVyzlEBICyt9GWPtv8lJ7
-	GU/iueUWPUXafaBkCiabe3O9owZidk5V4dtPeQNVMiuxNKjQ2ijfED4fvsURtA==
-X-Gm-Gg: ASbGncuQU1eroB7TuDhNQv4J3JC2+BeZSnrzuFIa4+VHcM/w6rHTo5sbYJVGpRe1TTx
-	2PDMbqDcvbvmhqoYWImodD7EvcGrIf9q1L2Am8vv4G/ekK4QOBELflS8NUA2y7NgtxAo/58qDWu
-	Pw56xnm0aGGG54EF1Vj4SUp0nMFMvZpCUURXq8F3R9N2yV3GNPQ6J+XxbHO4kRgwhFRmoPPKSDf
-	jOROi7nkTwHS+BQL7y3oXXIfydA/fNtmFVib7u46hdMvqzI5xK4aruB48fY7LjkflrP
-X-Google-Smtp-Source: AGHT+IHjEi/AY0wENllp4hRhBejtoC8+iDABIpse2LbxjAgeclXsFeuknXaJ/kZQDeuvcIrPHGkU0A==
-X-Received: by 2002:a05:6a21:788c:b0:1db:eee8:f2a0 with SMTP id adf61e73a8af0-1ddb0912f62mr8897525637.30.1732182959743;
-        Thu, 21 Nov 2024 01:55:59 -0800 (PST)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:527f:df65:78d6:c140])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21287ee2a07sm9910355ad.140.2024.11.21.01.55.57
+        bh=bTMbqsnoMNGLibkdcP7u5QI9+AWxB+kh9RGVzPPW/zM=;
+        b=EPpl5iuGFI9ecX+jeCjYlksMf7z2mEAVNm2zkkNEVOOSTG1BHa0n8fBmwu+I2WdYc4
+         j55+EncyDKix9z1oplNRW95ZPEolHHZ1gTTufMafHGIOsjaPzXqcJCJ2hMqL33IMtbMC
+         Zij3m7ew1ATB0n1fP+CEIzimoiW8YhuaDx4hDiIFbZJMEmmGTG/M2ONatnOq527HlACB
+         DsaOVXu7LPQ6DKOiY2xBppx2+K7JTC2ykzTgmc4T2U4FA0Eg9xxLE6CDKAWZ07IhlTol
+         UbybmHcFdykGBSeYGN6GDWfH5AukQT/8RoS+0AIpHlPb20KaILwf9uOOhepWyzXncqM8
+         3DCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uC+2dtvBDYG2ssbHQeS0PYcBB9Rl5o2iAoDnWkfCV+EBHEv/Y+Fokaif8AjhAwvi52Z3/lMx/pirzJE1EVo=@vger.kernel.org, AJvYcCWVEFktrF5RaWMr6uTxFLPg98fg683gDLFeULgTvFUUEVryqkvRqbjLgWadjmUPYnixVBS9rV1cfef88d2H@vger.kernel.org, AJvYcCWq4aO7by5hgA0hpzReMsAlRLwNuCkLf78rYH366w0bEMlEDGN+kw+8DiUsMe+0v6xxLHVKJLOZqF0SZrL50spdXPl4TBmA@vger.kernel.org
+X-Gm-Message-State: AOJu0YweNL2njmy0tRnzGcJ6SgOHrBg5ooNCUgixlAR8m0qYaA8bd+x+
+	zkeEv5ngrbBW8UN4/Rf1G9qBMe/H8wtN4rilrSTRY+1HJWQUEJ1z
+X-Google-Smtp-Source: AGHT+IEQ/3h1gmcyg8y0A2e1lAMy5tgKib+tZmeEdbSDdDb77Bea91wE6C/Db4iqDbt6Va8idVgQoQ==
+X-Received: by 2002:a2e:a549:0:b0:2fb:5014:aad4 with SMTP id 38308e7fff4ca-2ff8db2c665mr54822141fa.9.1732183049765;
+        Thu, 21 Nov 2024 01:57:29 -0800 (PST)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f436c412sm60692166b.179.2024.11.21.01.57.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 01:55:59 -0800 (PST)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>
-Subject: [PATCH] Revert "delay: Rework udelay and ndelay"
-Date: Thu, 21 Nov 2024 17:55:38 +0800
-Message-ID: <20241121095542.3684712-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+        Thu, 21 Nov 2024 01:57:28 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 21 Nov 2024 01:57:12 -0800
+Subject: [PATCH v2] ima: kexec: silence RCU list traversal warning
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241121-ima_rcu-v2-1-4d48630cf2c6@debian.org>
+X-B4-Tracking: v=1; b=H4sIAPcDP2cC/2XMMQ7CIBQA0KuQPxcDCFKZvIdpDMK3/YNgQImm4
+ e7Grq5veCtULIQVHFuhYKNKOYFjamAQFp9m5BTBMVBCaSmF5nT3lxJeHHHcRz/aKIyAgcGj4I3
+ e23SeBgYL1Wcuny1u8qf/R5NcciON1QcRzFHYU8Qr+bTLZYap9/4FUVfrFp8AAAA=
+X-Change-ID: 20241104-ima_rcu-ee83da87d050
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Eric W. Biederman" <ebiederm@xmission.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1865; i=leitao@debian.org;
+ h=from:subject:message-id; bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnPwQHUPDLWuedaB6ehCHozdKpH5lLrUX4VJvc1
+ /GUz1Fu5AGJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZz8EBwAKCRA1o5Of/Hh3
+ bfoWD/9V3QR+gu4NonzlOTUolGXozhUyVj7t/ynvxnIY6gQw/KFarveBDzIE1Gf8QDp9T4BOn6a
+ BqXlKNssfsh7V4K+L8O7P09b4OfdjF6g2drULQ9qYB3V9Rz/7vLr2j9/FLcKl/C7IVJjYXGVuVU
+ TQNIGc9+QDuEqbMZZPqCdnjmYliKGOKoHoDTfJSohLHxukbDrrd4vIVYPMfSVbwDbZyxvJ83LzS
+ hEs4koOdH/3Uw2HNLg0R/v1VR74kiox/8HnBB9c6+bXjNmHOXBzBsMFBBu54Ke6Pa4iKbaKwJKA
+ LhgLzP45Q6/QOiQWQE0E7C0PSTNtRdrDckrUG+ICzrYdIzCCPa9ya4q3KI8QOCMIHWsXjp7UC+F
+ XaCJXzI7LJyfRmFHcCWcpQwXMHwpZrajVK9SPeXGNFCBg1oqp96ZDLxxxrIsoOLf7R45BfWXxwC
+ 1Gsw05C2ojyzjnyTq/0pjxv4bj6d0E5Z5ETaAhFtSbyCx8m5yZDeQScSf3bF9uT//qaQAzhGBM/
+ d9zEDWZJKl24s+PPNLSFBm2zCOycfEMMWYtxSwxlxJtnRMEYhGJVjqFQdevxHxxfkuhuDjyvUlN
+ ZFtbyZeLUB/WtuewnrW4V1MkYfQk76pAixhTvmRamBlfe5EZ1WCuVGIdAYbrSnoncRpL/EmbX9a
+ 8Wq/wQAs4j41rgg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-This reverts commit 19e2d91d8cb1f333adf04731f2788ff6ca06cebd.
+The ima_measurements list is append-only and doesn't require
+rcu_read_lock() protection. However, lockdep issues a warning when
+traversing RCU lists without the read lock:
 
-Journald was recently observed to continuely crash at startup, causing
-the system to not be able to finish booting. This was observed locally
-on my MT8195 based Chromebook while doing development, and on KernelCI
-on a MT8192 based Chromebook [1].
+  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
 
-A bisect found this commit to be the first bad commit. Reverting it
-seems to have fixed the issue.
+Fix this by using the variant of list_for_each_entry_rcu() with the last
+argument set to true. This tells the RCU subsystem that traversing this
+append-only list without the read lock is intentional and safe.
 
-[1] https://lava.collabora.dev/scheduler/job/16123429
+This change silences the lockdep warning while maintaining the correct
+semantics for the append-only list traversal.
 
-Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arch@vger.kernel.org
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
-Honestly I have no idea what's going on under the hood. Journald getting
-stuck means the system doesn't boot to the login prompt. And turning on
-journald's debug output didn't produce anything.
+Changes in v2:
+- Do not hold the RCU read lock, but, annotate list_for_each_entry_rcu()
+  that is OK to traverse the list without the RCU read lock.
+- Link to v1: https://lore.kernel.org/r/20241104-ima_rcu-v1-1-5157460c5907@debian.org
+---
+ security/integrity/ima/ima_kexec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- include/asm-generic/delay.h | 65 ++++++++++++++++---------------------
- 1 file changed, 28 insertions(+), 37 deletions(-)
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 52e00332defed39774c9e23e045f1377cfa30d0c..9d45f4d26f731658a79b94b9f95f4dcc4dcb6325 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	/* This is an append-only list, no need to hold the RCU read lock */
++	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+ 			ima_measurements_show(&file, qe);
 
-diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
-index 76cf237b6e4c..a8cee41cc51b 100644
---- a/include/asm-generic/delay.h
-+++ b/include/asm-generic/delay.h
-@@ -2,9 +2,6 @@
- #ifndef __ASM_GENERIC_DELAY_H
- #define __ASM_GENERIC_DELAY_H
- 
--#include <linux/math.h>
--#include <vdso/time64.h>
--
- /* Undefined functions to get compile-time errors */
- extern void __bad_udelay(void);
- extern void __bad_ndelay(void);
-@@ -15,18 +12,13 @@ extern void __const_udelay(unsigned long xloops);
- extern void __delay(unsigned long loops);
- 
- /*
-- * The microseconds/nanosecond delay multiplicators are used to convert a
-- * constant microseconds/nanoseconds value to a value which can be used by the
-- * architectures specific implementation to transform it into loops.
-- */
--#define UDELAY_CONST_MULT	((unsigned long)DIV_ROUND_UP(1ULL << 32, USEC_PER_SEC))
--#define NDELAY_CONST_MULT	((unsigned long)DIV_ROUND_UP(1ULL << 32, NSEC_PER_SEC))
--
--/*
-- * The maximum constant udelay/ndelay value picked out of thin air to prevent
-- * too long constant udelays/ndelays.
-+ * Implementation details:
-+ *
-+ * * The weird n/20000 thing suppresses a "comparison is always false due to
-+ *   limited range of data type" warning with non-const 8-bit arguments.
-+ * * 0x10c7 is 2**32 / 1000000 (rounded up) -> udelay
-+ * * 0x5 is 2**32 / 1000000000 (rounded up) -> ndelay
-  */
--#define DELAY_CONST_MAX   20000
- 
- /**
-  * udelay - Inserting a delay based on microseconds with busy waiting
-@@ -53,17 +45,17 @@ extern void __delay(unsigned long loops);
-  * #. cache behaviour affecting the time it takes to execute the loop function.
-  * #. CPU clock rate changes.
-  */
--static __always_inline void udelay(unsigned long usec)
--{
--	if (__builtin_constant_p(usec)) {
--		if (usec >= DELAY_CONST_MAX)
--			__bad_udelay();
--		else
--			__const_udelay(usec * UDELAY_CONST_MULT);
--	} else {
--		__udelay(usec);
--	}
--}
-+#define udelay(n)							\
-+	({								\
-+		if (__builtin_constant_p(n)) {				\
-+			if ((n) / 20000 >= 1)				\
-+				 __bad_udelay();			\
-+			else						\
-+				__const_udelay((n) * 0x10c7ul);		\
-+		} else {						\
-+			__udelay(n);					\
-+		}							\
-+	})
- 
- /**
-  * ndelay - Inserting a delay based on nanoseconds with busy waiting
-@@ -71,17 +63,16 @@ static __always_inline void udelay(unsigned long usec)
-  *
-  * See udelay() for basic information about ndelay() and it's variants.
-  */
--static __always_inline void ndelay(unsigned long nsec)
--{
--	if (__builtin_constant_p(nsec)) {
--		if (nsec >= DELAY_CONST_MAX)
--			__bad_udelay();
--		else
--			__const_udelay(nsec * NDELAY_CONST_MULT);
--	} else {
--		__udelay(nsec);
--	}
--}
--#define ndelay(x) ndelay(x)
-+#define ndelay(n)							\
-+	({								\
-+		if (__builtin_constant_p(n)) {				\
-+			if ((n) / 20000 >= 1)				\
-+				__bad_ndelay();				\
-+			else						\
-+				__const_udelay((n) * 5ul);		\
-+		} else {						\
-+			__ndelay(n);					\
-+		}							\
-+	})
- 
- #endif /* __ASM_GENERIC_DELAY_H */
+---
+base-commit: ac24e26aa08fe026804f678599f805eb13374a5d
+change-id: 20241104-ima_rcu-ee83da87d050
+
+Best regards,
 -- 
-2.47.0.338.g60cca15819-goog
+Breno Leitao <leitao@debian.org>
 
 
