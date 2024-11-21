@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-416510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729929D461B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:10:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E37EF9D461F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:14:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2017B2252C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:10:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72871B21F22
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78E014A60D;
-	Thu, 21 Nov 2024 03:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vj87BFSE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8597413BAE2;
+	Thu, 21 Nov 2024 03:14:20 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66BA55C29
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4883070817;
+	Thu, 21 Nov 2024 03:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732158598; cv=none; b=rggsuv0GTpxo2/KrW/wKKmb25/f+wbXGm01tqKPqPpoBF1/0w/kE0D16tEMbwfIjYZh4my9Rv65vuwcewl7G4tCqXkjyp9ws97Y38cvcAqwmULhvSxQhPMTPZgPyRAIvBTdTNjaE31iT7D5cAgZFgOlatF8jvOBJd0qnGtB7igY=
+	t=1732158860; cv=none; b=i5pMZpdskKcywlvleBH7LsRKLf1z7UvSE0P35Xo7gyaP8pWB2bDvZIytbmdPtduUNPE+pIDk+ezj4h3mcxybIQmEFv2KBWmeta7rS0Y4q+UJgZmUYXgp6d+wL4F6rCDwKnYG7s4DHenKrzu+Stmk5G5q+p+osbsioQozAW6OID8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732158598; c=relaxed/simple;
-	bh=0H1m0NX8j7Q4v3rXNl3ISQx66VLYoAUVltruNmHwR78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLzWweaB28bR1J5a/Q/qKOZ5f/3VLzmATKrJHt7N+xEJaB6qM9U0cdIXAojVKzfmNtU93ELiRQFjIF8MJYQeHCcPfA9DeTFlotpVhs41369VqJVsAg4I7cN/bMNndv0HYpqf3bTceif8QgADY2U7woMyRk68d1hAIw6PgbNL4tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vj87BFSE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732158595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=i7WppD/Sc+LMLfzM3iKsXvqQTAszek1AB3KYAwb4TXA=;
-	b=Vj87BFSEM8DZulp97VQY4ELiBiMWYUVS0IBYN8fL/ouuq33i4nLXQvybeG0XtXu7ObmR3S
-	0YW25voqsdraFLiY8r4ryPJjm2FtSFcHJjhGAJ4nusPvA4ixRMPcf7uoe2MX4Nh9eRfUwe
-	TSdiOwZIts/xMEwf5l5XFqEhj841P1Q=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-449-PVOQQv3VNfO2ZHF52GjPdA-1; Wed,
- 20 Nov 2024 22:09:52 -0500
-X-MC-Unique: PVOQQv3VNfO2ZHF52GjPdA-1
-X-Mimecast-MFC-AGG-ID: PVOQQv3VNfO2ZHF52GjPdA
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A544219560A3;
-	Thu, 21 Nov 2024 03:09:48 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.87])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3D18430000DF;
-	Thu, 21 Nov 2024 03:09:33 +0000 (UTC)
-Date: Thu, 21 Nov 2024 11:09:27 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <wagi@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	John Garry <john.g.garry@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hannes Reinecke <hare@suse.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v5 4/8] blk-mq: introduce blk_mq_map_hw_queues
-Message-ID: <Zz6kZ7QZV9HKSWVR@fedora>
-References: <20241115-refactor-blk-affinity-helpers-v5-0-c472afd84d9f@kernel.org>
- <20241115-refactor-blk-affinity-helpers-v5-4-c472afd84d9f@kernel.org>
+	s=arc-20240116; t=1732158860; c=relaxed/simple;
+	bh=PUuC1t5t+/n5ZB+R5Tem9vzjEzm8d5KZbCxm79ml7I8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=adylf98iHZpZ0Ob/6BuyLb3qrMGKYoAlIlgQfssEn+OU243AoOuMx5UPA1ejPgO7AsPTcfnYRaQHc1Uzi3q/l/d87rhQTr9ivJvWt0bnaHZWjQe44x5j+LxSvKx8GguxJbvPheX2JXHrpU0zAV35cmzQbeaRQtzh1YHxzk2QUZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL2pI2c029337;
+	Thu, 21 Nov 2024 03:13:34 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0n541-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 21 Nov 2024 03:13:34 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Wed, 20 Nov 2024 19:13:32 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Wed, 20 Nov 2024 19:13:30 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH V3] fs/ntfs3: check if the inode is bad before creating symlink
+Date: Thu, 21 Nov 2024 11:13:29 +0800
+Message-ID: <20241121031329.354341-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241120161045.GL3387508@ZenIV>
+References: <20241120161045.GL3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115-refactor-blk-affinity-helpers-v5-4-c472afd84d9f@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: NAjo1vfwGLZaS1hclXBN6lHomPxM8qOx
+X-Proofpoint-GUID: NAjo1vfwGLZaS1hclXBN6lHomPxM8qOx
+X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=673ea55e cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=oXN7jNVGPntKbSpEweEA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-21_01,2024-11-20_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ mlxlogscore=771 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411210024
 
-On Fri, Nov 15, 2024 at 05:37:48PM +0100, Daniel Wagner wrote:
-> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
-> hardware queue mapping based on affinity information. These two function
-> share common code and only differ on how the affinity information is
-> retrieved. Also, those functions are located in the block subsystem
-> where it doesn't really fit in. They are virtio and pci subsystem
-> specific.
+On Wed, 20 Nov 2024 16:10:45 +0000, Al Viro wrote:
+> On Wed, Nov 20, 2024 at 11:04:43AM +0800, Lizhi Xu wrote:
+> > syzbot reported a null-ptr-deref in pick_link. [1]
+> >
+> > First, i_link and i_dir_seq are in the same union, they share the same memory
+> > address, and i_dir_seq will be updated during the execution of walk_component,
+> > which makes the value of i_link equal to i_dir_seq.
+> >
+> > Secondly, the chmod execution failed, which resulted in setting the mode value
+> > of file0's inode to REG when executing ntfs_bad_inode.
+> >
+> > Third, when creating a symbolic link using the file0 whose inode has been marked
+> > as bad, it is not determined whether its inode is bad, which ultimately leads to
+> > null-ptr-deref when performing a mount operation on the symbolic link bus because
+> > the i_link value is equal to i_dir_seq=2.
+> >
+> > Note: ("file0, bus" are defined in reproducer [2])
+> >
+> > To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
+> > whether the inode of file is already bad.
 > 
-> Thus introduce provide a generic mapping function which uses the
-> irq_get_affinity callback from bus_type.
+> I would really like to understand how the hell did that bad inode end up passed
+> to d_splice_alias()/d_instantiate()/whatever it had been.
+1. In the move_mount() process, the inode is created by ntfs_alloc_inode() and enters d_splice_alias() by ntfs_lookup(), at this time inode is good, as shown below:
+move_mount()->
+  user_path_at()->
+    filename_lookup()->
+      path_lookupat()->
+        lookup_last()->
+          walk_component()->
+            __lookup_slow()->
+              ntfs_lookup()->
+                d_splice_alias()->
+
+2. The subsequent chmod fails, causing the inode to be set to bad.
+3. During the link operation, d_instantiate() is executed in ntfs_link() to associate the bad inode with the dentry.
+4. During the mount operation, walk_component executes pick_link, triggering null-ptr-deref.
+
+Reproducer:
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
 > 
-> Originally idea from Ming Lei <ming.lei@redhat.com>
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Daniel Wagner <wagi@kernel.org>
-
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-
--- 
-Ming
-
+> That's the root cause - and it looks like ntfs is too free with make_bad_inode()
+> in general, which might cause other problems.
 
