@@ -1,547 +1,266 @@
-Return-Path: <linux-kernel+bounces-417463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27929D5460
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:58:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E33E9D5462
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2F62B23FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:58:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D385E1F21AAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEFA1CB31D;
-	Thu, 21 Nov 2024 20:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CA61C9B9A;
+	Thu, 21 Nov 2024 20:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oyuylrn3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HfgkzacF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ADA1C304F;
-	Thu, 21 Nov 2024 20:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732222693; cv=none; b=QtRERn6NnGmPqbnZjPBSBZHopM6c8gAT/EcpNSSfNvoBAXnFlF+O8IlqaUEzTKYXDeoRhotXgrS4QQqpHLNNO8EmMQbYIujFRkxhm5quwPWzsdqSo3JuqYggA6sTDwX7FBIjOewofVB7x4bdJ1qoLCspH7kzMCMOW3prUcIIxyY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732222693; c=relaxed/simple;
-	bh=xDvniAIlhnzBwNgXiEvN/CISL127vuPJKCIxQxi8PPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyy2CgBz7UEFZzg//LKKFvDSQqgPuRGfy0BtdQDVkQRX5uidHMhiBhQ0LJa4rlEUAxfkBZmQQ02GyshNFneRuHKAFqcblaX2hs4ES1GG4j2KVlTYZuJLneM+AwZFvBTPMbrEHp0ay+uGtVdvyo0Ob9ABP4qXzffrqWvCbK4o1/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oyuylrn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 493D0C4CECC;
-	Thu, 21 Nov 2024 20:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732222692;
-	bh=xDvniAIlhnzBwNgXiEvN/CISL127vuPJKCIxQxi8PPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oyuylrn3NycYPbHMY2OmeRp7UkFMPMaXpGKdAY5EsiIsqJlf264GdJxiUmy+yVrMv
-	 n8oasfXYrUVFpn8fncESI4xq9JpJNgX0LaCvWk8TSSBYZ0HKkgudHvmrunzWwI9+9z
-	 zgv46ab8ZqA/NQrTmLCSA1d6+ajK4tM2lBk1gSkM7AjITi9Qi5XnlzxpsTz1sN8I27
-	 1APOfAJn6rIwPaFnGQhOueBfAlStQhEl/ke5XnRXyqMS0bQD/QYImpb8DbgWHiD6Je
-	 XaHk1NHXMeTsfSVsgJF18YKSIHvffHyxCJIUNjq2kF9vYvwC67su2v1Mg1TAYfONcP
-	 Ppmy19UpFhOsQ==
-Date: Thu, 21 Nov 2024 17:58:09 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf tests: Fix hwmon parsing with PMU name test
-Message-ID: <Zz-e4fMLIJmufgyl@x1>
-References: <20241121000955.536930-1-irogers@google.com>
- <Zz9oKR3goFPP9_a9@x1>
- <Zz9sbNAuRsYjclAi@x1>
- <CAP-5=fXAitSZuRPppAjH=38Ua6BFyhou0sSj7xmfNakqPUQqPw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DE4132122;
+	Thu, 21 Nov 2024 20:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732222735; cv=fail; b=d/BZ0YFXhj/vmH+TaCyQFzHv3aKc2+bCp3oPUTv1M0BGA0+ArjI7O5+eRmFAlElC1eEUFkYzfeitEdroaP78HToRxXp4qgukr8/lASgNzFkfA2OoBkzKcjcxLeHEIXu3VTGqnoVILaJx6Q8nPlJAkauJE6Da8sWs0SgDT5GFYfs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732222735; c=relaxed/simple;
+	bh=Lupc2Edyb5LeoV+lwAPHkRYn1jv8ZJ9D2/jWm0TJaHs=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MG1Oeh9HfDomi0cNS/zpSGon0bLcw0+06mFf7OumoqiGdqjGDeP2Qy0AUooH2HkwyS3Tuw/hSWJ3ojCrIH3eBivq0GwOMg+ZdVXRExsndCnwLpFb+uBoA/fF00/+ra4SwvkqRwWi6ivKYwKIfZr+5E2MqnypWdSJaQuzCEqOR1U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HfgkzacF; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732222733; x=1763758733;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Lupc2Edyb5LeoV+lwAPHkRYn1jv8ZJ9D2/jWm0TJaHs=;
+  b=HfgkzacFU/54EeA8iVKtJkrJCE8E3huIEZSMnq9qmr3hKf9tg7wcx85A
+   DijbSAzGkWsDBKb/HO4hXUNPsl+j5TnQJyObXEKnQPsawzUAsyX93tf/8
+   P4VSFPyakwpz3126zgbskFpFJgm+ntsj2QWESu/vDp4HPw2qHSuHF+UP2
+   /GyCx25uSQGA78iukm7p6FD+Kzs30WowbGLkwTQsgUvp5OkGfTlqYp1qx
+   rW34T6iBEt++0RyGjYZxO6A3dUVS92bNvm1pNmcSOAaL/0D/ML+X7YFKs
+   ynoTZSIB9d4PEWbQLqy3LM0OmHnLQ2k5Qw7mYVG3JHJJ0wmWd0KjLfQ2h
+   g==;
+X-CSE-ConnectionGUID: hlHd3jBoTuumcb2p1z/wOg==
+X-CSE-MsgGUID: hNcJPULiTEq4QEJ75wvSRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="42877956"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="42877956"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 12:58:53 -0800
+X-CSE-ConnectionGUID: S2CaP3N6QL22/u0d3JTnSw==
+X-CSE-MsgGUID: JL+4uYyHTGu6LNfLfd2p3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90302764"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Nov 2024 12:58:53 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 21 Nov 2024 12:58:52 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 21 Nov 2024 12:58:52 -0800
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.41) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 21 Nov 2024 12:58:52 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Zay5ysWZ1rkIiws7jSTEKm1Is/3Cb/xz2QoHA2iX2rqzewkYCiD7+iaLpsGA726IBsTx6ZhNUPMxQ0452TC65jc8ysD0H41VfIobSaToyJOyVoEZoUX+vvISJQac1+d08faQ4LzUAlV1Z0N1mywi0Bbdwdh7jX7XUKunc3jAKk36s2Gd5FKg+SjvD8CH60E96y7jnBhsBgVOgqerE24H5BRdDmEtuLTC9SsxcPzw8flUwJ37I+LEOzgNaLqa+CUDs78NG8YZRFngMHMSeKpNE8hZsynzNNrHI3IGZwRKXoZWQbctpditjK7229LWyRO5ytlrB92v+WeE+ylyOYQtHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HQQ/V/5NkaLsDx6LjhtuDkHYhsrpnwlCsF4x2yLu8+Q=;
+ b=uKM4z73cswewKSIS/Ou6mTwmHNLdMcdAiowYZJg+ayxS5MuD4s4U4jD4/vgFDQY8dco2jtdlSG8YBWoZUZx++5qQFsIKA9Ny8fZ3+BO3zemwQA8wOCN+hLvSEaNlFOVYJ+lfJXWFg0LYXlTPOt7OP8ea4r7CI4B4xapAcd+9DJGuF9a1l7qsQ1a8xVfR1Nh3x4aVVoD6Tnuk19o8XOY/4ofQNN5jnXwHTDGt6VD5zlc0bhHpbdyHfK8+vqqO8Gr3e/iryloVAtgB2oZd7EcMGXKPPj01nyLCpXELQ4/BAaLTcLij1ND+eYQ3lcLa30g0LlWvs3CaFtwwJBJGTOuPuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SA2PR11MB4937.namprd11.prod.outlook.com (2603:10b6:806:118::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
+ 2024 20:58:41 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8158.019; Thu, 21 Nov 2024
+ 20:58:38 +0000
+Message-ID: <82b51e46-3da4-4b49-8ad9-45ed18fcc2e6@intel.com>
+Date: Thu, 21 Nov 2024 12:58:36 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 24/26] x86/resctrl: Update assignments on event
+ configuration changes
+To: <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <fenghua.yu@intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<thuth@redhat.com>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<akpm@linux-foundation.org>, <xiongwei.song@windriver.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <daniel.sneddon@linux.intel.com>,
+	<perry.yuan@amd.com>, <sandipan.das@amd.com>, <kai.huang@intel.com>,
+	<xiaoyao.li@intel.com>, <seanjc@google.com>, <jithu.joseph@intel.com>,
+	<brijesh.singh@amd.com>, <xin3.li@intel.com>, <ebiggers@google.com>,
+	<andrew.cooper3@citrix.com>, <mario.limonciello@amd.com>,
+	<james.morse@arm.com>, <tan.shaopeng@fujitsu.com>, <tony.luck@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<eranian@google.com>, <jpoimboe@kernel.org>, <thomas.lendacky@amd.com>
+References: <cover.1730244116.git.babu.moger@amd.com>
+ <89e98891f50d1d57c1cf8bc18c1f562ac58d2cce.1730244116.git.babu.moger@amd.com>
+ <b78a01b4-3583-4689-a894-96dab5dfb9fd@intel.com>
+ <31994778-74aa-0b61-cf93-14c25c872e9a@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <31994778-74aa-0b61-cf93-14c25c872e9a@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR05CA0081.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::26) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXAitSZuRPppAjH=38Ua6BFyhou0sSj7xmfNakqPUQqPw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA2PR11MB4937:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2fde868-6cd2-4181-1aa6-08dd0a6f459a
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZmkzSWNzakZEcVJtT0JrNmxqblBlS2h3b01aODdXZHRaaHJCSzlSb1JTamR3?=
+ =?utf-8?B?cXRmellOUFhlWC9aMlRPdmNkaGVSUjdCWTgvMEpBU0hxdmdwWlNXMUJUcmxp?=
+ =?utf-8?B?aWpNL3RGdnhabG1tejZsN0RxRWZVZTM1VVhUdmZoekxUTmQvSUZ6cDBDK3lM?=
+ =?utf-8?B?OFE3d1o3MnlhNkRvYmZaNWdiLzRzWVBmM1lzMXBrdkNSbGc4SmFreHRZU3RC?=
+ =?utf-8?B?SVE0aEQvandDRVNHcE9CUDhZTkY5cDNqbS93MUx4Mk5TaDJCdjR2N1FiRDZm?=
+ =?utf-8?B?bmZueWltdGFUOHF1c2xMQkhzZVI5K0kzV3lVait0am9peFdJaFZFNWZPK0V6?=
+ =?utf-8?B?a2x2Q2taMWRZaEZ4eVBFZk5Ra1pNeHVNZnJ0bjhmM1N1dTAzS2pvM0tCYnBF?=
+ =?utf-8?B?dnFCTWdwRFUyTzhNSTVROG9wNlNmQUx2MWNJRXp0SVFZY01KZ1hWZlR1OVNC?=
+ =?utf-8?B?ejhlVGxqc1JWYWdXZUNSeUxTeC9MNzZHMEdmZVVJWjZOamhqNFUwaEx6MWZP?=
+ =?utf-8?B?U0tiaEpNZkdFKzFyUHNlRkZlNkFINllvMWFlRThiamxSVzZvaURocWF6Mys1?=
+ =?utf-8?B?L0lJd1F2dDhQRWxSanEwY3haMlRBUmp1Q3p0dFBFL08zbmdZcFNBTGV3SUt3?=
+ =?utf-8?B?K3JOMDA2WDJCaDZRR1JqNnhIV3YzbzhZaTB4d0NTdEFYTmthLzR0cjVGN2Z1?=
+ =?utf-8?B?SWwzME8vemZ3MGhZTkFWN0JrQ051cFpwVzV2NlVIamFFZmxVTzZUZG41STNL?=
+ =?utf-8?B?NW1xL3J3WS9Oa3Z0bnNucjRtUUtnY1FvUmtoWEZyeCtMT2hxV0NQcUdETGRZ?=
+ =?utf-8?B?a1A1Z2RIWllmb2FVK2VZbU03MW81Vmh5Q0psQ0R3dk12TlFKS1VNWWhVU2py?=
+ =?utf-8?B?UkVhV1ROcEJyekdxRlh1MWRHNm1SMW0xTUtVTUVRejdYQXFQaFN3STNNalM2?=
+ =?utf-8?B?ZG9UelNLa044Z0lHWFNJRE1yRW9XM25UbjNPdkl2UVQzVmdmamFPSDNJQVZz?=
+ =?utf-8?B?V2c0cjBsdXdETk80ZUVGNTFOdDFyeUNwZVZzRngvVGtIUFF2UXI2SEZTQ1lS?=
+ =?utf-8?B?QzZhdW96TnU5NVFvdVppYi93czZGZTRKbW1Ba25JWGFWalEydGlaMXkrVUtk?=
+ =?utf-8?B?VlcxMmdEUVMxNm1UQWJDTmFTOE9WYWxOOXd1aWVnMHZtRkR3Z01MQnMvS0hY?=
+ =?utf-8?B?OE9BY3NsWDF2RHdzTUR6RnZkSlhuRk9MY01NL1lnemVSRnZLUVZjd3R4R1BR?=
+ =?utf-8?B?NzcreHZVcmZOa1FQNnZYYnpXMmUrb1doaUM4YmdQVUprRWxueEUxUmt3RVYx?=
+ =?utf-8?B?b2Zxd29QbkRSMTZERDZ4T0I1bWdNQ0FWZ0tEU2xJSjBCVEpjRENiVmNUV2t1?=
+ =?utf-8?B?U09aQnZKQ1FnV2VxZFFEN3RPbi9rOHIvRUs4UFlCdzZ2ZnQ2MXEwbFJzY3hz?=
+ =?utf-8?B?SldPcHZLWnpkaFZYRUZjaUh1b3ZFRWlFTDZPdmN6YTRnTUVER3hMdytJSHNS?=
+ =?utf-8?B?ekttSHBkT0NGTWVkaTkrdDVaRUdqSmRoa3BLOTNTWWp1dWJ5SWxBUnQ4NThX?=
+ =?utf-8?B?N1c0SXZJQXdFYmJHTnRaY0dMV2dVc3FzVk4zK3YybkladDg2Yi9FYW01UUxx?=
+ =?utf-8?B?dVRLNi82QXVJdFIzaEp2NmdKMDhTeXpHMHFRS0lQZDdOQUlmb0lYbEFtN0Ur?=
+ =?utf-8?B?cjd5RWxuZi9rUkhlNVhLU1pEVi9DMjZ6WDV3dEN5V2xxV1FTWnlwaTQ3TndQ?=
+ =?utf-8?Q?3cZXOO9NbvoljF7k9j7dUPJw6IuiakVt8a4hEVl?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YkZ4Y2xVRHhsMS8vZ29uMEhWWEdnbFJhTkhXcU4zaUZ3bXdldVRlYVJjWmhl?=
+ =?utf-8?B?eU1NZWN1dkk4Zzgxem51djRhS1BIWElJS3ZTcGdtVVZ2enE4Vzg2U1RnN2VI?=
+ =?utf-8?B?aDNDR2Fyanh4SENKY0ZYREtLRXp3WHJvVWhLaFJCUjhCODdoVjVKMFRSZ29y?=
+ =?utf-8?B?ZHI2b3lZVTZsWVhWVmdydm9OK3FGbVEwRlhsbWIvVDFxSWVMK2d6WVd1K0Ju?=
+ =?utf-8?B?WmdYRVIvdWxqditTd2lPNVNHZVpjRDhsbmhjQTVkNkZjcytmV1RwdDYzK0Z4?=
+ =?utf-8?B?MEJzSXJIeG1oREhOL3dzdFI5ZXJZWnNsNndrMTZsQXNoS2VlbURvdVd4Y2RD?=
+ =?utf-8?B?dGFGeERUV2NxWkNWenVPMHQ2VDlXNCtqN2NsZGN1NGtJV1Y0WUNrTC9kcDZP?=
+ =?utf-8?B?WTdXVDBzUitWMi9RUTJaVDd3VDNLaG5BSFVZSXFhazBnUHYrUUc3K0djNDRl?=
+ =?utf-8?B?Nk1nK1h6clhqRlhOOW1YQnZnZnVPMEN4S29HYlVZai85Y0NIM3p6VEdOcm5u?=
+ =?utf-8?B?Nk54RzlJTnhyT244Y1hTQ2NlblBDcUJjeGg2ODMzeXNxcnVkUVd0MHJ4QTNF?=
+ =?utf-8?B?UGg5MWFnRExxdEEybXMvV01GY0tEcVdNeHhidnN0WWdXZy81ZkptOC9QekR1?=
+ =?utf-8?B?ZGVaa0ZqN0J3NDMwWEIzMk5WY0lldmtsT0oyYkg2NXlvTXBScExRR0FidG5w?=
+ =?utf-8?B?dks5MjN1dk9ob3hNaWtleGVjb0hnNHpaYkhORG9ZbTlycFpXQzhrNWJ0aVdi?=
+ =?utf-8?B?TmxsaVhMNUI3ckk5b2VDMVFNZXZmaks4MllmKzkvVjhGWSswSSt3TmxxbitI?=
+ =?utf-8?B?TWtmNmpmMGI3R2FzcEZ4ekVnakRIcDEzK09PR0xPblNGc1RuZEhBQ2hHUWlO?=
+ =?utf-8?B?bDdBNkZqVEF0L1J1U01COWp1NmtkclZGeVNaaE9keXgxQ3dXb2gybjdMR01q?=
+ =?utf-8?B?YnB5a1o3TUtoRzd1aUR2dnJVT0ZzZEJhNUo1OEgyRFVxZnNkSWxveWltQXpF?=
+ =?utf-8?B?OGpKd01GUktkNW90RHhLYlBTazc0SGZVZGVVV2dxS29RRkRXOHhvZlNNdkNT?=
+ =?utf-8?B?cW9BV0VrWFJPRFNSMFVBMm5PbFZXaW4zciszWUh2aGt4WFlBSEVESC85WlUv?=
+ =?utf-8?B?bU5JdTRKU3U3b1JkUDYwdlB3T2gvWG9sR2c5YWMvYjhFbkg5WERMVFA4U2RB?=
+ =?utf-8?B?QXkxRURHdXdoSlVMZVBiVjNWSksvUVZFTkczMTRVYm1lcFBBeVRiQnRBVkkx?=
+ =?utf-8?B?d2tTT3B5Q0wzRkZ1Nm9DRTBwMUExTzZNMS9yY09OWW9uZyttUHVWYjA3ZGRO?=
+ =?utf-8?B?WHk4S0ZGd3RDVTdTUWlxSERZcjN6VmJMWlJqK0x4Q2lzNjFQVTlyNHJoMy9s?=
+ =?utf-8?B?SWErNHNZRmlsZTVmdHc1dzU4R2lNL2NNWWZiaVFXODM3ZHRPcGdlTzNyTUho?=
+ =?utf-8?B?UzY4TjA1VlBoS2NPR2dlS2dacm85aDMrM0pxK2VrRmlCTjAxNnpsQWROQnJo?=
+ =?utf-8?B?UDFsR3diQjRMYlZZZDAzcW1ndGNJYUZkZjY0b09rNCttZzEzU2J5ckJJQXNX?=
+ =?utf-8?B?ODIvOVpsenNUZm55R2RnVFVtK3l1WjJMcHNtdkdZWVY1OGwwSElpMU5BN24y?=
+ =?utf-8?B?L3pWVGpTM2lqNjdUL0lWekNlNVZWU3BVd1VKRmxGV1ozNlYwM2pWL1JBY2Qz?=
+ =?utf-8?B?TStyKzE1end6Z0R3SXZKalpJaklQZ1phOWJvTlloTlE1ems0dXBlWlZzOEdY?=
+ =?utf-8?B?TmVoZUMxUE9DMzNYN0VaemJWYWVWWmRVc3BPK2o1dnBIMVNzbWZ2VEIyUFFY?=
+ =?utf-8?B?L1hMSlJ2TlMxZXVnZGFuNWttemt5VUtab2JQai9raXkwbkFZaWlKTlBuL2Za?=
+ =?utf-8?B?QklxSUlVT1RENmNIR2FDK3V4ekFpOXJoME5JMEQweUNVU2RvRVJmMU4vcWVk?=
+ =?utf-8?B?UmExVEZOOFFVbXM3YjJ0UXJvRjc4Ty9XeG9mOWtQRklESHJJd3ZnbVFrQ3ky?=
+ =?utf-8?B?VWkrUEdKdlpWWklOeU0xYXBxQU1kOE12cDBBOFFreUhtMFk0eDl3R0E4c3RK?=
+ =?utf-8?B?RHZxcjVEaS9xWUpXZk0za2FlN0plOTg4SjBpK0o1djNnQTFrYStjaXcxdDh2?=
+ =?utf-8?B?NHlqZEhNTjZodTlYcUplRUt6SHNmc0s1bVdYVG1uMkNyb245MmdtMi91eG94?=
+ =?utf-8?B?elE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2fde868-6cd2-4181-1aa6-08dd0a6f459a
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 20:58:38.3695
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h94C7OT/PzB8SmmcRpts2WsvcD/83V7+qmZaLoBM55L2Z/1KNu3nVOU+qIBOiDTnqKk0bti+FhpWJvuzE/KWwKYPY/oT0tRgGdACI6S24Nc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4937
+X-OriginatorOrg: intel.com
 
-On Thu, Nov 21, 2024 at 10:55:00AM -0800, Ian Rogers wrote:
-> On Thu, Nov 21, 2024 at 9:22 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Thu, Nov 21, 2024 at 02:04:45PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Nov 20, 2024 at 04:09:55PM -0800, Ian Rogers wrote:
-> > > > Incorrectly the hwmon with PMU name test didn't pass "true". Fix and
-> > > > address issue with hwmon_pmu__config_terms needing to load events - a
-> > > > load bearing assert fired. Also fix missing list deletion when putting
-> > > > the hwmon test PMU and lower some debug warnings to make the hwmon PMU
-> > > > less spammy in verbose mode.
-> >
-> > > After applying this, with this series of patches on a Fedora 40 system,
-> > > I get output from -v where before I needed, IIRC, to use -vv:
-> > >
-> > > f8244bb9bfa66f79 (HEAD -> perf-tools-next, x1/perf-tools-next) perf tests: Fix hwmon parsing with PMU name test
-> > > 9ae6c7a4bd02acbd perf hwmon_pmu: Ensure hwmon key union is zeroed before use
-> > > 3e37de098af38179 perf tests hwmon_pmu: Remove double evlist__delete()
-> > > 0565017a0ac824c2 perf test: Correct hwmon test PMU detection
-> > > 85c60a01b85ee956 (perf-tools-next/tmp.perf-tools-next, perf-tools-next/perf-tools-next) perf: Remove unused del_perf_probe_events()
-> > > ⬢ [acme@toolbox perf-tools-next]$
-> >
-> > <SNIP>
-> >
-> > > root@number:~# perf test -v 11
-> > >  11: Hwmon PMU                                                       :
-> > >  11.1: Basic parsing test                                            : Ok
-> > > --- start ---
-> > > test child forked, pid 1823259
-> > > Testing 'temp_test_hwmon_event1'
-> > > Using CPUID GenuineIntel-6-B7-1
-> > > FAILED tests/hwmon_pmu.c:159 failed to parse event 'temp_test_hwmon_event1', err 1
-> > > event syntax error: 'temp_test_hwmon_event1'
-> > >                      \___ Bad event name
-> > >
-> > > Unable to find event on a PMU of 'temp_test_hwmon_event1'
-> >
-> > In gdb it fails on the first call to do_test() from the first test__hwmon_pmu()
-> >
-> > Starting program: /root/bin/perf test -F -vv 11
-> > [Thread debugging using libthread_db enabled]
-> > Using host libthread_db library "/lib64/libthread_db.so.1".
-> > --- start ---
-> > ---- end ----
-> >  11.1: Basic parsing test                                            : Ok
-> > --- start ---
-> >
-> > Breakpoint 1, test__hwmon_pmu (with_pmu=false) at tests/hwmon_pmu.c:203
-> > 203     {
-> > (gdb) n
-> > 205             struct perf_pmu *pmu = test_pmu_get(dir, sizeof(dir));
-> > (gdb) n
-> > 206             int ret = TEST_OK;
-> > (gdb) p pmu
-> > $2 = (struct perf_pmu *) 0xf50450
-> > (gdb) p *pmu
-> > $3 = {name = 0xf50ac0 "hwmon_a_test_hwmon_pmu", alias_name = 0xf50aa0 "hwmon1234", id = 0x0, type = 4294902994, selectable = false, is_core = false, is_uncore = false, auxtrace = false,
-> >   formats_checked = false, config_masks_present = false, config_masks_computed = false, max_precise = 0, perf_event_attr_init_default = 0x0, cpus = 0xf4fbf0, format = {next = 0xf50488,
-> >     prev = 0xf50488}, aliases = {next = 0xf50498, prev = 0xf50498}, events_table = 0x0, sysfs_aliases = 0, cpu_json_aliases = 0, sys_json_aliases = 0, sysfs_aliases_loaded = false,
-> >   cpu_aliases_added = false, caps_initialized = false, nr_caps = 0, caps = {next = 0xf504c8, prev = 0xf504c8}, list = {next = 0xedc090 <other_pmus>, prev = 0xedc090 <other_pmus>},
-> >   config_masks = {0, 0, 0, 0}, missing_features = {exclude_guest = false, checked = false}, mem_events = 0x0}
+Hi Babu,
+
+On 11/20/24 6:14 PM, Moger, Babu wrote:
+> On 11/18/2024 1:43 PM, Reinette Chatre wrote:
+>> On 10/29/24 4:21 PM, Babu Moger wrote:
+
+>>> +static void resctrl_arch_update_cntr(struct rdt_resource *r, struct rdt_mon_domain *d,
+>>> +                     enum resctrl_event_id evtid, u32 rmid,
+>>> +                     u32 closid, u32 cntr_id, u32 val)
+>>> +{
+>>> +    union l3_qos_abmc_cfg abmc_cfg = { 0 };
+>>> +
+>>> +    abmc_cfg.split.cfg_en = 1;
+>>> +    abmc_cfg.split.cntr_en = 1;
+>>> +    abmc_cfg.split.cntr_id = cntr_id;
+>>> +    abmc_cfg.split.bw_src = rmid;
+>>> +    abmc_cfg.split.bw_type = val;
+>>> +
+>>> +    wrmsrl(MSR_IA32_L3_QOS_ABMC_CFG, abmc_cfg.full);
+>>
+>> Is it needed to create an almost duplicate function? What if instead
+>> only resctrl_arch_config_cntr() exists and it uses parameter to decide
+>> whether to call resctrl_abmc_config_one_amd() directly or via
+>> smp_call_function_any()? I think that should help to make clear how
+>> the code flows.
+>> Also note that this is an almost identical arch callback with no
+>> error return. I expect that building on existing resctrl_arch_config_cntr()
+>> will make things easier to understand.
 > 
-> Thanks for helping, I'm not able to repro this, so extra debugging
-> would be useful for me. Here sysfs_aliases_loaded is false as we'll
-> load the PMU aliases when there is a request to pmu__have_event. This
-> looks pretty ordinary.
+> It can be done. But it takes another parameter to the function.
+> It has 7 parameters already. This will be 8th.
+> Will change it if that is ok.
+
+Please correct me if I am wrong but I am not familiar with a restriction on number
+of parameters. It seems unnecessary to me to create two almost duplicate 7 parameter
+functions to avoid one 8 parameter function.
+
+>> Since MBM_EVENT_ARRAY_INDEX is a macro it can be called closer to where it is used,
+>> within  rdtgroup_find_grp_by_cntr_id_index(), which prompts a reconsider of that function name.
 > 
-> > (gdb) s
-> > 208             if (!pmu)
-> > (gdb) s
-> > 211             for (size_t i = 0; i < ARRAY_SIZE(test_events); i++) {
-> > (gdb) s
-> > 212                     ret = do_test(i, with_pmu, /*with_alias=*/false);
-> > (gdb) s
-> > do_test (i=0, with_pmu=false, with_alias=false) at tests/hwmon_pmu.c:136
-> > 136     {
-> > (gdb) n
-> > 137             const char *test_event = with_alias ? test_events[i].alias : test_events[i].name;
-> > (gdb) n
-> > 138             struct evlist *evlist = evlist__new();
-> > (gdb) n
-> > 143             bool found = false;
-> > (gdb) n
-> > 145             if (!evlist) {
-> > (gdb) n
-> > 150             if (with_pmu)
-> > (gdb) n
-> > 153                     strlcpy(str, test_event, sizeof(str));
-> > (gdb) n
-> > 155             pr_debug("Testing '%s'\n", str);
-> > (gdb) p str
-> > $4 = "temp_test_hwmon_event1\000\000\004\000\000\000\000\000\000\000\274\204z\000\000\000\000\000΄z\000\000\000\000\000\021\000\000\000\000\000\000\000 \305\377\377\377\177\000\000߄z\000\000\000\000\000\353\204z\000\000\000\000\000\376\204z\000\000\000\000\000\n\205z\000\000\000\000\000\021\205z\000\000\000\000\000\035\205z\000\000\000\000\0000\205z\000\000\000\000\000<\205z\000\000\000\000"
-> > (gdb) n
-> > Testing 'temp_test_hwmon_event1'
-> > 156             parse_events_error__init(&err);
 > 
-> So there was no parse event output like the expected:
-> ```
-> Attempt to add: hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/
-> ..after resolving event: hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/
-> ```
-> The wildcard PMU lookup will call perf_pmu__have_event trying to find
-> a PMU with the event:
-> ```
-> Breakpoint 1, perf_pmu__have_event (pmu=0x555556157f90,
->    name=0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> 1816    {
-> (gdb) bt
-> #0  perf_pmu__have_event (pmu=0x555556157f90, name=0x5555560ce470
-> "temp_test_hwmon_event1")
->    at util/pmu.c:1816
-> #1  0x00005555557ab143 in parse_events_multi_pmu_add
-> (parse_state=0x7fffffffbf00,
->    event_name=0x5555560ce470 "temp_test_hwmon_event1", hw_config=10,
-> const_parsed_terms=0x0,
->    listp=0x7fffffffa270, loc_=0x7fffffffb120) at util/parse-events.c:1592
-> #2  0x00005555558108cc in parse_events_parse
-> (_parse_state=0x7fffffffbf00, scanner=0x555556138aa0)
->    at util/parse-events.y:293
-> #3  0x00005555557abdc2 in parse_events__scanner (str=0x7fffffffc000
-> "temp_test_hwmon_event1",
->    input=0x0, parse_state=0x7fffffffbf00) at util/parse-events.c:1870
-> #4  0x00005555557ac735 in __parse_events (evlist=0x55555613ca40,
->    str=0x7fffffffc000 "temp_test_hwmon_event1", pmu_filter=0x0,
-> err=0x7fffffffbff0,
->    fake_pmu=false, warn_if_reordered=true, fake_tp=false) at
-> util/parse-events.c:2139
-> #5  0x00005555557448ca in parse_events (evlist=0x55555613ca40,
->    str=0x7fffffffc000 "temp_test_hwmon_event1", err=0x7fffffffbff0)
->    at /home/irogers/kernel.org2/tools/perf/util/parse-events.h:41
-> #6  0x0000555555744f6e in do_test (i=0, with_pmu=false,
-> with_alias=false) at tests/hwmon_pmu.c:156
-> #7  0x00005555557452dd in test__hwmon_pmu (with_pmu=false) at
-> tests/hwmon_pmu.c:212
-> #8  0x000055555574538d in test__hwmon_pmu_without_pmu
-> (test=0x5555560a3740 <suite.hwmon_pmu>,
->    subtest=1) at tests/hwmon_pmu.c:229
-> #9  0x00005555556fc935 in start_test (test=0x5555560a3740
-> <suite.hwmon_pmu>, i=10, subi=1,
->    child=0x55555613c528, width=64, pass=1) at tests/builtin-test.c:424
-> #10 0x00005555556fd014 in __cmd_test (suites=0x55555613c0f0, argc=1,
-> argv=0x7fffffffd9c0,
->    skiplist=0x0) at tests/builtin-test.c:571
-> #11 0x00005555556fdb29 in cmd_test (argc=1, argv=0x7fffffffd9c0) at
-> tests/builtin-test.c:773
-> #12 0x000055555568043a in run_builtin (p=0x55555608f950 <commands+624>, argc=4,
->    argv=0x7fffffffd9c0) at perf.c:351
-> #13 0x00005555556806e1 in handle_internal_command (argc=4,
-> argv=0x7fffffffd9c0) at perf.c:404
-> #14 0x000055555568083a in run_argv (argcp=0x7fffffffd7bc,
-> argv=0x7fffffffd7b0) at perf.c:448
-> #15 0x0000555555680b83 in main (argc=4, argv=0x7fffffffd9c0) at perf.c:560
-> (gdb) p pmu->name
-> $1 = 0x5555560ce940 "cpu"
-> ```
-> Repeating this the test hwmon_a_test_hwmon_pmu test PMU should be tested:
-> ```
-> (gdb) c
-> Continuing.
+> How about ?
 > 
-> (gdb) p pmu->name
-> $2 = 0x5555560d6b20 "breakpoint"
-> (gdb) c
-> Continuing.
-> 
-> Breakpoint 1, perf_pmu__have_event (pmu=0x555556158060,
->    name=0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> 1816    {
-> (gdb) p pmu->name
-> $3 = 0x5555560d7ec0 "cstate_core"
-> (gdb) c
-> Continuing.
-> 
-> Breakpoint 1, perf_pmu__have_event (pmu=0x555556158610,
->    name=0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> 1816    {
-> (gdb) p pmu->name
-> $4 = 0x5555560c84b0 "cstate_pkg"
-> (gdb) c
-> Continuing.
-> 
-> Breakpoint 1, perf_pmu__have_event (pmu=0x5555561360b0,
->    name=0x5555560ce470 "temp_test_hwmon_event1") at util/pmu.c:1816
-> 1816    {
-> (gdb) p pmu->name
-> $5 = 0x5555560d46a0 "hwmon_a_test_hwmon_pmu"
-> ```
-> which should then go into the hwmon_pmu__have_event:
-> ```
-> (gdb) n
-> 1817            if (!name)
-> (gdb)
-> 1819            if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name))
-> (gdb)
-> 1821            if (perf_pmu__is_hwmon(pmu))
-> (gdb) n
-> 1822                    return hwmon_pmu__have_event(pmu, name);
-> (gdb) s
-> hwmon_pmu__have_event (pmu=0x5555561360b0, name=0x5555560ce470
-> "temp_test_hwmon_event1")
->    at util/hwmon_pmu.c:559
-> ```
-> hwmon_pmu__have_event should return true but it is either not getting
-> called in your case or it is returning false. Not getting called I
-> find hard to understand as your output shows the test PMU was created.
-> It seems more likely reading the "events" and then doing the hashmap
-> lookup in hwmon_pmu__have_event fails. This was failing for me with
-> undefined behavior sanitizer because of the under initialized unions.
-> But that should be fixed by: "perf hwmon_pmu: Ensure hwmon key union
-> is zeroed before use". The particular event "temp_test_hwmon_event1"
-> is going to search all events as it uses the "label" name, so that
-> makes me think the bug is here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/hwmon_pmu.c?h=perf-tools-next#n584
-> but I can't eye ball an issue and the test works for me even when
-> trying to be aggressive with sanitizers. If you could help me look I'd
-> appreciate it.
+> static struct rdtgroup *rdtgroup_find_grp_by_cntr_id_event(int cntr_id, enum resctrl_event_id evtid)
 
-Where is that "temp_test_hwmon_event1" added?
+... or for something shorter just get_rdtgroup_from_cntr_event(), but no hard requirement.
 
-I see it at:
-
-⬢ [acme@toolbox perf-tools-next]$ git grep -B6 -A10 temp_test_hwmon_event1 tools/ 
-tools/perf/tests/hwmon_pmu.c-static const struct test_event {
-tools/perf/tests/hwmon_pmu.c-   const char *name;
-tools/perf/tests/hwmon_pmu.c-   const char *alias;
-tools/perf/tests/hwmon_pmu.c-   long config;
-tools/perf/tests/hwmon_pmu.c-} test_events[] = {
-tools/perf/tests/hwmon_pmu.c-   {
-tools/perf/tests/hwmon_pmu.c:           "temp_test_hwmon_event1",
-tools/perf/tests/hwmon_pmu.c-           "temp1",
-tools/perf/tests/hwmon_pmu.c-           0xA0001,
-tools/perf/tests/hwmon_pmu.c-   },
-tools/perf/tests/hwmon_pmu.c-   {
-tools/perf/tests/hwmon_pmu.c-           "temp_test_hwmon_event2",
-tools/perf/tests/hwmon_pmu.c-           "temp2",
-tools/perf/tests/hwmon_pmu.c-           0xA0002,
-tools/perf/tests/hwmon_pmu.c-   },
-tools/perf/tests/hwmon_pmu.c-};
-tools/perf/tests/hwmon_pmu.c-
-⬢ [acme@toolbox perf-tools-next]$
-
-And then it is used in do_test() for looking it up in the hwmon that
-should have been added via:
-
-	test_pmu_get()
-		perf_pmus__add_test_hwmon_pmu()
-
-And we have:
-
-root@number:~# ls -la /tmp/perf-hwmon-pmu-test-YPH4sb/
-total 16
-drwx------.  3 root root  140 Nov 21 16:15 .
-drwxrwxrwt. 41 root root 1180 Nov 21 17:33 ..
-drwxr-xr-x.  2 root root   60 Nov 21 16:15 hwmon1234
--rw-------.  1 root root    6 Nov 21 16:15 temp1_input
--rw-------.  1 root root   18 Nov 21 16:15 temp1_label
--rw-------.  1 root root    6 Nov 21 16:15 temp2_input
--rw-------.  1 root root   18 Nov 21 16:15 temp2_label
-root@number:~# 
-
-So it should parse that dir, and then associate the alias that is the
-prefix for the files, etc. Ok, then we have:
-
-root@number:~# perf probe -x ~/bin/perf -L hwmon_pmu__have_event
-<hwmon_pmu__have_event@/home/acme/git/perf-tools-next/tools/perf/util/hwmon_pmu.c:0>
-      0  bool hwmon_pmu__have_event(struct perf_pmu *pmu, const char *name)
-      1  {
-      2         struct hwmon_pmu *hwm = container_of(pmu, struct hwmon_pmu, pmu);
-                enum hwmon_type type;
-                int number;
-      5         union hwmon_pmu_event_key key = { .type_and_num = 0 };
-                struct hashmap_entry *cur;
-                size_t bkt;
-         
-      9         if (!parse_hwmon_filename(name, &type, &number, /*item=*/NULL, /*is_alarm=*/NULL))
-     10                 return false;
-         
-     12         if (hwmon_pmu__read_events(hwm))
-     13                 return false;
-         
-     15         key.type = type;
-     16         key.num = number;
-     17         if (hashmap_find(&hwm->events, key.type_and_num, /*value=*/NULL))
-     18                 return true;
-     19         if (key.num != -1)
-     20                 return false;
-                /* Item is of form <type>_ which means we should match <type>_<label>. */
-     22         hashmap__for_each_entry((&hwm->events), cur, bkt) {
-     23                 struct hwmon_pmu_event_value *value = cur->pvalue;
-         
-     25                 key.type_and_num = cur->key;
-     26                 if (key.type == type && value->name && !strcasecmp(name, value->name))
-     27                         return true;
-                }
-     29         return false;
-     30  }
-         
-         static int hwmon_pmu__config_term(const struct hwmon_pmu *hwm,
-                                          struct perf_event_attr *attr,
-
-root@number:~# 
-
-Probing at the start and end, it gets called, and it returns false.
-
-root@number:~# perf probe -l;
-  probe_perf:hwmon_pmu__have_event (on hwmon_pmu__have_event:1@util/hwmon_pmu.c in /home/acme/bin/perf with name_string)
-  probe_perf:hwmon_pmu__have_event__return (on hwmon_pmu__have_event%return@util/hwmon_pmu.c in /home/acme/bin/perf with arg1)
-root@number:~# perf trace --libtrace -e probe_perf:* perf test -F 11
- 11.1: Basic parsing test                                            : Ok
-     0.000 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.017 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     0.021 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.031 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     0.034 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.189 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     0.192 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.203 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     0.205 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.221 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     0.224 :146016/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.234 :146016/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-event syntax error: 'temp_test_hwmon_event1'
-                     \___ Bad event name
-
-Unable to find event on a PMU of 'temp_test_hwmon_event1'
- 11.2: Parsing without PMU name                                      : FAILED!
-     3.701 perf/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     3.705 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     3.707 perf/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     3.710 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     3.712 perf/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     3.713 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     3.714 perf/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     3.716 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     3.717 perf/146016 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     3.718 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
-     3.870 perf/146016 probe_perf:hwmon_pmu__have_event(event syntax error: 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/'
-                     \___ Bad event or PMU
-(6611f1) name_string="hwmon_a_test_hwmon_pmu"
-Unable to find PMU or event on a PMU of 'hwmon_a_test_hwmon_pmu'
-)
-     3.871 perf/146016 probe_perf:hwmon_pmu__have_event__return((6611e1 <- 6570de) arg1=0x0)
- 11.3: Parsing with PMU name                                         : FAILED!
-root@number:~# 
-
-
-So lets see what is the return false we're getting:
-
-root@number:~# perf probe -d probe_perf:hwmon_pmu__have_event__return
-Removed event: probe_perf:hwmon_pmu__have_event__return
-root@number:~# perf probe -l
-  probe_perf:hwmon_pmu__have_event (on hwmon_pmu__have_event:1@util/hwmon_pmu.c in /home/acme/bin/perf with name_string)
-root@number:~# perf probe -x ~/bin/perf hwmon_pmu__have_event:10
-Added new event:
-  probe_perf:hwmon_pmu__have_event_L10 (on hwmon_pmu__have_event:10 in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:hwmon_pmu__have_event_L10 -aR sleep 1
-
-root@number:~# perf probe -x ~/bin/perf hwmon_pmu__have_event:13
-Added new event:
-  probe_perf:hwmon_pmu__have_event_L13 (on hwmon_pmu__have_event:13 in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:hwmon_pmu__have_event_L13 -aR sleep 1
-
-root@number:~# perf probe -x ~/bin/perf hwmon_pmu__have_event:20
-Added new event:
-  probe_perf:hwmon_pmu__have_event_L20 (on hwmon_pmu__have_event:20 in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:hwmon_pmu__have_event_L20 -aR sleep 1
-
-root@number:~# perf probe -x ~/bin/perf hwmon_pmu__have_event:29
-Added new event:
-  probe_perf:hwmon_pmu__have_event_L29 (on hwmon_pmu__have_event:29 in /home/acme/bin/perf)
-
-You can now use it in all perf tools, such as:
-
-	perf record -e probe_perf:hwmon_pmu__have_event_L29 -aR sleep 1
-
-root@number:~# perf probe -l
-  probe_perf:hwmon_pmu__have_event (on hwmon_pmu__have_event:1@util/hwmon_pmu.c in /home/acme/bin/perf with name_string)
-  probe_perf:hwmon_pmu__have_event_L10 (on hwmon_pmu__have_event:10@util/hwmon_pmu.c in /home/acme/bin/perf)
-  probe_perf:hwmon_pmu__have_event_L13 (on hwmon_pmu__have_event:13@util/hwmon_pmu.c in /home/acme/bin/perf)
-  probe_perf:hwmon_pmu__have_event_L20 (on hwmon_pmu__have_event:20@util/hwmon_pmu.c in /home/acme/bin/perf)
-  probe_perf:hwmon_pmu__have_event_L29 (on hwmon_pmu__have_event:29@util/hwmon_pmu.c in /home/acme/bin/perf)
-root@number:~# 
-
-
-root@number:~# perf trace --libtrace -e probe_perf:* perf test -F 11
- 11.1: Basic parsing test                                            : Ok
-event syntax error: 'temp_test_hwmon_event1'
-                     \___ Bad event name
-
-Unable to find event on a PMU of 'temp_test_hwmon_event1'
-     0.000 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.029 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
-     0.032 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.040 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
-     0.042 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.194 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
-     0.196 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.206 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
-     0.207 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.221 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
-     0.223 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="temp_test_hwmon_event1")
-     0.232 perf/146265 probe_perf:hwmon_pmu__have_event_L29((66135d))
- 11.2: Parsing without PMU name                                      : FAILED!
-     4.068 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.076 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     4.078 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.080 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     4.081 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.083 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     4.084 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.086 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     4.088 perf/146265 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.089 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     4.272 event syntax error: 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/'
-perf/                     \___ Bad event or PMU
-146265 
-Unable to find PMU or event on a PMU of 'hwmon_a_test_hwmon_pmu'
-probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     4.274 perf/146265 probe_perf:hwmon_pmu__have_event_L10((66123e))
- 11.3: Parsing with PMU name                                         : FAILED!
-root@number:~# 
-
-
-
-So for the "Unable to find event on a PMU of 'temp_test_hwmon_event1'"
-case its the last 'return false', while for the "Parsing without PMU
-name" case its all in line 10, i.e. 
-
-      9         if (!parse_hwmon_filename(name, &type, &number, /*item=*/NULL, /*is_alarm=*/NULL))
-     10                 return false;
-
-root@number:~# perf probe -x ~/bin/perf parse_hwmon_filename filename:string
-
-Unable to find event on a PMU of 'temp_test_hwmon_event1'
- 11.2: Parsing without PMU name                                      : FAILED!
-     6.436 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="temp_test_hwmon_event1")
-     6.446 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="temp_test_hwmon_event1")
-     6.452 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="temp_test_hwmon_event1")
-     6.454 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="temp_test_hwmon_event1")
-     6.488 perf/146683 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     6.490 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.492 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     6.494 perf/146683 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     6.495 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.497 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     6.499 perf/146683 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     6.500 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.502 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     6.504 perf/146683 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     6.505 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.507 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     6.508 perf/146683 probe_perf:hwmon_pmu__have_event((6611f1) name_string="hwmon_a_test_hwmon_pmu")
-     6.510 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.512 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
-     6.655 perf/146683 event syntax error: 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/'
-probe_perf:hwmon_pmu__have_event(                     \___ Bad event or PMU
-(6611f1) name_string="hwmon_a_test_hwmon_pmu"
-Unable to find PMU or event on a PMU of 'hwmon_a_test_hwmon_pmu'
-)
-     6.658 perf/146683 probe_perf:parse_hwmon_filename((65fd14) filename_string="hwmon_a_test_hwmon_pmu")
-     6.660 perf/146683 probe_perf:hwmon_pmu__have_event_L10((66123e))
- 11.3: Parsing with PMU name                                         : FAILED!
-root@number:~#
-
-Hope this helps,
-
-- Arnaldo
+Reinette
 
