@@ -1,102 +1,154 @@
-Return-Path: <linux-kernel+bounces-416821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555489D4ABA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:22:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E139D4ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4842B22830
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADB61F21C2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225B21D0DC7;
-	Thu, 21 Nov 2024 10:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BA61D3564;
+	Thu, 21 Nov 2024 10:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqOtcATb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqOkMim7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB2A1CB322;
-	Thu, 21 Nov 2024 10:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD081CB9E1;
+	Thu, 21 Nov 2024 10:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184355; cv=none; b=qIlWwEP2jpRnfX6F4Iirk3LsCgPszsxQwvE3FbFhGJYHCFctGBv/uPwG94eiwYv6l/sCmA576zx5u3AYhNFvNjueBtGbu7xi+4ee30BUgCtl7gHGzSiiJBOLwf8qyEX9JuwcmVSYue23M5cYoxparRtL2JeGRzl8TM3X0UcI3vo=
+	t=1732184383; cv=none; b=gG93YckqkmpTI2NRseVyuWiIOAnkAAAzX5tqfz2MEEe/vKORRYfjy0xkm8gomSIVRuQJztACa38N54PFSJf7T6GgAFtY8MChG3jLFaa2cFXvGsCBNG7GGRxSIaQ6sx68TeehdP629nbC276hrfPyOiqj+8T5nEdvMR45zaKdm18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184355; c=relaxed/simple;
-	bh=vdU01yydMwwx3sSdNOgVdvAm97pz89kQ5OB0TAdlmVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifN0dU2FuQpCAIHpkAFC8tkbUK//HBI0aO2oUwUrPq+l1Rtm0jYOg+jld6N+aHQWety9kdVo2Irf2HWygwji0y++wHFTci0NGp9gCjoZ+dvAN+6riFqZifZRtfst5yX4iPPel3x5VQcTRcoURjx7jgl24WiUTpB7CwtSGnDSjMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqOtcATb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7484C4CECC;
-	Thu, 21 Nov 2024 10:19:10 +0000 (UTC)
+	s=arc-20240116; t=1732184383; c=relaxed/simple;
+	bh=3rViafojyY8+otxEE07sKhwI/B2GOnjuVj2UxFUbVHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oPql6ZKv3a9OS5+r5lvIBbKDng/XTrSYwlm029ilrt+Fj5zI2zD/8+7O2Jc6LYvDmgQwuxrECCYcMD5El7D499303UM6hLsLsSbvaXAsttW61p/+oaUc1m7yFD2EAEigRK/+hl8bsEy947FJag4MMqTdbFDcD1C9rXxoO7WYAdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqOkMim7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057A8C4CED0;
+	Thu, 21 Nov 2024 10:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732184355;
-	bh=vdU01yydMwwx3sSdNOgVdvAm97pz89kQ5OB0TAdlmVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WqOtcATb1VkKmyUI/NcRWkuA09JLY/gsuhqTD+gzFS/qKpmoOPMzMk0ePxX4ocACb
-	 4EB2TRDNyFEsdXY/NDfvGyD/DDcn+EWCl0wSIVE237WWygYuKiQmzyjvaAdawtPcnW
-	 GIXmpkzJ/DAw+y1awNeD3VlflRD6cofwoz7W1h1+UyRUcTCG8lU0j7Tle69F7M/9f0
-	 6BprUazlD8s8yrLdQo3ENUYufgH+duQqZkYYO+/J1Md3k5fPj0JJTU42PR2X4Bt23u
-	 M0pR0eGQLP+bRB/bTXbueKJPYPptDJ1eT1a9lN0cWG8VG8GFCFIGs1UNwyZYIYYF1Q
-	 wFsfNy8pTVlhw==
-Date: Thu, 21 Nov 2024 11:19:07 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg, 
-	Rapoport@rox.of.borg, Guenter Roeck <linux@roeck-us.net>, 
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-Message-ID: <20241121-zwietracht-klugheit-4acf0bb07f2b@brauner>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+	s=k20201202; t=1732184382;
+	bh=3rViafojyY8+otxEE07sKhwI/B2GOnjuVj2UxFUbVHg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=fqOkMim71pALJn1pWygzadHLdEYjUmG8Cby7SS7bZHGnfp8o0LInuEMye2p27G6DS
+	 FFKoS1lTG1Tsby+gg7758ZUIIrMMRvXS7ZTzAaXxqSVhnkFsSnJMbNy75TmTtw45rD
+	 ZykSYadMT7ZmFOe4IHT5pSYrzVr0DVQTj9vefx651NTeFeiTNZ7/upGkFu73+tQL0j
+	 69xEK7Ey2TPrNZIB+T4WWCQ7UmJ310hISJdVyiCkAlQzxItkKA4MZVqgj114aazVXP
+	 aOfWB33/Dx12zmOCzkym9XcZkoS3Wvjg+dDRuYlbkLBnMRPRPhvZBBcOON+JseZChL
+	 aR5cKUkJ0cRDg==
+Message-ID: <a1dde768-aeb8-4777-b4f9-d3c52b046fbd@kernel.org>
+Date: Thu, 21 Nov 2024 11:19:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
+To: Xin Liu <quic_liuxin@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com, quic_jiegan@quicinc.com,
+ quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com
+References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
+ <20241119102315.3167607-4-quic_liuxin@quicinc.com>
+ <5d670f55-1ebe-4034-a6a5-e68417c6e486@kernel.org>
+ <64ec97a7-8e91-44d7-85ff-8b00304214fc@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <64ec97a7-8e91-44d7-85ff-8b00304214fc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 20, 2024 at 01:46:21PM +0100, Geert Uytterhoeven wrote:
-> On m68k, where the minimum alignment of unsigned long is 2 bytes:
+On 21/11/2024 10:44, Xin Liu wrote:
 > 
->     Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
->     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
->     Stack from 0102fe5c:
-> 	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
-> 	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
-> 	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
-> 	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
-> 	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
-> 	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
->     Call Trace: [<00425e78>] dump_stack+0xc/0x10
->      [<0041eb74>] panic+0xd8/0x26c
->      [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
->      [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
->      [<0041e5f0>] memset+0x0/0x8c
->      [<005f67c0>] io_uring_init+0x54/0xd2
 > 
-> The minimal alignment of an integral type may differ from its size,
-> hence is not safe to assume that an arbitrary freeptr_t (which is
-> basically an unsigned long) is always aligned to 4 or 8 bytes.
+> 在 2024/11/21 0:59, Krzysztof Kozlowski 写道:
+>> On 19/11/2024 11:23, Xin Liu wrote:
+>>> Add watchdog clock on the Qualcomm QCS8300 Ride platform.
+>>>
+>>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>> index 7eed19a694c3..3024338bcfbc 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
+>>> @@ -265,3 +265,7 @@ &ufs_mem_phy {
+>>>   	vdda-pll-supply = <&vreg_l5a>;
+>>>   	status = "okay";
+>>>   };
+>>> +
+>>> +&watchdog {
+>>> +    clocks = <&sleep_clk>;
+>>> +};
+>>> \ No newline at end of file
+>>
+>> Look, your patches have errors...
+>>
+> This is the information when I apply my patch.
+> ../linux-next$ git am ./wdt/test.patch
+> Applying: arm64: dts: qcom: qcs8300-ride: Add watchdog node
+> ../linux-next$
 > 
-> As nothing seems to require the additional alignment, it is safe to fix
-> this by relaxing the check to the actual minimum alignment of freeptr_t.
-> 
-> Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-> Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
+> There are no error messages here.
 
-Looks good to me,
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+So I made up that above error message? You sent patch with an error
+message. I responded directly under it, so what can I say more?
+
+You refuse to fix this, so I NAK this patch.
+Best regards,
+Krzysztof
 
