@@ -1,244 +1,200 @@
-Return-Path: <linux-kernel+bounces-417479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737F59D5492
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:16:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DE79D549D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:19:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD2E91F22D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:16:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC891F22E0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6E41CD1EE;
-	Thu, 21 Nov 2024 21:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDA71CB9F4;
+	Thu, 21 Nov 2024 21:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Pq8MKWNY"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jVR6EOEg"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A19D199FC9
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF3515098E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732223805; cv=none; b=ugA2Hzstb0/AQqqtvLWygu1fqHiJrMExd29VTQ3kJV3ZhPPCtNMnaP2JnRPrOFMgHkwUMXNXe4wA8nJ5jETiKN9ExyXVdfyIW1R3zHwvyccyu8XN2r1vbSrHiX8iIr+hfHECVbZ/+j2Tm+0HrwgQcblrUjCfy67RPFf/2QuU1DM=
+	t=1732223949; cv=none; b=ht7rGgxEe9SxVlJsm0mc57k5uDCsM8xhNnzc2AGr9apOsPRRafgFJE0uW6mcfNcKVcVXv7qYrKYuqvD4tmNsa6FmF1kF2R9epMYjrOp30lAbFH/lEB9Tev5mdsvCtSGzoNHlOJkmciayYAU6cnAjUxUyQqnnC8zGDsHdctZwPU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732223805; c=relaxed/simple;
-	bh=Vkpe9SiYwYEfwd2jAqagSpsgL2Q7SeaVN0WSbS/uiV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l6W1NjfhRnTSM7r7E5MNaI9e8FKZ6kbUFEkcAJfAcnMq5RkPCMNJgbUTBrkq9IJY1R1XP55HJays1/4tzr/0Ks5hG9e1GV84gqXJRJO6A3nCLhDNHVuaiGq3YE1l4lChsSP4w+WSNpgA/t/IEXYDoSFV/lhsTg14WN7DIEncTJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Pq8MKWNY; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a850270e2so270028666b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:16:42 -0800 (PST)
+	s=arc-20240116; t=1732223949; c=relaxed/simple;
+	bh=8lz2cEj5C1DwnLcZiEsku1DUpI7PthbBD35+zvvXCgI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gVqsRe74mFdWpRspOQO3fIhqT2SWFf3cIXVbwzF443nN+bls7Tkwn77LVuCgAdg/Jl3rN9BfiSMkBILAM7VGcRtFldZj43pMHOmRhayjACkYvS8jj4e3AGNXtEqmBkePJNP3E0d+ieXTIQUCAojkwFrGE7Z2u1rFat1GRr4Ia0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jVR6EOEg; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38231f84dccso972136f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:19:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1732223801; x=1732828601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ADSLCsVi1Tznb0EIsL+X0OVrkFRGd+TpY9WIHeu9ve0=;
-        b=Pq8MKWNYvdQIhqxYq8pOKtjBytNGMdPekxWhE/C/nAwknp9eYlFcRJ9HeguJbd01yo
-         5OmcXtjk4xoU7rHUwoCybr1b17C48RzsXli4LlhpeJrKh792FzkeTVHEqaFvensmHGJb
-         vj+nyVFJnYvP35KGhkhzqNM3WAQuiKnls07WfECsQFNzgyFGTeatO4BOlbZfbyOQI2HY
-         luXTP4NRrBrDNwEG5oX8f6E9pBhyZPtKTbRfXYUPsZFbhfvUTGviBb/wi2SgQuQDJek4
-         lzsa8BYUW5am0ZtgoL4wrTEXZo+fWvtyU7AfQL00wmem2yDKNg0+JFJj1RT6kIXnw3xf
-         lbrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732223801; x=1732828601;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732223946; x=1732828746; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ADSLCsVi1Tznb0EIsL+X0OVrkFRGd+TpY9WIHeu9ve0=;
-        b=D3xqIwWrDLjV85pruJovxj4ifDHOIENUulwqcyG96f5toH+fcDiM8vGWV9pvqXX9WR
-         q+RfcCcix8y7KXuXlDTk0GibIszWHAnvGy+FJZsyc1PdOdpY0EjbG4pgBaSSs/o9Fx1w
-         IFPWlh8kVDtIXkbl9HLdZNR9XD8XunCyudjYY/2fbjrxhxH97QwvunBCvZnxuhvdMd8L
-         XdtRu3xU/e9hiJL5Bt1Da9kelnvFpVy71QZII/hTdEMbv/m9ulEWMijZkGtbTEaAq8al
-         UtCLxYSkeqLYoRVwF76uQF93y0MFHhV5Wsnwg8n/MjfJuMhWDRLEoc/V0ZLSD6E40F1v
-         wzzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0bgGfjOnldejoZExMPhQRl8T3iRL6Up010V1cs5ICx1tHc2IdzlNv2wxttukzDufDN7odI6Nnj7akEks=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe8AES+VdxIqPEZIDVzmhojZOqrttAx0wf88SQEKUARyhhQQnl
-	BtlmUDdW10Q8uxnqrLZnHjp9L+XBpllAMPevU0Y98JY0vydiTZK3t9ubXGC23Xo=
-X-Gm-Gg: ASbGncuJKOHJUoXj25sOeRhj6lUTfIF4apspN3npcF8JBdNq5Di5zosf5uwzqAQFiQl
-	b3h+uKKI6ATn8a2aHob6OhRRVWsFlHCujcBGXfBJuJHbFEvUXfK2mjQbb7zz1tpHYgjtUOpW16C
-	ctPmtCTGAgfFjjn2zaDrKpgfU9e4k+G9eNISyDA9xhan6J7hI5JG6ZcFbIApnKSnTqo10eP23LV
-	mFMBn0K4NHKHNof2pUBVja9uNmu48bdhAygwd6Mb/XCQSeV+7WOeOeOZCPsmTaKuRhUqd+qWfRe
-	2ohq23EqQQ==
-X-Google-Smtp-Source: AGHT+IFYIEgIv1nc2MpvgqvQW89q6p0R6+ss6JlPvxYa0sC6IXhy8g7BLk1uIpGhOW4wVc3nHcwe/w==
-X-Received: by 2002:a17:907:84c2:b0:a99:f675:b672 with SMTP id a640c23a62f3a-aa50997f07amr43234166b.29.1732223801292;
-        Thu, 21 Nov 2024 13:16:41 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:f55:fe70:5486:7392? ([2001:67c:2fbc:1:f55:fe70:5486:7392])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5b842csm14640866b.194.2024.11.21.13.16.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 13:16:40 -0800 (PST)
-Message-ID: <c933e2bf-b19c-4f8b-b2c0-44de50eb4141@openvpn.net>
-Date: Thu, 21 Nov 2024 22:17:09 +0100
+        bh=pX8XiRlPufvUoMxM7Ycxdc9sn9Rz/VdbbgNK2el4cX4=;
+        b=jVR6EOEgv+c0M86upHz1qUDt9LCRyHTk4RuQx0H6rRnvrMj2IVVAS1Q7dlpU6G/+gp
+         IPGqdTNmrDsR+zRWSVQ+UJBqSRdUG86rWqOowI4R7vDYkL+9GK1JpLE0U5Z4dpQHIY6l
+         JuWKcY5TbVEbL0D0SdEtNM7indfKuh36NCYD451sqEVmNvuSihXRXsJNRS9QXpufo575
+         3+CSVkG8s6kYN0ihsqfbDrIORobpVAgBm8VdjDbWV/9sz92ISR4+tySPR8GxIEDU2Day
+         9QJ89yqsrtSCrQRE7v/Mwpek4gSPNibRCSPbruFM8BA5bZCpTRQ+lnL9//Nyr0hZEsF7
+         H5Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732223946; x=1732828746;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pX8XiRlPufvUoMxM7Ycxdc9sn9Rz/VdbbgNK2el4cX4=;
+        b=H16D9d2I7S+LqU/yyt5QJeebiGFouhHmf8PFgGgfOIM/54jMPWFE+RJ/sB575dUwrA
+         38LWQL4YRzM9W+Xw/d843EPDRJ3UmI8JBycazpLr756ndw90r2Za7KzXuQfldEojqZhQ
+         s37iqS3ONh0pth41scoeU1NS1qJ/9qY1UkvUKwhDXpjgrvJ51Ig1LG70Wn7WQmoXlz18
+         MARgpl1EH7Uo8M/OrvXZVAu000lGdFLfZ1bORxoHznDFdtbUQjw154CHm54T+XqpHoAM
+         VrTQ+kEnmGc5ClmfnZROGO7v9+EPpW+tUr12rWZ5fvgq3F70vgzWq59tHMRccV7ry5Ye
+         zKGA==
+X-Gm-Message-State: AOJu0Yz68WQ0Q1O2BilqaBAq/21SoSbqycLBHCzafbxuPgDCDhVksNTD
+	0h+qGyTzyArdxZyoZJoWPED92/Gdpv6h1BM71AhIpToycfMOngTbrNsVQwuSJ3ZvzKweNrrbJ1y
+	vdj2PHXKBWqEFn1yaU7vrQAdGCJA9Z4S4MXzfTY2KxQnIK9ANvSgT
+X-Gm-Gg: ASbGncsT9DFpWk5VNhUUYpZxmRZTqBuzEARTVR5l5/wnFrb8LG/wKhaO4XUGtJsIejy
+	mXOjg3JeKwnSuU8nAyjz26E5MHAQKPBFUS2/QA1h/YwwX4EXLDJKvsLCXIw==
+X-Google-Smtp-Source: AGHT+IET7ArKCoKeGbFTTH20elE2gMMjwLV5I6kbsX+Bkm1lKqx9xUfkwH4I55PZwpmn2XHoSWKx/W+grWluAK6DwkQ=
+X-Received: by 2002:a5d:5f47:0:b0:382:464e:1ab4 with SMTP id
+ ffacd0b85a97d-38260b45526mr432608f8f.3.1732223945901; Thu, 21 Nov 2024
+ 13:19:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 05/23] ovpn: keep carrier always on
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-5-de4698c73a25@openvpn.net>
- <6a171cc9-a052-452e-8b3d-273e5b46dae5@gmail.com>
- <89ae26a2-0a09-4758-989e-8f45a707a41b@openvpn.net>
- <e2caab8a-343e-4728-b5a7-b167f05c9bb9@gmail.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <e2caab8a-343e-4728-b5a7-b167f05c9bb9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241106003007.2112584-1-ctshao@google.com> <20241106003007.2112584-2-ctshao@google.com>
+ <CAP-5=fUc0YttVUMB9oAit3u5hzVGuK5rTLnP_dXD0kqt7QcO5g@mail.gmail.com> <CAJpZYjW0evv8SmPMwymjcFQExy+zVHe_6XW79bB_ErRXCwgzfA@mail.gmail.com>
+In-Reply-To: <CAJpZYjW0evv8SmPMwymjcFQExy+zVHe_6XW79bB_ErRXCwgzfA@mail.gmail.com>
+From: Chun-Tse Shao <ctshao@google.com>
+Date: Thu, 21 Nov 2024 13:18:54 -0800
+Message-ID: <CAJpZYjUEn-Cr-YWfA68iN8jnR7BdSPhg3DxXsQq7OwA93bDpOg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] perf: Reveal PMU type in fdinfo
+To: Ian Rogers <irogers@google.com>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/11/2024 23:56, Sergey Ryazanov wrote:
-> On 15.11.2024 16:13, Antonio Quartulli wrote:
->> On 09/11/2024 02:11, Sergey Ryazanov wrote:
->>> On 29.10.2024 12:47, Antonio Quartulli wrote:
->>>> An ovpn interface will keep carrier always on and let the user
->>>> decide when an interface should be considered disconnected.
->>>>
->>>> This way, even if an ovpn interface is not connected to any peer,
->>>> it can still retain all IPs and routes and thus prevent any data
->>>> leak.
->>>>
->>>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->>>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->>>> ---
->>>>   drivers/net/ovpn/main.c | 7 +++++++
->>>>   1 file changed, 7 insertions(+)
->>>>
->>>> diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
->>>> index 
->>>> eead7677b8239eb3c48bb26ca95492d88512b8d4..eaa83a8662e4ac2c758201008268f9633643c0b6 100644
->>>> --- a/drivers/net/ovpn/main.c
->>>> +++ b/drivers/net/ovpn/main.c
->>>> @@ -31,6 +31,13 @@ static void ovpn_struct_free(struct net_device *net)
->>>>   static int ovpn_net_open(struct net_device *dev)
->>>>   {
->>>> +    /* ovpn keeps the carrier always on to avoid losing IP or route
->>>> +     * configuration upon disconnection. This way it can prevent leaks
->>>> +     * of traffic outside of the VPN tunnel.
->>>> +     * The user may override this behaviour by tearing down the 
->>>> interface
->>>> +     * manually.
->>>> +     */
->>>> +    netif_carrier_on(dev);
->>>
->>> If a user cares about the traffic leaking, then he can create a 
->>> blackhole route with huge metric:
->>>
->>> # ip route add blackhole default metric 10000
->>>
->>> Why the network interface should implicitly provide this 
->>> functionality? And on another hand, how a routing daemon can learn a 
->>> topology change without indication from the interface?
->>
->> This was discussed loooong ago with Andrew. Here my last response:
->>
->> https://lore.kernel.org/all/d896bbd8-2709-4834-a637- 
->> f982fc51fc57@openvpn.net/
-> 
-> Thank you for sharing the link to the beginning of the conversation. 
-> Till the moment we have 3 topics regarding the operational state 
-> indication:
-> 1. possible absence of a conception of running state,
-> 2. influence on routing protocol implementations,
-> 3. traffic leaking.
-> 
-> As for conception of the running state, it should exists for tunneling 
-> protocols with a state tracking. In this specific case, we can assume 
-> interface running when it has configured peer with keys. The protocol 
-> even has nice feature for the connection monitoring - keepalive.
+Hi, just a friendly ping for review, in case anyone missed this.
 
-What about a device in MP mode? It doesn't make sense to turn the 
-carrier off when the MP node has no peers connected.
-At the same time I don't like having P2P and MP devices behaving 
-differently in this regard.
-Therefore keeping the carrier on seemed the most logical way forward (at 
-least for now - we can still come back to this once we have something 
-smarter to implement).
+Thanks,
+CT
 
-> 
-> Routing protocols on one hand could benefit from the operational state 
-> indication. On another hand, hello/hold timer values mentioned in the 
-> documentation are comparable with default routing protocols timers. So, 
-> actual improvement is debatable.
-> 
-> Regarding the traffic leading, as I mentioned before, the blackhole 
-> route or a firewall rule works better then implicit blackholing with a 
-> non-running interface.
-> 
-> Long story short, I agree that we might not need a real operational 
-> state indication now. Still protecting from a traffic leaking is not 
-> good enough justification.
-
-Well, it's the so called "persistent interface" concept in VPNs: leave 
-everything as is, even if the connection is lost.
-I know it can be implemented in many other different ways..but I don't 
-see a real problem with keeping this way.
-
-A blackhole/firewall can still be added if the user prefers (and not use 
-the persistent interface).
-
-Regards,
-
-> 
-> Andrew, what do you think? Is the traffic leaking prevention any good 
-> justification or it needs to be updated?
-> 
-> -- 
-> Sergey
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+On Thu, Nov 14, 2024 at 10:30=E2=80=AFAM Chun-Tse Shao <ctshao@google.com> =
+wrote:
+>
+> Hi Ian,
+>
+> On Thu, Nov 14, 2024 at 7:49=E2=80=AFAM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Tue, Nov 5, 2024 at 4:30=E2=80=AFPM Chun-Tse Shao <ctshao@google.com=
+> wrote:
+> > >
+> > > It gives useful info on knowing which PMUs are reserved by this proce=
+szs.
+> > > Also add config which would be useful.
+> > > Testing cycles:
+> > >
+> > >   $ ./perf stat -e cycles &
+> > >   $ cat /proc/`pidof perf`/fdinfo/3
+> > >   pos:    0
+> > >   flags:  02000002
+> > >   mnt_id: 16
+> > >   ino:    3081
+> > >   perf_event_attr.type:   0
+> > >   perf_event_attr.config: 0
+> > >
+> > > Testing L1-dcache-load-misses:
+> > >
+> > >   $ ./perf stat -e L1-dcache-load-misses &
+> > >   $ cat /proc/`pidof perf`/fdinfo/3
+> > >   pos:    0
+> > >   flags:  02000002
+> > >   mnt_id: 16
+> > >   ino:    1072
+> > >   perf_event_attr.type:   3
+> > >   perf_event_attr.config: 65536
+> > >
+> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
+> >
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> >
+> > > Change-Id: Ibea5618aaf00bae6f48a9b2a6e7798ab2b7f23ce
+> > > ---
+> > >  kernel/events/core.c | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > > index cdd09769e6c56..398cac8b208b9 100644
+> > > --- a/kernel/events/core.c
+> > > +++ b/kernel/events/core.c
+> > > @@ -55,6 +55,7 @@
+> > >  #include <linux/pgtable.h>
+> > >  #include <linux/buildid.h>
+> > >  #include <linux/task_work.h>
+> > > +#include <linux/seq_file.h>
+> > >
+> > >  #include "internal.h"
+> > >
+> > > @@ -6820,6 +6821,14 @@ static int perf_fasync(int fd, struct file *fi=
+lp, int on)
+> > >         return 0;
+> > >  }
+> > >
+> > > +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
+> > > +{
+> > > +       struct perf_event *event =3D f->private_data;
+> > > +
+> > > +       seq_printf(m, "perf_event_attr.type:\t%u\n", event->orig_type=
+);
+> > > +       seq_printf(m, "perf_event_attr.config:\t%llu\n", (unsigned lo=
+ng long)event->attr.config);
+> >
+> > nit: is the cast necessary? I don't see __u64 listed on:
+> > https://www.kernel.org/doc/Documentation/printk-formats.txt
+> > so I'm unsure.
+> >
+>
+> In this case I think it is safer to cast it to `unsigned long long`,
+> since I don't know if any architecture would have an exception on
+> __u64.
+>
+> Thanks,
+> CT
+>
+> > Thanks,
+> > Ian
+> >
+> > > +}
+> > > +
+> > >  static const struct file_operations perf_fops =3D {
+> > >         .release                =3D perf_release,
+> > >         .read                   =3D perf_read,
+> > > @@ -6828,6 +6837,7 @@ static const struct file_operations perf_fops =
+=3D {
+> > >         .compat_ioctl           =3D perf_compat_ioctl,
+> > >         .mmap                   =3D perf_mmap,
+> > >         .fasync                 =3D perf_fasync,
+> > > +       .show_fdinfo            =3D perf_show_fdinfo,
+> > >  };
+> > >
+> > >  /*
+> > > --
+> > > 2.47.0.199.ga7371fff76-goog
+> > >
 
