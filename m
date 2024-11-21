@@ -1,99 +1,166 @@
-Return-Path: <linux-kernel+bounces-417007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4489D4D8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1CE9D4D92
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AEB1F2232D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24B7281DF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32A61D90B6;
-	Thu, 21 Nov 2024 13:13:28 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E7814BF87;
+	Thu, 21 Nov 2024 13:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XpunXTwP"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2741D86F2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A361D7994;
+	Thu, 21 Nov 2024 13:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732194808; cv=none; b=ZJeskl6Cc+dBOASRxbXfB+kdswRFfU7xlW8HSqR45JIGFSvF5JV+dfoQEbzXAZmyI74TwlwLvKcByo6a/THrVhAWBa6WZyXfvlMlPPdiNIDwumvbnLi1VfKQjeTfGVUCPIDPkbLCpws7I9BdD2Mp5/OHfGygB+GYBPaIECDr4Ws=
+	t=1732194912; cv=none; b=egu3zyvzbYZoiw7scIvFTjypPtcaOtl02ZfszHFpYJ324qQ808lgS6jL6DVyktTXrrbnZFhNPiY5CxHpXX+ULnCqxsEWJ4M1kETPLhcB5iTub2MzmuiX9hXtyW8iYB/14vr+js9NMVTTYS+OyLqY4xIq/mp843Zt7rplLjCl4rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732194808; c=relaxed/simple;
-	bh=mlh0bylkAm0ifIvx1L8aJUhGU24UbG3qrWP5TY+9Vos=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=exxVEVQnwVQrwMdOSBoLh8gzsbnjaFDMxgwYCXov4giCnIHSpIMe/qK4DqjWk7fpArmthSB+pS42Eo5RymsUNDnqBhzgBeZs7Ps/wx6iOFDBTsPdcZhA0xgCU7meYzgXs/WhfwCH9/WKY/MBhsy/SeU/l4YZ/7hboUj0hRBWpvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a768b62268so9062675ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:13:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732194806; x=1732799606;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KOWHR+6cZm9nrsSvHH6bPy3TZe9GkM6yhS+PqixliyA=;
-        b=fSW9+FXPCS5QgZyk79SHGIaOuzFTTDP5TKahMP8Hm9VNipY6T/txn38Pe+QihWM64Z
-         /v3GD5UxenkjdhhB4CMYLA5oyBpGc65BQh49kf+pl73CAew0Pr8eGTi8foHr9IvncVC9
-         X81ub9HV94cb0lEd60ZNKKUGLMRy5HYHxaxU1D94TPKrQJuCCLSrc+h6LltCK22lSi8V
-         J2+pekDC4eE0TAoG2c9Ni07opiS0XmsthC8DpEumMA1EVzCkcRXqg4McYaG7/QG6QpP4
-         uL4jqZ+S8JGIQjlPVaDndW7KCB0iiX5F9CMsV+ICO2fNCMSXSYdudK0CutPUcqKmjrdC
-         uNCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWorvHRbowgw5FBfLYwvBW7pC2A2hLnaOLqkY3emJTGVe2MSs4G3A8d4gRudQT6g5X9NquR+kSqRG6Hjwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxh/qh1xiI6z0IhJciyvPuSXWS3lpopWze83yvXg4iXI6zRwLHA
-	xaOidsx1+SsSQWx/b+hs6+8OgOxutgYcN4trGCfq1JD3t7vHksmaa5uMK8289sS4zoy9hg1Kbg3
-	0IzpP9v3ksSHra4Xzt6jFSGkF6js82zqDpj4r8SSZLTFQBPQPkFY+qsg=
-X-Google-Smtp-Source: AGHT+IGFEBt3e/K+uovLH/gxLg2jsIfyHVP3nAy08FHlw1Fj9XF7+NFLkATQ9PZtp3iRlVkadJUOPFwpB1vNiLG1ojoIGCMIsx/K
+	s=arc-20240116; t=1732194912; c=relaxed/simple;
+	bh=XLkXT/TGAeY7kklfNbJ6h2NBpv3lbfCGvZ+Thptz5l4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g1qheK3yl49roEGrF/hpD/rMeEQX2QPf7k2L2LtNNMBj0MvPHw56wcf+cncn7GRXU3PkbUwQEK3l9iHMH0QKGEvsEjRizlaeCqBRgR6JwXPgNcj2hNPh3bT9ofKrCDIoZzzApYnWvCBe4vlHRM7Iia0dWXHeordvn4UMUU29DSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XpunXTwP reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 46089e4d199c0ed7; Thu, 21 Nov 2024 14:15:01 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EE3169119C0;
+	Thu, 21 Nov 2024 14:15:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1732194901;
+	bh=XLkXT/TGAeY7kklfNbJ6h2NBpv3lbfCGvZ+Thptz5l4=;
+	h=From:Subject:Date;
+	b=XpunXTwPhUpr1udOYVBw1+ULZPa4aq67URoBST3e/TkrGbjbAbwUE2UPcl3odYHm7
+	 EFyZif00ohAwh/MwWDe5M89kpV3oO8QG95Bb+Vea+r5AwQEm/foFq+IbLhmyoEIvJ6
+	 lmph5FmQFhyWJM4/NQDc/jaNSo7ePnLiIDOafOa6RLqZEGzten/eve6SdW27WVfltI
+	 w3udc9hN1DaeELR57lP+DSHnv0kEHQQqW0jOh5+I8yBm7WwkaBU0/yqcF72XuagldV
+	 7wDxCog8fUoqzb0hQkYKV2+zJanxned/TgQEfCfG5VQpQu5w+9e6FmkJazNuKWtD30
+	 oOChqUAiGPK+A==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Subject:
+ [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
+Date: Thu, 21 Nov 2024 14:15:00 +0100
+Message-ID: <5839859.DvuYhMxLoT@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0d:0:b0:3a7:7124:bd2c with SMTP id
- e9e14a558f8ab-3a7865814dfmr75048325ab.19.1732194806328; Thu, 21 Nov 2024
- 05:13:26 -0800 (PST)
-Date: Thu, 21 Nov 2024 05:13:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673f31f6.050a0220.3c9d61.0172.GAE@google.com>
-Subject: [syzbot] Monthly perf report (Nov 2024)
-From: syzbot <syzbot+list5bde034aa3d7a5a8ec4d@syzkaller.appspotmail.com>
-To: acme@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, mingo@redhat.com, namhyung@kernel.org, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvnhdrsghrohifnhesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhjrghnseh
+X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
 
-Hello perf maintainers/developers,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This is a 31-day syzbot report for the perf subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/perf
+As stated by Len in [1], the extra delay added by msleep() to the
+sleep time value passed to it can be significant, roughly between
+1.5 ns on systems with HZ = 1000 and as much as 15 ms on systems with
+HZ = 100, which is hardly acceptable, at least for small sleep time
+values.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 23 have already been fixed.
+Address this by using usleep_range() in acpi_os_sleep() instead of
+msleep().  For short sleep times this is a no-brainer, but even for
+long sleeps usleep_range() should be preferred because timer wheel
+timers are optimized for cancellation before they expire and this
+particular timer is not going to be canceled.
 
-Some of the still happening issues:
+Add at least 50 us on top of the requested sleep time in case the
+timer can be subject to coalescing, which is consistent with what's
+done in user space in this context [2], but for sleeps longer than 5 ms
+use 1% of the requested sleep time for this purpose.
 
-Ref Crashes Repro Title
-<1> 3720    Yes   WARNING: suspicious RCU usage in get_callchain_entry
-                  https://syzkaller.appspot.com/bug?extid=72a43cdb78469f7fbad1
-<2> 5       No    KCSAN: data-race in _free_event / perf_pending_task (2)
-                  https://syzkaller.appspot.com/bug?extid=e75157f5b04f8ff40e17
-<3> 1       Yes   INFO: task hung in _free_event
-                  https://syzkaller.appspot.com/bug?extid=3c4321e10eea460eb606
+The rationale here is that longer sleeps don't need that much of a timer
+precision as a rule and making the timer a more likely candidate for
+coalescing in these cases is generally desirable.  It starts at 5 ms so
+that the delta between the requested sleep time and the effective
+deadline is a contiuous function of the former.
+
+Link: https://lore.kernel.org/linux-pm/c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com/ [1]
+Link: https://lore.kernel.org/linux-pm/CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com/ [2]
+Reported-by: Len Brown <lenb@kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This is a follow-up to the discussion started by [1] above and since
+the beginning of it I have changed my mind a bit, as you can see.
+
+Given Arjan's feedback, I've concluded that using usleep_range() for
+all sleep values is the right choice and that some slack should be
+used there.  I've taken 50 us as the minimum value of it because that's
+what is used in user space FWICT and I'm not convinced that shorter
+values would be suitable here.
+
+The other part, using 1% of the sleep time as the slack for longer
+sleeps, is likely more controversial.  It is roughly based on the
+observation that if one timer interrupt is sufficient for something,
+then using two of them will be wasteful even if this is just somewhat.
+
+Anyway, please let me know what you think.  I'd rather do whatever
+the majority of you are comfortable with.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/acpi/osl.c |   22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Index: linux-pm/drivers/acpi/osl.c
+===================================================================
+--- linux-pm.orig/drivers/acpi/osl.c
++++ linux-pm/drivers/acpi/osl.c
+@@ -607,7 +607,27 @@ acpi_status acpi_os_remove_interrupt_han
+ 
+ void acpi_os_sleep(u64 ms)
+ {
+-	msleep(ms);
++	u64 usec = ms * USEC_PER_MSEC, delta_us = 50;
++
++	/*
++	 * Use a hrtimer because the timer wheel timers are optimized for
++	 * cancellation before they expire and this timer is not going to be
++	 * canceled.
++	 *
++	 * Set the delta between the requested sleep time and the effective
++	 * deadline to at least 50 us in case there is an opportunity for timer
++	 * coalescing.
++	 *
++	 * Moreover, longer sleeps can be assumed to need somewhat less timer
++	 * precision, so sacrifice some of it for making the timer a more likely
++	 * candidate for coalescing by setting the delta to 1% of the sleep time
++	 * if it is above 5 ms (this value is chosen so that the delta is a
++	 * continuous function of the sleep time).
++	 */
++	if (ms > 5)
++		delta_us = (USEC_PER_MSEC / 100) * ms;
++
++	usleep_range(usec, usec + delta_us);
+ }
+ 
+ void acpi_os_stall(u32 us)
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
 
-You may send multiple commands in a single email message.
+
 
