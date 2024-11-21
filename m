@@ -1,195 +1,238 @@
-Return-Path: <linux-kernel+bounces-417533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B959D5543
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:14:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC789D5547
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B9A91F233CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:14:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 368B7B21AE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F288A1DDA2F;
-	Thu, 21 Nov 2024 22:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188621DDC25;
+	Thu, 21 Nov 2024 22:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="W281CVnz"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bFfteXDY"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D401BD031;
-	Thu, 21 Nov 2024 22:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC6E1D79A6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732227240; cv=none; b=QHxOfHtCy59qivgyLKGXb3gGWknP9N+JBwHMRKuXgwpU+FqFvOV6C5HZVtxwQW8TgHQVmW4mz5V3ApO3hhjb9gafNB9DXZCR1/tRsuYMbp73hIYj6SvZl7Qaxk6rwN8Wd1k/6LOAAbzT72kGbLPQRwwchRN8YHud56m+GeUk3AA=
+	t=1732227301; cv=none; b=D8pKV2VXFnOI8FQj56bKXSpXvEoKX5Kdgvc35jkPkkDmucTjbnRk0UdlwVhkpPp+fURgm+XcxIas/z47ri7rA0Hscpm3laEuVQotnO2lrGnwSblnObjYhD40aHt6ocDYPFjV9cfCa+RRzXK7ZKOlxQpjkHtTQCIte2Aie2hUkwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732227240; c=relaxed/simple;
-	bh=oH7nqItlYPkTypgpC09pOI9idAGE9dHoYaCHeGqHVaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e0JHgJcK38Q/2Dn7T/LXKVjwI71fd/G7Y8p3ERrv1nKmX0jnYQh8l6hZwaS09HBlRY/6CXdgC5Re8kX7Xsusfy53zV0dwy+PFtSw+YX4goHR1psT/Fx2IRtAJY8187mpq6WAD5EvGv3cESiZ83GSYi4RGB1USOMx76Zmuh5sQgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=W281CVnz; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732227175; x=1732831975; i=w_armin@gmx.de;
-	bh=cXX54Y9INubhhZ0b2wtvIgEg76woonkRAY1ALNTis3o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=W281CVnz9kVQXUqCLfGxMvj/UtMP4YAOkuwkwCXL/ztx6SJzEs2kV77yUom2PJ69
-	 aUGnllmwVYpFkeO2MGUOzd0/OZBbDXYEV1QDU3d6JczeosozQXaJSh2kUdAPTU1XC
-	 Efee0mWSVKdhUW6x6qSduZcLaz5rEIlKDpArmRKYIFNkOHde2l2ZyVdCgiMCAPTCR
-	 AieEobfwg3WAIF7YREzS/oCyZ53LTieqTGesvDsX7Qx/1s67m3DnGUsuQ8syhRvb0
-	 jfy8DaHyjDJbKGOxbK4GE0gEJ6CicoawkPtRKbL39n4MWPLo97u05LB2snEbvnS/C
-	 Jw7lYHAbKKkpjPZArw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtwZ4-1u1gmB0IV2-0182Hl; Thu, 21
- Nov 2024 23:12:55 +0100
-Message-ID: <217c843d-3b8a-4d6e-9e19-3fb22f099fc5@gmx.de>
-Date: Thu, 21 Nov 2024 23:12:50 +0100
+	s=arc-20240116; t=1732227301; c=relaxed/simple;
+	bh=MedtbcPE68w6A1t+0iluDLfV5ixEvAxDTp134mz3ta8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dk0o5Bic7+O5y5SVQrY9cFX25RNzjmJPs3D4UIRyf1sRYBWNq8WTlmzvAAxek9602LThGq1ooQ1i4zzHjhNyS9QFCfWWU9NJWYaqGKJzatPiLRwHw25dO/XskvHtH+MoOLaZCR+xm9j56r6Nyz350Rf8VWYA6Kgbj4pzR+8S1RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bFfteXDY; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so1581710e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:14:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732227296; x=1732832096; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hi/XevIo1cthNQyPWS6cIe1zGxlhuryhjSAJjzS6ibM=;
+        b=bFfteXDY3fA8SWiKKI3+PJ8GBmeGfGdT9gMq0C+aVgXqG9va/5F9z+PUuDuq38sJh6
+         CycVpHQPvwrWRXh5JMLHlQcSubmb/AiCbRFHfgigADhhMgzkqlB0zBFIFnqx/w87Hxdm
+         2mAVN4cSAKgJMm+kmW9xcxV9EurOgUJGF8Ti89phdDiWa7Q+vVuy0ifDbNHNE8W8aCUS
+         d8ibT/xys7ggjN3yq9hG1RSxVsVBVC7O2/SDxA0Zi0sSphMRPsiA0LaLcbDDEsYX6zxi
+         WB6I4ncczb5gQ+2UWj7WObdct8lswQx748VQWcP2jT293C5UO5DcVrjDv1NupDEuKmR4
+         kHlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732227296; x=1732832096;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hi/XevIo1cthNQyPWS6cIe1zGxlhuryhjSAJjzS6ibM=;
+        b=CG3u5lhJpSQEvju1f8JjqiWSWK7msXGPGev8NMgfjogZH7afrAeZbVTThQvWWFQ0k7
+         n2DAs0VRuXNxNCQwPJIlKMJgGuinOD7Zch/9+NBOf8EREINA10RTo9aEtHD7inhr7ljG
+         elZdtjjW8uelWkRjh7DtU8c9JYmCrzQ1EzHqc/XJ6xWxgKroqOIoP3SK9LshZtXMDOz2
+         xt0YKQjkzKWWnyRTfiOJ6l+G2CG6QPk/4zkRbBdU5JbNZOqCWticaegs9Cr0mby+lrP7
+         kxQfMaOtIuzx1hoVVYZCVJpY+Mgn+w6KgHe9X2flnidIe9dfnt/kptbM6vlg/ADXd4mI
+         wBmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwWrrLXMeMNrbtxXnQTHIZOpuavACaI38L6OPnC4sUtNnFeSb6t76ZqHqFuCZix+aXKLw2glb9mbJY5bE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxChtkAcCAmbX2iPgl0uLnHYpwNablIS8YClBrPmIX5u9sqotzw
+	qbUhb2O7g5LoWTNvxx37dtNw/QdoyMtBMYzl+HYgkDiVfNIo+qkXTVP0lPLj23Q=
+X-Gm-Gg: ASbGncvc32jxzKOURE52CDURPRUf7z8GBOjTiQXcn6/szzrztDde096JLHBTvjpa7aa
+	1vphBi2PhZvJAj+MeaGkjGMTuFrw172GCzl5Hher5xXLIKMmx9j6H0i8rcVpFUTmO7T/uFvLxUg
+	9/BS3KLlqgy23teHDUxCCxhmhqwOl0clgpgi6Xel10w2rkXqiJspDw+mgXUleuEO0s+aKKMOrUr
+	wY1UheSZIKKVmad2rjPqgyjm5HvpVOxS/lq2DuvYuII95zcic/ZlmrfTVXPY91rX2NsgeGzHR+W
+	7GPJzuOxfZu9UZNt55wrUp5SvaC11g==
+X-Google-Smtp-Source: AGHT+IGV/C1nBqdFgvJeMR65ubRSZVeKyIlihXhmqtyVdAP02zb8OqzD3cvC0frxkEgh3Df6nv5ppg==
+X-Received: by 2002:a05:6512:304a:b0:53d:d0dd:8dae with SMTP id 2adb3069b0e04-53dd36a075fmr261668e87.17.1732227296249;
+        Thu, 21 Nov 2024 14:14:56 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd248b42esm91463e87.206.2024.11.21.14.14.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 14:14:54 -0800 (PST)
+Date: Fri, 22 Nov 2024 00:14:52 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Odelu Kukatla <quic_okukatla@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
+	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 3/4] interconnect: qcom: Add EPSS L3 support on SA8775P
+Message-ID: <u2jfxvmn6qazhpvmehrh7ifc3ei7qucuwbk5dq5jzpoqkxmdbk@tsx4di2fdj4h>
+References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
+ <20241121113006.28520-4-quic_rlaggysh@quicinc.com>
+ <bc926d6d-e3d1-4fbf-9b6a-bbd3816a766d@kernel.org>
+ <b2a05dfb-a820-4450-a156-8d6b4bd59be3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/22] ACPI: platform_profile: Add choices attribute
- for class interface
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241119171739.77028-1-mario.limonciello@amd.com>
- <20241119171739.77028-13-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241119171739.77028-13-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wQKlekWLqT4X1GSRk8d/ayccGcCUF6fyIDf0scD5h/eDdcxG8dB
- sd446YRaWch7PHGMekBXcbbYJ30JzMYfR3ErtySgqQ0xvmbpzzpyQbHlJoAzCnA6cplPg8R
- jYZeYGDpBfLupB0nNu+8gBo8M/6ZuhKcQ2TWaMeGpRxHh97kdx9eyQL2h4hhGvv7foQu49Y
- Wy6pD4+WV95h4JGC3w0Aw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F/7G9+BBVvQ=;DNrlaOH5JaTyt8xKiZ9x9Tj4E22
- vWu1yu132tpmsP0m1LFceVnFXYmpJ8jY2BNmxBfVRmiiR4O0za8916O+mx3/9BOzZgM6fZ71G
- 6MNgMdGPUTYPpCVGL/iYTUD4ymVS/kUq/AAkJRef+j4lkgnMgBQu4t2j8SHdJa/OiGB/r5MjH
- SXaP1RXl/NXsUCfwrM8U23ZkMBzW4vGN6v9uEFgCV7yMiKYDJ3PzRUYPPrw0cZjm5O+9OiWR2
- K28/ZaPv9HFBpDGY7pvODg3Eaon6Xv3uAWkdho0EuLyLzJBXIHMUTfshCh/mvuy+bF5qaayg2
- lhE/q8mxBv/Wia3TlbMz3QkIPs0mcaEYWXFjfR6EihN+ESaSaCt0JkzryEcFDkhrwMKzTUbJb
- 3p2NKcMDc8CqGvVWZRqQhfaY3Xy84B5THkcj0cFedEF0AIDNI/j9f4InYNpXw5L50SK9Miv2f
- LkDI/uUGFdhe2fdj2X04LoKkrvivb/bJggWeA97zRllHJoplXX4zIJy+cxGFZS9ooXhjqYBUc
- 1YBdQyz4430kG+zqWtHl+Z/hQnUas4pZyOBchIkW6tT2CwlASHDA5J/p/fQIh3/0MKPCvxzGC
- A+QihS8Zph0X5SXR++1Xz4t0ueo5uZKSfV1Z+FAZ/ZLUInMGtXbvusNR6lYw07OUmwZFzHDoA
- AWDzojZrZGJh8S9TEJr+o8JK008Ew+hVuSXdpEn4Ba+hUyGroORuiacW+3/MStpKgjjGi0nwQ
- 3ephWCaTQDa29YW5Fk53QNkJCQ+ZOH7ks1yw4vhm+hIYqWxy86K2XAIeccVZUhvrp0+dTKZ+K
- MHg4mgP8BSJTwfDRIH6r8AdTcorpvXOQsNt4NHK4OEi3AR5Aa/9+zlNeKP/blbYmRa4zURQsB
- J6Fh6bbnrp44xC/vUf9gbirZcG064CbvQANVdNjK4lctL/BP+K/do7/OEbgT6WJhfZwZKS3tg
- 242wxDzaTKTV4PA5/v1fufH+OJMFIg4n9kVk+ToRdb+YUE49cAgYLZKnrSADKz5q+uy4g0vm/
- waEigjQImXe0266y/Y5XXs1JkHz2dM4XTEHKrWYMg+h/IWLi3Z1O05SAfEtZx48w4/oYXO9rO
- F7CAC9JzNVCLjhqYXM+XUWa8n2Letw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b2a05dfb-a820-4450-a156-8d6b4bd59be3@quicinc.com>
 
-Am 19.11.24 um 18:17 schrieb Mario Limonciello:
+On Thu, Nov 21, 2024 at 11:33:04PM +0530, Raviteja Laggyshetty wrote:
+> 
+> 
+> On 11/21/2024 5:28 PM, Krzysztof Kozlowski wrote:
+> > On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
+> >> Add Epoch Subsystem (EPSS) L3 interconnect provider on
+> >> SA8775P SoCs with multiple device support.
+> >>
+> > 
+> > 
+> > ...
+> > 
+> >> -DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
+> >> -DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
+> >> +DEFINE_QNODE(osm_l3_master, 16, osm_l3_slave);
+> >> +DEFINE_QNODE(osm_l3_slave, 16);
+> >>  
+> >> -static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
+> >> +static struct qcom_osm_l3_node * const osm_l3_nodes[] = {
+> >>  	[MASTER_OSM_L3_APPS] = &osm_l3_master,
+> >>  	[SLAVE_OSM_L3] = &osm_l3_slave,
+> >>  };
+> >>  
+> >> -DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
+> >> -DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
+> >> +DEFINE_QNODE(epss_l3_master, 32, epss_l3_slave);
+> >> +DEFINE_QNODE(epss_l3_slave, 32);
+> >>  
+> >> -static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
+> >> +static struct qcom_osm_l3_node * const epss_l3_nodes[] = {
+> > 
+> > 
+> > I think dropping const makes the code worse, not better. Commit msg does
+> > not explain all these changes and I could not figure out the intention
+> > (except modifying but that's just obvious).
+> 
+> EPSS L3 on SA8775P has two instances and this requires creation of two device nodes in devicetree.
+> As Interconnect framework requires a unique node id, each device node needs to have different compatible and data.
+> To overcome the need of having two different compatibles and data, driver code has been modified to acquire unique node id from IDA 
+> and the node name is made dynamic (nodename@address).
+> Updating node id and node name is not possible with const.
 
-> The `choices` file will show all possible choices that a given platform
-> profile handler can support.
+Has this been described in the commit message? No. Have you had similar
+questions since v1? Yes. What does that tell us?
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+Also, while we are at it. Please fix your email client settings to wrap
+message body text on some sensible (72-75) width.
 
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v7:
->   * Drop locking
-> v5:
->   * Fix kdoc
->   * Add tag
->   * Fix whitespace
->   * Adjust mutex use
-> ---
->   drivers/acpi/platform_profile.c | 39 +++++++++++++++++++++++++++++++++
->   1 file changed, 39 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index a9d7ec3c85844..9d6ead043994c 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -25,6 +25,27 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFO=
-RM_PROFILE_LAST);
->
->   static DEFINE_IDA(platform_profile_ida);
->
-> +/**
-> + * _commmon_choices_show - Show the available profile choices
-> + * @choices: The available profile choices
-> + * @buf: The buffer to write to
-> + * Return: The number of bytes written
-> + */
-> +static ssize_t _commmon_choices_show(unsigned long *choices, char *buf)
-> +{
-> +	int i, len =3D 0;
-> +
-> +	for_each_set_bit(i, choices, PLATFORM_PROFILE_LAST) {
-> +		if (len =3D=3D 0)
-> +			len +=3D sysfs_emit_at(buf, len, "%s", profile_names[i]);
-> +		else
-> +			len +=3D sysfs_emit_at(buf, len, " %s", profile_names[i]);
-> +	}
-> +	len +=3D sysfs_emit_at(buf, len, "\n");
-> +
-> +	return len;
-> +}
-> +
->   /**
->    * name_show - Show the name of the profile handler
->    * @dev: The device
-> @@ -41,9 +62,27 @@ static ssize_t name_show(struct device *dev,
->   	return sysfs_emit(buf, "%s\n", handler->name);
->   }
->
-> +/**
-> + * choices_show - Show the available profile choices
-> + * @dev: The device
-> + * @attr: The attribute
-> + * @buf: The buffer to write to
-> + */
-> +static ssize_t choices_show(struct device *dev,
-> +			    struct device_attribute *attr,
-> +			    char *buf)
-> +{
-> +	struct platform_profile_handler *handler =3D dev_get_drvdata(dev);
-> +
-> +	return _commmon_choices_show(handler->choices, buf);
-> +}
-> +
->   static DEVICE_ATTR_RO(name);
-> +static DEVICE_ATTR_RO(choices);
-> +
->   static struct attribute *profile_attrs[] =3D {
->   	&dev_attr_name.attr,
-> +	&dev_attr_choices.attr,
->   	NULL
->   };
->   ATTRIBUTE_GROUPS(profile);
+> > 
+> > 
+> > 
+> >>  	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
+> >>  	[SLAVE_EPSS_L3_SHARED] = &epss_l3_slave,
+> >>  };
+> >> @@ -123,6 +125,19 @@ static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
+> >>  	.reg_perf_state = EPSS_REG_L3_VOTE,
+> >>  };
+> >>  
+> >> +static u16 get_node_id_by_name(const char *node_name,
+> >> +			       const struct qcom_osm_l3_desc *desc)
+> >> +{
+> >> +	struct qcom_osm_l3_node *const *nodes = desc->nodes;
+> >> +	int i;
+> >> +
+> >> +	for (i = 0; i < desc->num_nodes; i++) {
+> >> +		if (!strcmp(nodes[i]->name, node_name))
+> >> +			return nodes[i]->id;
+> >> +	}
+> >> +	return 0;
+> >> +}
+> >> +
+> >>  static int qcom_osm_l3_set(struct icc_node *src, struct icc_node *dst)
+> >>  {
+> >>  	struct qcom_osm_l3_icc_provider *qp;
+> >> @@ -164,10 +179,11 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+> >>  	const struct qcom_osm_l3_desc *desc;
+> >>  	struct icc_onecell_data *data;
+> >>  	struct icc_provider *provider;
+> >> -	const struct qcom_osm_l3_node * const *qnodes;
+> >> +	struct qcom_osm_l3_node * const *qnodes;
+> >>  	struct icc_node *node;
+> >>  	size_t num_nodes;
+> >>  	struct clk *clk;
+> >> +	u64 addr;
+> >>  	int ret;
+> >>  
+> >>  	clk = clk_get(&pdev->dev, "xo");
+> >> @@ -188,6 +204,10 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+> >>  	if (!qp)
+> >>  		return -ENOMEM;
+> >>  
+> >> +	ret = of_property_read_reg(pdev->dev.of_node, 0, &addr, NULL);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >>  	qp->base = devm_platform_ioremap_resource(pdev, 0);
+> >>  	if (IS_ERR(qp->base))
+> >>  		return PTR_ERR(qp->base);
+> >> @@ -242,8 +262,13 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+> >>  
+> >>  	icc_provider_init(provider);
+> >>  
+> >> +	/* Allocate unique id for qnodes */
+> >> +	for (i = 0; i < num_nodes; i++)
+> >> +		qnodes[i]->id = ida_alloc_min(&osm_l3_id, OSM_L3_NODE_ID_START, GFP_KERNEL);
+> >> +
+> >>  	for (i = 0; i < num_nodes; i++) {
+> >> -		size_t j;
+> >> +		char *node_name;
+> >> +		size_t j, len;
+> >>  
+> >>  		node = icc_node_create(qnodes[i]->id);
+> >>  		if (IS_ERR(node)) {
+> >> @@ -251,13 +276,29 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+> >>  			goto err;
+> >>  		}
+> >>  
+> >> -		node->name = qnodes[i]->name;
+> >> +		/* len = strlen(node->name) + @ + 8 (base-address) + NULL */
+> >> +		len = strlen(qnodes[i]->name) + OSM_NODE_NAME_SUFFIX_SIZE;
+> >> +		node_name = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
+> >> +		if (!node_name) {
+> >> +			ret = -ENOMEM;
+> >> +			goto err;
+> >> +		}
+> >> +
+> >> +		snprintf(node_name, len, "%s@%08llx", qnodes[i]->name, addr);
+> >> +		node->name = node_name;
+> > 
+> > 
+> > Why the node name becomes dynamic?
+> > 
+> > Best regards,
+> > Krzysztof
+> 
+
+-- 
+With best wishes
+Dmitry
 
