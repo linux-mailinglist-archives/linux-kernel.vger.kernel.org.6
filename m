@@ -1,98 +1,163 @@
-Return-Path: <linux-kernel+bounces-417066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FD19D4E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:17:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4739D4E87
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1197E1F24B35
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FF501F250E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3EB1D63FD;
-	Thu, 21 Nov 2024 14:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5201F1D90B9;
+	Thu, 21 Nov 2024 14:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iG5YGUd6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFBO2pNb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B101B1D79A7
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A773E1D63FD;
+	Thu, 21 Nov 2024 14:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198637; cv=none; b=LS8+jVN8wXIJmElfHbVL0mFhcf84D9JSHRl3dlWpCMS19gMaX8TAnFkYkhH1F9HPYKXUz+3Lp0qsFGhB6WJO66nVZ5y2obl1fFWAONfMXDXYJLSRrcWDjr2EeSHCQo3z0/pnEYEAeNxJgXAIPBSzXIM0OBoMVnTqCNnBeh2FpQ0=
+	t=1732198649; cv=none; b=XZ0zUF08onWRZXrzpScA1pl7w4Qit2gc/jlCSTYyEtQsYnrAAw9A8cezNq8OVe4ntQI0vBla+h2TGdD/cViAshDhlgxyykO8cLGkIM6ati0hAIk/EpePPQyYD2heSli+F2DY1lCghxRHuC3+1Di4/Y+bGBJnwHI9jJosJApaxaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198637; c=relaxed/simple;
-	bh=MBBqV0m/ntImifX5lORyCAqnf/uWBdgaxC5z0Sou1WE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/WIRR0QRxdqar7wvXHvTc6xsUQWEiE54LYGfHoozyLD2OwgHBxs0riKEkE15wQ7EMq2pW18MyIDN/c2NUXhc++vWy0QzqHXRW7Y8a97LOSuSvP7QFgM9mvXzupQBAireMStATvFuy27Kow48MSz3OMjQnMnncT+iCS8DazMQxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iG5YGUd6; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732198636; x=1763734636;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MBBqV0m/ntImifX5lORyCAqnf/uWBdgaxC5z0Sou1WE=;
-  b=iG5YGUd6ioyad2b1RGLFYmCTOD8s+Kp0P9b4fg+sPVILZQ1adf858yay
-   jTA0TTIpzHtj0CeNgsnZavNpKgrjOOo8PqyjzIVDmIbcaZ8+YIBplNtOD
-   B9v8jk+6S6m18GFWXX29dcXHviqAZ08aQaVjxgFddkm3kAshqwANG2Iz3
-   l8OyuIqRNtXgxySADQkxKoPDQXG+J6wK7Jjr/hOELHFY/kpO5BHaMDY8q
-   yuW+bEDMPEm2LwKdomtRa23UIIdGWsB+XdzQJ+pDUTW4U+r9pgoNLYXS6
-   hcF8OkcxretctkxjZ25PhlAG9kxQd42B4SpdQ8wdPyNAonyS2W+K47WtU
-   g==;
-X-CSE-ConnectionGUID: YbVusLflSYC5pxMr4KVSCw==
-X-CSE-MsgGUID: 1SeJExXGTD6Gpnr7iwtKTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43376187"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="43376187"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:17:15 -0800
-X-CSE-ConnectionGUID: WAzREU2dTVGKv2M2l999Dw==
-X-CSE-MsgGUID: YzY0SPebQeCBN2somvsrPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90242724"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 06:17:14 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tE7zb-0000000H5Lm-2bND;
-	Thu, 21 Nov 2024 16:17:11 +0200
-Date: Thu, 21 Nov 2024 16:17:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Cc: Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH v2 0/2] kcsan: debugs: Refactor allocation code
-Message-ID: <Zz9A59XQdiHJ8oLp@smile.fi.intel.com>
-References: <20241121141412.107370-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1732198649; c=relaxed/simple;
+	bh=Nwing6hxd7cbL8mrx1UFhwO+4wTLgqqgFjW37N/tBsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GgDlLtbMg9vTh7d0yOMIJrPwdhg9jC0f1vHUM96311FSTFVJD/v+2Qb89vIRstjpZBbmWgcnBq6sfFZKUt1Jhn5rUI1Ro8GZFfi2gstkklLGIWCYXf4dA5W13D56r1eA0Kvjc+Mwa1sav1JCwmS4VlFIMPscOvvrs6CjMHj7+KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFBO2pNb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2882C4CECC;
+	Thu, 21 Nov 2024 14:17:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732198649;
+	bh=Nwing6hxd7cbL8mrx1UFhwO+4wTLgqqgFjW37N/tBsY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WFBO2pNbkJJdN3p7N5UR1GeTs2j6WYsbgzGfuu+5SGkRUCMTRmfBooHBQHQM/Fsg2
+	 k9Zr14TBDhpekulan4sDjdyDiGe054/+vJ9NYTAP77515vh6ZgBuesca6wwOesiboQ
+	 aCrH2TzvD44QIcYNG59RfppvjzC/dgUc5oy80PlHtUiqdXk2J+MIX76aJzpYZSHyaj
+	 z5tHo5O2mUbCN25lZL+wiXfHhnWzuZ7Ed1CXzMLME7qT81YdoPwMEkLEmAIFubXkbK
+	 doltu3cGGVfqHr01kx4nvU6VFrC8b1a2UhsQv35/4W5nEZvBtHoSpYHB/dYH+Q+Ts6
+	 qZvui8KMW5T6g==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	stable@vger.kernel.org,
+	Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Subject: [PATCH] f2fs: fix to drop all discards after creating snapshot on lvm device
+Date: Thu, 21 Nov 2024 22:17:16 +0800
+Message-Id: <20241121141716.3018855-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121141412.107370-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 04:12:50PM +0200, Andy Shevchenko wrote:
-> Refactor allocation code to be more robust against overflows
-> and shorted in terms of LoCs.
-> 
-> In v2:
-> - collected tags (Marco)
-> - added patch 2
+Piergiorgio reported a bug in bugzilla as below:
 
-Okay, it seems I have to check the Linux Next for the current state of
-affairs...
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 969 at fs/f2fs/segment.c:1330
+RIP: 0010:__submit_discard_cmd+0x27d/0x400 [f2fs]
+Call Trace:
+ __issue_discard_cmd+0x1ca/0x350 [f2fs]
+ issue_discard_thread+0x191/0x480 [f2fs]
+ kthread+0xcf/0x100
+ ret_from_fork+0x31/0x50
+ ret_from_fork_asm+0x1a/0x30
 
+w/ below testcase, it can reproduce this bug quickly:
+- pvcreate /dev/vdb
+- vgcreate myvg1 /dev/vdb
+- lvcreate -L 1024m -n mylv1 myvg1
+- mount /dev/myvg1/mylv1 /mnt/f2fs
+- dd if=/dev/zero of=/mnt/f2fs/file bs=1M count=20
+- sync
+- rm /mnt/f2fs/file
+- sync
+- lvcreate -L 1024m -s -n mylv1-snapshot /dev/myvg1/mylv1
+- umount /mnt/f2fs
+
+The root cause is: it will update discard_max_bytes of mounted lvm
+device to zero after creating snapshot on this lvm device, then,
+__submit_discard_cmd() will pass parameter @nr_sects w/ zero value
+to __blkdev_issue_discard(), it returns a NULL bio pointer, result
+in panic.
+
+This patch changes as below for fixing:
+1. Let's drop all remained discards in f2fs_unfreeze() if snapshot
+of lvm device is created.
+2. Checking discard_max_bytes before submitting discard during
+__submit_discard_cmd().
+
+Cc: stable@vger.kernel.org
+Fixes: 35ec7d574884 ("f2fs: split discard command in prior to block layer")
+Reported-by: Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219484
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/segment.c | 16 +++++++++-------
+ fs/f2fs/super.c   | 12 ++++++++++++
+ 2 files changed, 21 insertions(+), 7 deletions(-)
+
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 7bdfe08ce9ea..af3fb3f6d9b5 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -1290,16 +1290,18 @@ static int __submit_discard_cmd(struct f2fs_sb_info *sbi,
+ 						wait_list, issued);
+ 			return 0;
+ 		}
+-
+-		/*
+-		 * Issue discard for conventional zones only if the device
+-		 * supports discard.
+-		 */
+-		if (!bdev_max_discard_sectors(bdev))
+-			return -EOPNOTSUPP;
+ 	}
+ #endif
+ 
++	/*
++	 * stop issuing discard for any of below cases:
++	 * 1. device is conventional zone, but it doesn't support discard.
++	 * 2. device is regulare device, after snapshot it doesn't support
++	 * discard.
++	 */
++	if (!bdev_max_discard_sectors(bdev))
++		return -EOPNOTSUPP;
++
+ 	trace_f2fs_issue_discard(bdev, dc->di.start, dc->di.len);
+ 
+ 	lstart = dc->di.lstart;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c0670cd61956..fc7d463dee15 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1760,6 +1760,18 @@ static int f2fs_freeze(struct super_block *sb)
+ 
+ static int f2fs_unfreeze(struct super_block *sb)
+ {
++	struct f2fs_sb_info *sbi = F2FS_SB(sb);
++
++	/*
++	 * It will update discard_max_bytes of mounted lvm device to zero
++	 * after creating snapshot on this lvm device, let's drop all
++	 * remained discards.
++	 * We don't need to disable real-time discard because discard_max_bytes
++	 * will recover after removal of snapshot.
++	 */
++	if (test_opt(sbi, DISCARD) && !f2fs_hw_support_discard(sbi))
++		f2fs_issue_discard_timeout(sbi);
++
+ 	clear_sbi_flag(F2FS_SB(sb), SBI_IS_FREEZING);
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.40.1
 
 
