@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-416644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D7C9D4830
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:23:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECDE9D4834
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E359B218B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB351F21E6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBDB1C7B77;
-	Thu, 21 Nov 2024 07:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38B81ADFE8;
+	Thu, 21 Nov 2024 07:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SqjSSNUQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbNrF3uu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDA71A7AFD;
-	Thu, 21 Nov 2024 07:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FCC14EC55;
+	Thu, 21 Nov 2024 07:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732173822; cv=none; b=bJhBmOPRoc2UKp8ASeXglZ9j+QLHlXQUtELv7vsg/+Us81FrGW3sxoAdwCbJZ7DcouTnpQbmB03W3rJIYTc3tFR9JlREhjekqNV9OXk71wAlB9t/WPFewoVDnx0N4BRlPXq4frR9VBXwYD2aq/fzx9K7QOdltl/2ZS87PPMwfrg=
+	t=1732174228; cv=none; b=VFGpMtP9D1M4bce6ZNyre4zCqgc05Ia6oO3f4ZwcVJUIjgZSb0V+Avre8KGIsc+KnEGSbr3l5A9NgBcX6LwDCife4gAspU3wPIOGxn6Rxf9jEd0dolf9LHwjAaQwgTdLs0Se9P4//4Q6sKI1G8k6gVtFGD2GCcooWomW0d5X4PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732173822; c=relaxed/simple;
-	bh=zr8/hJ0UahcT+StlJNZ1bWAAbNrwX9qz6unkkQiXPbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oJ+qtnFjbcoB8gw9wmbpAOWZQmcV3nlkTau+MU/JwnWMs52HbaACa45OfVOBC76MPLND4G+4rz0eRwTMduqTcZW1v4VzK6znp6Q7sIeLPSTmEeYPlGcwb8Qz2zx1C+jEmVXeGpK1OIOd77hUNdUqasVasVbarwQvhT1NPwOdLKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SqjSSNUQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKKZitV003947;
-	Thu, 21 Nov 2024 07:23:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zr8/hJ0UahcT+StlJNZ1bWAAbNrwX9qz6unkkQiXPbY=; b=SqjSSNUQc0YcAVvD
-	Tpkg4fDrnW8PtlChUALeRM8oBQ1/Mt3BXKuGhHoWqgOpI2Z8t3745LcVizNNht15
-	B/pATWlxMvz6PYdbfnmGAjSP6ndY8VY5jnC4sYwB9mZwcvqoHMMxT0AEBod5v6sJ
-	4oiSFbePtZtTD2kDaC03JKGvb3kYJFFZPHkc9AYtnEVdOzL87/yPjaXDA+waVU3/
-	uALZFWCks5xNkFV+BzZnjxcRzKJLQPb3Ki54tsbYzKNzNhOr7SDjmNupi1Xsoinx
-	7BSMgPGhwZvmDdBYB3flGK/rOZSu0CNNnBiTjeLfFE++Aowtct2y3hFAXUN18sns
-	tLo+aQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3b2x5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 07:23:34 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL7NXY1015839
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 07:23:33 GMT
-Received: from [10.64.68.102] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 23:23:23 -0800
-Message-ID: <99e9118b-e963-4797-be32-79d96c4f428d@quicinc.com>
-Date: Thu, 21 Nov 2024 15:23:19 +0800
+	s=arc-20240116; t=1732174228; c=relaxed/simple;
+	bh=nhje7TW8z+eKwp6xS7nSD+uB3e6VolprP3/Ux0+1vCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plqENnUiPKKqHx3n/AOyWu3rwfWHv7INoVoKfdYsMbjynzHfGzW6W2KAiNiPjKBRs4T45t+FsiWmGZyL1UF/pa0+TCIKJjcEIAU60lhNuLEbRa4oxQVBjm/MhSMpWRHuXOSFwzLMRzaTOfvftehUX4hSIPGt63Mnjc6NqdiHu0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbNrF3uu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A068AC4CECC;
+	Thu, 21 Nov 2024 07:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732174227;
+	bh=nhje7TW8z+eKwp6xS7nSD+uB3e6VolprP3/Ux0+1vCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fbNrF3uuUqrADLPH1O4X+MeP8um1/88KJLfeQ3C8EeeIopTSZBVdYXODa122ogKRK
+	 wBmGRKqw3QKeBUqYjBw2P+nr9pc6nu+xCRvkHLVPyAsygTtLAJZKUgcDp9+XsWfKAp
+	 WyS6PlR0C5mEYTajsDJDPtkZ8Cj6TNUzJkhqblqlSSX5lMhh3y71AL0MVQzvBZo3vz
+	 H8G4qQTPil+vCMwqKk7Bu41KCKMJ3zhIQ+YpeKoW68KBRb2D/ZPrzn8bXAfPhN+yhD
+	 kePEqAebLwWwOj3iGsIlCmSdQ1jUzykPeZesZGQqMYBd9EXCNidbHL9Jfp4RYm/i4o
+	 BUQLF04qt+Cjg==
+Date: Wed, 20 Nov 2024 23:30:25 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+Subject: Re: [PATCH v5 0/7] Avoid parsing tracepoint format just for id
+Message-ID: <Zz7hkZ7FYdcbccp9@google.com>
+References: <20241118225345.889810-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: qcs615: enable pcie for qcs615
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh+dt@kernel.org>,
-        <manivannan.sadhasivam@linaro.org>, <bhelgaas@google.com>,
-        <kw@linux.com>, <lpieralisi@kernel.org>, <quic_qianyu@quicinc.com>,
-        <conor+dt@kernel.org>, <neil.armstrong@linaro.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tdas@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        "Krishna
- chaitanya chundru" <quic_krichai@quicinc.com>
-References: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
- <20241118082619.177201-6-quic_ziyuzhan@quicinc.com>
- <u6wy6w5yfchbmhyvthhibyrhdp2pmusagxyalcanxvhg7ncbfn@vq6x6iwxtn2g>
-Content-Language: en-US
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-In-Reply-To: <u6wy6w5yfchbmhyvthhibyrhdp2pmusagxyalcanxvhg7ncbfn@vq6x6iwxtn2g>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5QCmXwt9rrnKyESKJsNeZcTdcT2IepMu
-X-Proofpoint-ORIG-GUID: 5QCmXwt9rrnKyESKJsNeZcTdcT2IepMu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=583
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210056
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241118225345.889810-1-irogers@google.com>
 
-Will modified in v2
+On Mon, Nov 18, 2024 at 02:53:38PM -0800, Ian Rogers wrote:
+> The tracepoint format isn't needed to open an event, just the id for
+> the config value. Refactor the use of evsel->tp_format to use an
+> accessor that will lazily construct its value. In evsel__newtp_idx
+> read the id so the config value can be set up/used.
+> 
+> This allows tracepoints to be used without libtraceevent in a number
+> of tests. Other functionality is enabled without libtracevent, such as
+> mapping a tracepoint id back to its name. There may be some
+> performance benefit to code using tracepoints but not using the format
+> information.
+> 
+> v5. Add perf env fixed found by Namhyung.
+> v4. Rebase due to conflict with 9ac98662dbd3 ("perf: event: Remove deadcode")
+> v3. Whitespace changes, Arnaldo.
+> v2. Add additional error checking/handling in evsel__tp_format.
+> 
+> Ian Rogers (7):
+>   perf env: Ensure failure broken topology file reads are always -1
+>     encoded
+>   tool api fs: Correctly encode errno for read/write open failures
+>   perf trace-event: Constify print arguments
+>   perf trace-event: Always build trace-event-info.c
+>   perf evsel: Add/use accessor for tp_format
+>   perf evsel: Allow evsel__newtp without libtraceevent
+>   perf tests: Enable tests disabled due to tracepoint parsing
 
-On 11/18/2024 7:29 PM, Dmitry Baryshkov wrote:
-> Split into platform and SoC changes.
+Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
+
+> 
+>  tools/lib/api/fs/fs.c                         |   6 +-
+>  tools/perf/builtin-kmem.c                     |  12 +-
+>  tools/perf/builtin-kwork.c                    |   3 +-
+>  tools/perf/builtin-record.c                   |   2 -
+>  tools/perf/builtin-script.c                   |   9 +-
+>  tools/perf/builtin-trace.c                    |  79 +++++++++----
+>  tools/perf/tests/Build                        |   6 +-
+>  tools/perf/tests/builtin-test.c               |   2 -
+>  tools/perf/tests/parse-events.c               |  25 +---
+>  tools/perf/util/Build                         |   2 +-
+>  tools/perf/util/data-convert-bt.c             |  10 +-
+>  tools/perf/util/data-convert-json.c           |   8 +-
+>  tools/perf/util/env.c                         |   9 +-
+>  tools/perf/util/evsel.c                       | 110 +++++++++++++-----
+>  tools/perf/util/evsel.h                       |   9 +-
+>  tools/perf/util/evsel_fprintf.c               |   4 +-
+>  tools/perf/util/parse-events.c                |  16 +--
+>  tools/perf/util/perf_event_attr_fprintf.c     |   4 -
+>  .../util/scripting-engines/trace-event-perl.c |   3 +-
+>  .../scripting-engines/trace-event-python.c    |   3 +-
+>  tools/perf/util/sort.c                        |  33 ++++--
+>  tools/perf/util/trace-event-parse.c           |   2 +-
+>  tools/perf/util/trace-event-scripting.c       |  10 +-
+>  tools/perf/util/trace-event.h                 |   2 +-
+>  24 files changed, 220 insertions(+), 149 deletions(-)
+> 
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
