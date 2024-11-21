@@ -1,131 +1,100 @@
-Return-Path: <linux-kernel+bounces-417141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598EA9D4F86
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:14:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE339D4F85
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C15B2544B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 169CD1F21A3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1041D1DBB36;
-	Thu, 21 Nov 2024 15:12:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173F41DC05D;
+	Thu, 21 Nov 2024 15:13:07 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C901D86CB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CEB1DBB03;
+	Thu, 21 Nov 2024 15:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201977; cv=none; b=fFt84gJ2unGXEG9ocSWQbjh/UAclnRXFqSSJMFpX3Ra4nM5RX2yB/QIIl8YHfbdoiMZR3H1JexG1h5WO3waO28ByG4h+8tKIvGgpWZA82ZeNv/eel6RvJccgFZbCPiJB8i1Azy1uwWYezzUtvZ+zOqAjwy0aNrJd68o32eWbo0A=
+	t=1732201986; cv=none; b=Dpoyrv2/2ff+lTmjsujJTaK+pmXhadHQoZmU3puSloK/ta32JPSluxC+shQ/xEMATwjBpBTQ77Bmh4uoRSwt59Ywwj3+MVdwAFcwrJH3QnMQ/c54lEJ/o4G55JS5tCwiMN112QDGlRyb2in4Hh+9zvwxQaJYht1vnlPJ1ciQ+70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201977; c=relaxed/simple;
-	bh=qSwaYSmr7cHiebiREuYIFlM8lNP5yhjdd8P/egjnf/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SfyTihwoKEHJV8k1i8h+9kcSR8sbnoZND1d6g+Lrbths9USLXJyOhvOBJTXzIf/al24VLpQ3kH/Z+vOkuJHxkThVYl2mz7EuRbqmEn/vJPzdkuNeom08XMRf+guI0OK4I/ILLrz/ivrV843Q9McOIwN+VmPCNiihhMVf21D32Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tE8rC-00062z-SP; Thu, 21 Nov 2024 16:12:34 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tE8rB-001vQb-1K;
-	Thu, 21 Nov 2024 16:12:33 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 0DEFC378B3C;
-	Thu, 21 Nov 2024 15:12:33 +0000 (UTC)
-Date: Thu, 21 Nov 2024 16:12:32 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Nicolai Buchwitz <nb@tipi-net.de>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, n.buchwitz@kunbus.com, l.sanfilippo@kunbus.com, 
-	p.rosenberger@kunbus.com, stable@vger.kernel.org, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] can: dev: can_set_termination(): Allow gpio sleep
-Message-ID: <20241121-augmented-aquamarine-cuckoo-017f53-mkl@pengutronix.de>
-References: <20241121150209.125772-1-nb@tipi-net.de>
+	s=arc-20240116; t=1732201986; c=relaxed/simple;
+	bh=N2t4wscRqsJghTzzXbgX0aBSC6h2KhOlngyKbJivo/s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TTOwJ1gAu6GSY2hjz40gc8MJtnfPAb6HjGTlqS8pr2SbG08vYF2q7q7zPf509vWtwSHJtgbfoXC3COP/PMxgi1EIrRXZ7Fiu4IqKeow9CmwR3PMDrjd1ev7ONukLlYsArSR2CA8/QjQF4Nhh0w/CBlBnFvzEmKguHRiZ0ECJAyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvM9r5YM5z6J9qF;
+	Thu, 21 Nov 2024 23:10:40 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E78CD140A79;
+	Thu, 21 Nov 2024 23:13:00 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 21 Nov
+ 2024 16:13:00 +0100
+Date: Thu, 21 Nov 2024 15:12:59 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<alison.schofield@intel.com>, <nifan.cxl@gmail.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
+	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
+Subject: Re: [PATCH 02/13] rasdaemon: cxl: Fix mismatch in region field's
+ name with kernel DRAM trace event
+Message-ID: <20241121151259.00006803@huawei.com>
+In-Reply-To: <20241120095923.1891-3-shiju.jose@huawei.com>
+References: <20241120095923.1891-1-shiju.jose@huawei.com>
+	<20241120095923.1891-3-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ejqsmakmfeudclee"
-Content-Disposition: inline
-In-Reply-To: <20241121150209.125772-1-nb@tipi-net.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, 20 Nov 2024 09:59:12 +0000
+<shiju.jose@huawei.com> wrote:
 
---ejqsmakmfeudclee
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: dev: can_set_termination(): Allow gpio sleep
-MIME-Version: 1.0
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> Fix mismatch in 'region' field's name with kernel DRAM trace event.
+> 
+> Fixes: ea224ad58b37 ("rasdaemon: CXL: Extract, log and record region info from cxl_general_media and cxl_dram events")
+> 
+No line break here (though this is rasdaemon so maybe kernel rules don't apply?)
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 
-Hello Nicolai,
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-thanks for your contribution!
+> ---
+>  ras-cxl-handler.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/ras-cxl-handler.c b/ras-cxl-handler.c
+> index 8733b2b..7d4fc9f 100644
+> --- a/ras-cxl-handler.c
+> +++ b/ras-cxl-handler.c
+> @@ -966,7 +966,7 @@ int ras_cxl_dram_event_handler(struct trace_seq *s,
+>  	if (trace_seq_printf(s, "hpa:0x%llx ", (unsigned long long)ev.hpa) <= 0)
+>  		return -1;
+>  
+> -	ev.region = tep_get_field_raw(s, event, "region", record, &len, 1);
+> +	ev.region = tep_get_field_raw(s, event, "region_name", record, &len, 1);
+>  	if (!ev.region)
+>  		return -1;
+>  	if (trace_seq_printf(s, "region:%s ", ev.region) <= 0)
 
-On 21.11.2024 16:02:09, Nicolai Buchwitz wrote:
-> The current implementation of can_set_termination() sets the GPIO in a
-> context which cannot sleep. This is an issue if the GPIO controller can
-> sleep (e.g. since the concerning GPIO expander is connected via SPI or
-> I2C). Thus, if the termination resistor is set (eg. with ip link),
-> a warning splat will be issued in the kernel log.
->=20
-> Fix this by setting the termination resistor with
-> gpiod_set_value_cansleep() which instead of gpiod_set_value() allows it to
-> sleep.
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
-
-I've send the same patch a few hours ago:
-
-https://lore.kernel.org/all/20241121-dev-fix-can_set_termination-v1-1-41fa6=
-e29216d@pengutronix.de/
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ejqsmakmfeudclee
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc/Td0ACgkQKDiiPnot
-vG/Pqwf/dWE69GxFrUHSylwyxBpOXWmTEdBhFLEjuDY5BFBD6JraWk8T7MWVERT3
-t97Fw7BhZc+gRuedteyDFIChRWFCL0nqan6mf111dFzqP4Vx+a4gj3cF72buEwuw
-vcsAM+aHEEubMro3czQhps58CZnrauP8kYX0RuL4q59JeMBw652TkBOe8GGMlghf
-ML3C6xPibVoQiOigKlflr2bGbvoW37S8VnmZZdw+hnkm278kXpLJiTEyhjLvx0L7
-w0IL1b+oGgohm1s7BJ+qtCipHh93DAR/wdpVbcGKp+5jwoFAGDXyk3zoSdiaAbVp
-rsfWbXdY4iHjHTYw7mE8JDT7d9hljQ==
-=P0BZ
------END PGP SIGNATURE-----
-
---ejqsmakmfeudclee--
 
