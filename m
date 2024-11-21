@@ -1,77 +1,39 @@
-Return-Path: <linux-kernel+bounces-417116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 184FB9D4F39
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F339D4F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7A51F23234
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA4B284C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3570F1DBB36;
-	Thu, 21 Nov 2024 14:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fLOLq24X"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5141ABEB4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301C1DE3D1;
+	Thu, 21 Nov 2024 14:49:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D091F1ABEB4;
+	Thu, 21 Nov 2024 14:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732200573; cv=none; b=umpzqdiueL9/5UGOSbNnEeTezN3SDzJQjIe9B0vjZtwdtQjQyiL/DyS0GsGBZFNC38bNhy4A5wbDNZw0nvBl1vTEuhJVVKaXzhpJsgSdc6yGUD5QmoLwe6q/bzCupT6BJnXXsSY5AoUXJWk+8cBZGw4PNmRmL/U6SM4GB/vJ8NY=
+	t=1732200588; cv=none; b=uZNqgtEvZWdIFlq2aDzxB0r35fL/o2Z5mqjalBMSkYn2/SYuxxOM2kUt+o+znz+THhvD4SpDOUcMXzWW0XNSJ/+WHZ7VvRFx1vVlyOpoog8e5Q5VzogbyqYYDIOME9EffV0Spg1pHqBTr6O3eOkyVjNIMib+4o8SuiMxk3EZtyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732200573; c=relaxed/simple;
-	bh=lyH7Vau7UK9NgcpywHmI/4QQPnjva331llXpYSQB2rM=;
+	s=arc-20240116; t=1732200588; c=relaxed/simple;
+	bh=HX6kL5Cp7xP9ixBQ+OnEw7ZCJCn5c6NB942vvpiUZnI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lN1H5iinZAaYVGuqRsLIQF1imB75AHOvIwnPgXCcTaU+abZDZNNwu4r8+WF0IenQPb9HYK6abGsiVfw51y/wVHauPK8EkoKB/maLXaDkx3eNF6QZ/JITZq8cUW3EtIGifMld5dtBq7ZbDnawuMn+Tgn5aaN2/MAtOX71473UfjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fLOLq24X; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2962feec93bso663661fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:49:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732200570; x=1732805370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2+/66L19zIqWL9MK0xfwzldJbGf6XYUQHlYyTGOsrnI=;
-        b=fLOLq24XME45HprqIdBtDrUtFVRt0KKf4D7XQU6GElDiCo/1pqpspoV6Cojat/tHRf
-         P/j+ep+X/mbtTcJfV1ztkRFrtTqmYJzz4+JDhz9p/eYtg7LZbjyRXBYJhR6K2dggdOcc
-         65QWGaNcfsWQ7+kfbYFRqzS8mwZes6nOIG58pQg+GX5xFWF5VY9pylH9HARVff5CNl1N
-         8tDTYXanP/qxtM21t37snWQF40Cnvl/DcCtr0dRFM4PjSe8/FjX6/S/GKuUy9APigciO
-         J6FvuUCYJt2X9zGasxSG5NayGXwS0RmaYBfKph76HXQ8WcXO1sTNQliLkq+Nw0LXdIu5
-         ochw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732200570; x=1732805370;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2+/66L19zIqWL9MK0xfwzldJbGf6XYUQHlYyTGOsrnI=;
-        b=P5YHuEzkY3iNu1QNDgRQYQjLQs5NHrC/DUhaQ2yj/K6m+WieCN6fH7TH8hgCinCQkS
-         6fTuFj2aTKba987nhf+tNLSljwfK/N7zyccIHuMSQpRf8N4qwhZZubPEWoT9KS6dlCgN
-         kXplQ2Zg+tl5zvB15RcpM1cHGcZkE3v89JF3Bg6M37lXt5q1pJgV2nzTzY1cI4Qhicgc
-         80sVNe/Ur1G0+zogPlKX/NSdNVjTnrZKB7dfywti5QFIgFK5gLQNOWOpDl9CnuonChUH
-         OXw9rj/m+ysyxFLi4yZhIhAOP3DToPOT54JjRxX6Oa0uJfgNQ7xIXbqfTPDUOnmmcsm9
-         XfGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUM6dKAD7Fius1DrrNqXvkxomMt3aBW351KIMUQrRR7htjz32mk53q41+MP+LWnbMxAKEXt3RL1UnnCQT8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB/G6JkM1MdjKs9u/R9nlxodMWlZSt0HLOrZaYonvg9a6UkxzL
-	cPovvQVKyeQ1FkO3d9wr7VxaJGG5ea6FET2N9Q7O0yN6OqQzepGxEnLeS3xwqeQ=
-X-Gm-Gg: ASbGncv6juXp8GJN1HqraYbrM5SBy465mc0wg1QrRCrYWxqilH/3yXLEWEwW0psIAZ7
-	7UZKd2sGo6Mi25xPX9tOUbs0OFnHqNYvU22DIEQuBflV2sVPIZWMIsn2kNXbzzwz/mp6mpMjc+O
-	e3QBTXHkrOT+G3YtrhQ/dX+lGwyAn9jkp12Q3Tu7KfMbL4rdyxnKqCRm5QmD9N038ndTULLq3vi
-	zCstnS3zQ6mKL7lIR5KcAkdZ8B0pf8CeMxvn4GRMyEi6Q==
-X-Google-Smtp-Source: AGHT+IFNrnSalwJ8Ln03ltl79/WoctqRlWoKBzFj94ZqnpbO7kUvel0Z5aZJ8hZfVYejeQ5nDN2fHg==
-X-Received: by 2002:a05:6870:b50f:b0:296:9dba:6398 with SMTP id 586e51a60fabf-296d9ae3ab8mr7166734fac.7.1732200569835;
-        Thu, 21 Nov 2024 06:49:29 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651b2fbd4sm4927124fac.44.2024.11.21.06.49.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 06:49:29 -0800 (PST)
-Message-ID: <a01ead6b-bd1d-4cd3-ade6-59ad905273e7@kernel.dk>
-Date: Thu, 21 Nov 2024 07:49:28 -0700
+	 In-Reply-To:Content-Type; b=gv/inmukaWznuwX5oEq8oLehLD5GGP8/Qq0nHwcf2+EkTbLef48EowZzKxvDJKinoHAWj6IgiVKyfePukuJgg3rnAhGyfR/FaXZumT41/gjslDvXJHfJ2lQASMQ1ufSDUBdOAJEIKPgh4KkeF0cXVRpN47CwlmQVqPhrg7AWZ3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F191C12FC;
+	Thu, 21 Nov 2024 06:50:13 -0800 (PST)
+Received: from [10.1.26.55] (010265703453.arm.com [10.1.26.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC0743F5A1;
+	Thu, 21 Nov 2024 06:49:40 -0800 (PST)
+Message-ID: <57477eba-ef6a-454b-85d1-d0244f6116d1@arm.com>
+Date: Thu, 21 Nov 2024 14:49:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,92 +41,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [bug-report] 5-9% FIO randomwrite ext4 perf regression on 6.12.y
- kernel
-To: Phil Auld <pauld@redhat.com>
-Cc: Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
- Sagi Grimberg <sagi@grimberg.me>, Paul Webb <paul.x.webb@oracle.com>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com>
- <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com>
- <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
- <20241121113058.GA394828@pauld.westford.csb>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20241121113058.GA394828@pauld.westford.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu
+ device bound
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>, Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, kernel-team@android.com, joro@8bytes.org,
+ jgg@ziepe.ca, jsnitsel@redhat.com, robdclark@chromium.org,
+ quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, quic_charante@quicinc.com,
+ stable@vger.kernel.org, Prakash Gupta <quic_guptap@quicinc.com>
+References: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
+ <173021496151.4097715.14758035881649445798.b4-ty@kernel.org>
+ <0952ca36-c5d9-462a-ab7b-b97154c56919@arm.com>
+ <1d3dcd91-d246-4db3-9717-9edfe405f431@quicinc.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <1d3dcd91-d246-4db3-9717-9edfe405f431@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11/21/24 4:30 AM, Phil Auld wrote:
+On 2024-11-19 7:10 pm, Pratyush Brahma wrote:
 > 
-> Hi,
-> 
-> On Wed, Nov 20, 2024 at 06:20:12PM -0700 Jens Axboe wrote:
->> On 11/20/24 5:00 PM, Chaitanya Kulkarni wrote:
->>> On 11/20/24 13:35, Saeed Mirzamohammadi wrote:
->>>> Hi,
+> On 11/7/2024 8:31 PM, Robin Murphy wrote:
+>> On 29/10/2024 4:15 pm, Will Deacon wrote:
+>>> On Fri, 04 Oct 2024 14:34:28 +0530, Pratyush Brahma wrote:
+>>>> Null pointer dereference occurs due to a race between smmu
+>>>> driver probe and client driver probe, when of_dma_configure()
+>>>> for client is called after the iommu_device_register() for smmu driver
+>>>> probe has executed but before the driver_bound() for smmu driver
+>>>> has been called.
 >>>>
->>>> I?m reporting a performance regression of up to 9-10% with FIO randomwrite benchmark on ext4 comparing 6.12.0-rc2 kernel and v5.15.161. Also, standard deviation after this change grows up to 5-6%.
+>>>> Following is how the race occurs:
 >>>>
->>>> Bisect root cause commit
->>>> ===================
->>>> - commit 63dfa1004322 ("nvme: move NVME_QUIRK_DEALLOCATE_ZEROES out of nvme_config_discard?)
->>>>
->>>>
->>>> Test details
->>>> =========
->>>> - readwrite=randwrite bs=4k size=1G ioengine=libaio iodepth=16 direct=1 time_based=1 ramp_time=180 runtime=1800 randrepeat=1 gtod_reduce=1
->>>> - Test is on ext4 filesystem
->>>> - System has 4 NVMe disks
->>>>
+>>>> [...]
 >>>
->>> Thanks a lot for the report, to narrow down this problem can you
->>> please :-
+>>> Applied to will (for-joerg/arm-smmu/updates), thanks!
 >>>
->>> 1. Run the same test on the raw nvme device /dev/nvme0n1 that you
->>>     have used for this benchmark ?
->>> 2. Run the same test on the  XFS formatted nvme device instead of ext4 ?
->>>
->>> This way we will know if there is an issue only with the ext4 or
->>> with other file systems are suffering from this problem too or
->>> it is below the file system layer such as block layer and nvme pci driver ?
->>>
->>> It will also help if you can repeat these numbers for io_uring fio io_engine
->>> to narrow down this problem to know if the issue is ioengine specific.
->>>
->>> Looking at the commit [1], it only sets the max value to write zeroes 
->>> sectors
->>> if NVME_QUIRK_DEALLOCATE_ZEROES is set, else uses the controller max
->>> write zeroes value.
+>>> [1/1] iommu/arm-smmu: Defer probe of clients after smmu device bound
+>>>        https://git.kernel.org/will/c/229e6ee43d2a
 >>
->> There's no way that commit is involved, the test as quoted doesn't even
->> touch write zeroes. Hence if there really is a regression here, then
->> it's either not easily bisectable, some error was injected while
->> bisecting, or the test itself is bimodal.
+>> I've finally got to the point of proving to myself that this isn't the
+>> right fix, since once we do get __iommu_probe_device() working properly
+>> in the correct order, iommu_device_register() then runs into the same
+>> condition itself. Diff below should make this issue go away - I'll write
+>> up proper patches once I've tested it a little more.
+>>
+>> Thanks,
+>> Robin.
+>>
+>> ----->8-----
+>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/ 
+>> iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> index 737c5b882355..b7dcb1494aa4 100644
+>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> @@ -3171,8 +3171,8 @@ static struct platform_driver arm_smmu_driver;
+>>  static
+>>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
+>> *fwnode)
+>>  {
+>> -    struct device *dev = 
+>> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
+>> -                              fwnode);
+>> +    struct device *dev = 
+>> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
+>> +      put_device(dev);
+>>      return dev ? dev_get_drvdata(dev) : NULL;
+>>  }
+>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/ 
+>> arm/arm-smmu/arm-smmu.c
+>> index 8321962b3714..aba315aa6848 100644
+>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+>> @@ -1411,8 +1411,8 @@ static bool arm_smmu_capable(struct device *dev, 
+>> enum iommu_cap cap)
+>>  static
+>>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
+>> *fwnode)
+>>  {
+>> -    struct device *dev = 
+>> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
+>> -                              fwnode);
+>> +    struct device *dev = 
+>> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
+> I think it would still follow this path:
 > 
-> I was just going to ask how confident we are in that bisect result.
+> bus_find_device_by_fwnode() -> bus_find_device() -> next_device()
 > 
-> I suspect this is the same issue I've been fighting here:
-> 
-> https://lore.kernel.org/lkml/20241101124715.GA689589@pauld.westford.csb/
-> 
-> Saeed, can you try your randwrite test after
-> 
->   "echo NO_DELAY_DEQUEUE > /sys/kernel/debug/sched/features"
-> 
-> please?
-> 
-> We don't as yet have a general fix for it as it seems to be a bit of
-> a trade off.
+> next_device() would always return null until the driver is bound to the 
+> device which
 
-Interesting. Might explain some regressions I've seen too related to
-performance.
+No, this is traversing the bus list, *not* the driver list, that's the 
+whole point. The SMMU device must exist on the platform bus before the 
+driver can bind, since the bus is responsible for matching the driver in 
+the first place.
 
--- 
-Jens Axboe
+> happens much later in really_probe() after the iommu_device_register() 
+> would be called
+> even as per this patch. That way the race would still occur, wouldn't it?
+> Can you please help me understand what I may be missing here?
+> Are you saying that these additional patches are required along with the 
+> fix I've
+> posted?
+
+I'm saying my change makes there be no race, i.e. the "if (!smmu)" case 
+can never be true, and so no longer needs working around.
+
+Thanks,
+Robin.
+
+>> +
+>>      put_device(dev);
+>>      return dev ? dev_get_drvdata(dev) : NULL;
+>>  }
+>> @@ -2232,21 +2232,6 @@ static int arm_smmu_device_probe(struct 
+>> platform_device *pdev)
+>>                      i, irq);
+>>      }
+>>
+>> -    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
+>> -                     "smmu.%pa", &smmu->ioaddr);
+>> -    if (err) {
+>> -        dev_err(dev, "Failed to register iommu in sysfs\n");
+>> -        return err;
+>> -    }
+>> -
+>> -    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
+>> -                    using_legacy_binding ? NULL : dev);
+>> -    if (err) {
+>> -        dev_err(dev, "Failed to register iommu\n");
+>> -        iommu_device_sysfs_remove(&smmu->iommu);
+>> -        return err;
+>> -    }
+>> -
+>>      platform_set_drvdata(pdev, smmu);
+>>
+>>      /* Check for RMRs and install bypass SMRs if any */
+>> @@ -2255,6 +2240,18 @@ static int arm_smmu_device_probe(struct 
+>> platform_device *pdev)
+>>      arm_smmu_device_reset(smmu);
+>>      arm_smmu_test_smr_masks(smmu);
+>>
+>> +    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
+>> +                     "smmu.%pa", &smmu->ioaddr);
+>> +    if (err)
+>> +        return dev_err_probe(dev, err, "Failed to register iommu in 
+>> sysfs\n");
+>> +
+>> +    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
+>> +                    using_legacy_binding ? NULL : dev);
+>> +    if (err) {
+>> +        iommu_device_sysfs_remove(&smmu->iommu);
+>> +        return dev_err_probe(dev, err, "Failed to register iommu\n");
+>> +    }
+>> +
+>>      /*
+>>       * We want to avoid touching dev->power.lock in fastpaths unless
+>>       * it's really going to do something useful - pm_runtime_enabled()
+> 
 
 
