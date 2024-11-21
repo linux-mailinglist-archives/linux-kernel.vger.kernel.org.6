@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-416671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B8D9D4888
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:10:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB689D4883
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E0431F21EE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:10:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0DB4B2227F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDB41CB338;
-	Thu, 21 Nov 2024 08:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831A1CB312;
+	Thu, 21 Nov 2024 08:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c56IFFaz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UB1IE6oX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2fS3USbt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4901CB333;
-	Thu, 21 Nov 2024 08:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8760A1CACE9;
+	Thu, 21 Nov 2024 08:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176630; cv=none; b=CzPMMpVvwS4w75vBLAAOCgHY0RadNisq+ACzddBxXROOdZuZHc4dqVcmZx3+mim4n0rBEJT1KGxAcbfIutJi1rdi7bCOgo7X4NmIFi/v55lwjI+5b9Wun56VdmLF/l8IA/nNeEIrhRxQ0boe9Lk6a0/FZSN4ZjgyRc82C7ZN70E=
+	t=1732176580; cv=none; b=F4MYbAiXMDxsvV+jVX3E5X7c2dZO3OWadX83+38+iU25DL6MpVYWAkfXHojCm9GOixOt63h4AOyH9d/e4e9XpDjRHMkl9BRUPHMydIMhfU8x0fNGUaiXif6vO1L2f39fOVRlPdYLv8OFbic3VH0QMptlOk//o/je6QITzgOl7TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176630; c=relaxed/simple;
-	bh=GtdOn5caD6WDaF75AVnYYBQ49F6yfgI1vqYP++FRU+4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=r92jgQGyD6ZRucFHLaMzM2h9VYewlbtcMNWZvVomHC+HUWuI1rvQsnE6BC2gDyerVwgXyZOeWA3hOHuPsPhQjCBra4v1GhVatbbIlsk0tU0FF665ZmKqgJrbqgMXuTReycP1bb6WmmtnRzgGUnOomZots64ZVpbb93kzmNeupBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c56IFFaz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKNS1rO026218;
-	Thu, 21 Nov 2024 08:09:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=9718PP5vwJYML5it2cCaHG
-	BMkJMGUFgBa/1hAUHZiTs=; b=c56IFFazZWBzTIPSitQkIcyxI9Hha6L8k2QeXZ
-	zIDypEIGuqH6quNNBvs5dYEiLgfNauQ5IYjHqJ7tRYMOOnmyXFY0JLFFQw+82q6m
-	t9v495YXM7DZ3laiyAfiUc0n3AK5/9yh1g5rXlaoIZUh/mpQvsxL1u4FzPHsPaWI
-	d20P26iaXAuxBbzyeS74YiYJwPHzOdI7oxoCX7t80l2yJoSIhskxLWjQbf0U54Nw
-	H5i1KPo3gLKSt5LdlgnrQ/oIeiHD/EZFbeS3lsIfXNAl283XkVoDF0LzlwfefCDC
-	/+RkueQ84DrClm/wsEv/a3dS35UWqOtctWhjaDWo6uZGWWvA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ebyaut0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:09:48 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL89lMb025550
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:09:48 GMT
-Received: from songxue-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 21 Nov 2024 00:09:42 -0800
-From: Song Xue <quic_songxue@quicinc.com>
-Date: Thu, 21 Nov 2024 16:09:27 +0800
-Subject: [PATCH v2] phy: qcom-qusb2: Add regulator_set_load to Qualcomm usb
- phy
+	s=arc-20240116; t=1732176580; c=relaxed/simple;
+	bh=BvEyhnyI0XDIdgF3tPtxKSiOJGP23vgPNFMQaakLTGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uNwM+vfFswGF0cy08wfjaAOrBFUJc0wIeoESo5LfGF5J6uMoi6d9Iq+aMuvpKJy4wwE2XOrh5yb96RTflqNR0gUJD8ZNzl/niH7hoRZGXD3o7+LnlfgIcxhc4/ZdQRNAktjHNeOAPg80eU5S01FYyEHNzBY6jpBpZt8aOl+5uCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UB1IE6oX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2fS3USbt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 21 Nov 2024 09:09:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732176576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=be4tTM+SqMFCpbwOaFbBKI9pXVAlJLs1b+OQG81BDrs=;
+	b=UB1IE6oXBYkFO/J97uHPV36m2ZdVgvPsU3jm7lCpx596p7Azoyhc2fVVnuf0FWLD7gQD8m
+	a2JbPEqfEiYuTZfhypdbGYkNbJ7Ov42HvPPsGHWplmyphQCmdWpt1txwLR28FHgwuiwJhn
+	AVVpcw8eka6OuCon2vva3e0ofwng2wMe8Sb5Zu/z7pDGkEYJf7Jopuic9T1bS/9y8CDgoc
+	2dkPR0p99xweKWkNoaiXV+d8JPZEMlExd2FAIURH3h9YBEhuzCcU8Um5xlZaiSvEH/6Z9e
+	SY27fHC7om4OliyidxSbH1OjMytxDMshQRCWs6WsQKFXtINk8HYRZP8UYLsC3g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732176576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=be4tTM+SqMFCpbwOaFbBKI9pXVAlJLs1b+OQG81BDrs=;
+	b=2fS3USbtB9V1nqNf8D3rhSHW0dmQUQ/lw6VtQ7sw7sg8MLyODHqkUkHRn5sY5wqzeyycPk
+	nPcUq3tVXnYWWiCg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selinux: explicitly clean generated av_permissions.h
+Message-ID: <20241121085228-327b3d62-4e9b-4f4e-9100-b62bcedfab1d@linutronix.de>
+References: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
+ <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALbqPmcC/42NQQqDMBBFryKzbooTBbGr3qNISJNJHWiNJlEU8
- e5NPUGX78F/f4dIgSnCrdgh0MKR/ZBBXgowvR5eJNhmBlnKGlGi0NaqSEm9vbYqeTXN8anGfhM
- WK9mYpm2cI8jzMZDj9Uw/usw9x+TDdj4t+LN/RBcUKEpX167SlWxLuk8zGx7M1fgPdMdxfAGUR
- Ud9wgAAAA==
-X-Change-ID: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Vivek Gautam
-	<vivek.gautam@codeaurora.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Song Xue
-	<quic_songxue@quicinc.com>
-X-Mailer: b4 0.15-dev-88a27
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732176582; l=2374;
- i=quic_songxue@quicinc.com; s=20240911; h=from:subject:message-id;
- bh=GtdOn5caD6WDaF75AVnYYBQ49F6yfgI1vqYP++FRU+4=;
- b=m7q607AhxgWCnNKJedUv5yCkwm5V4EzgpxtgWsMUI5z25i9x34scQbzWzuyVQHM7PIJH0v8yq
- E+8z+jY1SfBB5+m05d/LovfK1ZOPGWkjiC6kgey4sVFMv6ej1FpbIWI
-X-Developer-Key: i=quic_songxue@quicinc.com; a=ed25519;
- pk=Z6tjs+BBbyg1kYqhBq0EfW2Pl/yZdOPXutG9TOVA1yc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tvG0gxE5FvIXz39goYgIkl8CDBeNLfju
-X-Proofpoint-ORIG-GUID: tvG0gxE5FvIXz39goYgIkl8CDBeNLfju
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210063
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
 
-Set the current load before enable regulator supplies at QUSB phy.
+Hi,
 
-Encountered one issue where the board powered down instantly once the UVC
-camera was attached to USB port while adding host mode on usb port and
-testing a UVC camera with the driver on QCS615 platform. The extensible
-boot loader mentioned that OCP(Over Current Protection) occurred at LDO12
-from regulators-0 upon powered on board again. That indicates that the
-current load set for QUSB phy, which use the regulator supply, is lower
-than expected.
+On Wed, Nov 20, 2024 at 08:55:00PM +0900, Masahiro Yamada wrote:
+> On Wed, Nov 20, 2024 at 6:15 PM Thomas Weißschuh
+> <thomas.weissschuh@linutronix.de> wrote:
+> >
+> > av_permissions.h is not declared as a target and therefore won't be
+> > added to clean-files automatically by kbuild.
+> > For details why it is not a target see the Makefile itself.
+> >
+> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  security/selinux/Makefile | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/security/selinux/Makefile b/security/selinux/Makefile
+> > index 86f0575f670da66a9dc57e13a236d6a5551af38e..58129a7c8cfa08f9caf5444f7df776f41056b77a 100644
+> > --- a/security/selinux/Makefile
+> > +++ b/security/selinux/Makefile
+> > @@ -41,5 +41,8 @@ targets += flask.h
+> >  $(obj)/flask.h: $(obj)/genheaders FORCE
+> >         $(call if_changed,genhdrs)
+> >
+> > +# see the note above, remove this line
+> > +clean-files += av_permissions.h
+> > +
+> >  hostprogs := genheaders
+> >  HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
+> 
+> 
+> 
+> Presumably, the attached fixup.diff (comment in 'targets' assignment)
+> would align with the intention of the maintainer of this Makefile
+> because you can do
+> 
+>   targets += $(genhdrs)
+> 
+> without the need of the grouped target feature.
+> 'make clean' removes files listed in 'targets'.
+> 
+> 
+> 
+> BTW, the NOTE in this Makefile is not true.
+>   https://github.com/torvalds/linux/blob/v6.12/security/selinux/Makefile#L7
+> 
+> 
+> Even if you use GNU Make 4.3, the grouped target does not work with
+> the if_changed macro.
+> 
+> With GNU Make 4.4, it will work as a side-effect of commit
+> fabb03eac412b5ea19f1a97be31dc8c6fa7fc047
+> 
+> 
+> I asked about this behavior some time ago in GNU Make ML.
+> 
+> https://lists.gnu.org/archive/html/help-make/2024-08/msg00001.html
+>   or
+> https://savannah.gnu.org/bugs/index.php?66073
+> 
+> 
+> The combination of the grouped target and if_changed
+> is working with GNU Make 4.4+, but I do not know if
+> it is future promising.
 
-As per QUSB spec, set the maximum current load at 30mA to avoid overcurrent
-load when attach a device to the USB port.
+Thanks for all the insights!
 
-Fixes: 937e17f36a32 ("phy: qcom-qusb2: Power-on PHY before initialization")
-Signed-off-by: Song Xue <quic_songxue@quicinc.com>
----
-Changes in v2:
-- Removed "---" above the Fixes. 
-- Link to v1: https://lore.kernel.org/r/20241121-add_set_load_to_qusb_phy-v1-1-0f44f3a3290e@quicinc.com
----
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+> IMHO, I do not see much benefits for using the group target in this case
+> because you can still generate flask.h and av_permissions.h
+> separately.
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index c52655a383cef008552ed4533b9f31d1cbf34a13..80f0d17c42717e843937255a9a780bbae5998535 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -722,16 +722,27 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
- 	return ret;
- }
- 
-+#define QUSB2PHY_HPM_LOAD 30000 /*uA*/
-+
- static int qusb2_phy_init(struct phy *phy)
- {
- 	struct qusb2_phy *qphy = phy_get_drvdata(phy);
- 	const struct qusb2_phy_cfg *cfg = qphy->cfg;
- 	unsigned int val = 0;
- 	unsigned int clk_scheme;
--	int ret;
-+	int ret, i;
- 
- 	dev_vdbg(&phy->dev, "%s(): Initializing QUSB2 phy\n", __func__);
- 
-+	/* set the current load */
-+	for (i = 0; i < ARRAY_SIZE(qphy->vregs); i++) {
-+		ret = regulator_set_load(qphy->vregs[i].consumer, QUSB2PHY_HPM_LOAD);
-+		if (ret) {
-+			dev_err(&phy->dev, "failed to set load at %s\n", qphy->vregs[i].supply);
-+			return ret;
-+		}
-+	}
-+
- 	/* turn on regulator supplies */
- 	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
- 	if (ret)
+I'm fine either way.
 
----
-base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-change-id: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
+@Selinux maintainers:
 
-Best regards,
--- 
-Song Xue <quic_songxue@quicinc.com>
+What do you prefer? Also feel free to just commit whatever you think is
+best.
 
+
+Thomas
 
