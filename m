@@ -1,177 +1,124 @@
-Return-Path: <linux-kernel+bounces-416953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292789D4CD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:33:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5F29D4CD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27CE1F22AAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:33:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AD12B21481
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F831D47A3;
-	Thu, 21 Nov 2024 12:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E5A1D2F64;
+	Thu, 21 Nov 2024 12:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwtaAaPv"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gcijktP0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AC316F288;
-	Thu, 21 Nov 2024 12:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E6F15ADB4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192392; cv=none; b=CbKNaIU1R5zoJSUv/aaeqq1C89GjY/emnEVLlFurxmoNZAPRgcz91ZYl2elrY5iNV2LYTK5+zPjjc0pWh5kuHnykKyW6pCVkl1yECDWwmEl8CyjToMVxxvukZovd7YwQlNzRYn4BmnymE/8BrQHoWPABdW6rOoZc2TQ3h4nctH4=
+	t=1732192479; cv=none; b=DSstdWSyTxRfKrWGPVfrbInywWzLI7wfEdj9q+viy+siNJP6TYYnvhTdz02dYgx4F2SsWCi7IV0gXNCbwNIzVTmT4LlnO+TlLaogYscHJZqp+sOo7LOw1aBr90kFXlO7ZJiGtwRIbe9VgOBW1yyHO5SSSfTZYi11igct2qk6YWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192392; c=relaxed/simple;
-	bh=88ITFPUUsfIwaCKYuNyjaXtYOTMKYnqEbbMPpd/oAnc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=aauroCo7Uz4B8CU94aOU79LKK0RLy5kkCGOAGQYdKP4/bVzCw3reUKxgdKoeOPjc91coR8z7Pg0A2dSL4hInZfl36DGfajOdd3HQ8brj/lmwX1uw0PtM8qxWsuC3t1kTbQ5HpEiJ/LuUDjonx2yjc6HQvMNOW/XkCMLFSHTVdRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwtaAaPv; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99f3a5a44cso128877966b.3;
-        Thu, 21 Nov 2024 04:33:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732192389; x=1732797189; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MkLAD9Z/v55rtUvSWajMsLewz3MHOscGl7h7lwnVd/o=;
-        b=UwtaAaPvcw3ygmk5HicfpJgC8usk/68pRdiO8dcOyEqgOVL3XxyW+h0Xgh04j05b8l
-         NLufKlH56q9r88G2nNmIjtWwxin8z7p0RpP0aHqfSphcJ0eEakTsUrTjapKPxm8TQ3oS
-         nUckJ7fKOplo/T69aRZqHo8y1UiVy4cJfVebSdpJuQ4Ni5qagg46iO1Q9/vLGhXkH3Hl
-         SBL3DZQDGH6r5hOmYRHEkV4ja/nQ/3y3hBdaFNWLbJXk6WD24Ranq6kn0f0MPFlXcycr
-         JbkDMIP8TqpIiryYb0UEJNq0PUhzYdXNRcWMK/UJqss4nm6fwDRF+U/N+yachJmNesid
-         eCWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732192389; x=1732797189;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MkLAD9Z/v55rtUvSWajMsLewz3MHOscGl7h7lwnVd/o=;
-        b=M2vYfZXZKathNoOC8BKrsJGs3qh0pg54Sp96BPWMTs0I/q8pB+XCRSaTVq7lUTB9Lv
-         kwFamdRzzRHN4h1fQa4Em/+nNq+L9o2N9Jl3BEA3+D+v6DOKd+5mgM6ya5Q00LgnKEgq
-         whq+RHgo+6+pMBmhTwgLSvrw3bI2aHfbrjKIZWc5d3zsFpyH7BP0OKk0sdPdBl4EawkI
-         en9UJbtIR+moByiHuk3CRslvsnDpr/ddpuMlrHHMPplaDn82ZbXozZin+YKwzdq+zupi
-         rPaDJi9ksB8QknsoX//HHsdkRBogbtvn8vnBlEaUDU+FIox+y8lGGLQH53XIWQvz7nvZ
-         NMdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0kLjBqWnAqpQBGMqNKCnOAsCQKNip8IFMILCK5p9+vky3CRXcRrtTqMbPwzJ/krTi4PRPKT2gDaSS@vger.kernel.org, AJvYcCXqrKNOpmyjnYyxUQ04i31sUCl4Mh07n+Qy2lZo39v17Olr5pfZOadlr5RU9920lJJoHyY4RRtVdKwSaWni@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ZZlB48CLX3T2iYuJltzA1mpZaUwLxGYbFcTQ2DqCZzq/9i6z
-	EHMuwjLUmJ10NsJtrVWM5iXLkfhq9o5Go22AywLBiMcVPqWKMCPz9vLYng==
-X-Gm-Gg: ASbGncshoBL1dA3mIaGrLTGHGs7gcdjrKc8Vo5XldgFIvwUltyJ591mrmxPyS57o2ME
-	sltYH8gkPJI9ba/Wg+NnWsGOggVw3u7ujaG0CMBlpKFyaUEQ8KDv+TI958q4mn0VRoPqTFpGS7Y
-	K59wp6IcFDAlBb0BoLswpyED1DDwrfqVo6BinRccHNZ62wYEZm9cOA8+6XOFc4Xe9lvzyoNKsCi
-	R2eyunMECQnquM6Y+3yJ5JWnQAxNd1Sqe5lfyzx3WAQ3OZyeead/R6gxRwM28w2Ogo5N8EKXsbP
-	/o7v31LmLKU9kkdrIXIVSLk=
-X-Google-Smtp-Source: AGHT+IGi5XImn6CCV/jgD2xDfB7VL/11etT59d4E0UzrzVRpXsOXNGpEtINU8S6PvWoN+MFhSuYmVw==
-X-Received: by 2002:a17:906:ef01:b0:a99:5d03:4687 with SMTP id a640c23a62f3a-aa4dd552458mr571297066b.21.1732192389085;
-        Thu, 21 Nov 2024 04:33:09 -0800 (PST)
-Received: from localhost (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f42d48b8sm75379666b.116.2024.11.21.04.33.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 04:33:08 -0800 (PST)
+	s=arc-20240116; t=1732192479; c=relaxed/simple;
+	bh=QKZP4Uh01oBkc237eEN5Cd5VoGA67HiCz8Rl5bZAbz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kd4oLJ/i9ae6OT9bF48e0PDjlRAf8cTDUmLi3GVQ6vRm35IWTYmoUdK5IsVoHGO8R6YamyvZPpEd1EfEMtKjEezf7rLNYhzpUB/pY0L4oLPoOK9B2ha78Tk36bQ9zz9L941dqicUFfyAaX46rXzofjqZ0ciHo8mUfCDLL8J69Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gcijktP0; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732192478; x=1763728478;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=QKZP4Uh01oBkc237eEN5Cd5VoGA67HiCz8Rl5bZAbz4=;
+  b=gcijktP0dw2rBItSST+XLaz32oERQ1XsymLeRxNtXMaRO9uWyfSY+kDT
+   ssmwadNazGgYqGPuZtydo15Pqvk8W2qWopsrbcSi9KIfB64yfwbeSEybb
+   cx3uwkAfrwEQ8GuOg9ToQn4TDkDZoRG58dNK8tzHCHclNjIXHJ+qmKvnQ
+   zBC/jim9eCvv1UhXIH2p8k0m6ZViemS/eVfFnBnkxFe1uZfqLAY82Y0Nr
+   Hecx7HuUV4TbLbiJ7QplAS/9YGZ2WhetrxZSgXOlKAfuzslFGthfhyqQE
+   u6llCe24DB81Qvt/nm4cgVD/nPbn1ON9j4gz4ywId6Ex7tqLPEgEvCGaV
+   A==;
+X-CSE-ConnectionGUID: WGXCihWXQnWXYxdF5xkEUA==
+X-CSE-MsgGUID: xdiOrpUCRpylIS7gtuV/Yw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="35968019"
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="35968019"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 04:34:38 -0800
+X-CSE-ConnectionGUID: 8LszzqN/QUK9uGV5QxtPxQ==
+X-CSE-MsgGUID: lHRJuqUtTj6svk0eyKh7RQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="90646786"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP; 21 Nov 2024 04:34:36 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 252362CA; Thu, 21 Nov 2024 14:34:35 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] regmap: cache: mapple: use kmalloc_array() to replace kmalloc()
+Date: Thu, 21 Nov 2024 14:34:33 +0200
+Message-ID: <20241121123433.4180133-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 21 Nov 2024 13:33:07 +0100
-Message-Id: <D5RUYD6QBEC6.3CKN66RGZQGQH@gmail.com>
-Cc: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <rickard.andersson@axis.com>,
- <kernel@axis.com>, "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: iio: light: Document TI OPT4060
- RGBW sensor
-From: "Javier Carrasco" <javier.carrasco.cruz@gmail.com>
-To: "Per-Daniel Olsson" <perdaniel.olsson@axis.com>, "Jonathan Cameron"
- <jic23@kernel.org>, "Lars-Peter Clausen" <lars@metafoo.de>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20241120163247.2791600-1-perdaniel.olsson@axis.com>
- <20241120163247.2791600-2-perdaniel.olsson@axis.com>
-In-Reply-To: <20241120163247.2791600-2-perdaniel.olsson@axis.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Nov 20, 2024 at 5:32 PM CET, Per-Daniel Olsson wrote:
-> Add devicetree bindings for the OPT4060 RGBW color sensor.
->
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>
-> ---
->  .../bindings/iio/light/ti,opt4060.yaml        | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/light/ti,opt406=
-0.yaml
->
-> diff --git a/Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml =
-b/Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml
-> new file mode 100644
-> index 000000000000..0577e27db1ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/light/ti,opt4060.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/light/ti,opt4060.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Texas Instruments OPT4060 RGBW Color Sensor
-> +
-> +maintainers:
-> +  - Per-Daniel Olsson <perdaniel.olsson@axis.com>
-> +
-> +description:
-> +  Texas Instrument RGBW high resolution color sensor over I2C.
-> +  https://www.ti.com/lit/gpn/opt4060
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - ti,opt4060
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
+Use kmalloc_array() to replace kmalloc() with multiplication.
+kmalloc_array() has multiply overflow check, which will be safer.
+In once case change kcalloc() as we don't need to clear the memory
+since it's all being reinitialised just immediately after that.
 
-You could simply use vdd-supply: true, as it is obvious what it does.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/regmap/regcache-maple.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> +  vdd-supply:
-> +    description: Regulator that provides power to the sensor.
-> +
+diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
+index 23da7b31d715..2319c30283a6 100644
+--- a/drivers/base/regmap/regcache-maple.c
++++ b/drivers/base/regmap/regcache-maple.c
+@@ -73,8 +73,7 @@ static int regcache_maple_write(struct regmap *map, unsigned int reg,
+ 
+ 	rcu_read_unlock();
+ 
+-	entry = kmalloc((last - index + 1) * sizeof(unsigned long),
+-			map->alloc_flags);
++	entry = kmalloc_array(last - index + 1, sizeof(*entry), map->alloc_flags);
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
+@@ -204,7 +203,7 @@ static int regcache_maple_sync_block(struct regmap *map, unsigned long *entry,
+ 	 * overheads.
+ 	 */
+ 	if (max - min > 1 && regmap_can_raw_write(map)) {
+-		buf = kmalloc(val_bytes * (max - min), map->alloc_flags);
++		buf = kmalloc_array(max - min, val_bytes, map->alloc_flags);
+ 		if (!buf) {
+ 			ret = -ENOMEM;
+ 			goto out;
+@@ -320,7 +319,7 @@ static int regcache_maple_insert_block(struct regmap *map, int first,
+ 	unsigned long *entry;
+ 	int i, ret;
+ 
+-	entry = kcalloc(last - first + 1, sizeof(unsigned long), map->alloc_flags);
++	entry = kmalloc_array(last - first + 1, sizeof(*entry), map->alloc_flags);
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-is vdd-supply not required?
-
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        light-sensor@44 {
-> +            compatible =3D "ti,opt4060";
-> +            reg =3D <0x44>;
-> +            vdd-supply =3D <&vdd_reg>;
-> +            interrupt-parent =3D <&gpio5>;
-> +            interrupts =3D <13 IRQ_TYPE_EDGE_FALLING>;
-> +        };
-> +    };
-> +...
-
-Best regards,
-Javier Carrasco
 
