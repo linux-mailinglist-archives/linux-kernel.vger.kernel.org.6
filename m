@@ -1,295 +1,102 @@
-Return-Path: <linux-kernel+bounces-416827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBBED9D4AC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:23:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555489D4ABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6A01F22929
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:23:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4842B22830
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20711D7E4E;
-	Thu, 21 Nov 2024 10:20:59 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225B21D0DC7;
+	Thu, 21 Nov 2024 10:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqOtcATb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7C51D5ADC;
-	Thu, 21 Nov 2024 10:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB2A1CB322;
+	Thu, 21 Nov 2024 10:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184459; cv=none; b=JSR4Jjxrh2tJ+qtIkpZzBVZWvo4PhSyrou7dgxzL9bWXnR380MPAt0yoHNj/OX3KcLwmbkOU8+6zhYWqwN0N77Gd7nf39jfxmxg5WymG/CmfrsyzwOC48tdgJF8nrlgA7km4Exb4eOnpUI7DxPXH78vvY6rteUlWQHYDrDSCdt4=
+	t=1732184355; cv=none; b=qIlWwEP2jpRnfX6F4Iirk3LsCgPszsxQwvE3FbFhGJYHCFctGBv/uPwG94eiwYv6l/sCmA576zx5u3AYhNFvNjueBtGbu7xi+4ee30BUgCtl7gHGzSiiJBOLwf8qyEX9JuwcmVSYue23M5cYoxparRtL2JeGRzl8TM3X0UcI3vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184459; c=relaxed/simple;
-	bh=CV6JU7sYOsHz2ueDAt/Yb9FWbTFxVhrMXlaTilLqVGk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aYV7eEPwDUKJA3hKwCe7F50gx2wO3pgp91KoFtqLDyIJPnNdgWgXVPa7Vh4TgqVbXw5hLUD854jhW3PNo3qMAXA6ELV5ab4Aym7f1nh91IV6WR8k1XPba52PPG0fBjA1w8F6hDA6kc5k2DHwlwgcJ/XJrn4M1vSvTKzdrmkSyVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvDgN6ZNCz6K6yP;
-	Thu, 21 Nov 2024 18:17:20 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1EEAF140DD4;
-	Thu, 21 Nov 2024 18:20:55 +0800 (CST)
-Received: from SecurePC-101-06.china.huawei.com (10.122.19.247) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 21 Nov 2024 11:20:52 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <linux-cxl@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <linuxarm@huawei.com>, <tongtiangen@huawei.com>, Yicong Yang
-	<yangyicong@huawei.com>, Niyas Sait <niyas.sait@huawei.com>,
-	<ajayjoshi@micron.com>, Vandana Salve <vsalve@micron.com>, Davidlohr Bueso
-	<dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
-	<alison.schofield@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Gregory Price <gourry@gourry.net>, Huang
- Ying <ying.huang@intel.com>
-Subject: [RFC PATCH 4/4] hwtrace: Document CXL Hotness Monitoring Unit driver
-Date: Thu, 21 Nov 2024 10:18:45 +0000
-Message-ID: <20241121101845.1815660-5-Jonathan.Cameron@huawei.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
-References: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
+	s=arc-20240116; t=1732184355; c=relaxed/simple;
+	bh=vdU01yydMwwx3sSdNOgVdvAm97pz89kQ5OB0TAdlmVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ifN0dU2FuQpCAIHpkAFC8tkbUK//HBI0aO2oUwUrPq+l1Rtm0jYOg+jld6N+aHQWety9kdVo2Irf2HWygwji0y++wHFTci0NGp9gCjoZ+dvAN+6riFqZifZRtfst5yX4iPPel3x5VQcTRcoURjx7jgl24WiUTpB7CwtSGnDSjMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqOtcATb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7484C4CECC;
+	Thu, 21 Nov 2024 10:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732184355;
+	bh=vdU01yydMwwx3sSdNOgVdvAm97pz89kQ5OB0TAdlmVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WqOtcATb1VkKmyUI/NcRWkuA09JLY/gsuhqTD+gzFS/qKpmoOPMzMk0ePxX4ocACb
+	 4EB2TRDNyFEsdXY/NDfvGyD/DDcn+EWCl0wSIVE237WWygYuKiQmzyjvaAdawtPcnW
+	 GIXmpkzJ/DAw+y1awNeD3VlflRD6cofwoz7W1h1+UyRUcTCG8lU0j7Tle69F7M/9f0
+	 6BprUazlD8s8yrLdQo3ENUYufgH+duQqZkYYO+/J1Md3k5fPj0JJTU42PR2X4Bt23u
+	 M0pR0eGQLP+bRB/bTXbueKJPYPptDJ1eT1a9lN0cWG8VG8GFCFIGs1UNwyZYIYYF1Q
+	 wFsfNy8pTVlhw==
+Date: Thu, 21 Nov 2024 11:19:07 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Jens Axboe <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg, 
+	Rapoport@rox.of.borg, Guenter Roeck <linux@roeck-us.net>, 
+	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
+	io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+Message-ID: <20241121-zwietracht-klugheit-4acf0bb07f2b@brauner>
+References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
 
-Add basic documentation to describe the CXL HMU and the
-perf AUX buffer based interfaces.
+On Wed, Nov 20, 2024 at 01:46:21PM +0100, Geert Uytterhoeven wrote:
+> On m68k, where the minimum alignment of unsigned long is 2 bytes:
+> 
+>     Kernel panic - not syncing: __kmem_cache_create_args: Failed to create slab 'io_kiocb'. Error -22
+>     CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted 6.12.0-atari-03776-g7eaa1f99261a #1783
+>     Stack from 0102fe5c:
+> 	    0102fe5c 00514a2b 00514a2b ffffff00 00000001 0051f5ed 00425e78 00514a2b
+> 	    0041eb74 ffffffea 00000310 0051f5ed ffffffea ffffffea 00601f60 00000044
+> 	    0102ff20 000e7a68 0051ab8e 004383b8 0051f5ed ffffffea 000000b8 00000007
+> 	    01020c00 00000000 000e77f0 0041e5f0 005f67c0 0051f5ed 000000b6 0102fef4
+> 	    00000310 0102fef4 00000000 00000016 005f676c 0060a34c 00000010 00000004
+> 	    00000038 0000009a 01000000 000000b8 005f668e 0102e000 00001372 0102ff88
+>     Call Trace: [<00425e78>] dump_stack+0xc/0x10
+>      [<0041eb74>] panic+0xd8/0x26c
+>      [<000e7a68>] __kmem_cache_create_args+0x278/0x2e8
+>      [<000e77f0>] __kmem_cache_create_args+0x0/0x2e8
+>      [<0041e5f0>] memset+0x0/0x8c
+>      [<005f67c0>] io_uring_init+0x54/0xd2
+> 
+> The minimal alignment of an integral type may differ from its size,
+> hence is not safe to assume that an arbitrary freeptr_t (which is
+> basically an unsigned long) is always aligned to 4 or 8 bytes.
+> 
+> As nothing seems to require the additional alignment, it is safe to fix
+> this by relaxing the check to the actual minimum alignment of freeptr_t.
+> 
+> Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
+> Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
 
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
----
- Documentation/trace/cxl-hmu.rst | 197 ++++++++++++++++++++++++++++++++
- Documentation/trace/index.rst   |   1 +
- 2 files changed, 198 insertions(+)
-
-diff --git a/Documentation/trace/cxl-hmu.rst b/Documentation/trace/cxl-hmu.rst
-new file mode 100644
-index 000000000000..f07a50ba608c
---- /dev/null
-+++ b/Documentation/trace/cxl-hmu.rst
-@@ -0,0 +1,197 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==================================
-+CXL Hotness Monitoring Unit Driver
-+==================================
-+
-+CXL r3.2 introduced the CXL Hotness Monitoring Unit (CHMU). A CHMU allows
-+software running on a CXL Host to identify hot memory ranges, that is those with
-+higher access frequency relative to other memory ranges.
-+
-+A given Logical Device (presentation of a CXL memory device seen by a particular
-+host) can provide 1 or more CHMU each of which supports 1 or more separately
-+programmable CHMU Instances (CHMUI). These CHMUI are mostly independent with
-+the exception that there can be restrictions on them tracking the same memory
-+regions. The CHMUs are always completely independent.
-+The naming of the units is cxl_hmu_memX.Y.Z where memX matches the naming
-+of the memory device in /sys/bus/cxl/devices/, Y is the CHMU index and
-+Z is the CHMUI index with the CHMU.
-+
-+Each CHMUI provides a ring buffer structure known as the Hot List from which the
-+host an read back entries that describe the hotness of particular region of
-+memory (Hot List Units). The Hot List Unit combines a Unit Address and an access
-+count for the particular address. Unit address to DPA requires multiplication
-+by the unit size. Thus, for large unit sizes the device may support higher
-+counts. It is these Hot List Units that the driver provides via a perf AUX
-+buffer by copying them from PCI BAR space.
-+
-+The unit size at which hotness is measured is configurable for each CHMUI and
-+all measurement is done in Device Physical Address space. To relate this to
-+Host Physical Address space the HDM (Host-Managed Device Memory) decoder
-+configuration must be taken into account to reflect the placement in a
-+CXL Fixed Memory Window and any interleaving.
-+
-+The CHMUI can support interrupts on fills above a watermark, or on overflow
-+of the hotlist.
-+
-+A CHMUI can support two different basic modes of operation. Epoch and
-+Always On. These affect what is placed on the hotlist. Note that the actual
-+implementation of tracking is implementation defined and likely to be
-+inherently imprecise in that the hottest pages may not be discovered due to
-+resource exhaustion and the hotness counts may not represent accurately how
-+hot they are. The specification allows for a very high degree of flexibility
-+in implementation, important as it is likely that a number of different
-+hardware implementations will be chosen to suit particular silicon and accuracy
-+budgets.
-+
-+Operation and configuration
-+===========================
-+
-+An example command line is::
-+
-+  $perf record -a  -e cxl_hmu_mem0.0.0/epoch_type=0,access_type=6,\
-+  hotness_threshold=1024,epoch_multiplier=4,epoch_scale=4,range_base=0,\
-+  range_size=1024,randomized_downsampling=0,downsampling_factor=32,\
-+  hotness_granual=12
-+
-+  $perf report --dump-raw-traces
-+
-+which will produce a list of hotlist entries, one per line with a short header
-+to provide sufficient information to interpret the entries::
-+
-+  . ... CXL_HMU data: size 33512 bytes
-+  Header 0: units: 29c counter_width 10
-+  Header 1 : deadbeef
-+  0000000000000283
-+  0000000000010364
-+  0000000000020366
-+  000000000003033c
-+  0000000000040343
-+  00000000000502ff
-+  000000000006030d
-+  000000000007031a
-+  ...
-+
-+The least significant counter_width bits (here 16, hex 10) are the counter
-+value, all higher bits are the unit index.  Multiply by the unit size
-+to get a Device Physical Address.
-+
-+The parameters are as follows:
-+
-+epoch_type
-+----------
-+
-+Two values may be supported::
-+
-+  0 - Epoch based operation
-+  1 - Always on operation
-+
-+
-+0. Epoch Based Operation
-+~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+An Epoch is a period of time after which a counter is assessed for hotness.
-+
-+The device may have a global sense of an Epoch but it may also operate them on
-+a per counter, or per region of device basis. This is a function of the
-+implementation and is not controllable, but is discoverable. In a global Epoch
-+scheme at start of each Epoch all counters are zeroed / deallocated. Counters
-+are then allocated in a hardware specific manner and accesses counted. At the
-+completion of the Epoch the counters are compared with a threshold and entries
-+with a count above a configurable threshold are added to the hotlist. A new
-+Epoch is then begun with all counters cleared.
-+
-+In non-global Epoch scheme, when the Epoch of a given counter begins is not
-+specified. An example might be an Epoch for counter only starting on first
-+touch to the relevant memory region.  When a local Epoch ends the counter is
-+compared to the threshold and if appropriate added to the hotlist.
-+
-+Note, in Epoch Based Operation, the counter in the hotlist entry provides
-+information on how hot the memory is as the counter for the full Epoch is
-+provided.
-+
-+1. Always on Operation
-+~~~~~~~~~~~~~~~~~~~~~~
-+
-+In this mode, counters may all be reset before enabling the CHMUI. Then
-+counters are allocated to particular memory units via an hardware specific
-+method, perhaps on first touch.  When a counter passes the configurable
-+hotness threshold an entry is added to the hotlist and that counter is freed
-+for reuse.
-+
-+In this scheme the count provided in the hotlist entry is not useful as it will
-+depend only on the configured threshold.
-+
-+access_type
-+-----------
-+
-+The parameter controls which access are counted::
-+
-+  1 - Non-TEE read only
-+  2 - Non-TEE write only
-+  3 - Non-TEE read and write
-+  4 - TEE and Non-TEE read only
-+  5 - TEE and Non-TEE write only
-+  6 - TEE and Non-tee read and write
-+
-+
-+TEE here refers to a trusted execution environment, specifically one that
-+results in the T bit being set in the CXL transactions.
-+
-+
-+hotness_granual
-+---------------
-+
-+Unit size at which tracking is performed.  Must be at least 256 bytes but
-+hardware may only support some sizes. Expressed as a power of 2. e.g. 12 = 4kiB.
-+
-+hotness_threshold
-+-----------------
-+
-+This is the minimum counter value that must be reached for the unit to count as
-+hot and be added to the hotlist.
-+
-+The possible range may be dependent on the unit size as a larger unit size
-+requires more bits on the hotlist entry leaving fewer available for the hotness
-+counter.
-+
-+epoch_multiplier and epoch_scale
-+--------------------------------
-+
-+The length of an epoch (in epoch mode) is controlled by these two parameters
-+with the decoded epoch_scale multiplied by the epoch_multiplier to give the
-+overall epoch length.
-+
-+epoch_scale::
-+
-+  1 - 100 usecs
-+  2 - 1 msec
-+  3 - 10 msecs
-+  4 - 100 msecs
-+  5 - 1 second
-+
-+range_base and range_scale
-+--------------------------
-+
-+Expressed in terms of the unit size set via hotness_granual. Each CHMUI has a
-+bitmap that controls what Device Physical Address spaces is tracked. Each bit
-+represents 256MiB of DPA space.
-+
-+This interface provides a simple base and size in units of 256MiB to configure
-+this bitmap. All bits in the specified range will be set.
-+
-+downsampling_factor
-+-------------------
-+
-+Hardware may be incapable of counting accesses at full speed or it may be
-+desirable to count over a longer period during which the counters would
-+overflow.  This control allows selection of a down sampling factor expressed
-+as a power of 2 between 1 and 32768.  Default is minimum supported downsampling
-+factor.
-+
-+randomized_downsampling
-+-----------------------
-+
-+To avoid problems with downsampling when accesses are periodic this option
-+allows for an implementation defined randomization of the sampling interval,
-+whilst remaining close to the specified downsampling_factor.
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 0b300901fd75..b35ed8e9dfa9 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -36,3 +36,4 @@ Linux Tracing Technologies
-    user_events
-    rv/index
-    hisi-ptt
-+   cxl-hmu
--- 
-2.43.0
-
+Looks good to me,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
