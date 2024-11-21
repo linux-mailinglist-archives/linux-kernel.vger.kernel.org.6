@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-417272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB959D51D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:32:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756099D51D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B97BB27832
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:31:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA47BB24320
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADABC17333A;
-	Thu, 21 Nov 2024 17:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFB291A01CD;
+	Thu, 21 Nov 2024 17:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EGCAoz6/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y+cIMeuf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC591428F3;
-	Thu, 21 Nov 2024 17:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D47614883F;
+	Thu, 21 Nov 2024 17:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210298; cv=none; b=cG/hy5QlsXPU+xpBa7UZ6zm7npbnyK61szKZdiMdkqmdqLBfnOV3nmnDi1rWTQDFW+KJjV1DYdaf02h654eTyVBnd6AKgQHKF+Mlhyb29c+I5+NyvKzT8vNx7NgGtuwVGzNnPXBvjNDn7h+KBzeOveSuzcecFaZzoKi3aygoNiU=
+	t=1732210429; cv=none; b=ieWEY2pYiOhRboq54snkcCWPxRVKPRYC7BsQ791QcIrHSGPMud+dfJQYnu4KT5uWr0/ISLBLce0PuNJw4maeYxpG+W3VkB1Lz3k3emfpzhs7fYN/E0YrfJFiZpRtdctTdcCpDcmi4T5H/6iLshu7TfM/H73+xH5dUCmV1pI6pg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210298; c=relaxed/simple;
-	bh=qvnKnejMHTt5yQjnfmJSaKX0kWb1lHoEU3Q8HwZUXYE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P6HU28JwWYtp0cZ3N+XIyEd2Jyhq4+aYrsVxCqHSipCsyRM/FdFLhmH4li4GZ+GkmOOa2vnJbbi9gafTJ9nlSiAi8UqHkLl8N/QD/2GgtJvkvPZNAV5NMtd6C2H8GqOVOdTgvgOhAcnuneNyvXyUKYn2yhLgNkh66LEsxL01rJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EGCAoz6/; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1732210429; c=relaxed/simple;
+	bh=l+5rg6F5Ri2+kCpE6vsQzetIKYYVF6RSN2YSgcdjSNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clneC5xF9zJXsrmvRcSSyN90wmxhmr0ODeiBGKwKHl+2Vg+aRtMjh2R3vr7rjI49Fnkoy1Y2qNSbETyDWi5Ljm/AQfFLs6zOPiMQZ5orVDMjG1Xm3f6427nfLAzD43dQudEsjstNGaTJjjBppIyZPF3DNWe+F8kHMOacARGf+Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y+cIMeuf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732210296; x=1763746296;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=qvnKnejMHTt5yQjnfmJSaKX0kWb1lHoEU3Q8HwZUXYE=;
-  b=EGCAoz6/FdZ11Q/kiRw6TucD9kDtCro7QDWnmn47D0HgFf+5bbjdh6/9
-   hNs6/Z+O5OqxhscVILYi0ypVCYK3IJ3/qQhtFeLkUyH9fLig4wj28aEew
-   3Dp3ZYPz3hzPq99F4YWdaPti+q3fkVVbANGgmg841g4bEZKDYJiXuiGUK
-   G64eMEqEwgp+lTAqpQTYksGRFpO4cl02tN1X6zy1LmK9gqBqgR3Hr728c
-   +AceIyE1iCc3rzp43RFNqWMw0+BelnWp583iGR9OR2IbLhx3gymhnH+Nv
-   I/LoANYlSWs+L05siZK+drBiswnvixLeaH3KThDTnDGgmuK1b0/xQjoon
-   A==;
-X-CSE-ConnectionGUID: 6bAiZD+fRayhS0gpvfEPZw==
-X-CSE-MsgGUID: 0+f59z67RRiYT6EMtC638Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32486067"
+  t=1732210428; x=1763746428;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=l+5rg6F5Ri2+kCpE6vsQzetIKYYVF6RSN2YSgcdjSNc=;
+  b=Y+cIMeuf57AJVLbczZs0OSPpupvm0sh7EKhi9yANbb/h7VHsFwReEo+J
+   gUhXKBxx/0Xg2bufBiXHBJZXzeEZ7fPJ06lt54b/HlxCGpSQXKu1FoTKI
+   o3OLO18YjGILtPbj4/2mkjyeXyxam9z1dIsl3N2E3g3CXr7gymMg7XwJu
+   nj5pFw2N4AaokiVviJvBp1qCv8oXJE+vSFWiVL1Y1LAMLRq2mC0he4rQ0
+   lSbhTeXlI80XoAK31fs/EZJ/pyfLntGZNVBdHUitUip1rlCMYhX96CdOg
+   CVfujx+fXCjPAq8IGTQGYUtGQ4QrBCB8WcSD+brnUofejHwxiP49H/S0i
+   g==;
+X-CSE-ConnectionGUID: TzdWgwyqSQ+OQTWNpgHaBg==
+X-CSE-MsgGUID: m/m/Y1g2QgerAvVQPDHXmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="19929671"
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32486067"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:31:36 -0800
-X-CSE-ConnectionGUID: xvsWEZUFSnau9J5nV7lMhQ==
-X-CSE-MsgGUID: q7YBespHRLeLcfwhh6GUbg==
+   d="scan'208";a="19929671"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:33:48 -0800
+X-CSE-ConnectionGUID: zV0y1nmISQ2iIHzzPqLcFQ==
+X-CSE-MsgGUID: RyYvtQ3vRdmH2rxhOvFAYQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90740290"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.229])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:31:35 -0800
-Message-ID: <5fb45a8da68f2a694acc781b8a6ff7d4c95f423c.camel@linux.intel.com>
-Subject: Re: [PATCH] tools/power/x86/intel-speed-select: rm .*.cmd when make
- clean
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 21 Nov 2024 09:31:35 -0800
-In-Reply-To: <20241115073221.6176-1-zhujun2@cmss.chinamobile.com>
-References: <20241115073221.6176-1-zhujun2@cmss.chinamobile.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+   d="scan'208";a="127845120"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:33:46 -0800
+Date: Thu, 21 Nov 2024 09:33:44 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v9 2/9] x86/resctrl: Prepare for per-ctrl_mon group
+ mba_MBps control
+Message-ID: <Zz9u-JcQBlxKZia1@agluck-desk3>
+References: <20241114001712.80315-1-tony.luck@intel.com>
+ <20241114001712.80315-3-tony.luck@intel.com>
+ <515914f2-501d-4df3-894a-2d255d18be1c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <515914f2-501d-4df3-894a-2d255d18be1c@intel.com>
 
-On Thu, 2024-11-14 at 23:32 -0800, Zhu Jun wrote:
-> rm .*.cmd when make clean
->=20
-I don't see .cmd files by running make, how did you get those files?
+On Tue, Nov 19, 2024 at 05:08:42PM -0800, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 11/13/24 4:17 PM, Tony Luck wrote:
+> > Resctrl uses local memory bandwidth event as input to the feedback
+> > loop when the mba_MBps mount option is used. This means that this
+> > mount option cannot be used on systems that only support monitoring
+> > of total bandwidth.
+> > 
+> > Prepare to allow users to choose the input event independently for
+> > each ctrl_mon group.
+> 
+Hi Reinette,
 
-I have
+> The lack of detail on design and implementation leaves a lot for the
+> reader to decipher. For example,
+> * the change appears to create a contract that rdtgroup.mba_mbps_event
+>   is only valid if mba_sc is enabled, this is "documented" in the
+>   structure member comment but not connected to the rest of implementation, not
+>   here nor later in series.
 
-#ls
+I'll add text documenting this to the commit comment here, and also a
+comment in the code that defines mba_mbps_default_event.
 
-Build         include                  isst-config.c  isst-core-mbox.c
-isst-core-tpmi.c  isst-daemon.o   isst.h
-hfi-events.c  intel-speed-select       isst-config.o  isst-core-mbox.o
-isst-core-tpmi.o  isst-display.c  Makefile
-hfi-events.o  intel-speed-select-in.o  isst-core.c    isst-core.o    =20
-isst-daemon.c     isst-display.o
+> * the patch uses *three* different checks to manage new variables:
+>   is_mbm_local_enabled(), is_mba_sc(), and supports_mba_mbps(). Reader is
+>   left to decipher that all checks are built on is_mbm_local_enabled()
+>   and thus it is ok to use these checks before using the value that is only
+>   assigned when is_mbm_local_enabled().
 
+With some refactoring I've got that down to just one new additon of
+"is_mba_sc()" (protecting the assignment of rdtgrp->mba_mbps_event
+in rdtgroup_mkdir_ctrl_mon().
 
-Thanks,
-Srinivas
+> * clearly mba_mbps_default_event cannot always have a value making reader wonder
+>   if enum resctrl_event_id needs a "0", takes some deciphering to get confidence
+>   that its assignment when is_mbm_local_enabled() fits under the contract
+>   that values are only value when is_mba_sc() and thus any code following contract by
+>   first checking for mba_sc should never encounter a 0.
 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
-> =C2=A0tools/power/x86/intel-speed-select/Makefile | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/tools/power/x86/intel-speed-select/Makefile
-> b/tools/power/x86/intel-speed-select/Makefile
-> index 7221f2f55e8b..b58185cc97d2 100644
-> --- a/tools/power/x86/intel-speed-select/Makefile
-> +++ b/tools/power/x86/intel-speed-select/Makefile
-> @@ -47,7 +47,7 @@ $(OUTPUT)intel-speed-select: $(ISST_IN)
-> =C2=A0clean:
-> =C2=A0	rm -f $(ALL_PROGRAMS)
-> =C2=A0	rm -rf $(OUTPUT)include/linux/isst_if.h
-> -	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d'
-> -delete
-> +	find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '\.*.d'
-> -delete -o -name '\.*.cmd' -delete
-> =C2=A0
-> =C2=A0install: $(ALL_PROGRAMS)
-> =C2=A0	install -d -m 755 $(DESTDIR)$(bindir);		\
+Documented that mba_mbps_default_event remaining "0" is not an issue in
+the comment at the definition of mba_mbps_default_event.
 
+> * based on premise of this work reader may consider what happens if
+>   system does not support local MBM. more deciphering needed to get confidence
+>   that while mba_mbps_default_event will not be set, since is_mba_sc() still
+>   depends on local MBM this still fits under contract that mba_mbps_default_event
+>   cannot be used in this case.
+
+I think I've cleared up this mystery with commit and code comments.
+
+> Of course, it may just me that needs more help to understand what a patch is doing 
+> while having little insight into what it intends to do. I thought by sharing some of
+> the questions I felt needed to investigated may give some insight into the difficulty
+> a cryptic changelog creates. Review could be helped significantly if the changelog
+> provides insight into the design decisions. 
+
+Good point. I've also re-worked the cover letter to provide more
+information on the problem and solution implemented by this series.
+
+> ...
+> 
+> > @@ -3611,6 +3613,8 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+> >  			rdt_last_cmd_puts("kernfs subdir error\n");
+> >  			goto out_del_list;
+> >  		}
+> > +		if (is_mba_sc(NULL))
+> > +			rdtgrp->mba_mbps_event = mba_mbps_default_event;
+> >  	}
+> >  
+> >  	goto out_unlock;
+> > @@ -3970,6 +3974,8 @@ static void __init rdtgroup_setup_default(void)
+> >  	rdtgroup_default.closid = RESCTRL_RESERVED_CLOSID;
+> >  	rdtgroup_default.mon.rmid = RESCTRL_RESERVED_RMID;
+> >  	rdtgroup_default.type = RDTCTRL_GROUP;
+> > +	if (supports_mba_mbps())
+> > +		rdtgroup_default.mba_mbps_event = mba_mbps_default_event;
+> >  	INIT_LIST_HEAD(&rdtgroup_default.mon.crdtgrp_list);
+> >  
+> >  	list_add(&rdtgroup_default.rdtgroup_list, &rdt_all_groups);
+> 
+> I do not see the default resource group's mba_mbps_event ever being reset. This means
+> that if the user mounts resctrl, changes mba_mbps_event, umount resctrl, remount
+> resctrl, then the default resource group will not have the default mba_mbps_event
+> but whatever was set on previous mount. Is this intended? No mention of this behavior in
+> changelog.
+
+Good catch. You are correct that a changed event value in the default
+CTRL_MON group is preserved across unmount/remount. This was not
+intentional. Moving the initialization of rdtgroup_default.mba_mbps_event
+into set_mba_sc() fixes this (with the added benefit of removing the
+supports_mba_mbps() check).
+
+> Reinette
+
+-Tony
 
