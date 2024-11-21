@@ -1,165 +1,130 @@
-Return-Path: <linux-kernel+bounces-417219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1979D50C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:32:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6209D50C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33177B21CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29CEF2839C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF352309B4;
-	Thu, 21 Nov 2024 16:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6B719B3ED;
+	Thu, 21 Nov 2024 16:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UyoFesxE"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="kmUQKBLY"
+Received: from mail-40135.protonmail.ch (mail-40135.protonmail.ch [185.70.40.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15820157476
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACF928687;
+	Thu, 21 Nov 2024 16:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732206750; cv=none; b=rXyeynlmSyXzTUJ7q4vujIJjHAkI1YkvXUQmjFp8UrfM1EPlgJaS6M3A1QHrEWBJb7aqOWc5Ese6gcd+FeUmvcLP9TtkzAbDRTBoScGy+V1K9dOm9orxAcCb1d46rTFg6yIL/4tw3skAuM1syWcfEdUGsVpoHRT46sK3WXUTZ5w=
+	t=1732206798; cv=none; b=t0aYRSMC7TZbQMGTkudT21tATfXNGood4j4NXfICmO6aB4MlAMp10Bx050/Rlyd9mGYygxtIaGWn/otQw1AbkYU2akocL4lPB3qpCAua1JNcqCqfML5FuZgy/5wLt/PA9DqVmn16TbONYIQv/dvlhEPS8sDSb9Js9nDNqUgztyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732206750; c=relaxed/simple;
-	bh=0071SProcnj54azKnrgs9O4CTcBQWiKx7fiDtH0v6QI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DNB53skL7xVpZ7zRA+Tmxib8gVdSsRTrqz087JDv/o0981PyTQUtm9X6BqDqBP/7SwglTD0zi1YOeS8RK53ark5p42NkQGioQp8YsgXVVcl+pE/VYbRY6n8MFz7xnN5xYArxCrwd+X5Y6dWtxrWLQ4FZTZSwk+jE40pSsIkiMN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UyoFesxE; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460969c49f2so331501cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:32:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732206748; x=1732811548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KinxbNGywfMnxHwtq/MrCSYbQ52bStWS5PDW/rvFKDU=;
-        b=UyoFesxE9cDB7mn3kizkXDUJUgVZl4iK/Ehl0kua6JRvLUfsVTibYxJKpa+KEjKRme
-         b6OKsHSb2We7Ewtih4a5V5KHHX3gzuIlDEPPwdPYe29lfcJHR1MGijV+DSuMWqLeXQTt
-         VfN38AyAOUdsidX08ezXwa+UV1FnQAqtyuw1QjBo5XalOg9NpB7CjkFD4fZL/N/bzztm
-         KJ5k0toPx5p7VBnCvysRqeUgdAaW+uO3jUgCaDj9fDcGbNOYvMh1IoNKK0FKVYFQOdJB
-         yw33w9TyTOtwVQfy5hv3xuMs0KtGHunY1PeIgJ1Cs5El4uNcAuzMh9FLbbBG105VONPI
-         gvSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732206748; x=1732811548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KinxbNGywfMnxHwtq/MrCSYbQ52bStWS5PDW/rvFKDU=;
-        b=uT2zkOCPrAVMEIRuZ+pYyAxMUbNdJ2usdh/brsBkgy/olK1flkJW0PlszE8P6L+G4i
-         8JlGMtERANcAzgg1OJm+FEhXTn9i60lYWZLrb4zghCrdeIvQi5x0QRG7GAH2rM4ImTko
-         8uLQMYBFe0UmhFIOj+xL6nmQYTnDFWoC39rwbvhE9TaBlyumGevW2F1QUHs092wOj851
-         rL1jLzG0i/uUcxYSYs4SIUpHMPhA3OwcxqE9pFeJFxjAM0dku2/uuNKSr97ggqqB4XqM
-         opJv6O5FKssNLExjGJ3UFeqvYbL/EBv7TQegK0xEOO66EqtTTc2ZJDQsUIWf8t75+J1O
-         lV4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVDPustrg+ITFf2aGhDY38G7ETNKzE1UTWPbdL1yu1lzg7xTRI+8I1wclYBb/nraYX0rRWwDIv4iN7KF9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHKChmsBu/FjkqYJ1C8EB5cW1zT19pCtzz4n7UMPw7ZbPtvJyI
-	sSagtc5kibZhgDDLad7KWCCLEjwLS/4iFxOT2s/pDSun9rOma0gfjDbSWKPr6i83XHXhoKXLOkN
-	ZG5kDI/EsFIoaadBWxdYK1L/X2QUB4aVit8CL
-X-Gm-Gg: ASbGncuROD5VsMmbTa7IlQAzQRQaSMP1k5es5a/nI7iCuWPJw+oFVFbe+bdVWPCM+gB
-	o3ouZhogEofjaFpqh4TH0cv2c3GihlVEWN5o3WXpHLqOqPicKSm9EflSyzmAj
-X-Google-Smtp-Source: AGHT+IEAnK3ZNayNZX1MZKPWNaHHSfD9Gcs0HsfhavIX8PgOJ4JyzfKBkGAXcCXM+vNSiBpmS2gA+HMqANSVxnOf0r0=
-X-Received: by 2002:a05:622a:1aaa:b0:465:31d8:6f1a with SMTP id
- d75a77b69052e-4653bd85a6emr194851cf.23.1732206747600; Thu, 21 Nov 2024
- 08:32:27 -0800 (PST)
+	s=arc-20240116; t=1732206798; c=relaxed/simple;
+	bh=/mPU+UjIe8W+XHB0r1nL9kkH7H9EfZg2AivzAulbi00=;
+	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=K/+NRhmYB8kJDU+JneYAUr/LbGy3JniNEep9iXtVxAO1YwbMTlzR285yuUWkfBKv8Kjj2B1VaL/NxqbAajUiFW7AHCnZjaTl3P+g4YsHy+VmKyOMPINbfpZGYdIHN7G1Xy/1h81X7gEbR7fSMewqGIRWP3Z25m4EU7ww9r547jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=kmUQKBLY; arc=none smtp.client-ip=185.70.40.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1732206789; x=1732465989;
+	bh=h+YkN5aqE9/ZRH8oVk6vPYweoPBu1ZNIseF0k9zNoiQ=;
+	h=Date:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=kmUQKBLYHWZNrvQnoX8T7dF3Xwxz7tefNpSbkfwn/llXh53+l74oLpKdSOkiAfafa
+	 G/TQL3cg/qNtRQWV9qFhEMQuZnNCeULWUfllW9RbE1jaGwRtS1wSr7glwnyE803Xwk
+	 5Fn0JprS0ccniBglFiRHJ//QuXRphpZcXCIz8obTE6mAS3+Wpmhk+oSYmwalFaagQJ
+	 6tGYWmEZ3P8z2U94F89fCPRdWGj+fUiZakWuM1FUp3awpD8vbS/WV365fo6DEhuauV
+	 WjQm1KIj3muLbBYiaNr0v8c3SB4T7RviT557tz6fZ0ZFa+hbwVp9ewt2yL0hCTA6fU
+	 n7Os7H5zLrqjQ==
+Date: Thu, 21 Nov 2024 16:33:05 +0000
+From: Gregoire Stein <greyxor@protonmail.com>
+Cc: greyxor@protonmail.com, Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: btusb: Add one more ID 0x0489:0xe10a for Qualcomm WCN785x
+Message-ID: <20241121163259.180589-1-greyxor@protonmail.com>
+Feedback-ID: 1917010:user:proton
+X-Pm-Message-ID: 8b25073af9a006b983ff9bc025140851c710cffc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028010818.2487581-1-andrii@kernel.org> <20241028010818.2487581-3-andrii@kernel.org>
- <20241121144442.GL24774@noisy.programming.kicks-ass.net> <20241121152257.GN38972@noisy.programming.kicks-ass.net>
- <CAJuCfpE04MtnmRR+JYpYqC07-u9yXRUF0FB2mSaQatzwSkNNdw@mail.gmail.com>
-In-Reply-To: <CAJuCfpE04MtnmRR+JYpYqC07-u9yXRUF0FB2mSaQatzwSkNNdw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 21 Nov 2024 08:32:16 -0800
-Message-ID: <CAJuCfpHpDtis0+KwcUCb5oAbjNmgCtJB=K18Jr=MMRRE=Mkaig@mail.gmail.com>
-Subject: Re: [PATCH v4 tip/perf/core 2/4] mm: Introduce mmap_lock_speculation_{begin|end}
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, akpm@linux-foundation.org, oleg@redhat.com, 
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, 
-	mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	arnd@arndb.de, richard.weiyang@gmail.com, zhangpeng.00@bytedance.com, 
-	linmiaohe@huawei.com, viro@zeniv.linux.org.uk, hca@linux.ibm.com, 
-	Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 7:36=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Thu, Nov 21, 2024 at 7:23=E2=80=AFAM Peter Zijlstra <peterz@infradead.=
-org> wrote:
-> >
-> > On Thu, Nov 21, 2024 at 03:44:42PM +0100, Peter Zijlstra wrote:
-> >
-> > > But perhaps it makes even more sense to add this functionality to
-> > > seqcount itself. The same argument can be made for seqcount_mutex and
-> > > seqcount_rwlock users.
-> >
-> > Something like so I suppose.
->
-> Ok, let me put this all together. Thanks!
+Add an additional entry with ID (0x0489, 0xe10a) to the usb_device_id
+table to support the Qualcomm WCN785x.
+The device information from /sys/kernel/debug/usb/devices is provided below=
+:
 
-I posted the new version at
-https://lore.kernel.org/all/20241121162826.987947-1-surenb@google.com/
-The changes are minimal, only those requested by Peter, so hopefully
-they can be accepted quickly.
+T:  Bus=3D01 Lev=3D01 Prnt=3D01 Port=3D04 Cnt=3D01 Dev#=3D  2 Spd=3D12   Mx=
+Ch=3D 0
+D:  Ver=3D 1.10 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
+P:  Vendor=3D0489 ProdID=3De10a Rev=3D 0.01
+C:* #Ifs=3D 2 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D1ms
+E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
+E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
+I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 7 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
 
->
-> >
-> > ---
-> > diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-> > index 5298765d6ca4..102afdf8c7db 100644
-> > --- a/include/linux/seqlock.h
-> > +++ b/include/linux/seqlock.h
-> > @@ -318,6 +318,28 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    t=
-rue,     mutex)
-> >         __seq;                                                         =
- \
-> >  })
-> >
-> > +/**
-> > + * raw_seqcount_try_begin() - begin a seqcount_t read critical section
-> > + *                            w/o lockdep and w/o counter stabilizatio=
-n
-> > + * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variant=
-s
-> > + *
-> > + * Very like raw_seqcount_begin(), except it enables eliding the criti=
-cal
-> > + * section entirely if odd, instead of doing the speculation knowing i=
-t will
-> > + * fail.
-> > + *
-> > + * Useful when counter stabilization is more or less equivalent to tak=
-ing
-> > + * the lock and there is a slowpath that does that.
-> > + *
-> > + * If true, start will be set to the (even) sequence count read.
-> > + *
-> > + * Return: true when a read critical section is started.
-> > + */
-> > +#define raw_seqcount_try_begin(s, start)                              =
- \
-> > +({                                                                    =
- \
-> > +       start =3D raw_read_seqcount(s);                                =
-   \
-> > +       !(start & 1);                                                  =
- \
-> > +})
-> > +
-> >  /**
-> >   * raw_seqcount_begin() - begin a seqcount_t read critical section w/o
-> >   *                        lockdep and w/o counter stabilization
+Signed-off-by: Gregoire Stein <greyxor@protonmail.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e9534fbc92e3..5e77257eef65 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -371,6 +371,8 @@ static const struct usb_device_id quirks_table[] =3D {
+ =09/* QCA WCN785x chipset */
+ =09{ USB_DEVICE(0x0cf3, 0xe700), .driver_info =3D BTUSB_QCA_WCN6855 |
+ =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
++=09{ USB_DEVICE(0x0489, 0xe10a), .driver_info =3D BTUSB_QCA_WCN6855 |
++=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
+=20
+ =09/* Broadcom BCM2035 */
+ =09{ USB_DEVICE(0x0a5c, 0x2009), .driver_info =3D BTUSB_BCM92035 },
+--=20
+2.47.0
+
+
 
