@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-417484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4589D54A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:20:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1099D54A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C499282A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B821E1F2208E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7681CB9F4;
-	Thu, 21 Nov 2024 21:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480261D932F;
+	Thu, 21 Nov 2024 21:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="It4e0CFa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPBuUD/X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E369E1D04A0;
-	Thu, 21 Nov 2024 21:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6941199FC9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732224010; cv=none; b=Q65rRgyeVm0J3z3Pvc5uI3fxoTOVc3hEyVRUkGOp6SoudUrLY3NvhHEsiTMoAlU6oYXrgq+OVOIwIn5WjWw6csv2UjdPsDEn45btbw6z5S/b3V6ZaKlRyr5W7AXzcseIMynnDcERV9ZU1s728j3J3Fusbodsr4L3aJviTsEsR6w=
+	t=1732224030; cv=none; b=EIDv1WFYr9OwVlmRraiq5RNXntDip9SrNWAEVfQxUG/14b8fg0NEB/j/omtKrUk0tuykdUYhwbf+jGMPG/al09yOH8J1jZOFP0JOvrPLozd97V/AmUUV/MsnagOoaCSbVxzb6whErIhfPOjJHdo3+yi9Zc1QQM23jCNqsHVofN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732224010; c=relaxed/simple;
-	bh=KZT12RXt0vKAg5pmQ87+f1k0Iy0lnqOh0HqDe6idbj0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H/5AZ6KPgp65wj4pDqyKS25Ez42xPIc5X+oQV0FM80QhFXDtoZ+19xLojOXkas8vdx1fREerbbght63MrkSxNJjEKrYtRO7d7Yc20x/71DynHUTVYIuixKs7zorFG7G01yG7BYTXpFQdkZJaDmb544rbsWWi3qvE5zPEW84wELQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=It4e0CFa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A8AC4CECC;
-	Thu, 21 Nov 2024 21:20:09 +0000 (UTC)
+	s=arc-20240116; t=1732224030; c=relaxed/simple;
+	bh=hjB7hGiRI1B3zgRH/cJj75oU8tUs/C5k/s1NO6Yj3g4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IIpYPAi2/lkegy4pz5VBHKs8DqGBBuopp7QMd6y6OfykTubL4TZlZaLHPA5SyvmbWHbR+dTSH6RGrD+sj+onmyzDFU7ocM2M7ORacZ4VJconk6wskM/nrbSeXYW1de2s3JuIDVsn5PbxcMX0ZlZJEcYFaYcTfsyjjJFrJNpKC5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPBuUD/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA42C4CED1;
+	Thu, 21 Nov 2024 21:20:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732224009;
-	bh=KZT12RXt0vKAg5pmQ87+f1k0Iy0lnqOh0HqDe6idbj0=;
+	s=k20201202; t=1732224030;
+	bh=hjB7hGiRI1B3zgRH/cJj75oU8tUs/C5k/s1NO6Yj3g4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=It4e0CFagg4D/sw8EwNXPRpPxuwnZGk3RkCvbvcqiwp8xiCQ1FJQqsu7+k7yWhcrZ
-	 LEeTAk0Z3nVTjthXzHG/LoImO3wUCbCzMcqNinvaMoHQgpzYLCRE7xiRZ/qr5yoNda
-	 AIiLAJluOvvkg+3vx51rgcYVIv7fsbXwA0bCwjpJ5jtGaWPdDlQlxUEwg3/XaGSZ69
-	 qpA14EcTYzG0fFJjLILpLvZc6G/C1fT4xjoohSUP7ZeEjepIqk8Djxor6CkpioNWdR
-	 XLadxiS5kvbcKH+D1uLiPaDiz3u1twLHrJIrMezxE8nzOd+PAOK8/+WSuOg9hwBeVN
-	 wQhVXJmPsNULw==
+	b=FPBuUD/Xkxkv+iEwW185FJ9ZjxVomoPW5LwTjfdS3Cx78bp6FP+syw/by4CVXDVJ6
+	 SbWr9Lj4QwApX3ndht51q8/8EFzOpGbF0D4lByP+u4UI+2hKh5s6cbmUeUPVlWwDWO
+	 ZijNi1eDxL1Dqb5muNSFccsw05p+zsaIkU10BWEL7OiHilezaJyUA6Y4CpErxxvqMX
+	 lWojdXfXaaw+oc0oyZSaTYe8Xb2vc3YVUgMMVXQkquGrsVlAmUfoiagLVazyahuZsZ
+	 pAAIdd6wrfXP/asiK+RQy7ZLPc1yQSYlH6HqR0sWNKV+3BbJAKwzF1Y9h2VCzAgEIR
+	 DCsTVFrK6r+Dg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBA703809A00;
-	Thu, 21 Nov 2024 21:20:22 +0000 (UTC)
-Subject: Re: [GIT PULL] Please pull IOMMUFD subsystem changes
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF6443809A01;
+	Thu, 21 Nov 2024 21:20:43 +0000 (UTC)
+Subject: Re: [GIT PULL] configfs updates for Linux 6.13
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241120145345.GA811296@nvidia.com>
-References: <20241120145345.GA811296@nvidia.com>
-X-PR-Tracked-List-Id: <kvm.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241120145345.GA811296@nvidia.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git tags/for-linus-iommufd
-X-PR-Tracked-Commit-Id: 6d026e6d48cd2a95407c8fdd8d6187b871401c23
+In-Reply-To: <ZzzETmfaH0rI6keT@infradead.org>
+References: <ZzzETmfaH0rI6keT@infradead.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZzzETmfaH0rI6keT@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/configfs.git tags/configfs-6.13-2024-11-19
+X-PR-Tracked-Commit-Id: 84147f4e84c4f4822006161c5ad43612ac906407
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 341d041daae52cd5f014f68c1c7d9039db818fca
-Message-Id: <173222402140.2113520.3056559889313201720.pr-tracker-bot@kernel.org>
-Date: Thu, 21 Nov 2024 21:20:21 +0000
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, iommu@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Tian <kevin.tian@intel.com>
+X-PR-Merge-Commit-Id: 40f48f82a1390709207ee6b06939dfae5521316e
+Message-Id: <173222404225.2113184.14555608909895963416.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Nov 2024 21:20:42 +0000
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Joel Becker <jlbec@evilplan.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Wed, 20 Nov 2024 10:53:45 -0400:
+The pull request you sent on Tue, 19 Nov 2024 18:01:02 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jgg/iommufd.git tags/for-linus-iommufd
+> git://git.infradead.org/users/hch/configfs.git tags/configfs-6.13-2024-11-19
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/341d041daae52cd5f014f68c1c7d9039db818fca
+https://git.kernel.org/torvalds/c/40f48f82a1390709207ee6b06939dfae5521316e
 
 Thank you!
 
