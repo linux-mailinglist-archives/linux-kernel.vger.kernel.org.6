@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-416678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23C7E9D489E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:16:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5AA9D48A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D802F2831A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:16:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B21B2127E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA511C9B8C;
-	Thu, 21 Nov 2024 08:15:57 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CA91C9EB3;
+	Thu, 21 Nov 2024 08:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PR68RSX8"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B32A1AC420;
-	Thu, 21 Nov 2024 08:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5574502F;
+	Thu, 21 Nov 2024 08:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176957; cv=none; b=UJHy0RP0FlGNXB2s2bSP652y6MCqWnlF1DenGn7ejCOyFpPAIBuLAp284ugqnbV1wG01yd4EN9wCehE+8xRf5Ije5GQxpKj5QRzbIEJ6PQdvGeeSaBkm6cNn85LHtiFpXKzBZKk/B7zLpucqQ2XYM/M1uTrzC1VQaZ1n2LKYdzc=
+	t=1732177179; cv=none; b=Hk1/Kf2MOJUT2hdOgIe4N7HLRyFfcH4PRkSPbr28POvb/uJTltF73YxRUieDfgNMMWuFADzz4ApO75pB6ha5PbrwBNb0ONJuUI23+vhvhoGcTIjcJT3HZ11vfVNFnXCBtpFYFk5bf+EtTuawaKd5sz1l34FXTxrt70XjCpSGvqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176957; c=relaxed/simple;
-	bh=9o2/CH4id7fZ663DryZCUjiGj2CBRaiKI71WozjFFpM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HTXmXdmiI46vRRT4iLL0AyVl5ay9PAjTbG+xPx+loLxAX39l0LQsr3bG4PEMcKWDLoUVtx+4ittt+Gj5SVDU4RVes+tojoAMWSz3d7mCJC+Ni1MGkWzaBRTU2kQ97u7Rcll8+kT0jGZ5KNO/s4x9D7D8Z1HOkzDhZ/Uw0FamVaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1732177179; c=relaxed/simple;
+	bh=WPdD5/UEOPjLoF6A+GIsLEj9CnaP14w3kT6NsIlW4wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CcZ/LIcKdSIyphqmWTaydN12+T2CTdUPqrrRI0OmMZZL/uKIo8XfLYlrKCnt5AzRbW8jPNC1qOHBUIbHtu26rVvdb1y3HHWV/ark3EQokjbzJRmbn3zlz684z6MslIkyf8cNSUgLh9znXI+TKNATBLbGeKXOUnmHZLWWCzT2dVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PR68RSX8; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6eebc318242so5529837b3.3;
-        Thu, 21 Nov 2024 00:15:55 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53c779ef19cso601770e87.3;
+        Thu, 21 Nov 2024 00:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732177176; x=1732781976; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tFdEv+UI9GjMZSRUyorsGzJEYalDRkuczdcBGUSZQTM=;
+        b=PR68RSX8nVaSAxNfTvSd0+5Dv4kyD1I34KlrOK7OzAEInu/vDaXUu4LJokwCMBkQwP
+         KBwKlFcvvNWacm0/AG2SYhbE/F6HYI16lAucfy3UaqbYj8MzrhLN9gmlisX+pjXzz4Jy
+         xCDyjbmwgAPH4UytPo6wrkt68/uqptHcmFiX9/ZhjXZu/P2WleEp3GIb+ddhnhwrsx2W
+         brF2yxBUNlcWYoFCyvqgVtuW7aQYoUpWbNNqUUsN2gHtem0ZvlihNgtjV/i7zHtmgYxW
+         AeihxBC40zBX93MULr47gj1HLieA94NgpX0cc1Mbi8gXxBGfRh43nAw+GBuGcwT7WogG
+         kU9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732176953; x=1732781753;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Fa1bafhgnf4UjyHiSsOg5v1diyDhD3E0RXZDuNixLkQ=;
-        b=mw1RKNUwy8tZW8U0tbx1lVhrqMMnwXG9ZO8kK50fly97i34fri/arLi6cERj/A8jaP
-         DBti9E7qt12BKWRki1+UB1FAJcKWcCgVmDc4Bq2ZLoiQe2W4XO84ETPcv+vpHN++wXuR
-         AT1ltkxLh2Dd/QwrVctWxeVKZwn7UCn97k68KNgRGi2qGy0xYn2yyY+E6iIQaI1Ia/u7
-         IJP3eSS/kqBR1kceY8g2kZobhYGM7nT86gWQTbdFcx37kMa6qce++GQznyyyHbEuIl4e
-         mE8qZWF1CKmkTH9c9Kpl6/RmMKNo7GWIHIY6Ygt1+THKsIG1PLCj9nM8NzH90DzUFPaJ
-         cy/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWen/YNkpCg0RU6xCH2mOeNTUmK7G1qi0YFPA9Eg7dk2biBBtetJ1k2RSLGoS5ETTZg9KTfiNus1A==@vger.kernel.org, AJvYcCXFFWPl3Q5cgpoeff00QtjlQc6Iv/obPpoNOPE4Ye80NFSQZEdZ+S2XJL0ypKMoyG1LgRhQYWMYxxJQD1dZ@vger.kernel.org, AJvYcCXnvSApmPnuB7igXKffYyPEfpijiOq+PAxQ2d5YKqTgHtui11bYlxLaKukxOqfNN3fYuA9J48S4wggRrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpNi/K1MbjzDVyJJdInaUwZ80SCel+7ceDLF8vfLFUvlv6xklB
-	uxgKrD3D2wGBNeXz/WNRZVhN/XyVRBHd1eCitBGNx4H7tqgJiIUnPRfG1A+o
-X-Google-Smtp-Source: AGHT+IFNs9xzqjSTuoDKG/VbsgjHOTZpoSVmWKXyFN2pv8oz/YTJqZcinuLSTo9hr4iYI0MUEmrekQ==
-X-Received: by 2002:a05:690c:23c4:b0:6ee:ac2f:c6fa with SMTP id 00721157ae682-6eebd13026emr74713127b3.24.1732176953261;
-        Thu, 21 Nov 2024 00:15:53 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee7137f6aasm26001927b3.124.2024.11.21.00.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 00:15:51 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eeb31b10ceso5985737b3.1;
-        Thu, 21 Nov 2024 00:15:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWJT/DQApNPYjF6m+UesPut5zsBstHjgZklD9PrMvfNlqLr7TiggXr8QcKS0Yhfcm3H4/xdB2wYF8hmR91z@vger.kernel.org, AJvYcCWpuFM/FtqzAd0CKT6wognT+F3YSYG5iYdsBcNEyL5RCQXUo6wmkbTImVw6+d7GBUEv07aVUqnzyU6+Wg==@vger.kernel.org, AJvYcCXw1AyxCxFVBrKFGVMxir0S5huU42jVkky6guNNJGqV4LGF7nQJH6uiD0SG3rboi6zH5nRYcAWsXw==@vger.kernel.org
-X-Received: by 2002:a05:690c:7209:b0:6e2:fcb5:52ea with SMTP id
- 00721157ae682-6eebd2ae56emr67688777b3.29.1732176948950; Thu, 21 Nov 2024
- 00:15:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732177176; x=1732781976;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFdEv+UI9GjMZSRUyorsGzJEYalDRkuczdcBGUSZQTM=;
+        b=ASyzEtle0/14EzePuzAcRMygJVK861upUi0hcuDVBx3jE0Zw9NCWVWrdGCmQJhKU2v
+         5igowI67UTawivADRAYm6WZS31Ct7cCiJLHDHv37xbBeykOYTLBcVRcxhCUqpjCm14vT
+         vJ/MYOMhGMCcm2AO5It1gHZI85hyTJXJQ4hsxK54MQ6suZCtXhyM7X1taZFhwyx5EZSa
+         XYpQYXDGJ4Bb+XQBHLX9MLlnpBc8KVKlybvzeBwajc81Y3bu2f0akQKRV9L1G61eCkU5
+         HF5kK7cE1ux2XiVV9BeP37BldP0z3xitImxdRk45ESPWQFISyv2FlGPWseHsnJIT1qr2
+         HfrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvXifFCurvBYLPQMugldEO44JgBkS3m7KQuzg1fXygjAgVQ1WvnkNbq1RdiCmuguEsypr/+tBVY4OA@vger.kernel.org, AJvYcCVBjZVVEZZ2TBPUxMtSwshw0yTM6m3qJVFVWvYJxsmngoWHCpfwWtNaP5694GJJRM5JcQkGjeCpV0WK@vger.kernel.org, AJvYcCXwoDBj5Gj0BYnfAmlbbWapbD8RgWFnHC/YW8xLzuFlKY+KEwVmOqC5DSIMqWIYJYWT/fAmeA0rXUau7H0f@vger.kernel.org
+X-Gm-Message-State: AOJu0YycMPyuGVI4L/JdL369WIc4fsusbHsPwCSwLs8zAMiTLFQsRBI0
+	iwvZ0ljBfb1+YPIOcBvzB6KK6Qh7i/s6s0s732QVYDwXeqjRmseuASY5cdq2
+X-Google-Smtp-Source: AGHT+IHhyhrhbQSvtvUTpaBHdlwQYymca0wYStYyTz3imcKjZYpxET3kcRP5cRgFg1pAlCdVehN2eA==
+X-Received: by 2002:a19:6b15:0:b0:53d:c15a:307d with SMTP id 2adb3069b0e04-53dc15a328amr1871624e87.45.1732177175518;
+        Thu, 21 Nov 2024 00:19:35 -0800 (PST)
+Received: from mva-rohm ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd4723c0sm890050e87.194.2024.11.21.00.19.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 00:19:33 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:19:23 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] Support ROHM KX134ACR-LBZ
+Message-ID: <cover.1732105157.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz> <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
-In-Reply-To: <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Nov 2024 09:15:37 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
-Message-ID: <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+z5gtmrLHvQWYdLR"
+Content-Disposition: inline
+
+
+--+z5gtmrLHvQWYdLR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+This patch series introduces support for ROHM KX134ACR-LBZ and
+KX134-1211 accelerometers.
 
-On Wed, Nov 20, 2024 at 6:50=E2=80=AFPM Christoph Lameter (Ampere)
-<cl@gentwo.org> wrote:
-> On Wed, 20 Nov 2024, Vlastimil Babka wrote:
-> > > Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TY=
-PESAFE_BY_RCU io_kiocb cache")
-> > > Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@=
-roeck-us.net
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > Thanks, will add it to slab pull for 6.13.
->
-> Note that there are widespread assumptions in kernel code that the
-> alignment of scalars is the "natural alignment". Other portions of the
-> kernel may break. The compiler actually goes along with this??
+The KX134ACR-LBZ is almost identical to the KX132ACR-LBZ. Similarly the
+KX134-1211 is almost identical to the KX132-1211. The differencies
+visible to the driver are different g-ranges and the "Who am I"
+-identification register's values.
 
-Linux has supported m68k since last century.
-Any new such assumptions are fixed quickly (at least in the kernel).
-If you need a specific alignment, make sure to use __aligned and/or
-appropriate padding in structures.
-And yes, the compiler knows, and provides __alignof__.
+This series does also convert parts of the GTS helpers and the kx022a
+driver to use __cleanup - based scoped free/unlock operations, and fixes
+the value of required wait time after sensor reset. The wait time value
+fixup is cosmetic/documentational, as the time that has been slept has
+likely been larger than required due to the msleep() implementation.
 
-> How do you deal with torn reads/writes in such a scenario? Is this UP
-> only?
+Revision history:
+v1 =3D> v2:
+ - Rebased on iio-fixes to avoid conflicts with queued fixes.
+ - Added the reset delay change to the series to avoid conflicts. Was
+   previously sent as an individual patch:
+   https://lore.kernel.org/all/ZzWfXbjaDkFnu_Jg@mva-rohm/
+ - Added support for kx134-1211
 
-Linux does not support (rate) SMP m68k machines.
+The v1 can be found from:
+https://lore.kernel.org/all/cover.1731495937.git.mazziesaccount@gmail.com/
 
-Gr{oetje,eeting}s,
 
-                        Geert
+The patch 1/8 is the delay fixup mentioned above.
+
+The patch 2/8 contains GTS helper change, which is independent from the
+rest of the series. It can be applied/rejected independently.
+
+Patch 3/8 changes kx022a to use scoped mutexes. It can also be applied
+as an independent improvement even if the kx134acr-lbz support was not
+added.
+
+Patch 4/8 adds mechanisms for supporting sensors with different
+g-ranges in the kx022a driver.
+
+5-8/8 add support for new hardware, kx134acr-lbz and kx134-1211.
+
+---
+
+Matti Vaittinen (8):
+  iio: accel: kx022a: Improve reset delay
+  iio: gts: Simplify using __free
+  iio: accel: kx022a: Use cleanup.h helpers
+  iio: accel: kx022a: Support ICs with different G-ranges
+  dt-bindings: ROHM KX134ACR-LBZ
+  iio: kx022a: Support ROHM KX134ACR-LBZ
+  dt-bindings: iio: kx022a: Support KX134-1211
+  iio: accel: kx022a: Support KX134-1211
+
+ .../bindings/iio/accel/kionix,kx022a.yaml     |  11 +-
+ drivers/iio/accel/kionix-kx022a-i2c.c         |   4 +
+ drivers/iio/accel/kionix-kx022a-spi.c         |   4 +
+ drivers/iio/accel/kionix-kx022a.c             | 170 ++++++++++++------
+ drivers/iio/accel/kionix-kx022a.h             |   6 +
+ drivers/iio/industrialio-gts-helper.c         |  19 +-
+ 6 files changed, 147 insertions(+), 67 deletions(-)
 
 --=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+2.47.0
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
+--+z5gtmrLHvQWYdLR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmc+7QYACgkQeFA3/03a
+ocUxdgf/WIjdPxRbMVlVfOS1RcZcxBagWdrHGmSaHVbs1fc5gDm3E/VcxO/JNBR5
+kYhooddWQ1z/8zixVa9rAoXzP5j34b2PfvYuOTAVynUJ0TAsouNMbAosZ6dKhbN2
+I1sxIR8lzpzXikv/VIQG9rv3nd8FUi/i5b2oKOS+081ifyydQyr5JImUigg6Iwf4
+6sdUgksO8ZABXEvOiFU/KdSEzlfK1KUFLK905OCK2CthHn/DxhUycmzVw+JIz/85
+YeFhEwFawGY2YhsuVqmvKMAzjuP6B9RiR3AimSmDjmWJcDLmKs5gIs1xsHJwpTFU
+m94x26ADD2VZkLSlMXCfJq0xnaqNHg==
+=dyFF
+-----END PGP SIGNATURE-----
+
+--+z5gtmrLHvQWYdLR--
 
