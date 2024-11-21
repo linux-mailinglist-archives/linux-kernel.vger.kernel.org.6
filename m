@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-416699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238CB9D48EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D8A9D48F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 940D1B24467
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:34:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21419B20C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E981CB329;
-	Thu, 21 Nov 2024 08:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754811CACF2;
+	Thu, 21 Nov 2024 08:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bN4BHeyB"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NyrmhKAY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218711BD501;
-	Thu, 21 Nov 2024 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6437A1B0109
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178079; cv=none; b=SFjuqGvWpRtrkJbRMgbwZvP26rDxOTRNGooU2eh8b+1ZaleqIht0ztFeVvK9lkRxzmrIApH78XmnkxfkIhuXeX8hyfKG4UGdgNZeMj4u9cyFffXibJ4P8OxIHHxCMMT2iVdNupkg8UY2oSPIhcUFe6F4Ie6nfiQa0RQyE/tkQtM=
+	t=1732178268; cv=none; b=oXSTKvwsMpre7rQscXFalZSVjhtm/qmDv38ntAl3tFnz1IUt3ATcq9s6qncqgcGDuG9m7/LvBL/0fR9GrJEdi+Yn7hQfkwfYVlTkiqeyGtXVDgCKOTtkRjYEoOrMsqzS/ykNamQHq9GVfu37VN3Hvh3Sl5JOjT8RLwSr1FoB6mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178079; c=relaxed/simple;
-	bh=zjTOpW2VoG1jkCz4sfFZmC1KrVbbCTNewmnwv7ZVvow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=omEvwvYHdzrjKqCUhT0tl75DbV98ZcPqSL+JrKJ7GQt0TB1JSVglkdhUKgDGFmyBiyFRlc8L15jg2Nxb1hK2BKKptEqo1MbmB7Yg7DT6/cW40HPuI8vl5ljhNaEusOTZMU1oGibFG/sllo3rgztoD6QmHLIfc0BYW72iqHfNBoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bN4BHeyB; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4316cce103dso7066605e9.3;
-        Thu, 21 Nov 2024 00:34:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732178076; x=1732782876; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xuY9UIumhzkIskqm/6SfN6e7LblNj5wpgZ/rsXPts54=;
-        b=bN4BHeyBV2VREztHtKyl/wCugyrLw37xHgq16597EFBfeRQTnKp3NFcUCeEKSs+M/Z
-         nttwkg8VsO/o2/UVYpiB3YUJhbVS7JdPlaX+60J8/3NxgGnCcju1sA1DAPyGnZt5WkdW
-         WaNe7Lhv6tp1zRi4xzmAIqXDB+21WUCJVqyF6oxFb0rge1NjewXxRiuop5Nss0rBX703
-         S8W2p1uU1TPNqNjnRH7oNa0PAS9YBTKTH3q6Vc7zB8v/rlrj3DsawhJzLJPhfq4Xw4Yx
-         /DV5BtZZns/rps/aVqNXPjUiRwT1xFR/0+QN6V86/5PqGOcashnyxiU2vY+GbVRcnnzq
-         UNeg==
+	s=arc-20240116; t=1732178268; c=relaxed/simple;
+	bh=cD4Fu3KbyxCyUuGjzEa4IuToSXO0RyJkQJKRw80eINU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FvJVavX4wsJu+v488DSSHAF3b1HB5kqVx7gz401mEjnU6IYGBPG1RCnTsovEHSSCR/GRox3xqfUJ+8hjGUthIN7DbSp9MT/kA1VrwLpyI3AeY/G4jXMIRNSUGUrCEO1tIu8P+2PAodAGgPhqDJvglrySeNeOx7A97Cdhureqw0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NyrmhKAY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732178265;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B/bxOafOSRqeGDMIei40eQfZmBrNqEM9xnfr1EgoXyM=;
+	b=NyrmhKAYuLH8lTsHBZUtueyclZB60iQAvebYbNAqU12bTE6KH4ToJB6f0Ck/bbUgR12SNO
+	McO9wGrDVIzb80ab2QKiabkTYFt4iqJ2KjMhfcmuVTy3EV5b3KErI53g2cQqKtC2agi5nb
+	B2MOf1tH87lakMOBnzM1jhbhPjkr7RQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-98-KvyMVTZTPjCQ5Q8RYuPPng-1; Thu, 21 Nov 2024 03:37:44 -0500
+X-MC-Unique: KvyMVTZTPjCQ5Q8RYuPPng-1
+X-Mimecast-MFC-AGG-ID: KvyMVTZTPjCQ5Q8RYuPPng
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-431604a3b47so4283085e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:37:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732178076; x=1732782876;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xuY9UIumhzkIskqm/6SfN6e7LblNj5wpgZ/rsXPts54=;
-        b=ETbU7/JoKOm1nYYWz8p5F0Oh3+DL7mNQb1n4v+Jp2nqR2WolPFD42ACd1nE7+a9fJd
-         Yj2S7pCThmmGIPvqXS21xyB2uCMRKj+CYpGzv5b3r5/DBbDaIhhyn8hQ5+2GtX8/q+O/
-         07HoGsC+85/JjqM1anRM1PQL3vOtLz/b49CkMWneLuleg3DYe+ioWUTDNcGAwZKiKJGs
-         n3tZKlhltTDk4E9LpB+NUqjpi6M3rouhNdNoeXuZrn16FybiEZx0wI1CZqLdrIcoO3Vv
-         BwZ3zotEYZWniIP6EuhA85RqwC5hrjKLPqP0QpSP1/28/Y3wzjFOhp/Lxzo4zRFwqxdr
-         AHxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+CGh1Wy0K6foly1meMR+YeL8xiMEA9OQqlMq7zjmoUUPB/6Rx+10LseViUEQU3mptiX/jBJpAzd/Kr5Kv@vger.kernel.org, AJvYcCVr4ykj4ANGbqwgaH5jzM1B4nqGLERLmWKdpzWveHcKdE50ZX3MyLS/t/oFbuXXNc/2dpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+/AcF9BOapqNLA2bZ+7BLvMuJ5Y+mEt5uOwvDzCp3T6GcNgPj
-	4fz7SWAFsBiU4wnSq4vKeoa/UCHBh5Wr87Fd14YbTF/jrhD15f8=
-X-Google-Smtp-Source: AGHT+IHeO1HwhmFK4O5/NJbZp2M0Ctx7jARETW7C4rvS3zI6J6/qaqoBgcBCSOBXifhAzWODgPr6ag==
-X-Received: by 2002:a05:600c:34ce:b0:432:bb4d:cd77 with SMTP id 5b1f17b1804b1-433489ca951mr53704995e9.19.1732178076223;
-        Thu, 21 Nov 2024 00:34:36 -0800 (PST)
-Received: from qoroot.. ([195.181.116.221])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d16f8sm45392335e9.2.2024.11.21.00.34.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 00:34:35 -0800 (PST)
-From: Amir Mohammadi <amirmohammadi1999.am@gmail.com>
-X-Google-Original-From: Amir Mohammadi <amiremohamadi@yahoo.com>
-To: qmo@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
-Subject: [PATCH v3] bpftool: fix potential NULL pointer dereferencing in prog_dump()
-Date: Thu, 21 Nov 2024 12:04:13 +0330
-Message-ID: <20241121083413.7214-1-amiremohamadi@yahoo.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <47225498-12ab-4e69-ac50-2aab9dbe62c0@kernel.org>
-References: <47225498-12ab-4e69-ac50-2aab9dbe62c0@kernel.org>
+        d=1e100.net; s=20230601; t=1732178263; x=1732783063;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/bxOafOSRqeGDMIei40eQfZmBrNqEM9xnfr1EgoXyM=;
+        b=E/wXALwhn+5CeJCdkvj778QXiYDc8J+WHMHiAESQ7NXKwS9jMAeoIcx0oHwUyz93/H
+         FN4J90bgKO9esmMFPqHukr0b1qYhRMb5ZG+zzc3h6WYFxv9Bxr2nnL7R4BjTo4OSQ+8b
+         pLWBVmjV+SCVfEx2dV7zt1EYsvfgSEWOjwrQ/+6VbpjHONfXonuet3BKMtiMNb9f9tkY
+         qFwstpXcGLpuTiMkYKKbPeGv/MJLE/v7CHti3HDtzh9tHQwVhde5eX+U8DKE4PQNMHzt
+         IV10SNhnIE2yZX+dSotAnYhH0jDOSPzB7laaZZEs9rpdamUG9yFGOpmrwHCdeuvxygnk
+         Kaug==
+X-Gm-Message-State: AOJu0YwOc89Fy8MN3CFBPqPrwqt3T2XvE7i+12oPs52giJdkvhFSjyiJ
+	Dj/yCKv0fbU278nuKv4+3TFEeCbg2CYlC2SvUBAidZw9Yz6XzuXge/R/enylOMbma0SWOCPmdRd
+	NHQLTtUzfeYoHAdw6jvNcWWPNO1jwIkd3W7gXe3eFMuB4D5x+EzwtRxRYEoJVRQ==
+X-Gm-Gg: ASbGncs1syB8vjvL0xjV6aTTUaHVGkLjT/GMYyiOQLOM7adSviPLp0Qm9qeiRKvQ53m
+	Ur9XKKlr4b3ODU2gTipckNOXHxRIfTjsjatheJ+t97bjqO4XB2QYFXjmtY35Zi2oMwn7M9/5UfE
+	btM8v9e3tbqqDVaaX/jzY/+2wsiguUQcq6TBK6DUrVeMxdrR5rBVJuaVz7biLqeqBgs3kXguHFx
+	pJ0igJoRxLPKeilq26zu1KcmWVR5DFT+cEPwH/iiOcu9tXBOigfDnAUxhqX7sQfbE/xJdwD+Q==
+X-Received: by 2002:a5d:598f:0:b0:382:415e:a144 with SMTP id ffacd0b85a97d-38254a83376mr4518903f8f.0.1732178262780;
+        Thu, 21 Nov 2024 00:37:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFwhkitcAujwGpzsyn2UlIRtZ04mvp+DvbIZs8ciCgtCb6aWVOCkAcYbsRMTziLn3rq2vc0jg==
+X-Received: by 2002:a5d:598f:0:b0:382:415e:a144 with SMTP id ffacd0b85a97d-38254a83376mr4518886f8f.0.1732178262430;
+        Thu, 21 Nov 2024 00:37:42 -0800 (PST)
+Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493f3ebsm4208546f8f.105.2024.11.21.00.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 00:37:42 -0800 (PST)
+Message-ID: <3646cb4f-4eb5-406d-9ea1-a407c3e03d45@redhat.com>
+Date: Thu, 21 Nov 2024 09:37:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] net: openvswitch: convert
+ call_rcu(dp_meter_instance_free_rcu) to kvfree_rcu()
+To: Ran Xiaokai <ranxiaokai627@163.com>, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, mingo@redhat.com, peterz@infradead.org,
+ pshelar@ovn.org, davem@davemloft.net
+Cc: linux-kernel@vger.kernel.org, ran.xiaokai@zte.com.cn,
+ linux-perf-users@vger.kernel.org, netdev@vger.kernel.org, dev@openvswitch.org
+References: <20241120064716.3361211-1-ranxiaokai627@163.com>
+ <20241120064716.3361211-4-ranxiaokai627@163.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241120064716.3361211-4-ranxiaokai627@163.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-A NULL pointer dereference could occur if ksyms
-is not properly checked before usage in the prog_dump() function.
+On 11/20/24 07:47, Ran Xiaokai wrote:
+> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> 
+> The rcu callback dp_meter_instance_free_rcu() simply calls kvfree().
+> It's better to directly call kvfree_rcu().
+> 
+> Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-Fixes: b053b439b72a ("bpf: libbpf: bpftool: Print bpf_line_info during prog dump")
-Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
----
- tools/bpf/bpftool/prog.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+Since the patches in this series are independent one from each other,
+please break the series on a per subsystem basis. The patch 3 & 4 should
+target the net-next tree. It will simplify maintainers life (and yours).
 
-diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-index 2ff949ea8..e71be67f1 100644
---- a/tools/bpf/bpftool/prog.c
-+++ b/tools/bpf/bpftool/prog.c
-@@ -822,11 +822,18 @@ prog_dump(struct bpf_prog_info *info, enum dump_mode mode,
- 					printf("%s:\n", sym_name);
- 				}
- 
--				if (disasm_print_insn(img, lens[i], opcodes,
--						      name, disasm_opt, btf,
--						      prog_linfo, ksyms[i], i,
--						      linum))
--					goto exit_free;
-+				if (ksyms) {
-+					if (disasm_print_insn(img, lens[i], opcodes,
-+							      name, disasm_opt, btf,
-+							      prog_linfo, ksyms[i], i,
-+							      linum))
-+						goto exit_free;
-+				} else {
-+					if (disasm_print_insn(img, lens[i], opcodes,
-+							      name, disasm_opt, btf,
-+							      NULL, 0, 0, false))
-+						goto exit_free;
-+				}
- 
- 				img += lens[i];
- 
--- 
-2.42.0
+Also please note:
+
+## Form letter - net-next-closed
+
+The merge window for v6.13 has begun and net-next is closed for new
+drivers, features, code refactoring and optimizations. We are currently
+accepting bug fixes only.
+
+Please repost when net-next reopens after Dec 2nd.
+
+RFC patches sent for review only are welcome at any time.
+
+See:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+
+
+
+
+
+
+
 
 
