@@ -1,149 +1,213 @@
-Return-Path: <linux-kernel+bounces-416895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B6A9D4C23
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:40:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B739D4C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9DA1F226DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DE428276D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA391D12E0;
-	Thu, 21 Nov 2024 11:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C011D173F;
+	Thu, 21 Nov 2024 11:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BYzmFeM4"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vdhpO3bx"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CFF3C47B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60C73C47B;
+	Thu, 21 Nov 2024 11:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189192; cv=none; b=IvTVE2Fwc3OEbFFcMa02DkYK7wntewvtxN+LnVZ7oifHWfQh5bhp/mxPnDXlF/TagRb3G5Xc0ET2u8JR1E44FYwuuHQ23sCdcgcxf5twvJKVQxCIArzFIVea6u6qavaoREPIGoOVxTHsMTYSsuOnFBNpMbw0lnN1wDn0fzKvCPw=
+	t=1732189269; cv=none; b=KTrzqu7k7fQVZOHUIvchKso5469RxcAGt9XMFDl7kUorGlZb+YjDDbZvRJCCP0HoyRarY86HCiJ8kIpZavERCZ6x6j7DsqZXkpwZCSjaURwfXVAzgJOpMROUcN5decmDQK+4RrE6zQQaZ1T+hkwj0oqVh8IB07BGGt7q5dGpRSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189192; c=relaxed/simple;
-	bh=U9v+K6sJOOG6x+RFfN+V0Si4bcR0z6pz+6B8md76rd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LOEx0OE9cgzzpnpKca2URci9Pu1q1CDWgFGQvTN8d5yvGXMSAosIfv7q5J0DdcF4oRpy/X9nmlBfsD8/5881FM9q8Qn0jZXyqj5DnTmfqIShDgJzWmZ/qOzkh5pDMEjtFclP42FgCQ75ukhxLvZoGUe6ZSoFGF5YXzbCFUe57gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BYzmFeM4; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3823e45339bso625784f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732189189; x=1732793989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2IZyw4FOcZ6R/V4mnMHgpIhe+XP7mjUrhnLeyIz/iRg=;
-        b=BYzmFeM468ryeUt8P7KEyeA1lUTodlyL0qC5KvLydrMZm020b8jJhu6MO3C9FtXkKi
-         zLU5JG5RWXvXb2wHC6s1ZWQhgPNlz6OpOkIFOoQpaZ+czaz5r0wZEMmCx7YV9zpknheC
-         PZw1ZA0S5x/xX3Sd/VWQNss8SiHQTfQJ69Ojtn+e+tkBYpiI24L/fXTdGUSB9TOiB/yj
-         ehV92xYuUx0a+Uyp4uncsyJRz3imYbMMxLfBCUTElx8M1UuQ+0hHZhM70vDEMsaoyAR2
-         +p6KOCbe9TGxdg540BE/Tdy4iZ2BEH2E5cJNlVcRVyqT4QyySuZq6dacRW72Qg2W/50w
-         Ol5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732189189; x=1732793989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2IZyw4FOcZ6R/V4mnMHgpIhe+XP7mjUrhnLeyIz/iRg=;
-        b=f6l97+euPuRt+zs152Ybj/TiUETzlBFUoWF3kdhhwqc4KrCL/jV8XRSu+sYqEZky8w
-         ZQ3uin2fMqe1sxyvfRxgTJ9BbKAdemVVERrYGBwG1pPS9aU4h0xjo2jPXJkdeqL9M3U1
-         ievT1IjIlUjrA77oWdDBfjvEd1W4aHEP0ADUHYvhWoCCUkVx3Ve+NH7qzXEsP6QBybQ2
-         ADUayIcrOi0j5NFFAlRj0HYrxf9K2L/1E1uM8rc8ZvgxZ0pnp7RBtkFuFCmv6CXngkF1
-         XhXUZ1WgbTq4B4MYT4d0IbIZvoywzgIHAxAqnRnd5YWFq7CuSOnX13u7nWx05jd+k3ey
-         bbXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVM/7ebnnNSygdhVrun5mg1AlgAWwaCere70rcwGHs5nL4xzQnq1Qz9B9rJMdAvdpClpaYkNqoVIpMNZ9Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR3pea9YsC/sJVSt8vSgAvGRCyXGtttINurndAMjx9LhJEiE2n
-	VslXUetaSBOdSNqMoFW7kygUXTOYGWMjyu+yGZCR4Ss8NSnoi4SUeLGrxMfgZMl81zktbtZFLl/
-	ZO2wmBY1/32qchnNHNiKxqPPGADSwoLBrleII
-X-Gm-Gg: ASbGncvcza9W0yst6E1dmhcxFe2W01avEnKwLh7siDMJ5AUNIwoOHdoFhtiW82Pn5gY
-	Vx6LZK+7aYNwWnisvU6VdNvyV8hPRb/RFUAEOsPKnO5ec5xRCueUuicUTVRdqkQ==
-X-Google-Smtp-Source: AGHT+IHOUT5TK9qW8nVjhNy0VpEtuheP882P7CKZcuAtr3r08tu4OVDN35SCuTs2d/vi/YNbZK0QGKu6hwSa17GxWlo=
-X-Received: by 2002:a5d:47af:0:b0:382:44e0:c5e9 with SMTP id
- ffacd0b85a97d-38254af9c4fmr4724755f8f.25.1732189189300; Thu, 21 Nov 2024
- 03:39:49 -0800 (PST)
+	s=arc-20240116; t=1732189269; c=relaxed/simple;
+	bh=xi/MggR71byBBhUfd+bbxNTl1YfMsCSmSpm38mZB8jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZUr3f/Kqt2XotYQ7MLM85353cm/9DzFLZqh5My3KaKemKwEcmT7UiGA2QXCd+LT1rTQI+rRRdwiotN54nRo0Zza37Ma3Jh1QyeglqPDOkx4uoQebUOQMMrUVJB14zeMQDl/wuRFRf+f+VkDFg+eScYBh2p83pfL1Lgod8AkZYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vdhpO3bx; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:10f2:5b4b:5292:ac46:e988])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD8C7670;
+	Thu, 21 Nov 2024 12:40:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732189241;
+	bh=xi/MggR71byBBhUfd+bbxNTl1YfMsCSmSpm38mZB8jk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vdhpO3bxhMoJIjI2CB818lo/lIp5vr7bK3M4qixh5Km/wXTVcRq31g0pcXLyflAcx
+	 I6md36cvoxsD+uagFMEDjpdi+EQ/UtT6Y3h/xO2kMeg7TiW76w+v/fXBHdHIq7E/2R
+	 ABlRLpJuVgzxjKdfN0ALEcpkKfjT3XU4nAmVXv6Q=
+Date: Thu, 21 Nov 2024 17:10:54 +0530
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer
+ exposures
+Message-ID: <5mpch5lokeoxbglc6n3gfugluzluguakv5udt6lflkn5qv23pk@kcllmxh5vqxm>
+References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
+ <20241029-imx219_fixes-v1-2-b45dc3658b4e@ideasonboard.com>
+ <ZySV3KKXSyIreRI4@kekkonen.localdomain>
+ <CAPY8ntDF8W+xRBXbe=LYpg21LL7-svhCySTSJHRNiDzQs4Xw5Q@mail.gmail.com>
+ <Zy3oKnHBiGOq8Uoj@kekkonen.localdomain>
+ <CAPY8ntD4Q4f5fSC+xW=j-5T38_Zb5x7pGQM4RYVzrz+NJMGtUQ@mail.gmail.com>
+ <ZzMytF509nZ8CYGZ@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120-vma-v8-0-eb31425da66b@google.com> <20241120-vma-v8-5-eb31425da66b@google.com>
- <5762ab92-3091-46cf-9565-f59cf917b470@lucifer.local>
-In-Reply-To: <5762ab92-3091-46cf-9565-f59cf917b470@lucifer.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 21 Nov 2024 12:39:37 +0100
-Message-ID: <CAH5fLgjDfSL+7XB28sYmq4e40yxBv97h7jQPs=9Qe4+_3f1FRw@mail.gmail.com>
-Subject: Re: [PATCH v8 5/7] mm: rust: add mmput_async support
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="f6h4uy35r7yjlhco"
+Content-Disposition: inline
+In-Reply-To: <ZzMytF509nZ8CYGZ@kekkonen.localdomain>
+
+
+--f6h4uy35r7yjlhco
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/3] media: i2c: imx219: make HBLANK r/w to allow longer
+ exposures
+MIME-Version: 1.0
 
-On Wed, Nov 20, 2024 at 8:47=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Nov 20, 2024 at 02:49:59PM +0000, Alice Ryhl wrote:
-> > Adds an MmWithUserAsync type that uses mmput_async when dropped but is
-> > otherwise identical to MmWithUser. This has to be done using a separate
-> > type because the thing we are changing is the destructor.
-> >
-> > Rust Binder needs this to avoid a certain deadlock. See commit
-> > 9a9ab0d96362 ("binder: fix race between mmput() and do_exit()") for
-> > details. It's also needed in the shrinker to avoid cleaning up the mm i=
-n
-> > the shrinker's context.
->
-> Oh Lord, I didn't even know this existed... I see it was (re-)added in co=
-mmit
-> a1b2289cef92 ("android: binder: drop lru lock in isolate callback") back =
-in 2017
-> so quite a history of being necessary for binder.
->
-> I see mmdrop_async(), I guess that's not needed for anything binder-ish? =
-A quick
-> look in the code suggests this is invoked in free_signal_struct() and is =
-there
-> due to some softirq stuff on x86... so yeah I guess not :)
+Hi Sakari, Dave,
 
-I didn't know it was so binder-specific. I assumed it would be a
-relatively common use-case.
+On Nov 12, 2024 at 10:49:24 +0000, Sakari Ailus wrote:
+> Hi Dave,
+>=20
+> On Mon, Nov 11, 2024 at 07:37:56PM +0000, Dave Stevenson wrote:
+> > Hi Sakari
+> >=20
+> > On Fri, 8 Nov 2024 at 10:30, Sakari Ailus <sakari.ailus@linux.intel.com=
+> wrote:
+> > >
+> > > Hi Dave,
+> > >
+> > > On Thu, Nov 07, 2024 at 12:43:52PM +0000, Dave Stevenson wrote:
+> > > > Hi Sakari
+> > > >
+> > > > On Fri, 1 Nov 2024 at 08:48, Sakari Ailus <sakari.ailus@linux.intel=
+=2Ecom> wrote:
+> > > > >
+> > > > > Hi Jai,
+> > > > >
+> > > > > On Tue, Oct 29, 2024 at 02:27:36PM +0530, Jai Luthra wrote:
+> > > > > > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> > > > > >
+> > > > > > The HBLANK control was read-only, and always configured such
+> > > > > > that the sensor HTS register was 3448. This limited the maximum
+> > > > > > exposure time that could be achieved to around 1.26 secs.
+> > > > > >
+> > > > > > Make HBLANK read/write so that the line time can be extended,
+> > > > > > and thereby allow longer exposures (and slower frame rates).
+> > > > > > Retain the overall HTS setting when changing modes rather than
+> > > > > > resetting it to a default.
+> > > > >
+> > > > > It looks like this changes horizontal blanking at least in some c=
+ases. Does
+> > > > > this also work as expected in binned modes, for instance?
+> > > > >
+> > > > > Many sensors have image quality related issues on untested albeit
+> > > > > functional line length values.
+> > > > >
+> > > > > So my question is: how has this been validated?
+> > > >
+> > > > Validated by Sony, or others?
+> > > > I've tested a range of values in all modes and not observed any ima=
+ge
+> > > > quality issues.
+> > >
+> > > Somehow at least. :-)
+> > >
+> > > >
+> > > > From previous discussions with Sony, they always provide their big
+> > > > spreadsheet of register values for the specific mode and frame rate
+> > > > requested. I don't think they even officially state that changing
+> > > > VTS/FRM_LENGTH_LINES to change the framerate is permitted.
+> > > > There are some Sony datasheets (eg imx258) that state "set to X. Any
+> > > > other value please confirm with Sony", but that isn't the case for =
+the
+> > > > imx219 datasheet. I take that as it is permitted within the defined
+> > > > ranges.
+> > >
+> > > I'm not that much concerned of vertical blanking, changing that withi=
+n the
+> > > valid range has effects on the image itself very seldom. Horizontal
+> > > blanking is different though and this is what the patch makes changea=
+ble,
+> > > including a change in the default value. Of course there are big
+> > > differences between sensors here.
+> >=20
+> > The intention was that the default value shouldn't change, and as the
+> > overall PIXELS_PER_LINE value was meant to be retained on a mode
+> > change the value used should only change if an application changes
+> > V4L2_CID_HBLANK. If I blundered in the implementation of that, then
+> > that should be fixed (I know Jacopo made comments, but I haven't had a
+> > chance to investigate).
+>=20
+> I guess I misread the patch. It indeed should be the same.
+>=20
+> >=20
+> > I doubt we'd get validation from Sony beyond the contents of the
+> > datasheet. Potentially as the sensor is so old they don't have the
+> > information or engineers involved.
+> > I'm happy to set up a test system and capture a set of images with
+> > HBLANK from min to max at some increment. With the same exposure and
+> > gain they should all be identical as long as there isn't any movement
+> > (rolling shutter with longer readout times and all that). Would that
+> > be satisfactory?
+>=20
+> Sounds good to me. I just thought how it actually had been tested. :-)
+>=20
 
-> >  // These methods are safe to call even if `mm_users` is zero.
-> >  impl Mm {
-> >      /// Call `mmgrab` on `current.mm`.
-> > @@ -171,6 +213,13 @@ pub unsafe fn from_raw<'a>(ptr: *const bindings::m=
-m_struct) -> &'a MmWithUser {
-> >          unsafe { &*ptr.cast() }
-> >      }
-> >
-> > +    /// Use `mmput_async` when dropping this refcount.
-> > +    #[inline]
-> > +    pub fn use_mmput_async(me: ARef<MmWithUser>) -> ARef<MmWithUserAsy=
-nc> {
->
-> Again, nitty, but I wonder if this should be as_xxx()?
->
-> But I guess this makes sense too.
+While not a thorough test, I manually tested with different values for=20
+horizontal_blanking for both binned and non-binned modes, and the image=20
+quality looked okay, with expected behaviour (i.e. increase in exposure=20
+and decrease in frame rate as total pixels per line increase)
 
-In this case, the as_ prefix is incorrect because this is an owned ->
-owned conversion. See the API guidelines:
-https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-f=
-ollow-as_-to_-into_-conventions-c-conv
+I will send a v2 of this series with all the fixes.
 
-If we wish to use a prefix, the correct prefix is into_.
+> >=20
+> > For contrast, the IMX290 datasheet states that VMAX shall be fixed at
+> > 0x465 for all-pixel mode / 0x2ee for 720p mode, and HMAX should be
+> > changed for frame rate control. As you say, sensors differ.
+>=20
+> --=20
+> Kind regards,
+>=20
+> Sakari Ailus
 
-Alice
+--=20
+Thanks,
+Jai
+
+GPG Fingerprint: 4DE0 D818 E5D5 75E8 D45A AFC5 43DE 91F9 249A 7145
+
+--f6h4uy35r7yjlhco
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmc/HEUACgkQQ96R+SSa
+cUXPLw//fe9WYR5bMfP4AM5Xw6J8HAEV2Q2cRsmDbTa3lpwTrRVFZPX8+gJv7VMA
+EVjTtgSA559f6kgdeRra1/IkTHM1VNtcSQSdM9KnGyj3AvrDZ4yIc5utjrATqgY8
+BDvYy6EcZHvX/gpPvP2QFATlaHQumDLF7eOFGSOVIQB7XDjRx585yVkoTlnzyekl
+/lQEPqhDErO/X7Evm1tdlg4grfHiim81cVrjMfzXC6qSv4Xf7R/DHwHlKK3xVqoR
+7sJdB5mnvqwVuJMDC9unwoB2Xe58FtUMk78n7DRid0D/gS5CPOiDSl5HKgjYqZgE
+wrVSDAMH25eLX/3bgh9g6+xBRiTx58WWQ6Lj3+IRKK7kpp+aBgIMBfNIvxWN6+2z
+ZWXoyOFAD8Uih72szt2VV0FcXY5LNvDyzQR9uot5TVgDA7wwjJRqmlrzcaoByfjt
+5fOJIvx2bFYDiFgGXTIhxGwIs0ud+n/0nbIK7+aaP481/Mz8mC0y7vscaQBrgEtc
+C4kloczFx49zB5nattkCc0NnQgAl6LR+gASd2fN5C31Ul10hCjBsLArBWUoAwYNu
+H3rERJHPUDV+2i/7Js2Yya5jrh5YTiLnT9Sao76NklR9RF1AXMuw6Oc7RT+tWcpQ
+ahC3dS+fxQw4yqKAeuLeVxRM2KWVWJ2JMhgCtVQvrtvyufL84HM=
+=HEEJ
+-----END PGP SIGNATURE-----
+
+--f6h4uy35r7yjlhco--
 
