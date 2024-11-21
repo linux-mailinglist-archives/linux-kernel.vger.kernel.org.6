@@ -1,134 +1,192 @@
-Return-Path: <linux-kernel+bounces-416704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FBF9D4906
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:40:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DBCA9D490D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E5C728254C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:40:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B828B20D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846721C9EDC;
-	Thu, 21 Nov 2024 08:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UxrFv0f0"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B081CD1EB;
+	Thu, 21 Nov 2024 08:41:52 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1A613BC3F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4562D1CCECC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178439; cv=none; b=cX+811rXaY9m5dkr3zo4a2hAjLo8hoH1s6WbSmLc/npvCXLFrHvNS3DgjYo05i9Ngv8/mTsscnVcCru13AD1Eo8L6As+4I/KLUEOQwgANbZ8Rsqfz8Dhs+Gcw+RuAFlQm7Tuq0/e4PNvAPuh2sFiThg49EwUXzVeaQAfcnihCAM=
+	t=1732178512; cv=none; b=VMF60T0GL8DNitGhIDcgrDLa/K7AB6TRiPF8hA2ak6z/ze25AXGtURDGM9QuVjJUKiQDD61/9xjmJm0Wo0sVpf0PbhckgQLYdjfDmW0Dm0lwcBUgcprBJCGWWP0hDYw1lw8Ubk2d+SIuMZwo5klPmNj8lLvhTKcZ6KWGMtfmczQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178439; c=relaxed/simple;
-	bh=I4eBaZaVx6nes8q0hwKUpkYL2IV6pUfZfirvBunVQdc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W4csUj4aMgS3kU3Q+3V0MVWmOfM2zPo8rrfus7hrBn8yF7W9fRLXBj1Y2zr1wKQqfjwmTu42250ew0BUsYWygbHLTIPAtT6w7EcL2obBi9EMRYAAm3DeWS1ecKH77IWLGjaHOtXLkl5uisEau1KOdImcp11be7OczZx5q+JOuZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UxrFv0f0; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfb971de0dso91875a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:40:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732178435; x=1732783235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4eBaZaVx6nes8q0hwKUpkYL2IV6pUfZfirvBunVQdc=;
-        b=UxrFv0f00zYFQyAvJYufghBse4xOgeSft73FoehKDvkWFul/rlrCWb7cDjrnCGU9qq
-         QWAPTqySA+fodGXeuaTeqj18a4XK1vZqKbJtLFfLpWPs6ebXvROs7bULSp/UpRi4v64X
-         ETNaEdknkoufofH7/4/FqE1ifNgNK0eo0XMQOAGGKrbKccUsQ7YNk1qTk9bqDYVuqYQ5
-         9xUbWBmOglQg8KxWYHYo1jkJ32Ji3fk99PzV0+5mi1yvlU7q2Esz4vIEjf+XLTtfOda6
-         jAV/oXw2b7dCdg6GsV2pXUy+Bu3Zqo6ZJVYVQ/cRdCc4T1h2nl2JgmE664d7z0J7b5zM
-         jJTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732178435; x=1732783235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I4eBaZaVx6nes8q0hwKUpkYL2IV6pUfZfirvBunVQdc=;
-        b=D/w+2CkftT27PBzYIEKI4VrHqrZZtUZLnbTljb5L2ePL1t0Y2xM/ic1d1XQKlEIo5n
-         CEcAdHISbdxNNHtUXstJujSj4wEwmpg3+013dnL7UX9gRMojdmE+d4kv/UnR95NbF8iM
-         zobh33S6vsvBQzWvSe6rswXtmKUD/ljatF5Cn8AgZUOO0bAiHtVy/Hd6vS/Jmf9cFLDx
-         MCe879bYaRjPEdXq2PPLv+yErDLpHAdg6+0NSao+FtSGhjyFVTpUdy45bK0IqlCNkAfG
-         Ud3fri0HjlggLXBysid6LZtrrkswS8tLdjXO5LpzJArKZqmM2thyfuzAnyU3ylZCTCyH
-         gGkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFvpNSxbDKoS4x4ypJ8Mqljd3nR6XaMyDETnhNLpFFv5WH/dXD1TnWwwQY6mFkqZ0DBBgFVMuWnzNF4IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNtY3dZ3R+PYaom3CcXlM0NyA9ACuOPuAHtSS+WkLMrf4Yu977
-	ZYtppbbCHKwLrBcD1YIgY9HfnBEwM/FpqD+XMazKEw+NKHfbcnlaWJt4EowfempGrt9Q8NQvtqx
-	zpBTWRzvMZ7vQjcnj/oWfnsznqwm6ExL2EyezI8zRNAjvtkweNA0=
-X-Gm-Gg: ASbGncts6iRabeB9iddapBzN3vKHRcAv1AlNDxTfHL0i+haYY5PVJM4QSzmbbAdlQHF
-	6byZfw/k3XW17LZX0Yh941XTwkmqxDbQ=
-X-Google-Smtp-Source: AGHT+IEwNtBFHJJTYnKmgvScRjsEoF81IE7XkBqTTKtS39lBY1EKm8X0tj3K0Chi00aViPvYAvJ1SmIrbUFKUwYdQZg=
-X-Received: by 2002:a05:6402:35c8:b0:5cf:4549:ade7 with SMTP id
- 4fb4d7f45d1cf-5cff4b341a8mr1740156a12.4.1732178434897; Thu, 21 Nov 2024
- 00:40:34 -0800 (PST)
+	s=arc-20240116; t=1732178512; c=relaxed/simple;
+	bh=+bA1rXPMFxjpumxBPBsgBXGYUAll8wqXn3zjiH2FOg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vss2zELqfuDVyZojsUO435hdpHr6/7ltMROiwJXBshjGy3G1p8R/tL7pe5xy0m8gGZiwR9LoscqOyo77tv2EBvW7rUicCoFgSBhqGDJzXu+I9pazD8bVeAdFwpSBpv6geQ2OfaqW1/gQVKqf6ieYbX2W9QKgpZlBquLWDO5RUHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tE2kh-00015R-L4; Thu, 21 Nov 2024 09:41:27 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tE2kf-001sK9-2u;
+	Thu, 21 Nov 2024 09:41:25 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tE2kf-00731R-2Z;
+	Thu, 21 Nov 2024 09:41:25 +0100
+Date: Thu, 21 Nov 2024 09:41:25 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Russ Weight <russ.weight@linux.dev>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Marco Felsch <kernel@pengutronix.de>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
+ FW_UPLOAD_ERR_SKIP
+Message-ID: <20241121084125.3ldkyd7xotjvuq2r@pengutronix.de>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
+ <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
+ <20241120173037.x6cro7r2wh5aoadg@pengutronix.de>
+ <20241120185611.43soqjcyruztby4f@4VRSMR2-DT.corp.robot.car>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
- <20241119152939.158819-1-jinpu.wang@ionos.com> <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
- <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
-In-Reply-To: <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Thu, 21 Nov 2024 09:40:24 +0100
-Message-ID: <CAMGffE=hKeWTJzna8gFi=Q9wSuY9SLFScftdGVqc5MNW_jxQ4Q@mail.gmail.com>
-Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Haris Iqbal <haris.iqbal@ionos.com>, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, song@kernel.org, xni@redhat.com, 
-	yangerkun@huawei.com, yi.zhang@huawei.com, 
-	=?UTF-8?Q?Florian=2DEwald_M=C3=BCller?= <florian-ewald.mueller@ionos.com>, 
-	Christian Theune <ct@flyingcircus.io>, "yukuai (C)" <yukuai3@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120185611.43soqjcyruztby4f@4VRSMR2-DT.corp.robot.car>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi
-On Thu, Nov 21, 2024 at 9:33=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> w=
-rote:
->
-> Hi,
->
-> =E5=9C=A8 2024/11/21 16:10, Jinpu Wang =E5=86=99=E9=81=93:
-> > On Tue, Nov 19, 2024 at 4:29=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com=
-> wrote:
-> >>
-> >> Hi Kuai,
-> >>
-> >> We will test on our side and report back.
-> > Hi Kuai,
-> >
-> > Haris tested the new patchset, and it works fine.
-> > Thanks for the work.
->
-> Thanks for the test! And just to be sure, the BUG_ON() problem in the
-> other thread is not triggered as well, right?
-Yes, we tested the patchset on top of md/for-6.13 branch, no hang, no
-BUG_ON, it was running fine
->
-> +CC Christian
->
-> Are you able to test this set for lastest kernel?
-see above.
->
-> Thanks,
-> Kuai
-Thx!
->
-> >>
-> >> Yes, I meant patch5.
-> >>
-> >> Regards!
-> >> Jinpu Wang @ IONOS
-> >>
-> >
-> > .
-> >
->
+On 24-11-20, Russ Weight wrote:
+> 
+> On Wed, Nov 20, 2024 at 06:30:37PM +0100, Marco Felsch wrote:
+> > Hi,
+> > 
+> > On 24-11-20, Russ Weight wrote:
+> > > On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
+> > > > It's no error if a driver indicates that the firmware is already
+> > > > up-to-date and the update can be skipped.
+> > > > 
+> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > > > ---
+> > > >  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
+> > > >  1 file changed, 4 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+> > > > index b3cbe5b156e3..44f3d8fa5e64 100644
+> > > > --- a/drivers/base/firmware_loader/sysfs_upload.c
+> > > > +++ b/drivers/base/firmware_loader/sysfs_upload.c
+> > > > @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
+> > > >  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
+> > > >  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
+> > > >  	if (ret != FW_UPLOAD_ERR_NONE) {
+> > > > +		if (ret == FW_UPLOAD_ERR_SKIP) {
+> > > > +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
+> > > > +			ret = FW_UPLOAD_ERR_NONE;
+> > > > +		}
+> > > 
+> > > If you change the error-code from FW_UPLOAD_ERR_SKIP to
+> > > FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
+> > > patch will never be seen. There are currently no other instances where
+> > 
+> > Do we really need to set it? As explained within the commit message,
+> > it's no error if FW_UPLOAD_ERR_SKIP is returned. The previous patch just
+> > added all pieces which may be required later on.
+> > 
+> > > an error code requires special-case modifications to the fw_upload
+> > > code and I don't think it is necessary to add it here.
+> > 
+> > Because at the moment no one is checking it except for the gb-beagleplay
+> > driver. This driver prints a dev_warn() string and returns a failure.
+> > Now the userspace needs some heuristic by parsing dmesg to check the
+> > reason. This is rather complex and very error prone as the sting can be
+> > changed in the future.
+> > 
+> > Therefore I added the support to have a simple error code which can be
+> > returned by a driver. I'm open to return "skip" as error instead of
+> > casting it to none. Both is fine for me since both allow the userspace
+> > to easily check if the error is a 'real' error or if the fw-update was
+> > just skipped due to already-up-to-date.
+> 
+> Are you saying that you intend for the user-space code to see "skip"?
+> Because in the current implementation, I don't think the user-space
+> code would see "skip". If you ultimately return FW_UPLOAD_ERR_NONE,
+> then cat'ing the error file should result in an empty file.
+
+I know.
+
+> > I wouldn't say that this is a special case, it is very common but no one
+> > is performing a fw-version check. Therefore I added this to the common
+> > code, to make it easier for driver devs.
+> 
+> By "special case" I meant to say that this is the first time this
+> core code has had to know about any error codes other than
+> FW_UPLOAD_ERR_NONE - and the first time that an error type alters
+> the code flow.
+> 
+> I understand that other drivers may also want to abort if the
+> firmware being loaded is a duplicate.
+
+:)
+
+> > > The dev_info() message above can be provided by the device driver
+> > > that is using this API.
+> > > 
+> > > I think you can either:
+> > > 
+> > > (1) allow "skip" to be treated as an error. The update didn't happen...
+> > 
+> > Please see above.
+> > 
+> > > -or-
+> > > 
+> > > (2) The prepare function could detect the situation and set
+> > >     a flag in the same device driver. Your write function could
+> > >     set *written to the full data size and return without writing
+> > >     anything. Your poll_complete handler could also return
+> > >     FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
+> > >     at all. You would get the info message from the device driver
+> > >     and fw_upload would exit without an error.
+> > 
+> > Please see above. I don't think that this is special case and why making
+> > the life hard for driver devs instead of having a well known fw
+> > behaviour?
+> 
+> If you are not opposed to treating it as an error, then all you need
+> to add are the error code and the string to go with it.
+
+Yep this works for me.
+
+> Instead of FW_UPLOAD_ERR_SKIP -> "skip", how about
+> FW_UPLOAD_ERR_DUPLICATE -> "duplicate_firmware"?
+
+Fine by me :) I can use this if no one else comes up with a better idea
+for the string.
+
+Regards,
+  Marco
 
