@@ -1,106 +1,78 @@
-Return-Path: <linux-kernel+bounces-417307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1421D9D5247
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:04:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB489D5251
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E65828223E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 336212815D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BDC158A33;
-	Thu, 21 Nov 2024 18:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C051A1A0BF2;
+	Thu, 21 Nov 2024 18:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLrqylnR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyF9FxdA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4271AA1D4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251386CDBA;
+	Thu, 21 Nov 2024 18:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732212273; cv=none; b=mIFNJHJRqblkkHAiiDtpK5g/uWalYDUdANZjpILrunWjDv744lIbSa8XkFe3XanIlA3h46EdS2za4UG6mB7tPiNI2vax8oeZmPA3koGtRfE7SvanLPQXf46XjY/SAAoNKVwAeuVvXOvGf7ppABQR5h3MUgC5uJfLDNDqT6ECetk=
+	t=1732212322; cv=none; b=XfZjvtJOGyYIq+vm0by/LJcG51JMJLWise2DZ/rWBmnF0XY9V8Ka3cRQHUm0idi78Ly4z98/twwr17MExxd49Y/LI7za+I/7dzR2OBYhjG/9cXpBtD6piFez2AqWOTHDDA6r9bqGoPSlh27TKk2VTM7bvEv2CDGoZ5hPqLkR7UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732212273; c=relaxed/simple;
-	bh=FdN4QpUgFwDpPphzHWE0oTIPuxj47EiZ4BexOKoPyAI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gYGVDXcNQ5n8s2AsV0uSfI9g0sUr5UDdXQIHFFd6h5f6PV0jNe2OAW0aAa8j48hlkFLb7KU9rYjgBLBZv9QEMftCJn7jWj+1NbYkN7ceNhqu2mqaL78QQQ54pPXvB9fVqZG/P4YsOxv0KkjD+Hc9kzFNS+KLCzmeUQZkpQ/WnzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLrqylnR; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732212272; x=1763748272;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=FdN4QpUgFwDpPphzHWE0oTIPuxj47EiZ4BexOKoPyAI=;
-  b=DLrqylnRdVA2WFoaTbpgJudRZzWIDJijwWlUH6alr0L4Jb6GNJzF6HTJ
-   oEtb1DVazHd8zBq0rxf5bwq/E+XqHiLWYvS3EhJiRmt4qCTeVcyNwQogs
-   +Ds6f+zFwrp4T3nOVxL+6pqntjMHO12sb8jn1gTCj7keg1Ypb7nuXDcQ4
-   GwiJwe3InBLkNANxW65xwSe6F9OigttFzR7MKTc67fjAmQkOfnenYurEh
-   niI3vp5uX1+vENC5sulOdOwuhokpCPLzWzXnHd9b2gxHY6jRetMzZ6TKp
-   k+uiAuxxAURGFolviIz7sfNZTMAAOYysFPVRpZH3icqC0qqBB/ZO5PzV4
-   A==;
-X-CSE-ConnectionGUID: UcoeVaIBT1KPTkDFAlLuqA==
-X-CSE-MsgGUID: rchPjJ6XTMi4SRVVD70WFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43408049"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="43408049"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 10:04:31 -0800
-X-CSE-ConnectionGUID: psFAniG6TauLiq8GRGN+Nw==
-X-CSE-MsgGUID: mQs296gnQRqfYSWxeKqlSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90132452"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa007.fm.intel.com with ESMTP; 21 Nov 2024 10:04:30 -0800
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: acme@kernel.org,
-	namhyung@kernel.org,
-	qzhao@redhat.com,
-	mpetlan@redhat.com,
-	vmolnaro@redhat.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel: Add Arrow Lake U support
-Date: Thu, 21 Nov 2024 10:05:26 -0800
-Message-Id: <20241121180526.2364759-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1732212322; c=relaxed/simple;
+	bh=APuefoTykwddKXr/l4AfnPznJ6xTnjqoNmkxh3HvPfs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=mr1T1o1wn+d3uqybY7BDCP+0/yW1maBWNpJ8UZXhCrrRla6LnAB2z0LhzBm9rge2mHQPHjFh7vlcAA5odPNxjIXawgC9gQ0K5WFUwlSyNgobyQzmqNIUkXCFafDOcq49SF/MLMB4jqjqSlk6VrxHvyhZUp1AQ4Kjn16/wRbTzjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyF9FxdA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDFD1C4CECC;
+	Thu, 21 Nov 2024 18:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732212321;
+	bh=APuefoTykwddKXr/l4AfnPznJ6xTnjqoNmkxh3HvPfs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=LyF9FxdAPU1bgx7RG3iScyBe6VQfj/cY6PCV+9PEDMJxVQQcnB6L4yWgiux5WlZYK
+	 3L2injduz1loRbK8amWM69nM6Uf+cr8Qk4O/UHqemzN+I7qwfFfhMo5arUKjcihaM9
+	 4+e/hmARjXW55p7IL+LqJ/PZ5uLiT9rOmXtZbi0Iq9i2BM3t1iRNvcUrah65zpSxiJ
+	 Z7YaBckwFGorKrS7gU/7Rqpj8j9oBcVakRfn0aXmEoHFmR90eLR+cWpkOCYU21DEKC
+	 rLrdrGQIFgRRwMmcvHij6MUrNBhJnYIiYVo/vHfb+9z6ixyTRu+qQ/K07IflkewPZP
+	 +P9K9g1T5qCvw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADE83809A00;
+	Thu, 21 Nov 2024 18:05:34 +0000 (UTC)
+Subject: Re: [GIT PULL] dlm updates for 6.13
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Zz9Zyoho_wbCImkJ@redhat.com>
+References: <Zz9Zyoho_wbCImkJ@redhat.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Zz9Zyoho_wbCImkJ@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.13
+X-PR-Tracked-Commit-Id: 200b977ebbc313a59174ba971006a231b3533dc5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6a550ae5560f7237c82dc9c0c128ba1d593c4dde
+Message-Id: <173221233364.2032550.7279137346088342561.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Nov 2024 18:05:33 +0000
+To: David Teigland <teigland@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, gfs2@lists.linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Kan Liang <kan.liang@linux.intel.com>
+The pull request you sent on Thu, 21 Nov 2024 10:03:22 -0600:
 
-From PMU's perspective, the new Arrow Lake U is the same as the
-Meteor Lake.
+> git://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git dlm-6.13
 
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/core.c | 1 +
- 1 file changed, 1 insertion(+)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6a550ae5560f7237c82dc9c0c128ba1d593c4dde
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index a7d92e70e756..23104dc9a599 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -7534,6 +7534,7 @@ __init int intel_pmu_init(void)
- 
- 	case INTEL_METEORLAKE:
- 	case INTEL_METEORLAKE_L:
-+	case INTEL_ARROWLAKE_U:
- 		intel_pmu_init_hybrid(hybrid_big_small);
- 
- 		x86_pmu.pebs_latency_data = cmt_latency_data;
+Thank you!
+
 -- 
-2.38.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
