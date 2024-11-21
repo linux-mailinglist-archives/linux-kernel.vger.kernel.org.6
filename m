@@ -1,110 +1,130 @@
-Return-Path: <linux-kernel+bounces-416758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E169D49BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A73619D49C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B60B2568A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:15:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB046B20A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551451D0143;
-	Thu, 21 Nov 2024 09:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DAAE1CB9F0;
+	Thu, 21 Nov 2024 09:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foWLhjSc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aYDKy/pG"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A631CEAAC;
-	Thu, 21 Nov 2024 09:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709EE1CB30B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732180504; cv=none; b=SFd3MQ3HDGxIExXK8szJDtROP8d95XfhRoFphTnyTm0VIB//AHbGr54ZRK+6VE5CBDcwGC/lFpMdwa+wSHQIegtsknrjdw4NhkmZc8LY6wVkkDIu/i5xESQUFpEXvfFFC24jG3nxfdltX2Qm800YKFzCjX+HW0chcQK/y67b0ks=
+	t=1732180616; cv=none; b=qgiYcAq+2/21tj5mcAOGVZE+zTyxwpcuqFiO2kQ6NnvgiU24mfVi6bWhhEooHUKCK0uSo5SWBZMd2E0LaECKHYcr1uJi8lkt8XjEfjRrdKcJkRAtVU/P32zbs6XkQSOE2QXNouQuH/iqokmMtYcvGGahJTfDm893ebW2AoF8fNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732180504; c=relaxed/simple;
-	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qofhVKcFIeRNNEtcRubsM9zK0PxPPN74hLnGaDJsY3M9JK6+NMzfD1YwE9q12SxoueyXgJ1U56MH+t4cdKxpT3sqId1G4sa+sF5LHTYB5ems4yeOSxazjvC3IFkHC8qhcdOmwL7nN8PfAj+Q0f6+DnjMxOdf35SXSeOrOj9xOnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foWLhjSc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A41C4CED0;
-	Thu, 21 Nov 2024 09:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732180503;
-	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=foWLhjSczE7CDgEqUlZ+g26zxC+rtnOjzye+ImrsXs0W3dXcBoJlqCi4vnXVd44BD
-	 jSFh7mPfAoZXfTk/mRNxeWrVhRJl9wYqmf6qTX/E53klyvUIvdraLqDNsrESzJ0eQ9
-	 sZQ6fnJ3aYafoy/Sx8koStFVKdxjdnZpvlLhd1ybDJOqjfLA/oVmY3chzAlOoZJuWf
-	 RuubicXY+6J3hUbkIPHZt5rXUI/ixtONh4nbRzfWfeaW2P8ll6G3AS8dri1MrBtrGF
-	 DLqq6qUKqOmlOiY9UtJXErsXU2F2mKXoZ/0pNpWN6aVuWxL5+MN77UKd1e/jqOCIrc
-	 PsyUOcsVLDF2g==
-Date: Thu, 21 Nov 2024 10:14:56 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241121-unfertig-hypothek-a665360efcf0@brauner>
-References: <20241112082600.298035-1-song@kernel.org>
- <20241112082600.298035-3-song@kernel.org>
- <20241113-sensation-morgen-852f49484fd8@brauner>
- <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3>
+	s=arc-20240116; t=1732180616; c=relaxed/simple;
+	bh=N6qcfExF6HKyVQROB3/M+JmpOuLdpLoagMzOOIIxoTI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NOEP2oy9QW6YU9oKZ+19QV3KtSrM1Ci9ybdx0QUg6XjdYfu2xx/xq+0WpKFh5yfzTYJp4Z8O1j1zWIi45pnXDFLdVMQzDVqlTbr96MQJpUaX4uehqvAZhYQkYfIQI3GgCB6LoVyQhn2Qe1Vnt7CedJ5mNq+T01iREVTM22x3yiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aYDKy/pG; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ee7b886b5fso5979077b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:16:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732180614; x=1732785414; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gx7g1ycpbkaP8i3JjzDe0fy+LgJAm7hWm+PnlhjBjVk=;
+        b=aYDKy/pG27J6HY4bYm7hxaykgqrMAFuEAID0AEFb4b+cNjXvsjNvHNmSGyQBYd4s2L
+         uAfs/Wo0MYmOR+G+lVoRVfzy16EwG16YhhdMzVz6gk7VFDD5ZDrMX6pou2esfosj94m6
+         SyHTY19OpZxGxRbwrojsPK6NFKrG0QbBBF+T0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732180614; x=1732785414;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gx7g1ycpbkaP8i3JjzDe0fy+LgJAm7hWm+PnlhjBjVk=;
+        b=NMnubEUJiLAOhpqaBujvbdlbVlhkFTTAUWpysmSKICDwOTtUMn8HzKo4ofOKXPu377
+         ipI3H0PyQYjwoS/2b5/aUeHKwaTdeW0X9QxXzRkEiuxQFTjoAB1D1NIaarAc/4DX6gqS
+         n9GnylCb4w2897MqItcXvkykaAp0cRhBjPi5TGA6ahP5TqLEydIDfSbCol2s/HRaUtWz
+         iXveCmrUu2QPsSl1Yg+uXry6z+qq5q4snf325gtk0vloXxqgKu6GmQDKGIQi3VgPwWwt
+         dOfRfOSEtFhE+g3/WMXQ9w86ixAV0DWtFiQBd3usecRy3ogZhTtVf7l67IXG7TeJBzfX
+         kGmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwl5z2Srb1tOT0nGlMkZDhOHbJdtGppJRW9uET92R7HH/M9RMfumL00D1erUc7OiERT82IwPZyqfD76KY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1bavyav4nWxqZUPFO96XNwv4HqnSEsyd8p1C4iyErCBkDh78R
+	feGG97PbBNSZ18ImZFq4i5qgGq6KHwJogILLZ+NktOMToEOX2IjL2KjYJu6iRD1CRuzaBgMNn8Q
+	=
+X-Google-Smtp-Source: AGHT+IEwtrszS3T6Xc4Yxiza7arbzx1prlMVVU5cAA6WJx38v3jLAfMA9YXxGlHZHefHwBVRD5GPYw==
+X-Received: by 2002:a05:690c:4b11:b0:6ee:b43b:62fd with SMTP id 00721157ae682-6eebd2d1a9amr68205557b3.41.1732180614211;
+        Thu, 21 Nov 2024 01:16:54 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d43812ab1csm20719276d6.93.2024.11.21.01.16.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 01:16:52 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 21 Nov 2024 09:16:47 +0000
+Subject: [PATCH] iio: hid-sensor-prox: Fix invalid read_raw for attention
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241115111914.qhrwe4mek6quthko@quack3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAH76PmcC/x2MwQqAIBAFfyX2nNCKCfUr0SHyVXtRcSEC6d+Tj
+ gMzU0lRBEpzV6ngFpUUG3Df0X5t8YSR0JjsYB2zZXPIY3JJO1QRDAJv0+gdwztqTS5owv9b1vf
+ 9AG/s5slfAAAA
+To: Jiri Kosina <jikos@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-> I'm personally not *so* hung up about a pointer in struct inode but I can
-> see why Christian is and I agree adding a pointer there isn't a win for
-> everybody.
+The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
+IIO_CHAN_INFO_RAW.
 
-Maybe I'm annoying here but I feel that I have to be. Because it's
-trivial to grow structs it's rather cumbersome work to get them to
-shrink. I just looked at struct task_struct again and it has four bpf
-related structures/pointers in there. Ok, struct task_struct is
-everyone's favorite struct to bloat so whatever.
+Modify prox_read_raw() to support it.
 
-For the VFS the structures we maintain longterm that need to be so
-generic as to be usable by so many different filesystems have a tendency
-to grow over time.
+Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more channels")
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ drivers/iio/light/hid-sensor-prox.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-With some we are very strict, i.e., nobody would dare to grow struct
-dentry and that's mostly because we have people that really care about
-this and have an eye on that and ofc also because it's costly.
+diff --git a/drivers/iio/light/hid-sensor-prox.c b/drivers/iio/light/hid-sensor-prox.c
+index e8e7b2999b4c..8e5d0ad13a5f 100644
+--- a/drivers/iio/light/hid-sensor-prox.c
++++ b/drivers/iio/light/hid-sensor-prox.c
+@@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+ 	*val2 = 0;
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
++	case IIO_CHAN_INFO_PROCESSED:
+ 		if (chan->scan_index >= prox_state->num_channels)
+ 			return -EINVAL;
+ 		address = prox_state->channel2usage[chan->scan_index];
+@@ -107,8 +108,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
+ 							   report_id,
+ 							   SENSOR_HUB_SYNC,
+ 							   min < 0);
+-		if (prox_state->channel2usage[chan->scan_index] ==
+-		    HID_USAGE_SENSOR_HUMAN_ATTENTION)
++		if (mask == IIO_CHAN_INFO_PROCESSED)
+ 			*val *= 100;
+ 		hid_sensor_power_state(&prox_state->common_attributes, false);
+ 		ret_type = IIO_VAL_INT;
 
-But for some structures we simply have no one caring about them that
-much. So what happens is that with the ever growing list of features we
-bloat them over time. There need to be some reasonable boundaries on
-what we accept or not and the criteria I have been using is how
-generically useful to filesystems or our infrastructre this is (roughly)
-and this is rather very special-case so I'm weary of wasting 8 bytes in
-struct inode that we fought rather hard to get back: Jeff's timespec
-conversion and my i_state conversion.
+---
+base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
+change-id: 20241121-fix-processed-ed1a95641e64
 
-I'm not saying it's out of the question but I want to exhaust all other
-options and I'm not yet sure we have.
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
-> Longer term, I think it may be beneficial to come up with a way to attach
-> private info to the inode in a way that doesn't cost us one pointer per
-> funcionality that may possibly attach info to the inode. We already have
-
-Agreed.
 
