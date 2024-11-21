@@ -1,208 +1,196 @@
-Return-Path: <linux-kernel+bounces-417170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4EC9D4FD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:37:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303069D4FDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2869B1F232CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47A72840A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A488E154456;
-	Thu, 21 Nov 2024 15:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B07319CC0E;
+	Thu, 21 Nov 2024 15:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="EKojV+J3"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0d5vox/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF1341A8F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3F9183CA2
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732203441; cv=none; b=U1r9c4XvafIej3Q40TB7s5BARWrpzjlLNcjk/xxmXuv+v6K+xAW6L8UjKAmq5LQWZpGQ9GcKAEwkuYCiyixxuj0epF+a1c7JZF5obVf7Vs/lMRQlmrqUBXOB6mNRsCyVdmzp/2RPPH46TucasvbkO4uVKaDmXs9Yx9xkIlose6w=
+	t=1732203451; cv=none; b=EqAsk7UArKO93GAAKrBTWVCtgJSVu8jmbVRv9OhQBVibAnnznHm4cfw/zTWAygvoti1S+Yfj19Vs0/CcCdwIri8dGYi+nwuB2yXMIXxF7uc2rWa2AhSWD385N96RbyjJzDdgxdevU/sPSfGjw48UdKOGcrl6rpDzz+Sq/B7ip60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732203441; c=relaxed/simple;
-	bh=hyM4vCib5BHN+oOIl3oJQy667UjA0LMFpe257ZTgAkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSAv/BBS7pitilBecPskveQPcanLKO+sBQJtDIM4hW9Ziu6TCyA4RlPNg0H7vEJmc0AdJAvE0fXwU6EVnAtrGg9p8LfdYzV617ri8AW3AwdU6N6r+ECmeKrw71+9i2ucc/qO/TTIXpHKa/eb55JrHbXIj8+WSYOtCJ9hm2L9n2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=EKojV+J3; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ee8e894deeso10298907b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:37:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1732203439; x=1732808239; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kP6pOE3po/1ziJMcsJhojsNldXrvD7NcZzZfzxDnn2Q=;
-        b=EKojV+J3lRwrz20olLhEmlNUV99Kdgrg0D4h5jkJdQItKoZTsk4e0uIankhhrY/dU1
-         5kB+dXZgI++9m02pacgV7YouPwsO0sl4lswz7BzMHLRajjM02mFk1Bz4qOSm14B1vfLN
-         oFET06wj4rgvIE/dbA7UPyt8gHytoAvVczFIplRN+8wh3dV0OvuZFvbMWtAJJgd+PluL
-         1fVYteHairwp58Cu9dY1pc+rkGKPUTwDFw0aDW4t3Q0QgbJpAjDHCswRI7KtccSy9AVR
-         go0e9WWetKJn4HmyXB+k2dTTNcjMPg0BZ4W7ESzs+CdqtedE/g35GDJaYFJ6ICk/lEtg
-         Gclg==
+	s=arc-20240116; t=1732203451; c=relaxed/simple;
+	bh=eckblXHkSvhd8BGyR9du0j4hp1Pb4lGIxwfEguEklLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u7oHSUuxSlxjQS7MtPTieIU0hoVlJME8KY1x9BIQYVmT+oqdYitH4zveCtU6hOS1UkMx2H/m5JT4Cc3gWwM4Ddn8yYz9QAar9Ox4RquQVDalZeEB+r88ldZoqN2o9bL1FWoK/GzBJjuYitNLTNeIzEUwXARQHF7i1FkfyUQkork=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0d5vox/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732203449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=eS7bGCy5YRnQF1VVX3hqmSIuG3NddVnWmPFA2i7JUNM=;
+	b=G0d5vox/YZvI4HoyhYRlGw5JFjVU8p/iiFKFG+LN4+CkSkNYDUIK29YDqJz6CRRuvhHEB+
+	pW5qrwTOKFaMQNzM2rsLjXldVjVFzAcvMt64hW8tqlP7G/bc4Exp894XgDQGweSXWpioKt
+	z1CqnYTkbxfolnnyinzyUeIk6CBqTwU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-yWqBgFLOMviNj9_Do0I8PQ-1; Thu, 21 Nov 2024 10:37:26 -0500
+X-MC-Unique: yWqBgFLOMviNj9_Do0I8PQ-1
+X-Mimecast-MFC-AGG-ID: yWqBgFLOMviNj9_Do0I8PQ
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315dd8fe7fso9270505e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:37:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732203439; x=1732808239;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kP6pOE3po/1ziJMcsJhojsNldXrvD7NcZzZfzxDnn2Q=;
-        b=qY0Rb7qZv9jbuy38nCcLvVh3YQjlINlrw8xLov2TLKjw5Sj7JFI9bbMtEDhnto/AwF
-         55L/iBtiUgxgJXyd84mk6mT/+QEGJuH+CQ5uRdoPUN7se8Ep2AuLYfzKKdf9eUqbQ28U
-         27+cwgPCNAbZl8E7BUkPFMW2KqPNchVveOiyjBZiA7L7Qz1F6f5XfAYMUHn6SsaPDFZO
-         HbFqAMy1r3v/uy1FEddZ8+5J1eI/T6BsXm82SK180aapVwbNPuzCKXPH9tMUTNxfo3yb
-         EgBeesN+gxXRWkRQGH2EL9a+aLO2FvCUE+O75gZ1T8tnpEkpxxzGloG7RA0AEEnsh0XG
-         gkAw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/IxpM+d7QFGA5bOE85JQhxODtahU6rRtPU39GFm8drNcr82syXHqy0jtLIErWCdYl2G2ZHjZ9XgcCGHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoIBCaXTyEW78zNbhfEk7yQtOCFlpbtlvwXbqJ1rc07Fqq11ui
-	kTZVLQVPuz6UlolHo+PR61Ufi2tVjNi0vVPll+RH42bVHGoEwznzRH4YdjfpjBCoWZYzQD8qFnx
-	f/A+bdSn01ONzkv3jxw3fRvWTa9vrrabhwkVE9g==
-X-Gm-Gg: ASbGncsVPgqnScZlmJHFvBGjHCmwzUylVOiI1PPpgqTz7pK4Td5kMrpqinUKgFf3P5U
-	BM/rtoYcAhK0HrNMqUw0eeltN5TIKgCY=
-X-Google-Smtp-Source: AGHT+IF8UTnU+5p7nKbdKVjbrthoiYcBYTuLfXNVkQGbQk0KfLyktr9CA5uLVCOTpHwOyzUd5aASTSTl99WTmj5pohI=
-X-Received: by 2002:a05:690c:6283:b0:6ee:9cb7:dc24 with SMTP id
- 00721157ae682-6eebd2b24cemr74692547b3.38.1732203438928; Thu, 21 Nov 2024
- 07:37:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732203445; x=1732808245;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eS7bGCy5YRnQF1VVX3hqmSIuG3NddVnWmPFA2i7JUNM=;
+        b=JMqzDDRyPDk3OnytIbRTyW1mjXy7S0wsTwr8FnCnn3K8BfBHm/sGntwbxE2ZEVzkp1
+         WBiMF1Rk2WsjtBXHdmlFNvd+622E7A+WqnO9+cpk87mYqk1XfPEzv/Uz7keXnSo0ryfF
+         MPwb5BzXc/WZUUYb6ci/RrJ8CDsYNSI4NFdXfCPm5ISqrLepiEhthsjEwu6XIAn+uoLm
+         sO6yVX8HG2mySn8On9tPJN8ehUNgj5S8zSS8FCUJlW0ReKgdaDAG0U+Z5UuLLNKKR9oP
+         7T89mG7NFUFMFJvOiXBHxuGI3HDSHTz/slpSJYsIg9ZL9i7Qq3TAc5MUK6etld0jADJK
+         HbAA==
+X-Gm-Message-State: AOJu0Yzb2QJ7o8hb+y+rm9KkpwPoznR/zu+OytVBOyiId9beTYlSd9t1
+	Pv50wZD3WTKLzFgyVJGFlO7IR7o7b3OxC1IGLuIvR4t1VhJpgc7vPBJmLB8PYMO4+g3V/iHPH2N
+	pq0i8WTuAhV8eMDCfD05dEI1FAS+LNUIkpZZes4j8gGBMDyhy/AaR5GLKlMlZag==
+X-Gm-Gg: ASbGncuJEzc5f4N8L5OcjGAegho+UCYxV0hYrsucq4S5f9yiC+05MKgu0LC02HpFXgT
+	R3PtFvt2U7HRslzePJhuEo1cUO2uKb3Dh2aeEk9c58FD+Q1mkNEHQ866zU1mrqltUq9rBYnFzx0
+	nigF4XGmN0u2ko4GqSlbf2gQ01Nqf+1g+sT76PIWoUUDut/8unOIdEJipWkeUfd/R26KnIsGNAK
+	AzM1Rx8CXz8TqcI5++WuaaeY4SR2FkkCtqfIDJ9y2961dBdT8XTP4Ru0aFI1Y6Gup2EvXhRQnIe
+	Y93sHU06SDyJEVLrRLZxsZceaF/Vkf/mzCMrwTvDpxbIp0B/8IlQK9EsRmfhLOrFBKlQVHd9pwY
+	=
+X-Received: by 2002:a05:600c:1d93:b0:42b:ac3d:3abc with SMTP id 5b1f17b1804b1-4334f01548dmr68139705e9.24.1732203445506;
+        Thu, 21 Nov 2024 07:37:25 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFcWfaRMIf30Hgg52d+hIlcLWUuMutdNfVmMqgbxuJi7boGn2lsfYZzyLLvkfHTbZQW2nzANQ==
+X-Received: by 2002:a05:600c:1d93:b0:42b:ac3d:3abc with SMTP id 5b1f17b1804b1-4334f01548dmr68139385e9.24.1732203445201;
+        Thu, 21 Nov 2024 07:37:25 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d16f8sm58469525e9.2.2024.11.21.07.37.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 07:37:24 -0800 (PST)
+Message-ID: <b778d6d2-729b-4416-bc12-78a2e85b08f3@redhat.com>
+Date: Thu, 21 Nov 2024 16:37:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 21 Nov 2024 15:37:00 +0000
-Message-ID: <CAPY8ntBM=34pTiQ=t-CjtYEE5Ax6D=EtiY-sLT1keUkUMXuLeA@mail.gmail.com>
-Subject: Re: [PATCH 00/37] drm/vc4: Add support for BCM2712 / Pi5 display hardware
-To: Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Stefan Wahren <wahrenst@gmx.net>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	Dom Cobley <popcornmix@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 04/11] fs/proc/vmcore: move vmcore definitions from
+ kcore.h to crash_dump.h
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+ Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+ Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>, Eric Farman
+ <farman@linux.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
+References: <20241025151134.1275575-1-david@redhat.com>
+ <20241025151134.1275575-5-david@redhat.com> <ZzcYEQwLuLnGQM1y@MiWiFi-R3L-srv>
+ <ca0dd4a7-e007-4092-8f46-446fba26c672@redhat.com>
+ <Zz2u+2abswlwVcer@MiWiFi-R3L-srv>
+ <120bc3d9-2993-47eb-a532-eb3a5f6c4116@redhat.com>
+ <Zz64efFyFstyDdN8@MiWiFi-R3L-srv>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zz64efFyFstyDdN8@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 23 Oct 2024 at 17:50, Dave Stevenson
-<dave.stevenson@raspberrypi.com> wrote:
->
-> This series adds the required DRM, clock, and DT changes
-> required to support the display hardware on Pi5.
-> There are a couple of minor fixes first before the main patches.
->
-> Many of the patches were authored by Maxime whilst working
-> for us, however there have been a number of fixes squashed
-> into his original patches as issues have been found. I also
-> reworked the way UBM allocations are done to avoid double
-> buffering of the handles as they are quite a limited resource.
->
-> There are 2 variants of the IP. Most Pi5's released to date
-> have used the C1 step of the SoC, whilst the 2GB Pi5 released
-> in August is using the D0 step, as will other boards in future.
->
-> Due to various reasons the register map got reworked between
-> the steps, so there is extra code to handle the differences.
-> Which step is in use is read out of the hardware, so they
-> share a compatible string.
+>>>> If there are strong feelings I can use a different name, but
+>>>
+>>> Yes, I would suggest we better keep the old name or take a more
+>>> appropriate one if have to change.
+>>
+>> In light of patch #5 and #6, really only something like "vmcore_mem_node"
+>> makes sense. Alternatively "vmcore_range" or "vmcore_mem_range".
+>>
+>> Leaving it as "struct vmcore" would mean that we had to do in #5 and #6:
+>>
+>> * vmcore_alloc_add_mem_node() -> vmcore_alloc_add()
+>> * vmcore_free_mem_nodes() -> vmcore_free()
+>>
+>> Which would *really* be misleading, because we are not "freeing" the vmcore.
+>>
+>> Would "vmcore_range" work for you? Then we could do:
+>>
+>> * vmcore_alloc_add_mem_node() -> vmcore_alloc_add_range()
+>> * vmcore_free_mem_nodes() -> vmcore_free_ranges()
+> 
+> Yeah, vmcore_range is better, which won't cause misunderstanding.
+> Thanks.
+> 
 
-A gentle ping on the patches for clk-raspberrypi (patches 29-33) and
-Broadcom DT (patches 34-36).
+Thanks, I'll use that and adjust patch #5 and #6, keeping your ACKs.
 
-All the DRM and dtbinding ones are reviewed or acked (thank you!).
+-- 
+Cheers,
 
-Thanks
-  Dave
+David / dhildenb
 
-> Thanks!
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
-> Dave Stevenson (12):
->       drm/vc4: Limit max_bpc to 8 on Pi0-3
->       drm/vc4: Use of_device_get_match_data to set generation
->       drm/vc4: Fix reading of frame count on GEN5 / Pi4
->       drm/vc4: drv: Add support for 2712 D-step
->       drm/vc4: hvs: Add in support for 2712 D-step.
->       drm/vc4: plane: Add support for 2712 D-step.
->       drm/vc4: hdmi: Support 2712 D-step register map
->       drm/vc4: Enable bg_fill if there are no planes enabled
->       drm/vc4: Drop planes that are completely off-screen or 0 crtc size
->       arm64: dts: broadcom: Add firmware clocks and power nodes to Pi5 DT
->       arm64: dts: broadcom: Add display pipeline support to BCM2712
->       arm64: dts: broadcom: Add DT for D-step version of BCM2712
->
-> Dom Cobley (3):
->       clk: bcm: rpi: Add ISP to exported clocks
->       clk: bcm: rpi: Allow cpufreq driver to also adjust gpu clocks
->       clk: bcm: rpi: Enable minimize for all firmware clocks
->
-> Maxime Ripard (22):
->       dt-bindings: display: Add BCM2712 HDMI bindings
->       dt-bindings: display: Add BCM2712 HVS bindings
->       dt-bindings: display: Add BCM2712 PixelValve bindings
->       dt-bindings: display: Add BCM2712 MOP bindings
->       dt-bindings: display: Add BCM2712 MOPLET bindings
->       dt-bindings: display: Add BCM2712 KMS driver bindings
->       drm/vc4: drv: Support BCM2712
->       drm/vc4: hvs: Add support for BCM2712 HVS
->       drm/vc4: crtc: Add support for BCM2712 PixelValves
->       drm/vc4: hdmi: Add support for BCM2712 HDMI controllers
->       drm/vc4: txp: Introduce structure to deal with revision differences
->       drm/vc4: txp: Rename TXP data structure
->       drm/vc4: txp: Add byte enable toggle bit
->       drm/vc4: txp: Add horizontal and vertical size offset toggle bit
->       drm/vc4: txp: Handle 40-bits DMA Addresses
->       drm/vc4: txp: Move the encoder type in the variant structure
->       drm/vc4: txp: Add a new TXP encoder type
->       drm/vc4: txp: Add support for BCM2712 MOP
->       drm/vc4: txp: Add BCM2712 MOPLET support
->       drm/vc4: Add additional warn_on for incorrect revisions
->       clk: bcm: rpi: Create helper to retrieve private data
->       clk: bcm: rpi: Add disp clock
->
->  .../bindings/display/brcm,bcm2711-hdmi.yaml        |   2 +
->  .../bindings/display/brcm,bcm2835-hvs.yaml         |   5 +-
->  .../bindings/display/brcm,bcm2835-pixelvalve0.yaml |   3 +
->  .../bindings/display/brcm,bcm2835-txp.yaml         |   5 +-
->  .../bindings/display/brcm,bcm2835-vc4.yaml         |   1 +
->  arch/arm64/boot/dts/broadcom/Makefile              |   1 +
->  arch/arm64/boot/dts/broadcom/bcm2712-d-rpi-5-b.dts |  37 +
->  arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts   |  42 +
->  arch/arm64/boot/dts/broadcom/bcm2712.dtsi          | 188 +++++
->  drivers/clk/bcm/clk-raspberrypi.c                  |  34 +-
->  drivers/gpu/drm/vc4/tests/vc4_mock.c               |   8 +-
->  drivers/gpu/drm/vc4/tests/vc4_test_pv_muxing.c     | 106 +--
->  drivers/gpu/drm/vc4/vc4_crtc.c                     |  96 ++-
->  drivers/gpu/drm/vc4/vc4_drv.c                      |  19 +-
->  drivers/gpu/drm/vc4/vc4_drv.h                      |  54 +-
->  drivers/gpu/drm/vc4/vc4_hdmi.c                     | 112 ++-
->  drivers/gpu/drm/vc4/vc4_hdmi.h                     |   4 +
->  drivers/gpu/drm/vc4/vc4_hdmi_phy.c                 | 640 +++++++++++++++
->  drivers/gpu/drm/vc4/vc4_hdmi_regs.h                | 217 ++++++
->  drivers/gpu/drm/vc4/vc4_hvs.c                      | 737 ++++++++++++++++--
->  drivers/gpu/drm/vc4/vc4_kms.c                      | 102 ++-
->  drivers/gpu/drm/vc4/vc4_plane.c                    | 866 ++++++++++++++++++++-
->  drivers/gpu/drm/vc4/vc4_regs.h                     | 297 +++++++
->  drivers/gpu/drm/vc4/vc4_txp.c                      |  91 ++-
->  include/soc/bcm2835/raspberrypi-firmware.h         |   1 +
->  25 files changed, 3464 insertions(+), 204 deletions(-)
-> ---
-> base-commit: 91e21479c81dd4e9e22a78d7446f92f6b96a7284
-> change-id: 20241002-drm-vc4-2712-support-9ad3236e3caf
->
-> Best regards,
-> --
-> Dave Stevenson <dave.stevenson@raspberrypi.com>
->
 
