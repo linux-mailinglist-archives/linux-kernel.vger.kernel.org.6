@@ -1,142 +1,141 @@
-Return-Path: <linux-kernel+bounces-417400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D56C9D5392
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:48:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D4A9D5394
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB1D1B22B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4BE283EB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DF41C9B68;
-	Thu, 21 Nov 2024 19:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9C81C879E;
+	Thu, 21 Nov 2024 19:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUVRg+Qw"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i/Kpp21V"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E314614F10E;
-	Thu, 21 Nov 2024 19:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA481C461C
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732218523; cv=none; b=Ogsh2RUEm4Ikg5meuJ8M/pTUy6wVZ42W89U+lY8fm69tRiftiWZ37SYI7rKXynNHfXiBXJXTQwc0FVMtPii0Lj0EuDgUFJxk7/m1I73w5I90xCCaMDCSB3sJAiB7yk9ob1SXa4Qys2iE0X5a7xqKEVf+eexhduDPF0C4OC54G9w=
+	t=1732218561; cv=none; b=uYC3oCvJGAcHR0EZ1vb8UquZ0mapwBLWHIr4BykTlgfRMwjg8MYOY1QGvvmQVbKqtqH/ftaYkKSVLv2Bo2Va4gyUxDKaxKBC8iwIyGX4MyB8SKSRXrm3wiDDsw4RCnfpTl7V1+XaXnBcNyJwKY37b6ljwpvjlZMTrT26u6vrGnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732218523; c=relaxed/simple;
-	bh=2mmxw9K5UaQSpBQU/eNyl68TYy8cqH/wCI4bKyVA72c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jk/5+hOpPHbvrmVayzCKck6vE8PnKaEz/01ux86VOnjwveJrmQFCKE4mMZct+L90zOkxgw63AFCPcRQum7carl7TFC709OXTsJN4FD4Si7YKR8/ZqhJOwlDGhe6sRg2E6gDQ9HDDsUlFyeUjp+4Zu0GmsuhDh2UQpxamHr8aN9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUVRg+Qw; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83aad4a05eeso50343339f.1;
-        Thu, 21 Nov 2024 11:48:41 -0800 (PST)
+	s=arc-20240116; t=1732218561; c=relaxed/simple;
+	bh=/EhwlAowUPBNCPPUkYBxaERl2CCDs7Vetj3wrmlCrDQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qxJUXN/v5t9y4piZtMkHPqkD8S6+S+nfhIMbX90gCk4xdamHDlqtcN/NaY+9rIA6Y6Ox2IbLIUdmPlZwRfv6bnxR0Vhi/WdCoEi5B9rukUANny6XXkrp+a3RiR7Tc0CM4622do+d3GznBL3S5zGWIYEvPr4B9wiQBPQrVg8pbp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i/Kpp21V; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eae6aba72fso25308927b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:49:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732218521; x=1732823321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2mmxw9K5UaQSpBQU/eNyl68TYy8cqH/wCI4bKyVA72c=;
-        b=VUVRg+QwDSUGxhyBiHEWVmX+SASSwXV+0mdLiCtN2jnYdYel+a/BrdEwHyZGRpluXr
-         M6YJHrzIBLE+uTchZN7gMTj3N42m005NieEiCo7b3aOzB6c4E/i+BeBA8AvG5RUnxzzB
-         dHKWkb//UZFQ7bNuJvm644wr+AQRHyRUUMJQxei/7+JsTnPRyoAdaH0jQQ37M0cYlEWs
-         Iao3+lU6ufOpHDI0Aw7S1D+u+vV0TENJNk3Mx82atoVG7/ZOQTVcZT87ygtvG1YkghW1
-         FbVquzi5tN3Ku/2S/9LF/fVnb3SJ/MST0wpAo/xFjpNa8+1XiewW+wmqg+X2hw+Geipf
-         fwjw==
+        d=google.com; s=20230601; t=1732218559; x=1732823359; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FlTVGm5qa99OPyjgK2sYE6lFf2Ldqoi0UzDo7GJSevQ=;
+        b=i/Kpp21VAn51ZqhFYF7Cjncw62474OtRtoADBZybA2vu4KJKFbuHjNPnKRWFVJyJTD
+         3oi81O6JEzL6EYC25sGd8tlur6uagkkqq+yGKfbMdg4jV9h1W9/ENHx5zqDc94xN7pAo
+         HYQsKjIB5RVBQUjII8LSTWffEmQAhZEvL8dKIQTGQf/XRAGsPx+rRmPJMl/YbxI3PQcx
+         1hdP6G7fAyUZvqtgnSdAVjvUvOroXezjkpbpalofx/uB74EIOv0LOhWuUktp1PB89o34
+         Q1Ij+O8U3lHzJc2bgo0BmWYK8jdecupw7t26906HnNHh0noFNIKxKEOCA3P4x+lQ9s4B
+         e1dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732218521; x=1732823321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2mmxw9K5UaQSpBQU/eNyl68TYy8cqH/wCI4bKyVA72c=;
-        b=T+Y9xLi4X+neSID0QbseL5g3iDJbNgE/zhXbUVZV3afrgxamab4bFqBHtOHDUamVPe
-         3QOqJzjw6Z7nu5fO++aBsr68GZOwRVxah8zrGaBfF5hQfdSHjrAw34OndmPhph2J07lC
-         RlHQe23g5rTjeyD2/Z14tYbdAJcZP6UQnbSLG68k4Pxo+BEFIQd9ZS1kHfNdTWTnMKJ9
-         UGCa01k780XxAxBVCJvDQtEHem1sZxWdiTayXmJ0kl9TPq8JqrOxSqVY55nNj08MIctR
-         3Mzt415Ui9ihBjikTMG6wQw+LfYHhBK0Y4GUXviUM2C08o3Nxpz1ROOJxx9HwZ3WKo8p
-         nUQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUruV1+KlIYpy/AGPtCyeeO9NywVzvJBq5vdYkXBNcP98aM0IwXI0+n8jOSwMu1cTYvAXvDLaiM64Qfg2RRJw==@vger.kernel.org, AJvYcCWCqFlnLSWjQfrViJUVX/EcTxUzhRuw1Sd+0Q7anAkQsjkX3143mqFJlIhePJJt/RQuSNqxQpKqkUZ8@vger.kernel.org, AJvYcCWzP0kaHENDQvNCrT6rDuDDemHhSauhg3cAlCoLFazUndTI3n/f71hWBPiZtMQ3wXhsriXjl3Yar9OOqC+j@vger.kernel.org, AJvYcCXMqDkBfAb4UURTX9IYJNA4bLqzkNz3wmjjj/R4Qx5aaBRgF1jSdRuNnHwbe1vaH7+1WZRQ+GtMMg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDROSNMfwseXyFAgwsr2zO8oTd0JfORmCS4oqVXOjcM+6rHCYB
-	SIIezJ89bczBJZtd97K7odrDVirmauR2gKQZHT2m3MuDbNJKSl0PiMmEQlME5MUZkWysLCeR4va
-	tleK0jdWZctsUP+mhg+fi/sAJ2jY=
-X-Gm-Gg: ASbGncvM9WZkgpRpDQlMxs8PyqiYX7sNkDz6bR6LekPe+ZjVUE+wxmWPYQ6YHHVbUx3
-	kDj2Wd2o5D7q3haVsBJ7oI61uLuMx38e8EdPQIwX1tWnSQJU+L1AWqfNvpU7ciA==
-X-Google-Smtp-Source: AGHT+IHdcAeKJTnbBs+MjzCxYbF1H9xK69rOeH8X0oOXQybp3afVqWQjay99oVRaX9L75eLDJV9epy2kOJM1zrHXieY=
-X-Received: by 2002:a05:6602:154d:b0:83a:872f:4b98 with SMTP id
- ca18e2360f4ac-83ecdc44f29mr19701639f.2.1732218521051; Thu, 21 Nov 2024
- 11:48:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732218559; x=1732823359;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FlTVGm5qa99OPyjgK2sYE6lFf2Ldqoi0UzDo7GJSevQ=;
+        b=q3Hs6pfwXcpj4ZpAlVs9wUfeflaBlKSz/B+4OlW3TQuCoWLLuEmlc7amYuNztmy9YU
+         guV9uQznSzqfqeM3JoKB+UHLN8s7Fcx92iZJFhp4sHevwqX//fJ1NfU0aN8NCyZBiCTl
+         cfkevfhCjvcHQOcOvsD5y8of9D0sCbe4AeeypqMiGQxdFLH7ILVv+7Nxqc2B3xwYLNYh
+         eWwly5WPK2FylaWbw47/DQGmp94NgXlyUo2LsdJ0hfGS+YQDoy06JrPXAoYJB2RXhP0Y
+         7lXLY+cdKPqfCzdc0ziyccZ0La+lqBi1RxqSLu6pVjcN5AzvLvQr1qpicmu4ecyqF0XZ
+         twQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDoQ/N0l9Ji4M5Mh6TJCgTV/Ir/oFdZkhmRszmVF1CcSXdsMCMtCTHLc0oRD+dw1XD0+gqUujFEkXDMZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8XUy7gcPsOYbXiAeMFzc4i3iL2JTTr+vZZDCi8wxtoVGGmuMq
+	JEPO3U5n3NfXfAwPZo18MY4yiRg7shW0Im86u2NQs/99zp0QFp512ECIgHk3tn5XirvZWhQqpLU
+	LFQT8E9iqjQ==
+X-Google-Smtp-Source: AGHT+IGJd7/uvd/MveJMgVETHnva4G0+/AAqBaP8ft/tMr6ZWbYv/L2EZ60cfLxbRKbHYVPTXuL+MmRYVE48xQ==
+X-Received: from tadamsjr.c.googlers.com ([fda3:e722:ac3:cc00:13f:f798:ac1c:499f])
+ (user=tadamsjr job=sendgmr) by 2002:a05:690c:288d:b0:62c:ea0b:a447 with SMTP
+ id 00721157ae682-6eee08a96cemr2517b3.2.1732218559215; Thu, 21 Nov 2024
+ 11:49:19 -0800 (PST)
+Date: Thu, 21 Nov 2024 11:49:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
- <20241119-topic-sm8x50-gpu-bw-vote-v2-3-4deb87be2498@linaro.org>
- <fkezpguictntg2wkouwqipnaaiauo6vu46n7a2xzvlorzvyeaw@bbcpj3bs5eko>
- <CAF6AEGs6zT_kaTXNohUaA7KWZxZTr4byaoMoLAceuyqA7S+2CQ@mail.gmail.com> <dtt6d427u5yep3i3b3zxxef7uh572aeu3vtatmjvpbqfpjbvjc@epkkr7oumncn>
-In-Reply-To: <dtt6d427u5yep3i3b3zxxef7uh572aeu3vtatmjvpbqfpjbvjc@epkkr7oumncn>
-From: Rob Clark <robdclark@gmail.com>
-Date: Thu, 21 Nov 2024 11:48:28 -0800
-Message-ID: <CAF6AEGsr2WoOdytWzDU_TJJh4myPj3B943LMisxisnA45rLFKA@mail.gmail.com>
-Subject: Re: [PATCH v2 03/11] drm/msm: adreno: move features bits in a
- separate variable
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+Message-ID: <20241121194915.3039073-1-tadamsjr@google.com>
+Subject: [PATCH] scsi: pm80xx: Do not use libsas port id
+From: TJ Adams <tadamsjr@google.com>
+To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Igor Pylypiv <ipylypiv@google.com>, Terrence Adams <tadamsjr@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 10:44=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Nov 20, 2024 at 10:54:24AM -0800, Rob Clark wrote:
-> > On Wed, Nov 20, 2024 at 3:18=E2=80=AFAM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > On Tue, Nov 19, 2024 at 06:56:38PM +0100, Neil Armstrong wrote:
-> > > > Now the features defines have the right name, introduce a features
-> > > > bitfield and move the features defines in it, fixing all code check=
-ing
-> > > > for them.
-> > > >
-> > > > No functional changes intended.
-> > >
-> > > I think it might be better to squahs this patch into the previous one=
-,
-> > > it would simplify checking that we use .quirks for ADRENO_QUIRK_foo a=
-nd
-> > > .features for ADRENO_FEAT_bar.
-> > >
-> >
-> > IMHO better to keep this separated
->
-> If they are separated, it is easy to overlook presense of a statement
-> checking .quirks against ADRENO_FEAT_bar.
+From: Igor Pylypiv <ipylypiv@google.com>
 
-Maybe just drop this patch.. we don't really have so many
-quirks+features so a single bitmask is fine and avoids this
-wrong-bitmask-problem in the first place.
+libsas port ids can differ from the controller's port ids.
+Using libsas port id to index pm8001_ha->port array is a bug.
 
-BR,
--R
+Remove sas_find_local_port_id(). We can use pm8001_ha->phy[phy_id].port
+to get the port id.
 
-> >
-> > But we don't have _that_ many features/quirks so I don't find
-> > combining them all that problematic
-> >
->
-> --
-> With best wishes
-> Dmitry
+Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+Signed-off-by: Terrence Adams <tadamsjr@google.com>
+---
+ drivers/scsi/pm8001/pm8001_sas.c | 21 ++-------------------
+ 1 file changed, 2 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
+index ee2da8e49d4c..061b57b1cc7a 100644
+--- a/drivers/scsi/pm8001/pm8001_sas.c
++++ b/drivers/scsi/pm8001/pm8001_sas.c
+@@ -374,23 +374,6 @@ static int pm8001_task_prep_ssp(struct pm8001_hba_info *pm8001_ha,
+ 	return PM8001_CHIP_DISP->ssp_io_req(pm8001_ha, ccb);
+ }
+ 
+- /* Find the local port id that's attached to this device */
+-static int sas_find_local_port_id(struct domain_device *dev)
+-{
+-	struct domain_device *pdev = dev->parent;
+-
+-	/* Directly attached device */
+-	if (!pdev)
+-		return dev->port->id;
+-	while (pdev) {
+-		struct domain_device *pdev_p = pdev->parent;
+-		if (!pdev_p)
+-			return pdev->port->id;
+-		pdev = pdev->parent;
+-	}
+-	return 0;
+-}
+-
+ #define DEV_IS_GONE(pm8001_dev)	\
+ 	((!pm8001_dev || (pm8001_dev->dev_type == SAS_PHY_UNUSED)))
+ 
+@@ -463,10 +446,10 @@ int pm8001_queue_command(struct sas_task *task, gfp_t gfp_flags)
+ 	spin_lock_irqsave(&pm8001_ha->lock, flags);
+ 
+ 	pm8001_dev = dev->lldd_dev;
+-	port = &pm8001_ha->port[sas_find_local_port_id(dev)];
++	port = pm8001_ha->phy[pm8001_dev->attached_phy].port;
+ 
+ 	if (!internal_abort &&
+-	    (DEV_IS_GONE(pm8001_dev) || !port->port_attached)) {
++	    (DEV_IS_GONE(pm8001_dev) || !port || !port->port_attached)) {
+ 		ts->resp = SAS_TASK_UNDELIVERED;
+ 		ts->stat = SAS_PHY_DOWN;
+ 		if (sas_protocol_ata(task_proto)) {
+-- 
+2.47.0.371.ga323438b13-goog
+
 
