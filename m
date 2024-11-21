@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-417023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7429D4DDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:35:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992D19D4E04
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8FAA1F24635
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:35:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E98BB22611
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983661D86C0;
-	Thu, 21 Nov 2024 13:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B871D8A16;
+	Thu, 21 Nov 2024 13:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bsl2xWmJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="BOhSEbm9"
+Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9EA74068;
-	Thu, 21 Nov 2024 13:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296281D9A60;
+	Thu, 21 Nov 2024 13:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196134; cv=none; b=lwrXJjD902Yrnt8t6LbTJnfocYjGGk2s+IgYrfym/k6/wHh5mRTUwb/9DQ9SNi9CbOgQM5EXs6fRmG1GRBSQKkxCP2P6YoqxBx09TBcPA0oNh5yOXDXWXVDrDd59samXg4byAu3bIy4e+3v3HpGklMA9b6tFgMjr9EX/Yxmpz3E=
+	t=1732196662; cv=none; b=i0qSKiH3Dy0vEzySrV/w8f7i0meE9TuS7fgxICTgukqwNtJZ+DTB+tcb4aTwf1smRkmGgpV6aJkh0n1T3m1aMN/B63dIw2NleiR2X1EBAwR76302xRXHjEd8Uu2z1bwJpaK3niGoofR4W/rxYng+DkEk2AhJ9MWbQih8b1Kf3W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196134; c=relaxed/simple;
-	bh=noycbgP4PsyZPywg+z9UDRP/hJOHtMDGqxpMFtsP7Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E2vtFAWjWlKrf+XxllMvhLP84g/DrVxD6b1iVEsFv4wYGmLi/4siaBpmjyV0FYuLKoEZXMVN4vRVb833mvC5v3WovU1b1y2fOsYSzlagGdMSG7qczx0WCY4QU6llRwZlz+FbxEvb8RigXquesbHI2iapPP0XF0cyPYkwVNL8tmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bsl2xWmJ; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732196133; x=1763732133;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=noycbgP4PsyZPywg+z9UDRP/hJOHtMDGqxpMFtsP7Nc=;
-  b=Bsl2xWmJQO3tOQV1ccKPsiMO4Wu2eht3Qm2i5nxokVUk72FwTrnGi8ld
-   iFOhs2pqfIL0dgYcSr+zN+RIxv3ZSRZJKyxEPVUppatk7GKKbV8o3CmEn
-   gFEH3Ln9wKVwlS3nfyCIgAxdTNm2nQssOPF3XW/wplTMnumS9TaYXKrtq
-   CE87TufHYKKkQAvYKL7oyHE3+Y1emWIrCiDjJXhHOi5lxsLl+ycBXtBaW
-   SC0EkIlxsmw+d4yIyZuJXc0HOEQieoeXVgULPY7tfP4u2a0O+2SNFUkkK
-   1Ez3KH+dMNM5mrv97Hkz6o/UQNivext/dfZIwhTDEGuXTmx1Kyx2XNW1k
-   Q==;
-X-CSE-ConnectionGUID: 9HhA71+sQeSboKq1CqFKtw==
-X-CSE-MsgGUID: ezlnj124R3W1wkgiI9RBfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43691378"
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
-   d="scan'208";a="43691378"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 05:35:32 -0800
-X-CSE-ConnectionGUID: vX4zYwK+TiyfLlEQtH1+5w==
-X-CSE-MsgGUID: 47aUcOP8S1m4WzoaVcLhZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
-   d="scan'208";a="90640279"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 05:35:29 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id D04E811F8D9;
-	Thu, 21 Nov 2024 15:35:26 +0200 (EET)
-Date: Thu, 21 Nov 2024 13:35:26 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
-	git@xilinx.com, Sam Bobrowicz <sam@elite-embedded.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
-Subject: Re: [PATCH] media: ov5640: fix get_light_freq on auto
-Message-ID: <Zz83Hh6gKCFkxWtI@kekkonen.localdomain>
-References: <cb9f8aca1f07472d4c794cc66ebbde1977ee9e95.1732195934.git.michal.simek@amd.com>
+	s=arc-20240116; t=1732196662; c=relaxed/simple;
+	bh=tqumU3GXnVmcrmQDrcmOrgl5O9MwV/8WU7lJpOWjZwY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Dxh/WScykPjnfJ4n9dKeVWUdfJATE4iJZfy6KH5PeArxbFIMlkPmjc6dTbW8Vlx5XZdRAAHh64sTqTGoXN2llDHJq88tzk/JirlAJ2zlskTEYpX6aeBR35p32TwBIsXWLOSXpgnM50h5l7fAdYXvXeymYat9xw3hpUqdjrsAcBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=BOhSEbm9; arc=none smtp.client-ip=178.154.239.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1c:320f:0:640:c550:0])
+	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 45318618E4;
+	Thu, 21 Nov 2024 16:37:47 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id hbThKc4Od8c0-ofwBpATU;
+	Thu, 21 Nov 2024 16:37:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1732196265; bh=aWaKJsPlggbH/UfOSNQmJxRwPNFPnRQJBjnFjQcmxpc=;
+	h=In-Reply-To:Cc:Date:References:To:Subject:From:Message-ID;
+	b=BOhSEbm9n04XPbf2GAaSdi4uT4NiV1xIHeDt8Er87+nW3Z9jpQVTC37hucUHw8Sk9
+	 n2dIFpEqSywoUiT8btU1pUAmPhB5bNulrkjvsfLrds4pCkQzSbvYn/+a4uLuhx/1uS
+	 Xd7FLIgRInkqhk9Wn0EvvHEbo6wdElBYUe/jChIk=
+Authentication-Results: mail-nwsmtp-smtp-production-main-19.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <170c8ac6-688e-4d41-82aa-f392872896e7@yandex.ru>
+Date: Thu, 21 Nov 2024 16:37:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cb9f8aca1f07472d4c794cc66ebbde1977ee9e95.1732195934.git.michal.simek@amd.com>
+User-Agent: Mozilla Thunderbird
+From: stsp <stsp2@yandex.ru>
+Subject: Re: [PATCH net-next v3] af_unix: pass pidfd flags via SCM_PIDFD cmsg
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: almasrymina@google.com, asml.silence@gmail.com, axboe@kernel.dk,
+ brauner@kernel.org, cyphar@cyphar.com, davem@davemloft.net,
+ edumazet@google.com, gouhao@uniontech.com, horms@kernel.org,
+ kees@kernel.org, krisman@suse.de, kuba@kernel.org, kuniyu@amazon.com,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, mhal@rbox.co,
+ netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com,
+ quic_abchauha@quicinc.com, shuah@kernel.org, tandersen@netflix.com,
+ viro@zeniv.linux.org.uk, willemb@google.com
+References: <20241116101120.323174-1-stsp2@yandex.ru>
+ <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
+Content-Language: en-US
+In-Reply-To: <20241121125732.88044-1-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Michal,
+21.11.2024 15:57, Alexander Mikhalitsyn пишет:
+> Hi Stas!
+>
+> Hmm, it is a bit unusual that SCM_PIDFD message format is different in case
+> when you send it and when you read it.
+>
+> I mean that when you read it (on the receiver side) you get pidfd file descriptor number,
+> while when you write it (on the sender side) you are only allowed to send one integer and this time it's
+> a pidfd file descriptor flags. I personally have nothing strictly against that but just found this
+> a bit unusual and probably confusing for userspace programmers.
+>
+> Compare it with SCM_CREDENTIALS, for instance, where we read/write the same structure struct ucred.
 
-On Thu, Nov 21, 2024 at 02:32:16PM +0100, Michal Simek wrote:
-> From: Sam Bobrowicz <sam@elite-embedded.com>
-> 
-> Light frequency was not properly returned when in auto
-> mode and the detected frequency was 60Hz.
-> 
-> Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
->  drivers/media/i2c/ov5640.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> index c1d3fce4a7d3..8566bc2edde9 100644
-> --- a/drivers/media/i2c/ov5640.c
-> +++ b/drivers/media/i2c/ov5640.c
-> @@ -1982,6 +1982,7 @@ static int ov5640_get_light_freq(struct ov5640_dev *sensor)
->  			light_freq = 50;
->  		} else {
->  			/* 60Hz */
-> +			light_freq = 60;
+SCM_PIDFD_FLAGS can be added instead.
+But as you currently can't send SCM_PIDFD,
+and won't be able to receive SCM_PIDFD_FLAGS
+if it is added, then nothing prevents the reuse
+of an existing value. So among the possible
+solutions is to have SCM_PIDFD_FLAGS as
+an alias to SCM_PIDFD.
 
-Any idea where this issue was introduced?
+Should I do that?
 
-It'd be good to add Fixes: and Cc: stable to this.
-
->  		}
->  	}
->  
-
--- 
-Regards,
-
-Sakari Ailus
+>> +				goto error;
+>> +			memcpy(&flags, CMSG_DATA(cmsg), sizeof(flags));
+>> +			err = pidfd_validate_flags(flags);
+> pidfd_validate_flags allows PIDFD_THREAD, but what's the idea behind this if
+> scm->pid is always a thread-group leader? (see maybe_add_creds() function).
+>
+> Sorry if I misunderstand something just want to ensure that we are on the same page.
+The idea is to cover only PIDFD_NONBLOCK
+for now, and add new flags after. Of course
+if PIDFD_NONBLOCK+future extensions sounds
+not very convincing, then I'll have to send those
+"new flag" patches together with this one.
+As you can see, the supplied test-case only
+covers PIDFD_NONBLOCK. You can decide
+whether or not it is valuable/acceptable on
+its own.
+Speaking of PIDFD_THREAD, one can add
+tid to creds for this to work. I don't need
+such functionality, so instead I can as well
+disallow sending this flag until someone
+else needs it. But it looks potentially useful,
+so adding tid can also be considered and
+looks simple enough.
+What do you think?
 
