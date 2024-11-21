@@ -1,138 +1,251 @@
-Return-Path: <linux-kernel+bounces-417516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7049D5506
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:50:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A379D550B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0270A1F22F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02A21F22FC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E991D04A0;
-	Thu, 21 Nov 2024 21:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 810451D89FE;
+	Thu, 21 Nov 2024 21:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqEskWsc"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kEIqPTG1"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C51883CDA;
-	Thu, 21 Nov 2024 21:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075B2200A3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732225817; cv=none; b=jl4zo+NzE5QRkPpd4xARXITeq1vlwRMSf0L73mbrfQDAqXxqXnD1VWlOhFo/0cwEWMKqlCj/OFb1pkiHhKPoRRjBMi579JonLyAVHoBMnDiHQ+UeW3mYrkkTQFI0xW0ufZAW1zlSUeIKplcCGo19FInD9S4OLTAtehgUONMY9E4=
+	t=1732225902; cv=none; b=E3588zR7GgVwFRDMNsOADHIPqipKeU/PJUTdfVzvHCa2byb9+bw+lSmR7LclvykH1/O3NgSmHOBHx6j/OU7ZpGJhTkSk2OWA1yTHKfsIrKXP2RYQWjuMwfzR6GXhokS0CV8FIV6vDz4LjlEdfjG0T6+Dmd7RT5Exwa29UpmhJSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732225817; c=relaxed/simple;
-	bh=DwdlUxpukKZkwXyn+QCfutFIDPcY/3c2VtfjLZ6kMGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UkuISjKMnM0HN4yEz9F4PHZFBoUvdh4gIsiQN3ME6SVZwPQSEyr9ScsEZR8rlZ2zT070/GalBUE2Lh/X+RZmj23DbZd/JLDnB2/5B3KozI6d+I/Ilq3ttbJ4b+aqKU1JLvFrsb3sRJMb2aJg0raS9xCBe8WFENtnsMf427HJOvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqEskWsc; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fbce800ee5so68718a12.2;
-        Thu, 21 Nov 2024 13:50:16 -0800 (PST)
+	s=arc-20240116; t=1732225902; c=relaxed/simple;
+	bh=CUHno2R/nqM+vBmK7dZ3xoXb1J1KeGJmhbGs1sQeZCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vv4jtXAHnndR7MlkvLcZ03h6Zapheu9YGpkCpFwXsoy7NO9wLNfvX4cGpTAgsa9ISuxGco6OoTuX3qbyDRMN4/Rnj1GsqTtRhXD8yTJjgsuh0jA83nG9rFqp7H/bAflP1NXWFtKBy8KwggDbZjcc+lmjT8Hliey55pg148S6OtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kEIqPTG1; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so900a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:51:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732225816; x=1732830616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tng0iyvmtAeQDH4O6wrIeK+ASsO/thRJgM2H3Zm+p88=;
-        b=fqEskWscDEdYN/aoKA9d5mRZrL4mMiTsEYDEIresXDwyQDPscL0IhwIoElDFfhJTlg
-         elfnBV08pLMly4iQi5mZIaHlxwCtKgrRxIbanREMZvC8QHHhL9eFDCqYx5YMDbFePp8+
-         HxY9ee9ns2fcPKZKck4pd9cZBpfKQT5fRe+OBJGQeRdef1vYZIRi4+1OY71sO9ZCf4CV
-         qP+wP65AcddZ1y4UafTB1c4Bq4x4uEz1l8Yhanff5dVG0k+Utz7qZ1ZOntTlhzr16HuH
-         xhG2MFDH3mAikEAUqKqSftfO6kDc1mFw0zKS/6Iy/cgELVjGkvFI5ECjkIYXrHxb81d5
-         xvJw==
+        d=google.com; s=20230601; t=1732225899; x=1732830699; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PHKKmDtuZBsmU0fuCBMeHOOxdDx2/H6XhfP9M3Cqc2M=;
+        b=kEIqPTG1CrpRFE7rljT36R+QGJJRvQbOsXgc6y6bNvGCNHni43f3mM3MT6Oc7/s63H
+         zLjcfQ57L6CaYZi5lyWy6SYSmmgt/u6ZU5qWC99X6XuONXmJCcqbM4HpDPEUeKQ2gmxX
+         BRrTaZBlnVGBdJ1vywdy7Y724MycmflrwQn8ljQ4zJrZ2+/JwOdgknsLMm44FhFZrTiR
+         TXT54MhQyjlQiqG+rBU/DxTx8bMaxzgJ1Mkoc04ULDAV4b3kgjDNpwvSEDsoBm9kW6+W
+         urLgndy088FSRM8FzgOSji1mzdsQMf9NJFARM5Jz+hpDYVBELN+CWPGwc21M50kwU1fm
+         b2og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732225816; x=1732830616;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732225899; x=1732830699;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tng0iyvmtAeQDH4O6wrIeK+ASsO/thRJgM2H3Zm+p88=;
-        b=cSS3nF4ezdBeK8BakgFfx2iw54c0eJLncQm9WLGwFCFN0nXk0H7uVQaT/U0nO7c9kH
-         YC/ktP4GzrBStsBSO/m1o+3HVHSPOV8xeCO4phSACvfNbsTqf5onqS/rwQvPnkI29FFm
-         zAYqT8//JHbpgntKrpQSI6fbdccKdgQHxefdkhkEWEJIa10VX3Uux120V25DbRkO8SrP
-         l7d5/6FIB/gw6AtleW3BxHjg0+u55kl8/31g2Ieo7Y6c0iGPrIu1or8CsgfT44wW9PYj
-         1/9FyA+LHu35UbTwnbR7c4pgCjOLG7ozLTBBJgqdh+0oVZ4JgaTNkMk95CPX2OBb7j31
-         y4Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1+uU7/AdEcvmz8kxIOLxS/nVHgipeXXRSBDNeaOhIw/MhLIonS9vp1tNlkAK8frXzlDSHkgeRb14=@vger.kernel.org, AJvYcCX1CcPb/A4BllIUmq3b3wesL6slLaAq31BB90CjMCm0+HQrhx7LwpXg2yqhyWsXoxhigZvw3TQi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3cOaW2xVyUfWeVvu5yGlvg3UyjOPJ9QOouoclwSafA0oROTX2
-	v0F62EnpL12KPu9aOS9JZziPFL7ODJAa0454fncXE8XlMjD46K0=
-X-Gm-Gg: ASbGncu0r0ls9kN1AsDivoX7avoxDw9+hzN//E+NGC/KBJ5pXxTs29H8uXz7cL7XAuM
-	1Gxo7QL6CHPVDUwc6sGwRNnV+RUHytvT/lfjYcWc7twJ5a1OLzRYzLQ7cd9paC3RewKzCrN2pAl
-	6c6ByMzTG2HT++1awoMDEj5XPoJZhnXWHI0YQeSeR/SpmgdRg9+mUW5332p6NUeC2Rc95ZyxGEG
-	sHXTpvDhrCLCawy/tICk4sHR8TYLGksDrbTGgpAuGfK1khFfNgyjggFQ7ES2UPK7M8QTF66S9A=
-X-Google-Smtp-Source: AGHT+IFrL3LRjMWyNkTLvHSkG1wjmyQiarccPferfkvjFV92RnjBWU69GI/bxyj1j4a0Zc0Tcgd/7A==
-X-Received: by 2002:a05:6a21:c20b:b0:1dc:77fc:1cdb with SMTP id adf61e73a8af0-1e09e40a5abmr495782637.13.1732225815616;
-        Thu, 21 Nov 2024 13:50:15 -0800 (PST)
-Received: from localhost.localdomain ([117.250.157.213])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc0f7dsm210334a12.12.2024.11.21.13.50.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 13:50:15 -0800 (PST)
-From: Vyshnav Ajith <puthen1977@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Vyshnav Ajith <puthen1977@gmail.com>
-Subject: Fix spelling and grammar mistake - bareudp.rst
-Date: Fri, 22 Nov 2024 03:19:11 +0530
-Message-ID: <20241121214911.9034-1-puthen1977@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=PHKKmDtuZBsmU0fuCBMeHOOxdDx2/H6XhfP9M3Cqc2M=;
+        b=Hq8HFASQ/Pq+Wc8LT0btYJhSt3Aq0ropZ/5PzpzubyzZC/gbEsD4SYiV8HNwIBSsNa
+         012NkIILZgyhqY1t+P4A14Oh6iX6NXrY51+4V2KuHGHN39771N2vZPaw6MbzOMUrhCZY
+         TGEFUvgdwTHFfUtAPTtQ4e3Bk/6Nxbuy4biG8trXDwFFxxv+tgw2MX4LateX6ZBAy9Cf
+         duj2oYfKO1upNIeR4IXbzw58pZG2ia64c2AMSqDutci6uRQ1oVD0MFhGYkc0D8XfiKTd
+         My+g0O4epwH+xXufHaXq0xEYMH+Iiif3pfrcZPKsJ0H+c3bGjI3i5LoSr4+LaL8Hoqp+
+         61rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZElH2pTKdU6lKKuFtlMU7CdUAZnEWM5pMhghbVSElPh+5jrYXRKBsft8z4XO1sQTnw+4h130X1TydijA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR+EHC7ZvxV1qBgus9TuzdCWmYt9zeWz7A7bq3e44VXvXmy2v5
+	bhCQfHCmirbV3yId/PXvEcvfQ8Mi9xYlXo2yLNJ6SQkcBstQxdAftJt7bI+73X0eInTqkr6AoHC
+	jjnAsEGebB1VwabK59GeNS2qJzGKMJjFxhHgw
+X-Gm-Gg: ASbGncsyTC7/eWk8FMqp36YGULdw0Xffm7eP2HRderDiXF8APLWl6A3YGRuPcluNk/f
+	nORBioi/0LfWzj2rf+cVgQITqGXQF0F/+r6e4q4jWKKeesfJ+T79LVZsk0srUg+6p
+X-Google-Smtp-Source: AGHT+IHZXqsbw6LTrWSKQk3j6sgwFD4xI5UHXnS7pvVevPPLF9iib3NRzS9gCFTmnjvbHI8Vhd+KqI0rHViR8+rmNRI=
+X-Received: by 2002:aa7:d6cd:0:b0:5cf:bd9a:41ec with SMTP id
+ 4fb4d7f45d1cf-5d01dcbf0c4mr18135a12.2.1732225899042; Thu, 21 Nov 2024
+ 13:51:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
+ <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
+ <ZyNr--iMz_6Fj4yq@bombadil.infradead.org> <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
+ <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org> <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
+ <ZyrRYUD0K1f7SwWg@bombadil.infradead.org> <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
+ <Zy1BVXgnT72Jt_HE@bombadil.infradead.org>
+In-Reply-To: <Zy1BVXgnT72Jt_HE@bombadil.infradead.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Thu, 21 Nov 2024 13:51:26 -0800
+Message-ID: <CAGSQo03nq5tnqyp8eDZYA7CbjUPZeKs+A33oeSw3znTO9GRF_g@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000638ddf062773456e"
 
-The BareUDP documentation had several grammar and spelling mistakes,
-making it harder to read. This patch fixes those errors to improve
-clarity and readability for developers.
+--000000000000638ddf062773456e
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
----
- Documentation/networking/bareudp.rst | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+On Thu, Nov 7, 2024 at 2:38=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org>=
+ wrote:
+>
+> On Wed, Nov 06, 2024 at 02:19:38PM -0800, Matthew Maurer wrote:
+> > >
+> > > > If booted against an old kernel, it will
+> > > > behave as though there is no modversions information.
+> > >
+> > > Huh? This I don't get. If you have the new libkmod and boot
+> > > an old kernel, that should just not break becauase well, long
+> > > symbols were not ever supported properly anyway, so no regression.
+> >
+> > Specifically, if you set NO_BASIC_MODVERSIONS, build a module, and
+> > then load said module with a kernel *before* EXTENDED_MODVERSIONS
+> > existed, it will see no modversion info on the module to check. This
+> > will be true regardless of symbol length.
+>
+> Isn't that just the same as disabling modverisons?
+>
+> If you select modversions, you get the options to choose:
+>
+>   - old modversions
+>   - old modversions + extended modversions
+>   - extended modversions only
 
-diff --git a/Documentation/networking/bareudp.rst b/Documentation/networking/bareudp.rst
-index b9d04ee6dac1..ce885caf24d3 100644
---- a/Documentation/networking/bareudp.rst
-+++ b/Documentation/networking/bareudp.rst
-@@ -6,16 +6,17 @@ Bare UDP Tunnelling Module Documentation
- 
- There are various L3 encapsulation standards using UDP being discussed to
- leverage the UDP based load balancing capability of different networks.
--MPLSoUDP (__ https://tools.ietf.org/html/rfc7510) is one among them.
-+MPLSoUDP (https://tools.ietf.org/html/rfc7510) is one among them.
- 
- The Bareudp tunnel module provides a generic L3 encapsulation support for
- tunnelling different L3 protocols like MPLS, IP, NSH etc. inside a UDP tunnel.
- 
- Special Handling
- ----------------
-+
- The bareudp device supports special handling for MPLS & IP as they can have
- multiple ethertypes.
--MPLS procotcol can have ethertypes ETH_P_MPLS_UC  (unicast) & ETH_P_MPLS_MC (multicast).
-+The MPLS protocol can have ethertypes ETH_P_MPLS_UC  (unicast) & ETH_P_MPLS_MC (multicast).
- IP protocol can have ethertypes ETH_P_IP (v4) & ETH_P_IPV6 (v6).
- This special handling can be enabled only for ethertypes ETH_P_IP & ETH_P_MPLS_UC
- with a flag called multiproto mode.
-@@ -52,7 +53,7 @@ be enabled explicitly with the "multiproto" flag.
- 3) Device Usage
- 
- The bareudp device could be used along with OVS or flower filter in TC.
--The OVS or TC flower layer must set the tunnel information in SKB dst field before
--sending packet buffer to the bareudp device for transmission. On reception the
--bareudp device extracts and stores the tunnel information in SKB dst field before
-+The OVS or TC flower layer must set the tunnel information in the SKB dst field before
-+sending the packet buffer to the bareudp device for transmission. On reception, the
-+bareUDP device extracts and stores the tunnel information in the SKB dst field before
- passing the packet buffer to the network stack.
--- 
-2.43.0
+Yes, what I'm pointing out is that kernels before the introduction of
+extended modversions will not know how to read extended modversions,
+and so they will treat modules with *only* extended modversions as
+though they have no modversions.
 
+>
+> > > I'm not quite sure I understood your last comment here though,
+> > > can you clarify what you meant?
+> > >
+> > > Anyway, so now that this is all cleared up, the next question I have
+> > > is, let's compare a NO_BASIC_MODVERSIONS world now, given that the
+> > > userspace requirements aren't large at all, what actual benefits does
+> > > using this new extended mod versions have? Why wouldn't a distro end
+> > > up preferring this for say a future release for all modules?
+> >
+> > I think a distro will end up preferring using this for all modules,
+> > but was intending to put both in for a transitional period until the
+> > new format was more accepted.
+>
+> The only thing left I think to test is the impact at runtime, and the
+> only thing I can think of is first we use find_symbol() on resolve_symbol=
+()
+> which it took me a while to review and realize that this just uses a
+> completely different ELF section, the the ksymtab sections which are spli=
+t up
+> between the old and the gpl section. But after that we use check_version(=
+).
+> I suspect the major overhead here is in find_symbol() and that's in no wa=
+y shape
+> or form affected by your changes, and I also suspect that since the
+> way you implemented for_each_modversion_info_ext() is just *one* search
+> there shouldn't be any penalty here at all. Given it took *me* a while
+> to review all this, I think it would be good for you to also expand your
+> cover letter to be crystal clear on these expectations to users and
+> developers and if anything expand on the Kconfig / and add documentation
+> if we don't document any of this.
+
+I can add a commit extending modules.rst, but it's not clear to me
+what piece was surprising here - the existing MODVERSIONS format is
+*also* in a separate section. Nothing written in the "Module
+Versioning" section has been invalidated that I can see.
+
+Things I could think to add:
+
+* Summary of the internal data format (seems odd, since the previous
+one isn't here, and I'd think that an implementation detail anyways)
+* A warning about the effects of NO_BASIC_MODVERSIONS (probably better
+in Kconfig, isn't in the current changeset because the flag isn't
+there)
+
+>
+> I'd still like to see you guys test all this with the new TEST_KALLSYMS.
+
+I've attached the results of running TEST_KALLSYMS - it appears to be
+irrelevant to performance, as you expected.
+
+>
+>   Luis
+
+--000000000000638ddf062773456e
+Content-Type: application/octet-stream; name=extended-log
+Content-Disposition: attachment; filename=extended-log
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3rujd550>
+X-Attachment-Id: f_m3rujd550
+
+VEFQIHZlcnNpb24gMTMKMS4uMQojIHRpbWVvdXQgc2V0IHRvIDQ1CiMgc2VsZnRlc3RzOiBtb2R1
+bGU6IGZpbmRfc3ltYm9sLnNoCiMKIyAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9z
+YmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAgICAgMjg4OTgwMzIgbnMg
+ICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAyMzY2MDAwIG5zICAgdXNlcl90aW1lCiMgICAg
+ICAgICAgICAgICAgMjA3ICAgICAgcGFnZS1mYXVsdHMKIwojICAgICAgICAwLjAyMDA4NTk5MSBz
+ZWNvbmRzIHRpbWUgZWxhcHNlZAojCiMgICAgICAgIDAuMDAyMzY2MDAwIHNlY29uZHMgdXNlcgoj
+ICAgICAgICAwLjAwMDAwMDAwMCBzZWNvbmRzIHN5cwojCiMKIwojICBQZXJmb3JtYW5jZSBjb3Vu
+dGVyIHN0YXRzIGZvciAnL3NiaW4vbW9kcHJvYmUgdGVzdF9rYWxsc3ltc19iJzoKIwojICAgICAg
+ICAgICAyNTMzMzY0MCBucyAgIGR1cmF0aW9uX3RpbWUKIyAgICAgICAgICAgICAgMzIwMDAgbnMg
+ICB1c2VyX3RpbWUKIyAgICAgICAgICAgIDIzNTcwMDAgbnMgICBzeXN0ZW1fdGltZQojICAgICAg
+ICAgICAgICAgIDIwNyAgICAgIHBhZ2UtZmF1bHRzCiMKIyAgICAgICAgMC4wMjQwODM5NTcgc2Vj
+b25kcyB0aW1lIGVsYXBzZWQKIwojICAgICAgICAwLjAwMDAzMjAwMCBzZWNvbmRzIHVzZXIKIyAg
+ICAgICAgMC4wMDIzNTcwMDAgc2Vjb25kcyBzeXMKIwojCiMKIyAgUGVyZm9ybWFuY2UgY291bnRl
+ciBzdGF0cyBmb3IgJy9zYmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAg
+ICAgMjUzOTg2MDAgbnMgICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAgIDMwMDAwIG5zICAg
+dXNlcl90aW1lCiMgICAgICAgICAgICAyMjY5MDAwIG5zICAgc3lzdGVtX3RpbWUKIyAgICAgICAg
+ICAgICAgICAyMDggICAgICBwYWdlLWZhdWx0cwojCiMgICAgICAgIDAuMDI0MDk1MjA0IHNlY29u
+ZHMgdGltZSBlbGFwc2VkCiMKIyAgICAgICAgMC4wMDAwMzAwMDAgc2Vjb25kcyB1c2VyCiMgICAg
+ICAgIDAuMDAyMjY5MDAwIHNlY29uZHMgc3lzCiMKIwpvayAxIHNlbGZ0ZXN0czogbW9kdWxlOiBm
+aW5kX3N5bWJvbC5zaAovc2VsZnRlc3RzICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIEVY
+VEVOREVECiMgQ09ORklHX1g4Nl9FWFRFTkRFRF9QTEFURk9STSBpcyBub3Qgc2V0CkNPTkZJR19F
+WFRFTkRFRF9NT0RWRVJTSU9OUz15CiMgQ09ORklHX05FVENPTlNPTEVfRVhURU5ERURfTE9HIGlz
+IG5vdCBzZXQKQ09ORklHX1NFUklBTF84MjUwX0VYVEVOREVEPXkKL3NlbGZ0ZXN0cyAjCg==
+--000000000000638ddf062773456e
+Content-Type: application/octet-stream; name=noextend-log
+Content-Disposition: attachment; filename=noextend-log
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3rujd5y1>
+X-Attachment-Id: f_m3rujd5y1
+
+VEFQIHZlcnNpb24gMTMKMS4uMQojIHRpbWVvdXQgc2V0IHRvIDQ1CiMgc2VsZnRlc3RzOiBtb2R1
+bGU6IGZpbmRfc3ltYm9sLnNoCiMKIyAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9z
+YmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAgICAgMzA0NzczNDggbnMg
+ICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAyNDk0MDAwIG5zICAgdXNlcl90aW1lCiMgICAg
+ICAgICAgICAgICAgMjA2ICAgICAgcGFnZS1mYXVsdHMKIwojICAgICAgICAwLjAyNDA3ODUyNyBz
+ZWNvbmRzIHRpbWUgZWxhcHNlZAojCiMgICAgICAgIDAuMDAyNDk0MDAwIHNlY29uZHMgdXNlcgoj
+ICAgICAgICAwLjAwMDAwMDAwMCBzZWNvbmRzIHN5cwojCiMKIwojICBQZXJmb3JtYW5jZSBjb3Vu
+dGVyIHN0YXRzIGZvciAnL3NiaW4vbW9kcHJvYmUgdGVzdF9rYWxsc3ltc19iJzoKIwojICAgICAg
+ICAgICAyNTI2NDM4NSBucyAgIGR1cmF0aW9uX3RpbWUKIyAgICAgICAgICAgICAgMzQwMDAgbnMg
+ICB1c2VyX3RpbWUKIyAgICAgICAgICAgIDIzNTEwMDAgbnMgICBzeXN0ZW1fdGltZQojICAgICAg
+ICAgICAgICAgIDIwNyAgICAgIHBhZ2UtZmF1bHRzCiMKIyAgICAgICAgMC4wMjQwODE5ODAgc2Vj
+b25kcyB0aW1lIGVsYXBzZWQKIwojICAgICAgICAwLjAwMDAzNDAwMCBzZWNvbmRzIHVzZXIKIyAg
+ICAgICAgMC4wMDIzNTEwMDAgc2Vjb25kcyBzeXMKIwojCiMKIyAgUGVyZm9ybWFuY2UgY291bnRl
+ciBzdGF0cyBmb3IgJy9zYmluL21vZHByb2JlIHRlc3Rfa2FsbHN5bXNfYic6CiMKIyAgICAgICAg
+ICAgMjUzMDA2NDQgbnMgICBkdXJhdGlvbl90aW1lCiMgICAgICAgICAgICAgIDMzMDAwIG5zICAg
+dXNlcl90aW1lCiMgICAgICAgICAgICAyMzA3MDAwIG5zICAgc3lzdGVtX3RpbWUKIyAgICAgICAg
+ICAgICAgICAyMDcgICAgICBwYWdlLWZhdWx0cwojCiMgICAgICAgIDAuMDI0MTA5NDA5IHNlY29u
+ZHMgdGltZSBlbGFwc2VkCiMKIyAgICAgICAgMC4wMDAwMzMwMDAgc2Vjb25kcyB1c2VyCiMgICAg
+ICAgIDAuMDAyMzA3MDAwIHNlY29uZHMgc3lzCiMKIwpvayAxIHNlbGZ0ZXN0czogbW9kdWxlOiBm
+aW5kX3N5bWJvbC5zaAovc2VsZnRlc3RzICMgemNhdCAvcHJvYy9jb25maWcuZ3ogfCBncmVwIEVY
+VEVORAojIENPTkZJR19YODZfRVhURU5ERURfUExBVEZPUk0gaXMgbm90IHNldAojIENPTkZJR19F
+WFRFTkRFRF9NT0RWRVJTSU9OUyBpcyBub3Qgc2V0CiMgQ09ORklHX05FVENPTlNPTEVfRVhURU5E
+RURfTE9HIGlzIG5vdCBzZXQKQ09ORklHX1NFUklBTF84MjUwX0VYVEVOREVEPXkKL3NlbGZ0ZXN0
+cyAjCgo=
+--000000000000638ddf062773456e--
 
