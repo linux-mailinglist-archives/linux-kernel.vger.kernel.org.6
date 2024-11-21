@@ -1,127 +1,94 @@
-Return-Path: <linux-kernel+bounces-417015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C279D4DB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:23:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D1B9D4DBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F03921F2188C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F8B31F22136
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200481D8DF6;
-	Thu, 21 Nov 2024 13:22:59 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453FD1D7E4E;
+	Thu, 21 Nov 2024 13:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmqbELAe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5C41D6DDA;
-	Thu, 21 Nov 2024 13:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F59D1369B4;
+	Thu, 21 Nov 2024 13:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732195378; cv=none; b=BefOBglntvLRcBxP8tjsdujm7uUa9mY/UMpLE8oYvubsrzAp9AvS76yaxU2vA+Pze3FSMa7el7zdr2udzbHQex/cWe8ygyW6ajrnxOyKb0FdDYjz8FxuWBaRCbrq0Zl3ReuRukxp37Tcb6dC8FwXSG5eJC0wjrbLFFdYe7wLm58=
+	t=1732195570; cv=none; b=cELZ+DBBDVP9brifHrQCiH2BPRfR76cExFvKaoSGTVEYxLEXwgmsGRdUXPwKrGVj6sU9XgQedClEwrdFvyErQvo4ZBrV8hTOoLnFLzSiWFwTzJxDpNZjr5+XpvjS8f2AYmSKt8HdlnUOdmsdoDQHT3VXIsuwzcQMCvJpFdB10P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732195378; c=relaxed/simple;
-	bh=FuXpVUzb7frRTs+C0WNM9a1LtzYMemKKFhUDyPOgmEY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F7uOGDH5pz60ZVmSXSg+Tve8B6xpoJ0K7qCmLkh6+O0Ua4xWS9GKOQ1+8SJAfU4qTB3VmDzdTMdAk8yyYwNH099zf347Jjrss4BZ7ny7Q1bidw+gS4rmCAA33KVhviz0F8Cwm9CoVbGNWFQRew8Cc1qpZvFJFxF2MBLL90JKMMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id E1EB2C3EEAC5;
-	Thu, 21 Nov 2024 14:22:51 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl E1EB2C3EEAC5
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: netdev <netdev@vger.kernel.org>
-Cc: Oliver Neukum <oneukum@suse.com>,  Andrew Lunn <andrew+netdev@lunn.ch>,
-  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
- <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo Abeni
- <pabeni@redhat.com>,  linux-usb@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Jose Ignacio Tornos Martinez
- <jtornosm@redhat.com>,  Ming Lei <ming.lei@canonical.com>
-Subject: Re: [PATCH] usbnet_link_change() fails to call netif_carrier_on()
-In-Reply-To: <m34j43gwto.fsf@t19.piap.pl> ("Krzysztof =?utf-8?Q?Ha=C5=82as?=
- =?utf-8?Q?a=22's?= message of
-	"Tue, 19 Nov 2024 14:46:59 +0100")
-References: <m34j43gwto.fsf@t19.piap.pl>
-Sender: khalasa@piap.pl
-Date: Thu, 21 Nov 2024 14:22:50 +0100
-Message-ID: <m35xogg1qt.fsf@t19.piap.pl>
+	s=arc-20240116; t=1732195570; c=relaxed/simple;
+	bh=hZb9UF78W9QUZ1OdfaHRv3ywLUoZJy5o2aNmapCr66w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGXR+ENu9YLv3G5kGeICGwtJsn68S9kBpMeaxC4EVNCaH2UlR8p7cYLRsPH5MMU52mYRc7kTbpc+LGYpuTjflq3Fg2cYGv7lN+x8KPYVc3cJzwmSh39EFuoZ249XC9odN8qWMpf7hPIvp6PURVPs9+/Ugl52DSKxgjYqAMiHgKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmqbELAe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7541C4CECC;
+	Thu, 21 Nov 2024 13:26:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732195570;
+	bh=hZb9UF78W9QUZ1OdfaHRv3ywLUoZJy5o2aNmapCr66w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JmqbELAeXzlIr62DDCRG8m/onu4eOrBFah0pJVjvY1R8AxxUsWrUk0e1eCvgtFd7x
+	 CmaYrZ7bFC+D/onUo1O7KTNY/qZ+OJ3sKDXhB0/BakZHT1tWIMuI9w38HHqsFuNo9G
+	 dD23+BkdYETu9JLQdS2zh8yLkqukuRqG+ly1yYPQ6kcPCUPywdkjC7eCgAQ4rn2Kvs
+	 6rHaEMzXrKK67mJVuTPCjuxwXTPRdW5E9zOdYlKW2/U6ZydZYO7VErHDbHcFIu4NLf
+	 CCzckaMl6z3rUdaDLkh2ZnX4JF//Ek/G4xux39mIFsRe2At/cMTzaAEyRIIW94ypLI
+	 xndc2NHY21wgQ==
+Date: Thu, 21 Nov 2024 06:26:08 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [GIT PULL] First batch of KVM changes for Linux 6.13 merge window
+Message-ID: <20241121132608.GA4113699@thelio-3990X>
+References: <20241120135842.79625-1-pbonzini@redhat.com>
+ <Zz8t95SNFqOjFEHe@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zz8t95SNFqOjFEHe@sashalap>
 
-Hi,
+On Thu, Nov 21, 2024 at 07:56:23AM -0500, Sasha Levin wrote:
+> Hi Paolo,
+> 
+> On Wed, Nov 20, 2024 at 08:58:42AM -0500, Paolo Bonzini wrote:
+> >      riscv: perf: add guest vs host distinction
+> 
+> When merging this PR into linus-next, I've started seeing build errors:
+> 
+> In file included from /builds/linux/arch/riscv/kernel/asm-offsets.c:12:
+> In file included from /builds/linux/arch/riscv/include/asm/kvm_host.h:23:
+> In file included from /builds/linux/arch/riscv/include/asm/kvm_vcpu_pmu.h:12:
+> In file included from /builds/linux/include/linux/perf/riscv_pmu.h:12:
+> /builds/linux/include/linux/perf_event.h:1679:64: error: too many arguments provided to function-like macro invocation
+>  1679 | extern unsigned long perf_misc_flags(struct perf_event *event, struct pt_regs *regs);
+>       |                                                                ^
+> /builds/linux/arch/riscv/include/asm/perf_event.h:15:9: note: macro 'perf_misc_flags' defined here
+>    15 | #define perf_misc_flags(regs) perf_misc_flags(regs)
+>       |         ^
+> 
+> Looks like this is due to 2c47e7a74f44 ("perf/core: Correct perf
+> sampling with guest VMs") which went in couple of days ago through
+> Ingo's perf tree and changed the number of parameters for
+> perf_misc_flags().
 
-I'm still trying to understand how is it all (phy + phylink) supposed to
-work. My adapter uses fixed PHY mode (uses a special SFP module and the
-ASIX AX88772B internal PHY, configured by internal SROM memory).
+There is a patch out to fix this but it seems like it needs to be
+applied during this merge?
 
-This is not a fixed *MII connection, though. This is a regular clause 22
-transceiver, a part of the ASIX MAC IC.
+https://lore.kernel.org/20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+https://lore.kernel.org/ZzxDvLKGz1ouWzgX@gmail.com/
 
-The MDIO registers are initialized (on power-up) to (BMCR) 0x2100 and
-(BMSR) 0x780D, meaning autonegotiation is supported but disabled,
-100 Mbps FD is selected. Link is established.
-
-Ethtool shows the following:
-        Supported link modes:   10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-        Supported pause frame use: Symmetric Receive-only
-        Supports auto-negotiation: Yes
-        Supported FEC modes: Not reported
-        Advertised link modes:  10baseT/Half 10baseT/Full
-                                100baseT/Half 100baseT/Full
-        Advertised pause frame use: Symmetric Receive-only
-        Advertised auto-negotiation: Yes
-        Advertised FEC modes: Not reported
-the above is generally true, but:
-        Speed: Unknown!
-        Duplex: Unknown! (255)
-        Auto-negotiation: on <<<<<<<<<<<<<<<<
-        Port: Twisted Pair
-        PHYAD: 10
-        Transceiver: internal
-        MDI-X: Unknown
-        Link detected: no <<<<<<<<<<<<<<<<
-
-Autonegotiation is definitely off.
-
-Perhaps this code is responsible (in phy_probe()):
-
-	if (!linkmode_test_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-			       phydev->supported))
-		phydev->autoneg =3D 0;
-
-Shouldn't it check if the actual PHY BMCR autoneg bit (aka 0.12) isn't
-zero, and if it is, set autoneg =3D 0?
-
-
-The other part which may be contributing (in genphy_update_link()):
-
-	/* Consider the case that autoneg was started and "aneg complete"
-	 * bit has been reset, but "link up" bit not yet.
-	 */
-	if (phydev->autoneg =3D=3D AUTONEG_ENABLE && !phydev->autoneg_complete)
-		phydev->link =3D 0;
-
-Since phydev->autoneg apparently means "autoneg is supported", the above
-doesn't seem very right.
-
-But I guess phydev->autoneg is supposed to mean "autoneg is actually
-enabled".
-
-What do you think?
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+Cheers,
+Nathan
 
