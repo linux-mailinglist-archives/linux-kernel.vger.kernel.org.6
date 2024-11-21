@@ -1,129 +1,73 @@
-Return-Path: <linux-kernel+bounces-417558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58539D55A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:46:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A2B9D55BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 509921F226C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F02C1F22652
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8DE1DDC26;
-	Thu, 21 Nov 2024 22:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7741DDC26;
+	Thu, 21 Nov 2024 22:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hhi5quU/"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kr6Sfjel"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23C123098E;
-	Thu, 21 Nov 2024 22:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32E15695;
+	Thu, 21 Nov 2024 22:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732229183; cv=none; b=AcJknMn+KPkIOrgt/KkqcS9YCh4+1HJFUTH8f5SRG1V7aZVStuhecSZ0zbKOMmZjutdU7PUw/g2l8u8HYeE8fZAcyRAAdTPDJc2W6xWy/cevYsgz+hRquJthn6eB+L9iM7OsCX2heIKDivmmXog7xgQJ4A0V0gi08equ/xO63i4=
+	t=1732229267; cv=none; b=pC60zInUooYJU+83oU2v3ykctBr3j5qEKuTsRbYaym/0YlYgAE1SYrXJoyZRFk/o0CJrG0XsZ31w5E4J5i6TlqSwrLuI/EXqpKIp5wkRNKkv0CABXsmvCdP0jLB4eVv2ahxraxL4e+t1ElmlC2JmcqZDECVdtJF747IIuaxtd3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732229183; c=relaxed/simple;
-	bh=B8qDvfPULVWvMgZkxlUWxZQtkkngTTpNRPkD7iLA/eU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W12tvZuA7VRyd/nv91jTNtCD69LB4PSkwzlsOYGIOP7cvUkX7F7XJs72oEcBX2GAIxaScX8fgKu/lWnCIwTlMlsLrhyixmEquKbYScWRYJrscHRzIko67hul6Ljv9A5Uut8Ru+knOPjsuHgvNykfJ94CqzBpCrBqy8NUhW63ErY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hhi5quU/; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21288402a26so14344055ad.0;
-        Thu, 21 Nov 2024 14:46:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732229181; x=1732833981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dz00sH94+EWwFPuEsmTdejC/s0s5/Fjq48pe4/Lh2Cs=;
-        b=Hhi5quU/1i8U8YNK7WikSRsaqGaMT4xVyQJC43ycztwCAVIlfssABbCIrWMa4n/h/8
-         5JZ+wF/SbBXyVesnd6gBUEqp0Ssk/8wAUTV5BGsNxhNY2Las0dhERNJs0daPz4nalCqL
-         ZiU8g5RlGhBmoj6C+ipaHIQ1nMlZTvdrdLLXbkGuHq632WaIXg1p2y2yJoHljhI2QaSK
-         f9a0NBVtzkGnPKGvxRqBofDw2nHhXeJ9Sd5nW2G+GjeKkN1Q3dBj8/m7MMOoi4KTt9lU
-         0OtsRTRiEiz2G1B8z5wTfcFUx2Ocfe7b0dELnD0tPdgwaiEvn+qX0TqwcjfNtAZlsteN
-         +mBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732229181; x=1732833981;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dz00sH94+EWwFPuEsmTdejC/s0s5/Fjq48pe4/Lh2Cs=;
-        b=nqIVYqbeZtsThLxPZ+B1K1XZlvtQYauKcWetS8UwvgBXL4QpobFQoaEHMX4Nsollgt
-         t6j3IYp7Kctstk45eKrsf2igbZpxLRE1LsbkH/YXLLf2QcgDY7KhUL2YhTcA+kXSl057
-         jNB+Zpc/eDoE5Z3/Pn1x59pF46oSQYbOyyPzAcg2Yg+jso3Gelk5dvN/wmSXfw4L/xIF
-         dMsmGxGFGRdz+2d+cVPS31vL3MHXoUIL4lF5OUqDVCAwNxp4F/TbbOUm1Wa1MtBFIhcF
-         jBXDrAohQSrYMPQuLM4S1bj69fsL/qJ0oJI5miCkeCQK5036YMVdRT0kbhmYVAXCoQ4I
-         RIxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMepCXB+4Z+Z7o844OULyqi231WNhWY7V/igqDLmVKVCLO2iw3DBCCJXoqgBnyhUcsHLVSUDs6w2o=@vger.kernel.org, AJvYcCVrw/MMLp481zrxq4O6ceUBis5dadKIYq2bTjZwALW7r6R76crubNgAXU3yHAEC/wi+G1wTweMFxNC/qKA9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuwVH+i/YcDhohK/KgvKoJ8IEBJt9TCNgJcth6bb3xBVBQ0mn9
-	dsmmSsAdoFhoO4j1etfnM8rANRoCTfic+bU8i66i77DccreMSuo=
-X-Gm-Gg: ASbGncuho190bOSafHoXCIqetOaBEMlZHtGOY6Mt0thtJyVFe4CsddmRp5W1JReLEAB
-	iHOlBHPxkJ2hFjd+NkbL+y52OlPMzkqpeTQjI8gg8vPEx6Kt5rMJiy9wrjiJKLOxs2jJfz5DHPR
-	1cE80/1lnxBxUZBJ7xbOhgnqVPSNLVXIQre87HBmWa7u29MPs0dnQfN7vAIGM3/xp3XaFDj0dA9
-	FpZPUlAhbFsGhH6U8la/6xxoJpgbK9H0DmtYGhDaenf6yn/252Ax8X2q1w7ExBm9NXuoHqjE6I=
-X-Google-Smtp-Source: AGHT+IFjRI1i6uSTwsAPegQoHq3JoUEKY1x5RTEXDctgnlWzpbgDhhm9fmHuaQl4nvuurvM3efYaow==
-X-Received: by 2002:a17:902:f711:b0:20c:dbff:b9d8 with SMTP id d9443c01a7336-2129f28a632mr11817765ad.37.1732229180892;
-        Thu, 21 Nov 2024 14:46:20 -0800 (PST)
-Received: from localhost.localdomain ([117.250.157.213])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8c760sm3502945ad.30.2024.11.21.14.46.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:46:20 -0800 (PST)
-From: Vyshnav Ajith <puthen1977@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	corbet@lwn.net
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vyshnav Ajith <puthen1977@gmail.com>
-Subject: Slight improvement in readability
-Date: Fri, 22 Nov 2024 04:16:04 +0530
-Message-ID: <20241121224604.12071-1-puthen1977@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1732229267; c=relaxed/simple;
+	bh=7Rh3LO8bqPl+/ohAPK4jPsOy54AsIdEjBGcFAnaoX30=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=TWFa1P15Bimts8R0U8A2/JMe+G9CdT1LSqxxaBw/PZugCpQ0MxeA4p1wgae2E3kNG7qO9sOQWABxOEFb2zbwHgndkMfXfauj06cUvK4v8TpUfNayqYChvYcwJCJhzOQ4fUQEblENlgFa+8/m1AU7X17EBoH05vQzmP1hvFAWj9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kr6Sfjel; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E7F0C4CED1;
+	Thu, 21 Nov 2024 22:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732229267;
+	bh=7Rh3LO8bqPl+/ohAPK4jPsOy54AsIdEjBGcFAnaoX30=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=kr6SfjelJOok2BAk5NttJJeRSCSP9LIRA2nnQ6AIHRy40vBdokk4vG6cYfgaqxbm1
+	 /MvRM9u5364nRdRVDJQaBD11YvDTsQYU/Pyyk2+EeFByqxKGKVDSMoykEKD231zHBM
+	 fo7tjbm//Zc7Gu9o2EJQ8qiCath8hV9t3mwFKxWqSuKL2GvK+U/dt/A1wtfEZ9dZH8
+	 WQTSNdC/6Uq9wXdPju688Tf/uYkojnK8xHJpEkrht9O42ZfzO0ij/BkfytoGXDUmHK
+	 86a2Mc/cDMw2tnH7MDV2wflzWpm41FYJZnjN+RiJj1TiNZI60IteAjvPPw86k7CgSp
+	 MyiJ1i/fYzykg==
+Message-ID: <1cbb46bd59a85c0eb0b2e8319bb7ec63.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-34-1cc2d5594907@raspberrypi.com>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com> <20241023-drm-vc4-2712-support-v1-34-1cc2d5594907@raspberrypi.com>
+Subject: Re: [PATCH 34/37] clk: bcm: rpi: Add disp clock
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
+To: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Dave Stevenson <dave.stevenson@raspberrypi.com>, David Airlie <airlied@gmail.com>, Florian Fainelli <florian.fainelli@broadcom.com>, Javier Martinez Canillas <javierm@redhat.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, =?utf-8?q?Ma=C3=ADra?= Canal <mcanal@igalia.com>, Michael Turquette <mturquette@baylibre.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Ray Jui <rjui@broadcom.com>, Rob Herring <robh@kernel.org>, Scott Branden <sbranden@broadcom.com>, Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, Will Deacon <will@kernel.org>
+Date: Thu, 21 Nov 2024 14:47:45 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Removed few extra spaces and changed from "a" to "an ISP"
+Quoting Dave Stevenson (2024-10-23 09:50:31)
+> From: Maxime Ripard <mripard@kernel.org>
+>=20
+> BCM2712 has an extra clock exposed by the firmware called DISP, and used
+> by (at least) the HVS. Let's add it to the list of clocks to register in
+> Linux.
+>=20
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
 
-Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
----
- Documentation/networking/eql.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/networking/eql.rst b/Documentation/networking/eql.rst
-index a628c4c81166..4f47121323c9 100644
---- a/Documentation/networking/eql.rst
-+++ b/Documentation/networking/eql.rst
-@@ -23,9 +23,9 @@ EQL Driver: Serial IP Load Balancing HOWTO
- 
-   Which is worse? A huge fee for a 56K leased line or two phone lines?
-   It's probably the former.  If you find yourself craving more bandwidth,
--  and have a ISP that is flexible, it is now possible to bind modems
-+  and have an ISP that is flexible, it is now possible to bind modems
-   together to work as one point-to-point link to increase your
--  bandwidth.  All without having to have a special black box on either
-+  bandwidth. All without having to have a special black box on either
-   side.
- 
- 
-@@ -288,7 +288,7 @@ EQL Driver: Serial IP Load Balancing HOWTO
-   the load across two or more Cirrus chips.
- 
-   The good news is that one gets nearly the full advantage of the
--  second, third, and fourth line's bandwidth.  (The bad news is
-+  second, third, and fourth line's bandwidth. (The bad news is
-   that the connection establishment seemed fragile for the higher
-   speeds.  Once established, the connection seemed robust enough.)
- 
--- 
-2.43.0
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
