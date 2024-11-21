@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-417022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222959D4DDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:34:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7429D4DDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A63D1B20AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8FAA1F24635
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF3C1D7E57;
-	Thu, 21 Nov 2024 13:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 983661D86C0;
+	Thu, 21 Nov 2024 13:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhP5tC6i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bsl2xWmJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2B574068;
-	Thu, 21 Nov 2024 13:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9EA74068;
+	Thu, 21 Nov 2024 13:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196084; cv=none; b=i4GTUYH+wEU5EyDX/aNBSnuoCUDBbt33awVFycbZWJ7Bboy5mUKlg9FyZBCazeW6de6bJAjL+VGaxR7ujTbtvncYn6ifFDQS/EsrdFv7jQnD4v3p7KxLHr/HdEA4nldAIosvllxjqQhb3KvTUBTU3k8L7OGTFT+itkmPbDWbMt0=
+	t=1732196134; cv=none; b=lwrXJjD902Yrnt8t6LbTJnfocYjGGk2s+IgYrfym/k6/wHh5mRTUwb/9DQ9SNi9CbOgQM5EXs6fRmG1GRBSQKkxCP2P6YoqxBx09TBcPA0oNh5yOXDXWXVDrDd59samXg4byAu3bIy4e+3v3HpGklMA9b6tFgMjr9EX/Yxmpz3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196084; c=relaxed/simple;
-	bh=3VAWSEMdPqFgjrGm6l2Uy/QQVQCT9+sxRgSacC4mFtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CuM3BdIq3CQ5DO/btsyGk77WYgnjxrusjFmmUpQzhuvKu+pcF9292SFZ+eIhDFei107ychDBbHQkorRZFQro+JquscLMlCtBvy4lKGDf0thqpNZ78d9jiWaHv5ZEhW9p3/+3ehBUPx5BXKvLCwM0Ew2oFZWxVguKOCs+R0qfb4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhP5tC6i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3127AC4CECC;
-	Thu, 21 Nov 2024 13:34:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732196083;
-	bh=3VAWSEMdPqFgjrGm6l2Uy/QQVQCT9+sxRgSacC4mFtU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YhP5tC6iyvSmiZslllmusYS0qVZ1CBR/TK+kr53RiIDmgUdQIPkUO6QYLOE8b1b8w
-	 hktIhfY5Mm4CMcJAPI8zx6o0UxBwDxaBusuUaQwRW029ZzmCrdSW9FepabmcZ7GWPq
-	 CYRoI+7yvhM4/VgiLyltwmHx6YcRGiVIg/jE9Ea2WK8YM/Avea1iiNFTQDXESuGInS
-	 gv8ZZswo6CPvtD6kIIrgLFk+P5G1Pj5NgqZqDzzvB9gsuZSdh2SnET5e3b2yEUfdGT
-	 FPqGg+/3kCeQ4WUmrkoS5bFlVpm955FHb/G1lb+Tz7OQuAHRJBEBPDHPd3YolmVbvc
-	 HAfWG9uvtGgVA==
-Message-ID: <0b9495e8-b89e-4fff-b7a0-060d7631522a@kernel.org>
-Date: Thu, 21 Nov 2024 14:34:35 +0100
+	s=arc-20240116; t=1732196134; c=relaxed/simple;
+	bh=noycbgP4PsyZPywg+z9UDRP/hJOHtMDGqxpMFtsP7Nc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2vtFAWjWlKrf+XxllMvhLP84g/DrVxD6b1iVEsFv4wYGmLi/4siaBpmjyV0FYuLKoEZXMVN4vRVb833mvC5v3WovU1b1y2fOsYSzlagGdMSG7qczx0WCY4QU6llRwZlz+FbxEvb8RigXquesbHI2iapPP0XF0cyPYkwVNL8tmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bsl2xWmJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732196133; x=1763732133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=noycbgP4PsyZPywg+z9UDRP/hJOHtMDGqxpMFtsP7Nc=;
+  b=Bsl2xWmJQO3tOQV1ccKPsiMO4Wu2eht3Qm2i5nxokVUk72FwTrnGi8ld
+   iFOhs2pqfIL0dgYcSr+zN+RIxv3ZSRZJKyxEPVUppatk7GKKbV8o3CmEn
+   gFEH3Ln9wKVwlS3nfyCIgAxdTNm2nQssOPF3XW/wplTMnumS9TaYXKrtq
+   CE87TufHYKKkQAvYKL7oyHE3+Y1emWIrCiDjJXhHOi5lxsLl+ycBXtBaW
+   SC0EkIlxsmw+d4yIyZuJXc0HOEQieoeXVgULPY7tfP4u2a0O+2SNFUkkK
+   1Ez3KH+dMNM5mrv97Hkz6o/UQNivext/dfZIwhTDEGuXTmx1Kyx2XNW1k
+   Q==;
+X-CSE-ConnectionGUID: 9HhA71+sQeSboKq1CqFKtw==
+X-CSE-MsgGUID: ezlnj124R3W1wkgiI9RBfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43691378"
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="43691378"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 05:35:32 -0800
+X-CSE-ConnectionGUID: vX4zYwK+TiyfLlEQtH1+5w==
+X-CSE-MsgGUID: 47aUcOP8S1m4WzoaVcLhZA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="90640279"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 05:35:29 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id D04E811F8D9;
+	Thu, 21 Nov 2024 15:35:26 +0200 (EET)
+Date: Thu, 21 Nov 2024 13:35:26 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
+	git@xilinx.com, Sam Bobrowicz <sam@elite-embedded.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	"open list:V4L2 CAMERA SENSOR DRIVERS" <linux-media@vger.kernel.org>
+Subject: Re: [PATCH] media: ov5640: fix get_light_freq on auto
+Message-ID: <Zz83Hh6gKCFkxWtI@kekkonen.localdomain>
+References: <cb9f8aca1f07472d4c794cc66ebbde1977ee9e95.1732195934.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: serial: Add a new compatible string for
- ums9632
-To: Stanislav Jakubek <stano.jakubek@gmail.com>, wenhua.lin@unisoc.com
-Cc: Zhaochen.Su@unisoc.com, Zhirong.Qiu@unisoc.com,
- baolin.wang@linux.alibaba.com, brgl@bgdev.pl, cixi.geng@linux.dev,
- conor+dt@kernel.org, devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, orsonzhai@gmail.com, robh@kernel.org,
- wenhua.lin1994@gmail.com, xiongpeng.wu@unisoc.com, zhang.lyra@gmail.com
-References: <Zz8m8PqHX_7VzgoP@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zz8m8PqHX_7VzgoP@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb9f8aca1f07472d4c794cc66ebbde1977ee9e95.1732195934.git.michal.simek@amd.com>
 
-On 21/11/2024 13:26, Stanislav Jakubek wrote:
-> Correct me if I'm wrong, but this patch seems incorrect to me.
-> The 1st patch suggets that the sc9632-uart is incompatible with sc9836-uart,
-> but here you make it fallback to it anyway.
+Hi Michal,
+
+On Thu, Nov 21, 2024 at 02:32:16PM +0100, Michal Simek wrote:
+> From: Sam Bobrowicz <sam@elite-embedded.com>
 > 
-> Also, both of the patches seem to have made it to linux-next without the
-> reviews/Acks from maintainers. Maybe Greg was a bit too fast here :)
+> Light frequency was not properly returned when in auto
+> mode and the detected frequency was 60Hz.
+> 
+> Signed-off-by: Sam Bobrowicz <sam@elite-embedded.com>
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> ---
+> 
+>  drivers/media/i2c/ov5640.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+> index c1d3fce4a7d3..8566bc2edde9 100644
+> --- a/drivers/media/i2c/ov5640.c
+> +++ b/drivers/media/i2c/ov5640.c
+> @@ -1982,6 +1982,7 @@ static int ov5640_get_light_freq(struct ov5640_dev *sensor)
+>  			light_freq = 50;
+>  		} else {
+>  			/* 60Hz */
+> +			light_freq = 60;
 
-Yeah, this looks odd and considering totally empty commit msg (nothing
-useful there), it looks like wrong choice.
+Any idea where this issue was introduced?
 
-Please explain the compatibility aspects. In the future: you have entire
-commit msg to describe the hardware, instead of repeating the obvious -
-what is visible from the diff.
+It'd be good to add Fixes: and Cc: stable to this.
 
-Best regards,
-Krzysztof
+>  		}
+>  	}
+>  
+
+-- 
+Regards,
+
+Sakari Ailus
 
