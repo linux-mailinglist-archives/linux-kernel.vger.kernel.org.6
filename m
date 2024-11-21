@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-417522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2449D551E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:02:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A9B9D5524
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6C5BB225D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5A591F23741
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C9E1DAC9D;
-	Thu, 21 Nov 2024 22:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEFA1DDC2D;
+	Thu, 21 Nov 2024 22:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="m6dPLELz"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArQcT4SL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D31A4F20;
-	Thu, 21 Nov 2024 22:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8674A1DDA37
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226550; cv=none; b=PoGOZJ/z6O9vMRb8uuWCg+29xN4o6OJD2CmZiWMz6E0yAvrN6x55ocRZjsW7oSbIyTQEB/jThEu13483Zvz3RCIK64zXEofEssCrwDKLn9wPHlNLpA11RVtzzFtclvNH1xN8GCG9qHkQwz2xrx9UJUlrViAqbsB7c0ETiWbe+wk=
+	t=1732226582; cv=none; b=HNgtyzF9EJA/qbuxEcbKhpDUTTrXMttSLdyEWM/nKzuEYIQKBzKMKcR4K/mVA+UrEyHyRyB/J72qeQnFDuTsErILXUdUZggJHtRIS1tZXG6QkLhngObNBs5wa60kdz3DUyu513m0l6JxTnNUzIkx1Iz5icjFL1JMiSN2d8K6so0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226550; c=relaxed/simple;
-	bh=oaON3TQHvbhvp5NiT5tAyPyIpSYNjJS8Ed01fZqfTkQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AltEtD3cSSBJeTL0X8b9IFcpFWkqoxuTvVDJpasJ6waMZ6UibuelPmmWDImUhagUj7RFQ+1KaeUzykb4BQHLwxd+/Y9Z9PR37vpnhgnOQTYbwPMVpzcYVEZV1I9BOWZUOyEIQG7XsX7z0yCoBbrCoYSDbs3dmZI7AF33kw2G3FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=m6dPLELz; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rfNI/i+YSTQUMN5oUVqKU2Gc86BnFPrR7NkR/sTSzuE=; t=1732226547; x=1732831347; 
-	b=m6dPLELz6cw5UqDORk/71vXVkzNUP2GKuf6imsM9Lp45ztbW6g6oQfocJYGtEE3f7U57bAQD1F0
-	E0SeiMzUG7e8PDk40b5xnUT+G7BtPyPnwDkYVh+Z8qDgC6P7E9ohIVNuukVWLAbrlH9TTuQUXp/y7
-	93RfY/XorciAHMERIoJiG8SZu9x9DAxOL3uevqyldpL+GQoQ77JJ5zgdobwmOapcVuF+o2ic+PXeZ
-	698u3KndRbSialBrWDlH72zMw8gBYtZGduaoP5Ls5R7RdTgv/Fma2Tx+Ja9EdwnFU/u1z2gox1bQ+
-	J5UME4amF0UIcRY8JeVyddLvmBn4euT8repg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1tEFFc-00000000dHE-23Pt; Thu, 21 Nov 2024 23:02:12 +0100
-Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1tEFFc-00000000hrq-0sIZ; Thu, 21 Nov 2024 23:02:12 +0100
-Message-ID: <d0d818bb9635d43bde2331864733504f6f7a3635.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Christoph Lameter
- <cl@linux.com>,  Pekka Enberg <penberg@kernel.org>, David Rientjes
- <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,  Andrew Morton
- <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Roman
- Gushchin	 <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Jens Axboe	 <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
- Mike@rox.of.borg, 	Rapoport@rox.of.borg, Christian Brauner
- <brauner@kernel.org>, Guenter Roeck	 <linux@roeck-us.net>, Kees Cook
- <keescook@chromium.org>, Jann Horn	 <jannh@google.com>
-Cc: linux-mm@kvack.org, io-uring@vger.kernel.org,
- linux-m68k@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Thu, 21 Nov 2024 23:02:11 +0100
-In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
-References: 
-	<80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1732226582; c=relaxed/simple;
+	bh=5QZQjErElj3y/LB+QkqUnurQSzrENiSCuB1glqrxbhw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rP/GyV/rxJ8zfZ5DqebMC4uYJLanFRP/AD25wzlwt05dCTu8GU/Hsc/NTVFWPvwEg9EJwLza3jAw7ynRu4PCCrVCbdSQrzhzB5OnwSuhqsD+G5rZRGEsCCH19yKROoI9pUWm2/OHB6lwTk8aM6RCQKpoibeKhy0hwXCsWyUaex8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArQcT4SL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732226579;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mF3+KWvgLxl5U2zTG2GYl36cA4R4ZAKeJVmHOspWrlw=;
+	b=ArQcT4SL2Uxtami2dmh1o72bKn/wh7X1pRFOp4kBAhI6nMheiVJfe9tigUw4o3TLtngF/M
+	dXrZWbQIc3Ac5C2/1DcLfY/yxB+Nh2n1oN73c+G6D9UNRxF2DiTs2FoVe6ktVuByb9YFFo
+	aIFzsn72z5wFxXgcrIfony3gbOc/lyk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-5HqZUzsAP3-yRf4VSj2Lvg-1; Thu,
+ 21 Nov 2024 17:02:56 -0500
+X-MC-Unique: 5HqZUzsAP3-yRf4VSj2Lvg-1
+X-Mimecast-MFC-AGG-ID: 5HqZUzsAP3-yRf4VSj2Lvg
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE30719560AF;
+	Thu, 21 Nov 2024 22:02:53 +0000 (UTC)
+Received: from bgurney-thinkpadp1gen5.remote.csb (unknown [10.22.65.81])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29D21195E481;
+	Thu, 21 Nov 2024 22:02:49 +0000 (UTC)
+From: Bryan Gurney <bgurney@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	kbusch@kernel.org,
+	hch@lst.de,
+	sagi@grimberg.me,
+	axboe@kernel.dk,
+	mpe@ellerman.id.au,
+	naveen@kernel.org,
+	maddy@linux.ibm.com,
+	kernel@xen0n.name
+Cc: jmeneghi@redhat.com,
+	bmarzins@redhat.com,
+	Bryan Gurney <bgurney@redhat.com>
+Subject: [PATCH 0/1] nvme: remove CONFIG_NVME_MULTIPATH
+Date: Thu, 21 Nov 2024 17:02:35 -0500
+Message-ID: <20241121220235.40576-1-bgurney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, 2024-11-20 at 13:46 +0100, Geert Uytterhoeven wrote:
-> On m68k, where the minimum alignment of unsigned long is 2 bytes:
+Device-mapper multipath will no longer be operating on NVMe devices,
+so the nvme.core.multipath module parameter can be removed.  This
+series also removes the CONFIG_NVME_MULTIPATH kconfig option.
 
-Well, well, well, my old friend strikes again ;-).
+This was tested on the nvme-6.13 branch (currently showing version
+6.12-rc4), with particular attention to tests nvme/033-036, and
+nvme/039.  These tests still passed after the removal of the
+CONFIG_NVME_MULTIPATH parameter (the tests use an "rc" function,
+_require_test_dev_is_not_nvme_multipath, that checks for
+"nvme-subsystem" in $TEST_DEV_SYSFS, so they do not check for the
+existence of CONFIG_NVME_MULTIPATH).
 
-These will always come up until we fix the alignment issue on m68k.
+The blktests test nvme/005 checks for the module parameter value of
+"nvme_core multipath", but this test gets skipped after this patch.
 
-Adrian
+Bryan Gurney (1):
+  nvme: always enable multipath
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+ arch/loongarch/configs/loongson3_defconfig |  1 -
+ arch/powerpc/configs/skiroot_defconfig     |  1 -
+ drivers/nvme/host/Kconfig                  |  9 --
+ drivers/nvme/host/Makefile                 |  3 +-
+ drivers/nvme/host/core.c                   | 17 +---
+ drivers/nvme/host/ioctl.c                  |  3 +-
+ drivers/nvme/host/multipath.c              | 10 +--
+ drivers/nvme/host/nvme.h                   | 97 +---------------------
+ drivers/nvme/host/sysfs.c                  |  6 --
+ 9 files changed, 7 insertions(+), 140 deletions(-)
+
+-- 
+2.45.2
+
 
