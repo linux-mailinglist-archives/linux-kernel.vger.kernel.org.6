@@ -1,138 +1,266 @@
-Return-Path: <linux-kernel+bounces-417489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2ACA9D54A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:22:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551249D54AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED502811EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCCD6B2488D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1EA1C9EBB;
-	Thu, 21 Nov 2024 21:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE801D79BE;
+	Thu, 21 Nov 2024 21:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEe87WBV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="UOloufYV"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EB51C2307
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC86199FC9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732224120; cv=none; b=hlJq4E/D5dPttiwYyj4+xvMrf2oM5dqFHfZHPCNFLnPes8emy3HSpMQKnlTj+Jp3LHNTMI9m6wGlfJGIXIPJZJAmwEfpbULDq73uAOBn2DUiPxlwr9PKgae9sbTuGMe4/0g1p6/qVRYXPBDuN7HKF5vKzWRIgjWGaV6v/oZz4Ys=
+	t=1732224192; cv=none; b=fhWXww0qr1fMf1tLxyKOGaoEu823VvTVPkypyS1TIPWuT/J6frKRumAOb17eQOFoZKPtSpGZEOsHD+yRht4dxF0ZAxkyvbEgXswRl+/4dThsp830tUD9Bxl1TRxkgPFC5XLb4GIKgvLZmr0jjPtba2+P1lVi2bPFX0gQZy/aLUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732224120; c=relaxed/simple;
-	bh=wkSwR0azkL3Md0QdDN3Ua8FtgvqdJdV9ATN18OO1n+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BZC/JSYc7kkdQO1YWQgyA8N3jn2kj4D+MvkBdTOX7UI5WiSidpgj42Av79C+Lah/DHEf0fWitPx2oTMxtpHH2ePa06bfKUqxpUp2Fvl2I1/2kjk9E+o0mp/bb6V64oqnl2OxfApwu0LURMrX7ODIunHW/wP4Vz4dumCZAAfMo3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEe87WBV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732224117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t92srYTLUbUpyPkHghmLUL2yaj5b2j3zDv6b9Le7YIU=;
-	b=QEe87WBVWNxLryi5JUFVJ+LdHmNIfIMF7eH1GQj8vAKWIP9CNQ76cuxaPgM9lWf2HKj/v9
-	w8GKwkVe5UKcmiaiELXqLGu/e4Za0qKuFUu7OSYV9YjA35VYIA/+OyE0eK3kwGlx39IDJ2
-	ZpTdzVXWapDNBlCCF5/H3RVxV4pbxro=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-WietTaCrNz6iMxytMUBaFg-1; Thu,
- 21 Nov 2024 16:21:54 -0500
-X-MC-Unique: WietTaCrNz6iMxytMUBaFg-1
-X-Mimecast-MFC-AGG-ID: WietTaCrNz6iMxytMUBaFg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25E511955EEA;
-	Thu, 21 Nov 2024 21:21:52 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.137])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4763F30000DF;
-	Thu, 21 Nov 2024 21:21:48 +0000 (UTC)
-Date: Thu, 21 Nov 2024 16:21:45 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
- busy CPU
-Message-ID: <20241121212145.GG394828@pauld.westford.csb>
-References: <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
- <20241112154140.GC336451@pauld.westford.csb>
- <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
- <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
- <20241114112854.GA471026@pauld.westford.csb>
- <20241119113016.GB66918@pauld.westford.csb>
- <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
- <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
- <20241121115628.GB394828@pauld.westford.csb>
- <20241121120704.GC394828@pauld.westford.csb>
+	s=arc-20240116; t=1732224192; c=relaxed/simple;
+	bh=qywTFtD+0BzuPwD45lQta1Z8qCtNKrwLzH2n/AAZxJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SwNLCAB2OkKDHcJVjoU7gtNbu9753xj2nbngkdivhRoQGv1igu3eRzjY6CdMnPsrQ1kBvPU/xXCSfn7G5SWsyWtZHloFh7bC7YEnbnQedOWJVU0RCI60uLaNe8+pKEk+q07M/YKiNz7tUy5SPnjge9eYIF4U4vNUs4I4nbqTCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=UOloufYV; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso24980921fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:23:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1732224188; x=1732828988; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QuEuA2H3TWnIAf5kbxkDhfjOrhOItH/ikPCn+mNuBSA=;
+        b=UOloufYVlw1TfRWIE6x1SbjxXnWauPoymuReaet4eIZrLNO9XN5Gnb9Jjh3yJ41dSt
+         7cNiB0Esg/3fCXz3XVJK6Q7NTiFjMaoSFKeejEvEpJeJmK3dcd2Umws5lJxOHI5BNGN7
+         cOlSlrikbaHhNfw5H+E6Okpmz4SAlFWxanu7FMYHhiWe9lHUH26b07dzhBVzs4CrQDZS
+         vvSMurCU+B2lU+8aKARvhOKUGohEV81O+Trd/CDkONTtkdXLsa9ATDGKAOzrhL6N5nwZ
+         1rfge98Bt9BbAfm9SuqtkBtV4O6qsCKdktVbXxC0bqRnl3ad20C3nSWNmAllKfUsQJWI
+         g9QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732224188; x=1732828988;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QuEuA2H3TWnIAf5kbxkDhfjOrhOItH/ikPCn+mNuBSA=;
+        b=GtWSnCXC0lLtDjzSHOkef7DxgBs9U/ZhFHBcp2A4i9jceMhvB47K0LQGZ4mPOHudKc
+         idhI2R6+/22DAgAEp7spcwcjq6UOhLSdAWLHIVKx6ccMRdz0sukcvB/HvcFkZJrYoEv0
+         a92cFrgVcD9nUn4XZlaK3T3tIYUbKCIhaYRlOneicKF8lbpR8Fa1axav9p5Qgo/lp0Gn
+         uhVhKlAAWW3q7on2iYa5IAjUmVUF0jR+bXRvopfNgFdr8YpqDuRCP+4T6hlKdohxF5Jv
+         k3QFWH/rPxoRj37w6Kxk7nTrFBlY5WKskluAfIdEv9LAMKB3TZ6mgzQQ1YtE5LwnLLN1
+         af6w==
+X-Forwarded-Encrypted: i=1; AJvYcCU0ZLGh5VOxdCc5pB1FZVs0WxDfASjYZetwJ20ROEveX1BGE0oFYjUrjlGCwA3mjxw/as77rQdB1VV14GA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3HnNQF7Z9W3q21WkQKC3l91Qdt6Rxv/jNDThfw0Rd1Aw61iNI
+	0Ygx9AV18fu6MYtyxxK48lpJxtTOHYKJ/8fdNoElTerJe0xOI/ehJyjJkETYD1M=
+X-Gm-Gg: ASbGnctyH/b8IF1aDjO2tWWFutwyicjIssX7dMv9H7+Zp9RSIuRVQGapT1aanjebf5r
+	78h1O1IG/uNAC/GWbfRot6gFND3orURRQPZOi/EZqMaUYd1FR9auybQjCEGxyvnbNbbbKk0WOdS
+	MDhqw4f0W7dWltCQiBMAb7PpdJHkFttIwUbwNQljkj9YJKyrHLnCdBiVJNOGNNmrKic6/5+UFXS
+	0dbeIPy3ea5RY1JauWbSKNNTvP4jtQ4PIeALjzqWKIPm37Qe6DGHAB0a3l11A4e1JOeBtt9B4vC
+	w+vNiUmYZA==
+X-Google-Smtp-Source: AGHT+IFxBGMOFADHnq6mp//A/vFyhDz1w54VlnkH3inEJ0BvqI+GY5tV6VrB71LNvlVlewsvGohUcQ==
+X-Received: by 2002:a2e:bc16:0:b0:2fa:d604:e519 with SMTP id 38308e7fff4ca-2ffa7106413mr1944051fa.11.1732224188433;
+        Thu, 21 Nov 2024 13:23:08 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:f55:fe70:5486:7392? ([2001:67c:2fbc:1:f55:fe70:5486:7392])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fb6asm15223466b.92.2024.11.21.13.23.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 13:23:07 -0800 (PST)
+Message-ID: <52661fed-f521-4cdc-b9e1-b4f3fa292e78@openvpn.net>
+Date: Thu, 21 Nov 2024 22:23:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v11 06/23] ovpn: introduce the ovpn_peer object
+To: Sergey Ryazanov <ryazanov.s.a@gmail.com>,
+ Sabrina Dubroca <sd@queasysnail.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-6-de4698c73a25@openvpn.net>
+ <b7d3ec11-afe4-409c-970e-8bc647364a08@gmail.com> <ZzORATd5hG614dta@hog>
+ <e543a3de-44f1-4a2d-90ef-1786e222f0d8@gmail.com> <ZzR5i9sO-xwoJcDB@hog>
+ <dc1b37b2-389a-466d-8559-14c496cc9583@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <dc1b37b2-389a-466d-8559-14c496cc9583@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121120704.GC394828@pauld.westford.csb>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 21, 2024 at 07:07:04AM -0500 Phil Auld wrote:
-> On Thu, Nov 21, 2024 at 06:56:28AM -0500 Phil Auld wrote:
-> > On Wed, Nov 20, 2024 at 07:37:39PM +0100 Mike Galbraith wrote:
-> > > On Tue, 2024-11-19 at 12:51 +0100, Mike Galbraith wrote:
-> > > > On Tue, 2024-11-19 at 06:30 -0500, Phil Auld wrote:
-> > > > >
-> > > > > This, below, by itself, did not do help and caused a small slowdown on some
-> > > > > other tests.� Did this need to be on top of the wakeup change?
-> > > >
-> > > > No, that made a mess.
-> > > 
-> > > Rashly speculating that turning mobile kthread component loose is what
-> > > helped your write regression...
-> > > 
-> > > You could try adding (p->flags & PF_KTHREAD) to the wakeup patch to
-> > > only turn hard working kthreads loose to try to dodge service latency.
-> > > Seems unlikely wakeup frequency * instances would combine to shred fio
-> > > the way turning tbench loose did.
-> > >
-> > 
-> > Thanks, I'll try that. 
-> >
+On 21/11/2024 00:22, Sergey Ryazanov wrote:
+> On 13.11.2024 12:03, Sabrina Dubroca wrote:
+>> 2024-11-13, 03:37:13 +0200, Sergey Ryazanov wrote:
+>>> On 12.11.2024 19:31, Sabrina Dubroca wrote:
+>>>> 2024-11-10, 15:38:27 +0200, Sergey Ryazanov wrote:
+>>>>> On 29.10.2024 12:47, Antonio Quartulli wrote:
+>>>>>> An ovpn_peer object holds the whole status of a remote peer
+>>>>>> (regardless whether it is a server or a client).
+>>>>>>
+>>>>>> This includes status for crypto, tx/rx buffers, napi, etc.
+>>>>>>
+>>>>>> Only support for one peer is introduced (P2P mode).
+>>>>>> Multi peer support is introduced with a later patch.
+>>>>>
+>>>>> Reviewing the peer creation/destroying code I came to a generic 
+>>>>> question.
+>>>>> Did you consider keeping a single P2P peer in the peers table as well?
+>>>>>
+>>>>> Looks like such approach can greatly simply the code by dropping 
+>>>>> all these
+>>>>> 'switch (ovpn->mode)' checks and implementing a unified peer 
+>>>>> management. The
+>>>>> 'peer' field in the main private data structure can be kept to 
+>>>>> accelerate
+>>>>> lookups, still using peers table for management tasks like removing 
+>>>>> all the
+>>>>> peers on the interface teardown.
+>>>>
+>>>> It would save a few 'switch(mode)', but force every client to allocate
+>>>> the hashtable for no reason at all. That tradeoff doesn't look very
+>>>> beneficial to me, the P2P-specific code is really simple. And if you
+>>>> keep ovpn->peer to make lookups faster, you're not removing that many
+>>>> 'switch(mode)'.
+>>>
+>>> Looking at the done review, I can retrospectively conclude that I 
+>>> personally
+>>> do not like short 'switch' statements and special handlers :)
+>>>
+>>> Seriously, this module has a highest density of switches per KLOC 
+>>> from what
+>>> I have seen before and a major part of it dedicated to handle the 
+>>> special
+>>> case of P2P connection.
+>>
+>> I think it's fine. Either way there will be two implementations of
+>> whatever mode-dependent operation needs to be done. switch doesn't
+>> make it more complex than an ops structure.
+>>
+>> If you're reading the current version and find ovpn_peer_add, you see
+>> directly that it'll do either ovpn_peer_add_mp or
+>> ovpn_peer_add_p2p. With an ops structure, you'd have a call to
+>> ovpn->ops->peer_add, and you'd have to look up all possible ops
+>> structures to know that it can be either ovpn_peer_add_mp or
+>> ovpn_peer_add_p2p. If there's an undefined number of implementations
+>> living in different modules (like net_device_ops, or L4 protocols),
+>> you don't have a choice.
+>>
+>> xfrm went the opposite way to what you're proposing a few years ago
+>> (see commit 0c620e97b349 ("xfrm: remove output indirection from
+>> xfrm_mode") and others), and it made the code simpler.
 > 
-> Also, fwiw, I think there is another report here
+> I checked this. Florian did a nice rework. And the way of implementation 
+> looks reasonable since there are more than two encapsulation modes and 
+> handling is more complex than just selecting a function to call.
 > 
-> https://lore.kernel.org/lkml/392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com/
-> 
-> which seems to be the same thing but mis-bisected. I've asked them to try
-> with NO_DELAY_DEQUEUE just to be sure.  But it looks like a duck.
->
+> What I don't like about switches, that it requires extra lines of code 
+> and pushes an author to introduce a default case with error handling. It 
+> was mentioned that the module unlikely going to support more than two 
+> modes. In this context shall we consider ternary operator usage. E.g.:
 
-But it does not quack like one.  Their issue did not go away with
-NO_DELAY_DEQUEUE so something different is causing that one.
-
+the default case can actually be dropped. That way we can have the 
+compiler warn when one of the enum values is not handled in the switch 
+(should there be a new one at some point).
+However, the default is just a sanity check against future code changes 
+which may introduce a bug.
 
 > 
-> Cheers,
-> Phil
+> next_run = ovpn->mode == OVPN_MODE_P2P ?
+>             ovpn_peer_keepalive_work_p2p(...) :
+>             ovpn_peer_keepalive_work_mp(...);
+
+I find this ugly to read :-)
+The switch is much more elegant and straightforward.
+
+Do you agree this is getting more into a bike shed coloring discussion? :-D
+
+Since there is not much gain in changing approach, I think it is better 
+if the maintainer picks a style that he finds more suitable (or simply 
+likes more). no?
+
+> 
+>>> And back to the hashtable(s) size for the MP mode. 8k-bins table looks a
+>>> good choice for a normal server with 1-2Gb uplink serving up to 1k
+>>> connections. But it sill unclear, how this choice can affect 
+>>> installations
+>>> with a bigger number of connections? Or is this module applicable for
+>>> embedded solutions? E.g. running a couple of VPN servers on a home 
+>>> router
+>>> with a few actual connections looks like a waste of RAM. I was about to
+>>> suggest to use rhashtable due to its dynamic sizing feature, but the 
+>>> module
+>>> needs three tables. Any better idea?
+>>
+>> For this initial implementation I think it's fine. Sure, converting to
+>> rhashtable (or some other type of dynamically-sized hashtable, if
+>> rhashtable doesn't fit) in the future would make sense. But I don't
+>> think it's necessary to get the patches into net-next.
+
+Agreed. It's in the pipe (along with other features that I have already 
+implemented), but it will come later.
+
+Regards,
+
+> 
+> Make sense. Thanks for sharing these thoughts.
 > 
 > -- 
-> 
-> 
+> Sergey
 
 -- 
+Antonio Quartulli
+OpenVPN Inc.
 
 
