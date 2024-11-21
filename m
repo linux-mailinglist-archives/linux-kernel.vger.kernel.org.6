@@ -1,128 +1,149 @@
-Return-Path: <linux-kernel+bounces-417224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49E49D50E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:47:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F3F9D50E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6DB1F23131
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58C3EB23D89
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6519EEA1;
-	Thu, 21 Nov 2024 16:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE21B1A08A3;
+	Thu, 21 Nov 2024 16:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCqQ3o25"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Wfo0huLF"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C2D130E27;
-	Thu, 21 Nov 2024 16:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A337874C08;
+	Thu, 21 Nov 2024 16:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732207610; cv=none; b=a6/hAk84utHqg5Mo6f/3+G++C8ijcr+QMWx8n6LIRNWF30rgxwVUyMxnt6oaMsc9OuyR+zDwPNu//P6t9myQvC9JeyfXC4DIF/G9JQ4YzvzYmYZu1s9KZxPRhojkcQeX7+DF51enTIurKqof1HhgWBM9LmFxiCGn3PxvcIS71Po=
+	t=1732207627; cv=none; b=olrh3mApSuZRGl/lM1pY54x0eNjpKxsA6XwwhvBSyy0yL8NfS8S8AKXSqlAOecK9ltldnD83rOIjmB+xQDILTHboacse39VTmt6b1J5IsZoZ+7Ek0bsvjUJnEvpknmQHyJD6ZV0Bfv0tqhEVEzjliWUa2AhVzHfYhhgY8Wjy+YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732207610; c=relaxed/simple;
-	bh=fTV7N3XK38wOcga7Asc8Yj7zbLcQNsiiS8PEJTraF5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HKMiyVW0YVJvB6eYu5sRxOccNgBSLiZKJyvIVrBoOHCXScq3ZW89cAbJuq4kAGnVaOKheJO9+jduW5Q2mY3daoIcqKIP3RC7LPq7lQKFQ63n6N11TSlfTe4EY9Cbpmz6sfKesO8TWx5ILfznspQWhy99w/aRx9cEMsdyF7UhSdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCqQ3o25; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1274BC4CECC;
-	Thu, 21 Nov 2024 16:46:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732207610;
-	bh=fTV7N3XK38wOcga7Asc8Yj7zbLcQNsiiS8PEJTraF5s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=aCqQ3o250uicq6U7i22m1xLP1NvfMLncxBVdHciwiiuGr07OJBeeLn7KeSTkgRvAz
-	 KlvMCLVZnacSHk2kh/qu3dHJBRvTcYCpiNjnNx0xUOo8Zfk0I5rdBeyCLiiZaVwUcb
-	 udXET/8Tx2Tm5cNMEoYZfrPmdlYwbZ3uNe1uOn1W1lEbadB/trzThVA9cWMgWEjXrS
-	 AuZtCflFCN6dMrf833tRfKA5IMRyT5yRzDG5Yqq55VLN0Z9nvnh4tifVXmBa8y8MVv
-	 pnf+DZkzFPN8bpGIdJkgsMN5IJUcSH1a39MoH2flnykN/Mp1rQSMt1LaeIJjZAh6AQ
-	 +vkHXXrLG0Epw==
-Date: Thu, 21 Nov 2024 10:46:48 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	stable+noautosel@kernel.org, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
-Message-ID: <20241121164648.GA2387727@bhelgaas>
+	s=arc-20240116; t=1732207627; c=relaxed/simple;
+	bh=sCB9dkVcUaWIcMEgrF4mHxRVyYpDcDGowhkhLz/S/mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m3p/lEtBVJzaJD0eOtq1ylnb2kS/ivw1I8S4M/JVhhg3EIAmaY7ZFvBdzsmq72Q4x2YNLw0lqhE+gHkgPHX2dhFGQ/XUG9Bs68s+V1dE8P5q6bVFWDWYpa3sfJ2HpgbHyf9QHeQJRquqXdWA1SKK/xtUovkHdIPcCuSe0Jji1fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Wfo0huLF; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732207626; x=1763743626;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=3rYcatr6xn14OakYphLU6gjqCUo8BfUaPtrhEVfRA6s=;
+  b=Wfo0huLFBzg6G9wcgDdl5WeQ5/i7GGsDpsnlBmkXHrELNQ6Vhp0HfMk0
+   2DeCtMbpze+SBJYRclu4xC4IiX1v0PcgTNDGQYxUMHLrP61qRZ7SRFvVK
+   PLwjKYgjsm8gBAImml9xmW+tpT5S3Kn9YpG0LyTKIVCwrFVS75fBRW57n
+   w=;
+X-IronPort-AV: E=Sophos;i="6.12,173,1728950400"; 
+   d="scan'208";a="354610907"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 16:47:03 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:42989]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.9.62:2525] with esmtp (Farcaster)
+ id 84b57715-564e-4b10-a824-6b676d02ad0e; Thu, 21 Nov 2024 16:47:01 +0000 (UTC)
+X-Farcaster-Flow-ID: 84b57715-564e-4b10-a824-6b676d02ad0e
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 21 Nov 2024 16:47:01 +0000
+Received: from [192.168.3.109] (10.106.83.32) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 21 Nov 2024
+ 16:47:00 +0000
+Message-ID: <8ac0e3e6-5af3-4841-b3ba-ab0458ab355b@amazon.com>
+Date: Thu, 21 Nov 2024 16:46:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121094020.3679787-1-wenst@chromium.org>
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+To: David Hildenbrand <david@redhat.com>, <pbonzini@redhat.com>,
+	<corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>, "Sean
+ Christopherson" <seanjc@google.com>, <linux-mm@kvack.org>
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <08aeaf6e-dc89-413a-86a6-b9772c9b2faf@amazon.com>
+ <01b0a528-bec0-41d7-80f6-8afe213bd56b@redhat.com>
+ <efe6acf5-8e08-46cd-88e4-ad85d3af2688@redhat.com>
+ <55b6b3ec-eaa8-494b-9bc7-741fe0c3bc63@amazon.com>
+ <9286da7a-9923-4a3b-a769-590e8824fa10@redhat.com>
+ <f55d56d7-0ab9-495f-96bf-9bf642a9762d@redhat.com>
+ <03a12598-74aa-4202-a79a-668b45dbcc47@amazon.com>
+ <74cbda4a-7820-45a9-a1b2-139da9dae593@redhat.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <74cbda4a-7820-45a9-a1b2-139da9dae593@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D003EUB003.ant.amazon.com (10.252.51.36) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-[+cc OF folks]
 
-On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
-> A PCI device normally does not have a device node, since the bus is
-> fully enumerable. Assuming that a device node is presence is likely
-> bad.
 
-> The newly added pwrctl code assumes such and crashes with a NULL
-> pointer dereference.
+On 20/11/2024 18:29, David Hildenbrand wrote:
+ > Any clue how your new ioctl will interact with the WIP to have shared
+ > memory as part of guest_memfd? For example, could it be reasonable to
+ > "populate" the shared memory first (via VMA) and then convert that
+ > "allocated+filled" memory to private?
 
-> Besides that, of_find_device_by_node(NULL)
-> is likely going to return some random device.
+Patrick and I synced internally on this.  What may actually work for 
+guest_memfd population is the following.
 
-I thought this sounded implausible, but after looking at the code, I
-think you're right, because bus_find_device() will use
-device_match_of_node(), which decides the device matches if
-"dev->of_node == np" (where "np" is NULL in this case).
+Non-CoCo use case:
+  - fallocate syscall to fill the page cache, no page content 
+initialisation (like it is now)
+  - pwrite syscall to initialise the content + mark up-to-date (mark 
+prepared), no specific preparation logic is required
 
-I'm sure many devices will have "dev->of_node == NULL", so it does
-seem like of_find_device_by_node(NULL) will return the first one it
-finds.
+The pwrite will have "once" semantics until a subsequent 
+fallocate(FALLOC_FL_PUNCH_HOLE), ie the next pwrite call will "see" the 
+page is already prepared and return EIO/ENOSPC or something.
 
-This seems ... pretty janky and unexpected to me, but it's been this
-way for years, so maybe it's safe?  Cc'ing the OF folks just in case.
+SEV-SNP use case (no changes):
+  - fallocate as above
+  - KVM_SEV_SNP_LAUNCH_UPDATE to initialise/prepare
 
-> Reported-by: Klara Modin <klarasmodin@gmail.com>
-> Closes: https://lore.kernel.org/linux-pci/a7b8f84d-efa6-490c-8594-84c1de9a7031@gmail.com/
-> Fixes: cc70852b0962 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: stable+noautosel@kernel.org         # Depends on power supply check
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->  drivers/pci/bus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+We don't think fallocate/pwrite have dependencies on current->mm 
+assumptions that Paolo mentioned in [1], so they should be safe to be 
+called on guest_memfd from a non-VMM process.
+
+[1]: 
+https://lore.kernel.org/kvm/20241024095429.54052-1-kalyazin@amazon.com/T/#m57498f8e2fde577ad1da948ec74dd2225cd2056c
+
+ > Makes sense. Best we can do is:
+ >
+ > anon: work only on page tables
+ > shmem/guest_memfd: work only on pageacache
+ >
+ > So at least "only one treelike structure to update".
+
+This seems to hold with the above reasoning.
+
+ > --
+> Cheers,
 > 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 98910bc0fcc4..eca72e0c3b6c 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -405,7 +405,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->  	 * before PCI client drivers.
->  	 */
->  	pdev = of_find_device_by_node(dn);
-> -	if (pdev && of_pci_supply_present(dn)) {
-> +	if (dn && pdev && of_pci_supply_present(dn)) {
+> David / dhildenb 
 
-Thanks for this fix.  Krzysztof restored the NULL pointer check in
-of_pci_supply_present(), so of_pci_supply_present(NULL) will return
-false, which should also solve this problem.
-
-If of_find_device_by_node(NULL) returned NULL, we wouldn't need this,
-but for now I guess we do.
-
->  		if (!device_link_add(&dev->dev, &pdev->dev,
->  				     DL_FLAG_AUTOREMOVE_CONSUMER))
->  			pci_err(dev, "failed to add device link to power control device %s\n",
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
 
