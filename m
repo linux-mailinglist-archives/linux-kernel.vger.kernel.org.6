@@ -1,201 +1,235 @@
-Return-Path: <linux-kernel+bounces-417048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F7B9D4E42
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:05:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A595E9D4E48
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62041F2307D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:05:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6596D28328B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EBB1D90B6;
-	Thu, 21 Nov 2024 14:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACC01D932F;
+	Thu, 21 Nov 2024 14:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jvZ+xgWX"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ecn6E2ar"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09BF1D6DB5
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4878D1D0B8B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197900; cv=none; b=V6ocCKUSG+wJGle6DftbusFQZTVDIavXJT/YpSUtavLj8MYut+nRkAHdY3vKhTY4WhkC8wne3t3H32bTDZIDT/VMRoPIEGPF9GhSqbxcGXV7E5dhEqEn9yOL0BLGnyucvJpaPbR5Oes6rVqWCwXKFQR5k5uFirCe2V7IwZYTjz8=
+	t=1732198031; cv=none; b=sZQvhghN8x1nOPDzVaej2af5owkRM5+PJ9CTJqls1p5RJbpO8Rf/D9L1zaOBIDdLXdlAd5zP42k+eibYRo3rphabsqvFjOBbgRMeEBF1gzqP5HmM4EbPhUv2B/mHqneAHHAlVtapUHC70juwDGUP5/M+coAP0rzJ46UEnHa8Nro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197900; c=relaxed/simple;
-	bh=O4nYmoel1Gexv8PujvE6jan3LXLfm0fEjCn+hI/Am/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LdXfTGvrxMwEwmxes+zgSm1l+ZORf3uDoHvOvFW0RaASVy3iguFKBfLeOLGb9wukpO6zkl8X358T3d4RSfW7S4NDfQsB68WmkSTM2w8zsaqZkobule2/Dspf/qMfirkWycQK8yal4prOPcZVwZhhYRygfydjMCq+9j7NyHmMBB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jvZ+xgWX; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38231e9d518so677163f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:04:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732197896; x=1732802696; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CkzzeXPDV0OuvJPIPbzu0+X4+yJU9K+UT0DlmrNc6SA=;
-        b=jvZ+xgWXprQVZ4pTiH16PQu9Bm9r6JoLBxahdcktq4EWGuzzuuV7YcMxZ3Vwsb7hFg
-         1KtKp/x+ksKdo9mpevQD3YOfQ6a7fXggQqavj5fZOUP8+NDi76X98WQAjAiVY1mNBelA
-         wIbnIgQUBqKJ3DLk7wja/HGRQ28dTUn07eSV1r9ADt6yaIldQO9B8sybY0mM/26SHjLJ
-         4sk2v0AZfAFjBk46ifjZzECFQessreAIogtZBKBNkN9zuWkl9rqU/ajcI3FEgEgpIrhL
-         GnqNeI9p+hGYZJB6KRWyQsQV80aKa+xaC1k/bD60HxMquzqrPmWGQZ/Ak1Jo/FGb7ULK
-         NAQA==
+	s=arc-20240116; t=1732198031; c=relaxed/simple;
+	bh=9uW5Dudj+swqaGbCjUsjteU63w49eLJj7HUQPfq++9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dNkJg1IIRNjX45yt38WVpyttQhl3Mk0hJOwnYumDiXaWgVDvtNDLIbwUFfFCmL/w/dsq34H/kjEsklUj7DdFKef1RGCEfrz2JiaXe/0WCNjag/V9AXzFDY2wh3JigWaTMhs3v67jlgmSxp1RVEWp5mTD9iwjnZ1+21CpwRUnGAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ecn6E2ar; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732198028;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=C7tRH6nT8tzUEIZ5n33ADSmY1zfI1f6F5ul499NjvQI=;
+	b=Ecn6E2arKsjyCBjrEZKI2sw6RVeNMx+DMgn6+Xz6lOQsiy/1cLtx37Q+kgG/Gbm+Vs8XU7
+	nePNOIFlwxg9YDOyijVwDkGfP7fv8SD7TB6K0Oud5RK0rXTiU5S/Pgtuwp7hExwqscjtqa
+	uy8T1a883A/6ka1DFkCUraETq9MBIlU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-446-ckzlXM3LMouqwEn5-d0s5Q-1; Thu, 21 Nov 2024 09:07:06 -0500
+X-MC-Unique: ckzlXM3LMouqwEn5-d0s5Q-1
+X-Mimecast-MFC-AGG-ID: ckzlXM3LMouqwEn5-d0s5Q
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4316e2dde9eso8355885e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:07:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197896; x=1732802696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CkzzeXPDV0OuvJPIPbzu0+X4+yJU9K+UT0DlmrNc6SA=;
-        b=ePJf3FMXFF2jOcPf30pe1CNFMKm0HPX5SjkT1sjja86JXFO1m69uy1Il1CTD3IdS9i
-         ID5yt3KVF4Ek5cL8/ka5taXhgOTk9KMb9Oj3UKR9rL2PfFB1RCxBneMYh9NaSApiCXH2
-         Em66ZzY0wRVLtroAK7Mnz2bzNBgzQCKQbI9VGVujlEVmswolVe7G1YP/ka5g+JPIGrXr
-         Nn76rQwqzKtcQehkt63fTygQ5VO+bWiGnKO1T/NCDldiVr9F4VE22/FUAxYtVyrePNuH
-         pPFYMhH3TyiSM4rN3ty1KvTPD6uISgZXrfkwjKCNU1QAfae12q46hNBTCZ0Rze/ybdJm
-         u5aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOk4eaTKUbBxl/M2fI4LczH2du5MMZgNoUShvdE+qugSrwEYlA+GeCfZyeAROUXv9yUqHZ7p1oKFE5Ttc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSk2ap18U/a0J3/O+uveSGPD0avhFoDjRvzyRr+4NUlucp3ijb
-	yoFeMSAWbYRu8QxnGv9A8b+tMqKU56QFKVZN3fFgT6pMFRuwDz8fzZXbZTDKI/k=
-X-Gm-Gg: ASbGncuPzbG1DM3EDJdt3L80ozf6A4HvHn2DpUc8/dUqS8evgstRuDvKCzKXm2kOy2E
-	V3buLc41Ki1QzMsKWh4Gjt9tNfghGyOxL1OG3gfPk4bLHzbgPBDoS+R1SY7RutDY6Y0UW5CwJLN
-	prWIvtXnA2Yx/J9eVHXaX3nZVYQy0eMxvX9HjeN9bW8znYAjlO+fU/+iIC4uwY/2PUTDwpQL3CJ
-	ZMNimJAzU7a94loCKPl+hqHjJYbOc33XPTcLdpoMGVvRq+TT0bP5Cr80c4U3VSz0R5v8INoZQpb
-	gec=
-X-Google-Smtp-Source: AGHT+IGOOsfIl1JAjgf7kDd5oywzOAtVaQvQvXfPLIcz9cDfRlZE0jlhvEPwC9EtW28TdNTPrOjdyg==
-X-Received: by 2002:a5d:64c6:0:b0:382:442c:2c54 with SMTP id ffacd0b85a97d-38254afc65fmr5321357f8f.28.1732197894429;
-        Thu, 21 Nov 2024 06:04:54 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490c29fsm5083350f8f.32.2024.11.21.06.04.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 06:04:53 -0800 (PST)
-Date: Thu, 21 Nov 2024 15:04:52 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Keith Zhao <keith.zhao@starfivetech.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
-	"Laurent.pinchart@ideasonboard.com" <Laurent.pinchart@ideasonboard.com>, "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"hjc@rock-chips.com" <hjc@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>, 
-	"andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, William Qiu <william.qiu@starfivetech.com>, 
-	Xingyu Wu <xingyu.wu@starfivetech.com>, "kernel@esmil.dk" <kernel@esmil.dk>, 
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	Changhuang Liang <changhuang.liang@starfivetech.com>, Jack Zhu <jack.zhu@starfivetech.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
-Message-ID: <2ujegy7cw4kka4j6rrjf7fsigk7p4hw4rkitmp4rzt33qnlhv5@c6exsgaou5x7>
-References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
- <20241120061848.196754-4-keith.zhao@starfivetech.com>
- <oabm3ahd6vyeirjbbmp74w3tldqkcy3de7u6avio3ohfzfns2t@vfcvn3rl23xm>
- <NTZPR01MB10504FAE3695BF54DADB7B54EE22A@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+        d=1e100.net; s=20230601; t=1732198025; x=1732802825;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C7tRH6nT8tzUEIZ5n33ADSmY1zfI1f6F5ul499NjvQI=;
+        b=J/G3qHY2/AQK8Nb4rAz/qlnTHwy4jYvT+vbVLJAGEUdStPRKRV3Zbuc+l2iY16dJxn
+         8ulR/n5A1Xh4RzTUs/Vj1SpVzHg+JONSBJ8vekAAYIXmRzjP3RTk6x0ISYcYn4mVZR7Z
+         HWTyEVV+d05FS+jzNiGYZ8JDlGxnm7bHoRHFcyJ/DCfkUpxuY2ql8n7ToAomdHAt9Qp0
+         OhUFM0T6fSNSQH+nRkS8K1LXjcgu3v0AYx+joWonAVoROfPB+5EJROpC3Jg7fNda1ma3
+         /OI0DgSc+66CJ476DFLTBKQghR+dlNb8YRQMY9lhFSMMgVGSatMcnFiPAxp7pmnH4Vxm
+         S/cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWiy2wfH5pHdtFoehBvsjQN/dtM2I3tfNXpJLVyuUGdc34OAO9+0WwOKW3r9AMLL+KYh2uYvNFEuY6bvT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8dXKC4FWjWubQ4CMy1BztxQ7ifaFQtXHJuZlKCS8CUPgFUIl8
+	Aa1Hs4AekAIKmhyrHOgq9ts9+UuvkMFg7vy1XubxLj+t2mbYvIG2tAe2Cdf3ri1rjEcx1LWtVrV
+	Qfm3CwVQsyCEx3isvOBlFy95aI3DLUwXiystMNuuL5/mxa9G3OrZK8knOBTN0tA==
+X-Gm-Gg: ASbGncuVaI2aarKIQDObEvdBs0ZUAOjp2lHPkSubvuyHJ7/bqOCBNOvAkBF2qLOWZYD
+	iXcE3AihmRIwMTDjcVZ2lIbJKX1fY5OpiIpShW1wa+BWI8kY0G9HvPvQI9FNeTYRLquwUD3VAMr
+	1kiZcW9onejScnl1ktQsvQN1WxVoElAIBGJ6t8pRnosO/K4k8jZcKQz02HndK6lCS0goj4PX9t3
+	hkVZ1/RwnwMZWuxqOpTXzNsZ41ASMdx4HJRTZwpfJkviLqqf6nA
+X-Received: by 2002:a05:600c:a01:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-433489a02f2mr70066505e9.8.1732198025403;
+        Thu, 21 Nov 2024 06:07:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGErVlXnz0iTStRiT3lm2XztCeR4j5PanjVYk+18Bw5BOFsvkHxWCMSfhXHKVKZNlEzY/r/6w==
+X-Received: by 2002:a05:600c:a01:b0:431:59b2:f0c4 with SMTP id 5b1f17b1804b1-433489a02f2mr70065855e9.8.1732198024879;
+        Thu, 21 Nov 2024 06:07:04 -0800 (PST)
+Received: from [192.168.10.3] ([151.49.91.173])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-432f642f15esm85373565e9.0.2024.11.21.06.07.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 06:07:04 -0800 (PST)
+Message-ID: <901c7d58-9ca2-491b-8884-c78c8fb75b37@redhat.com>
+Date: Thu, 21 Nov 2024 15:07:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aiaflkf5aq5b3zo3"
-Content-Disposition: inline
-In-Reply-To: <NTZPR01MB10504FAE3695BF54DADB7B54EE22A@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] First batch of KVM changes for Linux 6.13 merge window
+To: Nathan Chancellor <nathan@kernel.org>, Sasha Levin <sashal@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20241120135842.79625-1-pbonzini@redhat.com>
+ <Zz8t95SNFqOjFEHe@sashalap> <20241121132608.GA4113699@thelio-3990X>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20241121132608.GA4113699@thelio-3990X>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 11/21/24 14:26, Nathan Chancellor wrote:
+> On Thu, Nov 21, 2024 at 07:56:23AM -0500, Sasha Levin wrote:
+>> Hi Paolo,
+>>
+>> On Wed, Nov 20, 2024 at 08:58:42AM -0500, Paolo Bonzini wrote:
+>>>       riscv: perf: add guest vs host distinction
+>>
+>> When merging this PR into linus-next, I've started seeing build errors:
+>>
+>> Looks like this is due to 2c47e7a74f44 ("perf/core: Correct perf
+>> sampling with guest VMs") which went in couple of days ago through
+>> Ingo's perf tree and changed the number of parameters for
+>> perf_misc_flags().
+
+Thanks Sasha. :(  Looks like Stephen does not build for risc-v.
+
+> There is a patch out to fix this but it seems like it needs to be
+> applied during this merge?
+> 
+> https://lore.kernel.org/20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Yes, this works.  To test it after the merge I did it.
+
+   curl https://lore.kernel.org/linux-riscv/20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com/raw | patch -p1
+   git add -p
+   git commit --amend
 
 
---aiaflkf5aq5b3zo3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
-MIME-Version: 1.0
+This should have been handled with a topic branch, and there is another
+nontrivial conflict with Catalin's tree that should have been handled
+with a topic branch.  (I knew about that one, but his topic branch also
+had a conflict with something else; so I un-pulled it and then forgot
+about it).
 
-On Thu, Nov 21, 2024 at 02:06:20AM +0000, Keith Zhao wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> > Sent: 2024=E5=B9=B411=E6=9C=8820=E6=97=A5 22:56
-> > To: Keith Zhao <keith.zhao@starfivetech.com>
-> > Cc: devicetree@vger.kernel.org; dri-devel@lists.freedesktop.org;
-> > andrzej.hajda@intel.com; neil.armstrong@linaro.org; rfoss@kernel.org;
-> > Laurent.pinchart@ideasonboard.com; jernej.skrabec@gmail.com;
-> > maarten.lankhorst@linux.intel.com; mripard@kernel.org;
-> > tzimmermann@suse.de; airlied@gmail.com; simona@ffwll.ch;
-> > robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > hjc@rock-chips.com; heiko@sntech.de; andy.yan@rock-chips.com; William Q=
-iu
-> > <william.qiu@starfivetech.com>; Xingyu Wu <xingyu.wu@starfivetech.com>;
-> > kernel@esmil.dk; paul.walmsley@sifive.com; palmer@dabbelt.com;
-> > aou@eecs.berkeley.edu; p.zabel@pengutronix.de; Changhuang Liang
-> > <changhuang.liang@starfivetech.com>; Jack Zhu <jack.zhu@starfivetech.co=
-m>;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge dri=
-ver.
-> >=20
-> > Hello,
-> >=20
-> > On Wed, Nov 20, 2024 at 02:18:42PM +0800, keith zhao wrote:
-> > > +struct platform_driver inno_hdmi_driver =3D {
-> > > +	.probe  =3D inno_hdmi_rockchip_probe,
-> > > +	.remove_new =3D inno_hdmi_rockchip_remove,
-> >=20
-> > Please use .remove instead of .remove_new.
-> >=20
-> Thank you for the clarification regarding .remove_new.=20
-> I understand that it's a relic and that new drivers should implement .rem=
-ove().
->=20
-> I have a question. One of the changes in this patch is to rename some fun=
-ction interfaces.=20
-> The original code is like this.=20
->=20
-> struct platform_driver inno_hdmi_driver =3D {
-> 	.probe  =3D inno_hdmi_probe,
-> 	.remove_new =3D inno_hdmi_remove,
-> 	.driver =3D {
-> 		.name =3D "innohdmi-rockchip",
-> 		.of_match_table =3D inno_hdmi_dt_ids,
-> 	},
-> };
->=20
-> Rename inno_hdmi_probe and inno_hdmi_remove
-> struct platform_driver inno_hdmi_driver =3D {
-> 	.probe  =3D inno_hdmi_rockchip_probe,
-> 	.remove_new =3D inno_hdmi_rockchip_remove,
-> 	.driver =3D {
-> 		.name =3D "innohdmi-rockchip",
-> 		.of_match_table =3D inno_hdmi_dt_ids,
-> 	},
-> };
-> Based on the principle of maintaining consistency,=20
-> does it(remove_new) need to be changed?
 
-If this isn't new code but moving from somewhere, don't change
-=2Eremove_new into .remove in the same patch. If you want, fix that in a
-separate patch then.
+Linus,
 
-Best regards
-Uwe
+if you prefer to get a reviewed pull request with the topic branches
+included, then the changes since commit 2c47e7a74f445426d156278e339b7abb259e50de:
 
---aiaflkf5aq5b3zo3
-Content-Type: application/pgp-signature; name="signature.asc"
+   perf/core: Correct perf sampling with guest VMs (2024-11-14 10:40:01 +0100)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc/PfgACgkQj4D7WH0S
-/k5i8wf/XcvUCC2rVJqEZtMZvKrDI/ZGnH8FSDI5ZF6TzlFZ2mmT+IW/9fosKPzw
-XThFPhs4q3eRJZEujqjr+ChJ7LAlLRWGFuEQtogLtwLs6PjwEtyjGNrwGbaMwGDu
-GVjtp1zsGgG7utTfoUsrvnoj9ZYCMmdiHM/gwUiBMGusJHgpSRTD2M4bIAbduV8m
-U6vO11pTdh0KSZgBHp4Rpj814BVjTU3prIDttOs/k9Qhq4B05ZAIOXYig/+g1k56
-o+cMqaeeXMHNLE13BKRg37xkzfr4+lQX1RmfX1laQXEUhxO9Fzumyh3+NYgqZ3Rf
-2JaY8G8iTmPnrSNSVtdrzpmI8Ad7OQ==
-=3HIb
------END PGP SIGNATURE-----
+   https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus-with-topic-branches-6.13
 
---aiaflkf5aq5b3zo3--
+for you to fetch changes up to bde387a8d81735a93c115ee4f1bd99718e5d30b0:
+
+   Merge branch 'for-next/mte' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux into HEAD (2024-11-21 08:53:23 -0500)
+
+
+Alternatively,
+
+the best way to get the RISC-V fix is the curl invocation above, and after
+my signature is the conflict resolution for Catalin's tree.
+
+
+Thanks,
+
+Paolo
+
+
+diff --cc arch/arm64/kvm/guest.c
+index 4cd7ffa76794,e738a353b20e..12dad841f2a5
+--- a/arch/arm64/kvm/guest.c
++++ b/arch/arm64/kvm/guest.c
+@@@ -1051,11 -1051,13 +1051,12 @@@ int kvm_vm_ioctl_mte_copy_tags(struct k
+   	}
+   
+   	while (length > 0) {
+  -		kvm_pfn_t pfn = gfn_to_pfn_prot(kvm, gfn, write, NULL);
+  +		struct page *page = __gfn_to_page(kvm, gfn, write);
+   		void *maddr;
+   		unsigned long num_tags;
+  -		struct page *page;
++ 		struct folio *folio;
+   
+  -		if (is_error_noslot_pfn(pfn)) {
+  +		if (!page) {
+   			ret = -EFAULT;
+   			goto out;
+   		}
+@@@ -1090,8 -1099,12 +1097,12 @@@
+   			/* uaccess failed, don't leave stale tags */
+   			if (num_tags != MTE_GRANULES_PER_PAGE)
+   				mte_clear_page_tags(maddr);
+- 			set_page_mte_tagged(page);
++ 			if (folio_test_hugetlb(folio))
++ 				folio_set_hugetlb_mte_tagged(folio);
++ 			else
++ 				set_page_mte_tagged(page);
++
+  -			kvm_release_pfn_dirty(pfn);
+  +			kvm_release_page_dirty(page);
+   		}
+   
+   		if (num_tags != MTE_GRANULES_PER_PAGE) {
+
 
