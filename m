@@ -1,219 +1,136 @@
-Return-Path: <linux-kernel+bounces-417551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 638A19D558C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:37:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5483D9D558D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C611F24812
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F3B282A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D50E1DD877;
-	Thu, 21 Nov 2024 22:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3688B1D932F;
+	Thu, 21 Nov 2024 22:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jVKzZhxO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="b2U02m6+"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DC1CBE81;
-	Thu, 21 Nov 2024 22:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC2200A3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228626; cv=none; b=altGW6yQGR+T1LAuBBTcRnCYxMUHKZZDVo5pifgsB2H/QcXU3WZ4vgjFQFXCEZQ1wm9KhM091jt7yKqKvVcP1mJ2JeiibvFWzgInIdma/YiXnXbi+dLmReRndR4bdUyYzJ9JLIEVMsaWzy5TvBbq0EH9IFE1jkBqtifva/m4ZMo=
+	t=1732228718; cv=none; b=aHulQe1SAQiVb1Bj67QccEloV/1qLyhv6m92s8vMeG5WBoqHupAFO93hyig3xX2u885sE+nwBmgHhWbU15rPohMaNd2XqDoUqqiEoQ2tB1IfnsH/z33vh92cH4ULIT020fZw5n7aBvCXYipb1tJ1OV2RjMmDN4JCnFkT11C7wr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228626; c=relaxed/simple;
-	bh=MUGLVwS75jQUSL12uOeu0NQbPRYbChsHCYEPGyBY20A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVKv86E4DAXSd9RVoX7XHsf/3HCZ+RTAxcYYcwfP1b7f0DQrO0VfHeN/ynNybSvDy59smEGZws2gTgmHyBUBZxO/diSLL8OkZz/FTpF9007VZsgKrDqg8YYRhQP3p4UK6ZkLj4uOVo7RkUMmqN4JmL03B5QUbzCE2S6LHv7R1ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jVKzZhxO; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732228625; x=1763764625;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MUGLVwS75jQUSL12uOeu0NQbPRYbChsHCYEPGyBY20A=;
-  b=jVKzZhxOfnSlhdcN3BiOmzxPAyohDCSnZIYmGzYYVomBL7a+LH6H3++7
-   RXjlMT7BMYPJC9Wzn0ep2K3ikDcKk4WNstjUOuJ4lrMGSTuKJL8SbbJP5
-   qMRMzIHYNm7fPDLE9XKkJyZoIpGNlJgZXH5YGfWISBe1CmOxwcX5JSWaa
-   TBGYy6JEjYqmfavS0QLgSDRQuHk8l1jqHxI1LdD6TDAyTkYVbKhhipfM5
-   kIoX3Ur6bQTIJ4Aewb18xUjxDRRejv71gS6ddjgW1yva/ErCSY3Ked4gp
-   N0fV7RoPhJ5OTrq+RbNxX55IzIzE1L7dR5WtbmVvN+XBY9LrpRS8beZ8f
-   w==;
-X-CSE-ConnectionGUID: Z2O2Dn8WQ1KzzJdbibXsvg==
-X-CSE-MsgGUID: RTm4L1kIQaKZ/kaqBOFAeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="49889254"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="49889254"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 14:37:04 -0800
-X-CSE-ConnectionGUID: u4lzi55QQtuEqcueIDQ7aA==
-X-CSE-MsgGUID: HC93Hgp/RFyhgB78eC/uvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="94480413"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 21 Nov 2024 14:37:00 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tEFnG-0003QJ-0N;
-	Thu, 21 Nov 2024 22:36:58 +0000
-Date: Fri, 22 Nov 2024 06:36:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, NXP S32 Linux <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Subject: Re: [PATCH v5 2/2] serial: fsl_linflexuart: add clock management
-Message-ID: <202411220621.UfubUV0X-lkp@intel.com>
-References: <20241118154449.3895692-3-ciprianmarian.costea@oss.nxp.com>
+	s=arc-20240116; t=1732228718; c=relaxed/simple;
+	bh=CSchTMooglpmi7tB+s7YZ1HskBoi6MQIVMFny/q7Vzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nrv/T+MQ5t594aN0Ad/WxoE3Lgi9TVHhjt22zXzQe2q5KH5OAD8pVrrP9z92Wdqj2aGzJoJTS3sK6EfoL8RTjcZc3xDDZyn4QRYMD5l7u0tW6DSjCpgMxOdg5nQN2O+r3lDYVcbtUxmEEGC0rQpOeg7Lt954Nbf8NDxKKRnIC0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=b2U02m6+; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da353eb2eso2479493e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:38:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1732228714; x=1732833514; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EJ8nXox9oTtbjG8THkz1b6EX661ulPLtJl3BXlJ60G0=;
+        b=b2U02m6+5Z5URUjgG1H70e4loaskxxSBCSlcnnNqbIS84Aj26UgcTY/n1T9pcPruhd
+         sugGztIrMP/1QY+8VQpmnjX8FtcgmpOB81VxIK5eKFnJUXcIKOApF6mA/FfWrRc83RNB
+         u3I81fyfT7Pyfq02fNArixVNq44ArrIzQ+VKQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732228714; x=1732833514;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EJ8nXox9oTtbjG8THkz1b6EX661ulPLtJl3BXlJ60G0=;
+        b=cQtOxCSRW1WmJFfI/70D0uhpAafXITRDqYKLIHuok7rjTZteOM1JlPJ8WO8OpVLO9j
+         wfcCMgIIItYdYll6fuWXxN7nx4sUM5wiYgr/1y/7x1VK+xOgIH1gB7QCD5QiIYE/zvPd
+         jAgb3oD79hUdsTm6IFOcuN5bVrehh7xa+qn+MfmuQjfO3uSqT+6WEiuUw+cWC3cnw07L
+         jpkrp7wS+dA602vWZS0eZs/70JHI4fEFJXWreBy3jSyIQPqcMqssgZ3j+Ib1sebPEoiq
+         v+pgpL6T/qJ6A2mWo2xtVSBXcXEv/I/FoV1xD5uTJ/wu6liQsXaAWkx/JWF4mIHIIrom
+         2T/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsMHz9UgY1NOfDB4l46Htt0YMwfqJzEuPNSUbdAnkfunHsZ/rH5TeIMVGN/9klT/CO08mtttICpzljzes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWU0C5mRIDUinzuKFpi1NooIJz/guctb10L+g5KQY+YYtVUfdp
+	WR9iA6EbSRNf8HAuMTniHr/8QZJPYVDPINk9uz8+3BsjgghQlUdse/NF+Izg3msCkFn6EiDQn1b
+	FND1W+A==
+X-Gm-Gg: ASbGncv0kPadjx/5NRNzRxd7gnQamgf9Z9DdsT0n6Gfs+eA2vMtujyyF/nj5jlOG5kG
+	iDuGKPwOYi9pqfiqEE9R4BuXB9hWLRRgDXVc9xnvRc5K8joKG7IuZYkwZztZaOQsmlFIYhl1pXr
+	RSwFB1GwOEeVsqxlka6yhPbtUDekhxaTVJU06uG64oyPCxfGdEOJMClCcR2hRtexAVUScke/7dw
+	K17HRk0pD4fGoNyAv41h7pl7Z7RlSfxTqJhJye5zVidWTSwiMLEpc0ZvE9tGij3bSNUbwXNIKza
+	4gbUFeJSCkPq1IicZSjNa0yQ
+X-Google-Smtp-Source: AGHT+IEaA0+8/r7QO2CfkRQ1fZcc7GtHOX+ykpssN0vqjTzX/5wsvlibACkSJ5iTSqgIMjkkBh2jMQ==
+X-Received: by 2002:a05:6512:2316:b0:53d:a866:9c42 with SMTP id 2adb3069b0e04-53dd389cb4cmr334265e87.30.1732228714068;
+        Thu, 21 Nov 2024 14:38:34 -0800 (PST)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b5b8c98sm20273366b.183.2024.11.21.14.38.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 14:38:32 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38245e072e8so1349413f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:38:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWSOcdGyEBvr12JnbtXjR7d/z5W8I3X1Woo0UDzLdnsdS4M/C2Ix8v+AFg1JrHPm0VOYj/bjkjfogs8Li8=@vger.kernel.org
+X-Received: by 2002:a5d:47cd:0:b0:382:4be3:b2bf with SMTP id
+ ffacd0b85a97d-38260bc6bdamr675542f8f.45.1732228712281; Thu, 21 Nov 2024
+ 14:38:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118154449.3895692-3-ciprianmarian.costea@oss.nxp.com>
+References: <202411190900.FE40FA5@keescook> <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org> <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+ <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl> <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
+ <Zz91LyHzxxOLEma_@kawka3.in.waw.pl> <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
+ <202411211011.C2E3ABEAB@keescook> <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+ <202411211302.08EEE6D395@keescook>
+In-Reply-To: <202411211302.08EEE6D395@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 21 Nov 2024 14:38:15 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjRE5S_vpQdRH-ZH2Q6SU1cmX0HhwzmfpjgYtoQAtok=Q@mail.gmail.com>
+Message-ID: <CAHk-=wjRE5S_vpQdRH-ZH2Q6SU1cmX0HhwzmfpjgYtoQAtok=Q@mail.gmail.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+To: Kees Cook <kees@kernel.org>
+Cc: =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, linux-kernel@vger.kernel.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Nir Lichtman <nir@lichtman.org>, syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
+	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ciprian,
+On Thu, 21 Nov 2024 at 14:06, Kees Cook <kees@kernel.org> wrote:
+>
+> I think I finally figured out why you keep saying this. I think you mean
+> to imply "ps -e" (or similar), not "ps". Asking for more process details
+> ("ps a", "ps -f", "ps -e", etc) uses cmdline.
 
-kernel test robot noticed the following build errors:
+Ah. I never use plain 'ps'. The output is too useless.
 
-[auto build test ERROR on tty/tty-testing]
-[also build test ERROR on tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus robh/for-next linus/master v6.12 next-20241121]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Since comm is mutable anyway, I feel like the "friendlier" default for
+> userspace would be option 2.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ciprian-Costea/dt-bindings-serial-fsl-linflexuart-add-clock-definitions/20241121-130303
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
-patch link:    https://lore.kernel.org/r/20241118154449.3895692-3-ciprianmarian.costea%40oss.nxp.com
-patch subject: [PATCH v5 2/2] serial: fsl_linflexuart: add clock management
-config: arm64-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220621.UfubUV0X-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220621.UfubUV0X-lkp@intel.com/reproduce)
+The thing is, I still violently disagree.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411220621.UfubUV0X-lkp@intel.com/
+I don't see what's "friendlier" in being (a) slower and (b) giving the
+wrong output.
 
-All errors (new ones prefixed by >>):
+argv[0] isn't what we *normally* use.
 
-   In file included from include/linux/platform_device.h:13,
-                    from drivers/tty/serial/fsl_linflexuart.c:15:
-   drivers/tty/serial/fsl_linflexuart.c: In function 'linflex_probe':
->> drivers/tty/serial/fsl_linflexuart.c:904:40: error: 'linflex_disable_clks' undeclared (first use in this function)
-     904 |                                        linflex_disable_clks, lfport);
-         |                                        ^~~~~~~~~~~~~~~~~~~~
-   include/linux/device.h:421:41: note: in definition of macro 'devm_add_action_or_reset'
-     421 |         __devm_add_action_or_reset(dev, action, data, #action)
-         |                                         ^~~~~~
-   drivers/tty/serial/fsl_linflexuart.c:904:40: note: each undeclared identifier is reported only once for each function it appears in
-     904 |                                        linflex_disable_clks, lfport);
-         |                                        ^~~~~~~~~~~~~~~~~~~~
-   include/linux/device.h:421:41: note: in definition of macro 'devm_add_action_or_reset'
-     421 |         __devm_add_action_or_reset(dev, action, data, #action)
-         |                                         ^~~~~~
+And I've seen lots of cases where argv[0] is actually plain made-up garbage.
 
+Christ, I went and looked at OUR OWN TEST-CASES, and they just happily
+lie about "argv[0]".
 
-vim +/linflex_disable_clks +904 drivers/tty/serial/fsl_linflexuart.c
+Just go check tools/testing/selftests/exec/execveat.c, and see.
 
-   835	
-   836	static int linflex_probe(struct platform_device *pdev)
-   837	{
-   838		struct device_node *np = pdev->dev.of_node;
-   839		struct linflex_port *lfport;
-   840		struct uart_port *sport;
-   841		struct resource *res;
-   842		int i, ret;
-   843	
-   844		lfport = devm_kzalloc(&pdev->dev, sizeof(*lfport), GFP_KERNEL);
-   845		if (!lfport)
-   846			return -ENOMEM;
-   847	
-   848		ret = of_alias_get_id(np, "serial");
-   849		if (ret < 0) {
-   850			dev_err(&pdev->dev, "failed to get alias id, errno %d\n", ret);
-   851			return ret;
-   852		}
-   853		if (ret >= UART_NR) {
-   854			dev_err(&pdev->dev, "driver limited to %d serial ports\n",
-   855				UART_NR);
-   856			return -ENOMEM;
-   857		}
-   858	
-   859		sport = &lfport->port;
-   860		sport->line = ret;
-   861	
-   862		lfport->devtype_data = of_device_get_match_data(&pdev->dev);
-   863		if (!lfport->devtype_data)
-   864			return dev_err_probe(&pdev->dev, -ENODEV,
-   865					"Failed to get linflexuart driver data\n");
-   866	
-   867		sport->membase = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-   868		if (IS_ERR(sport->membase))
-   869			return PTR_ERR(sport->membase);
-   870		sport->mapbase = res->start;
-   871	
-   872		ret = platform_get_irq(pdev, 0);
-   873		if (ret < 0)
-   874			return ret;
-   875	
-   876		sport->dev = &pdev->dev;
-   877		sport->iotype = UPIO_MEM;
-   878		sport->irq = ret;
-   879		sport->ops = &linflex_pops;
-   880		sport->flags = UPF_BOOT_AUTOCONF;
-   881		sport->has_sysrq = IS_ENABLED(CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE);
-   882	
-   883		lfport->clks = devm_kmalloc_array(&pdev->dev, lfport->devtype_data->n_clks,
-   884						  sizeof(*lfport->clks), GFP_KERNEL);
-   885		if (!lfport->clks)
-   886			return -ENOMEM;
-   887	
-   888		for (i = 0; i < lfport->devtype_data->n_clks; i++)
-   889			lfport->clks[i].id = lfport->devtype_data->clks_names[i];
-   890	
-   891		ret = devm_clk_bulk_get_optional(&pdev->dev,
-   892						 lfport->devtype_data->n_clks, lfport->clks);
-   893		if (ret)
-   894			return dev_err_probe(&pdev->dev, ret,
-   895					"Failed to get linflexuart clocks\n");
-   896	
-   897		ret = clk_bulk_prepare_enable(lfport->devtype_data->n_clks,
-   898					      lfport->clks);
-   899		if (ret)
-   900			return dev_err_probe(&pdev->dev, ret,
-   901					"Failed to enable linflexuart clocks\n");
-   902	
-   903		ret = devm_add_action_or_reset(&pdev->dev,
- > 904					       linflex_disable_clks, lfport);
-   905		if (ret)
-   906			return ret;
-   907	
-   908		linflex_ports[sport->line] = sport;
-   909		platform_set_drvdata(pdev, lfport);
-   910	
-   911		return uart_add_one_port(&linflex_reg, sport);
-   912	}
-   913	
+So  no. THERE IS NO WAY I WILL ACCEPT THE GARBAGE THAT IS ARGV[0].
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+What is so hard to understand about the fact that argv[0] has never
+*EVER* been meaningful? We're not making it so now.
+
+            Linus
 
