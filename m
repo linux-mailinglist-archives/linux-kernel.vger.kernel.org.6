@@ -1,117 +1,244 @@
-Return-Path: <linux-kernel+bounces-417252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5441F9D514D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:09:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A70A9D515E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7543B282061
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:09:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC8D4B2B062
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C64E19C578;
-	Thu, 21 Nov 2024 17:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799C7189F37;
+	Thu, 21 Nov 2024 17:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="DcD0S9IR"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WP9sL8ul"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CE713C807;
-	Thu, 21 Nov 2024 17:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423119CC17
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732208982; cv=none; b=HztWJRF+5tpMVLyeKm2Hrczw+2vw6vrzciHuj9DVlZXa1ohMIYWydO/J4Z5UR1RTTgcO6t2fc4xYSze96GDrUX9gTDgFPQKpixUyoB6Rkt1P8x55/ndZf5JaOvC7xh/TVAVvEhxIrhu47CGqmFaiDWH2wFfWQdjwKFLYFM7lAI4=
+	t=1732209012; cv=none; b=IARotPjD8ZSW+/zOGRGKyt9q6fjNNwLc17F95xE7HT8p79DVFkXtqsN0kQIftMU4B0pW0VCRrk7V+oNjVIVmXbb5TIpagaDqg2hap/5T6RAxck/OdNry4nZUz/W+GZWDU41OwS22rOHfjt+8lflNVc1zbBM6eoozMlaTt0CvvtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732208982; c=relaxed/simple;
-	bh=Ienun4VW9O2FwBJVBtm5qXYcp2e+U7uSxedKmhxnwIc=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date; b=aNl8dsg5lz+R6WGeWc+kJ7tqROAUchPymjF3I0V/2ixFekXwNEMQ7Kp4jh2W5lC8p3tTKrZt+a/C/RniMMVAxnMSJlJVWl9WJhCZztoFDrPT7acAQxFipb7EPCKFwo5iVRbUBqMMtGYkjmqHD8HeHU2AF23YIZyThNT8aKlpaNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=DcD0S9IR; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1732208955; x=1732813755; i=frank-w@public-files.de;
-	bh=oyBAAp+TqWN3ylwr2/elXUCc8cfY3vbibyis40Z1YhA=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:cc:content-transfer-encoding:content-type:date:
-	 from:message-id:mime-version:reply-to:subject:to;
-	b=DcD0S9IRXU0bRBfFckR7wHFQ3Vm9392bxWKI2aNJuDsVQMZRWTlepo2jMwCY86OY
-	 lZaR+hRz1DhBcdG9RXPZ4nTTIWQOCt0o2GmXddBxitmp7uqhxIgx6+3zKbT5GKCeW
-	 NX2pnFwDZzz1hOor8xOY7ugBjFYM+kO0Wv+2cMxaQjof7gtQSbCnh/Q/3lv6CYZ4T
-	 49HULGrPbAm6u/AGfZVieaPi+dmAkbVAwJU0MhPuWSUZJMSXqwTdYkMrlHl0xrtLe
-	 SOCaX9TEouy8YouK4KNhhFQ2RJACxmqmCQgn79CjrcjeiqRDSpeeHNUvm1Tv6hGVb
-	 gM/R5gUKfryvwkSNOA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.158.185] ([217.61.158.185]) by
- trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v (via HTTP); Thu, 21 Nov 2024
- 17:09:14 +0000
+	s=arc-20240116; t=1732209012; c=relaxed/simple;
+	bh=ifGy85N6zsRmBCj+/GrsUjDoHFFPGaFFCSuC+J0QRbw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=YxGlnTkOvoGg1wHzdyTJQlRqE8iin1Aelfnjq2I5MRocZFhW/Ry5vl/Vo7v+Ww5Sh/R9/FJhqCFSvOuFlQ0JENp07TzKYUv8lUnJZsGFq6YHxRPIjFUowo0NdVDNGniQJiK1p0cV92qnGT5apZ2YX01UTXduEInsulet1EgPYFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WP9sL8ul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3AEC4CECC;
+	Thu, 21 Nov 2024 17:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732209012;
+	bh=ifGy85N6zsRmBCj+/GrsUjDoHFFPGaFFCSuC+J0QRbw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=WP9sL8ulYMwC3FQFbVYYWyPa1wfsRv4VKTUaDxxYucM7Dw4HQB+5EuYqr/oA34n2h
+	 upGSM+PlyJ/TP77/0CHQ3AUUO3dIHz3TIm6XjmdJ3d9Ep62qcQJnl9FGzFPyaGBEHn
+	 9io3tGmTZnXkzvZuwYxhuoU54XZTucTDDPlxmZBmZKv5dVVs5yXmm+MyFji9DloZR7
+	 vJpX9TYfP3vxsdJFGRMWUvY+28YAHhlkaBn7gDAOrqKpTK/olkIdH6og92lh4eaFLF
+	 S1uRZXNw5rpOp+6tUb2FChwfzixL5iXxtGyJixAL1O7ubt1AMmeGwIuxDMpxGKwkpy
+	 jRhEGkN+VVM1w==
+Date: Thu, 21 Nov 2024 11:10:11 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-6989b089-36ba-4f0b-a924-f175377209c3-1732208954843@trinity-msg-rest-gmx-gmx-live-86dc4689bd-wks9v>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: re@w6rz.net, masahiroy@kernel.org, nicolas@fjasle.eu, nathan@kernel.org,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: frank-w@public-files.de
-Subject: build issue in builddeb (dpkg-checkbuilddeps: error: Unmet build
- dependencies: libssl-dev) in 6.12
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 21 Nov 2024 17:09:14 +0000
-X-UI-CLIENT-META-MAIL-DROP: W10=
-X-Provags-ID: V03:K1:CR3pPsPrqTyHSSZfgC7YZ/KmPokO0bYav0vvq7+zAPbH0mEPnAwvsr+RRVU/vxHylHYOV
- 6I4C/RO6iep78jMKE6wyeLfLIZHrtYOxjl0uOtdzntBqLvttN9rSBDYxVVJ99t2gc8jrgmyZwPi6
- aIDGuHy4RwQ8HnRO/w9vkGf9XPcfGcRXcVaD5iq+6JrKX8nZDmqUZ/UOs9JqsyPW3+rC8Oq9N5qc
- nihArLLK+N+PEFRx6AkH6HFXr/uYrrFb8YUHO+nS9pBvK8VmWaLqnPbvTtH30TggDtdifnkQAbHa
- lsdqAzI+o3GkLv8YVmPahHg13V6ZFh+F8wslGj/Ja1HCagG5ssFEUWhIh+Ce7b15p0=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Y5qjbmLrqlI=;j2x73XkjWDdDsvpLqjwg2QXJrae
- iu4l4MGikK/AuqXrEhQdC9Iqxd5eQY40rV6iq/d+6mEUvK5Iqsgwav5sK0MYMA3e5gdBMPO92
- uL/CABA9J+j/dFKV2JL4RjV38f4YP2RgBrGZ8jMCoSLLvQdBpFX/sgkfWmxOVGQO0NTEET8LY
- k4z3T6+MFq88MRZBaWhSFwoGe4lasJ/hmecYnCismWKEJEOloMxFT75K7oJfRPBKQeg1VZhHR
- 6d5HKQQz3r4I8njckZUFUxuUPhqBhJyqp1bHEr6izZIQKohbPpSsFHttVjn/a2T/PWXpyqroa
- k997BcYLW9rt/pVyGpc8VjvyVrrFxNQtQjn0kUJ6HWHlZ21pbyvbUmh6sD1Qr1NoTo/7k28qV
- MkYENkS/TGmSLVKv7LNvqa7Q9XgZo3JEygqryb7afAfblHlDeiEov668/g62fQV3OAKsh2z2A
- YL2QxmNlAvIOL3srw2Tsxwm8xZHksEBFNxU6+oDIShZ+eHosB0UYj/4C3cDyba1tUQd4zY31s
- VcFmT5CDNUbZth7tHbA/urUeAdMKxtY3GLz13lHPutMmikl+merDlm7ODWaxZaYWXi8s+jCSh
- GEkJvWef7K2gdC2kytMrmonhMC5kK6HqJTLfVOoBIB4AzUUAGIK8eS9Yb8MdJlaOaFmGDZ915
- aulZJnIhPTMDVZ4LkOTJPkiVznhaB0JCdBN6OlQti/jo8q2DDYkw41UsCDMKmByWQnq9i1o/O
- yEOD7SHrMYaobs2xTjya5hxilceaiTmGlER53k2f7Rh0eSR1lZXQZQ2oFZZCPw2SPXJBRsmor
- wN17gau2eDwpoKKVBOkXbLYBy9sSzD6Vj/F6WNK4VAzX7jQ/kXMrSiYjnURWcwBmj1qMjTVZ1
- o1BSI1rIj7RU1ZQxsQyc10iGbeC0tD57oG0c=
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, shawnku@chromium.org, 
+ geoffrey_chien@pegatron.corp-partner.google.com, hsinyi@chromium.org
+To: Herbert Wu <herbert1_wu@pegatron.corp-partner.google.com>
+In-Reply-To: <20241121032619.16525-1-herbert1_wu@pegatron.corp-partner.google.com>
+References: <20241121032619.16525-1-herbert1_wu@pegatron.corp-partner.google.com>
+Message-Id: <173220890396.3692254.17416105987923248929.robh@kernel.org>
+Subject: Re: [PATCH] arm64: dts: mt8186: Add mt8186-skitty
 
-Hi,
 
-i noticed this issue with debian package build-system in final 6.12.
+On Thu, 21 Nov 2024 11:26:19 +0800, Herbert Wu wrote:
+> Add Skitty initial device tree.
+> 
+> Signed-off-by: Herbert Wu <herbert1_wu@pegatron.corp-partner.google.com>
+> Reviewed-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> Reviewed-by: Geoffrey Chien <geoffrey_chien@pegatron.corp-partner.google.com>
+> Reviewed-by: Shawn Ku <shawnku@chromium.org>
+> Commit-Queue: Shawn Ku <shawnku@chromium.org>
+> Tested-by: Geoffrey Chien <geoffrey_chien@pegatron.corp-partner.google.com>
+> ---
+>  arch/arm64/boot/dts/mediatek/Makefile                |  1 +
+>  .../boot/dts/mediatek/mt8186-corsola-skitty.dts      | 12 ++++++++++++
+>  2 files changed, 13 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dts
+> 
 
-LOCALVERSION=-main board=bpi-r2 ARCH=arm CROSS_COMPILE=ccache arm-linux-gnueabihf-
-make[1]: Entering directory '/media/data_ext/git/kernel/build'
-  GEN     debian
-dpkg-buildpackage --build=binary --no-pre-clean --unsigned-changes -R'make -f debian/rules' -j1 -a$(cat debian/arch)
-dpkg-buildpackage: info: source package linux-upstream
-dpkg-buildpackage: info: source version 6.12.0-00061-g837897c10f69-3
-dpkg-buildpackage: info: source distribution noble
-dpkg-buildpackage: info: source changed by frank <frank@frank-u24>
-dpkg-buildpackage: info: host architecture armhf
- dpkg-source --before-build .
-dpkg-checkbuilddeps: error: Unmet build dependencies: libssl-dev
-dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
-dpkg-buildpackage: warning: (Use -d flag to override.)
-make[3]: *** [/media/data_ext/git/kernel/BPI-R2-4.14/scripts/Makefile.package:126: bindeb-pkg] Error 3
 
-it was ok in at least rc1 and libssl-dev is installed
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
-basicly i use this command after setting crosscompiler
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
 
-LOCALVERSION="${gitbranch}" board="$board" KDEB_COMPRESS=gzip make bindeb-pkg
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
 
-if i Revert "kbuild: deb-pkg: add pkg.linux-upstream.nokernelheaders build profile"
+  pip3 install dtschema --upgrade
 
-i can compile again..any idea why this happens? my build-system is ubuntu 24.4 and github actions with ubuntu-latest.
 
-https://github.com/frank-w/BPI-Router-Linux/actions/runs/11955322294/job/33327423877
+New warnings running 'make CHECK_DTBS=y mediatek/mt8186-corsola-skitty.dtb' for 20241121032619.16525-1-herbert1_wu@pegatron.corp-partner.google.com:
 
-regards Frank</frank@frank-u24>
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
+	['google,skitty', 'google,corsola', 'mediatek,mt8186'] is too long
+	['google,skitty', 'google,corsola', 'mediatek,mt8186'] is too short
+	'google,skitty' is not one of ['mediatek,mt2701-evb']
+	'google,skitty' is not one of ['mediatek,mt2712-evb']
+	'google,skitty' is not one of ['mediatek,mt6580-evbp1']
+	'google,skitty' is not one of ['prestigio,pmt5008-3g']
+	'google,skitty' is not one of ['fairphone,fp1', 'mundoreader,bq-aquaris5']
+	'google,skitty' is not one of ['mediatek,mt6592-evb']
+	'google,skitty' is not one of ['mediatek,mt6755-evb']
+	'google,skitty' is not one of ['mediatek,mt6765-evb']
+	'google,skitty' is not one of ['mediatek,mt6779-evb']
+	'google,skitty' is not one of ['mediatek,mt6795-evb', 'sony,xperia-m5']
+	'google,skitty' is not one of ['archermind,mt6797-x20-dev', 'mediatek,mt6797-evb']
+	'google,skitty' is not one of ['bananapi,bpi-r64', 'mediatek,mt7622-rfb1']
+	'google,skitty' is not one of ['mediatek,mt7623a-rfb-emmc', 'mediatek,mt7623a-rfb-nand', 'mediatek,mt7623n-rfb-emmc', 'bananapi,bpi-r2']
+	'google,skitty' is not one of ['mediatek,mt7629-rfb']
+	'google,skitty' is not one of ['cudy,wr3000-v1', 'openwrt,one', 'xiaomi,ax3000t']
+	'google,skitty' is not one of ['acelink,ew-7886cax', 'bananapi,bpi-r3', 'bananapi,bpi-r3mini', 'mediatek,mt7986a-rfb']
+	'google,skitty' is not one of ['mediatek,mt7986b-rfb']
+	'google,skitty' is not one of ['bananapi,bpi-r4']
+	'google,skitty' is not one of ['mediatek,mt8127-moose']
+	'google,skitty' is not one of ['mediatek,mt8135-evbp1']
+	'google,skitty' is not one of ['mediatek,mt8167-pumpkin']
+	'google,elm-rev8' was expected
+	'google,hana-rev6' was expected
+	'google,hana-rev7' was expected
+	'google,skitty' is not one of ['mediatek,mt8173-evb']
+	'google,burnet' was expected
+	'google,cozmo' was expected
+	'google,damu' was expected
+	'google,skitty' is not one of ['google,fennel-sku0', 'google,fennel-sku1', 'google,fennel-sku2', 'google,fennel-sku6', 'google,fennel-sku7']
+	'google,skitty' is not one of ['google,juniper-sku16', 'google,juniper-sku17']
+	'google,kakadu-rev3' was expected
+	'google,kakadu-rev3-sku22' was expected
+	'google,kappa' was expected
+	'google,skitty' is not one of ['google,katsu-sku32', 'google,katsu-sku38']
+	'google,skitty' is not one of ['google,kodama-sku16', 'google,kodama-sku272', 'google,kodama-sku288', 'google,kodama-sku32']
+	'google,skitty' is not one of ['google,krane-sku0', 'google,krane-sku176']
+	'google,skitty' is not one of ['google,makomo-sku0', 'google,makomo-sku1']
+	'google,skitty' is not one of ['google,pico-sku1', 'google,pico-sku2']
+	'google,skitty' is not one of ['google,willow-sku0', 'google,willow-sku1']
+	'google,skitty' is not one of ['mediatek,mt8183-evb']
+	'google,skitty' is not one of ['mediatek,mt8183-pumpkin']
+	'google,steelix-sku393219' was expected
+	'google,steelix-sku393220' was expected
+	'google,steelix-sku393221' was expected
+	'google,steelix-sku196609' was expected
+	'google,skitty' is not one of ['google,steelix-sku131072', 'google,steelix-sku131073']
+	'google,tentacruel-sku262147' was expected
+	'google,tentacruel-sku262151' was expected
+	'google,tentacruel-sku327681' was expected
+	'google,tentacruel-sku327683' was expected
+	'google,skitty' is not one of ['google,voltorb-sku589824', 'google,voltorb-sku589825']
+	'google,skitty' is not one of ['mediatek,mt8186-evb']
+	'google,skitty' is not one of ['mediatek,mt8188-evb']
+	'google,hayato-rev1' was expected
+	'google,hayato-rev5-sku2' was expected
+	'google,spherion-rev3' was expected
+	'google,spherion-rev4' was expected
+	'google,skitty' is not one of ['mediatek,mt8192-evb']
+	'google,skitty' is not one of ['google,tomato-rev2', 'google,tomato-rev1']
+	'google,tomato-rev4' was expected
+	'google,dojo-sku7' was expected
+	'google,skitty' is not one of ['mediatek,mt8195-demo', 'mediatek,mt8195-evb']
+	'google,skitty' is not one of ['mediatek,mt8365-evk']
+	'google,skitty' is not one of ['mediatek,mt8390-evk']
+	'google,skitty' is not one of ['kontron,3-5-sbc-i1200', 'mediatek,mt8395-evk', 'radxa,nio-12l']
+	'google,skitty' is not one of ['mediatek,mt8516-pumpkin']
+	'mediatek,mt2701' was expected
+	'mediatek,mt2712' was expected
+	'mediatek,mt6580' was expected
+	'mediatek,mt6582' was expected
+	'mediatek,mt6589' was expected
+	'mediatek,mt6592' was expected
+	'mediatek,mt6755' was expected
+	'mediatek,mt6765' was expected
+	'mediatek,mt6779' was expected
+	'mediatek,mt6795' was expected
+	'mediatek,mt6797' was expected
+	'mediatek,mt7622' was expected
+	'mediatek,mt7623' was expected
+	'mediatek,mt7629' was expected
+	'mediatek,mt7981b' was expected
+	'mediatek,mt7986a' was expected
+	'mediatek,mt7986b' was expected
+	'mediatek,mt7988a' was expected
+	'mediatek,mt8127' was expected
+	'mediatek,mt8135' was expected
+	'mediatek,mt8167' was expected
+	'google,elm-rev7' was expected
+	'google,hana-rev5' was expected
+	'mediatek,mt8173' was expected
+	'mediatek,mt8183' was expected
+	'google,fennel' was expected
+	'google,juniper' was expected
+	'google,kakadu-rev2' was expected
+	'google,kakadu-rev2-sku22' was expected
+	'google,katsu' was expected
+	'google,kodama' was expected
+	'google,krane' was expected
+	'google,makomo' was expected
+	'google,pico' was expected
+	'google,willow' was expected
+	'google,steelix-sku393216' was expected
+	'google,steelix-sku393217' was expected
+	'google,steelix-sku393218' was expected
+	'google,steelix-sku196608' was expected
+	'google,steelix' was expected
+	'google,tentacruel-sku262146' was expected
+	'google,tentacruel-sku262150' was expected
+	'google,tentacruel' was expected
+	'google,voltorb' was expected
+	'mediatek,mt8186' was expected
+	'mediatek,mt8188' was expected
+	'google,hayato' was expected
+	'google,hayato-sku2' was expected
+	'google,spherion-rev2' was expected
+	'google,spherion' was expected
+	'mediatek,mt8192' was expected
+	'google,tomato' was expected
+	'google,tomato-rev3' was expected
+	'google,dojo-sku5' was expected
+	'mediatek,mt8195' was expected
+	'mediatek,mt8365' was expected
+	'mediatek,mt8390' was expected
+	'mediatek,mt8395' was expected
+	'mediatek,mt8516' was expected
+	'google,elm-rev6' was expected
+	'google,hana-rev4' was expected
+	'google,kakadu' was expected
+	'google,tentacruel-sku262145' was expected
+	'google,tentacruel-sku262149' was expected
+	'google,spherion-rev1' was expected
+	'google,dojo-sku3' was expected
+	from schema $id: http://devicetree.org/schemas/arm/mediatek.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: /: failed to match any schema with compatible: ['google,skitty', 'google,corsola', 'mediatek,mt8186']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: /: failed to match any schema with compatible: ['google,skitty', 'google,corsola', 'mediatek,mt8186']
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: pmic: 'codec' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/mediatek,mt6397.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: dp-bridge@5c: 'extcon' is a required property
+	from schema $id: http://devicetree.org/schemas/display/bridge/ite,it6505.yaml#
+arch/arm64/boot/dts/mediatek/mt8186-corsola-skitty.dtb: sound: 'model' is a required property
+	from schema $id: http://devicetree.org/schemas/sound/mt8186-mt6366-rt1019-rt5682s.yaml#
+
+
+
+
+
 
