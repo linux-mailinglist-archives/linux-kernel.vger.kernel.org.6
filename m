@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-416701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78EBD9D48FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:38:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775949D48FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9B9282CC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:38:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCA21F22D64
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C018D1CB526;
-	Thu, 21 Nov 2024 08:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4B61CB322;
+	Thu, 21 Nov 2024 08:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FpiIU6sb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="K5E5LPB7"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FC61C9EDC;
-	Thu, 21 Nov 2024 08:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DC1146A6B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178304; cv=none; b=gA3/SwSsW09qVxu49fkqG92Fsa37XrjzlzvkoGKCmAQKv7qzrzgRlUgWNa2B/6uLtD3B+0Yx7WjNphgbBLTJVa24stP/H2bI8euMI9M7d6+G93ceNCnpDThj5kwHv6ZzBN6faW2GhRxngAthryBfXxAeL7ch1RmzZ8L0UeIIcNc=
+	t=1732178342; cv=none; b=H7wrg6B+bla6mWYBvPajwozS/8C3/h6y1PFWCBwqkISH/Y+ZMQt0ACUqrGMf3EBE78hiGpj0FCrU6c7v3o6nL15+MWlDbDB+FawBije/KRr7fng0BYZJ350FcGpE95ED+K0NNiW2m0PorKc+QnN5Dflcd9lGoRtOUlmeQ4voMDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178304; c=relaxed/simple;
-	bh=4Mj935QMoc0VRJ/01ktsGEBOR95L286nivQ5m8U2iw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gpyYa/0HvIWEQI3IuJbsiwUsmTqB1gZ41tnM5N0v8vFqM/VLwtvTMiIW9cEO+2yqQY5YSMyqTw+CYrFmyCGYZYI98yAGx0FDH1ESpOkB0NljY0NCpiB8weoqVZFrLFuC328eey4zh2ktoCFDLeIB9OqdHHURoqQ+DNlf54iyhuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FpiIU6sb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL7xaoc015290;
-	Thu, 21 Nov 2024 08:38:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tB0KnnanTcHNjDGVYNGLDMZfTGK9vcYncMo3+GSBNxU=; b=FpiIU6sb+Atbrrtv
-	RvWijmTAK6Elnu3X0A5qS0tKbPyqKtxenRYT7/equZ1v7UEq97eOmw4TFRkj8+Vl
-	c6LPJ0mltkgnisTCV0rrUFPwywopvDASrK5OwUjSbR4qVTvZIhtVRxXqebIZnh0+
-	vEAXMLVLEZkOBezkpH1sTukf5QJSmc042DjkAAN7ZMl6FGadImoXQmeVEmHBs34T
-	M0oYDADllPEn3efbnM8T9ncACL5Sssvk045Mj/cB4htm3pV178A+jl6DKjPYxBX8
-	kmTUsX3gsmiH/TJR09O/Kw3TkdukvzouIsijyvlrb7ASsM7trnYzvqOJI7lMOd2a
-	VLh/5Q==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9g4tv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:38:01 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL8c0LZ029995
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 08:38:00 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 00:37:53 -0800
-Message-ID: <242451d6-2b77-417c-bd98-4455f739dc0d@quicinc.com>
-Date: Thu, 21 Nov 2024 16:37:48 +0800
+	s=arc-20240116; t=1732178342; c=relaxed/simple;
+	bh=pzembqrUVPK9F44sznnbwZxaJ5QPuV+5mqPWq5PcR2o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DAj6Zop/Bm8QUQM/78kgh5d6NlRm2kzFooSHBOPOCFrKSbuQjHsqjUM/O7XEWZrdtHgGOjT5HSiu2fJ5UlIQWb1KBXhmi8KXe6saoFRiphfkoA3cTsBnkkxo2lBd28KNxLSQgZ1yUCFTto00WetvATCswIIfdg/fgIUgqvwB7pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=K5E5LPB7; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FHKNk3ZnkRHZqy1I3MVdZq0wTw6nyYKhvWFL++uRWnA=; t=1732178338; x=1732783138; 
+	b=K5E5LPB7HvETdCimRRacSvGhCjbU9KVmgNQgTp+CkGa8GdM0dDFgGEjj3+y9ThYqr6EH24J+oLr
+	yO90fTwD+nc9n/enUmuaKuRZxlVOlMnEliRLT7fCOPGews4LlHTCbgHgQ/QiEkWthvIsBbyH636hN
+	Qlsn0y8QrcFs64as1rC2gdy+y249M5Tmi72uDSmhQW0uLQqKZogQ5oGPQXDtoM586aRJdYq4EkPwr
+	E0DgZAsxEWONXcgSKFdeCWE89YavD3/6Zo6j53TazTxKOBQGLFTP29LuRRmVlD0EzgcIoAHic0dAS
+	NGEvCTzMkxXoR85taDXLOWLQSRFQuqEjtuFg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tE2i7-00000002umv-1tkB; Thu, 21 Nov 2024 09:38:47 +0100
+Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=z6.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tE2i7-00000002FgF-11eP; Thu, 21 Nov 2024 09:38:47 +0100
+Received: from glaubitz by z6.fritz.box with local (Exim 4.96)
+	(envelope-from <glaubitz@physik.fu-berlin.de>)
+	id 1tE2i6-00FJ8T-2m;
+	Thu, 21 Nov 2024 09:38:46 +0100
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: mpe@ellerman.id.au
+Cc: arnd@arndb.de,
+	geert@linux-m68k.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
+Date: Thu, 21 Nov 2024 09:38:46 +0100
+Message-Id: <20241121083846.3648473-1-glaubitz@physik.fu-berlin.de>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241114131114.602234-1-mpe@ellerman.id.au>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: ufs: qcom: Add UFS Host Controller
- for QCS615
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>, Andy Gross <agross@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <quic_jiegan@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <quic_sayalil@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
- <20241119022050.2995511-2-quic_liuxin@quicinc.com>
- <d9c3dc82-24e5-465d-bd1c-7a7c97e17136@kernel.org>
- <eae9d141-9c88-4856-9287-2ba6ea6f4a06@kernel.org>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <eae9d141-9c88-4856-9287-2ba6ea6f4a06@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: C-wGCnRF7NJ8TW3zITJPRtXg76QtxZEB
-X-Proofpoint-ORIG-GUID: C-wGCnRF7NJ8TW3zITJPRtXg76QtxZEB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=861 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210067
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
+Hello Michael,
 
+> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
+> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
+> some from Motorola? No Apple machines should be affected.
 
-在 2024/11/21 15:40, Krzysztof Kozlowski 写道:
-> On 20/11/2024 17:57, Krzysztof Kozlowski wrote:
->> On 19/11/2024 03:20, Xin Liu wrote:
->>> From: Sayali Lokhande <quic_sayalil@quicinc.com>
->>>
->>> Document the Universal Flash Storage(UFS) Host Controller on the Qualcomm
->>> QCS615 Platform.
->>>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
->>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->> That's a bit odd SoB chain. First, these are just one-liners. Second,
->> who authored the patches?
-> To be clear: SoB regarding authorship is correct, but regarding Acks and
-> Reviews is not. Savali did not receive these tags. If so, please point
-> to lore discussion with it.
-> 
-> All this needs fixing.
-Thank you for your comments. These are the two reviews I received. One 
-is your reviewd-by, and the other is Manivannan's acked-by.I have also 
-cc Sayali on the email.
+I have a Pegasos 2 and I planned on keeping it.
 
-https://lore.kernel.org/linux-arm-msm/rv3ukz6rhgp3x32s74nbftmoqmdxjxmoii3zsd4wipmhudyq7q@ha4l2svl5lim/
+Have you asked among the Amiga community whether they plan on discarding
+your hardware? I think it's always ill-fated to ask for popularity of
+hardware on just the LKML. Most users are not on the LKML.
 
-https://lore.kernel.org/linux-arm-msm/20241112075619.2ilsccnnk4leqmdy@thinkpad/
-> 
-> Best regards,
-> Krzysztof
+Adrian
 
+--
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
