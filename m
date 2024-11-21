@@ -1,301 +1,289 @@
-Return-Path: <linux-kernel+bounces-416788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C319D4A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:54:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60499D4A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32902282429
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBE0B21D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55961CB522;
-	Thu, 21 Nov 2024 09:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4582C1C7299;
+	Thu, 21 Nov 2024 09:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="YuEXK8Wg";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b="z4Hcy9ie"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2100.outbound.protection.outlook.com [40.107.22.100])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FR24Dwsz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5123099D;
-	Thu, 21 Nov 2024 09:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.100
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732182857; cv=fail; b=NvYAABmdGW/71hVtl7Fwt227Gt9pwVKGFEXPxRIQqYSk6HNFw7E1Mu+SLLU7LurSwqU95CHptFHH0l0enwny3mihS8z3pvyZaClMTU2A947tK12q7u6ipy/9+LHsOFTW/9l5UtCRV8KWsy81Yn52rMG9kUcftDFtqUWHQSiDRJE=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732182857; c=relaxed/simple;
-	bh=UrPK3r0SvBiRjSiCnx9NbylfVXYMMGXoiyGpsVyAMrs=;
-	h=Message-ID:Date:From:Subject:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BR4Hde6MTH5xA9XBekoBzsnCIrH87J4SpQ/x7m5PxiXU40fHC2AIPHyyTPuN/W7AHOY2HaITdzoNN1tmwhMYNPIVfTpUO44xNdALScAkRqY1+Vio54BSe83cSfATKnC9ml7Qp2g1qYrB4evpG7sOmHQMBUD/TTwmgrVNN0pcFkc=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=topic.nl; spf=pass smtp.mailfrom=topic.nl; dkim=pass (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=YuEXK8Wg; dkim=fail (2048-bit key) header.d=topic.nl header.i=@topic.nl header.b=z4Hcy9ie reason="signature verification failed"; arc=fail smtp.client-ip=40.107.22.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=topic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=topic.nl
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=fail;
- b=GlveT00Pdgt8kKJZCSNOeDEvv99rIqUzjnStpJodIwuUDTpW1VkWI/3c9iHi3H1C/fgX5B7CJRwgMag55lE8B/XwDTN4b6Sx6UFNrOMtaBDSfz7AtqmMv95rMyjlDvzaJbm1guygCdAZ2xeDIJ/fiI/npr6Y6g30TvW463j+QgS7PYC+2FRlAMlybfKmGwGdJT8xB3971XWFZlXCPox7jXCRFYN8da2oMSQWZPylcV1D2iQIPJvQJVaEGageebY0vfRD3G4T9koOgjQHkAjbTFbeFuu+4v+T6KzU+OWoe+zRT1chEj72OvBaB2yS/MCgFAbgaMCkRF78vDPOYFEAGQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UrPK3r0SvBiRjSiCnx9NbylfVXYMMGXoiyGpsVyAMrs=;
- b=aObcmaiJ5nm7Xc9X7t4PGwFCxYkT33y9ooVkhb3iFjUh7aFA1RzEZpgfBVMIGwisnJhUKXZySpi9Zsbv9gwawWth7Pe5C+AAMsAmEmonO7db14UodFVO8frDjRpeGNplWYg1eEZSxTAdTQEB0EID8mbkGt3rNp/+6shuRLM3darnlHXP+VtmuE3vZ2oP7NlgUI3rPmHeQOsKuJaYATNIBaXES/BraJo5xY9UcDrswp4YV1Jq/ey/fKLoN9t7grbWi7D13Zan2FCjoU4wx13/795Q8AKIFpQovz8kz3FtmRXlFsCPQZTp+5OS7W+xNz+m/OcZrm5M/69Zg6OgKIFeSQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 13.93.42.39) smtp.rcpttodomain=quicinc.com smtp.mailfrom=topic.nl; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=topic.nl; dkim=fail
- (signature did not verify) header.d=topic.nl; arc=fail (47)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UrPK3r0SvBiRjSiCnx9NbylfVXYMMGXoiyGpsVyAMrs=;
- b=YuEXK8Wg2oafwb+p4whaJgh3iEXY4NRN1KcJXIk6/VJu7DRIgNJGMg+zSlZIomLaTEWfWfd9umhgw5h6IOu6i53Bp9WCjqvmqJeHnukOCjn8wl8YGnSw8I6Y16D/DzPPBc0qiakPB52mL2Ltu3SjUa7dY2uzToIHBxpMRA1c0wSLQIWbs257QUljXq32r+STN8Da1evoW659MsTNvDtzEYUZET3HOeUSwhxGjmGiDWN7NSmQJplNR0tIByYufzUfIqpxcsts/wLQ0ytOlDXEc2KhVc58kjD/c4nQuznFDyG/tw+FUQLCXsoa+KbOJqjCfK6FeIpkCp3ocxoFPISDZg==
-Received: from DU2PR04CA0047.eurprd04.prod.outlook.com (2603:10a6:10:234::22)
- by DBBPR04MB7772.eurprd04.prod.outlook.com (2603:10a6:10:1e3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Thu, 21 Nov
- 2024 09:54:07 +0000
-Received: from DB3PEPF00008860.eurprd02.prod.outlook.com
- (2603:10a6:10:234:cafe::95) by DU2PR04CA0047.outlook.office365.com
- (2603:10a6:10:234::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.16 via Frontend
- Transport; Thu, 21 Nov 2024 09:54:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 13.93.42.39)
- smtp.mailfrom=topic.nl; dkim=fail (signature did not verify)
- header.d=topic.nl;dmarc=pass action=none header.from=topic.nl;
-Received-SPF: Pass (protection.outlook.com: domain of topic.nl designates
- 13.93.42.39 as permitted sender) receiver=protection.outlook.com;
- client-ip=13.93.42.39; helo=westeu12-emailsignatures-cloud.codetwo.com; pr=C
-Received: from westeu12-emailsignatures-cloud.codetwo.com (13.93.42.39) by
- DB3PEPF00008860.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8182.16 via Frontend Transport; Thu, 21 Nov 2024 09:54:06 +0000
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (104.47.11.40) by westeu12-emailsignatures-cloud.codetwo.com with CodeTwo SMTP Server (TLS12) via SMTP; Thu, 21 Nov 2024 09:54:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cShXL+s4V3n9/RNFnGCxRoWmyskbwlqD35JyYAhyPHnAmFBCOZz7B10p7MTwbguNusnTgEg1HqnzN6hrzIoy1yRD3Rk6sBvz/Zbak1pnnrZ2GSIbqY/0BI7OOez4M+mgsHE1F+WULAnZMNNM0UXxMh12yBlnBwFahVjegiFFiDYajSL23+uojt2An/PhzdIIivDaSpeDkjcJUQdwiIdKXwHNia1wIY86uKC/GkxMYwuJPe6/g9a1uYnWu6Uoy+UnmSmCklBIH7YYLkA0+yToSIBhc0knOtMoqHiAc1e8CV5k2vRF9989DmLh4sNsUBiN7YGtmkGQIM+bzegEA44rzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=w8RMSz4kz1rPDz/R7hw9nUq/ThXHAsVEEgnhBLG3UB0=;
- b=SXDD81POWDVRp8X+4ZUR3FOIXqV0do4ib1hQeUibT1Np3ZhT6NnzAHAOa9h0sNeI44CNPOclwrSBxAL7jjTZ57uEIyW+Uw1ylaCBha77q3k/a3j30wXjtMV4OB1jyvzY/lTri+wabcQemrz3oWerG3atcT/+kR2C8wpQvDHgvzKwUeqNmJSXb9ZIKUrbvCXZmStDlrAXkVkVKcYOnmiLfcIlyN8UTDgfn3cvxhH86LlhSL8UhXumNni6wohJflwx8hMhi7ceQenl1ECQBUp4Om4aEcQ8g2lO98fzkmkcgdsd5y2yGk4Nepo2CFrK63xk6aGMuT9zyOmhzSHEDueaYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=topic.nl; dmarc=pass action=none header.from=topic.nl;
- dkim=pass header.d=topic.nl; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=topic.nl; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w8RMSz4kz1rPDz/R7hw9nUq/ThXHAsVEEgnhBLG3UB0=;
- b=z4Hcy9ieOFKKl9fHdJGqXrYvmwdZRdocm1MDGEz0EApSXD7G9JH5uk+MZhbOR5w94OFBOYXza/hv5YAkAaSU2I5Zhlod0Ph2kiT301xbFokBACTx2zsFXw0YxCruWScBd9lCHZSUrY5zxSUscNqn39RoHxbsXOB40c1DZzuTgh0fiMDbFpOJ2cvEqjA+1qwfgVgLTcHK4OdVGgQxEhx+WsbpENq4wXpXinhXwuTSPmgLr79owkNYfLgv8nKpaM/BqU7wv8m1ASGw6+DYKyrpxgUBqKQYrm7TA9rVpn+6+znWsslYtZVNEzvIfUvOndf734li8s8x2Q0CHu3KKDcTtw==
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=topic.nl;
-Received: from AS8PR04MB8644.eurprd04.prod.outlook.com (2603:10a6:20b:42b::12)
- by AM9PR04MB8437.eurprd04.prod.outlook.com (2603:10a6:20b:3dd::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.16; Thu, 21 Nov
- 2024 09:54:00 +0000
-Received: from AS8PR04MB8644.eurprd04.prod.outlook.com
- ([fe80::e86d:f110:534e:480a]) by AS8PR04MB8644.eurprd04.prod.outlook.com
- ([fe80::e86d:f110:534e:480a%7]) with mapi id 15.20.8158.023; Thu, 21 Nov 2024
- 09:54:00 +0000
-Message-ID: <e3c88450-fbe3-42b9-a2ed-901ffdadfe1c@topic.nl>
-Date: Thu, 21 Nov 2024 10:54:00 +0100
-User-Agent: Mozilla Thunderbird
-From: Mike Looijmans <mike.looijmans@topic.nl>
-Subject: Re: [PATCH v3 1/2] dt-bindings: usb: Add microchip USB5807 HUB
-To: AKASH KUMAR <quic_akakum@quicinc.com>, Rob Herring <robh@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org
-References: <1b153bce-a66a-45ee-a5c6-963ea6fb1c82.949ef384-8293-46b8-903f-40a477c056ae.656f2a13-85bf-42a3-8490-f97f2538d8c3@emailsignatures365.codetwo.com>
- <20230522074510.16367-1-mike.looijmans@topic.nl>
- <168474408440.1935852.10036260685386476051.robh@kernel.org>
- <96bc29bf-b601-4852-ac9a-50091698529d@quicinc.com>
-Content-Language: nl, en-US
-Organization: TOPIC
-In-Reply-To: <96bc29bf-b601-4852-ac9a-50091698529d@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: AM4PR05CA0002.eurprd05.prod.outlook.com (2603:10a6:205::15)
- To AS8PR04MB8644.eurprd04.prod.outlook.com (2603:10a6:20b:42b::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85C2175562
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732182914; cv=none; b=q4PsgxQR4N7nY5DA9TtPp+93HYMRTr1MtiZcOs+364yGC30bZZhRwaRQAlYRVso7q+2G7ZYCaGqH9pJcIGfAgrxsUDniBiJC5gNuAy16JCDfwMkubka/hqvhQpuoriVK0rJN1fJwZfUpt8iosBI1zRtHQNshBRmC2d8+8VDc6ZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732182914; c=relaxed/simple;
+	bh=V9zSHS1pJjVSXltgG8ToSIxHEsIBoQJt5QpPTu7JfXY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=B1RUE/yfdt1MF94KcALgMDFF4FE9iQRjgM2l6Z6B30k+pf8RS4+i1XNiD5ANcEYKvphvOU9e87HusKgGOWRKr3VY18E6naf8H2h0hYXOgYa+4Kg3Iwshno7sCuWnkkcuidZfiNEiqjo2E2hYmsj7VWlIk9bG+QFGhwRvYaP6a9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FR24Dwsz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732182910;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oeSXhCxBTTH4vqfY7AAKMHZ+Jnc8WGPxhnpKzz8e11o=;
+	b=FR24DwszE0o7yMYP1fJW4JVxfDdttTVCkflf+jGYXQMdcDLe700CsXQNtMtFWfVWwvcBxR
+	zrYKBf0Xp1CtQ4NPMArTpFamA5wBOXHgXyHlzFX4154ThAWtsnBilt0Mq5LyP0x3PFZIIG
+	ZjvnEMUp9MS3L2+bxIaU6g0Z3ToJRys=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-WyOqWQ8fPDGAeTC0ZIjFgQ-1; Thu, 21 Nov 2024 04:55:08 -0500
+X-MC-Unique: WyOqWQ8fPDGAeTC0ZIjFgQ-1
+X-Mimecast-MFC-AGG-ID: WyOqWQ8fPDGAeTC0ZIjFgQ
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315afcae6cso3762485e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:55:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732182907; x=1732787707;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=oeSXhCxBTTH4vqfY7AAKMHZ+Jnc8WGPxhnpKzz8e11o=;
+        b=Sl3KqhYTPTMKFn9UnBSzhayRPF/WbHMDDz55D5vd8dxUDlTOsQIGOZg3ejW5hPHF2M
+         jlb+702EkS39KGGuYeLfQE6vR91Ga7j6CQ+Q+uPfeecmiDFEmtgt3CYg+qigmmxsHcIF
+         A4XA+VFkXyZrVAQunk9czh0VH3KR0bH3qObzuwbUOMO18/l+Wg+KCL5t/mh3ZllMnnlg
+         pn+jLL4xsnxLEdd7u4YTbr1xOwztkc64XNUQlFrXZrqGBHe6OQFBTUJZ35GQxeDHOOOa
+         fotRYt0Z9FOQt6kolqY/z+1GbqcsySMXBsk07JtY9ok7zHYL/ixRHDBe7Nl6rLCBRbzG
+         MphA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHAy+MaDFjIMtXRt9vs4g7wO9Y2cSo9TEx9heSJKBNzc5xnNE0IQBSsuBTFVvFS7B2ag2b/5biXfq//0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypBT9dLV/RYSES7Gt3yCDBtZ88zvLzV6PvQOz8hNEUV2BzPvaJ
+	A0QQmnI9IrrNUWM87pJ0Tv7w+gSDwi1mQB0fGF+PZ7IjkqK0h24ykXuy96+ylMZptsM/NuikKJf
+	1fKGujJGlinwrDlscLW3umbDwzPR/rA6Hprc34c96UtkqMkdyoLzbA9Nns9ZppmuyGPe7ig==
+X-Received: by 2002:a05:600c:3ca1:b0:42c:ae4e:a96c with SMTP id 5b1f17b1804b1-433c5cd8e80mr20000045e9.16.1732182907446;
+        Thu, 21 Nov 2024 01:55:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHyGk12OZ73HibIfae1Pd8GsBtuNqYucsHxtEDFplxjw7+0U1nJJ0gTYQ+41N0tKRGkd5aImQ==
+X-Received: by 2002:a05:600c:3ca1:b0:42c:ae4e:a96c with SMTP id 5b1f17b1804b1-433c5cd8e80mr19999895e9.16.1732182907067;
+        Thu, 21 Nov 2024 01:55:07 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f643b299sm54461735e9.0.2024.11.21.01.55.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 01:55:05 -0800 (PST)
+Message-ID: <6b8351f6-39bb-4312-b3ff-000eb1f1fe90@redhat.com>
+Date: Thu, 21 Nov 2024 10:55:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AS8PR04MB8644:EE_|AM9PR04MB8437:EE_|DB3PEPF00008860:EE_|DBBPR04MB7772:EE_
-X-MS-Office365-Filtering-Correlation-Id: c51e7f94-b343-430f-26f3-08dd0a12707a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?VjljSjk4cS80S3lGUlIrb3NWM0o4UUc0bVF5a1NxSWJJUlliWDZrZGhIQ3RE?=
- =?utf-8?B?b2hyaGJobzBxMHdFelJUL05LSDhuTlpXdjJrQjNvOUt5RFUyVHNVQWgwK21j?=
- =?utf-8?B?clhMWHR2S25EdWRsMWdNenNuWlFna1pLN0VBRGtocHpJN3RGV05pYVcrSE1C?=
- =?utf-8?B?aERMQ09FL012ZGRhTklIdEoyZVR0eUlNMHpJR1hZTFF5aTdHVURmN2JnWUhY?=
- =?utf-8?B?cGZpMXlzam9TZWV3SUErTVZxWnVsL3FFWFgxeTVxUkNaRFljT3hUdTJwNjVw?=
- =?utf-8?B?L3RJdUVpZ2ZiRzFQa1NzMi9MYzdZWllzQ2tCdkFjNkR2VXVQN09aRm9xUE5z?=
- =?utf-8?B?a3lYS3RuNWhSS2czVDlPbGJiUXFrV0RKUGQ2Z1FVMFhBeGtEcUlKTGJPZUtF?=
- =?utf-8?B?K0VEdVVOcWY2T3pkTC9mRnhqbndacGhjTVdvM0ZlUlhBVjVSNUhOV3JTMEw1?=
- =?utf-8?B?RFNXLzRmL1ppNE9oNjlhRm5RTUpZVkJqWTU1V3pDVmpuUllodXdUdUZsMExQ?=
- =?utf-8?B?TjVzNStOOXlYL0pzRjBEVWQxb0g0NDVRcTNiU1Y5TWRRbTdtNGJOR25Rengw?=
- =?utf-8?B?REl0aWM3YVNvd2xJWitVM09hZ1djaVo2aTVyWFJCRDJlYUxSbThDOEVPU3Zn?=
- =?utf-8?B?NUVLWm9zQWlzYXdIODFmMkFTT1hSL3FndnFyamhHWHVMemtvZHlvN0JNdUc2?=
- =?utf-8?B?NVFqVStSd0pHdUNHUzQ2L3RLZjVORTNyMUY1L1B5ZkhTWmhNVzhKaFBCdDhq?=
- =?utf-8?B?S3E4RFN5Yk9YSVExRUp0c251eFBkSVIrR1lwOHJrYUxTSXFDTm16a1BvcjVY?=
- =?utf-8?B?UHdpYTEvc0pMRUt0emQvQnZ3QWhudnkyeXlpNmJaOTdGSlRNbGdnN1dIR2F3?=
- =?utf-8?B?cnpvWHdPOEx6b3JUZjYwa3NVSXBZUGl6UDJaQnBMdmxBSHBJb3Q2Z042TFFo?=
- =?utf-8?B?WmxyVkFUalRxdytkZ014eEtvcU5jTHBESTVTUER1SHdPelVRMWMvVGZKUnd2?=
- =?utf-8?B?dmtwYkFnUlZxcTBScjRKcjBzWENhSWh3ODlwMU1pSUxtUFhKZVMyclFxbjNy?=
- =?utf-8?B?QVZRbVBmMi93WHcxMkpmUzcyd3dQK0wzYnU3ZzQweFVid3NTSVY3d0tYK3Zz?=
- =?utf-8?B?S1RJSkJ5U3hRdXptaGYyaFZpQVJqNkxNNGNlamtRNEF5U1grZGtKS3YvNkxv?=
- =?utf-8?B?NEVXdTU1dHE1YVlJN2dPRFdOTjBjZXFRZms3YjFIYlhEK29mcXVjTm1Tblcz?=
- =?utf-8?B?TWFzM0RyOEY5V3VMMVJ3S2hQaEU5MkdFc0xHYlphcmVEV1NmcUFOUGc3Vjcz?=
- =?utf-8?B?ZmUvNDVralBjR0N1NmlQbC9UaUdNUkdGSkRsb3BCTmpEWUdFNjBCOXRLclZj?=
- =?utf-8?B?MTFJVEYvMENMOTBzZmVsSTZEdXJweVR4WnhVNG1JWWUxZTNhOFh1MFdQbzBB?=
- =?utf-8?B?OXJhZ1JzN1NZbHFVbFpuZTVkcXZ5VEd6a2VDRGRPelZLcGwzVERiczgrc3Ra?=
- =?utf-8?B?N0tPMGYxTE1UZEdzTyt3R24yUElpZFo3aDdhY3pFZzJBR3g1R2ZtK3FTSDVv?=
- =?utf-8?B?QUVhb2FyOWtqeTZESEtmV0htcEhoMUlnV29yZXR0dHN5SFFBMmp3TVh0bERw?=
- =?utf-8?B?Zmt6ZVd0Q3dmWlIyZVVGWlRFK3lKT0xXWG1yUDdoQURWVXp2Z3N2bXBMR2dm?=
- =?utf-8?Q?VMapNd6uWKkPe4fC5tjS?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8644.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8437
-X-CodeTwo-MessageID: e03bd4a3-ab3f-4e17-822a-9330ad84efac.20241121095405@westeu12-emailsignatures-cloud.codetwo.com
-X-CodeTwoProcessed: true
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB3PEPF00008860.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	264aed8a-f48e-4851-2faf-08dd0a126c9f
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|35042699022|82310400026|14060799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MlE4ZURzbXlvS2pWUk04aEtEQ1ZpV3VJRWUrUVd5MWQ5bnhYaTQ0M2JpdVpk?=
- =?utf-8?B?NEJzbWpLV1FUZmVvMzRuRzg5V1Erbk45SGpUT3VwT0sxb1g4dithL091M2ZH?=
- =?utf-8?B?Ynl1OGRuOVg2RzRCQXdtTjQ0bzdsMjBoM0YrTGw3ZllJNndmeURJaWx5bGJG?=
- =?utf-8?B?Wm1BYVdxSGROVVBxeXBob0NLNnVLazVxOTF5SUdzSEprNE9qZTdnNlJIc201?=
- =?utf-8?B?RnBrTy9Ka0pPWGVURUtKcEJDR3owQWVYVVdWdlBmTCtQbXNNL0JUNmplRG1U?=
- =?utf-8?B?bk9uaHcrVkxwdnVyLzV5OFQrdVowU2VSK0NNQkRXeit0N1NGaGQ5bXhCN1l1?=
- =?utf-8?B?MzNWVkVYa29PanZISEE2RHMvUDE5OERUVW0vNE42VkJrVjZKM214VEFWUHhU?=
- =?utf-8?B?dkJaSmt0V0Q2VjZFNE0rcW1YbmFhbEZyeVkzTjV5YncyN1NtQUlva0lqTnpU?=
- =?utf-8?B?TDQ4cUdEZjZYamloaVhLcmZtU0ZaRUk1ZVVGcUZsYlF6bDBZaGRUaUsrTlc0?=
- =?utf-8?B?b05hK05JcXZvWUgyUlhoNTc2aXhKK3NiWGZJb3NGbGJVbUw5djVQSVFoWG80?=
- =?utf-8?B?QzJyaXQ4QnF6MVBsWDdvMjRCUlBITXZmVDlZYU9Ec3VJc1hBRm9oNE5OWWZF?=
- =?utf-8?B?N1dlL3hiQXFMS2lOYXdROENLZEVwUE1rMTh5djMyb24yY201M3hrUU1CT2U1?=
- =?utf-8?B?eUQ4TXl5OVc3K3Z5SHZEUTVEalZrazNKbkFFTUd2T3ZhQVFCSlpBMWhmc3ZE?=
- =?utf-8?B?SnM1NUdyVEovL3pMc1l2YW5DYkdJNEZ6Q3dWOTNiSWlCdFB1YnFqTTZNbG9z?=
- =?utf-8?B?bXJNbVhaV01waE5maU5JZmdocWZ1Umx0VExxNlpmYU9ydERFUGJ3eS9Bay9B?=
- =?utf-8?B?WnRldXlXcml5QnJKcjgzYnVKUEdRdzZnR3BUUGt4cWgzUHVyWFFhd2dUQjVF?=
- =?utf-8?B?VlFQa1lQRmtGREg0ZksyWjViZW5mVHVuZkRLRHhqY3gvZTFuKzlVbTNneEFF?=
- =?utf-8?B?KzJvL3JXZi8yaFRRczZYOFp6blZpUXFPLzZoT2tDMDJkWWlWamx5eUlGTVM2?=
- =?utf-8?B?NmxRU2RYK1lydWY0dkhUeUEzdUVRVllqRFBXcjlEOUVsU3pzUks0LzhyUnFy?=
- =?utf-8?B?UE9sSGxSbldRVHYxN3UvbHloblFTV1lVNFA1aU41V0h1b00zM2toRGFoYkdL?=
- =?utf-8?B?WE9XYTJmQVoreVY2VllpcVN4aUUrc1ZoUWlQd3RhWnZzOWNRRy9UaUtHbGJ4?=
- =?utf-8?B?WHFMM3dSUHZjVTRobWt0MURUWm5BakJaNTlXbTl1TWpsMnMwaHZ6SmVDN1VF?=
- =?utf-8?B?K0RYWWJtS1hBSjQrM09ldnpLVHZmVjdIVkxqeGJNcGJWS3hRUEdmck9QVUR1?=
- =?utf-8?B?aDJrWGtPTmNWUWVlWUxJU05ZanFyUGd6dzlkTjZxbHdtUzNmVTdrQXA2Wm8v?=
- =?utf-8?B?eTJLUWh4bkQ1U3Z1ZVRuK1pMQ2IyM2JCUkpXdTFzVFJSWnUxbVgxUjdqWlNE?=
- =?utf-8?B?ZHdGcFhCcEJ2UnBWWm1tZDh4SFZXaGFEckNXa3FqN3hUdDM2QXFLRW9uRWdZ?=
- =?utf-8?B?Tm40cERLM05KSnNiTVVWekJNbFphK0tzNGNCelExaVp0UWdrVUdhSXRtS3Ft?=
- =?utf-8?B?ekRiclNnT3dlNjJKT2NyVWNuN0IrZmRYajE0WFF2WjNUQmdFYUZESmMzSmdJ?=
- =?utf-8?B?d3pOUVdZMkV6YXcyb0MzZFQyZ0hYUVZDZEdKeDhUczFwT25NYkdkaU9OUUxy?=
- =?utf-8?B?L3dyY0V0TEMzSnR5ZE11ZzNOYTgzazdITU5NZEZRSFc1eUt4U1RYaFVselpn?=
- =?utf-8?Q?FfPGK9NuJ8J7YZ9Lzz5LW0jadSAXqkiZhTgP0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:13.93.42.39;CTRY:NL;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:westeu12-emailsignatures-cloud.codetwo.com;PTR:westeu12-emailsignatures-cloud.codetwo.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(35042699022)(82310400026)(14060799003);DIR:OUT;SFP:1102;
-X-OriginatorOrg: topic.nl
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 09:54:06.7658
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c51e7f94-b343-430f-26f3-08dd0a12707a
-X-MS-Exchange-CrossTenant-Id: 449607a5-3517-482d-8d16-41dd868cbda3
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=449607a5-3517-482d-8d16-41dd868cbda3;Ip=[13.93.42.39];Helo=[westeu12-emailsignatures-cloud.codetwo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB3PEPF00008860.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7772
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] BUG: Bad page state in iomap_write_begin
+From: David Hildenbrand <david@redhat.com>
+To: syzbot <syzbot+c317c107c68f8bc257d9@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ syzkaller-bugs@googlegroups.com
+Cc: David Howells <dhowells@redhat.com>
+References: <673d9fc5.050a0220.363a1b.0007.GAE@google.com>
+ <f3170ddb-7626-4631-b284-40c8bac7e549@redhat.com>
+ <7bab1234-45d7-43f6-8ebf-4a2c923c6a46@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <7bab1234-45d7-43f6-8ebf-4a2c923c6a46@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Akash,
+On 21.11.24 10:46, David Hildenbrand wrote:
+> On 21.11.24 10:26, David Hildenbrand wrote:
+>> On 20.11.24 09:37, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    e8bdb3c8be08 Merge tag 'riscv-for-linus-6.12-rc8' of git:/..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1644d2c0580000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=c317c107c68f8bc257d9
+>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1144d2c0580000
+>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176252e8580000
+>>>
+>>> Downloadable assets:
+>>> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e8bdb3c8.raw.xz
+>>> vmlinux: https://storage.googleapis.com/syzbot-assets/fcae16ff0e0f/vmlinux-e8bdb3c8.xz
+>>> kernel image: https://storage.googleapis.com/syzbot-assets/758973beace8/bzImage-e8bdb3c8.xz
+>>> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/a097a300c8a9/mount_0.gz
+>>> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/36b9fff6ab5e/mount_6.gz
+>>>
+>>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>>> Reported-by: syzbot+c317c107c68f8bc257d9@syzkaller.appspotmail.com
+>>>
+>>> BUG: Bad page state in process syz-executor315  pfn:49e01
+>>> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x49e01
+>>> head: order:0 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:-1
+>>
+>> So, we have a pincount underflow on a large folio (order-9). We
+>> allocated the folio in iomap_write_begin()->__iomap_get_folio(). Nothing
+>> special.
+>>
+>> [...]
+>>
+>>>     </TASK>
+>>> BUG: Bad page state in process syz-executor315  pfn:49e00
+>>> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x49e00
+>>> head: order:0 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+>>> flags: 0x4fff0000000004d(locked|referenced|uptodate|head|node=1|zone=1|lastcpupid=0x7ff)
+>>> raw: 04fff0000000004d dead000000000100 dead000000000122 0000000000000000
+>>> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff0000000004d dead000000000100 dead000000000122 0000000000000000
+>>> head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff00000000000 0000000000000000 ffffffffffffffff 0000000000000000
+>>> head: 0000000000000200 0000000000000000 00000000ffffffff 0000000000000000
+>>> page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+>>
+>> And we seem to have an unexpected flag set on the head page of the same
+>> large folio. Likely PG_locked.
+>>
+>> ...
+>>
+>>> XFS (loop0): Unmounting Filesystem 9f1cad42-11bd-4e12-8f0b-f07876b81d9a
+>>> BUG: Bad page state in process syz-executor315  pfn:49c01
+>>> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x49c01
+>>> head: order:0 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:-1
+>>> flags: 0x4fff0000000004d(locked|referenced|uptodate|head|node=1|zone=1|lastcpupid=0x7ff)
+>>> raw: 04fff00000000000 ffffea0001270001 ffffffffffffffff ffffffff00000000
+>>> raw: 0000000000000200 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff0000000004d dead000000000100 dead000000000122 0000000000000000
+>>> head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff00000000000 ffffea0001270001 ffffffffffffffff ffffffff00000000
+>>> head: 0000000000000200 0000000000000000 00000000ffffffff 0000000000000000
+>>> page dumped because: nonzero pincount
+>>
+>> [...]
+>>
+>>>     </TASK>
+>>> BUG: Bad page state in process syz-executor315  pfn:49c00
+>>> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x49c00
+>>> head: order:0 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+>>> flags: 0x4fff0000000004d(locked|referenced|uptodate|head|node=1|zone=1|lastcpupid=0x7ff)
+>>> raw: 04fff0000000004d dead000000000100 dead000000000122 0000000000000000
+>>> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff0000000004d dead000000000100 dead000000000122 0000000000000000
+>>> head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+>>> head: 04fff00000000000 0000000000000000 ffffffffffffffff 0000000000000000
+>>> head: 0000000000000200 0000000000000000 00000000ffffffff 0000000000000000
+>>> page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+>>> page_owner tracks the page as allocated
+>>
+>> Same thing, different folio.
+>>
+>>
+>> So we seem to be repeatedly freeing a large folio that
+>> (a) Is locked
+>> (b) Has a pincount underflow
+>>
+>> Likely because we have an unbalanced unpin, that happens before
+>> evicting/truncating the folio. If we then evict/truncate the (locked)
+>> folio, we free the folio before unlocking it and dropping the actual
+>> last reference.
+>>
+>> Not sure why we see a comparable thing with small folios (pincount part
+>> of refcount, but on unpin our refcount should seriously underflow
+>> immediately)
+>>
+>> CCing David
+> 
+> If I get the reproducer right, it does:
+> 
+> (1) Create a temporary folder and chdir into it
+> 
+> (2) Mounts an (XFS?) image (syz_mount_image() magic )
+> 
+> (3) Opens a file1 in there
+> 
+> (4) Writes some data into it using write(). Likely this allocates the
+> folios.
+> 
+> (5) Mmaps the file1 (MAP_UNINITIALIZED|MAP_LOCKED|MAP_FIXED|MAP_SHARED)
+> 
+> (6) Creates a socket -- socket() -- and binds it -- bind().
+> 
+> (7) Writes some more data into the mmap of file1 using memcpy.
+> 
+> (8) Mounts another (?) image (syz_mount_image() magic )
+> 
+> (9) Opens a file2 in there with O_SYNC|O_DIRECT|O_CREAT|O_RDWR.
+> 
+> (10) Calls ioctl(0xc0185879) on the file2
+> 
+> (11) Calls sendmsg() on the socket. msghdr and all data seems to reside
+> completely in the mmap of file1.
+> 
+> (12) Calls symlink(0,0)
+> 
+> (13) Calls rename(0,0)
+> 
+> 
+> I doubt 12+13 are relevant. Likely (11) is the problematic bit: we are
+> performing direct-io on folios allocated during (4) from file1 into file2.
+> 
+> I have not deciphered yet what the ioctl in (10) does.
 
-I was planning to, but the project was terminated so there was no budget to=
-=20
-finalize it. You're free to take over and make the required changes.
+Seems to be FITRIM.
 
-M.
+-- 
+Cheers,
 
-On 21-11-2024 09:34, AKASH KUMAR wrote:
-> Hi @Mike
->
-> Do you have plans to mainline this change?
->
-> We are using microchip hub in one of our project and we need this driver,
-> we have taken your change and able to enable usb hub.
-> Please check if you can push updated patchset addressing the comments fro=
-m Rob.
->
-> On 5/22/2023 1:58 PM, Rob Herring wrote:
->> On Mon, 22 May 2023 09:45:09 +0200, Mike Looijmans wrote:
->>> The USB5807 is a 7-port USB 3.1 hub that can be configured by I2C.
->>> This driver resets the chip, optionally allows D+/D- lines to be
->>> swapped in the devicetree config, and then sends an ATTACH command to
->>> put the device in operational mode.
->>>
->>> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
->>>
->>> ---
->>>
->>> Changes in v3:
->>> Add minItems
->>>
->>> Changes in v2:
->>> Rename to microchip,usb5807.yaml
->>> Remove reset-gpios description
->>> Add maxItems
->>> Add vddXX-supply properties
->>>
->>> =C2=A0 .../bindings/usb/microchip,usb5807.yaml=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 | 58 +++++++++++++++++++
->>> =C2=A0 1 file changed, 58 insertions(+)
->>> =C2=A0 create mode 100644=20
->>> Documentation/devicetree/bindings/usb/microchip,usb5807.yaml
->>>
->> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check=
-'
->> on your patch (DT_CHECKER_FLAGS is new in v5.13):
->>
->> yamllint warnings/errors:
->>
->> dtschema/dtc warnings/errors:
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
-usb/usb251xb.example.dtb:=20
->> usb-hub@2d: swap-dx-lanes: size is 32, expected 8
->> =C2=A0=C2=A0=C2=A0=C2=A0From schema:=20
->> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/=
-usb/usb251xb.yaml
->>
->> doc reference errors (make refcheckdocs):
->>
->> See=20
->> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/202305220=
-74510.16367-1-mike.looijmans@topic.nl
->>
->> The base for the series is generally the latest rc1. A different depende=
-ncy
->> should be noted in *this* patch.
->>
->> If you already ran 'make dt_binding_check' and didn't see the above
->> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->> date:
->>
->> pip3 install dtschema --upgrade
->>
->> Please check and re-submit after running the above command yourself. Not=
-e
->> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
->> your schema. However, it must be unset to test all examples with your sc=
-hema.
-> Thanks,
-> Akash
-
-
+David / dhildenb
 
 
