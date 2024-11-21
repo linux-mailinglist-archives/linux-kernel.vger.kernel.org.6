@@ -1,546 +1,335 @@
-Return-Path: <linux-kernel+bounces-416987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC59A9D4D4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:59:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F01F19D4D4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FCDDB25CB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:59:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE23D2839B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3AC1D86E8;
-	Thu, 21 Nov 2024 12:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE321D7E46;
+	Thu, 21 Nov 2024 12:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fJN6hT36"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ofZwaXTB";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LjHEQk6B"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8C81CB322;
-	Thu, 21 Nov 2024 12:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732193937; cv=none; b=VKUbjnS4ZgSw1KS36fTpPyXoFp1CiociUtF73jSmbpgEemePL7UADFL6yVBk73c9HOrqvGU3X1Ie+PBdq5Ycfju47FS3dvCvO4Uf3Z9KWBmSjb6sFSCX/UsKEu7Pnv3vgtW67wXn0+PD0Uq47IeQOT3Os4RTa+8jpQifgjSyFU8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732193937; c=relaxed/simple;
-	bh=bI0I7DBLIHsMzVWntL0XQpWNbgmdb8ZPuq4l9QJ6MYM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=d/BwvZdqlA+9Ogzahyx9grAnlC3iAIRJwnNshL04NMbXJZzlHLgLgyegfYxqOvlYOSqHUltcCe1OesggQx+5LD3FCYMR3m69vw3YOrr6XIxmJhr0biGD74QbZNVQdFJos7lUFNh1+ewbSzqleUUljcDvoUtMRkxjojv0GmiZXLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fJN6hT36; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL92Q0X019260;
-	Thu, 21 Nov 2024 12:58:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	GsT8Hdfnk5YU9hjiIdKtpMgSJ7pg1c1mCyu02V6SMWY=; b=fJN6hT36Qe+86EFk
-	1QAMAhPd9FD5yzdNrwp5U349L6tGI2A9OE0z24QsJhcoMPUJIqYqKf4mXW3NU6V0
-	XwIdvkVruvdQU6dPznU4jAXJK6xKzAs0L1+FK+1tTQYOv7kwQhP5jHLwaiojBT6j
-	p/z0UKWZVdJErNcrXG9mjo+AOSLEPh5layRqZWYUSh/BfYBxjTqoFd6zk2LjyoWr
-	5b/qf3tB2YafoLcGZFYVQXvMMw3fBOK35jO8ak2g8vQ+m65wC3Md9l+PHo1Q+smE
-	EwnEE7SzJ88dbaiiRN01iP8TgsbywQAgSxI4eK691mBmMDAu+hXQENsZPzA6VmOZ
-	plAHHQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hm5kh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:58:47 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALCwlLA015911
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:58:47 GMT
-Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 04:58:42 -0800
-Message-ID: <661f17df-e376-4d6b-9509-d6771bfcb8ce@quicinc.com>
-Date: Thu, 21 Nov 2024 18:28:39 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B741C7B99;
+	Thu, 21 Nov 2024 12:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732193996; cv=fail; b=VQ2iOM8TfyCwANEaKhPld9snUG5yspYnqnKKPiQ872lkzGnC+1Ktrg2cuYM1EMC8aX1bV9/kvSMFatfFWnLKqb0FsGmrnk4PpZWyBExn4g+h1YRCwJ7n+ea1aohm7ON8Kf4EZR9dNY4LoDQ719IwQ3RI8KnVq6mDlWhmSnyqL/w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732193996; c=relaxed/simple;
+	bh=/Yp+11dpSJaSPqrHlYahRYCmfe4AmGPFeQ3o8ONGGXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YD/aVhupalbuoTTjU/NIsO27vbw2/5Jb9/HE+uvo4aCkZ64ot5zMu5YTmtA9olWdEF4DkmHVOA4PnriNwuq0ZuMKmF9YWAuhia2K2VymMJAacfLW6yvGi6Y9YMa2orWUsjuDt/VP+O1m0dgBNANLYzugrKirr9sR5nGU8B+TzmI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ofZwaXTB; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LjHEQk6B; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALCtfWs028984;
+	Thu, 21 Nov 2024 12:59:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=F7o7dvrTSfr8DJq9rcsQScqWZOnCfnT2ljT6T4ENeTE=; b=
+	ofZwaXTBssu03coWJ6i0Z+SF+IgKFmluzmd6xgK/qv46wNP3HawniPX/nOqckXkY
+	fKd0lildxRVrvQ7ZN3andIV+OmX9hH2CplqaE/fdc5TG1ksEe5LWTewqn8m2y94w
+	cbf7zaZGfa6Digj7m7N6WKJy2ZYYHlWRmswSVuIIP0tIzUYGUIO90mMc9XlK6d0X
+	Ho/Y74UDxyQLsoll8QtoQHPKLsyElOe8gSF2RpUIA1M2THxOY17dNWG8UoHzlCn4
+	cI0kQAnzbiCLx3SWqgJ0MvRjOagoKZpB4wu5W1mCY6TplRi4cK7fcXPEdaCGcdkX
+	aybS6OgUXmGUQ+Jsf1HLng==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xhtc9kja-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Nov 2024 12:59:30 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALCSc0A008449;
+	Thu, 21 Nov 2024 12:59:29 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhubmdd9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Nov 2024 12:59:29 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UOonCkOgyvUw59xPpxNYDJOrSsJ7buTjnvs6OzDM3m/GxrUFCT7SW86rKKatfSVKXb9M3W3e0Hz89p1GGsQH7z9QEyMpa7NaWJ5MqIieqjh42VV8EyXxkMC1hOPk1vk8/vPtfpElwJ1ZaxRXplYgrfeoyF9cRqCZN914T19a22zRAyEms8W7Xi08pm0O/KIU83gAPR04caQYA+TQ3rjy8Nnt8o4W9IH1v4TWmaOU6Ba1xNbLm1dp+BSrsYGtio+bgw1ychumBdjpn597haoGLAF+zF9HrFX/kAsAxiPifnJuPv1vz3vIjZSoi20iPEP2Hao14TT76ybjIj4CWv1lrQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=F7o7dvrTSfr8DJq9rcsQScqWZOnCfnT2ljT6T4ENeTE=;
+ b=JCQqCpGGnv97+W5TlXWjhsQdVwTJQUXAO/0/2chY5WqFc2gInhNNtBnwik1cJvc/fo+Ty8MmvwIcEaZQbu0KjM/3nvbJMairtyMZNHBdGCQXFARyARieuablaFofEshjb2DtlaMwKfFlFxF+D1amJsCY8updxoZxL8NWFb8AA4BlUl1gVT6e37M1MogtFGx2seqMe6/x2UzXZA6nxmnSgBp+wsZUuKPl6+/Oq1b7s7DRiZPgkiGHrk3bjrypWZ+E1OSaKm9/MiJGlCeR2ypqQrCKWbNeb4hfFMEzvzwBLbdgmjK7Xsuvh4XxaQeAyPRXVesilFa3jtLOU5CoXXsW9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=F7o7dvrTSfr8DJq9rcsQScqWZOnCfnT2ljT6T4ENeTE=;
+ b=LjHEQk6Bn0ECyPa9oTJ4SjJhdymeaDwnyG95QLJxjqTySX+Sxy7clg2u06eNtcNrghUwoZrPOHcWCjIo00Dqx6ZTPSWwo394z5ob7nkfYvzPpTkTfg5vhesjSEFQtEmcZyYgmZBx2R6yhpdkXtqauierktMa5J1xGTE4h3fChb4=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by CH2PR10MB4197.namprd10.prod.outlook.com (2603:10b6:610:7d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15; Thu, 21 Nov
+ 2024 12:59:26 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8158.023; Thu, 21 Nov 2024
+ 12:59:25 +0000
+Date: Thu, 21 Nov 2024 12:59:21 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+        Gary Guo <gary@garyguo.net>,
+        =?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+        Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
+        Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v8 4/7] mm: rust: add lock_vma_under_rcu
+Message-ID: <fe7056d9-ad54-48a5-912c-ba19ba7c09d3@lucifer.local>
+References: <20241120-vma-v8-0-eb31425da66b@google.com>
+ <20241120-vma-v8-4-eb31425da66b@google.com>
+ <40be19b0-4c32-4554-a01f-649c12f889da@lucifer.local>
+ <CAH5fLggw4Ca59-AA+ArHYD0QrKH8cGd_i0EN83MnYYZK1bmTGQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLggw4Ca59-AA+ArHYD0QrKH8cGd_i0EN83MnYYZK1bmTGQ@mail.gmail.com>
+X-ClientProxiedBy: LO4P265CA0090.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bc::11) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-Subject: Re: [PATCH v2 RESEND 3/3] i2c: i2c-qcom-geni: Add Block event
- interrupt support
-To: Bjorn Andersson <andersson@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        "Sumit
- Semwal" <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>
-References: <20241111140244.13474-1-quic_jseerapu@quicinc.com>
- <20241111140244.13474-4-quic_jseerapu@quicinc.com>
- <54iirnbdmcvbg2zpkajuwqjdb6mxlehpvtnq2hmxd4beuh4ish@mbuttdzzvebv>
-Content-Language: en-US
-In-Reply-To: <54iirnbdmcvbg2zpkajuwqjdb6mxlehpvtnq2hmxd4beuh4ish@mbuttdzzvebv>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Lg65884r77MkNSNyZxqXnhqgAMaTKWWv
-X-Proofpoint-GUID: Lg65884r77MkNSNyZxqXnhqgAMaTKWWv
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|CH2PR10MB4197:EE_
+X-MS-Office365-Filtering-Correlation-Id: fd6e3eb8-5701-46d7-d63f-08dd0a2c5389
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OTgxajZudk1CMnRWUm45MGNiSmx3OUM2TlFaaFFzNXh0eDFJbGZ4TGg4dnFC?=
+ =?utf-8?B?aGpUMERwT29UMlhMVHloejJsbjFqa1F2Y211Rnk4YXhabmtXMGFLeWp2SmI2?=
+ =?utf-8?B?a3J6NVFZSk5wQzl1VzdibTlUMWFzb0V4aWdtOVlkc1JTVDFPdDgxSHNLUy9O?=
+ =?utf-8?B?eVZRVDgvRk5pNkptdVlTYjl5SEZhU2F5SElDODBZUTRCV2RwczFvUU5GTHdn?=
+ =?utf-8?B?Q0hWT25GTGpUZjQrb1dSMEM0bHp6QW94ZXY2aEhYN2tVbEtJVlZXR3pOMy9P?=
+ =?utf-8?B?NmNjMUs1akk0RGRwQUdZMzV3SGdmSW84anRQc2lYUFNTWVdiZ3NxUjZ6NkQr?=
+ =?utf-8?B?SS9hMWdUU0gva2FsSTJ1eFU2eTY3VnpjR3dRYUYycUFYUmd1RkhiMVhIR3pE?=
+ =?utf-8?B?VzBBZ0k4V01kYnJuam1HVTdsZnRnSDFwSExRZS9aTHB0S29abjlSeXEySjFy?=
+ =?utf-8?B?aXRlOUo4c1R1TUhBTjBwTWQydGtaemd4U3dJV1YrUVlVRk1ZSUp3L04yNzcw?=
+ =?utf-8?B?Nkd2dHMrUnVINWxyUmJNbUZ0UmhiSU5FU2MrNzA0TDFrQzlEZzNIajd5dnFI?=
+ =?utf-8?B?YVNva1hIc0dHcDUvV01CcHBLQUdEdUkyTjFFeUZQZGJadnpqS1BkN042QTFR?=
+ =?utf-8?B?Q1BKbXhQa2RNa1V2KzdZR2ZXTDVHdkpGNTBKOERNaEFNb0dsRzZPUUpXNGpT?=
+ =?utf-8?B?R1NMRXJud3lWK0JqdFFtdWYzK0NxT1l0MUd6akNPb001QTFROEZFeFBqQklK?=
+ =?utf-8?B?QlU4QjZhdjhtUEZQc3V0K3NsQXA5azJwUCtESVlVOUMwVCtJcTUzYml6bk5R?=
+ =?utf-8?B?ZmZyWFFBMUpFbHBJN3ZnM3BhOWZydkJ3K1NQS256T3dMTXh3UHowdThSUGk2?=
+ =?utf-8?B?VjNPTFJoNU8yaUdrd0IxcEphejZBR3BOcUdQQWQ3NHRRdkRmWVZZQ2gxYkhK?=
+ =?utf-8?B?eC9STFNIREFZbCtuUm81d3BpZmhieUNrRWFqWmRoN2xwT1E5ZEVRNTl6b203?=
+ =?utf-8?B?U1diSDQwcHJWS0puY1FpbkEvQzZ6S3pBcjZhYlM4cERZbnQ0dmQ1Z2lCV2xj?=
+ =?utf-8?B?Qy9kcEt3akVCMmFxdmtHYllrTjZiekExNHhIZDdzZGg2UURrRFZZMmxUcXJL?=
+ =?utf-8?B?TzVFSjJQM01DMk1jV1REdnlpdm91eUdFVGdwc2NGR1Ywd243RysveDFzK1dU?=
+ =?utf-8?B?M0pxOTBEWmJpbUJPcFB3UnJ4Y1VjM3JFWHcvcTk4eGU2ejFNbFhPRmZENlBt?=
+ =?utf-8?B?UW5rTU9RT3lhT1NhZ0dRWXRuUWZScGNBRXVnZ0NFc0cwT2JQTkUxRlJPVy9D?=
+ =?utf-8?B?K25QK2xCeGlOenhWNCtqSWYyWGZCYUFNOUh1VmtTLzQwNk5YL2hqMlRHeUpK?=
+ =?utf-8?B?WnJSK0Vzbk5BTENmaHV1d1RKbEc1YnorVUgvb2Vnd2xVUnFha1FYZFlWMkRI?=
+ =?utf-8?B?cXZMSHJiUVpUZ3IycG9CMDVpVG9jQ2hHZ0xGZENlS2ZqejRBY20rTTE0dFox?=
+ =?utf-8?B?cVV4WlV3c05FQXY3dGxuZ29ERWxvQlJpbXA4dzRBQ25yNjZWczlrSVpMVXB6?=
+ =?utf-8?B?eHdNTXFJTnk1c3FOSHQ3Wk1lT2JmTlZaeFZpUTd0SEdIdGVwempWK244THNL?=
+ =?utf-8?B?UlUyL0tFQi9hVnNxQUNwU3NoeGZSSGpUL2UzSTlDbkdkc0E4OTB1bnROS21Q?=
+ =?utf-8?Q?eRPBLDc7h6cN9Rs2cJ03?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDdhL0NuRU81dThyR1laNjJTN3FpM2tVVWUxakVKRTVoYS9lT3NEQmh2SGZP?=
+ =?utf-8?B?RStIWVN4WXZMc0NIcTRBZVcra3ZGY0VqbEt5OFhycU1uZWszMTB5M3Viczlv?=
+ =?utf-8?B?TGpUZ1ZiaFN6Zit5dnN2MTQ4YTRBa2VjeVZGY0VXRjY4K0JsNkUyUUlOeVVq?=
+ =?utf-8?B?SS95SzlCOUF2Tmt5SGJSNzQ4aG16R3NVV3U3Qi9GSVlmVVE3Q2s0d2xVbUxt?=
+ =?utf-8?B?SGp4WlpZL1hjNDNCMG9mYzY2Z2ZJZGpMT1BQajhEVHlTQVdmTGJHNlhVOWdj?=
+ =?utf-8?B?OFprYW5FR2xDbXMvL01hbEMzMVhlVCs2a05tUXB0MGNUVlZLbTl5SHhNN0tL?=
+ =?utf-8?B?NmZxMHdXenhxeWI4OUxQK0prRXhQK3ZrT2dKWHRRWUVvbEF4NXFuOTRQQStM?=
+ =?utf-8?B?N2dJUHEvVnZHUFJUajRURDNMM3BDQXdrM2Y0ellKZ0tEc01xdUZYR2sxZzFE?=
+ =?utf-8?B?VGJXdStlWG9MZVJGd3lZYmozL1VPNVBWUmR5SmtmWWY0TzA3Q1ZuYjFNenJY?=
+ =?utf-8?B?b3pFS2ZUWWUvZE9OdW10d2RLcTk2MHZKcmhKaWJKWXQ2UmFTR0pOQ1pBQ1N6?=
+ =?utf-8?B?RUFSRzcrVFVDU1NnYThZa3NHb1J4S0NwaGV6TFFPRm5sUUNuSlZBYlVBTU0y?=
+ =?utf-8?B?eEhIZE0wVmRHc0NDWmpNd0tpQ01FdzhrNUNTaEl4SE1JblBOYjFnRW5Ocnl6?=
+ =?utf-8?B?aDh0aGZxdWxIN1dyelBxaEtoUlNWUHdQQ1VONTR3ekE1RHQvN3dzSitqQkt2?=
+ =?utf-8?B?cjNUVjFiVXpCOUV4UlVodUlXamRaWGZFTzF1NmJnN3Vsd0RVQTNtWTc3QUJ0?=
+ =?utf-8?B?aHRiOStISHFEdTJwblFPd09uS3hqWEVHNFowKzhCV1llbDk1d2RrbFdtUngv?=
+ =?utf-8?B?c3RFQm8wYVRJc0tKL3N6NExyUmNRYlJrM2dMazEzVjBmbWdiZCtCWXQzcFdQ?=
+ =?utf-8?B?RmJRUDVvaDBETGRYNzNXbnZhTHFBQXFYbCswNmwrTG9zTUJMTGFaOFpGWGEv?=
+ =?utf-8?B?UzdSRGs3akpSalVwc2RncmFiNExIUStRd25qeVF1eVlhT0NZTGtDR283eDFt?=
+ =?utf-8?B?eGNrTWJGNFJyNWZLQVlBNTYwQ3ErZ1RZUk81QUJ0anV1bFNPbVlkS0F0MWd2?=
+ =?utf-8?B?ekZNY3ZzMHEyRmlKSVVyZkpxYWNJeVg3RFBDN1RMU1Q0UGQ0Q3NjT1RwWGkv?=
+ =?utf-8?B?ZEdmT3JwNGVrNEY4amdvcDZjM2hVNjBwWHFSRFpWNGw0M3ZnZU55dzVYS3Rr?=
+ =?utf-8?B?cVF0aE9ZcldHVFo1VEUwZ3I2eVgraE83cU4xL1I3Um5SN2V1M0FPdlhuUG5B?=
+ =?utf-8?B?SndkeUtPY204d2pJZGUzb2V1Y2MvbTRxQVRXd210Nk1rcTczaDZ3dDhMT1Bi?=
+ =?utf-8?B?czJVdHUvKzhuZzU0cDRRcFgvNkFNdVplaDF2ZHJZZjR4ajRLOVBTRU9YWHhp?=
+ =?utf-8?B?eTNLNFpneVJMTnFBalI4KzZGcG1pMWszalpjR2RxNldJSURNU1A4VnBlR0J2?=
+ =?utf-8?B?WVkwRjRoZC8vVGZEMTFXN2J4K3djYkdaTDJUNXlkMmRvZGE1eThDY3hlaXdG?=
+ =?utf-8?B?QUtyeFAvVWJyR29LZlAxSHBWRENTUGxmWm9tSmxvUit3Nm1PUDR4Zkh4V1Ny?=
+ =?utf-8?B?SzZDR2d2ZVVDWGREd05MY2JvTGd4QnJKK2NrNUVrZUFTMTcrdzZJU1ZJcXox?=
+ =?utf-8?B?aWNoTWJzMlNCVnFsNWhhdDFVUVVvN2xBeCtBVitSbU1vMGY3SnpaMmxDMFl0?=
+ =?utf-8?B?SVltejhUTDNmVllXQXVxNlNaZUxSdXlJSnc3N2daN0dvd3IzajlwZTB1Zy9K?=
+ =?utf-8?B?My8zeFlORVhkL2s2S2ZQVTFEYmlSUlN0bStYUnFta0pBQUN4bUhYTk8vajFY?=
+ =?utf-8?B?OHJmcXpCQlhOTXUybFpNN0l0L1F6TGx2V25MdjhLWHl3VWQwN2w0YTZSZHZi?=
+ =?utf-8?B?UG1aeUh5WFU4czJWbDV2STJqUmdkdHBWenVxYVFlOTRHNGJCS1FJb3FXeVQr?=
+ =?utf-8?B?d2FMTmQwYkpzUDJkTUF6Ny9VVG9DNXZGcVJjVytxUUkvUTM5YWJXWENXeWtk?=
+ =?utf-8?B?em55cmIvSEc0TDdQcndQOFZGTHJDUmVwSFkzRGZ1c3NDb1pmdFBGU3NoVFUz?=
+ =?utf-8?B?c3N4bG9ab3Q4UHdYZUtZR3R6cnhySWYydjl5UTFBVXdtOGZmMkRka0dNOVJX?=
+ =?utf-8?B?SEE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	vyu+MsZwb8vGta4o/OFeWICCSadQ6FM5X0AgfTCQTjrVTPw+6GtDqpPCzGiI+NxwtC7DGZsOfLs2cgnhEpmFHsRmT5msXTpVCURznhbbqehXL9fLVoNl+NQ3E1mEqCJBadU4zA5h5ZyiRT7aKsPE02LUdGkt9xwRwH0107wopGhJoZT391PMw7gPdHwi6oXflaaytCFbviV4Q10a4NUBONqUWX5ZzUD041LTrVuspKvMBXA/uJSNr5laKNylEGhQNqk2spQoQH3Qk/kkW2xdBv4zLe/SH7WSHzujoxPVNPo75bg/WJ0ZbFeBjHCUCndkgagJQ9ri5B0F73IfOC0HdIj70zEYWMzWjMBp1FoclpokUWM1kY3WNmgyEeUcMtFa5slZ76Yz3TwXqGK0+QqypvS5xneDHnRvOwxQ0j7bkoaSRL0A4q0zBE4ljw47n0AMBWm3VUKce9U4S+tTo5EPkGcuzJ6lmz/Y0Y7RrFx1KrBfeylCFd4oBPv4kpx3eUMN9WXsaat3lhehno7FA77MJnGKpS3xZPyYtH9uH9OkArqn1fwifbuU+tLDG0xvbWF1APYZLe/h0ks+RK8UJBtnY6J7hsOGZdWOg/r9tQMPgZE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd6e3eb8-5701-46d7-d63f-08dd0a2c5389
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 12:59:25.5662
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: WPDV4kf2IT+dWs/Ps2DsjrQh6HxVv6YuroN7B0EsFWCzqvoPACCNvnZ+sZQgqLUFrveiR6lLF3dFSBG0aZxCLKa5sC0y88oRUfH8n++L2qQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4197
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210101
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-21_09,2024-11-21_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 phishscore=0 mlxscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2409260000 definitions=main-2411210101
+X-Proofpoint-GUID: SZG-cn-UThGs9nO5B1WzAtdwajf2VBaO
+X-Proofpoint-ORIG-GUID: SZG-cn-UThGs9nO5B1WzAtdwajf2VBaO
 
+On Thu, Nov 21, 2024 at 11:44:52AM +0100, Alice Ryhl wrote:
+> On Wed, Nov 20, 2024 at 8:29 PM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > On Wed, Nov 20, 2024 at 02:49:58PM +0000, Alice Ryhl wrote:
+> > > All of Rust Binder's existing calls to `vm_insert_page` could be
+> > > optimized to first attempt to use `lock_vma_under_rcu`. This patch
+> > > provides an abstraction to enable that.
+> >
+> > I think there should be a blurb about what the VMA locks are, how they avoid
+> > contention on the mmap read lock etc. before talking about a use case (though
+> > it's useful to mention the motivating reason!)
 
+^ I think we should update the commit message to add this at the start then the
+binder stuff underneath.
 
-On 11/12/2024 10:03 AM, Bjorn Andersson wrote:
-> On Mon, Nov 11, 2024 at 07:32:44PM +0530, Jyothi Kumar Seerapu wrote:
->> The I2C driver gets an interrupt upon transfer completion.
->> For multiple messages in a single transfer, N interrupts will be
->> received for N messages, leading to significant software interrupt
->> latency. To mitigate this latency, utilize Block Event Interrupt (BEI)
-> 
-> Please rewrite this to the tone that the reader doesn't know what Block
-> Event Interrupt is, or that it exists.
-Sure, done.
-> 
->> only when an interrupt is necessary. This means large transfers can be
->> split into multiple chunks of 8 messages internally, without expecting
->> interrupts for the first 7 message completions, only the last one will
->> trigger an interrupt indicating 8 messages completed.
->>
->> By implementing BEI, multi-message transfers can be divided into
->> chunks of 8 messages, improving overall transfer time.
-> 
-> You already wrote this in the paragraph above.
-yeah removed it.
-> 
-> 
-> Where is this number 8 coming from btw?
-Its documented in "qcom-gpi-dma.h" file.
-Trigger an interrupt, after the completion of 8 messages.
-> 
->> This optimization reduces transfer time from 168 ms to 48 ms for a
->> series of 200 I2C write messages in a single transfer, with a
->> clock frequency support of 100 kHz.
->>
->> BEI optimizations are currently implemented for I2C write transfers only,
->> as there is no use case for multiple I2C read messages in a single transfer
->> at this time.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
->> ---
->>
->> v1 -> v2:
->>     - Moved gi2c_gpi_xfer->msg_idx_cnt to separate local variable.
->>     - Updated goto labels for error scenarios in geni_i2c_gpi function
->>     - memset tx_multi_xfer to 0.
->>     - Removed passing current msg index to geni_i2c_gpi.
->>     - Fixed kernel test robot reported compilation issues.
->>
->>   drivers/i2c/busses/i2c-qcom-geni.c | 203 +++++++++++++++++++++++++----
->>   1 file changed, 178 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
->> index 7a22e1f46e60..04a7d926dadc 100644
->> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->> @@ -100,6 +100,10 @@ struct geni_i2c_dev {
->>   	struct dma_chan *rx_c;
->>   	bool gpi_mode;
->>   	bool abort_done;
->> +	bool is_tx_multi_xfer;
->> +	u32 num_msgs;
->> +	u32 tx_irq_cnt;
->> +	struct gpi_i2c_config *gpi_config;
->>   };
->>   
->>   struct geni_i2c_desc {
->> @@ -500,6 +504,7 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->>   static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
->>   {
->>   	struct geni_i2c_dev *gi2c = cb;
->> +	struct gpi_multi_xfer *tx_multi_xfer;
->>   
->>   	if (result->result != DMA_TRANS_NOERROR) {
->>   		dev_err(gi2c->se.dev, "DMA txn failed:%d\n", result->result);
->> @@ -508,7 +513,21 @@ static void i2c_gpi_cb_result(void *cb, const struct dmaengine_result *result)
->>   		dev_dbg(gi2c->se.dev, "DMA xfer has pending: %d\n", result->residue);
->>   	}
->>   
->> -	complete(&gi2c->done);
->> +	if (gi2c->is_tx_multi_xfer) {
-> 
-> Wouldn't it be cleaner to treat the !is_tx_multi_xfer case as a
-> multi-xfer of length 1?
-Sure, addressed the change in V3 patch.
-> 
->> +		tx_multi_xfer = &gi2c->gpi_config->multi_xfer;
->> +
->> +		/*
->> +		 * Send Completion for last message or multiple of NUM_MSGS_PER_IRQ.
->> +		 */
->> +		if ((tx_multi_xfer->irq_msg_cnt == gi2c->num_msgs - 1) ||
->> +		    (!((tx_multi_xfer->irq_msg_cnt + 1) % NUM_MSGS_PER_IRQ))) {
->> +			tx_multi_xfer->irq_cnt++;
->> +			complete(&gi2c->done);
-> 
-> Why? You're removing the wait_for_completion_timeout() from
-> geni_i2c_gpi_xfer() when is_tx_multi_xfer is set.
-For (!is_tx_multi_xfer) case, need to wait for every message.
-But whereas for multi-message (when is_tx_multi_xfer is set) cases, 
-"wait_for_completion_timeout" will trigger after queuing messages till 
-QCOM_GPI_MAX_NUM_MSGS (32) or total number of i2c msgs and 
-"wait_for_completion_timeout" for this case is handled in GPI driver.
-> 
->> +		}
->> +		tx_multi_xfer->irq_msg_cnt++;
->> +	} else {
->> +		complete(&gi2c->done);
->> +	}
->>   }
->>   
->>   static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->> @@ -526,7 +545,42 @@ static void geni_i2c_gpi_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->>   	}
->>   }
->>   
->> -static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->> +/**
->> + * gpi_i2c_multi_desc_unmap() - unmaps the buffers post multi message TX transfers
->> + * @dev: pointer to the corresponding dev node
->> + * @gi2c: i2c dev handle
->> + * @msgs: i2c messages array
->> + * @peripheral: pointer to the gpi_i2c_config
->> + */
->> +static void gpi_i2c_multi_desc_unmap(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
->> +				     struct gpi_i2c_config *peripheral)
->> +{
->> +	u32 msg_xfer_cnt, wr_idx = 0;
->> +	struct gpi_multi_xfer *tx_multi_xfer = &peripheral->multi_xfer;
->> +
->> +	/*
->> +	 * In error case, need to unmap all messages based on the msg_idx_cnt.
->> +	 * Non-error case unmap all the processed messages.
-> 
-> What is the benefit of this optimization, compared to keeping things
-> simple and just unmap all buffers at the end of geni_i2c_gpi_xfer()?
+> >
+> > >
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-The maximum number of messages can allocate and submit to GSI hardware 
-is 16 (QCOM_GPI_MAX_NUM_MSGS) and to handle more messages beyond this 
-need to unmap the processed messages.
-If there is 200 messages or more in a transfer then we need to unmap the 
-processed messages for handling all messages in a transfer.
-So, instead of Unmap all messages together, here unmapping the chunk of 
-messages.
+Other than the doc stuff, this looks fine, so:
 
-> 
->> +	 */
->> +	if (gi2c->err)
->> +		msg_xfer_cnt = tx_multi_xfer->msg_idx_cnt;
->> +	else
->> +		msg_xfer_cnt = tx_multi_xfer->irq_cnt * NUM_MSGS_PER_IRQ;
->> +
->> +	/* Unmap the processed DMA buffers based on the received interrupt count */
->> +	for (; tx_multi_xfer->unmap_msg_cnt < msg_xfer_cnt; tx_multi_xfer->unmap_msg_cnt++) {
->> +		if (tx_multi_xfer->unmap_msg_cnt == gi2c->num_msgs)
->> +			break;
->> +		wr_idx = tx_multi_xfer->unmap_msg_cnt % QCOM_GPI_MAX_NUM_MSGS;
->> +		geni_i2c_gpi_unmap(gi2c, &msgs[tx_multi_xfer->unmap_msg_cnt],
->> +				   tx_multi_xfer->dma_buf[wr_idx],
->> +				   tx_multi_xfer->dma_addr[wr_idx],
->> +				   NULL, (dma_addr_t)NULL);
->> +		tx_multi_xfer->freed_msg_cnt++;
->> +	}
->> +}
->> +
->> +static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[],
->>   			struct dma_slave_config *config, dma_addr_t *dma_addr_p,
->>   			void **buf, unsigned int op, struct dma_chan *dma_chan)
->>   {
->> @@ -538,26 +592,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->>   	enum dma_transfer_direction dma_dirn;
->>   	struct dma_async_tx_descriptor *desc;
->>   	int ret;
->> +	struct gpi_multi_xfer *gi2c_gpi_xfer;
->> +	dma_cookie_t cookie;
->> +	u32 msg_idx;
->>   
->>   	peripheral = config->peripheral_config;
->> -
->> -	dma_buf = i2c_get_dma_safe_msg_buf(msg, 1);
->> -	if (!dma_buf)
->> -		return -ENOMEM;
->> +	gi2c_gpi_xfer = &peripheral->multi_xfer;
->> +	dma_buf = gi2c_gpi_xfer->dma_buf[gi2c_gpi_xfer->buf_idx];
->> +	addr = gi2c_gpi_xfer->dma_addr[gi2c_gpi_xfer->buf_idx];
->> +	msg_idx = gi2c_gpi_xfer->msg_idx_cnt;
->> +
->> +	dma_buf = i2c_get_dma_safe_msg_buf(&msgs[msg_idx], 1);
->> +	if (!dma_buf) {
->> +		ret = -ENOMEM;
->> +		goto out;
->> +	}
->>   
->>   	if (op == I2C_WRITE)
->>   		map_dirn = DMA_TO_DEVICE;
->>   	else
->>   		map_dirn = DMA_FROM_DEVICE;
->>   
->> -	addr = dma_map_single(gi2c->se.dev->parent, dma_buf, msg->len, map_dirn);
->> +	addr = dma_map_single(gi2c->se.dev->parent, dma_buf,
->> +			      msgs[msg_idx].len, map_dirn);
->>   	if (dma_mapping_error(gi2c->se.dev->parent, addr)) {
->> -		i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
->> -		return -ENOMEM;
->> +		i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
->> +		ret = -ENOMEM;
->> +		goto out;
->> +	}
->> +
->> +	if (gi2c->is_tx_multi_xfer) {
->> +		if (((msg_idx + 1) % NUM_MSGS_PER_IRQ))
->> +			peripheral->flags |= QCOM_GPI_BLOCK_EVENT_IRQ;
->> +		else
->> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
->> +
->> +		/* BEI bit to be cleared for last TRE */
->> +		if (msg_idx == gi2c->num_msgs - 1)
->> +			peripheral->flags &= ~QCOM_GPI_BLOCK_EVENT_IRQ;
->>   	}
->>   
->>   	/* set the length as message for rx txn */
->> -	peripheral->rx_len = msg->len;
->> +	peripheral->rx_len = msgs[msg_idx].len;
->>   	peripheral->op = op;
->>   
->>   	ret = dmaengine_slave_config(dma_chan, config);
->> @@ -575,7 +651,8 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->>   	else
->>   		dma_dirn = DMA_DEV_TO_MEM;
->>   
->> -	desc = dmaengine_prep_slave_single(dma_chan, addr, msg->len, dma_dirn, flags);
->> +	desc = dmaengine_prep_slave_single(dma_chan, addr, msgs[msg_idx].len,
->> +					   dma_dirn, flags);
->>   	if (!desc) {
->>   		dev_err(gi2c->se.dev, "prep_slave_sg failed\n");
->>   		ret = -EIO;
->> @@ -585,15 +662,48 @@ static int geni_i2c_gpi(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
->>   	desc->callback_result = i2c_gpi_cb_result;
->>   	desc->callback_param = gi2c;
->>   
->> -	dmaengine_submit(desc);
->> -	*buf = dma_buf;
->> -	*dma_addr_p = addr;
->> +	if (!((msgs[msg_idx].flags & I2C_M_RD) && op == I2C_WRITE)) {
->> +		gi2c_gpi_xfer->msg_idx_cnt++;
->> +		gi2c_gpi_xfer->buf_idx = (msg_idx + 1) % QCOM_GPI_MAX_NUM_MSGS;
->> +	}
->> +	cookie = dmaengine_submit(desc);
->> +	if (dma_submit_error(cookie)) {
->> +		dev_err(gi2c->se.dev,
->> +			"%s: dmaengine_submit failed (%d)\n", __func__, cookie);
->> +		ret = -EINVAL;
->> +		goto err_config;
->> +	}
->>   
->> +	if (gi2c->is_tx_multi_xfer) {
->> +		dma_async_issue_pending(gi2c->tx_c);
->> +		if ((msg_idx == (gi2c->num_msgs - 1)) ||
->> +		    (gi2c_gpi_xfer->msg_idx_cnt >=
->> +		     QCOM_GPI_MAX_NUM_MSGS + gi2c_gpi_xfer->freed_msg_cnt)) {
->> +			ret = gpi_multi_desc_process(gi2c->se.dev, gi2c_gpi_xfer,
-> 
-> A function call straight into the GPI driver? I'm not entirely familiar
-> with the details of the dmaengine API, but this doesn't look correct.
+Acked-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com> (for mm bits)
 
-"gpi_multi_desc_process" can be used for the other protocols as well and 
-so defined here. Please let me know if its not a good idea to make this 
-as common function for all required protocols and keep in GPI driver.
+> > > ---
+> > >  rust/helpers/mm.c |  5 +++++
+> > >  rust/kernel/mm.rs | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 61 insertions(+)
+> > >
+> > > diff --git a/rust/helpers/mm.c b/rust/helpers/mm.c
+> > > index 7b72eb065a3e..81b510c96fd2 100644
+> > > --- a/rust/helpers/mm.c
+> > > +++ b/rust/helpers/mm.c
+> > > @@ -43,3 +43,8 @@ struct vm_area_struct *rust_helper_vma_lookup(struct mm_struct *mm,
+> > >  {
+> > >       return vma_lookup(mm, addr);
+> > >  }
+> > > +
+> > > +void rust_helper_vma_end_read(struct vm_area_struct *vma)
+> > > +{
+> > > +     vma_end_read(vma);
+> > > +}
+> > > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
+> > > index ace8e7d57afe..a15acb546f68 100644
+> > > --- a/rust/kernel/mm.rs
+> > > +++ b/rust/kernel/mm.rs
+> > > @@ -13,6 +13,7 @@
+> > >  use core::{ops::Deref, ptr::NonNull};
+> > >
+> > >  pub mod virt;
+> > > +use virt::VmAreaRef;
+> > >
+> > >  /// A wrapper for the kernel's `struct mm_struct`.
+> > >  ///
+> > > @@ -170,6 +171,32 @@ pub unsafe fn from_raw<'a>(ptr: *const bindings::mm_struct) -> &'a MmWithUser {
+> > >          unsafe { &*ptr.cast() }
+> > >      }
+> > >
+> > > +    /// Try to lock the vma read lock under rcu.
+> >
+> > This reads oddly, I'd say 'try to acquire the VMA read lock'. It's not really
+> > necessary to mention RCU here I'd say, as while lock_vma_under_rcu() acquires
+> > the RCU lock in order to try to get the VMA read lock, it releases it afterwards
+> > and you hold the VMA read luck until you are done with it and don't need to hold
+> > an RCU lock.
+> >
+> > A reader might otherwise be confused and think an RCU read lock is required to
+> > be held throughout too which isn't the case (this is maybe a critique of the
+> > name of the function too, sorry Suren :P).
+> >
+> > > +    /// If this operation fails, the vma may still exist. In that case, you should take the mmap
+> > > +    /// read lock and try to use `vma_lookup` instead.
+> >
+> > This also reads oddly, you're more likely (assuming you are not arbitrarily
+> > trying to acquire a lock on an address likely to be unmapped soon) to have
+> > failed due to lock contention.
+> >
+> > So I'd say 'this is an optimistic try lock operation, so it may fail, in which
+> > case you should fall back to taking the mmap read lock'.
+> >
+> > I'm not sure it's necessary to reference vma_lookup() either, especially as in
+> > future versions of this code we might want to use a VMA iterator instead.
+>
+> Thanks for the doc suggestions, they sound great.
 
-Also, gpi_multi_desc_process can't be fit into dmaengine API and so 
-invoked a function call to GPI driver.
-> 
->> +						     gi2c->num_msgs, XFER_TIMEOUT,
->> +						     &gi2c->done);
->> +			if (ret) {
->> +				dev_err(gi2c->se.dev,
->> +					"I2C multi write msg transfer timeout: %d\n",
->> +					ret);
->> +				gi2c->err = ret;
->> +				goto err_config;
->> +			}
->> +		}
->> +	} else {
->> +		/* Non multi descriptor message transfer */
->> +		*buf = dma_buf;
->> +		*dma_addr_p = addr;
->> +	}
->>   	return 0;
->>   
->>   err_config:
->> -	dma_unmap_single(gi2c->se.dev->parent, addr, msg->len, map_dirn);
->> -	i2c_put_dma_safe_msg_buf(dma_buf, msg, false);
->> +	dma_unmap_single(gi2c->se.dev->parent, addr,
->> +			 msgs[msg_idx].len, map_dirn);
->> +	i2c_put_dma_safe_msg_buf(dma_buf, &msgs[msg_idx], false);
->> +
->> +out:
->> +	gi2c->err = ret;
->>   	return ret;
->>   }
->>   
->> @@ -605,6 +715,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>   	unsigned long time_left;
->>   	dma_addr_t tx_addr, rx_addr;
->>   	void *tx_buf = NULL, *rx_buf = NULL;
->> +	struct gpi_multi_xfer *tx_multi_xfer;
->>   	const struct geni_i2c_clk_fld *itr = gi2c->clk_fld;
->>   
->>   	config.peripheral_config = &peripheral;
->> @@ -618,6 +729,34 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>   	peripheral.set_config = 1;
->>   	peripheral.multi_msg = false;
->>   
->> +	gi2c->gpi_config = &peripheral;
->> +	gi2c->num_msgs = num;
->> +	gi2c->is_tx_multi_xfer = false;
->> +	gi2c->tx_irq_cnt = 0;
->> +
->> +	tx_multi_xfer = &peripheral.multi_xfer;
->> +	memset(tx_multi_xfer, 0, sizeof(struct gpi_multi_xfer));
->> +
->> +	/*
->> +	 * If number of write messages are four and higher then
-> 
-> Why four?
-It changed to 2 in V3, so that if the number of messages in a transfer 
-are greter than 1, then "is_tx_multi_xfer" is set.
-> 
->> +	 * configure hardware for multi descriptor transfers with BEI.
->> +	 */
->> +	if (num >= MIN_NUM_OF_MSGS_MULTI_DESC) {
->> +		gi2c->is_tx_multi_xfer = true;
->> +		for (i = 0; i < num; i++) {
->> +			if (msgs[i].flags & I2C_M_RD) {
->> +				/*
->> +				 * Multi descriptor transfer with BEI
->> +				 * support is enabled for write transfers.
->> +				 * Add BEI optimization support for read
->> +				 * transfers later.
-> 
-> Prefix this comment with "TODO:"
-Done
-> 
->> +				 */
->> +				gi2c->is_tx_multi_xfer = false;
->> +				break;
->> +			}
->> +		}
->> +	}
->> +
->>   	for (i = 0; i < num; i++) {
->>   		gi2c->cur = &msgs[i];
->>   		gi2c->err = 0;
->> @@ -628,14 +767,16 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>   			peripheral.stretch = 1;
->>   
->>   		peripheral.addr = msgs[i].addr;
->> +		if (i > 0 && (!(msgs[i].flags & I2C_M_RD)))
->> +			peripheral.multi_msg = false;
->>   
->> -		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
->> +		ret =  geni_i2c_gpi(gi2c, msgs, &config,
->>   				    &tx_addr, &tx_buf, I2C_WRITE, gi2c->tx_c);
->>   		if (ret)
->>   			goto err;
->>   
->>   		if (msgs[i].flags & I2C_M_RD) {
->> -			ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
->> +			ret =  geni_i2c_gpi(gi2c, msgs, &config,
->>   					    &rx_addr, &rx_buf, I2C_READ, gi2c->rx_c);
->>   			if (ret)
->>   				goto err;
->> @@ -643,18 +784,26 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>   			dma_async_issue_pending(gi2c->rx_c);
->>   		}
->>   
->> -		dma_async_issue_pending(gi2c->tx_c);
->> -
->> -		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
->> -		if (!time_left)
->> -			gi2c->err = -ETIMEDOUT;
->> +		if (!gi2c->is_tx_multi_xfer) {
->> +			dma_async_issue_pending(gi2c->tx_c);
->> +			time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
-> 
-> By making this conditional on !is_tx_multi_xfer transfers, what makes
-> the loop wait for the transfer to complete before you below unmap the
-> buffers?
-Yes, for (!is_tx_multi_xfer) case, need to wait for every message and 
-then unmap it and for is_tx_multi_xfer transfers shouldn't unmap per 
-message wise instead unmap the chunk of messages together.
+Thanks :)
 
-> 
->> +			if (!time_left) {
->> +				dev_err(gi2c->se.dev, "%s:I2C timeout\n", __func__);
->> +				gi2c->err = -ETIMEDOUT;
->> +			}
->> +		}
->>   
->>   		if (gi2c->err) {
->>   			ret = gi2c->err;
->>   			goto err;
->>   		}
->>   
->> -		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
->> +		if (!gi2c->is_tx_multi_xfer) {
->> +			geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
->> +		} else if (gi2c->tx_irq_cnt != tx_multi_xfer->irq_cnt) {
->> +			gi2c->tx_irq_cnt = tx_multi_xfer->irq_cnt;
->> +			gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
->> +		}
->>   	}
->>   
->>   	return num;
->> @@ -663,7 +812,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
->>   	dev_err(gi2c->se.dev, "GPI transfer failed: %d\n", ret);
->>   	dmaengine_terminate_sync(gi2c->rx_c);
->>   	dmaengine_terminate_sync(gi2c->tx_c);
->> -	geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
->> +	if (gi2c->is_tx_multi_xfer)
->> +		gpi_i2c_multi_desc_unmap(gi2c, msgs, &peripheral);
->> +	else
->> +		geni_i2c_gpi_unmap(gi2c, &msgs[i], tx_buf, tx_addr, rx_buf, rx_addr);
->> +
-> 
-> As above, it would be nice if multi-xfer was just a special case with a
-> single buffer; rather than inflating the cyclomatic complexity.
+>
+> > > +    ///
+> > > +    /// When per-vma locks are disabled, this always returns `None`.
+> > > +    #[inline]
+> > > +    pub fn lock_vma_under_rcu(&self, vma_addr: usize) -> Option<VmaReadGuard<'_>> {
+> >
+> > Ah I love having lock guards available... Something I miss from C++ :>)
+>
+> I've heard that C is starting to get lock guards recently!
 
-For a single i2c message, data can be placed at contigious memory 
-locations, but for multiple i2c messages in a transfer, all the messages 
-offsets and data may not guarantee to placed at contigious memory 
-locations.
-So, looks single large buffer is not helpful here.
+Yeah there are some (e.g. [0]) but the weak typing hinders things imo and the
+syntax is not fun.
 
-> 
-> Regards,
-> Bjorn
-> 
->>   	return ret;
->>   }
->>   
->> -- 
->> 2.17.1
->>
->>
+This is wrt to the _kernel_ C rather than C in general though in case you were
+referring to the newer standard or such!
+
+[0]: https://elixir.bootlin.com/linux/v6.12/source/include/linux/cleanup.h#L307
+
+>
+> > > +        #[cfg(CONFIG_PER_VMA_LOCK)]
+> >
+> > Ah interesting, so we have an abstraction for kernel config operations!
+>
+> Yeah, it's basically an #ifdef, but the block must still parse even if
+> the config is disabled.
+>
+
+Right, kinda sane to actually make sure it parses too... :)
+
+> Alice
 
