@@ -1,230 +1,78 @@
-Return-Path: <linux-kernel+bounces-417305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AE49D5242
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:03:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DB19D524E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E721B22323
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5AB283924
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C921C1F0A;
-	Thu, 21 Nov 2024 18:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E4413A250;
+	Thu, 21 Nov 2024 18:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JTWU+j3p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7lxX7Jz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE331A0726;
-	Thu, 21 Nov 2024 18:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813D814D6EF
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732212201; cv=none; b=Xz0QTqIM41VTqrXFQH+eqlfktdb8npu8NBIseQo5WrUCBymjktB2DJ11i9/STHGSNoEQeF6BMcACYWwt+6oPMAldbdfUswGjo2yrgvjV7lB1aaxewlwrKwKbh6KNW2tOgZVgVvXAdxM0/9lz/IR/R8YWzqiyQ3mi91n2OHxRUak=
+	t=1732212308; cv=none; b=CTTXHHfZLvzR8z9eHkQCsClE8UR9Kp+HtjKN/jMnJxFuDhnabLBJF7fui1uyg5EuauVMkxxv5P4tFzKTt453bn9fLrm+HjxQORBebuH/NZl4TO4fDrwfVWWvC/jXQx9y/Z5d6T/2kTzOs/sVQPEfMnbQnUqjrBv7zvOmXPwTTAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732212201; c=relaxed/simple;
-	bh=qdl3gcm8LTYFq14sBh2ATyVCxMyGQMP61nP8fX88IH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z1edo1YvCTZ0Zh90BIzeJBwCm77CLoV+dMYXohEJGsY2noQl+D9OktcdAA6NAJ6Ng/t5YCTqV6iAqaqgW+w/q49eD+XJ8o+F7/BH1c/xrb0grciELe6Cde2D37gkAzhO0AdZYASf+9ZKrbHSo1qe13SNstXbM/iQ0JzsHVajvos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JTWU+j3p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL9Dxs6007912;
-	Thu, 21 Nov 2024 18:03:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mQCLjvbQA0l76BDkjJNaGTmYOIeoZTLNFsbEZ66eoFs=; b=JTWU+j3px7+y9A9f
-	uCNMEXg5s8SYMbno6ELldQ79XAoCyzHHNApN0PFpFgEJmMSy5v5lH4CIN/02GmYb
-	miNVqfbcGuuplr+QFscOJllC5n6U5pLpOhEvt7EJJLAUTdv3zRuc4QCZLXeCwq/X
-	REkpGQ+5q9QfMsE1Sn1moqADy9dEFmfNHEx9vimMcCSOkwnlmOlFYWiK9FLLnnsg
-	5SkIH1ueMvf5lWckRF1aFRSRI5M63JUZhjIG/r5b+uO59lRTCnb1xqPVVYDlEj07
-	mTyoU0GMe3OY1doWiO8WTg38QmY+jax+vJDd5RBvEkkM8zamYo1nmZ6Li6RMIinX
-	pV0Ikg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4318uvne3w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 18:03:14 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALI3D7L013603
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 18:03:13 GMT
-Received: from [10.216.2.20] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 10:03:08 -0800
-Message-ID: <b2a05dfb-a820-4450-a156-8d6b4bd59be3@quicinc.com>
-Date: Thu, 21 Nov 2024 23:33:04 +0530
+	s=arc-20240116; t=1732212308; c=relaxed/simple;
+	bh=wF8Ad6kilhgNHogcqaHFl2gIdzn8xpZQqvWZscLTqco=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HfMxM2bsUuzctmVTrawol+ys5dvBu2fi7KTeBVtBvSHreCjY47KdJqejfE4inoMTCKRzx4XA2un4Vn0m0wRX2cFBRSulTrLnTJf6wLuIyrIj+fJBQYOD+mOQY27mOafCeLZfS8k6M52I+ZuCbLl4u14OMgztRrnyDwjsA1VobrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7lxX7Jz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B768C4CECC;
+	Thu, 21 Nov 2024 18:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732212308;
+	bh=wF8Ad6kilhgNHogcqaHFl2gIdzn8xpZQqvWZscLTqco=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=V7lxX7Jz6c4FkzVD3vQCS3bD9I50bkA03AsgjqT9kBkXTCkLLmUnxgKgFqa5uMxs2
+	 uCT4JrcH27pPrVAvW8dFzjaQWNSbOX/0/wd4w3gW6EO284z5FY3GCywIIJh1xHlLwy
+	 q8FOHw0x0VKegzGt4TBHJwmJM1w+V7JTMLFUlUNYVdFQXZIshYseosdGOTVWLnP8pl
+	 BOR1M76jDfDFhJPEyCgaVx8vvRGdVn+DQAbYxuPQIoF/qzYSVz/tIw8Gm/Ss+gRImC
+	 nxeYUSs898BapCGvgdbSjIzqX7NYX6uJX2lkv1gR9E8QHIuTvHX7oGX4EIVne4lPz8
+	 3qlktmNGRnpvQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E753809A00;
+	Thu, 21 Nov 2024 18:05:21 +0000 (UTC)
+Subject: Re: [GIT PULL] erofs updates for 6.13-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZzynU2PQOgkWy6BM@debian>
+References: <ZzynU2PQOgkWy6BM@debian>
+X-PR-Tracked-List-Id: Development of Linux EROFS file system <linux-erofs.lists.ozlabs.org>
+X-PR-Tracked-Message-Id: <ZzynU2PQOgkWy6BM@debian>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.13-rc1
+X-PR-Tracked-Commit-Id: 0bc8061ffc733a0a246b8689b2d32a3e9204f43c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 90a19b744de3a4fb51aee2edd8f2b9a4b14c9878
+Message-Id: <173221231982.2032550.9499251371642487333.pr-tracker-bot@kernel.org>
+Date: Thu, 21 Nov 2024 18:05:19 +0000
+To: Gao Xiang via Linux-erofs <linux-erofs@lists.ozlabs.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 3/4] interconnect: qcom: Add EPSS L3 support on SA8775P
-To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Mike Tipton
-	<quic_mdtipton@quicinc.com>,
-        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
- <20241121113006.28520-4-quic_rlaggysh@quicinc.com>
- <bc926d6d-e3d1-4fbf-9b6a-bbd3816a766d@kernel.org>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <bc926d6d-e3d1-4fbf-9b6a-bbd3816a766d@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L2QJQhmrIgNv2SkNb8xDAEuum8cZyLMQ
-X-Proofpoint-GUID: L2QJQhmrIgNv2SkNb8xDAEuum8cZyLMQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210137
 
+The pull request you sent on Tue, 19 Nov 2024 22:57:23 +0800:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.13-rc1
 
-On 11/21/2024 5:28 PM, Krzysztof Kozlowski wrote:
-> On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
->> Add Epoch Subsystem (EPSS) L3 interconnect provider on
->> SA8775P SoCs with multiple device support.
->>
-> 
-> 
-> ...
-> 
->> -DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
->> -DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
->> +DEFINE_QNODE(osm_l3_master, 16, osm_l3_slave);
->> +DEFINE_QNODE(osm_l3_slave, 16);
->>  
->> -static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->> +static struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->>  	[MASTER_OSM_L3_APPS] = &osm_l3_master,
->>  	[SLAVE_OSM_L3] = &osm_l3_slave,
->>  };
->>  
->> -DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
->> -DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
->> +DEFINE_QNODE(epss_l3_master, 32, epss_l3_slave);
->> +DEFINE_QNODE(epss_l3_slave, 32);
->>  
->> -static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
->> +static struct qcom_osm_l3_node * const epss_l3_nodes[] = {
-> 
-> 
-> I think dropping const makes the code worse, not better. Commit msg does
-> not explain all these changes and I could not figure out the intention
-> (except modifying but that's just obvious).
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/90a19b744de3a4fb51aee2edd8f2b9a4b14c9878
 
-EPSS L3 on SA8775P has two instances and this requires creation of two device nodes in devicetree.
-As Interconnect framework requires a unique node id, each device node needs to have different compatible and data.
-To overcome the need of having two different compatibles and data, driver code has been modified to acquire unique node id from IDA 
-and the node name is made dynamic (nodename@address).
-Updating node id and node name is not possible with const.
-> 
-> 
-> 
->>  	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
->>  	[SLAVE_EPSS_L3_SHARED] = &epss_l3_slave,
->>  };
->> @@ -123,6 +125,19 @@ static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
->>  	.reg_perf_state = EPSS_REG_L3_VOTE,
->>  };
->>  
->> +static u16 get_node_id_by_name(const char *node_name,
->> +			       const struct qcom_osm_l3_desc *desc)
->> +{
->> +	struct qcom_osm_l3_node *const *nodes = desc->nodes;
->> +	int i;
->> +
->> +	for (i = 0; i < desc->num_nodes; i++) {
->> +		if (!strcmp(nodes[i]->name, node_name))
->> +			return nodes[i]->id;
->> +	}
->> +	return 0;
->> +}
->> +
->>  static int qcom_osm_l3_set(struct icc_node *src, struct icc_node *dst)
->>  {
->>  	struct qcom_osm_l3_icc_provider *qp;
->> @@ -164,10 +179,11 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  	const struct qcom_osm_l3_desc *desc;
->>  	struct icc_onecell_data *data;
->>  	struct icc_provider *provider;
->> -	const struct qcom_osm_l3_node * const *qnodes;
->> +	struct qcom_osm_l3_node * const *qnodes;
->>  	struct icc_node *node;
->>  	size_t num_nodes;
->>  	struct clk *clk;
->> +	u64 addr;
->>  	int ret;
->>  
->>  	clk = clk_get(&pdev->dev, "xo");
->> @@ -188,6 +204,10 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  	if (!qp)
->>  		return -ENOMEM;
->>  
->> +	ret = of_property_read_reg(pdev->dev.of_node, 0, &addr, NULL);
->> +	if (ret)
->> +		return ret;
->> +
->>  	qp->base = devm_platform_ioremap_resource(pdev, 0);
->>  	if (IS_ERR(qp->base))
->>  		return PTR_ERR(qp->base);
->> @@ -242,8 +262,13 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  
->>  	icc_provider_init(provider);
->>  
->> +	/* Allocate unique id for qnodes */
->> +	for (i = 0; i < num_nodes; i++)
->> +		qnodes[i]->id = ida_alloc_min(&osm_l3_id, OSM_L3_NODE_ID_START, GFP_KERNEL);
->> +
->>  	for (i = 0; i < num_nodes; i++) {
->> -		size_t j;
->> +		char *node_name;
->> +		size_t j, len;
->>  
->>  		node = icc_node_create(qnodes[i]->id);
->>  		if (IS_ERR(node)) {
->> @@ -251,13 +276,29 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>  			goto err;
->>  		}
->>  
->> -		node->name = qnodes[i]->name;
->> +		/* len = strlen(node->name) + @ + 8 (base-address) + NULL */
->> +		len = strlen(qnodes[i]->name) + OSM_NODE_NAME_SUFFIX_SIZE;
->> +		node_name = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
->> +		if (!node_name) {
->> +			ret = -ENOMEM;
->> +			goto err;
->> +		}
->> +
->> +		snprintf(node_name, len, "%s@%08llx", qnodes[i]->name, addr);
->> +		node->name = node_name;
-> 
-> 
-> Why the node name becomes dynamic?
-> 
-> Best regards,
-> Krzysztof
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
