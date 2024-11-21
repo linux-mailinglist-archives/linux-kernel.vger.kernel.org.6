@@ -1,263 +1,129 @@
-Return-Path: <linux-kernel+bounces-417351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F4949D52DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:55:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 196989D52D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:52:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8072822F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72621F22C91
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB271DE2CC;
-	Thu, 21 Nov 2024 18:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="OAdKuTM1"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2050.outbound.protection.outlook.com [40.107.236.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9B21C830D;
+	Thu, 21 Nov 2024 18:52:40 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896571DE2A6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215178; cv=fail; b=crvbiSKd8M5IFAsOTTqpdfHda7yVqPBh2cOelMqXGj8344Rz0Q80weTnv7O3wf4YVA7wILU0na9xlW9+8KfOC1sT0EobmHkQblWaq300sxur/ken6Z1zOSMhyrTpaYlovHH2KdAyFP9avW4r2GRpmL913xfiUsM9Za7JpgouO/A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215178; c=relaxed/simple;
-	bh=zPGR7jKRPB6tJMDs2QTqlQCPHl5sLzjWxqmoVUkf1Co=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D46/9FjqzjZwnAKVkccY1PbIEUMO5nFV2srzZdZ3RRq6UUZ6o0Y+itUekJxLFXvbviSbGiFM/lo4QgyLGSjxbOu3/Rlgxxgs3YpwlnUr05tGVrdPlVCtMnN87lwPrcEwuESKyAUWaSoS3yq11Z6K+NWpP0An694f+zUtxblp5lU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=OAdKuTM1; arc=fail smtp.client-ip=40.107.236.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DFHo8moea7rlV4/8uZlcbNdEjHwR57YXRxfF+RtCGWOQlOGeEcdpJ4rY2EH2XHhKjHEXJv5lAkRg2eNhl2G76j7GBCl7AUMwkXUjX99BjuPcN9LnmXDMIY39VanpfMCM82lfiqpJpUhyGF8lDAj77PNwE0AFA62bxi8ZuNy+ogtL6XVvN4wDvHqdN7U4WYMxTwdgrO81/uhHPWLSaqTNReyAZBg68ylM6BZJ+TZLKrQGKFzfWseaXNLrEoc4QyGeRNJiAvwC3cX7s/M/Wwv6TLrnvQ2fo0zuGw9hkihC4KidV8idj/pCjSE5iLCWUlglGHfLr/q7RubryQns5ykfCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7vfodItUcrcyLrOMU+QPVr1fQyMNwn6ddi+gcaz99x8=;
- b=sVt4O3NoNqV3IY+VnRRuMNM5/TGte3foB9mw5cauoXH4ahwvJonR44TaOkSLqOLHhqFyhN80QQKXzHTy+r5Isva5Sm0Z+oZsFhkIPC75XCgjnXtOHYEa6K16kc7/Fg9P7kjfE1BpjSmoZ4iEXldS9TkyuStYCQH/8MPOWgjF9sa8umE9dXTQShV3FWbMECq5fyj7oJJVucUHMyfsbxFbtYPRZpKbFrm9G/u09H+CWXE3cPb7gqGH91EcQVcCrHhepO+wBJR1WoneNMEFqkgOn/6OH5PQvM090oId/RbhUcualaZW9Xd1q7mLsTuwWUpI8E2CbmMfQsgmIoJu0FN3+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7vfodItUcrcyLrOMU+QPVr1fQyMNwn6ddi+gcaz99x8=;
- b=OAdKuTM1Ig4jZxUJ69RH0ro9okn4s52IRcJw7+HaNeIXFLfooXlmUJmCRGWaQyBcDNTCaEcbccSxFjyverIj9q6t86jEi3ueQXBAvT+SJxbbTsCnMzQqEA9425yOhFas0WOElaJJfhptsuKclxoJzDStHfoIeTYh5WJX1X40zb2tVbnqX+Or9kOnEB6uvUucDsFNCtGNna6EuiQjAEY/KpWatoc4doDlyYcT2KAJUI8E3v61hd4PkFDMz7PFBhoyuWJIX6HB4oBm59p0yGwHgPJKBEdbHKIIqjzztsOrWrGHiq+8mfo1RZssrgB42qUq+b//uj+KYkrlXwUfOehILQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BL4PR12MB9478.namprd12.prod.outlook.com (2603:10b6:208:58e::9)
- by MW6PR12MB8834.namprd12.prod.outlook.com (2603:10b6:303:23c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
- 2024 18:52:44 +0000
-Received: from BL4PR12MB9478.namprd12.prod.outlook.com
- ([fe80::b90:212f:996:6eb9]) by BL4PR12MB9478.namprd12.prod.outlook.com
- ([fe80::b90:212f:996:6eb9%5]) with mapi id 15.20.8158.024; Thu, 21 Nov 2024
- 18:52:44 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yu Zhao <yuzhao@google.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	Zi Yan <ziy@nvidia.com>
-Subject: [PATCH v3 9/9] selftests/mm: add tests for folio_split(), buddy allocator like split.
-Date: Thu, 21 Nov 2024 13:52:20 -0500
-Message-ID: <20241121185220.2271520-10-ziy@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241121185220.2271520-1-ziy@nvidia.com>
-References: <20241121185220.2271520-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BL1PR13CA0216.namprd13.prod.outlook.com
- (2603:10b6:208:2bf::11) To BL4PR12MB9478.namprd12.prod.outlook.com
- (2603:10b6:208:58e::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4FA19FA93;
+	Thu, 21 Nov 2024 18:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732215159; cv=none; b=BvT0DhEtOePqwfdQ/Ne+wPYYAOLajNCv1c1V/TOwidm2gqi5IKGyzlbDii0pYWSvs1awZHXVLcLCzLWF1WNkjRkbW7uE4M9tsrs2lcSdKHSRboYOOEYIpfkrkk2CjDAv3ae6GCagZ3phxQns4R2HAKm46lJjiDx5omvfcHitaBE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732215159; c=relaxed/simple;
+	bh=oqqondy23S74aGu5BrVkzbnRTmFRm6XLzCNLrVkrraE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I4VwwUrLifEkGl1MKFBQpm1fxV/EjcpYmv6APJOorjXHDxKAEpb6RvqW7P1TiOP5rvEdO0wK2cg6T4qptTDWR8MhbroE1gPeIyUwz5YTLQL1ZcCL2O1p3jG1EKbYKnOqJKlDXTmZzCXEQSlaqkFzpDo6+8EvQ54CJ6wQ32di1qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ee6a2ae6ecso12213797b3.3;
+        Thu, 21 Nov 2024 10:52:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732215156; x=1732819956;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wiKmU47CtbBGWKBpE0HqbPui0PwogHusuDbrIOQ4p9Y=;
+        b=dctb+HZ5+f0qiCPx8mLt+q+RDeLUZFGNkrTiQmH/A6ORJYuP5JCUOmUsCUE8HS9z9P
+         86Z3Wqz1cOFFrPwJQuLO4x6B9Tepjg/b1lI7K/YqIw+LaaF91ZknQnd57S4get/oKvjx
+         FYSSZ/1Z3fm++YykJ0bnariecBrW5y8122FCCzCvTQHFxsZSM2zlkSyTKHVNjzNhwc9a
+         VAY3NHX8T6wWer7P/K772uOBQYJ4YWcqCZhW0YqeS2l+6BlSkFaSnaZQghbuFE3MpRbL
+         IMHjvgsB8IgVVC+Nmg/qADWivrQxXSHBhcXdAsVMHrP4KQZDrfZEMAmt3o5dWOKw1sNG
+         v1Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ZVo3k6j5WBUQlb2Fjf8BHks4hxkH2jV8gwNgaUmovmKHjoXqU7tLRkfTR0TTIqVsNMnkMohkmkK9kw==@vger.kernel.org, AJvYcCUicy5pYxdmgYj5RYdS1wNulfCdZRMfogYgKem5FdtbVYbwvLRMU7G8jtdbSKd1Fg55ieyGeHFHlKH1wSI=@vger.kernel.org, AJvYcCWl6YasKK8L0fEv/4QEohWtH51ZXTXAc3TeepNJQ9RJ2k06S2nd1iMyysY6oueT6vBTkyzPWGEA4xyc@vger.kernel.org
+X-Gm-Message-State: AOJu0YyylBhEsI5PeWtgyN7iMgDucVV8qDfrWBZJk8XQRm7ReodZxbIa
+	umTPr4CKBS2pTncpK9KWbdfgyPk+o8hDNNQ3ofPKiTwPOuQv7nJ8IGFVTBPH
+X-Gm-Gg: ASbGncuzWRKD8Dxh/Fv95BSOrwc1r893Bl4sxmpduXAJLwsSQmLub7CusU7k2+i5LlN
+	1/VQz8ucVnCCwq3ZS1Q7GQ3mcFtF2QAbQz/J0q/5Myiu/Y6fKJ0ssbff1reTb5znvut9J+q5DnZ
+	XZ+kcURSB457gjczKISdWFMO1RrfwxYQ3+2Lj3EBAGLFck5Ffzb5YSZduBI2hBNfEUXTScGeFyp
+	6ry6Uf0CLQkLCYeXse+1wbW6yLs/hx62ngsRgzEslypfOdBXF67PdU1p4Ba4g44aNwdDXCuSr0L
+	9/OQblxF/bgEx3EE
+X-Google-Smtp-Source: AGHT+IGC4f69cVdKB3sdm8qaXsD8Z1umi9orCXutexSe10QVT8gWThmk0thu42uMBHIP8V8Y4y7n1g==
+X-Received: by 2002:a05:690c:9b13:b0:6ee:6e71:e6cf with SMTP id 00721157ae682-6eee0a5b66dmr3843167b3.29.1732215156096;
+        Thu, 21 Nov 2024 10:52:36 -0800 (PST)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee00aa3f2sm697287b3.120.2024.11.21.10.52.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 10:52:35 -0800 (PST)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6eea47d51aeso12390977b3.2;
+        Thu, 21 Nov 2024 10:52:35 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVB583URUTWqFSzlyxZFfa+Lz8dFcYmCjrBrmJ4ttfQEFQAEcwvJwJbL3xrrTO65euBNb6DhaLSpxgVPQ==@vger.kernel.org, AJvYcCW5Pa1ss0pGzSiCWSSy/xSFAElHqHKsvbnYIQwlRitMJOsSImqEvrMm13Xt5G3jsTj50luMEXFhBF1X@vger.kernel.org, AJvYcCX52S9Pr9OEYGRFW0jlat9oIPYt3Lb0yVJYgg0QCuIKWIqDPSqNgRNoFkxELzAVkzxXOVsRqEpSaaM74hc=@vger.kernel.org
+X-Received: by 2002:a05:690c:7406:b0:6e2:1a56:bff8 with SMTP id
+ 00721157ae682-6eee0b7584emr3584917b3.36.1732215155155; Thu, 21 Nov 2024
+ 10:52:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL4PR12MB9478:EE_|MW6PR12MB8834:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0634ce88-ba82-4fd0-13c7-08dd0a5dad2e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ao6xM8paWj8W1BV6BMlXhk3QhR/VThr8iEKeDACvc9Y7fOoBPjN2A2xfG6Px?=
- =?us-ascii?Q?7mw//1i3mMpVEvRC48S1NBHGrCa1DyvjemfUPnNGSEkxZb/Vhscdb9ARX8ck?=
- =?us-ascii?Q?Rki5H2IWW+miJiyhvkAQC9VbmpLAMZuJM6E7BZJ4J40g7LHssvuTk8iWRdoK?=
- =?us-ascii?Q?rlkMeqZTtkhSInBcQJJWTabZDW3kvzI7BxpTK7Xhi1FV/X+cGiZsTUbPIsbf?=
- =?us-ascii?Q?xCOoHfgQTsAgmlrIbsC6vKUJFYH4dS57ICsa+4JpbOdmF6QHSvoptWHOElNZ?=
- =?us-ascii?Q?SK4IzNoyVZdPwkwaQ1u4ogkeWDOwwn/mLE0lkW2B8z80S1x728DyqvnhmeUL?=
- =?us-ascii?Q?oXnBtA1UPGk8Up8FgQYkyWJmaNrCtEjcYWsdoj+2sUw41Ujfps/8vtnmjgxl?=
- =?us-ascii?Q?NVKoInzAwGSmZc7uqhWgje+29Q/gLRyBNBFVLgri+xQf0kMxAy9za9Xa6/Hx?=
- =?us-ascii?Q?Dbzykji3pg+TfZztyeLeJV1l6FnIwlFZB8unuaORP9hZ6Re8HMT7OwhbGLXq?=
- =?us-ascii?Q?cvgvQ1NobiS6lfVKXbA1TZzBuOTIqC2+pVMMTnM554A4slPPLjktX+rDg83c?=
- =?us-ascii?Q?y+yG8eK9VEV/oZpr38PMoXDEFMdweFyx5MnSTefWbJJC57HQTaIebtOHvAih?=
- =?us-ascii?Q?CEe3dfKO7ybiGXoZxpBl2XrtijBR3qFW8o575L3rD42CUf1Q7v6WmeCssIkh?=
- =?us-ascii?Q?lj3bFSQKUgY/1itjZJin8algqvcIdTOrr0p2eDL0yJu0ETmoU6wAzxmAxbjY?=
- =?us-ascii?Q?Uv9je6cpAHZxNxCfyKTUxhDyCVI2apw423k+mz0ng4AuMfSGx0ZqJ72y6rys?=
- =?us-ascii?Q?5NpT9XRfZK0I4q2cQLlBk+mrWhai1UWfsmTWjzwn/idXZYtUr/HAa5m/DYtZ?=
- =?us-ascii?Q?Th82Bi4jtd1ZP+4OVV7dH001va1t5MDk0VTyV3v6M5gB8HqCF1qf50eWUvnR?=
- =?us-ascii?Q?LJTYX6Z6b6RUc6nwrLrR84N3zX0JJ/fo89Cyr87/oyNTKFbHOyHvV9Q2RCbr?=
- =?us-ascii?Q?llZv7+Tp6ntMu/wAlS/0ylHKrzz9xHSWX1ctoe2unjXyr4qRom8klfPl3sHC?=
- =?us-ascii?Q?Sl31DruWDH78nBfjW+drshMnOja90GfTXU/P0SKzDgr3qwRG/nTO66n8+F9e?=
- =?us-ascii?Q?v8gtH5Kp4TMNChV3Cql6TTHA3tRV4ge2c/vLvTV29lPz6sGU+DkGfGmKqW6a?=
- =?us-ascii?Q?rckT0QyadItX6KfcSqe9ENtnrOir9mf4b7FCNKuPEQuiiVKKN4H7ueidM7Qa?=
- =?us-ascii?Q?o6zyTgmyXkALj2xACtS3CFeyUFtXXXqpTlKhOqaeSzi35Cx2aSKJIyuObfMn?=
- =?us-ascii?Q?liC22+rlsYJidiiKy3efv2Ip?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL4PR12MB9478.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?S3AWpXHLvR8V8016XN5gZXJsu6xOaAvvlS5qjELxYLjsFR5JjRilojyEal2o?=
- =?us-ascii?Q?+5UQ4O+fd4zTERhTPbm+/GBeblw5GOY6LtWtFNSttakcQL6rRWY5RhZFecK+?=
- =?us-ascii?Q?y7umaC0BoyjhemVXulbzxmo4HACzunrhMKjLPIAAeDX/rPdi0L8zXCDLU5rZ?=
- =?us-ascii?Q?KQ7fr+zcgj8d0yAj5NbBN2QlQayRyYlg7nOdOY695Jaa0YNE4VJftJVEn5/9?=
- =?us-ascii?Q?7NpbLDRCJiCUis0Wrghx83slWFOOh/RcHWM6a6YneX1HtY3AunNmtuAetQDC?=
- =?us-ascii?Q?478tlK2XVQc/FNKlODiYUt5ZAIttYom1U3NlcZuu/SeFsQ07C9Lkm8N47bey?=
- =?us-ascii?Q?FGH1W7/dKS2blT/4MBlEmV7IVq718RCjF+YsMRbGq+QisWveWWr9kB4YxZvR?=
- =?us-ascii?Q?KVtMsvG8FcgankrNKEZ/FzAMIqbH60EyDLS8wVX7kHqk1ZI98UIAlNwWgwR5?=
- =?us-ascii?Q?H6ytz3tNPdKEUWoYU7xLHOAbqhG1m+n1bmBHb3mzXGTRqN+mmV4tMAUwRecy?=
- =?us-ascii?Q?KIOIhJwm3+orC9b7OMYrIjJN3SFtzsRCWjaafra/xnuNYGzSObxqFi7bYdkh?=
- =?us-ascii?Q?5d4tTI1jLpYreMU6+Pgxh9Z0fGj2xBMy7NAy3eKfYN/qOr7aBkB0S9eJJ0o0?=
- =?us-ascii?Q?Fipiz5vYnmZ8FuY+6U0/CZSGnwOINqCt6KSiVm9ZZTLDLD2NQbPNpFBdgBZn?=
- =?us-ascii?Q?RyfCwEH8ECSIuloAH3FHh+jbWrHyNuJbFkJOyj1mm4GaDCRc7NVi71UmWpZw?=
- =?us-ascii?Q?zX5Qje8lVw1J+i3vLmvPjc2GmC+0MBNV4jxTjZPnINJEyRtK9Srx5aevlaxM?=
- =?us-ascii?Q?WTs/dAXbroTk4OA67iloROqKX4RYCFYVNHy4h6CnqRZeG0i/r3f9LO05/W55?=
- =?us-ascii?Q?qsSqkX9AZyLRVN8h6dHN4TBLOuvqbm9wFherbYXDLEWMWdhEVgYd5wXuXQOy?=
- =?us-ascii?Q?2aof1mMgLjvBgXMFYVdi66WkvzgDrWWWyghzdnN5Ex6VkP0X8QzF9h927bXx?=
- =?us-ascii?Q?MKboRmfgrLzts8H2VHyMPXdSuOZk6IJpLeHbeRVTh9GdSrD+jw6IOcWdUZqF?=
- =?us-ascii?Q?R85dOC8tEW1CtqTOR41bXG5cp2GZ6SFulhBxip5O+cZ67w/0fBLI9LDcldXD?=
- =?us-ascii?Q?Lwa7giybLxU1tsyOQENKWGMM5UUTaVv/9yWrpoSAalmffRTiEEeFcXo1nw1z?=
- =?us-ascii?Q?lRPkZKLjJELYUTO+BCpDMreOjEBQg9zJJ5Pnd3cdiTlSmg1HEYIJkcE+7KCr?=
- =?us-ascii?Q?bF1/X0kXbpgWkB0/f0b+s/V29xu5WIk6vGf72BahIi0bv51YjgPwfdqtOmIn?=
- =?us-ascii?Q?cEo2N+tVLHn65e1wYP5xaR7nSkX9Fe18I36iSb1jDK8Kkcj42yh6FD4zqkBN?=
- =?us-ascii?Q?BcO9qRI1Dp5TCWN9rfR8/85ESbHVv+v4fz6y6hHibCntBdqhNSejSUj9kCvS?=
- =?us-ascii?Q?NFRB0MbTv/KKQb8chvGMB3YHuKZyT0zUG95nwEVqQJnqJYzSkr4gTFRuFRuz?=
- =?us-ascii?Q?LFgSOHsBC+PVaxBdCcORQictG4/vmoxzPRxyndDSbk6t7yk/rBKSE3BHS8Zt?=
- =?us-ascii?Q?O5HN8tLWddhYk3mbvnERYvc0aermuqDNP3HSEHE1?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0634ce88-ba82-4fd0-13c7-08dd0a5dad2e
-X-MS-Exchange-CrossTenant-AuthSource: BL4PR12MB9478.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 18:52:41.0986
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nQOjIULsQyyZeQzt+x8v5MCa/siBtpoh/RBWlZ+0crFxtyYE4wAd15VwwXj3/G6n
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8834
+References: <cover.1731450735.git.fthain@linux-m68k.org> <665c3526184a8d0c4a6373297d8e7d9a12591d8b.1731450735.git.fthain@linux-m68k.org>
+ <173193673970.37302.12055966881506116157.b4-ty@bootlin.com>
+ <8140c873-3456-1469-8bc5-2e94d409cf8a@linux-m68k.org> <20241121174630cbc6cfa6@mail.local>
+In-Reply-To: <20241121174630cbc6cfa6@mail.local>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 21 Nov 2024 19:52:23 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWCjC92DUxNiMQufaoaR4mzH+gshYnFayjka9-hH6DhFg@mail.gmail.com>
+Message-ID: <CAMuHMdWCjC92DUxNiMQufaoaR4mzH+gshYnFayjka9-hH6DhFg@mail.gmail.com>
+Subject: Re: (subset) [PATCH v4 1/2] rtc: m48t59: Use platform_data struct for
+ year offset value
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Finn Thain <fthain@linux-m68k.org>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Daniel Palmer <daniel@0x0f.com>, 
+	Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
+	linux-rtc@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It splits page cache folios to orders from 0 to 8 at different in-folio
-offset.
+Hi Alexandre,
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- .../selftests/mm/split_huge_page_test.c       | 29 ++++++++++++++-----
- 1 file changed, 22 insertions(+), 7 deletions(-)
+On Thu, Nov 21, 2024 at 6:46=E2=80=AFPM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+> On 21/11/2024 09:13:32+1100, Finn Thain wrote:
+> > On Mon, 18 Nov 2024, Alexandre Belloni wrote:
+> > > On Wed, 13 Nov 2024 09:32:15 +1100, Finn Thain wrote:
+> > > > Instead of hard-coded values and ifdefs, store the year offset in t=
+he
+> > > > platform_data struct.
+> > >
+> > > Applied, thanks!
+> > >
+> > > [1/2] rtc: m48t59: Use platform_data struct for year offset value
+> > >       https://git.kernel.org/abelloni/c/a06e4a93067c
+> >
+> > Thanks, Alexandre. Would you also take patch 2/2, please? Geert has sen=
+t a
+> > reviewed-by tag for that one too.
+>
+> I thought Geert would take it as this only touches arch/m68k
 
-diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
-index 5bb159ebc83d..1af8d6fa4465 100644
---- a/tools/testing/selftests/mm/split_huge_page_test.c
-+++ b/tools/testing/selftests/mm/split_huge_page_test.c
-@@ -14,6 +14,7 @@
- #include <fcntl.h>
- #include <sys/mman.h>
- #include <sys/mount.h>
-+#include <sys/param.h>
- #include <malloc.h>
- #include <stdbool.h>
- #include <time.h>
-@@ -420,7 +421,8 @@ int create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd,
- 	return -1;
- }
- 
--void split_thp_in_pagecache_to_order(size_t fd_size, int order, const char *fs_loc)
-+void split_thp_in_pagecache_to_order_at(size_t fd_size, const char *fs_loc,
-+		int order, int offset)
- {
- 	int fd;
- 	char *addr;
-@@ -438,7 +440,12 @@ void split_thp_in_pagecache_to_order(size_t fd_size, int order, const char *fs_l
- 		return;
- 	err = 0;
- 
--	write_debugfs(PID_FMT, getpid(), (uint64_t)addr, (uint64_t)addr + fd_size, order);
-+	if (offset == -1)
-+		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
-+			      (uint64_t)addr + fd_size, order);
-+	else
-+		write_debugfs(PID_FMT, getpid(), (uint64_t)addr,
-+			      (uint64_t)addr + fd_size, order, offset);
- 
- 	for (i = 0; i < fd_size; i++)
- 		if (*(addr + i) != (char)i) {
-@@ -458,8 +465,8 @@ void split_thp_in_pagecache_to_order(size_t fd_size, int order, const char *fs_l
- 	close(fd);
- 	unlink(testfile);
- 	if (err)
--		ksft_exit_fail_msg("Split PMD-mapped pagecache folio to order %d failed\n", order);
--	ksft_test_result_pass("Split PMD-mapped pagecache folio to order %d passed\n", order);
-+		ksft_exit_fail_msg("Split PMD-mapped pagecache folio to order %d at in-folio offset %d failed\n", order, offset);
-+	ksft_test_result_pass("Split PMD-mapped pagecache folio to order %d at in-folio offset %d passed\n", order, offset);
- }
- 
- int main(int argc, char **argv)
-@@ -470,6 +477,7 @@ int main(int argc, char **argv)
- 	char fs_loc_template[] = "/tmp/thp_fs_XXXXXX";
- 	const char *fs_loc;
- 	bool created_tmp;
-+	int offset;
- 
- 	ksft_print_header();
- 
-@@ -481,7 +489,7 @@ int main(int argc, char **argv)
- 	if (argc > 1)
- 		optional_xfs_path = argv[1];
- 
--	ksft_set_plan(1+9+2+9);
-+	ksft_set_plan(1+8+2+9+8*4+2);
- 
- 	pagesize = getpagesize();
- 	pageshift = ffs(pagesize) - 1;
-@@ -494,7 +502,8 @@ int main(int argc, char **argv)
- 	split_pmd_zero_pages();
- 
- 	for (i = 0; i < 9; i++)
--		split_pmd_thp_to_order(i);
-+		if (i != 1)
-+			split_pmd_thp_to_order(i);
- 
- 	split_pte_mapped_thp();
- 	split_file_backed_thp();
-@@ -502,7 +511,13 @@ int main(int argc, char **argv)
- 	created_tmp = prepare_thp_fs(optional_xfs_path, fs_loc_template,
- 			&fs_loc);
- 	for (i = 8; i >= 0; i--)
--		split_thp_in_pagecache_to_order(fd_size, i, fs_loc);
-+		split_thp_in_pagecache_to_order_at(fd_size, fs_loc, i, -1);
-+
-+	for (i = 0; i < 9; i++)
-+		for (offset = 0;
-+		     offset < pmd_pagesize / pagesize;
-+		     offset += MAX(pmd_pagesize / pagesize / 4, 1 << i))
-+			split_thp_in_pagecache_to_order_at(fd_size, fs_loc, i, offset);
- 	cleanup_thp_fs(fs_loc, created_tmp);
- 
- 	ksft_finished();
--- 
-2.45.2
+I can do that only after v6.13-rc1 has been released, due to the hard
+dependency on the new m48t59_plat_data.yy_offset member.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
