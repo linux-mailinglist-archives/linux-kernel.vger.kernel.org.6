@@ -1,149 +1,79 @@
-Return-Path: <linux-kernel+bounces-416772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5137E9D49FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:27:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688639D49FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09A0D1F2101B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:27:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123551F21354
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D881CD209;
-	Thu, 21 Nov 2024 09:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Njb9XiNg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED5A1CB51A;
+	Thu, 21 Nov 2024 09:27:20 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5159AD2C;
-	Thu, 21 Nov 2024 09:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0712AAD2C;
+	Thu, 21 Nov 2024 09:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732181249; cv=none; b=b/E0lkFWgIwwzKQ7W92u1hPrX5B2Is0S8jnU1+10MHa+5RIhUSQXKZ7d3368ZtfA+XQxKQHCWAaEAeU8si8vJ+Jwhnnq9qYAQmlutjgs0UD65w+TpAeYn3Wb25qRMyEYky2+bNsJzoq6FY4i3bj6VEQla0DRoY4KNTKVYdt0Y0U=
+	t=1732181240; cv=none; b=L+NnK7pdNdUkpIyFzPSMlpmq3XcFWyxSL/xg0piM/usq51S09TedxHfXCpU9ukQMSO68QhUIn6ea3rAVZsWqBWEwVdZYqZnoyeZs9MfmGBWtV31mdewl5CjVoBEVCXC5cDPeOTcSkUqTAZsrAaqbQt1X+ALG/u69bncAAvh5ABA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732181249; c=relaxed/simple;
-	bh=Hmkq187wpM0gvTE7zSdMBJtIlzx/4OjiFzlY6ikhhYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XLlI6zbIkafnzzRldT2wJ23fvo3qkaXfNTS/osnPq1/LazQvP1zKAnWi8aWuAKsNcYdRWWaY8WozCIyMBZwIK1El8c0sR++xQzyHQDnEsSnNTrX6G004biJrouybFL/Q+lQErPsKb3NYc9WAHX0+vgJlxB0zyZu6NryzZW9FkHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Njb9XiNg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL7ulow022214;
-	Thu, 21 Nov 2024 09:27:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BSNHlOKlqtFTnMdZHK4ZyYEqhXR/ELx3AykIjIIhiMk=; b=Njb9XiNgwNLxw/JJ
-	PH4ALfwHsUp1BVHQssuTDVeckwHEUw62BAYCvhzlZv2nI8hRtO3X8D0zTwKSghRv
-	++HZ8d9OkI29v/TnCTkYYLCn8J4rlZGjMuwna5ixkvU7PXpP3MFTHzQmaZCa8Wo7
-	icW+uAG5zeLQEwQfoW7fjiUTyt00+uw+fDEqK8diutGD176pKfO9p7EGqCzNXBtj
-	69dcxpLPlvKE5AuTJFpoOTd60mVD7JOaSW/SY7EWkTGoGOoLo1ApaQDo4OU0RDu7
-	uPdZyU7B4Kp40pEvV9vYRIiVuuIj3rArVk7IIGDS2kbUm3l+RGRXbzM/77QHDJ0L
-	wLP2jA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320wk0cu1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 09:27:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL9R9bA015632
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 09:27:09 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 01:27:02 -0800
-Message-ID: <49dc67a1-5b44-4987-b564-5a552a6fbcda@quicinc.com>
-Date: Thu, 21 Nov 2024 17:26:59 +0800
+	s=arc-20240116; t=1732181240; c=relaxed/simple;
+	bh=itz1z2Kf6Or5Wz88cu8QAKzATnozXj4IcRuUexJj8Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7STbnmeRNu47k+mm2R/+ytNRaWpDtIh7PrC0+vbbIFH59aXR+obfcpcOQi4C9HYZGgREgO8JdjWwGzp8XI1C0+jGZos4M4gnTbU5fGFyHbo8OURRvEVbJq6s8VzpP27mATt0WVk1qfkNlQJtn8RiKdmfiqy9VPh9I9hbQsNBaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 17D3C300097C8;
+	Thu, 21 Nov 2024 10:27:08 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id ECF6944680; Thu, 21 Nov 2024 10:27:07 +0100 (CET)
+Date: Thu, 21 Nov 2024 10:27:07 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
+	davem@davemloft.net, anil.s.keshavamurthy@intel.com,
+	mark.rutland@arm.com, peterz@infradead.org
+Subject: Re: [PATCH v3] PCI: hotplug: Add a generic RAS tracepoint for
+ hotplug event
+Message-ID: <Zz786zZljAy2J5i7@wunner.de>
+References: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/9] arm64: dts: qcom: Add display support for QCS615
- RIDE board
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Li Liu
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-8-2873eb6fb869@quicinc.com>
- <CAA8EJprBxL0KuOm4f1peRCw9Y=bzXo=Vt-QEv37RzJ62zJriNw@mail.gmail.com>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <CAA8EJprBxL0KuOm4f1peRCw9Y=bzXo=Vt-QEv37RzJ62zJriNw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1Sed8X8ZrSs7xhEhIW5hAgOYdjxle7QC
-X-Proofpoint-GUID: 1Sed8X8ZrSs7xhEhIW5hAgOYdjxle7QC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
- adultscore=0 mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
 
+On Wed, Nov 20, 2024 at 08:43:28PM +0800, Shuai Xue wrote:
+> $ echo 1 > /sys/kernel/debug/tracing/events/hotplug/pci_hp_event/enable
+                                              ^^^^^^^
+I think this should now be "pci_hotplug" because you've renamed the
+TRACE_SYSTEM in v3.
 
+I'm wondering if we'll have other categories besides "pci_hp_event"
+below "pci_hotplug".  Maybe not.  Is it possible to omit the "pci_hotplug"
+and make "pci_hp_event" top level?  Or should this be grouped below "pci"
+instead of "pci_hotplug"?  I'm somewhat at a loss here as I'm not
+familiar with the conventions used in the tracing subsystem.
 
-On 2024/11/13 20:27, Dmitry Baryshkov wrote:
-> On Wed, 13 Nov 2024 at 13:53, Fange Zhang <quic_fangez@quicinc.com> wrote:
->>
->> From: Li Liu <quic_lliu6@quicinc.com>
->>
->> Add display MDSS and DSI configuration for QCS615.
->> QCS615 has a DP port, and DP support will be added in a later patch.
->>
->> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 109 +++++++++++++++++++++++++++++++
->>   1 file changed, 109 insertions(+)
-> 
-> 
-> This patch has even more feedback that was ignored at v1. Please go to
-> the v1 discussion, respond to _all_ the items, so that we can actually
-> see what got ignored and why. Usually I don't require this (we can all
-> make a mistake and miss an item or two), but with this patchset the
-> number of the comments that were ignored is extremely high.
-i am so sorry for the mistake and miss, will update and double confirm 
-all v1 comments.
+From a PCI hotplug perspective, this patch LGTM, so:
 
-we are preparing v3 to fix them
-> 
-
+Reviewed-by: Lukas Wunner <lukas@wunner.de>
 
