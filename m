@@ -1,96 +1,166 @@
-Return-Path: <linux-kernel+bounces-417263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B92A9D51B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:28:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E4E9D5189
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1A96B21CFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:28:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AC311F21E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE911A0704;
-	Thu, 21 Nov 2024 17:27:57 +0000 (UTC)
-Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EA919D881;
+	Thu, 21 Nov 2024 17:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WubPOd1B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68B010A3E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6562055C29;
+	Thu, 21 Nov 2024 17:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210076; cv=none; b=Q3bxnj+4wKj+w14nOHxM4bsd7+/J19l/k3cCK1Xspln6jGn4OIqldHDREZrNfxDxI45gLwgxRk6hszQGnrPQOIN28d8Cd1AYF4/o3sXTbiYu+vL2v4s7WvdFE2KkI8wkHQ6B5aHHMALmjANnWXMi58/lMiqcYvdgrh3mfb5zTqs=
+	t=1732209775; cv=none; b=iJsZzwCQ8tH68QWEEilTVS2LuvFa8x2pldsk4s4fILz6AkoH17PvlNYCL9E8BIaLT+rVDQSaaqgowFaSv7GOVM0BoaEQlcmfSZncHnrX1r3K3376ZUfun5Y/izwS1qnPOBvwEuHheEtW72yVZS3cAZQgLyZVhw1nCYnhQ0X2wzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210076; c=relaxed/simple;
-	bh=coLAmp4PA2TmGaKqMW8KKOMgz9UkZTFIV0rBEtNmMkA=;
+	s=arc-20240116; t=1732209775; c=relaxed/simple;
+	bh=vrLtc+wqTM3wm53I5eqfMyii4DXjb/vnZwhmFtWYOT8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEX71uz4zzzL3LrDOq4uKZYmQxvFItwfqauGwDXdAcrKSo3Loepv3UQKhys/Ixf0C6xLmilZWBuXVoiV1h2YVoL1hN0kfffFdthMmCMUWVSx9CpTdemMAwMZwEdyeKjCtD8G8VZ7lm58lQElDoWw+7v9GqsM6k4A2cIXbXsFVAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
-Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
-	id DD8375A38F9; Thu, 21 Nov 2024 17:22:20 +0000 (UTC)
-Date: Thu, 21 Nov 2024 17:22:20 +0000
-From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Nir Lichtman <nir@lichtman.org>,
-	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
-	Tycho Andersen <tandersen@netflix.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-Message-ID: <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
-References: <202411190900.FE40FA5@keescook>
- <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org>
- <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XUiuTgkhBox2wxQ5D0bbXxrKJP1xY2Jmq96MNS7QmXSch6I+AxHotnZ2xcrgzHtc1x76lAPCCIc0D7rdRmkqxFGHENH7AkKOkTS6r+2jgy30ecjiAA3KSzxiJmon2BSYISmqLWuD/YxMpUf9WafqYnto4ttYdfn7zBIaGmR5OlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WubPOd1B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAEFBC4CECC;
+	Thu, 21 Nov 2024 17:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732209775;
+	bh=vrLtc+wqTM3wm53I5eqfMyii4DXjb/vnZwhmFtWYOT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WubPOd1Bf8Jsekq7KXCQSjLDwlcWXnnwtH3EL8QkB+xEZ4/3kiY38djMdNOQQBH2M
+	 9Bg55BXdLpYo+I3nQhFal2yG+BWW7Anuqor8yJcWlbjDcxQ23dVgbJGXKxgJ7dI9SO
+	 Lk+UKiphlpcE8fD/Q1virarRxZiq3GZi4ePuFW/wMvSJTG7pgBg0iXdVmTWk1yfBBB
+	 qygE8oBAYqJfd5eU+RTs+iXzh+Nyr0QCgkXQv34QutgrVEfNFcQn88WxwE2sP/99NV
+	 sNdjY4vp4Id4lXnL8OVT+KojOm0XrjlhvlivC2Lz7OusQ1sJGPQXZBlW6cElkyrBlq
+	 mSXQ++N42oiDg==
+Date: Thu, 21 Nov 2024 14:22:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf tests: Fix hwmon parsing with PMU name test
+Message-ID: <Zz9sbNAuRsYjclAi@x1>
+References: <20241121000955.536930-1-irogers@google.com>
+ <Zz9oKR3goFPP9_a9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zz9oKR3goFPP9_a9@x1>
 
-On Wed, Nov 20, 2024 at 06:23:55PM -0800, Linus Torvalds wrote:
-> On Wed, 20 Nov 2024 at 16:55, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >
-> > __set_task_comm cannot be called with bprm->file->f_dentry
-> > unconditionally.
+On Thu, Nov 21, 2024 at 02:04:45PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Nov 20, 2024 at 04:09:55PM -0800, Ian Rogers wrote:
+> > Incorrectly the hwmon with PMU name test didn't pass "true". Fix and
+> > address issue with hwmon_pmu__config_terms needing to load events - a
+> > load bearing assert fired. Also fix missing list deletion when putting
+> > the hwmon test PMU and lower some debug warnings to make the hwmon PMU
+> > less spammy in verbose mode.
+ 
+> After applying this, with this series of patches on a Fedora 40 system,
+> I get output from -v where before I needed, IIRC, to use -vv:
 > 
-> No, no. Only for the "no path" case.
+> f8244bb9bfa66f79 (HEAD -> perf-tools-next, x1/perf-tools-next) perf tests: Fix hwmon parsing with PMU name test
+> 9ae6c7a4bd02acbd perf hwmon_pmu: Ensure hwmon key union is zeroed before use
+> 3e37de098af38179 perf tests hwmon_pmu: Remove double evlist__delete()
+> 0565017a0ac824c2 perf test: Correct hwmon test PMU detection
+> 85c60a01b85ee956 (perf-tools-next/tmp.perf-tools-next, perf-tools-next/perf-tools-next) perf: Remove unused del_perf_probe_events()
+> ⬢ [acme@toolbox perf-tools-next]$
+
+<SNIP>
+
+> root@number:~# perf test -v 11
+>  11: Hwmon PMU                                                       :
+>  11.1: Basic parsing test                                            : Ok
+> --- start ---
+> test child forked, pid 1823259
+> Testing 'temp_test_hwmon_event1'
+> Using CPUID GenuineIntel-6-B7-1
+> FAILED tests/hwmon_pmu.c:159 failed to parse event 'temp_test_hwmon_event1', err 1
+> event syntax error: 'temp_test_hwmon_event1'
+>                      \___ Bad event name
 > 
-> > The reason bprm->file->f_dentry.dentry was abandoned were concerns
-> > about breaking userspace.
-> 
-> There's no way it can break user space considering that right now
-> comm[] ends up being just garbage.
+> Unable to find event on a PMU of 'temp_test_hwmon_event1'
 
-It'll "break userspace" in the sense the the resulting program name
-visible in /proc/self/{comm,stat,status} would be different than the
-expected value. Currently userspace is not using fexecve because this
-string is "just garbage". We'd very much like to start using fexecve,
-but we cannot do this (in the general case) if that'll result in a
-changed program name. If we change the value from the current
-(garbage) value to something that doesn't provide identical behaviour
-between execve and fexecve, fexecve will unused.
+In gdb it fails on the first call to do_test() from the first test__hwmon_pmu()
 
-As Eric wrote, there are various programs which are symlinked.
-/etc/alternatives is one group, but we also have "multicall binaries"
-which present different behaviour depending on the name.
-Some of those use argv[0], but other may use comm.
-We really need the name that the user called the program as,
-not the name after symlink chasing.
+Starting program: /root/bin/perf test -F -vv 11
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib64/libthread_db.so.1".
+--- start ---
+---- end ----
+ 11.1: Basic parsing test                                            : Ok
+--- start ---
 
-Even if we end up copying a string from userspace unnecessarilly,
-does this matter? execve is a heavyweight operation and copying a
-a dozen bytes extra hardly matters.
+Breakpoint 1, test__hwmon_pmu (with_pmu=false) at tests/hwmon_pmu.c:203
+203	{
+(gdb) n
+205		struct perf_pmu *pmu = test_pmu_get(dir, sizeof(dir));
+(gdb) n
+206		int ret = TEST_OK;
+(gdb) p pmu
+$2 = (struct perf_pmu *) 0xf50450
+(gdb) p *pmu
+$3 = {name = 0xf50ac0 "hwmon_a_test_hwmon_pmu", alias_name = 0xf50aa0 "hwmon1234", id = 0x0, type = 4294902994, selectable = false, is_core = false, is_uncore = false, auxtrace = false, 
+  formats_checked = false, config_masks_present = false, config_masks_computed = false, max_precise = 0, perf_event_attr_init_default = 0x0, cpus = 0xf4fbf0, format = {next = 0xf50488, 
+    prev = 0xf50488}, aliases = {next = 0xf50498, prev = 0xf50498}, events_table = 0x0, sysfs_aliases = 0, cpu_json_aliases = 0, sys_json_aliases = 0, sysfs_aliases_loaded = false, 
+  cpu_aliases_added = false, caps_initialized = false, nr_caps = 0, caps = {next = 0xf504c8, prev = 0xf504c8}, list = {next = 0xedc090 <other_pmus>, prev = 0xedc090 <other_pmus>}, 
+  config_masks = {0, 0, 0, 0}, missing_features = {exclude_guest = false, checked = false}, mem_events = 0x0}
+(gdb) s
+208		if (!pmu)
+(gdb) s
+211		for (size_t i = 0; i < ARRAY_SIZE(test_events); i++) {
+(gdb) s
+212			ret = do_test(i, with_pmu, /*with_alias=*/false);
+(gdb) s
+do_test (i=0, with_pmu=false, with_alias=false) at tests/hwmon_pmu.c:136
+136	{
+(gdb) n
+137		const char *test_event = with_alias ? test_events[i].alias : test_events[i].name;
+(gdb) n
+138		struct evlist *evlist = evlist__new();
+(gdb) n
+143		bool found = false;
+(gdb) n
+145		if (!evlist) {
+(gdb) n
+150		if (with_pmu)
+(gdb) n
+153			strlcpy(str, test_event, sizeof(str));
+(gdb) n
+155		pr_debug("Testing '%s'\n", str);
+(gdb) p str
+$4 = "temp_test_hwmon_event1\000\000\004\000\000\000\000\000\000\000\274\204z\000\000\000\000\000΄z\000\000\000\000\000\021\000\000\000\000\000\000\000 \305\377\377\377\177\000\000߄z\000\000\000\000\000\353\204z\000\000\000\000\000\376\204z\000\000\000\000\000\n\205z\000\000\000\000\000\021\205z\000\000\000\000\000\035\205z\000\000\000\000\0000\205z\000\000\000\000\000<\205z\000\000\000\000"
+(gdb) n
+Testing 'temp_test_hwmon_event1'
+156		parse_events_error__init(&err);
+(gdb) n
+157		ret = parse_events(evlist, str, &err);
+(gdb) n
+Using CPUID GenuineIntel-6-B7-1
+158		if (ret) {
+(gdb) p ret
+$5 = 1
+(gdb) n
+159			pr_debug("FAILED %s:%d failed to parse event '%s', err %d\n",
+(gdb) 
 
-Zbyszek
+
 
