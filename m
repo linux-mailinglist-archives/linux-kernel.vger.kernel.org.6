@@ -1,141 +1,138 @@
-Return-Path: <linux-kernel+bounces-417401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D4A9D5394
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:49:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCC49D539A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4BE283EB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:49:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CCA7B21917
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9C81C879E;
-	Thu, 21 Nov 2024 19:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454F51C9B68;
+	Thu, 21 Nov 2024 19:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i/Kpp21V"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmna5D7o"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA481C461C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A99200A3;
+	Thu, 21 Nov 2024 19:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732218561; cv=none; b=uYC3oCvJGAcHR0EZ1vb8UquZ0mapwBLWHIr4BykTlgfRMwjg8MYOY1QGvvmQVbKqtqH/ftaYkKSVLv2Bo2Va4gyUxDKaxKBC8iwIyGX4MyB8SKSRXrm3wiDDsw4RCnfpTl7V1+XaXnBcNyJwKY37b6ljwpvjlZMTrT26u6vrGnE=
+	t=1732218629; cv=none; b=OokVBdhJAAY5isL8GFJUqAFCvOpVcbuTG2Idb2hrBOovqPyOih8eGt4fzBtslV1GBfBMvvyn/mYk9lQBReCOYEow9Sgi7j1ie4UF7bBpdC9bJA7Nc1TC63ATb6oO++bDzkyPBIjwG40dqrfW+ipfAfb0gMcN5N1cdJMzXQM5Iyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732218561; c=relaxed/simple;
-	bh=/EhwlAowUPBNCPPUkYBxaERl2CCDs7Vetj3wrmlCrDQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qxJUXN/v5t9y4piZtMkHPqkD8S6+S+nfhIMbX90gCk4xdamHDlqtcN/NaY+9rIA6Y6Ox2IbLIUdmPlZwRfv6bnxR0Vhi/WdCoEi5B9rukUANny6XXkrp+a3RiR7Tc0CM4622do+d3GznBL3S5zGWIYEvPr4B9wiQBPQrVg8pbp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i/Kpp21V; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tadamsjr.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eae6aba72fso25308927b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:49:19 -0800 (PST)
+	s=arc-20240116; t=1732218629; c=relaxed/simple;
+	bh=7hzcrmCtwuNvAxC+vOI8qVzf+tjBP4ZaOWNH/zYFyJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGWR6ML78z6DuMv9KGm2bH8x04+i+S7JJkZRNkE7B4z4zy1aleu1EknTCf+n+cefvZsMwnEtQ99e/llU+OuMBIHfA/Zjhs1tTFheAI8EG5E7QAbA7qQR6lHDUKudxiqmdoLiFH5aCZuViN0BDu33P5F76toiQ3euTn4O5XxaNho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmna5D7o; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83ab21c26e5so44207539f.1;
+        Thu, 21 Nov 2024 11:50:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732218559; x=1732823359; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FlTVGm5qa99OPyjgK2sYE6lFf2Ldqoi0UzDo7GJSevQ=;
-        b=i/Kpp21VAn51ZqhFYF7Cjncw62474OtRtoADBZybA2vu4KJKFbuHjNPnKRWFVJyJTD
-         3oi81O6JEzL6EYC25sGd8tlur6uagkkqq+yGKfbMdg4jV9h1W9/ENHx5zqDc94xN7pAo
-         HYQsKjIB5RVBQUjII8LSTWffEmQAhZEvL8dKIQTGQf/XRAGsPx+rRmPJMl/YbxI3PQcx
-         1hdP6G7fAyUZvqtgnSdAVjvUvOroXezjkpbpalofx/uB74EIOv0LOhWuUktp1PB89o34
-         Q1Ij+O8U3lHzJc2bgo0BmWYK8jdecupw7t26906HnNHh0noFNIKxKEOCA3P4x+lQ9s4B
-         e1dg==
+        d=gmail.com; s=20230601; t=1732218627; x=1732823427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Iz3fx5gVJ4M22KYICfDKkgkAafxEBWal+eeMe1wl3mY=;
+        b=fmna5D7oME6EhKZEYOPlzdY/M8kIR8zP+AsoGgQs1dfIFVsRgukwoiH/IjgTlF/pgH
+         /yT/XUiYyo8c4lnu8s/7M9KQ8Re/cZe3hlxDUzUn9ls7Y/3T64ErPXF0UiTji9dZoFO7
+         tfdNzkkyErstPw1myab65rv/YFpsSo+OIUwlJuJ6qd/6cF8F+mDLAF2yli3uXFH4MnGM
+         a4oOgz+I5ySNVVdP5UvlHP3gW49wKED0KKBv97IUiPfuCyjAo12qhBW8NaOgS/m5rz9c
+         lpz34sI+PCDPhTAAWwx0An6exeGxpp5Apd7ZJvKuiuYQmrL3nuNj3uavlCl/rXJxT+kI
+         0AyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732218559; x=1732823359;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FlTVGm5qa99OPyjgK2sYE6lFf2Ldqoi0UzDo7GJSevQ=;
-        b=q3Hs6pfwXcpj4ZpAlVs9wUfeflaBlKSz/B+4OlW3TQuCoWLLuEmlc7amYuNztmy9YU
-         guV9uQznSzqfqeM3JoKB+UHLN8s7Fcx92iZJFhp4sHevwqX//fJ1NfU0aN8NCyZBiCTl
-         cfkevfhCjvcHQOcOvsD5y8of9D0sCbe4AeeypqMiGQxdFLH7ILVv+7Nxqc2B3xwYLNYh
-         eWwly5WPK2FylaWbw47/DQGmp94NgXlyUo2LsdJ0hfGS+YQDoy06JrPXAoYJB2RXhP0Y
-         7lXLY+cdKPqfCzdc0ziyccZ0La+lqBi1RxqSLu6pVjcN5AzvLvQr1qpicmu4ecyqF0XZ
-         twQA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDoQ/N0l9Ji4M5Mh6TJCgTV/Ir/oFdZkhmRszmVF1CcSXdsMCMtCTHLc0oRD+dw1XD0+gqUujFEkXDMZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8XUy7gcPsOYbXiAeMFzc4i3iL2JTTr+vZZDCi8wxtoVGGmuMq
-	JEPO3U5n3NfXfAwPZo18MY4yiRg7shW0Im86u2NQs/99zp0QFp512ECIgHk3tn5XirvZWhQqpLU
-	LFQT8E9iqjQ==
-X-Google-Smtp-Source: AGHT+IGJd7/uvd/MveJMgVETHnva4G0+/AAqBaP8ft/tMr6ZWbYv/L2EZ60cfLxbRKbHYVPTXuL+MmRYVE48xQ==
-X-Received: from tadamsjr.c.googlers.com ([fda3:e722:ac3:cc00:13f:f798:ac1c:499f])
- (user=tadamsjr job=sendgmr) by 2002:a05:690c:288d:b0:62c:ea0b:a447 with SMTP
- id 00721157ae682-6eee08a96cemr2517b3.2.1732218559215; Thu, 21 Nov 2024
- 11:49:19 -0800 (PST)
-Date: Thu, 21 Nov 2024 11:49:15 -0800
+        d=1e100.net; s=20230601; t=1732218627; x=1732823427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Iz3fx5gVJ4M22KYICfDKkgkAafxEBWal+eeMe1wl3mY=;
+        b=mdSpvDocUEeOsBsFcqkvRgoZDSUEQ82xYDwedhU8hoMrhsQxMRQOEZjGFahZm69dq5
+         7fjXbBxzgyU+rdOeUG9RmJcsbzvx4KMddCTKUl/6P8a03JtIIL1TkOhZ11vRZXwpCWAI
+         YraZIFGCw17WPnZioKmiPpAYCvvzEGfY/7DY2KTWCJri+ED5wMblz+pxX68OZWyYrrWo
+         JIBbd0qDOjK1Kfnwyg1J28mKv/nwnYtJ8iph44iFOagNpAFO+xFgfS9YMFmW5eC6NxrN
+         q4h5QntGp2GKHCxYaFnJrI1X2GHoX2DoPt+PZlId97BlsmbnMmiso9OHDgTds/9SZwrW
+         MLlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTQpEldzLe3RHr9PY91WhiZ8klcf6UhyQJzLQw0bDoIvxK5Wlxth6ltNBCJGD7n+cNd/XRbrSW9o6ze8Dm7g==@vger.kernel.org, AJvYcCVf9KGx9kp+GDW7eYxmfseBbVe3jKR7k96hd+QBI7Z5eXwjfG74FUTbjEPMkwGvFcpjFSN48xbSV3E=@vger.kernel.org, AJvYcCWnqcLODDqaBiM3HzRtVXON4zsaN4gFsYyl5vHhndu37ZnyOHPajC3yf4+5jC1YX/ro6Gbdrwp0Bakmic9y@vger.kernel.org, AJvYcCXj4gRHpTBrK3ypCK1VUxivmViz/D8IqOwzMAV9/fqvYY8V7ReBa41sKenrTXwwWtwRGtro/vQxMyT+@vger.kernel.org
+X-Gm-Message-State: AOJu0YybGSC4XuTUgEOdkPut/ZxI1E7FKPwi/lDRKaKSmDN8Y8CAW2S5
+	f1xvjOq9648ZtdmobypN0WT4W5djToZCIU3+c9CyomDFQP2sxn0Lp4QGhxAViZPWhojFTCbQ5Oo
+	y6Y5jah7Mcc3ilqutnw2E7aXe8dI=
+X-Gm-Gg: ASbGnctuQbl5zWZ0IVRaf7JhxetmAeZjGL8rVOntqz/dPcnUvlMNOg8KH34qxP4DN3/
+	sHQ1HqyeeWMVYya8FmETkfc+FeKhQwZbCTbfIq+Fb3OygifBjmXcH0pZ5CKYwkQ==
+X-Google-Smtp-Source: AGHT+IEcsVwQ+z53GhnAADuTWAgvyRSNn8jsJyjBPVBj9ItLAQIvxVXOd4pN8tYTG8mbfrhPL5pOlY7qrsRsAh+b038=
+X-Received: by 2002:a05:6602:1610:b0:83a:c242:82aa with SMTP id
+ ca18e2360f4ac-83ecdd15ebcmr16360939f.13.1732218627229; Thu, 21 Nov 2024
+ 11:50:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241121194915.3039073-1-tadamsjr@google.com>
-Subject: [PATCH] scsi: pm80xx: Do not use libsas port id
-From: TJ Adams <tadamsjr@google.com>
-To: Jack Wang <jinpu.wang@cloud.ionos.com>, 
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>, 
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Igor Pylypiv <ipylypiv@google.com>, Terrence Adams <tadamsjr@google.com>
+MIME-Version: 1.0
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org> <20241119-topic-sm8x50-gpu-bw-vote-v2-4-4deb87be2498@linaro.org>
+In-Reply-To: <20241119-topic-sm8x50-gpu-bw-vote-v2-4-4deb87be2498@linaro.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Thu, 21 Nov 2024 11:50:14 -0800
+Message-ID: <CAF6AEGtBVDERQjcoXriKK3d2VZy2QMUxZZJbFdSgbpvue=0QNA@mail.gmail.com>
+Subject: Re: [PATCH v2 04/11] drm/msm: adreno: add GMU_BW_VOTE feature flag
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, Viresh Kumar <vireshk@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Igor Pylypiv <ipylypiv@google.com>
+On Tue, Nov 19, 2024 at 9:56=E2=80=AFAM Neil Armstrong
+<neil.armstrong@linaro.org> wrote:
+>
+> The Adreno GMU Management Unit (GNU) can also scale the DDR Bandwidth
 
-libsas port ids can differ from the controller's port ids.
-Using libsas port id to index pm8001_ha->port array is a bug.
+nit, s/GNU/GMU/
 
-Remove sas_find_local_port_id(). We can use pm8001_ha->phy[phy_id].port
-to get the port id.
-
-Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-Signed-off-by: Terrence Adams <tadamsjr@google.com>
----
- drivers/scsi/pm8001/pm8001_sas.c | 21 ++-------------------
- 1 file changed, 2 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8001_sas.c
-index ee2da8e49d4c..061b57b1cc7a 100644
---- a/drivers/scsi/pm8001/pm8001_sas.c
-+++ b/drivers/scsi/pm8001/pm8001_sas.c
-@@ -374,23 +374,6 @@ static int pm8001_task_prep_ssp(struct pm8001_hba_info *pm8001_ha,
- 	return PM8001_CHIP_DISP->ssp_io_req(pm8001_ha, ccb);
- }
- 
-- /* Find the local port id that's attached to this device */
--static int sas_find_local_port_id(struct domain_device *dev)
--{
--	struct domain_device *pdev = dev->parent;
--
--	/* Directly attached device */
--	if (!pdev)
--		return dev->port->id;
--	while (pdev) {
--		struct domain_device *pdev_p = pdev->parent;
--		if (!pdev_p)
--			return pdev->port->id;
--		pdev = pdev->parent;
--	}
--	return 0;
--}
--
- #define DEV_IS_GONE(pm8001_dev)	\
- 	((!pm8001_dev || (pm8001_dev->dev_type == SAS_PHY_UNUSED)))
- 
-@@ -463,10 +446,10 @@ int pm8001_queue_command(struct sas_task *task, gfp_t gfp_flags)
- 	spin_lock_irqsave(&pm8001_ha->lock, flags);
- 
- 	pm8001_dev = dev->lldd_dev;
--	port = &pm8001_ha->port[sas_find_local_port_id(dev)];
-+	port = pm8001_ha->phy[pm8001_dev->attached_phy].port;
- 
- 	if (!internal_abort &&
--	    (DEV_IS_GONE(pm8001_dev) || !port->port_attached)) {
-+	    (DEV_IS_GONE(pm8001_dev) || !port || !port->port_attached)) {
- 		ts->resp = SAS_TASK_UNDELIVERED;
- 		ts->stat = SAS_PHY_DOWN;
- 		if (sas_protocol_ata(task_proto)) {
--- 
-2.47.0.371.ga323438b13-goog
-
+> along the Frequency and Power Domain level, but by default we leave the
+> OPP core vote for the interconnect ddr path.
+>
+> While scaling via the interconnect path was sufficient, newer GPUs
+> like the A750 requires specific vote paremeters and bandwidth to
+> achieve full functionality.
+>
+> While the feature will require some data in a6xx_info, it's safer
+> to only enable tested platforms with this flag first.
+>
+> Add a new feature enabling DDR Bandwidth vote via GMU.
+>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
+m/adreno/adreno_gpu.h
+> index 4702d4cfca3b58fb3cbb25cb6805f1c19be2ebcb..394b96eb6c83354ae008b15b5=
+62bedb96cd391dd 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -58,6 +58,7 @@ enum adreno_family {
+>  #define ADRENO_FEAT_HAS_HW_APRIV               BIT(0)
+>  #define ADRENO_FEAT_HAS_CACHED_COHERENT                BIT(1)
+>  #define ADRENO_FEAT_PREEMPTION                 BIT(2)
+> +#define ADRENO_FEAT_GMU_BW_VOTE                        BIT(3)
+>
+>  /* Helper for formating the chip_id in the way that userspace tools like
+>   * crashdec expect.
+>
+> --
+> 2.34.1
+>
 
