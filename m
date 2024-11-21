@@ -1,129 +1,209 @@
-Return-Path: <linux-kernel+bounces-417182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200139D5012
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:49:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B10D9D5015
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:49:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E5CCB25569
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:48:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2A21B2354D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC15814387B;
-	Thu, 21 Nov 2024 15:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A9B158A36;
+	Thu, 21 Nov 2024 15:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q7p0WCZH"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="CrIN55H9"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA84817BD3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B9C13C807
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204115; cv=none; b=ag4uEoO8iLRmfoGqsUDqg286obYf9zqkUf3AiM5J0lllmP4YzDFhpMKUbwEGTs4ygqlb+3OyEhtHwoVoXefmU6dQI7Nx6se0FHGT3DysZNnz1OvKKEairiKRz+a2Zxqhp3OoTBCkTdA2BLTjBJrjo2so7Br20MuG5dg43lz5mdk=
+	t=1732204181; cv=none; b=hvSXdaUZZUk7fUyZvz2oswKYfuElyxuNGejZD0NE8yIuULXwSYtAEijDTSGg+Oa0Dz6cDUqEogrVvE3d1ffB0qrnWATv8UOpx8J2Vs8YbDq1d/xxIZ/0zRn2BSGDrYOpDHE0JoCFuGhL4oW7XKuXLBl9XxZTueKBuVTSlFEc18g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204115; c=relaxed/simple;
-	bh=8NFwVbeSbIu4xuIL/+vn6mzdssua9mKA0pw8CxsYgrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H1q4ms4fxMKrMAOV15aNvCMq5kT9B6k+XX2shnvpUzG/PDaoeFt/UNBTp5zGkWLVdKhM0sBu9fhUsaFmyDRh9t8YoAyp1fkeQG+k+rNmzlxOG3mRhDAcYmQ6TjbSvNjYfZBJGu+ngaz/SJV8x/6f119+/vQUKfPoLMZXfif2dZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q7p0WCZH; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb599aac99so12471171fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:48:32 -0800 (PST)
+	s=arc-20240116; t=1732204181; c=relaxed/simple;
+	bh=Oh2BfdcHy7OE0x9WaESMJI4AmM1rSdTVvNsNt0TS0t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tFz5QwntF+DyHihBNw7Qv4Qlf6WGpCmbFueMLLbk3YurvOb0BqrwgUIdRsWoZ5uuco1vnkDQjkuI2x6cV+U2mOlKdyMBPeQwhIslMOL16ClGnR2t9pZ39wG4elmOlo9ltWQ3kUXxfqCv5DGbtAtGzldoi3scDW1qloyUZabvHzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=CrIN55H9; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4613162181dso5945521cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:49:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732204111; x=1732808911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/fhuOHTRRX8STr/F3eYtDuHLZMSXIOyEsTCLQHBch0=;
-        b=Q7p0WCZHQdZU6/KsbJuhLtUGHYs9W+eIOB18SxBRjyDccK+bNugbcQtfbDbomKPwfT
-         bojNLzTdvSaW++yKwlzW21j81gqK5YjEVNFLjpRheNKnrOqy8oodLn7j/CTAS6LZpggW
-         EahY8ad4Xn27h3YGp8j/+qrvRGYLrNttk2KWawbKOcRgZtINqDxIe6ZStu5WjFRER98+
-         7XzJplFFyhlUHLGDo9J0UZNRlGH9SqadlljFXTXglO/lNKcd/FllKLnZgF59CFdLMz5h
-         UlwMK0weVK7Ye0TmnKgcaRBr+10cwPIxJTEzy+xvnxFmm3GzLMejveQl1o2OJ/+6tVyq
-         uZew==
+        d=gourry.net; s=google; t=1732204178; x=1732808978; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=imGyslVzf4MtAURe8zmBJ1AT4ZR15AATmZm1LrrG9KI=;
+        b=CrIN55H94xdEe9kJWFTcz441z2u0l5Wh4dT4fecty+AV2No8cMQMfZ6D4CUvO8gYcR
+         +OyojOtqcasfP6TsYpSfMruF1KQFi0ppqRkeQgCc6NIRnzTO5H0w9a53esovD3fJ6VRH
+         48WCU4T85NlU2636kTnsTtfOm6tAWDTXIkynAQeDGs3+JYdAD6CfC6MbPaDlYIBdiXtv
+         73XOIugaLbV/O34A/SXJjhoUyL3kErbJkXbo/2FDL/kl57GEPMLd/ejJEeA9ZGyoDQBr
+         15mZWMXA6mU6vXlF2ySLziRZpHYqk8fT+3jVkdTyNduQlYTR+p1+VUiUVCG42LTPTFpG
+         0oHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732204111; x=1732808911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H/fhuOHTRRX8STr/F3eYtDuHLZMSXIOyEsTCLQHBch0=;
-        b=rWtU3dCrnqlChoJE7Z2CEE1odm71OM13z5aA4bN1cjdUEt4f8znUDRfi7HFDUxceRN
-         9mTao94Za4cTjLt1SB7BJ32H4qDZMpPxda8NOwo/qj1lhUbsNQ1xT90bXq6bVU7M2weH
-         wvZEJ7KCbIgPEpsGMTHyjvTbPOCCfSbio2V8xc8qG8DiJZGJ1uJzhvgrSQMPtLid3R0W
-         Z0PwbiE4AS+5E/EIsUKofSKIKHZkQUbctuaPIJYwnN7Kttlj5SWPAU24adh/pDhaUhdv
-         VbxSErnCFtGX+qTeRzXvtdEItsxJ8w+HDheYcogIHaZZ27VcaaibXC5geyYDYZmoWiPF
-         TStQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWya+DhqCUrxP6j1MBUhNeN1ze+2QP0clU5Zs7qErCmjiTgj47Zw9xkogKvsh72ZMufCPwam89nghUinU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWaXtXfd/lKVXzxIkYMwC2c1pF1OrvAD19Rw68NWePaHQy0Tf
-	4mjJDxcblGlqVAInrIcfCrkOqSPLpjHUFFhaq8pS1c2DpOOPEqyhrBGfYJb0XG/sCGLondqMSGc
-	ZDazktBpgvQUiBWxe+AIDihspKa01aW5wfxddLs2JEPXqsJfpNDc=
-X-Gm-Gg: ASbGncvh9FBZ4lKFYeSeYfFrjhsQ1K1fPS2yP0q77xz9UaEsG4Y+3xbXS35Wz9KVXDv
-	cT0tS0AfhyYtRWPghPXcOrJ2mh5Sucut+hSodOcbhjz7nh4rIP87sDhaPXbI1jA==
-X-Google-Smtp-Source: AGHT+IF75pNvGuAMuobLXcs8bP8ekOwdEpxBPncCEjd34YEVOCl2sVnSjJwi89Y6maf0VEbLr9RMuf/EN/VgtXWldTA=
-X-Received: by 2002:a2e:a9a4:0:b0:2ff:59e6:b9af with SMTP id
- 38308e7fff4ca-2ff8dd08555mr47569501fa.33.1732204110665; Thu, 21 Nov 2024
- 07:48:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732204178; x=1732808978;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imGyslVzf4MtAURe8zmBJ1AT4ZR15AATmZm1LrrG9KI=;
+        b=sSmR4eR/oD7tpGqa92nfAV2kBm9VC78jei6xHJTMcJC7UR03xTHCM8RxZrx0JUz29Z
+         qDLuPNooAvxFOXHVovs8LQ9lagXH4xhqaiYpjwe1xjskbQBddgrlTYji06O+WyJFWZoJ
+         vLY1wqENTi/Q61p/pAmB+qVDQxq2naEVOD43b9d62QhN7InulGmE84FcWuWRzc36Byjk
+         xgirHf5xbLm57wBAvmTDrmv4jhxwujgrTahge7a47nMXwysj04gOHRK5UylP6FzW0GY/
+         3v9TOh/KaEXOK5EY0T+Hsla3cb6gcWmLAc0Ie9+sM8gUybixBUuC6mhiwaq0uLSZ9a6R
+         YYLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/B+/DSau6p6K9UPUbCDW6yI6yaUjgaGtTOVxHKxCKBa4VgDRzDxO2PnAzhgPYr3M79xXesEiUycJ3D+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAapcmTEMLHfuXcv63m5/NAn6vrxCggq87l7XmqWkejDeRdn9D
+	JvojjIsUo7DSF4BCdfzVo0V1nDXavEybnuJQ8aR/CND3OfG5uAqaXhruwYxbrCk=
+X-Gm-Gg: ASbGncu6OpR3GZkBxKHW3uY/tnIj8P+yDG5jxF1En+cPs8IuJgbzHhJCt5moMRI0Qvx
+	nljHwWpbgaKxw3FMrP/8MWZuxwtKDqnE2pG4dlEvruunpUaWIco1AJzltqSNAAOhmQvMp53sXXX
+	uGjrLaDSqRxu4AjctiK8c1WZ39J6bthKH7e3HdSymjP18WlzFxlvvp4j+wfcu1X2Li1yethjNQu
+	/KDSKcyM/SIyiXwBF80eBFiqbotDKsGiSJuUNmfOT9Mzczz+1/OwSbwg6XOrNN3YwJrGWaFh5lf
+	o018GaEQxbfU9zvs+5+YpJFfBQEq1xOEqgk=
+X-Google-Smtp-Source: AGHT+IHfa6uG1/ElJG3c1ctd03gnOTTo/GnY7T0aRJbPucnRyYeXTT/g4/UhflcfSiPSDaYXjPo35A==
+X-Received: by 2002:ac8:5e4d:0:b0:460:a730:3176 with SMTP id d75a77b69052e-464777e23f3mr93728941cf.11.1732204178485;
+        Thu, 21 Nov 2024 07:49:38 -0800 (PST)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4646a63da08sm23720671cf.63.2024.11.21.07.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 07:49:37 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:49:29 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-cxl@vger.kernel.org, linux-mm@kvack.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxarm@huawei.com, tongtiangen@huawei.com,
+	Yicong Yang <yangyicong@huawei.com>,
+	Niyas Sait <niyas.sait@huawei.com>, ajayjoshi@micron.com,
+	Vandana Salve <vsalve@micron.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Huang Ying <ying.huang@intel.com>
+Subject: Re: [RFC PATCH 0/4] CXL Hotness Monitoring Unit perf driver
+Message-ID: <Zz9WiVaT8vMaHeTW@PC2K9PVX.TheFacebook.com>
+References: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
+ <Zz9Cq4CPStYGZyt7@PC2K9PVX.TheFacebook.com>
+ <20241121145852.00000460@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121145515.3087855-1-catalin.popescu@leica-geosystems.com>
-In-Reply-To: <20241121145515.3087855-1-catalin.popescu@leica-geosystems.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 21 Nov 2024 16:48:19 +0100
-Message-ID: <CAMRc=MdRPe1PRAQ1vwsMXynR02PRDqbxNeQHg1fXBiBxe-s8vw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mxc: fix warning about static allocation of GPIO base
-To: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bsp-development.geo@leica-geosystems.com, 
-	m.felsch@pengutronix.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121145852.00000460@huawei.com>
 
-On Thu, Nov 21, 2024 at 3:55=E2=80=AFPM Catalin Popescu
-<catalin.popescu@leica-geosystems.com> wrote:
->
-> Static allocation of GPIO base is deprecated, let gpiolib perform the
-> dynamic allocation. This is done by initializing base to a negative
-> value before the registration of the gpio controller.
->
-> Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-> ---
->  drivers/gpio/gpio-mxc.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-> index 4cb455b2bdee..a7418a4814d6 100644
-> --- a/drivers/gpio/gpio-mxc.c
-> +++ b/drivers/gpio/gpio-mxc.c
-> @@ -490,8 +490,7 @@ static int mxc_gpio_probe(struct platform_device *pde=
-v)
->         port->gc.request =3D mxc_gpio_request;
->         port->gc.free =3D mxc_gpio_free;
->         port->gc.to_irq =3D mxc_gpio_to_irq;
-> -       port->gc.base =3D (pdev->id < 0) ? of_alias_get_id(np, "gpio") * =
-32 :
-> -                                            pdev->id * 32;
-> +       port->gc.base =3D -1;
->
->         err =3D devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
->         if (err)
->
-> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> prerequisite-patch-id: 0000000000000000000000000000000000000000
-> --
-> 2.34.1
->
+On Thu, Nov 21, 2024 at 02:58:52PM +0000, Jonathan Cameron wrote:
+> On Thu, 21 Nov 2024 09:24:43 -0500
+> Gregory Price <gourry@gourry.net> wrote:
+> 
+> > On Thu, Nov 21, 2024 at 10:18:41AM +0000, Jonathan Cameron wrote:
+> > > The CXL specification release 3.2 is now available under a click through at
+> > > https://computeexpresslink.org/cxl-specification/ and it brings new
+> > > shiny toys.
+> > > 
+> > > RFC reason
+> > > - Whilst trace capture with a particular configuration is potentially useful
+> > >   the intent is that CXL HMU units will be used to drive various forms of
+> > >   hotpage migration for memory tiering setups. This driver doesn't do this
+> > >   (yet), but rather provides data capture etc for experimentation and
+> > >   for working out how to mostly put the allocations in the right place to
+> > >   start with by tuning applications.
+> > > 
+> > > CXL r3.2 introduces a CXL Hotness Monitoring Unit definition. The intent
+> > > of this is to provide a way to establish which units of memory (typically
+> > > pages or larger) in CXL attached memory are hot. The implementation details
+> > > and algorithm are all implementation defined. The specification simply
+> > > describes the 'interface' which takes the form of ring buffer of hotness
+> > > records in a PCI BAR and defined capability, configuration and status
+> > > registers.
+> > > 
+> > > The hardware may have constraints on what it can track, granularity etc
+> > > and on how accurately it tracks (e.g. counter exhaustion, inaccurate
+> > > trackers). Some of these constraints are discoverable from the hardware
+> > > registers, others such as loss of accuracy have no universally accepted
+> > > measures as they are typically access pattern dependent. Sadly it is
+> > > very unlikely any hardware will implement a truly precise tracker given
+> > > the large resource requirements for tracking at a useful granularity.
+> > > 
+> > > There are two fundamental operation modes:
+> > > 
+> > > * Epoch based. Counters are checked after a period of time (Epoch) and
+> > >   if over a threshold added to the hotlist.
+> > > * Always on. Counters run until a threshold is reached, after that the
+> > >   hot unit is added to the hotlist and the counter released.
+> > > 
+> > > Counting can be filtered on:
+> > > 
+> > > * Region of CXL DPA space (256MiB per bit in a bitmap).
+> > > * Type of access - Trusted and non trusted or non trusted only, R/W/RW
+> > > 
+> > > Sampling can be modified by:
+> > > 
+> > > * Downsampling including potentially randomized downsampling.
+> > > 
+> > > The driver presented here is intended to be useful in its own right but
+> > > also to act as the first step of a possible path towards hotness monitoring
+> > > based hot page migration. Those steps might look like.
+> > > 
+> > > 1. Gather data - drivers provide telemetry like solutions to get that
+> > >    data. May be enhanced, for example in this driver by providing the
+> > >    HPA address rather than DPA Unit Address. Userspace can access enough
+> > >    information to do this so maybe not.
+> > > 2. Userspace algorithm development, possibly combined with userspace
+> > >    triggered migration by PA. Working out how to use different levels
+> > >    of constrained hardware resources will be challenging.  
+> > 
+> > FWIW this is what i was thinking about for this extension:
+> > 
+> > https://lore.kernel.org/all/20240319172609.332900-1-gregory.price@memverge.com/
+> 
+> Yup. I had that in mind. Forgot to actually add a link.
+> 
+> > 
+> > At least for testing CHMU stuff. So if anyone is poking at testing such
+> > things, they can feel free to use that for prototyping. However, I think
+> > there is general discomfort around userspace handling HPA/DPA.
+> > 
+> > So it might look more like
+> > 
+> > echo nr_pages > /sys/.../tiering/nodeN/promote_pages
+> > 
+> > rather than handling the raw data from the CHMU to make decisions.
+> 
+> Agreed, but I think we are far away from a point where we can implement that.
+> 
+> Just working out how to tune the hardware to grab useful data is going
+> to take a while to figure out, let alone doing anything much with it.
+> 
+> Without care you won't get a meaningful signal for what is actually
+> hot out of the box. Lots of reasons why including:
+> a) Exhaustion of tracking resources, due to looking at too large a window
+>    or for too long.  Will probably need some form of auto updating of
+>    what is being scanning (coarse to fine might work though I'm doubtful,
+>    scanning across small regions maybe).
+> b) Threshold too high, no detections.
+> c) Threshold too low, everything hot.
+> d) Wrong timescales. Hot is not a well defined thing.
+> e) Hardware that won't do tracking at fine enough granularity.
+> 
 
-Sorry, no can do[1]. :(
+f) How does this even work with interleaving on larger pools :B
+   It's pretend-addressing all the way down :D
 
-Bart
+Lots of conceptually complex and fun questions here.
 
-https://lore.kernel.org/all/f891bb06-4fc6-7b4b-464d-50235c1cff48@pengutroni=
-x.de/
+~Gregory
 
