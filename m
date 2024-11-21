@@ -1,211 +1,101 @@
-Return-Path: <linux-kernel+bounces-417525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5189D5527
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:03:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F2449D551E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8862835C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6C5BB225D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:02:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633001DD877;
-	Thu, 21 Nov 2024 22:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C9E1DAC9D;
+	Thu, 21 Nov 2024 22:02:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="dy884cPf"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="m6dPLELz"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594031DC05D;
-	Thu, 21 Nov 2024 22:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4D31A4F20;
+	Thu, 21 Nov 2024 22:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226593; cv=none; b=ARMFQN4dqAsq05WEHxOftJa9UpOf4wdLzg5F+7QrJgaFP8jHIFDIu5A9PBdLVQ0x9xnPACzMW1JYHRdSfOZz3SX1PkMQ1TPUTb7qA00R1QClNFAxmsKXQRVcvXqteelZ5d5BwBIoTr8jwJWL4pnO4H0uzjaltew0unHaX880yUU=
+	t=1732226550; cv=none; b=PoGOZJ/z6O9vMRb8uuWCg+29xN4o6OJD2CmZiWMz6E0yAvrN6x55ocRZjsW7oSbIyTQEB/jThEu13483Zvz3RCIK64zXEofEssCrwDKLn9wPHlNLpA11RVtzzFtclvNH1xN8GCG9qHkQwz2xrx9UJUlrViAqbsB7c0ETiWbe+wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226593; c=relaxed/simple;
-	bh=Ros+bwO9Q/78EujOU7Y6eyGXbq2ExfNBOnLKVTgOVVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/3OUv7LrPyrFvID1qLzgVpyrd1zkJu+I1TXg+O03UamGExSFYqjE6P83PRQUZF/OtTmV7Fb8GYl/x5mrjo/dd7KT/q19zd1bUtNjSs4jxavr4fuG1jLIE0u4oi4gLY78NKOIoSPRWL41n5nx0nBxtQV6nqMd/XvRD0ME0s/+wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=dy884cPf; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732226522; x=1732831322; i=w_armin@gmx.de;
-	bh=MEp8dGg1PO0r/R+78/I2+LfYJ53XS9xvmlLw7gkP+JE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=dy884cPf6L2VLJdZkaNYYZMrj13pkufR7cAqgO5v6t0qpWfSXk32fBNtlSHyQRV2
-	 qUIpo72RewCg/sQEALSCJ9Sjl/mkYCSuPG72/URNXwVuOXl+QFdcdK3qFBOFxHI8E
-	 L3WwJx+3iIy6ZmwLD1kCDehQuH3hXj5VrCwchXmUY5rtEUQIZY2LgQZr8YQpjjukM
-	 eQrOwaw/sJZDQXxQQSC7w+e2dBch6ee/g1eSspCWySlyycHLRf/+AfSU7kK6GyffH
-	 3x824e+4dGiE9vvvDjn/CqBXh4AgSFI1vnf2knVz2gnMAJltOMcGUwFy7275u3IXK
-	 rhKBvxRuubhERxGoOg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtOGa-1u16yV3zf4-012Yc4; Thu, 21
- Nov 2024 23:02:02 +0100
-Message-ID: <2a652c79-daaa-4ef7-9b92-4512a26d633a@gmx.de>
-Date: Thu, 21 Nov 2024 23:01:56 +0100
+	s=arc-20240116; t=1732226550; c=relaxed/simple;
+	bh=oaON3TQHvbhvp5NiT5tAyPyIpSYNjJS8Ed01fZqfTkQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AltEtD3cSSBJeTL0X8b9IFcpFWkqoxuTvVDJpasJ6waMZ6UibuelPmmWDImUhagUj7RFQ+1KaeUzykb4BQHLwxd+/Y9Z9PR37vpnhgnOQTYbwPMVpzcYVEZV1I9BOWZUOyEIQG7XsX7z0yCoBbrCoYSDbs3dmZI7AF33kw2G3FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=m6dPLELz; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rfNI/i+YSTQUMN5oUVqKU2Gc86BnFPrR7NkR/sTSzuE=; t=1732226547; x=1732831347; 
+	b=m6dPLELz6cw5UqDORk/71vXVkzNUP2GKuf6imsM9Lp45ztbW6g6oQfocJYGtEE3f7U57bAQD1F0
+	E0SeiMzUG7e8PDk40b5xnUT+G7BtPyPnwDkYVh+Z8qDgC6P7E9ohIVNuukVWLAbrlH9TTuQUXp/y7
+	93RfY/XorciAHMERIoJiG8SZu9x9DAxOL3uevqyldpL+GQoQ77JJ5zgdobwmOapcVuF+o2ic+PXeZ
+	698u3KndRbSialBrWDlH72zMw8gBYtZGduaoP5Ls5R7RdTgv/Fma2Tx+Ja9EdwnFU/u1z2gox1bQ+
+	J5UME4amF0UIcRY8JeVyddLvmBn4euT8repg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1tEFFc-00000000dHE-23Pt; Thu, 21 Nov 2024 23:02:12 +0100
+Received: from p57bd904e.dip0.t-ipconnect.de ([87.189.144.78] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1tEFFc-00000000hrq-0sIZ; Thu, 21 Nov 2024 23:02:12 +0100
+Message-ID: <d0d818bb9635d43bde2331864733504f6f7a3635.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Christoph Lameter
+ <cl@linux.com>,  Pekka Enberg <penberg@kernel.org>, David Rientjes
+ <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,  Andrew Morton
+ <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Roman
+ Gushchin	 <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Jens Axboe	 <axboe@kernel.dk>, Pavel Begunkov <asml.silence@gmail.com>,
+ Mike@rox.of.borg, 	Rapoport@rox.of.borg, Christian Brauner
+ <brauner@kernel.org>, Guenter Roeck	 <linux@roeck-us.net>, Kees Cook
+ <keescook@chromium.org>, Jann Horn	 <jannh@google.com>
+Cc: linux-mm@kvack.org, io-uring@vger.kernel.org,
+ linux-m68k@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Thu, 21 Nov 2024 23:02:11 +0100
+In-Reply-To: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+References: 
+	<80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 02/22] platform/x86/dell: dell-pc: Create platform
- device
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241119171739.77028-1-mario.limonciello@amd.com>
- <20241119171739.77028-3-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241119171739.77028-3-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GYS5AOoGxqF0wXWDWQbStEiONjvFlvQC7x/UDdLufe4mr+RYYs6
- 4RNr2/1T5EfL0VyJgzs3rPF1aw0rG2eBS8vJFTBHjElziSSc/THZLsEfDwFr3/2QRNiWqmt
- ZEhKawoSNkLUrvwoj04+7Uq1E4UYLS400uOiP9FtykNwYT2+V5FjnOh+IkjuvClznHBvWHH
- s/A5mUDarqNljjUmwmZEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wZgpFk+F8Ds=;sZBT09GJoZLUuLjWxAXIxp1RT2U
- iGLfb0OizrnkcdTLQDgu7dNKerwlrBBf7AthLq+f768/6dgGyGy/X+AjdKbSdJD8JfSv4yyuv
- GqFDcp5q2v77jIVOfpcOV24jZl3vtQcUwZVm5BOJBlB+nysOrpsS59ttlzYQZjY6ogXJdsND9
- H8woKwhRXBenCV3ds7iZsXqqGQL2FwUymc/l2PUVNQ1QPwRUf7qfCdF9qWmBIU118fg/5iYHw
- uRNuuq8FUdGhqpWcavSSTNidW6RGkyDpnZbIY4k5lEdhjwYoO1XeDJSnaa3LySsfHfjYK7ZVR
- tXOkXMeHq4yXqhoKYWQI8XakyjhfH2PbW0/Jyn44Lvxx5WLh7xeveDRINp+F+3FBIbwl6F9e/
- N4Q/XpOWlhziw8EuIgws9JWiHwOrkVKdroeg70bmmnCO7TCSNxAS5mzcqgaZ4O3M/OK/vVlSI
- lq3tX6UZ5vK4jbZhluOcIuDDMCL45Npew2DVMlWW5/XAmkNAXtY1TYCFDciX5KST94PbVcB0Y
- XR9yr69OdyaVjSx55Gtd086pwBeBKts8fxBwewJ7t169WwSDheWuaFgIKazEOi3B4q3fxg/u8
- zFU4TRItgrQS/f5ns/35J/AP2i5wcen7/nYc+oUl+t1oByomOiXRuiEFcqputqU0w7kXvHdUY
- tfCCkwM7bRRlK3Ivnt+QpsIYvhDAuoNXTNe4z5kmA6UKgnww8bkybVwS4Ttch0D6/8J9YKnZY
- 3Jy4nJRryB6ApplPehAMz8STmLwoXFvMZa1Gl4gsKID14ZFoYeMveuYDP63JHcRt2B5tjEpAW
- JB/H7Tju9WpkfuE3fFn85NbtgF9FHkKXM2wqHdVHiKcKyvkU9nC8tyh4JX/WDIBN3NW9jm3e7
- lCzbtMqM3Hi1v8aMKqFAiJW4uT1rfMVCm2i2Sw+SOEG6nM5pTK2fInJA9
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Am 19.11.24 um 18:17 schrieb Mario Limonciello:
+On Wed, 2024-11-20 at 13:46 +0100, Geert Uytterhoeven wrote:
+> On m68k, where the minimum alignment of unsigned long is 2 bytes:
 
-> In order to have a device for the platform profile core to reference
-> create a platform device for dell-pc.
->
-> While doing this change the memory allocation for the thermal handler
-> to be device managed to follow the lifecycle of that device.
->
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v6:
->   * Use PLATFORM_DEVID_NONE (Armin)
-> v5:
->   * use platform_device_register_simple()
-> ---
->   drivers/platform/x86/dell/dell-pc.c | 32 +++++++++++++++++++++--------
->   1 file changed, 23 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/=
-dell/dell-pc.c
-> index 3cf79e55e3129..805497e44b3a5 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -18,10 +18,13 @@
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_profile.h>
-> +#include <linux/platform_device.h>
->   #include <linux/slab.h>
->
->   #include "dell-smbios.h"
->
-> +static struct platform_device *platform_device;
-> +
->   static const struct dmi_system_id dell_device_table[] __initconst =3D =
-{
->   	{
->   		.ident =3D "Dell Inc.",
-> @@ -244,9 +247,15 @@ static int thermal_init(void)
->   	if (!supported_modes)
->   		return 0;
->
-> -	thermal_handler =3D kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
-> -	if (!thermal_handler)
-> +	platform_device =3D platform_device_register_simple("dell-pc", PLATFOR=
-M_DEVID_NONE, NULL, 0);
-> +	if (!platform_device)
->   		return -ENOMEM;
+Well, well, well, my old friend strikes again ;-).
 
-Sorry for taking so long to notice that, but the documentation for platfor=
-m_device_register_simple() says:
+These will always come up until we fix the alignment issue on m68k.
 
-	"Returns &struct platform_device pointer on success, or ERR_PTR() on
-error." So please use IS_ERR() for checking the platform_device pointer,
-since a simple NULL-check is not enough. Thanks, Armin Wolf
+Adrian
 
-> +
-> +	thermal_handler =3D devm_kzalloc(&platform_device->dev, sizeof(*therma=
-l_handler), GFP_KERNEL);
-> +	if (!thermal_handler) {
-> +		ret =3D -ENOMEM;
-> +		goto cleanup_platform_device;
-> +	}
->   	thermal_handler->name =3D "dell-pc";
->   	thermal_handler->profile_get =3D thermal_platform_profile_get;
->   	thermal_handler->profile_set =3D thermal_platform_profile_set;
-> @@ -262,20 +271,25 @@ static int thermal_init(void)
->
->   	/* Clean up if failed */
->   	ret =3D platform_profile_register(thermal_handler);
-> -	if (ret) {
-> -		kfree(thermal_handler);
-> -		thermal_handler =3D NULL;
-> -	}
-> +	if (ret)
-> +		goto cleanup_thermal_handler;
-> +
-> +	return 0;
-> +
-> +cleanup_thermal_handler:
-> +	thermal_handler =3D NULL;
-> +
-> +cleanup_platform_device:
-> +	platform_device_unregister(platform_device);
->
->   	return ret;
->   }
->
->   static void thermal_cleanup(void)
->   {
-> -	if (thermal_handler) {
-> +	if (thermal_handler)
->   		platform_profile_remove();
-> -		kfree(thermal_handler);
-> -	}
-> +	platform_device_unregister(platform_device);
->   }
->
->   static int __init dell_init(void)
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
