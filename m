@@ -1,193 +1,138 @@
-Return-Path: <linux-kernel+bounces-417077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6F39D4EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:32:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A7B9D4EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0E12826FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829982841F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064D1D9350;
-	Thu, 21 Nov 2024 14:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FC41D9350;
+	Thu, 21 Nov 2024 14:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZ6qoYJP"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="SHteVPhf";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QFyjiVtr"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF95020330
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77F24A02;
+	Thu, 21 Nov 2024 14:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732199511; cv=none; b=mgg/u/r40WFP0NHr/0T4pqqpo0UGc24pm72Pe/1/DOxNiFaRJ48ni/2uLYAO3Fa0rd5FnDkBIk0e9z2Dyn/F+rlldsc0gxbH+2+cYA5vo8wsFrnXmuQAn7t+4OuMnk2OWRlshlF+u6edpsxkB+zwCRvuBjH/GM1LbevWkleFGo0=
+	t=1732199645; cv=none; b=FqzHEPlBmvbp0/ov1CgKg91YMZbKt0cIR1iRjoxjQstvr7EsqROl4PMY0qp48SgR8/Jod7bGr2gRHMWtkacL6QJcrdit707BXVpLDyQcRhLq9CnuY1HX2212Ok8iltuK+O/7HX846U5M4jNjL5wAIkECxHXQlNT/qLf2BqtXO8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732199511; c=relaxed/simple;
-	bh=xuIhtgaMlUOIv9x7NYBJIVaGk7rVNEaXmCZRykzFVDc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L/tAygQu/6LLVNfnVnBj8PbCQzvlAXdqB1aSsBIiNgsYqmJdh/GTRyz+P8C/Ut/oC5miLPFbXxO6tDRvFT5IFFptKa0JGvXtZcHIC8PXOtG3qAqWTcu/CPliL1lfQ5uQwuikXPn/SK3Qe63k2pwtuQ/uuQB85NIrOL/2pXz/C9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZ6qoYJP; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d41ac03343so7940916d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:31:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732199509; x=1732804309; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKPZc/x77KFHTZg9A9aYwVBIztc4o+fw2bfEVf84FTE=;
-        b=AZ6qoYJPEzMwV+2qbX4zZ2oaJNNhz6P5ZS5YkD5S0iCQ+WKry38l4T5KGa5s6dvA/K
-         vlTMbrQ7bXf8t3rDV7fNomHdHySigJKla0nFpPCu6k66j0lNBuwX/5ud0KtL+EKfiZew
-         zv8Dbx/W3XCtVSjaVbQ0J8Oc8GlURKfGwU2BKrkOmzh40pdsOxk+RLT7tmLJ3vvQkwu3
-         v9bgqXRdrnhJxZZWhN63VuLCBGYMdXiL/SQvJCPwCsKUhN4XB6LW99v+vrYeLDnPn+H7
-         w9+IAr1lAzcHUOOdYVlrfAWPe9Ka5jm7icIOFHTVZcTwh6fjXVHLNs0uBKTHZSlKGwQh
-         L8JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732199509; x=1732804309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sKPZc/x77KFHTZg9A9aYwVBIztc4o+fw2bfEVf84FTE=;
-        b=TkZrph/VYXtFpp4JVt0uMGe9Ra2kYyzWg1e7b0fvUbWyOwoWOA3AJc4nsc/Od7dGB4
-         6jrHvtTbdd0JfOfmcsdMTQ0rAPqWn3D82MY0t6IWsuj0rnAoCXR14bQmfCWAKtUc+cJm
-         Kk7wHoDtMVLK+Vgd5n/VO1wSgUTXTpt8fN99rxEecKtM/pI0TWgC2AMQh5Fqq91zTjjO
-         4dETRTSju/eRZh9FhCGUkUjmTC8EV+5OrNq87Y5HDARJAPilL9j7eVhJLo99EU9sAjQm
-         woIFf6EexsohDj3G2au2D2du3ZLAGJhx7ksvGl0uUIkwMC2x7j8yJziluYJ5EPl14zs6
-         nUrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwR3eZ75Igd1rjnrxguQz4L2jbg9kzYU+MG2ZmVB9Gf5YEE97dt471w9LopeNgLv0nJ9GcZLA6HtoHPp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziwIOmAJWQhMbeMGAL6mx1SHhcwJ8QfD7dAjNdRcR0hKDIrgt0
-	7y3xGNeByyj8xyFPCqP34Z/uxbtAdYdHpBhswsnBKRXZdYi3j50jQdGl9FIn0kJwsw3BLgQd/78
-	71cYAWnOtMCuwYeYndQPaSRaw8T8=
-X-Gm-Gg: ASbGnctc3CylLVu7YbFD+pMsr4awcBA7PKFD8yIHCslN2ll+4kM14XQrJ0VmHeIflVu
-	SqLuNhuUy/CohzskONo1Xg1DARJD6uvxZgA==
-X-Google-Smtp-Source: AGHT+IEDRn19JVPzduaMlA53SHNv33NfKcP24Uwn24a5w8PfzF1BQXNgOH5nTnVqGO8X4gA/fjpu1bWfMxBetS1S+0c=
-X-Received: by 2002:ad4:5fc5:0:b0:6b0:8ac1:26bc with SMTP id
- 6a1803df08f44-6d4423c8204mr52416676d6.14.1732199508839; Thu, 21 Nov 2024
- 06:31:48 -0800 (PST)
+	s=arc-20240116; t=1732199645; c=relaxed/simple;
+	bh=pIKV3HP1VFzMsK7qp0/RzOA25Z/QTyzJnYYwGtbCSAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hW85rKpX8jOV7R9VxKoJ9acFWswdC3I4K3kmdxLwATfmdeaulsyKnHyhQCpxtu7hWt6hX28Kx1Ra0WVRHq4Z5dVDxoBFAHWe1nkxscgMUwpXcTl0ToHJqN9E39lidXgEPJJ4ro0Wb+6v+sWW12cFCdQB2KRmYiwhLGojLb+ECn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=SHteVPhf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QFyjiVtr; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 1370225401A1;
+	Thu, 21 Nov 2024 09:34:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Thu, 21 Nov 2024 09:34:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1732199640; x=1732286040; bh=0BYnMeJRRg
+	a6HCEMYOl8JHeH/RdBznWhgGPzkdFC558=; b=SHteVPhfBZHF+oVkqiqfXHCdQM
+	0BauPYR14ct0FS7w+RoxJLyX463jk8SyPch19crb/4eWT65MJyhitNCwGQaPR4+J
+	vLKst/yW2vHlDClQUGN8eKAcMN1OgMO0jxCHDZ4WqdIP/HfOSW8kD5sszcxBSn0e
+	MrenqfA51fhFAWLcmNQq/8zpJTqBIt46/Ioab2vA0/luy+w5ICKS1kGPq4VoHCvx
+	scXfWyu44QWyPwkVSvT7YPLaAOlZuKx+pDNnhowjxRV3/hxe/fKMFQjJqa+mEzZ8
+	BWOvodjEI3QdpqRKLh3lBFBFKCI14UvM9iuBW4kIVl0zhNh3a7cHqXHIvTQg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732199640; x=1732286040; bh=0BYnMeJRRga6HCEMYOl8JHeH/RdBznWhgGP
+	zkdFC558=; b=QFyjiVtrEpuRhZSbpi7uTbm+Ve10QDiebnYaC+AVoBk18OSOL0y
+	XaKNDoSwOTJzWhNT5Tcsq9vvXvWUkLGICYm4lfjYQ5iRmFnK0ax9fAv0k+UCVvgQ
+	PzszfOjpZtoJhYc2we0aGyQcigslSH+3BwrVD1fIlkZysPRg1dxk7wQQ+peVLmvl
+	OF+30YNoJxDq28J4l9rXgMqoyZE4prRCw8i0HPcmgduBZkV5bcuUWA7/ndrVGIjy
+	L60Su+5GlNT5wjvKbgLz82XjFT2S355RLVltfivOMQxuwzn8nhXmdfCDqQFcMMjP
+	5wdWOjpNngt32p1mxy6qTl8KinIDEG3Dt8Q==
+X-ME-Sender: <xms:2EQ_Z43G0HHV3dgjtkCFFhFemyIqoetbakXQ1BpMKzw0X4vmbYSqKg>
+    <xme:2EQ_ZzFUOaDMU7YemgNprVEBh-aJgD0Q7PXaEtPxt2Dujimgsvfi_KNNbaTsXvcR7
+    KjvVCRD15H6n0vjDWw>
+X-ME-Received: <xmr:2EQ_Zw43mcxookhNFM_lV-Ar0KDQeuBfsuupnkspydWsPd60KYfQQhtRA4A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdeigecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
+    iiiigrqeenucggtffrrghtthgvrhhnpeelveduteeghfehkeeukefhudfftefhheetfedt
+    hfevgfetleevvdduveetueefheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohes
+    thihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    peihuhhnrdiihhhouhesfihinhgurhhivhgvrhdrtghomhdprhgtphhtthhopehsthhgrh
+    grsggvrhesshhtghhrrggsvghrrdhorhhgpdhrtghpthhtoheptgihphhhrghrsegthihp
+    hhgrrhdrtghomhdprhgtphhtthhopegrlhgvkhhsrghnughrrdhmihhkhhgrlhhithhshi
+    hnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epjhhovghlrdhgrhgrnhgrughosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhh
+    ihhrrghmrghtsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:2EQ_Zx1xfu7bMFHuXpLNy3GvdU3EO31teX2VFaQ5lc4q-xnQo2R9sg>
+    <xmx:2EQ_Z7H7dc6esBAh0rSchQKiz0paeVTxebweZQeun_P7dtICZdD4wg>
+    <xmx:2EQ_Z6_Mb-658p7Cg3fNEFcakxCVBA2PEEDMoc1FZ6xfZ3STPQQrAQ>
+    <xmx:2EQ_ZwnycN2vaNYgYmfVyb9Fao4NoXiXVbZ5FHh79KyT8a1vlPK6Ig>
+    <xmx:2EQ_Z7HaBXadyn7xvkK1GVw-C7V0eRnnZgAhf3aGWJnWomVCmv_iUoVg>
+Feedback-ID: i21f147d5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Nov 2024 09:33:58 -0500 (EST)
+Date: Thu, 21 Nov 2024 07:33:54 -0700
+From: Tycho Andersen <tycho@tycho.pizza>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Yun Zhou <yun.zhou@windriver.com>, stgraber@stgraber.org,
+	cyphar@cyphar.com,
+	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	mcgrof@kernel.org, kees@kernel.org, joel.granados@kernel.org,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
+Message-ID: <Zz9E0pGTioTcH32m@tycho.pizza>
+References: <20241105031024.3866383-1-yun.zhou@windriver.com>
+ <20241120-entgiften-geldhahn-a9d2922ec3e0@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120122858.22190-1-laoar.shao@gmail.com> <0aa9f3bd-b1b6-4089-b9eb-5b72d7a1541a@redhat.com>
-In-Reply-To: <0aa9f3bd-b1b6-4089-b9eb-5b72d7a1541a@redhat.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Thu, 21 Nov 2024 22:31:12 +0800
-Message-ID: <CALOAHbBMebKtsRnfOFvNKorQk_4KGoCzKd0JcYv2p6pXhJqYbQ@mail.gmail.com>
-Subject: Re: [PATCH] /dev/mem: Add a new parameter strict_devmem to bypass
- strict devmem
-To: David Hildenbrand <david@redhat.com>
-Cc: mingo@redhat.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120-entgiften-geldhahn-a9d2922ec3e0@brauner>
 
-On Thu, Nov 21, 2024 at 4:51=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 20.11.24 13:28, Yafang Shao wrote:
-> > When CONFIG_STRICT_DEVMEM is enabled, writing to /dev/mem to override
-> > kernel data for debugging purposes is prohibited. This configuration is
-> > always enabled on our production servers. However, there are times when=
- we
-> > need to use the crash utility to modify kernel data to analyze complex
-> > issues.
-> >
-> > As suggested by Ingo, we can add a boot time knob of soft-enabling it.
-> > Therefore, a new parameter "strict_devmem=3D" is added. The reuslt are =
-as
-> > follows,
-> >
-> > - Before this change
-> >    crash> wr panic_on_oops 0
-> >    wr: cannot write to /proc/kcore      <<<< failed
-> >
-> > - After this change
-> >    - default
-> >      crash> wr panic_on_oops 0
-> >      wr: cannot write to /proc/kcore    <<<< failed
-> >
-> >    - strict_devmem=3Doff
-> >      crash> p panic_on_oops
-> >      panic_on_oops =3D $1 =3D 1
-> >      crash> wr panic_on_oops 0
-> >      crash> p panic_on_oops
-> >      panic_on_oops =3D $2 =3D 0            <<<< succeeded
-> >
-> >    - strict_devmem=3Dinvalid
-> >      [    0.230052] Invalid option string for strict_devmem: 'invalid'
-> >      crash> wr panic_on_oops 0
-> >      wr: cannot write to /proc/kcore  <<<< failed
-> >
-> > Suggested-by: Ingo Molnar <mingo@kernel.org>
-> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+On Wed, Nov 20, 2024 at 10:06:27AM +0100, Christian Brauner wrote:
+> On Tue, Nov 05, 2024 at 11:10:24AM +0800, Yun Zhou wrote:
+> > It is necessary to have a different pid_max in different containers.
+> > For example, multiple containers are running on a host, one of which
+> > is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
+> > it requires the global pid_max <= 65535. This will cause configuration
+> > conflicts with other containers and also limit the maximum number of
+> > tasks for the entire system.
+> > 
+> > Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
 > > ---
-> >   .../admin-guide/kernel-parameters.txt         | 16 ++++++++++++++
-> >   drivers/char/mem.c                            | 21 ++++++++++++++++++=
-+
-> >   2 files changed, 37 insertions(+)
-> >
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index 1518343bbe22..7fe0f66d0dfb 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6563,6 +6563,22 @@
-> >                       them frequently to increase the rate of SLB fault=
-s
-> >                       on kernel addresses.
-> >
-> > +     strict_devmem=3D
-> > +                     [KNL] Under CONFIG_STRICT_DEVMEM, whether strict =
-devmem
-> > +                     is enabled for this boot. Strict devmem checking =
-is used
-> > +                     to protect the userspace (root) access to all of =
-memory,
-> > +                     including kernel and userspace memory. Accidental=
- access
-> > +                     to this is obviously disastrous, but specific acc=
-ess can
-> > +                     be used by people debugging the kernel. Note that=
- with
-> > +                     PAT support enabled, even in this case there are
-> > +                     restrictions on /dev/mem use due to the cache ali=
-asing
-> > +                     requirements.
-> > +             on      If IO_STRICT_DEVMEM=3Dn, the /dev/mem file only a=
-llows
-> > +                     userspace access to PCI space and the BIOS code a=
-nd data
-> > +                     regions. This is sufficient for dosemu and X and =
-all
-> > +                     common users of /dev/mem. (default)
-> > +             off     Disable strict devmem checks.
-> > +
-> >       sunrpc.min_resvport=3D
-> >       sunrpc.max_resvport=3D
-> >                       [NFS,SUNRPC]
->
-> This will allow to violate EXCLUSIVE_SYSTEM_RAM, and I am afraid I don't
-> enjoy seeing devmem handling+config getting more complicated.
+> 
+> Fwiw, I've done a patch like this years ago and then Alex revived it in
+> [1] including selftests! There's downsides to consider:
+> 
+> [1]: https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com
 
-That poses a challenge. Perhaps we should also consider disabling
-functions that rely on EXCLUSIVE_SYSTEM_RAM when strict_devmem=3Doff,
-but implementing such a change seems overly complex.
+Thanks, looks like this patch has the same oddity.
 
-Our primary goal is to temporarily bypass STRICT_DEVMEM for live
-kernel debugging. In an earlier version, I proposed making the
-fucntion devmem_is_allowed() error-injectable, but Ingo pointed out
-that it violates the principles of STRICT_DEVMEM.
+For me it's enough to just walk up the tree when changing pid_max. It
+seems unlikely that applications will create a sub pidns and then lower
+the max in their own pid_max. Famous last words and all that.
 
-Do you have any suggestions on enabling write access to /dev/mem in
-debugging tools like the crash utility, while maintaining
-compatibility with the existing rules?
-
-
---
-Regards
-Yafang
+Tycho
 
