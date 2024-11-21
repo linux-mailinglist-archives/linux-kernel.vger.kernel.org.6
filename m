@@ -1,371 +1,231 @@
-Return-Path: <linux-kernel+bounces-417033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BC199D4E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:47:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991979D4E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BB53B2155F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:47:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1362CB2105D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1CB21D6DB6;
-	Thu, 21 Nov 2024 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="IahvPf2G"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6562D1D86F2;
+	Thu, 21 Nov 2024 13:48:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0392A17BD3;
-	Thu, 21 Nov 2024 13:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946CE74068;
+	Thu, 21 Nov 2024 13:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196865; cv=none; b=SS8sS1lkFFGI8240wE///gFl4/OuQ4+2MYimCFZ1QzKIuP/MyaOFhtZjmOzWlr9ZbfgRJ18ZS2eUc6VSXEyZxgDLzAnFdNXLluO4QtKHY1KDtQbOp6jIeRn9LwQke5n7DESoTrJLWdg5X3LeWM7agNsON8Egvm0RdFhEde7sE+Q=
+	t=1732196879; cv=none; b=SUVGhLPWWhzZG1iwzgQ/iSxTAY3Sqp1l3Ot/JbIPjZz+yrUzJiOtQZokeT9sR3ZRS9XTD0z7YXNRsCZTmY0pHKjsFdcV1fKhWjX/+MoNPoRXILx6mfA9AMOLRW3dmq0m9FxSV95rY2m33UqqNc+DYV4LE1MhQ8y61fT2rB6Y3Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196865; c=relaxed/simple;
-	bh=EY0YjTtKFXnef9mF9s2fMNuqjKya2i2ClO/4BN1jClA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mrJK/bFHHKMpgc+QI9zWofyb/53LbyNHcjhJM2/92CrZYdaWs7DPXbcQGG7cxEP8PZgYOxTC1onLeuq+hMYp5f1m2fi/WMivJFThcNy9JvgKA+FJAZR3HWYHs7R+g0GADTNCvdWpTd425eQ0CsLnYsxSIFHCh24mTNyZMmt2GHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=IahvPf2G; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
-	t=1732196852; bh=EY0YjTtKFXnef9mF9s2fMNuqjKya2i2ClO/4BN1jClA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IahvPf2GzfWn2L4FGwff36/r6quxMBmGb0vJ6c7BM3A3ytYow7FAPcqEczpAVtzUh
-	 6eocAMN/JTjen/VwKViuxTeiN+N2at5p4bZ7KoNFUotmnhx4Bvt8O3vAwG09J5HJ0x
-	 VciwNRvs+8zEbLPA2fowLgIoBL0bMH2wjkVdrzlU=
-Date: Thu, 21 Nov 2024 14:47:32 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
-To: "Sung-Chi, Li" <lschyi@chromium.org>
-Cc: Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
-	Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] platform/chrome: cros_ec_charge_state: add new
- driver to control charge
-Message-ID: <8fcf9154-6c0d-42eb-901b-0cc9e731e757@t-8ch.de>
-References: <20241118-add_charger_state-v1-0-94997079f35a@chromium.org>
- <20241118-add_charger_state-v1-1-94997079f35a@chromium.org>
+	s=arc-20240116; t=1732196879; c=relaxed/simple;
+	bh=7xcPRh5jKXLkkMxq50QsiUeH8XvFnUNF4Y4WDRQIKMQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BbQShITpva3wxZ+VeX7i1irvVGPlKvbFyzBPRfE3kxWuQ384UpZJeQ/n79y3ll01NWldI68TOcXAFD3cqgcDFPF41jAQ0oIq3+P7Pjt/1cG8gGiJqAvCv+23oQwzrn+xpiXbV1FJGpg9VY/QyLH+8NA3tSGwnbhSFF18ItPDCow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvKKs6FsHz6K7JS;
+	Thu, 21 Nov 2024 21:47:29 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E52A1140133;
+	Thu, 21 Nov 2024 21:47:53 +0800 (CST)
+Received: from localhost (10.122.19.247) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 21 Nov
+ 2024 14:47:52 +0100
+Date: Thu, 21 Nov 2024 13:47:51 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <linux-cxl@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <linuxarm@huawei.com>, <tongtiangen@huawei.com>, Yicong Yang
+	<yangyicong@huawei.com>, Niyas Sait <niyas.sait@huawei.com>,
+	<ajayjoshi@micron.com>, Vandana Salve <vsalve@micron.com>, Davidlohr Bueso
+	<dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+	<alison.schofield@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
+	<dan.j.williams@intel.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Gregory Price <gourry@gourry.net>, Huang
+ Ying <ying.huang@intel.com>
+Subject: Re: [RFC PATCH 0/4] CXL Hotness Monitoring Unit perf driver
+Message-ID: <20241121134751.00006e26@huawei.com>
+In-Reply-To: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
+References: <20241121101845.1815660-1-Jonathan.Cameron@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118-add_charger_state-v1-1-94997079f35a@chromium.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 2024-11-18 17:33:46+0800, Sung-Chi, Li wrote:
-> Implement the new platform driver cros_ec_charge_state to have low finer
-> control over the charge current flow through the charge chip connected
-> on ChromeOS Embedded Controller (EC).
+On Thu, 21 Nov 2024 10:18:41 +0000
+Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+
+> The CXL specification release 3.2 is now available under a click through at
+> https://computeexpresslink.org/cxl-specification/ and it brings new
+> shiny toys.
 > 
-> The driver reads configured charge chip configurations from the device
-> tree, and register these chip controls as thermal zone devices, so they
-> are controllable from the thermal subsystem.
+> RFC reason
+> - Whilst trace capture with a particular configuration is potentially useful
+>   the intent is that CXL HMU units will be used to drive various forms of
+>   hotpage migration for memory tiering setups. This driver doesn't do this
+>   (yet), but rather provides data capture etc for experimentation and
+>   for working out how to mostly put the allocations in the right place to
+>   start with by tuning applications.
 > 
-> As such, corresponding DTS changes are needed, and here is a sample DTS
-> configuration:
+> CXL r3.2 introduces a CXL Hotness Monitoring Unit definition. The intent
+> of this is to provide a way to establish which units of memory (typically
+> pages or larger) in CXL attached memory are hot. The implementation details
+> and algorithm are all implementation defined. The specification simply
+> describes the 'interface' which takes the form of ring buffer of hotness
+> records in a PCI BAR and defined capability, configuration and status
+> registers.
 > 
-> ```
-> &cros_ec {
-> 	charge-chip-battery {
-> 		compatible = "google,cros-ec-charge-state";
-> 		type = "charge";
-> 		min-milliamp = <150>;
-> 		max-milliamp = <5000>;
-> 	};
-> };
-> ```
+> The hardware may have constraints on what it can track, granularity etc
+> and on how accurately it tracks (e.g. counter exhaustion, inaccurate
+> trackers). Some of these constraints are discoverable from the hardware
+> registers, others such as loss of accuracy have no universally accepted
+> measures as they are typically access pattern dependent. Sadly it is
+> very unlikely any hardware will implement a truly precise tracker given
+> the large resource requirements for tracking at a useful granularity.
 > 
-> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
-> ---
->  drivers/platform/chrome/Kconfig                |  11 ++
->  drivers/platform/chrome/Makefile               |   1 +
->  drivers/platform/chrome/cros_ec_charge_state.c | 215 +++++++++++++++++++++++++
->  3 files changed, 227 insertions(+)
+> There are two fundamental operation modes:
 > 
-> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
-> index 7dbeb786352a..34d00d8823cb 100644
-> --- a/drivers/platform/chrome/Kconfig
-> +++ b/drivers/platform/chrome/Kconfig
-> @@ -297,6 +297,17 @@ config CROS_TYPEC_SWITCH
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called cros_typec_switch.
->  
-> +config CROS_CHARGE_STATE
-> +	tristate "ChromeOS EC Charger Chip  Control"
-> +	depends on MFD_CROS_EC_DEV
-
-Should depend on THERMAL_OF.
-Otherwise the driver will be built and loaded on non-OF platforms but
-probing can never succeed.
-
-> +	default MFD_CROS_EC_DEV
-> +	help
-> +	  If you say Y here, you get support for configuring the battery
-> +	  charging and system input current.
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called cros-ec-charge-state.
-> +
->  source "drivers/platform/chrome/wilco_ec/Kconfig"
->  
->  # Kunit test cases
-> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
-> index 2dcc6ccc2302..01c7154ae119 100644
-> --- a/drivers/platform/chrome/Makefile
-> +++ b/drivers/platform/chrome/Makefile
-> @@ -32,6 +32,7 @@ obj-$(CONFIG_CROS_EC_SYSFS)		+= cros_ec_sysfs.o
->  obj-$(CONFIG_CROS_HPS_I2C)		+= cros_hps_i2c.o
->  obj-$(CONFIG_CROS_USBPD_LOGGER)		+= cros_usbpd_logger.o
->  obj-$(CONFIG_CROS_USBPD_NOTIFY)		+= cros_usbpd_notify.o
-> +obj-$(CONFIG_CROS_CHARGE_STATE)		+= cros_ec_charge_state.o
->  
->  obj-$(CONFIG_WILCO_EC)			+= wilco_ec/
->  
-> diff --git a/drivers/platform/chrome/cros_ec_charge_state.c b/drivers/platform/chrome/cros_ec_charge_state.c
-> new file mode 100644
-> index 000000000000..3fed5b48bc92
-> --- /dev/null
-> +++ b/drivers/platform/chrome/cros_ec_charge_state.c
-> @@ -0,0 +1,215 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Charge state driver for ChromeOS Embedded Controller
-> + *
-> + * Copyright 2024 Google LLC
-> + *
-> + * This driver exports the low level control over charge chip connected to EC
-> + * which allows to manipulate the current used to charge the battery, and also
-> + * manipulate the current input to the whole system.
-> + * This driver also registers that charge chip as a thermal cooling device.
-> + */
-> +
-> +#include <linux/of.h>
-> +#include <linux/platform_data/cros_ec_commands.h>
-> +#include <linux/platform_data/cros_ec_proto.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/thermal.h>
-> +
-> +#define DRV_NAME "cros-ec-charge-state"
-> +#define CHARGE_TYPE_CHARGE "charge"
-> +#define CHARGE_TYPE_INPUT "input"
-> +
-> +struct cros_ec_charge_state_data {
-> +	struct cros_ec_device *ec_dev;
-> +	struct device *dev;
-> +	enum charge_state_params charge_type;
-> +	uint32_t min_milliamp;
-> +	uint32_t max_milliamp;
-> +};
-> +
-> +static int
-> +cros_ec_charge_state_get_current_limit(struct cros_ec_device *ec_dev,
-> +				       enum charge_state_params charge_type,
-> +				       uint32_t *limit)
-> +{
-> +	struct ec_params_charge_state param;
-> +	struct ec_response_charge_state state;
-> +	int ret;
-> +
-> +	param.cmd = CHARGE_STATE_CMD_GET_PARAM;
-> +	param.get_param.param = charge_type;
-> +	ret = cros_ec_cmd(ec_dev, 0, EC_CMD_CHARGE_STATE, &param, sizeof(param),
-> +			  &state, sizeof(state));
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	*limit = cpu_to_le32(state.get_param.value);
-
-The cros_ec core itself does not handle BE systems.
-So I'm not sure if it's worth trying to handle it in the driver.
-
-> +	return 0;
-> +}
-> +
-> +static int
-> +cros_ec_charge_state_set_current_limit(struct cros_ec_device *ec_dev,
-> +				       enum charge_state_params charge_type,
-> +				       uint32_t limit)
-> +{
-> +	struct ec_params_charge_state param;
-> +	int ret;
-> +
-> +	param.cmd = CHARGE_STATE_CMD_SET_PARAM;
-> +	param.set_param.param = charge_type;
-> +	param.set_param.value = cpu_to_le32(limit);
-> +	ret = cros_ec_cmd(ec_dev, 0, EC_CMD_CHARGE_STATE, &param, sizeof(param),
-> +			  NULL, 0);
-> +	return (ret < 0) ? ret : 0;
-> +}
-> +
-> +static int
-> +cros_ec_charge_state_get_max_state(struct thermal_cooling_device *cdev,
-> +				   unsigned long *state)
-> +{
-> +	struct cros_ec_charge_state_data *data = cdev->devdata;
-> +	*state = data->max_milliamp;
-> +	return 0;
-> +}
-> +
-> +static int
-> +cros_ec_charge_state_get_cur_state(struct thermal_cooling_device *cdev,
-> +				   unsigned long *state)
-> +{
-> +	struct cros_ec_charge_state_data *data = cdev->devdata;
-> +	uint32_t limit;
-> +	int ret;
-> +
-> +	ret = cros_ec_charge_state_get_current_limit(data->ec_dev,
-> +						     data->charge_type, &limit);
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to get current state: %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	*state = data->max_milliamp - limit;
-> +	return 0;
-> +}
-> +
-> +static int
-> +cros_ec_charge_state_set_cur_state(struct thermal_cooling_device *cdev,
-> +				   unsigned long state)
-> +{
-> +	struct cros_ec_charge_state_data *data = cdev->devdata;
-> +	uint32_t limit = data->max_milliamp - state;
-> +
-> +	if (limit < data->min_milliamp) {
-> +		dev_warn(
-> +			data->dev,
-> +			"failed to set current %u lower than minimum %d; set to minimum",
-> +			limit, data->min_milliamp);
-> +		limit = data->min_milliamp;
-> +	}
-> +
-> +	state = data->max_milliamp - limit;
-> +	return cros_ec_charge_state_set_current_limit(
-> +		data->ec_dev, data->charge_type, (uint32_t)state);
-> +}
-> +
-> +static const struct thermal_cooling_device_ops
-> +	cros_ec_charge_state_cooling_device_ops = {
-> +		.get_max_state = cros_ec_charge_state_get_max_state,
-> +		.get_cur_state = cros_ec_charge_state_get_cur_state,
-> +		.set_cur_state = cros_ec_charge_state_set_cur_state,
-> +	};
-> +
-> +static int
-> +cros_ec_charge_state_register_charge_chip(struct device *dev,
-> +					  struct device_node *node,
-> +					  struct cros_ec_device *cros_ec)
-> +{
-> +	struct cros_ec_charge_state_data *data;
-> +	struct thermal_cooling_device *cdev;
-> +	const char *type_val = NULL;
-> +	int ret;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_string(node, "type", &type_val);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get charge type: %d", ret);
-> +		return ret;
-
-return dev_err_probe(dev, ...)
-
-> +	}
-> +
-> +	if (!strcmp(type_val, CHARGE_TYPE_CHARGE)) {
-> +		data->charge_type = CS_PARAM_CHG_CURRENT;
-> +	} else if (!strcmp(type_val, CHARGE_TYPE_INPUT)) {
-> +		data->charge_type = CS_PARAM_CHG_INPUT_CURRENT;
-> +	} else {
-> +		dev_err(dev, "unknown charge type: %s", type_val);
-> +		return -1;
-> +	}
-> +
-> +	ret = of_property_read_u32(node, "min-milliamp", &data->min_milliamp);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get min-milliamp data: %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = of_property_read_u32(node, "max-milliamp", &data->max_milliamp);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get max-milliamp data: %d", ret);
-> +		return ret;
-> +	}
-> +
-> +	data->ec_dev = cros_ec;
-> +	data->dev = dev;
-> +
-> +	cdev = devm_thermal_of_cooling_device_register(
-> +		dev, node, node->name, data,
-> +		&cros_ec_charge_state_cooling_device_ops);
-> +	if (IS_ERR_VALUE(cdev)) {
-> +		dev_err(dev,
-> +			"failed to register charge chip %s as cooling device: %pe",
-> +			node->name, cdev);
-> +		return PTR_ERR(cdev);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cros_ec_charge_state_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct cros_ec_dev *ec_dev = dev_get_drvdata(dev->parent);
-> +	struct cros_ec_device *cros_ec = ec_dev->ec_dev;
-> +	struct device_node *child;
-> +
-> +	for_each_available_child_of_node(cros_ec->dev->of_node, child) {
-> +		if (!of_device_is_compatible(child,
-> +					     "google,cros-ec-charge-state"))
-> +			continue;
-> +		if (cros_ec_charge_state_register_charge_chip(dev, child,
-> +							      cros_ec))
-> +			continue;
-> +	}
-
-If no chips are matched -ENODEV would be better.
-And errors should be reported from probe().
-
-Given that this is only useable with OF configuration, would it make
-more sense to probe it via OF instead of MFD?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct platform_device_id cros_ec_charge_state_id[] = {
-> +	{ DRV_NAME,  0 },
-> +	{}
-> +};
-
-Reference this in the platform_driver below.
-
-> +static struct platform_driver cros_ec_chargedev_driver = {
-> +	.driver = {
-> +		.name = DRV_NAME,
-> +	},
-> +	.probe = cros_ec_charge_state_probe,
-> +};
-> +
-> +module_platform_driver(cros_ec_chargedev_driver);
-> +
-> +MODULE_DEVICE_TABLE(platform, cros_ec_charge_state_id);
-> +MODULE_DESCRIPTION("ChromeOS EC Charge State Driver");
-> +MODULE_AUTHOR("Sung-Chi, Li <lschyi@chromium.org>");
-> +MODULE_LICENSE("GPL");
+> * Epoch based. Counters are checked after a period of time (Epoch) and
+>   if over a threshold added to the hotlist.
+> * Always on. Counters run until a threshold is reached, after that the
+>   hot unit is added to the hotlist and the counter released.
 > 
-> -- 
-> 2.47.0.338.g60cca15819-goog
+> Counting can be filtered on:
 > 
+> * Region of CXL DPA space (256MiB per bit in a bitmap).
+> * Type of access - Trusted and non trusted or non trusted only, R/W/RW
+> 
+> Sampling can be modified by:
+> 
+> * Downsampling including potentially randomized downsampling.
+> 
+> The driver presented here is intended to be useful in its own right but
+> also to act as the first step of a possible path towards hotness monitoring
+> based hot page migration. Those steps might look like.
+> 
+> 1. Gather data - drivers provide telemetry like solutions to get that
+>    data. May be enhanced, for example in this driver by providing the
+>    HPA address rather than DPA Unit Address. Userspace can access enough
+>    information to do this so maybe not.
+> 2. Userspace algorithm development, possibly combined with userspace
+>    triggered migration by PA. Working out how to use different levels
+>    of constrained hardware resources will be challenging.
+> 3. Move those algorithms in kernel. Will require generalization across
+>    different hotpage trackers etc.
+> 
+> So far this driver just gives access to the raw data. I will probably kick
+> of a longer discussion on how to do adaptive sampling needed to actually
+> use these units for tiering etc, sometime soon (if no one one else beats
+> me too it).  There is a follow up topic of how to virtualize this stuff
+> for memory stranding cases (VM gets a fixed mixture of fast and slow
+> memory and should do it's own tiering).
+> 
+> More details in the Documentation patch but typical commands are:
+> 
+> $perf record -a  -e cxl_hmu_mem0.0.0/epoch_type=0,access_type=6,\
+>  hotness_threshold=1024,epoch_multiplier=4,epoch_scale=4,range_base=0,\
+>  range_size=1024,randomized_downsampling=0,downsampling_factor=32,\
+>  hotness_granual=12
+> 
+> $perf report --dump-raw-traces
+> 
+> Example output.  With a counter_width of 16 (0x10) the least significant
+> 4 bytes are the counter value and the unit index is bits 16-63.
+> Here all units are over the threshold and the indexes are 0,1,2 etc.
+> 
+> . ... CXL_HMU data: size 33512 bytes
+> Header 0: units: 29c counter_width 10
+> Header 1 : deadbeef
+> 0000000000000283
+> 0000000000010364
+> 0000000000020366
+> 000000000003033c
+> 0000000000040343
+> 00000000000502ff
+> 000000000006030d
+> 000000000007031a
+> 
+> Which will produce a list of hotness entries.
+> Bits[N-1:0] counter value
+> Bits[63:N] Unit ID (combine with unit size and DPA base + HDM decoder
+>   config to get to a Host Physical Address)
+> 
+> Specific RFC questions.
+> - What should be in the header added to the aux buffer.
+>   Currently just the minimum is provided. Number of records
+>   and the counter width needed to decode them.
+> - Should we reset the counters when doing sampling "-F X"
+>   If the frequency is higher than the epoch we never see any hot units.
+>   If so, when should we reset them?
+> 
+> Note testing has been light and on emulation only + as perf tool is
+> a pain to build on a striped back VM,  build testing has all be on
+> arm64 so far.  The driver loads though on both arm64 and x86 so
+> any problems are likely in the perf tool arch specific code
+> which is build tested (on wrong machine)
+
+FWIW, runs on x86. However, it triggers a lockdep warning in
+both start and stop due to the spin lock. Something to tidy up for
+RFCv2.
+
+J
+
+> 
+> The QEMU emulation needs some cleanup, but I should be able to post
+> that shortly to let people actually play with this.  There are lots
+> of open questions there on how 'right' we want the emulation to be
+> and what counting uarch to emulate.
+> 
+> Jonathan Cameron (4):
+>   cxl: Register devices for CXL Hotness Monitoring Units (CHMU)
+>   cxl: Hotness Monitoring Unit via a Perf AUX Buffer.
+>   perf: Add support for CXL Hotness Monitoring Units (CHMU)
+>   hwtrace: Document CXL Hotness Monitoring Unit driver
+> 
+>  Documentation/trace/cxl-hmu.rst     | 197 +++++++
+>  Documentation/trace/index.rst       |   1 +
+>  drivers/cxl/Kconfig                 |   6 +
+>  drivers/cxl/Makefile                |   3 +
+>  drivers/cxl/core/Makefile           |   1 +
+>  drivers/cxl/core/core.h             |   1 +
+>  drivers/cxl/core/hmu.c              |  64 ++
+>  drivers/cxl/core/port.c             |   2 +
+>  drivers/cxl/core/regs.c             |  14 +
+>  drivers/cxl/cxl.h                   |   5 +
+>  drivers/cxl/cxlpci.h                |   1 +
+>  drivers/cxl/hmu.c                   | 880 ++++++++++++++++++++++++++++
+>  drivers/cxl/hmu.h                   |  23 +
+>  drivers/cxl/pci.c                   |  26 +-
+>  tools/perf/arch/arm/util/auxtrace.c |  58 ++
+>  tools/perf/arch/x86/util/auxtrace.c |  76 +++
+>  tools/perf/util/Build               |   1 +
+>  tools/perf/util/auxtrace.c          |   4 +
+>  tools/perf/util/auxtrace.h          |   1 +
+>  tools/perf/util/cxl-hmu.c           | 367 ++++++++++++
+>  tools/perf/util/cxl-hmu.h           |  18 +
+>  21 files changed, 1748 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/trace/cxl-hmu.rst
+>  create mode 100644 drivers/cxl/core/hmu.c
+>  create mode 100644 drivers/cxl/hmu.c
+>  create mode 100644 drivers/cxl/hmu.h
+>  create mode 100644 tools/perf/util/cxl-hmu.c
+>  create mode 100644 tools/perf/util/cxl-hmu.h
+> 
+
 
