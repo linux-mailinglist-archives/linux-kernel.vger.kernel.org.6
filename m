@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-416900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B16C9D4C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:46:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BD59D4C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60F42814F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923201F22A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B571D0E06;
-	Thu, 21 Nov 2024 11:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81501D1F78;
+	Thu, 21 Nov 2024 11:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VptVebi8"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtR0xX+6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B16616EBEE;
-	Thu, 21 Nov 2024 11:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ACD1CB322;
+	Thu, 21 Nov 2024 11:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189590; cv=none; b=qsG/nI5ZKs+e5Zkkcdgc7EOgJgEoRDOyFRqdor8UUBS9vgwGHtf3JQryG2nRErPHitLEdNHfLFR50iYbYjGq6BMmjWMLHqzJ9o4WS+LwbaHAsOFet/vpQqp5ZysM8J3DT93Zy/X66Xr41Y3/tzBdfRKtDaFEfi69zi3jWD6pcI0=
+	t=1732189607; cv=none; b=oW8SAZ5+DSQ6Utq48SPJefBOT9QXav52lfVHAgeJLALStrm1TV8IE9KDuRmOCBwosNEc3+v7Mx4bbVlC1yfrJJim0go9a4/SJJ/ud+cIre+YBwX5f36vvkX37YlkMDZcN1HFrwYrbUj6F4LkmW1Nws7I1ROF8Kdis3cv+xO+W9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189590; c=relaxed/simple;
-	bh=u+qQGOjC/8Yvob8W00T6BT6gJcQ8ITzS/zMb1wpZMZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DOCTzgNAPAyyBiXM4fT9tyROoNLudjuL5wO2cs9At+hlUThcfAx/zwGYdPLooPNqyQkuBLMjs93UlZIjmjwEtwmFop1Y+7bf4rCed0R6A9MlC+D2hD+4cwGiJ5pzvkctPa/yj9yxszsUBfK12H8ep0sRMOMnYjCFMJv7xcHI/CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VptVebi8; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=sBi7gZgjp6w2TJF/4NKwxDz1OUyb9c1yz3UviWlV53E=; b=VptVebi8eosVRNzrllxBaDfrCK
-	RPSzd06sa9UzQ+8sIIV9QZ35PFAjX9we0WGsjAZBuEK3trPpSXpVlqw5K6q0qcNFmzaz7zQLIA5SY
-	07AFVPVG7BcQnCDqB5IhCM/5y0QzxAB3hApfcbf7JetPOzuJP4lA8OmfgwFl/Dj8VPsW+3UuYWXZP
-	C9jsnmalOlk4zZCAd6d3tDZ2X0wNumes7yoNH11evjWJx1P3SUAx+ExAcgthGPqNgDG38jrs8c4Zk
-	JdbtEpeZ+k6gzNPYFMGea3yp8P5UC4nJeaNHypNlx1nzuvKkHCJrHxts+blnvdIzWYdfawPEnh6q0
-	5lVLOSrA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tE5di-00000000ZnP-2sJo;
-	Thu, 21 Nov 2024 11:46:26 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 71EF130068B; Thu, 21 Nov 2024 12:46:25 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:46:25 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
-	jthoughton@google.com
-Subject: Re: [PATCH v2 01/12] objtool: Generic annotation infrastructure
-Message-ID: <20241121114625.GI24774@noisy.programming.kicks-ass.net>
-References: <20241111115935.796797988@infradead.org>
- <20241111125218.113053713@infradead.org>
- <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
- <20241116093331.GG22801@noisy.programming.kicks-ass.net>
- <20241120003123.rhb57tk7mljeyusl@jpoimboe>
- <20241120010424.thsbdwfwz2e7elza@jpoimboe>
- <20241120085254.GD19989@noisy.programming.kicks-ass.net>
- <20241120160308.o24km3zwrpbqn7m4@jpoimboe>
- <20241120160324.ihoku7dopaju6nec@jpoimboe>
+	s=arc-20240116; t=1732189607; c=relaxed/simple;
+	bh=8xmUZT+nAyNtnMQYSHFfQWw4/XKrbcKKuwhBoaPXWj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kERmAok1eaNV5iA9OfJFcOEP73ShcpQsxbw517JGKNHcs2TmgVPeXZHoppo5RXCUhtmHW2Qy/zCyWeQ7N3InKgL6B41QKvGuxcSm4mIpGQ5Xgusl3Ea4HapDGNNBgWQLbBjZJ9RdYgJcMtRfg7MxT3c56/0LlAEF5xK0Ed2qvLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtR0xX+6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE78C4CECC;
+	Thu, 21 Nov 2024 11:46:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732189606;
+	bh=8xmUZT+nAyNtnMQYSHFfQWw4/XKrbcKKuwhBoaPXWj8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gtR0xX+6sko9pV6+8jwyKS4npOgBpmiK2ce8hhUG9F5XNzdw7bjLvuUfkqVQcyC9c
+	 FtF7URUfG4Tkjo9Kag8qyiNdiYct3m42hx0O6uaNfV9HANaP7VQyG7zTu56u0jYWTF
+	 GGVbyW1nttwUvCHFNAMwVjhoT/pAAVrA2VMXOWWKhIHg1W6xnm2HlUuMvsFqaREbhI
+	 LIMRULJ5di/zGSLs4BUBfhK9sYTGMj3tfeQyGAzsHE9QsAFerx24ojMJkbYCr/dwkr
+	 r7SzliUg5GGmtemErM7njazacOjhi/ENYWC0zoEI58KI09vZuBmM46XFbtb1oJm3qx
+	 j8DBp4UFV5UNA==
+Message-ID: <2bb08736-bcbd-4d74-a878-2598301e0182@kernel.org>
+Date: Thu, 21 Nov 2024 11:46:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120160324.ihoku7dopaju6nec@jpoimboe>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bpftool: Fix the wrong format specifier
+To: liujing <liujing@cmss.chinamobile.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241121085518.3738-1-liujing@cmss.chinamobile.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20241121085518.3738-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 08:03:24AM -0800, Josh Poimboeuf wrote:
-
-> > If you look at "readelf -WS vmlinux" there are plenty of non-mergeable
-> > sections with entsize.
+2024-11-21 16:55 UTC+0800 ~ liujing <liujing@cmss.chinamobile.com>
+> The type of lines is unsigned int, so the correct format specifier should be
+> %u instead of %d.
 > 
-> Er, vmlinux.o
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+> 
+> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+> index 08d0ac543c67..030556ce4d61 100644
+> --- a/tools/bpf/bpftool/main.c
+> +++ b/tools/bpf/bpftool/main.c
+> @@ -423,7 +423,7 @@ static int do_batch(int argc, char **argv)
+>  		err = -1;
+>  	} else {
+>  		if (!json_output)
+> -			printf("processed %d commands\n", lines);
+> +			printf("processed %u commands\n", lines);
+>  	}
+>  err_close:
+>  	if (fp != stdin)
 
-Well yes, but how do you set entsize from as? The manual only mentions
-entsize in relation to M(ergable) with the .section command.
+
+Thank you for the fix. While at it can you also fix the format specifier
+for the other two prints of "lines" in the function (via "p_err()"),
+please? I guess they're not raised by your static checker, but they
+should be addressed just the same.
+
+Quentin
 
