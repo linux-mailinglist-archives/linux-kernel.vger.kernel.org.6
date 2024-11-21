@@ -1,103 +1,128 @@
-Return-Path: <linux-kernel+bounces-416873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5C79D4B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:20:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727929D4B84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE5F1F21D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0020AB23A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4CF1D172C;
-	Thu, 21 Nov 2024 11:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2901D2F54;
+	Thu, 21 Nov 2024 11:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAp+d4bV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LEkZlkKS"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B441CB32F;
-	Thu, 21 Nov 2024 11:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590959474;
+	Thu, 21 Nov 2024 11:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732188048; cv=none; b=aL836xgaA5ZsUPe14u8dOoTbLqIjMqEzu3asI6m4n90Dz1r67xUcL8QYcwjJiuPQbKKhjPUByEGZ8juJhRiZjrhQh037yISiVXJ9/uEXpM5wgajiBY2nWB7NXtcVtCwCo8mlUwIZRPQDGVPuLy30zmFolKzXtQGAK3QTN7uW62c=
+	t=1732188110; cv=none; b=Omgk8rKMActwmARDWlcXRQaO53tCCFemnWSAxozwtyQn43WIbaAiXMExOM3kJcw/8XAU316+Reu9qFuXa0quaNuNFxKXCWM1M99Iahv83XdfPbQxxrw99KfZq4htPvVi8n4HI9PQap5fChv9UvK++YHFU/0prw98J74nu1i8yYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732188048; c=relaxed/simple;
-	bh=V1qwmYpUnP1CiJot/3EBrHXVUBv8JOAa6S7kT+VjG8M=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=dClLOgfD8ipC1ZSzx7HA2c/Y6Pgnnd0L9mpqGuFi4zxd2dGzSzCrOARCSjlOrBPtCPtFthtnXsBJjuv/LH5S2czVVhLmwKMSvqM+9Zj8+IeoWPHEbDa9t+4mFTceG8KSA2Qr7cxNfHVVuzBQ2UECb2pb4igkveWnlVDdcKwYS6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAp+d4bV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E5FEC4CECC;
-	Thu, 21 Nov 2024 11:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732188047;
-	bh=V1qwmYpUnP1CiJot/3EBrHXVUBv8JOAa6S7kT+VjG8M=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=HAp+d4bVQao54y/cn2DsJqZy9Yb14gtl7gGMwhxXfbV26TwD7zGxFVlX86SoLzAoP
-	 AWJ1CVS3QD9B3lZGgOOvGpLtIbRyRhdCVxr3k1pF42aRFCoTsfAr5iCQwZcCpJ1cMK
-	 2VIU4X1uR2iQUj055G2YcsfFotF3WZK9XNVnWw/ZnS2QQob915sBVMpxpeAglEaCSz
-	 KY77A1Mv9lR3KwElj0G9LBb/AWeo9vmLThlaRMnv98rb9RPQ7aPbFeFWMiTwHZytpC
-	 Ici219Mz2XWVLuB9R7tkcPmD/k5W/MMHuXRSGTVeLMl8X5Jq2kx+UrQMfo1eEviU9s
-	 Gblr7G0UBxW5A==
-From: Kalle Valo <kvalo@kernel.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Jeff Johnson <jjohnson@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  Nick Desaulniers <ndesaulniers@google.com>,  Bill
- Wendling <morbo@google.com>,  Justin Stitt <justinstitt@google.com>,
-  "Arnd Bergmann" <arnd@kernel.org>,  <linux-wireless@vger.kernel.org>,
-  <ath11k@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
-  <llvm@lists.linux.dev>
-Subject: Re: [PATCH 3/3] wifi: ath11k: mark
- ath11k_wow_convert_8023_to_80211() as noinline
-References: <20241119-ath11k-noinline-v1-0-4ec0a8aa30b2@quicinc.com>
-	<20241119-ath11k-noinline-v1-3-4ec0a8aa30b2@quicinc.com>
-Date: Thu, 21 Nov 2024 13:20:43 +0200
-In-Reply-To: <20241119-ath11k-noinline-v1-3-4ec0a8aa30b2@quicinc.com> (Jeff
-	Johnson's message of "Tue, 19 Nov 2024 07:47:40 -0800")
-Message-ID: <87plmox27o.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1732188110; c=relaxed/simple;
+	bh=+09UqF3DA48MJ036al7ktyOHyfA0HnCqeJz6/VYnoiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BjCzNCpfBUmHKNQvQsTCT+t6iLhYKzGhxaE/RX4PdZs51XM7jXn7iAtBLA4X3VOGnhtHTBLI1BjIagArm8ul0aI6mnTeC4jQLfT0a8RDXJCpuN5CS4gSi7O9PoatcAOXdwtEvr/mg1MsrUA1PIb9MR3/M/8GU+I2T4zfId/9C3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LEkZlkKS; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qgG0e7UzN8+WUp6AqXCjxSqcwayn6e6nDB+hkU2JcJo=; b=LEkZlkKSgLA6iUvi5ydHat8rBq
+	e8E/zLkDsZUujh0K6PcR6YKmgqzKDMl2VKiilQu7Zd+7bYsT+Qe+BOQrwTYWPvviS1WUIZ4eS6ggP
+	rbU7fgl6LY/zZtD4tECcbzJ1E/ZD7JvVD40nsC1VNN4SrhFieptGEOgp7tyH4E+oRbovtHNt/uHAi
+	5a/cN7p4SZVz2OYCuIuUf+XNwH01Xgyqb7mJ6hYeFT9KggG9WF1MOBcqK6ezSxNAJdV31yQrj3F+V
+	rZLESO7vxTJptBdYIwalye9P3bBOKsHBNgrxnS2TbR5Sqo7nTnxDKs/SSdafCU0kGtyghSLA774Ut
+	NdU9v2VQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57202)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tE5Fj-00076D-0V;
+	Thu, 21 Nov 2024 11:21:39 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tE5Fd-00080P-2R;
+	Thu, 21 Nov 2024 11:21:33 +0000
+Date: Thu, 21 Nov 2024 11:21:33 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Cong Yi <yicong.srfy@foxmail.com>, andrew@lunn.ch, hkallweit1@gmail.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	yicong@kylinos.cn
+Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for
+ improving code readability
+Message-ID: <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
+References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
+ <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
+ <20241121105044.rbjp2deo5orce3me@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241121105044.rbjp2deo5orce3me@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+On Thu, Nov 21, 2024 at 12:50:44PM +0200, Vladimir Oltean wrote:
+> On Wed, Nov 20, 2024 at 05:46:14PM +0800, Cong Yi wrote:
+> > Hi, Russell King:
+> > 
+> > Thank you for your reply!
+> > Yes, as you say, there is no problem with the definitions themselves
+> > being named. When I just read from Linux-5.4 to 6.6, I thought
+> > that PCS_STATE_ and PHYLINK_DISABLE- were associated in some way.
+> > After reading the code carefully, I found that there was no correlation。
+> > In order to avoid similar confusion, I sent this patch.
+> 
+> For the record, I agree that tying together unrelated constants inside
+> the same anonymous enum and resetting the counter is a confusing coding
+> pattern, to which I don't see the benefit. Separating them and giving
+> names to the enums also gives the opportunity for stronger typing, which
+> was done here. I think the patch (or at least its idea) is ok.
 
-> When compiling the ath11k driver using clang with KASAN enabled, the
-> following warning is observed:
->
-> drivers/net/wireless/ath/ath11k/wow.c:672:5: warning: stack frame size (1336) exceeds limit (1024) in 'ath11k_wow_op_suspend' [-Wframe-larger-than]
->
-> This is similar to the issue found in ath12k/qmi.c that was discussed
-> in [1] and fixed with [2]. The issue is that clang inlining can
-> explode stack usage.
->
-> ath11k_wow_op_suspend() itself is a pretty lightweight function, but
-> it dispatches to several other functions which do the real work. One
-> path in particular is:
->
-> ath11k_wow_op_suspend()
-> 	ath11k_wow_set_wakeups()
-> 		ath11k_vif_wow_set_wakeups()
-> 			ath11k_wow_convert_8023_to_80211()
->
-> Of these, ath11k_wow_convert_8023_to_80211() has non-trivial stack
-> usage, so mark it as 'noinline_for_stack' to prevent it from being
-> inlined in ath11k_wow_op_suspend(), thereby eliminating the excessive
-> stack usage.
->
-> Link: https://msgid.link/bc214795-1c51-4cb7-922f-67d6ef98bff2@quicinc.com # [1]
-> Link: https://patch.msgid.link/20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com # [2]
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+See include/linux/ata.h, and include/linux/libata.h.
 
-Acked-by: Kalle Valo <kvalo@kernel.org>
+We also have many enums that either don't use the enum counter, or set
+the counter to a specific value.
+
+The typing argument is nonsense. This is a common misconception by C
+programmers. You don't get any extra typechecking with enums. If you
+define two enums, say fruit and colour, this produces no warning,
+even with -Wall -pedantic:
+
+enum fruit { APPLE, ORANGE };
+enum colour { BLACK, WHITE };
+enum fruit get_fruit(void);
+enum colour test(void)
+{
+	return get_fruit();
+}
+
+What one gets is more compiler specific variability in the type -
+some compiler architectures may use storage sufficient to store the
+range of values defined in the enum (e.g. it may select char vs int
+vs long) which makes laying out structs with no holes harder.
+
+Another thing one gets is checking in switch() statmeents that all
+values in the enumerated type have a "case" or "default". That's
+fine where we need to ensure that all values of an enum are checked,
+but if that's unnecessary, it becomes an unnecessary burden to
+remember to add a - sometimes - useless default case to each switch.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
