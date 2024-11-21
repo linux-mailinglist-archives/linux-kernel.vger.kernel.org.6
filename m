@@ -1,77 +1,85 @@
-Return-Path: <linux-kernel+bounces-417328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855269D529A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:35:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6369D52A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44298281D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:35:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9971F226AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97401AAE1B;
-	Thu, 21 Nov 2024 18:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F47F1BC07B;
+	Thu, 21 Nov 2024 18:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="riv6zpD6"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f+jmQgkQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE83B67F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9019315ADB4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732214116; cv=none; b=mMNORBuJnuljba0QKo44V3vEFK0rWimnE554la8qz+m9x+2R+ecv9U2TIon3ZYrWxpDnoZrvbuTod6FWBqqylin+MP24D2p6dPcN6Syi+1px6WCzZtB1FT7J8vWvXmFPo76Em0DKkXR7eAdPfT0eb2VlsVZlUu6J9A5nPQIMSto=
+	t=1732214380; cv=none; b=nHttgPUuEgkq5srVr2QEVF07oqjXvBY+nLEeBFKhQK2u9D6E8mCZG61bY26cKYEga2ckwxmysIRQCdPrNYK0oLdhw+kTT5YqF1Mho+6P20ncWHbpNL2jUnt4qcCacXKnT9FxVQwVCRDHX5cuT1z/sQcWVXH1NBugqQbQXtAKMoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732214116; c=relaxed/simple;
-	bh=sxEt5QHQVWebuJzi/ZocdkWCv5jV6t5UCOUoxd5WEPQ=;
+	s=arc-20240116; t=1732214380; c=relaxed/simple;
+	bh=G8XOSFc7W5LX9nk1d6dB9lDKaf8fszfFMsNH4VlGnZQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/t7yYo6q09wX/A3+9sL1CFk2vAlFFrxiq3SIUzf4GNaE7neyekGuYFjOyIVxjQR+CVjy5C0Cr+NdX6//Q6TNUVP/UG0PUnQeGHCoMjmgZ3cQyx3O2jQXql75WEzWval+m/ksyAthrkLA5wmjk98cQdX5Aw9nqsyS6TJPzwX1D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=riv6zpD6; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-296c237a121so843081fac.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:35:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1732214113; x=1732818913; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mbqhQuLd+DrrA6T8L2Ps3K6JSpl7CQfQrjhLlkd4Ce8=;
-        b=riv6zpD6gKoahr9CvmQFTmST+QAMwSYFLMwaQsEgTVOGBMNidnBQMiPwwp0yJDBzSw
-         Z9AI7AtV7wV3TO6Z9iYwlNVHhth2gkvTHr/wmDzQTM5Jv0Ge2Qc23S3YG4BjXCeNLbNI
-         5g/h8/lF7ZhQ1vxYAAJWNcLELLfgupR8idnFSKZBm8NRE0p2Mh4CcKXFriWORjbeG8kZ
-         Fs4d/Qo54oWRxwZyb1a3bnQucfc9q19ThmnzMjb6R3Qd9ObuhMixUAje/zbHfX0+cFSC
-         PnTVQ9LG6qhIV1U27+vJGGpV/4o5kP2Qq6DqeosRpMQikmZewa45q5SHGcPHU+Dz5Bnb
-         dyZg==
+	 In-Reply-To:Content-Type; b=aAI6sycASedCoSeNi55sThT2yIescG1zEI+HqzOrp2WpvnF1LADgBbEKw5G5rO8Spi2+3K8s1m4xGd7/nk6CGQZGTKi222GxCrFoy2SIevTA5W/np2kDPi6ClA4HZ9PVxG9xTqu2tQfwBXHGpHYaHsGSn8q7FCYwI5mmseeIkM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f+jmQgkQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732214377;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R8LxgwuAPowXuHoG85RopJJmji4cVIb+ptva+m06qdM=;
+	b=f+jmQgkQFFHHngHhuoXF4ZE521rj2rNJoiOUNOPJC2z8UGhZdTc82itSUBEFgCHjJlE3Sr
+	+xD/aoMQA5kpp14eA3W8HHkfHjAH0K4IfFMH2Yygeh5+puQdrh/46x7C9FubR2qyI80kz6
+	seG52ma6tYsLe9DpA2Z0bd28C936tNo=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-W60wXnV7OFipf2YcrnTOuQ-1; Thu, 21 Nov 2024 13:39:36 -0500
+X-MC-Unique: W60wXnV7OFipf2YcrnTOuQ-1
+X-Mimecast-MFC-AGG-ID: W60wXnV7OFipf2YcrnTOuQ
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-539fb5677c9so1150320e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:39:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732214113; x=1732818913;
+        d=1e100.net; s=20230601; t=1732214374; x=1732819174;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mbqhQuLd+DrrA6T8L2Ps3K6JSpl7CQfQrjhLlkd4Ce8=;
-        b=EHso4UgcxlQKKvptbJ5izE2y9TKY08grqFw3G/WsZbevAs5vrBsyTpMThd/NZ3U0x+
-         /wzIHrfnqePfLEZjsxapmy/7ImoQ+xH8aOYwuiOHUjOliVbAihMm2AFLbaEuFCqZD1Rv
-         q2uIWM33Sh5kvTFWXrywVCvUxPQrP1Z3ykTtrPnb4yAKXiUvHsB5m8eNf4WuM59qbJfG
-         GA5o0tVAY2DFM1hefM2IDDk7F+KdiHwR8AIclV6jfZAFD2RcQ1vor21dGuCGriGA+6uy
-         cKG1Vq8ZooCVex5xOn1PbjA+d51zsW1+2TtSjXoWRT+ALBayiWWJTbnkqFq3EQTm38k8
-         vOdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHO1LEB3u0B7FpQXtw2R1qIpePb2YIFcqs1P80qXKQo8XcjrLgeIx78l/mqHvD4pqPpjQiPf/W29KTE3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiYYbaaAxnYTE427siYei/UmuTSIbR9XObHpzDMICr84picO1W
-	vQ97FUw2C4rrrJi5PYplfX3jWCZnlr/NElgKJdQhBMtluprUFSl2fk9NusT4W2o=
-X-Gm-Gg: ASbGnctPrxsv2Evyscdj4CgyQ19oaBiYhNpm+omPIOaiASQ/I3tg/NYCvOAoEq+FHv9
-	CGonUP4O27618oP69D5Jp1zIfQohkLYMcv2pts5MhZlSkq1g4shKvvCRu7ucu6BYjFzrr9HLnHD
-	M/TnjzNiTVuPJDOIxaY/VewALgSrRNivRo3nLGapeYL1UU2bnavJKJIOSCZsb4+0+Nh1jwcOx15
-	dABtD7i6GgDj9SWVoH5PdsqaUtvWopbAi79yNUQkLM06A==
-X-Google-Smtp-Source: AGHT+IGQ9k8wS2TS60qT8IVjc3fnuFCoLgHqv0GNMp58Q1HLV2LNWsVqKRLFgpF9Cw9p6ZAQqUdenA==
-X-Received: by 2002:a05:6870:9619:b0:296:b0d8:9025 with SMTP id 586e51a60fabf-296d9bcedd8mr8467428fac.20.1732214113009;
-        Thu, 21 Nov 2024 10:35:13 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2971d87e96dsm52987fac.45.2024.11.21.10.35.11
+        bh=R8LxgwuAPowXuHoG85RopJJmji4cVIb+ptva+m06qdM=;
+        b=R4q/3oC3zHYvzsS0OvuEkwOu3bY6c+LqBXYsAupoq/RmZyVRhbI+jBbuyBAQrZYdZN
+         8tMGDh5WClHWNyS/wjr0stDIh9duFHHTQxilJds66Oii9NqyT7vnPxOHIW+SVDCfzRlM
+         +SfxF2J/ksGOYQYz++y2TqJgnnanTnr1OHdWXR2RgctwDn38pKA3owBlbe78kk4wraNu
+         O/JzeF6sDhxRTyPWQoJSArfABRLgXDjOOtSXyZaiK7mEGWcS+2IhO6eRsXP/hxdF/tpB
+         Rw17BPHYpIiLDsfYPBzA1SgNRQ0YD2knRVRbl2Xstg3gurt9uiEBDZMBLwYR7+UqTtww
+         MWJA==
+X-Gm-Message-State: AOJu0YwdQj68AdHw0jXFWL8l90naTcPaCYdsTDZEvRMs6LN3a6QLaqQZ
+	uE8uGN6z4RlxV/UZ0zLHs0Qs7yNFvbP867rwFSsBb1ShExNTOIvbKOuIm21dLLKEHhS9QLx8r0Q
+	EzvO0JkysaJs7nW/suNqdFgTYtZFbmdjRfvU7qGQJUIRrZwm4Ow0t9GN5i5QkekSUiEskzw==
+X-Gm-Gg: ASbGncuLOOj24s3vx3XBKTWl3XMdZjzVtMHRje2bVwD6vacjyvHlInLVF17NWkHM55g
+	cN1z9UhHtzQCUFWbT95s3OMeoPza+4auS3E4woCjc+lpQhTZB2R8DE5e5oeMPO+1gfSzlDlcc4I
+	XP/ZP7K754WxbDrJjQIGZODnibdhXrDe18u3SstDJYR2oUdJBBkXDiEFcQSyrUXfdGdxUVZh0oO
+	q9oF9JGbdMqLhWNNOBX7UeKw1dlvbCQJqugu/pXpGPhMoaziXn6hUnytpx+HyCZW7nGq7z+fq+E
+	kn0/L5cE2Fq3AIbYotjLnggMeyjltMqHRojkiO9lMWXvI7K7ULOafib+SCinWosmgJAhdn9+ck7
+	ayWdHo+FkokWQ3h2LYmp4ZQbC
+X-Received: by 2002:a05:6512:1288:b0:53d:a025:14bc with SMTP id 2adb3069b0e04-53dc13670d0mr4202653e87.41.1732214374430;
+        Thu, 21 Nov 2024 10:39:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGsMRcWipCf+gqmLcfQGX437D2za5bWeNpvmmk4uIvuIwkT8PhxWA8oZeXW/HHOKWEX1LNOFQ==
+X-Received: by 2002:a05:6512:1288:b0:53d:a025:14bc with SMTP id 2adb3069b0e04-53dc13670d0mr4202627e87.41.1732214374020;
+        Thu, 21 Nov 2024 10:39:34 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fa36sm1718866b.122.2024.11.21.10.39.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 10:35:12 -0800 (PST)
-Message-ID: <3fe55eba-1a8c-464f-8598-6068ce03f296@kernel.dk>
-Date: Thu, 21 Nov 2024 11:35:10 -0700
+        Thu, 21 Nov 2024 10:39:33 -0800 (PST)
+Message-ID: <c6315bb7-2943-4693-899b-da65cfecc7a6@redhat.com>
+Date: Thu, 21 Nov 2024 19:39:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,73 +87,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: Guenter Roeck <linux@roeck-us.net>,
- "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
- David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Pavel Begunkov
- <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
- Jann Horn <jannh@google.com>, linux-mm@kvack.org, io-uring@vger.kernel.org,
- linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
- <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
- <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
- <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org>
- <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
+Subject: Re: [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in
+ acpi_os_sleep()
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
+ Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>,
+ Pierre Gondois <pierre.gondois@arm.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+References: <5839859.DvuYhMxLoT@rjwysocki.net>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <5839859.DvuYhMxLoT@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/21/24 11:30 AM, Guenter Roeck wrote:
-> On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrote:
->> On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
->>
->>> Linux has supported m68k since last century.
->>
->> Yeah I fondly remember the 80s where 68K systems were always out of reach
->> for me to have. The dream system that I never could get my hands on. The
->> creme de la creme du jour. I just had to be content with the 6800 and
->> 6502 processors. Then IBM started the sick road down the 8088, 8086
->> that led from crap to more crap. Sigh.
->>
->>> Any new such assumptions are fixed quickly (at least in the kernel).
->>> If you need a specific alignment, make sure to use __aligned and/or
->>> appropriate padding in structures.
->>> And yes, the compiler knows, and provides __alignof__.
->>>
->>>> How do you deal with torn reads/writes in such a scenario? Is this UP
->>>> only?
->>>
->>> Linux does not support (rate) SMP m68k machines.
->>
->> Ah. Ok that explains it.
->>
->> Do we really need to maintain support for a platform that has been
->> obsolete for decade and does not even support SMP?
+Hi,
 
-I asked that earlier in this thread too...
-
-> Since this keeps coming up, I think there is a much more important
-> question to ask:
+On 21-Nov-24 2:15 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Do we really need to continue supporting nommu machines ? Is anyone
-> but me even boot testing those ?
+> As stated by Len in [1], the extra delay added by msleep() to the
+> sleep time value passed to it can be significant, roughly between
+> 1.5 ns on systems with HZ = 1000 and as much as 15 ms on systems with
+> HZ = 100, which is hardly acceptable, at least for small sleep time
+> values.
+> 
+> Address this by using usleep_range() in acpi_os_sleep() instead of
+> msleep().  For short sleep times this is a no-brainer, but even for
+> long sleeps usleep_range() should be preferred because timer wheel
+> timers are optimized for cancellation before they expire and this
+> particular timer is not going to be canceled.
+> 
+> Add at least 50 us on top of the requested sleep time in case the
+> timer can be subject to coalescing, which is consistent with what's
+> done in user space in this context [2], but for sleeps longer than 5 ms
+> use 1% of the requested sleep time for this purpose.
+> 
+> The rationale here is that longer sleeps don't need that much of a timer
+> precision as a rule and making the timer a more likely candidate for
+> coalescing in these cases is generally desirable.  It starts at 5 ms so
+> that the delta between the requested sleep time and the effective
+> deadline is a contiuous function of the former.
+> 
+> Link: https://lore.kernel.org/linux-pm/c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com/ [1]
+> Link: https://lore.kernel.org/linux-pm/CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com/ [2]
+> Reported-by: Len Brown <lenb@kernel.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This is a follow-up to the discussion started by [1] above and since
+> the beginning of it I have changed my mind a bit, as you can see.
+> 
+> Given Arjan's feedback, I've concluded that using usleep_range() for
+> all sleep values is the right choice and that some slack should be
+> used there.  I've taken 50 us as the minimum value of it because that's
+> what is used in user space FWICT and I'm not convinced that shorter
+> values would be suitable here.
+> 
+> The other part, using 1% of the sleep time as the slack for longer
+> sleeps, is likely more controversial.  It is roughly based on the
+> observation that if one timer interrupt is sufficient for something,
+> then using two of them will be wasteful even if this is just somewhat.
+> 
+> Anyway, please let me know what you think.  I'd rather do whatever
+> the majority of you are comfortable with.
 
-Getting rid of nommu would be nice for sure in terms of maintenance,
-it's one of those things that pop up as a build breaking thing because
-nobody is using/testing them.
+I know it is a bit early for this, but the patch looks good to me, so:
 
-I'm all for axing relics from the codebase. Doesn't mean they can't be
-maintained out-of-tree, but that is where they belong imho.
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
--- 
-Jens Axboe
+Regards,
+
+Hans
+
+
+
+
+> ---
+>  drivers/acpi/osl.c |   22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
+> Index: linux-pm/drivers/acpi/osl.c
+> ===================================================================
+> --- linux-pm.orig/drivers/acpi/osl.c
+> +++ linux-pm/drivers/acpi/osl.c
+> @@ -607,7 +607,27 @@ acpi_status acpi_os_remove_interrupt_han
+>  
+>  void acpi_os_sleep(u64 ms)
+>  {
+> -	msleep(ms);
+> +	u64 usec = ms * USEC_PER_MSEC, delta_us = 50;
+> +
+> +	/*
+> +	 * Use a hrtimer because the timer wheel timers are optimized for
+> +	 * cancellation before they expire and this timer is not going to be
+> +	 * canceled.
+> +	 *
+> +	 * Set the delta between the requested sleep time and the effective
+> +	 * deadline to at least 50 us in case there is an opportunity for timer
+> +	 * coalescing.
+> +	 *
+> +	 * Moreover, longer sleeps can be assumed to need somewhat less timer
+> +	 * precision, so sacrifice some of it for making the timer a more likely
+> +	 * candidate for coalescing by setting the delta to 1% of the sleep time
+> +	 * if it is above 5 ms (this value is chosen so that the delta is a
+> +	 * continuous function of the sleep time).
+> +	 */
+> +	if (ms > 5)
+> +		delta_us = (USEC_PER_MSEC / 100) * ms;
+> +
+> +	usleep_range(usec, usec + delta_us);
+>  }
+>  
+>  void acpi_os_stall(u32 us)
+> 
+> 
+> 
+
 
