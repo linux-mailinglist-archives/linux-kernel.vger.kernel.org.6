@@ -1,271 +1,155 @@
-Return-Path: <linux-kernel+bounces-416915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F6E9D4C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:55:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9ADB9D4C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034EF283464
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B86280F66
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0DB1D5CCD;
-	Thu, 21 Nov 2024 11:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2008D1D2F55;
+	Thu, 21 Nov 2024 11:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k/sF9tj3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwmFRzzT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01561CD1EE;
-	Thu, 21 Nov 2024 11:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6704B1C728F;
+	Thu, 21 Nov 2024 11:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190076; cv=none; b=MtqsIHAiUlr94vk4n7/feBgEmHAnCh+rzmJs0kjutAEC4APj4oipP9YHuULbT+a6PsyujgNmG6yEcZCixxdLtsDLEgTX3obd8UANOMzcjCA0q3x5TlTxkeLzEXEEc/IMwc0mV2p+lUuqmRWnQ5qJZZit9+xXlGGTwD12cWimBQ0=
+	t=1732189927; cv=none; b=ICuEGdIerY3UAWMHzQvzoqZjL6rWqAspx7qKDASaiM/cX9/n3AWixsX6PapCT6RhKaVdUTVQM86AYlVqOFByH8A1ALbsNkAk8Q6TH9XFNGcWDSm/+U7ImIK8P0wMjId5cMPMb7Xa1BcibT5QgRn7YHNGOC4KM7nl2LL3Zrd41GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190076; c=relaxed/simple;
-	bh=bUk+v7mZMk9BXc2nQ992y5Tda10wwmT7kOocDNd27kY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qdggrC5am0NuMhKbHopZ6dTZfmZkzalI3eErHEzZnUPbrmIyysH7398yxN8yqKz9WzU4y+ih72uKPrKdTErHNJsn2sOsfnjmxCTDebZQOZux/K/PdyX8GhFDULWUbx0r1YdzzRQ/VTLl4rn4njI6+NkQ0Rx+gY3/U0xsvxI0L1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k/sF9tj3; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732190075; x=1763726075;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=bUk+v7mZMk9BXc2nQ992y5Tda10wwmT7kOocDNd27kY=;
-  b=k/sF9tj32ipEI+oVTNfoNHieIqwhdhuXnX9KmhdzJYu+XLY/FpNERK7O
-   P1qSUhq1/Y+RCZzhKF/RHhS+RtEhmeZaF2NA3Dr8u4pF9/HL9EYsFX8cX
-   /HG+2YfJU+48ss7YLG6X5asLE+hzCk9jvddj1O2/49HWSZh/jIvBNoBhQ
-   1woZQ0yT7t+H04w/9EwDurVu5o5gjw4wz+z8Npr5Cw+GPJc1wMo4COgcx
-   h9SezAWiYYoOIjMkq+apoK79Fh2k5FazUyDdg7FM1afnpGiWLgTSuWnvt
-   VUklZssc66DGS4Led8wix5Kz9oURp0fU51fq/gRg0u5tGJiBkYb6/q2r/
-   w==;
-X-CSE-ConnectionGUID: Kl7MSZUmRwiR29Pzs2wUzw==
-X-CSE-MsgGUID: d/Sbup4ZQKuIODv+2lprnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="35964530"
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
-   d="scan'208";a="35964530"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 03:54:35 -0800
-X-CSE-ConnectionGUID: FYhsAv2STdWj1Fcnv29ZzA==
-X-CSE-MsgGUID: +PwED7cqS/2aiYU5zEdFUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
-   d="scan'208";a="90354127"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 03:54:30 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org
-Cc: dave.hansen@linux.intel.com,
-	rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	binbin.wu@linux.intel.com,
-	dmatlack@google.com,
-	isaku.yamahata@intel.com,
-	isaku.yamahata@gmail.com,
-	nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [RFC PATCH 0/2] SEPT SEAMCALL retry proposal
-Date: Thu, 21 Nov 2024 19:51:39 +0800
-Message-ID: <20241121115139.26338-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241112073327.21979-1-yan.y.zhao@intel.com>
-References: <20241112073327.21979-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1732189927; c=relaxed/simple;
+	bh=JmJb7CdQHlMyUmcJRnuGoCkSUFCK4e1wGznMYGv8oXs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mytq2g1kELhb7EOjpq6YqvbN6a+EV3lJMBmZq2ZQUgUHNpcJMxr8k7ezm2mMGoNYpwj32aQk1P4BIHP8UXwouPm7O+QxEfY2etLGnkyQIBP5OerZx3F/ztmn7JFEAkUTIUWmq843bKXEqmWKrdQPtLUgPlUTlhO7SkdNNpEBja8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwmFRzzT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A039C4CECC;
+	Thu, 21 Nov 2024 11:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732189925;
+	bh=JmJb7CdQHlMyUmcJRnuGoCkSUFCK4e1wGznMYGv8oXs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uwmFRzzT9GjPiqmNKvk3V8mCLrfNEZ2dRwYwznz0Qp/cSgxDnmJq27kfi6vtpXfmB
+	 FBf+K1Qels76OgfwxurnQH+QutWKfxSmQJ735IlOfNBdxmz2KuSpP6L4DqFi4wXoOj
+	 qd1D0nE5lp9RtYutw03FCK2pfZ0/gEDpx7CDebDDlZ+XL0G0I0CAX9lf5P9lQxBj1O
+	 3vSWHWJPmgDzV4uarzgIaMBUpVI3se13A36qd+Igg6/i4MK+k4tLAv592/H8fl1AQ4
+	 nRQuMoK9h1novvdIYWqYXWghgjnMVIS8CFd1d/8eoEG9HOeEuxvOl2vzcEYlaSNSJn
+	 hve3DMfN13O2w==
+Message-ID: <51653aac-76e0-4da2-aea8-16d62b570155@kernel.org>
+Date: Thu, 21 Nov 2024 12:51:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 4/4] interconnect: qcom: osm-l3: Add epss compatibles
+ for SA8775P SoC
+To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Odelu Kukatla <quic_okukatla@quicinc.com>,
+ Mike Tipton <quic_mdtipton@quicinc.com>, Sibi Sankar
+ <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
+ <20241121113006.28520-5-quic_rlaggysh@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241121113006.28520-5-quic_rlaggysh@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This SEPT SEAMCALL retry proposal aims to remove patch
-"[HACK] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with operand SEPT"
-[1] at the tail of v2 series "TDX MMU Part 2".
-
-==brief history==
-
-In the v1 series 'TDX MMU Part 2', there were several discussions regarding
-the necessity of retrying SEPT-related SEAMCALLs up to 16 times within the
-SEAMCALL wrapper tdx_seamcall_sept().
-
-The lock status of each SEAMCALL relevant to KVM was analyzed in [2].
-
-The conclusion was that 16 retries was necessary because
-- tdh_vp_enter() contends with tdh_mem*() when 0-stepping is suspected.
-
-  When the TDX module detects that EPT violations are caused by the same
-  RIP as in the last tdh_vp_enter() for 6 consecutive times, tdh_vp_enter()
-  will take SEPT tree lock and contend with tdh_mem*().
-
-- tdg_mem_page_accept() can contend with other tdh_mem*().
-
-
-Sean provided several good suggestions[3], including:
-- Implement retries within TDX code when the TDP MMU returns
-  RET_PF_RETRY_FOZEN (for RET_PF_RETRY and frozen SPTE) to avoid triggering
-  0-step mitigation.
-- It's not necessary for tdg_mem_page_accept() to contend with tdh_mem*()
-  inside TDX module.
-- Use a method similar to KVM_REQ_MCLOCK_INPROGRESS to kick off vCPUs and
-  prevent tdh_vp_enter() during page uninstallation.
-
-Yan later found out that only retry RET_PF_RETRY_FOZEN within TDX code is
-insufficient to prevent 0-step mitigation [4].
-
-Rick and Yan then consulted TDX module team with findings that:
-- The threshold of zero-step mitigation is counted per vCPU.
-  It's of value 6 because
-
-    "There can be at most 2 mapping faults on instruction fetch
-     (x86 macro-instructions length is at most 15 bytes) when the
-     instruction crosses page boundary; then there can be at most 2
-     mapping faults for each memory operand, when the operand crosses
-     page boundary. For most of x86 macro-instructions, there are up to 2
-     memory operands and each one of them is small, which brings us to
-     maximum 2+2*2 = 6 legal mapping faults."
-  
-- Besides tdg_mem_page_accept(),  tdg_mem_page_attr_rd/wr() can also 
-  contend with SEAMCALLs tdh_mem*().
-
-So, we decided to make a proposal to tolerate 0-step mitigation.
-
-==proposal details==
-
-The proposal discusses SEPT-related and TLB-flush-related SEAMCALLs
-together which are required for page installation and uninstallation.
-
-These SEAMCALLs can be divided into three groups:
-Group 1: tdh_mem_page_add().
-         The SEAMCALL is invoked only during TD build time and therefore
-         KVM has ensured that no contention will occur.
-
-         Proposal: (as in patch 1)
-         Just return error when TDX_OPERAND_BUSY is found.
-
-Group 2: tdh_mem_sept_add(), tdh_mem_page_aug().
-         These two SEAMCALLs are invoked for page installation. 
-         They return TDX_OPERAND_BUSY when contending with tdh_vp_enter()
-	 (due to 0-step mitigation) or TDCALLs tdg_mem_page_accept(),
-	 tdg_mem_page_attr_rd/wr().
-
-         Proposal: (as in patch 1)
-         - Return -EBUSY in KVM for TDX_OPERAND_BUSY to cause RET_PF_RETRY
-           to be returned in kvm_mmu_do_page_fault()/kvm_mmu_page_fault().
-         
-         - Inside TDX's EPT violation handler, retry on RET_PF_RETRY as
-           long as there are no pending signals/interrupts.
-
-         The retry inside TDX aims to reduce the count of tdh_vp_enter()
-         before resolving EPT violations in the local vCPU, thereby
-         minimizing contentions with other vCPUs. However, it can't
-         completely eliminate 0-step mitigation as it exits when there're
-         pending signals/interrupts and does not (and cannot) remove the
-         tdh_vp_enter() caused by KVM_EXIT_MEMORY_FAULT.
-
-         Resources    SHARED  users      EXCLUSIVE users
-         ------------------------------------------------------------
-         SEPT tree  tdh_mem_sept_add     tdh_vp_enter(0-step mitigation)
-                    tdh_mem_page_aug
-         ------------------------------------------------------------
-         SEPT entry                      tdh_mem_sept_add (Host lock)
-                                         tdh_mem_page_aug (Host lock)
-                                         tdg_mem_page_accept (Guest lock)
-                                         tdg_mem_page_attr_rd (Guest lock)
-                                         tdg_mem_page_attr_wr (Guest lock)
-
-Group 3: tdh_mem_range_block(), tdh_mem_track(), tdh_mem_page_remove().
-         These three SEAMCALLs are invoked for page uninstallation, with
-         KVM mmu_lock held for writing.
-
-         Resources     SHARED users      EXCLUSIVE users
-         ------------------------------------------------------------
-         TDCS epoch    tdh_vp_enter      tdh_mem_track
-         ------------------------------------------------------------
-         SEPT tree  tdh_mem_page_remove  tdh_vp_enter (0-step mitigation)
-                                         tdh_mem_range_block   
-         ------------------------------------------------------------
-         SEPT entry                      tdh_mem_range_block (Host lock)
-                                         tdh_mem_page_remove (Host lock)
-                                         tdg_mem_page_accept (Guest lock)
-                                         tdg_mem_page_attr_rd (Guest lock)
-                                         tdg_mem_page_attr_wr (Guest lock)
-
-         Proposal: (as in patch 2)
-         - Upon detection of TDX_OPERAND_BUSY, retry each SEAMCALL only
-           once.
-         - During the retry, kick off all vCPUs and prevent any vCPU from
-           entering to avoid potential contentions.
-
-         This is because tdh_vp_enter() and TDCALLs are not protected by
-         KVM mmu_lock, and remove_external_spte() in KVM must not fail.
+On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
+> The EPSS instance in SA8775P uses PERF_STATE register instead of
+> REG_L3_VOTE to scale L3 clocks.
+> Along with SoC specific compatible, add new generic compatible
+> "qcom,epss-l3-perf" for PERF_STATE register based L3 scaling.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> ---
+>  drivers/interconnect/qcom/osm-l3.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/interconnect/qcom/osm-l3.c b/drivers/interconnect/qcom/osm-l3.c
+> index a9405b7d251b..285afaa1f61e 100644
+> --- a/drivers/interconnect/qcom/osm-l3.c
+> +++ b/drivers/interconnect/qcom/osm-l3.c
+> @@ -318,6 +318,7 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
+>  
+>  static const struct of_device_id osm_l3_of_match[] = {
+>  	{ .compatible = "qcom,epss-l3", .data = &epss_l3_l3_vote },
+> +	{ .compatible = "qcom,epss-l3-perf", .data = &epss_l3_perf_state },
 
 
+Hm? Why?
 
-SEAMCALL                Lock Type        Resource 
------------------------------Group 1--------------------------------
-tdh_mem_page_add        EXCLUSIVE        TDR
-                        NO_LOCK          TDCS
-                        NO_LOCK          SEPT tree
-                        EXCLUSIVE        page to add
-
-----------------------------Group 2--------------------------------
-tdh_mem_sept_add        SHARED           TDR
-                        SHARED           TDCS
-                        SHARED           SEPT tree
-                        HOST,EXCLUSIVE   SEPT entry to modify
-                        EXCLUSIVE        page to add
+>  	{ .compatible = "qcom,osm-l3", .data = &osm_l3 },
+>  	{ .compatible = "qcom,sc7180-osm-l3", .data = &osm_l3 },
+>  	{ .compatible = "qcom,sc7280-epss-l3", .data = &epss_l3_perf_state },
+> @@ -325,6 +326,7 @@ static const struct of_device_id osm_l3_of_match[] = {
+>  	{ .compatible = "qcom,sm8150-osm-l3", .data = &osm_l3 },
+>  	{ .compatible = "qcom,sc8180x-osm-l3", .data = &osm_l3 },
+>  	{ .compatible = "qcom,sm8250-epss-l3", .data = &epss_l3_perf_state },
+> +	{ .compatible = "qcom,sa8775p-epss-l3", .data = &epss_l3_perf_state },
 
 
-tdh_mem_page_aug        SHARED           TDR
-                        SHARED           TDCS
-                        SHARED           SEPT tree
-                        HOST,EXCLUSIVE   SEPT entry to modify
-                        EXCLUSIVE        page to aug
-
-----------------------------Group 3--------------------------------
-tdh_mem_range_block     SHARED           TDR
-                        SHARED           TDCS
-                        EXCLUSIVE        SEPT tree
-                        HOST,EXCLUSIVE   SEPT entry to modify
-
-tdh_mem_track           SHARED           TDR
-                        SHARED           TDCS
-                        EXCLUSIVE        TDCS epoch
-
-tdh_mem_page_remove     SHARED           TDR
-                        SHARED           TDCS
-                        SHARED           SEPT tree
-                        HOST,EXCLUSIVE   SEPT entry to modify
-                        EXCLUSIVE        page to remove
+So this is compatible with sm8250. Use that one. Don't grow this table
+needlessly.
 
 
-[1] https://lore.kernel.org/all/20241112073909.22326-1-yan.y.zhao@intel.com
-[2] https://lore.kernel.org/kvm/ZuP5eNXFCljzRgWo@yzhao56-desk.sh.intel.com
-[3] https://lore.kernel.org/kvm/ZuR09EqzU1WbQYGd@google.com
-[4] https://lore.kernel.org/kvm/Zw%2FKElXSOf1xqLE7@yzhao56-desk.sh.intel.com
-
-Yan Zhao (2):
-  KVM: TDX: Retry in TDX when installing TD private/sept pages
-  KVM: TDX: Kick off vCPUs when SEAMCALL is busy during TD page removal
-
- arch/x86/include/asm/kvm_host.h |   2 +
- arch/x86/kvm/mmu/mmu.c          |   2 +-
- arch/x86/kvm/vmx/tdx.c          | 102 +++++++++++++++++++++++++-------
- 3 files changed, 85 insertions(+), 21 deletions(-)
-
--- 
-2.43.2
-
+Best regards,
+Krzysztof
 
