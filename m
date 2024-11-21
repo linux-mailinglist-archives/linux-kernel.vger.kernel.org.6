@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-417340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED389D52CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:51:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09479D52CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDA72B24E24
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6119F281CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFF01CEAB8;
-	Thu, 21 Nov 2024 18:50:51 +0000 (UTC)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAAC19FA93;
+	Thu, 21 Nov 2024 18:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PnlRvgmv"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09351CB9F0;
-	Thu, 21 Nov 2024 18:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766B2139597
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215051; cv=none; b=VYtnIpbPabc0/eUfYT3GO/8Rci7MsOQxHXIJ962OXuolElmyQftLknrpaJUiyineppHvUwZ25qKwGuMAwJ3MRkNUAymmCD4HijL29ob9rSObCXh8pEwQuzdB3n5aWO2hiU6dqNt0lx8u23apjzV/6u70b8aSgiWJ4bhjfTwSeW8=
+	t=1732215044; cv=none; b=YgT0euUE/OGwABpzWEZnny8LPEHCw2RZgbQBRwLP1zc3pytAZnqwXDNbSEiHzx2Y7z/+rgoXBzcwyoefzpIkrqAouABB0kqF3YoxMXJsqYzfIjso0zjA7ZeWZG0WbE7YIkJNNNBFUC0dnxSKePVKlmBMXi10Kok3e8YOJ44vH9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215051; c=relaxed/simple;
-	bh=wKNU16KpaJnt0VzAm6J26LFqDGxUFxBpqWBfN2icH1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pQfAmaANaSRmBSwXjLMg7D4NwZhrtXjyOCzpYF1aFIQVpivknnDN+PGdCUcHOvJHETTiG+yT5dPCjbYYsPLl0w1OfzePO1+Vh4532TBEP+npR7XoU9ncbinbZYxV89pk+Au2W8bfrGxsOY67qYtabLix7KPWMXDri22YqXSKEXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e3889bc7ec6so1283233276.1;
-        Thu, 21 Nov 2024 10:50:48 -0800 (PST)
+	s=arc-20240116; t=1732215044; c=relaxed/simple;
+	bh=QxhytElEQlV9KEcf1qGU/kHOFBrKLIqmqeobJDMIfdk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZwhXoCoOOCBHHRdXR8WQaTMPCnZB8Teu0sscxzChxIKQvH0cTJsweZf3304acRj2tsYLpVK9N9cJf27HtiDY000L0rNp6SmQ6oncSJucsak+/JivwiZXG+BS3G22HS4FK1vtFNLS99hVlGdoOOI4qNglle4auIkxCGLjkR8S71E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PnlRvgmv; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb49510250so15446871fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:50:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732215039; x=1732819839; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7VdCN1lqNouTv5fI9/HnXjA5jG6LjBgxZhTU1QtUgLk=;
+        b=PnlRvgmvCPuMVcKIkdZTjiPJNyc180LEGahDtSeOFiMDGFrcvQERw0izX2vOFpaDl8
+         kcUW4FtCMPjx2I/1EeNHEp/N3ZABp8XggM+vvEJIsUYj9xAfLabKVDqqiLRyl5aMnMQK
+         BbeZX7qs+lfUsAmLNDCH7jkDTbxDJTTzl17z6TdFKHe0eVy1XBI4wFJlUbGILGC5Oery
+         LoNz1+/RjNSubQTZFOashrXT0QPZkjBPfQOxRyV/n3+QCtoOy1NPGaRNRl5Joo4CLdQu
+         AJ61zVTANoOWxR/sLuNm6IgP5Pp0AqDhR3lRS/C2HGCBiCJelVRrjL0St+KX0S5+UQwb
+         OgQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215047; x=1732819847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N1SoflphJdSTWjWlYBW10VBQhVvyygIYFn3eyN0CY8E=;
-        b=Dy5pklLJ2GLXIGIBYbpVV6uLnWtJGYi6uBJp+oKMK+2z4LE1yRYgiF1+Y7xCHUHhSb
-         GM2YW/nlXvsoy3uTAX/1R47tYizDe6lB86Cl6jNdUDnJJQHDq6AydXJstsE/yc9/uwbn
-         xK5H7J7IZx346IQsCXxcs2sTAb6uMTjgRctBw+M/Yvccm0Vy6KWBSAN8zijy0sqTLTGb
-         yZgEb8JjF8AHe0xNi6QRUD/CtpgUq3WdvOZiuw3lMd7k5b3TCulg+SzAMqORl4IWH1/h
-         wZCN3QZsx9GUHW7nbDqn6Doln19C1CZGqFH1WQZhfNKUUVOO1GFC2HUE9EDug1or5Nlo
-         eAmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpHUGpG2V3hMhDzo6Ty5xPRzIjbxj/zpZQvmxbrZbFjxH+pxvstBjDs7otMxq5aAqOKncUogIeQ1g2gk2O@vger.kernel.org, AJvYcCXP5IHwPlr3eUhDg+rstyepkdF/kpVXu8+seLpBFgXGWvullhWibE5gUobBpMikODdTKgPKTh4wrA==@vger.kernel.org, AJvYcCXr9XJfk6PaY3RU30ZX+JFTZ9ikgLTOLpETEbTIJkj5xKn3+UjReNE5fwzTj8qeqKAZ55FgQqzavLPWJQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9HqHog9LMlWU7O9rBEOEHiftl91HxMbovW7gW+W2Uh1OvyDPD
-	kOtAE6JVLo4JPjl6/Ra0CjM4r3fh9CjeMeIbeIRZuJByAiplqb/kb26+XviQ
-X-Gm-Gg: ASbGnctfR68mUuAgabXRPbD0U2HfYgvB8UoTKatLlfW7Kai1YgWWstPC6fG6xtlfwls
-	thceGAGJPszJHraE+SWIAsEFFhHkwEJGmwSmYSi61/vTxW1vRnZB+YEn6oTH66RrnaLBr27VqaP
-	SW4MOIRdyJ2oPMElvcm4v4hbmXXr4MuGTdMT5/WRrktUFtjYhGbffFAKXI3Ug53kq36tnOeR3R6
-	pPSO3CR//WQiQIJLEECftBVjb9FyO8LStSgUispd/rcGrenwn/w5jBKaVV2Ho1RbVEBjnLd8+fU
-	+Gl2oBgyvvB2KZLW
-X-Google-Smtp-Source: AGHT+IHX2mf5rujr0Gw98cuoiZkHaZb2gYQKCSs9744BLWJf37z8ND06BeOnp2kfhIIFl+0fbrGxJQ==
-X-Received: by 2002:a05:6902:2606:b0:e38:a203:bc16 with SMTP id 3f1490d57ef6-e38cb60c945mr8387030276.45.1732215046971;
-        Thu, 21 Nov 2024 10:50:46 -0800 (PST)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f6089523sm82574276.32.2024.11.21.10.50.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 10:50:45 -0800 (PST)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6eea47d51aeso12371667b3.2;
-        Thu, 21 Nov 2024 10:50:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUOwogVxjrOmozWFw8OvkFfPjTyZ0MusjgFFp7UejGFbbeeVkWFG8YxdQ49K+CylkkiuDmRWj4v3Eko9A==@vger.kernel.org, AJvYcCVbMzIPMGYxQ9vv3WxVFCyICEb1gg5hbXjrz0GHlIqk0NVTyNT0C3H9gZZ+u25372n8QsPiMZJ5xg==@vger.kernel.org, AJvYcCWKxL5zmNo8aMFt4bLf9PKqJ1FAWPwfmIENPOYqY0+ygdP1sGb1KQXc31f9jhjg8yvBR8Pjz9/rRXxh5ltt@vger.kernel.org
-X-Received: by 2002:a05:690c:6a01:b0:6ee:86da:3a49 with SMTP id
- 00721157ae682-6eee08aba14mr4213967b3.8.1732215045390; Thu, 21 Nov 2024
- 10:50:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732215039; x=1732819839;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7VdCN1lqNouTv5fI9/HnXjA5jG6LjBgxZhTU1QtUgLk=;
+        b=tm1t5+3VMjEuB80xhFKZbhTk4NLqtw9Pe/fgvGxfW2KOd5ThHg6X5v081j7l+gsb5A
+         1AEyM98+9dEKrulLu7jW7MWSEQB1Zg7Rd/aEKVAg7e8pPwWphv+ZJs/xwZg1DmoTpqGx
+         IAqjW2iOxkukmerKcMBT+GOXl39onQc6WQ5+yJk+bDyzXi0LECYFaqr1N3q+HdlypqOc
+         hjounrCjHAp8eOXeTMCnHQtmV2uC6u8xCg+PDBG9LNm6/SwHS36BUntKoOqycwuaT982
+         DoSg+p27sCjDCp53gnf2s7qEDTJPLa/te2AX0sya0k4RPVSKWHt2muihyfBIWdzfATG4
+         +ZoA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3Lo1nnSz5/4Tl6RkF8ivLKFlVsrTF/zBbhVlJBeaEsC6MQYFnIPEHkm7pOtGe2WP8i25iYYgRcp6Fqes=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGzwwMLV1rTVpe/a2B/zLLs6O5oEDzG60dJo1/SjqMIS9XnfiJ
+	diF8MZDYpjxniuLKnJTbM9uvwdOGHCLEBqLwVZDW40HGalSt3BX8Cp0AbV+FiiY=
+X-Gm-Gg: ASbGncteYBOB7cvfg6Q3ghX6GsUSplQ3lSlGWCRHXMhuPMGCO72P/+L3q5sl05ye8Af
+	BwsR2U8MOVYXAE7YqAnbMc2uvIY/sObnVXSTYpe3y00FJCO2pcP733bfdAkljkmd3t4WEDhe/qM
+	pZiJu3Z1i3p6pb6/84OYQ0JM2rYiX9cJgY4CffArBRelKuYuchCXvwf5IPdkWjfUZk+dSkTM283
+	wUZGg5Hi2gcEYqqUlCZI3VJF8w2AIXypjTfAzaJTxXSBxAGCA9SXDlzRfWO93rdm1Q+sw9EUQLF
+	9JaBh8JSeuPwEihDz0oGaXrkBkIyJA==
+X-Google-Smtp-Source: AGHT+IGawGN4JuBpuedSADFiEa8NGYWZ3m0+/DjVOzB7JMih6J9Gx73uzRw29DICHWEIBPvcPjyc5Q==
+X-Received: by 2002:a05:6512:457:b0:53c:761c:2a14 with SMTP id 2adb3069b0e04-53dc133b17cmr2947245e87.29.1732215039560;
+        Thu, 21 Nov 2024 10:50:39 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd249998asm45033e87.264.2024.11.21.10.50.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 10:50:38 -0800 (PST)
+Date: Thu, 21 Nov 2024 20:50:36 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>
+Cc: Kuldeep Singh <quic_kuldsing@quicinc.com>, 
+	Bjorn Andersson <bjorn.andersson@example.com>, Konrad Dybcio <konrad.dybcio@example.com>, 
+	Rob Herring <rob.herring@example.com>, Krzysztof Kozlowski <krzysztof.kozlowski@example.com>, 
+	Conor Dooley <conor.dooley@example.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_tengfan@quicinc.com, quic_shashim@quicinc.com, 
+	quic_kbajaj@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
+ Ride and QCS9100 Ride Rev3
+Message-ID: <lg5fszrlw7x6yamlyr2vck5ribdfddkjwi47t35qlxamrxd4nc@orwj6vafpnng>
+References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
+ <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
+ <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
+ <f123a993-0cd5-4747-80fb-88acb2434880@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz> <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
- <CAMuHMdWQisrjqaPPd0xLgtSAxRwnxCPdsqnWSncMiPYLnre2MA@mail.gmail.com>
- <693a6243-b2bd-7f2b-2b69-c7e2308d0f58@gentwo.org> <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-In-Reply-To: <f602e322-af21-4bb3-86d4-52795a581354@roeck-us.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Nov 2024 19:50:33 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXDmLoNAcKHpjp2O4D05nAd5SOZ=Xqdbb2O_3B09yU1Gw@mail.gmail.com>
-Message-ID: <CAMuHMdXDmLoNAcKHpjp2O4D05nAd5SOZ=Xqdbb2O_3B09yU1Gw@mail.gmail.com>
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>, 
-	David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Mike Rapoport <rppt@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, 
-	linux-mm@kvack.org, io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f123a993-0cd5-4747-80fb-88acb2434880@quicinc.com>
 
-On Thu, Nov 21, 2024 at 7:30=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
-> On Thu, Nov 21, 2024 at 09:23:28AM -0800, Christoph Lameter (Ampere) wrot=
-e:
-> > On Thu, 21 Nov 2024, Geert Uytterhoeven wrote:
-> > > Linux has supported m68k since last century.
-> >
-> > Yeah I fondly remember the 80s where 68K systems were always out of rea=
-ch
-> > for me to have. The dream system that I never could get my hands on. Th=
-e
-> > creme de la creme du jour. I just had to be content with the 6800 and
-> > 6502 processors. Then IBM started the sick road down the 8088, 8086
-> > that led from crap to more crap. Sigh.
-> >
-> > > Any new such assumptions are fixed quickly (at least in the kernel).
-> > > If you need a specific alignment, make sure to use __aligned and/or
-> > > appropriate padding in structures.
-> > > And yes, the compiler knows, and provides __alignof__.
-> > >
-> > > > How do you deal with torn reads/writes in such a scenario? Is this =
-UP
-> > > > only?
-> > >
-> > > Linux does not support (rate) SMP m68k machines.
+On Thu, Nov 21, 2024 at 05:08:22PM +0530, Pratyush Brahma wrote:
+> 
+> On 11/20/2024 5:24 PM, Dmitry Baryshkov wrote:
+> > On Wed, Nov 20, 2024 at 01:41:03AM +0530, Kuldeep Singh wrote:
+> > > 
+> > > On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
+> > > > This patch series is based on Tengfei Fan's patches [1] which adds support
+> > > > for QCS9100 Ride and QCS9100 Ride Rev3 boards.
+> > > > 
+> > > > Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
+> > > > introduced and the size and base addresses have been updated for
+> > > > a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
+> > > > and its corresponding scm reference has been removed as it is not required
+> > > > for these boards. Incorporate these changes in the updated memory map
+> > > > for QCS9100 Ride and QCS9100 Rev3 boards.
+> > > > 
+> > > > [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
+> > > > 
+> > > > Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+> > > The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
+> > > A good churn you are first deleting(based on sa8775p) and then re-adding
+> > > for qcs9100-ride*.
+> > > 
+> > > I think it's better to move common qcs9100-ride* to a common file ex:
+> > > qcs9100-ride.dtsi and keep specifics further to .dts files?
+> > > 
+> > > This will ensure common entities are present at same place with no
+> > > duplicates.
+> > I'd second this proposal.
+> Ok then, I see that there are some thermal and gpu enablement changes as
+> well in the pipeline to be posted.
 
-s/rate/rare/
+What kind of changes? It's really hard to make a judgement if you don't
+describe what is happening.
 
-> > Ah. Ok that explains it.
-> >
-> > Do we really need to maintain support for a platform that has been
-> > obsolete for decade and does not even support SMP?
->
-> Since this keeps coming up, I think there is a much more important
-> question to ask:
->
-> Do we really need to continue supporting nommu machines ? Is anyone
-> but me even boot testing those ?
+> Having a common dtsi file for these iot socs would help in reducing the
+> duplication at board
+> dts file level for all these changes. In that regard, does naming it
+> "sa8775-iot.dtsi" sound good? The board files can include this dtsi.
 
-Not all m68k platform are nommu.
+qcs9100.dtsi?
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
 
