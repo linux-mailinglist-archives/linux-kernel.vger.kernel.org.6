@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-417223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B4349D50DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:45:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49E49D50E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:47:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21ABD283DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F6DB1F23131
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DB81A2632;
-	Thu, 21 Nov 2024 16:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6519EEA1;
+	Thu, 21 Nov 2024 16:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SX1dwKv6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCqQ3o25"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C176F41C79;
-	Thu, 21 Nov 2024 16:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C2D130E27;
+	Thu, 21 Nov 2024 16:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732207496; cv=none; b=GnoKcf18qN7G+TAf88p/9+RHrSDiIxlt+SpZ+wmsArVw+8qE5EfmH0C5DdsrzxUo880njLeG7S6FjaIEYpc8JVs5CVU08gt76OFKKW5MHZI66N3TlV3Pz+nq5qI9WYYJQpgj5NuInU/W+kFaGOIVdHjGiapzK30EYOoeMiRhIBs=
+	t=1732207610; cv=none; b=a6/hAk84utHqg5Mo6f/3+G++C8ijcr+QMWx8n6LIRNWF30rgxwVUyMxnt6oaMsc9OuyR+zDwPNu//P6t9myQvC9JeyfXC4DIF/G9JQ4YzvzYmYZu1s9KZxPRhojkcQeX7+DF51enTIurKqof1HhgWBM9LmFxiCGn3PxvcIS71Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732207496; c=relaxed/simple;
-	bh=JG8GOin1RPGr6lBzi5vNbhQX9ZAXOl1lznBI9WMq6iM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zk1aDILWAs+FH9amp1Np1XOQvXu0nnm9aPVMAq7peUopgLPOagMz6tnqYcx/ALRD/fQ6bMBb6OgVwRBR2iZ4m6ZMK6JDdYKMsHqUEG1rBADBQ65e8V1YpAskMkU8gPjJqZjjVhI6FAqoLHnVkZuO/5MqG2dqBhhkPVJgird7ERo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SX1dwKv6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732207495; x=1763743495;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=JG8GOin1RPGr6lBzi5vNbhQX9ZAXOl1lznBI9WMq6iM=;
-  b=SX1dwKv6xWdjxQQaqCHsT4Y1+bmppTsQuPP0zBVVGeJBr7kMLsYqEJoV
-   O+CQw+fA6Y/OyCOAP2wZoR0rCLpDC7jOiP4nJU+V4lvO8GG1tOCa9MXYv
-   RiS7CwDW5EZKaSFehSMCbY7wrNG8D6ZEpKyNC5vSbVLQ75CmI8jKIV3El
-   he2EMaaXpiSTXgzGU6V/JvqLgaIOIuPMc9yYCKTV4TPzMzPA0+iyHD0qZ
-   hviw3UeztyQ4Hb0Sfu6MlWkvK9PFAM75Qa275fEuykCyH+QgdHFvs89pV
-   PlTpS/wWJRbObBtOyGEKK4+eYay1BuhkmYS4zbBQYEypsC2RUq8gGfB5n
-   w==;
-X-CSE-ConnectionGUID: 5LF0sjoHRFqOM3PHSWqMrQ==
-X-CSE-MsgGUID: 888t9XJnSvOR0oNZtPtijw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32263245"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32263245"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 08:44:54 -0800
-X-CSE-ConnectionGUID: AbYmCwoOQ1WaInLSQtlp5w==
-X-CSE-MsgGUID: 035BzuBzQh6wXY0wl558Ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90727624"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.229])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 08:44:54 -0800
-Message-ID: <853def565622848427e6e5df8f073465fa52e76c.camel@linux.intel.com>
-Subject: Re: [PATCH] iio: hid-sensor-prox: Fix invalid read_raw for attention
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Ricardo Ribalda <ribalda@chromium.org>, Jiri Kosina <jikos@kernel.org>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	linux-input@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 21 Nov 2024 08:44:53 -0800
-In-Reply-To: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org>
-References: <20241121-fix-processed-v1-1-4fae6770db30@chromium.org>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732207610; c=relaxed/simple;
+	bh=fTV7N3XK38wOcga7Asc8Yj7zbLcQNsiiS8PEJTraF5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=HKMiyVW0YVJvB6eYu5sRxOccNgBSLiZKJyvIVrBoOHCXScq3ZW89cAbJuq4kAGnVaOKheJO9+jduW5Q2mY3daoIcqKIP3RC7LPq7lQKFQ63n6N11TSlfTe4EY9Cbpmz6sfKesO8TWx5ILfznspQWhy99w/aRx9cEMsdyF7UhSdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCqQ3o25; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1274BC4CECC;
+	Thu, 21 Nov 2024 16:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732207610;
+	bh=fTV7N3XK38wOcga7Asc8Yj7zbLcQNsiiS8PEJTraF5s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=aCqQ3o250uicq6U7i22m1xLP1NvfMLncxBVdHciwiiuGr07OJBeeLn7KeSTkgRvAz
+	 KlvMCLVZnacSHk2kh/qu3dHJBRvTcYCpiNjnNx0xUOo8Zfk0I5rdBeyCLiiZaVwUcb
+	 udXET/8Tx2Tm5cNMEoYZfrPmdlYwbZ3uNe1uOn1W1lEbadB/trzThVA9cWMgWEjXrS
+	 AuZtCflFCN6dMrf833tRfKA5IMRyT5yRzDG5Yqq55VLN0Z9nvnh4tifVXmBa8y8MVv
+	 pnf+DZkzFPN8bpGIdJkgsMN5IJUcSH1a39MoH2flnykN/Mp1rQSMt1LaeIJjZAh6AQ
+	 +vkHXXrLG0Epw==
+Date: Thu, 21 Nov 2024 10:46:48 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable+noautosel@kernel.org, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
+Message-ID: <20241121164648.GA2387727@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241121094020.3679787-1-wenst@chromium.org>
 
-On Thu, 2024-11-21 at 09:16 +0000, Ricardo Ribalda wrote:
-> The attention channel is a IIO_CHAN_INFO_PROCESSED, not a
-> IIO_CHAN_INFO_RAW.
->=20
-> Modify prox_read_raw() to support it.
->=20
-What is the sysfs entry to trigger this IIO_CHAN_INFO_PROCESSED read?
-Don't you have an entry *_raw?
+[+cc OF folks]
 
+On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
+> A PCI device normally does not have a device node, since the bus is
+> fully enumerable. Assuming that a device node is presence is likely
+> bad.
 
-Thanks,
-Srinivas
+> The newly added pwrctl code assumes such and crashes with a NULL
+> pointer dereference.
 
-> Fixes: 596ef5cf654b ("iio: hid-sensor-prox: Add support for more
-> channels")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Besides that, of_find_device_by_node(NULL)
+> is likely going to return some random device.
+
+I thought this sounded implausible, but after looking at the code, I
+think you're right, because bus_find_device() will use
+device_match_of_node(), which decides the device matches if
+"dev->of_node == np" (where "np" is NULL in this case).
+
+I'm sure many devices will have "dev->of_node == NULL", so it does
+seem like of_find_device_by_node(NULL) will return the first one it
+finds.
+
+This seems ... pretty janky and unexpected to me, but it's been this
+way for years, so maybe it's safe?  Cc'ing the OF folks just in case.
+
+> Reported-by: Klara Modin <klarasmodin@gmail.com>
+> Closes: https://lore.kernel.org/linux-pci/a7b8f84d-efa6-490c-8594-84c1de9a7031@gmail.com/
+> Fixes: cc70852b0962 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Cc: stable+noautosel@kernel.org         # Depends on power supply check
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
-> =C2=A0drivers/iio/light/hid-sensor-prox.c | 4 ++--
-> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/iio/light/hid-sensor-prox.c
-> b/drivers/iio/light/hid-sensor-prox.c
-> index e8e7b2999b4c..8e5d0ad13a5f 100644
-> --- a/drivers/iio/light/hid-sensor-prox.c
-> +++ b/drivers/iio/light/hid-sensor-prox.c
-> @@ -94,6 +94,7 @@ static int prox_read_raw(struct iio_dev *indio_dev,
-> =C2=A0	*val2 =3D 0;
-> =C2=A0	switch (mask) {
-> =C2=A0	case IIO_CHAN_INFO_RAW:
-> +	case IIO_CHAN_INFO_PROCESSED:
-> =C2=A0		if (chan->scan_index >=3D prox_state->num_channels)
-> =C2=A0			return -EINVAL;
-> =C2=A0		address =3D prox_state->channel2usage[chan-
-> >scan_index];
-> @@ -107,8 +108,7 @@ static int prox_read_raw(struct iio_dev
-> *indio_dev,
-> =C2=A0							=C2=A0=C2=A0
-> report_id,
-> =C2=A0							=C2=A0=C2=A0
-> SENSOR_HUB_SYNC,
-> =C2=A0							=C2=A0=C2=A0 min < 0);
-> -		if (prox_state->channel2usage[chan->scan_index] =3D=3D
-> -		=C2=A0=C2=A0=C2=A0 HID_USAGE_SENSOR_HUMAN_ATTENTION)
-> +		if (mask =3D=3D IIO_CHAN_INFO_PROCESSED)
-> =C2=A0			*val *=3D 100;
-> =C2=A0		hid_sensor_power_state(&prox_state-
-> >common_attributes, false);
-> =C2=A0		ret_type =3D IIO_VAL_INT;
->=20
-> ---
-> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> change-id: 20241121-fix-processed-ed1a95641e64
->=20
-> Best regards,
+>  drivers/pci/bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 98910bc0fcc4..eca72e0c3b6c 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -405,7 +405,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>  	 * before PCI client drivers.
+>  	 */
+>  	pdev = of_find_device_by_node(dn);
+> -	if (pdev && of_pci_supply_present(dn)) {
+> +	if (dn && pdev && of_pci_supply_present(dn)) {
 
+Thanks for this fix.  Krzysztof restored the NULL pointer check in
+of_pci_supply_present(), so of_pci_supply_present(NULL) will return
+false, which should also solve this problem.
+
+If of_find_device_by_node(NULL) returned NULL, we wouldn't need this,
+but for now I guess we do.
+
+>  		if (!device_link_add(&dev->dev, &pdev->dev,
+>  				     DL_FLAG_AUTOREMOVE_CONSUMER))
+>  			pci_err(dev, "failed to add device link to power control device %s\n",
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
 
