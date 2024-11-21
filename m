@@ -1,151 +1,193 @@
-Return-Path: <linux-kernel+bounces-416920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883D69D4C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:59:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8452F9D4C6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FDA6B2606B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:58:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2C7DB26424
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEC21D414B;
-	Thu, 21 Nov 2024 11:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F321D5CCD;
+	Thu, 21 Nov 2024 11:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z/+zDL76"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XmXmOQgp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FBM0+Vkz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XmXmOQgp";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FBM0+Vkz"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209EA1CD1EE;
-	Thu, 21 Nov 2024 11:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8631D5157;
+	Thu, 21 Nov 2024 11:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190324; cv=none; b=b3ZE13mBO4JfN4+3ojnocjaeVlYaGrWXpeP2a01xMTMPCDH13biiQGdjLT2RFwhj3DFHDT6CD27jVFdGUDCdsydY9mG5Ela63Otzaq0J02st/Ed8eRtlwg7/uyMoPpnYTLGL9onaP8zxh7HYs6dy9cZl9/VPdtfl+xSnVqyuong=
+	t=1732190329; cv=none; b=Ms3Q7no7oK65D3FTd9ApmNAaDMWe9q1LztZMVuLiwYzCqFCykDVRQIW1r5fzyA1yIU41/6afwmD4MDhj8ygzAwp1X2Glf1quoHgO9jsMxU5aTLD2qQeGgg6wUerPi2rnoG31bi4p4bFPk8UYEWYKijZEZAKDGKab3uhXr1JEPLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190324; c=relaxed/simple;
-	bh=f75J4Z01SgbdmT+hfVnffrS67T2lmrDvQ6sXIzT0TxY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GwY+/TW+aUjsR46mFXgprPd1ffII8VmGbuuHftFBjo6z+nhe2tAxBT9YrNyxj8sxbKoGOo+NbGBRdokBVVGV1fEOtfrLybqphVoh4eQuHJOU+t8b201ozla9s7CzL/o0rUUEdXEUNxZqVCYPMmrQDTtNZ+Fd+vwK6+c9I1/f6WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z/+zDL76; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL8txNq025887;
-	Thu, 21 Nov 2024 11:58:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RgsWpf6+Sd43Rc5sq6mSIoTvfA0falFXbwKIv24/NX4=; b=Z/+zDL76duqckeND
-	Y0q0cBB3sXB8jS3VhGxO0nO1zmUdapuwSECImjvA85nRiUqmTc2LktH4lTuvjYEy
-	P65LE7qAIR+Cbe12+FMR/iyZVHpF0yCVGu/AYHYkwrFSupD+j4rzWNFvkLVFZuA8
-	Wvd79J6YA9vFfRzbTdwLR3YpHqTXi1lNVQX/1+WGd/GUl6w6lyr2i0WFV0M7eUru
-	gLuv3sNse3fHdR6VkZ/9JuwsuoMWu5p1ssd9GfrrJN3aqe3gOd2pD196D1ya7DqK
-	omFSA7hZfea50Z44b4vEBWOkDhsiUnzMvB+4yjiJ0F9FyFl7oK1Nb+PiW5xqVtiv
-	M3hWUg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431byjm0v2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 11:58:39 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALBwciu029380
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 11:58:38 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 03:58:31 -0800
-Message-ID: <b16bb82c-a14a-4bc1-997b-97e709d3a462@quicinc.com>
-Date: Thu, 21 Nov 2024 19:58:28 +0800
+	s=arc-20240116; t=1732190329; c=relaxed/simple;
+	bh=hCS4d0t24UBGZHnfwsC+SsdZKUUoJFE8mxC06/F+evo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+ZX4mCTQ4d3VXSRlstV7OSZ6EsYvlylGU79LKrKcaXLcYmttXagIrSp10mesmox0VwIaB6ejmxxINnbzPOY9mx4IMnOYFd8cmsINHHpHjAgomDFSBMUq4IAugjSxUCA/pJxdNObWq7M5rHt/4TzcjBzWx82V4BTMZqVdSCDjb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XmXmOQgp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FBM0+Vkz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XmXmOQgp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FBM0+Vkz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CE1641F802;
+	Thu, 21 Nov 2024 11:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732190325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GcSWdomwDNDpO7ZSV571broabLlQiL9P5rzLFLnfqRY=;
+	b=XmXmOQgpWD4xQdXE9FMcKsQKBYG8zJLyuajze7Z4gOl598dVI1UpiAxaxTTiaF1SjOlAel
+	GOMmKrU6n5wqVhV/1/coNQeRF5mO+HVuqXmtu55C3P8xf4Cj6aQeJZFFRzTSZV8b3T1U23
+	DfBlAwTeVIjpdQAT66QmQI9j0NNp2Jw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732190325;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GcSWdomwDNDpO7ZSV571broabLlQiL9P5rzLFLnfqRY=;
+	b=FBM0+Vkz83qVLdHck2RnXLdkMKgZcY5oLBRsyxUSKPYFGwZFfBDkf3B42K0Yc4iQNFlaWp
+	MMnNzk5Zx4GWBMBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732190325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GcSWdomwDNDpO7ZSV571broabLlQiL9P5rzLFLnfqRY=;
+	b=XmXmOQgpWD4xQdXE9FMcKsQKBYG8zJLyuajze7Z4gOl598dVI1UpiAxaxTTiaF1SjOlAel
+	GOMmKrU6n5wqVhV/1/coNQeRF5mO+HVuqXmtu55C3P8xf4Cj6aQeJZFFRzTSZV8b3T1U23
+	DfBlAwTeVIjpdQAT66QmQI9j0NNp2Jw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732190325;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GcSWdomwDNDpO7ZSV571broabLlQiL9P5rzLFLnfqRY=;
+	b=FBM0+Vkz83qVLdHck2RnXLdkMKgZcY5oLBRsyxUSKPYFGwZFfBDkf3B42K0Yc4iQNFlaWp
+	MMnNzk5Zx4GWBMBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C32F613927;
+	Thu, 21 Nov 2024 11:58:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F2uhL3UgP2c7DAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 11:58:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7BA4AA089E; Thu, 21 Nov 2024 12:58:45 +0100 (CET)
+Date: Thu, 21 Nov 2024 12:58:45 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	hughd@google.com, linux-ext4@vger.kernel.org, tytso@mit.edu,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v3 2/3] ext4: use inode_set_cached_link()
+Message-ID: <20241121115845.5rlrxawr62n4jhke@quack3>
+References: <20241120112037.822078-1-mjguzik@gmail.com>
+ <20241120112037.822078-3-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: qcs8300-ride: Add watchdog node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tingweiz@quicinc.com>
-References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
- <20241119102315.3167607-4-quic_liuxin@quicinc.com>
- <5d670f55-1ebe-4034-a6a5-e68417c6e486@kernel.org>
- <64ec97a7-8e91-44d7-85ff-8b00304214fc@quicinc.com>
- <a1dde768-aeb8-4777-b4f9-d3c52b046fbd@kernel.org>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <a1dde768-aeb8-4777-b4f9-d3c52b046fbd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: U3Ej_iqsDzgJZoFxZUnlZFh9bI6zgAS8
-X-Proofpoint-ORIG-GUID: U3Ej_iqsDzgJZoFxZUnlZFh9bI6zgAS8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- suspectscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- malwarescore=0 priorityscore=1501 bulkscore=0 adultscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120112037.822078-3-mjguzik@gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Wed 20-11-24 12:20:35, Mateusz Guzik wrote:
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
+Looks good to me. Feel free to add:
 
-在 2024/11/21 18:19, Krzysztof Kozlowski 写道:
-> On 21/11/2024 10:44, Xin Liu wrote:
->>
->>
->> 在 2024/11/21 0:59, Krzysztof Kozlowski 写道:
->>> On 19/11/2024 11:23, Xin Liu wrote:
->>>> Add watchdog clock on the Qualcomm QCS8300 Ride platform.
->>>>
->>>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> index 7eed19a694c3..3024338bcfbc 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
->>>> @@ -265,3 +265,7 @@ &ufs_mem_phy {
->>>>    	vdda-pll-supply = <&vreg_l5a>;
->>>>    	status = "okay";
->>>>    };
->>>> +
->>>> +&watchdog {
->>>> +    clocks = <&sleep_clk>;
->>>> +};
->>>> \ No newline at end of file
->>>
->>> Look, your patches have errors...
->>>
->> This is the information when I apply my patch.
->> ../linux-next$ git am ./wdt/test.patch
->> Applying: arm64: dts: qcom: qcs8300-ride: Add watchdog node
->> ../linux-next$
->>
->> There are no error messages here.
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/inode.c | 3 ++-
+>  fs/ext4/namei.c | 4 +++-
+>  2 files changed, 5 insertions(+), 2 deletions(-)
 > 
-> So I made up that above error message? You sent patch with an error
-> message. I responded directly under it, so what can I say more?
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 89aade6f45f6..7c54ae5fcbd4 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5006,10 +5006,11 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  		if (IS_ENCRYPTED(inode)) {
+>  			inode->i_op = &ext4_encrypted_symlink_inode_operations;
+>  		} else if (ext4_inode_is_fast_symlink(inode)) {
+> -			inode->i_link = (char *)ei->i_data;
+>  			inode->i_op = &ext4_fast_symlink_inode_operations;
+>  			nd_terminate_link(ei->i_data, inode->i_size,
+>  				sizeof(ei->i_data) - 1);
+> +			inode_set_cached_link(inode, (char *)ei->i_data,
+> +					      inode->i_size);
+>  		} else {
+>  			inode->i_op = &ext4_symlink_inode_operations;
+>  		}
+> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+> index bcf2737078b8..536d56d15072 100644
+> --- a/fs/ext4/namei.c
+> +++ b/fs/ext4/namei.c
+> @@ -3418,7 +3418,6 @@ static int ext4_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  			inode->i_op = &ext4_symlink_inode_operations;
+>  		} else {
+>  			inode->i_op = &ext4_fast_symlink_inode_operations;
+> -			inode->i_link = (char *)&EXT4_I(inode)->i_data;
+>  		}
+>  	}
+>  
+> @@ -3434,6 +3433,9 @@ static int ext4_symlink(struct mnt_idmap *idmap, struct inode *dir,
+>  		       disk_link.len);
+>  		inode->i_size = disk_link.len - 1;
+>  		EXT4_I(inode)->i_disksize = inode->i_size;
+> +		if (!IS_ENCRYPTED(inode))
+> +			inode_set_cached_link(inode, (char *)&EXT4_I(inode)->i_data,
+> +					      inode->i_size);
+>  	}
+>  	err = ext4_add_nondir(handle, dentry, &inode);
+>  	if (handle)
+> -- 
+> 2.43.0
 > 
-> You refuse to fix this, so I NAK this patch.
-Sorry, that's not what I meant. I realize my mistake and I will fix this 
-issue in the next version. Thank you for your comments.
-> Best regards,
-> Krzysztof
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
