@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-417361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281A69D5300
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:58:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA0C9D5336
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D48A8B27FDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:58:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60DFE281ED9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB6B1DFD99;
-	Thu, 21 Nov 2024 18:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84161DD886;
+	Thu, 21 Nov 2024 18:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hWbvyYAG"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ncos1WVO"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70821DF727
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21861DD880
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215212; cv=none; b=FYLdOb9VAqdtyYa1w9WVdG2IYp+cJ+1G5Eil8uLtTUrHBj/VnnLh8aYd3huGMTrdsClfWNpvtdjiP8NfbxDlKU8tOvyk8mWJ35bFnhmTGBzngq3oxYkagYv1U1ZqIArdJPTgXt2Z/lHi1dlQhjTuEZdeaXDJ64TFbVxjnJGT9ck=
+	t=1732215272; cv=none; b=KQYJNKgnpBSiIIszQpnv2kNL0M/uRQBKbv7t8dCBstNM4a4mStRz6YJL3Psa/cDbCFPZVMp2zzfuRfN+uLbnsgURHRZJ5wbP8wr3HNr9czzFhh0gO4hV8KwRGHnzfOlEe/8+7a+dw+LNrVFGioh7o97+xdXYGQrWQSKo3vBd+nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215212; c=relaxed/simple;
-	bh=plEMvc7P/MFjBXYDffAegW699zfoyFWmjCZw0oGkoHk=;
+	s=arc-20240116; t=1732215272; c=relaxed/simple;
+	bh=1YPCn9zJJS4aEfnFmVlYq1c5Rme4ftV6YZCy6UiFw5M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIjmvsw75xaBi7dpeYPXAOfYlmKSKqo2vWdLdtSyNvWJj1C04cc/l29yJMfK9tbIrvVxAePNhb780lCzEaHjr+gyvx0K4NDCSbtSVjxsPkS9fR7keU6/cjpO2vyDQmSh77QuBA5I3YeV0xMDs4pWFfePCTuO7KfLbD77XSIVIsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hWbvyYAG; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f53973fdso1145262e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:29 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBu13qNOZuOr+S2/hbf8h2rRudHkqEB036yEzz3SDp3Qc2inL+aYCnn+lF/KL9YD1C0iP+WOZnWKJ9RrnU3+qxHCJ68Yb2A4dx5qzHbcwvShN1L+491y71cJ+4WB2pCcJsgo1TaEJzHqujHCYYVDyw5GvtJOFMEvYM/v2dn/OzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ncos1WVO; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-212008b0d6eso11113395ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:54:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732215208; x=1732820008; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1732215270; x=1732820070; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zCRGuGZv2890xlpdNfg21Swlbdi3hgEZQI8IQp1Kpk=;
-        b=hWbvyYAG6UUvK0CfoALb7RDtdl9OYgdy8IAhmMU2DKBZWYVc9Ot4I4t7Pf1/MqASYC
-         b17Ptkd3b0Hw8yv75dhT8+dxOG9eMdCkHtzebZX+pDLnMbteSYCj4GKzEmHIbe05GZ+2
-         3ZjBltFIry8AjaHnZQmmT1Nh1rJxN5sBV7Y3Y5efPb1lEpWspy66d40l6nPjKGI6BF7D
-         I/UlbfPNA+xUzqCwwINxUdlp7YppPC64bLESUhFOFj4p1HxpUmUGV52Z/FMSIuEtxVCK
-         OpriDqLPFhDQYVSy6eHQkxzabXf9/zlTGgp8+cMPlNGmpFwuWbViCga17kBcoLvJXvbb
-         RY4w==
+        bh=tVo/3gvYEDND0rD37osncOuM3Oyc9/1OV2rDKG8dQow=;
+        b=ncos1WVOInINio401qms1NaRBBUfuKo+o37RzI3J8S7HuvjUCUA1TQeBF8cZIVimRB
+         ph3re5mFwmatJkIVCds/LLBzY3hz17HDSUK92Jt+ghcYH5OvJgS7sVANlIDsA3/AF+/Y
+         Klkp1PAwuBjGRRx94b+DbEXP/mkrNuHeEtVtI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215208; x=1732820008;
+        d=1e100.net; s=20230601; t=1732215270; x=1732820070;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3zCRGuGZv2890xlpdNfg21Swlbdi3hgEZQI8IQp1Kpk=;
-        b=mT/JdCFqUvtObgxXe0kaoBY6RDMr5/72+hTiXvns5zsjsS8OKUZTEAEOkQ8IDZPCsq
-         KDs5Bco+tjvIuZuK4N5856h99DFx3/7blgEExDZs1rrMkgfPunn9vSgoxXEFDuIKPEef
-         mR9VNHWEevUqyzCQH2sNehAbiV4zK6IjZcFNtCbItsgm4+QTXqu7mYBCpXg86zFvfzco
-         xtK8t7UTDr1D9fg9ykpVNtPUYs+Jef9hxSa4ARpEetRx5FTixkpltKbuY1BJe9DJFQYc
-         OicXNozMIE9M3AfeTE2ZujPayC6ReIEvUhtxf/BhbOhAONERmfnVXFPOlJVxz2IrSkC5
-         x2YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmXzkn+pitlRsnd3j1AAK1ui057JKT2txgNhY+XOpnlKwv+pO2bRiFsDGbc14wtGXn7FM0SlLz9byXupg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzODIykiP0M6VXuAOS78QeP1nVTsBBZFa7BXjxOlfoKZJ2+H8sw
-	mrvQrGL+1MNA4kr3CXxlt5i157P2aYLKcimxCOt0G9z+kzBThd6oB2WhLftceL8=
-X-Gm-Gg: ASbGncs1oTcCNgSLpYGbLm58D3GTwW6335qFwlhz/6EC5cfh8VGBTYepP6Bn/X4hVTz
-	WkCcUuJoxNg2MYULruGdnpECUAwlrXOGybWX4VQ2chBvovCwqpXSI0H2HD+R1vLsRluouj+8Eo2
-	llUXz3leTGPRJ29kUPYIg2K97IsS9lPwzKgx4C6UYGra+hcGKAkzDfjD8o+n+rbLcdDN+UYUUyG
-	MwupV7bl6KAxFQk/4dYW1kmeozS+OfihMzv1NMUlh6wY3hH0+KSvj9FMddbzC7O2Vf9T9vY80sy
-	Uie09eA+ynGix09h7HWX1NAQdRLPyw==
-X-Google-Smtp-Source: AGHT+IEUh6/Eu8AqzBMD3b9KkeOtieIJEmsmTP9LQnKAK7x7PGeGdXj1GDsp9PgUDFkqb/NEkA6Ypg==
-X-Received: by 2002:a05:6512:b23:b0:53d:c6f6:70b7 with SMTP id 2adb3069b0e04-53dd2acbc2bmr79294e87.13.1732215207879;
-        Thu, 21 Nov 2024 10:53:27 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd244561dsm49540e87.44.2024.11.21.10.53.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 10:53:26 -0800 (PST)
-Date: Thu, 21 Nov 2024 20:53:25 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org, 
-	linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
-Message-ID: <cn7pqvhw4x4y7s5hbgzjpvyjnw4g6hoyepic4jai7x2fjdenxr@ikr4hkorbuwb>
-References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
- <20241118084046.3201290-5-quic_ekangupt@quicinc.com>
- <2024111804-doze-reflected-0feb@gregkh>
- <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
+        bh=tVo/3gvYEDND0rD37osncOuM3Oyc9/1OV2rDKG8dQow=;
+        b=XpjSdazJB965BnVQTECKHaxMuLK1Pw3DjcjiaX81v45duBW0uci/PVve7fq9Z1eDWq
+         2upWdA+UR7s+HHX0IlnX/ggtWe4jc7zfhwt2Y4/7vCU2RdkJFvwsm0hMI2C5Pr+rYeJZ
+         rFBaU+K9PpBIwHzhPRNGBGupUcu4h/V7mgAdzQa2GRh7fyRsyK5Sx/5tGkCG2ZT/cpBL
+         nWIUObvr6pJzTzk+eAS0Y1jdGB5HIdQTCIbP2BSZ9XOAiXE0g/z3rsDLmMayMnENWmU0
+         iSuOoAMoqxAo4+uobN2BI/ElfhkNXc6gwndJtbJqkc9B5AaZJIVPjQ9tthOrMuBiIcqg
+         Mxbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1byb6xGGZPN7JMqDkEKnmVgTT9CweJkuC7w4zXQObQ5s8aqCIQZulIZ5q8bB38ksDvcMJyaqqpkQQT7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhRkZRx0kUBJdYwqYmTE9i8YrB9h317bYhyN4yzIgeB2xWECR/
+	1wMwiJsbLI0/Ztj80woAfGzhJ4Tp5bsPDHikGFE/qSyjEXm7jki1Hltb5ooPFg==
+X-Gm-Gg: ASbGnctXwCSxogKaKtb6RbDX3L1Pz328IgMbhzQz8Zlx8AGeq58Ug5gxkO7EaymVvZP
+	hPhJqHVP9QP0Oc991h2Fs6FO8lyIex0UdQaPhXkkEUOYM8W8E48H5RersY16I46hfPSux9fgAkX
+	GpY7UrmHxLFgdqgyb/KQZaxnz6LED52cYxx8xo4f+trslpw/UxRonUyXdnUKXextANG/bW2b3me
+	TeuilKicjrjNXBbTQdKQpW8KR3lzqV3yRWEMyiO3eOM1eh5V0wOxwgPVk3vt4QDmLB4a4HvNlrl
+	SDXdDLqVUhNJ
+X-Google-Smtp-Source: AGHT+IFwDhiiYxF0PoEBXjjEhwecpiAmAyU2t8KXrUR/0ogHKZJ2FPPWiWfHYGwqBhlMKTMk4/OA6g==
+X-Received: by 2002:a17:902:e88a:b0:20b:7ece:322c with SMTP id d9443c01a7336-2129f23b036mr2790085ad.29.1732215270160;
+        Thu, 21 Nov 2024 10:54:30 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:6485:23c4:db3b:3c93])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2129dc12917sm1576015ad.185.2024.11.21.10.54.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 10:54:29 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:54:28 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 3/4] PCI: Decouple D3Hot and D3Cold handling for
+ bridges
+Message-ID: <Zz-B5DSJx6z_FEQ4@google.com>
+References: <20240828155217.jccpmcgvizqomj4x@thinkpad>
+ <20240828210705.GA37859@bhelgaas>
+ <20240829052244.6jekalgshzlbz5hp@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,104 +90,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
+In-Reply-To: <20240829052244.6jekalgshzlbz5hp@thinkpad>
 
-On Thu, Nov 21, 2024 at 12:12:17PM +0530, Ekansh Gupta wrote:
+Hi Manivannan,
+
+On Thu, Aug 29, 2024 at 10:52:44AM +0530, Manivannan Sadhasivam wrote:
+> On Wed, Aug 28, 2024 at 04:07:05PM -0500, Bjorn Helgaas wrote:
+> > On Wed, Aug 28, 2024 at 09:22:17PM +0530, Manivannan Sadhasivam wrote:
+> > > I can, but I do not want these cleanups/refactoring to delay merging
+> > > the patch 4. Are you OK if I just send it standalone and work on the
+> > > refactoring as a separate series?
+> > 
+> > You mean to send patch 4/4 standalone, and do the rest separately?
+> > That sounds reasonable to me.
 > 
-> 
-> On 11/18/2024 7:32 PM, Greg KH wrote:
-> > On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
-> >> Add changes to support debugfs. The fastrpc directory will be
-> >> created which will carry debugfs files for all fastrpc processes.
-> >> The information of fastrpc user and channel contexts are getting
-> >> captured as part of this change.
-> >>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc/Makefile        |   3 +-
-> >>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
-> >>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
-> >>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
-> >>  4 files changed, 205 insertions(+), 3 deletions(-)
-> >>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
-> >>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
-> >>
-> >> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
-> >> index 020d30789a80..4ff6b64166ae 100644
-> >> --- a/drivers/misc/fastrpc/Makefile
-> >> +++ b/drivers/misc/fastrpc/Makefile
-> >> @@ -1,3 +1,4 @@
-> >>  # SPDX-License-Identifier: GPL-2.0
-> >>  obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
-> >> -fastrpc-objs	:= fastrpc_main.o
-> >> \ No newline at end of file
-> >> +fastrpc-objs	:= fastrpc_main.o \
-> >> +		fastrpc_debug.o
-> > Only build this file if debugfs is enabled.
-> >
-> > And again, "debug.c"?
-> I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
-> few more debug specific changes, maybe then I'll need to change the build rules again.
-> >
-> >> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
-> >> new file mode 100644
-> >> index 000000000000..cdb4fc6845a8
-> >> --- /dev/null
-> >> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
-> >> @@ -0,0 +1,156 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +// Copyright (c) 2024 Qualcomm Innovation Center.
-> >> +
-> >> +#include <linux/debugfs.h>
-> >> +#include <linux/seq_file.h>
-> >> +#include "fastrpc_shared.h"
-> >> +#include "fastrpc_debug.h"
-> >> +
-> >> +#ifdef CONFIG_DEBUG_FS
-> > Please put the #ifdef in the .h file, not in the .c file.
-> Ack
-> >
-> >> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
-> >> +{
-> >> +	char cur_comm[TASK_COMM_LEN];
-> >> +	int domain_id, size;
-> >> +	char *debugfs_buf;
-> >> +	struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
-> >> +
-> >> +	memcpy(cur_comm, current->comm, TASK_COMM_LEN);
-> >> +	cur_comm[TASK_COMM_LEN-1] = '\0';
-> >> +	if (debugfs_dir != NULL) {
-> >> +		domain_id = fl->cctx->domain_id;
-> >> +		size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
-> >> +				current->pid, fl->tgid, domain_id) + 1;
-> >> +		debugfs_buf = kzalloc(size, GFP_KERNEL);
-> >> +		if (debugfs_buf == NULL)
-> >> +			return;
-> >> +		/*
-> >> +		 * Use HLOS process name, HLOS PID, fastrpc user TGID,
-> >> +		 * domain_id in debugfs filename to create unique file name
-> >> +		 */
-> >> +		snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
-> >> +			cur_comm, current->pid, fl->tgid, domain_id);
-> >> +		fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
-> >> +				debugfs_dir, fl, &fastrpc_debugfs_fops);
-> > Why are you saving the debugfs file?  What do you need to do with it
-> > that you can't just delete the whole directory, or look up the name
-> > again in the future when removing it?
-> fl structure is specific to a process using fastrpc driver. The reason to save
-> this debugfs file is to delete is when the process releases fastrpc device.
-> If the file is not deleted, it might flood multiple files in debugfs directory.
-> 
-> As part of this change, only the file that is getting created by a process is
-> getting removed when process is releasing device and I don't think we
-> can clean up the whole directory at this point.
+> Ack, thanks.
 
-My 2c: it might be better to create a single file that conains
-information for all the processes instead of that. Or use fdinfo data to
-export process / FD information to userspace.
+Did this ever happen? I ask, because I'm also interested in supporting
+D3hot for bridges on device tree systems, and it seems like there's
+pretty clear agreement that pci_bridge_d3_possible() should not prevent
+it.
 
+If there isn't an updated posting and plan to merge yet, would you mind
+if I submitted one myself, carrying links to your work for
+back-reference?
 
--- 
-With best wishes
-Dmitry
+Also, I had some questions on patch 4, as I think it places too much
+restriction on how the DT should look. So I might tweak it a bit if I
+send a new revision.
+
+Brian
 
