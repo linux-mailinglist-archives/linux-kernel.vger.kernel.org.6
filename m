@@ -1,129 +1,184 @@
-Return-Path: <linux-kernel+bounces-416541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2179D4695
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:21:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF73E9D4699
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:22:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40A66B23338
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:21:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D7E1F22366
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E81148838;
-	Thu, 21 Nov 2024 04:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705B817623F;
+	Thu, 21 Nov 2024 04:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="UOHenyob"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lJ5xHgVr"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC9A2309B6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29044146A63
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732162856; cv=none; b=GjJ5eV1TE7E9OR3DU/dCdSMNaugdSJvIBmGIzWN5Y5fwsxsuIm64yqYJm9TsfHA0KZROMLGPWgd1CkK1s/r/t7QkEw9gSPQ5Fablab7ORTIUUxnPP+LxCq3gmRCRM1KDs020FSW0dYdfMfXOvOXyX6ciES2rGy4Ct150F9NQKWA=
+	t=1732162949; cv=none; b=XNXYp1T9+y/MG/COPe6bw6b0DyMJ5oXqEs+og1zJdgctqzSl0PCHplJg0aDih9DFCVvhJp5koalA81bzf3ZtAbbL9u09FDdks7hEv5p+v1EeaBzdwidraKKiXdhMh8CzGkUwS/laKAIPpe+SqaHDgCHV+0R04R/kdEtuvi07xdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732162856; c=relaxed/simple;
-	bh=aArlU4tpz3uBMTCOrMzLqbpBYisIgpk9/gwftKpZWyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BewvcwC2d/hgBReq4JuvO5/x0SMtZirESQ6ts+nDdLjMpsZXco3d2EB1IjYDzmXzODwjiLBTVc+rJvMDlm3Cu4jO87qL+sZoNbEcQ+iwQz0lhhh2tqaxIL7C3FZ2sQ+rgJ1rwku4Jp+by2O0hMyukZmx2VQgp+i6J849GbiHNC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=UOHenyob; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-6008a.ext.cloudfilter.net ([10.0.30.227])
-	by cmsmtp with ESMTPS
-	id DfWAtlNF3iA19DygStJvhv; Thu, 21 Nov 2024 04:20:48 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id DygStzEDq0YCNDygStPhEH; Thu, 21 Nov 2024 04:20:48 +0000
-X-Authority-Analysis: v=2.4 cv=ZbIbNNVA c=1 sm=1 tr=0 ts=673eb520
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=Da7nlx-0jZ_hJutoApkA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ydtcdRxwB2ZiytdFSHOrOV/wlQ/taDdubAe7sgkSaBk=; b=UOHenyobkWCGV0OSDbMc/AkjGd
-	6zlmguY3AbGGI2osQvoXqWJqBLwBqBau0I+vEyoQnYmxqcTNDQZ7O1Z2ahhdQRK6N/PEi3/Ti08KV
-	QFKVzextbWRwkRgRZsfUDYcWp9P3/mMpzrL0sdqx1YpcXs14FL0i12ZCiJYAgQsT8YQAEnTn7A4by
-	maNx5W9EIc33WTIHgJizn6kjwg6FIZY8iW3SmYdu03tGr+ImlCxTR70NoLzZwlhilxM/onhsUhaZs
-	R59Dah/pxStKb6DrvyR1xvyeyAszVJ5VYfdbyU9jd3+GTnRO+MyDDsEiG0OlexLEdD2xLA20fwRhc
-	4CttglfA==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35326 helo=[10.0.1.115])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1tDygQ-003Ghs-35;
-	Wed, 20 Nov 2024 21:20:46 -0700
-Message-ID: <2bde7bff-a41a-4304-b6dd-8d5d62e9c312@w6rz.net>
-Date: Wed, 20 Nov 2024 20:20:44 -0800
+	s=arc-20240116; t=1732162949; c=relaxed/simple;
+	bh=SpAAQo3l0wT/aBxSUBDG8LR2a69OhY7lZutFyWBoaSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HX7FpLHgw2R/mYEGWnGCwKvS4JEy7gm81cxGutOmwHLy05WUpEiCwItDUq0aeS99ArvgXEbae2glNzVjU627q4kAWhij4mtmOfq1vEgXr/27ceDqxr+0JKhi7kNt3moNo0arAQUPUI/gZ7mIchbXIMiV79moX0v2YOTJAz170Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lJ5xHgVr; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ee6a2ae6ecso3966307b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:22:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732162947; x=1732767747; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cP3Um0hz7Gv16Gtk91dL7DlYT6sIqAVCB2yrXnpMevM=;
+        b=lJ5xHgVrpeJelHGu3h+m+kpP+CpJio03F91Rbvepr+CWIi+9zzppZNlKGNpp8Ygsm3
+         Sjn3pfi0iup6FCY6VRUX/gvK0tToQVNp0Q1qdmUuwb3oyNDO0x+aTkFXUbPDPq2+uMYV
+         6Kkw1xQI1Og8AGiNWJdTkgrqygfd4mt9dNclhjlQwoslCkM4OjYkdA0dHkCZnDnLbXxN
+         1nxctHciljQ+3LXCJ/9o80XgWTNvdelIrPEluX+jd/rnZxIX0fjubBWinpxABfVVzOI3
+         0bzGibPw4zzKvqUUMZGV+0LajHL2/tYGbJNQKduNU2tQl84HB9kxxSB40UKEfbU5hHC1
+         Fthg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732162947; x=1732767747;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cP3Um0hz7Gv16Gtk91dL7DlYT6sIqAVCB2yrXnpMevM=;
+        b=uLLt9t4nyEC56+AecqJ4vY4qk53YL7AEAM7uXrMzvr2VWbRffMzASwKnpShsm1GmXC
+         Dchc5vrlfDOSykCu1taBBpZkHuoStTYUsSoywT/A1kLn01bP9i023EOy1B+WID+ClV1s
+         HuzjDscmdRjLK88I9Z5kgMBaM/aYleQjOd5Vn6fShbHWk+53HobXuCtojk39QnoKVR3d
+         hLWokueE1/VzvHR47VQ5WnSMBhbHGtWBr4+o8/6zgn7mQa3eY1ADrRtbJn9lwfu+XFE8
+         mO8d3SYYES+ZNI4xYnIVzexO7rUb2nJwfY1SNxAjIeky/K2ftFfAQWrgYpg34Q6/DR42
+         DRnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVh+LKgO2kHKsnFd1600CbA5inGCIDR2tsxuhZN85KuKzDlP8UVTIXg8xapa3rglLs0cEJUumcWXfc8lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMpefrFEpKkqDTAjPNq6gDXyGQtqSeC/qxKH3m3e3Womb3ywSA
+	G5J5SxlvgTQOsxLovuTLcTI5kMNNVjWtcSiBBuXqhBB1nqmNtUCBHAOcxXt4CBg=
+X-Google-Smtp-Source: AGHT+IFG/0lmdLf+PuJVUiUVDthedJQkU+yi8kvRYeLAcyp/RSQ9OGzeQL0b0Fr9yTqYmM0khQUKNg==
+X-Received: by 2002:a05:690c:5a15:b0:6ee:5068:7510 with SMTP id 00721157ae682-6eecc57b073mr20304047b3.26.1732162946630;
+        Wed, 20 Nov 2024 20:22:26 -0800 (PST)
+Received: from ghost ([50.146.0.9])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee71341e4dsm25749277b3.90.2024.11.20.20.22.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 20:22:25 -0800 (PST)
+Date: Wed, 20 Nov 2024 20:22:23 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, guoren <guoren@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFT 00/16] perf tools: Use generic syscall scripts for
+ all archs
+Message-ID: <Zz61f02p8s52G6ba@ghost>
+References: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
+ <3b56fc50-4c6c-4520-adba-461797a3b5ec@app.fastmail.com>
+ <Zyk9hX8CB_2rbWsi@ghost>
+ <CAP-5=fUdZRbCp+2ghEUdp+qJ1BuMDuTtw9R+dFAaom+3oqQV_g@mail.gmail.com>
+ <ZylaRaMqEsEjYjs6@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241120125629.623666563@linuxfoundation.org>
-Content-Language: en-US
-From: Ron Economos <re@w6rz.net>
-In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1tDygQ-003Ghs-35
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:35326
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 54
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJ3c5h3/nCkkQb5SFRTor9gRoVW4fSfuI/hdKmvSKHDRxIAoyeZep1BCvD81kPXjAtc9usF/506jONeScMornsHIgGKdRZs1Degxi97Ld9b4IuQa7kOp
- nmswi7TVNUk4kkF94xboVU2/a593nxWWWsHpm/5I8Yoae/pIF6z24hm9R0s/DzmzDYK8P3v+Pri6gNC17jDMbqVBTs8JHQN06mc=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZylaRaMqEsEjYjs6@ghost>
 
-On 11/20/24 04:56, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.63 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.63-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Nov 04, 2024 at 03:35:33PM -0800, Charlie Jenkins wrote:
+> On Mon, Nov 04, 2024 at 02:03:28PM -0800, Ian Rogers wrote:
+> > On Mon, Nov 4, 2024 at 1:32 PM Charlie Jenkins <charlie@rivosinc.com> wrote:
+> > >
+> > > On Mon, Nov 04, 2024 at 10:13:18PM +0100, Arnd Bergmann wrote:
+> > > > On Mon, Nov 4, 2024, at 22:06, Charlie Jenkins wrote:
+> > > > > Standardize the generation of syscall headers around syscall tables.
+> > > > > Previously each architecture independently selected how syscall headers
+> > > > > would be generated, or would not define a way and fallback onto
+> > > > > libaudit. Convert all architectures to use a standard syscall header
+> > > > > generation script and allow each architecture to override the syscall
+> > > > > table to use if they do not use the generic table.
+> > > > >
+> > > > > As a result of these changes, no architecture will require libaudit, and
+> > > > > so the fallback case of using libaudit is removed by this series.
+> > > > >
+> > > > > Testing:
+> > > > >
+> > > > > I have tested that the syscall mappings of id to name generation works
+> > > > > as expected for every architecture, but I have only validated that perf
+> > > > > trace compiles and runs as expected on riscv, arm64, and x86_64.
+> > > > >
+> > > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > > >
+> > > > Thanks for doing this, I had plans to do this myself, but hadn't
+> > > > completed that bit so far. I'm travelling at the moment, so I'm
+> > > > not sure I have time to look at it in enough detail this week.
+> > > >
+> > > > One problem I ran into doing this previously was the incompatible
+> > > > format of the tables for x86 and s390, which have conflicting
+> > > > interpretations of what the '-' character means. It's possible
+> > > > that this is only really relevant for the in-kernel table,
+> > > > not the version in tools.
+> > > >
+> > >
+> > > I don't think that is an issue for this usecase because the only
+> > > information that is taken from the syscall table is the number and the
+> > > name of the syscall. '-' doesn't appear in either of these columns!
+> > 
+> > This is cool stuff. An area that may not be immediately apparent for
+> > improvement is that the x86-64 build only has access to the 64-bit
+> > syscall table. Perhaps all the syscall tables should always be built
+> > and then at runtime the architecture of the perf.data file, etc. used
+> > to choose the appropriate one. The cleanup to add an ELF host #define
+> > could help with this:
+> > https://lore.kernel.org/linux-perf-users/20241017002520.59124-1-irogers@google.com/
+> 
+> Oh that's a great idea! I think these changes will make it more seamless
+> to make that a reality.
+> 
+> > 
+> > Ultimately I'd like to see less arch code as it inherently makes cross
+> > platform worker harder. That doesn't impact this work which I'm happy
+> > to review.
+> 
+> Yeah I agree. Reducing arch code was the motivation for this change.
+> There was the issue a couple weeks ago that caused all architectures
+> that used libaudit to break from commit 7a2fb5619cc1fb53 ("perf trace:
+> Fix iteration of syscall ids in syscalltbl->entries"), so this change
+> will eliminate that source of difference between architectures.
+> 
+> - Charlie
+> 
+> > 
+> > Thanks,
+> > Ian
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Let me know if you have any feedback on this series!
 
-Tested-by: Ron Economos <re@w6rz.net>
+- Charlie
 
 
