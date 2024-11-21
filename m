@@ -1,81 +1,53 @@
-Return-Path: <linux-kernel+bounces-417258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB7729D5188
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:22:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B92A9D51B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7067D28217A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1A96B21CFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0762019D881;
-	Thu, 21 Nov 2024 17:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N5eNftqQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE911A0704;
+	Thu, 21 Nov 2024 17:27:57 +0000 (UTC)
+Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E8613E898;
-	Thu, 21 Nov 2024 17:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68B010A3E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732209721; cv=none; b=qoKD3dm4XrZjkzA7FhE8Lk4o6K/MNajX9qmp50y7TCevnqWU8iWqJDERVf5ZU8qBYI4k0sgIbIP3Z/7JSchqDC2lJQHeexZWT9e+wAawB2buD/kIT2wro3/yl5zLD1BwpWwe/nsCLkXeFRKgFTAbJpRR2sd8EpdhlauxLKcgMAk=
+	t=1732210076; cv=none; b=Q3bxnj+4wKj+w14nOHxM4bsd7+/J19l/k3cCK1Xspln6jGn4OIqldHDREZrNfxDxI45gLwgxRk6hszQGnrPQOIN28d8Cd1AYF4/o3sXTbiYu+vL2v4s7WvdFE2KkI8wkHQ6B5aHHMALmjANnWXMi58/lMiqcYvdgrh3mfb5zTqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732209721; c=relaxed/simple;
-	bh=uZzvCXceCCMGBokvz6i2+tM5IXiCzvpjR3wsV/2zti0=;
+	s=arc-20240116; t=1732210076; c=relaxed/simple;
+	bh=coLAmp4PA2TmGaKqMW8KKOMgz9UkZTFIV0rBEtNmMkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCWfpaskVitpLkFRakXhtm9e7K0VFI+9ZAtF6hOwuRCxgFYn8Bnf/4oN4ydZdRZavPly26pz+ZIS8hfwBNBb0ebqr7fAtVlWexBhKCFB4UeGHXq+HuVfcMavEszsDwsiIWcks23rzwuarh8c22+3bEyo3rat1Ci1HQ+DDH/s45c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N5eNftqQ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732209719; x=1763745719;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uZzvCXceCCMGBokvz6i2+tM5IXiCzvpjR3wsV/2zti0=;
-  b=N5eNftqQp2QIDK6kzjDZvfXl8nNjtZKKnB41gvXdmmIz+5yGCU1fyrJZ
-   GRmijWhuF7VwIFsbTvdvJ+NHvOz3PABQrsZNclD01+4z236aosMfQWQXt
-   hiCjyMR9brT1JFV+6c7GjvWdTLsRhQj1gTh+ZJ0Glsws2Na9zz9vOLxE3
-   7dbK237uQv+m9tPjrJcoPuAWKTbanID4JJOTwGX3L583r0vuRxJicVdTt
-   Wb0E9pweN6luC7zMdJrQ7nuJI9AmlttocNajpD9Jh72c0ek7hf4ACBuAU
-   dH4CkEXTRwU8rppElpC0s0M52N53o/UsrXlPEO1Rr85bBZG3I4FmJi/u/
-   w==;
-X-CSE-ConnectionGUID: hlVpV4JNSYWq6y1hlYn56g==
-X-CSE-MsgGUID: XLoK/LtGRwy3Zh8YdeaYXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32580564"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32580564"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:21:59 -0800
-X-CSE-ConnectionGUID: XpRLyIZlQoqaQWkAYrTjjA==
-X-CSE-MsgGUID: zPX9LWEsSpiCTXZsOPprLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="113597678"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:21:59 -0800
-Date: Thu, 21 Nov 2024 09:21:58 -0800
-From: "Luck, Tony" <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v9 1/9] x86/resctrl: Introduce resctrl_file_fflags_init()
- to initialize fflags
-Message-ID: <Zz9sNkBj3Mpv2vO4@agluck-desk3>
-References: <20241114001712.80315-1-tony.luck@intel.com>
- <20241114001712.80315-2-tony.luck@intel.com>
- <dd1d284f-2138-4e63-8bc5-2e55ff9f0a2d@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEX71uz4zzzL3LrDOq4uKZYmQxvFItwfqauGwDXdAcrKSo3Loepv3UQKhys/Ixf0C6xLmilZWBuXVoiV1h2YVoL1hN0kfffFdthMmCMUWVSx9CpTdemMAwMZwEdyeKjCtD8G8VZ7lm58lQElDoWw+7v9GqsM6k4A2cIXbXsFVAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
+Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
+	id DD8375A38F9; Thu, 21 Nov 2024 17:22:20 +0000 (UTC)
+Date: Thu, 21 Nov 2024 17:22:20 +0000
+From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Nir Lichtman <nir@lichtman.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [GIT PULL] execve updates for v6.13-rc1
+Message-ID: <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
+References: <202411190900.FE40FA5@keescook>
+ <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
+ <87jzcxv227.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,48 +56,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dd1d284f-2138-4e63-8bc5-2e55ff9f0a2d@intel.com>
+In-Reply-To: <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 04:38:15PM -0800, Reinette Chatre wrote:
-> Hi Tony,
+On Wed, Nov 20, 2024 at 06:23:55PM -0800, Linus Torvalds wrote:
+> On Wed, 20 Nov 2024 at 16:55, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >
+> > __set_task_comm cannot be called with bprm->file->f_dentry
+> > unconditionally.
 > 
-> On 11/13/24 4:17 PM, Tony Luck wrote:
-> > From: Babu Moger <babu.moger@amd.com>
-> > 
-> > thread_throttle_mode_init() and mbm_config_rftype_init() both initialize
-> > fflags for resctrl files.
-> > 
-> > Adding new files will involve adding another function to initialize
-> > the fflags. This can be simplified by adding a new function
-> > resctrl_file_fflags_init() and passing the file name and flags
-> > to be initialized.
-> > 
-> > Consolidate fflags initialization into resctrl_file_fflags_init() and
-> > remove thread_throttle_mode_init() and mbm_config_rftype_init().
-> > 
-> > Signed-off-by: Babu Moger <babu.moger@amd.com>
-> > Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> No, no. Only for the "no path" case.
 > 
-> Please place "Signed-off-by" tag before "Reviewed-by" tag. For reference,
-> "Ordering of commit tags" in Documentation/process/maintainer-tip.rst
-
-Hi Reinette,
-
-I had misremembered what that Documentation file said. There is a
-section that describes keeping the Signed-off-by: tags in the order
-they were applied so that the commit comment describes the path that
-the patch took before final acceptance. I thought that ordering applied
-to other tags.
-
-But while I was there refreshing my memory I also noted the section
-about documenting changes made when adopting patches from other
-people. So I've added:
-
-[Tony: Drop __init attribute so resctrl_file_fflags_init() can be used
-at run time]
+> > The reason bprm->file->f_dentry.dentry was abandoned were concerns
+> > about breaking userspace.
 > 
-> Reinette
+> There's no way it can break user space considering that right now
+> comm[] ends up being just garbage.
 
--Tony
+It'll "break userspace" in the sense the the resulting program name
+visible in /proc/self/{comm,stat,status} would be different than the
+expected value. Currently userspace is not using fexecve because this
+string is "just garbage". We'd very much like to start using fexecve,
+but we cannot do this (in the general case) if that'll result in a
+changed program name. If we change the value from the current
+(garbage) value to something that doesn't provide identical behaviour
+between execve and fexecve, fexecve will unused.
+
+As Eric wrote, there are various programs which are symlinked.
+/etc/alternatives is one group, but we also have "multicall binaries"
+which present different behaviour depending on the name.
+Some of those use argv[0], but other may use comm.
+We really need the name that the user called the program as,
+not the name after symlink chasing.
+
+Even if we end up copying a string from userspace unnecessarilly,
+does this matter? execve is a heavyweight operation and copying a
+a dozen bytes extra hardly matters.
+
+Zbyszek
 
