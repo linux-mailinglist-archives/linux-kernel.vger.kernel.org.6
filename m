@@ -1,79 +1,189 @@
-Return-Path: <linux-kernel+bounces-416458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818B79D4537
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2077E9D453C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:17:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C85281313
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:15:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E4128130E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E78245979;
-	Thu, 21 Nov 2024 01:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1CA33998;
+	Thu, 21 Nov 2024 01:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8IT7Fse"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTfy/D8l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHoe/EPT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="WTfy/D8l";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="sHoe/EPT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CBD1BF58;
-	Thu, 21 Nov 2024 01:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5136729B0;
+	Thu, 21 Nov 2024 01:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732151734; cv=none; b=Q58nPl2VMXEMEkPPyKSjRSf5d2Zyz0DvhmLoLeu1ACJ0Ajgfx4nldgKkbWxDrbyyK/2tGVhuDx1y3IJwru6VmeBGlS+zZEc8m9F5Om4ofHg+nyShS1BE7hFLvmCalP/x2HlLmwCgFRa3IZxwVYBPa0/8Tn3mby3gaonw+kpAVKc=
+	t=1732151847; cv=none; b=Ks3yRs5rj6c1aXp/Mg8NtGIJHfD8REf1BIcD6P0KAJ6iUbLVIdlzVft9jXj4fRBgSHVIXIj8TCAyLY8lJsG2rEV/tAUHwCKrbNwNLXRFJb7WFy2GysSJ30hqHvKaz4gb+7d5tus5iEnUeoOOiO1rRJ0mJ/Iu2xVVX3OQDncP/iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732151734; c=relaxed/simple;
-	bh=PSgtjaGOCr/DfqS6AkjrSTdXEqqEScdjYghHEjGWkiY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mTFFvDMcmaS1dVgml0YL5yBTEJPwilzVLV5A3fqb5rL5YCaheGugtLfIeDvprhpmkEo0oT+wnQUbn7VPPI6RsvBXAFsmIceww/0oXRUIms5Gvdu+1OEjQwvCzoAnwnv/UyiLhWne2mTn16bP8fDAB4S/ekkbAOPNzicCnWsW2TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8IT7Fse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE197C4CECD;
-	Thu, 21 Nov 2024 01:15:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732151733;
-	bh=PSgtjaGOCr/DfqS6AkjrSTdXEqqEScdjYghHEjGWkiY=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=C8IT7Fse0pcSY+4Houfs00gbd8dCAMQ7KYG7CocpD0kNEbWVm2ADhIrYuAJ89iEja
-	 R7lXAHWr7OKfoMu2FpV5XLKrZ5qwN9wk6QeCoyxU5s9rVXg6jcISU0IMIAqwtrFyk+
-	 6MmLedsuvt5PKSrNvUpjheRPSllhFvUGRdj8GDxgw0MTj5NSiAFW58BlJk6nNoUeuD
-	 iix1IvTpibYXdsgnF847utnzlmkCw5yzoekkfrO3E74dwVW858TghOOvFO7VooXtcG
-	 fyyA+jvzy9deEaMBSLU4y0G/0yAgQXt3gM0IfOkRX46Y/LRl3kA5SuTjnlW6uItULm
-	 BJhjELOxFlWhw==
-Message-ID: <1364c01c-ecd7-4946-9646-a3e1b406006c@kernel.org>
-Date: Thu, 21 Nov 2024 09:15:29 +0800
+	s=arc-20240116; t=1732151847; c=relaxed/simple;
+	bh=vyXbvtxhyPtbV5ayWzvanIDpgaq/AHNMfKErujSAQMo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mMZ14QZhB8FN2/5krSssT3jSBx9NwNqxF6mUb4mkf4NxLuyOB57/z8P08xo1YL5MDIGpjQEsx9qzkiEQ65htgBqsb9DUv+UfGrTmTaSuath9tSMHlHkXC6MOW3p9Rd1h45WEfOmhhAQh146gmZseSSImrvLa7ZlA3q3qdr7WUSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTfy/D8l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sHoe/EPT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=WTfy/D8l; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=sHoe/EPT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 33ACB218E8;
+	Thu, 21 Nov 2024 01:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732151843;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
+	b=WTfy/D8lXXnS1RCYj/kN8ybXIRGdK9y77RgIIzyC2F+xZxevqn2DN5XCMEVnC/Do6cMl0H
+	M2AJae9CvW7tMxtUVDf0Ipiqi8tjNeii2nWDh9zG2MCCsJ8B8NebR1eH2oOVVAu9q8jRFX
+	271J45VO7uiuqFTr+2DFW7/HtOhaQy4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732151843;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
+	b=sHoe/EPT2FszmRf+WJP9eUtps0tEwuPNJ1TVh409aaJnFORCnA18Tw2+KbajPc5Kla0CRO
+	QcJELP0LMHFpTNDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732151843;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
+	b=WTfy/D8lXXnS1RCYj/kN8ybXIRGdK9y77RgIIzyC2F+xZxevqn2DN5XCMEVnC/Do6cMl0H
+	M2AJae9CvW7tMxtUVDf0Ipiqi8tjNeii2nWDh9zG2MCCsJ8B8NebR1eH2oOVVAu9q8jRFX
+	271J45VO7uiuqFTr+2DFW7/HtOhaQy4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732151843;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qLQJlwjvQ2Dbsxi9xrvB3E+w9FqEmidg2MsLHAlaruU=;
+	b=sHoe/EPT2FszmRf+WJP9eUtps0tEwuPNJ1TVh409aaJnFORCnA18Tw2+KbajPc5Kla0CRO
+	QcJELP0LMHFpTNDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93B9A1376E;
+	Thu, 21 Nov 2024 01:17:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cNZzHyKKPme0XgAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Thu, 21 Nov 2024 01:17:22 +0000
+Date: Thu, 21 Nov 2024 02:17:20 +0100
+From: Petr Vorel <pvorel@suse.cz>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
+Message-ID: <20241121011720.GA69389@pevik>
+Reply-To: Petr Vorel <pvorel@suse.cz>
+References: <20241120204125.52644-1-pvorel@suse.cz>
+ <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Daniel Rosenberg <drosen@google.com>,
- stable@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime
- mount option parsing"
-To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <20241112010820.2788822-1-jaegeuk@kernel.org>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241112010820.2788822-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
+X-Spam-Score: -3.50
+X-Spamd-Result: default: False [-3.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	HAS_REPLYTO(0.30)[pvorel@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,linaro.org,linux-foundation.org,lists.freedesktop.org,gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_EQ_FROM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 2024/11/12 9:08, Jaegeuk Kim via Linux-f2fs-devel wrote:
-> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
-> 
-> The above commit broke the lazytime mount, given
-> 
-> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
-> 
-> CC: stable@vger.kernel.org # 6.11+
-> Signed-off-by: Daniel Rosenberg <drosen@google.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> On Thu, Nov 21, 2024 at 5:41 AM Petr Vorel <pvorel@suse.cz> wrote:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> > It will be used in the next commit for DRM_MSM.
 
-Thanks,
+> > Suggested-by: Rob Clark <robdclark@gmail.com>
+> > Signed-off-by: Petr Vorel <pvorel@suse.cz>
+> > ---
+> > Changes v3->v4:
+> > * Move definition to the end of the file
+
+
+> I prefer to not check the tool.
+
+Ack.
+
+> Why don't you install python3?
+
+Everybody installs it when it's required, the question is how to inform about
+the dependency.
+
+There build environments are minimal environments:
+* chroot (e.g. cross compilation)
+* container
+
+These are used by both developers and distros.
+
+Kind regards,
+Petr
+
+> >  init/Kconfig | 3 +++
+> >  1 file changed, 3 insertions(+)
+
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index fbd0cb06a50a..c77e45484e81 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -2047,3 +2047,6 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+> >  # <asm/syscall_wrapper.h>.
+> >  config ARCH_HAS_SYSCALL_WRAPPER
+> >         def_bool n
+> > +
+> > +config HAVE_PYTHON3
+> > +       def_bool $(success,$(PYTHON3) -V)
+> > --
+> > 2.45.2
 
