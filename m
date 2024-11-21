@@ -1,270 +1,140 @@
-Return-Path: <linux-kernel+bounces-416906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BC19D4C3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:50:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE9F9D4C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EACFD1F22B93
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:50:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFC7EB21E7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D4D1D27A0;
-	Thu, 21 Nov 2024 11:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E187E1D0E06;
+	Thu, 21 Nov 2024 11:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eL6cOxuP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DfPyXL+N";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eL6cOxuP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DfPyXL+N"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jCciykZI"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DFC1C728F;
-	Thu, 21 Nov 2024 11:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C061C728F
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189799; cv=none; b=ZDVeEG41n7TTxdztmmrLkE9uEWgHYr7Ccfk+qlcasrQ7yc+l6g4vegVLvg5o0M5vALNfqPFcEVoc3eNkFjvVAKvAQACf+TBCEc812i9cPzoVdNkpKR5R7a+icnsvlu9ZlZhg9aEliwCBohysrMTJv0pPOSyW83q18d5cm4mr8ys=
+	t=1732189840; cv=none; b=RJAtF97bP/c/bpfkJGeejz4jVvGT8qSAxL439MW7MmKCxvyaci98Ouf8kiImMN6u22JxhMG5lx/NEoymNSPohLlA9vM5o3ULKd+pc61xk9qXI9jU47CKh3UpdVb6KCQJCl2ZHsIY5ggM2+tVO1S0i5CPC8t0WuBE181hvnUFS5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189799; c=relaxed/simple;
-	bh=Gbdc7YRc/+Gju6ZZDPX+O06gNSLXRayRDP5dM53siL8=;
+	s=arc-20240116; t=1732189840; c=relaxed/simple;
+	bh=c2YMnfLupFA8rEp9gwNfpk6zidAFLmRJoFVV2Zo14Xk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W2ideNgfozUXAJuDCZh/tP/3W6AFnqo47N9Ckr+458DbeMTXJa4p9jIowRuZ/AhLmTmvbGdZQp6aQp19RMqsbetpJh52xD3ht9/g+xvU7B3LKdomrmO+wLcQa4QFy5HwMVhooVp6ittwcrynNJ573ZmUp+u+b3DC44kzGqEx774=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eL6cOxuP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DfPyXL+N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eL6cOxuP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DfPyXL+N; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESOrmfi3gCMrG45sNaUPiMkx5EkH/RTP95zTYxY4dQPjvx+SjOY8qsa5Dv01s9sd8S+5f3sgk5JFl7HrVwGrtSNpU7DVIQieZahVCM/MarABtBat+rd+GjOYfuQC0uSruGjLdcp5MjpeFb02Z3o6HjQzdvzI5eguOVWUTyfmnec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jCciykZI; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3D41B40E0263;
+	Thu, 21 Nov 2024 11:50:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id fLpGkduEaatw; Thu, 21 Nov 2024 11:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732189827; bh=17zSb8aYTcL4k10y5LSBGllYzpPsKz6juvWhNwQyQnY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jCciykZIaXcSfax2oTiL/AHDcWp/6zwpmpENlLcBtPJi4PhXm3OzfyymJmZP+KPu/
+	 FmkdsQpwEdzIB2K7HgMtHJj7h2xdGnhI/w/TZHxKtsqrfWiOjY6xVLTmzdjuqL8ZxQ
+	 DpMNwJVWwxoU2C5sH7hcS27WezIsgqbQm2B7o60Qdl3h4bk4A6nVgbEF+vQl45pJ32
+	 CUE0uNWztqnGHzq1M4OLof7vd+cuZSLAYdrExlyjLzPxVisP3nSUexKbTCPJrrYgGX
+	 UifPUBFhiJhKORCt1X9TXfPYZI0r1a7ZeCr9DyV8muro6qDM48ykAeR45akz43MtoX
+	 htNzCC+eCOE/d5r7HFAG1yGuOuuPtrxAJBXupgGBMPAFrakPz7v/jTkF2m9AzXPh0N
+	 6DQC6aFSqVIxQVHHP5wCZKnETSsS3mzLbzcU4LTpXGiH49yyf0WDNarDcLarM178xG
+	 oZyLDGO/7CJkIepMILrLDw79TFda3NH95waLQm4hUzTRvbMWA0VW7BukvQzO9Xl/9L
+	 XX/EzBe84rC1FljjBmbKKqv8r9lyF3+Nf40N70ddYxs99pr346ng6730Bab/Rv1v5B
+	 j21YIHV4iQBdDe64pBeSp4bAoF2xTBThj2c/5cDggmsZK65+M0YhYgh5Y6yCFNLh6U
+	 BAAIlDE8V00NgOkoIWryTe2M=
+Received: from zn.tnic (p200300ea9736a1a8329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a1a8:329c:23ff:fea6:a903])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 59E541F800;
-	Thu, 21 Nov 2024 11:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732189795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
-	b=eL6cOxuP9bDelgonDV1jZ2wcdwkl1OHB24gfKYdtITJ81pRWhsgGz1d7DIraCwPCN2z8QC
-	cQwB1UJgQD86Z/fdhZjb7pY93oNtQ4K4sIoVA5lS0uierVrh22brNUjHeJ1dp+kZHqVV1y
-	/PmXPjoLf8FWAifs32H91vr4VregkUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732189795;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
-	b=DfPyXL+NfV2NK01c8fD3yGDfcmKtWjl2OyVz6xaI7ADqdO6+hvMw2kYjytRf44D9P/Qd99
-	ANXBVacXrm7sBHDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732189795; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
-	b=eL6cOxuP9bDelgonDV1jZ2wcdwkl1OHB24gfKYdtITJ81pRWhsgGz1d7DIraCwPCN2z8QC
-	cQwB1UJgQD86Z/fdhZjb7pY93oNtQ4K4sIoVA5lS0uierVrh22brNUjHeJ1dp+kZHqVV1y
-	/PmXPjoLf8FWAifs32H91vr4VregkUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732189795;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GQJmzcEK5Mg1r3/eEDfuHI1PwGO7fARlwgDUnl7dBU0=;
-	b=DfPyXL+NfV2NK01c8fD3yGDfcmKtWjl2OyVz6xaI7ADqdO6+hvMw2kYjytRf44D9P/Qd99
-	ANXBVacXrm7sBHDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 49BB113927;
-	Thu, 21 Nov 2024 11:49:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id reK2EWMeP2dJCQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 11:49:55 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EA8D4A089E; Thu, 21 Nov 2024 12:49:50 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:49:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Jim Zhao <jimzhao.ai@gmail.com>
-Cc: jack@suse.cz, akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	willy@infradead.org
-Subject: Re: [PATCH v2] mm/page-writeback: raise wb_thresh to prevent write
- blocking with strictlimit
-Message-ID: <20241121114950.5ie64l3lmi3dkoz5@quack3>
-References: <20241113100735.4jafa56p4td66z7a@quack3>
- <20241119114444.3925495-1-jimzhao.ai@gmail.com>
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9954940E015F;
+	Thu, 21 Nov 2024 11:49:57 +0000 (UTC)
+Date: Thu, 21 Nov 2024 12:49:52 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Eric Chan <ericchancf@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Kai Huang <kai.huang@intel.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	"Maciej W. Rozycki" <macro@orcam.me.uk>
+Subject: Re: [PATCHv2 2/2] x86/mm: Make memremap(MEMREMAP_WB) map memory as
+ encrypted by default
+Message-ID: <20241121114952.GCZz8eYEVa3yubYQzO@fat_crate.local>
+References: <20241021105723.2707507-1-kirill.shutemov@linux.intel.com>
+ <20241021105723.2707507-3-kirill.shutemov@linux.intel.com>
+ <20241118164616.GAZztvWGs9cOV8t20_@fat_crate.local>
+ <s4frmqwtuvclinuu7ttyzfpe7bj7hju5xgt6sxzy3gyt3prr62@rrgvhkv4lgwv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
-X-Spam-Score: -2.30
-X-Spam-Flag: NO
+In-Reply-To: <s4frmqwtuvclinuu7ttyzfpe7bj7hju5xgt6sxzy3gyt3prr62@rrgvhkv4lgwv>
 
-On Tue 19-11-24 19:44:42, Jim Zhao wrote:
-> With the strictlimit flag, wb_thresh acts as a hard limit in
-> balance_dirty_pages() and wb_position_ratio().  When device write
-> operations are inactive, wb_thresh can drop to 0, causing writes to be
-> blocked.  The issue occasionally occurs in fuse fs, particularly with
-> network backends, the write thread is blocked frequently during a period.
-> To address it, this patch raises the minimum wb_thresh to a controllable
-> level, similar to the non-strictlimit case.
-> 
-> Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
-> ---
-> Changes in v2:
-> 1. Consolidate all wb_thresh bumping logic in __wb_calc_thresh for consistency;
-> 2. Replace the limit variable with thresh for calculating the bump value,
-> as __wb_calc_thresh is also used to calculate the background threshold;
-> 3. Add domain_dirty_avail in wb_calc_thresh to get dtc->dirty.
+On Tue, Nov 19, 2024 at 10:21:05AM +0200, Kirill A. Shutemov wrote:
+> Sure, we can workaround every place that touches such ranges.
 
-Since the odd value of BdiDirryThresh got explained (independent cosmetic
-bug), feel free to add:
+Every place? Which every place? I thought this is only an EISA issue?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Then clearly your changelogs need to expand considerably more what we're
+*really* addressing here.
 
-								Honza
+> Or we can address problem at the root and make creating decrypted/shared
+> mappings explicit.
 
-> ---
->  mm/page-writeback.c | 48 ++++++++++++++++++++++-----------------------
->  1 file changed, 23 insertions(+), 25 deletions(-)
-> 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index e5a9eb795f99..8b13bcb42de3 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
->  				      unsigned long thresh)
->  {
->  	struct wb_domain *dom = dtc_dom(dtc);
-> +	struct bdi_writeback *wb = dtc->wb;
->  	u64 wb_thresh;
-> +	u64 wb_max_thresh;
->  	unsigned long numerator, denominator;
->  	unsigned long wb_min_ratio, wb_max_ratio;
->  
-> @@ -931,11 +933,27 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
->  	wb_thresh *= numerator;
->  	wb_thresh = div64_ul(wb_thresh, denominator);
->  
-> -	wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
-> +	wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
->  
->  	wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
-> -	if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
-> -		wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-> +
-> +	/*
-> +	 * It's very possible that wb_thresh is close to 0 not because the
-> +	 * device is slow, but that it has remained inactive for long time.
-> +	 * Honour such devices a reasonable good (hopefully IO efficient)
-> +	 * threshold, so that the occasional writes won't be blocked and active
-> +	 * writes can rampup the threshold quickly.
-> +	 */
-> +	if (thresh > dtc->dirty) {
-> +		if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
-> +			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
-> +		else
-> +			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
-> +	}
-> +
-> +	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-> +	if (wb_thresh > wb_max_thresh)
-> +		wb_thresh = wb_max_thresh;
->  
->  	return wb_thresh;
->  }
-> @@ -944,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
->  {
->  	struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
->  
-> +	domain_dirty_avail(&gdtc, true);
->  	return __wb_calc_thresh(&gdtc, thresh);
->  }
->  
-> @@ -1120,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
->  	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
->  		long long wb_pos_ratio;
->  
-> -		if (dtc->wb_dirty < 8) {
-> -			dtc->pos_ratio = min_t(long long, pos_ratio * 2,
-> -					   2 << RATELIMIT_CALC_SHIFT);
-> -			return;
-> -		}
-> -
->  		if (dtc->wb_dirty >= wb_thresh)
->  			return;
->  
-> @@ -1196,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
->  	 */
->  	if (unlikely(wb_thresh > dtc->thresh))
->  		wb_thresh = dtc->thresh;
-> -	/*
-> -	 * It's very possible that wb_thresh is close to 0 not because the
-> -	 * device is slow, but that it has remained inactive for long time.
-> -	 * Honour such devices a reasonable good (hopefully IO efficient)
-> -	 * threshold, so that the occasional writes won't be blocked and active
-> -	 * writes can rampup the threshold quickly.
-> -	 */
-> -	wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
->  	/*
->  	 * scale global setpoint to wb's:
->  	 *	wb_setpoint = setpoint * wb_thresh / thresh
-> @@ -1459,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
->  	 * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
->  	 * Hence, to calculate "step" properly, we have to use wb_dirty as
->  	 * "dirty" and wb_setpoint as "setpoint".
-> -	 *
-> -	 * We rampup dirty_ratelimit forcibly if wb_dirty is low because
-> -	 * it's possible that wb_thresh is close to zero due to inactivity
-> -	 * of backing device.
->  	 */
->  	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
->  		dirty = dtc->wb_dirty;
-> -		if (dtc->wb_dirty < 8)
-> -			setpoint = dtc->wb_dirty + 1;
-> -		else
-> -			setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
-> +		setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
->  	}
->  
->  	if (dirty < setpoint) {
-> -- 
-> 2.20.1
-> 
+What is the problem? That KVM implicitly converts memory to shared? Why does
+KVM do that an can it be fixed not to?
+
+Doesn't sound like the guest's problem.
+
+Or maybe this needs a lot more explanation what we're fixing here.
+
+> Such mappings have both functional (as we see here) and security
+> implications (VMM can manipulate the guest memory range). We should not
+> create decrypted mappings by default on legacy interfaces.
+
+So we're getting closer.
+
+The changes themselves are fine but your text is missing a lot about what
+we're fixing here. When I asked, I barely scratched the surface. So can we
+elaborate here pls?
+
+Thx.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
