@@ -1,165 +1,141 @@
-Return-Path: <linux-kernel+bounces-416972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00349D4D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:44:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6E79D4D19
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CD1B27506
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:44:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 877FEB2214A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B649D1D6DB6;
-	Thu, 21 Nov 2024 12:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4421D515F;
+	Thu, 21 Nov 2024 12:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lDNs9vWS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHMN33yc"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D791D3644
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99241C6F76;
+	Thu, 21 Nov 2024 12:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732193043; cv=none; b=i3a9ePjzfBlPw4tmdEX5lvVJcI694wW8F3qgRyXS5bR7E7/bBSdY+Ri0jHGnTHxX5kMJladfkS3I7CIBgFACKdzhHAUDVMpDJJbkgVq9YrmLZz6bRJOrTlgHt2D/ZboTqN8YgwBblWihR7U50E9MvAYiBj2tutxpoj99o+BxgT0=
+	t=1732193244; cv=none; b=oF0w0cJJg7PrOK4ALkAafMil13yK+wzLVpFxBnvx480B/a7fb/BKZhp8QqXdDqcEs2QSDfHctM/SejbPhA/F4/40ABGelZrLYxxJz+NsIjnHK0N87ebr1fZXlGmC99O/Bj6dVfmOTDYbQqDDgyp13E2y+ri5Z8/nH4haBegnxYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732193043; c=relaxed/simple;
-	bh=53esgrAnmt6HNtLTmQiYxPj8MuMWJ+xwI5VIL+xLOCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QokFJSm/OQeGuuH6FyiBV9wU66QfBOX91X//ZEuGNr6u2Yk43vN/lrL2q/YflQuPn6yrbe+F1BilsucXDQiHsjTlg3xHbC6mC9uMYVAZOlqz9ie/W+eGebk5gJq6xPpWL+Cne9DAOwf0p6bXJ3aWwL91eFH+6NrRbUqkOuENkNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lDNs9vWS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2754C4CECD;
-	Thu, 21 Nov 2024 12:44:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732193042;
-	bh=53esgrAnmt6HNtLTmQiYxPj8MuMWJ+xwI5VIL+xLOCs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=lDNs9vWSfDcs8G9k9m6Yn/Tl3559xijA5O3NvhmVev7fKIsUH1khLPhske/Ozx8Gw
-	 B756dzzTAEyq00UTqARZtVlJrSbMKbRpsNYWrwxuDn5V9DGxr9wr4q6nIOtFZ/dMGC
-	 xqkuKuRJEjuG7lRxAvOxnGv3xbKd2PQ+6fH+Sluy6emHmXtwbX4xthyoVCIeV6LOW9
-	 eDDWVbC+xx2Q1DqY/XTmEt7kwZ096lV6dj/5334fca6FcDsAH9npBpu8w0Y07jZZbJ
-	 U3+Sw1gNTfRIsY3ZaPqUc9CI15ZbhNiYoXjf+mNSbK5mCs8ymHgPUrlE59YXSf0vgo
-	 R/0GFsVTYBLGg==
-Date: Thu, 21 Nov 2024 12:43:58 +0000
-From: Lee Jones <lee@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Daniel Thompson <danielt@kernel.org>
-Subject: [GIT PULL] Backlight for v6.13
-Message-ID: <20241121124358.GC7052@google.com>
+	s=arc-20240116; t=1732193244; c=relaxed/simple;
+	bh=q4cwBxmYBUkAb5u0U1y/CWARAYnmlPuzU0KkVRM9i3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LozebWiMejVNxVZ0mRk0DisfRnB7QN2BEzuNEmiOgiBTKs6QKh2XXB9FtojHAt7r2g0c0JPAPPIo/Uc3Zef4gR0vwTb4tEWNN4nXy9j19LcgVIZ1Yq+SSNh+RTGT2E70YeiYPHwL4zx1bEnS7A7JvYGRj8qGHVHQ7dRdYCtKVFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YHMN33yc; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so377295e9.1;
+        Thu, 21 Nov 2024 04:47:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732193241; x=1732798041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhVt+OjyMRZnuKr6YGhKFJxFwgV8+CpM8/xF/R36PvM=;
+        b=YHMN33yc9QRuBcI+/pGmpdxFHjoSyQZTD3hF24w8ooqPcbGTJUCvD35b2R3ndHBWFz
+         JxsYwEsTL9PkN/6hMhkr5n6HwQvhkUZmcJpZG6Erb3OUJjK3mlMGdACCUiego+WemoX2
+         FPxprgIqd4I9czy1NADRNt9nT3rP6bAUQ1cQOZ3XVVmwYsMgFtHMtkqKBNMrFY5YX45J
+         APaSYfPPVV7hh3XMJOqijv+Ma49GMI9SrQbFJdk9vXphE332peWmSEaMRJyKpYYaIfwE
+         83+mJatwS7IfdZOJHCcz5fwrSTmmKLKszkrdF91hHM6VDCNNblSnN7hhZ75XFFjR1Ppp
+         C0dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732193241; x=1732798041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xhVt+OjyMRZnuKr6YGhKFJxFwgV8+CpM8/xF/R36PvM=;
+        b=csrOYqjXpi5Pf5aP4x+S8bQe39+VJSYgKfJmTw6t0eOOZj+YU9/XDfQEAnGEvPfs0+
+         Hejxtmkmk1WZcYaPX3xznW26WhB42gF+1CNXZJUw1l0UJV+Lq2fUc4XKrnu1Cb1a51Es
+         Emu8JZX4+nxGMHDbpjxH/9IDMylXsf8oSZc9oDejeFxQ6qrOjPI8QN3Rb3xBV/0caSKk
+         vypz6DriutnaMWZfSRxL1NtA9fpwrslENvLZSm5IbL11VwkUgcUcdQnO7tgyjKU8iiWm
+         Y4R4EHskTpeaME5U1bFi7xsOkBFA56aE0lhXyvCmMq3v48hn1f4sx+lgBbEDF8tp9ZWF
+         oYGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAMrUrzRFme7oFFbagiktxxIHm/SZ5kSaIQJ2Ks5b9VPUpgbCG52/1Tlf+/KIniyu1a2GQcyb9l8RuGRU=@vger.kernel.org, AJvYcCWASDUK6o/sv8ar8iJ3yCPAu7G0nV50PvwuhuTu+bE6sZTp/z6yfNkFfS8j0K6GKEenfKOgV9lP@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJy863k7TtF4j9IOlZoyc0fMcR5qv03at3V7a+r0xdxoPlbQJt
+	jCTso5QMFXVgM22gv7fKl6Up4IdDl7UqsFzAVm9bp/BSHiMY/NI/
+X-Gm-Gg: ASbGncvLr4N6sHJvf86SKE9tZnfFRaRwwc+7Hdb/+IxkBGI3ySKzDmRMb1DASawkZH6
+	AqCffzRYu+kSrAzgdGDgkwMrMrpUNSSZTAyjvKR/5StcN/oRK73Z5RckTLnLoSStjfK3TZSo/o8
+	THZVnhsh5ioQi0vXoesS9I81BKZBEHIS2tY/NEl7A7c/oyKhTGb9BzwNMN0Y/K8KwSnL30orHRs
+	csnUkKxTVwLUCrnfMV1a/73OBJ5kQKhN9N72NA=
+X-Google-Smtp-Source: AGHT+IHeFV/Jhu9bSkOoMfpbrwsRcidD7VBe2rYDYWnphr2b82M0eKqJvhRetyOoj+c5xCmnBqeDOQ==
+X-Received: by 2002:a05:600c:3b24:b0:42c:ba83:3efa with SMTP id 5b1f17b1804b1-43348905629mr25935845e9.0.1732193240942;
+        Thu, 21 Nov 2024 04:47:20 -0800 (PST)
+Received: from skbuf ([188.25.135.117])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463ab5fsm56906095e9.27.2024.11.21.04.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 04:47:20 -0800 (PST)
+Date: Thu, 21 Nov 2024 14:47:18 +0200
+From: Vladimir Oltean <olteanv@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Cong Yi <yicong.srfy@foxmail.com>, andrew@lunn.ch, hkallweit1@gmail.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	yicong@kylinos.cn
+Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for
+ improving code readability
+Message-ID: <20241121124718.7behooc2khmgyfvm@skbuf>
+References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
+ <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
+ <20241121105044.rbjp2deo5orce3me@skbuf>
+ <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
+ <20241121115230.u6s3frtwg25afdbg@skbuf>
+ <Zz8jVmO82CHQe5jR@shell.armlinux.org.uk>
+ <20241121121548.gcbkhw2aead5hae3@skbuf>
+ <Zz8nBN6Z8s7OZ7Fe@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zz8nBN6Z8s7OZ7Fe@shell.armlinux.org.uk>
 
-Good afternoon Linus,
+On Thu, Nov 21, 2024 at 12:26:44PM +0000, Russell King (Oracle) wrote:
+> On Thu, Nov 21, 2024 at 02:15:48PM +0200, Vladimir Oltean wrote:
+> > On Thu, Nov 21, 2024 at 12:11:02PM +0000, Russell King (Oracle) wrote:
+> > > On Thu, Nov 21, 2024 at 01:52:30PM +0200, Vladimir Oltean wrote:
+> > > > I don't understand what's to defend about this, really.
+> > > 
+> > > It's not something I want to entertain right now. I have enough on my
+> > > plate without having patches like this to deal with. Maybe next year
+> > > I'll look at it, but not right now.
+> > 
+> > I can definitely understand the lack of time to deal with trivial
+> > matters, but I mean, it isn't as if ./scripts/get_maintainer.pl
+> > drivers/net/phy/phylink.c lists a single person...
+> 
+> Trivial patches have an impact beyond just reviewing the patch. They
+> can cause conflicts, causing work that's in progress to need extra
+> re-work.
+> 
+> I have the problems of in-band that I've been trying to address since
+> April. I have phylink EEE support that I've also been trying to move
+> forward. However, with everything that has happened this year (first,
+> a high priority work item, followed by holiday, followed by my eye
+> operations) I've only _just_ been able to get back to looking at these
+> issues... meanwhile I see that I'm now being asked for stuff about
+> stacked PHYs which is also going to impact phylink. Oh, and to top it
+> off, I've discovered that mainline is broken on my test platform
+> (IRQ crap) which I'm currently trying to debug what has been broken.
+> Meaning I'm not working on any phylink stuff right now because of
+> other people's breakage.
+> 
+> It's just been bit of crap after another after another.
+> 
+> Give me a sodding break.
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+I just believe that any patch submitter has the right for their proposal
+to be evaluated based solely on its own merits (even if time has to be
+stretched in order for that to happen), not based on unrelated context.
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git tags/backlight-next-6.13
-
-for you to fetch changes up to 3adec6f907b698b32ab62f70da31b41abed00c59:
-
-  MAINTAINERS: Use Daniel Thompson's korg address for Backlight work (2024-11-11 16:42:02 +0000)
-
-----------------------------------------------------------------
-- Improved handling of LCD power states and interactions with the fbdev subsystem.
-- Introduced new LCD_POWER_ constants to decouple the LCD subsystem from fbdev.
-- Clarified the semantics of the lcd_ops.controls_device callback.
-- Removed unnecessary includes and dependencies.
-- Removed unused notifier functionality.
-- Simplified code with scoped for-each loops.
-- Fixed module autoloading for the ktz8866 driver.
-- Updated device tree bindings to yaml format.
-- Minor cleanups and improvements in various drivers.
-
-----------------------------------------------------------------
-Daniel Thompson (1):
-      MAINTAINERS: Use Daniel Thompson's korg address for Backlight work
-
-Dr. David Alan Gilbert (1):
-      backlight: Remove notifier
-
-Frank Li (1):
-      dt-bindings: backlight: Convert zii,rave-sp-backlight.txt to yaml
-
-Jinjie Ruan (1):
-      backlight: 88pm860x_bl: Simplify with scoped for each OF child loop
-
-Liao Chen (1):
-      backlight: ktz8866: Fix module autoloading
-
-Thomas Zimmermann (28):
-      backlight: lcd: Rearrange code in fb_notifier_callback()
-      backlight: lcd: Test against struct fb_info.lcd_dev
-      backlight: lcd: Add LCD_POWER_ constants for power states
-      backlight: corgi_lcd: Use lcd power constants
-      backlight: hx8357: Use lcd power constants
-      backlight: ili922x: Use lcd power constants
-      backlight: ili9320: Use lcd power constants
-      backlight: jornada720_lcd: Include <linux/io.h> for IOMEM() macro
-      backlight: jornada720_lcd: Use lcd power constants
-      backlight: l4f00242t03: Use lcd power constants
-      backlight: lms283gf05: Use lcd power constants
-      backlight: lms501kf03: Remove unnecessary include of <linux/backlight.h>
-      backlight: lms501kf03: Use lcd power constants
-      backlight: ltv350qv: Use lcd power constants
-      backlight: otm3225a: Use lcd power constants
-      backlight: platform_lcd: Remove include statement for <linux/backlight.h>
-      backlight: platform_lcd: Remove match_fb from struct plat_lcd_data
-      backlight: platform_lcd: Use lcd power constants
-      backlight: tdo24m: Use lcd power constants
-      fbdev: clps711x-fb: Replace check_fb in favor of struct fb_info.lcd_dev
-      fbdev: clps711x-fb: Use lcd power constants
-      fbdev: imxfb: Replace check_fb in favor of struct fb_info.lcd_dev
-      fbdev: imxfb: Use lcd power constants
-      fbdev: omap: Use lcd power constants
-      HID: picoLCD: Replace check_fb in favor of struct fb_info.lcd_dev
-      backlight: lcd: Replace check_fb with controls_device
-      backlight: lcd: Remove struct fb_videomode from set_mode callback
-      backlight: lcd: Do not include <linux/fb.h> in lcd header
-
- .../leds/backlight/zii,rave-sp-backlight.txt       | 23 ----------
- .../leds/backlight/zii,rave-sp-backlight.yaml      | 36 ++++++++++++++++
- MAINTAINERS                                        |  2 +-
- drivers/hid/hid-picolcd_fb.c                       |  4 ++
- drivers/hid/hid-picolcd_lcd.c                      |  6 ---
- drivers/video/backlight/88pm860x_bl.c              |  5 +--
- drivers/video/backlight/backlight.c                | 42 ------------------
- drivers/video/backlight/corgi_lcd.c                | 17 ++++----
- drivers/video/backlight/hx8357.c                   |  2 +-
- drivers/video/backlight/ili922x.c                  |  7 ++-
- drivers/video/backlight/ili9320.c                  | 15 +++----
- drivers/video/backlight/jornada720_lcd.c           | 10 ++---
- drivers/video/backlight/ktz8866.c                  |  1 +
- drivers/video/backlight/l4f00242t03.c              | 32 +++++++-------
- drivers/video/backlight/lcd.c                      | 50 ++++++++++++++++------
- drivers/video/backlight/lms283gf05.c               |  2 +-
- drivers/video/backlight/lms501kf03.c               | 24 +++++------
- drivers/video/backlight/ltv350qv.c                 | 15 +++----
- drivers/video/backlight/otm3225a.c                 |  2 +-
- drivers/video/backlight/platform_lcd.c             | 20 +++------
- drivers/video/backlight/tdo24m.c                   | 19 ++++----
- drivers/video/fbdev/clps711x-fb.c                  | 29 ++++++-------
- drivers/video/fbdev/imxfb.c                        | 32 +++++---------
- drivers/video/fbdev/omap/lcd_ams_delta.c           |  8 ++--
- include/linux/backlight.h                          | 20 ---------
- include/linux/fb.h                                 | 13 ++++++
- include/linux/lcd.h                                | 29 ++++++++++---
- include/video/platform_lcd.h                       |  3 --
- 28 files changed, 221 insertions(+), 247 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.txt
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml
-
--- 
-Lee Jones [李琼斯]
+At the end of the day, somebody other than you should be able to come in
+and say "I think this looks fine" and that should be sufficient, no?
+Especially since the dispute you've raised of this change's technical
+merit seems to be out of the way now.
 
