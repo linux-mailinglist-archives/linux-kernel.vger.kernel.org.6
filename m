@@ -1,101 +1,69 @@
-Return-Path: <linux-kernel+bounces-416477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 500029D45AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:10:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01139D45AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDEB224CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E61F1F22570
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195B861FCE;
-	Thu, 21 Nov 2024 02:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E8A70811;
+	Thu, 21 Nov 2024 02:12:20 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CE923098E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC3039FCE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732155016; cv=none; b=F7pKEpR/a7XiPdpdKE/tVUu05EZB3ekNLOPJ8AXZ9CSrQOtJkZ8rq5DB62K34ZkAZUOiABXO6Inr3et9yY0Ql/5V6Ze0IluIYUHDGQUb6E2tRPqhXKiQek+26SC4RWUUtJeofvsYuJgpKWoEYY7Gbm/nFbxgNlE+FCYsqO/TWaY=
+	t=1732155140; cv=none; b=JGCUpIEuYAfKVBKjcXdDnqpJrLHuc4YoQo0CdVoCu+4fDwSSfOGz5t7+4Og3gHuMd1obFqCudiyARGgBKn2pdDJAKch2a4Z38VIHtIL3NhZpi2t7WD8LImTWse/N/uPK7wirKRTDaHhUp65N8H8WEsT9ZbwGjdLMBtWtAVHlMf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732155016; c=relaxed/simple;
-	bh=BdDrSsbgvrK7uSMlaoRE3Ct9mpLRzFKAgwFn+eQCwE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lqbmT2BnlkoxUSSeOZ4RTfmbFhk+dm5k0/fTlbO624agAf8spYppJAP0z1NbEzggJOF+CD0pa21ioaHg22euSfdAY3pGcsXr+wcfAdGtZn7jZRR8qfyzRsGeiQZyKBM07Uj20kHLtLspLdsz66PBXOro5Qv/AS/pGB/kG7O/57M=
+	s=arc-20240116; t=1732155140; c=relaxed/simple;
+	bh=J8unRYiUdLCWYS5YDaz6lQKCpgJfUMrBzo9K4kxrh8w=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=C8az8BnQDmSK4LejeRjJP1Jpbdu3bqs8FZz7APVPUF6w24WuOobaokL0mvxjP6Y/+jycMkUq4qrbenc6K/dNjvL4QQvtMkn+5FQ8Ujz96BtJUc/uY48h97m47JqAHghSjlj6DacRAiuzc0OcPF2Df9B+ucQ9xRDseM3AaIr1tTs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8868EC4CECD;
-	Thu, 21 Nov 2024 02:10:15 +0000 (UTC)
-Date: Wed, 20 Nov 2024 21:10:51 -0500
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E728AC4CECD;
+	Thu, 21 Nov 2024 02:12:19 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tDwgj-00000002ZhH-0gym;
+	Wed, 20 Nov 2024 21:12:57 -0500
+Message-ID: <20241121021226.575757843@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 20 Nov 2024 21:12:26 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- guoweikang <guoweikang.kernel@gmail.com>
-Subject: [for-next][PATCH] ftrace: Fix regression with module command in
- stack_trace_filter
-Message-ID: <20241120211051.6d085095@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/2] tracincg/rust: Last minute updates for v6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
 
   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace/for-next
+rust/for-next
 
-Head SHA1: 45af52e7d3b8560f21d139b3759735eead8b1653
+Head SHA1: 8af7a50167833b6b22e30c008bbf95ab3ff1a5fb
 
 
-guoweikang (1):
-      ftrace: Fix regression with module command in stack_trace_filter
+Alice Ryhl (1):
+      jump_label: rust: pass a mut ptr to `static_key_count`
+
+Miguel Ojeda (1):
+      rust: jump_label: skip formatting generated file
 
 ----
- kernel/trace/ftrace.c | 3 +++
- 1 file changed, 3 insertions(+)
----------------------------
-commit 45af52e7d3b8560f21d139b3759735eead8b1653
-Author: guoweikang <guoweikang.kernel@gmail.com>
-Date:   Wed Nov 20 13:27:49 2024 +0800
-
-    ftrace: Fix regression with module command in stack_trace_filter
-    
-    When executing the following command:
-    
-        # echo "write*:mod:ext3" > /sys/kernel/tracing/stack_trace_filter
-    
-    The current mod command causes a null pointer dereference. While commit
-    0f17976568b3f ("ftrace: Fix regression with module command in stack_trace_filter")
-    has addressed part of the issue, it left a corner case unhandled, which still
-    results in a kernel crash.
-    
-    Cc: stable@vger.kernel.org
-    Cc: Masami Hiramatsu <mhiramat@kernel.org>
-    Cc: Mark Rutland <mark.rutland@arm.com>
-    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    Link: https://lore.kernel.org/20241120052750.275463-1-guoweikang.kernel@gmail.com
-    Fixes: 04ec7bb642b77 ("tracing: Have the trace_array hold the list of registered func probes");
-    Signed-off-by: guoweikang <guoweikang.kernel@gmail.com>
-    Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 4c28dd177ca6..5ff0822342ac 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -5076,6 +5076,9 @@ ftrace_mod_callback(struct trace_array *tr, struct ftrace_hash *hash,
- 	char *func;
- 	int ret;
- 
-+	if (!tr)
-+		return -ENODEV;
-+
- 	/* match_records() modifies func, and we need the original */
- 	func = kstrdup(func_orig, GFP_KERNEL);
- 	if (!func)
+ rust/Makefile                                                       | 4 ++--
+ rust/kernel/.gitignore                                              | 2 +-
+ ...static_branch_asm.rs.S => generated_arch_static_branch_asm.rs.S} | 0
+ rust/kernel/jump_label.rs                                           | 6 +++---
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+ rename rust/kernel/{arch_static_branch_asm.rs.S => generated_arch_static_branch_asm.rs.S} (100%)
 
