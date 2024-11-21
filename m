@@ -1,171 +1,240 @@
-Return-Path: <linux-kernel+bounces-417030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A093D9D4E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:45:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F9619D4E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EDD9282A38
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47111F214D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8FD1D90B6;
-	Thu, 21 Nov 2024 13:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IUScXwMP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8861D7E57;
+	Thu, 21 Nov 2024 13:46:27 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31791CD1EE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A89017BD3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196686; cv=none; b=Dg4aciEBJHdN3mCXTDjG0ZDMwhDWCLaLJ7cdBWymGIs2+TA5OE9wn6/4a6VoA5oxUs7B2onMuVdRDoH7KlmOFQ16a79Ufr7M2p0ir9ZS9gbjPlahzFYYgzEuL7A742clYJfJjiMT2th6FRgD1LtHM6rxCLaC59D7A8mptH6TIAc=
+	t=1732196787; cv=none; b=OUHG1ElkgvXtHN0JdTDZe9IzNsmM9ShX4SOSupz+jlLxMGumXp3qaLLsKW8u0goO3dtZxbtc04E2ZQs7WGHJ44hJ5mFENzOFC9X9ugKa3+Avs84QaBLG8dEbVXLLLXuEvnU/zegqZwwLyPmBhot3OEUv18VVI9wPwa1BdI5wa/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196686; c=relaxed/simple;
-	bh=DynCw4XfUx+Wf86vDjAAsgv4ycv6anlFfyo96v9eYPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IhCruvcBlAk2SKtogV0si1cec7DClxDvKO2XtQgWcHBDXsz8Wri2P8fNpKRW5r1+YCkqCO5TTUtaf4kb8UCaVgMIqI20/pQiTjRXhhKyczki5HiuJnXlXX4gcj5tKwE2YfxSSFgA9c4ZO0q2XnKU+Fh5hXiXmCviPWFO/q1V/Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IUScXwMP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732196683;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=QiKq40kADGw/i2kCfp5/KzfMuaQ4J7QQN9sLUOYlBLk=;
-	b=IUScXwMPrAjKY7FsT66pWnRtgIW2psbEIhWZmve0P+3GeQVkbpIONYm9OGOKW6FKkCJ50m
-	anzTQ2tdncEzD2kTHKNB5FfKH39grTW9P/QyFBP0Yv4I5UugVyRnRDasPcPbfTuoIeCWLh
-	G29Mwl6umWWAVjMTTAe84UqouUO5Td0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-645-aTWikmAHOmSUmWksHb9kKQ-1; Thu, 21 Nov 2024 08:44:42 -0500
-X-MC-Unique: aTWikmAHOmSUmWksHb9kKQ-1
-X-Mimecast-MFC-AGG-ID: aTWikmAHOmSUmWksHb9kKQ
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3822ec50b64so503679f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:44:42 -0800 (PST)
+	s=arc-20240116; t=1732196787; c=relaxed/simple;
+	bh=XGTwLO/A7JGdGXM863bmWbSjL0u5sFOh+oyZwem/qOs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N3WAXdIbLzd8mr5iNPzdymz0UkpwHv98jACp2DTmyVwCYhppVnjyPaeg73X+0XQHlDq3F37FqGqXzIRL+awq81UG1xXJSeXlaOadrmP28GY0EbR8IZE5AvO5pGCx/33PAYFtydgsANQEfBU8bN0hZxc6Lq7su0siQMGEiyr+WT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a77a808c27so9297185ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:46:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732196681; x=1732801481;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QiKq40kADGw/i2kCfp5/KzfMuaQ4J7QQN9sLUOYlBLk=;
-        b=MCERMHrsHGHF+1LERvhEs+0HLJjbfpr8aIYrURldzT7YrEpXxCaKZl7HJ25VElXVcn
-         lvLpqVZz3m7kzg1VuzLhwrliBGSDH0B+H7FSGiGf00LtE1NHV/DDSLZucBxhhhXLufUq
-         c5pBCOKoxX305MSujxNeJBvTVMpYjkYn692fump3IJdY5nXm8Mw9Lhk3CS6JdtMRI4iT
-         nrgr3HtRky0N8pw4iYOH81qlIAdC/azQIxGuIsNIMfS/ciRZ+CMzmBfIEDLRePCqKavR
-         WZikwFAVX/6uEeMa6qhc2XMiS96XFideWCPYqzvt4Yr3sQiHxDJjiGidQsAwj5FntrJW
-         DIrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY1nsgEAcABGZiNX9w0hkwF/AoLSyGGP/prNj/S/B/MJ6LyLJCLmL03W5ffgCqc3r0fTKxKYo38BdqTZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoqBvatN/711HBl9wvKoWg086Nv/YBFXwI6ZisYzOnwXLKPidk
-	5dZfOZIt5zX4KxyNBctg3rj1IgpHGTqCGBi6Oz60wn1yLtOVOK71X8ho8u41UxVDvXZKAXCPN/D
-	lkWQ0+WBEs/d8KliPfvhZ5bcWoeKv1q847GxuIUc8lymh9EfFfnLQ6fSCX+eA1A==
-X-Gm-Gg: ASbGnctTL6yKqe8XzyWnwV5BcNskVlnUdn+EhZK/Qtz1Mwxx/eXxOu0ad1onpZZA/+l
-	rTPzEdZWCMxaF9GRm5T3+Cdkm472nRnT4Jk50xdU0suiqLbOboz/TVt1rbPO4LkIe1a0EtB3sir
-	evnHRHox59/5Fq5lKwThdKoQKjSCysEWx0A97N6fDfskvEm0noOfErKNly408j+m+i2EnFH6Xh3
-	wCUscY0bhGji6QkjDTVrAnFbqJpBjb3+H8CU+KWkwxCkz0a44FoOmFtff/0Ri9IhU4UyvGmsWA3
-	nn4ClOgXCsDJlEZMLIJjk37aEp2ZQtJuVr4kDAYAoL9OCLaBHWFFJWspOAYskr2p8izbt5UbXnw
-	=
-X-Received: by 2002:a5d:648a:0:b0:382:4eef:26e with SMTP id ffacd0b85a97d-38254b1c86amr5009778f8f.51.1732196681234;
-        Thu, 21 Nov 2024 05:44:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHVnrdC30GKAhFUaf2lQE/XQCHVL4NBJxOu3+ucxhq2+Dmct/wiZ2WWhO6tSTTyyviZC/sK8w==
-X-Received: by 2002:a5d:648a:0:b0:382:4eef:26e with SMTP id ffacd0b85a97d-38254b1c86amr5009762f8f.51.1732196680885;
-        Thu, 21 Nov 2024 05:44:40 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933d39sm5184954f8f.83.2024.11.21.05.44.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 05:44:39 -0800 (PST)
-Message-ID: <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
-Date: Thu, 21 Nov 2024 14:44:37 +0100
+        d=1e100.net; s=20230601; t=1732196785; x=1732801585;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aeaUCVRvA2JA7iB9SOKNpFV0GIZ++rUQUyZ9/rH0aYI=;
+        b=EMEP+mPy9recdvbqao8s/EpRHjXub+DPOPJY5GXiUfUZzKOVRIoaGh6bn8JMmvGhj9
+         TrCohgR7spiMNYOi1P+nlQG8X4R4CeJAPfvwAub+7afxvigQOu7AgZY/XRCdcxBt6Lxx
+         XUYF0Y0RpugS1/JfyopB89BLSnrVA/aBlgq1TCHXNcOk82V/scUdv8n5i1Lfy6MOrkz5
+         JVCq4+7EdS8bgVpTnPso2Ih+/wetB3eGw/ikc08CiBXKXQMoz0PM96M0tT7E1Naem3Ii
+         mWMWBcFnvqjWYPV4FupIqcTbp4X7CD3Q1aDcE446fICvhKaFipghL2lJfZ0r+ImCF6v4
+         d7qA==
+X-Forwarded-Encrypted: i=1; AJvYcCUzLABud8S/Qn8AvHA9qxhPCQxNPXx2v6SGscwdaz94WGA8TbLkNQJMXSrAPnr7kqSPYrx8zQ39ZRbiCmY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz39wGZlyLQQ1hoFQvJUg3LkfJohhGj8KnLftNARvfi31UQqlhx
+	jpAK8ZGbd20vJpiH8bhp+AaDPcq9cVT4jIQ2MFN61S5vvew2T9ZNFoJrEl2R+BdfA6WMwd4BhgK
+	Rxs+lJk3WY4+6BPLmth56TaZ97AhULxmQ4DrLUiy0YSLk4OqZT6Lzbxo=
+X-Google-Smtp-Source: AGHT+IHJ3MvkRDjuaZSA7995ihtx+znw6D89Hb+9wchR4KB0Sh4omPbeGzBUxQ7oHXgcqM9Itprz+FjSNBk/KNDMXhiNTTTN6arK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use
- find_vma() correctly
-To: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org
-Cc: dave@stgolabs.net, willy@infradead.org, Liam.Howlett@oracle.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241121124113.66166-1-aha310510@gmail.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241121124113.66166-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a67:b0:3a7:6636:eb48 with SMTP id
+ e9e14a558f8ab-3a7865842b2mr66340925ab.18.1732196784796; Thu, 21 Nov 2024
+ 05:46:24 -0800 (PST)
+Date: Thu, 21 Nov 2024 05:46:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673f39b0.050a0220.363a1b.0126.GAE@google.com>
+Subject: [syzbot] [pci?] linux-next test error: general protection fault in of_pci_supply_present
+From: syzbot <syzbot+0058f72ff908dfa2dbf5@syzkaller.appspotmail.com>
+To: bhelgaas@google.com, linux-kernel@vger.kernel.org, 
+	linux-next@vger.kernel.org, linux-pci@vger.kernel.org, sfr@canb.auug.org.au, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 21.11.24 13:41, Jeongjun Park wrote:
-> vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
-> the returned pointer without any verification, even though it may return NULL.
-> In this case, NULL pointer dereference may occur, so to prevent this,
-> vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
-> 
-> Cc: <stable@vger.kernel.org>
-> Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
+Hello,
 
-If that's an issue, wouldn't it have predated that commit?
+syzbot found the following issue on:
 
-struct vm_area_struct *next = vma->vm_next;
-unsigned long nstart = next->vm_start;
+HEAD commit:    decc701f41d0 Add linux-next specific files for 20241121
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=14bceb78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+dashboard link: https://syzkaller.appspot.com/bug?extid=0058f72ff908dfa2dbf5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Would have also assumed that there is a next VMA that can be 
-dereferenced, no?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a9775a56bebc/disk-decc701f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/46688e4c6405/vmlinux-decc701f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0d11b152c43f/bzImage-decc701f.xz
 
--- 
-Cheers,
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0058f72ff908dfa2dbf5@syzkaller.appspotmail.com
 
-David / dhildenb
+NET: Registered PF_QIPCRTR protocol family
+dca service started, version 1.12.1
+PCI: Using configuration type 1 for base access
+HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+cryptd: max_cpu_qlen set to 1000
+raid6: skipped pq benchmark and selected avx2x4
+raid6: using avx2x2 recovery algorithm
+ACPI: Added _OSI(Module Device)
+ACPI: Added _OSI(Processor Device)
+ACPI: Added _OSI(3.0 _SCP Extensions)
+ACPI: Added _OSI(Processor Aggregator Device)
+ACPI: 2 ACPI AML tables successfully acquired and loaded
+ACPI: Interpreter enabled
+ACPI: PM: (supports S0 S3 S4 S5)
+ACPI: Using IOAPIC for interrupt routing
+PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+PCI: Ignoring E820 reservations for host bridge windows
+ACPI: Enabled 16 GPEs in block 00 to 0F
+ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
+acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+PCI host bridge to bus 0000:00
+pci_bus 0000:00: Unknown NUMA node; performance will be reduced
+pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfefff window]
+pci_bus 0000:00: root bus resource [bus 00-ff]
+pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+pci 0000:00:01.0: [8086:7110] type 00 class 0x060100 conventional PCI endpoint
+pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+pci 0000:00:01.3: quirk: [io  0xb000-0xb03f] claimed by PIIX4 ACPI
+pci 0000:00:03.0: [1af4:1004] type 00 class 0x000000 conventional PCI endpoint
+pci 0000:00:03.0: BAR 0 [io  0xc000-0xc03f]
+pci 0000:00:03.0: BAR 1 [mem 0xfe800000-0xfe80007f]
+pci 0000:00:04.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
+pci 0000:00:04.0: BAR 0 [io  0xc040-0xc07f]
+pci 0000:00:04.0: BAR 1 [mem 0xfe801000-0xfe80107f]
+pci 0000:00:05.0: [1ae0:a002] type 00 class 0x030000 conventional PCI endpoint
+pci 0000:00:05.0: BAR 0 [mem 0xfe000000-0xfe7fffff]
+pci 0000:00:05.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+pci 0000:00:06.0: [1af4:1002] type 00 class 0x00ff00 conventional PCI endpoint
+pci 0000:00:06.0: BAR 0 [io  0xc080-0xc09f]
+pci 0000:00:07.0: [1af4:1005] type 00 class 0x00ff00 conventional PCI endpoint
+pci 0000:00:07.0: BAR 0 [io  0xc0a0-0xc0bf]
+pci 0000:00:07.0: BAR 1 [mem 0xfe802000-0xfe80203f]
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-next-20241121-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:of_pci_supply_present+0x25/0xe0
+Code: 90 90 90 90 90 66 0f 1f 00 55 41 56 53 48 89 fb 49 be 00 00 00 00 00 fc ff df e8 96 78 93 fc 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 5c 69 fe fc 48 8b 1b 48 85 db 74
+RSP: 0000:ffffc90000066818 EFLAGS: 00010202
+RAX: 000000000000000b RBX: 0000000000000058 RCX: ffff88801bef0000
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000000
+RBP: ffff8881446f4488 R08: ffffffff8bbde83d R09: 1ffff11003ad2311
+R10: dffffc0000000000 R11: ffffed1003ad2312 R12: ffff8881446f4000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823ffff000 CR3: 000000000e736000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ pci_bus_add_device+0x1a9/0x340 drivers/pci/bus.c:408
+ pci_bus_add_devices+0x94/0x1c0 drivers/pci/bus.c:439
+ acpi_pci_root_add+0x2112/0x30f0 drivers/acpi/pci_root.c:761
+ acpi_scan_attach_handler drivers/acpi/scan.c:2260 [inline]
+ acpi_bus_attach+0x7ab/0xcb0 drivers/acpi/scan.c:2309
+ device_for_each_child+0x118/0x1b0 drivers/base/core.c:3994
+ acpi_dev_for_each_child+0xd0/0x110 drivers/acpi/bus.c:1157
+ acpi_bus_attach+0x9f4/0xcb0 drivers/acpi/scan.c:2329
+ device_for_each_child+0x118/0x1b0 drivers/base/core.c:3994
+ acpi_dev_for_each_child+0xd0/0x110 drivers/acpi/bus.c:1157
+ acpi_bus_attach+0x9f4/0xcb0 drivers/acpi/scan.c:2329
+ acpi_bus_scan+0x12b/0x560 drivers/acpi/scan.c:2610
+ acpi_scan_init+0x267/0x730 drivers/acpi/scan.c:2747
+ acpi_init+0x159/0x240 drivers/acpi/bus.c:1466
+ do_one_initcall+0x248/0x880 init/main.c:1266
+ do_initcall_level+0x157/0x210 init/main.c:1328
+ do_initcalls+0x3f/0x80 init/main.c:1344
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1577
+ kernel_init+0x1d/0x2b0 init/main.c:1466
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:of_pci_supply_present+0x25/0xe0
+Code: 90 90 90 90 90 66 0f 1f 00 55 41 56 53 48 89 fb 49 be 00 00 00 00 00 fc ff df e8 96 78 93 fc 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 5c 69 fe fc 48 8b 1b 48 85 db 74
+RSP: 0000:ffffc90000066818 EFLAGS: 00010202
+RAX: 000000000000000b RBX: 0000000000000058 RCX: ffff88801bef0000
+RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000000
+RBP: ffff8881446f4488 R08: ffffffff8bbde83d R09: 1ffff11003ad2311
+R10: dffffc0000000000 R11: ffffed1003ad2312 R12: ffff8881446f4000
+R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff88823ffff000 CR3: 000000000e736000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	90                   	nop
+   1:	90                   	nop
+   2:	90                   	nop
+   3:	90                   	nop
+   4:	90                   	nop
+   5:	66 0f 1f 00          	nopw   (%rax)
+   9:	55                   	push   %rbp
+   a:	41 56                	push   %r14
+   c:	53                   	push   %rbx
+   d:	48 89 fb             	mov    %rdi,%rbx
+  10:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
+  17:	fc ff df
+  1a:	e8 96 78 93 fc       	call   0xfc9378b5
+  1f:	48 83 c3 58          	add    $0x58,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 5c 69 fe fc       	call   0xfcfe6995
+  39:	48 8b 1b             	mov    (%rbx),%rbx
+  3c:	48 85 db             	test   %rbx,%rbx
+  3f:	74                   	.byte 0x74
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
