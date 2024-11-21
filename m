@@ -1,158 +1,164 @@
-Return-Path: <linux-kernel+bounces-416766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20709D49ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:24:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513499D49EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EC1281F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D8F1F21809
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1121CD1F7;
-	Thu, 21 Nov 2024 09:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC7E1C7299;
+	Thu, 21 Nov 2024 09:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QsNu8m7A"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoffOYkd"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B989614A62A;
-	Thu, 21 Nov 2024 09:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E9082890
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732181065; cv=none; b=KiShgea2Pz+OX4Q747YFksTYXRpjtPBnNqvrVPQBnCP3YSjcjBi5OJJtnfqPnWI7wENXNfN/4RBLzejeBp5h1KGF09N2j9Wmp84B5430xG3BeJjtZuz6BBfHqeaSHz45pdXL2gC2m1F6+OwDCpd7c0xzJt6bp7cep+MSZ4c/LgE=
+	t=1732181057; cv=none; b=J9yZuWiSzjH2VffM7YvZy3qEt/HxexpRvJ+e4SfTx0hms4nTwQdFj8oBYTAKvPcvRdVAs9ojhYT2xgYcUKQoeoBIOZ1bx0ZZ0PgpOQ9Wokn39vCdYxvOhq+zbvlWE4p0uToPX0nV8wQfBsVnUYetL9AtgDx4UrJJSAf5858OQFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732181065; c=relaxed/simple;
-	bh=fYsHbaBjUp1raVRGVoCgQALUqmy4e8BYwdTKVwHsJLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X8ygIs+99n1I8pEaZQwLsBUP7jzEfIHVIwLtFINMNEFZ5pDwzp3wkzK0AkniHJB3O4hLfqpFKFqHdsdS35Pa4CzWqOMN0wVGELxDzPEOgOwx4tHu2ncvJozVsAfRY7Y2svNKlCk4dTFO2S/C733jVJbPRzm0BvlHumq+MDfY59c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QsNu8m7A; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL9KiEh007711;
-	Thu, 21 Nov 2024 09:24:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QJzek0bdbC3Ntd/IGsSF3/5x+fHEg6vM7YVqfg+K9ec=; b=QsNu8m7A+mTFf1Vx
-	03rdLjUJ7NtLTmJTOz+pqeLDvcOWK7N6Hw9hGUsolH4ekUzW/GhugfUltAHPs7Sn
-	J7yFSr1wcY4JxGZekFpHN3dzfKiu7ZGuuZtGi/7bpBAUpTrBwv22bp++0zWOGP7B
-	gHCIRReUc7lR0nclyIv0IViTgpTnXAN5+6QuNRtrae6EbpKn3pKXQm5T0yym8+NL
-	93ZsOWoYfad3Yza+mr1L5vBvH9C6I7iPbe49qadTMxQWsJuFaaYlteQ3c4pfItkN
-	7gqQx1q99GjirjfaOvpQVYZOk6XNaUVHhXtGezXJFPzQ80vilMiDvvdVkEOqgWR4
-	2g/efQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4318uvm1xw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 09:24:02 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL9O1hv032359
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 09:24:01 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 01:23:53 -0800
-Message-ID: <ddd6325a-c50e-4602-80b3-848faea6a266@quicinc.com>
-Date: Thu, 21 Nov 2024 17:23:50 +0800
+	s=arc-20240116; t=1732181057; c=relaxed/simple;
+	bh=YIvR/FcWchEFYkSvjVNzlb1IfbQeE4XBcgUMTXBCt5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WNnJ8vtwdnDHeBH661QuBxS3yQCjgHbxCGmNAV/J/CP21PdUF6VkfWj9nZRnXrSQX4+N1+GlpaKao+ZfXs6MiHkeEb8+jA7e3D+BWI4L+0zv3rB7qGrBczzsndbi5WWLVYY/nWIfzY08QTsi03t7R3m5bg/or3f80HM/EI3c4pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eoffOYkd; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9eb3794a04so79744066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:24:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732181054; x=1732785854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7j4QqoxhFbCgJwkjEEmxm2qKB1etaPM/Wk727FzG74=;
+        b=eoffOYkd2Oj3PdCvM4y7M7FsJQAlaVmi43ADi6NAc7Ze/RXyezRU+dMrOkUma8AapW
+         F4re0bs6ws5suM3YkB6d1/iE3bxF0RzoqrtlbBLvd1yiHZgoSK2vzVdBNPkPNWjYamCF
+         HiNq2AkHo5wEfF16X6C5M64cSpGwGluXt0hM46z+jZYyndpo42i+1JlVvgwhP/ElrV52
+         3hGKrYUKTmsP4/H8Cp/ITkaFxWCPXpD9TCeRXeUI9qQCvJ0DiQv7/1NfJK2sxapaifTX
+         70DT6MvbHWXCYZJZnEVfPJ5QiAtJNd4RJktK4IYa2QhW0Oqg9up5Jo1cJP7tpcvVEhR1
+         MYHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732181054; x=1732785854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L7j4QqoxhFbCgJwkjEEmxm2qKB1etaPM/Wk727FzG74=;
+        b=P6HpYHQP6OReoYgyuMCSJ7ZzZz+d44mPI0IMk3FrxOA6ohMUAa72X9jxMTDILt5vIF
+         oa04Bw4+qYvGRm6htGp/vv1lm9XcCr3T2284ysCxSF2+ak30geoO5//LbmOAYWghLit/
+         9a3JNtX6HBfwrcTcERmpXOmIQmaHARc7N7Dv69yF0FhaY1Pf2BFjrgGeT+0/09Xdkvks
+         TglhPLpcGJpY3fYAlTuMdQoXf5iYQzOm8tI4STdmaL3QIDcVnEgkATX6SAaepwtL5n+H
+         CVY1z/ql9UUfHplTxaEtahR9MRQy3nMa4Ozsm6nBUS5M+TgnvxV3mOvUYoYaw+uxNWME
+         x0iA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGmSDhMXEbcHmJA/2Y3C+ra7jGONoLH4cY3WF3w4EtFDvSDpgP1Njtxd+IjD/NWWl83bn1P8szMP8EEZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLNT8Is3ITW78gS3GUGH3+VHV/DBhzLdNAL9lZc5T+AoEn9RaJ
+	b6QPzbFePTWwRwwhqYipaxeVnjW+uloLm8kJNB5blztM5xPoTGRR6YM/OM1i+m4=
+X-Google-Smtp-Source: AGHT+IEZYPG7qh/PlestFeKGHpZh1lDojcSBdGkG+BBHCtprwgWlBnbq7O9VkXEfLN5oXr+sCBlAcg==
+X-Received: by 2002:a17:907:7ba3:b0:aa4:9ab1:1985 with SMTP id a640c23a62f3a-aa4dd760d98mr510243766b.51.1732181054107;
+        Thu, 21 Nov 2024 01:24:14 -0800 (PST)
+Received: from localhost.localdomain (62-178-82-42.cable.dynamic.surfer.at. [62.178.82.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f4153741sm59112066b.20.2024.11.21.01.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 01:24:13 -0800 (PST)
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+To: Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: kernel-dev@igalia.com,
+	tursulin@igalia.com,
+	Christian Gmeiner <cgmeiner@igalia.com>,
+	etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/etnaviv: Add fdinfo support for memory stats
+Date: Thu, 21 Nov 2024 10:24:08 +0100
+Message-ID: <20241121092409.3859592-1-christian.gmeiner@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] drm/msm/dsi: Add support for QCS615
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        "Marijn Suijten" <marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Li Liu
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-6-2873eb6fb869@quicinc.com>
- <404f006b-46e5-44db-9f22-ec2139468ecc@oss.qualcomm.com>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <404f006b-46e5-44db-9f22-ec2139468ecc@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: fdm6g5vZ7vFP0pGBLjjxZTAH_bUfj3qQ
-X-Proofpoint-GUID: fdm6g5vZ7vFP0pGBLjjxZTAH_bUfj3qQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210073
+Content-Transfer-Encoding: 8bit
 
+From: Christian Gmeiner <cgmeiner@igalia.com>
 
+Use the new helper to export stats about memory usage.
 
-On 2024/11/14 21:32, Konrad Dybcio wrote:
-> On 13.11.2024 12:51 PM, Fange Zhang wrote:
->> From: Li Liu <quic_lliu6@quicinc.com>
->>
->> Add support for DSI 2.3.1 (block used on QCS615).
->> Add phy configuration for QCS615
->>
->> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->> ---
->>   drivers/gpu/drm/msm/dsi/dsi_cfg.c          | 17 +++++++++++++++++
->>   drivers/gpu/drm/msm/dsi/dsi_cfg.h          |  1 +
->>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.c      |  2 ++
->>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      |  1 +
->>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 21 +++++++++++++++++++++
->>   5 files changed, 42 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> index 10ba7d153d1cfc9015f527c911c4658558f6e29e..edbe50305d6e85fb615afa41f3b0db664d2f4413 100644
->> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> @@ -221,6 +221,21 @@ static const struct msm_dsi_config sc7280_dsi_cfg = {
->>   	},
->>   };
->>   
->> +static const struct regulator_bulk_data qcs615_dsi_regulators[] = {
->> +	{ .supply = "vdda", .init_load_uA = 21800 },
->> +};
-> 
-> I believe refgen is also present here and you can reuse dsi_v2_4_regulators
-yes, will fix them in next patch
-will remove qcs615_dsi_regulators and reuse dsi_v2_4_regulators
-> 
-> Konrad
+Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+---
+ drivers/gpu/drm/etnaviv/etnaviv_drv.c | 12 +++++++++++-
+ drivers/gpu/drm/etnaviv/etnaviv_gem.c | 12 ++++++++++++
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+index 6500f3999c5f..35f47dd6367f 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+@@ -488,7 +488,16 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] = {
+ 	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
+ };
+ 
+-DEFINE_DRM_GEM_FOPS(fops);
++static void etnaviv_show_fdinfo(struct drm_printer *p, struct drm_file *file)
++{
++	drm_show_memory_stats(p, file);
++}
++
++static const struct file_operations fops = {
++	.owner = THIS_MODULE,
++	DRM_GEM_FOPS,
++	.show_fdinfo = drm_show_fdinfo,
++};
+ 
+ static const struct drm_driver etnaviv_drm_driver = {
+ 	.driver_features    = DRIVER_GEM | DRIVER_RENDER,
+@@ -498,6 +507,7 @@ static const struct drm_driver etnaviv_drm_driver = {
+ #ifdef CONFIG_DEBUG_FS
+ 	.debugfs_init       = etnaviv_debugfs_init,
+ #endif
++	.show_fdinfo        = etnaviv_show_fdinfo,
+ 	.ioctls             = etnaviv_ioctls,
+ 	.num_ioctls         = DRM_ETNAVIV_NUM_IOCTLS,
+ 	.fops               = &fops,
+diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+index 5c0c9d4e3be1..e81c261b0017 100644
+--- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+@@ -527,6 +527,17 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
+ 	mutex_unlock(&priv->gem_lock);
+ }
+ 
++static enum drm_gem_object_status etnaviv_gem_status(struct drm_gem_object *obj)
++{
++	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
++	enum drm_gem_object_status status = 0;
++
++	if (etnaviv_obj->pages)
++		status |= DRM_GEM_OBJECT_RESIDENT;
++
++	return status;
++}
++
+ static const struct vm_operations_struct vm_ops = {
+ 	.fault = etnaviv_gem_fault,
+ 	.open = drm_gem_vm_open,
+@@ -540,6 +551,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
+ 	.get_sg_table = etnaviv_gem_prime_get_sg_table,
+ 	.vmap = etnaviv_gem_prime_vmap,
+ 	.mmap = etnaviv_gem_mmap,
++	.status = etnaviv_gem_status,
+ 	.vm_ops = &vm_ops,
+ };
+ 
+-- 
+2.47.0
 
 
