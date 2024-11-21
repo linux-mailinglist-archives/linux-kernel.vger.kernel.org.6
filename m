@@ -1,69 +1,92 @@
-Return-Path: <linux-kernel+bounces-417245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4988D9D512A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:01:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6079D5130
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2CD28A453
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9BF1F250F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96AE1BC9F7;
-	Thu, 21 Nov 2024 17:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8231A2C0B;
+	Thu, 21 Nov 2024 17:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iu6cVkon"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L63LVHjP"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3964E157485;
-	Thu, 21 Nov 2024 17:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389FC13F43B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732208427; cv=none; b=E0sUPSFiOcm6MKe+muKll2WF10E/uIEoXHuTm++x69IDi020qv6XcfBGL/fPLwewnraE6IMCEFEmTF7k5qeT4qiy7qA8YrBZ442vicl/UdRACl4m9jiMVEXGb9KkeMVPN7rNPDHC2YJIFGO9P7Uv4JiCh6NY40UsNyqbv5J9/k8=
+	t=1732208451; cv=none; b=TKniiOG5TSOvk0ZM3AeWlHRkr2I63hOqzFBSq7qD7ZoOFnca4tfVCrKnXq/yHYOplyUzSRUSRz6iGKbbr4FW+RoczqTPw21Zu7RVUAueQJxnqmVCoXFzdbsTWpfM1fuFBtlH3AEFYEM3/EpAr7+Oa7e36SLV9INBa5irSv1dSlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732208427; c=relaxed/simple;
-	bh=n8F8RjdeJDVgwm6h9A7zBEWYUMJ5Ij30BUILMFj2NZU=;
+	s=arc-20240116; t=1732208451; c=relaxed/simple;
+	bh=jzTU/z32x3hB0JfDrm8MmAyZ6G+T5pKSWXdt0ly+8jY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p17aEddB2hhCN5vFHk23zIj2mEdlanmZ3ZlX88HYNN5qv7UZmjpI2o5vAnFF0O+lqRy3mMg5/OiDONMX7WOAGobmc8h1fADAn9P4+n9dD5m0mkVm6cthPle1QF4Pd/aKgFemC+Ujv89CjYSl5KrLyfK9lq97S8DMTeJTcHL84Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iu6cVkon; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51205C4CECC;
-	Thu, 21 Nov 2024 17:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732208427;
-	bh=n8F8RjdeJDVgwm6h9A7zBEWYUMJ5Ij30BUILMFj2NZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iu6cVkonxdAz5QGbLucoWatLmqd+WFY0kmsGuRE6cpSQfhDhBf0VaO+MJ2J+izS8K
-	 9ajq6P2NTQ8br3KsnnHAzNb+zluBR1G4iPcVCmW/+tDqeIJGqK1rbM3cBAgpKp2n+K
-	 IXK5+4RoH8X6kQ01jNo097kLIQdwyHylEUEg3GdrZyXC0N78tgtOFOX9qVe/WDpu7y
-	 8x17DlJv/IJGzvIdBDEROAQXpASmU/XaiqzZ2AhxsYtLMeyAxX8iW3yKkSuSq4iyDU
-	 UPFCqFl2Dvt8lccQsHIJhO7BUGYXwCO40oAIuAVSPuLczm80d7K3Ody1PYZwrWz2He
-	 XOoo9a4kHdETQ==
-Date: Thu, 21 Nov 2024 19:00:20 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Jean Delvare <jdelvare@suse.de>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
-	Aditya Prabhune <aprabhune@nvidia.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
-	Bert Kenward <bkenward@solarflare.com>,
-	Matt Carlson <mcarlson@broadcom.com>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: Re: [PATCH v2] PCI/sysfs: Change read permissions for VPD attributes
-Message-ID: <20241121170020.GB160612@unreal>
-References: <61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org>
- <20241121130127.5df61661@endymion.delvare>
- <20241121121301.GA160612@unreal>
- <20241121151116.4213c144@endymion.delvare>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HFnINefPRGyyszGiQmpDBvPK/OrQA31YpJ1FuuYO+Hnh89ftPo+R6VI3K3LOX4S7L3bp6AkRyFt5q9cwzYDcC75AmoiNQdIDcunJfwChto+UFAMHtkpfMt16VLROE7qkhn/PDZkp47cGLc6T9TUdogEZSpnRUnF7Hjlt5zEDxeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L63LVHjP; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dd1b4e01cso502909e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:00:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732208447; x=1732813247; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTXid3Zut7ENV6u5lEywLtVroH0vN+GAHGKS1dMMtj0=;
+        b=L63LVHjPHU791h+YKXmJCmR5Du5UeMwXxcy3Oangg5fsBdazuhST+klzqEjI4BUd37
+         VCKL1hhApSfjju9vUqtvJoS1iNTlGZ8jgWB9c1a0Ki0/MWq/Hk2zgZBoOjHFxEllnr2T
+         dleqlmsb4L94QZLXL9nbYYdR7enISgCVPjF7jmsycoItxl5b1vJDWON1Y/XZcB378I2B
+         K3S6oH5g/UBWqEH9zlaZ8Vv4RvkvnL9iuU/JwvvjIcCIhiMgbHUMUtUtVkYpuCXKN8/k
+         NZply0MBFOg2bljJ2k7piQm4zsba85IzpGCKYcoN9gc+bhLwPw8frLtLd0GWbdSUfxh0
+         E0Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732208447; x=1732813247;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tTXid3Zut7ENV6u5lEywLtVroH0vN+GAHGKS1dMMtj0=;
+        b=dyljTMmhm4wjpy5JSNeyn1bO9Jx10zx7792t85x7vbvvrJnqxhRst/Fn8Zrk4khdsX
+         mRNq8ctdHLLP6BUxRmGou2cgjohdZKcjRDSGKafqfA5w9qeoLCaVjxf+AIG82fYm3w16
+         PLt6Y7Umn6l1ruQzIyQZokur048359A5JkRpYKiickggKF+QLshWAN2ohEizeMa2IlHa
+         J5kuUHVt8QDOLUEe5zWc+W9dhBRQNdPBNcpld462ExK+rsypqvpNmQ4fAR9NgzrykW6H
+         dqnLIURyBo7yzI7deMaUTL1xU/dI37vUzKXLXHzGRQzcWCkdtRjWiWn7VTj+a8dzQX7d
+         ucmw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNmGZreq130iaurIkchh6Qw+/xCPWT/hR9bjMZKCvMeVpS3WksuE1g+dAKzXUufry6pj8g6s2UgGXfIOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb+eh+od3JDArHf/Mj/fWb/RduZQ/4OQYcND3BDswW0GF2hMJj
+	V8kESIH5xyErm0UGmrO379dGWxmVonGViOr3tMPWxr4aDAZSoSPjgmJ60xw6SAU=
+X-Gm-Gg: ASbGncuz81D3h3z50syNh+quSW26YzoYqMGEnPzzc6Ut68g7N0EDNYuacg7iG12qXK4
+	0e/g/SKHa5bcS1mUWbtkKh/8jAz8/MsenGXHKfs7IwQS3ALUbwMExHDlEr6nj05vhLo33duCauL
+	c9aARSes/xHRXSSi1ksHrrzSKr9FF0mae3GvP8T6jbn7yx/8+Hj4K98QktvY8kd+jUXgk9tNPSs
+	UbsOWDD24BT4BFM1ig+F5gb7VzPlGUlWlY9WhAPqBqF4WmcGBBf+Zo93Zz8AdbMItjHmvzuaeY0
+	GR5OUqqj40EDvPrKJ3cU5O+vE3mKDg==
+X-Google-Smtp-Source: AGHT+IHHxVFXWhGPPdA9ksqKTV8tWCXoqA5zp3uVM/KOFvDJ1Wc2NNeKT6Y5HEDYj4Oq06/7SimNdw==
+X-Received: by 2002:a05:6512:32d4:b0:53d:cfe0:5937 with SMTP id 2adb3069b0e04-53dcfe059a2mr1179637e87.13.1732208445738;
+        Thu, 21 Nov 2024 09:00:45 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24455e6sm16713e87.3.2024.11.21.09.00.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 09:00:44 -0800 (PST)
+Date: Thu, 21 Nov 2024 19:00:42 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xin Liu <quic_liuxin@quicinc.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com, 
+	quic_sayalil@quicinc.com
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs615: add UFS node
+Message-ID: <45cb4thpg6mrtxiwdb333w2jxgtpw426akik2l3f7qv57dvwmm@kma6vrglbrjh>
+References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
+ <20241119022050.2995511-3-quic_liuxin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,71 +95,163 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121151116.4213c144@endymion.delvare>
+In-Reply-To: <20241119022050.2995511-3-quic_liuxin@quicinc.com>
 
-On Thu, Nov 21, 2024 at 03:11:16PM +0100, Jean Delvare wrote:
-> On Thu, 21 Nov 2024 14:13:01 +0200, Leon Romanovsky wrote:
-> > On Thu, Nov 21, 2024 at 01:01:27PM +0100, Jean Delvare wrote:
-> > > On Wed, 13 Nov 2024 14:59:58 +0200, Leon Romanovsky wrote:  
-> > > > --- a/drivers/pci/vpd.c
-> > > > +++ b/drivers/pci/vpd.c
-> > > > @@ -332,6 +332,14 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
-> > > >  	if (!pdev->vpd.cap)
-> > > >  		return 0;
-> > > >  
-> > > > +	/*
-> > > > +	 * Mellanox devices have implementation that allows VPD read by
-> > > > +	 * unprivileged users, so just add needed bits to allow read.
-> > > > +	 */
-> > > > +	WARN_ON_ONCE(a->attr.mode != 0600);
-> > > > +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
-> > > > +		return a->attr.mode + 0044;  
-> > > 
-> > > When manipulating bitfields, | is preferred. This would make the
-> > > operation safe regardless of the initial value, so you can even get rid
-> > > of the WARN_ON_ONCE() above.  
-> > 
-> > The WARN_ON_ONCE() is intended to catch future changes in VPD sysfs
-> > attributes. My intention is that once that WARN will trigger, the
-> > author will be forced to reevaluate the latter if ( ... PCI_VENDOR_ID_MELLANOX)
-> > condition and maybe we won't need it anymore. Without WARN_ON_ONCE, it
-> > is easy to miss that code.
+On Tue, Nov 19, 2024 at 10:20:49AM +0800, Xin Liu wrote:
+> From: Sayali Lokhande <quic_sayalil@quicinc.com>
 > 
-> The default permissions are 10 lines above in the same file. Doesn't
-> seem that easy to miss to me.
+> Add the UFS Host Controller node and its PHY for QCS615 SoC.
 > 
-> In my opinion, WARN_ON should be limited to cases where something really
-> bad has happened. It's not supposed to be a reminder for developers to
-> perform some code clean-up. Remember that WARN_ON has a run-time cost
-> and it could be evaluated for a possibly large number of PCI devices
-> (although admittedly VPD support seems to be present only in a limited
-> number of PCI device).
-
-Sorry about which run-time cost are you referring? This is slow path and
-extra if() inside WARN_ON which has unlikely keyword, makes no difference
-when accessing HW.
-
-In addition, this check is for devices which already known to have VPD
-(see pdev->vpd.cap check above).
-
+> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 112 +++++++++++++++++++++++++++
+>  1 file changed, 112 insertions(+)
 > 
-> Assuming you properly use | instead of +, then nothing bad will happen
-> if the default permissions change, the code will simply become a no-op,
-> until someone notices and deletes it. No harm done.
-> 
-> I'm not maintaining this part of the kernel so I can't speak or decide
-> on behalf of the maintainers, but in my opinion, if you really want to
-> leave a note for future developers, then a comment in the source code
-> is a better way, as it has no run-time cost, and will also be found
-> earlier by the developers (no need for run-time testing).
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index 590beb37f441..ceceafb2e71f 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -458,6 +458,118 @@ mmss_noc: interconnect@1740000 {
+>  			qcom,bcm-voters = <&apps_bcm_voter>;
+>  		};
+>  
+> +		ufs_mem_hc: ufshc@1d84000 {
+> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+> +			reg = <0x0 0x01d84000 0x0 0x3000>, <0x0 0x01d90000 0x0 0x8000>;
 
-I don't have any strong feelings about this WARN_ON_ONCE, will remove.
+Please consider splitting to have one entry per line (and reg-names
+too).
 
-Thanks
+> +			reg-names = "std", "ice";
+> +
+> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
+> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
+> +			clock-names = "core_clk",
+> +				      "bus_aggr_clk",
+> +				      "iface_clk",
+> +				      "core_clk_unipro",
+> +					  "core_clk_ice",
 
-> 
-> Thanks,
+Wrong indentation
+
+Other than that LGTM.
+
+
+> +				      "ref_clk",
+> +				      "tx_lane0_sync_clk",
+> +				      "rx_lane0_sync_clk";
+> +
+> +			resets = <&gcc GCC_UFS_PHY_BCR>;
+> +			reset-names = "rst";
+> +
+> +			operating-points-v2 = <&ufs_opp_table>;
+> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "ufs-ddr",
+> +					     "cpu-ufs";
+> +
+> +			power-domains = <&gcc UFS_PHY_GDSC>;
+> +			required-opps = <&rpmhpd_opp_nom>;
+> +
+> +			iommus = <&apps_smmu 0x300 0x0>;
+> +			dma-coherent;
+> +
+> +			lanes-per-direction = <1>;
+> +
+> +			phys = <&ufs_mem_phy>;
+> +			phy-names = "ufsphy";
+> +
+> +			#reset-cells = <1>;
+> +
+> +			status = "disabled";
+> +
+> +			ufs_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-50000000 {
+> +					opp-hz = /bits/ 64 <50000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <37500000>,
+> +						 /bits/ 64 <75000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +				};
+> +
+> +				opp-100000000 {
+> +					opp-hz = /bits/ 64 <100000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <75000000>,
+> +						 /bits/ 64 <150000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +				};
+> +
+> +				opp-200000000 {
+> +					opp-hz = /bits/ 64 <200000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <150000000>,
+> +						 /bits/ 64 <300000000>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>,
+> +						 /bits/ 64 <0>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +				};
+> +			};
+> +		};
+> +
+> +		ufs_mem_phy: phy@1d87000 {
+> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
+> +			reg = <0x0 0x01d87000 0x0 0xe00>;
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
+> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
+> +			clock-names = "ref",
+> +				      "ref_aux",
+> +				      "qref";
+> +
+> +			power-domains = <&gcc UFS_PHY_GDSC>;
+> +
+> +			resets = <&ufs_mem_hc 0>;
+> +			reset-names = "ufsphy";
+> +
+> +			#clock-cells = <1>;
+> +			#phy-cells = <0>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		tcsr_mutex: hwlock@1f40000 {
+>  			compatible = "qcom,tcsr-mutex";
+>  			reg = <0x0 0x01f40000 0x0 0x20000>;
 > -- 
-> Jean Delvare
-> SUSE L3 Support
+> 2.34.1
+> 
+> 
+> -- 
+> linux-phy mailing list
+> linux-phy@lists.infradead.org
+> https://lists.infradead.org/mailman/listinfo/linux-phy
+
+-- 
+With best wishes
+Dmitry
 
