@@ -1,234 +1,207 @@
-Return-Path: <linux-kernel+bounces-417052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582ED9D4E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:10:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D539D4E55
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D020283269
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:10:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA88E281586
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E58F1D90B6;
-	Thu, 21 Nov 2024 14:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40B51D959B;
+	Thu, 21 Nov 2024 14:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKIaOVPF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7JXJbPce";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zKIaOVPF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7JXJbPce"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Hxm+jn3s";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YGXSeOHa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CGeu9KB/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K6ngicCq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292751D86C3
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F81D79B0;
+	Thu, 21 Nov 2024 14:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732198207; cv=none; b=XzIzg/XnPo1mwAaAqzPCEZrRXdrofqXiW7jZy5ZSMfUSyeuYaa1fEdZvVZw/gJddHEU75aEvuE9uxTJu/GELb6c1l1cjF0gsyjzQZSGO5ba3eDACCEEhlSRVmVPEQpA5tCaiMxGzXgTH4+dgg7Zqa2NcbLxdCFxYuNMKg5YOse8=
+	t=1732198283; cv=none; b=RGWMPLYdgH5xXRzutbFjNkF3q+qygseP198Uq3YzgUiRduAMPXyaSprjf+EJ/AppI80qwmyvpzGxGvtdk5Qur0D7d/fvLN9BB6JJqx2o3F6piVbRGhJbb9saxRjpFORQVsV6MO3ZFc5xR6/DGTmcp3zYeJ5SXOa2pyJIrQQ+h9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732198207; c=relaxed/simple;
-	bh=kjzxQw9Jgk0GhcXGPGJ27l2cm0VJN+00QAw5KAQ2Dr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L9uRMzRLU5eM6OqCYCK3xDH4k0uh5u5zCC5SyhG5ayD045dLf+Ifk6lPb52vwkzAlQfnL7XwIF0RcSRUDrXJyi5EoBjI8yoIPYMekc9FgIXs/TZYn/9avl+ydHjjUaBrQzt1Kddl4Bj7lYX1htJXsGmLaw1x1hfUoQ4Rp2OiOYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKIaOVPF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7JXJbPce; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zKIaOVPF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7JXJbPce; arc=none smtp.client-ip=195.135.223.131
+	s=arc-20240116; t=1732198283; c=relaxed/simple;
+	bh=Ey0IAPn0edSlqo7bOQ+Oiyx7q+LGOFPvfHfglTadl48=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=avfNkRCA8Y59w8LCAy76PIfNZF9lbzOzPaJ3zczEUZAsphuTOK1HBKkGYs3pEnT/1fjmDKxnPY/u8gNEufRdJh4fIJ3Jipuk3+dqzEYyNr5JmV2IGS4/xq9hyAAAI1b4gbxAvR97MdXppfjYwR8Yhdwyx6tRsm0gNcvntibjoz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Hxm+jn3s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YGXSeOHa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CGeu9KB/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K6ngicCq; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6A30F1F810;
-	Thu, 21 Nov 2024 14:10:03 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1318F21A24;
+	Thu, 21 Nov 2024 14:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732198203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732198279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
-	b=zKIaOVPFD/apt6TjsVvNNc/kvTMJDYuDRVFcsxHmblw4Ro030TAZwwO72qssR/tDq8MjGZ
-	lNIsZ2nDxytx81vofIe3mvwYJzOb/fMlgXgZYd9X+jWRScZdXfsBm0kg4FXOKeHe4abc3I
-	ycv+7ZZXAuSbV7px7PnPAnKA/xr5RLg=
+	bh=90qHUuZk+1shGNjirM2QL8Sq/3ge+2iP+PRdngdmwIc=;
+	b=Hxm+jn3syYbS/XV73a7xZR+I3qTeWIKIAL32wjjGghP/Q+pClw2UCrojhSIycO5T+VgQxc
+	4pw9T043OAd3pqQ/USAFQyhj06bSugJCCqCy089T5iCcwE3BGenx5H2sFJzdBT7OGKgUbr
+	90fIrko6yH8/4TThNXoj5T6pw7cPCzQ=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732198203;
+	s=susede2_ed25519; t=1732198279;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
-	b=7JXJbPcezroNAGSYg4HEK9+DC8rfsnRw3ylMWmjQ9F0B+50wvLEoKDR5b1SXHZq3Qmr+5Z
-	Y2quMFVjwq95+8AA==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=90qHUuZk+1shGNjirM2QL8Sq/3ge+2iP+PRdngdmwIc=;
+	b=YGXSeOHa5HHOZMGy8Mc9vhsoUcaEWwniGYLfXV1/F12FnMwNZK83oA2hMdDm+1PSMiv2As
+	Fct9jTR6FxM2yfBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="CGeu9KB/";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=K6ngicCq
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1732198203; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1732198278; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
-	b=zKIaOVPFD/apt6TjsVvNNc/kvTMJDYuDRVFcsxHmblw4Ro030TAZwwO72qssR/tDq8MjGZ
-	lNIsZ2nDxytx81vofIe3mvwYJzOb/fMlgXgZYd9X+jWRScZdXfsBm0kg4FXOKeHe4abc3I
-	ycv+7ZZXAuSbV7px7PnPAnKA/xr5RLg=
+	bh=90qHUuZk+1shGNjirM2QL8Sq/3ge+2iP+PRdngdmwIc=;
+	b=CGeu9KB/AMGHF+y5efvIZEnWDHTbQKZ8oQCIjmZqD5nwHfeWl/URw0G90EkFlxg30vNNaP
+	qAM4V/jVeQf+sevvwynf3QQ/lsISGmUvkgscFY9I4OM8Mi+8Gcw1JSNWYCdhjBsJdlVijA
+	nWvsyiVEXLBEAp/JVJdcCpOJKqRodzU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1732198203;
+	s=susede2_ed25519; t=1732198278;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=XOgW7eCUefXeGk7/iqxt8C2VvYQjtB5JSpMdrCGoVXU=;
-	b=7JXJbPcezroNAGSYg4HEK9+DC8rfsnRw3ylMWmjQ9F0B+50wvLEoKDR5b1SXHZq3Qmr+5Z
-	Y2quMFVjwq95+8AA==
+	bh=90qHUuZk+1shGNjirM2QL8Sq/3ge+2iP+PRdngdmwIc=;
+	b=K6ngicCqcSxUVrJ49BCm0nDvfriyWDmz7K6hkNWM3oB4Q2w4pFLaemKNuU1kMcVsD3lbWw
+	K+BQ5DoUsPdL/7Bg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 00F9113927;
-	Thu, 21 Nov 2024 14:10:02 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51B8513927;
+	Thu, 21 Nov 2024 14:11:17 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vVlEOjo/P2cHNQAAD6G6ig
-	(envelope-from <pperego@suse.de>); Thu, 21 Nov 2024 14:10:02 +0000
-Date: Thu, 21 Nov 2024 15:10:02 +0100
-From: Paolo Perego <pperego@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kees Bakker <kees@ijzerbout.nl>, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Dave Penkler <dpenkler@gmail.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] staging:gpib: Fix a dereference before null check issue
-Message-ID: <wgcv5wesq3q3xank6elouewntisernnw4agfziqekkeirftx6i@ajucs5yqsvus>
-X-Responsible-Disclosure: https://en.opensuse.org/openSUSE:Security_disclosure_policy
-References: <20241120144653.377795-1-pperego@suse.de>
- <a0807e04-b2c9-4261-9b3f-7660fe258f56@stanley.mountain>
- <6ca90e87-965a-4895-ba72-8144540f6e4c@ijzerbout.nl>
- <b843f8a9-1562-458c-8f6a-c59b1037b756@stanley.mountain>
+	id Xb3nEYU/P2doNQAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Thu, 21 Nov 2024 14:11:17 +0000
+Date: Thu, 21 Nov 2024 15:11:16 +0100
+From: Jean Delvare <jdelvare@suse.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRz?=
+ =?UTF-8?B?a2k=?= <kw@linux.com>, linux-pci@vger.kernel.org, Ariel Almog
+ <ariela@nvidia.com>, Aditya Prabhune <aprabhune@nvidia.com>, Hannes
+ Reinecke <hare@suse.de>, Heiner Kallweit <hkallweit1@gmail.com>, Arun Easi
+ <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>, Bert Kenward
+ <bkenward@solarflare.com>, Matt Carlson <mcarlson@broadcom.com>, Kai-Heng
+ Feng <kai.heng.feng@canonical.com>, Alex Williamson
+ <alex.williamson@redhat.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, Thomas
+ =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>, Stephen Hemminger
+ <stephen@networkplumber.org>
+Subject: Re: [PATCH v2] PCI/sysfs: Change read permissions for VPD
+ attributes
+Message-ID: <20241121151116.4213c144@endymion.delvare>
+In-Reply-To: <20241121121301.GA160612@unreal>
+References: <61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org>
+	<20241121130127.5df61661@endymion.delvare>
+	<20241121121301.GA160612@unreal>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.34; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="usyxdlybbhffcxno"
-Content-Disposition: inline
-In-Reply-To: <b843f8a9-1562-458c-8f6a-c59b1037b756@stanley.mountain>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.90 / 50.00];
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 1318F21A24
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	HAS_ORG_HEADER(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[ijzerbout.nl,lists.linux.dev,vger.kernel.org,gmail.com,linuxfoundation.org,arndb.de];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -5.90
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux.com,vger.kernel.org,nvidia.com,suse.de,gmail.com,marvell.com,amazon.com,solarflare.com,broadcom.com,canonical.com,redhat.com,weissschuh.net,networkplumber.org];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,endymion.delvare:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Flag: NO
+X-Spam-Level: 
 
+On Thu, 21 Nov 2024 14:13:01 +0200, Leon Romanovsky wrote:
+> On Thu, Nov 21, 2024 at 01:01:27PM +0100, Jean Delvare wrote:
+> > On Wed, 13 Nov 2024 14:59:58 +0200, Leon Romanovsky wrote:  
+> > > --- a/drivers/pci/vpd.c
+> > > +++ b/drivers/pci/vpd.c
+> > > @@ -332,6 +332,14 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
+> > >  	if (!pdev->vpd.cap)
+> > >  		return 0;
+> > >  
+> > > +	/*
+> > > +	 * Mellanox devices have implementation that allows VPD read by
+> > > +	 * unprivileged users, so just add needed bits to allow read.
+> > > +	 */
+> > > +	WARN_ON_ONCE(a->attr.mode != 0600);
+> > > +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
+> > > +		return a->attr.mode + 0044;  
+> > 
+> > When manipulating bitfields, | is preferred. This would make the
+> > operation safe regardless of the initial value, so you can even get rid
+> > of the WARN_ON_ONCE() above.  
+> 
+> The WARN_ON_ONCE() is intended to catch future changes in VPD sysfs
+> attributes. My intention is that once that WARN will trigger, the
+> author will be forced to reevaluate the latter if ( ... PCI_VENDOR_ID_MELLANOX)
+> condition and maybe we won't need it anymore. Without WARN_ON_ONCE, it
+> is easy to miss that code.
 
---usyxdlybbhffcxno
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The default permissions are 10 lines above in the same file. Doesn't
+seem that easy to miss to me.
 
-On Thu, Nov 21, 2024 at 10:37:30AM GMT, Dan Carpenter wrote:
-> On Wed, Nov 20, 2024 at 08:54:16PM +0100, Kees Bakker wrote:
-> > Op 20-11-2024 om 18:04 schreef Dan Carpenter:
-> > > On Wed, Nov 20, 2024 at 03:46:53PM +0100, Paolo Perego wrote:
-> > > > This commit fixes a dereference before null check issue discovered =
-by
-> > > > Coverity (CID 1601566).
-> > > >=20
-> > > > The check ad line 1450 suggests that a_priv can be NULL, however it=
- has
-> > > > been derefenced before, in the interface_to_usbdev() call.
-> > > >=20
-> > > > Signed-off-by: Paolo Perego <pperego@suse.de>
-> > > > ---
-> > > You need a Fixes tag.  But I'm pretty sure the correct fix is to remo=
-ve the NULL
-> > > check.
-> > In the whole agilent_82357a.c module there is no consistency whether
-> > board->private_data needs to be checked for a NULL or not.
-> >=20
-> > If Dan is correct then it is better to drop the NULL check, not only he=
-re
-> > but in a few more places as well. There are at least 10 functions were
-> > there is no NULL check for private_data.
-> >=20
-> > Run this command and you'll see what I mean
-> > git grep -3 -e '->private_data' -- drivers/staging/gpib/agilent_82357a
-> >=20
->=20
-> I had looked at similar issue in a different driver:
-> https://lore.kernel.org/all/2d99b7a6-f427-4d54-bde7-fb3df5e19e53@stanley.=
-mountain/
->=20
-> Here the NULL check we are discussing is the same thing.  The private dat=
-a is
-> allocated in attach() and freed in detach().  The detach has no need to c=
-heck
-> for NULL because we can't detach something which isn't attached.
->=20
-> The other NULL checks are in agilent_82357a_driver_disconnect(),
-> agilent_82357a_driver_suspend() and agilent_82357a_driver_resume().  And =
-there
-> the NULL checks are required because it could happen when the driver isn't
-> attached.
->=20
-> I also did a quick glance through to see if any of the functions which di=
-dn't
-> check for NULL should get a NULL check but they all seemed okay because e=
-ither
-> the board was attached or the caller had a NULL check.
->=20
+In my opinion, WARN_ON should be limited to cases where something really
+bad has happened. It's not supposed to be a reminder for developers to
+perform some code clean-up. Remember that WARN_ON has a run-time cost
+and it could be evaluated for a possibly large number of PCI devices
+(although admittedly VPD support seems to be present only in a limited
+number of PCI device).
 
-Hi all and thanks for the fruitful discussion.=20
+Assuming you properly use | instead of +, then nothing bad will happen
+if the default permissions change, the code will simply become a no-op,
+until someone notices and deletes it. No harm done.
 
-> So I think we can just remove this one NULL check and everything else mak=
-es
-> sense.
-Please, apologise if I'm too newbie here to understand next step on my
-own. Am I asked to do something, to submit a V2 with the correct Tag or
-the patch is good as is?
+I'm not maintaining this part of the kernel so I can't speak or decide
+on behalf of the maintainers, but in my opinion, if you really want to
+leave a note for future developers, then a comment in the source code
+is a better way, as it has no run-time cost, and will also be found
+earlier by the developers (no need for run-time testing).
 
-( No pressure to be accepted, it's just my willing to understand and go
-into the process :-) )
-
-Thanks
-Paolo
---=20
-(*_  Paolo Perego                           @thesp0nge
-//\  Software security engineer               suse.com
-V_/_ 0A1A 2003 9AE0 B09C 51A4 7ACD FC0D CEA6 0806 294B
-
---usyxdlybbhffcxno
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEad0ki8u8+tnCnxjUEWmTq+eyM3gFAmc/PzQACgkQEWmTq+ey
-M3h+jg//T4XH1hcC2mL9nmPOlAz9d0mB2Di090O279J3rt8P6+9qoGToyu+9zXMT
-Wf74fmdy0osMHGxPL/1QtwaD0aX00aygJBq2icmzkLOkNs+o7G38wdCqsNSAYunN
-328TE2U5PJWiEvc1/LAtuQ29FohO0vxe1baP4TtyLUXfXS9J1/mVC8oj+hYC1Pgl
-UEeAV7d7dvjgpCSlwFncXFJ7CQZ0S0/a8l8ziN9QoBm5MQjPwdn2GH9Jr34H1MDM
-0IgQjBBnMohpQ8Pcs7N4L02+vcbJoP6JMAdd0ew/p74zU2kwSL5qdUjHTCA3O18p
-B6VKQVBVr4vo+CJ1PnjU6ixSu7PVGTaeRxIU4bZ+xonqiAXdAJcsoS8eIAK2zisb
-Ar4NU2wrcL2thMxZGBPwL10qrzah0w6LnuUNC0kI78u/z/FOYjh8YD8HU7/+oOua
-XFM9vMiTcp4fk7VNw7Fh5duulzJ2pVguFbl/J/JiePI8r0P7zTslr+Bas6vTIOGj
-+RiB4OUw4THsad+CRfrygEr4XnP8420oQMcbq/aFWy3Y/V3lhxnYWnhkCDxr80Ey
-K8WecqHaAa0115wSDwVe61811fG01fTRDNa6/Qevm8/vcppXz7lHftc9tpUAhr8c
-PFC1ocvQpB4H36itoWg4/f1FzQDg89KsHlBQLqTGJEuiM+hb+Pc=
-=KOHf
------END PGP SIGNATURE-----
-
---usyxdlybbhffcxno--
+Thanks,
+-- 
+Jean Delvare
+SUSE L3 Support
 
