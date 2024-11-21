@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-417025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D549D4DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CECC9D4E01
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F24328194C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11A4282233
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DBD1D8E1A;
-	Thu, 21 Nov 2024 13:43:20 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FBA1D5CCD;
-	Thu, 21 Nov 2024 13:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FE11D90DB;
+	Thu, 21 Nov 2024 13:44:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F041D7E57;
+	Thu, 21 Nov 2024 13:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196600; cv=none; b=mSwCIKD4ZdZ357bh1x6Kj76sML/3+2YNXVoHiTEPh9aLO10HN3LVF7uRjcG1AzO75um6Dr7jzBg47Dm5MZ5jZegSVvFiWDLgHnkUz5Q/cXdtrQI2L/nn55TWgYKOTzzcCkGWk4uOJlMJxyKjSz/2rF1I2dPlKa7nPDQ7j1W/ChI=
+	t=1732196656; cv=none; b=YLlNbrn0qVqXlxGSPgAcKj2A7LIcOkFaFoEqtdOKoTp1f59brXXbP57Ks1mp29wiw+IOXhTTj40aaClXP8NGZiwxgT13yGV3znnUuIjBVbwHqqPIzlYEKkE1R3IEgfTGXoGgtG4J/BO9sfO0a2q+kt8SwcsFpNlFY0edW2nxYps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196600; c=relaxed/simple;
-	bh=t1xS6VPnNXhFDtO31L5INNt/+JTUA64GJsQLsWahz44=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AG7pvr9N1KTYlytyRbvcNwWa8Hb/of5vsl+hwkBSfx0+ndekZidf+qEhUqf62ZDA7Na8Hn53OtAqUEngaJ6+ZboGPt3nGILM24VYwMXt8ylmlxxB4j4mUHASffDxTc4We7rZgVKWIjQiLPN1Rujy24ScM8JQrfkEBj4D8yqOeH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07634C4CECC;
-	Thu, 21 Nov 2024 13:43:17 +0000 (UTC)
-Date: Thu, 21 Nov 2024 08:43:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bhelgaas@google.com,
- tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org
-Subject: Re: [PATCH v3] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <20241121084354.4a554829@gandalf.local.home>
-In-Reply-To: <7002248c-f3af-42aa-ba42-a65cd738ae37@linux.alibaba.com>
-References: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
-	<Zz786zZljAy2J5i7@wunner.de>
-	<7002248c-f3af-42aa-ba42-a65cd738ae37@linux.alibaba.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732196656; c=relaxed/simple;
+	bh=PhZZoOaS3ryFyeN0JP/HtGmzeZqkb+zHGZhGnpkyDuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R3tY7lTCNBQciXUfpwCMDY12tWKsYHhsADRJrwckbJFDSydxFSrUsO2XlDihIv5YagQG8Zx78fHkERNSHCcaRxV7MDtLxUL4FDP9YgEvD/NNPL7uPfYoG7oCRW8AHVMlhYDFG5nxBT01TVHgpJC1eqooFj3CQzDyLWCcpfcIRXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 756261476;
+	Thu, 21 Nov 2024 05:44:37 -0800 (PST)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 302E33F66E;
+	Thu, 21 Nov 2024 05:44:05 -0800 (PST)
+Message-ID: <a02c5976-e288-404e-b725-66bd4c391384@arm.com>
+Date: Thu, 21 Nov 2024 13:44:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 3/3] page_pool: skip dma sync operation for
+ inflight pages
+To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: liuyonglong@huawei.com, fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Alexander Duyck <alexander.duyck@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, IOMMU <iommu@lists.linux.dev>,
+ MM <linux-mm@kvack.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-4-linyunsheng@huawei.com>
+ <15f937d7-7ac1-4a7f-abcd-abfede191b51@arm.com>
+ <57dea3ef-6982-4946-bf96-8ebadf6f883c@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <57dea3ef-6982-4946-bf96-8ebadf6f883c@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 21 Nov 2024 19:34:31 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-
-> Sure, I can reorganize the directory. You have two optional proposals:
+On 21/11/2024 8:04 am, Yunsheng Lin wrote:
+> On 2024/11/21 0:17, Robin Murphy wrote:
+>> On 20/11/2024 10:34 am, Yunsheng Lin wrote:
+>>> Skip dma sync operation for inflight pages before the
+>>> page_pool_destroy() returns to the driver as DMA API
+>>> expects to be called with a valid device bound to a
+>>> driver as mentioned in [1].
+>>>
+>>> After page_pool_destroy() is called, the page is not
+>>> expected to be recycled back to pool->alloc cache and
+>>> dma sync operation is not needed when the page is not
+>>> recyclable or pool->ring is full, so only skip the dma
+>>> sync operation for the infilght pages by clearing the
+>>> pool->dma_sync under protection of rcu lock when page
+>>> is recycled to pool->ring to ensure that there is no
+>>> dma sync operation called after page_pool_destroy() is
+>>> returned.
+>>
+>> Something feels off here - either this is a micro-optimisation which I wouldn't really expect to be meaningful, or it means patch #2 doesn't actually do what it claims. If it really is possible to attempt to dma_sync a page *after* page_pool_inflight_unmap() has already reclaimed and unmapped it, that represents yet another DMA API lifecycle issue, which as well as being even more obviously incorrect usage-wise, could also still lead to the same crash (if the device is non-coherent).
 > 
-> 1. /sys/kernel/debug/tracing/events/pci_hp_event
-
-I'm guessing the above has TRACING_SYSTEM = pci_hp_event ? That is, the
-above is a system and not an event.
-
-> 2. /sys/kernel/debug/tracing/events/pci/pci_hp_event
-
-Whereas here, it's an event.
-
+> For a page_pool owned page, it mostly goes through the below steps:
+> 1. page_pool calls buddy allocator API to allocate a page, call DMA mapping
+>     and sync_for_device API for it if its pool is empty. Or reuse the page in
+>     pool.
 > 
-> I personally prefer the second approach. However, I'll defer the final decision
-> to the tracing subsystem maintainer, considering their expertise and
-> familiarity with the existing conventions.
+> 2. Driver calls the page_pool API to allocate the page, and pass the page
+>     to network stack after packet is dma'ed into the page and the sync_for_cpu
+>     API is called.
+> 
+> 3. Network stack is done with page and called page_pool API to free the page.
+> 
+> 4. page_pool releases the page back to buddy allocator if the page is not
+>     recyclable before doing the dma unmaping. Or do the sync_for_device
+>     and put the page in the its pool, the page might go through step 1
+>     again if the driver calls the page_pool allocate API.
+> 
+> The calling of dma mapping and dma sync API is controlled by pool->dma_map
+> and pool->dma_sync respectively, the previous patch only clear pool->dma_map
+> after doing the dma unmapping. This patch ensures that there is no dma_sync
+> for recycle case of step 4 by clearing pool->dma_sync.
 
-Normally the system is determined by the users of the tracing
-infrastructure and not the tracing maintainers. But I can give you some
-guidelines.
+But *why* does it want to ensure that? Is there some possible race where 
+one thread can attempt to sync and recycle a page while another thread 
+is attempting to unmap and free it, such that you can't guarantee the 
+correctness of dma_sync calls after page_pool_inflight_unmap() has 
+started, and skipping them is a workaround for that? If so, then frankly 
+I think that would want solving properly, but at the very least this 
+change would need to come before patch #2.
 
-The "system" level:
+If not, and this is just some attempt at performance micro-optimisation, 
+then I'd be keen to see the numbers to justify it, since I struggle to 
+imagine it being worth the bother while already in the process of 
+spending whole seconds scanning memory...
 
-  /sys/kernel/tracing/events/<system>
+Thanks,
+Robin.
 
-is just a way to group like events making it easier to enable them all at once:
-
- echo 1 > /sys/kernel/tracing/events/<system>/enable
-
-or
-
-  trace-cmd start -e <system>
-
-The name of the "system" should be something that all the events underneath
-represent. Note, although events in two different systems can have the same
-name, it's best to try to keep them all unique. That's because if you have:
-
-
- systemA/foo  and systemB/foo
-
-If you add to the kernel command line: trace_event=foo
-it will enable both events. Although that could be fixed with: trace_event=systemA:foo
-
-Note: trace_event=systemA  would enable all systemA events at boot.
-
-That said, is all these events going to be related to hotplug? If so, you
-probably want "hotplug" or "hp" in the system name. If you make it just
-"pci", then it will be expected that all the events will be related to PCI
-in general.
-
-Does that help?
-
--- Steve
-
+> The dma_sync skipping should also happen before page_pool_inflight_unmap()
+> is called too because all the caller will see the clearing of pool->dma_sync
+> after synchronize_rcu() and page_pool_inflight_unmap() is called after
+> the same synchronize_rcu() in page_pool_destroy().
+> 
+>>
+>> Otherwise, I don't imagine it's really worth worrying about optimising out syncs for any pages which happen to get naturally returned after page_pool_destroy() starts but before they're explicitly reclaimed. Realistically, the kinds of big server systems where reclaim takes an appreciable amount of time are going to be coherent and skipping syncs anyway.
+> 
+> The skipping is about skipping the dma sync for those inflight pages,
+> I should make it clearer that the skipping happens before the calling
+> of page_pool_inflight_unmap() instead of page_pool_destroy() in the
+> commit log.
+> 
+>>
+> 
 
