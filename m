@@ -1,102 +1,89 @@
-Return-Path: <linux-kernel+bounces-416956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADDE9D4CDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:35:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1149D4CF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:36:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E63D31F21169
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:35:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DB01B25196
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCC71D7E42;
-	Thu, 21 Nov 2024 12:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNUPQW36"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9A91D3629;
-	Thu, 21 Nov 2024 12:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927211D416A;
+	Thu, 21 Nov 2024 12:36:41 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA66915ADB4;
+	Thu, 21 Nov 2024 12:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192493; cv=none; b=BaAS6MEHz1t24rl/Lo+/+XGAvHUksyK2Z8cAQ2NlTuDUqqvIKMzM9RGth5zRnJRkFFCx6BrXI0yLfvIWN62Csli38+zbME1wwYP/KvDwa3Dt1Xj6zi6IOtdnnhCQyDammV0/Mn0+miwYNC7M1IMWHKk5o8ozbqruO78aFGpFMsw=
+	t=1732192601; cv=none; b=ejtY/ny2pfEDf6w/PJcIWTLXycPpFzWPQKE47B8MR6S+YPTFowx56p8VEzWTMKT0Vh5/E/W5NIVgDDVPJLmXAzs/W30+D7IAViR4L+NhgNHg9w9CPDuOeUngT3oyN6M8dYlwILBXWDlWvynYM56dmveRUNdub8v3cxmD+zySUDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192493; c=relaxed/simple;
-	bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E7/+XKC/N0tim7mezt8zNcyFaiR2jiNiQMNvgwMTlmhuongzWjJlFV/yB4YcEad2a5yljlynrFzr8ZuKkmN5mf0xQg+1D85JLdeOPlLVNJcCKFodDItGmdHyCbeIRHnurHccVrip3g2GvFe6D/a+7k7Gs+Y9iicefmSiu6kPiTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNUPQW36; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4781C4CECC;
-	Thu, 21 Nov 2024 12:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732192493;
-	bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nNUPQW36SjxwGAiVy261aK8fE4BPdYUKGnAI85RSyL2fVSAtEx0a/k4ktnuHzw7jA
-	 OjwCy+7SCxSmQO9328Z4fLb7pCpxFyepOjjAWzjOC8AWLMiqTuLXAdVE4lvwB/FXMH
-	 9NiTIvcDv1tEZ22r1y3yAGRVHEpIVcZ/qgbBwjupIVFdIXIPsMsKQnf1JaeSWvGeJw
-	 3h/D3WfzwycWj3i8wR+VBlxcNNlgmKu36oWUG1nCUqnCWgb3QeTK+GwT2fZvHgoB1k
-	 gEfxPzDUnUpQL9H2MiaWG17zJWYARrdUR4aejrPcyqrug8JUmtIs4mNbEmlm6ywtSt
-	 1uCWIB9jN3BJw==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
+	s=arc-20240116; t=1732192601; c=relaxed/simple;
+	bh=Fk+4Ys5HM6Xi/65FH8+mZ2tifyhK6thhfMK7TlPEBFw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z76GwuGkj0vsrCV/UsqNcrz4AODBUWc6E8oT4VRWH3N+jC8Yf8T0YgSZ7FkvaOKDCarHMw3mb+fKnSTCYM6uIEK5hGCw6/ue/FKyXwA4nnbNgEPg/GC1EZsLncbcE1MLsMTdNyLonvYYTh+ORJoimGUvY4pHPV4e7F4ossBKOhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee4673f2953da1-306ab;
+	Thu, 21 Nov 2024 20:36:35 +0800 (CST)
+X-RM-TRANSID:2ee4673f2953da1-306ab
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.69])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1673f29522cb-d7016;
+	Thu, 21 Nov 2024 20:36:35 +0800 (CST)
+X-RM-TRANSID:2ee1673f29522cb-d7016
+From: liujing <liujing@cmss.chinamobile.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	hughd@google.com,
-	linux-ext4@vger.kernel.org,
-	tytso@mit.edu,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 0/3] symlink length caching
-Date: Thu, 21 Nov 2024 13:34:44 +0100
-Message-ID: <20241121-blatt-akkubetrieben-ad5d655d184a@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241120112037.822078-1-mjguzik@gmail.com>
-References: <20241120112037.822078-1-mjguzik@gmail.com>
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] perf intel-pt: Fix variable duplicate check
+Date: Thu, 21 Nov 2024 20:36:33 +0800
+Message-Id: <20241121123633.5805-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1297; i=brauner@kernel.org; h=from:subject:message-id; bh=9peFlhC4ruSN6CtZ3OzEwhHu359NZdsnNpRUcSrcQaA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbazyNrz58+ZvrCj+1hw9YA59dUyxZprLRZFWIYpX1G 6vixtBrHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOZq8nIsKpHzNbqzauft73s 9VdNdbBtuuOseniC73el2fsS5S937WVkuP1Mt/2I18WH5zxblXVenT3HXnDA+HF7SbHc/h2Xu1c mMQAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Nov 2024 12:20:33 +0100, Mateusz Guzik wrote:
-> quote:
->     When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
->     speed up when issuing readlink on /initrd.img on ext4.
-> 
-> The size is stored in a union with i_devices, which is never looked at
-> unless the inode is for a device.
-> 
-> [...]
+Identical condition 'data->from_mtc', second condition is always false,
+so duplicate checks are eliminated.
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+index e733f6b1f7ac..9fde2c49f8b5 100644
+--- a/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
++++ b/tools/perf/util/intel-pt-decoder/intel-pt-decoder.c
+@@ -883,7 +883,7 @@ static int intel_pt_calc_cyc_cb(struct intel_pt_pkt_info *pkt_info)
+ 			return 1;
+ 		timestamp = pkt_info->packet.payload |
+ 			    (data->timestamp & (0xffULL << 56));
+-		if (data->from_mtc && timestamp < data->timestamp &&
++		if (timestamp < data->timestamp &&
+ 		    data->timestamp - timestamp < decoder->tsc_slip)
+ 			return 1;
+ 		if (timestamp < data->timestamp)
+-- 
+2.27.0
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
-
-[1/3] vfs: support caching symlink lengths in inodes
-      https://git.kernel.org/vfs/vfs/c/5cbb3c7e0051
-[2/3] ext4: use inode_set_cached_link()
-      https://git.kernel.org/vfs/vfs/c/740456f67017
-[3/3] tmpfs: use inode_set_cached_link()
-      https://git.kernel.org/vfs/vfs/c/30071e02c163
 
