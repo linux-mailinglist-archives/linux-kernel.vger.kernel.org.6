@@ -1,90 +1,90 @@
-Return-Path: <linux-kernel+bounces-417509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F509D54F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:45:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9665A9D54E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A54F1F225D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 313DBB21EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934D31DE2C5;
-	Thu, 21 Nov 2024 21:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81C41DD88B;
+	Thu, 21 Nov 2024 21:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BNFcApkC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KqaDG6Tf"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2C71DBB19;
-	Thu, 21 Nov 2024 21:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7D21CB50C;
+	Thu, 21 Nov 2024 21:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732225505; cv=none; b=R33sdyZoXyCKDyPFYavTW9tUrhzKtcIj3NC7HACs1Jdae7o7+WQYbYfIkJC0AjlP+hDcwgm7VUjwNMkOe1gwHKa6m0L4VkANTYEtITtImU0UT3zgOXd90rISlyKgh5YNQ2DQgqtWySgAYoAdIfzmAZXfLTFElKUr4J0/+rONMe4=
+	t=1732225503; cv=none; b=RyvCp85aCQm50MOMfFD1Pb7QoVz3LuIHPF/CCKdfta8bXIDW/9exPLeX5KNJGzn0IWuqDC7GgeRzTUDHXivwMXAQXrit4bgxBeF1xA5uQXYg0UaJSQFBkJ3THI7n7OeNsp3ExhXH9FzXhENe4Si9VmonzSeP7AraIhdYfXvBXiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732225505; c=relaxed/simple;
-	bh=NIUcN6+T+wki60rCRnwepyQ8KRF0PBbMkb47VLXLqKM=;
+	s=arc-20240116; t=1732225503; c=relaxed/simple;
+	bh=z6SsQwO1xdocyqy0LDzeJjiSEosdlVjnlBC6wCHkbj8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVjNpgzoCzoV3P1SY4M70VTAZDlaKb1VAwsEM1ItD1jSqnZ8oEk4WbA4Yunuk6z/XrGBwY98cbCOG6yyN8Y5LUwzUJUxn2ke5vVrTyBL2hpXx5sUPfyED/Yex9E+kuvhjlDku0JhfrIeEnH7gxMJTIFYcRdTDLF3XzpUc0yYB/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BNFcApkC; arc=none smtp.client-ip=198.175.65.18
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nys7BAKPM3ytKW06Qw4kP82i+l8tQ0RhX3zKumXweFb9IiWGdv39AkiOPZZIcyLLmgzDYmy/SZPhJBEyONEHtK6HEBNtA6ZOkbUjYZg0kSOOISIj3kpm8m0U2L4kIOf5loDWQqCZo8BxCgJ3I8WQU/Ce0NTzq9uN3Yzpx6IiA7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KqaDG6Tf; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732225504; x=1763761504;
+  t=1732225502; x=1763761502;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=NIUcN6+T+wki60rCRnwepyQ8KRF0PBbMkb47VLXLqKM=;
-  b=BNFcApkCceVM9sS7dM7XHFFI8lIuy0mmm3XqLpRVhM+3qy5qt7P8kU4T
-   f/8rIOxMJXlnwqnAi+F/DijxT8xYFwtyGKOLXSj+8Tb23nEbIwvBWQewe
-   cFUuZd92N6PDupXXYMyNHL+GuBAQExGC+OITiX7sY8pwYweFr45jgh2p1
-   6ArBuuiGy1vRY6YcTCdIeuNsjVizmxfhe0ZtF/V4MN5DveTlaWvScF5Rt
-   7m/pbMhsNuxyC8wQ256oABy1O6lp+x9sVy6QFMHLOSQ6sVLGvcLzF0T5B
-   nDnRm8CHu7/JpKQSCWQzAva8/7hLpyH4mPx+Efl2AhMNXL47O4aZBD7+8
-   w==;
-X-CSE-ConnectionGUID: UGYcYd7LRrqR+VMlrOAW0g==
-X-CSE-MsgGUID: oCnwJEQ7Rc6PzIy/7uIaPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32514204"
+  bh=z6SsQwO1xdocyqy0LDzeJjiSEosdlVjnlBC6wCHkbj8=;
+  b=KqaDG6TfwQlzaGmIWeVg5y3QkMEpY2p+CZKJKkxfnIPxK6R4YZypeyy2
+   gM1zrMgSb9DmD8yBIyI1ff0Af/NsYVpVLK4bKEqwBOMcD8MrcZ5fNIm6e
+   ndhhatik81YpPtVINMEKGZrazHn/ihHWhGPrdBR3OEV29z6kg7Zi+zR1t
+   sq71crsJBwHStHx9sBxw5TfbundtgzT+jIlsSlrBpt6V8jCEKNY0PX0Lx
+   F0t4BGy7kLhUyA5iuCRSLSeVIM6UJ927vAv9j1xURRrSV/yEg2y/jUr6M
+   Iz5Sx8WIl5G3L0hb8K2DFmVsE4QhdWSCmsk3fprZ5Ah8lBVAUvcdoTumm
+   Q==;
+X-CSE-ConnectionGUID: lxZavyciQ5qTVTcVJh5zUA==
+X-CSE-MsgGUID: z6qs273vTWulcoqviPl/UQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32514196"
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32514204"
+   d="scan'208";a="32514196"
 Received: from fmviesa010.fm.intel.com ([10.60.135.150])
   by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 13:45:01 -0800
-X-CSE-ConnectionGUID: xdpPO1RmQrC72kpFCsgzmg==
-X-CSE-MsgGUID: zhZedUIBSeupQFYJAgkZ8A==
+X-CSE-ConnectionGUID: LSoy2AwmSsKRuXTWY52GvA==
+X-CSE-MsgGUID: baquf0K4S/CXW5Q48ljBhw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90753178"
+   d="scan'208";a="90753181"
 Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
   by fmviesa010.fm.intel.com with ESMTP; 21 Nov 2024 13:44:56 -0800
 Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tEEyr-0003O1-1A;
+	id 1tEEyr-0003Nz-16;
 	Thu, 21 Nov 2024 21:44:53 +0000
-Date: Fri, 22 Nov 2024 05:43:56 +0800
+Date: Fri, 22 Nov 2024 05:43:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: Xiao Liang <shaw.leon@gmail.com>, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Ido Schimmel <idosch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Jiri Pirko <jiri@resnulli.us>, Hangbin Liu <liuhangbin@gmail.com>,
-	linux-rdma@vger.kernel.org, linux-can@vger.kernel.org,
-	osmocom-net-gprs@lists.osmocom.org, bpf@vger.kernel.org,
-	linux-ppp@vger.kernel.org, wireguard@lists.zx2c4.com,
-	linux-wireless@vger.kernel.org, b.a.t.m.a.n@lists.open-mesh.org,
-	bridge@lists.linux.dev, linux-wpan@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 3/5] rtnetlink: Decouple net namespaces in
- rtnl_newlink_create()
-Message-ID: <202411220516.rokej98E-lkp@intel.com>
-References: <20241118143244.1773-4-shaw.leon@gmail.com>
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	cros-qcom-dts-watchers@chromium.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?unknown-8bit?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, quic_vbadigan@quicinc.com,
+	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com,
+	quic_skananth@quicinc.com, quic_vpernami@quicinc.com,
+	quic_mrana@quicinc.com, mmareddy@quicinc.com,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
+Message-ID: <202411220541.dAciinyb-lkp@intel.com>
+References: <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,68 +93,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118143244.1773-4-shaw.leon@gmail.com>
+In-Reply-To: <20241117-ecam-v1-2-6059faf38d07@quicinc.com>
 
-Hi Xiao,
+Hi Krishna,
 
-kernel test robot noticed the following build warnings:
+kernel test robot noticed the following build errors:
 
-[auto build test WARNING on net-next/main]
+[auto build test ERROR on 2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiao-Liang/net-ip_tunnel-Build-flow-in-underlay-net-namespace/20241121-112705
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241118143244.1773-4-shaw.leon%40gmail.com
-patch subject: [PATCH net-next v4 3/5] rtnetlink: Decouple net namespaces in rtnl_newlink_create()
-config: arc-randconfig-002-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220516.rokej98E-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220516.rokej98E-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-chaitanya-chundru/arm64-dts-qcom-sc7280-Increase-config-size-to-256MB-for-ECAM-feature/20241121-095614
+base:   2f87d0916ce0d2925cedbc9e8f5d6291ba2ac7b2
+patch link:    https://lore.kernel.org/r/20241117-ecam-v1-2-6059faf38d07%40quicinc.com
+patch subject: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
+config: alpha-randconfig-r064-20241121 (https://download.01.org/0day-ci/archive/20241122/202411220541.dAciinyb-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220541.dAciinyb-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411220516.rokej98E-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411220541.dAciinyb-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All errors (new ones prefixed by >>):
 
->> net/batman-adv/soft-interface.c:1075: warning: Function parameter or struct member 'params' not described in 'batadv_softif_newlink'
->> net/batman-adv/soft-interface.c:1075: warning: Excess function parameter 'nets' description in 'batadv_softif_newlink'
->> net/batman-adv/soft-interface.c:1075: warning: Excess function parameter 'dev' description in 'batadv_softif_newlink'
->> net/batman-adv/soft-interface.c:1075: warning: Excess function parameter 'tb' description in 'batadv_softif_newlink'
->> net/batman-adv/soft-interface.c:1075: warning: Excess function parameter 'data' description in 'batadv_softif_newlink'
->> net/batman-adv/soft-interface.c:1075: warning: Excess function parameter 'extack' description in 'batadv_softif_newlink'
-
-
-vim +1075 net/batman-adv/soft-interface.c
-
-128254ceea6ffe Sven Eckelmann 2020-10-11  1063  
-128254ceea6ffe Sven Eckelmann 2020-10-11  1064  /**
-128254ceea6ffe Sven Eckelmann 2020-10-11  1065   * batadv_softif_newlink() - pre-initialize and register new batadv link
-c19808cb1d05d1 Xiao Liang     2024-11-18  1066   * @nets: the applicable net namespaces
-128254ceea6ffe Sven Eckelmann 2020-10-11  1067   * @dev: network device to register
-128254ceea6ffe Sven Eckelmann 2020-10-11  1068   * @tb: IFLA_INFO_DATA netlink attributes
-128254ceea6ffe Sven Eckelmann 2020-10-11  1069   * @data: enum batadv_ifla_attrs attributes
-128254ceea6ffe Sven Eckelmann 2020-10-11  1070   * @extack: extended ACK report struct
-128254ceea6ffe Sven Eckelmann 2020-10-11  1071   *
-128254ceea6ffe Sven Eckelmann 2020-10-11  1072   * Return: 0 if successful or error otherwise.
-128254ceea6ffe Sven Eckelmann 2020-10-11  1073   */
-c19808cb1d05d1 Xiao Liang     2024-11-18  1074  static int batadv_softif_newlink(struct rtnl_newlink_params *params)
-128254ceea6ffe Sven Eckelmann 2020-10-11 @1075  {
-c19808cb1d05d1 Xiao Liang     2024-11-18  1076  	struct net_device *dev = params->dev;
-c19808cb1d05d1 Xiao Liang     2024-11-18  1077  	struct nlattr **data = params->data;
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1078  	struct batadv_priv *bat_priv = netdev_priv(dev);
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1079  	const char *algo_name;
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1080  	int err;
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1081  
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1082  	if (data && data[IFLA_BATADV_ALGO_NAME]) {
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1083  		algo_name = nla_data(data[IFLA_BATADV_ALGO_NAME]);
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1084  		err = batadv_algo_select(bat_priv, algo_name);
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1085  		if (err)
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1086  			return -EINVAL;
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1087  	}
-a5ad457eea41ef Sven Eckelmann 2020-10-11  1088  
-128254ceea6ffe Sven Eckelmann 2020-10-11  1089  	return register_netdevice(dev);
-128254ceea6ffe Sven Eckelmann 2020-10-11  1090  }
-128254ceea6ffe Sven Eckelmann 2020-10-11  1091  
+   alpha-linux-ld: drivers/pci/controller/dwc/pcie-designware-host.o: in function `dw_pcie_host_deinit':
+>> (.text+0x17a4): undefined reference to `pci_ecam_free'
+>> alpha-linux-ld: (.text+0x17a8): undefined reference to `pci_ecam_free'
+   alpha-linux-ld: drivers/pci/controller/dwc/pcie-designware-host.o: in function `dw_pcie_host_init':
+>> (.text+0x21e4): undefined reference to `pci_generic_ecam_ops'
+>> alpha-linux-ld: (.text+0x21e8): undefined reference to `pci_ecam_create'
+   alpha-linux-ld: (.text+0x21f0): undefined reference to `pci_ecam_create'
+>> alpha-linux-ld: (.text+0x2240): undefined reference to `pci_generic_ecam_ops'
+   alpha-linux-ld: (.text+0x2834): undefined reference to `pci_ecam_free'
+   alpha-linux-ld: (.text+0x2838): undefined reference to `pci_ecam_free'
 
 -- 
 0-DAY CI Kernel Test Service
