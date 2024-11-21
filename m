@@ -1,141 +1,241 @@
-Return-Path: <linux-kernel+bounces-417228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772569D50F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:49:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEAB9D50F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EC6284D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:49:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6288E1F210CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CA91A0BD7;
-	Thu, 21 Nov 2024 16:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 804621AA1DB;
+	Thu, 21 Nov 2024 16:49:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mXc45Td3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iC8HuUGy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968EC198A3F;
-	Thu, 21 Nov 2024 16:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B731A08A3;
+	Thu, 21 Nov 2024 16:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732207744; cv=none; b=Yidqbh7YdfcymAmnIVpI2iejebLEyPMFYhsjpjCWu9i3YJ1GDZsV+bKMEQG4usdjfW2i2DjckQOfQDRHgw3qB0jqom9Jp4zPTRdmggVf/e7pyj0OoSozexTjPaP6NK8/lABr5OS6BhfcnloaONZDR2aVujl64tyAu/hB8X+eO7U=
+	t=1732207797; cv=none; b=SewSRdY+Q3q/Um9BBLQDRjnAwxpOSi1azpEnh+F4UE4tVff82/6U30VjOzneILRjsEaMapmNx8YYu2+QySKXCDV2Ak8adED+WN5eVi5NegKnn+37gi4E12KqHUwAohzLcYzpFmKOD4rhsONKBe/DnBUVnLHPurP03/9xkWr8gco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732207744; c=relaxed/simple;
-	bh=8TnNgT9BSGeNnV9Q4psaEUNm1Db9V2po/4TACtO0ZMo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OXYXUGAnPJ5hLhAp/YEzUOyTGGRLQMT44M1Bx8072nJ/cofdyTB7q8HVGiKPRG0VtQJj8osaHXLLg+7ux8H163w7x0MhFSjq9xna0WPapkwTst5VugWhTqul8wmfK+7wZh4Se2vwUgocvCCScqOb1pc0kl0JFaAzBgnQtjgc3RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mXc45Td3; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732207743; x=1763743743;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=8TnNgT9BSGeNnV9Q4psaEUNm1Db9V2po/4TACtO0ZMo=;
-  b=mXc45Td3ZBuw+cbXgyrpbI7W/0AYbqHK7ucUYhikjkvEGzwKQwL3uINn
-   hkSQRoDiW98c+cO+qZwPFTn5Kl3EC+LeaXYBus6bVGDyWQ8ejfDibxG8y
-   qXZnElG472uQmX+WfYcj22/81YerxqlrCwYt9R8hO/13rndtz7n6UaOjo
-   IZjTekQ6Fa8x8T58qS3KWVXjxar7E0PQAmo2Aoxwm2lmVQVHB7O5fUWyl
-   Fu3GcpaguUJQTDHv+dFHBSjDIlj9mTZWHO5xGrgda7rn4h9vKcF8exV3c
-   k3vQgJXQ9pNcxLlj8xl1UmBSeqpEO5qdoTHHoDL5Sivsi0p+CKTSI/mly
-   w==;
-X-CSE-ConnectionGUID: jyAn31n9TvioGUb5FIMvpQ==
-X-CSE-MsgGUID: up+klhdAS4m3d65mA7vKVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43730767"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="43730767"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 08:49:02 -0800
-X-CSE-ConnectionGUID: Rujrdt0hTzqYMp2r60LyPA==
-X-CSE-MsgGUID: lgl1DRxOR3CLJ7GljqRlqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="90431340"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.109.229])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 08:49:02 -0800
-Message-ID: <56b6520093f5a0aca6738d2114c5ae08db2660fa.camel@linux.intel.com>
-Subject: Re: [PATCH] tools/power/x86/intel-speed-select: Fix the wrong
- format specifier
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 21 Nov 2024 08:49:01 -0800
-In-Reply-To: <20241121130028.6259-1-liujing@cmss.chinamobile.com>
-References: <20241121130028.6259-1-liujing@cmss.chinamobile.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732207797; c=relaxed/simple;
+	bh=cJJ52sojpaSaxkTBGKNoCKPWm4vXsAZgcjIjAZEfVkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=gCp+nk1tOhGWF7oHqMYk666qiBX+RSAK2YZYSif4kpd4XehlQ/3rv4GeCOy6BOGH4oMrOs2Ij6BM5V/QZcdZjt4+/Gnuz1ofUpdqzJ93+IWHK2o0b4tBVRHM4zxTCQE+XQO3Zn+xnfkHdDm1rHrVxBt+hTnSkemz/So2mmrQfy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iC8HuUGy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 612C9C4CED0;
+	Thu, 21 Nov 2024 16:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732207797;
+	bh=cJJ52sojpaSaxkTBGKNoCKPWm4vXsAZgcjIjAZEfVkY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iC8HuUGyTjQHTJh/puTCypw3YM2UhI9LvfOtWf8oByYPZ3kmAi70cEsNP8cSmTqPa
+	 g4O55bwuj97PHUW7RQEYh/QkIbIvMnnVsV+IX0gemM0GOQAHiqTWkyJLtEZ5EN0chk
+	 pUBKvw7K/gNHRLAP08f3d+VXNMO7ZUYmGQMWQnCgHSn1nDw+uB/Hna8tki+isNCxFn
+	 MioE5w4kOWKEvxfgwKW/ZSEhEUz/ZM2293FKt8c56oGQrYzUJIxlauVWDwcXjctd9x
+	 nio5bPtDjFD+tDGxPDULklDRUNWknSsWoWwcYtlYWcueqKFHTbEM6uwB8gaImBoOI6
+	 iEzvkdOchw/5g==
+Date: Thu, 21 Nov 2024 10:49:56 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: syzbot <syzbot+0058f72ff908dfa2dbf5@syzkaller.appspotmail.com>
+Cc: bhelgaas@google.com, linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org, linux-pci@vger.kernel.org,
+	sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [pci?] linux-next test error: general protection fault
+ in of_pci_supply_present
+Message-ID: <20241121164956.GA2388306@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <673f39b0.050a0220.363a1b.0126.GAE@google.com>
 
-On Thu, 2024-11-21 at 21:00 +0800, liujing wrote:
-> Because clos_config->clos_min and clos_config->clos_max
-> are unsigned int types, the output format should be %u.
->=20
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+On Thu, Nov 21, 2024 at 05:46:24AM -0800, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    decc701f41d0 Add linux-next specific files for 20241121
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14bceb78580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0058f72ff908dfa2dbf5
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a9775a56bebc/disk-decc701f.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/46688e4c6405/vmlinux-decc701f.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/0d11b152c43f/bzImage-decc701f.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0058f72ff908dfa2dbf5@syzkaller.appspotmail.com
+> 
+> NET: Registered PF_QIPCRTR protocol family
+> dca service started, version 1.12.1
+> PCI: Using configuration type 1 for base access
+> HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+> HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+> HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+> HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+> cryptd: max_cpu_qlen set to 1000
+> raid6: skipped pq benchmark and selected avx2x4
+> raid6: using avx2x2 recovery algorithm
+> ACPI: Added _OSI(Module Device)
+> ACPI: Added _OSI(Processor Device)
+> ACPI: Added _OSI(3.0 _SCP Extensions)
+> ACPI: Added _OSI(Processor Aggregator Device)
+> ACPI: 2 ACPI AML tables successfully acquired and loaded
+> ACPI: Interpreter enabled
+> ACPI: PM: (supports S0 S3 S4 S5)
+> ACPI: Using IOAPIC for interrupt routing
+> PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+> PCI: Ignoring E820 reservations for host bridge windows
+> ACPI: Enabled 16 GPEs in block 00 to 0F
+> ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+> acpi PNP0A03:00: _OSC: OS supports [ASPM ClockPM Segments MSI HPX-Type3]
+> acpi PNP0A03:00: _OSC: not requesting OS control; OS requires [ExtendedConfig ASPM ClockPM MSI]
+> acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended configuration space under this bridge
+> PCI host bridge to bus 0000:00
+> pci_bus 0000:00: Unknown NUMA node; performance will be reduced
+> pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+> pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+> pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+> pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfefff window]
+> pci_bus 0000:00: root bus resource [bus 00-ff]
+> pci 0000:00:00.0: [8086:1237] type 00 class 0x060000 conventional PCI endpoint
+> pci 0000:00:01.0: [8086:7110] type 00 class 0x060100 conventional PCI endpoint
+> pci 0000:00:01.3: [8086:7113] type 00 class 0x068000 conventional PCI endpoint
+> pci 0000:00:01.3: quirk: [io  0xb000-0xb03f] claimed by PIIX4 ACPI
+> pci 0000:00:03.0: [1af4:1004] type 00 class 0x000000 conventional PCI endpoint
+> pci 0000:00:03.0: BAR 0 [io  0xc000-0xc03f]
+> pci 0000:00:03.0: BAR 1 [mem 0xfe800000-0xfe80007f]
+> pci 0000:00:04.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
+> pci 0000:00:04.0: BAR 0 [io  0xc040-0xc07f]
+> pci 0000:00:04.0: BAR 1 [mem 0xfe801000-0xfe80107f]
+> pci 0000:00:05.0: [1ae0:a002] type 00 class 0x030000 conventional PCI endpoint
+> pci 0000:00:05.0: BAR 0 [mem 0xfe000000-0xfe7fffff]
+> pci 0000:00:05.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+> pci 0000:00:06.0: [1af4:1002] type 00 class 0x00ff00 conventional PCI endpoint
+> pci 0000:00:06.0: BAR 0 [io  0xc080-0xc09f]
+> pci 0000:00:07.0: [1af4:1005] type 00 class 0x00ff00 conventional PCI endpoint
+> pci 0000:00:07.0: BAR 0 [io  0xc0a0-0xc0bf]
+> pci 0000:00:07.0: BAR 1 [mem 0xfe802000-0xfe80203f]
+> Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
+> CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-next-20241121-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+> RIP: 0010:of_pci_supply_present+0x25/0xe0
+> Code: 90 90 90 90 90 66 0f 1f 00 55 41 56 53 48 89 fb 49 be 00 00 00 00 00 fc ff df e8 96 78 93 fc 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 5c 69 fe fc 48 8b 1b 48 85 db 74
+> RSP: 0000:ffffc90000066818 EFLAGS: 00010202
+> RAX: 000000000000000b RBX: 0000000000000058 RCX: ffff88801bef0000
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000000
+> RBP: ffff8881446f4488 R08: ffffffff8bbde83d R09: 1ffff11003ad2311
+> R10: dffffc0000000000 R11: ffffed1003ad2312 R12: ffff8881446f4000
+> R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff88823ffff000 CR3: 000000000e736000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  pci_bus_add_device+0x1a9/0x340 drivers/pci/bus.c:408
+>  pci_bus_add_devices+0x94/0x1c0 drivers/pci/bus.c:439
+>  acpi_pci_root_add+0x2112/0x30f0 drivers/acpi/pci_root.c:761
+>  acpi_scan_attach_handler drivers/acpi/scan.c:2260 [inline]
+>  acpi_bus_attach+0x7ab/0xcb0 drivers/acpi/scan.c:2309
+>  device_for_each_child+0x118/0x1b0 drivers/base/core.c:3994
+>  acpi_dev_for_each_child+0xd0/0x110 drivers/acpi/bus.c:1157
+>  acpi_bus_attach+0x9f4/0xcb0 drivers/acpi/scan.c:2329
+>  device_for_each_child+0x118/0x1b0 drivers/base/core.c:3994
+>  acpi_dev_for_each_child+0xd0/0x110 drivers/acpi/bus.c:1157
+>  acpi_bus_attach+0x9f4/0xcb0 drivers/acpi/scan.c:2329
+>  acpi_bus_scan+0x12b/0x560 drivers/acpi/scan.c:2610
+>  acpi_scan_init+0x267/0x730 drivers/acpi/scan.c:2747
+>  acpi_init+0x159/0x240 drivers/acpi/bus.c:1466
+>  do_one_initcall+0x248/0x880 init/main.c:1266
+>  do_initcall_level+0x157/0x210 init/main.c:1328
+>  do_initcalls+0x3f/0x80 init/main.c:1344
+>  kernel_init_freeable+0x435/0x5d0 init/main.c:1577
+>  kernel_init+0x1d/0x2b0 init/main.c:1466
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:of_pci_supply_present+0x25/0xe0
+> Code: 90 90 90 90 90 66 0f 1f 00 55 41 56 53 48 89 fb 49 be 00 00 00 00 00 fc ff df e8 96 78 93 fc 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 5c 69 fe fc 48 8b 1b 48 85 db 74
+> RSP: 0000:ffffc90000066818 EFLAGS: 00010202
+> RAX: 000000000000000b RBX: 0000000000000058 RCX: ffff88801bef0000
+> RDX: 0000000000000000 RSI: 0000000000000008 RDI: 0000000000000000
+> RBP: ffff8881446f4488 R08: ffffffff8bbde83d R09: 1ffff11003ad2311
+> R10: dffffc0000000000 R11: ffffed1003ad2312 R12: ffff8881446f4000
+> R13: dffffc0000000000 R14: dffffc0000000000 R15: 0000000000000000
+> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: ffff88823ffff000 CR3: 000000000e736000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:	90                   	nop
+>    1:	90                   	nop
+>    2:	90                   	nop
+>    3:	90                   	nop
+>    4:	90                   	nop
+>    5:	66 0f 1f 00          	nopw   (%rax)
+>    9:	55                   	push   %rbp
+>    a:	41 56                	push   %r14
+>    c:	53                   	push   %rbx
+>    d:	48 89 fb             	mov    %rdi,%rbx
+>   10:	49 be 00 00 00 00 00 	movabs $0xdffffc0000000000,%r14
+>   17:	fc ff df
+>   1a:	e8 96 78 93 fc       	call   0xfc9378b5
+>   1f:	48 83 c3 58          	add    $0x58,%rbx
+>   23:	48 89 d8             	mov    %rbx,%rax
+>   26:	48 c1 e8 03          	shr    $0x3,%rax
+> * 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+>   2f:	74 08                	je     0x39
+>   31:	48 89 df             	mov    %rbx,%rdi
+>   34:	e8 5c 69 fe fc       	call   0xfcfe6995
+>   39:	48 8b 1b             	mov    (%rbx),%rbx
+>   3c:	48 85 db             	test   %rbx,%rbx
+>   3f:	74                   	.byte 0x74
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 
-You need to have for your tag:
+#syz fix: 278dd091e95d ("PCI/pwrctl: Create pwrctl device only if at least one power supply is present")
 
-Full Name <email address>
+https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=278dd091e95d
+should fix this by adding back the "if (!np)" check in
+of_pci_supply_present().
 
-Thanks,
-Srinivas
-
->=20
-> diff --git a/tools/power/x86/intel-speed-select/isst-display.c
-> b/tools/power/x86/intel-speed-select/isst-display.c
-> index 07ebd08f3202..5ecf24bda6dd 100644
-> --- a/tools/power/x86/intel-speed-select/isst-display.c
-> +++ b/tools/power/x86/intel-speed-select/isst-display.c
-> @@ -617,14 +617,14 @@ void isst_clos_display_information(struct
-> isst_id *id, FILE *outf, int clos,
-> =C2=A0	format_and_print(outf, level + 2, header, value);
-> =C2=A0
-> =C2=A0	snprintf(header, sizeof(header), "clos-min");
-> -	snprintf(value, sizeof(value), "%d MHz", clos_config-
-> >clos_min * isst_get_disp_freq_multiplier());
-> +	snprintf(value, sizeof(value), "%u MHz", clos_config-
-> >clos_min * isst_get_disp_freq_multiplier());
-> =C2=A0	format_and_print(outf, level + 2, header, value);
-> =C2=A0
-> =C2=A0	snprintf(header, sizeof(header), "clos-max");
-> =C2=A0	if ((clos_config->clos_max *
-> isst_get_disp_freq_multiplier()) =3D=3D 25500)
-> =C2=A0		snprintf(value, sizeof(value), "Max Turbo
-> frequency");
-> =C2=A0	else
-> -		snprintf(value, sizeof(value), "%d MHz",
-> clos_config->clos_max * isst_get_disp_freq_multiplier());
-> +		snprintf(value, sizeof(value), "%u MHz",
-> clos_config->clos_max * isst_get_disp_freq_multiplier());
-> =C2=A0	format_and_print(outf, level + 2, header, value);
-> =C2=A0
-> =C2=A0	snprintf(header, sizeof(header), "clos-desired");
-
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
