@@ -1,129 +1,140 @@
-Return-Path: <linux-kernel+bounces-417582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB049D562D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:30:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 983E19D562E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D4F5B2271C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425D71F232B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E981DE4DB;
-	Thu, 21 Nov 2024 23:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D31D042A;
+	Thu, 21 Nov 2024 23:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGXMj+SI"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6+AwDD1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D221DE3D2;
-	Thu, 21 Nov 2024 23:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60DC1AAE06;
+	Thu, 21 Nov 2024 23:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231807; cv=none; b=pcbS4IDMPw+seCeOTIUxWoeR1BOgbZF8aKIQ/fNdWB7BzlyCorNpORRuqj2aY7pY/LKbjwYrW3XdRLZvrasFV1MdDn77fmA07/8Lo+fN+18QXP4t1bJ8NAlKa0C5/rI+UIiy5Kiet+uvhT/Nlmc4ad67xjyOnGpv7MSJ6d85DQA=
+	t=1732231964; cv=none; b=K/9jbUzg+cHa+sGJ7tmEKNx4EPWvyvGv6qksBkwGhkwdlSAMu7bKS8c4VMIvvTRKpzzLusg0+8OlWHpRV1/eUdBup0ccB+ZdoA3EeMMCCt/xrz0KbrwfrVfxn/cFaJ6yLyUqzDTWmGbxrcfqfjs2OKY3zzwNyIBh/yI+WCJjf14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231807; c=relaxed/simple;
-	bh=PmJ6lkn58ZxljyegMVGGcxmPXHfrDsgippaoYUGBR7k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W3jxks1fYOBegFVXOqhqPoQ7CWWeNpPd5hJRq+/MmvdAaBZ92gO6a+8Pyif9r/cC4OGgr8gpKYMT9oZP4H8FRgp4K+2b/PFzRLOvoXq9mj17p2hchHg8WECwaQ65om3HVQx2STsxo7dY6tC89JomuqiZRPKLgqiXLXUuEkgNnbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGXMj+SI; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71a6b13bbceso679163a34.1;
-        Thu, 21 Nov 2024 15:30:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732231804; x=1732836604; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=owV7zU087L6xjLTYOiWTs2oqbkasPds8d3oh4BtDm/Y=;
-        b=ZGXMj+SIdC9qq7S5i1AoOy3vce22WBN6BrlfdBQp1Zu472Jv14CZ6c43SBkidOmxqQ
-         wyeFjEK8CGtOcGIm+IdpRmI56kVymw/BDcJzM6WPzle4JXLiUorSdKzDr9910PcWG8VF
-         T/R5BBU8pQmKQvSzcsJwscS1woOhxnV1qwNLGDhYps94PjT7NnjMQxKaH5X9YF6fpmmP
-         0B+at3skNdNtyzkS0TH91aKpof4kzBjpJc4H92BpCPNF9geShP6sN5I9vcpcK/9bztzi
-         4r+V86imeEbfA7e6LWehx8QX4lNu4inPaAVF6lR4q7BVkK918zN1ZOtfsIZxRYBr4364
-         JllA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732231804; x=1732836604;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=owV7zU087L6xjLTYOiWTs2oqbkasPds8d3oh4BtDm/Y=;
-        b=t1QYNoMr4V21tnWwbxc/Wi/1ut2TtOsGHwLCylp1P4bEGdo4qxYfnBmWqJW7nJ9B2w
-         Wbmn0Ho6if6eRPCn7M8BWiUBiwpU/9bXMxJPlW8Ajqg5/l47T2jSSIchlE7Hyg4AIKK3
-         sgjmtaUhsG9jaWmIF6tzEiefW6TuwkloW9JenW1Okj4oIWATtbau2HeupoDBrx3+ovhX
-         1aAzLsDeodVQTX2IeOIucLaP6QdMimBVNGSVJWkEO6IThkg0Iz/MpTfjfPKShJEY4D2N
-         RfGmw49Pub08t9ffU4ydfozDTjjUGLaKzVdM6l78UjqHYjkyITmTSXXeqB5CmCHvUHCY
-         KL3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW73gilPIbEzh9aUeocod75pp2zkvmM427Y4R7wps3xL+CIY6dNYV3OFmpEIwXtek5WZ6DhOIEcp1GbEGw=@vger.kernel.org, AJvYcCWAXdqfa5no7VGNRtZyJGvFqzR90AsUTRSP24/6TogvzdehTFXaS8MZ0LxQGlIsXyKiieNpcdKsSWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4vNPt+U5fHDV5CIlf59o5f7D07Dh/Kq5y5dsIs/lOnvpmEQ3M
-	3cKDJsyLbOFAuFBiM7yMn7ejuwRUsGAwzXTqXRdLifOUDCdJJ9cP
-X-Gm-Gg: ASbGnculsPduiDl7yw8UnF1Zg0tzxpiughYgSnO06whCxJyzN+DuRM3npfQw3s9mpSL
-	oj8MslE7tFptWjHMLQzyHsFPUg2A6VlX51JYje6LaUSyRWeyNafAwXVe/GYMcNXIvTQvJMMw0IL
-	v5aYj90bFcIHL5ADg6E7dnwMI5Pxsd1fMks3sn12m/hJR/Cm0l/SvHTVgjc2K/i/8Hh7kIt9ORU
-	gMrzEsuJZJbnhmW9Z8/ggniSbwMNi/LRVO7KigcGeFB6m68QJjSOQ1LcvxeIeHxr+87yoS3fTe7
-	H08MCqceHKHLlY0=
-X-Google-Smtp-Source: AGHT+IEnnsRZ0NHjbTx3fdggf1Enpi2OR06QodDPxiOAf44oUcTuRYP905po760JgbDKEKa1p+KlTQ==
-X-Received: by 2002:a9d:7306:0:b0:718:615:462d with SMTP id 46e09a7af769-71c04b9a0e6mr585586a34.13.1732231804217;
-        Thu, 21 Nov 2024 15:30:04 -0800 (PST)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:8925:1c80:f24e:ec0c])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71c03793533sm174284a34.37.2024.11.21.15.30.01
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 21 Nov 2024 15:30:03 -0800 (PST)
-From: anish kumar <yesanishhere@gmail.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH] ASoC: doc: dapm: Add location information for dapm-graph tool
-Date: Thu, 21 Nov 2024 15:29:58 -0800
-Message-Id: <20241121232958.46179-1-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1732231964; c=relaxed/simple;
+	bh=ygYMDWO/yHZ3l8DQZRGNyMCOr+dX6/eskJ6pouwjMv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jycc3oKb+hRFlV050Imk0FT/H4OzYgljkwwNqT+xYDG6Ocr2+cg301Fp6ma28sWUcrlYFRUOCAbf3I+QHFomJHs8dhZIR0MYUsKZuFU1xfce7MnJan6qUbtZf5r/ESUo5BZMzKNbm8bqJ2cPiGiwBOaZr3DXwo8QbeqFwz9hjFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6+AwDD1; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732231962; x=1763767962;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ygYMDWO/yHZ3l8DQZRGNyMCOr+dX6/eskJ6pouwjMv4=;
+  b=A6+AwDD1j4R2GBOdNKk4hGro5a5qIj/OFA8Ndfn1RWwzpqUN9G9Mgf9P
+   Xu1zHlTvz5DX+N1mzoeNv/LN9UVHXE8fBzABbuZrjvgokY1sCX2zARnQs
+   wze0stj4AOEYs6sxPlUjIJoRk+WIvrYjZd+7dZrZzumMwnpXvnheXTrvT
+   9Jy+Ev645D2q5k5wyW8pPeIVlrlahS6HLWxwbhoeNH9JWd8tVsuQoCzmT
+   dcvkGJVBwu2qZLuTsOp/OSQgQxgF5YD5Uzpj05SlaaV6bpMqALxQ/FxUt
+   FGv31a4/MOTWBR1e8+JZ0NjoscIV6NfHfj8qIVNiUwInsPV6sblU4WAAc
+   g==;
+X-CSE-ConnectionGUID: weEeW3AbRSGlNwiJYQuC4A==
+X-CSE-MsgGUID: 9WT/dpxPQue8p0wvy/mE1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32613356"
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="32613356"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:32:41 -0800
+X-CSE-ConnectionGUID: g3cD8rRoRgyoze6v4P/7Mg==
+X-CSE-MsgGUID: n2x+Fu8CTPi2umoSbcumDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="91206105"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:32:41 -0800
+Date: Thu, 21 Nov 2024 15:32:40 -0800
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
+	pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>,
+	chao.gao@intel.com, rick.p.edgecombe@intel.com,
+	yan.y.zhao@intel.com, linux-kernel@vger.kernel.org,
+	isaku.yamahata@gmail.com, Marcelo Tosatti <mtosatti@redhat.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
+Message-ID: <Zz/DGOoo/mEvULiG@ls.amr.corp.intel.com>
+References: <cover.1728719037.git.isaku.yamahata@intel.com>
+ <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
 
-To help developers debug DAPM issues and visualize widget connectivity,
-the dapm-graph tool provides a graphical representation of how widgets
-and routes are connected. This commit adds the location information for
-the tool to the documentation, making it easier for users to find and
-use it for troubleshooting DAPM-related problems.
+On Mon, Oct 14, 2024 at 08:17:19PM +0530,
+"Nikunj A. Dadhania" <nikunj@amd.com> wrote:
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
-This patch was generated as a result of recent problem I was
-debugging with dapm widgets, where I was looking for a way
-to visualize as was shown in the documentation, I had to
-do a lot of google searches to figure out this tool. So,
-just adding the information here so that future developers
-doesn't need to look around.
+> > Solution
+> > --------
+> > The solution is to keep the KVM TSC offset/multiplier the same as the value of
+> > the TDX module somehow.  Possible solutions are as follows.
+> > - Skip the logic
+> >   Ignore (or don't call related functions) the request to change the TSC
+> >   offset/multiplier.
+> >   Pros
+> >   - Logically clean.  This is similar to the guest_protected case.
+> >   Cons
+> >   - Needs to identify the call sites.
+> > 
+> > - Revert the change at the hooks after TSC adjustment
+> >   x86 KVM defines the vendor hooks when the TSC offset/multiplier are
+> >   changed.  The callback can revert the change.
+> >   Pros
+> >   - We don't need to care about the logic to change the TSC offset/multiplier.
+> >   Cons:
+> >   - Hacky to revert the KVM x86 common code logic.
+> > 
+> > Choose the first one.  With this patch series, SEV-SNP secure TSC can be
+> > supported.
+> 
+> I am not sure how will this help SNP Secure TSC, as the GUEST_TSC_OFFSET and 
+> GUEST_TSC_SCALE are only available to the guest.
 
- Documentation/sound/soc/dapm.rst | 3 +++
- 1 file changed, 3 insertions(+)
+Although Xiaoyao mentioned KVM emulated timer, let me clarify it.
+I think the following is common for SEV-SNP and TDX.
 
-diff --git a/Documentation/sound/soc/dapm.rst b/Documentation/sound/soc/dapm.rst
-index 14c4dc026e6b..73a42d5a9f30 100644
---- a/Documentation/sound/soc/dapm.rst
-+++ b/Documentation/sound/soc/dapm.rst
-@@ -35,6 +35,9 @@ The graph for the STM32MP1-DK1 sound card is shown in picture:
-     :alt:   Example DAPM graph
-     :align: center
- 
-+You can also generate compatible graph for your sound card using
-+`tools/sound/dapm-graph` utility.
-+
- DAPM power domains
- ==================
- 
+The issue is with guest MSR_IA32_TSC_DEADLINE (and guest local APIC Timer
+Initial Count Register).  As long as I understand according to the public
+documentation, the SEV-SNP hardware (or the TDX module) doesn't virtualize it so
+that the VMM (KVM) has to emulate it.
+The KVM uses the host timer(vcpu->arch.apic.lapic_timer) and inject timer
+interrupt withit.  KVM tracks TSC multiplier/offset to calculate the host
+TSC timeout value based on them.
+
+The KVM multiplier and offset must match with the values the hardware 
+(or the TDX module) thinks.  If they don't match,  the KVM tsc deadline timer
+(or local APIC timer) emulation is inaccurate.  Timer interrupt is injected
+Late or early.
+
+KVM has several points to change tsc multiplier/offset from the original value.
+This patch series is to prevent KVM from modifying TSC multipler/offset.
+
+In reality, it's difficult to notice that the timer interrupt is injected late
+or early like several miliseconds due to vCPU scheduling.  The injecting timer
+interrupt always late harms time sensitive workload (e.g. heart beat) in guest
+as Marcelo noticed.
+
+Thanks,
 -- 
-2.39.5 (Apple Git-154)
-
+Isaku Yamahata <isaku.yamahata@intel.com>
 
