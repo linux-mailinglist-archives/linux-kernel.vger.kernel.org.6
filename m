@@ -1,55 +1,76 @@
-Return-Path: <linux-kernel+bounces-416807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF859D4A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:13:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B8E9D4A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D22A282BDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:13:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8FF282FA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFA51CD207;
-	Thu, 21 Nov 2024 10:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EA61CC175;
+	Thu, 21 Nov 2024 10:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyZX4BaO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kkZ8CDWe"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F2F5FEED;
-	Thu, 21 Nov 2024 10:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A53F2309B6;
+	Thu, 21 Nov 2024 10:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732183978; cv=none; b=n3GTinA29inGk0ZuVmfzNO3unJa5fXiqw1ldrUicZ1egsBM+3CwzNMOEbG6YJOZCUnRSp0qFi9+bYFVjTc5dxuYBJ+oj4uXhvzmDvFCRFeEg/NXCFe/c/Z0tF63r9G5mGFjlA8cwzbsaDrqyUFQrUqlIvZT4mrV7k28bYmv1q7s=
+	t=1732184294; cv=none; b=H+ZNAZxchYWBFOyVKmVx/tg8IMd208GZKH+hK8RKEgybJaExqBwvaS+Xnx3sJmG0955p9BTfzFA5v3UyjZ3PRuxpthNF9AyGBzCPsq3wIxBDiV7vgiklY+5D40hNRBgMGD1lqgFptLH/vpOhsDmjsFYTO+2k1jW6cI7v9oDZpqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732183978; c=relaxed/simple;
-	bh=6eiFaJrYM90rvCLkLlof6VzZqT6tcdWrRcNLWTHa+aA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Git/gvJhHdMWZk3EumWw4lJXuS3sr2MGG4V8JNkxKOshyBnWkOep9dNAerS2X8EcMkfuKMre65fBcioIiXDo8Ekvp2UOiNSp/elHbox3tt5Tj5kxiFPc6uhohM3wLFAnlulZT/rzZvGEEemsxGeL8QdtKHU5RsWdpl7vo92+b64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyZX4BaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83098C4CECC;
-	Thu, 21 Nov 2024 10:12:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732183978;
-	bh=6eiFaJrYM90rvCLkLlof6VzZqT6tcdWrRcNLWTHa+aA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KyZX4BaOE2H7wAKl0O4Zee18KkAzJdiHIfODYDQuNXKcfovxm323pwz+3QZPrBAmh
-	 0JAhgsyCbo+vdhaoU2q9euo7AkaJO2nnm8I53iUHX6gLg75iXuHCm8UUsDjv6+H83L
-	 t5m3215mGYygSkP8Z2delemLfw8jmry/2v2f4Odhm1TVRbP+UrUZHBhmtWbzF7PQjH
-	 DmntSFVpYMD4YZ4jlF+nMxZbycIvFpQhYVwKdhsZyQ/+T1qQjzOtR16ymwkslVlHcX
-	 4CHAWz651aJ0U7LZM+6E7/lwV0qag5NpOeeFudZtTQH7zTinK7rKsw/Ht5e+bgmaWy
-	 FRnJkMICYv+GA==
-Date: Thu, 21 Nov 2024 11:12:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, hughd@google.com, linux-ext4@vger.kernel.org, tytso@mit.edu, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 1/3] vfs: support caching symlink lengths in inodes
-Message-ID: <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
-References: <20241120112037.822078-1-mjguzik@gmail.com>
- <20241120112037.822078-2-mjguzik@gmail.com>
+	s=arc-20240116; t=1732184294; c=relaxed/simple;
+	bh=t0c2i8+GlYTfqDD9xH1LK6zNin2RsOoo+ALw02hJUzo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LYHhamUpmkEplD4Rr4YJkTzjcTqC5nSFJbXq8P1PmdaH2JX8CDQQmylCL8N3Kqs37+yKl51MfJOMlbc3jJg8QmyjfeiLYn4CspLtpycFNc1aTYUU+4LEXKFaPvo/7M3lkya6wMFvmD8p8aqpFCFm3pT367vVmUjWhhoVHP7PseU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kkZ8CDWe; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EB3AC20002;
+	Thu, 21 Nov 2024 10:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732184288;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PSpipFllfpXYYHDQWPsv/JoqwKuQO0NyaVwH5k8jcGY=;
+	b=kkZ8CDWeHL9oj3zg2E3STPYPZD7riH0WgjIXJzDp1aFWevI2EPp6QntDBcqIXbiY1evq/J
+	l7GXMAN0QM+saJUBNgiJJnP13bt5gOAZEG9bI+PCqXtqxZT3bUKZwBupho21e0FffKAC/7
+	g0NWW1+UPe76/Ef9UMo3RwzM/VgdE2lC+FjNT4Sb6lZ8KY/Dz6jfmfE2i1+V8FaEKs2hIj
+	UlqPvLjO5ehQ5JL7NmsGhTwin6cT9YXswiarpD5pQLj+g6tkTwSLXVMK+dioneoPF1L8x2
+	QdkqxEhEgTal33CY0NZV3Qp2ikTlysNwIdI+gGOVnR1CA+06XDHc+dPLpM7tYg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Thomas Bonnefille
+ <thomas.bonnefille@bootlin.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>,  Rob Herring <robh+dt@kernel.org>,
+  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,  Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>,  Herve Codina
+ <herve.codina@bootlin.com>,  Milan Stevanovic <milan.stevanovic@se.com>,
+  Jimmy Lalande <jimmy.lalande@se.com>,  Pascal Eberhard
+ <pascal.eberhard@se.com>,  linux-renesas-soc@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  Gareth
+ Williams <gareth.williams.jx@renesas.com>,  Wolfram Sang
+ <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
+ board device-tree
+In-Reply-To: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+	(Geert Uytterhoeven's message of "Tue, 12 Nov 2024 11:50:29 +0100")
+References: <20230209133507.150571-1-clement.leger@bootlin.com>
+	<20230209133507.150571-3-clement.leger@bootlin.com>
+	<CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
+	<20230215092933.2f71ece0@fixe.home>
+	<20230215115441.361aed53@fixe.home>
+	<CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
+	<CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Thu, 21 Nov 2024 11:18:07 +0100
+Message-ID: <87mshsvqjk.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,150 +78,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241120112037.822078-2-mjguzik@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Nov 20, 2024 at 12:20:34PM +0100, Mateusz Guzik wrote:
-> When utilized it dodges strlen() in vfs_readlink(), giving about 1.5%
-> speed up when issuing readlink on /initrd.img on ext4.
-> 
-> Filesystems opt in by calling inode_set_cached_link() when creating an
-> inode.
-> 
-> The size is stored in a new union utilizing the same space as i_devices,
-> thus avoiding growing the struct or taking up any more space.
-> 
-> Churn-wise the current readlink_copy() helper is patched to accept the
-> size instead of calculating it.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
->  fs/namei.c                     | 34 +++++++++++++++++++---------------
->  fs/proc/namespaces.c           |  2 +-
->  include/linux/fs.h             | 15 +++++++++++++--
->  security/apparmor/apparmorfs.c |  2 +-
->  4 files changed, 34 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 9d30c7aa9aa6..e56c29a22d26 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -5272,19 +5272,16 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
->  				getname(newname), 0);
->  }
->  
-> -int readlink_copy(char __user *buffer, int buflen, const char *link)
-> +int readlink_copy(char __user *buffer, int buflen, const char *link, int linklen)
->  {
-> -	int len = PTR_ERR(link);
-> -	if (IS_ERR(link))
-> -		goto out;
-> +	int copylen;
->  
-> -	len = strlen(link);
-> -	if (len > (unsigned) buflen)
-> -		len = buflen;
-> -	if (copy_to_user(buffer, link, len))
-> -		len = -EFAULT;
-> -out:
-> -	return len;
-> +	copylen = linklen;
-> +	if (unlikely(copylen > (unsigned) buflen))
-> +		copylen = buflen;
-> +	if (copy_to_user(buffer, link, copylen))
-> +		copylen = -EFAULT;
-> +	return copylen;
->  }
->  
->  /**
-> @@ -5304,6 +5301,9 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
->  	const char *link;
->  	int res;
->  
-> +	if (inode->i_opflags & IOP_CACHED_LINK)
-> +		return readlink_copy(buffer, buflen, inode->i_link, inode->i_linklen);
-> +
->  	if (unlikely(!(inode->i_opflags & IOP_DEFAULT_READLINK))) {
->  		if (unlikely(inode->i_op->readlink))
->  			return inode->i_op->readlink(dentry, buffer, buflen);
-> @@ -5322,7 +5322,7 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
->  		if (IS_ERR(link))
->  			return PTR_ERR(link);
->  	}
-> -	res = readlink_copy(buffer, buflen, link);
-> +	res = readlink_copy(buffer, buflen, link, strlen(link));
->  	do_delayed_call(&done);
->  	return res;
->  }
-> @@ -5391,10 +5391,14 @@ EXPORT_SYMBOL(page_put_link);
->  
->  int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
->  {
-> +	const char *link;
-> +	int res;
-> +
->  	DEFINE_DELAYED_CALL(done);
-> -	int res = readlink_copy(buffer, buflen,
-> -				page_get_link(dentry, d_inode(dentry),
-> -					      &done));
-> +	link = page_get_link(dentry, d_inode(dentry), &done);
-> +	res = PTR_ERR(link);
-> +	if (!IS_ERR(link))
-> +		res = readlink_copy(buffer, buflen, link, strlen(link));
->  	do_delayed_call(&done);
->  	return res;
->  }
-> diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
-> index 8e159fc78c0a..c610224faf10 100644
-> --- a/fs/proc/namespaces.c
-> +++ b/fs/proc/namespaces.c
-> @@ -83,7 +83,7 @@ static int proc_ns_readlink(struct dentry *dentry, char __user *buffer, int bufl
->  	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
->  		res = ns_get_name(name, sizeof(name), task, ns_ops);
->  		if (res >= 0)
-> -			res = readlink_copy(buffer, buflen, name);
-> +			res = readlink_copy(buffer, buflen, name, strlen(name));
->  	}
->  	put_task_struct(task);
->  	return res;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 7e29433c5ecc..2cc98de5af43 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -626,6 +626,7 @@ is_uncached_acl(struct posix_acl *acl)
->  #define IOP_XATTR	0x0008
->  #define IOP_DEFAULT_READLINK	0x0010
->  #define IOP_MGTIME	0x0020
-> +#define IOP_CACHED_LINK	0x0040
->  
->  /*
->   * Keep mostly read-only and often accessed (especially for
-> @@ -723,7 +724,10 @@ struct inode {
->  	};
->  	struct file_lock_context	*i_flctx;
->  	struct address_space	i_data;
-> -	struct list_head	i_devices;
-> +	union {
-> +		struct list_head	i_devices;
-> +		int			i_linklen;
-> +	};
+Hello Geert,
 
-I think that i_devices should be moved into the union as it's really
-only used with i_cdev but it's not that easily done because list_head
-needs to be initialized. I roughly envisioned something like:
+On 12/11/2024 at 11:50:29 +01, Geert Uytterhoeven <geert@linux-m68k.org> wr=
+ote:
 
-union {
-        struct {
-                struct cdev             *i_cdev;
-                struct list_head        i_devices;
-        };
-        struct {
-                char                    *i_link;
-                unsigned int            i_link_len;
-        };
-        struct pipe_inode_info          *i_pipe;
-        unsigned                        i_dir_seq;
-};
+> Hi Cl=C3=A9ment,
+>
+> On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
+> <geert@linux-m68k.org> wrote:
+>> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
+>> <clement.leger@bootlin.com> wrote:
+>> > Le Wed, 15 Feb 2023 09:29:33 +0100,
+>> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
+>> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
+>> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
+>> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clement.le=
+ger@bootlin.com> wrote:
+>> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. =
+Since this
+>> > > > > configuration targets only the RZ/N1D, it is named r9a06g032-rzn=
+1d400-eb.
+>> > > > > It adds support for the 2 additional switch ports (port C and D)=
+ that are
+>> > > > > available on that board.
+>> > > > >
+>> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.co=
+m>
+>> > > >
+>> > > > Thanks for your patch!
+>> > > >
+>> > > > > --- /dev/null
+>> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
+>>
+>> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, =
+<&pins_eth4>,
+>> > > > > +                   <&pins_mdio1>;
+>> > > > > +
+>> > > > > +       mdio {
+>> > > > > +               /* CN15 and CN16 switches must be configured in =
+MDIO2 mode */
+>> > > > > +               switch0phy1: ethernet-phy@1 {
+>> > > > > +                       reg =3D <1>;
+>> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>;
+>> > > >
+>> > > > marvell,reg-init is not documented in any DT bindings document?
+>> > >
+>> > > Indeed, this is not somethiong that should be made available here. I=
+t's
+>> > > only inverting the LED polarity but supported by some internal patch.
+>> > > I'll remove that.
+>>
+>> > I actually was confused by a property I added in another device-tree b=
+ut
+>> > marvell,reg-init exists, is handled by the marvell phy driver and used
+>> > in a few device-trees. Strangely, it is not documented anywhere. So I
+>> > can either remove that (and the LED won't work properly) or let it live
+>> > depending on what you prefer.
+>>
+>> In that case, please keep it.
+>> But the property really should be documented, one day...
+>
+> Any plans to follow-up?
 
-But it's not important enough imho.
+Cl=C3=A9ment is no longer working with us; most of his ongoing work has been
+offloaded to colleagues and mostly taken care of but this one has
+clearly fallen into the cracks :)
+
+I'm adding two colleagues in Cc in case they can have a look.
+
+Cheers,
+Miqu=C3=A8l
 
