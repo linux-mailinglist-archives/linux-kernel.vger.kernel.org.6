@@ -1,121 +1,106 @@
-Return-Path: <linux-kernel+bounces-417429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48DF39D53F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:25:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C1C9D53FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09C7D281249
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CE8281C63
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF171D04A0;
-	Thu, 21 Nov 2024 20:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA38B1CB331;
+	Thu, 21 Nov 2024 20:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aFHtNl8K"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="aiLfPXII"
+Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B721BF58;
-	Thu, 21 Nov 2024 20:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6428F1BF58
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732220711; cv=none; b=I53uYZXd0ugSVjw0rphPq7kwDR1Su+2oXkwKan2v2LM6/dSz7XXDiuVI0WON9BED+cNItDyDHS0UIpUxswUEmxIW6BQsqQt9aBedwrkY2eNwwmZhoQEwrg9BfHnLO9p1WdA5OpPOrh3Mdf6LKRTr7xZ2lrgBZ7Zbk7HfAuQXugs=
+	t=1732220924; cv=none; b=QDqfODkTYLN5KSdIQFWrVy3iOjsjQ/OSt52SwPMNwLdvLQq5n7Rwbs+OY2Om9bGpKLcOSb7wLsOHlWDQJi1SVgnf+T/8ADoQxT0NF44C8R3mttRpa/WZrzA2jOYkJC+sFNQirE6SntcxXXE/mLUa5iMHYbjHRr4caddkuOAu748=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732220711; c=relaxed/simple;
-	bh=CXqPNWbVPQ8qT6s7kSXjnP4nRBSsQDswLyOy90b73Aw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dLFSUJwz0KTmfFV0KtWIUY4aT0gWD6OtKIMVCCY39hy0ITd5MOoUK4ZWY2nUPolnnqseagtjSiXXGjJU+VvkwDsbkWKX7RcXMZLBV6rrFtZWnRf5DHX3os0oK1EiJ47N63glJFngM+EFTjNVro4eiY72b3grT6Ehh+hXlegmZxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aFHtNl8K; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6d40d77aa97so9404086d6.1;
-        Thu, 21 Nov 2024 12:25:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732220709; x=1732825509; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/e+krLYjREL99mp3bPy7rS+1YPiak3kADaJAnlhlvS4=;
-        b=aFHtNl8K6OTH5Eyin57i1Mhp8rT8g6uEoPGbLqhCBeXd6dOUPTAInNWJtaq2ZuOW9S
-         s3fHKNjeN5y9lEid94KjRULSa8OsHE3yshdO5flmJRfpdP4rULI9YMu/zpq23X/5aUJu
-         O56mZLKrTCa4tk9wGGGGC9CqjvHKhVO9zac+clYFrshkAdpHstTE0UTNNf6ikgTKCFA6
-         OGL51l7K9C91gujmfATklu8Vw1+jR/Gi1tEGwfVDh/832BDi4I+KEdRNcb0fFawQBuV4
-         Vz+4HmjnzLovHGW+NKjliDVlpziI4uI4uZo7pcwhCYMc5qiuI3K7xQUT856HqsjwS3zO
-         kxWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732220709; x=1732825509;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/e+krLYjREL99mp3bPy7rS+1YPiak3kADaJAnlhlvS4=;
-        b=rFDEqRvczg5en0cCrQda8/I2D6mzrx1Twpdi1sJWegZX4QghXuuHwn0X5HSJKgxEE7
-         fgCXvuaDGhBcVcQ290vwyj2dwSM8mI9WiTH+PnSjTbKBMa8w7Zkcu10DxsZg6YO9QI6f
-         t8udvLorZhXr0bYMYO/5pDQ8PbZ14imyUb0MLE+pynJZMlrkbSMVReIiP8M3R/Q1OErQ
-         30Fs+a4nTmYv5xjKtRYA0fGFV6vyMwJiI5vaOAW2/od7ziqd9iKwulrz5xCvU4i/a0n0
-         +1mP7Wx9lMWYv/UV+lwxNP177AziYVvJ822aDTOMjamyFw31kSCxqw7/qvOIo2Jq+jJt
-         FM+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUXAyzkazYtnAM+PDTSYprr07YlCqooCRBEgiRykJtz9+Tv4AG/sI3ZKfUtv8JeqyXcDIuy6yMZT7JFYYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtKhKZN1f9m8VTgIESnNYhclbTLQiRGOY6WiQu8GAexuUZkB4P
-	Ke6BPwDlm9sMDqL0wGqR8q7zmWSePWSitdWlTjZo15viVUQ8zXyn
-X-Gm-Gg: ASbGncskcS8/ctVj6MPbYl8i+VHbPPRFVDADQfpuFNmA9ycrwCtrwVkB37sgl4pWjcE
-	uKsj+UlyBNvVl2X27iD/XosrqgXn2bsmVP7l75/vAkUFfblA/9S7NQpbaoB2dSJ4oHEm4aKKWcd
-	QY1+XIWO/Gi8rEe9sQ6zF+0TlHHDDbQ1aG72xYwwUxV1kfmuBZvm3D+IK2onLwr18HF8NFVnZxU
-	Fp1DpBhhPOZAYbwStT+mfTLe6HcCsp3Zuq6aclq5QAeV1aA4mRZZ4ZlfSOT5xUoxZjv13Eh
-X-Google-Smtp-Source: AGHT+IGoqyMhCm2tIV9WwuFSmLxkCZW2uuRBj/mFnPxUkD6XrOuBVQl0XTh18ZzItq7FZGSgcrZV4A==
-X-Received: by 2002:ad4:576e:0:b0:6ce:26c3:c6e6 with SMTP id 6a1803df08f44-6d45137a320mr8333316d6.40.1732220708846;
-        Thu, 21 Nov 2024 12:25:08 -0800 (PST)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a96c4csm1397946d6.28.2024.11.21.12.25.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 12:25:08 -0800 (PST)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: mchehab@kernel.org,
-	hverkuil@xs4all.nl,
-	andrzejtp2010@gmail.com,
-	allen.lkml@gmail.com,
-	neil.armstrong@linaro.org,
-	quic_jjohnson@quicinc.com,
-	lkundrak@v3.sk,
-	sakari.ailus@linux.intel.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] media: marvell: Add check for clk_enable()
-Date: Thu, 21 Nov 2024 20:25:06 +0000
-Message-Id: <20241121202506.37602-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732220924; c=relaxed/simple;
+	bh=1CIuCQ2Idh1P3CXHCxjdIw0x6Xfb5dBYnqzXNx0HDzo=;
+	h=MIME-Version:Date:From:To:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=UfCuxWBIRqC/EFnGWjDmpYwmDsiK7wMxiiFxqxVdFiRLseBUSLSqfgVktg8NKIUsAgjSms7xGwZiOfY13aJvWcTLIdI9/xezP2s23wfIyXEzJTbAXigw2ArVK+y5KCYBIVtRRq7tVT5dx4k5JPTakTGpXNcM11igEZGnyLNU3m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=aiLfPXII; arc=none smtp.client-ip=198.252.153.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx0.riseup.net (Postfix) with ESMTPS id 4XvVDf74Nbz9wQQ;
+	Thu, 21 Nov 2024 20:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1732220915; bh=1CIuCQ2Idh1P3CXHCxjdIw0x6Xfb5dBYnqzXNx0HDzo=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=aiLfPXIIMxNv+Ak3ng9/K/fZQQYbAFJ+hj7DID6TLosM1UzFCI8ak3AFidpcHCnVv
+	 Bg27hCrvalzJntyhR9jJb6htCjiC+mMxfAx/Q5xSppyPVjA0/yy2LMe3insVFNM4AA
+	 xdP+xvu1eNUXwF8LqYZDwkdjU1ZmewEcAdZn4uBM=
+X-Riseup-User-ID: 60DD21AD3028D52608F08AE50A1CE82203C79030CBD4A7ED658510D6A09C3DAE
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4XvVDN0YQLzJmqy;
+	Thu, 21 Nov 2024 20:28:20 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 21 Nov 2024 20:28:19 +0000
+From: sk-alexis@riseup.net
+To: linux-kernel@vger.kernel.org
+Subject: Re: MAINTAINERS: HyperBK - altenate kernel by Hyperbola project
+In-Reply-To: <E139FBBC-879B-4282-9FAD-B3300E4715E6@riseup.net>
+References: <20241120085609.199586-1-keith.zhao@starfivetech.com>
+ <E139FBBC-879B-4282-9FAD-B3300E4715E6@riseup.net>
+Message-ID: <0ea4a89cb6df1cf81a2cb6d42a5126b0@riseup.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of clk_enable() to gurantee the success.
+Hey there,
 
-Fixes: 81a409bfd551 ("media: marvell-ccic: provide a clock for the sensor")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/media/platform/marvell/mcam-core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+We would like to share with the Linux kernel community, to current and
+past maintainers, our efforts to release a pre-alpha version of HyperBK,
+an alternate kernel, which is part of a bigher HyperbolaBSD project - a
+full GNU inspired BSD-descendant operating system.
 
-diff --git a/drivers/media/platform/marvell/mcam-core.c b/drivers/media/platform/marvell/mcam-core.c
-index 9ec01228f907..47023e701e12 100644
---- a/drivers/media/platform/marvell/mcam-core.c
-+++ b/drivers/media/platform/marvell/mcam-core.c
-@@ -935,7 +935,9 @@ static int mclk_enable(struct clk_hw *hw)
- 	ret = pm_runtime_resume_and_get(cam->dev);
- 	if (ret < 0)
- 		return ret;
--	clk_enable(cam->clk[0]);
-+	ret = clk_enable(cam->clk[0]);
-+	if (ret)
-+		return ret;
- 	mcam_reg_write(cam, REG_CLKCTRL, (mclk_src << 29) | mclk_div);
- 	mcam_ctlr_power_up(cam);
- 
--- 
-2.25.1
+Since 2017 we ported software like Xenocara and LibreSSL from OBSD, to
+our system-distribution (Arch / Parabola and our own packaging-scripts,
+Debian security patches). Our focus has now turned to creating a
+copyleft hard-fork  of OpenBSD-kernel, v7.0. The kernel is already
+enhanced for a different stack of build-tools, like FreeBSD make(1) and,
+also several issue fixing, inclusion of other components from the Linux
+side has well has other BSD distributions. Complete source code license
+audit, improving upon LibreBSD scripting work, basically mapping out
+necessary rewrites, results documented in:
+https://git.hyperbola.info:50100/~team/documentation/todo.git/about/.
+Furthermore we provide HyperRC (Gentoo Open-RC fork), HyperBLibC and
+hyperman our own package manager (fork of pacman) that all will work on
+HyperbolaBSD.
 
+We are sending this message, to present our vision, providing software
+to all.
+Has team, has limited funding and are struggling to provide adequate
+technical assistance. If you disagree with the recent decisions, then
+maybe our project might be of some interest. For any questions, happy to
+respond, you are more then welcome to join. Look at our wiki, and to
+check current state of the project, please review:
+
+
+Code-Repositories:
+https://git.hyperbola.info:50100/hyperbolabsd/hyperbk.git/
+https://git.hyperbola.info:50100/hyperbolabsd/userspace-alpha.git/
+
+Documentation:
+https://wiki.hyperbola.info/doku.php?id=en:manual:contrib:hyperbolabsd_roadmap
+https://wiki.hyperbola.info/doku.php?id=en:manual:contrib:hyperbolabsd_faq
+
+Article/Interview:
+https://itsfoss.com/hyperbola-linux-bsd/
 
