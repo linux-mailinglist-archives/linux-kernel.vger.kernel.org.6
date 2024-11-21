@@ -1,130 +1,144 @@
-Return-Path: <linux-kernel+bounces-417312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA299D5257
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:08:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BC89D525A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:10:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E830B1F22BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:08:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DF7CB267E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC51AA1D4;
-	Thu, 21 Nov 2024 18:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536261B0F0C;
+	Thu, 21 Nov 2024 18:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="zXxHufkU"
-Received: from mail-40132.protonmail.ch (mail-40132.protonmail.ch [185.70.40.132])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="UNXpu6BJ"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E83F188717
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9219E97E;
+	Thu, 21 Nov 2024 18:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732212480; cv=none; b=PH0jKplphloP7ugnS91mbfw2uNdFOz3o40r7220+c6uc9bkAFWFdLVTsRpJ3hwDzYK7qc5m+WU2PNZnWkBn/Bz4lwG6tG3uRQiPBoTsApr/kBdfGXYHFHrqKIlkQA65Ko52/0vxsfM+Dj0ZgtvUiAdM3eaXyFvm/b+faV61zMYc=
+	t=1732212617; cv=none; b=SVtbNAJLB+fstgrQ4VSTkpo1xQx+aJZyYJfoC4M4x8vjUyOf/4RCJDml66p+pBdoAjnQun5FrSYjoltUpaEEVLRRLnBkSrrxibDqu7jXwlJbCUugzM6La7aUnUok/oKLDZqctzwFU27epmzLHAlFiJD7rrfkZMMpJGusSQFj7Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732212480; c=relaxed/simple;
-	bh=6mFh8aWcmnOx3PFe9wnRnr6usTVWmUmEg15Hs+YLvuM=;
-	h=Date:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Av9LvDTQYUNbjtAN/lef4ymSAOwEkFW4D6UR4tG5BEfy/zFqDJKMpPnziqZ0k4wAYlP2UopW0iy2+d8Aeko7wuLOEiYX267EBtZ1iLZR9lPocDfjrfATYbzS8/EhFbzQN+gxSxmcPDWJtUplJzG752JcAGq7erWqOF3E/ZBYtXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=zXxHufkU; arc=none smtp.client-ip=185.70.40.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1732212471; x=1732471671;
-	bh=r2xvjAwO29eEItBGYM5V6kOh2AA0Ww/PkWx4bG2QwHU=;
-	h=Date:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=zXxHufkUZ1/70iPa3GDVQettmMR+C7MhlxAfe55Pkr/Rfh+0f7dstce9jzyN5g1xR
-	 b2t0gtJBsNW4pUcgz7Q6VQzQkWFnjEeYTpqcf2FTlNhdwumt5O2FFBQueO2efcA5iO
-	 Ejqtb4vmWtPF9VQAGbkZTZkHF8qzGdSrl7jwnodn/5QRJ8A2bAeZzmHmTYLKCTXfXU
-	 E+BxmfOmVBgEuGhE6scUxbaKdwtQO5bQRceA+dyNl3slkx+3+E8WDU2jvDzkAlKH+m
-	 8RDAhE04gAT+bCpkEmwMFZl6vmXBTMEApqLEXC5h+gac0ThXcZgpBsYDn8bfvOPDEC
-	 LLsGUmzDVGnHQ==
-Date: Thu, 21 Nov 2024 18:07:46 +0000
-From: Gregoire Stein <greyxor@protonmail.com>
-Cc: greyxor@protonmail.com, Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btusb: Add one more ID 0x0489:0xe10a for Qualcomm WCN785x
-Message-ID: <20241121180742.156230-1-greyxor@protonmail.com>
-Feedback-ID: 1917010:user:proton
-X-Pm-Message-ID: c4ffef790b6f5c2606d9c24de641d8bed20764df
+	s=arc-20240116; t=1732212617; c=relaxed/simple;
+	bh=/QrK9DcsN5FlFdjIm0jrLNUb5NSLxodNCY1SNAtQRis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RpJjY8xE7Vr5TjSAcfhNghwXwx2xtUu3wvA8poMc12TPJ6/yEhJRDt1S30zQrcHEk0T5dA3Ypk8KC9K2wj7GxAYYrDhlsxesLwtFC9PvNF8YWmaygmnynQM4FUh+jbGpMULfTH8wnhpp25HWEVqvy3VpvVG4JMsyWkyY1GWeO00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=UNXpu6BJ; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732212616; x=1763748616;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=Jedw0RuD934xWRc76uUvfNLom3KleitLn5e/Kk6VcZc=;
+  b=UNXpu6BJ7UjJa6FE7S4kPsHZlkNYgCYMMc5cZmLOCWtL366NOGLL6vA+
+   MscePqBCTuMKBwgRpOwahpIL3fLHN3pwytoqJMRFyDNnGRyoMEK/4awwo
+   +SDB/HDb4ZyR8LskEa487YOJZ24qlDsm17eAfSOj0Q+71GMm6JiEIKjgt
+   E=;
+X-IronPort-AV: E=Sophos;i="6.12,173,1728950400"; 
+   d="scan'208";a="675607877"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 18:10:13 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:18256]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.207:2525] with esmtp (Farcaster)
+ id 39959816-ee15-428d-81ae-64f7364106b7; Thu, 21 Nov 2024 18:10:12 +0000 (UTC)
+X-Farcaster-Flow-ID: 39959816-ee15-428d-81ae-64f7364106b7
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 21 Nov 2024 18:10:09 +0000
+Received: from [192.168.3.109] (10.106.83.32) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 21 Nov 2024
+ 18:10:08 +0000
+Message-ID: <f8faa85e-24e6-4105-ab83-87b1b8c4bd56@amazon.com>
+Date: Thu, 21 Nov 2024 18:10:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+CC: <pbonzini@redhat.com>, <seanjc@google.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
+	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+ <87h684ctlg.fsf@redhat.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <87h684ctlg.fsf@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D013EUB001.ant.amazon.com (10.252.51.116) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
-Add an additional entry with ID (0x0489, 0xe10a) to the usb_device_id
-table to support the Qualcomm WCN785x.
-The device information from /sys/kernel/debug/usb/devices is provided below=
-:
 
-T:  Bus=3D01 Lev=3D01 Prnt=3D01 Port=3D04 Cnt=3D01 Dev#=3D  2 Spd=3D12   Mx=
-Ch=3D 0
-D:  Ver=3D 1.10 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
-P:  Vendor=3D0489 ProdID=3De10a Rev=3D 0.01
-C:* #Ifs=3D 2 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
-I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D1ms
-E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
-E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
-I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 7 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
 
-Signed-off-by: Gregoire Stein <greyxor@protonmail.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 18/11/2024 17:58, Vitaly Kuznetsov wrote:
+> Nikita Kalyazin <kalyazin@amazon.com> writes:
+> 
+>> On x86, async pagefault events can only be delivered if the page fault
+>> was triggered by guest userspace, not kernel.  This is because
+>> the guest may be in non-sleepable context and will not be able
+>> to reschedule.
+> 
+> We used to set KVM_ASYNC_PF_SEND_ALWAYS for Linux guests before
+> 
+> commit 3a7c8fafd1b42adea229fd204132f6a2fb3cd2d9
+> Author: Thomas Gleixner <tglx@linutronix.de>
+> Date:   Fri Apr 24 09:57:56 2020 +0200
+> 
+>      x86/kvm: Restrict ASYNC_PF to user space
+> 
+> but KVM side of the feature is kind of still there, namely
+> 
+> kvm_pv_enable_async_pf() sets
+> 
+>      vcpu->arch.apf.send_user_only = !(data & KVM_ASYNC_PF_SEND_ALWAYS);
+> 
+> and then we check it in
+> 
+> kvm_can_deliver_async_pf():
+> 
+>       if (vcpu->arch.apf.send_user_only &&
+>           kvm_x86_call(get_cpl)(vcpu) == 0)
+>               return false;
+> 
+> and this can still be used by some legacy guests I suppose. How about
+> we start with removing this completely? It does not matter if some
+> legacy guest wants to get an APF for CPL0, we are never obliged to
+> actually use the mechanism.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 279fe6c115fa..506e9d30111f 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -375,6 +375,8 @@ static const struct usb_device_id quirks_table[] =3D {
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
- =09{ USB_DEVICE(0x0489, 0xe0f3), .driver_info =3D BTUSB_QCA_WCN6855 |
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
-+=09{ USB_DEVICE(0x0489, 0xe10a), .driver_info =3D BTUSB_QCA_WCN6855 |
-+=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
- =09{ USB_DEVICE(0x13d3, 0x3623), .driver_info =3D BTUSB_QCA_WCN6855 |
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
-=20
---=20
-2.47.0
+If I understand you correctly, the change you propose is rather 
+orthogonal to the original one as the check is performed after the work 
+has been already allocated (in kvm_setup_async_pf).  Would you expect 
+tangible savings from omitting the send_user_only check?
+
+> 
+> --
+> Vitaly
 
 
 
