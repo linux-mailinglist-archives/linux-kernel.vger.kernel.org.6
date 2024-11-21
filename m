@@ -1,305 +1,216 @@
-Return-Path: <linux-kernel+bounces-417523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023F99D5523
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:03:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A04E9D552D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4DC1F230F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90423B20DF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC321C8FBD;
-	Thu, 21 Nov 2024 22:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28BE1DD0FE;
+	Thu, 21 Nov 2024 22:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gvv1AdRv"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OLycAlZe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2B91D79A6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226578; cv=none; b=BSGWSO/Y4qh5iKPl0gZEkCu9+PVHEoR9/FNfmhNaG1oLsdI2VfFu43/0eH1H2t9b4sZhtFtGnWMrU1qowtxWxxR3esMP/yo6OETosqtshaU1hC99ZByfCdsuH5QyJrOuFruoAGuPlHHIRwLHiC0cXFDlvDPX2Acu3/Us/2xFKGU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226578; c=relaxed/simple;
-	bh=+q3J5+26S3qLOW3VlhEi8UKAtf0KbbS5+fxznIzyn4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNcwujJsGzjw0BLuBoVVgtr/OBrk29fD3ASH9plJyURPbyYPLWPvtmIsSxwuAXMXBLavM14xRq+LCnQFp33tf5jhi0CvU2HJS4sUq6w/xEGMwDkLTPjl3xKkh8xTZ6w0U5Tn9kyUtrvN3BpJc9bDFylZKDmA1H6B0MN/LtZAzwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gvv1AdRv; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53dd3584911so314410e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:02:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732226575; x=1732831375; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyZbodUlxaaIOLbLNj0ESoIe1vXf8L/biFz6rscYqaI=;
-        b=Gvv1AdRvnQ3JW7sXWmRhbnglMO6koNG6iRC7OGsVqbdSoh/sslHAeWae6trICT/VAf
-         1QglIWWOHlWoIknR7uUDkSdRpprrbocnE/pL4IC8hOcUByvSDDUj2fYkUj907n4mM1IM
-         Nh92/KPZCf48Cj5qokaSyFLCNNey5TLHtCnwBx582jeIUE+QVs427FKhDRVL/nP4JmJL
-         FtJuNmNlkjq0QtP5lwJMKvkd7S5h18Tscw5rGirgSTPuz7IbUb4yIza9eOqdbLMuMd7x
-         G6pjMDj9u99GoOM6GSMJgr9+AOYFq+WfmZeHR4jMaf3weVjgwYpe2H4Vliz7ZUFpsPFw
-         5X7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732226575; x=1732831375;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XyZbodUlxaaIOLbLNj0ESoIe1vXf8L/biFz6rscYqaI=;
-        b=w82cgjaL1Hln3XPuYS98xE7W8F9fmm0r1ILAitAvq5xk2mFS9j6i3hOL/LHc9sV900
-         tDmAJAuwlU1qUD8VMsEjVdM2Anlsm4ZibrVobvIeWGLM/1U6UhPuaQrpW82WduDMfTJA
-         MxLN6H4tjGRWID988c6h/LB19auTx7+Pn+PBISzktxCacCa6pYGOm2i4hOKrDXqiWTss
-         Ov4ImeOO/pY1ZApww00elt06aqC+gcXcVCu1nRMhQALyzw4oxQi/oRAB9XO211YnKsaD
-         lPbxz8OBnKStedB6KZtZsUPAqqvjujCkoc1n5XN5JDZP0QUzVI24NrSDtNIKwZSiHYqS
-         y7Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmJO+DxcUMobBRU4Fe503VsuOhAO57cS4MjEB/T/ua2lQrzTIvfnKb5k/iNCQbj2LZeEqtjKGTfvZ9NLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEl6nEoeqy2SSv+T0uZOa8+ZSFB2Uvl032lcvdj5gYAOxbq3Sb
-	9kUoZ4bDwMAjc4qrBqIsk8tmuZ5E0h9msHSfmMRQ/mwWD0pi+/NFhcKZLyYMWEU=
-X-Gm-Gg: ASbGncsb+Ih60WKtawkmdGHjQcWaPhOotsckMh/Lwtwaltqnfo0udfd8NNhF8upPelH
-	TpeTcPN3Cq6UdjEjpuXa8xB2i/yC7erqT+EwKo3rKeEuR12HqGeFw1qSM8iGmeL0Jv1dJ+zp5qT
-	q+W38MzgttfQLcyMd3jbIa63OSzL3vspuEslrAo0XRljRmu9Y8ReRwL4SZE2J1tV0AcBnF/fBke
-	B8mgt8rYbCaH0/8HHADfK24QswKpXOwwQPvFGm+0Wedx48m7VEuJhtlcGUYbIhto5NXl2ejoUTf
-	kFbeLXgWSdzY1M7y5HuVhaPE8MNJCg==
-X-Google-Smtp-Source: AGHT+IGvMp2P63eNMJFBM/uS4x5A1fplOGNXUhnBN8XcU6oi3MYCcRDHTuJfZMtxhHAmmCkZfdOtjw==
-X-Received: by 2002:a05:6512:3e23:b0:535:82eb:21d1 with SMTP id 2adb3069b0e04-53dd3baf730mr140842e87.57.1732226574803;
-        Thu, 21 Nov 2024 14:02:54 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24518b2sm93296e87.102.2024.11.21.14.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:02:53 -0800 (PST)
-Date: Fri, 22 Nov 2024 00:02:51 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Odelu Kukatla <quic_okukatla@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] interconnect: qcom: sdx75: Drop QP0 related
- interconnect and BCM nodes
-Message-ID: <cjqy5de3kkqh7qasbyow4midimgoo3qkx5zk73hc5kqy5566ps@7ukxckx5vcz5>
-References: <20241121172737.255-1-quic_rlaggysh@quicinc.com>
- <20241121172737.255-3-quic_rlaggysh@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA41C57AA;
+	Thu, 21 Nov 2024 22:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732226906; cv=fail; b=pGGMZ3lSwXGNqvhNW4vlebRkC/kAvF/tabzQ3eawX72ZOby+DqoitToaCr6gw9j/fbbxtpf16LSNJRiadFFLP1+79HrkOl4FCLgQyCil7ujV/0Ja6quTbb0rEUSdlQ+KhfF9K2AwGrkLRtM7YiNg1AKbIvk04cwUv+bHd72ydbQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732226906; c=relaxed/simple;
+	bh=HCuWBiBp1MEW1hPpyBRrP2D+dBTrodDr3epzWvtlxtk=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=P05rLzxa7SfUDwzU9ocmweV/WEOPdN78SeItgNwKjn9mRTbeSjNFj0RCwF8OAgsbuKoOTkyKNVIFvkmJNeAtsg8T7J+Ldf+f5HHTAI8mmWObDSELd9Z+F0ektzc6FSOdoXJjyGn+yrwyacYq4Ho+hYl4SHdUdl7AMGSZJ9JsSd8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OLycAlZe; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732226905; x=1763762905;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=HCuWBiBp1MEW1hPpyBRrP2D+dBTrodDr3epzWvtlxtk=;
+  b=OLycAlZeDokvdiqCi2IkqKM8FmGEHy7CgAhEdXHpds3rOfFlJZEkvbnL
+   sELOpphmb8CFUSfATl1LOGC40wnt+/1ypz+w/gwfIKo5ekHP3ebwsOD+d
+   nBB/rn44iNfW7+ZzkQ+uQj74fjnFrqyhG5PCAHAilZfqNiQ9lZGQOuD65
+   Ut8/1+LoUDrgF2NEH3c1hn9X9iWPA/Ngd+tNlDM5UsMVtA5EmXvXEav8m
+   Q/lzKng+VGhPWOYA4vCNuCzRQW9WotmJKExBzNg0eM9v6emUbAgK49DFi
+   17yC2V+1h71mGxgPSwQRUNUsJtgYy2UurQYtsod9/hQUVf7G7mqAcMvUT
+   g==;
+X-CSE-ConnectionGUID: s+/gKPeVS5CxpWGzq1HfZA==
+X-CSE-MsgGUID: 7yOM6zlcRNOHm2bUXlWBgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="57768861"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="57768861"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 14:08:24 -0800
+X-CSE-ConnectionGUID: a2/BFBaGSU+TSEO0uUCwKw==
+X-CSE-MsgGUID: aJCrND5lQVCM5Uv41WLVkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="113671194"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Nov 2024 14:08:23 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 21 Nov 2024 14:08:22 -0800
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 21 Nov 2024 14:08:22 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 21 Nov 2024 14:08:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I9n7ChSNz6xdf8eeJ9ofgOG7v7ecOI2JO9hdoDGWtOK7c8zOthVTzIwmU5TX9rHPEZ/jc2vQgGH9nt6D7vBZFN28KMszmqlJOf2TCQmRNSR6Vl+7bLKN1NaE/OxTOfCaodJ1vfeaj9mVRpLwbWjuV6faxYQtF/rTDOcv4M3uFFHRUe9wcaLWkwKHqmlRedDS/tXXpu7CDvDSF0uDKiMPwy3bgGUCptTuXEYuh3YfrbI5M7ilFSQO1g3r3lOvUFRO3gVZFW3nxlBK/4WSk3wKS33c5sav2GNcC968f8AOAMhV2ua2+qQcmKH8TKVKvw8Z72P5YuA1Dg0v+QCSjpt9jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QobvNdeEra68aZ8/g8hmDQ2cDB6qjpu+gybZH6HwqGg=;
+ b=mobo2Kdg96jthTNpd02oGqBMHwHgSWTjC81m0VYg8seKeWQu+F0KABHlbT93sArW5Hh4DHMRtnxo9U6rJRTeRi13SdZR6EnVgrfaYamuUn+zvYwogdCSGZO7rlTuTEafnb+hVIt+cdxoLPQ7T3mOuqwAXZMUB1hV9/TZFP0lY3EvhFLfnUcl/K3tOAwOF7MQNp/k7zhVlQcdrlW2VTu+K3b8PTFbcBPoNNoNBcGbdgKNyLk8otPUfE02HUdCk23jKWqGpRfUs7J+6+B3aOVMBYv1LiV6bTV+0i1dUwbfcCQuLPr7ll38r1CG/Hcw+Jd4BjoJj8jc5bK6tM2rkr6uHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7444.namprd11.prod.outlook.com (2603:10b6:8:146::11)
+ by MW3PR11MB4761.namprd11.prod.outlook.com (2603:10b6:303:53::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
+ 2024 22:08:19 +0000
+Received: from DS0PR11MB7444.namprd11.prod.outlook.com
+ ([fe80::fea8:e53a:7a96:7fe3]) by DS0PR11MB7444.namprd11.prod.outlook.com
+ ([fe80::fea8:e53a:7a96:7fe3%5]) with mapi id 15.20.8158.021; Thu, 21 Nov 2024
+ 22:08:19 +0000
+Date: Thu, 21 Nov 2024 16:03:07 -0600
+From: Ben Olson <matthew.olson@intel.com>
+To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+	<bpf@vger.kernel.org>
+CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+	<martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH bpf-next] libbpf: Improve debug message when the base BTF
+ cannot be found
+Message-ID: <Zz-uG3hligqOqAMe@bolson-desk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SN4PR0501CA0116.namprd05.prod.outlook.com
+ (2603:10b6:803:42::33) To DS0PR11MB7444.namprd11.prod.outlook.com
+ (2603:10b6:8:146::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121172737.255-3-quic_rlaggysh@quicinc.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7444:EE_|MW3PR11MB4761:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d4efdf8-775b-4f0d-bfe9-08dd0a7901d9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+Zb9EZ+Gl+x0a/qXW6TmQmNUxfb+eQ/gvkxZzHy9V2kgJFw/1wI3DdjAea25?=
+ =?us-ascii?Q?BFJKZoT5gn5A+8GuhBPqjzED07+J80ueCQPvU1PR3mW2z2ZjwRvG9xEMlHf6?=
+ =?us-ascii?Q?j+J1UGX/1Q9V909bNgDn8h1MbCKaIQIFLuHVjAYO3Yo/PddxurNr/67Smy60?=
+ =?us-ascii?Q?Oyly/QbUr6sO4x/Q+nCfOXDSh6OTOzesPpV6RJh06JaaXiOJPdO0dlXeNDOY?=
+ =?us-ascii?Q?t7C63nRvPTofycyQTH0CvZ4vH9cNqGsfZh95occdRvieMC2eXtO52OOed8+8?=
+ =?us-ascii?Q?rqtHuPyjcTuEasRlGC18HPd/CjQJ7htaeRYga1pOlgSZOqf2Yia9h6qZPIL/?=
+ =?us-ascii?Q?/uu7hdkOcACb8mI+SHue9iwVzPu+v21YaqI9fTF6hlpPYRX9HQKh9PpczvIR?=
+ =?us-ascii?Q?rE0ygdm5St0JxyGFMb866iXUPWMuv8s3Q0nP5GQhncE/0j8AV/gfgp4bFGD2?=
+ =?us-ascii?Q?N7EJRdaBnrJN9X76Ij08WGY4qxAtPMMG4+uWCGrxHVDAKlydgtn/AEI2BxAv?=
+ =?us-ascii?Q?N2ETC5zq9jl3lyoiCrMGBAob60kRyv23mG0S8Lj+WvWcRELZaowpfY4QFh9l?=
+ =?us-ascii?Q?QqHJVYAbn5GvpmCyYF7u24CVIi0oc4OgO6nsufftv6PXwYSiVPNqBBqG6oZo?=
+ =?us-ascii?Q?+xrMaiC7j0z6TDbgMTMfexB5MmQlBdh032MB/V+kZU/oMBFo0TKHybwrczBf?=
+ =?us-ascii?Q?40kLvQiPEqDd7LMB2p2cXmROuptmZ3CZ5G3sLqtI5ObcG0dn8VSmrHy4Ps+Q?=
+ =?us-ascii?Q?+Qa8hASzuCnb+zrhHLefr0VCOObqBZIIcm/Pe3FFyj1+3D/2EVepKtzURoL8?=
+ =?us-ascii?Q?22CRMwl1F34ESEGlt+9DJ0MOiG5tNIJy25+/guaiBu1OCTRDYu4faO4xJStU?=
+ =?us-ascii?Q?h3FSq+1ebrhFARMXFdT3i65AiHIvlsL7wVIjciYgRD/sYPbi4G6Yj1WToZPD?=
+ =?us-ascii?Q?V+ZMj01wiSeTZRoHUNac+pxo8W/NR2NUuEcS3ySLdJgSHZ93YFPRWcTlOqvC?=
+ =?us-ascii?Q?65sE3/lhRj3ZYx/cub9F/h2CgDADcvkvIi8IymYNf68owuyGVr3hXo6r7KXR?=
+ =?us-ascii?Q?9gW8uCEdZFYGuVN/q6BKwScg7CE2/W85NU3v3cbKTOrwrukI64grI6EKVu1c?=
+ =?us-ascii?Q?NpeK5JnDJz+teo0x1awpzf0SYe8UxKToRuau9igUUUkRrykQbRXcjGUcwmZU?=
+ =?us-ascii?Q?TtnZf49FkYD2sb2z3ZlXTSrAmCfC3EFznECMar6khHlbaW79U3m3ZTaOVezY?=
+ =?us-ascii?Q?ez+CkojN9vpthtACWVlQZ7sTJMt06gUJFBTY3mDv0v0sh2YU6A5SragnZipC?=
+ =?us-ascii?Q?4WBG6wm3pEGdp5DTb7KcVaZ+?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7444.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kIkvweTPFtP/qv4N5lvoecrkEtuCQnIROigHMRRIudSxQEoiZnhSTmB1MhUT?=
+ =?us-ascii?Q?vpcNQ1rqdaYgqTy3/sVfPz0YgJZnSwXVGOHuIpL0VjQstKp9m0ie7S1mbP16?=
+ =?us-ascii?Q?i2LkeJLmXTz3ugVyy3Hhs8XioLe0FZ+GTTEfscxt5Qbo9jzbXINUaMnBrwdK?=
+ =?us-ascii?Q?UcfKUuUD6+VUjOYm8rymGXYK1hGZueaPPTyoJYeHoiY1lgVZhaJryGCgLSJ+?=
+ =?us-ascii?Q?NYDCnJHkqFN8/7D/TvGx/LZXP0Xcr+NjYW7ciWr+ctZTkdTo/xY1RITp8ouz?=
+ =?us-ascii?Q?CfFPyrF10Q7YlH+6urdT1G6oUS731dTgscNmo+BnMfPHSeR4h/EzO1j7f4x0?=
+ =?us-ascii?Q?tEn2/DhdoOtB1b+sQzTLzz6HmyNbUKl1syq3pq9z2qQP7/Q65tXt0/4uQfAB?=
+ =?us-ascii?Q?kT+lTOaJHJlbW+RJS+AqozKPqiWDBB0qaZwCmjYNEVcNiQtQ04PjYd9iCjx+?=
+ =?us-ascii?Q?InPBMThiG55p6RvfYxE/5FINg5PFyjWYgJHUXO5St6w8VrTjdWDOFYiRcDvW?=
+ =?us-ascii?Q?amX0JoV+dIP/AL8T+PT1rgKIW9mzkWtfH9XSYvVRq+sljScPkZul+H5R5XiZ?=
+ =?us-ascii?Q?Q+CKuOKlD6YuhKRLiE1xtppsFKT/KN2KBNcgeQMPEZVbLVjWtIkDh5x9lLtl?=
+ =?us-ascii?Q?BQgDcKiilnqKaQnKzMdYsyzMOM72J8LgojeLFPs3m+jQqEMW94urec3Fnjbs?=
+ =?us-ascii?Q?v4NxjmiUpiYLBjDdgHLC54cQu9HAovpYXai/pwetv1IeIGNhcotlJucQ3Vig?=
+ =?us-ascii?Q?wkCdxW6L4X3Dy395l/CBlvKzBWZbUWddAaMLRrTn+GFplo8vVKaWvJBfskUu?=
+ =?us-ascii?Q?Bb6tUSK6LSsr04VR+X+txHLkUtHyzTVgk4THl/U3vaQFzziNtbD8ThykdII6?=
+ =?us-ascii?Q?3ubLKIX7oC7DrVsMSe4Onblz7cUtb0VbrvDcY30X7Yg1r5aU2ZJVJGYRZk3Z?=
+ =?us-ascii?Q?o1yNJbV096fz4IO2VK8+vh4eVzraF3PYTChfMFpNkPJAfDMeRJQgly0F/4P2?=
+ =?us-ascii?Q?KAAdXeOzBdGWNwf4Axf4MzcmV7mJv2olhQNu7vIPOCIdLfjMBji9Qv7K95c7?=
+ =?us-ascii?Q?7yyb5XaI41gQoI/VJBC23/jz3Psd4lP9AJYQJsl2i4WTKfQr5h9Mt732lSOv?=
+ =?us-ascii?Q?bLNnkDVsN0WkKkiS3Oy+8bmtzENjbeLSvAMSd/MtzqA1fTChD6Il0qDNY8DE?=
+ =?us-ascii?Q?DbrWBATJHGWnRpLJd8Oqp03uR0YwM9tM6IqdP+rhRjfUsgSVjTNq5610YLwI?=
+ =?us-ascii?Q?z2jsAZZiqR8Mb3EqhOMGg1YvA5xqTZJamhpWW8x1YBv8mBqbgaaAv9Tdj/CL?=
+ =?us-ascii?Q?dA5kPVal3MDTZ9ds0pRIJf8sSG4JYw9mCzScnsaEs4dUckzT9OI5v3tshzgD?=
+ =?us-ascii?Q?huEUXw5QBs6D8agKMRj9JvkZMyp/Y5RWlCSQEDvbQHIfdeOQHuwsnUTBVYQ1?=
+ =?us-ascii?Q?xboq+s4XE4PXxELSk1MD+2MxmBaIxAwTINAOFQeHNmj0JmpXTdKUPavmweoq?=
+ =?us-ascii?Q?9zRBI0/VrWvqeXuRmV7fW3xVZItUQtuuMrrwi1hSF9giBEBn52gh91HZi5zs?=
+ =?us-ascii?Q?0wAoe2rf15IPmof3OeuhbzFUGBIwylGekELrAnALLLJimREHSNMGTV7HW+M8?=
+ =?us-ascii?Q?5A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4efdf8-775b-4f0d-bfe9-08dd0a7901d9
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7444.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 22:08:19.6250
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Fj7xYxYGvhlXsbrAxEC3h8whLPT+U3o/ssAc2gxNYSH4ijWsT+M/UHd8Mxhdwi/ymBz2JukZlitwekM49Y78HA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4761
+X-OriginatorOrg: intel.com
 
-On Thu, Nov 21, 2024 at 05:27:37PM +0000, Raviteja Laggyshetty wrote:
-> QP0 resource on sdx75 is managed by clk-rpmh.
-> There are no interconnect clients voting for QP0, hence dropping the
-> redundant nodes from topolgy to avoid the risk of overriding the vote
-> placed on QP0 using clk-rpmh.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> ---
->  drivers/interconnect/qcom/sdx75.c |  25 -------
->  drivers/interconnect/qcom/sdx75.h | 118 +++++++++++++++---------------
->  2 files changed, 58 insertions(+), 85 deletions(-)
-> 
-> diff --git a/drivers/interconnect/qcom/sdx75.c b/drivers/interconnect/qcom/sdx75.c
-> index 7ef1f17f3292..4afcdc5f25a7 100644
-> --- a/drivers/interconnect/qcom/sdx75.c
-> +++ b/drivers/interconnect/qcom/sdx75.c
-> @@ -16,15 +16,6 @@
->  #include "icc-rpmh.h"
->  #include "sdx75.h"
->  
-> -static struct qcom_icc_node qpic_core_master = {
-> -	.name = "qpic_core_master",
-> -	.id = SDX75_MASTER_QPIC_CORE,
-> -	.channels = 1,
-> -	.buswidth = 4,
-> -	.num_links = 1,
-> -	.links = { SDX75_SLAVE_QPIC_CORE },
-> -};
-> -
->  static struct qcom_icc_node qup0_core_master = {
->  	.name = "qup0_core_master",
->  	.id = SDX75_MASTER_QUP_CORE_0,
-> @@ -375,14 +366,6 @@ static struct qcom_icc_node xm_usb3 = {
->  	.links = { SDX75_SLAVE_A1NOC_CFG },
->  };
->  
-> -static struct qcom_icc_node qpic_core_slave = {
-> -	.name = "qpic_core_slave",
-> -	.id = SDX75_SLAVE_QPIC_CORE,
-> -	.channels = 1,
-> -	.buswidth = 4,
-> -	.num_links = 0,
-> -};
-> -
->  static struct qcom_icc_node qup0_core_slave = {
->  	.name = "qup0_core_slave",
->  	.id = SDX75_SLAVE_QUP_CORE_0,
-> @@ -831,12 +814,6 @@ static struct qcom_icc_bcm bcm_mc0 = {
->  	.nodes = { &ebi },
->  };
->  
-> -static struct qcom_icc_bcm bcm_qp0 = {
-> -	.name = "QP0",
-> -	.num_nodes = 1,
-> -	.nodes = { &qpic_core_slave },
-> -};
-> -
->  static struct qcom_icc_bcm bcm_qup0 = {
->  	.name = "QUP0",
->  	.keepalive = true,
-> @@ -903,9 +880,7 @@ static struct qcom_icc_bcm * const clk_virt_bcms[] = {
->  };
->  
->  static struct qcom_icc_node * const clk_virt_nodes[] = {
-> -	[MASTER_QPIC_CORE] = &qpic_core_master,
->  	[MASTER_QUP_CORE_0] = &qup0_core_master,
-> -	[SLAVE_QPIC_CORE] = &qpic_core_slave,
->  	[SLAVE_QUP_CORE_0] = &qup0_core_slave,
->  };
->  
-> diff --git a/drivers/interconnect/qcom/sdx75.h b/drivers/interconnect/qcom/sdx75.h
-> index 24e887159920..3fd2bfcdce84 100644
-> --- a/drivers/interconnect/qcom/sdx75.h
-> +++ b/drivers/interconnect/qcom/sdx75.h
-> @@ -33,65 +33,63 @@
->  #define SDX75_MASTER_QDSS_ETR			24
->  #define SDX75_MASTER_QDSS_ETR_1			25
->  #define SDX75_MASTER_QPIC			26
-> -#define SDX75_MASTER_QPIC_CORE			27
+When running `bpftool` on a kernel module installed in `/lib/modules...`,
+this error is encountered if the user does not specify `--base-btf` to
+point to a valid base BTF (e.g. usually in `/sys/kernel/btf/vmlinux`).
+However, looking at the debug output to determine the cause of the error
+simply says `Invalid BTF string section`, which does not point to the
+actual source of the error. This just improves that debug message to tell
+users what happened.
 
-What prompts renumbering of all the nodes? From my POV it's perfectly
-fine to keep the indices with the holes in them.
+Signed-off-by: Ben Olson <matthew.olson@intel.com>
+---
+ tools/lib/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> -#define SDX75_MASTER_QUP_0			28
-> -#define SDX75_MASTER_QUP_CORE_0			29
-> -#define SDX75_MASTER_SDCC_1			30
-> -#define SDX75_MASTER_SDCC_4			31
-> -#define SDX75_MASTER_SNOC_CFG			32
-> -#define SDX75_MASTER_SNOC_SF_MEM_NOC		33
-> -#define SDX75_MASTER_SYS_TCU			34
-> -#define SDX75_MASTER_USB3_0			35
-> -#define SDX75_SLAVE_A1NOC_CFG			36
-> -#define SDX75_SLAVE_ANOC_PCIE_GEM_NOC		37
-> -#define SDX75_SLAVE_AUDIO			38
-> -#define SDX75_SLAVE_CLK_CTL			39
-> -#define SDX75_SLAVE_CRYPTO_0_CFG		40
-> -#define SDX75_SLAVE_CNOC_MSS			41
-> -#define SDX75_SLAVE_DDRSS_CFG			42
-> -#define SDX75_SLAVE_EBI1			43
-> -#define SDX75_SLAVE_ETH0_CFG			44
-> -#define SDX75_SLAVE_ETH1_CFG			45
-> -#define SDX75_SLAVE_GEM_NOC_CFG			46
-> -#define SDX75_SLAVE_GEM_NOC_CNOC		47
-> -#define SDX75_SLAVE_ICBDI_MVMSS_CFG		48
-> -#define SDX75_SLAVE_IMEM			49
-> -#define SDX75_SLAVE_IMEM_CFG			50
-> -#define SDX75_SLAVE_IPA_CFG			51
-> -#define SDX75_SLAVE_IPC_ROUTER_CFG		52
-> -#define SDX75_SLAVE_LAGG_CFG			53
-> -#define SDX75_SLAVE_LLCC			54
-> -#define SDX75_SLAVE_MCCC_MASTER			55
-> -#define SDX75_SLAVE_MEM_NOC_PCIE_SNOC		56
-> -#define SDX75_SLAVE_PCIE_0			57
-> -#define SDX75_SLAVE_PCIE_1			58
-> -#define SDX75_SLAVE_PCIE_2			59
-> -#define SDX75_SLAVE_PCIE_0_CFG			60
-> -#define SDX75_SLAVE_PCIE_1_CFG			61
-> -#define SDX75_SLAVE_PCIE_2_CFG			62
-> -#define SDX75_SLAVE_PCIE_ANOC_CFG		63
-> -#define SDX75_SLAVE_PCIE_RSC_CFG		64
-> -#define SDX75_SLAVE_PDM				65
-> -#define SDX75_SLAVE_PRNG			66
-> -#define SDX75_SLAVE_QDSS_CFG			67
-> -#define SDX75_SLAVE_QDSS_STM			68
-> -#define SDX75_SLAVE_QPIC			69
-> -#define SDX75_SLAVE_QPIC_CORE			70
-> -#define SDX75_SLAVE_QUP_0			71
-> -#define SDX75_SLAVE_QUP_CORE_0			72
-> -#define SDX75_SLAVE_SDCC_1			73
-> -#define SDX75_SLAVE_SDCC_4			74
-> -#define SDX75_SLAVE_SERVICE_GEM_NOC		75
-> -#define SDX75_SLAVE_SERVICE_PCIE_ANOC		76
-> -#define SDX75_SLAVE_SERVICE_SNOC		77
-> -#define SDX75_SLAVE_SNOC_CFG			78
-> -#define SDX75_SLAVE_SNOC_GEM_NOC_SF		79
-> -#define SDX75_SLAVE_SNOOP_BWMON			80
-> -#define SDX75_SLAVE_SPMI_VGI_COEX		81
-> -#define SDX75_SLAVE_TCSR			82
-> -#define SDX75_SLAVE_TCU				83
-> -#define SDX75_SLAVE_TLMM			84
-> -#define SDX75_SLAVE_USB3			85
-> -#define SDX75_SLAVE_USB3_PHY_CFG		86
-> +#define SDX75_MASTER_QUP_0			27
-> +#define SDX75_MASTER_QUP_CORE_0			28
-> +#define SDX75_MASTER_SDCC_1			29
-> +#define SDX75_MASTER_SDCC_4			30
-> +#define SDX75_MASTER_SNOC_CFG			31
-> +#define SDX75_MASTER_SNOC_SF_MEM_NOC		32
-> +#define SDX75_MASTER_SYS_TCU			33
-> +#define SDX75_MASTER_USB3_0			34
-> +#define SDX75_SLAVE_A1NOC_CFG			35
-> +#define SDX75_SLAVE_ANOC_PCIE_GEM_NOC		36
-> +#define SDX75_SLAVE_AUDIO			37
-> +#define SDX75_SLAVE_CLK_CTL			38
-> +#define SDX75_SLAVE_CRYPTO_0_CFG		39
-> +#define SDX75_SLAVE_CNOC_MSS			40
-> +#define SDX75_SLAVE_DDRSS_CFG			41
-> +#define SDX75_SLAVE_EBI1			42
-> +#define SDX75_SLAVE_ETH0_CFG			43
-> +#define SDX75_SLAVE_ETH1_CFG			44
-> +#define SDX75_SLAVE_GEM_NOC_CFG			45
-> +#define SDX75_SLAVE_GEM_NOC_CNOC		46
-> +#define SDX75_SLAVE_ICBDI_MVMSS_CFG		47
-> +#define SDX75_SLAVE_IMEM			48
-> +#define SDX75_SLAVE_IMEM_CFG			49
-> +#define SDX75_SLAVE_IPA_CFG			50
-> +#define SDX75_SLAVE_IPC_ROUTER_CFG		51
-> +#define SDX75_SLAVE_LAGG_CFG			52
-> +#define SDX75_SLAVE_LLCC			53
-> +#define SDX75_SLAVE_MCCC_MASTER			54
-> +#define SDX75_SLAVE_MEM_NOC_PCIE_SNOC		55
-> +#define SDX75_SLAVE_PCIE_0			56
-> +#define SDX75_SLAVE_PCIE_1			57
-> +#define SDX75_SLAVE_PCIE_2			58
-> +#define SDX75_SLAVE_PCIE_0_CFG			59
-> +#define SDX75_SLAVE_PCIE_1_CFG			60
-> +#define SDX75_SLAVE_PCIE_2_CFG			61
-> +#define SDX75_SLAVE_PCIE_ANOC_CFG		62
-> +#define SDX75_SLAVE_PCIE_RSC_CFG		63
-> +#define SDX75_SLAVE_PDM				64
-> +#define SDX75_SLAVE_PRNG			65
-> +#define SDX75_SLAVE_QDSS_CFG			66
-> +#define SDX75_SLAVE_QDSS_STM			67
-> +#define SDX75_SLAVE_QPIC			68
-> +#define SDX75_SLAVE_QUP_0			69
-> +#define SDX75_SLAVE_QUP_CORE_0			70
-> +#define SDX75_SLAVE_SDCC_1			71
-> +#define SDX75_SLAVE_SDCC_4			72
-> +#define SDX75_SLAVE_SERVICE_GEM_NOC		73
-> +#define SDX75_SLAVE_SERVICE_PCIE_ANOC		74
-> +#define SDX75_SLAVE_SERVICE_SNOC		75
-> +#define SDX75_SLAVE_SNOC_CFG			76
-> +#define SDX75_SLAVE_SNOC_GEM_NOC_SF		77
-> +#define SDX75_SLAVE_SNOOP_BWMON			78
-> +#define SDX75_SLAVE_SPMI_VGI_COEX		79
-> +#define SDX75_SLAVE_TCSR			80
-> +#define SDX75_SLAVE_TCU				81
-> +#define SDX75_SLAVE_TLMM			82
-> +#define SDX75_SLAVE_USB3			83
-> +#define SDX75_SLAVE_USB3_PHY_CFG		84
->  
->  #endif
-> -- 
-> 2.39.2
-> 
-
+diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+index 12468ae0d573..1a17de9d99e6 100644
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -283,7 +283,7 @@ static int btf_parse_str_sec(struct btf *btf)
+ 		return -EINVAL;
+ 	}
+ 	if (!btf->base_btf && start[0]) {
+-		pr_debug("Invalid BTF string section\n");
++		pr_debug("Cannot find base BTF\n");
+ 		return -EINVAL;
+ 	}
+ 	return 0;
 -- 
-With best wishes
-Dmitry
+2.47.0
 
