@@ -1,200 +1,231 @@
-Return-Path: <linux-kernel+bounces-416473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354BE9D459A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:57:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF869D459B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0692829F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A531F225E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCC87641E;
-	Thu, 21 Nov 2024 01:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781E855C29;
+	Thu, 21 Nov 2024 01:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nhkcd9cs"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODMAFw6N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9832309A9;
-	Thu, 21 Nov 2024 01:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39752309BB
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732154230; cv=none; b=JBxBSZD2eFVZ0Sow51nAPi4VH13pJx332J5knDgOrHalfbhRxvWrvliYCS4qaoVqudEDJ649XpFulCIcrZ0Wyk2R/nJNxB+g/SX51PvU6UQz7TYfvCN/Yr1d5mCFjv+jcum5aGtdnV6MbOucVv7lzHFGkjTSsSEBsy2INFSKh5c=
+	t=1732154277; cv=none; b=h4lRmFLCpCjp+cRZjyknmb0kWVWT93Hryl3/etARkRMp1rf+X5JJTSEhu+PeZyzwpBzhdEmAN6mZFV9AunpOWvYUJSC5HsFb+GbFLPx19uzgFRkSM6P7oLNfHJ18b1WHkHQEYA9AvFHVTFSJtrk8mE5iaV4cLgYvdz53Ffdk20Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732154230; c=relaxed/simple;
-	bh=+qRBOdS5QpT6J2mqeV+RUAi6U/3UXxVW/APYQ3NScI0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwlbosRAqLit/Z5yq/0e81Ukr204YZTjjNJuvgUfRFdtDYg19Jc9tN0ai9LAEXtN4tPoHP3YbfAxspwk7IkFYf71yKdZzRlCJc0yLyUY6r5jle9zN0NtaP79kfrZCwWiBdlYUfhwaZuYqnLhsV7BisU3OgxDJqRC50tEPp4yDEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nhkcd9cs; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720b2d8bcd3so332973b3a.2;
-        Wed, 20 Nov 2024 17:57:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732154228; x=1732759028; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wcMRqlbCfDiojXUFV5zhu21WNiCGL5ZhoJbd9wpOjhg=;
-        b=Nhkcd9csMTWn9cTBQp3m8ZW+S6K9eJ9nGas1Ohnv+BRBNpFBMdRAnWarGMI+EwZYks
-         JL7/eDctzf2iPnpJYOYqos00813XP1Dy87J2q1FoC5QatCfzuCIsdAaTPqo3SeKOkAYt
-         dstqtVBda3T6+AM/l32CowtI/fz8dUAz10p2sZWlQRYvKNapnnvepHv0joobDlt3SBrk
-         DuXB5t5gcaFE6ziFJxtVouBVg4Y//LDZMGdMNp3MsnOY5sioIx+aw6VBVdR5cvMfeM2x
-         o81H1lP/jKmUY87VGQGyd9e0iQPI1oPB3e8S/52luIHh1toUbku3hCebTscP8qjIgDED
-         cbxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732154228; x=1732759028;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wcMRqlbCfDiojXUFV5zhu21WNiCGL5ZhoJbd9wpOjhg=;
-        b=PVLwjB+KNp5rt81MkEtyeO76Gir1LPM3C5zp6ddvtgpXHsKE0XaslxjcHsj5SRhqSy
-         X0rNgMFoiRIAYIIhR6AzCjGGjuAyN5QpLZl7jZP9A5nVfkcnw8f4184gpVbke5BKikaB
-         dRllLStvl02gC88EZcrd895E1J79k5i1vVP7f6ANILjMRAhJ/aqSZFhRe1N4oPb2iU8g
-         wMeQzfNqLu8/J2ktMo+dsA2gMXeayhOyRpENiAXhJ4UUkNGc/FcmbEmTL/+jK8dbu4v3
-         h6nORE6imdoEmfi95DlkuTXJTNaVk4nVg1ZDbg3kJNbU3gcL+Ng5KSE+8Jlw8toLBieD
-         mDMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7ekgBiTf24r6+187V1tTBU9HVCLWj5GdgbR5B6cNZsxGORLf8uojzeYURd3Hjj0JuZ1YnGtSk7qKbr5E=@vger.kernel.org, AJvYcCWPG47LG20rXAq8J7UcmrveNyoNgTTHx44E2Dxu8uipX5SzuCcMaVHG8X0RShkw2p/KH0OOlfPFBAmr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUTu57dfxa08jzyulbG7qezZ2bVOxEYnnVpzSkxqIrcDTJ+7z1
-	Aaf/hQQOiLT9fvN7N97BD1AAbmCnRK3he6cgeZUlacUqHJIe/mCa6LB3tA==
-X-Gm-Gg: ASbGnctP2hkRY/EUl/ujd9nyxCvQMOLJT8Rx3Z+YmmxPvxUvwMDvrM9x9WAkUkGs/RQ
-	6W8RE8JuMuKcLlqQZZ7kDedeXnSD0Dw/0oA/2YhRvnmdGPdu8BZDSMJSDheQSdV9Pg2bNh/+dMJ
-	ENVwi7lRcmys6jo+9+yPyzc4rG/RTn3nJRsu6HQQUmqUWHsKm83Q0Y3Kf+lAqOAjy/bGE+bVvzV
-	XOFQfDMpJtzIBePnDdDBYaGwn1eqzNZTAnkkHHNnN+Fm//LfzgRdWjAJPZdRracNgdhRSDSFFUH
-	QlZ2m4BKEt/tiTLXWgD3vHN6
-X-Google-Smtp-Source: AGHT+IEJEsDXjRS5g4p+QXVubUytuWQWU5/p8J2OOZ9LwfrfnVYt4ixAPBZRGWFc5DJvm4/UMRk9zQ==
-X-Received: by 2002:a05:6a20:9149:b0:1d9:2b51:3ccd with SMTP id adf61e73a8af0-1ddae1fa776mr7800150637.7.1732154228019;
-        Wed, 20 Nov 2024 17:57:08 -0800 (PST)
-Received: from [172.19.1.43] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befac308sm2427036b3a.145.2024.11.20.17.57.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 17:57:07 -0800 (PST)
-Message-ID: <179b30f0-8fda-47d1-8461-a4919a53e744@gmail.com>
-Date: Thu, 21 Nov 2024 09:57:03 +0800
+	s=arc-20240116; t=1732154277; c=relaxed/simple;
+	bh=TXQ7aoNM0tnS/RnjEIecLbc4EDssigqIjGAeDmxFkQ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZS8W2tRvxVRITrZ6lCxgNS8pyjr//7tu9/vaok0om1U9/PVOCARyVF5182BmIBMH/AK9oaAP8Z+zQOKVJqqG42sJngIB5wXw8nt84GLzOkc8rTofywO6T41N/LvAvGc1CRHvefHwaAPZ+WRvKMmvXu1yQvAe9wmLKwx1ZtWB0Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODMAFw6N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4685C4CECD;
+	Thu, 21 Nov 2024 01:57:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732154277;
+	bh=TXQ7aoNM0tnS/RnjEIecLbc4EDssigqIjGAeDmxFkQ8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ODMAFw6NNWR2v7x/3ARlAitjnPoYqWTAJ8j0nZgARTQjkOSKdcfnTelNPFP3ygmwF
+	 5Lir2+uYFaZn4NsmvehgcgpmgeMKfQAnXkrA4ahE2ol6LmxKpTSeinlz3f2fmBA6f6
+	 yYaSXqsXPVsQzF43gcuMf4jp7aUvXmJhzuWGUTvDgpgRX2lvsoIqY2cyQNNU4WW7uH
+	 GK/820wAESARW/G6tvKeLOh8J2C+Y+bUHakfvfKsQQ7L2LO2xuGUHPkWGcQNDWzVai
+	 RW2xqgKzu1/gnQuAOupzaRD1/+zTg4yEJskodVomMo6h5Tny533qP3ud0IkuiF2l/B
+	 DLB+A6ROzaLaQ==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Xiuhong Wang <xiuhong.wang@unisoc.com>,
+	Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: [PATCH 1/2] f2fs: fix to shrink read extent node in batches
+Date: Thu, 21 Nov 2024 09:57:50 +0800
+Message-Id: <20241121015751.2300234-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sudeep.holla@arm.com, arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
-References: <20241119025954.4161-1-mjchen0829@gmail.com>
- <20241119025954.4161-2-mjchen0829@gmail.com>
- <ql6m6qrdokwfu4iizn6wmvovawuc7kgg6jfzxebkmac5muz66e@myrjvq5jm7gg>
-Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <ql6m6qrdokwfu4iizn6wmvovawuc7kgg6jfzxebkmac5muz66e@myrjvq5jm7gg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+We use rwlock to protect core structure data of extent tree during
+its shrink, however, if there is a huge number of extent nodes in
+extent tree, during shrink of extent tree, it may hold rwlock for
+a very long time, which may trigger kernel hang issue.
 
+This patch fixes to shrink read extent node in batches, so that,
+critical region of the rwlock can be shrunk to avoid its extreme
+long time hold.
 
-On 2024/11/20 下午 04:41, Krzysztof Kozlowski wrote:
-> On Tue, Nov 19, 2024 at 02:59:53AM +0000, Ming-Jen Chen wrote:
->> Add YAML bindings for MA35D1 SoC keypad.
->>
->> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
->> ---
->>   .../bindings/input/nuvoton,ma35d1-keypad.yaml | 69 +++++++++++++++++++
->>   1 file changed, 69 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
->> new file mode 100644
->> index 000000000000..9ccd81a2574d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/input/nuvoton,ma35d1-keypad.yaml
-> 
-> Filename matching compatible. You got this comment already.
-> 
-> 
->> @@ -0,0 +1,69 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/input/nuvoton,ma35d1-keypad.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Nuvoton MA35D1 Keypad
->> +
->> +maintainers:
->> +  - Ming-jen Chen <mjchen0829@gmail.com>
->> +
->> +allOf:
->> +  - $ref: /schemas/input/matrix-keymap.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: nuvoton,ma35d1-kpi
->> +
->> +  debounce-delay-ms:
->> +    description: Debounce delay time in milliseconds.
->> +    maxItems: 1
->> +
->> +  scan-interval-ms:
->> +    description: Scan interval time in milliseconds.
->> +    maxItems: 1
->> +
->> +  reg:
->> +    maxItems: 1
-> 
-> Keep the same order of properties as in required: block.
+Reported-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+Closes: https://lore.kernel.org/linux-f2fs-devel/20241112110627.1314632-1-xiuhong.wang@unisoc.com/
+Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/extent_cache.c | 69 +++++++++++++++++++++++++-----------------
+ 1 file changed, 41 insertions(+), 28 deletions(-)
 
-I will ensure that the properties block and the required block have the 
-same order.
-
-> 
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - linux,keymap
->> +  - keypad,num-rows
->> +  - keypad,num-columns
->> +  - debounce-delay-ms
->> +  - scan-interval-ms
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/input/input.h>
->> +    keypad@404A0000 {
-> 
-> Lowercase hex
-
-I will fix it in the next revision
-
-> 
->> +      compatible = "nuvoton,ma35d1-kpi";
->> +      reg = <0x404A0000 0x10000>;
-> 
-> Lowercase hex
-
-I will fix it in the next revision
-
-Best regards,
-Mingjen-Jen Chen
-
-> 
-> Best regards,
-> Krzysztof
-> 
+diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+index 019c1f7b7fa5..b7a6817b44b0 100644
+--- a/fs/f2fs/extent_cache.c
++++ b/fs/f2fs/extent_cache.c
+@@ -379,21 +379,22 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode,
+ }
+ 
+ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+-					struct extent_tree *et)
++				struct extent_tree *et, unsigned int nr_shrink)
+ {
+ 	struct rb_node *node, *next;
+ 	struct extent_node *en;
+-	unsigned int count = atomic_read(&et->node_cnt);
++	unsigned int count;
+ 
+ 	node = rb_first_cached(&et->root);
+-	while (node) {
++
++	for (count = 0; node && count < nr_shrink; count++) {
+ 		next = rb_next(node);
+ 		en = rb_entry(node, struct extent_node, rb_node);
+ 		__release_extent_node(sbi, et, en);
+ 		node = next;
+ 	}
+ 
+-	return count - atomic_read(&et->node_cnt);
++	return count;
+ }
+ 
+ static void __drop_largest_extent(struct extent_tree *et,
+@@ -622,6 +623,30 @@ static struct extent_node *__insert_extent_tree(struct f2fs_sb_info *sbi,
+ 	return en;
+ }
+ 
++static unsigned int __destroy_extent_node(struct inode *inode,
++					enum extent_type type)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
++	struct extent_tree *et = F2FS_I(inode)->extent_tree[type];
++	unsigned int nr_shrink = type == EX_READ ?
++				READ_EXTENT_CACHE_SHRINK_NUMBER :
++				AGE_EXTENT_CACHE_SHRINK_NUMBER;
++	unsigned int node_cnt = 0;
++
++	if (!et || !atomic_read(&et->node_cnt))
++		return 0;
++
++	while (atomic_read(&et->node_cnt)) {
++		write_lock(&et->lock);
++		node_cnt += __free_extent_tree(sbi, et, nr_shrink);
++		write_unlock(&et->lock);
++	}
++
++	f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
++
++	return node_cnt;
++}
++
+ static void __update_extent_tree_range(struct inode *inode,
+ 			struct extent_info *tei, enum extent_type type)
+ {
+@@ -760,9 +785,6 @@ static void __update_extent_tree_range(struct inode *inode,
+ 		}
+ 	}
+ 
+-	if (is_inode_flag_set(inode, FI_NO_EXTENT))
+-		__free_extent_tree(sbi, et);
+-
+ 	if (et->largest_updated) {
+ 		et->largest_updated = false;
+ 		updated = true;
+@@ -780,6 +802,9 @@ static void __update_extent_tree_range(struct inode *inode,
+ out_read_extent_cache:
+ 	write_unlock(&et->lock);
+ 
++	if (is_inode_flag_set(inode, FI_NO_EXTENT))
++		__destroy_extent_node(inode, EX_READ);
++
+ 	if (updated)
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+@@ -942,10 +967,14 @@ static unsigned int __shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink
+ 	list_for_each_entry_safe(et, next, &eti->zombie_list, list) {
+ 		if (atomic_read(&et->node_cnt)) {
+ 			write_lock(&et->lock);
+-			node_cnt += __free_extent_tree(sbi, et);
++			node_cnt += __free_extent_tree(sbi, et,
++					nr_shrink - node_cnt - tree_cnt);
+ 			write_unlock(&et->lock);
+ 		}
+-		f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
++
++		if (atomic_read(&et->node_cnt))
++			goto unlock_out;
++
+ 		list_del_init(&et->list);
+ 		radix_tree_delete(&eti->extent_tree_root, et->ino);
+ 		kmem_cache_free(extent_tree_slab, et);
+@@ -1084,23 +1113,6 @@ unsigned int f2fs_shrink_age_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink
+ 	return __shrink_extent_tree(sbi, nr_shrink, EX_BLOCK_AGE);
+ }
+ 
+-static unsigned int __destroy_extent_node(struct inode *inode,
+-					enum extent_type type)
+-{
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-	struct extent_tree *et = F2FS_I(inode)->extent_tree[type];
+-	unsigned int node_cnt = 0;
+-
+-	if (!et || !atomic_read(&et->node_cnt))
+-		return 0;
+-
+-	write_lock(&et->lock);
+-	node_cnt = __free_extent_tree(sbi, et);
+-	write_unlock(&et->lock);
+-
+-	return node_cnt;
+-}
+-
+ void f2fs_destroy_extent_node(struct inode *inode)
+ {
+ 	__destroy_extent_node(inode, EX_READ);
+@@ -1109,7 +1121,6 @@ void f2fs_destroy_extent_node(struct inode *inode)
+ 
+ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
+ {
+-	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+ 	struct extent_tree *et = F2FS_I(inode)->extent_tree[type];
+ 	bool updated = false;
+ 
+@@ -1117,7 +1128,6 @@ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
+ 		return;
+ 
+ 	write_lock(&et->lock);
+-	__free_extent_tree(sbi, et);
+ 	if (type == EX_READ) {
+ 		set_inode_flag(inode, FI_NO_EXTENT);
+ 		if (et->largest.len) {
+@@ -1126,6 +1136,9 @@ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
+ 		}
+ 	}
+ 	write_unlock(&et->lock);
++
++	__destroy_extent_node(inode, type);
++
+ 	if (updated)
+ 		f2fs_mark_inode_dirty_sync(inode, true);
+ }
+-- 
+2.40.1
 
 
