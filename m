@@ -1,120 +1,143 @@
-Return-Path: <linux-kernel+bounces-416958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C5B9D4CF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:37:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329DE9D4CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:39:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17BA1F22A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:37:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4AF281A49
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F141D432A;
-	Thu, 21 Nov 2024 12:37:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065EC1D7982;
+	Thu, 21 Nov 2024 12:39:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qlgchR0O"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BA81D0F66;
-	Thu, 21 Nov 2024 12:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CA71D0F66;
+	Thu, 21 Nov 2024 12:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732192660; cv=none; b=R2sdFhp2LDkm21SxFOjGBghCjERX/HNZMf/zCJxkqNAjSYI5f6twQIF/68CGakHcyCkyUhRmagieHyQbzH1aUzB4+1LmDwUiqhvoomLEE97CkVXfLcbUYQeJ/ioBTGjWbX3/pgnM2A5GNh03Q2l0B2/hHG74tmyjBMms0ZZ4T8U=
+	t=1732192751; cv=none; b=VyZ0OI2Jga34r1LI7rECiI3m2OB5mwh+qS3kdO0V+l0qwBGOe5DqaHAZGuwI+5KqxnBnQASDcpsHL/mwHYwzHuV+p1t9MCx4ivifbvI05BHI8aGrSXsLXAyNhO2dN7V8/jb5q/uoWW6lwdN+Siwgb2kYGPZO0nofh3G63+SJMcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732192660; c=relaxed/simple;
-	bh=/ZXPPPVdbG+j3djrBAL+e7IdbHb1alFH6Q36A14etac=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Q5fQv1DQh5vQGRU5+TgE2w7U7qM0ftIrf+AHcleHLfkzgy561oaw917ldhapO7QzGoLX1W782cpcuwavP/CJRupHQCSDsIIfRhKxk0doOgYDytA7t7qnot2wgtzblRqwWdMH2U9aV6jUdERp02loN/4ujMRoqmPvMgE8wHKwdtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XvHmp5FYyz4f3nK6;
-	Thu, 21 Nov 2024 20:37:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 35FB91A018D;
-	Thu, 21 Nov 2024 20:37:34 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoKIKT9nmwOwCQ--.21489S3;
-	Thu, 21 Nov 2024 20:37:30 +0800 (CST)
-Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
-To: Christian Theune <ct@flyingcircus.io>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: Jinpu Wang <jinpu.wang@ionos.com>, Haris Iqbal <haris.iqbal@ionos.com>,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, song@kernel.org,
- xni@redhat.com, yangerkun@huawei.com, yi.zhang@huawei.com,
- =?UTF-8?Q?Florian-Ewald_M=c3=bcller?= <florian-ewald.mueller@ionos.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
- <20241119152939.158819-1-jinpu.wang@ionos.com>
- <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
- <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
- <3038E681-BC24-491B-9AA1-52A4F86E5196@flyingcircus.io>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e688ffc6-73ff-ba82-4991-4a072c5bc5fe@huaweicloud.com>
-Date: Thu, 21 Nov 2024 20:37:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1732192751; c=relaxed/simple;
+	bh=8xjSf05nAdp1JvAMlz7MNeWjj2n5t2Son3K7+3hln0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbEixjD8m7dDq5fo14r2IOdBjkpaIut13bKAV5oitvz/0zNXcstHTr7Qa0CizS6m1w3rmN9BB2fI1ShxqQ2qCkmCC01DTUouRqAKhm4NsbZj3ZHD+DDHiP+DpS1iFNs81uDAZuBOzgoJaVuzZG49gv1/91Ta4D0aPcTsG9Z/X4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qlgchR0O; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALCLv4q023046;
+	Thu, 21 Nov 2024 12:39:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=O/ECh6stuvVYPaBsgU8koXpxoWSOynA5FZ31Yt+3r
+	hY=; b=qlgchR0Oulx29wr686zG/hPsPbUNgtMJKCQRPRW7htW7/6BTYmuXaw4/p
+	6A5lj5JG9TQ9j5AhlxpnpsTiW43J38jghAUDwekCZKux4OC1o13irr5xNjpNCyKT
+	lipn08+fHaApPMxSvxrqhJfV2zPEXI++EpDiUjZ9LvlRVQui+LGGutU7p9qNZNTB
+	NTw5eFPYofsqcCD5GpqviCtBJH41H+ZgYCf26TRSdeMaDFZkHhV4xJwuMxRaW0Zi
+	VhcL5iVq4yOxLXNSZZdifbhCD6bLn42ROZe+TO2AaabE6HCASd+VSSNpPbYVPr1u
+	AKVXYAWCkJ0EoOQxokvb0xlkDt7iA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttjw21-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:39:00 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ALCd03h002516;
+	Thu, 21 Nov 2024 12:39:00 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttjw1w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:39:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL61x15011994;
+	Thu, 21 Nov 2024 12:38:59 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y7xjrmht-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 12:38:59 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ALCcvM852363570
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 21 Nov 2024 12:38:57 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A735120043;
+	Thu, 21 Nov 2024 12:38:57 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 673AA20040;
+	Thu, 21 Nov 2024 12:38:56 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.82])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 21 Nov 2024 12:38:56 +0000 (GMT)
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
+Subject: [PATCH v2 0/2] Fix generic/390 failure due to quota release after freeze
+Date: Thu, 21 Nov 2024 18:08:53 +0530
+Message-ID: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <3038E681-BC24-491B-9AA1-52A4F86E5196@flyingcircus.io>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnzoKIKT9nmwOwCQ--.21489S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF1kWFykKFWxur4UJw4UXFb_yoWftrc_AF
-	WFkFy3J34DGF47XFsIqF4Sqw1DKF4UGFWrJ3W8KF4Iq3s5Zrs5WFZ3GF4Y9wn3Wan3try3
-	CF4Y93s0ganrXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY
-	04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
-	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
-	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
-	x0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK
-	8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ekGEkwAqD5J-C8GnDljUCh-laGIg3mLt
+X-Proofpoint-ORIG-GUID: Y5RU1JJ2By94QuBbpyYMtUw-i_LC8tYI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 adultscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411210098
 
-Hi,
+Changes since v1:
 
-在 2024/11/21 20:21, Christian Theune 写道:
-> Hi,
-> 
->> On 21. Nov 2024, at 09:33, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Thanks for the test! And just to be sure, the BUG_ON() problem in the
->> other thread is not triggered as well, right?
->>
->> +CC Christian
->>
->> Are you able to test this set for lastest kernel?
-> 
-> Reading through the list - I’m confused. You posted a patchset on 2024-11-18@12:48. There was discussion later around an adjustment but I’m not seeing the adjusted patchset.
+ * Patch 1: Move flush_delayed_work() to start of function
+ * Patch 2: Guard ext4_release_dquot against freeze
 
-I don't know you mean here, this is the only set. If you didn't
-subscribe mail-list and don't know how to find the set:
+Regarding patch 2, as per my understanding of the journalling code,
+right now ext4_release_dquot() can only be called from the
+quota_realease_work workqueue and hence ideally should never have a
+journal open but to future-proof it we make sure the journal is not
+opened when calling sb_start_inwrite().
 
-https://lore.kernel.org/all/20241118114157.355749-1-yukuai1@huaweicloud.com/
+** Original Cover **
 
-> 
-> Also, which kernel do you want me to test on? 6.12?
+Recently we noticed generic/390 failing on powerpc systems. This test
+basically does a freeze-unfreeze loop in parallel with fsstress on the
+FS to detect any races in the code paths.
 
-The branch is from the title, md-6.13. If you don't know:
+We noticed that the test started failing due to kernel WARN_ONs because
+quota_release_work workqueue started executing while the FS was frozen
+which led to creating new transactions in ext4_release_quota. 
 
-https://git.kernel.org/pub/scm/linux/kernel/git/song/md.git/log/?h=md-6.13
+Most of the details are in the bug however I'd just like to add that
+I'm completely new to quota code so the patch, although fixing the
+issue, might be not be logically the right thing to do. So reviews and
+suggestions are welcome. 
 
-Thanks,
-Kuai
+Also, I can only replicate this race on one of my machines reliably and
+does not appear on others.  I've tested with with fstests -g quota and
+don't see any new failures.
 
-> 
-> Christian
-> 
+Ojaswin Mujoo (2):
+  quota: flush quota_release_work upon quota writeback
+  ext4: protect ext4_release_dquot against freezing
+
+ fs/ext4/super.c  | 17 +++++++++++++++++
+ fs/quota/dquot.c |  2 ++
+ 2 files changed, 19 insertions(+)
+
+-- 
+2.43.5
 
 
