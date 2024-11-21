@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-417384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F859D5347
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D1C9D534E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2D6FB21FFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:11:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C63EB23B19
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0742B1BC9ED;
-	Thu, 21 Nov 2024 19:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079E01BDAA5;
+	Thu, 21 Nov 2024 19:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGrXuwiz"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHUg7rcB"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF22F200A3;
-	Thu, 21 Nov 2024 19:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C284C15665E;
+	Thu, 21 Nov 2024 19:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732216251; cv=none; b=QO2hCWcka4ListmrIhkhYmP6vi5GSIBqQ3U7OYEBVPBhBw6N/kkrppszSBVN13+Jo/ax8raqsHF6Us7jCUjC6Lv1SCSd7Api60hrHKQQqqfX99IBhqWVLjoQ1dABV4xeXqww3lknH5prLENF96C3rK8rLpCimHOEOq5c1cel9ZA=
+	t=1732216356; cv=none; b=dLDxyYG7w+O+0fbHWR7+4gCDhqmgMn+3hv1GOAvXXJV0uDZtqxBVqiqDrFk628o3UNMQCw3ieu5mUWAtl9ygw5j2u+KhTj1C7S3Z6A1TvLRbJssNm+vZs0ypp/a6a6XsH6Sd/FqJ/azSssdvJ+jrxaw24RM9YZHe6aC4KZUNJTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732216251; c=relaxed/simple;
-	bh=jYLvvSedHfv1S2LW/Xl6qeZajP1uONHYlSPoUiWtFis=;
+	s=arc-20240116; t=1732216356; c=relaxed/simple;
+	bh=Y7Bn+9pJo7nO7PQtMMLwgiHvrZ0871a3sU2c8cWm71U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e3R/ZcBlIBbzSg2BOInZeDaCc+Qign9f7ze0M5m9n2r5PIrOb0DvpZYXZKIvdNvCUkk5BmJ5Y1fGKJy6eRtuDbfE358bYdkAIZyeTAtp82YKE6FOpPHyz/Fem6wzx4fdmKieQ6kEJHWTuxZ6FF9dYGrKlkQ5XYFd1qTt0oVeidc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGrXuwiz; arc=none smtp.client-ip=209.85.219.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=l9eP/fdvUaEZLJIdvqWe9Jln3cZ0+g2TBrg7mpEzyeUBOY3j07Nq4oz7Po7EXrRD8MAjo+1JVIGqGFauFAlwkGULz5IOrgi0R16O/38iBtflHESKgEypysZ6r06WCDMPTOsMuWQEgSOLfAI2I3YzmCIhJGvqjw45cBbtcSvDrG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MHUg7rcB; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d41eeca2d6so8933076d6.1;
-        Thu, 21 Nov 2024 11:10:49 -0800 (PST)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4635760725cso22644511cf.1;
+        Thu, 21 Nov 2024 11:12:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732216248; x=1732821048; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732216353; x=1732821153; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mndBLNzJ+Ni1BuMLAuNFNji89qTPweETAMDxodRxvFs=;
-        b=CGrXuwiz6McBQZAxWABwLoPV9+1HncrvSv5W7IUrG6O7f3ZuzT8rT6NBvUuWV0zr8J
-         7JtrHX2IZdH8aJIgJa8GLFX8zyHWJTeNKseTlMx9qWVFxmqEcLwlyRoXuoDdBO6/r//C
-         54Uy17pVlzfhEOYEEfIK8U3V+q4a4NkBmWll6u+VMzoTcUSz4daz8MQ7g2vxNeuTeJbn
-         v96Wk6BMhzD2g7bQeHI0VDGsNV/WDVdJpoHeWXeEVuwkob18khnIPvi0/oVFSpGQGstW
-         7cA3v/Qa5idZdUWd9yP1wnkjTdi/U1s9ZIAA9zwLVwMJ/fD+aQPCzPN64ZeqEhpqMaBA
-         GStQ==
+        bh=7l+Cnz3oOSITA9Sni+tfmSuPMOvtijlXLQ9PbqOF+pk=;
+        b=MHUg7rcBaQON0npoFWVQVtGcCTGmhMGgGtfulzlA71otOh45ExWOdU4Shz03z4aygB
+         S9SlZNaV32PelbWwzaAGQn/X2N0Fm7gbW9TFoNAwAN4tlLlz1LUJnFTEVa/eX8HjueAE
+         H+vFPTTk3tLifYb6iKo/7wmJuRjlKoopS0frQr83IikqTWWSHc7I1lEQ37i2b4ECAR9T
+         VTHN7FplTyVSiBl12BAV0I3muyEHq3PVJNfCMgScTu6CISmzKWSNjJfhVK4cMH7eOgjn
+         pe4N2lVJ7GuTdlUla2Kqc0yBxmvDhUYC+80gCT+WjNIJlbgPZgUD7Vxk4S3DTRRJe6Ng
+         RTWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732216248; x=1732821048;
+        d=1e100.net; s=20230601; t=1732216353; x=1732821153;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mndBLNzJ+Ni1BuMLAuNFNji89qTPweETAMDxodRxvFs=;
-        b=JRcxijojp8G388+psLUbqT6A8VXbyHgEk9r3vvXhCMoeV/UQtpQ0T2df09Ur+KSDFS
-         A/kzFUt+zjBGc2rzJS6pY2m6slQarvsqXcloql00CtaOVuE6nJhhGIfnbM+mxExGET7P
-         NPmOJd/YkP/iOPGQG1ui4TqBSFUV9g5T4p1sRS3cojpcya6dmbMJWUhlA6Kkn3WTmbVk
-         nZPOt6eks+M6T+godQFnDRVLeXJsvGAl0aoXLQmn/Q3QFo4nbUAGdlesEsycUcZ/bJdD
-         Kf74Om7s+Bjqz35UnnshPrgWCTCw4RNrsixHyR3Fg/qT66UwEDamo7TKERV7fdnBDDl5
-         Bbmg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6LsOXup2LYfV/TT0VOFGCko0kqRF3PB8VONZ0qnhBO3HitfBtu19qzwQVHTJF6hobO0eIrrcbVV0ixmbjnGw=@vger.kernel.org, AJvYcCVCFYwjTThgG+M+lhgm8Gi8hbhFzGVS2XB2vIeOgdo3Se9Mdod9ITzFlQRh1T92DGswqi1Q5Xmi5iXFW80=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweot8lt0f8HIwGr9xUG9hLSi7QD/bu28/EKVNcXVb+PAE3Z6VC
-	NUKaqEbSBsUL6k7D3evqVLe6TC8dClCr0s0pb90l7Bbpt54gxqig
-X-Gm-Gg: ASbGncscwhE7Arr6mmFXr1evr11/gsoe2E6xNRIG2Sz8QYLAD17zfewwEX8UXRCKt4n
-	n0DmPVeN7QPOBCE6mtmVbVl65bogNTPtl0vtFReikyYIormAX6sgJti4to/gSoKsMdjDVnOEVSP
-	ab+tCstE0NhbksLkw3m8Uv9ftgHDbWrSTIkSE5mx6t6FWJnkHuQTRHB4XGK9TUj8aPYDsiB8MMu
-	87pd8zB8asQTy5JB2WrgvHqrOGjaQViwERl2JHFXaGK2tr5M+bIhabgPJPBsz9Et+ewz8A9sxfO
-	3AKCOB9P3+/aOtAxPkTB0CBmKdjKkrlRLU2URLky
-X-Google-Smtp-Source: AGHT+IE3EG78k8zKCjeh5hjn2+K+HjogsMTfgQ2VCCRmJRLUKsnlTob6emyf0BQC3dIB0wmhUpVEVw==
-X-Received: by 2002:ad4:4eec:0:b0:6d3:f1ff:f8d6 with SMTP id 6a1803df08f44-6d451360ff4mr4235686d6.40.1732216248463;
-        Thu, 21 Nov 2024 11:10:48 -0800 (PST)
+        bh=7l+Cnz3oOSITA9Sni+tfmSuPMOvtijlXLQ9PbqOF+pk=;
+        b=ChzDnvENa3vn4g+nTQNg4Vgpcx8Gb/JpttCWMwMSwcLqQk17YHVl1gYWvLTehCh8XI
+         fucNLnwGL5ruSPFBHKUUgYznYJ+MMZ8cGG79pLKAhk1awdr2+878YcOA6bcW71B/Nz1f
+         1Zb8qDvOx2fKfM/sFaCITeVckemOvh5eRWKKwtMUAKBKvDv8HZnHHj30ObAIYrgtibW8
+         tbmhU9GqeUl6MJr/PoWQ9/dPZIigKQDh0t34CLH99Mra1SPGH8pB9e+6tUUOKFmc1z5r
+         99akirf+xxlSRVAOKOEguyytLhlOz449pz+GbRr7kZBqs7vyS7qIeUrkwp8Il5ZWQwTr
+         3+7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBwz6IYdQyim0ECFlnuPBq3U8DA8xVy4EJhShye3Gel1aJtuuar90pgllsxjsn80efwsIZYmQouqThD2pQWyw=@vger.kernel.org, AJvYcCXoZgsVa234QGJYyVQnR2HpybGI9wznswc1X89rGxEN9NSZWrTXG8wGiJlsuQviIVvbJLcphwmCZ1WDPik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGbOxfY8ZLW7fOZOk+OWd/jvrvyg72iF1IkHogWq6CFQoal08Y
+	PmBpp+OOP6fboY7n9WnC5zNGUWysi7wMNqoZtxEgFU5rocxXHO9W
+X-Gm-Gg: ASbGncvzMV+gpzRSJhqcZouRLdenC3Hh0x11z1efXRMVgAFV3Mu6VXjexGv23CEX1Zd
+	8MASflmtQKhxgDg8GiunbIwynpv+gK3eoRMKqtowehwEXdnKIGh7ly0KRhuaXUmlW4mR2WBK3h2
+	MCsKoFps4uGIXs45d3e+X3N4lyq+IO6TE+oCnMuzF+wt2RG05W5fDHmNIbw2pGKJIxeQuTSr7RQ
+	OJtH93I2ufwjOhtDuak/3khEaNi8DHN1tTz1VvwQrKLgFX2TVGEZT6xKerBw4NhKV9nkEgP3Kro
+	Gwf801/MvNleRAC2Pk2zDkWuOZhGYaMJQedN7wfR
+X-Google-Smtp-Source: AGHT+IH32n1uDGPzo8idMNiROjH+9JYUnYBsUU9edzhv7RQpAuUmS3rb30OFpTzBk5owI83bpmzA5g==
+X-Received: by 2002:a05:622a:107:b0:465:2fba:71b5 with SMTP id d75a77b69052e-4653cbbbf0emr5704111cf.13.1732216353323;
+        Thu, 21 Nov 2024 11:12:33 -0800 (PST)
 Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451ab53dcsm695156d6.56.2024.11.21.11.10.47
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4653c40e789sm2148911cf.42.2024.11.21.11.12.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 11:10:47 -0800 (PST)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 3D2891200043;
-	Thu, 21 Nov 2024 14:10:47 -0500 (EST)
+        Thu, 21 Nov 2024 11:12:32 -0800 (PST)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 03EA01200043;
+	Thu, 21 Nov 2024 14:12:32 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Thu, 21 Nov 2024 14:10:47 -0500
-X-ME-Sender: <xms:t4U_Z1k4golFVUEC_5Tp6WZ7K24NpeWYXELnQ3z4UJemA9AOTHAshQ>
-    <xme:t4U_Zw0QFPPUWXJ9W6VL1pr_l3TK9BS5I6LHZy-xR8bfHkl91nPKN7d4UJUD6LoDu
-    Z2lVY7kd0II467FFQ>
-X-ME-Received: <xmr:t4U_Z7rbUo9xZDelKTx56vzuflyzzrgYh_yI9Mk4i5JCp2LWDRNzmoMA75c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdduudelucetufdoteggodetrfdotf
+  by phl-compute-07.internal (MEProxy); Thu, 21 Nov 2024 14:12:32 -0500
+X-ME-Sender: <xms:H4Y_Z5DSeKEMQuZnaK5XuEAun1KC0PgHf0RRikES9KJEq8pP2RsHhA>
+    <xme:H4Y_Z3gjVZLlmZrTgFh-atNeMIrBJ6ncx57mG8pT0tHOjsi22TsauYKp1IFv0yuxw
+    Xv5ChaQuixU3oVaXg>
+X-ME-Received: <xmr:H4Y_Z0lCHoYBtpE77uaV6JO_n7bu5NlsS_6Vu0GB_bEksEWo-6g-aqlyCCE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdduvddtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
     htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
@@ -89,7 +89,7 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdduudelucetufdoteggod
     vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
     epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
     thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudelpdhmohgu
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddtpdhmohgu
     vgepshhmthhpohhuthdprhgtphhtthhopegrsgguihgvlhdrjhgrnhhulhhguhgvsehgmh
     grihhlrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdp
     rhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhope
@@ -98,15 +98,15 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdduudelucetufdoteggod
     hnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhn
     vghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhmpd
     hrtghpthhtohepsggvnhhnohdrlhhoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:t4U_Z1kWDJhkQj1vlAtpipXc7E_tfqqzYK_0O_UCnOL8onW2McqyYQ>
-    <xmx:t4U_Zz0-iZ1fNMdl5kZi_Bjw1MAIldh_SL9EECbY14LArOMwEaQXag>
-    <xmx:t4U_Z0vqfCjahQpqIbAAzZiUbM7b72VkfEEiSLNGd7o8jUcbnmjj4g>
-    <xmx:t4U_Z3W1cPFqKTVht0M5fJ0yc6Uv5xOoZpTwulSCfoeEuykWChYeJA>
-    <xmx:t4U_Z60tkdYtMeJYGk5GHCpxjk0ruru9F7bew22jtndYh9x4EsEBkZF5>
+X-ME-Proxy: <xmx:H4Y_Zzw7n_gS8rrWQ4PD-qlKeUNVrGQKO2peAi547ay-qIse1qcnDQ>
+    <xmx:H4Y_Z-Tkl8o86HcGuuj_UwgTsEVXXnDwCfraQ_Mu_UztrF4cW6SBlg>
+    <xmx:H4Y_Z2bpZ_VLH9QLao5ZOAm58vPkbyuCk26d5DopKnAbdDPY8EEqcg>
+    <xmx:H4Y_Z_SVlenI-jrKlHURNSKOmAEh07spPpPsXbm4VDWrgri530GHGQ>
+    <xmx:H4Y_Z8DdCrcpEMrJx9jcxgxgGJT9VxhwmAjqwpslsP2aCAs-t0Ji_yYy>
 Feedback-ID: iad51458e:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Nov 2024 14:10:46 -0500 (EST)
-Date: Thu, 21 Nov 2024 11:10:45 -0800
+ 21 Nov 2024 14:12:31 -0500 (EST)
+Date: Thu, 21 Nov 2024 11:12:30 -0800
 From: Boqun Feng <boqun.feng@gmail.com>
 To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 Cc: Matthew Wilcox <willy@infradead.org>, Alice Ryhl <aliceryhl@google.com>,
@@ -122,10 +122,10 @@ Cc: Matthew Wilcox <willy@infradead.org>, Alice Ryhl <aliceryhl@google.com>,
 	open list <linux-kernel@vger.kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-	airlied@redhat.com
+	airlied@redhat.com, Kairui Song <ryncsn@gmail.com>
 Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
  mappings
-Message-ID: <Zz-FtcjNm0TVH5v9@tardis.local>
+Message-ID: <Zz-GHlkhrz35w2YN@tardis.local>
 References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
  <Zz1sHZLruF5sv7JT@casper.infradead.org>
  <CAH5fLgiyHGQJxLxigvZDHPJ84s1fw_OXtdhGTd0pv_X3bCZUgA@mail.gmail.com>
@@ -135,6 +135,7 @@ References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
  <98a46b27-c4bb-4540-8f75-f176c3f2fae1@gmail.com>
  <Zz59qgqKruqnouTl@tardis.local>
  <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
+ <Zz-FtcjNm0TVH5v9@tardis.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -143,73 +144,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
+In-Reply-To: <Zz-FtcjNm0TVH5v9@tardis.local>
 
-[Cc Kairui in case he's interested]
-
-On Thu, Nov 21, 2024 at 11:30:13AM +0200, Abdiel Janulgue wrote:
-> Hi Boqun, Matthew:
+On Thu, Nov 21, 2024 at 11:10:45AM -0800, Boqun Feng wrote:
+> [Cc Kairui in case he's interested]
 > 
-> On 21/11/2024 02:24, Boqun Feng wrote:
-> > > > So if I understand correctly, what Abdiel needs here is a way to convert
-> > > > a virtual address to the corresponding page, would it make sense to just
-> > > > use folio in this case? Abdiel, what's the operation you are going to
-> > > > call on the page you get?
+
+(forgot to cc...)
+
+> On Thu, Nov 21, 2024 at 11:30:13AM +0200, Abdiel Janulgue wrote:
+> > Hi Boqun, Matthew:
+> > 
+> > On 21/11/2024 02:24, Boqun Feng wrote:
+> > > > > So if I understand correctly, what Abdiel needs here is a way to convert
+> > > > > a virtual address to the corresponding page, would it make sense to just
+> > > > > use folio in this case? Abdiel, what's the operation you are going to
+> > > > > call on the page you get?
+> > > > 
+> > > > Yes that's basically it. The goal here is represent those existing struct
+> > > > page within this rust Page abstraction but at the same time to avoid taking
+> > > > over its ownership.
+> > > > 
+> > > > Boqun, Alice, should we reconsider Ownable and Owned trait again? :)
+> > > > 
 > > > 
-> > > Yes that's basically it. The goal here is represent those existing struct
-> > > page within this rust Page abstraction but at the same time to avoid taking
-> > > over its ownership.
-> > > 
-> > > Boqun, Alice, should we reconsider Ownable and Owned trait again? :)
+> > > Could you use folio in your case? If so, we can provide a simple binding
+> > > for folio which should be `AlwaysRefcounted`, and re-investigate how
+> > > page should be wrapped.
 > > > 
 > > 
-> > Could you use folio in your case? If so, we can provide a simple binding
-> > for folio which should be `AlwaysRefcounted`, and re-investigate how
-> > page should be wrapped.
+> > I'm not sure. Is there a way to get the struct folio from a vmalloc'd
+> > address, e.g vmalloc_to_folio()?
 > > 
 > 
-> I'm not sure. Is there a way to get the struct folio from a vmalloc'd
-> address, e.g vmalloc_to_folio()?
+> I think you can use page_folio(vmalloc_to_page(..)) to get the folio,
+> but one thing to notice is that folio is guaranteed to be a non-tail
+> page, so if you want to do something later for the particular page (if
+> it's a tail page), you will need to know the offset of the that page in
+> folio. You can do something like below:
 > 
-
-I think you can use page_folio(vmalloc_to_page(..)) to get the folio,
-but one thing to notice is that folio is guaranteed to be a non-tail
-page, so if you want to do something later for the particular page (if
-it's a tail page), you will need to know the offset of the that page in
-folio. You can do something like below:
-
-    pub fn page_slice_to_folio<'a>(page: &PageSlice) -> Result<(&'a Folio, usize)> {
-        ...
-	let page = vmalloc_to_page(ptr);
-
-	let folio = page_folio(page);
-	let offset = folio_page_idx(folio, page);
-
-	Ok((folio, offset))
-    }	
-
-And you have a folio -> page function like:
-
-    pub struct Folio(Opaque<bindings::folio>);
-
-    impl Folio {
-        pub fn nth_page(&self, n: usize) -> &Page {
-	    &*(nth_page(self.0.get(), n))
-	}
-    }
-
-Of course, this is me acting as I know MM ;-) but I feel this is the way
-to go. And if binder can use folio as well (I don't see a reason why
-not, but it's extra work, so defer to Alice), then we would only need
-the `pub struct Page { inner: Opaque<bindings::page> }` part in your
-patch #1, and can avoid doing `Ownable` or `AlwaysRefcounted` for
-`Page`.
-
-Thoughts?
-
-Regards,
-Boqun
-
+>     pub fn page_slice_to_folio<'a>(page: &PageSlice) -> Result<(&'a Folio, usize)> {
+>         ...
+> 	let page = vmalloc_to_page(ptr);
+> 
+> 	let folio = page_folio(page);
+> 	let offset = folio_page_idx(folio, page);
+> 
+> 	Ok((folio, offset))
+>     }	
+> 
+> And you have a folio -> page function like:
+> 
+>     pub struct Folio(Opaque<bindings::folio>);
+> 
+>     impl Folio {
+>         pub fn nth_page(&self, n: usize) -> &Page {
+> 	    &*(nth_page(self.0.get(), n))
+> 	}
+>     }
+> 
+> Of course, this is me acting as I know MM ;-) but I feel this is the way
+> to go. And if binder can use folio as well (I don't see a reason why
+> not, but it's extra work, so defer to Alice), then we would only need
+> the `pub struct Page { inner: Opaque<bindings::page> }` part in your
+> patch #1, and can avoid doing `Ownable` or `AlwaysRefcounted` for
+> `Page`.
+> 
+> Thoughts?
+> 
 > Regards,
-> Abdiel
+> Boqun
+> 
+> > Regards,
+> > Abdiel
 
