@@ -1,87 +1,75 @@
-Return-Path: <linux-kernel+bounces-416974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6915C9D4D1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:48:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB659D4D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CABDEB2581C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:48:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFF89B214A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664971D79A6;
-	Thu, 21 Nov 2024 12:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FF81D5ACC;
+	Thu, 21 Nov 2024 12:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="exRLNVMg"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Is4bGFhw"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB621D04B9;
-	Thu, 21 Nov 2024 12:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C791CB9F9;
+	Thu, 21 Nov 2024 12:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732193304; cv=none; b=YzkoIiigmUi9vfNPIdiNOy2/u25cpPghdq0F9ZQYIuzbQ+8L3JasoDWWxmKHn5a0lTipEy69mOqmkbVOXIC3Zyrf4IAcuCgAIvq7h+cLhLzv2H4e1wJwrZ5l7HSxBijaotqT7fLl4F3y0paIZmeCP9nnVYBxtP39N4p2smNT59Y=
+	t=1732193394; cv=none; b=SD42WzuvGEE3j1L5QzHMsk4dN6Q7Y+JiXvV/t0YxsXJoWrPNv0W/VJtOkaDlXeaROUAKa185nQFV8VD/aML8WHWtbg6pXkQikOvVin4NLsjy2MDiM9y1P6orQmk4WO7gadPf4XIB0efMaYFQLoBL8fFhbZ1/EVXFgpuIWdvDDYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732193304; c=relaxed/simple;
-	bh=V6h68H8dHWhb99rXhqd+FgVURyJXDChT4nqQs+LWmwA=;
+	s=arc-20240116; t=1732193394; c=relaxed/simple;
+	bh=89BAQ/YroiD9FSqwYRj0v6+SNU51MwwGl3k7/5m8NLk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gz3NwVIK38KA4LI1We2+icDoAppXw0WQFTIs9vnTJGoLP8gjYY7cwrqM/GjsxBuiXMqtJIBJeLdM1GHIFl9UnSj/sJ1UIMWnGBKIwyJChtDL+XLPU5YtPjNQk/pWCaB+CmywoccxGThRiL+CJslodw9mtb/M14SIwUi2vsPt8NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=exRLNVMg; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL8eCQO010271;
-	Thu, 21 Nov 2024 12:48:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=m9hVYClbCAMOmyugw63CMTQBhJJdSW
-	5LuLjt4ZXI/pY=; b=exRLNVMgWxEaS7lU+yxaYTZg0qc61b4oCMgHFvzM+9TtDL
-	MITh5+6nCIM7VmCcuzeKocpaPEiMYO5c4iGo8x5wC268PsUtXqVjJTjGHjE7CP27
-	STpuLY7gh9EoMqYxHzK3ktjjJh5CNR80BwtHSSWPHHPH5pD73z7Au2E2VFEgweub
-	D0235m/Mgpy4L91BRhjt1V2pGrZQCHuDeLz0R25pe/h5NygF3sRTM94OQdEtevFI
-	WX9ot0lX4IjwIiyQaJYv04mNZS2Oo+tGhyT4RXx8FjhfP87JUnnjV6hQjACAzyH6
-	YM+s3U2Q0TT0ohv5fMpTCqpWC5fqgjEBXBfeTByg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu21mrq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:10 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4ALCaD7V004456;
-	Thu, 21 Nov 2024 12:48:09 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu21mrj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:09 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL7MbtV024610;
-	Thu, 21 Nov 2024 12:48:08 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1gku8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 12:48:08 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ALCm7DP58720624
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 21 Nov 2024 12:48:07 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA65920043;
-	Thu, 21 Nov 2024 12:48:06 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B05FE20040;
-	Thu, 21 Nov 2024 12:48:05 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 21 Nov 2024 12:48:05 +0000 (GMT)
-Date: Thu, 21 Nov 2024 18:18:03 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 0/2] Fix generic/390 failure due to quota release
- after freeze
-Message-ID: <Zz8sA7YavAg8+mqI@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d+bV12soPAptyTU+4nhYnV98CRqrdN9HCiZBqehAgAwQDV609MRng4B3SrpTK6nIn8WnwBodyDFUK8ADfnikXLDn/K/b6BSN2guTMl5fpqj2ehgVyjqXkMAWLsUsJzmZQd203mNBfq4qHCNLql028XbJIaN8KRlUJuveoK0ebG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Is4bGFhw; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=lpivMAocVTDsHkAg+ZfnFbdHTIbdTIsRzzLgrJZSVyk=; b=Is4bGFhwfoaUGw+nmiaCeOM9/M
+	J+y4fTHTJ/CuH+CYFwsckevyzzK/GNnlRvbkDxrywQ/msJxXQStzjyxmARA8HxUhCg9yeFcSU5Q6m
+	4h00V4AqmqIwDVp6Vm/WCrz9GPJ8iAGckiQI2b96kx/4PAz+0MyWw6rxMRcKK6SVDGokCqQiDeF4L
+	AAb2o2hms9VmiRyhZ9dgcUq56B227R7JfQFD+SdQTjMVmjKLHwH7dEdH8ZTzM7XO1BONhc37QKFKE
+	1D9PMLpERKpjXlQofILuLPH/Jiub6og9AoIWyqP5Nycs6Yi5BxzqbahAhQx21fnKx+0P2yvBZSHsf
+	2rso2/1Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45288)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tE6d0-0007DI-26;
+	Thu, 21 Nov 2024 12:49:47 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tE6cy-000842-0F;
+	Thu, 21 Nov 2024 12:49:44 +0000
+Date: Thu, 21 Nov 2024 12:49:43 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Cong Yi <yicong.srfy@foxmail.com>, andrew@lunn.ch, hkallweit1@gmail.com,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	yicong@kylinos.cn
+Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for
+ improving code readability
+Message-ID: <Zz8sZ8WTocbX1x3r@shell.armlinux.org.uk>
+References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
+ <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
+ <20241121105044.rbjp2deo5orce3me@skbuf>
+ <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
+ <20241121115230.u6s3frtwg25afdbg@skbuf>
+ <Zz8jVmO82CHQe5jR@shell.armlinux.org.uk>
+ <20241121121548.gcbkhw2aead5hae3@skbuf>
+ <Zz8nBN6Z8s7OZ7Fe@shell.armlinux.org.uk>
+ <20241121124718.7behooc2khmgyfvm@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,64 +78,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121123855.645335-1-ojaswin@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Om05031vx9cGbA3Ie5fxutlFcxWgbOF5
-X-Proofpoint-ORIG-GUID: 275cugeP6hY2B4eTA0bJrGx6mmc6ywmB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210098
+In-Reply-To: <20241121124718.7behooc2khmgyfvm@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Nov 21, 2024 at 06:08:53PM +0530, Ojaswin Mujoo wrote:
-> Changes since v1:
+On Thu, Nov 21, 2024 at 02:47:18PM +0200, Vladimir Oltean wrote:
+> On Thu, Nov 21, 2024 at 12:26:44PM +0000, Russell King (Oracle) wrote:
+> > On Thu, Nov 21, 2024 at 02:15:48PM +0200, Vladimir Oltean wrote:
+> > > On Thu, Nov 21, 2024 at 12:11:02PM +0000, Russell King (Oracle) wrote:
+> > > > On Thu, Nov 21, 2024 at 01:52:30PM +0200, Vladimir Oltean wrote:
+> > > > > I don't understand what's to defend about this, really.
+> > > > 
+> > > > It's not something I want to entertain right now. I have enough on my
+> > > > plate without having patches like this to deal with. Maybe next year
+> > > > I'll look at it, but not right now.
+> > > 
+> > > I can definitely understand the lack of time to deal with trivial
+> > > matters, but I mean, it isn't as if ./scripts/get_maintainer.pl
+> > > drivers/net/phy/phylink.c lists a single person...
+> > 
+> > Trivial patches have an impact beyond just reviewing the patch. They
+> > can cause conflicts, causing work that's in progress to need extra
+> > re-work.
+> > 
+> > I have the problems of in-band that I've been trying to address since
+> > April. I have phylink EEE support that I've also been trying to move
+> > forward. However, with everything that has happened this year (first,
+> > a high priority work item, followed by holiday, followed by my eye
+> > operations) I've only _just_ been able to get back to looking at these
+> > issues... meanwhile I see that I'm now being asked for stuff about
+> > stacked PHYs which is also going to impact phylink. Oh, and to top it
+> > off, I've discovered that mainline is broken on my test platform
+> > (IRQ crap) which I'm currently trying to debug what has been broken.
+> > Meaning I'm not working on any phylink stuff right now because of
+> > other people's breakage.
+> > 
+> > It's just been bit of crap after another after another.
+> > 
+> > Give me a sodding break.
+> 
+> I just believe that any patch submitter has the right for their proposal
+> to be evaluated based solely on its own merits (even if time has to be
+> stretched in order for that to happen), not based on unrelated context.
 
-Forgot to link v1:
+Right, and my coding preference is as I've written the code. If my
+coding preference, as author and maintainer of this file, were
+different then I would've written it differently.
 
-https://lore.kernel.org/linux-ext4/20241115183449.2058590-1-ojaswin@linux.ibm.com/T/#t
+Am I not entitled to make my own choices for code I maintain?
 
-> 
->  * Patch 1: Move flush_delayed_work() to start of function
->  * Patch 2: Guard ext4_release_dquot against freeze
-> 
-> Regarding patch 2, as per my understanding of the journalling code,
-> right now ext4_release_dquot() can only be called from the
-> quota_realease_work workqueue and hence ideally should never have a
-> journal open but to future-proof it we make sure the journal is not
-> opened when calling sb_start_inwrite().
-> 
-> ** Original Cover **
-> 
-> Recently we noticed generic/390 failing on powerpc systems. This test
-> basically does a freeze-unfreeze loop in parallel with fsstress on the
-> FS to detect any races in the code paths.
-> 
-> We noticed that the test started failing due to kernel WARN_ONs because
-> quota_release_work workqueue started executing while the FS was frozen
-> which led to creating new transactions in ext4_release_quota. 
-> 
-> Most of the details are in the bug however I'd just like to add that
-> I'm completely new to quota code so the patch, although fixing the
-> issue, might be not be logically the right thing to do. So reviews and
-> suggestions are welcome. 
-> 
-> Also, I can only replicate this race on one of my machines reliably and
-> does not appear on others.  I've tested with with fstests -g quota and
-> don't see any new failures.
-> 
-> Ojaswin Mujoo (2):
->   quota: flush quota_release_work upon quota writeback
->   ext4: protect ext4_release_dquot against freezing
-> 
->  fs/ext4/super.c  | 17 +++++++++++++++++
->  fs/quota/dquot.c |  2 ++
->  2 files changed, 19 insertions(+)
-> 
-> -- 
-> 2.43.5
-> 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
