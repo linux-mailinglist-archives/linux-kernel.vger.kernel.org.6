@@ -1,145 +1,184 @@
-Return-Path: <linux-kernel+bounces-417292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574159D5218
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:47:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04A49D5266
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF4A1F228D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA78283E06
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874D819DF62;
-	Thu, 21 Nov 2024 17:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED781BC070;
+	Thu, 21 Nov 2024 18:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MCg5O+gQ"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ppFW6lQS"
+Received: from sonic316-19.consmr.mail.bf2.yahoo.com (sonic316-19.consmr.mail.bf2.yahoo.com [74.6.130.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07FF1482E2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FD31A08A3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.130.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732211244; cv=none; b=ThvT8UtZioE/+xruXJ3t2izP7cfZ310DTXQ5R4aGDbfoQ4inpnmrSzkgCSjXbmWo12Ebw+lxTWhVYqPfmHXYc82m1+Z+y0aZsmVZr7K/FbdZTjaeOVa02mr6oRvNOBCTOljPteYBDfiHBC6Hf5Uafdf0XHNT3QY2ylpoIkhNlaw=
+	t=1732213094; cv=none; b=HwEMawJ84+y8TakhjT4O9W+JsTfGtMx8Vh/oqbVR+R98PANDnl4QoLReyAdR+K1idlQVndy6X3M7l20C2vQn4gvmM2zTESZ/7yvrNrVa5qAY9QK94tJcEufEgZOX9bsHMEcfBWs9ImmvLdkoQZZdC/9hpxs7lUq0uDTtUyyWntI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732211244; c=relaxed/simple;
-	bh=B8qy8Q/n5MDwBgCK9TorilYKi+CojlmuzgfSg2SeO+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m5y1xFfp8VtEYgX5gNe058xU9T4fRGj8OfDNG/LdqjnFy9pRz+ySYcTD0kyzz/nERvoIu3q4WUxZvnhVYCQc9GGWP5a9VNZc7mXepZjYkPoCpX3zt8SU7UnUHtUB5n41P3XG9lPUTw4q6+EqULecp/lvu/LjB2pLQYVrQRDfDbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MCg5O+gQ; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfaa02c716so1583906a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:47:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732211241; x=1732816041; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XA/iJyNnc5nTicmbbrtzlzZcZnraDIPDaCwbOdD4hKk=;
-        b=MCg5O+gQ1y+gowGXUag4CUYWF1qc1a8+CIKmE2TBEGn4MvRozsWUHyw77CmfShADjU
-         FfhGEWUzAHbBBbl/sfyyvQ29xbuGG96rRVUSrCTkJ/Uinwk5cOZOQE3yXvonLsZd+Y9u
-         H/7caoV5xVnZ/o5z8ghFk04ULXqfTdPLWnsi8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732211241; x=1732816041;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XA/iJyNnc5nTicmbbrtzlzZcZnraDIPDaCwbOdD4hKk=;
-        b=MXhA/jeBUf9OeOKqKGkfwwlQVjBYuu09Enan8evNoxpbbVrOIsf7uOEi3oZAr7Dujc
-         pHMitp/2lnamMnt/KtyVCoaIt5cneN00Dwx3dQ/cl1RrTRyziAIygDC54q/aF7UbhrsU
-         35H0eKSgwXqtwrjKb7gicbr5fLJpF7aho0C3/K5qHi6hL5Ehcg+oLzzdyhO23CLGD7p0
-         JT3Qa6iLIgHS3Bdb9YC1Uh/tH9VqLZIFd68D0jG0xmxTQaIQA48dxHxHDuYPrDNEwwuL
-         Z9TdGe7DsEUi/GPQR3bwD2sWQNwje8zdKmiE8BPvAL8TBMYQb2P28yGjT0Zo7f3rYPLW
-         fteA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU7/6XkLjmXd86UlJANzuKHNCEtPTJBGrAYGYinJ1JFdQToP7Gxf3n3HTEFS42PN2m4ydvv4cTscoLGAM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfbm47rDbuhFj3xRxspZxvJwBGdS5J6yhCpwuxQr3n9wNuiC+7
-	6muUgehszTPi9XwwVuZ5xXV4p0UeA6FiPUfZTwWBeeux3C7zUznsC6tZWrp6eFKBUkXGhdL6gMb
-	BgO8=
-X-Gm-Gg: ASbGncuSANiOSjim4oBNjAdV03e1bB+iiFLq+5YrAocH7C8Cu+XwW8N2sn6WcztVEyH
-	nxKpEUQsYp/JrYgH7tkQQhURuo0NDLZpTF8XidDsPz/ROJ78uXgzzbHAjz7+p5Dx42sepJGMfsJ
-	nNVXGPeiywcH5owwO+3TYWlYA+P/IlqE4AyUIBx+VqjPFLn7JuBRjDZua/GGjPOpQMMKs/sJEPq
-	622hX8EjRAbMNVmPVIMlml0cEvPPGwGxcue0E5P936HXQWZ1X8AJSTeQdCSJ4lnHQ0V8MhnqWVA
-	ImJQLtn1loletdumCjGCDb/6
-X-Google-Smtp-Source: AGHT+IFEcKQwCF/QLk9m+VXT3JMO1livpJa+zzJtrxgqlvnmum5w8i+Td0X/86nvZ+UPnKyZEl/8xQ==
-X-Received: by 2002:a17:906:3101:b0:a9e:b287:2813 with SMTP id a640c23a62f3a-aa509906366mr6043366b.5.1732211240763;
-        Thu, 21 Nov 2024 09:47:20 -0800 (PST)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f42d33e9sm104125466b.94.2024.11.21.09.47.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 09:47:20 -0800 (PST)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a68480164so182628966b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:47:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWC8zHqP6otFNQHjQpCji9+iEJVDgkNJSJxXsClSUyX5VeI2XWfAGAIB1j8pszDMAAESXqZo8TrLGrrKW0=@vger.kernel.org
-X-Received: by 2002:a17:906:3188:b0:a99:ffef:aec5 with SMTP id
- a640c23a62f3a-aa5099393a2mr4495266b.23.1732211239821; Thu, 21 Nov 2024
- 09:47:19 -0800 (PST)
+	s=arc-20240116; t=1732213094; c=relaxed/simple;
+	bh=1nJPrORecUy9aErlkXc7diFWNOLRy4mY85TL66J12KI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hfzM+vD4Hz4sxX8KWRGspFQdRV+hxvLlcxpFn5wlilN7AMpQZhefpPSQp1APo4fyPlKiEfeJbA6lMgGe2cJh206jddV2K5qtxru83YDMqHJD3TGKCvcsB76mxWIR6bjysx9QZL1qCLlMSAfIQm3dxq+aHU/uJ7l2+lsG9/QQU6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ppFW6lQS; arc=none smtp.client-ip=74.6.130.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732213091; bh=EdrPSyL442ItgVmRGJmr9cZU2LuODB87mu487HPxUuk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ppFW6lQSbXmMKkPoMWA5F8afzy7Ntg+sgEvMyFk3UnixGE+5JYz4mWyQf+4FNeiRkHxbVstq/ujQ3f8XqLITrgNS5SZ2zTRMu5un6w7xFSkP4HWeKf5vzvEb1PeNcpbXai2rtePMOq0pwo4LcGJZH6G5ULfJlB/l2FkmlI/h1MFTQuyIYj2Hv8c8icROIXGduAC1e2Xc+NbQ6dAmT/0tYjGsvQBlCreac6vIE2g6NoxcaPSBhqImUw6Ky6X2QjLM1AFIHWj0j0f3J3Fspk8R1/4mkNuCdh38viYdlJ0okDww+eWKaE/b8Nq8E/VjyRNp6Rmduz/Y6rmVLEe4ziG6Dg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732213091; bh=jasu8/lwIQAhGCqJBJy7vDfWUE14x8K9zQsBlavdrVc=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=W0NNanIo1FtSCaGlxsBy3JAi34yEjTbY9GaR0eptnQt7sx3qj2NdMDs9gmAq0fDeDFROfk0g2MFsE/TjgYLS+Q4hegUDl5M16iNL4lTp3Fdle6DheifGhCr3q/YkGhKiuVYFllQCzL3nMk7AAEy0PzCDo6+JnnzHb6aTVI7RxvrsX7Y70DUIcNzAO2QQv9WYl5z4VkPd2dRlNLgoualv1A0tK59+50/DOA2DJ/6CN2ZGHpS0rGQVK3ntiH8P6Lsuu2l9JMRNzt3YrrcGbmDMvX16k2rgM0MOPS6ydpWUQoSGEJAzoAZIftHHQ67LGAXIzd98i1hDe1q6j+yEy8u2aA==
+X-YMail-OSG: 6TEUD8QVM1lZm51Lkjdit6WAWg2I3gCVCoI5_UcJq5yicKZzg6U.dgxiI3JQ3zf
+ SlglxMTk_jsrjEdp.OhqBJTggNEaU3foxKNCbOvGUFf_cj_DTPyfPQLeoDZsJJpn7OOe3YFggBOS
+ lYtBNgssX.XODjTh.pyr0.gO5C_digkAP7.Sc96pc45KjiYaq3Q3oQaKjdmKITQJXJPWw.VYEPOe
+ dKfm2YC6F1IV4JQkp6UXTsvujKChBSyVwzpWrlAlbJVsmUaSisPS_BfA8xoAILT5iB8wR0rZyL07
+ pMD2MpK6STD1yeB4kSAf1nF2xdW4PrsIdyIqDtm1vCQs3IgcCjuF0sxLoQLmEqHWZ35heGr6Is8k
+ 1c6UiT8z1GwqAsCn9n66VH7bHmJcxSa4ug6KrX8aPpWTFCUCT85wZg8aiKO_JCZNnrfm.I6.5Tsn
+ MzH7UcKSFrER2yTvsVmYGYGJddFrsenEpCPcMNUBJIUEKfEg6bxHdjLBsEnJdf_RTgVUfwPEfrWy
+ 7KhXvNXkSpcZ64Kvg509Yie4oAGuhi7EtvxgbuTj1A3EV5pmhTaoMSkzOamOIgAqF_wtgXaZ52bb
+ 5rU.SRuw_X5MjBK2cqVsNlc5v04QH4E6aiJ1HU2nT6JhuWCT1xlME9MPoyhW_w3IO5fWSbERPr9P
+ wrkNJY.Re.nHkQiI9tYvV_AWFEEDltD_u1PVhXNjqxUXxeKBdTj36RfdvsrMSWei4ZR4_q8tT2Lo
+ o6TPbYC_W_Mg6Euk63z.6b5U6Z3zlfxKOni4Y4ve8fSeRX0Qge0jmiorCAqYppCxWdkREUkNznZj
+ KGJQSDp2D.GE5yg0xkvSpt073PU3Xn5ZXCFESVQeCHK.YrVTG2Ac9chiFD.KUWfWFwdrdn5sk1yM
+ BaO8KUdl9r24s4Yl2ClfCx1pRx47e8.aFGnzwey42Hhi3QWovcVpacqbuWc5Xz3pZg6b9Dl9EqFZ
+ mh_Su2T5O8ZCBHSq5pU1Xk4PZVqAMUeiiVWK4s7uG6mXz9iulElz0KevGaKXGDEtnA6fN9dMsY9S
+ q6l3keyHtvYnrOtg5dDu.r8pXHf38P16DL9xZUFWfXg9mxDfCw3kTrQ6B4b1phPhylawqWkzPIUe
+ ZAXXV4yBaKl6R19Ij0wNL_p_DOCTcKGXFYKagKe7wLdGlaSUmjWUyVUH8bSlfLkdxqDOad3vZsYH
+ C0zm5Yn2Gu8uNY04lANmQrK5kepFod097XE5Isy3tVqamgdlhDPbEyMpXaficV5NPf1ibOwc03mG
+ 0EBZ0HwRrJAtyM41izEVHy0X49mAa6SkN2Qg4Nf3SXY0w1qfto.fh6O6C_DPy7hYe.dvRb4hJScb
+ MEhMfXbfgcxyJ6LkWEzmfWvXDC2DlZCGLMhejybjamuBMh9rUUQ4T3r8ANVkdK67lzW1mFIDGGt3
+ vCrOkB_dkWJT2CAD7zxvNRQT0ML8E6tINfE2hRvdwuKyjhrT5_yFy4SsZXyTX4z5gJdtI6nZlYpP
+ DJ3WiFbVEeVkS9o0mfa7Ymdz2LpR3FDLIn4spU0p6OSgeVEvpmy8hCYEY.SM326.wA4Kwo_RYbNN
+ tSNRNqTtSrq8SuFIYA_6krV3GRm4Cx_T7.ghnUe.xL6WcHri3afhA.DVfVIpOX9dePnav5J1fMfs
+ HDUhlmLiMoR0K9clkFwylAT7CMeG76C8.6NssAKL9XFo0SAokq7UTN1lezNBFpd1rLg0ooEo0mfk
+ a1imFJkX_DdjYHTM4oPo2jIXL4i5sLVqjWljr7XAuWAzobYYRPXVou1k0KKhBdVP6hYktUu0IhE6
+ ijLlCoSeD1Rot89g.diWrDSlfeAO2ehrybsWGSeEKCmc3.ui3lMeX2YZwieIZm9vM26YpHfgT92a
+ jObjkAABBy9HhZg.P.rPKsGqDftQvYSbjl2PLzB62A9OeNLD_UfqIxDL16nAcClB0vwbXK.rayYb
+ QCrZuudvcVj9jfbKQMKwdKM7i.mAEXW3rCQ9Ig4qUf1QuG9IiCtbWBmlwMeohjQerEFaQPRJdhOt
+ YlqtmI828b3.N9L5M18frpUaA7lNtayA5bJTrRTktoKplVDR6mQAzXRQAqycTL4jqJwM19hR.jNl
+ Gl0jHHYmvBB07aAnFWlYoQOctmh_KCCA01GIH1cCbPpbu1rjxtPEeVt0b..NoRcMniipAGAds9K_
+ RgbhVzM0WlSkZb7MXee3ggaHuk5yEJmUGtybJAo5SGhJpovKzZLBERoYAb2ZdkySd6kA0cJFbmRK
+ eWvJvxyeR0RWWXWuedpCiJ9brsxLWzFqHUsXhyG7e66gNQNZGK35yFHzbH9ROGErYI7GiKYtzWYN
+ cug--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: b3fc884e-23b1-4fbb-ac7c-8fd641c8110e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.bf2.yahoo.com with HTTP; Thu, 21 Nov 2024 18:18:11 +0000
+Received: by hermes--production-gq1-5dd4b47f46-bwg5p (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1a4874166160859949530f5aeaf2c67e;
+          Thu, 21 Nov 2024 17:47:42 +0000 (UTC)
+Message-ID: <9d020786-fca5-4e96-9384-fa1fc50bfa44@schaufler-ca.com>
+Date: Thu, 21 Nov 2024 09:47:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411190900.FE40FA5@keescook> <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org> <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
- <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl> <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 21 Nov 2024 09:47:03 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whzKjzbZQ9a-ZvRFwj6X_wsQvNjiizyCzTryEQnZc_47A@mail.gmail.com>
-Message-ID: <CAHk-=whzKjzbZQ9a-ZvRFwj6X_wsQvNjiizyCzTryEQnZc_47A@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-To: =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Nir Lichtman <nir@lichtman.org>, syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
-	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Song Liu <songliubraving@meta.com>, "Dr. Greg" <greg@enjellic.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "jack@suse.cz" <jack@suse.cz>, "brauner@kernel.org" <brauner@kernel.org>,
+ Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+ <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com>
+ <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+ <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com>
+ <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+ <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
+ <20241119122706.GA19220@wind.enjellic.com>
+ <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
+ <20241120165425.GA1723@wind.enjellic.com>
+ <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, 21 Nov 2024 at 09:28, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 11/21/2024 12:28 AM, Song Liu wrote:
+> Hi Dr. Greg,
 >
-> See? There is no single solution, but at least the dentry name is a
-> *reliable* thing, not a random garbage thing passed in by user space.
+> Thanks for your input!
+>
+>> On Nov 20, 2024, at 8:54 AM, Dr. Greg <greg@enjellic.com> wrote:
+>>
+>> On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
+> [...]
+>
+>>>> 2.) Implement key/value mapping for inode specific storage.
+>>>>
+>>>> The key would be a sub-system specific numeric value that returns a
+>>>> pointer the sub-system uses to manage its inode specific memory for a
+>>>> particular inode.
+>>>>
+>>>> A participating sub-system in turn uses its identifier to register an
+>>>> inode specific pointer for its sub-system.
+>>>>
+>>>> This strategy loses O(1) lookup complexity but reduces total memory
+>>>> consumption and only imposes memory costs for inodes when a sub-system
+>>>> desires to use inode specific storage.
+>>> SELinux and Smack use an inode blob for every inode. The performance
+>>> regression boggles the mind. Not to mention the additional
+>>> complexity of managing the memory.
+>> I guess we would have to measure the performance impacts to understand
+>> their level of mind boggliness.
+>>
+>> My first thought is that we hear a huge amount of fanfare about BPF
+>> being a game changer for tracing and network monitoring.  Given
+>> current networking speeds, if its ability to manage storage needed for
+>> it purposes are truely abysmal the industry wouldn't be finding the
+>> technology useful.
+>>
+>> Beyond that.
+>>
+>> As I noted above, the LSM could be an independent subscriber.  The
+>> pointer to register would come from the the kmem_cache allocator as it
+>> does now, so that cost is idempotent with the current implementation.
+>> The pointer registration would also be a single instance cost.
+>>
+>> So the primary cost differential over the common arena model will be
+>> the complexity costs associated with lookups in a red/black tree, if
+>> we used the old IMA integrity cache as an example implementation.
+>>
+>> As I noted above, these per inode local storage structures are complex
+>> in of themselves, including lists and locks.  If touching an inode
+>> involves locking and walking lists and the like it would seem that
+>> those performance impacts would quickly swamp an r/b lookup cost.
+> bpf local storage is designed to be an arena like solution that works
+> for multiple bpf maps (and we don't know how many of maps we need 
+> ahead of time). Therefore, we may end up doing what you suggested 
+> earlier: every LSM should use bpf inode storage. ;) I am only 90%
+> kidding. 
 
-Note that the reason I want 'comm[]' to be something actually
-*reliable* is that that is what the kernel actually uses for various
-error messages etc.
+Sorry, but that's not funny. It's the kind of suggestion that some
+yoho takes seriously, whacks together a patch for, and gets accepted
+via the xfd887 device tree. Then everyone screams at the SELinux folks
+because of the performance impact. As I have already pointed out,
+there are serious consequences for an LSM that has a blob on every
+inode.
 
-User space tools like 'ps' already do the "dig around in user space to
-look for argv[]" thing, and tools like "ps" do *not* actually use
-comm[] at all from normal user space programs.
-
-For example, why do you think "ps 3545" says
-
-   3545 ?        Ssl    0:00 /usr/libexec/gnome-shell-calendar-server
-
-but when I do "cat /proc/3545/stat" I see
-
-    3545 (gnome-shell-cal) S 3129 ...
-
-in the output?
-
-That's exactly because comm[] has that "gnome-shell-cal" (limited to
-16 characters with the NUL due to TASK_COMM_LEN), but 'ps' will go
-digging into user space argv[0] by looking at /proc/*/cmdline which
-gets you much more than just the name of the executable.
-
-And I do *not* want anybody to think that "comm[]" should act IN ANY
-WAY identically to /proc/*/cmdline. It never has, and it never will.
-Exactly because the two are completely different things, for different
-uses.
-
-And yes, people have historically actively messed with the argv[0]
-thing, and actively tried to hide what the actual executable was.
-
-I am not AT ALL interested in letting people play those kinds of games
-with "comm[]".
-
-There's a very real reason I rejected that original execve() change.
-It was stupid and wrong.
-
-                  Linus
 
