@@ -1,238 +1,351 @@
-Return-Path: <linux-kernel+bounces-417436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820F99D540D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 596659D540F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:42:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 135471F22F21
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:36:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC42D1F23096
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD41D63DC;
-	Thu, 21 Nov 2024 20:36:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB9E1BC9ED;
+	Thu, 21 Nov 2024 20:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xkm476Xu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0hZw1L/J"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7081BC07D;
-	Thu, 21 Nov 2024 20:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732221369; cv=fail; b=WOf5Kj0CduYp5vgMRW9q5cQDW8FC9WZq0aneupLpU8jTy0Gonjxpee9vIZMewheNpBh3B6aNadBMHvKRPx46DFdt60hHDaY+PI2/pRrEno7LV7bDMbEpsc63hSEMJignB9sXR3qlXPcnIAqUgpqTRLYMs5BUG0vErAEokD4qt4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732221369; c=relaxed/simple;
-	bh=fpftyKphrOqQEgoDfRjShErfyOyrHRngfqKEJUumfj4=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bdkf4aJJYA5w/daEk1VuRUQa3/U8J4FaupGXzwSgRszc+yDwCAwGYN+XCKPgZcQwJ3hLqi0giJAx7r06jvpFMdrwd6FulDpuKaFznzr/QGyRMMFCFZ1zG8MG48w6t5vIJK8hv3zwFRNBDYnc++2Qo+jEXq5JTaDmXWSt0ugM9cc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xkm476Xu; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732221368; x=1763757368;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=fpftyKphrOqQEgoDfRjShErfyOyrHRngfqKEJUumfj4=;
-  b=Xkm476XucGK64miTXg/eASJGaTuEsZwIdboBwr8w2uoVYujEUMIsPg6U
-   FHYo/pHTvlGdvVojoFSuLaWV8nqc+aZmaZk5OiF80P1Ny3Z1hnylsBgCP
-   3MppKdbGF42KsaFm1sAhE38PGNi2E/SI7cvHVPE/fFAQ+Eno3C47lfYvG
-   NVV2sCCKeUALCoaRR4X3xp1hSpE9F3xg0RvPcFGnVZfmV72p8vI9VGVqp
-   FPZQHb/oVou9zZMsqFJ1QY5MfvhJTObyw0Le7z3CzRyBxwoq+2tEhTIyu
-   DGwJAHxQAXbBvQOyB1jOFycTtqKc8yyayaxdo0mzbOYppf6F+V0D94m5B
-   w==;
-X-CSE-ConnectionGUID: +dsiwTIvRne807TJD1qSVA==
-X-CSE-MsgGUID: ujbarbsdSJ+XVtMifAFjJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32108603"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="32108603"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 12:36:07 -0800
-X-CSE-ConnectionGUID: L9KSOjB+TgOEKqO9HikNng==
-X-CSE-MsgGUID: Bd/zNdgSS5y3J4Crpwc4tg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="94454946"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Nov 2024 12:36:07 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 21 Nov 2024 12:36:06 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 21 Nov 2024 12:36:06 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 21 Nov 2024 12:36:06 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NVadFvAbfGo+BF5CNtlcDEHzyfDWsR/N6pOhpzMXujJsG96xd2xr2uDfJwcqQR76eFT5Z16Wn31ECx71UHFH4OyFcSqecEiLNFjh8I5lNkMy10Bob5VaWrKjtPh3yPuZKN26+UwTHGKJ8iA26P1FXY7rgrlSoirvlVO0Iozyn4LXpIHuXSpn7ylX52fTL7GQHZegUUkWf5eIfjxtLkFKI4YPEP2IqhMNkFM/ke04KpRXM9+6CD1FZFDM4J6YRmi7JAc75wAFz636vwTFO8ZMk+aIryltExq4Wvw8bM75JckPAFt4ydzflYGr6ZIT/lDJiCZB7n58Vh0fqCbSHa99Ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xJ8HO4bgVdFBe4oHB7gv14O6N2gBJM1Zhu1txIWA3Aw=;
- b=I94qQf5oFRotxy6odnabla5hwbA+SM0a0dJ69DSSrZfMKknAgNVHuJZxK28QXryW7BXZiyn1t4tW3KB7J2BzXZfs3EjP0UHLhJCrN4JeBk3oJbwyfIJRwTDxbCxjBU2PU7vGufUTOKzHYq2J8wVKB6fYtNXoYnhQyVHoOt8NzatSKBq3QkN03UY16xFIQpOYVmZlf4GSKFNmHpQ/au7y1mBVLQ+Kr0CepLZ1vtiw8J+pG6YRqrzvx6x/bM5h0wV+BkR/Tmku0j4iWIPyS1wfH0lDbaaFEzaUXi9a78Z+DiBP5G1X+TdiaYuL32ZJpAdn6WZTyHweZ7nZii3kuk50gQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by MW6PR11MB8440.namprd11.prod.outlook.com (2603:10b6:303:242::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
- 2024 20:36:04 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8158.024; Thu, 21 Nov 2024
- 20:36:04 +0000
-Message-ID: <2b28f8bf-3327-41a4-95bb-858f07fcfcfb@intel.com>
-Date: Thu, 21 Nov 2024 12:35:53 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] net: microchip: vcap: Add typegroup table
- terminators in kunit tests
-To: Guenter Roeck <linux@roeck-us.net>, Lars Povlsen
-	<lars.povlsen@microchip.com>
-CC: Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon
-	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <linux-arm-kernel@lists.infradead.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241119213202.2884639-1-linux@roeck-us.net>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20241119213202.2884639-1-linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0097.namprd04.prod.outlook.com
- (2603:10b6:303:83::12) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F111F3C47B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732221758; cv=none; b=L1u/g9vIM9u8HWnZKpz4wJxqwBK8XehkMHI/y5U4cz3kkg84t1LES5mczWgd+D0xTm6N4iwYo2wJaDoHUdLkQoVD5klIq+kOgjKplUD7RecpNzSPWXmyfs1LUZhNFk3XBuNkqcckwngIHKayoCfG8hptCEELpdQYjx3irUhaBcg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732221758; c=relaxed/simple;
+	bh=rJs6LLEdV9LNIe3BWRFRAx7DlIZIwQfGN90KzyE+A4k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ukq0tuIsLXb0sRe2fRl6COuolt87OJlWBPlLas09KVcdFvlgKK7Meo2psB00WUUu6/nJjXnREIkfrksrD1tzPcebuVKEevHhrbnK9mT+9fsdt4cmJQyZTX1wgdcZJNEb2gynrqUsN9tAK7zzXd012ozmQjfN/Qs65gu7tW2Vpu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0hZw1L/J; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--samitolvanen.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee7ccc0283so22243397b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:42:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732221756; x=1732826556; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SnWPSw2aqDJ2fjvlH5A3OoULrbQ15ijPXx2tZ4Gn0r4=;
+        b=0hZw1L/JgyCI1fmfkYnA/Miv5nQZC1jmIEveFOywZToEgklYS6MaMmLiY1DCMMizJ9
+         RkPMqan5eGPoULf4O/hU+SnOoltCMZdzZbMKUI4LYUzQ1w5Cj9iPpbZFXhgU/yjv3Ky1
+         JV9AyDGVriD7YleUIdW99NxWDu14DlUDAJm9qg4zVGp0b1SFYimI+eYfNfIPldBbD6we
+         6v1nV9OxRF5dOOQsEC3bqV+x0qPcx8xxsNP14hAk/FkWnVaJpxPPofz8cLtTJmDX4AZ9
+         O2IH+er23Kc0hrhQUPMx6Tq9Fp279qztzlpLFnKy5pF1msRqEfndfW8/kmHOvvFG8ok9
+         LJfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732221756; x=1732826556;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SnWPSw2aqDJ2fjvlH5A3OoULrbQ15ijPXx2tZ4Gn0r4=;
+        b=U6PWMAE+eg1osjKxWGxstIf+08JGEk/dqTYSNGaLUvDlqx0FMye6ZLJV9TfBqsJMPJ
+         n2qRooZkhAckUlayJ4YYJpmO4zucozjfDD885AuRokYKY0KYxlAODpftL0ml8t06rQPE
+         wmHoUiqGJmCtxvPflJKmVy/EZAfq4Xu5NIdUMjKjJsbu3FUwQb7GBVwYXDwI5JUk14tO
+         iKMDXVJynIBTpXok6qtYCLlXdaEB23FYVsYE1udvk4Jp9iVbgQpyZdGGyNnyNaMPRX2b
+         /pj7d7pgczQcAiKeergG3q1jOGejG4EcDL4NVQpid4G7xbY0VWON7cEC3+JXPKNBj30n
+         oX4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVU+mpF9hBslIvb7ynQSvZxYHlMKnO+NpGv0yJK2OBDNFBx4jWm7+K6rcfM3/qh2RWZisUaWXyFRl1SLo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTEEFTS2Fuew1ngcQk85c3HzvpB2IsUycUjXQQohKe6RiA3OPk
+	ykWi2P8T8TcUiSy25bIXIspgHo0aOQilkGaSClmQ5qCYkVWuT09nQCpWqCs0N7RQwXdo5gnzhTA
+	4/AHR71xkTrtUR1CsgTpcQ0c9rQ==
+X-Google-Smtp-Source: AGHT+IEM1wcs7zT7wfIKQpp3JjLe/UW3BxESoePC97InZ/JyDv14sDQBJbNNDVOfbMali1ZrmmAYEHbamgjzGXB67y0=
+X-Received: from samitolvanen.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:4f92])
+ (user=samitolvanen job=sendgmr) by 2002:a05:690c:20a5:b0:6e3:b08:92cb with
+ SMTP id 00721157ae682-6eee077a19emr5797b3.0.1732221755894; Thu, 21 Nov 2024
+ 12:42:35 -0800 (PST)
+Date: Thu, 21 Nov 2024 20:42:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|MW6PR11MB8440:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e2105f9-c456-48e2-4206-08dd0a6c1e4a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z1U4N2l5UW03SFFjeUZLMEplQkpsWGZ2dGtpUU5JNXZTaGZXc21ObnFvS1FG?=
- =?utf-8?B?bE5BU3BOTkY1VldwRkV0YWJXTmxBL3RuODUxMk8rZ2VLd1VrbUEwZjJtMW5i?=
- =?utf-8?B?WFZEWFhhYmlCMXdJZFk1dHpvTjZvNm5BR1BVSVA0Y3huUW5EZENxS2h4bDhw?=
- =?utf-8?B?Z3VJeTZOdXc4Qnk5bVQ2QkdRYXU5UEtnSFZybGoydkI2Zy9jVnNXU0JHM3Bn?=
- =?utf-8?B?aVRDWlY3U0txZmJTdHRxVzNiL2YvUHhyL3VGajVOdzhWM3RqbHhpM2lxMnJk?=
- =?utf-8?B?bnlseTR2MzcxY0p3Vy8zWDQwSnZSc1NGdmplNDZCT1RkV2dyVVdvcVNQTms3?=
- =?utf-8?B?M3RScXR4UTR3cWYza3ViV2NZVk4wUkd0YU5zbHhWdUpNTDJTL0VLOHA3a0o0?=
- =?utf-8?B?V3U3VGE4V0NXMm5xWk55cWY2bzErZG5ReThGbE9GR29PVEthNytlMG9VMnFu?=
- =?utf-8?B?MklSSzh2ZjFhMXFRemV6cG1CMDN0cDBLUmorM2lRL1RTK3JMWHFjNlErTDZ5?=
- =?utf-8?B?Sm52Yis4WGpqL1pkMUUrSDhlOEtjTlJ3Qy9JWEs3Mi95eEx3QkdPRFNSd0hF?=
- =?utf-8?B?M1JwNHZpSFI1ZHhUNC9QSGRpbTBsZGVBMTlBZXo4bUhNdWRBajBsd2ZzZThs?=
- =?utf-8?B?YmxNMVNHblE5d1BMdjNvWVdvcjRSM3VFNitVOWhjdW9KRXFBdlppTCtNYnN2?=
- =?utf-8?B?dHVwR01ydVNBczBTT3k5UTQwV0JkT2VySE8yN05XelBNYzVaRTBzSGhsMVZk?=
- =?utf-8?B?M3drOE4wWXhpOVdTcXlGQVpUb2p4WnFVcDYyTWpDVFFXSittazRjcHp1RGJS?=
- =?utf-8?B?VHNueGRIMUIySEVudTB0NTByTC9uRXhtSTAvekM1YnQyTVB2T2F6RWE5a05W?=
- =?utf-8?B?V3R5bjdnZEtGcGtLVzJpaytDV29jWXRRZ21rb1VtRGFjbTQzY0RYZE5OSS9U?=
- =?utf-8?B?OEt6MU9pZmh4dFFWRzlXdk9ubGd3QkpYYklxRjJoMzFUTE9STFIyNEJLVFg4?=
- =?utf-8?B?NzBtOWg3WmVQQVlpNGFDTXdBSk9CSVE1QjIzV2l6MCtuQ2RUR1dONnlTeGRO?=
- =?utf-8?B?SXREN2VGbzdqRVQwaEdPTEQzbUJMMlpYVXoxdE81bk9FeG1hM2xxcEk5L0NK?=
- =?utf-8?B?UlVXRjl1T29oZkVJdnc5d052ZmRKS0k5aVllZnR5YzF5YzdYT0VFbDQvR2dl?=
- =?utf-8?B?QWJFcGRxKzhMUkFXWTU4U2FubzNnU2JZSFBEZ0ZtQnJSZTNiZ2VxcTUzcG04?=
- =?utf-8?B?K1RTMnZhSjJYVUplTDUzVm8rdU9HRWhGKzdhRS9HdzlOYjg3RGxiUWlBNXJq?=
- =?utf-8?B?V1lKU0VpVWp4dXE1SkhBU2k4QnlTVCtUQ2Z1TmVuVE9zRHZzRzdWd1QxTDZE?=
- =?utf-8?B?WHh1cTdCcXlnenlmdEFjWVpiR2I0U3RQTHp3UjA1Um5pQ2JRVUxlNTdEZGZv?=
- =?utf-8?B?ZGdTN1c3aUxzc1hCcEU4NS9JTlcza2djSmUxSmZDUmFxVEJQRFRBSm91dHU1?=
- =?utf-8?B?QVJGQWYveERPcTNHbEtoN00rSWRsKzVpYk1nSTEybytMUEdiL0xFR2t6Zzdz?=
- =?utf-8?B?bTV1MnI5UUhUNUlPY1Y2eFBBSzlnTFg5dkVydVZKQitqc2pSU0o2cFh6SUZz?=
- =?utf-8?B?WUIzenJSTDMyT0Q3YVQyK3FvZ2VpNkVwK0tGa1VlVjV6T3NlR1pmYzVINStw?=
- =?utf-8?B?VjlaV010bjErMWZBb2xnY2VWU3NsVWVBU1k1T3JNRFl1U3E0MDVkemdUbmpr?=
- =?utf-8?Q?CWKtpvuTzGNF4paiAs=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z1VFRFlnNzVCUTlHdHdSeWJTVEUra1NxMlhreWUwN1ZIbGZDOGlXMWFkSXN5?=
- =?utf-8?B?YW9TZ0hKTGo1cUlkbmxZcTJ5NnorUFVGMXpWN3FncWtCZ1hHRjlSM3VkbWFh?=
- =?utf-8?B?ZVF1L1JBVTEvNnlIb3ZtRHlqRkV0RG1PdjNVV3Q0MjFod0RibTVTWlltTmlN?=
- =?utf-8?B?ZWtzZjl2M0NiQTlFc0wzQ3F1RXBhMWFRa01NUWd2cXZhV0NBSWNJVjl6a2hk?=
- =?utf-8?B?QndoV0w5NTBoL2NnUy9yQzh5UGJmREFaV1FUYkk1SU8wN0dZYmNiRWlWcWJP?=
- =?utf-8?B?aXlrbkczR085c09mZXp5clVWZG9KSHQ1cGR3RGxwL0daMFRFYjM5SWJxOUFj?=
- =?utf-8?B?VVdnY3hZcEVWOCs1ODNHQ2xvSDJTOTRYUVIxYVBBRFYyUE9VQUFjZ0pFdXh2?=
- =?utf-8?B?ZFEwUFlXNExzM0VsRGFQNml0Tzl2Z0tsVFVnL29sUDJJRSt2d1F3Y3VNN2h2?=
- =?utf-8?B?bmduSXoweFBhRU55U3F2NTFqays2eitwQkhNT045Y0hkczladk9IdzNJWlVx?=
- =?utf-8?B?RmFacGZqeGFoL2pwSnFKdzFXNDFFRUVsaVZjdUxwNkdyWTlBUDdXbzA4RW1Z?=
- =?utf-8?B?QkQrYTZJaUdRRWxucWhWWW41bVduRFpHUWNJb3VXc0VMNDRETzlhUld3QTFw?=
- =?utf-8?B?V3ZsZHJTQm1mR3RjNVJlNDhkY3RDcEFhaEZTdUhoc0tiVDY3ZkZFazJhZUgx?=
- =?utf-8?B?dW1QbGFzdEk4L2JBd3gvZU9vRTd5NExGQVZDemVNYnFBVHU4Vm1VY0duRmcy?=
- =?utf-8?B?ejlRWUQyUVRIM0tpZHlDR051SCtUWDczVHJWdW9ja0NzZGFKWDV5cFFxK3Rw?=
- =?utf-8?B?VWlEeEdJYmJSUlhXYUl1cXFENjd1QWxsOHRxdGtubHlqMlhIbE9uUDdkYk1w?=
- =?utf-8?B?WkVwQTZHUyswV0RiSHRGY0FTRjgyekdjb0hkMlVuZERjWi96SVlnZkh6SFBM?=
- =?utf-8?B?eWs1VTBmMVg5c3U4ekx3RXk5dkRWZ0VVMldJU0I2K1FHNFk2OFY5MDFOQTc5?=
- =?utf-8?B?cFU3MllmTkFaTmZpeUs1RVZlU09iY21iVjVsM0o2YnFLZ0EwbHhKUTFnQllk?=
- =?utf-8?B?RDVaK3lMa0ZFWGxpZUJ3OTFDZXB1anBkczVEdkZJc3Q2V1dKc1VTYkgwV2d2?=
- =?utf-8?B?V216VDd3cjZESW9vQUhad0pJQ2pPQllmNE4vbFdMdFRVR1B5M0d0UWhJZ1kw?=
- =?utf-8?B?RXhuSWJvc1BqQ1NGMEZDYWk3ekNZenJhazREL2RENWVnNXlNdml0ZUlQYkRG?=
- =?utf-8?B?WHR3b1V5K2x1T2MrWTRoaDdOTTdtc3orVTJwSEJKekg0U1RRK0FrS1JTWFQx?=
- =?utf-8?B?VzREamlsVTRWMHMyamIyWEhmdlRJK3NUNnIwbFZBSDczUTFLYVo2NDF3NWdL?=
- =?utf-8?B?TVROcFB1UGJNMldhNEliclhPYmFtSlJDV3FySE5CdjVuZXBtdHhTeFRUeHZx?=
- =?utf-8?B?emxPMTZCYW5YeCtpMG10RW5mWS9QeHhmV015WDE3dGR6U0FPak9MTG1ZR29R?=
- =?utf-8?B?Z3lVQUJrZzlRSHhLZDRwT3JLalJJY1dRYmJJa0FPUFoxOXlHTzNTaEtFeUE5?=
- =?utf-8?B?S2lOb1VPN3BmdFJsbmpqWnhGdTBXQy9LK3dKVlV4S2JsUnAwQzVwR0RHTFF5?=
- =?utf-8?B?L2FqbndpcVFBejJoMUxLNXFmVXhiWlZ6ODdLc2xiYXpqQUxIMkhEL0FMTGNn?=
- =?utf-8?B?Z0JmVFgyZmZQUWs3dUZZRS95ckVLUXQ5MUNRcVRUWW5TMSt6WVBhQTJUY3lu?=
- =?utf-8?B?RjFtcnZpQkVjMDdnVHJ4UUsrYkdTRk5MMlZkdVgreG1VOGwrTE40TGdiY3h5?=
- =?utf-8?B?bEVZQ09GTnRFejMvQThpZ0hlcEJMWjhOZkZCZlJrdlFRcVRWMWFwVThDMDBW?=
- =?utf-8?B?UU1EaDJNTlJwbFdjS2pqajJqVlFYMkMrclRUOEZiQm5oVEhCNVhkY2VTSUtq?=
- =?utf-8?B?aU1IZDZXOVFNYW1od3F5cEZiQUhSd3hLYUhNTXdzdHUrWlpGNTd2NnR5c0NK?=
- =?utf-8?B?YytvU05YNTI2bkVaTWtwdXZYMDN3T0YzY3B1TlFLK2pkSS9uLy9DT25ucW1q?=
- =?utf-8?B?ekxPUi9VQjhOV1FsQkhLT0FmSUVWMlRsRzkrZmNNMGVmbUJEUHE0K3pzUmxU?=
- =?utf-8?B?eVdTdDZYN2V5YlRMdWlkMEx4bk9XNE5KVWRmWTIzbGhIYjlBalBobmk3QVRY?=
- =?utf-8?B?WlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e2105f9-c456-48e2-4206-08dd0a6c1e4a
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 20:36:04.1731
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4kdabCx00XQ1A1qI/Dhx6KyU195EAiPDx6AZSazN8w39qcIgGUjqk7YAKcwPvOgb2tiT6hPGq851kHQNg+g0HXmv8e3g84sLrZ04cdBwLcc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR11MB8440
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+X-Developer-Key: i=samitolvanen@google.com; a=openpgp; fpr=35CCFB63B283D6D3AEB783944CB5F6848BBC56EE
+X-Developer-Signature: v=1; a=openpgp-sha256; l=10871; i=samitolvanen@google.com;
+ h=from:subject; bh=rJs6LLEdV9LNIe3BWRFRAx7DlIZIwQfGN90KzyE+A4k=;
+ b=owGbwMvMwCEWxa662nLh8irG02pJDOn2s3UuJf/QVZ1z6a65ZsKjZK1eGe6DQVlrl0/LFN35b
+ s+uRbsjOkpZGMQ4GGTFFFlavq7euvu7U+qrz0USMHNYmUCGMHBxCsBEZpcyMpxZXGP5d8d1HeG4
+ BbnOk1cGt8fmmDrua9F+FKHxOCs9+CAjw9ZI1wW3n0gnvwt3NpqkbCGuG7ygdE3BzY96DHob1YV 4OAE=
+X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+Message-ID: <20241121204220.2378181-20-samitolvanen@google.com>
+Subject: [PATCH v6 00/18] Implement DWARF modversions
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
+	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Sami Tolvanen <samitolvanen@google.com>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi,
+
+Here's v6 of the DWARF modversions series. The main motivation is
+modversions support for Rust, which is important for distributions
+like Android that are about to ship Rust kernel modules. Per Luis'
+request [1], v2 dropped the Rust specific bits from the series and
+instead added the feature as an option for the entire kernel to
+make it easier to evaluate the benefits of this approach, and to
+get better test coverage. Matt is addressing Rust modversion_info
+compatibility issues in a separate patch set [2] that depends on
+this series, and actually allows modversions to be enabled with
+Rust.
+
+Short background: Unlike C, Rust source code doesn't have sufficient
+information about the final ABI, as the compiler has considerable
+freedom in adjusting structure layout, for example, which makes
+using a source code parser like genksyms a non-starter. Based on
+earlier feedback, this series uses DWARF debugging information for
+computing versions. DWARF is an established and a relatively stable
+format, which includes all the necessary ABI details, and adding a
+CONFIG_DEBUG_INFO dependency for Rust symbol versioning seems like a
+reasonable trade-off as most distributions already enable it.
+
+The first 15 patches add gendwarfksyms, a tool for computing symbol
+versions from DWARF. When passed a list of exported symbols and
+object files, the tool generates an expanded type string for each
+symbol and computes symbol versions. gendwarfksyms is written in C,
+uses libdw to process DWARF, and zlib for CRC32. Patch 16 ensures
+that debugging information is present where we need it, patch 17
+adds gendwarfksyms as an alternative to genksyms, and the last patch
+adds documentation.
+
+v6 has changes to structure expansion and the kABI stability
+features based on our backtesting results with previous Android
+release kernels (see the change log below). It's also based on
+linux-kbuild/for-next to include symtypes build rule clean-ups from
+Masahiro [3]. For your convenience, the series is also available
+here:
+
+https://github.com/samitolvanen/linux/commits/gendwarfksyms-v6
+
+If you also want to test the series with actual Rust modules, this
+branch adds Matt's latest modversion_info series:
+
+https://github.com/samitolvanen/linux/commits/rustmodversions-v6
+
+Sami
 
 
+[1] https://lore.kernel.org/lkml/ZnIZEtkkQWEIGf9n@bombadil.infradead.org/
+[2] https://lore.kernel.org/linux-modules/20241030-extended-modversions-v8-0-93acdef62ce8@google.com/
+[3] https://lore.kernel.org/linux-modules/CAK7LNAR9c+EEsOvPPn4qSq3gAFskYOXVd=dg8O+bKeeC-HMifw@mail.gmail.com/
 
-On 11/19/2024 1:32 PM, Guenter Roeck wrote:
-> VCAP API unit tests fail randomly with errors such as
-> 
->    # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:387
->    Expected 134 + 7 == iter.offset, but
->        134 + 7 == 141 (0x8d)
->        iter.offset == 17214 (0x433e)
->    # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:388
->    Expected 5 == iter.reg_idx, but
->        iter.reg_idx == 702 (0x2be)
->    # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:389
->    Expected 11 == iter.reg_bitpos, but
->        iter.reg_bitpos == 15 (0xf)
->    # vcap_api_iterator_init_test: pass:0 fail:1 skip:0 total:1
-> 
-> Comments in the code state that "A typegroup table ends with an all-zero
-> terminator". Add the missing terminators.
-> 
-> Some of the typegroups did have a terminator of ".offset = 0, .width = 0,
-> .value = 0,". Replace those terminators with "{ }" (no trailing ',') for
-> consistency and to excplicitly state "this is a terminator".
-> 
-> Fixes: 67d637516fa9 ("net: microchip: sparx5: Adding KUNIT test for the VCAP API")
-> Cc: Steen Hegelund <steen.hegelund@microchip.com>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
+---
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+v6:
+- Dropped pointer expansion limits as this affects version
+  stability when exported symbols are removed. (Patch 9)
+
+- Changed local type definitions (in .c files) that are opaque
+  to external users to be treated as declarations even if a
+  definition is available. (Patch 9)
+
+- Switched to zlib's CRC32 implementation per Masahiro's
+  suggestion. (Patch 12)
+
+- Renamed struct_declonly kABI rule to simply declonly, as it
+  applies also to unions and enums, added a new rule for
+  overriding enumerator values, and refactored the examples.
+  (Patch 13)
+
+- Added --stable support for renamed structure members and
+  also added examples. (Patch 14)
+
+- Rebased on linux-kbuild/for-next for Masahiro's symtypes
+  build rule clean-ups. (Patch 17)
+
+- Updated the documentation reflect --stable changes. (Patch 18)
+
+v5: https://lore.kernel.org/lkml/20241030170106.1501763-21-samitolvanen@google.com/
+- Rebased on v6.12-rc5.
+
+- Fixed an issue with limiting structure expansion, and applied
+  Petr's clean-up. (Patch 10)
+
+- Dropped an unnecessary return statement in error path. (Patch
+  12)
+
+- Addressed several other smaller issues Petr brought up. (Patches
+  13, 14, and 15)
+
+- Added a KBUILD_GENDWARFKSYMS_STABLE flag to enable --stable for
+  the entire kernel build. (Patch 18)
+
+- Updated documentation to include KBUILD flags. (Patch 19)
+
+- Picked up Reviewed-by tags from v4.
+
+v4: https://lore.kernel.org/lkml/20241008183823.36676-21-samitolvanen@google.com/
+- Rebased on v6.12-rc2, which now includes all the prerequisites.
+
+- Dropped unnecessary name_only parameter for symbols.c::for_each
+  and cleaned up error handling. (Patch 3)
+
+- Fixed anonymous scope handling to ensure unnamed DIEs don't get
+  names. (Patch 4)
+
+- Added non-variant children to variant_type output, and included
+  DW_AT_discr_value attributes for variants. (Patch 9)
+
+- Added another symbol pointer test case. (Patch 16)
+
+- Picked up (Acked|Reviewed)-by tags from v3.
+
+v3: https://lore.kernel.org/lkml/20240923181846.549877-22-samitolvanen@google.com/
+- Updated SPX license headers.
+
+- Squashed the first two patches in v2 and tried to reduce churn as
+  much as reasonable.
+
+- Dropped patch 18 from v2 ("x86/asm-prototypes: Include
+  <asm/ptrace.h>") as it's addressed by a separate patch.
+
+- Changed the error handling code to immediately terminate instead
+  of propagating the errors back to main, which cleaned up the code
+  quite a bit.
+
+- Switched to the list and hashtable implementations in scripts and
+  dropped the remaining tools/include dependencies. Added a couple
+  missing list macros. (patch 1)
+
+- Moved the genksyms CRC32 implementation to scripts/include and
+  dropped the duplicate code. (patches 2 and 14)
+
+- Switched from ad-hoc command line parsing to getopt_long (patch 3).
+
+- Added structure member and function parameter names to the DIE
+  output to match genksyms behavior, and tweaked the symtypes format
+  to be more parser-friendly in general based on Petr's suggestions.
+
+- Replaced the declaration-only struct annotations with more generic
+  kABI stability rules that allow source code annotations to be used
+  where #ifndef __GENKSYMS__ was previously used.  Added support for
+  rules that can be used to exclude enumerators from versioning.
+  (patch 16)
+
+- Per Miroslav's suggestion, added an option to hide structure
+  members from versioning when they're added to existing alignment
+  holes, for example. (patch 16)
+
+- Per Greg's request, added documentation and example macros for the
+  --stable features, and a couple of test cases. (patches 15, 16, and
+  20)
+
+- Fixed making symtypes files, which need to depend on .o files with
+  gendwarfksyms. (patch 19)
+
+- Addressed several other smaller issues that Petr and Masahiro
+  kindly pointed out during the v2 review.
+
+v2: https://lore.kernel.org/lkml/20240815173903.4172139-21-samitolvanen@google.com/
+- Per Luis' request, dropped Rust-specific patches and added
+  gendwarfksyms as an alternative to genksyms for the entire
+  kernel.
+
+- Added support for missing DWARF features needed to handle
+  also non-Rust code.
+
+- Changed symbol address matching to use the symbol table
+  information instead of relying on addresses in DWARF.
+
+- Added __gendwarfksyms_ptr patches to ensure the compiler emits
+  the necessary type information in DWARF even for symbols that
+  are defined in other TUs.
+
+- Refactored debugging output and moved the more verbose output
+  behind --dump* flags.
+
+- Added a --symtypes flag for generating a genksyms-style
+  symtypes output based on Petr's feedback, and refactored
+  symbol version calculations to be based on symtypes instead
+  of raw --dump-dies output.
+
+- Based on feedback from Greg and Petr, added --stable flag and
+  support for reserved data structure fields and declaration-onl
+  structures. Also added examples for using these features.
+
+- Added a GENDWARFKSYMS option and hooked up kbuild support
+  for both C and assembly code. Note that with gendwarfksyms,
+  we have to actually build a temporary .o file for calculating
+  assembly modversions.
+
+v1: https://lore.kernel.org/lkml/20240617175818.58219-17-samitolvanen@google.com/
+
+---
+
+Sami Tolvanen (18):
+  tools: Add gendwarfksyms
+  gendwarfksyms: Add address matching
+  gendwarfksyms: Expand base_type
+  gendwarfksyms: Add a cache for processed DIEs
+  gendwarfksyms: Expand type modifiers and typedefs
+  gendwarfksyms: Expand subroutine_type
+  gendwarfksyms: Expand array_type
+  gendwarfksyms: Expand structure types
+  gendwarfksyms: Limit structure expansion
+  gendwarfksyms: Add die_map debugging
+  gendwarfksyms: Add symtypes output
+  gendwarfksyms: Add symbol versioning
+  gendwarfksyms: Add support for kABI rules
+  gendwarfksyms: Add support for reserved and ignored fields
+  gendwarfksyms: Add support for symbol type pointers
+  export: Add __gendwarfksyms_ptr_ references to exported symbols
+  kbuild: Add gendwarfksyms as an alternative to genksyms
+  Documentation/kbuild: Add DWARF module versioning
+
+ Documentation/kbuild/gendwarfksyms.rst     |  308 ++++++
+ Documentation/kbuild/index.rst             |    1 +
+ include/linux/export.h                     |   15 +
+ kernel/module/Kconfig                      |   31 +
+ scripts/Makefile                           |    3 +-
+ scripts/Makefile.build                     |   35 +-
+ scripts/gendwarfksyms/.gitignore           |    2 +
+ scripts/gendwarfksyms/Makefile             |   12 +
+ scripts/gendwarfksyms/cache.c              |   51 +
+ scripts/gendwarfksyms/die.c                |  166 +++
+ scripts/gendwarfksyms/dwarf.c              | 1158 ++++++++++++++++++++
+ scripts/gendwarfksyms/examples/kabi.h      |  157 +++
+ scripts/gendwarfksyms/examples/kabi_ex.c   |   30 +
+ scripts/gendwarfksyms/examples/kabi_ex.h   |  263 +++++
+ scripts/gendwarfksyms/examples/symbolptr.c |   33 +
+ scripts/gendwarfksyms/gendwarfksyms.c      |  185 ++++
+ scripts/gendwarfksyms/gendwarfksyms.h      |  301 +++++
+ scripts/gendwarfksyms/kabi.c               |  333 ++++++
+ scripts/gendwarfksyms/symbols.c            |  339 ++++++
+ scripts/gendwarfksyms/types.c              |  477 ++++++++
+ 20 files changed, 3893 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/kbuild/gendwarfksyms.rst
+ create mode 100644 scripts/gendwarfksyms/.gitignore
+ create mode 100644 scripts/gendwarfksyms/Makefile
+ create mode 100644 scripts/gendwarfksyms/cache.c
+ create mode 100644 scripts/gendwarfksyms/die.c
+ create mode 100644 scripts/gendwarfksyms/dwarf.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi.h
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex.c
+ create mode 100644 scripts/gendwarfksyms/examples/kabi_ex.h
+ create mode 100644 scripts/gendwarfksyms/examples/symbolptr.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.c
+ create mode 100644 scripts/gendwarfksyms/gendwarfksyms.h
+ create mode 100644 scripts/gendwarfksyms/kabi.c
+ create mode 100644 scripts/gendwarfksyms/symbols.c
+ create mode 100644 scripts/gendwarfksyms/types.c
+
+
+base-commit: 3596c721c4348b2a964e43f9296a0c01509ba927
+-- 
+2.47.0.371.ga323438b13-goog
+
 
