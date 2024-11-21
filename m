@@ -1,124 +1,200 @@
-Return-Path: <linux-kernel+bounces-416494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84E79D45D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:46:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED0C9D4692
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2201F21932
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 02:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AD541F2186B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3970831;
-	Thu, 21 Nov 2024 02:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5C113C3D6;
+	Thu, 21 Nov 2024 04:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W98XJXQB"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="wCBSNVwy"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D1A43AA1
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACD412DD88;
+	Thu, 21 Nov 2024 04:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732157158; cv=none; b=IK/gK07TrUmlAW0orcDDBHsNHrGBOyxMHofC1aaj1gYrvn548u7a/Uv/GTOx7EN1JYDCs9TfDJl15FyNb/BCTdYPzAj5+3NOtbnZI4cg8B9fYEgJ2AetwhMzcz4UflFlndj5tpFbaCFXZcuk2cjAvLo8yMLUaN4lCNEKRQT6yRw=
+	t=1732162596; cv=none; b=W6sP4mYaJ2MuGaSZGpvT5BrZsXITbJnNXD2Y9Tkz/db1OERc3QSHZOh2RjkHfHi40vxC52LNkpcjWDsKSNLgRXMkjnJ21IW60sVJDFDeDcIoZiPUWQrk3fjL1h2E+w3hJNYYX6GeTgP8AnMxg3oTf752iBCSUw0YctBk1rvvzaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732157158; c=relaxed/simple;
-	bh=TAI9Owk28kv6v5bd0BAEAkNc+VKgpC5JvpKi3v2bQd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kVIVTk1vQLwPRQeol7ISDcQXXIENaJu69LY++nh1b0jqPhl94ah1qDO7/a12SO2gltzBZxy0x3uj907nydAopufs94MlCFTCem9LGwA0gZ/9lR5GMZrGnv9pLEQfbVrSLMK4fF61egjq2W47Vv+seKhBzq5jBs0SQYbgw6eo0eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W98XJXQB; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9ec86a67feso78232966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:45:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732157154; x=1732761954; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HBRgLZfJt3TUy7eInBHoe+dA6rZbgdHVPZ1EAwIgSxA=;
-        b=W98XJXQBcSurcDQrG8Volvfz+qVcb/hvtthI8J54Mzo5cMBfAm9VhEJdBbjMVP9Pbh
-         8M4oR3hplX9xb7h7GfywTYgxtJHw6Mm+7zW4/I8tBEU5hVbzCeLisKv9POIc2d68dqcu
-         1ZzsTlF5Gz975I/+ciNhuW0WiFq5F+WJXwUdc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732157154; x=1732761954;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HBRgLZfJt3TUy7eInBHoe+dA6rZbgdHVPZ1EAwIgSxA=;
-        b=WwKZCMUOIcs+GU1T48EqldXTGxMA+iABqoVqDXgixyKwFT4C8s7Ddj4tJ4sLtDVQDL
-         QvvlVIHBxjrlimzkkMNmKkX3a6yGPu3jIx3yrZ5qTuKIoBuGwP42LiJ7zUjRBv6eMKqv
-         G5aK84EEshh4FqH7PvnYusgaGi8Y7CGsuzXQUG4KNefcd5QAgeKASP9U8fY01xhuD6NV
-         5RMQKyIbNNihC2pp17wedMZGC/duqossKc1mydmquUlfZLcnQNrsvIeLm0IcgPVJ2qRU
-         N6Z/Ty1h9Nq/GWpPMG2DXOzXAhFhXK8TyHSngQhEQ7/9vR1pRsroCglGAxLLNZbfmb+u
-         J2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWouisskWw1lH3B2GpuAIDcmztOi0aQT0dbWlXVaYvN8uGGj58ulW+VtUkvqNQ1k0shVYyI5EW4xGAULf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy1IQv0d/+fNUMJRq0Y5TkKGyV9M+kEKLefwF/3CveHSCwkVgR
-	0IL3GgQZARieZWq/iHGNMGucEbPEbvfO+lMgi7qCyqVEpEClPQwdUoyNcgWTkUx2CMjrtrsMQrE
-	XgyY=
-X-Gm-Gg: ASbGncu/LF2BrNX4xygcSDpjayDt9SLDlcZZT9Pf1M46qLh74LSWMhYRvqGw/MhR42q
-	ZIXVlnCcqK5JnIZhIfgJbyXkNm9p7PCAConhzInewwJOB93BeIdGSeiohgGybWjckmHAY+T9krJ
-	pU1yXquaQYzSuUJnTtzX/ruogFQRTYReqnq6xeeF7VzXVNkF19XKO/e1xOTmiSudlhAnxwNpq2x
-	XzEJoCDORXXobRJ1txaBhvYzGAeP9oIBtIAI05Cvoj4fxQRNLUD4J2Kd2uH+GzT4pL9j3uHoMIS
-	HA+e6hfMMmDqtBAv1xNYfPOJ
-X-Google-Smtp-Source: AGHT+IH0KOjBKKuneorT90Tsy2Uy9hjt4mgjdRVdeE4ELi7JZzlrj6Q0DwTn8fdLIPzO2YzeJQp7vg==
-X-Received: by 2002:a17:907:2da7:b0:a9a:bbcc:508c with SMTP id a640c23a62f3a-aa4dd52c70bmr459123966b.2.1732157153985;
-        Wed, 20 Nov 2024 18:45:53 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f419d412sm25709666b.84.2024.11.20.18.45.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 18:45:53 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9ec86a67feso78230066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 18:45:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXv1VhjwljhoNPBN1gAnnb14Geg5/DElax84BDJdV8GN/1Y9V3R1RaCrDsw4urXAEmIhv748pZxsoyqHJs=@vger.kernel.org
-X-Received: by 2002:a17:907:2da2:b0:a9a:ad8:fc56 with SMTP id
- a640c23a62f3a-aa4dd70b6e7mr441535366b.44.1732157152277; Wed, 20 Nov 2024
- 18:45:52 -0800 (PST)
+	s=arc-20240116; t=1732162596; c=relaxed/simple;
+	bh=1kB6/fvKOs03QKjHRmLNEhIfZK0odXkAbCqWPjmEIHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cxy60zrZpiFEvykFvmiSxyfNhI3cikS+pR+24MCQN05fB1CytZYNws3nlAhFa1b8T2Q/LGubxG8A5tVmY4RefhzxpudhtH4v8RBqLoZz1Y/ibD7KL1qBnO6Mh7y2OMuatQGKpGymwcdIWGiTR1Vl0EMu3c4mcP8lbXL84zAlhTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=wCBSNVwy; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 634C089649;
+	Thu, 21 Nov 2024 05:16:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1732162587;
+	bh=2fodjiAgYPDtTdtLZpHcgtZf3CNy/SOSXhvCQwtxCgw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wCBSNVwyMCtyV+EJz0s8mS+rd+v36qvA6mFZGmMq5phZpHsR8dVcwGXv1+Rb9y2at
+	 vsjlPVwrsU5S4f4P5xYBBa5K0xb+uVxFaxY7j/z/l1UpozYFVIqww/Udrm5fpNjGT/
+	 LbUI5mQUyf6oWpXEpUbfI2rEWAl3jIx6jj1pSecUModI1Te5cxyi0666k4EfbEdKsA
+	 KPriDe1TbHoQXl52Y/tIL/T5YMdrjSuQAZir/s1AX/Jg+yTV3aAHfGwikJ3zcX2RAq
+	 Vr5rmPHGPGtbL4MU9z4M22mTSqhbimd8GZkUQxOTzmD53oJgF6xTxjvAcB6aM3CuRO
+	 tWMS71DS4zVPw==
+Message-ID: <c5ab63da-21ec-4c0d-8ecc-3745943d806f@denx.de>
+Date: Thu, 21 Nov 2024 03:45:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202411190900.FE40FA5@keescook> <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org> <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
-In-Reply-To: <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 20 Nov 2024 18:45:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgv8mo=qfy6bLSdiWYFR4CPei_V6hC0_o_hDhtZS9SYPQ@mail.gmail.com>
-Message-ID: <CAHk-=wgv8mo=qfy6bLSdiWYFR4CPei_V6hC0_o_hDhtZS9SYPQ@mail.gmail.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Nir Lichtman <nir@lichtman.org>, syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com, 
-	Tycho Andersen <tandersen@netflix.com>, Vegard Nossum <vegard.nossum@oracle.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
+ pixel clock reconfigure parent rate"
+To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20241114065759.3341908-1-victor.liu@nxp.com>
+ <20241114065759.3341908-3-victor.liu@nxp.com>
+ <df6ebdde-65f8-4aad-93c7-b1df695bd2ef@denx.de>
+ <AM7PR04MB7046546A882A8D48E135D84698272@AM7PR04MB7046.eurprd04.prod.outlook.com>
+ <8a4fd234-4c7b-4a04-990d-3222aaa5172d@denx.de>
+ <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
+ <83be0a27-6b6c-4ba6-b9dc-f914a10abace@denx.de>
+ <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <AM7PR04MB7046587167BF790549B8560F98212@AM7PR04MB7046.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, 20 Nov 2024 at 18:23, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> > Again binfmt_script still uses it.
->
-> Ahh, yeah, we can't just get rid of it.
+On 11/20/24 7:38 AM, Ying Liu wrote:
 
-Actually, that reminds me: we've had issues with this horrible fdpath
-hack before due to close-on-exec, and that's why we have
-BINPRM_FLAGS_PATH_INACCESSIBLE.
+[...]
 
-And that's independent of the whole "/proc isn't always mounted", so
-that the /dev/fd/%d/.. paths don't work at all.
+>>> If the DP monitors support typical video modes like 1080p60 with
+>>> 148.5MHz pixel clock rate, I assume these typical video modes work
+>>> still ok with this patch at least.  Please help confirm this, since if the
+>>> alternative solution(*) doesn't stand, we would know those video
+>>> modes still work ok with my solution(fixed PLL rate).
+>>
+>> They do not work with the fixed PLL setting.
+> 
+> Why?  Did you assign a sensible fixed PLL rate in DT?
 
-It would probably have been much nicer if we just put the real path of
-the dentry originally in ->fdpath, but I suspect it's too late to fix
-now: it would _mostly_ be a more reliable and meaningful path, and it
-would fix the close-on-exec situation, but I would not be surprised if
-we have some horrible  user that really depends on the 'fd' being the
-only way to actually access it (either due to permission issues, or
-because of it having been actively unlinked).
+Whatever was in imx8mp.dtsi does not really work for all the panels.
+Please keep in mind that the use case I have does not include only 
+1920x1080 "standard" panels, but also other resolutions.
 
-              Linus
+> Can you please compare clk_summary output for the failing cases
+> before and after this patch is applied? I assume that if you use
+> the fixed PLL rate same to the rate which works before this patch is
+> applied, the typical video modes still just work after this patch is
+> applied.
+
+I'm afraid I do not need to support only typical video modes, but also 
+the other "atypical" modes.
+
+[...]
+
+>> One really nasty way I can think of is -- use find_node_by_compatible(),
+>> look up all the relevant DT nodes, parse their clock properties, and
+>> check whether they all point to the Video PLL or not.
+> 
+> That's nasty.  It looks even more nasty when considering the fact that
+> i.MX93 LCDIF is also driven by imx-lcdif DRM while only i.MX8MP LCDIF
+> needs the nasty check, because i.MX93 SoC embeds only one LCDIF.
+
+The check can be skipped based on compatible string.
+
+I agree it is nasty, but it is a start. Are there better ideas ?
+
+>> Maybe the clock subsystem has a better way, like list "neighbor"
+>> consumers of some specific parent clock or something like that.
+> 
+> What will imx-lcdif DRM look like by using this way? Get the ancestor PLL
+> clock of pixel clock(media_disp{1,2}_pix_root_clk), list all child clocks
+> (media_disp1_pix and/or media_disp2_pix + other possible clocks) of the
+> PLL clock in a string array and find media_disp1_pix + media_disp2_pix
+> in it?
+> 
+> Doesn't look nice, either.
+
+One other option came to my mind -- place a virtual clock between the 
+Video PLL and consumers (LCDIF1/2/LDB), and then have the virtual clock 
+driver do the clock rate negotiation in some .round_rate callback. That 
+is also nasty, but it is another idea. If there is a clock specifically 
+implemented to negotiate best upstream clock rate for all of its 
+consumers, and it is aware of the consumer behavior details and 
+requirements, maybe that could work ?
+
+>> [...]
+>>
+>>>> Can something like (*) above be implemented instead, so both Shared
+>> and
+>>>> separate PLLs would be supported ? That should solve both of our use
+>>>> cases, right ?
+>>>
+>>> I don't see any clear way to implement something like(*).
+>>>
+>>> Take the 3 i.MX8MP LCDIFs as one graphic card driven by one imx-lcdif
+>>> DRM instance?  Would it be too intrusive?
+>>
+>> Yes, and I think unnecessary, one can simply traverse and parse the DT
+>> to determine the clock assignment?
+> 
+> Yes, people can traverse and parse DT, but it's nasty.
+> 
+> In addition, one may argue that now that CLK_SET_RATE_PARENT flag
+> is set for the pixel clocks, all potential video modes read from EDID
+> should be supported when only either LVDS display pipeline or MIPI DSI
+> display pipeline is active in the shared PLL case.  This requires one
+> single DRM instance to detect single or dual active display pipelines
+> dynamically, hence this single DRM instance becomes necessary.
+
+Would single virtual clock which do the frequency negotiation between 
+multiple DRM consumers work too ?
+
+I do not have much to add to the points below.
 
