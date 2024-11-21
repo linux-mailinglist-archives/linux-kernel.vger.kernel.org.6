@@ -1,148 +1,140 @@
-Return-Path: <linux-kernel+bounces-416453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FDF9D44F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:37:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62CE39D4521
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 01:53:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E00611F21F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEC49B22160
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407881F956;
-	Thu, 21 Nov 2024 00:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A2CBA3D;
+	Thu, 21 Nov 2024 00:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sy/kmpcT"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CbGPCrn4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89965695
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BFF230980;
+	Thu, 21 Nov 2024 00:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732149446; cv=none; b=QYhRPArl+boU14Rk+Q1Jypcf4wGZiBPY9JgAO6sn425NBdh6aa+sfZL7PEL1RcqtiFzFhcUc5PnHgsfCJlhy0HOmeFsZfXMAQAeQfR10Zysd01B30fVHvsUOX9LCuRs87VCES9vmM0bCmWokG6UWUUR5XHIl+Nn7ghaJqBXJXoI=
+	t=1732150410; cv=none; b=DvIo+awJNPcrSYWDh0ih1Tv0h3ylFI4OI3J3H+Elai0E8C+n+jXSihsEzRYc3Ggw5KP+NBQx9jpCB5Xe8luRqqQG8WcJTz5B76QeXvHScsrf8MTpAG+mih5ken4o0E1jqrEZ6XAYsQ2lbfT/3fW8o3F/6c2re+L0jTIN6qYowtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732149446; c=relaxed/simple;
-	bh=U1S0roCBZy6Yr/IN5az14AchlrK43tHpIByXaXPoH0A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXBKcmH1ie0jFL8ql+MfnEj+qFE9vdEB8/vM36UI6acAq1DXPCyy6cd19saD7P3gpyKKFsUpEAoJWYqdyfgz+O5qZffM0WLBZ6q8N2RDSrCe6jXvKeBXX7IGyUhUtqg8NB1R1f3Nc+1jd636jqB7ZlZ7pm0AI8GMtD+4BLeHTso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sy/kmpcT; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539d9bfc5d1so8378e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:37:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732149443; x=1732754243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YAuXluMpfSh0qDO+UckfWrXerNoxRK+af2VJkTt6Y4g=;
-        b=Sy/kmpcTwZM+69COId67IPOCa4YugyAXsuSPVcoY9yHEwBVGZ6IVnT1BQIVMfZdkc6
-         gFITm+wtk22RirvoctJ3TXWj4sa9gChSlZrVcPlXzjUJp1ef4QcN29+NRrWuxZ5j2gKY
-         Yl6tCVCqZQyPEs5iF7JqW8wckob9ds/wN96GCcaUvvErJmj7jxULtP09JQ0tfdYU/fDl
-         hVXHFgmv4vDulJ5Lq7GDHaoeJC86/hZgIIPBPgFWZ+USVm7gTsHzYOnMlBvGq6cX50Nj
-         trEncmtv9rArPj584tvykHjp4KGJkqtFzssMhcHcezm5ssjjpDkSZbUhE+qiIJtvdkuu
-         DzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732149443; x=1732754243;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAuXluMpfSh0qDO+UckfWrXerNoxRK+af2VJkTt6Y4g=;
-        b=qAXnyIaMZJQgiuUaC+dYq04WqEBqKHAwG0BZ6+uUB7y2YoTTeSuHfNypwQrRgzZjPP
-         LyxNhS+JqDzzn17llzQOUNdJ418qx0gpDTfDqlyrlpjXNEy3vMiP8KAMm6eIAoeB9bei
-         28Zum+5prYP7lq4eeJhBKeZ5ilh/88TiGetxrfikgpBJ/7qDCPrSe7b2DI/yDJMEyRp1
-         XTyVl34663iJ0ikmTF1b+icIFWnTuUM0jw7en2npMQGhISjtkVGs1thZM6KEQKZ6ZlGh
-         MmpelWECyPIPeGhRiQstbfNQiLenTa5z8hLcab/JjJIzh1xeABcnQC3I0BkprLbOkrD8
-         U6ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUMWmWDqjJC1wjeYtHHlWIs/do6rQB3thDNh1FOm9DEzC+SJiJ6PUe/GZMwI+sxEMldYN4XrBkoV5Ijf0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVrr89JaEQjHe9wd7v0J51nuhnXdrAR2FAwqvBQrBvbLzKBuSH
-	VqiEznykiO2lXQHuHKLuNhtcqTSDqZyHvMFqSeKgy3hGsKV78dsN7fj9aoLNt6o=
-X-Gm-Gg: ASbGncvmwXQS7nEgJCbagA6eQ/t3lj33dBj9OyCpOJbHeODqVIKGW3d75nv6pLxquV+
-	Wpa/IzQQdqJkQWne9TDuN4HU5xWRDzIcI4inUjaSNoTcjCRhJ7ReQI1SxAyo0Qm1W1WAr1vmXe+
-	+JBNXb5ZfPkGwikcc1iOU1iLioz/mBvL9xSp23RcSDp/97zo29zbUH2j2rG31wudRmz6P8rs00R
-	KUX0EHZaZZKYBDsWG5p+gfia3KU6jVUneMy8vKXL5s6j1L/wm/ZS6PEaJeYmAJouggLALdQrdsS
-	FHSw0nmSF/lGzT00v3CB8upNnHHs
-X-Google-Smtp-Source: AGHT+IFN9O08F0W2wl6yka9ElBfiou3gnBgywoKZF/lU+i/vNAQy12evwkDojEAvUqtsv0eO+fwRIA==
-X-Received: by 2002:a05:6512:3d12:b0:53d:a8a5:82d2 with SMTP id 2adb3069b0e04-53dc13281a8mr604562e87.3.1732149442659;
-        Wed, 20 Nov 2024 16:37:22 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd472766sm773787e87.204.2024.11.20.16.37.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 16:37:21 -0800 (PST)
-Message-ID: <f903025b-08ff-422c-a93e-fad911a7ee43@linaro.org>
-Date: Thu, 21 Nov 2024 02:37:19 +0200
+	s=arc-20240116; t=1732150410; c=relaxed/simple;
+	bh=QH63q3LPfT12S8/eAj3OT5nAZXwFbhvQGB58xRdgnKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nz0Ks0tP295anCOFnlOH+fX0cAWRFH16IbxfngEOohG3rIMqz2X5hNhndhYihKXuvSWasGZydumFvvRF0hpVRy4AjlEDRMMVp1hAHMzIvsF6kCc5pP6k+uUmjRQLY/gQLrW/bR0Pm2HwLOU2pzjlqnjKQLxBbXN4fDh53IxBp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CbGPCrn4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732150398;
+	bh=oHTbb3mtfNEel7hDftU95Omx0o0JvV4hbLuDk0nw9Wg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CbGPCrn4nXCEnJdS/YH2Pzc/MGrpQ4bePMYBSaTv7u/97shuHy9iwvleqSVr9FYIt
+	 6SvCknLrcSbp6OG5T0RRkmLMbkUdP6OX42YEQAc+F8T/+Poln6K5HUFQYJWCewnTNF
+	 AC1HzUX0c44BUOQHDyjzhnvkFpZVXRa0oY95mU8lVsRCRSBqmRNdnb2l2FzE3qs12Q
+	 4eCNynDJRRlWxf3yOuLRHmusYimirosv43MnrqmZquK/Wgr0X6p+S1/mx0oM3T9LJp
+	 ibkn4ZsTgGoeSCrm9/eOleBYGQk7rFV73jq3uguLJUdbuKDaWBlbBohGg4Fxd1JPYO
+	 UrvQUJ7qoIDMg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xv08Y1s70z4wcZ;
+	Thu, 21 Nov 2024 11:53:17 +1100 (AEDT)
+Date: Thu, 21 Nov 2024 11:53:19 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Han Shen <shenhan@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Rong Xu <xur@google.com>
+Subject: Re: linux-next: manual merge of the tip tree with the kbuild tree
+Message-ID: <20241121115319.0285b0a5@canb.auug.org.au>
+In-Reply-To: <20241112130136.52ffc457@canb.auug.org.au>
+References: <20241112130136.52ffc457@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] dt-bindings: media: Add qcom,x1e80100-camss binding
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-2-54075d75f654@linaro.org>
- <92f3f608-1ca6-4c41-9406-28c7ad589872@linaro.org>
- <66d1c50f-ebfc-41c7-95a4-5d555b336da4@linaro.org>
- <bb58d02f-9ed6-476f-8bc6-ad56cb35e37f@linaro.org>
- <91afb347-e8ee-4a97-bd8b-9a1413051cb9@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <91afb347-e8ee-4a97-bd8b-9a1413051cb9@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/H1/bf69mEV==Ydre5dq1r+O";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 11/21/24 01:27, Bryan O'Donoghue wrote:
-> On 20/11/2024 23:02, Vladimir Zapolskiy wrote:
->> like "vdd-csiphy-0p9-supply" and "vdd-csiphy-1p2-supply"?
-> 
-> In theory, however I'd like to avoid adding endless strings of new names
-> into the driver code for each different power input.
+--Sig_/H1/bf69mEV==Ydre5dq1r+O
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't understand this argument, it's the same degree of endlessness as
-the endlessness of new designed SoCs. Should it be stopped now or what's
-the point here?
+Hi all,
 
-My argument is to represent the actual hardware instead of copying errors.
+On Tue, 12 Nov 2024 13:01:36 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   tools/objtool/check.c
+>=20
+> between commits:
+>=20
+>   315ad8780a12 ("kbuild: Add AutoFDO support for Clang build")
+>   0dcc2d106615 ("kbuild: Add Propeller configuration for kernel build")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   d5173f753750 ("objtool: Exclude __tracepoints data from ENDBR checks")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc tools/objtool/check.c
+> index 05a0fb4a3d1a,f7586f82b967..000000000000
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@@ -4557,8 -4573,7 +4573,9 @@@ static int validate_ibt(struct objtool_
+>   		    !strcmp(sec->name, "__jump_table")			||
+>   		    !strcmp(sec->name, "__mcount_loc")			||
+>   		    !strcmp(sec->name, ".kcfi_traps")			||
+>  +		    !strcmp(sec->name, ".llvm.call-graph-profile")	||
+>  +		    !strcmp(sec->name, ".llvm_bb_addr_map")		||
+> + 		    !strcmp(sec->name, "__tracepoints")			||
+>   		    strstr(sec->name, "__patchable_function_entries"))
+>   			continue;
+>  =20
 
-> We can add this additional string name though in the interim between now
-> and refactor for the PHY API.
+This is now a conflict between the kbuild tree and Linus' tree.
 
-I don't see it as a good reason to copy an easy to correct mistake.
+--=20
+Cheers,
+Stephen Rothwell
 
->> Also you put a description like "supply to PHY refclk pll block", but if I
->> remember correctly once you've said that the datasheet (of another SoC)
->> does not give any clues about the usage of the supply, thus it invalidates
->> the given description.
-> 
-> I'm surmising by extrapolation - that's "probably" what those are just
-> at different voltage levels based on previous iterations of this PHY.
+--Sig_/H1/bf69mEV==Ydre5dq1r+O
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-But this is proven to be wrong, let me kindly ask you to align with the SoC
-documentation here.
+-----BEGIN PGP SIGNATURE-----
 
-> I'm just as happy not to describe this or to describe it as no mor that
-> the 1.2v supply etc.
-> 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc+hH8ACgkQAVBC80lX
+0Gzu9QgAmLlKXT771H7AxFTKUUgUX5i1ZJ7+eOPh542mOQ1HsCQXT2YnlzTvnCcT
+knK6+cLir5EvMfRZOSFbKJLXmSHrvg95bVP9EyjNZAFhGTUfBOabFug5HqXoJgpq
+Asy/lLR9u+W5+CKS4BYzuF3I9oszurG0mWNL48mdSqdva/geHZVSVzGEcegylBGI
+mQj83GiReZgL7N8jcP9nvflAPqLyoChssk7wKbY80iSyQ9XSxWAEAg8N7GnGQYRp
+QWFmCe5Kd8/irRJwrkewcgWVGbbH4MpZ6R6YKXEtYdwxla3KOrzNO1YKMvW07bNI
+sOgCgNtjqFSb8ioVydtA1Iri6+8N5A==
+=8s2u
+-----END PGP SIGNATURE-----
 
-Thank you for understanding.
-
---
-Best wishes,
-Vladimir
+--Sig_/H1/bf69mEV==Ydre5dq1r+O--
 
