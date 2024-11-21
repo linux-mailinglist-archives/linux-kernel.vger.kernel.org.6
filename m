@@ -1,124 +1,236 @@
-Return-Path: <linux-kernel+bounces-416917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300D19D4C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:57:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84079D4C61
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:57:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65511B220C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C13281A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0251D2F74;
-	Thu, 21 Nov 2024 11:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275B61D47BC;
+	Thu, 21 Nov 2024 11:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hh2ynMM5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERClybw8"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905691D27A0
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0E1D432A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190204; cv=none; b=dogWMicUuTN9jOsSHLVeWMuCKAygy24rh8FqnuUOCaHqfkjG3f4HIaSwVWkNhA1VkYVAy1BK7aWQOKRoeBkhT1WwkDwSsRDYAM2ku5elGnyfcLvEA9wVS+kQS8q8zD0QwkzC3lBDRdLMrnDDrMoDOP5rzXbLgf7UJrE6WJxEzF4=
+	t=1732190208; cv=none; b=dtYwTF9RtzQhiaMFc/tIn5CifiEVgQr0d/gp93wCUX63F/2fyePKQIsC0i/PXI+g4T24pC1KGrS9mnPNMvKI353UV3YUnzWU9Pe9dwq4FtGCsT0xGIycC1dj95ZM7Imv5Ql5Z2cPDNhoK+VlU5vLaQ+5ER1KMCGLTFXah3uvYdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190204; c=relaxed/simple;
-	bh=p/u4MFCjetG7YecklKYzh05VDlhESiTrCVy7KPXjBNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBc8mb3s/+Dvqlq1nGI+YDz1ZnJ+mhnngrj45Sw2H614E3BrX/h3UN8hJc9bvUsj0xQIoPf0ET0y0mUYnQMliuAF/srQHNxvbNT+YkxrjrLaXn31CZwSOdyCgf24RBldGTLYcDXWu84VU0kJHDb2/7OAKL8DBV4dJmoRKZmlQB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hh2ynMM5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732190200;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YT1vTjmlkW658AsQD5WWZVQNoZbYtfe0XiDxPgbNrQQ=;
-	b=hh2ynMM5ehq19q4wIPxA6bzI4XReB4xMccnZBBwVG6XED1ZWNr/zALUJ7ZbETkdgZ29pq0
-	Errr9qWMg7Qm4QnCiYHls/9CYF/CCfgVDoxB3cnNZDRyEZSIno8olzM6gjW7GNuzR0krij
-	4XN0oAI+7XX3rhMof3pjoB+vlXiq7lI=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-445-0xRy0S-mMzGIn7uRA0Or5A-1; Thu,
- 21 Nov 2024 06:56:37 -0500
-X-MC-Unique: 0xRy0S-mMzGIn7uRA0Or5A-1
-X-Mimecast-MFC-AGG-ID: 0xRy0S-mMzGIn7uRA0Or5A
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EE24E1955EEA;
-	Thu, 21 Nov 2024 11:56:34 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.137])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 27EE01955F3D;
-	Thu, 21 Nov 2024 11:56:31 +0000 (UTC)
-Date: Thu, 21 Nov 2024 06:56:28 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
- busy CPU
-Message-ID: <20241121115628.GB394828@pauld.westford.csb>
-References: <5a4cb3e4ab698fe2d8419e28d61e292dcd0c8fad.camel@gmx.de>
- <20241112124117.GA336451@pauld.westford.csb>
- <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
- <20241112154140.GC336451@pauld.westford.csb>
- <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
- <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
- <20241114112854.GA471026@pauld.westford.csb>
- <20241119113016.GB66918@pauld.westford.csb>
- <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
- <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
+	s=arc-20240116; t=1732190208; c=relaxed/simple;
+	bh=VkGV7Zt+rEd3MMDFMNpRohwhdhdrUG06HHcUUpm+I30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i09xyvA1Y53rYSbB9ZZQDWK9tKXO8ub6EwJluv55lOOAdrhzVkoiL0YUhMs7NJ3oXfupOv0lPJqoROWwQVQ+MHy37qhjhQMb3N3GqeQbNIxNI/MQ+bkKAR7SO2vL4IplQpKCdxNicWoPs9J1ZEdP3AkQQgFbNXA3axYLVLp/e28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ERClybw8; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-856e7566b2cso413472241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:56:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732190205; x=1732795005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C6Gdo3Vzol5nCNRn6dlVpR9KZyNtJnDJ8NArSZRSKrA=;
+        b=ERClybw8FlIG83IVV9As7lnxNaBMT9NCTA6g/339dAYqA0PzhFKvJS2B2+LJOkCYMu
+         mmFVRgJxOg5A1gHR1aUe0c5PpRzXay5PYMZn2yRlgnWjFGtkrzxUpPZEWg1YKD31Bn2l
+         UuvBEVp04bKRCyzWMbzlrSeYnpSNP/XkcCUzV6Un7Y0afXgA9N/AA+0ATDHjFTCM/UUv
+         Ad9TlhogXRSfBooTUhmtM7PHVuAe94Agt+1MczjeJdL/wBm8CATGKetOWgohhqujpjSn
+         yDNE6qTFVYjfotR8trubusJcjlj+0mNnmZj6kUhpchxdhUK/XERn4e2AkFtVfUzgoDem
+         pJ5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732190205; x=1732795005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C6Gdo3Vzol5nCNRn6dlVpR9KZyNtJnDJ8NArSZRSKrA=;
+        b=MSBGWWxUJnLXBtWSSkjCZQfwAfVhGRZqTV0yhi6xcDZLdNhdV62ztVHr2bT0kkj4wa
+         OZubcx/lDtC8XcWLbQ4HqilxvSujAheTGU6eWI+PCE70KB/pU0YgNbXr6V1l9xbZB04C
+         g7iaR5Q2m1cA8tnuXWhb8iiaBHK/KiFSulPcFzDRJYLe0JgUW07CblJWQlomfli6zZnk
+         5sfn01RUr5yitk6FovkMZfADKV2c3Mf4JlPxWNGLEdAqHhw+ZgERb8HN3HFKYynRvf/3
+         lhRQIntqPAJHXoTGWoC3ewZmi0ALSCBvwyJU/SSKgkoSqg8q8CjavLWHyMECZiY/TEEE
+         1uog==
+X-Forwarded-Encrypted: i=1; AJvYcCWOZL6fVfArNtag36r6SulolnqZotDurTALJusg5Gf8JBt3j7voXaw1D1r7KBnhFROx2zTiUhJtF43ApEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKLJwnKl0Is05UCLzrf4+4JIDrvl2tA0P3Q9TsbD5OzoCyyYzE
+	LHqWfCgGsNrvcSsze7xyj2c2sOBSNJiAxKwpfs+J1YtNuwZDVabYRjX+8sYHBWGto+xCUIZE5i4
+	YcIe1eW1fcFgOCE98NI1CDy3/ETayLxae4H7zHg==
+X-Gm-Gg: ASbGncuDJovyGe6AzueFxn8wSHa9SfDJHLrEGR5ZFrSpDXe7X43p1s7b9v+uBg4oUIf
+	UNwJrD3PQgEO/kRrWh8yjHjbgdiYK3oOAGAuNt9ZX0jwF+KFgMSWLe8rQ3OsxZWiI
+X-Google-Smtp-Source: AGHT+IHWx4Ch0jeGqZrv+bKd260l45EkCV/RlRxsXv4mlux6sr5BbBUsPegersHTqKg2s9qYi7j388Ee9Xg4esX0wVA=
+X-Received: by 2002:a05:6102:f13:b0:4ad:4b64:530b with SMTP id
+ ada2fe7eead31-4adaf4156a1mr7940550137.3.1732190205519; Thu, 21 Nov 2024
+ 03:56:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241120124100.444648273@linuxfoundation.org>
+In-Reply-To: <20241120124100.444648273@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 21 Nov 2024 17:26:34 +0530
+Message-ID: <CA+G9fYsuQ_F0H8ByKiNazExpVbPGNrZ8amUoXCjc_njwng2Vpg@mail.gmail.com>
+Subject: Re: [PATCH 6.12 0/3] 6.12.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 07:37:39PM +0100 Mike Galbraith wrote:
-> On Tue, 2024-11-19 at 12:51 +0100, Mike Galbraith wrote:
-> > On Tue, 2024-11-19 at 06:30 -0500, Phil Auld wrote:
-> > >
-> > > This, below, by itself, did not do help and caused a small slowdown on some
-> > > other tests.  Did this need to be on top of the wakeup change?
-> >
-> > No, that made a mess.
-> 
-> Rashly speculating that turning mobile kthread component loose is what
-> helped your write regression...
-> 
-> You could try adding (p->flags & PF_KTHREAD) to the wakeup patch to
-> only turn hard working kthreads loose to try to dodge service latency.
-> Seems unlikely wakeup frequency * instances would combine to shred fio
-> the way turning tbench loose did.
+On Wed, 20 Nov 2024 at 18:26, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
+> This is the start of the stable review cycle for the 6.12.1 release.
+> There are 3 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 22 Nov 2024 12:40:53 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.1-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Thanks, I'll try that. 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Cheers,
-Phil
+## Build
+* kernel: 6.12.1-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 11741096a22cc5e52f0cd4cc91f4b83bb848ff62
+* git describe: v6.12-4-g11741096a22c
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
+-4-g11741096a22c
 
+## Test Regressions (compared to v6.12)
 
+## Metric Regressions (compared to v6.12)
 
-> 	-Mike
-> 
+## Test Fixes (compared to v6.12)
 
--- 
+## Metric Fixes (compared to v6.12)
 
+## Test result summary
+total: 137313, pass: 112117, fail: 2757, skip: 22439, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 138 total, 136 passed, 2 failed
+* arm64: 52 total, 52 passed, 0 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 33 passed, 1 failed
+* parisc: 4 total, 3 passed, 1 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 24 total, 23 passed, 1 failed
+* s390: 22 total, 21 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 44 total, 44 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
