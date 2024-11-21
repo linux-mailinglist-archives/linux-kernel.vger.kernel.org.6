@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-416929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D84A79D4C84
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:06:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBEDB9D4C86
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:06:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9584F1F21D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:06:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73E921F222BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9761D0F56;
-	Thu, 21 Nov 2024 12:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03271D319B;
+	Thu, 21 Nov 2024 12:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="d19bgBZK"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="laCwdI/y"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D28B155330;
-	Thu, 21 Nov 2024 12:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C353A155330
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190774; cv=none; b=Hw0XJw1H5TEG7oY9bzb9Toetw5H5WIAyeF+FqEqbUFqph63KoG32C8BvS/XWNcbB8qN4+FY5a9vWuWVdthsWLDhQnUN/cNtfPSDTeDCTSV6S7YB+LcD/f9dlazeBdFU1O/BQoqPSdN2Ons6T4tRPoz8ETnfdpM+HSV89VsbIItA=
+	t=1732190806; cv=none; b=PpjdlCB3dmCQ0i0OXDyVjtXZuJGeilXLIUG8j8n5kpcYl6Wrr5klXbYv4Kshfz1yVLOiNXtxupFib1JCK97sqDYZfqnjeP/TQqz2yJborBvro1C5/9LSXYpRDh82R2slH91Z0mkSPsaYLquZJr025HObj3oQ90hsmaTGFIT5dWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190774; c=relaxed/simple;
-	bh=d5xuqQUSGEDUXrjk5NlMoo/YnLL4yHpmgTs8I84to6I=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PvvqUKbdRcVDeTIRZ295p2nhA69zjAHaUmww7LzBpSl2b0oJRP9t7Jw0qP5GQBZrsG7Jkc97T5lzh385XUgRk/VMDdfEr7hS36Amt+V+UA108VzJmz7fyP0I/+EMdOLxYYvH10t6agqxkWfeykGgDLZ/KE61Tj65Ec+i0u8vus0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=d19bgBZK; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1732190766;
-	bh=d5xuqQUSGEDUXrjk5NlMoo/YnLL4yHpmgTs8I84to6I=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=d19bgBZKaOCivlFjpgvuxjVyzT+kIZ2T7/VaOMAFUyyHFJvWs1zYsX1fgYojbv+si
-	 X3kaxKJWjdFKDutnpXg9OqKgc0DuxBCHGki68qnCrP7lxWCwI0R/ym7BLxMjX7E40U
-	 cy3L186GK8VR9+3eY1mSCQEe81qCtRsrkTvQ/qeU=
+	s=arc-20240116; t=1732190806; c=relaxed/simple;
+	bh=jdyS7l/nToraMU8DwFUS/jMddkId5ELk7bSNl9XwrEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxSmOui7mA0XXhoGigCmZ+vaP8wFIIZGQ7/4+US9wXVMSuv+D17o03kpb9NUfplter5h6yxrEiwi4E1cqD7vcp9y/XVrwvLtyU5clWvhSLOYHMJoKAp7xCmZnKtS88jfctwHCADk/akB+TKOHJKM91yIxYLsrhnjx6CTLBIY4Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=laCwdI/y; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-720d5ada03cso844059b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732190804; x=1732795604; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QeJkQl4NZCb42aF1EDykjOMDqurfKMx1jJdti4mmSYI=;
+        b=laCwdI/y3CDQN+7IZYs2Dp5NHh9HjE8RCWdJuGSKOwhO6AkBgFoNOnYyAnpFW5KDku
+         jHojinyd/6ct1UkK0+imUUDK5B73ZHU0Wv6+BfeGu7RekaH9m1KU6+A3NMWkvP51xRsc
+         gqel4l5EpLBRTghCuje0EQjsiPV8hETuCge6tTRVP4NKnEwqmsepNFJHpQps6wI4HN1F
+         unfbLob1mlCSK3oHwmHN0M7u0zA7U8z+RjVsU/seiccFiQe4YkFPKBrSbjR+9HMhuJ67
+         rCAlTBigarfMPWOve6RBCO/uOJuJJbmjuR+Woriv6K+ygk7yYbYM6m1hGLVkpvVZPToI
+         +dHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732190804; x=1732795604;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeJkQl4NZCb42aF1EDykjOMDqurfKMx1jJdti4mmSYI=;
+        b=gUUzLuiZA1mkjSZ0ohlrEAjixsns9r3Ip+d5d6KHg+5LZVehn9xwPjc5YjBdoy9scu
+         I10zK2WrAQa+HpsJVkjed6wzvoIID57tIM4arp26Mkn04JSs4qSU8Xe3bjHOPX8NWhdI
+         mbf7Y0MRNUdgDNTAVUErLxvHTfAT+xxAnU3V11EyiLHmNNJoYMk7g+HmO+TVj8MO5IFY
+         F9QlJA7ejptHAmK8B21E6nb9z1vl6hxmijBhb2/LQb6zqDQ/FDEwvgNCEUyzg32s870J
+         TN1QLfPtIyGDLeDH9x/xUenmXaWCrqfvKHRUi3SEiR6nda2G1H6U17p8N3jiq7xG+kZh
+         Z9UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVg7arN+Cx/Z9jNFMzixcXTBpfmFEv5qfA5qR2I2MYOgmQlgaPu4fmZXU3z4Dz7bPNKfiJ35r71B0EhWYE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOsqFWbeCFxDqaAzWKU5OF0SJrl9bvo2a04fyRtQs5VE42R0xk
+	eniFuXMVORocoNprX+N8Ky/4XgnfS6CPRoIXgZf+wxChjKoqC9G/um2e8XYFMQ==
+X-Google-Smtp-Source: AGHT+IFJrKxqS/drFBULdAcXuufWwk/0qbcFmu12EETGZqfH/I2ea8PwOKdoyNwUd6BRtkdHSGeCZw==
+X-Received: by 2002:a05:6a00:c87:b0:71e:7604:a76 with SMTP id d2e1a72fcca58-724bec8a716mr8148779b3a.1.1732190804093;
+        Thu, 21 Nov 2024 04:06:44 -0800 (PST)
+Received: from thinkpad ([120.60.55.63])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724befac2c6sm3450562b3a.150.2024.11.21.04.06.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 04:06:43 -0800 (PST)
+Date: Thu, 21 Nov 2024 17:36:37 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	stable+noautosel@kernel.org
+Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
+Message-ID: <20241121120637.76ircbsfayjebdvr@thinkpad>
+References: <20241121094020.3679787-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <6434853a-4df4-d3c4-14b9-a0d4ad599602@huaweicloud.com>
-Date: Thu, 21 Nov 2024 13:05:45 +0100
-Cc: Jinpu Wang <jinpu.wang@ionos.com>,
- Haris Iqbal <haris.iqbal@ionos.com>,
- linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org,
- song@kernel.org,
- xni@redhat.com,
- yangerkun@huawei.com,
- yi.zhang@huawei.com,
- =?utf-8?Q?Florian-Ewald_M=C3=BCller?= <florian-ewald.mueller@ionos.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <828B989D-9683-4B03-B95A-C7390ABDB9A5@flyingcircus.io>
-References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
- <20241119152939.158819-1-jinpu.wang@ionos.com>
- <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
- <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
- <DFAA8E00-E2CD-4BD0-99E5-FD879A6B2057@flyingcircus.io>
- <6434853a-4df4-d3c4-14b9-a0d4ad599602@huaweicloud.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241121094020.3679787-1-wenst@chromium.org>
 
-Hi,
+On Thu, Nov 21, 2024 at 05:40:19PM +0800, Chen-Yu Tsai wrote:
+> A PCI device normally does not have a device node, since the bus is
+> fully enumerable. Assuming that a device node is presence is likely
+> bad.
+> 
 
-ok, good thing I asked, then =E2=80=A6 :)
+I missed the fact that NULL ptr check is removed from of_pci_supply_present().
 
-I=E2=80=99ll try this out later today.
+> The newly added pwrctl code assumes such and crashes with a NULL
+> pointer dereference. Besides that, of_find_device_by_node(NULL)
+> is likely going to return some random device.
+> 
 
-Christian
+Yeah, good catch.
 
-> On 21. Nov 2024, at 12:01, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->=20
-> Hi,
->=20
-> =E5=9C=A8 2024/11/21 17:30, Christian Theune =E5=86=99=E9=81=93:
->> Hi,
->>> On 21. Nov 2024, at 09:33, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>=20
->>> Hi,
->>>=20
->>> =E5=9C=A8 2024/11/21 16:10, Jinpu Wang =E5=86=99=E9=81=93:
->>>> On Tue, Nov 19, 2024 at 4:29=E2=80=AFPM Jack Wang =
-<jinpu.wang@ionos.com> wrote:
->>>>>=20
->>>>> Hi Kuai,
->>>>>=20
->>>>> We will test on our side and report back.
->>>> Hi Kuai,
->>>> Haris tested the new patchset, and it works fine.
->>>> Thanks for the work.
->>>=20
->>> Thanks for the test! And just to be sure, the BUG_ON() problem in =
-the
->>> other thread is not triggered as well, right?
->>>=20
->>> +CC Christian
->>>=20
->>> Are you able to test this set for lastest kernel?
->> I have scheduled testing for later today. My current plan was to try =
-Xiao Ni=E2=80=99s fix on 6.6 as that did fix it on 6.11 for me.
->> Which way forward makes more sense now? Are those two patches =
-independent or amalgamated or might they be stepping on each others=E2=80=99=
- toes?
->=20
-> Our plan is to apply this set to latest kernel first, and then =
-backport
-> this to older kernel. Xiao's fix will not be considered. :(
->=20
-> Thanks,
-> Kuai
->=20
->> Christian
+> Reported-by: Klara Modin <klarasmodin@gmail.com>
+> Closes: https://lore.kernel.org/linux-pci/a7b8f84d-efa6-490c-8594-84c1de9a7031@gmail.com/
+> Fixes: cc70852b0962 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Cc: stable+noautosel@kernel.org         # Depends on power supply check
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
+Thanks for the fix!
 
-Liebe Gr=C3=BC=C3=9Fe,
-Christian Theune
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
+- Mani
 
+> ---
+>  drivers/pci/bus.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> index 98910bc0fcc4..eca72e0c3b6c 100644
+> --- a/drivers/pci/bus.c
+> +++ b/drivers/pci/bus.c
+> @@ -405,7 +405,7 @@ void pci_bus_add_device(struct pci_dev *dev)
+>  	 * before PCI client drivers.
+>  	 */
+>  	pdev = of_find_device_by_node(dn);
+> -	if (pdev && of_pci_supply_present(dn)) {
+> +	if (dn && pdev && of_pci_supply_present(dn)) {
+>  		if (!device_link_add(&dev->dev, &pdev->dev,
+>  				     DL_FLAG_AUTOREMOVE_CONSUMER))
+>  			pci_err(dev, "failed to add device link to power control device %s\n",
+> -- 
+> 2.47.0.338.g60cca15819-goog
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
