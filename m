@@ -1,261 +1,167 @@
-Return-Path: <linux-kernel+bounces-416687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3BB9D48BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:22:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B7F9D48C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049871F2141B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:22:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF8242818DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4B11CB532;
-	Thu, 21 Nov 2024 08:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12981CB339;
+	Thu, 21 Nov 2024 08:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K8kDCojT"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVbnAJJB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92011CB33F;
-	Thu, 21 Nov 2024 08:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D0E12FB1B;
+	Thu, 21 Nov 2024 08:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732177317; cv=none; b=vBcn+U9xKyVhC0wqT56xtqEkZwL6b7/UMSWf+8hppv9yXx4Fa4nH2K/7h2S+RSo9IBPVXosaZg+ObbZpyr75K6ZwKWoSSnT+9BH+K4fV4+lH+vsbYgVMLn2bdpJP5BUZCi7vtQaTGxM2E7OmG/3vSWLFHsFMRySNOdcp2WtjLJ4=
+	t=1732177387; cv=none; b=Z5SAI+DbYjjXxUEn8AenYO1/adp8T7hGaVI/4yvfN/S9PswgONSLCqnlnAeK0pm952LmT/KlGBjhEHA8RcCiGIoVuv/eAfyB+MEzGf2iYCYels828qZ2fTA1NnveNhCqi56tKZ7wEbieiv0cZHbByUzc2adoFQCRzynXjTNzU6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732177317; c=relaxed/simple;
-	bh=dGN2Nm+0BkDArBThjkDHlNygFnYu8lKpAr+UO7Am8CM=;
+	s=arc-20240116; t=1732177387; c=relaxed/simple;
+	bh=wUfTnjHQ2yL4NbL5Y4AFUH82UDKPs5WqKTu3tB1fwgk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIQj34yhfLBX+Zanc/1F+4+OePUIEg2XtvEgblg3Ubj9XjrSU1pRm0bJVv4A0gmB1TgTVtJSidGcC6P1kxS3poYrCRcl8eJH2ATVNG4wSCmuNezdZLnIg3NqOYotiv7M5DKu2rhiOzec9lAh/lZTuyKNxIG7BhMOPUmu5yVKCf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K8kDCojT; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ff550d37a6so7600711fa.0;
-        Thu, 21 Nov 2024 00:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732177313; x=1732782113; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jn43AcFqNBvQ9O6y3AMVs8AexQzeuQlFzw2cpuwp37E=;
-        b=K8kDCojTI8ltoQHovc3C5D6FElnHhbNe6udGcds7assdgGLAstNhQTZ5shrxl3GOcg
-         5YPRBsUKH8pw9KfLzGjgxGxLtaXmh4RVRIcwcLEGeVYUofIanbvJ/eib59rJTnV98w/S
-         A7VU4xMbAK4dKj9EecjD2CqG6Hnytob0uJwNE0Tjlkv/8Jo9hSM2sjUcBOyxVTrU00fO
-         Lq7fAo7MRWye7NXAuPogV22APTUs5M31zr+Y29lkAbVSvywKOcjC0UhPGn2JfRAS7CT9
-         AS41j/uPbrTtFqnkdtpBJMycLvPwK85/vnZNkZRKlgzcGzb/LLDk9UQfR9dShE2rC8A7
-         QMug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732177313; x=1732782113;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jn43AcFqNBvQ9O6y3AMVs8AexQzeuQlFzw2cpuwp37E=;
-        b=cfHOBxgucxATGmwH70t06QGDPxZa5qbfsVy+Yd82CNqQ8QalY3Ae7A2mSF2vOWmAc0
-         J7jUeizOHvikcvw8DNsd458ASJobJFYWas+q4Hn4U83BSR6eEpyuVtlxM9TJwfLfICuE
-         aW0lS95RiGQ4lmjXBhS89dkz4c+qCSTxvKQUYMNmdR3sNCztObWQHM2U+ZsG0/cb76Ce
-         CwkzkIxXtODpdi+Dm249ThrxKt/PFzo8NwPgDWkJaM0dQMaiZewTxkTR3J9+05JElWLs
-         6t35SmlHY+et+rZ7bRj3ihfZ5UUfkEjRyQ/vEILS8VVDOVl3F5qVaZ6bjs32G9VWanD0
-         pG8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV+3SoBmhJtOfisZE9Ta6D8WDCCS7C1TEa7VUkXrBlsNwPvhAXXXlOZZEFDx23TseHdexbo7HtDndxVki6K@vger.kernel.org, AJvYcCW1DoNcbkiAfacUsH3AaQ4YBYKF+7oYeAI0RYys2DcdAb4ZHb3MZPjQLnEIfNaeEaZEbB01hBGH0HAj@vger.kernel.org, AJvYcCXHhVXjsX8WBI1mVeL1dIsczUJZyogpmbDelKcwWuMftPvultuU8zTP91134iJkQzMvKahZZyTZ4xp5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAhr7advbb1aup0PNqm5KuTeSOWUM8m/ueN/nEVfT+XOTgIS1k
-	TDtWXPnBqMsRcDofx93ZX7HRcwFLjZLJVZO1oU5P79HWqw2yvqIc
-X-Gm-Gg: ASbGncv/O/+aTex9zCHh8ZVGxTQguV500mimGvtLABfm9zj+bRzRnjpiutzqsd0ZVHG
-	Bx/7vMuzx+JFN5A/xlELV9AqzTMoLunumeEhNdjkvG0zMPP5PpiLkNLQtDaZ1gRa6kBps9sERBb
-	ocuDiqyFAqE8LheP7SE33EqWNI/Q7+ZI8CQ+cCV1QCIq5Pijv64ZQNqJDwUCprujpyl0n1IscYE
-	VnTm7nNf5uRCqVYA3OFKtw9E5M7G7589/ki4QXpsi6oLXnTKyrG
-X-Google-Smtp-Source: AGHT+IG8q8e6bzQ90TXu7yt52oGt8qHW6ZY1jHaXuiCoCg9dksvHwao03XMcXo0Ja6yigUjZfcY4ng==
-X-Received: by 2002:a05:651c:12c4:b0:2fb:607b:4cde with SMTP id 38308e7fff4ca-2ff8dcd2f96mr28224791fa.39.1732177312557;
-        Thu, 21 Nov 2024 00:21:52 -0800 (PST)
-Received: from mva-rohm ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff69851577sm17891751fa.9.2024.11.21.00.21.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 00:21:51 -0800 (PST)
-Date: Thu, 21 Nov 2024 10:21:46 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYdd7JHEEHeQNQPavH/n07Fgp5/WElY361Zcd0RsP+Egn+uo0chaNP2MDuR4Hvbrnhur1LA+e5VKnRax7yUzJI9++KbzW/4a3ZDP+0rqrHyBWq/s593+QO0fjdFk0tHw9pRiA7dvLeWt0Pm6nb/jx3LdVbJ620qIrViiEmKjbrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVbnAJJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0775C4CECC;
+	Thu, 21 Nov 2024 08:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732177386;
+	bh=wUfTnjHQ2yL4NbL5Y4AFUH82UDKPs5WqKTu3tB1fwgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MVbnAJJB0YKzqkLAlv+RUlK1bsic7FFTr3PrQXxxLvDMpvYiEsNj+QN9blVHNBrRd
+	 vgV2DR9hjWxEx8BfsCc5nQUrG+ywgDIf5rE9YiVaDTVu2dv0j38g1AtXMjWtTEuaYL
+	 ZK3WTn+KG7uIdD+Hlb1InkCXDpAw8m1TDGBUqADKtEknIZkMLOZilgc7bmFq5JD3XA
+	 SQvZcTA2rS9DFCgbzPUuAckR0jEvsbjOk2a7WAqMZ00ZOBoS7ntM9I0wJAjY+jfS1h
+	 yvQ+7xPUT9qU1fZ6SgHFoZBI/4/5lCx4GB40DjxL5VaNtLDso7JCXBZzWx2HfnxT/y
+	 CjTct7UPCoYfw==
+Date: Thu, 21 Nov 2024 09:23:03 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: keith zhao <keith.zhao@starfivetech.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
+	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] iio: accel: kx022a: Support KX134-1211
-Message-ID: <833f2f066e12021bfbca25d84f9c4673b902a8bc.1732105157.git.mazziesaccount@gmail.com>
-References: <cover.1732105157.git.mazziesaccount@gmail.com>
+Subject: Re: [PATCH v5 1/9] dt-bindings: display: bindings for
+ starfive,JH7110 display pipeline
+Message-ID: <fza6u77alzm6ovzptkh7isztycn72pzae2f62kqeyj3f7ognou@lmp7cg4tr3yw>
+References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
+ <20241120061848.196754-2-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="PLvimeSiTIMtWcQ/"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1732105157.git.mazziesaccount@gmail.com>
+In-Reply-To: <20241120061848.196754-2-keith.zhao@starfivetech.com>
+
+On Wed, Nov 20, 2024 at 02:18:40PM +0800, keith zhao wrote:
+> - Added bindings to support the display subsystem on the JH7110 SoC.
+
+Please do not use "This commit/patch/change" (implied) and past tense,
+but imperative mood. See longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+> 
+> - Included the DC8200 display controller and Inno HDMI controller.
+> 
+> - Created innosilicon,inno-hdmi.yaml schema containing common properties
+>   for the Inno DesignWare HDMI TX controller.
+>   This isn't a full device tree binding specification,
+>   but is intended to be referenced by platform-specific bindings
+>   for the IP core.
+> 
+> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+> ---
+>  .../display/bridge/innosilicon,inno-hdmi.yaml |  45 +++++
+>  .../display/rockchip/rockchip,inno-hdmi.yaml  |  27 +--
+>  .../starfive/starfive,jh7110-dc8200.yaml      | 176 ++++++++++++++++++
+>  .../starfive/starfive,jh7110-inno-hdmi.yaml   |  91 +++++++++
+>  .../soc/starfive/starfive,jh7110-syscon.yaml  |   1 +
+
+I do not see how you addressed my feedback. I asked you to split the
+patch. Where is the split?
+
+Your answer to my request to split was "Background is ...", yeah, so
+what? You are not going to split?
 
 
---PLvimeSiTIMtWcQ/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  MAINTAINERS                                   |   8 +
+>  6 files changed, 323 insertions(+), 25 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/starfive/starfive,jh7110-dc8200.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/starfive/starfive,jh7110-inno-hdmi.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml b/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
+> new file mode 100644
+> index 000000000000..f2543aebc312
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/innosilicon,inno-hdmi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common Properties for Innosilicon HDMI TX IP
+> +
+> +maintainers:
+> +  - keith zhao <keith.zhao@starfivetech.com>
+> +
+> +description: |
 
-The ROHM KX134-1211 has very similar register interface as KX132-1211
-does. The main differencies are the content of the "Who am I"
-identification register and different g-ranges. The KX132-1211 can
-measure ranges from +/- 2g to +/-16g where the KX134-1211 supports
-measuring ranges +/- 8g to +/- 64g.
-
-Support the ROHM KX134-1211.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
----
-
-Revision history:
-  v1 =3D> v2:
-  - new patch
----
- drivers/iio/accel/kionix-kx022a-i2c.c |  2 ++
- drivers/iio/accel/kionix-kx022a-spi.c |  2 ++
- drivers/iio/accel/kionix-kx022a.c     | 30 +++++++++++++++++++++++++++
- drivers/iio/accel/kionix-kx022a.h     |  2 ++
- 4 files changed, 36 insertions(+)
-
-diff --git a/drivers/iio/accel/kionix-kx022a-i2c.c b/drivers/iio/accel/kion=
-ix-kx022a-i2c.c
-index 9fd049c2b62e..7359073ae0c0 100644
---- a/drivers/iio/accel/kionix-kx022a-i2c.c
-+++ b/drivers/iio/accel/kionix-kx022a-i2c.c
-@@ -38,6 +38,7 @@ static int kx022a_i2c_probe(struct i2c_client *i2c)
- static const struct i2c_device_id kx022a_i2c_id[] =3D {
- 	{ .name =3D "kx022a", .driver_data =3D (kernel_ulong_t)&kx022a_chip_info =
-},
- 	{ .name =3D "kx132-1211", .driver_data =3D (kernel_ulong_t)&kx132_chip_in=
-fo },
-+	{ .name =3D "kx134-1211", .driver_data =3D (kernel_ulong_t)&kx134_chip_in=
-fo },
- 	{ .name =3D "kx132acr-lbz", .driver_data =3D (kernel_ulong_t)&kx132acr_ch=
-ip_info },
- 	{ .name =3D "kx134acr-lbz", .driver_data =3D (kernel_ulong_t)&kx134acr_ch=
-ip_info },
- 	{ }
-@@ -47,6 +48,7 @@ MODULE_DEVICE_TABLE(i2c, kx022a_i2c_id);
- static const struct of_device_id kx022a_of_match[] =3D {
- 	{ .compatible =3D "kionix,kx022a", .data =3D &kx022a_chip_info },
- 	{ .compatible =3D "kionix,kx132-1211", .data =3D &kx132_chip_info },
-+	{ .compatible =3D "kionix,kx134-1211", .data =3D &kx134_chip_info },
- 	{ .compatible =3D "rohm,kx132acr-lbz", .data =3D &kx132acr_chip_info },
- 	{ .compatible =3D "rohm,kx134acr-lbz", .data =3D &kx134acr_chip_info },
- 	{ }
-diff --git a/drivers/iio/accel/kionix-kx022a-spi.c b/drivers/iio/accel/kion=
-ix-kx022a-spi.c
-index b20978afc565..50aeaafc56ec 100644
---- a/drivers/iio/accel/kionix-kx022a-spi.c
-+++ b/drivers/iio/accel/kionix-kx022a-spi.c
-@@ -38,6 +38,7 @@ static int kx022a_spi_probe(struct spi_device *spi)
- static const struct spi_device_id kx022a_id[] =3D {
- 	{ .name =3D "kx022a", .driver_data =3D (kernel_ulong_t)&kx022a_chip_info =
-},
- 	{ .name =3D "kx132-1211", .driver_data =3D (kernel_ulong_t)&kx132_chip_in=
-fo },
-+	{ .name =3D "kx134-1211", .driver_data =3D (kernel_ulong_t)&kx134_chip_in=
-fo },
- 	{ .name =3D "kx132acr-lbz", .driver_data =3D (kernel_ulong_t)&kx132acr_ch=
-ip_info },
- 	{ .name =3D "kx134acr-lbz", .driver_data =3D (kernel_ulong_t)&kx134acr_ch=
-ip_info },
- 	{ }
-@@ -47,6 +48,7 @@ MODULE_DEVICE_TABLE(spi, kx022a_id);
- static const struct of_device_id kx022a_of_match[] =3D {
- 	{ .compatible =3D "kionix,kx022a", .data =3D &kx022a_chip_info },
- 	{ .compatible =3D "kionix,kx132-1211", .data =3D &kx132_chip_info },
-+	{ .compatible =3D "kionix,kx134-1211", .data =3D &kx134_chip_info },
- 	{ .compatible =3D "rohm,kx132acr-lbz", .data =3D &kx132acr_chip_info },
- 	{ .compatible =3D "rohm,kx134acr-lbz", .data =3D &kx134acr_chip_info },
- 	{ }
-diff --git a/drivers/iio/accel/kionix-kx022a.c b/drivers/iio/accel/kionix-k=
-x022a.c
-index 9fe16802c125..e3986dd65337 100644
---- a/drivers/iio/accel/kionix-kx022a.c
-+++ b/drivers/iio/accel/kionix-kx022a.c
-@@ -1209,6 +1209,36 @@ const struct kx022a_chip_info kx132_chip_info =3D {
- };
- EXPORT_SYMBOL_NS_GPL(kx132_chip_info, IIO_KX022A);
-=20
-+const struct kx022a_chip_info kx134_chip_info =3D {
-+	.name			  =3D "kx134-1211",
-+	.regmap_config		  =3D &kx132_regmap_config,
-+	.channels		  =3D kx132_channels,
-+	.num_channels		  =3D ARRAY_SIZE(kx132_channels),
-+	.scale_table			=3D kx134acr_lbz_scale_table,
-+	.scale_table_size		=3D ARRAY_SIZE(kx134acr_lbz_scale_table) *
-+					  ARRAY_SIZE(kx134acr_lbz_scale_table[0]),
-+	.fifo_length		  =3D KX132_FIFO_LENGTH,
-+	.who			  =3D KX132_REG_WHO,
-+	.id			  =3D KX134_1211_ID,
-+	.cntl			  =3D KX132_REG_CNTL,
-+	.cntl2			  =3D KX132_REG_CNTL2,
-+	.odcntl			  =3D KX132_REG_ODCNTL,
-+	.buf_cntl1		  =3D KX132_REG_BUF_CNTL1,
-+	.buf_cntl2		  =3D KX132_REG_BUF_CNTL2,
-+	.buf_clear		  =3D KX132_REG_BUF_CLEAR,
-+	.buf_status1		  =3D KX132_REG_BUF_STATUS_1,
-+	.buf_smp_lvl_mask	  =3D KX132_MASK_BUF_SMP_LVL,
-+	.buf_read		  =3D KX132_REG_BUF_READ,
-+	.inc1			  =3D KX132_REG_INC1,
-+	.inc4			  =3D KX132_REG_INC4,
-+	.inc5			  =3D KX132_REG_INC5,
-+	.inc6			  =3D KX132_REG_INC6,
-+	.xout_l			  =3D KX132_REG_XOUT_L,
-+	.get_fifo_bytes_available =3D kx132_get_fifo_bytes_available,
-+};
-+EXPORT_SYMBOL_NS_GPL(kx134_chip_info, IIO_KX022A);
-+
-+
- /*
-  * Despite the naming, KX132ACR-LBZ is not similar to KX132-1211 but it is
-  * exact subset of KX022A. KX132ACR-LBZ is meant to be used for industrial
-diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-k=
-x022a.h
-index ea32fd252a38..142652ff4b22 100644
---- a/drivers/iio/accel/kionix-kx022a.h
-+++ b/drivers/iio/accel/kionix-kx022a.h
-@@ -78,6 +78,7 @@
-=20
- #define KX132_REG_WHO		0x13
- #define KX132_ID		0x3d
-+#define KX134_1211_ID		0x46
-=20
- #define KX132_FIFO_LENGTH	86
-=20
-@@ -190,6 +191,7 @@ int kx022a_probe_internal(struct device *dev, const str=
-uct kx022a_chip_info *chi
-=20
- extern const struct kx022a_chip_info kx022a_chip_info;
- extern const struct kx022a_chip_info kx132_chip_info;
-+extern const struct kx022a_chip_info kx134_chip_info;
- extern const struct kx022a_chip_info kx132acr_chip_info;
- extern const struct kx022a_chip_info kx134acr_chip_info;
-=20
---=20
-2.47.0
+Do not need '|' unless you need to preserve formatting.
 
 
---PLvimeSiTIMtWcQ/
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> +  Innosilicon HDMI TX is an HDMI transmission device integrated into the zap SoC.
 
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmc+7ZoACgkQeFA3/03a
-ocUQTAf8Cq62fxAksV9iCIpVwhHxL45PZQirwWM2XaIPIHi03dPDHmTqIBrLSJip
-8k3Dl/w8G+5xNLPxbE9D/r7Y4zJB34546/9GKqJc68h3m9BAZXbRMzh5mxGBSviu
-Buo0F0Mr8LIkcVWLEzGbkmUM6l1JfJW4iWFwcR0RNduRwIm7ZY0tqT8td+2dURZV
-LAzu1UiomeVA/JyJ396PCY7zddx+pLyI649VeEE/PxBFBUqWYLWPevS2cN0ThKXm
-YXXb1m+bUpbwC9mjIbTv47SthmpZRo1I7gWDg15FGoLTbGAfCLUMu1ErxiCz0dgf
-5+6Pqx+uei2MuHf99eImuIuUdOLCMQ==
-=v7i2
------END PGP SIGNATURE-----
+Keep and extend.
 
---PLvimeSiTIMtWcQ/--
+> +  This document specifies the device tree properties for the INNO HDMI IP core.
+
+Keep... but what is INNO HDMI IP core? Another name? Different block?
+
+
+> +  It is intended to be referenced by platform-specific device tree bindings,
+> +  which will determine the necessity of each property.
+
+Not much improved here. Last two sentences are almost useless. Again -
+document the hardware. Drop this sentence.
+
+I already complained about this. I already complained that you keep
+ignoring my comments and this does not improve much.
+
+Since you did not implement my main feedback I am going to NAK the rest
+except one more thing:
+
+...
+
+> +
+> +properties:
+> +  compatible:
+> +    const: "starfive,jh7110-inno-hdmi"
+
+I could not be more specific in my previous feedback. Improvements? No.
+Stop wasting our time.
+
+NAK.
+
+Best regards,
+Krzysztof
+
 
