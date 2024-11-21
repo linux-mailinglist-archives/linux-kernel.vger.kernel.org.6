@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-417155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6229D4FB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 882BF9D5022
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3AEA28361D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D66A2837C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A061DB349;
-	Thu, 21 Nov 2024 15:27:31 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7833919CC29;
+	Thu, 21 Nov 2024 15:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IkQk+h08"
+Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FEC1D79BE;
-	Thu, 21 Nov 2024 15:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8AB15D5C3;
+	Thu, 21 Nov 2024 15:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732202851; cv=none; b=sNklB4fXD+9g3oAVTv19XOTWO+taQRV0SSD5kUoPLxiWD+yGQLDYNsMKiW1i0WCQaqDhPuflcdJBXVCg16bEMg3GSTDftPwGOHqcdcQWRvqwqbKwvHQc+jol4qgqGd9DYfFdyx787f1xupTttSUoPuHGe1a8ZkpFmV6J696OKcE=
+	t=1732204311; cv=none; b=jZvuC5lLozLzvYEEqu14yHRoGx7O1TFCV2ofdNcVykV3Czy5qxSuGEtM10URQGiXJtWuQDRNElla+p/Ccf7gc5FtuFgemH2+EIyROmPcn7o4eC8wbw7yw1CUhhwFRy4Tus0vBbFjxhD6F/Ep3KlZmJO4+PpMUfERVxJgdsU6Ioc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732202851; c=relaxed/simple;
-	bh=lWmz3RHURceLQQy1kUYqJTKZtC598garbXLXaNLqxqA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tO4ZwJ/6xk0qJ5yxBMRHD8x4xGsZc4z00OE3mXNCf280mD12OH5kIti6474D/LOrZIOq5knNWM+2qeRHv0eloq1GENlWwMVQqkjF+ReaK7SzhGNmeJqYHn81FRSzuVWzmfeK048AB9AKxYqfT2+9Rcyyy7sgXu5KMKL9Zxf5Aj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvMT40NCdz6J747;
-	Thu, 21 Nov 2024 23:23:52 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DA59F140A86;
-	Thu, 21 Nov 2024 23:27:26 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 21 Nov
- 2024 16:27:26 +0100
-Date: Thu, 21 Nov 2024 15:27:24 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<alison.schofield@intel.com>, <nifan.cxl@gmail.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
-Subject: Re: [PATCH 06/13] rasdaemon: cxl: Update CXL general media event to
- CXL spec rev 3.1
-Message-ID: <20241121152724.0000281e@huawei.com>
-In-Reply-To: <20241120095923.1891-7-shiju.jose@huawei.com>
-References: <20241120095923.1891-1-shiju.jose@huawei.com>
-	<20241120095923.1891-7-shiju.jose@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732204311; c=relaxed/simple;
+	bh=X7hwPZmjY8q8t6ar3X/nRv/1vY7FPM9xlv+jJsMT4L8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IyXKrZ+1ZP94I4JZn2AlOEm+jq/BdJBPYlK3VdmOSIxFWKionM3QhFusOzyELTxa1eeVb+W25ki2UuFNih34vM55o1kRfA9ontjoOlUK9DdFRiNuTv83otu7l8mOE70JFCNdKSLhuZhLyD6DOvky3WMrRJvMT6AVfev4FArmiik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IkQk+h08; arc=none smtp.client-ip=217.70.178.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay4-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::224])
+	by mslow1.mail.gandi.net (Postfix) with ESMTP id 16AE2C351D;
+	Thu, 21 Nov 2024 15:27:52 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4498CE0015;
+	Thu, 21 Nov 2024 15:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732202864;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7vNUEM2nqa5ru8I3224DdW8toFKm1983QOZjCOpdhak=;
+	b=IkQk+h08kyzyl0ixQitvGKYANR/xMCGTYLxz+REOBqQ2sHLSvUez5TvQC8OF9DmBr2MHXp
+	liDAmVLJzuMzHMGk7B/aD8IhuMo2Qy859j28+aN0UyuBZepcKG7X65GSToOn8Hksg/NHy8
+	3TCmAmr76JWvf0ym9NkKxgatvqCq4CnYLKiCjCf14pIKyE0GketAiOH3CHCtt1m3PsKoE5
+	K7OkzjtQMjXPVtYthRtTdDifYI/PvOfzQRYULXMQMNGC8/4sls67l/2oNREMiTckwx1lwa
+	4py66em/riyMwXy4OOo7+eEygZZGNzaRVzYOC6llfdg7B+2eWTOTgVrmF9coAg==
+Date: Thu, 21 Nov 2024 16:27:39 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Liam Girdwood
+ <lgirdwood@gmail.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH RFC net-next v3 17/27] regulator: dt-bindings: Add
+ regulator-power-budget property
+Message-ID: <20241121162739.6c566d85@kmaincent-XPS-13-7390>
+In-Reply-To: <9b5c62aa-fc01-4391-9fab-219889fa0cf6@sirena.org.uk>
+References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
+	<20241121-feature_poe_port_prio-v3-17-83299fa6967c@bootlin.com>
+	<9b5c62aa-fc01-4391-9fab-219889fa0cf6@sirena.org.uk>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Wed, 20 Nov 2024 09:59:16 +0000
-<shiju.jose@huawei.com> wrote:
+On Thu, 21 Nov 2024 14:58:06 +0000
+Mark Brown <broonie@kernel.org> wrote:
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec rev 3.1 section 8.2.9.2.1.1 Table 8-45, General Media Event
-> Record has updated with following new fields and new types for Memory
-> Event Type and Transaction Type fields.
-> 1. Advanced Programmable Corrected Memory Error Threshold Event Flags
-> 2. Corrected Memory Error Count at Event
-> 3. Memory Event Sub-Type
-> 
-> The format of component identifier has changed (CXL spec 3.1 section
-> 8.2.9.2.1 Table 8-44).
-> 
-> Update the parsing, logging and recording of general media event for
-> the above spec changes.
-> 
-> Example rasdaemon log for CXL general media event,
-> 
-> cxl_general_media 2024-11-20 00:00:49 +0000 memdev:mem1 host:0000:0f:00.0 \
-> serial:0x3 log type:Fatal hdr_uuid:fbcd0a77-c260-417f-85a9-088b1621eba6 \
-> hdr_handle:0x1 hdr_related_handle:0x0 hdr_timestamp:1970-01-01 00:00:49 +0000 \
-> hdr_length:128 hdr_maint_op_class:2 hdr_maint_op_sub_class:4 dpa:0x30d40 \
-> dpa_flags:descriptor:'UNCORRECTABLE EVENT' 'THRESHOLD EVENT' 'POISON LIST OVERFLOW' \
-> memory_event_type:TE State Violation memory_event_sub_type:Media Link Command \
-> Training Error transaction_type:Host Inject Poison hpa:0xffffffffffffffff \
-> region: region_uuid:00000000-0000-0000-0000-000000000000 channel:3 rank:33 \
-> device:5 comp_id:03 74 c5 08 9a 1a 0b fc d2 7e 2f 31 9b 3c 81 4d \
-> comp_id_pldm_valid_flags:'PLDM Entity ID' 'Resource ID' \
-> PLDM Entity ID:74 c5 08 9a 1a 0b Resource ID:fc d2 7e 2f \
-> Advanced Programmable CME threshold Event Flags:'Corrected Memory Errors in \
-> Multiple Media Components' 'Exceeded Programmable Threshold' \
-> Corrected Memory Error Count:0x78
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-LGTM
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> On Thu, Nov 21, 2024 at 03:42:43PM +0100, Kory Maincent wrote:
+> >    regulator-input-current-limit-microamp:
+> >      description: maximum input current regulator allows
+> > =20
+> > +  regulator-power-budget:
+> > +    description: power budget of the regulator in mW
+> > + =20
+>=20
+> Properties are supposed to include the unit in the name.
+
+Oh ok, thanks!
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
