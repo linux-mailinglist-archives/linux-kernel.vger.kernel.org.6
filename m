@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-417293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5CF9D5219
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:48:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF2BC9D521E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81B671F22795
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC0F5B2417A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023641A0AF5;
-	Thu, 21 Nov 2024 17:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C371BC9EC;
+	Thu, 21 Nov 2024 17:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfQZS86k"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a7mDN+tp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0287155CBF;
-	Thu, 21 Nov 2024 17:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0218A6B0;
+	Thu, 21 Nov 2024 17:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732211313; cv=none; b=XD1LpsbeoMXOKHBcY9m6a8Qtnu/NO4HgJR450KRsl4uEBYevqk81uEiaiUwL7dZFPuERP73Hv2IVD8fQHXIpZK68Cupw2xNnRrRVDN8A669376SJ/+tJoNXRoQHZpvj+A/W+wCZgfy9CalgrGZVtFH8q6QOutUN96iWxiDKYaU0=
+	t=1732211383; cv=none; b=L+ZNiQmc7Yy6/QrZ0T2zOtOPo3qCqbjfPw0FxRG7t21L6GNr5gy9H1rJFiBWoZ51yReHcVUL4gTS93BHkhPszIGtoV9lUiGpf/wT+vY4HJVzYDPFJix+94lYzMBc32BxJh7N3UryzxD+Y7RsKVcD1XHtGjrJDsZgasIj22IkgDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732211313; c=relaxed/simple;
-	bh=2j+yGxBfMrlFHjJHbtMVDYgDj+tpJCC/bnrxR9QYfLg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dNjDs7kzL2drVyIB5oFDjAtccCe6enEPw3x80PJDCHrb9Rk/S3TkYEocOikVJL/Q8e+7lqoJJkU1QDNxsjt8yk+xEpDTClyuq+JoAfHULTDlY8k9rn6eGvxvwScHaF8fokNngvcQPdpmBHsrhY8f8drxWObRo+mdhXcXy6q0t8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfQZS86k; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9e44654ae3so183602166b.1;
-        Thu, 21 Nov 2024 09:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732211310; x=1732816110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bnv6l3zsa4uYp4FLTUryoOp7s4l9kVPgSsBQVrp4UN0=;
-        b=AfQZS86kDcUinELz0BFzAItkSWYWS5JNSNdP/FZLUPkCKaKdMYK14K6fxCLxU0GoBm
-         28kaWy3bw5AkQQWOtOrN8feBm+HN2gv1t7PEOdhRiVYBMxq4KN4Xa1qA9m/5Vb8G3X3z
-         lGCiaRlfJHf87oTyk9wBZSIzubg90d4JV/B/34/bPz5gpfMZ3v92GdY0JjtLfEbpGWqB
-         SyyjjI/ltHvm+074+ZIm7o6YFOqKyE89FcvVEJWqtDPlxtQGC2K8C18QriuQ+LwhwtIv
-         Tsk+SfFIDiFzDQfhlvUcBarrh/kEmvFZpJbjBIrqN3To4g1VMraL3K29tRFp6Bs/2Khp
-         7kLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732211310; x=1732816110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bnv6l3zsa4uYp4FLTUryoOp7s4l9kVPgSsBQVrp4UN0=;
-        b=uhAEkPhueUrwt3hT+K0+vORpLBCPeQcwMV4ANQ2fhpkmTAyeNlu3AAJjRLVEQ+dVXM
-         Rpplw6AhJckwH08RTwZbkN9bZBUBxrHw3z7obENQIYEqqUfQpDybYH3fkgmwHwEyw0I8
-         ra+5q+j13IB4zyxYEtgrdtBE+j4f1rdkYnaQpwSlidPJFP/oYJ7zgO0vDvSseMNrfWkv
-         neH8eKv8lFKjUYcvPYwmjOPK0Rm5p7MK1sNjB/5Yp6c6S6Iu+6OWomPUPTcL/qiU04vm
-         nc3kYKsw3I1N5BjjKtp8B7WvpO3cLsz3B+DqQNtg0Qxe56ycx1+KJIDnwWDbhZAZ9WBl
-         ETlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUsTrN9lhb81f7tqXC4rIlEHlZy8+W+e1+n7U9ZW4yhjKFtQhztqMspqQedmWYilBpjVbaHIiHUnch55xJ@vger.kernel.org, AJvYcCWtVK4CzOWXlz+SZcx9S9zGC0BG5a8hqt9AP7WsFX61YS1D2PRDDAUljpjRlYX0USscN5ZrlmHZG9u3SvYl3PQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9G9oR1ozCF9gZiw7M7R+fuWacOfWFehHVHKt7hXfFy7FqzeJ9
-	NZQpPWkOzVT6sj3zlYtX2mRIeyeqRHyxqOnnGVPdafRNMZGIzbUk477Vdl78KgRMnobp/Le4mUG
-	aNVRWFL855q/tXrAp042hY6A/JwcOHmdUSzA=
-X-Gm-Gg: ASbGncs1hZBQ1Mi+RKQCsJtCUZfb04c0etZGO0q8oWRpQiadGOcjH5iWjpaYOTlxQ97
-	TNpASSpV5Bj6S18KeSqbVi926tkDBTRYg
-X-Google-Smtp-Source: AGHT+IFIf76/m18OY4g7R3eEd4MmZoeaqRE4i/4+NasxdugQcUeImn0repBSl/Tiwsk+0tJruMOcKU366rRUjjCoD5k=
-X-Received: by 2002:a17:906:3101:b0:a9a:dc3:c86e with SMTP id
- a640c23a62f3a-aa50990b1aamr6444766b.11.1732211309820; Thu, 21 Nov 2024
- 09:48:29 -0800 (PST)
+	s=arc-20240116; t=1732211383; c=relaxed/simple;
+	bh=eYa0tafet6GRAMGRDmil5OxMlGok6oRDpRA8q5GaqSU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AckmZWY7YG7QgtZ0VDt+/NQAfM3aKtgvc1hyiXgfW/ZOiRCg2O8Ny+hmo51Lfh8t23q8ABod6rnt1CyovWcpZO+C5aPp8nWkq2dFQGAz+Z5yu/YWCMfIuV7XPPgGdwdhsXIdMbNBdp/0VVdSDcJhQ6x8RJUu7S547iInA/KK6e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a7mDN+tp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALAb2IR004466;
+	Thu, 21 Nov 2024 17:49:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Wm4fBSwIUToKWln2SasrDquBwxxQuyoC/VFXaV8gUBg=; b=a7mDN+tp1Pse+NEx
+	JvtS0YY5fpvjTmp89EeOEHjoT+lgxxxl4bxFiewiglc7TK3rwt1gRYH9kCTrMjZa
+	Bcjkq0bmkhcAO00oxo3UieUVyKk3v7X47KL/qIJc+F0zj4UKg+BwFZYkZpaN1O+/
+	uyQco/4YtmsApCYzVaW9w2JiGGnDZ23PJqjQrNBWW7BXnn/lKbKmTbrMjW4lGNxH
+	ITDSyj2alAwj5RsbYpdPtFnTW2vRU+ZeHoWHqqctfCSxXjCZrDqHKScJ/a5+nGsf
+	yaIcseFC/LI5SdDCLy5XykEdlPne/bIPWns+9V0HoxHoNl6kh94/TVNPr549tX7T
+	8ln6Ng==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ea74gdk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 17:49:39 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALHncXk002470
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 17:49:38 GMT
+Received: from [10.216.2.20] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 09:49:33 -0800
+Message-ID: <41977702-51da-42d3-ad18-0d77ba9c8b5b@quicinc.com>
+Date: Thu, 21 Nov 2024 23:19:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
- <20241119205529.3871048-2-bjohannesmeyer@gmail.com> <Zz2tzVqql2RMSFN4@infradead.org>
- <CAOZ5it2KXhBy0=ktgjAHMs8ut-Go2OXOt_vnWFiUBV7uBBH5HQ@mail.gmail.com> <Zz6_CFj-MiMk73Tm@infradead.org>
-In-Reply-To: <Zz6_CFj-MiMk73Tm@infradead.org>
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Date: Thu, 21 Nov 2024 10:48:17 -0700
-Message-ID: <CAOZ5it1H_bac-W7vptu5pAi=O6KhRWPCwLP8NgjD55+AyBvfwQ@mail.gmail.com>
-Subject: Re: [RFC v2 1/2] dmapool: Move pool metadata into non-DMA memory
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Raphael Isemann <teemperor@gmail.com>, Cristiano Giuffrida <giuffrida@cs.vu.nl>, Herbert Bos <h.j.bos@vu.nl>, 
-	Greg KH <gregkh@linuxfoundation.org>, Keith Busch <kbusch@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 2/4] arm64: dts: qcom: sa8775p: add EPSS l3
+ interconnect provider
+To: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
+        Mike Tipton
+	<quic_mdtipton@quicinc.com>,
+        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
+ <20241121113006.28520-3-quic_rlaggysh@quicinc.com>
+ <2b72c05e-eeb3-4c27-99b0-66bec8adba7c@kernel.org>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <2b72c05e-eeb3-4c27-99b0-66bec8adba7c@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: e1GqR4-eLESl8WGpAnRvkwwI50QgbygL
+X-Proofpoint-ORIG-GUID: e1GqR4-eLESl8WGpAnRvkwwI50QgbygL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411210135
 
-On Wed, Nov 20, 2024 at 10:03=E2=80=AFPM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
-> Indeed.  You'd probably need to split the linkage of the pages into
-> a list of those that have free blocks and those that don't as a minimum.
->
-> Can you share your current version?
 
-Sure, I can share the current version, though fair warning---it=E2=80=99s
-still quite messy.
 
-FWIW, I wonder if the bitmap approach might be more suitable as a
-separate RFC. AFAICT, the primary issue with the currently submitted
-patches is their runtime overhead. I=E2=80=99ve proposed a way to address t=
-his
-in my recent response to [RFC v2 0/2]. Unfortunately, as I noted,
-improving the memory overhead without worsening the runtime
-performance is challenging---for example, removing the `next_block`
-pointers would require iterating over all pages to find a free
-`block`, which significantly impacts the runtime.
+On 11/21/2024 5:24 PM, Krzysztof Kozlowski wrote:
+> On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
+>> Add Epoch Subsystem (EPSS) L3 interconnect provider node on SA8775P
+>> SoCs.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>> index 9f315a51a7c1..dd7207eb3616 100644
+>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+>> @@ -10,6 +10,7 @@
+>>  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
+>>  #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
+>>  #include <dt-bindings/dma/qcom-gpi.h>
+>> +#include <dt-bindings/interconnect/qcom,osm-l3.h>
+>>  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
+>>  #include <dt-bindings/mailbox/qcom-ipcc.h>
+>>  #include <dt-bindings/firmware/qcom,scm.h>
+>> @@ -4282,6 +4283,15 @@ rpmhpd_opp_turbo_l1: opp-9 {
+>>  			};
+>>  		};
+>>  
+>> +		epss_l3_cl0: interconnect@18590000 {
+> 
+> 
+> Drop unused label.
+> 
+This will be used by DCVS driver for getting the interconnect path.
 
-That said, how would you prefer I share my bitmap approach? Should I
-submit it as a separate patch series or provide the patch directly in
-this thread?
+> BTW, DTS is never before the driver. It suggests dependency. If you have
+> dependency, it's a NAK.
+> 
 
-Thanks,
+There is no dependency, I will rearrange the patches in next revision.
 
-Brian Johannesmeyer
+> Best regards,
+> Krzysztof
+
 
