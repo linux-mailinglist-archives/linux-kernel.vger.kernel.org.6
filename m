@@ -1,127 +1,92 @@
-Return-Path: <linux-kernel+bounces-416729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D1D9D4950
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22549D4953
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A70F2848F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA54B20FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68B61CC175;
-	Thu, 21 Nov 2024 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MAU3vaTh"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D3A1CB322;
-	Thu, 21 Nov 2024 08:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A466D1D0947;
+	Thu, 21 Nov 2024 08:55:26 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B031CB338;
+	Thu, 21 Nov 2024 08:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732179315; cv=none; b=aaw9JaSLZsBLMKkycpT/XTPP8C/PvU4Ky/Obb9MGKtYNlW/463Fpioph6IdY3iHs4IVNayckkeacq5cJCLMqX7Ijur6UdJuDUV1VmQBIujpFie4z8aYuX2+bvV7v6OcsQexn6B/cN8CQyZSaf5vdQ0GV+uaO+FSH35lBm+Tjhd0=
+	t=1732179326; cv=none; b=bzYEmH3gVW9G9XAJiToqUllKSPiSr4xboPobVzvHN2B9y3Fa4qTz8zC2wdxiiheAq9AwFXoHPoIVC6RQjOOT3zHExavgbSlpWlU614hEWaLMp1o/FDJdAwthsNU07UF+nTlWDO+8WopjCrYqlXrHyYgZ7VN8wqTZpYOaC5Ic+74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732179315; c=relaxed/simple;
-	bh=esX6pNIA4mdgAouLBmxFqcD5UvWUX2OcANV49HJchSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlhrUuHic8sToQrkiLfYvBxxHr8s4uXu1Htwfo143CDxxh2ro8gEMIEsaEdXlzr6uzJkk5Zry45yvJlVm9Y8xGkr8BFOf/ktGAkAU/dM15fX3jM4V/dZOLZr+aFndoTdk7asFl3Q19d6aF74bBxIAkux1FLkIZlGSBQD9WLBIMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MAU3vaTh; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732179311;
-	bh=esX6pNIA4mdgAouLBmxFqcD5UvWUX2OcANV49HJchSs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MAU3vaThPKsD/1L/Zm+bwQdn1YX5Us5vGulfNUH3TnJIcJ8/hqH9BIhEw7XxzfyoU
-	 Q1XUAf78dZwv9qYtCoNjJ7Xe+bgjm4OOcoqXtdgTs8ZlNlHQ/IMtZcfTKptZbt3+V0
-	 r6U7/e0oDlT0Ulim2IXuDb3bxcWCF2iRNfowHVzrTfDjq1TZS8F7myWw3Bajp4DxXZ
-	 5dXKJAf53L+C97Qo3P1MwZbkg+Inw7SQhewVYvMKs6lGtvIFldKjoaqII01ahDIrfM
-	 rWWScEjKE3oG8DzOsLy35mai5+Ac2hmErQ+KcijVRs+HmxAMVPNJ2lRiBCjgjNnTWv
-	 k1QG2KiWg3cag==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6A81F17E132F;
-	Thu, 21 Nov 2024 09:55:10 +0100 (CET)
-Message-ID: <72c1e62b-0bbf-4213-adbb-972caa1ebfee@collabora.com>
-Date: Thu, 21 Nov 2024 09:55:09 +0100
+	s=arc-20240116; t=1732179326; c=relaxed/simple;
+	bh=idWFuNeGFu+29MpLoouGziP9KKOimeHGYWeDbZAYpaI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e+Mk+VRiWYAz2B/5dzOS5a21nURShEibnzNEcRi7/qSNRkSNA1OVNbrTnnglMuZsjK/jDN6B7UnPjKzZyysGza6mgQafnwMyBLxPRkeaIghKc1jtSeffy+R4rngRoSUW2rbuA5FGfM2/XYSR2TJllP0i5TNhFLegBPp3zhxFBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3673ef579959-2c181;
+	Thu, 21 Nov 2024 16:55:21 +0800 (CST)
+X-RM-TRANSID:2ee3673ef579959-2c181
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.69])
+	by rmsmtp-syy-appsvr05-12005 (RichMail) with SMTP id 2ee5673ef578cd4-ca220;
+	Thu, 21 Nov 2024 16:55:21 +0800 (CST)
+X-RM-TRANSID:2ee5673ef578cd4-ca220
+From: liujing <liujing@cmss.chinamobile.com>
+To: qmo@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] bpftool: Fix the wrong format specifier
+Date: Thu, 21 Nov 2024 16:55:18 +0800
+Message-Id: <20241121085518.3738-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/8] Add GCE support for MT8196
-To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Moudy Ho <moudy.ho@mediatek.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, Singo Chang <singo.chang@mediatek.com>,
- Nancy Lin <nancy.lin@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20241121042602.32730-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241121042602.32730-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 21/11/24 05:25, Jason-JH.Lin ha scritto:
-> This patch series adds support for the MediaTek MT8196 SoC in the CMDQ
-> driver and related subsystems. The changes include adding compatible
-> names and properties, updating driver data to accommodate hardware
-> changes, and modifying the CMDQ API to support non-subsys ID hardware.
-> 
-> Jason-JH.Lin (8):
->    dt-bindings: mailbox: mediatek: Add GCE header file for MT8196
->    dt-bindings: mailbox: mediatek: Add MT8196 support for gce-mailbox
->    mailbox: mtk-cmdq: Add driver data to support for MT8196
->    soc: mediatek: mtk-cmdq: Add unsupported subsys ID programing flow
->    soc: mediatek: mtk-cmdq: Add mminfra_offset compatibility for DRAM
->      address
->    soc: mediatek: Add pa_base due to CMDQ API change
->    drm/mediatek: Add pa_base due to CMDQ API change
->    media: mediatek: mdp3: Add pa_base due to CMDQ API change
-> 
->   .../mailbox/mediatek,gce-mailbox.yaml         |    4 +
->   drivers/gpu/drm/mediatek/mtk_ddp_comp.c       |    6 +-
->   drivers/mailbox/mtk-cmdq-mailbox.c            |  107 +-
->   .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    |    4 +-
->   .../platform/mediatek/mdp3/mtk-mdp3-comp.h    |    4 +-
->   drivers/soc/mediatek/mtk-cmdq-helper.c        |  133 +-
->   drivers/soc/mediatek/mtk-mmsys.c              |    1 +
->   drivers/soc/mediatek/mtk-mutex.c              |    2 +-
->   .../dt-bindings/mailbox/mediatek,mt8196-gce.h | 1449 +++++++++++++++++
->   include/linux/mailbox/mtk-cmdq-mailbox.h      |    3 +
->   include/linux/soc/mediatek/mtk-cmdq.h         |   22 +-
->   11 files changed, 1698 insertions(+), 37 deletions(-)
->   create mode 100755 include/dt-bindings/mailbox/mediatek,mt8196-gce.h
-> 
+The type of lines is unsigned int, so the correct format specifier should be
+%u instead of %d.
+
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+
+diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
+index 08d0ac543c67..030556ce4d61 100644
+--- a/tools/bpf/bpftool/main.c
++++ b/tools/bpf/bpftool/main.c
+@@ -423,7 +423,7 @@ static int do_batch(int argc, char **argv)
+ 		err = -1;
+ 	} else {
+ 		if (!json_output)
+-			printf("processed %d commands\n", lines);
++			printf("processed %u commands\n", lines);
+ 	}
+ err_close:
+ 	if (fp != stdin)
+-- 
+2.27.0
 
 
-Hello Jason,
-I had a fast look at the changes that you're proposing with this series.
 
-The reasons behind this are more or less understood on my side, but the
-actual changes look a bit odd in the sense that passing a physical address
-like this, on a first glance, not only looks like it may be dangerous, but
-also looks like there's a lot of room for improvement.
-
-Can you please point me at some driver/code (or a reference downsream kernel
-for this SoC, which would be even better) so that I can take a look at how
-is that being used?
-
-Thanks,
-Angelo
 
