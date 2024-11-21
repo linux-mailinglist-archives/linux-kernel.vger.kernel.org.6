@@ -1,117 +1,152 @@
-Return-Path: <linux-kernel+bounces-417196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64D4E9D5052
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:02:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A349D5070
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D7F1F2381F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:02:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B80AEB257B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F0A1A2C0B;
-	Thu, 21 Nov 2024 16:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fi2Satx7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7521A01C6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D61A19EEC4;
 	Thu, 21 Nov 2024 16:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="TWPDTvVP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JsoRE5mx"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE6B158A33;
+	Thu, 21 Nov 2024 16:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204947; cv=none; b=KK16fIBRD0y6mfouWzAgzxqgKsVKcEoA/A91jamp/3ZzJtMYbxUj80erD3u+91mh3tDiEWrySthKwUvg9KeKLK9MqHuxIRgUFVrcD5QjhZm3seT1blcduti9aEj8m6yW8VsLes/6bgP1xwg18t/7ascwEXAA9UScZirAejGtbkA=
+	t=1732204943; cv=none; b=ar9CknIm75CXPGKB5nLmdtryM0gsHZwCv9RODjgYvuoZ2TI816c1RtFzs5wF60NNCo/azM4hBIfXjzKQWeRSfq5l+wDlRiLE5QzpmHwakEVwvL4LQd4PAnCdTgQx/j9mnEmZj2kET9InO9keTCGkGsAfELZ8VA496+Ybk/EDNnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204947; c=relaxed/simple;
-	bh=2bW8Wv0hCk87GdvB9hjRyJK87S+fSBhpJJqQaQcaTA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/ivv1rmtzz6XfPBbeIUv/LLkAe6AyAKW5czDJ6JwmTNKB89fU7dZOnbQq1hO1XPu5cF7kWZ7oBqfILHtwEXZFWqCY3/OvWiZT1n2KRx9iRBEmDOGSXAHJUbvOYpV5T3zxi/NYmkT0sMIGtaU838dn2SHuIBFhqvRHnNGum5i1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fi2Satx7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43155abaf0bso9303065e9.0;
-        Thu, 21 Nov 2024 08:02:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732204944; x=1732809744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2bW8Wv0hCk87GdvB9hjRyJK87S+fSBhpJJqQaQcaTA0=;
-        b=fi2Satx71fHcOHxP/Z4Qctc4qfSyPk6Ksgx1AKbtoEaHVFqlmKCAtnz4GkPooxr4KK
-         O6T5sv5mN3WKIp5fzSuUU5pWTdm4ht0pvA/9XkBB7vDYJFjk7ZCs/U3ruC011B2dIhk3
-         tAuVW6kfh+in9f0YTjg/Y0s2i1LpimcRKWMOVSRqI6dYuc2N938xyy1Bsyx/28cbUR84
-         ElYgQkyddUvTHIf5+9Oek2YU+JNy+rc7gPK+X9v4Vw7uBpCYBJCcjmzQ8WQknZu3QZ4Y
-         dEcS9nnZv0LzzpXoT+npPmadFwzJVlFeJ393mmNqxJxXdFhbs4LZeuEWDllOY/U7e3sh
-         BuPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732204944; x=1732809744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2bW8Wv0hCk87GdvB9hjRyJK87S+fSBhpJJqQaQcaTA0=;
-        b=v2IO3cY8gl0CdSZJ7Z4Ci5UxWUCuMWCTdxLpokQqYPOzVN3m+YQKn5w6muIpEb/eNT
-         MXS6SVH3q8PTiRi4H4Lzd2mYvWa9/zZMoQaopTQt9PyZgYQ0iQv1XTDPBUd2rlanBSrS
-         jN06shim+HgVPcMD7kxU7y6Ig4LOm98bIfqgfCnNd6BJiEZ8JSOY5ROCRwgP2ts9tPp7
-         vX99SfgRJr7NYEraYD7dHBk6RJIkmAWvJPS42LARyVx5Ha0iwqno4Ac6mWOOYLDKIqBd
-         6inAPwP6+l2kfuoqJoB2woyblLKrYOQCYgNqwfUEXZ6yfrwITsBbCyW3jdLhLt8/ZVw+
-         I5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiV+5Dn5hQdeqy9ciUmVOJ0GReSCwPZ0YnSkuInw0HVhh1pXIrW9av9y4M+CGeywar6TFOrmjhg5jVyC6G0mRQs69x@vger.kernel.org, AJvYcCWM20PyxxqPxN4UYc2a+PLY2vtpk+Pghkxw7Ugq6ZPNtk8LVH34iGZrhxD1Qq1aYLFU7CY=@vger.kernel.org, AJvYcCWjk+roe0INmdGPQLJfTQ91ms3VetvunpvueZImBLCTcofVa7qNtjYqipLNf4Lz89j2f2SOM+uCEHzWI4GX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9X2WeaenP5+2md6MzspHKr/TXmWYDfJZE33lWkg1hGBUtKSYI
-	bRQc/uaFFQQ/zw3tKSU8o/CzM6O8rYMRmt+p+fzH4KHI2xmpbOmBJto8HNEOINPFhoe7T6FTs/7
-	8pq1pyzeH5q/3+v2wYNIqhFdbmKA=
-X-Gm-Gg: ASbGncsXj2pgS044bfQXE6Gn1xBIvIWWk4+VeTUSyROyIk9AJN4/DDYLQP0RRUiq1PH
-	uVOyaMMCoJfUtgO6HaLM9RLku4TltZTLd8pbT5pcHhYOqLxs=
-X-Google-Smtp-Source: AGHT+IEzLUcr65YGaS31uSTluNq/pGiJ7InzkK/WpGhyanTNFZTNaaWN8JKdvdZPmgqcD7EwB6Pdwid0PHW/Htt7yX8=
-X-Received: by 2002:a05:6000:410c:b0:382:51ae:7569 with SMTP id
- ffacd0b85a97d-38254af697cmr3977360f8f.18.1732204943111; Thu, 21 Nov 2024
- 08:02:23 -0800 (PST)
+	s=arc-20240116; t=1732204943; c=relaxed/simple;
+	bh=dBHlf6+aZ1hAOrvQPwSccNRc472d+mPq6Pqy8pnvfqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HTez54ssCs/Dd/tEl0s04ydXTsWl+D6l74I5yeKaa6eX2qC+vFs5zydd89O7DC8cQyxxzc0VU9yAZbOKofdK+hHhm62hkFL/P97SXrGzkNHaJu3c7FUP0+qq4Oj8m6SRk0pHr9AECkAuoT6tmmuI7bZeIZr9zPuEs/j+YIl0J3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=TWPDTvVP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JsoRE5mx; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailflow.phl.internal (Postfix) with ESMTP id EEB67200637;
+	Thu, 21 Nov 2024 11:02:18 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 21 Nov 2024 11:02:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732204938; x=
+	1732208538; bh=pO3PALF2awA+eBkc4VARw2inhjxAJiO5t86BEffGEBw=; b=T
+	WPDTvVPJ6FmJbTIVJ9cjEwSdbk+CQXtbYOIod/ngJcXW4TWzv8qJlZTYYFak6mGn
+	KGTsig9Hs8eAtEMHVLfaTIcH3qdySAKtLCXx1ukd+ikhGODWIlgkebyY5vQnkp2b
+	qPdIRjyy4rtk5lGMgQLTnOcxcIC8MietnDM9xfW6Q5iFjgzuPN4lw/GpeCS5RvFl
+	/zfIgRwIos7ZmN3/WD13n8g3G24l0bk3rxfvk5Efkd85iWkyy1Jrku24hx6A+afQ
+	NA4nMTRAPSneMcclwaU6ZCcIin80Bq8bWFIY3e1S92rizQBHcaXSyFbdBspvdEIE
+	IWXze/N0lWC4d+Mp7nq1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732204938; x=1732208538; bh=pO3PALF2awA+eBkc4VARw2inhjxAJiO5t86
+	BEffGEBw=; b=JsoRE5mxhUvnoibuHggM8f9j0HS3wCPZT3oK+JNDED+a5Io456B
+	2P41QTC3Xz3PJQovzdxpoc6bYbT22dWh1BKU9fSIinuMJ+Z1eyTaBmBcyOxSdVvt
+	PWM2JrzWS3mqaPBERNu1j3lORoSLcCI7MIHzXo0DStbrChajPHuhFkG7rh41zIf5
+	BhAfmtA6a7/+zETJB48Vo4KkcDWKyXd2mrXbaCEBVtWQ62AYVuarA7hFE/NKCD4q
+	an68PAZqGQ6BzmyYWfzdIOWlyp+73kPJIqtYP2cEmSvM1MKW6rq0iICIB0XYsgQp
+	KAi0izO2lzizHWr7hauK10svFfeBmZqy6/A==
+X-ME-Sender: <xms:ilk_Zzo0kvxi0-8n6fCkCA24K5CkyUYcMk7atmcZrkPozFaxQ1PxuQ>
+    <xme:ilk_Z9p0mp4zrGaZJT-kz2gf6XsTOJET8TTJ-n63m-De-WQuC-E5SkE-LPh5_WrDJ
+    1h5a4joHZP4Xn7d84U>
+X-ME-Received: <xmr:ilk_ZwP1FwnkqlDMWvWy2roaQHiqTRmSZ2ZxwVOHe-hqE8ALy9_E5eQqj4XS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdekvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrih
+    hlrdhnvghtqeenucggtffrrghtthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeeg
+    teehgeehieffgfeuvdeuffefgfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghr
+    tghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnih
+    hosehophgvnhhvphhnrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
+    vgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopeguohhnrghlugdrhhhu
+    nhhtvghrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheprhihrgiirghnohhvrdhsrdgrsehgmhgrihhlrdgtohhmpdhr
+    tghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:ilk_Z25w-yK-e58Q3JfDsVJIFxeV6ELe7jvji-q9k3hnHgEwnTMLUQ>
+    <xmx:ilk_Zy53vRHhMrOHg3FZEcQfMJxA_EVBqx2w2OqKgL01p7XiBkBfHA>
+    <xmx:ilk_Z-iuDQpl-psr7P3DlL8Eqj9AmNeM8NUqs-UuRNwIxN5dpVe6Kg>
+    <xmx:ilk_Z056dXOzePiJl8WqbSw9XDqPJrSJ4mRxQP5aunuXly-DHtXOgg>
+    <xmx:ilk_Z0skCtz4O2b9xjq7tt7lay1y8a72X5c38yerGPvt4f4IhyScrpsS>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 21 Nov 2024 11:02:17 -0500 (EST)
+Date: Thu, 21 Nov 2024 17:02:15 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v11 18/23] ovpn: implement peer
+ add/get/dump/delete via netlink
+Message-ID: <Zz9Zh-5hZrbal5Ww@hog>
+References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
+ <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-6-jolsa@kernel.org>
- <20241105142327.GF10375@noisy.programming.kicks-ass.net> <ZypI3n-2wbS3_w5p@krava>
- <CAEf4BzZ4XgSOHz0T5nXPyd+keo=rQvH5jc0Jghw1db0a7qR9GQ@mail.gmail.com>
- <ZzkSKQSrbffwOFvd@krava> <CAEf4BzbSrtJWUZUcq-RouwwRxK1GOAwO++aSgjbyQf26cQMfow@mail.gmail.com>
- <20241119091348.GE11903@noisy.programming.kicks-ass.net> <CAEf4BzbhDE2B41pULQuTfx0f_-1fn5ugJEdPpweKWZVJetCxrQ@mail.gmail.com>
- <20241121115353.GJ24774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241121115353.GJ24774@noisy.programming.kicks-ass.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 21 Nov 2024 08:02:12 -0800
-Message-ID: <CAADnVQJJ0WS=Y1EudjiFD8fn4zHCz6x1auaEEHaYHsP15Vks2Q@mail.gmail.com>
-Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe trampolines
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <olsajiri@gmail.com>, 
-	Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241029-b4-ovpn-v11-18-de4698c73a25@openvpn.net>
 
-On Thu, Nov 21, 2024 at 4:17=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Wed, Nov 20, 2024 at 04:07:38PM -0800, Andrii Nakryiko wrote:
->
-> > USDTs are meant to be "transparent" to the surrounding code and they
-> > don't mark any clobbered registers. Technically it could be added, but
-> > I'm not a fan of this.
->
-> Sure. Anyway, another thing to consider is FRED, will all of this still
-> matter once that lands? If FRED gets us INT3 performance close to what
-> SYSCALL has, then all this work will go unused.
+[I'm still thinking about the locking problems for ovpn_peer_float,
+but just noticed this while staring at the rehash code]
 
-afaik not a single cpu in the datacenter supports FRED while
-uprobe overhead is real.
-imo it's worth improving performance today for existing cpus.
-I suspect arm64 might benefit too. Even if arm hw does the same
-amount of work for trap vs syscall the sw overhead of handling
-trap is different.
-I suspect that equation will apply to future FRED cpus too.
+2024-10-29, 11:47:31 +0100, Antonio Quartulli wrote:
+> +void ovpn_peer_hash_vpn_ip(struct ovpn_peer *peer)
+> +	__must_hold(&peer->ovpn->peers->lock)
+> +{
+> +	struct hlist_nulls_head *nhead;
+> +
+> +	if (peer->vpn_addrs.ipv4.s_addr != htonl(INADDR_ANY)) {
+> +		/* remove potential old hashing */
+> +		hlist_nulls_del_init_rcu(&peer->hash_entry_transp_addr);
+
+s/hash_entry_transp_addr/hash_entry_addr4/ ?
+
+
+> +		nhead = ovpn_get_hash_head(peer->ovpn->peers->by_vpn_addr,
+> +					   &peer->vpn_addrs.ipv4,
+> +					   sizeof(peer->vpn_addrs.ipv4));
+> +		hlist_nulls_add_head_rcu(&peer->hash_entry_addr4, nhead);
+> +	}
+> +
+> +	if (!ipv6_addr_any(&peer->vpn_addrs.ipv6)) {
+> +		/* remove potential old hashing */
+> +		hlist_nulls_del_init_rcu(&peer->hash_entry_transp_addr);
+
+s/hash_entry_transp_addr/hash_entry_addr6/ ?
+
+
+> +		nhead = ovpn_get_hash_head(peer->ovpn->peers->by_vpn_addr,
+> +					   &peer->vpn_addrs.ipv6,
+> +					   sizeof(peer->vpn_addrs.ipv6));
+> +		hlist_nulls_add_head_rcu(&peer->hash_entry_addr6, nhead);
+> +	}
+> +}
+
+-- 
+Sabrina
 
