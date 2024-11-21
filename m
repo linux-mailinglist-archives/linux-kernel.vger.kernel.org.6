@@ -1,135 +1,128 @@
-Return-Path: <linux-kernel+bounces-417381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C72D9D5342
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F809D5343
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4F6AB2A47C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:06:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CDEDB225C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0913C1D9587;
-	Thu, 21 Nov 2024 18:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE6819EEC4;
+	Thu, 21 Nov 2024 19:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OLhaRYtK"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVrmBAd0"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2531D79BE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306664595B;
+	Thu, 21 Nov 2024 19:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215451; cv=none; b=usZiyGETeZvsNyKZguwMtvJiaWIyhZKfot5+UaWhm0S4U+0lBybhoVIpetcbYiZorbKyb63KpM6kNKl5MSxnJ6fJXNLFeFKREZBAVA0TAKoRa7VHBmmmkGuiA8KqL5qPof1e6jov0X2234E/8IAFHJjp0/Nq6V2MMv6X/8vHNLw=
+	t=1732216072; cv=none; b=JepRJX9taJdQ30usrWVoE1yE1bxlfnPu6u+x3w2q9VawRLd7TpFFuxlwD99uduN8WoeJxjZ78eP9bx/eauLx6gVA+oj+QSaYAH9/Mn+C95oPm9g+M1zxSDReGkqlW/pJDgLkKLNMadt+DWXYLXxQ/j4NFFzTo01396L4UxWD9G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215451; c=relaxed/simple;
-	bh=SqxVB5S9ZnCXmJwg3D51+w4alkfmGLlr9ardQuDdsLk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Pk16zEK++iEZI0IZz2Z2iDPUwr70UrcSD4G62LXAFM832TuEzw67hOheVRncvG0X81kr46VOcyMFZ2jgtnFdWYXh93dHRDx4V6iy5GAUDtCdtEg2XHXArjoqo7G2pD9+o30RAIl2UdjJt9AuE8XMp+RMEOFpGvL70/h6uWFP2YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OLhaRYtK; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e381c19246fso2166645276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:57:28 -0800 (PST)
+	s=arc-20240116; t=1732216072; c=relaxed/simple;
+	bh=/d2+VVHaIsc9e1mxOzdZ7xoJ9mN0pQZ1sfrcN0FYsiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tSIIhsjiXKExPOsnhsTkvI/7ZPiM5oRM6DmAjnyZEDJjsSVh5YYN5mOzEcn2SdfBrd6Gd2pxAj2ZNTO9v3Y5VEHBcB9lwP5Z8VR0uKIrOB177WENZ/M3p9vafZt/vivwN2jsNq6H7M0dcSxAHJRAbLvHXefVuRMJ6DIGapPsDQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVrmBAd0; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec86a67feso230514666b.1;
+        Thu, 21 Nov 2024 11:07:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732215447; x=1732820247; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtljJXMaf+UWOpBKMnoIRrXFTJsECASm8jaTE6OQZlo=;
-        b=OLhaRYtKBYtoKl8xugwH9pZFyLgIyz5kRDXmQb023WpiZ1kQStJyb2GdQ/oFIcZe/v
-         SKdj1HGfcU47Vm9IRH+L3YLrsxa6jd5vmUaN2U/uwnZZh3RCMJbQz20/q3zkRRgt4NnP
-         7x2HWR9tHIG9X4SP3DD8Qp+jP51uzz48ge7zEYLCNnzCUJFhhUIsurAeN6YeC0E3OnhP
-         bgh1bmgQxspL1znlxbGPV12Zcnm/LOSeLh5Euk8NHKkKtc0uM70Q8iobopjeIZsLIo56
-         hg1mDssrx3Zrm80gChfo9spAKK1cOxlp5YyMtE5w40dG5TU6t1sLzAd4vaqGnuSSCGjV
-         T1Aw==
+        d=gmail.com; s=20230601; t=1732216069; x=1732820869; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4OFLbG/GNSVDQ8hLVIP7nasORNGr4F2pT8NcKMANcTg=;
+        b=kVrmBAd061ZiuUOHuwcQX0lZ4XTRMakDETh3+JtBsb0FYLKpfj3NQbgE8rLhj7GKGc
+         62Y2f+Zq+bLJmhsiFG5QT+g0R72Ff1Ie28wj5syAxB4ynuKa4ek4E6uWvzbBfG7+7pIt
+         8lnckeEbV6ROYuTj+cGzcT66zFxL5hwMe0x6VmRTOFRzpsllxyD+83oLGU0BVZDdJf7Y
+         ZPTy08VI7EYVBJ238mBe9d99xI8jDxdgfG9LG3iP0neDkXys9AKfR6lAz+MisCk3/Ol2
+         BAASoltuyYwbTzQuYTKoUE75zF9q83n7RUny2Cer7qd2zBZ1TXJuZ/Xsh34SRuDvviJw
+         6F/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215447; x=1732820247;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtljJXMaf+UWOpBKMnoIRrXFTJsECASm8jaTE6OQZlo=;
-        b=BeaqcEprAbxXoLd1NZ2+TY6rhFylRbsh7KtSp3HyrSwLekodwQB3e+XvE/JGip30aK
-         t8zHQ1IRCu09iYzPVh9OuSDfvPzrdKu/oCSA8jtLbRKsSi+V+44DiVbn5pfQSk/t6aq+
-         VlJG9VcRAP/CvFE/KpQBEEPUvIpNVFnLOz7tbv/031S4EM9uBBPI6If95IkqH+4ARWoJ
-         T8l1Z33Se4bJQ8J7Bxs/5mJSgC7DqVujjZiaOskP5BMJxZhz7teA1O7ui1yRptNfzYhf
-         x1fCZq6yAQLFsGz5x6DdP7FcO3U4FkE0+cZ2Swj81xp2mXs/zTwpRWAyLEFD8d+dr4XY
-         UwCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcQgs461k84z0ldDOT4sAArrF5fxvckb5z/WzGNc2075cHcge3YzKS8wc53dIdcP2XnuHqDd1f3XkbrKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1OsK5+m9jyL5nU7k/hbsFXn7s8k8qAdzNkKQMt0KlkG4GiUlK
-	RRUDyaIhnsM1X7MWxiiekLoakNiMBOcnc1ZP0p+4dCtOPJuU/958P7kPyBm7SU7kzzgTd1Pv3Ti
-	qsg==
-X-Google-Smtp-Source: AGHT+IFPhgD0+tZ8PuaJ5SHJ0gWlfVSVuDvUHEavOi5mjZNLvxVtFKB7zcRQ023335iVTGSmRK5UXkZAsBQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:8811:0:b0:e38:b1c7:f48e with SMTP id
- 3f1490d57ef6-e38cb533507mr11963276.1.1732215447374; Thu, 21 Nov 2024 10:57:27
- -0800 (PST)
-Date: Thu, 21 Nov 2024 10:57:26 -0800
-In-Reply-To: <3aeeed2f4ccca6ddd404553984f22bf1b72e45cf.camel@redhat.com>
+        d=1e100.net; s=20230601; t=1732216069; x=1732820869;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4OFLbG/GNSVDQ8hLVIP7nasORNGr4F2pT8NcKMANcTg=;
+        b=L62+4QnZpAYr1VxwxTjCMW798oSTY9wAugbB0IjHybwkravEYB9wn37/YLvBK+rYYQ
+         m+CycUpwTbCcPRyPzKWvRDyh+t/gC+qlYGXNF9VyB2vN8XGUep8KELz3rpwJ6RNoVX9I
+         PrXL1gm/AoS5v5giawPO7cBEquZW4vNcuQ/WCYOBbHqcG2CccbYLDQ8ksRkY1KarJkcK
+         Vcu9czcKw/X3Vx5zINqM9fAP30+BU2hHeGhfu8nzKslJqfRujZDfkwuFYQhmzVpk4UN3
+         VgJ0B34fPol8VQXYq60gFx6rlIsyViJK/MyN36lHgx5xnnEoKR3un4pcbHZ5uW0p40UP
+         4O5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWw2r44TZJgIvVqrB38blxiMRl19g2cc6QGBRYFUhvLEkrMw8YfRTuSwUVRhiP7bTWhW+vCmzlGkJDX8ymf@vger.kernel.org, AJvYcCXXYYv8jtS0oOQm+Q9/iXSje/wezYgHg7vYLeO6ZysI1awBUMlqUjxsKIUdJtczE7HRxJAz5EE1bS8w/XTwRn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMcUr4opN+GcgS4K80rJUFj66vnc8excFP6dRVVegEZVDB5rVp
+	kDnTlRUo5razYrGLJwsnVurtOb6QtjWnFKu1hAgombPYNSx+mglhFDukwsrzoyxQYVD+qnFWQS4
+	VxPVWmUcPhzdmVfbOKPlSSdXt+7I=
+X-Gm-Gg: ASbGnct3XE5HoUWfhOLNHzSHN6xGpTmaZ89KETZAX8tx15HL7rTXdhtzXBAk2wZET5S
+	7KkIV8w2EZeZgZlP/32mOIinpczHYkmP7
+X-Google-Smtp-Source: AGHT+IHwL2oKd5Z4PJMHiT2EHcC1N94XnI9wGB1yGPBHyd5+/F2SPV0zcqrDbXyJqDQd8mxE0gciUKgsM4683iaTXq4=
+X-Received: by 2002:a17:906:9ca:b0:aa1:dd58:aebc with SMTP id
+ a640c23a62f3a-aa509bbfc31mr17333666b.39.1732216069286; Thu, 21 Nov 2024
+ 11:07:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240517173926.965351-1-seanjc@google.com> <20240517173926.965351-6-seanjc@google.com>
- <6a8aee9425a47290c7401d4926041c0611d69ff6.camel@redhat.com>
- <Zow_BmpOGwQJ9Yoi@google.com> <3aeeed2f4ccca6ddd404553984f22bf1b72e45cf.camel@redhat.com>
-Message-ID: <Zz-ClqMVuOrFlIZK@google.com>
-Subject: Re: [PATCH v2 05/49] KVM: selftests: Assert that the @cpuid passed to
- get_cpuid_entry() is non-NULL
-From: Sean Christopherson <seanjc@google.com>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Hou Wenlong <houwenlong.hwl@antgroup.com>, 
-	Kechen Lu <kechenl@nvidia.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>, 
-	Robert Hoo <robert.hoo.linux@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
+ <Zz2r73CFtfuRmjup@infradead.org> <Zz4vzSRcdjvWNIgK@kbusch-mbp>
+ <CAOZ5it1v3zxiavxctm-d32bT9aO701Os1-EnEeG0KCUhBPLMnw@mail.gmail.com>
+ <Zz6q85eMTko7P-Y3@kbusch-mbp> <CAOZ5it3xiMwD4_HsgXR_7-ERTzoS+FG3W5Og4sKtgthFA7HsVQ@mail.gmail.com>
+ <Zz92l2gxYtK4SUC_@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <Zz92l2gxYtK4SUC_@kbusch-mbp.dhcp.thefacebook.com>
+From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+Date: Thu, 21 Nov 2024 12:07:36 -0700
+Message-ID: <CAOZ5it0LKViPsOJrfLXmB-zk1OGWhKT6XMrj03etV-MA8-HOkQ@mail.gmail.com>
+Subject: Re: [RFC v2 0/2] dmapool: Mitigate device-controllable mem. corruption
+To: Keith Busch <kbusch@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Raphael Isemann <teemperor@gmail.com>, Cristiano Giuffrida <giuffrida@cs.vu.nl>, Herbert Bos <h.j.bos@vu.nl>, 
+	Greg KH <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024, Maxim Levitsky wrote:
-> On Mon, 2024-07-08 at 19:33 +0000, Sean Christopherson wrote:
-> > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > > > Add a sanity check in get_cpuid_entry() to provide a friendlier error than
-> > > > a segfault when a test developer tries to use a vCPU CPUID helper on a
-> > > > barebones vCPU.
-> > > > 
-> > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > > ---
-> > > >  tools/testing/selftests/kvm/lib/x86_64/processor.c | 2 ++
-> > > >  1 file changed, 2 insertions(+)
-> > > > 
-> > > > diff --git a/tools/testing/selftests/kvm/lib/x86_64/processor.c b/tools/testing/selftests/kvm/lib/x86_64/processor.c
-> > > > index c664e446136b..f0f3434d767e 100644
-> > > > --- a/tools/testing/selftests/kvm/lib/x86_64/processor.c
-> > > > +++ b/tools/testing/selftests/kvm/lib/x86_64/processor.c
-> > > > @@ -1141,6 +1141,8 @@ const struct kvm_cpuid_entry2 *get_cpuid_entry(const struct kvm_cpuid2 *cpuid,
-> > > >  {
-> > > >  	int i;
-> > > >  
-> > > > +	TEST_ASSERT(cpuid, "Must do vcpu_init_cpuid() first (or equivalent)");
-> > > > +
-> > > >  	for (i = 0; i < cpuid->nent; i++) {
-> > > >  		if (cpuid->entries[i].function == function &&
-> > > >  		    cpuid->entries[i].index == index)
-> > > 
-> > > Hi,
-> > > 
-> > > Maybe it is better to do this assert in __vcpu_get_cpuid_entry() because the
-> > > assert might confuse the reader, since it just tests for NULL but when it
-> > > fails, it complains that you need to call some function.
-> > 
-> > IIRC, I originally added the assert in __vcpu_get_cpuid_entry(), but I didn't
-> > like leaving get_cpuid_entry() unprotected.  What if I add an assert in both?
-> > E.g. have __vcpu_get_cpuid_entry() assert with the (hopefully) hepful message,
-> > and have get_cpuid_entry() do a simple TEST_ASSERT_NE()?
-> > 
-> 
-> This looks like a great idea.
+On Thu, Nov 21, 2024 at 11:06=E2=80=AFAM Keith Busch <kbusch@kernel.org> wr=
+ote:
+> If you have the time, could you compare with using xarray instead?
 
-Circling back to this, I actually like your initial suggestion better.  Asserting
-in get_cpuid_entry() is unnecessary paranoia, e.g. it's roughly equivalent to
-asserting that any and all pointers are non-NULL.   The __vcpu_get_cpuid_entry()
-assert though makes a lot more sense, because it's not all that obvious that
-vcpu->cpuid is (usually) initialized elsewhere.
+Sure. Good idea.
+
+**With the submitted patches applied AND using an xarray for
+vaddr-to-block translations:**
+```
+dmapool test: size:16   align:16   blocks:8192 time:37954
+dmapool test: size:64   align:64   blocks:8192 time:40036
+dmapool test: size:256  align:256  blocks:8192 time:41942
+dmapool test: size:1024 align:1024 blocks:2048 time:10964
+dmapool test: size:4096 align:4096 blocks:1024 time:6101
+dmapool test: size:68   align:32   blocks:8192 time:41307
+```
+
+The xarray approach shows a slight improvement in performance compared
+to the maple tree approach.
+
+FWIW, I implemented the two with slightly different semantics:
+- In the maple tree implementation, I saved the `block`'s entire
+`vaddr` range, allowing any `vaddr` within the `block` to be passed to
+`dma_pool_free()`.
+- In the xarray implementation, I saved only the `block's` base
+`vaddr`, requiring `dma_pool_free()` to be called with the exact
+`vaddr` returned by `dma_pool_alloc()`. This aligns with the DMA pool
+API documentation, which specifies that the `vaddr` returned by
+`dma_pool_alloc()` should be passed to `dma_pool_free()`.
+
+Let me know if you'd like further adjustments.
+
+Thanks,
+
+Brian Johannesmeyer
 
