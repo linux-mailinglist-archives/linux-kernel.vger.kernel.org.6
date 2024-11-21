@@ -1,227 +1,162 @@
-Return-Path: <linux-kernel+bounces-416624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A939D47EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:44:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D1D9D47F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80EC6B22BF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDAE282AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FCC1C9EBB;
-	Thu, 21 Nov 2024 06:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EBA1BBBDA;
+	Thu, 21 Nov 2024 06:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A+vhrPYj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BEyyYyoj"
+Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A501A3BC8;
-	Thu, 21 Nov 2024 06:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F02528687;
+	Thu, 21 Nov 2024 06:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732171366; cv=none; b=Ck0p6D/h/JAT/k9SubQIApw6woM/A0qh1z58gb6zTG6tZZ97B00U4gPBHfLGtY7K2OWlxiXEuCKWOP+ISbrCblLiKi2UbvvGw+Ud3JyzJ3UAV61OqDesrLw97n8GPgUD+c4eN0te0ffI67oYpYNpSjReaIVweRj2wroSAGraxd8=
+	t=1732171863; cv=none; b=jomaLaKjjl/B5Tk6xrSXc0g6bL7AtEc9a6c+pbuJPwtlKLYL72A9OjrdHJJLaXg1uIt+UbWud5X0AwJetl7M5x4d9Vdb2SA7sRUI2cAQ8XpOKzPZWgQdehRtuR2qCMJ1zNukK9cqQkJdbuBfYReJKwbgghd2X6+puJ8vT+zZ17A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732171366; c=relaxed/simple;
-	bh=9lQwP/0+cKuX3tW3z+nW1BX1KeIrkjm4Xw+2ve5/aHA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SOlwJK4z4U3gML6Zm7cwrP6Q+tmkoaQhhNKXQgR1L6ESsj7A3qKeIW3iLMmK9In3mZ9xJXmlYqcFA1sefYgX9+1qBCplDdVYnotcL8tGCWZkXG76WYlrDXRbnQjB/8Ur9l8MpUhuV/XdsArgrmFone11jth8c09TqsRkIoH48rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A+vhrPYj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL0TTQn026010;
-	Thu, 21 Nov 2024 06:42:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lfNzy9g5Cy/oIro3ADWMAQY68R/YxCz0HFf2tevRnI0=; b=A+vhrPYj9ijj2hz7
-	XuoaX3yZjaZ2aRQtHykyhlTL23b2jYislXS6GTL2q+vfPZ14RwSRSt5kbiI3UnxD
-	unqwdlcv60ErGe/Uk1jGAaFqV1XKpKbzCNWIhfxgVya6okgHDV6WJA4T5uRAA26e
-	rj5UQBAhIRTKpsbuXcSn8LdD3FkVCyOmKksAKc+HVf6q6cWG8riQtN5cmnSzkzay
-	VuQfiGv+HmMeVdeqW2LISKFb3xUFzPYt2PvmDfkpCI3o14sEKxucLz1Nw+/m3gzl
-	BfzLN+fV3hh3Xzv+zQfAfJRlD91J52F5pWkHX2udEWW8jcFOzfkOlnsfxjTt0Fpo
-	okZGpQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ebyamwa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:42:24 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL6gO0e002029
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:42:24 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 22:42:21 -0800
-Message-ID: <c3b285b0-33d1-4bfa-b8ab-6783ff5ed78d@quicinc.com>
-Date: Thu, 21 Nov 2024 12:12:17 +0530
+	s=arc-20240116; t=1732171863; c=relaxed/simple;
+	bh=2zycfry1p+Gzk2DViygIpISiI3WqRpWC10KIpyYSflE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CywfqJRALGXqwPJm5Oo/JXF4IIDk3aGQ2+B0L+SfmeR8uTpD5ZeHD4dHjt7Gu0ci/oZfLuTnJJ7YwiA6XFmzurSLwu3zwaPmQ2ArkGMSvP6Z/3PprEeFGvI4C8uGMuK9Ma/X49hVEvVAOViFYs/8ynjP4UvRS6NlqLBSH93rw3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BEyyYyoj; arc=none smtp.client-ip=115.124.30.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732171856; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=z93QOYyeKE9vxi+z8TZmZScUKuAySnyShvsDNCiZM3o=;
+	b=BEyyYyojOb62hDDmESdt3djZD7QW4G0gVUF85iG767INURE8fdDysXmftiUILZ62/TMB60AH1mlkH4wEhygwtn0jpTwnZza9/8klsW77fS53FftkZWKslf9xg4LhZWvd3/o4j9nK6bBhCuVY7P1ItYa/fyHweE4sToerbtHfspk=
+Received: from localhost(mailfrom:zijie.wei@linux.alibaba.com fp:SMTPD_---0WJuyxey_1732171840 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 21 Nov 2024 14:50:56 +0800
+From: weizijie <zijie.wei@linux.alibaba.com>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: weizijie <zijie.wei@linux.alibaba.com>,
+	xuyun <xuyun_xy.xy@linux.alibaba.com>
+Subject: [PATCH] KVM: x86: ioapic: Optimize EOI handling to reduce unnecessary VM exits
+Date: Thu, 21 Nov 2024 14:50:39 +0800
+Message-ID: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] misc: fastrpc: Add debugfs support for fastrpc
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>
-References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
- <20241118084046.3201290-5-quic_ekangupt@quicinc.com>
- <2024111804-doze-reflected-0feb@gregkh>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024111804-doze-reflected-0feb@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bguHFXILvBFJOECbbodaCIFWxCJlOlMR
-X-Proofpoint-ORIG-GUID: bguHFXILvBFJOECbbodaCIFWxCJlOlMR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210050
+Content-Transfer-Encoding: 8bit
 
+Address performance issues caused by a vector being reused by a
+non-IOAPIC source.
 
+commit 0fc5a36dd6b3
+("KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race")
+addressed the issues related to EOI and IOAPIC reconfiguration races.
+However, it has introduced some performance concerns:
 
-On 11/18/2024 7:32 PM, Greg KH wrote:
-> On Mon, Nov 18, 2024 at 02:10:46PM +0530, Ekansh Gupta wrote:
->> Add changes to support debugfs. The fastrpc directory will be
->> created which will carry debugfs files for all fastrpc processes.
->> The information of fastrpc user and channel contexts are getting
->> captured as part of this change.
->>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc/Makefile        |   3 +-
->>  drivers/misc/fastrpc/fastrpc_debug.c | 156 +++++++++++++++++++++++++++
->>  drivers/misc/fastrpc/fastrpc_debug.h |  31 ++++++
->>  drivers/misc/fastrpc/fastrpc_main.c  |  18 +++-
->>  4 files changed, 205 insertions(+), 3 deletions(-)
->>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
->>  create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
->>
->> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
->> index 020d30789a80..4ff6b64166ae 100644
->> --- a/drivers/misc/fastrpc/Makefile
->> +++ b/drivers/misc/fastrpc/Makefile
->> @@ -1,3 +1,4 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
->> -fastrpc-objs	:= fastrpc_main.o
->> \ No newline at end of file
->> +fastrpc-objs	:= fastrpc_main.o \
->> +		fastrpc_debug.o
-> Only build this file if debugfs is enabled.
->
-> And again, "debug.c"?
-I'll add change to build this only if debugfs is enabled. Going forward I have plans to add
-few more debug specific changes, maybe then I'll need to change the build rules again.
->
->> diff --git a/drivers/misc/fastrpc/fastrpc_debug.c b/drivers/misc/fastrpc/fastrpc_debug.c
->> new file mode 100644
->> index 000000000000..cdb4fc6845a8
->> --- /dev/null
->> +++ b/drivers/misc/fastrpc/fastrpc_debug.c
->> @@ -0,0 +1,156 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +// Copyright (c) 2024 Qualcomm Innovation Center.
->> +
->> +#include <linux/debugfs.h>
->> +#include <linux/seq_file.h>
->> +#include "fastrpc_shared.h"
->> +#include "fastrpc_debug.h"
->> +
->> +#ifdef CONFIG_DEBUG_FS
-> Please put the #ifdef in the .h file, not in the .c file.
-Ack
->
->> +void fastrpc_create_user_debugfs(struct fastrpc_user *fl)
->> +{
->> +	char cur_comm[TASK_COMM_LEN];
->> +	int domain_id, size;
->> +	char *debugfs_buf;
->> +	struct dentry *debugfs_dir = fl->cctx->debugfs_dir;
->> +
->> +	memcpy(cur_comm, current->comm, TASK_COMM_LEN);
->> +	cur_comm[TASK_COMM_LEN-1] = '\0';
->> +	if (debugfs_dir != NULL) {
->> +		domain_id = fl->cctx->domain_id;
->> +		size = snprintf(NULL, 0, "%.10s_%d_%d_%d", cur_comm,
->> +				current->pid, fl->tgid, domain_id) + 1;
->> +		debugfs_buf = kzalloc(size, GFP_KERNEL);
->> +		if (debugfs_buf == NULL)
->> +			return;
->> +		/*
->> +		 * Use HLOS process name, HLOS PID, fastrpc user TGID,
->> +		 * domain_id in debugfs filename to create unique file name
->> +		 */
->> +		snprintf(debugfs_buf, size, "%.10s_%d_%d_%d",
->> +			cur_comm, current->pid, fl->tgid, domain_id);
->> +		fl->debugfs_file = debugfs_create_file(debugfs_buf, 0644,
->> +				debugfs_dir, fl, &fastrpc_debugfs_fops);
-> Why are you saving the debugfs file?  What do you need to do with it
-> that you can't just delete the whole directory, or look up the name
-> again in the future when removing it?
-fl structure is specific to a process using fastrpc driver. The reason to save
-this debugfs file is to delete is when the process releases fastrpc device.
-If the file is not deleted, it might flood multiple files in debugfs directory.
+Configuring IOAPIC interrupts while an interrupt request (IRQ) is
+already in service can unintentionally trigger a VM exit for other
+interrupts that normally do not require one, due to the settings of
+`ioapic_handled_vectors`. If the IOAPIC is not reconfigured during
+runtime, this issue persists, continuing to adversely affect
+performance.
 
-As part of this change, only the file that is getting created by a process is
-getting removed when process is releasing device and I don't think we
-can clean up the whole directory at this point.
+Simple Fix Proposal:
+A straightforward solution is to record the vector that is pending at
+the time of injection. Then, upon the next guest exit, clean up the
+ioapic_handled_vectors corresponding to the vector number that was
+pending. This ensures that interrupts are properly handled and prevents
+performance issues.
 
-Do you suggest that looking up the name is a better approach that saving
-the file?
->
->> +		kfree(debugfs_buf);
->> +	}
->> +}
->> +
->> +void fastrpc_remove_user_debugfs(struct fastrpc_user *fl)
->> +{
->> +	debugfs_remove(fl->debugfs_file);
-> Why remove just the file and not the whole directory?
-As mentioned above, file process specific and is getting created when
-any process uses fastrpc driver. It is getting deleted when the process
-releases the device.
->
->> +}
->> +
->> +struct dentry *fastrpc_create_debugfs_dir(const char *name)
->> +{
->> +	return debugfs_create_dir(name, NULL);
-> At the root of debugfs?  Why is this function even needed?
-creating a dir named "fastrpc_adsp", "fastrpc_cdsp" etc. to create debugfs
-file for the processes using adsp, cdsp etc.
->
->> +}
->> +
->> +void fastrpc_remove_debugfs_dir(struct dentry *cctx_debugfs)
->> +{
->> +	debugfs_remove_recursive(cctx_debugfs);
-> See, you don't need the debugfs file reference at all, you don't do
-> anything with it.
-right, I can try with look up.
-> And again, why are you wrapping basic debugfs functions with your own
-> version?  Please don't do that.
-Ack. Thanks for reviewing this change.
+Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
+Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
+---
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/ioapic.c           | 11 +++++++++--
+ arch/x86/kvm/vmx/vmx.c          | 10 ++++++++++
+ 3 files changed, 20 insertions(+), 2 deletions(-)
 
---ekansh
->
-> thanks,
->
-> greg k-h
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index e159e44a6a1b..b008c933d2ab 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1041,6 +1041,7 @@ struct kvm_vcpu_arch {
+ #if IS_ENABLED(CONFIG_HYPERV)
+ 	hpa_t hv_root_tdp;
+ #endif
++	DECLARE_BITMAP(ioapic_pending_vectors, 256);
+ };
+ 
+ struct kvm_lpage_info {
+diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
+index 995eb5054360..6f5a88dc63da 100644
+--- a/arch/x86/kvm/ioapic.c
++++ b/arch/x86/kvm/ioapic.c
+@@ -284,6 +284,8 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+ 
+ 	spin_lock(&ioapic->lock);
+ 
++	bitmap_zero(vcpu->arch.ioapic_pending_vectors, 256);
++
+ 	/* Make sure we see any missing RTC EOI */
+ 	if (test_bit(vcpu->vcpu_id, dest_map->map))
+ 		__set_bit(dest_map->vectors[vcpu->vcpu_id],
+@@ -297,10 +299,15 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
+ 			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
+ 
+ 			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
+-						e->fields.dest_id, dm) ||
+-			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
++						e->fields.dest_id, dm))
++				__set_bit(e->fields.vector,
++					  ioapic_handled_vectors);
++			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
+ 				__set_bit(e->fields.vector,
+ 					  ioapic_handled_vectors);
++				__set_bit(e->fields.vector,
++					  vcpu->arch.ioapic_pending_vectors);
++			}
+ 		}
+ 	}
+ 	spin_unlock(&ioapic->lock);
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 0f008f5ef6f0..572e6f9b8602 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -5710,6 +5710,16 @@ static int handle_apic_eoi_induced(struct kvm_vcpu *vcpu)
+ 
+ 	/* EOI-induced VM exit is trap-like and thus no need to adjust IP */
+ 	kvm_apic_set_eoi_accelerated(vcpu, vector);
++
++	/* When there are instances where ioapic_handled_vectors is
++	 * set due to pending interrupts, clean up the record and the
++	 * corresponding bit after the interrupt is completed.
++	 */
++	if (test_bit(vector, vcpu->arch.ioapic_pending_vectors)) {
++		clear_bit(vector, vcpu->arch.ioapic_pending_vectors);
++		clear_bit(vector, vcpu->arch.ioapic_handled_vectors);
++		kvm_make_request(KVM_REQ_LOAD_EOI_EXITMAP, vcpu);
++	}
+ 	return 1;
+ }
+ 
+-- 
+2.43.5
 
 
