@@ -1,175 +1,114 @@
-Return-Path: <linux-kernel+bounces-416709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74549D4916
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C9C9D4919
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697B01F22DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:43:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59A01F228FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7191CB532;
-	Thu, 21 Nov 2024 08:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD0F1C9EDC;
+	Thu, 21 Nov 2024 08:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OUxGPnmh"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="SjfgntB/"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF0A1BC9E2
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60A2158D79
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178605; cv=none; b=cfVV2KUQ7CEScVqJf5ax/MiMThQF4tyBadKjwdgo7oDuCwex9JGVsb8t+ggjAeL9iJLDugHhWTi+BhB3NkQJEAZRvRWqGAr7n8VZ0xVxCuhQ1xDqRBAZK67tZLE6twzzhILSdqYJGkJkreyXFuKGZHKoEkz8Egse5r385vrCW10=
+	t=1732178632; cv=none; b=T4Oc5vSeHcIoqod5EiTRtzkKZVjoKsKl2biC5k0/kT9eO/XBRm0mVhAvx3UUe+IBwf19T0OMlcHRlHHWTMpKNl1ZxuG3DXeCzddqnWTs6Yp+WWk7oVBDDQ+qsXD5yj3UZSLW7ZnvJzTzDXLAsFkZv7Ii7NhHqNltVqUYC/pCxRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178605; c=relaxed/simple;
-	bh=8MYhJTbJ7F4usSFmd0mps/eCDIHG/TRkGxMTXjlpUuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uZdfUf0bpn9H9CzpdIVHbh0cjwq5XRSANipydT3zYKXMbCL4wAvawnG+MF7RHDeQZyPm1NKJUkzU4WrJTJIJ/jyrG8MyE/0/BYdwO6AtVGmHWDvfucmCHTtVN7ZwlX8XkHqvDjp8xCT/nt/fxgOa4dWDcNtlUer4zo4lgCGNDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OUxGPnmh; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3823eb7ba72so393312f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:43:23 -0800 (PST)
+	s=arc-20240116; t=1732178632; c=relaxed/simple;
+	bh=zbMOE85kyf/M+jgDKtWC/AtsNaFvB8caVQrYhqvhyGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XheblN6CiDuDAw6lutVDCTm6EyT2X4ctT1rUMgNZCkrA3K+U6Q0x+PubNjTa29bNd6ev2ck8p1B+mJeOwJCUPkwM/GMcSe/vUBdKN06wQ5vJ6yIaAvwDTMaQMf46BNZQznJL5wbrizaxFIwn/HDaYNJPBGuf9YuLzGxj+GOMbh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=SjfgntB/; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9aa8895facso116776966b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:43:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732178602; x=1732783402; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jLSsZ5JOZPvpqG/LZBTATMNgJ0P8sq7dJjWcV7/MSNs=;
-        b=OUxGPnmhszi9+s2zlkVFjOjItVjRFc8h7vJyW0x+6CIBllJ1LYAb+ncSzzUrv2qjS5
-         uopUfpKJ9UsdjLz9rrqadaGLmadcgoiNqrxNaxrHhw0BlqHNzvXhijQsxIEpTlaxepXP
-         Yn8G5nJJTWe3qqJ+bud3HkdZqtWzMEtCRqFdl7gnTqbMoW+dfirFLA3XJHopnm2DkV1V
-         BfWAROzd2sZzhbX2hnzUo9Zpho7Z5Zjcfaq18UdTmGGGF15Q4CwLUVzNZiZAywmCOUoL
-         cIDpX8L/sy3hMePe3uka15eAqtWQuZmYemtLxWpll2hHma/hkY3Y2eiFLFGZtiAV2Tly
-         LtjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732178602; x=1732783402;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1732178628; x=1732783428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jLSsZ5JOZPvpqG/LZBTATMNgJ0P8sq7dJjWcV7/MSNs=;
-        b=Uh+NukE4UHkehLOqc7ShtzepfhlukaBxZW6MpevTW+t2xSzuRsbCt5emYSNzKGKcvL
-         F9ZStTyaJdUo8tVsRXB6kfYyeQzPRMxll/sje2KEVBs+PoM3ix2Dmu83S6TiIppHtk0z
-         pPS68de7kTr+Y2cF4wSYQNOMUMmghbKGwBaWEpQpQgHLboWEtjjwVdNYxHOZtIpTP3TL
-         c6efrMiaZFFiyR7oyB0y4PScmTyZ+3QeaFqkF+7pw3zaxCW3t9jB4MM8Uf+Vyd8/vSW8
-         /QQKWN7nSiyqmITPVrxxKtdgVsHTNl8g3IbVYsqSZeTK8l7Xjbr7Sov3D0LGxGgJ+U8c
-         jebQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQz6NVUZQrZt5d//lFFzt6saJqzkWYDkJ/JdRpsEu3n622H9SStBFaGJkzrTBf+bOvXEGY8XIPfybUosE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuQux3y2o2q44udC7FyvnTFTAFfmaWNXXNxYJqoLvFSSwUzM8c
-	yBFw3r0BJ+emv6MzDDScZJkLyOnHE0+Pdw69V6oGnm6dktaQD7c9bdklHCougBo=
-X-Gm-Gg: ASbGncu2BfT3vlWgUz3vxNsMc2UgveBM9t3BSl52opjDfqTwh8WnL5P7AlmFmRtq8eF
-	R5KRcfQzaRQsebnJHRmCpUq8JMD4sHCGSBsgCIqXNIj1Po4etiIEpxKrLOnv+Px+mQwme4x6sXF
-	82B3HKZusQgHlbmXUc+wI7ULCEJvhCiKs88/NErhA8F7CUPRSlMtBnmZ+DESUKS0kwl9IwXgLWL
-	yt9l9mu3o45DZmUgwB8uACUMzLBEAeJix+mMZXa
-X-Google-Smtp-Source: AGHT+IFpzheFe8Pg8r0thIYlyEIejMxQZNthE+3ERMHDXChvRhZ7QOfLnjgXRaCi9TO530mI1wAQ6Q==
-X-Received: by 2002:a05:6000:154c:b0:382:359f:5333 with SMTP id ffacd0b85a97d-38254af5268mr4115907f8f.22.1732178601810;
-        Thu, 21 Nov 2024 00:43:21 -0800 (PST)
-Received: from localhost ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490ca19sm4207193f8f.39.2024.11.21.00.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 00:43:21 -0800 (PST)
-Date: Thu, 21 Nov 2024 09:43:21 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Dave Chinner <david@fromorbit.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>,
-	jack@suse.cz, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"conduct@kernel.org" <conduct@kernel.org>
-Subject: review process (was: underalated stuff)
-Message-ID: <Zz7yqeI0RatH4ao5@tiehlicka>
-References: <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
- <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
- <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+        bh=zbMOE85kyf/M+jgDKtWC/AtsNaFvB8caVQrYhqvhyGE=;
+        b=SjfgntB/HcvOobtWOXpsUDLB2rPB+mAKqCTUI7miwRFQVi3mQ2YCyleC4uRsbl3oZq
+         7E60Y7icAvDQw2eNfsOuTcn+5MbjrRqJLZa3LP5NbRbo1ax9MGWJwZ6BcQfpTNrQBOhc
+         dfvahB8Ra2G2fi3zCv1HKOYMSMANbj2Fn6QYyZgYLXdRql4aPY0R2y2KgUhc5NOJgDew
+         q2sDURpA8s0I1g+Kn9JxRYjoPdPP/b+nuXLbxxvmndMbkh5xlwaDtNOppteABL42BrJ1
+         LtxxdB/1ZM83GQUM6JSFj0G09gI48GM3avWjEnSUQgFK5n0sBMXN0fKY0XFnu310ki78
+         Zw1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732178628; x=1732783428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zbMOE85kyf/M+jgDKtWC/AtsNaFvB8caVQrYhqvhyGE=;
+        b=U6jNMV21Sc6AQvPgc+JCCHcNj3SEagRsXI2GXkwDQZVkqUDWenwLUxmvJmkNshBnXU
+         OYIK5NfSCKC/F6ZXUotdMpwizEMCZqL25Ny88E6RkdkYYdU1GlEiU9frIAyKOhruICBV
+         bd3wabD1gUJjyBngjFFz25c7lYQhDwc6fMmaksddDnOQWRzi6wdP55avRDZ/RE/QBwXm
+         Aa0Ju6Ks6dMwZE17HNxVIPvzSrwaskCDQZNGxvXeJCKEpZEv3/+9wj858QWaG8Tu63ul
+         rEmbxomxnh/IK5r5lFVm/JuCySSiWIn0vC78vjx80jPom4KPqnlcWLzlSIhBNUiNKMgu
+         r10A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWtdC2vQEuJMrXkyApFI2ghbWSNlXBI9zMMPdbe9Cdh4HzZ1kH2o44LR2lrfLetvLKJfAd+bfN2B36xjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhmhKl3WuyJyguL082DrEyUv5tc/aga3eWcfLon8ODOvnoCpu2
+	OL7Ip6srwIWAYxIoM9P4cmiT31fVYtoFuT/KiVInbzKpFAcKlq5w8YSOyUVAInP10/SCk4u0Orx
+	GROF6ujVrduGrGgh6fA7xGxCYw+cdaFwNDD44pA==
+X-Gm-Gg: ASbGncvKS8hFQ1HwPI6Mskv2PD8jU/TKdcnRp+LBEkGqCaoQ0OnRn0QNqqdfXkUpo6p
+	74AArnmqzt76e6K5K48fBFsr1VzCyedZYEXHe+gn81k+E4Ni4mnA21AiTtft5
+X-Google-Smtp-Source: AGHT+IHd1tWz4ktoGkYiqgv0D+V9Xdzmco7j4J4H7r1eGdJjckgvHhcLnFzws4eZAlZff0HRlTXsvijEvYWA774J4Yo=
+X-Received: by 2002:a17:907:f19a:b0:aa4:e89d:57b1 with SMTP id
+ a640c23a62f3a-aa4e89d5aa8mr342483966b.28.1732178628260; Thu, 21 Nov 2024
+ 00:43:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
+ <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
+ <CAKPOu+-DdwTCFDjW+ykKM5Da5wmLW3gSx5=x+fsSdaMEwUuvJw@mail.gmail.com>
+ <CAJuCfpGDw7LLs2dTa+9F4J8ZaSV2YMq=-LPgOmNgrgL4P84V_Q@mail.gmail.com>
+ <CAKPOu+8tvSowiJADW2RuKyofL_CSkm_SuyZA7ME5vMLWmL6pqw@mail.gmail.com>
+ <CAJuCfpEBs3R8C910eiaXcSMPPrtbMjFLNYzYdPGJG+gw4WHM8A@mail.gmail.com> <20241121045109.GA20615@lst.de>
+In-Reply-To: <20241121045109.GA20615@lst.de>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 21 Nov 2024 09:43:37 +0100
+Message-ID: <CAKPOu+-_X9cc723v_f_BW4CwfHJe_mi=+cbUBP2tZO-kEcyoMA@mail.gmail.com>
+Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
+To: Christoph Hellwig <hch@lst.de>
+Cc: Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 20-11-24 17:39:09, Kent Overstreet wrote:
-> Michal's (as well as Steve's) behaviour in the memory allocation
-> profiling review process was, in my view, unacceptable (this included
-> such things as crashing our LSF presentation with ideas they'd come up
-> with that morning, and persistent dismissive axegrinding on the list).
-> The project was nearly killed because of his inability to listen to the
-> reasons for a design and being stubbornly stuck on his right to be heard
-> as the maintainer.
+On Thu, Nov 21, 2024 at 5:51=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+> Something seems to be going wrong here, though, but the trace below
+> doesn't really tell me anything about the workload or file system
+> used, and if this is even calling into readahead.
 
-Couple of entry points that might be helful for that.
-https://lore.kernel.org/all/YxBc1xuGbB36f8zC@dhcp22.suse.cz/
-I have expressed my concerns and set expectations to move the
-work forward. I've had couple of back and forth with Suren about
-specifics of overhead assumptions from the stack unwinding IIRC. 
+In case you were asking :-) these are web servers (shared webhosting),
+running PHP most of the time. The host itself runs on an ext4, but I
+don't think the ext4 system partition has anything to do with this.
+PHP runs in containers that are erofs, the PHP sources plus
+memory-mapped opcache files are in btrfs (read-only snapshot) and the
+runtime data is on NFS or Ceph (there have been stalls on both server
+types).
+My limited experience with Linux MM suggests that this happens during
+the page fault of a memory mapped file. PHP processes usually mmap
+only files from erofs and btrfs.
+The servers are always somewhat under memory pressure; our container
+manager keeps as many containers alive as possible and only shuts them
+down when the server reaches the memory limit. At any given time,
+there are thousands of containers.
 
-For the first non-RFC version my feedback was
-https://lore.kernel.org/all/ZFIMaflxeHS3uR%2FA@dhcp22.suse.cz/#t
-not really "maintenance burden only" but a request to show that alternative
-approaches have been explored. It was not particularly helpful that you
-had expected tracing people would implement the feature for you.
-https://lore.kernel.org/all/20230503092128.1a120845@gandalf.local.home/
-Other people have also expressed that this is not completely impossible
-https://lore.kernel.org/all/ZFKNZZwC8EUbOLMv@slm.duckdns.org/
-The rest of the email thread is mostly a combat zone that I have avoided
-participating as much as possible.
-
-I didn't have any reaction to v2 at all.
-
-v3 was aiming to be merged and I've stepped up as there was no single
-review at the time https://lore.kernel.org/all/Zctfa2DvmlTYSfe8@tiehlicka/
-
-I admit that I was really open that I do not like the solution and I've
-said reasons for that. Allocator APIs have always been a large mess of
-macros, static inlines that makes it really far from free to maintain
-and alternative ways should be considered before going that route.
-
-I was also clear that support by MM people was necessary to get this
-merged. I have explicitly _not_ NAKed the series and backed off for you
-guys to gain that support. 
-
-So essentially there was a clear outline for you and Sure how to achieve
-that.
-
-I would really like to hear from other maintainers. Is tnis really
-unacceptable maintainer behavior? I am OK to apologize but the above is
-in line of my understanding of how to ack properly.
-
-[...]
-
-> Next up, PF_MEMALLOC_NORECLAIM over Michal's nack - I was wrong there, I
-> only did it because it really seemed to me that Michal was axe grinding
-> against _anything_ I was posting, but I still shouldn't have and that
-> was more serious infraction in my view; that sort of thing causes a real
-> loss of trust, and no I will not do it again.
-
-Yes, this is simply unacceptable! Just to put full context. We are
-talking about eab0af905bfc ("mm: introduce PF_MEMALLOC_NORECLAIM,
-PF_MEMALLOC_NOWARN"). I have pushed back on that https://lore.kernel.org/all/Zbu_yyChbCO6b2Lj@tiehlicka/
-Rather than searching for support elsewhere you have completely bypassed
-the whole MM community including Andrew and pushed that hidden in
-bcachefs PR. This is breaking trust model we are all relying on.
-
-I am cutting the rest of as something that is not really material to
-maintainership discussion.
--- 
-Michal Hocko
-SUSE Labs
+Max
 
