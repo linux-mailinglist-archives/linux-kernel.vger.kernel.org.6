@@ -1,153 +1,239 @@
-Return-Path: <linux-kernel+bounces-416892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDAB9D4C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B4949D4C15
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B86AAB24500
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91FE1F21DC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AA51D174C;
-	Thu, 21 Nov 2024 11:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFCB1CDA18;
+	Thu, 21 Nov 2024 11:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bql3r4NW"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skISQ7z6"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAD1E52D;
-	Thu, 21 Nov 2024 11:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E6F3C47B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189000; cv=none; b=eL6lFaxmxvRoDeGgJEq5s3ad8nqFo7RTgZZRIDRAPwIppR6quMC4Kg6qGWvGobEevP0e239hmdGL5/VkTxq0NfmeRU63W7+/IWFHzPBRJYojxU9zz5W7TsYke7Sv8Cvs9ValFJhu4vqzFZ2KCQddzblwvpQnwN8v95Zb+y/MDKM=
+	t=1732189107; cv=none; b=fmdL2vRU/8/46QF5necG3RPch3mq4nFFII4Z07qsdR6IE40FYjgBA6T/QzzZ8q2Jmfffd5hhzt+AJZMMQJc5ZgNoLiifETyrZomRzDG66dI8bOHpFb6XHpt/fAYhgRd5wPbWRKcKF+v04sSLi9qmD5YigUL0UPd+C48JMng29UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189000; c=relaxed/simple;
-	bh=LbZQYk84BXacNPIxR5ZjcaQUtezDv/lcCXofOdgV4Zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TcVN5faXo01dGgt6rhSBR0IIdp2PBd6z82vchWFczWj/eiFQW7QDLATbF5s4asbPr9VESC+pWOt54HBJgrb/dhWHjkCvtzbuz6CJ7GM+MUrD1sMVNU2FkPSQfv5UTOnjTah4aJTdlyDvpTokAzfi9jMyNAP4l/Vh8GTLzf24PIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bql3r4NW; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=LS6+dcL7H0Nwp8T0TKzgyearEgOQ/YIKFVEH6/AJ1c0=; b=Bql3r4NW/oN5F/KLQZCbdU8C7c
-	5yTQugrq9Mc1Jlbtb5Y/umQYQpvy4CE6HpJ/dYffqERxcycWdMkORlR+8eBYSL/5UMUSlHMA26wch
-	e2Trg5Ze9RgmmdqSZzEzI5k9Tn/OO7XQPYo3mmBz9yJztkYB3z19SrlVhXp0cH/hP3hn4raqBOXAY
-	/znOOqKox9jTJw3DIMfVLn0GCYfD7vtCzo3qt+Uj7s/qbxVR/Fp5OcA0akpXS/97dLf7IfTiIuhIT
-	y63ZdlMWHJAF0IqLzyWX9Lu3gvpAmc/ggAged4re91TWxasJB4puDBYST2YRKFjUeLRlTeboDdCqI
-	BPPGSoug==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tE5U5-00000000ZlQ-3pmS;
-	Thu, 21 Nov 2024 11:36:30 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8AB5430068B; Thu, 21 Nov 2024 12:36:29 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:36:29 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Davidlohr Bueso <dave@stgolabs.net>, regressions@lists.linux.dev,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RESEND][PATCH] locking: rtmutex: Fix wake_q logic in
- task_blocks_on_rt_mutex
-Message-ID: <20241121113629.GH24774@noisy.programming.kicks-ass.net>
-References: <20241120184625.3835422-1-jstultz@google.com>
+	s=arc-20240116; t=1732189107; c=relaxed/simple;
+	bh=GoTq39iPiD/MsBXuMgTX/y+bT00dhL9Tn6diA5FsVT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nZiXBcbNHkWYguKW7Z+3J3EiIWhJKCy5MKd8y8mEq4w6NIZF45p8kkZsuXWxOcJna/eSc4+QJ+6haOKQ8LZcqNwjEJPr4gD/03eS8CIpCe7Ki92w3e5wqdYZ2qSXmVx+79os2RWCBIz9j0AuEObjL67QQ14tGM9AFLK0j5rsGlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skISQ7z6; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-5148381f2a4so368988e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:38:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732189104; x=1732793904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F7ukX8ZlTj96KIQhfZzpEJEoiPzLwIJpbM5cfdfMhxs=;
+        b=skISQ7z6dE8itZoqKWTJDXxDCcYQbP46Dl8EdiRMNDG4UyGCEgd0hPjCTcD5kgm3fJ
+         ssy33UZdHwr94FbuCJFspS3p0GtYNbwR+BEj0467tSmhudwgXpZrEyKTsGwaq1OiPpfS
+         sXwr7n5ccnMAMpvtQgnRC15n7OWodjxwRjCafjd/luW4MdhE9ggRkMYfU40dnrRcXXUn
+         jEoH02i5dYQii4r/rRRjSNCOPnQsH9DwrI+c6+zhyi5mTuo/ls0ZzpzdjTbEWmmIdsAK
+         TB3UQKHndQ8ZBkS+phtcvjd1f9q/ri3nWQUxUTD0AA+hldVD8rBZJ4plK0mxMrNRdI+k
+         SjdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732189104; x=1732793904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F7ukX8ZlTj96KIQhfZzpEJEoiPzLwIJpbM5cfdfMhxs=;
+        b=o7nzDdnpyQYV60THpf8/HVXO4QEGnz5qujloHPx7+lXRKEdzjZpJiM5Bn5BlEstApE
+         TDHuNYEctZXj/Q1bziXGrrs+F8X9U6+y1I4QHaAIbT4JVFkYahe6Ybgf2n2HIEGM/P82
+         vnVC0F4y8eo9JTQ2T6s9lAHNe0WR8YItsASv1zTni00Cp7bS9U1BWSr9kAL89xWKuLfC
+         F/JHv8htnt9YMlzLa3OyD2Iugge8Ba9JmgNZgqxxbkA+eDy2qINR1rzO+6m3Y9x/z5JI
+         k4a/fOgWh7RWZDV4CdN5oj8a6QvIZTDAw3W2fyEF/MiPKQlOS8VY0dDtvkTS+bU9tHYf
+         ygmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXje+uXIOzALqKzyc/bYJ5Ms5vNEfsEoLCJkzz/5AC6C71VBrxyihOjpDFgYzBb27VtJQhxHx0xrsoaec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXHDZueA6PRN41O4umlCXPKAM1uzV08VWzSgI0tDUimarPtotc
+	1mKW8Tn0rY3uCXeudy4p7JtoReEJ/ROiK4Gzx/2zplbHnx05eeJCuTa7RE6Vd9wFAK7thm/XbeJ
+	fWw5IPIFq+/0JOoRjKxp6Chmn69alqcRFGRGnHA==
+X-Gm-Gg: ASbGncvqcNMrkDseP1XiMFI/H8a89T1cETMkfsKzYqSDLmxr6a0bQs6XM+e1x3XejkO
+	kmfyUINhRVh6k3CA1NzWJGomLwCX6oV5GKIIqvZdaPhb6Rmj7wWrVB6tgCAw3epyh
+X-Google-Smtp-Source: AGHT+IEmTnYwUS/GoFS5lHtmsk6MPCKN7/BBErYWheG+A2g8DHXNCtrFTmlMdEgbpvkK0+ZlnzCUB4v1D+drV8T/SYU=
+X-Received: by 2002:a05:6122:640c:20b0:514:ea11:4ee5 with SMTP id
+ 71dfb90a1353d-514ea11529fmr708139e0c.1.1732189104384; Thu, 21 Nov 2024
+ 03:38:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120184625.3835422-1-jstultz@google.com>
+References: <20241120125629.681745345@linuxfoundation.org>
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 21 Nov 2024 17:08:12 +0530
+Message-ID: <CA+G9fYsaZNm2VKnm10tR4dy0DfnE3_FQtkj-E9-SPR-RacXxcw@mail.gmail.com>
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 10:46:15AM -0800, John Stultz wrote:
-> Anders had bisected a crash using PREEMPT_RT with linux-next and
-> isolated it down to commit 894d1b3db41c ("locking/mutex: Remove
-> wakeups from under mutex::wait_lock"), where it seemed the
-> wake_q structure was somehow getting corrupted causing a null
-> pointer traversal.
-> 
-> I was able to easily repoduce this with PREEMPT_RT and managed
-> to isolate down that through various call stacks we were
-> actually calling wake_up_q() twice on the same wake_q.
-> 
-> I found that in the problematic commit, I had added the
-> wake_up_q() call in task_blocks_on_rt_mutex() around
-> __ww_mutex_add_waiter(), following a similar pattern in
-> __mutex_lock_common().
-> 
-> However, its just wrong. We haven't dropped the lock->wait_lock,
-> so its contrary to the point of the original patch. And it
-> didn't match the __mutex_lock_common() logic of re-initializing
-> the wake_q after calling it midway in the stack.
-> 
-> Looking at it now, the wake_up_q() call is incorrect and should
-> just be removed. So drop the erronious logic I had added.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Qais Yousef <qyousef@layalina.io>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Benjamin Segall <bsegall@google.com>
-> Cc: Zimuzo Ezeozue <zezeozue@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Metin Kaya <Metin.Kaya@arm.com>
-> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: kernel-team@android.com
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: regressions@lists.linux.dev
-> Cc: Thorsten Leemhuis <linux@leemhuis.info>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Fixes: 894d1b3db41c ("locking/mutex: Remove wakeups from under mutex::wait_lock")
-> Reported-by: Anders Roxell <anders.roxell@linaro.org>
-> Reported-by: Arnd Bergmann <arnd@arndb.de>
-> Closes: https://lore.kernel.org/lkml/6afb936f-17c7-43fa-90e0-b9e780866097@app.fastmail.com/
-> Tested-by: Anders Roxell <anders.roxell@linaro.org>
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
-> Signed-off-by: John Stultz <jstultz@google.com>
-> ---
-> Apologies for being noisy, I recognize its only been a week, but
-> I wanted to resend this now as the problematic commit just
-> landed in Linus' tree and I've not seen this get queued yet.
+On Wed, 20 Nov 2024 at 18:28, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.11.10-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Right, I picked up the old one a few days ago, but will not be sticking
-it in any git tree until -rc1.
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.11.10-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: c9b39c48bf4a40a9445a429ca741a25ba6961cca
+* git describe: v6.11.9-108-gc9b39c48bf4a
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
+.9-108-gc9b39c48bf4a
+
+## Test Regressions (compared to v6.11.7-249-g0862a6020163)
+
+## Metric Regressions (compared to v6.11.7-249-g0862a6020163)
+
+## Test Fixes (compared to v6.11.7-249-g0862a6020163)
+
+## Metric Fixes (compared to v6.11.7-249-g0862a6020163)
+
+## Test result summary
+total: 154549, pass: 128415, fail: 1847, skip: 24287, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 130 total, 128 passed, 2 failed
+* arm64: 42 total, 42 passed, 0 failed
+* i386: 18 total, 16 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 32 total, 30 passed, 1 failed, 1 skipped
+* riscv: 16 total, 15 passed, 1 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 34 total, 34 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs[
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tr[
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
