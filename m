@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-417581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9535B9D562B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:29:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEB049D562D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC0EB21B40
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:29:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D4F5B2271C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B97B1DE3D2;
-	Thu, 21 Nov 2024 23:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E981DE4DB;
+	Thu, 21 Nov 2024 23:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/MUxuwZ"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZGXMj+SI"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BFC1DE3AB;
-	Thu, 21 Nov 2024 23:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D221DE3D2;
+	Thu, 21 Nov 2024 23:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231770; cv=none; b=t8U6pE0NDPC18F3KnnuMeo1wVWvMDZjM9ZmwIMgUFKM88ZF81zUQC7lQoc8HbIAOhWYM34P6eJhH8EthU4bf4tRdGoRGJtC/E0xQ3/acGs/pnRk0X5XZLAaV+v6Yb6F7mVMdAAiFPQ4Vz6LKCLmZJFeRf1txYPDtGEAaHrQHV+E=
+	t=1732231807; cv=none; b=pcbS4IDMPw+seCeOTIUxWoeR1BOgbZF8aKIQ/fNdWB7BzlyCorNpORRuqj2aY7pY/LKbjwYrW3XdRLZvrasFV1MdDn77fmA07/8Lo+fN+18QXP4t1bJ8NAlKa0C5/rI+UIiy5Kiet+uvhT/Nlmc4ad67xjyOnGpv7MSJ6d85DQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231770; c=relaxed/simple;
-	bh=3agi3g463cUMfLUPzQ1P7IltDVf69J4wx8NL57FN8Y8=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=o0NQibaU9DPpLXenXxL/nzD6nge19U3E8VifZyo+XyoE5etZ+7lQmoM6FY2dr22tW6kdQKHnJkTybaMDe0ox61YU0W3i6SUVPyE3oFvDxE2NorYNAkvTGYsGfJzeT+KBUQGFfmObr0PoLutGbpzyEJW4+xAPnJ/nk5TJpi9CPuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/MUxuwZ; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1732231807; c=relaxed/simple;
+	bh=PmJ6lkn58ZxljyegMVGGcxmPXHfrDsgippaoYUGBR7k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W3jxks1fYOBegFVXOqhqPoQ7CWWeNpPd5hJRq+/MmvdAaBZ92gO6a+8Pyif9r/cC4OGgr8gpKYMT9oZP4H8FRgp4K+2b/PFzRLOvoXq9mj17p2hchHg8WECwaQ65om3HVQx2STsxo7dY6tC89JomuqiZRPKLgqiXLXUuEkgNnbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZGXMj+SI; arc=none smtp.client-ip=209.85.210.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e681bc315so1078041b3a.0;
-        Thu, 21 Nov 2024 15:29:27 -0800 (PST)
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-71a6b13bbceso679163a34.1;
+        Thu, 21 Nov 2024 15:30:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732231767; x=1732836567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/uvUYPAt+7GuR03C0B8LYpvwYn6Rpq5Y+1RIDzkqP44=;
-        b=K/MUxuwZ3tHC9LG7eRFmE77UM/3Lyj3XmaFcQHACx/evgAGtEoe/AbkUO+B0MRkEvZ
-         Q7QhSzudxI5lesBkoydvRLSoaID8jMCjXF7HbQTjZFBcK8+LNeUTO9wG8S28wMwheo9v
-         alFzsk38J2vbstf3DOrnG6KeNXXZa7psHX8PKvlnwMxLwyNNzVtO+JW5ewzXbzZYZ0jn
-         vv9QOgobzOjDWvUxJAEPBBN7JYXOLu4pY5/90pKCuvYewzv1fHdtx+N7f6UcSlThmInF
-         +Z1J0SjroBvOo2qcHklXJpgbTIZWcNweCgGqhiXPx1LlyZF2MCRByLE4yE7K9gYpIEUe
-         dhOQ==
+        d=gmail.com; s=20230601; t=1732231804; x=1732836604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=owV7zU087L6xjLTYOiWTs2oqbkasPds8d3oh4BtDm/Y=;
+        b=ZGXMj+SIdC9qq7S5i1AoOy3vce22WBN6BrlfdBQp1Zu472Jv14CZ6c43SBkidOmxqQ
+         wyeFjEK8CGtOcGIm+IdpRmI56kVymw/BDcJzM6WPzle4JXLiUorSdKzDr9910PcWG8VF
+         T/R5BBU8pQmKQvSzcsJwscS1woOhxnV1qwNLGDhYps94PjT7NnjMQxKaH5X9YF6fpmmP
+         0B+at3skNdNtyzkS0TH91aKpof4kzBjpJc4H92BpCPNF9geShP6sN5I9vcpcK/9bztzi
+         4r+V86imeEbfA7e6LWehx8QX4lNu4inPaAVF6lR4q7BVkK918zN1ZOtfsIZxRYBr4364
+         JllA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732231767; x=1732836567;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/uvUYPAt+7GuR03C0B8LYpvwYn6Rpq5Y+1RIDzkqP44=;
-        b=SiUIVD4lG37sfg7fd4vJovyKhsVWZ/24Y1nQ6iPiwyDJRCCS64vTHnYiqDOVzokxj/
-         IvjuiCO58xm9wVuy34W8m/sKa87tIKPf/bOVjl1LxNfKvEm4EZu9Bz/BR3zuv/B8oURF
-         y/jHOLNsmENYll574cow0BijmMpFkZFwfbXsWLOSl5xkljc1B1tSd8ZS3wb7P+tUdwoM
-         UM0F+id8Wymucp1JGP2ScTcEK+GkXe/u2Hh7cM79+3ugtfLHC6gitHMfgMIHKCx8Kash
-         5/AzmvxBtNrVCAnavyp+1l7SQZJVQllEhs+8s/XbwOHIJEgufzmV5gFZO5RkIaEI0cgk
-         7O+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtHyS3+NnQZ4YBOxqmlJigocyriUqhPPBX9oENXlO73BE91pOEKH3/ukFzaqBr/Tc7hCYNBDBqlNHJGhzJ@vger.kernel.org, AJvYcCXX1OcwQLj0HSTQqFjV9jLuK+d1Oqi9s1yVeMPyvsIJ9wx0XFZ+rok+KxKW37LRbU78o3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2hbGOvmKy02tKBzsSKggMEcYSVswJFTFasqBl+wGrCV8j93+b
-	mcPAW2tk8imRI3K4Yu5h+6FpIqG8h8PERrji2FN/W6tqiSdXJM6j
-X-Gm-Gg: ASbGnctGO4WW7hz3dYgjYbGg0p3u6u6TKPqK/hDtnYmcWgd1FhAKZK8vKK26R5VHqjL
-	HOSbZD5ucEAoWGQvdFWUc99Ensf4ZjyjyASPseq+4OSWBnixKb0GhJOdmQrkpWkSNnshqH25JOE
-	HV3wbZZLb8oZxINyA3B9Wikc0v718wZmIfEvO8gQ4DJQfMRb81Ksf2UZOw5z3c6ktEw0M/JKfZU
-	ihU1ZyKzRLuHBAl0ARd//7y59EcQYtWgMzhFc62buRSJKlwe5U=
-X-Google-Smtp-Source: AGHT+IFwRZR66UGKDfsRQTBL5+hGumVNJ7KxGH/k9/6jYpZRGJi6GXSmOSC6F4rG2rJoOhyuTRjP8A==
-X-Received: by 2002:a05:6a00:181c:b0:724:d06a:e0b7 with SMTP id d2e1a72fcca58-724de571aacmr2027085b3a.3.1732231766981;
-        Thu, 21 Nov 2024 15:29:26 -0800 (PST)
-Received: from localhost ([98.97.39.253])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de454bc4sm331221b3a.5.2024.11.21.15.29.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 15:29:26 -0800 (PST)
-Date: Thu, 21 Nov 2024 15:29:25 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Quentin Monnet <qmo@kernel.org>, 
- Amir Mohammadi <amirmohammadi1999.am@gmail.com>, 
- ast@kernel.org, 
- daniel@iogearbox.net, 
- andrii@kernel.org, 
- martin.lau@linux.dev, 
- eddyz87@gmail.com, 
- song@kernel.org, 
- yonghong.song@linux.dev, 
- john.fastabend@gmail.com, 
- kpsingh@kernel.org, 
- sdf@fomichev.me, 
- haoluo@google.com, 
- jolsa@kernel.org, 
- bpf@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
-Message-ID: <673fc25593a24_111820886@john.notmuch>
-In-Reply-To: <3ec0fb06-79a4-403c-8ff8-84f7477ddf1f@kernel.org>
-References: <47225498-12ab-4e69-ac50-2aab9dbe62c0@kernel.org>
- <20241121083413.7214-1-amiremohamadi@yahoo.com>
- <3ec0fb06-79a4-403c-8ff8-84f7477ddf1f@kernel.org>
-Subject: Re: [PATCH v3] bpftool: fix potential NULL pointer dereferencing in
- prog_dump()
+        d=1e100.net; s=20230601; t=1732231804; x=1732836604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=owV7zU087L6xjLTYOiWTs2oqbkasPds8d3oh4BtDm/Y=;
+        b=t1QYNoMr4V21tnWwbxc/Wi/1ut2TtOsGHwLCylp1P4bEGdo4qxYfnBmWqJW7nJ9B2w
+         Wbmn0Ho6if6eRPCn7M8BWiUBiwpU/9bXMxJPlW8Ajqg5/l47T2jSSIchlE7Hyg4AIKK3
+         sgjmtaUhsG9jaWmIF6tzEiefW6TuwkloW9JenW1Okj4oIWATtbau2HeupoDBrx3+ovhX
+         1aAzLsDeodVQTX2IeOIucLaP6QdMimBVNGSVJWkEO6IThkg0Iz/MpTfjfPKShJEY4D2N
+         RfGmw49Pub08t9ffU4ydfozDTjjUGLaKzVdM6l78UjqHYjkyITmTSXXeqB5CmCHvUHCY
+         KL3A==
+X-Forwarded-Encrypted: i=1; AJvYcCW73gilPIbEzh9aUeocod75pp2zkvmM427Y4R7wps3xL+CIY6dNYV3OFmpEIwXtek5WZ6DhOIEcp1GbEGw=@vger.kernel.org, AJvYcCWAXdqfa5no7VGNRtZyJGvFqzR90AsUTRSP24/6TogvzdehTFXaS8MZ0LxQGlIsXyKiieNpcdKsSWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4vNPt+U5fHDV5CIlf59o5f7D07Dh/Kq5y5dsIs/lOnvpmEQ3M
+	3cKDJsyLbOFAuFBiM7yMn7ejuwRUsGAwzXTqXRdLifOUDCdJJ9cP
+X-Gm-Gg: ASbGnculsPduiDl7yw8UnF1Zg0tzxpiughYgSnO06whCxJyzN+DuRM3npfQw3s9mpSL
+	oj8MslE7tFptWjHMLQzyHsFPUg2A6VlX51JYje6LaUSyRWeyNafAwXVe/GYMcNXIvTQvJMMw0IL
+	v5aYj90bFcIHL5ADg6E7dnwMI5Pxsd1fMks3sn12m/hJR/Cm0l/SvHTVgjc2K/i/8Hh7kIt9ORU
+	gMrzEsuJZJbnhmW9Z8/ggniSbwMNi/LRVO7KigcGeFB6m68QJjSOQ1LcvxeIeHxr+87yoS3fTe7
+	H08MCqceHKHLlY0=
+X-Google-Smtp-Source: AGHT+IEnnsRZ0NHjbTx3fdggf1Enpi2OR06QodDPxiOAf44oUcTuRYP905po760JgbDKEKa1p+KlTQ==
+X-Received: by 2002:a9d:7306:0:b0:718:615:462d with SMTP id 46e09a7af769-71c04b9a0e6mr585586a34.13.1732231804217;
+        Thu, 21 Nov 2024 15:30:04 -0800 (PST)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:8925:1c80:f24e:ec0c])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71c03793533sm174284a34.37.2024.11.21.15.30.01
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 21 Nov 2024 15:30:03 -0800 (PST)
+From: anish kumar <yesanishhere@gmail.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: [PATCH] ASoC: doc: dapm: Add location information for dapm-graph tool
+Date: Thu, 21 Nov 2024 15:29:58 -0800
+Message-Id: <20241121232958.46179-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Quentin Monnet wrote:
-> 2024-11-21 12:04 UTC+0330 ~ Amir Mohammadi <amirmohammadi1999.am@gmail.com>
-> > A NULL pointer dereference could occur if ksyms
-> > is not properly checked before usage in the prog_dump() function.
-> > 
-> > Fixes: b053b439b72a ("bpf: libbpf: bpftool: Print bpf_line_info during prog dump")
-> > Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
-> 
-> Reviewed-by: Quentin Monnet <qmo@kernel.org>
-> 
-> Thanks!
+To help developers debug DAPM issues and visualize widget connectivity,
+the dapm-graph tool provides a graphical representation of how widgets
+and routes are connected. This commit adds the location information for
+the tool to the documentation, making it easier for users to find and
+use it for troubleshooting DAPM-related problems.
 
-Acked-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: anish kumar <yesanishhere@gmail.com>
+---
+This patch was generated as a result of recent problem I was
+debugging with dapm widgets, where I was looking for a way
+to visualize as was shown in the documentation, I had to
+do a lot of google searches to figure out this tool. So,
+just adding the information here so that future developers
+doesn't need to look around.
+
+ Documentation/sound/soc/dapm.rst | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/sound/soc/dapm.rst b/Documentation/sound/soc/dapm.rst
+index 14c4dc026e6b..73a42d5a9f30 100644
+--- a/Documentation/sound/soc/dapm.rst
++++ b/Documentation/sound/soc/dapm.rst
+@@ -35,6 +35,9 @@ The graph for the STM32MP1-DK1 sound card is shown in picture:
+     :alt:   Example DAPM graph
+     :align: center
+ 
++You can also generate compatible graph for your sound card using
++`tools/sound/dapm-graph` utility.
++
+ DAPM power domains
+ ==================
+ 
+-- 
+2.39.5 (Apple Git-154)
+
 
