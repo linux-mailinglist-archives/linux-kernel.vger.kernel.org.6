@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-416558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33589D46D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B11129D46DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27231B23D21
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:36:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316CCB24255
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D003142E6F;
-	Thu, 21 Nov 2024 04:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD55E1C6F54;
+	Thu, 21 Nov 2024 04:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQ59fLjx"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRBtq78u"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C4F230992;
-	Thu, 21 Nov 2024 04:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963741F956;
+	Thu, 21 Nov 2024 04:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732163786; cv=none; b=cbeSHdFyhEKIgM9GzJCXQtoo6OnvgMHfyGWI+zEu74glk7dexOYzPnl4RpAtNktjmIbH1Uoisxasydn85KVfWXwM90UlpPiLcqK7ohBGLmXe4yKuBBNjPvcFDOAPEz/rNltD+w3QW/0WcMXoU6qmB5eBeHjPFs27iR7HPy5WurM=
+	t=1732163789; cv=none; b=IWrQn0J8lmQ0B+/Groj2G393m7+BMtLhSmUYG4ySziVoTpzQdxXmnVgyxbrfNCKNC/ZKG9skrcEjAvl4/w2JvaS7l/K9L/6/PzO94woM6HKyeMQlA/MWLGc5MHjePQTsdka7Uy+38SJJorp6JwOxGHidIlofa4EKaR6TKnFRvs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732163786; c=relaxed/simple;
-	bh=381WngC8iKFV1PSpDa07H1nZ9xgbAG9Xckkdyqb9St8=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nAzdVP2oRic4TLP6oqi1jX6eIBkD4imBEw6cJ7on+99tKagD3qtIDf7fOmYU6GiSAj83A4E6cq9dfwt6rYfQTqmwBrtXyCTWkTJpOTtFVn8mPnkt4J23kWC8hNCRFl8I3kyPmL6kB3c9Z4Pu2glm5Z8yfEw2EPquEBUmGULk65c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQ59fLjx; arc=none smtp.client-ip=209.85.219.176
+	s=arc-20240116; t=1732163789; c=relaxed/simple;
+	bh=FgpAIoX+4e+QQroE4QsDxMK/L1w728/CM4HFCE+TVtE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=d+5bRoT4rSMr6+wFhRcacOpRkvVpZIKJtRvKtDUWOGcMN7ctEJ2GI57lY2xM/rYOJVUr+V5PaIutL0R8McPDOwYffS2VsE9vlBX025vVmcoiN3tQsgbSZQFygAqgxpLGraDMoe6WI96sNlSJ5SSlt0+pFN0Sr2vaPEegfh1lx5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRBtq78u; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e383bbcef9dso428025276.3;
-        Wed, 20 Nov 2024 20:36:24 -0800 (PST)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e387e50d98eso380621276.2;
+        Wed, 20 Nov 2024 20:36:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732163784; x=1732768584; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gq+ad7sZfGrLxQrmLaPQvEe+2stpRD0g+Leamoq1YOQ=;
-        b=BQ59fLjx6AKHkyB2/OaaLDKvXlrKBHnBZ3P0qA6FNalvy5DK0mJ/5jeYVb1At+TKLO
-         mxdwwJnZmsHlSDOe1YDrPkCZ+wIxnnBosYt++8WBooFlUdZlUJEKG7zeIxDVBPwSV4W+
-         j7ywwqCcaBprBLAwgnqAokdWE/sam6h/zK7cgpl7nJjThsNGKMTffx5xcxPjWbbPTzVj
-         EIpPfbteCmnRNLajigaGEBCCk8bhJW/SDis8HROn4rT77+DxpqBgwlPzQ1e579kfYRGT
-         mNj9tezZ5Ijqg2LHtpTTDvDsHxkQbpI4Fl/hqZw/1Na1CwHbAspbegOetUM6Sw1Japm/
-         ilDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732163784; x=1732768584;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1732163786; x=1732768586; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gq+ad7sZfGrLxQrmLaPQvEe+2stpRD0g+Leamoq1YOQ=;
-        b=D1PlSUP6LwnU/EKb8LhjAFhh18Xw4EVIiEK1Sds4fnvZN2azLoN61WrseQj2RlwFhG
-         AQBvzI6yAp+DxcoP9Il4QZGmJZZ40tcM+MKTXvEWov+OAvbLWUNhdq3H8lpH9Lij0JSC
-         OAjFpZ7cj6Ape+hibX/Bzay7x+S4yGqyzQu3UQyQY7/qfQiJN3WEgsiurWPIjI2Ci77v
-         j9OoQaNIuZcCpCipwchFa7MvvH2UwO+7mC8t8cIeWS7DTOvT2edJH7dUPUy307wKS+xn
-         vLDDBCOslYUl5DAFHgZuejj/3XT3vw/FUVxOVg8g7vYYFIvVQI41IS5gUQAjvqRLuqFY
-         Ft0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+CR1cyuiHpD4Gg2ENdZM+noXGs1kP4LFsY6wRnMvWY7IGvc3ruIcLu1p/P8dGd+TrPf24h2j/lnNRa7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUqPDqLw237bjkg4UV5UHPTwNqaZcj8Jjo+p7byURM7HXUnbgr
-	71Iy2fcq/jsbxaAX3EOupqRliWUtySgk6vcnVhU7J3t1ijueFlHQ
-X-Gm-Gg: ASbGncvWgEF4v43fd4ac1GO9wjciRpTzFoqFzFGmWXGLKkcFFVFwezxbZQK0qiYny1m
-	IcEs9jIa+xDb1jWgapZa3csN2BerwIn0TwIQHauLBXqQQkeqrTsyuTkMR38SKeD8r3rCSSRRxv9
-	iP96RSohQu6kZmACatEH3fcG7yTnnF+hSLd0m9I7n982Wup4RWVU06PHlu8fgcL+ldEkSgtfvsV
-	Tjjdl9wF4cRgs+PyK+SYCsM4hmth0z6XXjEUQ1sSaWmjFyIbJLJUpf0E74tm6jWUAPFxiKY759a
-	TiBBZj12+FGAjJMcX/vd7F94vMw=
-X-Google-Smtp-Source: AGHT+IG6v9ry8rNPMTv18xrWoIOcEji23ZUnLH/q33uEBsqANBSy4agWkDZk0KmSDWfSx0CnygepHw==
-X-Received: by 2002:a05:6902:18c2:b0:e30:e1f3:2a9c with SMTP id 3f1490d57ef6-e38cb3cfc5fmr6450392276.0.1732163784062;
-        Wed, 20 Nov 2024 20:36:24 -0800 (PST)
+        bh=nuyF7+8Fz7Mpttrs+fI8NL75TsOEWtX+J92XFGbgaKU=;
+        b=PRBtq78uCNMP51RqrJDOGkYqpuzt+c2qsBQTG/dU0SM+HSQwCHHyoPkw1DM7zbefrd
+         mBEd6nH8DeXy0ZuC2Qeq6F+IWDz8e+MXWlCFis0ajnUgcrYA8h4Gb5D83zm/sChTOHfT
+         0sHdxn/cMWxkp5zHlCtj/3VFa2TIu/2FfDseZ7T0oHiyuqwcoKKvF1GvYuFQL2iryVh5
+         pC7y4dTwq205r2s6A08zFDSQdW0Oh+uv7Si2PDsAA+lh0HMZH0GxuHRsoVek9bcmrBKd
+         WQALtHXs4oB62+MF+UqfiXhEZ+BakaVO6Xdv9gt1v/Jh2I/Se0MgYb8VAnDTRgsplP3l
+         0yeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732163786; x=1732768586;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nuyF7+8Fz7Mpttrs+fI8NL75TsOEWtX+J92XFGbgaKU=;
+        b=w3wX1FCKnAsEgNNLD+quCzCGkRRDpViD90W/dlSDl1G8H+jnA/DjW8uqHM04bUeuVJ
+         5ylHl4qNPMW1eWncRnrc+5e5iEAG4+6gWzqYHlqvVd0w/gAcP059MV7F4Qna7mtA59lX
+         tP1nIyAXkjSkGUN4C4VkwOlVR5SdhljDwLojz7BHKdLlbYvCDxATWp5GOKRss8qfKoh9
+         dc6ok8y5WnxFR+cqYqe0qfe/qOPEkTvjE1k++EL+FpxUwlwfGQxaox0eg+o/w72+L1cw
+         8RnNj2C2nVMKu/GvcWvkuY/LxOvgI/FPTlyIcrAPggUlWkn2TNcXWlJKlggikTN6JViB
+         71iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXB3rNjdj8o63gCpzYda0sQUaonSJhoPF7DF+X70F3z3ffC3n3ynDw56b5+9j1cTeUAvd9/BPqGkG2FMG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXrYFdVOdMXEMOykt24rjMDc7JfJjtoj4cpb6mhgpIhjSQ37g9
+	2Xq0WeRi8rUOrLTkKc8MGCkiXReSeVfsSjN3wY5ETABwF2EZ6MX6
+X-Gm-Gg: ASbGncvpVDMVqngPjr+WeesACsF6U8kj2zmKO0My4rXm4m6m26g1eNfpxCevrSqXtUQ
+	+VUD8oOb0zMLpTRxhl1+rGVdFzgL0sEXIy9n/7A2n2UXzXPjnDK1TjMbRzHflgeVv5na5V8jg+8
+	hSeDkrg1/iiIo9+kYEAjbD6d/5zhntTmNv4b11ctjT1aj6S59czZpDqReiA7QcElisVPwz3Cq4q
+	67yx3uzyTkB99ghlsejrDRQatjMAjwxtJMk6dWzH1pcMZht+R7328AxwMYoG80Vd+E6T7RfHE2a
+	rAvK5P3a4VJ3KWn/ZPHp5GVzdG0=
+X-Google-Smtp-Source: AGHT+IF30ME5s1gaJATBRjBcX8Rto6d8Elgy0z54nRN46cpfTIYfKGmrsKdWfd4s/uRCQcRBSZkQDA==
+X-Received: by 2002:a05:6902:2742:b0:e30:99c0:af7d with SMTP id 3f1490d57ef6-e38cb60dd1fmr4909115276.52.1732163786614;
+        Wed, 20 Nov 2024 20:36:26 -0800 (PST)
 Received: from localhost.localdomain (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbb64e11fcsm402013a12.15.2024.11.20.20.36.21
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbb64e11fcsm402013a12.15.2024.11.20.20.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 20:36:23 -0800 (PST)
+        Wed, 20 Nov 2024 20:36:26 -0800 (PST)
 From: Potin Lai <potin.lai.pt@gmail.com>
-Subject: [PATCH 0/2] ARM: dts: aspeed: catalina: revise catalina dts file
-Date: Thu, 21 Nov 2024 12:34:03 +0800
-Message-Id: <20241121-catalina-dts-20241120-v1-0-e4212502624b@gmail.com>
+Date: Thu, 21 Nov 2024 12:34:04 +0800
+Subject: [PATCH 1/2] ARM: dts: aspeed: catalina: revise ltc4287
+ shunt-resistor value
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,9 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADu4PmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyMD3eTEksSczLxE3ZSSYl24aKqxiWGSpYG5oYVJqhJQb0FRalpmBdj
- c6NjaWgB6tcObZwAAAA==
+Message-Id: <20241121-catalina-dts-20241120-v1-1-e4212502624b@gmail.com>
+References: <20241121-catalina-dts-20241120-v1-0-e4212502624b@gmail.com>
+In-Reply-To: <20241121-catalina-dts-20241120-v1-0-e4212502624b@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
  Andrew Jeffery <andrew@codeconstruct.com.au>, 
@@ -93,32 +95,42 @@ Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
  Potin Lai <potin.lai.pt@gmail.com>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732163781; l=647;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732163781; l=968;
  i=potin.lai.pt@gmail.com; s=20240724; h=from:subject:message-id;
- bh=381WngC8iKFV1PSpDa07H1nZ9xgbAG9Xckkdyqb9St8=;
- b=h1qEWQAugQzZbGZaOABW6eYNn/tU2euJILA3NbFag8tPDo0xTstUA80jjiwz3tvv9IZAxBccc
- fZl41CP7LWnDOZrzSz1yCjzHIZR9KIn9VwTnPzNBZU2Lrk9f8nXcu9h
+ bh=FgpAIoX+4e+QQroE4QsDxMK/L1w728/CM4HFCE+TVtE=;
+ b=BICNuLr+vifOMwP7TqOnU1nthYmDGgU8Prg5w33jLmWC6dvW4VwWc/9Zu3wGhVdjBIjx0EDd5
+ qUdPwWFlLp7CjHJHpQKpOCBj3RbEa9Xfty41tXlgOVXDhtTrMhVEUOJ
 X-Developer-Key: i=potin.lai.pt@gmail.com; a=ed25519;
  pk=6Z4H4V4fJwLteH/WzIXSsx6TkuY5FOcBBP+4OflJ5gM=
 
-Add following patches to fix issues.
-- revise ltc4287 shunt-resistor value 
-- remove interrupt of GPIOB4 form all IOEXP
+Fix wrong shunt-resistor settings of two ltc4287 nodes.
 
 Signed-off-by: Potin Lai <potin.lai.pt@gmail.com>
 ---
-Potin Lai (2):
-      ARM: dts: aspeed: catalina: revise ltc4287 shunt-resistor value
-      ARM: dts: aspeed: catalina: remove interrupt of GPIOB4 form all IOEXP
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241120-catalina-dts-20241120-e341b907184e
+diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
+index 82835e96317d..417c0d12635c 100644
+--- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
++++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-catalina.dts
+@@ -512,12 +512,12 @@ i2c1mux0ch4: i2c@4 {
+ 			power-monitor@42 {
+ 				compatible = "lltc,ltc4287";
+ 				reg = <0x42>;
+-				shunt-resistor-micro-ohms = <200>;
++				shunt-resistor-micro-ohms = <100>;
+ 			};
+ 			power-monitor@43 {
+ 				compatible = "lltc,ltc4287";
+ 				reg = <0x43>;
+-				shunt-resistor-micro-ohms = <200>;
++				shunt-resistor-micro-ohms = <100>;
+ 			};
+ 		};
+ 		i2c1mux0ch5: i2c@5 {
 
-Best regards,
 -- 
-Potin Lai <potin.lai.pt@gmail.com>
+2.31.1
 
 
