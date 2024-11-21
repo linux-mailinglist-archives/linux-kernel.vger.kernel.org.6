@@ -1,236 +1,205 @@
-Return-Path: <linux-kernel+bounces-416918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84079D4C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFB19D4C72
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69C13281A84
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C521728306D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275B61D47BC;
-	Thu, 21 Nov 2024 11:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2311D61B9;
+	Thu, 21 Nov 2024 11:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ERClybw8"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCOteERi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A0E1D432A
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE89E1D2B13;
+	Thu, 21 Nov 2024 11:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190208; cv=none; b=dtYwTF9RtzQhiaMFc/tIn5CifiEVgQr0d/gp93wCUX63F/2fyePKQIsC0i/PXI+g4T24pC1KGrS9mnPNMvKI353UV3YUnzWU9Pe9dwq4FtGCsT0xGIycC1dj95ZM7Imv5Ql5Z2cPDNhoK+VlU5vLaQ+5ER1KMCGLTFXah3uvYdk=
+	t=1732190382; cv=none; b=dCtaEe0egEXsLy7r11A/RXZPTWb8DOYKjFVH2t1rViaWUFQR4s4Raj+goSMOc1Cd6/MmCi8v7Vow9n0PMHrhxNmulAFThN6/J3ZiTXgSHIIqZj8+vOU6+IrmLNynMnsDKc92lCKmDv+G9Z1OAu2hN1B2kUv0UhWtJydP6FZvUNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190208; c=relaxed/simple;
-	bh=VkGV7Zt+rEd3MMDFMNpRohwhdhdrUG06HHcUUpm+I30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i09xyvA1Y53rYSbB9ZZQDWK9tKXO8ub6EwJluv55lOOAdrhzVkoiL0YUhMs7NJ3oXfupOv0lPJqoROWwQVQ+MHy37qhjhQMb3N3GqeQbNIxNI/MQ+bkKAR7SO2vL4IplQpKCdxNicWoPs9J1ZEdP3AkQQgFbNXA3axYLVLp/e28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ERClybw8; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-856e7566b2cso413472241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:56:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732190205; x=1732795005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C6Gdo3Vzol5nCNRn6dlVpR9KZyNtJnDJ8NArSZRSKrA=;
-        b=ERClybw8FlIG83IVV9As7lnxNaBMT9NCTA6g/339dAYqA0PzhFKvJS2B2+LJOkCYMu
-         mmFVRgJxOg5A1gHR1aUe0c5PpRzXay5PYMZn2yRlgnWjFGtkrzxUpPZEWg1YKD31Bn2l
-         UuvBEVp04bKRCyzWMbzlrSeYnpSNP/XkcCUzV6Un7Y0afXgA9N/AA+0ATDHjFTCM/UUv
-         Ad9TlhogXRSfBooTUhmtM7PHVuAe94Agt+1MczjeJdL/wBm8CATGKetOWgohhqujpjSn
-         yDNE6qTFVYjfotR8trubusJcjlj+0mNnmZj6kUhpchxdhUK/XERn4e2AkFtVfUzgoDem
-         pJ5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732190205; x=1732795005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C6Gdo3Vzol5nCNRn6dlVpR9KZyNtJnDJ8NArSZRSKrA=;
-        b=MSBGWWxUJnLXBtWSSkjCZQfwAfVhGRZqTV0yhi6xcDZLdNhdV62ztVHr2bT0kkj4wa
-         OZubcx/lDtC8XcWLbQ4HqilxvSujAheTGU6eWI+PCE70KB/pU0YgNbXr6V1l9xbZB04C
-         g7iaR5Q2m1cA8tnuXWhb8iiaBHK/KiFSulPcFzDRJYLe0JgUW07CblJWQlomfli6zZnk
-         5sfn01RUr5yitk6FovkMZfADKV2c3Mf4JlPxWNGLEdAqHhw+ZgERb8HN3HFKYynRvf/3
-         lhRQIntqPAJHXoTGWoC3ewZmi0ALSCBvwyJU/SSKgkoSqg8q8CjavLWHyMECZiY/TEEE
-         1uog==
-X-Forwarded-Encrypted: i=1; AJvYcCWOZL6fVfArNtag36r6SulolnqZotDurTALJusg5Gf8JBt3j7voXaw1D1r7KBnhFROx2zTiUhJtF43ApEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKLJwnKl0Is05UCLzrf4+4JIDrvl2tA0P3Q9TsbD5OzoCyyYzE
-	LHqWfCgGsNrvcSsze7xyj2c2sOBSNJiAxKwpfs+J1YtNuwZDVabYRjX+8sYHBWGto+xCUIZE5i4
-	YcIe1eW1fcFgOCE98NI1CDy3/ETayLxae4H7zHg==
-X-Gm-Gg: ASbGncuDJovyGe6AzueFxn8wSHa9SfDJHLrEGR5ZFrSpDXe7X43p1s7b9v+uBg4oUIf
-	UNwJrD3PQgEO/kRrWh8yjHjbgdiYK3oOAGAuNt9ZX0jwF+KFgMSWLe8rQ3OsxZWiI
-X-Google-Smtp-Source: AGHT+IHWx4Ch0jeGqZrv+bKd260l45EkCV/RlRxsXv4mlux6sr5BbBUsPegersHTqKg2s9qYi7j388Ee9Xg4esX0wVA=
-X-Received: by 2002:a05:6102:f13:b0:4ad:4b64:530b with SMTP id
- ada2fe7eead31-4adaf4156a1mr7940550137.3.1732190205519; Thu, 21 Nov 2024
- 03:56:45 -0800 (PST)
+	s=arc-20240116; t=1732190382; c=relaxed/simple;
+	bh=5kBYzGS748MhlX9s7PCCnBu6ZsoqdrDORvYFy2xenI8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=P3vNFOZvvT/wWVswbt3cQLRrXpz5hsZA+24exAN6eM/+kiZAakqVjafw/5wVN9eNc08lcncKL6/HNCRf7I52C6Cd0paARHJsp2dJJdDoUxfD2knPQdTbeVqGsKYzBmKS91P2LC+MAvPCipUPb1pyS9dfZaSv/ZWJFjUKqgefGYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCOteERi; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732190381; x=1763726381;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=5kBYzGS748MhlX9s7PCCnBu6ZsoqdrDORvYFy2xenI8=;
+  b=GCOteERiDEB3YO/+Wsr+R+I5Zg9e0Do4WIuyTpSF8c+1BLw419/0XIp8
+   XdiyhxA6i/SbU31J16qwpNdfaloOVG48xiHGs4q+aVN9l0kr0/YhWoRh7
+   MlRs4YraELM0tOKfFdUux9QCl0TN2ptD6JvXiloL7lQfL0+BU3sKqnDVR
+   dQt1tpWqL0dyCZgBZYtMed65KWZTWbNQiyKLe5tOZ69X83NHtq4fgA+G5
+   DVeKg9taxOqmxDJpW5LThsZ/doVn+6qCxydrao1KYlfIR7rYXyeDb6Spo
+   B1Ke+pBS2ndIEIF1d3ulYLi6uhbDVnqLAmEQ7nYc31H8sSdD2cpUhtLF3
+   A==;
+X-CSE-ConnectionGUID: sEYwAnhzTsepN4XriEofkg==
+X-CSE-MsgGUID: UBFczQvRQ4CqTxKUbrpH+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="42940726"
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="42940726"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 03:59:40 -0800
+X-CSE-ConnectionGUID: rWfNUW8lTry9FZZJvCmqXg==
+X-CSE-MsgGUID: 6zeHSrmDQ0CVQUgTFQoYlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="90398304"
+Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 03:59:36 -0800
+From: Yan Zhao <yan.y.zhao@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org
+Cc: dave.hansen@linux.intel.com,
+	rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	isaku.yamahata@gmail.com,
+	nik.borisov@suse.com,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: [RFC PATCH 2/2] KVM: TDX: Kick off vCPUs when SEAMCALL is busy during TD page removal
+Date: Thu, 21 Nov 2024 19:57:03 +0800
+Message-ID: <20241121115703.26381-1-yan.y.zhao@intel.com>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20241121115139.26338-1-yan.y.zhao@intel.com>
+References: <20241121115139.26338-1-yan.y.zhao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120124100.444648273@linuxfoundation.org>
-In-Reply-To: <20241120124100.444648273@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 21 Nov 2024 17:26:34 +0530
-Message-ID: <CA+G9fYsuQ_F0H8ByKiNazExpVbPGNrZ8amUoXCjc_njwng2Vpg@mail.gmail.com>
-Subject: Re: [PATCH 6.12 0/3] 6.12.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Nov 2024 at 18:26, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.1 release.
-> There are 3 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 22 Nov 2024 12:40:53 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.1-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+For tdh_mem_range_block(), tdh_mem_track(), tdh_mem_page_remove(),
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+- Upon detection of TDX_OPERAND_BUSY, retry each SEAMCALL only once.
+- During the retry, kick off all vCPUs and prevent any vCPU from entering
+  to avoid potential contentions.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+---
+ arch/x86/include/asm/kvm_host.h |  2 ++
+ arch/x86/kvm/vmx/tdx.c          | 49 +++++++++++++++++++++++++--------
+ 2 files changed, 40 insertions(+), 11 deletions(-)
 
-## Build
-* kernel: 6.12.1-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 11741096a22cc5e52f0cd4cc91f4b83bb848ff62
-* git describe: v6.12-4-g11741096a22c
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
--4-g11741096a22c
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 521c7cf725bc..bb7592110337 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -123,6 +123,8 @@
+ #define KVM_REQ_HV_TLB_FLUSH \
+ 	KVM_ARCH_REQ_FLAGS(32, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
+ #define KVM_REQ_UPDATE_PROTECTED_GUEST_STATE	KVM_ARCH_REQ(34)
++#define KVM_REQ_NO_VCPU_ENTER_INPROGRESS \
++	KVM_ARCH_REQ_FLAGS(33, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
+ 
+ #define CR0_RESERVED_BITS                                               \
+ 	(~(unsigned long)(X86_CR0_PE | X86_CR0_MP | X86_CR0_EM | X86_CR0_TS \
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 60d9e9d050ad..ed6b41bbcec6 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -311,6 +311,20 @@ static void tdx_clear_page(unsigned long page_pa)
+ 	__mb();
+ }
+ 
++static void tdx_no_vcpus_enter_start(struct kvm *kvm)
++{
++	kvm_make_all_cpus_request(kvm, KVM_REQ_NO_VCPU_ENTER_INPROGRESS);
++}
++
++static void tdx_no_vcpus_enter_stop(struct kvm *kvm)
++{
++	struct kvm_vcpu *vcpu;
++	unsigned long i;
++
++	kvm_for_each_vcpu(i, vcpu, kvm)
++		kvm_clear_request(KVM_REQ_NO_VCPU_ENTER_INPROGRESS, vcpu);
++}
++
+ /* TDH.PHYMEM.PAGE.RECLAIM is allowed only when destroying the TD. */
+ static int __tdx_reclaim_page(hpa_t pa)
+ {
+@@ -1648,15 +1662,20 @@ static int tdx_sept_drop_private_spte(struct kvm *kvm, gfn_t gfn,
+ 	if (KVM_BUG_ON(!is_hkid_assigned(kvm_tdx), kvm))
+ 		return -EINVAL;
+ 
+-	do {
+-		/*
+-		 * When zapping private page, write lock is held. So no race
+-		 * condition with other vcpu sept operation.  Race only with
+-		 * TDH.VP.ENTER.
+-		 */
++	/*
++	 * When zapping private page, write lock is held. So no race
++	 * condition with other vcpu sept operation.  Race only with
++	 * TDH.VP.ENTER.
++	 */
++	err = tdh_mem_page_remove(kvm_tdx->tdr_pa, gpa, tdx_level, &entry,
++				  &level_state);
++	if ((err & TDX_OPERAND_BUSY)) {
++		/* After no vCPUs enter, the second retry is expected to succeed */
++		tdx_no_vcpus_enter_start(kvm);
+ 		err = tdh_mem_page_remove(kvm_tdx->tdr_pa, gpa, tdx_level, &entry,
+ 					  &level_state);
+-	} while (unlikely(err == TDX_ERROR_SEPT_BUSY));
++		tdx_no_vcpus_enter_stop(kvm);
++	}
+ 
+ 	if (unlikely(kvm_tdx->state != TD_STATE_RUNNABLE &&
+ 		     err == (TDX_EPT_WALK_FAILED | TDX_OPERAND_ID_RCX))) {
+@@ -1728,8 +1747,12 @@ static int tdx_sept_zap_private_spte(struct kvm *kvm, gfn_t gfn,
+ 	WARN_ON_ONCE(level != PG_LEVEL_4K);
+ 
+ 	err = tdh_mem_range_block(kvm_tdx->tdr_pa, gpa, tdx_level, &entry, &level_state);
+-	if (unlikely(err == TDX_ERROR_SEPT_BUSY))
+-		return -EAGAIN;
++	if (unlikely(err & TDX_OPERAND_BUSY)) {
++		/* After no vCPUs enter, the second retry is expected to succeed */
++		tdx_no_vcpus_enter_start(kvm);
++		err = tdh_mem_range_block(kvm_tdx->tdr_pa, gpa, tdx_level, &entry, &level_state);
++		tdx_no_vcpus_enter_stop(kvm);
++	}
+ 	if (KVM_BUG_ON(err, kvm)) {
+ 		pr_tdx_error_2(TDH_MEM_RANGE_BLOCK, err, entry, level_state);
+ 		return -EIO;
+@@ -1772,9 +1795,13 @@ static void tdx_track(struct kvm *kvm)
+ 
+ 	lockdep_assert_held_write(&kvm->mmu_lock);
+ 
+-	do {
++	err = tdh_mem_track(kvm_tdx->tdr_pa);
++	if ((err & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_BUSY) {
++		/* After no vCPUs enter, the second retry is expected to succeed */
++		tdx_no_vcpus_enter_start(kvm);
+ 		err = tdh_mem_track(kvm_tdx->tdr_pa);
+-	} while (unlikely((err & TDX_SEAMCALL_STATUS_MASK) == TDX_OPERAND_BUSY));
++		tdx_no_vcpus_enter_stop(kvm);
++	}
+ 
+ 	if (KVM_BUG_ON(err, kvm))
+ 		pr_tdx_error(TDH_MEM_TRACK, err);
+-- 
+2.43.2
 
-## Test Regressions (compared to v6.12)
-
-## Metric Regressions (compared to v6.12)
-
-## Test Fixes (compared to v6.12)
-
-## Metric Fixes (compared to v6.12)
-
-## Test result summary
-total: 137313, pass: 112117, fail: 2757, skip: 22439, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 138 total, 136 passed, 2 failed
-* arm64: 52 total, 52 passed, 0 failed
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 3 passed, 1 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 24 total, 23 passed, 1 failed
-* s390: 22 total, 21 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 44 total, 44 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
