@@ -1,71 +1,81 @@
-Return-Path: <linux-kernel+bounces-416523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A68949D465E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:51:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D19D4660
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57DCC28202C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:51:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFAA7B22ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916527F48C;
-	Thu, 21 Nov 2024 03:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62864757FC;
+	Thu, 21 Nov 2024 03:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GD10U7Vw"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfCX7t9W"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9C010A3E;
-	Thu, 21 Nov 2024 03:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0B910A3E;
+	Thu, 21 Nov 2024 03:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732161103; cv=none; b=Tu5nZma1gs1fLPtjbcsS+iuIBNHCUT5UQdHIazFwxBwld1Sr6tUIgfkTxFjr++AeT7cVCZpsFvHJg6kuVd8SCM6h+FEgTq64NKbIPZq/7r7oOOaLd20CYz6l8fOpLtiAPdGdwEmpzrHPjDj1aYWaylW44ElvaoON5sBwpKLUTf8=
+	t=1732161173; cv=none; b=Ul892YNJBQBDisdZ2Oo64Jl0T2zlvx0/UC5xhRino5ozPlkWs2rWnvqyMYTmxNwK9KQwJZfjbzsvU3vCtyt1R5il63cvZhHsmMqW6lQlvDXl+ripYqfZPOOdKV8AhRrNW5ojF7cL+6jatMthr/adUK/S3ZOH4guW9U9f4jaenFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732161103; c=relaxed/simple;
-	bh=d39CCmkZ8YwXDK3kbb4qQSnUGD/DQlAFdLdtmqLYmAU=;
+	s=arc-20240116; t=1732161173; c=relaxed/simple;
+	bh=q0k2YCp8z++rwKPiwDiQl0ztFqn2wSYeVugXkk8lIaU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZwVtU4BLNCCgI90xaboDzaCjRvCXJPHbdwdyFX7gFyXwVc8JMQfqW0/N3yCFkSjTFruR3ILRUH5qpTlNuXU1HxurcZojvh8ycIePN/SLTdAuPT0fX0wJCWkE42oLM7ECRYOzxNT2pc8W3whJ4HA9DbV4XKTFyXAw2rNzO5gjO2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GD10U7Vw; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=2xeimqU1HjPVrZw0PVZ08j1Bp5dOdUnKVWuE8/Ca5ro=; b=GD10U7VwxZlnhtNSLarPjIxu1t
-	sgKN8SqpaWbZ77NYf/JMIe0v+Xw7f2qAZeHMHwEn9SNc+uLJ3Z4HG/y0i29QojXPMOirErOjiFUd5
-	VP+jMskl9qMqek6GOfAblAvzVw9OKLrpdzBqLHXT5WawqAmLPEmRGtc2wkI4gcfkdA6qSd5GTYDym
-	zosyRM0PeH2fiIKx0IbAHl65oZX8f8XHy2+FmfP9Lg+sHV/GzHbUi4AcYuOUa0VtpKsxTD7laixsC
-	b5UBcoBpcv1/Gh4wPEsV7UtA7YPwJ7y6Ll1eChn0kmKbZeM7D42aotv8OBgFVhoQB04Lpxt6Cvr+s
-	Qiy4ZoIg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDyE8-00000005vhG-1rUX;
-	Thu, 21 Nov 2024 03:51:32 +0000
-Date: Thu, 21 Nov 2024 03:51:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
-	linux-mm@kvack.org, io-uring@vger.kernel.org,
-	linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-Message-ID: <Zz6uRN_-mbo1CPzo@casper.infradead.org>
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <4f70f8d3-4ba5-43dc-af1c-f8e207d27e9f@suse.cz>
- <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=smrCQkh4WllQGD2EHwGD3Kv84nRgXhhZQE/HdTDBxbylvHyhaUem+oGPne41JUEjQNXLQy3Czr4isV1/oafPkEMLj6nGahS9ZZHzD1M7M0pujDWlSasawD1EQADDXfeLDDBCRs00CrZPOxaNFa0vY4y8fne4I79yutv4lM2GfcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfCX7t9W; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7240fa50694so447177b3a.1;
+        Wed, 20 Nov 2024 19:52:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732161171; x=1732765971; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=grsgBrJIyl0KbZ1rmpSs1CTdGEN1wfeqKjgjn/6rgcQ=;
+        b=RfCX7t9WY+F6MEgEJW633YDegFKdM3Woh2vzZnt50GI/vjQCZYaUQKdLzJm5fgyDqM
+         lQ0K7brukipw/rushaSJSIngT3380tqqWUWsMs3LAbz4Z9cw2mztnsBD0ff8nk2T+Pny
+         IVLZ1Th6SYOyR7NkJ8KXgrcNZGpiInNGVKeXuzIMVkS8onqbhMXih6CQLGDlV9X78FuU
+         8GVlW8mltm2yEUZBYxsgMXHf923vSwZAElGEB2lzU25ShC2AgCFJlaZECXzJaSVThlVb
+         Iw3okc3Sz9rk7b4aqaSEzj+9SOsvluhM19jTURzNgQqBLQGOJAPzeEmfILnYdwLDRvky
+         PSkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732161171; x=1732765971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=grsgBrJIyl0KbZ1rmpSs1CTdGEN1wfeqKjgjn/6rgcQ=;
+        b=AmeOmbtnnmUxotzZAtdAimmHYirDoomC4dLhS0rilzxanstyXhCAYFRGhjxDuXwJpp
+         W3w/wgHP9mOqJdVEfRR+3Ep41jpzYswXm+EAlyG8dPEO+oLezmgkt8vz3fnVyNejmURC
+         lspe0ntvc+LvSf1Yk9zCt/9VVEwMSZaYNJeZuR1MXZEE7P0oU2qOsWD8YntJb2h1WCZi
+         fQRFHKBu+orsbdrVxE2IE3YKkyyGKHfwx4w4RINxnf6S+K2ZoBBR+Sf5tvhaSgM2HQpf
+         0nYorUlLqjLYlaWglqZvTPJDNnHBxK43smi9ehg3sbos5POJO2f8mwZ0lSJTfdu1bGwg
+         xB6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWo47KkKQmeoNK2Sgg3Bj18QbGzBf8AOib7cF5EwMF8IYUDvPI9XKLftIZgX5+UtfCO8F9w8djxMCB9zFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZfRmgjqXk9A0ci89FWFqlJUtVQHoBs/pVpuaLwRMry5cdQXjP
+	kBMoZne4ZDscfeExYrZYS6/1R9atJoUi3urVpcZHnrlTQZ8v9FoR
+X-Google-Smtp-Source: AGHT+IFrced5Qg0nl8jSAiQ16k7AMl+hWepAwFTUNNEwUhfgceMR0AU3erTiEnzCye2nMI5f7qxS9w==
+X-Received: by 2002:a05:6a20:72a2:b0:1db:d8fe:9d4 with SMTP id adf61e73a8af0-1ddaedce5a5mr7467257637.16.1732161171362;
+        Wed, 20 Nov 2024 19:52:51 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:201:4bb5:180f:3c88:3602])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724beeb8f58sm2508699b3a.36.2024.11.20.19.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 19:52:50 -0800 (PST)
+Date: Thu, 21 Nov 2024 03:52:45 +0000
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: linux-input@vger.kernel.org, Erick Archer <erick.archer@outlook.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] Input: db9 - use guard notation when acquiring mutex
+Message-ID: <Zz6ujWxy5Gyhx7oj@google.com>
+References: <20240904043104.1030257-1-dmitry.torokhov@gmail.com>
+ <20240904043104.1030257-2-dmitry.torokhov@gmail.com>
+ <47ea20d8-444b-4c72-97d3-b04a6918b121@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,31 +84,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2e704ffc-2e79-27f7-159e-8fe167d5a450@gentwo.org>
+In-Reply-To: <47ea20d8-444b-4c72-97d3-b04a6918b121@baylibre.com>
 
-On Wed, Nov 20, 2024 at 09:50:47AM -0800, Christoph Lameter (Ampere) wrote:
-> On Wed, 20 Nov 2024, Vlastimil Babka wrote:
+On Wed, Nov 20, 2024 at 12:33:36PM -0600, David Lechner wrote:
+> On 9/3/24 11:30 PM, Dmitry Torokhov wrote:
+> > Using guard notation makes the code more compact and error handling
+> > more robust by ensuring that mutexes are released in all code paths
+> > when control leaves critical section.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/input/joystick/db9.c | 30 ++++++++++++++----------------
+> >  1 file changed, 14 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/input/joystick/db9.c b/drivers/input/joystick/db9.c
+> > index 682a29c27832..7ac0cfc3e786 100644
+> > --- a/drivers/input/joystick/db9.c
+> > +++ b/drivers/input/joystick/db9.c
+> > @@ -505,24 +505,22 @@ static int db9_open(struct input_dev *dev)
+> >  {
+> >  	struct db9 *db9 = input_get_drvdata(dev);
+> >  	struct parport *port = db9->pd->port;
+> > -	int err;
+> >  
+> > -	err = mutex_lock_interruptible(&db9->mutex);
+> > -	if (err)
+> > -		return err;
+> > -
+> > -	if (!db9->used++) {
+> > -		parport_claim(db9->pd);
+> > -		parport_write_data(port, 0xff);
+> > -		if (db9_modes[db9->mode].reverse) {
+> > -			parport_data_reverse(port);
+> > -			parport_write_control(port, DB9_NORMAL);
+> > +	scoped_guard(mutex_intr, &db9->mutex) {
+> > +		if (!db9->used++) {
+> > +			parport_claim(db9->pd);
+> > +			parport_write_data(port, 0xff);
+> > +			if (db9_modes[db9->mode].reverse) {
+> > +				parport_data_reverse(port);
+> > +				parport_write_control(port, DB9_NORMAL);
+> > +			}
+> > +			mod_timer(&db9->timer, jiffies + DB9_REFRESH_TIME);
+> >  		}
+> > -		mod_timer(&db9->timer, jiffies + DB9_REFRESH_TIME);
+> > +
+> > +		return 0;
+> >  	}
+> >  
+> > -	mutex_unlock(&db9->mutex);
+> > -	return 0;
+> > +	return -EINTR;
 > 
-> > >
-> > > Fixes: aaa736b186239b7d ("io_uring: specify freeptr usage for SLAB_TYPESAFE_BY_RCU io_kiocb cache")
-> > > Fixes: d345bd2e9834e2da ("mm: add kmem_cache_create_rcu()")
-> > > Reported-by: Guenter Roeck <linux@roeck-us.net>
-> > > Closes: https://lore.kernel.org/37c588d4-2c32-4aad-a19e-642961f200d7@roeck-us.net
-> > > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> >
-> > Thanks, will add it to slab pull for 6.13.
+> This patch and any others like it are potentially introducing a bug.
 > 
-> Note that there are widespread assumptions in kernel code that the
-> alignment of scalars is the "natural alignment". Other portions of the
-> kernel may break. The compiler actually goes along with this??
+> From inspecting the source code, it looks like
+> mutex_lock_interruptible() can return -EINTR, -EALREADY, or -EDEADLK.
+> 
+> Before this patch, the return value of mutex_lock_interruptible() was
+> passed to the caller. Now, the return value is reduced to pass/fail
+> and only -EINTR is returned on failure when the reason could have
+> been something else.
 
-u64s aren't aligned on x86-32.  it's caused some problems over the
-years, but things work ok in general.
+It is documented that mutex_lock_interruptible() only returns 0 or
+-EINTR. These additional errors only returned from __mutex_lock_common()
+for WW mutexes.
 
-> How do you deal with torn reads/writes in such a scenario? Is this UP
-> only?
+If there is another form of scoped_cond_guard() that would make
+available error code returned by the constructor of the locking
+primitive we can switch to it later.
 
-there were never a lot of smp m68k.  not sure i can think of one, tbh.
-sun3 and hp300/400 seem like the obvious people who might have done an
-smp m68k, but neither did.
+Thanks.
+
+-- 
+Dmitry
 
