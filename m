@@ -1,62 +1,66 @@
-Return-Path: <linux-kernel+bounces-416537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899D29D4685
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:12:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E2249D4686
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C0C3280FD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:12:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DDA8B22F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310351AB535;
-	Thu, 21 Nov 2024 04:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0176136671;
+	Thu, 21 Nov 2024 04:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fBlF0e2s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="nPWpUXwz"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6E912B169;
-	Thu, 21 Nov 2024 04:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDEA230983
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732162352; cv=none; b=cGi7jw39YsFt63ibqMjaZbm2QaFiyem9UHDqF1QWZnjsp7JxaqAZExdTP55ukQZ4Sz/fgO2LrcmxLPu5weij0SQTuCTTK5r3Qck3lwvos2bsfIdjOFrzfmhxX3A3qB0U8uQS6E9Ka29HJOSe544BcRuqW7WUbYfyMyV01nD+VEI=
+	t=1732162420; cv=none; b=By0SfTQTuakIdfPxf1WzeX32PkfB1U5dFL0i1x/6RcJjiGgLFN+AbSu87lSPVNwFVRvaL9FY1lqy4kU8hmFWGBZ4rkBXJqPcyxUjWL4tNnmhRl7/Dfs7B5+IcObDROKSSSlNvC+M6Ei5nWcXGE7kUhDBzKu9FHm0lGUSldGwGD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732162352; c=relaxed/simple;
-	bh=tRxFYv+MD/7TYjDZas1s52wE3uAKqXw+1ECygh1LjFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q4V/v8ujcy3ppYj/k3/dpmRgK1mKa0OXP75RstE6cnedqMWeJ+UPCz6LudRYEnO1kBy4fcAPqiWBCVKKdrOKaCdiKzheZZ2TeOgaQ4rXoWrjXovIJI92ImkNpID2hnUBVNQS/OrvQPKaYR214Q0rBxM6iQNm7tlwsJRgZbED5z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fBlF0e2s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKK26EO005916;
-	Thu, 21 Nov 2024 04:12:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vz/FBwQrY132juxwXiPsTKF6DcwmRg0A7kNHvHSCnIQ=; b=fBlF0e2syz6gDrPJ
-	FaKvjsofVEc/CI8S5xuCVnv2p/lQnkOMAAl8SUMOuyNOrAb5dWksMKxSXBBo7Rll
-	9mGEtiKaeesyS5Tdrm/sq+nl6SikukE0mD/ODnCYjLcElboIwVFGEclhqTqsCQsf
-	RFm+PweMmI3Pt38PY3l4msbUCsabPihvdAjw7QDlNgqy+l4WDtZn4YMVI2g1d7En
-	h8Nmnd8tCgLrkyR33QhXgu7c6TxyR8508nRxjhugbZ9GH/+N0m+rJA2bRwHgKFfO
-	TYP+4RvAy8Ha62j2drzyYp4r0LDwbHNKKvK3RZzlF1GQ8lKk4V1OdRRfx6jQOaQ3
-	26jP9A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4317t23c6p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 04:12:25 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL4COri011429
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 04:12:24 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 20:12:19 -0800
-Message-ID: <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com>
-Date: Thu, 21 Nov 2024 12:12:16 +0800
+	s=arc-20240116; t=1732162420; c=relaxed/simple;
+	bh=rsgcDDpuonVLuevU8p+YsVl9GKVNmkAo9l7A4aM06qo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y5of5JImtjH2tx/Q94ze01nbK65SPYwfkzPyQ62dJwR4WtoDF+19gGoPl+1XIyZSh3T1F9i4XIAcv82xfheg+OMH22enzhcRKdT2gwsfTcEhzgZnOXYcEoiG8LIrtRAiOaWL3fhqnjQyNYhQ5Vzz5TMg0tZXaePDKaJaj/PBaYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=nPWpUXwz; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+	by cmsmtp with ESMTPS
+	id DmrhtwbPhrKrbDyZTtVuIl; Thu, 21 Nov 2024 04:13:36 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id DyZTtpqDlCgT6DyZTtMA8i; Thu, 21 Nov 2024 04:13:35 +0000
+X-Authority-Analysis: v=2.4 cv=XvwxOkF9 c=1 sm=1 tr=0 ts=673eb36f
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=u4wymUDdFjS2QedViv0A:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yMNNEdoktASNnB092jEUhXeJVO1jccuHG1TKJjyMy7U=; b=nPWpUXwzBZvdclOqiDyT1rwdtZ
+	uGXs0Xm5qrfEG/zwIjbI5x+xMspg5+FPtwutloYy4YPfpOR2oAXpvBxRgBtySX0gX+vYMRhZB3mfA
+	wA8TijR5TE+Q7k3CnwIxxlkjY6qQ0HukJ5hBfDQZ8XdLnlLwV+eceheEHNgB7L/hJ+g149qUkOJFa
+	ZJ5320Vreb5o++E/9tbAMLl2cB7Okye3HdrPJaNYeGYY7S1sq1DAMUSL73T0Oee0WftnFF9nucKx6
+	uWKXej6EQ6RE5yZe2FDBk26AMgQVgxpE+M3JqfCc3+/LxrzZ7vR7ozRXZO1xFcSPy7y8GKMAqmSBE
+	cFOSP00A==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:43124 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tDyZS-003Ejf-0u;
+	Wed, 20 Nov 2024 21:13:34 -0700
+Message-ID: <52d9eb66-e5c8-4d70-a0f5-58fa9cab3eb0@w6rz.net>
+Date: Wed, 20 Nov 2024 20:13:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,88 +68,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: bluetooth: Add qca6698 compatible
- string
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-3-quic_chejiang@quicinc.com>
- <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241120125629.681745345@linuxfoundation.org>
 Content-Language: en-US
-From: Cheng Jiang <quic_chejiang@quicinc.com>
-In-Reply-To: <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
-Content-Type: text/plain; charset="UTF-8"
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CyerFLAsEMZxIsTgOWsEIZSl2GfwxrX5
-X-Proofpoint-ORIG-GUID: CyerFLAsEMZxIsTgOWsEIZSl2GfwxrX5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
- mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210029
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tDyZS-003Ejf-0u
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:43124
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 35
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFs+fOoSdPO+Y9QA4Ec/5Ey/Tg2JMZj9zLrCIR2oRFgM9AmZVCnfDwntKwks+uVkF/HXMVfdBmpHFQx2/BxXt4AcoWUeHBTvWa04Nn0VHvMzs2K9xy6h
+ fduxp8qM/cUsMuIl89CMjItosl/JpkdU3TcwOV0hdG/1Fp2EFFbkBk0D46n++4UZCEwSPZqFE2zHG0YkOMB3T1fnMu/YU/YfJlc=
 
-Hi Dmitry,
+On 11/20/24 04:55, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On 11/20/2024 6:44 PM, Dmitry Baryshkov wrote:
-> On Wed, Nov 20, 2024 at 05:54:26PM +0800, Cheng Jiang wrote:
->> Add QCA6698 qcom,qca6698-bt compatible strings.
-> 
-> Why? Is it the same chip as WCN6855 or a different chip? Is it
-> completely compatible?
-> 
-They are different chips. But it's compatible with WCN6855.
->>
->> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->> ---
->>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> index 9019fe7bcdc6..527f947289af 100644
->> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->> @@ -18,6 +18,7 @@ properties:
->>      enum:
->>        - qcom,qca2066-bt
->>        - qcom,qca6174-bt
->> +      - qcom,qca6698-bt
->>        - qcom,qca9377-bt
->>        - qcom,wcn3988-bt
->>        - qcom,wcn3990-bt
->> @@ -175,6 +176,7 @@ allOf:
->>          compatible:
->>            contains:
->>              enum:
->> +              - qcom,qca6698-bt
->>                - qcom,wcn6855-bt
->>      then:
->>        required:
->> -- 
->> 2.25.1
->>
-> 
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+
+Tested-by: Ron Economos <re@w6rz.net>
 
 
