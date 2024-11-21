@@ -1,241 +1,159 @@
-Return-Path: <linux-kernel+bounces-417512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AEBD9D54FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A51F49D54FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8318B1F20614
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:46:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222CA1F238D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A58C1DC1B7;
-	Thu, 21 Nov 2024 21:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0D1146A6B;
+	Thu, 21 Nov 2024 21:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QiNv2vpk"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iKytwh5z"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928641DDA2F;
-	Thu, 21 Nov 2024 21:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086670801
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732225509; cv=none; b=hac2YJaUqrpjo86RrWVgylsmA3IOEt5R7zGiQ+beAtAKKN7Bi9u9OvovRAGbFdkxlAKlcdVNiAVpvyTA9tFZjWqrEqkmsGVtAbo5UNgcK8PHOa/VqEkRb880WoaBm4f0vVP04k3Ow2HxF/CYrpdMkwTkYU23B0hgwoDSkrJI1qA=
+	t=1732225584; cv=none; b=tlPK7Z9N+o2pnm5zsVcJ9Zgp3yvAmrZVpgb+fR75YYcqiivw5mvzCQgQykuaRjeuPwLNzs1SNnJVKS8FOtl76YJL7uVddNqfbJPexPDUUeUuNTHeVuxfmvnULalqvuG5nY3ZGKvp5zTwwl+RDrMwL4XZ9xAHegAQVLd4wJUn7hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732225509; c=relaxed/simple;
-	bh=cAPRlqfmem4ZUOZNsb73Kqr8EsdpJovMlH2T1kFWOXM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A5tWCMM596I7dyukX38WLjaesFXZ0IN910+3/wzzhS+d/UMAkzpO8gPsTdryc7EhnBR3JJnY22YP4WFbQCRaVnbTNzhVxXDe6zWcS3xR5ExmankdK7moKbYTIh/C48N4M1ydJJZDXxNplXrEvoBWH6Kmi25bc+WweK3TN1hSV5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QiNv2vpk; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3824a8a5c56so922004f8f.3;
-        Thu, 21 Nov 2024 13:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732225506; x=1732830306; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bsO5TXWUmIJB0UF9EZfURqtCuTGKyAOmc2IK79hH25k=;
-        b=QiNv2vpkZiTsbLJFeRFMavl2c19DJs1VuyqhYsyWyZIx0pFEmz/qdAaUv8014WMAc8
-         Gj1xryKtgvlylc3JG6wJYnuNAY2AGb3kjJphJhfhS24oLu+9q/oLHnsSCx8LDh29Shrp
-         gI+HTGM5JqQTbpjl69iM/LBQJySoUia9iUwMABTpwtGCcj7w0Kxq4CF/1V1s0aQOKKJI
-         owdVizS+6lLfmF47UvvDIUVC4GyM2fxelycpqYzTE3zlPcIzxnikZNR2h31d/ZhImFey
-         k18R1q0iX+6Q7b5ztLfaWpNGYjOfbymRodLRPLaViOehVgvbZO884p5Ja8togRO+wWqF
-         DzTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732225506; x=1732830306;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bsO5TXWUmIJB0UF9EZfURqtCuTGKyAOmc2IK79hH25k=;
-        b=YbwKnsbzpStvvEYLglVDhWLA+f1mSek8aOUgGBaFdRehYgBEF7MOJPk49ZjfgJpW2U
-         1d+VUCCOnIvdugInKSSouTk95hTDSgcUorkplyWEi2AGl+IpNzkgn79F4voZ4FaUF8L6
-         qP9pDdxw6/dMZhVhqocDqFE1/58hE//i6OrOPqtOzNB1NJYMTR22cB2Dd2vho4zByjAZ
-         9wBRMb30Hat0KBpoGB6Ocrb20YkR2mJYfska2b6WFh0bwDiW7ItPYDqN50Lm92zyu3fa
-         3Awh1yuQAyinWDb9F7lmXcccSkgf7XoXFErr+9jb6GC5XTGkrMRpQqCmMaAwFYN1Ia1q
-         kRTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrEh5j6x9cTJXoUqw+5GiaibDfteDy9SpsaxKeQRNYBY0qwZnf45A6QGezvQc3DiZZ+dV5esn9JBK5Nw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXrjNV9dk8/8Y4FilmNkeKF1qm9e7Bfk2FKT9hzMK4gWbahid7
-	tqkvPXL01H1GWjaUPsrNLxqBjc447w5l74dmglh9YUNX8ReJ2DS7
-X-Gm-Gg: ASbGncsvmwbDPkhDh5GaK15RSp6JrF+L5YPg7pyccHDPtfC8nqljHXvHXdE8Z5lZdJ1
-	PdRN5Jpao2J9E/cqUXVYx0ys4fiV6KTGzl9Ca8cpV+I4DTEffxCdQ03zOqrjkx9qrPMq5eIKYgc
-	ROioDuhqi3xzzEhqEA+WJ2CdOufp+TbuoKFL/txOJMEKYe3GYbPc3rQV874cLUyUP+VCySyP0JT
-	T4lpO9XfzFah8bzy4fs8b/WPAaDBm21MpPWv+CvbKyMMZ8KhQuPLZmGqkvw8PwLLbU16ls+BfO+
-	YzwzLREdEQdHLwUXNXh0RCl8AzX+Jy/fX/vMA75Uh4gbyiGv0S0+80q9zDcX7hZNxL/SbZPE
-X-Google-Smtp-Source: AGHT+IECyXWoa3vNC6aG+mGBIil4TrFWvVZHen3azU0MomrvCyNE6ChZKRoohVA5IsGJ/8moQEvjew==
-X-Received: by 2002:a5d:588f:0:b0:382:4851:46d2 with SMTP id ffacd0b85a97d-38260b45c95mr572678f8f.1.1732225505587;
-        Thu, 21 Nov 2024 13:45:05 -0800 (PST)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-7b6a-90cc-9bcd-a2c3.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:7b6a:90cc:9bcd:a2c3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fb53858sm636694f8f.62.2024.11.21.13.45.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 13:45:05 -0800 (PST)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Thu, 21 Nov 2024 22:44:56 +0100
-Subject: [PATCH 2/2] hwmon: (chipcap2) Switch to guard() for mutext
- handling
+	s=arc-20240116; t=1732225584; c=relaxed/simple;
+	bh=ucQNHCx5uhMe/Grca9b8f6ZdAnFaMY58VzKxTis/0iA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=X3FlW1NteJLUqABvU+a2WMHMce53kW3nk4vqicGdmbFs/sY19bNG9011Yz8X3VthvfRz15zjGSeaHfd42qsJXMQOvpG4KidjZlBEEwmkrdLqfD6PSEE/sUOOLsuMC4UfksLckSYWgkl+pSdf6UD2+TNO1Rk4DM2r3e/0BbcLG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iKytwh5z; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732225583; x=1763761583;
+  h=message-id:date:mime-version:from:subject:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=ucQNHCx5uhMe/Grca9b8f6ZdAnFaMY58VzKxTis/0iA=;
+  b=iKytwh5zNQe4+a076SFmozoKhHuz8LVE8OcrhksXmzc6E1asWDOYxaEF
+   ZwwhKG3jCAUBOPJzaVBKyi3YJ3clxj5FSai6g/yroFc2cVToCDIQ9rkzp
+   JGjomoXCqLmbxV8iejdNfBdZY9BVZfS+v1Hii8wqga2FfR4cO+Zanv0y6
+   MYHiv7nTwbIaocusikX5p+vU+gSTMtb+GQOalUdJVaa3I6DOKFTNFus2Z
+   IOfUFvCu1G7y2wXr0+dG7fyew0ZDaOMbvUXRHaHTK29iRWnO6vkG8Kwfg
+   VvsaDLsBL7ZfVXtd/lmkDQ2Qgk8w9y9pX7VslMFURDUY/hFoU8gsOb0oB
+   Q==;
+X-CSE-ConnectionGUID: rTikGiDQQIS6KALBmrwrzg==
+X-CSE-MsgGUID: VTYdDhSmS5ONL+92zg+APw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32514314"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="32514314"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 13:46:22 -0800
+X-CSE-ConnectionGUID: fYOo4fxmRIK4ExmiCvqffA==
+X-CSE-MsgGUID: GOoWo6KRScyI6DSdi6zdnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="127899467"
+Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.220.45]) ([10.124.220.45])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 13:46:22 -0800
+Message-ID: <49690bcc-e2ac-43f6-95da-3711801e195a@intel.com>
+Date: Thu, 21 Nov 2024 13:46:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 04/11] x86/acpi: Check MWAIT feature instead of CPUID
+ level
+To: Sean Christopherson <seanjc@google.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+ bp@alien8.de, rafael@kernel.org, lenb@kernel.org, dave.jiang@intel.com,
+ irenic.rajneesh@gmail.com, david.e.box@intel.com
+References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+ <20241120195332.929A7C44@davehans-spike.ostc.intel.com>
+ <Zz9S352550TZSKBQ@google.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Zz9S352550TZSKBQ@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-chipcap_no_iio-v1-2-6c157848a36f@gmail.com>
-References: <20241121-chipcap_no_iio-v1-0-6c157848a36f@gmail.com>
-In-Reply-To: <20241121-chipcap_no_iio-v1-0-6c157848a36f@gmail.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732225501; l=3960;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=cAPRlqfmem4ZUOZNsb73Kqr8EsdpJovMlH2T1kFWOXM=;
- b=jk/nhwFA9U5gAWsQlRrkxtnSLmtgSRavfXDCD7rTFNPFtnNfJbGbEbqg7O9x3906nlVIxjAgo
- mLeq7kDrZ4pDEaAGeRAdxrbqWp6snw3H7zeuEOGhcPy45T/MgVluUW8
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Switch to guard() for mutex handling to simplify the code, getting rid
-of the 'ret = x, break; return ret;' construct and returning the result
-of the operation instead.
+On 11/21/24 07:33, Sean Christopherson wrote:
+> On Wed, Nov 20, 2024, Dave Hansen wrote:
+>> From: Dave Hansen <dave.hansen@linux.intel.com>
+>>
+>> I think this code is possibly buggy.  The CPU could have a high
+>> c->cpuid_level and not support MWAIT at all.
+> 
+> Reading CPUID.0x5 is totally fine in that case though.  Wasteful and pointless,
+> but functionally ok.  If the CPU provides non-zero values when MWAIT is unsupported,
+> then that's a broken CPU.
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/hwmon/chipcap2.c | 63 ++++++++++++++----------------------------------
- 1 file changed, 18 insertions(+), 45 deletions(-)
+That's a good point.
 
-diff --git a/drivers/hwmon/chipcap2.c b/drivers/hwmon/chipcap2.c
-index edf454474f11..9d071f7ca9d2 100644
---- a/drivers/hwmon/chipcap2.c
-+++ b/drivers/hwmon/chipcap2.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/bitfield.h>
- #include <linux/bits.h>
-+#include <linux/cleanup.h>
- #include <linux/completion.h>
- #include <linux/delay.h>
- #include <linux/hwmon.h>
-@@ -556,55 +557,40 @@ static int cc2_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
- 		    int channel, long *val)
- {
- 	struct cc2_data *data = dev_get_drvdata(dev);
--	int ret = 0;
- 
--	mutex_lock(&data->dev_access_lock);
-+	guard(mutex)(&data->dev_access_lock);
- 
- 	switch (type) {
- 	case hwmon_temp:
--		ret = cc2_measurement(data, type, val);
--		break;
-+		return cc2_measurement(data, type, val);
- 	case hwmon_humidity:
- 		switch (attr) {
- 		case hwmon_humidity_input:
--			ret = cc2_measurement(data, type, val);
--			break;
-+			return cc2_measurement(data, type, val);
- 		case hwmon_humidity_min:
--			ret = cc2_get_reg_val(data, CC2_R_ALARM_L_ON, val);
--			break;
-+			return cc2_get_reg_val(data, CC2_R_ALARM_L_ON, val);
- 		case hwmon_humidity_min_hyst:
--			ret = cc2_get_reg_val(data, CC2_R_ALARM_L_OFF, val);
--			break;
-+			return cc2_get_reg_val(data, CC2_R_ALARM_L_OFF, val);
- 		case hwmon_humidity_max:
--			ret = cc2_get_reg_val(data, CC2_R_ALARM_H_ON, val);
--			break;
-+			return cc2_get_reg_val(data, CC2_R_ALARM_H_ON, val);
- 		case hwmon_humidity_max_hyst:
--			ret = cc2_get_reg_val(data, CC2_R_ALARM_H_OFF, val);
--			break;
-+			return cc2_get_reg_val(data, CC2_R_ALARM_H_OFF, val);
- 		case hwmon_humidity_min_alarm:
--			ret = cc2_humidity_min_alarm_status(data, val);
--			break;
-+			return cc2_humidity_min_alarm_status(data, val);
- 		case hwmon_humidity_max_alarm:
--			ret = cc2_humidity_max_alarm_status(data, val);
--			break;
-+			return cc2_humidity_max_alarm_status(data, val);
- 		default:
--			ret = -EOPNOTSUPP;
-+			return -EOPNOTSUPP;
- 		}
--		break;
- 	default:
--		ret = -EOPNOTSUPP;
-+		return -EOPNOTSUPP;
- 	}
--
--	mutex_unlock(&data->dev_access_lock);
--
--	return ret;
- }
- 
- static int cc2_write(struct device *dev, enum hwmon_sensor_types type, u32 attr,
- 		     int channel, long val)
- {
- 	struct cc2_data *data = dev_get_drvdata(dev);
--	int ret;
- 	u16 arg;
- 	u8 cmd;
- 
-@@ -614,41 +600,28 @@ static int cc2_write(struct device *dev, enum hwmon_sensor_types type, u32 attr,
- 	if (val < 0 || val > CC2_RH_MAX)
- 		return -EINVAL;
- 
--	mutex_lock(&data->dev_access_lock);
-+	guard(mutex)(&data->dev_access_lock);
- 
- 	switch (attr) {
- 	case hwmon_humidity_min:
- 		cmd = CC2_W_ALARM_L_ON;
- 		arg = cc2_rh_to_reg(val);
--		ret = cc2_write_reg(data, cmd, arg);
--		break;
--
-+		return cc2_write_reg(data, cmd, arg);
- 	case hwmon_humidity_min_hyst:
- 		cmd = CC2_W_ALARM_L_OFF;
- 		arg = cc2_rh_to_reg(val);
--		ret = cc2_write_reg(data, cmd, arg);
--		break;
--
-+		return cc2_write_reg(data, cmd, arg);
- 	case hwmon_humidity_max:
- 		cmd = CC2_W_ALARM_H_ON;
- 		arg = cc2_rh_to_reg(val);
--		ret = cc2_write_reg(data, cmd, arg);
--		break;
--
-+		return cc2_write_reg(data, cmd, arg);
- 	case hwmon_humidity_max_hyst:
- 		cmd = CC2_W_ALARM_H_OFF;
- 		arg = cc2_rh_to_reg(val);
--		ret = cc2_write_reg(data, cmd, arg);
--		break;
--
-+		return cc2_write_reg(data, cmd, arg);
- 	default:
--		ret = -EOPNOTSUPP;
--		break;
-+		return -EOPNOTSUPP;
- 	}
--
--	mutex_unlock(&data->dev_access_lock);
--
--	return ret;
- }
- 
- static int cc2_request_ready_irq(struct cc2_data *data, struct device *dev)
+I was mostly worried about consuming *bad* data from CPUID.5, but the
+leaf check takes care of that now.
 
--- 
-2.43.0
+>> diff -puN arch/x86/kernel/acpi/cstate.c~mwait-leaf-checks-3 arch/x86/kernel/acpi/cstate.c
+>> --- a/arch/x86/kernel/acpi/cstate.c~mwait-leaf-checks-3	2024-11-20 11:44:17.225650902 -0800
+>> +++ b/arch/x86/kernel/acpi/cstate.c	2024-11-20 11:44:17.225650902 -0800
+>> @@ -173,7 +173,7 @@ int acpi_processor_ffh_cstate_probe(unsi
+>>  	struct cpuinfo_x86 *c = &cpu_data(cpu);
+>>  	long retval;
+>>  
+>> -	if (!cpu_cstate_entry || c->cpuid_level < CPUID_MWAIT_LEAF)
+>> +	if (!cpu_cstate_entry || cpu_has(c, X86_FEATURE_MWAIT))
+> 
+> Someone didn't test this :-)
 
+Guilty.
+
+I'll just drop this.
 
