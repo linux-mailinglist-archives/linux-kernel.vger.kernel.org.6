@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-416784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466019D4A30
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1749D4A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E77C41F21ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A918B1F21FC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68106175562;
-	Thu, 21 Nov 2024 09:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DADF1CB526;
+	Thu, 21 Nov 2024 09:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="gMn7qclb"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="cXEp51ru"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E979514037F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4295916C6B7;
+	Thu, 21 Nov 2024 09:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732182443; cv=none; b=I9i9yNMZjFk2xROYu3irqBUmwRZ5CY4UtHeKCag2cVqGOp+yZqjnrZXSmA6PyIRIrzi4zRTbrD8Trd02lnq2iwaO6ONr4vSa1mOQBglxq3EoRdU71qgdyqHn2+N2nArOOqxX78kKjEIvkY1lN48ze0ejnmgcdsdSlGgeq7zn684=
+	t=1732182998; cv=none; b=HGLU3sfgEgN4WLHRSL91pZU52aPoY/G4blN792Y3EC3eb0hhKfxJiNXScrO5IqBfN7j7T1lXKuxnaRKhw2bZzwB0y+WanQGlGWpLDRj/VJMI/zg3IASu5RLhDKTe+EV9cMtHgAiqekJ//CzH+UtB3epUdIIvSCbJFA1SYgyl4S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732182443; c=relaxed/simple;
-	bh=Gpje52MeQkC2HWbcecyTdgd/XV/yeZ7raSsN+rV5p1M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VNhR3Dm2Qp2KPUUVQYvltDpCUnZc/UE3d3KzxeYOyggO9cYdeFcrBNlWEk0wj8sDyXo2Te16Pj3qlFFynT4tbBWDyAzYmd7bCr/d/gzoq9WVxySZ/Hj2x3QZ8f4ioD7+EEuibKMpkFiF6t2PY3oPEuSDMZglEIWsyZvoQyvTVNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=gMn7qclb; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+f/DS4eIhc6HJDHU7gW/93mS9sHoEQHIU8oWWCmNg0E=; b=gMn7qclbdFVAnDNBlsZg1SpwQ7
-	9fka/v6UnK16oqpjoopcr6QWnUO26WS2iYyjYzCeqHZNASqkztfzzLz+wxOXc4JMxfhAvnAz4gdTP
-	4+WKXe2aNEgfaaxXwe5EaAkb9AuqzdDNdV4IgPv9lo9ZV5jSZ5QYSa/CjTZbrPje5XAcfTH2I/unt
-	8Nlr8+GBB1WG7hDtYRz/nVvOQ4uWphsu817xDAmK0JbBeR2rrMzBo9x773/UiUzrsee+K9tSMULKl
-	NKORwsi2b751DJD36z6fiMXJ7G0KSBj7zKoAzRJZsGSXjN+skHxz41viDlsnoTVoYkoAb2/7XTryg
-	pjREgyTg==;
-Received: from [90.241.98.187] (helo=[192.168.0.101])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tE3mG-00ALcg-8Q; Thu, 21 Nov 2024 10:47:08 +0100
-Message-ID: <d0c0802f-6fce-4112-a228-e484cebff383@igalia.com>
-Date: Thu, 21 Nov 2024 09:47:07 +0000
+	s=arc-20240116; t=1732182998; c=relaxed/simple;
+	bh=6a1lmDXRXaByFiYEkhzgdStYxEcDxqiScLYSKWsVP60=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FNHxX/tHku+gWnPnjpJl1AMCTWKHICOKVNNEKLUD4dO9Etkvd9mUP644rNTvVgLAjehZn8OXuj4iIp0yH87A53Jk5JO8ZxaTE5QjVBbTuRbycSPMPJwxvet16u17FLcHl/06Leo1rk2/BHMDIkpAcjsgZJvBR6kcBzL9xqbakaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=cXEp51ru; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1732182470; bh=U0s3KJOlLfA2r4fDPFHTpZA+EytCFoDVxiqRkfVovus=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=cXEp51ruoUuqLv0ZG8cgYz14l94uKLBLx6Wc7UKvJcSQKdb1Yk6dFH1G773qd/p1C
+	 3mTxnv22c8wR9QkomauNXmLSxNd+pSeg9CalIicmiP/XEo998GswIifpKiACobL03U
+	 t2LbX3TZUjlvqDJZIFrMAfSu29gIO/fkCh8lR1xA=
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
+Date: Thu, 21 Nov 2024 10:47:49 +0100
+Message-ID: <6F3F4134-23FF-4230-9DC2-219FACAF546E@kloenk.dev>
+In-Reply-To: <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
+References: <20241009105759.579579-1-me@kloenk.dev>
+ <20241009105759.579579-2-me@kloenk.dev>
+ <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/etnaviv: Add fdinfo support for memory stats
-To: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: kernel-dev@igalia.com, tursulin@igalia.com,
- Christian Gmeiner <cgmeiner@igalia.com>, etnaviv@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241121092409.3859592-1-christian.gmeiner@gmail.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-In-Reply-To: <20241121092409.3859592-1-christian.gmeiner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
 
-On 21/11/2024 09:24, Christian Gmeiner wrote:
-> From: Christian Gmeiner <cgmeiner@igalia.com>
-> 
-> Use the new helper to export stats about memory usage.
-> 
-> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
-> ---
->   drivers/gpu/drm/etnaviv/etnaviv_drv.c | 12 +++++++++++-
->   drivers/gpu/drm/etnaviv/etnaviv_gem.c | 12 ++++++++++++
->   2 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index 6500f3999c5f..35f47dd6367f 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -488,7 +488,16 @@ static const struct drm_ioctl_desc etnaviv_ioctls[] = {
->   	ETNA_IOCTL(PM_QUERY_SIG, pm_query_sig, DRM_RENDER_ALLOW),
->   };
->   
-> -DEFINE_DRM_GEM_FOPS(fops);
-> +static void etnaviv_show_fdinfo(struct drm_printer *p, struct drm_file *file)
-> +{
-> +	drm_show_memory_stats(p, file);
-> +}
-> +
-> +static const struct file_operations fops = {
-> +	.owner = THIS_MODULE,
-> +	DRM_GEM_FOPS,
-> +	.show_fdinfo = drm_show_fdinfo,
-> +};
->   
->   static const struct drm_driver etnaviv_drm_driver = {
->   	.driver_features    = DRIVER_GEM | DRIVER_RENDER,
-> @@ -498,6 +507,7 @@ static const struct drm_driver etnaviv_drm_driver = {
->   #ifdef CONFIG_DEBUG_FS
->   	.debugfs_init       = etnaviv_debugfs_init,
->   #endif
-> +	.show_fdinfo        = etnaviv_show_fdinfo,
->   	.ioctls             = etnaviv_ioctls,
->   	.num_ioctls         = DRM_ETNAVIV_NUM_IOCTLS,
->   	.fops               = &fops,
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> index 5c0c9d4e3be1..e81c261b0017 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-> @@ -527,6 +527,17 @@ void etnaviv_gem_obj_add(struct drm_device *dev, struct drm_gem_object *obj)
->   	mutex_unlock(&priv->gem_lock);
->   }
->   
-> +static enum drm_gem_object_status etnaviv_gem_status(struct drm_gem_object *obj)
-> +{
-> +	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
-> +	enum drm_gem_object_status status = 0;
-> +
-> +	if (etnaviv_obj->pages)
-> +		status |= DRM_GEM_OBJECT_RESIDENT;
-> +
-> +	return status;
 
-Or just:
+On 18 Nov 2024, at 11:22, Alice Ryhl wrote:
 
-return etnaviv_obj->pages ? DRM_GEM_OBJECT_RESIDENT : 0;
+> On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Fiona Behrens <me@kloenk.dev> w=
+rote:
+>> +impl<'a, T> Led<T>
+>> +where
+>> +    T: Operations + 'a,
+>> +{
+>> +    /// Register a new LED with a predefine name.
+>> +    pub fn register_with_name(
+>> +        name: &'a CStr,
+>> +        device: Option<&'a Device>,
+>> +        config: &'a LedConfig,
+>> +        data: T,
+>> +    ) -> impl PinInit<Self, Error> + 'a {
+>> +        try_pin_init!( Self {
+>> +            led <- Opaque::try_ffi_init(move |place: *mut bindings::l=
+ed_classdev| {
+>> +            // SAFETY: `place` is a pointer to a live allocation, so =
+erasing is valid.
+>> +            unsafe { place.write_bytes(0, 1) };
+>> +
+>> +            // SAFETY: `place` is a pointer to a live allocation of `=
+bindings::led_classdev`.
+>> +            unsafe { Self::build_with_name(place, name) };
+>> +
+>> +            // SAFETY: `place` is a pointer to a live allocation of `=
+bindings::led_classdev`.
+>> +            unsafe { Self::build_config(place, config) };
+>> +
+>> +            // SAFETY: `place` is a pointer to a live allocation of `=
+bindings::led_classdev`.
+>> +            unsafe { Self::build_vtable(place) };
+>> +
+>> +        let dev =3D device.map(|dev| dev.as_raw()).unwrap_or(ptr::nul=
+l_mut());
+>> +            // SAFETY: `place` is a pointer to a live allocation of `=
+bindings::led_classdev`.
+>> +        crate::error::to_result(unsafe {
+>> +            bindings::led_classdev_register_ext(dev, place, ptr::null=
+_mut())
+>> +        })
+>> +            }),
+>> +            data: data,
+>> +        })
+>> +    }
+>> +
+>> +    /// Add nameto the led_classdev.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `ptr` has to be valid.
+>> +    unsafe fn build_with_name(ptr: *mut bindings::led_classdev, name:=
+ &'a CStr) {
+>> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
+ef is safe.
+>> +        let name_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).name) };
+>> +        // SAFETY: `name_ptr` points to a valid allocation and we hav=
+e exclusive access.
+>> +        unsafe { ptr::write(name_ptr, name.as_char_ptr()) };
+>> +    }
+>> +
+>> +    /// Add config to led_classdev.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// `ptr` has to be valid.
+>> +    unsafe fn build_config(ptr: *mut bindings::led_classdev, config: =
+&'a LedConfig) {
+>> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
+ef is safe.
+>> +        let color_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).color) };=
 
-But it is inconsequential, or maybe even you plan to add purgeable at 
-some point.
+>> +        // SAFETY: `color_ptr` points to a valid allocation and we ha=
+ve exclusive access.
+>> +        unsafe { ptr::write(color_ptr, config.color.into()) };
+>> +    }
+>> +}
+>
+> This usage of lifetimes looks incorrect to me. It looks like you are
+> trying to say that the references must be valid for longer than the
+> Led<T>, but what you are writing here does not enforce that. The Led
+> struct must be annotated with the 'a lifetime if you want that, but
+> I'm inclined to say you should not go for the lifetime solution in the
+> first place.
 
-> +}
-> +
->   static const struct vm_operations_struct vm_ops = {
->   	.fault = etnaviv_gem_fault,
->   	.open = drm_gem_vm_open,
-> @@ -540,6 +551,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
->   	.get_sg_table = etnaviv_gem_prime_get_sg_table,
->   	.vmap = etnaviv_gem_prime_vmap,
->   	.mmap = etnaviv_gem_mmap,
-> +	.status = etnaviv_gem_status,
->   	.vm_ops = &vm_ops,
->   };
->  
-Either way LGTM.
+The `led_classdev_register_ext` function copies the name, therefore the i=
+dea was that the name only has to exists until the pin init function is c=
+alled, which should be the case with how I used the lifetimes here
 
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Fiona
 
-Regards,
-
-Tvrtko
+>
+> Alice
 
