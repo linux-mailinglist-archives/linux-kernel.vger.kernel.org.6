@@ -1,149 +1,125 @@
-Return-Path: <linux-kernel+bounces-416853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F8A9D4B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:00:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9059D4B30
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1EC2817D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:00:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C71F6B23CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9C61D12E1;
-	Thu, 21 Nov 2024 11:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aGfumQ4J"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A9E1CFEC1;
+	Thu, 21 Nov 2024 11:01:43 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C793A1CC88D;
-	Thu, 21 Nov 2024 11:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E731BBBDC;
+	Thu, 21 Nov 2024 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732186832; cv=none; b=AQC8XXosU6910MXuQCuC5BQbrgypl4u40amRPeZxbO7IPcxh8MUZzh/ZeWbwDzSgEESUt1A6saJfe4Hi1Y5JB7FTrh+I51puby2h0tX5MABRXenMtVmv3bV/QVYoQMqGB9acYRuzW1MwIcxFohLO0RBUclwB1SDzaHcRLkC8uKM=
+	t=1732186903; cv=none; b=LurqZZMf7Asfr7fSOZQXdxAHol6NGDWfr3VSlwBQGhZATLBbDSqoRpvjERUtqIu4X6DLTxHbf2H9W5KWuk2A5ZmRb76Asw1WJpNmyWOK5LetFjCt8v5MKkRGKsFtc4uuCJ8dmgKLkoviHkHN+EqlcPkgKFu8NI2vJEZ57Ut+iTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732186832; c=relaxed/simple;
-	bh=9gfsOjXUGyFwnFr59dC+u4M0J91DcAOQbqnLQalZcxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A00AQ33AVVtRyYGqhJML98gNYFCLGtxbWaLqi+Ip2DCYAT+0iSKiq5hHicx5oaE9Y+HaaZzD8BjgijBTSxf7mLRgXqXo0q9V7w/Ikk4CTdFv1bJlDNHs1fr8kp/Ziw+8iLAlAqPI0V614DvgaXCM0v+cs4x93ugENccqMMbOGV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aGfumQ4J; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/4UY6ooFSZbuurvbSSxwnqyBmiXRU+RN7sWd/ZeHliw=; b=aGfumQ4JkaRWnYeAD+H/67VZah
-	vYz0LMQIP45v3VwBZKvVWDMqLirOmn6oWsQjYIgwz13/QVVo4P7x6kVsqdCp2NSs/LWBA3X+Hzgbe
-	uGH6g5kKTrVQ2NKdOtNQZvDqva01ydSWpXjvNPB+1zgOPTYAIevJFZIMJZYYFNPFL1Ifbv3PKnJZv
-	OrwEY2eJ4EsvDdm0qUegKwZMVis4ARGSOAgFYvCfKVXYZcaxuES3LHkjrjuAr/MHrhw/5FzBU9PlF
-	5qrPQbLKjpWsCQb1aYz5GmVU03v13aN65v2SlUcMnIeL21n/K2hMk8I4crChD6KYZLtY4/0wo5Ris
-	TqUAjfTw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tE4v7-00000000ZU8-1far;
-	Thu, 21 Nov 2024 11:00:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0365F30068B; Thu, 21 Nov 2024 12:00:21 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:00:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
-	bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
-Message-ID: <20241121110020.GC24774@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-7-vschneid@redhat.com>
- <20241119233902.kierxzg2aywpevqx@jpoimboe>
- <20241120145649.GJ19989@noisy.programming.kicks-ass.net>
- <20241120145746.GL38972@noisy.programming.kicks-ass.net>
- <20241120165515.qx4qyenlb5guvmfe@jpoimboe>
+	s=arc-20240116; t=1732186903; c=relaxed/simple;
+	bh=408LT1IWjoN4marM98RDb+DLNXIp7h5tz8bHKxqodvI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RGSVpX9RIa3doBOHyGdfEsKWaVUeCZ1HpX1+6+5vmJAZyk+4RoVfYp7p3Fg0CSFz5XNDQ5tGX53JPekyJmdVY0BWz2RceeivhjXORFWcBKcRbgLPntiXeYCJ7W+EhsUSpohJE2AlGDN0INwKmYq2wggg3PMhe+PVSdgWoodUohA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XvFf55JDqz4f3jcs;
+	Thu, 21 Nov 2024 19:01:17 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 485111A0196;
+	Thu, 21 Nov 2024 19:01:36 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgB3U4cOEz9nKJ6pCQ--.29643S3;
+	Thu, 21 Nov 2024 19:01:36 +0800 (CST)
+Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
+To: Christian Theune <ct@flyingcircus.io>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: Jinpu Wang <jinpu.wang@ionos.com>, Haris Iqbal <haris.iqbal@ionos.com>,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, song@kernel.org,
+ xni@redhat.com, yangerkun@huawei.com, yi.zhang@huawei.com,
+ =?UTF-8?Q?Florian-Ewald_M=c3=bcller?= <florian-ewald.mueller@ionos.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
+ <20241119152939.158819-1-jinpu.wang@ionos.com>
+ <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
+ <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
+ <DFAA8E00-E2CD-4BD0-99E5-FD879A6B2057@flyingcircus.io>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6434853a-4df4-d3c4-14b9-a0d4ad599602@huaweicloud.com>
+Date: Thu, 21 Nov 2024 19:01:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120165515.qx4qyenlb5guvmfe@jpoimboe>
+In-Reply-To: <DFAA8E00-E2CD-4BD0-99E5-FD879A6B2057@flyingcircus.io>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3U4cOEz9nKJ6pCQ--.29643S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW8JrW7urW7AF1xCF4xXrb_yoWDZrc_WF
+	W5ZFyqk348XF40yFsrtFyYqrWkGFyxC34rJ348GF4I934kXFn8WrsYg3s5Za1xZF4ftFna
+	kr93Z3Z0kws2qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkI
+	wI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Nov 20, 2024 at 08:55:15AM -0800, Josh Poimboeuf wrote:
-> On Wed, Nov 20, 2024 at 03:57:46PM +0100, Peter Zijlstra wrote:
-> > On Wed, Nov 20, 2024 at 03:56:49PM +0100, Peter Zijlstra wrote:
-> > 
-> > > But I think we can make the fall-back safer, we can simply force the IPI
-> > > when we poke at noinstr code -- then NOHZ_FULL gets to keep the pieces,
-> > > but at least we don't violate any correctness constraints.
-> > 
-> > I should have read more; that's what is being proposed.
+Hi,
+
+在 2024/11/21 17:30, Christian Theune 写道:
+> Hi,
 > 
-> Hm, now I'm wondering what you read, as I only see the text poke IPIs
-> being forced when the caller sets force_ipi, rather than the text poke
-> code itself detecting a write to .noinstr.
+>> On 21. Nov 2024, at 09:33, Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/11/21 16:10, Jinpu Wang 写道:
+>>> On Tue, Nov 19, 2024 at 4:29 PM Jack Wang <jinpu.wang@ionos.com> wrote:
+>>>>
+>>>> Hi Kuai,
+>>>>
+>>>> We will test on our side and report back.
+>>> Hi Kuai,
+>>> Haris tested the new patchset, and it works fine.
+>>> Thanks for the work.
+>>
+>> Thanks for the test! And just to be sure, the BUG_ON() problem in the
+>> other thread is not triggered as well, right?
+>>
+>> +CC Christian
+>>
+>> Are you able to test this set for lastest kernel?
+> 
+> I have scheduled testing for later today. My current plan was to try Xiao Ni’s fix on 6.6 as that did fix it on 6.11 for me.
+> 
+> Which way forward makes more sense now? Are those two patches independent or amalgamated or might they be stepping on each others’ toes?
 
-Right, so I had much confusion and my initial thought was that it would
-do something dangerous. Then upon reading more I see it forces the IPI
-for these special keys -- with that force_ipi thing.
+Our plan is to apply this set to latest kernel first, and then backport
+this to older kernel. Xiao's fix will not be considered. :(
 
-Now, there's only two keys marked special, and both have a noinstr
-presence -- the entire reason they get marked.
+Thanks,
+Kuai
 
-So effectively we force the IPI when patching noinstr, no?
+> 
+> Christian
+> 
 
-But yeah, this is not quite the same as not marking anything and simply
-forcing the IPI when the target address is noinstr.
-
-And having written all that; perhaps that is the better solution, it
-sticks the logic in text_poke and ensure it automagically work for all
-its users, obviating the need for special marking.
-
-Is that what you were thinking?
 
