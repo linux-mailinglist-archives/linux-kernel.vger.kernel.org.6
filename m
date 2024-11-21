@@ -1,120 +1,145 @@
-Return-Path: <linux-kernel+bounces-416631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049B09D4808
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:02:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2499D480A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:09:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2D9B2119B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC791F21FFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACED18A6B2;
-	Thu, 21 Nov 2024 07:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81191C6F54;
+	Thu, 21 Nov 2024 07:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lBZcsgJa"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OC4obv+v"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2180BBA3D
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D3BBA3D;
+	Thu, 21 Nov 2024 07:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732172535; cv=none; b=X/D9YXkqyuQFjq0fE83nH2YyTKhwofAT3OrSGJ7nWtsvjmJ8tB2xYiirYMJMApWomV/LFE0/JtR/kQNZXV9B+QX33SZduOyKolTPWduIAOB9yw5TLWcpgMVFwUAlJmBbvhGn53QTWkkc0EH/dvAtZzeAIC3VEj2w0flTJB7kio8=
+	t=1732172970; cv=none; b=ZViv3ckgGVwzOpbTERvTACEcbcYPzIIQnFxRHF7xosUiMQNbOFl5T96w6e4US3m1IaFpcR6tgzNMF5mzbE+fFPW/jymhEF0hJEyYC/BYyUU1O7fA6pkxddmlmxBc0SlcZ9WcrrVwcWS7CFPKmz+Z6PhBGRYXkBqLANEZDnzN9MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732172535; c=relaxed/simple;
-	bh=HSGqSmZvl8yCfsKbNauklbaTlgvSrCw877t+oc1o+sA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7K97WLttrwv7o77qI+56MvR5RlqJXvMELnDChOEVvrEZ5uvmS+KcMDNHcTxFjZNjEO41Q4GMYxQCAmHy+25bG+FbpbLmEcrUjEqLKYYpJGsoYRE8kVmb+k1FaOwTyxBV4l3vJpXr5XYFHBkNDA5FUKj2uDX1FQCOtcHYE/QokM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lBZcsgJa; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 20 Nov 2024 23:01:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732172523;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ap95Q1nsWIhzVEIGy3SKI0y8bEU8NHJzB+owS7s7oFk=;
-	b=lBZcsgJaHZ1iWQ8HkxNDrrNGu46xUgydVslYoZefgOefdLNNgQXSiMrR3U4kGlmy6XN5aC
-	Qq76DHM997dZqvp4ODH3lmWODeOLVfPBVgKaot6jk1xdzcT3t/uVsvtI/V00eIvM82Zo3n
-	Fe6dQhbXnC6OTbsfivkffvcSJA2Gp3c=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, 
-	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, oleg@redhat.com, 
-	dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
-	hdanton@sina.com, hughd@google.com, minchan@google.com, jannh@google.com, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com
-Subject: Re: [PATCH v4 2/5] mm: move per-vma lock into vm_area_struct
-Message-ID: <iw34akksaz6wjlygwuztlkvto3aiduekrhw6rjlqq4lr7vzmug@tprkddvgrj3e>
-References: <20241120000826.335387-1-surenb@google.com>
- <20241120000826.335387-3-surenb@google.com>
- <zfd7xdkr5dkvvx3caqao3oorh2pxxifhdhwsw2iyxcuzbevo3n@sobu7xhw24vv>
- <CAJuCfpFAh-gw_BVCaEB4+saedVC6aPB7HfyPikvTujyGRLXPwQ@mail.gmail.com>
- <wnwfgk32wyvx7tzd522ajwk5uixls7iayksrtho6c3dkvgdpek@25yqv3ohljzc>
- <CAJuCfpGx6LCd7qCOsLc6hm-qMGtyM3ceitYbRdx1yKPHFHT-jQ@mail.gmail.com>
+	s=arc-20240116; t=1732172970; c=relaxed/simple;
+	bh=aLFFCjrkdkrZhCu/NyexcMDYEcrLWZtaulB8rWwll78=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LW2M6PrN66e3IluBniNjDLEoM2X66mcYOlM7hm3YCat+jCEERbyZFn9S8+T+P6M9uo33HNw/cf/2hGiy530r8Afm1JDrvjz8Vc6N9+K1DxchX1uh0+AepVRQxBbduGiAV2dxqJ4aoJg2oyjyhrGnpkAwhvKxnXHosnniKFtBlgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OC4obv+v; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ee7e87f6e4so524040a12.2;
+        Wed, 20 Nov 2024 23:09:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732172968; x=1732777768; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/bV5oWLDBC27cWZHR043yZGMTpwFi3iERVni6jKJ+U=;
+        b=OC4obv+vbiKp4YIQt3CdXhJU2oo3JAUqi0oFX9YID3Gx3Ax+uJ07TCl4ZjYid3bKoc
+         W+1zXHPT4+Xgrvt1lokvJ4PwgzdfTLixoRfsB1hWrfjlDWYuHcJJSf1qv6HVw7ZXAzRd
+         K8ESZj9fYHphSm07mvF3COUfpCPcksW9f5q5luBV8Mh8sVGS/gk9vn9gSBr3/UPD9llQ
+         gGS8xcbFG1wVrCmwMO8AECwoXAbc+l7ZjHTmU0P19X/z7ZdOABzQ0513TKQDKf9pr4sS
+         /s/pS+JFZ5tf96VCiRWp55J16k7f0+ORd4Rw4jOMsboVdfH519ewh4xsASx6HXRq0w5p
+         hAxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732172968; x=1732777768;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K/bV5oWLDBC27cWZHR043yZGMTpwFi3iERVni6jKJ+U=;
+        b=k6GfBpKusBS1z2g5pxReLpSsw6gQeh7pVvfNnA1A4ZX7U1X3M0QjGxqN0opLccGNPY
+         Z1q8C+JDRwDqt4NDDKN+Z4Z1UYzzICux3aa8BnmUWUa8vprTH+iy1KgNYIfZMFVhsk5w
+         +EeznJ0Ux62B7s+1L9JzlyrmgXxKMOwhuGkFlubeGfNYTs2zBJ63C7nuvcvtFFaKNfc0
+         CfrW1s08Qy4m3MX7kPtjj3/PjwEdDcDZ3Scu69MG7GN8xCgmFarDfs1ySFeEReIVvVhi
+         oIGc0lmpIOF6JboRvZppWncbbw+ohWcgq5eyQIN8094DFdpPHOu/lhOAd4GqxSYfGI8h
+         THNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXa5SxrNFaTinMR5UfxRy+ZNLI/0pRMlcNbMDkhOLE4YSdQ5X7k04ZepFkLE5fQHr92bBsoUyXsNMv1RAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsKFCwytwRu4rjzk0iUL8GMSrkoDt8lFaTKxpEBOXOtmDUm0J+
+	1wM79SpgZghxnsCwx0FRT2cLO8ySxL9y6sAjJ6ucDT0nPZZrt44KoPm4AVCZ
+X-Gm-Gg: ASbGncuoVRA4W2yffNFFE9kUl9zmnEaI4tRNZb2bCyD0csnHfb5asVhq9fuMRfeDl1w
+	ECykh2xLJwHnkx7/5XT+/mqS5UlXVf90txqL4tJEFtci2FPdaodoxvIB/ev8/OQGe5WfiTlEuxp
+	zqrcCRQowKDmeEYjUTuIZCS/sDVuixIJyxuO2qw4Pl3G+znVOX5lw3jV12fL3OpgNR3aypjLcc+
+	w4Hi65+q7sz6CU17CsPc0qJZYnIZuUNZOuh2vJP5aGB+Z3Q3X0maK8=
+X-Google-Smtp-Source: AGHT+IEHtgwWOWAxj1UqicM0Uxnp4+dMA2ZTYHHv9dEZXodElmUipdeypRzYo+JScji7D9JjaMV7kA==
+X-Received: by 2002:a05:6a20:2449:b0:1cf:6c86:231c with SMTP id adf61e73a8af0-1ddaf0b8a56mr6867894637.26.1732172967753;
+        Wed, 20 Nov 2024 23:09:27 -0800 (PST)
+Received: from [192.168.122.73] ([103.12.224.66])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead03356fbsm2479723a91.31.2024.11.20.23.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 23:09:27 -0800 (PST)
+From: Renjaya Raga Zenta <ragazenta@gmail.com>
+Date: Thu, 21 Nov 2024 14:09:27 +0700
+Subject: [PATCH] brcmfmac: fix brcmf_vif_clear_mgmt_ies when stopping AP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJuCfpGx6LCd7qCOsLc6hm-qMGtyM3ceitYbRdx1yKPHFHT-jQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKbcPmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDQyND3aSi5Ny03MRkXWPTtCSLRMPEFCMjQyWg8oKi1LTMCrBR0bG1tQA
+ KlAmqWgAAAA==
+X-Change-ID: 20241121-brcmfmac-35fb8a1ad221
+To: Arend van Spriel <aspriel@gmail.com>, 
+ Franky Lin <franky.lin@broadcom.com>, 
+ Hante Meuleman <hante.meuleman@broadcom.com>, Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com, 
+ SHA-cyfmac-dev-list@infineon.com, linux-kernel@vger.kernel.org, 
+ Renjaya Raga Zenta <ragazenta@gmail.com>
+X-Mailer: b4 0.14.2
 
-On Wed, Nov 20, 2024 at 04:33:37PM -0800, Suren Baghdasaryan wrote:
-[...]
-> > > >
-> > > > Do we just want 'struct vm_area_struct' to be cacheline aligned or do we
-> > > > want 'struct vma_lock vm_lock' to be on a separate cacheline as well?
-> > >
-> > > We want both to minimize cacheline sharing.
-> > >
-> >
-> > For later, you will need to add a pad after vm_lock as well, so any
-> > future addition will not share the cacheline with vm_lock. I would do
-> > something like below. This is a nit and can be done later.
-> >
-> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> > index 7654c766cbe2..5cc4fff163a0 100644
-> > --- a/include/linux/mm_types.h
-> > +++ b/include/linux/mm_types.h
-> > @@ -751,10 +751,12 @@ struct vm_area_struct {
-> >  #endif
-> >         struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-> >  #ifdef CONFIG_PER_VMA_LOCK
-> > +       CACHELINE_PADDING(__pad1__);
-> >         /* Unstable RCU readers are allowed to read this. */
-> > -       struct vma_lock vm_lock ____cacheline_aligned_in_smp;
-> > +       struct vma_lock vm_lock;
-> > +       CACHELINE_PADDING(__pad2__);
-> >  #endif
-> > -} __randomize_layout;
-> > +} __randomize_layout ____cacheline_aligned_in_smp;
-> 
-> I thought SLAB_HWCACHE_ALIGN for vm_area_cachep added in this patch
-> would have the same result, no?
-> 
+This removes the following error log when stopping AP:
 
-SLAB_HWCACHE_ALIGN is more about the slub allocator allocating cache
-aligned memory. It does not say anything about the internals of the
-struct for which the kmem_cache is being created. The
-____cacheline_aligned_in_smp tag in your patch made sure that the field
-vm_lock will be put in a new cacheline and there can be a hole between
-vm_lock and the previous field if the previous field is not ending at
-the cacheline boundary. Please note that if you add a new field after
-vm_lock (without cacheline alignment tag), it will be on the same
-cacheline as vm_lock. So, your code is achieving the vm_lock on its own
-cacheline goal but vm_lock being the only field on that cacheline is not
-being achieved.
+ieee80211 phy0: brcmf_vif_set_mgmt_ie: vndr ie set error : -52
+
+It happened if
+1) previously wlan interface was in station mode (wpa_supplicant) and
+   connected to a hotspot
+2) then started AP mode (hostapd)
+3) and then stopped AP mode.
+
+The error happened when it tried to clear BRCMF_VNDR_IE_PRBREQ_FLAG.
+This flag is not set in `brcmf_config_ap_mgmt_ie`, but
+BRCMF_VNDR_IE_ASSOCRSP_FLAG is set instead.
+
+Signed-off-by: Renjaya Raga Zenta <ragazenta@gmail.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index e19c14ba35f60433de3702873b0a776945d0e548..ac958848935c920d446b64ac650d40968606cc4d 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -5022,12 +5022,16 @@ s32 brcmf_vif_set_mgmt_ie(struct brcmf_cfg80211_vif *vif, s32 pktflag,
+ s32 brcmf_vif_clear_mgmt_ies(struct brcmf_cfg80211_vif *vif)
+ {
+ 	static const s32 pktflags[] = {
+-		BRCMF_VNDR_IE_PRBREQ_FLAG,
+ 		BRCMF_VNDR_IE_PRBRSP_FLAG,
+ 		BRCMF_VNDR_IE_BEACON_FLAG
+ 	};
+ 	int i;
+ 
++	if (vif->wdev.iftype == NL80211_IFTYPE_AP)
++		brcmf_vif_set_mgmt_ie(vif, BRCMF_VNDR_IE_ASSOCRSP_FLAG, NULL, 0);
++	else
++		brcmf_vif_set_mgmt_ie(vif, BRCMF_VNDR_IE_PRBREQ_FLAG, NULL, 0);
++
+ 	for (i = 0; i < ARRAY_SIZE(pktflags); i++)
+ 		brcmf_vif_set_mgmt_ie(vif, pktflags[i], NULL, 0);
+ 
+
+---
+base-commit: df8a2f6dc114b2c5c7685a069f717f2b06186b74
+change-id: 20241121-brcmfmac-35fb8a1ad221
+
+Best regards,
+-- 
+Renjaya Raga Zenta <ragazenta@gmail.com>
 
 
