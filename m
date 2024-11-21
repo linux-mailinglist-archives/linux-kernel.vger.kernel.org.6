@@ -1,360 +1,193 @@
-Return-Path: <linux-kernel+bounces-417035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9C8D9D4E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF8E9D4E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:51:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11283B22A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D13A1F22679
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9379D1D958E;
-	Thu, 21 Nov 2024 13:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBB91D86CB;
+	Thu, 21 Nov 2024 13:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSSjFQqr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VDXgzCby"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7382A1D515F;
-	Thu, 21 Nov 2024 13:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A6A1C7B99
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732196902; cv=none; b=m05Jc2IrRIYoimQcmqC6Z1vx/BDj+mDt9BUxDGuer8vWxWWIV0CZ3ju25nYTlgP+jeP0p71wKklKQuDBcT2suXNV5TWgzzUh48w0C1n/wX7UG/6MkbJV8JRbD04PwZVapeXMJPrJEix3NRZP1vpgoWKf/r843iqiRYkzI5hpp/k=
+	t=1732197064; cv=none; b=V2oqSWscAfQm/BAsi2HbPOZs5sfcyoZQ1dhEadJ7GRBdETvUGLdKbIFoyFaM073R5ykQOSSK31YJgvyW8ppGdH36gubXoj+6T9qRqr1t41WbE593M/kmlpQ8iRaV0uAxPJ3oQLySC4DSfMeDBvrySilfqqa+BWZABUT0aKR7I3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732196902; c=relaxed/simple;
-	bh=5zSFbDgpXPxHjrjKF2WpJdqNClJXYVH2mbS60X2jYSA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KCpQYNuaZzvDPSnU04XUFTOabB3cIxEf6MqQFJOXpby8h+ltdJ/238Cyx1+Rm0OAbOoYMtLcKY3S3AExhLtFalfH+aErkrmUOgctkP0BNvypgk3BjYSfsiGs+YE04iRHedun3fS3aKTTd2/c4XuyB8h80e5gpk48gwThgCCp5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSSjFQqr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1438DC4CECC;
-	Thu, 21 Nov 2024 13:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732196902;
-	bh=5zSFbDgpXPxHjrjKF2WpJdqNClJXYVH2mbS60X2jYSA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=DSSjFQqrUE3i9v1G2PAl+yY/gRJ+UqVFd3R63T8DJJOPbgCFvtkf3Zi0b/Btrj3Z/
-	 RDsIgWoQpTgkIGrkyR3svFUf+arZRd53zFtF6CsqxSoe0EknQSf9M3G/2aaOsbNdZo
-	 1zXMZOjQ63euRwvjddl/RQynjuKtYputDZAW5n0WkKlH19tJY5rKjsb6/GmBEwaWqb
-	 6Z3mZzs3t15fsgcFAIj0NDaglgodGRx3mHiYG/unmohdNqmVACuPGMp6ysFUf+YHWY
-	 hfd7c7Xj2kZL3Rgzs4BRzfzFL1Xc/qlAmNJT6C/vUnLvNwtcyTAbXizpR1Kyj19xDn
-	 oaS7TVXekOdKw==
-Message-ID: <a559fe60e88bb444f04ff60b066bd78a018c7495.camel@kernel.org>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-From: Jeff Layton <jlayton@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>, Christian Brauner
- <brauner@kernel.org>
-Cc: Song Liu <songliubraving@meta.com>, Jan Kara <jack@suse.cz>, Song Liu
- <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, Kernel Team
- <kernel-team@meta.com>,  "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,  "martin.lau@linux.dev"
- <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk"
- <viro@zeniv.linux.org.uk>,  "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>,  "repnop@google.com"
- <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net"
- <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Date: Thu, 21 Nov 2024 08:48:18 -0500
-In-Reply-To: <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
-References: <20241112082600.298035-1-song@kernel.org>
-	 <20241112082600.298035-3-song@kernel.org>
-	 <20241113-sensation-morgen-852f49484fd8@brauner>
-	 <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
-	 <20241115111914.qhrwe4mek6quthko@quack3>
-	 <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
-	 <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
-	 <CAOQ4uxgUYHEZTx7udTXm8fDTfhyFM-9LOubnnAc430xQSLvSVA@mail.gmail.com>
-	 <CAOQ4uxhyDAHjyxUeLfWeff76+Qpe5KKrygj2KALqRPVKRHjSOA@mail.gmail.com>
-	 <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
-	 <20241120-wimpel-virologen-1a58b127eec6@brauner>
-	 <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732197064; c=relaxed/simple;
+	bh=4d40igTiPLwx48bZDZOhhhi9XJf/WmCL9uv24wl5Ujs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SYYD5LZ1bACL3GoBxRwwN+zQ4aCYPcvppVAjTR+CaNNpnGEZ7Ngu7DlM/FFF5iWLQ3lXIZ9mTEpCbt7mc7PyrFr7jBzIi5EXqghp4YOpsek4ltNMAObcZXYYReCFPYygvJ3lACBOkHd/CMqAyfRR69/Qb+AjcrzyWF+gM8fvfZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VDXgzCby; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732197062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WAsLa1es1p3tVD2xuZw9teX+HJV0RZHqbPvj3c6eKSE=;
+	b=VDXgzCby1+xBR1fY+Z9sPwTPv1bN6sPgNm0DaEGMH2eBgLYDqWO62EVEvFdrJ9QPzhxzSQ
+	Z7rbjiQ6ZOPEynwv9YNLerLF8AcUsYrKlawp5J74+GRiod5bx7xsV7UzuIh5eC4q0FdAEv
+	EIgKbbEmlvkuDcITZF7vpn92k0qk3gk=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-157-Hj7sGrkDOE6PISk1-KDr8Q-1; Thu, 21 Nov 2024 08:51:00 -0500
+X-MC-Unique: Hj7sGrkDOE6PISk1-KDr8Q-1
+X-Mimecast-MFC-AGG-ID: Hj7sGrkDOE6PISk1-KDr8Q
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4316655b2f1so6197825e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:51:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732197059; x=1732801859;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WAsLa1es1p3tVD2xuZw9teX+HJV0RZHqbPvj3c6eKSE=;
+        b=WkWaMsOiXXMdUgrTLp5bgi/APL/dJrV4JB+2voekvmBQp2v1h5AKWlOW+Cx4+egAKq
+         eOI53i64i3NuKKLp2INbNc6Gb1qeX6UGCNVq24fvpR+leLOLI3hdZaRubL3jhg1FnChT
+         fhMJVeKKPUhDEEggV5nlxC2mNcs1bXltoi4PCExDoY5keHmOKOJnOVHOzSdLYzJmYzaH
+         u8iS/eqtUFBpsd6DpiJ78GqmbOnb+nFCGEFU7dOff02pUerdiVu9sLERK7sdHVz36eTH
+         JQhCyD6XhCO4L9Rdnx6fBPUoE3hKNukWvvarTqocW85Q9nr2vCotQDbQ/RkOJvvgYWK3
+         2M7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWG7Bp0y80yasFycP01ZWJUaS4iXLJqcEsi3vqAO7rGG4TupMOODALXzBXW6t0+ISo5I8NyPZiQecx13Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2zA+z0HWKHKglepMWAnRtOK6E7qhQgzvckj8i3eD82Lf6+/oZ
+	uCn1zfhJTl3o1mQetiHY3ZMZz4kncUWKiVX9ugK7sOieH7gXSdcud3Fhu+Fz9DrEtCExgI/xVpH
+	xQd3qg9vHpE7NtMW4d1Aa3zGhqFMvuzGcmfXN14GU5mfeKYSJdBKfYlveyP0zVQ==
+X-Gm-Gg: ASbGnctznmllvenDEivVeGjck8XL6FJDNb1Q9AFRarTF0CzQWGUg77uN03q5BDaVYhN
+	mc1m8cZGA6QHGDk4Gi6UCTgGY0kn6NxgUvRSS/xp8R34PpjELkS1iihvXzG3pIfBolLdAIqDxA2
+	ieA9xdXhwbdYqprWuXs70w0uCEUmv4dwt4a+Xqnr3Mv43CqSLTf6phMi3MUg4nxgR/hPXZ3gzPd
+	v9K8ym6HigGzGvll4v7tzxgWVx9MCOTFvYzt8TkQaOrU6vZlK7rAeVJwTkc1xmTW67TzGhUn+d5
+	0gpjz1ZhWuqXejkOXYEUUyDpwKyChFhiv0LHapxmSomt5DHX8nOeqFijrnnSUouEX5kr4X10ywg
+	=
+X-Received: by 2002:a05:6000:1ac8:b0:382:4503:728a with SMTP id ffacd0b85a97d-38254b20a01mr6145071f8f.53.1732197059624;
+        Thu, 21 Nov 2024 05:50:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGSw+20gWEiAkvgehCCjoS5ixieY+L2WLbKow5IUX9mwzcqyh+s8ZyTE30Q7sOmQlFHcyhrlA==
+X-Received: by 2002:a05:6000:1ac8:b0:382:4503:728a with SMTP id ffacd0b85a97d-38254b20a01mr6145054f8f.53.1732197059312;
+        Thu, 21 Nov 2024 05:50:59 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254933d52sm5232332f8f.80.2024.11.21.05.50.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 05:50:58 -0800 (PST)
+Message-ID: <25ead85f-2716-4362-8fb5-3422699e308c@redhat.com>
+Date: Thu, 21 Nov 2024 14:50:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use
+ find_vma() correctly
+From: David Hildenbrand <david@redhat.com>
+To: Jeongjun Park <aha310510@gmail.com>, akpm@linux-foundation.org
+Cc: dave@stgolabs.net, willy@infradead.org, Liam.Howlett@oracle.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+References: <20241121124113.66166-1-aha310510@gmail.com>
+ <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2024-11-20 at 12:19 +0100, Amir Goldstein wrote:
-> On Wed, Nov 20, 2024 at 10:28=E2=80=AFAM Christian Brauner <brauner@kerne=
-l.org> wrote:
-> >=20
-> > On Tue, Nov 19, 2024 at 09:53:20PM +0000, Song Liu wrote:
-> > > Hi Jeff and Amir,
-> > >=20
-> > > Thanks for your inputs!
-> > >=20
-> > > > On Nov 19, 2024, at 7:30=E2=80=AFAM, Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > > >=20
-> > > > On Tue, Nov 19, 2024 at 4:25=E2=80=AFPM Amir Goldstein <amir73il@gm=
-ail.com> wrote:
-> > > > >=20
-> > > > > On Tue, Nov 19, 2024 at 3:21=E2=80=AFPM Jeff Layton <jlayton@kern=
-el.org> wrote:
-> > > > > >=20
-> > >=20
-> > > [...]
-> > >=20
-> > > > > > Longer term, I think it may be beneficial to come up with a way=
- to attach
-> > > > > > > > private info to the inode in a way that doesn't cost us one=
- pointer per
-> > > > > > > > funcionality that may possibly attach info to the inode. We=
- already have
-> > > > > > > > i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's=
- always a tough
-> > > > > > > > call where the space overhead for everybody is worth the ru=
-ntime &
-> > > > > > > > complexity overhead for users using the functionality...
-> > > > > > >=20
-> > > > > > > It does seem to be the right long term solution, and I am wil=
-ling to
-> > > > > > > work on it. However, I would really appreciate some positive =
-feedback
-> > > > > > > on the idea, so that I have better confidence my weeks of wor=
-k has a
-> > > > > > > better chance to worth it.
-> > > > > > >=20
-> > > > > > > Thanks,
-> > > > > > > Song
-> > > > > > >=20
-> > > > > > > [1] https://github.com/systemd/systemd/blob/main/src/core/bpf=
-/restrict_fs/restrict-fs.bpf.c
-> > > > > >=20
-> > > > > > fsnotify is somewhat similar to file locking in that few inodes=
- on the
-> > > > > > machine actually utilize these fields.
-> > > > > >=20
-> > > > > > For file locking, we allocate and populate the inode->i_flctx f=
-ield on
-> > > > > > an as-needed basis. The kernel then hangs on to that struct unt=
-il the
-> > > > > > inode is freed.
-> > >=20
-> > > If we have some universal on-demand per-inode memory allocator,
-> > > I guess we can move i_flctx to it?
-> > >=20
-> > > > > > We could do something similar here. We have this now:
-> > > > > >=20
-> > > > > > #ifdef CONFIG_FSNOTIFY
-> > > > > >        __u32                   i_fsnotify_mask; /* all events t=
-his inode cares about */
-> > > > > >        /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > > > > >        struct fsnotify_mark_connector __rcu    *i_fsnotify_mark=
-s;
-> > > > > > #endif
-> > >=20
-> > > And maybe some fsnotify fields too?
-> > >=20
-> > > With a couple users, I think it justifies to have some universal
-> > > on-demond allocator.
-> > >=20
-> > > > > > What if you were to turn these fields into a pointer to a new s=
-truct:
-> > > > > >=20
-> > > > > >        struct fsnotify_inode_context {
-> > > > > >                struct fsnotify_mark_connector __rcu    *i_fsnot=
-ify_marks;
-> > > > > >                struct bpf_local_storage __rcu          *i_bpf_s=
-torage;
-> > > > > >                __u32                                   i_fsnoti=
-fy_mask; /* all events this inode cares about */
-> > > > > >        };
-> > > > > >=20
-> > > > >=20
-> > > > > The extra indirection is going to hurt for i_fsnotify_mask
-> > > > > it is being accessed frequently in fsnotify hooks, so I wouldn't =
-move it
-> > > > > into a container, but it could be moved to the hole after i_state=
-.
-> > >=20
-> > > > > > Then whenever you have to populate any of these fields, you jus=
-t
-> > > > > > allocate one of these structs and set the inode up to point to =
-it.
-> > > > > > They're tiny too, so don't bother freeing it until the inode is
-> > > > > > deallocated.
-> > > > > >=20
-> > > > > > It'd mean rejiggering a fair bit of fsnotify code, but it would=
- give
-> > > > > > the fsnotify code an easier way to expand per-inode info in the=
- future.
-> > > > > > It would also slightly shrink struct inode too.
-> > >=20
-> > > I am hoping to make i_bpf_storage available to tracing programs.
-> > > Therefore, I would rather not limit it to fsnotify context. We can
-> > > still use the universal on-demand allocator.
-> >=20
-> > Can't we just do something like:
-> >=20
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 7e29433c5ecc..cc05a5485365 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -627,6 +627,12 @@ is_uncached_acl(struct posix_acl *acl)
-> >  #define IOP_DEFAULT_READLINK   0x0010
-> >  #define IOP_MGTIME     0x0020
-> >=20
-> > +struct inode_addons {
-> > +        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > +        struct bpf_local_storage __rcu          *i_bpf_storage;
-> > +        __u32                                   i_fsnotify_mask; /* al=
-l events this inode cares about */
-> > +};
-> > +
-> >  /*
-> >   * Keep mostly read-only and often accessed (especially for
-> >   * the RCU path lookup and 'stat' data) fields at the beginning
-> > @@ -731,12 +737,7 @@ struct inode {
-> >                 unsigned                i_dir_seq;
-> >         };
-> >=20
-> > -
-> > -#ifdef CONFIG_FSNOTIFY
-> > -       __u32                   i_fsnotify_mask; /* all events this ino=
-de cares about */
-> > -       /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > -       struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > -#endif
-> > +       struct inode_addons *i_addons;
-> >=20
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> >         struct fscrypt_inode_info       *i_crypt_info;
-> >=20
-> > Then when either fsnotify or bpf needs that storage they can do a
-> > cmpxchg() based allocation for struct inode_addons just like I did with
-> > f_owner:
-> >=20
-> > int file_f_owner_allocate(struct file *file)
-> > {
-> >         struct fown_struct *f_owner;
-> >=20
-> >         f_owner =3D file_f_owner(file);
-> >         if (f_owner)
-> >                 return 0;
-> >=20
-> >         f_owner =3D kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> >         if (!f_owner)
-> >                 return -ENOMEM;
-> >=20
-> >         rwlock_init(&f_owner->lock);
-> >         f_owner->file =3D file;
-> >         /* If someone else raced us, drop our allocation. */
-> >         if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
-> >                 kfree(f_owner);
-> >         return 0;
-> > }
-> >=20
-> > The internal allocations for specific fields are up to the subsystem
-> > ofc. Does that make sense?
-> >=20
->=20
-> Maybe, but as I wrote, i_fsnotify_mask should not be moved out
-> of inode struct, because it is accessed in fast paths of fsnotify vfs
-> hooks, where we do not want to have to deref another context,
-> but i_fsnotify_mask can be moved to the hole after i_state.
->
-> And why stop at i_fsnotify/i_bfp?
-> If you go to "addons" why not also move i_security/i_crypt/i_verify?
-> Need to have some common rationale behind those decisions.
->=20
+On 21.11.24 14:44, David Hildenbrand wrote:
+> On 21.11.24 13:41, Jeongjun Park wrote:
+>> vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
+>> the returned pointer without any verification, even though it may return NULL.
+>> In this case, NULL pointer dereference may occur, so to prevent this,
+>> vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
+>>
+>> Cc: <stable@vger.kernel.org>
+>> Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
+> 
+> If that's an issue, wouldn't it have predated that commit?
+> 
+> struct vm_area_struct *next = vma->vm_next;
+> unsigned long nstart = next->vm_start;
+> 
+> Would have also assumed that there is a next VMA that can be
+> dereferenced, no?
+> 
 
-I don't think we would stop there. We could probably move several
-fields into the new struct (i_flctx comes to mind), but that should
-probably be done piecemeal, in later patchsets.
+And looking into the details, we only assume that there is a next VMA if 
+we are explicitly told to by the caller of vma_adjust_trans_huge() using 
+"adjust_next".
 
-The bigger concern is that this is only helpful when inode_addons is
-needed for a fraction of inodes on the system. i_security might not be
-good candidate to move there for that reason. Anyone running with an
-LSM is going to end up allocating one of these for almost every inode,
-so they might as well just keep a pointer in struct inode instead.
+There is only one such caller, 
+vma_merge_existing_range()->commit_merge() where we set adj_start -> 
+"adjust_next" where we seem to have a guarantee that there is a next VMA.
 
-We also need to be cautious here. This adds extra pointer indirection,
-which could be costly for some uses.
---=20
-Jeff Layton <jlayton@kernel.org>
+So I don't think there is an issue here (although the code does look 
+confusing ...).
+
+Not sure, though, if a
+
+if (WARN_ON_ONCE(!next))
+	return;
+
+would be reasonable.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
