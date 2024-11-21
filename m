@@ -1,169 +1,197 @@
-Return-Path: <linux-kernel+bounces-417122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83189D4F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:57:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C8FA9D4F5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6161F2241C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:57:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC902B2A615
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5631D95B3;
-	Thu, 21 Nov 2024 14:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4770E1ABEB4;
+	Thu, 21 Nov 2024 14:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="X3U22K/j"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2084.outbound.protection.outlook.com [40.107.241.84])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ArWbtJLV"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD8D1D9353;
-	Thu, 21 Nov 2024 14:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732200924; cv=fail; b=g9s6Dr25C+uX9mt+x57+angbi/dd+igLp30YMj7IGzdaJF2biOdWyeYS2daKAOgi2SjNkhJ07c8xYZ+qt50nZPMzgLgiY6dlttImiovIwkM9KpYCE42pzztlRx6cvTn9164AfRGw1gfU684OdqmbTQh4pwnW8tQmaGqVRQ4GTu4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732200924; c=relaxed/simple;
-	bh=qbbLE/P16iIU83ZWFl84rqzkvoBog7xHmDi9+aReTV4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=p4h/HqJ8FDXTSrK3R0aRG5iv66k9rhWkvrpkdtvkrXlTF2TDIAnnSPNh5CrWQBpPT1Gi/Gcx3rjE3IThmzhvy1hoGCiTXI8lOnqQWbhhsMuOHXWL8Rguu1qJ4fDzze7IJSbJi0sHQXgrlez+VLrD7iEx3hhFQqn3hO8t26CvKXw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=X3U22K/j; arc=fail smtp.client-ip=40.107.241.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L9Fk4gthF/GmAqN8Kgsp6DHsMHqUsK4x6fU0YVYe9OIrccmAu0QlDS0/KTei/F9l8vGQv86g7S8QlFhjM/kAzjL6Ecua49zLKfpHzz1pQv7XKO4STDngi36NFZCxWTVFc2rSgfMTXC0rqQOPdms+Fhkb0TySGbQWwj7qMTi8NMgaydPbc9xAwqQvl4KBcrHFOUOR2KY39cpGlQmFltXENf6UXwC5sqhKE6M18ZqB5kq0T6JFfU/S/xI786MDsjCuXO6OL0hA9VVsKAq9Fyi+OpT36sPnxQlfPKpb+I1LXiJaxAuOfSs/4wqke2QI0J4VUXdVTWjmLAPIDxxVK47I/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YZxk7eWnHGvm+0E6OWQeXlgW4JMzzowWCnH8XmuzGiU=;
- b=L6B1NOFaikD7lphxNNP+Z0EnkYcdy8PZL/yTUawMJ8rFOM8r84HrtAV4Vc2rHkCM8M8eiwWAixiCVt/uQ5n0vm3GxElESH4HSSS35P9B4PyGoc14A4/kMj+iRpFdL/Tx+eaCSXFqMaaMWL7M+yLT3s3JgvqR++0sYFtabJ72imZMmLiBeld6pOkFBA3CMRvP5K5L60nt7EJ0/fbFx74sfbQnfqU7Wrf9dqUa0uJGflRJKqIPvIybRDVmwpyyvY+Xyrmzrg36caWnFCId4P54tDcQp6leno3FSlxBAQ+RVqPpz+GfSWEKK7mDgstiTfaa5CenKGRGjRQ43YxmUC3LOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZxk7eWnHGvm+0E6OWQeXlgW4JMzzowWCnH8XmuzGiU=;
- b=X3U22K/j1WJizf+J76H5kn6zur1cgAhvK4i2laq+g4KkGcMmT7P0BjljjfdGbWcJb3DgvFsoRqfyl0bjkkM92GTXvq0qGWsebiwK1gtotr+L3djp8ZMTkAMFnLYE6LqjF5lB1YO7nLjWIfF53BCd57xw6yobZDPUx7wTE7FLFSM=
-Received: from DU2PR04CA0192.eurprd04.prod.outlook.com (2603:10a6:10:28d::17)
- by AS1PR06MB8588.eurprd06.prod.outlook.com (2603:10a6:20b:4d8::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.16; Thu, 21 Nov
- 2024 14:55:19 +0000
-Received: from DU2PEPF00028CFE.eurprd03.prod.outlook.com
- (2603:10a6:10:28d:cafe::f8) by DU2PR04CA0192.outlook.office365.com
- (2603:10a6:10:28d::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24 via Frontend
- Transport; Thu, 21 Nov 2024 14:55:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- DU2PEPF00028CFE.mail.protection.outlook.com (10.167.242.182) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8182.16 via Frontend Transport; Thu, 21 Nov 2024 14:55:18 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Thu, 21 Nov 2024 15:55:18 +0100
-From: Catalin Popescu <catalin.popescu@leica-geosystems.com>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bsp-development.geo@leica-geosystems.com,
-	m.felsch@pengutronix.de,
-	Catalin Popescu <catalin.popescu@leica-geosystems.com>
-Subject: [PATCH] gpio: mxc: fix warning about static allocation of GPIO base
-Date: Thu, 21 Nov 2024 15:55:15 +0100
-Message-Id: <20241121145515.3087855-1-catalin.popescu@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C302E1D90D4
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732200990; cv=none; b=c3BnQVJUOT/Dp6Ak/KsT0qklcJDIzdgActGscef+6++4xsmMnfDO8ERMelBjya5nLGARSZSVVD/NE865wPLfeDO9I0WekyJhGOlwH7N9xfmo7pHlj2Bsyur8Xg+josEd4MBQd11fdS55Ldi7a150DUwZCOIaYdZ+zp68Uio5U9c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732200990; c=relaxed/simple;
+	bh=I5o6PoDiRHq1RuiCKKs5cUTbHT5egymWxAALEg0qTMw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lcd5USvinEHifNNOIuGy+iAvHHCAotznBaqXIBz2cREWrc1C5PJq64/nU8tScTMMq7dYMbRYLF1lXU70GaeB/mEaLwtQ7XTOV0eIn8pdG2kk3eBQR/orUeahH48JRIe1gEnEZnNHNnVDjPMR5jYbhVZf4Ih6uZ+V0chsdYEBSiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ArWbtJLV; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2279840005;
+	Thu, 21 Nov 2024 14:56:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732200987;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OLDouZPklZzpGMTdyZtvlWDtrmgpTgU58+RznhI2QS4=;
+	b=ArWbtJLVVW6rfFcHFOeFRswAtedzNXlMo41TC47senVzpgr3xMwGfNzCF1GFA4nYAbyGhR
+	urpbEhaHh1oL2xUnbLsUaw3GybYbJxAz5ZIy8TM3iGlF2EPAzh2woT6GEEOiQz29krRTLM
+	MPdzi3V1h1OL9Kva/DrrvDR9JCVh64pjG44OnDE86xfR/gqJakQEI1TpRLs9byDVrG9+cN
+	t8iNdc9R6k23Zk0+aslqpr9ItwWLxNknmgd8beZOzSJ6r9ncutKDD8uQFkmP30PSnIRcQM
+	CIzukUgyYVF51bIoBmGc80dTgiFXszT9OzpOCSO6ba+1KI6Dh2ZVOCDYolBjDg==
+Message-ID: <e6381bb3-70ae-4aa5-83a0-1e226a5efdfd@bootlin.com>
+Date: Thu, 21 Nov 2024 15:56:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 21 Nov 2024 14:55:18.0405 (UTC) FILETIME=[61749B50:01DB3C25]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028CFE:EE_|AS1PR06MB8588:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 92f22076-ad22-4901-eb41-08dd0a3c8430
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nDd/7qVm1lJXXmUDMOoe3RTQuPtXturPjDHMzE2dlZIELbneRCVwJ4tI1Nv2?=
- =?us-ascii?Q?SzBKLUKZeoh+PtDuWvUTNHOQwoWq01WicQWPNOaiBvMcdU5tRwVtoGb4Pz2k?=
- =?us-ascii?Q?zNK2XgbxbOYhEbszd+zJJUxAOrdUoaiF7c5P7aWEecwDhTNhZoPLRkxOd+Ll?=
- =?us-ascii?Q?IumIpV/zE4LIJLftGzV8dYnvbSsWbplBNkjhXO+qHwcPK45Lj9dYYKSonLwr?=
- =?us-ascii?Q?2+gGBJghPkh8vpqa0+t+BlVhWoWxMzSZldrxFGlwdgKZnQ6q5jMtJKe2gspT?=
- =?us-ascii?Q?JdWXiyITUYU3yX4M6uizXOgVr0ZmlGho5vlB/BfF/jzTpR6TeayHQA6N3QTB?=
- =?us-ascii?Q?gxgir2jr6gySaKIdQ7CcRZu9X+nGpvhuBKJZsy3p+pzK5t5IeUNWq42sv6Nc?=
- =?us-ascii?Q?s5fiVboc+kL0814QAL0epJw2UGRovwhLdY9XvUBVwwKWLxvejC4u8yCKxihC?=
- =?us-ascii?Q?lTF3Q4M5Y4Zah1oSCFEVeNak33adur2v5uckTV6kcQrCUrkXKkH6afCoHrVR?=
- =?us-ascii?Q?TJdMeXtDKe4w2lkjaUsDc+U18B5Nv3qDU8YG6ag1dlbex1M9KKhdrFiHZ7i8?=
- =?us-ascii?Q?93lqc9TxrkzKqT5Tn6pC0Y/mp7rhX+FwlIgA4M55wZ6u3LSMpf/Js2sf3wnk?=
- =?us-ascii?Q?+bmmZYr1wS/C2EaYHeT0tl/YRM29LUchqct6fqT2fMYHcER4HNEeA+S3oe+3?=
- =?us-ascii?Q?iMp7iaT+RTEwZ38QOhR534Hgw0CI6+adtfF+hJVh1JjiXQlRqkS36VytGkRP?=
- =?us-ascii?Q?Zn63I/18aUzMSFxYg+diE4WOt8IFcIqAVMgxzS87eEKQ8s0GOW1LkC2jrJhL?=
- =?us-ascii?Q?xN2y6SVQj7yKIfmz/gj5y7R7wgxuhsM2nUzjVZyc0S3eFDtYq0mIoJNUsngS?=
- =?us-ascii?Q?xBJbwb7uvVjspY2cRVJeEqE6zfW0B5CgPuSwpi0CpX0XFzspi2kY16+ohciA?=
- =?us-ascii?Q?KKBaltRm2vblyRhHh2fRNBq6ixVgc77P2RBFfvbrazBk58blJzq4guyUF0D0?=
- =?us-ascii?Q?6ToGkvKj4FCcGhIkDiVBqVkEHta0geRfV2j1xc34q+RmGOaqhknuXb7miMXL?=
- =?us-ascii?Q?Uv5xqgfwGaPZBPwTPVl07TJ69M1bzdTULDKAzmOtMdLwdxTvmVU8YHLdfMF5?=
- =?us-ascii?Q?3PMAouHX1iqfNITvgn9k3dcT0b7+qZqOEOD+K27FqTHQwEJ7jGEa8FQitVYD?=
- =?us-ascii?Q?HtDe1+ZPuw45+oq2BqFXOlb5FUk7lgU3UEs2eBj02w2ys1waai+DgfKaKP97?=
- =?us-ascii?Q?eJUobl7N+OGqzVw3fxqVzR0WC+yOm7saw/ztUaDyCpTesxsl81dGIQmrrQrt?=
- =?us-ascii?Q?1i+T2cVXX1lVfu81a6d/H5fRnNLWWQHPWFhjTKOa3mgD8KndIWfCGOJs54IH?=
- =?us-ascii?Q?Z2pCaIWGUg871otIbsPtoKJObodmJIkdUZb600vuERXn36TbfQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 14:55:18.7186
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92f22076-ad22-4901-eb41-08dd0a3c8430
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF00028CFE.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR06MB8588
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/10] memory: ti-aemif: Create
+ aemif_check_cs_timings()
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Christopher Cordahi <christophercordahi@nanometrics.ca>
+References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
+ <20241115132631.264609-5-bastien.curutchet@bootlin.com>
+ <e3b8366d-b365-43a3-8f40-c2374ff9e8bf@kernel.org>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <e3b8366d-b365-43a3-8f40-c2374ff9e8bf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Static allocation of GPIO base is deprecated, let gpiolib perform the
-dynamic allocation. This is done by initializing base to a negative
-value before the registration of the gpio controller.
+Hi Krzysztof,
 
-Signed-off-by: Catalin Popescu <catalin.popescu@leica-geosystems.com>
----
- drivers/gpio/gpio-mxc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 11/21/24 11:28 AM, Krzysztof Kozlowski wrote:
+> On 15/11/2024 14:26, Bastien Curutchet wrote:
+>> aemif_calc_rate() check the validity of a new computed timing against a
+>> 'max' value given as input. This isn't convenient if we want to check
+>> the CS timing configuration somewhere else in the code.
+>>
+>> Wrap the verification of all the chip select's timing configuration into a
+>> single function to ease its exportation in upcoming patches.
+>> Remove the 'max' input from aemif_calc_rate() as it's no longer used.
+>>
+>> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+>> ---
+>>   drivers/memory/ti-aemif.c | 107 +++++++++++++++++---------------------
+>>   1 file changed, 49 insertions(+), 58 deletions(-)
+>>
+>> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+>> index aec6d6464efa..5c1c6f95185f 100644
+>> --- a/drivers/memory/ti-aemif.c
+>> +++ b/drivers/memory/ti-aemif.c
+>> @@ -132,18 +132,48 @@ struct aemif_device {
+>>   	struct aemif_cs_data cs_data[NUM_CS];
+>>   };
+>>   
+>> +/**
+>> + * aemif_check_cs_timings - Check the validity of a CS timing configuration.
+>> + * @timings: timings configuration
+>> + *
+>> + * @return: 0 if the timing configuration is valid, negative error number otherwise.
+>> + */
+>> +static int aemif_check_cs_timings(struct aemif_cs_timings *timings)
+>> +{
+>> +	if (timings->ta > TA_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->rhold > RHOLD_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->rstrobe > RSTROBE_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->rsetup > RSETUP_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->whold > WHOLD_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->wstrobe > WSTROBE_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	if (timings->wsetup > WSETUP_MAX)
+>> +		return -EINVAL;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   /**
+>>    * aemif_calc_rate - calculate timing data.
+>>    * @pdev: platform device to calculate for
+>>    * @wanted: The cycle time needed in nanoseconds.
+>>    * @clk: The input clock rate in kHz.
+>> - * @max: The maximum divider value that can be programmed.
+>>    *
+>>    * On success, returns the calculated timing value minus 1 for easy
+>>    * programming into AEMIF timing registers, else negative errno.
+>>    */
+>> -static int aemif_calc_rate(struct platform_device *pdev, int wanted,
+>> -			   unsigned long clk, int max)
+>> +static int aemif_calc_rate(struct platform_device *pdev, int wanted, unsigned long clk)
+>>   {
+>>   	int result;
+>>   
+>> @@ -156,10 +186,6 @@ static int aemif_calc_rate(struct platform_device *pdev, int wanted,
+>>   	if (result < 0)
+>>   		result = 0;
+>>   
+>> -	/* ... But configuring tighter timings is not an option. */
+>> -	else if (result > max)
+>> -		result = -EINVAL;
+>> -
+>>   	return result;
+>>   }
+>>   
+>> @@ -249,7 +275,6 @@ static int of_aemif_parse_abus_config(struct platform_device *pdev,
+>>   	struct aemif_device *aemif = platform_get_drvdata(pdev);
+>>   	unsigned long clk_rate = aemif->clk_rate;
+>>   	struct aemif_cs_data *data;
+>> -	int ret;
+>>   	u32 cs;
+>>   	u32 val;
+>>   
+>> @@ -275,68 +300,34 @@ static int of_aemif_parse_abus_config(struct platform_device *pdev,
+>>   	aemif_get_hw_params(pdev, aemif->num_cs++);
+>>   
+>>   	/* override the values from device node */
+>> -	if (!of_property_read_u32(np, "ti,cs-min-turnaround-ns", &val)) {
+>> -		ret = aemif_calc_rate(pdev, val, clk_rate, TA_MAX);
+>> -		if (ret < 0)
+>> -			return ret;
+>> -
+>> -		data->timings.ta = ret;
+>> -	}
+>> +	if (!of_property_read_u32(np, "ti,cs-min-turnaround-ns", &val))
+>> +		data->timings.ta = aemif_calc_rate(pdev, val, clk_rate);
+>>   
+> 
+> You just changed these lines in patch #1. Basically this is partial
+> revert of #1.
+> 
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 4cb455b2bdee..a7418a4814d6 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -490,8 +490,7 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	port->gc.request = mxc_gpio_request;
- 	port->gc.free = mxc_gpio_free;
- 	port->gc.to_irq = mxc_gpio_to_irq;
--	port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
--					     pdev->id * 32;
-+	port->gc.base = -1;
- 
- 	err = devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
- 	if (err)
+IMHO this isn't a partial revert of patch #1. Patch #1 moved the call of 
+aemif_calc_rate() from aemif_config_abus() to here. Then, this patch 
+removes the check of the aemif_calc_rate() as it no longer returns 
+negative values. Maybe I should change the aemif_calc_rate() return type 
+to u32 by the way.
 
-base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-prerequisite-patch-id: 0000000000000000000000000000000000000000
--- 
-2.34.1
+
+Best regards,
+Bastien
 
 
