@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-416831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0925D9D4AD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:25:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C1999D4AD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:25:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3171F218FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:25:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74E3287BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8CB1D31BA;
-	Thu, 21 Nov 2024 10:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9009B1D0405;
+	Thu, 21 Nov 2024 10:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjjpW1zl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzLmgXIH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EEF1D31B6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28C91C3046
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184636; cv=none; b=RyrzPme6Jb0ULocrp/8266+aWrwhumvSW/o1WCJJhDDXytj0QS0Xy2tU//9fuHDmBac344Fn9Md4JlYXOqs06au9lKEeqQTRtxCpwX2PVuijwAvGQhSkHex3yAM8NxRoS0WZfm+S9hMjYYcRtNJx/Ng9VVKj9EjKku5FBnI8vkk=
+	t=1732184706; cv=none; b=TdqgGcipUOtnj34YsFg6PypZq87G8W4fVPiY66JNuEzdccYw2rNapxLz9LcdqOXJWq86FzRvIDNCadglGOq/BT74O0ANn8Mc8hvRix1bUn4TBoMDocufCLN0GRyRRTpk6eE48775k9C0me7XceZhJjNLzsmh3ADUBPRVVQdr6TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184636; c=relaxed/simple;
-	bh=rSBwMVz+Hbwl+HCqPvxM1KxUFP+enn+vvwnQeEGLsMc=;
+	s=arc-20240116; t=1732184706; c=relaxed/simple;
+	bh=uTUGn2iQmB7yPEXNTqyE13jq3MolpgNw7N7yDtmNDjU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TNd1taet7xSDzmXzoWfw0/ApNHA+ZQjtprybroHd33qLqTwZYr6VmapOPhscUIf70bEfe6H3yG0+eyPXCGk5kF6m0g46fXmUx2QwG4y9J4m9KiqgO4qnDIWxaV/542nNR23S88FQJ+3YRHFRL6uVZNv1mH64HB57ihpkhLrRW6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjjpW1zl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61B6AC4CECC;
-	Thu, 21 Nov 2024 10:23:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tTuu7VFw3GdYmik4RDfnGDch350GQ1exXqGC1V2LaSrGPpfaZF0OlFPT+XY6R0PMhYMgr4gcnJ4UV8cspjo6VB6CpG4dlzEJ1p13Eh5RRXvortH/3wmc3oJkdVcd84Gj5fGygcHYIDsTp4Os30JvjeIbYJ15kcLTyxRSO7Yj+pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzLmgXIH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7500AC4CECC;
+	Thu, 21 Nov 2024 10:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732184636;
-	bh=rSBwMVz+Hbwl+HCqPvxM1KxUFP+enn+vvwnQeEGLsMc=;
+	s=k20201202; t=1732184705;
+	bh=uTUGn2iQmB7yPEXNTqyE13jq3MolpgNw7N7yDtmNDjU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YjjpW1zlfI5Bce2JyfWq6SpRraKtEoG2ACdltIXLrDJ6KHts3/q5YhL+QS25gK/RM
-	 L16AArh8jpxh0rxd1rcDrjHTxuaNfxRBsiahtumma59n6KEkgV19tY5a/m24UKhJk1
-	 yR9YHZnHPb9/yxdWlep1pD0H9MiggcQcHf6RgyXh4ImmN/HVzMofXpfiWNlhmUG5AC
-	 DL0B1zSGIjh45s6PvQBw2T21PEdEzlrLFSNMIgZ5WolrK5oUgmRS9F83DpHdLBWd20
-	 5BZEB+MGmNwzsoVutUqtvjhElvPom50wolW9U2fXzu1TmrXKW5aavwAaOTh0SGV9CG
-	 Q5vxi/yQAxNng==
-Message-ID: <72a0e0a5-c44c-4e92-9f91-e200900e3eed@kernel.org>
-Date: Thu, 21 Nov 2024 11:23:51 +0100
+	b=jzLmgXIHeJjNAlQzUwYbM/2HpugkItmTXES1aGt3QlzROXHTPiAwOt7c37PM+bGdp
+	 9L3hdk3ZJRlfldueTP2Ely9U0px0XibPiyVaJmF09jfNLN4VZWLgoOtUrZXQZ7nf4Z
+	 PDKBB3T5kPsCNi1X76gosubGeIDJqyrYYWtG2OIgKF1VLQ3Gd8+bZyZgsQ8Hkm8g8T
+	 ho/946b6RyLxfUSeQ4fPdd5u8J1DaM+BvM+M6h97NVqx1p1AmRKJhTMfkNmzl3MJWp
+	 Dz/owWv6cZnCnbj/hrUEB2bbIQssB3qZhwW7sd3ik8K4IJm4ZQ2RB+KP36Z4Xl+Ide
+	 ILkd/KJffNB4g==
+Message-ID: <4bff3f3e-9e32-45b1-91b1-6c9faf36d416@kernel.org>
+Date: Thu, 21 Nov 2024 11:25:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 00/10] Implement setup_interface() in the DaVinci NAND
- controller
+Subject: Re: [PATCH v4 03/10] memory: ti-aemif: Wrap CS timings into a struct
 To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
  Santosh Shilimkar <ssantosh@kernel.org>,
  Miquel Raynal <miquel.raynal@bootlin.com>,
@@ -60,6 +59,7 @@ Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
  Herve Codina <herve.codina@bootlin.com>,
  Christopher Cordahi <christophercordahi@nanometrics.ca>
 References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
+ <20241115132631.264609-4-bastien.curutchet@bootlin.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,22 +105,50 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
+In-Reply-To: <20241115132631.264609-4-bastien.curutchet@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/11/2024 14:26, Bastien Curutchet wrote:
-> Hi all,
+> CS timings are store in the struct aemif_cs_data along with other CS
+> parameters. It isn't convenient for exposing CS timings to other drivers
+> without also exposing the other parameters.
 > 
-> This patch series aims to implement the setup_interface() operation in
-> the DaVinci NAND controller to enable the use of all ONFI modes and
-> improve the NAND access speed.
+> Wrap the CS timings in a new the struct aemif_cs_timings to simplify
+> their export in upcoming patches.
 > 
-> PATCH 6 depends on PATCH 1-2-3-4-5
-> PATCH 10 depends on PATCH 6-8-9
+> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+> ---
+>  drivers/memory/ti-aemif.c | 58 ++++++++++++++++++++++-----------------
+>  1 file changed, 33 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+> index 6a751a23d41a..aec6d6464efa 100644
+> --- a/drivers/memory/ti-aemif.c
+> +++ b/drivers/memory/ti-aemif.c
+> @@ -78,10 +78,8 @@
+>  				WSETUP(WSETUP_MAX) | \
+>  				EW(EW_MAX) | SSTROBE(SSTROBE_MAX) | \
+>  				ASIZE_MAX)
+> -
 
-That's a bit too many to go via separate tree, so I'll provide them via
-stable tag to Miquel/MTD.
+This does not look related change.
+
+>  /**
+> - * struct aemif_cs_data: structure to hold CS parameters
+> - * @cs: chip-select number
+> + * struct aemif_cs_timings: structure to hold CS timings
+>   * @wstrobe: write strobe width, number of cycles - 1
+>   * @rstrobe: read strobe width, number of cycles - 1
+>   * @wsetup: write setup width, number of cycles - 1
+> @@ -89,12 +87,8 @@
+>   * @rsetup: read setup width, number of cycles - 1
+>   * @rhold: read hold width, number of cycles - 1
+>   * @ta: minimum turn around time, number of cycles - 1
+> - * @enable_ss: enable/disable select strobe mode
+> - * @enable_ew: enable/disable extended wait mode
+> - * @asize: width of the asynchronous device's data
+
 
 Best regards,
 Krzysztof
