@@ -1,215 +1,130 @@
-Return-Path: <linux-kernel+bounces-416754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73C159D49AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:14:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BF89D49B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE4A281A89
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:14:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EFD28215B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE491CCB26;
-	Thu, 21 Nov 2024 09:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pRpEz+hK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3464206E;
-	Thu, 21 Nov 2024 09:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96B1CB9F0;
+	Thu, 21 Nov 2024 09:14:59 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E44206E;
+	Thu, 21 Nov 2024 09:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732180451; cv=none; b=buit03yvHq3sriVdg2/wWuBuh4Ud7SL5z+hzpwsFJpATCDh7KzGwZsDrh1zDOSbkrBjvarJY8BZJIlxYltTH4iPRYSgV8HWBAQxVVgBvQyuLIrxJebY5HVZh8Tcp897zz+Kh77Uzu+cqvojTtwNsePxpvZ1p/6AsrkWYWe8FqZM=
+	t=1732180499; cv=none; b=oGPrxh8eBAN7A2pDCkOKqeSKldVbrBeFPD3IhFrepSn2ucAbm4gDPOtf9uunKDDxPWfeP9d8EHseqrp6Xuk4sOW6klpRwQbdXZoI3yvIGu+P79kMIZCetkTTa0z+L4OBdRJ7x9PPK6Aa4Sh4BYxDBoLGjaNLZiz9vmoTyiiB4WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732180451; c=relaxed/simple;
-	bh=KfG74JQyOCfVgqMGtJuBmgLAopV5I88+l8j2Xk2H3Og=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=G7c2vr3c1+BrthnrCFEOK+11PlbdDvLZrbbooh0/b6WaXWJ1M45oDAZ+noorAwteBGA4J4wxHvtHIytl4BxtCTnzJxe8QsyPKPam/5qk2xkRyhGj3NCFC4Hey7XIbJOr54VInaWdHZixbqsE8DnYsRB23Uf3/eK7ZN6O6TMzriY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pRpEz+hK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL0Cn8j026219;
-	Thu, 21 Nov 2024 09:14:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=a4RK+u81L+OhH7N7XBGm2T/Ds8A4xfc/86FBSw72qco=; b=pR
-	pEz+hK6y64T0VVFiB9k2E7oKDx69XgKZtBKcVk0HPvNAoK1GZxNb3jKX30HRf1LV
-	hzcOWPQ6+Mtn9FbNdwRpgWXBK3J7hpWPDHbTyt/lMzk7SyKFE2lqT8eNVNj4FgIx
-	HINALhCvb7zv5e74dnbXzXYQQP62nk9WOmRcSkiMyc3I6dffLy/3Bc+w2nZyNqU5
-	DIILeSnw0dLfP+kTqhBoc5kBFpzLJKx7WMTCQVUB2MN5RvefSkAMJAnYL6JA728j
-	bIEW3WL9PArYiu/nBzNmKFyj3deqgRM16cyZ6sXcQr49r87rBfi78QuNx1Snmb3E
-	wVoWSkGhM4vQavN7HWFw==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ebyb62h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 09:14:07 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL9E4FC024157;
-	Thu, 21 Nov 2024 09:14:04 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 42xmfmn76h-1;
-	Thu, 21 Nov 2024 09:14:04 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AL9E4ff024139;
-	Thu, 21 Nov 2024 09:14:04 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-mukhopad-hyd.qualcomm.com [10.147.244.250])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 4AL9E3Lf024133;
-	Thu, 21 Nov 2024 09:14:04 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 3978529)
-	id 0BE135009F5; Thu, 21 Nov 2024 14:44:03 +0530 (+0530)
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-To: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com,
-        quic_vproddut@quicinc.com, quic_abhinavk@quicinc.com
-Subject: [PATCH v5 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display Port
-Date: Thu, 21 Nov 2024 14:44:01 +0530
-Message-Id: <20241121091401.20584-3-quic_mukhopad@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241121091401.20584-1-quic_mukhopad@quicinc.com>
-References: <20241121091401.20584-1-quic_mukhopad@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: S42ISiq-cPISblxCxcRIs4SKt3-cR9nO
-X-Proofpoint-ORIG-GUID: S42ISiq-cPISblxCxcRIs4SKt3-cR9nO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210071
+	s=arc-20240116; t=1732180499; c=relaxed/simple;
+	bh=HC+FClx8+FFEcf2S1sO5cNwBgI+xwZmAbAIZHTFgOfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=exK/mlrHQLgsYiMTsw89eyLFslWwBzQhOINdDTfDmQjQuoDHDiN4HfgVSh5FeO+aF62QpzsK298pmvHlE1TfDyymwtZlrDSzgaVAvQoVVLwkiFl7lchoejtETzEnynmrq6BcZ7WGErw4kM4J8JseQFGpGZpgRCHibZQtofsg9v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3673efa0ed88-2c5b0;
+	Thu, 21 Nov 2024 17:14:54 +0800 (CST)
+X-RM-TRANSID:2ee3673efa0ed88-2c5b0
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from [172.20.230.59] (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6673efa0d35c-d5849;
+	Thu, 21 Nov 2024 17:14:54 +0800 (CST)
+X-RM-TRANSID:2ee6673efa0d35c-d5849
+Message-ID: <291c5d58-9681-49bc-b5c4-3ee4555d68bd@cmss.chinamobile.com>
+Date: Thu, 21 Nov 2024 17:14:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] selftests: mm: Fix conversion specifiers
+ intransact_test()
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
+ akpm@linux-foundation.org, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241117071231.177864-1-guanjing@cmss.chinamobile.com>
+ <a2b65507-90dd-4586-9881-4ce5b310c2a8@collabora.com>
+From: guanjing <guanjing@cmss.chinamobile.com>
+In-Reply-To: <a2b65507-90dd-4586-9881-4ce5b310c2a8@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The Qualcomm SA8775P platform comes with 2 DisplayPort controllers
-for each mdss. edp0 and edp1 correspond to the DP controllers of
-mdss0, whereas edp2 and edp3 correspond to the DP controllers of
-mdss1. This change enables only the DP controllers, DPTX0 and DPTX1
-alongside their corresponding PHYs of mdss0, which have been
-validated.
+I found it when reading the code. So far, I haven't found any tools that 
+can be used for scanning yet. :)
 
-Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 80 ++++++++++++++++++++++
- 1 file changed, 80 insertions(+)
+Thank you for your review.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index adb71aeff339..f4f6a78e94c7 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -27,6 +27,30 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	dp0-connector {
-+		compatible = "dp-connector";
-+		label = "eDP0";
-+		type = "full-size";
-+
-+		port {
-+			dp0_connector_in: endpoint {
-+				remote-endpoint = <&mdss0_dp0_out>;
-+			};
-+		};
-+	};
-+
-+	dp1-connector {
-+		compatible = "dp-connector";
-+		label = "eDP1";
-+		type = "full-size";
-+
-+		port {
-+			dp1_connector_in: endpoint {
-+				remote-endpoint = <&mdss0_dp1_out>;
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -421,6 +445,50 @@
- 	status = "okay";
- };
- 
-+&mdss0 {
-+	status = "okay";
-+};
-+
-+&mdss0_dp0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&dp0_hot_plug_det>;
-+	pinctrl-names = "default";
-+};
-+
-+&mdss0_dp0_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp0_connector_in>;
-+};
-+
-+&mdss0_dp0_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+};
-+
-+&mdss0_dp1 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&dp1_hot_plug_det>;
-+	pinctrl-names = "default";
-+};
-+
-+&mdss0_dp1_out {
-+	data-lanes = <0 1 2 3>;
-+	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-+	remote-endpoint = <&dp1_connector_in>;
-+};
-+
-+&mdss0_dp1_phy {
-+	status = "okay";
-+
-+	vdda-phy-supply = <&vreg_l1c>;
-+	vdda-pll-supply = <&vreg_l4a>;
-+};
-+
- &pmm8654au_0_gpios {
- 	gpio-line-names = "DS_EN",
- 			  "POFF_COMPLETE",
-@@ -527,6 +595,18 @@
- };
- 
- &tlmm {
-+	dp0_hot_plug_det: dp0-hot-plug-det-state {
-+		pins = "gpio101";
-+		function = "edp0_hot";
-+		bias-disable;
-+	};
-+
-+	dp1_hot_plug_det: dp1-hot-plug-det-state {
-+		pins = "gpio102";
-+		function = "edp1_hot";
-+		bias-disable;
-+	};
-+
- 	ethernet0_default: ethernet0-default-state {
- 		ethernet0_mdc: ethernet0-mdc-pins {
- 			pins = "gpio8";
--- 
-2.17.1
+
+On 2024/11/19 15:33, Muhammad Usama Anjum wrote:
+> Thanks for the patch.
+>
+>
+> On 11/17/24 12:12 PM, guanjing wrote:
+>> Lots of incorrect conversion specifiers. Fix them.
+> Not sure why I'd not got warnings. Just curious, how were you able
+> to notice these warnings?
+>
+>> Fixes: 46fd75d4a3c9 ("selftests: mm: add pagemap ioctl tests")
+>> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>
+>> ---
+>>   tools/testing/selftests/mm/pagemap_ioctl.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
+>> index bcc73b4e805c..fdafce0654e9 100644
+>> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
+>> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
+>> @@ -1405,9 +1405,9 @@ static void transact_test(int page_size)
+>>   	memset(mem, 0, 0x1000 * nthreads * pages_per_thread);
+>>   
+>>   	count = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
+>> -	ksft_test_result(count > 0, "%s count %d\n", __func__, count);
+>> +	ksft_test_result(count > 0, "%s count %u\n", __func__, count);
+>>   	count = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
+>> -	ksft_test_result(count == 0, "%s count %d\n", __func__, count);
+>> +	ksft_test_result(count == 0, "%s count %u\n", __func__, count);
+>>   
+>>   	finish = 0;
+>>   	for (i = 0; i < nthreads; ++i)
+>> @@ -1429,7 +1429,7 @@ static void transact_test(int page_size)
+>>   			ksft_exit_fail_msg("pthread_barrier_wait\n");
+>>   
+>>   		if (count > nthreads * access_per_thread)
+>> -			ksft_exit_fail_msg("Too big count %d expected %d, iter %d\n",
+>> +			ksft_exit_fail_msg("Too big count %u expected %u, iter %u\n",
+>>   					   count, nthreads * access_per_thread, i);
+>>   
+>>   		c = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
+>> @@ -1454,7 +1454,7 @@ static void transact_test(int page_size)
+>>   			 * access and application gets page fault again for the same write.
+>>   			 */
+>>   			if (count < nthreads * access_per_thread) {
+>> -				ksft_test_result_fail("Lost update, iter %d, %d vs %d.\n", i, count,
+>> +				ksft_test_result_fail("Lost update, iter %u, %u vs %u.\n", i, count,
+>>   						      nthreads * access_per_thread);
+>>   				return;
+>>   			}
+>> @@ -1467,7 +1467,7 @@ static void transact_test(int page_size)
+>>   	finish = 1;
+>>   	pthread_barrier_wait(&end_barrier);
+>>   
+>> -	ksft_test_result_pass("%s Extra pages %u (%.1lf%%), extra thread faults %d.\n", __func__,
+>> +	ksft_test_result_pass("%s Extra pages %u (%.1lf%%), extra thread faults %u.\n", __func__,
+>>   			      extra_pages,
+>>   			      100.0 * extra_pages / (iter_count * nthreads * access_per_thread),
+>>   			      extra_thread_faults);
+
 
 
