@@ -1,300 +1,136 @@
-Return-Path: <linux-kernel+bounces-417038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C72C9D4E25
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:54:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53BD9D4E27
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9FEBB22BFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58F11B23452
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA731D89E3;
-	Thu, 21 Nov 2024 13:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D7E1D89E3;
+	Thu, 21 Nov 2024 13:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="X4FqLt0r"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpePayAR"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD9F1D2F64
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD881B0F0C;
+	Thu, 21 Nov 2024 13:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732197240; cv=none; b=ijO+J4uKKGUjw6C/12yIrLpzuxtWZ00c2ibpIk4dbDTXl46EJZiAGZG25Hv3uJSFhzQBwDvFxAZzJFFFT13kI9pnOx0DMZQKgkrhcU8t+zmHrT12qfhknzBIHKvkj8frNPI5LaDRQ5fHN3l4yS2zs4Rp/N3wJNyF91CvR6oFkqA=
+	t=1732197256; cv=none; b=LCQHL3GAnK4tIIUkASlgevbBBpeQpwgryukxebqFAQtN4ES9VN41AnPgz7mxmKNsTz6QzqVUgcMuZWdNGYu/VBgDEQjeiDjRXes1DQP1SkPQvL2khNhtoKh09m6BVPw0elDq+RFNK+4osDVRE9PrRVdxHvWRJM3ZR4C2Ix/MkO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732197240; c=relaxed/simple;
-	bh=y0/IGuvkvrL5BG8LKCqBwE8XTo+VVlZlf9uewaGMH5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CaP49XWnwaw4YsUTk9xVxSoPVicUu1VewctSDFj42SSKxUGBeP/2UmcaOawzoRjoSwCW7BzUhmGIKLzYY3zWiPdmIQilbkhqWgKgNgYwI5AwIKgtl1lm1ABO4xqNSuyh813Th4DATHzVj/H4GiTbs/MqSYuQ4rZtVefO3kEKdPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=X4FqLt0r; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa1f73966a5so157467266b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:53:57 -0800 (PST)
+	s=arc-20240116; t=1732197256; c=relaxed/simple;
+	bh=4F2uPZDhl79s/b3GeeUWm0C4ymSo6yl2Vh00rx1jd0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kYrFhz2AfWAHCATEPaloKYfKI4nfM700hKodksQ2WaS/F5yFp80Lnc+nqMgkEOPyK6Xc4UbK/yl0BZEJy6FzqXZ/XNnG8pSvWQxjFe/U/IeK2dn35uEYKyFEpOwN8oleFGZfGXWxbDUpQjzhNa+JpR6a1mBZrT/2CmQHYBW4mVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpePayAR; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e8607c2aso989156e87.3;
+        Thu, 21 Nov 2024 05:54:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732197236; x=1732802036; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jl6e5D40Xi8ZKnUy8M68lwLmWTZ/IaWEGCI46p3eoW8=;
-        b=X4FqLt0rRsqQv4F+I/5DOLrXZx37E8L5NldBY3+TFKfMcaKrU6wtiHZgDs81CtjMjr
-         QIbGDg+DpxUvQrF+n5zPqvAek1hN0Sqs+2aWIaqdCqKJkcC89YwRVEF5S8T0tBnB1OEw
-         lAb8qWrCmnPvToZ/eXj1N61STtLiNNFuML8UL1RoH9/s5dG55mY9myQZ1iA7UEKWWvMM
-         Em/Kd8KzOvEhN3vJhA8K7dSllLPqvNjpIc0qU+VEvcV2Gi1rjLKY0gw7eCRSX4GgEkpc
-         2PzZwIu0QZHMwbbxTIKi4pG7LdW7mWRngPe/6ory+ChejUs7IxYLl4cheVzs7MgtQWX4
-         HUfw==
+        d=gmail.com; s=20230601; t=1732197252; x=1732802052; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JwmcWq/IQwazom5lTDenZTbI3rb/SZ+QRK2h1hXK7aw=;
+        b=LpePayARxIyf5WK62Gg7p+agNjzokxOI+ucQ/YUhMSEVG9W+Ro81TO3ikS3q2y8Pj7
+         Bp3VSsdfPIuZ0jRRGqH3Nfdw/lqxXoiQRb8ubLsX9VRtr4ZcmxuEYY9Qm+OvGxfLvWSA
+         coY0ZL5LB2Cj3G4zLFLmvIxONMKlqMVf9N+yq8knS9+lFehX0CiMGflnV7rA9FIOgdEr
+         a/c7ApXI3zoazQLvpfYlQ9J09kHdtDhpXGamPId+srdgVUjg+3DWrV1iIe7gWF2R5+2d
+         NiKpNW9LC8BgofFEbiIvF4CwZsnZi8g+h0WLzKbGQoRMuirvELiz5uQ6uRi724GIZ2VX
+         SDTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732197236; x=1732802036;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jl6e5D40Xi8ZKnUy8M68lwLmWTZ/IaWEGCI46p3eoW8=;
-        b=ug4/N0mtpL5vxeHHyaPUWyIPd9KzddxEv+cq/xRCAgDG8XmE7o8793pBMRMlM4xCan
-         BdprZkC1u8Zo7E5iQRq9x4G//vL5EJwmyzvC85Mji2wUozFA5g/QN43fKCDK66OhQAu7
-         XEMGpNDd0jOtuiEy2YV9aK5crKRPXxfnYjGoVK7PWX3rp7BUHPQP5285emPOhh1nN1Y4
-         zvGh4y2B4rWy/RCWQhSosZWoYTUInPcXPXirW0lBAP+JE4c8mOMmqP/Rm71l4ND+RuDU
-         85AxKj/46ySF9PpjeKRq0aL/hOAm37kVUi0LpwqZ9QWvFPSd9agcPY0kYLAv7jvqj2Je
-         /p5g==
-X-Gm-Message-State: AOJu0YxJABCCiRHlnToNAO76N/BvLMeIovC5NKkacfNwynKWpkHuON/6
-	vydIVyZZKRU6qrJhPUPlVFbZdEDM7deCkvt9xHPurSM7swP7i0FEke5kBVxmyovl4T3cxcVCMC3
-	Z2+s=
-X-Gm-Gg: ASbGncuLV5gh8zwMUe7+WkD5AFS2GwSa3O1O1FbstYG6RQqJfTML8Ec6tqE9wpsM+Lw
-	AHIMyxwcAyiEZovFA5LK2Ktk5jJHq7ZDHy+IH931Ut38+p8y3O1oDtsGrNMCRmumT+rWicoCfb2
-	hvDao620VrLB9A4pd84XePgqvzR/JSPJtrcbCp5oMrfh3vexPilmB/1RAFd4nXxNkmpc9qJQqEp
-	nylfe3fZiEcuq+OPgYlkh5knzvjf5F+gSKHG8yy443s6ewduradiwgONXxpAVVwCix6RpgUzaAT
-	7YPB5SBzvI5na1w9iPRmIe8cdjmCpomB/GM3wjrO/doqZT1XOg==
-X-Google-Smtp-Source: AGHT+IFoAAbFshrZHtWe+t4PCem5jQ17Z3g+kEtTC10nHfI8uPR+Ni9ppuZtyWEiRFHX7Y7EgF6KVQ==
-X-Received: by 2002:a17:907:dac:b0:a99:8a5c:a357 with SMTP id a640c23a62f3a-aa4dd766d81mr642437166b.58.1732197236288;
-        Thu, 21 Nov 2024 05:53:56 -0800 (PST)
-Received: from raven.intern.cm-ag (p200300dc6f12b600023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f12:b600:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f4153111sm82890366b.15.2024.11.21.05.53.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 05:53:56 -0800 (PST)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: linux-nfs@vger.kernel.org,
-	trondmy@kernel.org,
-	anna@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/nfs/io: make nfs_start_io_*() killable
-Date: Thu, 21 Nov 2024 14:53:51 +0100
-Message-ID: <20241121135351.1230969-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1732197252; x=1732802052;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JwmcWq/IQwazom5lTDenZTbI3rb/SZ+QRK2h1hXK7aw=;
+        b=PfcHzDfbgjWbwZF2qCwR7Ox0nN/HXzmISGd3+2bhR3k6LFLEOC3INRYaM7afJegESJ
+         n0UR5RxhFUmkp2wcWfkEe2OoBQMfsYd6ny2RJO+/m9R4baBntdyX6V7EDUuNfqIIe/uH
+         xVmNSZcOIOTGdX5t5fscc8qFyCj5FdGJArZnffPyFxpC5PtsnT2K8uxiXRJq0stdRQ07
+         H2dfOe2YsvWAdHU+rDwX5w9Ljl69ig+DUmmzfxZkKCWwS0PqqLC/SShXXXvImE/pbXGq
+         Ot1znzhVicnhYWGcHZQ28b9Jkub1RZciDTdNw2tly+cSpP4OxSAFZmh2u03VOJTcSA7c
+         2kBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGWnKNztFxcaf6Nv/o5vMTd+Z3i/hEsP4+PbrlxoqGcYmdpZe5M5K1LKLig5mXjVR0FqthCBa7iFy4OQcL@vger.kernel.org, AJvYcCXbnprjX6/KvbRwDJxPQhNxFLwRLD/0j/M1M5GybKaMmV6nTbWHnNDmOgnGDVywSpE9C6vJDPEXXm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB0fQxFVkB6p7I7q5S/PQ2DY0BMh54kWYWSOYIGf/Ja6UrEyHK
+	Lm0apU20EZ2PyBRdCnhE4r6zNLjcHVY6y1iLtziR0ZxfCubyHNHsdCAMgQ==
+X-Gm-Gg: ASbGncspNVlZ2xapTpLrhspPcb4flJ+jJkm5dTnel71Ibk9Z++f4C8WKr1thrp5TILm
+	52jPtY2fIfJ6Qs52O34oHmbtIJav+FMrMdUf7B7VmG0PIWIxeIiEHQIPoao1P01ilS2Y38E+S9Y
+	a31CHUA/WmI7jxbxRJ+6R7uTU3H2T2hXf9VBDvu9PxOyM7/LN1OqLfE3T+hXBgbJWM1W25AbGHR
+	hH2PQC8PdvuxbGv6H2Z6VQlRp4zIBD1uLztBP4oC5RZrwyWe538HFwhTCd91CbCb+MLCUQOk0Fv
+	LzF8cTLm4+E22IJzMZtTsK6X9FSq
+X-Google-Smtp-Source: AGHT+IFnvckvHnQVhH3o7rsxtGMkea8ghpFCZHEKE9KCGQ72vQv0aiXs+A4cfd8QImS86LgLcn+6bA==
+X-Received: by 2002:a05:6512:32a5:b0:53d:bf13:49de with SMTP id 2adb3069b0e04-53dc1346858mr2699914e87.34.1732197251996;
+        Thu, 21 Nov 2024 05:54:11 -0800 (PST)
+Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff44efaf8sm1888225a12.33.2024.11.21.05.54.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 05:54:11 -0800 (PST)
+Message-ID: <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
+Date: Thu, 21 Nov 2024 14:54:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] iio: Use __cleanup for a few ROHM sensors
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732193263.git.mazziesaccount@gmail.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <cover.1732193263.git.mazziesaccount@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This allows killing processes that wait for a lock when one process is
-stuck waiting for the NFS server.  This aims to complete the coverage
-of NFS operations being killable, like nfs_direct_wait() does, for
-example.
+On 21/11/2024 14:04, Matti Vaittinen wrote:
+> Use __cleanup.
+> 
+> The series converts the rest of the ROHM sensors (maintained by me) to
+> use guard(mutex). This simplifies the error paths.
+> 
+> As a note, kx022a accelerometer driver is handled in another series,
+> which also adds support for two new accelerometers. I did also patch the
+> driver for the BU27008 and BU27010 - but when I was testing the changes
+> I found that the BU27008 status is set to "obsolete". I'll try to dig
+> some information about the BU27010 and decide if having the driver
+> in-tree is still worth the effort, or if I should just send out patches
+> to drop it all. Hence patch to rohm-bu27008.c is not included in the
+> series. If someone is actually using the BU27008 or BU27010 and wants
+> to patch it - feel free to pick
+> 131315de97ff ("iio: bu27008: simplify using guard(mutex)")
+> from
+> https://github.com/M-Vaittinen/linux/tree/bu27008-cleanup
+> 
+> ---
+> 
+> Matti Vaittinen (2):
+>   iio: bu27034: simplify using guard(mutex)
+>   iio: bm1390: simplify using guard(mutex)
+> 
+>  drivers/iio/light/rohm-bu27034.c   | 73 ++++++++++------------------
+>  drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
+>  2 files changed, 55 insertions(+), 96 deletions(-)
+> 
+> 
+> base-commit: adc218676eef25575469234709c2d87185ca223a
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/nfs/direct.c   | 21 ++++++++++++++++++---
- fs/nfs/file.c     | 14 +++++++++++---
- fs/nfs/internal.h |  7 ++++---
- fs/nfs/io.c       | 44 +++++++++++++++++++++++++++++++++-----------
- 4 files changed, 66 insertions(+), 20 deletions(-)
+Hi Matti,
 
-diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 90079ca134dd..b08dbe96bc57 100644
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@ -454,8 +454,16 @@ ssize_t nfs_file_direct_read(struct kiocb *iocb, struct iov_iter *iter,
- 	if (user_backed_iter(iter))
- 		dreq->flags = NFS_ODIRECT_SHOULD_DIRTY;
- 
--	if (!swap)
--		nfs_start_io_direct(inode);
-+	if (!swap) {
-+		result = nfs_start_io_direct(inode);
-+		if (result) {
-+			/* release the reference that would usually be
-+			 * consumed by nfs_direct_read_schedule_iovec()
-+			 */
-+			nfs_direct_req_release(dreq);
-+			goto out_release;
-+		}
-+	}
- 
- 	NFS_I(inode)->read_io += count;
- 	requested = nfs_direct_read_schedule_iovec(dreq, iter, iocb->ki_pos);
-@@ -1007,7 +1015,14 @@ ssize_t nfs_file_direct_write(struct kiocb *iocb, struct iov_iter *iter,
- 		requested = nfs_direct_write_schedule_iovec(dreq, iter, pos,
- 							    FLUSH_STABLE);
- 	} else {
--		nfs_start_io_direct(inode);
-+		result = nfs_start_io_direct(inode);
-+		if (result) {
-+			/* release the reference that would usually be
-+			 * consumed by nfs_direct_write_schedule_iovec()
-+			 */
-+			nfs_direct_req_release(dreq);
-+			goto out_release;
-+		}
- 
- 		requested = nfs_direct_write_schedule_iovec(dreq, iter, pos,
- 							    FLUSH_COND_STABLE);
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 6800ee92d742..1bb646752e46 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -166,7 +166,10 @@ nfs_file_read(struct kiocb *iocb, struct iov_iter *to)
- 		iocb->ki_filp,
- 		iov_iter_count(to), (unsigned long) iocb->ki_pos);
- 
--	nfs_start_io_read(inode);
-+	result = nfs_start_io_read(inode);
-+	if (result)
-+		return result;
-+
- 	result = nfs_revalidate_mapping(inode, iocb->ki_filp->f_mapping);
- 	if (!result) {
- 		result = generic_file_read_iter(iocb, to);
-@@ -187,7 +190,10 @@ nfs_file_splice_read(struct file *in, loff_t *ppos, struct pipe_inode_info *pipe
- 
- 	dprintk("NFS: splice_read(%pD2, %zu@%llu)\n", in, len, *ppos);
- 
--	nfs_start_io_read(inode);
-+	result = nfs_start_io_read(inode);
-+	if (result)
-+		return result;
-+
- 	result = nfs_revalidate_mapping(inode, in->f_mapping);
- 	if (!result) {
- 		result = filemap_splice_read(in, ppos, pipe, len, flags);
-@@ -668,7 +674,9 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
- 	nfs_clear_invalid_mapping(file->f_mapping);
- 
- 	since = filemap_sample_wb_err(file->f_mapping);
--	nfs_start_io_write(inode);
-+	error = nfs_start_io_write(inode);
-+	if (error)
-+		return error;
- 	result = generic_write_checks(iocb, from);
- 	if (result > 0)
- 		result = generic_perform_write(iocb, from);
-diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-index 430733e3eff2..f0c9c7f51e77 100644
---- a/fs/nfs/internal.h
-+++ b/fs/nfs/internal.h
-@@ -6,6 +6,7 @@
- #include "nfs4_fs.h"
- #include <linux/fs_context.h>
- #include <linux/security.h>
-+#include <linux/compiler_attributes.h>
- #include <linux/crc32.h>
- #include <linux/sunrpc/addr.h>
- #include <linux/nfs_page.h>
-@@ -516,11 +517,11 @@ extern const struct netfs_request_ops nfs_netfs_ops;
- #endif
- 
- /* io.c */
--extern void nfs_start_io_read(struct inode *inode);
-+extern __must_check int nfs_start_io_read(struct inode *inode);
- extern void nfs_end_io_read(struct inode *inode);
--extern void nfs_start_io_write(struct inode *inode);
-+extern  __must_check int nfs_start_io_write(struct inode *inode);
- extern void nfs_end_io_write(struct inode *inode);
--extern void nfs_start_io_direct(struct inode *inode);
-+extern __must_check int nfs_start_io_direct(struct inode *inode);
- extern void nfs_end_io_direct(struct inode *inode);
- 
- static inline bool nfs_file_io_is_buffered(struct nfs_inode *nfsi)
-diff --git a/fs/nfs/io.c b/fs/nfs/io.c
-index b5551ed8f648..3388faf2acb9 100644
---- a/fs/nfs/io.c
-+++ b/fs/nfs/io.c
-@@ -39,19 +39,28 @@ static void nfs_block_o_direct(struct nfs_inode *nfsi, struct inode *inode)
-  * Note that buffered writes and truncates both take a write lock on
-  * inode->i_rwsem, meaning that those are serialised w.r.t. the reads.
-  */
--void
-+int
- nfs_start_io_read(struct inode *inode)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
-+	int err;
-+
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	err = down_read_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
- 	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) == 0)
--		return;
-+		return 0;
- 	up_read(&inode->i_rwsem);
-+
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	err = down_write_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
- 	nfs_block_o_direct(nfsi, inode);
- 	downgrade_write(&inode->i_rwsem);
-+
-+	return 0;
- }
- 
- /**
-@@ -74,11 +83,15 @@ nfs_end_io_read(struct inode *inode)
-  * Declare that a buffered read operation is about to start, and ensure
-  * that we block all direct I/O.
-  */
--void
-+int
- nfs_start_io_write(struct inode *inode)
- {
--	down_write(&inode->i_rwsem);
--	nfs_block_o_direct(NFS_I(inode), inode);
-+	int err;
-+
-+	err = down_write_killable(&inode->i_rwsem);
-+	if (!err)
-+		nfs_block_o_direct(NFS_I(inode), inode);
-+	return err;
- }
- 
- /**
-@@ -119,19 +132,28 @@ static void nfs_block_buffered(struct nfs_inode *nfsi, struct inode *inode)
-  * Note that buffered writes and truncates both take a write lock on
-  * inode->i_rwsem, meaning that those are serialised w.r.t. O_DIRECT.
-  */
--void
-+int
- nfs_start_io_direct(struct inode *inode)
- {
- 	struct nfs_inode *nfsi = NFS_I(inode);
-+	int err;
-+
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	err = down_read_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
- 	if (test_bit(NFS_INO_ODIRECT, &nfsi->flags) != 0)
--		return;
-+		return 0;
- 	up_read(&inode->i_rwsem);
-+
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	err = down_write_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
- 	nfs_block_buffered(nfsi, inode);
- 	downgrade_write(&inode->i_rwsem);
-+
-+	return 0;
- }
- 
- /**
--- 
-2.45.2
+Both patches look good to me, but I noticed that you kept a few
+mutex_lock() + mutex_unlock() in both drivers, in particular in the
+cases where a scoped_guard() could simplify the code. Did you leave
+those cases untouched on purpose?
 
+Best regards,
+Javier Carrasco
 
