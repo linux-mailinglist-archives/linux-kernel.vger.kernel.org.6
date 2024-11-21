@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-416653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D55F9D484C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:46:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F3D9D4850
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:47:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14D21F2264D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:46:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7615E2830B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C511C9B8E;
-	Thu, 21 Nov 2024 07:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF311C7B77;
+	Thu, 21 Nov 2024 07:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I49OEa1X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cjg2UNQK"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356657F48C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DF41A76B0
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732175172; cv=none; b=WQzAJDHiaWcH4EDd8EuxcHt790BQgyseGrtmRLVuqdDF0NFbD2t1PhyqH+fUq9RSOxDFHW1yGyPXsQOTWfbEw/MjYPkKLeo9N2ahZ3n1CH7PKy1X+c1N81iBYgyLcksa5j+LfHqpVCWh8RmO4I5slANRLUx5inZs8x9KPqLr/Lk=
+	t=1732175252; cv=none; b=dpN95KNvr7KSwelQaWDJvJXIorEf6eEIuIYXSY0yx6JdeW7C+1U1vlHeTGiNHcqps/XNCRsUw/xPrAc9uv1P+BCMeWqTp5TTyaR9CkHLUlv8awf9ziO5pqfj9lKI8ERxVrPHK+uEgNWlXLDJEol5GGJFd2A/5VPfAXTEAJAlOb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732175172; c=relaxed/simple;
-	bh=ltlVIXEj72noAMxu0C++nlwvZY2f4jIikbQJXXY6+yM=;
+	s=arc-20240116; t=1732175252; c=relaxed/simple;
+	bh=YeL2ghLeyHXtI4iH/ZhL0JaPrgj8DbmE6O6mhpAS8yQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hZojyFFXDHyTPw2m4O2k92ABiCAFGu1Fm6E17H/S2SONenxIMXBsaAlXkKQ70/+u3nZjJ9nc3W5XxuQaQGTmwNLiW0bJhijrl3IozWJZCLW1zezzQXcDtkNJ+XGOQb9tHd61IiuRPASELBDP3AQvVUT5EshJA7fd8BCl1l9nV5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I49OEa1X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732175169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QDdn0M+k8yyKr2FkBT1Y8LYWzdJLNp3idrs1OmCygfk=;
-	b=I49OEa1XckFPID6Ga4F9gLu1zYvy9HJi+JFsNclmXsNAyoMbjFUt1jX2Iv/D9hse3IiBmm
-	hzHv+3QrMSw4zmT1kDxvXQ1ghirwaUP2URDBPdYUCxNjGqFfyXsDLyGacTbUleU4BdyO5c
-	mwXeqY57w8+4o1EOgF9uH4ki7D5ijfw=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-138-jiuHMP1NN2S3t1H0O0oCmg-1; Thu, 21 Nov 2024 02:45:26 -0500
-X-MC-Unique: jiuHMP1NN2S3t1H0O0oCmg-1
-X-Mimecast-MFC-AGG-ID: jiuHMP1NN2S3t1H0O0oCmg
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3822ec50b64so335140f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:45:25 -0800 (PST)
+	 In-Reply-To:Content-Type; b=d7Aw0rKbg946/gTsQmE7g7skidV9lPeF9wtXLJ5zAeBB5OdItPjnu/4Ca+obqioXRXdTdJSHQ8p5GkwrSyDTmIVFgtKs0PBwgwyd8OFU2esDvUYzIPQKLDpGmXRJkUQdOlpAuQBL50YOu5bq2Eb7RyULm1g32b+6d0ckeEu5U2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cjg2UNQK; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-432d796a57eso186775e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732175248; x=1732780048; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BS5ZRVYZSc50G5o4Vd0b7F4JpLeCAVQYGlYkmwTCAMk=;
+        b=Cjg2UNQKQyRsFYZoF3ufvdJDoffY0aOIk8EfBH/1m7EnkKJJq2uOd2TYjxJpL8bvvz
+         gLCFl8tfdbFBBf9DQEyUoVOeoHvfmY6xRJNGIY4TpaTFEiLPkgQeT0iwzXBlJQSo7eKf
+         YObt3dk4RMJA2g6TCWJOnBbHTiIRaHTkrgRsvk1D7wh4JkiBrkc8gUaRkU407S6WLDjX
+         9gmJR5/81+Rz0OBmlXGMDh+k7eSmNFZkcSIHALV+s8GVvyOiBGiVxBWGeyzR8fi/WWbi
+         z6491WG7Ytiy5QcQxlLHiY17I+shjR2NCz7p1HmstAuEDOSyiwkiAEu6piVt1+NVS+Ur
+         KlGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732175125; x=1732779925;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QDdn0M+k8yyKr2FkBT1Y8LYWzdJLNp3idrs1OmCygfk=;
-        b=IIJPMVj2uLcPAOWW0F0He06o0yv6UbrTYaHETZFwGDRyUSPgI9/VSlVeit1GAJoS+7
-         z6GaYQB4GmeGFVXkgyGNSlt42pHp1QONIE6nyo5EuGWl2mIUCVz9hpSDN1cNqXQBD7o6
-         IqCAM5uFAvKqjjSZ47t6Z3HLocVGVUaDNCpLC47wnA5maStQ7j7i2fKr0llPmmbheId2
-         k0ffGB12hB+3I/9OBUjyrr1fYohSqqDJl/AfdA5OftwYz2HOBSTRqRFZnFoiXdc/NEzD
-         nrzfzrF8MWEcRQTrf1BPt5IsoPf8nCfdKC1KgpR5Sfb1idviME4dazsAldYodLBJ+rui
-         KnoA==
-X-Forwarded-Encrypted: i=1; AJvYcCV55ktyWDRH9NJHWvXvqubeTRhPnSKfK+uZISzk+aAXmUMmu2rOhhRb2JsSopifpDWDPaF7AmFBmZNMsF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRNZN+n2jYgBUWBZkRLCRERNy8WARyxMsGd3/sGL+yYVJizu4I
-	Zl1H2hm5Jor8wrQakvMtqkuyc62UXtomO4CSqQIf+TIQcWbKYG53oQE6KqO87C6KrmNDnCxzCmk
-	AQ9rz6MQbaVP05CVh2h0ck5jnU7DSfTtiOmmEIZz0aRXsod+ZHxThvW1IcWPgtQ==
-X-Received: by 2002:a05:6000:796:b0:382:6d2:2aa9 with SMTP id ffacd0b85a97d-38254b14c09mr4474181f8f.37.1732175124873;
-        Wed, 20 Nov 2024 23:45:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IENjccaFYv9DnUII4IHVDnz1NtdHN+oocHRHWQvgpwzqO3y5Gm8BoZsAyaTjYXow73ws0CY0g==
-X-Received: by 2002:a05:6000:796:b0:382:6d2:2aa9 with SMTP id ffacd0b85a97d-38254b14c09mr4474144f8f.37.1732175124527;
-        Wed, 20 Nov 2024 23:45:24 -0800 (PST)
-Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b4634c9fsm45793895e9.34.2024.11.20.23.45.21
+        d=1e100.net; s=20230601; t=1732175248; x=1732780048;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BS5ZRVYZSc50G5o4Vd0b7F4JpLeCAVQYGlYkmwTCAMk=;
+        b=tUw2j6x3qipb1yIMDX2wpX7L4Bb9QNVDAACWlQtUNaIfB1Y7BTxZ6Uk/Ucgjb5nUCL
+         3IGyEh5KDvcwrft1h5CldemwkQhzJZbuDSZFUcKtWqsWwfDT8zwYNFB/owoX7TV+gLN0
+         uvydYjROaOBSk7eTAONJMlKeJkY3dwzA83qBluABL3SUq5lMi+z5gjDmOa5xMQA/iByx
+         9HZ74+yUyZFYnykSMSlwsRjLiJI0SV4yJ8XZTDo5lmddT3M+sRpDolTqwlfUeVbkdoFB
+         9UoI2xgGkZMfxWlLf5YqqF4FOkk8Tda83gEKVPpd1MuIAVxTXOiNb4hegeLXhxKecfOZ
+         UKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLrs8fVOuB+KoANwSYqh6PC2xeUsuhC62UsnVORXBo+sX1IjUGZPy6puBqKzDGVeXJ48eeQbL+lXZF7NM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdyBsoXhjwzinl/HCS2oOgVymo4OvHSdK47UFua6t2qmnr1YmH
+	9Ly4pufnklMwSOh1Z15TXaKD75wnKLInjERwljM59fZBu/ck6TcOxCkE7ggSDw0=
+X-Gm-Gg: ASbGncuyTLKkM58fbOeSSpz8MV1xm0eu2Rnq35T3i8CJt+0ADZFk84FcPOcFwpUcZMl
+	YNMZx1iIMBgUq86NlDRniSf1LK1rOpSGTY527Dx0CL4G3cjONo7ou8c5SvawHn41Lo0MCagEnrn
+	gsqQ9ymXUABrPQaXCG3Dd4Gf7pMV353IkjQeVH2HeWnbbtSHKK2Gfl82dKrfgH7v4gGAH8c7niE
+	sFd6QI2s3z0ZDuLmS5gYsyc6EZrPAmPbjUnJIeWXKdbvKGy/NydPM3YPP8TWMcrppG11A==
+X-Google-Smtp-Source: AGHT+IFxWcMgmH8My3CD7LJZvACg4t39rhilu21wZCuNimks2qFogI/hGPY45e0t1ZOyRKzNa/Kt2A==
+X-Received: by 2002:a05:600c:4fcf:b0:42c:aeee:e604 with SMTP id 5b1f17b1804b1-4334f030467mr22124675e9.8.1732175248624;
+        Wed, 20 Nov 2024 23:47:28 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382549452a1sm4073701f8f.106.2024.11.20.23.47.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 23:45:24 -0800 (PST)
-Message-ID: <d6794550-07f2-46df-aa4f-c728b06d50bd@redhat.com>
-Date: Thu, 21 Nov 2024 08:45:20 +0100
+        Wed, 20 Nov 2024 23:47:28 -0800 (PST)
+Message-ID: <94c90aef-9807-473d-b71d-168282d87570@linaro.org>
+Date: Thu, 21 Nov 2024 08:47:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,61 +80,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 16/16] net: stmmac: platform: Fix PTP clock rate
- reading
-To: jan.petrous@oss.nxp.com, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Vinod Koul <vkoul@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>,
- Minda Chen <minda.chen@starfivetech.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Iyappan Subramanian <iyappan@os.amperecomputing.com>,
- Keyur Chudgar <keyur@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 3/5] dt-bindings: vendor-prefixes: Add TouchNetix AS
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Russ Weight
+ <russ.weight@linux.dev>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
- <20241119-upstream_s32cc_gmac-v5-16-7dcc90fcffef@oss.nxp.com>
+ <conor+dt@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Kamel Bouhara <kamel.bouhara@bootlin.com>,
+ Marco Felsch <kernel@pengutronix.de>, Henrik Rydberg <rydberg@bitmath.org>,
+ Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-3-6124925b9718@pengutronix.de>
+ <b5hjephfcvdu2jjchodaj5u4yltvatdgmse7xvwkhaepn5dinv@sfl4utyuz34g>
+ <20241120081527.s6pfo5soa2tqvra4@pengutronix.de>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241119-upstream_s32cc_gmac-v5-16-7dcc90fcffef@oss.nxp.com>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241120081527.s6pfo5soa2tqvra4@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/19/24 16:00, Jan Petrous (OSS) wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+On 20/11/2024 09:15, Marco Felsch wrote:
+> On 24-11-20, Krzysztof Kozlowski wrote:
+>> On Tue, Nov 19, 2024 at 11:33:52PM +0100, Marco Felsch wrote:
+>>> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>>>
+>>> Add vendor prefix for TouchNetix AS (https://www.touchnetix.com/products/).
+>>>
+>>> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
+>>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> I think this did not happen (only Ack).
 > 
-> The stmmac driver supports many vendors SoCs using Synopsys-licensed
-> Ethernet controller IP. Most of these vendors reuse the stmmac_platform
-> codebase, which has a potential PTP clock initialization issue.
-> The PTP clock rate reading might require ungating what is not provided.
+> Huh.. I used b4 to retrieve the latest Bootlin version. According [1] it
+> was already present :/ I can drop it if you want.
 > 
-> Fix the PTP clock initialization by enabling it immediately.
+> [1] https://lore.kernel.org/all/20240703142520.207066-3-kamel.bouhara@bootlin.com/
 > 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+Hm? This points to entirely different patch!
 
-Side, process-related note: it would be great if you could trim the
-patch series below 16 (currently off-by-one):
-
-https://elixir.bootlin.com/linux/v6.11.8/source/Documentation/process/maintainer-netdev.rst#L14
-
-This patch looks like an independent fix, possibly worth the 'net' tree.
-If so, please submit this patch separately, including a suitable fixes
-tag and including the 'net' keyword in the patch subj prefix.
-
-Thanks,
-
-Paolo
-
+Best regards,
+Krzysztof
 
