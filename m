@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-416931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FE109D4C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:07:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7E9D4C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7051F21D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:07:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9991F21D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297361D130B;
-	Thu, 21 Nov 2024 12:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765951D5ADE;
+	Thu, 21 Nov 2024 12:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AqIegkIu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ITCCumxL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988651CDA18
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 12:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01071D3627;
+	Thu, 21 Nov 2024 12:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732190839; cv=none; b=N2ffNgEgFVOjoj8PeGEh6xIVL02grDFBaulLPuCYJc6wE0k3tw1rrOMi/GjdlBy9K6GyVSKPfNN/tlACQJk8dsw3D2KueJlZ0rvOCVZXfi9gExLE8mIzS6w5SR3lcCQah0TrmJZKJJbc5gPvW7IfbxotLAHtfXRRx+0BtNpUpCQ=
+	t=1732190945; cv=none; b=Dj4DtTEFIG6SQFRROhxI3Vd1hG4NCqXAYGJ7UEt89ZTMe07bBVEzXjLn6W4rO9ECfVPgYBx5Bz3LSSCBk3jbP7O7rbo1XhqcTl1KRkWAT8AeH6jwkJQEp5zRFJyeA1W2DdZTUZ+H6yH4/wcIHGRhgb8OdSMAQ21FgjRf1P1uUQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732190839; c=relaxed/simple;
-	bh=rsxudbseoW9XX0qecRc26AyYl3AoYbImcWM51vQj8KA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmr8qtijvpV7d3CrHXMPwZX+HfqMmRvNVW29iamPBexGBAfWJGxUpjT3fHhZ1p5umJvKLHkPq3WqkNZbJfSNEV+QVbkBhTvvOGWC3lF1DqbDirJTzNiUpWQ7F22eQUQmlvY9jJRKR0ut/sx3WwIh2MecaGLaYgoBV3IURz9G3Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AqIegkIu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732190836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qcmsPXReTxPDhWrLsk2GcwWTzmBDcRxHULeh3GulGd8=;
-	b=AqIegkIui7Cb7BgaLLX9yx26IeNuO0oxybppAzRnEJaxsFWjT3eYyQTenjpue53PFi60nD
-	i0lX2m/AaVEQk8I45J4ZSUC6r+3r0gEOz1JfxQ2ssF6pGBJK7GfeioScCSPA1FuPskmocs
-	AocxvqWZ8RxJXm7ladS7ic8xUvIY3d0=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-198-vdqdNoU_N3mDIFLrhrAsRg-1; Thu,
- 21 Nov 2024 07:07:13 -0500
-X-MC-Unique: vdqdNoU_N3mDIFLrhrAsRg-1
-X-Mimecast-MFC-AGG-ID: vdqdNoU_N3mDIFLrhrAsRg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E1DBB1955F77;
-	Thu, 21 Nov 2024 12:07:10 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.80.137])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0295A195607C;
-	Thu, 21 Nov 2024 12:07:06 +0000 (UTC)
-Date: Thu, 21 Nov 2024 07:07:04 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de
-Subject: Re: [PATCH] sched/fair: Dequeue sched_delayed tasks when waking to a
- busy CPU
-Message-ID: <20241121120704.GC394828@pauld.westford.csb>
-References: <20241112124117.GA336451@pauld.westford.csb>
- <0befc9ed8979594d790a8d4fe7ff5c5534c61c3c.camel@gmx.de>
- <20241112154140.GC336451@pauld.westford.csb>
- <81de2f710d8922a47364632335ff5ba1a45625b3.camel@gmx.de>
- <95ff75cacab4720bbbecd54e881bb94d97087b45.camel@gmx.de>
- <20241114112854.GA471026@pauld.westford.csb>
- <20241119113016.GB66918@pauld.westford.csb>
- <bede25619ef6767bcd38546e236d35b7dadd8bd4.camel@gmx.de>
- <915eab00325f2bf608bcb2bd43665ccf663d4084.camel@gmx.de>
- <20241121115628.GB394828@pauld.westford.csb>
+	s=arc-20240116; t=1732190945; c=relaxed/simple;
+	bh=YwJa4ZE5jyHEJV+g3sgNej5M8rF37IhwufyCMPNMMok=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uQ1GSpwGZlBxaTIWJcFILVa/s8798moXurn84OGRWAJUKSV4bluCn+SjBj3IQj0LtP+ViXlqJwMsRSW+fgSnnLFx1mtdvEd7/IjFBg4u+aHzk9HNdScxsTXcL/aor2V7CoNcXFMwL0LQRCG07t7G2xzvKiRRzWxKvAnf3GBvCmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ITCCumxL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:10f2:5b4b:5292:ac46:e988])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EC85B219;
+	Thu, 21 Nov 2024 13:08:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732190923;
+	bh=YwJa4ZE5jyHEJV+g3sgNej5M8rF37IhwufyCMPNMMok=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ITCCumxLloED4MwkpUjDIKUw4TcmktWkUJMPFI57DJSzA+CvGksYJqa3gH4xtO9As
+	 JZGQNXYqU3oDeR1Bl9FPjvIOQDoTpZKapwNd27vI3WfeTFG/+FoCrGgCoLUaCBVk5m
+	 +2IzgRmLpCP9svuUqMbbW6zCSms5x6GPq/rOLZbU=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH v2 0/3] media: i2c: imx219: Fixes for blanking and pixel
+ rate
+Date: Thu, 21 Nov 2024 17:38:01 +0530
+Message-Id: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121115628.GB394828@pauld.westford.csb>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKEiP2cC/3WMyw7CIBBFf6WZtRhAaKwr/8M0hsfUzqLQgCE1D
+ f8udu/y3JtzdsiYCDPcuh0SFsoUQwN56sDNJryQkW8MkksluBwYLZsUw3OiDTOzkzFOGd1LzqE
+ pa8LjaMZjbDxTfsf0OepF/NY/oSIYZ1Zp7y69vlqFd/Jocgw2muTPLi4w1lq/WYN6Nq8AAAA=
+X-Change-ID: 20241029-imx219_fixes-bfaac4a56200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ David Plowman <david.plowman@raspberrypi.com>, 
+ Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1315;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=YwJa4ZE5jyHEJV+g3sgNej5M8rF37IhwufyCMPNMMok=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnPyLVbyE8psPL5s0TPHlnvJ3hEKSIK8sW2lhb7
+ 8Ge0zJB0QqJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZz8i1QAKCRBD3pH5JJpx
+ RYEdD/4sH8/OwjNQq7hX7l9BuNGsW2Q/wkgxotbkMWIjP5GzlgVRaCrAP9w1Qkmu8RuZgBjjrVZ
+ xTdX00cyBQ3ncJNqWFQqtFlOp47iwcaJtc4EfiWpG+WjVSUQ90cLcBKd6Iau4X3RngRLjS43xOp
+ I60olC9Oe9MDe8c/JAoWirMVBLCDm9dZRn3O8WdKaRzaDMEhoKXg9eB8xBhMLRyn2rZJbqDFKEB
+ cO5d5pCJ7NkQUBAaVs8kG70paESVTG7ipFXlMH8d68POaDRjuU88tjiITZmxWI2tm4NdwhKYacl
+ QxpwkXlXI9j1qTXJarwsQ1I+Ld+0H+buzPdQxCkvMZEjqx4jQoi+q32GeWXa+Tl2sK/lrfa+G0d
+ awIdAFq4q3azA5prZdg0RvLa85c3/gISQidRSetVqmNR3rAzcpT2E16QvUX1MzQrkn1Rt0s1a+q
+ 0vqYTLFNLpa3lybM+1sHCjJqqaIlaxpRa0747sxeCZySFcJsT2vQAGTUk8f3YKcA300O52VvreQ
+ nWKsaMwE0S5w0GQJoXjMZfex957/ofxuacBn6mGdVaAYs+rSOgeOGzKdUtjHCBupOUV9IGKxiG+
+ E2rnCu9A4TWXevpek2ODgPd3cU2mkUziC7dJ05eL1eeoXnSf+/HDHOziVETzcacN7OGoPSjpi+s
+ wlizrzg3bB30Hig==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-On Thu, Nov 21, 2024 at 06:56:28AM -0500 Phil Auld wrote:
-> On Wed, Nov 20, 2024 at 07:37:39PM +0100 Mike Galbraith wrote:
-> > On Tue, 2024-11-19 at 12:51 +0100, Mike Galbraith wrote:
-> > > On Tue, 2024-11-19 at 06:30 -0500, Phil Auld wrote:
-> > > >
-> > > > This, below, by itself, did not do help and caused a small slowdown on some
-> > > > other tests.  Did this need to be on top of the wakeup change?
-> > >
-> > > No, that made a mess.
-> > 
-> > Rashly speculating that turning mobile kthread component loose is what
-> > helped your write regression...
-> > 
-> > You could try adding (p->flags & PF_KTHREAD) to the wakeup patch to
-> > only turn hard working kthreads loose to try to dodge service latency.
-> > Seems unlikely wakeup frequency * instances would combine to shred fio
-> > the way turning tbench loose did.
-> >
-> 
-> Thanks, I'll try that. 
->
+This series has a few fixes for improving h/v blanking and pixel rate
+reporting for the IMX219 sensor.
 
-Also, fwiw, I think there is another report here
+These patches are picked and modified (and squashed where applicable)
+from the rpi-6.6.y vendor tree.
 
-https://lore.kernel.org/lkml/392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com/
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Changes in v2:
+- PATCH 1/3: Add R-By from Jacopo, Dave
+- PATCH 2/3:
+    - Keep IMX219_PPL_MIN macro value in hex, matching the datasheet
+    - Fix prev_hts calculation, by moving it before updating pad format
+- PATCH 3/3:
+    - Store binning register values in enum binning_mode directly
+    - Remove unnecessary pixel_rate variable in imx219_init_controls()
+- Link to v1: https://lore.kernel.org/r/20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com
 
-which seems to be the same thing but mis-bisected. I've asked them to try
-with NO_DELAY_DEQUEUE just to be sure.  But it looks like a duck.
+---
+Dave Stevenson (1):
+      media: i2c: imx219: make HBLANK r/w to allow longer exposures
 
+David Plowman (1):
+      media: i2c: imx219: Correct the minimum vblanking value
 
-Cheers,
-Phil
+Jai Luthra (1):
+      media: i2c: imx219: Scale the pixel rate for analog binning
 
+ drivers/media/i2c/imx219.c | 177 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 119 insertions(+), 58 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241029-imx219_fixes-bfaac4a56200
+
+Best regards,
 -- 
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
