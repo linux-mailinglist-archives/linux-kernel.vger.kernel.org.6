@@ -1,168 +1,92 @@
-Return-Path: <linux-kernel+bounces-416911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1DE9D4C4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:53:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447B99D4C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D51282C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9FBA1F216C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AED1D2F64;
-	Thu, 21 Nov 2024 11:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCAE1D27A0;
+	Thu, 21 Nov 2024 11:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMD6ikVn"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i8kPc53J"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8581D0E06;
-	Thu, 21 Nov 2024 11:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE281CD1EE;
+	Thu, 21 Nov 2024 11:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189957; cv=none; b=hWNNkAMDOuDQX3On36bnjHZ1msy9MoZPqDzYJSWrUwj8D+ZrVdrHYGL2iuYf1OiNBEvwUIrun9Yr/vSirbXbvDgVFpmiC6CeFJbC2PcDuh+Njq5d1Av53kwVKqGfm19u4mJa72gXtN3YGB/tP28q79jcQzzPnhzNwiI6wqjAxwU=
+	t=1732190043; cv=none; b=H2NP316dOD7wA7LXcuxknWAHt1pyg2soV415FlwodjZ8VJtV6C4BoNFpBhKYhAzptlbySg7ascDrNK3GTNdnCIVcco8ktR2cueCCQ4o4cjNgWzgW1Zuy5424Slzll7BT64FApJxS4ReZsXxMSpc8ewdlZET2kxHik4HUS4WtcxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189957; c=relaxed/simple;
-	bh=SPEfxz8D/7+FSyFZN6aXGlPZV776eeSKihhe8baRUdA=;
+	s=arc-20240116; t=1732190043; c=relaxed/simple;
+	bh=AmK0AI1qoNjZ0cH1lAwLtt6sWfdkbtQrIoeS241Raec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WnAfD1Bw2xqMPDR6q2seeSztA0sb5uk1sqI+n6+tJM5IXdLWfzHjNvbbjsUMKyFRFSv0Umn+zHQsssQNl0kuv4gOhUZN1svah0I3iO26b+4AyztjNf16FQc68Qa5OINmZBFuniPRcQsf53zCEpj7VmKwkZPyzYLRPEopJr49z6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nMD6ikVn; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43159469053so318195e9.2;
-        Thu, 21 Nov 2024 03:52:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732189953; x=1732794753; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HB4YPCa/bzCF4nZ0Gjx/f2iO7SMMcWEq9XBiY6VqTsI=;
-        b=nMD6ikVnEwPi+Fp7TGE+fi66QXmReqEmFx7ZYWlYj2wYVHDdEngfzbjlsOZFauMHwd
-         3IMbOlliXwrFPJBjIkcoekyJjkrXV7UZdnaeg3GsmWXPkVYOE3rPDi7NNiw49q+vXkih
-         r2PHWFbJX7g9yhkRLZBBfNeSEEaAQAaEO2VN4dXF2msIR/es76DUTf+alUkmZsaVL4Kc
-         YZsgFU8i9nxgfmuKXmOiECg4ZLJJO8AJqmvmbSU2cvsjUiUIn2SJcqU8ongWJSxk9sA6
-         bdWUyESj4tMAX+N86zbAdePEwN3zVWUY539+OwZXqlWqKPnFgUNvydb2sOY5HNI4CqQ3
-         zZbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732189953; x=1732794753;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HB4YPCa/bzCF4nZ0Gjx/f2iO7SMMcWEq9XBiY6VqTsI=;
-        b=a65YHZ/gXBrUFNCmRGQ94P/RbkRdKiikaRtOIoYDb9KXeh6eTfDWhhHzJRqzMWzTrt
-         DhwXvTN/C02WZhOC12mC8tDB/BaMvIxMrFqciUevE8l93MO6SoSqbU5gIBiPe8Dgw8uF
-         YOTruuKS/Orkicg4t3A/C3Io9ZEZcozRvXKBxe1tP2QFSxzlUN2VdVbbRtRMEOKMXT3V
-         rFKYITyuqQx+t8iGTLbeiur7XRdJmWoCPei6uQ+t/CIw4GYnt72zXdvBu2MkWx8Mvg8O
-         kLDZlmRimobr08bxoEVeAp0qoS5yE5SiPdSFEyeN38xCDeS1+Lnovq4eX/N3wmwBqBKs
-         zhEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTs07cKwXS+gn05g5Bex3lndalt3BzRS9CiDo76obFG+657liuxsgJkcj6Iwm6ni/uQszvz46s@vger.kernel.org, AJvYcCW3vtb2fkc7cL4oSLf3X0TDPA7PZsYNehkyOBAY21Rz3fEKMwhJWtKWv5iXg40gOvh1fEWgO8+/0B1ZKuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx9kEyeI/AquYxDEoK3GK/U/4Ua3MONm6YJXBRJGbObrXeCtHI
-	5mlldeoypRe2OwwQtNLhn/PYlgy0MMfZxRH/0bxvAS2F+dLqLU/J
-X-Gm-Gg: ASbGncsPocpS1FAEjtOHaaqBgnW7hhqGj8UsHxIJDGw5VNUrktpPR8Fig1dhKywt03O
-	28+PrKEp3kDXw+jEAPQXktQhNyNNL/DK/WGsnS1IN/tb2/Fw7Sx0kvUWgNvnhKAZwFvTS7tTpnv
-	BMDzPOqPVUkOwKnK7tsGJHziYTuybNdNOCTRDT5aHpfRIaoTZR7PBXxlQikyHBFAipGQtKEPTQY
-	lquC0a4krC/MZ7fbQnGAucccqIWCQOx4FZjky8=
-X-Google-Smtp-Source: AGHT+IE29phPPdabLhx0KY5cGqNlPJfGlCbVtxG3bDvpMZcxCR5E9rMrF9JeKqaYuEUa9pDZVoM/Ug==
-X-Received: by 2002:a05:600c:4f82:b0:431:558c:d9e9 with SMTP id 5b1f17b1804b1-4334f01d8c0mr24154605e9.5.1732189953278;
-        Thu, 21 Nov 2024 03:52:33 -0800 (PST)
-Received: from skbuf ([188.25.135.117])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490bfd6sm4781382f8f.25.2024.11.21.03.52.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 03:52:32 -0800 (PST)
-Date: Thu, 21 Nov 2024 13:52:30 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Cong Yi <yicong.srfy@foxmail.com>, andrew@lunn.ch, hkallweit1@gmail.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	yicong@kylinos.cn
-Subject: Re: [PATCH] net: phylink: Separating two unrelated definitions for
- improving code readability
-Message-ID: <20241121115230.u6s3frtwg25afdbg@skbuf>
-References: <Zz2id5-T-2-_jj4Q@shell.armlinux.org.uk>
- <tencent_0F68091620B122436D14BEA497181B17C007@qq.com>
- <20241121105044.rbjp2deo5orce3me@skbuf>
- <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhMJxmPS5rCTPZ731euklN91BZWZLnBYogRBq8/ILXmogwEuvZEH+PBdrnE5Amncl5nFdN2Ef978yB/ggwwyXMUA9Gp0DCo3jW15oxnR2UzKAKUOrMJpSM15khfOIMjNQVBKmCGL4H8Ev0dbUVfm1+CaouSYaqi8kFwjsUvPSjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i8kPc53J; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AmK0AI1qoNjZ0cH1lAwLtt6sWfdkbtQrIoeS241Raec=; b=i8kPc53JEweieYf82/XNWs+MyZ
+	y4TdePE7L5rOgPuxlWUHzcVG6gzltYkmMsaE/ZzgBBynjqMwGiE+6yFLxQvITJvcH7YGqUYLkNaUo
+	Qn0lvht+b2fv6Uq8UKqIZHgHfoTNAYjqbeJ1capS9O1WbedziHKV9DK7xsXuaA3Ta90tiAThMD8Ow
+	IDMPeF/uK4/iX1VS8IQTC9idKd0O0yp9Co4xmqi+FU1LZtLHXRySZh8HVH6PkynqdkebIAQiuVifM
+	ENg5RvdtXFb6WZIRurvGvEZHCyzs2oZ8tLHTrN29ItXiy8FUmXg9AVXM5eSe1PV5ZjVj9O4DrBFVX
+	nIlPDXLw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tE5ku-00000006LDa-2iuE;
+	Thu, 21 Nov 2024 11:53:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 83C1B30068B; Thu, 21 Nov 2024 12:53:53 +0100 (CET)
+Date: Thu, 21 Nov 2024 12:53:53 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe
+ trampolines
+Message-ID: <20241121115353.GJ24774@noisy.programming.kicks-ass.net>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
+ <20241105133405.2703607-6-jolsa@kernel.org>
+ <20241105142327.GF10375@noisy.programming.kicks-ass.net>
+ <ZypI3n-2wbS3_w5p@krava>
+ <CAEf4BzZ4XgSOHz0T5nXPyd+keo=rQvH5jc0Jghw1db0a7qR9GQ@mail.gmail.com>
+ <ZzkSKQSrbffwOFvd@krava>
+ <CAEf4BzbSrtJWUZUcq-RouwwRxK1GOAwO++aSgjbyQf26cQMfow@mail.gmail.com>
+ <20241119091348.GE11903@noisy.programming.kicks-ass.net>
+ <CAEf4BzbhDE2B41pULQuTfx0f_-1fn5ugJEdPpweKWZVJetCxrQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zz8Xve4kmHgPx-od@shell.armlinux.org.uk>
+In-Reply-To: <CAEf4BzbhDE2B41pULQuTfx0f_-1fn5ugJEdPpweKWZVJetCxrQ@mail.gmail.com>
 
-On Thu, Nov 21, 2024 at 11:21:33AM +0000, Russell King (Oracle) wrote:
-> On Thu, Nov 21, 2024 at 12:50:44PM +0200, Vladimir Oltean wrote:
-> > On Wed, Nov 20, 2024 at 05:46:14PM +0800, Cong Yi wrote:
-> > > Hi, Russell King:
-> > > 
-> > > Thank you for your reply!
-> > > Yes, as you say, there is no problem with the definitions themselves
-> > > being named. When I just read from Linux-5.4 to 6.6, I thought
-> > > that PCS_STATE_ and PHYLINK_DISABLE- were associated in some way.
-> > > After reading the code carefully, I found that there was no correlation。
-> > > In order to avoid similar confusion, I sent this patch.
-> > 
-> > For the record, I agree that tying together unrelated constants inside
-> > the same anonymous enum and resetting the counter is a confusing coding
-> > pattern, to which I don't see the benefit. Separating them and giving
-> > names to the enums also gives the opportunity for stronger typing, which
-> > was done here. I think the patch (or at least its idea) is ok.
-> 
-> See include/linux/ata.h, and include/linux/libata.h.
-> 
-> We also have many enums that either don't use the enum counter, or set
-> the counter to a specific value.
-> 
-> The typing argument is nonsense. This is a common misconception by C
-> programmers. You don't get any extra typechecking with enums. If you
-> define two enums, say fruit and colour, this produces no warning,
-> even with -Wall -pedantic:
-> 
-> enum fruit { APPLE, ORANGE };
-> enum colour { BLACK, WHITE };
-> enum fruit get_fruit(void);
-> enum colour test(void)
-> {
-> 	return get_fruit();
-> }
-> 
-> What one gets is more compiler specific variability in the type -
-> some compiler architectures may use storage sufficient to store the
-> range of values defined in the enum (e.g. it may select char vs int
-> vs long) which makes laying out structs with no holes harder.
+On Wed, Nov 20, 2024 at 04:07:38PM -0800, Andrii Nakryiko wrote:
 
-Well, I mean...
+> USDTs are meant to be "transparent" to the surrounding code and they
+> don't mark any clobbered registers. Technically it could be added, but
+> I'm not a fan of this.
 
-$ cat test_enum.c
-#include <stdio.h>
-
-enum fruit { APPLE, ORANGE };
-enum colour { BLACK, WHITE };
-
-enum fruit get_fruit(void)
-{
-	return APPLE;
-}
-
-enum colour test(void)
-{
-	return get_fruit();
-}
-
-int main(void)
-{
-	test();
-}
-$ make CFLAGS="-Wall -Wextra" test_enum
-cc -Wall -Wextra    test_enum.c   -o test_enum
-test_enum.c: In function ‘test’:
-test_enum.c:13:16: warning: implicit conversion from ‘enum fruit’ to ‘enum colour’ [-Wenum-conversion]
-   13 |         return get_fruit();
-      |                ^~~~~~~~~~~
-
-I don't understand what's to defend about this, really.
+Sure. Anyway, another thing to consider is FRED, will all of this still
+matter once that lands? If FRED gets us INT3 performance close to what
+SYSCALL has, then all this work will go unused.
 
