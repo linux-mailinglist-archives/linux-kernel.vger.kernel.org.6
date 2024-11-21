@@ -1,166 +1,176 @@
-Return-Path: <linux-kernel+bounces-417008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1CE9D4D92
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:15:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C43379D4D96
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24B7281DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:15:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B77BB21481
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E7814BF87;
-	Thu, 21 Nov 2024 13:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BE51D79A7;
+	Thu, 21 Nov 2024 13:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="XpunXTwP"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MEG5jByR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0dMoycn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MEG5jByR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0dMoycn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A361D7994;
-	Thu, 21 Nov 2024 13:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DE214BF87;
+	Thu, 21 Nov 2024 13:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732194912; cv=none; b=egu3zyvzbYZoiw7scIvFTjypPtcaOtl02ZfszHFpYJ324qQ808lgS6jL6DVyktTXrrbnZFhNPiY5CxHpXX+ULnCqxsEWJ4M1kETPLhcB5iTub2MzmuiX9hXtyW8iYB/14vr+js9NMVTTYS+OyLqY4xIq/mp843Zt7rplLjCl4rs=
+	t=1732195007; cv=none; b=ucnzMKMJmUhbGdG8Lxyy1TtjPnmTMD+5bdoq4QcJdy2+RzXm3eGDkzgJPj+6OpG7AP3zRK3Z34P4uW56qEt4vVGbP9md6gzWndMEDpjMneSFkiwLNDgg2M/b/PKSMarNH1wyBiVv7ZXhzdhdJLYTx5VhdMubfpHG1RO/kaolO+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732194912; c=relaxed/simple;
-	bh=XLkXT/TGAeY7kklfNbJ6h2NBpv3lbfCGvZ+Thptz5l4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g1qheK3yl49roEGrF/hpD/rMeEQX2QPf7k2L2LtNNMBj0MvPHw56wcf+cncn7GRXU3PkbUwQEK3l9iHMH0QKGEvsEjRizlaeCqBRgR6JwXPgNcj2hNPh3bT9ofKrCDIoZzzApYnWvCBe4vlHRM7Iia0dWXHeordvn4UMUU29DSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=XpunXTwP reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
- id 46089e4d199c0ed7; Thu, 21 Nov 2024 14:15:01 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1732195007; c=relaxed/simple;
+	bh=7XHWyvWXbr2LJZIelM99SG1GYm/RcFWHYMS7xIgK4jk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ZM+FyYndqZfbTdZ3Cq7YD1soOLvye2Rb4QfZAycvZOL1ZqKDiHRme946W2okw65+IIvkCJJJqU9jrRrisbo2Dhgi3nJFlZWC8Ehxdt9Fiaf+1jfqYBAADqYPDob2A4QEDybBwxBxsCdyVF15EI5Jz2DeanS222hYble8g+sq9P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MEG5jByR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0dMoycn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MEG5jByR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0dMoycn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from pobox.suse.cz (unknown [10.100.2.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id EE3169119C0;
-	Thu, 21 Nov 2024 14:15:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1732194901;
-	bh=XLkXT/TGAeY7kklfNbJ6h2NBpv3lbfCGvZ+Thptz5l4=;
-	h=From:Subject:Date;
-	b=XpunXTwPhUpr1udOYVBw1+ULZPa4aq67URoBST3e/TkrGbjbAbwUE2UPcl3odYHm7
-	 EFyZif00ohAwh/MwWDe5M89kpV3oO8QG95Bb+Vea+r5AwQEm/foFq+IbLhmyoEIvJ6
-	 lmph5FmQFhyWJM4/NQDc/jaNSo7ePnLiIDOafOa6RLqZEGzten/eve6SdW27WVfltI
-	 w3udc9hN1DaeELR57lP+DSHnv0kEHQQqW0jOh5+I8yBm7WwkaBU0/yqcF72XuagldV
-	 7wDxCog8fUoqzb0hQkYKV2+zJanxned/TgQEfCfG5VQpQu5w+9e6FmkJazNuKWtD30
-	 oOChqUAiGPK+A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Subject:
- [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
-Date: Thu, 21 Nov 2024 14:15:00 +0100
-Message-ID: <5839859.DvuYhMxLoT@rjwysocki.net>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3391321A08;
+	Thu, 21 Nov 2024 13:16:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732195003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
+	b=MEG5jByR+NcMAEhMIIhFIrOgZUlazDP3xMPzE8FufTGlX3hMeUtBwRlrzqUdqz6bbVVGLX
+	D6WLDdmL3gn6EmhzkwJmScAGixC7Ci9rXEbLEBPbZllRtsRyMU2gq5Eu0e9Puow6ccb68q
+	chX/2dve3nolCfF9At5DKdV6Xy1lPnY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732195003;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
+	b=r0dMoycnkB8G4vPTsVGog+tnhIWAi415a+UX0LLEoLCM1MwCFzUxXFqedE+6M9dDvF/yH3
+	brFUDHJl4WmMvxBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732195003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
+	b=MEG5jByR+NcMAEhMIIhFIrOgZUlazDP3xMPzE8FufTGlX3hMeUtBwRlrzqUdqz6bbVVGLX
+	D6WLDdmL3gn6EmhzkwJmScAGixC7Ci9rXEbLEBPbZllRtsRyMU2gq5Eu0e9Puow6ccb68q
+	chX/2dve3nolCfF9At5DKdV6Xy1lPnY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732195003;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3YTXiVTRlxcSzx9SYX8rgBDqmASsJNsTcw4BKzeFV+E=;
+	b=r0dMoycnkB8G4vPTsVGog+tnhIWAi415a+UX0LLEoLCM1MwCFzUxXFqedE+6M9dDvF/yH3
+	brFUDHJl4WmMvxBQ==
+Date: Thu, 21 Nov 2024 14:16:43 +0100 (CET)
+From: Miroslav Benes <mbenes@suse.cz>
+To: George Guo <dongtai.guo@linux.dev>
+cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
+    joe.lawrence@redhat.com, shuah@kernel.org, live-patching@vger.kernel.org, 
+    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    George Guo <guodongtai@kylinos.cn>
+Subject: Re: [PATCH livepatch/master v1 1/6] selftests/livepatch: fix
+ test-callbacks.sh execution error
+In-Reply-To: <20241121111135.2125391-1-dongtai.guo@linux.dev>
+Message-ID: <alpine.LSU.2.21.2411211414400.8938@pobox.suse.cz>
+References: <20241121111135.2125391-1-dongtai.guo@linux.dev>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhinhhugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvnhdrsghrohifnhesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhjrghnseh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi,
 
-As stated by Len in [1], the extra delay added by msleep() to the
-sleep time value passed to it can be significant, roughly between
-1.5 ns on systems with HZ = 1000 and as much as 15 ms on systems with
-HZ = 100, which is hardly acceptable, at least for small sleep time
-values.
+On Thu, 21 Nov 2024, George Guo wrote:
 
-Address this by using usleep_range() in acpi_os_sleep() instead of
-msleep().  For short sleep times this is a no-brainer, but even for
-long sleeps usleep_range() should be preferred because timer wheel
-timers are optimized for cancellation before they expire and this
-particular timer is not going to be canceled.
+> From: George Guo <guodongtai@kylinos.cn>
+> 
+> The script test-callbacks.sh fails with the following error:
+> $ sudo ./test-callbacks.sh
+> TEST: target module before livepatch ... not ok
+> 
+> - expected
+> + result
+>  test_klp_callbacks_mod: test_klp_callbacks_mod_init
+>  % insmod test_modules/test_klp_callbacks_demo.ko
+>  livepatch: enabling patch 'test_klp_callbacks_demo'
+> -livepatch: 'test_klp_callbacks_demo': initializing patching transition
+> +transition: 'test_klp_callbacks_demo': initializing patching transition
+>  test_klp_callbacks_demo: pre_patch_callback: vmlinux
+>  test_klp_callbacks_demo: pre_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+> -livepatch: 'test_klp_callbacks_demo': starting patching transition
+> -livepatch: 'test_klp_callbacks_demo': completing patching transition
+> +transition: 'test_klp_callbacks_demo': starting patching transition
+> +transition: 'test_klp_callbacks_demo': completing patching transition
+>  test_klp_callbacks_demo: post_patch_callback: vmlinux
+>  test_klp_callbacks_demo: post_patch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+> -livepatch: 'test_klp_callbacks_demo': patching complete
+> +transition: 'test_klp_callbacks_demo': patching complete
+>  % echo 0 > /sys/kernel/livepatch/test_klp_callbacks_demo/enabled
+> -livepatch: 'test_klp_callbacks_demo': initializing unpatching transition
+> +transition: 'test_klp_callbacks_demo': initializing unpatching transition
+>  test_klp_callbacks_demo: pre_unpatch_callback: vmlinux
+>  test_klp_callbacks_demo: pre_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+> -livepatch: 'test_klp_callbacks_demo': starting unpatching transition
+> -livepatch: 'test_klp_callbacks_demo': completing unpatching transition
+> +transition: 'test_klp_callbacks_demo': starting unpatching transition
+> +transition: 'test_klp_callbacks_demo': completing unpatching transition
+>  test_klp_callbacks_demo: post_unpatch_callback: vmlinux
+>  test_klp_callbacks_demo: post_unpatch_callback: test_klp_callbacks_mod -> [MODULE_STATE_LIVE] Normal state
+> -livepatch: 'test_klp_callbacks_demo': unpatching complete
+> +transition: 'test_klp_callbacks_demo': unpatching complete
+>  % rmmod test_klp_callbacks_demo
+>  % rmmod test_klp_callbacks_mod
+>  test_klp_callbacks_mod: test_klp_callbacks_mod_exit
+> 
+> ERROR: livepatch kselftest(s) failed
+> 
+> The issue arises due to a mismatch in expected log output during livepatch
+> transition. Specifically, the logs previously contained "livepatch:" but have
+> now been updated to "transition:". This results in test failures when comparing
+> the output with the expected values.
+> 
+> This patch updates the expected test output to reflect the new log format.
 
-Add at least 50 us on top of the requested sleep time in case the
-timer can be subject to coalescing, which is consistent with what's
-done in user space in this context [2], but for sleeps longer than 5 ms
-use 1% of the requested sleep time for this purpose.
+are you sure? I have just run livepatch selftests on v6.12 and everything 
+was fine.
 
-The rationale here is that longer sleeps don't need that much of a timer
-precision as a rule and making the timer a more likely candidate for
-coalescing in these cases is generally desirable.  It starts at 5 ms so
-that the delta between the requested sleep time and the effective
-deadline is a contiuous function of the former.
+The above suggests that something happened to KBUILD_MODNAME in your case 
+(which would also mean that the fix should be different). Could you 
+verify or provide more information, please?
 
-Link: https://lore.kernel.org/linux-pm/c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com/ [1]
-Link: https://lore.kernel.org/linux-pm/CAJvTdK=Q1kwWA6Wxn8Zcf0OicDEk6cHYFAvQVizgA47mXu63+g@mail.gmail.com/ [2]
-Reported-by: Len Brown <lenb@kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-This is a follow-up to the discussion started by [1] above and since
-the beginning of it I have changed my mind a bit, as you can see.
-
-Given Arjan's feedback, I've concluded that using usleep_range() for
-all sleep values is the right choice and that some slack should be
-used there.  I've taken 50 us as the minimum value of it because that's
-what is used in user space FWICT and I'm not convinced that shorter
-values would be suitable here.
-
-The other part, using 1% of the sleep time as the slack for longer
-sleeps, is likely more controversial.  It is roughly based on the
-observation that if one timer interrupt is sufficient for something,
-then using two of them will be wasteful even if this is just somewhat.
-
-Anyway, please let me know what you think.  I'd rather do whatever
-the majority of you are comfortable with.
-
----
- drivers/acpi/osl.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/acpi/osl.c
-===================================================================
---- linux-pm.orig/drivers/acpi/osl.c
-+++ linux-pm/drivers/acpi/osl.c
-@@ -607,7 +607,27 @@ acpi_status acpi_os_remove_interrupt_han
- 
- void acpi_os_sleep(u64 ms)
- {
--	msleep(ms);
-+	u64 usec = ms * USEC_PER_MSEC, delta_us = 50;
-+
-+	/*
-+	 * Use a hrtimer because the timer wheel timers are optimized for
-+	 * cancellation before they expire and this timer is not going to be
-+	 * canceled.
-+	 *
-+	 * Set the delta between the requested sleep time and the effective
-+	 * deadline to at least 50 us in case there is an opportunity for timer
-+	 * coalescing.
-+	 *
-+	 * Moreover, longer sleeps can be assumed to need somewhat less timer
-+	 * precision, so sacrifice some of it for making the timer a more likely
-+	 * candidate for coalescing by setting the delta to 1% of the sleep time
-+	 * if it is above 5 ms (this value is chosen so that the delta is a
-+	 * continuous function of the sleep time).
-+	 */
-+	if (ms > 5)
-+		delta_us = (USEC_PER_MSEC / 100) * ms;
-+
-+	usleep_range(usec, usec + delta_us);
- }
- 
- void acpi_os_stall(u32 us)
-
-
-
+Miroslav
 
