@@ -1,145 +1,91 @@
-Return-Path: <linux-kernel+bounces-417550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FA69D5588
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:33:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DDB59D5581
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14BBB238F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0116C1F243DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781DB1DE2DA;
-	Thu, 21 Nov 2024 22:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ibkaTQ4O"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD73156875;
+	Thu, 21 Nov 2024 22:32:36 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646541DE2B4;
-	Thu, 21 Nov 2024 22:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E3E5695;
+	Thu, 21 Nov 2024 22:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228366; cv=none; b=gvGi9AcgjlR7uVfYwFHREza/XUmV2Nd9yao9PsrFDcO2T3uEEDl0WTLtBydMMoTN/yXoIbShcXQ53dxogzYoumsnziV/D5jqSQco6/oMd7bPgJBCgO2SuywONobDNulxW6qo/5fFoxH1iVRCDZdOyeOF9aIFcXYPJ+J0c9gLGJE=
+	t=1732228355; cv=none; b=COpUzA8AKQmk0OUYKLjeKlD4DPgB9A1zCSHGAO3RCqiPPvckabXqRCdlrpUTeRIzEh52sLRc+Y89cOWHIg7FcbOOqmcUkvFi4kviWYy5soNN6n1RgFGsiWf6bje10Wd21lZyy5m+Wfeag0GsC6YXVLUi0CBS2XJOksfxn74Sedg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228366; c=relaxed/simple;
-	bh=yLXcD7EcMzw9xT0WwrAiCg8Ub8pkccyUlE0tO5U6joU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wcz3UUWi8B6j/2FD2DwRH0BvtG1I9glui6ECO8ri6FUhKt9rTdYJVeuSJ7vyxLQAqlvz/8B5Tof//IFuxvCtKpH2bfo+AsA1XYtx42wpJ6SPFdUHPb0Re7o0PYXT6lijAm8AembppELk9IueM/fPnMlNG9lw/IF5QbBNfzOYTA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ibkaTQ4O; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732228290; x=1732833090; i=w_armin@gmx.de;
-	bh=14fUGPbX8Lv0O9UwgU8VqOQ9m/mAK/lhmr5W67lQWz8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=ibkaTQ4OIDjR0k7SdfSzPbQ/oyl2XHYBGRien0O/Z8/VHruz/0JlNmxSiAQw6Cgf
-	 I2wRYLI2fILyfh6ZggnGWb2JwByynmeW9jg6vsHfsSP8Ywk2W+jwd+Fe1xSBapNEn
-	 NCz493GsbBqQTIsekJ5NSsKkv1HXsd6y3o1LKT5LZtR3orGOmHaQ8a+LfAAVt7Q5R
-	 YzTjBNAaTJsiRHwgWnZW/AnWKvywAfai2itDWUtAqOme960YILQOJNsWVZzRoQ06B
-	 APev0uQ1LPyheoBjOiWixT5Snh8mA4rg0sMqsCt0KMAp+xmqrJsj22XgM64k089b3
-	 R3ayKXorc2ErhbF8GA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MdNcG-1tnJPV2fSa-00alXh; Thu, 21
- Nov 2024 23:31:29 +0100
-Message-ID: <180cce53-d778-4ab6-b54c-41c13b4929d3@gmx.de>
-Date: Thu, 21 Nov 2024 23:31:25 +0100
+	s=arc-20240116; t=1732228355; c=relaxed/simple;
+	bh=OSDP648lDt7Tf3SrrgCOs+h8R2qVThcd7JCYaUNoemU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVtK2y0tnNH4YDj+VspJ2sL5NUdKZsSfArhShsa4Kj/49BGZa4mDmL4HyPTaeuADUOU8Wgn7f0A28pCqU2J3OQUL0Z3hQNiuxl471TjnXXpkyYWPHhxGZUYQ9CSDRPW1iEibI6sKO3CSAC5OLSZBcLWxnPEtXEQL2VztAbFVJOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A76A13000B9FB;
+	Thu, 21 Nov 2024 23:32:29 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 80A2631BB07; Thu, 21 Nov 2024 23:32:29 +0100 (CET)
+Date: Thu, 21 Nov 2024 23:32:29 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 15/15] PCI/AER: Enable internal errors for CXL
+ upstream and downstream switch ports
+Message-ID: <Zz-0_RJGI0rbPHZx@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-16-terry.bowman@amd.com>
+ <Zzsq6-GN0GFKb3_S@wunner.de>
+ <4529f2a2-e655-4906-8e21-8d5d90db4468@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 19/22] ACPI: platform_profile: Notify class device from
- platform_profile_notify()
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241119171739.77028-1-mario.limonciello@amd.com>
- <20241119171739.77028-20-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241119171739.77028-20-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:AJQAyobA8wZvDwtD5ZtJ2PZxsr6E9H/CUsQZRmspXpyB3/OU3RU
- jGhhWUpWNvBaJYALNVV3jqCF2kWcLncHKz8JopjlWEbQfEY18yIEYcQywsJ/wx0wR3q+toj
- IxacUruA50C42EAS+GA7kxogvWhMWrodI0Y+i0korI0tXMHyGvXXENIenqeIcK3+NJSCWmk
- ETwLmpKIMlC8tLArntZVw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xfZz7REQkaY=;Unlox4losSV9H6k6t21x1MxYp+X
- YBvt26xCqHDUN7JVSC5KJEgMhm+yDkgEk2z4gZATXftmwpx4CR5+b6hUBypCu5Dpj3rUQOYex
- 7l2vbcTmiQf8ncwOlq4ZyovVixeC/7lH97gTCS+yv6uEwZovsjTyQPlUh/mOZgShq4Iz/Vn3X
- ZSOLUWnRm3FehBwPT6bQ667LePGmWQDqst/TsDKZQ+LG0iPH10Ca8/7vrAwBRtcVif3r6oB+h
- iGsg6mq2Iq5pG1JR6DylnC/AxDeHf1PJjrot4pKR1piYfULei0CujSC4oW5IjEVhg4u2OrQHP
- 9ko5e+taO/DmoFTKUhg4fdAnuQpxaMVHTSm2LMqb3HTiSKGZRUlxqW37wAb0koppeAQ2slctN
- u/OB2GgGGpUo85tZo+agYU2718GDw14se0L7JkBMjBtCHLYcAugO6Btn/G0Kwbh+RtAUBPqV0
- VEPTC+AxsDb76JNp+XZMI8gLsdemknwU8XU7YnNfy63oZIBP2KBktQEtPCCHGm8LEbgRg4dab
- HPWZKwe81G3BRGrGO1wNiedxH247znG1C0qy2xXDJvalNs/BkrULdZK6elzA7IwQX1k3D4Z5d
- MyrJdo70OuqZdYDAV9dQu7O2tT+NY1rCSXcs7ecMTTGQez2F81AbsedwkLE031PMmCV9W3Xcf
- 2bge4tX/s8cUjITQ6ilxfYAziAaYZ0GQVc1X4/WoXi/Hd/zIeFZhD9GCKR6biTrmpQVzzPXIK
- gxkV8ZyZiK3HQ86WfX1Ec7TDKmAd3brlmrMn33UP17IaiAN0LMO8vep4K7GV14ocB84FLlarV
- YB9fAmWZoyVDpNZy2cLCvfZp04w0n9YXK+k/fn1kyS74ZWsngmGLXfTZrxr4mraHbm7BEsjRM
- 4iMyNg3zCj+O1czGqK6+rf4YxUUxi2OlNZKXjCDBD0Iwelw77LOCTGbrv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4529f2a2-e655-4906-8e21-8d5d90db4468@amd.com>
 
-Am 19.11.24 um 18:17 schrieb Mario Limonciello:
+On Thu, Nov 21, 2024 at 04:25:31PM -0600, Bowman, Terry wrote:
+> On 11/18/2024 5:54 AM, Lukas Wunner wrote:
+> > Hm, it seems the reason why you're moving pci_aer_unmask_internal_errors()
+> > outside of "ifdef CONFIG_PCIEAER_CXL" is that drivers/cxl/core/pci.c
+> > is conditional on CONFIG_CXL_BUS, whereas CONFIG_PCIEAER_CXL depends
+> > on CONFIG_CXL_PCI.
+> >
+> > In other words, you need this to avoid build breakage if CONFIG_CXL_BUS
+> > is enabled but CONFIG_CXL_PCI is not.
+> >
+> > I'm wondering (as a CXL ignoramus) why that can happen in the first
+> > place, i.e. why is drivers/cxl/core/pci.c compiled at all if
+> > CONFIG_CXL_PCI is disabled?
+[...]
+> The drivers/cxl/Makefile file shows CONFIG_CXL_PCI gates cxl_pci.c build with:
+> obj-$(CONFIG_CXL_PCI) += cxl_pci.o
 
-> When a driver has called platform_profile_notify() both the legacy sysfs
-> interface and the class device should be notified as userspace may listen
-> to either.
->
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v7:
->   * Use class_for_each_device
-> ---
->   drivers/acpi/platform_profile.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index ca997f4e9a5cb..e88b355a72112 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -402,6 +402,10 @@ void platform_profile_notify(struct platform_profile_handler *pprof)
->   {
->   	if (!cur_profile)
->   		return;
-> +	scoped_cond_guard(mutex_intr, return, &profile_lock) {
-> +		class_for_each_device(&platform_profile_class, NULL, NULL,
-> +				      _notify_class_profile);
+I wasn't referring to drivers/cxl/pci.c, but drivers/cxl/core/pci.c.
+That's gated by CONFIG_CXL_BUS, not CONFIG_CXL_PCI, which seems weird.
 
-I think that using class_for_each_device() is a bit overblown here. He only want to notify a single platform profile,
-so using class_for_each_device() is a bit too much. Using _notify_class_profile() is enough.
+Thanks,
 
-With that being fixed:
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> +	}
->   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_notify);
+Lukas
 
