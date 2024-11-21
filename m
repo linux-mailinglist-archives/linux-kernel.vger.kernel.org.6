@@ -1,47 +1,84 @@
-Return-Path: <linux-kernel+bounces-416834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EB59D4AE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:28:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF399D4AE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F460B23056
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:28:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 146541F218A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CE023099D;
-	Thu, 21 Nov 2024 10:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C9B1CEAB8;
+	Thu, 21 Nov 2024 10:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZsuEJyP9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OcLanNHG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05721CACD6
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD6E1C305A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184885; cv=none; b=SkCY8ovypWgWod5FHSw06l9QkmlwDbRuycaKz8nQqzKEqWlDJs/FTejsse9pV90Qwx5YKmmgZrrKa1AEk9F8V1TSxq1uVByBwmBXnm7iEgmRN+vfnrKQhBf4x0IMFD7yaQo18D7RxeSoYSisvb5ChnJLF4210iIBRX6OQy4vhGU=
+	t=1732184919; cv=none; b=cyaeV1/0HoTP3BviAtIuQmLd0dDmF3HPMwLTxhnOcARa56cygRYJyFRe6520Nq4yHVgQ95enBdmRtFgBsnI9FCa2mbbWq6e3f750GbyFvXZAaF2FWHM5vXEUfFfR5S5k4Lkl0T0QVMpIb9PqfZXcuaRqevSQpo5xtkAurCwA7uI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184885; c=relaxed/simple;
-	bh=sQyHjoPV6h9sOqmsyfmf7/IL7whikxmmoPsVmcB/N60=;
+	s=arc-20240116; t=1732184919; c=relaxed/simple;
+	bh=sKzohGaYqI7jAfKfMkPF4Mb7mwMdcuQHHA0ja+FhXVI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJ90+ChVq3i+XKz1PNQ9DjuhIR5hAww9CfIG1kGuWKassb8sCyesRzX+T/ErJuhF4zUl99U9Ye5dXbKwjFzTxUI/xnjBoPi4b+BW1hC//hEziXCAiuBO4eYo4Rq8FPVeuOsLr6kLNPCXKf/X1gbqgN66b09GFCFxdiUQgChZlRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZsuEJyP9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF167C4CECC;
-	Thu, 21 Nov 2024 10:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732184885;
-	bh=sQyHjoPV6h9sOqmsyfmf7/IL7whikxmmoPsVmcB/N60=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZsuEJyP9kAwvE66L7VrUbX+2DfxflCnkfKESz2/y8fu0M2wXPLGAucDyBHxxcVDzP
-	 bro3MIzWsr2UvOzBIlKOeog/Wj08VSoJwwCJy9MFb3+XkdKuBu/LlGAon4DeTRJGEG
-	 A2vGxjYmWyjHG7GCvmrBt5VMqkhrYsHVPLilkGeV5W511AtX8p3Fc+pKpXzD2mIa0z
-	 rZ/STFsVhfbytfCHMO3MKlk+Wu1utazVRjRpC/eph8h8T5zApZVi/aHm9EXgSpY5Yq
-	 9mGZb7kJaO2zjcD5yksGKlRzQjer1rMdoQRzBtIugVi8321CKQIH1WW8koVAk4tM7I
-	 HSQxSEjJozhFQ==
-Message-ID: <e3b8366d-b365-43a3-8f40-c2374ff9e8bf@kernel.org>
-Date: Thu, 21 Nov 2024 11:28:01 +0100
+	 In-Reply-To:Content-Type; b=jGEGrx5B0/UncX6b+LJQ4OC3j7In3QEW1hG3GDF3yAqECmAPsYDXA8ZwWetw9Pos9T4UzMc3wYuHvqqBzeRQrREnAWZsUvjVKGQJYBPrKATh6CRWi+QxLKKDodvMa7R3rZiXE0xu/fJCf8Hn+Mu2Iz2beY79Ul5VObr61J3Jxc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OcLanNHG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732184916;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sKzohGaYqI7jAfKfMkPF4Mb7mwMdcuQHHA0ja+FhXVI=;
+	b=OcLanNHGy6Fv80WRM3xvdFlONfK4BToATp2/cCEmKkX/JxK5oXHrU4TU0NWBZgEDyjWQQy
+	HhptP/efyX2mh+pj2GuvZYoEFl4mXc3VXNmwnLQioISgHBiNqxoiidTa6VkXfSTAmU3TDS
+	1HkH3uHpMAJJX/hJYDSe+uUw6BDbpUc=
+Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
+ [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-OFhNSCgmMbqT3Pcwpxzrtg-1; Thu, 21 Nov 2024 05:28:34 -0500
+X-MC-Unique: OFhNSCgmMbqT3Pcwpxzrtg-1
+X-Mimecast-MFC-AGG-ID: OFhNSCgmMbqT3Pcwpxzrtg
+Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-85722f5d206so219252241.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:28:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732184913; x=1732789713;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sKzohGaYqI7jAfKfMkPF4Mb7mwMdcuQHHA0ja+FhXVI=;
+        b=JgrtzyGvbM9kP2PIaNKrsn8z3j/pemwbHoRgpA73zyOLUendOl5z+9VqPjGx6+cVAA
+         EICoRcjlsV6z5rFoRo3fgUL3OKyKyjavFHbsJoGz5cCvRY2z7aB/oKxnc+PX1y+L5HrF
+         YMshQ/+4pOphqhBq//I+34fl8xF9oV5dHxDiKdqocFziqgxvwzKZ1pKR2jW92QG7ijjL
+         mWlvC0BDLwHI8cEccK6Z2oxgfIDYfwAeTDH7GepgIRK9DzUUVkAr5zNCfWr5PC66VOnm
+         s7DCeLdPEIdWFdVlEgskbD4N1jxvU5zW34KBJlUFsEnv8CohIiS59e6A3Hu3ehJY/JtN
+         vafg==
+X-Forwarded-Encrypted: i=1; AJvYcCURH+rkt+MjXnTiof8Jryxpl8VRnXz0H+axdr0cAG68/zrL0nOYHsA6cjZQkDzMGFA+bBwTuKzCTBsQVx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdP2i078YvpXLJTusdohDmj/EaDw5DPggbrHJBNyvOAUi+HhUF
+	w8bR32lTQ16rHPIKzdmfvbV7VvIagnff5b9bRuDf8FrED18KrLdoWm9WoT+CA3UYLWMsC5ZzPX4
+	2vGkV2+OsptTuc2bzL8MKeJrQb+gQRbE5HT0LsXzsBVzrJvwgBk1TGhqNwtUyIQ==
+X-Gm-Gg: ASbGnctLep357vUu2JaMEIIvujFkbigQ9GtjqTTwgd77+sL+79VY0K6ACYajGwVbJ9K
+	Padx6AkpLh1VpK1r9IHsLwHkDapU5MwxTBwGRxvG7c9LakR8TRhHWo/nR2BYCU+KwgL3WNIxI0A
+	5lrhZb9xA6cBa/R403aVeGWPoaeLOjeTw8vM3vQDIYYR6X5YaI7G37/w2ZRnnXm+oZxJaZz8sh1
+	KDUSGg5wrD9FTpx/w/DzUbH2mk6KzkLf1zwCB90gVSXktq1OuUxXsF/umCd3qFh9L5Ey8sfMw==
+X-Received: by 2002:a05:6102:3e07:b0:498:ef8d:8368 with SMTP id ada2fe7eead31-4adaf4bb33fmr7794351137.13.1732184913236;
+        Thu, 21 Nov 2024 02:28:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvNgLLYktvPtaJaBpniqt/2h5wYTqtk6DE591nq3WhjRfvS6UaO9CP9BTTqW5PKVBbtxtxGg==
+X-Received: by 2002:a05:6102:3e07:b0:498:ef8d:8368 with SMTP id ada2fe7eead31-4adaf4bb33fmr7794340137.13.1732184912953;
+        Thu, 21 Nov 2024 02:28:32 -0800 (PST)
+Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4646ab21517sm20273601cf.82.2024.11.21.02.28.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 02:28:32 -0800 (PST)
+Message-ID: <4f621a9d-f527-4148-831b-aad577a6e097@redhat.com>
+Date: Thu, 21 Nov 2024 11:28:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,174 +86,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/10] memory: ti-aemif: Create
- aemif_check_cs_timings()
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20241115132631.264609-1-bastien.curutchet@bootlin.com>
- <20241115132631.264609-5-bastien.curutchet@bootlin.com>
+Subject: Re: [PATCH 1/2] PCI/MSI: Add MSIX option to write to ENTRY_DATA
+ before any reads
+To: Dullfire <dullfire@yahoo.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jacob Keller
+ <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Mostafa Saleh <smostafa@google.com>,
+ Marc Zyngier <maz@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20241117234843.19236-1-dullfire@yahoo.com>
+ <20241117234843.19236-2-dullfire@yahoo.com>
+ <a292cdfe-e319-4bbd-bcc0-a74c16db9053@redhat.com>
+ <07726755-f9e7-4c01-9a3f-1762e90734af@yahoo.com>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241115132631.264609-5-bastien.curutchet@bootlin.com>
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <07726755-f9e7-4c01-9a3f-1762e90734af@yahoo.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 15/11/2024 14:26, Bastien Curutchet wrote:
-> aemif_calc_rate() check the validity of a new computed timing against a
-> 'max' value given as input. This isn't convenient if we want to check
-> the CS timing configuration somewhere else in the code.
-> 
-> Wrap the verification of all the chip select's timing configuration into a
-> single function to ease its exportation in upcoming patches.
-> Remove the 'max' input from aemif_calc_rate() as it's no longer used.
-> 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
-> ---
->  drivers/memory/ti-aemif.c | 107 +++++++++++++++++---------------------
->  1 file changed, 49 insertions(+), 58 deletions(-)
-> 
-> diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-> index aec6d6464efa..5c1c6f95185f 100644
-> --- a/drivers/memory/ti-aemif.c
-> +++ b/drivers/memory/ti-aemif.c
-> @@ -132,18 +132,48 @@ struct aemif_device {
->  	struct aemif_cs_data cs_data[NUM_CS];
->  };
->  
-> +/**
-> + * aemif_check_cs_timings - Check the validity of a CS timing configuration.
-> + * @timings: timings configuration
-> + *
-> + * @return: 0 if the timing configuration is valid, negative error number otherwise.
-> + */
-> +static int aemif_check_cs_timings(struct aemif_cs_timings *timings)
-> +{
-> +	if (timings->ta > TA_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->rhold > RHOLD_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->rstrobe > RSTROBE_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->rsetup > RSETUP_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->whold > WHOLD_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->wstrobe > WSTROBE_MAX)
-> +		return -EINVAL;
-> +
-> +	if (timings->wsetup > WSETUP_MAX)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
->  /**
->   * aemif_calc_rate - calculate timing data.
->   * @pdev: platform device to calculate for
->   * @wanted: The cycle time needed in nanoseconds.
->   * @clk: The input clock rate in kHz.
-> - * @max: The maximum divider value that can be programmed.
->   *
->   * On success, returns the calculated timing value minus 1 for easy
->   * programming into AEMIF timing registers, else negative errno.
->   */
-> -static int aemif_calc_rate(struct platform_device *pdev, int wanted,
-> -			   unsigned long clk, int max)
-> +static int aemif_calc_rate(struct platform_device *pdev, int wanted, unsigned long clk)
->  {
->  	int result;
->  
-> @@ -156,10 +186,6 @@ static int aemif_calc_rate(struct platform_device *pdev, int wanted,
->  	if (result < 0)
->  		result = 0;
->  
-> -	/* ... But configuring tighter timings is not an option. */
-> -	else if (result > max)
-> -		result = -EINVAL;
-> -
->  	return result;
->  }
->  
-> @@ -249,7 +275,6 @@ static int of_aemif_parse_abus_config(struct platform_device *pdev,
->  	struct aemif_device *aemif = platform_get_drvdata(pdev);
->  	unsigned long clk_rate = aemif->clk_rate;
->  	struct aemif_cs_data *data;
-> -	int ret;
->  	u32 cs;
->  	u32 val;
->  
-> @@ -275,68 +300,34 @@ static int of_aemif_parse_abus_config(struct platform_device *pdev,
->  	aemif_get_hw_params(pdev, aemif->num_cs++);
->  
->  	/* override the values from device node */
-> -	if (!of_property_read_u32(np, "ti,cs-min-turnaround-ns", &val)) {
-> -		ret = aemif_calc_rate(pdev, val, clk_rate, TA_MAX);
-> -		if (ret < 0)
-> -			return ret;
-> -
-> -		data->timings.ta = ret;
-> -	}
-> +	if (!of_property_read_u32(np, "ti,cs-min-turnaround-ns", &val))
-> +		data->timings.ta = aemif_calc_rate(pdev, val, clk_rate);
->  
+On 11/21/24 10:22, Dullfire wrote:
+> On 11/21/24 02:55, Paolo Abeni wrote:
+>> On 11/18/24 00:48, dullfire@yahoo.com wrote:
+>>> From: Jonathan Currier <dullfire@yahoo.com>
+>>>
+>>> Commit 7d5ec3d36123 ("PCI/MSI: Mask all unused MSI-X entries")
+>>> introduces a readl() from ENTRY_VECTOR_CTRL before the writel() to
+>>> ENTRY_DATA. This is correct, however some hardware, like the Sun Neptune
+>>> chips, the niu module, will cause an error and/or fatal trap if any MSIX
+>>> table entry is read before the corresponding ENTRY_DATA field is written
+>>> to. This patch adds an optional early writel() in msix_prepare_msi_desc().
+>> Why the issue can't be addressed into the relevant device driver? It
+>> looks like an H/W bug, a driver specific fix looks IMHO more fitting.
+>
+> I considered this approach, and thus asked about it in the mailing lists here:
+> https://lore.kernel.org/sparclinux/7de14cca-e2fa-49f7-b83e-5f8322cc9e56@yahoo.com/T/
 
-You just changed these lines in patch #1. Basically this is partial
-revert of #1.
+I forgot about such thread, thank you for the reminder. Since the more
+hackish code is IRQ specific, if Thomas is fine with that, I'll not oppose.
 
-Best regards,
-Krzysztof
+>> A cross subsystem series, like this one, gives some extra complication
+>> to maintainers.
+
+The niu driver is not exactly under very active development, I guess the
+whole series could go via the IRQ subsystem, if Thomas agrees.
+
+Cheers,
+
+Paolo
+
 
