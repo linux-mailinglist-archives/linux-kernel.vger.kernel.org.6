@@ -1,129 +1,166 @@
-Return-Path: <linux-kernel+bounces-417342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196989D52D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:52:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E06C9D52E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72621F22C91
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:52:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91239B2618A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9B21C830D;
-	Thu, 21 Nov 2024 18:52:40 +0000 (UTC)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0ED21D63D5;
+	Thu, 21 Nov 2024 18:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VptYPwhn"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4FA19FA93;
-	Thu, 21 Nov 2024 18:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7907B1D63DC
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215159; cv=none; b=BvT0DhEtOePqwfdQ/Ne+wPYYAOLajNCv1c1V/TOwidm2gqi5IKGyzlbDii0pYWSvs1awZHXVLcLCzLWF1WNkjRkbW7uE4M9tsrs2lcSdKHSRboYOOEYIpfkrkk2CjDAv3ae6GCagZ3phxQns4R2HAKm46lJjiDx5omvfcHitaBE=
+	t=1732215200; cv=none; b=uTqWwVO62Edwyulv9hrBgehXqYTnK9W5Q79KRXrxxVMeylRyeq0J78UNJADrtOPN7zIQrgo+RInOhtvc75Rs0kypA2dJemMp0DG8FAhoXCgtem3YOk5kHUkYqUWKMhN9ER4pPziJDP+vFoFCdS60EAWW5eJr8lt/bioPyVj3QvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215159; c=relaxed/simple;
-	bh=oqqondy23S74aGu5BrVkzbnRTmFRm6XLzCNLrVkrraE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I4VwwUrLifEkGl1MKFBQpm1fxV/EjcpYmv6APJOorjXHDxKAEpb6RvqW7P1TiOP5rvEdO0wK2cg6T4qptTDWR8MhbroE1gPeIyUwz5YTLQL1ZcCL2O1p3jG1EKbYKnOqJKlDXTmZzCXEQSlaqkFzpDo6+8EvQ54CJ6wQ32di1qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ee6a2ae6ecso12213797b3.3;
-        Thu, 21 Nov 2024 10:52:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215156; x=1732819956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+	s=arc-20240116; t=1732215200; c=relaxed/simple;
+	bh=VFdt9cilaiyxS1TXoF0548lV9YvYhKTjRGbWjbjdNe4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=jBMtyOwRuob53SStvncOilYACHDDnaxXJ4+0FBb60CkTXX2NP4V9DsRyK8AGysIoBCC1t1xJqLAzIT4X3YHiKQuUp1IACK/lIqUtvZqcd+dwDzf8bCDzF9FWg33TjJeGECZvHb9vrWUu6ns9t8IbHA7RHAbjAITQFMPnSWHBj3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VptYPwhn; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-724dafe8023so287630b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732215198; x=1732819998; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wiKmU47CtbBGWKBpE0HqbPui0PwogHusuDbrIOQ4p9Y=;
-        b=dctb+HZ5+f0qiCPx8mLt+q+RDeLUZFGNkrTiQmH/A6ORJYuP5JCUOmUsCUE8HS9z9P
-         86Z3Wqz1cOFFrPwJQuLO4x6B9Tepjg/b1lI7K/YqIw+LaaF91ZknQnd57S4get/oKvjx
-         FYSSZ/1Z3fm++YykJ0bnariecBrW5y8122FCCzCvTQHFxsZSM2zlkSyTKHVNjzNhwc9a
-         VAY3NHX8T6wWer7P/K772uOBQYJ4YWcqCZhW0YqeS2l+6BlSkFaSnaZQghbuFE3MpRbL
-         IMHjvgsB8IgVVC+Nmg/qADWivrQxXSHBhcXdAsVMHrP4KQZDrfZEMAmt3o5dWOKw1sNG
-         v1Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/ZVo3k6j5WBUQlb2Fjf8BHks4hxkH2jV8gwNgaUmovmKHjoXqU7tLRkfTR0TTIqVsNMnkMohkmkK9kw==@vger.kernel.org, AJvYcCUicy5pYxdmgYj5RYdS1wNulfCdZRMfogYgKem5FdtbVYbwvLRMU7G8jtdbSKd1Fg55ieyGeHFHlKH1wSI=@vger.kernel.org, AJvYcCWl6YasKK8L0fEv/4QEohWtH51ZXTXAc3TeepNJQ9RJ2k06S2nd1iMyysY6oueT6vBTkyzPWGEA4xyc@vger.kernel.org
-X-Gm-Message-State: AOJu0YyylBhEsI5PeWtgyN7iMgDucVV8qDfrWBZJk8XQRm7ReodZxbIa
-	umTPr4CKBS2pTncpK9KWbdfgyPk+o8hDNNQ3ofPKiTwPOuQv7nJ8IGFVTBPH
-X-Gm-Gg: ASbGncuzWRKD8Dxh/Fv95BSOrwc1r893Bl4sxmpduXAJLwsSQmLub7CusU7k2+i5LlN
-	1/VQz8ucVnCCwq3ZS1Q7GQ3mcFtF2QAbQz/J0q/5Myiu/Y6fKJ0ssbff1reTb5znvut9J+q5DnZ
-	XZ+kcURSB457gjczKISdWFMO1RrfwxYQ3+2Lj3EBAGLFck5Ffzb5YSZduBI2hBNfEUXTScGeFyp
-	6ry6Uf0CLQkLCYeXse+1wbW6yLs/hx62ngsRgzEslypfOdBXF67PdU1p4Ba4g44aNwdDXCuSr0L
-	9/OQblxF/bgEx3EE
-X-Google-Smtp-Source: AGHT+IGC4f69cVdKB3sdm8qaXsD8Z1umi9orCXutexSe10QVT8gWThmk0thu42uMBHIP8V8Y4y7n1g==
-X-Received: by 2002:a05:690c:9b13:b0:6ee:6e71:e6cf with SMTP id 00721157ae682-6eee0a5b66dmr3843167b3.29.1732215156096;
-        Thu, 21 Nov 2024 10:52:36 -0800 (PST)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee00aa3f2sm697287b3.120.2024.11.21.10.52.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 10:52:35 -0800 (PST)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6eea47d51aeso12390977b3.2;
-        Thu, 21 Nov 2024 10:52:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVB583URUTWqFSzlyxZFfa+Lz8dFcYmCjrBrmJ4ttfQEFQAEcwvJwJbL3xrrTO65euBNb6DhaLSpxgVPQ==@vger.kernel.org, AJvYcCW5Pa1ss0pGzSiCWSSy/xSFAElHqHKsvbnYIQwlRitMJOsSImqEvrMm13Xt5G3jsTj50luMEXFhBF1X@vger.kernel.org, AJvYcCX52S9Pr9OEYGRFW0jlat9oIPYt3Lb0yVJYgg0QCuIKWIqDPSqNgRNoFkxELzAVkzxXOVsRqEpSaaM74hc=@vger.kernel.org
-X-Received: by 2002:a05:690c:7406:b0:6e2:1a56:bff8 with SMTP id
- 00721157ae682-6eee0b7584emr3584917b3.36.1732215155155; Thu, 21 Nov 2024
- 10:52:35 -0800 (PST)
+        bh=5+lzBQC5Ttw9j6ggXls2txYNDG8DC9c3ckF1XngrbFM=;
+        b=VptYPwhnZjlbM7SJkKKxGWxJ7tKKaIPO+Ql37o3Q4XbpHnEnJ48UGNO4UWvNXSdlQF
+         BZwRf7cxGNGWdX9lXMAiAR4mQs5mLpt6FtJBDIHAXrMtnRARri6yaBYIaQd8umunhNch
+         MYXLxisDVjvXgb/OHGUNvYQlwt4cnHhdrPR6XcZIhyE3Rc+4UqMJhMlU1M3XK/2gswwg
+         l6uOixXYBAFEZNxxGOXLPHZc5uRZAK6jAfSj80oTqVksZkCawf8nzozH22lm6Oud8/CD
+         N9N5zDGrXH2XH8ZCDdZrdzAixhzcoc8zrtLN8llqsMiIo71b7ATyT4lAGAXDstjZtgV2
+         CWyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732215198; x=1732819998;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5+lzBQC5Ttw9j6ggXls2txYNDG8DC9c3ckF1XngrbFM=;
+        b=LrF/ZDUBiQdHiwz8MIXMIuJ8e73kTEla5fjkoFtaZEg1HFT5OSJqK1rH3W20XlYwGx
+         OK/SKBO1ILdSs1R3HKXgnL7nYHGrDaczLDpQP12uGc7i4gfHiWN8zjGjy4pHXvMmuJpd
+         XDLowOpP+vx/xGFtor1g2dSEdjyFDbUgfHaHhPWKp0bw4VgwE2cC+EPu7k+aMs6Mw196
+         wR08IZhIpCDnvIc4TecNtZ7mmMLxUnQ3WqLDn4rO+gebI3604BURbej/yJAeM+G8QRTZ
+         qz4tgedlW1C8G8cT8waatjb7ocHVMlXnJWTnBpJ86jY2hKytpHhX5WEXfXrACBgIQoo0
+         6PTg==
+X-Forwarded-Encrypted: i=1; AJvYcCV13nXGiS4n6Ij0NPlbAAbvw6eN2jR0pFPoEt3+CDAMVie8omBkNypIsoehsM+E55drtSR/j8uCNBqg9jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKYnRyKvjCmkuGlwXrHSaCs3YauoJN2lPcXxRKzCDUXtGou4TN
+	WDByaGQJnOcWXGaHRkthk6FqTrpkhp+eEfWB+/mBoOks600WtVJZRAQI3Ae35RsP2fUpKlvlFJU
+	ddbrEAg==
+X-Google-Smtp-Source: AGHT+IEQVIhgBrxcrY39bxedIn0TvpboCw05sUP5QffbMKzXRZU6fQePTnsrcLehryI6ThvkNhu3SeWxP9T/
+X-Received: from mizhang-super.c.googlers.com ([34.105.13.176]) (user=mizhang
+ job=sendgmr) by 2002:aa7:818f:0:b0:724:c7a7:2d60 with SMTP id
+ d2e1a72fcca58-724df70931amr10b3a.6.1732215197723; Thu, 21 Nov 2024 10:53:17
+ -0800 (PST)
+Reply-To: Mingwei Zhang <mizhang@google.com>
+Date: Thu, 21 Nov 2024 18:52:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1731450735.git.fthain@linux-m68k.org> <665c3526184a8d0c4a6373297d8e7d9a12591d8b.1731450735.git.fthain@linux-m68k.org>
- <173193673970.37302.12055966881506116157.b4-ty@bootlin.com>
- <8140c873-3456-1469-8bc5-2e94d409cf8a@linux-m68k.org> <20241121174630cbc6cfa6@mail.local>
-In-Reply-To: <20241121174630cbc6cfa6@mail.local>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 21 Nov 2024 19:52:23 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWCjC92DUxNiMQufaoaR4mzH+gshYnFayjka9-hH6DhFg@mail.gmail.com>
-Message-ID: <CAMuHMdWCjC92DUxNiMQufaoaR4mzH+gshYnFayjka9-hH6DhFg@mail.gmail.com>
-Subject: Re: (subset) [PATCH v4 1/2] rtc: m48t59: Use platform_data struct for
- year offset value
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Finn Thain <fthain@linux-m68k.org>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Daniel Palmer <daniel@0x0f.com>, 
-	Michael Pavone <pavone@retrodev.com>, linux-m68k@lists.linux-m68k.org, 
-	linux-rtc@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+Message-ID: <20241121185315.3416855-1-mizhang@google.com>
+Subject: [RFC PATCH 00/22] KVM: x86: Virtualize IA32_APERF and IA32_MPERF MSRs
+From: Mingwei Zhang <mizhang@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+Linux guests read IA32_APERF and IA32_MPERF on every scheduler tick
+(250 Hz by default) to measure their effective CPU frequency. To avoid
+the overhead of intercepting these frequent MSR reads, allow the guest
+to read them directly by loading guest values into the hardware MSRs.
 
-On Thu, Nov 21, 2024 at 6:46=E2=80=AFPM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
-> On 21/11/2024 09:13:32+1100, Finn Thain wrote:
-> > On Mon, 18 Nov 2024, Alexandre Belloni wrote:
-> > > On Wed, 13 Nov 2024 09:32:15 +1100, Finn Thain wrote:
-> > > > Instead of hard-coded values and ifdefs, store the year offset in t=
-he
-> > > > platform_data struct.
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/2] rtc: m48t59: Use platform_data struct for year offset value
-> > >       https://git.kernel.org/abelloni/c/a06e4a93067c
-> >
-> > Thanks, Alexandre. Would you also take patch 2/2, please? Geert has sen=
-t a
-> > reviewed-by tag for that one too.
->
-> I thought Geert would take it as this only touches arch/m68k
+These MSRs are continuously running counters whose values must be
+carefully tracked during all vCPU state transitions:
+- Guest IA32_APERF advances only during guest execution
+- Guest IA32_MPERF advances at the TSC frequency whenever the vCPU is
+  in C0 state, even when not actively running
+- Host kernel access is redirected through get_host_[am]perf() which
+  adds per-CPU offsets to the hardware MSR values
+- Remote MSR reads through /dev/cpu/*/msr also account for these
+  offsets
 
-I can do that only after v6.13-rc1 has been released, due to the hard
-dependency on the new m48t59_plat_data.yy_offset member.
+Guest values persist in hardware while the vCPU is loaded and
+running. Host MSR values are restored on vcpu_put (either at KVM_RUN
+completion or when preempted) and when transitioning to halt state.
 
-Gr{oetje,eeting}s,
+Note that guest TSC scaling via KVM_SET_TSC_KHZ is not supported, as
+it would require either intercepting MPERF reads on Intel (where MPERF
+ticks at host rate regardless of guest TSC scaling) or significantly
+complicating the cycle accounting on AMD.
 
-                        Geert
+The host must have both CONSTANT_TSC and NONSTOP_TSC capabilities
+since these ensure stable TSC frequency across C-states and P-states,
+which is required for accurate background MPERF accounting.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Jim Mattson (14):
+  x86/aperfmperf: Introduce get_host_[am]perf()
+  x86/aperfmperf: Introduce set_guest_[am]perf()
+  x86/aperfmperf: Introduce restore_host_[am]perf()
+  x86/msr: Adjust remote reads of IA32_[AM]PERF by the per-cpu host
+    offset
+  KVM: x86: Introduce kvm_vcpu_make_runnable()
+  KVM: x86: INIT may transition from HALTED to RUNNABLE
+  KVM: nSVM: Nested #VMEXIT may transition from HALTED to RUNNABLE
+  KVM: nVMX: Nested VM-exit may transition from HALTED to RUNNABLE
+  KVM: x86: Make APERFMPERF a governed feature
+  KVM: x86: Initialize guest [am]perf at vcpu power-on
+  KVM: x86: Load guest [am]perf when leaving halt state
+  KVM: x86: Introduce kvm_user_return_notifier_register()
+  KVM: x86: Restore host IA32_[AM]PERF on userspace return
+  KVM: x86: Update aperfmperf on host-initiated MP_STATE transitions
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Mingwei Zhang (8):
+  KVM: x86: Introduce KVM_X86_FEATURE_APERFMPERF
+  KVM: x86: Load guest [am]perf into hardware MSRs at vcpu_load()
+  KVM: x86: Save guest [am]perf checkpoint on HLT
+  KVM: x86: Save guest [am]perf checkpoint on vcpu_put()
+  KVM: x86: Allow host and guest access to IA32_[AM]PERF
+  KVM: VMX: Pass through guest reads of IA32_[AM]PERF
+  KVM: SVM: Pass through guest reads of IA32_[AM]PERF
+  KVM: x86: Enable guest usage of X86_FEATURE_APERFMPERF
+
+ arch/x86/include/asm/kvm_host.h  |  11 ++
+ arch/x86/include/asm/topology.h  |  10 ++
+ arch/x86/kernel/cpu/aperfmperf.c |  65 +++++++++++-
+ arch/x86/kvm/cpuid.c             |  12 ++-
+ arch/x86/kvm/governed_features.h |   1 +
+ arch/x86/kvm/lapic.c             |   5 +-
+ arch/x86/kvm/reverse_cpuid.h     |   6 ++
+ arch/x86/kvm/svm/nested.c        |   2 +-
+ arch/x86/kvm/svm/svm.c           |   7 ++
+ arch/x86/kvm/svm/svm.h           |   2 +-
+ arch/x86/kvm/vmx/nested.c        |   2 +-
+ arch/x86/kvm/vmx/vmx.c           |   7 ++
+ arch/x86/kvm/vmx/vmx.h           |   2 +-
+ arch/x86/kvm/x86.c               | 171 ++++++++++++++++++++++++++++---
+ arch/x86/lib/msr-smp.c           |  11 ++
+ drivers/cpufreq/amd-pstate.c     |   4 +-
+ drivers/cpufreq/intel_pstate.c   |   5 +-
+ 17 files changed, 295 insertions(+), 28 deletions(-)
+
+
+base-commit: 0a9b9d17f3a781dea03baca01c835deaa07f7cc3
+-- 
+2.47.0.371.ga323438b13-goog
+
 
