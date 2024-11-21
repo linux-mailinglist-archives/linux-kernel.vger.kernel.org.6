@@ -1,169 +1,182 @@
-Return-Path: <linux-kernel+bounces-417542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CD69D5560
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCAD9D5568
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E15E4B22E00
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:25:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94DD7B23E7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8601DAC89;
-	Thu, 21 Nov 2024 22:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337961DDA37;
+	Thu, 21 Nov 2024 22:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KoZabLzQ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="UCCrsNHy"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF5F1BD031
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AEB1CEAB8;
+	Thu, 21 Nov 2024 22:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732227891; cv=none; b=M+wfGYgfGztH9/u2Xn2ja7kCEHC7YzBrc1a/NkKaLSY1n6wOATqYWYsoO16CwWuQDHI+GQ0Hyfk9BK4TFBWoJufPgUH7Zbd7+TgKaFEhc0Id1fFfZ/HnC0C7VaS6g8nH3nzLC1C0cGHPFJ/bPKU0d9WEKrR/GPtmTW1vyJ1PhEc=
+	t=1732227985; cv=none; b=cr687irprtmt4Bt9ivQvyGN8x95o5SKYksybs0VWuLXLbkk2y8cjAg6jt0OHFFr752Vi5mmAJhgM7xubowN7xn8U6VNyOimo9ZAD3Exk80g+qrwdZPNwIWOOYfMMfrfI1b4i64u74gbD5lG1Lh3JUeY7Hj+04Raf1D/DCyn8Iyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732227891; c=relaxed/simple;
-	bh=iLHr6c937zAUNjvXiqxzEog1xJ2S+61XBMshQQmaT0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sukOo5YbKr2UDevXlUrq5T9xY94fX/aEcAi0j5mYM17PapoxKgfTioYzaxOViYPx1JL63GNHgd3NqAhvtpfjZPKQ5BVaG8csEAClSbV0T8lap6IGtQKJ16zEkFwjXjqR8SqL4/6nB2rKWyW37hJQNwH+5V/3LwZLDMK9CSvsYfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KoZabLzQ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f8490856so1529079e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732227888; x=1732832688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h9qF8j45CSfYdsmm+Dydm51y3aJn8tF9GxFB43niHJc=;
-        b=KoZabLzQ0KVh8qWtYXXaAuMEBV3ChKxNGxan8+npV0MrtBmFXvreGBXTcOxFQCjXBT
-         jR5juWL58RBrAJj0Wk1PcUzXBi1w/M4tDxAaCTUBuW7HqC1ukDCXQDR6EafvmRL6GBsX
-         O29gJZnwEy0EL08O/lfE9rsS9uDO6UjQUzn8yJ8RtQSBLUFMLoUj81YEeTrwefQnJ1l3
-         /LTGJEyTVqS+z7iqPj9am/7IjOTgmcmpdUpRAwxvKf4qx9OT93eFtSEXPZnXFHy6hl/E
-         vG+Od5TCX2KRq+8BwJpea5BQqYBWwczhClQxOG//M437kb9zYXVlxuNYGVdmKAgdrNsR
-         oU7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732227888; x=1732832688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h9qF8j45CSfYdsmm+Dydm51y3aJn8tF9GxFB43niHJc=;
-        b=LGIAeqpAcmPOQkh6xeWQtEGAjXFQvfru/RTeatdzcbBg9kE/bqVRagju1pXU4rhXoS
-         LF6HXX/RIS4pAQySIMRpou1xyBsWNg8Is3Hk/h65lAhw8vLbtYX3sDhTzURyF5rz61gx
-         uc2RieH4GfUnyGoXzB7hS1CJCwAEfqq/CtG7um1Rs2Gli8ICIBs4tYHG1gbNPfq7J9WC
-         oCCKHcBSXvXDH68CrkdOGCGg4WGeAr16y8CFg0ota2QPQ2kmxbnWTZzOsF4BwAdOmwIZ
-         3IkR9j9Y/hGaM+VV4vxUF5Yqn7nlx97g+UQPkWzMc2Goe3nNnxu4G+ODIs9PRXr066AG
-         k5hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWR1OlxcCFt2iztwfVOvj9NhD1lp5hUWPXnGBNsnJLp/p1gDosmv2kY87HbVVGkNyzOlCblAM1lPycCamo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHRu5rrgBA3eLyRiX+6KAt68UXCqQhzPVKI/C+n/J8IAL1046W
-	MvoMkdXhOYVlBaw3CKn9Ly1We80HiD3e9yyICCCPAPVcwVkgDZ1kIZGcJZSmAME=
-X-Gm-Gg: ASbGnctNmwniJkviCTYKuhFJq/QuqDDoWxPuNcFsMvPbNr7Y36Ag5If3lvmbaurbwy3
-	5eUviseexaqaU3a6cg2krA/IcdNBR6A8ghj+LmjGp71ioP3O+XUmwxBwYXyRPUkdf4g0WCOpj9Q
-	HCDRBrqobXs9byL1cgJTdhuCK0IQjnrcc5j6v0/sQIksB6acAeeNKyoBJDx6tFDW4di+WWHe+ab
-	EHuQXbjFd0wHqaeAj+iIion27wmUv2SeU0F5c0koBR+S/d7aacyHAFamLEAzF4lOEGFSslBZb3O
-	sAyKMlfyruZe+ex1eJhcmdKxxdFnEw==
-X-Google-Smtp-Source: AGHT+IE2T2Pj6r6Y1ycGgpu7KwhyGxrz0hWNZVwX6ZaXIy5LqSV1VBAcT58vN5h6glzEjVd3g7gW/w==
-X-Received: by 2002:ac2:410d:0:b0:53d:d3f1:2f4b with SMTP id 2adb3069b0e04-53dd3f12f92mr106226e87.30.1732227887928;
-        Thu, 21 Nov 2024 14:24:47 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24519b6sm99737e87.106.2024.11.21.14.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 14:24:46 -0800 (PST)
-Date: Fri, 22 Nov 2024 00:24:44 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Song Xue <quic_songxue@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Manu Gautam <mgautam@codeaurora.org>, 
-	Vivek Gautam <vivek.gautam@codeaurora.org>, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] phy: qcom-qusb2: Add regulator_set_load to Qualcomm
- usb phy
-Message-ID: <7qj4szkw365ve45hm5w475xs2vlfsfg5pcpc44bo3s5vhrcmuu@bh5swbug4ywi>
-References: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
+	s=arc-20240116; t=1732227985; c=relaxed/simple;
+	bh=EH/XAb2bLpcT2B2KyuREJ6qvtY0LOfPeILpQHOtsVU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TPQy9sw9o+Ezi2GM5JRtev0Tbm+BZjVYkkx+CNhSXO/IruO5Gucg1C+AkR85HxmHsJyO30JWugE5c5cXFfDwB2e1rn09+d6VJgtiQhWCCMEJKXtReKr8fQx9JoJASWxDNDi9VwajBUd1zN4R64rxycNGG84Ct03cuCl57tMDJXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=UCCrsNHy; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732227905; x=1732832705; i=w_armin@gmx.de;
+	bh=EH/XAb2bLpcT2B2KyuREJ6qvtY0LOfPeILpQHOtsVU4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UCCrsNHyEL2RiOt098Z8FrvU/zcDw1K6E7Zm/F3tgqWhYXibUbXLhnbN16abWJWZ
+	 vF9ZY6en2pPyus2Xxk65Gor9ffXANWJP33/4P8lPoAE54QPKjXiApahMtNc/sZhbS
+	 BvL8WAhJIettkYZeMArFamSz+pK9TbG8nLwEzSQluVgAysFmNBabrmNFTQ8PZ8s4u
+	 /yk4g7TwKy2Wgx3+j1snlrDdZ5viMi+9qLCb4utkEdXpPJxpnhv5UW6dleUE3gQkc
+	 q2OO3/crHEaln2Ezd24DLkwVx27h8he23fvPweoJa5ESZmiK9IyFP9GTqEigvtZXl
+	 P8B9IZP1LHDGy8yQRQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N95eJ-1tpnwk1CaN-014lXw; Thu, 21
+ Nov 2024 23:25:05 +0100
+Message-ID: <99c47bd4-02f4-46bc-a355-50a0ab1d8538@gmx.de>
+Date: Thu, 21 Nov 2024 23:24:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121-add_set_load_to_qusb_phy-v2-1-1c5da1befec0@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 14/22] ACPI: platform_profile: Notify change events on
+ register and unregister
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241119171739.77028-1-mario.limonciello@amd.com>
+ <20241119171739.77028-15-mario.limonciello@amd.com>
+ <31d48b10-87e1-1064-b25a-71f55736e504@linux.intel.com>
+ <46b822e9-8bfd-462e-9f2f-acddd44bba30@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <46b822e9-8bfd-462e-9f2f-acddd44bba30@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7p8ufks7Qmp5C3tLzfCRVWOPDNTRx3CzCPILtm/b+WagWkCJ3d0
+ Lyc/wwZqqNRCgun0jtkvGWABsPXzE4G2JEdvx7SrF3x4Xi67VCBqv7+tyUWaLWbdauyQo2q
+ siR2/EseX/WhFUOovwFJmPJqdqld28M7LiDbb0h2aoVzwBD+eVksQb5s7FvnBJ52hhK9EZX
+ 9r/QuQ+rKReMIOTOu1Y7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VNdloLmZJ6w=;pUIx4JRKa+1/cvst9LNEfclYVYx
+ +BFVWVmKnLl2vFxqcVGttN0gwnXlrp3DbqwnzGcnFpz03kU5f0+h8jdTRu22KvLyzAulrQyVL
+ Gp38xpFaVspf0idn90D/jzFP9m9M80GTNC3X8+bLbrBq3T5UL9EPZjNrmCX6cZWuKuY4WzwT3
+ XRowDz7/2HDh3uNgIn1hc19vwqI53ID4AyC1pBkP6/NflZXCNEnEliLbDk1f1iJCoc1RDbeuQ
+ 6lFGyeIrLwCjtV32VMaaq2bt0Kblabrmy00YNN+0+GfWcwHnNgKK6m6Cih0V3QTKoIbOuW6X8
+ vziTaT/+EzdQehxpND23kHVPVW/jU+WOUVoma5XM+Qda8OvQ/vx7icazmROV2xnYV0/ZKmcUk
+ UdIOFEDaaW03ueivplRUpYXE9JhS9974dur2+cd/rGP+MZ0mrcAKggR7VbhpTckCycHseVKQ4
+ wMZzSQfBUL4U7056xR5rvVPA07DlCmrtkPB5sM7nh06WYidwSTcGYrq7ICOZS29qL5VbPeuZH
+ 5+RvuZS+b2OuqVgOomVyaWRLK8xjJJc2DZvLWTC0Jqxi8cKvmN54h3pS6jr4V8q1h24MkNYg2
+ x/rSxeamrqS4N1SbtLD4PfRlwXVH4bqdxYPi0Exu0yD6xS++CKCqj/F4Xd+BS3vuyYLQUyec/
+ RGwgLLU7qKN0EZ3fNhG+oEdWcqVA7gG3p1qDIrIHmbnjT76ETFdJB2h1A/0qmRuZUIA5AcThP
+ +gImHcv4ZmVf3cPfvgpD6kvYqdzqXBMBH0BbBoLF1V0cIcmyBaobWTAKYUJLg87YBH1Z4MSgw
+ EuyMRtPDAWjapsN+KMtzrxscqfyoxqg/K4UeDUl5PnIOIzD1hvrMt6DDzHFSAGQ4WxQ1zZ2+y
+ dwb8sD57O+paD+Od4ZQTrjB8g6upxhdY9tS/z99GcMEBBS3JW0+CC7sT9
 
-On Thu, Nov 21, 2024 at 04:09:27PM +0800, Song Xue wrote:
-> Set the current load before enable regulator supplies at QUSB phy.
-> 
-> Encountered one issue where the board powered down instantly once the UVC
-> camera was attached to USB port while adding host mode on usb port and
-> testing a UVC camera with the driver on QCS615 platform. The extensible
-> boot loader mentioned that OCP(Over Current Protection) occurred at LDO12
-> from regulators-0 upon powered on board again. That indicates that the
-> current load set for QUSB phy, which use the regulator supply, is lower
-> than expected.
-> 
-> As per QUSB spec, set the maximum current load at 30mA to avoid overcurrent
-> load when attach a device to the USB port.
-> 
-> Fixes: 937e17f36a32 ("phy: qcom-qusb2: Power-on PHY before initialization")
-> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
-> ---
-> Changes in v2:
-> - Removed "---" above the Fixes. 
-> - Link to v1: https://lore.kernel.org/r/20241121-add_set_load_to_qusb_phy-v1-1-0f44f3a3290e@quicinc.com
-> ---
->  drivers/phy/qualcomm/phy-qcom-qusb2.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> index c52655a383cef008552ed4533b9f31d1cbf34a13..80f0d17c42717e843937255a9a780bbae5998535 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-> @@ -722,16 +722,27 @@ static int __maybe_unused qusb2_phy_runtime_resume(struct device *dev)
->  	return ret;
->  }
->  
-> +#define QUSB2PHY_HPM_LOAD 30000 /*uA*/
-> +
->  static int qusb2_phy_init(struct phy *phy)
->  {
->  	struct qusb2_phy *qphy = phy_get_drvdata(phy);
->  	const struct qusb2_phy_cfg *cfg = qphy->cfg;
->  	unsigned int val = 0;
->  	unsigned int clk_scheme;
-> -	int ret;
-> +	int ret, i;
->  
->  	dev_vdbg(&phy->dev, "%s(): Initializing QUSB2 phy\n", __func__);
->  
-> +	/* set the current load */
-> +	for (i = 0; i < ARRAY_SIZE(qphy->vregs); i++) {
-> +		ret = regulator_set_load(qphy->vregs[i].consumer, QUSB2PHY_HPM_LOAD);
+Am 20.11.24 um 16:37 schrieb Mario Limonciello:
 
-Please use regulator_set_mode() instead. Or just fix the mode in the
-device tree, if the device can not operate if the regulator is in
-non-HPM mode.
+> On 11/20/2024 09:09, Ilpo J=C3=A4rvinen wrote:
+>> On Tue, 19 Nov 2024, Mario Limonciello wrote:
+>>
+>>> As multiple platform profile handlers may come and go, send a
+>>> notification
+>>> to userspace each time that a platform profile handler is registered o=
+r
+>>> unregistered.
+>>>
+>>> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>>> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>> v7:
+>>> =C2=A0 * Add Armin's tag
+>>> ---
+>>> =C2=A0 drivers/acpi/platform_profile.c | 4 ++++
+>>> =C2=A0 1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c
+>>> b/drivers/acpi/platform_profile.c
+>>> index 1530e6096cd39..de0804305b02c 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -363,6 +363,8 @@ int platform_profile_register(struct
+>>> platform_profile_handler *pprof)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto cleanup_id=
+a;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_pro=
+file");
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cur_profile =3D pprof;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D sysfs_update_group(acpi_=
+kobj, &platform_profile_group);
+>>
+>> Is the ordering problematic here, how long userspace has to wait for th=
+e
+>> update to become visible?
+>
+> TBH - this feels like an artifact of the earlier patches.=C2=A0 I don't
+> know that we really need the notify anymore since calling
+> sysfs_update_group().
+>
+> I'm tending to think drop this patch entirely.
+>
+I do not think so. A new platform profile handler might cause the platform=
+ profile choices to change. It might also cause the platform profile
+to switch to "custom" in some cases. So i think we still have to keep this=
+ patch.
 
-> +		if (ret) {
-> +			dev_err(&phy->dev, "failed to set load at %s\n", qphy->vregs[i].supply);
-> +			return ret;
-> +		}
-> +	}
-> +
->  	/* turn on regulator supplies */
->  	ret = regulator_bulk_enable(ARRAY_SIZE(qphy->vregs), qphy->vregs);
->  	if (ret)
-> 
-> ---
-> base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-> change-id: 20241121-add_set_load_to_qusb_phy-d1327c797ffe
-> 
-> Best regards,
-> -- 
-> Song Xue <quic_songxue@quicinc.com>
-> 
+Thanks
 
--- 
-With best wishes
-Dmitry
+>>
+>>> @@ -393,6 +395,8 @@ int platform_profile_remove(struct
+>>> platform_profile_handler *pprof)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device_unregister(pprof->class_dev);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ida_free(&platform_profile_ida, id);
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 sysfs_notify(acpi_kobj, NULL, "platform_pro=
+file");
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sysfs_update_group(acpi_kobj, &platform=
+_profile_group);
+>>
+>>
+>
+>
 
