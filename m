@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-416775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870B89D4A07
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:32:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513D59D4A09
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23387B21747
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28BC1F22583
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60FC1C1F26;
-	Thu, 21 Nov 2024 09:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="T8abkMoJ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9FF1CB333;
+	Thu, 21 Nov 2024 09:33:01 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD213E3F5
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0794A154BFF;
+	Thu, 21 Nov 2024 09:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732181554; cv=none; b=fyq8H0aE29YvhrA5akOxZIfZugTdmwlCkNfYGHODWY598FjWU5GXQkOTr1wMVRjuXjmksi2HLV0EItG35Rpsu/ow2lZCpY5Nfq3f/KxpsNVT5M7XaevMXFhznonVQWpJCx2P6D7pkVEnZVeo/vkoXuR04o+w1JR2kXFxCbInO5A=
+	t=1732181581; cv=none; b=qjWtqgGdLBURyAYD0PZmlFN2CTIzSghGOr1YE4tfCidIsj3Efhaf62pgn+n82uDJjh6TW8vy06e/uxTz9DwQNevUwayuFA0uCW+mX/UCrlIx6JlBXj6AYPG/RQwbN2LO9odcjiDnyydDTxnCk4kTfapkS4c21gz/FSzDR1Ew8lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732181554; c=relaxed/simple;
-	bh=fa4v6uz6VEFeR8izNt0n6njpP/3Mpxu4ttEX9Sv9B/Q=;
+	s=arc-20240116; t=1732181581; c=relaxed/simple;
+	bh=ju6w+OEV6RGqOl4StwYVV73mcfrYeHharZ90JPv9bV4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xg5dQc+gZRMq11HTMAHuMu+Voxkp5KTmyBQi9auO0ZESMRrgHjqh1q2hbaJSTdcSySCSbm9gQadTCcdowCRP7pie1DQoBBKVvRaMTbpUE/ybe7IWjuTbEGcY9yf+UjBIGFxEp+zQzRVztU3/aFTy2tSPaT+nGcUiQ1IVUq34DAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=T8abkMoJ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f1292a9bso673991e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:32:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732181550; x=1732786350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=opuzTjYFnx1shlOWe4vRrTVSSc8AtRFFWZgXJNFD7tA=;
-        b=T8abkMoJD6lhbp3bLuG9FYWZnYTS543wbCkjvaa2tg+9yJR/UU/SNjzcxJjdvFMMim
-         vMqgyOHILLWZk7i5YE6QfuoqF8qJO1MIL8XWsnDzky3AIusRZtt2p/G7HX+twLU+qEFB
-         1Bod63yaJYJf0tbygZyOU//087zF+WnkQPsom7VsFVWuY54i2sic2WRAOT/9SXZJWNFS
-         JXUe2uUuQnfcBrt4VSR1ts6YJD8BMo6G5FYE/SMOGqUae9XBU+N6yGjETZT/NUv0QA8G
-         JYMct+lcXfc/SZd+A5X/ImQvUlaE9t4tD+4MIUQnrV8mCd+ZZIQ3SKUdOQqjdtG/loMV
-         h+Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732181550; x=1732786350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=opuzTjYFnx1shlOWe4vRrTVSSc8AtRFFWZgXJNFD7tA=;
-        b=qCC+8O5FljOwwfIHnsnzG96R3gZevwIgKz+L1Sx9VAV4GGEgQ2QQAgGBj437Ox9441
-         pk403vG8Z6pPR+Ga159WhJ7gVlceVgucTB3O6L3blCExhWfEHR19V1EMvYfoK9w/pc3L
-         S0XyEZ/GWPWLy50RLzqF/bRHoy89O9hmTZI6dQ712JD2ALds0c0pCpudXD9geVKAgJKE
-         Y/FFKIljQzsBsKUg5WJlEfpApGw+tv4Q+ismwte3Zx8n2gB+H0woBJYbMLOoMKoR6MWX
-         RfENRe522zE+ziZhmfDdMC0JRegbGOUEkKuK1Vap4MahGl15Byrs+gXeWgVYhShFsZPl
-         ilEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8JyAgQcx15fnY/bsqG1lXwxfHi614YDjDUvtCOGkg8a26GjsoLnVyIuU8OdviNliM95NuLWBzbpfMlzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy2j/j0TuAzBGpyFmcjp0R/xANQCA4kGHrFNW4MNxqq5Fgpy4L
-	tDPSCB9QGl0x2a0GO8QlaIhoSGDXSgKACci0h5yDEiXsuCbjG7cFicBP2HpAogI=
-X-Gm-Gg: ASbGncsDxUpM+KSLpxQoPyM/kG+NNWysMFhgNnd3s57pT429guJycGGuU9fjqkl+bP5
-	kp2AB0vfDMUBjb+xiGHkZ09wa+INDnYjXG+MpRyam3eABD3wx5qQbfLGKn/gwl/3vTzYf/Tq96Z
-	NyxEz5MqjMcwDS8lrMxfhGcFMEywcHGCSIunkdXTNx7tuv57dtp5uPmj89Kbrtxn8NnMErTOd4P
-	Qu8k4JJZRPqKNn7WOBJzGiPN/UUZ70/PfOnnHJoiAECLddp7ib9V3YmzfEcv/jkAHJMAP1K4SQI
-	HynixHZE+BOYr3DRQR3TUmIe4z8bbQLPeR8=
-X-Google-Smtp-Source: AGHT+IFL59TB3m783wVOF4vRiqRGMGuRzNrlKCikLNXG8Aeg3JjXdtpMhMqy28LdyLbcgbMlwO5A1w==
-X-Received: by 2002:a05:6512:2316:b0:539:f9b9:e6d2 with SMTP id 2adb3069b0e04-53dc136715emr3144849e87.35.1732181549734;
-        Thu, 21 Nov 2024 01:32:29 -0800 (PST)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463abb4sm49876175e9.31.2024.11.21.01.32.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 01:32:29 -0800 (PST)
-Date: Thu, 21 Nov 2024 10:32:28 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] riscv: Call secondary mmu notifier when flushing the
- tlb
-Message-ID: <20241121-e97820f8c09de9bcedfe885d@orel>
-References: <20240328073838.8776-1-alexghiti@rivosinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCrrPuc5gRLxAVTe25UXZ0tf8EC8riKwi0a/5/Y/UUNQN0utGEsQtkinADZQkIoXi5Ao6dKsfu2Qb/hZDwK9e2hr1bCyCbX8bywF6T/u/elyg4mlIcnEQvO23O0/KHjU8Gjrb2Bv8ob8an78xLdtt/qPUqtMS7LjlfV9jTwevSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id D36661C00A8; Thu, 21 Nov 2024 10:32:56 +0100 (CET)
+Date: Thu, 21 Nov 2024 10:32:56 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+Message-ID: <Zz7+SIXT9ti+g/NT@duo.ucw.cz>
+References: <20241120125629.681745345@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oFNwiWPH6culmr1R"
+Content-Disposition: inline
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+
+
+--oFNwiWPH6culmr1R
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240328073838.8776-1-alexghiti@rivosinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 28, 2024 at 08:38:38AM +0100, Alexandre Ghiti wrote:
-> This is required to allow the IOMMU driver to correctly flush its own
-> TLB.
-> 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
-> 
-> Changes in v2:
-> - Rebase on top of 6.9-rc1
-> 
->  arch/riscv/mm/tlbflush.c | 39 +++++++++++++++++++++++----------------
->  1 file changed, 23 insertions(+), 16 deletions(-)
->
+Hi!
 
-Hi Alex,
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Is this patch still something we need?
+CIP testing did not find any problems here:
 
-Thanks,
-drew
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.11.y
+
+6.6 passes our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--oFNwiWPH6culmr1R
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZz7+SAAKCRAw5/Bqldv6
+8lABAJwOktlr/JOLohfFWb8BgoNmzyPtdQCeLpnEiFASEFBHMY92Z3FbPWXJijo=
+=2mEz
+-----END PGP SIGNATURE-----
+
+--oFNwiWPH6culmr1R--
 
