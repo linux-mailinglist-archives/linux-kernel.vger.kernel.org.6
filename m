@@ -1,99 +1,123 @@
-Return-Path: <linux-kernel+bounces-417577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEF89D5620
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950CC9D5623
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3AEB216A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:19:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330491F22540
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023B21DE3AB;
-	Thu, 21 Nov 2024 23:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9571DE3B6;
+	Thu, 21 Nov 2024 23:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="LdRl9LHr"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+qiXZJu"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D6F19F410;
-	Thu, 21 Nov 2024 23:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68341C877E;
+	Thu, 21 Nov 2024 23:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231165; cv=none; b=PXcTwu8iE8l5METy+eoLjSby38LFgSOOhWWTq+VddwQ2jrFnux4Fbl4sJ2aaLUZ7vDiGIFuEQ4f45wKMU0lZY0Hx6Y8yMWTgv2W2txK6+HMllcOrIRF8WT4+DuqCona2KqBklVoDVGaiB2lHs2BRfvYq5d3Ap0DSiJ7l0A8uhos=
+	t=1732231330; cv=none; b=uaktNs6Wzz0DshxP3fbdhEWGzq4CI6k6gj+OxQ5fY9vFU74zKi2gVze5RIXIV17hwXHps+o8THw3GwK8NfIH3mFI42vCK9O7XL4qVcxEekCx1KoHNhBiPNZdCj2W8TXWkmDKxm7ty+7HpPhY0jgMVk169E1n4wzz2HJZXN6zlpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231165; c=relaxed/simple;
-	bh=lypCQLHdxHaBu432IbmR6/kD0jI5ZG968AuxFBOBcFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o2A/7VlXO8pCQJFCnanQPBgb56EDp7IdQtx63Jjri/zccjX5SkUNgXknmP5nhD2GyFRn8oyyTTwEEmPoXGrxxwuYjw9SO32RMOIgg5hHk0GyI0EoWB8oK6VWzK86g1Qt7yWw0kcfip8MdIOL1jg21a+md+mvYPSl6J6QJJL9IZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=LdRl9LHr; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=96KNAgEZKYTBkhwHVr8dFUlI4/ybeiMP1elBVeu9dx4=; b=LdRl9LHrohGG6tMagH5yftvd5t
-	lrNDEZNhszNp9qPHUxY76/gc3mi8rrgoqs21Sqb1/6tv7nnTbkSphe3wbSWiThQ8VQc+sQ7zStUAl
-	K1zED3UAWiLARfGkJVlumGM4GV5oZaJk3S9U7Hw3WOGImCf8Q5mV5KwKQhneHnMxR5JwESWE9jZ+b
-	OYO7393QsXfOPJ5tzbhDjd1r3rsbvmoaiCby3ti/f/hlx69tSZCPh0abzW4SWMBuUgCGdqVjV7Cv3
-	ZVoRleybl0/CrP1jouCzxS0uFBx+sw1+68VDSuh8jrPEPieC6PQUcb0lFh0oSISlDc7A04hB1PBgg
-	QaFu3I7A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tEGRj-000qOI-1b;
-	Fri, 22 Nov 2024 07:18:48 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 22 Nov 2024 07:18:47 +0800
-Date: Fri, 22 Nov 2024 07:18:47 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Michal Kubiak <michal.kubiak@intel.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net] netpoll: Use rtnl_dereference() for npinfo pointer
- access
-Message-ID: <Zz-_15xseWSPHLqg@gondor.apana.org.au>
-References: <20241121-netpoll_rcu_herbet_fix-v1-1-457c5fee9dfd@debian.org>
+	s=arc-20240116; t=1732231330; c=relaxed/simple;
+	bh=zJto9ivipYO/WczCa6h8ub6o8ToZHi4kGGeDz8cr/kM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GVd6m+hitlcHEZwMRCeLZIF9mEglbCGTv7UZatHAwCTQdA0Sz9R58oPwlCd6Tef/cdBrzEdqgnRxzR917AYg5fXg1/UaNL/t8eD5v4LhQx024oIRq4mDhjvzaJQMDLr29FNDb23ASNXYFc8mnOmyVW1IahdU/+u4EgQ/VSpDaWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+qiXZJu; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21290973bcbso13397105ad.3;
+        Thu, 21 Nov 2024 15:22:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732231328; x=1732836128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vm69DWsgNi7OPxvs0iEX7zCR+55p7Oued1bSDUQ/MU=;
+        b=S+qiXZJuJ/jKcZBlmujwTPUdFwYWcXZjbX7lGKxjw+3dtwSrcYXHyaXRbcBtkCyioe
+         gmO09NQTZuQQSVRGKIBhLH8jHHqPTl+wOtcYRDAR3TeiaXHccQLfGWOCaqNpTBz5T9ZM
+         JGvphjV+uifXwUxQm51tfa3Xb8F8RLmT4qbCrc3u6792BIZUGX3pwNiukgwlaqQWPH9h
+         ec/Lo2tyWxZ3JiaEA/4YWwXyMMwxjzDpxBGmYJhJuUWWGjNTWuJl9Ufwx83rpsx7Nkck
+         1CklrXXLofn6QqHBVY7rQUWJYDmyNd+3T8ZtwpFHPblrv0GA8naR4+Xrx4swu8+hadkK
+         RIVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732231328; x=1732836128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0vm69DWsgNi7OPxvs0iEX7zCR+55p7Oued1bSDUQ/MU=;
+        b=Nui6CY27FxV1ux8QpPsw17rcY2wmNsZmS+AH7ICp/Bf2BODYaKXSd217IOyQVwm1gY
+         jYIcD8RNK+NSC5ZT4BMMK1BxJzTrJT1hlYn495BHXzbyP6xeWCoCIFQ4gjlcM4nWidf0
+         NY1gAa26XJnqhPr/tau4hG9RRdtsr81su0zsxLK7Va4Vf2p+XZvRFB7ICB6VYVkcKSQt
+         omPYrXCRYvxTecCKzf5CiSLgLkvFM8yNPBZzcToV9G6FrFMo4KX/AU8DG621C+UKQfGs
+         FYeSgw05fqh1VpTphQYF4vJXZlYUMcqoDUJUtUB6UwZHx6u5hP7X6SynnEi2ejpzoKbe
+         Cl5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUokJorjaUCEZimaMkUReLVm9riAep2oLfbH/ZWUE8W1DVaY5+4V/z+QzfzF1u0qapo5IN1rkbk19Q=@vger.kernel.org, AJvYcCWmBZgV7844vmClXsHPYrDZW9zbbebRm15WrC2xKw/LF9XuywdvuNUigzELV83JfItwGFweHXcPoezGxKvV@vger.kernel.org
+X-Gm-Message-State: AOJu0YymnNW8cJ7JE5jw9RXDfKHQJL8/fAnRKz+eebTGv5THSJoMaEsX
+	MsVShXoVptn8Lm2551GwFB45rRtyQEh+H0e71G+/Z+c9X/n2gL8=
+X-Gm-Gg: ASbGncu+T1VkLOQ4oW5AkaLj4FfU1wa07IBshdL5AAX/2ujLdTdwGfv9FzRzGuZgDLL
+	DT0kP31ZFpr48NllC9QR+PwqQJsWWFEt+pi45zUhFxW6w/MPyb/TpSi/lDa5BeilOPSQJ9FABqW
+	40ItgMjj6KHsSkT0KBSqe6mqTPrlQMJ1O7Uq8F4+DxdlU9r9qTuV8vtmY0y3TA9i79TAwfaIc/v
+	EyAeywSHKFsqBfT1akRdxkoZdHxc5XBV99FAT/BkpjhOsLp8zEfheLImXO4zxMk7JzcpeGUok0=
+X-Google-Smtp-Source: AGHT+IEHh7R4wlQqsgbzY9raVAXjnSU/BtLMAx0J6wGaA53zev1YKSp/g3R6QLautUbNQx+eB11DTw==
+X-Received: by 2002:a17:902:dac5:b0:212:500:74e with SMTP id d9443c01a7336-2129f51d2c6mr10558855ad.11.1732231327941;
+        Thu, 21 Nov 2024 15:22:07 -0800 (PST)
+Received: from localhost.localdomain ([117.250.157.213])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfee73sm3688875ad.150.2024.11.21.15.22.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 15:22:07 -0800 (PST)
+From: Vyshnav Ajith <puthen1977@gmail.com>
+To: paulmck@kernel.org,
+	frederic@kernel.org,
+	neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org,
+	josh@joshtriplett.org,
+	boqun.feng@gmail.com,
+	urezki@gmail.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com,
+	qiang.zhang1211@gmail.com,
+	corbet@lwn.net
+Cc: rcu@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vyshnav Ajith <puthen1977@gmail.com>
+Subject: Fixing Spelling Mistake in rculist_nulls.rst
+Date: Fri, 22 Nov 2024 04:51:18 +0530
+Message-ID: <20241121232118.13507-1-puthen1977@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121-netpoll_rcu_herbet_fix-v1-1-457c5fee9dfd@debian.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 06:58:58AM -0800, Breno Leitao wrote:
-> In the __netpoll_setup() function, when accessing the device's npinfo
-> pointer, replace rcu_access_pointer() with rtnl_dereference(). This
-> change is more appropriate, as suggested by Herbert Xu.
-> 
-> The function is called with the RTNL mutex held, and the pointer is
-> being dereferenced later, so, dereference earlier and just reuse the
-> pointer for the if/else.
-> 
-> The replacement ensures correct pointer access while maintaining
-> the existing locking and RCU semantics of the netpoll subsystem.
-> 
-> Fixes: c75964e40e69 ("netpoll: Use rtnl_dereference() for npinfo pointer access")
-> Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  net/core/netpoll.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+NUll is a special marker and not maker I believe. Fixing typo with this patch. 
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+---
+ Documentation/RCU/rculist_nulls.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/Documentation/RCU/rculist_nulls.rst b/Documentation/RCU/rculist_nulls.rst
+index 21e40fcc08de..88bce14b3c37 100644
+--- a/Documentation/RCU/rculist_nulls.rst
++++ b/Documentation/RCU/rculist_nulls.rst
+@@ -13,7 +13,7 @@ Please read the basics in listRCU.rst.
+ Using 'nulls'
+ =============
+ 
+-Using special makers (called 'nulls') is a convenient way
++Using special markers (called 'nulls') is a convenient way
+ to solve following problem.
+ 
+ Without 'nulls', a typical RCU linked list managing objects which are
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.43.0
+
 
