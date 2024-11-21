@@ -1,87 +1,82 @@
-Return-Path: <linux-kernel+bounces-417003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28A59D4D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:10:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB109D4D7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F8A1B222C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70119283BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 13:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384ED1D5ADC;
-	Thu, 21 Nov 2024 13:10:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185891D86EC;
+	Thu, 21 Nov 2024 13:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tawtPhkv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B511B0F0C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFC11B0F0C;
+	Thu, 21 Nov 2024 13:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732194605; cv=none; b=QB86dAReYLFAluzKSi8ABNLq6WgL4uhZty3Tbejga0AFykXEpmWL+oIWO8Hdw7OpzFaytB5OXtc6X1PttY5h8LR7AHsfoRSfzLVyva4CeZd3YBbBFWU48R1BYkDu6HPhNVyaTbnuC92Q8y39HGS+7SoPHOHGsWURTuuR4ThE9hQ=
+	t=1732194635; cv=none; b=PX508F+/zRYbafGn7JD/1DTInpKGVZse7QuydI5rzLrNfk2B9Mkf6Ga8Mq40cDaX8ptIgTwz8j82JTJ4GCHiEq1AHZ9O4I33WTfq4kN3hIGPYo7T4pJFMz7Q9FqK5GEG7qdxa50c8ZRYeUumUJ2Y5gg3jqPBs9xGwbb6VMYn0BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732194605; c=relaxed/simple;
-	bh=cr6soKyHEzs7FjNQynevndpr8UBZ5rR0byi3HSjwbD4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ue8RWmv2lKmUh20uXlBHUHqwoR2bmsLooUOSb8n4mEOGNg3INSeL3Y+oCapHbGTn3SRECiNM+yyz6ZWBKmJ1sl+8abOWaq+ti5N+VE+tsRqoyH0KGC+/Xo5U6IOB23Og0i7HCV3UtzdNtrTfzqcfmYUT5jkiZoABayZ36X78cJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83abef51173so95336439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:10:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732194603; x=1732799403;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gv7AfqREKeXj/lQ4Lzh2ErA6NZI2NrmTQmXjhoUPtZY=;
-        b=eMj+Sf1sY+SwniG0WQFgkFt3kEy56tVeh70HWhnN+gKwtTBgerwFdVN+hVqWwLxEar
-         tbMEw94V3nOz89MMSvl8vovZxIMhkHUjHIjbksbeMTvso22eXCGrcKDl9S9f7IimqYcu
-         +Da0HIJ75tt16ZHS9HrzehCaH6BHDWiO/pdpgINCZWlGMlls5Ft8IfO3Nzm+IdpFs9fA
-         fH5pBW/JXnaOjTvgmmOQ+n+UKjEMrM8daW59Jhcp0c1VeKLVLdJJInyqGPwQVpjdr14n
-         EC7ifOPggKrhcrPcXntgnJTTgKJH0rvBmB6B4lCZpuFSjpDK4uAU3f3nSohLITGox5Ha
-         XjAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUaHkD6MvL/OzELi9++jfegb1/EA8rV2t/Y2Jv+8B3S2XI5Qfe+iA+PlbejgbPDp56GUijboRpDS0rj+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPNfiSrrSyWE33m9zDvUMY4O53f+VWW/maAj+XoSbRfr6rmV8F
-	sJWspXjAXnJ9envv9W7rRpiL+hbNpEMtcv1TcQQHoaECRdJKuLOW/ECPN5tExAnSanD1XZOI+Aw
-	Wbpg9r4TUWqUud+2tLM1BJS9GICfA4gUEshMyCo84i5PSRwacpE49MCc=
-X-Google-Smtp-Source: AGHT+IH0W+dvVn27/TtKkqk1wiyXb9SfsEsiHKK6DdiXvC63BnG1hvP3NdbUW1boE/I+QJ8SRBpFmOQMoVb3GRbSSXpF0ZZnC78K
+	s=arc-20240116; t=1732194635; c=relaxed/simple;
+	bh=Q7e/7v/wkwzf+9WRZWI76lfTqRghf/xxHp0zdkSzu+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XI0oecw3erl2OyolY62F1AJg3dw1VXTWVfxNZzGRVr393sjX6xaVDChDPblQyfjjcFkUnu5M/sqneVeaokQGHROE4xQTZykW55OngSri5uCu0xeH1WJ4WGCCQTp6wlvkGXXhPcvcNEA+0+1sXql2aSKTBPoeQVPUs/AFTqArn8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tawtPhkv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6858EC4CECC;
+	Thu, 21 Nov 2024 13:10:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732194635;
+	bh=Q7e/7v/wkwzf+9WRZWI76lfTqRghf/xxHp0zdkSzu+U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tawtPhkvVrm2LcvaCKjV6g8MeO3JOG8jZncu/ZDZzulDw2HSdMKZKba1yGDemoVGW
+	 yy7dPrP1XkRDf8bQeeL2H+6WF2GuVm5fIeP+Sozos2GuqCmQwWElP/Lrju6B7VzNRR
+	 Wa1SyJs4R+2xqYpRp1vnPVK6W9SK1MAqTtG9Z0gfjLC47waW+H1bYFeJLipl6c2rF+
+	 KwiJpurVykxwY+teUkL7EwnD8Nzx9WOrt4q1X7DZVmYqn7Bc9QuoSsmOqPiqEFP13D
+	 FB35V1EzOVOj0hSQ4m3kDYl44vKVzJzzqOTMzgmyv/TzpOF+ofy/EQ8e4uPB8mdfzh
+	 J9y0cBm244jkw==
+Message-ID: <1c755fb4-964a-4c7b-819f-f5cf54baddfb@kernel.org>
+Date: Thu, 21 Nov 2024 15:10:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a68:b0:3a7:88f2:cfa9 with SMTP id
- e9e14a558f8ab-3a788f2da1amr57761765ab.11.1732194602918; Thu, 21 Nov 2024
- 05:10:02 -0800 (PST)
-Date: Thu, 21 Nov 2024 05:10:02 -0800
-In-Reply-To: <20241121124343.VLW_9%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673f312a.050a0220.3c9d61.0171.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (2)
-From: syzbot <syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
+To: MD Danish Anwar <danishanwar@ti.com>, conor+dt@kernel.org,
+ krzk+dt@kernel.org, robh@kernel.org, ssantosh@kernel.org, nm@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, s-anna@ti.com, kristo@kernel.org, srk@ti.com
+References: <20241113110955.3876045-1-danishanwar@ti.com>
+ <20241113110955.3876045-2-danishanwar@ti.com>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20241113110955.3876045-2-danishanwar@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reported-by: syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com
-Tested-by: syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com
+On 13/11/2024 13:09, MD Danish Anwar wrote:
+> The ICSSG module has 7 clocks for each instance.
+> 
+> These clocks are ICSSG0_CORE_CLK, ICSSG0_IEP_CLK, ICSSG0_ICLK,
+> ICSSG0_UART_CLK, RGMII_MHZ_250_CLK, RGMII_MHZ_50_CLK and RGMII_MHZ_5_CLK
+> These clocks are described in AM64x TRM Section 6.4.3 Table 6-398.
+> 
+> Add these clocks to the dt binding of ICSSG.
+> 
+> Link: https://www.ti.com/lit/pdf/spruim2 (AM64x TRM)
+> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
 
-Tested on:
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 
-commit:         43fb83c1 Merge tag 'soc-arm-6.13' of git://git.kernel...
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12c05930580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1638cad79464dac0
-dashboard link: https://syzkaller.appspot.com/bug?extid=fe2a25dae02a207717a0
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=149beb78580000
-
-Note: testing is done by a robot and is best-effort only.
 
