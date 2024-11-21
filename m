@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-416746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D45B99D4988
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:08:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0059D4992
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:09:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9729528146E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CBC1F21D73
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793DC1CB333;
-	Thu, 21 Nov 2024 09:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C71D147C79;
+	Thu, 21 Nov 2024 09:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXx63RYK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X3PG1Gv4"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3094982890
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401311AA1E6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732180092; cv=none; b=gOP7+cvqZQRYA4ndZ0AMsyVd4scHrtXozKjzA2uR+OrVWNsl3TEa4y/1baMcQ6znd/z2G177Lf+wpu96daT5ag2wKZyBG4axveCIPr0Tb8zQf1PRnsXHdG+RA0cgwJVT5K5WEeeManaFP8LQP1ZMzM0Wpfko8Xfw+TenVx39Fgo=
+	t=1732180160; cv=none; b=hFdb/8VkqvV20FX+xX4/CF2LBkYUYgFdJScPfZqm0UEZIqn4FV7ohTMbOELnASwNypGWSxeHjnTs9KnHAbRmMnxdTs87IRE3ortAXb8W4lCUIuvrqry013xhqLTu+Ly8Od/Ag/eRcCvKM/KyO/UAowXXrE5696X2MGPoUchvGsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732180092; c=relaxed/simple;
-	bh=XfxHG7T9zdJ9nblrp6w+ekWfkJvYj/7d5Bu7Q0dX2Ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9tINYdLT6PTvHsK9hwkEf0k9XzH4T4bifgXHhSkigdpyJcOVim3sZuIvXJaw06CxFZoRrW9PuHdXRVMXZeno55Ck3orgLwSo880Obn3wGBslEeLe23m/SAqmb+CiCJagXYQwems9K9D5Z3Th/v7r05aZ441BCJlueqMeQirK0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXx63RYK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732180090;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=afC2fEWr0oOrXo3pVR/4wD4LruzaVFrljRmorsICJx4=;
-	b=bXx63RYKEduDE99zNB0uqUxUMCieweSlzGRruOYGGkIbRDMxX8fT8xvHUoExKlUyiAiODY
-	WtKpFZHrNvk2DYggAVwRhw9LgVN7notwV4Uh0yvukM2POHM5y/YpU97WvdOM65pTUIr4UH
-	+IoupB2ucpUzUygqvO0CGhQCkbB7ds8=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-JxXKc51wNX2c140bavv0Dw-1; Thu, 21 Nov 2024 04:08:08 -0500
-X-MC-Unique: JxXKc51wNX2c140bavv0Dw-1
-X-Mimecast-MFC-AGG-ID: JxXKc51wNX2c140bavv0Dw
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e3859de1c11so1225725276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:08:08 -0800 (PST)
+	s=arc-20240116; t=1732180160; c=relaxed/simple;
+	bh=ZAyrck5tlQevYqpMXOTskbTcJyaWO8Hs8gXBxfr1uf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Adp29TdxCUMkIKcxo97JVEUzze4B90DSZfqgcWRph7rD/jYC9hsC+y2w2pmO+XX0hN2P9CQk24V7SW/7RjdyFdj1bR3XTGyuSwJd0dE0eKeUFZPuuK7oShI7Mf0vOpKO06W98VcIRJaTlpc+0Q+S3cpNt6eFD8lEtzrnsJAp4V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X3PG1Gv4; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2965e10da1bso376115fac.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:09:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732180158; x=1732784958; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OxHbi6ASfjiq8iEPoZc72oeQ6cf3BdSdOcjBRpGls9o=;
+        b=X3PG1Gv4pozV9GCqt4ynVNV7RV23xK1HTQ777xWKR9yvvModLnnDVuf0T9zgxd+tXG
+         sVSdH/RnLhRxpH7asqIrkyp77vkmK4WFlaaXJPhQ8bnXvINehE8LWIUIn2RyVriFE5bo
+         lwvM/GvTcOMSYuf7kGgQJ02vEvnprNAGtD46DEeEEyE1/+sYYH7CGD8xOTFvgPXlPkl2
+         0Is+I3emjxWcHOk32waqVSmF1AvOTwJ726UBECkqpjUDVAaQrDCZBzie+SR96eZxXf7Z
+         BRZfnfwTDs264yEwoUoQM7LFtHbvvksevORwbEt0wqYpWurCEVEuQUSsyUCj46ld56Ll
+         jlUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732180088; x=1732784888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=afC2fEWr0oOrXo3pVR/4wD4LruzaVFrljRmorsICJx4=;
-        b=ID/I4rJrJcOj0YW2YfOeW0JCeV4H6B6XYpWOa3Pfk4vSEKgFiftt8t4nr3fU9lVQ1o
-         voC/6BYcRK7vN5mgrHnH9wfBVmoZH4GNuem5b0Gq7wK+4DghptW8HZahrgfg/t6kO79c
-         5BEBa+hEOP84Edk5uRcxEHtwhgGmNf6I7rOUHj1tfoCJZV1rtl/ZxDmQ08AYHUHLL1q6
-         dIwqBNCjOWH8hz0mMQGJV9MfXd3RBGvOkKRhnZQPa7J64sl1ODLT++nckDjQ9fD6eQtP
-         RcsTNR5WmoTELYfEuf2n9qhxH9DHy4/ipuypOpYKpUgYuaTTb98uXxTCnjPypcnLRbWY
-         NTnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXA2ecpM/D62EQV6pSknY/sP/lDXqD+0ygiBwy43/J5wA9t0FtcpcygimckzacG+t5Arb+BXinifgAVVq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEE3gjAimtptDXjyhwNLgBgsLySizFeg9gCx0s5u8rPVzwm7RC
-	76u6WBT+Qp91kpWaTgGqrIXpTwGWtUOvxLc6OWqJTBH2/0nQHF/G+L+HDqLGU8VcU4n750fCdc6
-	rjBZ4GHeLijB6MCD5In2/qfRrEmqmsZT/Jn+8V3HoqpDln0YQAp2/X4VrV17Rhg==
-X-Gm-Gg: ASbGncv3Zo6ykRvdbNrFobYoCjAKxzWlcHs+NqqzkpYdkF9ETJ3d2oMjUVv4JBJq1eF
-	2QhB523yqpzTyAJD6/kOvoiPDQkYDkdvSKcMKksD2tPPVXkDK4eYNkTfI2pQt6MA64cUDZW4wOw
-	5Cmf0gMdsPoXVpyRxGRm+Aeo8A7cvvPFBQ/iqOzO5USJAonmzyDL9J0Ld4LeODW+UA3Q6iQXq+9
-	+X6r/boFbX6LW0Qmkn+Fz6Mr6cy+wPdcXvbq/JHTXpUkit/e0W/7HrgZ/lQmhghXF/4wpSSgQ==
-X-Received: by 2002:a05:6902:1107:b0:e38:ae50:3360 with SMTP id 3f1490d57ef6-e38cb58cb69mr6096050276.27.1732180088123;
-        Thu, 21 Nov 2024 01:08:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFvcd2Tc+vOWhnMdPjejOD4B82sqJ4ONVE5q8tt3h7dnbHkb3vWE9q84qQ2i9DLtZwcC9d5Bg==
-X-Received: by 2002:a05:6902:1107:b0:e38:ae50:3360 with SMTP id 3f1490d57ef6-e38cb58cb69mr6096030276.27.1732180087824;
-        Thu, 21 Nov 2024 01:08:07 -0800 (PST)
-Received: from [192.168.88.24] (146-241-6-75.dyn.eolo.it. [146.241.6.75])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4646ac1971fsm19452431cf.89.2024.11.21.01.08.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 01:08:07 -0800 (PST)
-Message-ID: <ed3a24ba-ec2b-4261-a479-11625b04b44a@redhat.com>
-Date: Thu, 21 Nov 2024 10:08:03 +0100
+        d=1e100.net; s=20230601; t=1732180158; x=1732784958;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OxHbi6ASfjiq8iEPoZc72oeQ6cf3BdSdOcjBRpGls9o=;
+        b=AnH48RCK5k+pzFDMjrUV6rEOqK7WF2vIuDgJlljqjuQyIhQoOUs1CCIbNakiGZFZmN
+         QFXV8LNIYz1c2KNc/MTuB53vAiRv7mYjP7ZYhDqeWZnC6/0GaNyHlzIjR+ouFUoEvren
+         xacn5LkDjTzPQv1lp+fZ/PZWBEaSxBxVWxWMNBcqY/Gw7J9yHCJqUcsHG0NPF62F+UVj
+         Q7qIdNMy3KMLW8Y6x77xcVubHv5HAIYWU0SeDJ7i6RXfcggsT2y72jT4XK9ExtysxrOH
+         cPCjMKzjfemfWehsyFdCNX67k/mrP10V7t3+BELo/LlGbdAx2QNPkOdLXI4BwH5ovrrr
+         soxg==
+X-Forwarded-Encrypted: i=1; AJvYcCX88QW1caOwFoMtHHRQFzA1FMLFJvT/tEnqau2c84qkWYWe2yI30V324BfzRv8IZDkh5aSPzXymuwk705g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH0NwfIjjJmE2x0uA89E0eI1C8A0EUxjOQcG3Zj3FuD7v/opzP
+	dKG0BMqeIaYRduaKT6CH5+talkJasHfP4NhrxdYvqVhfwCcYRkZht0NNvIyCAuzPUBECPkt6L/h
+	wc9YuE72kp9q1Oo87iTGPvhyvzJ9iTV/acRVx+Q==
+X-Gm-Gg: ASbGncuX8zkgZ7O/xdXqKkqy5COJk5rJnkbqYna33npMpfTRTFZKZOTm+xXTqiBd59Y
+	Y6xRvL8B0yJuLTHBZ86p+o771V+2Y/AyoUYlE1NgcGcAHTLjcEno+qFJ9Vl5oNw==
+X-Google-Smtp-Source: AGHT+IGlBrhM1he89NTY6gbHyTFxW/0w/9MnZ6DHduJEKWDUclBwVD79cdcU9z96VzKNIRfTYH3d9MO2sG8QjenfPWw=
+X-Received: by 2002:a05:6870:d914:b0:296:aef8:fe9a with SMTP id
+ 586e51a60fabf-296d9affe47mr5902908fac.7.1732180158357; Thu, 21 Nov 2024
+ 01:09:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2] net/smc: Remove unused function parameter in
- __smc_diag_dump
-To: manas18244@iiitd.ac.in, Wenjia Zhang <wenjia@linux.ibm.com>,
- Jan Karcher <jaka@linux.ibm.com>, "D. Wythe" <alibuda@linux.alibaba.com>,
- Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>, Anup Sharma <anupnewsmail@gmail.com>,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241120-fix-oops-__smc_diag_dump-v2-1-9703b18191e0@iiitd.ac.in>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241120-fix-oops-__smc_diag_dump-v2-1-9703b18191e0@iiitd.ac.in>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241120093904.8629-1-jerry.meng.lk@quectel.com>
+ <863ba24c-eca4-46e2-96ab-f7f995e75ad0@gmail.com> <fbb61e9f-ad1f-b56d-3322-b1bac5746c62@quicinc.com>
+In-Reply-To: <fbb61e9f-ad1f-b56d-3322-b1bac5746c62@quicinc.com>
+From: Loic Poulain <loic.poulain@linaro.org>
+Date: Thu, 21 Nov 2024 10:08:42 +0100
+Message-ID: <CAMZdPi_FyvS8c2wA2oqLW5iVPXRrBhFtBU8HOqSdNo0O1+-GUQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: wwan: Add WWAN sahara port type
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>
+Cc: Sergey Ryazanov <ryazanov.s.a@gmail.com>, Jerry Meng <jerry.meng.lk@quectel.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/20/24 16:01, Manas via B4 Relay wrote:
-> From: Manas <manas18244@iiitd.ac.in>
-> 
-> The last parameter in __smc_diag_dump (struct nlattr *bc) is unused.
-> There is only one instance of this function being called and its passed
-> with a NULL value in place of bc.
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+On Wed, 20 Nov 2024 at 22:48, Jeffrey Hugo <quic_jhugo@quicinc.com> wrote:
+>
+> On 11/20/2024 1:36 PM, Sergey Ryazanov wrote:
+> > +Manivannan
+> >
+> > Hello Jerry,
+> >
+> > this version looks a way better, still there is one minor thing to
+> > improve. See below.
+> >
+> > Manivannan, Loic, could you advice is it Ok to export that SAHARA port
+> > as is?
+>
+> I'm against this.
+>
+> There is an in-kernel Sahara implementation, which is going to be used
+> by QDU100.  If WWAN is going to own the "SAHARA" MHI channel name, then
+> no one else can use it which will conflict with QDU100.
+>
+> I expect the in-kernel implementation can be leveraged for this.
 
-## Form letter - net-next-closed
+Fair enough, actually the same change has already been discussed two
+years ago, and we agreed that it should not be exposed as a WWAN
+control port:
+https://lore.kernel.org/netdev/CAMZdPi_7KGx69s5tFumkswVXiQSdxXZjDXT5f9njRnBNz1k-VA@mail.gmail.com/#t
 
-The merge window for v6.13 has begun and net-next is closed for new
-drivers, features, code refactoring and optimizations. We are currently
-accepting bug fixes only.
-
-Please repost when net-next reopens after Dec 2nd.
-
-RFC patches sent for review only are welcome at any time.
-
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
-
-
-
-
-
-
+Regards,
+Loic
 
