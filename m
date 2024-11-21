@@ -1,134 +1,145 @@
-Return-Path: <linux-kernel+bounces-417279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A1C9D51E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:39:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478949D51E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:39:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C532824F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26001F22808
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160491BC07B;
-	Thu, 21 Nov 2024 17:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3098156F5E;
+	Thu, 21 Nov 2024 17:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMko/tRi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UHPYmaaD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5E21A3BDA;
-	Thu, 21 Nov 2024 17:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F24414A0AA;
+	Thu, 21 Nov 2024 17:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210777; cv=none; b=Wa/z7SnAY3+QdGn17/f6hiXyo+hJbZ4RgaJbY5ARftzRYybg1AsaDkiEF6E+FGiJX2XqTqja4NbCsn0HKajbzx/eLH51OGIYlZ9VRg1aJhfofq3QnyWdxyBGQKTeG3hHgU9KpIrYfVmOrLB64E75M8RTh9wG3YE8LoBeuOD+qpo=
+	t=1732210776; cv=none; b=up5cPXNLBxHX/tduYx/jGmMN+xvriRHqfG0Wu4ZffNx91TPH4bP1xJjSFmyWKtPkqolH24VrpRBeAqrrqgM9oSubXpS5Ynn9GUG2HnBfsc6xNNArU9FNL6HowoaSQ0vUMakhqr9WzV9L6HyDlEMra3aLLbAMRjRYW7kInJWUWPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210777; c=relaxed/simple;
-	bh=8rQmx+MU88WP65XCIMFTnGToYXS/SMlvOL+qUX/tvKw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RYfKFrwKaPxZ1nUjXMIyYd6Vho9vtaegqTkA5plqnxQniONayRVjNY8mE03pRDpx3AUBkJT9ywDHScoZs4QNhCouN5gR1Jwp8uM4GvdTUXJZmEG/nfhO7YnE/pqKDHIyEiLZrNxmMzDvNSXGnkYSkgf4Ud5y/fvZWNL7T1tcImI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMko/tRi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31417C4CECC;
-	Thu, 21 Nov 2024 17:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732210776;
-	bh=8rQmx+MU88WP65XCIMFTnGToYXS/SMlvOL+qUX/tvKw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=lMko/tRi/KmepU25C1EKLld531qo4AA7/UJzrzMNSlu1Z4QoF6YTgGW0B3pXK3Hqm
-	 l6h2D5lgslKaxkB1RnJYPM7eVESmj5QSkPS5G3/1goJwaqwbxEd93hez99ZedGLO56
-	 5p7Ql1KNeH6dOb0/JmJun6ujFtO87QLEcz7RVEtTrCTamp9Qv/NQOHEIOOus6PdFVX
-	 w0H4JP8+qbKKDboJTkNuSQq8x50INIQwzgYRpzvVZTxYAnu3vw6W36GFmNBMRtO3fI
-	 Oi9Pn2jGVIjQZiujA/bHn7iVrFgv8/DWj3Fg0x5FwVpp4zvdND6DiMkCAelVQ8Z04N
-	 hElEmyOnBiV6Q==
-Message-ID: <22828bf2-45a7-464d-ae30-8224056d9f0f@kernel.org>
-Date: Thu, 21 Nov 2024 18:39:30 +0100
+	s=arc-20240116; t=1732210776; c=relaxed/simple;
+	bh=uT1Nv9OIO5LpSBXoquolSqcEzlSL841t1zuKuEVmULI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfC1bWFjWJLRm3A0vp9h8cj5d50sxuiQNT20Z0ar/jlXs2snZ/vsV6iLgp/1sNblWNquTBsw3VMYoVoVMOwAvoTUEmAvdGnHw+hCI5piPxDlruisdVnU9tnPFF/z9kKC8elU2+6HaYnkw2kRCIQncD1iCGYCT7V9AFLbx+l0ZzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UHPYmaaD; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732210774; x=1763746774;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uT1Nv9OIO5LpSBXoquolSqcEzlSL841t1zuKuEVmULI=;
+  b=UHPYmaaDU1Pw0wldrUnAxVGpHCxpJrW0bE/h0JhpdRTHV/4Pdmv8IXdk
+   qAhuwpiL2uAkxVYMj6+qVYPHuo1BySRWMdv8ItLqW6jnt+EMkKxk7d2LR
+   F4fWIG75fS6RCqnVZnEjOZlj33owLPP1gZiYC6uXdaFeMzFPf0T5rkmOE
+   xY9406TqpmifxYOd4wis0nS8cXDWl9aXG5I1G2ftfUQmZiPoN9QqfcuAz
+   GwT2Szz+G6FxIY8wlh2Q3NNaz+cEfI5L9SVhXLlykbQjM5M2ydE7J0Sdp
+   T6NiSFMbKzs0YU5rYkNl4Fyjz0ZKi/N4yXDS03MOArCCJmKkzTYc+5ZqP
+   Q==;
+X-CSE-ConnectionGUID: brZz3M6/TlyaXMGdtmJLgQ==
+X-CSE-MsgGUID: aL+mhyecQjSo6CfYvE0K3w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32271162"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="32271162"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:39:34 -0800
+X-CSE-ConnectionGUID: JM42aBx2T0edIsgjq5qWGw==
+X-CSE-MsgGUID: IrQ8vYMxTw6INmJ++BcMGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90739796"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.70])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 09:39:34 -0800
+Date: Thu, 21 Nov 2024 09:39:32 -0800
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v9 5/9] x86/resctrl: Relax checks for mba_MBps mount
+ option
+Message-ID: <Zz9wVHIzbgL9ob21@agluck-desk3>
+References: <20241114001712.80315-1-tony.luck@intel.com>
+ <20241114001712.80315-6-tony.luck@intel.com>
+ <a87640c0-0cd5-42be-83fc-bd12385bf69f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interconnect: qcom: drop QPIC_CORE IDs
-To: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Odelu Kukatla <quic_okukatla@quicinc.com>,
- Mike Tipton <quic_mdtipton@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241121172737.255-1-quic_rlaggysh@quicinc.com>
- <20241121172737.255-2-quic_rlaggysh@quicinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241121172737.255-2-quic_rlaggysh@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a87640c0-0cd5-42be-83fc-bd12385bf69f@intel.com>
 
-On 21/11/2024 18:27, Raviteja Laggyshetty wrote:
-> QPIC resources are modeled as clks, therefore remove corresponding
-
-s/clks/clocks/
-
-> defines from the binding as they're unused.
-
-
-As clocks where? Details are needed since you are affecting the ABI.
-
+On Tue, Nov 19, 2024 at 07:54:10PM -0800, Reinette Chatre wrote:
+> Hi Tony,
 > 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> ---
->  include/dt-bindings/interconnect/qcom,sdx75.h | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> On 11/13/24 4:17 PM, Tony Luck wrote:
+> > This option may be used with any memory bandwidth monitoring event.
 > 
-This does not build.
+> Needs a changelog.
 
-../drivers/interconnect/qcom/sdx75.c:906:10: error: ‘MASTER_QPIC_CORE’
-undeclared here (not in a function); did you mean ‘MASTER_QPIC’?
+Added one.
 
-Best regards,
-Krzysztof
+> > 
+> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/resctrl/rdtgroup.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > index a8022bddf9f7..3a89516e6f56 100644
+> > --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> > @@ -2334,7 +2334,7 @@ static bool supports_mba_mbps(void)
+> >  	struct rdt_resource *rmbm = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
+> >  	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA].r_resctrl;
+> >  
+> > -	return (is_mbm_local_enabled() &&
+> > +	return (is_mbm_enabled() &&
+> >  		r->alloc_capable && is_mba_linear() &&
+> >  		r->ctrl_scope == rmbm->mon_scope);
+> >  }
+> 
+> I *thought* I had a handle on things with the understanding that rdtgroup.mba_mbps_event
+> is only valid when mba_sc is enabled. This understanding falls apart with this change since
+> at this point in series if a system only supports total MBM then mba_sc may be true
+> but rdtgroup.mba_mbps_event will be zero.
+> 
+> The expectation is that patches build on each other to create a solution but this series
+> does not respect this making it difficult to reason about this work.  I think this series
+> will be easier to understand if "x86/resctrl: Make mba_sc use total bandwidth if local
+> is not supported" is moved before this change.
+
+Rather than moving that patch before this one, I've merged it into this
+patch since both are small and intimately connected.
+
+> > @@ -2759,7 +2759,7 @@ static int rdt_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> >  		ctx->enable_cdpl2 = true;
+> >  		return 0;
+> >  	case Opt_mba_mbps:
+> > -		msg = "mba_MBps requires local MBM and linear scale MBA at L3 scope";
+> > +		msg = "mba_MBps requires MBM and linear scale MBA at L3 scope";
+> >  		if (!supports_mba_mbps())
+> >  			return invalfc(fc, msg);
+> >  		ctx->enable_mba_mbps = true;
+> 
+> Reinette
+
+-Tony
 
