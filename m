@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-416894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2229D4C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:38:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6A9D4C23
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:40:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75CD281A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9DA1F226DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C71D358F;
-	Thu, 21 Nov 2024 11:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA391D12E0;
+	Thu, 21 Nov 2024 11:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gcrE9/67"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BYzmFeM4"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2F3C47B;
-	Thu, 21 Nov 2024 11:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CFF3C47B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189115; cv=none; b=LKdiTt6g7h7un0h87VOOJOJyRgtP3mxHf6egg7s6hvIf75PE3+0kmRTBnhq2OqwRSmdrIzr1v/vJZUCGKPZHSfoE7CdAW2h6MpB5jLJRS5eik4kPiQo132UZi2gN5DRElWxLfndPrqFTb9fmJnIp/HWlsEbGouaIdoNCIMuXRWk=
+	t=1732189192; cv=none; b=IvTVE2Fwc3OEbFFcMa02DkYK7wntewvtxN+LnVZ7oifHWfQh5bhp/mxPnDXlF/TagRb3G5Xc0ET2u8JR1E44FYwuuHQ23sCdcgcxf5twvJKVQxCIArzFIVea6u6qavaoREPIGoOVxTHsMTYSsuOnFBNpMbw0lnN1wDn0fzKvCPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189115; c=relaxed/simple;
-	bh=TktO2GCT6OnXrOXfOCRgOrtOaCnVDQkqu89HI9z1htE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VQOubSZZ8GZYQzNzT0YdUi3FH0hXXsr1SC4kqqOaLO98M4z3zCdBTUeWv1ufYb1Lv2oKFLDOzU8HMeOwetBaYlFKf42CTa3jN64WVu3fAd3S+oQobeEKELLIVrX5YSc/yIVYgCanNedrTmYJsHymjkyd+0Z8fQunKkOz/+X2/5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gcrE9/67; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL8uUPY003935;
-	Thu, 21 Nov 2024 11:38:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4YRcO6b70jf15iw+nKaeBYvuDjp5NyM+Lyd4fqDywlU=; b=gcrE9/67B6ifTCMk
-	nKQU5EwKN8AY3Ag3Zbj3FT2LDBhFSYv2XMWiaryj301sBs+t4/cYys5vD1wYoJLT
-	ANeZyynnpPXgwNjj7EZG3gd9jW9gh9azdAq4s3aEGQRz7bhQ6VRTZ3WchPodd+Lq
-	I9nRzhdWD/jLygI2drBJhFJtktwn/nc08yD8mimwXXrinvUPZCX3JVXInKZb6Xgz
-	Zd3+R9xwiyyy5bvH1VC+f2edcWNmtnDwPJYvvOuapWMFYByCP8/X7WOweaMdwaSC
-	oA9al3OozE6R76Gwvl40brnLmYTRxN3edj7P6EbKo0cgBT8lqoIGz3rbmxkaragL
-	RKlfRw==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3bvrk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 11:38:32 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALBcVtL025920
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 11:38:31 GMT
-Received: from [10.216.44.227] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 03:38:26 -0800
-Message-ID: <f123a993-0cd5-4747-80fb-88acb2434880@quicinc.com>
-Date: Thu, 21 Nov 2024 17:08:22 +0530
+	s=arc-20240116; t=1732189192; c=relaxed/simple;
+	bh=U9v+K6sJOOG6x+RFfN+V0Si4bcR0z6pz+6B8md76rd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LOEx0OE9cgzzpnpKca2URci9Pu1q1CDWgFGQvTN8d5yvGXMSAosIfv7q5J0DdcF4oRpy/X9nmlBfsD8/5881FM9q8Qn0jZXyqj5DnTmfqIShDgJzWmZ/qOzkh5pDMEjtFclP42FgCQ75ukhxLvZoGUe6ZSoFGF5YXzbCFUe57gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BYzmFeM4; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3823e45339bso625784f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732189189; x=1732793989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2IZyw4FOcZ6R/V4mnMHgpIhe+XP7mjUrhnLeyIz/iRg=;
+        b=BYzmFeM468ryeUt8P7KEyeA1lUTodlyL0qC5KvLydrMZm020b8jJhu6MO3C9FtXkKi
+         zLU5JG5RWXvXb2wHC6s1ZWQhgPNlz6OpOkIFOoQpaZ+czaz5r0wZEMmCx7YV9zpknheC
+         PZw1ZA0S5x/xX3Sd/VWQNss8SiHQTfQJ69Ojtn+e+tkBYpiI24L/fXTdGUSB9TOiB/yj
+         ehV92xYuUx0a+Uyp4uncsyJRz3imYbMMxLfBCUTElx8M1UuQ+0hHZhM70vDEMsaoyAR2
+         +p6KOCbe9TGxdg540BE/Tdy4iZ2BEH2E5cJNlVcRVyqT4QyySuZq6dacRW72Qg2W/50w
+         Ol5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732189189; x=1732793989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2IZyw4FOcZ6R/V4mnMHgpIhe+XP7mjUrhnLeyIz/iRg=;
+        b=f6l97+euPuRt+zs152Ybj/TiUETzlBFUoWF3kdhhwqc4KrCL/jV8XRSu+sYqEZky8w
+         ZQ3uin2fMqe1sxyvfRxgTJ9BbKAdemVVERrYGBwG1pPS9aU4h0xjo2jPXJkdeqL9M3U1
+         ievT1IjIlUjrA77oWdDBfjvEd1W4aHEP0ADUHYvhWoCCUkVx3Ve+NH7qzXEsP6QBybQ2
+         ADUayIcrOi0j5NFFAlRj0HYrxf9K2L/1E1uM8rc8ZvgxZ0pnp7RBtkFuFCmv6CXngkF1
+         XhXUZ1WgbTq4B4MYT4d0IbIZvoywzgIHAxAqnRnd5YWFq7CuSOnX13u7nWx05jd+k3ey
+         bbXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVM/7ebnnNSygdhVrun5mg1AlgAWwaCere70rcwGHs5nL4xzQnq1Qz9B9rJMdAvdpClpaYkNqoVIpMNZ9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR3pea9YsC/sJVSt8vSgAvGRCyXGtttINurndAMjx9LhJEiE2n
+	VslXUetaSBOdSNqMoFW7kygUXTOYGWMjyu+yGZCR4Ss8NSnoi4SUeLGrxMfgZMl81zktbtZFLl/
+	ZO2wmBY1/32qchnNHNiKxqPPGADSwoLBrleII
+X-Gm-Gg: ASbGncvcza9W0yst6E1dmhcxFe2W01avEnKwLh7siDMJ5AUNIwoOHdoFhtiW82Pn5gY
+	Vx6LZK+7aYNwWnisvU6VdNvyV8hPRb/RFUAEOsPKnO5ec5xRCueUuicUTVRdqkQ==
+X-Google-Smtp-Source: AGHT+IHOUT5TK9qW8nVjhNy0VpEtuheP882P7CKZcuAtr3r08tu4OVDN35SCuTs2d/vi/YNbZK0QGKu6hwSa17GxWlo=
+X-Received: by 2002:a5d:47af:0:b0:382:44e0:c5e9 with SMTP id
+ ffacd0b85a97d-38254af9c4fmr4724755f8f.25.1732189189300; Thu, 21 Nov 2024
+ 03:39:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
- Ride and QCS9100 Ride Rev3
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Kuldeep Singh
-	<quic_kuldsing@quicinc.com>
-CC: Bjorn Andersson <bjorn.andersson@example.com>,
-        Konrad Dybcio
-	<konrad.dybcio@example.com>,
-        Rob Herring <rob.herring@example.com>,
-        "Krzysztof Kozlowski" <krzysztof.kozlowski@example.com>,
-        Conor Dooley
-	<conor.dooley@example.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tengfan@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kbajaj@quicinc.com>
-References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
- <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
- <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
-Content-Language: en-US
-From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-In-Reply-To: <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9n3Lo9Y5RQJnNB6QxYxqUc_ugdjnYlle
-X-Proofpoint-ORIG-GUID: 9n3Lo9Y5RQJnNB6QxYxqUc_ugdjnYlle
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=898
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210091
+References: <20241120-vma-v8-0-eb31425da66b@google.com> <20241120-vma-v8-5-eb31425da66b@google.com>
+ <5762ab92-3091-46cf-9565-f59cf917b470@lucifer.local>
+In-Reply-To: <5762ab92-3091-46cf-9565-f59cf917b470@lucifer.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 21 Nov 2024 12:39:37 +0100
+Message-ID: <CAH5fLgjDfSL+7XB28sYmq4e40yxBv97h7jQPs=9Qe4+_3f1FRw@mail.gmail.com>
+Subject: Re: [PATCH v8 5/7] mm: rust: add mmput_async support
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Nov 20, 2024 at 8:47=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Nov 20, 2024 at 02:49:59PM +0000, Alice Ryhl wrote:
+> > Adds an MmWithUserAsync type that uses mmput_async when dropped but is
+> > otherwise identical to MmWithUser. This has to be done using a separate
+> > type because the thing we are changing is the destructor.
+> >
+> > Rust Binder needs this to avoid a certain deadlock. See commit
+> > 9a9ab0d96362 ("binder: fix race between mmput() and do_exit()") for
+> > details. It's also needed in the shrinker to avoid cleaning up the mm i=
+n
+> > the shrinker's context.
+>
+> Oh Lord, I didn't even know this existed... I see it was (re-)added in co=
+mmit
+> a1b2289cef92 ("android: binder: drop lru lock in isolate callback") back =
+in 2017
+> so quite a history of being necessary for binder.
+>
+> I see mmdrop_async(), I guess that's not needed for anything binder-ish? =
+A quick
+> look in the code suggests this is invoked in free_signal_struct() and is =
+there
+> due to some softirq stuff on x86... so yeah I guess not :)
 
-On 11/20/2024 5:24 PM, Dmitry Baryshkov wrote:
-> On Wed, Nov 20, 2024 at 01:41:03AM +0530, Kuldeep Singh wrote:
->>
->> On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
->>> This patch series is based on Tengfei Fan's patches [1] which adds support
->>> for QCS9100 Ride and QCS9100 Ride Rev3 boards.
->>>
->>> Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
->>> introduced and the size and base addresses have been updated for
->>> a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
->>> and its corresponding scm reference has been removed as it is not required
->>> for these boards. Incorporate these changes in the updated memory map
->>> for QCS9100 Ride and QCS9100 Rev3 boards.
->>>
->>> [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
->>>
->>> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
->> The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
->> A good churn you are first deleting(based on sa8775p) and then re-adding
->> for qcs9100-ride*.
->>
->> I think it's better to move common qcs9100-ride* to a common file ex:
->> qcs9100-ride.dtsi and keep specifics further to .dts files?
->>
->> This will ensure common entities are present at same place with no
->> duplicates.
-> I'd second this proposal.
-Ok then, I see that there are some thermal and gpu enablement changes as 
-well in the pipeline to be posted.
-Having a common dtsi file for these iot socs would help in reducing the 
-duplication at board
-dts file level for all these changes. In that regard, does naming it
-"sa8775-iot.dtsi" sound good? The board files can include this dtsi.
+I didn't know it was so binder-specific. I assumed it would be a
+relatively common use-case.
 
--- 
-Thanks and Regards
-Pratyush Brahma
+> >  // These methods are safe to call even if `mm_users` is zero.
+> >  impl Mm {
+> >      /// Call `mmgrab` on `current.mm`.
+> > @@ -171,6 +213,13 @@ pub unsafe fn from_raw<'a>(ptr: *const bindings::m=
+m_struct) -> &'a MmWithUser {
+> >          unsafe { &*ptr.cast() }
+> >      }
+> >
+> > +    /// Use `mmput_async` when dropping this refcount.
+> > +    #[inline]
+> > +    pub fn use_mmput_async(me: ARef<MmWithUser>) -> ARef<MmWithUserAsy=
+nc> {
+>
+> Again, nitty, but I wonder if this should be as_xxx()?
+>
+> But I guess this makes sense too.
 
+In this case, the as_ prefix is incorrect because this is an owned ->
+owned conversion. See the API guidelines:
+https://rust-lang.github.io/api-guidelines/naming.html#ad-hoc-conversions-f=
+ollow-as_-to_-into_-conventions-c-conv
+
+If we wish to use a prefix, the correct prefix is into_.
+
+Alice
 
