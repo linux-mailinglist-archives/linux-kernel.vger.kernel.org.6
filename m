@@ -1,220 +1,110 @@
-Return-Path: <linux-kernel+bounces-416890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6DF9D4C10
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABB79D4C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD5A283EDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17AB01F2114A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AB51D2F55;
-	Thu, 21 Nov 2024 11:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E561CEAAC;
+	Thu, 21 Nov 2024 11:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gZNafvK0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nyyvu25H";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gZNafvK0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Nyyvu25H"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+I3rVhZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4D71CEAAC;
-	Thu, 21 Nov 2024 11:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DFE1C3046;
+	Thu, 21 Nov 2024 11:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732188950; cv=none; b=FkJ19Xjg96A6Nc0zlJD/7wKX+1ubjWNYXwsVyq0AF8M0agQFY2cB/28V+GlB/ZaKbXvrClUVtXLAPoqbY0OzjmTP4YyYd/qi3Q2r4UaNuTl33h8+c//UVZxDDKzgiwQswfDMKezLHEbL0IpUdNYccXmuB/VHPyry1cAe0oRNscs=
+	t=1732188988; cv=none; b=g+l7dRUGBI5cbefGihKSFv/+G3Nfne3Ubj8jtLkLa4LF8ne3vPxhAHu6oxB0Uov0l2MgeXARCR8D1wXGj52+g5V4QvjVzEAZzaKHEU7m36LLMyiwV8zNBp8ruYzyjZWedksmD7C96OhU2ZWm0G/RQAjp341Wo9bddARhZtoRVHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732188950; c=relaxed/simple;
-	bh=H+InuCZAVe/s/oVInDzsiaHK8UMZy9fOxfpi6EvYjhM=;
+	s=arc-20240116; t=1732188988; c=relaxed/simple;
+	bh=cM8frLWLkX23eGShDOZ4lAAKAr+0zQogfii33AqdZsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Anpwi+WDVczFNQkyHBwny/+0gApc/fj8GE+3b8J3oGkbB5WI4PuBDf1ZMGy0d3cN504g1i1uuooUBJELssfiqm0ajPCnledfWp9KgMOniDZhEHaeL1qLrLdmx7uvvu0l/P6V0deG6GugJq1J0fmGeLbbQqss3VMkqNpR+RhE/Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gZNafvK0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nyyvu25H; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gZNafvK0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Nyyvu25H; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 897BD1F7FB;
-	Thu, 21 Nov 2024 11:35:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732188946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GK16IzfkdgV1PUCdlVeB/mMd3MAHrVpEn6IZ5MBM7g4=;
-	b=gZNafvK0SmbhL4HyBbYcQ9V+Zt+TfxC0C6tWy7Z6s3Rzn/q4Em6B97yw12Dy0p8nUH9ZWt
-	FLJ4TChdTNC8HVNZkto8G4zuLKWoYTErolHhhlFioA4qCI60hGx3F51W4S/A4RPaGYobzl
-	VUaysWdtPTcJCeyqpawBYe55tWkux+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732188946;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GK16IzfkdgV1PUCdlVeB/mMd3MAHrVpEn6IZ5MBM7g4=;
-	b=Nyyvu25HUbdK5PObarAyUxLcbWFfRsDo96LOjhl4OlNcFAnCkqlt1yAvbmXHI1S7qIHufG
-	gShoFq6jd8ENlVCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732188946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GK16IzfkdgV1PUCdlVeB/mMd3MAHrVpEn6IZ5MBM7g4=;
-	b=gZNafvK0SmbhL4HyBbYcQ9V+Zt+TfxC0C6tWy7Z6s3Rzn/q4Em6B97yw12Dy0p8nUH9ZWt
-	FLJ4TChdTNC8HVNZkto8G4zuLKWoYTErolHhhlFioA4qCI60hGx3F51W4S/A4RPaGYobzl
-	VUaysWdtPTcJCeyqpawBYe55tWkux+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732188946;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GK16IzfkdgV1PUCdlVeB/mMd3MAHrVpEn6IZ5MBM7g4=;
-	b=Nyyvu25HUbdK5PObarAyUxLcbWFfRsDo96LOjhl4OlNcFAnCkqlt1yAvbmXHI1S7qIHufG
-	gShoFq6jd8ENlVCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F36F13927;
-	Thu, 21 Nov 2024 11:35:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zNMJHxIbP2fkBAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 21 Nov 2024 11:35:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 36B93A089E; Thu, 21 Nov 2024 12:35:46 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:35:46 +0100
-From: Jan Kara <jack@suse.cz>
-To: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com, 21371365@buaa.edu.cn
-Subject: Re: [PATCH] fs: Fix data race in inode_set_ctime_to_ts
-Message-ID: <20241121113546.apvyb43pnuceae3g@quack3>
-References: <20241120024306.156920-1-zhenghaoran@buaa.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LdHLzGi+V1+C2XVG+WYqzOI5gXkjfwyp7qQRFWQvCbm732I2AzoR6CpyJoNyNr2yZ5/+LI1+oi/oTTs8ERV43YKFPvVXsLdUKm8BdzNowbrljvYzYaIlEtU1WatHd0DELDVKoW84WCgSJm/MbTpD0mRH8lJuGFcM6xrGfyZNqQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+I3rVhZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C8C6C4CECC;
+	Thu, 21 Nov 2024 11:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732188988;
+	bh=cM8frLWLkX23eGShDOZ4lAAKAr+0zQogfii33AqdZsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e+I3rVhZ37SjdeoKWrZhZpMBlCRFcw22QerkKPTF4jjlgbM8OlqnOJemB4sEzwVt9
+	 hjIAYMxk84m/hVT9nQDLsXoWfwid4fyRrcdSdTDLkv1sgZVyEYqlWIAWmmbKSGtyrj
+	 Qa0Y1aWORZuhRaIMc723hLtoItMQxaTSFNarDNkGxkWIBb1dGJ3IVo4SpQZiuDfeHe
+	 1q0z+H4S75pweRBGIBOfcSnRA+E9OctiEYlIUZnZ3bDxlhe4wTgH2l/ABn8DkECjaM
+	 WadnPqRcjB7IoPn5+0HFlhZ08iKybW/wGeAmklmjBjfpp34n5VyLWAdTMfkkWvJVIw
+	 XpI5lkniQMdQw==
+Date: Thu, 21 Nov 2024 12:36:25 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] Revert "delay: Rework udelay and ndelay"
+Message-ID: <Zz8bOYgVrFEBPRrd@localhost.localdomain>
+References: <20241121095542.3684712-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241120024306.156920-1-zhenghaoran@buaa.edu.cn>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org,gmail.com,buaa.edu.cn];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241121095542.3684712-1-wenst@chromium.org>
 
-On Wed 20-11-24 10:43:06, Hao-ran Zheng wrote:
-> A data race may occur when the function `inode_set_ctime_to_ts()` and
-> the function `inode_get_ctime_sec()` are executed concurrently. When
-> two threads call `aio_read` and `aio_write` respectively, they will
-> be distributed to the read and write functions of the corresponding
-> file system respectively. Taking the btrfs file system as an example,
-> the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
-> finally called. These two functions created a data race when they
-> finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
-> The specific call stack that appears during testing is as follows:
+Le Thu, Nov 21, 2024 at 05:55:38PM +0800, Chen-Yu Tsai a écrit :
+> This reverts commit 19e2d91d8cb1f333adf04731f2788ff6ca06cebd.
 > 
-> ```
-> ============DATA_RACE============
-> btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
-> btrfs_update_inode+0x45e/0xbb0 [btrfs]
-> btrfs_dirty_inode+0x2b8/0x530 [btrfs]
-> btrfs_update_time+0x1ad/0x230 [btrfs]
-> touch_atime+0x211/0x440
-> filemap_read+0x90f/0xa20
-> btrfs_file_read_iter+0xeb/0x580 [btrfs]
-> aio_read+0x275/0x3a0
-> io_submit_one+0xd22/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ============OTHER_INFO============
-> btrfs_write_check+0xa15/0x1390 [btrfs]
-> btrfs_buffered_write+0x52f/0x29d0 [btrfs]
-> btrfs_do_write_iter+0x53d/0x1590 [btrfs]
-> btrfs_file_write_iter+0x41/0x60 [btrfs]
-> aio_write+0x41e/0x5f0
-> io_submit_one+0xd42/0x1ce0
-> __se_sys_io_submit+0xb3/0x250
-> do_syscall_64+0xc1/0x190
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ```
+> Journald was recently observed to continuely crash at startup, causing
+> the system to not be able to finish booting. This was observed locally
+> on my MT8195 based Chromebook while doing development, and on KernelCI
+> on a MT8192 based Chromebook [1].
 > 
-> The call chain after traceability is as follows:
+> A bisect found this commit to be the first bad commit. Reverting it
+> seems to have fixed the issue.
 > 
-> ```
-> Thread1:
-> btrfs_delayed_update_inode() ->
-> fill_stack_inode_item() ->
-> inode_get_ctime_sec()
+> [1] https://lava.collabora.dev/scheduler/job/16123429
 > 
-> Thread2:
-> btrfs_write_check() ->
-> update_time_for_write() ->
-> inode_set_ctime_to_ts()
-> ```
-> 
-> To address this issue, it is recommended to
-> add WRITE_ONCE when writing the `inode->i_ctime_sec` variable.
+> Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
+> Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-arch@vger.kernel.org
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Thanks for the patch! This is really, really theoretic but with LTO I
-suppose the compiler could get inventive and compile this in some other way
-than plain stores.  But WRITE_ONCE() alone is not enough. You should have
-READ_ONCE() in the reading counterparts as well.
+Ah wait, can you please try this instead?
 
-								Honza
+diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
+index 76cf237b6e4c..03b0ec7afca6 100644
+--- a/include/asm-generic/delay.h
++++ b/include/asm-generic/delay.h
+@@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec)
+ {
+ 	if (__builtin_constant_p(nsec)) {
+ 		if (nsec >= DELAY_CONST_MAX)
+-			__bad_udelay();
++			__bad_ndelay();
+ 		else
+ 			__const_udelay(nsec * NDELAY_CONST_MULT);
+ 	} else {
+-		__udelay(nsec);
++		__ndelay(nsec);
+ 	}
+ }
+ #define ndelay(x) ndelay(x)
 
-> 
-> Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
-> ---
->  include/linux/fs.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3559446279c1..d11b257a35e1 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1674,8 +1674,8 @@ static inline struct timespec64 inode_get_ctime(const struct inode *inode)
->  static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
->  						      struct timespec64 ts)
->  {
-> -	inode->i_ctime_sec = ts.tv_sec;
-> -	inode->i_ctime_nsec = ts.tv_nsec;
-> +	WRITE_ONCE(inode->i_ctime_sec, ts.tv_sec);
-> +	WRITE_ONCE(inode->i_ctime_nsec, ts.tv_nsec);
->  	return ts;
->  }
->  
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+Thanks!
 
