@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-417355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A189D52E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:56:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0776A9D52EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9F64281135
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B38441F21EB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE981DE4E1;
-	Thu, 21 Nov 2024 18:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEA01DED4C;
+	Thu, 21 Nov 2024 18:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ktVOWZII"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hFstuxpQ"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72B81DE3D4
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD2E1DE4FE
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215203; cv=none; b=O8AdSqAjMvrWqBJ1Kg1PB4Yfk24PSTaHJS2U59vU00BaRgepsoFZv4Isn8zNC/kMEK9ksG+zVmvbeGfHlqQlRdWSsRtslOkdnev6KBExzrWO4I9DAURzPS2KvUSUhK4c7mQcbj0BG7WSNCCj/2e88LER4GboGgyISpu+vK9b8qs=
+	t=1732215205; cv=none; b=igO7x6wls1blPoA3pvzbx3d/IrhTeC79YnJv30Jq3149KyaXaBcA51EzLtPXbu6vZhdoyhXtWPiV3UTi48hexARfTIi/yZvp+4nlBgnJu1zExPhprCdA7XPl/uejoHc0bvyV9+6xB15NePMs2jYdMltISANTs6GZG4YcsyvXkf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215203; c=relaxed/simple;
-	bh=1MOR7DCPmoVrL2EupOMAwcUroCAGOgOeQudXxZyVN2g=;
+	s=arc-20240116; t=1732215205; c=relaxed/simple;
+	bh=/MlTsvEZhBm6lsxe7EmxCdECCTQKt4d+z1t/zvxQERw=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MgYpCsZmtQBuEHTohPvhvS0gQAN+QnpcyE6Ud5NGhSF2NVShKZZTsXhInYpHJ4QjcKaN9qBxU6FxKPxS6JVVCrgSIqeDoTsoGuB+QukvN8e6xnTa77LNyv/AzbqtzBfAy/1bfnecfk6DwrI6gQ2zDDyK9/4RPsJpQagocoyMqMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ktVOWZII; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=FVNzkBys9MgV0bvGtYKWmUL2kBapCZ4UJrLlFWrL0Dbtdx33CmXKTdcl7elrcSVc6ENrqPmhMrzLljh9Y7s66Sy8pvSghIex+Ityd4iEJ7Bwh3cFk2REtJpmxMsxKfYcUMvJq4XwhfPsKgRxUrxu7Z5B1r6O0RhySa9qwJwISqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hFstuxpQ; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eae6aba72fso24218127b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:21 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e330f65bcd9so1568165276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732215201; x=1732820001; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732215202; x=1732820002; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=yX+GRl14cPObJa/kACzBQrLOUmiZNTxc+R8PcnYIGO8=;
-        b=ktVOWZIIM9e6kSmCyKrD20l+GKNugXeKhziRNR5qitJmewhveDSbmql9bIyJ9T+jNp
-         vrZjxMwMO3dZW0op2r6VOPwFb9uRu2SDNUCCl8lCgYKjco+U26fepAXc79EnhWfZ3a6A
-         xQ+8xBNM9sdW6Fikelon+mBeFOHrF0bnr64KIWbR56Hsw8SwB1WEIte7oFiYsHwVQ+Hj
-         unX1vsq2LqutNwCtnA253MTVKR17RUJbPLdni7X9MU8LU4uAg4fKK6CNCI3CObeWccBw
-         6yb3flmEGYNFIlTLGWp3fU6mCSrga81+eJKUA3fuY7HqjGYBVkvDRZ8TMvWfNtRz+AFt
-         JEvA==
+        bh=rsHo0Py3TPU7pbh7g3h3HouheNFLNCt6iVoC0xc8Ffg=;
+        b=hFstuxpQUnAlVZ3bZY0abEGefUG6T5jzWCjPKELKL2luMCA0BgWlYBnf/t8KI/Fcag
+         gpjsF21oDoUURQfgS4Wtb3BXl+i//gNyaPJOEEjy94US8YihoTUdtW4SitxRCesVEUea
+         vxHJdK4GDFgE30iC1NVwzwk3rhAHsEz/WzYnSvpT6QoXZn6VNSgF1bkyRmSRRfz8V28D
+         mqOkCcoeTfkTgrENC3dl7X04Z54uYxMrQJFtuhQdY1xPkHd158oMT3CfiyF0wWNtQcRE
+         VBs35tgJczBa26nosQ4/hsw0AJLMnOMQpyqBse7zc2u04zwX6FF31jQidRu6qcUJI78z
+         LHsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215201; x=1732820001;
+        d=1e100.net; s=20230601; t=1732215202; x=1732820002;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yX+GRl14cPObJa/kACzBQrLOUmiZNTxc+R8PcnYIGO8=;
-        b=T8KEFTHnkcGU2WDClwpebzbi1fRs7QKHkGa2jiMIt4tqlDPvdjEYk0jYJR4UR+tay6
-         Tg8MJPQmMeqTUL91tKdPcydL53cAnHPabevoxZd8VdmdbLfg1aqfBi56r+PqlXN0ki9L
-         82LmqcuGhipIqS/vKp//Hr0NT1obKzp1ng6X1ks6VdPMTbJXldp0WTScKEf63KvXji79
-         J/v412C9v/PBM6CcIzy2G2tQpeSafquScee9M4oLED//p1O/beyx/ym+udn79i5/Tljw
-         ZG7Q5DIJG8SmDryXA/iHZMp1dSRQFknYPZlIxFb8vjAeApMIVaEYZO+LRswewcERTXfL
-         gSYw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ss159SXYUSiausG6/9J3GnTs3qUZwf8J1SL0FRU7vl4QN5YfoxveRjgS1aur0CQ1qVEMVthVFUKbsAU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb4Zelew9d6eoRpWvIXOEOO9JXPyGwX5eLviZ7FZEBwCYUnuu+
-	GpIEHdGUzc2N0X1amJX2v87xlK8212JtDYTlDjnEL7kL4HvnJacBy3/JSGVGkquWlwrvrNZwucA
-	vr8UEYw==
-X-Google-Smtp-Source: AGHT+IEaIdHhehjQ/cZzYbs1B5PHMTwy0M/hKHYmKCVWAh5XULvcYUBoSgtrQsU3NFy0g50qZrAVQfI3lmYy
-X-Received: from mizhang-super.c.googlers.com ([34.105.13.176]) (user=mizhang
- job=sendgmr) by 2002:a05:690c:67c1:b0:6ea:1f5b:1f54 with SMTP id
- 00721157ae682-6eee07bb768mr3687b3.0.1732215200906; Thu, 21 Nov 2024 10:53:20
+        bh=rsHo0Py3TPU7pbh7g3h3HouheNFLNCt6iVoC0xc8Ffg=;
+        b=El7jZv5v5lVJnhikIa/if7jNvFecFNSmUVlmeynEszA2CKqg9XAW/ElKHD3M0h84Qa
+         8OR9t7aLIPRy+1RVS2zFD0PHvYiqbx+7xtsugVdUV3LPOH8SLe087CI+Q+qaqecCKIZQ
+         F+6OyjX1X2oWp3oJ5tP3gziYAc0cG3SD4YWjTFj0r/oWmVpdvEQqp5Ye2qmFI3qOfbNA
+         LgYzbCqNZ+6jlOQ4c0elXxJ3osFOEoAs134v1j/DnoyujI0RY5BlhlsI4Cmj9qvkC6vz
+         ULD1w29Pdq3IXv3e5X8s8smo70KFbbpQf8XWAOWLWYAV08aqHJSYwZJZa9EaT34BEQos
+         G2jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU61Z+2ELEKQzXlJlg8XELuLu1rvfLKeuvKnFfAiQtPqXS1K4nvk4ca+M4PCxycZ3h5tO9KxQGAeZJILHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySshPLL4LGTwUcWx8kMEeWbVnoaLbtPKlP+OLGg6/zRFSUGZpp
+	pbV12VNQLY2Hq+68n0HiZm917A7z1wk7/wDk5pG7m2XxX56cjD4Mz4BY0CrLYQdfnRRMTkgzuxm
+	hskQ9rw==
+X-Google-Smtp-Source: AGHT+IEa89oTDs6AEs0b6qM9YtZe6l8s01zJVqD4TK4bwVkMk4+VBxvLRHFEIhtWa5nFhIw1lpDFQnaYmZLg
+X-Received: from mizhang-super.c.googlers.com ([35.247.89.60]) (user=mizhang
+ job=sendgmr) by 2002:a25:e90b:0:b0:e2e:317a:d599 with SMTP id
+ 3f1490d57ef6-e38f700d9c3mr998276.2.1732215202627; Thu, 21 Nov 2024 10:53:22
  -0800 (PST)
 Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Thu, 21 Nov 2024 18:52:54 +0000
+Date: Thu, 21 Nov 2024 18:52:55 +0000
 In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241121185315.3416855-1-mizhang@google.com>
 X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241121185315.3416855-3-mizhang@google.com>
-Subject: [RFC PATCH 02/22] x86/aperfmperf: Introduce set_guest_[am]perf()
+Message-ID: <20241121185315.3416855-4-mizhang@google.com>
+Subject: [RFC PATCH 03/22] x86/aperfmperf: Introduce restore_host_[am]perf()
 From: Mingwei Zhang <mizhang@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
@@ -90,97 +90,56 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Jim Mattson <jmattson@google.com>
 
-KVM guests need access to IA32_APERF and IA32_MPERF to observe their
-effective CPU frequency, but intercepting reads of these MSRs is too
-expensive since Linux guests read them every scheduler tick (250 Hz by
-default). Allow the guest to read these MSRs without interception by
-loading guest values into the hardware MSRs.
+Round out the {host,guest}[am]perf APIs by adding functions to restore
+host values to the hardware MSRs. These functions:
 
-When loading a guest value into IA32_APERF or IA32_MPERF:
-1. Query the current host value
-2. Record the offset between guest and host values in a per-CPU variable
-3. Load the guest value into the MSR
-
-Modify get_host_[am]perf() to add the per-CPU offset to the raw MSR
-value, so that host kernel code can still obtain correct host values
-even when the MSRs contain guest values.
+1. Write the current host value (obtained via get_host_[am]perf()) to
+   the corresponding MSR
+2. Clear the per-CPU offset used to track the difference between guest
+   and host values
 
 Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Mingwei Zhang <mizhang@google.com>
-Signed-off-by: Mingwei Zhang <mizhang@google.com>
 ---
- arch/x86/include/asm/topology.h  |  5 +++++
- arch/x86/kernel/cpu/aperfmperf.c | 31 +++++++++++++++++++++++++++++--
- 2 files changed, 34 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/topology.h  |  2 ++
+ arch/x86/kernel/cpu/aperfmperf.c | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
 
 diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-index 2ef9903cf85d7..fef5846c01976 100644
+index fef5846c01976..8d4d4cd41bd84 100644
 --- a/arch/x86/include/asm/topology.h
 +++ b/arch/x86/include/asm/topology.h
-@@ -302,8 +302,13 @@ static inline void arch_set_max_freq_ratio(bool turbo_disabled) { }
- static inline void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled) { }
- #endif
- 
-+DECLARE_PER_CPU(u64, host_aperf_offset);
-+DECLARE_PER_CPU(u64, host_mperf_offset);
-+
- extern u64 get_host_aperf(void);
+@@ -309,6 +309,8 @@ extern u64 get_host_aperf(void);
  extern u64 get_host_mperf(void);
-+extern void set_guest_aperf(u64 aperf);
-+extern void set_guest_mperf(u64 mperf);
+ extern void set_guest_aperf(u64 aperf);
+ extern void set_guest_mperf(u64 mperf);
++extern void restore_host_aperf(void);
++extern void restore_host_mperf(void);
  
  extern void arch_scale_freq_tick(void);
  #define arch_scale_freq_tick arch_scale_freq_tick
 diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-index 3be5070ba3361..8b66872aa98c1 100644
+index 8b66872aa98c1..4d6c0b8b39452 100644
 --- a/arch/x86/kernel/cpu/aperfmperf.c
 +++ b/arch/x86/kernel/cpu/aperfmperf.c
-@@ -94,20 +94,47 @@ void arch_set_max_freq_ratio(bool turbo_disabled)
+@@ -135,6 +135,22 @@ void set_guest_mperf(u64 guest_mperf)
  }
- EXPORT_SYMBOL_GPL(arch_set_max_freq_ratio);
+ EXPORT_SYMBOL_GPL(set_guest_mperf);
  
-+DEFINE_PER_CPU(u64, host_aperf_offset);
-+DEFINE_PER_CPU(u64, host_mperf_offset);
-+
- u64 get_host_aperf(void)
- {
- 	WARN_ON_ONCE(!irqs_disabled());
--	return native_read_msr(MSR_IA32_APERF);
-+	return native_read_msr(MSR_IA32_APERF) +
-+		this_cpu_read(host_aperf_offset);
- }
- EXPORT_SYMBOL_GPL(get_host_aperf);
- 
- u64 get_host_mperf(void)
- {
- 	WARN_ON_ONCE(!irqs_disabled());
--	return native_read_msr(MSR_IA32_MPERF);
-+	return native_read_msr(MSR_IA32_MPERF) +
-+		this_cpu_read(host_mperf_offset);
- }
- EXPORT_SYMBOL_GPL(get_host_mperf);
- 
-+void set_guest_aperf(u64 guest_aperf)
++void restore_host_aperf(void)
 +{
-+	u64 host_aperf;
-+
 +	WARN_ON_ONCE(!irqs_disabled());
-+	host_aperf = get_host_aperf();
-+	wrmsrl(MSR_IA32_APERF, guest_aperf);
-+	this_cpu_write(host_aperf_offset, host_aperf - guest_aperf);
++	wrmsrl(MSR_IA32_APERF, get_host_aperf());
++	this_cpu_write(host_aperf_offset, 0);
 +}
-+EXPORT_SYMBOL_GPL(set_guest_aperf);
++EXPORT_SYMBOL_GPL(restore_host_aperf);
 +
-+void set_guest_mperf(u64 guest_mperf)
++void restore_host_mperf(void)
 +{
-+	u64 host_mperf;
-+
 +	WARN_ON_ONCE(!irqs_disabled());
-+	host_mperf = get_host_mperf();
-+	wrmsrl(MSR_IA32_MPERF, guest_mperf);
-+	this_cpu_write(host_mperf_offset, host_mperf - guest_mperf);
++	wrmsrl(MSR_IA32_MPERF, get_host_mperf());
++	this_cpu_write(host_mperf_offset, 0);
 +}
-+EXPORT_SYMBOL_GPL(set_guest_mperf);
++EXPORT_SYMBOL_GPL(restore_host_mperf);
 +
  static bool __init turbo_disabled(void)
  {
