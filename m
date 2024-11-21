@@ -1,143 +1,147 @@
-Return-Path: <linux-kernel+bounces-417217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961399D50B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:29:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F639D50BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27F51B22FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E587A1F238BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82D81A0AF5;
-	Thu, 21 Nov 2024 16:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C547C19E971;
+	Thu, 21 Nov 2024 16:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UinRx+EL"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="bSRtOj/3"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A0E16DEAA
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7871990AB;
+	Thu, 21 Nov 2024 16:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732206534; cv=none; b=Be7w8CST8CAeJdlLZYFU7vRQDP008xBsT01tj+WFZTvDAtF7Tigu0Y2we2Ib80KpWtOOZz2jMoXv9Q9UhkNCBKsPuFFrq0hXUNsIfJXUqx7A0WZMmnJx3Wg+Yw+CF6z9IHerWUXONyMtByL38jYf9XDwNRMFH+OzKwSVf28DzC4=
+	t=1732206583; cv=none; b=P6/+VVknol5VggbIuEq3WWyrAIDxOfzwvAhNPCZqJOT8L6zI6F7zSk41CVgzRK0uzJm1+zlMCHh8Om2SpiXgeIXZcVY4JP/jPo+F9ffxRSIIrxoIo/aRBZZcdrnsRIXs+7qcyXzMjS/28Xp4I7pCOmtzMoYTyw9FejbY7F2XDcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732206534; c=relaxed/simple;
-	bh=MGKmVjnk8yoDkXuExTllKnxldDA3sHkKgKmYP7xY74Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jmPeT0olelgsU3eXm5zrMFm3KVcDvkuYdUIban2Wgn0TW80EuRIcmwe1SIlUmSl8V40u9n/M2GEsGltt+wfIC6IVNrHNhAsZNB6/0767luvCurR2+METJhmRA6WBKYH+zDKtcoSylDP7HKNIG3qpw21RZkJAcE7gJDXZKPow+gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UinRx+EL; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e38b425ce60so942009276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:28:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732206529; x=1732811329; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9TXJDPjbxfNTgXBJjbMA4nZmwtyITDhR1t+eI678Jsg=;
-        b=UinRx+ELSUQ8Cl9nzb7fNsK0LSsWCdyVUkHXf/wGS95oveUb1NqPcPXYYE2fJnAoyC
-         4uLIoTEsaH+Z0HXZ0psUKcpKxUhHPtWpymCA+flJChItbBseHt4qjWkLCP80on5faD7V
-         p937jG0ufTdaFGKcB/5+xGgbWtlc0nx81g06j6YNtJdAh0QAkAxKMbJhs5DG/meAZiSR
-         pWelGB/IJaR3fCUpzkk+rsVpg15Ieq7TvnExVW35021i69w972fyhAUOfsSZuX4pZWWq
-         xD4zwq64aeR7ahES5tdh0nttwX7hpNBYPG2KOK1ed4FKZI+rPDjnJ6AE9mb+R7VXsWBa
-         9DBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732206529; x=1732811329;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9TXJDPjbxfNTgXBJjbMA4nZmwtyITDhR1t+eI678Jsg=;
-        b=Eh0XxaXO9V35RLch5GM85lNoJpt/ciUdg/am8LMM5fZZPDgFR1D84VDe1qmIHogRf8
-         DaeJerOFZ+zqlo6JlkljVNa7tfmqdWiuFWfqbXvDDthofeT8JGs717pVys51rDGsJiTW
-         BeJMGhPR1RP5Nl5Egd71TAC1V1pZDIBvT0ZlsHXhjGqyFw1NXxqxU227FvSFgPtZ38/H
-         k1GgY4+aZxJ0dSM50iTYmWm+FCNd8AhpOaoXIY72YMf1wCj6phL+WquM9jLcUEhvkIOK
-         d8KlCx6OSace+e2jWBla5+lvILjAPAXVWbrH///xXtiKn7qKtMRgtMQaVn3ReBkimiNn
-         RDkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuNQFwT3EhSqX6CMOv/ciLTrgoTINey/oBYPhGlxUZCPO8EFTw+5SRhmf92z5psh0LdW12QlrCY5oHVho=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDFWLF4FOpiqpEoQOhUk2ns35bScnsfsy3IsaqPoAZ7T8cNAcq
-	pEIHXa+OebTvUMuOFQBfED1rM+KLq4bmzf7hNT7HQIabr0xlURYKBuHmIIbtwHLpU02789uUluA
-	/dOLJUm3pBJjymGkM7oeOOi0hdHhRzQqFIT8juw==
-X-Gm-Gg: ASbGnctd0+7c/em/g1dDRAzGWWKKNRbTjKV1U12/A/agQ2CkztgHcR0dgGtgQX89N4M
-	yjEH1moU1NjKETZYcieT9UkWHwFi8MA==
-X-Google-Smtp-Source: AGHT+IH8jQ21wlz4AC2Gow5w4irMjP5l7uwsR8il3RocOz176o0lukHq/cOQw/yaQ1lFxcITz6OY2O1mdE+2lf5pOlI=
-X-Received: by 2002:a05:6902:1242:b0:e30:c850:b77e with SMTP id
- 3f1490d57ef6-e38e14bdda0mr3239516276.3.1732206529351; Thu, 21 Nov 2024
- 08:28:49 -0800 (PST)
+	s=arc-20240116; t=1732206583; c=relaxed/simple;
+	bh=KBlm+PY8r6pCW0H54X1PIOvoepWbroSKAgUlxr1PlLw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Hm+pZ5GOLSHfarVxm3MKi1Z/4kqoEcOeBOkLt/XRzzsGKhw3brw2xhpAbTjDtghNK82g9xYimxihMMoWSTvsKnEeh5K8svCMmhb1vaCYyhIsSbdPrytSTROrDCPXR51Kh9sTXyaJ5+o/Xg+x724lSpShg4SX5CzC9ws52fcBioQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=bSRtOj/3; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732206574;
+	bh=KBlm+PY8r6pCW0H54X1PIOvoepWbroSKAgUlxr1PlLw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=bSRtOj/3/agJoi4hjXbx60+K1pIb1sdpvfPwJZGcyuAOis8Hqlf2GaNywvgTTJ6zh
+	 3MVimqRcfKqdsihqSExQR8mmuSsbZt+Gf9+d3nauxtVtDpyH4JfIkb8OXXj69nO4MX
+	 yjOwu7z7qILtZ9waQ4SH2H+3X0ywLB/vCsOw0rm0=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Thu, 21 Nov 2024 17:29:32 +0100
+Subject: [PATCH] thermal: int3400: Remove unneeded data_vault
+ attribute_group
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-3-quic_chejiang@quicinc.com> <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
- <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com>
-In-Reply-To: <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 21 Nov 2024 18:28:41 +0200
-Message-ID: <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: bluetooth: Add qca6698 compatible string
-To: Cheng Jiang <quic_chejiang@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	quic_zijuhu@quicinc.com, linux-bluetooth@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241121-sysfs-const-bin_attr-int340x_thermal-v1-1-2436facf9dae@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAOtfP2cC/x3N0QrCMAxA0V8ZeTbQ1k3RXxEZtaYuoJkkQSZj/
+ 27x8bzcu4KRMhmcuxWUPmw8S0PcdVCmLA9CvjdDCqmPMUW0r1XDMos53ljG7K7I4vs+LKNPpK/
+ 8xHo6hDykUuJwhJZ6K1Ve/pvLddt+GbnWAnYAAAA=
+X-Change-ID: 20241121-sysfs-const-bin_attr-int340x_thermal-f960a52cc157
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732206574; l=2881;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=KBlm+PY8r6pCW0H54X1PIOvoepWbroSKAgUlxr1PlLw=;
+ b=ufRGddApucFjv7bKF8DyZwI8R+KTQrRxY6Lp7EsxgQtFQ20d+RcVf11iHqho25FppYwAOZZSS
+ z7yS+PgY/DZBF7Uu/Vy8t8d3hUe5TJCRn04h4yq6NrT0ICLRbFxW1bk
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, 21 Nov 2024 at 06:12, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
->
-> Hi Dmitry,
->
-> On 11/20/2024 6:44 PM, Dmitry Baryshkov wrote:
-> > On Wed, Nov 20, 2024 at 05:54:26PM +0800, Cheng Jiang wrote:
-> >> Add QCA6698 qcom,qca6698-bt compatible strings.
-> >
-> > Why? Is it the same chip as WCN6855 or a different chip? Is it
-> > completely compatible?
-> >
-> They are different chips. But it's compatible with WCN6855.
+The group only contains a single entry and the conditionals around its
+lifecycle make clear that this won't change.
+Remove the unnecessary group.
 
-So, do we really need new compat? Will/can it use the same firmware?
+This saves some memory and it's easier to read.
+The removal of a non-const bin_attribute[] instance is also a
+preparation for the constification of struct bin_attributes.
 
-> >>
-> >> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
-> >> ---
-> >>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
-> >>  1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >> index 9019fe7bcdc6..527f947289af 100644
-> >> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-> >> @@ -18,6 +18,7 @@ properties:
-> >>      enum:
-> >>        - qcom,qca2066-bt
-> >>        - qcom,qca6174-bt
-> >> +      - qcom,qca6698-bt
-> >>        - qcom,qca9377-bt
-> >>        - qcom,wcn3988-bt
-> >>        - qcom,wcn3990-bt
-> >> @@ -175,6 +176,7 @@ allOf:
-> >>          compatible:
-> >>            contains:
-> >>              enum:
-> >> +              - qcom,qca6698-bt
-> >>                - qcom,wcn6855-bt
-> >>      then:
-> >>        required:
-> >> --
-> >> 2.25.1
-> >>
-> >
->
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+index b0c0f0ffdcb046607b4478390f39a77ae316a511..558a08f1727fc48c37181f8d345e236f879dab27 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+@@ -75,11 +75,6 @@ struct odvp_attr {
+ 
+ static BIN_ATTR_SIMPLE_RO(data_vault);
+ 
+-static struct bin_attribute *data_attributes[] = {
+-	&bin_attr_data_vault,
+-	NULL,
+-};
+-
+ static ssize_t imok_store(struct device *dev, struct device_attribute *attr,
+ 			  const char *buf, size_t count)
+ {
+@@ -108,10 +103,6 @@ static const struct attribute_group imok_attribute_group = {
+ 	.attrs = imok_attr,
+ };
+ 
+-static const struct attribute_group data_attribute_group = {
+-	.bin_attrs = data_attributes,
+-};
+-
+ static ssize_t available_uuids_show(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    char *buf)
+@@ -624,8 +615,7 @@ static int int3400_thermal_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (!ZERO_OR_NULL_PTR(priv->data_vault)) {
+-		result = sysfs_create_group(&pdev->dev.kobj,
+-					    &data_attribute_group);
++		result = device_create_bin_file(&pdev->dev, &bin_attr_data_vault);
+ 		if (result)
+ 			goto free_uuid;
+ 	}
+@@ -648,7 +638,7 @@ static int int3400_thermal_probe(struct platform_device *pdev)
+ free_sysfs:
+ 	cleanup_odvp(priv);
+ 	if (!ZERO_OR_NULL_PTR(priv->data_vault)) {
+-		sysfs_remove_group(&pdev->dev.kobj, &data_attribute_group);
++		device_remove_bin_file(&pdev->dev, &bin_attr_data_vault);
+ 		kfree(priv->data_vault);
+ 	}
+ free_uuid:
+@@ -683,7 +673,7 @@ static void int3400_thermal_remove(struct platform_device *pdev)
+ 		acpi_thermal_rel_misc_device_remove(priv->adev->handle);
+ 
+ 	if (!ZERO_OR_NULL_PTR(priv->data_vault))
+-		sysfs_remove_group(&pdev->dev.kobj, &data_attribute_group);
++		device_remove_bin_file(&pdev->dev, &bin_attr_data_vault);
+ 	sysfs_remove_group(&pdev->dev.kobj, &uuid_attribute_group);
+ 	sysfs_remove_group(&pdev->dev.kobj, &imok_attribute_group);
+ 	thermal_zone_device_unregister(priv->thermal);
 
+---
+base-commit: 43fb83c17ba2d63dfb798f0be7453ed55ca3f9c2
+change-id: 20241121-sysfs-const-bin_attr-int340x_thermal-f960a52cc157
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Thomas Weißschuh <linux@weissschuh.net>
+
 
