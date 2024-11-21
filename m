@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-417495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6E99D54BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1437D9D54C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FD9282C45
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:31:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA9C1282CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298201D9350;
-	Thu, 21 Nov 2024 21:31:11 +0000 (UTC)
-Received: from kawka3.in.waw.pl (kawka3.in.waw.pl [68.183.222.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39841D9324;
+	Thu, 21 Nov 2024 21:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="s9uT45ix"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE99A1D89FE
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.183.222.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAB4502F;
+	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732224670; cv=none; b=BUErRejTjdVxGRBtLgDmWnrJpKZwd+U48s8NNhUD1Dj7e5pvRrwZZaUgDDFT1/8VURAYUc5/DHjuzQdXLcUifDAtRg/icv+jyV1wm0egnEO4aykGhmKfNTgdW/8+w2HFcdf6B5drB4Edn4SSNWmno/IgfeaSR2JfRarSZcYi0wg=
+	t=1732224766; cv=none; b=RJ6EeP+oU80iOGrehP9K2bZGIx6NtjQWp+44Z5914RgNtTHSSzolitVBiqQPvclUh0OUOtMlP3jI7xKJnsJV+lL5vtfz5WboTA4wqc4yDfMr8ViQUk4arErrxDGB1Oiy5ZI5ixl8EIq9Rg4Doqrj+OOvI5GgnYZTcuHeVS1dTaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732224670; c=relaxed/simple;
-	bh=xStHEIS7G2wdO39+85O/1Mxu/q2ZdyHl+eelhE71Bu4=;
+	s=arc-20240116; t=1732224766; c=relaxed/simple;
+	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KH12K5sA1v5Xz45eTK5hN+oYkN77IeKk302IpZi9+72rvRLk9V0cU1Vv5kvWz90lTfD15KdHyyoPVoTgvmkIttG3FlQYiANnY06cYd/I5eSnuL9DzFOThj6vRpn9+uFDfn8Sd17PwqoR+Sim8W7gmw8KM50ZtzuMClm4Aun31dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl; spf=pass smtp.mailfrom=in.waw.pl; arc=none smtp.client-ip=68.183.222.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=in.waw.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=in.waw.pl
-Received: by kawka3.in.waw.pl (Postfix, from userid 1000)
-	id 9C4BC5A3C9B; Thu, 21 Nov 2024 21:31:06 +0000 (UTC)
-Date: Thu, 21 Nov 2024 21:31:06 +0000
-From: Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	linux-kernel@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Nir Lichtman <nir@lichtman.org>,
-	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
-	Tycho Andersen <tandersen@netflix.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-Message-ID: <Zz-mmg9tEj7EbPlm@kawka3.in.waw.pl>
-References: <202411190900.FE40FA5@keescook>
- <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org>
- <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
- <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
- <CAHk-=wiJZDxO+Wgmg8f=Cio9AgmJ85V7do4kxroKejHNsS80hQ@mail.gmail.com>
- <Zz91LyHzxxOLEma_@kawka3.in.waw.pl>
- <CAHk-=whv4q-RBXmc9G7NZ4GiATqE_ORU05f=9g00HkQXbV7vqw@mail.gmail.com>
- <202411211011.C2E3ABEAB@keescook>
- <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMqpM1eAFH7yKh3NlLwm0DOGOXZt2clgKrMOShgMvELh3CIYMcTXQjnBzXqaiDWpIuhQ8T6r9/EfFU325tx3rOrbtKUcrdw/cJyW5v6/WRHTxwswtE7PwSuiniE020lwS9UbW06KZd//5gxWg2iPkGfI/Lb9d4NG/9tnYIHjN+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=s9uT45ix; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9E1C4CECC;
+	Thu, 21 Nov 2024 21:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732224765;
+	bh=htrvxQ/acJt2mn32w1njKdyG5hdJdbkfDKs+NrdqLFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9uT45ixbZuVdMo+D7KF90yl/M4gz4FOZG+z4QHSwZQfBNYtRrDTQPsMu4MO3iA2k
+	 KELBNAWcrzFY/wAazJxMr+f7n9L4juBJIsbng4iTsYokcXzUXiV61ml2PxRXi/d1Z+
+	 sXDGeU4Ie5dXi7xqKv8lgIOngFjO7GAhkwmoxzjA=
+Date: Thu, 21 Nov 2024 22:32:19 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+	lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 2/8] serial: sh-sci: Check if TX data was written to
+ device in .tx_empty()
+Message-ID: <2024112128-faceted-moonstone-027f@gregkh>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgfX4dvvKo8PrPZj76Z2ULMMK2RvaF+O7QhLnwOSBYdhQ@mail.gmail.com>
+In-Reply-To: <20241115134401.3893008-3-claudiu.beznea.uj@bp.renesas.com>
 
-On Thu, Nov 21, 2024 at 11:23:46AM -0800, Linus Torvalds wrote:
-> On Thu, 21 Nov 2024 at 10:50, Kees Cook <kees@kernel.org> wrote:
-> >
-> > The only flip side I can see is that "ps" etc, should just never use comm
-> > at all, and instead use argv[0] from cmdline
+On Fri, Nov 15, 2024 at 03:43:55PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Gods people, what are you all on about?
+> On the Renesas RZ/G3S, when doing suspend to RAM, the uart_suspend_port()
+> is called. The uart_suspend_port() calls 3 times the
+> struct uart_port::ops::tx_empty() before shutting down the port.
 > 
-> THIS IS WHAT PS ALREADY DOES.
-
-Nope. 'ps' uses comm, for example in 'ps -C' which is documented as
-"select by command name" and quite commonly used.
-
-It does not use it in the default listing, because it shows "COMMAND",
-incl. args, which obviously must use /proc//cmdline. But nobody said
-that it does. Kees only mentioned that "ps uses comm for the short
-name view of a process", which is true. _You_ wrote about ps and showed
-an example with COMMAND which is … fine, but not really relevant.
-
-If you wanted, you could ask where is comm used by the userspace?
-The ones I'm aware of where it's directly visible:
-- 'ps -C' or 'ps -o comm'
-- pgrep
-- top
-- htop
-
-Using sourcegraph.com I see mentions in moby, kubernetes, zsh and
-ohmyzsh, earlyoom, vmtop, and pages of more obscure stuff. It's also
-exposed via libsystemd's sd_bus_creds and journald's _COMM field.
-The generic interfaces are the biggest problem. We could probably
-update top/htop/pgrep to use argv[0], but we can't fix scripts
-that are out there that either use 'ps -o comm' or look in /proc//comm
-directly or filter journalctl output by field.
-
-> Stop this completely inane discussion. It's literally like you don't
-> even know what you are talking about.
->
-> For user space, comm[] is basically the fallback for when cmdline
-> fails for some reason (for example, /proc/*/cmdline will be empty for
-> kworkers, but there are other situations too)
-
-As mentioned, this is easily disproved by running e.g. top/htop/pgrep.
-
-> The reason? comm[] has *always* been much too limited for 'ps' output. ALWAYS.
+> According to the documentation, the struct uart_port::ops::tx_empty()
+> API tests whether the transmitter FIFO and shifter for the port is
+> empty.
 > 
-> Yes, you can literally *force* ps to not do that (eg "ps -eo comm")
-> but if you do that, you get the very limited comm[] output that nobody
-> has ever wanted ps to give exactly because it's so limited.
+> The Renesas RZ/G3S SCIFA IP reports the number of data units stored in the
+> transmit FIFO through the FDR (FIFO Data Count Register). The data units
+> in the FIFOs are written in the shift register and transmitted from there.
+> The TEND bit in the Serial Status Register reports if the data was
+> transmitted from the shift register.
 > 
-> People who want 'argv[0]' will typically want argv[1] etc too, because
-> argv[0] simply IS NOT SPECIAL.
+> In the previous code, in the tx_empty() API implemented by the sh-sci
+> driver, it is considered that the TX is empty if the hardware reports the
+> TEND bit set and the number of data units in the FIFO is zero.
 > 
-> And yes, 'top' will give comm[] output because it's so much faster.
+> According to the HW manual, the TEND bit has the following meaning:
+> 
+> 0: Transmission is in the waiting state or in progress.
+> 1: Transmission is completed.
+> 
+> It has been noticed that when opening the serial device w/o using it and
+> then switch to a power saving mode, the tx_empty() call in the
+> uart_port_suspend() function fails, leading to the "Unable to drain
+> transmitter" message being printed on the console. This is because the
+> TEND=0 if nothing has been transmitted and the FIFOs are empty. As the
+> TEND=0 has double meaning (waiting state, in progress) we can't
+> determined the scenario described above.
+> 
+> Add a software workaround for this. This sets a variable if any data has
+> been sent on the serial console (when using PIO) or if the DMA callback has
+> been called (meaning something has been transmitted). In the tx_empty()
+> API the status of the DMA transaction is also checked and if it is
+> completed or in progress the code falls back in checking the hardware
+> registers instead of relying on the software variable.
+> 
+> Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Exactly.
+Why is this bug/regression fix burried in a long series?  It should be
+sent individually so that it could be applied on its own as it is not
+related to the other ones, right?
 
-> I'm done with this discussion that apparently was brought on by people
-> not knowing what the hell they were doing.
+Or are you ok with waiting for this to show up in 6.14-rc1?
 
-You keep disagreeing with things that nobody has said.
+thanks,
 
-The point is that comm _is_ used in many places that matter. I'm not
-sure what you're trying to say really, since in the second half of
-your mail you actually showed an example where this is true.
-
-Zbyszek
+greg k-h
 
