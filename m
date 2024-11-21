@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-416757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BF89D49B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:15:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E169D49BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EFD28215B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:15:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8B60B2568A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB96B1CB9F0;
-	Thu, 21 Nov 2024 09:14:59 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E44206E;
-	Thu, 21 Nov 2024 09:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551451D0143;
+	Thu, 21 Nov 2024 09:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foWLhjSc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A631CEAAC;
+	Thu, 21 Nov 2024 09:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732180499; cv=none; b=oGPrxh8eBAN7A2pDCkOKqeSKldVbrBeFPD3IhFrepSn2ucAbm4gDPOtf9uunKDDxPWfeP9d8EHseqrp6Xuk4sOW6klpRwQbdXZoI3yvIGu+P79kMIZCetkTTa0z+L4OBdRJ7x9PPK6Aa4Sh4BYxDBoLGjaNLZiz9vmoTyiiB4WU=
+	t=1732180504; cv=none; b=SFd3MQ3HDGxIExXK8szJDtROP8d95XfhRoFphTnyTm0VIB//AHbGr54ZRK+6VE5CBDcwGC/lFpMdwa+wSHQIegtsknrjdw4NhkmZc8LY6wVkkDIu/i5xESQUFpEXvfFFC24jG3nxfdltX2Qm800YKFzCjX+HW0chcQK/y67b0ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732180499; c=relaxed/simple;
-	bh=HC+FClx8+FFEcf2S1sO5cNwBgI+xwZmAbAIZHTFgOfA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=exK/mlrHQLgsYiMTsw89eyLFslWwBzQhOINdDTfDmQjQuoDHDiN4HfgVSh5FeO+aF62QpzsK298pmvHlE1TfDyymwtZlrDSzgaVAvQoVVLwkiFl7lchoejtETzEnynmrq6BcZ7WGErw4kM4J8JseQFGpGZpgRCHibZQtofsg9v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app03-12003 (RichMail) with SMTP id 2ee3673efa0ed88-2c5b0;
-	Thu, 21 Nov 2024 17:14:54 +0800 (CST)
-X-RM-TRANSID:2ee3673efa0ed88-2c5b0
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from [172.20.230.59] (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6673efa0d35c-d5849;
-	Thu, 21 Nov 2024 17:14:54 +0800 (CST)
-X-RM-TRANSID:2ee6673efa0d35c-d5849
-Message-ID: <291c5d58-9681-49bc-b5c4-3ee4555d68bd@cmss.chinamobile.com>
-Date: Thu, 21 Nov 2024 17:14:53 +0800
+	s=arc-20240116; t=1732180504; c=relaxed/simple;
+	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qofhVKcFIeRNNEtcRubsM9zK0PxPPN74hLnGaDJsY3M9JK6+NMzfD1YwE9q12SxoueyXgJ1U56MH+t4cdKxpT3sqId1G4sa+sF5LHTYB5ems4yeOSxazjvC3IFkHC8qhcdOmwL7nN8PfAj+Q0f6+DnjMxOdf35SXSeOrOj9xOnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foWLhjSc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A41C4CED0;
+	Thu, 21 Nov 2024 09:14:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732180503;
+	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=foWLhjSczE7CDgEqUlZ+g26zxC+rtnOjzye+ImrsXs0W3dXcBoJlqCi4vnXVd44BD
+	 jSFh7mPfAoZXfTk/mRNxeWrVhRJl9wYqmf6qTX/E53klyvUIvdraLqDNsrESzJ0eQ9
+	 sZQ6fnJ3aYafoy/Sx8koStFVKdxjdnZpvlLhd1ybDJOqjfLA/oVmY3chzAlOoZJuWf
+	 RuubicXY+6J3hUbkIPHZt5rXUI/ixtONh4nbRzfWfeaW2P8ll6G3AS8dri1MrBtrGF
+	 DLqq6qUKqOmlOiY9UtJXErsXU2F2mKXoZ/0pNpWN6aVuWxL5+MN77UKd1e/jqOCIrc
+	 PsyUOcsVLDF2g==
+Date: Thu, 21 Nov 2024 10:14:56 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
+	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
+	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
+	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
+	"jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+Message-ID: <20241121-unfertig-hypothek-a665360efcf0@brauner>
+References: <20241112082600.298035-1-song@kernel.org>
+ <20241112082600.298035-3-song@kernel.org>
+ <20241113-sensation-morgen-852f49484fd8@brauner>
+ <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
+ <20241115111914.qhrwe4mek6quthko@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] selftests: mm: Fix conversion specifiers
- intransact_test()
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
- akpm@linux-foundation.org, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241117071231.177864-1-guanjing@cmss.chinamobile.com>
- <a2b65507-90dd-4586-9881-4ce5b310c2a8@collabora.com>
-From: guanjing <guanjing@cmss.chinamobile.com>
-In-Reply-To: <a2b65507-90dd-4586-9881-4ce5b310c2a8@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241115111914.qhrwe4mek6quthko@quack3>
 
-I found it when reading the code. So far, I haven't found any tools that 
-can be used for scanning yet. :)
+> I'm personally not *so* hung up about a pointer in struct inode but I can
+> see why Christian is and I agree adding a pointer there isn't a win for
+> everybody.
 
-Thank you for your review.
+Maybe I'm annoying here but I feel that I have to be. Because it's
+trivial to grow structs it's rather cumbersome work to get them to
+shrink. I just looked at struct task_struct again and it has four bpf
+related structures/pointers in there. Ok, struct task_struct is
+everyone's favorite struct to bloat so whatever.
 
+For the VFS the structures we maintain longterm that need to be so
+generic as to be usable by so many different filesystems have a tendency
+to grow over time.
 
-On 2024/11/19 15:33, Muhammad Usama Anjum wrote:
-> Thanks for the patch.
->
->
-> On 11/17/24 12:12 PM, guanjing wrote:
->> Lots of incorrect conversion specifiers. Fix them.
-> Not sure why I'd not got warnings. Just curious, how were you able
-> to notice these warnings?
->
->> Fixes: 46fd75d4a3c9 ("selftests: mm: add pagemap ioctl tests")
->> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
-> Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->
->> ---
->>   tools/testing/selftests/mm/pagemap_ioctl.c | 10 +++++-----
->>   1 file changed, 5 insertions(+), 5 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
->> index bcc73b4e805c..fdafce0654e9 100644
->> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
->> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
->> @@ -1405,9 +1405,9 @@ static void transact_test(int page_size)
->>   	memset(mem, 0, 0x1000 * nthreads * pages_per_thread);
->>   
->>   	count = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
->> -	ksft_test_result(count > 0, "%s count %d\n", __func__, count);
->> +	ksft_test_result(count > 0, "%s count %u\n", __func__, count);
->>   	count = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
->> -	ksft_test_result(count == 0, "%s count %d\n", __func__, count);
->> +	ksft_test_result(count == 0, "%s count %u\n", __func__, count);
->>   
->>   	finish = 0;
->>   	for (i = 0; i < nthreads; ++i)
->> @@ -1429,7 +1429,7 @@ static void transact_test(int page_size)
->>   			ksft_exit_fail_msg("pthread_barrier_wait\n");
->>   
->>   		if (count > nthreads * access_per_thread)
->> -			ksft_exit_fail_msg("Too big count %d expected %d, iter %d\n",
->> +			ksft_exit_fail_msg("Too big count %u expected %u, iter %u\n",
->>   					   count, nthreads * access_per_thread, i);
->>   
->>   		c = get_dirty_pages_reset(mem, nthreads * pages_per_thread, 1, page_size);
->> @@ -1454,7 +1454,7 @@ static void transact_test(int page_size)
->>   			 * access and application gets page fault again for the same write.
->>   			 */
->>   			if (count < nthreads * access_per_thread) {
->> -				ksft_test_result_fail("Lost update, iter %d, %d vs %d.\n", i, count,
->> +				ksft_test_result_fail("Lost update, iter %u, %u vs %u.\n", i, count,
->>   						      nthreads * access_per_thread);
->>   				return;
->>   			}
->> @@ -1467,7 +1467,7 @@ static void transact_test(int page_size)
->>   	finish = 1;
->>   	pthread_barrier_wait(&end_barrier);
->>   
->> -	ksft_test_result_pass("%s Extra pages %u (%.1lf%%), extra thread faults %d.\n", __func__,
->> +	ksft_test_result_pass("%s Extra pages %u (%.1lf%%), extra thread faults %u.\n", __func__,
->>   			      extra_pages,
->>   			      100.0 * extra_pages / (iter_count * nthreads * access_per_thread),
->>   			      extra_thread_faults);
+With some we are very strict, i.e., nobody would dare to grow struct
+dentry and that's mostly because we have people that really care about
+this and have an eye on that and ofc also because it's costly.
 
+But for some structures we simply have no one caring about them that
+much. So what happens is that with the ever growing list of features we
+bloat them over time. There need to be some reasonable boundaries on
+what we accept or not and the criteria I have been using is how
+generically useful to filesystems or our infrastructre this is (roughly)
+and this is rather very special-case so I'm weary of wasting 8 bytes in
+struct inode that we fought rather hard to get back: Jeff's timespec
+conversion and my i_state conversion.
 
+I'm not saying it's out of the question but I want to exhaust all other
+options and I'm not yet sure we have.
+
+> Longer term, I think it may be beneficial to come up with a way to attach
+> private info to the inode in a way that doesn't cost us one pointer per
+> funcionality that may possibly attach info to the inode. We already have
+
+Agreed.
 
