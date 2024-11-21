@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-416669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB689D4883
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:09:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07FE49D4885
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0DB4B2227F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30E8282CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831A1CB312;
-	Thu, 21 Nov 2024 08:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0B1CB305;
+	Thu, 21 Nov 2024 08:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UB1IE6oX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2fS3USbt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="LtFs0KfB"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8760A1CACE9;
-	Thu, 21 Nov 2024 08:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E3A146A6B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176580; cv=none; b=F4MYbAiXMDxsvV+jVX3E5X7c2dZO3OWadX83+38+iU25DL6MpVYWAkfXHojCm9GOixOt63h4AOyH9d/e4e9XpDjRHMkl9BRUPHMydIMhfU8x0fNGUaiXif6vO1L2f39fOVRlPdYLv8OFbic3VH0QMptlOk//o/je6QITzgOl7TY=
+	t=1732176624; cv=none; b=ghEYRBjbcaIxQpB4o+P6Oq76OhfcMexO2omQhWaDHEjH+F4aARVDqN3Dgey6i/r+hzDFuJXdP1CAVlmfK9LYsZkcBKbEA9XSpx+YIDPsN8QRpPdaqJuyf2U/V5FJdkaSkvOgMz66/v32w/Pk3kkZT63q1Dtu/LXBqJOsbjkhgMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176580; c=relaxed/simple;
-	bh=BvEyhnyI0XDIdgF3tPtxKSiOJGP23vgPNFMQaakLTGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uNwM+vfFswGF0cy08wfjaAOrBFUJc0wIeoESo5LfGF5J6uMoi6d9Iq+aMuvpKJy4wwE2XOrh5yb96RTflqNR0gUJD8ZNzl/niH7hoRZGXD3o7+LnlfgIcxhc4/ZdQRNAktjHNeOAPg80eU5S01FYyEHNzBY6jpBpZt8aOl+5uCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UB1IE6oX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2fS3USbt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 21 Nov 2024 09:09:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732176576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=be4tTM+SqMFCpbwOaFbBKI9pXVAlJLs1b+OQG81BDrs=;
-	b=UB1IE6oXBYkFO/J97uHPV36m2ZdVgvPsU3jm7lCpx596p7Azoyhc2fVVnuf0FWLD7gQD8m
-	a2JbPEqfEiYuTZfhypdbGYkNbJ7Ov42HvPPsGHWplmyphQCmdWpt1txwLR28FHgwuiwJhn
-	AVVpcw8eka6OuCon2vva3e0ofwng2wMe8Sb5Zu/z7pDGkEYJf7Jopuic9T1bS/9y8CDgoc
-	2dkPR0p99xweKWkNoaiXV+d8JPZEMlExd2FAIURH3h9YBEhuzCcU8Um5xlZaiSvEH/6Z9e
-	SY27fHC7om4OliyidxSbH1OjMytxDMshQRCWs6WsQKFXtINk8HYRZP8UYLsC3g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732176576;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=be4tTM+SqMFCpbwOaFbBKI9pXVAlJLs1b+OQG81BDrs=;
-	b=2fS3USbtB9V1nqNf8D3rhSHW0dmQUQ/lw6VtQ7sw7sg8MLyODHqkUkHRn5sY5wqzeyycPk
-	nPcUq3tVXnYWWiCg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selinux: explicitly clean generated av_permissions.h
-Message-ID: <20241121085228-327b3d62-4e9b-4f4e-9100-b62bcedfab1d@linutronix.de>
-References: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
- <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
+	s=arc-20240116; t=1732176624; c=relaxed/simple;
+	bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dz9lSTlE2yIdm7uXnzLjJ/ePAiCiYGMBtETX3KKdYvMdqnlyDbkWb0YeODxYmgp5Opzdu/IXmMb/pf/dxAyxkxchWLglSeauK1mlyC6XAkU9o6gsvEiSEtUycil4r+Ut7aCA+b8+0CW7ZXNIFtfzA78XCekgMiTUgiDN/o9GLAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=LtFs0KfB; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfc0209eadso74790a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:10:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732176618; x=1732781418; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
+        b=LtFs0KfBVjtiXWCIpbHI5W3LOrfWt0PiTMKu7TXcHIiskylcF0AHaqWTpMsSXwZYpt
+         MOBfwNdds1WolKK38NFIxVJlcDumpWTviCzN5Tlw9eLpx6QMsb1ArArY4MK27CXAUXNi
+         MHtJINV/3DQqHq+AQPSMRCWTdXLZfTj2ktZ9S5lX+JW4qKalLC+TkeHuaCLNkc4l3Sv1
+         EZSz/9B08uOyZk8JpU88TrsquTA0E9LgmmiWSsbH4f+Q1To01YT1k4f4jc6b1sTyEpGg
+         lEv55vP+ALInOO2yEQCVWn+SxD4HZvxIy4QkV76eHMJ1SeeTBMTzu7vfSHWgu23fwGVR
+         bdxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732176618; x=1732781418;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
+        b=nWwCoFNroMBKS9pMyVmQw2FAVvnWWOWXt8NJ9YAjK5IFYpjEEp1WTXyo7J2xlaq4/5
+         8xe0TJ3Mr8I+xZw4X4Gtu8fTdpHoNaP3io3nf6H7Zm4nvFYdeBzmrh8Btwi0HjscTYSU
+         HGCavjaD85mDzNpOECcF7x3Fw1XcH8em1cBsY3N+iULBv5djZmEi7oW+7IZrqRE0jlx6
+         9YpLcIIfUaS3/GNXi8Ef+FDXbsBn+mT5AtDRcsmvE6RsC+X7cDyzqgKea+QRYhl2H6ZM
+         vKU6JJypGQiqOcd5+saDyFXyWHGfY9zTZoYHVARlgQJEQZvUMFfZqveKcyEs8DhE36XU
+         DkJg==
+X-Gm-Message-State: AOJu0YyhDMmrlKaCEUc4hgTFn6iAkiZ2vThVseVwxsRQIkIna+c0DpI8
+	CrPhajU+bbTA1V/1zEPYfQyQ0fcDU0DCO3C7ay///nPIrAWiKJzrMijWLG4GdCC2yhJ+zPjop+S
+	8yHATjxiLo/pZ5gulrEcboa3EAbaynKSnB9adJQ==
+X-Gm-Gg: ASbGncupoNQ4/R2+wEMn+XP3rip5Y2rXmyocV0gUU0I7uAcB5qrmNpZKlP4TKMwVnIS
+	0WynJX/GStgHEbRUGT7QcJv7NlkDe250=
+X-Google-Smtp-Source: AGHT+IEMvl1hbMySB0BrKqNmTgujNgYhCn5cHtxvHqbfm5g+a6bdtUVeU22KGhY3n+Q/ksiLTGSywShZMRKkUP051/E=
+X-Received: by 2002:a05:6402:2695:b0:5cf:b99c:3afb with SMTP id
+ 4fb4d7f45d1cf-5cff4ccff67mr1591425a12.6.1732176618599; Thu, 21 Nov 2024
+ 00:10:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
+References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com> <20241119152939.158819-1-jinpu.wang@ionos.com>
+In-Reply-To: <20241119152939.158819-1-jinpu.wang@ionos.com>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Thu, 21 Nov 2024 09:10:08 +0100
+Message-ID: <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
+Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
+To: yukuai1@huaweicloud.com, Haris Iqbal <haris.iqbal@ionos.com>
+Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, song@kernel.org, 
+	xni@redhat.com, yangerkun@huawei.com, yi.zhang@huawei.com, yukuai3@huawei.com, 
+	=?UTF-8?Q?Florian=2DEwald_M=C3=BCller?= <florian-ewald.mueller@ionos.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Nov 19, 2024 at 4:29=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com> wr=
+ote:
+>
+> Hi Kuai,
+>
+> We will test on our side and report back.
+Hi Kuai,
 
-On Wed, Nov 20, 2024 at 08:55:00PM +0900, Masahiro Yamada wrote:
-> On Wed, Nov 20, 2024 at 6:15 PM Thomas Weißschuh
-> <thomas.weissschuh@linutronix.de> wrote:
-> >
-> > av_permissions.h is not declared as a target and therefore won't be
-> > added to clean-files automatically by kbuild.
-> > For details why it is not a target see the Makefile itself.
-> >
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  security/selinux/Makefile | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/security/selinux/Makefile b/security/selinux/Makefile
-> > index 86f0575f670da66a9dc57e13a236d6a5551af38e..58129a7c8cfa08f9caf5444f7df776f41056b77a 100644
-> > --- a/security/selinux/Makefile
-> > +++ b/security/selinux/Makefile
-> > @@ -41,5 +41,8 @@ targets += flask.h
-> >  $(obj)/flask.h: $(obj)/genheaders FORCE
-> >         $(call if_changed,genhdrs)
-> >
-> > +# see the note above, remove this line
-> > +clean-files += av_permissions.h
-> > +
-> >  hostprogs := genheaders
-> >  HOST_EXTRACFLAGS += -I$(srctree)/security/selinux/include
-> 
-> 
-> 
-> Presumably, the attached fixup.diff (comment in 'targets' assignment)
-> would align with the intention of the maintainer of this Makefile
-> because you can do
-> 
->   targets += $(genhdrs)
-> 
-> without the need of the grouped target feature.
-> 'make clean' removes files listed in 'targets'.
-> 
-> 
-> 
-> BTW, the NOTE in this Makefile is not true.
->   https://github.com/torvalds/linux/blob/v6.12/security/selinux/Makefile#L7
-> 
-> 
-> Even if you use GNU Make 4.3, the grouped target does not work with
-> the if_changed macro.
-> 
-> With GNU Make 4.4, it will work as a side-effect of commit
-> fabb03eac412b5ea19f1a97be31dc8c6fa7fc047
-> 
-> 
-> I asked about this behavior some time ago in GNU Make ML.
-> 
-> https://lists.gnu.org/archive/html/help-make/2024-08/msg00001.html
->   or
-> https://savannah.gnu.org/bugs/index.php?66073
-> 
-> 
-> The combination of the grouped target and if_changed
-> is working with GNU Make 4.4+, but I do not know if
-> it is future promising.
-
-Thanks for all the insights!
-
-> IMHO, I do not see much benefits for using the group target in this case
-> because you can still generate flask.h and av_permissions.h
-> separately.
-
-I'm fine either way.
-
-@Selinux maintainers:
-
-What do you prefer? Also feel free to just commit whatever you think is
-best.
-
-
-Thomas
+Haris tested the new patchset, and it works fine.
+Thanks for the work.
+>
+> Yes, I meant patch5.
+>
+> Regards!
+> Jinpu Wang @ IONOS
+>
 
