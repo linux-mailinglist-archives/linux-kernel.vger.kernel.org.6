@@ -1,96 +1,200 @@
-Return-Path: <linux-kernel+bounces-416803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419899D4A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:08:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B449D9D4A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6C1AB2155B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:08:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E280B21617
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308601CC159;
-	Thu, 21 Nov 2024 10:08:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8B61A0B08
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49921CCEF7;
+	Thu, 21 Nov 2024 10:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/IcJIzm"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759A25FEED;
+	Thu, 21 Nov 2024 10:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732183720; cv=none; b=mCgKX1rOlHbs6qyBIHctT81WSfmuf8lAKIwLf708THIO2nEliyoOXVsSgRXDgK6aChFl17x5bt/UbqMoE8pZ2NeOm6d+4doWpWKkKp3CoZG5GFI+mbJhJUBaLYzOZZYj0GVNKcY6fb8qO1kn/VSLZw/KDVEN8ra1PdylUQidhYQ=
+	t=1732183882; cv=none; b=bvnNmN0lBqsai7hqwos1VfRrN3WHFHyF9Zszf87T2Ooj0QR9yN4uQ+i2koTAEhKsiHweknN5W6h2QiwqVa99iIpJYV+dBappUASyujcdRw9j+2+C+8wVdRl5x5hAH5RqNr12Djj0IybNYY85O6pq4cfjmv/LqDu2hKRwT7ywOaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732183720; c=relaxed/simple;
-	bh=Eulqd7hNf8dJDvELlztTs7OJMg/wuWLKkIuPumnh/20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LtleSsGaFFrk/LtnvdcYN/lXC0lH70/chjPplc3w44pAH2svwJ2akbw9F5gaR0YI4jmPe+Ikja1RSPdeWEmrpYzvBTgdFQcJ70DsIMiOZbtnixMdqrgszgDOpODdpBGd+OXYI323CLQHjQoUVuvaHMSyB8OhyBtuu14ieVc+cbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 617931480;
-	Thu, 21 Nov 2024 02:09:07 -0800 (PST)
-Received: from [10.57.92.130] (unknown [10.57.92.130])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 727303F6A8;
-	Thu, 21 Nov 2024 02:08:36 -0800 (PST)
-Message-ID: <b7636597-b72e-4bea-ab07-c6ad6caf2aac@arm.com>
-Date: Thu, 21 Nov 2024 10:08:35 +0000
+	s=arc-20240116; t=1732183882; c=relaxed/simple;
+	bh=S8XCUZdZIsQmCweh/Xof+QyHgkUG5L7UiamSVUGRZYM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XdsUwo+uwZ6qPDM9vyTtTpSqNmc+ikJ7oy5XJ0tTtkOTCAKQ0U4U10uGG8qr80dKLIj6lstqK8ZRRU6pYf6AU8DSxy2oBfwIDXW/GXKiJnw2Z4Ml4UYT9EpS9XN85K6H3KamK5KiHuc/zblTvH2vq8wJi6TnkialOCqQxqfSVds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/IcJIzm; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfcb7183deso3264108a12.0;
+        Thu, 21 Nov 2024 02:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732183879; x=1732788679; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=orZm2h7WMcvgWW0S6Q6soEEfio1OXIAtBvmEIOIWSRs=;
+        b=k/IcJIzm6Iuu99vjJdHLGdPxL1qSmIuhtjU/fI3WMNPpXZCMk1YF61hC625Flmc2B7
+         6BV2vO6iEF/7NmPT6OGYm38h6wSR2CtyvlQirFH+sW28tWO68pHjNs17Va6cbQloSvN7
+         lAjSxCYy5973MgtpXkHtyV4tgjbIqxsHcI6gcUym4GdXhsTbYr8iQseZRsSsI3RQC6rj
+         BB3+WLxSVmlTqTuk69q38xwmTI4a4JZAzroYt8mmilUscLxOekf8vDKNjDpGKD4L6hVv
+         MWXvIPFXJZ2PWDjRNsXhqapy9pRPW/NALvr9iKWc/ThUFo9FUOPgKUvD3opWtMqXYI2j
+         ijfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732183879; x=1732788679;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=orZm2h7WMcvgWW0S6Q6soEEfio1OXIAtBvmEIOIWSRs=;
+        b=BenIkVadqrZXrHg+e7xb+bhu6aMdkwyRuz326O41AK0AOnpq8n1mwgiTCeneFc6jMF
+         IUOTkRa0ejyXOlvYktqPottrP0UM1Rove5nTMZFF3W7RPJv0/L5cQk4GQK5VPqObC395
+         UF+EYbySxglYObSKm59/kR4Qd8xGZnwoZBuUTg64QJtiucyHJgKdPZfQp55ABha/b/O3
+         f5wD06eSastgctlrkosOh4OwoJ+dOILRlxpYF0wO9DomIrgubMtC75CsViGahL4gAnqV
+         oFGyzuHlwZCQyiF0f7hAklIjkZNp8t6PLRdlvgC/wS29phhvqk+Q57XGN5Gf3QOyWAjL
+         HXZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU09PMQ096X0L+3gNhnYQUJi8VgwM+34vdPZuGQ1JZq71xExK/Uct5NubwMHbEKN71CzFRYGwZSFww=@vger.kernel.org, AJvYcCVn018ExE7nAUWQ7pAPOp9aNoI3btrW6pMaKPYeyK/s3FXzcYFZfbHPYogz+U6L0kElwPnRnWYGqbzt5/y4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzMaSSJmruXujG8JxpoYEq5+Ejc4+2RRyKFnoKCz/lVch2PwRi
+	xiuCSzEkZWjYcVTTQZwRDXz0D0nlzCgHKXmUbg2EhxGlWFKpi2k7TjE6NLUagijsuuQrv2j76yT
+	LJXOB1fWALvK/EVNMnUxFzR9jrOU=
+X-Google-Smtp-Source: AGHT+IFo9Si2frH4eDj3XQI3Tzc2md+3KkMtVOhZp4DS+rJqFhD9bAjtxNSdW+oDIlSQJEvSuo3Mel4KJuzeuyxVF5U=
+X-Received: by 2002:a17:907:7208:b0:a9e:b5d0:4714 with SMTP id
+ a640c23a62f3a-aa4efd9b8a6mr243895866b.21.1732183878598; Thu, 21 Nov 2024
+ 02:11:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf/arm-cmn: Ensure port and device id bits are set
- properly
-To: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: Stephane Eranian <eranian@google.com>, LKML
- <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <20241121001334.331334-1-namhyung@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241121001334.331334-1-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241021062732.5592-1-kfting@nuvoton.com> <20241021062732.5592-4-kfting@nuvoton.com>
+ <fh43vyo4oviet35jmihew5yew5ez3nyaqgsyntqtd7x7s5mdrv@ezpal3a4banw>
+ <CACD3sJbzgnq1bKJXS59TA8MJE3o0N_bz_a9PTJdy5C0FdD8wRw@mail.gmail.com> <bad4bd66cuiva4foudw4iv3aqr4475coo3fll357bh4k5xxqpv@n4iqvh5odsjc>
+In-Reply-To: <bad4bd66cuiva4foudw4iv3aqr4475coo3fll357bh4k5xxqpv@n4iqvh5odsjc>
+From: Tali Perry <tali.perry1@gmail.com>
+Date: Thu, 21 Nov 2024 12:11:06 +0200
+Message-ID: <CAHb3i=uT+Zx8m4hAF1M2yjCn=a5sDBn2wJajWdCm79syuy97Ag@mail.gmail.com>
+Subject: Re: [PATCH v7 3/4] i2c: npcm: use i2c frequency table
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Tyrone Ting <warp5tw@gmail.com>, avifishman70@gmail.com, tmaimon77@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-11-21 12:13 am, Namhyung Kim wrote:
-> The portid_bits and deviceid_bits were set only for XP type nodes in
-> the arm_cmn_discover() and it confused other nodes to find XP nodes.
-> Copy the both bits from the XP nodes directly when it sets up a new
-> node.
+Hi Andi,
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+>
+> > > > -     /* 100KHz and below: */
+> > > > -     if (bus_freq_hz <= I2C_MAX_STANDARD_MODE_FREQ) {
+> > > > -             sclfrq = src_clk_khz / (bus_freq_khz * 4);
+> > > > -
+> > > > -             if (sclfrq < SCLFRQ_MIN || sclfrq > SCLFRQ_MAX)
+> > > > -                     return -EDOM;
+> > > > -
+> > > > -             if (src_clk_khz >= 40000)
+> > > > -                     hldt = 17;
+> > > > -             else if (src_clk_khz >= 12500)
+> > > > -                     hldt = 15;
+> > > > -             else
+> > > > -                     hldt = 7;
+> > > > -     }
+> > > > -
+> > > > -     /* 400KHz: */
+> > > > -     else if (bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ) {
+> > > > -             sclfrq = 0;
+> > > > +     switch (bus_freq_hz) {
+> > > > +     case I2C_MAX_STANDARD_MODE_FREQ:
+> > > > +             smb_timing = smb_timing_100khz;
+> > > > +             table_size = ARRAY_SIZE(smb_timing_100khz);
+> > > > +             break;
+> > > > +     case I2C_MAX_FAST_MODE_FREQ:
+> > > > +             smb_timing = smb_timing_400khz;
+> > > > +             table_size = ARRAY_SIZE(smb_timing_400khz);
+> > > >               fast_mode = I2CCTL3_400K_MODE;
+> > > > -
+> > > > -             if (src_clk_khz < 7500)
+> > > > -                     /* 400KHZ cannot be supported for core clock < 7.5MHz */
+> > > > -                     return -EDOM;
+> > > > -
+> > > > -             else if (src_clk_khz >= 50000) {
+> > > > -                     k1 = 80;
+> > > > -                     k2 = 48;
+> > > > -                     hldt = 12;
+> > > > -                     dbnct = 7;
+> > > > -             }
+> > > > -
+> > > > -             /* Master or Slave with frequency > 25MHz */
+> > > > -             else if (src_clk_khz > 25000) {
+> > > > -                     hldt = clk_coef(src_clk_khz, 300) + 7;
+> > > > -                     k1 = clk_coef(src_clk_khz, 1600);
+> > > > -                     k2 = clk_coef(src_clk_khz, 900);
+> > > > -             }
+> > > > -     }
+> > > > -
+> > > > -     /* 1MHz: */
+> > > > -     else if (bus_freq_hz <= I2C_MAX_FAST_MODE_PLUS_FREQ) {
+> > > > -             sclfrq = 0;
+> > > > +             break;
+> > > > +     case I2C_MAX_FAST_MODE_PLUS_FREQ:
+> > > > +             smb_timing = smb_timing_1000khz;
+> > > > +             table_size = ARRAY_SIZE(smb_timing_1000khz);
+> > > >               fast_mode = I2CCTL3_400K_MODE;
+> > > > -
+> > > > -             /* 1MHZ cannot be supported for core clock < 24 MHz */
+> > > > -             if (src_clk_khz < 24000)
+> > > > -                     return -EDOM;
+> > > > -
+> > > > -             k1 = clk_coef(src_clk_khz, 620);
+> > > > -             k2 = clk_coef(src_clk_khz, 380);
+> > > > -
+> > > > -             /* Core clk > 40 MHz */
+> > > > -             if (src_clk_khz > 40000) {
+> > > > -                     /*
+> > > > -                      * Set HLDT:
+> > > > -                      * SDA hold time:  (HLDT-7) * T(CLK) >= 120
+> > > > -                      * HLDT = 120/T(CLK) + 7 = 120 * FREQ(CLK) + 7
+> > > > -                      */
+> > > > -                     hldt = clk_coef(src_clk_khz, 120) + 7;
+> > > > -             } else {
+> > > > -                     hldt = 7;
+> > > > -                     dbnct = 2;
+> > > > -             }
+> > > > +             break;
+> > > > +     default:
+> > > > +             return -EINVAL;
+> > >
+> > > There is here a slight change of behaiour which is not mentioned
+> > > in the commit log. Before the user could set a bus_freq_hz which
+> > > had to be <= I2C_MAX_..._MODE_FREQ, while now it has to be
+> > > precisely that.
+> > >
+> > > Do we want to check what the user has set in the DTS?
+> >
+> > The driver checks the bus frequency the user sets in the DTS.
+>
+> yes, but before it was checking the value within a range, while
+> now it's checking the exact value.
+>
+> The difference is that now if you don't set the exact value you
+> get EINVAL, not before.
+>
+> Andi
 
-> Fixes: e79634b53e39 ("perf/arm-cmn: Refactor node ID handling. Again.")
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->   drivers/perf/arm-cmn.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-> index 49bd811c6fd6efdd..b20fa600e510c54f 100644
-> --- a/drivers/perf/arm-cmn.c
-> +++ b/drivers/perf/arm-cmn.c
-> @@ -2178,8 +2178,6 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
->   			continue;
->   
->   		xp = arm_cmn_node_to_xp(cmn, dn);
-> -		dn->portid_bits = xp->portid_bits;
-> -		dn->deviceid_bits = xp->deviceid_bits;
->   		dn->dtc = xp->dtc;
->   		dn->dtm = xp->dtm;
->   		if (cmn->multi_dtm)
-> @@ -2420,6 +2418,8 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
->   			}
->   
->   			arm_cmn_init_node_info(cmn, reg & CMN_CHILD_NODE_ADDR, dn);
-> +			dn->portid_bits = xp->portid_bits;
-> +			dn->deviceid_bits = xp->deviceid_bits;
->   
->   			switch (dn->type) {
->   			case CMN_TYPE_DTC:
-> 
-> base-commit: 43fb83c17ba2d63dfb798f0be7453ed55ca3f9c2
+Previously the driver was rounding numbers down.
+The driver has settings for 100, 400, 1000 KHz.
+but what happens if the user asks for 200KHz?
+Some of the coefficients were calculated according to the equations,
+and some were hard-coded values per setting.
+We don't want to support this mix.
+We prefer the users to ask for numbers that are one of the three
+supported values and block unknown input values.
 
+Thanks ,
+Tali
 
