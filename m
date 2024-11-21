@@ -1,204 +1,135 @@
-Return-Path: <linux-kernel+bounces-417331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E31539D52AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:42:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DFF9D52B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A8071F22A9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EA1F1F22583
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD561C4A0B;
-	Thu, 21 Nov 2024 18:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3D01C3F0E;
+	Thu, 21 Nov 2024 18:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCPgxIPG"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvCuZSEM"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A1A139597;
-	Thu, 21 Nov 2024 18:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBAB1428F3
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732214532; cv=none; b=JM9/AW9H6AZJnqYPMQPm02V+nw9AOUmqLhPODyJTFlBdiEBU/49i19dmmdALJVkI84v/c9ZURUmM1SQDxKiAWxdlwDDQzUVTbdy81rTXrx4vUOAaO9ozXI8GLR7HG42wVFg17dS3OcvJ982VpkJ9TOOBZJQvYXiTSuD2hAChY9Q=
+	t=1732214666; cv=none; b=s1voEukFrVYYgDw07uQmAZYz4O9+2U80fakvRcnZhAESLrGGP89ywiAN3bLB2dbRDEQegcX9PerWTviVOV6K2DkPougV8+Ac7OlJEsMEHowQhOR/LNoy+UnjsIjCTNAtTkXjvsyZdfh4WkB9ZzSKk4QIeSaAYQOZSEtYawIGziY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732214532; c=relaxed/simple;
-	bh=4ZOZYSGT9MiXACTC9i0gSBIs254zlFZ1yEDhRSCBbzw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=h5FOeDdT9t+Ga4Mxstq5Hspqby5omNwfzU1GoHACJCoMQNXo+g3f+D82tdi3uTBPHHZjeBKh305ffWld9dEDOEHh0Tdb6FCXOYknhjgBTBTilkioy7vDFNznlNAL2/BwHCKB2BAX8xJLO5Miht+Zm95+dtPVTaRugI4GKJRsHpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCPgxIPG; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b157c9ad12so77528385a.1;
-        Thu, 21 Nov 2024 10:42:11 -0800 (PST)
+	s=arc-20240116; t=1732214666; c=relaxed/simple;
+	bh=0iXEZP10lMiFvqi+1JJCxNY441IVtcYkv7fsyr5IQSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tI7rEZKpOGDqpY+9EO2AGS+Q/r12vKrz02zu+xPpK3wEOZBFDY70fofIJ38qX83Ob+VWNY9H/wy50H1IomohqML2pORHEl5R9oGpxpVV3EOd31eiD7FE8a91lkulFd19VWLzIomZvcSijTAPEBRgqo/yN2FBMnyaQxhD7Iucm00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvCuZSEM; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539d9fffea1so1156272e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:44:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732214530; x=1732819330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jmdOgbqBPUJl7sAppIUwjIKcePWDsMluXPvHfEsrgt8=;
-        b=bCPgxIPGElLhlD7gSotFb/IK9BPHIs8yBHgIfaf3QxOb7ZgT2DNs4MRU3WZi21EshR
-         pJKF9C8h/NuAt0/uE2KcL8JtdR27uV/CSIKEfmuzFoSiA8IgreHg+EsMh8hJhAGSbWZg
-         BPNL5Dcr9dyYk6f4A1JmKaFWD5ltTAIs4bloF6W0uYe/yvphdvsv7mEckH5WyHU7uzr7
-         NIA/79XUW8FP8QldDzvgZpPBeSIFlncrAXAqytFBm+cqPsZZgRd4E3WogvI3jecyILuO
-         EkR7ESc/YG/pVL2SorgjXWu4ChgW7ZzoNLXm5LIJDXVvGPtGSQ8kPMJ8fs+o1NSIRZf5
-         WlOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732214530; x=1732819330;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+        d=linaro.org; s=google; t=1732214663; x=1732819463; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=jmdOgbqBPUJl7sAppIUwjIKcePWDsMluXPvHfEsrgt8=;
-        b=Z5jkGqpU6iFqbrYLvxDN5IuqL5nhjZ4MlgoRh25p3oar+saOu6WCBhcpBljwpa1czl
-         vAvi9hK7ojDEELT7SAPYt/FNZVAbMu095K3ZgXAXd0OV/t9b0MvpZZEVfRPPydc7rLt8
-         X/ty2Uq8qYhjflSLiEuPweVPGM/HCKSkDBEfe+yJEZe4ngvGi4mTb0J/F0yNfT17TnC8
-         vOibI3wL06G9IhUY+tt1iv65Y+blWXkC1pbvKp1KU/PZljHj1bTPmyP4VlA6/1jT3QDo
-         30vF2KWF6YzAvYIItCpOeVPdZjIXJZJ5PVnfdZcok/kdKMTMtEbkpD8vV/x5BkZGrmyw
-         Kdmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8mJj75tlV5q1uHZRNIUEHunXV1JT93X5nxtkTccsSJpGeDYa+Rrlx4blxDxauMxcdODfChBZF5bnnv5qB@vger.kernel.org, AJvYcCVwN+8OZ7b4oh+ZPSIBHt5pOtenTFdAKitFuXuA7AOAL3Ap5AzQMcOeMawAD0cl/TuwFMw=@vger.kernel.org, AJvYcCWMlYa2Vdwmw3+Bf66ekuvW1KeX87bqaMZHBOEGDTZ0/qK+i5ERvsgnT/qC65wdJbfrUFTQmPgW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyf7oknn7erqvVMhej0qkB4mXqkta3jbU8KlzMPuj2kyRZQnGur
-	3NC1a4yvvKNPplQzGzxc+rnTMUnmhzAdTJK8CvSVmPnIZn4vQVRT
-X-Gm-Gg: ASbGncuSGqrYRwqMVeD+UFKzoH86tYHtIfEGTbnXWbpOF0WPJhdpYATExny2R+k9Ij7
-	ZYJGImeHvDBX8sjYb4/PqYm7n21e/UtePkw35YYv88hhrx6AHvW0c4tbW0wkz5BWHMQXWKIHAPi
-	jMrkfXd5js3d+OFggQNUbw5vmit04esRl/kneS42gY5oPfkPHr1fZ9svcjtukma++739NuiaZtE
-	rcC8MaZAEYCsEIXZGih6e0TUsXqrKkNMTUJQ28l0eZ8DeDlz23munlUIqm7Bvaryr2K5Hh+C4cu
-	VBp/RPKnAIuW9YqWkmZSGQ==
-X-Google-Smtp-Source: AGHT+IFofUQ3XTph+PXQDeyalPqr8Wf++DjeBHaM1eFHOLZvndMCNCiX5H/I12tKbgyZy4m8Ghrrkw==
-X-Received: by 2002:a05:620a:19a4:b0:7a9:b8dd:eb96 with SMTP id af79cd13be357-7b51455cce1mr9934085a.30.1732214530165;
-        Thu, 21 Nov 2024 10:42:10 -0800 (PST)
-Received: from localhost (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b51416aae7sm6088585a.115.2024.11.21.10.42.09
+        bh=TZyh5R6Jjbt7oN7KVsZQw9ZFXBRvyZ4Sk/f6o54iZsw=;
+        b=gvCuZSEMYZ9ionoELpCChVruD1ekPOwiLm8SwmoA3U7tXZc4H3T5isIRMvkDp5zQjx
+         pAXsW70fq+OW+b4glBXIRreI7bM4lf2tWv8a3GoFMgUaS4RxH2aFC3KIVXRWGPMS/Mmc
+         nQcWyf+4YfckdVN9P1t6KdCp0msGAmiywdEKT1psucrxPDN706R4DGGR7l8mdvJ2hiYJ
+         6a5wsjOrP+Qyn83+InSPWfdeDNd1WovU0okKGJ4dvCdnpEb4O9w3jsRrEDyvVElPzYAZ
+         hyG4rK2GKPACZnRZdMs/UgYKkLXL2eiYzn7ri3NWs9VW1rWnQhjuHK07wlBAydHLewCd
+         C0Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732214663; x=1732819463;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZyh5R6Jjbt7oN7KVsZQw9ZFXBRvyZ4Sk/f6o54iZsw=;
+        b=tX0JEFyWg8K6B8oskPGjGjmLzYcgQbj2tjVMlpRos2Kyk3kW745cM5l0WAJXdfHO02
+         II+ZokZjDXZ1jWWLn2LvHjue0lEWIvExZRaRtfeprh3WGmMsYBo6uuPDAz6P/bk5putf
+         fuWIY5E4HRSqIG0UGkoeJoDtIs9yngtUlP2OmTU02AD6W4Ww6FKIEN3kmj437HKghybv
+         2FcwPxXg8sfw1I8/YwcoZcIuBRahilcnIw5DQTtsmtck6k8Cs0sAi/2Ft70K0l/qXiMN
+         7cd9KF1wfkHJJ8BBm5CXz9mDhFyJhGXjK+l+NgDIZUvF1R6ysA/vCr9EZnjO3gkr027u
+         14wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVno+ucVBZyeMXLqirInDBIh2LrM4cUOUGpFHPhjsf1bw+jkKblrrsclXwd1CMw8+nld1bpqQUaDrjWaFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwpojCiiElDXUHnJlLsbZ8pEjVXOwWvWrG5uY5o0d0ffhuf85r
+	1hreCebpYgEfuN8OPJZfJ2e0KMUzH0nvYTHmd13AF5Jy8C/skAixMkLXOGGyttI=
+X-Gm-Gg: ASbGncsz5swQ2dY7/gwp0GnHPBN+qlrCquvKF22gvUcIJd0KM9v8UbPGuosm/a8mzWo
+	gRbpWVyRx6r1ltP/HhvRu2mlueTAUBBLJYIH0V7oA4b7Z+rozjWNl0MQ0PU8qzEpQcPwQlOL3+L
+	qFaX3eJW3+Iz8Hg3g1q40dDEzmD7hdoXgAY/rVf/Wttnoj3Z9GgQ76xzQpX6m9POE+6JdsegpYE
+	bqchCf0ullOkaGFPrrIQoOQrfeyMutTKtjki3mMNx9aG7RyvAytBX+09w4+bg2ypFiIbaQo+jWC
+	aiCvUypd+1n5hrpudn7Zngfuq1vxpQ==
+X-Google-Smtp-Source: AGHT+IG7nxOfbTTnTu4v1sr9zkOK5csQupd0P6YOCsdv1of5Sqk8kO39dWTULCj7D8rgDzFjdACzwA==
+X-Received: by 2002:ac2:430a:0:b0:539:adb0:b91 with SMTP id 2adb3069b0e04-53dc138a1ffmr3344284e87.57.1732214663097;
+        Thu, 21 Nov 2024 10:44:23 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2496a37sm43307e87.234.2024.11.21.10.44.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 10:42:09 -0800 (PST)
-Date: Thu, 21 Nov 2024 13:42:09 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, 
- =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>, 
- Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Stanislav Fomichev <sdf@fomichev.me>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- nex.sw.ncis.osdt.itp.upstreaming@intel.com, 
- bpf@vger.kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <673f7f013a3b0_d495a294be@willemb.c.googlers.com.notmuch>
-In-Reply-To: <55628623-220c-4512-acdc-0b3bd38685e1@intel.com>
-References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
- <20241115184301.16396cfe@kernel.org>
- <6738babc4165e_747ce29446@willemb.c.googlers.com.notmuch>
- <52650a34-f9f9-4769-8d16-01f549954ddf@intel.com>
- <673cab54db1c1_2a097e2948c@willemb.c.googlers.com.notmuch>
- <6af7f16f-2ce4-4584-a7dc-47116158d47a@intel.com>
- <673f55109d49_bb6d229431@willemb.c.googlers.com.notmuch>
- <55628623-220c-4512-acdc-0b3bd38685e1@intel.com>
-Subject: Re: [PATCH net-next v5 00/19] xdp: a fistful of generic changes
- (+libeth_xdp)
+        Thu, 21 Nov 2024 10:44:21 -0800 (PST)
+Date: Thu, 21 Nov 2024 20:44:19 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Akhil P Oommen <quic_akhilpo@quicinc.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] drm/msm: adreno: move features bits in a
+ separate variable
+Message-ID: <dtt6d427u5yep3i3b3zxxef7uh572aeu3vtatmjvpbqfpjbvjc@epkkr7oumncn>
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+ <20241119-topic-sm8x50-gpu-bw-vote-v2-3-4deb87be2498@linaro.org>
+ <fkezpguictntg2wkouwqipnaaiauo6vu46n7a2xzvlorzvyeaw@bbcpj3bs5eko>
+ <CAF6AEGs6zT_kaTXNohUaA7KWZxZTr4byaoMoLAceuyqA7S+2CQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGs6zT_kaTXNohUaA7KWZxZTr4byaoMoLAceuyqA7S+2CQ@mail.gmail.com>
 
-Alexander Lobakin wrote:
-> From: Willem De Bruijn <willemdebruijn.kernel@gmail.com>
-> Date: Thu, 21 Nov 2024 10:43:12 -0500
+On Wed, Nov 20, 2024 at 10:54:24AM -0800, Rob Clark wrote:
+> On Wed, Nov 20, 2024 at 3:18 AM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> >
+> > On Tue, Nov 19, 2024 at 06:56:38PM +0100, Neil Armstrong wrote:
+> > > Now the features defines have the right name, introduce a features
+> > > bitfield and move the features defines in it, fixing all code checking
+> > > for them.
+> > >
+> > > No functional changes intended.
+> >
+> > I think it might be better to squahs this patch into the previous one,
+> > it would simplify checking that we use .quirks for ADRENO_QUIRK_foo and
+> > .features for ADRENO_FEAT_bar.
+> >
 > 
-> > Alexander Lobakin wrote:
-> >> From: Willem De Bruijn <willemdebruijn.kernel@gmail.com>
-> >> Date: Tue, 19 Nov 2024 10:14:28 -0500
-> >>
-> >>> Alexander Lobakin wrote:
-> >>>> From: Willem De Bruijn <willemdebruijn.kernel@gmail.com>
-> >>>> Date: Sat, 16 Nov 2024 10:31:08 -0500
-> >>
-> >> [...]
-> >>
-> >>>> libeth_xdp depends on every patch from the series. I don't know why you
-> >>>> believe this might anyhow move faster. Almost the whole series got
-> >>>> reviewed relatively quickly, except drivers/intel folder which people
-> >>>> often tend to avoid.
-> >>>
-> >>> Smaller focused series might have been merged already.
-> >>
-> >> Half of this series merged wouldn't change that the whole set wouldn't
-> >> fit into one window (which is what you want). Half of this series merged
-> >> wouldn't allow sending idpf XDP parts.
-> > 
-> > I meant that smaller series are easier to facilitate feedback and
-> > iterate on quickly. So multiple focused series can make the same
-> > window.
-> 
-> You get reviews on more patches with bigger series. I'm not saying 19 is
-> fine, but I don't see any way how this series split into two could get
-> reviewed and accepted in full if the whole series didn't do that.
-> And please don't say that the delays between different revisions were
-> too long. I don't remember Mina sending devmem every single day. I
-> already hit the top negative review:series ratio score this window while
-> I was reviewing stuff when I had time.
-> Chapter II also got delayed a bit due to that most of the maintainers
-> were on vacations and I was helping with the reviews back then as well.
-> It's not only about code when it comes to upstream, it's not just you
-> and me being here.
-> 
-> [...]
-> 
-> >> I clearly remember Kuba's position that he wants good quality of
-> >> networking core and driver code. I'm pretty sure every netdev maintainer
-> >> has the same position. Again, feel free to argue with them, saying they
-> >> must take whatever trash is sent to LKML because customer X wants it
-> >> backported to his custom kernel Y ASAP.
-> > 
-> > Not asking for massive changes, just suggesting a different patch
-> > order. That does not affect code quality.
-> > 
-> > The core feature set does not depend on loop unrolling, constification,
-> 
-> I need to remind once again that you have mail from me somewhere
-> describing every patch in detail and why it's needed?
-> When we agreed with Kuba to drop stats off the Chapter II, it took me a
-> while to resolve all the dependencies, but you keep saying that wasting
-> time on downgrading code is better and faster than upstreaming what was
-> already done and works good.
-> 
-> > removal of xdp_frame::mem.id, etcetera. These can probably be reviewed
-> 
-> You see already that I even receive additional requests (Amit).
-> Sometimes generic (and not only) changes cause chain reaction and you
-> can't say to people "let me handle this later", because there's once
-> again no "later" here.
-> idpf still has 3 big lists of todos/followups to be done since it was
-> upstreamed and I haven't seen any activity here (not my team
-> responsibility), so I don't believe in "laters".
-> 
-> > and merged more quickly independent from this driver change, even.
-> > 
-> > Within IDPF, same for for per queue(set) link up/down and chunked
-> > virtchannel messages. A deeper analysis can probably carve out
-> > other changes not critical to landing XDP/XSK (sw marker removal).
-> 
-> You also said once that XDP Rx Hints can be implemented in 3 lines,
-> while it took couple hundred and several revisions for Larysa to
-> implement it in ice.
-> 
-> Just BTW, even if Chapter 3 + 4 + 5 is taken literally today, XDP
-> doesn't work on C0 board revisions at all because the FW is broken and I
-> also doesn't have any activity in fixing this for half a year already.
+> IMHO better to keep this separated
 
-I am not aware of this restriction. Definitely have been running
-variants of your github version on various boards. Let's discuss
-offline.
+If they are separated, it is easy to overlook presense of a statement
+checking .quirks against ADRENO_FEAT_bar.
+
+> 
+> But we don't have _that_ many features/quirks so I don't find
+> combining them all that problematic
+> 
+
+-- 
+With best wishes
+Dmitry
 
