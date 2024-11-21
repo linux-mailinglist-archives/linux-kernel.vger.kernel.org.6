@@ -1,125 +1,185 @@
-Return-Path: <linux-kernel+bounces-417362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B839D52FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:58:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD259D52E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:55:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04048282245
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8BFD1F2148F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C001DFD9D;
-	Thu, 21 Nov 2024 18:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF9A1DE3BD;
+	Thu, 21 Nov 2024 18:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZmRG4+Du"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X4vKXci1"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729A91DF742
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE781D0DF7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215212; cv=none; b=VugVkMIZesad2Zr/arCU6Nxu5UhsUuxTgN7qCH2fCs6Y5KTLIspnhwhpTywcZ0A0djbBBBPrXRj9y4M14+nlmJfZIBUhrCphWzkKiy8BbM1iZ/Js+TuLTBhUU424WTM53RD2YJFNU/INrQJ2BHQASjFic4Fkps1tyZwIhi20by0=
+	t=1732215185; cv=none; b=VEREvh14LZR/DI6nocPLIuWG/cToxE26flWfRxklvYarEK0pHsSgj8I7HJN4F/O/dKGcukRFH9xyMGMQXPZtPbdI5W8GWSc+ivgucRvP3yAR+RKzcjacC0lwEFIXO03m6RGqv4gvZ290tqUdGKmiVJ2mB/81pRzD2M8eLaeQWP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215212; c=relaxed/simple;
-	bh=HIwgyq0n9Pc6IQ1JW0mNNbc4Q1w8gUiM8GLpxz3MNio=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uqauNA4MCwbNdLmVqrtCgaKxeeeR7MykYsrIUoitJe+1Ke79IvlkZhjl79S6tEQ1mWlV3DTkP3GCj8IVE/k86dLTNRZLCdWCbI+B90poRI8mVzewmvOw/obvA5/ysQKDoP2SCEzkAIhKLJW8X9blT2vihZYiUwVItWMXLJhXnBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZmRG4+Du; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea8794f354so21237667b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:30 -0800 (PST)
+	s=arc-20240116; t=1732215185; c=relaxed/simple;
+	bh=x3cGfoVEihpQ6iJ8upGK+iS4YmQ7ELMjL/MQmp9LIhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFFcR5MDCYyv7srIlhUBn2P3LDBuumqraUKQdVpWUrhjC48UvrmocRRJtLR9p+drrABDAKL6T0cNfhJu23DPtsz4k5w6DxRuTW5gEYBRjplAPbwC5EBOaB9t3BNjRb0KBguBS7Ncj9h3wa3VtvKnh4YQZAP0iWooinKtPRhphOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X4vKXci1; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-720d5ada03cso1286729b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732215209; x=1732820009; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=179m8kOvQfRqP37wmtAhsMQnswgm0gukoWaPbObarIY=;
-        b=ZmRG4+DuMWNCDnDdrGbuILOaPLCIfuysnoc2coDwQ9tvZBu971oWt8QGQk/v0ZG8SB
-         lh5yW9bVqyx41EYwpRhDt36BkHYVPtwoBFU9mOdt9BI4okKYZTl0Y60nUhZiUkXKkGnc
-         93ejV7dIWXIb3QafDV6dDwcIWoxGsGmwlBmk9vUh3e2EZ6aRHGpO823QSDtTPjf1VWTp
-         4K7z+Gd2pl7/RRaZ/yK1kZVyAxuPbfBXYG55UrptpxAvdQNMc1mU7XR3ZDQL1lPPiRtY
-         hYJwGYmF0PTApfT5w1xPuVXyEkO1p2x06sKtUegp7cX4vLjMdy0J7luuiyXrV9yV8mXw
-         aBtw==
+        d=chromium.org; s=google; t=1732215183; x=1732819983; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p5Qth7Y59EGcplMI8RH/OJ6a3yjWKA2zdogBK7G3SxU=;
+        b=X4vKXci1kd9Ik7G1suw+1Oo6ENBq9Bsxi++oKGuhlO3nxcxYWaC6HrcC/F/jQlrYVi
+         d7IMEDreejwK07J7Zp6Fp8AmOP1OK67GgRfaybeS5ullbfbSihGG6X+rRoXzzQraqd4f
+         lFcIYhtjWDBkr5JNLs0gvsUF3494wCLp9F24M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215209; x=1732820009;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=179m8kOvQfRqP37wmtAhsMQnswgm0gukoWaPbObarIY=;
-        b=lOe8WyP3KRFP4Q58xKJWK54WumtPW6/H9Wsfhqs3HRkfr6M6witc861D0y6/AsSxLI
-         IEDxB5u7kW8KiGmVJFVlOiXWZqzJ9f+XsPUdbHtEitMPhN3p1QUTZLfXpHOxOdmA75x9
-         0BQOrg9TpwO2spsXApmZ5vrGoRDwfXfLJh53wOG6BQp1fAwUdiwTP8rZF0/WCBJ6rag9
-         HEGp1KLImjCzzEmuW4V4y1FXeNBQ9+XzF6mQgS7tkeyph1i29YlCQDgbBsN7+mAQ2dLY
-         7PLias/9vbSn2vNNjUD9P61CU1d7rBkeqhP1VLi56VqDiH5zmdZzJFSGVPa70JLWpncL
-         Ov4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWeAZVk/UZUm/VvMDmPZwO+SF/T7ne4/U9Uaaec5IF1OqpzLovMvn3a+SW1dEAWAiFvfE1cOS5Bi4Co67w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0j9SiZNCph67ziTtFZBC0u2vCWIPmTrYHmsKkcKCJLSCn++va
-	50M3pwk9tqPrSJ416HlNO977UTPiChRosSpdMMKnTq51YXlzRUsvsADnaBw4ET+izX4k+sH55Ra
-	tJqMNUw==
-X-Google-Smtp-Source: AGHT+IHDdAZrVVVtQkbNY+ODhRentmxWbP6Rfzn5FkbIRQBeRGy86k9mMoUCty77jPdE55ldMhNkDkbK1cVV
-X-Received: from mizhang-super.c.googlers.com ([35.247.89.60]) (user=mizhang
- job=sendgmr) by 2002:a05:690c:4b07:b0:663:ddc1:eab8 with SMTP id
- 00721157ae682-6eee0a26d5emr29857b3.4.1732215209587; Thu, 21 Nov 2024 10:53:29
- -0800 (PST)
-Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Thu, 21 Nov 2024 18:52:59 +0000
-In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
+        d=1e100.net; s=20230601; t=1732215183; x=1732819983;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p5Qth7Y59EGcplMI8RH/OJ6a3yjWKA2zdogBK7G3SxU=;
+        b=MpYSDH+b0/b4IpW1sa7o3CylBZJpU4BRZrqpuLsubXF9cNyozOP4JIdtgi8u2QY816
+         6ISp/GhSNm1NzwvsV5vQ2qcAQ0XqY09FRvwO+e/BAyCm43LfW9/9YIIPeLRXlc95u74E
+         VDa4qhcv84iwLrPkQ+m9/5lnBrEvKAQ8gVshshwlzmpB/z0tBjaX9SCVkEuLeNyRdSNf
+         /gA/0EUc7BvxnqsFPlLCMxc3CdOsLfNgi1SZPZJnwmhgMCx9iKl4iEO4gcinkxcIjRtc
+         8RDmvqnV//RBVNqr+7qtj3dH0Mo+vtkobpinEwLhBpJYWH9hBtX7JcyL/2KPH+sZZHMH
+         lMkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRnGu3koncBX9Dql9nFWnLX/I+M3eMAwh/9nWKB39kGLnpK1XQg//J1VvPs7myxIa18OBFtj91lKiEtqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfEJj2DY9A5HmcGQ2vNzd9GSbsVcdwQfWsgH1ookHPGO2MuO2w
+	bZVS2Y5fEBupD3UBZXe7zrAkb3suuI5d3FoUxRnNaQRsj1yM3zmFHKERwokdwg==
+X-Gm-Gg: ASbGnctuPjvUcvtdsKvFbMGnR9a3bNvqvcXY3VOCcSr0pU3l9aUzCQzuWYwK1ExhEfe
+	zkveNqDkg6C5kvjDz7dXKkZUI7UuK+lovAzgU3MBpYVaNq5BOsAJAzMCajI0qT5ryV1s2FuytLZ
+	e9PiMNjxKjG/VQwyGvFaa+NQz5ivvqiKfS/vLs5k/kXQWIPqPEo1ZU2H70lOMa6u+4b5xIoNnpN
+	ExkGHLQAdW0oYMY5d6wME/O22EdErjeRIzQM2ufQEZKoS/sZ43tkBdM+VzEpsIGoG/cwBf4tcl2
+	WU/y4t+4AdiD
+X-Google-Smtp-Source: AGHT+IEnHqovNtzlCmc+PDaMnUFqqZzrIPq8HhFFCMkNi3Dndp8nmsfdHbOYSzctEa5FweZZz0sEwg==
+X-Received: by 2002:a05:6a00:1a87:b0:71e:8023:c718 with SMTP id d2e1a72fcca58-724df5d0d90mr122658b3a.8.1732215183145;
+        Thu, 21 Nov 2024 10:53:03 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:6485:23c4:db3b:3c93])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-724dea69e96sm62889b3a.73.2024.11.21.10.53.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 10:53:02 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:53:00 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	lukas@wunner.de, mika.westerberg@linux.intel.com,
+	Hsin-Yi Wang <hsinyi@chromium.org>
+Subject: Re: [PATCH v5 4/4] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <Zz-BjF3rZRyfv0Mg@google.com>
+References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
+ <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241121185315.3416855-1-mizhang@google.com>
-X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241121185315.3416855-8-mizhang@google.com>
-Subject: [RFC PATCH 07/22] KVM: nSVM: Nested #VMEXIT may transition from
- HALTED to RUNNABLE
-From: Mingwei Zhang <mizhang@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <lenb@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802-pci-bridge-d3-v5-4-2426dd9e8e27@linaro.org>
 
-From: Jim Mattson <jmattson@google.com>
+Hi Manivannan,
 
-When a halted vCPU is awakened by a nested event, it might have been
-the target of a previous KVM_HC_KICK_CPU hypercall, in which case
-pv_unhalted would be set. This flag should be cleared before the next
-HLT instruction, as kvm_vcpu_has_events() would otherwise return true
-and prevent the vCPU from entering the halt state.
+Dredging up an old one, but it seems like there was almost consensus on
+this patch, and yet it stalled because the series does too much. I'm
+interested in reviving it, but I also have some thoughts on the
+usability.
 
-Use kvm_vcpu_make_runnable() to ensure consistent handling of the
-HALTED to RUNNABLE state transition.
+On Fri, Aug 02, 2024 at 11:25:03AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> Unlike ACPI based platforms, there are no known issues with D3Hot for the
+> PCI bridges in the Devicetree based platforms. So let's allow the PCI
+> bridges to go to D3Hot during runtime. It should be noted that the bridges
+> need to be defined in Devicetree for this to work.
 
-Fixes: 38c0b192bd6d ("KVM: SVM: leave halted state on vmexit")
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
- arch/x86/kvm/svm/nested.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+IMO, it's not an amazing idea to key off the presence of a bridge DT
+node for this. AFAIK, that's not really required for most other things
+(especially if we're not mapping legacy INTx support), and many
+platforms I work with do not define a bridge node. But they do use DT,
+and I'd like to be able to suspend their bridges.
 
-diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-index cf84103ce38b9..49e6cdfeac4da 100644
---- a/arch/x86/kvm/svm/nested.c
-+++ b/arch/x86/kvm/svm/nested.c
-@@ -994,7 +994,7 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
- 	kvm_clear_request(KVM_REQ_GET_NESTED_STATE_PAGES, vcpu);
- 
- 	/* in case we halted in L2 */
--	svm->vcpu.arch.mp_state = KVM_MP_STATE_RUNNABLE;
-+	kvm_vcpu_make_runnable(vcpu);
- 
- 	/* Give the current vmcb to the guest */
- 
--- 
-2.47.0.371.ga323438b13-goog
+Personally, I'd choose to match the same requirements as used by
+devm_pci_alloc_host_bridge() -> devm_of_pci_bridge_init() -- that the
+parent device under which the host bridge is created has an of_node.
+Code sample below.
 
+> Currently, D3Cold is not allowed since Vcc supply which is required for
+> transitioning the device to D3Cold is not exposed on all Devicetree based
+> platforms.
+> 
+> Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/pci.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index c7a4f961ec28..bc1e1ca673f1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2992,6 +2992,18 @@ static bool pci_bridge_d3_allowed(struct pci_dev *bridge, pci_power_t state)
+>  		if (pci_bridge_d3_force)
+>  			return true;
+>  
+> +		/*
+> +		 * Allow D3Hot for all Devicetree based platforms having a
+> +		 * separate node for the bridge. We don't allow D3Cold for now
+> +		 * since not all platforms are exposing the Vcc supply in
+> +		 * Devicetree which is required for transitioning the bridge to
+> +		 * D3Cold.
+> +		 *
+> +		 * NOTE: The bridge is expected to be defined in Devicetree.
+> +		 */
+> +		if (state == PCI_D3hot && dev_of_node(&bridge->dev))
+> +			return true;
+> +
+
+For me, a way to lighten the bridge-node restriction is:
+
+	struct pci_host_bridge *host_bridge;
+
+	...
+		/*
+		 * Allow D3 for all Device Tree based systems. We check
+		 * if our host bridge's parent has a Device Tree node.
+		 * None of the D3 restrictions that applied to old BIOS
+		 * systems are known to apply to DT systems.
+		 */
+		host_bridge = pci_find_host_bridge(bridge->bus);
+		if (dev_of_node(host_bridge->dev.parent))
+			return true;
+
+Brian
+
+>  		/* Even the oldest 2010 Thunderbolt controller supports D3. */
+>  		if (bridge->is_thunderbolt)
+>  			return true;
+> @@ -3042,7 +3054,7 @@ bool pci_bridge_d3cold_allowed(struct pci_dev *bridge)
+>   *
+>   * This function checks if the bridge is allowed to move to D3Hot.
+>   * Currently we only allow D3Hot for recent enough PCIe ports on ACPI based
+> - * platforms and Thunderbolt.
+> + * platforms, Thunderbolt and Devicetree based platforms.
+>   */
+>  bool pci_bridge_d3hot_allowed(struct pci_dev *bridge)
+>  {
+> 
+> -- 
+> 2.25.1
+> 
+> 
 
