@@ -1,174 +1,131 @@
-Return-Path: <linux-kernel+bounces-417140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3AF9D4F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:11:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598EA9D4F86
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A929283E72
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C15B2544B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7B1DBB0C;
-	Thu, 21 Nov 2024 15:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGyevH2X"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1041D1DBB36;
+	Thu, 21 Nov 2024 15:12:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCD91D90DB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C901D86CB
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201907; cv=none; b=Su1pH1BOf1NQm0BRHlH3TN2WAkZfvgXn7uG/QSFG2QD1haLrCjxtQfempJpJuQ1tFVg3tQLsUBe7ZiBvnlacMvAPoaDX5ll8Vdh4+WesDIwggbSCs9ho6DVKSb5p3lpU0k7Us94nZU2ezrK5kdgaH2U9yhnoCA4j9oaE0nVyuu8=
+	t=1732201977; cv=none; b=fFt84gJ2unGXEG9ocSWQbjh/UAclnRXFqSSJMFpX3Ra4nM5RX2yB/QIIl8YHfbdoiMZR3H1JexG1h5WO3waO28ByG4h+8tKIvGgpWZA82ZeNv/eel6RvJccgFZbCPiJB8i1Azy1uwWYezzUtvZ+zOqAjwy0aNrJd68o32eWbo0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201907; c=relaxed/simple;
-	bh=CdOIvr7HSZq5NjuQtJdpoEDTI6rFxBrvraKUALHoG8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kDpSVrlG22DhUZgcbZGwyCNujONfl6cuxRn7+YXxHJblx4RyitnurGf6zmAtBF/TiJjZUnyro8wMEoXuUnM4xHIWCzyaRoqCUeIiWzHGYMCqlw87dAsKTkX99uLYd7kgZpCCoimou16iE8oYEDIzxqh4sfzBK3dSfQfzoUJbKLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGyevH2X; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732201904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AAU5tspYcdCNEP7up2zgoXRaM3KJXFMONMxQMY8ZH2k=;
-	b=iGyevH2Xu8rpsVXOpdZxtJz4wlY2KsLkn+Q/TKRwz6RGIYy0EuljAuRwrsGCvTf1jl02o/
-	vuGgFMtqKWq+9sAuIFPn1sI3i14t7oqK6ioy5/GyG90EcxuBCT/bdJGo5cjn6+fvXnhijJ
-	KLSDyZR3KfC6Elw9HXnsgJ5AHpAPhEI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-JYyy3iZsMlmkA76rTkVtaQ-1; Thu,
- 21 Nov 2024 10:11:39 -0500
-X-MC-Unique: JYyy3iZsMlmkA76rTkVtaQ-1
-X-Mimecast-MFC-AGG-ID: JYyy3iZsMlmkA76rTkVtaQ
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	s=arc-20240116; t=1732201977; c=relaxed/simple;
+	bh=qSwaYSmr7cHiebiREuYIFlM8lNP5yhjdd8P/egjnf/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SfyTihwoKEHJV8k1i8h+9kcSR8sbnoZND1d6g+Lrbths9USLXJyOhvOBJTXzIf/al24VLpQ3kH/Z+vOkuJHxkThVYl2mz7EuRbqmEn/vJPzdkuNeom08XMRf+guI0OK4I/ILLrz/ivrV843Q9McOIwN+VmPCNiihhMVf21D32Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tE8rC-00062z-SP; Thu, 21 Nov 2024 16:12:34 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tE8rB-001vQb-1K;
+	Thu, 21 Nov 2024 16:12:33 +0100
+Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6C8C819560AF;
-	Thu, 21 Nov 2024 15:11:37 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.74.7])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D97711955E99;
-	Thu, 21 Nov 2024 15:11:35 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 2/2] nfs/blocklayout: Limit repeat device registration on
- failure
-Date: Thu, 21 Nov 2024 10:11:33 -0500
-Message-ID: <B0CDB911-D9F2-4513-A4A0-403508BF4E0A@redhat.com>
-In-Reply-To: <Zz3+rNnvxE2TRT0v@tissot.1015granger.net>
-References: <cover.1732111502.git.bcodding@redhat.com>
- <d156fbaf743d5ec2de50a894170f3d9c7b7a146c.1732111502.git.bcodding@redhat.com>
- <Zz3+rNnvxE2TRT0v@tissot.1015granger.net>
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 0DEFC378B3C;
+	Thu, 21 Nov 2024 15:12:33 +0000 (UTC)
+Date: Thu, 21 Nov 2024 16:12:32 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Nicolai Buchwitz <nb@tipi-net.de>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, n.buchwitz@kunbus.com, l.sanfilippo@kunbus.com, 
+	p.rosenberger@kunbus.com, stable@vger.kernel.org, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: dev: can_set_termination(): Allow gpio sleep
+Message-ID: <20241121-augmented-aquamarine-cuckoo-017f53-mkl@pengutronix.de>
+References: <20241121150209.125772-1-nb@tipi-net.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ejqsmakmfeudclee"
+Content-Disposition: inline
+In-Reply-To: <20241121150209.125772-1-nb@tipi-net.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 20 Nov 2024, at 10:22, Chuck Lever wrote:
 
-> On Wed, Nov 20, 2024 at 09:09:35AM -0500, Benjamin Coddington wrote:
->> If we're unable to register a SCSI device, ensure we mark the device as
->> unavailable so that it will timeout and be re-added via GETDEVINFO.  This
->> avoids repeated doomed attempts to register a device in the IO path.
->>
->> Add some clarifying comments as well.
->>
->> Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
->> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> ---
->>  fs/nfs/blocklayout/blocklayout.c | 12 +++++++++++-
->>  1 file changed, 11 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
->> index 0becdec12970..b36bc2f4f7e2 100644
->> --- a/fs/nfs/blocklayout/blocklayout.c
->> +++ b/fs/nfs/blocklayout/blocklayout.c
->> @@ -571,19 +571,29 @@ bl_find_get_deviceid(struct nfs_server *server,
->>  	if (!node)
->>  		return ERR_PTR(-ENODEV);
->>
->> +	/*
->> +	 * Devices that are marked unavailable are left in the cache with a
->> +	 * timeout to avoid sending GETDEVINFO after every LAYOUTGET, or
->> +	 * constantly attempting to register the device.  Once marked as
->> +	 * unavailable they must be deleted and never reused.
->> +	 */
->>  	if (test_bit(NFS_DEVICEID_UNAVAILABLE, &node->flags)) {
->>  		unsigned long end = jiffies;
->>  		unsigned long start = end - PNFS_DEVICE_RETRY_TIMEOUT;
->>
->>  		if (!time_in_range(node->timestamp_unavailable, start, end)) {
->> +			/* Force a new GETDEVINFO for this LAYOUT */
->
-> Or perhaps: "Uncork subsequent GETDEVINFO operations for this device"
-> <shrug>
+--ejqsmakmfeudclee
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] can: dev: can_set_termination(): Allow gpio sleep
+MIME-Version: 1.0
 
-Sure, ok!
+Hello Nicolai,
 
->>  			nfs4_delete_deviceid(node->ld, node->nfs_client, id);
->>  			goto retry;
->>  		}
->>  		goto out_put;
->>  	}
->>
->> -	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node)))
->> +	/* If we cannot register, treat this device as transient */
->
-> How about "Make a negative cache entry for this device"
+thanks for your contribution!
 
-Hmm - that's closer to the dentry language rather than how we refer to
-temporary error cases in device land.  For me the "transient" has some
-hopeful meaning as in we expect this might work in the future - but I'm ok
-changing this comment.  There will be some NFS clients that might try to do
-pNFS SCSI but will never actually have the devices locally, and so that's
-not a "transient" situation.  This can only fixed today with export policy.
+On 21.11.2024 16:02:09, Nicolai Buchwitz wrote:
+> The current implementation of can_set_termination() sets the GPIO in a
+> context which cannot sleep. This is an issue if the GPIO controller can
+> sleep (e.g. since the concerning GPIO expander is connected via SPI or
+> I2C). Thus, if the termination resistor is set (eg. with ip link),
+> a warning splat will be issued in the kernel log.
+>=20
+> Fix this by setting the termination resistor with
+> gpiod_set_value_cansleep() which instead of gpiod_set_value() allows it to
+> sleep.
+>=20
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Nicolai Buchwitz <nb@tipi-net.de>
 
->
->> +	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node))) {
->> +		nfs4_mark_deviceid_unavailable(node);
->>  		goto out_put;
->> +	}
->>
->>  	return node;
->>
->> -- 
->> 2.47.0
->>
->
-> It took me a bit to understand what this patch does. It is like
-> setting up a negative dentry so the local device cache absorbs
-> bursts of checks for the device. OK.
+I've send the same patch a few hours ago:
 
-Yes, its like the layout error handling, but for devices.
+https://lore.kernel.org/all/20241121-dev-fix-can_set_termination-v1-1-41fa6=
+e29216d@pengutronix.de/
 
-Its not obvious at this layer, but every IO wants to do LAYOUTGET, then
-figure out which device GETDEVINFO, then here we need to prep the device
-with a reservation.  Its a lot of slow work that makes a mess of IO
-latencies if one of the later steps is going to fail for awhile.
+Marc
 
-> Just an observation: Negative caching has some consequences too.
-> For instance, there will now be a period where, if the device
-> happens to become available, the layout is still unusable. I wonder
-> if that's going to have some undesirable operational effects.
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-It sure does, but I don't think there's a simple way to get notified that a
-SCSI device has re-appeared or has started supporting persistent
-reservations.
+--ejqsmakmfeudclee
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ben
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc/Td0ACgkQKDiiPnot
+vG/Pqwf/dWE69GxFrUHSylwyxBpOXWmTEdBhFLEjuDY5BFBD6JraWk8T7MWVERT3
+t97Fw7BhZc+gRuedteyDFIChRWFCL0nqan6mf111dFzqP4Vx+a4gj3cF72buEwuw
+vcsAM+aHEEubMro3czQhps58CZnrauP8kYX0RuL4q59JeMBw652TkBOe8GGMlghf
+ML3C6xPibVoQiOigKlflr2bGbvoW37S8VnmZZdw+hnkm278kXpLJiTEyhjLvx0L7
+w0IL1b+oGgohm1s7BJ+qtCipHh93DAR/wdpVbcGKp+5jwoFAGDXyk3zoSdiaAbVp
+rsfWbXdY4iHjHTYw7mE8JDT7d9hljQ==
+=P0BZ
+-----END PGP SIGNATURE-----
+
+--ejqsmakmfeudclee--
 
