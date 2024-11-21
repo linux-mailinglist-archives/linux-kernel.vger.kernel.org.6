@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-416651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2621D9D4843
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:42:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00DA9D4845
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF36E1F223E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:42:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB6C4282FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FEE1C4A24;
-	Thu, 21 Nov 2024 07:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7731A1ACDE3;
+	Thu, 21 Nov 2024 07:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J9xOyJeV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmEGSK/h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2EA4317E;
-	Thu, 21 Nov 2024 07:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC07B4317E;
+	Thu, 21 Nov 2024 07:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732174923; cv=none; b=l4bkys2QoT4Q3XckiwpjlAoHVIxzF4WEIsGsmY5ws++i6ythFEPRCEg+z7iMFvBEJTBVa77OVFTp911Jp7oXyahrr5bTS029Wfy90QVU9Nb8d1/5x5YNSVmnwLztk7Pav0VwA2AUxHU3ADZree/1KBhYMQgpFRhVoD9PnhuxEd0=
+	t=1732174994; cv=none; b=RJ/AUbx3r0q5rgl85jFIe0zgXija8jYmv7qrQhDnceVoRi8qpclOptIvuNGNti7lrpLi73TJoXKEwW8LXiIaw9WmTd0xZbQ35HCY80gKODfAn2SA2hbV37wZ2V5kyDRWVFlZ6fvFCcFScw8xfa+jqkSgl0CL+iAsyY7mmFLyDDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732174923; c=relaxed/simple;
-	bh=GM6k3W0TB0s+geDrt+JmszN/+Ajtk5eChMYhgg6SVvU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LhY9pWg5yiTnLs+m+hQ94O4Wa4lxzg2Aw8jU+7ctqqfOaEd45/pg4u6DSeRY32qotnbFY0i1qeE/tHmqto7X5YVTBUZY5Tm3jCoivk7NPwIDSMYrIbMCTd9oRIjyma7wlPI5NJ2MAXa4cSzrCvaXP2rgfiALcq0kkO0hdlYNJsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J9xOyJeV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C55FC4CECC;
-	Thu, 21 Nov 2024 07:41:55 +0000 (UTC)
+	s=arc-20240116; t=1732174994; c=relaxed/simple;
+	bh=8WWv8hqbcwFsRl0qJ5guotpkGwn+bgSJl5fS88q+Rr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eJRnPdW+v5n9Q9Wso4I7ddipPZwhroBpjow7Yd6AK1vIfzgOoGbadgezAjQUrRu1K38KllPgY24uQ3ZyGA+/cMIgccQUaexClVe2HRuW6orddbyWjGvrC5mIj3LSWUBqhrz8EHcx7Vd4WoumW/eQ7liuL/dWY+WX9AUACYqbQzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmEGSK/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5C7EC4CECC;
+	Thu, 21 Nov 2024 07:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732174922;
-	bh=GM6k3W0TB0s+geDrt+JmszN/+Ajtk5eChMYhgg6SVvU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=J9xOyJeVnaN3rAekvvHnmXhQEMvqXHvaNwxaEP8hZobYWrHrvjcw2gXvlkkZqJIIy
-	 7F9+3H4HZSccdv/YAz02chUDHJ8dJljvvJMrHgn8UkUMPj2ObhSwvHHWJeC255dJyc
-	 Nbw+sWVrEXLPi51Z5ic8rrOse9UO+MSEChaF2loeyWorgbLJXJ21s3NNO+Hzd0hdah
-	 qB5UpZUU4gXOH7pAcyu+Q2sqZrN464iTHe0k2mmIZaINIoFvR2UqFtT/0b5yOTAMh3
-	 OIkQe8tKOnKZZrLEuaekgGC51W3BG/fKxG46DdDSuxV0Ekx1roasJyqwx3KYNwpAFF
-	 nYwI9iX1O1yKg==
-Message-ID: <f5b40d0c-defc-4b91-9313-9e454af22fb8@kernel.org>
-Date: Thu, 21 Nov 2024 08:41:53 +0100
+	s=k20201202; t=1732174993;
+	bh=8WWv8hqbcwFsRl0qJ5guotpkGwn+bgSJl5fS88q+Rr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qmEGSK/h68JLhToSPtYLe4V3cYiyfaABpT2HxiXkwbZke5lSakA8VK/s/IL6fim1r
+	 qz+QFZA4ZqIC09B1553Z8noSobUi4YpLi5aWESjmn3io07n6TR0OS7G8stjDk3d+OU
+	 ZqFndw3yzbN0BqviPryvUYIhWcIq1ALME6AJAX4g68DKt0ZxkRBbNoOmTFpsfMbFx7
+	 0qwMJehaL/+czfExAw0FioZjtezdq4UT+ZT0YKfXP612xLhhsjv0M7DpCKQk21P5bi
+	 BO+WyxX+VDuDzZmcnete348zKGHeL22wvu+cbkeOY/k15N9qzeP2LaafzpHGsvMgK0
+	 D8+IGmHmtm3zw==
+Message-ID: <48f0b74f-561b-4a5b-8311-e2cfddb92e3b@kernel.org>
+Date: Thu, 21 Nov 2024 08:43:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs615: add UFS node
+Subject: Re: [PATCH 3/3] dt-bindings: w1: ds2482: Add vcc-supply property
+To: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>,
+ Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stefan Wahren <stefan.wahren@chargebyte.com>,
+ Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com>
+ <20241115-ds2482-add-reg-v1-3-cc84b9aba126@gmail.com>
+ <20241115-happy-garter-2cf65f4b1290@spud>
+ <83c8487c-2c50-4315-8244-ff80632165e9@gmail.com>
+ <9896a38f-4b68-46a9-83b8-bf76abea47ba@kernel.org>
+ <f824fcb5-8c04-4a39-887c-64fed2439cef@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Xin Liu <quic_liuxin@quicinc.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
- Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- quic_jiegan@quicinc.com, quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com,
- quic_sayalil@quicinc.com
-References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
- <20241119022050.2995511-3-quic_liuxin@quicinc.com>
- <4bf9ea1f-4a45-4536-82c0-032f72b28807@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -112,23 +107,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <4bf9ea1f-4a45-4536-82c0-032f72b28807@kernel.org>
+In-Reply-To: <f824fcb5-8c04-4a39-887c-64fed2439cef@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20/11/2024 17:58, Krzysztof Kozlowski wrote:
-> On 19/11/2024 03:20, Xin Liu wrote:
->> From: Sayali Lokhande <quic_sayalil@quicinc.com>
->>
->> Add the UFS Host Controller node and its PHY for QCS615 SoC.
->>
->> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
->> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+On 20/11/2024 23:53, Kryštof Černý wrote:
+> Hello,
 > 
-> Confusing. Who is the FIRST author? Please carefully read submitting
-> patches.
-I retract my comment: It is actually correct here.
+>> On 20/11/2024 09:34, Kryštof Černý wrote:
+>>> Hello,
+>>>
+>>>> On Fri, Nov 15, 2024 at 03:58:06PM +0100, Kryštof Černý via B4 Relay wrote:
+>>>>> From: Kryštof Černý <cleverline1mc@gmail.com>
+>>>>>
+>>>>> Adds the newly added vcc-supply property to bindings.
+>>>>
+>>>> This commit message is a circular argument. You're adding it to the
+>>>> binding, which of course means it is newly added.
+>>>
+>>> You are right, I will replace with "Adds the vcc-supply property to
+>>> bindings." in the next version.
+>>
+>> No, please say why, e.g. because it was missing and device has it
+>> according to datasheet.
+> 
+> Right, what about:
+> 
+> Adds the optional vcc-supply property to bindings, informs if the device 
+> needs a regulator to be turned on for its operation
+
+It does not inform at all. All devices needs power, don't they? And what
+operation?
+
+
 
 Best regards,
 Krzysztof
