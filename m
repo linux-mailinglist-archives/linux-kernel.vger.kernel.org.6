@@ -1,256 +1,144 @@
-Return-Path: <linux-kernel+bounces-417190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDD99D5038
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:57:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA169D5036
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5965BB2632F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D771F232C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F88119CC3D;
-	Thu, 21 Nov 2024 15:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096919B3ED;
+	Thu, 21 Nov 2024 15:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EHOJsvrr"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k6DqgMRs"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA90155CBF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CD1079C4;
+	Thu, 21 Nov 2024 15:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204469; cv=none; b=D5qae+jSWL0N2ZoRgMzWvSmhTqcYvHAX1GBblOSgXqazNaWaK6PhEk3tnLwW2b6Z4SRWq3u95ZjICqft7AI2RUjTYNL74jBBo8gKr4QWvGg0kMud6bzW91Clg7w/8syrg1JPrL+OqRx4IooEW4mLPDcku9KO5q/zFOsfYE9kAXc=
+	t=1732204608; cv=none; b=HY4dFz1Kyzq86k/Y0muP7nv09yohOK1UR+j/Xir91fE8qKcJiwY9t6rP4zJhEPpkwAKiBoifOUiNTb+4qU8/QKar1/IZq6ImI1ox5RcPqc1yPPZqIWeLBpP1Z+3Z3KUZV988CyDiawN6O3/A00ASaC7uyif9T7YbjuM2tyaR9lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204469; c=relaxed/simple;
-	bh=8AqXKMsRkiratDD63ZdJUvOJNcWfQxBbS4MaoNL5BKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VT5d8HkUV3dGJmmiUwWIR78jsLBssL77dwUL7K478DiXeXmKb6SfgBrDcEwFl/Zbe2gGzh8VNm1Psd1cSzIBBW+jyhT6+yu8JCSg7qzRUlhZlKPUfRFjvDagJZMk272eWvX7CmC80uFfkj8V8R3qgupQj4t+LZ3tI4ZXcivEqLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EHOJsvrr; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d00e8d007aso841728a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:54:27 -0800 (PST)
+	s=arc-20240116; t=1732204608; c=relaxed/simple;
+	bh=JJ9Rr6ynLNHNFRFdYz46vVfER3rEooE5nCnrZwK4Z+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d3O32kzvBuifNsfRKu2aXyjrNnodaJ4/UYZVM5Su03md3tcfZbESBnbY0t05UR5b1HB/cLbJsRCRQ1ZfFVsSp/0WF3zlzBGV2FI9hRtJIvvH9klbH6+5lOP19p0ujjsQozOHHav7CNW5TtDo1bhfjrEp7Jzns8lWodVGpYTl/fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k6DqgMRs; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfadf851e2so1449760a12.2;
+        Thu, 21 Nov 2024 07:56:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732204466; x=1732809266; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBc/oNyGgbYuy8gAk9An/ZS4ZJV6hZ/cN5oiQZlgySc=;
-        b=EHOJsvrrJtEAIZKOvK8vlYMchOiMCzeWz0fVk0SWW2SGnKQwqH5kk+QOxe+yYgF5Ly
-         dydniuVacU3cKVAsgOnmclEg00DHJMlcHDnUTk0lYfZlJ52gMrOJvOc3lhvZKiDdLBaR
-         8ClNkRl5UbQEv8S6cE7uVlmVTWaNDnv4nKHd/G3MGN16g8nUA4hyxYEvkx49iOWcrjH8
-         dG2eUtYAn0GEZzp9CGassXzGuq1Sa4MIqPRf2+MnU0n6t3eHioYPK+NoFUwPIftuoNfn
-         VizZA7Afjqw4esJBwah3npTM9hRDjkmq+k3kJE80G1Ruu0ugvsXKP574y1hINfK5G5Wb
-         fI4g==
+        d=gmail.com; s=20230601; t=1732204605; x=1732809405; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LEYUuV3fkXQb0Ykf6y3EmMa9d+j8wlHrcdZRdxggfI8=;
+        b=k6DqgMRs6LjnG1V3A2SHELZ7VPOs/wOR0xECNDFvnIOtlbhW9prNQGLlxupm2/49FZ
+         1A5uHV5wJGNsjzoGMWAbL8C/+vCimlASvIr3Hk4m73C4yyXfJlJLl9rDoXqo90OpUHMm
+         DzoJRt2+cHJdMPkzFrpIPnb41uZw9iCDppwG3OFZT3+6af2qxLfuqrNwEbGA89oq/pzX
+         Az9nbcQH6R5HLY523usWPD2gXHDpQMTctdqgsSOencmA4tnFhXurDvM6GBGhmpmgMZFv
+         DlD8fuNs61eAOVqaUxvnhT8tj3PhZda/vPSlzoy8DxKvy2qdn7ubF1L9UrKdMArYJUiC
+         sE5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732204466; x=1732809266;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hBc/oNyGgbYuy8gAk9An/ZS4ZJV6hZ/cN5oiQZlgySc=;
-        b=kFbpeCLWQWON+2EPcdO7reyWA9XPrdzDyRnZy++jlsjSw1Ij4HVqLRzCXiaYI8LK9Z
-         HzGPzz/diXGX9jNpCEYPJXAS3nbzx/9PgTzHS0qG3vnRWc9Zl6Oa6kWNThaX5LjgGb0W
-         zUgKqWqlnY8azxnyk831PmW7y2wSuwqPDGYU/JDM3FZImLGtDLNdtJQIHJQtvRqUAi4s
-         dYsuUdl6J1c4CstdEr7Y8R4ed0Ga+HJkMQVZvqT+M/SqpcP008OBn5nTkrsvqsljev/K
-         NmQaJL37MbC6Hjcekb+4BYYd85mHTkoPZZc7IP9935zDVIUfH9/cU4Bu1iybG3YDXbfD
-         n9nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgDYKYHGotf+181sdPY98miZ07HgyNaSYGvhk59RWo8J3xnudMI2Tzuvepk1u6NpIrCXvBHC00Dfv03eA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4G+O656hR5Qi/I39/DEOtrkYlp33Hj9DfOm06dhx1mUkLX9xs
-	uFN2JMIBPvFIUCnqa+a9KnGQRAub4nvOngRB33VgISw+SNMVq2i0vPjST2nHUTyhS0eChNKxBok
-	Z9HievU3ta62dlKt+JP90Cd3IXGknnJlS2xq2hQ==
-X-Gm-Gg: ASbGncuEc3XbNgRRrDWsKL3JAK2eVlKuCRkAb/3pNbDHA7/5gRfWyHgp7McL7tBOVP/
-	nlR8OasuABPfdUIjru/+rDRXJMiAGG4SONxxh45VIkkT6BXiopW/tweKIorRoYE4wqg==
-X-Google-Smtp-Source: AGHT+IFoL3MuaOxZJPwqRnPiiiww3g12j7OhKiUmIMC687dA/kXZIiIIWIX8g53oxzmYJo/i2m0qsy19dsfZz5Mmzog=
-X-Received: by 2002:a05:6402:518b:b0:5cf:c8ac:cad1 with SMTP id
- 4fb4d7f45d1cf-5cff4c55511mr4596509a12.14.1732204465635; Thu, 21 Nov 2024
- 07:54:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732204605; x=1732809405;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LEYUuV3fkXQb0Ykf6y3EmMa9d+j8wlHrcdZRdxggfI8=;
+        b=NrbNQL29JC3A/79YLMzduN6afOerw4GuiIWJjPkoKclzpclpvrAkC37bmZNw+j1qJm
+         0msrqN5QDdZfQobrBM1H7wb2mjsrFCsfHVxk2SE/0GB/F4x7fVx6y8dSovpHOQQr8pgm
+         Y7pscMikA93dFpTAWRVOD5masyfxuw/YhOVplUHhXtfJDqPj7i8sQQdoz8rGWkY4OeSv
+         H6l2dU4RMXaELwgokXj7PnNgkl1r4cKuscLjiKc/1LlMf1tcu4GfupoLBT+bd/3mO1w4
+         ykNMgNbv3qit5mN2Kfk1Y3qf7nJDr2gpVcyPJMakjfJilWntUphlcyMln+JDlX5Brv7d
+         tT8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUhQqla1lmiA48ZmTwinOLzIrZq4N+nXTMyFlqGqepquFbzQhZFN3ega2QuI+B2UtMDBdxJMa2y7TCCqK8f@vger.kernel.org, AJvYcCWqrr9faUB3mjFT30PPasR3gfo+LqvYNUWz6SOULS5Ronx3a0x32dHflcj2gfQqbcDWD58/YCOiMyue@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj1HNXvx8TU1VQ2zGl4OrMn8B2zffXKGhKmU8Tfp2S67aQ21Rz
+	icIl9/lQI2P0v9Hs+53B+MEiDrDuVMy43oohEF+JXTD8q+pCGdRR
+X-Gm-Gg: ASbGncuvaQSRAZf+3PubcrK0rbzytQMnBqki6a0sCNnigxHXo51kNdVjS/GeEQoJ3BT
+	Mvfo8a+hOk5zPxKtbpQlJZ6iokBFpkv4IDVM463EtMrpVV5qJ2iEydCC8trpHurjwrPbU34wlrG
+	p2Jrcrpj59SDef3QEFt3di6iHT3AtOIW/o3JN8G0orcQuG3AzUHhFZMmv88DQyK7ipKf0pjyKXa
+	AFP8n7ibrUwTefX4BB3AJljjsPlr+N9VC0NiTSZDUFeGjfoRfKdw7FLa/trJXFRnsF27A==
+X-Google-Smtp-Source: AGHT+IGGgP3FalMOP+1Zfuy6LUhtlw2Q+9R0E9/+CVYUAn9nZZfkEEMKoOkcYwA1Y6A6Y6zJDQA6wg==
+X-Received: by 2002:a17:907:3e98:b0:a9e:471e:ce4a with SMTP id a640c23a62f3a-aa4dd53db26mr684405066b.11.1732204604605;
+        Thu, 21 Nov 2024 07:56:44 -0800 (PST)
+Received: from [192.168.221.195] ([81.19.10.93])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f4319b8bsm94821466b.142.2024.11.21.07.56.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 07:56:44 -0800 (PST)
+Message-ID: <ee013b8f-5526-4f32-bde3-aaebfb49e4d0@gmail.com>
+Date: Thu, 21 Nov 2024 16:56:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
- <20241104133515.256497-5-arnaud.pouliquen@foss.st.com> <Zzt+7NBdNjyzWZIb@p14s>
- <0d9075cd-68c2-49ec-9b9c-4315aa8c8517@foss.st.com> <CANLsYkxvTuLv8Omw-UeyPaA9g9QokmtMaMYD0eoUPo20wUuONQ@mail.gmail.com>
- <CANLsYkwPDFvJxgXrAV=92w+sT8tXB=-=K8Qs8eRVKm2C2v+0aA@mail.gmail.com> <57a66f3c-d644-4ebb-b4dd-0b9d411ec243@foss.st.com>
-In-Reply-To: <57a66f3c-d644-4ebb-b4dd-0b9d411ec243@foss.st.com>
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Date: Thu, 21 Nov 2024 08:54:14 -0700
-Message-ID: <CANLsYkx-dpMvYwQN3XgbPS6xQ9Vv6smP1krNYTYpBzdbBJjCrQ@mail.gmail.com>
-Subject: Re: [PATCH v13 4/7] remoteproc: Introduce release_fw optional operation
-To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Jens Wiklander <jens.wiklander@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, op-tee@lists.trustedfirmware.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: w1: ds2482: Add vcc-supply property
+To: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Stefan Wahren <stefan.wahren@chargebyte.com>,
+ Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com>
+ <20241115-ds2482-add-reg-v1-3-cc84b9aba126@gmail.com>
+ <20241115-happy-garter-2cf65f4b1290@spud>
+ <83c8487c-2c50-4315-8244-ff80632165e9@gmail.com>
+ <9896a38f-4b68-46a9-83b8-bf76abea47ba@kernel.org>
+ <f824fcb5-8c04-4a39-887c-64fed2439cef@gmail.com>
+ <48f0b74f-561b-4a5b-8311-e2cfddb92e3b@kernel.org>
+Content-Language: cs
+From: =?UTF-8?B?S3J5xaF0b2YgxIxlcm7DvQ==?= <cleverline1mc@gmail.com>
+In-Reply-To: <48f0b74f-561b-4a5b-8311-e2cfddb92e3b@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Nov 2024 at 09:39, Arnaud POULIQUEN
-<arnaud.pouliquen@foss.st.com> wrote:
->
->
->
-> On 11/20/24 17:04, Mathieu Poirier wrote:
-> > On Tue, 19 Nov 2024 at 13:38, Mathieu Poirier
-> > <mathieu.poirier@linaro.org> wrote:
-> >>
-> >> On Tue, 19 Nov 2024 at 11:14, Arnaud POULIQUEN
-> >> <arnaud.pouliquen@foss.st.com> wrote:
-> >>>
-> >>> Hello Mathieu,
-> >>>
-> >>> On 11/18/24 18:52, Mathieu Poirier wrote:
-> >>>> On Mon, Nov 04, 2024 at 02:35:12PM +0100, Arnaud Pouliquen wrote:
-> >>>>> This patch updates the rproc_ops struct to include an optional
-> >>>>> release_fw function.
-> >>>>>
-> >>>>> The release_fw ops is responsible for releasing the remote processor
-> >>>>> firmware image. The ops is called in the following cases:
-> >>>>>
-> >>>>>  - An error occurs in rproc_start() between the loading of the segments and
-> >>>>>       the start of the remote processor.
-> >>>>>  - after stopping the remote processor.
-> >>>>>
-> >>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-> >>>>> ---
-> >>>>> Updates from version V11:
-> >>>>> - fix typo in @release_fw comment
-> >>>>> ---
-> >>>>>  drivers/remoteproc/remoteproc_core.c | 5 +++++
-> >>>>>  include/linux/remoteproc.h           | 3 +++
-> >>>>>  2 files changed, 8 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> >>>>> index 7694817f25d4..46863e1ca307 100644
-> >>>>> --- a/drivers/remoteproc/remoteproc_core.c
-> >>>>> +++ b/drivers/remoteproc/remoteproc_core.c
-> >>>>> @@ -1258,6 +1258,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
-> >>>>>
-> >>>>>  static void rproc_release_fw(struct rproc *rproc)
-> >>>>>  {
-> >>>>> +    if (rproc->ops->release_fw)
-> >>>>> +            rproc->ops->release_fw(rproc);
-> >>>>> +
-> >>>>>      /* Free the copy of the resource table */
-> >>>>>      kfree(rproc->cached_table);
-> >>>>>      rproc->cached_table = NULL;
-> >>>>> @@ -1377,6 +1380,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
-> >>>>>  unprepare_subdevices:
-> >>>>>      rproc_unprepare_subdevices(rproc);
-> >>>>>  reset_table_ptr:
-> >>>>> +    if (rproc->ops->release_fw)
-> >>>>> +            rproc->ops->release_fw(rproc);
-> >>>>>      rproc->table_ptr = rproc->cached_table;
-> >>>>
-> >>>> I suggest the following:
-> >>>>
-> >>>> 1) Create two new functions, i.e rproc_load_fw() and rproc_release_fw().  The
-> >>>> only thing those would do is call rproc->ops->load_fw() and
-> >>>> rproc->ops->release_fw(), if they are present.  When a TEE interface is
-> >>>> available, ->load_fw() and ->release_fw() become rproc_tee_load_fw() and
-> >>>> rproc_tee_release_fw().
-> >>>
-> >>>
-> >>> I'm wondering if it should be ->preload_fw() instead of ->load_fw() ops, as the
-> >>> ->load() op already exists.
-> >>>
-> >>
-> >> I agree that ->load() and ->load_fw() will lead to confusion.  I would
-> >> support ->preload_fw() but there is no obvious antonyme.
-> >>
-> >> Since we already have rproc_ops::prepare() and rproc_prepare_device()
-> >> I suggest rproc_ops::prepare_fw() and rproc_prepare_fw().  The
-> >> corollary would be rproc_ops::unprepare_fw() and rproc_unprepare_fm().
-> >> That said, I'm open to other ideas should you be interested in finding
-> >> other alternatives.
-> >>
-> >
-> > Actually...  A better approach might to rename rproc::load to
-> > rproc::load_segments.  That way we can use rproc::load_fw() and
-> > rproc_load_fw() without confusion.
->
-> Concerning this proposal, please correct me if I'm wrong
-> - ops::load_segments() would be used for ELF format only as segment notion seems
-> linked to this format.
 
-Correct - nothing different from what it is now.
 
-> - ops:rproc_load_fw should be used for other formats.
->
-> The risk is that someone may later come with a requirement to get a resource
-> table first to configure some memories before loading a non-ELF firmware.
->
+Dne 21.11.2024 v 8:43 Krzysztof Kozlowski napsal(a):
+> On 20/11/2024 23:53, Kryštof Černý wrote:
+>> Hello,
+>>
+>>> On 20/11/2024 09:34, Kryštof Černý wrote:
+>>>> Hello,
+>>>>
+>>>>> On Fri, Nov 15, 2024 at 03:58:06PM +0100, Kryštof Černý via B4 Relay wrote:
+>>>>>> From: Kryštof Černý <cleverline1mc@gmail.com>
+>>>>>>
+>>>>>> Adds the newly added vcc-supply property to bindings.
+>>>>>
+>>>>> This commit message is a circular argument. You're adding it to the
+>>>>> binding, which of course means it is newly added.
+>>>>
+>>>> You are right, I will replace with "Adds the vcc-supply property to
+>>>> bindings." in the next version.
+>>>
+>>> No, please say why, e.g. because it was missing and device has it
+>>> according to datasheet.
+>>
+>> Right, what about:
+>>
+>> Adds the optional vcc-supply property to bindings, informs if the device
+>> needs a regulator to be turned on for its operation
+> 
+> It does not inform at all. All devices needs power, don't they? And what
+> operation?
 
-We can address that problem if/when it comes about.
+This is probably the best I can do:
 
->
-> >
-> >>>>
-> >>>> 2) Call rproc_load_fw() in rproc_boot(), just before rproc_fw_boot().  If the
-> >>>> call to rproc_fw_boot() fails, call rproc_release_fw().
-> >>>>
-> >>>> 3) The same logic applies to rproc_boot_recovery(), i.e call rproc_load_fw()
-> >>>> before rproc_start() and call rproc_release_fw() if rproc_start() fails.
-> >>>
-> >>>
-> >>> I implemented this and I'm currently testing it.
-> >>> Thise second part requires a few adjustments to work. The ->load() ops needs to
-> >>> becomes optional to not be called if the "->preload_fw()" is used.
-> >>>
-> >>> For that, I propose to return 0 in rproc_load_segments if rproc->ops->load is
-> >>> NULL and compensate by checking that at least "->preload_fw()" or ->load() is
-> >>> non-null in rproc_alloc_ops.
-> >>>
-> >>
-> >> I agree.
-> >>
-> >>> Thanks,
-> >>> Arnaud
-> >>>
-> >>>
-> >>>>
-> >>>> 4) Take rproc_tee_load_fw() out of rproc_tee_parse_fw().  It will now be called
-> >>>> in rproc_load_fw().
-> >>>>
-> >>>> 5) As stated above function rproc_release_fw() now calls rproc_tee_release_fw().
-> >>>> The former is already called in rproc_shutdown() so we are good in that front.
-> >>>>
-> >>>> With the above the cached_table management within the core remains the same and
-> >>>> we can get rid of patch 3.7.
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>> Mathieu
-> >>>>
-> >>>>>
-> >>>>>      return ret;
-> >>>>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> >>>>> index 2e0ddcb2d792..08e0187a84d9 100644
-> >>>>> --- a/include/linux/remoteproc.h
-> >>>>> +++ b/include/linux/remoteproc.h
-> >>>>> @@ -381,6 +381,8 @@ enum rsc_handling_status {
-> >>>>>   * @panic:  optional callback to react to system panic, core will delay
-> >>>>>   *          panic at least the returned number of milliseconds
-> >>>>>   * @coredump:         collect firmware dump after the subsystem is shutdown
-> >>>>> + * @release_fw:     optional function to release the firmware image from ROM memories.
-> >>>>> + *          This function is called after stopping the remote processor or in case of an error
-> >>>>>   */
-> >>>>>  struct rproc_ops {
-> >>>>>      int (*prepare)(struct rproc *rproc);
-> >>>>> @@ -403,6 +405,7 @@ struct rproc_ops {
-> >>>>>      u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> >>>>>      unsigned long (*panic)(struct rproc *rproc);
-> >>>>>      void (*coredump)(struct rproc *rproc);
-> >>>>> +    void (*release_fw)(struct rproc *rproc);
-> >>>>>  };
-> >>>>>
-> >>>>>  /**
-> >>>>> --
-> >>>>> 2.25.1
-> >>>>>
+	ds2482 has a VCC pin, accepting 2.9-5.5 V. Allow optionally specifying 
+a voltage regulator to power the chip.
+
+If you don't find this satisfactory, please provide a suggestion.
+
+> Best regards,
+> Krzysztof
+
+Thank you for your patience,
+Kryštof Černý
 
