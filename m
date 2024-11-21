@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-417547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D1F9D557D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:29:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42FA69D5588
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9615E283FF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:29:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14BBB238F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAF21DDA37;
-	Thu, 21 Nov 2024 22:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781DB1DE2DA;
+	Thu, 21 Nov 2024 22:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcWrzrsH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ibkaTQ4O"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0F21D5164;
-	Thu, 21 Nov 2024 22:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646541DE2B4;
+	Thu, 21 Nov 2024 22:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228151; cv=none; b=l+O//1bppB4KXqBfYbf5sXmgtVkv9XtG0n7VM6DMqNfll8fY+LS9yBCEOwMSGI4aNznkWe69Brix6HoS6NPowI5iE87YPtJk/sDq/A6jjDeYPMQIA4RNPtP0g7zdfSb5874vGisTYUcQMAb1J9qVF0hBMEBAJDzO1/9JVNSiuP4=
+	t=1732228366; cv=none; b=gvGi9AcgjlR7uVfYwFHREza/XUmV2Nd9yao9PsrFDcO2T3uEEDl0WTLtBydMMoTN/yXoIbShcXQ53dxogzYoumsnziV/D5jqSQco6/oMd7bPgJBCgO2SuywONobDNulxW6qo/5fFoxH1iVRCDZdOyeOF9aIFcXYPJ+J0c9gLGJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228151; c=relaxed/simple;
-	bh=tjQSsOUWzW3WwJYC83/glQCSqGSvUSIbP3JOWT1OQe4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y0Qrk6uFJYipXo4UAT5IpdLendDdM90VYZse2gEk49o7HHK3vuxbIMuzLLECWElvXGpatr7t+uiY5LXEA1T2d49he0D04Xx1UFrJxYPJbnmAfBRZvR2X2wgWZT+tl5DnGCSwEXd9La8i1qmfq8c7xw0a0USZ6Tj11jRyzSBakgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcWrzrsH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96726C4CED2;
-	Thu, 21 Nov 2024 22:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732228150;
-	bh=tjQSsOUWzW3WwJYC83/glQCSqGSvUSIbP3JOWT1OQe4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rcWrzrsH4tEfQHf3P7q+6wJHhl56AH3LlQmqwrbYgwwVSUSTCOttUuxqiTtt8MYtA
-	 AT0LT77kW5Hfk1KR228V62O5x2hnzoAn703DD3JdU9rzR8Lnc95qr7UNoNnK7q9J14
-	 MTi3uIbSJFd2+6flzi3Sx8YcdJXa8XIbTEn2xhIDSiEQMGlQriOdRLbe0Lg27pia8j
-	 MWY3CBf7TLhCF/27xxkwDcGgOzRxHlyBaQT8hHKs9/KQdFPQFSglmIsxeypi3bisCW
-	 pdUeHmcNsRH47gwWbmtMDwYtyok7H/GBhI7j/TWRojepAA1ra1E8p1nD73S90uviyc
-	 Ix5mYtx8tw5pQ==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53da4fd084dso2656811e87.0;
-        Thu, 21 Nov 2024 14:29:10 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVemAih31VTO1wYEg0N5WsycA9tH+ePgKMELzQANLial8vNYBnOXKKsG5aRVb4HG7DAQ0ZmEFUegjnLWlo/@vger.kernel.org, AJvYcCVxjp0cgVg3702T9yFQU3YDrla9pUEyIwz6Iy8UK2GkOX2Z1fZ0DZQRSuUEpSxSJIRcgxe3pVjCA7ra7IpC@vger.kernel.org, AJvYcCXpfEbwCvQE1MRGiO74K1dgmZeXvAIIqA6uJKIQm0YQgg/q/Q6AQzOD5hkEreFFbsPLCOgrsmHsczFtfqwU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyDaMWqeMLVuuZGDBaT/4sJf5VOtMJ/eHAXMxy7bstemwQf6X5
-	36ani4EsrejY74VtKDC0mwM+NVMuaH7wH/YazfNt5Gq+10Na278/7J2xGDfsb+oGmN6vx9cLmHR
-	jeEwRPMtIPOXYLZmXcbNOidy0FUQ=
-X-Google-Smtp-Source: AGHT+IHW+QS4dVHOxA02lbsya/fSi8Nd0koHSYBV9qK4E+o17m5c7V+ut9orQpRQIqJnqhxvz3Dnlr3nqgP2Bv8wIDM=
-X-Received: by 2002:a05:6512:1383:b0:53d:d209:d96b with SMTP id
- 2adb3069b0e04-53dd209d986mr500586e87.13.1732228149219; Thu, 21 Nov 2024
- 14:29:09 -0800 (PST)
+	s=arc-20240116; t=1732228366; c=relaxed/simple;
+	bh=yLXcD7EcMzw9xT0WwrAiCg8Ub8pkccyUlE0tO5U6joU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wcz3UUWi8B6j/2FD2DwRH0BvtG1I9glui6ECO8ri6FUhKt9rTdYJVeuSJ7vyxLQAqlvz/8B5Tof//IFuxvCtKpH2bfo+AsA1XYtx42wpJ6SPFdUHPb0Re7o0PYXT6lijAm8AembppELk9IueM/fPnMlNG9lw/IF5QbBNfzOYTA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ibkaTQ4O; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1732228290; x=1732833090; i=w_armin@gmx.de;
+	bh=14fUGPbX8Lv0O9UwgU8VqOQ9m/mAK/lhmr5W67lQWz8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ibkaTQ4OIDjR0k7SdfSzPbQ/oyl2XHYBGRien0O/Z8/VHruz/0JlNmxSiAQw6Cgf
+	 I2wRYLI2fILyfh6ZggnGWb2JwByynmeW9jg6vsHfsSP8Ywk2W+jwd+Fe1xSBapNEn
+	 NCz493GsbBqQTIsekJ5NSsKkv1HXsd6y3o1LKT5LZtR3orGOmHaQ8a+LfAAVt7Q5R
+	 YzTjBNAaTJsiRHwgWnZW/AnWKvywAfai2itDWUtAqOme960YILQOJNsWVZzRoQ06B
+	 APev0uQ1LPyheoBjOiWixT5Snh8mA4rg0sMqsCt0KMAp+xmqrJsj22XgM64k089b3
+	 R3ayKXorc2ErhbF8GA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.129.90] ([176.6.148.212]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MdNcG-1tnJPV2fSa-00alXh; Thu, 21
+ Nov 2024 23:31:29 +0100
+Message-ID: <180cce53-d778-4ab6-b54c-41c13b4929d3@gmx.de>
+Date: Thu, 21 Nov 2024 23:31:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120204125.52644-1-pvorel@suse.cz> <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
- <20241121011720.GA69389@pevik> <CAF6AEGuzFNVd5fE+b+hKcC8xAOg7CrkPaYuWC6tCVmioutoOOw@mail.gmail.com>
-In-Reply-To: <CAF6AEGuzFNVd5fE+b+hKcC8xAOg7CrkPaYuWC6tCVmioutoOOw@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Fri, 22 Nov 2024 07:28:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com>
-Message-ID: <CAK7LNAQDMJUYUF7BaN10bwctW7fuHmSMrrAjMmn4s7P2ys5P+Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
-To: Rob Clark <robdclark@gmail.com>
-Cc: Petr Vorel <pvorel@suse.cz>, linux-arm-msm@vger.kernel.org, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 19/22] ACPI: platform_profile: Notify class device from
+ platform_profile_notify()
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241119171739.77028-1-mario.limonciello@amd.com>
+ <20241119171739.77028-20-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241119171739.77028-20-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:AJQAyobA8wZvDwtD5ZtJ2PZxsr6E9H/CUsQZRmspXpyB3/OU3RU
+ jGhhWUpWNvBaJYALNVV3jqCF2kWcLncHKz8JopjlWEbQfEY18yIEYcQywsJ/wx0wR3q+toj
+ IxacUruA50C42EAS+GA7kxogvWhMWrodI0Y+i0korI0tXMHyGvXXENIenqeIcK3+NJSCWmk
+ ETwLmpKIMlC8tLArntZVw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xfZz7REQkaY=;Unlox4losSV9H6k6t21x1MxYp+X
+ YBvt26xCqHDUN7JVSC5KJEgMhm+yDkgEk2z4gZATXftmwpx4CR5+b6hUBypCu5Dpj3rUQOYex
+ 7l2vbcTmiQf8ncwOlq4ZyovVixeC/7lH97gTCS+yv6uEwZovsjTyQPlUh/mOZgShq4Iz/Vn3X
+ ZSOLUWnRm3FehBwPT6bQ667LePGmWQDqst/TsDKZQ+LG0iPH10Ca8/7vrAwBRtcVif3r6oB+h
+ iGsg6mq2Iq5pG1JR6DylnC/AxDeHf1PJjrot4pKR1piYfULei0CujSC4oW5IjEVhg4u2OrQHP
+ 9ko5e+taO/DmoFTKUhg4fdAnuQpxaMVHTSm2LMqb3HTiSKGZRUlxqW37wAb0koppeAQ2slctN
+ u/OB2GgGGpUo85tZo+agYU2718GDw14se0L7JkBMjBtCHLYcAugO6Btn/G0Kwbh+RtAUBPqV0
+ VEPTC+AxsDb76JNp+XZMI8gLsdemknwU8XU7YnNfy63oZIBP2KBktQEtPCCHGm8LEbgRg4dab
+ HPWZKwe81G3BRGrGO1wNiedxH247znG1C0qy2xXDJvalNs/BkrULdZK6elzA7IwQX1k3D4Z5d
+ MyrJdo70OuqZdYDAV9dQu7O2tT+NY1rCSXcs7ecMTTGQez2F81AbsedwkLE031PMmCV9W3Xcf
+ 2bge4tX/s8cUjITQ6ilxfYAziAaYZ0GQVc1X4/WoXi/Hd/zIeFZhD9GCKR6biTrmpQVzzPXIK
+ gxkV8ZyZiK3HQ86WfX1Ec7TDKmAd3brlmrMn33UP17IaiAN0LMO8vep4K7GV14ocB84FLlarV
+ YB9fAmWZoyVDpNZy2cLCvfZp04w0n9YXK+k/fn1kyS74ZWsngmGLXfTZrxr4mraHbm7BEsjRM
+ 4iMyNg3zCj+O1czGqK6+rf4YxUUxi2OlNZKXjCDBD0Iwelw77LOCTGbrv
 
-On Thu, Nov 21, 2024 at 10:49=E2=80=AFAM Rob Clark <robdclark@gmail.com> wr=
-ote:
+Am 19.11.24 um 18:17 schrieb Mario Limonciello:
+
+> When a driver has called platform_profile_notify() both the legacy sysfs
+> interface and the class device should be notified as userspace may listen
+> to either.
 >
-> On Wed, Nov 20, 2024 at 5:17=E2=80=AFPM Petr Vorel <pvorel@suse.cz> wrote=
-:
-> >
-> > > On Thu, Nov 21, 2024 at 5:41=E2=80=AFAM Petr Vorel <pvorel@suse.cz> w=
-rote:
-> >
-> > > > It will be used in the next commit for DRM_MSM.
-> >
-> > > > Suggested-by: Rob Clark <robdclark@gmail.com>
-> > > > Signed-off-by: Petr Vorel <pvorel@suse.cz>
-> > > > ---
-> > > > Changes v3->v4:
-> > > > * Move definition to the end of the file
-> >
-> >
-> > > I prefer to not check the tool.
-> >
-> > Ack.
-> >
-> > > Why don't you install python3?
-> >
-> > Everybody installs it when it's required, the question is how to inform=
- about
-> > the dependency.
-> >
-> > There build environments are minimal environments:
-> > * chroot (e.g. cross compilation)
-> > * container
-> >
-> > These are used by both developers and distros.
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+> v7:
+>   * Use class_for_each_device
+> ---
+>   drivers/acpi/platform_profile.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 >
-> I don't think py3 is an _onerous_ dependency, but it has come up as a
-> surprise in minimal distro build environments at least once.. so I'd
-> be a fan of surfacing this dependency in a predictable/understandable
-> way (ie. I'm in favor of this patchset)
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index ca997f4e9a5cb..e88b355a72112 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -402,6 +402,10 @@ void platform_profile_notify(struct platform_profile_handler *pprof)
+>   {
+>   	if (!cur_profile)
+>   		return;
+> +	scoped_cond_guard(mutex_intr, return, &profile_lock) {
+> +		class_for_each_device(&platform_profile_class, NULL, NULL,
+> +				      _notify_class_profile);
 
+I think that using class_for_each_device() is a bit overblown here. He only want to notify a single platform profile,
+so using class_for_each_device() is a bit too much. Using _notify_class_profile() is enough.
 
-"once" is a keyword here.
+With that being fixed:
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-"/bin/sh: python3: not found" provides sufficient information
-about why the compilation failed, and you know what to do
-to fix the problem.
-This is good.
-
-
-If you hide CONFIG_DRM_MSM silently
-due to missing python3, you may scratch your head
-"why drm/msm was not compiled?".
-This is worse.
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+> +	}
+>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>   }
+>   EXPORT_SYMBOL_GPL(platform_profile_notify);
 
