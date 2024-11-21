@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-416808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B8E9D4A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7C8B9D4AA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8FF282FA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:18:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F03528308C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EA61CC175;
-	Thu, 21 Nov 2024 10:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24BA41D1F73;
+	Thu, 21 Nov 2024 10:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kkZ8CDWe"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JLNV5SWX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A53F2309B6;
-	Thu, 21 Nov 2024 10:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C8F1CD1E2;
+	Thu, 21 Nov 2024 10:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184294; cv=none; b=H+ZNAZxchYWBFOyVKmVx/tg8IMd208GZKH+hK8RKEgybJaExqBwvaS+Xnx3sJmG0955p9BTfzFA5v3UyjZ3PRuxpthNF9AyGBzCPsq3wIxBDiV7vgiklY+5D40hNRBgMGD1lqgFptLH/vpOhsDmjsFYTO+2k1jW6cI7v9oDZpqQ=
+	t=1732184312; cv=none; b=TZ836h9qSRJIH+wnz9iOo1Lx7hFS1D8OHAVxe4/5k69AO7lCYMM+NNyI35EI0iK6vC6JF0/9dyOCIt8mxNqStOkSTnicVtZtIOoNfeq9smEu9o+nlnn6zwYd5NKiI6Nod8rLltSZ/VeKqz/B1TBWhM5SZHU/8QyAYL0DzUaLTBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184294; c=relaxed/simple;
-	bh=t0c2i8+GlYTfqDD9xH1LK6zNin2RsOoo+ALw02hJUzo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LYHhamUpmkEplD4Rr4YJkTzjcTqC5nSFJbXq8P1PmdaH2JX8CDQQmylCL8N3Kqs37+yKl51MfJOMlbc3jJg8QmyjfeiLYn4CspLtpycFNc1aTYUU+4LEXKFaPvo/7M3lkya6wMFvmD8p8aqpFCFm3pT367vVmUjWhhoVHP7PseU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kkZ8CDWe; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EB3AC20002;
-	Thu, 21 Nov 2024 10:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732184288;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PSpipFllfpXYYHDQWPsv/JoqwKuQO0NyaVwH5k8jcGY=;
-	b=kkZ8CDWeHL9oj3zg2E3STPYPZD7riH0WgjIXJzDp1aFWevI2EPp6QntDBcqIXbiY1evq/J
-	l7GXMAN0QM+saJUBNgiJJnP13bt5gOAZEG9bI+PCqXtqxZT3bUKZwBupho21e0FffKAC/7
-	g0NWW1+UPe76/Ef9UMo3RwzM/VgdE2lC+FjNT4Sb6lZ8KY/Dz6jfmfE2i1+V8FaEKs2hIj
-	UlqPvLjO5ehQ5JL7NmsGhTwin6cT9YXswiarpD5pQLj+g6tkTwSLXVMK+dioneoPF1L8x2
-	QdkqxEhEgTal33CY0NZV3Qp2ikTlysNwIdI+gGOVnR1CA+06XDHc+dPLpM7tYg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>, Romain Gantois
- <romain.gantois@bootlin.com>, Thomas Bonnefille
- <thomas.bonnefille@bootlin.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>,  Rob Herring <robh+dt@kernel.org>,
-  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,  Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>,  Herve Codina
- <herve.codina@bootlin.com>,  Milan Stevanovic <milan.stevanovic@se.com>,
-  Jimmy Lalande <jimmy.lalande@se.com>,  Pascal Eberhard
- <pascal.eberhard@se.com>,  linux-renesas-soc@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,  Gareth
- Williams <gareth.williams.jx@renesas.com>,  Wolfram Sang
- <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: r9a06g032: add r9a06g032-rzn1d400-eb
- board device-tree
-In-Reply-To: <CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
-	(Geert Uytterhoeven's message of "Tue, 12 Nov 2024 11:50:29 +0100")
-References: <20230209133507.150571-1-clement.leger@bootlin.com>
-	<20230209133507.150571-3-clement.leger@bootlin.com>
-	<CAMuHMdWUorkDYXZvsd-9rjwEkeJYC_FMfexZHaGYHDry=9Yjdg@mail.gmail.com>
-	<20230215092933.2f71ece0@fixe.home>
-	<20230215115441.361aed53@fixe.home>
-	<CAMuHMdVhGFyrWx6oD-K9WhZRtYT_xJ_kWRA+vhdvB_JubFk8YA@mail.gmail.com>
-	<CAMuHMdX4nMA6HSu=UkNEWJWKK432VB5YVQCWn_rDZ6mNSv+41g@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Thu, 21 Nov 2024 11:18:07 +0100
-Message-ID: <87mshsvqjk.fsf@bootlin.com>
+	s=arc-20240116; t=1732184312; c=relaxed/simple;
+	bh=wlCC9KYBfvH6f8bzXyZMsbzrX7ITXIMK+pupeDh0eI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MVg/uNC8HqpCDUPHTfJUGrw+eTFwH3Q4yXYTws9DU7gDU/98JH8nZf2s2YiGuFrTk880B/mttf2DeAutDYx742bmfqYrF11Kx6aXLbH51HPtqaB+QwxonfIj7jLMgsdem6ptNR1VcU+8BJbqMgJlLW2U4/rGMNteKug06qMnaPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JLNV5SWX; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732184311; x=1763720311;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wlCC9KYBfvH6f8bzXyZMsbzrX7ITXIMK+pupeDh0eI4=;
+  b=JLNV5SWXJ8oCnCR4naK03x+oq5p1LKqywJIASGSmSdblf3E9aFMi/HIb
+   4ah8y/P7N7TMGB+L4cxWAYamxuqOA5d6V0fL0xwVryQtfPTzkURcpi5r8
+   xJw31+dzXFC/lQb+/Mpw/IA3cHTJUWipkYby54+V/H0C31nIo970xXBim
+   tdZvFXnTt193juF9TAWFfhMJkI8Z4nfPwhakkggydYQOiD5m1Z7Z9A/jA
+   zwZB11pv/y51E7yxbwExX03yA0SJeyUKQLa3ippS1AWS5lTJJF+Wi+wZI
+   G2Tlp1m9Qi8Q0broy0QdmUkwJaDCrgZ0kDBLbdw/mz0SpKYN4oiBqvXga
+   Q==;
+X-CSE-ConnectionGUID: Gtyww8w+Q2OqLECQQ7gKPQ==
+X-CSE-MsgGUID: TnyBuehxR6etIpUH33Yjbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="42906117"
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="42906117"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 02:18:30 -0800
+X-CSE-ConnectionGUID: t+ofQvoHSCaTxbTYyifiUg==
+X-CSE-MsgGUID: wYW50nb5R6aJW8g5XoOi8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,172,1728975600"; 
+   d="scan'208";a="90615268"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 02:18:25 -0800
+Message-ID: <820e9b6b-16eb-446a-b524-adc8129726ec@intel.com>
+Date: Thu, 21 Nov 2024 12:18:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf intel-pt: cleanup unneeded return variable in
+ intel_pt_text_poke()
+To: guanjing <guanjing@cmss.chinamobile.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, algonell@gmail.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241121100047.25318-1-guanjing@cmss.chinamobile.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241121100047.25318-1-guanjing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Geert,
+On 21/11/24 12:00, guanjing wrote:
+> Removed Unneeded variable: "ret"
+> 
+> Fixes: 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions")
 
-On 12/11/2024 at 11:50:29 +01, Geert Uytterhoeven <geert@linux-m68k.org> wr=
-ote:
+A Fixes tag is not for patches that don't fix some functionality.
 
-> Hi Cl=C3=A9ment,
->
-> On Wed, Feb 15, 2023 at 12:31=E2=80=AFPM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, Feb 15, 2023 at 11:52 AM Cl=C3=A9ment L=C3=A9ger
->> <clement.leger@bootlin.com> wrote:
->> > Le Wed, 15 Feb 2023 09:29:33 +0100,
->> > Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com> a =C3=A9crit :
->> > > Le Tue, 14 Feb 2023 17:25:14 +0100,
->> > > Geert Uytterhoeven <geert@linux-m68k.org> a =C3=A9crit :
->> > > > On Thu, Feb 9, 2023 at 2:32 PM Cl=C3=A9ment L=C3=A9ger <clement.le=
-ger@bootlin.com> wrote:
->> > > > > The EB board (Expansion board) supports both RZ/N1D and RZ-N1S. =
-Since this
->> > > > > configuration targets only the RZ/N1D, it is named r9a06g032-rzn=
-1d400-eb.
->> > > > > It adds support for the 2 additional switch ports (port C and D)=
- that are
->> > > > > available on that board.
->> > > > >
->> > > > > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.co=
-m>
->> > > >
->> > > > Thanks for your patch!
->> > > >
->> > > > > --- /dev/null
->> > > > > +++ b/arch/arm/boot/dts/r9a06g032-rzn1d400-eb.dts
->>
->> > > > > +       pinctrl-0 =3D <&pins_eth1>, <&pins_eth2>, <&pins_eth3>, =
-<&pins_eth4>,
->> > > > > +                   <&pins_mdio1>;
->> > > > > +
->> > > > > +       mdio {
->> > > > > +               /* CN15 and CN16 switches must be configured in =
-MDIO2 mode */
->> > > > > +               switch0phy1: ethernet-phy@1 {
->> > > > > +                       reg =3D <1>;
->> > > > > +                       marvell,reg-init =3D <3 16 0 0x1010>;
->> > > >
->> > > > marvell,reg-init is not documented in any DT bindings document?
->> > >
->> > > Indeed, this is not somethiong that should be made available here. I=
-t's
->> > > only inverting the LED polarity but supported by some internal patch.
->> > > I'll remove that.
->>
->> > I actually was confused by a property I added in another device-tree b=
-ut
->> > marvell,reg-init exists, is handled by the marvell phy driver and used
->> > in a few device-trees. Strangely, it is not documented anywhere. So I
->> > can either remove that (and the LED won't work properly) or let it live
->> > depending on what you prefer.
->>
->> In that case, please keep it.
->> But the property really should be documented, one day...
->
-> Any plans to follow-up?
+> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+> ---
+>  tools/perf/util/intel-pt.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+> index 30be6dfe09eb..6c0234acc669 100644
+> --- a/tools/perf/util/intel-pt.c
+> +++ b/tools/perf/util/intel-pt.c
+> @@ -3402,7 +3402,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
+>  	struct machine *machine = pt->machine;
+>  	struct intel_pt_cache_entry *e;
+>  	u64 offset;
+> -	int ret = 0;
+>  
+>  	addr_location__init(&al);
+>  	if (!event->text_poke.new_len)
+> @@ -3443,7 +3442,7 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
+>  	}
+>  out:
+>  	addr_location__exit(&al);
+> -	return ret;
+> +	return 0;
 
-Cl=C3=A9ment is no longer working with us; most of his ongoing work has been
-offloaded to colleagues and mostly taken care of but this one has
-clearly fallen into the cracks :)
+Should just drop the return value entirely, since it is
+always zero.
 
-I'm adding two colleagues in Cc in case they can have a look.
+>  }
+>  
+>  static int intel_pt_process_event(struct perf_session *session,
 
-Cheers,
-Miqu=C3=A8l
 
