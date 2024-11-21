@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-416528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5869D4669
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:59:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4A69D4670
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B0FB216DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 03:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE0E2837FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47135136358;
-	Thu, 21 Nov 2024 03:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDADE142E6F;
+	Thu, 21 Nov 2024 04:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GNYvIKjm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i6IobRGI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32D1023099D;
-	Thu, 21 Nov 2024 03:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC62191;
+	Thu, 21 Nov 2024 04:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732161587; cv=none; b=uWRdDiSbnwOaRhzqNG4T7J1SXpT7b5hk7h7HthIcfWiRtFDltZJbfZKjrjS6L4MiAbr/ZCAHp1EgWqq1F5TSVXCXjGKRpghPHoQHdDSed5K/4eaV7zDBZsKDj4srp/m5onf9kxyCz/SPlC2AUt4mTW3jUBMRkT6URbneC/1g4W0=
+	t=1732161770; cv=none; b=UAOKK1unj5rTYTRF3E2BPasYFtS5D0Bh316FHq3cTPjUeMPe3XRrw39Iv/VzddjZxuG09gjoR6ukbAADquVRsp/2qkr6d10U+quff5FRvLKZK/Dcm9f7slMf2uTkWpeWXmRUSCTSiUon/gnQ0Qcf7C27JfNMkWTYITYS8aizil0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732161587; c=relaxed/simple;
-	bh=xRQ+NukL96XVgf0TjxScXjTeGDznVFzspHowFnHfHyg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gM7jp5qqQiSc9P/UV6FUwB8DzNYOUdb3DvzRWeTWyMuJfa3H1pSkV4ymvx0+5fqfaahakf14Db0ZB14TOWdqOflnSxNZ9JOoRCICs07a4kYCYkDnccIYwrkCR0snUUliFSl7RM9Asfa0Mt4LDj7dkGYGD6twQgDjeyEYy+x+N/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GNYvIKjm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=Z1G3HjME0MUpLj8hYZp8r4/+FSgSZ05odH8oiA0RgU0=; b=GNYvIKjmL9Uh3sdHrNf+aDS1R/
-	TXwip7IOhCyudtu6L4x3CVedsP6BKnxZ+l5v6yaE2PQogfEauobLhocYUQJ8sEYPvUftWAw/z9Q94
-	EgPsB1R8JKb6IRh2UY6G61PJptzEEOHr+LOAz/RXSoZLfXxblQXWmu8xV+XE5Hw8P9MARn2JRqcVI
-	UvmCqTbT6clNDejIj5R56XTCHoM+YAUPPW0V3qRtc4ewMtjje8Qom7/SHs0hJWQuTFCc//AqKwQty
-	63dKs5PqfhkIQXRKfzEzZKL0348cZtFi4ol/fpNCRITeo3jfvodcXZZhsWsbalxS7JqLasfInEzqA
-	hagJxUAA==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDyM1-00000005vza-2wRh;
-	Thu, 21 Nov 2024 03:59:43 +0000
-Message-ID: <d26c4116-9ec1-44a7-bd61-a5de3ff9d257@infradead.org>
-Date: Wed, 20 Nov 2024 19:59:36 -0800
+	s=arc-20240116; t=1732161770; c=relaxed/simple;
+	bh=4HH9e2DdIyD+Gb/EqyPsW6Fio0L3K9h91eEBO+nCvkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fxxjh12QhaFZ0WtyI0e3wA2Hc4/XjvUOIw8CBST46o+El8mzUYniH6RdkRuR4JGzDHAh9S6eQLp3NC6WLMnPfAP8WrDRilIaAlIXBBMyQ6XgiIPUhMVOnk/DP/skzvRCULchf2Rq6FU3/6cYKgBHhcSqYZJo4KFvOtfrORb6n/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i6IobRGI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJtrOv019248;
+	Thu, 21 Nov 2024 04:02:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	r8ppdMKfh51u5pgiAc1cpcSILYq3w01TytQeIjLxsk0=; b=i6IobRGIBkbdEiF+
+	YIdCAOX4mM8W9u09dvneeKfzs6BfhnOuWG6qNYtdXcRmaK9C06G965hkaqKUvU5n
+	VTjBsPw0RDo2XFWisJE9PzWYg7InX4pJDj/Ykvn87ByoOsp3p8w35/W83ooUY9vN
+	znVwY+wniEal2e9RBYwozfnRq79oQsjLG0gk98M92k/QuhTlaoYvKArrWMJYW6Oy
+	gSXMAnvteGnhP9geSQa2d9wrnF8QkZgXZA9Qat8sE5G+0I/kOs2enTMKh3GldKWW
+	C+dz7tIpWqVcaRfY9PdrNGAVB8lQI2j6qjzO9KUs1i9j58l1JhTvzxALGIGTShM8
+	lEdGeQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hjqtm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 04:02:33 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL42WN4017665
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 04:02:32 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
+ 2024 20:02:27 -0800
+Message-ID: <fb5bc38b-83b3-4924-b1d0-39219a2927b4@quicinc.com>
+Date: Thu, 21 Nov 2024 12:02:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,66 +64,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] docs: Add debugging section to process
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
- hverkuil-cisco@xs4all.nl, mchehab@kernel.org, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com
-References: <20241028-media_docs_improve_v3-v3-0-edf5c5b3746f@collabora.com>
- <20241028-media_docs_improve_v3-v3-1-edf5c5b3746f@collabora.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_mohamull@quicinc.com>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-2-quic_chejiang@quicinc.com>
+ <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20241028-media_docs_improve_v3-v3-1-edf5c5b3746f@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+In-Reply-To: <454tdpuglu23nmxfqqesv42h5rk3vqiji7spo3naf2djqwojqt@6x3ram3lnlkq>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Kr0nPh-zQUBBVuPbSI-BU9tmQifDkabM
+X-Proofpoint-GUID: Kr0nPh-zQUBBVuPbSI-BU9tmQifDkabM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411210028
 
+Hi Dmitry, 
 
-
-On 11/17/24 11:03 PM, Sebastian Fricke wrote:
-> This idea was formed after noticing that new developers experience
-> certain difficulty to navigate within the multitude of different
-> debugging options in the Kernel and while there often is good
-> documentation for the tools, the developer has to know first that they
-> exist and where to find them.
-> Add a general debugging section to the Kernel documentation, as an
-> easily locatable entry point to other documentation and as a general
-> guideline for the topic.
+On 11/20/2024 6:43 PM, Dmitry Baryshkov wrote:
+> On Wed, Nov 20, 2024 at 05:54:25PM +0800, Cheng Jiang wrote:
+>> Several Qualcomm projects will use the same Bluetooth chip, each
+>> focusing on different features. For instance, consumer projects
+>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
+>> SINK feature, which may have more optimizations for coexistence when
+>> acting as a SINK. Due to the patch size, it is not feasible to include
+>> all features in a single firmware.
+>>
+>> Therefore, the 'product-variant' devicetree property is used to provide
+>> product information for the Bluetooth driver to load the appropriate
+>> firmware.
+>>
+>> If this property is not defined, the default firmware will be loaded,
+>> ensuring there are no backward compatibility issues with older
+>> devicetrees.
+>>
+>> The product-variant defines like this:
+>>   0 - 15 (16 bits) are product line specific definitions
+>>   16 - 23 (8 bits) are for the product line.
+>>   24 - 31 (8 bits) are reserved for future use, 0 currently
 > 
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-> ---
->  .../driver_development_debugging_guide.rst         | 223 ++++++++++++++++
->  Documentation/process/debugging/index.rst          |  65 +++++
->  .../debugging/userspace_debugging_guide.rst        | 280 +++++++++++++++++++++
->  Documentation/process/index.rst                    |   8 +-
->  4 files changed, 573 insertions(+), 3 deletions(-)
+> Please use text strings instead of encoding this information into random
+> integers and then using just 3 bits out of 32.
+Ack. Originally intended to make it more flexible for future use. It can be 
+text strings for current requirement.
+> 
+>>
+>> |---------------------------------------------------------------------|
+>> |                       32 Bits                                       |
+>> |---------------------------------------------------------------------|
+>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
+>> |---------------------------------------------------------------------|
+>> |   Reserved        |    0: default       | 0: default                |
+>> |                   |    1: CE            |                           |
+>> |                   |    2: IoT           |                           |
+>> |                   |    3: Auto          |                           |
+>> |                   |    4: Reserved      |                           |
+>> |---------------------------------------------------------------------|
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> index 7bb68311c609..9019fe7bcdc6 100644
+>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>> @@ -110,6 +110,12 @@ properties:
+>>      description:
+>>        boot firmware is incorrectly passing the address in big-endian order
+>>  
+>> +  qcom,product-variant:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      specify the product information for driver to load the appropriate firmware
+> 
+> DT describes hardware. Is this a hardware property?
+
+It has been added to identify the firmware image for the platform. The driver
+parses it, and then the rampatch is selected from a specify directory. Currently, 
+there is a 'firmware-name' parameter, but it is only used to specify the NVM
+(config) file. We also need to specify the rampatch (TLV file).
+
+
+Can we re-use the "firmware-name"? add two segments like the following?
+firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
+
+Or add a new property to specify the rampatch file? 
+rampatch-name = "rampatch_xx.tlv";
+
+> 
+>> +
+>> +
+>>  required:
+>>    - compatible
+>>  
+>> -- 
+>> 2.25.1
+>>
 > 
 
-> diff --git a/Documentation/process/debugging/index.rst b/Documentation/process/debugging/index.rst
-> new file mode 100644
-> index 000000000000..10fa673f0fe3
-> --- /dev/null
-> +++ b/Documentation/process/debugging/index.rst
-> @@ -0,0 +1,65 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-
-[snip]
-
-> +
-> +How to do a simple analysis with linux tools?
-
-                                    Linux
-
-> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +
-
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
--- 
-~Randy
 
