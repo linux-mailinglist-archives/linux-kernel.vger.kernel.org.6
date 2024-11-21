@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-417250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7BC9D513C
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:04:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FA29D5146
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE54B1F244BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:04:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BB81B2B60D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE438189F37;
-	Thu, 21 Nov 2024 17:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3618B198A3F;
+	Thu, 21 Nov 2024 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuWh3fr9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H69m0zDy"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA8810A3E;
-	Thu, 21 Nov 2024 17:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E777E10A3E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732208685; cv=none; b=Mb9bmOwnlVgjxY4mGOs0tunNy1qckR3Ygp3DzXm/GG9trpYTbCdjzoD4+fN5DRMhqxoNdQ/xYoj/tu7El1hwXhsULsFkZO/x9PQjxN9ZuLS9EeWjAy9r3qA3cMg+oiqNSwF6MN8g+mphYgikirKiQADM1vNQzBs0jlaVKZRnIU0=
+	t=1732208735; cv=none; b=R+fmILPx0RPryvlUMyMi1yONStHLDvphParL4etTDYRfbfRrFPjzQT2nsFvKasyDkqA+224+K11aX/sqHfQxrhpxsjU85emAJYwmF8GKt7Je1oqUwQIa+tbQo01KpozWtI4QFcDq7SLwEFXwRuNviydR45u80mjS0eEJ861SSaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732208685; c=relaxed/simple;
-	bh=aZGpUzKzmNNoZNO+kAOuEPARwds35ZIR3tETVKuSnKo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4s4C5d7EkhjX07mlRCpZ61/URUb0K+D5rdl1+yytYo87W1dYMp7DPVxVpaHOOIUh56KG18wW/Z0Itax8D02heYbkXTyWL+78xcFl1RZeg+hHfihN9XsHiXgPlYlVqe0S5mPQxnHA291FA7qLsDaJ+2te4LznNMPlf3zvse5kRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuWh3fr9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368FBC4CECC;
-	Thu, 21 Nov 2024 17:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732208684;
-	bh=aZGpUzKzmNNoZNO+kAOuEPARwds35ZIR3tETVKuSnKo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OuWh3fr9p904cw9e1mc8O2m6lKvKAi2Q4W7mb0LRf/sRvlgauQfqFPaed6rwfJ8YK
-	 qM+Czf8d2QD0FwOJjRc9zbZAsowK4TO0GlPR0kTj9yr+pQrkczIzB5YMLOWu5yV62X
-	 zrbvsglrFK+K6oWhUpyAUQvr7h35onXHuD1ji6yShqfYV+iOrV/Q1VhGH17Kqh02yD
-	 mPukHVH9AZim+1EQrqg3Ey6X0URZGtS4CLwZdyUOATXbHhidPW9pPiD0VFwmZyEdnQ
-	 YowMbfYElZn5sMsKxNSTzdKWt/IVLV+O9GTHKupSLLrTnq81ICP1SdxN4CV49VDkms
-	 3/VBQZ5QuoMTA==
-Date: Thu, 21 Nov 2024 14:04:41 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf tests: Fix hwmon parsing with PMU name test
-Message-ID: <Zz9oKR3goFPP9_a9@x1>
-References: <20241121000955.536930-1-irogers@google.com>
+	s=arc-20240116; t=1732208735; c=relaxed/simple;
+	bh=CbaenAERdzcCNRG1oChBWu9T6RdVY5QgrQue3cb2CBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZPlYA4zW3iYzA+ZyWQcWGy61XK5QLKJm/yoitYbZFx+yu4GgcffXHgHTxToHmZZ8yP8RKU2sSt+GA/JF2F18newB7oPfupK9T/usKvP4GnaM6ycImt/PWevhX3SmHxnXaaE0Yta7Jx7PXoIw8qiruMnC/vxJ+pXUwBJf4iLOes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H69m0zDy; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-460969c49f2so345651cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:05:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732208733; x=1732813533; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FbzeelOTslR/KHrOgwW0t93Zwe+09I3fmH31n/QNlAQ=;
+        b=H69m0zDyUKmfNutXbdGIMgnbwAqgFkxSMG0GX+wgG1zWhSD+uvNG96debh34q29zmJ
+         +HDNZnMqxltDyNUiLwEZUswOyFViOJECZjI2lHgOkMom5j31jJposAJqkXIFS59KTSxp
+         SCJksGHvyqwAJC3rzA+5fJ6KCXKf9gGpn/eJ/p4ufuYLsm1MB8wPS0/h/wsaHTBjOtgX
+         QES9eBqDX7F699OizeaYf8PAmUtJPY2UiidG7Bx2PiXulszHItc75lwZx59U9i67D3Tw
+         5p0ZS070wNlvsf1XN5renfXEBhcmFUOh2+gyv0iRysijWh/2QXJ/bd9s8qjDwGV6trID
+         Yycg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732208733; x=1732813533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FbzeelOTslR/KHrOgwW0t93Zwe+09I3fmH31n/QNlAQ=;
+        b=lj7+q9dzrlo8Tx7Bl9CZjX5EF7oZVUyHKlVP3CqHo81vfA/YV5dUhhshIL1L9fch4i
+         AmUq5yz60FdPTrvaneslKeOjqQvkdbIP5rWmqp+bH46nVHDaLf/5S75eXcLAa6ZR6KP4
+         QPldXqtz5GBu07PepYQGtPaw0nMGj8HS9ziSigXh38wt4Ohbyd8pt8kfGu0VYfDahLkM
+         495dcLw3BHAv3WMqMYxNR7LwHklP3/ctUJPJXUMZEOzI8YwoFFdXDeMkO11JkWpg10Ax
+         3ZRJjJTXWaQrDHKcy+01FJDIkv2M+v2szF7geThlwtmAbUtEed/hlsGTSngIPWo8zyYc
+         549A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZePOPq+liy/Z+w4gRvlZV4Scdd5Mk1UzDVgQ+ZOI/5hmbTq+0Ocw9HccA7dQOCypLMyWx5JgjuDN7xao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl7chAjrP2/RoLLDKGs5+rNsBKjsT8z39xsR4VMz1pwPzEKo0g
+	OXVs/Gyj+jA8q/0+jBhPSidyjwPwDXmyC/R5+yoJY2hzauEPQsI0Yphp4cp+I2gtrBfk559L5Th
+	hSGLevEB9XjDGS03S/S2EAVE1VcIIYxfMaUpA
+X-Gm-Gg: ASbGncuG42iqdDnOnLTla6P6pbkYYnkH/E0wZHq0FPqfEBkE2LE1wWJnzllzGUBThOt
+	PrxrAOhtShwssmqhX59JTVlw5yEL8wlkSj4AqBSABzFdshrW4ifsAPACKPEFg
+X-Google-Smtp-Source: AGHT+IEmxC31siYh0URWSvBOXH/D6mpJAtcWIEuMEukulOsxIf+33rCEYQo9mERxz5BBpt3yaGO4a9w2aMpXBv0P0VU=
+X-Received: by 2002:a05:622a:30b:b0:461:6832:8805 with SMTP id
+ d75a77b69052e-4653bcdcf41mr342011cf.12.1732208732479; Thu, 21 Nov 2024
+ 09:05:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121000955.536930-1-irogers@google.com>
+References: <20241120000826.335387-1-surenb@google.com> <20241120000826.335387-3-surenb@google.com>
+ <zfd7xdkr5dkvvx3caqao3oorh2pxxifhdhwsw2iyxcuzbevo3n@sobu7xhw24vv>
+ <CAJuCfpFAh-gw_BVCaEB4+saedVC6aPB7HfyPikvTujyGRLXPwQ@mail.gmail.com>
+ <wnwfgk32wyvx7tzd522ajwk5uixls7iayksrtho6c3dkvgdpek@25yqv3ohljzc>
+ <CAJuCfpGx6LCd7qCOsLc6hm-qMGtyM3ceitYbRdx1yKPHFHT-jQ@mail.gmail.com> <iw34akksaz6wjlygwuztlkvto3aiduekrhw6rjlqq4lr7vzmug@tprkddvgrj3e>
+In-Reply-To: <iw34akksaz6wjlygwuztlkvto3aiduekrhw6rjlqq4lr7vzmug@tprkddvgrj3e>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 21 Nov 2024 09:05:21 -0800
+Message-ID: <CAJuCfpHVQyVGR9sPtKLYt4a7rQUUopX0cBfk53=3RqpYK4=V8w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] mm: move per-vma lock into vm_area_struct
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz, 
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
+	jannh@google.com, souravpanda@google.com, pasha.tatashin@soleen.com, 
+	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 04:09:55PM -0800, Ian Rogers wrote:
-> Incorrectly the hwmon with PMU name test didn't pass "true". Fix and
-> address issue with hwmon_pmu__config_terms needing to load events - a
-> load bearing assert fired. Also fix missing list deletion when putting
-> the hwmon test PMU and lower some debug warnings to make the hwmon PMU
-> less spammy in verbose mode.
+On Wed, Nov 20, 2024 at 11:02=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.d=
+ev> wrote:
+>
+> On Wed, Nov 20, 2024 at 04:33:37PM -0800, Suren Baghdasaryan wrote:
+> [...]
+> > > > >
+> > > > > Do we just want 'struct vm_area_struct' to be cacheline aligned o=
+r do we
+> > > > > want 'struct vma_lock vm_lock' to be on a separate cacheline as w=
+ell?
+> > > >
+> > > > We want both to minimize cacheline sharing.
+> > > >
+> > >
+> > > For later, you will need to add a pad after vm_lock as well, so any
+> > > future addition will not share the cacheline with vm_lock. I would do
+> > > something like below. This is a nit and can be done later.
+> > >
+> > > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > > index 7654c766cbe2..5cc4fff163a0 100644
+> > > --- a/include/linux/mm_types.h
+> > > +++ b/include/linux/mm_types.h
+> > > @@ -751,10 +751,12 @@ struct vm_area_struct {
+> > >  #endif
+> > >         struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
+> > >  #ifdef CONFIG_PER_VMA_LOCK
+> > > +       CACHELINE_PADDING(__pad1__);
+> > >         /* Unstable RCU readers are allowed to read this. */
+> > > -       struct vma_lock vm_lock ____cacheline_aligned_in_smp;
+> > > +       struct vma_lock vm_lock;
+> > > +       CACHELINE_PADDING(__pad2__);
+> > >  #endif
+> > > -} __randomize_layout;
+> > > +} __randomize_layout ____cacheline_aligned_in_smp;
+> >
+> > I thought SLAB_HWCACHE_ALIGN for vm_area_cachep added in this patch
+> > would have the same result, no?
+> >
+>
+> SLAB_HWCACHE_ALIGN is more about the slub allocator allocating cache
+> aligned memory. It does not say anything about the internals of the
+> struct for which the kmem_cache is being created. The
+> ____cacheline_aligned_in_smp tag in your patch made sure that the field
+> vm_lock will be put in a new cacheline and there can be a hole between
+> vm_lock and the previous field if the previous field is not ending at
+> the cacheline boundary. Please note that if you add a new field after
+> vm_lock (without cacheline alignment tag), it will be on the same
+> cacheline as vm_lock. So, your code is achieving the vm_lock on its own
+> cacheline goal but vm_lock being the only field on that cacheline is not
+> being achieved.
 
-After applying this, with this series of patches on a Fedora 40 system,
-I get output from -v where before I needed, IIRC, to use -vv:
+Sorry, I should have been more clear. It's ok if some fields which are
+rarely accessed in the pagefault path are placed in the same cacheling
+with vm_lock. In fact I've done that to pack them better in the
+previous version of this patchset here:
+https://lore.kernel.org/all/20241111205506.3404479-5-surenb@google.com/
+(removed for now based on the feedback). So, vm_lock being the only
+field on the cacheline is not my goal. After this patchset I'm
+planning to try packing the members better and save some memory.
 
-f8244bb9bfa66f79 (HEAD -> perf-tools-next, x1/perf-tools-next) perf tests: Fix hwmon parsing with PMU name test
-9ae6c7a4bd02acbd perf hwmon_pmu: Ensure hwmon key union is zeroed before use
-3e37de098af38179 perf tests hwmon_pmu: Remove double evlist__delete()
-0565017a0ac824c2 perf test: Correct hwmon test PMU detection
-85c60a01b85ee956 (perf-tools-next/tmp.perf-tools-next, perf-tools-next/perf-tools-next) perf: Remove unused del_perf_probe_events()
-⬢ [acme@toolbox perf-tools-next]$
-
-root@number:~# perf -vv
-perf version 6.12.rc6.gf8244bb9bfa6
-                   aio: [ on  ]  # HAVE_AIO_SUPPORT
-                   bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
-         bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
-            debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
-                 dwarf: [ on  ]  # HAVE_LIBDW_SUPPORT
-    dwarf_getlocations: [ on  ]  # HAVE_LIBDW_SUPPORT
-          dwarf-unwind: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
-              auxtrace: [ on  ]  # HAVE_AUXTRACE_SUPPORT
-              libaudit: [ OFF ]  # HAVE_LIBAUDIT_SUPPORT
-                libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
-           libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
-             libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
-    libdw-dwarf-unwind: [ on  ]  # HAVE_LIBDW_SUPPORT
-                libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
-               libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-            libopencsd: [ on  ]  # HAVE_CSTRACE_SUPPORT
-               libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
-               libpfm4: [ on  ]  # HAVE_LIBPFM
-             libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
-              libslang: [ on  ]  # HAVE_SLANG_SUPPORT
-         libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
-             libunwind: [ OFF ]  # HAVE_LIBUNWIND_SUPPORT
-                  lzma: [ on  ]  # HAVE_LZMA_SUPPORT
-numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
-         syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
-                  zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
-                  zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
-root@number:~# 
-
-root@number:~# perf test -v 11
- 11: Hwmon PMU                                                       :
- 11.1: Basic parsing test                                            : Ok
---- start ---
-test child forked, pid 1823259
-Testing 'temp_test_hwmon_event1'
-Using CPUID GenuineIntel-6-B7-1
-FAILED tests/hwmon_pmu.c:159 failed to parse event 'temp_test_hwmon_event1', err 1
-event syntax error: 'temp_test_hwmon_event1'
-                     \___ Bad event name
-
-Unable to find event on a PMU of 'temp_test_hwmon_event1'
----- end(-1) ----
- 11.2: Parsing without PMU name                                      : FAILED!
---- start ---
-test child forked, pid 1823260
-Testing 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/'
-Using CPUID GenuineIntel-6-B7-1
-FAILED tests/hwmon_pmu.c:159 failed to parse event 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/', err 1
-event syntax error: 'hwmon_a_test_hwmon_pmu/temp_test_hwmon_event1/'
-                     \___ Bad event or PMU
-
-Unable to find PMU or event on a PMU of 'hwmon_a_test_hwmon_pmu'
----- end(-1) ----
- 11.3: Parsing with PMU name                                         : FAILED!
-root@number:~#
-
-⬢ [acme@toolbox perf-tools-next]$ ls -la /sys/class/hwmon/
-total 0
-drwxr-xr-x.  2 nobody nobody 0 Nov 21 14:03 .
-drwxr-xr-x. 80 nobody nobody 0 Nov 15 11:43 ..
-lrwxrwxrwx.  1 nobody nobody 0 Nov 15 11:43 hwmon0 -> ../../devices/virtual/thermal/thermal_zone0/hwmon0
-lrwxrwxrwx.  1 nobody nobody 0 Nov 15 11:43 hwmon1 -> ../../devices/pci0000:00/0000:00:06.0/0000:02:00.0/nvme/nvme0/hwmon1
-lrwxrwxrwx.  1 nobody nobody 0 Nov 20 16:36 hwmon2 -> ../../devices/platform/PNP0C14:02/wmi_bus/wmi_bus-PNP0C14:02/DEADBEEF-2001-0000-00A0-C90629100000/hwmon/hwmon2
-lrwxrwxrwx.  1 nobody nobody 0 Nov 20 16:36 hwmon3 -> ../../devices/pci0000:00/0000:00:1f.4/i2c-16/16-0053/hwmon/hwmon3
-lrwxrwxrwx.  1 nobody nobody 0 Nov 20 16:36 hwmon4 -> ../../devices/platform/coretemp.0/hwmon/hwmon4
-⬢ [acme@toolbox perf-tools-next]$
-⬢ [acme@toolbox perf-tools-next]$ uname -a
-Linux toolbox 6.11.7-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Fri Nov  8 19:21:57 UTC 2024 x86_64 GNU/Linux
-⬢ [acme@toolbox perf-tools-next]$ 
-
-- Arnaldo
+>
 
