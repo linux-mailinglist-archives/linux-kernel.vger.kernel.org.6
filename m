@@ -1,187 +1,132 @@
-Return-Path: <linux-kernel+bounces-417555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820F79D5597
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:43:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20E49D559A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DA82830B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4510FB22453
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CDF1D9324;
-	Thu, 21 Nov 2024 22:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CF61DDC18;
+	Thu, 21 Nov 2024 22:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="wR4ErVwr"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g3rBFSj+"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3161BD4EB
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6E1AAE06
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732228968; cv=none; b=kD+xWlwL4wgmqXvBOP1AybOivWJXA2lEkSQMgVUD6+DsFxkem7vWBQo9UM6EQevckJY3S7I8/brQeqLs8gw1T8zh76bLVByhw4NnFEZ8IAbOa0kgAxIWtr/MGccHzBrX0a1DP3Th6G58NPHh0PkR46qNRjfnUUtaZEFoOB1r90I=
+	t=1732229061; cv=none; b=QHCgo9zTTq06t1j2y7+K3dW0+KD+4NcsenElJ62orOpX1CTpwp9CloFYV3LqxI8FGwQjtu+hkU6xFgx+9+4IurWtOZx8Lf2gIvC3Cn/LQvn2gR/LovAN5igaTqCl9K/dhJqKpFWvtJ6NvAiZjjj6Vg41YgqmRCWkyYAIE2cqo/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732228968; c=relaxed/simple;
-	bh=M8DVUXQGR6NcXFE188QjZG7fKBPLaNmu+KGvMT6oh00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yzf/ajVom/OEfMw07CHg53z1nKxTYESeiniQZEBIbgMp8nVPUZuJmDQLhyl4QbI/LakeI6y2vTmMjrH+yq2kcQa8xwXQG0Fi0yi7hms1ddVsJxCmE9QXd3Lch0J0QrDLmWKMSfABaY10Ltl3RCyGpGExQvQwHs3HOnMI3wAexII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=wR4ErVwr; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso223987366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:42:46 -0800 (PST)
+	s=arc-20240116; t=1732229061; c=relaxed/simple;
+	bh=UvqKl313UbCoQrV81fFTtqVbmffHswlTT+HQtjKyoJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlnluL5ckzZ7B82wNYj1MUMOeRn0JlW3YPN8/Wge5zWj+bbI0WwhK2PdKm0YcO7x8JbkrnFaM0pCKmDHIw/4jYYFc1zNyZATnNnsIplozkL0n+VKr6pxss4TIeONFzCxwqa/NFXd01w6DxeiF5mF28LvRpGlWZcQYKKErPhy/JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g3rBFSj+; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5740a03bso16835741fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:44:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1732228965; x=1732833765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lpl29WxoyNcOaT5g0KSW5/agiiklTO12tp7HkumeaXI=;
-        b=wR4ErVwrSZWHysH/me/V8xUKSiEUW8QhCEer658KLg6ybrKfZHFhCRIbz4MYbRlHO/
-         Z/D3nBq8/lvFIH4TeF5JyVtqekD10nV988figyGVaE8qia5dcuf7x3i0ENm1pUedtQ7y
-         T8IVEORocf63jwbuPomdk/tSrYyIkREpU5CaugTZiEw3DXrhQji3dVE0fwk826TJ16Rs
-         K+8RQxVpy4XMqhZ9eJqeQGIwVi7+ab7wKdO2zjlNZbqmwEjpPUNU98/nluefp+uLuFr2
-         YnGuB3a4jUziDDuhitZX8cMKlyAi+pKaGySaHE5rmo39/9/8wPBgxFKhRV5Xe0U72P3n
-         5afA==
+        d=linaro.org; s=google; t=1732229058; x=1732833858; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q/Nja2Bb51yLaelcKPmFVLsubQx3+cZP82+7JwtW4Xk=;
+        b=g3rBFSj+cdb2AX+iX48C7PMjjZFTT9h1MTUkIcCOyk7kbfnHV0RQ98W6nG+aM+CHQi
+         3+9kVmMUWjQ2G8aecV0N1XMwYRQPZklcZ9ygPLE2/Fl3j0MUK3MZB4f36NMCdzX0EnNT
+         URfeh+mcVCEb8RdKF7Zl4xRAZUgDA6UTt5ateX3z3rmudcKaahZCy7GrUcODVke95y3h
+         O5MkiBqtIvIdfqR86hk433wRxWZxPAVkcr7YoPzkd5et3/aG4YuvCzZYRpW+StKni7NL
+         0RlVXsdrwTzq2P9UI6g3jzblCafTbRdWHLGlKTjheJjl5pcgfPyedBBD7CkWvSPCFQ2Q
+         OZZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732228965; x=1732833765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lpl29WxoyNcOaT5g0KSW5/agiiklTO12tp7HkumeaXI=;
-        b=X0H8eQfTgHvsKmJU7XQFdrSL9hWN7uSbzfOFLiQZj2U3pFnfC/4ooPTLkLvlsV6c6h
-         FAn+o8eUUwIkZ1TnwXR/kHiei1BJ1sXAw8pT8YA37DvJCqiwpZA2Q9izCNjMY5aHjWNu
-         3Seq/Sdlawg7iVSkoT15miS/dSvNekbdk+S+KJOSpe4nclm2Jh5NVHCu0W1acn/BLZAx
-         orxRSDDalZoGdrp8bLjsx/Pkn0gNLXjuCEKvTThMggZG9qsbi2a96OgMV0B+2MS2srTA
-         VU5NmgwCxWfwPmvr5CRjxQuDBm4asNuG7TRpBtTolpDcnU9gE4ZudznJrNSMdTg9ugWk
-         tLZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWk6WU/kyNx1v9rl6wDYOR+Tdr+GXEJvjNLCIMrr5KVCW4gWUkJu9398yfGxNUYHTQZeDEGbfyESOi3kLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo02vxiDCpNF7zQahmTHKwUxhxO0Hmm1IJaxbRQjJJedwhlM1R
-	+WZnwKgCl85eOpTCxCzk3/ezGeSnmt+5CFa3GtN5J2TyJnPT3nXelDLWuUt3bNLoxzErbjev2Pc
-	+tDZ+SYpjQj6bTqQ5iZYfNu2HbaiugC/hQRCt
-X-Gm-Gg: ASbGncs+I1nsutJFTax1I9Qd80A8a5/uG92qEnVpdyV32aWQcY6EeVBo9XZF1LIWNrY
-	aqPffKJJYaqQv5SnE8ETr91Bdv1/Blw==
-X-Google-Smtp-Source: AGHT+IEJBb9KISPdLeRNueM+M6hMlDiEZBnKX/0BK3HOiT007/scaGSB3LtwJa2rfHw9qXCKhSH2k1VVwUmlKXIZfpk=
-X-Received: by 2002:a17:907:1dd7:b0:a9a:8a4:e090 with SMTP id
- a640c23a62f3a-aa509bca598mr60753666b.50.1732228964782; Thu, 21 Nov 2024
- 14:42:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732229058; x=1732833858;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q/Nja2Bb51yLaelcKPmFVLsubQx3+cZP82+7JwtW4Xk=;
+        b=GiSFDj/56VBPhnRmUi/+yBToU/k7z6Ls2+WnneKCelybOlg1pEwIWtvm1nkSY5ZWGX
+         cPjiUfr2H7FEGhNaEhe3Y5Gnu3Pd+GX1BPNeWWCsP84NMm0ANiiiJDVtL9FmLChkQ7fW
+         oO159rsKYW7RHaHrXo4uRZxhbCN6DeLCADuAGvwE+rrHW1Z4CTmAwgzMRe1Rn1+MOuvJ
+         orhecQHdrbojV4IzcGD4LYOX534RVEl3n+cRUXSSnZJBycUYKL7Dppd6RcoE+ec3eq8F
+         eXNmFGuAel30SzLnXSvrLGVNkS+u2zPvpYIMM/m2i+Tdwb4cjAxg2MX2I1ChQtnSdmIy
+         wCYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjF6N3w6d/PLu2Yyw/GBuKGMA/Kud13jUJPU9GXIy4zAbdbGHoWb8AN0n5nyvfmnfiEJVP+1fQ+UTfF58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzGRFnStrDkHjhjO3Ipf74kmZn8hmfcYFRM1yMq39/IccLKB2r
+	6mZdNzIaS/goPVsVVRU7LgDrCyGeTHaLcQKkfMBj5RQ+gii5EAyJ6Pxq3+4F2m8=
+X-Gm-Gg: ASbGncsI44hJIKxe5zHB1G6SS05jStDkn8J5FdakovCMh682oG3Q3cJu1tZvX2rdK0Y
+	57t0nEmE5J+gDg5MUZjhfkgz7exk73YHcSIHVO/n/a/A4oJN5uR+iF2rB4gKL9n0F+7GWyZNJnX
+	4nXNeza7dhJlN5bgY0VTLEJmT3qtcuiR55rfV/v4EkeqhChqYNZVf2vUXxwJuLXBpSNIi0v0UJ5
+	aIOVujfm/pNFzwUS8pPlzB+BhZ0LPjwjxeyMj/5YvWzJeVZFJaBZzsSTQBhfm9wsBRihzTIkz+z
+	h2iqzfhrhlldwrl+c4XjqtF1Dp1UGA==
+X-Google-Smtp-Source: AGHT+IGbReTR075Ouxz1EQlRJI//zuSXefAabMn1r5zxrv9eXDCoMRD5JejlOdypknkykXEjg8Eg3g==
+X-Received: by 2002:a05:651c:221b:b0:2fb:5723:c9ea with SMTP id 38308e7fff4ca-2ffa716ce5fmr1747681fa.30.1732229057836;
+        Thu, 21 Nov 2024 14:44:17 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa53769f2sm665281fa.77.2024.11.21.14.44.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 14:44:16 -0800 (PST)
+Date: Fri, 22 Nov 2024 00:44:14 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
+	andersson@kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_vbadigan@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] arm64: dts: qcom: qcs6490-rb3gen2: Add node for
+ qps615
+Message-ID: <berrvurtuyujkgy7q7hn3flx5lfusrskxh5bo7xvp374zojcro@v5mkoea2xkds>
+References: <20241112-qps615_pwr-v3-0-29a1e98aa2b0@quicinc.com>
+ <20241112-qps615_pwr-v3-2-29a1e98aa2b0@quicinc.com>
+ <ngjwfsymvo2sucvzyoanhezjisjqgfgnlixrzjgxjzlfchni7y@lvgrfslpnqmo>
+ <yjwk3gnxkxmhnw36mawwvnpsckm3eier2smishlo2bdqa23jzu@mexrtjul2qlk>
+ <a4146b5a-a229-4441-b123-d13e72ab4472@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx> <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
- <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
- <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
- <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
- <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
- <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
- <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
- <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com>
- <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
- <CALCETrW6vMYZo-b7N9ojVSeZLVxhZjLBjnMHsULMGP6TaVYRHA@mail.gmail.com>
- <9c80e779b6268fde33c93ed3765ff93b1d6d007b.camel@HansenPartnership.com>
- <CALCETrX4vHnVorqWjPEOP0XLaA0uUWkKikDcCXWtbs2a7EBuiA@mail.gmail.com>
- <66fabe21-7d0d-4978-806e-9a4af3e9257a@oracle.com> <CALCETrXXsta0OdgXb5Ti87psaty7gp5WRr-w8vTuEhOLuoGyXg@mail.gmail.com>
-In-Reply-To: <CALCETrXXsta0OdgXb5Ti87psaty7gp5WRr-w8vTuEhOLuoGyXg@mail.gmail.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Thu, 21 Nov 2024 14:42:32 -0800
-Message-ID: <CALCETrV=PSLvDn4K6o1qoQLwTQtaPU6ESVPZTwRBJF5Pj_XJwg@mail.gmail.com>
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: ross.philipson@oracle.com
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	"Daniel P. Smith" <dpsmith@apertussolutions.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, Eric Biggers <ebiggers@kernel.org>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org, 
-	iommu@lists.linux-foundation.org, mingo@redhat.com, bp@alien8.de, 
-	hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
-	mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
-	nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4146b5a-a229-4441-b123-d13e72ab4472@kernel.org>
 
-On Thu, Nov 21, 2024 at 12:54=E2=80=AFPM Andy Lutomirski <luto@amacapital.n=
-et> wrote:
->
-> On Thu, Nov 21, 2024 at 12:11=E2=80=AFPM <ross.philipson@oracle.com> wrot=
-e:
-> >
-> > On 11/18/24 12:02 PM, Andy Lutomirski wrote:
->
-> > > If the vendor of an attestation-dependent thing trusts SM3 but *Linux=
-*
-> > > does not like SM3, then the vendor's software should not become wildl=
-y
-> > > insecure because Linux does not like SM3.  And, as that 2004 CVE
-> > > shows, even two groups that are nominally associated with Microsoft
-> > > can disagree on which banks they like, causing a vulnerability.
-> >
-> > Thanks everyone for all the feedback and discussions on this. I
-> > understand it is important and perhaps the Linux TPM code should be
-> > modified to do the extend operations differently but this seems like it
-> > is outside the scope of our Secure Launch feature patch set.
->
-> It's absolutely not outside the scope.  Look, this is quoted verbatim
-> from your patchset (v11, but I don't think this has materially
-> changed):
+On Wed, Nov 20, 2024 at 02:28:29PM +0100, Krzysztof Kozlowski wrote:
+> On 20/11/2024 12:03, Dmitry Baryshkov wrote:
+> >>>  
+> >>>  &apps_rsc {
+> >>> @@ -684,6 +708,75 @@ &mdss_edp_phy {
+> >>>  	status = "okay";
+> >>>  };
+> >>>  
+> >>> +&pcie1_port {
+> >>> +	pcie@0,0 {
+> >>> +		compatible = "pci1179,0623";
+> >>
+> >> The switch is part of SoC or board? This is confusing, I thought QPS615
+> >> is the SoC.
+> > 
+> > QCS615 is the SoC, QPS615 is a switch.
+> OK, thanks for confirming. Just to be clear, I understand above as: it
+> is only the switch, nothing else.
 
+PCIe switch, networking interface, but not the SoC (and not a part of
+the SoC).
 
-... I apologize -- I've misread the code.  That code is still wrong, I
-think, but for an entirely different reason:
+> 
+> Best regards,
+> Krzysztof
 
->
-> +       /* Early SL code ensured there was a max count of 2 digests */
-> +       for (i =3D 0; i < event->count; i++) {
-> +               dptr =3D (u8 *)alg_id_field + sizeof(u16);
-> +
-> +               for (j =3D 0; j < tpm->nr_allocated_banks; j++) {
-> +                       if (digests[j].alg_id !=3D *alg_id_field)
-> +                               continue;
->
-> ^^^^^^^^^^^^^^^^^^^^^ excuse me?
->
-> +
-> +                       switch (digests[j].alg_id) {
-> +                       case TPM_ALG_SHA256:
-> +                               memcpy(&digests[j].digest[0], dptr,
-> +                                      SHA256_DIGEST_SIZE);
-> +                               alg_id_field =3D (u16 *)((u8 *)alg_id_fie=
-ld +
-> +                                       SHA256_DIGEST_SIZE + sizeof(u16))=
-;
-> +                               break;
-> +                       case TPM_ALG_SHA1:
-> +                               memcpy(&digests[j].digest[0], dptr,
-> +                                      SHA1_DIGEST_SIZE);
-> +                               alg_id_field =3D (u16 *)((u8 *)alg_id_fie=
-ld +
-> +                                       SHA1_DIGEST_SIZE + sizeof(u16));
-> +                               break;
-> +                       default:
-> +                               break;
-> +                       }
-> +               }
-> +       }
-
-If we fall off the end of the loop, we never increase alg_id_field,
-and subsequent iterations will malfunction.  But we apparently will
-write zeros (or fail?) if we have an unsupported algorithm, because we
-are asking to extend all allocated banks.  I think.  This code is
-gross.  It's plausible that this whole sequence is impossible unless
-something malicious is going on.
-
-Also, and I'm sort of replying to the wrong patch here, how
-trustworthy is the data that's used to populate tpm_algs in the stub?
-I don't think the results will be very pretty if tpm_algs ends up
-being incorrect.
+-- 
+With best wishes
+Dmitry
 
