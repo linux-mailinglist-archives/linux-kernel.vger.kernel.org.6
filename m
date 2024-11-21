@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-416670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FE49D4885
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:10:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8F09D488A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30E8282CF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C01131F22408
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 08:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0B1CB305;
-	Thu, 21 Nov 2024 08:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C62E1CB323;
+	Thu, 21 Nov 2024 08:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="LtFs0KfB"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1TTuoVS2"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E3A146A6B
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAEA1AA7A6
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 08:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732176624; cv=none; b=ghEYRBjbcaIxQpB4o+P6Oq76OhfcMexO2omQhWaDHEjH+F4aARVDqN3Dgey6i/r+hzDFuJXdP1CAVlmfK9LYsZkcBKbEA9XSpx+YIDPsN8QRpPdaqJuyf2U/V5FJdkaSkvOgMz66/v32w/Pk3kkZT63q1Dtu/LXBqJOsbjkhgMc=
+	t=1732176641; cv=none; b=Yk3xvV/fjxSDhYUBgbxa08hUl++qVcJHnR10MjVRjMzH+sxAM0DT/QEtz5s8TGxH8e3+vPUSQ4xkWhAka5AyD/7ZGbiSCn0sHVpotsn+hMGLOidprmO43zPhJ3c1xYWVYLcnwAGp55hqrOMuuEVJLraM3eoigloQ6sz3eCtcIr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732176624; c=relaxed/simple;
-	bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dz9lSTlE2yIdm7uXnzLjJ/ePAiCiYGMBtETX3KKdYvMdqnlyDbkWb0YeODxYmgp5Opzdu/IXmMb/pf/dxAyxkxchWLglSeauK1mlyC6XAkU9o6gsvEiSEtUycil4r+Ut7aCA+b8+0CW7ZXNIFtfzA78XCekgMiTUgiDN/o9GLAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=LtFs0KfB; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfc0209eadso74790a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:10:19 -0800 (PST)
+	s=arc-20240116; t=1732176641; c=relaxed/simple;
+	bh=5lOL0dAG+qWC0r4hkRD0OLI4t1JweZw1bUh7yRT08po=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tblDpVmLHxdB7NPnKqlfbshUG30RpQEGj+dXeDAnEQscwicXbARKpuUOZlvo/W9yB/U+slA3cwf680R1vP82nzab0Fvvn0UHNo5e4TnHp04p2e9PJ45VvHC+fixznbNb8F8gnoAuSqszV31vRS3P0Zqh1EojFOVZFm9YpNRDWKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1TTuoVS2; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53a007743e7so610179e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 00:10:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732176618; x=1732781418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1732176637; x=1732781437; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
-        b=LtFs0KfBVjtiXWCIpbHI5W3LOrfWt0PiTMKu7TXcHIiskylcF0AHaqWTpMsSXwZYpt
-         MOBfwNdds1WolKK38NFIxVJlcDumpWTviCzN5Tlw9eLpx6QMsb1ArArY4MK27CXAUXNi
-         MHtJINV/3DQqHq+AQPSMRCWTdXLZfTj2ktZ9S5lX+JW4qKalLC+TkeHuaCLNkc4l3Sv1
-         EZSz/9B08uOyZk8JpU88TrsquTA0E9LgmmiWSsbH4f+Q1To01YT1k4f4jc6b1sTyEpGg
-         lEv55vP+ALInOO2yEQCVWn+SxD4HZvxIy4QkV76eHMJ1SeeTBMTzu7vfSHWgu23fwGVR
-         bdxw==
+        bh=rnPwcB+5WPLiKnjzFr2LUkl9/dt100jcqR+MZTr4V+I=;
+        b=1TTuoVS2T9NrTTbNg9Mq83G5VUQHaoObfwe9gGuQGEaJwNQlnq9WLn+vw0DQF5N4pB
+         yIEpSD42X1m1p9oO4t/s8+aVW+sRYkWQYHwUDxj9buUp+Dr0rDy1FIh41eMM9kk30bJ8
+         WqPA5qafJVPYpN0pplYyNMTp8HSB9mPbuMiZf+EcXIUVX3YkeOFUj/lJpBjg6JdPx68q
+         FiBYCKgjbboYTU1pnIsuf7Ennkmgaq2tmJ6HuAvwponiQDh7hqNH4rKsQGN3xMSFmS9w
+         J6MmPHOiSSHiutr3A0zio0bv4FLIbOV9JxuMpr508BvRkpz7OMPTpLEZsomuFLXTB1Pk
+         e8AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732176618; x=1732781418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732176637; x=1732781437;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=J1CNHD/ipIg/L0Nh/y/WM5Z08MZpn6PYb6fY+01z9XQ=;
-        b=nWwCoFNroMBKS9pMyVmQw2FAVvnWWOWXt8NJ9YAjK5IFYpjEEp1WTXyo7J2xlaq4/5
-         8xe0TJ3Mr8I+xZw4X4Gtu8fTdpHoNaP3io3nf6H7Zm4nvFYdeBzmrh8Btwi0HjscTYSU
-         HGCavjaD85mDzNpOECcF7x3Fw1XcH8em1cBsY3N+iULBv5djZmEi7oW+7IZrqRE0jlx6
-         9YpLcIIfUaS3/GNXi8Ef+FDXbsBn+mT5AtDRcsmvE6RsC+X7cDyzqgKea+QRYhl2H6ZM
-         vKU6JJypGQiqOcd5+saDyFXyWHGfY9zTZoYHVARlgQJEQZvUMFfZqveKcyEs8DhE36XU
-         DkJg==
-X-Gm-Message-State: AOJu0YyhDMmrlKaCEUc4hgTFn6iAkiZ2vThVseVwxsRQIkIna+c0DpI8
-	CrPhajU+bbTA1V/1zEPYfQyQ0fcDU0DCO3C7ay///nPIrAWiKJzrMijWLG4GdCC2yhJ+zPjop+S
-	8yHATjxiLo/pZ5gulrEcboa3EAbaynKSnB9adJQ==
-X-Gm-Gg: ASbGncupoNQ4/R2+wEMn+XP3rip5Y2rXmyocV0gUU0I7uAcB5qrmNpZKlP4TKMwVnIS
-	0WynJX/GStgHEbRUGT7QcJv7NlkDe250=
-X-Google-Smtp-Source: AGHT+IEMvl1hbMySB0BrKqNmTgujNgYhCn5cHtxvHqbfm5g+a6bdtUVeU22KGhY3n+Q/ksiLTGSywShZMRKkUP051/E=
-X-Received: by 2002:a05:6402:2695:b0:5cf:b99c:3afb with SMTP id
- 4fb4d7f45d1cf-5cff4ccff67mr1591425a12.6.1732176618599; Thu, 21 Nov 2024
- 00:10:18 -0800 (PST)
+        bh=rnPwcB+5WPLiKnjzFr2LUkl9/dt100jcqR+MZTr4V+I=;
+        b=sPEwI49ZC2c94p/DCvs3Eby4x/f8VKTD96+wFQp91cx4WRlUpm0KoXUkssJTcakt5B
+         uUT060AijTi+p8JOJKFtynGd8M8d7PvU0rz7hJ2Ny1NIHWKS7SS1ccUjDCXQdXPCA4Oo
+         Kw0Od4agRhEZ9vErz1yTqiopR9WwFHCdAoUDcsniMx0altO/tVUyebJQgH2WYrmt7ZPQ
+         30nW3raTLFYvsh9fpekEEkqWHfpGc+k0ST8FB+GiyNCbk+5CvXutyEHevP6EyWrZTuVV
+         FXFpCaYtm3Xk0tal5+TD31zwYOEyGDicpqmx7xIQJNhy9Qh59Jo7dke6XvYyKvhwAbHY
+         MAcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhfXjka3ybjTGILIRsCsRP948vzcauvzcDmrK6XjqZgP08G3mamSWm6RbUWlsVnQuZySct2R1rpo6n/aY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPfmVOTb/322K6M/1iarObLLG0lBSWLmx0Jbvo0MCCOe4ZVg7
+	h+OXAV8hx1l1+T+pupNXhykiWX8FE1Oh4Rt9oli5e+WJndRq7qoNZw46fHDjPVw=
+X-Google-Smtp-Source: AGHT+IGlTpfF8XVK0B5gc3g3nL1WX7zKVvmRxcMqPy555X8l8nNBazMekEELBSkNiok4v12jorW8dQ==
+X-Received: by 2002:a05:6512:3b24:b0:53d:c062:b5b7 with SMTP id 2adb3069b0e04-53dc136739dmr2901878e87.42.1732176637449;
+        Thu, 21 Nov 2024 00:10:37 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:d902:9409:ef0:268d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1170sm46696195e9.3.2024.11.21.00.10.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 00:10:36 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Mun Yew Tham <mun.yew.tham@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v2 1/1] gpio: altera: Add missed base and label initialisations
+Date: Thu, 21 Nov 2024 09:10:28 +0100
+Message-ID: <173217662607.10730.5524794345806722350.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241118095402.516989-1-andriy.shevchenko@linux.intel.com>
+References: <20241118095402.516989-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com> <20241119152939.158819-1-jinpu.wang@ionos.com>
-In-Reply-To: <20241119152939.158819-1-jinpu.wang@ionos.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Thu, 21 Nov 2024 09:10:08 +0100
-Message-ID: <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
-Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
-To: yukuai1@huaweicloud.com, Haris Iqbal <haris.iqbal@ionos.com>
-Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, song@kernel.org, 
-	xni@redhat.com, yangerkun@huawei.com, yi.zhang@huawei.com, yukuai3@huawei.com, 
-	=?UTF-8?Q?Florian=2DEwald_M=C3=BCller?= <florian-ewald.mueller@ionos.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 4:29=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com> wr=
-ote:
->
-> Hi Kuai,
->
-> We will test on our side and report back.
-Hi Kuai,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Haris tested the new patchset, and it works fine.
-Thanks for the work.
->
-> Yes, I meant patch5.
->
-> Regards!
-> Jinpu Wang @ IONOS
->
+
+On Mon, 18 Nov 2024 11:28:02 +0200, Andy Shevchenko wrote:
+> During conversion driver to modern APIs the base field initial value
+> of the GPIO chip was moved from -1 to 0, which triggers a warning.
+> Add missed base initialisation as it was in the original code.
+> 
+> Initialise the GPIO chip label correctly as it was done by
+> of_mm_gpiochip_add_data() before the below mentioned change.
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] gpio: altera: Add missed base and label initialisations
+      commit: c7899503ad9c06a0c6ee2796301139731cf1f5ab
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
