@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-416842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9DE9D4B01
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:42:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E80539D4B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90FB7B21BEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B0628597B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921CA1D07BB;
-	Thu, 21 Nov 2024 10:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZG0Lgk0"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040031CD209;
+	Thu, 21 Nov 2024 10:44:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC9213C695;
-	Thu, 21 Nov 2024 10:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CCD1D0E28
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732185758; cv=none; b=L7qBTMrokTd7oCJjd9GpqBAMP6FoIcgAmnJcCPeqbe7oeq8ej1tQfYP1tbERkm8qcTBROh0o6TX1sgtAzLzLR67KuNcnGRKr8P63VfY45M84ci32aUfAen8+ECBmI6AjWSN/rUanY0I1CVVZiPHhb9y+vdIL4vEmkjyUL4/Shu8=
+	t=1732185883; cv=none; b=XqojhtsKi+/zVe7b6iEZjrsUVRtKbSxiwwLI80+QTbO1aFmz/ANGpb3M4IETvWJ0wHG4kbB31rpHQLJ2Qd5YkWSm7eITk5vJ20DUbELGjergPc4xaH78dxjWww2X7S+hZVFGE9+lk4ojFKChDt0R5Gy1NFtXwWVCj+zGnVBYZ8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732185758; c=relaxed/simple;
-	bh=oAK0TJegtWW+lWIrhE+2a1Wu2HGKkfpJKCa24nmD05E=;
+	s=arc-20240116; t=1732185883; c=relaxed/simple;
+	bh=zTmWI0KmNoOKw6BQqMhF3Ls+TquqPpC5m9B1f8OOaxQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JcQ3sEBoJbT3R0kruOux1EqxclBrkrWLIg4DCKi8ykWjU/3fLEvzE6rIMS4yzz/iXCP0cAokvV90bow8oMYHAt3JiDOvdubjAS0/H0KV+R0ob5mimfn/HTWFzyoNZYbx42wFLjsGd8Pkd5RAcFKl7KZlCJEAo9K1451RnSQjMpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZG0Lgk0; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53da3b911b9so748253e87.2;
-        Thu, 21 Nov 2024 02:42:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732185754; x=1732790554; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g5QMCNW5k4WGGyY3GhBYH58sgwcx1JQEoIPCRoein8s=;
-        b=AZG0Lgk0PrUud95sq2PXPuPreq87lrttnXE53qfgipk+CMAQFX9mtfL5bb35bcUDk+
-         DRVgz9VteWnMPnVmorFIUcb1fDOQifvLu3bqLNhiMoebvY0oNLvC6dgOvdmROO9cpcMU
-         6gyCe5n2PHNmlw7KMCNvCgbVBlXfjEF7gXatrt+NshzpHV3ltmHje4F8TjF5A+uF5kas
-         sesC2SvKdOePfkCmQWdnXY1BwCCr9qP8dZahNEiqGisQmaW0WJXu15/bn4ziqx4kM1lH
-         leweBCFxAdgnkH1fHqrBuJfp5h8NEK41AHdgpX60u5LzJ5djRR8skwDyzjzV46NNh0wP
-         yOtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732185754; x=1732790554;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g5QMCNW5k4WGGyY3GhBYH58sgwcx1JQEoIPCRoein8s=;
-        b=HfNjJJeC/h7z3MYcRsKo6re208rFrqwDsIe57GsrQZTzjV281YQOiOako9RQJXTGln
-         BpUo14VUGN90lXZL90TL+RAwTxrm7IYY5Hr61qKq07fwpiDpUv9ONtd2UpUCvHwhl3Df
-         yAUijhsVFlrRwhZ4xuR63bYxTu6VscOE1WmXdq/z10qLOT6APyGoN/MZNwlJdMS4EeNv
-         QOOv3xQFRN2U+E4jfV5vB5GqQXwMrG25W7LQPA4H7NDMm+r6gUl7ciIuNF4p6Gzjh0cR
-         yPAiM5WhRnHLwAOPWrTxtJmhtdbeT3P8IWOXE7ZTA2PJIPWCs4G88AdMv6+fKCzokTVm
-         /E/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0LpD8lPI/wncGQgQ+5GNCgOWruuofxy5f7FrVDhQYgVoYUZVeSQdLH2zL70YpxFNPTsMYeAzU9LVPfiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7kgRVEgiQX0IFgbMeAoiEtqCOp7WXU5yr9WwBXGnSViXNsvIB
-	PazkcVAdiiQmUZIHHyhdgDcqSJyZAJ664hHhYmMhGML9mel0/W1w
-X-Google-Smtp-Source: AGHT+IH4/s7Q9qGl45xJ3H+VuqI8cL6ZT/HGoYu1Q47EzlvxEACZcPoaGys06lcT0GbIo+FlnRaJ7w==
-X-Received: by 2002:a05:6512:a8a:b0:53d:ccd5:606 with SMTP id 2adb3069b0e04-53dccd5073bmr595121e87.36.1732185753901;
-        Thu, 21 Nov 2024 02:42:33 -0800 (PST)
-Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd467175sm953549e87.116.2024.11.21.02.42.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 02:42:32 -0800 (PST)
-Message-ID: <cdfab3ac-4506-4415-a70b-1eb867bb9d9f@gmail.com>
-Date: Thu, 21 Nov 2024 11:42:29 +0100
+	 In-Reply-To:Content-Type; b=KvKfjWNqrZzTB6S3OFyvWX+L6OPfUqS0HULzn2vyE+lWmNYcrLlYTRqJbJ2DQ2ZA6wvLpQC2caSH4+XQHdbKUHuAlvxw6OheQJHBYNKdY/Oo/rZ9l0Q9j4WpE8c3SwhPST6Rtl9aa78pYPctAIorw2MPb9KO5qepOEbjbRFhrCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tE4fk-0004fj-E2; Thu, 21 Nov 2024 11:44:29 +0100
+Message-ID: <54c5de0c-3c5f-4411-a345-a34852cf9112@pengutronix.de>
+Date: Thu, 21 Nov 2024 11:44:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,56 +41,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/pwrctl: Do not assume device node presence
-To: Chen-Yu Tsai <wenst@chromium.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- stable+noautosel@kernel.org
-References: <20241121094020.3679787-1-wenst@chromium.org>
-Content-Language: en-US, sv-SE
-From: Klara Modin <klarasmodin@gmail.com>
-In-Reply-To: <20241121094020.3679787-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [EXT] Re: [PATCH] crypto: caam - use JobR's space to access page
+ 0 regs
+To: Gaurav Jain <gaurav.jain@nxp.com>, Horia Geanta <horia.geanta@nxp.com>,
+ Pankaj Gupta <pankaj.gupta@nxp.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
+ Silvano Di Ninno <silvano.dininno@nxp.com>, Varun Sethi <V.Sethi@nxp.com>,
+ Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
+ Sahil Malhotra <sahil.malhotra@nxp.com>,
+ Nikolaus Voss <nikolaus.voss@haag-streit.com>
+Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20241111121020.4013077-1-gaurav.jain@nxp.com>
+ <93e915b3-ef8e-4b98-aa7f-7759ae0b3091@pengutronix.de>
+ <DB9PR04MB8409AC6672B7A209ABC8F9DAE7272@DB9PR04MB8409.eurprd04.prod.outlook.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <DB9PR04MB8409AC6672B7A209ABC8F9DAE7272@DB9PR04MB8409.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 2024-11-21 10:40, Chen-Yu Tsai wrote:
-> A PCI device normally does not have a device node, since the bus is
-> fully enumerable. Assuming that a device node is presence is likely
-> bad.
-> 
-> The newly added pwrctl code assumes such and crashes with a NULL
-> pointer dereference. Besides that, of_find_device_by_node(NULL)
-> is likely going to return some random device.
-> 
-> Reported-by: Klara Modin <klarasmodin@gmail.com>
-> Closes: https://lore.kernel.org/linux-pci/a7b8f84d-efa6-490c-8594-84c1de9a7031@gmail.com/
-> Fixes: cc70852b0962 ("PCI/pwrctl: Ensure that pwrctl drivers are probed before PCI client drivers")
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Krzysztof Wilczyński <kwilczynski@kernel.org>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: stable+noautosel@kernel.org         # Depends on power supply check
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> ---
->   drivers/pci/bus.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> index 98910bc0fcc4..eca72e0c3b6c 100644
-> --- a/drivers/pci/bus.c
-> +++ b/drivers/pci/bus.c
-> @@ -405,7 +405,7 @@ void pci_bus_add_device(struct pci_dev *dev)
->   	 * before PCI client drivers.
->   	 */
->   	pdev = of_find_device_by_node(dn);
-> -	if (pdev && of_pci_supply_present(dn)) {
-> +	if (dn && pdev && of_pci_supply_present(dn)) {
->   		if (!device_link_add(&dev->dev, &pdev->dev,
->   				     DL_FLAG_AUTOREMOVE_CONSUMER))
->   			pci_err(dev, "failed to add device link to power control device %s\n",
+Hello Gaurav,
 
-Thanks for the fix,
-Tested-by: Klara Modin <klarasmodin@gmail.com>
+On 18.11.24 10:31, Gaurav Jain wrote:
+>> -----Original Message-----
+>> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>> Sent: Monday, November 11, 2024 5:52 PM
+>> To: Gaurav Jain <gaurav.jain@nxp.com>; Horia Geanta
+>> <horia.geanta@nxp.com>; Pankaj Gupta <pankaj.gupta@nxp.com>; Herbert
+>> Xu <herbert@gondor.apana.org.au>; David S . Miller
+>> <davem@davemloft.net>; Silvano Di Ninno <silvano.dininno@nxp.com>;
+>> Varun Sethi <V.Sethi@nxp.com>; Meenakshi Aggarwal
+>> <meenakshi.aggarwal@nxp.com>; Sahil Malhotra
+>> <sahil.malhotra@nxp.com>; Nikolaus Voss <nikolaus.voss@haag-streit.com>
+>> Cc: linux-crypto@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix
+>> Kernel Team <kernel@pengutronix.de>
+>> Subject: [EXT] Re: [PATCH] crypto: caam - use JobR's space to access page 0
+>> regs
+>>
+>> Caution: This is an external email. Please take care when clicking links or
+>> opening attachments. When in doubt, report the message using the 'Report
+>> this email' button
+>>
+>>
+>> Hello Guarav,
+>>
+>> Thanks for your patch.
+>>
+>> On 11.11.24 13:10, Gaurav Jain wrote:
+>>> Access to controller region is not permitted.
+>>
+>> It's permitted on most of the older SoCs. Please mention on which SoCs this
+>> is no longer true and which SoCs you tested your change on.
+> Yes, it is permitted on iMX6/7/8M SoCs but not on iMX8DXL/QM/QXP/8ULP.
+
+Ok, please add this to the commit message.
+
+>>
+>>> use JobR's register space to access page 0 registers.
+>>>
+>>> Fixes: 6a83830f649a ("crypto: caam - warn if blob_gen key is
+>>> insecure")
+>>
+>> Did the CAAM even support any of the SoCs, where this doesn't work
+>> anymore back when the code was mainlined?
+> Yes, for all SECO/ELE based SoCs, CAAM page 0 is not accessible from Non secure world.
+
+Same, this information needs to be in the commit message.
+
+>>
+>>> Signed-off-by: Gaurav Jain <gaurav.jain@nxp.com>
+>>> ---
+>>>  drivers/crypto/caam/blob_gen.c | 3 ++-
+>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/crypto/caam/blob_gen.c
+>>> b/drivers/crypto/caam/blob_gen.c index 87781c1534ee..079a22cc9f02
+>>> 100644
+>>> --- a/drivers/crypto/caam/blob_gen.c
+>>> +++ b/drivers/crypto/caam/blob_gen.c
+>>> @@ -2,6 +2,7 @@
+>>>  /*
+>>>   * Copyright (C) 2015 Pengutronix, Steffen Trumtrar
+>> <kernel@pengutronix.de>
+>>>   * Copyright (C) 2021 Pengutronix, Ahmad Fatoum
+>>> <kernel@pengutronix.de>
+>>> + * Copyright 2024 NXP
+>>>   */
+>>>
+>>>  #define pr_fmt(fmt) "caam blob_gen: " fmt @@ -104,7 +105,7 @@ int
+>>> caam_process_blob(struct caam_blob_priv *priv,
+>>>       }
+>>>
+>>>       ctrlpriv = dev_get_drvdata(jrdev->parent);
+>>> -     moo = FIELD_GET(CSTA_MOO, rd_reg32(&ctrlpriv->ctrl-
+>>> perfmon.status));
+>>> +     moo = FIELD_GET(CSTA_MOO,
+>>> + rd_reg32(&ctrlpriv->jr[0]->perfmon.status));
+>>
+>> I believe your change is correct, but I would prefer that ctrlpriv gets a
+>> perfmon member that is initialized in caam_probe to either &ctrlpriv->ctrl-
+>>> perfmon.status or &ctrlpriv->jr[0]->perfmon.status and then the code here
+>> would just use &ctrlpriv->perfmon->status.
+>>
+>> This would simplify code not only here, but also in caam_ctrl_rng_init.
+> As already communicated by Horia, a separate patch is good to cover this.
+
+Are you interested in writing that separate patch?
+
+Cheers,
+Ahmad
+
+> 
+> Thanks
+> Gaurav
+>>
+>> Thanks,
+>> Ahmad
+>>
+>>
+>>>       if (moo != CSTA_MOO_SECURE && moo != CSTA_MOO_TRUSTED)
+>>>               dev_warn(jrdev,
+>>>                        "using insecure test key, enable HAB to use
+>>> unique device key!\n");
+>>
+>>
+>> --
+>> Pengutronix e.K.                           |                             |
+>> Steuerwalder Str. 21                       |
+>> https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.
+>> pengutronix.de%2F&data=05%7C02%7Cgaurav.jain%40nxp.com%7C758768
+>> 98a8044b366f4808dd024b7740%7C686ea1d3bc2b4c6fa92cd99c5c30163
+>> 5%7C0%7C0%7C638669245367988594%7CUnknown%7CTWFpbGZsb3d8e
+>> yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIj
+>> oiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aaQ65iMsvuHn3q
+>> 0bo5UU%2FYU7Fpyw3El7wNVHd%2BMNee0%3D&reserved=0  |
+>> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+>> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> 
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
