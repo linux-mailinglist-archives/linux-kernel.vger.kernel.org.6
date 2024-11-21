@@ -1,194 +1,204 @@
-Return-Path: <linux-kernel+bounces-416843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E80539D4B08
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73979D4B09
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:45:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B0628597B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBC428654B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040031CD209;
-	Thu, 21 Nov 2024 10:44:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936B41CB528;
+	Thu, 21 Nov 2024 10:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xAVtialq"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CCD1D0E28
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA0E1D0B8B
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732185883; cv=none; b=XqojhtsKi+/zVe7b6iEZjrsUVRtKbSxiwwLI80+QTbO1aFmz/ANGpb3M4IETvWJ0wHG4kbB31rpHQLJ2Qd5YkWSm7eITk5vJ20DUbELGjergPc4xaH78dxjWww2X7S+hZVFGE9+lk4ojFKChDt0R5Gy1NFtXwWVCj+zGnVBYZ8I=
+	t=1732185908; cv=none; b=GNdlcuphPLQxplXBxHw99qRxM+1Z/r45K5ckfzr2jdDo7PiPyIIxGAmj/DicrFUrsrozaPRCZdS6TxHuM8NhWh8xF2CZITWMmjFaG360uc2aokcIAwEmvljc2l1jZ0EC0yjUfl/ET9nBKWYdu5fUISSFyJQiBEtu1Qg8t24ra1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732185883; c=relaxed/simple;
-	bh=zTmWI0KmNoOKw6BQqMhF3Ls+TquqPpC5m9B1f8OOaxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvKfjWNqrZzTB6S3OFyvWX+L6OPfUqS0HULzn2vyE+lWmNYcrLlYTRqJbJ2DQ2ZA6wvLpQC2caSH4+XQHdbKUHuAlvxw6OheQJHBYNKdY/Oo/rZ9l0Q9j4WpE8c3SwhPST6Rtl9aa78pYPctAIorw2MPb9KO5qepOEbjbRFhrCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tE4fk-0004fj-E2; Thu, 21 Nov 2024 11:44:29 +0100
-Message-ID: <54c5de0c-3c5f-4411-a345-a34852cf9112@pengutronix.de>
-Date: Thu, 21 Nov 2024 11:44:17 +0100
+	s=arc-20240116; t=1732185908; c=relaxed/simple;
+	bh=CwIShjUsfcnOqesiDbb35NKm4hTygyydM61hfALVz0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A3hEraUsrd+FTzcz6WQKUrhqqLsdM0wScb79NJ4lVMNKwS9IlZRWv7t2uT4VNntKUt2/4QPBCbAWh2lznYkuv2aaK1/9zzHPa/OGYUCHJRYu2kCs5WHXMb4iyNjB0KOLlN4S0K3v8tH2MJa/uSLTpziAIDJqPIWuso5vVLUWyHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xAVtialq; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3823cf963f1so426953f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:45:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732185904; x=1732790704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xK4Cfg9DlwufnPePVmxDaoaAvTYsonxko5dLjDtr1k8=;
+        b=xAVtialqQzD68QZEOQHJDmZf3qmHqdQ8bp91F5fe9qhXoRabP9C70i6mCgXZKyXqOt
+         ydh/Rg/x/4d0A1kbEJesdDir49SzkB6aYTqTek+xekz64Q4r7sgM+yFq5uKTV8gGXWXw
+         xAswTAL09qpNQBqNc9DSBQHNiiHl1Dyckrpy7tShGYvLSb+uRlOZk+1zAb+ZmhTMnj2M
+         /r4cM726rD6tkwMwI9sjR4C4wGGlSe9bzCGA6Lgye3hT3ejgq2clB8UjdrBN8rmo65KO
+         /a37wCnbi+TkIr13jcF2vOZirZ+OqtYCKlOilCzL15IjMO9g9SCsEnq8XckO8H02wMBP
+         gCbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732185904; x=1732790704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xK4Cfg9DlwufnPePVmxDaoaAvTYsonxko5dLjDtr1k8=;
+        b=sxGEqSthch4PtGcFjGz8O6jI9p2mK7BQC7nX0t5nG1Z9yU0ltgfTOrqnCbUvQDYw7Z
+         4ivj2XI6zZzeJ9BkntThUDSJydHfeRGRQk7sR9nkljknUpmXQenIws/Z22+RI2uBOGDo
+         Q18Ue9RHi9qWanEiuXV1YKU+pWLuZxI1uRYI8MLYB9jG6k2qyBHCyykhHIjGOUbDdCfo
+         1WZTzqYIPIWmBb9hxUJAmb3+iCiSv28S4X+nvAccsc1n88bwq9Crcvahk5WWZYR4qEnr
+         u0rFdnZmbElHKYGP+c/IaRkBzX19Mtpdl26te2YhVY8tYxSWtF5uiOLHlaVJTgeWY7L6
+         lhIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPodRKCrScZm0tatwNNsARTjiTU0g4Sfg0E6bXKWyUrFwMN9KKO8f8chDP0slWOZG/FU+Rql+yq1F55Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyDcofAC+sFPMz4xhfa2Zs1EqzdZpt09DKvYTeq3Xuwdxa2G3w
+	ZSLd1zSJyQVV87STWaEhoUFgZZezZfpRy8lLiGoSTPiqCzQgF1WpnOZtDc5EpLlJCGX5K0KvUgB
+	56T946mcqhjRk8A0YjQx2CKwOQAOs7sYpikmD
+X-Gm-Gg: ASbGnctxwawX5XRzp+zAD0s4pnnmvX/7eVgxbDD2J1Nvg44Hh7hBoPzUYCpINWdMBYq
+	T/jZzIOjcdc76Amy3gS8P2Zj3prXqFgStxiQrHdUsHxSSv7IugL1bPSJaX6oQAQ==
+X-Google-Smtp-Source: AGHT+IFNLFXfFTPNcf0Jy6eL0FhPoWe5bssVRl6BmWr16Rlaom5gN2QQBv1a2lad6azAjMDYL8YEC8lFmavr2ot49Tw=
+X-Received: by 2002:a5d:5f86:0:b0:382:5393:43cf with SMTP id
+ ffacd0b85a97d-38254af6394mr4794445f8f.13.1732185904176; Thu, 21 Nov 2024
+ 02:45:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH] crypto: caam - use JobR's space to access page
- 0 regs
-To: Gaurav Jain <gaurav.jain@nxp.com>, Horia Geanta <horia.geanta@nxp.com>,
- Pankaj Gupta <pankaj.gupta@nxp.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, "David S . Miller" <davem@davemloft.net>,
- Silvano Di Ninno <silvano.dininno@nxp.com>, Varun Sethi <V.Sethi@nxp.com>,
- Meenakshi Aggarwal <meenakshi.aggarwal@nxp.com>,
- Sahil Malhotra <sahil.malhotra@nxp.com>,
- Nikolaus Voss <nikolaus.voss@haag-streit.com>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20241111121020.4013077-1-gaurav.jain@nxp.com>
- <93e915b3-ef8e-4b98-aa7f-7759ae0b3091@pengutronix.de>
- <DB9PR04MB8409AC6672B7A209ABC8F9DAE7272@DB9PR04MB8409.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <DB9PR04MB8409AC6672B7A209ABC8F9DAE7272@DB9PR04MB8409.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241120-vma-v8-0-eb31425da66b@google.com> <20241120-vma-v8-4-eb31425da66b@google.com>
+ <40be19b0-4c32-4554-a01f-649c12f889da@lucifer.local>
+In-Reply-To: <40be19b0-4c32-4554-a01f-649c12f889da@lucifer.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 21 Nov 2024 11:44:52 +0100
+Message-ID: <CAH5fLggw4Ca59-AA+ArHYD0QrKH8cGd_i0EN83MnYYZK1bmTGQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/7] mm: rust: add lock_vma_under_rcu
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Gaurav,
+On Wed, Nov 20, 2024 at 8:29=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Wed, Nov 20, 2024 at 02:49:58PM +0000, Alice Ryhl wrote:
+> > All of Rust Binder's existing calls to `vm_insert_page` could be
+> > optimized to first attempt to use `lock_vma_under_rcu`. This patch
+> > provides an abstraction to enable that.
+>
+> I think there should be a blurb about what the VMA locks are, how they av=
+oid
+> contention on the mmap read lock etc. before talking about a use case (th=
+ough
+> it's useful to mention the motivating reason!)
+>
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/helpers/mm.c |  5 +++++
+> >  rust/kernel/mm.rs | 56 +++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  2 files changed, 61 insertions(+)
+> >
+> > diff --git a/rust/helpers/mm.c b/rust/helpers/mm.c
+> > index 7b72eb065a3e..81b510c96fd2 100644
+> > --- a/rust/helpers/mm.c
+> > +++ b/rust/helpers/mm.c
+> > @@ -43,3 +43,8 @@ struct vm_area_struct *rust_helper_vma_lookup(struct =
+mm_struct *mm,
+> >  {
+> >       return vma_lookup(mm, addr);
+> >  }
+> > +
+> > +void rust_helper_vma_end_read(struct vm_area_struct *vma)
+> > +{
+> > +     vma_end_read(vma);
+> > +}
+> > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
+> > index ace8e7d57afe..a15acb546f68 100644
+> > --- a/rust/kernel/mm.rs
+> > +++ b/rust/kernel/mm.rs
+> > @@ -13,6 +13,7 @@
+> >  use core::{ops::Deref, ptr::NonNull};
+> >
+> >  pub mod virt;
+> > +use virt::VmAreaRef;
+> >
+> >  /// A wrapper for the kernel's `struct mm_struct`.
+> >  ///
+> > @@ -170,6 +171,32 @@ pub unsafe fn from_raw<'a>(ptr: *const bindings::m=
+m_struct) -> &'a MmWithUser {
+> >          unsafe { &*ptr.cast() }
+> >      }
+> >
+> > +    /// Try to lock the vma read lock under rcu.
+>
+> This reads oddly, I'd say 'try to acquire the VMA read lock'. It's not re=
+ally
+> necessary to mention RCU here I'd say, as while lock_vma_under_rcu() acqu=
+ires
+> the RCU lock in order to try to get the VMA read lock, it releases it aft=
+erwards
+> and you hold the VMA read luck until you are done with it and don't need =
+to hold
+> an RCU lock.
+>
+> A reader might otherwise be confused and think an RCU read lock is requir=
+ed to
+> be held throughout too which isn't the case (this is maybe a critique of =
+the
+> name of the function too, sorry Suren :P).
+>
+> > +    /// If this operation fails, the vma may still exist. In that case=
+, you should take the mmap
+> > +    /// read lock and try to use `vma_lookup` instead.
+>
+> This also reads oddly, you're more likely (assuming you are not arbitrari=
+ly
+> trying to acquire a lock on an address likely to be unmapped soon) to hav=
+e
+> failed due to lock contention.
+>
+> So I'd say 'this is an optimistic try lock operation, so it may fail, in =
+which
+> case you should fall back to taking the mmap read lock'.
+>
+> I'm not sure it's necessary to reference vma_lookup() either, especially =
+as in
+> future versions of this code we might want to use a VMA iterator instead.
 
-On 18.11.24 10:31, Gaurav Jain wrote:
->> -----Original Message-----
->> From: Ahmad Fatoum <a.fatoum@pengutronix.de>
->> Sent: Monday, November 11, 2024 5:52 PM
->> To: Gaurav Jain <gaurav.jain@nxp.com>; Horia Geanta
->> <horia.geanta@nxp.com>; Pankaj Gupta <pankaj.gupta@nxp.com>; Herbert
->> Xu <herbert@gondor.apana.org.au>; David S . Miller
->> <davem@davemloft.net>; Silvano Di Ninno <silvano.dininno@nxp.com>;
->> Varun Sethi <V.Sethi@nxp.com>; Meenakshi Aggarwal
->> <meenakshi.aggarwal@nxp.com>; Sahil Malhotra
->> <sahil.malhotra@nxp.com>; Nikolaus Voss <nikolaus.voss@haag-streit.com>
->> Cc: linux-crypto@vger.kernel.org; linux-kernel@vger.kernel.org; Pengutronix
->> Kernel Team <kernel@pengutronix.de>
->> Subject: [EXT] Re: [PATCH] crypto: caam - use JobR's space to access page 0
->> regs
->>
->> Caution: This is an external email. Please take care when clicking links or
->> opening attachments. When in doubt, report the message using the 'Report
->> this email' button
->>
->>
->> Hello Guarav,
->>
->> Thanks for your patch.
->>
->> On 11.11.24 13:10, Gaurav Jain wrote:
->>> Access to controller region is not permitted.
->>
->> It's permitted on most of the older SoCs. Please mention on which SoCs this
->> is no longer true and which SoCs you tested your change on.
-> Yes, it is permitted on iMX6/7/8M SoCs but not on iMX8DXL/QM/QXP/8ULP.
+Thanks for the doc suggestions, they sound great.
 
-Ok, please add this to the commit message.
+> > +    ///
+> > +    /// When per-vma locks are disabled, this always returns `None`.
+> > +    #[inline]
+> > +    pub fn lock_vma_under_rcu(&self, vma_addr: usize) -> Option<VmaRea=
+dGuard<'_>> {
+>
+> Ah I love having lock guards available... Something I miss from C++ :>)
 
->>
->>> use JobR's register space to access page 0 registers.
->>>
->>> Fixes: 6a83830f649a ("crypto: caam - warn if blob_gen key is
->>> insecure")
->>
->> Did the CAAM even support any of the SoCs, where this doesn't work
->> anymore back when the code was mainlined?
-> Yes, for all SECO/ELE based SoCs, CAAM page 0 is not accessible from Non secure world.
+I've heard that C is starting to get lock guards recently!
 
-Same, this information needs to be in the commit message.
+> > +        #[cfg(CONFIG_PER_VMA_LOCK)]
+>
+> Ah interesting, so we have an abstraction for kernel config operations!
 
->>
->>> Signed-off-by: Gaurav Jain <gaurav.jain@nxp.com>
->>> ---
->>>  drivers/crypto/caam/blob_gen.c | 3 ++-
->>>  1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/crypto/caam/blob_gen.c
->>> b/drivers/crypto/caam/blob_gen.c index 87781c1534ee..079a22cc9f02
->>> 100644
->>> --- a/drivers/crypto/caam/blob_gen.c
->>> +++ b/drivers/crypto/caam/blob_gen.c
->>> @@ -2,6 +2,7 @@
->>>  /*
->>>   * Copyright (C) 2015 Pengutronix, Steffen Trumtrar
->> <kernel@pengutronix.de>
->>>   * Copyright (C) 2021 Pengutronix, Ahmad Fatoum
->>> <kernel@pengutronix.de>
->>> + * Copyright 2024 NXP
->>>   */
->>>
->>>  #define pr_fmt(fmt) "caam blob_gen: " fmt @@ -104,7 +105,7 @@ int
->>> caam_process_blob(struct caam_blob_priv *priv,
->>>       }
->>>
->>>       ctrlpriv = dev_get_drvdata(jrdev->parent);
->>> -     moo = FIELD_GET(CSTA_MOO, rd_reg32(&ctrlpriv->ctrl-
->>> perfmon.status));
->>> +     moo = FIELD_GET(CSTA_MOO,
->>> + rd_reg32(&ctrlpriv->jr[0]->perfmon.status));
->>
->> I believe your change is correct, but I would prefer that ctrlpriv gets a
->> perfmon member that is initialized in caam_probe to either &ctrlpriv->ctrl-
->>> perfmon.status or &ctrlpriv->jr[0]->perfmon.status and then the code here
->> would just use &ctrlpriv->perfmon->status.
->>
->> This would simplify code not only here, but also in caam_ctrl_rng_init.
-> As already communicated by Horia, a separate patch is good to cover this.
+Yeah, it's basically an #ifdef, but the block must still parse even if
+the config is disabled.
 
-Are you interested in writing that separate patch?
-
-Cheers,
-Ahmad
-
-> 
-> Thanks
-> Gaurav
->>
->> Thanks,
->> Ahmad
->>
->>
->>>       if (moo != CSTA_MOO_SECURE && moo != CSTA_MOO_TRUSTED)
->>>               dev_warn(jrdev,
->>>                        "using insecure test key, enable HAB to use
->>> unique device key!\n");
->>
->>
->> --
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       |
->> https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fwww.
->> pengutronix.de%2F&data=05%7C02%7Cgaurav.jain%40nxp.com%7C758768
->> 98a8044b366f4808dd024b7740%7C686ea1d3bc2b4c6fa92cd99c5c30163
->> 5%7C0%7C0%7C638669245367988594%7CUnknown%7CTWFpbGZsb3d8e
->> yJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIj
->> oiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aaQ65iMsvuHn3q
->> 0bo5UU%2FYU7Fpyw3El7wNVHd%2BMNee0%3D&reserved=0  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Alice
 
