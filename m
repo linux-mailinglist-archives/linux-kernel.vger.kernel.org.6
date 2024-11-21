@@ -1,326 +1,649 @@
-Return-Path: <linux-kernel+bounces-416565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737819D46F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8E99D46F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA3D71F2217F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDEC281CA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323E513BACC;
-	Thu, 21 Nov 2024 04:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472F31A3BC8;
+	Thu, 21 Nov 2024 04:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0dV0W+47"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D0T7+O1l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05C0849C
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA93230986;
+	Thu, 21 Nov 2024 04:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732164360; cv=none; b=YfFoZKH/X23b9TutV0kkSj5E3QSKrUycE4B2oUl8Tu32JhAmy+E5jKagTVrLaBL8InyuUGtZPwHFbmLGKBIghIIOYddWmx6n0Kg3F0zn7EcQCpQnCzUYdPDTs2GhH4Pe9AZ/gMePHfTjTYkwz4Lxfz3vhEp8krooJKe1MTWaDYE=
+	t=1732164546; cv=none; b=Ba3v60OtdXtJyZHF1nhR6emNVE+UNcjju1Q/aFAwcFspGnjQhpXjpdPy5Z8PWo0hZFFzHyiA2N/Ch/xudEF4KvEIeuLjtU7C3LTOUfSY8RgegmeqCYwyhpdNJ5MJE/zEAce1yRIMfbRkbn1EdEc+YVAA4RjlRRe4LsTk6IkOITI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732164360; c=relaxed/simple;
-	bh=hnHlCPe3Ij38lk5LYTKDqGJdMedllOn0yNRtCNDzTBQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SrAEry5IFtKmYhNYbFLRHyTwpr9lHbLYDZz5rp0cGEJRmP486UZXdQR7u33MjMNvS7skPN0NXMl0qHg5J3vjf0L0RyyNmyWaAKBSZXQbBVSU4ZIPu67m/K3b1ejHmQY2dN5G+UFNrQcDZv6tBbI3sYP0HfReqsSfrzwyaXAShS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0dV0W+47; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ctshao.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e388c4bd92bso900632276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:45:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732164357; x=1732769157; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Cogs2EVBRjzSDp3JU3Wnx8u85Le+bSEDTylLBOdqsAs=;
-        b=0dV0W+47bLuloWN9b+2oRifdIiFbUPHnBPGznhVhERORCZXr6aPbMXqs0/cMxEHD9a
-         zt7Rh3eooqqxM1361No6HI9UZfQBWSnEmeDFmjFRhS/eK5iFLy2mjylmn78iXvFsMLOu
-         n3XGrr07loH9KcScSZER5Wg0vtCFBsY5Q9qr0tBlJ1SCMC7Neo19/CAvtN5aW4ubNYmY
-         wYPDrq16VjJGUsFizzP1jCTB7HASqgouCMANSyYCIsEsdZCK1hJX+QukmMz/QBZlKWrP
-         HTVg1wjzLBcd6dav1XTlNRI6cfO/WCNWxuH8V8xdvXa6Q9zsxF7JY8W9LW+YYGtwP/G1
-         79xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732164357; x=1732769157;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Cogs2EVBRjzSDp3JU3Wnx8u85Le+bSEDTylLBOdqsAs=;
-        b=Y8kMc5o6vaHrFnniiqupBpFUdnD6rT2n+0C9uRdF2fc0aDLK9Ytf6eWDwzvMIDFsUZ
-         DFTPYur1tMr7DXfw7X+hoJAPOnrIhxqxkb3UYvCpZ75NADDqhOf/I7iyMWLqpyLSZ0eN
-         UFAYv8tvp3HHtBXVAWEwqvksFxM6y+sESEclr5vcn/gM8klOnYdINkN3+q1qaaV8TIII
-         WrhefokZfn/LbGHLOTFlQMShx52O5A5IAGRTKdosUBeuwoLTAs/gEYXDxChQP7PppGsm
-         m4/1KyRWTAUI8JVBDWy1aGYDD/Gp1VZBSmwDmMWLcK02/4rBV0gN6XkLj+Y7EXn+XQNf
-         O3hw==
-X-Gm-Message-State: AOJu0YyiHnBgevHAG/yVAgb3+Px5RSRpLhf+wyyMD3TS+5aqsUWhL4EA
-	LGgdaLtM65MDf/chZF5i2P89mFYl6+84ihsI2xSYoji9YKVpF5u5xxcwzKhJ8WJ4U+H7z1kT7RM
-	D/gyHMQJuG4Aws5+0rA60ddcSFZr+8HyMxdDSQu++azbAjn7/+e8wh45e36BhNW5QNGej/S16LG
-	3p2tPPriR30bVS2+yP0QywxZKF9+BP2vJJBQxsDIRW
-X-Google-Smtp-Source: AGHT+IGnJF4cN0dj9pPxA+mrV5LuwrOcTvLTa1lewlNwcQfsCne8aFrqZTs1F2CydhHeFYbHk8ScG30GXhg=
-X-Received: from colette.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:ce7])
- (user=ctshao job=sendgmr) by 2002:a25:9c83:0:b0:e38:c40:380f with SMTP id
- 3f1490d57ef6-e38cb55df95mr18587276.3.1732164356532; Wed, 20 Nov 2024 20:45:56
- -0800 (PST)
-Date: Thu, 21 Nov 2024 04:45:51 +0000
+	s=arc-20240116; t=1732164546; c=relaxed/simple;
+	bh=2PDcz86n9IXdoUZuPOU8Q0Kyiq+6W75/hkRlmsah6CQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hNaNFYMJRo4CaSBCg9VY/SUJDh6ld9EgCchuU2RouIIhNrIMsa9oIFeSlCOOgFOmF1JchzgBgJQDLrlib9jzh4TKe8FtiG+DseW24WB/SyPrpMjccsnnnDQ/LMaoRJUQbErIaXMKlSgOsFDVKvr9HCI9hRA7p52rhz+yEz3Mfeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D0T7+O1l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKKriQM027815;
+	Thu, 21 Nov 2024 04:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xwZGogvGzYKIbCsudIfRLmpYGvsqKpEMScoVocFluF8=; b=D0T7+O1lOoUggml4
+	7Xcd4nISLdnhW+fwcrfpWgwORpyppRgjwjDOdpc6OvjMI1syEpI9jX02phrunEHw
+	TXumDOAjMzMx1KroGIKN5dB0lSjno6RYQQ3o11XV8vN3VNg/aaXgIHb3tTO7Ynij
+	zRaupWhDdfj1nooZgEbluMnsNZrRhu41S91pSvKV2PfUoc5Nqi0uci1gULXgNvr5
+	SyxNeKVSn9ySfKqLuP3vyTRXwrDi9ZXX2JCHuG/dvUu8rMVbEmxtvWg4sckx0U0k
+	gG6Us7Jygjxc8Jksi+s7FiTbhKo6H2aPv8daeNhsEMMaC5YsvymD7GNX/w5QIWSz
+	6yzc4g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431bv7atvx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 04:48:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL4mtxr030045
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 04:48:55 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
+ 2024 20:48:49 -0800
+Message-ID: <39fa4138-aca2-4230-adca-0d6e377c1671@quicinc.com>
+Date: Thu, 21 Nov 2024 12:48:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241121044551.3899270-1-ctshao@google.com>
-Subject: [PATCH] perf lock: Fix parse_lock_type which only retrieve one lock flag
-From: Chun-Tse Shao <ctshao@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: Chun-Tse Shao <ctshao@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] Bluetooth: hci_qca: add qcom,product-variant
+ properties
+To: <neil.armstrong@linaro.org>, Marcel Holtmann <marcel@holtmann.org>,
+        "Luiz
+ Augusto von Dentz" <luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+        Rocky Liao <quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>
+CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_mohamull@quicinc.com>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-5-quic_chejiang@quicinc.com>
+ <a837df85-2505-4250-a81e-3683b74d618a@linaro.org>
+Content-Language: en-US
+From: Cheng Jiang <quic_chejiang@quicinc.com>
+In-Reply-To: <a837df85-2505-4250-a81e-3683b74d618a@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4VWJldGyNtwShuf0z0Y7d1TQSzF7aGH-
+X-Proofpoint-GUID: 4VWJldGyNtwShuf0z0Y7d1TQSzF7aGH-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411210035
 
-`parse_lock_type` can only add the first lock flag in `lock_type_table`
-given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
-into this perf session. Another example is for `-Y mutex`, it only adds
-the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
-sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
-so on.
+Hi Neil,
 
-Testing:
-  $ ./perf lock con -ab -Y rwlock,mutex -- perf bench sched pipe
-  # Running 'sched/pipe' benchmark:
-  # Executed 1000000 pipe operations between two processes
-
-       Total time: 7.870 [sec]
-
-         7.870224 usecs/op
-           127061 ops/sec
-   contended   total wait     max wait     avg wait         type   caller
-
-         122      1.01 ms     18.73 us      8.32 us        mutex   pipe_read+0x57
-          33    149.06 us      8.88 us      4.52 us        mutex   pipe_write+0x50
-           5     56.06 us     15.07 us     11.21 us        mutex   do_epoll_wait+0x24d
-           2     26.43 us     14.62 us     13.22 us        mutex   do_epoll_wait+0x24d
-           2     21.51 us     15.68 us     10.76 us        mutex   pipe_read+0x282
-           2     20.57 us     10.74 us     10.29 us        mutex   do_epoll_ctl+0x3d4
-           1      8.58 us      8.58 us      8.58 us     rwlock:W   do_epoll_wait+0x255
-           1      8.38 us      8.38 us      8.38 us     rwlock:W   do_epoll_ctl+0xb65
-           1      8.11 us      8.11 us      8.11 us     rwlock:R   ep_poll_callback+0x35
-           1      5.49 us      5.49 us      5.49 us        mutex   do_epoll_ctl+0x6c1
-
-Signed-off-by: Chun-Tse Shao <ctshao@google.com>
----
- tools/perf/builtin-lock.c | 118 +++++++++++++++++++++++---------------
- 1 file changed, 71 insertions(+), 47 deletions(-)
-
-diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-index 062e2b56a2ab..2692b8e9eb9a 100644
---- a/tools/perf/builtin-lock.c
-+++ b/tools/perf/builtin-lock.c
-@@ -1575,61 +1575,57 @@ static void sort_result(void)
- 
- static const struct {
- 	unsigned int flags;
--	const char *str;
-+	/* Name of the lock, it is unique and 1-1 mapping to flags */
- 	const char *name;
-+	/*
-+	 * Name of the group this lock belongs to.
-+	 * For example, both rwlock:R and rwlock:W belong to rwlock.
-+	 * This is used for reverse parsing while user specify the group name (ex. mutex/rwlock),
-+	 * And for symbol name in LOCK_AGGR_ADDR mode.
-+	 */
-+	const char *affiliated_group_name;
-+	/*
-+	 * This is used for caller type in LOCK_AGGR_CALLER mode.
-+	 */
-+	const char *caller_type;
- } lock_type_table[] = {
--	{ 0,				"semaphore",	"semaphore" },
--	{ LCB_F_SPIN,			"spinlock",	"spinlock" },
--	{ LCB_F_SPIN | LCB_F_READ,	"rwlock:R",	"rwlock" },
--	{ LCB_F_SPIN | LCB_F_WRITE,	"rwlock:W",	"rwlock" },
--	{ LCB_F_READ,			"rwsem:R",	"rwsem" },
--	{ LCB_F_WRITE,			"rwsem:W",	"rwsem" },
--	{ LCB_F_RT,			"rt-mutex",	"rt-mutex" },
--	{ LCB_F_RT | LCB_F_READ,	"rwlock-rt:R",	"rwlock-rt" },
--	{ LCB_F_RT | LCB_F_WRITE,	"rwlock-rt:W",	"rwlock-rt" },
--	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"percpu-rwsem" },
--	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem" },
--	{ LCB_F_MUTEX,			"mutex",	"mutex" },
--	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
--	/* alias for get_type_flag() */
--	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex" },
-+	{ 0,				"semaphore",	"semaphore",	"semaphore" },
-+	{ LCB_F_SPIN,			"spinlock",	"spinlock",	"spinlock" },
-+	{ LCB_F_SPIN | LCB_F_READ,	"rwlock:R",	"rwlock",	"rwlock:R" },
-+	{ LCB_F_SPIN | LCB_F_WRITE,	"rwlock:W",	"rwlock",	"rwlock:W" },
-+	{ LCB_F_READ,			"rwsem:R",	"rwsem",	"rwsem:R" },
-+	{ LCB_F_WRITE,			"rwsem:W",	"rwsem",	"rwsem:W" },
-+	{ LCB_F_RT,			"rt-mutex",	"rt-mutex",	"rt-mutex" },
-+	{ LCB_F_RT | LCB_F_READ,	"rwlock-rt:R",	"rwlock-rt",	"rwlock-rt:R" },
-+	{ LCB_F_RT | LCB_F_WRITE,	"rwlock-rt:W",	"rwlock-rt",	"rwlock-rt:W" },
-+	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"percpu-rwsem",	"pcpu-sem:R" },
-+	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem",	"pcpu-sem:W" },
-+	{ LCB_F_MUTEX,			"mutex-nospin",	"mutex",	"mutex" },
-+	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex-spin",	"mutex",	"mutex" },
- };
- 
--static const char *get_type_str(unsigned int flags)
-+static const char *get_lock_caller_type(unsigned int flags)
- {
- 	flags &= LCB_F_MAX_FLAGS - 1;
- 
- 	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
- 		if (lock_type_table[i].flags == flags)
--			return lock_type_table[i].str;
-+			return lock_type_table[i].caller_type;
- 	}
- 	return "unknown";
- }
- 
--static const char *get_type_name(unsigned int flags)
-+static const char *get_lock_affiliated_group_name(unsigned int flags)
- {
- 	flags &= LCB_F_MAX_FLAGS - 1;
- 
- 	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
- 		if (lock_type_table[i].flags == flags)
--			return lock_type_table[i].name;
-+			return lock_type_table[i].affiliated_group_name;
- 	}
- 	return "unknown";
- }
- 
--static unsigned int get_type_flag(const char *str)
--{
--	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
--		if (!strcmp(lock_type_table[i].name, str))
--			return lock_type_table[i].flags;
--	}
--	for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
--		if (!strcmp(lock_type_table[i].str, str))
--			return lock_type_table[i].flags;
--	}
--	return UINT_MAX;
--}
--
- static void lock_filter_finish(void)
- {
- 	zfree(&filters.types);
-@@ -1732,7 +1728,8 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
- 
- 	switch (aggr_mode) {
- 	case LOCK_AGGR_CALLER:
--		fprintf(lock_output, "  %10s   %s\n", get_type_str(st->flags), st->name);
-+		fprintf(lock_output, "  %10s   %s\n",
-+			get_lock_caller_type(st->flags), st->name);
- 		break;
- 	case LOCK_AGGR_TASK:
- 		pid = st->addr;
-@@ -1742,7 +1739,7 @@ static void print_lock_stat_stdio(struct lock_contention *con, struct lock_stat
- 		break;
- 	case LOCK_AGGR_ADDR:
- 		fprintf(lock_output, "  %016llx   %s (%s)\n", (unsigned long long)st->addr,
--			st->name, get_type_name(st->flags));
-+			st->name, get_lock_affiliated_group_name(st->flags));
- 		break;
- 	case LOCK_AGGR_CGROUP:
- 		fprintf(lock_output, "  %s\n", st->name);
-@@ -1783,7 +1780,8 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
- 
- 	switch (aggr_mode) {
- 	case LOCK_AGGR_CALLER:
--		fprintf(lock_output, "%s%s %s", get_type_str(st->flags), sep, st->name);
-+		fprintf(lock_output, "%s%s %s",
-+			get_lock_caller_type(st->flags), sep, st->name);
- 		if (verbose <= 0)
- 			fprintf(lock_output, "\n");
- 		break;
-@@ -1795,7 +1793,7 @@ static void print_lock_stat_csv(struct lock_contention *con, struct lock_stat *s
- 		break;
- 	case LOCK_AGGR_ADDR:
- 		fprintf(lock_output, "%llx%s %s%s %s\n", (unsigned long long)st->addr, sep,
--			st->name, sep, get_type_name(st->flags));
-+			st->name, sep, get_lock_affiliated_group_name(st->flags));
- 		break;
- 	case LOCK_AGGR_CGROUP:
- 		fprintf(lock_output, "%s\n",st->name);
-@@ -2333,6 +2331,7 @@ static int parse_max_stack(const struct option *opt, const char *str,
- 	return 0;
- }
- 
-+
- static bool add_lock_type(unsigned int flags)
- {
- 	unsigned int *tmp;
-@@ -2350,29 +2349,54 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
- 			   int unset __maybe_unused)
- {
- 	char *s, *tmp, *tok;
--	int ret = 0;
- 
- 	s = strdup(str);
- 	if (s == NULL)
- 		return -1;
- 
- 	for (tok = strtok_r(s, ", ", &tmp); tok; tok = strtok_r(NULL, ", ", &tmp)) {
--		unsigned int flags = get_type_flag(tok);
-+		bool found = false;
- 
--		if (flags == -1U) {
--			pr_err("Unknown lock flags: %s\n", tok);
--			ret = -1;
--			break;
-+		/* Traverse lock name first. */
-+		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
-+			if (!strcmp(lock_type_table[i].name, tok)) {
-+				if (add_lock_type(lock_type_table[i].flags)) {
-+					found = true;
-+					break;
-+				}
-+				pr_err("Failed to alloc lock: %s\n", tok);
-+				free(s);
-+				return -1;
-+			}
- 		}
-+		if (found)
-+			continue;
- 
--		if (!add_lock_type(flags)) {
--			ret = -1;
--			break;
-+		/*
-+		 * If `tok` can not be found in lock name, look up the lock affiliated group
-+		 * instead. A group would contain more than one lock flag.
-+		 */
-+		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
-+			if (!strcmp(lock_type_table[i].affiliated_group_name, tok)) {
-+				if (add_lock_type(lock_type_table[i].flags)) {
-+					found = true;
-+				} else {
-+					pr_err("Failed to alloc lock: %s\n", tok);
-+					free(s);
-+					return -1;
-+				}
-+			}
-+		}
-+
-+		if (!found) {
-+			pr_err("Unknown lock flags: %s\n", tok);
-+			free(s);
-+			return -1;
- 		}
- 	}
- 
- 	free(s);
--	return ret;
-+	return 0;
- }
- 
- static bool add_lock_addr(unsigned long addr)
--- 
-2.47.0.371.ga323438b13-goog
+On 11/20/2024 6:59 PM, neil.armstrong@linaro.org wrote:
+> On 20/11/2024 10:54, Cheng Jiang wrote:
+>> Since different products use the same SoC chip, features cannot
+>> be included in a single patch. Use the qcom,product-variant to
+>> load the appropriate firmware.
+>>
+>> The qcom,product-variant provides product line information, which
+>> the driver uses to load firmware from different directories.
+>>
+>> If it's not defined in dts, the default firmware will be loaded.
+>>
+>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>> ---
+>>   drivers/bluetooth/btqca.c   | 142 +++++++++++++++++++++++++++++-------
+>>   drivers/bluetooth/btqca.h   |  11 ++-
+>>   drivers/bluetooth/hci_qca.c |  73 +++++++++---------
+>>   3 files changed, 164 insertions(+), 62 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+>> index dfbbac92242a..0845e5a60412 100644
+>> --- a/drivers/bluetooth/btqca.c
+>> +++ b/drivers/bluetooth/btqca.c
+>> @@ -700,8 +700,79 @@ static int qca_check_bdaddr(struct hci_dev *hdev, const struct qca_fw_config *co
+>>       return 0;
+>>   }
+>>   -static void qca_generate_hsp_nvm_name(char *fwname, size_t max_size,
+>> -        struct qca_btsoc_version ver, u8 rom_ver, u16 bid)
+>> +
+>> +const char *qca_get_soc_name(enum qca_btsoc_type soc_type)
+>> +{
+>> +    const char *soc_name = "";
+>> +
+>> +    switch (soc_type) {
+>> +    case QCA_QCA2066:
+>> +        soc_name = "QCA2066";
+>> +        break;
+>> +
+>> +    case QCA_QCA6698:
+>> +        soc_name = "QCA6698";
+>> +        break;
+>> +
+>> +    case QCA_WCN3988:
+>> +    case QCA_WCN3990:
+>> +    case QCA_WCN3991:
+>> +    case QCA_WCN3998:
+>> +        soc_name = "WCN399x";
+>> +        break;
+>> +
+>> +    case QCA_WCN6750:
+>> +        soc_name = "WCN6750";
+>> +        break;
+>> +
+>> +    case QCA_WCN6855:
+>> +        soc_name = "WCN6855";
+>> +        break;
+>> +
+>> +    case QCA_WCN7850:
+>> +        soc_name = "WCN7850";
+>> +        break;
+>> +
+>> +    default:
+>> +        soc_name = "ROME/QCA6390";
+>> +    }
+>> +
+>> +    return soc_name;
+>> +}
+>> +EXPORT_SYMBOL_GPL(qca_get_soc_name);
+>> +
+>> +static void qca_get_firmware_path(enum qca_btsoc_type soc_type, char *fw_path,
+>> +        size_t max_size, enum qca_product_type product_type)
+>> +{
+>> +    const char *fw_dir = NULL;
+>> +
+>> +    switch (product_type) {
+>> +    case QCA_MCC:
+>> +        fw_dir = "qca";
+>> +        break;
+>> +    case QCA_CE:
+>> +        fw_dir = "qca/ce";
+>> +        break;
+>> +    case QCA_IOT:
+>> +        fw_dir = "qca/iot";
+>> +        break;
+>> +    case QCA_AUTO:
+>> +        fw_dir = "qca/auto";
+>> +        break;
+>> +    default:
+>> +        fw_dir = "qca";
+>> +        break;
+>> +    }
+>> +
+>> +    if (product_type == QCA_IOT)
+>> +        snprintf(fw_path, max_size, "%s/%s", fw_dir, qca_get_soc_name(soc_type));
+>> +    else
+>> +        snprintf(fw_path, max_size, "%s", fw_dir);
+>> +}
+>> +
+>> +static void qca_generate_hsp_nvm_name(enum qca_btsoc_type soc_type, char *fwname,
+>> +        size_t max_size, const char *fw_path, struct qca_btsoc_version ver, u8 rom_ver,
+>> +        u16 bid)
+>>   {
+>>       const char *variant;
+>>   @@ -712,33 +783,36 @@ static void qca_generate_hsp_nvm_name(char *fwname, size_t max_size,
+>>           variant = "";
+>>         if (bid == 0x0)
+>> -        snprintf(fwname, max_size, "qca/hpnv%02x%s.bin", rom_ver, variant);
+>> +        snprintf(fwname, max_size, "%s/hpnv%02x%s.bin", fw_path, rom_ver, variant);
+>>       else
+>> -        snprintf(fwname, max_size, "qca/hpnv%02x%s.%x", rom_ver, variant, bid);
+>> +        snprintf(fwname, max_size, "%s/hpnv%02x%s.%x", fw_path, rom_ver, variant, bid);
+>>   }
+>>   -static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg,
+>> +static inline void qca_get_nvm_name_generic(struct qca_fw_config *cfg, const char *fw_path,
+>>                           const char *stem, u8 rom_ver, u16 bid)
+>>   {
+>>       if (bid == 0x0)
+>> -        snprintf(cfg->fwname, sizeof(cfg->fwname), "qca/%snv%02x.bin", stem, rom_ver);
+>> +        snprintf(cfg->fwname, sizeof(cfg->fwname),
+>> +             "%s/%snv%02x.bin", fw_path, stem, rom_ver);
+>>       else if (bid & 0xff00)
+>>           snprintf(cfg->fwname, sizeof(cfg->fwname),
+>> -             "qca/%snv%02x.b%x", stem, rom_ver, bid);
+>> +             "%s/%snv%02x.b%x", fw_path, stem, rom_ver, bid);
+>>       else
+>>           snprintf(cfg->fwname, sizeof(cfg->fwname),
+>> -             "qca/%snv%02x.b%02x", stem, rom_ver, bid);
+>> +             "%s/%snv%02x.b%02x", fw_path, stem, rom_ver, bid);
+>>   }
+>>     int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>              enum qca_btsoc_type soc_type, struct qca_btsoc_version ver,
+>> -           const char *firmware_name)
+>> +           const char *firmware_name, uint32_t product_variant)
+>>   {
+>>       struct qca_fw_config config = {};
+>>       int err;
+>>       u8 rom_ver = 0;
+>>       u32 soc_ver;
+>>       u16 boardid = 0;
+>> +    enum qca_product_type product_type;
+>> +    char fw_path[64] = {0};
+>>         bt_dev_dbg(hdev, "QCA setup on UART");
+>>   @@ -759,6 +833,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>       if (soc_type == QCA_WCN6750)
+>>           qca_send_patch_config_cmd(hdev);
+>>   +    /* Get the f/w path based on product variant */
+>> +    product_type = (product_variant >> 16) & 0xff;
+>> +    qca_get_firmware_path(soc_type, fw_path, sizeof(fw_path), product_type);
+>> +
+>>       /* Download rampatch file */
+>>       config.type = TLV_TYPE_PATCH;
+>>       switch (soc_type) {
+>> @@ -766,19 +844,23 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>       case QCA_WCN3991:
+>>       case QCA_WCN3998:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/crbtfw%02x.tlv", rom_ver);
+>> +             "%s/crbtfw%02x.tlv", fw_path, rom_ver);
+> 
+> Changing firmware path will break existing platforms, please don't, or add fallbacks.
+Ack.
+> 
+>>           break;
+>>       case QCA_WCN3988:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/apbtfw%02x.tlv", rom_ver);
+>> +             "%s/apbtfw%02x.tlv", fw_path, rom_ver);
+>>           break;
+>>       case QCA_QCA2066:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/hpbtfw%02x.tlv", rom_ver);
+>> +             "%s/hpbtfw%02x.tlv", fw_path, rom_ver);
+>>           break;
+>>       case QCA_QCA6390:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/htbtfw%02x.tlv", rom_ver);
+>> +             "%s/htbtfw%02x.tlv", fw_path, rom_ver);
+>> +        break;
+>> +    case QCA_QCA6698:
+>> +        snprintf(config.fwname, sizeof(config.fwname),
+>> +             "%s/hpbtfw%02x.tlv", fw_path, rom_ver);
+>>           break;
+>>       case QCA_WCN6750:
+>>           /* Choose mbn file by default.If mbn file is not found
+>> @@ -786,19 +868,19 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>            */
+>>           config.type = ELF_TYPE_PATCH;
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/msbtfw%02x.mbn", rom_ver);
+>> +             "%s/msbtfw%02x.mbn", fw_path, rom_ver);
+>>           break;
+>>       case QCA_WCN6855:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/hpbtfw%02x.tlv", rom_ver);
+>> +             "%s/hpbtfw%02x.tlv", fw_path, rom_ver);
+>>           break;
+>>       case QCA_WCN7850:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/hmtbtfw%02x.tlv", rom_ver);
+>> +             "%s/hmtbtfw%02x.tlv", fw_path, rom_ver);
+>>           break;
+>>       default:
+>>           snprintf(config.fwname, sizeof(config.fwname),
+>> -             "qca/rampatch_%08x.bin", soc_ver);
+>> +             "%s/rampatch_%08x.bin", fw_path, soc_ver);
+>>       }
+>>         err = qca_download_firmware(hdev, &config, soc_type, rom_ver);
+>> @@ -810,7 +892,8 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>       /* Give the controller some time to get ready to receive the NVM */
+>>       msleep(10);
+>>   -    if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850)
+>> +    if (soc_type == QCA_QCA2066 || soc_type == QCA_WCN7850 ||
+>> +        soc_type == QCA_QCA6698)
+>>           qca_read_fw_board_id(hdev, &boardid);
+>>         /* Download NVM configuration */
+>> @@ -825,39 +908,40 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>           case QCA_WCN3998:
+>>               if (le32_to_cpu(ver.soc_id) == QCA_WCN3991_SOC_ID) {
+>>                   snprintf(config.fwname, sizeof(config.fwname),
+>> -                     "qca/crnv%02xu.bin", rom_ver);
+>> +                     "%s/crnv%02xu.bin", fw_path, rom_ver);
+>>               } else {
+>>                   snprintf(config.fwname, sizeof(config.fwname),
+>> -                     "qca/crnv%02x.bin", rom_ver);
+>> +                     "%s/crnv%02x.bin", fw_path, rom_ver);
+>>               }
+>>               break;
+>>           case QCA_WCN3988:
+>>               snprintf(config.fwname, sizeof(config.fwname),
+>> -                 "qca/apnv%02x.bin", rom_ver);
+>> +                 "%s/apnv%02x.bin", fw_path, rom_ver);
+>>               break;
+>>           case QCA_QCA2066:
+>> -            qca_generate_hsp_nvm_name(config.fwname,
+>> -                sizeof(config.fwname), ver, rom_ver, boardid);
+>> +        case QCA_QCA6698:
+>> +            qca_generate_hsp_nvm_name(soc_type, config.fwname,
+>> +                sizeof(config.fwname), fw_path, ver, rom_ver, boardid);
+>>               break;
+>>           case QCA_QCA6390:
+>>               snprintf(config.fwname, sizeof(config.fwname),
+>> -                 "qca/htnv%02x.bin", rom_ver);
+>> +                 "%s/htnv%02x.bin", fw_path, rom_ver);
+>>               break;
+>>           case QCA_WCN6750:
+>>               snprintf(config.fwname, sizeof(config.fwname),
+>> -                 "qca/msnv%02x.bin", rom_ver);
+>> +                 "%s/msnv%02x.bin", fw_path, rom_ver);
+>>               break;
+>>           case QCA_WCN6855:
+>>               snprintf(config.fwname, sizeof(config.fwname),
+>> -                 "qca/hpnv%02x.bin", rom_ver);
+>> +                 "%s/hpnv%02x.bin", fw_path, rom_ver);
+>>               break;
+>>           case QCA_WCN7850:
+>> -            qca_get_nvm_name_generic(&config, "hmt", rom_ver, boardid);
+>> +            qca_get_nvm_name_generic(&config, "hmt", fw_path, rom_ver, boardid);
+>>               break;
+>>             default:
+>>               snprintf(config.fwname, sizeof(config.fwname),
+>> -                 "qca/nvm_%08x.bin", soc_ver);
+>> +                 "%s/nvm_%08x.bin", fw_path, soc_ver);
+>>           }
+>>       }
+>>   @@ -871,6 +955,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>       case QCA_WCN3991:
+>>       case QCA_QCA2066:
+>>       case QCA_QCA6390:
+>> +    case QCA_QCA6698:
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> @@ -909,6 +994,7 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           /* get fw build info */
+>>           err = qca_read_fw_build_info(hdev);
+>>           if (err < 0)
+>> diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+>> index bb5207d7a8c7..baa3f979d017 100644
+>> --- a/drivers/bluetooth/btqca.h
+>> +++ b/drivers/bluetooth/btqca.h
+>> @@ -151,21 +151,30 @@ enum qca_btsoc_type {
+>>       QCA_WCN3991,
+>>       QCA_QCA2066,
+>>       QCA_QCA6390,
+>> +    QCA_QCA6698,
+>>       QCA_WCN6750,
+>>       QCA_WCN6855,
+>>       QCA_WCN7850,
+>>   };
+>>   +enum qca_product_type {
+>> +    QCA_MCC = 0,
+>> +    QCA_CE,
+>> +    QCA_IOT,
+>> +    QCA_AUTO,
+>> +};
+>> +
+>>   #if IS_ENABLED(CONFIG_BT_QCA)
+>>     int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+>>   int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>>              enum qca_btsoc_type soc_type, struct qca_btsoc_version ver,
+>> -           const char *firmware_name);
+>> +           const char *firmware_name, uint32_t product_variant);
+>>   int qca_read_soc_version(struct hci_dev *hdev, struct qca_btsoc_version *ver,
+>>                enum qca_btsoc_type);
+>>   int qca_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+>>   int qca_send_pre_shutdown_cmd(struct hci_dev *hdev);
+>> +const char *qca_get_soc_name(enum qca_btsoc_type soc_type);
+>>   #else
+>>     static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 37129e6cb0eb..69fec890eb8c 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -227,6 +227,7 @@ struct qca_serdev {
+>>       struct qca_power *bt_power;
+>>       u32 init_speed;
+>>       u32 oper_speed;
+>> +    u32 product_variant;
+>>       bool bdaddr_property_broken;
+>>       const char *firmware_name;
+>>   };
+>> @@ -1361,6 +1362,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           usleep_range(1000, 10000);
+>>           break;
+>>   @@ -1447,6 +1449,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
+>>               !qca_get_speed(hu, QCA_OPER_SPEED))
+>>               return -EINVAL;
+>> @@ -1489,6 +1492,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>>           case QCA_WCN6750:
+>>           case QCA_WCN6855:
+>>           case QCA_WCN7850:
+>> +        case QCA_QCA6698:
+>>               hci_uart_set_flow_control(hu, true);
+>>               break;
+>>   @@ -1523,6 +1527,7 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>>           case QCA_WCN6750:
+>>           case QCA_WCN6855:
+>>           case QCA_WCN7850:
+>> +        case QCA_QCA6698:
+>>               hci_uart_set_flow_control(hu, false);
+>>               break;
+>>   @@ -1803,6 +1808,7 @@ static int qca_power_on(struct hci_dev *hdev)
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>>       case QCA_QCA6390:
+>> +    case QCA_QCA6698:
+>>           ret = qca_regulator_init(hu);
+>>           break;
+>>   @@ -1858,7 +1864,6 @@ static int qca_setup(struct hci_uart *hu)
+>>       int ret;
+>>       struct qca_btsoc_version ver;
+>>       struct qca_serdev *qcadev;
+>> -    const char *soc_name;
+>>         ret = qca_check_speeds(hu);
+>>       if (ret)
+>> @@ -1873,34 +1878,7 @@ static int qca_setup(struct hci_uart *hu)
+>>        */
+>>       set_bit(HCI_QUIRK_SIMULTANEOUS_DISCOVERY, &hdev->quirks);
+>>   -    switch (soc_type) {
+>> -    case QCA_QCA2066:
+>> -        soc_name = "qca2066";
+>> -        break;
+>> -
+>> -    case QCA_WCN3988:
+>> -    case QCA_WCN3990:
+>> -    case QCA_WCN3991:
+>> -    case QCA_WCN3998:
+>> -        soc_name = "wcn399x";
+>> -        break;
+>> -
+>> -    case QCA_WCN6750:
+>> -        soc_name = "wcn6750";
+>> -        break;
+>> -
+>> -    case QCA_WCN6855:
+>> -        soc_name = "wcn6855";
+>> -        break;
+>> -
+>> -    case QCA_WCN7850:
+>> -        soc_name = "wcn7850";
+>> -        break;
+>> -
+>> -    default:
+>> -        soc_name = "ROME/QCA6390";
+>> -    }
+>> -    bt_dev_info(hdev, "setting up %s", soc_name);
+>> +    bt_dev_info(hdev, "setting up %s", qca_get_soc_name(soc_type));
+> 
+> Move this into a new function in a separate patch
+Ack.
+> 
+>>         qca->memdump_state = QCA_MEMDUMP_IDLE;
+>>   @@ -1919,6 +1897,7 @@ static int qca_setup(struct hci_uart *hu)
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           qcadev = serdev_device_get_drvdata(hu->serdev);
+>>           if (qcadev->bdaddr_property_broken)
+>>               set_bit(HCI_QUIRK_BDADDR_PROPERTY_BROKEN, &hdev->quirks);
+>> @@ -1952,6 +1931,7 @@ static int qca_setup(struct hci_uart *hu)
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           break;
+>>         default:
+>> @@ -1963,7 +1943,7 @@ static int qca_setup(struct hci_uart *hu)
+>>         /* Setup patch / NVM configurations */
+>>       ret = qca_uart_setup(hdev, qca_baudrate, soc_type, ver,
+>> -            firmware_name);
+>> +            firmware_name, qcadev->product_variant);
+> 
+> Add product variant support separately from adding QCA6698
+Ack.
+> 
+>>       if (!ret) {
+>>           clear_bit(QCA_IBS_DISABLED, &qca->flags);
+>>           qca_debugfs_init(hdev);
+>> @@ -2089,6 +2069,20 @@ static const struct qca_device_data qca_soc_data_qca6390 __maybe_unused = {
+>>       .num_vregs = 0,
+>>   };
+>>   +static const struct qca_device_data qca_soc_data_qca6698 __maybe_unused = {
+>> +    .soc_type = QCA_QCA6698,
+>> +    .vregs = (struct qca_vreg []) {
+>> +        { "vddio", 5000 },
+>> +        { "vddbtcxmx", 126000 },
+>> +        { "vddrfacmn", 12500 },
+>> +        { "vddrfa0p8", 102000 },
+>> +        { "vddrfa1p7", 302000 },
+>> +        { "vddrfa1p2", 257000 },
+>> +    },
+>> +    .num_vregs = 6,
+>> +    .capabilities = QCA_CAP_WIDEBAND_SPEECH | QCA_CAP_VALID_LE_STATES,
+>> +};
+>> +
+>>   static const struct qca_device_data qca_soc_data_wcn6750 __maybe_unused = {
+>>       .soc_type = QCA_WCN6750,
+>>       .vregs = (struct qca_vreg []) {
+>> @@ -2165,7 +2159,7 @@ static void qca_power_shutdown(struct hci_uart *hu)
+>>           pwrseq_power_off(power->pwrseq);
+>>           set_bit(QCA_BT_OFF, &qca->flags);
+>>           return;
+>> -        }
+>> +    }
+> 
+> This is cleanup
+> 
+>>         switch (soc_type) {
+>>       case QCA_WCN3988:
+>> @@ -2179,6 +2173,7 @@ static void qca_power_shutdown(struct hci_uart *hu)
+>>         case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>> +    case QCA_QCA6698:
+>>           gpiod_set_value_cansleep(qcadev->bt_en, 0);
+>>           msleep(100);
+>>           qca_regulator_disable(qcadev);
+>> @@ -2313,6 +2308,12 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>>                        &qcadev->firmware_name);
+>>       device_property_read_u32(&serdev->dev, "max-speed",
+>>                    &qcadev->oper_speed);
+>> +    device_property_read_u32(&serdev->dev, "qcom,product-variant",
+>> +                 &qcadev->product_variant);
+>> +
+>> +    if (qcadev->product_variant != 0)
+>> +        BT_INFO("QC Product Variant: 0x%08x", qcadev->product_variant);
+>> +
+>>       if (!qcadev->oper_speed)
+>>           BT_DBG("UART will pick default operating speed");
+>>   @@ -2333,6 +2334,7 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>>       case QCA_QCA6390:
+>> +    case QCA_QCA6698:
+>>           qcadev->bt_power = devm_kzalloc(&serdev->dev,
+>>                           sizeof(struct qca_power),
+>>                           GFP_KERNEL);
+>> @@ -2346,6 +2348,7 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>>       switch (qcadev->btsoc_type) {
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           if (!device_property_present(&serdev->dev, "enable-gpios")) {
+>>               /*
+>>                * Backward compatibility with old DT sources. If the
+>> @@ -2380,7 +2383,8 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>>                              GPIOD_OUT_LOW);
+>>           if (IS_ERR(qcadev->bt_en) &&
+>>               (data->soc_type == QCA_WCN6750 ||
+>> -             data->soc_type == QCA_WCN6855)) {
+>> +             data->soc_type == QCA_WCN6855 ||
+>> +             data->soc_type == QCA_QCA6698)) {
+>>               dev_err(&serdev->dev, "failed to acquire BT_EN gpio\n");
+>>               return PTR_ERR(qcadev->bt_en);
+>>           }
+>> @@ -2393,7 +2397,8 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+>>           if (IS_ERR(qcadev->sw_ctrl) &&
+>>               (data->soc_type == QCA_WCN6750 ||
+>>                data->soc_type == QCA_WCN6855 ||
+>> -             data->soc_type == QCA_WCN7850)) {
+>> +             data->soc_type == QCA_WCN7850 ||
+>> +             data->soc_type == QCA_QCA6698)) {
+>>               dev_err(&serdev->dev, "failed to acquire SW_CTRL gpio\n");
+>>               return PTR_ERR(qcadev->sw_ctrl);
+>>           }
+>> @@ -2475,6 +2480,7 @@ static void qca_serdev_remove(struct serdev_device *serdev)
+>>       case QCA_WCN6750:
+>>       case QCA_WCN6855:
+>>       case QCA_WCN7850:
+>> +    case QCA_QCA6698:
+>>           if (power->vregs_on)
+>>               qca_power_shutdown(&qcadev->serdev_hu);
+>>           break;
+>> @@ -2669,6 +2675,7 @@ static const struct of_device_id qca_bluetooth_of_match[] = {
+>>       { .compatible = "qcom,qca2066-bt", .data = &qca_soc_data_qca2066},
+>>       { .compatible = "qcom,qca6174-bt" },
+>>       { .compatible = "qcom,qca6390-bt", .data = &qca_soc_data_qca6390},
+>> +    { .compatible = "qcom,qca6698-bt", .data = &qca_soc_data_qca6698},
+>>       { .compatible = "qcom,qca9377-bt" },
+>>       { .compatible = "qcom,wcn3988-bt", .data = &qca_soc_data_wcn3988},
+>>       { .compatible = "qcom,wcn3990-bt", .data = &qca_soc_data_wcn3990},
+> 
+> This patch is too long anf has multiple different changes merged together,
+> please split into multiple small pieces that can be reviewed easier,
+Ack. Thanks Neil. Will change the patch to samll pieces in furture commits. 
+>
+> Thanks,
+> Neil
 
 
