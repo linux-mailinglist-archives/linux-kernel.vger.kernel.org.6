@@ -1,186 +1,266 @@
-Return-Path: <linux-kernel+bounces-417188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95CB19D502B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:53:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD759D5034
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C79283684
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:53:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1AA4B25A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0819CD0E;
-	Thu, 21 Nov 2024 15:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DFF14F12F;
+	Thu, 21 Nov 2024 15:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N6lXYvnN"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3W3p90qo"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2073.outbound.protection.outlook.com [40.107.96.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD11B132122;
-	Thu, 21 Nov 2024 15:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732204417; cv=none; b=llhk+P69Jez6K6gFO+7NGTUKZ7b7i2k6xahE+tuH049iEOLNl61Lw7Bl4NnAYAe2m/HsiKVk7vKiEkKDCWdS9xhbsazL79B15G31oyuOjn6U3M69Gk7TSYd7f0rhrNjrvb/HOu29fu5rFhGBZmKSllXEZAQUFpgAZpLgDU6hrys=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732204417; c=relaxed/simple;
-	bh=bEvgRur44FM4ftsf8LdgAzMDucW7VPkHFXSp25ktueI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=chd2+XXuB8LDKLpWu5Cx6SllgY6xsHYtPabLtpzR8CZQUondXLkACyhf7Btrm2iZHth6VzYXiotfNbERRPYgj7TpV/NjD0kQS8PNiKLCYzxGFghFJ8IjRXnq0Orfvz6CvwS8tJdrcXvd7ROjbGcX3NNC4oOjGratsAMpOobPqus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N6lXYvnN; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALAYFTj027329;
-	Thu, 21 Nov 2024 15:53:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MK/8a1y3kW8M7eNqMsEi7pWYZUCu2ujWwiQcYO9hXfg=; b=N6lXYvnNR7dicZXp
-	6Rq1kzf/J2M4vWr/lufUD2l2ByrZ3Oe3Vxfl0CAS+3HWt5T8OokhPcii0C0/6/CQ
-	SnV9XpsNhj7xSAd/kX7KjR1y1bYlh34CCZKjRloQRy6UkpvmA/XtTvg7frwst7e+
-	QJqSuDpHWloZ3y9ehelrTtyfXULygAiEYtfh35IKLOdgXJKlPN3tRdaX+BfR+ydI
-	pCGi2oROfaEq05SxeHE4KkzxmU5+YLuVrEvVdxU0B7VCCQ+08x0FlWyWymoEDUbw
-	wLE6mqCeJzo2E2ElUyFVgrxupZTnuvoyIWslaC3fLPLZx19qIz24zU0QJ4vY8Kzz
-	dGPcGQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ebyc7cf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 15:53:29 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALFrS0Y027720
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 15:53:28 GMT
-Received: from [10.253.72.30] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 07:53:23 -0800
-Message-ID: <8a185104-f393-4341-ac85-34cb83c47c22@quicinc.com>
-Date: Thu, 21 Nov 2024 23:53:19 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6218156875;
+	Thu, 21 Nov 2024 15:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732204448; cv=fail; b=W9XPT13In+V956FQbsBeJ6dJutE3mpIlNo4yR4Uh78viVE9tYPU7/zBQTTBKPI1vCmVLZArf8QgXPd0xdLQtDEsrOWIn/sG6Xjh23WiqcSCo8XNNq6unU8i26DKMRWvcCpOKE20sVnilqMcWbiQXo7l1OUr/LPMPjQuvpZxHesw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732204448; c=relaxed/simple;
+	bh=Tx7OfucL+WzfkBvslMHrb6DUi0MyQ9M5peDgmHez4qQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IjT3C8ISR2tVsqWbUiDRN7PuyRPWNMkbmVE9hhezKwaIslyWSfLGGShrBTdONgpIOKksA4iKFyawI7RRYeIhlQ7O+iddb21zCD25Qck9zH0f6+gtDInnetW5RB+JZJtDstbj0ESfvF76bzd5AgyXFLUa8VTcFhf3cfKdf7f3fmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3W3p90qo; arc=fail smtp.client-ip=40.107.96.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RqKhtY03wdS1pQVVl9Ov0MUlKJQKMqNlgsgXI0jx353ZZlyhcfkDPRuf7LuulPmg9HkfZBYLx0Jh/b8Db7SZAJN3ba5CoQCzzDLmts/Vfc0lZl9c7tsXMh/MdAZIzhoI7L8meCbD3pE4hhBbmoWeyZB9CkCAAgptomVPo34ZoVWioYJVE26jZbFkgoh5uOGEKJFeTUJBq5UMbW7hLOzmTf8oPgZpNxtYQswr+F7jQ/HMWDqk1I7M+7XbbpwyaH/StVpnzvM7bXAcOu1gb377ZPfDO8qmhjLCUl3/DHjs7oZe7coNfqUDU6eyPAv9gsx2Nc2MGHzpHNy8WL2YhY0l7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OdPhIgEMRg94WWnohU/JhNnV9OaPdQp0wKpWCcf4244=;
+ b=Dp41U4kk0xqqcJVpI4FgEVTONaQupNya9JGJjgaN0uo3dlEGk4C3vSKCMG0de+oGZ7JXLCMbAYtzzWoEy2VfIUAq3fWLU23yy2qv/rFApI1YwXLGe5qiPE/lQHqNKY6ZH5pWBhvJlT2WEXgWgboQz65C5Mk99afZSyEdmRvkQgnR/IRkvQZgvnitHx2P9BHLhEHBRiP7RZE/ekWkMGDnmrZOyGDm00vSbNSq/NA7Mn44DcUe+MzoMHDsqtb6vXrrgwc2EMvDqnPc/k9fGfg7F4L2ZKtsjpMuuv1DueXKGgpR/3P+ddrkt5F/CTQtMuGkbRk1f2OGx8u4Cy6ffGplAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OdPhIgEMRg94WWnohU/JhNnV9OaPdQp0wKpWCcf4244=;
+ b=3W3p90qoKwkf1Rvrs/0rh6gzFw7Q5FdLZCTBkJ7TmKX/g8vpSuprSlMsew575jAqinG6aCp8UYKzu1skz6mVbfQTnL70s9pTnPw/buTRSJLZsAc81nmVYxO6ruKN9pKsVUfAdEq8usJcUqiYoOVg5t0ZdTeCT41BGdRn5VcbHZs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS0PR12MB8528.namprd12.prod.outlook.com (2603:10b6:8:160::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Thu, 21 Nov
+ 2024 15:54:02 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8158.019; Thu, 21 Nov 2024
+ 15:54:02 +0000
+Message-ID: <78ad9dfc-386f-4aa7-a025-a2ba87936068@amd.com>
+Date: Thu, 21 Nov 2024 09:53:59 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 0/4] drm: Minimum backlight overrides and
+ implementation for amdgpu
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Jani Nikula <jani.nikula@linux.intel.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ Jonathan Corbet <corbet@lwn.net>, Simona Vetter <simona@ffwll.ch>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>,
+ linux-doc@vger.kernel.org
+References: <20241111-amdgpu-min-backlight-quirk-v7-0-f662851fda69@weissschuh.net>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241111-amdgpu-min-backlight-quirk-v7-0-f662851fda69@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0076.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::21) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: bluetooth: add 'qcom,product-variant'
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad Dybcio" <konradybcio@kernel.org>,
-        Balakrishna Godavarthi
-	<quic_bgodavar@quicinc.com>,
-        Rocky Liao <quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>
-CC: <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-2-quic_chejiang@quicinc.com>
- <c8ae761a-732c-4def-ac6e-5e1b16a21ada@kernel.org>
- <0b0b55a2-ab80-4f6d-a4cf-c04acc94a989@quicinc.com>
- <4c419118-83f8-4263-9d7c-8aef02908430@kernel.org>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <4c419118-83f8-4263-9d7c-8aef02908430@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: OfGMRbmI7Xpf-kg2OF4mndzMnOm53OZ7
-X-Proofpoint-ORIG-GUID: OfGMRbmI7Xpf-kg2OF4mndzMnOm53OZ7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 mlxscore=0 phishscore=0 suspectscore=0 bulkscore=0
- adultscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411210122
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS0PR12MB8528:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc358885-04fb-4aec-7794-08dd0a44b85a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VFM5L29xVUpFMjByUnp0RGphNUhHbTZNVEVRV2Y5WHRmZHFrMGxWWHF6TnZk?=
+ =?utf-8?B?Uzlqb0x3dmNLK3FFUjNtQVNDajZFd3o3TUs0NW9lcVV3ZFNVUXByem4yckxG?=
+ =?utf-8?B?SnV4Um12d3NjMEsydHVyc0xHcEhNaTVGTzByNmNJS2NTZ2J3dFZndlI5TXA2?=
+ =?utf-8?B?a0JtZnQwQzZlSXBnYnJsUmxOUHFJNGY1UERJMkp5N21QUERNUElIb0gvaHB6?=
+ =?utf-8?B?RGQxeTIrSWsxb1dGSHE3SHF3R2Iyc2c5ZUNMTUpxd0g4Si95bjdTMkVMaEFm?=
+ =?utf-8?B?OVFKWUpPNHUyNUFBWmMwNjVPTHJTZktmWUt1UXA2ejVHUUl1TDVtY1RwcEcw?=
+ =?utf-8?B?VC9YcG5RSzhndkVWUHdDT2Q5OGcyZnlTUTlEU1V5Q2JpTk5NVkZ3RHZJa3pp?=
+ =?utf-8?B?cGFzblVBYTZmRVc5V1BudFYrUlJybFVsUzVrSkdRRy8zaDdkUjNYOTRNWnRR?=
+ =?utf-8?B?Y3dEdWdrOEsxUFlVR0ZLZUh4M3p0bk1pM3p4cW10WDAwNHkxYmxlU2paN214?=
+ =?utf-8?B?Y0VIYnhKUDhCOFVRN0pZaXNENHgzY012c0NIK2dDSTBjcEFjNlQ5QkorM1Vv?=
+ =?utf-8?B?UXpBS2xFUnhzYk45N0hxTGg0a1NVL01ONVhLNjNpVjh0bmxBSXJhQkxQc2RG?=
+ =?utf-8?B?RXBOdnhGenhFOHRmUHIybVZjdFBTb1FEMmhSL3E2VFFzREdiajVsSVRVUFBI?=
+ =?utf-8?B?WkoxSW9kVWZzNkFMOHhOUndhRnZMNkZJOStuSUk4SXJ1N1RwY3NCOVFHYjNV?=
+ =?utf-8?B?NjB0SlUwcWVpYitGWUNNVnlySWFGSTFDOWR2MGRNVzloU3dadkREcXI3NGFF?=
+ =?utf-8?B?ZlNld0hVK0JGSEszbTA2ZW1veEc2TTdoWm56QkJRR0NpWVRIdDE5aXpwSzFY?=
+ =?utf-8?B?ZkpNWW54UitETXp1Nko3cnlFdExXV28rMEw4OGJPaDV1ejFGNXhIMFdXQ3N1?=
+ =?utf-8?B?TTZhY1Nqdlp0U3drcG1RWDcwNE5CTHA0MVAxSXFBTXRpYkFJMHBBTWRvWTAz?=
+ =?utf-8?B?Sk5VN09aRjA0TTdYcVZBcnBSdUtraWZKMzZFTHpzTi9YUVFHTFJ6SWVFeDhX?=
+ =?utf-8?B?ZEx6SEFYNkRXRWdhV2lndjNBR2k3R0tIOCtTNFpFcUNTcnBBR3A2UUxKUWsx?=
+ =?utf-8?B?OVZWV3hHNGdYTC9ZL00vSUVuMmtkVWQwWnh2UU0rZVhzMjNRM2ZSSjRDZ0xV?=
+ =?utf-8?B?WXVBTnI3OEpEZGJPK3lpUXFnLzRTd05WdFB0Z3Z0aUt3RlcyTDgydzlJdzNC?=
+ =?utf-8?B?RXJDOXRBb1ZyM3Y5RmJRUFVBV29KZERDMmVnSGI4L1RVM3AvTWxBZG5aMGNj?=
+ =?utf-8?B?T25wZWJPQlFKVkIvczlGdkp6bW12b1FjQ1hsYnBnNjIyZG05dmx1SFU5MktT?=
+ =?utf-8?B?eGFTNSsxbnlZc080Wjl1b0J5K3VFOWhEU0UyTEMrdjdlc29qdXlVZUFwT3Zm?=
+ =?utf-8?B?UitnTCtPdENlbTRWSnREenpqV3pGNDFhWjR0aXlLTXVCelhlLy9XZ3dRamZy?=
+ =?utf-8?B?RndlMHRHM2ZwQmNnVnFkSTZEVjhyWDFTeDlDU1NzM3luOUxCNy9PUDlQUUFa?=
+ =?utf-8?B?eWVVUnhqNkh6T0FzcmVnQ3AyMEZZcXE5MXlOdFRMNkJBUUhwbmFlT2pTaXlY?=
+ =?utf-8?B?NjRNY2JDbU41NEw3UVBsUFZORVF4cjl3WEduWHRPR01td1FJeVBySkUvamlq?=
+ =?utf-8?B?NU0rV2JoQnRjQlVHdnd3amVvellPeXJrUmRrZ2J1TVF3VXFaaVFjaDJNR0F1?=
+ =?utf-8?Q?0GRS3sH1YCsdVl/Lu3c1sVwLxwC17DtUM6OMujC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXhlRlUwZHNNb0pkTmlyQWZnOEpiakxqcUhVY2I2TUFvWDJZMzZUVU5BOGJH?=
+ =?utf-8?B?UWRjM3J6dWprMyt0OEF0Q0tQR2l2bHpQSUJ3Q3A2UzVXMjl2VTBPeTdtZDhw?=
+ =?utf-8?B?NzBGLzNFTDI4QnAwWHJ5TU5IaWEzY0xQVnNURTUzN084T3Y5OThiZ2oxa09s?=
+ =?utf-8?B?U3g5MjgxQ2tyNFZPaUhFQjJOOGhwSm56VXRUWHRaZExub1BLNE1pWGFIVVh4?=
+ =?utf-8?B?a1lDS2U5elRiY29USTA5Rk1qQXlxLzlzZ3ZMdVN3M2Mzdk5Ld3ZGRndXQUJQ?=
+ =?utf-8?B?U3A5K2NHbU1NbC9ZZmFpWVZjUy9xckRLUm9FdFF2ZHhHOStEQWd5elNOWDdD?=
+ =?utf-8?B?VGFpV3pQVjVhRmlMd1pVV1hCRjkyZ2xodnRTcDBlTG5uQkt3NDR1T3ZLOEd6?=
+ =?utf-8?B?SzFleHN6bnZrSXY0M2tmS2tCclRQYTNxblpMUEhQZUNuSG0rSW1QTWlyZGN1?=
+ =?utf-8?B?NWtiQk8rTkIwdXhrQ1RBZGwzaFkzdDdMZEh0Zk5oZThWcllzb3l6dUlCNkQx?=
+ =?utf-8?B?emFKbFZjUEJacWRvcFo0SlJvSnB0V3JIa0lIMWM2ci8wTXFHV3E2akxNSmZQ?=
+ =?utf-8?B?NndKVUUxVU1LRllaZERIRGdNT2thZWxxcXBDOHlldHJ1d0RPZDNzSGdWak1z?=
+ =?utf-8?B?bXRCa2RhKzZ6TzRyeFVHUDI5UDRBbHRsdDhkOFY3Sk8xbDJla2dLUWZNUlNy?=
+ =?utf-8?B?RTJ2SCtNb2lDSmw5d1cwakhVcUFuYlROS0VsQnlMS2NMamd5NGVoVGxTaHBZ?=
+ =?utf-8?B?K3phVkxhMUZMK05TOEVBVUszeGpCSTM5dUFrYzlBcnRaSFR1amlEZVhLNFpk?=
+ =?utf-8?B?QlNPMlZINDB0aHU1QXpEOCtxdzF3Q0MrQVl5NVpYdWY1dlRjcC9jZ1gwaWZl?=
+ =?utf-8?B?ekZiY1l0UWoyM0h6RngrOENXUjk4SHU0VklXaVFYalNlWmhubk1ISDJaWkxm?=
+ =?utf-8?B?aTVLaHVJVUZtbDZNLy9ISUpUU1hLZ3JXV1RiWnBKOWRGZXR0aGdvNUVycFh0?=
+ =?utf-8?B?d0dVZkZHNHlxczJQVktwQzFQVUpsRmRTZDZqR3dUWDNReE5pRmt0bnFKSzVh?=
+ =?utf-8?B?WDdUY044anNsZVdRVUllL3lxK1JpUys4Z3BRL0ZFY1BMWmxCYXEzUS9lSFRN?=
+ =?utf-8?B?OUJONlJ4T1ROWVRIa25ZMlhBdUNma0NMQ0tBZEpRZDdTZEVXTXVLVlVOK0NU?=
+ =?utf-8?B?UVZXZ3ZNU3N0bHNESUJMUVVFUEgrK05yc01ZaThmQWxmVDZLbVpaZFhJVTZy?=
+ =?utf-8?B?L2lsTkZ4Wm9CeDAwMmIyOW4zeERtUWJzRnBkVG9DNWY1SlY0VHUzNEF3SHVM?=
+ =?utf-8?B?aTJQMHlTanV4YzFicVdtSFJPL3dBVXBUTDdwY2J1a1VTVjBQbTltVDdXNjhP?=
+ =?utf-8?B?bVZZOWFVcmNURklOWlF1U1FmUDhEMjh0aEx0Y0NGMUFCSGk1OEpDRzA0OURa?=
+ =?utf-8?B?R0pwV0wrNWs0bHRhRlE5L3U2UkFnOE9sbWpjS0ZXc25pUUxtWkhVc1RzYktG?=
+ =?utf-8?B?K0NNb3UzOU5tbUdUNlZSY0haM2FnRHRyRTB1WU1JQlg4cGNReTF1TjQ4Z3Rv?=
+ =?utf-8?B?RVVNc1VWVUpueTFUQlREa05hNmhIUGhkcHRCTzhrV1lweGY2cndHOTVFQ1d1?=
+ =?utf-8?B?V0plb2hzMWlub1BPVm81THRtRDEwMzBwMUplVEVmNzVUcE81Rk9HZTBVaWg2?=
+ =?utf-8?B?aHpuNHlJbGxQcUxsZDFGNkU5YWdLMWpZT0grdWpURTJQTHZZYkpDd1h4aTJo?=
+ =?utf-8?B?SnBnZDNwM1BvY1N6MTZDZ0F5ZGdCcWZONTZhU1VKc2QwM0M2UXBBeWYweG1P?=
+ =?utf-8?B?MlJLU25aL0FZRG1YbHZRdm5WeDcxNXc4VzBLbS9tdGF0RU1ZNkdqN1FyZHlG?=
+ =?utf-8?B?OHgxMUVTb3prb0JiemU1VzAvMnovNURHME1tOEtibXM1RDdOemJMZnJDSlZo?=
+ =?utf-8?B?VUxwTHJQZ1dDVlQ0RHd3elU3MkNiOE5PeHBOYXZTMHFybFhhWWlPM00zWnpC?=
+ =?utf-8?B?cWF0SVEzd1ErRUFrQmt4MVhOU1orK1VQZ202WWFZUVZGWjl0UUIvR2dmRldR?=
+ =?utf-8?B?STVxMDFoS2JyVjUzWHptaXMvMDN6Zzk1amtrTGVWbVlYL0IxWUVsMk1QN0FX?=
+ =?utf-8?Q?o1nQBfOISRwV5iWgV+W5aGqka?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc358885-04fb-4aec-7794-08dd0a44b85a
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 15:54:02.5516
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ivg9wgv+bAXP4bJo4gmZozBuFbyOuXMM4wDsVE84bAV1+DAlnQZnSVN6TVJZ3roHXHycewoblIFzosKEmKx3qg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8528
 
-Hi Krzysztof,
+On 11/11/2024 12:09, Thomas Weißschuh wrote:
+> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+> is "12". This leads to a fairly bright minimum display backlight.
+> 
+> Introduce a quirk to override "min_input_signal" to "0" which leads to a
+> much lower minimum brightness, which is still readable even in daylight.
+> 
+> One solution would be a fixed firmware version, which was announced but
+> has no timeline.
 
-On 11/21/2024 3:49 PM, Krzysztof Kozlowski wrote:
-> On 21/11/2024 05:06, Cheng Jiang wrote:
->> Hi Krzysztof,
->>
->> On 11/21/2024 12:47 AM, Krzysztof Kozlowski wrote:
->>> On 20/11/2024 10:54, Cheng Jiang wrote:
->>>> Several Qualcomm projects will use the same Bluetooth chip, each
->>>> focusing on different features. For instance, consumer projects
->>>> prioritize the A2DP SRC feature, while IoT projects focus on the A2DP
->>>> SINK feature, which may have more optimizations for coexistence when
->>>> acting as a SINK. Due to the patch size, it is not feasible to include
->>>> all features in a single firmware.
->>>>
->>>> Therefore, the 'product-variant' devicetree property is used to provide
->>>> product information for the Bluetooth driver to load the appropriate
->>>> firmware.
->>>>
->>>> If this property is not defined, the default firmware will be loaded,
->>>> ensuring there are no backward compatibility issues with older
->>>> devicetrees.
->>>>
->>>> The product-variant defines like this:
->>>>   0 - 15 (16 bits) are product line specific definitions
->>>>   16 - 23 (8 bits) are for the product line.
->>>>   24 - 31 (8 bits) are reserved for future use, 0 currently
->>>>
->>>> |---------------------------------------------------------------------|
->>>> |                       32 Bits                                       |
->>>> |---------------------------------------------------------------------|
->>>> |  31 - 24 (bits)   |    23 - 16 (bits)   | 15 - 0 (16 bits)          |
->>>> |---------------------------------------------------------------------|
->>>> |   Reserved        |    0: default       | 0: default                |
->>>> |                   |    1: CE            |                           |
->>>> |                   |    2: IoT           |                           |
->>>> |                   |    3: Auto          |                           |
->>>> |                   |    4: Reserved      |                           |
->>>> |---------------------------------------------------------------------|
->>>>
->>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->>>> ---
->>>>  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml          | 6 ++++++
->>>>  1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> index 7bb68311c609..9019fe7bcdc6 100644
->>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> @@ -110,6 +110,12 @@ properties:
->>>>      description:
->>>>        boot firmware is incorrectly passing the address in big-endian order
->>>>  
->>>> +  qcom,product-variant:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    description:
->>>> +      specify the product information for driver to load the appropriate firmware
->>>
->>> Nah, you have firmware-name for this.
->>>
->> Currently "firmware-name" is used to specifythe nvm (config) file only,
->> we also need to specify the rampatch file (TLV). 
->>  
->> Can we re-use the "firmware-name"? add two segments like the following?
->> firmware-name = "rampatch_xx.tlv",  "nvm_xx.bin";
->>
->> Or add a new property to specify the rampatch file? 
->> rampatch-name = "rampatch_xx.tlv";
-> You can grow the property, it's a list. Order of items in the list must
-> be fixed (specific), though. See other Qualcomm remoteproc PAS loaders
-> which already use two entries.
-Thank you for the guidance. I will follow it to submit a new change. 
+Hi Thomas,
+
+Thanks for this resubmission and the rebase.  Apologies for the delay, 
+but this is now picked up to drm-misc-next.
+
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=22e5c7ae12145af13785e3ff138395d5b1a22116
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=c2753b2471c65955de18cbc58530641447e5bfe9
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=916ecc0db336768d80e14ef28a8c64a775274f95
+https://cgit.freedesktop.org/drm/drm-misc/commit/?id=d80b5c5b9be6b2e1cdeaaeaa8259523b63cae292
+
+Thanks!
+
+> 
+> ---
+> Changes in v7:
+> - Rebase on drm-next
+> - Drop now unnecessary hacky allocation of struct drm_edid
+> - Link to v6: https://lore.kernel.org/r/20240824-amdgpu-min-backlight-quirk-v6-0-1ed776a17fb3@weissschuh.net
+> 
+> Changes in v6:
+> - Clean up cover letter and commit messages
+> - Add my S-o-b to patch from Dustin
+> - Mention testing in combination with "panel_power_savings"
+> - Link to v5: https://lore.kernel.org/r/20240818-amdgpu-min-backlight-quirk-v5-0-b6c0ead0c73d@weissschuh.net
+> 
+> Changes in v5:
+> - Forward-declare struct drm_edid
+> - Reorder patches, quirk entries are last
+> - Add patch from Dustin for additional quirk entries
+> - Link to v4: https://lore.kernel.org/r/20240812-amdgpu-min-backlight-quirk-v4-0-56a63ff897b7@weissschuh.net
+> 
+> Changes in v4:
+> - Switch back to v2 implementation
+> - Add MODULE_DESCRIPTION()
+> - Simplify quirk infrastructure to only handle min backlight quirks.
+>    It can be extended if necessary.
+> - Expand documentation.
+> - Link to v3: https://lore.kernel.org/r/20240731-amdgpu-min-backlight-quirk-v3-0-46d40bb21a62@weissschuh.net
+> 
+> Changes in v3:
+> - Switch to cmdline override parameter
+> - Link to v2: https://lore.kernel.org/r/20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net
+> 
+> Changes in v2:
+> - Introduce proper drm backlight quirk infrastructure
+> - Quirk by EDID and DMI instead of only DMI
+> - Limit quirk to only single Framework 13 matte panel
+> - Link to v1: https://lore.kernel.org/r/20240610-amdgpu-min-backlight-quirk-v1-1-8459895a5b2a@weissschuh.net
+> 
+> ---
+> Dustin L. Howett (1):
+>        drm: panel-backlight-quirks: Add Framework 13 glossy and 2.8k panels
+> 
+> Thomas Weißschuh (3):
+>        drm: Add panel backlight quirks
+>        drm/amd/display: Add support for minimum backlight quirk
+>        drm: panel-backlight-quirks: Add Framework 13 matte panel
+> 
+>   Documentation/gpu/drm-kms-helpers.rst             |  3 +
+>   drivers/gpu/drm/Kconfig                           |  4 +
+>   drivers/gpu/drm/Makefile                          |  1 +
+>   drivers/gpu/drm/amd/amdgpu/Kconfig                |  1 +
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 ++
+>   drivers/gpu/drm/drm_panel_backlight_quirks.c      | 94 +++++++++++++++++++++++
+>   include/drm/drm_utils.h                           |  4 +
+>   7 files changed, 113 insertions(+)
+> ---
+> base-commit: 377dda2cff59825079aee3906aa4904779747b0b
+> change-id: 20240610-amdgpu-min-backlight-quirk-8402fd8e736a
 > 
 > Best regards,
-> Krzysztof
 
 
