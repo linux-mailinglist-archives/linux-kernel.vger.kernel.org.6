@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-417372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874E69D531D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:02:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B7299D5320
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D27B280CEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61955280F25
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 19:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10171E2319;
-	Thu, 21 Nov 2024 18:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BFA1E32B3;
+	Thu, 21 Nov 2024 18:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Q3vNv8L"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uC6XDDIa"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCB31E2311
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954551E1C3E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732215230; cv=none; b=fSUj9NytRHRN+XbLRJahrZtzHsoDGbD7DRhdDh8v4R4eApcxrHZRC1jZzJZwKLBUFqAt1BjkE1ct6NDxW1tDDFGi6xqW4lZk0vZOU0Q/DQ/bg669lSmBEPVERKSAz+Mg/FNtWe90YkzLAaX1n17Ewy0b74ges+lX9MacjzTalJ8=
+	t=1732215231; cv=none; b=FEc+LJHkQjoxX4DklfdGk+113fk4oTKLIUzLxRfe78rdolRkORCC1+APfAQ+a6wBy2SuRTGuT9XAXnXmYFFnd10/eWWmhAjEp8khf+ZHemRGw8oS7KD4D6ESRCrX5qAPLCsGZLN6QqD+3BCmmeQEalHrU+Tkx8ojwu4ufqcvCoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732215230; c=relaxed/simple;
-	bh=eHXZPCixs0Kp9lb7wTpd1eAC5lTE/wHduYYezTPcltI=;
+	s=arc-20240116; t=1732215231; c=relaxed/simple;
+	bh=qemrFZ+DR3sCl7VG4GKYwVD8L8FwjlVxsp3WJhJHwXU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FHQ5tWkNw32KA8yOQASNOjAMmI067o6dXTpuTMy7tyKodAYlhgZ7hDCeaWRDoBQpWBASXgoK9uTS2rAOy7gpkN4G6TOcOMzoJVWIPAZir48FtqRtJn4bKY3X3xBbdUf1KuHoz/8FRjQ5InstAjjaZOn+RElcUVvDSy4ZvslraKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Q3vNv8L; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=njUy9Mu9Gtven9p4pyYFKSXyh8GdxMg3jcfq96oVeZRtBtHwn88LtB+PJ8lvoGBxCg0z2GttihvlZ5sRjQEXGBixSE1gwAL5YmIVVUbT2E9DqoBpPtIF19RX6uovnElurmSMSGRUIccXRM/E/1R8l+HPvCvK9lafvNj2Jer2VfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uC6XDDIa; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mizhang.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eebd4e7cc5so14918397b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:48 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea258fe4b6so27717637b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:53:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732215227; x=1732820027; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1732215229; x=1732820029; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3ejUU/7aVBo5O4Q0RNsvCKZVgKY1XQah2zaS1IN8Y8=;
-        b=2Q3vNv8LrR2WteR3PRdx5a0g0bxBUBMmsz/1ptNtGsXDSdQHBv8If8DdkSLHMCr8mK
-         Ryy8n1eERwWnj6OGFjS7EuhJNu4Lu0eflomgCC62OJ4pNP9W9mmGSTrCG8qJ21UQ0m/Y
-         XtT55v1s0frhm3EIGGYIDTD78wCmIWP4ukINQpSHy3okwpTGqBIaB0H1H2/fRL4EEj+Y
-         XOE1UEIUFcaVlo7oZe+dF1sx+pXzgf3u5j/YTxG5LJ2r9upJTt6YmU/fXmMZAwWZmB7h
-         OGvbPHgdyMQCFxnvi4BTPas6DrTmZ7rHKPG2Ag/wbrsscOjyBu1GDIaWbNPYyWFeml/p
-         B7Hg==
+        bh=Sh4pMBblHn1VD2N9Y2lp4abB6oxAsUcAPAYEWiOVGrA=;
+        b=uC6XDDIamI6lGnwNA6gWzfVX+QGACb4lytpRAYWk3pyND8yI3nGZ0+RV/UsoOxUdrT
+         1aP2aR3KJD4xok2SZLsolRHCoGqR0d0Ne8NavIDLJ0Q0GRsSkYeI/eL6OhT1BMWXBcW5
+         v7xi7ulDRvFQmZKC4qC7KQ5vx0aZaYDTG7qZApDlgJtOVrWkxRppfTmFQ3WEcnrp71Yv
+         lyH77bY2Qt/006ClS1xB7SV/w51EmhXaMSv6+e3z2/oDFVd44d5uM6cIFQrWvJjcqJ9u
+         YTzfHN/AQE6G/wLrmaolXadstknKakMTLYvZtQedyF+/EW+P8sGqF1rhUHap1QgeMpBw
+         AqdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732215227; x=1732820027;
+        d=1e100.net; s=20230601; t=1732215229; x=1732820029;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=S3ejUU/7aVBo5O4Q0RNsvCKZVgKY1XQah2zaS1IN8Y8=;
-        b=NhSmKKXpgRj87wZ5HBmFQTAFHzoU7o0/TGmgK3cm/1fe6ZCrmjg1jaL1MilaTlbZPl
-         TsEpf85cUUfK212kuIwL4aDuPtdUlx0d7rhnAaNBE9kYjiY4Twm738VmM5+UOZM7215u
-         pt95ZdyRX1Z078AC60ZGhaiP0bBS3LH+4e9n8JR+xpTW3EHvTW8Revf4E6DA1FdqegxA
-         x/i66Yl2aqbYE1wRi0u+Fb2LGaqcBnW2CRFg4tHuutSEVAZbqUF5uQg9Exn4ssV8ToCU
-         GXQ+TwNIneNgEzmTaumCJlFfNEz8RBTeqwx2dwqSRjyQMj81y+14VTW9t4+hvRR0lxFS
-         lm9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWjNXPM/EaAq4T0PMnppmopgDozp3TUwdhM2rDPnydVLOUNOTQVPQ2CF/15SeTHf8X+DV3kGt4ynHy7wKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4z5yPei90+saWklaj1TrfNBmkM9VDwsdE+8MjEqts1b5DBKXW
-	jAeWqy1uBfOmFst40jqpaX9jBqa1FfxKr8XkY6LGieT3jXBFx782IMNeb1sVpkeQGyiShDIoHWI
-	vp6Ykvw==
-X-Google-Smtp-Source: AGHT+IFnZhLdaAm9Iv4V2heWNMD+AOPfEaQHbFcWJ8d4iuBWsqxwVlNaJU/yAnomaTfOoVWSEqQuOYrN36SC
+        bh=Sh4pMBblHn1VD2N9Y2lp4abB6oxAsUcAPAYEWiOVGrA=;
+        b=f/ZYsKtH412Ry2jssTL3aQUw67gooqviZBRzF/uYVVUDEFbIT6Ow01N+YeArNsBLX7
+         HvPMuYesuh7XN/X8YRVmABpb1sWZ1OSVLxsyMEKbkZOhnA3SOeLujnnU3HxHDwGAnEMM
+         MULOt3foOuwBw+OTn8Jsbo7FLg/KwyQaYGKDPbUCSpoFm0p255xf5zXDT/rh++dDasN0
+         zRaTPyFcZA+PaNfxErfUqxSiBOgtUDZaxjePx4tuLf0r+5pc+PO7J18YL47nM3or/byV
+         78iDrskND5t+a30Af5fndnpsJGYbqXRekdb1dMqRwKpG1/GTohW3DidAOCl9MNewxOXJ
+         Y5kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNgouwRgymuJRG23VqlJFMt6FOqbo1TT2/AlEzxeZZioI5zRlsZL83xYu3xdzH8IjXo5xRiM+lhLDNYRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymNkXtNfKZfbM6Mmu/dTdtiDLKIXLq3Vey1gvRpGWPb6g17B/B
+	JAMdS7Y8Wqrs4pOvj2ADQeg4AsEmTv1qLmreKQE9NCk8RVv2/yPVtNs7mUETXyh8kXZzq7Q7sEH
+	LVsrsxw==
+X-Google-Smtp-Source: AGHT+IEJaYc97wodeOZjWOswXnwDACandNWSXkgUJpIhOpYXATvfyTkw2S5hqwBp9Sei4x4azZY6rZTmf+9J
 X-Received: from mizhang-super.c.googlers.com ([35.247.89.60]) (user=mizhang
- job=sendgmr) by 2002:a81:a742:0:b0:6ee:a2b0:a803 with SMTP id
- 00721157ae682-6eecd2b215emr527207b3.1.1732215227332; Thu, 21 Nov 2024
- 10:53:47 -0800 (PST)
+ job=sendgmr) by 2002:a25:c581:0:b0:e30:d61e:b110 with SMTP id
+ 3f1490d57ef6-e38cb5fbd2fmr9499276.5.1732215228789; Thu, 21 Nov 2024 10:53:48
+ -0800 (PST)
 Reply-To: Mingwei Zhang <mizhang@google.com>
-Date: Thu, 21 Nov 2024 18:53:09 +0000
+Date: Thu, 21 Nov 2024 18:53:10 +0000
 In-Reply-To: <20241121185315.3416855-1-mizhang@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241121185315.3416855-1-mizhang@google.com>
 X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Message-ID: <20241121185315.3416855-18-mizhang@google.com>
-Subject: [RFC PATCH 17/22] KVM: x86: Save guest [am]perf checkpoint on vcpu_put()
+Message-ID: <20241121185315.3416855-19-mizhang@google.com>
+Subject: [RFC PATCH 18/22] KVM: x86: Update aperfmperf on host-initiated
+ MP_STATE transitions
 From: Mingwei Zhang <mizhang@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
 	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
@@ -88,44 +89,52 @@ Cc: "H. Peter Anvin" <hpa@zytor.com>, Perry Yuan <perry.yuan@amd.com>, kvm@vger.
 	Jim Mattson <jmattson@google.com>, Mingwei Zhang <mizhang@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-For vCPUs with APERFMPERF that are in KVM_RUN and not halted,
-checkpoint the current hardware MSR values along with the host TSC
-when unloading the vCPU. While still in virtual C0 state, the vCPU
-will no longer run on this physical CPU, requiring different handling
-for each counter:
+From: Jim Mattson <jmattson@google.com>
 
-- IA32_APERF should stop accumulating since no actual CPU cycles are
-  being spent on behalf of the guest
-- IA32_MPERF should continue accumulating cycles since the guest is
-  still in C0 state
+When the host modifies a vCPU's MP_STATE after the vCPU has started
+running, maintain the accuracy of guest aperfmperf tracking:
 
-Later when the vCPU is reloaded, we'll use this checkpoint and the
-host TSC delta to properly account for any "background" cycles that
-should be reflected in the guest's IA32_MPERF value.
+1. For transitions from !HALTED to HALTED, add any accumulated
+   "background" TSC ticks to the guest_mperf checkpoint before
+   stopping the counter.
 
-Signed-off-by: Mingwei Zhang <mizhang@google.com>
-Co-developed-by: Jim Mattson <jmattson@google.com>
+2. For transitions from HALTED to !HALTED, record the current TSC in
+   host_tsc to begin accumulating background cycles in guest_mperf.
+
+This ensures the guest MPERF counter properly reflects time spent in
+C0 vs C1 states, even when state transitions are initiated by the host
+rather than the guest.
+
 Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Mingwei Zhang <mizhang@google.com>
+Signed-off-by: Mingwei Zhang <mizhang@google.com>
 ---
- arch/x86/kvm/x86.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/x86/kvm/x86.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 793f5d2afeb2b..7c22bda3b1f7b 100644
+index 7c22bda3b1f7b..cd1f1ae86f83f 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -5173,6 +5173,11 @@ void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
- 		srcu_read_unlock(&vcpu->kvm->srcu, idx);
- 	}
+@@ -11904,6 +11904,18 @@ int kvm_arch_vcpu_ioctl_set_mpstate(struct kvm_vcpu *vcpu,
+ 	     mp_state->mp_state == KVM_MP_STATE_INIT_RECEIVED))
+ 		goto out;
  
-+	if (vcpu->wants_to_run &&
-+	    guest_can_use(vcpu, X86_FEATURE_APERFMPERF) &&
-+	    vcpu->arch.aperfmperf.loaded_while_running)
-+		kvm_put_guest_aperfmperf(vcpu);
++	if (kvm_vcpu_has_run(vcpu) &&
++	    guest_can_use(vcpu, X86_FEATURE_APERFMPERF)) {
++		if (mp_state->mp_state == KVM_MP_STATE_HALTED &&
++		    vcpu->arch.mp_state != KVM_MP_STATE_HALTED) {
++			kvm_accumulate_background_guest_mperf(vcpu);
++			vcpu->arch.aperfmperf.loaded_while_running = false;
++		} else if (mp_state->mp_state != KVM_MP_STATE_HALTED &&
++			   vcpu->arch.mp_state == KVM_MP_STATE_HALTED) {
++			vcpu->arch.aperfmperf.host_tsc = rdtsc();
++		}
++	}
 +
- 	kvm_x86_call(vcpu_put)(vcpu);
- 	vcpu->arch.last_host_tsc = rdtsc();
- }
+ 	if (mp_state->mp_state == KVM_MP_STATE_SIPI_RECEIVED) {
+ 		vcpu->arch.mp_state = KVM_MP_STATE_INIT_RECEIVED;
+ 		set_bit(KVM_APIC_SIPI, &vcpu->arch.apic->pending_events);
 -- 
 2.47.0.371.ga323438b13-goog
 
