@@ -1,200 +1,176 @@
-Return-Path: <linux-kernel+bounces-417481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DE79D549D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:19:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FF39D54A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC891F22E0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:19:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6391F21A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDA71CB9F4;
-	Thu, 21 Nov 2024 21:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF091D6DDA;
+	Thu, 21 Nov 2024 21:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jVR6EOEg"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaVXi5v0"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF3515098E
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323684502F;
+	Thu, 21 Nov 2024 21:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732223949; cv=none; b=ht7rGgxEe9SxVlJsm0mc57k5uDCsM8xhNnzc2AGr9apOsPRRafgFJE0uW6mcfNcKVcVXv7qYrKYuqvD4tmNsa6FmF1kF2R9epMYjrOp30lAbFH/lEB9Tev5mdsvCtSGzoNHlOJkmciayYAU6cnAjUxUyQqnnC8zGDsHdctZwPU8=
+	t=1732224003; cv=none; b=QMwUCUB4MUIV02h9YmdFNZXEjGoWZm90ZF+jJI856ScjQ3fmaYNHxKWUwIVApBlwAxFOJbg3rJ/wPeQVYuuU3MTI1nQNggMst6uCog3T9IbKQv1R1mx98TTeJCE2RunsMkowekv3Jisyh6PuYULWKCOX8tO3C0QLRIrobuhsVmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732223949; c=relaxed/simple;
-	bh=8lz2cEj5C1DwnLcZiEsku1DUpI7PthbBD35+zvvXCgI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gVqsRe74mFdWpRspOQO3fIhqT2SWFf3cIXVbwzF443nN+bls7Tkwn77LVuCgAdg/Jl3rN9BfiSMkBILAM7VGcRtFldZj43pMHOmRhayjACkYvS8jj4e3AGNXtEqmBkePJNP3E0d+ieXTIQUCAojkwFrGE7Z2u1rFat1GRr4Ia0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jVR6EOEg; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38231f84dccso972136f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:19:07 -0800 (PST)
+	s=arc-20240116; t=1732224003; c=relaxed/simple;
+	bh=IZxeSj3DH9D4QFgOVdPCe7k3HBOTZSxL4HiD7PDE4bg=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Cc:Content-Type; b=bCER9n04nu2k10XjOum/g7tOtmYmw8HOiGEk+EvaxTLGZqTJWO57bvWEwXWtR96L7DIlgLY7y7SAaYKKx+8EuUwsBifop28D6OSv5zF/PrgfWHfehPh2IVbOV69ETWz7ryTcKTnziG03daWpf64/1DTt87gJLBDXr0+hacOSSY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaVXi5v0; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99f646ff1bso212277466b.2;
+        Thu, 21 Nov 2024 13:20:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732223946; x=1732828746; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732223999; x=1732828799; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pX8XiRlPufvUoMxM7Ycxdc9sn9Rz/VdbbgNK2el4cX4=;
-        b=jVR6EOEgv+c0M86upHz1qUDt9LCRyHTk4RuQx0H6rRnvrMj2IVVAS1Q7dlpU6G/+gp
-         IPGqdTNmrDsR+zRWSVQ+UJBqSRdUG86rWqOowI4R7vDYkL+9GK1JpLE0U5Z4dpQHIY6l
-         JuWKcY5TbVEbL0D0SdEtNM7indfKuh36NCYD451sqEVmNvuSihXRXsJNRS9QXpufo575
-         3+CSVkG8s6kYN0ihsqfbDrIORobpVAgBm8VdjDbWV/9sz92ISR4+tySPR8GxIEDU2Day
-         9QJ89yqsrtSCrQRE7v/Mwpek4gSPNibRCSPbruFM8BA5bZCpTRQ+lnL9//Nyr0hZEsF7
-         H5Gg==
+        bh=+5mVwL/gxcL6T7A/AL0caz7nykYr0i5AQPoZcXGEz/0=;
+        b=AaVXi5v0mabo9uTBhRwqMGGVGnkxNO7jKPbSlJ6WdF3JMk4uFddFjmXMbx0tuKeKc1
+         htK2tPM2t0ct5BAxCsHY/muHntnTakxRdbFDwv/SpnaqB1dDi6XmUoSWgWAo1+yhp9tu
+         iVSblNVrssx+jw25fe5APllpmjD0ktaS6/ZN+RscwIa+b0RDzNExnvg3mfe/qCd5Yb2s
+         4ovtNMITiUs6oKWSj+spKGrwHBSGARYf8BPM/hH5QGjuWDajIPC7d6KThBztGGNdnjM2
+         Kt5UGFCy7J1hz6LoYkqz4V7IJgOp9i21UP3pbWxgLVtDys2I7iCG4SjqR5JZ3X31GYUD
+         9iqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732223946; x=1732828746;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pX8XiRlPufvUoMxM7Ycxdc9sn9Rz/VdbbgNK2el4cX4=;
-        b=H16D9d2I7S+LqU/yyt5QJeebiGFouhHmf8PFgGgfOIM/54jMPWFE+RJ/sB575dUwrA
-         38LWQL4YRzM9W+Xw/d843EPDRJ3UmI8JBycazpLr756ndw90r2Za7KzXuQfldEojqZhQ
-         s37iqS3ONh0pth41scoeU1NS1qJ/9qY1UkvUKwhDXpjgrvJ51Ig1LG70Wn7WQmoXlz18
-         MARgpl1EH7Uo8M/OrvXZVAu000lGdFLfZ1bORxoHznDFdtbUQjw154CHm54T+XqpHoAM
-         VrTQ+kEnmGc5ClmfnZROGO7v9+EPpW+tUr12rWZ5fvgq3F70vgzWq59tHMRccV7ry5Ye
-         zKGA==
-X-Gm-Message-State: AOJu0Yz68WQ0Q1O2BilqaBAq/21SoSbqycLBHCzafbxuPgDCDhVksNTD
-	0h+qGyTzyArdxZyoZJoWPED92/Gdpv6h1BM71AhIpToycfMOngTbrNsVQwuSJ3ZvzKweNrrbJ1y
-	vdj2PHXKBWqEFn1yaU7vrQAdGCJA9Z4S4MXzfTY2KxQnIK9ANvSgT
-X-Gm-Gg: ASbGncsT9DFpWk5VNhUUYpZxmRZTqBuzEARTVR5l5/wnFrb8LG/wKhaO4XUGtJsIejy
-	mXOjg3JeKwnSuU8nAyjz26E5MHAQKPBFUS2/QA1h/YwwX4EXLDJKvsLCXIw==
-X-Google-Smtp-Source: AGHT+IET7ArKCoKeGbFTTH20elE2gMMjwLV5I6kbsX+Bkm1lKqx9xUfkwH4I55PZwpmn2XHoSWKx/W+grWluAK6DwkQ=
-X-Received: by 2002:a5d:5f47:0:b0:382:464e:1ab4 with SMTP id
- ffacd0b85a97d-38260b45526mr432608f8f.3.1732223945901; Thu, 21 Nov 2024
- 13:19:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732223999; x=1732828799;
+        h=content-transfer-encoding:cc:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+5mVwL/gxcL6T7A/AL0caz7nykYr0i5AQPoZcXGEz/0=;
+        b=iO/YXEoKxD/t02m5/O42ftdQfiIeEiy7ft9+FrDg7Q0Q0icxx367XuczXUYHCiaT4M
+         ufpjNsdT6/gD2dzS2mihqwUGyomtmMrODumfi3UPShEGEvTLM5XIzK3w0ad04OOdsrwT
+         xpbZD05MiOMQ5Q2lCIe8vT4Mqv8zOz1xKm9mK2+qKZyI3w2yIyAjnWrOQWune7S//9r3
+         VjM5hXwEGv7bjSvAtsogJ6MQTZdl/un0l2DE9W1MSflgpDoCsB18QVKv4rWGAxxMlabA
+         aVCBv/yhJzovTFnAlGmJ/0o/02kbf9oVNsa3txYbmNW23iD5srOFeZs9aps1+n3qbF4+
+         Y7jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbKFOOCZN1uxxS4Q/HQkqKZGVciTN8wRb/UgWfDd396HaBDFWlrimZHp6ns3Y4X+y3MbbSHL73LLKLRxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoaATQwJxozITH3SQClDpkiRsAvGERiA2q+15E4hiZzsS2viwP
+	CtUlhEwbEdpb1d4InDgm6MLRvBQ8s4QcuQKinEddsy3YPxKg5pgbJXLnAg==
+X-Gm-Gg: ASbGncut5skYK8jFsaxeyKtJb8bhqTKLhNCYqhHG6RP0MwQcG6l2YsZLR/C528u1Nf/
+	OBU+VMkPNWLyc3rgaZRFW/+hIiZqjnVVR1o7ivrzDJ2C8RgHSLpPizGWTWh6hwkdqegxckGDW9G
+	9t3cPwRnVhCYRhMZ8oJuBNP8okAVqww3SKk2b4gg+cFVAcXKHJ8lLRM3d3HCO12+Jc2I9S4rrYu
+	FRmFGmj5FL9KLn29I5itsEszV2+eSiBfIukJlogZwXn0dpWOIUW+dyi7G6ByNNhUcSQqUOx
+X-Google-Smtp-Source: AGHT+IEgJCmbBuQqoybt7KwE0w4X0L72atjpXIF7Z7ccrhIhMaRCKipXQU1YUH2jkLaRC8w+NGL2Cw==
+X-Received: by 2002:a17:907:cb26:b0:a9e:b0a3:db75 with SMTP id a640c23a62f3a-aa509b551a0mr42773066b.35.1732223998775;
+        Thu, 21 Nov 2024 13:19:58 -0800 (PST)
+Received: from [192.168.178.20] (dh207-40-8.xnet.hr. [88.207.40.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57d4d5sm14881366b.163.2024.11.21.13.19.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 13:19:58 -0800 (PST)
+Message-ID: <f96d57c9-efda-4781-a395-a7c5fec7f2ad@gmail.com>
+Date: Thu, 21 Nov 2024 22:18:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106003007.2112584-1-ctshao@google.com> <20241106003007.2112584-2-ctshao@google.com>
- <CAP-5=fUc0YttVUMB9oAit3u5hzVGuK5rTLnP_dXD0kqt7QcO5g@mail.gmail.com> <CAJpZYjW0evv8SmPMwymjcFQExy+zVHe_6XW79bB_ErRXCwgzfA@mail.gmail.com>
-In-Reply-To: <CAJpZYjW0evv8SmPMwymjcFQExy+zVHe_6XW79bB_ErRXCwgzfA@mail.gmail.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Thu, 21 Nov 2024 13:18:54 -0800
-Message-ID: <CAJpZYjUEn-Cr-YWfA68iN8jnR7BdSPhg3DxXsQq7OwA93bDpOg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] perf: Reveal PMU type in fdinfo
-To: Ian Rogers <irogers@google.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linux Kernel Build System <linux-kbuild@vger.kernel.org>
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Subject: [PROBLEM] make bindeb-pkg: When just one source line in a single
+ driver is changed, all driver are rebuilt?
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Bagas Sanjaya <bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi, just a friendly ping for review, in case anyone missed this.
+Hi,
 
-Thanks,
-CT
+I am perplexed now at 6.12 stable vanilla tree, and I've noticed that after changing just one
+line in ./drivers/gpu/drm/xe/tests/xe_migrate.c:226:5-11, all unrelated drivers are being BTF'd, SIGNED,
+and INSTALL-ed:
 
-On Thu, Nov 14, 2024 at 10:30=E2=80=AFAM Chun-Tse Shao <ctshao@google.com> =
-wrote:
->
-> Hi Ian,
->
-> On Thu, Nov 14, 2024 at 7:49=E2=80=AFAM Ian Rogers <irogers@google.com> w=
-rote:
-> >
-> > On Tue, Nov 5, 2024 at 4:30=E2=80=AFPM Chun-Tse Shao <ctshao@google.com=
-> wrote:
-> > >
-> > > It gives useful info on knowing which PMUs are reserved by this proce=
-szs.
-> > > Also add config which would be useful.
-> > > Testing cycles:
-> > >
-> > >   $ ./perf stat -e cycles &
-> > >   $ cat /proc/`pidof perf`/fdinfo/3
-> > >   pos:    0
-> > >   flags:  02000002
-> > >   mnt_id: 16
-> > >   ino:    3081
-> > >   perf_event_attr.type:   0
-> > >   perf_event_attr.config: 0
-> > >
-> > > Testing L1-dcache-load-misses:
-> > >
-> > >   $ ./perf stat -e L1-dcache-load-misses &
-> > >   $ cat /proc/`pidof perf`/fdinfo/3
-> > >   pos:    0
-> > >   flags:  02000002
-> > >   mnt_id: 16
-> > >   ino:    1072
-> > >   perf_event_attr.type:   3
-> > >   perf_event_attr.config: 65536
-> > >
-> > > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> >
-> > Reviewed-by: Ian Rogers <irogers@google.com>
-> >
-> > > Change-Id: Ibea5618aaf00bae6f48a9b2a6e7798ab2b7f23ce
-> > > ---
-> > >  kernel/events/core.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > index cdd09769e6c56..398cac8b208b9 100644
-> > > --- a/kernel/events/core.c
-> > > +++ b/kernel/events/core.c
-> > > @@ -55,6 +55,7 @@
-> > >  #include <linux/pgtable.h>
-> > >  #include <linux/buildid.h>
-> > >  #include <linux/task_work.h>
-> > > +#include <linux/seq_file.h>
-> > >
-> > >  #include "internal.h"
-> > >
-> > > @@ -6820,6 +6821,14 @@ static int perf_fasync(int fd, struct file *fi=
-lp, int on)
-> > >         return 0;
-> > >  }
-> > >
-> > > +static void perf_show_fdinfo(struct seq_file *m, struct file *f)
-> > > +{
-> > > +       struct perf_event *event =3D f->private_data;
-> > > +
-> > > +       seq_printf(m, "perf_event_attr.type:\t%u\n", event->orig_type=
-);
-> > > +       seq_printf(m, "perf_event_attr.config:\t%llu\n", (unsigned lo=
-ng long)event->attr.config);
-> >
-> > nit: is the cast necessary? I don't see __u64 listed on:
-> > https://www.kernel.org/doc/Documentation/printk-formats.txt
-> > so I'm unsure.
-> >
->
-> In this case I think it is safer to cast it to `unsigned long long`,
-> since I don't know if any architecture would have an exception on
-> __u64.
->
-> Thanks,
-> CT
->
-> > Thanks,
-> > Ian
-> >
-> > > +}
-> > > +
-> > >  static const struct file_operations perf_fops =3D {
-> > >         .release                =3D perf_release,
-> > >         .read                   =3D perf_read,
-> > > @@ -6828,6 +6837,7 @@ static const struct file_operations perf_fops =
-=3D {
-> > >         .compat_ioctl           =3D perf_compat_ioctl,
-> > >         .mmap                   =3D perf_mmap,
-> > >         .fasync                 =3D perf_fasync,
-> > > +       .show_fdinfo            =3D perf_show_fdinfo,
-> > >  };
-> > >
-> > >  /*
-> > > --
-> > > 2.47.0.199.ga7371fff76-goog
-> > >
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aht10.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/adt7475.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/as370-hwmon.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/aquacomputer_d5next.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/applesmc.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asus_rog_ryujin.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/asc7621.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/atxp1.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/axi-fan-control.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-psu.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9055-hwmon.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/chipcap2.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/cros_ec_hwmon.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/da9052-hwmon.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/coretemp.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/corsair-cpro.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/hwmon/dell-smm-hwmon.ko
+
+Is there an option to rebuild just the necessary driver that was modified?
+
+2.
+
+From the list of files that were compiled, it seems that drivers/gpu/drm/xe/tests/xe_migrate.c was
+not rebult:
+
+$ grep CC ../err-6.12.0-tiny-pt-02b.log
+  CC      init/version.o
+  CC      init/version-timestamp.o
+  CC      arch/x86/boot/version.o
+  CC      arch/x86/boot/compressed/kaslr.o
+  CC      arch/x86/boot/compressed/misc.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/kallsyms
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/sorttable
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/asn1_compiler
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/genksyms.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/selinux/genheaders/genheaders
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/selinux/mdp/mdp
+  YACC    debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/parse.tab.[ch]
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/sign-file
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/insert-sys-cert
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/parse.tab.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/genksyms/lex.lex.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/modpost.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/file2alias.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/sumversion.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/mod/symsearch.o
+  HOSTCC  debian/linux-headers-6.12.0-dirty/usr/src/linux-headers-6.12.0-dirty/scripts/basic/fixdep
+
+But they were only BTF + INSTALL + STRIP + SIGN'ed:
+
+$ grep drivers/gpu/drm/xe/ ../err-6.12.0-tiny-pt-02b.log
+  BTF [M] drivers/gpu/drm/xe/xe.ko
+  INSTALL debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+  STRIP   debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+  SIGN    debian/linux-image-6.12.0-dirty/lib/modules/6.12.0-dirty/kernel/drivers/gpu/drm/xe/xe.ko
+
+Nothing suggests that "drivers/gpu/drm/xe/tests/xe_migrate.c" is being recompiled, though it was modified,
+or at least "touch"-ed.
+
+Is this the expected behaviour?
+
+(I have deliberately skipped "make clean", to see if I can save some building time and grid power.)
+
+Thank you very much.
+
+Best regards,
+Mirsad Todorovac
+
 
