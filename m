@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-416612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056B09D4799
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:31:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AA29D479C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:35:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84869B24178
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:31:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5782837B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020F1CB9F4;
-	Thu, 21 Nov 2024 06:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD2D156F39;
+	Thu, 21 Nov 2024 06:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Uk0v7tkQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdjCCAWU"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B613DBB6;
-	Thu, 21 Nov 2024 06:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FCB1474CC;
+	Thu, 21 Nov 2024 06:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732170635; cv=none; b=RinFQRn3IMmSjtLOkGizankjfb++FFvr+ywwhVBwH6dmG6y1zz491W8/WB4sPPZ4+6GH+aOMIAYEpAIU0OODWvwZVnlgdaSG6fw2M9KNHuWbleqSGm8hNz4FLvP/71Ihz7QZyfAeo0DcoS/u08tomOBlRMYEHR5B2iueutvjKYs=
+	t=1732170891; cv=none; b=r+I03xLMM7LUdqIYaqDH9ycvNT9WOqET1p5PK2tRdURUuwO1HdKReLKHO9TWfIFuf5e8haZqBb0GMfcobVvN9y+0E7k6GqdNEJKPOJrcGo5H0xNax3GHEKwJyZk2+01XkOPA0MTMr1dPG0S+ujMrP6nVhrrh9arniYGOtK3rUFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732170635; c=relaxed/simple;
-	bh=r+qhFA10uVrKLXTgaNirInIM4wph+0aTAGpHG36K6WI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lcISCR7HGvFR9SQDadlOADoGs+L9L/WTGZkWTp0sEn87sFTS22s5AIX6PttwKNPA6Vq9aSRDg1RqeFRWg9QFmJfRSDTvhdKdUIuOB9ULL5egmqc4ls7HB16N1Z30PoL5+GRPc+qtNBu1pNbmFW3c01gQg4jJoJ+TLlO4XI5+20E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Uk0v7tkQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKLPNeG027911;
-	Thu, 21 Nov 2024 06:30:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	gnt2uT/jjRCIFi0W+Dw10NAsiNv+OHSt8mFhvPVKpGg=; b=Uk0v7tkQfCwbwwpd
-	E7+fxdv97Vl2zMyMPw7sZEPFFHXKJriehMcEqhAfC6QioCqCj5UKxr8l0An1USuD
-	ahKy8rIMyu+bhI36F8egdNT848y6DP5PXJdEs7M3DWVnXrSpWipJ2mN55CZr1hYg
-	3oagMimc1kg75ELBo+fXEJ3QrPILkriAhEv4kYkWm5jeDV0CfbTzVWOpnIOCJu7G
-	awH3rKsGNwlKyy0ixtdaXKwBKK+FCBEvurJ20f98kq6jmAo6GWIhJ/IymBFOBW2v
-	cJXnsKm8gnxOqzvUNPPGJZ0i7Ia7v/JLbSJjr4qA4f5I/CryTOZVDhShERWMux4X
-	WkiQgA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431bv7b1gh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:30:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL6UUWX021139
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:30:30 GMT
-Received: from hu-kriskura-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 20 Nov 2024 22:30:26 -0800
-From: Krishna Kurapati <quic_kriskura@quicinc.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <quic_ppratap@quicinc.com>,
-        <quic_jackp@quicinc.com>, Krishna Kurapati <quic_kriskura@quicinc.com>
-Subject: [PATCH v2 2/2] arm64: dts: qcom: Enable Primary USB controller on QCS615 Ride
-Date: Thu, 21 Nov 2024 12:00:07 +0530
-Message-ID: <20241121063007.2737908-3-quic_kriskura@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
-References: <20241121063007.2737908-1-quic_kriskura@quicinc.com>
+	s=arc-20240116; t=1732170891; c=relaxed/simple;
+	bh=CCJYpnNoFaP4PSwtx+JJstwBCvQf8IP9xq6B/BY7U7k=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=mHikSo+PwwtBbDCnusguS9o6To7+CyRMOdNadYheA/6ZKptXQhyNBWyGL6tcXpmidIbp228X1hK/SH8r4TE1Vk+8k1Dc6dBw4cLbG+tqpZs732fc2u4Il0lWkf6irPMlrHOPbNeQ7mgYqhMfXoMl/sIhJ45mB7Aq95/k/e9sdhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdjCCAWU; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21260cfc918so4016055ad.0;
+        Wed, 20 Nov 2024 22:34:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732170890; x=1732775690; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vcbwmTLwIfF0uyzEPmfMHhi+eaHOIrhHi87bo0ww+6M=;
+        b=OdjCCAWU4oWNYqIpGyb28ctc34sEPzUVOOwEArp9JfFxOAaKYiasScU4o6qe1zVWBL
+         lzPYKBwMPR+SYYgCodbI500fmQ8CS9HEdSG9z4LTgFOcMz5ycF0PRjc+N0gssu2L8N7s
+         l+qnXNWfA0jzKvQVRDoSr6m3z2OWEoftFuKSo/ProaqXErKmlP8/jNQGq4zKmOGaek6V
+         qvhl5kxvV7KEtcS6fCi1Sl339NABadX3O+i60Ah5vm3iFsL2Cfks7+9EEvEGVNHjhHu3
+         T5Uyd2vVsQpkqhqzTvUccGsI+Ayg97zy3aZeH3yMK+PlfMlvFGaiL6GxkfFnL6vDlqwy
+         ZvHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732170890; x=1732775690;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vcbwmTLwIfF0uyzEPmfMHhi+eaHOIrhHi87bo0ww+6M=;
+        b=n803uwXIDkqYVnuLy7l8N4YlEUVlS5jgMRaec1pqXmSvDHrth9kcahBbov0s43egQv
+         bB50WrtduYwYFyRxPreC7B7OKrWfdbWm/ogJQJx5XRebR91+3hO7zl8QRKQmpV4HcBXo
+         dVBJcScRNhtOY0upIMJvFBI6+oLx9k/iiEqfOpOcb7BkUuVXoJ3UNOxWN9KI3LpLu0jf
+         6Zwlh80R/0ygdoy1oKbVlAT+bG7YcgYdzTLYazJxoOdBrepVMUTikyj9FrHRpEveaYnp
+         LSeXpnWmL55mlfQZhWETvZn7jcV3BfD1byhJF9XgLz+eFQwjAioSelm3TLVi1DaprGKq
+         JTNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUapA2WEjJA2GoGshXxdWzCRWrOBM4HyikQYONGepcVfTVfo/ISvXw0sR1lz/lrFX93/zpI3D9A3JF/Bm1+@vger.kernel.org, AJvYcCVXDhpFgkBaIHMnUwku5YRCWEdny0w/lNAeHBCVZixznmIoDaUMdgnuK4feRqj6jRJWxEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKE17q6AecPlMIfXqe8beCVhtEfd5NQkNyIaltJi7EHWmXFAig
+	Rtp15k1AwJcjaDifrsC0D55/satr2Bh3vpARO/xHUlLsNiFUAE99
+X-Gm-Gg: ASbGnctK8Im5vojO9NbnX9J6I4ISWbvvvQcRXUBfrd48RweGJbpQK9mBCHxlOVRi2JG
+	M2mt1ibTy+C1cKR0YeloH6RkAqKNJIs5aGWhvIbJzWOoBqm5dT6qJOx8Gw0KIMUHZH6azhyaduS
+	J/Cxzg4yqElU/gyacfMJpsvA0b51dm6zoshE1fX4EKt28Q9emmfPsIp8weZ8F1YU95L3LqfHh9w
+	3QIJw/m/61pvUtNXr5PM+h8MM0TfgJ8MgkNCSsxbO79wFnesQk=
+X-Google-Smtp-Source: AGHT+IFkmlVd18uw8U9dudkF6C+D/TZ9qT66mPffZJqim4Ux43xTlK89LhBU1qMqtrdo02x2/fQwCw==
+X-Received: by 2002:a17:903:8c5:b0:20e:552c:5408 with SMTP id d9443c01a7336-2126a4551c7mr64693705ad.51.1732170889716;
+        Wed, 20 Nov 2024 22:34:49 -0800 (PST)
+Received: from localhost ([98.97.39.253])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21287ee14e4sm6035055ad.147.2024.11.20.22.34.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 22:34:49 -0800 (PST)
+Date: Wed, 20 Nov 2024 22:34:47 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Amir Mohammadi <amirmohammadi1999.am@gmail.com>, 
+ qmo@kernel.org, 
+ ast@kernel.org, 
+ daniel@iogearbox.net, 
+ andrii@kernel.org, 
+ martin.lau@linux.dev, 
+ eddyz87@gmail.com, 
+ song@kernel.org, 
+ yonghong.song@linux.dev, 
+ john.fastabend@gmail.com, 
+ kpsingh@kernel.org, 
+ sdf@fomichev.me, 
+ haoluo@google.com, 
+ jolsa@kernel.org, 
+ bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Cc: Amir Mohammadi <amiremohamadi@yahoo.com>
+Message-ID: <673ed487b45f4_157a208ab@john.notmuch>
+In-Reply-To: <20241116071346.1412266-1-amiremohamadi@yahoo.com>
+References: <47225498-12ab-4e69-ac50-2aab9dbe62c0@kernel.org>
+ <20241116071346.1412266-1-amiremohamadi@yahoo.com>
+Subject: RE: [PATCH v2] bpftool: fix potential NULL pointer dereferencing in
+ prog_dump()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v_NAVkJ-OItwQizFjQXNHY3QlpUZNhij
-X-Proofpoint-GUID: v_NAVkJ-OItwQizFjQXNHY3QlpUZNhij
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 spamscore=0 mlxlogscore=729 impostorscore=0 phishscore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210048
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Enable primary USB controller on QCS615 Ride platform. The primary USB
-controller is made "peripheral", as this is intended to be connected to
-a host for debugging use cases.
+Amir Mohammadi wrote:
+> A NULL pointer dereference could occur if ksyms
+> is not properly checked before usage in the prog_dump() function.
+> 
+> Signed-off-by: Amir Mohammadi <amiremohamadi@yahoo.com>
+> ---
+>  tools/bpf/bpftool/prog.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
 
-For using the controller in host mode, changing the dr_mode and adding
-appropriate pinctrl nodes to provide vbus would be sufficient.
-
-Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6..a25928933e2b 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -214,6 +214,29 @@ &uart0 {
- 	status = "okay";
- };
- 
-+&usb_1_hsphy {
-+	vdd-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+	vdda-phy-dpdm-supply = <&vreg_l13a>;
-+
-+	status = "okay";
-+};
-+
-+&usb_qmpphy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "peripheral";
-+};
-+
- &watchdog {
- 	clocks = <&sleep_clk>;
- };
--- 
-2.34.1
-
+LGTM but still needs a Fixes line.
 
