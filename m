@@ -1,162 +1,97 @@
-Return-Path: <linux-kernel+bounces-416791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F1749D4A4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA86B9D4A37
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A918B1F21FC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BB0A1F220C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DADF1CB526;
-	Thu, 21 Nov 2024 09:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="cXEp51ru"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515851A9B42;
+	Thu, 21 Nov 2024 09:50:26 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4295916C6B7;
-	Thu, 21 Nov 2024 09:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793E61531E1
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732182998; cv=none; b=HGLU3sfgEgN4WLHRSL91pZU52aPoY/G4blN792Y3EC3eb0hhKfxJiNXScrO5IqBfN7j7T1lXKuxnaRKhw2bZzwB0y+WanQGlGWpLDRj/VJMI/zg3IASu5RLhDKTe+EV9cMtHgAiqekJ//CzH+UtB3epUdIIvSCbJFA1SYgyl4S0=
+	t=1732182626; cv=none; b=WX02e6y+ZNm+s5gznEPw/HkY7ocGMyKMPg/xTmYwiIiOXBeBDh5JQqLQUqM51A16pQUzCBP47qmk6XPqQcKipawBHq4204d5YnECHoaoHtZhkjrlxrrk4WAxFyNsuQ62s0YHeGzIwqu4Ll86Ty8f6cyKiCg/ELsWPXXRNWV40T4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732182998; c=relaxed/simple;
-	bh=6a1lmDXRXaByFiYEkhzgdStYxEcDxqiScLYSKWsVP60=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FNHxX/tHku+gWnPnjpJl1AMCTWKHICOKVNNEKLUD4dO9Etkvd9mUP644rNTvVgLAjehZn8OXuj4iIp0yH87A53Jk5JO8ZxaTE5QjVBbTuRbycSPMPJwxvet16u17FLcHl/06Leo1rk2/BHMDIkpAcjsgZJvBR6kcBzL9xqbakaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=cXEp51ru; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Fiona Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1732182470; bh=U0s3KJOlLfA2r4fDPFHTpZA+EytCFoDVxiqRkfVovus=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=cXEp51ruoUuqLv0ZG8cgYz14l94uKLBLx6Wc7UKvJcSQKdb1Yk6dFH1G773qd/p1C
-	 3mTxnv22c8wR9QkomauNXmLSxNd+pSeg9CalIicmiP/XEo998GswIifpKiACobL03U
-	 t2LbX3TZUjlvqDJZIFrMAfSu29gIO/fkCh8lR1xA=
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- FUJITA Tomonori <fujita.tomonori@gmail.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-Date: Thu, 21 Nov 2024 10:47:49 +0100
-Message-ID: <6F3F4134-23FF-4230-9DC2-219FACAF546E@kloenk.dev>
-In-Reply-To: <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
-References: <20241009105759.579579-1-me@kloenk.dev>
- <20241009105759.579579-2-me@kloenk.dev>
- <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
+	s=arc-20240116; t=1732182626; c=relaxed/simple;
+	bh=FGO4BeVUMYEZDZMkjtSlonZAZx9UMN+rpetz3/zATz8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qb0Uy23/C55NlhWzWDKYAJwWh8yBZ0wwJFCIPp0k49qc9mSjZ1wvxijuVzTJgG6ifUd9Bs5uxjrKXJX8y4gGKtYlffgKhAVuCnUy9JRgcIpQkAu0hMpNbj8Gvifdnr9bOMFBnVWYwnkp5wyDAsWG9AYCHUAOLk/Mh3802NWkJrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso7812855ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:50:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732182623; x=1732787423;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yG5fYqoFl0t1IHX9mlRsDbQlnWfhNBQhEGosyFvJw70=;
+        b=kq+6o//YFV8/oi6BDKWFklVHynl6iLaji3eVgIuohuKD/qfZRX+8K7yQgaaWVl54cF
+         6BB1uA/TmaEWrt8hXwTsFVhILGchItKRabVkfIGF/l8sHw0UJ2yoXNKFI6QlcLOhC9lT
+         gKGV4ujEQoUJpkVLJqCyZoTOINYlA817/SEMjUcUOGi654h/QSBu6wkHlY4NdIKKHVpK
+         oJ3Zqxoz3LrlGti9UHO75mKA8+3vUwkX2OrdjnEEsrfstvmKtbDE7K1qa5T5JiblbVu6
+         IlNXSJ+zvnCANL+nlatT66vMM5M8PyW2SF2hXmvcr3M7dQ6wBx/mnSfrir0ibM+SC4pL
+         JVPw==
+X-Gm-Message-State: AOJu0Yxzi4kWkx4yn8ThzY0EwWaH5SPJq3Zol8uYVfSSmbzsvQypaXNz
+	ypSaS5biHyb59FqkVoENfbzdtRJcFiDKRWCoIKnmoH9QmQVv1wdVbWkaXFwZGer3iUNN4p+/PtF
+	wowcatvPCngojUuoFzZEq21UrUHgBYnO3aqBZtcp0enHJsduGaeZyC7E=
+X-Google-Smtp-Source: AGHT+IGfDDjmHUsUK18fbFKl8h22zJyn+fThfcuo/Q4Kz6URLxQGTP83WTonaRZ22t++zCV1b+0tIV7ZvxVgZpgSfMFKeuZEzUFT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:13ae:b0:3a7:819c:5129 with SMTP id
+ e9e14a558f8ab-3a786574454mr63939175ab.18.1732182623685; Thu, 21 Nov 2024
+ 01:50:23 -0800 (PST)
+Date: Thu, 21 Nov 2024 01:50:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673f025f.050a0220.363a1b.00fa.GAE@google.com>
+Subject: [syzbot] Monthly netfs report (Nov 2024)
+From: syzbot <syzbot+list7a6f269bbee45c565136@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello netfs maintainers/developers,
 
+This is a 31-day syzbot report for the netfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/netfs
 
-On 18 Nov 2024, at 11:22, Alice Ryhl wrote:
+During the period, 3 new issues were detected and 0 were fixed.
+In total, 9 issues are still open and 1 has already been fixed.
 
-> On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Fiona Behrens <me@kloenk.dev> w=
-rote:
->> +impl<'a, T> Led<T>
->> +where
->> +    T: Operations + 'a,
->> +{
->> +    /// Register a new LED with a predefine name.
->> +    pub fn register_with_name(
->> +        name: &'a CStr,
->> +        device: Option<&'a Device>,
->> +        config: &'a LedConfig,
->> +        data: T,
->> +    ) -> impl PinInit<Self, Error> + 'a {
->> +        try_pin_init!( Self {
->> +            led <- Opaque::try_ffi_init(move |place: *mut bindings::l=
-ed_classdev| {
->> +            // SAFETY: `place` is a pointer to a live allocation, so =
-erasing is valid.
->> +            unsafe { place.write_bytes(0, 1) };
->> +
->> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
->> +            unsafe { Self::build_with_name(place, name) };
->> +
->> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
->> +            unsafe { Self::build_config(place, config) };
->> +
->> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
->> +            unsafe { Self::build_vtable(place) };
->> +
->> +        let dev =3D device.map(|dev| dev.as_raw()).unwrap_or(ptr::nul=
-l_mut());
->> +            // SAFETY: `place` is a pointer to a live allocation of `=
-bindings::led_classdev`.
->> +        crate::error::to_result(unsafe {
->> +            bindings::led_classdev_register_ext(dev, place, ptr::null=
-_mut())
->> +        })
->> +            }),
->> +            data: data,
->> +        })
->> +    }
->> +
->> +    /// Add nameto the led_classdev.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `ptr` has to be valid.
->> +    unsafe fn build_with_name(ptr: *mut bindings::led_classdev, name:=
- &'a CStr) {
->> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
-ef is safe.
->> +        let name_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).name) };
->> +        // SAFETY: `name_ptr` points to a valid allocation and we hav=
-e exclusive access.
->> +        unsafe { ptr::write(name_ptr, name.as_char_ptr()) };
->> +    }
->> +
->> +    /// Add config to led_classdev.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `ptr` has to be valid.
->> +    unsafe fn build_config(ptr: *mut bindings::led_classdev, config: =
-&'a LedConfig) {
->> +        // SAFETY: `ptr` is pointing to a live allocation, so the der=
-ef is safe.
->> +        let color_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).color) };=
+Some of the still happening issues:
 
->> +        // SAFETY: `color_ptr` points to a valid allocation and we ha=
-ve exclusive access.
->> +        unsafe { ptr::write(color_ptr, config.color.into()) };
->> +    }
->> +}
->
-> This usage of lifetimes looks incorrect to me. It looks like you are
-> trying to say that the references must be valid for longer than the
-> Led<T>, but what you are writing here does not enforce that. The Led
-> struct must be annotated with the 'a lifetime if you want that, but
-> I'm inclined to say you should not go for the lifetime solution in the
-> first place.
+Ref Crashes Repro Title
+<1> 58      Yes   KASAN: slab-use-after-free Read in iov_iter_revert
+                  https://syzkaller.appspot.com/bug?extid=2625ce08c2659fb9961a
+<2> 4       Yes   kernel BUG in iov_iter_revert (2)
+                  https://syzkaller.appspot.com/bug?extid=404b4b745080b6210c6c
+<3> 1       No    WARNING in netfs_writepages
+                  https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
 
-The `led_classdev_register_ext` function copies the name, therefore the i=
-dea was that the name only has to exists until the pin init function is c=
-alled, which should be the case with how I used the lifetimes here
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Fiona
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
->
-> Alice
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
