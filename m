@@ -1,93 +1,51 @@
-Return-Path: <linux-kernel+bounces-417578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950CC9D5623
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:22:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3423F9D5625
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:23:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 330491F22540
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC0821F22857
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9571DE3B6;
-	Thu, 21 Nov 2024 23:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFADB1DE3B1;
+	Thu, 21 Nov 2024 23:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+qiXZJu"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHRhYm7l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68341C877E;
-	Thu, 21 Nov 2024 23:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5336B1DDC24;
+	Thu, 21 Nov 2024 23:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231330; cv=none; b=uaktNs6Wzz0DshxP3fbdhEWGzq4CI6k6gj+OxQ5fY9vFU74zKi2gVze5RIXIV17hwXHps+o8THw3GwK8NfIH3mFI42vCK9O7XL4qVcxEekCx1KoHNhBiPNZdCj2W8TXWkmDKxm7ty+7HpPhY0jgMVk169E1n4wzz2HJZXN6zlpI=
+	t=1732231381; cv=none; b=pKFxRBC7TKPbzmKilWwrhnb3CUsmHggGt+LFvrwXEFY02jp7p1XM+aIAQGF8SJ8Rs6q+F2Ksjp/fLOoOc7thTSOKnDgIgevBStYW9jXdEW3M3aWLfSwYA2cYgbgI+g04ecmX2A2QhfYTPL6W0aZrRFxSE9Vdd4rovY1bm3pqtBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231330; c=relaxed/simple;
-	bh=zJto9ivipYO/WczCa6h8ub6o8ToZHi4kGGeDz8cr/kM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GVd6m+hitlcHEZwMRCeLZIF9mEglbCGTv7UZatHAwCTQdA0Sz9R58oPwlCd6Tef/cdBrzEdqgnRxzR917AYg5fXg1/UaNL/t8eD5v4LhQx024oIRq4mDhjvzaJQMDLr29FNDb23ASNXYFc8mnOmyVW1IahdU/+u4EgQ/VSpDaWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+qiXZJu; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21290973bcbso13397105ad.3;
-        Thu, 21 Nov 2024 15:22:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732231328; x=1732836128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vm69DWsgNi7OPxvs0iEX7zCR+55p7Oued1bSDUQ/MU=;
-        b=S+qiXZJuJ/jKcZBlmujwTPUdFwYWcXZjbX7lGKxjw+3dtwSrcYXHyaXRbcBtkCyioe
-         gmO09NQTZuQQSVRGKIBhLH8jHHqPTl+wOtcYRDAR3TeiaXHccQLfGWOCaqNpTBz5T9ZM
-         JGvphjV+uifXwUxQm51tfa3Xb8F8RLmT4qbCrc3u6792BIZUGX3pwNiukgwlaqQWPH9h
-         ec/Lo2tyWxZ3JiaEA/4YWwXyMMwxjzDpxBGmYJhJuUWWGjNTWuJl9Ufwx83rpsx7Nkck
-         1CklrXXLofn6QqHBVY7rQUWJYDmyNd+3T8ZtwpFHPblrv0GA8naR4+Xrx4swu8+hadkK
-         RIVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732231328; x=1732836128;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0vm69DWsgNi7OPxvs0iEX7zCR+55p7Oued1bSDUQ/MU=;
-        b=Nui6CY27FxV1ux8QpPsw17rcY2wmNsZmS+AH7ICp/Bf2BODYaKXSd217IOyQVwm1gY
-         jYIcD8RNK+NSC5ZT4BMMK1BxJzTrJT1hlYn495BHXzbyP6xeWCoCIFQ4gjlcM4nWidf0
-         NY1gAa26XJnqhPr/tau4hG9RRdtsr81su0zsxLK7Va4Vf2p+XZvRFB7ICB6VYVkcKSQt
-         omPYrXCRYvxTecCKzf5CiSLgLkvFM8yNPBZzcToV9G6FrFMo4KX/AU8DG621C+UKQfGs
-         FYeSgw05fqh1VpTphQYF4vJXZlYUMcqoDUJUtUB6UwZHx6u5hP7X6SynnEi2ejpzoKbe
-         Cl5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUokJorjaUCEZimaMkUReLVm9riAep2oLfbH/ZWUE8W1DVaY5+4V/z+QzfzF1u0qapo5IN1rkbk19Q=@vger.kernel.org, AJvYcCWmBZgV7844vmClXsHPYrDZW9zbbebRm15WrC2xKw/LF9XuywdvuNUigzELV83JfItwGFweHXcPoezGxKvV@vger.kernel.org
-X-Gm-Message-State: AOJu0YymnNW8cJ7JE5jw9RXDfKHQJL8/fAnRKz+eebTGv5THSJoMaEsX
-	MsVShXoVptn8Lm2551GwFB45rRtyQEh+H0e71G+/Z+c9X/n2gL8=
-X-Gm-Gg: ASbGncu+T1VkLOQ4oW5AkaLj4FfU1wa07IBshdL5AAX/2ujLdTdwGfv9FzRzGuZgDLL
-	DT0kP31ZFpr48NllC9QR+PwqQJsWWFEt+pi45zUhFxW6w/MPyb/TpSi/lDa5BeilOPSQJ9FABqW
-	40ItgMjj6KHsSkT0KBSqe6mqTPrlQMJ1O7Uq8F4+DxdlU9r9qTuV8vtmY0y3TA9i79TAwfaIc/v
-	EyAeywSHKFsqBfT1akRdxkoZdHxc5XBV99FAT/BkpjhOsLp8zEfheLImXO4zxMk7JzcpeGUok0=
-X-Google-Smtp-Source: AGHT+IEHh7R4wlQqsgbzY9raVAXjnSU/BtLMAx0J6wGaA53zev1YKSp/g3R6QLautUbNQx+eB11DTw==
-X-Received: by 2002:a17:902:dac5:b0:212:500:74e with SMTP id d9443c01a7336-2129f51d2c6mr10558855ad.11.1732231327941;
-        Thu, 21 Nov 2024 15:22:07 -0800 (PST)
-Received: from localhost.localdomain ([117.250.157.213])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfee73sm3688875ad.150.2024.11.21.15.22.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 15:22:07 -0800 (PST)
-From: Vyshnav Ajith <puthen1977@gmail.com>
-To: paulmck@kernel.org,
-	frederic@kernel.org,
-	neeraj.upadhyay@kernel.org,
-	joel@joelfernandes.org,
-	josh@joshtriplett.org,
-	boqun.feng@gmail.com,
-	urezki@gmail.com,
-	rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	jiangshanlai@gmail.com,
-	qiang.zhang1211@gmail.com,
-	corbet@lwn.net
-Cc: rcu@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vyshnav Ajith <puthen1977@gmail.com>
-Subject: Fixing Spelling Mistake in rculist_nulls.rst
-Date: Fri, 22 Nov 2024 04:51:18 +0530
-Message-ID: <20241121232118.13507-1-puthen1977@gmail.com>
+	s=arc-20240116; t=1732231381; c=relaxed/simple;
+	bh=WRqDd+Blc/Hf0M6hwBoUgKmUol3+tqdzFL1Pr/87Jps=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OzrOTkozrN1Vyh82/TyRRpdFQEBDLIBbZ0rE0XOCLCspbqC8QHjA87yKEyjR8Pnb7hJYw0G9bQq+eiFYyE4n6+V4J2M3MYSPJBlufAqoMPH3eYwj5nKnKmHKkrKzTGL1vFUUDsfXY3Zhu9uk2WVfAzHbSIv8Q0DkOL3JOFelIZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oHRhYm7l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26207C4CECC;
+	Thu, 21 Nov 2024 23:22:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732231380;
+	bh=WRqDd+Blc/Hf0M6hwBoUgKmUol3+tqdzFL1Pr/87Jps=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oHRhYm7llWuVHyOMW9fRrILI7OPDLpMX5hMg1iWCEdjk2Rt1oEPCMNeec/2EE8RT3
+	 AEUs7cxQmYE/esiZMSAJxWOWv+Rc9vW2CVLJ3DDkM9UiBRPx+76SuGWgEbu38tEa/A
+	 x2oFO12U5VT+kylMI3laSGS95Tqp1JyaW+WFTli7Sd8Nb4vNQG752ZBRuI4ME7AwxQ
+	 a/6R5WD9OXiCz9bsOuRbqVuybFfNcKWRcWLGDUAe43O6k2nGOUlOHYquKghb4UsLSS
+	 CCJdfABXA2f+HDJFPVm0MfU36rts8HoAwdON3BdgzEOxvBGXtbl1Vi+5YKgH1pXz6+
+	 iG+vPefkhhOfw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] genksyms: reduce indentation in export_symbol()
+Date: Fri, 22 Nov 2024 08:22:55 +0900
+Message-ID: <20241121232257.1992219-1-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -97,26 +55,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-NUll is a special marker and not maker I believe. Fixing typo with this patch. 
+Modify this function to return earlier when find_symbol() returns NULL,
+reducing the level of improve readability.
 
-Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+No functional changes are intended.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 ---
- Documentation/RCU/rculist_nulls.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/RCU/rculist_nulls.rst b/Documentation/RCU/rculist_nulls.rst
-index 21e40fcc08de..88bce14b3c37 100644
---- a/Documentation/RCU/rculist_nulls.rst
-+++ b/Documentation/RCU/rculist_nulls.rst
-@@ -13,7 +13,7 @@ Please read the basics in listRCU.rst.
- Using 'nulls'
- =============
+ scripts/genksyms/genksyms.c | 89 +++++++++++++++++++------------------
+ 1 file changed, 45 insertions(+), 44 deletions(-)
+
+diff --git a/scripts/genksyms/genksyms.c b/scripts/genksyms/genksyms.c
+index f3901c55df23..07f9b8cfb233 100644
+--- a/scripts/genksyms/genksyms.c
++++ b/scripts/genksyms/genksyms.c
+@@ -632,54 +632,55 @@ static unsigned long expand_and_crc_sym(struct symbol *sym, unsigned long crc)
+ void export_symbol(const char *name)
+ {
+ 	struct symbol *sym;
++	unsigned long crc;
++	int has_changed = 0;
  
--Using special makers (called 'nulls') is a convenient way
-+Using special markers (called 'nulls') is a convenient way
- to solve following problem.
+ 	sym = find_symbol(name, SYM_NORMAL, 0);
+-	if (!sym)
++	if (!sym) {
+ 		error_with_pos("export undefined symbol %s", name);
+-	else {
+-		unsigned long crc;
+-		int has_changed = 0;
+-
+-		if (flag_dump_defs)
+-			fprintf(debugfile, "Export %s == <", name);
+-
+-		expansion_trail = (struct symbol *)-1L;
+-
+-		sym->expansion_trail = expansion_trail;
+-		expansion_trail = sym;
+-		crc = expand_and_crc_sym(sym, 0xffffffff) ^ 0xffffffff;
+-
+-		sym = expansion_trail;
+-		while (sym != (struct symbol *)-1L) {
+-			struct symbol *n = sym->expansion_trail;
+-
+-			if (sym->status != STATUS_UNCHANGED) {
+-				if (!has_changed) {
+-					print_location();
+-					fprintf(stderr, "%s: %s: modversion "
+-						"changed because of changes "
+-						"in ", flag_preserve ? "error" :
+-						       "warning", name);
+-				} else
+-					fprintf(stderr, ", ");
+-				print_type_name(sym->type, sym->name);
+-				if (sym->status == STATUS_DEFINED)
+-					fprintf(stderr, " (became defined)");
+-				has_changed = 1;
+-				if (flag_preserve)
+-					errors++;
+-			}
+-			sym->expansion_trail = 0;
+-			sym = n;
+-		}
+-		if (has_changed)
+-			fprintf(stderr, "\n");
+-
+-		if (flag_dump_defs)
+-			fputs(">\n", debugfile);
+-
+-		printf("#SYMVER %s 0x%08lx\n", name, crc);
++		return;
+ 	}
++
++	if (flag_dump_defs)
++		fprintf(debugfile, "Export %s == <", name);
++
++	expansion_trail = (struct symbol *)-1L;
++
++	sym->expansion_trail = expansion_trail;
++	expansion_trail = sym;
++	crc = expand_and_crc_sym(sym, 0xffffffff) ^ 0xffffffff;
++
++	sym = expansion_trail;
++	while (sym != (struct symbol *)-1L) {
++		struct symbol *n = sym->expansion_trail;
++
++		if (sym->status != STATUS_UNCHANGED) {
++			if (!has_changed) {
++				print_location();
++				fprintf(stderr,
++					"%s: %s: modversion changed because of changes in ",
++					flag_preserve ? "error" : "warning",
++					name);
++			} else {
++				fprintf(stderr, ", ");
++			}
++			print_type_name(sym->type, sym->name);
++			if (sym->status == STATUS_DEFINED)
++				fprintf(stderr, " (became defined)");
++			has_changed = 1;
++			if (flag_preserve)
++				errors++;
++		}
++		sym->expansion_trail = 0;
++		sym = n;
++	}
++	if (has_changed)
++		fprintf(stderr, "\n");
++
++	if (flag_dump_defs)
++		fputs(">\n", debugfile);
++
++	printf("#SYMVER %s 0x%08lx\n", name, crc);
+ }
  
- Without 'nulls', a typical RCU linked list managing objects which are
+ /*----------------------------------------------------------------------*/
 -- 
 2.43.0
 
