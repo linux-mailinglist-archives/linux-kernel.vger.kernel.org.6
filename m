@@ -1,45 +1,68 @@
-Return-Path: <linux-kernel+bounces-416568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBA89D46F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:51:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291AD9D46FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE382830F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:51:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAF95B21573
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 04:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4086613BACC;
-	Thu, 21 Nov 2024 04:51:15 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C91E1A707E;
+	Thu, 21 Nov 2024 04:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ub7OH5ZF"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD4B230986
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D184B13BC0E
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 04:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732164674; cv=none; b=A5z+6AqdS15RxGbLIcZECs08es1O5JpnLOGisN0D3GR0GACGN6WYJgLJET6d++U7uk6z/969FpDABfQL3iKXBzZwtCU15QmpUAgmzD+K1JUbg7awu2EC8mx+bB76cZHIjebgqRkMkxLlJhcuUbRZ48yTE/zyK/5GJGAvzK5Db8M=
+	t=1732164820; cv=none; b=J+eRRpMIlFU3yqVGdIqehVnz/9I6J0xwcJjbXQSc6sBnoeESN7j9uDVTgKAdy4U2U5pJplhS+ACnnKSdnyjy/N0/Y0sbBg8tqCZOHx+3G+uNHPuEuYOtE9SD47bj8p46v2S3q8M34N70MmojCHB/sg/BLlqzcrHFt/L0RZhhF60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732164674; c=relaxed/simple;
-	bh=Pf6KvcxT1m0Nlg1/x94Kf5QlbfcW+KzdJS58DSOjQdQ=;
+	s=arc-20240116; t=1732164820; c=relaxed/simple;
+	bh=Ij0HDsfLaBRrZfAtCTu8XbYtmIPNsEOALdn60KpGHsc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7pnn29hXhl5J2U7Gr9npiXHI8HAqZzwWjco1ocyhUfSGyeZauMJ6Fo51sbkKSXm/wFuE2Lz+bduG+Q72b4IyGOW7l4Xr/OW895vOPWReYWE4IwAHDPdCv9dBU4hdgTuAYlPeqeOJf5V6gm7W7Xjq1AFL9dzgmsHGejeKK5Jgpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5C4F668BEB; Thu, 21 Nov 2024 05:51:09 +0100 (CET)
-Date: Thu, 21 Nov 2024 05:51:09 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
-Message-ID: <20241121045109.GA20615@lst.de>
-References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com> <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com> <CAKPOu+-DdwTCFDjW+ykKM5Da5wmLW3gSx5=x+fsSdaMEwUuvJw@mail.gmail.com> <CAJuCfpGDw7LLs2dTa+9F4J8ZaSV2YMq=-LPgOmNgrgL4P84V_Q@mail.gmail.com> <CAKPOu+8tvSowiJADW2RuKyofL_CSkm_SuyZA7ME5vMLWmL6pqw@mail.gmail.com> <CAJuCfpEBs3R8C910eiaXcSMPPrtbMjFLNYzYdPGJG+gw4WHM8A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hur6fDN4bs/YQ5NcG0vX0QH/9y9J1HLjjoqithB6z3smvhqvKRxnMFSWeqrzl6jqVHPoEREGbtdwVNzqg8Bb7dg/J7cfK7Laxogkv0ENeqTsqTUvqfYsc9+jFOEmzikJcgoL378vyoVjrHa+NB1eeg1lYu/iCuAZAbf1t0/e7i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ub7OH5ZF; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 20 Nov 2024 23:53:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732164810;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ENB2kor/jdS78IhNaupupsMY4qX+PiyIEzt301nX8dw=;
+	b=ub7OH5ZFxuMTogSswMhL6laP6FmQ+LpfRgOWFiPWmxY2qlPEKOD7uorveRva0zo/xwBdSE
+	gH+QltkL48B32CHyOwZgPSK2ll1/NgflmB16iYHWh+l8EPzYYAPOFztgHWLAPnGLfgA6ve
+	tVI43Oz1XoumG7YqcMlD25QAXKJCcos=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Theodore Ts'o <tytso@mit.edu>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <thwbzrybt6kk3x6o5ege3h7k6vsip4j6mllxdvn6poldvdczz6@zobwlfwgxhkt>
+References: <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu>
+ <20241121042558.GA20176@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,27 +71,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpEBs3R8C910eiaXcSMPPrtbMjFLNYzYdPGJG+gw4WHM8A@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241121042558.GA20176@lst.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 20, 2024 at 08:56:21AM -0800, Suren Baghdasaryan wrote:
-> This is interesting. readahead_expand() indeed has
-> psi_memstall_enter() without a matching psi_memstall_leave():
-> https://elixir.bootlin.com/linux/v6.11.9/source/mm/readahead.c#L727
-> and https://elixir.bootlin.com/linux/v6.11.9/source/mm/readahead.c#L754.
-> Looks like this was introduced in [1].  I'm not sure if that's a bug
-> or psi_memstall_leave() is supposed to be called from somewhere else.
-> CC'ing Christoph to clarify.
+On Thu, Nov 21, 2024 at 05:25:58AM +0100, Christoph Hellwig wrote:
+> On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+> > On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+> > > Shuah, would you be willing to entertain the notion of modifying your...
+> > 
+> > Kent, I'd like to gently remind you that Shuah is not speaking in her
+> > personal capacity, but as a representative of the Code of Conduct
+> > Committee[1], as she has noted in her signature.  The Code of Conduct
+> > Committee is appointed by, and reports to, the TAB[2], which is an
+> > elected body composed of kernel developers and maintainers.
+> 
+> FYI, without taking any stance on the issue under debate here, I find the
+> language used by Shuah on behalf of the Code of Conduct committee
+> extremely patronising and passive aggressive.  This might be because I
+> do not have an American academic class background, but I would suggest
+> that the code of conduct committee should educate itself about
+> communicating without projecting this implicit cultural and class bias
+> so blatantly.
 
-So the readahead_control structure tracks if psi_memstall_enter has
-been called using the _workingset member, and the assumption was
-that readahead_expand is only called from aops->readahead so that
-read_pages() takes care of the psi_memstall_leave.  This still seems
-reasonable given that readahead_expand operates on the ractl structure
-only used by ->readahead, and tested fine back then.
+I wasn't even thinking about the language issue, but I think that's a
+very good point.
 
-Something seems to be going wrong here, though, but the trace below
-doesn't really tell me anything about the workload or file system
-used, and if this is even calling into readahead.
+We have a very strong culture of personal responsibility and taking
+responsibility for our work here, and I think that's one of the main
+thing that enables us to function and work together even when we're
+constantly butting heads.
 
+Broadly speaking, what that means to me is: I will justify, explain and
+give the reasoning for my actions if asked, and if I can't because I
+made a mistake, then I will make it right or at least acknowledge my
+mistake.
+
+So, the very passive language from Shuah (i.e. "I'm not the one 'doing'
+this, I'm just implementing the policy that we all decided on, even
+though I totally wrote and advocated for that policy") does seem
+problematic to me as well.
 
