@@ -1,132 +1,127 @@
-Return-Path: <linux-kernel+bounces-416604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BE39D477F
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:25:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5399D477C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:25:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63032B236E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:25:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432CD1F22960
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB54156F39;
-	Thu, 21 Nov 2024 06:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1C155330;
+	Thu, 21 Nov 2024 06:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S1jOWJSU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="gKoF+BDY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mYZDcqEi"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3F7142E6F;
-	Thu, 21 Nov 2024 06:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20C13C3D6;
+	Thu, 21 Nov 2024 06:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732170330; cv=none; b=pMNLYKTHc77fMXtqc3Rb4fxEmZc2LlJyS9E0bzeQeBq2u/yZ0G1uFWlIC7LLfviUJw7elf7ojWrR3rw4SQ+nFuf/lz+SIhZrQtGj4g0eNOKdDTpqZV9jHiQ5P0X/dz8JsWh8Hrj6cmqedbgojzzQEcruX+JU4SX/IjvCZZSmarw=
+	t=1732170314; cv=none; b=gQPyD4/8Zhp8WVIUigzrAf2eDXaOXDFBeF/A+1rdenkzgd5w+J95u6ihA4bGMXV113Me0eKwR2jxnHQPvp4TY+OFbKDJYKC5a9ePirotXBjwsVcsivgnRGWvWQWByTqcoRgyE21nHeZbzaP+irj/1Wtsh8xtrZpSvJwdKPrSi5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732170330; c=relaxed/simple;
-	bh=h0fvZ0SzRRBolM1p0jrM6SKS3Jdp9g0BgyVObobA/qE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jyKzChA1CCtpUYbboJ5036y7FbWt4hGPCQKzA0+pAUEAnUdTXjKsva0VwibQWJnnSfUG+dhh61oh7zN+cYMU10O+AlCiiBHOycMEgQCVuVusIAh2BabnE6+OXhKNxbHNx+jwyEHqnPGiQ9ylS+7tDca4VqU+VodUn+3igGNtQck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S1jOWJSU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKJujd9006031;
-	Thu, 21 Nov 2024 06:25:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/He31/zSuIoyM8liQVZXh3lBwnQ1JwgncJP/XBmnxnw=; b=S1jOWJSUfRnEDpiX
-	HQbFPUjGKpSNiueu9HlBsBGaNdRMzprLobNY7dETrbl2IIO8xvuDOyOgMr56CqJW
-	6kpNezhrcsSUiU8YDeOFGFSiF3UMLJ3W7WWYa/krbptPn6A6UW9A6mpq4+qmFAkv
-	L+Jh7k31YexVJ1i6CHxowfqo3lXCB7YATh/4sZBu/a9F3vDc04YmdIXEK+ZhK9Kq
-	8zxaVJwLa+pcNX2S99qnQ0zViVKgLPykaRya8970sHjlu/cAWKSFkZYAykFdzy8E
-	norixYzTAAlOz1WIYAr1uRZwhoo4yUcYClqzAER4XXnUfgSJHSr7sFdiat1Gkm44
-	7tEp8w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4317t23mqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:25:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AL6PKp7002520
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 06:25:20 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 22:24:24 -0800
-Message-ID: <6e1fa7cc-c80b-40c1-aee5-d2e954ae1513@quicinc.com>
-Date: Thu, 21 Nov 2024 11:54:21 +0530
+	s=arc-20240116; t=1732170314; c=relaxed/simple;
+	bh=egoCVr1BilwzWHcGVBQ98EAvgTTioMWrIXHZIoN9fXA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=tHYzzHMaP4rNjRQp40R2QSBCxdjc/ouls8JceVX42DFdyaDH26745Z54+CLJ1D9dp2ka6NlGLUuyt98ABq9ZMr4bctcintogjnZGLcz2lD2+aO3t2Yj5akhEeepAzVrNfCljpO4uE7Wtg1K7u0B5GUT7zbKsqD96k3UerF/w/nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=gKoF+BDY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mYZDcqEi; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7ADCF13806C9;
+	Thu, 21 Nov 2024 01:25:10 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 21 Nov 2024 01:25:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732170310;
+	 x=1732256710; bh=WuODbQXwSS1VveYgLHkSG2hdi3F4z6KiShzT4+ka20E=; b=
+	gKoF+BDY0YkGc2+eaGavkKMkFS5H3vVaNH03xF6GdYxmey8Ap30miRUjhDS/4LCl
+	mu2u6AZkl3LAozqhnH1VUSyVLwTqzAbWRMZAGJE0EJ/JNEAUxvOWr+WFRGt+S+LF
+	NJiHzextz0C204Ztq0FwIDjrsIyEMqcbGlvdLlUpgqXAN1ndKg5Ifqaf605wJkfO
+	IfYC09Gj19CjZNIMK9MQ0zeeHIP2UMutSz0wO3Kz78i0xil1rkVE91GpcZbIkBXn
+	cm5mB3yaIysSFdr/bRLBz1Vh/vBmQz68r706AQ7ESSw5FMCkPyk6Ivmx5+4nDgHU
+	l65UCUEnnEnwAChEgHUYCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732170310; x=
+	1732256710; bh=WuODbQXwSS1VveYgLHkSG2hdi3F4z6KiShzT4+ka20E=; b=m
+	YZDcqEiWyAblC3/R+xK0hzCnqFnI79HOsjaMmaiiYAd2/WNd9/bZg5TOhDO7maNj
+	pYCC1VVN0OjhC10A2Xpu4Xj8xP+O9EtTD4avG6WTw7erFbeSqG787w2VhrmrMPQF
+	udgq0zvTl00Zq2pPXyyqYBG+eI3Xn9cISkTOLXVevvUo/GPhu8039YSV7xiv00bw
+	QlhZXPRchlq8EreWUHvrUgO8KQFoHhtmKMTmxV9M2K3GZucEsl8yQOjFbGvvzsf2
+	6zRI9lOiWE8bg93QJoSE8rZfGjHU9qbHjf3KNbveMXXDGYvCMSbxitThswxmKVsu
+	i8q8rCkv2vh+4rP/oP0Jw==
+X-ME-Sender: <xms:RdI-Zyzw_SeAGoz0u1GZwQk40Py-TBXZqSF4Wes2tkvUKc3QVEMlug>
+    <xme:RdI-Z-TmbAVszloPDHDRnztykiFqVw8mBHeRf-7GPX8y91-hmHqyhH-nw8Q3tQ6Zx
+    BPZGXJ2rEQBNeLRgxI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeehgdelfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
+    gvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffg
+    vedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhhpihhtrhgvsegsrgihlhhisghrvg
+    drtghomhdprhgtphhtthhopehjvhgvthhtvghrsehkrghlrhgrhidrvghupdhrtghpthht
+    oheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprhdqth
+    hrrggtkhgvrhdqsghotheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhorhhvrghl
+    ughssehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehstghhnh
+    gvlhhlvgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehhtghhsehlshhtrdgu
+    vgdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    gh
+X-ME-Proxy: <xmx:RdI-Z0V_X7AiciSx4PbadCEX4rn3Zn6QQOffxItaS3Nu102BjujRTg>
+    <xmx:RdI-Z4iagFM_S2LzuLngwgxAgF8TORQVzwBaN0DCxMhzntx3v9WwxQ>
+    <xmx:RdI-Z0DAO7qVj5KmUR2M5RPrkbvwWe2kqiRTUJkpnOr13N-MZ1Vxsg>
+    <xmx:RdI-Z5L3EDbf2VHSKnKv6B-fZZ6gnXAxY_dnY9L29GhgXiz295Iwog>
+    <xmx:RtI-Z0ttkVd_Gu4oyJyhhnRgM_ov3EpUZUre6G6eONs1xZ8xFJXuD6r8>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 962D72220071; Thu, 21 Nov 2024 01:25:09 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] misc: fastrpc: Rename fastrpc.c to fastrpc_main.c
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>
-References: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
- <20241118084046.3201290-3-quic_ekangupt@quicinc.com>
- <2024111841-egotistic-unranked-ad4a@gregkh>
-Content-Language: en-US
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024111841-egotistic-unranked-ad4a@gregkh>
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 21 Nov 2024 07:24:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Huacai Chen" <chenhuacai@kernel.org>, pr-tracker-bot@kernel.org
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Julian Vetter" <jvetter@kalray.eu>, "Nicolas Pitre" <npitre@baylibre.com>,
+ "Christoph Hellwig" <hch@lst.de>
+Message-Id: <bdfcadb9-b1c5-4992-9c5f-7fe59252f77d@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H7VLPngEb_pxs4Zc4OX3i5X0W0Ao=7qFhY_PMqyEBVjyQ@mail.gmail.com>
+References: <c09168a6-23e7-40fd-afc2-4c3ac6deaff6@app.fastmail.com>
+ <173214663696.1393168.4436714062176910731.pr-tracker-bot@kernel.org>
+ <CAAhV-H7VLPngEb_pxs4Zc4OX3i5X0W0Ao=7qFhY_PMqyEBVjyQ@mail.gmail.com>
+Subject: Re: [GIT PULL] asm-generic updates for 6.13
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 64uoepTuLKebVLXedNi06VAfJtK8lZNg
-X-Proofpoint-ORIG-GUID: 64uoepTuLKebVLXedNi06VAfJtK8lZNg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 lowpriorityscore=0
- mlxscore=0 malwarescore=0 impostorscore=0 phishscore=0 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210047
 
+On Thu, Nov 21, 2024, at 03:20, Huacai Chen wrote:
+> Oh, no, why the tag name is asm-generic-3.13?
 
+It looks like I typed it wrong when I wrote the tag message,
+sorry about that.
 
-On 11/18/2024 7:28 PM, Greg KH wrote:
-> On Mon, Nov 18, 2024 at 02:10:44PM +0530, Ekansh Gupta wrote:
->> Rename the main fastrpc source file to accomodate new files to be
->> compiled in the same kernel object.
->>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc/Makefile                      | 1 +
->>  drivers/misc/fastrpc/{fastrpc.c => fastrpc_main.c} | 0
->>  2 files changed, 1 insertion(+)
->>  rename drivers/misc/fastrpc/{fastrpc.c => fastrpc_main.c} (100%)
->>
->> diff --git a/drivers/misc/fastrpc/Makefile b/drivers/misc/fastrpc/Makefile
->> index 77fd2b763b6b..020d30789a80 100644
->> --- a/drivers/misc/fastrpc/Makefile
->> +++ b/drivers/misc/fastrpc/Makefile
->> @@ -1,2 +1,3 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
->> +fastrpc-objs	:= fastrpc_main.o
->> \ No newline at end of file
->> diff --git a/drivers/misc/fastrpc/fastrpc.c b/drivers/misc/fastrpc/fastrpc_main.c
->> similarity index 100%
->> rename from drivers/misc/fastrpc/fastrpc.c
->> rename to drivers/misc/fastrpc/fastrpc_main.c
-> Why not just "main.c"?  You are in your own subdir, no need for the
-> fastrpc_* prefix anymore, right?
-Ack. I will update the names in next patchset. Thanks.
+The contents are correct though, and the tag description
+does say 6.13.
 
---ekansh
-> thanks,
->
-> greg "naming is hard" k-h
-
+      Arnd
 
