@@ -1,125 +1,187 @@
-Return-Path: <linux-kernel+bounces-417081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A4E9D4EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:40:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC53D9D4EC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:40:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF791F228BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:40:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BEF4281CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910F21D9587;
-	Thu, 21 Nov 2024 14:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65411DBB31;
+	Thu, 21 Nov 2024 14:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gy5f/07N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pqpPkR3v"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FF51CD1EF;
-	Thu, 21 Nov 2024 14:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FA71CD1EF
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732199995; cv=none; b=S09Fr6TnKC+LdNNJKepM1Va71ykMDb6Q/amia1lzG1rr4jWvjuJLlZz11ioSh1X+7AQmSwjNadnr4oTa2LbyTEIhylPCixQHyZnZp+3PK+mUjk3eq4x9F8xLgZzAdiE/gFKaxiTypXSovEhsBr+wcgs9ba7CyQQerKLYYCQLQ88=
+	t=1732200001; cv=none; b=FVLQclQdFVfkcz55STImCxqIjrGsPzK4WcOwfCjiXVNGGmoEiX3Hzl57M945/i4sEKqRPNxsG/PBc+OuKDkrQymUdG7YTSBvFOcShqmvaLNq75AFAkAzDvVDyK5Uy5hOkcCiv3ITAK9D5w9JPCyZa+AzLy4q2XrWDElRoc967EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732199995; c=relaxed/simple;
-	bh=tHtKSYrNJa2e2haOjJsCV9fKOUuQcCDr8J4Fl/iaFNI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jXiwQ0s2qB9jDEb2bfg+STeA6BpqN/TiTKwqQFfK8mhc+d+5T0smV0wJkPCGoLhj6oXRtC1bCQVH3/V3+UYRHoy46rZ+ExY7o0DQ4BI3m/rIRiLx3OtZ547kOHyzb7Ri9BEguvQUuKnU/DyviIX08YIXsIdh4cHpwbk7ezZGTIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gy5f/07N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01996C4CECC;
-	Thu, 21 Nov 2024 14:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732199994;
-	bh=tHtKSYrNJa2e2haOjJsCV9fKOUuQcCDr8J4Fl/iaFNI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=gy5f/07NEZ2c+fJfVsyRaKs/haoHeGivW+KTntwBxcw3P9HY4plSbsXQfcM/ejTTU
-	 htrtguAgZTzHxpPnF/akaVXcEo+qZdIfdtDPAFhyx+MdazUrWcf3vHyff54vAwawF3
-	 xzxw1Aeqbu7zJuuZnZ7LB/xgWdvNzi/2TTkWqXnkOqc6BdJbv8m47BSprlQP2chxOJ
-	 H8207ShL8ok72qZVPa+zYfRx2fSyV2zXvrKmXZcHEkp/2a7SsUXxtAXoF5YOWNbMP/
-	 S9+XXERU8bHl8aLwdlwisuHoDsUejMoXIJDsCv7r14/M/LIxQ3lmaBt5SwcsqkJEMG
-	 kiTdABjiDJSUw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 21 Nov 2024 09:39:44 -0500
-Subject: [PATCH] samples: fix missing nodiratime option and handle
- propagate_from correctly
+	s=arc-20240116; t=1732200001; c=relaxed/simple;
+	bh=nO+3nDyIudH0dDMPwsn4/5w94K4SpantV8zCiRa35TQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KR3oC0nzcV16Y6h2nqyx6aETadd6EsP5ZgnBUxYCHO4XV9//H1WaxAljnoE2lT4N7Slr3Z0bW8Dv3xILzgM/ozB3yJcs+Ic5J+KycR2PptsTCuPkRGSWLoAgHFJ9LJBU3j0J7ePZH2KuM7kWpG8Jhw8GqOIqCTNJWHfKMq0xVfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pqpPkR3v; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43158625112so8280515e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732199997; x=1732804797; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fRJx2WZ5u5Th7dWmrrUrE1cesu1hkjYpX0gzcJWX5Y4=;
+        b=pqpPkR3vK3iG2zgt0Fev4luKmvZQNjp1VTaM9JSOzyFKq/Lp4HdYuP5eTDfyFt8UKQ
+         Y6AoMgb8/bo7OPWbOoEt2x0YnELwdlPBDvEHGHeG/UjLCwc1p+qSJUkQV7dQ1okoTeII
+         5sHDImxa4D+L6OPO218ZqY2j4A5EEK3NII2eGx1rxG7eDibgmZvjnmjmeeUikzGF8dri
+         +qaQ/o11HT8gWzsi9rcR73hjB8WKV8aUNrrl1jpPnQBFE96p6LVuc9tTThDiJzdDKjqF
+         8PLsO8g49WFiGUfOibzPNWX27C8hHhss3NT8HcnePU+4roPMYTbKmtiAc5jfk4riYnIB
+         UhCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732199997; x=1732804797;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fRJx2WZ5u5Th7dWmrrUrE1cesu1hkjYpX0gzcJWX5Y4=;
+        b=AIA4x2I9g1eNaFlwVzwXey/qJ8UWmKfgc8zJUXjjwdMDH+ZqsEoah9tJI4h9Irr//f
+         ILfcLFpmqtd021WXi4AobDvG0os9nKviCD6Je/BQDo+TzYD1eZCSzuWl8RMNvuJJvlST
+         wS56NFXajPBwW+wn2wtBI1xiP1VB6slG785yycS1LJ40ndHlnECrcUXm36Cxq5m6k3gQ
+         H6KsTuD2SBWaIER6SKteNrWn5xphD9DTkv55JvQ/1UMPuJUL3Pj+b1G3WmgObZJKvSQ3
+         mt91teaV90hxHo7n6uat/XxGJma2a3WgyGmBKpM60yXUqfUGpVJKMtg/5CJY15zKCg06
+         HD+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVtYEIJjnk4E9H6T3UElc1gIAn6atQ7IMhy8uc4kNBk+SAQbm7l16SAiJOBsAoktMY2+cDoI2mZSd5Cclk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFKdkWmCtVUDm1VPm86Os34jD0KJQNA94RAKkn09VDFabVwAjE
+	Ujac+si4isy1vI5/bYYXQvUxYsKt+JaJqn0A8/vhcSwAD/12ZqjYdHLRsO1nQY/ZCbFtVS6zWP+
+	WP40TFJ3PqxqF+ZOw5BdOprWwzHo2/l9QDdkN
+X-Gm-Gg: ASbGnctg8BME4RgY+GV31XS+EdULm9Sru7H309sIMoFN6nDVS46FRQ53noydgsfinmk
+	SZJRWHccd+g22IZuQJkRyDNyyIhKCaKKrjmAC5cDOF3NgDglgtP9bDOZ/sGQGog==
+X-Google-Smtp-Source: AGHT+IEovcTS4X7zk9GHA36taO4imLGGYuJ2IpetSRs95zNJpNYqDqE1eWMgvsHvtxUKoS5Hl2pXCf075S4vMEjTkXU=
+X-Received: by 2002:a05:6000:4410:b0:37c:d244:bdb1 with SMTP id
+ ffacd0b85a97d-38254afcb4emr3878408f8f.26.1732199997420; Thu, 21 Nov 2024
+ 06:39:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-statmount-v1-1-09c85a7d5d50@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAC9GP2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQyND3eKSxJLc/NK8El1LI5PEJBMjY+MUs1QloPqCotS0zAqwWdGxtbU
- AGF45JVsAAAA=
-X-Change-ID: 20241121-statmount-924ab4233d6e
-To: Christian Brauner <brauner@kernel.org>, 
- Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1503; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=tHtKSYrNJa2e2haOjJsCV9fKOUuQcCDr8J4Fl/iaFNI=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnP0Y1sZm1jFDwPmy1CGJgmyoSwSEG8Pjkjg8aZ
- SEGku1Ux+2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZz9GNQAKCRAADmhBGVaC
- FVNfD/47viuxHXpfGFqIVNb7PtprZZqykeq/1MWa6ej2avNdOt/+06XocURAsZrulwcW7cQRjLg
- awt8mFgEebxADPqxWn619VTdgDLPNQrVYErHBRtvUs8qeBMXNaeQMGTEbi9Kk6tkB5P/udFEuYJ
- 2KPOV+KwFm6rhEpIgye+sxxIbSqsGPV3sKSr0dXDpwnh+WkbSF+53OaW82jYCLKacS27feTdX5F
- zIPGkhJ+H6G4ActhdbvOhenGZS1rwM12n/n/tV6k02VJZBdAZK6tmYnPgwLvt54zcN8On7zqDsp
- 3IHldHxvNqoDegfDBOfLTrV2SLRv9OnqghnauDdcbjOPKepM1IavJ7dtT8MwEQi//6Yp070vwiM
- wT0XbqpMRRJwWS31+1cJ9kYAVAyqwTfRpqZvD4I2aSGkMITUBo0z85AePot8U/J511ZlwpLF2Zr
- mZ4yR1C1DT53hwyuvRPkoYZCwGT6qGM8cnjc9ITewKwYdpm4CmFnpFoX5M7R5lFaY/hy2DC2IT9
- 7GpxLFBFhD7qsxLjhi+NWfPkqD7ClV589pamAnbjqQxuAOWSg0cPi/5Jx7x3jc6z2fqR+yE+axI
- fwoNtoUNJoM/rG0JMfN2HSrsbo6uGKViaGfKqhAiGuF3sd+6JD/HkjMX45pG9d8JNEbVeTWJWwN
- M52BLIGhlLnZE5g==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+References: <20241120-vma-v8-0-eb31425da66b@google.com> <20241120-vma-v8-2-eb31425da66b@google.com>
+ <c26a63a3-0f1e-467d-b24f-3963e5e4e13d@lucifer.local> <CAH5fLghdeBvbtC+aPq0mSr1io+DUt-J54zYagys63cK-4tictQ@mail.gmail.com>
+ <d2d1f25c-780d-4103-aeb1-461adc4940c3@lucifer.local>
+In-Reply-To: <d2d1f25c-780d-4103-aeb1-461adc4940c3@lucifer.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 21 Nov 2024 15:39:45 +0100
+Message-ID: <CAH5fLgijS7JOO==JQegexPEgx3hs8hFDcQqFa4L50F1LdfZJJQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/7] mm: rust: add vm_area_struct methods that require
+ read access
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The nodiratime option is not currently shown. Also, the test for when
-to display propagate_from: is incorrect. Make it work like it does in
-show_mountinfo().
+On Thu, Nov 21, 2024 at 1:50=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Nov 21, 2024 at 11:23:39AM +0100, Alice Ryhl wrote:
+> > On Wed, Nov 20, 2024 at 8:07=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Wed, Nov 20, 2024 at 02:49:56PM +0000, Alice Ryhl wrote:
+> > > > +    #[inline]
+> > > > +    pub fn end(&self) -> usize {
+> > > > +        // SAFETY: By the type invariants, the caller holds at lea=
+st the mmap read lock, so this
+> > > > +        // access is not a data race.
+> > > > +        unsafe { (*self.as_ptr()).__bindgen_anon_1.__bindgen_anon_=
+1.vm_end as _ }
+> > > > +    }
+> > > > +
+> > > > +    /// Unmap pages in the given page range.
+> > >
+> > > This needs some more description, as 'unmapping' pages is unfortunate=
+ly an
+> > > overloaded term in the kernel and this very much might confuse people=
+ as
+> > > opposed to e.g. munmap()'ing a range.
+> > >
+> > > I'd say something like 'clear page table mappings for the range at th=
+e leaf
+> > > level, leaving all other page tables intact, freeing any memory refer=
+enced
+> > > by the VMA in this range (anonymous memory is completely freed, file-=
+backed
+> > > memory has its reference count on page cache folio's dropped, any dir=
+ty
+> > > data will still be written back to disk as usual)'.
+> >
+> > Sure, will add that to the docs.
+>
+> Thanks, I assume you mean this comment, which will form part of the docs?=
+ As
+> here we should at least replace the 'unmap' with 'zap' to avoid confusion
+> vs. munmap().
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-It might be best to just squash this patch into the one that adds the
-new sample program. Also, looks like your vfs-6.14.misc branch hasn't
-been updated yet?
----
- samples/vfs/mountinfo.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes. Comments with three slashes are rendered in the html documentation.
 
-diff --git a/samples/vfs/mountinfo.c b/samples/vfs/mountinfo.c
-index d9f21113a93b7aa7606de2edfce5ad0d5bcf2056..349aaade4de53912b96eadb35bf1b7457b4b04fa 100644
---- a/samples/vfs/mountinfo.c
-+++ b/samples/vfs/mountinfo.c
-@@ -90,6 +90,8 @@ static void show_mnt_attrs(uint64_t flags)
- 		break;
- 	}
- 
-+	if (flags & MOUNT_ATTR_NODIRATIME)
-+		printf(",nodiratime");
- 	if (flags & MOUNT_ATTR_NOSYMFOLLOW)
- 		printf(",nosymfollow");
- 	if (flags & MOUNT_ATTR_IDMAP)
-@@ -102,7 +104,7 @@ static void show_propagation(struct statmount *sm)
- 		printf(" shared:%llu", sm->mnt_peer_group);
- 	if (sm->mnt_propagation & MS_SLAVE) {
- 		printf(" master:%llu", sm->mnt_master);
--		if (sm->mnt_master)
-+		if (sm->propagate_from && sm->propagate_from != sm->mnt_master)
- 			printf(" propagate_from:%llu", sm->propagate_from);
- 	}
- 	if (sm->mnt_propagation & MS_UNBINDABLE)
+> > > > +    #[inline]
+> > > > +    pub fn zap_page_range_single(&self, address: usize, size: usiz=
+e) {
+> > > > +        // SAFETY: By the type invariants, the caller has read acc=
+ess to this VMA, which is
+> > > > +        // sufficient for this method call. This method has no req=
+uirements on the vma flags. Any
+> > > > +        // value of `address` and `size` is allowed.
+> > > > +        unsafe {
+> > > > +            bindings::zap_page_range_single(
+> > >
+> > > Hm weirdly I see this in rust/bindings/bindings_generated.rs but not =
+in
+> > > rust/helpers/mm.c is this intended?
+> > >
+> > > Is this meant to be generated _from_ somewhere? Is something missing =
+for
+> > > that?
+> >
+> > The bindings_generated.rs file is generated at built-time from C
+> > headers. The zap_page_range_single is a real function, not a fake
+> > static inline header-only function, so bindgen is able to generate it
+> > without anything in rust/helpers.
+> >
+> > > > +                self.as_ptr(),
+> > > > +                address as _,
+> > > > +                size as _,
+> > > > +                core::ptr::null_mut(),
+> > > > +            )
+> > > > +        };
+> > > > +    }
+> > > > +}
+> > > > +
+> > > > +/// The integer type used for vma flags.
+> > > > +#[doc(inline)]
+> > > > +pub use bindings::vm_flags_t;
+> > >
+> > > Where do you declare this type?
+> >
+> > It's declared in include/linux/mm_types.h
+>
+> I meant from a rust perspective, but I guess bindgen handles this?
 
----
-base-commit: ee05701bd2a2e4559f35742d59922ebb9b006d3c
-change-id: 20241121-statmount-924ab4233d6e
+Yes, anything in `bindings::` is output from bindgen based on C headers.
 
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
-
+Alice
 
