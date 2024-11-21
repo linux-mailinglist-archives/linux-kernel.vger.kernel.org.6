@@ -1,144 +1,211 @@
-Return-Path: <linux-kernel+bounces-416792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314709D4A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:57:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106A19D4A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB347B20E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:57:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7442826C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CA71CB331;
-	Thu, 21 Nov 2024 09:57:34 +0000 (UTC)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367471CC159;
+	Thu, 21 Nov 2024 10:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Jg62Vrgc"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FC4169AE4;
-	Thu, 21 Nov 2024 09:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C553126C05;
+	Thu, 21 Nov 2024 10:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732183053; cv=none; b=mP9KkkrfmcEuGdbJsVViQ6mHT5XuViZ8AK3O2AVNZC0jEeKEtoyZiP/uBFSaeWtK2nQf2z839QrItXxfqHVG6v2nPaTOI4BjmgxJjDW7nOc1JP9dyAtW+N/s5kd0MrZW2dHWeZ6pUwThUU18SuTmoypihYTaQirsIpDJEVxnbkE=
+	t=1732183372; cv=none; b=OYh4mela+l3ZgsGwBU/Uxb1vj/dOR/T5i9QrJ85w/lvgShnjJuPZ5LPLdp8tA7wTwP3UXvlyKXAkm1XxiQx5dohohMyfeoTG296wV/RFo+WwH+4glf9drEZHg6tywx2qA8sMgs2Yi5AdiPyRWGSIcTG03ddao0pO00BgSRCEqfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732183053; c=relaxed/simple;
-	bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XkpR7zOA0vK6wcwEvNy5aX93KBuw1x1Np2BLyh6ctZRGJakQsGa0Bo3Ide7Omj89PGHRxWbSKt6bWj3/mvcAcHEW1y3hTqUknBs1Gw3USojCsGxGWajA03YYHHSDYvtAIGVkgFLH5oeVn1PKd3PgbnV8hyTUR6fG8jn/5YZ0yV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso11986861fa.3;
-        Thu, 21 Nov 2024 01:57:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732183050; x=1732787850;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bTMbqsnoMNGLibkdcP7u5QI9+AWxB+kh9RGVzPPW/zM=;
-        b=EPpl5iuGFI9ecX+jeCjYlksMf7z2mEAVNm2zkkNEVOOSTG1BHa0n8fBmwu+I2WdYc4
-         j55+EncyDKix9z1oplNRW95ZPEolHHZ1gTTufMafHGIOsjaPzXqcJCJ2hMqL33IMtbMC
-         Zij3m7ew1ATB0n1fP+CEIzimoiW8YhuaDx4hDiIFbZJMEmmGTG/M2ONatnOq527HlACB
-         DsaOVXu7LPQ6DKOiY2xBppx2+K7JTC2ykzTgmc4T2U4FA0Eg9xxLE6CDKAWZ07IhlTol
-         UbybmHcFdykGBSeYGN6GDWfH5AukQT/8RoS+0AIpHlPb20KaILwf9uOOhepWyzXncqM8
-         3DCA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/uC+2dtvBDYG2ssbHQeS0PYcBB9Rl5o2iAoDnWkfCV+EBHEv/Y+Fokaif8AjhAwvi52Z3/lMx/pirzJE1EVo=@vger.kernel.org, AJvYcCWVEFktrF5RaWMr6uTxFLPg98fg683gDLFeULgTvFUUEVryqkvRqbjLgWadjmUPYnixVBS9rV1cfef88d2H@vger.kernel.org, AJvYcCWq4aO7by5hgA0hpzReMsAlRLwNuCkLf78rYH366w0bEMlEDGN+kw+8DiUsMe+0v6xxLHVKJLOZqF0SZrL50spdXPl4TBmA@vger.kernel.org
-X-Gm-Message-State: AOJu0YweNL2njmy0tRnzGcJ6SgOHrBg5ooNCUgixlAR8m0qYaA8bd+x+
-	zkeEv5ngrbBW8UN4/Rf1G9qBMe/H8wtN4rilrSTRY+1HJWQUEJ1z
-X-Google-Smtp-Source: AGHT+IEQ/3h1gmcyg8y0A2e1lAMy5tgKib+tZmeEdbSDdDb77Bea91wE6C/Db4iqDbt6Va8idVgQoQ==
-X-Received: by 2002:a2e:a549:0:b0:2fb:5014:aad4 with SMTP id 38308e7fff4ca-2ff8db2c665mr54822141fa.9.1732183049765;
-        Thu, 21 Nov 2024 01:57:29 -0800 (PST)
-Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f436c412sm60692166b.179.2024.11.21.01.57.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 01:57:28 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 21 Nov 2024 01:57:12 -0800
-Subject: [PATCH v2] ima: kexec: silence RCU list traversal warning
+	s=arc-20240116; t=1732183372; c=relaxed/simple;
+	bh=SAZnTR6nFodWMC2jvQ3/SQAYg1GfYwllTStdi7ONILs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LE1TzF9wecZL7sCCws2+/90kmH8feHyJIpXTBfH1hE7kNPdlUBI6/7W16MKgVuYR7t+sr7f/kl+n4hElBqFlRcbmwjHZ9XsC07yq4/iJX2XxcxGLcAvahU5K5JhkwCS6bPNHDU5rstGyUHjX/EYkkItDtgIBcDA311oEe9Ah6vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Jg62Vrgc; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AL42NIT028349;
+	Thu, 21 Nov 2024 11:02:30 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	tMHARmkV5I92PboMXt6Pp6b96tFSvjo8btyHafNWUhQ=; b=Jg62VrgcSnv4qCny
+	oQebn5uJV1AxeI36qhwi5I6pL937pOlrroCBrUdkVaFo5w4HbaeD53p76/IUApwf
+	qM6Dr0CsmJ4wyjefnDlakjfTE/rStJZ4UYBXr8h4EbzbRpqU9YEkTkKHUbA3iV0a
+	wqOnQzXDQCQ1xD4KYWkTo4MmkKTCWtTtfhK0HX+OyKZIVZbOYQ7xl7hPuQDFvvd5
+	6fl5r6lyn002AmIX/6mLf3c6pvdiXCJFtZKCaXAmtZee+bdbeIXpMUmWZfgzPb+j
+	y2VfK3yMbl1Way/ApSItKtVtJoi4YYSUqOcWd2T3ll3nm0JHvsOQwvAkb8qLByIx
+	n2W2mw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xkqf5t69-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 21 Nov 2024 11:02:29 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 41F8F40044;
+	Thu, 21 Nov 2024 11:00:53 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 112F225E1E1;
+	Thu, 21 Nov 2024 10:59:54 +0100 (CET)
+Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 21 Nov
+ 2024 10:59:53 +0100
+Message-ID: <752c2573-97bc-4b5a-87d1-ca52b854a48d@foss.st.com>
+Date: Thu, 21 Nov 2024 10:59:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-ima_rcu-v2-1-4d48630cf2c6@debian.org>
-X-B4-Tracking: v=1; b=H4sIAPcDP2cC/2XMMQ7CIBQA0KuQPxcDCFKZvIdpDMK3/YNgQImm4
- e7Grq5veCtULIQVHFuhYKNKOYFjamAQFp9m5BTBMVBCaSmF5nT3lxJeHHHcRz/aKIyAgcGj4I3
- e23SeBgYL1Wcuny1u8qf/R5NcciON1QcRzFHYU8Qr+bTLZYap9/4FUVfrFp8AAAA=
-X-Change-ID: 20241104-ima_rcu-ee83da87d050
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- "Eric W. Biederman" <ebiederm@xmission.com>, 
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1865; i=leitao@debian.org;
- h=from:subject:message-id; bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnPwQHUPDLWuedaB6ehCHozdKpH5lLrUX4VJvc1
- /GUz1Fu5AGJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZz8EBwAKCRA1o5Of/Hh3
- bfoWD/9V3QR+gu4NonzlOTUolGXozhUyVj7t/ynvxnIY6gQw/KFarveBDzIE1Gf8QDp9T4BOn6a
- BqXlKNssfsh7V4K+L8O7P09b4OfdjF6g2drULQ9qYB3V9Rz/7vLr2j9/FLcKl/C7IVJjYXGVuVU
- TQNIGc9+QDuEqbMZZPqCdnjmYliKGOKoHoDTfJSohLHxukbDrrd4vIVYPMfSVbwDbZyxvJ83LzS
- hEs4koOdH/3Uw2HNLg0R/v1VR74kiox/8HnBB9c6+bXjNmHOXBzBsMFBBu54Ke6Pa4iKbaKwJKA
- LhgLzP45Q6/QOiQWQE0E7C0PSTNtRdrDckrUG+ICzrYdIzCCPa9ya4q3KI8QOCMIHWsXjp7UC+F
- XaCJXzI7LJyfRmFHcCWcpQwXMHwpZrajVK9SPeXGNFCBg1oqp96ZDLxxxrIsoOLf7R45BfWXxwC
- 1Gsw05C2ojyzjnyTq/0pjxv4bj6d0E5Z5ETaAhFtSbyCx8m5yZDeQScSf3bF9uT//qaQAzhGBM/
- d9zEDWZJKl24s+PPNLSFBm2zCOycfEMMWYtxSwxlxJtnRMEYhGJVjqFQdevxHxxfkuhuDjyvUlN
- ZFtbyZeLUB/WtuewnrW4V1MkYfQk76pAixhTvmRamBlfe5EZ1WCuVGIdAYbrSnoncRpL/EmbX9a
- 8Wq/wQAs4j41rgg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] media: uapi: add WebP uAPI
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>,
+        Fritz Koenig <frkoenig@chromium.org>,
+        Sebastian
+ Fricke <sebastian.fricke@collabora.com>,
+        Daniel Almeida
+	<daniel.almeida@collabora.com>,
+        Andrzej Pietrasiewicz
+	<andrzej.p@collabora.com>,
+        Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
+ <20241120110105.244413-2-hugues.fruchet@foss.st.com>
+ <19cf9e45e00ccf68f35339d8d694e026ffa48037.camel@collabora.com>
+Content-Language: en-US
+From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
+In-Reply-To: <19cf9e45e00ccf68f35339d8d694e026ffa48037.camel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-The ima_measurements list is append-only and doesn't require
-rcu_read_lock() protection. However, lockdep issues a warning when
-traversing RCU lists without the read lock:
+Hi Nicolas,
 
-  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
+thanks for review,
 
-Fix this by using the variant of list_for_each_entry_rcu() with the last
-argument set to true. This tells the RCU subsystem that traversing this
-append-only list without the read lock is intentional and safe.
+On 11/20/24 15:21, Nicolas Dufresne wrote:
+> Hi Hughe,
+> 
+> thanks for the update.
+> 
+> Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
+>> This patch adds the WebP picture decoding kernel uAPI.
+>>
+>> This design is based on currently available VP8 API implementation and
+>> aims to support the development of WebP stateless video codecs
+>> on Linux.
+>>
+>> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+>> ---
+>>   Documentation/userspace-api/media/v4l/biblio.rst  |  9 +++++++++
+>>   .../userspace-api/media/v4l/pixfmt-compressed.rst | 15 +++++++++++++++
+>>   drivers/media/v4l2-core/v4l2-ioctl.c              |  1 +
+>>   include/uapi/linux/videodev2.h                    |  1 +
+>>   4 files changed, 26 insertions(+)
+>>
+>> diff --git a/Documentation/userspace-api/media/v4l/biblio.rst b/Documentation/userspace-api/media/v4l/biblio.rst
+>> index 35674eeae20d..df3e963fc54f 100644
+>> --- a/Documentation/userspace-api/media/v4l/biblio.rst
+>> +++ b/Documentation/userspace-api/media/v4l/biblio.rst
+>> @@ -447,3 +447,12 @@ AV1
+>>   :title:     AV1 Bitstream & Decoding Process Specification
+>>   
+>>   :author:    Peter de Rivaz, Argon Design Ltd, Jack Haughton, Argon Design Ltd
+>> +
+>> +.. _webp:
+>> +
+>> +WEBP
+>> +====
+>> +
+>> +:title:     WEBP picture Bitstream & Decoding Process Specification
+>> +
+>> +:author:    Google (https://developers.google.com/speed/webp)
+>> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+>> index 806ed73ac474..e664e70b0619 100644
+>> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+>> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+>> @@ -169,6 +169,21 @@ Compressed Formats
+>>   	this pixel format. The output buffer must contain the appropriate number
+>>   	of macroblocks to decode a full corresponding frame to the matching
+>>   	capture buffer.
+>> +    * .. _V4L2-PIX-FMT-WEBP-FRAME:
+>> +
+>> +      - ``V4L2_PIX_FMT_WEBP_FRAME``
+>> +      - 'WEBP'
+>> +      - WEBP VP8 parsed frame, excluding WEBP RIFF header, keeping only the VP8
+>> +	bistream including the frame header, as extracted from the container.
+>> +	This format is adapted for stateless video decoders that implement a
+>> +	WEBP pipeline with the :ref:`stateless_decoder`.
+>> +	Metadata associated with the frame to decode is required to be passed
+>> +	through the ``V4L2_CID_STATELESS_VP8_FRAME`` control.
+>> +	See the :ref:`associated Codec Control IDs <v4l2-codec-stateless-vp8>`.
+>> +	Exactly one output and one capture buffer must be provided for use with
+>> +	this pixel format. The output buffer must contain the appropriate number
+>> +	of macroblocks to decode a full corresponding frame to the matching
+>> +	capture buffer.
+> 
+> I wonder if we should document the constraints, I think
+> V4L2_VP8_FRAME_FLAG_KEY_FRAME must be set, which imply that last/golden/alt
+> timestamp are ignored.
 
-This change silences the lockdep warning while maintaining the correct
-semantics for the append-only list traversal.
+I will add something about that.
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v2:
-- Do not hold the RCU read lock, but, annotate list_for_each_entry_rcu()
-  that is OK to traverse the list without the RCU read lock.
-- Link to v1: https://lore.kernel.org/r/20241104-ima_rcu-v1-1-5157460c5907@debian.org
----
- security/integrity/ima/ima_kexec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> With that clarified:
+> 
+> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> 
+>>
+>>   
+>>       * .. _V4L2-PIX-FMT-VP9:
+>>   
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> index 0304daa8471d..e2ff03d0d773 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -1501,6 +1501,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>>   		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+>>   		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+>>   		case V4L2_PIX_FMT_VP8_FRAME:    descr = "VP8 Frame"; break;
+>> +		case V4L2_PIX_FMT_WEBP_FRAME:    descr = "WEBP VP8 Frame"; break;
+>>   		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+>>   		case V4L2_PIX_FMT_VP9_FRAME:    descr = "VP9 Frame"; break;
+>>   		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index e7c4dce39007..09fff269e852 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -757,6 +757,7 @@ struct v4l2_pix_format {
+>>   #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /* SMPTE 421M Annex L compliant stream */
+>>   #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+>>   #define V4L2_PIX_FMT_VP8_FRAME v4l2_fourcc('V', 'P', '8', 'F') /* VP8 parsed frame */
+>> +#define V4L2_PIX_FMT_WEBP_FRAME v4l2_fourcc('W', 'B', 'P', 'F') /* WEBP VP8 parsed frame */
+>>   #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+>>   #define V4L2_PIX_FMT_VP9_FRAME v4l2_fourcc('V', 'P', '9', 'F') /* VP9 parsed frame */
+>>   #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
+> 
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 52e00332defed39774c9e23e045f1377cfa30d0c..9d45f4d26f731658a79b94b9f95f4dcc4dcb6325 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 
- 	memset(&khdr, 0, sizeof(khdr));
- 	khdr.version = 1;
--	list_for_each_entry_rcu(qe, &ima_measurements, later) {
-+	/* This is an append-only list, no need to hold the RCU read lock */
-+	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
- 		if (file.count < file.size) {
- 			khdr.count++;
- 			ima_measurements_show(&file, qe);
-
----
-base-commit: ac24e26aa08fe026804f678599f805eb13374a5d
-change-id: 20241104-ima_rcu-ee83da87d050
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+BR,
+Hugues.
 
