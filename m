@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-417593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4389D5667
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:46:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A279D5668
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C330B222C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0632B22692
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633B91DF240;
-	Thu, 21 Nov 2024 23:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889641D9A66;
+	Thu, 21 Nov 2024 23:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="TCI0vHQC"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88081DF971
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZOWJMhrR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784A119F410;
+	Thu, 21 Nov 2024 23:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732232719; cv=none; b=heFq6xfvSCqUkuFAxFtXakFKlvajHKI2g2WVR3tpvQUCHli1l7yafwKlLXyrzkdwvxSQTo+ZzhFqqE8lOZgyGj2EZJe6KgcvyuFx7NRJP6IjM2M8QHyUfJl1s4Pi1qk+KESr1NIaqGDHez9nF7BNoHnmxLifxWc0dQlsirjzqo4=
+	t=1732233024; cv=none; b=ulCo5KrSVfyebnOYcPzoBB9RNS5Svjk6ocRJ1OH1zlHXoJ2N6gTOJhRI+mKYR3YvrGv8TWRdKkdmaSRTEln2NPWItq5RSh7k68qfcBBoyLBuZEPfc9zoRc36OdSfg/lyW95NYRI2EMtvFeN9YoeDfgJyvhp6h+J0UL0x08aCS2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732232719; c=relaxed/simple;
-	bh=WJ8aHAPGOPGpnIyH9WyYZ9xcgXjeq4iYAKKItBFKKzU=;
+	s=arc-20240116; t=1732233024; c=relaxed/simple;
+	bh=wiQ3p9Hy32GNbdHS2hhBxtvP/6k5Uun92yZjmgVUWmg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O+2zHMvBENabxrT02qHQAc8MR3idgmpVif94MlwmvAAiozbMozvJd8tMKIY2PMCfT3bRlYk7hM58WpYV4JX9sHCC4DC499y/qD0LnWtlSWccxkcDB68IL+BA72svxxZK0AKJZ353XjJ/Lq8P+SNuAe5baWf1EIZZuguuNu9h91w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=TCI0vHQC; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 3FFB014C1E1;
-	Fri, 22 Nov 2024 00:45:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1732232715;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u8f+LwLszrHbolnXZg0ayVqT0diIxwr+pKK0O36nMkc=;
-	b=TCI0vHQCYt9Ne5WwZakn3LuGnVwTUvRvp9HbK3hL08JRMIEqVU4Z7hNN4kzh0FVPwjAywi
-	6O2LwTnY39QT6MRKEFrIm9uGYcDoWuq4dQf0a4aUjR833EJy/yeN2Mdk8c+bfe2WcqtUeu
-	oAYPLqA2/lsSbaWQOfoekEjym6gncUNJbeT54wSJJvPfhpDFgN9l3WaVuyX2dFabERrGS9
-	Hm2w+ZiwnSt5fGV+olA5QUn3EqcgnwI7F/z4A5HpQYVV1rFbMGUrylqptro+d5JCF2kNcv
-	iWbMtn1rwVDyyXM3q1xNGfag91TQzAA8bQAcpofwEFJ6sMQy33q0gAVyvIJNsw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 4c7bd5de;
-	Thu, 21 Nov 2024 23:45:10 +0000 (UTC)
-Date: Fri, 22 Nov 2024 08:44:55 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: Alexander Merritt <alexander@edera.dev>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Alex Zenla <alex@edera.dev>, Ariadne Conill <ariadne@ariadne.space>
-Subject: Re: [PATCH] 9p/xen: fix release of IRQ
-Message-ID: <Zz_F9wMda68xhvKa@codewreck.org>
-References: <20241121225100.5736-1-alexander@edera.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAZH9N+8mSXSLomlmdlgdK56aOIvWR/wBfSpXs+TxLpIIwB3VJattN65gLS6Pyz5oAz0AZ39K+7kGFvbNztCqRyJfm8RFiEJ2z+M2hQ3keXXwPDb/0/PFtMPdWB9MhkpoVX/KYC2MH3jDJEfZbyeNPLsxtZVGvnyduEXeh9cnmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZOWJMhrR; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732233022; x=1763769022;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wiQ3p9Hy32GNbdHS2hhBxtvP/6k5Uun92yZjmgVUWmg=;
+  b=ZOWJMhrRCKKJllLspavdmzuBVwjLGbBUc4F/rpAwjdLX0ZIzeT/agQgn
+   F2Z3mQlXarNoWRhTYVEUeL3rR18Y2MbCU9hBvlFiD8vkMlbbJEPMoVr3k
+   Br6b2MRTc+kIw8Q0jD1Q3C9rnZKO3yO/e8opj7BiXWOe1M4+q0LkxHrDk
+   iIH0/ZQSqcqo0Z1Zv3LGZzGl7ZapYqQU6cmIkQ4gzhcUYo6seAjGaZ5ya
+   b6gz7hrJVWsxsZPgq2r5WZJdd8nKX1QnYw3HB8Gq8eZAn0NcYlnlwd6CP
+   Sfd6YvnYXJM1rh1pFWH93WEjmlR68k2lAvOddWxOHjv1qZj2sph4wY8C/
+   g==;
+X-CSE-ConnectionGUID: oGSCv17aRNOgUzrrxaBPZw==
+X-CSE-MsgGUID: bfg3RHggS2yPKPzuAfMpBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32517445"
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="32517445"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:50:21 -0800
+X-CSE-ConnectionGUID: gpeJGlLQT0a/eGWV8JLnrg==
+X-CSE-MsgGUID: HWs9T5+hTAunZANnW+guGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="113692973"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:50:21 -0800
+Date: Thu, 21 Nov 2024 15:50:20 -0800
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"nikunj@amd.com" <nikunj@amd.com>,
+	"mtosatti@redhat.com" <mtosatti@redhat.com>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Gao, Chao" <chao.gao@intel.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] KVM: x86: Don't allow tsc_offset, tsc_scaling_ratio
+ to change
+Message-ID: <Zz/HPBEFe0Nwgu5Z@ls.amr.corp.intel.com>
+References: <cover.1728719037.git.isaku.yamahata@intel.com>
+ <3a7444aec08042fe205666864b6858910e86aa98.1728719037.git.isaku.yamahata@intel.com>
+ <86d3e586314037e90c7425e344432ba21d511a26.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,69 +84,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241121225100.5736-1-alexander@edera.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <86d3e586314037e90c7425e344432ba21d511a26.camel@intel.com>
 
-Alexander Merritt wrote on Thu, Nov 21, 2024 at 10:51:00PM +0000:
-> From: Alex Zenla <alex@edera.dev>
+On Mon, Oct 14, 2024 at 03:48:03PM +0000,
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> wrote:
+
+> On Sat, 2024-10-12 at 00:55 -0700, Isaku Yamahata wrote:
+> > Problem
+> > The current x86 KVM implementation conflicts with protected TSC because the
+> > VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
+> > logic to change/adjust the TSC offset/multiplier somehow.
+> > 
+> > Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
+> > offset/multiplier, the TSC timer interrupts is injected to the guest at the
+> > wrong time if the KVM TSC offset is different from what the TDX module
+> > determined.
+> > 
+> > Originally this issue was found by cyclic test of rt-test [1] as the
+> > latency in TDX case is worse than VMX value + TDX SEAMCALL overhead.  It
+> > turned out that the KVM TSC offset is different from what the TDX module
+> > determines.
+> > 
+> > Solution
+> > The solution is to keep the KVM TSC offset/multiplier the same as the value
+> > of the TDX module somehow.  Possible solutions are as follows.
+> > - Skip the logic
+> >   Ignore (or don't call related functions) the request to change the TSC
+> >   offset/multiplier.
+> >   Pros
+> >   - Logically clean.  This is similar to the guest_protected case.
+> >   Cons
+> >   - Needs to identify the call sites.
+> > 
+> > - Revert the change at the hooks after TSC adjustment
+> >   x86 KVM defines the vendor hooks when TSC offset/multiplier are
+> >   changed.  The callback can revert the change.
+> >   Pros
+> >   - We don't need to care about the logic to change the TSC
+> >     offset/multiplier.
+> >   Cons:
+> >   - Hacky to revert the KVM x86 common code logic.
+> > 
+> > Choose the first one.  With this patch series, SEV-SNP secure TSC can be
+> > supported.
+> > 
+> > [1] https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+> > 
+> > Reported-by: Marcelo Tosatti <mtosatti@redhat.com>
 > 
-> Kernel logs indicate an IRQ was double-freed.
+> IIUC this problem was reported by Marcelo and he tested these patches and found
+> that they did *not* resolve his issue? But offline you mentioned that you
+> reproduced a similar seeming bug on your end that *was* resolved by these
+> patches.
 
-Nit: if you still have the log it'd be great to include it in the commit
-message, rather than paragraphing it.
-
-The rationale is that someone with the same problem will likely just
-search for the error as is first, and having it in the commit log will
-be an easy hit.
-
-(This alone wouldn't need a resend, I can add it if you just reply to
-the mail with it; it's also fine if you no longer have the log, that'll
-be a remark for the next patch)
+That's right. The first experimental patch didn't, but this patch does.
+(At least I belive so. Marcelo, please jump in if I'm wrong.)
 
 
-> 
-> Pass correct device ID during IRQ release.
-> 
-> Fixes: 71ebd71921e45 ("xen/9pfs: connect to the backend")
-> Signed-off-by: Alex Zenla <alex@edera.dev>
-> Signed-off-by: Alexander Merritt <alexander@edera.dev>
-> Signed-off-by: Ariadne Conill <ariadne@ariadne.space>
+> If I got that right, I would think we should figure out Marcelo's
+> problem before fixing this upstream. If it only affects out-of-tree TDX code we
+> can take more time and not thrash the code as it gets untangled further.
 
-
-
-> ---
->  net/9p/trans_xen.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
-> index dfdbe1ca5338..198d46d79d84 100644
-> --- a/net/9p/trans_xen.c
-> +++ b/net/9p/trans_xen.c
-> @@ -286,7 +286,8 @@ static void xen_9pfs_front_free(struct xen_9pfs_front_priv *priv)
->  		if (!priv->rings[i].intf)
->  			break;
->  		if (priv->rings[i].irq > 0)
-> -			unbind_from_irqhandler(priv->rings[i].irq, priv->dev);
-> +			unbind_from_irqhandler(priv->rings[i].irq, ring);
-> +		priv->rings[i].evtchn = priv->rings[i].irq = 0;
-
-(style) I don't recall seeing much `a = b = 0` in the kernel, and
-looking at it checkpatch seems to complain:
-CHECK: multiple assignments should be avoided
-#114: FILE: net/9p/trans_xen.c:290:
-+		priv->rings[i].evtchn = priv->rings[i].irq = 0;
-
-Please run checkpatch on the patches you send (b4 can do it for you if
-you want to start using it)
-
-
-code-wise,
-I also don't see where unbinf_from_irqhandler would free the evtchn, so
-is it leaking here, or is it implicit from something else?
-We only free it explicitly on error binding the irq.
-
-
-
-Thanks,
+Ok.  This patch affects TDX code (and potentially SEV-SNP secure TSC host code.)
 -- 
-Dominique Martinet | Asmadeus
+Isaku Yamahata <isaku.yamahata@intel.com>
 
