@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-417599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E109D5678
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:56:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37E29D567A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:57:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC49C1F242F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00511F2450C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DBE1D90BE;
-	Thu, 21 Nov 2024 23:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90561D63DC;
+	Thu, 21 Nov 2024 23:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U0LwXR63"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xsN2lZhE"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BC519F410;
-	Thu, 21 Nov 2024 23:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AAE19F410
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732233388; cv=none; b=Hgj/5vqU0gE7lyLbGXrvFzkwZQXXMhlNnVLo7kZepbQr3vy0DwFCUhOBjMO2+sVJRBtwE5g7e87/Gq0wlC8zDIyBJa7S4SjI2jOgyAVdTiOq5xTm30rY/rNiqPS9S1J6aix7hWJaPtWXYwZK3oCRNxd7pJOIUbnwu0FIp/dEeX0=
+	t=1732233440; cv=none; b=r5QCu/jEFVdy2kJvZ01UTOWyWgrp1KNhLAc1K27nTrCxMd3yOhFkLtETVNVE9eBSqFyD7oA7qZqxa4CvJksBdFlPufSCtLzHwDTfCAoD9TQ5XH/ufc+8qKrS79+qzVhpNiEEZcwsSP+9rr8Y9cvT4iZaJ4dS1DmG+AmhkMqcCcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732233388; c=relaxed/simple;
-	bh=JTX8rK0tDIOsQhXvdAlefynAbFr2c/KG/cTKbiC6vJw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ovkJD5RvjW4w5ie/SixD90o02773wmkV5AlBWWNjcH/FWw9WUMex1Eo5d87l6QDho8JXxeZhxPLAiogqabbiAzreMFj/QcIrCahbgAuCm2NqSxKdWh9eZ0d04/snKiq6WvaRMf+y51uNzwvG21znxXrFQjyPRdVbNHoxalPtyrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=U0LwXR63; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732233370;
-	bh=gteJz45hcbxUpnJwPsrCXaOeQ2wAJnZjTsciHCiDRqs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=U0LwXR63OILDwz+7nFDueZ2qDtKa1ALEu87dhuKpgGZjHoB7MVqBvXGeBpTfCNqFG
-	 FFmFJL2gHkSpMSwr57v/cA8NqfPzv8UEmSP74v8CQCeH0D1vnNemNDanB2CbAkldWU
-	 gBBW7Rm6/EPLsYkuJMYOhCtUH0xqLLxqCcIxK1a3StzTfI/PUrAGgeGPHxF3xfeLV/
-	 dMWliVTBp/AbU6nte0LE7utU2oagggzPkbzrmh/4shyY1Ouir7w5RXZBcPH0hvY2mh
-	 fjfbYAXfWNPtkfKd3hKbCREESBO8dhklyE3Vxi3+4SJs531nXR/W3CnnjVJiZcRulI
-	 GMZruZdILrc5Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XvZr93cmCz4wcy;
-	Fri, 22 Nov 2024 10:56:09 +1100 (AEDT)
-Date: Fri, 22 Nov 2024 10:56:11 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Julian Vetter <jvetter@kalrayinc.com>,
- Kuan-Wei Chiu <visitorckw@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the asm-generic tree with the mm
- tree
-Message-ID: <20241122105611.38d8607e@canb.auug.org.au>
-In-Reply-To: <20241029095525.0fba9d23@canb.auug.org.au>
-References: <20241029095525.0fba9d23@canb.auug.org.au>
+	s=arc-20240116; t=1732233440; c=relaxed/simple;
+	bh=UMOpRKdbXrU4NoO+Ttp5Od2ly8k7VvCMhCAhmP5R6P4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3VpR6cqh0DhyQhLmUZBTU/ioFmcGPcxDbq0ywTDEyx9/cR9Y8iU0aC59WcAZAEh0tf8Y/UlZEXvXKQ43O1XogKsVww9M6dZHbffZ1Vrl2BJit+rZ/0D7xtJbnvOdOuefzNLrYfyj7r8Hn27u0E0NZX6mTUDC2mugSbPryIQ6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xsN2lZhE; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f84907caso1629025e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:57:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732233436; x=1732838236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGZRbTR/uK+ftQ2TfPgufc2P+z5Ye/l5g2WR5F5d4JQ=;
+        b=xsN2lZhEjxXAohLSxNO/BfjqGK7hbvrD8iodSQjRcXisrpqkq0t5dISYgk2zL2IG7W
+         8x17ia2DKt54LtQjvSjT3F2OeUEr50JdUU5e+D/z5u5QtuYS2nO91En6hLVyenKY6lNd
+         KLEw6/uXV1v+Suwg+AOjb+MAee6WZVa4Rtj3AUYXTPtY1EnC4aMjgjUOxMVWr9k4suHC
+         iGjdYgJ5jGECXv4JRvMhDoezubeVpoblX6a2a0o7/mMP/rrIqQCN5khkZD0KnOt+j0iq
+         ZfQ8mH/QVoiXkZKSyBvAQFrNOc8RMO6L5hZZEw9xPc9M1zcR9xJNH9G8JML2tJFEiuX7
+         GsEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732233436; x=1732838236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FGZRbTR/uK+ftQ2TfPgufc2P+z5Ye/l5g2WR5F5d4JQ=;
+        b=I61cdvf5OH9xs0+b+wlcIT/wYvdiI6OapOucSc37oTwLPghkGY5ZiPQqcvQzJ15sic
+         gKCGEQDADqXGjm733u/rado9hK1Vq10EJW71AJetpt6q1IT2yZZPJ0O8mBiVzToxVWT6
+         Nk64orilgg18qhcBkd7KDVe+1sFSpUIBpvF5Tm3tINW1kSkV/yh6TiIoCVQeNHOTCzi2
+         RRObJsaZqdMA7E+ldnPStobYIriw1UXQzSx7mef0yLEafCrQh2YCQGFzxEY6T4bVYfJj
+         2vY2njodkI3/dW/gOV0WHzox72SdQWaHNK+ykOoj0FC5xNS+dABRMH/wj1eJngldHK4N
+         388Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVmb3UJqkBMrITIwZUWxjS3JyhgSpkQ4hpvSNuWyx1RfW+2IigbfubglUG0qAoqWqQrPePYDC7ftZOcuSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5R4bpoRL8Gvf5M4D0CXqxdRIGs1YJRPVt87D6Z3RlBQEL7JK0
+	srvFHBKvVufPKoOH7JKqnveLukHLWlNy03yLxWAAm1KYus5DDwNc8ieDNifnlXU=
+X-Gm-Gg: ASbGncsq9a5PTBQBZJNv/evM3vlMEtLUv3ruPiDE/kusXBr54WP+0QCl3zCc+2oDRgT
+	vH00agRwNGyoeykVoqw9Qfr7Z5sv3GDMdDtlqSQTTkXmC1Do5u7RLe5mPOvRShHjuFBmof15EOq
+	DN5kMIQg85K1FvCwk7FEoss6KxuBO2cEXkLhApa7voxjmmIDXumgAruD/kjPuZkdp0MfnhdoK6M
+	gTAE8t5Cou+THX87dyL8Pikm6Po1f7ARHFFzXuj3S3bajsHPnQ3WMGBNeISr75s5NOUa++JtUTg
+	K5H1Zklzzk6nJwlqfuBRNSQzhYkyhg==
+X-Google-Smtp-Source: AGHT+IEmXbDQJcAUYj6lojIiC9JM4M4ujCCevK4TnX7twcBWShy1O7UHHnGrFWe77gpB0XWeTqJyWw==
+X-Received: by 2002:a05:6512:b10:b0:539:adb0:b91 with SMTP id 2adb3069b0e04-53dd3ab11a5mr254370e87.57.1732233436333;
+        Thu, 21 Nov 2024 15:57:16 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2481e38sm114731e87.123.2024.11.21.15.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 15:57:14 -0800 (PST)
+Date: Fri, 22 Nov 2024 01:57:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: keith zhao <keith.zhao@starfivetech.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
+	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/9] drm: bridge: inno-hdmi: add inno bridge driver.
+Message-ID: <u4iaxbpuozap5rhjraxktq2wzxwdpqxj7ldglpvsmvpnxcutuz@ak2eiwtb5fg5>
+References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
+ <20241120061848.196754-4-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/E92lv+vJFk=+jTPtDxaFBhK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120061848.196754-4-keith.zhao@starfivetech.com>
 
---Sig_/E92lv+vJFk=+jTPtDxaFBhK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Nov 20, 2024 at 02:18:42PM +0800, keith zhao wrote:
+> move rochchip inno hdmi connector to a newly created directory named
+> inno-hdmi.c, and rename rockchip/inno_hdmi.c to
+> rockchip/inno_hdmi-rockchip.c
+> 
+> This patch refines the Innosilicon HDMI architecture by abstracting
+> the existing connector into a bridge architecture.
+> The drm_bridge_connector_init function is used to create the connector.
+> 
+> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+> ---
+>  MAINTAINERS                                   |    2 +
+>  drivers/gpu/drm/bridge/Kconfig                |    2 +
+>  drivers/gpu/drm/bridge/Makefile               |    1 +
+>  drivers/gpu/drm/bridge/innosilicon/Kconfig    |    6 +
+>  drivers/gpu/drm/bridge/innosilicon/Makefile   |    2 +
+>  .../gpu/drm/bridge/innosilicon/inno-hdmi.c    |  376 ++++++
+>  .../gpu/drm/bridge/innosilicon/inno-hdmi.h    |   34 +
+>  drivers/gpu/drm/rockchip/Kconfig              |    1 +
+>  drivers/gpu/drm/rockchip/Makefile             |    2 +-
+>  drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c |  690 +++++++++++
+>  .../{inno_hdmi.h => inno_hdmi-rockchip.h}     |    0
+>  drivers/gpu/drm/rockchip/inno_hdmi.c          | 1025 -----------------
+>  include/drm/bridge/inno_hdmi.h                |   56 +
+>  13 files changed, 1171 insertions(+), 1026 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/innosilicon/Kconfig
+>  create mode 100644 drivers/gpu/drm/bridge/innosilicon/Makefile
+>  create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.c
+>  create mode 100644 drivers/gpu/drm/bridge/innosilicon/inno-hdmi.h
+>  create mode 100644 drivers/gpu/drm/rockchip/inno_hdmi-rockchip.c
+>  rename drivers/gpu/drm/rockchip/{inno_hdmi.h => inno_hdmi-rockchip.h} (100%)
+>  delete mode 100644 drivers/gpu/drm/rockchip/inno_hdmi.c
+>  create mode 100644 include/drm/bridge/inno_hdmi.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f787dd625497..7766ee0bdd74 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7439,6 +7439,8 @@ S:	Maintained
+>  T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>  F:	Documentation/devicetree/bindings/display/bridge/innosilicon,inno-hdmi.yaml
+>  F:	Documentation/devicetree/bindings/display/starfive/
+> +F:	drivers/gpu/drm/bridge/innosilicon/
+> +F:	include/drm/bridge/inno_hdmi.h
 
-Hi all,
+Separate entry, please. This is not specific to StarFive.
 
-On Tue, 29 Oct 2024 09:55:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the asm-generic tree got a conflict in:
->=20
->   lib/Makefile
->=20
-> between commit:
->=20
->   2ff14c29323d ("lib/Makefile: make union-find compilation conditional on=
- CONFIG_CPUSETS")
->=20
-> from the mm tree and commit:
->=20
->   b660d0a2acb9 ("New implementation for IO memcpy and IO memset")
->=20
-> from the asm-generic tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc lib/Makefile
-> index 1eb89962daef,db4717538fad..000000000000
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@@ -35,12 -35,10 +35,12 @@@ lib-y :=3D ctype.o string.o vsprintf.o cm
->   	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
->   	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
->   	 nmi_backtrace.o win_minmax.o memcat_p.o \
-> - 	 buildid.o objpool.o
->  -	 buildid.o objpool.o union_find.o iomem_copy.o
-> ++	 buildid.o objpool.o iomem_copy.o
->  =20
->  +lib-$(CONFIG_UNION_FIND) +=3D union_find.o
->   lib-$(CONFIG_PRINTK) +=3D dump_stack.o
->   lib-$(CONFIG_SMP) +=3D cpumask.o
->  +lib-$(CONFIG_MIN_HEAP) +=3D min_heap.o
->  =20
->   lib-y	+=3D kobject.o klist.o
->   obj-y	+=3D lockref.o
+>  
+>  DRM DRIVER FOR SYNAPTICS R63353 PANELS
+>  M:	Michael Trimarchi <michael@amarulasolutions.com>
 
-This is now a conflict between the mm-non-mm stable tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/E92lv+vJFk=+jTPtDxaFBhK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc/yJsACgkQAVBC80lX
-0GzhQAf+O5+PCBdLiRWEh6LhpQrH4Z3Uz/7LjG6kHOX34BCy3DzjhYqYkmJQrAAK
-QjmZ5eusApOglnT/kxbdZp/esm+Q/nrufwRoCi4JYQRktURUJuza42LS3bGaRC4y
-vtxQVoR+GssgiPNt248e9FXiTW6ApnsbAA1lp/sjdpDo6RAqepufG8vo2u0TBLoF
-NWTSmgeQH5PSTA067v6JAysWwNctQ9QEVjKgFIqPUY5Z3bKgrfSrHy5qT8b6PIzj
-4q9oWn7x/WdmoXBhXBH3jtEt366sWMrQ4k8b87lkE0O9LabW7DSdLZMEUVXdIFjf
-/j6MWL+yEOsdleMO0A+WIKTYu0ddpA==
-=ZEmi
------END PGP SIGNATURE-----
-
---Sig_/E92lv+vJFk=+jTPtDxaFBhK--
+-- 
+With best wishes
+Dmitry
 
