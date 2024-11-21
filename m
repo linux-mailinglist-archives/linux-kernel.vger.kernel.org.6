@@ -1,108 +1,96 @@
-Return-Path: <linux-kernel+bounces-416836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA82C9D4AEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:31:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD4279D4AF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D411F227BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5134FB217C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5B21CD1E9;
-	Thu, 21 Nov 2024 10:31:29 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF801171650;
-	Thu, 21 Nov 2024 10:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9FF1D0F56;
+	Thu, 21 Nov 2024 10:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGIIl/AR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44511D0B83;
+	Thu, 21 Nov 2024 10:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732185089; cv=none; b=UW40bfn5CPeomNmlYb/T3pJk2WQkvElhAhjR7K5E8P+ROh9kgrzPwqtaQeX3ICGyJskIEUO9wJStCbHBif8O9rpJTt8e/k2dLPGgJ5/of/t0CRXFCwF2TCb2WowmIqUKUhXGWptV0n0XsSgdFKcSwjhImnvTDcDllvu+74sw/6Y=
+	t=1732185238; cv=none; b=l6yp4zINrVwzoPvdsoCtwTp8glpmy2F9N5JEcoEtn4h4OgW55OcsE+YE+0B66FsmWLvhsG/zJkgq2VNcHVINIuzYgcf+ODEGdf3od2E5K2mR3GO9DGODicYZwUJsCxLM0WK5FgS9mKrNej5VEKj0GgaLdhNZ/Ru9dh9HfyhWztk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732185089; c=relaxed/simple;
-	bh=x8taLnZsBUghNuHkVQ7/oPeHVAKtgFa3NgX+bOdHZqQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BRLR6IRGj+gFvpa+kal58IGqJmtFlmCJiMIND1E/5pEBN2IDCpE9kAHMIGS5QPB/LWz96ozqPWZKEwpSHAk4jmuqBguoj+CZnQ+DM+SyMEY5gu12RklzuFbbrdzJEkpLSXT+rONrEZWaSKXxelZ27dXVSWi6EQ6lrF9mN9d1ez4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1673f0bf48ed-2f204;
-	Thu, 21 Nov 2024 18:31:22 +0800 (CST)
-X-RM-TRANSID:2ee1673f0bf48ed-2f204
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from [25.255.155.44] (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee2673f0bfa6d0-cf824;
-	Thu, 21 Nov 2024 18:31:22 +0800 (CST)
-X-RM-TRANSID:2ee2673f0bfa6d0-cf824
-Message-ID: <94663eed-e5a7-4263-ab96-bf16fa94eb58@cmss.chinamobile.com>
-Date: Thu, 21 Nov 2024 18:31:21 +0800
+	s=arc-20240116; t=1732185238; c=relaxed/simple;
+	bh=PRsd2mYUtqJDcJ1K7x7OCmAEwgu9V/n3Pf1REKc5WGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gKpVmOflw7ocVu5aWDilkKntEuVIhiRUmmnfq47A55Xgd0rA64Soq8dXHeXf+VIfxtG333KodJUwEgzIJ6hNIDRaNF3MKYq324fuvUR7+0hxkFxi796c3dGYFKD5ZVjY9K92snv1z3jNWqgXm4iwcihdq8ivWIXMqv9CQKoH4TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGIIl/AR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 715A9C4CED0;
+	Thu, 21 Nov 2024 10:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732185237;
+	bh=PRsd2mYUtqJDcJ1K7x7OCmAEwgu9V/n3Pf1REKc5WGE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XGIIl/ARoIRb2tIpMRvqTygsb1uOfavVtcesqrwb7ivSAQtOd/bETVBCV6ARWOeG5
+	 cM5SdMgjTcovs79puYqRHEJz8Kp87za48LkAUefY2f1V7ZdmqJaRZYyE/hWTDfRo5U
+	 fK6PWuLI5qk5H79yL4MFFXWZTCon7F3IXVYaHsGhYMBbXG3sl9PfGpb/XOX2pfwJ/y
+	 fujTZY4lLRi2Ciimm4dTfs0CaDTZ7+BFAXBncFsjTpOxhefIIfWPWm4b8RTmiwtL2+
+	 qn+0xa31iNPUx3omM/2XGkoCcxr8u6YH+RNF2wZHz0i3AtrK74BojlzliD0W7P0a+r
+	 lRgPqUmJ4Dxqg==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ee9db85af0so825711eaf.0;
+        Thu, 21 Nov 2024 02:33:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUpCkPQk2+tfV2jju1fmstOM+Q+onMuAxTtcuh+mtHyF7bIUZkqwdUebSZHFuJcTQVB6EPgZKS53Db91yT/@vger.kernel.org, AJvYcCWxdjDLmLSLVrCcfPr9pYUqqI6iD6YNd8EC4MNbe++PDzxwTjdjqXAiCRCL0x1AAajpIRDsFmXFtsAv@vger.kernel.org, AJvYcCXAgncB4X7syVXHgawJ3eSaPFkGY6P0PeK3MZfBdnhqE2kbcSWauZOGtdxqO6M8yr2++hHh//v0efE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTrpy/8OFF4TlE0auggAuo2O9FX3fiIhqj3MXdX0zsg/ALkDZ7
+	/pOo4a7yUXR9IpcCtTrj8SnHLVHPYWMcuW00VqvNRvKydeQPk2t67tAhznlPAs1SHp1XtTM/diS
+	P+vKhv4kFXo1WFaF9ELmOerlKT3k=
+X-Google-Smtp-Source: AGHT+IFk2dIFB0EhKFDmZLp6hggCtgy6vkiIpWWpYvjA8ubljmfDCLOq8wB9cYLG3YGFwFXLB+38mJUUXEkxj4XJp2o=
+X-Received: by 2002:a05:6830:12:b0:710:d4cd:bff3 with SMTP id
+ 46e09a7af769-71b037b5bf3mr1346080a34.9.1732185236812; Thu, 21 Nov 2024
+ 02:33:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] perf intel-pt: cleanup unneeded return variable
- inintel_pt_text_poke()
-To: Adrian Hunter <adrian.hunter@intel.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, algonell@gmail.com
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241121100047.25318-1-guanjing@cmss.chinamobile.com>
- <820e9b6b-16eb-446a-b524-adc8129726ec@intel.com>
-From: guanjing <guanjing@cmss.chinamobile.com>
-In-Reply-To: <820e9b6b-16eb-446a-b524-adc8129726ec@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
+ <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
+ <90818e23-0bdb-40ad-b2f9-5117c7d8045e@linux.intel.com> <CAJZ5v0gxNEQx5Q+KXs-AMn=bt7GD=jU-TseMHUc5mHp0tKSBtA@mail.gmail.com>
+ <0147ea1a-3595-47ae-a9d5-5625b267b7a8@linux.intel.com> <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+ <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com> <CAJZ5v0h5=3LMVCa8kSoomNyF9r_7HLmpkH+YhYEO_N7H6-hAGQ@mail.gmail.com>
+ <593c4be2-c21e-49fa-8bf7-a614c01c8e66@linux.intel.com> <CAJZ5v0h_hh8Rp2kG0xT_b5Bm5zWX6MscRo1rEx-jO-dBd7t5Aw@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h_hh8Rp2kG0xT_b5Bm5zWX6MscRo1rEx-jO-dBd7t5Aw@mail.gmail.com>
+From: Len Brown <lenb@kernel.org>
+Date: Thu, 21 Nov 2024 05:33:45 -0500
+X-Gmail-Original-Message-ID: <CAJvTdKkYKj-PQhzQgDVGnx=oTwK5ufWNsLxOLtzDwQPGpteVfg@mail.gmail.com>
+Message-ID: <CAJvTdKkYKj-PQhzQgDVGnx=oTwK5ufWNsLxOLtzDwQPGpteVfg@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in acpi_os_sleep().
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>, anna-maria@linutronix.de, tglx@linutronix.de, 
+	peterz@infradead.org, frederic@kernel.org, corbet@lwn.net, 
+	akpm@linux-foundation.org, linux-acpi@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Len Brown <len.brown@intel.com>, Todd Brandt <todd.e.brandt@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thank you for clarifying the proper usage of the Fixes tag. I understand 
-now that it should only be applied when there is an actual fix to 
-functionality. I will ensure to use it correctly in future submissions.
+On Wed, Nov 20, 2024 at 2:42=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
 
-Thanks a lot!
+> I generally think that if you are sleeping relatively long, you may as
+> well sacrifice some precision for avoiding system stress so to speak,
+> so I've been considering something like flat 50 us for sleeps between
+> 1 and 5 ms and then 1% of the sleep duration for longer sleeps.
 
-On 2024/11/21 18:18, Adrian Hunter wrote:
-> On 21/11/24 12:00, guanjing wrote:
->> Removed Unneeded variable: "ret"
->>
->> Fixes: 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions")
-> A Fixes tag is not for patches that don't fix some functionality.
->
->> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
->> ---
->>   tools/perf/util/intel-pt.c | 3 +--
->>   1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
->> index 30be6dfe09eb..6c0234acc669 100644
->> --- a/tools/perf/util/intel-pt.c
->> +++ b/tools/perf/util/intel-pt.c
->> @@ -3402,7 +3402,6 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
->>   	struct machine *machine = pt->machine;
->>   	struct intel_pt_cache_entry *e;
->>   	u64 offset;
->> -	int ret = 0;
->>   
->>   	addr_location__init(&al);
->>   	if (!event->text_poke.new_len)
->> @@ -3443,7 +3442,7 @@ static int intel_pt_text_poke(struct intel_pt *pt, union perf_event *event)
->>   	}
->>   out:
->>   	addr_location__exit(&al);
->> -	return ret;
->> +	return 0;
-> Should just drop the return value entirely, since it is
-> always zero.
->
->>   }
->>   
->>   static int intel_pt_process_event(struct perf_session *session,
+What is the maximum rate of acpi_os_sleep() invocations?
 
+Assuming the reasoning for user-space timer-slack is sound @ fixed 50 usec,
+what logic supports acpi_os_sleep paying more timer slack delay than user s=
+pace?
 
+What measurements can demonstrate the benefit of this proposed additional d=
+elay?
 
