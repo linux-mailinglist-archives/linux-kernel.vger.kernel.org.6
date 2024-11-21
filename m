@@ -1,123 +1,309 @@
-Return-Path: <linux-kernel+bounces-417413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C0D9D53BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:14:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1652F9D53C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E11B2283057
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FDCAB230B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:15:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC561C8FB4;
-	Thu, 21 Nov 2024 20:14:22 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86231C7B8D;
+	Thu, 21 Nov 2024 20:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nloe853c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3A21BD9EC;
-	Thu, 21 Nov 2024 20:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACF11CD1EE;
+	Thu, 21 Nov 2024 20:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732220061; cv=none; b=caL4CI/KZiwprBECO2NAwioxVhFzgObd0P3gE44T0/Z4q4GCSZZkhcnH0lq9z/ZAALggl0Ryd6mTcnBhXJAh/VaiAie8odfD+nfJLv9ix75liyWiNxAeg1J2MFpcj4vo68CQmSPdsLW+vjSTGzZ4bshicXETOt/dCFiU7U1GPOE=
+	t=1732220112; cv=none; b=Ruw70uOfyhrkvw8W23gbNoK7BKnIRp3wGEpKyt1dIiqPlTBZURnUD7FXtN3k1pSBCrRdp//6OB+uUfRLM2dRt75Of6X2DH9KFBuJJ/N+0h1A9Euk0zW+Nx3BV9EtYUhkQeLNg3RrHDDFFf4Lqkb0wd8JkbGzBTZYIta8Ws4TBDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732220061; c=relaxed/simple;
-	bh=gYsJwu02pWugVazNIEP1YeIcasnqbI8b2ezxJMncNwY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xpp6olzAAyE2n9sow6046KW6pC42Isqr5aHpLoapyvcxaPu0fZU9F3vuwgdghbF4TT8eqkdpLBWo0LKIkf3i+NhnR25IEQBE6LnjWncQdVBTcK0G7BpS3AZrFmoPru8U73KIiacWR7/LBnm83LTyCz3N/nkwjuwaSRiXkF8Ri/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-21207f0d949so12818685ad.2;
-        Thu, 21 Nov 2024 12:14:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732220060; x=1732824860;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jm9iL6DwjcTmoPVhHDUHF5A4pRNRL3Op5katTm02rI0=;
-        b=D778EKpZpBRx2tLJNWiRuwyo0Y8IGWK71PduB0jV7Hi8tQv8ELwdu77GVJxKlMuAxa
-         Ogw1BGUtKo+dK5eUjfDe6qqGygqrYDI4/9uamiK685q1sm1aFdyoAt1x3HoLsDQf5lo9
-         trrV2THyw+wS6vJW2Tui8fDSCcG+mrslE1/AcIg+BdplqTPVb1vm+ndIXX72OAnN2i7k
-         eAJjC7H8PYIdj3CRvFL5QQFq+3RgwVXYA+lcXqqytjwvIlLaed2rMDM/QEQOHTVlbJdO
-         VLtkoJ5w5oGzPOggbVFLFUiIo42kAfrNNEsx2sTAnH3/UIZBKnJONmI4U3m+VMCiklXG
-         wG1w==
-X-Forwarded-Encrypted: i=1; AJvYcCV8EztEorZ30Nn4+T5+nBUtBK5jemVFkSXqUy+at12iR16dnQSfrMu1Y8kHvdmBAyNw06o1uju47y4B@vger.kernel.org, AJvYcCVczDYa16+dx8OI1iVRrtPTzubcnsOSLgzc77SjL4KSsbW+oO1PsPWLczpA5SriuTj+Jz5X6iYoEqFKudM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzknzwhIht6nJUoyEMFY3Pl6Bfft1nT3cSeQtgatd0My3vzfsdE
-	NiI4WdEX1A0nLyzRjQIAvR3lx2NZSIlicyjmdQ5130YsFQNGdQKLuFKG+6lK6to=
-X-Gm-Gg: ASbGncvjS0KZf06Hfqsi37AzHQT9+GEUgsvk9OACfcYlx3j3BN3QuFSC3o5Oiz4fd3C
-	mDTGslx0/IJ4979vwWRnIsYyR3MofNkKhjIWZX30SZNLNequ8laE0vIfdZYnrjFPbz9p48twhkC
-	5mGWNgGGDn2Vi5I8TML5+AeBLVhLWRwlZ7L45fJHcoJCVDbzptrVp7mjLy42J3uOtR61ak4Ckli
-	+EOn5++D2BPxLolwMt2mqcg78/8IOVhTz2eNw4FO1gfZDLEfYxwIZ0C3J5GPyUg9Qc2CxOEGWlj
-	t4D0VfKw
-X-Google-Smtp-Source: AGHT+IF3z7YCs46o8PBTA8F9sNRp3I2o96B3q3m0XP0Vg++EgjKoc1O0YOTQnRr94Gb/NHPZMdB2jQ==
-X-Received: by 2002:a17:902:8213:b0:211:ce91:63ea with SMTP id d9443c01a7336-2129f53288emr3164305ad.15.1732220059574;
-        Thu, 21 Nov 2024 12:14:19 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc20feasm2231205ad.256.2024.11.21.12.14.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 12:14:18 -0800 (PST)
-Date: Fri, 22 Nov 2024 05:14:17 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1732220112; c=relaxed/simple;
+	bh=fhWu3do1FaQ1TjGwNgvB+EioEnbqtAJ1lpjLarsm/K8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X9Ijz8bfEwzvUWEjXERHEGv9cRIMTqldT9L6VMa/mXaxb6RbirSyLqaHU1zwqIqltumZ5Nb9G7W4ZYHJhScj2Xe0A7+A95OF1xN597g8DnHnpdsjh/jVvvbBFV23zxdF5L8K4DzkoC6eeylaG4gDQYdh09g2N0P4EfM29TcUZho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nloe853c; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732220110; x=1763756110;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fhWu3do1FaQ1TjGwNgvB+EioEnbqtAJ1lpjLarsm/K8=;
+  b=Nloe853cORTz7w+DO3tdVk1SiBvgXPTMtcGof49DO1oZB5yA3lyj1iwj
+   Ek8uT8s8deQn8cq8lVGROFaEoPNIfCvc9Wr8HSVEH8Gh2NEtQbIAEadfC
+   1nTv0QhLnSCM/3mOQAJdhRMIr/zrQ02gD3KJntPqcNue7jcVhtPJ4Lvz1
+   csqNRV+6K1voUEM5jfRuZTkJnFAUJTeIwvnZY0b6XLuV/499aAOWAIqlF
+   hDDh3HGonrx8CwkI+s8LzXJr7dqPdWwhlBT22oZSSZf4PUjyvHQlFH4sZ
+   XXGGq11lNaS3EJOgvM7ktKLzgMe3rQhywiCUe8EcRT5zN9T6s+jlY830t
+   w==;
+X-CSE-ConnectionGUID: XX1obg+OQaK+oeeD3aq6Og==
+X-CSE-MsgGUID: TJDpTJO1SmaWgjI8meSG3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="31715830"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="31715830"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 12:15:09 -0800
+X-CSE-ConnectionGUID: GVbgxKuBQz2zTbNB9NYr3g==
+X-CSE-MsgGUID: nb4lbBd5RG2a/D65xO07wA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90161060"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO ahunter-VirtualBox.ger.corp.intel.com) ([10.246.16.81])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 12:15:03 -0800
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@linux.intel.com,
+	binbin.wu@linux.intel.com,
+	dmatlack@google.com,
+	isaku.yamahata@intel.com,
+	nik.borisov@suse.com,
 	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-	stable+noautosel@kernel.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 3/5] PCI/pwrctl: Ensure that the pwrctl drivers are
- probed before the PCI client drivers
-Message-ID: <20241121201417.GA767990@rocinante>
-References: <20241120170232.flllyqcycsrsk6cj@thinkpad>
- <20241120201839.GA2338274@bhelgaas>
- <20241121120010.zjmo7sun2j7w2f5r@thinkpad>
- <20241121182824.GA69684@rocinante>
+	x86@kernel.org,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com,
+	weijiang.yang@intel.com
+Subject: [PATCH 0/7] KVM: TDX: TD vcpu enter/exit
+Date: Thu, 21 Nov 2024 22:14:39 +0200
+Message-ID: <20241121201448.36170-1-adrian.hunter@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241121182824.GA69684@rocinante>
 
-On 24-11-22 03:28:24, Krzysztof Wilczyński wrote:
-> Hello,
-> 
-> [...]
-> > > -			pci_err(dev, "failed to add device link between %s and %s\n",
-> > > -				dev_name(&dev->dev), pdev->name);
-> > > +			pci_err(dev, "failed to add device link to power control device %s\n",
-> > 
-> > Maybe use 'pwrctrl' instead of 'power control'?
-> 
-> Changed, thank you!  This makes the verbiage consistent with other
-> messages, code comments, etc.
+Hi
 
-... this one might have slip into the after merge window.
+This patch series introduces callbacks to facilitate the entry of a TD VCPU
+and the corresponding save/restore of host state.
 
-Also, Bjorn and I, we had a conversation about the correct wording here in
-user-facing messages.
+There are some outstanding things still to do (see below), so we expect to
+post future revisions of this patch set, but please do review the current
+patches so that they can be made ready for hand off to Paolo.  Also
+direction is needed for "x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+TDX guest" because it will affect KVM.
 
-The "power control" vs "pwrctrl", etc.  There is a single existing
-precedent within the code base for the "pwrctrl" use per:
+This patch set is one of several patch sets that are all needed to provide
+the ability to run a functioning TD VM.  They have been split from the
+"marker" sections of patch set "[PATCH v19 000/130] KVM TDX basic feature
+support":
 
-  55:	ret = devm_pci_pwrctrl_device_set_ready(dev, &data->ctx);
-  56-	if (ret)
-  57-		return dev_err_probe(dev, ret,
-  58:				     "Failed to register the pwrctrl wrapper\n");
+  https://lore.kernel.org/all/cover.1708933498.git.isaku.yamahata@intel.com/
 
-So, we should be consistent within the documentation and anything user-facing
-around what wording we use, I believe.  Whichever it will be in the end.
+The recent patch sets are:
 
-	Krzysztof
+  TDX host: metadata reading
+  TDX vCPU/VM creation
+  TDX KVM MMU part 2
+  TD vcpu enter/exit			<- this one
+  TD vcpu exits/interrupts/hypercalls   <- still to come
+
+Notably, a later patch sets deal with VCPU exits, interrupts and
+hypercalls.
+
+For x86 maintainers
+
+This series has 1 commit that is an RFC that needs input from x86
+maintainers:
+
+  x86/virt/tdx: Add SEAMCALL wrapper to enter/exit TDX guest
+
+This is because wrapping TDH.VP.ENTER means dealing with multiple input and
+output formats for the data in argument registers. We would like
+maintainers to comment on the discussion that we will have on it.
+
+Overview
+
+A TD VCPU is entered via the SEAMCALL TDH.VP.ENTER. The TDX Module manages
+the save/restore of guest state and, in conjunction with the SEAMCALL
+interface, handles certain aspects of host state. However, there are
+specific elements of the host state that require additional attention, as
+detailed in the Intel TDX ABI documentation for TDH.VP.ENTER.
+
+TDX is quite different from VMX in this regard.  For VMX, the host VMM is
+heavily involved in restoring, managing and saving guest CPU state, whereas
+for TDX this is handled by the TDX Module.  In that way, the TDX Module can
+protect the confidentiality and integrity of TD CPU state.
+
+The TDX Module does not save/restore all host CPU state because the host
+VMM can do it more efficiently and selectively.  CPU state referred to
+below is host CPU state.  Often values are already held in memory so no
+explicit save is needed, and restoration may not be needed if the kernel
+is not using a feature.
+
+Outstanding things still to do:
+
+  - how to wrap TDH.VP.ENTER SEAMCALL, refer to patch "x86/virt/tdx:
+    Add SEAMCALL wrapper to enter/exit TDX guest"
+  - tdx_vcpu_enter_exit() calls guest_state_enter_irqoff()
+    and guest_state_exit_irqoff() which comments say should be
+    called from non-instrumentable code but noinst was removed
+    at Sean's suggestion:
+  	https://lore.kernel.org/all/Zg8tJspL9uBmMZFO@google.com/
+    noinstr is also needed to retain NMI-blocking by avoiding
+    instrumented code that leads to an IRET which unblocks NMIs.
+    A later patch set will deal with NMI VM-exits.
+  - disallow TDX guest to use Intel PT
+  	I think Tony will fix tdx_get_supported_xfam()
+  - disallow PERFMON (TD attribute bit 63)
+  - save/restore MSR IA32_UMWAIT_CONTROL or disallow guest
+    CPUID(7,0).ECX.WAITPKG[5]
+  - save/restore IA32_DEBUGCTL
+  	VMX does:
+  		vmx_vcpu_load() -> get_debugctlmsr()
+  		vmx_vcpu_run() -> update_debugctlmsr()
+  	TDX Module only preserves bits 1, 12 and 14
+
+Key Details
+
+Argument Passing: Similar to other SEAMCALLs, TDH.VP.ENTER passes
+arguments through General Purpose Registers (GPRs). For the special case
+of the TD guest invoking TDG.VP.VMCALL, nearly any GPR can be used,
+as well as XMM0 to XMM15. Notably, RBP is not used, and Linux mandates the
+TDX Module feature NO_RBP_MOD, which is enforced elsewhere. Additionally,
+XMM registers are not required for the existing Guest Hypervisor
+Communication Interface and are handled by existing KVM code should they be
+modified by the guest.
+
+Debug Register Handling: After TDH.VP.ENTER returns, registers DR0, DR1,
+DR2, DR3, DR6, and DR7 are set to their architectural INIT values. Existing
+KVM code already handles the restoration of host values as needed, refer
+vcpu_enter_guest() which calls hw_breakpoint_restore().
+
+MSR Restoration: Certain Model-Specific Registers (MSRs) need to be
+restored post TDH.VP.ENTER. The Intel TDX ABI documentation provides a
+detailed list in the msr_preservation.json file. Most MSRs do not require
+restoration if the guest is not utilizing the corresponding feature. The
+following features are currently assumed to be unsupported, and their MSRs
+are not restored:
+  PERFMON            (TD ATTRIBUTES[63])
+  LBRs               (XFAM[15])
+  User Interrupts    (XFAM[14])
+  Intel PT           (XFAM[8])
+The one feature that is supported:
+  CET                (XFAM[11-12])	is restored via kvm_put_guest_fpu()
+
+Other host MSR/Register Handling:
+
+MSR IA32_XFD is already restored by KVM, refer to kvm_put_guest_fpu().
+The TDX Module sets MSR IA32_XFD_ERR to its RESET value (0) which is
+fine for the kernel.
+
+MSR IA32_DEBUGCTL appears to have been overlooked.  According to
+msr_preservation.json, the TDX Module preserves only bits 1, 12 and 14.
+For VMX there is code to save and restore in vmx_vcpu_load() and
+vmx_vcpu_run() respectively, but TDX does not use those functions.
+
+MSR IA32_UARCH_MISC_CTL is not utilized by the kernel, so it is fine if
+the TDX Module sets it to it's RESET value.
+
+MSR IA32_KERNEL_GS_BASE is addressed in patch "KVM: TDX: vcpu_run:
+save/restore host state (host kernel gs)".
+
+MSRs IA32_XSS and XCRO are handled in patch "KVM: TDX: restore host xsave
+state when exiting from the guest TD".
+
+MSRs IA32_STAR, IA32_LSTAR, IA32_FMASK, and IA32_TSC_AUX are handled in
+patch "KVM: TDX: restore user ret MSRs".
+
+MSR IA32_TSX_CTRL is handled in patch "KVM: TDX: Add TSX_CTRL msr into
+uret_msrs list".
+
+MSR IA32_UMWAIT_CONTROL appears to have been overlooked.  The host value
+needs to be restored if guest CPUID(7,0).ECX.WAITPKG[5] is 1, otherwise
+that guest CPUID value needs to be disallowed.
+
+Additional Notes
+
+The patch "KVM: TDX: Implement TDX vcpu enter/exit path" highlights that
+TDX does not support "PAUSE-loop exiting".  According to the TDX Module
+Base arch. spec., hypercalls are expected to be used instead.  Note that
+the Linux TDX guest supports existing hypercalls via TDG.VP.VMCALL.
+
+Base
+
+This series is based off of a kvm-coco-queue commit and some pre-req
+series:
+1. commit ee69eb746754 ("KVM: x86/mmu: Prevent aliased memslot GFNs") (in
+   kvm-coco-queue).
+2. v7 of "TDX host: metadata reading tweaks, bug fix and info dump" [1].
+3. v1 of "KVM: VMX: Initialize TDX when loading KVM module" [2], with some
+   new feedback from Sean.
+4. v2 of “TDX vCPU/VM creation” [3]
+5. v2 of "TDX KVM MMU part 2" [4]
+
+It requires TDX module 1.5.06.00.0744[5], or later. This is due to removal
+of the workarounds for the lack of the NO_RBP_MOD feature required by the
+kernel. Now NO_RBP_MOD is enabled (in VM/vCPU creation patches), and this
+particular version of the TDX module has a required NO_RBP_MOD related bug
+fix.
+A working edk2 commit is 95d8a1c ("UnitTestFrameworkPkg: Use TianoCore
+mirror of subhook submodule").
+
+Testing
+
+The series has been tested as part of the development branch for the TDX
+base series. The testing consisted of TDX kvm-unit-tests and booting a
+Linux TD, and TDX enhanced KVM selftests.
+
+The full KVM branch is here:
+https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-11-20
+
+Matching QEMU:
+https://github.com/intel-staging/qemu-tdx/commits/tdx-qemu-upstream-v6.1/
+
+[0] https://lore.kernel.org/kvm/20240904030751.117579-1-rick.p.edgecombe@intel.com/
+[1] https://lore.kernel.org/kvm/cover.1731318868.git.kai.huang@intel.com/#t
+[2] https://lore.kernel.org/kvm/cover.1730120881.git.kai.huang@intel.com/
+[3] https://lore.kernel.org/kvm/20241030190039.77971-1-rick.p.edgecombe@intel.com/
+[4] https://lore.kernel.org/kvm/20241112073327.21979-1-yan.y.zhao@intel.com/
+[5] https://github.com/intel/tdx-module/releases/tag/TDX_1.5.06
+
+Chao Gao (1):
+      KVM: x86: Allow to update cached values in kvm_user_return_msrs w/o
+      wrmsr
+
+Isaku Yamahata (4):
+      KVM: TDX: Implement TDX vcpu enter/exit path
+      KVM: TDX: vcpu_run: save/restore host state(host kernel gs)
+      KVM: TDX: restore host xsave state when exit from the guest TD
+      KVM: TDX: restore user ret MSRs
+
+Kai Huang (1):
+      x86/virt/tdx: Add SEAMCALL wrapper to enter/exit TDX guest
+
+Yang Weijiang (1):
+      KVM: TDX: Add TSX_CTRL msr into uret_msrs list
+
+ arch/x86/include/asm/kvm_host.h |   1 +
+ arch/x86/include/asm/tdx.h      |   1 +
+ arch/x86/kvm/vmx/main.c         |  45 ++++++++-
+ arch/x86/kvm/vmx/tdx.c          | 212 ++++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/tdx.h          |  14 +++
+ arch/x86/kvm/vmx/x86_ops.h      |   9 ++
+ arch/x86/kvm/x86.c              |  24 ++++-
+ arch/x86/virt/vmx/tdx/tdx.c     |   8 ++
+ arch/x86/virt/vmx/tdx/tdx.h     |   1 +
+ 9 files changed, 306 insertions(+), 9 deletions(-)
+
+Regards
+Adrian
 
