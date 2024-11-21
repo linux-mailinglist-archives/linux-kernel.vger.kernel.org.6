@@ -1,209 +1,230 @@
-Return-Path: <linux-kernel+bounces-417459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07FE89D5450
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:50:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE2B9D5451
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 850881F2305E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D1A1F2332C
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 20:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BC31C9B76;
-	Thu, 21 Nov 2024 20:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A14F1C9B76;
+	Thu, 21 Nov 2024 20:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="mjAFLUQ0";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Ga19D2t6"
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KpnQ65JT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40931B5EB0;
-	Thu, 21 Nov 2024 20:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732222246; cv=fail; b=i8I1QU7KIvAhjMbxnb5wSjkc7JoEQ+wxB1KjcwHgzDEPl6IOTEb8WHeRHRFMK4f8sk9+bnZ+8qvP4wZpHMwvIlAIwZQ+wk8dhBLCD8lZHiipi/dhZqF108G0wwhGAz7owRArnmQpD4IIImJOINu7yd4csKGDpDDkj2VJcw7HNQA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732222246; c=relaxed/simple;
-	bh=pB37gZCNzBZfaE+NaWaXoglSpTc7L0q+Pxmb/QFxIxY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i0AzkGBybqP9IVxWR9/CyFPA4ctW2VCSB/v6LSqaC9eVN3ImEsalXeS1TWh63XFrj8vZet80lq1C7GXCYyli72exAE5KjF0BoTy9UCDLurua7lqWbggHow7ReZcy37Y5Tq8qJGImydWQNtZ/EEA0ir+mgXkDWxBgX7fOKEBpbxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=mjAFLUQ0; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=Ga19D2t6; arc=fail smtp.client-ip=68.232.143.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1732222244; x=1763758244;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=pB37gZCNzBZfaE+NaWaXoglSpTc7L0q+Pxmb/QFxIxY=;
-  b=mjAFLUQ0OHAhI3NO6uWL9HuEpabVvcfWIWVfjBOWJaMIqEEt3RIOlbWv
-   EwyHMF1PZHDM5ycHmT/1rKifOSClgsy0YNxUwkWvfwrycfSnu6MLcG+6i
-   XXEaQ1dPrpgAu187vtzxgjQJmrFHSogXr3EV1GwJkfYDVJi5ikGVcGfft
-   305jSkSBChl2IYOALCMgtCl2iaIOBTup/M9WVOELQ/BF4amzAjptOYOrk
-   r2FN9wJq0P9CsDfAnmNSSWdyZ8KP78Z1wDnHA1j2RoFEztu4KJS+5lYog
-   eBKXp68MaJsdKpiKroee5ktbKGglsk6XvnqYeH2jFaAdsIZx4NwLO4hkT
-   w==;
-X-CSE-ConnectionGUID: 8DTjlDrERMOiC/AEn7FjEw==
-X-CSE-MsgGUID: Gigt4ljVRRmXDxOhOm2GNw==
-X-IronPort-AV: E=Sophos;i="6.12,173,1728921600"; 
-   d="scan'208";a="32589924"
-Received: from mail-westcentralusazlp17011029.outbound.protection.outlook.com (HELO CY4PR02CU008.outbound.protection.outlook.com) ([40.93.6.29])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Nov 2024 04:50:38 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eWbPvjJR9BB0qjPq1GIIf9DkDHd1TuWdaKpvJydjm41tRuWHCqpiObOYeynPotsjbHeC+uBXWZ5ALarOjqHYvxpGHu4dVaqGqHsL3x9nze0O/DBlhebUjOfrnkSFmSDJSHB2pbcAvkwAxFsKeTijP9TOsPLYRBYI3/wIKEG5L9Ei+v4f5DrbT/e0MAuzmzvPvyRi+yg3ZMIXciTtptdQLLIG24V+Ws/seUNnH9jeUboPTYAPPqhgtE/+mrv42gdU7+h45qvbX+K2nzlj5Oo7dEya6BmKFhkVmrFD8H0XSEBKs2vxzQXp4du+g39qzhQQ+KiXbE5ymDS9FnVdMn81rg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pB37gZCNzBZfaE+NaWaXoglSpTc7L0q+Pxmb/QFxIxY=;
- b=u0TUXMb723xK3uILVqq4qiq6Iv9Og43u/FlO1ZSm2eBVXEBvusmMoQsNiJ25ArfSqYjXx/VTPKQ07FnYHCaWxaQn9olPiVcs3MG3huOktEb9r6O/LbtqjPhuUoCwkkXMrWGDmjmhnJysEtWD7sBvgNvHui6dN8/fAbBxipZO0GtTo0hu8fmdhDxdyrHHCF39hJowAn8RYp/1/Irojgw146dhbzJF0zRsdTmDDp975OOMzmqHKVbb7DOeQGZwPXzso6dpAHkP3yVhtYYUxXRNyH/Ua88BV9AmgVV+kXERlvbC82xN9wiWgHeo/TaPmywbAWGBTmw8u6l5dKDoZV9Jhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pB37gZCNzBZfaE+NaWaXoglSpTc7L0q+Pxmb/QFxIxY=;
- b=Ga19D2t6kX8phj6mImDOAHI4coDnvL25+BKBjr9ueYjIJzRoYh+P+lEK6jljRiy8WpUTbtyDDspk3l+HcZHejAI/RMOQfxVjhjKFJEEgutWGndAmNPv/vLulqIUcS3bt0YF+1Iceq+c+u5OId3gZasmmtTqcWAf4kwbgG3bTxd0=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- BY1PR04MB9611.namprd04.prod.outlook.com (2603:10b6:a03:5b5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Thu, 21 Nov
- 2024 20:50:33 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f%7]) with mapi id 15.20.8182.014; Thu, 21 Nov 2024
- 20:50:33 +0000
-From: Avri Altman <Avri.Altman@wdc.com>
-To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Bean Huo
-	<beanhuo@micron.com>
-Subject: RE: [PATCH v4 1/3] scsi: ufs: core: Prepare to introduce a new
- clock_gating lock
-Thread-Topic: [PATCH v4 1/3] scsi: ufs: core: Prepare to introduce a new
- clock_gating lock
-Thread-Index: AQHbOchJf8nR0be67kiHV6HwnKGw0rLCNFyAgAAF7hA=
-Date: Thu, 21 Nov 2024 20:50:32 +0000
-Message-ID:
- <DM6PR04MB6575EEC76CE7536BC97829CCFC222@DM6PR04MB6575.namprd04.prod.outlook.com>
-References: <20241118144117.88483-1-avri.altman@wdc.com>
- <20241118144117.88483-2-avri.altman@wdc.com>
- <2e5e888a-a7d8-4b10-a366-3cefd6685e69@acm.org>
-In-Reply-To: <2e5e888a-a7d8-4b10-a366-3cefd6685e69@acm.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|BY1PR04MB9611:EE_
-x-ms-office365-filtering-correlation-id: c4f610f9-b8a9-462d-fdfc-08dd0a6e2461
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?QzFlbWRPdmptZ3QxNGFEWFU5RlJhR1E5U0REdFBubjJuTzRJTHdBMjFSSHI1?=
- =?utf-8?B?RTRTdjg1NFdqYUZPeC9GT0VZK3dhcnlIaC9tVDVhNk9qem41OXhqNmh3OWpa?=
- =?utf-8?B?MjBndmRVb0xkdU9sZDMyUUo0YkFzbG1yaHFPQnR0eGhGWitrV3cxa3FNckt5?=
- =?utf-8?B?NzhJNktkajFVVmVZQkRBenplN1NIbktML1pFd0F5ZDZyNTU5SHpGNjBVNEtj?=
- =?utf-8?B?aVBmMTBhRkxBemttclovM3dBL1d3RTBESWlWYTVteUNBUW1nK1cvZ1pxSjZL?=
- =?utf-8?B?SGp0SjhSOGM2eDlHVkhpVnNlYTlzaFNLbUhlWlNFMjFVblBSMmtzdUV6Tkc0?=
- =?utf-8?B?aVZIaXhueTRlUThHNW1DRGJOclFrR0VPb0lhSCtIUHY2K1duWk40ZHM3Q253?=
- =?utf-8?B?QTd6RzYzR0ZwT1RBS3pHZ0ZBMGloUU1OcWRRZUJFbk9pcEp0TzFVRExPUE40?=
- =?utf-8?B?Q2lMYlVQTStTemN6aXQwemUvNk9MU2JwQ1NqNUJLUXF0TFR6OUlPS3FrNVdB?=
- =?utf-8?B?TWcvTXdERkxMb28rWFN3a2hGSWZqUHRPeDJacktDUUE1b0JhSnJmSlk5b3M3?=
- =?utf-8?B?Zk8vRVVqUXRsbEJ0NTJlemV2TTFvZ1EvNDArRTRldDNmZkM1YXZwT2lVdFBK?=
- =?utf-8?B?dTk0eGNFR1UyeU9NZUNKOVFhU0NYUXNJZ3UyYXZZVkdEZ3IzVnJqeWoxZ2Nk?=
- =?utf-8?B?b1hsUzBpVnZHODE1ZVFGcGxmY2IwdloyZGZhK2twclR6RmpBeDNLcjcwZzlX?=
- =?utf-8?B?eEFkbFBXbngram1oU3o2ZHlYWjRZazcyaGdnTzhUWFFMUThlMzZWdnBOUlVj?=
- =?utf-8?B?Um9FSmRSaUNUdVVMRytLeGlXZXJsYllLeFpza09EU1R5elVXcjRScjhGVUkv?=
- =?utf-8?B?UTBkeW1wN2t6aUgxWE12Nmp6aGRWb0NWaWdPUmUxVkZiL3FPUE5RZlRqRVpI?=
- =?utf-8?B?L202b0dua1gvSGNBcG0wT1pORE9TeVJlL2Z0a3ozRU9lcHlCRklqU3AvMGZR?=
- =?utf-8?B?emMrc1FacTJUeXFxV1J6T092VHY2M2tCV3p5L3NnRU93MklXSFk2TmljQkNH?=
- =?utf-8?B?eDJkZGIwR3VXOWpsTE45c0Vzelo1b09JWXZpcWFGMkZCNCtzTkVaaHVpV0d1?=
- =?utf-8?B?TExIN0svdHM3bWFWSEVUdnpFTy9POE5uTzRxdUZQZ1BVa1F4dC9jdU1ndHRw?=
- =?utf-8?B?Z1hBTkRFdTJ5dUEyVXc4ekEyUmdQU2p0UFdEYWo4QWF5MWdQdVhpQ0h4Ymdw?=
- =?utf-8?B?UzJNMVRLdzFvSFpjTFZRbitDZDBja1dkUXJwVEpTa21TcDJsNjc2Z1pkVFpG?=
- =?utf-8?B?eVM2NTlzUTBEVjl4anpqWGwvOGwxQWhIaEtKMFpRSDVsaGdGdjlSbUVqNjJl?=
- =?utf-8?B?UXlXSTl3U3BjZ0Z6MXh0R3VkbktrWnEyYS9JQ01jY1lsTHlKVUtPbDJ4N1d1?=
- =?utf-8?B?MmtPM2lIcVR3MS8zZTBYbndCdDBERG4yV3E1WFBXZW5lRW9YVUJnaC91N3dP?=
- =?utf-8?B?LzIyU01CdHEwWHdoRFdGakNHdTNnNnVYVEgxa1JabU00V3I5c1B4czlYMTNV?=
- =?utf-8?B?b1pHemQ1Q0FJVDVoQzlJcHV1aXVVbDBMTnhiK0dQTEFrVE1kRFhYcCtjbW5Y?=
- =?utf-8?B?STR2cGY5ODJVck5MQWJ6Rk44K3JNK055QkU2VVZHeC85dzRUQVVrSnNHdHRj?=
- =?utf-8?B?YXBVYnkrU09JZWdaS3RsYjdIZGxuZWVUbnYrbjJScVdsclhMSStOb20zL2Rx?=
- =?utf-8?B?VmwxbmFCaERLNCtuVUZrQTRNb3RQUXo0dG5MWDRqQlJXSEd0Q2FmcW9qYjR4?=
- =?utf-8?Q?NZz6iC5hFdbYbxUmankVlTrvRJm2ovK8i6SZM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OW13QXI4dlZnTUVYaWZPRVRTREhLNUZKUTNhUTl0a1VIM0RPbEZJejFLY3Jn?=
- =?utf-8?B?MytoSGc5ZEl1aDB0eHYwdE5pNWRFU1ZhdnJWN1cvVVV0VG5qc3hZQlJKanU0?=
- =?utf-8?B?TW1yNDMxazJDNytaZk9xU3JDUS9WanNlc241UER1V2c5WTY3OWMxeGY1cEVW?=
- =?utf-8?B?UlJHWm5hVEpncmU1RkFYTUE0ZVQrd0x2OThnaG81Z1R0WVhlZmc1MjZEaFlY?=
- =?utf-8?B?U3BCeXpEdWsxTHFEanBvVjRIQVh5ZEZDTkxJakQ2UEJKaE5SSmhUallOemNM?=
- =?utf-8?B?UlNFN1U2NkVqaFJqOEZtbno5KzUrRm9WUnE1bmQwbVBINUNnSDdtaFdidEZP?=
- =?utf-8?B?ajBUbHZuUEtmcW8xSTJrN2hveHNoc0ZQNUxReFNGckNyeHRubEx0NEI2OG9y?=
- =?utf-8?B?VGN5N2ZuRmpKdy9TZkR6QklkRW9jSEFwK3BhcWQzcW5peW43N3lPZ3pKaUlM?=
- =?utf-8?B?ZWhUY3NLVUc0Z3ZtS0pJa0FmQXVCUDlaU1lCTGQwREE2Y3JLTlg5KzJqV0c5?=
- =?utf-8?B?Y3ZWQWh2bmkxeCtsK1V1QlBBbUl6MlVnd1p5UjVGZVhBakZpeUh1R2hZdkxI?=
- =?utf-8?B?NTRVbERUcHB1V0JOZEtKRHgyUEo4U2VSWS9vQzY1aU81dmZoSENDa0lacGMv?=
- =?utf-8?B?RW1xTzBsVFkyUkFqcUphVUZidWx0Nkl6Q3FNbjk3UFZVcmgwWmRTeFNWNmFv?=
- =?utf-8?B?QVBtQ01FY0dDRnhDT21RMG1haDRxL2NoK21UZTlnUGFYbnIwcEFFWjdkSWhT?=
- =?utf-8?B?VjJSbFhudEhld2diVEphWFdTdC9BY0gzRk9yTm0xYkZ2Um50K2JHS0RObUts?=
- =?utf-8?B?Tzg5NEN1T2tJa2E0SVRJZEgwamVtQU00T01ib0c1dTlodDdDSlBPZlZqaWVX?=
- =?utf-8?B?NnhKWUVaVHRMdkJxMG5QSzZpTGE2MTJsS3hTTWhnckliNWFFemhzTmJrZ1A2?=
- =?utf-8?B?dGNoaFZlbGU1SlU2TUUzbU52bUx3OHlpZDZmMmUvRGxzYTlObXpybVYxdUFu?=
- =?utf-8?B?Rks2WHUzTU9ueENnK3ppbzVFRjRqbEJOZzUvZHlRNXgrTjB2N2VIaVJaU0t3?=
- =?utf-8?B?Sy90S3lYS1hKeUo1ekx4UUtTRmNmelB6VytLRC9CWXplU1pMNXhjYVlhY3Vu?=
- =?utf-8?B?V2h3b0EwNTcwT28valdYamY2RkxlakJsTkdSMHBGVlgzRis3eVdnN2tONER1?=
- =?utf-8?B?ODJyeVhhZTJ3NWNhNWhsV1JRL0RPbmhROHpSL0laOHlKT2FqT0w3OVRxRnQ4?=
- =?utf-8?B?ZUo1QWsvNWRKK2FQTDJIUFAwdHZLaW9OcDZyNHN1L0V6UWc4ZE1ZR3N5RzRY?=
- =?utf-8?B?Y1dkVFltMW5lUHFsUE5wT0RRSSsvTHIxV0ZrWlhaZU5BZnBudWF5TE9ScXdp?=
- =?utf-8?B?d1ZPMDQ1YjhIQjNPTUU0RldZQ2FId0JEbE9qUGZIaUp2TGpRT3NQN0VvS2Vo?=
- =?utf-8?B?TEo2eGM2ejhRbnNKYnp1OUhHSjZlUHZSaURVVVIzZEkvbndzOXNPUC81VDcx?=
- =?utf-8?B?QUo2eUxQSGRHdTBpcmJRSHk5YVlEMWJIYzFlQnBPTXJXbXZNZzg5Rk9NL0p4?=
- =?utf-8?B?UUQ3amNOUXFVVEFDNTFVSG80V29PT1YwcFMwQyt4WWtJSEdxTEpNVkpwRkcr?=
- =?utf-8?B?eUttZVBTSzcrUmxuYmJrVDZtSUVaMVdRQTNVZWptaVNwSlFCNXllaDFydmts?=
- =?utf-8?B?T1FiRnowMjlmKzZVQkRFUTFnbm9oak9hd1NVdTZ6Y2cvNitZMWVqU0VyNWRF?=
- =?utf-8?B?Q1JScjFORmlEVXdRZTlzSWJNNTJocDNDTHQvNGJqQ1AvRFRvU3NFeDRvbzlw?=
- =?utf-8?B?elkwRlRoUnYzY2lpcFFDUUdSUFlvRWdGdFd2eElkTGJkbUsyL01OMFNXU21R?=
- =?utf-8?B?ZHlYbHdRdC82bTZsT3A3SjlEV3ljUFpsbGV6ZUJSTDJpNVZOY2c4Vk0rc1FU?=
- =?utf-8?B?SWpzUUlGZzZxb1JaMEMrV0ltRUR1QVBOdEt3VkdWUU1QbnZWa3R0VXRRek5T?=
- =?utf-8?B?SmFnYjZDeUN4U0p1Unh4MGZjbVBrNytYV1RsOE90SW5TVEtRWTdWR3E5ZUhQ?=
- =?utf-8?B?N2hob3c2KzhkdnRwZ1lVTUs3NC8vUkhha2pmRkJMcS9zRTB4UjBNeEx5Z0pj?=
- =?utf-8?Q?UrOO/8/znsTEfvAeRmOptmcG2?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F67C1C07D3;
+	Thu, 21 Nov 2024 20:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732222312; cv=none; b=c3jrRErQMK+ClMqzNZx1tpldAG79HJdzG13Vq/qYfw/4arO9rh7xhRL2Vr4tqY9aWIQ0uVBiiT1AeCFVvjZnFpRTfje35e3qbT60BbP97Br7qXGtE9S3SeBQJtSb6qG0s5vpG8OKvBw0qtucU9wZIpI2shNL9i3MQqgxAEFTc+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732222312; c=relaxed/simple;
+	bh=taT9ePeQrxhiHDut79dVzLrgGpr1nEZJDb/ox09Aocs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RXVhKkd52/fySjIVPUUsFoRoEAKU34DoHjE3lU5GDtxLMHDxKT5vslge1/3d6VoQpCAeTG89ZbpjSPc43KGu3uv0pJiMpzF21owO6KDRM8IB7+CTAw85wa9CFBTxlaw1XF05QVn4lohNBWs3qN5nWuTEds99CAXFarMj7owdnO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KpnQ65JT; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732222310; x=1763758310;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=taT9ePeQrxhiHDut79dVzLrgGpr1nEZJDb/ox09Aocs=;
+  b=KpnQ65JTltTHjUcr7KH+HlGGzHUeWERuhw9LyckEcY/gOSe7WJ/HO86V
+   fB3U/GLTz3gxs/Lxy7giGwbTa0vQ8RGqwcPshIVrwXsDzS54HSeM71bPU
+   tMj0F5Xa2n3zqnegDd5A6sCcgrA8DsfcXUyR7VsAtVZjz58X8dI3b6jmp
+   KMqU4GJdp3K5MI+etRr1L6exs2ucChWDsfFnNc/Sgwb5MnPiI2fcpxdBf
+   kbeX0odIeILF/3rXXaM6ToHC+MSSv/30zSxSJhBJdWlhM9whwCXpRjpli
+   vWOsWH8aba/vhquhPWB3ot7ZaO7CcK7IjAric1PHSwZJo8vuiE3c/nd12
+   g==;
+X-CSE-ConnectionGUID: ohIYHGjWT9G4TIF5Gcy4JQ==
+X-CSE-MsgGUID: sp2A029VSRiFlo74oiLmUA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32508676"
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="32508676"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 12:51:50 -0800
+X-CSE-ConnectionGUID: uDyqpQcJSv64qC4vtqakSQ==
+X-CSE-MsgGUID: Z0WAiq0sRcacnmPMNs7c/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
+   d="scan'208";a="90009499"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 21 Nov 2024 12:51:47 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEE9R-0003LD-17;
+	Thu, 21 Nov 2024 20:51:45 +0000
+Date: Fri, 22 Nov 2024 04:51:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dan Carpenter <error27@gmail.com>, Kees Cook <kees@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] overflow: improve size_add/mul for 32bit systems
+Message-ID: <202411220409.0vrV1mjl-lkp@intel.com>
+References: <ebdae636-11f3-4f02-a158-f15bbed2847f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	YMp4S3Y1wLSQkh6a9Fa3g+dtNQRGfSHUYZ8pYl2+Hb3NDxrNNUkg7rC7mGQFKHeglNN2b05JWntwiW9pZ4vkPU6gYIEr55zJhqnCawNEJSdv1G6hCpIa88KhF3mnwxwUryHN8DBfYnvPOdhhFMIB0H6uKdPSoOYq3lO+HC3d+aXRMLtrWdTU61DByth3SUZbQcg36WPbDYN8Zw0WIBzZFe7ULczrd7IYnpBqZ+VrBqI5LdGZGKH9CbzlVP7WnT/Mi38xq/of2bxrJ+8jy7s8AIYYQ4M56c7ciCEEIBl+Pkucb6XHaMXY67DXpnZfOlelnDEBazA7gMvBzCY+iPy726JYP0034f6qBUyKWkrPhko5oB1fkFUN1z92tswtVwRcfrS8Jf+U+JaYvNh0QTCV/MJJcmcK1DGF7MeOzUNpHPl2zsrKYmcfULptKmGShbgvZdm79GVRrtIehCI2ZZG3JLnlBdJnuG2H8SviSF3NGEtqcyhzcyyuQXbLjotKBw84AzD+g3uAQQAZYTUkkWKUAiyo3Qw6wOUIUn3yJ5lsS/mjFIWZuV2ul0BT1TDrrm0WMnx8zZcICra70Pf6BIXL2/PuEC9ha6Q9SPE6fpcm1d5P9+Ai0Ab9cRotM7MK96RY
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4f610f9-b8a9-462d-fdfc-08dd0a6e2461
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2024 20:50:32.9276
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pQDBnUEZ31OJTkfrzQu4vBo8WaUYT/nlFAixNYifsLFUwtLhJFW6cucL8aLKb7dVOEPc+rL2rtAvEGIadGw4lQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR04MB9611
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebdae636-11f3-4f02-a158-f15bbed2847f@stanley.mountain>
 
-PiBIaSBBdnJpLA0KPiANCj4gSSBzZWUgdHdvIGNoYW5nZXMgaW4gdGhpcyBwYXRjaDogaW50cm9k
-dWN0aW9uIG9mIHRoZSBmdW5jdGlvbg0KPiB1ZnNoY2RfaGFzX3BlbmRpbmdfdGFza3MoKSBhbmQg
-cmVtb3ZhbCBvZiBoYmEtPmNsa19nYXRpbmcuYWN0aXZlX3JlcXMgZnJvbQ0KPiB1ZnNoY2RfaXNf
-dWZzX2Rldl9idXN5KCkuIFNob3VsZG4ndCB0aGlzIHBhdGNoIGJlIHNwbGl0IGludG8gdHdvIHBh
-dGNoZXMgLQ0KPiBvbmUgcGF0Y2ggcGVyIGNoYW5nZT8NCkRvbmUuDQoNClRoYW5rcywNCkF2cmkN
-Cg0KPiANCj4gVGhhbmtzLA0KPiANCj4gQmFydC4NCg==
+Hi Dan,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on kees/for-next/hardening]
+[also build test WARNING on kees/for-next/pstore kees/for-next/kspp linus/master v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dan-Carpenter/overflow-improve-size_add-mul-for-32bit-systems/20241121-124847
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
+patch link:    https://lore.kernel.org/r/ebdae636-11f3-4f02-a158-f15bbed2847f%40stanley.mountain
+patch subject: [PATCH] overflow: improve size_add/mul for 32bit systems
+config: arm-randconfig-004-20241122 (https://download.01.org/0day-ci/archive/20241122/202411220409.0vrV1mjl-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411220409.0vrV1mjl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411220409.0vrV1mjl-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/device.h:15,
+                    from include/linux/cdev.h:8,
+                    from include/linux/tty_driver.h:9,
+                    from include/linux/tty.h:9,
+                    from drivers/tty/serial/atmel_serial.c:12:
+   drivers/tty/serial/atmel_serial.c: In function 'atmel_prepare_rx_dma':
+>> drivers/tty/serial/atmel_serial.c:1214:36: warning: format '%zu' expects argument of type 'size_t', but argument 5 has type 'long unsigned int' [-Wformat=]
+    1214 |                 dev_dbg(port->dev, "%s: mapped %zu@%p to %pad\n", __func__,
+         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/dev_printk.h:139:49: note: in definition of macro 'dev_no_printk'
+     139 |                         _dev_printk(level, dev, fmt, ##__VA_ARGS__);    \
+         |                                                 ^~~
+   include/linux/dev_printk.h:171:40: note: in expansion of macro 'dev_fmt'
+     171 |         dev_no_printk(KERN_DEBUG, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                        ^~~~~~~
+   drivers/tty/serial/atmel_serial.c:1214:17: note: in expansion of macro 'dev_dbg'
+    1214 |                 dev_dbg(port->dev, "%s: mapped %zu@%p to %pad\n", __func__,
+         |                 ^~~~~~~
+   drivers/tty/serial/atmel_serial.c:1214:50: note: format string is defined here
+    1214 |                 dev_dbg(port->dev, "%s: mapped %zu@%p to %pad\n", __func__,
+         |                                                ~~^
+         |                                                  |
+         |                                                  unsigned int
+         |                                                %lu
+
+
+vim +1214 drivers/tty/serial/atmel_serial.c
+
+34df42f59a6022 Elen Song          2013-07-22  1177  
+34df42f59a6022 Elen Song          2013-07-22  1178  static int atmel_prepare_rx_dma(struct uart_port *port)
+34df42f59a6022 Elen Song          2013-07-22  1179  {
+34df42f59a6022 Elen Song          2013-07-22  1180  	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+c24d25317a7c6b Radu Pirea         2018-07-13  1181  	struct device *mfd_dev = port->dev->parent;
+34df42f59a6022 Elen Song          2013-07-22  1182  	struct dma_async_tx_descriptor *desc;
+34df42f59a6022 Elen Song          2013-07-22  1183  	dma_cap_mask_t		mask;
+34df42f59a6022 Elen Song          2013-07-22  1184  	struct dma_slave_config config;
+34df42f59a6022 Elen Song          2013-07-22  1185  	struct circ_buf		*ring;
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1186  	struct dma_chan *chan;
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1187) 	int ret;
+34df42f59a6022 Elen Song          2013-07-22  1188  
+34df42f59a6022 Elen Song          2013-07-22  1189  	ring = &atmel_port->rx_ring;
+34df42f59a6022 Elen Song          2013-07-22  1190  
+34df42f59a6022 Elen Song          2013-07-22  1191  	dma_cap_zero(mask);
+34df42f59a6022 Elen Song          2013-07-22  1192  	dma_cap_set(DMA_CYCLIC, mask);
+34df42f59a6022 Elen Song          2013-07-22  1193  
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1194  	chan = dma_request_chan(mfd_dev, "rx");
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1195  	if (IS_ERR(chan)) {
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1196  		atmel_port->chan_rx = NULL;
+34df42f59a6022 Elen Song          2013-07-22  1197  		goto chan_err;
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1198  	}
+ec9fc2cffa8d2f Christophe JAILLET 2023-11-19  1199  	atmel_port->chan_rx = chan;
+34df42f59a6022 Elen Song          2013-07-22  1200  	dev_info(port->dev, "using %s for rx DMA transfers\n",
+34df42f59a6022 Elen Song          2013-07-22  1201  		dma_chan_name(atmel_port->chan_rx));
+34df42f59a6022 Elen Song          2013-07-22  1202  
+34df42f59a6022 Elen Song          2013-07-22  1203  	spin_lock_init(&atmel_port->lock_rx);
+34df42f59a6022 Elen Song          2013-07-22  1204  	/* UART circular rx buffer is an aligned page. */
+2c277054104031 Leilei Zhao        2015-02-27  1205  	BUG_ON(!PAGE_ALIGNED(ring->buf));
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1206) 	atmel_port->rx_phys = dma_map_single(port->dev, ring->buf,
+12bedddb67520d Jiri Slaby (SUSE   2024-04-05  1207) 					     ATMEL_SERIAL_RX_SIZE,
+48479148a2f531 Wolfram Sang       2014-07-21  1208  					     DMA_FROM_DEVICE);
+34df42f59a6022 Elen Song          2013-07-22  1209  
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1210) 	if (dma_mapping_error(port->dev, atmel_port->rx_phys)) {
+34df42f59a6022 Elen Song          2013-07-22  1211  		dev_dbg(port->dev, "need to release resource of dma\n");
+34df42f59a6022 Elen Song          2013-07-22  1212  		goto chan_err;
+34df42f59a6022 Elen Song          2013-07-22  1213  	} else {
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05 @1214) 		dev_dbg(port->dev, "%s: mapped %zu@%p to %pad\n", __func__,
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1215) 			ATMEL_SERIAL_RX_SIZE, ring->buf, &atmel_port->rx_phys);
+34df42f59a6022 Elen Song          2013-07-22  1216  	}
+34df42f59a6022 Elen Song          2013-07-22  1217  
+34df42f59a6022 Elen Song          2013-07-22  1218  	/* Configure the slave DMA */
+34df42f59a6022 Elen Song          2013-07-22  1219  	memset(&config, 0, sizeof(config));
+34df42f59a6022 Elen Song          2013-07-22  1220  	config.direction = DMA_DEV_TO_MEM;
+34df42f59a6022 Elen Song          2013-07-22  1221  	config.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
+34df42f59a6022 Elen Song          2013-07-22  1222  	config.src_addr = port->mapbase + ATMEL_US_RHR;
+a8d4e016379023 Ludovic Desroches  2015-04-16  1223  	config.src_maxburst = 1;
+34df42f59a6022 Elen Song          2013-07-22  1224  
+5483c10e03c6e3 Maxime Ripard      2014-10-22  1225  	ret = dmaengine_slave_config(atmel_port->chan_rx,
+5483c10e03c6e3 Maxime Ripard      2014-10-22  1226  				     &config);
+34df42f59a6022 Elen Song          2013-07-22  1227  	if (ret) {
+34df42f59a6022 Elen Song          2013-07-22  1228  		dev_err(port->dev, "DMA rx slave configuration failed\n");
+34df42f59a6022 Elen Song          2013-07-22  1229  		goto chan_err;
+34df42f59a6022 Elen Song          2013-07-22  1230  	}
+34df42f59a6022 Elen Song          2013-07-22  1231  	/*
+34df42f59a6022 Elen Song          2013-07-22  1232  	 * Prepare a cyclic dma transfer, assign 2 descriptors,
+34df42f59a6022 Elen Song          2013-07-22  1233  	 * each one is half ring buffer size
+34df42f59a6022 Elen Song          2013-07-22  1234  	 */
+34df42f59a6022 Elen Song          2013-07-22  1235  	desc = dmaengine_prep_dma_cyclic(atmel_port->chan_rx,
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1236) 					 atmel_port->rx_phys,
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1237) 					 ATMEL_SERIAL_RX_SIZE,
+e51c3e1d236f8b Jiri Slaby (SUSE   2024-04-05  1238) 					 ATMEL_SERIAL_RX_SIZE / 2,
+34df42f59a6022 Elen Song          2013-07-22  1239  					 DMA_DEV_TO_MEM,
+34df42f59a6022 Elen Song          2013-07-22  1240  					 DMA_PREP_INTERRUPT);
+c85be041065c0b Kangjie Lu         2019-03-15  1241  	if (!desc) {
+c85be041065c0b Kangjie Lu         2019-03-15  1242  		dev_err(port->dev, "Preparing DMA cyclic failed\n");
+c85be041065c0b Kangjie Lu         2019-03-15  1243  		goto chan_err;
+c85be041065c0b Kangjie Lu         2019-03-15  1244  	}
+34df42f59a6022 Elen Song          2013-07-22  1245  	desc->callback = atmel_complete_rx_dma;
+34df42f59a6022 Elen Song          2013-07-22  1246  	desc->callback_param = port;
+34df42f59a6022 Elen Song          2013-07-22  1247  	atmel_port->desc_rx = desc;
+34df42f59a6022 Elen Song          2013-07-22  1248  	atmel_port->cookie_rx = dmaengine_submit(desc);
+1e67bd2b8cb90b Tudor Ambarus      2021-11-25  1249  	if (dma_submit_error(atmel_port->cookie_rx)) {
+1e67bd2b8cb90b Tudor Ambarus      2021-11-25  1250  		dev_err(port->dev, "dma_submit_error %d\n",
+1e67bd2b8cb90b Tudor Ambarus      2021-11-25  1251  			atmel_port->cookie_rx);
+1e67bd2b8cb90b Tudor Ambarus      2021-11-25  1252  		goto chan_err;
+1e67bd2b8cb90b Tudor Ambarus      2021-11-25  1253  	}
+34df42f59a6022 Elen Song          2013-07-22  1254  
+4f4b9b5895614e Tudor Ambarus      2021-11-25  1255  	dma_async_issue_pending(atmel_port->chan_rx);
+4f4b9b5895614e Tudor Ambarus      2021-11-25  1256  
+34df42f59a6022 Elen Song          2013-07-22  1257  	return 0;
+34df42f59a6022 Elen Song          2013-07-22  1258  
+34df42f59a6022 Elen Song          2013-07-22  1259  chan_err:
+34df42f59a6022 Elen Song          2013-07-22  1260  	dev_err(port->dev, "RX channel not available, switch to pio\n");
+36ce7cff4f9361 Zheng Bin          2020-01-13  1261  	atmel_port->use_dma_rx = false;
+34df42f59a6022 Elen Song          2013-07-22  1262  	if (atmel_port->chan_rx)
+34df42f59a6022 Elen Song          2013-07-22  1263  		atmel_release_rx_dma(port);
+34df42f59a6022 Elen Song          2013-07-22  1264  	return -EINVAL;
+34df42f59a6022 Elen Song          2013-07-22  1265  }
+34df42f59a6022 Elen Song          2013-07-22  1266  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
