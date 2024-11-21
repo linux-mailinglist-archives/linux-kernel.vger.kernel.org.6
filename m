@@ -1,92 +1,174 @@
-Return-Path: <linux-kernel+bounces-416593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281DF9D4752
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:47:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033759D4756
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:50:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25A5B21892
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7BBE2846C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 05:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0DC1531E1;
-	Thu, 21 Nov 2024 05:47:02 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545CC17C222;
+	Thu, 21 Nov 2024 05:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zv8ersnr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126AE27447
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 05:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04CB126F1E;
+	Thu, 21 Nov 2024 05:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732168022; cv=none; b=lYUrAcWTG0KlKr9AjAewsNEGfjGkbrDT/BAHT52HfIMXphP+1/9ivRVxiH8mJ6xx6oQvT6Et/0AFzdkisSy71FOkWiUilD/LXGEJhS17LiRx38D+8rQ0WksdCqPkIdXdEwD/iKng1VMrq8+Gx4TJ9LQnPdJ9RH1LtZ9Bac2wW3k=
+	t=1732168195; cv=none; b=QPESoW0WQhfPNa/2iopnPHaasbXCjugva6yrQk1rhSQjGpKblXoTbzyGMhyB8pVLgfIsTJoaEBcMGyXNmj3Ttc1Fd8bybodm30GyDSZjyVr0TND30mwDHgQ8lsKrOiRdHAWaNh+vy9DFxZahgk/xJt9eMP0tc0NBTEDUiqXKM1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732168022; c=relaxed/simple;
-	bh=FMRMI7zjFYV296bX8HxzXoquya3ZDGU2mdluRYiyw5M=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cu/u8wj1BNORJPWSxzzqkB7vgWfRxglxgoKGBmTcORJdv48GjvqBjCuJooBt2zssp5WBc+DCXs2fND4BGmywuYK7+XCvyqb8yytVdcEvoRra2QauPqtQc43nMKc/yoKjsQzgpWY36UQiyvSoybOL19Aq61tDCxuNEeZ6+POkdnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so5764545ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:47:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732168020; x=1732772820;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vvdiQD0oJRFfhZlIEFX3WUb8SSdre8hcUH5hj5vTFQ4=;
-        b=eczTLqCFLLnxqCWeuuQTiX31N17mQclQPpz39vLFylu8BlZj1MjjmTTx/Y7pvYV23h
-         ZHOlX6mC8DSBYkilXKslAsknel7pf41voB6JvKESJwhs3ySIf0WD+GyGM+9AbN8d/5D2
-         gn1QsiTAgUaCqONm3WzcmHvCg/QDJRV+7CdCsN0jXJ0D4wv3m3bcbMbV4Tp2Ai7Hd2cd
-         cCb1TANykrJSBSjZZYyZG49ubTm1tF/+esfOStZvfqn7Ai1BFBqR/PXeEaE9S4UY184t
-         iIMJGy4C1MiENxxJ6YayhgnJOpUT3QjPtz42wNYJmezLrTJML2vaWmZxWQVE4PRtbn2C
-         gTFw==
-X-Gm-Message-State: AOJu0YxhizBrouv0BAYxUkZGjfTWIq5KB/5aVa/6VqM3Hhw0gfuNSmwT
-	gyB8NQZwAqJgUvfiazeefYMczD0B4yOgyS+pnTa9IJceETBWxq0hmHEXquDXxIU+j1kScqEZ6qy
-	6jXWdpHs6AwbG3hUSZUkHXl4BNkIenoNQIYbhTnXyD8xaWsnP/WRo6a0=
-X-Google-Smtp-Source: AGHT+IGRUSxjiEv0CO77xh724EFIH1i+LMQbdaLBba3Xj17Fy1/gPZtF96UbOwIbN2PSXM0VjX91sj1Tzy85PH7/L83gf21dsSOM
+	s=arc-20240116; t=1732168195; c=relaxed/simple;
+	bh=ftB/0JAA7nn+qWIsDHXXMq9e0XJWTR9zvGVDhuL+05s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3hLjZiXpdF9ezHJe5NrEcFSgZku2HrwLbBkWWg2n1BWlTWfBOb853r7AlTVzVRFlXsxi08fSwgN7hVbGJ89JK6kKcIOFDj+XXyIDt+603ojmya0JnTExrMoG3Eg/EHu0Ki5Z8rRQ5XKEzeoYTjBTRjtnwZzqMTyru2EH1yNYZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zv8ersnr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AEBAC4CECC;
+	Thu, 21 Nov 2024 05:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732168195;
+	bh=ftB/0JAA7nn+qWIsDHXXMq9e0XJWTR9zvGVDhuL+05s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zv8ersnrqqB0CgVGSt3xV+p+q4ohPQ1MAugTrbtGk+1bm4Ew9X0o/OK65baXjRyZS
+	 xHuetImwtSznEDZD0+97ll/BzwLFYcW8kOWIw/zj1zV/6/izrONB0lF3aObPWWRD85
+	 8wyUkt04ESLm1l6eDzxfL6CCUiId9py6Or1QdjIiXR/nJAeoJeoKzhEY+WI0CxRS6k
+	 qah1zEZt/FYSpRoi3ZntcGRCvh3ZYzQ1m4lYDTw2TZRPrfxdWTc4c0KMnUNHZElGha
+	 diwoAg5P8GfqMhIhKMTAgQV7JcYew6950blgCSpSthojvZDsuwq1800PCN2bJ6a/82
+	 XRoxuGRp0jYFQ==
+Date: Wed, 20 Nov 2024 21:49:52 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf tests: Fix hwmon parsing with PMU name test
+Message-ID: <Zz7KAAG2pHhCg-Dx@google.com>
+References: <20241121000955.536930-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18cf:b0:3a7:7558:a6ea with SMTP id
- e9e14a558f8ab-3a786486002mr70542385ab.10.1732168020191; Wed, 20 Nov 2024
- 21:47:00 -0800 (PST)
-Date: Wed, 20 Nov 2024 21:47:00 -0800
-In-Reply-To: <673e9f03.050a0220.363a1b.0081.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673ec954.050a0220.3c9d61.0169.GAE@google.com>
-Subject: Re: [syzbot] Re: KASAN: slab-out-of-bounds Read in led_tg_check()
-From: syzbot <syzbot+6c8215822f35fdb35667@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241121000955.536930-1-irogers@google.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Nov 20, 2024 at 04:09:55PM -0800, Ian Rogers wrote:
+> Incorrectly the hwmon with PMU name test didn't pass "true". Fix and
+> address issue with hwmon_pmu__config_terms needing to load events - a
+> load bearing assert fired. Also fix missing list deletion when putting
+> the hwmon test PMU and lower some debug warnings to make the hwmon PMU
+> less spammy in verbose mode.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-***
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-Subject: Re: KASAN: slab-out-of-bounds Read in led_tg_check()
-Author: dmantipov@yandex.ru
+Thanks,
+Namhyung
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git dd7207838d38780b51e4690ee508ab2d5057e099
-
-diff --git a/net/netfilter/xt_LED.c b/net/netfilter/xt_LED.c
-index f7b0286d106a..8a80fd76fe45 100644
---- a/net/netfilter/xt_LED.c
-+++ b/net/netfilter/xt_LED.c
-@@ -96,7 +96,9 @@ static int led_tg_check(const struct xt_tgchk_param *par)
- 	struct xt_led_info_internal *ledinternal;
- 	int err;
- 
--	if (ledinfo->id[0] == '\0')
-+	/* Bail out if empty string or not a string at all. */
-+	if (ledinfo->id[0] == '\0' ||
-+	    !memchr(ledinfo->id, '\0', sizeof(ledinfo->id)))
- 		return -EINVAL;
- 
- 	mutex_lock(&xt_led_mutex);
+> ---
+>  tools/perf/tests/hwmon_pmu.c |  5 +++--
+>  tools/perf/util/hwmon_pmu.c  | 16 ++++++++++------
+>  2 files changed, 13 insertions(+), 8 deletions(-)
+> 
+> diff --git a/tools/perf/tests/hwmon_pmu.c b/tools/perf/tests/hwmon_pmu.c
+> index d8bc71b51599..b4656529146e 100644
+> --- a/tools/perf/tests/hwmon_pmu.c
+> +++ b/tools/perf/tests/hwmon_pmu.c
+> @@ -41,6 +41,7 @@ static int test_pmu_put(const char *dir, struct perf_pmu *hwm)
+>  	if (ret)
+>  		pr_err("Failure to \"%s\"\n", buf);
+>  
+> +	list_del(&hwm->list);
+>  	perf_pmu__delete(hwm);
+>  	return ret;
+>  }
+> @@ -147,7 +148,7 @@ static int do_test(size_t i, bool with_pmu, bool with_alias)
+>  	}
+>  
+>  	if (with_pmu)
+> -		snprintf(str, sizeof(str), "/%s/", test_event);
+> +		snprintf(str, sizeof(str), "hwmon_a_test_hwmon_pmu/%s/", test_event);
+>  	else
+>  		strlcpy(str, test_event, sizeof(str));
+>  
+> @@ -230,7 +231,7 @@ static int test__hwmon_pmu_without_pmu(struct test_suite *test __maybe_unused,
+>  static int test__hwmon_pmu_with_pmu(struct test_suite *test __maybe_unused,
+>  				   int subtest __maybe_unused)
+>  {
+> -	return test__hwmon_pmu(/*with_pmu=*/false);
+> +	return test__hwmon_pmu(/*with_pmu=*/true);
+>  }
+>  
+>  static int test__parse_hwmon_filename(struct test_suite *test __maybe_unused,
+> diff --git a/tools/perf/util/hwmon_pmu.c b/tools/perf/util/hwmon_pmu.c
+> index 4d9d6f405434..e61429b38ba7 100644
+> --- a/tools/perf/util/hwmon_pmu.c
+> +++ b/tools/perf/util/hwmon_pmu.c
+> @@ -197,13 +197,13 @@ bool parse_hwmon_filename(const char *filename,
+>  		}
+>  	}
+>  	if (fn_item == NULL || fn_type[0] == '\0' || (item != NULL && fn_item[0] == '\0')) {
+> -		pr_debug("hwmon_pmu: not a hwmon file '%s'\n", filename);
+> +		pr_debug3("hwmon_pmu: not a hwmon file '%s'\n", filename);
+>  		return false;
+>  	}
+>  	elem = bsearch(&fn_type, hwmon_type_strs + 1, ARRAY_SIZE(hwmon_type_strs) - 1,
+>  		       sizeof(hwmon_type_strs[0]), hwmon_strcmp);
+>  	if (!elem) {
+> -		pr_debug("hwmon_pmu: not a hwmon type '%s' in file name '%s'\n",
+> +		pr_debug3("hwmon_pmu: not a hwmon type '%s' in file name '%s'\n",
+>  			 fn_type, filename);
+>  		return false;
+>  	}
+> @@ -223,7 +223,7 @@ bool parse_hwmon_filename(const char *filename,
+>  	elem = bsearch(fn_item, hwmon_item_strs + 1, ARRAY_SIZE(hwmon_item_strs) - 1,
+>  		       sizeof(hwmon_item_strs[0]), hwmon_strcmp);
+>  	if (!elem) {
+> -		pr_debug("hwmon_pmu: not a hwmon item '%s' in file name '%s'\n",
+> +		pr_debug3("hwmon_pmu: not a hwmon item '%s' in file name '%s'\n",
+>  			 fn_item, filename);
+>  		return false;
+>  	}
+> @@ -281,7 +281,7 @@ static int hwmon_pmu__read_events(struct hwmon_pmu *pmu)
+>  			continue;
+>  
+>  		if (!parse_hwmon_filename(ent->d_name, &type, &number, &item, &alarm)) {
+> -			pr_debug("Not a hwmon file '%s'\n", ent->d_name);
+> +			pr_debug3("Not a hwmon file '%s'\n", ent->d_name);
+>  			continue;
+>  		}
+>  		key.num = number;
+> @@ -653,10 +653,14 @@ int hwmon_pmu__config_terms(const struct perf_pmu *pmu,
+>  			    struct parse_events_terms *terms,
+>  			    struct parse_events_error *err)
+>  {
+> -	const struct hwmon_pmu *hwm = container_of(pmu, struct hwmon_pmu, pmu);
+> +	struct hwmon_pmu *hwm = container_of(pmu, struct hwmon_pmu, pmu);
+>  	struct parse_events_term *term;
+> +	int ret;
+> +
+> +	ret = hwmon_pmu__read_events(hwm);
+> +	if (ret)
+> +		return ret;
+>  
+> -	assert(pmu->sysfs_aliases_loaded);
+>  	list_for_each_entry(term, &terms->terms, list) {
+>  		if (hwmon_pmu__config_term(hwm, attr, term, err))
+>  			return -EINVAL;
+> -- 
+> 2.47.0.371.ga323438b13-goog
+> 
 
