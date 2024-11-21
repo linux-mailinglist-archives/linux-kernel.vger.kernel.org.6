@@ -1,134 +1,139 @@
-Return-Path: <linux-kernel+bounces-417300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C0669D5233
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:59:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5599A9D5235
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:59:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C08C283249
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02B731F22AA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5079D1AAE06;
-	Thu, 21 Nov 2024 17:59:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C5F1C232B;
+	Thu, 21 Nov 2024 17:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="B3tAmkmn"
-Received: from mail-40138.protonmail.ch (mail-40138.protonmail.ch [185.70.40.138])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="oxE8joED"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E096CDAF
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CED36CDAF;
+	Thu, 21 Nov 2024 17:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732211957; cv=none; b=XzNQ2sOsFvXbIm+wGOs+obF7jSBRdzUVv2l6sC4pZCi8WlweHKVp5hndx1HbPewMK0o1THgn7poRzxj9LwpwSadYqsU6ToyuEr8zng5R70cbLAtXbkeNCVPXUB0KHwoheM/2ZkxkrOvG33yHGIOAorGMRs01aNxdbR7rZdav8ng=
+	t=1732211964; cv=none; b=S8VeNOmsK14ITfCtUB6xDNfu5AMezOwt+FPyln3A4ohE/Is8hlbc/S6zgBWdQyogJShZ1UJJC818K39T06ffPW1OzXa3B0y/AuAVEuR6e/yZGDE4mVLEMcR44L4J4neH1684phoJHR7uHJRCJ6qBNWD+MqaDqRgdJryYpuLMgJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732211957; c=relaxed/simple;
-	bh=ClE+5TJLmK6yj9O5XdCVALxnETZTAapG9G+AOIgVqmw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pyg084LQzwkKmWIwxWjtOMIUocT4i5BdQXYYy4fsfHPDYCjM628kXZjCc9ndAOM9XTozrPWRNNlld6jD02oRI7JF0Tg/FTj4sfBR0BnAwDrhkzzqzNCqCof40V+JxBH3eRXL8fLGiBu1RnGvy01qvEcP1xuOmDMun2CKMWAgSBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=B3tAmkmn; arc=none smtp.client-ip=185.70.40.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1732211947; x=1732471147;
-	bh=S2adombCveWtynb5JK0rPvmIBtpUZOSmldP70Ex5d0Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=B3tAmkmn30hNi1bn1F5Sh6/HBzPiinlYacSlPF184+1L2/6ZSYbg5JCVKTwFk4erR
-	 8+pkiP6kez1+NripJ8u1bvSdKJW1yb3M3usnwB6Q2odXnk8xNwhOGn5e8aQEOVEPNy
-	 zvpcF3W1XGR2qMdBhC4D0sEl2KbvYs6y366J7TLFwR2jopB6allcoBEpMP+qviTCKK
-	 /v8lYIm23wVtHABpCTGwJXdDxtZC/jVe3fsc4QsN7fa77kGC9N2grYqJve1XDX8kYy
-	 iyxVL9qJaFAEzwN8UvUYK/0IDnKBwHJ1dJ25lJIyc2tZil6PpIKFSImFVfG7IHEluK
-	 ulz5fxqyYqxHw==
-Date: Thu, 21 Nov 2024 17:59:02 +0000
-To: greyxor@protonmail.com
-From: Gregoire Stein <greyxor@protonmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org
-Subject: [PATCH] Bluetooth: btusb: Add one more ID 0x0489:0xe10a for Qualcomm WCN785x
-Message-ID: <20241121175851.137414-1-greyxor@protonmail.com>
-In-Reply-To: <20241121163259.180589-1-greyxor@protonmail.com>
-References: <20241121163259.180589-1-greyxor@protonmail.com>
-Feedback-ID: 1917010:user:proton
-X-Pm-Message-ID: d4108b9efbb2f7bde0c3c87748ef9a971eb360db
+	s=arc-20240116; t=1732211964; c=relaxed/simple;
+	bh=zeFYhMICWHfr3eAXY+whaVGKw3m24BGN4aGc9t95zps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FBQgLl160iRl4s4Qee5ypl3AlSxi7HDA46u2xNfl2RyJb/RBhqZ5whssV5wBnnFMVBSmIQ7bEQ9LmuuPo5wYkXb81uMBPF7ukBRGlRcrbQwqaH3nJl5LbB3R4HGMdJEY0riFDt212A+YQgy+axUkjJhRxC9lnk8eHpFSJPJYE60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=oxE8joED; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732211963; x=1763747963;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=Q6L+gDMY6SSVxys36wX+g9uo/y0GD3cJbqHoxBuTNeE=;
+  b=oxE8joEDG58fGVYPIaBBZM7OJ9QEWi6GgX5y9fne1F/swwcf23mWE7JH
+   WGuDa82vwV2mony3XScpfAal7MQy1HYxb8VMR8kb6WdyF6yTPstZYEuHz
+   Cyaou0RW7loZubYCifYCDg3e1iSftVIbkgfHboCaiX9gkQFytjKb6QUHr
+   E=;
+X-IronPort-AV: E=Sophos;i="6.12,173,1728950400"; 
+   d="scan'208";a="149683278"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 17:59:20 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:60036]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.10.207:2525] with esmtp (Farcaster)
+ id c63636fb-6fa6-4115-94d2-2afc1b700741; Thu, 21 Nov 2024 17:59:19 +0000 (UTC)
+X-Farcaster-Flow-ID: c63636fb-6fa6-4115-94d2-2afc1b700741
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 21 Nov 2024 17:59:18 +0000
+Received: from [192.168.3.109] (10.106.83.32) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Thu, 21 Nov 2024
+ 17:59:17 +0000
+Message-ID: <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+Date: Thu, 21 Nov 2024 17:59:16 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Add an additional entry with ID (0x0489, 0xe10a) to the usb_device_id
-table to support the Qualcomm WCN785x.
-The device information from /sys/kernel/debug/usb/devices is provided below=
-:
-
-T:  Bus=3D01 Lev=3D01 Prnt=3D01 Port=3D04 Cnt=3D01 Dev#=3D  2 Spd=3D12   Mx=
-Ch=3D 0
-D:  Ver=3D 1.10 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
-P:  Vendor=3D0489 ProdID=3De10a Rev=3D 0.01
-C:* #Ifs=3D 2 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
-I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D1ms
-E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
-E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D  64 Ivl=3D0ms
-I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
-I:  If#=3D 1 Alt=3D 7 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
-=3Dbtusb
-E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
-E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  65 Ivl=3D1ms
-
-Signed-off-by: Gregoire Stein <greyxor@protonmail.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 279fe6c115fa..b52552a5c13d 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -377,6 +377,8 @@ static const struct usb_device_id quirks_table[] =3D {
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
- =09{ USB_DEVICE(0x13d3, 0x3623), .driver_info =3D BTUSB_QCA_WCN6855 |
- =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
-+=09{ USB_DEVICE(0x0489, 0xe10a), .driver_info =3D BTUSB_QCA_WCN6855 |
-+=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH },
-=20
- =09/* Broadcom BCM2035 */
- =09{ USB_DEVICE(0x0a5c, 0x2009), .driver_info =3D BTUSB_BCM92035 },
---=20
-2.47.0
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+To: Sean Christopherson <seanjc@google.com>
+CC: <pbonzini@redhat.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <david@redhat.com>,
+	<peterx@redhat.com>, <oleg@redhat.com>, <vkuznets@redhat.com>,
+	<gshan@redhat.com>, <graf@amazon.de>, <jgowans@amazon.com>,
+	<roypat@amazon.co.uk>, <derekmn@amazon.com>, <nsaenz@amazon.es>,
+	<xmarcalx@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+ <ZzyRcQmxA3SiEHXT@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
+ ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
+ abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
+In-Reply-To: <ZzyRcQmxA3SiEHXT@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D010EUA002.ant.amazon.com (10.252.50.108) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
+
+On 19/11/2024 13:24, Sean Christopherson wrote:
+>> This patch avoids the overhead above in case of kernel-originated faults
+> 
+> Please avoid "This patch".
+
+Ack, thanks.
+
+>> by moving the `kvm_can_deliver_async_pf` check from
+>> `kvm_arch_async_page_not_present` to `__kvm_faultin_pfn`.
+>>
+>> Note that the existing check `kvm_can_do_async_pf` already calls
+>> `kvm_can_deliver_async_pf` internally, however it only does that if the
+>> `kvm_hlt_in_guest` check is true, ie userspace requested KVM not to exit
+>> on guest halts via `KVM_CAP_X86_DISABLE_EXITS`.  In that case the code
+>> proceeds with the async fault processing with the following
+>> justification in 1dfdb45ec510ba27e366878f97484e9c9e728902 ("KVM: x86:
+>> clean up conditions for asynchronous page fault handling"):
+>>
+>> "Even when asynchronous page fault is disabled, KVM does not want to pause
+>> the host if a guest triggers a page fault; instead it will put it into
+>> an artificial HLT state that allows running other host processes while
+>> allowing interrupt delivery into the guest."
+> 
+> None of this justifies breaking host-side, non-paravirt async page faults.  If a
+> vCPU hits a missing page, KVM can schedule out the vCPU and let something else
+> run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
+> even enter a low enough sleep state to let other cores turbo a wee bit.
+> 
+> I have no objection to disabling host async page faults, e.g. it's probably a net
+> negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
+> userspace.
+
+That's a good point, I didn't think about it.  The async work would 
+still need to execute somewhere in that case (or sleep in GUP until the 
+page is available).  If processing the fault synchronously, the vCPU 
+thread can also sleep in the same way freeing the pCPU for something 
+else, so the amount of work to be done looks equivalent (please correct 
+me otherwise).  What's the net gain of moving that to an async work in 
+the host async fault case?  "while allowing interrupt delivery into the 
+guest." -- is this the main advantage?
 
