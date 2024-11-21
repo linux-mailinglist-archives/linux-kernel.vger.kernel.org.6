@@ -1,203 +1,550 @@
-Return-Path: <linux-kernel+bounces-417117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F339D4F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:55:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0EE9D4F4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA4B284C44
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:55:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1592B292EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301C1DE3D1;
-	Thu, 21 Nov 2024 14:49:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D091F1ABEB4;
-	Thu, 21 Nov 2024 14:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABEA1DD0DC;
+	Thu, 21 Nov 2024 14:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JIAk+rly";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQUce8H3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C715D1DBB13;
+	Thu, 21 Nov 2024 14:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732200588; cv=none; b=uZNqgtEvZWdIFlq2aDzxB0r35fL/o2Z5mqjalBMSkYn2/SYuxxOM2kUt+o+znz+THhvD4SpDOUcMXzWW0XNSJ/+WHZ7VvRFx1vVlyOpoog8e5Q5VzogbyqYYDIOME9EffV0Spg1pHqBTr6O3eOkyVjNIMib+4o8SuiMxk3EZtyg=
+	t=1732200640; cv=none; b=p4s1dD2bMl9XC169r+pXDNy2mQqtgwrCF/Xj690kEjfFtWiXxOM3RT1BL9fx09JRihqRoXAGuopXtcugOM43MHLeCKDcUspIvWPwvxOTrMqSexE+hNfZEfeL/jkI94VYaaD+LwYDSU5l/d6+heIA+3elewAiqAjfc3lwHkHqEXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732200588; c=relaxed/simple;
-	bh=HX6kL5Cp7xP9ixBQ+OnEw7ZCJCn5c6NB942vvpiUZnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gv/inmukaWznuwX5oEq8oLehLD5GGP8/Qq0nHwcf2+EkTbLef48EowZzKxvDJKinoHAWj6IgiVKyfePukuJgg3rnAhGyfR/FaXZumT41/gjslDvXJHfJ2lQASMQ1ufSDUBdOAJEIKPgh4KkeF0cXVRpN47CwlmQVqPhrg7AWZ3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F191C12FC;
-	Thu, 21 Nov 2024 06:50:13 -0800 (PST)
-Received: from [10.1.26.55] (010265703453.arm.com [10.1.26.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC0743F5A1;
-	Thu, 21 Nov 2024 06:49:40 -0800 (PST)
-Message-ID: <57477eba-ef6a-454b-85d1-d0244f6116d1@arm.com>
-Date: Thu, 21 Nov 2024 14:49:39 +0000
+	s=arc-20240116; t=1732200640; c=relaxed/simple;
+	bh=pU6rOgQVh/c7d/d9Ala3NLfLk14SMZaXD2UvOSiLR+Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=p3q3VC0yTfLMJsYFm9HguPw8n8JiyIrG8gIIi2BHDcZywe0k18nquXB7iP6xz0eIt89iE5YJlOlN6ZdBDAjs5Ap5quLFemesIg+pw3T+ZyGmJimgOaQKUYOaLqg4ADeZNk9siWDl/zB6xBsTPmkUn0gpGLTAC6wA2hnssYXjwUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JIAk+rly; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQUce8H3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732200635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=USBCcfi6bUWUlnyPWKrgwcW59LiWlwxWCde2Nd+xdT4=;
+	b=JIAk+rlyNjFUsLo+9I7hWTuJvovuPARwL8EDSe7bWoG+yW7xxF8ayEAdqot51IPeLYas00
+	6Zrd8mDOMXzBk3sXxi/iOue3ebenafj1QsKFbEGuTmfnDVTnxwszfT6K5DahUf6MzF1TRL
+	e4DFd3OUHCaUpDm9zZz1dmiKQSafWM+DeYYjrrNvP78V2cdLm8TwOClllArAq2ZUoMpZ8Z
+	gwS5MCPGaxrXj/L0npUDCdIN13QoAMPW1OI7KKSwH0jkgtoycPU6vLqxp52VtlK/raf84q
+	BIsSH7F5cNZidIhR3x06S+5RCGCA1n/ftAG8jaIfiDtf31bOwuiSA2M/8HEtmA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732200635;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=USBCcfi6bUWUlnyPWKrgwcW59LiWlwxWCde2Nd+xdT4=;
+	b=LQUce8H3P4yP67nFQRowoeDR2I1MRgzMa5GktcpUpTDzluOQsqAP9zR5ZHZ/zx9/vzmXwW
+	QPiXuazUFIfeVxDw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Brendan Higgins <brendanhiggins@google.com>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yoann Congal <yoann.congal@smile.fr>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Jann Horn <jannh@google.com>
+Subject: [PATCH printk v1] printk: ringbuffer: Add KUnit test
+Date: Thu, 21 Nov 2024 15:56:34 +0106
+Message-Id: <20241121145034.123367-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu
- device bound
-To: Pratyush Brahma <quic_pbrahma@quicinc.com>, Will Deacon <will@kernel.org>
-Cc: catalin.marinas@arm.com, kernel-team@android.com, joro@8bytes.org,
- jgg@ziepe.ca, jsnitsel@redhat.com, robdclark@chromium.org,
- quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, quic_charante@quicinc.com,
- stable@vger.kernel.org, Prakash Gupta <quic_guptap@quicinc.com>
-References: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
- <173021496151.4097715.14758035881649445798.b4-ty@kernel.org>
- <0952ca36-c5d9-462a-ab7b-b97154c56919@arm.com>
- <1d3dcd91-d246-4db3-9717-9edfe405f431@quicinc.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <1d3dcd91-d246-4db3-9717-9edfe405f431@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 2024-11-19 7:10 pm, Pratyush Brahma wrote:
-> 
-> On 11/7/2024 8:31 PM, Robin Murphy wrote:
->> On 29/10/2024 4:15 pm, Will Deacon wrote:
->>> On Fri, 04 Oct 2024 14:34:28 +0530, Pratyush Brahma wrote:
->>>> Null pointer dereference occurs due to a race between smmu
->>>> driver probe and client driver probe, when of_dma_configure()
->>>> for client is called after the iommu_device_register() for smmu driver
->>>> probe has executed but before the driver_bound() for smmu driver
->>>> has been called.
->>>>
->>>> Following is how the race occurs:
->>>>
->>>> [...]
->>>
->>> Applied to will (for-joerg/arm-smmu/updates), thanks!
->>>
->>> [1/1] iommu/arm-smmu: Defer probe of clients after smmu device bound
->>>        https://git.kernel.org/will/c/229e6ee43d2a
->>
->> I've finally got to the point of proving to myself that this isn't the
->> right fix, since once we do get __iommu_probe_device() working properly
->> in the correct order, iommu_device_register() then runs into the same
->> condition itself. Diff below should make this issue go away - I'll write
->> up proper patches once I've tested it a little more.
->>
->> Thanks,
->> Robin.
->>
->> ----->8-----
->> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/ 
->> iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> index 737c5b882355..b7dcb1494aa4 100644
->> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
->> @@ -3171,8 +3171,8 @@ static struct platform_driver arm_smmu_driver;
->>  static
->>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
->> *fwnode)
->>  {
->> -    struct device *dev = 
->> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
->> -                              fwnode);
->> +    struct device *dev = 
->> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
->> +      put_device(dev);
->>      return dev ? dev_get_drvdata(dev) : NULL;
->>  }
->> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/ 
->> arm/arm-smmu/arm-smmu.c
->> index 8321962b3714..aba315aa6848 100644
->> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> @@ -1411,8 +1411,8 @@ static bool arm_smmu_capable(struct device *dev, 
->> enum iommu_cap cap)
->>  static
->>  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
->> *fwnode)
->>  {
->> -    struct device *dev = 
->> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
->> -                              fwnode);
->> +    struct device *dev = 
->> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
-> I think it would still follow this path:
-> 
-> bus_find_device_by_fwnode() -> bus_find_device() -> next_device()
-> 
-> next_device() would always return null until the driver is bound to the 
-> device which
+From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
-No, this is traversing the bus list, *not* the driver list, that's the 
-whole point. The SMMU device must exist on the platform bus before the 
-driver can bind, since the bus is responsible for matching the driver in 
-the first place.
+The KUnit test validates the correct operation of the ringbuffer.
+A separate dedicated ringbuffer is used so that the global printk
+ringbuffer is not touched.
 
-> happens much later in really_probe() after the iommu_device_register() 
-> would be called
-> even as per this patch. That way the race would still occur, wouldn't it?
-> Can you please help me understand what I may be missing here?
-> Are you saying that these additional patches are required along with the 
-> fix I've
-> posted?
+Co-developed-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+For those not familiar with KUnit, you can easily run this test
+doing something like this:
 
-I'm saying my change makes there be no race, i.e. the "if (!smmu)" case 
-can never be true, and so no longer needs working around.
+$ ./tools/testing/kunit/kunit.py run \
+  --arch=x86_64 \
+  --qemu_args "-enable-kvm -smp 8" \
+  --kunitconfig kernel/printk
 
-Thanks,
-Robin.
+ init/Kconfig                           |  12 +
+ kernel/printk/.kunitconfig             |   3 +
+ kernel/printk/Makefile                 |   2 +
+ kernel/printk/printk_ringbuffer.c      |   4 +
+ kernel/printk/printk_ringbuffer_test.c | 350 +++++++++++++++++++++++++
+ 5 files changed, 371 insertions(+)
+ create mode 100644 kernel/printk/.kunitconfig
+ create mode 100644 kernel/printk/printk_ringbuffer_test.c
 
->> +
->>      put_device(dev);
->>      return dev ? dev_get_drvdata(dev) : NULL;
->>  }
->> @@ -2232,21 +2232,6 @@ static int arm_smmu_device_probe(struct 
->> platform_device *pdev)
->>                      i, irq);
->>      }
->>
->> -    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
->> -                     "smmu.%pa", &smmu->ioaddr);
->> -    if (err) {
->> -        dev_err(dev, "Failed to register iommu in sysfs\n");
->> -        return err;
->> -    }
->> -
->> -    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
->> -                    using_legacy_binding ? NULL : dev);
->> -    if (err) {
->> -        dev_err(dev, "Failed to register iommu\n");
->> -        iommu_device_sysfs_remove(&smmu->iommu);
->> -        return err;
->> -    }
->> -
->>      platform_set_drvdata(pdev, smmu);
->>
->>      /* Check for RMRs and install bypass SMRs if any */
->> @@ -2255,6 +2240,18 @@ static int arm_smmu_device_probe(struct 
->> platform_device *pdev)
->>      arm_smmu_device_reset(smmu);
->>      arm_smmu_test_smr_masks(smmu);
->>
->> +    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
->> +                     "smmu.%pa", &smmu->ioaddr);
->> +    if (err)
->> +        return dev_err_probe(dev, err, "Failed to register iommu in 
->> sysfs\n");
->> +
->> +    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
->> +                    using_legacy_binding ? NULL : dev);
->> +    if (err) {
->> +        iommu_device_sysfs_remove(&smmu->iommu);
->> +        return dev_err_probe(dev, err, "Failed to register iommu\n");
->> +    }
->> +
->>      /*
->>       * We want to avoid touching dev->power.lock in fastpaths unless
->>       * it's really going to do something useful - pm_runtime_enabled()
-> 
+diff --git a/init/Kconfig b/init/Kconfig
+index 3b6ca7cce03b..46d144908191 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1576,6 +1576,18 @@ config PRINTK
+ 	  very difficult to diagnose system problems, saying N here is
+ 	  strongly discouraged.
+ 
++config PRINTK_RINGBUFFER_TEST
++	tristate "Test for the printk ringbuffer" if !KUNIT_ALL_TESTS
++	depends on PRINTK && KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds the printk ringbuffer KUnit test suite.
++
++	  For more information on KUnit and unit tests in general, please refer
++	  to the KUnit documentation.
++
++	  If unsure, say N.
++
+ config BUG
+ 	bool "BUG() support" if EXPERT
+ 	default y
+diff --git a/kernel/printk/.kunitconfig b/kernel/printk/.kunitconfig
+new file mode 100644
+index 000000000000..8d31a5c19053
+--- /dev/null
++++ b/kernel/printk/.kunitconfig
+@@ -0,0 +1,3 @@
++CONFIG_KUNIT=y
++CONFIG_SMP=y
++CONFIG_PRINTK_RINGBUFFER_TEST=y
+diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
+index 39a2b61c7232..edb5a4cacf67 100644
+--- a/kernel/printk/Makefile
++++ b/kernel/printk/Makefile
+@@ -7,3 +7,5 @@ obj-$(CONFIG_PRINTK_INDEX)	+= index.o
+ obj-$(CONFIG_PRINTK)                 += printk_support.o
+ printk_support-y	             := printk_ringbuffer.o
+ printk_support-$(CONFIG_SYSCTL)	     += sysctl.o
++
++obj-$(CONFIG_PRINTK_RINGBUFFER_TEST) += printk_ringbuffer_test.o
+diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+index 88e8f3a61922..57b80d262cb7 100644
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++#include <kunit/visibility.h>
+ #include <linux/kernel.h>
+ #include <linux/irqflags.h>
+ #include <linux/string.h>
+@@ -1685,6 +1686,7 @@ bool prb_reserve(struct prb_reserved_entry *e, struct printk_ringbuffer *rb,
+ 	memset(r, 0, sizeof(*r));
+ 	return false;
+ }
++EXPORT_SYMBOL_IF_KUNIT(prb_reserve);
+ 
+ /* Commit the data (possibly finalizing it) and restore interrupts. */
+ static void _prb_commit(struct prb_reserved_entry *e, unsigned long state_val)
+@@ -1759,6 +1761,7 @@ void prb_commit(struct prb_reserved_entry *e)
+ 	if (head_id != e->id)
+ 		desc_make_final(e->rb, e->id);
+ }
++EXPORT_SYMBOL_IF_KUNIT(prb_commit);
+ 
+ /**
+  * prb_final_commit() - Commit and finalize (previously reserved) data to
+@@ -2181,6 +2184,7 @@ bool prb_read_valid(struct printk_ringbuffer *rb, u64 seq,
+ {
+ 	return _prb_read_valid(rb, &seq, r, NULL);
+ }
++EXPORT_SYMBOL_IF_KUNIT(prb_read_valid);
+ 
+ /**
+  * prb_read_valid_info() - Non-blocking read of meta data for a requested
+diff --git a/kernel/printk/printk_ringbuffer_test.c b/kernel/printk/printk_ringbuffer_test.c
+new file mode 100644
+index 000000000000..79331ea2b739
+--- /dev/null
++++ b/kernel/printk/printk_ringbuffer_test.c
+@@ -0,0 +1,350 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include <linux/delay.h>
++#include <linux/init.h>
++#include <linux/kthread.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/random.h>
++#include <linux/sched/clock.h>
++#include <linux/slab.h>
++#include <linux/wait.h>
++
++#include <kunit/test.h>
++
++#include "printk_ringbuffer.h"
++
++/*
++ * This KUnit tests the data integrity of the lockless printk_ringbuffer.
++ * From multiple CPUs it writes messages of varying length and content while
++ * a reader validates the correctness of the messages.
++ *
++ * IMPORTANT: The more CPUs you can use for this KUnit, the better!
++ *
++ * The test works by starting "num_online_cpus() - 1" writer threads, each
++ * pinned to their own CPU. Each writer thread loops, writing data of varying
++ * length into a printk_ringbuffer as fast as possible. The data content is
++ * an embedded data struct followed by string content repeating the byte:
++ *
++ *      'A' + CPUID
++ *
++ * A reader thread is started on the remaining online CPU and ensures that
++ * embedded struct content is consistent with the string and that the string
++ * is terminated and is composed of the same repeating byte as its first byte.
++ *
++ * Because the threads are running in such tight loops, they will call
++ * schedule() from time to time so the system stays functional.
++ *
++ * If the reader encounters an error, the test is aborted and some
++ * information about the error is provided via printk. The runtime of
++ * the test can be configured with the runtime_ms module parameter.
++ *
++ * Note that the test is performed on a separate printk_ringbuffer instance
++ * and not the instance used by printk().
++ */
++
++static unsigned long runtime_ms = 10000;
++module_param(runtime_ms, ulong, 0400);
++
++/* used by writers to signal reader of new records */
++static DECLARE_WAIT_QUEUE_HEAD(test_wait);
++
++/* test data structure */
++struct rbdata {
++	unsigned int len;
++	char text[] __counted_by(len);
++};
++
++#define MAX_RBDATA_LEN (0x7f + 1)
++#define MAX_RECORD_SIZE (sizeof(struct rbdata) + MAX_RBDATA_LEN + 1)
++
++static struct test_running {
++	int runstate;
++	unsigned long num;
++	struct kunit *test;
++} *test_running;
++static int halt_test;
++
++static void fail_record(struct kunit *test, struct rbdata *dat, u64 seq)
++{
++	char buf[MAX_RBDATA_LEN + 1];
++
++	snprintf(buf, sizeof(buf), "%s", dat->text);
++	buf[sizeof(buf) - 1] = 0;
++
++	KUNIT_FAIL(test, "BAD RECORD: seq=%llu len=%u text=%s\n",
++		   seq, dat->len, dat->len < sizeof(buf) ? buf : "<invalid>");
++}
++
++static bool check_data(struct rbdata *dat)
++{
++	unsigned int len;
++
++	len = strnlen(dat->text, MAX_RBDATA_LEN + 1);
++
++	/* Sane length? */
++	if (len != dat->len || !len || len > MAX_RBDATA_LEN)
++		return false;
++
++	/* String repeats with the same character? */
++	while (len) {
++		len--;
++		if (dat->text[len] != dat->text[0])
++			return false;
++	}
++
++	return true;
++}
++
++/* Equivalent to CONFIG_LOG_BUF_SHIFT=13 */
++DEFINE_PRINTKRB(test_rb, 8, 5);
++
++static int prbtest_writer(void *data)
++{
++	struct test_running *tr = data;
++	char text_id = 'A' + tr->num;
++	struct prb_reserved_entry e;
++	unsigned long count = 0;
++	struct printk_record r;
++	u64 min_ns = (u64)-1;
++	struct rbdata *dat;
++	u64 total_ns = 0;
++	u64 max_ns = 0;
++	u64 post_ns;
++	u64 pre_ns;
++	int len;
++
++	set_cpus_allowed_ptr(current, cpumask_of(tr->num));
++
++	kunit_info(tr->test, "start thread %03lu (writer)\n", tr->num);
++
++	tr->runstate = 1;
++
++	for (;;) {
++		/* +2 to ensure at least 1 character + terminator. */
++		len = sizeof(struct rbdata) + (get_random_u32() & 0x7f) + 2;
++
++		/* specify the text sizes for reservation */
++		prb_rec_init_wr(&r, len);
++
++		pre_ns = local_clock();
++
++		if (prb_reserve(&e, &test_rb, &r)) {
++			r.info->text_len = len;
++
++			len -= sizeof(struct rbdata) + 1;
++
++			dat = (struct rbdata *)&r.text_buf[0];
++			dat->len = len;
++			memset(&dat->text[0], text_id, len);
++			dat->text[len] = 0;
++
++			prb_commit(&e);
++
++			post_ns = local_clock();
++
++			wake_up_interruptible(&test_wait);
++
++			post_ns -= pre_ns;
++			if (post_ns < min_ns)
++				min_ns = post_ns;
++			if (post_ns > max_ns)
++				max_ns = post_ns;
++			total_ns += post_ns;
++		}
++
++		if ((count++ & 0x3fff) == 0)
++			schedule();
++
++		if (READ_ONCE(halt_test) == 1)
++			break;
++	}
++
++	kunit_info(tr->test, "end thread %03lu: wrote=%lu min_ns=%llu avg_ns=%llu max_ns=%llu\n",
++		   tr->num, count, min_ns, total_ns / (u64)count, max_ns);
++
++	tr->runstate = 2;
++
++	return 0;
++}
++
++static int prbtest_reader(void *data)
++{
++	struct test_running *tr = data;
++	char text_buf[MAX_RECORD_SIZE];
++	unsigned long total_lost = 0;
++	unsigned long max_lost = 0;
++	unsigned long count = 0;
++	struct printk_info info;
++	struct printk_record r;
++	int did_sched = 1;
++	u64 seq = 0;
++
++	set_cpus_allowed_ptr(current, cpumask_of(tr->num));
++
++	prb_rec_init_rd(&r, &info, &text_buf[0], sizeof(text_buf));
++
++	kunit_info(tr->test, "start thread %03lu (reader)\n", tr->num);
++
++	tr->runstate = 1;
++
++	while (!wait_event_interruptible(test_wait,
++				kthread_should_stop() ||
++				prb_read_valid(&test_rb, seq, &r))) {
++		bool error = false;
++
++		if (kthread_should_stop())
++			break;
++		/* check/track the sequence */
++		if (info.seq < seq) {
++			KUNIT_FAIL(tr->test, "BAD SEQ READ: request=%llu read=%llu\n",
++				   seq, info.seq);
++			error = true;
++		} else if (info.seq != seq && !did_sched) {
++			total_lost += info.seq - seq;
++			if (max_lost < info.seq - seq)
++				max_lost = info.seq - seq;
++		}
++
++		if (!check_data((struct rbdata *)&r.text_buf[0])) {
++			fail_record(tr->test, (struct rbdata *)&r.text_buf[0], info.seq);
++			error = true;
++		}
++
++		if (error)
++			WRITE_ONCE(halt_test, 1);
++
++		did_sched = 0;
++		if ((count++ & 0x3fff) == 0) {
++			did_sched = 1;
++			schedule();
++		}
++
++		if (READ_ONCE(halt_test) == 1)
++			break;
++
++		seq = info.seq + 1;
++	}
++
++	kunit_info(tr->test,
++		   "end thread %03lu: read=%lu seq=%llu total_lost=%lu max_lost=%lu\n",
++		   tr->num, count, info.seq, total_lost, max_lost);
++
++	while (!kthread_should_stop())
++		msleep(1000);
++	tr->runstate = 2;
++
++	return 0;
++}
++
++static int module_test_running;
++static struct task_struct *reader_thread;
++
++static int start_test(void *arg)
++{
++	struct kunit *test = arg;
++	struct task_struct *thread;
++	unsigned long i;
++	int num_cpus;
++
++	num_cpus = num_online_cpus();
++	if (num_cpus == 1)
++		kunit_skip(test, "need >1 CPUs for at least one reader and writer");
++
++	test_running = kcalloc(num_cpus, sizeof(*test_running), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_NULL(test, test_running);
++
++	module_test_running = 1;
++
++	kunit_info(test, "starting test\n");
++
++	for (i = 0; i < num_cpus; i++) {
++		test_running[i].test = test;
++		test_running[i].num = i;
++		if (i < num_cpus - 1) {
++			thread = kthread_run(prbtest_writer, &test_running[i],
++					     "prbtest writer");
++		} else {
++			thread = kthread_run(prbtest_reader, &test_running[i],
++					     "prbtest reader");
++			reader_thread = thread;
++		}
++		if (IS_ERR(thread)) {
++			kunit_err(test, "unable to create thread %lu\n", i);
++			test_running[i].runstate = 2;
++		}
++	}
++
++	/* wait until all threads finish */
++	for (;;) {
++		msleep(1000);
++
++		for (i = 0; i < num_cpus; i++) {
++			if (test_running[i].runstate < 2)
++				break;
++		}
++		if (i == num_cpus)
++			break;
++	}
++
++	kunit_info(test, "completed test\n");
++
++	module_test_running = 0;
++
++	return 0;
++}
++
++static void test_readerwriter(struct kunit *test)
++{
++	static bool already_run;
++	int num_cpus;
++	int i;
++
++	if (already_run)
++		KUNIT_FAIL_AND_ABORT(test, "test can only be run once");
++	already_run = true;
++
++	kunit_info(test, "running for %lu ms\n", runtime_ms);
++
++	kthread_run(start_test, test, "prbtest");
++
++	/* wait until all threads active */
++	num_cpus = num_online_cpus();
++	for (;;) {
++		msleep(1000);
++
++		for (i = 0; i < num_cpus; i++) {
++			if (test_running[i].runstate == 0)
++				break;
++		}
++		if (i == num_cpus)
++			break;
++	}
++
++	msleep(runtime_ms);
++
++	if (reader_thread && !IS_ERR(reader_thread))
++		kthread_stop(reader_thread);
++
++	WRITE_ONCE(halt_test, 1);
++
++	while (module_test_running)
++		msleep(1000);
++	kfree(test_running);
++}
++
++static struct kunit_case prb_test_cases[] = {
++	KUNIT_CASE_SLOW(test_readerwriter),
++	{}
++};
++
++static struct kunit_suite prb_test_suite = {
++	.name       = "printk-ringbuffer",
++	.test_cases = prb_test_cases,
++};
++kunit_test_suite(prb_test_suite);
++
++MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
++MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
++MODULE_DESCRIPTION("printk_ringbuffer test");
++MODULE_LICENSE("GPL");
+
+base-commit: 4022ef25504db2fb79a2acac0afe9bac934f8dd6
+-- 
+2.39.5
 
 
