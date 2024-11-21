@@ -1,270 +1,193 @@
-Return-Path: <linux-kernel+bounces-417076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C270A9D4EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:31:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6F39D4EB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:32:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAA11F221AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0E12826FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D291D9350;
-	Thu, 21 Nov 2024 14:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2064D1D9350;
+	Thu, 21 Nov 2024 14:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="RhiYRIJL"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AZ6qoYJP"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C8F20330;
-	Thu, 21 Nov 2024 14:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF95020330
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732199501; cv=none; b=tCaCOVmLvtwWXQ5ZwN4br8JmzFrOZ2CXLtGH+7EcxWqKpqTBgJ9K+RZjHnR0lEJheX2rXfQJD7r0q6di0d4wSU8ioS4GdYH11AfmDDZoGAgWMV8UwCszEg0ZFJh530tfHI11t3fHQ4G2RhQZWpYesdibl9bo9islXRZOVBSECKM=
+	t=1732199511; cv=none; b=mgg/u/r40WFP0NHr/0T4pqqpo0UGc24pm72Pe/1/DOxNiFaRJ48ni/2uLYAO3Fa0rd5FnDkBIk0e9z2Dyn/F+rlldsc0gxbH+2+cYA5vo8wsFrnXmuQAn7t+4OuMnk2OWRlshlF+u6edpsxkB+zwCRvuBjH/GM1LbevWkleFGo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732199501; c=relaxed/simple;
-	bh=ipNLKjp0DQNKz1zI+FH+WIIfigEZEG8IJVFlaeB1HQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TBU7/YSib30W7JNYSnZiVqIB9Zlk3+fdNYf7NNIwC7FROtuPpABNzMTBXf2gaaOKkNx9JZETefSoqLnpxYj9bQTMpJO6YWub9GCgDc+XxlYZz0czRW3yY6NfJdEp45TC7kw3aFiQ8zmIge0boAIwDgbI5/T1uzMSrr9PEkvnWsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=RhiYRIJL; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALE4fYk031954;
-	Thu, 21 Nov 2024 15:31:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	L4AhvO+uIes1NeK6LJvz0UDQof4cSrasjC8QG7eav24=; b=RhiYRIJLqI/rs9dj
-	4pQFFoDcYma+OlI8+OX3qgew523W1gwyHsWc4yWMeTEicu2yiX7QK7DQNFsBg6To
-	T4IXByDciwGzLr+sn51vOR1hrX5eIgeoTQJXlXoVEk+m0z/hS4P1oMJuWXkoXZV8
-	Zk6LKksoPXv5JvT1U5E/meGxIUZzhkcdNttTCzozz7V/+cP2k6MH5EuApueo9C5e
-	SeUN4jgBt/DJ9/mEgy5TH1TxZX/gp2vXljt+2K2NTpkAj/b466vFGw025IJkEATF
-	Wf76BYXyMB1DSBwSaBl5hBZ9xexuGAas2L98U/BbtjGtnCe6HDKv+nrY8a5yKqtT
-	Xi/tPA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xkq67g2h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 15:31:16 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2F4264002D;
-	Thu, 21 Nov 2024 15:29:55 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 773652786E2;
-	Thu, 21 Nov 2024 15:28:57 +0100 (CET)
-Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 21 Nov
- 2024 15:28:56 +0100
-Message-ID: <41f0b8e4-d6aa-4a42-8633-9ea77873d275@foss.st.com>
-Date: Thu, 21 Nov 2024 15:28:56 +0100
+	s=arc-20240116; t=1732199511; c=relaxed/simple;
+	bh=xuIhtgaMlUOIv9x7NYBJIVaGk7rVNEaXmCZRykzFVDc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L/tAygQu/6LLVNfnVnBj8PbCQzvlAXdqB1aSsBIiNgsYqmJdh/GTRyz+P8C/Ut/oC5miLPFbXxO6tDRvFT5IFFptKa0JGvXtZcHIC8PXOtG3qAqWTcu/CPliL1lfQ5uQwuikXPn/SK3Qe63k2pwtuQ/uuQB85NIrOL/2pXz/C9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AZ6qoYJP; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d41ac03343so7940916d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:31:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732199509; x=1732804309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sKPZc/x77KFHTZg9A9aYwVBIztc4o+fw2bfEVf84FTE=;
+        b=AZ6qoYJPEzMwV+2qbX4zZ2oaJNNhz6P5ZS5YkD5S0iCQ+WKry38l4T5KGa5s6dvA/K
+         vlTMbrQ7bXf8t3rDV7fNomHdHySigJKla0nFpPCu6k66j0lNBuwX/5ud0KtL+EKfiZew
+         zv8Dbx/W3XCtVSjaVbQ0J8Oc8GlURKfGwU2BKrkOmzh40pdsOxk+RLT7tmLJ3vvQkwu3
+         v9bgqXRdrnhJxZZWhN63VuLCBGYMdXiL/SQvJCPwCsKUhN4XB6LW99v+vrYeLDnPn+H7
+         w9+IAr1lAzcHUOOdYVlrfAWPe9Ka5jm7icIOFHTVZcTwh6fjXVHLNs0uBKTHZSlKGwQh
+         L8JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732199509; x=1732804309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sKPZc/x77KFHTZg9A9aYwVBIztc4o+fw2bfEVf84FTE=;
+        b=TkZrph/VYXtFpp4JVt0uMGe9Ra2kYyzWg1e7b0fvUbWyOwoWOA3AJc4nsc/Od7dGB4
+         6jrHvtTbdd0JfOfmcsdMTQ0rAPqWn3D82MY0t6IWsuj0rnAoCXR14bQmfCWAKtUc+cJm
+         Kk7wHoDtMVLK+Vgd5n/VO1wSgUTXTpt8fN99rxEecKtM/pI0TWgC2AMQh5Fqq91zTjjO
+         4dETRTSju/eRZh9FhCGUkUjmTC8EV+5OrNq87Y5HDARJAPilL9j7eVhJLo99EU9sAjQm
+         woIFf6EexsohDj3G2au2D2du3ZLAGJhx7ksvGl0uUIkwMC2x7j8yJziluYJ5EPl14zs6
+         nUrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwR3eZ75Igd1rjnrxguQz4L2jbg9kzYU+MG2ZmVB9Gf5YEE97dt471w9LopeNgLv0nJ9GcZLA6HtoHPp8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziwIOmAJWQhMbeMGAL6mx1SHhcwJ8QfD7dAjNdRcR0hKDIrgt0
+	7y3xGNeByyj8xyFPCqP34Z/uxbtAdYdHpBhswsnBKRXZdYi3j50jQdGl9FIn0kJwsw3BLgQd/78
+	71cYAWnOtMCuwYeYndQPaSRaw8T8=
+X-Gm-Gg: ASbGnctc3CylLVu7YbFD+pMsr4awcBA7PKFD8yIHCslN2ll+4kM14XQrJ0VmHeIflVu
+	SqLuNhuUy/CohzskONo1Xg1DARJD6uvxZgA==
+X-Google-Smtp-Source: AGHT+IEDRn19JVPzduaMlA53SHNv33NfKcP24Uwn24a5w8PfzF1BQXNgOH5nTnVqGO8X4gA/fjpu1bWfMxBetS1S+0c=
+X-Received: by 2002:ad4:5fc5:0:b0:6b0:8ac1:26bc with SMTP id
+ 6a1803df08f44-6d4423c8204mr52416676d6.14.1732199508839; Thu, 21 Nov 2024
+ 06:31:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] media: verisilicon: add WebP decoding support
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Fritz Koenig <frkoenig@chromium.org>,
-        Sebastian
- Fricke <sebastian.fricke@collabora.com>,
-        Daniel Almeida
-	<daniel.almeida@collabora.com>,
-        Andrzej Pietrasiewicz
-	<andrzej.p@collabora.com>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
- <20241120110105.244413-3-hugues.fruchet@foss.st.com>
- <c9f19faacccd47b8a72fc4a29a0f75b30bce1aa1.camel@collabora.com>
- <cf81e5f2-45a4-4c82-890c-c8a4d17b22df@foss.st.com>
- <41310959a7b40f8e28fb324e00c4a51966bec803.camel@collabora.com>
-Content-Language: en-US
-From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
-In-Reply-To: <41310959a7b40f8e28fb324e00c4a51966bec803.camel@collabora.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20241120122858.22190-1-laoar.shao@gmail.com> <0aa9f3bd-b1b6-4089-b9eb-5b72d7a1541a@redhat.com>
+In-Reply-To: <0aa9f3bd-b1b6-4089-b9eb-5b72d7a1541a@redhat.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 21 Nov 2024 22:31:12 +0800
+Message-ID: <CALOAHbBMebKtsRnfOFvNKorQk_4KGoCzKd0JcYv2p6pXhJqYbQ@mail.gmail.com>
+Subject: Re: [PATCH] /dev/mem: Add a new parameter strict_devmem to bypass
+ strict devmem
+To: David Hildenbrand <david@redhat.com>
+Cc: mingo@redhat.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nicolas,
-
-On 11/21/24 15:20, Nicolas Dufresne wrote:
-> Hi Hugues,
-> 
-> Le jeudi 21 novembre 2024 à 11:07 +0100, Hugues FRUCHET a écrit :
->> Hi Nicolas,
->>
->> On 11/20/24 15:25, Nicolas Dufresne wrote:
->>> Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
->>>> Add WebP picture decoding support to VP8 stateless decoder.
->>>>
->>>> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
->>>> ---
->>>>    .../media/platform/verisilicon/hantro_g1_regs.h |  1 +
->>>>    .../platform/verisilicon/hantro_g1_vp8_dec.c    | 14 ++++++++++++++
->>>>    .../media/platform/verisilicon/hantro_v4l2.c    |  2 ++
->>>>    .../platform/verisilicon/stm32mp25_vpu_hw.c     | 17 +++++++++++++++--
->>>>    4 files changed, 32 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>> index c623b3b0be18..e7d4db788e57 100644
->>>> --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>> +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>> @@ -232,6 +232,7 @@
->>>>    #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
->>>>    #define G1_REG_ADDR_STR					0x030
->>>>    #define G1_REG_ADDR_DST					0x034
->>>> +#define G1_REG_ADDR_DST_CHROMA				0x038
->>>>    #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
->>>>    #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
->>>>    #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
->>>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>> index 851eb67f19f5..c83ee6f5edc8 100644
->>>> --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>> +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>> @@ -307,6 +307,12 @@ static void cfg_parts(struct hantro_ctx *ctx,
->>>>    			   G1_REG_DEC_CTRL3_STREAM_LEN(dct_part_total_len),
->>>>    			   G1_REG_DEC_CTRL3);
->>>>    
->>>> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
->>>> +		vdpu_write_relaxed(vpu,
->>>> +				   G1_REG_DEC_CTRL3_STREAM_LEN_EXT
->>>> +					(dct_part_total_len >> 24),
->>>> +				   G1_REG_DEC_CTRL3);
->>>> +
->>>>    	/* DCT partitions base address */
->>>>    	for (i = 0; i < hdr->num_dct_parts; i++) {
->>>>    		u32 byte_offset = dct_part_offset + dct_size_part_size + count;
->>>> @@ -427,6 +433,12 @@ static void cfg_buffers(struct hantro_ctx *ctx,
->>>>    
->>>>    	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
->>>>    	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
->>>> +
->>>> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
->>>> +		vdpu_write_relaxed(vpu, dst_dma +
->>>> +				   ctx->dst_fmt.plane_fmt[0].bytesperline *
->>>> +				   ctx->dst_fmt.height,
->>>> +				   G1_REG_ADDR_DST_CHROMA);
->>>>    }
->>>>    
->>>>    int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>>> @@ -471,6 +483,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>>>    		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
->>>>    	if (hdr->lf.level == 0)
->>>>    		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
->>>> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
->>>> +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
->>>>    	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
->>>>    
->>>>    	/* Frame dimensions */
->>>> diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
->>>> index 2513adfbd825..7075b2ba1ec2 100644
->>>> --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
->>>> +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
->>>> @@ -470,6 +470,7 @@ hantro_update_requires_request(struct hantro_ctx *ctx, u32 fourcc)
->>>>    		break;
->>>>    	case V4L2_PIX_FMT_MPEG2_SLICE:
->>>>    	case V4L2_PIX_FMT_VP8_FRAME:
->>>> +	case V4L2_PIX_FMT_WEBP_FRAME:
->>>>    	case V4L2_PIX_FMT_H264_SLICE:
->>>>    	case V4L2_PIX_FMT_HEVC_SLICE:
->>>>    	case V4L2_PIX_FMT_VP9_FRAME:
->>>> @@ -492,6 +493,7 @@ hantro_update_requires_hold_capture_buf(struct hantro_ctx *ctx, u32 fourcc)
->>>>    	case V4L2_PIX_FMT_JPEG:
->>>>    	case V4L2_PIX_FMT_MPEG2_SLICE:
->>>>    	case V4L2_PIX_FMT_VP8_FRAME:
->>>> +	case V4L2_PIX_FMT_WEBP_FRAME:
->>>>    	case V4L2_PIX_FMT_HEVC_SLICE:
->>>>    	case V4L2_PIX_FMT_VP9_FRAME:
->>>>    		vq->subsystem_flags &= ~(VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF);
->>>> diff --git a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
->>>> index 833821120b20..48d6912c3bab 100644
->>>> --- a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
->>>> +++ b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
->>>> @@ -22,10 +22,10 @@ static const struct hantro_fmt stm32mp25_vdec_fmts[] = {
->>>>    		.codec_mode = HANTRO_MODE_NONE,
->>>>    		.frmsize = {
->>>>    			.min_width = FMT_MIN_WIDTH,
->>>> -			.max_width = FMT_FHD_WIDTH,
->>>> +			.max_width = FMT_4K_WIDTH,
->>>>    			.step_width = MB_DIM,
->>>>    			.min_height = FMT_MIN_HEIGHT,
->>>> -			.max_height = FMT_FHD_HEIGHT,
->>>> +			.max_height = FMT_4K_HEIGHT,
->>>
->>> I'm a little surprised of this change, since this is modifying VP8_FRAME, while
->>> we should instead introduce WEBP_FRAME.
->>
->> This is the resolution of the YUV output of decoder, not the WebP input,
->> and because of lack of post-processor, the output is not scaled, so can
->> go up to 4K with WebP.
->> Before WebP introduction, the maximum output resolution was FHD for all
->> codecs. Now WebP allows up to 4K but FHD constraint remains for
->> H264/VP8. I don't see real problems because VP8/H264 compressed inputs
->> are well limited to FHD and only WebP allows 4K...
-> 
-> Good point. Would you mind adding a justification for this change within the
-> commit message in v3 ?
-
-v3 already sent but I'll note that for the future v4.
-Could you test & ack the 4K support on your platform having 
-post-processor support ?
-
-> 
->>
->>>
->>>>    			.step_height = MB_DIM,
->>>>    		},
->>>>    	},
->>>> @@ -68,6 +68,19 @@ static const struct hantro_fmt stm32mp25_venc_fmts[] = {
->>>>    		.codec_mode = HANTRO_MODE_NONE,
->>>>    		.enc_fmt = ROCKCHIP_VPU_ENC_FMT_YUV420SP,
->>>>    	},
->>>> +	{
->>>> +		.fourcc = V4L2_PIX_FMT_WEBP_FRAME,
->>>> +		.codec_mode = HANTRO_MODE_VP8_DEC,
->>>> +		.max_depth = 2,
->>>> +		.frmsize = {
->>>> +			.min_width = FMT_MIN_WIDTH,
->>>> +			.max_width = FMT_4K_WIDTH,
->>>> +			.step_width = MB_DIM,
->>>> +			.min_height = FMT_MIN_HEIGHT,
->>>> +			.max_height = FMT_4K_HEIGHT,
->>>> +			.step_height = MB_DIM,
->>>> +		},
->>>> +	},
->>>
->>> This is venc_fmt (encoder), this shouldn't be there.
->>
->> All apologizes for this rebase issue, it is of course part of
->> stm32mp25_vdec_fmts.
-> 
-> Ack, let's get this right in v3 :-D
-> 
->>
->>>
->>>>    	{
->>>>    		.fourcc = V4L2_PIX_FMT_YUYV,
->>>>    		.codec_mode = HANTRO_MODE_NONE,
->>>
->>
->> BR,
->> Hugues.
+On Thu, Nov 21, 2024 at 4:51=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
 >
+> On 20.11.24 13:28, Yafang Shao wrote:
+> > When CONFIG_STRICT_DEVMEM is enabled, writing to /dev/mem to override
+> > kernel data for debugging purposes is prohibited. This configuration is
+> > always enabled on our production servers. However, there are times when=
+ we
+> > need to use the crash utility to modify kernel data to analyze complex
+> > issues.
+> >
+> > As suggested by Ingo, we can add a boot time knob of soft-enabling it.
+> > Therefore, a new parameter "strict_devmem=3D" is added. The reuslt are =
+as
+> > follows,
+> >
+> > - Before this change
+> >    crash> wr panic_on_oops 0
+> >    wr: cannot write to /proc/kcore      <<<< failed
+> >
+> > - After this change
+> >    - default
+> >      crash> wr panic_on_oops 0
+> >      wr: cannot write to /proc/kcore    <<<< failed
+> >
+> >    - strict_devmem=3Doff
+> >      crash> p panic_on_oops
+> >      panic_on_oops =3D $1 =3D 1
+> >      crash> wr panic_on_oops 0
+> >      crash> p panic_on_oops
+> >      panic_on_oops =3D $2 =3D 0            <<<< succeeded
+> >
+> >    - strict_devmem=3Dinvalid
+> >      [    0.230052] Invalid option string for strict_devmem: 'invalid'
+> >      crash> wr panic_on_oops 0
+> >      wr: cannot write to /proc/kcore  <<<< failed
+> >
+> > Suggested-by: Ingo Molnar <mingo@kernel.org>
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >   .../admin-guide/kernel-parameters.txt         | 16 ++++++++++++++
+> >   drivers/char/mem.c                            | 21 ++++++++++++++++++=
++
+> >   2 files changed, 37 insertions(+)
+> >
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
+ation/admin-guide/kernel-parameters.txt
+> > index 1518343bbe22..7fe0f66d0dfb 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -6563,6 +6563,22 @@
+> >                       them frequently to increase the rate of SLB fault=
+s
+> >                       on kernel addresses.
+> >
+> > +     strict_devmem=3D
+> > +                     [KNL] Under CONFIG_STRICT_DEVMEM, whether strict =
+devmem
+> > +                     is enabled for this boot. Strict devmem checking =
+is used
+> > +                     to protect the userspace (root) access to all of =
+memory,
+> > +                     including kernel and userspace memory. Accidental=
+ access
+> > +                     to this is obviously disastrous, but specific acc=
+ess can
+> > +                     be used by people debugging the kernel. Note that=
+ with
+> > +                     PAT support enabled, even in this case there are
+> > +                     restrictions on /dev/mem use due to the cache ali=
+asing
+> > +                     requirements.
+> > +             on      If IO_STRICT_DEVMEM=3Dn, the /dev/mem file only a=
+llows
+> > +                     userspace access to PCI space and the BIOS code a=
+nd data
+> > +                     regions. This is sufficient for dosemu and X and =
+all
+> > +                     common users of /dev/mem. (default)
+> > +             off     Disable strict devmem checks.
+> > +
+> >       sunrpc.min_resvport=3D
+> >       sunrpc.max_resvport=3D
+> >                       [NFS,SUNRPC]
+>
+> This will allow to violate EXCLUSIVE_SYSTEM_RAM, and I am afraid I don't
+> enjoy seeing devmem handling+config getting more complicated.
+
+That poses a challenge. Perhaps we should also consider disabling
+functions that rely on EXCLUSIVE_SYSTEM_RAM when strict_devmem=3Doff,
+but implementing such a change seems overly complex.
+
+Our primary goal is to temporarily bypass STRICT_DEVMEM for live
+kernel debugging. In an earlier version, I proposed making the
+fucntion devmem_is_allowed() error-injectable, but Ingo pointed out
+that it violates the principles of STRICT_DEVMEM.
+
+Do you have any suggestions on enabling write access to /dev/mem in
+debugging tools like the crash utility, while maintaining
+compatibility with the existing rules?
+
+
+--
+Regards
+Yafang
 
