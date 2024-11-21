@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-416818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1ACC9D4AB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:20:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 473739D4AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CF94B23032
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:20:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF1B2225A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B691D6DD1;
-	Thu, 21 Nov 2024 10:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BAE1D89E5;
+	Thu, 21 Nov 2024 10:18:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Fmoj9FCx"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DykALw7/"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAFA1D2F74
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9025D1D432A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 10:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732184316; cv=none; b=d1r/orGArXVqbtSYL/SXoA1YDgLYQffOs6HYFUv1T2l6rqsoMetcSCmvuZGJKpQlDXkn6jpVKK+wfJ7d1P+jr4DkRoxQRau2SFDIkctdtjpAYp3W5CpVyVL6OjFReUTAB0ntW4M0rCcfA5EaSxM0o6s4tOl2Tmlf5+iSNjQZCjg=
+	t=1732184319; cv=none; b=o/7zVX9EhzuzR6+IHK+Rg/VSgM52En23BcfawH9aN/vVK8TtxAINMFIo/Lx58QfxBAeVMubxHuKlD8zapQ4/2M+HKtw8mo5BvbLxilFdtsbGvphN5dm99rpDpNKvMJgVMG6FxcN8MOYndfmM041mK/Sy1lBl3OxoFQUynWtGkeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732184316; c=relaxed/simple;
-	bh=Rm7fdKwuILN1wABcMwtBOX8LaUe3ccIFEyDzCkBVoDQ=;
+	s=arc-20240116; t=1732184319; c=relaxed/simple;
+	bh=tdpf/A32vha/ko+aQ4RiDlCU44C08sRlPZcE4GA5DLw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TgrazN0/eijrGgzmL9ZtVTbSB3fXwttXoz1jC5XxK1vIP4uBqRki8LigQN5e8JbXEyrxohWwF2+NUlDBE48AdzaFGq0vdXXmZqsMRT6fL3g51ALcoipjvg4NM/O2HKbOj4r27GTccuEbHqv08A5xdKuapDOUc81gh/Mv6eqEzOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Fmoj9FCx; arc=none smtp.client-ip=209.85.221.53
+	 In-Reply-To:To:Cc; b=hWbcqtBFPquW1q1hPW51/AQ4MrwMvCdL1c+8q8n3HBO+l3AqTggflnXoSGXvw32XU3lG73WByXEGuaCGh9cv2PYjwa1OamtfONr2rNFCzDc+JUTGo5eNZODX6N0FKuQxYqM4qOSZ0tbhpHKVugXlfYFhwhqs4nKBA0ptZdC5Uus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DykALw7/; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3823eaad37aso1174164f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:18:34 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53da2140769so731749e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 02:18:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732184313; x=1732789113; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732184314; x=1732789114; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wHaSxL3+Y30jYFHs/JHdzuANlkeArnNpuo2+kK7YYpY=;
-        b=Fmoj9FCxo9XRZKTpii/pRYEd71/sPatc9Euyh13M1fesvmOlzIh1DQEM8w/BEUckJq
-         yAhv/HePjRcKKHaOyJi2YwNw/a2up90wh1WNPieAOKsf4s2xGtmrHyJgXDCgmrZHW7hW
-         Ds6PvzZEVyRq9SfE0wFvngby8Sl9UIsrrgIdrnReRQiiKDj0oPiiy+ucYTTu7NxsPt1F
-         blDiJFGGHDFNR3LbcC29uCk+S2CfuiTFebbbtPHnPML0dEGav6+EPM8a1yAqDoUmhhrO
-         ENCjpRoATkUPkEg4BKwThBiSkqxOpygU2B6aXpqT+nrfKTcn7RJVs1wQyush7MaDBp7d
-         WPEw==
+        bh=oRi3cIGaDlxTwStqxhJi+pjnXvvxLtR6kDzgcy0nvWU=;
+        b=DykALw7/frZ4guuLjcJy3QLI27TsYnjlBF+Rp26TY0HOr++EB8A492iHO1HMMlSuvT
+         ECioZDo0EtB47ArSfNy3Zx5MshJwOPADKbwjk2cbjbAp/desRpNEeZJPBcWMPkonU1T8
+         CbhWyz8VXpbY/rv71T/7rulwOffJfYoj0lG+84JavTWxa5c4ayfPkBYUD2mO82WKryWz
+         KW8wNahBNtUVMRkSLoAtMjOlOKPfqrU27gkSAXTy6igFG+vo+XTHISimcw4SefuRc7M4
+         oJYG+mPGTna0hDTAS6vVWp+F/4Dc/M/VbVbNroocfbl2A4mezBpT8cmOJHcGIPk3PzsP
+         zf2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732184313; x=1732789113;
+        d=1e100.net; s=20230601; t=1732184314; x=1732789114;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wHaSxL3+Y30jYFHs/JHdzuANlkeArnNpuo2+kK7YYpY=;
-        b=O6HXldgeHzFNzBIgFXmcq6le9nW1TBKhNkuZDUQ8mNzogcefz4GYwPwIripp7EybVb
-         PNLKlFvms4B/b98W/4++nkUd7AdjCc+zoXdnkX8457ITHccOPKDk5ai/dZ9LkUHX/xbn
-         Tx2H88/CPckN2Vn8BYwg2uLYKIZHu4j3AW8YFBfr9WorSIHhLrETb050If8pSVx+sLXg
-         16KpRoDUoyfzHw2TR+649BLXMRmyLjDaQDJVIQcoy2ouwHJromhw0QbgKURHnV66JD9l
-         N+jdthpRNhfezkdT5IX69YgV2qkyhrY6sGRRKNe9pvXnpRtq0xxBvBl03TI9fWg+Dwbq
-         TB9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUuMUQhWCJOJJbxBkWmhdwfXIH7+kdi0lJa7XRA444HhPmuREaSFRUZ3Db6kQmq+CJssf7s3Gd/7VTmGGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzZ9SvBj+4fVNMe8/GbR56RLKRu3zyFhQ5p1ZwI256SboRpYxV
-	uzWsmbxRBVUvEZDUrz/p4mDdVsEIPkhR5DBsP18JxqMqGVgi6iPwnez7Jd157uasrDfJD6PjJKt
-	J
-X-Google-Smtp-Source: AGHT+IHG6NXlIBhSHjBBI33tsOYshaSt/FYtyInlElG+QJyXqLXRCysPCVrrRaxPhu/BywhhESHpQQ==
-X-Received: by 2002:a5d:64ce:0:b0:37d:34e7:6d24 with SMTP id ffacd0b85a97d-38259d2b848mr2047885f8f.18.1732184312352;
-        Thu, 21 Nov 2024 02:18:32 -0800 (PST)
+        bh=oRi3cIGaDlxTwStqxhJi+pjnXvvxLtR6kDzgcy0nvWU=;
+        b=gMq+qcbiU+z60o+pD/2oE1ropUydZxdULA/kflOUZ90Ofz8lla7xQjhPHef7rsyy0Z
+         FeBtgoHRD3xrxqKDWlsxDiA8KwYfch8uy4eQSnACeojAqQCPc34cfUTlPGOXbY3zP/ji
+         xgxG3bcYoqsZN0lCIJLkjsUobGNB9Hkzg3iiLaovMhX9HTMHirwkkVTvqQQBvx+wKJtg
+         Dj5BVzKh7rQVzyijrI6TsMWW1Xrr+gDetOYWhgt36H+Y2c0vzFphMaybqs5yak6Ogrv+
+         neQDOLnZHi+ElpTsweWjvA49Z+PixqsS0izG1FwGvKHfXrQmCk3vJguPPPZs80bqnpGI
+         KmzA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0TEqEZwS8Fftj7zwURTobj37jWJqfxbqskXP+XOyGbD5ajJfAGUhdYrDJHxjZK9arc/NDH07mEJI+IpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6Wqvc06DfusKLZ6+sxQZETinGmw0owghPiLOskDaFc3Mf38sV
+	kHIsoEJFRCeUtg9hc9S2TdE1mZhjqZ6OJ2R+lNogsBurXkdc586dp82V1z0VjkShNbgfWh2r6OI
+	o
+X-Google-Smtp-Source: AGHT+IFd0X5sd0gLrWTrdWHzSVGz3bjzzQ0tWK2LA5BLwCGIn3GL8B7rGGMHcyvlWsAO9re9qR5F2w==
+X-Received: by 2002:a05:6512:53c:b0:53d:a309:7fa3 with SMTP id 2adb3069b0e04-53dc1368c75mr2424566e87.41.1732184313217;
+        Thu, 21 Nov 2024 02:18:33 -0800 (PST)
 Received: from [127.0.1.1] (frhb82016ds.ikexpress.com. [185.246.87.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254910796sm4598065f8f.47.2024.11.21.02.18.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38254910796sm4598065f8f.47.2024.11.21.02.18.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 02:18:31 -0800 (PST)
+        Thu, 21 Nov 2024 02:18:32 -0800 (PST)
 From: Guillaume Stols <gstols@baylibre.com>
-Date: Thu, 21 Nov 2024 10:18:30 +0000
-Subject: [PATCH 8/9] iio: adc: ad7606: Simplify channel macros
+Date: Thu, 21 Nov 2024 10:18:31 +0000
+Subject: [PATCH 9/9] iio: adc: ad7606: Add support for writing registers
+ when using backend
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241121-ad7606_add_iio_backend_software_mode-v1-8-8a693a5e3fa9@baylibre.com>
+Message-Id: <20241121-ad7606_add_iio_backend_software_mode-v1-9-8a693a5e3fa9@baylibre.com>
 References: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
 In-Reply-To: <20241121-ad7606_add_iio_backend_software_mode-v1-0-8a693a5e3fa9@baylibre.com>
 To: Lars-Peter Clausen <lars@metafoo.de>, 
@@ -93,110 +94,149 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
  aardelean@baylibre.com, adureghello@baylibre.com, 
  Guillaume Stols <gstols@baylibre.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732184304; l=3067;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732184304; l=4035;
  i=gstols@baylibre.com; s=20240417; h=from:subject:message-id;
- bh=Rm7fdKwuILN1wABcMwtBOX8LaUe3ccIFEyDzCkBVoDQ=;
- b=PeM+F7Unq5hw0qEHvjQSXhzdr0HCrmaP/6KBbQl3LVfPREko98epnF7/FmSX40NPefdf3wTE+
- XW38P2aduRIASA6qwyuPT6eMhTvxk8EiUcwME6QBmz28QFQzYAZTZ9e
+ bh=tdpf/A32vha/ko+aQ4RiDlCU44C08sRlPZcE4GA5DLw=;
+ b=IG8R0F6BS7ExulQfzVIBxrGS6fS4qof4AM1NKLiCQyCH0n6OvosUfzcczsrHesp1cJt3Lyfo+
+ apRxWf5SaiKAiTV14WHE7FXNgmJPpz53QR3HGCdb4Gc/yULdOclYON/
 X-Developer-Key: i=gstols@baylibre.com; a=ed25519;
  pk=XvMm5WHuV67sGYOJZqIYzXndbaJOlNd8Q6li6vnb4Cs=
 
-This is a preparation to add the new channels for software mode and
-hardware mode in iio backend mod more easily.
+Adds the logic for effectively enabling the software mode for the
+iio-backend, i.e enabling the software mode channel configuration and
+implementing the register writing functions.
 
 Signed-off-by: Guillaume Stols <gstols@baylibre.com>
 ---
- drivers/iio/adc/ad7606.h | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
+ drivers/iio/adc/ad7606.h     | 15 ++++++++++++
+ drivers/iio/adc/ad7606_par.c | 58 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 72 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-index eca7ea99e24d..74896d9f1929 100644
+index 74896d9f1929..a54dc110839f 100644
 --- a/drivers/iio/adc/ad7606.h
 +++ b/drivers/iio/adc/ad7606.h
-@@ -40,37 +40,19 @@
- #define AD7606_RANGE_CH_ADDR(ch)	(0x03 + ((ch) >> 1))
- #define AD7606_OS_MODE			0x08
+@@ -96,6 +96,21 @@
+ 		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),  \
+ 		0, 0, 16)
  
--#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {	\
-+#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all,	\
-+		mask_sep_avail, mask_all_avail, bits) {		\
- 		.type = IIO_VOLTAGE,				\
- 		.indexed = 1,					\
- 		.channel = num,					\
- 		.address = num,					\
- 		.info_mask_separate = mask_sep,			\
-+		.info_mask_separate_available =			\
-+			mask_sep_avail,				\
- 		.info_mask_shared_by_type = mask_type,		\
- 		.info_mask_shared_by_all = mask_all,		\
--		.scan_index = num,				\
--		.scan_type = {					\
--			.sign = 's',				\
--			.realbits = (bits),			\
--			.storagebits = (bits) > 16 ? 32 : 16,	\
--			.endianness = IIO_CPU,			\
--		},						\
--}
--
--#define AD7606_SW_CHANNEL(num, bits) {				\
--		.type = IIO_VOLTAGE,				\
--		.indexed = 1,					\
--		.channel = num,					\
--		.address = num,					\
--		.info_mask_separate =				\
--			BIT(IIO_CHAN_INFO_RAW) |		\
--			BIT(IIO_CHAN_INFO_SCALE),		\
--		.info_mask_separate_available =			\
--			BIT(IIO_CHAN_INFO_SCALE),		\
--		.info_mask_shared_by_all =			\
--			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
- 		.info_mask_shared_by_all_available =		\
--			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+			mask_all_avail,				\
- 		.scan_index = num,				\
- 		.scan_type = {					\
- 			.sign = 's',				\
-@@ -82,12 +64,28 @@
- 
- #define AD7605_CHANNEL(num)				\
- 	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
--		BIT(IIO_CHAN_INFO_SCALE), 0, 16)
-+		BIT(IIO_CHAN_INFO_SCALE), 0, 0, 0, 16)
- 
- #define AD7606_CHANNEL(num, bits)			\
- 	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),	\
- 		BIT(IIO_CHAN_INFO_SCALE),		\
--		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+		0, 0, bits)
-+
-+#define AD7606_SW_CHANNEL(num, bits)			\
++#define AD7606_BI_SW_CHANNEL(num)			\
 +	AD760X_CHANNEL(num,				\
 +		/* mask separate */			\
-+		BIT(IIO_CHAN_INFO_RAW) |		\
 +		BIT(IIO_CHAN_INFO_SCALE),		\
 +		/* mask type */				\
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+		/* mask all */				\
 +		0,					\
++		/* mask all */				\
++		BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
++		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
 +		/* mask separate available */		\
 +		BIT(IIO_CHAN_INFO_SCALE),		\
 +		/* mask all available */		\
 +		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),	\
-+		bits)
- 
- #define AD7616_CHANNEL(num)	AD7606_SW_CHANNEL(num, 16)
- 
-@@ -95,7 +93,8 @@
- 	AD760X_CHANNEL(num, 0,				\
- 		BIT(IIO_CHAN_INFO_SCALE),		\
- 		BIT(IIO_CHAN_INFO_SAMP_FREQ) |		\
--		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), 16)
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),  \
-+		0, 0, 16)
- 
++		16)
++
  struct ad7606_state;
  
+ typedef int (*ad7606_scale_setup_cb_t)(struct iio_dev *indio_dev,
+diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
+index a25182a3daa7..0c1177f436f3 100644
+--- a/drivers/iio/adc/ad7606_par.c
++++ b/drivers/iio/adc/ad7606_par.c
+@@ -13,12 +13,14 @@
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
++#include <linux/pwm.h>
+ #include <linux/types.h>
+ 
+ #include <linux/iio/backend.h>
+ #include <linux/iio/iio.h>
+ 
+ #include "ad7606.h"
++#include "ad7606_bi.h"
+ 
+ static const struct iio_chan_spec ad7606b_bi_channels[] = {
+ 	AD7606_BI_CHANNEL(0),
+@@ -31,6 +33,17 @@ static const struct iio_chan_spec ad7606b_bi_channels[] = {
+ 	AD7606_BI_CHANNEL(7),
+ };
+ 
++static const struct iio_chan_spec ad7606b_bi_sw_channels[] = {
++	AD7606_BI_SW_CHANNEL(0),
++	AD7606_BI_SW_CHANNEL(1),
++	AD7606_BI_SW_CHANNEL(2),
++	AD7606_BI_SW_CHANNEL(3),
++	AD7606_BI_SW_CHANNEL(4),
++	AD7606_BI_SW_CHANNEL(5),
++	AD7606_BI_SW_CHANNEL(6),
++	AD7606_BI_SW_CHANNEL(7),
++};
++
+ static int ad7606_bi_update_scan_mode(struct iio_dev *indio_dev, const unsigned long *scan_mask)
+ {
+ 	struct ad7606_state *st = iio_priv(indio_dev);
+@@ -70,7 +83,7 @@ static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev *indio
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = devm_iio_backend_enable(dev, st->back);
++	ret = devm_iio_backend_enable(st->dev, st->back);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -86,9 +99,52 @@ static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev *indio
+ 	return 0;
+ }
+ 
++static int ad7606_bi_reg_read(struct iio_dev *indio_dev, unsigned int addr)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++	int val, ret;
++	struct ad7606_platform_data *pdata =  st->dev->platform_data;
++
++	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
++		ret = pdata->bus_reg_read(st->back,
++					addr,
++					&val);
++	}
++	if (ret < 0)
++		return ret;
++
++	return val;
++}
++
++static int ad7606_bi_reg_write(struct iio_dev *indio_dev,
++			       unsigned int addr,
++			       unsigned int val)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++	struct ad7606_platform_data *pdata =  st->dev->platform_data;
++	int ret;
++
++	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
++	ret = pdata->bus_reg_write(st->back,
++					addr,
++					val);
++	}
++	return ret;
++}
++
++static int ad7606_bi_sw_mode_config(struct iio_dev *indio_dev)
++{
++	indio_dev->channels = ad7606b_bi_sw_channels;
++
++	return 0;
++}
++
+ static const struct ad7606_bus_ops ad7606_bi_bops = {
+ 	.iio_backend_config = ad7606_bi_setup_iio_backend,
+ 	.update_scan_mode = ad7606_bi_update_scan_mode,
++	.reg_read = ad7606_bi_reg_read,
++	.reg_write = ad7606_bi_reg_write,
++	.sw_mode_config = ad7606_bi_sw_mode_config,
+ };
+ 
+ static int ad7606_par16_read_block(struct device *dev,
 
 -- 
 2.34.1
