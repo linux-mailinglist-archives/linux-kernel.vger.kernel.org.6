@@ -1,162 +1,118 @@
-Return-Path: <linux-kernel+bounces-416625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D1D9D47F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:51:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4AFD9D47F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 07:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BDAE282AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:51:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62E18B22A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 06:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EBA1BBBDA;
-	Thu, 21 Nov 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BEyyYyoj"
-Received: from out30-97.freemail.mail.aliyun.com (out30-97.freemail.mail.aliyun.com [115.124.30.97])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC4D1C9B9D;
+	Thu, 21 Nov 2024 06:51:37 +0000 (UTC)
+Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F02528687;
-	Thu, 21 Nov 2024 06:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3EB1AC8A2;
+	Thu, 21 Nov 2024 06:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732171863; cv=none; b=jomaLaKjjl/B5Tk6xrSXc0g6bL7AtEc9a6c+pbuJPwtlKLYL72A9OjrdHJJLaXg1uIt+UbWud5X0AwJetl7M5x4d9Vdb2SA7sRUI2cAQ8XpOKzPZWgQdehRtuR2qCMJ1zNukK9cqQkJdbuBfYReJKwbgghd2X6+puJ8vT+zZ17A=
+	t=1732171896; cv=none; b=bz7sszpmOq7HW+hwpnZsVUCWs+JfX9/CDKTKDdphULwJDs+GdYjmZOQtL8gSX9SmGhdXyjq4CrKVOO1N01PxQkA+OIP1YETePIDPePQ49UIAaa/pdgl5OSA+G3JTOKIwv6nirEdFTHycMsUEmQf+m7M8mzPNEKyIydx2sKNUjLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732171863; c=relaxed/simple;
-	bh=2zycfry1p+Gzk2DViygIpISiI3WqRpWC10KIpyYSflE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CywfqJRALGXqwPJm5Oo/JXF4IIDk3aGQ2+B0L+SfmeR8uTpD5ZeHD4dHjt7Gu0ci/oZfLuTnJJ7YwiA6XFmzurSLwu3zwaPmQ2ArkGMSvP6Z/3PprEeFGvI4C8uGMuK9Ma/X49hVEvVAOViFYs/8ynjP4UvRS6NlqLBSH93rw3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BEyyYyoj; arc=none smtp.client-ip=115.124.30.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732171856; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=z93QOYyeKE9vxi+z8TZmZScUKuAySnyShvsDNCiZM3o=;
-	b=BEyyYyojOb62hDDmESdt3djZD7QW4G0gVUF85iG767INURE8fdDysXmftiUILZ62/TMB60AH1mlkH4wEhygwtn0jpTwnZza9/8klsW77fS53FftkZWKslf9xg4LhZWvd3/o4j9nK6bBhCuVY7P1ItYa/fyHweE4sToerbtHfspk=
-Received: from localhost(mailfrom:zijie.wei@linux.alibaba.com fp:SMTPD_---0WJuyxey_1732171840 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 21 Nov 2024 14:50:56 +0800
-From: weizijie <zijie.wei@linux.alibaba.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: weizijie <zijie.wei@linux.alibaba.com>,
-	xuyun <xuyun_xy.xy@linux.alibaba.com>
-Subject: [PATCH] KVM: x86: ioapic: Optimize EOI handling to reduce unnecessary VM exits
-Date: Thu, 21 Nov 2024 14:50:39 +0800
-Message-ID: <20241121065039.183716-1-zijie.wei@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1732171896; c=relaxed/simple;
+	bh=WJIdoe0ZU3QvNR5tZoSQf3L46qRt/MN+rIPPxriDbIM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WLp9vV2+vpnxT5v6D39uursEw+25i7bYqe2FNIlLow2V8vT0PqgX8Plza2RUb1+1kulDfbibtdzsFpNilCdueXkeZ9oZA5tN8yvg/idIWGgbe+zeaM0jPgm+WTXMOgsTof7xsje9Zr4JSwv2LwEn9JtTUlB92cRCzAXZVHfzTEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
+Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
+	by ni.piap.pl (Postfix) with ESMTPS id 4C2EBC3EEAC5;
+	Thu, 21 Nov 2024 07:51:24 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 4C2EBC3EEAC5
+From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev <netdev@vger.kernel.org>,  Oliver Neukum <oneukum@suse.com>,
+  Andrew Lunn <andrew+netdev@lunn.ch>,  "David S. Miller"
+ <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
+ Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,
+  linux-usb@vger.kernel.org,  linux-kernel@vger.kernel.org,  Jose Ignacio
+ Tornos Martinez <jtornosm@redhat.com>,  Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] usbnet_link_change() fails to call netif_carrier_on()
+In-Reply-To: <9baf4f17-bae6-4f5c-b9a1-92dc48fd7a8d@lunn.ch> (Andrew Lunn's
+	message of "Tue, 19 Nov 2024 17:20:34 +0100")
+References: <m34j43gwto.fsf@t19.piap.pl>
+	<9baf4f17-bae6-4f5c-b9a1-92dc48fd7a8d@lunn.ch>
+Sender: khalasa@piap.pl
+Date: Thu, 21 Nov 2024 07:51:24 +0100
+Message-ID: <m3plmpf5ar.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Address performance issues caused by a vector being reused by a
-non-IOAPIC source.
+Hi Andrew,
+thanks for a looking at this.
 
-commit 0fc5a36dd6b3
-("KVM: x86: ioapic: Fix level-triggered EOI and IOAPIC reconfigure race")
-addressed the issues related to EOI and IOAPIC reconfiguration races.
-However, it has introduced some performance concerns:
+Andrew Lunn <andrew@lunn.ch> writes:
 
-Configuring IOAPIC interrupts while an interrupt request (IRQ) is
-already in service can unintentionally trigger a VM exit for other
-interrupts that normally do not require one, due to the settings of
-`ioapic_handled_vectors`. If the IOAPIC is not reconfigured during
-runtime, this issue persists, continuing to adversely affect
-performance.
+>> void usbnet_link_change(struct usbnet *dev, bool link, bool need_reset)
+>> {
+>>       /* update link after link is reseted */
+>>       if (link && !need_reset)
+>>               netif_carrier_on(dev->net);
+>>       else
+>>               netif_carrier_off(dev->net);
+>>
+>>       if (need_reset && link)
+>>               usbnet_defer_kevent(dev, EVENT_LINK_RESET);
+>>       else
+>>               usbnet_defer_kevent(dev, EVENT_LINK_CHANGE);
+>> }
+>
+> This device is using phylink to manage the PHY. phylink will than
+> manage the carrier. It assumes it is solely responsible for the
+> carrier. So i think your fix is wrong. You probably should be removing
+> all code in this driver which touches the carrier.
 
-Simple Fix Proposal:
-A straightforward solution is to record the vector that is pending at
-the time of injection. Then, upon the next guest exit, clean up the
-ioapic_handled_vectors corresponding to the vector number that was
-pending. This ensures that interrupts are properly handled and prevents
-performance issues.
+Ok, I wasn't aware that phylink manages netdev's carrier state.
 
-Signed-off-by: weizijie <zijie.wei@linux.alibaba.com>
-Signed-off-by: xuyun <xuyun_xy.xy@linux.alibaba.com>
----
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/ioapic.c           | 11 +++++++++--
- arch/x86/kvm/vmx/vmx.c          | 10 ++++++++++
- 3 files changed, 20 insertions(+), 2 deletions(-)
+Then, is the patch wrong just because the asix driver shouldn't use the
+function, or is it wrong because the function should work differently
+(i.e., the semantics are different)?
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index e159e44a6a1b..b008c933d2ab 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1041,6 +1041,7 @@ struct kvm_vcpu_arch {
- #if IS_ENABLED(CONFIG_HYPERV)
- 	hpa_t hv_root_tdp;
- #endif
-+	DECLARE_BITMAP(ioapic_pending_vectors, 256);
- };
- 
- struct kvm_lpage_info {
-diff --git a/arch/x86/kvm/ioapic.c b/arch/x86/kvm/ioapic.c
-index 995eb5054360..6f5a88dc63da 100644
---- a/arch/x86/kvm/ioapic.c
-+++ b/arch/x86/kvm/ioapic.c
-@@ -284,6 +284,8 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
- 
- 	spin_lock(&ioapic->lock);
- 
-+	bitmap_zero(vcpu->arch.ioapic_pending_vectors, 256);
-+
- 	/* Make sure we see any missing RTC EOI */
- 	if (test_bit(vcpu->vcpu_id, dest_map->map))
- 		__set_bit(dest_map->vectors[vcpu->vcpu_id],
-@@ -297,10 +299,15 @@ void kvm_ioapic_scan_entry(struct kvm_vcpu *vcpu, ulong *ioapic_handled_vectors)
- 			u16 dm = kvm_lapic_irq_dest_mode(!!e->fields.dest_mode);
- 
- 			if (kvm_apic_match_dest(vcpu, NULL, APIC_DEST_NOSHORT,
--						e->fields.dest_id, dm) ||
--			    kvm_apic_pending_eoi(vcpu, e->fields.vector))
-+						e->fields.dest_id, dm))
-+				__set_bit(e->fields.vector,
-+					  ioapic_handled_vectors);
-+			else if (kvm_apic_pending_eoi(vcpu, e->fields.vector)) {
- 				__set_bit(e->fields.vector,
- 					  ioapic_handled_vectors);
-+				__set_bit(e->fields.vector,
-+					  vcpu->arch.ioapic_pending_vectors);
-+			}
- 		}
- 	}
- 	spin_unlock(&ioapic->lock);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 0f008f5ef6f0..572e6f9b8602 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5710,6 +5710,16 @@ static int handle_apic_eoi_induced(struct kvm_vcpu *vcpu)
- 
- 	/* EOI-induced VM exit is trap-like and thus no need to adjust IP */
- 	kvm_apic_set_eoi_accelerated(vcpu, vector);
-+
-+	/* When there are instances where ioapic_handled_vectors is
-+	 * set due to pending interrupts, clean up the record and the
-+	 * corresponding bit after the interrupt is completed.
-+	 */
-+	if (test_bit(vector, vcpu->arch.ioapic_pending_vectors)) {
-+		clear_bit(vector, vcpu->arch.ioapic_pending_vectors);
-+		clear_bit(vector, vcpu->arch.ioapic_handled_vectors);
-+		kvm_make_request(KVM_REQ_LOAD_EOI_EXITMAP, vcpu);
-+	}
- 	return 1;
- }
- 
--- 
-2.43.5
+Surely the function is broken, isn't it? Calling netif_carrier_off()
+on link up event can't be right?
 
+
+Now the ASIX driver, I'm looking at it for some time now. It consists
+of two parts linked together. The ax88172a.c part doesn't use phylink,
+while the main asix_devices.c does. So I'm leaving ax88172a.c alone for
+now (while it could probably be better ported to the same framework,
+i.e., phylink).
+
+The main part uses usbnet.c, which does netif_carrier_{on,off}() in the
+above usbnet_link_change(). I guess I can make it use directly
+usbnet_defer_kevent() only so it won't be a problem.
+
+Also, usbnet.c calls usbnet_defer_kevent() and thus netif_carrier_off()
+in usbnet_probe, removing FLAG_LINK_INTR from asix_devices.c will stop
+that.
+
+The last place interacting with carrier status is asix_status(), called
+about 8 times a second by usbnet.c intr_complete(). This is independent
+of any MDIO traffic. Should I now remove this as well? I guess removing
+asix_status would suffice.
+--=20
+Krzysztof "Chris" Ha=C5=82asa
+
+Sie=C4=87 Badawcza =C5=81ukasiewicz
+Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
+Al. Jerozolimskie 202, 02-486 Warszawa
 
