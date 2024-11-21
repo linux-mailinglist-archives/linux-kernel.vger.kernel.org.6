@@ -1,204 +1,452 @@
-Return-Path: <linux-kernel+bounces-417135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A97E89D4F60
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 113279D4F63
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699CE2820BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24B5281E1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48811D959E;
-	Thu, 21 Nov 2024 15:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDA31D934C;
+	Thu, 21 Nov 2024 15:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="csoXk8dE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b="SXeaZrev"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2106.outbound.protection.outlook.com [40.107.241.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658E21C728F
-	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201482; cv=none; b=hb49xokW8F74AupU+l6cCCbmdVkfjOIL89Pm5nIyzvc2l+RAdcnQWe6hfgIlQedbzqsVKM/33amvmYYrQ2SqiZaPLqa1e/ObYssXVuDOHxrg7EjfYqYFPKi4MTapIbiUyK5His+n0oIfCCv+pj90q0V8sqH9gIdjMhEc0I9G5RI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201482; c=relaxed/simple;
-	bh=Hc4o4tFcNVn7jqfs9MJy4/6SXEgHVb5psHg4B5qW/m8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XeKjbyat7YULTWYmiahU+/p3EbI2oT4zFKtDPciuOT9d7xe3TQi63RlJZuvcOR5Q0lFPkvRQGZIB4ks3HkVgjNmvDNeLt+PLvTDmeMfArAdKmOPIr7CA7PMsMbO0B9ZFpCZdUMjncI4NRxQ73MJc7R3RxyNcVoh9oSRQsGSOYQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=csoXk8dE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732201479;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3Nq1kII2UB+9ENt//6WMlEnfZsLsEAnBwTFsduCKCB8=;
-	b=csoXk8dEzYNE4V1HnEbWXJr+yM1qPEgJ6Lby326cKpEe9meT/KEQ3I0CCPn2LcM3nD3nx9
-	arqIcRAw82Kpw2AVlmvMDEoXxx9PWevmNJf4uSiUcqqqaGh8ppn0v5F9dC0VIz7wnWpW90
-	zQB6Qb/0sNbzaNlFkzMLj+F4TZMir6w=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-693-8KyPY0GsMrCuMjUWriK_TA-1; Thu, 21 Nov 2024 10:04:37 -0500
-X-MC-Unique: 8KyPY0GsMrCuMjUWriK_TA-1
-X-Mimecast-MFC-AGG-ID: 8KyPY0GsMrCuMjUWriK_TA
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4314f1e0f2bso7359665e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 07:04:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732201476; x=1732806276;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Nq1kII2UB+9ENt//6WMlEnfZsLsEAnBwTFsduCKCB8=;
-        b=o5FavQOGbs7djfgQbCeQpspLa9WHuEmM5B8UYvmZjWFgiZ5YGapDGRhHCXBsh1W4wF
-         KgYqeuKZHdqjzqtAot0htXMzoQsz5C8D3iwsXdOKUaS/sfWAhA66EZwT3caJN8SoVkvw
-         tqYjwUQP+DLksLft3mZMRHe5kumd4dCl+9MA/6z5ErHe9lUCebeix1liGNJJApZo9RRv
-         NNObshlSTGLjaBd1YkKpkavloJuBDmpwAxZV6CNTKjEAptOsBsgFjHqaXe4cWJqBGhYB
-         2PIFg6KGllw8YQh49NwwLliiU4fzz84qwBqn1dho5pZt6nso1keJRyGtapwZdB/5VE2R
-         Qwfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXARJ8rEC0sISS0UiSRVcBs9QzJQiTgdOCwJWic3uZd5iY4kZ/Iy0nsBX/FK63lgI22tjz1kgD4cbAHjb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMu+qhfJ+baLxVZuqCqeaXns8znWfMps4rVJYmB1RyCY6cU5uP
-	7o6HVGU6D9LT4ksdT5+Sx6XqrFAL/suV17S+T+NMz/NSQsc2C+hqNfFr5li/ri7fCJ+sRugkERm
-	IF8VWUL2xGeHf9W1cgkr3K7YuH5f5ppu3V8Y2k/O2FvOeyHCXbfjqQzwGmDwwQg==
-X-Gm-Gg: ASbGncuwnpZJwwxYKEEun1jI+VByo06WSpDJ2Or3eNjMPd5QpC7AuWLiEsZMt88PivQ
-	9CAnj0d60p0S08fDOmNXs2DxdlmnY4iYlwIWsL+ZyCuNFxQD88OYP4B95tSsX8nkXHJu5pfurHw
-	JGUzMbF0LSPwuCKxx5/OMN6tZ842QkxnbdrKTN1BJrI7zixeIIXfjGjoeu/7+x+y2VhiumJxllY
-	O6Nv7LkDBNpDo8Bz7DV/kxTm66rDW26IiJ47h+laKPuMMXPM5VE/wA3jym+tne9JUXQNs5C06CE
-	eBGJ9KZyuXLxrLMjUZd/wJGk60mfdomPoaBQ+hGymGEDYq/Fx+ZiXoup8gA1V4K21eODOO255D8
-	=
-X-Received: by 2002:a05:600c:3b8d:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4334899712dmr59724145e9.7.1732201476198;
-        Thu, 21 Nov 2024 07:04:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHvdmgV40iceBFhDPE6uUMsEeLIuOuf5e3raKKjMPeU6dfpAjM249m4BWtVHDX7rkMEbjfpXA==
-X-Received: by 2002:a05:600c:3b8d:b0:42c:c401:6d8b with SMTP id 5b1f17b1804b1-4334899712dmr59723405e9.7.1732201475521;
-        Thu, 21 Nov 2024 07:04:35 -0800 (PST)
-Received: from ?IPV6:2003:cb:c70c:de00:1200:8636:b63b:f43? (p200300cbc70cde0012008636b63b0f43.dip0.t-ipconnect.de. [2003:cb:c70c:de00:1200:8636:b63b:f43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b01e1046sm61538025e9.4.2024.11.21.07.04.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 07:04:35 -0800 (PST)
-Message-ID: <3affa5da-469e-4a25-8c75-dfc783ed2919@redhat.com>
-Date: Thu, 21 Nov 2024 16:04:32 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0A81C728F;
+	Thu, 21 Nov 2024 15:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732201527; cv=fail; b=oMssPidTqo0+DeyzQsoKC5S2wm/6vKtNby0g9eVa9fWqH0QMr+GWTxW9zt79FnZbJYIhfBv8GaBFI2jWHsisub5go+qRG9VFpLvBaoPtwvFj48LizGPsma90Kr/l7F7VAPuniEUJJ0PKf2O6i0SUhkdTcOT/zi8HAsFjLGrfbJg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732201527; c=relaxed/simple;
+	bh=XyLLAkypoE2rLWAGBDVvH7BjuBloldAxyoBXFcaZ9e0=;
+	h=From:Date:Subject:Content-Type:Message-Id:To:Cc:MIME-Version; b=PiDcnhtZ1Zec29fWgMIXLQqA28RuLRGhEvYXMnH2Rzg0E2DvgabJKsswwE6BA3jBqqelNLY0NZtkH7f7SAsORL9nazHOOnjam3V3AOV+uVjJJqg7RLQ0cnD2xv0GX4CasgkfyqQL1nC6Ve3bjIaqt7/LwfJ61rDpfIvsyK+rYTA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com; spf=pass smtp.mailfrom=solid-run.com; dkim=pass (1024-bit key) header.d=solidrn.onmicrosoft.com header.i=@solidrn.onmicrosoft.com header.b=SXeaZrev; arc=fail smtp.client-ip=40.107.241.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=solid-run.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=solid-run.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kdvgDQjA+YKQL2BWv232TTPySA4/1uQ1k6IhAX6/0eYrpwrIJuR+j3pBAvPHAq9AuBxBm2mWXdWM2lR1b7Iz724tyrkv+rllG870Ff5KaU7TZFERAeJZEYOwP529etrHUIbFQtmnLs6o8kdxMMOlUGxmrCFtJ6pldOMVZbbA6WOZqHhd0ahlQ+JBymsR5a4R69FcBO+Ui84joTh4iJl5sKjocCl36/a3KPmxjFoNn9xhl0aBNLQwo3jccPTPyQegmo3xkr/IINwwdZ/g4u56YEb6IqFsrbJ9/B33p3n+2VhDJcsOVR7sNKASfUz2JqclGGvTN3gUXbnd5dbxVkykRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8b9qVRMfyicpoZOGaabdgyEQ1OZG48ftHBo7JcUxFmc=;
+ b=Wlasvgaed/Ver9zwTw0s9zFzu53oVH4Rtkl+BCognr9zZmUv3EQa29Gr/DbjmI5O9nlu5B1KCPfPYVAvuUoVXjp6i4HJJUI9zaITPZqPabMA98si5ejauASfNjmQEYFac0oJn2EieSOIoNTeHoNmMZitPIURtOHL5edHEb8/pOPn+YA+kIxrjCvGYk2asOr0HHfQ/TvSTCASMLhEWqSzI5jKWNphqBAmTgU1tpdE4p/WK5syxeQJJMOXKXlQI0ChTwDrNtT2qI8CCt8Jwm5A+nlUKBVUxyZkgw/seh7OHjratqAU/QfLC3d3vWHOAdRtpBsyHYoICfDvCEhRYW4fNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=solid-run.com; dmarc=pass action=none
+ header.from=solid-run.com; dkim=pass header.d=solid-run.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solidrn.onmicrosoft.com; s=selector1-solidrn-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8b9qVRMfyicpoZOGaabdgyEQ1OZG48ftHBo7JcUxFmc=;
+ b=SXeaZrev4J28MxTIuTNDBWvro6/WLmJlZDnathTYJZPlJIqvDH53dVSzg5aGPm3802V+SUvJ3MVdt/sQ2yrIPa50znJA0yWP06kJSxImNVkajMzfj1w4SbldDEzj5KyTWOYcjso+eToAL2l4p61PC3LlNks9hXZIpKJMjDxXtvI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=solid-run.com;
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com (2603:10a6:20b:2d5::17)
+ by DB9PR04MB8479.eurprd04.prod.outlook.com (2603:10a6:10:2c5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
+ 2024 15:05:20 +0000
+Received: from AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529]) by AM9PR04MB7586.eurprd04.prod.outlook.com
+ ([fe80::c04e:8a97:516c:5529%4]) with mapi id 15.20.8158.023; Thu, 21 Nov 2024
+ 15:05:20 +0000
+From: Josua Mayer <josua@solid-run.com>
+Date: Thu, 21 Nov 2024 16:05:11 +0100
+Subject: [PATCH RFC] ata: libahci_platform: support non-consecutive port
+ numbers
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241121-ahci-nonconsecutive-ports-v1-1-1a20f52816fb@solid-run.com>
+X-B4-Tracking: v=1; b=H4sIACZMP2cC/x3MsQqDQAyA4VeRzAaaU2l1FXwA19LhvKY1S04uK
+ oL47j06fsP/n2CchA264oTEu5hEzaCygDB7/TLKOxvczdVEjtDPQVCjhqjGYVtlZ1xiWg39oyW
+ aKtc0/g65XxJ/5Pi/nzAOPbyu6wdwYwVOcAAAAA==
+X-Change-ID: 20241121-ahci-nonconsecutive-ports-a8911b3255a7
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: Jon Nettleton <jon@solid-run.com>, 
+ Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+ Yazan Shhady <yazan.shhady@solid-run.com>, 
+ Rabeeh Khoury <rabeeh@solid-run.com>, linux-ide@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: FR5P281CA0037.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:f3::17) To AM9PR04MB7586.eurprd04.prod.outlook.com
+ (2603:10a6:20b:2d5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/huge_memory: Fix to make vma_adjust_trans_huge() use
- find_vma() correctly
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: akpm@linux-foundation.org, dave@stgolabs.net, willy@infradead.org,
- Liam.Howlett@oracle.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-References: <20241121124113.66166-1-aha310510@gmail.com>
- <26b82074-891f-4e26-b0a7-328ee2fa08d3@redhat.com>
- <25ead85f-2716-4362-8fb5-3422699e308c@redhat.com>
- <CAO9qdTE8WO100AJo_bgM+J5yCpTtv=tRniNV2Rq3YAwQjx3JrA@mail.gmail.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAO9qdTE8WO100AJo_bgM+J5yCpTtv=tRniNV2Rq3YAwQjx3JrA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB7586:EE_|DB9PR04MB8479:EE_
+X-MS-Office365-Filtering-Correlation-Id: 831d8a95-b1bb-463f-e3ae-08dd0a3deaca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QXFaWENJWmoyZmdpRFNpcEpqTlN1NFFMbUNhdUx3WUlna1pEdlZUQklremJE?=
+ =?utf-8?B?djhORVJMR3BlOFd1WFY5SzluQXFOWXl5OXpnMXBXRkhOZERIQzluazNzUzFE?=
+ =?utf-8?B?MlRqQXRTZVlMeWI0NXVRU1A5bUNTU09hQ3NBc3FPNk5BTjhkeTNwU0lZTDlq?=
+ =?utf-8?B?S3Bsb1V4TjE4Y0xtV3pNL3k5aGhYc1NpWGt4SXlHQlRPUlVRcWtZRThCaVVX?=
+ =?utf-8?B?REUrcFNxbTJnQzFOT1RPaFBTRUZMbE4weklNRmVwWlI4eWY0bEFnYkhFUHpm?=
+ =?utf-8?B?amp3TFM1c3NCR0YyTlQrZTlUckRIbHhFV1RaaTFRTmdzYThXbGtzTmRXUXRv?=
+ =?utf-8?B?Q0JRYzViajM2QVhlZ0hDcWNDNytpRkdLMkZEVzlDNUxmdkFuWVRqVTM3cXk1?=
+ =?utf-8?B?OExBTWFpbHpRTUxJWWNqazVkTEFpMGc1YkkreUpMdHdLN3RiYVNRQk1IVzJP?=
+ =?utf-8?B?eisrR3BKZ1FSYVovMmk5YUM5SmlXM3ViSkp4RXZQaXRwRHMxZXR5bzRGNG9m?=
+ =?utf-8?B?ZW1iTnhsclBLaWVtK3hCb1hsU2g5dER4SmhjMFlEZGhTZlZtb0liUi9NWnZF?=
+ =?utf-8?B?eDdveHU4OVJqQjBLckxUc0pub1M2YzdkRkxpaEZONCthTVlkSjAvRlpJVysx?=
+ =?utf-8?B?WnIzSDNwV25lSEpDTjZEV1dTbkY4czEvNC8vV3RlMkQ1VVNoem9kSllIUnpM?=
+ =?utf-8?B?THdVbjRFWjgzWkxTa2x6V0QvT3B4c0FhZGQyeDlMN1FjYUlWNk45U0VtNENw?=
+ =?utf-8?B?UmNOWWhmbmJvZXlTRm15UTJBUVl2WEpOSkh6QlVBeWpVNmc2TkE0TzBVKzZU?=
+ =?utf-8?B?cGZjbFh5bkg5TldFakRiRlRZR0ZIbXp5dEJOVWp5czZLTlBKd2wxcEJWM1RP?=
+ =?utf-8?B?WjdSSEJraWJsQjZGRlV3UUNSQTBIZWJrSTRlQ24yU09KeG9scWVGYlpDcWtZ?=
+ =?utf-8?B?V1JSRCtFN05HbWJJQ0ZLSGJhdDJhR1ZLaGwzSzltUzlnRzdSMEc5clRSMzlp?=
+ =?utf-8?B?b2NNUlNOek5NSGVUeVRyaUZ3UHRyZUk2NWduU1JoVUVlQmxuZzIrMGtzMUo1?=
+ =?utf-8?B?SW9hOGFDU0orYVgyalhBS0NzTFFXRldYNFQvajlFbUtmMHpPQjcrL2JTOWE3?=
+ =?utf-8?B?MWtsU0NhdytIYW1IZVBONzd5eU1hYkZsdE0vamVkbndrbllUSGZkSzJVUXpr?=
+ =?utf-8?B?c3ZvWFNQSjdveHZuY0p2NXVQZHpNaXJZV0paZzgxUnVGYUdHREFOM2MyUVRa?=
+ =?utf-8?B?K1RqZHNIRk1pR1MzVFhjOUx5dHFvZWhnNVYwTWlWNUtKNUFsVnhwT01ZcW5D?=
+ =?utf-8?B?NVVnRkxHNU5QbExoMEdZc0ZnUkRXRS9YUUFaSXRtNEpkZDh3a0NKNVJUR1VL?=
+ =?utf-8?B?UTZta0RnQUlmS3RtdlBKUFZTc0d6ZmNwdi9JeU40bUl5WGNvWjZxcnVVU3Ux?=
+ =?utf-8?B?THd3RlVVV1VXaDBYWTFObkY2WEM1UExHaVBwK1BWZ2VTSHZ2dDRKcG4yWHF4?=
+ =?utf-8?B?Q1Q5eC94Yy94OSt5ekF4aHFlZmRIY2tkTExSZHlKYVl5ZlR1OVFNMTRRM0xE?=
+ =?utf-8?B?NFVhM0dBTEc5T0RXenVFekIwTXdXV3JBaVhVVUExVGZtNCtJNGJpODdkektI?=
+ =?utf-8?B?Q3BtbFBkUmFiWHMzRkJpVjNGVFRmWVVDcURFSGhMS0VMcTZTRllQcXljU2F6?=
+ =?utf-8?B?R1FuMzdKYXd0cTI4Z0VOeUxxdE5NSFZIV2F0UHVtZ1BhcUhuVTQrVmNsUW8v?=
+ =?utf-8?B?bUlTcysxNXh0RUZzZDRpdWxFODRobkhPR0RCUlVqMGJOSFMwV3p6bWVvcmlt?=
+ =?utf-8?Q?Yt//3K36fo2KU5DFU+ffdspN6wtlyVhQ3GVTY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB7586.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TURNaGVvWnQ4YTIxbEdKMW5KSk5oZ1Y3TkZxOGZhR1ovSkJoYjZNOWFrTEs2?=
+ =?utf-8?B?RDhWM21SVE9Mb3p4TmR3TCtKUUV4eVVyZy9aTk1iS1B3YjBQcFdUbFIvekMx?=
+ =?utf-8?B?RXRuTzlSWW5xM2tPMm5OMEd6RnRlbDJadXRwSFpUY2RkaUdNcUNMYjB3TXZH?=
+ =?utf-8?B?L0Z1Z3Iyd2x6cFFZRk1xRzMxK3pqY0VrZi9lVzM5ZXdweE5SZk1jaGRaOU8y?=
+ =?utf-8?B?aW5kL1VlSWF3N3NXY0Q1Ujk0eTZ6MStoV3F5V0V4WGFEQjhZRmFoOVByZVZr?=
+ =?utf-8?B?aWU2aVZzYjhoT01RUG5hUXBwQXdWbnFNNHcrTGJGekxYbkdYbWVVWGt3bTRN?=
+ =?utf-8?B?ZlMvM0h0MGJRQ1c5UjNIbHVRTHBvcWRCM3R2d01JbjZVVnFnVDVaTHBIQ2xK?=
+ =?utf-8?B?Mng1K0J1UGhocGZJdkplNTEzdjRnSk9OVTB0QVBTYW5MbUVBdi95SnFKN3NG?=
+ =?utf-8?B?N28yaFFZR2JHMTNIT0xPOFdHdkRIT0dKd1cxMlZzdWVwZGdJYjFGWkNucFJ5?=
+ =?utf-8?B?cWVmZFBzUmZkZElGajF6MDNnVDc1ZXBUZkQ2V2FMSW9kaDBZdWV6ODVmMGt2?=
+ =?utf-8?B?b2RGZXNsUlZSdm4vQkgreUJmYm9rTndDaU1uRW92QlN2ZzBSMk10Kyt1UUJk?=
+ =?utf-8?B?cmhBb1JYTzZKRG54RUk3cE8rbzNKbkVnV0xkTFJMZUczOFBOTHdPakxIWFBu?=
+ =?utf-8?B?Y09ZY3NiUjdVazBVZGxmdDdjeCtPZmhibU4xTUxOOUJ5QURFMkhleG5sUksz?=
+ =?utf-8?B?KzA1YjZqZXFNL3dpVmxKNjU3OEZ0NEtQT1VKdVlJNWpFZDhxV1FxSFdINnkw?=
+ =?utf-8?B?bUFTV0NPa0FGaDlGekxvRG1BdnVoVjc0ZUNZY1dNalBUTFcra25rOVJjd1lK?=
+ =?utf-8?B?bGZCTElWQTFQZVc0WnJYZUxYcjdiei9zRW5RaHNzOUJLY05VNjMvSEVzb1ZX?=
+ =?utf-8?B?NHlWTVZYRGUvY3dIM3dOVGpzalpMTlRjVjgybDdOQnZESEVmYTl3TGJPeElW?=
+ =?utf-8?B?MUF2SFIyR2x1bGxFaW9ZTFF0elRzYTF3L2pncHhtSmJzNUdPWHQvbVJ2NDlI?=
+ =?utf-8?B?aW4xOUJlWEtrc1owanNsbGVzVU5ad3Q0alFteWprZmEwRnYwUnFtcUdCTnNR?=
+ =?utf-8?B?SVZxOSs1MHRwYlNHcUJzQjQyU1dZR2lwSFFuN3dsUjdia3M0bXBUc1I0REFa?=
+ =?utf-8?B?cnBkRkFrcVF6NmRjQk1UWHhINENmVzl3ODJ0SzN3dEE5L2dPeDkwKzJDT3lS?=
+ =?utf-8?B?SXJTVzYzN1QxSDYxcnE5Y3FXU21JbmhscFVmWGdpdmpIZU5JVE1tVy9CUDdP?=
+ =?utf-8?B?Z29lbUhUZVU3SFNheGZNRndLUnRmZ2VidXdtR0N3RE94L1RsS05tdnBOMnNY?=
+ =?utf-8?B?cjE1V0RKVDE4WHR2RDMwdXFxSTVtMjdXakc0M2MzRDVCNFl1YlcvUTUwUWFP?=
+ =?utf-8?B?YmlTM2JXZ05OYVNScmFiWE81OGtQMFJ3ZVVFR2FYaGdxNlZmNy9NOUZ1bWYz?=
+ =?utf-8?B?UFhSNGM2UjZuSG1tenEyYnQ3MG8rRlBVbmVyT09ubW8yMGdNOWxhVEFTQjZT?=
+ =?utf-8?B?YjNqbXVXQU9YT29idW5PcFVpOVRnMlpxQWxMajlwOUg0b3RVWFNkREdtWStI?=
+ =?utf-8?B?N1I4NkxLeXBFY1E0b3UwL1B5amhGQnZGclhhSklCekZPVDN2VWhYcjRPMlFH?=
+ =?utf-8?B?dkZjM2NNYjhHNzhhWWVHaEp1N3hmbHRjQkxZbzFxQmw3MStaNXlKMXljMm9U?=
+ =?utf-8?B?NkpNODhxZW1MK21xTDZObUYvKy9ka0dmSU1jb1ZKZ1ZHbVFiMHhHYWhjN3J5?=
+ =?utf-8?B?TW8vRGEveno5eitxUk9Dcm5rZHp2Z2tlWU9vSGh1TktnSjZqQk85NkxORDQz?=
+ =?utf-8?B?MXhiZDJ0SFllSVIzRlZReHdER1dUdnEzekhBd091NmE0RnNNT2NwTzYrZkJh?=
+ =?utf-8?B?dE1aWU41T1IzcGpSMUhQQVZKcS9KVi9oOXhxTGh1YW5QSmxjaUY3Q3VIN0Y0?=
+ =?utf-8?B?dXNuQXdwaXpCOS9XdVZYNXVWYm9FUUhDVHNqQnc2dml0S2FGOUgwZDZwYllh?=
+ =?utf-8?B?ZTYvYi90UEJtTVFmY0RXR3pZMGFsd1MxZzNERlNqODMwdi9XRnRxWFgwUkxl?=
+ =?utf-8?Q?zo3206lTv3TdQolI8afOocJ/Q?=
+X-OriginatorOrg: solid-run.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 831d8a95-b1bb-463f-e3ae-08dd0a3deaca
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB7586.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 15:05:20.6473
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a4a8aaf3-fd27-4e27-add2-604707ce5b82
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pDTkGsCnvHsmU/tP2uGZBy3G3PGEKyB9g4ULx5K6xvQHLibKLu/yagfLXVoC57q/VpcboQQAFnmAKY9O1oFFGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8479
 
-On 21.11.24 15:18, Jeongjun Park wrote:
-> David Hildenbrand <david@redhat.com> wrote:
->>
->> On 21.11.24 14:44, David Hildenbrand wrote:
->>> On 21.11.24 13:41, Jeongjun Park wrote:
->>>> vma_adjust_trans_huge() uses find_vma() to get the VMA, but find_vma() uses
->>>> the returned pointer without any verification, even though it may return NULL.
->>>> In this case, NULL pointer dereference may occur, so to prevent this,
->>>> vma_adjust_trans_huge() should be fix to verify the return value of find_vma().
->>>>
->>>> Cc: <stable@vger.kernel.org>
->>>> Fixes: 685405020b9f ("mm/khugepaged: stop using vma linked list")
->>>
->>> If that's an issue, wouldn't it have predated that commit?
->>>
->>> struct vm_area_struct *next = vma->vm_next;
->>> unsigned long nstart = next->vm_start;
->>>
->>> Would have also assumed that there is a next VMA that can be
->>> dereferenced, no?
->>>
->>
->> And looking into the details, we only assume that there is a next VMA if
->> we are explicitly told to by the caller of vma_adjust_trans_huge() using
->> "adjust_next".
->>
->> There is only one such caller,
->> vma_merge_existing_range()->commit_merge() where we set adj_start ->
->> "adjust_next" where we seem to have a guarantee that there is a next VMA.
-> 
-> I also thought that it would not be a problem in general cases, but I think
-> that there may be a special case (for example, a race condition...?) that can
-> occur in certain conditions, although I have not found it yet.
+So far ahci_platform relied on number of child nodes in firmware to
+allocate arrays and expected port numbers to start from 0 without holes.
+This number of ports is then set in private structure for use when
+configuring phys and regulators.
 
-If we're working on VMAs in that way (merging!) we need the mmap lock in 
-write mode, so no races are possible.
+Some platforms may not use every port of an ahci controller.
+E.g. SolidRUN CN9130 Clearfog uses only port 1 but not port 0, leading
+to the following errors during boot:
+[    1.719476] ahci f2540000.sata: invalid port number 1
+[    1.724562] ahci f2540000.sata: No port enabled
 
-> 
-> In addition, most functions except this one unconditionally check the return
-> value of find_vma(), so I think it would be better to handle the return value
-> of find_vma() consistently in this function as well, rather than taking the
-> risk and leaving it alone just because it seems to be okay.
+Remove from ahci_host_priv the property nports which only makes sense
+when enabled ports are consecutive. It is replaced with AHCI_MAX_PORTS
+and checks for hpriv->mask_port_map, which indicates each port that is
+enabled.
 
-Your patch is silently hiding something that should never happen such 
-that we wouldn't handle our operation as intended. So no, that's even worse.
+Update ahci_host_priv properties target_pwrs and phys from dynamically
+allocated arrays to statically allocated to size AHCI_MAX_PORTS.
 
+Update ahci_platform_get_resources to ignore holes in the port numbers
+and enable ports defined in firmware by their reg property only.
+
+When firmware does not define children it is assumed that there is
+exactly one port, using index 0.
+
+I marked this RFC because it was only tested with Linux v6.1, Marvell
+fork, CN9130 Clearfog Pro which has only port number 1 in device-tree.
+Further I am not completely sure if it has severe side-effects on
+other platforms.
+I plan to submit it again after testing on v6.13-rc1, but do welcome
+feedback in the meantime, particularly whether this idea of supporting
+non-consecutive ports is acceptable.
+
+Signed-off-by: Josua Mayer <josua@solid-run.com>
+---
+ drivers/ata/ahci.h             |  5 ++-
+ drivers/ata/ahci_brcm.c        |  5 ++-
+ drivers/ata/ahci_ceva.c        | 22 +++++++-----
+ drivers/ata/libahci_platform.c | 81 ++++++++++++++----------------------------
+ 4 files changed, 46 insertions(+), 67 deletions(-)
+
+diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
+index 8f40f75ba08cff4deca261b1162ee9a0fb91fed6..544b6242c11131f75c724d15244a74588410ee05 100644
+--- a/drivers/ata/ahci.h
++++ b/drivers/ata/ahci.h
+@@ -348,15 +348,14 @@ struct ahci_host_priv {
+ 	struct clk_bulk_data	*clks;		/* Optional */
+ 	unsigned int		f_rsts;
+ 	struct reset_control	*rsts;		/* Optional */
+-	struct regulator	**target_pwrs;	/* Optional */
++	struct regulator	*target_pwrs[AHCI_MAX_PORTS];	/* Optional */
+ 	struct regulator	*ahci_regulator;/* Optional */
+ 	struct regulator	*phy_regulator;/* Optional */
+ 	/*
+ 	 * If platform uses PHYs. There is a 1:1 relation between the port number and
+ 	 * the PHY position in this array.
+ 	 */
+-	struct phy		**phys;
+-	unsigned		nports;		/* Number of ports */
++	struct phy		*phys[AHCI_MAX_PORTS];
+ 	void			*plat_data;	/* Other platform data */
+ 	unsigned int		irq;		/* interrupt line */
+ 	/*
+diff --git a/drivers/ata/ahci_brcm.c b/drivers/ata/ahci_brcm.c
+index 2f16524c252629cf89014144b33fec85d6bca137..169519c4cde37fe8aea6a48fbef16fd10d4d402c 100644
+--- a/drivers/ata/ahci_brcm.c
++++ b/drivers/ata/ahci_brcm.c
+@@ -287,7 +287,10 @@ static unsigned int brcm_ahci_read_id(struct ata_device *dev,
+ 	brcm_sata_phy_enable(priv, ap->port_no);
+ 
+ 	/* Re-initialize and calibrate the PHY */
+-	for (i = 0; i < hpriv->nports; i++) {
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (!(hpriv->mask_port_map & (1 << i)))
++			continue;
++
+ 		rc = phy_init(hpriv->phys[i]);
+ 		if (rc)
+ 			goto disable_phys;
+diff --git a/drivers/ata/ahci_ceva.c b/drivers/ata/ahci_ceva.c
+index 11a2c199a7c24628e858f2fc8e88e69a60c8b94b..4f0b5674f68e62d6871207e82de16c8422232285 100644
+--- a/drivers/ata/ahci_ceva.c
++++ b/drivers/ata/ahci_ceva.c
+@@ -205,20 +205,24 @@ static int ceva_ahci_platform_enable_resources(struct ahci_host_priv *hpriv)
+ 	if (rc)
+ 		goto disable_clks;
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
+-		rc = phy_init(hpriv->phys[i]);
+-		if (rc)
+-			goto disable_rsts;
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (hpriv->mask_port_map & (1 << i)) {
++			rc = phy_init(hpriv->phys[i]);
++			if (rc)
++				goto disable_rsts;
++		}
+ 	}
+ 
+ 	/* De-assert the controller reset */
+ 	ahci_platform_deassert_rsts(hpriv);
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
+-		rc = phy_power_on(hpriv->phys[i]);
+-		if (rc) {
+-			phy_exit(hpriv->phys[i]);
+-			goto disable_phys;
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (hpriv->mask_port_map & (1 << i)) {
++			rc = phy_power_on(hpriv->phys[i]);
++			if (rc) {
++				phy_exit(hpriv->phys[i]);
++				goto disable_phys;
++			}
+ 		}
+ 	}
+ 
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 7a8064520a35bd86a1fa82d05c1ecaa8a81b7010..e73dbdaa17604999561646f8d0b04f3e7314305c 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -48,7 +48,10 @@ int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int rc, i;
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (!(hpriv->mask_port_map & (1 << i)))
++			continue;
++
+ 		rc = phy_init(hpriv->phys[i]);
+ 		if (rc)
+ 			goto disable_phys;
+@@ -70,8 +73,10 @@ int ahci_platform_enable_phys(struct ahci_host_priv *hpriv)
+ 
+ disable_phys:
+ 	while (--i >= 0) {
+-		phy_power_off(hpriv->phys[i]);
+-		phy_exit(hpriv->phys[i]);
++		if (hpriv->mask_port_map & (1 << i)) {
++			phy_power_off(hpriv->phys[i]);
++			phy_exit(hpriv->phys[i]);
++		}
+ 	}
+ 	return rc;
+ }
+@@ -87,9 +92,11 @@ void ahci_platform_disable_phys(struct ahci_host_priv *hpriv)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
+-		phy_power_off(hpriv->phys[i]);
+-		phy_exit(hpriv->phys[i]);
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (hpriv->mask_port_map & (1 << i)) {
++			phy_power_off(hpriv->phys[i]);
++			phy_exit(hpriv->phys[i]);
++		}
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(ahci_platform_disable_phys);
+@@ -209,13 +216,12 @@ int ahci_platform_enable_regulators(struct ahci_host_priv *hpriv)
+ 	if (rc)
+ 		goto disable_ahci_pwrs;
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
+-		if (!hpriv->target_pwrs[i])
+-			continue;
+-
+-		rc = regulator_enable(hpriv->target_pwrs[i]);
+-		if (rc)
+-			goto disable_target_pwrs;
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (hpriv->mask_port_map & (1 << i)) {
++			rc = regulator_enable(hpriv->target_pwrs[i]);
++			if (rc)
++				goto disable_target_pwrs;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -243,10 +249,9 @@ void ahci_platform_disable_regulators(struct ahci_host_priv *hpriv)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < hpriv->nports; i++) {
+-		if (!hpriv->target_pwrs[i])
+-			continue;
+-		regulator_disable(hpriv->target_pwrs[i]);
++	for (i = 0; i < AHCI_MAX_PORTS; i++) {
++		if (hpriv->mask_port_map & (1 << i))
++			regulator_disable(hpriv->target_pwrs[i]);
+ 	}
+ 
+ 	regulator_disable(hpriv->ahci_regulator);
+@@ -343,8 +348,8 @@ static void ahci_platform_put_resources(struct device *dev, void *res)
+ 	 * SATA device itself. So we can't use devm for automatically
+ 	 * releasing them. We have to do it manually here.
+ 	 */
+-	for (c = 0; c < hpriv->nports; c++)
+-		if (hpriv->target_pwrs && hpriv->target_pwrs[c])
++	for (c = 0; c < AHCI_MAX_PORTS; c++)
++		if ((hpriv->mask_port_map & (1 << c)) && hpriv->target_pwrs[c])
+ 			regulator_put(hpriv->target_pwrs[c]);
+ 
+ 	kfree(hpriv->target_pwrs);
+@@ -539,41 +544,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 		hpriv->f_rsts = flags & AHCI_PLATFORM_RST_TRIGGER;
+ 	}
+ 
+-	/*
+-	 * Too many sub-nodes most likely means having something wrong with
+-	 * the firmware.
+-	 */
+ 	child_nodes = of_get_child_count(dev->of_node);
+-	if (child_nodes > AHCI_MAX_PORTS) {
+-		rc = -EINVAL;
+-		goto err_out;
+-	}
+-
+-	/*
+-	 * If no sub-node was found, we still need to set nports to
+-	 * one in order to be able to use the
+-	 * ahci_platform_[en|dis]able_[phys|regulators] functions.
+-	 */
+-	if (child_nodes)
+-		hpriv->nports = child_nodes;
+-	else
+-		hpriv->nports = 1;
+-
+-	hpriv->phys = devm_kcalloc(dev, hpriv->nports, sizeof(*hpriv->phys), GFP_KERNEL);
+-	if (!hpriv->phys) {
+-		rc = -ENOMEM;
+-		goto err_out;
+-	}
+-	/*
+-	 * We cannot use devm_ here, since ahci_platform_put_resources() uses
+-	 * target_pwrs after devm_ have freed memory
+-	 */
+-	hpriv->target_pwrs = kcalloc(hpriv->nports, sizeof(*hpriv->target_pwrs), GFP_KERNEL);
+-	if (!hpriv->target_pwrs) {
+-		rc = -ENOMEM;
+-		goto err_out;
+-	}
+-
+ 	if (child_nodes) {
+ 		for_each_child_of_node_scoped(dev->of_node, child) {
+ 			u32 port;
+@@ -587,7 +558,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 				goto err_out;
+ 			}
+ 
+-			if (port >= hpriv->nports) {
++			if (port >= AHCI_MAX_PORTS) {
+ 				dev_warn(dev, "invalid port number %d\n", port);
+ 				continue;
+ 			}
+@@ -625,6 +596,8 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 		 * If no sub-node was found, keep this for device tree
+ 		 * compatibility
+ 		 */
++		hpriv->mask_port_map |= BIT(0);
++
+ 		rc = ahci_platform_get_phy(hpriv, 0, dev, dev->of_node);
+ 		if (rc)
+ 			goto err_out;
+
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241121-ahci-nonconsecutive-ports-a8911b3255a7
+
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Josua Mayer <josua@solid-run.com>
 
 
