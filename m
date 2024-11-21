@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-417078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A7B9D4EB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:34:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E798F9D4EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 829982841F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:34:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66315B257D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FC41D9350;
-	Thu, 21 Nov 2024 14:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 485FD1D9334;
+	Thu, 21 Nov 2024 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b="SHteVPhf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QFyjiVtr"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GPP6hrRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77F24A02;
-	Thu, 21 Nov 2024 14:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC8C1AAE37;
+	Thu, 21 Nov 2024 14:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732199645; cv=none; b=FqzHEPlBmvbp0/ov1CgKg91YMZbKt0cIR1iRjoxjQstvr7EsqROl4PMY0qp48SgR8/Jod7bGr2gRHMWtkacL6QJcrdit707BXVpLDyQcRhLq9CnuY1HX2212Ok8iltuK+O/7HX846U5M4jNjL5wAIkECxHXQlNT/qLf2BqtXO8c=
+	t=1732199669; cv=none; b=u33tFxSeW7j50aF2uMvH30oP5DNqVR+EtfQFo9N7IX+syD2q+sZYZJMQxxk/Q32skMQHACgHicFnqMpDUZDWoWP4+TijMrQevjcVVLs+9jC5dQY5TWYRZPqA5UD+DYApMSGXkmTkTNyG4/PO00HJsVtpaTLBYsKxRtcfcRoeJ2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732199645; c=relaxed/simple;
-	bh=pIKV3HP1VFzMsK7qp0/RzOA25Z/QTyzJnYYwGtbCSAY=;
+	s=arc-20240116; t=1732199669; c=relaxed/simple;
+	bh=TsAFbujU4fB8QUxdKHjvksqjOhJcoSHX6zf/LFgOQpg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hW85rKpX8jOV7R9VxKoJ9acFWswdC3I4K3kmdxLwATfmdeaulsyKnHyhQCpxtu7hWt6hX28Kx1Ra0WVRHq4Z5dVDxoBFAHWe1nkxscgMUwpXcTl0ToHJqN9E39lidXgEPJJ4ro0Wb+6v+sWW12cFCdQB2KRmYiwhLGojLb+ECn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza; spf=pass smtp.mailfrom=tycho.pizza; dkim=pass (2048-bit key) header.d=tycho.pizza header.i=@tycho.pizza header.b=SHteVPhf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QFyjiVtr; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.pizza
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tycho.pizza
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 1370225401A1;
-	Thu, 21 Nov 2024 09:34:01 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Thu, 21 Nov 2024 09:34:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1732199640; x=1732286040; bh=0BYnMeJRRg
-	a6HCEMYOl8JHeH/RdBznWhgGPzkdFC558=; b=SHteVPhfBZHF+oVkqiqfXHCdQM
-	0BauPYR14ct0FS7w+RoxJLyX463jk8SyPch19crb/4eWT65MJyhitNCwGQaPR4+J
-	vLKst/yW2vHlDClQUGN8eKAcMN1OgMO0jxCHDZ4WqdIP/HfOSW8kD5sszcxBSn0e
-	MrenqfA51fhFAWLcmNQq/8zpJTqBIt46/Ioab2vA0/luy+w5ICKS1kGPq4VoHCvx
-	scXfWyu44QWyPwkVSvT7YPLaAOlZuKx+pDNnhowjxRV3/hxe/fKMFQjJqa+mEzZ8
-	BWOvodjEI3QdpqRKLh3lBFBFKCI14UvM9iuBW4kIVl0zhNh3a7cHqXHIvTQg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1732199640; x=1732286040; bh=0BYnMeJRRga6HCEMYOl8JHeH/RdBznWhgGP
-	zkdFC558=; b=QFyjiVtrEpuRhZSbpi7uTbm+Ve10QDiebnYaC+AVoBk18OSOL0y
-	XaKNDoSwOTJzWhNT5Tcsq9vvXvWUkLGICYm4lfjYQ5iRmFnK0ax9fAv0k+UCVvgQ
-	PzszfOjpZtoJhYc2we0aGyQcigslSH+3BwrVD1fIlkZysPRg1dxk7wQQ+peVLmvl
-	OF+30YNoJxDq28J4l9rXgMqoyZE4prRCw8i0HPcmgduBZkV5bcuUWA7/ndrVGIjy
-	L60Su+5GlNT5wjvKbgLz82XjFT2S355RLVltfivOMQxuwzn8nhXmdfCDqQFcMMjP
-	5wdWOjpNngt32p1mxy6qTl8KinIDEG3Dt8Q==
-X-ME-Sender: <xms:2EQ_Z43G0HHV3dgjtkCFFhFemyIqoetbakXQ1BpMKzw0X4vmbYSqKg>
-    <xme:2EQ_ZzFUOaDMU7YemgNprVEBh-aJgD0Q7PXaEtPxt2Dujimgsvfi_KNNbaTsXvcR7
-    KjvVCRD15H6n0vjDWw>
-X-ME-Received: <xmr:2EQ_Zw43mcxookhNFM_lV-Ar0KDQeuBfsuupnkspydWsPd60KYfQQhtRA4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeigdeigecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefvhigthhhoucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpih
-    iiiigrqeenucggtffrrghtthgvrhhnpeelveduteeghfehkeeukefhudfftefhheetfedt
-    hfevgfetleevvdduveetueefheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohes
-    thihtghhohdrphhiiiiirgdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpoh
-    huthdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    peihuhhnrdiihhhouhesfihinhgurhhivhgvrhdrtghomhdprhgtphhtthhopehsthhgrh
-    grsggvrhesshhtghhrrggsvghrrdhorhhgpdhrtghpthhtoheptgihphhhrghrsegthihp
-    hhgrrhdrtghomhdprhgtphhtthhopegrlhgvkhhsrghnughrrdhmihhkhhgrlhhithhshi
-    hnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohepmhgtghhrohhfsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epjhhovghlrdhgrhgrnhgrughosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhh
-    ihhrrghmrghtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:2EQ_Zx1xfu7bMFHuXpLNy3GvdU3EO31teX2VFaQ5lc4q-xnQo2R9sg>
-    <xmx:2EQ_Z7H7dc6esBAh0rSchQKiz0paeVTxebweZQeun_P7dtICZdD4wg>
-    <xmx:2EQ_Z6_Mb-658p7Cg3fNEFcakxCVBA2PEEDMoc1FZ6xfZ3STPQQrAQ>
-    <xmx:2EQ_ZwnycN2vaNYgYmfVyb9Fao4NoXiXVbZ5FHh79KyT8a1vlPK6Ig>
-    <xmx:2EQ_Z7HaBXadyn7xvkK1GVw-C7V0eRnnZgAhf3aGWJnWomVCmv_iUoVg>
-Feedback-ID: i21f147d5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 21 Nov 2024 09:33:58 -0500 (EST)
-Date: Thu, 21 Nov 2024 07:33:54 -0700
-From: Tycho Andersen <tycho@tycho.pizza>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Yun Zhou <yun.zhou@windriver.com>, stgraber@stgraber.org,
-	cyphar@cyphar.com,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	mcgrof@kernel.org, kees@kernel.org, joel.granados@kernel.org,
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
-Message-ID: <Zz9E0pGTioTcH32m@tycho.pizza>
-References: <20241105031024.3866383-1-yun.zhou@windriver.com>
- <20241120-entgiften-geldhahn-a9d2922ec3e0@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtMY9UFJ2MNQoU/JPh1FPDp5WueLVJdjkNzGzpGR7a3HbwTRdHCAsG1wyKMSzz3Tl3XEHSJKSvKAbWW58p5ZbjD9ibzfRMymvBCKojQ3j7daVUE9RYiT0ku1tA/5HBoS5rWMqUwiZJImYg6rDYzaf9Lrp75mgInu682RXR59jpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GPP6hrRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D493EC4CECC;
+	Thu, 21 Nov 2024 14:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732199668;
+	bh=TsAFbujU4fB8QUxdKHjvksqjOhJcoSHX6zf/LFgOQpg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GPP6hrRAtBVDZzIvhFOK0SDftzPs+zHOUfD7IBmpWwhqjzyG1yvfGvApDqGYJ4ytp
+	 7n6rZJJ5j2o2lOfDM4AvEXFIjfy7+DAeG/yICdA8fWVZFM+N/F0c8INA/9TFur5TUQ
+	 W4kLeeDvf7DvKLAjcsJmIzlqiH1obMGPuX89rwVErDAjPSQs16TE34Q9MRpAk4RTJs
+	 My0eAhoZswjDpO+mCIfF9SW0VAHpRiqHqup8u+ZxpXJtMhedUNS+tw8NOWooOqhZ9x
+	 /TEP53Y8VS32rsbXdx0LPeO8mLQznpoIeb8t1yjtxLBfiYJoQ7BxLPddtVLf4AiqVx
+	 VoS8+xESnTfjA==
+Date: Thu, 21 Nov 2024 09:34:26 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, torvalds@linux-foundation.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [GIT PULL] First batch of KVM changes for Linux 6.13 merge window
+Message-ID: <Zz9E8lYTsfrMjROi@sashalap>
+References: <20241120135842.79625-1-pbonzini@redhat.com>
+ <Zz8t95SNFqOjFEHe@sashalap>
+ <20241121132608.GA4113699@thelio-3990X>
+ <901c7d58-9ca2-491b-8884-c78c8fb75b37@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20241120-entgiften-geldhahn-a9d2922ec3e0@brauner>
+In-Reply-To: <901c7d58-9ca2-491b-8884-c78c8fb75b37@redhat.com>
 
-On Wed, Nov 20, 2024 at 10:06:27AM +0100, Christian Brauner wrote:
-> On Tue, Nov 05, 2024 at 11:10:24AM +0800, Yun Zhou wrote:
-> > It is necessary to have a different pid_max in different containers.
-> > For example, multiple containers are running on a host, one of which
-> > is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
-> > it requires the global pid_max <= 65535. This will cause configuration
-> > conflicts with other containers and also limit the maximum number of
-> > tasks for the entire system.
-> > 
-> > Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
-> > ---
-> 
-> Fwiw, I've done a patch like this years ago and then Alex revived it in
-> [1] including selftests! There's downsides to consider:
-> 
-> [1]: https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com
+On Thu, Nov 21, 2024 at 03:07:03PM +0100, Paolo Bonzini wrote:
+>On 11/21/24 14:26, Nathan Chancellor wrote:
+>>On Thu, Nov 21, 2024 at 07:56:23AM -0500, Sasha Levin wrote:
+>>>Hi Paolo,
+>>>
+>>>On Wed, Nov 20, 2024 at 08:58:42AM -0500, Paolo Bonzini wrote:
+>>>>      riscv: perf: add guest vs host distinction
+>>>
+>>>When merging this PR into linus-next, I've started seeing build errors:
+>>>
+>>>Looks like this is due to 2c47e7a74f44 ("perf/core: Correct perf
+>>>sampling with guest VMs") which went in couple of days ago through
+>>>Ingo's perf tree and changed the number of parameters for
+>>>perf_misc_flags().
+>
+>Thanks Sasha. :(  Looks like Stephen does not build for risc-v.
 
-Thanks, looks like this patch has the same oddity.
+He does :)
 
-For me it's enough to just walk up the tree when changing pid_max. It
-seems unlikely that applications will create a sub pidns and then lower
-the max in their own pid_max. Famous last words and all that.
+This issue was reported[1] about a week ago in linux-next and a fix was
+sent out (the one you linked to be used for conflict resolution), but it
+looks like it wasn't picked up by either the perf tree or the KVM tree.
 
-Tycho
+
+[1] https://lore.kernel.org/all/CA+G9fYv=qPeZKkF+ntWxUXbAKjz4gXnBM8y60C4F=YHv+jgZZw@mail.gmail.com/
+
+-- 
+Thanks,
+Sasha
 
