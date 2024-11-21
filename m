@@ -1,296 +1,177 @@
-Return-Path: <linux-kernel+bounces-417266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0A89D51C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:29:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C259D51C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 18:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0985FB26640
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD681F210DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4943D1C9B7A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D21D3656;
 	Thu, 21 Nov 2024 17:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WDvj6UBC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTipAVX/"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC47F1C82E2;
-	Thu, 21 Nov 2024 17:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933691ACDE7
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732210093; cv=none; b=H4jMypis6M592UFmMQopf7bAseZSujmIv2AntvzBX+52McoFrdo/wik4ZdqHTAVAkNVE9FvzkKESXcVK9Pkm3c3q4CiTk52lQWA6twdZSPSufupw/qWg/Gj+/95M52ATgFJ4Nya3B4n0857r5zN0QkL9fvYQDRDLZvekTaj672w=
+	t=1732210094; cv=none; b=ju6XBeshhKRph2nVevC0z/yD8GztpyZqYwuw3Ncn9kJl0R6+TfQ4OTGfK1Q9WHhtioq/Z+tTBFruXigo8F3cqTWJIgg2JcXkKvvauGWPvgdVILCNE911vHdoLncShrXsTdINfjK64tzDHCTDzfLeHaTTtCtAo7rec5yQfMSJGEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732210093; c=relaxed/simple;
-	bh=jzi/XV+v10t0Tu+pou40m4qwzk2RQTjdzeDzGxXchgM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AtvmXRmgbfDwVzYwXz7Tbop6Nm3HxKY4IS0SQhPhvxJ2Pm+Bk8HgQiQaWT+HJtvYADEo2X+4MAhXevda/1Yqy5DvOzl7Z/XusdZCiHdJRVKVopjUNy1Z+jJ/MhXdU7Gbo7w60T737++IL5T5dNcjF9vP/LdBt/91veFuRM9rkMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WDvj6UBC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALGfo9q022204;
-	Thu, 21 Nov 2024 17:28:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/8u/vNecc53IGxE3L/RjtRDJI6qPhOI2ZWyuk/XFR5Q=; b=WDvj6UBCcv56+oZg
-	ODLSqG2zxZTSjDJU3TK/fd9+33h2YFzBluGCstq7+ubat1A7D5eosJlV/7Cl6lx9
-	q+ICprJ9JpOs/Uo8Uhc1GC7M4JvpINSpDGFIPddKUu5WdeY10p23TQf7OWdyRToY
-	jT1o9cct8rwmL6Gim7mWb2KAGAlYj32bQci0MDeLte+Aj+Pek0oaawJwfHqpF20h
-	j+ay74SUyG7JP+d5JHdDkENeNikR/0AGZRR9WDTZzUnA8+TJZA/SAiNSXYvFU+6t
-	XCBop+yluOFwZZl0h44dgclh1QqtLvO6g9SBi1s1GCC9HLwzMoRJri92rcYV0EEi
-	21JpLQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320wk1n8u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 17:28:07 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4ALHS6cA005317
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 21 Nov 2024 17:28:06 GMT
-Received: from a629a2d9ebad.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 21 Nov 2024 09:28:02 -0800
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Odelu Kukatla <quic_okukatla@quicinc.com>,
-        Mike Tipton
-	<quic_mdtipton@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] interconnect: qcom: sdx75: Drop QP0 related interconnect and BCM nodes
-Date: Thu, 21 Nov 2024 17:27:37 +0000
-Message-ID: <20241121172737.255-3-quic_rlaggysh@quicinc.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241121172737.255-1-quic_rlaggysh@quicinc.com>
-References: <20241121172737.255-1-quic_rlaggysh@quicinc.com>
+	s=arc-20240116; t=1732210094; c=relaxed/simple;
+	bh=HDlO+c1C2yLuRLkGcMdW31ieHzzoqKOZatA2RnIXkr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GOIVyNUEcBg5HxG2+Z2cZnS7C+y/74cbborpwcC4pvfoBlXNuHabD7qQjtNbRVJZ0VM8se9kK4FoXePck13i9WL/FckmslmSa372/x7cGS6EbdlRJEszgwNu/mF0SfUrM/npsesIq8JQekxct9soWLSrppCK0kvvX5C01WeAxss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTipAVX/; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso938408b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:28:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732210092; x=1732814892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bUujZ0vfqIHopDqCO24kOSaCqkx5c2bzcxIPVMvRxJQ=;
+        b=KTipAVX/535T62Clm77BoajDNe3cHqOzE2zz1uj+LJNQ03l3f9VAMx9deS9ksX0126
+         TSlmpJO+jzOxHL+Ey6xkFLU8cxidmikpJTCVWuyTcqvfFUh2Tgf7c94T0GuiwyWS8ibN
+         m6YtS5/OMtsqNltEQjN6b2iC9xjN4scqgsDzudGNC8Ro7UzOU94jWXeSnn3nx9d5ESFQ
+         cr3I6Jppa4Xyq5o85BkZTav66dGO/VeXDnHbB8L9TZcI3ziyTO5PTXiRNWhJnMJboeWG
+         /RAg2yL225P8hpxHucK7SZMRIo2VIpX/mS1ru83z5wVqHObeGgrfs1I3zOuv4WAdfi0j
+         z7GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732210092; x=1732814892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bUujZ0vfqIHopDqCO24kOSaCqkx5c2bzcxIPVMvRxJQ=;
+        b=hjz6s7c7hE6oK10M2B27xcE+LNs6IJ/V8Yt7m54Py301W3Al4bI2I5GIJoJilYNNHq
+         uGrS2iqJVElNFKrWJzW+HWNIIBrAUFC1fFggtgNm6pDN0M5Fnv4U+FmS9asVvHZs3hJd
+         gpXY+vnTD8RUMAO6ttccjCNywCIMafCt2KZpgbBAuifdPcjqt3xU5OLINDrt10E4/Gpw
+         ev+XAq2UPVyykCBM5y1ExwqAzSsDTTr309v0NTH6mSAxUrWGN5177Zf28dknsYoNh4XO
+         RuM/thzrUsxtHdL38lW0FQdpPJ7pnw34YcK+KzBZaAHUBYlW0JObe8Gl6x8+MgmVGeGa
+         4vxg==
+X-Forwarded-Encrypted: i=1; AJvYcCXskLu2fXM/gJA5P5RXmgQn8t8/Hb3eOxbKoVxO67Qj9G29Z3t2Nz3ZDR6xQqQBSv1Rhhw0K3ESjToBnD4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB49D8joL7PTBKKy8XKk/GOsn1vgN/HnQpCIp3Jrycs5OR7CNR
+	u3atfpcClaYnJg6IbTYLVWlLoabQ+tcrMZtG+P6b2ANXLUPSN7iRRr9ddeDX4y7HMq6M8bXR1yw
+	LIHE5xynVjVyAbdqBGYqcyT03iqQ=
+X-Gm-Gg: ASbGnctxKlSkHkc6sol6+K3XddOfCQEMB1Zfh9+se3dO7QG1sx4ZOyVmtoufC3YfKm+
+	J11f8trHHLm/af1ubVDHOMsCdLNoi4iORWAQ7msaIuaK+t+UbDadUd7cRCIB5oWYC3A==
+X-Google-Smtp-Source: AGHT+IFm10HXjJM98hmkDah4HHzt/rH6rZ2L0hImspsuEVGx/bCXSs8+l4R92v7sRnEUnS/7ZCEi75F8/P2PEeZqoHg=
+X-Received: by 2002:a05:6a00:814:b0:71e:58be:3604 with SMTP id
+ d2e1a72fcca58-724bec8769dmr8028104b3a.4.1732210091801; Thu, 21 Nov 2024
+ 09:28:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: pULXLZK5eCVVCGS_y8Cx_4BQH9y6b3Z7
-X-Proofpoint-GUID: pULXLZK5eCVVCGS_y8Cx_4BQH9y6b3Z7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=994
- adultscore=0 mlxscore=0 bulkscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411210132
+References: <20241120-fix-dereference-null-x86-sev-v2-1-7e637851dfe2@gmail.com>
+ <20241119210336.GEZzz9KMiZwf6R9hwd@fat_crate.local> <CAE8VWiKQ4fdeBeoWbGf55QXaqHrEdSCxo5qTJ=S2vKVd5W1scw@mail.gmail.com>
+ <20241120190318.GCZz4ydl5z5mUHrJd4@fat_crate.local>
+In-Reply-To: <20241120190318.GCZz4ydl5z5mUHrJd4@fat_crate.local>
+From: Shresth Prasad <shresthprasad7@gmail.com>
+Date: Thu, 21 Nov 2024 22:57:59 +0530
+Message-ID: <CAE8VWiKubZ5Z7yEgLh5ourc+0W1OC+54y+vC-i=xLVLYK=_YGA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/sev: Fix dereference NULL return value
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-QP0 resource on sdx75 is managed by clk-rpmh.
-There are no interconnect clients voting for QP0, hence dropping the
-redundant nodes from topolgy to avoid the risk of overriding the vote
-placed on QP0 using clk-rpmh.
+On Thu, Nov 21, 2024 at 12:33=E2=80=AFAM Borislav Petkov <bp@alien8.de> wro=
+te:
+>
+> On Wed, Nov 20, 2024 at 06:23:09PM +0530, Shresth Prasad wrote:
+> > lookup_address() does return NULL in some paths so I do assume that it
+>
+> You assume?
+>
+> Well, do you know or not? You can simply read lookup_address() and more
+> specifically lookup_address_in_pgd_attr() and see whether it can return N=
+ULL
+> or not.
+>
+> As to this particular case, I don't think it would return a NULL. Otherwi=
+se
+> something else is very very wrong so perhaps it is better to crash'n'burn
+> there.
+>
+> What would happen if you continue instead on a NULL ptr? Would that make =
+sense
+> either?
+>
+> Basically, I'm trying to make you think before you send patches. Just bec=
+ause
+> some silly tool says something is wrong, it doesn't mean you should trust=
+ it
+> blindly.
+>
+> You analyze the situation and *then* you send a patch, only when it is re=
+ally
+> an issue.
+>
+> > can happen, unless there's a logical reason why it can't (please let me=
+ know
+> > if that's the case). I've also seen it be checked this way in a couple =
+other
+> > places.
+>
+> Kernel programming is not voodoo. You read the code and think.
+>
+> > I'm not sure why you can't open the page but would it help if I was mor=
+e
+> > descriptive in the commit message?
+>
+> SYNOPSYS
+>
+> Username:
+> Password:
+>
+> is what I get.
+>
+> > Really sorry about that, I completely overlooked it. I'll CC them
+> > when I resend the patch.
+>
+> Before you do, I'd like you to turn on brain and think about the question=
+s
+> above.
+>
+> And I'd like you to please read
+>
+> https://kernel.org/doc/html/latest/process/development-process.html
+>
+> and especially
+>
+> https://kernel.org/doc/html/latest/process/submitting-patches.html
+>
+> before you submit more patches.
+>
+> I'm not typing those to get ignored. I mean, I can ignore emails too if m=
+ine
+> get ignored.
+>
+> --
+> Regards/Gruss,
+>     Boris.
+>
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
----
- drivers/interconnect/qcom/sdx75.c |  25 -------
- drivers/interconnect/qcom/sdx75.h | 118 +++++++++++++++---------------
- 2 files changed, 58 insertions(+), 85 deletions(-)
+I apologise, my approach here was incorrect. I'll rethink how I submit
+patches from now on.
+It wasn't my intention to ignore any part of your message. I
+absolutely went through the docs that you linked.
 
-diff --git a/drivers/interconnect/qcom/sdx75.c b/drivers/interconnect/qcom/sdx75.c
-index 7ef1f17f3292..4afcdc5f25a7 100644
---- a/drivers/interconnect/qcom/sdx75.c
-+++ b/drivers/interconnect/qcom/sdx75.c
-@@ -16,15 +16,6 @@
- #include "icc-rpmh.h"
- #include "sdx75.h"
- 
--static struct qcom_icc_node qpic_core_master = {
--	.name = "qpic_core_master",
--	.id = SDX75_MASTER_QPIC_CORE,
--	.channels = 1,
--	.buswidth = 4,
--	.num_links = 1,
--	.links = { SDX75_SLAVE_QPIC_CORE },
--};
--
- static struct qcom_icc_node qup0_core_master = {
- 	.name = "qup0_core_master",
- 	.id = SDX75_MASTER_QUP_CORE_0,
-@@ -375,14 +366,6 @@ static struct qcom_icc_node xm_usb3 = {
- 	.links = { SDX75_SLAVE_A1NOC_CFG },
- };
- 
--static struct qcom_icc_node qpic_core_slave = {
--	.name = "qpic_core_slave",
--	.id = SDX75_SLAVE_QPIC_CORE,
--	.channels = 1,
--	.buswidth = 4,
--	.num_links = 0,
--};
--
- static struct qcom_icc_node qup0_core_slave = {
- 	.name = "qup0_core_slave",
- 	.id = SDX75_SLAVE_QUP_CORE_0,
-@@ -831,12 +814,6 @@ static struct qcom_icc_bcm bcm_mc0 = {
- 	.nodes = { &ebi },
- };
- 
--static struct qcom_icc_bcm bcm_qp0 = {
--	.name = "QP0",
--	.num_nodes = 1,
--	.nodes = { &qpic_core_slave },
--};
--
- static struct qcom_icc_bcm bcm_qup0 = {
- 	.name = "QUP0",
- 	.keepalive = true,
-@@ -903,9 +880,7 @@ static struct qcom_icc_bcm * const clk_virt_bcms[] = {
- };
- 
- static struct qcom_icc_node * const clk_virt_nodes[] = {
--	[MASTER_QPIC_CORE] = &qpic_core_master,
- 	[MASTER_QUP_CORE_0] = &qup0_core_master,
--	[SLAVE_QPIC_CORE] = &qpic_core_slave,
- 	[SLAVE_QUP_CORE_0] = &qup0_core_slave,
- };
- 
-diff --git a/drivers/interconnect/qcom/sdx75.h b/drivers/interconnect/qcom/sdx75.h
-index 24e887159920..3fd2bfcdce84 100644
---- a/drivers/interconnect/qcom/sdx75.h
-+++ b/drivers/interconnect/qcom/sdx75.h
-@@ -33,65 +33,63 @@
- #define SDX75_MASTER_QDSS_ETR			24
- #define SDX75_MASTER_QDSS_ETR_1			25
- #define SDX75_MASTER_QPIC			26
--#define SDX75_MASTER_QPIC_CORE			27
--#define SDX75_MASTER_QUP_0			28
--#define SDX75_MASTER_QUP_CORE_0			29
--#define SDX75_MASTER_SDCC_1			30
--#define SDX75_MASTER_SDCC_4			31
--#define SDX75_MASTER_SNOC_CFG			32
--#define SDX75_MASTER_SNOC_SF_MEM_NOC		33
--#define SDX75_MASTER_SYS_TCU			34
--#define SDX75_MASTER_USB3_0			35
--#define SDX75_SLAVE_A1NOC_CFG			36
--#define SDX75_SLAVE_ANOC_PCIE_GEM_NOC		37
--#define SDX75_SLAVE_AUDIO			38
--#define SDX75_SLAVE_CLK_CTL			39
--#define SDX75_SLAVE_CRYPTO_0_CFG		40
--#define SDX75_SLAVE_CNOC_MSS			41
--#define SDX75_SLAVE_DDRSS_CFG			42
--#define SDX75_SLAVE_EBI1			43
--#define SDX75_SLAVE_ETH0_CFG			44
--#define SDX75_SLAVE_ETH1_CFG			45
--#define SDX75_SLAVE_GEM_NOC_CFG			46
--#define SDX75_SLAVE_GEM_NOC_CNOC		47
--#define SDX75_SLAVE_ICBDI_MVMSS_CFG		48
--#define SDX75_SLAVE_IMEM			49
--#define SDX75_SLAVE_IMEM_CFG			50
--#define SDX75_SLAVE_IPA_CFG			51
--#define SDX75_SLAVE_IPC_ROUTER_CFG		52
--#define SDX75_SLAVE_LAGG_CFG			53
--#define SDX75_SLAVE_LLCC			54
--#define SDX75_SLAVE_MCCC_MASTER			55
--#define SDX75_SLAVE_MEM_NOC_PCIE_SNOC		56
--#define SDX75_SLAVE_PCIE_0			57
--#define SDX75_SLAVE_PCIE_1			58
--#define SDX75_SLAVE_PCIE_2			59
--#define SDX75_SLAVE_PCIE_0_CFG			60
--#define SDX75_SLAVE_PCIE_1_CFG			61
--#define SDX75_SLAVE_PCIE_2_CFG			62
--#define SDX75_SLAVE_PCIE_ANOC_CFG		63
--#define SDX75_SLAVE_PCIE_RSC_CFG		64
--#define SDX75_SLAVE_PDM				65
--#define SDX75_SLAVE_PRNG			66
--#define SDX75_SLAVE_QDSS_CFG			67
--#define SDX75_SLAVE_QDSS_STM			68
--#define SDX75_SLAVE_QPIC			69
--#define SDX75_SLAVE_QPIC_CORE			70
--#define SDX75_SLAVE_QUP_0			71
--#define SDX75_SLAVE_QUP_CORE_0			72
--#define SDX75_SLAVE_SDCC_1			73
--#define SDX75_SLAVE_SDCC_4			74
--#define SDX75_SLAVE_SERVICE_GEM_NOC		75
--#define SDX75_SLAVE_SERVICE_PCIE_ANOC		76
--#define SDX75_SLAVE_SERVICE_SNOC		77
--#define SDX75_SLAVE_SNOC_CFG			78
--#define SDX75_SLAVE_SNOC_GEM_NOC_SF		79
--#define SDX75_SLAVE_SNOOP_BWMON			80
--#define SDX75_SLAVE_SPMI_VGI_COEX		81
--#define SDX75_SLAVE_TCSR			82
--#define SDX75_SLAVE_TCU				83
--#define SDX75_SLAVE_TLMM			84
--#define SDX75_SLAVE_USB3			85
--#define SDX75_SLAVE_USB3_PHY_CFG		86
-+#define SDX75_MASTER_QUP_0			27
-+#define SDX75_MASTER_QUP_CORE_0			28
-+#define SDX75_MASTER_SDCC_1			29
-+#define SDX75_MASTER_SDCC_4			30
-+#define SDX75_MASTER_SNOC_CFG			31
-+#define SDX75_MASTER_SNOC_SF_MEM_NOC		32
-+#define SDX75_MASTER_SYS_TCU			33
-+#define SDX75_MASTER_USB3_0			34
-+#define SDX75_SLAVE_A1NOC_CFG			35
-+#define SDX75_SLAVE_ANOC_PCIE_GEM_NOC		36
-+#define SDX75_SLAVE_AUDIO			37
-+#define SDX75_SLAVE_CLK_CTL			38
-+#define SDX75_SLAVE_CRYPTO_0_CFG		39
-+#define SDX75_SLAVE_CNOC_MSS			40
-+#define SDX75_SLAVE_DDRSS_CFG			41
-+#define SDX75_SLAVE_EBI1			42
-+#define SDX75_SLAVE_ETH0_CFG			43
-+#define SDX75_SLAVE_ETH1_CFG			44
-+#define SDX75_SLAVE_GEM_NOC_CFG			45
-+#define SDX75_SLAVE_GEM_NOC_CNOC		46
-+#define SDX75_SLAVE_ICBDI_MVMSS_CFG		47
-+#define SDX75_SLAVE_IMEM			48
-+#define SDX75_SLAVE_IMEM_CFG			49
-+#define SDX75_SLAVE_IPA_CFG			50
-+#define SDX75_SLAVE_IPC_ROUTER_CFG		51
-+#define SDX75_SLAVE_LAGG_CFG			52
-+#define SDX75_SLAVE_LLCC			53
-+#define SDX75_SLAVE_MCCC_MASTER			54
-+#define SDX75_SLAVE_MEM_NOC_PCIE_SNOC		55
-+#define SDX75_SLAVE_PCIE_0			56
-+#define SDX75_SLAVE_PCIE_1			57
-+#define SDX75_SLAVE_PCIE_2			58
-+#define SDX75_SLAVE_PCIE_0_CFG			59
-+#define SDX75_SLAVE_PCIE_1_CFG			60
-+#define SDX75_SLAVE_PCIE_2_CFG			61
-+#define SDX75_SLAVE_PCIE_ANOC_CFG		62
-+#define SDX75_SLAVE_PCIE_RSC_CFG		63
-+#define SDX75_SLAVE_PDM				64
-+#define SDX75_SLAVE_PRNG			65
-+#define SDX75_SLAVE_QDSS_CFG			66
-+#define SDX75_SLAVE_QDSS_STM			67
-+#define SDX75_SLAVE_QPIC			68
-+#define SDX75_SLAVE_QUP_0			69
-+#define SDX75_SLAVE_QUP_CORE_0			70
-+#define SDX75_SLAVE_SDCC_1			71
-+#define SDX75_SLAVE_SDCC_4			72
-+#define SDX75_SLAVE_SERVICE_GEM_NOC		73
-+#define SDX75_SLAVE_SERVICE_PCIE_ANOC		74
-+#define SDX75_SLAVE_SERVICE_SNOC		75
-+#define SDX75_SLAVE_SNOC_CFG			76
-+#define SDX75_SLAVE_SNOC_GEM_NOC_SF		77
-+#define SDX75_SLAVE_SNOOP_BWMON			78
-+#define SDX75_SLAVE_SPMI_VGI_COEX		79
-+#define SDX75_SLAVE_TCSR			80
-+#define SDX75_SLAVE_TCU				81
-+#define SDX75_SLAVE_TLMM			82
-+#define SDX75_SLAVE_USB3			83
-+#define SDX75_SLAVE_USB3_PHY_CFG		84
- 
- #endif
--- 
-2.39.2
+Thank you for your time.
 
+Best Regards,
+Shresth
 
