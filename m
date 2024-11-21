@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-416901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BD59D4C31
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:46:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0519D4C58
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923201F22A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:46:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9774283A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81501D1F78;
-	Thu, 21 Nov 2024 11:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648C91D3562;
+	Thu, 21 Nov 2024 11:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtR0xX+6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="QgTE7EH9"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ACD1CB322;
-	Thu, 21 Nov 2024 11:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C271CF5D4;
+	Thu, 21 Nov 2024 11:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732189607; cv=none; b=oW8SAZ5+DSQ6Utq48SPJefBOT9QXav52lfVHAgeJLALStrm1TV8IE9KDuRmOCBwosNEc3+v7Mx4bbVlC1yfrJJim0go9a4/SJJ/ud+cIre+YBwX5f36vvkX37YlkMDZcN1HFrwYrbUj6F4LkmW1Nws7I1ROF8Kdis3cv+xO+W9U=
+	t=1732190065; cv=none; b=XCDoHMB2RXxfdVm4JwcvtGUnDlUh2kAQUSl7gF/iYebmzdXC6iZxuFH6OYEVQqe3/JyIo/qdlDzl0aG7d15asi7zzqyVsGqlQ1IkbIT7n+0gZGDzSJcBUtZnaH2rFrAAR/ngAJR5AwDds+VnNjc2eN0+GAz2T7RVgVNYGmXpOns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732189607; c=relaxed/simple;
-	bh=8xmUZT+nAyNtnMQYSHFfQWw4/XKrbcKKuwhBoaPXWj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kERmAok1eaNV5iA9OfJFcOEP73ShcpQsxbw517JGKNHcs2TmgVPeXZHoppo5RXCUhtmHW2Qy/zCyWeQ7N3InKgL6B41QKvGuxcSm4mIpGQ5Xgusl3Ea4HapDGNNBgWQLbBjZJ9RdYgJcMtRfg7MxT3c56/0LlAEF5xK0Ed2qvLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtR0xX+6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE78C4CECC;
-	Thu, 21 Nov 2024 11:46:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732189606;
-	bh=8xmUZT+nAyNtnMQYSHFfQWw4/XKrbcKKuwhBoaPXWj8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gtR0xX+6sko9pV6+8jwyKS4npOgBpmiK2ce8hhUG9F5XNzdw7bjLvuUfkqVQcyC9c
-	 FtF7URUfG4Tkjo9Kag8qyiNdiYct3m42hx0O6uaNfV9HANaP7VQyG7zTu56u0jYWTF
-	 GGVbyW1nttwUvCHFNAMwVjhoT/pAAVrA2VMXOWWKhIHg1W6xnm2HlUuMvsFqaREbhI
-	 LIMRULJ5di/zGSLs4BUBfhK9sYTGMj3tfeQyGAzsHE9QsAFerx24ojMJkbYCr/dwkr
-	 r7SzliUg5GGmtemErM7njazacOjhi/ENYWC0zoEI58KI09vZuBmM46XFbtb1oJm3qx
-	 j8DBp4UFV5UNA==
-Message-ID: <2bb08736-bcbd-4d74-a878-2598301e0182@kernel.org>
-Date: Thu, 21 Nov 2024 11:46:42 +0000
+	s=arc-20240116; t=1732190065; c=relaxed/simple;
+	bh=GA+riEPnI10/xWsNFm8z78mAIS3Moz8d5/rbC4MCogA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rjI4uOmb1CWA3c1TOGPaWZtQauZVHv9gZjGWN2FpnLMdkDiOkl4Y7sVx1jGJrhw+JsTqH/tpRHOKik7ha8i5xwieo+S3ZmOnQvazqzYisDx9uRX3MMacbOWew2KuzfZ2ivdEeCBu7ehI3bYDQkpYZT6amhx57tZ3Fq+L93wmcsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=QgTE7EH9; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
+	by mail.ispras.ru (Postfix) with ESMTPSA id C147F518E763;
+	Thu, 21 Nov 2024 11:47:40 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru C147F518E763
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1732189660;
+	bh=4kSpGNx4NEEFrF0ZMmnj2iC3dLzPzs1+TqbYsa2ECRM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QgTE7EH9jvkqd/hyYBk8H/UXwFa2wQAFJE9vVejIsSLkOeHp7Gjh3Vwa6DTYkLqjg
+	 OMN9j0bAfak3oQP/swIZ1A36QKBXxslAXYPEqffNToKkzFDTh8f9Y7FIUbOLPYpHJT
+	 IH83O/SZR4CH3jIurVcLnVPkwJyfnETgNdm4hy+w=
+From: Vitalii Mordan <mordan@ispras.ru>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Vitalii Mordan <mordan@ispras.ru>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-sh@vger.kernel.org,
+	Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: ehci-hcd: fix call balance of clocks handling routines
+Date: Thu, 21 Nov 2024 14:47:00 +0300
+Message-Id: <20241121114700.2100520-1-mordan@ispras.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpftool: Fix the wrong format specifier
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241121085518.3738-1-liujing@cmss.chinamobile.com>
-From: Quentin Monnet <qmo@kernel.org>
-Content-Language: en-GB
-In-Reply-To: <20241121085518.3738-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-2024-11-21 16:55 UTC+0800 ~ liujing <liujing@cmss.chinamobile.com>
-> The type of lines is unsigned int, so the correct format specifier should be
-> %u instead of %d.
-> 
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
-> 
-> diff --git a/tools/bpf/bpftool/main.c b/tools/bpf/bpftool/main.c
-> index 08d0ac543c67..030556ce4d61 100644
-> --- a/tools/bpf/bpftool/main.c
-> +++ b/tools/bpf/bpftool/main.c
-> @@ -423,7 +423,7 @@ static int do_batch(int argc, char **argv)
->  		err = -1;
->  	} else {
->  		if (!json_output)
-> -			printf("processed %d commands\n", lines);
-> +			printf("processed %u commands\n", lines);
->  	}
->  err_close:
->  	if (fp != stdin)
+If the clocks priv->iclk and priv->fclk were not enabled in ehci_hcd_sh_probe,
+they should not be disabled in any path.
 
+Conversely, if they was enabled in ehci_hcd_sh_probe, they must be disabled
+in all error paths to ensure proper cleanup.
 
-Thank you for the fix. While at it can you also fix the format specifier
-for the other two prints of "lines" in the function (via "p_err()"),
-please? I guess they're not raised by your static checker, but they
-should be addressed just the same.
+Found by Linux Verification Center (linuxtesting.org) with Klever.
 
-Quentin
+Fixes: 63c845522263 ("usb: ehci-hcd: Add support for SuperH EHCI.")
+Cc: stable@vger.kernel.org # ff30bd6a6618: sh: clk: Fix clk_enable() to return 0 on NULL clk
+Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
+---
+ drivers/usb/host/ehci-sh.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/host/ehci-sh.c b/drivers/usb/host/ehci-sh.c
+index d31d9506e41a..77460aac6dbd 100644
+--- a/drivers/usb/host/ehci-sh.c
++++ b/drivers/usb/host/ehci-sh.c
+@@ -119,8 +119,12 @@ static int ehci_hcd_sh_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->iclk))
+ 		priv->iclk = NULL;
+ 
+-	clk_enable(priv->fclk);
+-	clk_enable(priv->iclk);
++	ret = clk_enable(priv->fclk);
++	if (ret)
++		goto fail_request_resource;
++	ret = clk_enable(priv->iclk);
++	if (ret)
++		goto fail_iclk;
+ 
+ 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (ret != 0) {
+@@ -136,6 +140,7 @@ static int ehci_hcd_sh_probe(struct platform_device *pdev)
+ 
+ fail_add_hcd:
+ 	clk_disable(priv->iclk);
++fail_iclk:
+ 	clk_disable(priv->fclk);
+ 
+ fail_request_resource:
+-- 
+2.25.1
+
 
