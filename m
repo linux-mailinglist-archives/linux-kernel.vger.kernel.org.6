@@ -1,216 +1,499 @@
-Return-Path: <linux-kernel+bounces-417528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A04E9D552D
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:08:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B8489D5528
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:04:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90423B20DF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:08:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13610B225CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28BE1DD0FE;
-	Thu, 21 Nov 2024 22:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC84F1DD0E7;
+	Thu, 21 Nov 2024 22:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OLycAlZe"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="On2xjlzW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAA41C57AA;
-	Thu, 21 Nov 2024 22:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732226906; cv=fail; b=pGGMZ3lSwXGNqvhNW4vlebRkC/kAvF/tabzQ3eawX72ZOby+DqoitToaCr6gw9j/fbbxtpf16LSNJRiadFFLP1+79HrkOl4FCLgQyCil7ujV/0Ja6quTbb0rEUSdlQ+KhfF9K2AwGrkLRtM7YiNg1AKbIvk04cwUv+bHd72ydbQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732226906; c=relaxed/simple;
-	bh=HCuWBiBp1MEW1hPpyBRrP2D+dBTrodDr3epzWvtlxtk=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=P05rLzxa7SfUDwzU9ocmweV/WEOPdN78SeItgNwKjn9mRTbeSjNFj0RCwF8OAgsbuKoOTkyKNVIFvkmJNeAtsg8T7J+Ldf+f5HHTAI8mmWObDSELd9Z+F0ektzc6FSOdoXJjyGn+yrwyacYq4Ho+hYl4SHdUdl7AMGSZJ9JsSd8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OLycAlZe; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732226905; x=1763762905;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=HCuWBiBp1MEW1hPpyBRrP2D+dBTrodDr3epzWvtlxtk=;
-  b=OLycAlZeDokvdiqCi2IkqKM8FmGEHy7CgAhEdXHpds3rOfFlJZEkvbnL
-   sELOpphmb8CFUSfATl1LOGC40wnt+/1ypz+w/gwfIKo5ekHP3ebwsOD+d
-   nBB/rn44iNfW7+ZzkQ+uQj74fjnFrqyhG5PCAHAilZfqNiQ9lZGQOuD65
-   Ut8/1+LoUDrgF2NEH3c1hn9X9iWPA/Ngd+tNlDM5UsMVtA5EmXvXEav8m
-   Q/lzKng+VGhPWOYA4vCNuCzRQW9WotmJKExBzNg0eM9v6emUbAgK49DFi
-   17yC2V+1h71mGxgPSwQRUNUsJtgYy2UurQYtsod9/hQUVf7G7mqAcMvUT
-   g==;
-X-CSE-ConnectionGUID: s+/gKPeVS5CxpWGzq1HfZA==
-X-CSE-MsgGUID: 7yOM6zlcRNOHm2bUXlWBgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="57768861"
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="57768861"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 14:08:24 -0800
-X-CSE-ConnectionGUID: a2/BFBaGSU+TSEO0uUCwKw==
-X-CSE-MsgGUID: aJCrND5lQVCM5Uv41WLVkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,173,1728975600"; 
-   d="scan'208";a="113671194"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 21 Nov 2024 14:08:23 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 21 Nov 2024 14:08:22 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 21 Nov 2024 14:08:22 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 21 Nov 2024 14:08:22 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I9n7ChSNz6xdf8eeJ9ofgOG7v7ecOI2JO9hdoDGWtOK7c8zOthVTzIwmU5TX9rHPEZ/jc2vQgGH9nt6D7vBZFN28KMszmqlJOf2TCQmRNSR6Vl+7bLKN1NaE/OxTOfCaodJ1vfeaj9mVRpLwbWjuV6faxYQtF/rTDOcv4M3uFFHRUe9wcaLWkwKHqmlRedDS/tXXpu7CDvDSF0uDKiMPwy3bgGUCptTuXEYuh3YfrbI5M7ilFSQO1g3r3lOvUFRO3gVZFW3nxlBK/4WSk3wKS33c5sav2GNcC968f8AOAMhV2ua2+qQcmKH8TKVKvw8Z72P5YuA1Dg0v+QCSjpt9jA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QobvNdeEra68aZ8/g8hmDQ2cDB6qjpu+gybZH6HwqGg=;
- b=mobo2Kdg96jthTNpd02oGqBMHwHgSWTjC81m0VYg8seKeWQu+F0KABHlbT93sArW5Hh4DHMRtnxo9U6rJRTeRi13SdZR6EnVgrfaYamuUn+zvYwogdCSGZO7rlTuTEafnb+hVIt+cdxoLPQ7T3mOuqwAXZMUB1hV9/TZFP0lY3EvhFLfnUcl/K3tOAwOF7MQNp/k7zhVlQcdrlW2VTu+K3b8PTFbcBPoNNoNBcGbdgKNyLk8otPUfE02HUdCk23jKWqGpRfUs7J+6+B3aOVMBYv1LiV6bTV+0i1dUwbfcCQuLPr7ll38r1CG/Hcw+Jd4BjoJj8jc5bK6tM2rkr6uHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7444.namprd11.prod.outlook.com (2603:10b6:8:146::11)
- by MW3PR11MB4761.namprd11.prod.outlook.com (2603:10b6:303:53::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Thu, 21 Nov
- 2024 22:08:19 +0000
-Received: from DS0PR11MB7444.namprd11.prod.outlook.com
- ([fe80::fea8:e53a:7a96:7fe3]) by DS0PR11MB7444.namprd11.prod.outlook.com
- ([fe80::fea8:e53a:7a96:7fe3%5]) with mapi id 15.20.8158.021; Thu, 21 Nov 2024
- 22:08:19 +0000
-Date: Thu, 21 Nov 2024 16:03:07 -0600
-From: Ben Olson <matthew.olson@intel.com>
-To: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
-	<bpf@vger.kernel.org>
-CC: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
-	<daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
-	<martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
-	<song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
-	<john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
-	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	<bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH bpf-next] libbpf: Improve debug message when the base BTF
- cannot be found
-Message-ID: <Zz-uG3hligqOqAMe@bolson-desk>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: SN4PR0501CA0116.namprd05.prod.outlook.com
- (2603:10b6:803:42::33) To DS0PR11MB7444.namprd11.prod.outlook.com
- (2603:10b6:8:146::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2161D4144
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732226628; cv=none; b=oaJMnN6M5hzRdlujGBpY3QU+68V4W7SGEP8fTltxD4UvlOtp5I0C4B2UxA4t7kTov0buniMm52cqMWYjX+5cuCUhVAQOGTNZFN/Mh7AlceMLtYuChWNHRMoA+M5njESvg6gHo+P6fWjWKEuJKcjgUcWFcpbuLgYqdxojnJlp3o8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732226628; c=relaxed/simple;
+	bh=LR1/GrDMOqavQ26iGGwWwxQtw9llncULe6bKshYJcfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QdAzqGZYd86b4k/WMbvO/zIaaKiFfSKW+dDnveHAvfUCGQ+FKaqGwPyVUF6GVvGS6BwOQu7OTkDsUFBZI+Chxdk4PLRGfsNGQCz1n8dZlWCFlVD+3/GViriZ8Gsnp52ai++4oPjiOn8X/1wsYpJM/gYM859ZeP7Jcjz0+bG3wHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=On2xjlzW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732226625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=utQ/+Wialc2cpyfpIYaR/RBfZ4JfS61QRHO5uJBPAJA=;
+	b=On2xjlzWhuZdEFEIr398ndcbM8KqVbBxQd7HG8ymXII2Hq+RXZi5M//AcehcRXhuBjvwnp
+	rbIc8TZ67MewNIXHmo6pFnIQSD6uhDPs1UZBMujdnMq/tnUcQzdbThuWslvHcLs5dqr7f+
+	p9qRQs7w9Rhl18d5sUJ0FOObcK5T+n8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-P_uwEoMWMEerWW--V2wp_Q-1; Thu,
+ 21 Nov 2024 17:03:41 -0500
+X-MC-Unique: P_uwEoMWMEerWW--V2wp_Q-1
+X-Mimecast-MFC-AGG-ID: P_uwEoMWMEerWW--V2wp_Q
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 105EF195419F;
+	Thu, 21 Nov 2024 22:03:39 +0000 (UTC)
+Received: from bgurney-thinkpadp1gen5.remote.csb (unknown [10.22.65.81])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 95AC430000DF;
+	Thu, 21 Nov 2024 22:03:34 +0000 (UTC)
+From: Bryan Gurney <bgurney@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	kbusch@kernel.org,
+	hch@lst.de,
+	sagi@grimberg.me,
+	axboe@kernel.dk,
+	mpe@ellerman.id.au,
+	naveen@kernel.org,
+	maddy@linux.ibm.com,
+	kernel@xen0n.name
+Cc: jmeneghi@redhat.com,
+	bmarzins@redhat.com,
+	Bryan Gurney <bgurney@redhat.com>
+Subject: [PATCH 1/1] nvme: always enable multipath
+Date: Thu, 21 Nov 2024 17:03:21 -0500
+Message-ID: <20241121220321.40616-1-bgurney@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7444:EE_|MW3PR11MB4761:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d4efdf8-775b-4f0d-bfe9-08dd0a7901d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?+Zb9EZ+Gl+x0a/qXW6TmQmNUxfb+eQ/gvkxZzHy9V2kgJFw/1wI3DdjAea25?=
- =?us-ascii?Q?BFJKZoT5gn5A+8GuhBPqjzED07+J80ueCQPvU1PR3mW2z2ZjwRvG9xEMlHf6?=
- =?us-ascii?Q?j+J1UGX/1Q9V909bNgDn8h1MbCKaIQIFLuHVjAYO3Yo/PddxurNr/67Smy60?=
- =?us-ascii?Q?Oyly/QbUr6sO4x/Q+nCfOXDSh6OTOzesPpV6RJh06JaaXiOJPdO0dlXeNDOY?=
- =?us-ascii?Q?t7C63nRvPTofycyQTH0CvZ4vH9cNqGsfZh95occdRvieMC2eXtO52OOed8+8?=
- =?us-ascii?Q?rqtHuPyjcTuEasRlGC18HPd/CjQJ7htaeRYga1pOlgSZOqf2Yia9h6qZPIL/?=
- =?us-ascii?Q?/uu7hdkOcACb8mI+SHue9iwVzPu+v21YaqI9fTF6hlpPYRX9HQKh9PpczvIR?=
- =?us-ascii?Q?rE0ygdm5St0JxyGFMb866iXUPWMuv8s3Q0nP5GQhncE/0j8AV/gfgp4bFGD2?=
- =?us-ascii?Q?N7EJRdaBnrJN9X76Ij08WGY4qxAtPMMG4+uWCGrxHVDAKlydgtn/AEI2BxAv?=
- =?us-ascii?Q?N2ETC5zq9jl3lyoiCrMGBAob60kRyv23mG0S8Lj+WvWcRELZaowpfY4QFh9l?=
- =?us-ascii?Q?QqHJVYAbn5GvpmCyYF7u24CVIi0oc4OgO6nsufftv6PXwYSiVPNqBBqG6oZo?=
- =?us-ascii?Q?+xrMaiC7j0z6TDbgMTMfexB5MmQlBdh032MB/V+kZU/oMBFo0TKHybwrczBf?=
- =?us-ascii?Q?40kLvQiPEqDd7LMB2p2cXmROuptmZ3CZ5G3sLqtI5ObcG0dn8VSmrHy4Ps+Q?=
- =?us-ascii?Q?+Qa8hASzuCnb+zrhHLefr0VCOObqBZIIcm/Pe3FFyj1+3D/2EVepKtzURoL8?=
- =?us-ascii?Q?22CRMwl1F34ESEGlt+9DJ0MOiG5tNIJy25+/guaiBu1OCTRDYu4faO4xJStU?=
- =?us-ascii?Q?h3FSq+1ebrhFARMXFdT3i65AiHIvlsL7wVIjciYgRD/sYPbi4G6Yj1WToZPD?=
- =?us-ascii?Q?V+ZMj01wiSeTZRoHUNac+pxo8W/NR2NUuEcS3ySLdJgSHZ93YFPRWcTlOqvC?=
- =?us-ascii?Q?65sE3/lhRj3ZYx/cub9F/h2CgDADcvkvIi8IymYNf68owuyGVr3hXo6r7KXR?=
- =?us-ascii?Q?9gW8uCEdZFYGuVN/q6BKwScg7CE2/W85NU3v3cbKTOrwrukI64grI6EKVu1c?=
- =?us-ascii?Q?NpeK5JnDJz+teo0x1awpzf0SYe8UxKToRuau9igUUUkRrykQbRXcjGUcwmZU?=
- =?us-ascii?Q?TtnZf49FkYD2sb2z3ZlXTSrAmCfC3EFznECMar6khHlbaW79U3m3ZTaOVezY?=
- =?us-ascii?Q?ez+CkojN9vpthtACWVlQZ7sTJMt06gUJFBTY3mDv0v0sh2YU6A5SragnZipC?=
- =?us-ascii?Q?4WBG6wm3pEGdp5DTb7KcVaZ+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7444.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?kIkvweTPFtP/qv4N5lvoecrkEtuCQnIROigHMRRIudSxQEoiZnhSTmB1MhUT?=
- =?us-ascii?Q?vpcNQ1rqdaYgqTy3/sVfPz0YgJZnSwXVGOHuIpL0VjQstKp9m0ie7S1mbP16?=
- =?us-ascii?Q?i2LkeJLmXTz3ugVyy3Hhs8XioLe0FZ+GTTEfscxt5Qbo9jzbXINUaMnBrwdK?=
- =?us-ascii?Q?UcfKUuUD6+VUjOYm8rymGXYK1hGZueaPPTyoJYeHoiY1lgVZhaJryGCgLSJ+?=
- =?us-ascii?Q?NYDCnJHkqFN8/7D/TvGx/LZXP0Xcr+NjYW7ciWr+ctZTkdTo/xY1RITp8ouz?=
- =?us-ascii?Q?CfFPyrF10Q7YlH+6urdT1G6oUS731dTgscNmo+BnMfPHSeR4h/EzO1j7f4x0?=
- =?us-ascii?Q?tEn2/DhdoOtB1b+sQzTLzz6HmyNbUKl1syq3pq9z2qQP7/Q65tXt0/4uQfAB?=
- =?us-ascii?Q?kT+lTOaJHJlbW+RJS+AqozKPqiWDBB0qaZwCmjYNEVcNiQtQ04PjYd9iCjx+?=
- =?us-ascii?Q?InPBMThiG55p6RvfYxE/5FINg5PFyjWYgJHUXO5St6w8VrTjdWDOFYiRcDvW?=
- =?us-ascii?Q?amX0JoV+dIP/AL8T+PT1rgKIW9mzkWtfH9XSYvVRq+sljScPkZul+H5R5XiZ?=
- =?us-ascii?Q?Q+CKuOKlD6YuhKRLiE1xtppsFKT/KN2KBNcgeQMPEZVbLVjWtIkDh5x9lLtl?=
- =?us-ascii?Q?BQgDcKiilnqKaQnKzMdYsyzMOM72J8LgojeLFPs3m+jQqEMW94urec3Fnjbs?=
- =?us-ascii?Q?v4NxjmiUpiYLBjDdgHLC54cQu9HAovpYXai/pwetv1IeIGNhcotlJucQ3Vig?=
- =?us-ascii?Q?wkCdxW6L4X3Dy395l/CBlvKzBWZbUWddAaMLRrTn+GFplo8vVKaWvJBfskUu?=
- =?us-ascii?Q?Bb6tUSK6LSsr04VR+X+txHLkUtHyzTVgk4THl/U3vaQFzziNtbD8ThykdII6?=
- =?us-ascii?Q?3ubLKIX7oC7DrVsMSe4Onblz7cUtb0VbrvDcY30X7Yg1r5aU2ZJVJGYRZk3Z?=
- =?us-ascii?Q?o1yNJbV096fz4IO2VK8+vh4eVzraF3PYTChfMFpNkPJAfDMeRJQgly0F/4P2?=
- =?us-ascii?Q?KAAdXeOzBdGWNwf4Axf4MzcmV7mJv2olhQNu7vIPOCIdLfjMBji9Qv7K95c7?=
- =?us-ascii?Q?7yyb5XaI41gQoI/VJBC23/jz3Psd4lP9AJYQJsl2i4WTKfQr5h9Mt732lSOv?=
- =?us-ascii?Q?bLNnkDVsN0WkKkiS3Oy+8bmtzENjbeLSvAMSd/MtzqA1fTChD6Il0qDNY8DE?=
- =?us-ascii?Q?DbrWBATJHGWnRpLJd8Oqp03uR0YwM9tM6IqdP+rhRjfUsgSVjTNq5610YLwI?=
- =?us-ascii?Q?z2jsAZZiqR8Mb3EqhOMGg1YvA5xqTZJamhpWW8x1YBv8mBqbgaaAv9Tdj/CL?=
- =?us-ascii?Q?dA5kPVal3MDTZ9ds0pRIJf8sSG4JYw9mCzScnsaEs4dUckzT9OI5v3tshzgD?=
- =?us-ascii?Q?huEUXw5QBs6D8agKMRj9JvkZMyp/Y5RWlCSQEDvbQHIfdeOQHuwsnUTBVYQ1?=
- =?us-ascii?Q?xboq+s4XE4PXxELSk1MD+2MxmBaIxAwTINAOFQeHNmj0JmpXTdKUPavmweoq?=
- =?us-ascii?Q?9zRBI0/VrWvqeXuRmV7fW3xVZItUQtuuMrrwi1hSF9giBEBn52gh91HZi5zs?=
- =?us-ascii?Q?0wAoe2rf15IPmof3OeuhbzFUGBIwylGekELrAnALLLJimREHSNMGTV7HW+M8?=
- =?us-ascii?Q?5A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d4efdf8-775b-4f0d-bfe9-08dd0a7901d9
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7444.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Nov 2024 22:08:19.6250
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Fj7xYxYGvhlXsbrAxEC3h8whLPT+U3o/ssAc2gxNYSH4ijWsT+M/UHd8Mxhdwi/ymBz2JukZlitwekM49Y78HA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4761
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-When running `bpftool` on a kernel module installed in `/lib/modules...`,
-this error is encountered if the user does not specify `--base-btf` to
-point to a valid base BTF (e.g. usually in `/sys/kernel/btf/vmlinux`).
-However, looking at the debug output to determine the cause of the error
-simply says `Invalid BTF string section`, which does not point to the
-actual source of the error. This just improves that debug message to tell
-users what happened.
+Since device-mapper multipath will no longer be operating on NVMe
+devices, there is no longer a need to set CONFIG_NVME_MULTIPATH=n.
 
-Signed-off-by: Ben Olson <matthew.olson@intel.com>
+Always enable NVMe multipath, remove CONFIG_NVME_MULTIPATH, and use
+the code paths that would be used if CONFIG_NVME_MULTIPATH=y.
+
+Reviewed-by: John Meneghini <jmeneghi@redhat.com>
+Tested-by: Bryan Gurney <bgurney@redhat.com>
+Signed-off-by: Bryan Gurney <bgurney@redhat.com>
 ---
- tools/lib/bpf/btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/loongarch/configs/loongson3_defconfig |  1 -
+ arch/powerpc/configs/skiroot_defconfig     |  1 -
+ drivers/nvme/host/Kconfig                  |  9 --
+ drivers/nvme/host/Makefile                 |  3 +-
+ drivers/nvme/host/core.c                   | 17 +---
+ drivers/nvme/host/ioctl.c                  |  3 +-
+ drivers/nvme/host/multipath.c              | 10 +--
+ drivers/nvme/host/nvme.h                   | 97 +---------------------
+ drivers/nvme/host/sysfs.c                  |  6 --
+ 9 files changed, 7 insertions(+), 140 deletions(-)
 
-diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-index 12468ae0d573..1a17de9d99e6 100644
---- a/tools/lib/bpf/btf.c
-+++ b/tools/lib/bpf/btf.c
-@@ -283,7 +283,7 @@ static int btf_parse_str_sec(struct btf *btf)
- 		return -EINVAL;
+diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+index 75b366407a60..91931927645a 100644
+--- a/arch/loongarch/configs/loongson3_defconfig
++++ b/arch/loongarch/configs/loongson3_defconfig
+@@ -422,7 +422,6 @@ CONFIG_BLK_DEV_RAM_SIZE=8192
+ CONFIG_VIRTIO_BLK=y
+ CONFIG_BLK_DEV_RBD=m
+ CONFIG_BLK_DEV_NVME=y
+-CONFIG_NVME_MULTIPATH=y
+ CONFIG_NVME_RDMA=m
+ CONFIG_NVME_FC=m
+ CONFIG_NVME_TCP=m
+diff --git a/arch/powerpc/configs/skiroot_defconfig b/arch/powerpc/configs/skiroot_defconfig
+index 9d44e6630908..10336c5796c7 100644
+--- a/arch/powerpc/configs/skiroot_defconfig
++++ b/arch/powerpc/configs/skiroot_defconfig
+@@ -76,7 +76,6 @@ CONFIG_BLK_DEV_RAM=y
+ CONFIG_BLK_DEV_RAM_SIZE=65536
+ CONFIG_VIRTIO_BLK=m
+ CONFIG_BLK_DEV_NVME=m
+-CONFIG_NVME_MULTIPATH=y
+ CONFIG_EEPROM_AT24=m
+ # CONFIG_CXL is not set
+ # CONFIG_OCXL is not set
+diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
+index 486afe598184..50505bea1ca6 100644
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -14,15 +14,6 @@ config BLK_DEV_NVME
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called nvme.
+ 
+-config NVME_MULTIPATH
+-	bool "NVMe multipath support"
+-	depends on NVME_CORE
+-	help
+-	   This option enables support for multipath access to NVMe
+-	   subsystems.  If this option is enabled only a single
+-	   /dev/nvmeXnY device will show up for each NVMe namespace,
+-	   even if it is accessible through multiple controllers.
+-
+ config NVME_VERBOSE_ERRORS
+ 	bool "NVMe verbose error reporting"
+ 	depends on NVME_CORE
+diff --git a/drivers/nvme/host/Makefile b/drivers/nvme/host/Makefile
+index 6414ec968f99..4a3117ec0096 100644
+--- a/drivers/nvme/host/Makefile
++++ b/drivers/nvme/host/Makefile
+@@ -10,10 +10,9 @@ obj-$(CONFIG_NVME_FC)			+= nvme-fc.o
+ obj-$(CONFIG_NVME_TCP)			+= nvme-tcp.o
+ obj-$(CONFIG_NVME_APPLE)		+= nvme-apple.o
+ 
+-nvme-core-y				+= core.o ioctl.o sysfs.o pr.o
++nvme-core-y				+= core.o ioctl.o sysfs.o pr.o multipath.o
+ nvme-core-$(CONFIG_NVME_VERBOSE_ERRORS)	+= constants.o
+ nvme-core-$(CONFIG_TRACING)		+= trace.o
+-nvme-core-$(CONFIG_NVME_MULTIPATH)	+= multipath.o
+ nvme-core-$(CONFIG_BLK_DEV_ZONED)	+= zns.o
+ nvme-core-$(CONFIG_FAULT_INJECTION_DEBUG_FS)	+= fault_inject.o
+ nvme-core-$(CONFIG_NVME_HWMON)		+= hwmon.o
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index bfd71511c85f..0a71a1a5af68 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -3599,9 +3599,7 @@ static struct nvme_ns_head *nvme_alloc_ns_head(struct nvme_ctrl *ctrl,
+ 	size_t size = sizeof(*head);
+ 	int ret = -ENOMEM;
+ 
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	size += num_possible_nodes() * sizeof(struct nvme_ns *);
+-#endif
+ 
+ 	head = kzalloc(size, GFP_KERNEL);
+ 	if (!head)
+@@ -3750,14 +3748,6 @@ static int nvme_init_ns_head(struct nvme_ns *ns, struct nvme_ns_info *info)
+ 					info->nsid);
+ 			goto out_put_ns_head;
+ 		}
+-
+-		if (!multipath) {
+-			dev_warn(ctrl->device,
+-				"Found shared namespace %d, but multipathing not supported.\n",
+-				info->nsid);
+-			dev_warn_once(ctrl->device,
+-				"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+-		}
  	}
- 	if (!btf->base_btf && start[0]) {
--		pr_debug("Invalid BTF string section\n");
-+		pr_debug("Cannot find base BTF\n");
- 		return -EINVAL;
+ 
+ 	list_add_tail_rcu(&ns->siblings, &head->list);
+@@ -3855,11 +3845,8 @@ static void nvme_alloc_ns(struct nvme_ctrl *ctrl, struct nvme_ns_info *info)
+ 		sprintf(disk->disk_name, "nvme%dc%dn%d", ctrl->subsys->instance,
+ 			ctrl->instance, ns->head->instance);
+ 		disk->flags |= GENHD_FL_HIDDEN;
+-	} else if (multipath) {
+-		sprintf(disk->disk_name, "nvme%dn%d", ctrl->subsys->instance,
+-			ns->head->instance);
+ 	} else {
+-		sprintf(disk->disk_name, "nvme%dn%d", ctrl->instance,
++		sprintf(disk->disk_name, "nvme%dn%d", ctrl->subsys->instance,
+ 			ns->head->instance);
  	}
+ 
+@@ -4457,13 +4444,11 @@ static bool nvme_handle_aen_notice(struct nvme_ctrl *ctrl, u32 result)
+ 			queue_work(nvme_wq, &ctrl->fw_act_work);
+ 		}
+ 		break;
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	case NVME_AER_NOTICE_ANA:
+ 		if (!ctrl->ana_log_buf)
+ 			break;
+ 		queue_work(nvme_wq, &ctrl->ana_work);
+ 		break;
+-#endif
+ 	case NVME_AER_NOTICE_DISC_CHANGED:
+ 		ctrl->aen_result = result;
+ 		break;
+diff --git a/drivers/nvme/host/ioctl.c b/drivers/nvme/host/ioctl.c
+index 64b5542fb3b7..60d14084dcf1 100644
+--- a/drivers/nvme/host/ioctl.c
++++ b/drivers/nvme/host/ioctl.c
+@@ -676,7 +676,7 @@ int nvme_ns_chr_uring_cmd_iopoll(struct io_uring_cmd *ioucmd,
+ 		return blk_rq_poll(req, iob, poll_flags);
  	return 0;
+ }
+-#ifdef CONFIG_NVME_MULTIPATH
++
+ static int nvme_ns_head_ctrl_ioctl(struct nvme_ns *ns, unsigned int cmd,
+ 		void __user *argp, struct nvme_ns_head *head, int srcu_idx,
+ 		bool open_for_write)
+@@ -766,7 +766,6 @@ int nvme_ns_head_chr_uring_cmd(struct io_uring_cmd *ioucmd,
+ 	srcu_read_unlock(&head->srcu, srcu_idx);
+ 	return ret;
+ }
+-#endif /* CONFIG_NVME_MULTIPATH */
+ 
+ int nvme_dev_uring_cmd(struct io_uring_cmd *ioucmd, unsigned int issue_flags)
+ {
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index a85d190942bd..da7cb04a3697 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -9,11 +9,6 @@
+ #include <trace/events/block.h>
+ #include "nvme.h"
+ 
+-bool multipath = true;
+-module_param(multipath, bool, 0444);
+-MODULE_PARM_DESC(multipath,
+-	"turn on native support for multiple controllers per subsystem");
+-
+ static const char *nvme_iopolicy_names[] = {
+ 	[NVME_IOPOLICY_NUMA]	= "numa",
+ 	[NVME_IOPOLICY_RR]	= "round-robin",
+@@ -633,7 +628,7 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
+ 	 * could change after a rescan.
+ 	 */
+ 	if (!(ctrl->subsys->cmic & NVME_CTRL_CMIC_MULTI_CTRL) ||
+-	    !nvme_is_unique_nsid(ctrl, head) || !multipath)
++	    !nvme_is_unique_nsid(ctrl, head))
+ 		return 0;
+ 
+ 	blk_set_stacking_limits(&lim);
+@@ -1039,8 +1034,7 @@ int nvme_mpath_init_identify(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 	int error = 0;
+ 
+ 	/* check if multipath is enabled and we have the capability */
+-	if (!multipath || !ctrl->subsys ||
+-	    !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
++	if (!ctrl->subsys || !(ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA))
+ 		return 0;
+ 
+ 	/* initialize this in the identify path to cover controller resets */
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 611b02c8a8b3..c9d5dc42436d 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -186,9 +186,7 @@ struct nvme_request {
+ 	u8			retries;
+ 	u8			flags;
+ 	u16			status;
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	unsigned long		start_time;
+-#endif
+ 	struct nvme_ctrl	*ctrl;
+ };
+ 
+@@ -355,7 +353,6 @@ struct nvme_ctrl {
+ 	struct work_struct fw_act_work;
+ 	unsigned long events;
+ 
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	/* asymmetric namespace access: */
+ 	u8 anacap;
+ 	u8 anatt;
+@@ -367,7 +364,6 @@ struct nvme_ctrl {
+ 	struct timer_list anatt_timer;
+ 	struct work_struct ana_work;
+ 	atomic_t nr_active;
+-#endif
+ 
+ #ifdef CONFIG_NVME_HOST_AUTH
+ 	struct work_struct dhchap_auth_work;
+@@ -439,9 +435,7 @@ struct nvme_subsystem {
+ 	u16			vendor_id;
+ 	u16			awupf;	/* 0's based awupf value. */
+ 	struct ida		ns_ida;
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	enum nvme_iopolicy	iopolicy;
+-#endif
+ };
+ 
+ /*
+@@ -491,7 +485,6 @@ struct nvme_ns_head {
+ 	struct device		cdev_device;
+ 
+ 	struct gendisk		*disk;
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	struct bio_list		requeue_list;
+ 	spinlock_t		requeue_lock;
+ 	struct work_struct	requeue_work;
+@@ -500,12 +493,11 @@ struct nvme_ns_head {
+ 	unsigned long		flags;
+ #define NVME_NSHEAD_DISK_LIVE	0
+ 	struct nvme_ns __rcu	*current_path[];
+-#endif
+ };
+ 
+ static inline bool nvme_ns_head_multipath(struct nvme_ns_head *head)
+ {
+-	return IS_ENABLED(CONFIG_NVME_MULTIPATH) && head->disk;
++	return head->disk;
+ }
+ 
+ enum nvme_ns_features {
+@@ -520,10 +512,8 @@ struct nvme_ns {
+ 	struct nvme_ctrl *ctrl;
+ 	struct request_queue *queue;
+ 	struct gendisk *disk;
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	enum nvme_ana_state ana_state;
+ 	u32 ana_grpid;
+-#endif
+ 	struct list_head siblings;
+ 	struct kref kref;
+ 	struct nvme_ns_head *head;
+@@ -937,7 +927,7 @@ extern const struct block_device_operations nvme_bdev_ops;
+ 
+ void nvme_delete_ctrl_sync(struct nvme_ctrl *ctrl);
+ struct nvme_ns *nvme_find_path(struct nvme_ns_head *head);
+-#ifdef CONFIG_NVME_MULTIPATH
++
+ static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+ {
+ 	return ctrl->ana_log_buf != NULL;
+@@ -972,7 +962,6 @@ static inline void nvme_trace_bio_complete(struct request *req)
+ 		trace_block_bio_complete(ns->head->disk->queue, req->bio);
+ }
+ 
+-extern bool multipath;
+ extern struct device_attribute dev_attr_ana_grpid;
+ extern struct device_attribute dev_attr_ana_state;
+ extern struct device_attribute subsys_attr_iopolicy;
+@@ -981,88 +970,6 @@ static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
+ {
+ 	return disk->fops == &nvme_ns_head_ops;
+ }
+-#else
+-#define multipath false
+-static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+-{
+-	return false;
+-}
+-static inline void nvme_failover_req(struct request *req)
+-{
+-}
+-static inline void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,
+-		struct nvme_ns_head *head)
+-{
+-	return 0;
+-}
+-static inline void nvme_mpath_add_disk(struct nvme_ns *ns, __le32 anagrpid)
+-{
+-}
+-static inline void nvme_mpath_remove_disk(struct nvme_ns_head *head)
+-{
+-}
+-static inline bool nvme_mpath_clear_current_path(struct nvme_ns *ns)
+-{
+-	return false;
+-}
+-static inline void nvme_mpath_revalidate_paths(struct nvme_ns *ns)
+-{
+-}
+-static inline void nvme_mpath_clear_ctrl_paths(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline void nvme_mpath_shutdown_disk(struct nvme_ns_head *head)
+-{
+-}
+-static inline void nvme_trace_bio_complete(struct request *req)
+-{
+-}
+-static inline void nvme_mpath_init_ctrl(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline int nvme_mpath_init_identify(struct nvme_ctrl *ctrl,
+-		struct nvme_id_ctrl *id)
+-{
+-	if (ctrl->subsys->cmic & NVME_CTRL_CMIC_ANA)
+-		dev_warn(ctrl->device,
+-"Please enable CONFIG_NVME_MULTIPATH for full support of multi-port devices.\n");
+-	return 0;
+-}
+-static inline void nvme_mpath_update(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline void nvme_mpath_stop(struct nvme_ctrl *ctrl)
+-{
+-}
+-static inline void nvme_mpath_unfreeze(struct nvme_subsystem *subsys)
+-{
+-}
+-static inline void nvme_mpath_wait_freeze(struct nvme_subsystem *subsys)
+-{
+-}
+-static inline void nvme_mpath_start_freeze(struct nvme_subsystem *subsys)
+-{
+-}
+-static inline void nvme_mpath_default_iopolicy(struct nvme_subsystem *subsys)
+-{
+-}
+-static inline void nvme_mpath_start_request(struct request *rq)
+-{
+-}
+-static inline void nvme_mpath_end_request(struct request *rq)
+-{
+-}
+-static inline bool nvme_disk_is_ns_head(struct gendisk *disk)
+-{
+-	return false;
+-}
+-#endif /* CONFIG_NVME_MULTIPATH */
+ 
+ int nvme_ns_get_unique_id(struct nvme_ns *ns, u8 id[16],
+ 		enum blk_unique_id type);
+diff --git a/drivers/nvme/host/sysfs.c b/drivers/nvme/host/sysfs.c
+index b68a9e5f1ea3..e32f50f4d9cc 100644
+--- a/drivers/nvme/host/sysfs.c
++++ b/drivers/nvme/host/sysfs.c
+@@ -255,10 +255,8 @@ static struct attribute *nvme_ns_attrs[] = {
+ 	&dev_attr_nsid.attr,
+ 	&dev_attr_metadata_bytes.attr,
+ 	&dev_attr_nuse.attr,
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	&dev_attr_ana_grpid.attr,
+ 	&dev_attr_ana_state.attr,
+-#endif
+ 	&dev_attr_io_passthru_err_log_enabled.attr,
+ 	NULL,
+ };
+@@ -282,7 +280,6 @@ static umode_t nvme_ns_attrs_are_visible(struct kobject *kobj,
+ 		if (!memchr_inv(ids->eui64, 0, sizeof(ids->eui64)))
+ 			return 0;
+ 	}
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	if (a == &dev_attr_ana_grpid.attr || a == &dev_attr_ana_state.attr) {
+ 		/* per-path attr */
+ 		if (nvme_disk_is_ns_head(dev_to_disk(dev)))
+@@ -290,7 +287,6 @@ static umode_t nvme_ns_attrs_are_visible(struct kobject *kobj,
+ 		if (!nvme_ctrl_use_ana(nvme_get_ns_from_dev(dev)->ctrl))
+ 			return 0;
+ 	}
+-#endif
+ 	return a->mode;
+ }
+ 
+@@ -860,9 +856,7 @@ static struct attribute *nvme_subsys_attrs[] = {
+ 	&subsys_attr_firmware_rev.attr,
+ 	&subsys_attr_subsysnqn.attr,
+ 	&subsys_attr_subsystype.attr,
+-#ifdef CONFIG_NVME_MULTIPATH
+ 	&subsys_attr_iopolicy.attr,
+-#endif
+ 	NULL,
+ };
+ 
 -- 
-2.47.0
+2.45.2
+
 
