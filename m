@@ -1,550 +1,226 @@
-Return-Path: <linux-kernel+bounces-417118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0EE9D4F4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:58:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 740EF9D4F45
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1592B292EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C0D3B297EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 14:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ABEA1DD0DC;
-	Thu, 21 Nov 2024 14:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC381DE4EC;
+	Thu, 21 Nov 2024 14:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JIAk+rly";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LQUce8H3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nXZdCwWX"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C715D1DBB13;
-	Thu, 21 Nov 2024 14:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CDA1DD0F9
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 14:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732200640; cv=none; b=p4s1dD2bMl9XC169r+pXDNy2mQqtgwrCF/Xj690kEjfFtWiXxOM3RT1BL9fx09JRihqRoXAGuopXtcugOM43MHLeCKDcUspIvWPwvxOTrMqSexE+hNfZEfeL/jkI94VYaaD+LwYDSU5l/d6+heIA+3elewAiqAjfc3lwHkHqEXE=
+	t=1732200714; cv=none; b=ajccq5d4V6dJy6dlPoRVtAg8gwE2i0elM7JvQDswvI5iy7YN/15PHzeQqiM2snNiZs0Q9FcaI6WMi136BQB9kHk7/4NYitHN8wAnjwGcsyhw3JiqzwT16RbQH6VOOqYLfZXvnCYMtMx9zIs9VaElLKymtBpX55ngQpaJvgKJGzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732200640; c=relaxed/simple;
-	bh=pU6rOgQVh/c7d/d9Ala3NLfLk14SMZaXD2UvOSiLR+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=p3q3VC0yTfLMJsYFm9HguPw8n8JiyIrG8gIIi2BHDcZywe0k18nquXB7iP6xz0eIt89iE5YJlOlN6ZdBDAjs5Ap5quLFemesIg+pw3T+ZyGmJimgOaQKUYOaLqg4ADeZNk9siWDl/zB6xBsTPmkUn0gpGLTAC6wA2hnssYXjwUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JIAk+rly; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LQUce8H3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1732200635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=USBCcfi6bUWUlnyPWKrgwcW59LiWlwxWCde2Nd+xdT4=;
-	b=JIAk+rlyNjFUsLo+9I7hWTuJvovuPARwL8EDSe7bWoG+yW7xxF8ayEAdqot51IPeLYas00
-	6Zrd8mDOMXzBk3sXxi/iOue3ebenafj1QsKFbEGuTmfnDVTnxwszfT6K5DahUf6MzF1TRL
-	e4DFd3OUHCaUpDm9zZz1dmiKQSafWM+DeYYjrrNvP78V2cdLm8TwOClllArAq2ZUoMpZ8Z
-	gwS5MCPGaxrXj/L0npUDCdIN13QoAMPW1OI7KKSwH0jkgtoycPU6vLqxp52VtlK/raf84q
-	BIsSH7F5cNZidIhR3x06S+5RCGCA1n/ftAG8jaIfiDtf31bOwuiSA2M/8HEtmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1732200635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=USBCcfi6bUWUlnyPWKrgwcW59LiWlwxWCde2Nd+xdT4=;
-	b=LQUce8H3P4yP67nFQRowoeDR2I1MRgzMa5GktcpUpTDzluOQsqAP9zR5ZHZ/zx9/vzmXwW
-	QPiXuazUFIfeVxDw==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Yoann Congal <yoann.congal@smile.fr>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Jens Axboe <axboe@kernel.dk>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jann Horn <jannh@google.com>
-Subject: [PATCH printk v1] printk: ringbuffer: Add KUnit test
-Date: Thu, 21 Nov 2024 15:56:34 +0106
-Message-Id: <20241121145034.123367-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1732200714; c=relaxed/simple;
+	bh=jqedViYwvun5MakxDt5nbSkxg7ZjzRibKwjbt7Cm3+Y=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aioRum6zejlL72w3mp//rXIMv+fnAXThfZDAqR9CRfQlEzB9bL5Avx7N9IyF16y3YuZndgu8mtop0gHGTwawh85xrnKJWonYGBCtSGRXxDUK48PXpUAUvm5G8BCkRcB+u6+M8MnP9IhLg+SDlTOaXmpvf36efzP8FLrFFiQN8uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nXZdCwWX; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e38b2d868c8so886456276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 06:51:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732200710; x=1732805510; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IW9hLRAylg+ln+0KOywBCYwaZACv/9u6gJMVewYJ5y8=;
+        b=nXZdCwWXfMIOsDlVPK2Eg/7PJ0LJSuNIzv4NUQytjzimupR2lybsKOJu+KNZ7eOQqV
+         JkGFjAI0acuisGMPIFadRCDHMSk9ZLdm135pJ7NxFgxasESJ4y65hdRAaHt9IkIrMlYu
+         bYxL68PSAa9zXxss+ZKysO1cglLEEmlsX2Wfrtjs5Ru6B82nNF9ElZ9l+WH0Xh/IaTux
+         DoV78p3jTtqYoC+xEEzGWq+hm6kT8dXr0GBbN7rS8nC6n2kX9HCI+yO16P9p0mJwcWt2
+         an5cpPSAZhTkfWa0n1dAt0JeWRg82FvOpDj7RXkpZymvPJnCGZlX3RA8a2VJ/l3rBn8Q
+         G0JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732200710; x=1732805510;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IW9hLRAylg+ln+0KOywBCYwaZACv/9u6gJMVewYJ5y8=;
+        b=oy4YWpXYxo7q+xCJT6W7gdeZjdkFMJcLiyK/B58BeP3/tEvDbwEAOmUyYVCQKsYCng
+         yAkPt0hHJzAnuHJuTy3rlUAgIB1+cAzz9qiIh8dZmOPN5F2H5VeQFyufDJ6OExETWFr0
+         /lFVpz7tJFhPhQIqtzFkWSMrMiyArcTUFupepon7hnwfQDK1jm45Qdz8D9tBL5mhJYoP
+         OqpEWnTO/aCHQgnkNtNvbqp5cxVltnsXvSmdpawUO+d8FmW6jiRosK0Yd8c8LP0Uhr8P
+         gZkX4OQjXFM++AK/ld0dp2ZXejd4B5ooCk0otZWEnYV9fyDJ1d08x6362OxaKWiT7a9w
+         Bd6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXemtNnSIqHoWYE0N2Bl0WBGlb1m/Joq8iIONGyxl4lYM8WOkTzLMzU2k4thnykv0R3xbM847q5iuCw2Bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx43ZWn2jJKuTf9BqX4dNN1VhOGXQnp3K35oAVmJ4i+k/az2jvf
+	gaqE0e6niIj+VAwZejhPguetFK2F95tnku8uawOgbSG+EfwHKG32J4CU3+4jDijkCwWOx+Fn8IS
+	/RqTjtw17+isWXuK5cTQ8t1EafSCSUzdcmHpsAg==
+X-Gm-Gg: ASbGncsGlGvxSL2RtqTHOW8znVfVLYg4nR5rcW9yyp99BnqiOJ2rp2z2qDyiP3vxQIE
+	vU3ms38qmJK1v1PiaJTM5RtR7OvQs3wECAyqVElIobrCh8Wu9+bcxxbrBlNGiSC6v
+X-Google-Smtp-Source: AGHT+IH/zeBRHfSwhp5oRXvCEbbAPacPm8jOYa4uMae3tXMP2WsluSNrPTDCyNM9hJkYNCNSFOV2bTGYXYi1Tw0myk4=
+X-Received: by 2002:a05:6902:2b86:b0:e38:4d62:5a92 with SMTP id
+ 3f1490d57ef6-e38cb7170d9mr5809581276.42.1732200710049; Thu, 21 Nov 2024
+ 06:51:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 21 Nov 2024 20:21:38 +0530
+Message-ID: <CA+G9fYurbY3B6ahZ+k+Syp5bZ3a+YQdeX8DRb6Twi4BDEFbUsw@mail.gmail.com>
+Subject: next-20241121: arm64: of_pci_supply_present (drivers/pci/of.c:746) -
+ Unable to handle kernel NULL pointer dereference at virtual address 0000000000000058
+To: PCI <linux-pci@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+The juno-r2, qemu-arm64 and qemu-armv7 boot failed on the Linux-next tree.
+Please find the crash log below.
 
-The KUnit test validates the correct operation of the ringbuffer.
-A separate dedicated ringbuffer is used so that the global printk
-ringbuffer is not touched.
+First seen on the next-20241121 tag.
+Good: next-20241120
+Bad:  next-20241121
 
-Co-developed-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
-For those not familiar with KUnit, you can easily run this test
-doing something like this:
+Juno-r2, qemu-arm64:
+* boot/gcc-13-lkftconfig
+* boot/clang-nightly-lkftconfig
+* boot/gcc-13-lkftconfig-perf
 
-$ ./tools/testing/kunit/kunit.py run \
-  --arch=x86_64 \
-  --qemu_args "-enable-kvm -smp 8" \
-  --kunitconfig kernel/printk
+qemu-armv7:
+* boot/gcc-13-lkftconfig
+* boot/clang-19-lkftconfig
 
- init/Kconfig                           |  12 +
- kernel/printk/.kunitconfig             |   3 +
- kernel/printk/Makefile                 |   2 +
- kernel/printk/printk_ringbuffer.c      |   4 +
- kernel/printk/printk_ringbuffer_test.c | 350 +++++++++++++++++++++++++
- 5 files changed, 371 insertions(+)
- create mode 100644 kernel/printk/.kunitconfig
- create mode 100644 kernel/printk/printk_ringbuffer_test.c
 
-diff --git a/init/Kconfig b/init/Kconfig
-index 3b6ca7cce03b..46d144908191 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1576,6 +1576,18 @@ config PRINTK
- 	  very difficult to diagnose system problems, saying N here is
- 	  strongly discouraged.
- 
-+config PRINTK_RINGBUFFER_TEST
-+	tristate "Test for the printk ringbuffer" if !KUNIT_ALL_TESTS
-+	depends on PRINTK && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds the printk ringbuffer KUnit test suite.
-+
-+	  For more information on KUnit and unit tests in general, please refer
-+	  to the KUnit documentation.
-+
-+	  If unsure, say N.
-+
- config BUG
- 	bool "BUG() support" if EXPERT
- 	default y
-diff --git a/kernel/printk/.kunitconfig b/kernel/printk/.kunitconfig
-new file mode 100644
-index 000000000000..8d31a5c19053
---- /dev/null
-+++ b/kernel/printk/.kunitconfig
-@@ -0,0 +1,3 @@
-+CONFIG_KUNIT=y
-+CONFIG_SMP=y
-+CONFIG_PRINTK_RINGBUFFER_TEST=y
-diff --git a/kernel/printk/Makefile b/kernel/printk/Makefile
-index 39a2b61c7232..edb5a4cacf67 100644
---- a/kernel/printk/Makefile
-+++ b/kernel/printk/Makefile
-@@ -7,3 +7,5 @@ obj-$(CONFIG_PRINTK_INDEX)	+= index.o
- obj-$(CONFIG_PRINTK)                 += printk_support.o
- printk_support-y	             := printk_ringbuffer.o
- printk_support-$(CONFIG_SYSCTL)	     += sysctl.o
-+
-+obj-$(CONFIG_PRINTK_RINGBUFFER_TEST) += printk_ringbuffer_test.o
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index 88e8f3a61922..57b80d262cb7 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include <kunit/visibility.h>
- #include <linux/kernel.h>
- #include <linux/irqflags.h>
- #include <linux/string.h>
-@@ -1685,6 +1686,7 @@ bool prb_reserve(struct prb_reserved_entry *e, struct printk_ringbuffer *rb,
- 	memset(r, 0, sizeof(*r));
- 	return false;
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_reserve);
- 
- /* Commit the data (possibly finalizing it) and restore interrupts. */
- static void _prb_commit(struct prb_reserved_entry *e, unsigned long state_val)
-@@ -1759,6 +1761,7 @@ void prb_commit(struct prb_reserved_entry *e)
- 	if (head_id != e->id)
- 		desc_make_final(e->rb, e->id);
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_commit);
- 
- /**
-  * prb_final_commit() - Commit and finalize (previously reserved) data to
-@@ -2181,6 +2184,7 @@ bool prb_read_valid(struct printk_ringbuffer *rb, u64 seq,
- {
- 	return _prb_read_valid(rb, &seq, r, NULL);
- }
-+EXPORT_SYMBOL_IF_KUNIT(prb_read_valid);
- 
- /**
-  * prb_read_valid_info() - Non-blocking read of meta data for a requested
-diff --git a/kernel/printk/printk_ringbuffer_test.c b/kernel/printk/printk_ringbuffer_test.c
-new file mode 100644
-index 000000000000..79331ea2b739
---- /dev/null
-+++ b/kernel/printk/printk_ringbuffer_test.c
-@@ -0,0 +1,350 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/delay.h>
-+#include <linux/init.h>
-+#include <linux/kthread.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/random.h>
-+#include <linux/sched/clock.h>
-+#include <linux/slab.h>
-+#include <linux/wait.h>
-+
-+#include <kunit/test.h>
-+
-+#include "printk_ringbuffer.h"
-+
-+/*
-+ * This KUnit tests the data integrity of the lockless printk_ringbuffer.
-+ * From multiple CPUs it writes messages of varying length and content while
-+ * a reader validates the correctness of the messages.
-+ *
-+ * IMPORTANT: The more CPUs you can use for this KUnit, the better!
-+ *
-+ * The test works by starting "num_online_cpus() - 1" writer threads, each
-+ * pinned to their own CPU. Each writer thread loops, writing data of varying
-+ * length into a printk_ringbuffer as fast as possible. The data content is
-+ * an embedded data struct followed by string content repeating the byte:
-+ *
-+ *      'A' + CPUID
-+ *
-+ * A reader thread is started on the remaining online CPU and ensures that
-+ * embedded struct content is consistent with the string and that the string
-+ * is terminated and is composed of the same repeating byte as its first byte.
-+ *
-+ * Because the threads are running in such tight loops, they will call
-+ * schedule() from time to time so the system stays functional.
-+ *
-+ * If the reader encounters an error, the test is aborted and some
-+ * information about the error is provided via printk. The runtime of
-+ * the test can be configured with the runtime_ms module parameter.
-+ *
-+ * Note that the test is performed on a separate printk_ringbuffer instance
-+ * and not the instance used by printk().
-+ */
-+
-+static unsigned long runtime_ms = 10000;
-+module_param(runtime_ms, ulong, 0400);
-+
-+/* used by writers to signal reader of new records */
-+static DECLARE_WAIT_QUEUE_HEAD(test_wait);
-+
-+/* test data structure */
-+struct rbdata {
-+	unsigned int len;
-+	char text[] __counted_by(len);
-+};
-+
-+#define MAX_RBDATA_LEN (0x7f + 1)
-+#define MAX_RECORD_SIZE (sizeof(struct rbdata) + MAX_RBDATA_LEN + 1)
-+
-+static struct test_running {
-+	int runstate;
-+	unsigned long num;
-+	struct kunit *test;
-+} *test_running;
-+static int halt_test;
-+
-+static void fail_record(struct kunit *test, struct rbdata *dat, u64 seq)
-+{
-+	char buf[MAX_RBDATA_LEN + 1];
-+
-+	snprintf(buf, sizeof(buf), "%s", dat->text);
-+	buf[sizeof(buf) - 1] = 0;
-+
-+	KUNIT_FAIL(test, "BAD RECORD: seq=%llu len=%u text=%s\n",
-+		   seq, dat->len, dat->len < sizeof(buf) ? buf : "<invalid>");
-+}
-+
-+static bool check_data(struct rbdata *dat)
-+{
-+	unsigned int len;
-+
-+	len = strnlen(dat->text, MAX_RBDATA_LEN + 1);
-+
-+	/* Sane length? */
-+	if (len != dat->len || !len || len > MAX_RBDATA_LEN)
-+		return false;
-+
-+	/* String repeats with the same character? */
-+	while (len) {
-+		len--;
-+		if (dat->text[len] != dat->text[0])
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+/* Equivalent to CONFIG_LOG_BUF_SHIFT=13 */
-+DEFINE_PRINTKRB(test_rb, 8, 5);
-+
-+static int prbtest_writer(void *data)
-+{
-+	struct test_running *tr = data;
-+	char text_id = 'A' + tr->num;
-+	struct prb_reserved_entry e;
-+	unsigned long count = 0;
-+	struct printk_record r;
-+	u64 min_ns = (u64)-1;
-+	struct rbdata *dat;
-+	u64 total_ns = 0;
-+	u64 max_ns = 0;
-+	u64 post_ns;
-+	u64 pre_ns;
-+	int len;
-+
-+	set_cpus_allowed_ptr(current, cpumask_of(tr->num));
-+
-+	kunit_info(tr->test, "start thread %03lu (writer)\n", tr->num);
-+
-+	tr->runstate = 1;
-+
-+	for (;;) {
-+		/* +2 to ensure at least 1 character + terminator. */
-+		len = sizeof(struct rbdata) + (get_random_u32() & 0x7f) + 2;
-+
-+		/* specify the text sizes for reservation */
-+		prb_rec_init_wr(&r, len);
-+
-+		pre_ns = local_clock();
-+
-+		if (prb_reserve(&e, &test_rb, &r)) {
-+			r.info->text_len = len;
-+
-+			len -= sizeof(struct rbdata) + 1;
-+
-+			dat = (struct rbdata *)&r.text_buf[0];
-+			dat->len = len;
-+			memset(&dat->text[0], text_id, len);
-+			dat->text[len] = 0;
-+
-+			prb_commit(&e);
-+
-+			post_ns = local_clock();
-+
-+			wake_up_interruptible(&test_wait);
-+
-+			post_ns -= pre_ns;
-+			if (post_ns < min_ns)
-+				min_ns = post_ns;
-+			if (post_ns > max_ns)
-+				max_ns = post_ns;
-+			total_ns += post_ns;
-+		}
-+
-+		if ((count++ & 0x3fff) == 0)
-+			schedule();
-+
-+		if (READ_ONCE(halt_test) == 1)
-+			break;
-+	}
-+
-+	kunit_info(tr->test, "end thread %03lu: wrote=%lu min_ns=%llu avg_ns=%llu max_ns=%llu\n",
-+		   tr->num, count, min_ns, total_ns / (u64)count, max_ns);
-+
-+	tr->runstate = 2;
-+
-+	return 0;
-+}
-+
-+static int prbtest_reader(void *data)
-+{
-+	struct test_running *tr = data;
-+	char text_buf[MAX_RECORD_SIZE];
-+	unsigned long total_lost = 0;
-+	unsigned long max_lost = 0;
-+	unsigned long count = 0;
-+	struct printk_info info;
-+	struct printk_record r;
-+	int did_sched = 1;
-+	u64 seq = 0;
-+
-+	set_cpus_allowed_ptr(current, cpumask_of(tr->num));
-+
-+	prb_rec_init_rd(&r, &info, &text_buf[0], sizeof(text_buf));
-+
-+	kunit_info(tr->test, "start thread %03lu (reader)\n", tr->num);
-+
-+	tr->runstate = 1;
-+
-+	while (!wait_event_interruptible(test_wait,
-+				kthread_should_stop() ||
-+				prb_read_valid(&test_rb, seq, &r))) {
-+		bool error = false;
-+
-+		if (kthread_should_stop())
-+			break;
-+		/* check/track the sequence */
-+		if (info.seq < seq) {
-+			KUNIT_FAIL(tr->test, "BAD SEQ READ: request=%llu read=%llu\n",
-+				   seq, info.seq);
-+			error = true;
-+		} else if (info.seq != seq && !did_sched) {
-+			total_lost += info.seq - seq;
-+			if (max_lost < info.seq - seq)
-+				max_lost = info.seq - seq;
-+		}
-+
-+		if (!check_data((struct rbdata *)&r.text_buf[0])) {
-+			fail_record(tr->test, (struct rbdata *)&r.text_buf[0], info.seq);
-+			error = true;
-+		}
-+
-+		if (error)
-+			WRITE_ONCE(halt_test, 1);
-+
-+		did_sched = 0;
-+		if ((count++ & 0x3fff) == 0) {
-+			did_sched = 1;
-+			schedule();
-+		}
-+
-+		if (READ_ONCE(halt_test) == 1)
-+			break;
-+
-+		seq = info.seq + 1;
-+	}
-+
-+	kunit_info(tr->test,
-+		   "end thread %03lu: read=%lu seq=%llu total_lost=%lu max_lost=%lu\n",
-+		   tr->num, count, info.seq, total_lost, max_lost);
-+
-+	while (!kthread_should_stop())
-+		msleep(1000);
-+	tr->runstate = 2;
-+
-+	return 0;
-+}
-+
-+static int module_test_running;
-+static struct task_struct *reader_thread;
-+
-+static int start_test(void *arg)
-+{
-+	struct kunit *test = arg;
-+	struct task_struct *thread;
-+	unsigned long i;
-+	int num_cpus;
-+
-+	num_cpus = num_online_cpus();
-+	if (num_cpus == 1)
-+		kunit_skip(test, "need >1 CPUs for at least one reader and writer");
-+
-+	test_running = kcalloc(num_cpus, sizeof(*test_running), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_NULL(test, test_running);
-+
-+	module_test_running = 1;
-+
-+	kunit_info(test, "starting test\n");
-+
-+	for (i = 0; i < num_cpus; i++) {
-+		test_running[i].test = test;
-+		test_running[i].num = i;
-+		if (i < num_cpus - 1) {
-+			thread = kthread_run(prbtest_writer, &test_running[i],
-+					     "prbtest writer");
-+		} else {
-+			thread = kthread_run(prbtest_reader, &test_running[i],
-+					     "prbtest reader");
-+			reader_thread = thread;
-+		}
-+		if (IS_ERR(thread)) {
-+			kunit_err(test, "unable to create thread %lu\n", i);
-+			test_running[i].runstate = 2;
-+		}
-+	}
-+
-+	/* wait until all threads finish */
-+	for (;;) {
-+		msleep(1000);
-+
-+		for (i = 0; i < num_cpus; i++) {
-+			if (test_running[i].runstate < 2)
-+				break;
-+		}
-+		if (i == num_cpus)
-+			break;
-+	}
-+
-+	kunit_info(test, "completed test\n");
-+
-+	module_test_running = 0;
-+
-+	return 0;
-+}
-+
-+static void test_readerwriter(struct kunit *test)
-+{
-+	static bool already_run;
-+	int num_cpus;
-+	int i;
-+
-+	if (already_run)
-+		KUNIT_FAIL_AND_ABORT(test, "test can only be run once");
-+	already_run = true;
-+
-+	kunit_info(test, "running for %lu ms\n", runtime_ms);
-+
-+	kthread_run(start_test, test, "prbtest");
-+
-+	/* wait until all threads active */
-+	num_cpus = num_online_cpus();
-+	for (;;) {
-+		msleep(1000);
-+
-+		for (i = 0; i < num_cpus; i++) {
-+			if (test_running[i].runstate == 0)
-+				break;
-+		}
-+		if (i == num_cpus)
-+			break;
-+	}
-+
-+	msleep(runtime_ms);
-+
-+	if (reader_thread && !IS_ERR(reader_thread))
-+		kthread_stop(reader_thread);
-+
-+	WRITE_ONCE(halt_test, 1);
-+
-+	while (module_test_running)
-+		msleep(1000);
-+	kfree(test_running);
-+}
-+
-+static struct kunit_case prb_test_cases[] = {
-+	KUNIT_CASE_SLOW(test_readerwriter),
-+	{}
-+};
-+
-+static struct kunit_suite prb_test_suite = {
-+	.name       = "printk-ringbuffer",
-+	.test_cases = prb_test_cases,
-+};
-+kunit_test_suite(prb_test_suite);
-+
-+MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
-+MODULE_AUTHOR("John Ogness <john.ogness@linutronix.de>");
-+MODULE_DESCRIPTION("printk_ringbuffer test");
-+MODULE_LICENSE("GPL");
+Boot crash log on arm64:
+-----------
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+[    0.000000] Linux version 6.12.0-next-20241121 (tuxmake@tuxmake)
+(aarch64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils
+for Debian) 2.43.1) #1 SMP PREEMPT @1732169734
+...
+[    2.118104] pci_bus 0000:08: resource 0 [io  0x2000-0x2fff]
+[    2.123710] pci_bus 0000:08: resource 1 [mem 0x50100000-0x501fffff]
+[    2.130054] Unable to handle kernel NULL pointer dereference at
+virtual address 0000000000000058
+[    2.138868] Mem abort info:
+[    2.141672]   ESR = 0x0000000096000004
+[    2.145435]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    2.150765]   SET = 0, FnV = 0
+[    2.153832]   EA = 0, S1PTW = 0
+[    2.156994]   FSC = 0x04: level 0 translation fault
+[    2.161888] Data abort info:
+[    2.164781]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[    2.170283]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[    2.175351]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[    2.180680] [0000000000000058] user address but active_mm is swapper
+[    2.187055] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[    2.193333] Modules linked in:
+[    2.196393] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+6.12.0-next-20241121 #1
+[    2.204151] Hardware name: ARM Juno development board (r2) (DT)
+[    2.210078] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[    2.217053] pc : of_pci_supply_present (drivers/pci/of.c:746)
+[    2.221685] lr : pci_bus_add_device (drivers/pci/bus.c:408 (discriminator 1))
+[    2.226135] sp : ffff800082f5ba70
+[    2.229450] x29: ffff800082f5ba70 x28: ffff8000827ce000 x27: ffff8000823e0118
+[    2.236607] x26: ffff8000822f65c8 x25: ffff8000823be4f0 x24: ffff00082111a428
+[    2.243762] x23: ffff0008218a8800 x22: 0000000000000000 x21: ffff000800a230c8
+[    2.250916] x20: ffff000800a8a400 x19: ffff000800a23000 x18: ffffffffffffffff
+[    2.258069] x17: 00000000f3b41269 x16: 000000006984274c x15: ffff800082f5b8c0
+[    2.265224] x14: ffff800102f5ba47 x13: ffff800082f5ba4b x12: ffff800080b5dee0
+[    2.272378] x11: ffff8000800171b0 x10: 000000000000002e x9 : ffff80008084b910
+[    2.279532] x8 : ffff800082f5b8e8 x7 : 0000000000000000 x6 : 0000000000000001
+[    2.286685] x5 : ffff000800a3a850 x4 : 0000000000000000 x3 : 0000000000000198
+[    2.293839] x2 : 0000000000000000 x1 : ffff000800a8a400 x0 : 0000000000000000
+[    2.300992] Call trace:
+[    2.303438] of_pci_supply_present+0x18/0x78 P
+[    2.308065] pci_bus_add_device+0x90/0x208 L
+[    2.312515] pci_bus_add_device (drivers/pci/bus.c:408 (discriminator 1))
+[    2.316616] pci_bus_add_devices (drivers/pci/bus.c:435 (discriminator 2))
+[    2.320718] pci_host_probe (drivers/pci/probe.c:3362
+drivers/pci/probe.c:3132)
+[    2.324472] pci_host_common_probe
+(drivers/pci/controller/pci-host-common.c:80)
+[    2.328924] platform_probe (drivers/base/platform.c:1404)
+[    2.332595] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658)
+[    2.336176] __driver_probe_device (drivers/base/dd.c:800)
+[    2.340540] driver_probe_device (drivers/base/dd.c:830)
+[    2.344730] __driver_attach (drivers/base/dd.c:1217)
+[    2.348572] bus_for_each_dev (drivers/base/bus.c:370)
+[    2.352413] driver_attach (drivers/base/dd.c:1235)
+[    2.355994] bus_add_driver (drivers/base/bus.c:675)
+[    2.359835] driver_register (drivers/base/driver.c:246)
+[    2.363677] __platform_driver_register (drivers/base/platform.c:868)
+[    2.368391] gen_pci_driver_init
+(drivers/pci/controller/pci-host-generic.c:87)
+[    2.372495] do_one_initcall (init/main.c:1266)
+[    2.376338] kernel_init_freeable (init/main.c:1327 (discriminator
+1) init/main.c:1344 (discriminator 1) init/main.c:1363 (discriminator
+1) init/main.c:1577 (discriminator 1))
+[    2.380705] kernel_init (init/main.c:1470)
+[    2.384200] ret_from_fork (arch/arm64/kernel/entry.S:863)
+[ 2.387784] Code: d503233f a9be7bfd 910003fd a90153f3 (f9402c13)
+All code
+========
+   0: d503233f paciasp
+   4: a9be7bfd stp x29, x30, [sp, #-32]!
+   8: 910003fd mov x29, sp
+   c: a90153f3 stp x19, x20, [sp, #16]
+  10:* f9402c13 ldr x19, [x0, #88] <-- trapping instruction
 
-base-commit: 4022ef25504db2fb79a2acac0afe9bac934f8dd6
--- 
-2.39.5
+Code starting with the faulting instruction
+===========================================
+   0: f9402c13 ldr x19, [x0, #88]
+[    2.393886] ---[ end trace 0000000000000000 ]---
+[    2.398565] Kernel panic - not syncing: Attempted to kill init!
+exitcode=0x0000000b
+[    2.406234] SMP: stopping secondary CPUs
+[    2.410169] Kernel Offset: disabled
+[    2.413658] CPU features: 0x080,00020c3c,00800000,0200421b
+[    2.419150] Memory Limit: none
+[    2.422207] ---[ end Kernel panic - not syncing: Attempted to kill
+init! exitcode=0x0000000b ]---
 
+
+Links:
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25983314/suite/boot/test/gcc-13-lkftconfig-rcutorture/log
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/log
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/details/
+- https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/history/
+
+
+Build image:
+-----------
+- https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/
+
+Steps to reproduce:
+------------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2p9DVXtRiqTj7VZO9wnFlkwmU8g/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2p9DVXtRiqTj7VZO9wnFlkwmU8g/tux_plan
+
+metadata:
+----
+Linux version: 6.12.0-next-20241121
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+git sha: decc701f41d07481893fdea942c0ac6b226e84cd
+kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/config
+build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/
+toolchain: gcc-13 and clang-19
+config: gcc-13-lkftconfig
+arch: arm64 and armv7
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
