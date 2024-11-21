@@ -1,84 +1,174 @@
-Return-Path: <linux-kernel+bounces-417139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4EC69D4F7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:11:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3AF9D4F7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7B2282761
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:11:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A929283E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 15:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594981DB375;
-	Thu, 21 Nov 2024 15:11:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB7B1DBB0C;
+	Thu, 21 Nov 2024 15:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iGyevH2X"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304001D47DC;
-	Thu, 21 Nov 2024 15:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCD91D90DB
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 15:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732201874; cv=none; b=PffAb8QnIboeXkj3awKBzcyMofUH3puvEawXmFWKaLtigor551d5/OmhlMHgaY+151JBbOvs9iWcLY3oDw5b6+Rlf/LkTyEaolN4VavpUUN5/T8UxoPa1xbXUZmGs3FlhdKpwcTdrKTSf5q9N38a5A/dvj0mY6nMUSd1yRfODo4=
+	t=1732201907; cv=none; b=Su1pH1BOf1NQm0BRHlH3TN2WAkZfvgXn7uG/QSFG2QD1haLrCjxtQfempJpJuQ1tFVg3tQLsUBe7ZiBvnlacMvAPoaDX5ll8Vdh4+WesDIwggbSCs9ho6DVKSb5p3lpU0k7Us94nZU2ezrK5kdgaH2U9yhnoCA4j9oaE0nVyuu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732201874; c=relaxed/simple;
-	bh=Qk2ZQQOCaJWeyhioDSxZF/pEd6L3gv2B97TBV9VosJw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FsM21/l74/rwe7KeEmcJlh/pg6r0OwPcIxBPPwziKKLeDlb8TQqyvdgF/6h6XiAcghKVN5Mz0Faem659PqeWuefb3By6dl3ITjUD44aH4/LR6vNWzjdt1c3JMiNJzidZQ8aCfe6xG/nMuH7liWL4OOfQYF0+C7cI17bhhIc9Zhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XvM9v5BYXz6L75J;
-	Thu, 21 Nov 2024 23:10:43 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D8181140A79;
-	Thu, 21 Nov 2024 23:11:07 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 21 Nov
- 2024 16:11:06 +0100
-Date: Thu, 21 Nov 2024 15:11:05 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<mchehab@kernel.org>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<alison.schofield@intel.com>, <nifan.cxl@gmail.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <dave@stgolabs.net>,
-	<linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
-	<tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>
-Subject: Re: [PATCH 01/13] rasdaemon: cxl: Fix logging of memory event type
- of DRAM trace event
-Message-ID: <20241121151105.00000d6d@huawei.com>
-In-Reply-To: <20241120095923.1891-2-shiju.jose@huawei.com>
-References: <20241120095923.1891-1-shiju.jose@huawei.com>
-	<20241120095923.1891-2-shiju.jose@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1732201907; c=relaxed/simple;
+	bh=CdOIvr7HSZq5NjuQtJdpoEDTI6rFxBrvraKUALHoG8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kDpSVrlG22DhUZgcbZGwyCNujONfl6cuxRn7+YXxHJblx4RyitnurGf6zmAtBF/TiJjZUnyro8wMEoXuUnM4xHIWCzyaRoqCUeIiWzHGYMCqlw87dAsKTkX99uLYd7kgZpCCoimou16iE8oYEDIzxqh4sfzBK3dSfQfzoUJbKLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iGyevH2X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732201904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AAU5tspYcdCNEP7up2zgoXRaM3KJXFMONMxQMY8ZH2k=;
+	b=iGyevH2Xu8rpsVXOpdZxtJz4wlY2KsLkn+Q/TKRwz6RGIYy0EuljAuRwrsGCvTf1jl02o/
+	vuGgFMtqKWq+9sAuIFPn1sI3i14t7oqK6ioy5/GyG90EcxuBCT/bdJGo5cjn6+fvXnhijJ
+	KLSDyZR3KfC6Elw9HXnsgJ5AHpAPhEI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-JYyy3iZsMlmkA76rTkVtaQ-1; Thu,
+ 21 Nov 2024 10:11:39 -0500
+X-MC-Unique: JYyy3iZsMlmkA76rTkVtaQ-1
+X-Mimecast-MFC-AGG-ID: JYyy3iZsMlmkA76rTkVtaQ
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6C8C819560AF;
+	Thu, 21 Nov 2024 15:11:37 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.74.7])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D97711955E99;
+	Thu, 21 Nov 2024 15:11:35 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 2/2] nfs/blocklayout: Limit repeat device registration on
+ failure
+Date: Thu, 21 Nov 2024 10:11:33 -0500
+Message-ID: <B0CDB911-D9F2-4513-A4A0-403508BF4E0A@redhat.com>
+In-Reply-To: <Zz3+rNnvxE2TRT0v@tissot.1015granger.net>
+References: <cover.1732111502.git.bcodding@redhat.com>
+ <d156fbaf743d5ec2de50a894170f3d9c7b7a146c.1732111502.git.bcodding@redhat.com>
+ <Zz3+rNnvxE2TRT0v@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, 20 Nov 2024 09:59:11 +0000
-<shiju.jose@huawei.com> wrote:
+On 20 Nov 2024, at 10:22, Chuck Lever wrote:
 
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec rev 3.0 section 8.2.9.2.1.2 defines the DRAM Event Record.
-> 
-> Fix logging of memory event type field of DRAM trace event.
-> For e.g. if value is 0x1 it will be reported as an Invalid Address
-> (General Media Event Record - Memory Event Type) instead of Scrub Media
-> ECC Error (DRAM Event Record - Memory Event Type) and so on.
-> 
-> Fixes: 9a2f6186db26 ("rasdaemon: Add support for the CXL dram events")
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> On Wed, Nov 20, 2024 at 09:09:35AM -0500, Benjamin Coddington wrote:
+>> If we're unable to register a SCSI device, ensure we mark the device as
+>> unavailable so that it will timeout and be re-added via GETDEVINFO.  This
+>> avoids repeated doomed attempts to register a device in the IO path.
+>>
+>> Add some clarifying comments as well.
+>>
+>> Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
+>> Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>> ---
+>>  fs/nfs/blocklayout/blocklayout.c | 12 +++++++++++-
+>>  1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+>> index 0becdec12970..b36bc2f4f7e2 100644
+>> --- a/fs/nfs/blocklayout/blocklayout.c
+>> +++ b/fs/nfs/blocklayout/blocklayout.c
+>> @@ -571,19 +571,29 @@ bl_find_get_deviceid(struct nfs_server *server,
+>>  	if (!node)
+>>  		return ERR_PTR(-ENODEV);
+>>
+>> +	/*
+>> +	 * Devices that are marked unavailable are left in the cache with a
+>> +	 * timeout to avoid sending GETDEVINFO after every LAYOUTGET, or
+>> +	 * constantly attempting to register the device.  Once marked as
+>> +	 * unavailable they must be deleted and never reused.
+>> +	 */
+>>  	if (test_bit(NFS_DEVICEID_UNAVAILABLE, &node->flags)) {
+>>  		unsigned long end = jiffies;
+>>  		unsigned long start = end - PNFS_DEVICE_RETRY_TIMEOUT;
+>>
+>>  		if (!time_in_range(node->timestamp_unavailable, start, end)) {
+>> +			/* Force a new GETDEVINFO for this LAYOUT */
+>
+> Or perhaps: "Uncork subsequent GETDEVINFO operations for this device"
+> <shrug>
+
+Sure, ok!
+
+>>  			nfs4_delete_deviceid(node->ld, node->nfs_client, id);
+>>  			goto retry;
+>>  		}
+>>  		goto out_put;
+>>  	}
+>>
+>> -	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node)))
+>> +	/* If we cannot register, treat this device as transient */
+>
+> How about "Make a negative cache entry for this device"
+
+Hmm - that's closer to the dentry language rather than how we refer to
+temporary error cases in device land.  For me the "transient" has some
+hopeful meaning as in we expect this might work in the future - but I'm ok
+changing this comment.  There will be some NFS clients that might try to do
+pNFS SCSI but will never actually have the devices locally, and so that's
+not a "transient" situation.  This can only fixed today with export policy.
+
+>
+>> +	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node))) {
+>> +		nfs4_mark_deviceid_unavailable(node);
+>>  		goto out_put;
+>> +	}
+>>
+>>  	return node;
+>>
+>> -- 
+>> 2.47.0
+>>
+>
+> It took me a bit to understand what this patch does. It is like
+> setting up a negative dentry so the local device cache absorbs
+> bursts of checks for the device. OK.
+
+Yes, its like the layout error handling, but for devices.
+
+Its not obvious at this layer, but every IO wants to do LAYOUTGET, then
+figure out which device GETDEVINFO, then here we need to prep the device
+with a reservation.  Its a lot of slow work that makes a mess of IO
+latencies if one of the later steps is going to fail for awhile.
+
+> Just an observation: Negative caching has some consequences too.
+> For instance, there will now be a period where, if the device
+> happens to become available, the layout is still unusable. I wonder
+> if that's going to have some undesirable operational effects.
+
+It sure does, but I don't think there's a simple way to get notified that a
+SCSI device has re-appeared or has started supporting persistent
+reservations.
+
+Ben
 
 
