@@ -1,140 +1,113 @@
-Return-Path: <linux-kernel+bounces-417583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983E19D562E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:32:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1A79D5635
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425D71F232B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B901E1F23D9A
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 23:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D31D042A;
-	Thu, 21 Nov 2024 23:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1531DE2DC;
+	Thu, 21 Nov 2024 23:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6+AwDD1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gtvW6Izj"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60DC1AAE06;
-	Thu, 21 Nov 2024 23:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0A91DDC1F;
+	Thu, 21 Nov 2024 23:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732231964; cv=none; b=K/9jbUzg+cHa+sGJ7tmEKNx4EPWvyvGv6qksBkwGhkwdlSAMu7bKS8c4VMIvvTRKpzzLusg0+8OlWHpRV1/eUdBup0ccB+ZdoA3EeMMCCt/xrz0KbrwfrVfxn/cFaJ6yLyUqzDTWmGbxrcfqfjs2OKY3zzwNyIBh/yI+WCJjf14=
+	t=1732232357; cv=none; b=ZD5jasOzttCb6P+0F6Ym8XIachKzoipJJah0v9LWzaCezMwjyPTLS4z4hwDEoI4V7r20oB+jKGwDxAevcZ9KJdCy5GctYR8HouMR1YnpGYdMTb9EyCGdtVORBuIKWN5ruhkzeu2SwcaMzStsT7JnPlqWX9HkQImSfxC1MHqJoTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732231964; c=relaxed/simple;
-	bh=ygYMDWO/yHZ3l8DQZRGNyMCOr+dX6/eskJ6pouwjMv4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jycc3oKb+hRFlV050Imk0FT/H4OzYgljkwwNqT+xYDG6Ocr2+cg301Fp6ma28sWUcrlYFRUOCAbf3I+QHFomJHs8dhZIR0MYUsKZuFU1xfce7MnJan6qUbtZf5r/ESUo5BZMzKNbm8bqJ2cPiGiwBOaZr3DXwo8QbeqFwz9hjFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6+AwDD1; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732231962; x=1763767962;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ygYMDWO/yHZ3l8DQZRGNyMCOr+dX6/eskJ6pouwjMv4=;
-  b=A6+AwDD1j4R2GBOdNKk4hGro5a5qIj/OFA8Ndfn1RWwzpqUN9G9Mgf9P
-   Xu1zHlTvz5DX+N1mzoeNv/LN9UVHXE8fBzABbuZrjvgokY1sCX2zARnQs
-   wze0stj4AOEYs6sxPlUjIJoRk+WIvrYjZd+7dZrZzumMwnpXvnheXTrvT
-   9Jy+Ev645D2q5k5wyW8pPeIVlrlahS6HLWxwbhoeNH9JWd8tVsuQoCzmT
-   dcvkGJVBwu2qZLuTsOp/OSQgQxgF5YD5Uzpj05SlaaV6bpMqALxQ/FxUt
-   FGv31a4/MOTWBR1e8+JZ0NjoscIV6NfHfj8qIVNiUwInsPV6sblU4WAAc
-   g==;
-X-CSE-ConnectionGUID: weEeW3AbRSGlNwiJYQuC4A==
-X-CSE-MsgGUID: 9WT/dpxPQue8p0wvy/mE1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32613356"
-X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="32613356"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:32:41 -0800
-X-CSE-ConnectionGUID: g3cD8rRoRgyoze6v4P/7Mg==
-X-CSE-MsgGUID: n2x+Fu8CTPi2umoSbcumDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="91206105"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 15:32:41 -0800
-Date: Thu, 21 Nov 2024 15:32:40 -0800
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
-	pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>,
-	chao.gao@intel.com, rick.p.edgecombe@intel.com,
-	yan.y.zhao@intel.com, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, Marcelo Tosatti <mtosatti@redhat.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
-Message-ID: <Zz/DGOoo/mEvULiG@ls.amr.corp.intel.com>
-References: <cover.1728719037.git.isaku.yamahata@intel.com>
- <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
+	s=arc-20240116; t=1732232357; c=relaxed/simple;
+	bh=+2Yrn/8yYSm+MI4xHHHhX+Ptj7pQFNmlJUxh10IN7pw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LKy55kei7v+kYc+0FdyMXFaq4DY+4Lb+rSvv3zEOt+DKcACr5UyjpcB9VVxx5buyPWDelf7yRD2rhatLPhn/1avVbIirLGo5y3USaW14lJv4kTxfO0UVh6c4Dv1kPBW6uaHvGpf8KNyyFwfzL7xI74xfIJsGF95eglV2O6x2KAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gtvW6Izj; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ea45dac86eso1294815a91.3;
+        Thu, 21 Nov 2024 15:39:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732232355; x=1732837155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sXNz6VaAsiDKIdp12hbKlxVaiSjzEADc7nTccQXvD7M=;
+        b=gtvW6IzjPH80mxHsvfpEP4PFO6RtQ4fV4MYds+q4abA7yKtbLCgGCKnAzqcA05dQfi
+         2kKojkBFqmoBvaaipQEac+tx1EcvMYZBcITuim1j2cBoO0EYwFh2RZrfOhZWegkayPlD
+         kYmkJh/MwMCkBrf/LbN/c3vZIjbSlZnYymU0/cPQByinvfJmFHcK7GDUK6aO9iAUOk5Q
+         Yjr8Uizkqkvi/V4vlXwuGvVGWg0vFRDDnPS6JD/bqGG0ZXWWxbWcvqP342VrcFvfRM41
+         C0xC3AXjgGz9+JH42519mU9T9y2AO3t1ZT0X/p2oMGDuinpbV3L8Oz/EfH6k9+VIFicv
+         pexA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732232355; x=1732837155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sXNz6VaAsiDKIdp12hbKlxVaiSjzEADc7nTccQXvD7M=;
+        b=ZTCdz9wyA+9wqqflNvPJ+hXK6HWej5ZrEMWnJ7Suhs9+CSUHa+aSE5qlYKsE3eUJlk
+         NOHhycDjRdqbwxhSFSDDVbwYKzrqZVSz5P2e/7JrQEwsHkbssmOe8XNFaYE2lZd3yO9T
+         g9/GY8obsDsLV9t4nl+NcoKZpxUTruSIpdG8UaWkYQERHKzbMWJ2P5S4J2NMORrqNnMe
+         atJ6qWyGLq1xA3Vn3nLDtdqFbfThNs5U91nu0uI/pJoY8BAxxAwAFG2R4vBKW1kWyW7y
+         U4GgAw7hHzSYksqeb5ylEfv8paoR+9VCNpAeWf5WH6zqQnNd38DGeBGJzGedSSkL8fY6
+         iugw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmdO/nTGQIyUP8PAxpRqHhV4hWvqCzH4c7QJWhHfTGnoqtotFCx0WgWW0Sax+pGxIalfNhrnyjLck=@vger.kernel.org, AJvYcCVvyCN66G4sdpFT+orBOY7QF12l7+qF5clMpdZ5DUDfO+Mu871Jl5RjhhzTfePwW30s6+p/dxPX/0bwNN8H@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc6fyL1cd3vbB3MKuOXrgVw93OEbnHlcR6eFhoitMW//GBCO36
+	G8psPrhgSL2jyGXDNLX+wwADfT13v+lHe+y+DweOow/syHj/oxE=
+X-Gm-Gg: ASbGncv48PO5v+h3K9Z0W7aKjyPX78ja8Bmvspp8XBGLb+l7Hm+gu8jgOmvAUh2JGY6
+	87uKHLDzD3ECSH1Pnxc4VZz0k1/9gLI4FSzfxOmo5SIJRW9WlZm0XB80J6y7ulCPtX1f2Pb/3ep
+	Wdnqxd9aY+/srOf+6Qk8XlOXQ3/7Pl2ymVYKcwQ+i9r3xMkP6iWyRmtu2M90nnIxa6KpSASuOc/
+	i2N0buWfCofybj79POiBgPx8PPyunvyvAI20qpAzFPGoNWmiZ0puBviI5QItMLZhXc1UwgG0/U=
+X-Google-Smtp-Source: AGHT+IGMR4iacChFlqlSy5PAljOdPhc8zN6VYc6/2UbVF3EjtfrEQasXm7WaRAbZkYWFy8AT0ox/ow==
+X-Received: by 2002:a17:90b:4d06:b0:2ea:8e42:c48 with SMTP id 98e67ed59e1d1-2eb0e02b0fbmr819464a91.3.1732232354576;
+        Thu, 21 Nov 2024 15:39:14 -0800 (PST)
+Received: from localhost.localdomain ([117.250.157.213])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc1e1921sm280512a12.25.2024.11.21.15.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 15:39:14 -0800 (PST)
+From: Vyshnav Ajith <puthen1977@gmail.com>
+To: gregkh@linuxfoundation.org,
+	corbet@lwn.net
+Cc: linux-usb@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vyshnav Ajith <puthen1977@gmail.com>
+Subject: Fixing Grammatical Error
+Date: Fri, 22 Nov 2024 05:08:29 +0530
+Message-ID: <20241121233829.14779-1-puthen1977@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 08:17:19PM +0530,
-"Nikunj A. Dadhania" <nikunj@amd.com> wrote:
+'Worst case' being singular needs 'is' instead of 'are'.
 
-> > Solution
-> > --------
-> > The solution is to keep the KVM TSC offset/multiplier the same as the value of
-> > the TDX module somehow.  Possible solutions are as follows.
-> > - Skip the logic
-> >   Ignore (or don't call related functions) the request to change the TSC
-> >   offset/multiplier.
-> >   Pros
-> >   - Logically clean.  This is similar to the guest_protected case.
-> >   Cons
-> >   - Needs to identify the call sites.
-> > 
-> > - Revert the change at the hooks after TSC adjustment
-> >   x86 KVM defines the vendor hooks when the TSC offset/multiplier are
-> >   changed.  The callback can revert the change.
-> >   Pros
-> >   - We don't need to care about the logic to change the TSC offset/multiplier.
-> >   Cons:
-> >   - Hacky to revert the KVM x86 common code logic.
-> > 
-> > Choose the first one.  With this patch series, SEV-SNP secure TSC can be
-> > supported.
-> 
-> I am not sure how will this help SNP Secure TSC, as the GUEST_TSC_OFFSET and 
-> GUEST_TSC_SCALE are only available to the guest.
+Signed-off-by: Vyshnav Ajith <puthen1977@gmail.com>
+---
+ Documentation/usb/dwc3.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Although Xiaoyao mentioned KVM emulated timer, let me clarify it.
-I think the following is common for SEV-SNP and TDX.
-
-The issue is with guest MSR_IA32_TSC_DEADLINE (and guest local APIC Timer
-Initial Count Register).  As long as I understand according to the public
-documentation, the SEV-SNP hardware (or the TDX module) doesn't virtualize it so
-that the VMM (KVM) has to emulate it.
-The KVM uses the host timer(vcpu->arch.apic.lapic_timer) and inject timer
-interrupt withit.  KVM tracks TSC multiplier/offset to calculate the host
-TSC timeout value based on them.
-
-The KVM multiplier and offset must match with the values the hardware 
-(or the TDX module) thinks.  If they don't match,  the KVM tsc deadline timer
-(or local APIC timer) emulation is inaccurate.  Timer interrupt is injected
-Late or early.
-
-KVM has several points to change tsc multiplier/offset from the original value.
-This patch series is to prevent KVM from modifying TSC multipler/offset.
-
-In reality, it's difficult to notice that the timer interrupt is injected late
-or early like several miliseconds due to vCPU scheduling.  The injecting timer
-interrupt always late harms time sensitive workload (e.g. heart beat) in guest
-as Marcelo noticed.
-
-Thanks,
+diff --git a/Documentation/usb/dwc3.rst b/Documentation/usb/dwc3.rst
+index f94a7ba16573..12989d126a8a 100644
+--- a/Documentation/usb/dwc3.rst
++++ b/Documentation/usb/dwc3.rst
+@@ -20,7 +20,7 @@ Please pick something while reading :)
+     to the device. If MSI provides per-endpoint interrupt this dummy
+     interrupt chip can be replaced with "real" interrupts.
+   - interrupts are requested / allocated on usb_ep_enable() and removed on
+-    usb_ep_disable(). Worst case are 32 interrupts, the lower limit is two
++    usb_ep_disable(). The worst case is 32 interrupts, the lower limit is two
+     for ep0/1.
+   - dwc3_send_gadget_ep_cmd() will sleep in wait_for_completion_timeout()
+     until the command completes.
 -- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+2.43.0
+
 
