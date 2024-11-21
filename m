@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-417469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71329D5475
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:05:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193B09D5476
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 22:05:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FB55281E75
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:05:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D2BDB21A2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 21:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6896F1CB50D;
-	Thu, 21 Nov 2024 21:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4171CB512;
+	Thu, 21 Nov 2024 21:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ko30Kico"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x8/WOB1N"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA778145A03;
-	Thu, 21 Nov 2024 21:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11121C4A37
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732223115; cv=none; b=s9xQbWU6oAgumWJADi4N5Xy3lOXnPNnZYdglCXBYBHBOufMdCG6gqhkOkQS1HOrQxz74QikKyBad0rAD3HXeGLM5OkL71sOCiUDLkSGnyoo59u2xwPCcir/InEad+518xshuYeQIPmMuTgRLIzLXyiMiG/t4xdY3kPybebbjoo0=
+	t=1732223134; cv=none; b=duxl7qtmYizeSK+hjhNJxyjXvqvgr1/kBa1dyPuisvd0llmD4LR1czXMiGikxOBhNYB6bPUO+iadDD9E3CfAWV6B4YRNfDm2/qH1T+xsu2ECTFHesnzuoCSpx+jYYAcZW0UEDd59cL9yq1mxAZQ+Fq8GO8u4pGud88hzZKB73lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732223115; c=relaxed/simple;
-	bh=X3eu61xg9llcnUKHcb0Q5Uo0q9OVZwoeWaPet4215wY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYV31IM+kT/xMM5s641ntQEe3rKbacX83UDNSJRjHMGzGPq6lOqwVE0zpoJmIiHMtcZTv+8m2LMaoFnwqSYGZSLzgms+rSKbyTGKgySo3iP+9vLhElTAYpMlNm0os3Y1HRQ3+UghzjLy4bKJ0R0kKS3I7VX7yXYIBBudITYgNWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ko30Kico; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4F4C4CECC;
-	Thu, 21 Nov 2024 21:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732223115;
-	bh=X3eu61xg9llcnUKHcb0Q5Uo0q9OVZwoeWaPet4215wY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ko30KicoHx8gnZ/U7OKxZrl0iYK5pvTuG7i4fkptS/RpBBI+9pxGVJdnoMTAZUdTp
-	 JBT4M5+gbBtmuaJ6ggBgwnc7hfjkALeBjBqqmBErKqKJfPvCrODXXLETxMWVmk4x5Q
-	 8Rs/6vYBFmWkgWuKlUicKAOw4IJq6DN8+rnZFK7C8bNj3ZSrN0nM7YMfPfd1qgHG33
-	 ikLttYrZOXWg88HnwyyhY/j7+L4dbrSpAzErkAJUpbQcYu+4x/nJGyNlT2T8Icac6G
-	 riaXWOl919iNwVuIxnhrCWWUXGuFe+4p1//LtrUiihXw7scyAn/vqrxiDoAONFAfhA
-	 23oUPDSN1YJ5w==
-Date: Thu, 21 Nov 2024 15:05:14 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org, linux-doc@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v9 2/3] dt-bindings: leds: Add LED1202 LED Controller
-Message-ID: <173222307644.3811087.7654504224510124517.robh@kernel.org>
-References: <20241121165829.8210-1-vicentiu.galanopulo@remote-tech.co.uk>
- <20241121165829.8210-3-vicentiu.galanopulo@remote-tech.co.uk>
+	s=arc-20240116; t=1732223134; c=relaxed/simple;
+	bh=vyjd2G/poPUNHJ7AgfmFwVQ4NgJflJ0Gzqnpxwe2gcQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XWx1ptTphIPJZX2Pzh6IwbjvIZM5ljp+/Q07ot4Kp3v+ZegopwOt1szNNH/Sbhv2IZY2pmSVhboF1LUXaAfLw9A4j0ap9ee3/JuoASSnNEwmjvjteW133E0fS1PjUIKnWVHWaRqYN1GHOaRFk+uKzDVZNBLoVQuKYs1gh2ZD/6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x8/WOB1N; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7203cdc239dso1529769b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 13:05:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732223132; x=1732827932; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVK84h+cRkKm7y5j10sbeKMXM6R17PysvQBrN7p5PNc=;
+        b=x8/WOB1NHCZ7zRQUcb/LFI5nwstEWasp+R0mWXaFc39GvYOoAM4IS5+2If3oXMCALe
+         bVj2zfZ5dsqLIh/XM/7xtHES8y60CmUerJxceDz3Oq+Op4x74gwu3+WxcND12xeRwTI4
+         lycW9J2wP4KD+Sql14qgZvEAoe29AOS0Wd2YfWCKJ4n7pBXdCHmh7vHQDgRIaVIY4JAP
+         ivvbXPRx/r+F9daUhkYsG9PiDGHgKeuZx04AucxWyiO/G4tUpNTWbHqfx/goVxYTO886
+         3M43lPt4YkbDTqihzJkjviLTbBLnZX5ccRjqgIOatgPpzPEn4UTLaIFCgyUR0xqkkNpc
+         fc+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732223132; x=1732827932;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MVK84h+cRkKm7y5j10sbeKMXM6R17PysvQBrN7p5PNc=;
+        b=n8Nk/dOAXcgZg2t5J+idUBeScn8gLfGHGHxXD5AH8CQQZccesnM+PV+Q0k+jYUI3j/
+         vOLZ8rySiCR+xsPjBmVPEqUZZcFdcuH3Cd/xB/FtsyLJ2bbkEkVFRfKmIGIxzZIjr5ow
+         BdCFhFhC0v6yfyBd6HEl7DH+AjWkjZlYl518VLwIrkbqCXoi5q02gYjvWDW1dcwZzT3m
+         UeRQHAIOuWvBUdEtIV0nd1LGLd2RMO9/Fl8rFfi4ItQtAYKbDTc1RswPKHVWm8MPMG59
+         jFiTzy6G+3v+RfpU9M5B2aKroh+Cj90hWb2JQ5KneWHoTufdWItV+NIbattCEQexZvyZ
+         MIKg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2VeRV4R968O0d79J7cdX6ueJ+f85xzCOYb9QXWPDlma83AFOuqe6PISBFnaIYm39VLwv+crqGrtSkdFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyPSHanW/lv6DWCMx2dMIzcYT8pVfudEaBDTwbramE5keVpsfn
+	HxsD8BfVtq9gXbTOYuqLH5bpP1MR85NJeZsMZYCau8CTYdMEUqROWa0l1kSHw7F8UQ2bBZdeHNe
+	e+Q==
+X-Google-Smtp-Source: AGHT+IEZJHOQOby4QohXqqy90JcclwkUdaYqwtd1ld+r6QqFqDnTGy4TzDHLisEZ5MjJRibuGnXEc0/0VMc=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:cb0b:b0:2ea:1a5a:dacd with SMTP id
+ 98e67ed59e1d1-2eb0e020087mr179a91.1.1732223131841; Thu, 21 Nov 2024 13:05:31
+ -0800 (PST)
+Date: Thu, 21 Nov 2024 13:05:30 -0800
+In-Reply-To: <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121165829.8210-3-vicentiu.galanopulo@remote-tech.co.uk>
+Mime-Version: 1.0
+References: <20241118130403.23184-1-kalyazin@amazon.com> <ZzyRcQmxA3SiEHXT@google.com>
+ <b6d32f47-9594-41b1-8024-a92cad07004e@amazon.com>
+Message-ID: <Zz-gmpMvNm_292BC@google.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+From: Sean Christopherson <seanjc@google.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, david@redhat.com, peterx@redhat.com, 
+	oleg@redhat.com, vkuznets@redhat.com, gshan@redhat.com, graf@amazon.de, 
+	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es, 
+	xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-
-On Thu, 21 Nov 2024 16:58:24 +0000, Vicentiu Galanopulo wrote:
-> The LED1202 is a 12-channel low quiescent current LED driver with:
->   * Supply range from 2.6 V to 5 V
->   * 20 mA current capability per channel
->   * 1.8 V compatible I2C control interface
->   * 8-bit analog dimming individual control
->   * 12-bit local PWM resolution
->   * 8 programmable patterns
+On Thu, Nov 21, 2024, Nikita Kalyazin wrote:
+> On 19/11/2024 13:24, Sean Christopherson wrote:
+> > None of this justifies breaking host-side, non-paravirt async page faults.  If a
+> > vCPU hits a missing page, KVM can schedule out the vCPU and let something else
+> > run on the pCPU, or enter idle and let the SMT sibling get more cycles, or maybe
+> > even enter a low enough sleep state to let other cores turbo a wee bit.
+> > 
+> > I have no objection to disabling host async page faults, e.g. it's probably a net
+> > negative for 1:1 vCPU:pCPU pinned setups, but such disabling needs an opt-in from
+> > userspace.
 > 
-> If the led node is present in the controller then the channel is
-> set to active.
-> 
-> Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-> ---
-> v1: https://lore.kernel.org/lkml/ZnCnnQfwuRueCIQ0@admins-Air/T/
-> v2: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
-> v3: https://lore.kernel.org/all/ZniNdGgKyUMV-hjq@admins-Air/T/
-> 
-> Changes in v4:
->   - remove label property, use devm_led_classdev_register_ext instead
-> Changes in v3:
->   - remove active property
-> Changes in v2:
->   - renamed label to remove color from it
->   - add color property for each node
->   - add function and function-enumerator property for each node
-> 
->  .../devicetree/bindings/leds/st,led1202.yaml  | 132 ++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yaml
-> 
+> That's a good point, I didn't think about it.  The async work would still
+> need to execute somewhere in that case (or sleep in GUP until the page is
+> available).
 
+The "async work" is often an I/O operation, e.g. to pull in the page from disk,
+or over the network from the source.  The *CPU* doesn't need to actively do
+anything for those operations.  The I/O is initiated, so the CPU can do something
+else, or go idle if there's no other work to be done.
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+> If processing the fault synchronously, the vCPU thread can also sleep in the
+> same way freeing the pCPU for something else,
 
-If a tag was not added on purpose, please state why and what changed.
+If and only if the vCPU can handle a PV async #PF.  E.g. if the guest kernel flat
+out doesn't support PV async #PF, or the fault happened while the guest was in an
+incompatible mode, etc.
 
-Missing tags:
+If KVM doesn't do async #PFs of any kind, the vCPU will spin on the fault until
+the I/O completes and the page is ready.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-
-
+> so the amount of work to be done looks equivalent (please correct me
+> otherwise).  What's the net gain of moving that to an async work in the host
+> async fault case? "while allowing interrupt delivery into the guest." -- is
+> this the main advantage?
 
