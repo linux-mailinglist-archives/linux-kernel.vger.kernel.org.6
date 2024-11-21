@@ -1,181 +1,220 @@
-Return-Path: <linux-kernel+bounces-417233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09759D50FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:51:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A49569D5101
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 17:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57CDCB27416
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FD11F2559D
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 16:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077951AA78F;
-	Thu, 21 Nov 2024 16:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855BC1C460E;
+	Thu, 21 Nov 2024 16:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="LJfoH+iI"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11023080.outbound.protection.outlook.com [40.93.201.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYo2BJuZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C343F10A3E;
-	Thu, 21 Nov 2024 16:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732207863; cv=fail; b=nT7G22bsfk0V5s1PNMOB3DbD00NFod7Sqc557zcu7a8rht7M3ee8AvNIEWFkawI8lvic3inT8Pp1+xMeY6M6/hIr++0EW5Ywz/wFZFtfL+tjCKLz7IibIATzaoW0HDaHD7onluSj1TdFFWEYBTrWusDWwFr4lxtE2jhBFvsSpXo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732207863; c=relaxed/simple;
-	bh=ZuwdpiBGbeOBCfY8bqkEWLp0GTrpRortJ4SHKKMBJNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oFtK9yKrNq8XQTVZiRDPflekFCw7uIXVFKX4zlhlQ0P+4Mq7Hn0CCegJn3zOLM/rXUTH3mA2UGdFcS1ymsVmBkQO/u3mIxOgcvt8SUI7rhs37Xmg3Ug+ASH5OGIawsmFB87KvBApthukv+q12VABTsqlpuT2nFfwiYukWfcWy2c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=LJfoH+iI; arc=fail smtp.client-ip=40.93.201.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mXSxyc1DYcRCB7JQ6qs2pk2ykMHtozfY7tjmMCMdtTP13OrTcm3MZbTBhSvkhwIOa6lwS4RBOmKx8rWqt+kVeKrVtliWlTzR4SfX1ZGVevRw252tCWkLI83M54P+Se7SjbE7UuhYD3jUFS8OXtLAlL1oKWO1wO7+NJLBiVAmqsUh2bXMyxoBCj8vyfgNJygD2UF2+A2za316VlbFV7NOpJxs23mzTKCdO4X8hshX+akuqnSFPm+vgdBaUPRU1baT1qiDh437ww8jmWFx3NhktxYq79HUvSXIryBQQYHK9Z/Hm/KQeHmK06num+Nh+t+X08X0o9wmYdep0eys0W5yaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZuwdpiBGbeOBCfY8bqkEWLp0GTrpRortJ4SHKKMBJNQ=;
- b=tf39vWXMtpKVWOJZwkdWGUfd2X68ZhS6yRGg39p+deKHWBvCzOgTIycEo0iZ3XQJ+jglDDDc2wuwWy/2E0lbmmQckNRlMoATvCaWOmnIlieBzLH6MmzrUPiHFexBh5HkkXgFGF5frywfz8QsVVHUTv+H9SizD3hgOQLLUJCJ1dY4u8pLzpZOe2xlZv1eDKstcZcY4RFm2bNPMLljtdsnm1wP2JKUcomU5VoLvsTMZkX1b3/DlpgYpQKjjih4K4b7RfAttwztqQV+7hpR/gf8mpvVD0mHyD8c4ze5St/f2aeQouSYYWgB2J+m9/ecRllRb9SZ8E3FRarB01W1ExvqZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZuwdpiBGbeOBCfY8bqkEWLp0GTrpRortJ4SHKKMBJNQ=;
- b=LJfoH+iIWahMxajsdTzfYKolvQ6+nKW8up6jURo7ol3wRQb5KbGpplFvZCrHeM0Z6guu00JwZowWC1h2vpdw00utr311ZP/Cwny92qm7BgC2hprPbq9VncwkqQwX8RQ1xP6u/pl1DkT430kDo0mWeW5MXNrtFnxcwhdYu5bHK+s=
-Received: from IA3PR21MB4269.namprd21.prod.outlook.com (2603:10b6:208:51f::13)
- by BL4PR21MB4664.namprd21.prod.outlook.com (2603:10b6:208:4e6::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.16; Thu, 21 Nov
- 2024 16:50:59 +0000
-Received: from IA3PR21MB4269.namprd21.prod.outlook.com
- ([fe80::2ad3:451a:7a41:c069]) by IA3PR21MB4269.namprd21.prod.outlook.com
- ([fe80::2ad3:451a:7a41:c069%5]) with mapi id 15.20.8182.014; Thu, 21 Nov 2024
- 16:50:59 +0000
-From: Hardik Garg <Hardik.Garg@microsoft.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-CC: "patches@lists.linux.dev" <patches@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux@roeck-us.net"
-	<linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
-	"patches@kernelci.org" <patches@kernelci.org>, "lkft-triage@lists.linaro.org"
-	<lkft-triage@lists.linaro.org>, "pavel@denx.de" <pavel@denx.de>,
-	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "f.fainelli@gmail.com"
-	<f.fainelli@gmail.com>, "sudipm.mukherjee@gmail.com"
-	<sudipm.mukherjee@gmail.com>, "srw@sladewatkins.net" <srw@sladewatkins.net>,
-	"rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
-	"broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH 6.1 00/73] 6.1.119-rc1 review
-Thread-Topic: [PATCH 6.1 00/73] 6.1.119-rc1 review
-Thread-Index: AQHbPDWKasQvKh1uGkyknrzjO+sBLw==
-Date: Thu, 21 Nov 2024 16:50:59 +0000
-Message-ID:
- <IA3PR21MB426998846BC2A2CEE3445DA9E1222@IA3PR21MB4269.namprd21.prod.outlook.com>
-References: <20241120125809.623237564@linuxfoundation.org>
-In-Reply-To: <20241120125809.623237564@linuxfoundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-11-21T16:50:58.772Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR21MB4269:EE_|BL4PR21MB4664:EE_
-x-ms-office365-filtering-correlation-id: aa438fc7-7dcc-49ae-def5-08dd0a4cad21
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?hPeC/ohyrFifqjwkARcF+o8LQEqS7UgMPm6WSD5cf2A8WCuySFAwI+SbiW?=
- =?iso-8859-1?Q?E2UuMXgCf/mQTIKmOZ3YL3r34v+AYA58+l9uMbo7bf5diEiXM/r+Kkab3+?=
- =?iso-8859-1?Q?j/eCbUbpvK26FXFcbDeVrkW8PqK+DmtAu7PVlYNw+CAK8ImLJglF8ZW2AT?=
- =?iso-8859-1?Q?6nTisGgSs6tAiG2ysxLnwf5afp9WxP8f9omVpwaLfKH0SX/G2GhjpwqyI4?=
- =?iso-8859-1?Q?hVcr1uuJqM4jQjxi0rruROog7mc+K0dWJM1yDUuwfJ4ZhOS4j1MydaHMFM?=
- =?iso-8859-1?Q?ibw8UGzsF05HRMDldMqaEosoiD8oAG4y9y3t8tVNjuYkjjq+FSbn6uGWTv?=
- =?iso-8859-1?Q?w6tG5eziy9blTvUg6iPMjHlQjVnKzHAGLyvc5kBNGBd9EHcGVhijFIKo8f?=
- =?iso-8859-1?Q?wnGfb5xyJpjJJ2wbFbQwOKnmmNWNUWWpG9UmniUQu3G6ThuZ2E+18gt13I?=
- =?iso-8859-1?Q?Swqj81vylAveetVDV4YQGy/K3aSykZrT4CJPaNYEn+huQEea4nft+Wp78d?=
- =?iso-8859-1?Q?WEGuY9xHdx4c/+ODIXFlkVuX/Qi2dwZgcIyqjj8IsBkuT6FyZV1rS7ebRY?=
- =?iso-8859-1?Q?2H89I7eDBIgn4tmf1K+SPoQbqz6+uyILPkByICgJahFwdoXGOpn8XxJjCG?=
- =?iso-8859-1?Q?Pa7n+tHm/VLhMlGORr3kthRxYd8Ro3PNBqFsgNJyVXx+GyPKBaToA18Z2j?=
- =?iso-8859-1?Q?hcRKCCystNozVuc2VeZELgF56ohOYlsNybSWr/LRHJr83Ne/m4rbcQd+MC?=
- =?iso-8859-1?Q?S+rH8T4Wou4zOkMAFDfKXBrtJwf0gSM1ksbK94RcPaDyXr7lvGNxPktOmP?=
- =?iso-8859-1?Q?IlQ3srXP+dPMHlHHo3frLhPCvjUyz5nJP62QRkkO1Mgs6dGb1TN6A1o6mi?=
- =?iso-8859-1?Q?8Ihiyla6/hq25UfAZ5LtN8ZGcZZJpyXI0Lq19JV+GG9La0aHcOadFXDmJJ?=
- =?iso-8859-1?Q?VHYgEVrssWE2B6lJndDFOP+lscMora0FgzXS5MaC033aMtL5KOe/E/7yFv?=
- =?iso-8859-1?Q?xoDNDAOI0YerQ9+o4iGLkAvQpgQ1Kno6XhqIZSG3nYkZzT8QG6AAZ/NjJg?=
- =?iso-8859-1?Q?kKUc3aQUAqT2F6M0ggWBVNAdzLx75rNze2gmIJuHBbl1Y3BXHKuwfWv1ra?=
- =?iso-8859-1?Q?CLoZit/4k8/CMNqCCxvUrawh5FNZrL+aoz+iL61QCp2zxaGfmK9HDQk7rv?=
- =?iso-8859-1?Q?xJMfBc0KPMNClt6tL5v8axYtIqM8pwi+8BJUPHf5OXeK8RoSUiLETV3a7f?=
- =?iso-8859-1?Q?uJweDuFL9DELWn1G3AXda+Dn7cA4IxCEF5NxuHtlUq2B6NdKG30rvjMT7G?=
- =?iso-8859-1?Q?SJ0PYpU4u0yqq0aG0Q5nWb9jbivHUnjVhtqOsQ6VPjOlQ1/L77v8odw49Y?=
- =?iso-8859-1?Q?BbpQoTq6EKTBoABGXlAQVO12nfM/B51LqVixQkIAEphF1JSFR2az4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR21MB4269.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?5bNjHQXccsGoKpr9y9xtgFJmStEXrJoT1yN/BOg2UNiFC2pXMjPcp/6Ydw?=
- =?iso-8859-1?Q?AT174yC+Z3u00BkzZOGmFpXO44YnlCSXyt7lKtmiFbVUgZs0ilXerqVnws?=
- =?iso-8859-1?Q?gu/dQKNy8Ru090ELKmY4PFcnZvsdzzhAfW5Rg1qr6mDehDbKSOK4YSitPr?=
- =?iso-8859-1?Q?athMpjJ4WPKsGg1gS8bxlxsJ8l0wtg1u2Olnj7JNxsIKC/NGXZc+h1n4/7?=
- =?iso-8859-1?Q?1W3WrkOPaoqzIaHlunFIaILC9z0SBnFoOiibDaPh47TD7Um5hgSBOxygLc?=
- =?iso-8859-1?Q?gcRG8ezOg8f93XqXQdC89H+Qnv8COD2bG9rXPECHb95r3kuMJWizMyeMY3?=
- =?iso-8859-1?Q?Bkjk/dsptMc96Ro6Jvu0aruts6m6oDXylgLomwkP2w3cn2BhCVgi1Dajyd?=
- =?iso-8859-1?Q?oawOrJrSRIZRQvipkN7/zQPGuO/hWwHMkPwSmngJ+aBtnE91TGc9mRGHWY?=
- =?iso-8859-1?Q?YQ1NlaJ0yRCPFZOxpJ327U56QRoyT2H7YdMG3wptsOhaXBf2AFfh7N3tqh?=
- =?iso-8859-1?Q?hQnqBclUls/xOTf8dk2OGeEn6uo66L0DCk4DlgCLCFpy/8w4PTDgMPCSfA?=
- =?iso-8859-1?Q?P+JS8g+j2dRUyVE7i6sE27EKD1nmAEFeWAio1spAFabZjJxjQ9Y/Vx0cQ/?=
- =?iso-8859-1?Q?QMnK94Pt/V2oMgwTtjaWM+ePlwXa1D2ns1Vdf8B2kx74VEGYTzqWZqIske?=
- =?iso-8859-1?Q?IGDC1XBFZWGwHhAGeLTVxZzB7rKKJ29C4aY9JJDDz9CR6ZB+z6s28ETCpR?=
- =?iso-8859-1?Q?7J81O+Dk0HHe3cTCaV6towEoO4QPVCh2tywb5H0r35xdcvRJF3YD4bKNkj?=
- =?iso-8859-1?Q?+bM5D7m7+x2nfz490nENwNfjXTU5A4O/6K+I2m7CDHwQzPdfxirW16Njsu?=
- =?iso-8859-1?Q?iGFgm7FkfrCQhcbK0Z3h1i9BcvtXcrvBrJkHwk+oNP7Vaz21PrFaXVcWOJ?=
- =?iso-8859-1?Q?SGp7bL42yXL8r9GMeJifKRNBravYX4TNRR1TsFTsJB6rJuGGtMKul0TouX?=
- =?iso-8859-1?Q?b0bPCVc4BZ6C3i6KRcoDjAHTpiX53i6qlchv/sJlw3hPgHj3paNJYA4OCE?=
- =?iso-8859-1?Q?xpl189kdo47L/WibjUhZkqkraBowPcammu2AQrTCGrKXcS1ee9gYd+yBt4?=
- =?iso-8859-1?Q?MWPEEqMD4sD6Av+XU5IBXtjokGYcymPccdFq7tBS5Fo/Hq1IT4e2uwyj45?=
- =?iso-8859-1?Q?B7rRn729xTi8hddFfP1TlbtzN5X/VgCjJszsri0tWnNFIybXEUIIpTPND/?=
- =?iso-8859-1?Q?ua0XL5JKy/2bEkPnV8RF/67+zzKu9FcSvgxrpee3T4tKbLML3jjFMNJHBC?=
- =?iso-8859-1?Q?BIOUWvoup5WMi0z3F88RMK5q9u4S/LvjJISJR03HRA/OEwNhAKneNSieFH?=
- =?iso-8859-1?Q?F/i3iYrZHZtzjkMmo2p2dDTuiZIY3GAUORM9muxlf31J5iDrlYbCA6PzcL?=
- =?iso-8859-1?Q?Eo+6jYZBFDvg9Prv2pWKoQtS/kbYRpWNhOuYqvLy0yD8b2n2zbIJveulRA?=
- =?iso-8859-1?Q?X8uLgrlas9PFVpRLsTDz4vU0C4d6a2F97ZEU/diOBhXXDWC/mMPgy0H/z9?=
- =?iso-8859-1?Q?Y+xOXpAqU6aZtb/xBe5/vBSAOsqzZwoNmIvboKVlmTdL6LZUpDoxW5IMGT?=
- =?iso-8859-1?Q?muCM706ZOXJjF7/khHFCAKKqVjKXoBjh62?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8B31AF0A1;
+	Thu, 21 Nov 2024 16:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732207937; cv=none; b=Gp8DWXf6BDjGHXxFg2/RZhamgs41a9qOwfHOfe4/zNs3/aOgW42vPJgGKoU2aFzEehPe2JHO9ganmEAKiTpX8qpiUGOsHmYWDjra/9IjUJAOCpGrLCtQG2v+1lmD5GV1v0KZd4Xi3f99z5ij/vD7pVxvnyN/3chUvnRwrNEQOa0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732207937; c=relaxed/simple;
+	bh=Y1mdkaWrTYBIUMxo9h4PUiMiMSW1f7efHaVFCg8rH+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=L6juSyJOZ9y6fR5y7wVctLw/vxHGE+tMzc8IORGMz3mIjha1S6Ui91rZYwVfTUIWNk5UX7t9f3E7meGyI3bgyhxfX6wqeYu1uaJGyGm11IPaGfOtW+dZE9+uFmHB9XTZgeIxt4+R79S+y51mD+jrE+uIdhKuUE1BIK36FktD/Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYo2BJuZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 700DCC4CECD;
+	Thu, 21 Nov 2024 16:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732207937;
+	bh=Y1mdkaWrTYBIUMxo9h4PUiMiMSW1f7efHaVFCg8rH+c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=PYo2BJuZiGgGaGHKxMuoPyEkgU9X6/+IiLSg6tzkmfOcpyiJ4i0KZD0BHxqHyjA6F
+	 Mn3ln0UQl26TsQRjrnXkInQ5QY7ehMxAJ7ABgPWWoB5QR8MBzko9SqUGyD4AfbHeRQ
+	 46/ZWcq9NyMJ0vd3geu4IWg2lY0DDQtgeaeh2Pox3ykLSG5ubjQyZaRXvMz3uA1chp
+	 kdDBJXWejAMxmX1G+n2YBco2aT3L4hM2BYloZU+DaGXrZWa7HLOhzG4XVUxMWalAQy
+	 rgl6IKcDEQhiclOeA4Q+H47l7zBUby097H3Yi0olwltj1lEdNAUQnB6MAAibYqBOUC
+	 up7dS2LYAMc5A==
+Date: Thu, 21 Nov 2024 10:52:16 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: PCI <linux-pci@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: Re: next-20241121: arm64: of_pci_supply_present
+ (drivers/pci/of.c:746) - Unable to handle kernel NULL pointer dereference at
+ virtual address 0000000000000058
+Message-ID: <20241121165216.GA2388449@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR21MB4269.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa438fc7-7dcc-49ae-def5-08dd0a4cad21
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2024 16:50:59.4658
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8V9ru+rp6OI204h9bDkyQ+58+H/S5yxQdXwEpHyKC1NHuAuqj9GuSW3KAYBovAKbeQkNREcGIaKgFumMfLeNMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR21MB4664
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYurbY3B6ahZ+k+Syp5bZ3a+YQdeX8DRb6Twi4BDEFbUsw@mail.gmail.com>
 
-The kernel, modules, BPF tool, and kselftest tool for 6.1.119-rc1 builds su=
-ccessfully on both amd64 and arm64 Azure Linux VMs.=0A=
-=0A=
-Tested-by: Hardik Garg hargar@linux.microsoft.com=0A=
-=0A=
-=0A=
-=0A=
-Thanks,=0A=
-Hardik=
+[+cc Krzysztof]
+
+On Thu, Nov 21, 2024 at 08:21:38PM +0530, Naresh Kamboju wrote:
+> The juno-r2, qemu-arm64 and qemu-armv7 boot failed on the Linux-next tree.
+> Please find the crash log below.
+
+Thanks for the very detailed problem report!
+
+I think this should be fixed by
+https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/commit/?id=278dd091e95d,
+which added back the "if (!np)" check in of_pci_supply_present().
+
+> First seen on the next-20241121 tag.
+> Good: next-20241120
+> Bad:  next-20241121
+> 
+> Juno-r2, qemu-arm64:
+> * boot/gcc-13-lkftconfig
+> * boot/clang-nightly-lkftconfig
+> * boot/gcc-13-lkftconfig-perf
+> 
+> qemu-armv7:
+> * boot/gcc-13-lkftconfig
+> * boot/clang-19-lkftconfig
+> 
+> 
+> Boot crash log on arm64:
+> -----------
+> [    0.000000] Booting Linux on physical CPU 0x0000000000 [0x000f0510]
+> [    0.000000] Linux version 6.12.0-next-20241121 (tuxmake@tuxmake)
+> (aarch64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0, GNU ld (GNU Binutils
+> for Debian) 2.43.1) #1 SMP PREEMPT @1732169734
+> ...
+> [    2.118104] pci_bus 0000:08: resource 0 [io  0x2000-0x2fff]
+> [    2.123710] pci_bus 0000:08: resource 1 [mem 0x50100000-0x501fffff]
+> [    2.130054] Unable to handle kernel NULL pointer dereference at
+> virtual address 0000000000000058
+> [    2.138868] Mem abort info:
+> [    2.141672]   ESR = 0x0000000096000004
+> [    2.145435]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    2.150765]   SET = 0, FnV = 0
+> [    2.153832]   EA = 0, S1PTW = 0
+> [    2.156994]   FSC = 0x04: level 0 translation fault
+> [    2.161888] Data abort info:
+> [    2.164781]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    2.170283]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    2.175351]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    2.180680] [0000000000000058] user address but active_mm is swapper
+> [    2.187055] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> [    2.193333] Modules linked in:
+> [    2.196393] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+> 6.12.0-next-20241121 #1
+> [    2.204151] Hardware name: ARM Juno development board (r2) (DT)
+> [    2.210078] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [    2.217053] pc : of_pci_supply_present (drivers/pci/of.c:746)
+> [    2.221685] lr : pci_bus_add_device (drivers/pci/bus.c:408 (discriminator 1))
+> [    2.226135] sp : ffff800082f5ba70
+> [    2.229450] x29: ffff800082f5ba70 x28: ffff8000827ce000 x27: ffff8000823e0118
+> [    2.236607] x26: ffff8000822f65c8 x25: ffff8000823be4f0 x24: ffff00082111a428
+> [    2.243762] x23: ffff0008218a8800 x22: 0000000000000000 x21: ffff000800a230c8
+> [    2.250916] x20: ffff000800a8a400 x19: ffff000800a23000 x18: ffffffffffffffff
+> [    2.258069] x17: 00000000f3b41269 x16: 000000006984274c x15: ffff800082f5b8c0
+> [    2.265224] x14: ffff800102f5ba47 x13: ffff800082f5ba4b x12: ffff800080b5dee0
+> [    2.272378] x11: ffff8000800171b0 x10: 000000000000002e x9 : ffff80008084b910
+> [    2.279532] x8 : ffff800082f5b8e8 x7 : 0000000000000000 x6 : 0000000000000001
+> [    2.286685] x5 : ffff000800a3a850 x4 : 0000000000000000 x3 : 0000000000000198
+> [    2.293839] x2 : 0000000000000000 x1 : ffff000800a8a400 x0 : 0000000000000000
+> [    2.300992] Call trace:
+> [    2.303438] of_pci_supply_present+0x18/0x78 P
+> [    2.308065] pci_bus_add_device+0x90/0x208 L
+> [    2.312515] pci_bus_add_device (drivers/pci/bus.c:408 (discriminator 1))
+> [    2.316616] pci_bus_add_devices (drivers/pci/bus.c:435 (discriminator 2))
+> [    2.320718] pci_host_probe (drivers/pci/probe.c:3362
+> drivers/pci/probe.c:3132)
+> [    2.324472] pci_host_common_probe
+> (drivers/pci/controller/pci-host-common.c:80)
+> [    2.328924] platform_probe (drivers/base/platform.c:1404)
+> [    2.332595] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:658)
+> [    2.336176] __driver_probe_device (drivers/base/dd.c:800)
+> [    2.340540] driver_probe_device (drivers/base/dd.c:830)
+> [    2.344730] __driver_attach (drivers/base/dd.c:1217)
+> [    2.348572] bus_for_each_dev (drivers/base/bus.c:370)
+> [    2.352413] driver_attach (drivers/base/dd.c:1235)
+> [    2.355994] bus_add_driver (drivers/base/bus.c:675)
+> [    2.359835] driver_register (drivers/base/driver.c:246)
+> [    2.363677] __platform_driver_register (drivers/base/platform.c:868)
+> [    2.368391] gen_pci_driver_init
+> (drivers/pci/controller/pci-host-generic.c:87)
+> [    2.372495] do_one_initcall (init/main.c:1266)
+> [    2.376338] kernel_init_freeable (init/main.c:1327 (discriminator
+> 1) init/main.c:1344 (discriminator 1) init/main.c:1363 (discriminator
+> 1) init/main.c:1577 (discriminator 1))
+> [    2.380705] kernel_init (init/main.c:1470)
+> [    2.384200] ret_from_fork (arch/arm64/kernel/entry.S:863)
+> [ 2.387784] Code: d503233f a9be7bfd 910003fd a90153f3 (f9402c13)
+> All code
+> ========
+>    0: d503233f paciasp
+>    4: a9be7bfd stp x29, x30, [sp, #-32]!
+>    8: 910003fd mov x29, sp
+>    c: a90153f3 stp x19, x20, [sp, #16]
+>   10:* f9402c13 ldr x19, [x0, #88] <-- trapping instruction
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>    0: f9402c13 ldr x19, [x0, #88]
+> [    2.393886] ---[ end trace 0000000000000000 ]---
+> [    2.398565] Kernel panic - not syncing: Attempted to kill init!
+> exitcode=0x0000000b
+> [    2.406234] SMP: stopping secondary CPUs
+> [    2.410169] Kernel Offset: disabled
+> [    2.413658] CPU features: 0x080,00020c3c,00800000,0200421b
+> [    2.419150] Memory Limit: none
+> [    2.422207] ---[ end Kernel panic - not syncing: Attempted to kill
+> init! exitcode=0x0000000b ]---
+> 
+> 
+> Links:
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25983314/suite/boot/test/gcc-13-lkftconfig-rcutorture/log
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/log
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/details/
+> - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241121/testrun/25978784/suite/boot/test/gcc-13-lkftconfig/history/
+> 
+> 
+> Build image:
+> -----------
+> - https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/
+> 
+> Steps to reproduce:
+> ------------
+> - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2p9DVXtRiqTj7VZO9wnFlkwmU8g/reproducer
+> - https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2p9DVXtRiqTj7VZO9wnFlkwmU8g/tux_plan
+> 
+> metadata:
+> ----
+> Linux version: 6.12.0-next-20241121
+> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+> git sha: decc701f41d07481893fdea942c0ac6b226e84cd
+> kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/config
+> build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2p9DUGD8S9fakSvceaAXMeGBRs7/
+> toolchain: gcc-13 and clang-19
+> config: gcc-13-lkftconfig
+> arch: arm64 and armv7
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
 
