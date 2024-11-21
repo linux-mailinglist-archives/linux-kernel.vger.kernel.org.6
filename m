@@ -1,142 +1,166 @@
-Return-Path: <linux-kernel+bounces-416855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D792F9D4B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:02:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4249D4B38
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 12:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9723C1F2363A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:02:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE912B2457B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 11:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB35A1D12E1;
-	Thu, 21 Nov 2024 11:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9997D15C120;
+	Thu, 21 Nov 2024 11:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XPKb8Vow"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tfwg01Cl"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDE41C9B95;
-	Thu, 21 Nov 2024 11:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2811D0B8A
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 11:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732186967; cv=none; b=HWQxonSkSvcCTNeEKydw6C7YKftxOsb+VOsQF2ivGc7sYbNuTiZ6mGonqoMtDltoQGEl6qmIkOu4au2j/+4nBn9pSyHUV1O+XcL0xH/OMsftOJ1QK7lbapbYiGcVozfJcp5uLFhdSSwfKAUN7++ktsviWorccCMjX6CDi1xrnZc=
+	t=1732187030; cv=none; b=THwWTPZ0UorCiYEh4srGxSYKSv0OfrEn4ch3SxcMMf2vKptRDApq33aYdP7DROxTfNYtsNTMW+EKHWQcHDCW3BjevJRNPULDKPyY/vFtoLytrHd4GYFWJe6VTch/yIhqiNiqri677EVvnrAX7R89AVQZwujNW2PvN8BboAS5Sbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732186967; c=relaxed/simple;
-	bh=28IJcyn5WF2tiP+O72CcHDbeluIq7DCiPoYbU4oOZgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BT1aZkByWJmiuBYO8GkwOo+Q41AmK7z1BztPbk7im5nvd1CGY1lnFkvQ6eRdZaIR5LR717TlG37fFFy7KmHkyUIjZeM8qCLjyPWxOJSra9Cq8mktRfFB2IwkcottMPb9QsCnFoPHPtej1tlmyMzWeYP+eg8gbIzM9RVwGIFltTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XPKb8Vow; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zNXZoyeqqFWas/9jC0n8iQIDDwWz6V7tiZVs/eKT/uQ=; b=XPKb8Vow8F3xBJs12GZw/rt+Ow
-	VF/GyUTUxJh9qI63kQJho8d0o5b4u5E8hDxO9ShcsfeRFVp/4rkAW3WVDH3KYv4FBUs5QeL3bDFNr
-	M2aCUSxGPm77wao4+XcolTgelx3/vUfJRC9ZTa1qpwqLhckqrIoLQCwPBFII/z+3NvmeOaejchepE
-	O9kLSIfVQIw8d8FkRpeeViXPOameNIBniXeZmlVNv54ia4JTaw8U/tDSVrqpUmahogiKcjW06qsaB
-	7ZnXXj6OLHYDFY3PL0Ifx3GW+EpiJvB3xWocbtKENr0hYiPfi1fSS6O/0nTMqHDkVAYuqiGmwuOiS
-	qgVENELw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tE4xN-00000006IWH-3lMe;
-	Thu, 21 Nov 2024 11:02:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B8FEF30068B; Thu, 21 Nov 2024 12:02:42 +0100 (CET)
-Date: Thu, 21 Nov 2024 12:02:42 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 08/15] sched/clock, x86: Make __sched_clock_stable
- forceful
-Message-ID: <20241121110242.GD24774@noisy.programming.kicks-ass.net>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-9-vschneid@redhat.com>
- <20241120145904.GK19989@noisy.programming.kicks-ass.net>
- <xhsmhv7whhnjb.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1732187030; c=relaxed/simple;
+	bh=7PVx9sFZRrAihAdQ/yUnR6p8Gj46dp5SH7888wIWc3I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H3kSQqq4iTr8G6vd00WipEeulu/w2N8TaBJLL9sSjww4S0EWAem0gsP/BlyGCW7C8oh7G7W1eQt07cggMtgsanHbX1Ga7sMBU1QilbWQf9vFL/UQZC+apMi+UTTFv/yJFT6OEvBqUkaYDjwqZirHNvACRGHmMHOnl/7ZNiD3wuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tfwg01Cl; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso607049276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 03:03:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732187028; x=1732791828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HnmX5TqmpI0tRkOweTa1/DhIzHunTTWi3NrhaxtEZZM=;
+        b=tfwg01ClTD7JVknLKBXOVgp/r6wMpkfqVhNpQz2juqfJt6fiL1bjfLQ121b5lNEsco
+         jUDa85f+labp/Tl5NWXIJDqDZyMege4bP2evJgvTVfSKtJkSoWp8UuAkR/vYIuphmmAd
+         SXPVkYGUOQuhbrBOUs3EtVIJfyV/EREIS+R8SLMdhuD2MaKxYbE4AFem36ucwbT0aEKE
+         8dxrRYttvACv1XwrDZEGb0iv+CLsOBoIS/x7VQputLAgMTY/kR2ShM2VuIT1XEWz7CYq
+         TQ/dEQPry/oslWEQd8oxI3inK8tckt6EohH7/iKueJRUXNS8O2Dj8WJJNPv59XXj5p7t
+         hVWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732187028; x=1732791828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HnmX5TqmpI0tRkOweTa1/DhIzHunTTWi3NrhaxtEZZM=;
+        b=mbbtAqOleEdufadEtAN/5kQxr4nkXdEA/MCiJ8j3iG+xPJMGf6sOyUYwmqrrJM/JlQ
+         Qy63rqur0WubWAfxngzQYuTWoA6zVc8MMYJvTPUGLfg6i2qPIPsgFIU6YvWVtxVcR64J
+         rIbOQEn19hwOL/FUzBlQ/Keg8pXIWvD7e2cC6uXLrrD92j44Ola2gLXZgJOVIU9IsmJR
+         hqDf7ikhKWKryfjDARMuz7cGevM13+QzUqgd/axjESj3kvLFJftuRR8D+wyoOvjAf7m0
+         E50wENDmg6IqZm0EfOWe8+kep0JcHqq7LQcK8NuI2gJvhPs7IG+AKQ4NB7fzIGWwGJhU
+         sKwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyo0i38FovHHJoO9gn8QFWAjAvpWfoK/yY3MFRicnmtIrY3dNMZKTwVG1NK8bmFZZtwXPGpZmQhsw7F28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdHhBhPLJnYbqD49IXnRonI2yNBbZlV6diYOSfjVk3BbP7leE7
+	YGrz1ybDETdWwPgRVLhOMrrufrMg6W/ZM1cE4dxKCbISqC9TjPcsTPK6E50kmgHR9fcI3tNjyu7
+	b/YneNmfN2WIov6FbykYykLAikCNTSjk5tdVP/A==
+X-Gm-Gg: ASbGncuKmq97Pz7WF63h5S3MhAumvveIPQRuWOlwHN5oVCutnY+c8UeHj33LAwMhcob
+	GXTfY6ByQ5+TIQY7+Uzd0uk6ZQ2bns3Vq
+X-Google-Smtp-Source: AGHT+IHThgwC/2AN5VCX26+izVDudjEqWF+s/Kp+cAGqMDexA7+s1nCPpNNrlrMFSnqiN8eH6D0iaXXY9h4nOZXblmE=
+X-Received: by 2002:a05:6902:1004:b0:e38:d1e5:c247 with SMTP id
+ 3f1490d57ef6-e38d1e5c514mr5266672276.19.1732187028290; Thu, 21 Nov 2024
+ 03:03:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhv7whhnjb.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+ <20241023213134.GC3736641@google.com> <CAPDyKFo05Hyw9gdEBx7zQq_6P58ittHHsZQLuqmeR1AChyHSHw@mail.gmail.com>
+ <20241025025628.GD1781@sol.localdomain> <CAPDyKFo5EijkL5Y+MZ0=ZWyGdLfDdSdqTOC0eMsTVY00KP+RAA@mail.gmail.com>
+ <c41839b9-36b1-431e-9031-4e57f62b50c2@quicinc.com>
+In-Reply-To: <c41839b9-36b1-431e-9031-4e57f62b50c2@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 21 Nov 2024 12:03:12 +0100
+Message-ID: <CAPDyKFpKnofrut7pbWTJSrZP8uHCWO9omr=bNLp27JH6aP8q7g@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/2] Avoid reprogram all keys to Inline Crypto Engine
+ for MMC runtime suspend resume
+To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_rampraka@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com, 
+	quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com, 
+	quic_gaurkash@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 20, 2024 at 05:34:32PM +0100, Valentin Schneider wrote:
-> On 20/11/24 15:59, Peter Zijlstra wrote:
-> > On Tue, Nov 19, 2024 at 04:34:55PM +0100, Valentin Schneider wrote:
-> >> Later commits will cause objtool to warn about non __ro_after_init static
-> >> keys being used in .noinstr sections in order to safely defer instruction
-> >> patching IPIs targeted at NOHZ_FULL CPUs.
-> >> 
-> >> __sched_clock_stable is used in .noinstr code, and can be modified at
-> >> runtime (e.g. KVM module loading). Suppressing the text_poke_sync() IPI has
+On Thu, 21 Nov 2024 at 06:16, Seshu Madhavi Puppala
+<quic_spuppala@quicinc.com> wrote:
+>
+>
+>
+> On 10/25/2024 2:12 PM, Ulf Hansson wrote:
+> > On Fri, 25 Oct 2024 at 04:56, Eric Biggers <ebiggers@kernel.org> wrote:
+> >>
+> >> On Fri, Oct 25, 2024 at 01:07:18AM +0200, Ulf Hansson wrote:
+> >>> On Wed, 23 Oct 2024 at 23:31, Eric Biggers <ebiggers@kernel.org> wrote:
+> >>>>
+> >>>> On Sun, Oct 06, 2024 at 07:25:28PM +0530, Seshu Madhavi Puppala wrote:
+> >>>>> Crypto reprogram all keys is called for each MMC runtime
+> >>>>> suspend/resume in current upstream design.
+> >>>>
+> >>>> Is that correct?  I thought that similar to what is done for UFS, the key
+> >>>> reprogramming happens only after the MMC controller is reset.  I thought that is
+> >>>> different from a runtime suspend.
+> >>>
+> >>> Looks like Seshu is not really worried about the host's runtime
+> >>> suspend, but the card's runtime suspend.
+> >>>
+> >>> Perhaps there are some out of tree code involved here that makes use
+> >>> of MMC_CAP_AGGRESSIVE_PM, which is what allows the card to be runtime
+> >>> suspended?
+> >>>
+> >>>>
+> >>>> If it's in fact triggering more often, maybe that is what needs to be fixed?
+> >>>
+> >>> We could extend the runtime PM autosusend timeout for the card, if
+> >>> that makes sense.
+> >>>
+> This change aims to address host side feature by not tying it up to card
+> side flag/feature.
+> >>> Kind regards
+> >>> Uffe
+> >>
+> >> The keyslots are being reprogrammed from mmc_set_initial_state(), which is
+> >> documented as:
+> >>
+> >>      /*
+> >>       * Set initial state after a power cycle or a hw_reset.
+> >>       */
+> >>      void mmc_set_initial_state(struct mmc_host *host)
+> >>
+> >> It's called by: mmc_power_up(), mmc_power_off(), _mmc_hw_reset(), and
+> >> mmc_sdio_sw_reset().
+> >>
+> >> Can that mean a power cycle of the card, not a power cycle of the host
+> >> controller?
 > >
-> > Wait, what !? loading KVM causes the TSC to be marked unstable?
-> 
+> > Yes, that's correct.
+> >
+> > Well, indirectly the host is likely to be power cycled too, but not necessarily.
+> >
+> >> The keyslots are part of the host controller, so that may explain
+> >> the problem.  The keyslots should be reprogrammed only when the host controller
+> >> is reset, as that is when they are lost.  (And it should not be skipped entirely
+> >> as this patchset does, as a host controller reset is possible.)
+> >>
+>
+> This will be update via a separate patch by invoking reprogram_all_keys
+> API from sdhci_msm_gcc_reset() API
+> https://github.com/torvalds/linux/blob/master/drivers/mmc/host/sdhci-msm.c#L2363
 
-> There is however this:
-> 
->   kvm_arch_vcpu_load()
->   `\
->     mark_tsc_unstable()
-> 
-> So plugging a VCPU might do that.
+Okay, in that case, please post the complete solution in the next
+version. It seems like $subject series on its own doesn't make sense
+to us.
 
-Right, but that only happens if it observes the TSC doing dodgy, so
-that's deserved and shouldn't happen on hardware from this decade, and
-possibly the one before that.
+[...]
+
+Kind regards
+Uffe
 
