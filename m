@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-416774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A999D4A03
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:30:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870B89D4A07
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 10:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10262282C6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:30:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23387B21747
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 09:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBD91BD9CC;
-	Thu, 21 Nov 2024 09:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60FC1C1F26;
+	Thu, 21 Nov 2024 09:32:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="BcJ0f6/J"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="T8abkMoJ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C201154BFF;
-	Thu, 21 Nov 2024 09:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DD213E3F5
+	for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 09:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732181446; cv=none; b=DIG7D50ZHEBrOxz1Asz1WOsu4eGOqldDw3KDVR1pdC+5cCrCkXxXrcnPhsSam/8eE9h9n/S7uWYW2iQ9gNn+ighg84nPB3ukFh3GyfMEHNa6GNBjaaqxL+w9oTWRVuIf5ntgQfZdVBPhpQAw8dme9sxByfpqsi8+3bG/2qKYDgw=
+	t=1732181554; cv=none; b=fyq8H0aE29YvhrA5akOxZIfZugTdmwlCkNfYGHODWY598FjWU5GXQkOTr1wMVRjuXjmksi2HLV0EItG35Rpsu/ow2lZCpY5Nfq3f/KxpsNVT5M7XaevMXFhznonVQWpJCx2P6D7pkVEnZVeo/vkoXuR04o+w1JR2kXFxCbInO5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732181446; c=relaxed/simple;
-	bh=kY6ATH4jDYJl+37Zh0x1guou/Yjv6FBOF7eBV4sdsCE=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=MVxdABSgg+HZJnfCcKbKFrttenGnfQPfQXU6tBCW0XS25AMnPqWdXvFkzo4clSrT8j7R9KTS7dWN3JYomgyvF2jGfXarLHwBaCxBohAoU3+X4+VFPejwTsrN0UzCK1JAmVyvRgbKxXy2yK/8Vz8xNX6Y9kqPDPPKhOOx7rvOfuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=BcJ0f6/J; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1732181434;
-	bh=kY6ATH4jDYJl+37Zh0x1guou/Yjv6FBOF7eBV4sdsCE=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=BcJ0f6/J+1pW7RwIGqCAAaqMH4Rtw5RB9VY102dzq+f6kYMfyb1FKnETiV3m9ErcE
-	 QAfHtFDhbrMpey4196AdXTiM3G4aZCESnQnvap78V72Gunr8JNHcP7Rjfq+ad9mIBi
-	 6xP6xRoWypzFzy7EVubB4bYr+EXIanJRHrusfHBI=
+	s=arc-20240116; t=1732181554; c=relaxed/simple;
+	bh=fa4v6uz6VEFeR8izNt0n6njpP/3Mpxu4ttEX9Sv9B/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xg5dQc+gZRMq11HTMAHuMu+Voxkp5KTmyBQi9auO0ZESMRrgHjqh1q2hbaJSTdcSySCSbm9gQadTCcdowCRP7pie1DQoBBKVvRaMTbpUE/ybe7IWjuTbEGcY9yf+UjBIGFxEp+zQzRVztU3/aFTy2tSPaT+nGcUiQ1IVUq34DAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=T8abkMoJ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f1292a9bso673991e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 01:32:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1732181550; x=1732786350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=opuzTjYFnx1shlOWe4vRrTVSSc8AtRFFWZgXJNFD7tA=;
+        b=T8abkMoJD6lhbp3bLuG9FYWZnYTS543wbCkjvaa2tg+9yJR/UU/SNjzcxJjdvFMMim
+         vMqgyOHILLWZk7i5YE6QfuoqF8qJO1MIL8XWsnDzky3AIusRZtt2p/G7HX+twLU+qEFB
+         1Bod63yaJYJf0tbygZyOU//087zF+WnkQPsom7VsFVWuY54i2sic2WRAOT/9SXZJWNFS
+         JXUe2uUuQnfcBrt4VSR1ts6YJD8BMo6G5FYE/SMOGqUae9XBU+N6yGjETZT/NUv0QA8G
+         JYMct+lcXfc/SZd+A5X/ImQvUlaE9t4tD+4MIUQnrV8mCd+ZZIQ3SKUdOQqjdtG/loMV
+         h+Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732181550; x=1732786350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=opuzTjYFnx1shlOWe4vRrTVSSc8AtRFFWZgXJNFD7tA=;
+        b=qCC+8O5FljOwwfIHnsnzG96R3gZevwIgKz+L1Sx9VAV4GGEgQ2QQAgGBj437Ox9441
+         pk403vG8Z6pPR+Ga159WhJ7gVlceVgucTB3O6L3blCExhWfEHR19V1EMvYfoK9w/pc3L
+         S0XyEZ/GWPWLy50RLzqF/bRHoy89O9hmTZI6dQ712JD2ALds0c0pCpudXD9geVKAgJKE
+         Y/FFKIljQzsBsKUg5WJlEfpApGw+tv4Q+ismwte3Zx8n2gB+H0woBJYbMLOoMKoR6MWX
+         RfENRe522zE+ziZhmfDdMC0JRegbGOUEkKuK1Vap4MahGl15Byrs+gXeWgVYhShFsZPl
+         ilEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8JyAgQcx15fnY/bsqG1lXwxfHi614YDjDUvtCOGkg8a26GjsoLnVyIuU8OdviNliM95NuLWBzbpfMlzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy2j/j0TuAzBGpyFmcjp0R/xANQCA4kGHrFNW4MNxqq5Fgpy4L
+	tDPSCB9QGl0x2a0GO8QlaIhoSGDXSgKACci0h5yDEiXsuCbjG7cFicBP2HpAogI=
+X-Gm-Gg: ASbGncsDxUpM+KSLpxQoPyM/kG+NNWysMFhgNnd3s57pT429guJycGGuU9fjqkl+bP5
+	kp2AB0vfDMUBjb+xiGHkZ09wa+INDnYjXG+MpRyam3eABD3wx5qQbfLGKn/gwl/3vTzYf/Tq96Z
+	NyxEz5MqjMcwDS8lrMxfhGcFMEywcHGCSIunkdXTNx7tuv57dtp5uPmj89Kbrtxn8NnMErTOd4P
+	Qu8k4JJZRPqKNn7WOBJzGiPN/UUZ70/PfOnnHJoiAECLddp7ib9V3YmzfEcv/jkAHJMAP1K4SQI
+	HynixHZE+BOYr3DRQR3TUmIe4z8bbQLPeR8=
+X-Google-Smtp-Source: AGHT+IFL59TB3m783wVOF4vRiqRGMGuRzNrlKCikLNXG8Aeg3JjXdtpMhMqy28LdyLbcgbMlwO5A1w==
+X-Received: by 2002:a05:6512:2316:b0:539:f9b9:e6d2 with SMTP id 2adb3069b0e04-53dc136715emr3144849e87.35.1732181549734;
+        Thu, 21 Nov 2024 01:32:29 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b463abb4sm49876175e9.31.2024.11.21.01.32.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 01:32:29 -0800 (PST)
+Date: Thu, 21 Nov 2024 10:32:28 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] riscv: Call secondary mmu notifier when flushing the
+ tlb
+Message-ID: <20241121-e97820f8c09de9bcedfe885d@orel>
+References: <20240328073838.8776-1-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
-Date: Thu, 21 Nov 2024 10:30:13 +0100
-Cc: Jinpu Wang <jinpu.wang@ionos.com>,
- Haris Iqbal <haris.iqbal@ionos.com>,
- linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org,
- song@kernel.org,
- xni@redhat.com,
- yangerkun@huawei.com,
- yi.zhang@huawei.com,
- =?utf-8?Q?Florian-Ewald_M=C3=BCller?= <florian-ewald.mueller@ionos.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DFAA8E00-E2CD-4BD0-99E5-FD879A6B2057@flyingcircus.io>
-References: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
- <20241119152939.158819-1-jinpu.wang@ionos.com>
- <CAMGffEkODwo19u0EjKojQ0WaWVkvOOB8aRR8R3NXn+oC6TFQWQ@mail.gmail.com>
- <d456368e-cff5-5476-238e-4cc97f016cfa@huaweicloud.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240328073838.8776-1-alexghiti@rivosinc.com>
 
-Hi,
+On Thu, Mar 28, 2024 at 08:38:38AM +0100, Alexandre Ghiti wrote:
+> This is required to allow the IOMMU driver to correctly flush its own
+> TLB.
+> 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+> 
+> Changes in v2:
+> - Rebase on top of 6.9-rc1
+> 
+>  arch/riscv/mm/tlbflush.c | 39 +++++++++++++++++++++++----------------
+>  1 file changed, 23 insertions(+), 16 deletions(-)
+>
 
-> On 21. Nov 2024, at 09:33, Yu Kuai <yukuai1@huaweicloud.com> wrote:
->=20
-> Hi,
->=20
-> =E5=9C=A8 2024/11/21 16:10, Jinpu Wang =E5=86=99=E9=81=93:
->> On Tue, Nov 19, 2024 at 4:29=E2=80=AFPM Jack Wang =
-<jinpu.wang@ionos.com> wrote:
->>>=20
->>> Hi Kuai,
->>>=20
->>> We will test on our side and report back.
->> Hi Kuai,
->> Haris tested the new patchset, and it works fine.
->> Thanks for the work.
->=20
-> Thanks for the test! And just to be sure, the BUG_ON() problem in the
-> other thread is not triggered as well, right?
->=20
-> +CC Christian
->=20
-> Are you able to test this set for lastest kernel?
+Hi Alex,
 
-I have scheduled testing for later today. My current plan was to try =
-Xiao Ni=E2=80=99s fix on 6.6 as that did fix it on 6.11 for me.
+Is this patch still something we need?
 
-Which way forward makes more sense now? Are those two patches =
-independent or amalgamated or might they be stepping on each others=E2=80=99=
- toes?
-
-Christian
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
-
+Thanks,
+drew
 
