@@ -1,99 +1,93 @@
-Return-Path: <linux-kernel+bounces-417738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 377A29D5895
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:34:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469489D5898
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BDD9B228C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:34:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B62001F22C6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FB4159583;
-	Fri, 22 Nov 2024 03:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE40156C5F;
+	Fri, 22 Nov 2024 03:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ErlnXMI3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JsTyKHp4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E949F4D8A3
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A883C18651
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732246474; cv=none; b=H/nFn/ne0lZcSgShjxLW+5ITIGP7YqlYCMnFmfy897Ul4os0Vs/zBTFCl9KgdbmdWpXuo8OBkm5aPeYm0PLtEwsOwhTTpFvz53Q9+zjsiSmX6oMYAVcNw5gacUr6cZ2ZB+I83bZ17w2KHn+MC3UQAxLVISAS9QgSB2v0A83ZlnI=
+	t=1732246554; cv=none; b=kdv/AwJcR9SWmrv1FC7YN+RzYEnS7FyGXKZTCK4Rb5BvnW2ysTQ8fIIEPpCGkv1vK3ZI+Lm7YTyXLNwjuyo+hHdOpfrRTae/k6f5uGL6ShG0MEEtoan5Ut84nwHVXtpIco+YDx9ccJuorbdO5HIhfqL6nXl2MKvpoahZKSNQlYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732246474; c=relaxed/simple;
-	bh=9kkSHX5C/Rzcba5jDJqEPRSjF0ZyIB/tw8lBGgd3K04=;
+	s=arc-20240116; t=1732246554; c=relaxed/simple;
+	bh=KTvFDp9QD5ijXLqnlkxWgnqB3se/WaIsEOe2XJj0bM0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oRySQ8PMH4mLVvwPaMj1QWLWHWLALYt9H1lfqS/IlUYuFB5XT23XZlwLo7KoeK2Xb9WFI+SuJN4oYfStfAA6WJrSKEmja24rf4PFPMEcTjLbndgIyF7QWxAFNn2AQsxeQTPBmLgWh+UzUOtu+TdpP7JowxRoTtG0/Z1xG5z6ppo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ErlnXMI3; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=NfqvkVApFRBkomSe5GQ6gQBdzdMwUjM44zUQKl3pDPrnB4XMxByZsxhxKrLZ5sHtMN1Ss3FoHGeK05noqgBIo9cB2NoTI4PeHF2NP17nBBomMOH/U7wMyhuX7+uX4tCbLjaw0uriZqR/Czjmko2L4+cBenyMWARtce/NKk2S4U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JsTyKHp4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732246472;
+	s=mimecast20190719; t=1732246551;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=5owPybl2A6mPLtXeb0GF8SzCVpIuIgw+HHvE5+2/5T0=;
-	b=ErlnXMI39LEHHWPRlh3+6JgkMT8jF6XezjhG4+EvlDDHwIlLLpK0bQ8m3hlofbAeiGwtvt
-	sZHc6zk+i4wjmgcUBJ6m84T1BMiEeOd8pguhjRK22AGqhG648xBipepFXCNE+VvvlotqI3
-	xjYO2QsAX977c5z8HiQjMGqYbyO0bG4=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=5oMByVgskSlAO+H6dfEVs61hv0tol8zLwPvoHoN0zXQ=;
+	b=JsTyKHp46feWn/62Y//LKw71yFUdpmqlI0v+AbW7GfjDApxCC1eLEsa6syl1gaFEgQ7+nD
+	OCThedOnHf+G1uPqMmrjkELVHV4EoQC48vQ2mMGNOTo0k9dbI/8WsXMEX/W2nnpvwznZSJ
+	vp0HiPR7NSTWM/FLPhwZrzQBp7SnqCM=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-u2WqMItwPqSqxlfVf7FB8Q-1; Thu, 21 Nov 2024 22:34:29 -0500
-X-MC-Unique: u2WqMItwPqSqxlfVf7FB8Q-1
-X-Mimecast-MFC-AGG-ID: u2WqMItwPqSqxlfVf7FB8Q
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7b1473a4640so254292585a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:34:29 -0800 (PST)
+ us-mta-622-0Wn0eqfUONG4dUeRKDxPUQ-1; Thu, 21 Nov 2024 22:35:49 -0500
+X-MC-Unique: 0Wn0eqfUONG4dUeRKDxPUQ-1
+X-Mimecast-MFC-AGG-ID: 0Wn0eqfUONG4dUeRKDxPUQ
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b35b1b9663so522964285a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:35:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732246469; x=1732851269;
+        d=1e100.net; s=20230601; t=1732246549; x=1732851349;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5owPybl2A6mPLtXeb0GF8SzCVpIuIgw+HHvE5+2/5T0=;
-        b=YE2MA/f2JLnLeiHumdNisRcrxkH1vE8q0tz1ukV0oUmvywJhMAIsMfKNXqDUFQ2fom
-         OMTdBTsUBDSRORGDjEuQrcL67D1KCvtY/Caw8aFw1HPpbL2tPAICKPkdy5TYQjBl7nsc
-         cX9keKH0YI87Hzmm0v3F/u/K7ExGhxZJTjMaSsPDRkmVzZc5f/xNy6oMagDXVKv7SnaX
-         62Oos0kmrikoHvsrl+zUNmtfPu1rh1Rj3YXipj1zB1jTwrEYXflgGVhJaY+7h0WI1AFh
-         4E/7RYfNw0bqsjFem8LmdRwL96VlIVfZpm1szOmVkx9CGRp3s9t21nKvbxoGZDkIXeyX
-         HsLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSFsJqaqjfHJZ+rICdM8GfH3C4XBJhnmjPkZvLi1ZRBSH/GyT6uNXqYHqmPxGzQSCeEGqdC/71ag1VkHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3VhPAjZkySj2v5UKMWQxZ2BdmfnRdHbDWSJ98pQj/aXsASsUi
-	eazN1VSRzO5fAe0e9VEZUa8KA5Fk1Sf7pMeIXmACks/VnS7zttIspPpTAzEa4TafGXKrItrleXn
-	UDDORVWXfwBDv0PGgpC/N/LYaclmvVr0SqL/+9g6JzU9E/09QiNpII2uk7nRSmA==
-X-Gm-Gg: ASbGncv2XR10wgHkHo9viSUXSX6O/KIpa6QbFcn9RoVWK4IaVXBNOy8Xp9u5GXJ8Z4H
-	Q+a1YJPDd52Tm4JPmrfe5+H1GjEfRw3QINHciYpCtsyMVLDyEJRJGHpi3nn/4MTALC2zOibouBv
-	Y70LJLfcPtTynwr1bcs2a0GLmLtoGvT5tzlswSs+TBRzabqcATA9oWsWzdkD6XrAHTK0tQkvET1
-	/8ENWo2CSYxRscEFHAIj1BjMAbouFVJNBBMpAdf/eM4Xu/p1w==
-X-Received: by 2002:a05:620a:601c:b0:7b1:21c9:d1ad with SMTP id af79cd13be357-7b50c1bbea5mr922167885a.23.1732246469281;
-        Thu, 21 Nov 2024 19:34:29 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF40kkpOkNoCUj7UXHDVNMT6f685l0ht7e59S+qcPkVWqYBRtbkkFc+AKlw7dYgnr5xBZD8Ig==
-X-Received: by 2002:a05:620a:601c:b0:7b1:21c9:d1ad with SMTP id af79cd13be357-7b50c1bbea5mr922166285a.23.1732246468905;
-        Thu, 21 Nov 2024 19:34:28 -0800 (PST)
+        bh=5oMByVgskSlAO+H6dfEVs61hv0tol8zLwPvoHoN0zXQ=;
+        b=qGCDVr2zGP997MXiM/fgKxYk8rh45jkcBpYiKsDTfUZZriM9pm2BmrqeCVPXcpagCL
+         P36qS8RHGeTKK2nj/JXZ2lg9wLxJMot+7oxhfC0uaOY2UOdQph9URQDBWNecOc9bxk3y
+         vZ4UZQP/+5c6fiPKxpWTFTiFklNnsBO4Wbt4dLlI4Am4UeUvDnpvvbieTKCGHY2RA77C
+         VOWYm/dtrR3vzS18Q/hNpO+OKQna66KNHpCnmlM/xBA2l/ioU43wLLjQP6oEvdUlD3vO
+         WGwp/Agb4PI/Bgn2Bzuq0w7ebWkJ4ETZXyV9ulcfK3QLBm3Qch1YHHIH7DlSEHV/Jgqa
+         f9xg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4mAXGPZIIZ0MBk2Z4E4a5QLFn1Pmwo1vZc5B1GLANrN272/+BjAA8C05iJ3KDGj4Lagq/CJgx4hwV8CE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdlareabwEJCHoZEXDMy04/DsywRwW9m49cB751rmgXFEb2FE3
+	uEokXx2bFZP4Y2DRv6hpz7KMUXUxbBA52TWKupLLn5OPuVqkZZu57GpDkqJ9P0qiSZC9Xt/+Avb
+	lyoumzx2qE5EIF5fzdm7Vt/2iZhQQNyOSBPIoelGN9yxEUmwAIk5oIuJJg/jv7w==
+X-Gm-Gg: ASbGncsN8YqM68P+0gr9oqJ578HrtCwyDCvU+AiTEjlWHDh+XfRvcfDyEL7uKhOF9nj
+	kPPi3a2xuGeUGm6xN8CbQJ5Iwdi8XD6NRKbpbm8ybualQWkEJnG5Vt+JKIeht3s2ctjdQz/Na2v
+	r6k8TUbtToNnDGiRMDelZH8RxmLaRDgKxtb/VFOWuQza40O01L073PeQXEaUC/pTYReslh0hFh7
+	f17caDqq2skpu+GBpte28rye3KS7uM/CaJ0/SlCoS3TlDlcsw==
+X-Received: by 2002:a05:620a:2450:b0:7b2:fa17:f7d7 with SMTP id af79cd13be357-7b51403cdabmr258709785a.6.1732246548982;
+        Thu, 21 Nov 2024 19:35:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFN+J1bJodpM9PMzVK1b6LgI1yRvNPBKfxwy6rPr8dHKDm/izGv3gPubPdaJ5huR5NYalePUA==
+X-Received: by 2002:a05:620a:2450:b0:7b2:fa17:f7d7 with SMTP id af79cd13be357-7b51403cdabmr258708385a.6.1732246548653;
+        Thu, 21 Nov 2024 19:35:48 -0800 (PST)
 Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a837bbsm4922046d6.23.2024.11.21.19.34.27
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b5141537basm44920785a.105.2024.11.21.19.35.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 19:34:28 -0800 (PST)
-Message-ID: <8d7e0d0391df4efc7cb28557297eb2ec9904f1e5.camel@redhat.com>
-Subject: Re: [PATCH v3 0/4] Allow AVIC's IPI virtualization to be optional
+        Thu, 21 Nov 2024 19:35:48 -0800 (PST)
+Message-ID: <c0f7e5b96829407d839d9e5f3907943c4c0f960f.camel@redhat.com>
+Subject: Re: vmx_pmu_caps_test fails on Skylake based CPUS due to read only
+ LBRs
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Will Deacon <will@kernel.org>, 
- linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, Ingo Molnar
- <mingo@redhat.com>,  "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner
- <tglx@linutronix.de>, Joerg Roedel <joro@8bytes.org>, Suravee Suthikulpanit
- <suravee.suthikulpanit@amd.com>,  Robin Murphy <robin.murphy@arm.com>,
- iommu@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 21 Nov 2024 22:34:27 -0500
-In-Reply-To: <Zxf2ZK7HS7jL7TQk@google.com>
-References: <20231002115723.175344-1-mlevitsk@redhat.com>
-	 <ZRsYNnYEEaY1gMo5@google.com>
-	 <1d6044e0d71cd95c477e319d7e47819eee61a8fc.camel@redhat.com>
-	 <Zxb4D_JCC-L7OQDT@google.com> <Zxf2ZK7HS7jL7TQk@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 21 Nov 2024 22:35:47 -0500
+In-Reply-To: <948408887cbe83cbcf05452a53d33fb5aaf79524.camel@redhat.com>
+References: <c9d8269bff69f6359731d758e3b1135dedd7cc61.camel@redhat.com>
+	 <Zx-z5sRKCXAXysqv@google.com>
+	 <948408887cbe83cbcf05452a53d33fb5aaf79524.camel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -102,75 +96,109 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-10-22 at 12:00 -0700, Sean Christopherson wrote:
-> On Mon, Oct 21, 2024, Sean Christopherson wrote:
-> > On Wed, Oct 04, 2023, Maxim Levitsky wrote:
-> > > About the added 'vcpu->loaded' variable, I added it also because it is
-> > > something that is long overdue to be added, I remember that in IPIv code
-> > > there was also a need for this, and probalby more places in KVM can be
-> > > refactored to take advantage of it, instead of various hacks.
+On Sun, 2024-11-03 at 18:32 -0500, Maxim Levitsky wrote:
+> On Mon, 2024-10-28 at 08:55 -0700, Sean Christopherson wrote:
+> > On Fri, Oct 18, 2024, Maxim Levitsky wrote:
+> > > Hi,
+> > > 
+> > > Our CI found another issue, this time with vmx_pmu_caps_test.
+> > > 
+> > > On 'Intel(R) Xeon(R) Gold 6328HL CPU' I see that all LBR msrs (from/to and
+> > > TOS), are always read only - even when LBR is disabled - once I disable the
+> > > feature in DEBUG_CTL, all LBR msrs reset to 0, and you can't change their
+> > > value manually.  Freeze LBRS on PMI seems not to affect this behavior.
+> > > 
+> > > I don't know if this is how the hardware is supposed to work (Intel's manual
+> > > doesn't mention anything about this), or if it is something platform
+> > > specific, because this system also was found to have LBRs enabled
+> > > (IA32_DEBUGCTL.LBR == 1) after a fresh boot, as if BIOS left them enabled - I
+> > > don't have an idea on why.
+> > > 
+> > > The problem is that vmx_pmu_caps_test writes 0 to LBR_TOS via KVM_SET_MSRS,
+> > > and KVM actually passes this write to actual hardware msr (this is somewhat
+> > > wierd),
 > > 
-> > I don't view using the information from the Physical ID table as a hack.  It very
-> > explicitly uses the ir_list_lock to ensure that the pCPU that's programmed into
-> > the IRTE is the pCPU on which the vCPU is loaded, and provides rather strict
-> > ordering between task migration and device assignment.  It's not a super hot path,
-> > so I don't think lockless programming is justified.
-
-If you strongly prefer this I won't argue. KVM does read back its SPTE entries,
-which is also something I can't say that I like that much.
-
-> > 
-> > I also think we should keep IsRunning=1 when the vCPU is unloaded.  That approach
-> > won't run afoul of your concern with signaling the wrong pCPU, because KVM can
-> > still keep the ID up-to-date, e.g. if the task is migrated when a pCPU is being
-> > offlined.
-> > 
-> > The motiviation for keeping IsRunning=1 is to avoid unnecessary VM-Exits and GA
-> > log IRQs.  E.g. if a vCPU exits to userspace, there's zero reason to force IPI
-> > senders to exit, because KVM can't/won't notify userspace, and the pending virtual
-> > interrupt will be processed on the next VMRUN.
+> > When the "virtual" LBR event is active in host perf, the LBR MSRs are passed
+> > through to the guest, and so KVM needs to propagate the guest values into hardware.
 > 
-> My only hesitation to keeping IsRunning=1 is that there could, in theory, be a
-> noisy neighbor problem.  E.g. if there is meaningful overhead when the CPU responds
-> to the doorbell. 
+> Yes, but usually KVM_SET_MSRS doesn't touch hardware directly, even for registers/msrs
+> that are passed through, but rather the relevant values are loaded when the guest vCPU
+> is loaded and/or when the guest is entered.
+> I don't know the details though.
+> 
+> 
+> > > and since the MSR is not writable and silently drops writes instead,
+> > > once the test tries to read it, it gets some random value instead.
+> > 
+> > This just showed up in our testing too (delayed backport on our end).  I haven't
+> > (yet) tried debugging our setup, but is there any chance Intel PT is interfering?
+> > 
+> >   33.3.1.2 Model Specific Capability Restrictions
+> >   Some processor generations impose restrictions that prevent use of
+> >   LBRs/BTS/BTM/LERs when software has enabled tracing with Intel Processor Trace.
+> >   On these processors, when TraceEn is set, updates of LBR, BTS, BTM, LERs are
+> >   suspended but the states of the corresponding IA32_DEBUGCTL control fields
+> >   remained unchanged as if it were still enabled. When TraceEn is cleared, the
+> >   LBR array is reset, and LBR/BTS/BTM/LERs updates will resume.
+> >   Further, reads of these registers will return 0, and writes will be dropped.
+> > 
+> >   The list of MSRs whose updates/accesses are restricted follows.
+> >   
+> >     • MSR_LASTBRANCH_x_TO_IP, MSR_LASTBRANCH_x_FROM_IP, MSR_LBR_INFO_x, MSR_LASTBRANCH_TOS
+> >     • MSR_LER_FROM_LIP, MSR_LER_TO_LIP
+> >     • MSR_LBR_SELECT
+> >   
+> >   For processors with CPUID DisplayFamily_DisplayModel signatures of 06_3DH,
+> >   06_47H, 06_4EH, 06_4FH, 06_56H, and 06_5EH, the use of Intel PT and LBRs are
+> >   mutually exclusive.
+> > 
+> > If Intel PT is NOT responsible, i.e. the behavior really is due to DEBUG_CTL.LBR=0,
+> > then I don't see how KVM can sanely virtualize LBRs.
+> > 
+> 
+> Hi!
+> 
+> 
+> I will check PT influence soon, but to me it looks like the hardware implementation has changed. 
+> It is just too consistent:
+> 
+> When DEBUG_CTL.LBR=1, the LBRs do work, I see all the registers update, although
+> TOS does seem to be stuck at one value, but it does change sometimes, and it's non zero.
+> 
+> The FROM/TO do show healthy amount of updates 
+> 
+> Note that I read all msrs using 'rdmsr' userspace tool.
+> 
+> However as soon as I disable DEBUG_CTL.LBR, all these MSRs reset to 0, and can't be changed.
 
-I once measured this by bombarding a regular CPU, which is not running any guests,
-with AVIC doorbells. It was like 60% reduction of its performance if I remember correctly.
+Hi,
+I tested this on another skylake based machine (Intel(R) Xeon(R) Silver 4214) and I see the same behavior: 
+LBR_TOS is readonly:
 
-So physical id table entries of a VM can't point to a CPU which doesn't run the VM's vCPU thread, because
-only in this case this doesn't pose a DOS risk.
+It's 0 when LBRS disabled in DEBUG_CTL, and running (changes all the time as expected)
+when LBRS are enabled in the DEBUG_CTL.
 
-Same with IOMMU (malicious guest can in theory make an assigned device generate an interrupt
-storm, and then this storm can get redirected to a doorbell of a CPU which doesn't belong to a VM).
+IA32_RTIT_CTL.TraceEn is disabled (msr 0x570 is 0).
 
+Also on this machine BIOS didn't left LBRs running.
+
+I guess we need to at least disable the check in the unit test or at least
+speak with someone from Intel to clarify on what is going on.
+What do you think?
 
 Best regards,
 	Maxim Levitsky
 
+> 
+> I'll check this on another Skylake based machine and see if I see the same thing.
+> 
+> Best regards,
+> 	Maxim Levitsky
+> 
 
 
->  Hrm, and if another vCPU is scheduled in on the same pCPU, that
-> vCPU could end up processing a virtual interrupt in response to a doorbell intended
-> for a different vCPU.
-> 
-> The counter-argument to both concerns is that APICv Posted Interrupts have had a
-> _worse_ version of that behavior for years, and no one has complained.  KVM sets
-> PID.SN only when a vCPU is _preempted_, and so devices (and now virtual IPIs) will
-> send notification IRQs to pCPUs that aren't actively running the vCPU, or are
-> running a different vCPU.
-> 
-> The counter-counter-argument is that (a) IPI virtualization is a recent addition,
-> and device posted interrupts are unlikely to be used in a CPU oversubscribed setup,
-> and (b) Posted Interrupts are effectively rate-limited to a single "spurious"
-> notification per vCPU, as notification IRQs are sent if and only if PID.ON=0.
-> 
-> That said, while I'm somewhat less confident that keeping IsRunning=1 is desirable
-> for all use cases than I was yesterday, I still think we should avoid tightly
-> coupling it to whether or not the vCPU is loaded, because there are undoubtedly
-> setups where it _is_ desirable, e.g. if vCPUs are pinned 1:1 to pCPUs.
-> 
 
 
 
