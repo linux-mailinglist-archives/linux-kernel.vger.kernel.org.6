@@ -1,231 +1,132 @@
-Return-Path: <linux-kernel+bounces-417754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BC49D58C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:00:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D15C9D58C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E371D283551
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70FC280D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA33716BE14;
-	Fri, 22 Nov 2024 03:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EA9158A31;
+	Fri, 22 Nov 2024 04:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boGPS3Kj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qz4Gw5uD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDDB166F33;
-	Fri, 22 Nov 2024 03:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B867603F;
+	Fri, 22 Nov 2024 04:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732247984; cv=none; b=QhP8lay2sopSLcmQyWKGOQ2CL9tgpZzP1E7IiFpwM6E+qqugDLJLzbJQZfBIBICs8uNUZ64xgwOxurrU2yAWIu45QHsWwpM8VjKnf/kTkvxDMV/ocS+Yv+9e5sFqLE56/5zasPb+BLo40xknzjuZAt9Ay9jMZ7uoLb9owmcKIUM=
+	t=1732248042; cv=none; b=OxZ8Uq0bA9Oh6ypHKHFz7WYSVIIHI+xbMXnfYUcq3Tz61B3Ucw6jfVcBD1XnfqxU3kfKmtpRhCyuxWGzQMipNgaL3mKQslb+RpxZEZ+ggQWMLwCKUUnPSpPuXriLFlIKKD2mtJmDrEmeMxNrWWmoGYNniAYBBKDjU25h1XEq8a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732247984; c=relaxed/simple;
-	bh=ys8xt4C56rYtjmOzSwyPtxF10s0x/3VqNIJ+VsmJ0ek=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AuvOMh9DPUokYf2b8UMjmnQ2+mH312ev18STzgqbumhXE8o2XCCCmJheaVIQBfuhrmw5wkIzesf4S7YBICawSIiTQQSkjVFB+kh+pjYLqziUDKyGBHh5tjy3PFpqfJC4GjLDq/GsiQaeOM2TRGbEJvXAYcLVf/z7q/rmOfjR/04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boGPS3Kj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A31C4CECE;
-	Fri, 22 Nov 2024 03:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732247983;
-	bh=ys8xt4C56rYtjmOzSwyPtxF10s0x/3VqNIJ+VsmJ0ek=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=boGPS3KjNDr/KG+j85/+Yj7deoXpbmw5PBgsj4I0/N5N6XBzhDIPJzB7EXeBGsw9G
-	 IkFEk7YvnC/qNEBeIOunDtl1My0YyNf5VV+4uwG8hfs0ie91svLoJSsexyr7Lo5AXT
-	 10+Z6mNku73kl/8WxzKLs4LRR3sE7n9lkDBZeVmTSHJ3bx4WtZSH0KPQFO9Dz0KFHI
-	 um3UcBJJBc5WKhoYk6Wy/cZo0K98eXoktIkWowu5amK325mMQgyxYzc9TeFPceYKQQ
-	 3JFHkFA78CRpCGIJc5zKFh9YmRrbpHBJ8b3mcJCgK6Qlh/8iy3I6zoenUArEuXFuh6
-	 QOVKrXx/OxnHQ==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	peterz@infradead.org,
-	mingo@kernel.org,
-	torvalds@linux-foundation.org
-Cc: oleg@redhat.com,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jolsa@kernel.org,
-	paulmck@kernel.org,
-	willy@infradead.org,
-	surenb@google.com,
-	mjguzik@gmail.com,
-	brauner@kernel.org,
-	jannh@google.com,
-	mhocko@kernel.org,
-	vbabka@suse.cz,
-	shakeel.butt@linux.dev,
-	hannes@cmpxchg.org,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	david@redhat.com,
-	arnd@arndb.de,
-	viro@zeniv.linux.org.uk,
-	hca@linux.ibm.com,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v5 tip/perf/core 2/2] uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
-Date: Thu, 21 Nov 2024 19:59:22 -0800
-Message-ID: <20241122035922.3321100-3-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241122035922.3321100-1-andrii@kernel.org>
-References: <20241122035922.3321100-1-andrii@kernel.org>
+	s=arc-20240116; t=1732248042; c=relaxed/simple;
+	bh=qKIf34OkFC2YM6N84wF8TKhsdSfPIyLMzdhm9Rw6EH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V8WJelEdT7goy67s/W6NiVi5nXv26dcnhNZRuEbMY5a8/Xe9rm4o3eqDDPSdkkvemEK26CuXTLiLBCjZBz0c4skfN+D4xbBj9/4zcuu+bVqrBb2XAtYtwG4fq7OKLkhhEhD5QcWflAQOTiG+LiSAsMyhTjmCJuv3qqxzJFScRWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qz4Gw5uD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1732248035;
+	bh=Rdt/cP7z9YEqAD3dvmt0bKLkrU/L2GCLdQEwhHFtwt0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Qz4Gw5uD9+cpZxGFS7elp9OYxK/3/2wimGhMKaJ0BoP6NlzXRR3eOcfxhdofjYZpc
+	 NhvUYOq8CVlcvgms75+Ei8xlvN2pJn8t++FAAM+PsQzlk6ZFSN+fv2/QEk3qVI/jSW
+	 VbBL7FtH54JmjUV1Cps4px+Pt2ezGmHp246oF53MPq3RSR9ZhMQw/TUzS+OK+JJ2vB
+	 0LNd3qxDk1RXeky3jh+AMAYSeaofNzBBesj7hMkMlypjDQnlYjDanWcqdUTBMbNmaf
+	 rJDqKhwtqCqAxyvky8wDtS6MW4Wz/bqLcHZBfuGSY/PU/ojWhyMXsOB1/s/3RcRWNi
+	 hzCk814HexDZA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XvhGC5YJZz4w2M;
+	Fri, 22 Nov 2024 15:00:35 +1100 (AEDT)
+Date: Fri, 22 Nov 2024 15:00:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Anup Patel <anup@brainfault.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul@pwsan.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Palmer Dabbelt
+ <palmer@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>,
+ Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Subject: linux-next: manual merge of the kvm-riscv tree with the risc-v tree
+Message-ID: <20241122150038.680eab25@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Al/oLvNfFhFhjv6fSzaij77";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Given filp_cachep is marked SLAB_TYPESAFE_BY_RCU (and FMODE_BACKING
-files, a special case, now goes through RCU-delated freeing), we can
-safely access vma->vm_file->f_inode field locklessly under just
-rcu_read_lock() protection, which enables looking up uprobe from
-uprobes_tree completely locklessly and speculatively without the need to
-acquire mmap_lock for reads. In most cases, anyway, assuming that there
-are no parallel mm and/or VMA modifications. The underlying struct
-file's memory won't go away from under us (even if struct file can be
-reused in the meantime).
+--Sig_/Al/oLvNfFhFhjv6fSzaij77
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-We rely on newly added mmap_lock_speculate_{try_begin,retry}() helpers to
-validate that mm_struct stays intact for entire duration of this
-speculation. If not, we fall back to mmap_lock-protected lookup.
-The speculative logic is written in such a way that it will safely
-handle any garbage values that might be read from vma or file structs.
+Hi all,
 
-Benchmarking results speak for themselves.
+Today's linux-next merge of the kvm-riscv tree got a conflict in:
 
-BEFORE (latest tip/perf/core)
-=============================
-uprobe-nop            ( 1 cpus):    3.384 ± 0.004M/s  (  3.384M/s/cpu)
-uprobe-nop            ( 2 cpus):    5.456 ± 0.005M/s  (  2.728M/s/cpu)
-uprobe-nop            ( 3 cpus):    7.863 ± 0.015M/s  (  2.621M/s/cpu)
-uprobe-nop            ( 4 cpus):    9.442 ± 0.008M/s  (  2.360M/s/cpu)
-uprobe-nop            ( 5 cpus):   11.036 ± 0.013M/s  (  2.207M/s/cpu)
-uprobe-nop            ( 6 cpus):   10.884 ± 0.019M/s  (  1.814M/s/cpu)
-uprobe-nop            ( 7 cpus):    7.897 ± 0.145M/s  (  1.128M/s/cpu)
-uprobe-nop            ( 8 cpus):   10.021 ± 0.128M/s  (  1.253M/s/cpu)
-uprobe-nop            (10 cpus):    9.932 ± 0.170M/s  (  0.993M/s/cpu)
-uprobe-nop            (12 cpus):    8.369 ± 0.056M/s  (  0.697M/s/cpu)
-uprobe-nop            (14 cpus):    8.678 ± 0.017M/s  (  0.620M/s/cpu)
-uprobe-nop            (16 cpus):    7.392 ± 0.003M/s  (  0.462M/s/cpu)
-uprobe-nop            (24 cpus):    5.326 ± 0.178M/s  (  0.222M/s/cpu)
-uprobe-nop            (32 cpus):    5.426 ± 0.059M/s  (  0.170M/s/cpu)
-uprobe-nop            (40 cpus):    5.262 ± 0.070M/s  (  0.132M/s/cpu)
-uprobe-nop            (48 cpus):    6.121 ± 0.010M/s  (  0.128M/s/cpu)
-uprobe-nop            (56 cpus):    6.252 ± 0.035M/s  (  0.112M/s/cpu)
-uprobe-nop            (64 cpus):    7.644 ± 0.023M/s  (  0.119M/s/cpu)
-uprobe-nop            (72 cpus):    7.781 ± 0.001M/s  (  0.108M/s/cpu)
-uprobe-nop            (80 cpus):    8.992 ± 0.048M/s  (  0.112M/s/cpu)
+  arch/riscv/include/uapi/asm/kvm.h
 
-AFTER
-=====
-uprobe-nop            ( 1 cpus):    3.534 ± 0.033M/s  (  3.534M/s/cpu)
-uprobe-nop            ( 2 cpus):    6.701 ± 0.007M/s  (  3.351M/s/cpu)
-uprobe-nop            ( 3 cpus):   10.031 ± 0.007M/s  (  3.344M/s/cpu)
-uprobe-nop            ( 4 cpus):   13.003 ± 0.012M/s  (  3.251M/s/cpu)
-uprobe-nop            ( 5 cpus):   16.274 ± 0.006M/s  (  3.255M/s/cpu)
-uprobe-nop            ( 6 cpus):   19.563 ± 0.024M/s  (  3.261M/s/cpu)
-uprobe-nop            ( 7 cpus):   22.696 ± 0.054M/s  (  3.242M/s/cpu)
-uprobe-nop            ( 8 cpus):   24.534 ± 0.010M/s  (  3.067M/s/cpu)
-uprobe-nop            (10 cpus):   30.475 ± 0.117M/s  (  3.047M/s/cpu)
-uprobe-nop            (12 cpus):   33.371 ± 0.017M/s  (  2.781M/s/cpu)
-uprobe-nop            (14 cpus):   38.864 ± 0.004M/s  (  2.776M/s/cpu)
-uprobe-nop            (16 cpus):   41.476 ± 0.020M/s  (  2.592M/s/cpu)
-uprobe-nop            (24 cpus):   64.696 ± 0.021M/s  (  2.696M/s/cpu)
-uprobe-nop            (32 cpus):   85.054 ± 0.027M/s  (  2.658M/s/cpu)
-uprobe-nop            (40 cpus):  101.979 ± 0.032M/s  (  2.549M/s/cpu)
-uprobe-nop            (48 cpus):  110.518 ± 0.056M/s  (  2.302M/s/cpu)
-uprobe-nop            (56 cpus):  117.737 ± 0.020M/s  (  2.102M/s/cpu)
-uprobe-nop            (64 cpus):  124.613 ± 0.079M/s  (  1.947M/s/cpu)
-uprobe-nop            (72 cpus):  133.239 ± 0.032M/s  (  1.851M/s/cpu)
-uprobe-nop            (80 cpus):  142.037 ± 0.138M/s  (  1.775M/s/cpu)
+between commit:
 
-Previously total throughput was maxing out at 11mln/s, and gradually
-declining past 8 cores. With this change, it now keeps growing with each
-added CPU, reaching 142mln/s at 80 CPUs (this was measured on a 80-core
-Intel(R) Xeon(R) Gold 6138 CPU @ 2.00GHz).
+  1851e7836212 ("RISC-V: KVM: Allow Smnpm and Ssnpm extensions for guests")
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- kernel/events/uprobes.c | 45 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+from the risc-v tree and commit:
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index c4da8f741f3a..3f5577d4032a 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2295,6 +2295,47 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
- 	return is_trap_insn(&opcode);
- }
- 
-+static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
-+{
-+	struct mm_struct *mm = current->mm;
-+	struct uprobe *uprobe = NULL;
-+	struct vm_area_struct *vma;
-+	struct file *vm_file;
-+	loff_t offset;
-+	unsigned int seq;
-+
-+	guard(rcu)();
-+
-+	if (!mmap_lock_speculate_try_begin(mm, &seq))
-+		return NULL;
-+
-+	vma = vma_lookup(mm, bp_vaddr);
-+	if (!vma)
-+		return NULL;
-+
-+	/*
-+	 * vm_file memory can be reused for another instance of struct file,
-+	 * but can't be freed from under us, so it's safe to read fields from
-+	 * it, even if the values are some garbage values; ultimately
-+	 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
-+	 * that whatever we speculatively found is correct
-+	 */
-+	vm_file = READ_ONCE(vma->vm_file);
-+	if (!vm_file)
-+		return NULL;
-+
-+	offset = (loff_t)(vma->vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vma->vm_start);
-+	uprobe = find_uprobe_rcu(vm_file->f_inode, offset);
-+	if (!uprobe)
-+		return NULL;
-+
-+	/* now double check that nothing about MM changed */
-+	if (mmap_lock_speculate_retry(mm, seq))
-+		return NULL;
-+
-+	return uprobe;
-+}
-+
- /* assumes being inside RCU protected region */
- static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swbp)
- {
-@@ -2302,6 +2343,10 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
- 	struct uprobe *uprobe = NULL;
- 	struct vm_area_struct *vma;
- 
-+	uprobe = find_active_uprobe_speculative(bp_vaddr);
-+	if (uprobe)
-+		return uprobe;
-+
- 	mmap_read_lock(mm);
- 	vma = vma_lookup(mm, bp_vaddr);
- 	if (vma) {
--- 
-2.43.5
+  97eccf7db4f2 ("RISC-V: KVM: Add Svade and Svadu Extensions Support for Gu=
+est/VM")
 
+from the kvm-riscv tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/riscv/include/uapi/asm/kvm.h
+index 4f24201376b1,85bbc472989d..000000000000
+--- a/arch/riscv/include/uapi/asm/kvm.h
++++ b/arch/riscv/include/uapi/asm/kvm.h
+@@@ -175,8 -175,8 +175,10 @@@ enum KVM_RISCV_ISA_EXT_ID=20
+  	KVM_RISCV_ISA_EXT_ZCF,
+  	KVM_RISCV_ISA_EXT_ZCMOP,
+  	KVM_RISCV_ISA_EXT_ZAWRS,
+ +	KVM_RISCV_ISA_EXT_SMNPM,
+ +	KVM_RISCV_ISA_EXT_SSNPM,
++ 	KVM_RISCV_ISA_EXT_SVADE,
++ 	KVM_RISCV_ISA_EXT_SVADU,
+  	KVM_RISCV_ISA_EXT_MAX,
+  };
+ =20
+
+--Sig_/Al/oLvNfFhFhjv6fSzaij77
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdAAeYACgkQAVBC80lX
+0GxHgAf/f+vqaqPuN77tVobiLbHp9RaHeV0poD+mUubimEjqTsDzB2a7MF60AsWE
+gHNnYdCfPhGOBSBvMUsBM3zO4v9YlSjuUTYQ/fDsfqhoiP8iSbGlfbAz8yfP8WWd
+96qtYcJB7+cX6ggD/lA4soLCcUu3S62yePqiRRRwm6FHYapYtdYXxDOvgY7kkitd
+9aC8tiI7yXTUzqB5cLhNKmK7eqzeSkY1SHi9F4rIhcBorX/XXJOLQL0kQx1HVGl6
+5Z45e9o5XW+OF4Po3vJGSh1EB+HXPLNJ98wvIVZYHmQXbnVDOuoACUQmipGwQMTV
+8rS3U4RdjHHlJaaXnXsNIP9qZPkfhQ==
+=qgFg
+-----END PGP SIGNATURE-----
+
+--Sig_/Al/oLvNfFhFhjv6fSzaij77--
 
