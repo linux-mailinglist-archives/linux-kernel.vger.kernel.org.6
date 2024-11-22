@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-418066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1F739D5C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:58:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304149D5C99
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 472CAB259F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4AF028284C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729701DC1B7;
-	Fri, 22 Nov 2024 09:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A632D1DE3AA;
+	Fri, 22 Nov 2024 09:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GKqnaG9p"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2070.outbound.protection.outlook.com [40.107.92.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="famk3Dyq"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAB91D63FC;
-	Fri, 22 Nov 2024 09:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732269445; cv=fail; b=fhGAmuuAPBr/eUa3VxnlyFtX6CTWohocm5mckuVYs3qw4X0b9g0tOQPdjTS1Xj6hYQC37ReTW0CAgiczAyi2BV7ItxHJv6xzYCZ/FOsFYC7UF7yo212uHvy2XMyyuNm1g9pDNTFRgZoId2oj/47lTKnpdnY+fNN3zWzBfylSpb8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732269445; c=relaxed/simple;
-	bh=3CZ+mHqjNZuKuoFt5h/Dzy+0DvFsjt2wUunbGRE/Js8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GOsXT9XkQ+zhOZbVjijCYdBWVLzAnluycPzt4jY6Uy0aRn3QSKldo3OfWC0O9YUIl4Tn8L6iYFxna5VPP4TfCgMqxtU//Fa7OtuQ4JZG4TkOtdNWQ3ZpuLeVkoOcvKOtkNLpEZUnsho8g7206WIIYq2ijPZNRGnOvUh7/ZQv7Nw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GKqnaG9p; arc=fail smtp.client-ip=40.107.92.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qzk54WaBoQIedqASaDVkDXo0htK1XfRUq8cEc3SASClcMw9meElj2NiCPVaMKin/VKLuvhPM3JJ6TB0E8Ht0bQY1LEWRHE04H6xA2nQaS7U6c1C+F1rXnsQTwtTYpE8E+B12Yxp1ClsrYhNkntuPQ5sTeK4VPdbPFDOh/c9Qd4oD8dPccGX+kzw09xNTO603bEEAfEpAA1iq9fDJIwzY/gy9KWiuHuVlmcuusaVkW4Y1RG71T76OdISqyct+GzVrXJEFdDk7+zgpIiXatFfivX4MIvXbeS/AIPZtD8J59nS5B6/EeNGS9kqIPuX3KHbDKuWgh2pvvdTgj1O64oKQHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4rdeCnBSJluG5jTTgeN6PQcOlpDr2fg/d8wdCEXhE6s=;
- b=NPX1ZchGw/ZW5WAyt3fN+okgumR5Wcl0hpC03QuFfhEv4rIe9EbVCaLWV/IXwGMCSayCruTGXj/xD3b5KKAWwmMrlXPJEmnqGEa1QA6yo9DcyQ+H5TWhHUna4vuFNPe7Cbh3fZqPfNkM3Rwkp32rDmse8YjF6r/H2npIoJbcKSP4rOhaP7LDzGBNce8C3tZrpOL67r+EVl1FTmsqAU7E/CaE2iHC2rPUduWi8rltmwXbEfiBDJxYx/mOLcNpr0gm84gaWYIHamiUT7VRaBUuOXenPodHWQIypYss7/cnERnknHSCkS4woJPeYyMutwRwtCNRmXws8nR95i6VLhKDAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4rdeCnBSJluG5jTTgeN6PQcOlpDr2fg/d8wdCEXhE6s=;
- b=GKqnaG9pTWvFqFYXFsGiv+hHUctZ9RXgYTygHxgW633msBXnXK/CYI/rNcSuyRSEcGDRuesy/MOeZyR4m1bQsozk1CIt+IrxFqnOhTkFjffnwg//FbODgkOF3xwGoy1Zqa8UthGbQJMNvkFx1PbrzHhH3x6LjxQqH6qUXN0tXwI=
-Received: from BN7PR06CA0046.namprd06.prod.outlook.com (2603:10b6:408:34::23)
- by PH8PR12MB7327.namprd12.prod.outlook.com (2603:10b6:510:215::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Fri, 22 Nov
- 2024 09:57:15 +0000
-Received: from BL6PEPF00022573.namprd02.prod.outlook.com
- (2603:10b6:408:34:cafe::20) by BN7PR06CA0046.outlook.office365.com
- (2603:10b6:408:34::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24 via Frontend
- Transport; Fri, 22 Nov 2024 09:57:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.12) by
- BL6PEPF00022573.mail.protection.outlook.com (10.167.249.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 09:57:14 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Nov
- 2024 03:57:13 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 22 Nov
- 2024 03:57:13 -0600
-Received: from xsjwillw50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 22 Nov 2024 03:57:13 -0600
-From: Naman Trivedi <naman.trivedimanojbhai@amd.com>
-To: <robh@kernel.org>, <michal.simek@amd.com>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <senthilnathan.thangaraj@amd.com>
-CC: <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] arm64: zynqmp: add clock-output-names property in clock nodes
-Date: Fri, 22 Nov 2024 01:57:12 -0800
-Message-ID: <20241122095712.1166883-1-naman.trivedimanojbhai@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD2C1D79BB;
+	Fri, 22 Nov 2024 09:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732269475; cv=none; b=c49Q0J+8N6+W86LAyGla4B6fGWLWh/2Qd5AwH9mOFK0Ohj69r97QV/mJ2meU54sUFQwQweSAsvVT4FH0h92mPk38dpl5ZjOIsXxA9K7H+R4vV5Tpbsr0Iu1fE7n18VSZJusI6SgckjKRucnPv0UezaGdRyKTaOKV2RAqb3oZ/ls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732269475; c=relaxed/simple;
+	bh=DROrcZMktV46vS9hDs7wxjs4RZ7k0PD0goqABW4Ck0M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XM7wlG1gpMyi9oXNQIs2YXObqv2wyuMEyuAv0LGCT5hh8HiG7lXfN//xTdLcm6chIee2AaWjky4wBqksBandAH08T8NJFA+sObQWrMKSfB87fWaxs67loXk7Z7h0hHJvI7vhJc4CZwTCJcLXNk+NLd966Q2zNkwzleH6YIrSTWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=famk3Dyq; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ef275b980so306199366b.0;
+        Fri, 22 Nov 2024 01:57:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732269471; x=1732874271; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z1YNjxFnMu7YgunhEkueJiGg2Ls9YnMrEIaJQYBXqDw=;
+        b=famk3DyqqooLn+AVJMnuQTkk+x9k7D0uFoBEnTeOJmTUJf9X2LXcP6OK2/Qo+td7M4
+         p9N/7x9c+Awr41ewcmhutzILiAYyrBmp376FlQ58oU7Ds78evRqHQddtb0yjHiqOl+I4
+         FoWa7tIMEPp82PfDinHBgRK9RpUbZbo4YXXQnihA6z2cKsLmXFOKb3lzzLcKelUIgrnI
+         PgI33VoLqUak6j48B//Y7+WyoCpjyzgy/1qU1X+wCxHZtV5DR+WD+Ga2fsvtBayuRXvf
+         TqMoDKpcfpqpLxiKOmBsNvxuuJEjKy1+ctXkseWur3gqTuG2rAaXVMz7NAMkT51h1vQe
+         6m/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732269471; x=1732874271;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z1YNjxFnMu7YgunhEkueJiGg2Ls9YnMrEIaJQYBXqDw=;
+        b=f+Zl4hksWEXulQTu4LDeZLBeW7P3kLEqE74O7OMRENa50/jJ5E8dDL4VrW1pe+H7YY
+         0auwTRxlcGzjz19Czdb4sI8FH5uVZdeJ0anf6JOXUrO/gDxxkG4146DuCNIISIysqDti
+         vOg+palQmqC0yP69QWjNl6i5A4uHIDI0FEC+t5St+UTJcPfrRnKFq9Cd0PCbJPqspoRL
+         g7VKgt1xSBTwywQ8Z+EsoWPs8JokXCmAxlZSWFVKy98sRtwWGNL7v/gl6O+SUFAyCD4W
+         YW6sXTRE8m6zYr5ABosMgGDPZZFgH9p8qazyFliX/oqBwFt+NlbHuHEm4Ge2t1kKgJct
+         l6RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUM0P8N8uTrcbMAJ6Q/MPQPgr9qVqlWE+zD/excxYVDMGjKY2P2i56I3RQRHq2ZI4Rxkb7DYmMUuL1KGeqUZg==@vger.kernel.org, AJvYcCVOCuU21fN4PVEJbmaq5b24lgaMt4ei+7STrsRljg78eG37fCQXJh78OBE28+1VDBm8yYEvHxuvzyrv9qpW@vger.kernel.org, AJvYcCXetUxdz84lYpbepKVx4mAYLJHTfl0IhcS4n7mYigyN88otwZPaH+IhWT4mYVr5zDYGwh3YFInB0A1Kl+wE@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+2BGdc1Qc7ljjXSM8hjhjxD0A4axJKI2UJ4T3SMQkQ/N/Ph3X
+	6to2SwGUVNGVr5CuSfzcVgPQlkvjIbvSnRmcKauTeyiLd4bpyilf
+X-Gm-Gg: ASbGncvvegx3n958xIVEiK47E+Ta60GgCK7GUWU3ZLusiyI6TGO0Hp6k2Ig1xPaNWrp
+	PMIUfn0BoaOsLNONfliqiXfikQBDfjNzHk7+lVMPRyMlfrr31VzWniZczpK7LnOZVPjz7Wtbf1G
+	CitCkfFlA3/B6cLibzW5exCcWlWJ4HRAvwEz0HTEUg2aKGR6Vv9aEe8cnRunRNRucNG5PEOkPIA
+	TpXmnnkmEmBsL2JyWsl4cYMuCrG8BF9xrKnvSmHDswYeULS+v3wf9SVEouwVtKM4EjaugljcLMi
+	R3LA+jraPZTDYKlzJYLIoUl/r2DbfOpcu4GYHUKqWsVQQnc=
+X-Google-Smtp-Source: AGHT+IGlXtYvtFI2fCcfNTMjkok1wT9AVTZQ1CDek+TBZjQJfwlcWeDAxmdNY1dtnE+KYuSIWXrzsQ==
+X-Received: by 2002:a17:907:2718:b0:a99:c075:6592 with SMTP id a640c23a62f3a-aa509c0d6dbmr192813266b.56.1732269471061;
+        Fri, 22 Nov 2024 01:57:51 -0800 (PST)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b530aa0sm77567866b.115.2024.11.22.01.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 01:57:50 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: [GIT PULL] overlayfs updates for 6.13
+Date: Fri, 22 Nov 2024 10:57:46 +0100
+Message-Id: <20241122095746.198762-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,123 +87,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022573:EE_|PH8PR12MB7327:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7b243870-f736-4402-9d5e-08dd0adc0a98
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QvhdRRlLviOOleRwtcKWYnCvUpR5XUG+CFAfZURlXS78CeqxT1/FHqYtHBh9?=
- =?us-ascii?Q?xpPL80qEcGgWA5sDOhHJz+4EC0eQ8hWzew+25YGrfZFJ3qmaYKWaVr25Ex8U?=
- =?us-ascii?Q?ZLGTv2cQj7XeZBeWvsnB32sxYDlPEhNaE6iucJUwmDQcxD4TdQcojuZYr3Tu?=
- =?us-ascii?Q?AfO+4wsAtAS3nfmarYEjyG8E6SzW/eg4kDiUT/YM9Qc4+h0PwiWpfl8u1x+V?=
- =?us-ascii?Q?4LIZNj0nBjm/VASlAHyELziuiXPmbExPY+upq2XIdCwT63gwwt5XEMafKQG2?=
- =?us-ascii?Q?jvPDqG9guxZ1eM/HBfbVFPd58fvKCXeBUOIe8BRbVrqNcPtp1Bcvj+SfCWRN?=
- =?us-ascii?Q?67peBesXQDg03jsKz2zzQCevovbPJMav7g3VNL8zaZua9g9EYWzVrridxF8b?=
- =?us-ascii?Q?oRmdTqsDD/4wCSDzcBGYUQ5dNhFK9fS2xKG7QqH5psKyEMQiDrvTO0TpA3j+?=
- =?us-ascii?Q?TvlWUlhzXr+7hRhRXTc4IKucPDUZkzR48/XyvDE1xMKGTTZTkTstnfjAgVao?=
- =?us-ascii?Q?3ZhNM2CNxbgWhLMNF3KndX/qA1uu8UbOo1Rs4VcChF6iWWhhI1A4jD7j6NbM?=
- =?us-ascii?Q?2vAGGxYyHoWDCAukm1A+Hvhx6huaLmrQTdkBbkMJbG9ui22MuJNqfAFai6xv?=
- =?us-ascii?Q?lg5tHuULPbvFLCLntj+s9rRkU5R5dRE4hAQ/Sa7MWPqzJuFBujXMiE/LgRUV?=
- =?us-ascii?Q?pZnKzzGxxbDRYo05I6kqplemtaM7iyEpFmom6Ec+qg+rcxaBVoXi3LYjKtct?=
- =?us-ascii?Q?5SLlwgMbOcnCmTz1uJcpu1/UuRVE0aBoWZb/CJAHNBKRgSE+ycq9NdwTxc/h?=
- =?us-ascii?Q?J9NdHrCh38yxfA3/YeMAOFNwYLk2sGxBvQbpzbnYzP4EgpOg3s15AilrcdGz?=
- =?us-ascii?Q?EtCkbnlX0iUOs+ZoCDtryBQbsyMn7cTplvX+w2LUdRMkh7Aa5evAgwlrnAr4?=
- =?us-ascii?Q?A7+A00VdrWCkCmVgXlUEoPgTM1ZyBGn2kqxiEwB41RlT8TrZBDGxpXDuoXqq?=
- =?us-ascii?Q?hJQbo2I3VmTBxvJxmDUEKATfNIsE6yvYcsYVi9jYK383BfUTr9ekaDHmVn6Y?=
- =?us-ascii?Q?gihaZE3GMe41vIkn2VcVEqzl3szwKm7bmUde00tfdVHzzI8s4MKEgO9wbzMm?=
- =?us-ascii?Q?Dg5QzB1lZurnsozKjBEHTGp4TTkUeMxMqGI9ZaJ0bIe8iPSsmlMDgRcSrQ3w?=
- =?us-ascii?Q?sVeRe2+YauNXdZW4q2SuiVRWFtGFhHpyivJJRqvJHYikUGmWmMrBq5RWUdYI?=
- =?us-ascii?Q?4tcCOXgX2kWrkF+/OHurX/bumMY735dLV5WMb+n6xsxRjnGjhmcw46sGsfNc?=
- =?us-ascii?Q?ND0czxN+wXWtD8kecWNdU9GmNRA0hdO2gHmG3f148ySzQ5h32cXj4+AV/PEV?=
- =?us-ascii?Q?cdiqS14=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 09:57:14.2085
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7b243870-f736-4402-9d5e-08dd0adc0a98
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022573.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7327
 
-Add clock-output-names property to clock nodes, so that the resulting
-clock name do not change when clock node name is changed.
-Also, replace underscores with hyphens in the clock node names as per
-dt-schema rule.
+Hi Linus,
 
-Signed-off-by: Naman Trivedi <naman.trivedimanojbhai@amd.com>
----
-v1: https://lore.kernel.org/all/c5d6effa-bdcf-49e3-a4bf-3713db889b70@kernel.org
-Changes v1 -> v2:
-- Fix the clock node names by replacing underscore with hyphen.
----
- arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+Please pull overlayfs updates for 6.13.
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
-index 60d1b1acf9a0..385fed8a852a 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-clk-ccf.dtsi
-@@ -10,39 +10,44 @@
- 
- #include <dt-bindings/clock/xlnx-zynqmp-clk.h>
- / {
--	pss_ref_clk: pss_ref_clk {
-+	pss_ref_clk: pss-ref-clk {
- 		bootph-all;
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <33333333>;
-+		clock-output-names = "pss_ref_clk";
- 	};
- 
--	video_clk: video_clk {
-+	video_clk: video-clk {
- 		bootph-all;
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <27000000>;
-+		clock-output-names = "video_clk";
- 	};
- 
--	pss_alt_ref_clk: pss_alt_ref_clk {
-+	pss_alt_ref_clk: pss-alt-ref-clk {
- 		bootph-all;
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <0>;
-+		clock-output-names = "pss_alt_ref_clk";
- 	};
- 
--	gt_crx_ref_clk: gt_crx_ref_clk {
-+	gt_crx_ref_clk: gt-crx-ref-clk {
- 		bootph-all;
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <108000000>;
-+		clock-output-names = "gt_crx_ref_clk";
- 	};
- 
--	aux_ref_clk: aux_ref_clk {
-+	aux_ref_clk: aux-ref-clk {
- 		bootph-all;
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <27000000>;
-+		clock-output-names = "aux_ref_clk";
- 	};
- };
- 
--- 
-2.25.1
+This pull request has some changes in code outside of fs/overlayfs:
 
+1. The backing_file API change touches fuse code - that was collaborated
+   with Miklos who authored this API change
+
+2. The additions of revert/override_creds_light() helpers in cred.{h,c}
+   were collaborated with Christian who has suggested those helpers
+
+There was also an overlayfs change in this cycle coming from Christian
+(file descriptors based layer setup).  His changes do not conflict with
+this branch and I have also tested his change along with the fs-next
+community test branch.
+
+Most of this branch has been sitting in linux-next for over a week except
+for one syzbot issue fix that was added three days ago.
+
+The code has gone through the usual overlayfs test routines.
+
+The branch merges cleanly with master branch of the moment.
+
+Thanks,
+Amir.
+
+----------------------------------------------------------------
+The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+
+  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-update-6.13
+
+for you to fetch changes up to c8b359dddb418c60df1a69beea01d1b3322bfe83:
+
+  ovl: Filter invalid inodes with missing lookup function (2024-11-20 10:23:04 +0100)
+
+----------------------------------------------------------------
+overlayfs updates for 6.13
+
+- Fix a syzbot reported NULL pointer deref with bfs lower layers
+
+- Fix a copy up failure of large file from lower fuse fs
+
+- Followup cleanup of backing_file API from Miklos
+
+- Introduction and use of revert/override_creds_light() helpers, that were
+  suggested by Christian as a mitigation to cache line bouncing and false
+  sharing of fields in overlayfs creator_cred long lived struct cred copy.
+
+- Store up to two backing file references (upper and lower) in an ovl_file
+  container instead of storing a single backing file in file->private_data.
+
+  This is used to avoid the practice of opening a short lived backing file
+  for the duration of some file operations and to avoid the specialized use
+  of FDPUT_FPUT in such occasions, that was getting in the way of Al's
+  fd_file() conversions.
+
+----------------------------------------------------------------
+Amir Goldstein (6):
+      ovl: pass an explicit reference of creators creds to callers
+      ovl: do not open non-data lower file for fsync
+      ovl: allocate a container struct ovl_file for ovl private context
+      ovl: store upper real file in ovl_file struct
+      ovl: convert ovl_real_fdget_path() callers to ovl_real_file_path()
+      ovl: convert ovl_real_fdget() callers to ovl_real_file()
+
+Miklos Szeredi (1):
+      backing-file: clean up the API
+
+Oleksandr Tymoshenko (1):
+      ovl: properly handle large files in ovl_security_fileattr
+
+Vasiliy Kovalev (1):
+      ovl: Filter invalid inodes with missing lookup function
+
+Vinicius Costa Gomes (4):
+      cred: Add a light version of override/revert_creds()
+      fs/backing-file: Convert to revert/override_creds_light()
+      ovl: use wrapper ovl_revert_creds()
+      ovl: Optimize override/revert creds
+
+ fs/backing-file.c            |  53 ++++---
+ fs/fuse/passthrough.c        |  32 +++--
+ fs/overlayfs/copy_up.c       |   2 +-
+ fs/overlayfs/dir.c           |  68 ++++++---
+ fs/overlayfs/file.c          | 327 +++++++++++++++++++++++++------------------
+ fs/overlayfs/inode.c         |  27 ++--
+ fs/overlayfs/namei.c         |  10 +-
+ fs/overlayfs/overlayfs.h     |   4 +
+ fs/overlayfs/readdir.c       |   8 +-
+ fs/overlayfs/util.c          |  14 +-
+ fs/overlayfs/xattrs.c        |   9 +-
+ include/linux/backing-file.h |  11 +-
+ include/linux/cred.h         |  18 +++
+ kernel/cred.c                |   6 +-
+ 14 files changed, 352 insertions(+), 237 deletions(-)
 
