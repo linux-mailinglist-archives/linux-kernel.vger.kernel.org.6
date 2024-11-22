@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-418404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0C09D6143
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:18:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5AD9D6147
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:21:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D201603C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:21:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6076F30C;
+	Fri, 22 Nov 2024 15:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ma1GLpGc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 005AF2816FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:18:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A05057CBE;
-	Fri, 22 Nov 2024 15:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvYCgY7M"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF71B2309BF;
-	Fri, 22 Nov 2024 15:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17282309BF;
+	Fri, 22 Nov 2024 15:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732288703; cv=none; b=O1wDxSzioyhYs5vr2ckXPBzW8//qJo5wJNchCjjAT7LP3GNk2okVnbC59eg4WbN42iFEaBZ4w6s1sY4iFcdu6X74t5M6SeyF7Xqt8ke7EsSTsdRATObNR1pi3SBxXrqWnJS9bnBX3qC/qrllFUoY+CRLN+0nR+FB1AKiH1ccYM4=
+	t=1732288866; cv=none; b=MN/ENGx0cZOOSbToZmRDwQiCvC/2q+NZhBGYq7b/l+VgQD9iOaBpa9ASr7b57pzF+Xj/6qbaAn+rO1UMcQ2SzL+az7t+JL7GmvMC1A07Iiob6fR3Jrzvls1w/r/6EVTEXHpV7FOtt8PnDzeOqk+kXJbBRWFs7EubRcZ0CMoCHfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732288703; c=relaxed/simple;
-	bh=hn1Y560QVQ0Uknl6r7bzviI2BE7dU0uOMrfSfl65Mw4=;
+	s=arc-20240116; t=1732288866; c=relaxed/simple;
+	bh=7pz32RbN7KvAwY8Z4VR7ySVX87cMIOLDDNQdlcRElAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaIL2Xlv9QCHgEFQLX0SzzXR4HnrG/Tqqe5rUaXSmZWwgxP/fBXL7XP/rYqMN+QZMlVzFJ8tmb9sTw3HKU5iEe8foEFR/5KDgCpQedhpDlDEnFGJHoB/NOlGBtECBOIDpNFmyIGsJzrSGL2k8vou5cWyJ6MF0a9Ry3K8bjY4DDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvYCgY7M; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1942380a12.2;
-        Fri, 22 Nov 2024 07:18:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732288700; x=1732893500; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0mC0ibQILczdDOL3K7/Vw0e389ozSt7wo4Pk380de68=;
-        b=DvYCgY7Mr0Iwh8ftoVXU/oZvDoRvOkq6MrZKwTVYY6HoisqEkZQvcBL4egZP7ZaFUs
-         83Ity1MkMl3QmZgp5gpb/2CBQyBKaADay2M9qKgfF/y6jnCYNJ0U6jlVby8+b27vXJT3
-         V1MG4DnocxLS6iX71DR0kXU3d7zwaTiNDdo+QYtsy/3cj3lnfwBgbCQZaiSvPmhQQlAJ
-         x/Cbaw9BOvF7b6bT3TMoAsKh4c0yqkqSg0kK4ADYCs1fw0ZiSWsZd+sMk4rs7ddiKU8x
-         uJp2HNHSCoia2lP3jfxxiTWbyHwrobmycvG3qtGgpDoiiBHpB2ZwZ5zMnmN7Y1icuBKd
-         +0Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732288700; x=1732893500;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0mC0ibQILczdDOL3K7/Vw0e389ozSt7wo4Pk380de68=;
-        b=EQ0qyMh1D1c5ImXNVEMzOk/7mTWFcmqt/+IJCJkjYvEwonADRMAB1sI9xT1I/aI6ut
-         l0ZX/HwqHO+P3sC6DM4Yq0W5wjP8Vt+SkGkFXAwpBsFNLR/8abyKaS6rlwngSa2lmHft
-         gj8tgPSnUCQvQ5511QIme7kAW6StYP96kcnSGDrvLwW6yj8M1ftY3cmjeonXZuu/cQlv
-         gKRNHfEWAcMhW5NYFJUnca5n0ZsaxVJZV77hrPIxI61z9qvfNy3FFPKKJJIoTrwIP1D4
-         WBZH3B8wHDzj6tzKP2SOQCC367BpqO2G25cSboG/qC5FRt8JezcBEnlGn3AVb6brhP8d
-         nRyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6yCOVb+vZKKb5xTz/sMxi1GyLmqYsKCYgpjBlRVYl7opjdO1gnP+1f9+GBuWYkrcBeVkv5R7JYY9QJOE=@vger.kernel.org, AJvYcCV5Y8oJEIwfD2ecSRrTm7hRbgoq0mePZvzdYbEPzOt6wmr3sFUYFC7kJ5DJMov0dWede2LpigEsn85zU/+o@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxVpIBUZOZVII6IHNB3Q4LfkqdoT8NWS6v5gqhzNyg2TLvSgpL
-	5l2SjzCP/EOFlx+VKneQIlmCdfX5nolO5v78K/MP3LKX9k6+n1Pa
-X-Gm-Gg: ASbGncvVqJBQDpPDoMmVjwvyKL+Y3UUluTX192qTmkZGfGRe+Wsc1Mw6ri0vRClvGcb
-	hWfAPqY0DP3uQ1yfH9d2k+fW/OXRSsmJ+3hRXjWSwmHZx160kKcBXrS86m2yuvjDiE/RFcW+cxA
-	XAx2x7aWfoCbXnACIrH1NN4Px9BR9qMAiOoQvsdPlKECEI4ujduZphp5c4M2ajr2RLuM9w90XcO
-	BqTqdg+S/tZ49yarGZylGXoDo9SJ13/nax8PbtJtaP4vFGNwhW3FvWiQdBrgmY=
-X-Google-Smtp-Source: AGHT+IHdenufjeYqL6ObinYdlziNp1lXtTyN8KlS46tZAjNTWmQRiZ8cbDwiQt/4VutvxqKEB4b8/Q==
-X-Received: by 2002:a05:6a20:2d09:b0:1db:dfe6:53f5 with SMTP id adf61e73a8af0-1e09e61f524mr3692529637.45.1732288700124;
-        Fri, 22 Nov 2024 07:18:20 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc0857sm1764245a12.10.2024.11.22.07.18.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 07:18:19 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 22 Nov 2024 07:18:18 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Message-ID: <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQKgNcI8YYCTryj+Atdsp/4ySnRzaxhV5eIf2fFu+qWJoyoyqqo2GTRrfRRtdjyBVInFAV5eYrZFEMnWfLaucsj4xyeCo2LtqSrakZVNJB3JCXO/kHW+tHVI3nGxscjK6PanEoP8z7uLxHIC72c1S4jZ1BEdsDCxKEo0pHJ7CSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ma1GLpGc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F5EDC4CECE;
+	Fri, 22 Nov 2024 15:21:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732288866;
+	bh=7pz32RbN7KvAwY8Z4VR7ySVX87cMIOLDDNQdlcRElAg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ma1GLpGcU49K7V4i4V697Y2v1F+5gFEzWWYfG5ikQE+epTRKFWCKoH1EKhBUlvgg5
+	 Rmuxt/3KU1BnX25bq4mq4g/MgfNMmzgnc3Oz6kOk/ENKy4N0brAfguPHD6jmQ6fu+a
+	 2Gc4fcqjhh4EkAyn8gWE5c06MQwMBq5ZRiGINmHPhF9nO7yBjnolYua+7MfjyPeQ18
+	 NLTTzKlS3ZC3p/iuWeIRAJ0od+DZuaxN2wuVP+e2tY1c94VMmdNMZXYdLj/oWLG9Oj
+	 z4miGV/9poZHenA3v3hzPb8qGGkOcXCoxFRhj1jbf3w9hm51XJGkYvPW3wEXf8VEvL
+	 8W/a3r9HB3mWg==
+Date: Fri, 22 Nov 2024 10:21:04 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	kernel test robot <lkp@intel.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>, linux@armlinux.org.uk,
+	arnd@arndb.de, samitolvanen@google.com,
+	linux-arm-kernel@lists.infradead.org, llvm@lists.linux.dev
+Subject: Re: [PATCH AUTOSEL 6.6 5/6] ARM: 9434/1: cfi: Fix compilation corner
+ case
+Message-ID: <Z0ChYA7bsmnZRI2d@sashalap>
+References: <20241120140647.1768984-1-sashal@kernel.org>
+ <20241120140647.1768984-5-sashal@kernel.org>
+ <20241120151338.GA3158726@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240405152924.252598-2-schnelle@linux.ibm.com>
+In-Reply-To: <20241120151338.GA3158726@thelio-3990X>
 
-On Fri, Apr 05, 2024 at 05:29:24PM +0200, Niklas Schnelle wrote:
-> In a future patch HAS_IOPORT=n will disable inb()/outb() and friends at
-> compile time. We thus need to add HAS_IOPORT as dependency for those
-> drivers using them unconditionally. For 8250 based drivers some support
-> MMIO only use so fence only the parts requiring I/O ports.
-> 
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-...
-> @@ -422,10 +443,12 @@ static void set_io_from_upio(struct uart_port *p)
->  	up->dl_write = default_serial_dl_write;
->  
-> +	default:
-> +		WARN(1, "Unsupported UART type %x\n", p->iotype);
+On Wed, Nov 20, 2024 at 08:13:38AM -0700, Nathan Chancellor wrote:
+>Hi Sasha,
+>
+>On Wed, Nov 20, 2024 at 09:06:35AM -0500, Sasha Levin wrote:
+>> From: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> [ Upstream commit 4aea16b7cfb76bd3361858ceee6893ef5c9b5570 ]
+>>
+>> When enabling expert mode CONFIG_EXPERT and using that power
+>> user mode to disable the branch prediction hardening
+>> !CONFIG_HARDEN_BRANCH_PREDICTOR, the assembly linker
+>> in CLANG notices that some assembly in proc-v7.S does
+>> not have corresponding C call sites, i.e. the prototypes
+>> in proc-v7-bugs.c are enclosed in ifdef
+>> CONFIG_HARDEN_BRANCH_PREDICTOR so this assembly:
+>>
+>> SYM_TYPED_FUNC_START(cpu_v7_smc_switch_mm)
+>> SYM_TYPED_FUNC_START(cpu_v7_hvc_switch_mm)
+>>
+>> Results in:
+>>
+>> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_smc_switch_mm
+>> >>> referenced by proc-v7.S:94 (.../arch/arm/mm/proc-v7.S:94)
+>> >>> arch/arm/mm/proc-v7.o:(.text+0x108) in archive vmlinux.a
+>>
+>> ld.lld: error: undefined symbol: __kcfi_typeid_cpu_v7_hvc_switch_mm
+>> >>> referenced by proc-v7.S:105 (.../arch/arm/mm/proc-v7.S:105)
+>> >>> arch/arm/mm/proc-v7.o:(.text+0x124) in archive vmlinux.a
+>>
+>> Fix this by adding an additional requirement that
+>> CONFIG_HARDEN_BRANCH_PREDICTOR has to be enabled to compile
+>> these assembly calls.
+>>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202411041456.ZsoEiD7T-lkp@intel.com/
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+>> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>> ---
+>>  arch/arm/mm/proc-v7.S | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mm/proc-v7.S b/arch/arm/mm/proc-v7.S
+>> index 193c7aeb67039..bea11f9bfe856 100644
+>> --- a/arch/arm/mm/proc-v7.S
+>> +++ b/arch/arm/mm/proc-v7.S
+>> @@ -93,7 +93,7 @@ ENTRY(cpu_v7_dcache_clean_area)
+>>  	ret	lr
+>>  ENDPROC(cpu_v7_dcache_clean_area)
+>>
+>> -#ifdef CONFIG_ARM_PSCI
+>> +#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+>>  	.arch_extension sec
+>>  ENTRY(cpu_v7_smc_switch_mm)
+>
+>This patch is unnecessary in branches prior to 6.10 (when ARM started
+>supporting kCFI) because SYM_TYPED_FUNC_START() is not used here. I
+>would just drop it for 6.6 and earlier.
 
-So, according to this patch, the serial uart on microblaze, nios2,
-openrisc, xtensa, and possibly others is not or no longer supported.
+Ack, will do.
 
-WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8250_set_defaults+0x1a8/0x22c
-Unsupported UART type 0
-
-Any special reason ?
-
-Guenter
+-- 
+Thanks,
+Sasha
 
