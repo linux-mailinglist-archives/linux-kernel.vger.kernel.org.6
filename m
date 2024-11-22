@@ -1,129 +1,172 @@
-Return-Path: <linux-kernel+bounces-417744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCB09D58AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:48:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA059D58B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9271F2365E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5606B1F234AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5B22582;
-	Fri, 22 Nov 2024 03:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE51C155A24;
+	Fri, 22 Nov 2024 03:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IdmHw1LD"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113881632D4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b="p4hrFIoh"
+Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704702582;
+	Fri, 22 Nov 2024 03:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732247261; cv=none; b=oaepV+o3XOyf8juTSrC+W1IHVZVerfrcXJ3J/bQ0XoZPmR11acbjir7EcmV+eepSeWW4GJPWCyozlR85bXCTIxM6GaX+OSXFwjugNINgcqyG81ZGOCJaqCdnT/E/UHg76RtxChiLXonBNhWEPF3dF51l4GbW8alYQc/FEmmGlDE=
+	t=1732247544; cv=none; b=AY1usQ/r5t7CGU1f7jo2tktZ73YkiF1pnLJdVI3xoYcquiFoGjSc5nzWeAidjvvdSnoUf0qkjvetTy0LjDXLujUHEqVIacqJTsMY9Yi898xNaeTUVsUL9WA+hqd69f1ZDx+CWV8uu7lVyg/xw/ypGrPToxGpPZ7rSanHhxRs928=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732247261; c=relaxed/simple;
-	bh=ecrPWNCROGbCGBvflsd6cHirBTqgXm1cERWiLr23QUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=juxcLa28IJZTfVqJgkHE7XSsd91nyB0M0CowG0dyp+URsW4BqALfbmJR2kVzxas7lpx9GLV0MCxJB0wef65jtZAMUKbQg2D1SZZMSVaIXdMhhYzdsQLE7Jy5pC/irkjv53LsBK8Ymhf6H3WLkoEQTWD/cttYqqmsk1nDjK1+vKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IdmHw1LD; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e5f835c024so1075395b6e.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:47:39 -0800 (PST)
+	s=arc-20240116; t=1732247544; c=relaxed/simple;
+	bh=V34Au27fs4cZLV58O5DmcrXCKBSUAAqJh3Gt38QvG/U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Ks5XSyTJ2KCFYvdSIP23Ku3uVH62QgDsBigBnWo71KBIpfphGTnvfPaNUKuD2CONHQYOzQeMdUwvDoBT+JTVlMGcNppmSHOfuCksUPOLt4FtTYwM6tFhRq5zQTf/ks3YGd0H89XSFDuXsue67Dog4WWszpZEC/igqDiROgihzwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn; spf=pass smtp.mailfrom=buaa.edu.cn; dkim=fail (0-bit key) header.d=buaa.edu.cn header.i=@buaa.edu.cn header.b=p4hrFIoh reason="key not found in DNS"; arc=none smtp.client-ip=209.97.181.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buaa.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buaa.edu.cn
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732247259; x=1732852059; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=knk5bhF5K5WlFtwhF1HiZTyghnwunglBtYROl19Amnc=;
-        b=IdmHw1LDH0scOAYCc1DRfAjBzUnhQlq5yZlBpW0FW+m+U2XxbcY5RTVsLwuLSMTJsp
-         ZxbrZc0ap8+3Baj+SrZ1s+e/tuGVGW+oySEslKmUmruAG0YL0l+h4X4hlEet7DbyHqTm
-         7PEzg0S7k/9MGkarD6uiOVTr0IP8Gfas56EHQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732247259; x=1732852059;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=knk5bhF5K5WlFtwhF1HiZTyghnwunglBtYROl19Amnc=;
-        b=RCj/6S0eoMRn4rqo5J4iCG1AaPGQXaDcqJ3hu4PFYgVj20DDtAibk0woibLVRJBOB/
-         5pSb4pu6c80VFgzNKUDNrBR5d9XFtGR3DQpK2eVnTgNihk8UFCu52O9QFG2NBgJk5sWj
-         n7nH/wEIUtW/GP50HukeQltW6cJVT7U5Kmw6+ZnbzfyfkWm7+EYQPfj1Y4q8KVZjNxAm
-         QZUWZI5S88eXYRxWmfQW+lEV6wzLCADZPDxezBTegVc/IPampo59M3NCcbGCrY+REkea
-         iF3/uny9YFZ60OHP6VtjSFWLf6Llu6J/X3cMqjB/VBz96lSdLX+wh7d/d0d4EGWjowNC
-         i3vA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIRnhhhwiNGo1+vnAotdvZW/hP3KXammjefPkWVFjdj9Od7dtfK/3qpf4MdYivJ1IY4SHFxGdIAT7R4rQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN5aVlliah9HkaPsnE4WFxN6+qITwTuPS3VUeQTCA29g1dzajB
-	8K6VP7B6GNywrXUekb3aFvaPMPkZk6XkkV6rT9l5Xstn4J/BiaT+kTIJ7JVbbQ==
-X-Gm-Gg: ASbGncsTHl2AvQcrwg7EJz+lKvdeJo+jiG7hXdVo8BjHAut8v08i66sB9k2EEeNSoc5
-	pCW5/I3bDdkKl8AoX+12P4nZzNJfo7ER2EVIRZmspXSnIdOiu6ImkDk2E9X4yWxtpTsuBbRXNyJ
-	4nVgxi8/oJb/kVDK90NMCAvWD3VORpH9ThM1FkumXU5fKwP/QCJYYpcQOE9+555Gjwq8mNYsCFR
-	Tu7NoEaajFffDrQSGuV8LXFLcPSVoRVWijA0bqjo4t5H6Sc+Q5rHp1BLEi3PbJapSSH8/4=
-X-Google-Smtp-Source: AGHT+IG9TmutnyL2idfCzGrxIgPrFSPj4hupzoYH5zYY4fJEibqFwqT2kUZnaPO1+nOzBHXjr0fcdQ==
-X-Received: by 2002:a05:6808:3186:b0:3e6:10d1:ecb6 with SMTP id 5614622812f47-3e915afc2f0mr2042657b6e.28.1732247259232;
-        Thu, 21 Nov 2024 19:47:39 -0800 (PST)
-Received: from lschyi-p920.tpe.corp.google.com ([2401:fa00:1:10:533e:26bf:b63:973a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de554b11sm550174b3a.133.2024.11.21.19.47.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 19:47:38 -0800 (PST)
-From: Sung-Chi Li <lschyi@chromium.org>
-Date: Fri, 22 Nov 2024 11:47:22 +0800
-Subject: [PATCH 2/2] dt-bindings: mfd: cros-ec: add properties for thermal
- cooling cells
+	d=buaa.edu.cn; s=buaa; h=Received:From:To:Cc:Subject:Date:
+	Message-Id:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding; bh=MPVIVjkI+MMPkOmuX3f54VoncTmxlJ2Oaf
+	8xDRhd8c4=; b=p4hrFIohRrMT5PCLRNeima4yqMoafxLMwjdA1VxMJjW3BoAxOW
+	4ctfZFbf18Ii1CsLbsMRnXy3+RjFXZUHHGmYy20XwSTIxMSxthQn//6BSXA3r8rJ
+	f3cHpSEOqWFSwFLMHT5lXxYEIJ9yL8fXBwE+wb3Gbb+VbpgYIXoXUEOQI=
+Received: from s1eepy-QiTianM540-A739.. (unknown [10.130.145.81])
+	by coremail-app1 (Coremail) with SMTP id OCz+CgC35A7g_z9nIOdAAQ--.19002S2;
+	Fri, 22 Nov 2024 11:52:03 +0800 (CST)
+From: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: baijiaju1990@gmail.com,
+	zhenghaoran@buaa.edu.cn,
+	21371365@buaa.edu.cn
+Subject: [PATCH v2] fs: Fix data race in inode_set_ctime_to_ts
+Date: Fri, 22 Nov 2024 11:51:59 +0800
+Message-Id: <20241122035159.441944-1-zhenghaoran@buaa.edu.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241121113546.apvyb43pnuceae3g@quack3>
+References: <20241121113546.apvyb43pnuceae3g@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-extend_power_limit-v1-2-a3ecd87afa76@chromium.org>
-References: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
-In-Reply-To: <20241122-extend_power_limit-v1-0-a3ecd87afa76@chromium.org>
-To: Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
- Sebastian Reichel <sre@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: chrome-platform@lists.linux.dev, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sung-Chi Li <lschyi@chromium.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732247251; l=873;
- i=lschyi@chromium.org; s=20241113; h=from:subject:message-id;
- bh=ecrPWNCROGbCGBvflsd6cHirBTqgXm1cERWiLr23QUw=;
- b=+Ar7fFL4Es6YoP98iJ8z+ts7PPhZxkPpxs/twgJcXy9F+hxWQE8UDw3qtSLkVEsv8smzvWQH5
- xC5M1yQiGp1B2ApDAeFU70wlo7L2T10cnh4QYIQ6sueAac/a24ZnXMn
-X-Developer-Key: i=lschyi@chromium.org; a=ed25519;
- pk=nE3PJlqSK35GdWfB4oVLOwi4njfaUZRhM66HGos9P6o=
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:OCz+CgC35A7g_z9nIOdAAQ--.19002S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1Duw1rCFWxtw47Aw18Krg_yoW5uryxpF
+	ZxKa4fJr1UJrZ7GrZ7tr4UXr1Fgan8ta1UJr4kWr4fArnIyr18KFyjyry0yrWUCrWkAFy0
+	qa48Cr15Gwn0yrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUy01IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kE
+	wVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x
+	0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF
+	7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F4
+	0Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC
+	6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIec
+	xEwVCm-wCF04k20xvY0x0EwIxGrwCF04k20xvE74AGY7Cv6cx26F1DJr1UJwCFx2IqxVCF
+	s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
+	1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
+	JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r
+	1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
+	YxBIdaVFxhVjvjDU0xZFpf9x0JUZa9-UUUUU=
+X-CM-SenderInfo: 1v1sjjazstiqpexdthxhgxhubq/
 
-The cros_ec supports limiting the input current to act as a passive
-thermal cooling device. Add the property '#cooling-cells' bindings, such
-that thermal framework can recognize cros_ec as a valid thermal cooling
-device.
+V2:
+Thanks for Honza's reply and suggestions. READ_ONCE should indeed
+be added to the reading position. I added READ_ONCE to
+`inode_get_ctime_sec()`. The new patch is as follows.
+-----------------------------------------------------------------
+V1:
+A data race may occur when the function `inode_set_ctime_to_ts()` and
+the function `inode_get_ctime_sec()` are executed concurrently. When
+two threads call `aio_read` and `aio_write` respectively, they will
+be distributed to the read and write functions of the corresponding
+file system respectively. Taking the btrfs file system as an example,
+the `btrfs_file_read_iter` and `btrfs_file_write_iter` functions are
+finally called. These two functions created a data race when they
+finally called `inode_get_ctime_sec()` and `inode_set_ctime_to_ns()`.
+The specific call stack that appears during testing is as follows:
 
-Signed-off-by: Sung-Chi Li <lschyi@chromium.org>
+```
+============DATA_RACE============
+btrfs_delayed_update_inode+0x1f61/0x7ce0 [btrfs]
+btrfs_update_inode+0x45e/0xbb0 [btrfs]
+btrfs_dirty_inode+0x2b8/0x530 [btrfs]
+btrfs_update_time+0x1ad/0x230 [btrfs]
+touch_atime+0x211/0x440
+filemap_read+0x90f/0xa20
+btrfs_file_read_iter+0xeb/0x580 [btrfs]
+aio_read+0x275/0x3a0
+io_submit_one+0xd22/0x1ce0
+__se_sys_io_submit+0xb3/0x250
+do_syscall_64+0xc1/0x190
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
+============OTHER_INFO============
+btrfs_write_check+0xa15/0x1390 [btrfs]
+btrfs_buffered_write+0x52f/0x29d0 [btrfs]
+btrfs_do_write_iter+0x53d/0x1590 [btrfs]
+btrfs_file_write_iter+0x41/0x60 [btrfs]
+aio_write+0x41e/0x5f0
+io_submit_one+0xd42/0x1ce0
+__se_sys_io_submit+0xb3/0x250
+do_syscall_64+0xc1/0x190
+entry_SYSCALL_64_after_hwframe+0x77/0x7f
+```
+
+The call chain after traceability is as follows:
+
+```
+Thread1:
+btrfs_delayed_update_inode() ->
+fill_stack_inode_item() ->
+inode_get_ctime_sec()
+
+Thread2:
+btrfs_write_check() ->
+update_time_for_write() ->
+inode_set_ctime_to_ts()
+```
+
+To address this issue, it is recommended to
+add WRITE_ONCE when writing the `inode->i_ctime_sec` variable.
+--------------------------------------------------------------
+Signed-off-by: Hao-ran Zheng <zhenghaoran@buaa.edu.cn>
 ---
- Documentation/devicetree/bindings/mfd/google,cros-ec.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/fs.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-index aac8819bd00b..2b6f098057af 100644
---- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-+++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
-@@ -96,6 +96,9 @@ properties:
-   '#gpio-cells':
-     const: 2
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 3559446279c1..869ccfc9a787 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1655,7 +1655,7 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
  
-+  '#cooling-cells':
-+    const: 2
-+
-   gpio-controller: true
+ static inline time64_t inode_get_ctime_sec(const struct inode *inode)
+ {
+-	return inode->i_ctime_sec;
++	return READ_ONCE(inode->i_ctime_sec);
+ }
  
-   typec:
-
+ static inline long inode_get_ctime_nsec(const struct inode *inode)
+@@ -1674,8 +1674,8 @@ static inline struct timespec64 inode_get_ctime(const struct inode *inode)
+ static inline struct timespec64 inode_set_ctime_to_ts(struct inode *inode,
+ 						      struct timespec64 ts)
+ {
+-	inode->i_ctime_sec = ts.tv_sec;
+-	inode->i_ctime_nsec = ts.tv_nsec;
++	WRITE_ONCE(inode->i_ctime_sec, ts.tv_sec);
++	WRITE_ONCE(inode->i_ctime_nsec, ts.tv_nsec);
+ 	return ts;
+ }
+ 
 -- 
-2.47.0.371.ga323438b13-goog
+2.34.1
 
 
