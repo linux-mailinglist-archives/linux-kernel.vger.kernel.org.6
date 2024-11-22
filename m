@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-418521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D7159D6282
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:47:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615D89D628C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:50:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C45FBB274FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05440B24439
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FCF5D477;
-	Fri, 22 Nov 2024 16:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B446A1DF969;
+	Fri, 22 Nov 2024 16:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N7sxXxm2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="JxL+Q2ix";
+	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="SVFm8dE7"
+Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C9D2D638
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCF91DF753
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732294042; cv=none; b=I+Nsck64KQZLFPGXPCBSLGsfNjkcUvyTx1L0drwCq7i47a0RC0r0EWqdUT4g7/2PxbTwf9wLhvuvb8Z8CMb8y1/lQDktO5n5VOyYAEiO5xBBfI6Tfc/Wknw+b4Nk0D4HE+5i5OO0xsABV4o2w9MxnlaYj71hBsU4PyXRW+/1fGM=
+	t=1732294191; cv=none; b=TsF4F+aBsRzlJzUxUNL4pbZAzseJlWMSbYHT4SeKYBePO0xvWXW8GVo/agC74nYY9w3iCiWEhTnQIeCafYd9cg5EI2GNB/7DGynwfNe4nW2mX+1VFpzB6COOF256DkC1jfG7T9dviTr6kaaDyQUnRC+DGcDbZ4lL5J40FpkYFpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732294042; c=relaxed/simple;
-	bh=ItNTKavT00h+piga1HTfcObBvAtBiGxqCrbjRJ1Tavc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FJP3YA0F0E8sGDRfyBtJXi5oqXfgOEDyF7R984aBEZ72eTA0aWpdm1gHitGoDGvYkZiO8dz8RIayiK5/6tFKBbDFHYXQgkjvR14I6hm4kpEP9fu61ykyQCgdYvKLbdOPkrv1EoQRUuQ8GJLl1mLFluj55/DTf7iV9268tEPrq0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N7sxXxm2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-212884028a3so14085625ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:47:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732294040; x=1732898840; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kzq5xBGhrLm4GuYMaG3vOjkgbW2jTLhEik+B/AfpKr0=;
-        b=N7sxXxm28qpSXdKXM1+JiWGvFRcSNDETzc91Xq/qDHCDzGC+Q7wjdupj7fQnIRqf7z
-         qOd1jUlf2NO/MXy3qRwmHqEjJUVksk9IuTtuNdVwvareJuu41Oot2YKDmqaZb5wMiPJZ
-         d9Cw/Z3hSFZ2KEtSRk4A0H+aNVDgDVzPs5nnGauQD5KeStHBiJNRvDTK+AlaoyyPcL2T
-         g2uskKblMTx4NkQ+KozZqPC/aspdSRiC0Wzr9YMwGvJz1aGM2/sZvffUMukkkx6Trg7u
-         ONTSqxQ9394/HY6LpZzlhR/8uljXKZrtZ0IEOFDZZakqTukL1ZaHU/0Kaze+SjCgPjGg
-         OOQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732294040; x=1732898840;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kzq5xBGhrLm4GuYMaG3vOjkgbW2jTLhEik+B/AfpKr0=;
-        b=Kq9yUfprpmwMNlbIiojTvHNPoJ4fXPMXISq0zq0BqZUB0N52wYFPAS0UtFM/4OEQT6
-         TUHWg7f+DOtEL4u9xkblAcZxBtZBvs6H7C9aJaFqH1aDFPdesOz/o2obDXDSIFeHQ+fr
-         Dzs7jDJTskEcLiew6FpECTSkL5k7b8Wh123R/69LJ2AzrQCoKoNYmRIYD2gE4P+AHNDe
-         VrghlU/OKqJO1BCIg6NhaSK4mxxz889wsk851esgvO3T6gXceIYwyIm2HBKWVxQ3Gcw1
-         StA+Te5ATb3MPSphvOum4f29VpsUy5P+fqrfKtWoLwYfgDDs4N+XeikdyjIF8vsF19jU
-         k55w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFPyPZmlXbWNDiDsCAUpvCiX1Edkif/bFZUjaDUAlk5S3IPnpPwgu3EUi0uimhzJ38L4eJ8oQXcPCxwXs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk3cryKzxMzgUZfDsPzYjimXq+P2hJSppv3p38GjcNRjB/XYf8
-	HIhKod7jvX1cJpYO45HXfJZVupIOI93HmJL+Qw2dYPYTYMSUkv5OrqLsRUBnUA==
-X-Gm-Gg: ASbGnctJJyzp/A0i1HpG6sNryFXHLkF2G8hjXWbMZKIxOkwICNnTb7yu/p0hjaDUwtW
-	y130XEsOR0/4iZ204Bxr9VqM+Rlj7DAhbjEtnqxJpcyVOeNSUFtGiabO24x6ik1f7iLvb+nZd6G
-	eHmNXdHKS5rFJzL3D48pFRcmu5xj8Vkc3qNrl2MWUKx8L+bruaPJWpI9xZHawVoP0HOQLvm7tGU
-	S6iExis60TaNNsWC8m9Ogbgd5PrjX/6MNv12u6bNEn111ej+WcsoYbG1qNJ
-X-Google-Smtp-Source: AGHT+IH2RH2HUiPHMzLk35ACiz5SeB6Uib1iKjXQGa54thdOMDLFrThNUfglBoU0p2O84vxcD04wlg==
-X-Received: by 2002:a17:902:f70d:b0:212:35f5:b564 with SMTP id d9443c01a7336-2129fe2669emr56816865ad.7.1732294040271;
-        Fri, 22 Nov 2024 08:47:20 -0800 (PST)
-Received: from thinkpad ([49.207.202.49])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba357bsm18336365ad.88.2024.11.22.08.47.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 08:47:19 -0800 (PST)
-Date: Fri, 22 Nov 2024 22:17:14 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	Frank Li <frank.li@nxp.com>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 08/10] PCI: imx6: Use dwc common suspend resume method
-Message-ID: <20241122164714.aj4dzv32zixdj7pq@thinkpad>
-References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
- <20241101070610.1267391-9-hongxing.zhu@nxp.com>
- <20241115070932.vt4cqshyjtks2hq4@thinkpad>
- <AS8PR04MB867625A97A43FE5352FC0E768C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1732294191; c=relaxed/simple;
+	bh=fbJyDxZN+U0aLs51zdRPYgn56ap1jOvu70jSaT0aEik=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OXJ6l7W8uNGwCFh1A1wkM6XmU4oOJA9xTGjqKvWinURkZr1bWhgfCToTxBznE5njlh0nWyir0pdOmbavJpvlCNhvaIAeF4YBmqUo63IXgEgFlyLi95F44HQKTyB1GbkpWOT80Vo+9/zkJAjxWwFhdT9dsGjuvyEPPEXAQLMOIsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=JxL+Q2ix reason="unknown key version"; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=SVFm8dE7; arc=none smtp.client-ip=103.2.141.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1732295089; h=Feedback-ID:
+	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
+	List-Unsubscribe:List-Unsubscribe-Post;
+	bh=wm5L+Qoo/ioFGQt3DT4pcDXXIVurmW309DoYLq1KaIc=; b=JxL+Q2ixUuOHusccsvi2fOfFeg
+	bcxhkZXPIkXGX4gTX8FlpKIExuX3PVvKxdaYXl0rMCrN7tAzdCLdo5g6dOcBXwtAMadJDsbgCpK7B
+	Q2bMqaILqWlZKxHeNs9D6TZs5HEyqfcTdZyrhN0WobKWQFbD49Qwl4/3gW+hEJypBA+X+/WY0T/zE
+	AHdoB7aVS/fRJoI+yOxt5yVMSYjA3d2fHzeqWQwfaTM3tMsM+yavjv2bYPPcrJKOpOm4MHvAU9JkO
+	N+aHqJEvjk3q+ZXB0YQqoHc+PPgNFqruo5f8dwLWaMhUhLl692HclNsgOBs4hoybcCqDXnpqeNzj9
+	hlJzVrzw==;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
+ i=@triplefau.lt; q=dns/txt; s=s510616; t=1732294189; h=from : subject
+ : to : message-id : date;
+ bh=wm5L+Qoo/ioFGQt3DT4pcDXXIVurmW309DoYLq1KaIc=;
+ b=SVFm8dE7lP8/ls/gMlj4Ddy/tkSBMqMbZHiAyLPsoqftIMVXbW5tvWUfAqFoAGOWFA5sK
+ NXshFBa5czWsM2LJiiJ9EGS1S1z27s9MpxdbLgyXUEsQERTdmmqAVFp9miByrLbyAGcrI+9
+ z8WicF3+p4iaZMeXuLzhQHCI5fRo3bGg8odu0ogy1TW/Z55kO5v36M56xqgnV/OcQE6S3mQ
+ 6QI9TJR61xAfe3WTMdz3BdBrFuLHQ8ETIZSuiMI5RTD7R/2+Z0Tz8+IQipNoU2dz/tfHUG/
+ xQY/subdYsggnu6vLEHU4rO42B661boLk7mm/w25ITmQcXsqSwORxRe14xew==
+Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1tEWqR-TRjyJk-P1; Fri, 22 Nov 2024 16:49:23 +0000
+Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
+ (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+ (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
+ id 1tEWqR-4o5NDgrgcby-m1Zz; Fri, 22 Nov 2024 16:49:23 +0000
+From: Remi Pommarel <repk@triplefau.lt>
+To: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Cedric Veilleux <veilleux.cedric@gmail.com>,
+ Vasanthakumar Thiagarajan <quic_vthiagar@quicinc.com>,
+ Remi Pommarel <repk@triplefau.lt>
+Subject: [RESEND PATCH v3 0/2] Improve ath10k flush queue mechanism
+Date: Fri, 22 Nov 2024 17:48:00 +0100
+Message-Id: <cover.1732293922.git.repk@triplefau.lt>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB867625A97A43FE5352FC0E768C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
+X-Smtpcorp-Track: f7juQoXObcjq.Xs5XFeEVo-6j.ucvNzgCJ_I1
+Feedback-ID: 510616m:510616apGKSTK:510616saXhY0s_Pe
+X-Report-Abuse: Please forward a copy of this message, including all headers,
+ to <abuse-report@smtp2go.com>
 
-On Mon, Nov 18, 2024 at 03:00:44AM +0000, Hongxing Zhu wrote:
+It has been reported [0] that a 3-4 seconds (actually up to 5 sec) of
+radio silence could be observed followed by the error below on ath10k
+devices:
 
-[...]
+ ath10k_pci 0000:04:00.0: failed to flush transmit queue (skip 0 ar-state 1): 0
 
-> > > -static void imx_pcie_pm_turnoff(struct imx_pcie *imx_pcie) -{
-> > > -	struct device *dev = imx_pcie->pci->dev;
-> > > -
-> > > -	/* Some variants have a turnoff reset in DT */
-> > > -	if (imx_pcie->turnoff_reset) {
-> > > -		reset_control_assert(imx_pcie->turnoff_reset);
-> > > -		reset_control_deassert(imx_pcie->turnoff_reset);
-> > 
-> > Where these are handled in imx_pcie_pme_turn_off()? If you removed them
-> > intentionally for a reason, it should be mentioned in commit message.
-> > 
-> How about add the following descriptions into commit message?
-> SRC interface is used to do the PME_TURN_OFF operations before. It's not very
+This is due to how the TX queues are flushed in ath10k. When a STA is
+removed, mac80211 need to flush queues [1], but because ath10k does not
+have a lightweight .flush_sta operation, ieee80211_flush_queues() is
+called instead effectively blocking the whole queue during the drain
+causing this radio silence. Also because ath10k_flush() waits for all
+queued to be emptied, not only the flushed ones it could more easily
+take up to 5 seconds to finish making the whole situation worst.
 
-What is SRC?
+The first patch of this series adds a .flush_sta operation to flush only
+specific STA traffic avoiding the need to stop whole queues and should
+be enough in itself to fix the reported issue.
 
->  suitable. Now DWC common driver can do the PME_TURN_OFF kick off. Switch to
->  this common methods, and remove the useless turnoff_reset manipulate codes.
-> 
+The second patch of this series is a proposal to improve ath10k_flush so
+that it will be less likely to timeout waiting for non related queues to
+drain.
 
-Hmm, so 'turnoff_reset' is used to send PME_Turn_Off msg?
+The abose kernel warning could still be observed (e.g. flushing a dead
+STA) but should be now harmless.
 
-If so, then you need to say in such a way that the reader should understand
-'turnoff_reset' was used to send PME_Turn_Off and since the DWC implementation
-is used, it is not needed now.
+[0]: https://lore.kernel.org/all/CA+Xfe4FjUmzM5mvPxGbpJsF3SvSdE5_wgxvgFJ0bsdrKODVXCQ@mail.gmail.com/
+[1]: commit 0b75a1b1e42e ("wifi: mac80211: flush queues on STA removal")
 
-- Mani
+V3:
+  - Initialize empty to true to fix smatch error
+
+V2:
+  - Add Closes tag
+  - Use atomic instead of spinlock for per sta pending frame counter
+  - Call ath10k_htt_tx_sta_dec_pending within rcu
+  - Rename pending_per_queue[] to num_pending_per_queue[]
+
+Remi Pommarel (2):
+  wifi: ath10k: Implement ieee80211 flush_sta callback
+  wifi: ath10k: Flush only requested txq in ath10k_flush()
+
+ drivers/net/wireless/ath/ath10k/core.h   |  2 +
+ drivers/net/wireless/ath/ath10k/htt.h    | 11 +++-
+ drivers/net/wireless/ath/ath10k/htt_tx.c | 49 +++++++++++++++-
+ drivers/net/wireless/ath/ath10k/mac.c    | 75 ++++++++++++++++++++----
+ drivers/net/wireless/ath/ath10k/txrx.c   | 11 ++--
+ 5 files changed, 127 insertions(+), 21 deletions(-)
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.40.0
+
 
