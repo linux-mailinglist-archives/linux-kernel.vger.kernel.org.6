@@ -1,185 +1,213 @@
-Return-Path: <linux-kernel+bounces-418102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6209D5D3A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:23:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525BE9D5D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E004A28319E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7731F2484E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0231DE4CC;
-	Fri, 22 Nov 2024 10:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A021DE8A6;
+	Fri, 22 Nov 2024 10:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VDjqCOuI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E4E8tg14"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B901DDC39;
-	Fri, 22 Nov 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE73A1DE88B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732270957; cv=none; b=MpRTB0c5FM4h2w2QxD0/f1/+D+sU0+5Y4bz8lpa6sjacQqIizqzuX/d4hucdnur1bC1Gx9i5IEK4slKToKmMFQXrKfK89lWnLrtBsV9rDtaGMKBEL1YxJc0hL80ppYADwnvOnaJZaSbIMmj53Tlv9vnmeE2o3YNZAD75IN5AYVU=
+	t=1732270971; cv=none; b=XU0I7lkL3tKexKfdIWfvkNxl3r+RfgOpfXX66VKYiqLtdouta8kTb1g9P78hTQhaTjJ1jebc5gB1z0cMe3lT3hg0sqo5AbxL84cabj3UaIBbw6pumPuyj5oHWz03kUdDx2AXJvjIUnBGSTXJOlGqHn4tqdlWREphwjVXkhK1JRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732270957; c=relaxed/simple;
-	bh=cRe94m9FYYjIppWUlSjL4c/l+04MITohxLzc/eurtUk=;
+	s=arc-20240116; t=1732270971; c=relaxed/simple;
+	bh=FUMOsTI1XKBWnpseE8vk0dVqvDxYGIbH+QH+cNwOnAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dXo75wyMW3s5JLGRi8gO4fD1rDS9kfbSmdUky6YxYKoP7PpNQ2/Gxvpl8NT17z87A8Ziw6zLwlC/r1znfePRTdbKkFBXDj6+H2D8TmzZbhPdt0z6MoCWLij67QU08njPaInr1lI0aGCsu4+sXJ0+xNO21YbISfBRZFBa72tmv1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VDjqCOuI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 51BC38BE;
-	Fri, 22 Nov 2024 11:22:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732270934;
-	bh=cRe94m9FYYjIppWUlSjL4c/l+04MITohxLzc/eurtUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VDjqCOuIq7jR2DYTa7+I16iCWhf+kUdD/8IyvT66ob4yeJG0rUhC/yyhJOMCQlF9Z
-	 wipevVi3ZLPbJXMma6pXwSk0LbMd0n4RnpkA9LAZWsM+eoHhKwls0W5jfs9b40GnHF
-	 aTL8OHnYGgsIU3DXdH9LNYojDsUHhUGtkESApt7o=
-Date: Fri, 22 Nov 2024 11:22:30 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH v2 2/3] media: i2c: imx219: make HBLANK r/w to allow
- longer exposures
-Message-ID: <emkd4ifsubxe2cmteld2hjkvin7uaspuqvh5ptuzm5o5kgp3py@hujytrhrlc44>
-References: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
- <20241121-imx219_fixes-v2-2-7b068a60ea40@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tcbxukpHF2SJHT8vdeONZSyoANxP5qvxE8VNiG+8eHVuIFLO8ObCFCddPqOhv2vtlqaozd5FGB/d3BMQ+xCst+nUqYm0fYlKbhU1cnhdebRc9OqwJjoXXlz7GPsE8V+KhzSq/kDQ3lxSFrvVK8LQAVCeUCm7n3YkKMAs53/vYr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E4E8tg14; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2130326e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:22:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732270967; x=1732875767; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ISPB4u0k/IY3WdqyYBfvJI1MUBGbBsUm1AW/lweuam4=;
+        b=E4E8tg14BnFU6aqnJV+wSX/8IlXVgoEozhcYuhOzWUIMXXj6U/X4Yq3ir0TPKLSvd6
+         Vj9ly0Og7QiZTArctGx489cqOic4bxWpT9RA/u6c7tvyuOTKhUP+Q7tfHP75diBmXqT6
+         F4XhTUWg3pJmwPown+9Ze3iAFllM96aVSgoUxDrKAgI02awf37iODbuoyJDxttorcOfJ
+         TY1tom/SIFcGlG1uZSz8HFehAhi4QjG2IZPENCeoL7diEYheTj01EZMpOECijDP3I8Ov
+         sKvGzOZyADvNQi5PP1xhVaYV/4Mgp29YQRrDTm51jMZVooXFjx4WhAmsyu/FpNbEwCja
+         f7mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732270967; x=1732875767;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ISPB4u0k/IY3WdqyYBfvJI1MUBGbBsUm1AW/lweuam4=;
+        b=wPj7LThoymPwpU8cWNwalx/j/AOA1oJDcwZpCbj31fH24fM8AQ49ftZzuCj3+Nf5HO
+         lLmqvnJTMQQTHJrX84PtziCJ3JbdzSxZJWXaZ9ex6S1RdFUDQ++rBiL7rWN8rBEpjaBE
+         TrBy5IsZu+DiocF53sM/RVtsOKmdo5D+boRcPGCIOGxSBC/akobi9gWqpY0Dri7/455w
+         e/LryFXihBQi2ItnQIsHYocKQSGwtqhMRxdRZQFm1L9uIY4h1K5A1ItAic7GZh7eum8K
+         BzC2nuq0c/3/L93RUCkzguvQwsV0dx5B+rJkhWagkCDP6W27k0koO6u5+eEW3COeZFiA
+         +T+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPv2P1tB93F4WrgVQFYWShR6rx6FdzQpbWEHo13iwueJHvTaS9+44hU7ZWP3jQJGaJQeca1AbAGfW7SeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA6T1lNjFS70BOPzOn1RKWfWm10jTzRnWal6aK6BJQ5i5AAnLw
+	Meuus8WID35F+ud06xTlh5ANk9rM+8Y05RYQCpEHTG7+pUSWnmZy2VrxnGpSzn0=
+X-Gm-Gg: ASbGncsbr/GCnfQfBsBwpwIjBQelssjTdzSKxB2SgK7R5KG3XOidn0qL2nfZszgQg1Q
+	ehWcIIAcBgZFXzgllvdocMC8E+ZtIdyrzB5zT7mcroBLRy8/C+oTo1zpsnS5psgezAtrQZcLmlV
+	hC5Vh9MOtE3jgWr+njCujalJFtux7ZohLjhKdCMAudDbgKpdjoQnsWSk4RRP+33L/yEryn69jwc
+	GxHRD5Dlvmt/WmD+oGiPe4T7D+uLlmUaT8I3j6VEqx36a9u0l9T2I/M3f5ic1iTnUu9r9KIjCFz
+	/Q/PTYFqD7gdHEUeWyBi+VX3NbnmuQ==
+X-Google-Smtp-Source: AGHT+IFS7C183Wt8hN7C/INKvkL1qt9YbaPn5aBu73dBkn87fnUOLWLXeKl+x6xSQFdRyLKoKS4qmA==
+X-Received: by 2002:ac2:51b5:0:b0:53d:d3ff:77f6 with SMTP id 2adb3069b0e04-53dd3ff77fdmr829792e87.46.1732270966827;
+        Fri, 22 Nov 2024 02:22:46 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd88b54cbsm62838e87.214.2024.11.22.02.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 02:22:45 -0800 (PST)
+Date: Fri, 22 Nov 2024 12:22:43 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Fange Zhang <quic_fangez@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Krishna Manikandan <quic_mkrishn@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Li Liu <quic_lliu6@quicinc.com>, 
+	Xiangxu Yin <quic_xiangxuy@quicinc.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 9/9] arm64: dts: qcom: Add display support for QCS615
+ RIDE board
+Message-ID: <azdmcs7uafw3n6cqbq4ei66oybzhtyvdyz2xl4wtaf3u5zextb@vdhbs6wnbeg4>
+References: <20241122-add-display-support-for-qcs615-platform-v3-0-35252e3a51fe@quicinc.com>
+ <20241122-add-display-support-for-qcs615-platform-v3-9-35252e3a51fe@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241121-imx219_fixes-v2-2-7b068a60ea40@ideasonboard.com>
+In-Reply-To: <20241122-add-display-support-for-qcs615-platform-v3-9-35252e3a51fe@quicinc.com>
 
-Hi Jai
-
-On Thu, Nov 21, 2024 at 05:38:03PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> The HBLANK control was read-only, and always configured such
-> that the sensor HTS register was 3448. This limited the maximum
-> exposure time that could be achieved to around 1.26 secs.
->
-> Make HBLANK read/write so that the line time can be extended,
-> and thereby allow longer exposures (and slower frame rates).
-> Retain the overall HTS setting when changing modes rather than
-> resetting it to a default.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+On Fri, Nov 22, 2024 at 05:56:52PM +0800, Fange Zhang wrote:
+> From: Li Liu <quic_lliu6@quicinc.com>
+> 
+> Add display MDSS and DSI configuration for QCS615 RIDE board.
+> QCS615 has a DP port, and DP support will be added in a later patch.
+> 
+> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
+> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
 > ---
->  drivers/media/i2c/imx219.c | 37 ++++++++++++++++++++++++-------------
->  1 file changed, 24 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f98aad74fe584a18e2fe7126f92bf294762a54e3..970e6362d0ae3a9078daf337155e83d637bc1ca1 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -76,8 +76,10 @@
->
->  #define IMX219_VBLANK_MIN		32
->
-> -/* HBLANK control - read only */
-> -#define IMX219_PPL_DEFAULT		3448
-> +/* HBLANK control range */
-> +#define IMX219_PPL_MIN			0x0d78
-> +#define IMX219_PPL_MAX			0x7ff0
-> +#define IMX219_REG_HTS			CCI_REG16(0x0162)
->
->  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
->  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
-> @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->  		cci_write(imx219->regmap, IMX219_REG_VTS,
->  			  format->height + ctrl->val, &ret);
->  		break;
-> +	case V4L2_CID_HBLANK:
-> +		cci_write(imx219->regmap, IMX219_REG_HTS,
-> +			  format->width + ctrl->val, &ret);
-> +		break;
->  	case V4L2_CID_TEST_PATTERN_RED:
->  		cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
->  			  ctrl->val, &ret);
-> @@ -496,12 +502,10 @@ static int imx219_init_controls(struct imx219 *imx219)
->  					   V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
->  					   IMX219_VTS_MAX - mode->height, 1,
->  					   mode->vts_def - mode->height);
-> -	hblank = IMX219_PPL_DEFAULT - mode->width;
-> +	hblank = IMX219_PPL_MIN - mode->width;
->  	imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
->  					   V4L2_CID_HBLANK, hblank, hblank,
->  					   1, hblank);
-> -	if (imx219->hblank)
-> -		imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
->  	exposure_max = mode->vts_def - 4;
->  	exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
->  		exposure_max : IMX219_EXPOSURE_DEFAULT;
-> @@ -817,6 +821,10 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  	struct v4l2_mbus_framefmt *format;
->  	struct v4l2_rect *crop;
->  	unsigned int bin_h, bin_v;
-> +	u32 prev_hts;
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 76 ++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index ee6cab3924a6d71f29934a8debba3a832882abdd..cc7dadc411ab79b9e60ccb15eaff84ea5f997c4c 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -202,6 +202,82 @@ &gcc {
+>  		 <&sleep_clk>;
+>  };
+>  
+> +&i2c2 {
+> +	clock-frequency = <400000>;
+> +	status = "okay";
 > +
-> +	format = v4l2_subdev_state_get_format(state, 0);
-> +	prev_hts = format->width + imx219->hblank->val;
->
->  	mode = v4l2_find_nearest_size(supported_modes,
->  				      ARRAY_SIZE(supported_modes),
-> @@ -824,8 +832,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  				      fmt->format.width, fmt->format.height);
->
->  	imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
-> -
-> -	format = v4l2_subdev_state_get_format(state, 0);
->  	*format = fmt->format;
->
->  	/*
-> @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->  					 exposure_max, imx219->exposure->step,
->  					 exposure_def);
->  		/*
-> -		 * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
-> -		 * depends on mode->width only, and is not changeble in any
-> -		 * way other than changing the mode.
-> +		 * Retain PPL setting from previous mode so that the
-> +		 * line time does not change on a mode change.
-> +		 * Limits have to be recomputed as the controls define
-> +		 * the blanking only, so PPL values need to have the
-> +		 * mode width subtracted.
->  		 */
-> -		hblank = IMX219_PPL_DEFAULT - mode->width;
-> -		__v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
-> -					 hblank);
-> +		hblank = prev_hts - mode->width;
-> +		__v4l2_ctrl_modify_range(imx219->hblank,
-> +					 IMX219_PPL_MIN - mode->width,
-> +					 IMX219_PPL_MAX - mode->width,
-> +					 1, IMX219_PPL_MIN - mode->width);
-> +		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
+> +	ioexp: gpio@3e {
+> +		compatible = "semtech,sx1509q";
+> +		reg = <0x3e>;
+> +		interrupt-parent = <&tlmm>;
+> +		interrupts = <58 0>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		semtech,probe-reset;
+> +	};
+> +
+> +	i2c-mux@77 {
+> +		compatible = "nxp,pca9542";
+> +		reg = <0x77>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		i2c@0 {
+> +			reg = <0>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			anx7625@58 {
+> +				compatible = "analogix,anx7625";
+> +				reg = <0x58>;
+> +				interrupt-parent = <&ioexp>;
+> +				interrupts = <0 0>;
+> +				enable-gpios = <&tlmm 4 GPIO_ACTIVE_HIGH>;
+> +				reset-gpios = <&tlmm 5 GPIO_ACTIVE_HIGH>;
+> +				wakeup-source;
+> +
+> +				ports {
+> +					#address-cells = <1>;
+> +					#size-cells = <0>;
+> +
+> +					port@0 {
+> +						reg = <0>;
+> +						anx_7625_in: endpoint {
+> +							remote-endpoint = <&mdss_dsi0_out>;
+> +						};
+> +					};
+> +
+> +					port@1 {
+> +						reg = <1>;
+> +						anx_7625_out: endpoint {
+> +						};
 
-Thanks, this now looks correct to me
+Where is it connected? Is it DP port? USB-C? eDP?
 
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&mdss {
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dsi0 {
+> +	vdda-supply = <&vreg_l11a>;
+> +	status = "okay";
+> +};
+> +
+> +&mdss_dsi0_out {
+> +	remote-endpoint = <&anx_7625_in>;
+> +	data-lanes = <0 1 2 3>;
+> +};
+> +
+> +&mdss_dsi0_phy {
+> +	vdds-supply = <&vreg_l5a>;
+> +	status = "okay";
+> +};
+> +
+>  &qupv3_id_0 {
+>  	status = "okay";
+>  };
+> 
+> -- 
+> 2.34.1
+> 
 
-Thanks
-   j
-
->  	}
->
->  	return 0;
->
-> --
-> 2.47.0
->
->
+-- 
+With best wishes
+Dmitry
 
