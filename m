@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-417801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45A629D593C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:08:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F296A9D5942
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCB11F2339F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA7B22C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D3316B38B;
-	Fri, 22 Nov 2024 06:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA90D1632D0;
+	Fri, 22 Nov 2024 06:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NMiR9sQ1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxPCzrOi"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53470376F1;
-	Fri, 22 Nov 2024 06:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D146158214;
+	Fri, 22 Nov 2024 06:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732255668; cv=none; b=FM6abXwpw7Va9SGZbeAXS4wbsfq35fkoo5Oxd2W7s2lH7tCDW9XdsDhkDvNoHkOiCHpRcG1e4P97pQYrAGvpE6prjWY+0MbxB1IE9zYvbFWFvRn+k3egSQxTGHuS2x+xD0v0ye1oFgIHi5c9Fh9Hs9TV1i10ZGzhIuZ8VhkwEe4=
+	t=1732255816; cv=none; b=W2A1pCdnaXte8NdmYFpH7flzjembNym+JMM+mABuyi+yr881sSstE0USE5VXOCw3PWYQUPdv4A9XQavOL6AHI0hC0QDBssJjcHZORR1J0QFYOf3D+R0JJN+i7hg+oHAqyKuMdChI3szhkBxEx2KSv5Qe80qoXxHz/wrdVbxY7W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732255668; c=relaxed/simple;
-	bh=NRx+EUQMbI6onvvuBgklMuUetuKV1RjyJw+1+uiy0K0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TqlAQSFrQD4q2R4SpUC7aedxEI6+Wir4jkyWUsW8oCwpuePtwFM16YE1JTi44RdvPX95p01myd/UX4z5qhw97B80z4Yixz19LX8RYHy1vQazNftkmwW/j0DJ0JKxwjX6qXu+jx0bwVt4TYvfw2kjp7F+97qsuxS2BqdDPSIP/SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NMiR9sQ1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM2Muil027713;
-	Fri, 22 Nov 2024 06:07:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S/AWrFKiGjI5jrs0RclHK9dtitiixWc5tMJZ/QlOQTs=; b=NMiR9sQ1gv0x2ar2
-	cvIUbsw/wFNxaAIGXcGqYyvk4zg1IfNdB/8L47Pz48kDY4tGmPD3YFcA8kqi58Zf
-	UCy1RkH2lB/N/vIgpQfhh4nolSDMIVEt1+ruZzcBIZOca0iRch4EYobHwyH+WN1F
-	IvItZ1Q43UUr3d6u/hsTmggsL3CICfJnuyCOr+Fs15V7IerGZQrc9WL5SkeB3Qp0
-	F4xXoV/EEFa5uuDjbLdTzgFmt2n7lNdF/fcY+OMlRo7U78tTYxreq/bas1QrVqw9
-	Wfvhbq122y8Mzg5M781OCTbEFqFZqk6Qm60RB/yuhT+bJtFVaysZsgD2wBkdIR0U
-	u7EK0w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432h4dre63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:07:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM67GPf029964
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 06:07:16 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 22:07:10 -0800
-Message-ID: <c9971277-bc93-4e53-b20a-a6aac6df9023@quicinc.com>
-Date: Fri, 22 Nov 2024 14:07:08 +0800
+	s=arc-20240116; t=1732255816; c=relaxed/simple;
+	bh=h1BuSolWKnMZV0lYRh/sj1XnIlI3eusKPoDlGjOs2YU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=roz3otCmFpjzpJPKSLMMXni37PRpEgBDQoBhQ/wTLcyD33JqqIx2u1oQi2EqbDX6TTXihvzJhRort9AIniI3gfelBRfSI0DABPBnZDiHLbnseMfe2iiER8fXqDZ8TEydpKbzQFCI5BVLbxtyOD166ZPwo4gfWR3wMMVqJsjGWlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxPCzrOi; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa97d99d6so915481fa.1;
+        Thu, 21 Nov 2024 22:10:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732255812; x=1732860612; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lXmuqMypGahuge5EVWptLvwyNQ/jI/s77haxB8Mhc3E=;
+        b=fxPCzrOi/t6pYczWHZN6r84RnpqpW4GJPmJIisfGdpDkfZutCWOMu1VMtPrqtrkCqE
+         YEY68GxMln2J0qujzpMq8vZAenODeRw+EVSKKZEUHQzPLTtS+24VlhFPQHmszLwa9+0i
+         GtNfv9b3Pe0ep4y+kJMYKFZtWOTb2QP0gVzv1Z4ADnuNLRKPrCb7Y+0qnvVfEPXrEPsR
+         BlVgWhpd0FTjboz1Z8xpCJwaNoV7kRZ3qMLKS5p3j1bnGrMFYbdZHCHAgb/lxfate8F9
+         WL4CAEooqj7yjHcJM0D85ADHU7M7b3asnQ7BRgzFekOnNHfklEFIP4VykIKIUf/Iv9eP
+         /Enw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732255812; x=1732860612;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lXmuqMypGahuge5EVWptLvwyNQ/jI/s77haxB8Mhc3E=;
+        b=hcRZU/T27YU6gV1JEog4n83MkkFdZn8r3O85ZylHUdvAIdUkO4OiYT86jxsvxJip9Y
+         HZN/NLeb0R/9ziSCtHsKqTSrQokVAwHI3BmUzAR13g9hXHP0/sIQqP7eplNfNsbYN1G9
+         avek8TaUW7tQMEMgJkkS14aCmSarjTQYXf4o/NNyrVClVdOO/mwZrYeIEStfP/ZP6hnc
+         lShrwDoaQPoAektZRq2ay4N3z71qVI98dGwEs4OWlTak00gvkoBAmXRn6QK6m6qDqVDy
+         nCzaO6e6x0CDIqep97Qnz9n2v+KGrP0k+ZDp63N/JYvk8ht6YJcz+49cMidIouRXuMjS
+         0yuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBIXwlYDHxz8+ZB/JVBDZqQblLfe3D5itMvX2NiNPHcnrtQ6eyc4h0rVleZdqi6diChdnDRkkM/GTUUT1I@vger.kernel.org, AJvYcCVKhic8lTWIwM0IX4dy5io6jaxrqU09EoWTbSuOi3vNars6YDENyfiwGt7TQQkQ5IgNSFM3RCOtTug=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt4NcpUcksIYok1HliBCZPjCSqKwQ60uFppMefdOD6SvKLZ6Tm
+	cLEBF9z+511tlQQL64/Lu9hvpZp6ekK5FKHvl1sQCCfrLIWSDvQdgaI87Y8M
+X-Gm-Gg: ASbGnctOwgns79KCr8ok1JT+aKJNwijJqeqxtx4ZKPuawEp6je8MRkWqwGRTLlMzuai
+	IL4LWVogb+n8xwakMPUTPsLwzR2TeUcpy/m8vRLdpRRfri9qX6ZB+rB42IYex83jlgsZYTlW2Uc
+	jY2GrpOv7rjqEu+pcnO8RVuRAx+CvhiNPV/2LVdxD8P5spDNQmxXvPZNLP76NQiO4DMrgAQ/MiS
+	1IsyKWD/4JWETwyML/U1Nni5r3qarkMUwN0XzEF9OWH4UdY7DTvOq1ASil5tmsqFb5gEEWHju2M
+	M8M8ffrhD1vAsZKVADXdTavA+2MiPxw=
+X-Google-Smtp-Source: AGHT+IHlSjwCiOvjkf1xMUeTHog1xaJ0fNmCjHTSTG9l04ARGBd4a8eUwC1bTZei59htSK3+n/4abg==
+X-Received: by 2002:a05:6512:10ca:b0:533:4689:973c with SMTP id 2adb3069b0e04-53dd36a084emr546807e87.23.1732255812118;
+        Thu, 21 Nov 2024 22:10:12 -0800 (PST)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489d92sm242004e87.193.2024.11.21.22.10.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 21 Nov 2024 22:10:10 -0800 (PST)
+Message-ID: <37bba4fa-34c6-4b7c-ae65-75929213a8f2@gmail.com>
+Date: Fri, 22 Nov 2024 08:10:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,205 +80,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs615: add UFS node
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        "Kishon Vijay Abraham I" <kishon@kernel.org>,
-        Alim Akhtar
-	<alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Bart Van Assche
-	<bvanassche@acm.org>,
-        "Andy Gross" <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <quic_sayalil@quicinc.com>
-References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
- <20241119022050.2995511-3-quic_liuxin@quicinc.com>
- <45cb4thpg6mrtxiwdb333w2jxgtpw426akik2l3f7qv57dvwmm@kma6vrglbrjh>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <45cb4thpg6mrtxiwdb333w2jxgtpw426akik2l3f7qv57dvwmm@kma6vrglbrjh>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Q3ijIbtUjn_N8OD4cNVIln5lLAvnoS0E
-X-Proofpoint-GUID: Q3ijIbtUjn_N8OD4cNVIln5lLAvnoS0E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- clxscore=1011 phishscore=0 malwarescore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220049
+Subject: Re: [PATCH 0/2] iio: Use __cleanup for a few ROHM sensors
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1732193263.git.mazziesaccount@gmail.com>
+ <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Javier,
 
-
-在 2024/11/22 1:00, Dmitry Baryshkov 写道:
-> On Tue, Nov 19, 2024 at 10:20:49AM +0800, Xin Liu wrote:
->> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+On 21/11/2024 15:54, Javier Carrasco wrote:
+> On 21/11/2024 14:04, Matti Vaittinen wrote:
+>> Use __cleanup.
 >>
->> Add the UFS Host Controller node and its PHY for QCS615 SoC.
+>> The series converts the rest of the ROHM sensors (maintained by me) to
+>> use guard(mutex). This simplifies the error paths.
 >>
->> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
->> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
->> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>> As a note, kx022a accelerometer driver is handled in another series,
+>> which also adds support for two new accelerometers. I did also patch the
+>> driver for the BU27008 and BU27010 - but when I was testing the changes
+>> I found that the BU27008 status is set to "obsolete". I'll try to dig
+>> some information about the BU27010 and decide if having the driver
+>> in-tree is still worth the effort, or if I should just send out patches
+>> to drop it all. Hence patch to rohm-bu27008.c is not included in the
+>> series. If someone is actually using the BU27008 or BU27010 and wants
+>> to patch it - feel free to pick
+>> 131315de97ff ("iio: bu27008: simplify using guard(mutex)")
+>> from
+>> https://github.com/M-Vaittinen/linux/tree/bu27008-cleanup
+>>
 >> ---
->>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 112 +++++++++++++++++++++++++++
->>   1 file changed, 112 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index 590beb37f441..ceceafb2e71f 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -458,6 +458,118 @@ mmss_noc: interconnect@1740000 {
->>   			qcom,bcm-voters = <&apps_bcm_voter>;
->>   		};
->>   
->> +		ufs_mem_hc: ufshc@1d84000 {
->> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
->> +			reg = <0x0 0x01d84000 0x0 0x3000>, <0x0 0x01d90000 0x0 0x8000>;
-> 
-> Please consider splitting to have one entry per line (and reg-names
-> too).
-Thank you for your comments. I will fix it next version.
-> 
->> +			reg-names = "std", "ice";
->> +
->> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
->> +
->> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
->> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
->> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
->> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
->> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>,
->> +				 <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
->> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
->> +			clock-names = "core_clk",
->> +				      "bus_aggr_clk",
->> +				      "iface_clk",
->> +				      "core_clk_unipro",
->> +					  "core_clk_ice",
-> 
-> Wrong indentation
-> 
-> Other than that LGTM.
-> 
-Thank you for your comments. I will fix it next version.
-> 
->> +				      "ref_clk",
->> +				      "tx_lane0_sync_clk",
->> +				      "rx_lane0_sync_clk";
->> +
->> +			resets = <&gcc GCC_UFS_PHY_BCR>;
->> +			reset-names = "rst";
->> +
->> +			operating-points-v2 = <&ufs_opp_table>;
->> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
->> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
->> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
->> +			interconnect-names = "ufs-ddr",
->> +					     "cpu-ufs";
->> +
->> +			power-domains = <&gcc UFS_PHY_GDSC>;
->> +			required-opps = <&rpmhpd_opp_nom>;
->> +
->> +			iommus = <&apps_smmu 0x300 0x0>;
->> +			dma-coherent;
->> +
->> +			lanes-per-direction = <1>;
->> +
->> +			phys = <&ufs_mem_phy>;
->> +			phy-names = "ufsphy";
->> +
->> +			#reset-cells = <1>;
->> +
->> +			status = "disabled";
->> +
->> +			ufs_opp_table: opp-table {
->> +				compatible = "operating-points-v2";
->> +
->> +				opp-50000000 {
->> +					opp-hz = /bits/ 64 <50000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <37500000>,
->> +						 /bits/ 64 <75000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>;
->> +					required-opps = <&rpmhpd_opp_low_svs>;
->> +				};
->> +
->> +				opp-100000000 {
->> +					opp-hz = /bits/ 64 <100000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <75000000>,
->> +						 /bits/ 64 <150000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>;
->> +					required-opps = <&rpmhpd_opp_svs>;
->> +				};
->> +
->> +				opp-200000000 {
->> +					opp-hz = /bits/ 64 <200000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <150000000>,
->> +						 /bits/ 64 <300000000>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>,
->> +						 /bits/ 64 <0>;
->> +					required-opps = <&rpmhpd_opp_nom>;
->> +				};
->> +			};
->> +		};
->> +
->> +		ufs_mem_phy: phy@1d87000 {
->> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
->> +			reg = <0x0 0x01d87000 0x0 0xe00>;
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
->> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
->> +			clock-names = "ref",
->> +				      "ref_aux",
->> +				      "qref";
->> +
->> +			power-domains = <&gcc UFS_PHY_GDSC>;
->> +
->> +			resets = <&ufs_mem_hc 0>;
->> +			reset-names = "ufsphy";
->> +
->> +			#clock-cells = <1>;
->> +			#phy-cells = <0>;
->> +
->> +			status = "disabled";
->> +		};
->> +
->>   		tcsr_mutex: hwlock@1f40000 {
->>   			compatible = "qcom,tcsr-mutex";
->>   			reg = <0x0 0x01f40000 0x0 0x20000>;
->> -- 
->> 2.34.1
+>> Matti Vaittinen (2):
+>>    iio: bu27034: simplify using guard(mutex)
+>>    iio: bm1390: simplify using guard(mutex)
+>>
+>>   drivers/iio/light/rohm-bu27034.c   | 73 ++++++++++------------------
+>>   drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
+>>   2 files changed, 55 insertions(+), 96 deletions(-)
 >>
 >>
->> -- 
->> linux-phy mailing list
->> linux-phy@lists.infradead.org
->> https://lists.infradead.org/mailman/listinfo/linux-phy
+>> base-commit: adc218676eef25575469234709c2d87185ca223a
 > 
+> Hi Matti,
+> 
+> Both patches look good to me, but I noticed that you kept a few
+> mutex_lock() + mutex_unlock() in both drivers, in particular in the
+> cases where a scoped_guard() could simplify the code. Did you leave
+> those cases untouched on purpose?
+
+Thanks for taking a look at the patches. Much appreciated :)
+
+I remember leaving couple of direct calls to mutex_lock() and 
+mutex_unlock() - but I think I left them only to places where I saw no 
+real improvement by the use of guard() or scoped_guard(). It is likely I 
+considered the locking in these cases being trivial. (Probably only for 
+a duration of one or couple of function calls, with no error handling 
+when a lock is held). The direct mutex_lock()/mutex_unlock() has no real 
+room for usual errors (like leaving the function while lock was taken) 
+in such case.
+
+For me,
+
+mutex_lock();
+ret = foo();
+mutex_unlock();
+
+is as clear as it gets. I don't think scoped_guard() has benefits there. 
+On the contrary, for me the scoped_guard() would be more complex and 
+less obvious :)
+
+Yours,
+	-- Matti
 
 
