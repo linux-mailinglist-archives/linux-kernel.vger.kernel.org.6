@@ -1,173 +1,171 @@
-Return-Path: <linux-kernel+bounces-417920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B3C9D5ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:11:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A539D5AC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:11:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39A31F213D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B701F22BD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04159189F50;
-	Fri, 22 Nov 2024 08:11:22 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843A118B473;
+	Fri, 22 Nov 2024 08:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="QNBVIxyH"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD541714A3;
-	Fri, 22 Nov 2024 08:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732263081; cv=none; b=N4YWxxxLACkBmQCT9Sjcd/Kg0gXImLPGndrQ43vbKX+62by2S/salRHQapxTrmG2JLICP3VfrC/Zbh2gQPAEvawGg/rbiLq/XPClQB5zxIDTVUQ4zNW3Lkyasi5wYrbOpuaGZj83/NsPCpqIDa9b3vlemhqTWMU69t2lZqon6N0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732263081; c=relaxed/simple;
-	bh=9SgXJ+0o+mC9C9/p0Q7HD+Cr3BLQ0pbZ7Nm3evt21u8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mSlR2vMkRncIL3iltNrCARewCWqt5mGpFQwx58goaQJf2waBkIeTd9OgG9IEB71sgJUKEI6LdpTqg0/an7AqViSsVGRrTNSigiu5KQD5rSYVqMfYnUxvznq8DiFLvndT/zaNL0VS5NPXFzbf8BrZjWlNykVnNtAn+PB+pTPDRu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM5E1cT010723;
-	Fri, 22 Nov 2024 08:10:44 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0ppyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 22 Nov 2024 08:10:43 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Fri, 22 Nov 2024 00:10:28 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Fri, 22 Nov 2024 00:10:26 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <lizhi.xu@windriver.com>
-CC: <viro@zeniv.linux.org.uk>, <almaz.alexandrovich@paragon-software.com>,
-        <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
-        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V4] fs/ntfs3: check if the inode is bad before creating symlink
-Date: Fri, 22 Nov 2024 16:10:25 +0800
-Message-ID: <20241122081025.1661161-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241122074952.1585521-1-lizhi.xu@windriver.com>
-References: <20241122074952.1585521-1-lizhi.xu@windriver.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DEF17C9B7;
+	Fri, 22 Nov 2024 08:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732263096; cv=pass; b=hcOHRjkVaNpv8j5SmWDP3m8pF0kJGZtfDCqTgWY9mgkErsHI/DfftmCei413A3HqguZ7YqBo6HssEG6FSr2l4XHv9zvDDMjb7i4hO4QO0olVcvFddk6cbXQca1CLwBoREYZLzU2VluCBKTxG5wyTmqhmfzZJMHbiQ7wTtgWHsVI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732263096; c=relaxed/simple;
+	bh=5OSIA5yfXfTEOiApH3tLTnSXeO90aFWKH284IvMHd/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PeddNFToGS67+hqvjRKc53yC5FshhlypRbyJDAtkBWFpMHz+6E209xiYzLo75jASjOW3Draf2ptUXn2jf6Dy1kErsHbxApVNrMq1GyyBMf0OMVC0MGPx8G85CHMVAIZyHSWsXB10a4bFn+JG/B+TwWApCSomy5hcubNgVSqWuvI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=QNBVIxyH; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4XvnqM2jqkz49Pv3;
+	Fri, 22 Nov 2024 10:11:11 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1732263083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ippbDKWwjgedKHUNgriEsvQ+7CFSQnkoFmjAHD1jXZA=;
+	b=QNBVIxyHJ5Wg/2tJoHqa8dzsBI4cbLRxK6HNFo6lCS2r/ZB/VaOGhVWN1VvbQOWJfhJ518
+	zvALd2r/HpjnM8jb7CdPSj8k1pbVkUSK20X6wHHd309p20tj4wQJUlejrDe8eBCABAM8Y4
+	pi1ZaPonDDyaiAb6q6SWv2t6su6IUTGPVL+6RGVtxGFdJ17huhLlVQT7ZyrFXN5EfOrO0c
+	bcpJMbgOaGbQ7Nc3PMn+lf3wx7qYaIMeRbJl3aKGEtA5W30mlpqEdueAnHzRZ+t2zAolhx
+	cQou2A/hghr9cgm9dQmVwy5pq3rqkRB2HY4FlirUeFidzNNMbIj1wIeFI8UDRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1732263083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ippbDKWwjgedKHUNgriEsvQ+7CFSQnkoFmjAHD1jXZA=;
+	b=Ju20UBMnbjl7q5ZgAYJ67rCvTDAyVLhcng9pDQt8wmRHvmxqxAMdfLB2Xsb8kfkNQCnXP3
+	D9JeZu2nPdJW4z0J+s7w3JggEnGXYFtCDHzSY9PC6XzJQbkQqdFOc9fVvictDkThCadEMg
+	9Wal8dS9A5HB8wYbFpXlHOwoRWnutwqPTnbQ66VC+rkMV3pAptHnNIzz4LROoxeOP4i4Xg
+	f/n9Y07D7gDXQGR7s3VyMWqdB20tYjhU7Zgoc6JAkt5CJvUlrrN1vd9X9h2w9vf5jr3yGU
+	3Xg60irCTXy45MaTrmLZgxMfsSwK1uaTbQg1aoPjUuSFODQ+8ySN+n6RCYXnlQ==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1732263083; a=rsa-sha256;
+	cv=none;
+	b=olQ0irYzoKLmBB1ix3ON2yfzoUuhwWTuNM+TJU55M3xaw9ejgBLT+a04RQ+NXZFSfVg/sk
+	JVUoU8qhTGZbSixlXbGDjTzZcXHq4Q+1H2nDYvWzHhKKTyMiBO3eka8+Z4yVPgOTeAuYsT
+	Vg5GJyYy9wqS2noa8BgqAMwpwMX4TNN7ZdHIWkbhArjiMyeMl+eRZWAahCdcl/CZ99xHLX
+	XmEhYkcYeADJsPuE/z2Z2WLVvyGVFCzqceh8yVp7clxfx/Sid3JhvDDuN35LPNNGNvVzRE
+	EIHJb5sdvrtiwV/dDAyB+FVVy96UPpTp/rajFNjw17AUrGbngZplbuhQIh3XIA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 0BE47634C93;
+	Fri, 22 Nov 2024 10:11:10 +0200 (EET)
+Date: Fri, 22 Nov 2024 08:11:10 +0000
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev,
+	lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org
+Subject: Re: drivers/media/pci/intel/ipu-bridge.c:752
+ ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+Message-ID: <Z0A8njOPBMtkb5wJ@valkosipuli.retiisi.eu>
+References: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
+ <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain>
+ <CANiDSCuQFmrPTLTFs0GPJ209EEKN=MCg8cK3xcsxp8c2eEMhVg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: AhRtL3gN848X77p4Wiytni39kt6sPfnE
-X-Proofpoint-GUID: AhRtL3gN848X77p4Wiytni39kt6sPfnE
-X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=67403c83 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=vpW_iYbbhX9-InLknqQA:9
- a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-22_02,2024-11-21_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- mlxlogscore=917 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2411220068
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANiDSCuQFmrPTLTFs0GPJ209EEKN=MCg8cK3xcsxp8c2eEMhVg@mail.gmail.com>
 
-syzbot reported a null-ptr-deref in pick_link. [1]
+Hi Ricardo,
 
-First, i_link and i_dir_seq are in the same union, they share the same memory
-address, and i_dir_seq will be updated during the execution of walk_component,
-which makes the value of i_link equal to i_dir_seq.
+On Fri, Nov 22, 2024 at 09:06:40AM +0100, Ricardo Ribalda wrote:
+> Hi
+> 
+> On Fri, 22 Nov 2024 at 09:01, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
+> >
+> > Hi Dan,
+> >
+> > On Fri, Nov 22, 2024 at 10:45:53AM +0300, Dan Carpenter wrote:
+> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > > head:   28eb75e178d389d325f1666e422bc13bbbb9804c
+> > > commit: 93da10eee90b2ffa4b496dd4a6ea276c57461fb6 media: intel/ipu6: Fix direct dependency Kconfig error
+> > > config: alpha-randconfig-r072-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221147.N6w23gDo-lkp@intel.com/config)
+> > > compiler: alpha-linux-gcc (GCC) 14.2.0
+> > >
+> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > > the same patch/commit), kindly add following tags
+> > > | Reported-by: kernel test robot <lkp@intel.com>
+> > > | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > | Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
+> > >
+> > > smatch warnings:
+> > > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
+> > >
+> > > vim +/i +752 drivers/media/pci/intel/ipu-bridge.c
+> > >
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  745  static int ipu_bridge_ivsc_is_ready(void)
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  746  {
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  747     struct acpi_device *sensor_adev, *adev;
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  748     struct device *csi_dev;
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  749     bool ready = true;
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  750     unsigned int i;
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  751
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03 @752     for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  753  #if IS_ENABLED(CONFIG_ACPI)
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  754             const struct ipu_sensor_config *cfg =
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  755                     &ipu_supported_sensors[i];
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  756
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  757             for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  758  #else
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  759             while (true) {
+> > >                                                                                                         ^^^^^^^^^^^^^^
+> > >
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  760                     sensor_adev = NULL;
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  761  #endif
+> > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  762                     if (!ACPI_PTR(sensor_adev->status.enabled))
+> > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  763                             continue;
+> > >
+> > >
+> > > These continues make sense in for_each_acpi_dev_match() but not in a while (true) {
+> > > loop.  We're stuck forever.
+> >
+> > The non-ACPI case is there just for the looks... I think what should be
+> > done is to make the entire loop conditional to CONFIG_ACPI. I can post a
+> > patch.
+> 
+> I saw your mail after I sent my patch :)
+> https://patchwork.linuxtv.org/project/linux-media/patch/20241122-fix-ipu-v1-1-246e254cb77c@chromium.org/
+> 
+> If we make the entire loop conditional then we would not compile test the
+> loop.
 
-Secondly, the chmod execution failed, which resulted in setting the mode value
-of file0's inode to REG when executing ntfs_bad_inode.
+I'm fine with the patch as such but don't you think we might get just a
+different warning from this one? :-) I'm fine trying this though.
 
-Third, during the execution of the link command, it sets the inode of the
-symlink file to the already bad inode of file0 by calling d_instantiate, which
-ultimately leads to null-ptr-deref when performing a mount operation on the
-symbolic link bus because it use bad inode's i_link and its value is equal to
-i_dir_seq=2. 
-
-Note: ("file0, bus" are defined in reproducer [2])
-
-To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
-whether the inode of file is already bad.
-
-[1]
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
-Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
-RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
-R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
-R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
-FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- step_into+0xca9/0x1080 fs/namei.c:1923
- lookup_last fs/namei.c:2556 [inline]
- path_lookupat+0x16f/0x450 fs/namei.c:2580
- filename_lookup+0x256/0x610 fs/namei.c:2609
- user_path_at+0x3a/0x60 fs/namei.c:3016
- do_mount fs/namespace.c:3844 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4b18ad5b19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
-RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
-R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
- </TASK>
-
-[2]
-move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
-chmod(&(0x7f0000000080)='./file0\x00', 0x0)
-link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
-mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
-
-Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
-V1 --> V2: add the root cause of the i_link not set issue and imporve the check
-V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
-V3 --> V4: add comments for symlink use bad inode, it is the root cause
-
- fs/ntfs3/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index be04d2845bb7..fefbdcf75016 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
- 	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
- 	struct NTFS_DE *de;
- 
-+	if (is_bad_inode(inode))
-+		return -EIO;
-+
- 	/* Allocate PATH_MAX bytes. */
- 	de = __getname();
- 	if (!de)
 -- 
-2.43.0
-
+Sakari Ailus
 
