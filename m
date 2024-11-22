@@ -1,391 +1,302 @@
-Return-Path: <linux-kernel+bounces-417930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9C19D5AE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:18:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82CA59D5AF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36276B239E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4976B21F94
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA03318BBB8;
-	Fri, 22 Nov 2024 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3497C18BC31;
+	Fri, 22 Nov 2024 08:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="kKIbZpWi"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C62170A03
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732263472; cv=none; b=nE7V8cR0UH950lt1Ck0alKA+TcUNnZkwzZznRbKez6cZBxhUztGCzRh85DCWYws239DfYk/eZZ31PXv1NDLlhT4Oo3ffvWiYD3VG0mam8DZMi3l9X4CDXxxEcXgKVmMhI37bJ69ImpSaK4TneN/IxD3Q/3BmN2ISfBok3qcSUDk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732263472; c=relaxed/simple;
-	bh=TaGhmULq3katz+gGyjfGdXQBWz8KzltUV/OLYFggFQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=o2wQiBCuLo7Jn6fqdXzM5kiTsvKaJ5DpjDt9oz9Xf8zQmcjXRaszy6E43Q60PgrVprhi1+AMNmEAnL62j1EeDOrO9jMP3KQ1/0gw9/8UaHItoCtI0Y2yqIoj54BgS/+Otg4481uT4yBIv8uSyuUyVuZpMhycu6k6ZnMwAC4ZhtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=kKIbZpWi; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p54921e31.dip0.t-ipconnect.de [84.146.30.49])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PCcJjQLh"
+Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 510AF2C1D1C;
-	Fri, 22 Nov 2024 09:17:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1732263468;
-	bh=TaGhmULq3katz+gGyjfGdXQBWz8KzltUV/OLYFggFQQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=kKIbZpWi0/N9zvrTES1r4xafqg7LkBrLA+zVgnSeIs0WeApAPm2oDHED0Hr1vqgRf
-	 pAX5mgxlRoEe76w/JS18X+1lB0TsqnWfn6eflmjJc2UGxbIlKxT02vjDBm+DeBdwRr
-	 81H6lvdVTinZqdAP4O+h+wT/xTCJE0e/AlAE9Kv61h5AnJUUjmxfbonLj0hkYaQwKq
-	 Svtjj9ctFmlHoPjFG6bghAY6q6fwiiEZ7Z8yIdys2YMJESsJ9wUNgRdpkt4Khb9QsZ
-	 o3aeOkO0de9lOYZnSI5wgsSM9JPltP8BEziJl9nvCu4MHU2Ha48LJ6tIlH/ikk/KeA
-	 UyyC1UNHur26w==
-Date: Fri, 22 Nov 2024 09:17:47 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: [git pull] IOMMU Updates for Linux v6.13
-Message-ID: <Z0A-K1MiL2CLa7Zd@8bytes.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8349618308A;
+	Fri, 22 Nov 2024 08:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732263513; cv=none; b=rKGI++CgooA5SFgVYlIr6h81la+t4DWGw205W+QDGJTug0ekaxQHEvExaWkxBc0dlyVDHo0Jh6bnrRQ0eh09CPoWA2XPnjC7aVm8Es/9ViQKZOHxQDqFG7+z2Y8JlEaG+G99Yq9Kc4wmIJP2R8fGLXBuY/5PGzRB27YekCUTbsA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732263513; c=relaxed/simple;
+	bh=0QjR7exsqEfryrKCGOHz0ypMg6tYTPC5iGlX0JssUpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ueIAFpwqw+DlXcWav3+gXiWdanmqx6wVL0Sk/CjIYR7++Lz39EpmAQbVoFCmn4dhuI8CGOv6lffERn26sBjf628FGJMJu6DD5ly9oJKCXo+5pUtyuzCWoA6jJhazDexAQjdkuvl+MOnQ+c6It6eRxX0V7IR4bWvVC+tO32jYOfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PCcJjQLh; arc=none smtp.client-ip=80.12.242.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from mail-ej1-f44.google.com ([209.85.218.44])
+	by smtp.orange.fr with ESMTPSA
+	id EOrttRWAg51TuEOrutgU8W; Fri, 22 Nov 2024 09:18:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732263502;
+	bh=bkksmYHd3DOLy+GhB0etWEn8hsqAz4V+x3nuZS3Vdn4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=PCcJjQLhU01KdNSZl2OVQGRQDrZ1U7m8y4Q/zL+B23lRln0e6jyTcV2F4HFe7oBQj
+	 WEo61DYgw8q01ZPbvXJQck+HXlqKUVQTK0nxsi1/oYs+CjJEr4Ppmrkwj+AvpZissV
+	 ZwAtBE2/g7pAAr28WDMYDfoCI4l+Pm5jko9d6PkY83CntCDkjzdCxlEYCgZz9Fuq1X
+	 Q8U/6VpowxuU4kW/IXJtGrjjkm9OY9AurB+vhw7MN2sy7kyKgl1RYkO4rBdWIB4uXu
+	 qaovh4wDcqLILKayEo90FSwhBiu7t5M6i4otjJt7y0Q4gxkQ9HjHFfouujvISXS6lV
+	 ivCJwndNBzK3Q==
+X-ME-Helo: mail-ej1-f44.google.com
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 22 Nov 2024 09:18:22 +0100
+X-ME-IP: 209.85.218.44
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa3a79d4d59so275643166b.3;
+        Fri, 22 Nov 2024 00:18:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUARR9dq3tZmaZpEIm+bFZJ1SNQe04OGCxGYIYX2rMNgDFd8Qmt6MHdDGaWfqJuoGCYwN5nlXY7X6SIQw==@vger.kernel.org, AJvYcCV0VcQap653sfkdDzUAyRBWAx/6t2IFvSzOCR3bQDbigyW3rlhokueYgiqQ6XSIpN2JZC+sr4hTQbseBaGD@vger.kernel.org, AJvYcCVPq82jKDkWqGIBdNshG27Ma0fbfg5D8FQKWn1cYe2LDqZ13gQJAEaOUQ5lJDRyIrIZg5XrxtqmC3VTxzVcNcY=@vger.kernel.org, AJvYcCVX9vElPgrKGC6hkwjH3Sm/HPafh50I8IdTtxzQB5VdTlv1YINom4weLEswgAnNk82WL4xW9IFcgGvOHvA=@vger.kernel.org, AJvYcCVtlCcKZ6M2cZNdDBEseeQBI+W4Gr9LWfElMUaqdh3idOK8f2G0dpO8U7ZVU2fegWCP25oWqA4N@vger.kernel.org, AJvYcCWcGYmS7ak2WQQQSXDs9aafAuQtS1w0dmAY1YOC1Cddt3wvwVgrSc78k1Ffvm1OCAK611jiz4sjyQRo@vger.kernel.org, AJvYcCWdqc8WhYzPCSPMQJ9kib3NOdDlqUl5/N28nWdTiLBwvQmFQDaA4nd1MyRwjDldrh9/c1XLep/c1MCI@vger.kernel.org, AJvYcCXY12hv5zOWAu2ERHZz8SCXX07gB+uWkae7FlQet2qbYEcGRuXFIh50y+PtYDNCEhBop2P37wEsJlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzYa2aVawYyKKY0vPZFaX0tVSFjif8FJusKW7qjJz9kDWv+V0W
+	tuQWOXxsD7AXq+qBWam1HA4FmvbX0nXSLmDFp4UIiCppwVi+2PXMKgMtMtXIFdZA2IVm3fIpgw6
+	UUMZEK7muG2NUtC9e307mTRI4VX4=
+X-Google-Smtp-Source: AGHT+IGjU0Ifb4iseWJWvWQesHEv6Ktx1cnDwwP3WxvPpn1YSLbPy8AcJJePd1GJu60EJ+MGHbckXIVPwFDtaFz2354=
+X-Received: by 2002:a17:906:31c5:b0:aa5:21f7:4304 with SMTP id
+ a640c23a62f3a-aa521f7433dmr5945266b.30.1732263501649; Fri, 22 Nov 2024
+ 00:18:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lNWcLHXsMnkJjivo"
-Content-Disposition: inline
+References: <20241121064046.3724726-1-tmyu0@nuvoton.com> <20241121064046.3724726-5-tmyu0@nuvoton.com>
+ <08a91d47-ad78-4f7d-896f-b75d7418be1e@wanadoo.fr> <CAOoeyxVjBsmOr=-14iq7pQamJ90j_PBMhQK0Lo=xmvPyqqseGQ@mail.gmail.com>
+In-Reply-To: <CAOoeyxVjBsmOr=-14iq7pQamJ90j_PBMhQK0Lo=xmvPyqqseGQ@mail.gmail.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Date: Fri, 22 Nov 2024 17:18:09 +0900
+X-Gmail-Original-Message-ID: <CAMZ6Rq+WePVM2aSk2HzXoa-t+ZE97yeqS6bndpGXUh+NuiM8sg@mail.gmail.com>
+Message-ID: <CAMZ6Rq+WePVM2aSk2HzXoa-t+ZE97yeqS6bndpGXUh+NuiM8sg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] can: Add Nuvoton NCT6694 CAN support
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri. 22 Nov. 2024 at 17:05, Ming Yu <a0282524688@gmail.com> wrote:
+> Dear Vincent,
+>
+> Thank you for your comments,
+>
+> Vincent Mailhol <mailhol.vincent@wanadoo.fr> =E6=96=BC 2024=E5=B9=B411=E6=
+=9C=8821=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:47=E5=AF=AB=E9=81=
+=93=EF=BC=9A
+> > > +
+> > > +struct __packed nct6694_can_cmd0 {
+> >
+> > Give more meaningfull names to your structures. For example:
+> >
+> >   /* cmd1 */
+> >   struct __packed nct6694_can_bittiming
+> >
+>
+> Understood. I will make the modifications in v3.
+>
+> > > +     u32 nbr;
+> > > +     u32 dbr;
+> > > +     u32 active:8;
+> > > +     u32 reserved:24;
+> > > +     u16 ctrl1;
+> > > +     u16 ctrl2;
+> > > +     u32 nbtp;
+> > > +     u32 dbtp;
+> > > +};
+> > Always use the specific endianess types in the structures that you are
+> > sending to the device. e.g. replace u32 by __le32 (assuming little endi=
+an).
+> >
+>
+> Okay, I'll fix it in v3.
+>
+> > > +struct __packed nct6694_can_cmd1 {
+> ...
+> > > +
+> > > +struct nct6694_canfd_priv {
+> >
+> > Be consistent in your name space. Sometime you prefix your names with
+> > nct6694_can and sometimes with nct6694_canfd for no apparent reasons.
+> >
+>
+> Understood. I will make the modifications in v3.
+>
+> > > +     struct can_priv can;    /* must be the first member */
+> ...
+> > > +     } else {
+> > > +             if (buf->flag & NCT6694_CAN_FLAG_BRS)
+> > > +                     cf->flags |=3D CANFD_BRS;
+> > > +
+> > > +             for (i =3D 0; i < cf->len; i++)
+> > > +                     cf->data[i] =3D buf->data[i];
+> >
+> > Use memcpy().
+> >
+>
+> Okay, I'll fix it in v3.
+>
+> > > +     }
+> > > +
+> > > +     /* Remove the packet from FIFO */
+> > > +     stats->rx_packets++;
+> > > +     stats->rx_bytes +=3D cf->len;
+> >
+> > Do not increment the rx_bytes if the frame is RTR.
+> >
+>
+> Okay, I'll fix it in v3.
+>
+> > > +     netif_receive_skb(skb);
+> ...
+> > > +
+> > > +     switch (new_state) {
+> > > +     case CAN_STATE_ERROR_WARNING:
+> > > +             /* error warning state */
+> >
+> > Such comment can be removed. Here you are just paraphrasing the macro. =
+I
+> > can already see that CAN_STATE_ERROR_WARNING means the "error warning
+> > state". The comments should add information.
+> >
+>
+> Okay, I will drop them in v3.
+>
+> > > +             cf->can_id |=3D CAN_ERR_CRTL;
+> > > +             cf->data[1] =3D (bec.txerr > bec.rxerr) ? CAN_ERR_CRTL_=
+TX_WARNING :
+> > > +                                                     CAN_ERR_CRTL_RX=
+_WARNING;
+> ...
+> > > +static int nct6694_canfd_start(struct net_device *ndev)
+> > > +{
+> > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > +     struct nct6694_can_cmd0 *buf =3D (struct nct6694_can_cmd0 *)pri=
+v->tx_buf;
+> >
+> > Give a more memorable name to buf, for example: bittiming_cmd.
+> >
+>
+> Got it. So, every buf that uses a command must be renamed similarly, righ=
+t?
 
---lNWcLHXsMnkJjivo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes. Note that you can use different names if you have a better idea.
+It is just that generic names like "buf" or "cmd1" do not tell me what
+this variable actually is. On the contrary, bittiming_cmd tells me
+that this variable holds the payload for the command to set the device
+bittiming. This way, suddenly, the code becomes easier to read and
+understand. As long as your naming conveys this kind of information,
+then I am fine with whatever you choose, just avoid the "buf" or
+"cmd1" names.
 
-Hi Linus,
+> > > +     const struct can_bittiming *n_bt =3D &priv->can.bittiming;
+> > > +     const struct can_bittiming *d_bt =3D &priv->can.data_bittiming;
+> > > +     int ret;
+> > > +
+> > > +     guard(mutex)(&priv->lock);
+> > > +
+> > > +     memset(priv->tx_buf, 0, NCT6694_CAN_CMD0_LEN);
+> >
+> > Remove those CMD*_LEN macros, instead, use sizeof() of your structures.
+> >
+> >   memset(buf, 0, sizeof(*buf));
+> >
+>
+> Understood. I will make the modifications in v3.
+>
+> > > +     buf->nbr =3D n_bt->bitrate;
+> > > +     buf->dbr =3D d_bt->bitrate;
+> ...
+> > > +static netdev_tx_t nct6694_canfd_start_xmit(struct sk_buff *skb,
+> > > +                                         struct net_device *ndev)
+> > > +{
+> > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > +
+> > > +     if (priv->tx_skb || priv->tx_busy) {
+> > > +             netdev_err(ndev, "hard_xmit called while tx busy\n");
+> > > +             return NETDEV_TX_BUSY;
+> > > +     }
+> > > +
+> > > +     if (can_dev_dropped_skb(ndev, skb))
+> > > +             return NETDEV_TX_OK;
+> > > +
+> > > +     netif_stop_queue(ndev);
+> >
+> > Here, you are inconditionally stopping the queue. Does it mean that you=
+r
+> > device is only able to manage one CAN frame at the time?
+> >
+>
+> Yes, we designed it to manage a single CAN frame, so we stop the queue
+> here until a TX event is received to wake queue.
 
-This PR also comes with dependencies from the IOMMUFD tree via the
-iommufd/arm-smmuv3-nested branch. It is possible that you already pulled
-those from Jason. With that being said:
+Do you mean that the device is designed to manage only one single CAN
+frame or is the driver designed to only manage one single CAN frame?
+If the device is capable of handling several CAN frames, your driver
+should take advantage of this. Else the driver will slow down the
+communication a lot whenever packets start to accumulate in the TX
+queue.
 
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
-
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git tags/iommu-updates-v6.13
-
-for you to fetch changes up to 42f0cbb2a253bcd7d4f20e80462014622f19d88e:
-
-  Merge branches 'intel/vt-d', 'amd/amd-vi' and 'iommufd/arm-smmuv3-nested' into next (2024-11-15 09:27:43 +0100)
-
-----------------------------------------------------------------
-IOMMU Updates for Linux v6.13:
-
-Including:
-
-	- Core Updates:
-	  - Convert call-sites using iommu_domain_alloc() to more specific
-	    versions and remove function.
-	  - Introduce iommu_paging_domain_alloc_flags().
-	  - Extend support for allocating PASID-capable domains to more
-	    drivers.
-	  - Remove iommu_present().
-	  - Some smaller improvements.
-
-	- New IOMMU driver for RISC-V.
-
-	- Intel VT-d Updates:
-	  - Add domain_alloc_paging support.
-	  - Enable user space IOPFs in non-PASID and non-svm cases.
-	  - Small code refactoring and cleanups.
-	  - Add domain replacement support for pasid.
-
-	- AMD-Vi Updates:
-	  - Adapt to iommu_paging_domain_alloc_flags() interface and alloc V2
-	    page-tables by default.
-	  - Replace custom domain ID allocator with IDA allocator.
-	  - Add ops->release_domain() support.
-	  - Other improvements to device attach and domain allocation code
-	    paths.
-
-	- ARM-SMMU Updates:
-	  - SMMUv2:
-	    - Return -EPROBE_DEFER for client devices probing before their SMMU.
-	    - Devicetree binding updates for Qualcomm MMU-500 implementations.
-	  - SMMUv3:
-	    - Minor fixes and cleanup for NVIDIA's virtual command queue driver.
-	  - IO-PGTable:
-	    - Fix indexing of concatenated PGDs and extend selftest coverage.
-	    - Remove unused block-splitting support.
-
-	- S390 IOMMU:
-	  - Implement support for blocking domain.
-
-	- Mediatek IOMMU:
-	  - Enable 35-bit physical address support for mt8186.
-
-	- OMAP IOMMU driver:
-	  - Adapt to recent IOMMU core changes and unbreak driver.
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      iommu/vt-d: Increase buffer size for device name
-
-Bartosz Golaszewski (1):
-      iommu/sysfs: constify the class struct
-
-Dmitry Baryshkov (1):
-      dt-bindings: iommu: arm,smmu: Add Qualcomm SAR2130P compatible
-
-Dr. David Alan Gilbert (1):
-      iommu/vt-d: Remove unused dmar_msi_read
-
-Gan Jie (1):
-      iommu/iova: Fix typo 'adderss'
-
-Jason Gunthorpe (15):
-      iommu: Remove useless flush from iommu_create_device_direct_mappings()
-      iommu/amd: Fix corruption when mapping large pages from 0
-      iommu: Refactor __iommu_domain_alloc()
-      iommu: Introduce iommu_paging_domain_alloc_flags()
-      iommu: Add new flag to explictly request PASID capable domain
-      iommu: Put domain allocation in __iommu_group_alloc_blocking_domain()
-      iommu: Create __iommu_alloc_identity_domain()
-      vfio: Remove VFIO_TYPE1_NESTING_IOMMU
-      iommu/arm-smmu-v3: Report IOMMU_CAP_ENFORCE_CACHE_COHERENCY for CANWBS
-      iommu/arm-smmu-v3: Implement IOMMU_HWPT_ALLOC_NEST_PARENT
-      iommu/arm-smmu-v3: Expose the arm_smmu_attach interface
-      iommu/io-pgtable-arm: Remove split on unmap behavior
-      iommu/io-pgtable-arm-v7s: Remove split on unmap behavior
-      iommu: Add a kdoc to iommu_unmap()
-      iommu/arm-smmu-v3: Make set_dev_pasid() op support replace
-
-Jinjie Ruan (1):
-      iommu/vt-d: Use PCI_DEVID() macro
-
-Joel Granados (3):
-      iommu/vt-d: Separate page request queue from SVM
-      iommu/vt-d: Move IOMMU_IOPF into INTEL_IOMMU
-      iommufd: Enable PRI when doing the iommufd_hwpt_alloc
-
-Joerg Roedel (6):
-      iommu: Fix prototype of iommu_paging_domain_alloc_flags()
-      iommu: Restore iommu_flush_iotlb_all()
-      Merge branch 'core' into amd/amd-vi
-      Merge tag 'arm-smmu-updates' of git://git.kernel.org/pub/scm/linux/kernel/git/will/linux into arm/smmu
-      Merge branches 'arm/smmu', 'mediatek', 's390', 'ti/omap', 'riscv' and 'core' into next
-      Merge branches 'intel/vt-d', 'amd/amd-vi' and 'iommufd/arm-smmuv3-nested' into next
-
-Julia Lawall (1):
-      iommu: Reorganize kerneldoc parameter names
-
-Klaus Jensen (2):
-      iommu/vt-d: Remove the pasid present check in prq_event_thread
-      iommu/vt-d: Drop pasid requirement for prq initialization
-
-Konrad Adamczyk (1):
-      iommu/mediatek: Add PGTABLE_PA_35_EN to mt8186 platform data
-
-Lu Baolu (13):
-      iommu: Remove iommu_present()
-      remoteproc: Use iommu_paging_domain_alloc()
-      media: nvidia: tegra: Use iommu_paging_domain_alloc()
-      drm/nouveau/tegra: Use iommu_paging_domain_alloc()
-      iommu: Remove iommu_domain_alloc()
-      iommu/vt-d: Add domain_alloc_paging support
-      iommu/vt-d: Remove unused domain_alloc callback
-      iommu/vt-d: Enhance compatibility check for paging domain attach
-      iommu/vt-d: Remove domain_update_iommu_cap()
-      iommu/vt-d: Remove domain_update_iommu_superpage()
-      iommu/vt-d: Refactor first_level_by_default()
-      iommu/vt-d: Refine intel_iommu_domain_alloc_user()
-      iommu/vt-d: Drain PRQs when domain removed from RID
-
-Matthew Rosato (1):
-      iommu/s390: Implement blocking domain
-
-Mostafa Saleh (2):
-      iommu/io-pgtable-arm: Fix stage-2 map/unmap for concatenated tables
-      iommu/io-pgtable-arm: Add self test for the last page in the IAS
-
-Nicolin Chen (5):
-      iommu/tegra241-cmdqv: Staticize cmdqv_debugfs_dir
-      ACPICA: IORT: Update for revision E.f
-      ACPI/IORT: Support CANWBS memory access flag
-      iommu/arm-smmu-v3: Support IOMMU_GET_HW_INFO via struct arm_smmu_hw_info
-      iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
-
-Pratyush Brahma (1):
-      iommu/arm-smmu: Defer probe of clients after smmu device bound
-
-Qingqing Zhou (1):
-      dt-bindings: arm-smmu: document QCS615 APPS SMMU
-
-Robin Murphy (2):
-      iommu/omap: Add minimal fwnode support
-      iommu: Make bus_iommu_probe() static
-
-Tomasz Jeznach (7):
-      dt-bindings: iommu: riscv: Add bindings for RISC-V IOMMU
-      iommu/riscv: Add RISC-V IOMMU platform device driver
-      iommu/riscv: Add RISC-V IOMMU PCIe device driver
-      iommu/riscv: Enable IOMMU registration and device probe.
-      iommu/riscv: Device directory management.
-      iommu/riscv: Command and fault queue support
-      iommu/riscv: Paging domain support
-
-Uros Bizjak (1):
-      iommu/amd: Use atomic64_inc_return() in iommu.c
-
-Vasant Hegde (20):
-      iommu/amd: Do not try copy old DTE resume path
-      iommu/arm-smmu-v3: Enhance domain_alloc_user() to allocate PASID capable domain
-      iommu/amd: Add helper function to check GIOSUP/GTSUP
-      iommu/amd: Move V2 page table support check to early_amd_iommu_init()
-      iommu/amd: Separate page table setup from domain allocation
-      iommu/amd: Pass page table type as param to pdom_setup_pgtable()
-      iommu/amd: Enhance amd_iommu_domain_alloc_user()
-      iommu/amd: Implement global identity domain
-      iommu/amd/pgtbl_v2: Take protection domain lock before invalidating TLB
-      iommu/amd: Use ida interface to manage protection domain ID
-      iommu/amd: Remove protection_domain.dev_cnt variable
-      iommu/amd: xarray to track protection_domain->iommu list
-      iommu/amd: Remove unused amd_iommus variable
-      iommu/amd: Do not detach devices in domain free path
-      iommu/amd: Reduce domain lock scope in attach device path
-      iommu/amd: Rearrange attach device code
-      iommu/amd: Convert dev_data lock from spinlock to mutex
-      iommu/amd: Reorder attach device code
-      iommu/amd: Add ops->release_domain
-      iommu/amd: Improve amd_iommu_release_device()
-
-Will Deacon (2):
-      iommu/tegra241-cmdqv: Fix unused variable warning
-      Merge branch 'for-joerg/arm-smmu/bindings' into arm/smmu
-
-Yi Liu (13):
-      iommu/vt-d: Drop s1_pgtbl from dmar_domain
-      iommu: Pass old domain to set_dev_pasid op
-      iommu/vt-d: Add a helper to flush cache for updating present pasid entry
-      iommu/vt-d: Refactor the pasid setup helpers
-      iommu/vt-d: Add pasid replace helpers
-      iommu/vt-d: Consolidate the struct dev_pasid_info add/remove
-      iommu/vt-d: Add iommu_domain_did() to get did
-      iommu/vt-d: Make intel_iommu_set_dev_pasid() to handle domain replacement
-      iommu/vt-d: Limit intel_iommu_set_dev_pasid() for paging domain
-      iommu/vt-d: Make intel_svm_set_dev_pasid() support domain replacement
-      iommu/vt-d: Make identity_domain_set_dev_pasid() to handle domain replacement
-      iommu/vt-d: Add set_dev_pasid callback for nested domain
-      iommu: Make set_dev_pasid op support domain replacement
-
-Zhenzhong Duan (2):
-      iommu/vt-d: Fix checks and print in dmar_fault_dump_ptes()
-      iommu/vt-d: Fix checks and print in pgtable_walk()
-
- .../devicetree/bindings/iommu/arm,smmu.yaml        |    5 +
- .../devicetree/bindings/iommu/riscv,iommu.yaml     |  147 ++
- MAINTAINERS                                        |    9 +
- arch/s390/include/asm/pci.h                        |    4 +-
- arch/s390/pci/pci.c                                |    3 +
- arch/s390/pci/pci_debug.c                          |   10 +-
- drivers/acpi/arm64/iort.c                          |   13 +
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c |    4 +-
- drivers/iommu/Kconfig                              |   10 +
- drivers/iommu/Makefile                             |    2 +-
- drivers/iommu/amd/amd_iommu.h                      |   11 +-
- drivers/iommu/amd/amd_iommu_types.h                |   23 +-
- drivers/iommu/amd/init.c                           |   63 +-
- drivers/iommu/amd/io_pgtable.c                     |   11 +-
- drivers/iommu/amd/io_pgtable_v2.c                  |    3 +
- drivers/iommu/amd/iommu.c                          |  495 +++---
- drivers/iommu/amd/pasid.c                          |    6 +-
- drivers/iommu/arm/arm-smmu-v3/Makefile             |    1 +
- .../iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c    |   31 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-sva.c    |    5 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        |   97 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        |   45 +-
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c     |    7 +-
- drivers/iommu/arm/arm-smmu/arm-smmu.c              |   27 +-
- drivers/iommu/intel/Kconfig                        |    2 +-
- drivers/iommu/intel/Makefile                       |    2 +-
- drivers/iommu/intel/dmar.c                         |   15 +-
- drivers/iommu/intel/iommu.c                        |  576 +++----
- drivers/iommu/intel/iommu.h                        |   56 +-
- drivers/iommu/intel/irq_remapping.c                |    4 +-
- drivers/iommu/intel/nested.c                       |   53 +-
- drivers/iommu/intel/pasid.c                        |  409 +++--
- drivers/iommu/intel/pasid.h                        |   22 +-
- drivers/iommu/intel/prq.c                          |  396 +++++
- drivers/iommu/intel/svm.c                          |  433 +----
- drivers/iommu/io-pgtable-arm-v7s.c                 |  149 +-
- drivers/iommu/io-pgtable-arm.c                     |  114 +-
- drivers/iommu/iommu-sysfs.c                        |    2 +-
- drivers/iommu/iommu.c                              |  263 ++--
- drivers/iommu/iommufd/hw_pagetable.c               |    3 +-
- drivers/iommu/iommufd/vfio_compat.c                |    7 +-
- drivers/iommu/iova.c                               |    2 +-
- drivers/iommu/mtk_iommu.c                          |    2 +-
- drivers/iommu/omap-iommu.c                         |   26 +-
- drivers/iommu/riscv/Kconfig                        |   20 +
- drivers/iommu/riscv/Makefile                       |    3 +
- drivers/iommu/riscv/iommu-bits.h                   |  784 +++++++++
- drivers/iommu/riscv/iommu-pci.c                    |  120 ++
- drivers/iommu/riscv/iommu-platform.c               |   92 ++
- drivers/iommu/riscv/iommu.c                        | 1661 ++++++++++++++++++++
- drivers/iommu/riscv/iommu.h                        |   88 ++
- drivers/iommu/s390-iommu.c                         |   73 +-
- drivers/media/platform/nvidia/tegra-vde/iommu.c    |    7 +-
- drivers/remoteproc/remoteproc_core.c               |    6 +-
- drivers/vfio/vfio_iommu_type1.c                    |   12 +-
- include/acpi/actbl2.h                              |    3 +-
- include/linux/dmar.h                               |    1 -
- include/linux/iommu.h                              |   30 +-
- include/uapi/linux/iommufd.h                       |   43 +
- include/uapi/linux/vfio.h                          |    2 +-
- 60 files changed, 4797 insertions(+), 1716 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
- create mode 100644 drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
- create mode 100644 drivers/iommu/intel/prq.c
- create mode 100644 drivers/iommu/riscv/Kconfig
- create mode 100644 drivers/iommu/riscv/Makefile
- create mode 100644 drivers/iommu/riscv/iommu-bits.h
- create mode 100644 drivers/iommu/riscv/iommu-pci.c
- create mode 100644 drivers/iommu/riscv/iommu-platform.c
- create mode 100644 drivers/iommu/riscv/iommu.c
- create mode 100644 drivers/iommu/riscv/iommu.h
-
-Please pull.
-
-Thanks,
-
-	Joerg
-
---lNWcLHXsMnkJjivo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEr9jSbILcajRFYWYyK/BELZcBGuMFAmdAPisACgkQK/BELZcB
-GuOXTRAA0UoLAr0nXC4jEJ/XDLxUX4lU9Td+TaMNdKaHAR1osCgAUucPFQKLqKq9
-oOHpWl7GNp+edyPQeEKMjhhXQV//1l8CXMpoqYU2cAOy7ok+sWdrkEFhoYk8JTm/
-DD21QdcMdoStP50aYoCyLEsV/AKENMejYlEAllMxuMMSWHw0/n8gwn9bnYW8CJ13
-ZW6x8bhttUL5RNyZ04MWmTrObLJBJOBC8AtOavIdfMy1SJpNTft7uyte5RQwWNo7
-lX+KRY9LRGCEU5C4Ca4JbHZiy30+hcMvqzQXIyjN+INhy1uRdKn9wCBJxhSDpg+P
-KyHQ/XYgKnwVxqsdCBj+zM4iWqbVcqb/DCy2XctQGLO7dNDphY4lEyawXbGp7grZ
-FNL6QbUfYfz+eMm0YhW6UUuw2w6rYK/tg59P9iJwbFIBsF4wIEQyVxQNoocq5W82
-U682XP4lMF7LAm1Gcc1rHt+89vM15OWcCUaJsgMCEr+sjbFS6R1r7VtWXoCnjJkK
-6uEM9fXqdHhBjijLbQrmXbtulEP0JcUERd6wSx8zRSTq+hsBB3B0BKB7ARhXpASa
-pzUkOG+rDLOQXUJvDHLXA0xZh18tGDy1XaTvWhYH3ynEXriYUKbyOx+CkOyAjMui
-1bERmMrdY64VniUOV16aYND5BfjDUQpVQBnP1ohwfg7/xJPp148=
-=/8BZ
------END PGP SIGNATURE-----
-
---lNWcLHXsMnkJjivo--
+> But It seems I lost the error handling code for the tx command in
+> nct6694_canfd_tx(), I will fix it in the next patch.
+>
+> > > +     priv->tx_skb =3D skb;
+> > > +     queue_work(priv->wq, &priv->tx_work);
+> > > +
+> > > +     return NETDEV_TX_OK;
+> > > +}
+> > > +
+> > > +static void nct6694_canfd_tx(struct net_device *ndev, struct canfd_f=
+rame *cf)
+> > > +{
+> > > +     struct nct6694_canfd_priv *priv =3D netdev_priv(ndev);
+> > > +     struct nct6694_can_cmd10_11 *buf =3D (struct nct6694_can_cmd10_=
+11 *)priv->tx_buf;
+> > > +     u32 txid =3D 0;
+> > > +     int i;
+> ...
+> > > +
+> > > +     /* set data to buf */
+> > > +     for (i =3D 0; i < cf->len; i++)
+> > > +             buf->data[i] =3D cf->data[i];
+> > > +
+> > > +     nct6694_write_msg(priv->nct6694, NCT6694_CAN_MOD,
+> > > +                       NCT6694_CAN_CMD10_OFFSET(1),
+> > > +                       NCT6694_CAN_CMD10_LEN,
+> > > +                       buf);
+>
+> I will add the error handling to wake the queue in the next patch.
+>
+> > > +}
+> > > +
+> ...
+> > > +static const struct net_device_ops nct6694_canfd_netdev_ops =3D {
+> > > +     .ndo_open =3D nct6694_canfd_open,
+> > > +     .ndo_stop =3D nct6694_canfd_stop,
+> > > +     .ndo_start_xmit =3D nct6694_canfd_start_xmit,
+> > > +     .ndo_change_mtu =3D can_change_mtu,
+> > > +};
+> >
+> > Also add a struct ethtool_ops for the default timestamps:
+> >
+> >   static const struct ethtool_ops nct6694_ethtool_ops =3D {
+> >           .get_ts_info =3D ethtool_op_get_ts_info,
+> >   };
+> >
+> > This assumes that your device does not support hardware timestamps. If
+> > you do have hardware timestamping support, please adjust accordingly.
+> >
+>
+> Understood. I will make the modifications in v3.
+>
+> Best regards,
+> Ming
 
