@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-417923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EAC9D5ACC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 780A39D5AD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:14:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 592CF1F22DDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8651F21A3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52C318A6D9;
-	Fri, 22 Nov 2024 08:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0CB15B149;
+	Fri, 22 Nov 2024 08:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHz9BAUu"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X8/CePgd";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ty9nn9U9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D2C172777
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B52C22075
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732263190; cv=none; b=FiEgXsxSjAXiv1EFpjfXIb+YhYInb7M/6m8kAlUNdt8GcnU1P+2Ndp/5hK9STqw8eVfu62Bg8khpLTnmkRLSXnL6z/F+3Hzr/IdpNpl+tzNHbQUu09ZEfMjgTdULK6Ixe0fE/l59/iPbkdHIg88SENdqp2TC9nr+aVKBiaG7DVI=
+	t=1732263289; cv=none; b=EhKyvMUu6OCDsJvkK3TMKgj9Cy5Xuw7/yFi1XGovoBrl1suEfA1GLSl8MYHYGDzyV+UmNVc0UFs/Txvt/J7tm2SLTyS0j46VNUV4k7v/Tzq71069ua6I8heJwBzKjhGM/uNqQWecBzFQJTqjttFtzQcVXRszVq1AugTsy7XZnB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732263190; c=relaxed/simple;
-	bh=2cC5+ylqaAyXDN4/QbFBkSVRcxQfIpjqqG260ixa/b8=;
+	s=arc-20240116; t=1732263289; c=relaxed/simple;
+	bh=qcwewDRgaD8gm+fKgWbuxpBo55nR+NI6TrCl4SNLY+Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjLmpN1zIqzbJ2bxFYVTCP6c4wBijat3xH1Cy/U9BcWqDnfttlY6Eq6nwxRhc0kJM6nZD9qY4q/NPnRclP3rZyz77uAoit9KYm22lQOU1hSLnGiLwVgDZ3s1MZ4HnBYbJsnL/n/DLVVAvbk4FVs657ieYBa6luWDwjAgpR5oT7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHz9BAUu; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1595764a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:13:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732263188; x=1732867988; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qtiM7FGfMA/9Bsc4nOUQdU11ZmJTmqiA1GxS7HwsgKQ=;
-        b=dHz9BAUu7Y1/Z9lGnVDXwT5kPGIgQN9zzr0YX0ulX23DdNsDgflpvYzURB5zkwbUL9
-         77ebqswHThX2nFRVc8bq8lUtAHMuME18CqIb7W/eA9J+Sp6Yx3rLp0tjiUmiMv/bJsCP
-         P4LtGPuR7PgF9BufivCB3tGDYa7GY/vrkdLW1LA6YTPLe4lMvduezQQskMXTAg1Z6uFw
-         cnPGwUOnttYFxE+ULLbAoBs3jmL2s5ooJgKcwnrBC5cCiLS9ykJzgA98D7rLXfuDXtZS
-         wzpfXvHzlEsiSjpdItsNJ71xwcx9MPN6lK79zIGR36KInb4fJfkl+w+ik3eq3kLhcaLG
-         5TmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732263188; x=1732867988;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qtiM7FGfMA/9Bsc4nOUQdU11ZmJTmqiA1GxS7HwsgKQ=;
-        b=b+zogCuZ/Kfk0PV2+F2ZL2Gobkgdgt5767JfWSIMgMG/zP8r5Wwge/yFd7OY+1k3Qm
-         UAaKtJgEfP2RMAu+Sftv5UACPa48/wI8YaNpPJFG9KuxYPbBh1bRQICjIDe06mz8osDh
-         OkJFkmVHWZtVDgOwCRs043lvoG0yhG+oNoTirx8A6Nr17Db9NleiqsZBsE2qEImIoqAO
-         z7g4CFbOEIr3PSyHeZVYciq9sw9I9O8k/Tk3s4eOlKEYT+Mz5nmOS7nH8w84cEfSLHow
-         VB6uDKMhzwgxIlhHId+ZXrQWjZRYckH+599oHvrVP4ePK05AObq7gS+LSgjk+wiegKFy
-         tLzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOCicrpT18Er1rEmBne4RgHJtnpu7ZbmzDVITU8yJaf0/9DAot8+RqTbh6tFfpGLdVm8spKglDMP5iTu4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyakS91I2JX3CUAJMG1c7NlS1RaCXrk/uxJGaqFjctKnC4Nc46W
-	pU9gv7L45oVFZXwN9dlGsSCtvcpurYG/ncmRNVlJ/7eFcImT0LBpTrkYrRe12I0=
-X-Gm-Gg: ASbGncuf9g2vjv2z318FlotSpfHhZSylchKc8c8VDCnNgy6abG1QMeJO7KZbUZX9SQL
-	Es3ZfkxPMNg4F+2I7f0iKo3M0R6XuU/eH/Q0J5PRanQQFefCBrUAZI7kwyatKgH9YopheTJggn5
-	iXssjFxZ1ZWgFlt8MYT+YtPdIA83PPD61gT7aNje6I7sQDGLzbbUAKIztmi7mDStsORcwY3s/BI
-	0u9BgKDkW3L1yECoYzZo5c+ZuLLMwEeM5TURxl5xlz5NGBE44bN
-X-Google-Smtp-Source: AGHT+IHev06k9pGAl1nqt+OQo9UbIc+5qm1amkYSvGMCzvONl7a9WGyQtu/RSPc8s9vIp3SP7KWhDQ==
-X-Received: by 2002:a05:6a21:6d88:b0:1dc:3023:bd97 with SMTP id adf61e73a8af0-1e09e5da6ffmr2314612637.41.1732263186820;
-        Fri, 22 Nov 2024 00:13:06 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcc1e2490sm1064181a12.31.2024.11.22.00.13.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 00:13:06 -0800 (PST)
-Date: Fri, 22 Nov 2024 13:43:04 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Li Zhijian <lizhijian@fujitsu.com>
-Cc: linux-kselftest@vger.kernel.org, shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH for-next v3] selftests/cpufreq: gitignore output files
- and clean them in make clean
-Message-ID: <20241122081304.j2zbjvmgd2nnfca3@vireshk-i7>
-References: <20241122074757.1583002-1-lizhijian@fujitsu.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=shWngNRrtA1ZdDEY3pc3mILjoVXJtvUbusAVLg7grmaJobShIL0tHL5ydqg6UKOEsKbArKkC4F2CrcltN3JibWKNo9Lh+5UBLoJYHc1f2/1R+s6mZ1YVNoi21NNThN0sbWrtUGGsZWrbHY9zcE0XofeYTjHBCAHAc0f3mhUcHME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X8/CePgd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ty9nn9U9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Nov 2024 09:14:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732263279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y5f2KKQBZsbL1m3fb5DYI0rcFDbRUsBKOLW2TE7xMXs=;
+	b=X8/CePgdUUdEnwy6Fi2ZFBHOa9AEprEVeoMWD3xDy01h2FB+x+EirdMXc5Jd9MugW1X2Vm
+	VSS9vV3+uTloDZ7+EqsVPFs5AJ9Z9dpVcBlHQE2Uvj8PhlZ/PNBU2fw/BQiiZmZRASv1E+
+	9bZIuLzZPFSZcjYllNDZLvNXiwAvJRL9o+0PGGhzZ1UGk1+OHxF6Slhamz3GX6TEuZjBQx
+	CBAeNE3LF3BeLcshQrS6i6ripYEpVo23sMsNSaj+HrEqbkda4qVXxcjWgzSeH0yhEDnv/m
+	DHXNx2CmDgHsZjCGTQuU3A2cXXp6RnTVGj8+vnfutyqF2/nv0YefyzQrrijH8w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732263279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y5f2KKQBZsbL1m3fb5DYI0rcFDbRUsBKOLW2TE7xMXs=;
+	b=ty9nn9U91upjTVz6kKxbFz/p2pnkJeqnDd60WHqElO+N2rl6a9ra3vA6HupAVB7lKWBnUf
+	0T8I3AsFwcMeXLBw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Alessandro Carminati <acarmina@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Clark Williams <clrkwllms@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Thomas Weissschuh <thomas.weissschuh@linutronix.de>,
+	Alessandro Carminati <alessandro.carminati@gmail.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Gabriele Paoloni <gpaoloni@redhat.com>,
+	Eric Chanudet <echanude@redhat.com>
+Subject: Re: [PATCH] mm/kmemleak: Fix sleeping function called from invalid
+ context in kmemleak_seq_show
+Message-ID: <20241122081437.AKxGgM9n@linutronix.de>
+References: <20241120102325.3538-1-acarmina@redhat.com>
+ <Zz332cG45rNSeE_B@arm.com>
+ <20241120102602.3e17f2d5@gandalf.local.home>
+ <Zz-HqbsWxFPrrjST@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241122074757.1583002-1-lizhijian@fujitsu.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zz-HqbsWxFPrrjST@arm.com>
 
-On 22-11-24, 15:47, Li Zhijian wrote:
-> After `make run_tests`, the git status complains:
-> Untracked files:
->     (use "git add <file>..." to include in what will be committed)
->         cpufreq/cpufreq_selftest.dmesg_cpufreq.txt
->         cpufreq/cpufreq_selftest.dmesg_full.txt
->         cpufreq/cpufreq_selftest.txt
-> 
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+On 2024-11-21 19:19:05 [+0000], Catalin Marinas wrote:
+=E2=80=A6
+> > Maybe SELinux locks should be converted to raw? I don't know how long t=
+hat
+> > lock is held. There are some loops though :-/
+> >=20
+> > avc_insert():
+> >=20
+> > 	spin_lock_irqsave(lock, flag);
+> > 	hlist_for_each_entry(pos, head, list) {
+> > 		if (pos->ae.ssid =3D=3D ssid &&
+> > 			pos->ae.tsid =3D=3D tsid &&
+> > 			pos->ae.tclass =3D=3D tclass) {
+> > 			avc_node_replace(node, pos);
+> > 			goto found;
+> > 		}
+> > 	}
+> > 	hlist_add_head_rcu(&node->list, head);
+> > found:
+> > 	spin_unlock_irqrestore(lock, flag);
+> >=20
+> > Perhaps that could be converted to simple RCU?
+> >=20
+> > As I'm sure there's other places that call vsprintf() under a raw_spin_=
+lock
+> > or non-preemptable context, perhaps this should be the fix we do.
+>=20
+> My preference would also be to convert SELinux rather than avoiding the
+> issue in kmemleak (and other similar places).
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+No. kmemleak has been made use a raw_spinlock_t because most of what it
+does is something that is not used in production on a PREEMPT_RT system
+and falls in the same category as lockdep for instance. And that code
+calls into LSM/ selinux.
+Before making the lock in selinux a raw_spinlock_t you have to think
+about the consequences in general and audit the code. From a quick
+look, there is also avc_insert() invoked in that callchain which
+allocates memory and this is a no no.
+Also, if you make the solution here in selinux to use a raw_spinlock_t
+you would have to do it also in every LSM as they might be used instead
+of selinux.
 
--- 
-viresh
+Therefore, I still prefer adding PREEMPT_RT to the restricted_pointer()
+category for atomic invocations.
+
+Sebastian
 
