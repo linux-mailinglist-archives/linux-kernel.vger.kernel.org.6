@@ -1,276 +1,196 @@
-Return-Path: <linux-kernel+bounces-418479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6689F9D621A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:22:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26AB8160675
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:21:37 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895471DFD98;
-	Fri, 22 Nov 2024 16:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eDNy4mdT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 770079D6215
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:21:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D676F30C;
-	Fri, 22 Nov 2024 16:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366F92818E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:21:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3321DFDA6;
+	Fri, 22 Nov 2024 16:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f2Qnlzt0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91631DF996
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292430; cv=none; b=uCwD9W/Du5Xg329XBXdnb0yGBFhmpSBBtJC/l9qyfw2xY6MHaW42NG3zcO4QhuLnHOSWzESqAVSemGNZG3xcT0TtMbLmnsxpg8677rdgXfa1Ky1nedIcLIUPRSI4q12Ul/XKyXmUYM0LMD6ne2xCCh0K/ovLqZ2o3Yme6PAmcDE=
+	t=1732292432; cv=none; b=PfmNgI2rM9fLmnLL86o/YPmBbiO0Mkxubp9FLsBZIIsW2kOEEtY0CTE5DmKBZiDIa8B0XxbMP/bwSgTciiT25lyKdcKA3k12ivNEaCpWIYq+z06y9W2Lh5KcCcyr6Bhs7NXmju6riwjK/NaHQAVP8WNXsgWphpJHMU9hNSMp0ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292430; c=relaxed/simple;
-	bh=X7g1a+sf2rHnBA+qNLfyggOHT5AGhqtmKOwWFZeLsQ4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=jgiU+I18ZVIqCXiGPPd4am7zRR5XBZaIGvMzZvitr0nM6RF9HKnbQQ6pBRXMCXUyBiDd6tn9ftF5+kb3OAWwraippQAiU2nQPpEEORxjaRObgx+ffGrowsVPw4oo/bzryjUvD9AaqWC0u63SVL551wjQsm+7lNdG2U4RQX6MFic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eDNy4mdT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMCXXtp005030;
-	Fri, 22 Nov 2024 16:20:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8SIR2kRK3C2T+NtCN30bWcwKcjNSWtzBpjKPvXMD/A8=; b=eDNy4mdT9Qk/COGy
-	7kkT5rDD6jFixybv6/g2AZYVzhwhd3FJ+aHzGXCLDcaG5YkqQWrDdNLUAGtNNcJV
-	0A0qzm0GUfykIN+XlJq5Ty7qQPqPYn/duxzakqfQzoFsYWAnbEb4Sc7ha7PjSgB4
-	dNBCFoacCOF/dwJQf0ZBlhEcEGNCOXzG/twGsQYeFE9Ka47i8CMfW0YzVsinTgWf
-	Kxj5+A0OyjMcHYSELPD6rn70RSzsx24uTctFageebTxfdAXjA+91Xxf+uqODy7+x
-	aZB/sA0f9NXrqUgk+ZFMk4Wlz3Z2GYq5nLTaKW08r/PKwfv4s4aCM6BsnGLGifSS
-	8n2g4A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ea77fxf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 16:20:10 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AMGK9hI019301
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 16:20:09 GMT
-Received: from [10.218.27.127] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 22 Nov
- 2024 08:20:04 -0800
-Message-ID: <5696afa2-c4ab-42fe-b29a-6ecee622fbb4@quicinc.com>
-Date: Fri, 22 Nov 2024 21:50:01 +0530
+	s=arc-20240116; t=1732292432; c=relaxed/simple;
+	bh=O8DTFdUDvt0Jqe14tTtcDcYNJoRYAHOjoV9axjKb8tQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m6JfbTx95BuQ4gpFjp9kOPArOfE+VYcFZhw79EBfeBexo/OOXGhvBrZp3TBMTRAaiGG+NfZjbSjSOjHPwuH0PMSj7f4RcCDkBe+yNGIoA2FuznlUQIxTpjtH02ss+4EG6okyxBt7txWE423djcUQIs1afbAOGg1Bp6eL/eKCr4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f2Qnlzt0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732292429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aeBsoywq5pgh/XUprwXSGU0TjSDIfHvJFYAFD/VkyJs=;
+	b=f2Qnlzt0Pt2kIi3ZK21nuccAe6gJNTvcZCIe3T4lLjUILUNcIyfrD35yq5AL7CVc7oki7C
+	cNFrT7dHAlTVfy++Gx1Tefagw13+fWlYrIrr7idKaAW8fEMJabpjxUGVc/Nul1pBFrxaTs
+	ghD2aLTt/Pu9nYCOSh8BfwrZcNoCxiQ=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-kF-eEYDANqqwl81mn6m9wg-1; Fri, 22 Nov 2024 11:20:27 -0500
+X-MC-Unique: kF-eEYDANqqwl81mn6m9wg-1
+X-Mimecast-MFC-AGG-ID: kF-eEYDANqqwl81mn6m9wg
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4316e2dde9eso20088825e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:20:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732292427; x=1732897227;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aeBsoywq5pgh/XUprwXSGU0TjSDIfHvJFYAFD/VkyJs=;
+        b=tLmt7dL4gljy91qzNIn4ezeZPvsHy7mRxZvEgQEOgvwAfDkaKDYB/A0u4WX3Mj20LW
+         HtPAfqaSaYXOeZ+w6OoGo6RTWZj+4LrOHmCneJY11AkncvMJ3ZZ6qreKSxkcRdkD8I1e
+         AV1orI5yGK/EukXh4L3FnGpq0d3CzIRGE3NRlSz/sjUrWf1KnwQmZQx3f5rORXZ6GelH
+         Hdz5sbB3cqJmFTlRj/5o3bYq55SDAfJ10vkFpz4PNcXtvASUv6myx+NB+NDKKE3QH520
+         vBTBKoiwQ+RG30ok3pQv0TnyQz8JV7Y5EbCDUqif7atXswz892XOVUKx6tG6E9ZJmy/x
+         FHUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbPWfNN35dQ83OTDYFt1LLEQH41coDvvXuaG5ebQLkwDr/XqGqNxHALHjBMnK8QxcJqm+mYcw1LNU6K60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoF8nJylNda/5MP84sLoKGh/vu1gkxG/NhRGnRD8HTLpMoy2YE
+	7fEjIfFJa2o2CVVx0EXOtSS3KuLkFudGzO/KhyDoskxfUkTqgeezx9zJnHo67AVqH+BeNMDOpfU
+	W3axJ6ZaoH8x7ZcHx7ok83DkKWb9LcX9l0cL3AIdGS9pkiI1r3fB5IKRvLre/KQ==
+X-Gm-Gg: ASbGncsqFBnRt8M1VTXoQU64YGCzThyqnjmb780v1Ogk4nyXEipfsr341IueVUI3+Sp
+	9ZHtg4Exs1Xb5nf07rHEc3u6GMhJ76+n9zWX2gLoX4CvYvNBLR06SyrLmmZEsnEygsGae7gZ9nr
+	feE5yE/M+psQScCMDK0DnGcqHscr/2nyPTlAjqHeYidqJATqEia/aZCyY4fQd3nsdFSjGfBGXAY
+	I/OQjbBDSnPWExUYZWGh+ZigRY+n3eX9cF3wiVw2a9ESGQhYLQS9AF+dUWdbwJpHySOO2xYLDii
+	v3cA2Ta6DLDle59UEw5zFQ==
+X-Received: by 2002:a05:600c:4fcc:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-433ce410337mr29781545e9.1.1732292426644;
+        Fri, 22 Nov 2024 08:20:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfnCVCtSLDvYz49C8CbppJHHhiynRHuZUEWU9I8Ig8QVTpU3P25aNt428T9B2r9GX9wU/yTw==
+X-Received: by 2002:a05:600c:4fcc:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-433ce410337mr29781235e9.1.1732292426254;
+        Fri, 22 Nov 2024 08:20:26 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b4643217sm95331535e9.44.2024.11.22.08.20.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 08:20:24 -0800 (PST)
+Date: Fri, 22 Nov 2024 17:20:22 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v4 04/15] acpi/ghes: better handle source_id and
+ notification
+Message-ID: <20241122172022.64fddb52@imammedo.users.ipa.redhat.com>
+In-Reply-To: <0ad66ed39b357d5fbf2e4a6d1fa47d310796cc1c.1732266152.git.mchehab+huawei@kernel.org>
+References: <cover.1732266152.git.mchehab+huawei@kernel.org>
+	<0ad66ed39b357d5fbf2e4a6d1fa47d310796cc1c.1732266152.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Subject: Re: [PATCH RESEND v17 3/5] iommu/arm-smmu: add support for PRR bit
- setup
-To: Rob Clark <robdclark@gmail.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robh@kernel.org>,
-        <krzysztof.kozlowski@linaro.org>, <quic_c_gdjako@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        "Rob
- Clark" <robdclark@chromium.org>
-References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
- <20241114160721.1527934-4-quic_bibekkum@quicinc.com>
- <CAF6AEGuwWsAkRyF-h5Aj3KzM7iksb12HsfJ5Ks+-P8hv60MWFg@mail.gmail.com>
- <CAF6AEGvVteuOOMod6yw9_6eOn2PxAx+BR8sVOHAHp7Ts8XigBw@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAF6AEGvVteuOOMod6yw9_6eOn2PxAx+BR8sVOHAHp7Ts8XigBw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cka76lyLpvKigEh1sA0mMpD69E_0TB1t
-X-Proofpoint-ORIG-GUID: cka76lyLpvKigEh1sA0mMpD69E_0TB1t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220137
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Fri, 22 Nov 2024 10:11:21 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-
-On 11/21/2024 3:40 AM, Rob Clark wrote:
-> On Wed, Nov 20, 2024 at 9:17 AM Rob Clark <robdclark@gmail.com> wrote:
->>
->> On Thu, Nov 14, 2024 at 8:10 AM Bibek Kumar Patro
->> <quic_bibekkum@quicinc.com> wrote:
->>>
->>> Add an adreno-smmu-priv interface for drm/msm to call
->>> into arm-smmu-qcom and initiate the PRR bit setup or reset
->>> sequence as per request.
->>>
->>> This will be used by GPU to setup the PRR bit and related
->>> configuration registers through adreno-smmu private
->>> interface instead of directly poking the smmu hardware.
->>>
->>> Suggested-by: Rob Clark <robdclark@gmail.com>
->>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
->>> ---
->>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 37 ++++++++++++++++++++++
->>>   drivers/iommu/arm/arm-smmu/arm-smmu.h      |  2 ++
->>>   include/linux/adreno-smmu-priv.h           | 14 ++++++++
->>>   3 files changed, 53 insertions(+)
->>>
->>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>> index d26f5aea248e..0e4f3fbda961 100644
->>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
->>> @@ -16,6 +16,8 @@
->>>
->>>   #define QCOM_DUMMY_VAL -1
->>>
->>> +#define GFX_ACTLR_PRR          (1 << 5)
->>> +
->>>   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->>>   {
->>>          return container_of(smmu, struct qcom_smmu, smmu);
->>> @@ -99,6 +101,32 @@ static void qcom_adreno_smmu_resume_translation(const void *cookie, bool termina
->>>          arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_RESUME, reg);
->>>   }
->>>
->>> +static void qcom_adreno_smmu_set_prr_bit(const void *cookie, bool set)
->>> +{
->>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
->>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
->>> +       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
->>> +       u32 reg = 0;
->>> +
->>> +       reg =  arm_smmu_cb_read(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR);
->>> +       reg &= ~GFX_ACTLR_PRR;
->>> +       if (set)
->>> +               reg |= FIELD_PREP(GFX_ACTLR_PRR, 1);
->>> +       arm_smmu_cb_write(smmu, cfg->cbndx, ARM_SMMU_CB_ACTLR, reg);
->>> +}
->>> +
->>> +static void qcom_adreno_smmu_set_prr_addr(const void *cookie, phys_addr_t page_addr)
->>> +{
->>> +       struct arm_smmu_domain *smmu_domain = (void *)cookie;
->>> +       struct arm_smmu_device *smmu = smmu_domain->smmu;
->>> +
->>> +       writel_relaxed(lower_32_bits(page_addr),
->>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_LADDR);
->>> +
->>> +       writel_relaxed(upper_32_bits(page_addr),
->>> +                               smmu->base + ARM_SMMU_GFX_PRR_CFG_UADDR);
->>> +}
->>> +
->>>   #define QCOM_ADRENO_SMMU_GPU_SID 0
->>>
->>>   static bool qcom_adreno_smmu_is_gpu_device(struct device *dev)
->>> @@ -210,6 +238,7 @@ static bool qcom_adreno_can_do_ttbr1(struct arm_smmu_device *smmu)
->>>   static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
->>>                  struct io_pgtable_cfg *pgtbl_cfg, struct device *dev)
->>>   {
->>> +       const struct device_node *np = smmu_domain->smmu->dev->of_node;
->>>          struct adreno_smmu_priv *priv;
->>>
->>>          smmu_domain->cfg.flush_walk_prefer_tlbiasid = true;
->>> @@ -239,6 +268,14 @@ static int qcom_adreno_smmu_init_context(struct arm_smmu_domain *smmu_domain,
->>>          priv->get_fault_info = qcom_adreno_smmu_get_fault_info;
->>>          priv->set_stall = qcom_adreno_smmu_set_stall;
->>>          priv->resume_translation = qcom_adreno_smmu_resume_translation;
->>> +       priv->set_prr_bit = NULL;
->>> +       priv->set_prr_addr = NULL;
->>> +
->>> +       if (of_device_is_compatible(np, "qcom,smmu-500") &&
->>> +                       of_device_is_compatible(np, "qcom,adreno-smmu")) {
->>
->> fwiw, it seems like PRR actually works on sc7180, which is _not_
->> mmu-500, so I guess the support actually goes back further.
->>
->> I'm curious if we can just rely on this being supported by any hw that
->> has a6xx or newer?
+> GHES has two fields that are stored on HEST error source
+> blocks associated with notifications:
 > 
+> - notification type, which is a number defined at the ACPI spec
+>   containing several arch-specific synchronous and assynchronous
+>   types;
+> - source id, which is a HW/FW defined number, used to distinguish
+>   between different implemented sources.
 > 
-> Also, unrelated, but we can't assume the smmu is powered when drm
-> driver calls set_prr_bit/addr, could you add in runpm get/put around
-> the register access?
+> There could be several sources with the same notification type,
+> which is dependent of the way each architecture maps notifications.
 > 
-
-I see, thanks for this observation.
-It's surely a possible case, when they access these registers
-SMMU state is off.
-I will add the suggested runpm ops around the register access.
-
-> Otherwise Conner and I have vk sparse residency working now
+> Right now, build_ghes_v2() hardcodes a 1:1 mapping between such
+> fields. Move it to two independent parameters, allowing the
+> caller function to fill both.
 > 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
-Sorry, could not get this. Did you mean that vk sparse residency
-is working now using this patch?
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 
-Thanks & regards,
-Bibek
-
-> BR,
-> -R
 > 
->>
->>> +               priv->set_prr_bit = qcom_adreno_smmu_set_prr_bit;
->>> +               priv->set_prr_addr = qcom_adreno_smmu_set_prr_addr;
->>> +       }
->>>
->>>          return 0;
->>>   }
->>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>> index e2aeb511ae90..2dbf3243b5ad 100644
->>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
->>> @@ -154,6 +154,8 @@ enum arm_smmu_cbar_type {
->>>   #define ARM_SMMU_SCTLR_M               BIT(0)
->>>
->>>   #define ARM_SMMU_CB_ACTLR              0x4
->>> +#define ARM_SMMU_GFX_PRR_CFG_LADDR     0x6008
->>> +#define ARM_SMMU_GFX_PRR_CFG_UADDR     0x600C
->>>
->>>   #define ARM_SMMU_CB_RESUME             0x8
->>>   #define ARM_SMMU_RESUME_TERMINATE      BIT(0)
->>> diff --git a/include/linux/adreno-smmu-priv.h b/include/linux/adreno-smmu-priv.h
->>> index c637e0997f6d..614665153b3e 100644
->>> --- a/include/linux/adreno-smmu-priv.h
->>> +++ b/include/linux/adreno-smmu-priv.h
->>> @@ -50,6 +50,18 @@ struct adreno_smmu_fault_info {
->>>    *                 the GPU driver must call resume_translation()
->>>    * @resume_translation: Resume translation after a fault
->>>    *
->>> + * *CAUTION* : PRR callbacks (set_prr_bit/set_prr_addr) are NULL terminated for
->>> + *             targets without PRR support. Exercise caution and verify target
->>> + *             capabilities before invoking these callbacks to prevent potential
->>> + *             runtime errors or unexpected behavior.
->>> + *
->>> + * @set_prr_bit:   Extendible interface to be used by GPU to modify the
->>> + *                ACTLR register bits, currently used to configure
->>> + *                Partially-Resident-Region (PRR) bit for feature's
->>> + *                setup and reset sequence as requested.
->>> + * @set_prr_addr:  Configure the PRR_CFG_*ADDR register with the
->>> + *                physical address of PRR page passed from
->>> + *                GPU driver.
->>>    *
->>>    * The GPU driver (drm/msm) and adreno-smmu work together for controlling
->>>    * the GPU's SMMU instance.  This is by necessity, as the GPU is directly
->>> @@ -67,6 +79,8 @@ struct adreno_smmu_priv {
->>>       void (*get_fault_info)(const void *cookie, struct adreno_smmu_fault_info *info);
->>>       void (*set_stall)(const void *cookie, bool enabled);
->>>       void (*resume_translation)(const void *cookie, bool terminate);
->>> +    void (*set_prr_bit)(const void *cookie, bool set);
->>> +    void (*set_prr_addr)(const void *cookie, phys_addr_t page_addr);
->>>   };
->>>
->>>   #endif /* __ADRENO_SMMU_PRIV_H */
->>> --
->>> 2.34.1
->>>
+> ---
+> 
+> Chenges from v10:
+> 
+> - Some changes got moved to the previous patch.
+> 
+> Changes from v8:
+> - Non-rename/cleanup changes merged altogether;
+> - source ID is now more generic, defined per guest target.
+>   That should make easier to add support for 86.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index 4a6c45bcb4be..29cd7e4d8171 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -284,9 +284,13 @@ static void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
+>  }
+>  
+>  /* Build Generic Hardware Error Source version 2 (GHESv2) */
+> -static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+> +static void build_ghes_v2(GArray *table_data,
+> +                          BIOSLinker *linker,
+> +                          enum AcpiGhesNotifyType notify,
+> +                          uint16_t source_id)
+>  {
+>      uint64_t address_offset;
+> +
+>      /*
+>       * Type:
+>       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
+> @@ -316,18 +320,8 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
+>          address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),
+>          ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
+>  
+> -    switch (source_id) {
+> -    case ACPI_HEST_SRC_ID_SEA:
+> -        /*
+> -         * Notification Structure
+> -         * Now only enable ARMv8 SEA notification type
+> -         */
+> -        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
+> -        break;
+> -    default:
+> -        error_report("Not support this error source");
+> -        abort();
+> -    }
+> +    /* Notification Structure */
+> +    build_ghes_hw_error_notification(table_data, notify);
+>  
+>      /* Error Status Block Length */
+>      build_append_int_noprefix(table_data, ACPI_GHES_MAX_RAW_DATA_LENGTH, 4);
+> @@ -369,7 +363,8 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+>  
+>      /* Error Source Count */
+>      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
+> -    build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
+> +    build_ghes_v2(table_data, linker,
+> +                  ACPI_GHES_NOTIFY_SEA, ACPI_HEST_SRC_ID_SEA);
+>  
+>      acpi_table_end(linker, &table);
+>  }
 
 
