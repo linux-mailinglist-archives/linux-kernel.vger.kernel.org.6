@@ -1,325 +1,500 @@
-Return-Path: <linux-kernel+bounces-417610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D039D5694
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:13:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D409D5699
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40E01F22468
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:13:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0BE282D3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C0F1388;
-	Fri, 22 Nov 2024 00:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A184A04;
+	Fri, 22 Nov 2024 00:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KENN++4d"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2078.outbound.protection.outlook.com [40.107.103.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R83kQtBF"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8BB17C;
-	Fri, 22 Nov 2024 00:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.78
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732234426; cv=fail; b=OD1aXvKQIGL5zJml74yzVShEZxYCowPd/WNg6AMHzLbQ91UfK5nhGykUoVIA0aVg3rQqk/MzJOVZ50MHfGwyRK5BIfTSAepta9TvXod38GzSRYqruutRbT/AgUojZRBYVEkdnIsHjLkqKU6u7M9cEdG+D894KbVX4atVeUNRlZ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732234426; c=relaxed/simple;
-	bh=uTSyZzFp+RwlyO0vZcWIxcmnuKZVF1oLwM1tvMf8jcE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=McrKIqpZFZ3w4fQzb41K+PaXlWFylS8skOdUIXtiOWJWi+t1qc0MEusjBx0z8M85j38T6SC+S86X8GVZubaX/s0v5aoOR69ZjRD863tKNRJw3MqKALnLY6CVQxCGApPipfpjCu9kIYirz3iR7uIwr5QrHxFThV99zv2yl96Dyso=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KENN++4d; arc=fail smtp.client-ip=40.107.103.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ScQCbw6yGRVNdjcmEfSR/VwDjRSB4Ax3AMu4EmgsbmnZXoIzmLUpdXGlY9a0XJ6NCryt80HRMyhf8eOr0YobNxRQcREAkWZiIQ6NZQ0RYg/f/Yuz3fJpr0b/jCLDP033gULhw7UPDqOKoR5W8D9F8tnNNBQ6OhTp070FzAsKqHfYu55NxqYoXF/VpRDvI7AyqnLcV3Xhc91oDDmVzgzamjupHIGtQMZjv4sq/apJPhOgXYVXjxvbnQfqQUn1io5xkcjxe+KGiujEge4j0HDGlND6W62CvVl74q+gsYqv91KVsZ6WZa1xu8V/ulyjW8AMgswzVgnyoa/lMj/qILzKIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SMc4H+1sRPVT9Lorat4oVwseDCJqpKwYUpoAkfqPzDs=;
- b=PUYQ+bTrIIWJqldsPpC1MHnOnk/PaXLJ3Y3afJzzhtCv87X29OEomBed826SXGBt1NE8xYg3yNxjy/CIJb3c1olRrbLi33QyuiE2J3CEzALh8bAn9uXPL7VgSWoIsWZXCRQw4zu3XMwLgrL3iEzv1R8y2oR/O48QPzpUvP4nsQZQe9IGWGqs0+fsb+AzMCOhX3Lidb3nUwY66cpJYyziWfIArrEGB0c7vXlU6yZoJdJmFawfKbpbqMY7vNrfSWy7vFXSl28nvFjPjbM+lKjGRR/oe3r8x9mL8oHwqul6l2dy0Sti5SIj8yb6SFERRXfXCkQR/1wg1zD1o6zoWKF+qQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SMc4H+1sRPVT9Lorat4oVwseDCJqpKwYUpoAkfqPzDs=;
- b=KENN++4dHGrYinjJM0RUXuTmZ/tYkvfvoxH9NpURC+iyoq3uelW7G1fZZpDDuvNyAMrRzOyvLzk4JWMid+d+c6eBRNodpyPlOvbeyGE0rBwiYVGieM0SztiUxEoiSLt9dLv32b/bWE5A8dfkEySuJmPo707Vkf917kEkIY7y4GgWo2AGzMrwAMVTrcFa86DlW8AwXfib9AKEla0nL6ul7gsVkKyrSdGUYBxkLkN6jjwqxBEIa8B2AH8bTbClNA5QyKF2u1kzkndZl9UvA1zMka9E+IXL2mRLrwxHxmdaTvSKkAU2G7Ro3IAr6a8IaV/GXvaGVxGLkgLltaSZtPyW0A==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by PAXPR04MB8814.eurprd04.prod.outlook.com (2603:10a6:102:20d::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15; Fri, 22 Nov
- 2024 00:13:40 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.8182.016; Fri, 22 Nov 2024
- 00:13:40 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>, Thomas Renninger <trenn@suse.com>, Shuah Khan
-	<shuah@kernel.org>, "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur
-	<jkacur@redhat.com>
-CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] pm: cpupower: Makefile: Allow overriding
- cross-compiling env params
-Thread-Topic: [PATCH v2 2/2] pm: cpupower: Makefile: Allow overriding
- cross-compiling env params
-Thread-Index: AQHbCotjTSksRUq1mEyXqNdymTcGi7LBikwAgACE5UCAAEobgIAAeDyQ
-Date: Fri, 22 Nov 2024 00:13:40 +0000
-Message-ID:
- <PAXPR04MB84595BA5BEAE2D21F015036688232@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240919-pm-v2-0-0f25686556b5@nxp.com>
- <20240919-pm-v2-2-0f25686556b5@nxp.com>
- <48c0adb5-4ae8-48bc-8e83-3d1c413f6861@broadcom.com>
- <DB9PR04MB846134093D2302B6D67E7E6288222@DB9PR04MB8461.eurprd04.prod.outlook.com>
- <16411b6f-3e1d-4d52-a047-8c322774ec8c@broadcom.com>
-In-Reply-To: <16411b6f-3e1d-4d52-a047-8c322774ec8c@broadcom.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|PAXPR04MB8814:EE_
-x-ms-office365-filtering-correlation-id: 6769b0ae-3f15-42d1-10d9-08dd0a8a84be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?BcMRqe/msYTiRkRK55VtXbUvjLlxzIY52nT2FdiA0IImZBfjFMK9DICTg3vQ?=
- =?us-ascii?Q?nCQ7b1vgD11n8DkRYu6k8+dWq1pnZzYbou4QCyWQQxHvEeS+QU98VXGpPE8a?=
- =?us-ascii?Q?LhYIJvDnl+FQwmCXUInUOUs3BIlBNcVH3MeJtKOwEQQEVU6LWUrnwqrmHRWS?=
- =?us-ascii?Q?ToYRyokenZwsdAAEMc1M6DJIww/iHT5CmfkGEbE54IBj08HKcjqfw2WB11WU?=
- =?us-ascii?Q?c9RoeHj+ppdNwT+fmAURE32PVkhSOMNPBSZBngS9Sng2Ok5nmu11tda1MkhY?=
- =?us-ascii?Q?Y+oaNBBeBR+iup1y7TrYVHH9MK9Fa2YS9LRCKj8XeceHrG8pysDBRWa9hYjD?=
- =?us-ascii?Q?CZ8suwRWpmrsuUe4bFr8Co87bokGd5a/ddz0zK13Fl36FYWhn6NLmORaV28V?=
- =?us-ascii?Q?u8S0CDcwA3PLkance5NVk6XI00ChcIxxyiqtZsqYS5jYSKGVghLRf7iB9/76?=
- =?us-ascii?Q?dW6QokTwhvH6qyM8rCnP446EX7CjKSN4q0KzeahAmeDL1VDQAiAwWBb+8ZTA?=
- =?us-ascii?Q?tyvSOY1Uu/ilrtauLV8RVjRkvR4il0THCsEkqBTNAHCHh3i+gWkgkmeMiGVS?=
- =?us-ascii?Q?ymoXI1lTT9fYsDoBK8w0xb7s2Dvv+ODo/mt5/LPw0E+tBbJEGGHpakSTUGyk?=
- =?us-ascii?Q?ZV5RPskky0SAu6qI1/R7ZaoKsDbvoQ0msEfITuWh8VF1mmS0jj7M06pN5IeT?=
- =?us-ascii?Q?elBcW+PEQWQ55e4fF5uFXMKgkDVKk61MVjBTCxEVADkl4lncLU2B7QDfn7B1?=
- =?us-ascii?Q?yL+WGCY1sEphOXPmL0HsCLY+AxTxjVlsvaDkZAI7lhPFEsQwZahssNWVo9aK?=
- =?us-ascii?Q?SHfsUnBy1WfN27NiARRNfpLOWsOc7ukqihid4TwS1E1Wtc/sa/1XdSwsGOPq?=
- =?us-ascii?Q?8VZqeqHy19/hI/yQPLEPMZICr1VV71O7XbhVSprjuqAHQklbJQaFHh856Z3Q?=
- =?us-ascii?Q?/gwY7yxxxT8xnS0b5cR4i6x/Nl4AlYzQEtoOaQqxUX65YPFkUGvzn1m9JWZb?=
- =?us-ascii?Q?cJpT+94Hens9fLttP/dzb/zDFDN0ojTHVoa4zG2PtCl4T/aHGc5Fzzw9FjOr?=
- =?us-ascii?Q?GrLxWXRMwpN8WmEL05+MMlbiPXOyxZJWoDrySEULE7aRofc+k6OA1FbXWckC?=
- =?us-ascii?Q?KygvLXwM17BMOmvGmdskyuhqLbi21gSh4pldeuf+xMzWpiXUX64ZPVsI3iuR?=
- =?us-ascii?Q?kR86wGrXi1LhJOvSH5tVgbmP6wv5dp4hHRWqf5eCs1eXdYb0thIdO7KdvZMZ?=
- =?us-ascii?Q?9s9+qWwEX3Y761ASc4NEDqFZjkJCCFrLkiw4ZGeMQUtujR+MV260HJgRilPZ?=
- =?us-ascii?Q?nSdfliIib7Kv6KuFtB6krsgQ?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?s+eZLQwRGhgWZ0EdayiUfQrFUSCya8G4Hg7CJyjZvlHOUlQkl5iUtsCUdWjE?=
- =?us-ascii?Q?yctwDC2ZuCh5eIFJrWlQa0yWF3peFqnznQnKkclzt+nBi3SHt7v7y+AkGF6D?=
- =?us-ascii?Q?1S//w4XIvVlfyJ+7odX4Gtl/IwDCcnWDaDejgbO4lsOEI5GHQ74v73BsgB/R?=
- =?us-ascii?Q?eICXLiE5Ys3NCGhsK0yD8RKLSymDqHe327k3BB4or4O0M6KiX184d/bI0W+m?=
- =?us-ascii?Q?OEByhOCz9TSVbtqk28mEIFOXSpybJn5SCJSi81WMVsS4ypZ8IupwAFJVqS3w?=
- =?us-ascii?Q?/KNXspPV8oRRccNsu8iGtQdmkfseuWvAuG8iwTDQlaehXkXy3W3tvNpYmwSs?=
- =?us-ascii?Q?qSn0U4BQPsJ2kCDtoKfAfVobuSXl9eZ5BLuXC/C+aU1QflQiN5hnDszjmN40?=
- =?us-ascii?Q?2YcbrBiu6v+WfrshveoSMZIFxWic3ZzxysIiTKe/+6HE99EXCb0QWXstDyEx?=
- =?us-ascii?Q?JhnvUjyUNbfgtHoc2MgCtxhHl5u23v+5bFum9q+htNvoRo194WgEaoHrXVT0?=
- =?us-ascii?Q?PyVt98ZdbbyrjKBKDUNZuJPv4jc2gqrvTDQz7LSHpwPrgJHgHn/JwFJLxsJX?=
- =?us-ascii?Q?7b59I0F0WBpRFncKcK/4ENr+tqtg12Qvh7S8fzDoEq07+7rgNnGuNXgqtqpf?=
- =?us-ascii?Q?rmuMBoumtpBLCF//AnmjE/yitGoZYpIQQhs7WDj5jp38yRIryJuC7Yftuu2y?=
- =?us-ascii?Q?mXtkfr92VA/wfxVF9hdBM3eO5cfYMgFTJ1xUf8hH8LCivFGqxme0cnMBCYDH?=
- =?us-ascii?Q?NYUXaOIR7WGnxWwo4SA/WnlREnsaCFomLDyLUAzZ9CnKB2rEUMaTLbc+bNxU?=
- =?us-ascii?Q?xKHRi4gi+5Q22MMMO/X4xRIDalTTQMHw7qFh/v8m25R7hY4vRuU0dsdjVTS/?=
- =?us-ascii?Q?InxxLotdR4k78ygjs6HaM4791S4RQPeHZvfqACcTQQO0gmwKfE8GmNJ1ISIF?=
- =?us-ascii?Q?QpyJ8uJxntcN4VE2xY/M+tmsEFf9cxxnSyWJYVCX5T47hNQJB99cEemrHzM+?=
- =?us-ascii?Q?8A5EvR1qWfwSgYv8ywRd7zo2Rf0EqifnB/+93yGGv9BQoJRVdD/6nH/xPfD5?=
- =?us-ascii?Q?VdDt5TtPHf5lYLIwIsnu6MWyaVfhDE8CIb1tiK4Ysnj5nBNb6X2vKYF10ZrT?=
- =?us-ascii?Q?BPEuJ7z6s1Y0YQ90HQEWgal4jrI+MaXCTBTVihkQ50t6XfbibyLWDKc/JSp1?=
- =?us-ascii?Q?XqJmS/NBTGwg0ZpCdmM+n8ZtBKEuJNGOgJ0xv8MlGKv7eqAr5eZTMcb8wnxM?=
- =?us-ascii?Q?TQP1nTA7CdthoTtypBvf4MEx8uE68CX+R7rQIaD+VuSiVOMsmOTFvrPfioJ9?=
- =?us-ascii?Q?+4I49blMa1GNN7T1K4rYUNVsCXfXgoDpibFZjK8rkfPpcSnAk5lIA4nVBXn3?=
- =?us-ascii?Q?Z5xxe/Qak8ym6a8ogdeO7O4aAocgUcJeHCQ1JzidJf+7Ib6xCDknfiYY2ruN?=
- =?us-ascii?Q?L7o7h/aOc87IBOBP6W7lhab61LRtMZPS1bIqzDXXMvLZ4n9t5laoCiDQ+sZb?=
- =?us-ascii?Q?1wVeJ+Jasimiwpt+JCz8oP9a8MXLsVj8CUAjmD1qSp7WI7RWud/7ORb0Qy6P?=
- =?us-ascii?Q?DJB+sLpzqJ6p/gNthIU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74754A01
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732234595; cv=none; b=o0oILWmL37VrraqnLjPumJU+FUURBTUUfiMeHiIqvqwFV5ow3NMVBmenF/DSt8W33wtL+PFX06NNRFZ/eGHlMncVcIpdItM6w49RFBTuEGCPGj/WJwviOSMdxnqrW4E/bI0Gg5gdxaJeW1tgpJYKASAgapZbEmP0sgPvVUevNpw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732234595; c=relaxed/simple;
+	bh=JlbF7Li8YyKi//xP7+jFYieFIUc4DPF/sUvdjZtUzB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPAnmo+AC3ZmRWleD1yFmq5tgNOYr8LysLf84hAbLM90nQcjOOHNdSlyfhRu79aFsDPZcQ3U6E7z0kVz7EKVNH2M1xhsXpzKbH5J5+cVWrwWVqYnsZF4wShzF8kM8J6Z2ubULBCj70zovEagUDUpEGTgnHusJ2AVAS6SFmDx2/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R83kQtBF; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fb49c64aso2593264e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:16:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732234591; x=1732839391; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cKZxpNEbboMNS8++9aS12zEht9Y65UKuYuRZmpzKiT4=;
+        b=R83kQtBFX2oQMX3XRoT3fLt7vTYc9jQgJEAT15cfA5VdxXw0DBeFao+j5pDmUvt8K0
+         CZMf8+WwukywCtKMM7yHm0rxQCh8Xu3yq3n+l5fwBjE2NA95/+BIPlmJOF3Kdy7HI/ti
+         ulv9PB3kpOzjZ2FgKhHI5ulZ7H8kHi7M5ihLxTjRuZ/Fcrl3h/ZjE3r0LSrSaqVIOHvJ
+         7y+U3qqurZkNTB66Mf1tsgKcMBvPISrxSPOk12Dl621cARAUjHRWKwD/QQvyaWT5OC0r
+         4hIredagd2q6Ta60B+Hhcdk7FpDqFWxA6c1fm/uwbypBBzQXvm0D2/WWyDvX8kIUHcYH
+         5Z+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732234591; x=1732839391;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cKZxpNEbboMNS8++9aS12zEht9Y65UKuYuRZmpzKiT4=;
+        b=cAZy8D/Ua30TevytsQXDiJ/DO/ERVo3DbQrgvw/WS6q4WGKaE1VFSkAMcjWc8ac7VT
+         UjnkikNltYj3OgfSbBhaxVatFeXJc85rgGKRAd9FOOtkPutuJ6j2Sh4t0cFr5C9OgQla
+         bAnyOxm7me3YrzzrWYmc7U6uEpexz9xV91YnJotEfjl/mTh44v3zJUeCFXtYxbaIcFZS
+         EjLrK/+tEXvUBEVSOsqf0sarq4cx7frRNc/37IitChLQRCZsjEaM+Lx6qjuJn7Mhsrdv
+         oHrD7cZG1e5/AANAT+Uh2OcBUTCLs+X1OAyceqzO/I+X77ZZmHvK86C9OpFfXKZ0bJwr
+         GOMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMqGkVQGvoi7yq8nuXvhdOM7FJoYVlbV+6jnsBOT5c1Tx7CLZpEIHleDUkYCptZ+IZOBD67dvcD3FpqGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcPiOFJa4evl/CA2lFYrdU03fwhrGEWA5u3dD8zwwk8Wc7nYat
+	4ABr0zwY2PHVHN763G8D2aMKtxn9xyHKmPD4ukEmPNGI8kHQQL3Gst+Rw32tNsM=
+X-Gm-Gg: ASbGncv3MJKyMfXP4I6fZPslbKLrZojHQAbpQBzHnOO6uMORw9Po4/yoQLfAGdkh71A
+	YXVLAIIMwe9+UuB9y/jQJs+W+nib7BZVEcFoYi2S8HBIbLM7W8f2A7i/Q9Wvzezzkq77aJL9RM+
+	av2rU90ZRPMfNLtDbOmBFDF0G5AKlOloc5RiaFXQBFQvPyKUvXrNM5w4YwTg5ylGgzIGqkDKiU1
+	XT2UPaIfyS903/BvyqwSJrf84B/3t19Ym3CoiPMk2tAb8K7kGS0d/2lKcyJcjRRIt1y9KvG+RuE
+	tLyxJ2GiJDWD6m3Zo5vD6/txsfzQwA==
+X-Google-Smtp-Source: AGHT+IG3I7agYfE+lXLVl0nJViza9WZBwUY7lMLfC1kqDU5PNkr9N4Ilw1yFPu1gD/pQOCylnPumOw==
+X-Received: by 2002:a05:6512:3406:b0:53d:a4e0:c3ca with SMTP id 2adb3069b0e04-53dd39a4eb0mr480338e87.43.1732234590835;
+        Thu, 21 Nov 2024 16:16:30 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd4253c64sm28519e87.107.2024.11.21.16.16.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 16:16:29 -0800 (PST)
+Date: Fri, 22 Nov 2024 02:16:26 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: keith zhao <keith.zhao@starfivetech.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
+	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 6/9] drm/vs: Add CRTC Functions
+Message-ID: <hqdjfne4svqbxfr2cojrdd5bvggl3zyucgztbdsqyzhhh7tw5m@2iib5audsluy>
+References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
+ <20241120061848.196754-7-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6769b0ae-3f15-42d1-10d9-08dd0a8a84be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2024 00:13:40.4759
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: B8R+o8paq/E4+ZktNgDkgIdOJRqY/l9fjt6VPHxLVCkaXLvtlwzYXPbVWHIEfAGvD09vN4UgMpcO3AqJ+eK0qw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8814
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120061848.196754-7-keith.zhao@starfivetech.com>
 
-> Subject: Re: [PATCH v2 2/2] pm: cpupower: Makefile: Allow overriding
-> cross-compiling env params
->=20
-> On 11/21/24 04:40, Peng Fan wrote:
-> >> Subject: Re: [PATCH v2 2/2] pm: cpupower: Makefile: Allow
-> overriding
-> >> cross-compiling env params
-> >>
-> >> Hi Peng,
-> >>
-> >> On 9/19/2024 5:08 AM, Peng Fan (OSS) wrote:
-> >>> From: Peng Fan <peng.fan@nxp.com>
-> >>>
-> >>> Allow overriding the cross-comple env parameters to make it
-> easier
-> >> for
-> >>> Yocto users. Then cross-compiler toolchains to build cpupower
-> with
-> >>> only two steps:
-> >>> - source (toolchain path)/environment-setup-armv8a-poky-linux
-> >>> - make
-> >>
-> >> This patch breaks the way that buildroot builds cpupower:
-> >>
-> >>
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
-> >> git.buildroot.net%2Fbuildroot%2Ftree%2Fpackage%2Flinux-
-> >> tools%2Flinux-tool-
-> >>
-> cpupower.mk.in&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C246da9
-> >>
-> 2d8b6243d138c808dd09e6d644%7C686ea1d3bc2b4c6fa92cd99c5c3
-> >>
-> 01635%7C0%7C0%7C638677609234547728%7CUnknown%7CTWFpb
-> >>
-> GZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJX
-> >>
-> aW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdat
-> >>
-> a=3DnL1YUl%2F07Vd8F0GpW7uRqdpZT74avOku1ox9N3%2FFkUg%3D&r
-> >> eserved=3D0
-> >>
-> >> and after enabling verbose it becomes clear as to why, see below:
-> >>
-> >>   >>> linux-tools  Configuring
-> >>   >>> linux-tools  Building
-> >> GIT_DIR=3D.
-> >> PATH=3D"/local/users/fainelli/buildroot-
-> >> upstream/output/arm/host/bin:/local/users/fainelli/buildroot-
-> >>
-> upstream/output/arm/host/sbin:/projects/firepath/tools/bin:/home/ff
-> >>
-> 944844/bin:/home/ff944844/.local/bin:/opt/stblinux/bin:/usr/local/sb
-> >> in:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local
-> >> /ga mes:/snap/bin:/opt/toolchains/metaware-vctools-0.4.1/bin/"
-> >> /usr/bin/make -j97
-> >> CROSS=3D/local/users/fainelli/buildroot-
-> >> upstream/output/arm/host/bin/arm-linux-
-> >> CPUFREQ_BENCH=3Dfalse NLS=3Dfalse LDFLAGS=3D"-L.
-> >> -L/local/users/fainelli/buildroot-
-> upstream/output/arm/target/usr/lib"
-> >> DEBUG=3Dfalse V=3D1 -C
-> >> /local/users/fainelli/buildroot-upstream/output/arm/build/linux-
-> >> custom/tools
-> >> cpupower
-> >> mkdir -p power/cpupower && /usr/bin/make
-> subdir=3Dpower/cpupower
-> >> --no-print-directory -C power/cpupower cc -DVERSION=3D\"6.12.0\" -
-> >> DPACKAGE=3D\"cpupower\"
-> >> -DPACKAGE_BUGREPORT=3D\"linux-pm@vger.kernel.org\" -
-> D_GNU_SOURCE -pipe
-> >> -Wall -Wchar-subscripts -Wpointer-arith -Wsign- compare
-> >> -Wno-pointer-sign -Wdeclaration-after-statement -Wshadow - Os
-> >> -fomit-frame-pointer -fPIC -o lib/cpufreq.o -c lib/cpufreq.c
-> >
-> > You are building on an ARM host? Or you are cross compiling with cc
-> is
-> > actually arm gcc?
->=20
-> This is cross compiling targeting ARM, which is why CROSS is set to
-> ../arm-linux-
->=20
-> >
-> >>
-> >> Here we use cc, aka host compiler, rather than $(CROSS)gcc as we
-> >> should, so we are no longer cross compiling at all.
-> >
-> > I not understand. CROSS was set, but using cc to compile for host?
->=20
-> See below.
->=20
-> >
-> >>
-> >> The issue is the use of the lazy set if absent for *all* of CC, LD,
-> >> AR, STRIP, RANLIB, rather than just for CROSS. The following fixes it
-> for me:
-> >>
-> >> diff --git a/tools/power/cpupower/Makefile
-> >> b/tools/power/cpupower/Makefile index
-> >> 175004ce44b2..96bb1e5f3970 100644
-> >> --- a/tools/power/cpupower/Makefile
-> >> +++ b/tools/power/cpupower/Makefile
-> >> @@ -87,11 +87,11 @@ INSTALL_SCRIPT =3D ${INSTALL} -m 644
-> >>    # to something more interesting, like "arm-linux-".  If you want
-> >>    # to compile vs uClibc, that can be done here as well.
-> >>    CROSS ?=3D #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
-> >> -CC ?=3D $(CROSS)gcc
-> >> -LD ?=3D $(CROSS)gcc
-> >> -AR ?=3D $(CROSS)ar
-> >> -STRIP ?=3D $(CROSS)strip
-> >> -RANLIB ?=3D $(CROSS)ranlib
-> >> +CC =3D $(CROSS)gcc
-> >> +LD =3D $(CROSS)gcc
-> >> +AR =3D $(CROSS)ar
-> >> +STRIP =3D $(CROSS)strip
-> >> +RANLIB =3D $(CROSS)ranlib
-> >
-> > The ? is just allow to override CC/LD/AR.., so in your env, CC is set,
-> > but should not be used for cpupower compling?
->=20
-> Adding debug to show the origin of the CC variable shows the following:
->=20
-> CROSS=3D/local/users/fainelli/buildroot-
-> upstream/output/arm/host/bin/arm-linux-
-> CC origin is (default) and value is (cc) LD origin is (default) and value=
- is
-> (ld) CC=3Dcc LD=3Dld AR=3Dar STRIP=3D RANLIB=3D
+On Wed, Nov 20, 2024 at 02:18:45PM +0800, keith zhao wrote:
+> This commit adds CRTC functions and helper functions
+> to the VS DRM subsystem,
+> enhancing support for display management and configurations.
+> 
+> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+> ---
+>  drivers/gpu/drm/verisilicon/Makefile  |   3 +-
+>  drivers/gpu/drm/verisilicon/vs_crtc.c | 241 ++++++++++++++++++++++++++
+>  drivers/gpu/drm/verisilicon/vs_crtc.h |  42 +++++
+>  drivers/gpu/drm/verisilicon/vs_drv.h  |  41 +++++
+>  4 files changed, 326 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.c
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_crtc.h
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_drv.h
+> 
+> diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/verisilicon/Makefile
+> index 842867dad4cb..37f6a4db2a12 100644
+> --- a/drivers/gpu/drm/verisilicon/Makefile
+> +++ b/drivers/gpu/drm/verisilicon/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+>  vs_drm-objs := vs_dc_hw.o \
+> -	       vs_modeset.o
+> +	       vs_modeset.o \
+> +	       vs_crtc.o
+>  
+>  obj-$(CONFIG_DRM_VERISILICON_DC8200) += vs_drm.o
+> diff --git a/drivers/gpu/drm/verisilicon/vs_crtc.c b/drivers/gpu/drm/verisilicon/vs_crtc.c
+> new file mode 100644
+> index 000000000000..45ce28960e27
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_crtc.c
+> @@ -0,0 +1,241 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
+> + *
+> + */
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_atomic.h>
+> +#include <drm/drm_vblank.h>
+> +#include <drm/drm_print.h>
+> +
+> +#include "vs_crtc.h"
+> +#include "vs_drv.h"
+> +
+> +static void vs_crtc_atomic_destroy_state(struct drm_crtc *crtc,
+> +					 struct drm_crtc_state *state)
+> +{
+> +	__drm_atomic_helper_crtc_destroy_state(state);
+> +	kfree(to_vs_crtc_state(state));
+> +}
+> +
+> +static void vs_crtc_reset(struct drm_crtc *crtc)
+> +{
+> +	struct vs_crtc_state *state;
+> +
+> +	if (crtc->state)
+> +		vs_crtc_atomic_destroy_state(crtc, crtc->state);
+> +
+> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
+> +	if (!state)
+> +		return;
+> +
+> +	__drm_atomic_helper_crtc_reset(crtc, &state->base);
+> +}
+> +
+> +static struct drm_crtc_state *
+> +vs_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
+> +{
+> +	struct vs_crtc_state *old_state;
+> +	struct vs_crtc_state *state;
+> +
+> +	if (!crtc->state)
+> +		return NULL;
+> +
+> +	old_state = to_vs_crtc_state(crtc->state);
+> +
+> +	state = kmemdup(old_state, sizeof(*old_state), GFP_KERNEL);
+> +		if (!state)
+> +			return NULL;
+> +
+> +	__drm_atomic_helper_crtc_duplicate_state(crtc, &state->base);
+> +
+> +	return &state->base;
+> +}
+> +
+> +static int vs_crtc_enable_vblank(struct drm_crtc *crtc)
+> +{
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	dc_hw_enable_interrupt(&dc->hw);
+> +
+> +	return 0;
+> +}
+> +
+> +static void vs_crtc_disable_vblank(struct drm_crtc *crtc)
+> +{
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	dc_hw_disable_interrupt(&dc->hw);
+> +}
+> +
+> +static const struct drm_crtc_funcs vs_crtc_funcs = {
+> +	.set_config		= drm_atomic_helper_set_config,
+> +	.page_flip		= drm_atomic_helper_page_flip,
+> +	.reset			= vs_crtc_reset,
+> +	.atomic_duplicate_state = vs_crtc_atomic_duplicate_state,
+> +	.atomic_destroy_state	= vs_crtc_atomic_destroy_state,
+> +	.enable_vblank		= vs_crtc_enable_vblank,
+> +	.disable_vblank		= vs_crtc_disable_vblank,
+> +};
+> +
+> +static void vs_crtc_atomic_enable(struct drm_crtc *crtc,
+> +				  struct drm_atomic_state *state)
+> +{
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	struct vs_crtc_state *crtc_state = to_vs_crtc_state(crtc->state);
+> +	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
+> +	int id;
+> +
+> +	id = to_vs_display_id(crtc);
+> +	if (crtc_state->encoder_type == DRM_MODE_ENCODER_DSI) {
+> +		dc_hw_set_out(&dc->hw, OUT_DPI, id);
+> +		clk_set_rate(priv->clks[7].clk, mode->clock * 1000);
+> +		clk_set_parent(priv->clks[5].clk, priv->clks[7].clk);
+> +	} else {
+> +		dc_hw_set_out(&dc->hw, OUT_DP, id);
+> +		clk_set_parent(priv->clks[4].clk, priv->clks[6].clk);
+> +	}
 
+Can this go to the encoder's atomic_enable() instead? Also it would be
+nice to have a less magic code here. What are the clocks 4-7?
 
-How about
-CROSS ?=3D #/usr/i386-linux-uclibc/usr/bin/i386-uclibc-
-ifneq ($(CROSS), )
-CC =3D $(CROSS)gcc
-LD =3D $(CROSS)gcc
-AR =3D $(CROSS)ar
-STRIP =3D $(CROSS)strip
-RANLIB =3D $(CROSS)ranlib
-else
-CC ?=3D $(CROSS)gcc
-LD ?=3D $(CROSS)gcc
-AR ?=3D $(CROSS)ar
-STRIP ?=3D $(CROSS)strip
-RANLIB ?=3D $(CROSS)ranlib
-Endif
+> +
+> +	dc_hw_enable(&dc->hw, id, mode, crtc_state->encoder_type, crtc_state->output_fmt);
+> +
+> +	enable_irq(priv->irq);
+> +
+> +	drm_crtc_vblank_on(crtc);
+> +}
+> +
+> +static void vs_crtc_atomic_disable(struct drm_crtc *crtc,
+> +				   struct drm_atomic_state *state)
+> +{
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +	int id;
+> +
+> +	drm_crtc_vblank_off(crtc);
+> +
+> +	disable_irq(priv->irq);
+> +
+> +	id = to_vs_display_id(crtc);
+> +	dc_hw_disable(&dc->hw, id);
+> +
+> +	if (crtc->state->event && !crtc->state->active) {
+> +		spin_lock_irq(&crtc->dev->event_lock);
+> +		drm_crtc_send_vblank_event(crtc, crtc->state->event);
+> +		crtc->state->event = NULL;
+> +		spin_unlock_irq(&crtc->dev->event_lock);
+> +	}
+> +}
+> +
+> +static void vs_dc_set_gamma(struct vs_dc *dc, struct drm_crtc *crtc,
+> +			    struct drm_color_lut *lut, unsigned int size)
+> +{
+> +	u16 i, r, g, b;
+> +	u8 bits, id;
+> +
+> +	if (size != dc->hw.info->gamma_size) {
+> +		drm_err(crtc->dev, "gamma size does not match!\n");
+> +		return;
+> +	}
+> +
+> +	id = to_vs_display_id(crtc);
+> +
+> +	bits = dc->hw.info->gamma_bits;
+> +	for (i = 0; i < size; i++) {
+> +		r = drm_color_lut_extract(lut[i].red, bits);
+> +		g = drm_color_lut_extract(lut[i].green, bits);
+> +		b = drm_color_lut_extract(lut[i].blue, bits);
+> +		dc_hw_update_gamma(&dc->hw, id, i, r, g, b);
+> +
+> +		if (i >= dc->hw.info->gamma_size)
+> +			return;
+> +
+> +		dc->hw.gamma[id].gamma[i][0] = r;
+> +		dc->hw.gamma[id].gamma[i][1] = g;
+> +		dc->hw.gamma[id].gamma[i][2] = b;
+> +	}
+> +}
+> +
+> +static void vs_crtc_atomic_begin(struct drm_crtc *crtc,
+> +				 struct drm_atomic_state *state)
+> +{
+> +	struct drm_crtc_state *new_state = drm_atomic_get_new_crtc_state(state,
+> +									  crtc);
+> +
+> +	struct drm_property_blob *blob = new_state->gamma_lut;
+> +	struct drm_color_lut *lut;
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +	u8 id;
+> +
+> +	dc_hw_enable_shadow_register(dc, false);
+> +
+> +	id = to_vs_display_id(crtc);
+> +	if (new_state->color_mgmt_changed) {
+> +		if (blob && blob->length) {
+> +			lut = blob->data;
+> +			vs_dc_set_gamma(dc, crtc, lut,
+> +					blob->length / sizeof(*lut));
+> +			dc_hw_enable_gamma(&dc->hw, id, true);
+> +		} else {
+> +			dc_hw_enable_gamma(&dc->hw, id, false);
+> +		}
+> +	}
+> +}
+> +
+> +static void vs_crtc_atomic_flush(struct drm_crtc *crtc,
+> +				 struct drm_atomic_state *state)
+> +{
+> +	struct drm_pending_vblank_event *event = crtc->state->event;
+> +	struct vs_drm_device *priv = to_vs_drm_private(crtc->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	if (event) {
+> +		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+> +
+> +		spin_lock_irq(&crtc->dev->event_lock);
+> +		drm_crtc_arm_vblank_event(crtc, event);
+> +		crtc->state->event = NULL;
+> +		spin_unlock_irq(&crtc->dev->event_lock);
+> +	}
+> +
+> +	dc_hw_enable_shadow_register(dc, true);
+> +}
+> +
+> +static const struct drm_crtc_helper_funcs vs_crtc_helper_funcs = {
+> +	.atomic_check = drm_crtc_helper_atomic_check,
+> +	.atomic_enable	= vs_crtc_atomic_enable,
+> +	.atomic_disable = vs_crtc_atomic_disable,
+> +	.atomic_begin	= vs_crtc_atomic_begin,
+> +	.atomic_flush	= vs_crtc_atomic_flush,
+> +};
+> +
+> +struct vs_crtc *vs_crtc_create(struct drm_device *drm_dev,
+> +			       struct vs_dc_info *info)
+> +{
+> +	struct vs_crtc *crtc;
+> +	int ret;
+> +
+> +	if (!info)
+> +		return NULL;
+> +
+> +	crtc = drmm_crtc_alloc_with_planes(drm_dev, struct vs_crtc, base, NULL,
+> +					   NULL, &vs_crtc_funcs,
+> +					   info->name ? info->name : NULL);
+> +
+> +	drm_crtc_helper_add(&crtc->base, &vs_crtc_helper_funcs);
+> +
+> +	if (info->gamma_size) {
+> +		ret = drm_mode_crtc_set_gamma_size(&crtc->base,
+> +						   info->gamma_size);
+> +		if (ret)
+> +			return NULL;
+> +
+> +		drm_crtc_enable_color_mgmt(&crtc->base, 0, false,
+> +					   info->gamma_size);
+> +	}
+> +
+> +	return crtc;
+> +}
+> diff --git a/drivers/gpu/drm/verisilicon/vs_crtc.h b/drivers/gpu/drm/verisilicon/vs_crtc.h
+> new file mode 100644
+> index 000000000000..58aa7a77d94e
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_crtc.h
+> @@ -0,0 +1,42 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
+> + */
+> +
+> +#ifndef __VS_CRTC_H__
+> +#define __VS_CRTC_H__
+> +
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_crtc_helper.h>
 
-Thanks,
-Peng.
+I thought you've commented about removing them.
 
->=20
-> See
-> https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2F
-> www.gnu.org%2Fsoftware%2Fmake%2Fmanual%2Fhtml_node%2FOrig
-> in-Function.html%23Origin-
-> Function&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C02c643288e1e
-> 456e69e108dd0a4e58d7%7C686ea1d3bc2b4c6fa92cd99c5c301635%
-> 7C0%7C0%7C638678053808856433%7CUnknown%7CTWFpbGZsb3d8
-> eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiI
-> sIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DL4xd4j
-> ijUJXibguQnxUTzcAUA%2FGSUGUQzmA5FfVaaAQ%3D&reserved=3D0
-> --
-> Florian
+> +
+> +#include "vs_type.h"
+> +
+> +struct vs_crtc_state {
+> +	struct drm_crtc_state base;
+> +
+> +	u32 output_fmt;
+> +	u8 encoder_type;
+> +	u8 bpp;
+> +};
+> +
+> +struct vs_crtc {
+> +	struct drm_crtc base;
+> +	struct device *dev;
+> +	u8 index;
+> +};
+
+Which modules do need to look into CRTC and CRTC state?
+
+> +
+> +static inline u8 to_vs_display_id(struct drm_crtc *crtc)
+> +{
+> +	return container_of(crtc, struct vs_crtc, base)->index;
+> +}
+> +
+> +struct vs_crtc *vs_crtc_create(struct drm_device *drm_dev,
+> +			       struct vs_dc_info *info);
+> +
+> +static inline struct vs_crtc_state *
+> +to_vs_crtc_state(struct drm_crtc_state *state)
+> +{
+> +	return container_of(state, struct vs_crtc_state, base);
+> +}
+> +
+> +#endif /* __VS_CRTC_H__ */
+> diff --git a/drivers/gpu/drm/verisilicon/vs_drv.h b/drivers/gpu/drm/verisilicon/vs_drv.h
+> new file mode 100644
+> index 000000000000..dc6efb093205
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_drv.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
+> + */
+> +
+> +#ifndef __VS_DRV_H__
+> +#define __VS_DRV_H__
+> +
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/clk.h>
+> +#include <linux/reset.h>
+> +
+> +#include <drm/drm_fourcc.h>
+> +
+> +#include "vs_dc_hw.h"
+> +
+> +/*@pitch_alignment: buffer pitch alignment required by sub-devices.*/
+> +struct vs_drm_device {
+> +	struct drm_device base;
+> +	unsigned int pitch_alignment;
+
+Unused
+
+> +	/* clocks */
+> +	unsigned int clk_count;
+
+unused
+
+> +	struct clk_bulk_data	*clks;
+> +	struct reset_control	*rsts;
+
+You guess, unused
+
+> +	struct vs_dc dc;
+> +	int irq;
+> +	struct regmap *dc_syscon_regmap;
+
+and this one too
+
+> +};
+> +
+> +static inline struct vs_drm_device *
+> +to_vs_drm_private(const struct drm_device *dev)
+> +{
+> +	return container_of(dev, struct vs_drm_device, base);
+> +}
+> +
+> +#ifdef CONFIG_DRM_INNO_STARFIVE_HDMI
+> +extern struct platform_driver starfive_hdmi_driver;
+> +#endif
+> +
+> +#endif /* __VS_DRV_H__ */
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
