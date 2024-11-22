@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-417809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3DE9D594F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551219D5955
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:21:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97AF0282C47
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4941F20F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115C816DEA2;
-	Fri, 22 Nov 2024 06:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fv/cDF8b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8996016E87D;
+	Fri, 22 Nov 2024 06:20:59 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3C6376F1;
-	Fri, 22 Nov 2024 06:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A1D13049E;
+	Fri, 22 Nov 2024 06:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732256384; cv=none; b=ebZwWxm+kSlRZLHANJmAZCz/mISj/B8AuckDlPDa8q24mhchLxlDzux2OGkKXAcXE3vbH6MEOxnxMMJtjKAZwwe8O1nQwxndX5IWuRf7aIAmNcYPAL4P6P1anSZko4ZUfkGNwQo8SY4sAXmF6+27mEJx27fRLz27ZzQxNU0eJoU=
+	t=1732256459; cv=none; b=aBUvhOGXBY4D4OJegoVRG01C6rjy2Q9nw6jklZZRYTlxdjk1xdDauoHQK6S8CqQNPnN/xgQd2Qxk6n+3wP7LWb8C5mwLdk7p0Jwb2/9BYO1xE8pmDIBSr8PGI7qT33vpxKJxUTdKew1b+IE67MgZfS88v0reM1AhDN9CY1gTBb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732256384; c=relaxed/simple;
-	bh=TV1/1YnZIDQZeSYDM7Yx4q9AWg2k3f1mpbgpQnwfFhg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=vFwKQdRcLhkqERkrHl4MVPO2WCg39NxITP0w3nCP/HFPlyZ8rf/Q9ZFekXfk+YhNEnu9SLauq/QqlDZP+V9iuIm2hkKo1XBUNzUe9bCch8Vm0+sVmbPNz7YM4om+ptkA5WLWk32HK3dKAeFTJstJIwJzJgdYGryEkcELGYVx7Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fv/cDF8b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85949C4CECE;
-	Fri, 22 Nov 2024 06:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732256383;
-	bh=TV1/1YnZIDQZeSYDM7Yx4q9AWg2k3f1mpbgpQnwfFhg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fv/cDF8b1qk4Ooq+bjOA6rpWocxQJ/+HNWvWlE7rSou39bShaui+b2ACVhxRlcUkd
-	 O9pB6osQs7vGTYZIN6x5evS+u+g3zqgylmrNcOnfuIhHxZJ5Er1ddv8ftVxwksVFwJ
-	 b738Ra0bFdv6RfByzPb1+AeEaFjRFnekNY4KbI7I=
-Date: Thu, 21 Nov 2024 22:19:37 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com,
- stable@vger.kernel.org, Christoph Lameter <cl@linux.com>
-Subject: Re: [PATCH v1] mm/mempolicy: fix migrate_to_node() assuming there
- is at least one VMA in a MM
-Message-Id: <20241121221937.c41ee2b5e8534729e94fc104@linux-foundation.org>
-In-Reply-To: <lguepu5d2szipdzjid5ccf5m56tdquuo47bzy7ohrjk7fh53q5@6z73dfwdbn4n>
-References: <20241120201151.9518-1-david@redhat.com>
-	<lguepu5d2szipdzjid5ccf5m56tdquuo47bzy7ohrjk7fh53q5@6z73dfwdbn4n>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732256459; c=relaxed/simple;
+	bh=NSQdXNVyOy7drLHA2vuIV+iG0iYw6tdiwWdayeqv4yI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tIR9OJFRMcAPuM7Dmv2VxnUzhY9nQBcM/5eGPyJzGm8x3na4It0pFytIHL7gY5tBn6lHEc53x36zUFhmsX5nZ0vB9xJdqFIFht3oxMwj/sPWk0mZUHaUex4CoHzPHO22bIQSI3FjMDg3301EqQxzy2D/BVqD/XyeB3nKAZG3niI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XvlGR54ywz1JCfl;
+	Fri, 22 Nov 2024 14:15:59 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0143D1400D5;
+	Fri, 22 Nov 2024 14:20:53 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ kwepemh100008.china.huawei.com (7.202.181.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 22 Nov 2024 14:20:52 +0800
+From: Lifeng Zheng <zhenglifeng1@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
+	<viresh.kumar@linaro.org>
+CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <hepeng68@huawei.com>,
+	<fanghao11@huawei.com>, <zhenglifeng1@huawei.com>
+Subject: [PATCH v2 0/3] Support for autonomous selection in cppc_cpufreq
+Date: Fri, 22 Nov 2024 14:20:48 +0800
+Message-ID: <20241122062051.3658577-1-zhenglifeng1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Wed, 20 Nov 2024 15:27:46 -0500 "Liam R. Howlett" <Liam.Howlett@oracle.com> wrote:
+Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
+driver.
 
-> I hate the extra check because syzbot can cause this as this should
-> basically never happen in real life, but it seems we have to add it.
+The patch series is organized in two parts:
 
-So..
+ - patch 1 refactor out the general CPPC register get and set functions
+   in cppc_acpi.c
 
---- a/mm/mempolicy.c~mm-mempolicy-fix-migrate_to_node-assuming-there-is-at-least-one-vma-in-a-mm-fix
-+++ a/mm/mempolicy.c
-@@ -1080,7 +1080,7 @@ static long migrate_to_node(struct mm_st
- 
- 	mmap_read_lock(mm);
- 	vma = find_vma(mm, 0);
--	if (!vma) {
-+	if (unlikely(!vma)) {
- 		mmap_read_unlock(mm);
- 		return 0;
- 	}
-_
+ - patches 2-3 expose sysfs files for users to control CPPC autonomous
+   selection when supported
 
-?
+Change since v1:
+ - fix some incorrect placeholder
+ - change kstrtoul to kstrtobool in store_auto_select
+
+Lifeng Zheng (3):
+  ACPI: CPPC: Refactor register get and set ABIs
+  ACPI: CPPC: Add autonomous selection ABIs
+  cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
+
+ .../ABI/testing/sysfs-devices-system-cpu      |  54 ++++
+ drivers/acpi/cppc_acpi.c                      | 235 +++++++++---------
+ drivers/cpufreq/cppc_cpufreq.c                | 138 ++++++++++
+ include/acpi/cppc_acpi.h                      |  20 ++
+ 4 files changed, 328 insertions(+), 119 deletions(-)
+
+-- 
+2.33.0
+
 
