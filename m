@@ -1,197 +1,177 @@
-Return-Path: <linux-kernel+bounces-418732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C31379D64CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 585B79D64D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:18:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78A1E282E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:17:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F13BE282E4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B13178CEC;
-	Fri, 22 Nov 2024 20:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A01C176AA1;
+	Fri, 22 Nov 2024 20:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="26YOuE0N"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="DYAW5AWD"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3A0175A5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 20:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F21B158DA3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 20:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732306633; cv=none; b=gTGSe+aEhxfL8a8ctMjRQ5UcMqFS4rAWIWvkXBF7WJ1tpujIvhCCmwOs43U3V8swSfB6olMy4i9vtGMwnp1RrPUGaD8Qjx/pHosAps7MPbI7VJcvAxBDNbVEVnbZRNBgJFgvxjLy6AIf4F6YXB57IGg9TIDqgLnPqMdtYiY2VcM=
+	t=1732306729; cv=none; b=Eqc6sZQVs7fm2Z04Va73GmUqGLR70ESzo1JziL7WbkspyE+yh+TR8oPhjwDPFfgtT5C7MehvB8G2jZIIL+LaQg0oO8bfmJkD/AFF4Ocr6Q5E06J///0Fn3AlV0dJYYuEOrOh2Iii2z4MuO54pQXYlAOoZsuAuQxz3+gWtTdsRmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732306633; c=relaxed/simple;
-	bh=KmeFhdBtuaq6g3lkgDM2V/1Ngqeol4WqkFh8u2leAiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tqWiZRTiHI39BUco6Di7x5mjBCOJZAYM/8AQlT/46jF8D1wvHzpVWBjk3QUZl4xUoR0NtYeL8/2WcwmUwWhYmyDhNvCtxq+3aYdNdapqRPf/RCw8gvtwD30FDPKKxyXD/SPyS8mfgKi8moUAk/Qfabl16sOZ3M3lsgaq6BupP5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=26YOuE0N; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4319399a411so23026885e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:17:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732306630; x=1732911430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QG3kEeD4o5WMVUrR5MGaMLkHMAvK8n76S6L6z1qKop8=;
-        b=26YOuE0NvnpJFeapZ3G1YoXydvUwuATpnUQRRhbRTzJ3QFxU+PfqXiZygrUVBQjfPX
-         Dtmk+1fzg/pyc3F392Z1qzlSZVUiXBQgDsDRPAFnJQHlpYI5FWhNGoa86n4iTvxlukWD
-         Ard6BW0aIKNFF0+54qX/WAuSjdwB9m9wu40tEQOD9iSd0srKMw/My+seA1qGhdiVv3Qx
-         t+AXhVx3Nwkn36ULx1HLkb6vyOCe9ZougFBrb0ItunkV4CO/lUjli496oxzfYu2XXr8v
-         x8fv/6meaq34CphqblhMI3M4UbCJmd4NwX/+RyjP4djYq79tiINSKE1uYAaxewceFeDR
-         NjmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732306630; x=1732911430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QG3kEeD4o5WMVUrR5MGaMLkHMAvK8n76S6L6z1qKop8=;
-        b=FNGZDI+dGpfP7bc1ocxEQkBfnoVUZe08San3bAlQ2Uuo3zMIME0fOtWACXUUjfLHs0
-         uouQM3ItRozzLEz2j4wywi1JApjGL1dNXvQAivH/Cqthk7XbI9meuzEx6C6wKhwCF4IN
-         OnjKcDkry2Ezbd7plLYdiPO4z7siWd8yITtcrQUY4IsTmpHPiz+4aL79+V5EKqVTL5A7
-         PZUnMlmw8GQT44GqPpo2yx65VKg5/i+6tkvcw3kdbB+zkiTckucjD6g6VOl5g05dMXko
-         QVMcZt6KvbriXm7gJKDo2eB23KL1cXUox/jEc4c+Xdal03+75j6roWCbk9UYa6P3YIsv
-         jIcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxlY2qPoWuooc61yFRQ57SrvcWcnWeUdtjWSVOi8hambJT1FKC/frdggCQA8wUT5EAe6Ph/BwEfxV+I0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+vkJxB3TPvlt4QLLPvlX89D/nnkMM7Arq4xFJf1+p3RGN86B
-	J/suoFz2n65mJQwjJKVvqW6E0AX8pOZPCNbQxYPr7RhlBuXisI26aKHPJi/fb/uTWUjiCVdjOyb
-	AWd9GRWi+W83B+I/Bytl6zIprf9/3/HYyclaA
-X-Gm-Gg: ASbGncvFUeT4WRDKTUt/G8soFJ9s/sX2vk0z23ltzmqcFqD25z8H4JUQaWx3hKdiC/D
-	a75TwOr2eeSI9y2HGARezckxCWA5uVL9w
-X-Google-Smtp-Source: AGHT+IFWqePFuP+tQF+WkpAWE/TYTHdWg7sF/rMtGjGKkKfM5BVl/SGktBjFR20250IpBmxLobH9zw/Mk8zzOzHVBm8=
-X-Received: by 2002:a5d:5849:0:b0:382:2f62:bd4b with SMTP id
- ffacd0b85a97d-38260b86b74mr3165216f8f.33.1732306629848; Fri, 22 Nov 2024
- 12:17:09 -0800 (PST)
+	s=arc-20240116; t=1732306729; c=relaxed/simple;
+	bh=ShYX8AElLJr2n334KbhmpjPjVPPyhWkr5goeJbY2XCU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Je04/clf8rNI5R8hHNlkt0duUgc6B4RGGIvoSzsKVvy+zPRlweW70whIvRf8+7DnLTiXFfyR9J/bt5myuSd8zwwPulhW1RVUlY+PVPFqva6nw/TQgHfJAuLV8doeIn3Mr7Tj4993OiR81RfUVIfC/ig7k1o6i5lRXH3cT0rUcXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=DYAW5AWD; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xw5yt2j42zlgMVX;
+	Fri, 22 Nov 2024 20:18:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:subject
+	:subject:from:from:content-language:user-agent:mime-version:date
+	:date:message-id:received:received; s=mr01; t=1732306722; x=
+	1734898723; bh=tvU7yzIXdrJ1JoTLWn58eZu1CUo1ZLYhMNfsnSJ7p70=; b=D
+	YAW5AWDRHIrzIKx5sbX8LHwPweTU9rEUrH3vR1ZBWCADq34iVQ2boepZ1B+EGAxo
+	gwjW6DAjMPktvVVXOYi7D42ba3IbZqMsmavJ439Vxc21V8Q9cbKejrIMbX8CHr8c
+	BM/vHEVNOOUiBchITCuutJwB8rlV8JUwz/6kuMPkpiLj0Ap5Koa6YP1G98G8elLE
+	W/jHA+Uhh4WNAKNdtjeUTMmsUO2iaXRw4chXd3uD9EmY44KlSTiWb6tBScwwgFri
+	e1VJiOywelGieHy48pbZq723nRnXIaBDcWIHcokbiZmEzPiI7qPSAcRqiOjpvKlO
+	UgZjvtIAyBnoMpBeCEQjQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id lIwshB4O9nuA; Fri, 22 Nov 2024 20:18:42 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xw5yn6H7TzlgMVW;
+	Fri, 22 Nov 2024 20:18:41 +0000 (UTC)
+Message-ID: <9025e912-7151-4a1e-b1ba-91eafde12179@acm.org>
+Date: Fri, 22 Nov 2024 12:18:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-8-7127bfcdd54e@google.com>
- <6740c786.050a0220.31315a.5363@mx.google.com> <CAH5fLgiiCgcPRkdeGX7LJcaGN5Y5E=zWOXuwqo+GU-tTt63PzA@mail.gmail.com>
- <6740d8be.050a0220.30b282.4f2e@mx.google.com> <Z0Dbvbj39c87EQTq@casper.infradead.org>
- <CAH5fLgippKab6Qarc7go8pz8XPrvEOoi_FvzMNAJXzr8v3qqjA@mail.gmail.com> <Z0Dhi3LDfxFGtAQn@casper.infradead.org>
-In-Reply-To: <Z0Dhi3LDfxFGtAQn@casper.infradead.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 22 Nov 2024 21:16:58 +0100
-Message-ID: <CAH5fLgjow4x=qH3HDRZwQVus7maZZN9a6cpQ3tPabVWepj8H5Q@mail.gmail.com>
-Subject: Re: [PATCH v9 8/8] task: rust: rework how current is accessed
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+From: Bart Van Assche <bvanassche@acm.org>
+Subject: Unexpected lockdep selftest failures
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 8:54=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Fri, Nov 22, 2024 at 08:43:33PM +0100, Alice Ryhl wrote:
-> > On Fri, Nov 22, 2024 at 8:30=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > >
-> > > On Fri, Nov 22, 2024 at 11:17:15AM -0800, Boqun Feng wrote:
-> > > > > I don't think this is a problem? As long as a thread exists somew=
-here
-> > > > > with `current` being equal to the task, we should be fine?
-> > > > >
-> > > >
-> > > > I think I had a misunderstanding on what you meant by "operations
-> > > > that are only valid on the current task", you mean these operations=
- can
-> > > > be run by other threads, but it has to be *on* a task_struct that's
-> > > > "currently running", right? BTW, you probably want to reword a bit,
-> > > > because the "current" task may be blocked, so technically it's not
-> > > > "running".
-> > > >
-> > > > Basically, the operations that `CurrentTask` have are the methods t=
-hat
-> > > > are safe to call (even on a different thread) for the "current" tas=
-k, as
-> > > > long as it exists (not dead or exited). In that definition, not bei=
-ng
-> > > > `Sync` is fine.
-> > > >
-> > > > But I have to admit I'm a bit worried that people may be confused, =
-and
-> > > > add new methods that can be only run by the current thread in the
-> > > > future.
-> > >
-> > > I agree, I think CurrentTask should refer to "current".  Or we'll
-> > > confuse everyone.  Would ActiveTask be a good name for this CurrentTa=
-sk?
-> >
-> > I mean, it does refer to current. Any time you have a `&CurrentTask`,
-> > then you know that you got the pointer by reading the value of
-> > `current`, and that the task you got it from hasn't returned to
-> > userspace (or otherwise exited) yet.
-> >
-> > But the name ActiveTask also makes sense I guess.
->
-> OK, I'm going to be all rust newbie about this (zoea?)
->
-> Given that there are operations that we can do on 'current' that aren't
-> safe to do if we pass current to another thread, is the right thing
-> to say that we have Task, and you can get a (Rust) reference to Task
-> either by it being 'current', or by getting a refcount on it using
-> get_task_struct()?  And I think that's called a typestate?
+Hi,
 
-There are essentially three important types here:
+With the for-next branch of this tree: git://git.kernel.dk/linux-block
+(commit 12ab2c13ca77 ("Merge branch 'for-6.13/block' into for-next")) I
+see the following:
 
-* ARef<Task>
-* &Task
-* &CurrentTask
 
-The first one is using the pointer type ARef<_> to hold ownership over
-a refcount to the task. When variables of type ARef<Task> go out of
-scope, put_task_struct() is called in the destructor. And constructing
-a new ARef<Task> involves a call to get_task_struct().
+[    0.887603][    T0] 
+--------------------------------------------------------------------------
+[    0.888763][    T0]   | Wound/wait tests |
+[    0.889310][    T0]   ---------------------
+[    0.889867][    T0]                   ww api failures:  ok  |FAILED| 
+ok  |
+[    0.892597][    T0]                ww contexts mixing:  ok  |  ok  |
+[    0.894638][    T0]              finishing ww context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.898020][    T0]                locking mismatches:  ok  |  ok  | 
+ok  |
+[    0.900689][    T0]                  EDEADLK handling:  ok  |  ok  | 
+ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |  ok  |
+[    0.908172][    T0]            spinlock nest unlocked:  ok  |
+[    0.909484][    T0]                spinlock nest test:  ok  |
+[    0.910902][    T0] 
+-----------------------------------------------------
+[    0.911824][    T0]                                  |block | try 
+|context|
+[    0.912970][    T0] 
+-----------------------------------------------------
+[    0.913890][    T0]                           context:  ok  |  ok  | 
+ok  |
+[    0.916613][    T0]                               try:  ok  |  ok  | 
+ok  |
+[    0.919235][    T0]                             block:  ok  |  ok  | 
+ok  |
+[    0.921852][    T0]                          spinlock:  ok  |  ok 
+|FAILED|
+[    0.924666][    T0] 
+--------------------------------------------------------------------------
+[    0.925852][    T0]   | queued read lock tests |
+[    0.926506][    T0]   ---------------------------
+[    0.927132][    T0]       hardirq read-lock/lock-read:  ok  |
+[    0.928496][    T0]       hardirq lock-read/read-lock:  ok  |
+[    0.929860][    T0]                 hardirq inversion:  ok  |
+[    0.931269][    T0]   --------------------
+[    0.931827][    T0]   | fs_reclaim tests |
+[    0.932383][    T0]   --------------------
+[    0.932932][    T0]                   correct nesting:  ok  |
+[    0.934252][    T0]                     wrong nesting:  ok  |
+[    0.935518][    T0]                 protected nesting:  ok  |
+[    0.936784][    T0] 
+--------------------------------------------------------------------------
+[    0.937936][    T0]   | wait context tests |
+[    0.938516][    T0] 
+--------------------------------------------------------------------------
+[    0.939661][    T0]                                  | rcu  | raw  | 
+spin |mutex |
+[    0.940646][    T0] 
+--------------------------------------------------------------------------
+[    0.941798][    T0]                in hardirq context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.944946][    T0] in hardirq context (not threaded):  ok  |  ok  | 
+ok  |  ok  |
+[    0.948072][    T0]                in softirq context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.951206][    T0]                    in RCU context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.954345][    T0]                 in RCU-bh context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.957477][    T0]              in RCU-sched context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.960612][    T0]           in RAW_SPINLOCK context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.963927][    T0]               in SPINLOCK context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.967252][    T0]                  in MUTEX context:  ok  |  ok  | 
+ok  |  ok  |
+[    0.970571][    T0] 
+--------------------------------------------------------------------------
+[    0.971702][    T0]   | local_lock tests |
+[    0.972422][    T0]   ---------------------
+[    0.972965][    T0]           local_lock inversion  2:  ok  |
+[    0.974319][    T0]           local_lock inversion 3A:  ok  |
+[    0.975708][    T0]           local_lock inversion 3B:  ok  |
+[    0.977106][    T0]       hardirq_unsafe_softirq_safe:  ok  |
+[    0.978595][    T0] 
+--------------------------------------------------------------------------
+[    0.979723][    T0]   | lockdep_set_subclass() name test|
+[    0.980424][    T0]   -----------------------------------
+[    0.981123][    T0]     compare name before and after:  ok  |
+[    0.982423][    T0] 
+-----------------------------------------------------------------
+[    0.983434][    T0] BUG:   2 unexpected failures (out of 395) - 
+debugging disabled! |
+[    0.984441][    T0] 
+-----------------------------------------------------------------
 
-Now, the second type &Task is a reference to a task. A reference is
-when you *don't* have ownership over a refcount. They're used whenever
-there is *any* mechanism keeping the value alive; the actual mechanism
-in question is not part of the type. The way references work is that
-they are annotated with a compile-time concept called a lifetime,
-which is essentially a region of code that the reference is not
-allowed to escape. The compiler generally enforces this. For example,
-given an ARef<Task>, you can obtain a &Task without touching the
-refcount. Attempting to use the &Task after the ARef<Task> is
-destroyed is a hard compiler error. In this case, the ARef<_> keeps a
-refcount alive, so accessing the task through the &Task is always okay
-even though the &Task doesn't have a refcount.
 
-Another mechanism is `current`. The way that Rust's `current!()` macro
-works is essentially by defining a local variable which goes out of
-scope at the end of the current function, and giving you a &Task where
-the reference's lifetime is bounded by that local variable. So by
-ensuring that the &Task is bounded by the current function scope, we
-ensure that we're not using it after current becomes invalid.
+Is this a known issue?
 
-With this change, the `current!()` macro instead gives you a
-`&CurrentTask` whose lifetime is bounded to the function scope in the
-same way. Given a &CurrentTask, you can deref it to a normal &Task
-with the same lifetime, so you can also access the normal Task methods
-on a &CurrentTask.
+Thanks,
 
-And what's happening here is basically that ... you can use the
-&CurrentTask as long as the function you created it in has not yet
-returned. So if you spawn something on the workqueue and sleep until
-the workqueue finishes executing the job, then technically that
-satisfies the requirement and Rust will not prevent you from using the
-&CurrentTask within that workqueue job. And this is technically also
-okay from a C perspective, since the address space isn't going to go
-away as long as the function doesn't return.
-
-Alice
+Bart.
 
