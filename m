@@ -1,941 +1,182 @@
-Return-Path: <linux-kernel+bounces-417622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D1D9D56CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:40:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF9F9D56CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:41:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72D5FB21497
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:40:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135BCB228B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C075CB8;
-	Fri, 22 Nov 2024 00:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47D3AD5A;
+	Fri, 22 Nov 2024 00:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m2GRE8BV"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlbV2ERH"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2788F524F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD814A0C;
+	Fri, 22 Nov 2024 00:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732236048; cv=none; b=NpIlXb5iL+vdmErpltoMq/Pn7KWHgYYIFOGRslCZR04zcNpTAU0QDbo3Hk2xxhMJh8/7jlusP2V8ovyECqY8SP3s5k3r/A7OaqvC5HdOmJ2JvbFwnn0H+BDS4c9KhlWrWBZXrTGoA5bzROdKtpuu0KSbHdrl8b10AX8J7U/Y4sA=
+	t=1732236071; cv=none; b=sRduoQMoPBMMRF7glFRT0cg0MWuM7xRLWJ0XH3AUk8FV8hU25cy2tp/VYWqoKF+qlhWaQ7UG3LSbENDOMoeIaLulcf4gH1j929RGAQfbsfMWYIXE5izslmL8cbohJhNaAokWBWgdcYSwy2LRjIioll8p2aELPE7ASnqntJ1wIiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732236048; c=relaxed/simple;
-	bh=9BMf5EDiOh/S1K/iAB5h/h7XqppgfYxUc+t+9kqY+bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EBrA3v92dqWcdlsUa4L0LmuS9/Oyn88uTGjUxn5Jr/9R+fGIAt5gSY4eCTVnFbnf38hv9+EqyBPwC97n7AD9LDJUG1SbdJCTQiZX1qNSc4m4fI4xBxdQ+J529FV3FXbumxXpsqARfikWns+TPjHHJD7hutd6TaT0j9QkuJnX03M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m2GRE8BV; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so1709510e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:40:44 -0800 (PST)
+	s=arc-20240116; t=1732236071; c=relaxed/simple;
+	bh=z9dF6Emhtspyw3VwGifMj3kprIqiID/ABO92TYKcqwM=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=CRpekzuIf5q5fnZuNz32FDb321ZEk5NPqm9Vxh4u8yyxriK9fSEP73iZdR+sKvexMyD4xwmtVRXQLVWX6VHPNyh/jRabwVGBHaD5W5EzkMFEYyGOJLxJ1zxCrv10sRl/OQgTn6Yv5vKWSvIHsaGzaD8e9dvS/+oDFNPzv9IQB2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlbV2ERH; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so58839639f.3;
+        Thu, 21 Nov 2024 16:41:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732236043; x=1732840843; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z0drL0hzNtZwmzgi8H3t+P8aKX4a9Vae9TOnpS7s7Fw=;
-        b=m2GRE8BVKpfVP9t3MhDhzMV/gp+i66VLwiNsJU4JKSY9Y1vakVqAx7fg80IWb13NUe
-         DKEgmJYs15Lkw98jx/9c4ZacQkiyphaOehSFmn0KOagjFH78MAekvwQAP0mbbDSeOd34
-         T7PxdEXf3P6SmAj8h7NhsFpjNphRoe9xWCVw3joWdOMIv3ND4iDs9NE1Hnt0vlx4kvO+
-         HnbO4QBCb+TQyqHK5MtXUmfINacdV3o6cVaiv2WVNF6QlQuAfT54LWu4OVZ30XpYfXQs
-         /n/fxdCvjRLZHEmWXlaATR3Rt8eNwTvK9n79TnPYc4BXqmPvhveS8Lmxn7QG0pODmdB9
-         lyqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732236043; x=1732840843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1732236069; x=1732840869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z0drL0hzNtZwmzgi8H3t+P8aKX4a9Vae9TOnpS7s7Fw=;
-        b=ahIXEilTkkKXRpf+NleqeQvSuQGnZM5FgZzT5hDSAz4Zo94sHeVS/OBMxfjhZ2pD0U
-         4auT5r5U+/AIYsFk7892dO0WsZdgr1K5IFl/gdQgCCqXQ3wUV2xK5qOylO5+5j/hxH7H
-         bOfiO+WcPwl0EpiT4/I5ZzIB9cxQJE4fKV9kThrbQlJAC+TBDfUwS5q9Hqae/ViL+C6k
-         igqRmZ39Ao6PfyG8RvCe3psAEVzFs1QVbfUrnnvCV45gWrVqh1jDDB1CJ9V54LN8Gkea
-         bo/W1iPeRWPHVj8r5mvVWwrH7nGHEozVmt/KhqJgvBQEw7Sw1YGEQYuXDsWPoy2vegb8
-         I60Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXElzCIyoWJXMZbQlYGpb6A6HHDx1f6zc3N0Vw7rHARgIoCOldtZvrjd8s5O2wOvaORCFxaKO/G0S2+gG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCWP+zZYKPJe80C9gGj6QSGVvkvlLdxruoDGcC86kyfUgyD5bJ
-	pQ/K7PzteRrq9igfp2KKwL+23FJ8+24RuWVX43R5QbYshdEMKs87kvtbxkntOx8=
-X-Gm-Gg: ASbGncvLZPvjdmI3MoBJBLrIvBnh9qxRNC9wfGZRx/mHD8rWqy6OC9i4CLJsi8syu1T
-	cS7VUTz92P7NHOp9ZDgLTF0jGbmeLpkcvsztrEqA3jIFPFgYQZDiRVFL/xl+FFkvHeNHlXQ17vL
-	XrP0sYHSQpOk/t6onpU5/iqjHkw97R5sj1s0aVUvLCrL2metiubre9U1rd9xA/suF52bF/CBJH4
-	CjY3HiR9pj531uh9kowLltRCcoLwMVeH5tXmI6MYh5VUovkG/lyp1/ug9bj//rdrgA59DW25tgx
-	B8UYpEj8+5ZkLJ8RMR7FUgaphz3X4A==
-X-Google-Smtp-Source: AGHT+IGS/55kp241M+kdNgMlaTmSsykNA42bMQaXQXloEZ1QtFVp6+cOvEXasHoqzkVa2h+eIFH0tA==
-X-Received: by 2002:a05:6512:3a8e:b0:53d:a58c:c5a4 with SMTP id 2adb3069b0e04-53dd39b0e4cmr324691e87.40.1732236043093;
-        Thu, 21 Nov 2024 16:40:43 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24997c1sm129815e87.260.2024.11.21.16.40.40
+        bh=04MVoN+OIvJr2YdZQzPbMEP15dXCFEy6P+SherFyn/8=;
+        b=MlbV2ERHDx6tj2pkkODaTPi8WddbuBeH7JkqxhkIaV/bcn+dDQfr0SuXZX/oRRNnih
+         TTTeRHwnsxXO9kc3Z6ag9+iCIvN8Rj7c8spXliJ/nkfbKJh+mLD7zbqr9d6gNGx4FtaJ
+         2VeHqXYsmsTS+p4ECOJqiPj0Q5OVDiVs5nDXm3AnYZUgEC7JYS+VLurnJqYUSIv7+VP1
+         9fSAiYnBxdH/vHsfWQaQjafO1jR6B3/sus+vYuKT2MdtlHqf5amQud3IVIZzGBaQVpBO
+         /h71o8QwSh5mKy5fd2wQd1X+Bcr15XBhcGcHDYQzr2Yq8EmY7JaAErxDG7ku2ptKzJU2
+         Kqkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732236069; x=1732840869;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=04MVoN+OIvJr2YdZQzPbMEP15dXCFEy6P+SherFyn/8=;
+        b=luuHYvat9Panr9C20pjat2rVX2rw6c6UBalT6MXO82MFY/a7mJFS9MoQzlHaDHqoUk
+         005hSAbVOiDgG7UoxPixO0nqvrcs8GoY18N5lwJkqfmGHK/kV5m1XwGby7QVt6o8hHZc
+         PiIDa1UVV0rxUNEYevUZY6A/t2tO8iezyz2jy8F9BPbv6n5Wh8Zm5qZx54GykJ6KC0W2
+         AgzOqH6Xo3d/sK4o9PLO3NtX8Tx4zYZAHgRdZOQNwE39pMsesSQRSc1qJsunK/PyoqLs
+         WMCWvP/t88ddYQadLfFfyI+KiPk75woyeUVzvWlFgGJxwBRVWM0Bs2Mxwn9npAP3wVzw
+         NfPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUItiGUnhyarUHOLB/hsWHAJcG5K0B1YmeD28XlCqIwhqkttLy5ECL3M3TaI9rAkZWyTo4=@vger.kernel.org, AJvYcCWpDnQENbSkcEZ23LA/hGs28r441NRwj0B8I3JWpAO4x0kej39mVpdSAKFEGavZOtRP7DiymaNKfKlTwfm/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4FhMnUEu6gA7uE1rvuLFEqtAMEEx+2ZRh45C/fqvLpXLTer5y
+	PcOSdiEc1jYnQpxnWN3RiPJMQ8RxHfCXZApd17RD7taikvOpTpjnlqU2LQ==
+X-Gm-Gg: ASbGncv+fy0A70iyTuK0NRXHkjkPdovCTxf/AqYeynnJ0QouAmV4Mvww+q87jJIcnXI
+	4aoUQJk3Rl9yUSw2oY5WcW/Bngl/sJKL++mTqEAv7OVj/xmVfLyQibLMH4O09dvYgE5cjbuO5Y6
+	RhTBeDtaiV1u0u41hKDzDZsH/pwWTn+XDuLINtHfIZcvxFk1+b1JyGBfcjv9YBJ6MYSnM0bF6JH
+	MpbBTt8koNHn5zlIpu6E+S7mpZ3Xq0rwT2su2+lfTdi45u23jw=
+X-Google-Smtp-Source: AGHT+IEpZv48o7EMNyfIQ2/+C0TuoNaUSVg007ysRSyWDMDywOYlRzeOC5AR7mKVUg9lOrgUPMj8Kw==
+X-Received: by 2002:a05:6602:154d:b0:83a:f443:875 with SMTP id ca18e2360f4ac-83ecdd140e9mr91707739f.15.1732236068775;
+        Thu, 21 Nov 2024 16:41:08 -0800 (PST)
+Received: from localhost ([98.97.39.253])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc08efsm402586a12.16.2024.11.21.16.41.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 16:40:41 -0800 (PST)
-Date: Fri, 22 Nov 2024 02:40:39 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: keith zhao <keith.zhao@starfivetech.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
-	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 9/9] drm/vs: Add VS DRM Master Driver for JH7110 SoC
-Message-ID: <egdvgfnm7hjvlhg7li4thiho4s3iebpeewojxk5kzawk77smcz@isnxzwvqld4c>
-References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
- <20241120061848.196754-10-keith.zhao@starfivetech.com>
+        Thu, 21 Nov 2024 16:41:08 -0800 (PST)
+Date: Thu, 21 Nov 2024 16:41:06 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, 
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev, 
+ bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <673fd322ce3ac_1118208b3@john.notmuch>
+In-Reply-To: <20241119065230.19157-1-yangtiezhu@loongson.cn>
+References: <20241119065230.19157-1-yangtiezhu@loongson.cn>
+Subject: RE: [PATCH] LoongArch: BPF: Sign-extend return values
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120061848.196754-10-keith.zhao@starfivetech.com>
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 20, 2024 at 02:18:48PM +0800, keith zhao wrote:
-> The VS DRM master driver for the JH7110 System on Chip (SoC),
-> along with the addition of a DMA GEM (Graphics Execution Manager) driver
+Tiezhu Yang wrote:
+> (1) Description of Problem:
 > 
-> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+> When testing BPF JIT with the latest compiler toolchains on LoongArch,
+> there exist some strange failed test cases, dmesg shows something like
+> this:
+> 
+>   # dmesg -t | grep FAIL | head -1
+>   ... ret -3 != -3 (0xfffffffd != 0xfffffffd)FAIL ...
+> 
+> (2) Steps to Reproduce:
+> 
+>   # echo 1 > /proc/sys/net/core/bpf_jit_enable
+>   # modprobe test_bpf
+> 
+> (3) Additional Info:
+> 
+> There are no failed test cases compiled with the lower version of GCC
+> such as 13.3.0, while the problems only appear with higher version of
+> GCC such as 14.2.0.
+> 
+> This is because the problems were hidden by the lower version of GCC
+> due to there are redundant sign extension instructions generated by
+> compiler, but with optimization of higher version of GCC, the sign
+> extension instructions have been removed.
+> 
+> (4) Root Cause Analysis:
+> 
+> The LoongArch architecture does not expose sub-registers, and hold all
+> 32-bit values in a sign-extended format. While BPF, on the other hand,
+> exposes sub-registers, and use zero-extension (similar to arm64/x86).
+> 
+> This has led to some subtle bugs, where a BPF JITted program has not
+> sign-extended the a0 register (return value in LoongArch land), passed
+> the return value up the kernel, for example:
+> 
+>   | int from_bpf(void);
+>   |
+>   | long foo(void)
+>   | {
+>   |    return from_bpf();
+>   | }
+> 
+> Here, a0 would be 0xffff_ffff, instead of the expected
+> 0xffff_ffff_ffff_ffff.
+> 
+> Internally, the LoongArch JIT uses a5 as a dedicated register for BPF
+> return values. That is to say, the LoongArch BPF uses a5 for BPF return
+> values, which are zero-extended, whereas the LoongArch ABI uses a0 which
+> is sign-extended.
+> 
+> (5) Final Solution:
+> 
+> Keep a5 zero-extended, but explicitly sign-extend a0 (which is used
+> outside BPF land). Because libbpf currently defines the return value
+> of an ebpf program as a 32-bit unsigned integer, just use addi.w to
+> extend bit 31 into bits 63 through 32 of a5 to a0. This is similar
+> with commit 2f1b0d3d7331 ("riscv, bpf: Sign-extend return values").
+> 
+> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
->  drivers/gpu/drm/verisilicon/Makefile |   3 +-
->  drivers/gpu/drm/verisilicon/vs_drv.c | 777 +++++++++++++++++++++++++++
->  2 files changed, 779 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_drv.c
+>  arch/loongarch/net/bpf_jit.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/verisilicon/Makefile
-> index a602630c2416..67c94518d810 100644
-> --- a/drivers/gpu/drm/verisilicon/Makefile
-> +++ b/drivers/gpu/drm/verisilicon/Makefile
-> @@ -3,7 +3,8 @@
->  vs_drm-objs := vs_dc_hw.o \
->  	       vs_modeset.o \
->  	       vs_crtc.o \
-> -	       vs_plane.o
-> +	       vs_plane.o \
-> +	       vs_drv.o
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index 7dbefd4ba210..dd350cba1252 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -179,7 +179,7 @@ static void __build_epilogue(struct jit_ctx *ctx, bool is_tail_call)
 >  
->  vs_drm-$(CONFIG_DRM_INNO_STARFIVE_HDMI) += inno_hdmi-starfive.o
->  obj-$(CONFIG_DRM_VERISILICON_DC8200) += vs_drm.o
-> diff --git a/drivers/gpu/drm/verisilicon/vs_drv.c b/drivers/gpu/drm/verisilicon/vs_drv.c
-> new file mode 100644
-> index 000000000000..830dd0b1e9a0
-> --- /dev/null
-> +++ b/drivers/gpu/drm/verisilicon/vs_drv.c
-> @@ -0,0 +1,777 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
-> + */
-> +#include <linux/clk.h>
-> +#include <linux/component.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/of_clk.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <drm/drm_aperture.h>
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_client_setup.h>
-> +#include <drm/drm_crtc.h>
-> +#include <drm/drm_crtc_helper.h>
-> +#include <drm/drm_fb_helper.h>
-> +#include <drm/drm_file.h>
-> +#include <drm/drm_fourcc.h>
-> +#include <drm/drm_gem_dma_helper.h>
-> +#include <drm/drm_module.h>
-> +#include <drm/drm_of.h>
-> +#include <drm/drm_probe_helper.h>
-> +#include <drm/drm_vblank.h>
-> +
-> +#include "vs_drv.h"
-> +#include "vs_crtc.h"
-> +#include "vs_plane.h"
-> +#include "vs_modeset.h"
-> +
-> +#define DRV_NAME	"verisilicon"
-> +#define DRV_DESC	"Verisilicon DRM driver"
-> +#define DRV_DATE	"20230516"
-> +#define DRV_MAJOR	1
-> +#define DRV_MINOR	0
-> +
-> +#define FRAC_16_16(mult, div)	 (((mult) << 16) / (div))
-> +
-> +static const u32 primary_overlay_format[] = {
-> +	DRM_FORMAT_RGB565,
-> +	DRM_FORMAT_BGR565,
-> +	DRM_FORMAT_XRGB8888,
-> +	DRM_FORMAT_XBGR8888,
-> +	DRM_FORMAT_RGBX8888,
-> +	DRM_FORMAT_BGRX8888,
-> +	DRM_FORMAT_ARGB8888,
-> +	DRM_FORMAT_ABGR8888,
-> +	DRM_FORMAT_RGBA8888,
-> +	DRM_FORMAT_BGRA8888,
-> +	DRM_FORMAT_XRGB4444,
-> +	DRM_FORMAT_XBGR4444,
-> +	DRM_FORMAT_RGBX4444,
-> +	DRM_FORMAT_BGRX4444,
-> +	DRM_FORMAT_ARGB4444,
-> +	DRM_FORMAT_ABGR4444,
-> +	DRM_FORMAT_RGBA4444,
-> +	DRM_FORMAT_BGRA4444,
-> +	DRM_FORMAT_XRGB1555,
-> +	DRM_FORMAT_XBGR1555,
-> +	DRM_FORMAT_RGBX5551,
-> +	DRM_FORMAT_BGRX5551,
-> +	DRM_FORMAT_ARGB1555,
-> +	DRM_FORMAT_ABGR1555,
-> +	DRM_FORMAT_RGBA5551,
-> +	DRM_FORMAT_BGRA5551,
-> +	DRM_FORMAT_ARGB2101010,
-> +	DRM_FORMAT_ABGR2101010,
-> +	DRM_FORMAT_RGBA1010102,
-> +	DRM_FORMAT_BGRA1010102,
-> +	DRM_FORMAT_YUYV,
-> +	DRM_FORMAT_YVYU,
-> +	DRM_FORMAT_UYVY,
-> +	DRM_FORMAT_VYUY,
-> +	DRM_FORMAT_YVU420,
-> +	DRM_FORMAT_YUV420,
-> +	DRM_FORMAT_NV12,
-> +	DRM_FORMAT_NV21,
-> +	DRM_FORMAT_NV16,
-> +	DRM_FORMAT_NV61,
-> +	DRM_FORMAT_P010,
-> +};
-> +
-> +static const u32 cursor_formats[] = {
-> +	DRM_FORMAT_ARGB8888
-> +};
-> +
-> +static const u64 format_modifier[] = {
-> +	DRM_FORMAT_MOD_LINEAR,
-> +	DRM_FORMAT_MOD_INVALID
-> +};
-> +
-> +static const u64 secondary_format_modifiers[] = {
-> +	DRM_FORMAT_MOD_LINEAR,
-> +	DRM_FORMAT_MOD_INVALID
-> +};
+>  	if (!is_tail_call) {
+>  		/* Set return value */
+> -		move_reg(ctx, LOONGARCH_GPR_A0, regmap[BPF_REG_0]);
+> +		emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0], 0);
 
-Same as primary
+Not overly familiar with this JIT but just to check this wont be used
+for BPF 2 BPF calls correct?
 
-> +
-> +static const struct vs_plane_data vs_plane_pri0 = {
-> +		.num_formats	= ARRAY_SIZE(primary_overlay_format),
-> +		.formats		= primary_overlay_format,
-> +		.num_modifiers	= ARRAY_SIZE(format_modifier),
-> +		.modifiers		= format_modifier,
-> +		.min_width		= 0,
-> +		.min_height		= 0,
-> +		.max_width		= 4096,
-> +		.max_height		= 4096,
-> +		.min_scale		= FRAC_16_16(1, 3),
-> +		.max_scale		= FRAC_16_16(10, 1),
-> +		.rotation		= DRM_MODE_ROTATE_0 |
-> +					  DRM_MODE_ROTATE_90 |
-> +					  DRM_MODE_ROTATE_180 |
-> +					  DRM_MODE_ROTATE_270 |
-> +					  DRM_MODE_REFLECT_X |
-> +					  DRM_MODE_REFLECT_Y,
-> +		.color_encoding	= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +		.zpos			= 0,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_pri1 = {
-> +		.num_formats		= ARRAY_SIZE(primary_overlay_format),
-> +		.formats		= primary_overlay_format,
-> +		.num_modifiers		= ARRAY_SIZE(format_modifier),
-> +		.modifiers		= format_modifier,
-> +		.min_width		= 0,
-> +		.min_height		= 0,
-> +		.max_width		= 4096,
-> +		.max_height		= 4096,
-> +		.min_scale		= FRAC_16_16(1, 3),
-> +		.max_scale		= FRAC_16_16(10, 1),
-> +		.rotation		= DRM_MODE_ROTATE_0 |
-> +					  DRM_MODE_ROTATE_90 |
-> +					  DRM_MODE_ROTATE_180 |
-> +					  DRM_MODE_ROTATE_270 |
-> +					  DRM_MODE_REFLECT_X |
-> +					  DRM_MODE_REFLECT_Y,
-> +		.color_encoding		= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +		.zpos			= 3,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_over0 = {
-> +		.num_formats		= ARRAY_SIZE(primary_overlay_format),
-> +		.formats		= primary_overlay_format,
-> +		.num_modifiers		= ARRAY_SIZE(format_modifier),
-> +		.modifiers		= format_modifier,
-> +		.min_width		= 0,
-> +		.min_height		= 0,
-> +		.max_width		= 4096,
-> +		.max_height		= 4096,
-> +		.min_scale		= FRAC_16_16(1, 3),
-> +		.max_scale		= FRAC_16_16(10, 1),
-> +		.rotation		= DRM_MODE_ROTATE_0 |
-> +					  DRM_MODE_ROTATE_90 |
-> +					  DRM_MODE_ROTATE_180 |
-> +					  DRM_MODE_ROTATE_270 |
-> +					  DRM_MODE_REFLECT_X |
-> +					  DRM_MODE_REFLECT_Y,
-> +		.color_encoding		= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +		.zpos			= 1,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_over1 = {
-> +		.num_formats		= ARRAY_SIZE(primary_overlay_format),
-> +		.formats		= primary_overlay_format,
-> +		.num_modifiers		= ARRAY_SIZE(secondary_format_modifiers),
-> +		.modifiers		= secondary_format_modifiers,
-> +		.min_width		= 0,
-> +		.min_height		= 0,
-> +		.max_width		= 4096,
-> +		.max_height		= 4096,
-> +		.min_scale		= DRM_PLANE_NO_SCALING,
-> +		.max_scale		= DRM_PLANE_NO_SCALING,
-> +		.rotation		= 0,
-> +		.color_encoding		= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +		.zpos			= 2,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_over2 = {
-> +	.num_formats		= ARRAY_SIZE(primary_overlay_format),
-> +	.formats		= primary_overlay_format,
-> +	.num_modifiers		= ARRAY_SIZE(format_modifier),
-> +	.modifiers		= format_modifier,
-> +	.min_width		= 0,
-> +	.min_height		= 0,
-> +	.max_width		= 4096,
-> +	.max_height		= 4096,
-> +	.min_scale		= FRAC_16_16(1, 3),
-> +	.max_scale		= FRAC_16_16(10, 1),
-> +	.rotation		= DRM_MODE_ROTATE_0 |
-> +				  DRM_MODE_ROTATE_90 |
-> +				  DRM_MODE_ROTATE_180 |
-> +				  DRM_MODE_ROTATE_270 |
-> +				  DRM_MODE_REFLECT_X |
-> +				  DRM_MODE_REFLECT_Y,
-> +	.color_encoding		= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +	.zpos			= 4,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_over3 = {
-> +		.num_formats	= ARRAY_SIZE(primary_overlay_format),
-> +		.formats		= primary_overlay_format,
-> +		.num_modifiers	= ARRAY_SIZE(format_modifier),
-> +		.modifiers		= format_modifier,
-> +		.min_width		= 0,
-> +		.min_height		= 0,
-> +		.max_width		= 4096,
-> +		.max_height		= 4096,
-> +		.min_scale		= FRAC_16_16(1, 3),
-> +		.max_scale		= FRAC_16_16(10, 1),
-> +		.rotation		= DRM_MODE_ROTATE_0 |
-> +					  DRM_MODE_ROTATE_90 |
-> +					  DRM_MODE_ROTATE_180 |
-> +					  DRM_MODE_ROTATE_270 |
-> +					  DRM_MODE_REFLECT_X |
-> +					  DRM_MODE_REFLECT_Y,
-> +		.color_encoding	= BIT(DRM_COLOR_YCBCR_BT709) | BIT(DRM_COLOR_YCBCR_BT2020),
-> +		.zpos			= 5,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_cur0 = {
-> +	.num_formats		= ARRAY_SIZE(cursor_formats),
-> +	.formats		= cursor_formats,
-> +	.min_width		= 32,
-> +	.min_height		= 32,
-> +	.max_width		= 64,
-> +	.max_height		= 64,
-> +	.min_scale		= DRM_PLANE_NO_SCALING,
-> +	.max_scale		= DRM_PLANE_NO_SCALING,
-> +	.zpos			= 255,
-> +};
-> +
-> +static const struct vs_plane_data vs_plane_cur1 = {
-> +	.num_formats		= ARRAY_SIZE(cursor_formats),
-> +	.formats		= cursor_formats,
-> +	.min_width		= 32,
-> +	.min_height		= 32,
-> +	.max_width		= 64,
-> +	.max_height		= 64,
-> +	.zpos			= 255,
-> +};
-> +
-> +static const struct vs_plane_info info[] = {
-> +	{.id = PRIMARY_PLANE_0, .data = &vs_plane_pri0,
-> +	 .type = DRM_PLANE_TYPE_PRIMARY},
-> +	{.id = OVERLAY_PLANE_0, .data = &vs_plane_over0,
-> +	 .type = DRM_PLANE_TYPE_OVERLAY},
-> +	{.id = OVERLAY_PLANE_1, .data = &vs_plane_over1,
-> +	 .type = DRM_PLANE_TYPE_OVERLAY},
-> +	{.id = PRIMARY_PLANE_1, .data = &vs_plane_pri1,
-> +	 .type = DRM_PLANE_TYPE_PRIMARY},
-> +	{.id = OVERLAY_PLANE_2, .data = &vs_plane_over2,
-> +	 .type = DRM_PLANE_TYPE_OVERLAY},
-> +	{.id = OVERLAY_PLANE_3, .data = &vs_plane_over3,
-> +	 .type = DRM_PLANE_TYPE_OVERLAY},
-> +	{.id = CURSOR_PLANE_0, .data = &vs_plane_cur0,
-> +	 .type = DRM_PLANE_TYPE_CURSOR},
-> +	{.id = CURSOR_PLANE_1, .data = &vs_plane_cur1,
-> +	 .type = DRM_PLANE_TYPE_CURSOR},
-> +};
-> +
-> +static const struct vs_dc_info dc8200_info = {
-> +	.name			= "DC8200",
-> +	.plane_num      = ARRAY_SIZE(info),
-> +	.panel_num		= 2,
-> +	.info		= info,
-> +	.layer_num		= 6,
-> +	.gamma_size		= GAMMA_EX_SIZE,
-> +	.gamma_bits		= 12,
-> +	.pitch_alignment	= 128,
-> +};
-> +
-> +#define STARFIVE_SOC_CON8		0x08
-> +# define STARFIVE_MIPI_SEL		BIT(3)
-> +
-> +static int vs_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
-> +			      struct drm_mode_create_dumb *args)
-> +{
-> +	struct vs_drm_device *priv = to_vs_drm_private(dev);
-> +	unsigned int pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
-> +
-> +	args->pitch = ALIGN(pitch, priv->pitch_alignment);
-> +	return drm_gem_dma_dumb_create_internal(file, dev, args);
-> +}
-> +
-> +DEFINE_DRM_GEM_FOPS(vs_drm_fops);
-> +
-> +static struct drm_driver vs_drm_driver = {
-> +	.driver_features	= DRIVER_MODESET | DRIVER_ATOMIC | DRIVER_GEM,
-> +
-> +	DRM_GEM_DMA_DRIVER_OPS_WITH_DUMB_CREATE(vs_gem_dumb_create),
-> +
-> +	.fops			= &vs_drm_fops,
-> +	.name			= DRV_NAME,
-> +	.desc			= DRV_DESC,
-> +	.date			= DRV_DATE,
-> +	.major			= DRV_MAJOR,
-> +	.minor			= DRV_MINOR,
-> +};
-> +
-> +static irqreturn_t vs_dc_isr(int irq, void *data)
-> +{
-> +	struct vs_drm_device *priv = data;
-> +	struct vs_dc *dc = &priv->dc;
-> +	u8 status = 0;
-> +
-> +	dc_hw_get_interrupt(&dc->hw, &status);
-> +
-> +	if (status & BIT(0))
-> +		drm_crtc_handle_vblank(&dc->crtc[0]->base);
-> +
-> +	if (status & BIT(1))
-> +		drm_crtc_handle_vblank(&dc->crtc[1]->base);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int vs_drm_device_init_res(struct vs_drm_device *priv)
-> +{
-> +	struct device *dev = priv->base.dev;
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	int ret;
-> +	struct vs_dc *dc;
-> +
-> +	dc = &priv->dc;
-> +	dc->hw.hi_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(dc->hw.hi_base))
-> +		return PTR_ERR(dc->hw.hi_base);
-> +
-> +	dc->hw.reg_base = devm_platform_ioremap_resource(pdev, 1);
-> +	if (IS_ERR(dc->hw.reg_base))
-> +		return PTR_ERR(dc->hw.reg_base);
-> +
-> +	dc->hw.info = (struct vs_dc_info *)of_device_get_match_data(dev);
-> +
-> +	ret = devm_clk_bulk_get_all(dev, &priv->clks);
-> +	if (ret < 0) {
-> +		dev_err(dev, "can't get vout clock, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +	priv->clk_count = ret;
-> +
-> +	priv->rsts = devm_reset_control_array_get_shared(dev);
-> +	if (IS_ERR(priv->rsts))
-> +		return PTR_ERR(priv->rsts);
-> +
-> +	priv->irq = platform_get_irq(pdev, 0);
-> +
-> +	/* do not autoenable, will be enabled later */
-> +	ret = devm_request_irq(dev, priv->irq, vs_dc_isr, IRQF_NO_AUTOEN, dev_name(dev), priv);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to install irq:%u.\n", priv->irq);
-> +		return ret;
-> +	}
-> +
-> +	priv->dc_syscon_regmap = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +						"starfive,syscon");
-> +	if (IS_ERR(priv->dc_syscon_regmap)) {
-> +		dev_err(dev, "failed to get starfive,syscon property\n");
-> +		return PTR_ERR(priv->dc_syscon_regmap);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static u32 vs_get_addr_offset(u32 id)
-> +{
-> +	u32 offset = 0;
-> +
-> +	switch (id) {
-> +	case PRIMARY_PLANE_1:
-> +	case OVERLAY_PLANE_1:
-> +		offset = 0x04;
-> +		break;
-> +	case OVERLAY_PLANE_2:
-> +		offset = 0x08;
-> +		break;
-> +	case OVERLAY_PLANE_3:
-> +		offset = 0x0C;
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return offset;
-> +}
-> +
-> +static u32 vs_map_possible_crtc(u32 id)
-> +{
-> +	switch (id) {
-> +	case PRIMARY_PLANE_0:
-> +	case CURSOR_PLANE_0:
-> +		return 0x01;//crtc0
-> +	case PRIMARY_PLANE_1:
-> +	case CURSOR_PLANE_1:
-> +		return 0x02;//crtc1
-> +	default:
-> +		return 0x03;//crtc0&crtc1
-> +	}
-> +}
-> +
-> +static int vs_kms_init(struct vs_drm_device *priv)
-> +{
-> +	struct vs_dc *dc;
-> +	struct drm_device *drm_dev;
-> +	int i, ret;
-> +	struct device_node *port;
-> +	struct vs_crtc *crtc;
-> +	struct vs_dc_info *dc_info;
-> +	struct vs_plane_info *plane_info;
-> +	struct vs_plane *plane;
-> +
-> +	u32 max_width = 0, max_height = 0;
-> +	u32 min_width = 0xffff, min_heigth = 0xffff;
-> +
-> +	dc = &priv->dc;
-> +	dc_info = dc->hw.info;
-> +	drm_dev = &priv->base;
-> +
-> +	for (i = 0; i < dc_info->panel_num; i++) {
-> +		crtc = vs_crtc_create(drm_dev, dc_info);
-> +		if (!crtc) {
-> +			drm_err(drm_dev, "Failed to create CRTC.\n");
-> +			ret = -ENOMEM;
-> +			return ret;
-> +		}
-> +		crtc->dev = drm_dev->dev;
-> +		crtc->index = i;
-
-Do you actually need .index? Can you pass panel data directly to CRTC
-functions?
-
-> +
-> +		port = of_graph_get_port_by_id(crtc->dev->of_node, i);
-> +		if (!port) {
-> +			drm_err(drm_dev, "no port node found for crtc_port%d\n", i);
-> +			return -ENOENT;
-> +		}
-> +
-> +		crtc->base.port = port;
-
-Set those fields from vs_crtc_create(), removing the need to export the
-structure.
-
-> +		dc->crtc[i] = crtc;
-> +
-> +		of_node_put(port);
-
-I have mixed feelings towards freeing the node here. Please move it to
-the driver cleanup.
-
-> +	}
-> +
-> +	if (!dc->crtc[0]->base.port || !dc->crtc[1]->base.port) {
-> +		drm_err(drm_dev, "no port no crtc mask, fail to create plane\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	for (i = 0; i < dc_info->plane_num; i++) {
-> +		plane_info = (struct vs_plane_info *)&dc_info->info[i];
-> +
-> +		plane = vs_plane_create(drm_dev, plane_info, dc_info->layer_num,
-> +					vs_map_possible_crtc(plane_info->id));
-> +
-> +		plane->id = i;
-> +		dc->planes[i].id = plane_info->id;
-> +		dc->planes[i].offset = vs_get_addr_offset(plane_info->id);
-
-Same comment. Ideally please pass all data to vs_plane_craete().
-
-> +
-> +		if (plane_info->type == DRM_PLANE_TYPE_PRIMARY) {
-> +			if (plane_info->id == PRIMARY_PLANE_0)
-> +				dc->crtc[0]->base.primary = &plane->base;
-> +			else
-> +				dc->crtc[1]->base.primary = &plane->base;
-> +			min_width = min_t(u32, min_width, plane_info->data->min_width);
-> +			min_heigth = min_t(u32, min_heigth, plane_info->data->min_height);
-> +			/*
-> +			 * Note: these values are used for multiple independent things:
-> +			 * hw display mode filtering, plane buffer sizes ...
-> +			 * Use the combined maximum values here to cover all use cases,
-> +			 * and do more specific checking in the respective code paths.
-> +			 */
-> +			max_width = max_t(u32, max_width, plane_info->data->max_width);
-> +			max_height = max_t(u32, max_height, plane_info->data->max_height);
-> +		}
-> +
-> +		if (plane_info->type == DRM_PLANE_TYPE_CURSOR) {
-> +			if (plane_info->id == CURSOR_PLANE_0)
-> +				dc->crtc[0]->base.cursor = &plane->base;
-> +			else
-> +				dc->crtc[1]->base.cursor = &plane->base;
-> +			drm_dev->mode_config.cursor_width = plane_info->data->max_width;
-> +			drm_dev->mode_config.cursor_height = plane_info->data->max_height;
-> +		}
-> +	}
-> +
-> +	drm_dev->mode_config.min_width = min_width;
-> +	drm_dev->mode_config.min_height = min_heigth;
-> +	drm_dev->mode_config.max_width = max_width;
-> +	drm_dev->mode_config.max_height = max_height;
-> +
-> +	if (dc_info->pitch_alignment > priv->pitch_alignment)
-> +		priv->pitch_alignment = dc_info->pitch_alignment;
-> +
-> +	return 0;
-> +}
-> +
-> +static int vs_load(struct vs_drm_device *priv)
-> +{
-> +	int ret;
-> +
-> +	ret = clk_bulk_prepare_enable(priv->clk_count, priv->clks);
-> +	if (ret)
-> +		return ret;
-> +
-> +	reset_control_deassert(priv->rsts);
-> +
-> +	ret = dc_hw_init(&priv->dc);
-> +	if (ret) {
-> +		DRM_ERROR("failed to init DC HW\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void vs_mipi_encoder_disable(struct drm_encoder *encoder)
-> +{
-> +	struct drm_device *dev = encoder->dev;
-> +	struct vs_drm_device *priv = to_vs_drm_private(dev);
-> +	int idx;
-> +
-> +	if (!drm_dev_enter(dev, &idx))
-> +		return;
-> +
-> +	regmap_update_bits(priv->dc_syscon_regmap, STARFIVE_SOC_CON8, STARFIVE_MIPI_SEL, 0);
-> +
-> +	drm_dev_exit(idx);
-> +}
-> +
-> +static void vs_mipi_encoder_enable(struct drm_encoder *encoder)
-> +{
-> +	struct drm_device *dev = encoder->dev;
-> +	struct vs_drm_device *priv = to_vs_drm_private(dev);
-> +	int idx;
-> +
-> +	if (!drm_dev_enter(dev, &idx))
-> +		return;
-> +
-> +	regmap_update_bits(priv->dc_syscon_regmap, STARFIVE_SOC_CON8, STARFIVE_MIPI_SEL, BIT(3));
-> +
-> +	drm_dev_exit(idx);
-> +}
-> +
-> +static const struct drm_encoder_helper_funcs vs_mipi_encoder_helper_funcs = {
-> +	.disable = vs_mipi_encoder_disable,
-> +	.enable = vs_mipi_encoder_enable,
-> +};
-> +
-> +static int vs_attach_mipi_bridge(struct vs_drm_device *priv)
-> +{
-> +	struct device *dev = priv->base.dev;
-> +	struct drm_bridge *bridge;
-> +	struct drm_encoder *encoder;
-> +	int ret;
-> +
-> +	bridge = devm_drm_of_get_bridge(dev, dev->of_node, 1, 1);
-> +	if (IS_ERR(bridge)) {
-> +		if (PTR_ERR(bridge) == -ENODEV) {
-> +			bridge = NULL;
-> +			return 0;
-> +		}
-> +
-> +		return PTR_ERR(bridge);
-> +	}
-> +
-> +	/* Create the encoder and attach the bridge. */
-> +	encoder = devm_kzalloc(dev, sizeof(*encoder), GFP_KERNEL);
-> +	if (!encoder)
-> +		return -ENOMEM;
-> +
-> +	encoder->possible_crtcs = drm_crtc_mask(&priv->dc.crtc[1]->base);
-> +
-> +	ret = drmm_encoder_init(&priv->base, encoder, NULL, DRM_MODE_ENCODER_DSI, NULL);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to initialize encoder\n");
-> +		return ret;
-> +	}
-> +
-> +	drm_encoder_helper_add(encoder, &vs_mipi_encoder_helper_funcs);
-> +
-> +	ret = drm_bridge_attach(encoder, bridge, NULL, 0);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to attach bridge\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int vs_drm_bind(struct device *dev)
-> +{
-> +	struct vs_drm_device *priv;
-> +	int ret;
-> +	struct drm_device *drm_dev;
-> +
-> +	priv = devm_drm_dev_alloc(dev, &vs_drm_driver, struct vs_drm_device, base);
-> +	if (IS_ERR(priv))
-> +		return PTR_ERR(priv);
-> +
-> +	priv->pitch_alignment = 64;
-> +	drm_dev = &priv->base;
-> +	dev_set_drvdata(dev, drm_dev);
-> +
-> +	ret = dma_set_coherent_mask(drm_dev->dev, DMA_BIT_MASK(40));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = vs_drm_device_init_res(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	vs_mode_config_init(drm_dev);
-> +
-> +	/* Remove existing drivers that may own the framebuffer memory. */
-> +	ret = drm_aperture_remove_framebuffers(&vs_drm_driver);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = vs_kms_init(priv);
-> +	if (ret) {
-> +		DRM_ERROR("Failed to initialize KMS pipeline\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = vs_load(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Now try and bind all our sub-components */
-> +	ret = component_bind_all(dev, drm_dev);
-> +	if (ret) {
-> +		ret = -EPROBE_DEFER;
-> +		goto unload;
-> +	}
-> +
-> +	ret = vs_attach_mipi_bridge(priv);
-> +	if (ret)
-> +		goto err_unbind_all;
-> +
-> +	ret = drm_vblank_init(drm_dev, drm_dev->mode_config.num_crtc);
-> +	if (ret)
-> +		goto err_unbind_all;
-> +
-> +	drm_mode_config_reset(drm_dev);
-> +
-> +	ret = drmm_kms_helper_poll_init(drm_dev);
-> +	if (ret)
-> +		goto err_unbind_all;
-> +
-> +	ret = drm_dev_register(drm_dev, 0);
-> +	if (ret)
-> +		goto err_unbind_all;
-> +
-> +	drm_client_setup(drm_dev, NULL);
-> +
-> +	return 0;
-> +
-> +err_unbind_all:
-> +	component_unbind_all(drm_dev->dev, drm_dev);
-> +unload:
-> +	reset_control_assert(priv->rsts);
-> +	clk_bulk_disable_unprepare(priv->clk_count, priv->clks);
-> +	return ret;
-> +}
-> +
-> +static void vs_drm_unbind(struct device *dev)
-> +{
-> +	struct drm_device *drm_dev = dev_get_drvdata(dev);
-> +	struct vs_drm_device *priv = to_vs_drm_private(drm_dev);
-> +
-> +	reset_control_assert(priv->rsts);
-> +	clk_bulk_disable_unprepare(priv->clk_count, priv->clks);
-> +
-> +	drm_dev_unregister(drm_dev);
-> +	drm_atomic_helper_shutdown(drm_dev);
-> +	component_unbind_all(drm_dev->dev, drm_dev);
-> +}
-> +
-> +static const struct component_master_ops vs_drm_ops = {
-> +	.bind = vs_drm_bind,
-> +	.unbind = vs_drm_unbind,
-> +};
-> +
-> +static struct platform_driver *drm_sub_drivers[] = {
-> +#ifdef CONFIG_DRM_INNO_STARFIVE_HDMI
-> +	&starfive_hdmi_driver,
-> +#endif
-> +};
-> +
-> +static struct component_match *vs_add_external_components(struct device *dev)
-> +{
-> +	struct component_match *match = NULL;
-> +	struct device_node *node;
-> +
-> +#ifdef CONFIG_DRM_INNO_STARFIVE_HDMI
-> +	node = of_graph_get_remote_node(dev->of_node, 0, 0);
-> +	drm_of_component_match_add(dev, &match, component_compare_of, node);
-> +	of_node_put(node);
-> +#endif
-
-Having #ifndef in the function body is a frowned upon practice.
-
-> +
-> +	return match ? match : ERR_PTR(-ENODEV);
-> +}
-> +
-> +static int vs_drm_platform_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct component_match *match;
-> +
-> +	/* all the planes and CRTC would be created in this platform device,
-> +	 * so external components are encoder + connector
-> +	 */
-> +	match = vs_add_external_components(dev);
-> +	if (IS_ERR(match))
-> +		return PTR_ERR(match);
-> +
-> +	return component_master_add_with_match(dev, &vs_drm_ops, match);
-> +}
-> +
-> +static void vs_drm_platform_remove(struct platform_device *pdev)
-> +{
-> +	component_master_del(&pdev->dev, &vs_drm_ops);
-> +}
-> +
-> +#ifdef CONFIG_PM_SLEEP
-> +static int vs_drm_suspend(struct device *dev)
-> +{
-> +	return drm_mode_config_helper_suspend(dev_get_drvdata(dev));
-> +}
-> +
-> +static int vs_drm_resume(struct device *dev)
-> +{
-> +	drm_mode_config_helper_resume(dev_get_drvdata(dev));
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(vs_drm_pm_ops, vs_drm_suspend, vs_drm_resume);
-> +
-> +static const struct of_device_id vs_drm_dt_ids[] = {
-> +	{ .compatible = "starfive,jh7110-dc8200", .data = &dc8200_info,},
-> +	{ },
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, vs_drm_dt_ids);
-> +
-> +static struct platform_driver vs_drm_platform_driver = {
-> +	.probe = vs_drm_platform_probe,
-> +	.remove = vs_drm_platform_remove,
-> +
-> +	.driver = {
-> +		.name = DRV_NAME,
-> +		.of_match_table = vs_drm_dt_ids,
-> +		.pm = &vs_drm_pm_ops,
-> +	},
-> +};
-> +
-> +static int __init vs_drm_init(void)
-
-Generic comment: Please settle on some common prefix for all your
-functions and data structures. vs_dc_nnnnn() sounds good enough from my
-POV.
-
-> +{
-> +	int ret;
-> +
-> +	ret = platform_register_drivers(drm_sub_drivers, ARRAY_SIZE(drm_sub_drivers));
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = drm_platform_driver_register(&vs_drm_platform_driver);
-> +	if (ret)
-> +		platform_unregister_drivers(drm_sub_drivers, ARRAY_SIZE(drm_sub_drivers));
-> +
-> +	return ret;
-> +}
-> +
-> +static void __exit vs_drm_fini(void)
-> +{
-> +	platform_driver_unregister(&vs_drm_platform_driver);
-> +	platform_unregister_drivers(drm_sub_drivers, ARRAY_SIZE(drm_sub_drivers));
-> +}
-> +
-> +module_init(vs_drm_init);
-> +module_exit(vs_drm_fini);
-> +
-> +MODULE_DESCRIPTION("VeriSilicon DRM Driver");
-> +MODULE_LICENSE("GPL");
+>  		/* Return to the caller */
+>  		emit_insn(ctx, jirl, LOONGARCH_GPR_RA, LOONGARCH_GPR_ZERO, 0);
+>  	} else {
 > -- 
-> 2.34.1
+> 2.42.0
+> 
 > 
 
--- 
-With best wishes
-Dmitry
+
 
