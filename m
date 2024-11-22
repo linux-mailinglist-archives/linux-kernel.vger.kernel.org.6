@@ -1,195 +1,94 @@
-Return-Path: <linux-kernel+bounces-418215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6A09D5EAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:18:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB989D5E9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:11:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE901F23479
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:18:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FCB1F22A00
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BC41DF97E;
-	Fri, 22 Nov 2024 12:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BBA1DDC39;
+	Fri, 22 Nov 2024 12:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IYs9fu+P"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRIQIqAy"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6451DE2DA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:16:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0FC1B0F0C;
+	Fri, 22 Nov 2024 12:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732277812; cv=none; b=hvbpRz8uGcQxazCWQyI2VxtgfR7hS744Cjtp/sWjJgjPE1rO9Nk/A4JlEfVIQKU1mclewwmTHGVEDCP7MEcGya5HiX0OcPu56hfop1EVy/cg0c9f5JEHAQQPWUUGzW7RmjfkSa/EytgRsUKszNLP0y/K4fob0Hl+PKhc35yMYlk=
+	t=1732277495; cv=none; b=Uwazl6u+z7jygzkDVIsx3GulY9JItps+YObHUcx4XeVvHLZw1nRHEQL5Iv7tTfzDUPcTP95MEthsIBV1w3Lybgo4KjxGVvkR/rgu1h/Bo+3E8PrO4ZC332Icw7cJEy6Dm2DDaFmzEONMdlZZXMqaEa5lZA8RKurmWgwZI2zO/g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732277812; c=relaxed/simple;
-	bh=EhZ1VmUBU3oU2QwB906u37VFOFY9mXd6AAqr8QHO0/s=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=c5Mlip5n9cEInSke2AoIPWIdP/XiYBoC0Vef9VJ1x+dK0oOKdtb0cBeHFyJsqS7h05UtYUMOh1wJBuOvCS0H5SR1FZGJmLMH7n0Nj9hz2x0tKkJAd8/tkfu/oyUcY/uH6LCvehPB9VcRvKETtrFERolcA8EOYlLESzzEp7Q+hNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IYs9fu+P; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=LpPe5pTofDOreIRlTEa7ME57/EzH98eTbxi5ud5+/n0=; b=IYs9fu+PLMEwChw1rd72VIUxej
-	sft4FMEFTyFoEoaL3Ae1W8IWHWVoH2qzBWsG9jwryduC60tF+2lvnzjYtKXzp6nv4cKmDpex7ZiR3
-	WpZRADnPkN+VwGIagCcbfxJ5ZCQCCZX5sMaq8bOvx7PQwkLxLGgNSY1eTEtIGLrKt6plq7FcQIWPl
-	kOjHeQvP5QX8+PYO5CHTVHGPkOFJFVOki9QJwZbYIGf+Cxo69mDvmaCTfg6Bh42RGxlGm6liJUpU4
-	1EzjOuYYdw/017kbwUZWWAVhmpN8pkwhyKJpAFHiF3pgLhYX/RLv9xfHvTCfkEwX/GhhmqopZsIFp
-	Ma+tHP8w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tESae-00000000hax-2wLl;
-	Fri, 22 Nov 2024 12:16:48 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 093FA302DC2; Fri, 22 Nov 2024 13:16:47 +0100 (CET)
-Message-Id: <20241122121556.560621502@infradead.org>
-User-Agent: quilt/0.65
-Date: Fri, 22 Nov 2024 13:10:25 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: jpoimboe@redhat.com
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org
-Subject: [PATCH 9/9] objtool: Collect all annotations in objtool.h
-References: <20241122121016.372005127@infradead.org>
+	s=arc-20240116; t=1732277495; c=relaxed/simple;
+	bh=H6LU5NqN29Gru8BfOLQuBCel+Sikavthh/CeQJBzL3k=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=leKn+zGjvX1B+JH3GJv878LsZtXdAKAPNwz01sJtQtcuZHjOJIBm70TDNMk2JFGnsmPu/xcFgpnscRxMcfTui5EF0y0NnpMLiwy9p5b92R62xvW8UHFttMHOVkrnTxnMlTQnbHy6tQqL+2zGKePvEL1lQxL2gS2o858r9jKb3Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRIQIqAy; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e5fef69f2eso1222703b6e.3;
+        Fri, 22 Nov 2024 04:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732277493; x=1732882293; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=H6LU5NqN29Gru8BfOLQuBCel+Sikavthh/CeQJBzL3k=;
+        b=QRIQIqAynrIY7RcEyogmR4IXPgmoCNQVG6Iu5JvljUU8DjgCHoWe2nZoVO6g2n1IW7
+         /BSyYoDVXDys53kLiZzjQl/PVzJHlndRUeKOEWwo/bKxyY0OFGLo80wssNQuB0F0B+54
+         W9yW93FC0frisvo5B+hWookLyiHNQ+gIrOIpji9urYUCSfl8h8sSSb5ppqXp65v5imZc
+         oQVKk2CBHAODKgS8j+pU9nom6abja8qluvNR+wvXmWxS6ho4jOoXAmfQ6a11xyQnMSNB
+         gs6b5TzS2+H+Pb5t09Ucs7xNci/hL4sArsdf9IbT4ysfggHmJQcsngWOlO4IowQOhAGT
+         D8Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732277493; x=1732882293;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H6LU5NqN29Gru8BfOLQuBCel+Sikavthh/CeQJBzL3k=;
+        b=QfV/0MWd0apV+I7ywIQYcds52JGRiuDAzOIGHrBC1hMLRszK6jh5IRuWzN6X16wYvX
+         E4aXfl/SugvW2/W9YLg4oJNueJ8fcn/jgPJ5dlI2kgMRQFTXkpI+JIm7CkT3gsveW+JT
+         LyiUSRkANpPZWKPpQSeF0pw64JcxyX2Rp2VGrg+SwzZVtO/X/JVbn0tpo9wZ8L4G0jxq
+         3cnE8/56p80A63x/fgtUtVT1pBKWUxKY+D89Zl46dQbuuSOCu7YIF+eV8XmmoQpDAROM
+         xn32NcLrtom/95gjIQa14jhzQ8YNUNFUrENTw0Gwzi9hw1SO7L03l4h28Ojtqskw7sCp
+         jmPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbopcnC8T83bXYQ76P+R+R4fIvOPQhXYXUlmxzwEiJgkAYMRo2g9qPvVKKeYVcT7PpS3J6w2g7tkfa@vger.kernel.org, AJvYcCXuXYElr2g9WkXqLdK13PRrPRb2TE/1Lc5/vHkRjJZOj0yMM9jjXbEc9bR3+GQwhC6BwEKRY12DV+yuWFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzE6T/xO19LjMdJ6evnU38yaBNvgpppglG1u723kx7x3FtK0H8+
+	XLPTyBZ+x8tMV7x2Z6/9VkoPwkREjMEtRETP07kDF3936ODbhou5BnwQXiXiiIyss1A1/SM7CBa
+	c2biCcxNJeQ177WV3NXH7ze60u74=
+X-Gm-Gg: ASbGncuFM8Lafo1F4E+DWkZ3cgE7ip/mOsyfh9GpvPl/Xejwz+0dLXjgbb61YWkhuEn
+	LwOD9hK3/OuR+oJZbu5BjU1wHEp/qi+mY4puJJAFGtQOsZE5j1TcbfUloArQrfhkToA==
+X-Google-Smtp-Source: AGHT+IFJc3Lm3/vC9HNNAcXFb5RTiNyyhjENLj8ZfekJebt0VK8JuV6U02HfpMPHalA9ZDx8HQpUF05xrqkmrWagIa8=
+X-Received: by 2002:a05:6808:4495:b0:3e5:f172:3a3 with SMTP id
+ 5614622812f47-3e91582c81dmr3394831b6e.19.1732277493405; Fri, 22 Nov 2024
+ 04:11:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Adrian <thirphattt06@gmail.com>
+Date: Fri, 22 Nov 2024 19:11:29 +0700
+Message-ID: <CADoo-my4_ZUUUQkE4B1OG0EqYNrDwFUwhXbDhQ3oZamviVB05g@mail.gmail.com>
+Subject: =?UTF-8?B?4Liq4Li04LiZ4LmA4LiK4Li34LmI4Litc21l?=
+To: linux-kernel-owner@kernel.org, linux-kernel@archiver.kernel.org, 
+	majordomo@vger.kernel.org, linux-kernel@vger.kernel.org, john.allen@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/alternative.h   |   12 ------------
- arch/x86/include/asm/nospec-branch.h |    9 ---------
- include/linux/objtool.h              |   30 +++++++++++++++++++++++-------
- 3 files changed, 23 insertions(+), 28 deletions(-)
-
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -56,12 +56,6 @@
- #endif
- 
- /*
-- * objtool annotation to ignore the alternatives and only consider the original
-- * instruction(s).
-- */
--#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
--
--/*
-  * The patching flags are part of the upper bits of the @ft_flags parameter when
-  * specifying them. The split is currently like this:
-  *
-@@ -308,12 +302,6 @@ void nop_func(void);
- #endif
- 
- /*
-- * objtool annotation to ignore the alternatives and only consider the original
-- * instruction(s).
-- */
--#define ANNOTATE_IGNORE_ALTERNATIVE ANNOTATE type=ANNOTYPE_IGNORE_ALTS
--
--/*
-  * Issue one struct alt_instr descriptor entry (need to put it into
-  * the section .altinstructions, see below). This entry contains
-  * enough information for the alternatives patching code to patch an
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -180,13 +180,6 @@
- #ifdef __ASSEMBLY__
- 
- /*
-- * This should be used immediately before an indirect jump/call. It tells
-- * objtool the subsequent indirect jump/call is vouched safe for retpoline
-- * builds.
-- */
--#define ANNOTATE_RETPOLINE_SAFE	ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
--
--/*
-  * (ab)use RETPOLINE_SAFE on RET to annotate away 'bare' RET instructions
-  * vs RETBleed validation.
-  */
-@@ -345,8 +338,6 @@
- 
- #else /* __ASSEMBLY__ */
- 
--#define ANNOTATE_RETPOLINE_SAFE ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
--
- typedef u8 retpoline_thunk_t[RETPOLINE_THUNK_SIZE];
- extern retpoline_thunk_t __x86_indirect_thunk_array[];
- extern retpoline_thunk_t __x86_indirect_call_thunk_array[];
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -61,8 +61,6 @@
- 	"911:\n\t"						\
- 	__ASM_ANNOTATE(911b, x)
- 
--#define ANNOTATE_NOENDBR	ASM_ANNOTATE(ANNOTYPE_NOENDBR)
--
- #else /* __ASSEMBLY__ */
- 
- /*
-@@ -140,8 +138,6 @@
- 	.popsection
- .endm
- 
--#define ANNOTATE_NOENDBR	ANNOTATE type=ANNOTYPE_NOENDBR
--
- /*
-  * This macro indicates that the following intra-function call is valid.
-  * Any non-annotated intra-function call will cause objtool to issue a warning.
-@@ -158,7 +154,6 @@
- #define STACK_FRAME_NON_STANDARD(func)
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #define ASM_ANNOTATE(x)
--#define ANNOTATE_NOENDBR
- #define ASM_REACHABLE
- #else
- #define ANNOTATE_INTRA_FUNCTION_CALL
-@@ -166,8 +161,6 @@
- .endm
- .macro STACK_FRAME_NON_STANDARD func:req
- .endm
--.macro ANNOTATE_NOENDBR
--.endm
- .macro REACHABLE
- .endm
- .macro ANNOTATE type:req
-@@ -176,4 +169,27 @@
- 
- #endif /* CONFIG_OBJTOOL */
- 
-+#ifndef __ASSEMBLY__
-+/*
-+ * Annotate away the various 'relocation to !ENDBR` complaints; knowing that
-+ * these relocations will never be used for indirect calls.
-+ */
-+#define ANNOTATE_NOENDBR		ASM_ANNOTATE(ANNOTYPE_NOENDBR)
-+/*
-+ * This should be used immediately before an indirect jump/call. It tells
-+ * objtool the subsequent indirect jump/call is vouched safe for retpoline
-+ * builds.
-+ */
-+#define ANNOTATE_RETPOLINE_SAFE		ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
-+/*
-+ * objtool annotation to ignore the alternatives and only consider the original
-+ * instruction(s).
-+ */
-+#define ANNOTATE_IGNORE_ALTERNATIVE	ASM_ANNOTATE(ANNOTYPE_IGNORE_ALTS)
-+#else
-+#define ANNOTATE_NOENDBR		ANNOTATE type=ANNOTYPE_NOENDBR
-+#define ANNOTATE_RETPOLINE_SAFE		ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
-+#define ANNOTATE_IGNORE_ALTERNATIVE	ANNOTATE type=ANNOTYPE_IGNORE_ALTS
-+#endif
-+
- #endif /* _LINUX_OBJTOOL_H */
-
-
+4LiC4Lit4Lit4LiZ4Li44LiN4Liy4LiV4Lic4Li54LmJ4LiU4Li54LmA4LmA4Lil4LmA4LmA4Lil
+4Liw4LmA4LiI4LmJ4Liy4LiC4Lit4LiH4LiB4Li04LiI4LiB4Liy4Lij4LiU4LmJ4Lin4Lii4LiE
+4Lij4Lix4LiaDQrguILguK3guIfguJzguKHguIjguLDguYDguJvguYfguJnguIHguLLguKPguYDg
+uKrguJnguK3guYDguIfguLTguJnguJfguLjguJnguYDguJ7guLfguYjguK3guYDguIjguYnguLLg
+uILguK3guIfguJjguLjguKPguIHguLTguIgNCuC4l+C4teC5iOC4oeC4teC4geC4suC4o+C4iOC4
+lOC4l+C4sOC5gOC4muC4teC4ouC4meC5g+C4meC4o+C4ueC4m+C5geC4muC4muC4muC4o+C4tOC4
+qeC4seC4lw0K4Lir4LiI4LiBIOC5guC4o+C4h+C4h+C4suC4meC4reC4uOC4leC4quC4suC4q+C4
+geC4o+C4o+C4oSDguJfguLHguYjguKfguJvguKPguLDguYDguJfguKgNCuC4lOC4reC4geC5gOC4
+muC4teC5ieC4ouC4leC5iOC4syDguYDguKPguLTguYjguKHguJXguYnguJnguJfguLXguYggMS0x
+LjUlDQrguKrguK3guJrguJbguLLguKHguJ/guKPguLXguJ7guJnguLHguIHguIfguLLguJnguKrg
+uLjguKDguLLguJ4NCjA2MjY2OTc4NzkgKOC4nOC4ueC5ieC4iOC4seC4lOC4geC4suC4o+C4neC5
+iOC4suC4ouC4geC4suC4o+C5gOC4h+C4tOC4mSkNCg==
 
