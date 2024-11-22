@@ -1,103 +1,243 @@
-Return-Path: <linux-kernel+bounces-418842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0DD19D6632
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:03:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833ED9D6634
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFD282145
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:03:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEE8BB21947
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A75C18A6AB;
-	Fri, 22 Nov 2024 23:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD41618C336;
+	Fri, 22 Nov 2024 23:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IqAzKgO5"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fw5+t5nd"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1449750285;
-	Fri, 22 Nov 2024 23:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3338C176ADB;
+	Fri, 22 Nov 2024 23:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732316621; cv=none; b=demhUdKyQXikadISZkzAIDCmIddqxIUj6kY9Uq5As22GrmwY+V8xO0GpOH1N8Ggi67orodK6oVpltU3BnM2UA00t8+j13nYPZBFBdSTYBk05/mRiVuSAOgf3PuYwwccdKELP5Qn8ft1xr8/32iW9BJ1pejPuPna1pvuMwrNLDrY=
+	t=1732316699; cv=none; b=j5QxKFJg8VzfX+1WFG40hupXj8u7pBa4fYy2DBFAl7hPRlYPiL7s+dR+f6iH0tl2AQhHDf/LxTTiw729wcWi4cAi2hgsfCZtfy+vxdjaeuDeCOol5X01cPmncQNnYfh+mChfvMRK+T8mhXT8WMQ8BwJlI0Ui0XxgI1C8DNCpr5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732316621; c=relaxed/simple;
-	bh=J7/SCpSmCjmhHvzCpvmulKjpJC4J84S29Rs0RZQr+PI=;
+	s=arc-20240116; t=1732316699; c=relaxed/simple;
+	bh=4wIWfXpF5G8HG9/Pq+zqdSb7DFqwGwuXPQRVw4+p5FE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YX6NPKmR2bjzisOZfZ1xg85J4re85HiQUfKWo1WweD9fku9X+jRq799XeMotUjWYO1Of+ROrlqrejXW13INo3P5pXLAkonRNS9lltORscBxEQHZS0J4jt4nFEbAxupGc0Y74mAjjSenG09XH7kWgWDh8Woj1qnA4jxTK44i+5Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IqAzKgO5; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB2E760003;
-	Fri, 22 Nov 2024 23:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732316610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JUXKXaBWyak1Ovx48ZLm1Tp4ygFFPbjUy27VTJe6Uic=;
-	b=IqAzKgO5pOmPzflHIs1J1k8Zsfj1GIGNWNInfEUBW13hfmgVuOmX8g1gpC5auPemL7YNGz
-	vmqjV1WTxJkekM6huSNqPLBOyhcpXV1yfLMEibSqMzbYt1C9utFSvGg66h895rAXeziLXo
-	pbFt7S1q27AVr0hUYX90T1Cpw9hfTy3cPfcXrvQSgzStvoWr22c1q6Syh58qdXJmEyJVZ6
-	/ehLBJcdI0NG30NwJNJ9vpzjtCrsj0Oc5Z0VO9upY6jE63OVLvuac2t+ZOofvYnj1GRU7t
-	g/bXvoUBI+NBTRnd1r68y98jHiEkoggwdDyrX7sWVUGPhPaj30AbKzOIRwqZcg==
-Date: Sat, 23 Nov 2024 00:03:29 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Finn Thain <fthain@linux-m68k.org>, Daniel Palmer <daniel@0x0f.com>,
-	Michael Pavone <pavone@retrodev.com>,
-	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] m68k: mvme147, mvme16x: Adopt rtc-m48t59 platform
- driver
-Message-ID: <20241122230329128df024@mail.local>
-References: <cover.1731450735.git.fthain@linux-m68k.org>
- <19a16bcc94c42ea9c5397b37b1918c2937e3faab.1731450735.git.fthain@linux-m68k.org>
- <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXfB1BPStLiTEhAi0BO/WFzPm6kxcwNp3OEkPjqhV1boe3ArUHPF7UAPRoXgTDc1/CxpN/5kzbOiSW5lx+ax8uqj2WYFGpjeNcyBxelAyDxj94vFYR5DseN4jL6MGiwS+dWU3dE3RifyHSJ93/h5ulNHXnaIs8ug//LIFZmylSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fw5+t5nd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IEf/4Dtt1gordcffcgfDzPQ5Kwj0hKh+nasI0mtcRXU=; b=fw5+t5ndLTUbfV+GOCK33u7kKP
+	0NIDL66Qye4jbiAL54256OFAhoWjOExVCRm58kK4jLY8By4WNhj6nNsamBy4UmE7RdKO1znD3qZLH
+	z0Rl9T3KzFWdEPfNu5wpSx1F4vIX0/13CaW5W01HO6hD4izaNYr8C/iS95nicBIBcdkk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tEchk-00EAsH-3b; Sat, 23 Nov 2024 00:04:48 +0100
+Date: Sat, 23 Nov 2024 00:04:48 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+Subject: Re: [PATCH net-next v2 14/21] motorcomm:yt6801: Implement the WOL
+ function of ethtool_ops
+Message-ID: <55cac132-578f-4f07-95b0-d4ddb06b6b7f@lunn.ch>
+References: <20241120105625.22508-1-Frank.Sae@motor-comm.com>
+ <20241120105625.22508-15-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVuv7wRud4jNt=t4Ac_s4ze6YYguUKLRt0hQ4gTqEWpEg@mail.gmail.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20241120105625.22508-15-Frank.Sae@motor-comm.com>
 
-On 22/11/2024 15:44:33+0100, Geert Uytterhoeven wrote:
-> On Tue, Nov 12, 2024 at 11:51 PM Finn Thain <fthain@linux-m68k.org> wrote:
-> > Both mvme147 and mvme16x platforms have their own RTC driver
-> > implementations that duplicate functionality provided by the rtc-m48t59
-> > driver. Adopt the rtc-m48t59 driver and remove the other ones.
-> >
-> > Tested-by: Daniel Palmer <daniel@0x0f.com>
-> > Signed-off-by: Finn Thain <fthain@linux-m68k.org>
-> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > ---
-> > This patch depends upon the m48t59 driver changes in the preceding patch.
-> >
-> > Changed since v1:
-> >  - Initialize yy_offset in struct m48t59_plat_data.
-> >
-> > Changed Since v3:
-> >  - Re-ordered defconfig symbols.
-> >  - Added reviewed-by tag from arch maintainer.
+On Wed, Nov 20, 2024 at 06:56:18PM +0800, Frank Sae wrote:
+> Implement the .get_wol and .set_wol callback function.
 > 
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> so it still can make it into v6.13-rc1 via RTC?
+> Signed-off-by: Frank Sae <Frank.Sae@motor-comm.com>
+> ---
+>  .../motorcomm/yt6801/yt6801_ethtool.c         | 169 +++++
+>  .../net/ethernet/motorcomm/yt6801/yt6801_hw.c | 576 ++++++++++++++++++
+>  .../ethernet/motorcomm/yt6801/yt6801_net.c    | 118 ++++
+>  3 files changed, 863 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/motorcomm/yt6801/yt6801_ethtool.c b/drivers/net/ethernet/motorcomm/yt6801/yt6801_ethtool.c
+> index 7989ccbc3..af643a16a 100644
+> --- a/drivers/net/ethernet/motorcomm/yt6801/yt6801_ethtool.c
+> +++ b/drivers/net/ethernet/motorcomm/yt6801/yt6801_ethtool.c
+> @@ -565,6 +565,173 @@ static int fxgmac_set_ringparam(struct net_device *netdev,
+>  	return ret;
+>  }
+>  
+> +static void fxgmac_get_wol(struct net_device *netdev,
+> +			   struct ethtool_wolinfo *wol)
+> +{
+> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
+> +
+> +	wol->supported = WAKE_UCAST | WAKE_MCAST | WAKE_BCAST | WAKE_MAGIC |
+> +			 WAKE_ARP | WAKE_PHY;
 
-It is now applied, it is going to conflict with your tree as it didn't
-cleanly apply. I don't think this is going to cause issues but I'll let
-it sit in linux-next for a few days before sending to Linus.
+You are not asking the PHY what it can do. Ideally you want the PHY to
+do WoL so you can power off the MAC. You should only use MAC WoL when
+asked to do something the PHY does not support.
 
+> +	wol->wolopts = 0;
+> +	if (!(pdata->hw_feat.rwk) || !device_can_wakeup(pdata->dev)) {
+> +		yt_err(pdata, "%s, pci does not support wakeup.\n", __func__);
+> +		return;
+> +	}
+> +
+> +	wol->wolopts = pdata->wol;
+> +}
+> +
+> +#pragma pack(1)
+> +/* it's better to make this struct's size to 128byte. */
+> +struct pattern_packet {
+> +	u8 ether_daddr[ETH_ALEN];
+> +	u8 ether_saddr[ETH_ALEN];
+> +	u16 ether_type;
+> +
+> +	__be16 ar_hrd;		/* format of hardware address  */
+> +	__be16 ar_pro;		/* format of protocol          */
+> +	u8 ar_hln;		/* length of hardware address  */
+> +	u8 ar_pln;		/* length of protocol address  */
+> +	__be16 ar_op;		/* ARP opcode (command)        */
+> +	u8 ar_sha[ETH_ALEN];	/* sender hardware address     */
+> +	u8 ar_sip[4];		/* sender IP address           */
+> +	u8 ar_tha[ETH_ALEN];	/* target hardware address     */
+> +	u8 ar_tip[4];		/* target IP address           */
+> +
+> +	u8 reverse[86];
+> +};
+> +
+> +#pragma pack()
+> +
+> +static int fxgmac_set_pattern_data(struct fxgmac_pdata *pdata)
+> +{
+> +	struct fxgmac_hw_ops *hw_ops = &pdata->hw_ops;
+> +	u8 type_offset, tip_offset, op_offset;
+> +	struct wol_bitmap_pattern pattern[4];
+> +	struct pattern_packet packet;
+> +	u32 ip_addr, i = 0;
+> +
+> +	memset(pattern, 0, sizeof(struct wol_bitmap_pattern) * 4);
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This is somewhat error prone. It is better to use
+
+       memset(pattern, 0, sizeof(pattern));
+
+> +
+> +	/* Config ucast */
+> +	if (pdata->wol & WAKE_UCAST) {
+> +		pattern[i].mask_info[0] = 0x3F;
+
+What does 0x3F mean? Can you replace the magic number with a #define
+which explains it?
+
+> +		pattern[i].mask_size = sizeof(pattern[0].mask_info);
+> +		memcpy(pattern[i].pattern_info, pdata->mac_addr, ETH_ALEN);
+> +		pattern[i].pattern_offset = 0;
+> +		i++;
+> +	}
+> +
+> +	/* Config bcast */
+> +	if (pdata->wol & WAKE_BCAST) {
+> +		pattern[i].mask_info[0] = 0x3F;
+> +		pattern[i].mask_size = sizeof(pattern[0].mask_info);
+> +		memset(pattern[i].pattern_info, 0xFF, ETH_ALEN);
+> +		pattern[i].pattern_offset = 0;
+> +		i++;
+> +	}
+> +
+> +	/* Config mcast */
+> +	if (pdata->wol & WAKE_MCAST) {
+> +		pattern[i].mask_info[0] = 0x7;
+> +		pattern[i].mask_size = sizeof(pattern[0].mask_info);
+> +		pattern[i].pattern_info[0] = 0x1;
+> +		pattern[i].pattern_info[1] = 0x0;
+> +		pattern[i].pattern_info[2] = 0x5E;
+
+I don't think that is the correct definition of multicast.
+
+https://elixir.bootlin.com/linux/v6.12/source/include/linux/etherdevice.h#L122
+
+You are just interested in one bit to indicate it is an Ethernet
+multicast frame.
+
+> +	/* Config arp */
+> +	if (pdata->wol & WAKE_ARP) {
+> +		memset(pattern[i].mask_info, 0, sizeof(pattern[0].mask_info));
+> +		type_offset = offsetof(struct pattern_packet, ar_pro);
+> +		pattern[i].mask_info[type_offset / 8] |= 1 << type_offset % 8;
+> +		type_offset++;
+> +		pattern[i].mask_info[type_offset / 8] |= 1 << type_offset % 8;
+> +		op_offset = offsetof(struct pattern_packet, ar_op);
+> +		pattern[i].mask_info[op_offset / 8] |= 1 << op_offset % 8;
+> +		op_offset++;
+> +		pattern[i].mask_info[op_offset / 8] |= 1 << op_offset % 8;
+> +		tip_offset = offsetof(struct pattern_packet, ar_tip);
+> +		pattern[i].mask_info[tip_offset / 8] |= 1 << tip_offset % 8;
+> +		tip_offset++;
+> +		pattern[i].mask_info[tip_offset / 8] |= 1 << type_offset % 8;
+> +		tip_offset++;
+> +		pattern[i].mask_info[tip_offset / 8] |= 1 << type_offset % 8;
+> +		tip_offset++;
+> +		pattern[i].mask_info[tip_offset / 8] |= 1 << type_offset % 8;
+> +
+> +		packet.ar_pro = 0x0 << 8 | 0x08;
+> +		/* ARP type is 0x0800, notice that ar_pro and ar_op is
+> +		 * big endian
+> +		 */
+> +		packet.ar_op = 0x1 << 8;
+> +		/* 1 is arp request,2 is arp replay, 3 is rarp request,
+> +		 * 4 is rarp replay
+> +		 */
+> +		ip_addr = fxgmac_get_netdev_ip4addr(pdata);
+
+What happens when there is no IPv4 address on the interface? You
+probably want to return -EINVAL.
+
+> +static int fxgmac_set_wol(struct net_device *netdev,
+> +			  struct ethtool_wolinfo *wol)
+> +{
+> +	struct fxgmac_pdata *pdata = netdev_priv(netdev);
+> +	int ret;
+> +
+> +	if (wol->wolopts & (WAKE_MAGICSECURE | WAKE_FILTER)) {
+> +		yt_err(pdata, "%s, not supported wol options, 0x%x\n", __func__,
+> +		       wol->wolopts);
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	if (!(pdata->hw_feat.rwk)) {
+> +		yt_err(pdata, "%s, hw wol feature is n/a\n", __func__);
+> +		return wol->wolopts ? -EOPNOTSUPP : 0;
+> +	}
+
+You should be reporting that in get_wol().
+
+> +	pdata->wol = 0;
+> +	if (wol->wolopts & WAKE_UCAST)
+> +		pdata->wol |= WAKE_UCAST;
+> +
+> +	if (wol->wolopts & WAKE_MCAST)
+> +		pdata->wol |= WAKE_MCAST;
+
+It is not 100% clear, but i think set_wol should be additive. You can
+use ethtool to keep adding more WoL options. The clear them you use
+wol d.
+
+	Andrew
 
