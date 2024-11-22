@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-417964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7D19D5B47
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B585B9D5B52
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:55:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F2FFB21164
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:50:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5374DB21B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599871BDA85;
-	Fri, 22 Nov 2024 08:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1F31CB528;
+	Fri, 22 Nov 2024 08:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpN4gUqt"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz5nIjZL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F61018BBB8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9481BC094;
+	Fri, 22 Nov 2024 08:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732265424; cv=none; b=NqqE7e2N+SpJZEHIlg/dTVqL0KI8jRmSPpeKgXwTqUXcQKql0NbV14MiMMHGbSVHu8qYR5cQe7BG0A9Rlt7whIJS0C4lHJZlGX0KyXt8atAiB0UU1nJ6CCupynq244VCOOSY0tQ+jAXvKqrgeYuO07s7XCZxSYHxuoLAeLfb80I=
+	t=1732265685; cv=none; b=sOPp5iIuY5yqTePP7omTEfiiQM5vb18+Cv77WrwbBPBkfLad/8aCOc1scLDSVBhqVuVi9/pJ2Ktp+ipsY45ha7Tijk05WL6jH6pB0NMnSBzX9cokaadG4gAzJ/ZTE0jRwhXQ8boHikKavOB4fjVMwWrqX8+ohDrhnYINAuPhd78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732265424; c=relaxed/simple;
-	bh=Kak5wLuuHaVOP0U907HYm5hiYqDYH9HgnC+M3zG1i00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LHfWzAzohOkY3wb8unU1AauoHMhdCVWYdH189/uwC53OCedZTsY7NuDW2xZeqUBODwz5XQm8Y404UtDdciS+lnf/44ca/Pah2b3lFfbSMKcGi0XndC0tKYWbOu4KL7q9W5Gish1H3ptp1tfWv/lPbeEKMhDmeVLjBXo7YgismJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpN4gUqt; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e59746062fso1570388a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:50:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732265422; x=1732870222; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8+9nnoYbf1UxcWWZ8IBCVQZ3ux5jExiFpmdjlIQbp0=;
-        b=vpN4gUqtNBZxMz+BCxB4GkyEmBchZsTXe+6ijIXwhKipG4Dgnzjgh7dd4xctMxCPPg
-         mrezVnwAOXvaXApPQZdNVJLwqa8sewMXELsrR2WTaDSATx+xgh/4LDbYIC4zl16rKakG
-         Ghn5f7REkTasQ0T8zkclEdhCTTTms07IiUUo4VzCFxr2Vy8SVttbs7wMGMTgTqJemGzo
-         HzC9y7L1vhjJZI3nA+Y/1Q3wd0oJFiIjJMvbciBXdMT1De/qxp60o4HBOOhFxbzv9O9j
-         nUZS7OfEicRk9R5g78WDTVfnUAKYJlPeUBkKO3fhN1Sts6qt3ttQR/oBmZIMu9uITU7J
-         Z4Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732265422; x=1732870222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w8+9nnoYbf1UxcWWZ8IBCVQZ3ux5jExiFpmdjlIQbp0=;
-        b=JaZY9x/gmf4/JL2aQI1Yc6J2KkSv8leGvsdSGFMcv7mA8dxITMXrsw3ObQPDOf1Gtv
-         u/gYYs70CYvzo3Qfz47wyq4U5fJXfYy4+CMhUE+fXFTwLQMO/KBXqWlhdj6EhMA6zkM0
-         fKMP6258zrUmLYnhFMchvuqSUA695DlOIUZcRP4X9KHclvFpSPJ+Re1OhwyRC27D9hSC
-         5wTv0QfkhUuTsn9b09XLx5WpGbWZZzVKAV5EwtlQ2jU5D3u8EZKD46pBpILnO0Ij7Gbu
-         689NwqXxtPlUQIQLOprgIqsyKBaExvSssj6KDcI2wUcZl+YOejNMEu0iY/zCXAnJcdIE
-         kqTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWD18OjpFJAk6/WnZ49x/7kmOJGY82KMPuIqaK2i0/1LXmA/GG3rdapxMfOE+/ktJW0RrtmkC1ed2EVh1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/YDv5uD8hHI62ZjxUs3aZmBTe6eh49NnLN1iXxb6QHfjw5Jlz
-	RNSm06hOv6BW7HOO6Hco786L0V2rUA8uLZGk6RnubJoEXHkGRxi+iiq3gy+J/BMP492qm+rFXHv
-	AtPhO5SYSkcyVD7UMuokzn9nf3/qh13S3p5jv
-X-Gm-Gg: ASbGnctaUEE1O8VbBPyygYTda1D+5gYf7RJDKD5ttKsmtFS0runeWHToMU/CvQ7OW1o
-	NnY3EJpcxbL1Df9fKP/BK0mdb1e7ZydmL
-X-Google-Smtp-Source: AGHT+IERZ9lNFuDAeT7H4I2JX5gC9cNIWkhL8/VD4BkcdPi2aQdqVypnRfvRtA9Uv8ewZgtJ3R72MEjmWswSyzndUqI=
-X-Received: by 2002:a17:90a:d40b:b0:2ea:5dcf:6f5d with SMTP id
- 98e67ed59e1d1-2eb0e528054mr2472713a91.16.1732265422368; Fri, 22 Nov 2024
- 00:50:22 -0800 (PST)
+	s=arc-20240116; t=1732265685; c=relaxed/simple;
+	bh=7rzMvx48n11Ga+k4795VyVqRvaffhTq48wBjDhlzNNo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OG7QgRZiBzJ3cVWBHPZJ3pYX9M+kiwo9uMlqSq7RjYJkY6e96VuuplVj+NEdUqchFDTkOVVEvlByuR/Hl6kWdQT63oU7fw0pynuCU4XbfgjSqB1C4wzwsUztsYeqRl4dnm1sXMA/XSWmuKqRwBxZu544RQLovdj7YiboktdZQng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz5nIjZL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 232D9C4CECE;
+	Fri, 22 Nov 2024 08:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732265685;
+	bh=7rzMvx48n11Ga+k4795VyVqRvaffhTq48wBjDhlzNNo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=bz5nIjZL3KtxyswrPAm0AkkiPjXzW8GxvrVVMXXM8MnI/dbA4smxZEmLlTYk3LsjO
+	 UojVhfpWpP3BjfrEOr3104UIQHW1lxj9TGGJ0yI+6X3kJw4v/sWX6Lmuo/ow29HyWD
+	 rJHnQUcq8IbGAFR/oB9JmPEJ4B2eznpDE/T8idKxn2TgU0gyxhQp655WayNjmREzi/
+	 7v4gMmSHbW1Ka8rHD6tGKLYDYcHkG0RX0L1tBTjmMtWbMDiUwNSKkFoKF3UdsrQvoG
+	 BoYjmjU16NEWaBAw6Dq4I+gL2LRc9jYz6mdIwj9go+1JhvK7qEbuA+BaeCoO3tKqOF
+	 Iw/K6pVV5/bkA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19526E65D37;
+	Fri, 22 Nov 2024 08:54:45 +0000 (UTC)
+From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD_via_B4_Relay?= <devnull+cleverline1mc.gmail.com@kernel.org>
+Subject: [PATCH v2 0/3] Add support for attaching a regulator to w1: ds2482
+Date: Fri, 22 Nov 2024 09:53:56 +0100
+Message-Id: <20241122-ds2482-add-reg-v2-0-a5a03ee74da7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
- <20241119112408.779243-3-abdiel.janulgue@gmail.com> <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
- <43a07c04-2985-4999-b6d6-732794906a36@gmail.com> <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
- <CAH5fLghUb8dEV9GVtJj497cJ5sp4Gg7=qeijfnV_w4BNd70qxg@mail.gmail.com> <f0052c1d-ce36-447c-af1f-db12940f6cc1@gmail.com>
-In-Reply-To: <f0052c1d-ce36-447c-af1f-db12940f6cc1@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 22 Nov 2024 09:50:09 +0100
-Message-ID: <CAH5fLgjk7UV6URZAK7_37iqXUKTUsfnaBj7bLZVJ91bkieOZvw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page mappings
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: Jann Horn <jannh@google.com>, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKRGQGcC/13MwQrCMAzG8VcZORtpY53Tk+8hO3RttgXcKq0MZ
+ fTdrQMv5vYPfL8VEkfhBJdqhciLJAlzCdpV4EY7D4ziSwMpMroc+kSmIbTeY+QBe9YHUsr6k6+
+ hjB6Re3lt4K0tPUp6hvje/EV/vz/q+E8tGhU615jubDurqb4Ok5X73oUJ2pzzB9ApMhKsAAAA
+X-Change-ID: 20241111-ds2482-add-reg-fe13200ad7d6
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Stefan Wahren <stefan.wahren@chargebyte.com>
+Cc: Ben Gardner <bgardner@wabtec.com>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, 
+ =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732265684; l=833;
+ i=cleverline1mc@gmail.com; s=20241112; h=from:subject:message-id;
+ bh=7rzMvx48n11Ga+k4795VyVqRvaffhTq48wBjDhlzNNo=;
+ b=/3H2DNmW19Y6vUUYwxh+ll7I0BRp/3t9orrqSBiaWcUwL5Y/NrWsX7KRoDq04OA/QiTPOpBGK
+ GFwHYefiy5KB5KhbaAP3ux9rPEEdYxnJoBNHMgP3xcZ5Lw+u90W4qd8
+X-Developer-Key: i=cleverline1mc@gmail.com; a=ed25519;
+ pk=EJoEbw03UiRORQuCiEyNA8gH1Q6fIpEWnn/MyaWOWX0=
+X-Endpoint-Received: by B4 Relay for cleverline1mc@gmail.com/20241112 with
+ auth_id=275
+X-Original-From: =?utf-8?q?Kry=C5=A1tof_=C4=8Cern=C3=BD?= <cleverline1mc@gmail.com>
+Reply-To: cleverline1mc@gmail.com
 
-On Fri, Nov 22, 2024 at 9:36=E2=80=AFAM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
->
-> On 22/11/2024 09:55, Alice Ryhl wrote:
-> > On Thu, Nov 21, 2024 at 9:18=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> >>
-> >> On Wed, Nov 20, 2024 at 11:56=E2=80=AFPM Abdiel Janulgue
-> >> <abdiel.janulgue@gmail.com> wrote:
-> >>> On 19/11/2024 19:07, Jann Horn wrote:
-> >>>>> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a =
-Self>
-> >>>>
-> >>>> Sorry, can you explain to me what the semantics of this are? Does th=
-is
-> >>>> create a Page reference that is not lifetime-bound to the PageSlice?
-> >>>
-> >>> This creates a Page reference that is tied to the lifetime of the `C
-> >>> struct page` behind the PageSlice buffer. Basically, it's just a cast
-> >>> from the struct page pointer and does not own that resource.
-> >>
-> >> How is the Page reference tied to the lifetime of the C "struct page"?
-> >>
-> >> I asked some Rust experts to explain to me what this method signature
-> >> expands to, and they added the following to the Rust docs:
-> >>
-> >> https://github.com/rust-lang/reference/blob/master/src/lifetime-elisio=
-n.md
-> >> ```
-> >> fn other_args1<'a>(arg: &str) -> &'a str;             // elided
-> >> fn other_args2<'a, 'b>(arg: &'b str) -> &'a str;      // expanded
-> >> ```
-> >>
-> >> Basically, my understanding is that since you are explicitly
-> >> specifying that the result should have lifetime 'a, but you are not
-> >> specifying the lifetime of the parameter, the parameter is given a
-> >> separate, unrelated lifetime by the compiler? Am I misunderstanding
-> >> how this works, or is that a typo in the method signature?
-> >
-> > No, you are correct. The signature is wrong and lets the caller pick
-> > any lifetime they want, with no relation to the lifetime of the
-> > underlying `struct page`.
->
-> But that could be put in the invariant that the PageSlice buffer must
-> last at least the lifetime `'a`?
->
-> >
-> >  From a C perspective, what are the lifetime requirements of vmalloc_to=
-_page?
-> >
->
-> If I'm not mistaken, that should be the lifetime of the vmalloc'd buffer
-> right?
+Sending a new version based on our discussion.
 
-It seems to me that the signature should look like this:
+Signed-off-by: Kryštof Černý <cleverline1mc@gmail.com>
+---
+Changes in v2:
+- Removed property description
+- Changed commit message of binding commit
+- Link to v1: https://lore.kernel.org/r/20241115-ds2482-add-reg-v1-0-cc84b9aba126@gmail.com
 
-fn vmalloc_to_page(vec: &VVec<PageSlice>, i: usize) -> &Page
+---
+Kryštof Černý (3):
+      w1: ds2482: Add regulator support
+      w1: ds2482: Fix datasheet URL
+      dt-bindings: w1: ds2482: Add vcc-supply property
 
-This way, by providing the VVec, you can only use it with memory that
-really comes from a vmalloc call.
+ .../devicetree/bindings/w1/maxim,ds2482.yaml       |  2 ++
+ drivers/w1/masters/ds2482.c                        | 23 +++++++++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+---
+base-commit: 6d59cab07b8d74d0f0422b750038123334f6ecc2
+change-id: 20241111-ds2482-add-reg-fe13200ad7d6
 
-Alice
+Best regards,
+-- 
+Kryštof Černý <cleverline1mc@gmail.com>
+
+
 
