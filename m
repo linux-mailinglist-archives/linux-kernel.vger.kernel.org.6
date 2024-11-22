@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-418792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1B49D65B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:18:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15699D65B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:18:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF55916128C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:18:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92AC72822FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D231D12E0;
-	Fri, 22 Nov 2024 22:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13AE1DFE23;
+	Fri, 22 Nov 2024 22:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hdm4jwGS"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lBBNAMA8"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7171DEFFD
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D0218FC7C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732313827; cv=none; b=ZGO51LmPkiI+DIDUu2pfBvs4t482Ch5vzi+uVpwO4TgnmgS3vu1EGlOotmnGw1WDCGHduwdyPhKR90VxnkrvSEiu8hDpBv3ERLkVuRAvbbmLrACuQFKKPN2Pmd3qf9AKJyGwMUY2R2PobIjMDS14zP2hMO1j1Wc6utT92GjfY2I=
+	t=1732313829; cv=none; b=ljapSQOLQau79h14kL4uRt7cfPPx1zRj6iV8gLjFKbDqddx5g1PYxR+QLz5TG/2y1PucIJTeeuJV9yg2qptbpV6aMdCeDDyfh4PzwlS3me9w31iSQVE0x7I4+c5kFp9snb7ASvLNem8s/0KXOl5pdJlWlAvtMzk7TQfuW3mzsB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732313827; c=relaxed/simple;
-	bh=RCHjtrDYGosX7hVMEeF0eEIsFG3i6FYsIXt5jHBzeRA=;
+	s=arc-20240116; t=1732313829; c=relaxed/simple;
+	bh=aZI6nysz82pEP0emeVa6kVzsEW4+gM9gju+4YJnXy/8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BXY2tp749EComaB1p1ihaMsDCJoWM9R764hdOQBnPOuhiFtDTW8mmboz2nt8UB0NQSLBpDu6BV4Vi0l+bhqGs8ok6bMbMdnA/zJ40BafZm9aY0kANNLB4jwbxvg18Hkb1vPFw1e5AJTpVUopQ6wxAqb8eOWZWguRjiiNT6482+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=hdm4jwGS; arc=none smtp.client-ip=209.85.167.51
+	 MIME-Version; b=YkvuA1TnmLFr83K2rHtV93BHBc0hxSy3iCK7hajm0pFgrdN+QjdNCbQU+giwqyQ2hdqIslR9BwnWNpLNilCyCxuXB2bX0YtwsBgSIOvR9cBf2mFxS7OXIFOrJ6tXBzgQZgz1u2fzdzn2/CAblLPFlIpdwWSnve/00lu4rgJxHdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=lBBNAMA8; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f2b95775so3948483e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:17:05 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so4728390e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:17:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1732313824; x=1732918624; darn=vger.kernel.org;
+        d=amarulasolutions.com; s=google; t=1732313825; x=1732918625; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VgKjVRJAevY3wmDGnu8dG/wFQ+or5hcDk8y0qLVlEgA=;
-        b=hdm4jwGShUM5EpuT17WLUC5TaTdkPsrZvQJHP0hea3mFj29mEQySrAFxa7ix9l56aM
-         z33fRn4Jwk2HoOt1z5cRKYXzU/SYVrU9cba3K8KXrPRcdSKT/JzF4ZhJrCdwdY7bN0TD
-         OgR8WROyHvWPjHmtyb4G9BdCX1yjvuwLf903M=
+        bh=RlpDyiJR/k7vKSJ97gJNXRm8erHzYQsibasSD5BWwAI=;
+        b=lBBNAMA826kS2z6gmmowxrqiHnksOIYc2O+jiPjTFWkgOdb9EZl+Dc6RmuCjTtn3o7
+         7vDxWpwjwbwty5GO40i4ot38fHM+XcUCtBLYsENSBpZXXEcMMd/fwNRi6jsYMn5T0Wzq
+         4+OpEMMgkgWU2/W9kl1d6tTS6h713own8F92k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732313824; x=1732918624;
+        d=1e100.net; s=20230601; t=1732313825; x=1732918625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VgKjVRJAevY3wmDGnu8dG/wFQ+or5hcDk8y0qLVlEgA=;
-        b=G7SCYaY7zv5ZU0liIw4hJ1ZCTfR/g4wIpBIlb2nVt4ii4m794YX25oipw+/J8qoroM
-         KH5KewHDDMuW4BvxVW4EmXF2cbnLI6ZuAa8uj3q3V71n/OQWIAW2NMDoc48xx4nkZEhP
-         cOhj3wONWR2wcO6QHgq30dIy+EepY4t5uAPR08IBhJwl6z16WI8sDYsfFKFYzEcF0LxS
-         OZ+1m6ZjJKsZ+UH1lG05MoaySEM2fuhsxPT9DH3w0wD12YEwf4kfu7yNytOvO+za5LwL
-         /EMW4xBDJdTSvCprYWyM7YvJPi5ZfTgDAZj/ev357Vehtp5IfHO+ubtYj2KKQ5+lA1PA
-         YfaQ==
-X-Gm-Message-State: AOJu0YwXkHQnbgEgI5cNURkD8Y8vvr019fJ3Mkfxk/hs1kIHG02ucxMz
-	jHvOJ7Fh8+CJhrO/9ZFYes7p2diF6ltVy4Od5ouD9eR6XxCTJo/LPML3O5opWgySHAugRt3RqTZ
-	w
-X-Gm-Gg: ASbGncvcCAK1iD6gMCSSMPcivBcJei8HFFexCYa5ClrdHv7UwqFCEyIlDD4yip9MxO5
-	r7jgagUdeXvTpve0zF5NikbeL2OF1WSUKSbN+W+KZacPYOsYphF4EyGKmx02AZfX4QkUg563Z67
-	EwFNgqM8t0DrAO/q+jWeVUUcZsc3tHiQzJUWiJ4vOef1fN5EhM+Oz4PojR19le1zKUhh+al4aqn
-	Fkk6swwo4LNld+zmHXYMyvUCJVfNF9oxuNrEps3ZlXb/YohlyGm0CfDBEdc36KDBCWniyxGuWYR
-	/MGPyddvYP/BOOZ2NN9CrBw2RyU0479UU04b1XirbqwWt+zOMRicR+XUUpXvS+xpqUkoEqSQGd/
-	7XweeDbVLQ4UiDf6v
-X-Google-Smtp-Source: AGHT+IHZ/ABLxFIVbFLFvSrsmgIkf3PgZHq1H1ox1bPhmgDf7xN30T44QnNfRAPsf4/UWKxgOeMrTg==
-X-Received: by 2002:a05:6512:b97:b0:53d:a2cb:1350 with SMTP id 2adb3069b0e04-53dd369f458mr3917868e87.17.1732313824154;
-        Fri, 22 Nov 2024 14:17:04 -0800 (PST)
+        bh=RlpDyiJR/k7vKSJ97gJNXRm8erHzYQsibasSD5BWwAI=;
+        b=HRIbL+F6peGEhLjqPgFM5wQaI+YImlKRlZxZ+/oMY3irLjoj7cpnOBrdx5zdj8yq0J
+         8Q3eAMkzKV9+vcnMFYomSg13eggqPw2aN862gmgRDoWZqweyHosYy/aKC6RI4IKOJMZF
+         kuVpQvNmEGkzaIf5tl7nDgfJZyjAo/GR8VnUTb9RnyKmZSyDnA6N/bbsouB45QnF96XL
+         vw0p1kLQ1M6oLgi1cUZay5LK7EtMJwmVMHTfknVYCrBSW5f2XS6snw6EvyxXAU7Ep3ao
+         V8O5hy29RiysN7wKgn0KHI9iXXNzTnU9xLiaMRyTTvr5jiU7xA1pD1g4eQNq0yQADe9k
+         n/UA==
+X-Gm-Message-State: AOJu0YxO1lPz0OPSOpUNC8W46/ffPHCVs0/mXJoMuu/9SXJgjiujQVEA
+	c57yjXDM/DjrQ09Q2c4yza8CeTujf4NkynR0sxFWs5Kz78OYLs78ce0vvdAeZQ7ivlP5i4XpdKZ
+	W
+X-Gm-Gg: ASbGncvBnbAA7XEtd8OUM1q9VVbNpwqEHt46Rx2QyskDFa0Fqg4C+oFqEJyaY0eyilQ
+	SuXPXcIavX/Fd4/Tgjq7SYoo06qs6/0hJI1tKBzENeZkk3eaCD6jQTMzkpmfP/QEaB/L8rjKlyd
+	fKmWBEtISdabhMlrfzBVjvm/t3qlaU68nghd/hQ7AsH9m0FsF92umktJ8W4gl2snDEv0UKzLawK
+	vTE4mXWIWK7YYnvwgoTaNiUF7Qbb9TG936u2IawMGb13OmWYJiXHnLXmdrWhZvG0KxweAHrFoS2
+	Nee8Alm1W31x29hTvvYnZYcDJ8bRG89M4Lpg6bnLdywxAdjN4F8rQaQcSTWhaG9Ucq4T6dgNbHD
+	MWP+TD4P2ECeYCqhG
+X-Google-Smtp-Source: AGHT+IFM4zz1P0zcbDlpIS0RlDY0cn+D//lyH7aVLQCevJCESOfOR94A0A1KmXqMkwxRcXzDyP6m0w==
+X-Received: by 2002:a05:6512:304c:b0:53d:da89:a491 with SMTP id 2adb3069b0e04-53dda89a8abmr1706753e87.10.1732313825233;
+        Fri, 22 Nov 2024 14:17:05 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fcebsm148226466b.127.2024.11.22.14.17.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b52fcebsm148226466b.127.2024.11.22.14.17.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 14:17:03 -0800 (PST)
+        Fri, 22 Nov 2024 14:17:04 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Akshay Bhat <akshay.bhat@timesys.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Oliver Hartkopp <oliver.hartkopp@volkswagen.de>,
 	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
 	Wolfgang Grandegger <wg@grandegger.com>,
 	linux-can@vger.kernel.org
-Subject: [PATCH v2 08/12] can: hi311x: fix {rx,tx}_errors statistics
-Date: Fri, 22 Nov 2024 23:15:49 +0100
-Message-ID: <20241122221650.633981-9-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH v2 09/12] can: sja1000: fix {rx,tx}_errors statistics
+Date: Fri, 22 Nov 2024 23:15:50 +0100
+Message-ID: <20241122221650.633981-10-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
 References: <20241122221650.633981-1-dario.binacchi@amarulasolutions.com>
@@ -93,12 +93,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The hi3110_can_ist() function was incorrectly incrementing only the
-receive error counter, even in cases of bit or acknowledgment errors that
-occur during transmission. The patch fixes the issue by incrementing the
-appropriate counter based on the type of error.
+The sja1000_err() function only incremented the receive error counter
+and never the transmit error counter, even if the ECC_DIR flag reported
+that an error had occurred during transmission. Increment the
+receive/transmit error counter based on the value of the ECC_DIR flag.
 
-Fixes: 57e83fb9b746 ("can: hi311x: Add Holt HI-311x CAN driver")
+Fixes: 429da1cc841b ("can: Driver for the SJA1000 CAN controller")
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 ---
@@ -106,70 +106,128 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Changes in v2:
 - Update statistics even if skb allocation fails
 
- drivers/net/can/spi/hi311x.c | 47 ++++++++++++++++++++++--------------
- 1 file changed, 29 insertions(+), 18 deletions(-)
+ drivers/net/can/sja1000/sja1000.c | 67 ++++++++++++++++++-------------
+ 1 file changed, 39 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
-index 25d9b32f5701..09ae218315d7 100644
---- a/drivers/net/can/spi/hi311x.c
-+++ b/drivers/net/can/spi/hi311x.c
-@@ -696,27 +696,38 @@ static irqreturn_t hi3110_can_ist(int irq, void *dev_id)
- 			/* Check for protocol errors */
- 			if (eflag & HI3110_ERR_PROTOCOL_MASK) {
- 				skb = alloc_can_err_skb(net, &cf);
--				if (!skb)
--					break;
-+				if (skb)
-+					cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
+diff --git a/drivers/net/can/sja1000/sja1000.c b/drivers/net/can/sja1000/sja1000.c
+index ddb3247948ad..4d245857ef1c 100644
+--- a/drivers/net/can/sja1000/sja1000.c
++++ b/drivers/net/can/sja1000/sja1000.c
+@@ -416,8 +416,6 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 	int ret = 0;
  
--				cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
- 				priv->can.can_stats.bus_error++;
--				priv->net->stats.rx_errors++;
--				if (eflag & HI3110_ERR_BITERR)
--					cf->data[2] |= CAN_ERR_PROT_BIT;
--				else if (eflag & HI3110_ERR_FRMERR)
--					cf->data[2] |= CAN_ERR_PROT_FORM;
--				else if (eflag & HI3110_ERR_STUFERR)
--					cf->data[2] |= CAN_ERR_PROT_STUFF;
--				else if (eflag & HI3110_ERR_CRCERR)
--					cf->data[3] |= CAN_ERR_PROT_LOC_CRC_SEQ;
--				else if (eflag & HI3110_ERR_ACKERR)
--					cf->data[3] |= CAN_ERR_PROT_LOC_ACK;
--
--				cf->data[6] = hi3110_read(spi, HI3110_READ_TEC);
--				cf->data[7] = hi3110_read(spi, HI3110_READ_REC);
-+				if (eflag & HI3110_ERR_BITERR) {
-+					priv->net->stats.tx_errors++;
-+					if (skb)
-+						cf->data[2] |= CAN_ERR_PROT_BIT;
-+				} else if (eflag & HI3110_ERR_FRMERR) {
-+					priv->net->stats.rx_errors++;
-+					if (skb)
-+						cf->data[2] |= CAN_ERR_PROT_FORM;
-+				} else if (eflag & HI3110_ERR_STUFERR) {
-+					priv->net->stats.rx_errors++;
-+					if (skb)
-+						cf->data[2] |= CAN_ERR_PROT_STUFF;
-+				} else if (eflag & HI3110_ERR_CRCERR) {
-+					priv->net->stats.rx_errors++;
-+					if (skb)
-+						cf->data[3] |= CAN_ERR_PROT_LOC_CRC_SEQ;
-+				} else if (eflag & HI3110_ERR_ACKERR) {
-+					priv->net->stats.tx_errors++;
-+					if (skb)
-+						cf->data[3] |= CAN_ERR_PROT_LOC_ACK;
-+				}
+ 	skb = alloc_can_err_skb(dev, &cf);
+-	if (skb == NULL)
+-		return -ENOMEM;
+ 
+ 	txerr = priv->read_reg(priv, SJA1000_TXERR);
+ 	rxerr = priv->read_reg(priv, SJA1000_RXERR);
+@@ -425,8 +423,11 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 	if (isrc & IRQ_DOI) {
+ 		/* data overrun interrupt */
+ 		netdev_dbg(dev, "data overrun interrupt\n");
+-		cf->can_id |= CAN_ERR_CRTL;
+-		cf->data[1] = CAN_ERR_CRTL_RX_OVERFLOW;
++		if (skb) {
++			cf->can_id |= CAN_ERR_CRTL;
++			cf->data[1] = CAN_ERR_CRTL_RX_OVERFLOW;
++		}
 +
- 				netdev_dbg(priv->net, "Bus Error\n");
--				netif_rx(skb);
-+				if (skb) {
-+					cf->data[6] = hi3110_read(spi, HI3110_READ_TEC);
-+					cf->data[7] = hi3110_read(spi, HI3110_READ_REC);
-+					netif_rx(skb);
-+				}
- 			}
- 		}
+ 		stats->rx_over_errors++;
+ 		stats->rx_errors++;
+ 		sja1000_write_cmdreg(priv, CMD_CDO);	/* clear bit */
+@@ -452,7 +453,7 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 		else
+ 			state = CAN_STATE_ERROR_ACTIVE;
+ 	}
+-	if (state != CAN_STATE_BUS_OFF) {
++	if (state != CAN_STATE_BUS_OFF && skb) {
+ 		cf->can_id |= CAN_ERR_CNT;
+ 		cf->data[6] = txerr;
+ 		cf->data[7] = rxerr;
+@@ -460,33 +461,38 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 	if (isrc & IRQ_BEI) {
+ 		/* bus error interrupt */
+ 		priv->can.can_stats.bus_error++;
+-		stats->rx_errors++;
  
+ 		ecc = priv->read_reg(priv, SJA1000_ECC);
++		if (skb) {
++			cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
+ 
+-		cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
+-
+-		/* set error type */
+-		switch (ecc & ECC_MASK) {
+-		case ECC_BIT:
+-			cf->data[2] |= CAN_ERR_PROT_BIT;
+-			break;
+-		case ECC_FORM:
+-			cf->data[2] |= CAN_ERR_PROT_FORM;
+-			break;
+-		case ECC_STUFF:
+-			cf->data[2] |= CAN_ERR_PROT_STUFF;
+-			break;
+-		default:
+-			break;
+-		}
++			/* set error type */
++			switch (ecc & ECC_MASK) {
++			case ECC_BIT:
++				cf->data[2] |= CAN_ERR_PROT_BIT;
++				break;
++			case ECC_FORM:
++				cf->data[2] |= CAN_ERR_PROT_FORM;
++				break;
++			case ECC_STUFF:
++				cf->data[2] |= CAN_ERR_PROT_STUFF;
++				break;
++			default:
++				break;
++			}
+ 
+-		/* set error location */
+-		cf->data[3] = ecc & ECC_SEG;
++			/* set error location */
++			cf->data[3] = ecc & ECC_SEG;
++		}
+ 
+ 		/* Error occurred during transmission? */
+-		if ((ecc & ECC_DIR) == 0)
+-			cf->data[2] |= CAN_ERR_PROT_TX;
++		if ((ecc & ECC_DIR) == 0) {
++			stats->tx_errors++;
++			if (skb)
++				cf->data[2] |= CAN_ERR_PROT_TX;
++		} else {
++			stats->rx_errors++;
++		}
+ 	}
+ 	if (isrc & IRQ_EPI) {
+ 		/* error passive interrupt */
+@@ -502,8 +508,10 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 		netdev_dbg(dev, "arbitration lost interrupt\n");
+ 		alc = priv->read_reg(priv, SJA1000_ALC);
+ 		priv->can.can_stats.arbitration_lost++;
+-		cf->can_id |= CAN_ERR_LOSTARB;
+-		cf->data[0] = alc & 0x1f;
++		if (skb) {
++			cf->can_id |= CAN_ERR_LOSTARB;
++			cf->data[0] = alc & 0x1f;
++		}
+ 	}
+ 
+ 	if (state != priv->can.state) {
+@@ -516,6 +524,9 @@ static int sja1000_err(struct net_device *dev, uint8_t isrc, uint8_t status)
+ 			can_bus_off(dev);
+ 	}
+ 
++	if (!skb)
++		return -ENOMEM;
++
+ 	netif_rx(skb);
+ 
+ 	return ret;
 -- 
 2.43.0
 
