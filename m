@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-418861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6CF9D6670
-	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:48:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436E216111D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:48:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E3C18C920;
-	Fri, 22 Nov 2024 23:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vzii+MXZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FD69D6672
+	for <lists+linux-kernel@lfdr.de>; Sat, 23 Nov 2024 00:54:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B71208A9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 23:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC66BB2175D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:54:35 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5B018EFC6;
+	Fri, 22 Nov 2024 23:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="XZC/tRi4"
+Received: from sonic310-15.consmr.mail.bf2.yahoo.com (sonic310-15.consmr.mail.bf2.yahoo.com [74.6.135.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA16188580
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 23:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.125
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732319302; cv=none; b=l3hjfO/Gy6oU3005gU9q5lm79Qi5/c3SQ3exs642C6hKBR1Mci/lTzXKLu4QrGygHoVKjQLBgloadVMxLyeBjU8TZ6zvbRXskEickgBNBv82lJnlSCD1cfLJskiE2XcrZbdO1JfqxsbaNOybC3RPUCe7cjHJoFToGwc4WIZMiIo=
+	t=1732319669; cv=none; b=KnJeFwrtrp/JBZVo94s1WOnjYW78eUaYyUim3K1bSRpyFoo+ukbale7ThOmeHiat7ZaUNTSixsERHm7DS9Gzp/yWVq5K75Lsf2P8OlXR8mIgCyv7u9J5zoL2Hs+W+HWowfo3EiCBTl8z57O1asHiFMfwAh3GOj5+cws0fRS0QWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732319302; c=relaxed/simple;
-	bh=IRBJs9tzj/+j3tOOYYucW6hkcUxHD7siYOm5ePvU748=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h0A1At/tmwTTXkRiX5TbVKskyCe/f1S2lrj/8rjSOccDEO6Wh6h5bCCUKt/gczKFAHY5xnvWO/o9UieeNo7pWqwylr4P/9U44qKU3d2XH7XWvHSSXmz06hTRtg07PRfvDrWbjItYbxnTjcFI5OU7Nd39aygjLrt/1drdK9u49hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vzii+MXZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49298C4CECE;
-	Fri, 22 Nov 2024 23:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732319302;
-	bh=IRBJs9tzj/+j3tOOYYucW6hkcUxHD7siYOm5ePvU748=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Vzii+MXZFTrx4N88lBp/DO9KCzr4+GLgG7lOsTuiWeB/8+k284VNvDwXbLBIpLmeo
-	 zm98sHSy9ggbQXhfuXsq79HVhsVdMZaGrg42TfaR/sjLKZmy+pN0I7Xn4Jjw9QNpa5
-	 Sf348/VVRr8OSf1dE3vmyV415Ww5uD9+9T4FUCoX0n2sB7I6oTgYz+PxDNSRTJ7dWW
-	 O8LWULEVW1dAZAKWoucYYS48x5x5ACgvPQYyAT9p/ZmuC4rX0D2invaBxZeNYKTqVi
-	 nvT+OQ6uu19RePN7WJwdPftvlu+dEXsnxBa3jm68bCWtCrL+hMrk2t3y5pYgKbqtvC
-	 UTsPMl1OJpjYQ==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Anthony Mallet <anthony.mallet@laas.fr>
-Subject: [PATCH] posix-timers: Target group sigqueue to current task only if not exiting
-Date: Sat, 23 Nov 2024 00:48:11 +0100
-Message-ID: <20241122234811.60455-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1732319669; c=relaxed/simple;
+	bh=Px45QG5wMBqsx4SLxUDpTdTfuK5HQkGCkKpsSNEkaUA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NiAB7kP6dW4nc/YHejMPoqntnuvG4UZQmPIn0NqMlMAeOAHFVw/JsoJlh7GVY0aq5QjUZqF4IXq3A4Vq0d6SSpSjGb4wYVZOONESayYz4exHjdYP68hFBX4cqrpKYyaPCn+v3oQPFlZClpZT6fobJGld4iXONJXFc8A5wrNFgIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=XZC/tRi4; arc=none smtp.client-ip=74.6.135.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1732319660; bh=XcebQec07jzXTrfAZrzNgm8590Jm3hrgaHHTMTCk89Q=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=XZC/tRi4t09ITL1yQgQNVgm7bS2CHeL4WpAYAWdi4nLmvkjYudsZHtxlbOB6Uc/pfBempfsnigy+LZznig7pjIqFhNE5MDoXDcS67c0Qbu6LMUbc+kCjfhKTlNyiJfAsM7WNa8kjbnexbi4FF4Px8gG0ddvsu82jq+XCPef/EINK+ZO26zvPr4kp7q3QZxZT93x2KThCAcjwyh2nNq+nKDVq5gUi9z7JIP0BBz8yJL2BT2QeB3ei6UzDF9xFI+JH0b5ETVrWeKrHAfNj04V8StEK7gChYVkepJaZRjtf6FDGZ26pMRtdtlCo9JrkvbKljcK8EqMaqFI8vyr0crQevQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732319660; bh=X5/068k9a7Io1grIvOcTalFLcllga5dcqIVD3ohnbKx=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=tY2SijnqEOHPWwUYUAuw1X8iY2zhfejeAuNskkGGZzcDOP1sjKWZOlA86n/hGte1QRoKXGXxJXBbH0LFTcR+BHQa+yZP2IQ8NN+hwjRewMoyKEVrA8MfS/dfKO6A8idk8Fhw+gLkSt1L9FSEB1oIha5ZrV/IR02yyP0fo4VjdPpqx0IWvgayI/xKL9rsdd1ggHUzsjr1IohZfnoTtIKiz13JsxH5NfCRF32dAf8uZ9UyXoBPSUYGYJMHsGXyiO8oYSODs8MzNxe/PvE9gURTSQbwe1qgV5/+Fjt4bRcWaag0jRQvI4MfqEwuf72b5epQ0WEshS8+ZjK+bxb0A6kPNQ==
+X-YMail-OSG: yi9awj0VM1nyy_7ywC5wCXozf9vWpwY2nlSjsz8nzVsoiaukq6iCBzr5LEedNrN
+ z055cdqB0bfa9G7ecbt_TWIxRG8hadwZkhApCeikmWV8GLjp91gCijVWK5vE7Elcc1gV8vmgmQgK
+ m6vVwZ3.s1oZPhj3mnC6dut6H3DprMr.0Vq6TMEbtD3IOWMM9q2yUlgmPFZQUsSt3ahHv5BSU2Vt
+ Pkz6zyXz0MCwv3qCE4gQa_KrxoJF4.47xkZg32xKLrxEtIQcN5n06pN85AhA26GQQkRWJHrCw5Kp
+ WTJ5y6e2XNilxp_mhYDj5LdLJGJjgka05En5HQ2Q7nnkyNqFUGaoJZinoPMm8G9Mb8DCUXYAFBB.
+ To5MMGGMYbuyDR7y6w8l0p_wkR_kmG5ROQmsg0f8CrtuETNIPdmYBkIOnyHz9hkpR3LTZGPUQlKE
+ Igq8H3GaPb7NUZ5_fSXeb9RXIFwhgQkK9AX3X29awRypxLL6LfljiS8W7UojsDde3pu2bpB26LcO
+ bQPXvBqoOFdvbPtXMCDsFGS.J761yxw_LO6.KKKZTp7ha1QM2PXK0GSf5fj5Yl9Tod7u9Cg3PB8L
+ ElYPjaMC45kK7gXyFfD2siofq4j7lPzJabLMnurvxtGAJFW7Y33k9j3hLE7WTicWzK2ivCY0AU2z
+ aCGON1HDrZ0KgQdj9rmw7yXHS_RgiPwIS.EnKQWpEc3JZTNtXZ0HHHcJsErrFw_FBrEluTkaRSue
+ UnVyN9r7ZogweQvkU7ZpWEfpTxiW3fxRw_26tnKu4ZqH0726QCcCotu4_NaTxhHHn79iYkjCRDI2
+ 7ErKxvw.JM6z0AZ_E9r8R.mj0ZOeaY_opBYTrVFiLpJ9Ih2kMP_vufnXxFDWpnK9qHTCh4X50Sns
+ EOBTtjbyICpZpgU4g6aI1ZN024wUO6S4yUM6C3TBpBhQVeu8e_gjF.0jLuYYNPCdZEhqF52j9AAS
+ QeInk2ba_VcLzCN5b560oaxOHmJ3LhpjFyI5Sz3_IewMxnmMPE2sUeDtjNv2DtuHPa2Mfm9uYIdP
+ D4ajVEDWLYLgF1nMNoBizFeh6xUIHZHNoaHhErdNJJFy6PBzD0A8WoomO4HAhk17mTiNk1IKX9L8
+ zd8YL7E7C7R8IIHE7TfgLHA.cE.hRaIlm8GV4LLbNxhjCaxR53ZmNLQ2Om7406tNNiO235UXNdPv
+ gSolpn8y0HkEZ9D0B6pgaTf7MqiMlucLax.ifBTz0tC9g9K.lIAQjgR7zvQaD20_5DG9aQi9yYLU
+ GZ1nNXe.Q1d.lhZNu2fgzX2_Cf8ybJ2yIR23KixNZxcPlGXRDrP2zXmcylAn4VPe9ebuqvovDSOA
+ 56VeZyfxVoENTBvz5VA0ZoTSNzXaOj.czPBbxPUxdPdR.27nGRJUkeS9u2HbnBjuPVn7k3Qp.8Qv
+ .BwLCYdjdiwmQE0FqK4.lk1z9RmA8pM_oUfk2MdZs.QH1ldLqq_aTk2ApbtzTvH9VmBHhorFTuN8
+ vA.psnuY4QLdFrqZzMcC24wqfdL_BzwBy1YdveOiGeDOUHte8UB7n8WeYURZPBJHDYDFJDBtvOXM
+ 4FKGqwKEeFWqsZ_k1o5pg1_a.qrBJdBOvkBpQM1r2ylD5ZzLrgdsU4SYNDU8bhi8jDCO8rvXh0GT
+ 7_TEyNI2xMVZqZ7cFn3Fhiq3.e5fCCCmaPnqyiaEzvE91a2V2znCKYikNKXTCdfcPigSd0u7GoBS
+ jT7Mxd0n.rMhwQEDiArLbn4Uw9587tvAcuR.ZrPep9vpdAJOWEsB4z3k326lvG.B2Lr4Mt_EJZb6
+ 6jEiayAdROMZ7.zD5KxGGIiQjw83j6YoUVC6FE_KQ23EFthjXoIs022FriQ1laGnIoeaptEr2HiY
+ JWYckmnFR1CRxFL0GChUuiTi6F.LZyWRYRlbq.6dh4bVhtBNZp2HTHcOwuhVeiw3mEb41n1HAl15
+ uB0yuzAhmi_AutUzr3TyHb_Eisq25crcIRQXKiOx3yUqSt8MAvhOtyPY_nHwuD3nVMnPBd25Xte4
+ X6zukuZCkGXzPit0GHRQFxDCwXqtCtS8KkTJN0wFeFbqHqncwW_Cx5x6HTBYc.XgAKgD2SScwxAq
+ 3TuibtqnlJGyr5ipMVbOQ1H4ENQslHDEAXFDOYbZ20k90F0QCap1abAsfmdCvnLlvi4WhQi6SSbd
+ GXdf9S28WAIV0QexnipbAHV4bBxEkGb8VKKX3jU6n7L1MRDzo_6geP2066Qzy2zGAPu.RnapB_gt
+ RnRKnROn6CnG0dP9y_OdGalsnowHM8sTn.83jo0k45RiuWAbHLZv3wR.CgyZM_V0csDwlfxEmxMh
+ 3xogF88WpUvWkH9oLeA--
+X-Sonic-MF: <bluescreen_avenger@verizon.net>
+X-Sonic-ID: 9ebfe8ec-9e56-4838-89cf-aac4788eb787
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Fri, 22 Nov 2024 23:54:20 +0000
+Received: by hermes--production-bf1-66bb576cbb-dxqpr (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 52fa6f45a421e925c7017fe74ca5f885;
+          Fri, 22 Nov 2024 23:54:19 +0000 (UTC)
+From: nerdopolis <bluescreen_avenger@verizon.net>
+To: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ Gil Pedersen <gpdev@gpost.dk>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH 0/1] Fix to allow more correct isatty()
+Date: Fri, 22 Nov 2024 18:54:17 -0500
+Message-ID: <16989967.geO5KgaWL5@nerdopolis2>
+In-Reply-To: <20241121111506.4717-1-gpdev@gpost.dk>
+References: <20241121111506.4717-1-gpdev@gpost.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-A sigqueue belonging to a posix timer, which target is not a specific
-thread but a whole thread group, is preferrably targeted to the current
-task if it is part of that thread group.
+On Thursday, November 21, 2024 6:12:53 AM EST Gil Pedersen wrote:
+> This patch comes from an issue discovered in systemd, where it can fail to
+> restore a text TTY session after a GUI session is stopped when compiled
+> with musl libc.
+> 
+> The specific systemd integration issue is currently resolved in the musl
+> master branch by closer aligning the implementation with glibc, but the
+> underlying isatty() implementation is still flawed since it can return 0
+> (false) for something that is definitely a TTY. Essentially both musl
+> and glibc give up correctly handling this case on Linux due to
+> inadequate/buggy kernel APIs.
+> 
+> Thus I am proposing this patch as a solution to fix the kernel APIs. An
+> alternative fix could be to add a new IOCTL to specifically handle this,
+> but that seems overkill.
+> 
+This is pretty cool as it fixes the /dev/console-is-a-disconnected-/dev/ttyS0
+issue I found this year
+https://github.com/systemd/systemd/pull/33690
+and
 
-However nothing prevents a posix timer event from queueing such a
-sigqueue from a reaped yet running task. The interruptible code space
-between exit_notify() and the final call to schedule() is enough for
-posix_timer_fn() hrtimer to fire.
+https://lore.kernel.org/all/2669238.7s5MMGUR32@nerdopolis2/
+namely on vt-less kernels that now have /dev/console as /dev/ttyS0 instead of
+/dev/tty0 or a virtual device.
 
-If that happens while the current task is part of the thread group
-target, it is proposed to handle it but since its sighand pointer may
-have been cleared already, the sigqueue is dropped even if there are
-other tasks running within the group that could handle it.
 
-As a result posix timers with thread group wide target may miss signals
-when some of their threads are exiting.
+So yeah, when you have hardware and you've been using vt-enabled kernels
+on it for years (where your /dev/ttyS0 doesn't even have an rs232 port, let
+alone connected to anything), and then when you upgrade to a vt-less kernel,
+sometime in the future, because of systemd's isatty() check failing, and
+refusing to write to /dev/console, Plymouth's new log display facility in turn
+gets far fewer logs from systemd, because of the ioctl failure in isatty()
 
-Fix this with verifying that the current task hasn't been through
-exit_notify() before proposing it as a preferred target so as to ensure
-that its sighand is still here and stable.
 
-complete_signal() might still reconsider the choice and find a better
-target within the group if current has passed retarget_shared_pending()
-already.
+MY idea for this solution was that kernels turning off CONFIG_VT_CONSOLE could
+then turn on a CONFIG_NULL_TTY_CONSOLE that would get selected at the same time
+the VT console would have, so that if distros choose to do so, the virtual
+/dev/ttynull device to always work for User Space. (that way kernels that never
+had CONFIG_VT_CONSOLE turned on won't have a behavior change as well)
 
-Reported-by: Anthony Mallet <anthony.mallet@laas.fr>
-Fixes: bcb7ee79029d ("posix-timers: Prefer delivery of signals to the current thread")
-Suggested-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
----
- kernel/signal.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 10b464b9d91f..7cdfb25d5078 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -1958,14 +1958,15 @@ static void posixtimer_queue_sigqueue(struct sigqueue *q, struct task_struct *t,
-  *
-  * Where type is not PIDTYPE_PID, signals must be delivered to the
-  * process. In this case, prefer to deliver to current if it is in
-- * the same thread group as the target process, which avoids
-- * unnecessarily waking up a potentially idle task.
-+ * the same thread group as the target process and its sighand is
-+ * stable, which avoids unnecessarily waking up a potentially idle task.
-  */
- static inline struct task_struct *posixtimer_get_target(struct k_itimer *tmr)
- {
- 	struct task_struct *t = pid_task(tmr->it_pid, tmr->it_pid_type);
- 
--	if (t && tmr->it_pid_type != PIDTYPE_PID && same_thread_group(t, current))
-+	if (t && tmr->it_pid_type != PIDTYPE_PID &&
-+	    same_thread_group(t, current) && !current->exit_state)
- 		t = current;
- 	return t;
- }
--- 
-2.46.0
+(the one benefit to my idea is that Plymouth goes into text mode logging when
+the console device is /dev/ttyS0, so Desktop distros would need to add a new
+"plymouth.graphical" to their grub commands to get the splash to work again,
+however when the console device is /dev/ttynull it automatically assumes that
+the user wants a splash screen.) This is more specific to Plymouth though
+
+
+However testing this patch and it also works, and this won't need a new
+configuration change.
+> Link: https://github.com/systemd/systemd/pull/34039
+> Link: https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/70711
+> Link: https://www.openwall.com/lists/musl/2024/08/20/2
+> Link: https://git.musl-libc.org/cgit/musl/commit/src/unistd/isatty.c?id=c94a0c16f08894ce3be6dafb0fe80baa77a6ff2a
+> Link: https://sourceware.org/bugzilla/show_bug.cgi?id=32103
+> 
+> Gil Pedersen (1):
+>   tty: respond to TIOCGWINSZ when hung
+> 
+>  drivers/tty/tty_io.c | 29 ++++++++++++++++++++++-------
+>  1 file changed, 22 insertions(+), 7 deletions(-)
+> 
+> 
+
+
+
 
 
