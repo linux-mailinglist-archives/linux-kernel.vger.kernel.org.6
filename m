@@ -1,160 +1,107 @@
-Return-Path: <linux-kernel+bounces-418367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532909D60E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:53:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B9409D60DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:52:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AEE21F21C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619252814C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA6713D53B;
-	Fri, 22 Nov 2024 14:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F6D13959D;
+	Fri, 22 Nov 2024 14:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="LzCLfG+G"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XvSO/s0E"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036113B298;
-	Fri, 22 Nov 2024 14:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7025E182D2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732287181; cv=none; b=K0EAzOQ6Mmg2VuZJXMhysyX/68RfXZEy0IWltVV8mNZJIGqOqbca7X4fCsFyR073exVtdYIsSNYuXSLgHm2fUOvX/F+REepNMG/BFWIgh+u6IpRjG3YwuqQeeIbGJwshf51FjpOS/XG1UcSyXPfulwGMLN3z0KymUeF1BP7645k=
+	t=1732287152; cv=none; b=GqkwT6Acywd2P88AIECAVZDLtnGgPflI7/KhTIfbM4ISQl2rQPkDkAoz8eJLlks6TuTrI7Gm0BLnUg48XNB+QGUry1woqNHnWW1EUtN9Kj3Ta2E8f6EEXAa91SEU6NeLiN/kJE/jFQex52QQAzeS5sLNHcZSEdF+zOyDVxkaojM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732287181; c=relaxed/simple;
-	bh=aFi5zF3dMYrTZJtFjbLKmRl7u3piNrt0b5TZjGxN6qU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uk3tdqeDUwy8HhQ9XhRiCsD3oIxUhfNSghAoYhsoAfG9pp6eZ5vYcD24V7SSVurUN8k/HIJmvx7DRT/2dOLPUalByfTvEju96c34gWYFDpvJe8AcdsfOKOaawAVGh3ud1MnXTc6bEwU0rylMPcjgvhL112jcN1H9cJ/bs6av+Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=LzCLfG+G; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Cc:To:In-Reply-To:References:Message-Id:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From:Sender:
-	Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender
-	:Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=USN4L66UJITCUR+qW8nXpFIAvm6RhtpdO923SmyUnvI=; b=LzCLfG+GXRj0txFYscxL9W73iG
-	V0C3xgDYiiqttu+iINNLYe4Z6IGS2SfooBSdm6aBO4RciEWAiUvriJQQywI4Uoq70+1JBJJ/6/qMn
-	o+LH2/8PssXVn3odg6pa55GxNU1Bmy0QX1AHM68Di/KYHrHUOCVJ6H8j/t3oGV+kpek8Ni+4ltb5P
-	8nzD7R5A9gtbxuiDjhIphGU314bvpr1oIgdexFyv3+fAz2J3SFMrbHPft2f38kjW4vI6YySCxtJ1P
-	AhzpGibl8gHVc7kwVZYRzcl7b7rOZCyg0h0n1lzvz7asguwxhQy2YWyNwmu3UtJnQmigXd2GFHS3/
-	pkehmVFg==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sean@geanix.com>)
-	id 1tEV1W-000KIH-LG; Fri, 22 Nov 2024 15:52:42 +0100
-Received: from [185.17.218.86] (helo=zen.localdomain)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <sean@geanix.com>)
-	id 1tEV1W-000HFz-1T;
-	Fri, 22 Nov 2024 15:52:42 +0100
-From: Sean Nyekjaer <sean@geanix.com>
-Date: Fri, 22 Nov 2024 15:52:24 +0100
-Subject: [PATCH can-next v3 3/3] can: m_can: call deinit/init callback when
- going into suspend/resume
+	s=arc-20240116; t=1732287152; c=relaxed/simple;
+	bh=H4ZH4hse3qfhm3J5KjDY1bc57PZTgGnGOXIlR6oGR3g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j6Zt0YnJ38COZrXfql1yiTcmNfXzWGrWvCMeCSUzb3CqNXPSBBfAHWusQRdPA3LppFYID46JxHtdLiO1azKZv3DIDCdBG1e9uQrIVh1i2KIDVwYE+BeP0p4ZqOMzDoA6bvrm/Z+XqRlz0Jtjvqlxq6QZtauior/uPc0llZyZGxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XvSO/s0E; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-431688d5127so18096485e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:52:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1732287148; x=1732891948; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H4ZH4hse3qfhm3J5KjDY1bc57PZTgGnGOXIlR6oGR3g=;
+        b=XvSO/s0EPlECsMWkGQ016IS5liDiLHjDijux0bhHXPlmYfoT48u70KTid1ylKav4fD
+         ZTeV9ycSog/w8X3wsx/DVPVL+f7/FDzGZXopb5GCt1AdB/CTDvNYhpnwTWcNnc8V97QH
+         cEhwWoaBCs6OZ0/SRFM1wvuEXxTux+tqlArjN+Fpfw3Z3q1RCBMXrexGlW8eIrCT7juN
+         8O4Ae7fV0Re6BMaVoTPQZl/Hc6U5Hl37W0D0lEK5kDvjQkxOsq4qOdkASUpnE+2ZactS
+         jWpSNfZbL8QfnPhg7EXVYF/cqlAFcDcJjL+wt9jm9taXMtw9+Tb8zZ9jt9gVC5immPQp
+         XXZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732287148; x=1732891948;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H4ZH4hse3qfhm3J5KjDY1bc57PZTgGnGOXIlR6oGR3g=;
+        b=hq6NUl02dHFpkFB1o98BytYuNErFLNLjBFnh++rIWv1BQxX65Ach5Og7KJUameEh35
+         EwEp0VX3e1vjPcGDrOnfeQN7HS8W1wGpvTcCw4JYwJb0SyFbVRWEBu56hD5BRyuzQVWy
+         DyXZKBe9iyS291DdsgfTX5nncm7DP421ZekhSCqriBQVYyRUkAd0xA/JnhxmOGQE/yIt
+         3PSvoM0PHQXyfd2lnAf0DVHRWDQPeILNHVv/2CHwTQ0LAbCqqtCdqsmrNNxFNVh+dTpK
+         0zZ7uLO4RdsCiMzU/xLRT0VXeWd4/0m/Ph9CpGcSP2PPxHtUiUfHu+GLtNphE3g9b6Tk
+         FQSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeZUJE7RG7Q4gFW5gSo8Y9EruAToWG6QRPMIEKuQ7AGthV3c3IdoIwP/S+EFrbbukAiJKvA856xcwoo18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfmW/XjPthN3b19HC3EfjsC3YXm6vIYoU2mdaGidnkUsnKVeMf
+	Ib9J19325TNuTkB39hnv+GDVLb3T/aG+MtNP2La28yy5LDp5S7Df9dTea1FESN0=
+X-Gm-Gg: ASbGncvSW7fJG9MOO7Djr7zjPplnmIlx50+5oUqqdAEtya92OxejGnG/WzY0j3qBzXj
+	l/Ip9tYVxwcLsJTJ0pAkJYgDhEz+n4O8ET8ewI9YhY7QJw1O9kmyRh9BzoUpQQsi4pxCFZp8HXb
+	fH4OcC9mrHp2jfTJSEH3Udsb8PSj1uK4tHhQ7FloNnJ4ZmBEeGHAa3Zfpm+q2eVcpUd6682qD0A
+	h6zdZ14Z9HrK7dQToGlv85Kcr+iJ36/tFMPelAIID/w6N+wOV9v4YQvLQ==
+X-Google-Smtp-Source: AGHT+IHsjxLFgEV15mKQiBicElXEUDVmwQhGml7xxTkNfAnsEvktBECCBV9Of39mNkEwnuKWhKEvsw==
+X-Received: by 2002:a05:600c:34d2:b0:431:4f29:4a98 with SMTP id 5b1f17b1804b1-433ce4c2319mr24740675e9.20.1732287148506;
+        Fri, 22 Nov 2024 06:52:28 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432f642f15esm117534725e9.0.2024.11.22.06.52.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 06:52:27 -0800 (PST)
+Message-ID: <a326f5ab-f36a-4210-83ff-0f2ae9fa830d@tuxon.dev>
+Date: Fri, 22 Nov 2024 16:52:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-tcan-standby-v3-3-90bafaf5eccd@geanix.com>
-References: <20241122-tcan-standby-v3-0-90bafaf5eccd@geanix.com>
-In-Reply-To: <20241122-tcan-standby-v3-0-90bafaf5eccd@geanix.com>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sean Nyekjaer <sean@geanix.com>
-X-Mailer: b4 0.14.2
-X-Authenticated-Sender: sean@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27465/Fri Nov 22 10:41:26 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spi: atmel-quadspi: Fix register name in verbose logging
+ function
+Content-Language: en-US
+To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Mark Brown <broonie@kernel.org>,
+ linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+References: <20241122141302.2599636-1-csokas.bence@prolan.hu>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241122141302.2599636-1-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-m_can user like the tcan4x5x device, can go into standby mode.
-Low power RX mode is enabled to allow wake on can.
 
-Signed-off-by: Sean Nyekjaer <sean@geanix.com>
----
- drivers/net/can/m_can/m_can.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index e31ce973892a96f47d26d06464e0f6e2245550fd..777dfb23c6fa2052e9544d0808c0c4980e9c8b0f 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -2444,6 +2444,7 @@ int m_can_class_suspend(struct device *dev)
- {
- 	struct m_can_classdev *cdev = dev_get_drvdata(dev);
- 	struct net_device *ndev = cdev->net;
-+	int ret = 0;
- 
- 	if (netif_running(ndev)) {
- 		netif_stop_queue(ndev);
-@@ -2456,6 +2457,9 @@ int m_can_class_suspend(struct device *dev)
- 		if (cdev->pm_wake_source) {
- 			hrtimer_cancel(&cdev->hrtimer);
- 			m_can_write(cdev, M_CAN_IE, IR_RF0N);
-+
-+			if (cdev->ops->deinit)
-+				ret = cdev->ops->deinit(cdev);
- 		} else {
- 			m_can_stop(ndev);
- 		}
-@@ -2467,7 +2471,7 @@ int m_can_class_suspend(struct device *dev)
- 
- 	cdev->can.state = CAN_STATE_SLEEPING;
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(m_can_class_suspend);
- 
-@@ -2475,14 +2479,13 @@ int m_can_class_resume(struct device *dev)
- {
- 	struct m_can_classdev *cdev = dev_get_drvdata(dev);
- 	struct net_device *ndev = cdev->net;
-+	int ret = 0;
- 
- 	pinctrl_pm_select_default_state(dev);
- 
- 	cdev->can.state = CAN_STATE_ERROR_ACTIVE;
- 
- 	if (netif_running(ndev)) {
--		int ret;
--
- 		ret = m_can_clk_start(cdev);
- 		if (ret)
- 			return ret;
-@@ -2495,6 +2498,10 @@ int m_can_class_resume(struct device *dev)
- 			 * again.
- 			 */
- 			cdev->active_interrupts |= IR_RF0N | IR_TEFN;
-+
-+			if (cdev->ops->init)
-+				ret = cdev->ops->init(cdev);
-+
- 			m_can_write(cdev, M_CAN_IE, cdev->active_interrupts);
- 		} else {
- 			ret  = m_can_start(ndev);
-@@ -2508,7 +2515,7 @@ int m_can_class_resume(struct device *dev)
- 		netif_start_queue(ndev);
- 	}
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(m_can_class_resume);
- 
+On 22.11.2024 16:13, Csókás, Bence wrote:
+> `atmel_qspi_reg_name()` is used for pretty-printing register offsets
+> for verbose logging of register accesses. However, due to a typo
+> (likely a copy-paste error), QSPI_RD's offset prnts as "MR", the
 
--- 
-2.46.2
+s/prnts/prints ?
 
+> name of the previous register. Fix this typo.
 
