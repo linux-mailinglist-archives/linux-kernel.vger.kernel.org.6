@@ -1,109 +1,196 @@
-Return-Path: <linux-kernel+bounces-417821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8CC9D596D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:35:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A29C9D596F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:40:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4541F229EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:35:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDAF0281D8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072E6165EE3;
-	Fri, 22 Nov 2024 06:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6084815ADA6;
+	Fri, 22 Nov 2024 06:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="l8jzxS4r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Tw9hikfl"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013054.outbound.protection.outlook.com [52.101.67.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BA015ADA6
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732257314; cv=none; b=Kp6KaSm3k+t0hohH7JJP7mnkS+kqNGB4dWYr2/cQ80cHwZqLJ6EN6mZ8+aFuwK9tIpG45F97yFQ5GF4aM0JJjKBnrqQXanHmoh06bT7N0OqlmcYbrJARWt5ULTiB79NjmOzqVi5K4h0m2N1xelOz5QJHdEV74oBBeKSyXT0cLYw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732257314; c=relaxed/simple;
-	bh=Dc35X1AynRH7806Gnedjy6IT8gdRrWZm1YnMEZPAbx0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=f2ahhiA5KGw0pyQIL8iQUauqp4fGUyHm5tlIVXXrLsTlLkJ9o2E02xubGLYXYnOdjR8J1gFwlY+UiOZg4CcNlrDGu24zOWsMeukh0g5BSIrrqX423U8f7a5I7jj7UTkW1qqRtjpHRBr2A5GLVhsFqsIx7/AsIB7Xt3al0GfGECU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=l8jzxS4r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747ECC4CECE;
-	Fri, 22 Nov 2024 06:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1732257313;
-	bh=Dc35X1AynRH7806Gnedjy6IT8gdRrWZm1YnMEZPAbx0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l8jzxS4rXh6l9+CCMiyLQ4F3ZYb/9W5O0EHQwZ4ZOyvxcq80ED1JJyKZUAkm6CaXY
-	 wg1USkZZe8joundRt6mKSTcm3SQD0z2mdRhekRm46t70o8zI0qnzQkOGAzwGGKPrKs
-	 HBW370FqZ6JG/AsNZvHaFDDyToL5cD8aW8ckuXuk=
-Date: Thu, 21 Nov 2024 22:35:09 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: oleg@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] get_task_exe_file: check PF_KTHREAD locklessly
-Message-Id: <20241121223509.a77731933dd7fb3e1728eacc@linux-foundation.org>
-In-Reply-To: <20241119143526.704986-1-mjguzik@gmail.com>
-References: <20241119143526.704986-1-mjguzik@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2232582
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732257594; cv=fail; b=NH5BHWoq7OBScP0SgUmId/ua9gkBOPtE9zj7v+Ih1aJl3UmTjeTjBxDxoUwieH+Kq7OQo9nJ92HC927wMZSXUYKpfwimvSNRRfQu8kJ0H7Xg2tmy5q6m+WnoeVFxa4yqzLL3vrNU5Put6JfVWXWwgFbQMTqhK/1Y3zYgPc7s/E0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732257594; c=relaxed/simple;
+	bh=ht3W+hz/2AqAIy8cqGzfyf/k9fbyIjAil+QRq2StQdc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=n78FTWb/FvHEc1vFVqJBeIq/aOemxOmJfyqmDC99ND0pzV/cQfnehqKVZLp6XwaHvnTUnSaC3DypxxPx9JX1MlV4R4ZkkYsJjmCeyuCAyM8BaNI1tXAi5+f9R1K14/huz0Q+Nd/XtTt25xAxowzKpfcz/uCHRW3OC+LHYvibyDE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Tw9hikfl; arc=fail smtp.client-ip=52.101.67.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MAaYf5s9ydAP5UcetJHH/1s6PCUMdqjFrV/zgyw9AFdniYKE/bk6fpZA2UDGeOGhEUWi7dVJQ7q56zwxF096szO2ikLPAyklgJjSI45bfpFsOFGx0oKcEZUS8gO4C+pK3rIyH2gvcH9l0LTHcFc8SNyHnPn2WItcHsLCLFdsNAlguHft5VaMqArht9x4mZI9BcydbpsJCWxRWvpvqJNY5ezhboEPAU2xdlhRv1dsWGGX6uYThRBoW0LRUDVAOQrv0lWL63jJK5OM3Pbu/qDdGwICggvzYJmk9eUy7/mzVnI7gjSHMhQ/Mvz8ewJJJTftgFPAorUhSrUtB+o1zXDzFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ht3W+hz/2AqAIy8cqGzfyf/k9fbyIjAil+QRq2StQdc=;
+ b=Mqqf2FaMXjECkNwkmZPFA1qJh2REVqAehQsbxgLPNA7mLPdg2IF+v/7XSz0PLmh9YVmXDbE9GkG3BzqT996TBW92NQxlOujof7eth9BArCsgP0OZe3Ubb3WV2mQkLsB+TRb5P8kZRN029YazSH5EEojG+9Zv1zkgLgJvG4h9JeVKqDmXEnYNU0pLbs06aC/uwnNCNagM+P94DOjXUK2AutiVYSk/cYSr2FnhE/CssQvNAEgOck/zr64K+q5j89gHSZVwbU3zwFZ7bc4TjbwrO8q4OyVHmPPyxKPNpNb9d1Kpt24Y47UiRikXLeMoBpOKVCGL2kZdj8kZ3iWvVyX5gA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ht3W+hz/2AqAIy8cqGzfyf/k9fbyIjAil+QRq2StQdc=;
+ b=Tw9hikflS+tare9QYQYm/mYt2o0s4pfVzMCzua92ExRG41KLqGROu3CfpEnOEG9mHOIrUhSPU5+3oJ2A9VsxjoWZ9v9fzxxoHkiT7mqFk5ZIn+2U9ZgBWwAnHD5fS8Qx8+8OGa1uoAm0VPJJGfaT4WTqSDYkxlJsP6c+zm7U48rWI5HlhXALSoP1pyGxNeywMAq3IfiDnLSJVCPbFAhJYbvBMQWzsvRHyoz/OmEsYX+bTSPDg8fxiM4/+hu3bb55jj4XnS6F553J3Jzh1t4jzhs4LP0Hq84VjaYTmiOnfTla4TycsGjlrtFBjsbk+EzVQqxtaRTwWeVGA5zwkhwBrQ==
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com (2603:10a6:102:2b6::15)
+ by AS1PR04MB9454.eurprd04.prod.outlook.com (2603:10a6:20b:4d9::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.17; Fri, 22 Nov
+ 2024 06:39:49 +0000
+Received: from PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87]) by PAXPR04MB9328.eurprd04.prod.outlook.com
+ ([fe80::367:d59:375:fb87%5]) with mapi id 15.20.8158.019; Fri, 22 Nov 2024
+ 06:39:49 +0000
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: Jason Wang <jasowang@redhat.com>, Yongji Xie <xieyongji@bytedance.com>
+CC: "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+	"mst@redhat.com" <mst@redhat.com>, "virtualization@lists.linux.dev"
+	<virtualization@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] vduse: relicense under GPL-2.0 OR BSD-3-Clause
+Thread-Topic: [PATCH] vduse: relicense under GPL-2.0 OR BSD-3-Clause
+Thread-Index: AQHbOlapd3MuNgvMf06RTiQM5NeBTrLCkRaAgABDw+A=
+Date: Fri, 22 Nov 2024 06:39:49 +0000
+Message-ID:
+ <PAXPR04MB9328FECAAF24B6731DCD15DA89232@PAXPR04MB9328.eurprd04.prod.outlook.com>
+References: <20241119074238.38299-1-xieyongji@bytedance.com>
+ <CACGkMEtzSKiMgEzZg3o4nugqqMt9DDXZKZ_LkfrbqpfVDQy4aQ@mail.gmail.com>
+In-Reply-To:
+ <CACGkMEtzSKiMgEzZg3o4nugqqMt9DDXZKZ_LkfrbqpfVDQy4aQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB9328:EE_|AS1PR04MB9454:EE_
+x-ms-office365-filtering-correlation-id: af5897fd-2751-4f01-f079-08dd0ac0765a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dmFFaWZrM2MxYnBPWEJVdFVENlVPVk9haXplWEVmWk5JaFZ3SWRUZWtnZmxB?=
+ =?utf-8?B?L3pQTTY2b3lad09QdjhGWDltY2ZmcE8zV3pUZ0VEY3BIUHlBOERkNGZKWkFx?=
+ =?utf-8?B?T3hVOUZnTDQyVXN1cWgraFp0VjZLOGJOTXQxdlhsbEtwMkcwblF5WDdqcmVh?=
+ =?utf-8?B?dlhJaTRCWkZoSU4wMHQxRGYxbGtXZ3hrLzNpdjJSQ1JmdU14T3lIRThmbFpw?=
+ =?utf-8?B?SmI4clR3Q1gvREcydnZhcVBhMnVVQWhKNlhRN0xYTU5RVmVsay9WdjFXVGJG?=
+ =?utf-8?B?dThhVWQ0VUhMeEsycTBGS01tMEk3VFpSb2prSkpsbjdid20zRTdkK2xNQmVr?=
+ =?utf-8?B?SHV2aTdSODU4UmUzYWNma3ZSa3k1RTlxWjE5T3gvRnErdlVIeWFnbk1UQXZ2?=
+ =?utf-8?B?VUpKM0FKSFJRVDIvYkYzVGlwWG96L20yQUo3cDFRV3g5UnRvQ0dMRkFWSGJF?=
+ =?utf-8?B?cUdqQ1lpL1JqS3U4QUlpSWV3WlFkMlp6QjRNZFpncjNSWCtpZWhmSHhwbzU0?=
+ =?utf-8?B?dWYrdjVLZTMwd0RERXdKRGtnaEg4ekZFNHhLS2p1bGNwVDlsc3ZqMk1lUVpH?=
+ =?utf-8?B?SE5HOFZXclAwbXZtWk5hbHZjN3VoK2lVTVpsdit0TlFpQi9qSkl4bDk2bTYw?=
+ =?utf-8?B?ZXlNMlovMXpjTzJKVWluaEpkcEJQcnVDRGpSYU1YNk0wQU5hRFA0ZUx3czBW?=
+ =?utf-8?B?eWVuS2FRSTdtamsvQ1JIcW1rZjNRdURXNzhMazhzeG5XdTNUUm9mWHlVUlVC?=
+ =?utf-8?B?ejR1eVBlN1drZ055dDdXb2VMVWdKVXpoNlgzSUZZUU0vUll4OU9BYkZURzF3?=
+ =?utf-8?B?c25vT3luWlFJZVcvYW51VE56NVZYZmVBZXJydWx0Y2ZpbkZuRk95RWRNcGIy?=
+ =?utf-8?B?ei9xdGRPNGRZcGxoVEJEZzFVY0pLUklGL2Rvc3QyY1lDQyt0aDM0c3RmSmtk?=
+ =?utf-8?B?TFNzK2o2dXJOZVJRcHljUU9DU1AyYUVsWHhSRit4WkNQTTVKeFp2S0dnNHNk?=
+ =?utf-8?B?UHRzY3ZCKzFzQWdIZ0lBMDNoUGp6bDc0VmdLc1NqbDdpcGdBakYybzB5Z2h3?=
+ =?utf-8?B?TnJoanhNRzhiZjNybE9keVI2WlV1eGl6eDFhVzhicEQveFhUM2UvOGg3aUZ1?=
+ =?utf-8?B?KzNBVDlpbWs5STA5L0JtTnNobEFoeU1mSHZGMVpGRFg0UWt4K0lTSXVJbGxE?=
+ =?utf-8?B?aTlZYVR3bzFEeFlzZlZ6d0ZNbkFuM1g3RzAwc09XUEdFVjJDdzZEZzhEcU9M?=
+ =?utf-8?B?TjJ4ZG0yTzFUdWxDRlZRTlRYWm0zeHVXSEV4dHYyMTR2TXJrRnM2TDdJeXZi?=
+ =?utf-8?B?ckJiT1haZExQVEtoSVR1czQxaElKcEhpQ3NaZFhFODgxNHI3Rk9GVFB5OWY5?=
+ =?utf-8?B?cnRlQkk1UUV1Qy95bjNLcVlQdnB2TjRQTm5DKy82aFQzTUxuM0tJaVVveUVM?=
+ =?utf-8?B?d0NzQ3JsZ1FDWFJkeXU1aWpQMExKZTk3NjJla1VxTDVnaUlEUVRxc3V3Mlh3?=
+ =?utf-8?B?NWhXVk1jMlRKdEpoczNHalVydWpJMUhDZ3MxU2NiYWlyUXNKOGI2TzNmQlFx?=
+ =?utf-8?B?YlVBa1owVEE2TmFuZHlzeWFnM014YmNwenRzSUhNWWk1WkVSanpWbkFFajZG?=
+ =?utf-8?B?aEdYSDMxcXlGSi9XVTFxczJBKzBYZU9nRE85YW44bmpBK0U1eWtENTZtbndh?=
+ =?utf-8?B?WUFDemZXNUlEYUp3NXVYdklSUlBicWdpSWM4WklITytUa1pXQ1p4dzNRV3Fs?=
+ =?utf-8?B?cUhlbnNyTjB0a3FZZnQ2YldCVTdXaEV2Y3k0VldGNkpFOER3Uk1tUU00Q0FS?=
+ =?utf-8?B?VWZTYnRkN3pvRFJIc3l1b0xkbGxkYnBqeEZKVkhSdU0vemhIaHZ3VEhmN1VB?=
+ =?utf-8?B?Z1VZMUpKY1YvbmhtVVV2TXM5ZFplS2V4cEhVdFZZVkNLUkE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9328.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ZjQyL3ZQZ2orRHNBTFFuQVVHNTc1WVd2V2R4NkVKV0FiZ0ZxTXlXMXNJTXpq?=
+ =?utf-8?B?SHBpUkx4dFJadE9TTzFyazUySEtua1lYcUdhQzNzNC9ybHVvZUY5WHJpbmFJ?=
+ =?utf-8?B?TmtiNzJsVFB4TktiSGNYMWJyMFJSdnlHZnJqME10VG51Mno2REpHZ0liZlp6?=
+ =?utf-8?B?UGgrN3I2ZFFMV1UrK2ErRDRvaExFUVN1bEVPU0J6UjRZMlhxTHVldWxyOG5J?=
+ =?utf-8?B?cWJxbGd3bS9EUGI0OHJpMGx2Q2VPWkhiUVVlQUlRM2o4SDIyQ0xIaHhpQTV5?=
+ =?utf-8?B?cG9vQldQZmtqTnNCY3l5ZHg1dWJkZ0tneHl2MDJSUWdvY2JHSmp2UEpUM3Rw?=
+ =?utf-8?B?cjRRdkRnTWlPa3NseXNwKy83NnA2ejB4dDR6MDhVWDErZGh3ZEwrdEJKT2p2?=
+ =?utf-8?B?M2J1Wmdtb3NoRU5OTUxkV2Z1YjFnTklqb3diL3R2aUhQYitnb1FWK0tXeFNQ?=
+ =?utf-8?B?ZFh4Vm9UZlVNb3lkZWJKN3d5MVNHSWZaZWxMQ2tqenB1RC9PaWRleEVGaWVV?=
+ =?utf-8?B?Q1R0ZytmM2UzMzlzaUk3bnVMTGh1TkVHbmZXb1Z0RHlZeVlJMFRtTkxLUndo?=
+ =?utf-8?B?Z0VxWDQ4TENINjhlQTlCMXFSU0NLbGFUenZRUU55Zk5YMmFUSzZyZ25yM0hG?=
+ =?utf-8?B?TmtXTFlpOUpldm1ZQnJpeFVITWVLYktvT2E0T1ozRjhnUlhJa0RSbmt2L1Js?=
+ =?utf-8?B?WEJSUVZlUjlEMW9FdVEwQVZmUFo5VGo2RU1TSWxwWFBFcFdvR2hMaUk4Z0Rl?=
+ =?utf-8?B?QjJEM3FhRnZDR2thMjZlbVpXSVMvU0xlc0dyNHpoNXQvQi9laXNjbXpDbTUy?=
+ =?utf-8?B?K1l5TmJ6bmNDdXkzd0JoMDBsZ29pSUdkcmxPejNuaHlFRHdBYUhXVUtNMmZ5?=
+ =?utf-8?B?T1grdXFSU0xCVlRZT0Zyc2JzWm5vQnZpRENZSUYwbUMyeWZOZDFYTFJMZlZD?=
+ =?utf-8?B?Vm5KSlVFR1gySDJnMkNiVmFIZ2xvVWViQW1Qc0RpUTNPaUxsQmpuaXQwRktq?=
+ =?utf-8?B?VU1pNjVoNU56T0plTm5LQk1SVDhLalZqOHhWK1JmS0NZY2lhYVhvMHVQcXNE?=
+ =?utf-8?B?cmduOGVPbS9Pdk9QWGxIR2F6QVFHVGZ1THBhTk9LOTNCNmRTTis2VFg5UjU4?=
+ =?utf-8?B?NGRJUXNnK0xGSGNOV2NmUkJLaU9iMnN0eFBJaC8wQ21mU3RMTWZNZUJ5dFFM?=
+ =?utf-8?B?NDdhQ3dBMlduSFcrSTFsSm9DNU9vSXlTaXR4b0FOY01XYktsMTYveVcyekVU?=
+ =?utf-8?B?ZUxaeWV1NSt0YUphK2dyZnl5dXc1bzhXUU1ZWFVqZTdIVlR1UWxscHVZMzcw?=
+ =?utf-8?B?VnFHUTdONjBNVm11N1l3SFlLU1lpcjhmZlFhb2tZV3ZhMmV0R3VUZ3NIOXZt?=
+ =?utf-8?B?cjJXeFFENTgrWkV2bTJPcnJxYlk1MER1ZnA0MUJER05HOXovSGZhaTE5WG1y?=
+ =?utf-8?B?Sm5qMGI3OStCQ1oxTVJMMTgvYXo1ZVZEdU5NQkorS2plMDY2WXlWdlJVYW0y?=
+ =?utf-8?B?TkdEd00xMXExdXN6VUhuNzBPSzNSRmpFcmU1WUl1M1N5b2MvNS95ekxER0Vw?=
+ =?utf-8?B?dXhvb2p0SlpWRHNiT3B0YjdCZjJVOWJ6cHJ4b2NFQldLc3puUVlCbjl4TUJt?=
+ =?utf-8?B?OUNvY2MyKzdvWml5RGdYdFJsOXZmU29hbXZaa0JRdDFwNGpYS0JoRE9PZk54?=
+ =?utf-8?B?akphQUVwMU14UlhNVDRzVnUvTG1XU0RZemorOUlpWndRQU1nTm1Id1k3Y1dQ?=
+ =?utf-8?B?cDBmV250RldlUlRYWWJnN3hqdlM4RDROYkNPRnNJZ0pVOEtWbFJyOENRVnVx?=
+ =?utf-8?B?L0F2ZGRMVEp0ZVN4a0F6aGpxeXphTEl5T0RvUFk0cldLNnV3ai9SZEFuVFdt?=
+ =?utf-8?B?TGlac0s3MUhCTkxpRDkvZVFMSlowT1ZnRVo3ejZyTVFQY1RiVTJnM3JoTDNF?=
+ =?utf-8?B?NmlSSEc5VytMME5mMmdSd2lkYWFlS2doYjk2dTczeEs2a0FGakdlVlpqN2lM?=
+ =?utf-8?B?a0Y2NXJVL3h4b2U5TVlnOTEzdnVzRzRjR1hDZjFmRjlDU2tWZGc3WHk5YXRh?=
+ =?utf-8?B?aStnWXh3eE9uOVcvYVUxdkRuc1NGd2t2WlhLU01UVGlNZlhiQis1NjdFYUVF?=
+ =?utf-8?Q?q9tmp7yogC0sYv3632JQYgwL2?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9328.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: af5897fd-2751-4f01-f079-08dd0ac0765a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2024 06:39:49.1886
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gOAC55E8BWzp6bUpLh380iO7AJ5Hcpwycnt17nB4hQyHf5nkV5E7zOERWZd43TmyKXPjivE0WcOiIy9pF9nlHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9454
 
-On Tue, 19 Nov 2024 15:35:26 +0100 Mateusz Guzik <mjguzik@gmail.com> wrote:
-
-> Same thing as 8ac5dc66599c ("get_task_mm: check PF_KTHREAD lockless")
-
-We prefer that patches have fuller changelogs, please.
-
-I copied the 8ac5dc66599c changelog text into this patch's changelog.
-
-
-
-From: Mateusz Guzik <mjguzik@gmail.com>
-Subject: get_task_exe_file: check PF_KTHREAD locklessly
-Date: Tue, 19 Nov 2024 15:35:26 +0100
-
-Same thing as 8ac5dc66599c ("get_task_mm: check PF_KTHREAD lockless")
-
-Nowadays PF_KTHREAD is sticky and it was never protected by ->alloc_lock. 
-Move the PF_KTHREAD check outside of task_lock() section to make this code
-more understandable.
-
-Link: https://lkml.kernel.org/r/20241119143526.704986-1-mjguzik@gmail.com
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- kernel/fork.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
---- a/kernel/fork.c~get_task_exe_file-check-pf_kthread-locklessly
-+++ a/kernel/fork.c
-@@ -1496,12 +1496,13 @@ struct file *get_task_exe_file(struct ta
- 	struct file *exe_file = NULL;
- 	struct mm_struct *mm;
- 
-+	if (task->flags & PF_KTHREAD)
-+		return NULL;
-+
- 	task_lock(task);
- 	mm = task->mm;
--	if (mm) {
--		if (!(task->flags & PF_KTHREAD))
--			exe_file = get_mm_exe_file(mm);
--	}
-+	if (mm)
-+		exe_file = get_mm_exe_file(mm);
- 	task_unlock(task);
- 	return exe_file;
- }
-_
-
+PiBPbiBUdWUsIE5vdiAxOSwgMjAyNCBhdCAzOjQz4oCvUE0gWW9uZ2ppIFhpZSA8eGlleW9uZ2pp
+QGJ5dGVkYW5jZS5jb20+DQo+IHdyb3RlOg0KPiA+DQo+ID4gRHVhbC1saWNlbnNlIHRoZSB2ZHVz
+ZSBrZXJuZWwgaGVhZGVyIGZpbGUgdG8gZHVhbA0KPiA+IEdQTC0yLjAgT1IgQlNELTMtQ2xhdXNl
+IGxpY2Vuc2UgdG8gbWFrZSBpdCBwb3NzaWJsZSB0byBzaGlwIGl0IHdpdGgNCj4gPiBEUERLICh1
+bmRlciBCU0QtMy1DbGF1c2UpIGZvciBvbGRlciBkaXN0cm9zLg0KPiA+DQo+ID4gU2lnbmVkLW9m
+Zi1ieTogWW9uZ2ppIFhpZSA8eGlleW9uZ2ppQGJ5dGVkYW5jZS5jb20+DQo+ID4gLS0tDQo+ID4g
+IGluY2x1ZGUvdWFwaS9saW51eC92ZHVzZS5oIHwgMiArLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
+MSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9pbmNs
+dWRlL3VhcGkvbGludXgvdmR1c2UuaCBiL2luY2x1ZGUvdWFwaS9saW51eC92ZHVzZS5oDQo+ID4g
+aW5kZXggMTFiZDQ4YzcyYzZjLi42OGE2MjdkMDRhZmEgMTAwNjQ0DQo+ID4gLS0tIGEvaW5jbHVk
+ZS91YXBpL2xpbnV4L3ZkdXNlLmgNCj4gPiArKysgYi9pbmNsdWRlL3VhcGkvbGludXgvdmR1c2Uu
+aA0KPiA+IEBAIC0xLDQgKzEsNCBAQA0KPiA+IC0vKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjog
+R1BMLTIuMCBXSVRIIExpbnV4LXN5c2NhbGwtbm90ZSAqLw0KPiA+ICsvKiBTUERYLUxpY2Vuc2Ut
+SWRlbnRpZmllcjogKChHUEwtMi4wIFdJVEggTGludXgtc3lzY2FsbC1ub3RlKSBPUg0KPiA+ICtC
+U0QtMy1DbGF1c2UpICovDQo+ID4gICNpZm5kZWYgX1VBUElfVkRVU0VfSF8NCj4gPiAgI2RlZmlu
+ZSBfVUFQSV9WRFVTRV9IXw0KPiA+DQo+ID4gLS0NCj4gPiAyLjM5LjMgKEFwcGxlIEdpdC0xNDYp
+DQo+ID4NCj4gDQo+IEFja2VkLWJ5OiBKYXNvbiBXYW5nIDxqYXNvd2FuZ0ByZWRoYXQuY29tPg0K
+DQpBY2tlZC1ieTogSGVtYW50IEFncmF3YWwgPGhlbWFudC5hZ3Jhd2FsQG54cC5jb20+DQoNClRo
+YW5rcw0K
 
