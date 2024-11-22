@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-417871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CDE9D5A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:36:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AA99D5A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:38:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D931A1F2371E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:36:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75D25B22087
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E29171E55;
-	Fri, 22 Nov 2024 07:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3131E1741E0;
+	Fri, 22 Nov 2024 07:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="XB+CUaik"
-Received: from esa12.hc1455-7.c3s2.iphmx.com (esa12.hc1455-7.c3s2.iphmx.com [139.138.37.100])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U7gAYW49"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A90C170A00;
-	Fri, 22 Nov 2024 07:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.37.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F41C165EE3;
+	Fri, 22 Nov 2024 07:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261006; cv=none; b=g0RWylmjg9YwbEK5Wb2cy4qtXd71rgceDQ6jBFMdE53g11+DcW/LfHFC+6X16cpGGW9Vm+wb7eFo3Cow0TSLsh9lC5bCRTJwIoQeBBSa4jfUyvmqkxG6Ra9AdG0+iXsqq+b45nLez3oPCKhMkf0SoBZ7jQR/wo6o5vHT+5UD2CQ=
+	t=1732261121; cv=none; b=MYKDBlEyi8zunVU1/AH5CPiT/F72ZH5r4GBh2CgYrYbejjM+YAUo5eCI/LRhcLtKXkJrmdxIYaatD8eUWkvWY58RKuoYZkO0C74Q7aX9mK8jsNo+fOXzObg0f5fbE3ryd53cHv6eoKwDrjXPceXVHS8kiTXNtju/QzFamG9ukb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261006; c=relaxed/simple;
-	bh=CgUx0IlOGrF/yLFV9BJb7HxBI9VBRO+yLhrTxkWGMMw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WLan7yjynIcwL2CDzDVCJZeH1pu+sq+vRA/FKQx+MzwxK0WQdmCyV3OKENnUIw+MpYY8v/d3iRcvIgjQAAmWhM5xav32tboBZhUr9LpRw8HsznLu4ShiwcdMJg5RVa1mPLL5eyHdaoIuYPVlUX/VI06TLhGizhQoJwT/2bLiFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=XB+CUaik; arc=none smtp.client-ip=139.138.37.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1732261004; x=1763797004;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=CgUx0IlOGrF/yLFV9BJb7HxBI9VBRO+yLhrTxkWGMMw=;
-  b=XB+CUaikg2dqWGkCxXH8ROFkYyfApcwV1BM4gVi3TJW6GSL2PjDtHup+
-   qlruYkyM+JfVjE51S7N6tv2BdW5I4+QAZMxhjkDjnMdTTUzrd7SgXLJKT
-   Mfd682GmEYa64HkeJrtrP5u3e/fLZQGsGLaDcmXbKDt+jUJoaumSVXOzA
-   6hqMh8VjWuGGizY0OUi7OrIwws+D+nYlwpIhn2gXQAWelIEGPo3JqzywF
-   QmpsmdyPSBeQfip2AvOC3M/cpNiO272F39KxnbhYTb1UY6uoVmLNkas6+
-   BB1HmCqxz2IrJEFBuJ2Ki8WtQWRDlsWlG9QY3Gy+jrKnflu2PxmARkIat
-   A==;
-X-CSE-ConnectionGUID: oGzjwGLkQVePIF+gFQl3Eg==
-X-CSE-MsgGUID: qosyJ1m1SRGufkrVzoYS6A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="160267502"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
-   d="scan'208";a="160267502"
-Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
-  by esa12.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:36:41 +0900
-Received: from oym-m1.gw.nic.fujitsu.com (oym-nat-oym-m1.gw.nic.fujitsu.com [192.168.87.58])
-	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 6DED8D4808;
-	Fri, 22 Nov 2024 16:36:39 +0900 (JST)
-Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
-	by oym-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 00755C19B3;
-	Fri, 22 Nov 2024 16:36:39 +0900 (JST)
-Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
-	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 8B355E2070;
-	Fri, 22 Nov 2024 16:36:38 +0900 (JST)
-Received: from iaas-rdma.. (unknown [10.167.135.44])
-	by edo.cn.fujitsu.com (Postfix) with ESMTP id C12A11A006C;
-	Fri, 22 Nov 2024 15:36:37 +0800 (CST)
-From: Li Zhijian <lizhijian@fujitsu.com>
-To: linux-kselftest@vger.kernel.org
-Cc: shuah@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Miklos Szeredi <mszeredi@redhat.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH for-next v3] selftests/filesystems: Add missing gitignore file
-Date: Fri, 22 Nov 2024 15:37:25 +0800
-Message-ID: <20241122073725.1531483-1-lizhijian@fujitsu.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1732261121; c=relaxed/simple;
+	bh=Il4u2JmKDCqigPfRRYGfxmRB1iP4DLOiIY1PedxhxEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lc7Gw6x9C0comkNzqskkcW+SWTaPky3ac3yTStyCpAXOvI3Gy+TOmTmGmqrDvxl0uWMt0A0fLA/0utEwXfdHeRw83XdNwVqE3g3McxyTVI42+HGJtuNDs/5nnDJqPvgrrtvFtoadBxE59pXRdAr9iRajz5pbfJ3VgTUHsLiAZTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U7gAYW49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F754C4CECE;
+	Fri, 22 Nov 2024 07:38:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732261121;
+	bh=Il4u2JmKDCqigPfRRYGfxmRB1iP4DLOiIY1PedxhxEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U7gAYW49N2xAlLY+uS+rUOgVk2yvCC40uzA0KE8BvOaEPCmP0L4ti3VAEea5+eidP
+	 8AjTLg4COd0PPjfAPm28xiafKY2YinZXcdWbK88MyAfzxRZIT2+nnAodi7qGSW2GNz
+	 UaaD89+d9An15M/84bRSyiXb1QX6X0t84Ny0KyuoirP84M7NFblj+YcIyramAFmQAD
+	 r2eW1w6AZI4ErSacmpdjVUi3oM7mni+1FyOMlpkZJzNL87ON+Jfyjni5PBeY35l1ux
+	 RKn+kJaTUhFu+766u3FZcMwHH8XP7dK4qXoI36hSk1EvPrMSuK/GkblOA+RI4S2SNa
+	 6R86tJqYS7R5g==
+Date: Fri, 22 Nov 2024 08:38:38 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	andersson@kernel.org, konradybcio@kernel.org, quic_tsoni@quicinc.com, 
+	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, 
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH v2 1/6] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Document the QCS615 QMP PCIe PHY Gen3 x1
+Message-ID: <dpuqj6hsqourl7ln66maezhcpmdrnnju22u5vs7mvre5aotkki@y6p2bbkre6pf>
+References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
+ <20241122023314.1616353-2-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28812.004
-X-TM-AS-User-Approved-Sender: Yes
-X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28812.004
-X-TMASE-Result: 10--3.043400-10.000000
-X-TMASE-MatchedRID: 54gb2yeIOXQhiKpapiFQUqoXHZz/dXlxTJDl9FKHbrmwcSh5kytY+TxT
-	JjE+nPo2V89FgO/U4vBeAZpJlX3ct6Mqw1MrQ3Xs0e7jfBjhB8eBs03RHrzjM2oFlnxJu2+hOki
-	GGidO7I8i+t+0AiFaYs/zm2Wt1N8TKA89P2l9zZ6eAiCmPx4NwGmRqNBHmBveVDC1CbuJXmMqtq
-	5d3cxkNV6l++H8AVY9CZ85G8TivabAYDXpDgYC7C5BuXeFwSNKRf+ACC6LFtRCeKLNLAFgi0SFq
-	9xTvKXggn6P4mGbxT/rFBvKT5XxbAibYH2E0kJqFcUQf3Yp/ridO0/GUi4gFb0fOPzpgdcEKeJ/
-	HkAZ8Is=
-X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241122023314.1616353-2-quic_ziyuzhan@quicinc.com>
 
-Compiled binary files should be added to .gitignore
+On Fri, Nov 22, 2024 at 10:33:09AM +0800, Ziyue Zhang wrote:
+> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> 
+> Document the QMP PCIe PHY on the QCS615 platform.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml     | 2 ++
+>  1 file changed, 2 insertions(+)
 
-'git status' complains:
-Untracked files:
-(use "git add <file>..." to include in what will be committed)
-     filesystems/statmount/statmount_test_ns
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
-Hello,
-Cover letter is here.
 
-This patch set aims to make 'git status' clear after 'make' and 'make
-run_tests' for kselftests.
----
-V3:
-  sorted the ignored files
-V2:
-   split as a separate patch from a small one [0]
-   [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
 
-Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
----
- tools/testing/selftests/filesystems/statmount/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-diff --git a/tools/testing/selftests/filesystems/statmount/.gitignore b/tools/testing/selftests/filesystems/statmount/.gitignore
-index 82a4846cbc4b..973363ad66a2 100644
---- a/tools/testing/selftests/filesystems/statmount/.gitignore
-+++ b/tools/testing/selftests/filesystems/statmount/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+statmount_test_ns
- /*_test
--- 
-2.44.0
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
 
 
