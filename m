@@ -1,97 +1,129 @@
-Return-Path: <linux-kernel+bounces-418195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544A99D5E78
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:57:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AD59D5E82
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:00:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055E21F213A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A911F218A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB641DDC0C;
-	Fri, 22 Nov 2024 11:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895811DE4EE;
+	Fri, 22 Nov 2024 12:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pzeM6uSe"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HtnHBx3e"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61980524F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC7524F;
+	Fri, 22 Nov 2024 11:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732276666; cv=none; b=qhdbpZ1XvJbM/qq47px7Cav3h/0Gr+Muwr3843GVGfjkfa4ghNeJN+kknHA2tpqXdA306PDYCoVo/tCXRlOMkjJXWUbfbKMCs00AX25zwKYv6AwrX0P6AgG6Na8OqdqSOEUeh/HUVLtGGuciGixc11uD9F9iJQf/HqQZVirU0+A=
+	t=1732276802; cv=none; b=L8DlB1Vxw2BND96jVWtliYk7dhI/KT2n7eQ1e6MJ+FW6ilNWZDVd9YWRy78ML6Jb218SKp+5lnG3WkCXmC7fibL6IiYzM7h0Hxs3S1yLE71Fz6Jx/e77n/X3EvYjO6jKBiQFd2Mfcyq+AJFWSANBxF9MK7Imnznj5Vjdx/3X0fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732276666; c=relaxed/simple;
-	bh=IUm5K1QpDLqrSIFnFvSWxFRNljNOtCpXkwifZSl6pK4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Qjk1r90TxRHvUvnwqemGkpHfx8WPONEKstZ+w0xCyka2Y98jWvmaiLP28njX00DwVykdGvygg3MoauKA8Q3Mj8dqtMihRE31d4lxLweLIZSAgBDJeI8j0wbWpZSzYAKZqpJ9e79bb/ElGt85sh47xcaOeDfVoIc3qwE0FEL1qa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pzeM6uSe; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732276661;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IUm5K1QpDLqrSIFnFvSWxFRNljNOtCpXkwifZSl6pK4=;
-	b=pzeM6uSeH2Y5cOTdDA1cSo4d3+jVXmy43WTztqwzhyNhn383H14aJG1eu1zAUXG9pXJ60C
-	HJ+/v4lPAtkVwPX2wOeRH6DSstoUW7VaDpNBWpP2FAZryyDVn6UfDoi2feRDxCWk3jQXj+
-	4IVx7Z4o5JLz3uRBxdxjhzyQWEqfDF0=
+	s=arc-20240116; t=1732276802; c=relaxed/simple;
+	bh=lX1IY5r7v5tsoLMf2bcVbuVbOPd1MvuOHDlxoiOVVQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LALLDBBi0djVAH9DB72r9qBOATqu7NEdy8NXYTGH6QH9RJqHxMFdGhbdOCAvnTquYx16fj6a/cCGhsCsEFiQWVVNDu1Xu8FP9wOg9huX7aZ+62alnzQqZRhjWLDyTtHGSrZExZG5rTHt5TgXw/7JDrLNjKxZUI/0I0TQJ5Mqcko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HtnHBx3e; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=o8WeUfkNhuU0xebIZYnnpfdPy1pYAgywRjfJ3vGwYgk=; b=HtnHBx3e6l+svFqC2GJZCgVr6b
+	F4IQLw9wKNnWVVWnWHq2Bt+/UYpnu47b6Xr2Y2Pv5n9/I14omt526ZAHefefR32bR52texkq6IqRj
+	Svreeer6Dz1JzD6jbPp/pJVbZgEf3RPOb8Bv3Z55FxYwFJozdLGw/igKT/1rQdwBp1wB2JViEcip8
+	eqVssdOaXdbR1OytUowUc/Eq9b564xRa2kM3CjzrU2nN8kTc6AGFiQ5sjWxiu+1OE3af5nG77ypkm
+	yCNCvXzDukboVxIj0Jl7eEVEnwNyylqd2zOlF3k0JY4ZaPHx1dlf6jAcRb3eH9tfm7xRuPh0elinJ
+	Bmz7r6Gg==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tESKB-00AvjT-G3; Fri, 22 Nov 2024 12:59:47 +0100
+Message-ID: <c00c6436-8abf-4b8d-a5a1-dfcab45b6f7d@igalia.com>
+Date: Fri, 22 Nov 2024 08:59:41 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH] powerpc: Transliterate author name and remove FIXME
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <87v7wuy3p5.fsf@mpe.ellerman.id.au>
-Date: Fri, 22 Nov 2024 12:57:26 +0100
-Cc: Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/v3d: Stop active perfmon if it is being destroyed
+To: Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Melissa Wen <mwen@igalia.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ "Juan A. Suarez Romero" <jasuarez@igalia.com>
+Cc: kernel-dev@igalia.com, Christian Gmeiner <cgmeiner@igalia.com>,
+ stable@vger.kernel.org, dri-devel@lists.freedesktop.org,
  linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <55B1EE24-BEC9-4A8D-84B0-ED32FCC070A5@linux.dev>
-References: <20241110162139.5179-2-thorsten.blum@linux.dev>
- <87v7wuy3p5.fsf@mpe.ellerman.id.au>
-To: Michael Ellerman <mpe@ellerman.id.au>
-X-Migadu-Flow: FLOW_OUT
+References: <20241118221948.1758130-1-christian.gmeiner@gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <20241118221948.1758130-1-christian.gmeiner@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 11. Nov 2024, at 02:11, Michael Ellerman wrote:
-> Thorsten Blum <thorsten.blum@linux.dev> writes:
->> The name is Mimi Phuong-Thao Vo.
->=20
-> Is that the correct spelling?
->=20
-> The github commit below suggests it's Mimi Ph=C3=BB=C3=B4ng-Th=C3=A5o =
-V=C3=B5.
->=20
-> And presumably the author preferred that spelling, otherwise they =
-would
-> have just written it in ASCII in the first place.
->=20
-> =
-https://github.com/bminor/binutils-gdb/commit/6603bf38d74409906b3814f6a26c=
-0483a5d32e41
+Hi Christian,
 
-Hi Michael,
+On 18/11/24 19:19, Christian Gmeiner wrote:
+> From: Christian Gmeiner <cgmeiner@igalia.com>
+> 
+> If the active performance monitor (v3d->active_perfmon) is being
+> destroyed, stop it first. Currently, the active perfmon is not
+> stopped during destruction, leaving the v3d->active_perfmon pointer
+> stale. This can lead to undefined behavior and instability.
+> 
+> This patch ensures that the active perfmon is stopped before being
+> destroyed, aligning with the behavior introduced in commit
+> 7d1fd3638ee3 ("drm/v3d: Stop the active perfmon before being destroyed").
+> 
+> Cc: stable@vger.kernel.org # v5.15+
+> Fixes: 26a4dc29b74a ("drm/v3d: Expose performance counters to userspace")
+> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
 
-Are you suggesting to keep "Mimi Ph\373\364ng-Th\345o V\365" and a FIXME
-instead of changing it to "Mimi Phuong-Thao Vo" which is how she spells
-her name on her LinkedIn profile and other websites?
+Applied to misc/kernel.git (drm-misc-next).
 
-I doubt anyone prefers their name to be spelled with octal escape
-characters.
+Maxime, Thomas, if possible, could you cherry-pick this commit to be 
+included in 6.13? Thanks!
 
-Thanks,
-Thorsten=
+Best Regards,
+- Maíra
+
+> ---
+>   drivers/gpu/drm/v3d/v3d_perfmon.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
+> index 00cd081d7873..909288d43f2f 100644
+> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
+> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
+> @@ -383,6 +383,7 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
+>   {
+>   	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
+>   	struct drm_v3d_perfmon_destroy *req = data;
+> +	struct v3d_dev *v3d = v3d_priv->v3d;
+>   	struct v3d_perfmon *perfmon;
+>   
+>   	mutex_lock(&v3d_priv->perfmon.lock);
+> @@ -392,6 +393,10 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
+>   	if (!perfmon)
+>   		return -EINVAL;
+>   
+> +	/* If the active perfmon is being destroyed, stop it first */
+> +	if (perfmon == v3d->active_perfmon)
+> +		v3d_perfmon_stop(v3d, perfmon, false);
+> +
+>   	v3d_perfmon_put(perfmon);
+>   
+>   	return 0;
+
 
