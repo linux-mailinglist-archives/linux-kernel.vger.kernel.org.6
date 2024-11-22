@@ -1,106 +1,133 @@
-Return-Path: <linux-kernel+bounces-417840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0130D9D59A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:52:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B53F39D59A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87264B22E24
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:52:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56176B21BFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDE317BB1E;
-	Fri, 22 Nov 2024 06:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0016BE23;
+	Fri, 22 Nov 2024 06:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UdvEOMQ/"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="HvBdJhfb"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD631779BA
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258309; cv=none; b=mCCKWIreLgJ40YgsC5ajqdaEbS+3UwGlSDNGmlu0v+5kHd6BT7JkvJnlZA9xn3BbPU0eUjQrtzGdivf51jSKbV69Q+vbGS8T9JeYnE6boyflpsO5h6P14BMyOF20U76/Yy4ConQUOZ0/tb6pKiepb/6eEt7QTuC7s86SgriZ1hQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258309; c=relaxed/simple;
-	bh=FksEp9kapCY4+YbOqxOtRfRJLC2TEUlIdnGiXK6I00c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbuyMAkVheh5gBaqwlFatrjJij7VKZTyfT0e72g5ou03IVK8kebqxijPxmlKMuNeYgcuS5eDT7uPC6BoToESdvqwDHdI1fwgi4JCMbWdA0NgDlf3QPCF8uZCHORk55wjKbWpVdpu/SRR0xk5aKvC6tkbKIuSLOdNgIpLufKbiq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UdvEOMQ/; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 22 Nov 2024 01:51:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732258305;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rjgj1cBWl/+Hfb4W6G3LBJubD6GGLHSB/5rnaF15CvM=;
-	b=UdvEOMQ/ljA52aWMaj+kjBRg6rsV/9XN0YFltdXsWPGJxpTRb2F4HQUsQ6IlSBuFwfYcC3
-	jGx3uzQPKE2eIHvlo1ySZkNWszETq6lZ5yw4X1MiSCVbF5ZLe50pmGkzrCXVHwVLzBs1xE
-	ypy3uUPd8Wh2Tk8EEv4jpxiVGBl24fI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>, 
-	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
-	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <grcqflezvbht4mqyaalavqoneqgo2yfnmbdhbizrllv27dlgrl@jq3reem4va7i>
-References: <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
- <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
- <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
- <20241120234759.GA3707860@mit.edu>
- <20241121042558.GA20176@lst.de>
- <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8D31509B6;
+	Fri, 22 Nov 2024 06:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732258559; cv=pass; b=gLHP62zdqp54yaCY/60imfW4/H+pZn7cWl8EdAVLHbgLYPSPqJgE8MCMJNnRrygApHXsamGN4t765od2Ns0XZeFy2p4ewdLkKpvfDsuDGWV/dO96+jqf2Vgujso1I5vWbfg54D6+Gy2vjUobAHDeoW6aocqO73sRylBPw1dkISc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732258559; c=relaxed/simple;
+	bh=T/Zt13xnSI9S06gpZyk3yarbECKKw+wZukHD9qHOq34=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cjkSofC0un0BaudpQgCGY7O/TqVA5xi5+9IXdHy94U6L6ui/88qzc2uQdx6QqQgi8Mmpf00ASeycnBrNNGrFSwioUcAdnajgNlTaeBvoui+ObSTGSBbdodJ+TWtNnqvBt9Ms/W74tPfDFX8dOcV+ddmPPk7D9RzLDwyePTPac7A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=HvBdJhfb; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732258523; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=R50vwk3m4SWvsU2H96UvbucJSMtxENkJoVT2oQYqsJJrzqOxIXJJ9I7+wmMj2enmsVo3XxVdMo/8kQhfNjJuiJh16jg+U/rnvXls6GkO26PuBYlUtEav2BJ7BRWwypKXTSHyycMgZKWASvNUbf2nuLRKZ+X6bvl8MSof+41VH0k=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732258523; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=q+2JkKzk1jp46NgS4TyFdM4ETBmYhVEqzqdB8s0TT0U=; 
+	b=Cl3UU61HVtmEJKYDOzKcm12GYqhS+9sT6ZggZQFVarSLvJn65l22cafzkcW2wFbCo0tGzengAPi9CsqNLrQfvn0CaAQcEHqZSJTcxwHyUhWBLHLiiEa4fnOfpw3XVWzcplGlv7f4cK0cdxMYVihF9hzpAuZFTwUZBAx0r28eyTQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732258523;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=q+2JkKzk1jp46NgS4TyFdM4ETBmYhVEqzqdB8s0TT0U=;
+	b=HvBdJhfbbUjbEcuR8S+7kMlpZQO2Xlu5NUStWgyaqxBsKWb2RSyfbwNPDMJs7w+2
+	rFulbh2x9a2q/GizqRts52klGWfejFeHwUapxwe+iUvcbIzYqZKA9dL4eAI+KF/J4+T
+	gfTqIU0SBGYqrePv7dnBQZ1goJzOEc1WE+8O2Dho=
+Received: by mx.zohomail.com with SMTPS id 1732258520676116.96159492790991;
+	Thu, 21 Nov 2024 22:55:20 -0800 (PST)
+Message-ID: <3bc112f0-055d-4390-8998-880d228caa4f@collabora.com>
+Date: Fri, 22 Nov 2024 11:55:16 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241120125629.623666563@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Thu, Nov 21, 2024 at 04:53:48PM -0700, Shuah Khan wrote:
-> On 11/20/24 21:25, Christoph Hellwig wrote:
-> > On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
-> > > On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
-> > > > Shuah, would you be willing to entertain the notion of modifying your...
-> > > 
-> > > Kent, I'd like to gently remind you that Shuah is not speaking in her
-> > > personal capacity, but as a representative of the Code of Conduct
-> > > Committee[1], as she has noted in her signature.  The Code of Conduct
-> > > Committee is appointed by, and reports to, the TAB[2], which is an
-> > > elected body composed of kernel developers and maintainers.
-> > 
-> > FYI, without taking any stance on the issue under debate here, I find the
-> > language used by Shuah on behalf of the Code of Conduct committee
-> > extremely patronising and passive aggressive.  This might be because I
-> > do not have an American academic class background, but I would suggest
-> > that the code of conduct committee should educate itself about
-> > communicating without projecting this implicit cultural and class bias
-> > so blatantly.
+On 11/20/24 5:56 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.63 release.
+> There are 82 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I tend to use formal style when I speak on behalf of the Code of Conduct
-> committee. I would label it as very formal bordering on pedantic.
-> Would you prefer less formal style in the CoC communication?
+> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.63-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+OVERVIEW
 
-Personally, it's always easier to take requests from a human, than a
-faceless process that I have no input into.
+        Builds: 37 passed, 0 failed
 
-I'll always rebell against the latter, but I'll always work to help out
-or make things right with people in the community.
+    Boot tests: 482 passed, 0 failed
+
+    CI systems: broonie, maestro
+
+REVISION
+
+    Commit
+        name: v6.6.62-83-g2c6a63e3d044
+        hash: 2c6a63e3d044aa21274c98760650830a22b5d54c
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+
+
+BUILDS
+
+    No build failures found
+
+BOOT TESTS
+
+    No build failures found
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=2c6a63e3d044aa21274c98760650830a22b5d54c&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
