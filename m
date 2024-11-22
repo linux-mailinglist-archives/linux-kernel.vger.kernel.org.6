@@ -1,58 +1,90 @@
-Return-Path: <linux-kernel+bounces-418176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEBC39D5E12
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:31:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0946B9D5E15
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2521F2265E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:31:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C307C28484C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6351DEFC2;
-	Fri, 22 Nov 2024 11:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5414B1DDC39;
+	Fri, 22 Nov 2024 11:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ptf2RCld"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k/c6S05b";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gxXo0Zpw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B46A1DED4A;
-	Fri, 22 Nov 2024 11:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5531DDC32;
+	Fri, 22 Nov 2024 11:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732275084; cv=none; b=pFqjUhpdXWWInM3GptVXouIHz8DvacNuqyAEAWgh2P6qXuFf/NdM5GzT95l/MNhoYYVKxrN3hB5tCwQFAr4B642zosSl0MczX4yuScLQaFNO28sQnIHkZCwL5NUcjIquAisBjnhgDxdUZZ6Q67ZwiUI4YzJgb7QGelwKmKRKhdo=
+	t=1732275136; cv=none; b=qVaF76xJDQg7+bwQFumR3/bTvcWqlYBJfZwZkQohQJsfJsP+q8cxHTCaJRuSUuxacJDg0yZsRxvqyaL3uRcCx1xawSDq8+JLu82GC+7borcelo3DRk11m2QbWJSxpA4y9hkg3oneD7Y9cdOmT03gN2i3FsXgkMBW+dIUdQz+QdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732275084; c=relaxed/simple;
-	bh=nL1fwObmR5aWAcjXqUw4jdRTWKBmpbBvUkZCZW9IoZU=;
+	s=arc-20240116; t=1732275136; c=relaxed/simple;
+	bh=Xg+DaoAsALEyo18syRnOL6zaKvc5waW7/iMILZVGyaE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A7cJWg4oRrEy4LzIZywD20esizKyOYpUiJySxcvMT5XrvTk/HSjj/SCVzAdilhC432TMgWu2AjDR2OMkTxK20OwqYNdybegntrr/GqVzXGf6WfsWkPoDyOrobPX/KgxetUCvfKSwtHZUj8LWWVT+yR/EMhJcbzLGmGF3qr5qP80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ptf2RCld; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E076C4CECE;
-	Fri, 22 Nov 2024 11:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732275083;
-	bh=nL1fwObmR5aWAcjXqUw4jdRTWKBmpbBvUkZCZW9IoZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ptf2RCldkdWSffHdTscx+6Cg2j3kABnA7+5t+O9TB+MCxNnXvWHCVwputj74S45M4
-	 QdCeUjhUrGVKMFLkHf6CKfnwrbY/7d8CIrRInFzJSNxB1uS5G+31aT1Ylx1SJ5srC8
-	 fI+BqVfpk37HlxNXmZ/Y5/s6wIUkTUz5x2xGDnfS2x/e6NBksC4iZiE5vkrI2/M73O
-	 x/3PwqNlZhzZrLx+U2YKz0rD0jK75kQfUCnpPYavJavqu5lo9kvbBoSJWa8M/EVyOV
-	 al4R/fJBeZtOd7DAqLOl2rk64FMC+MufP53udIhX2IbbgT2zNs6fohpVsSTJGyMxI0
-	 tIwrtTOTuyeTw==
-Date: Fri, 22 Nov 2024 12:31:17 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Tycho Andersen <tycho@tycho.pizza>
-Cc: Yun Zhou <yun.zhou@windriver.com>, stgraber@stgraber.org, 
-	cyphar@cyphar.com, Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>, 
-	mcgrof@kernel.org, kees@kernel.org, joel.granados@kernel.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
-Message-ID: <20241122-hinten-sesshaft-5951878d9374@brauner>
-References: <20241105031024.3866383-1-yun.zhou@windriver.com>
- <20241120-entgiften-geldhahn-a9d2922ec3e0@brauner>
- <Zz9E0pGTioTcH32m@tycho.pizza>
+	 Content-Type:Content-Disposition:In-Reply-To; b=syDwyFcDoBIEr3kfKzk3tq14CJZRtFKpmAsT5apIxi4RRRUmM8xP/i6o7lrXZhyT6Brx/XEoHX85P1hXKFCLYBu8ylH96HZZMAry45KpLAnvl8ZT682wOlJqe8Hb3qFd3tMA5urQAHYc1kHwjzAReEVIqVao/Q2wxzzbPgwCTPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k/c6S05b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gxXo0Zpw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 22 Nov 2024 12:32:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732275132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qXjERXwGoyz9ImH0OMqUpjRgs/7YUUrAyzys/z/9r0k=;
+	b=k/c6S05bPuDrImjm8Fw2qYvcj4mTSjZ9qt6zOhnYnC/mGr0YO959GgXEX26faTyCFz4Nz+
+	Pem5zExC15Sg2I07wHAoCFMlb+V3bGY9L7bteS9f/PiRdZSCV3r58/Jzjfu2Wbnq/fLmtR
+	H1Pl3jx8N4xp00twLXnjB57bDvKEk6LxRORDGuk6J2lU1DwfYyAsGDfIiOXeVXYZ+0P6b5
+	hic4DPcoYR4PZQDlZdm/QzgJo2hamgJknpx5TkyP9ut319fveGdQ+W0FNIH5CTLtlM/QLB
+	ctAXFRgA10RqXhtkB9LQOucJn49BcljwAoBypGl6KgTlX2xg81Ijh4PSNqDcPA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732275132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qXjERXwGoyz9ImH0OMqUpjRgs/7YUUrAyzys/z/9r0k=;
+	b=gxXo0ZpwlI393YrU+pT27Eb0NRpvEvxrhTtR0c4V04Uoryoueah5nEIxdBvaMlhIl6sX4X
+	h2YKQi/K542hcPBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org,
+	jannh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
+	kasan-dev <kasan-dev@googlegroups.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Waiman Long <longman@redhat.com>, dvyukov@google.com,
+	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org,
+	josh@joshtriplett.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, tj@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	Thomas Gleixner <tglx@linutronix.de>, roman.gushchin@linux.dev,
+	42.hyeyoo@gmail.com, rcu@vger.kernel.org
+Subject: Re: [PATCH] kasan: Remove kasan_record_aux_stack_noalloc().
+Message-ID: <20241122113210.QxE7YOwK@linutronix.de>
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
+ <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+ <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
+ <20241104114506.GC24862@noisy.programming.kicks-ass.net>
+ <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com>
+ <20241119155701.GYennzPF@linutronix.de>
+ <CA+fCnZfzJcbEy0Qmn5GPzPUx9diR+3qw+4ukHa2j5xzzQMF8Kw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,32 +93,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zz9E0pGTioTcH32m@tycho.pizza>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CA+fCnZfzJcbEy0Qmn5GPzPUx9diR+3qw+4ukHa2j5xzzQMF8Kw@mail.gmail.com>
 
-On Thu, Nov 21, 2024 at 07:33:54AM -0700, Tycho Andersen wrote:
-> On Wed, Nov 20, 2024 at 10:06:27AM +0100, Christian Brauner wrote:
-> > On Tue, Nov 05, 2024 at 11:10:24AM +0800, Yun Zhou wrote:
-> > > It is necessary to have a different pid_max in different containers.
-> > > For example, multiple containers are running on a host, one of which
-> > > is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
-> > > it requires the global pid_max <= 65535. This will cause configuration
-> > > conflicts with other containers and also limit the maximum number of
-> > > tasks for the entire system.
-> > > 
-> > > Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
-> > > ---
-> > 
-> > Fwiw, I've done a patch like this years ago and then Alex revived it in
-> > [1] including selftests! There's downsides to consider:
-> > 
-> > [1]: https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com
-> 
-> Thanks, looks like this patch has the same oddity.
-> 
-> For me it's enough to just walk up the tree when changing pid_max. It
-> seems unlikely that applications will create a sub pidns and then lower
-> the max in their own pid_max. Famous last words and all that.
+On 2024-11-19 20:36:56 [+0100], Andrey Konovalov wrote:
+> > diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> > index 6310a180278b6..b18b5944997f8 100644
+> > --- a/mm/kasan/generic.c
+> > +++ b/mm/kasan/generic.c
+> > @@ -521,7 +521,7 @@ size_t kasan_metadata_size(struct kmem_cache *cache=
+, bool in_object)
+> >                         sizeof(struct kasan_free_meta) : 0);
+> >  }
+> >
+> > -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_f=
+lags)
+>=20
+> Could you add a comment here that notes the usage, something like:
+>=20
+> "This function avoids dynamic memory allocations and thus can be
+> called from contexts that do not allow allocating memory."
+>=20
+> > +void kasan_record_aux_stack(void *addr)
+> >  {
+=E2=80=A6
+Added but would prefer to add a pointer to stack_depot_save_flags()
+which has this Context: paragraph. Would that work?
+Now looking at it, it says:
+|  * Context: Any context, but setting STACK_DEPOT_FLAG_CAN_ALLOC is requir=
+ed if
+|  *          alloc_pages() cannot be used from the current context. Curren=
+tly
+|  *          this is the case for contexts where neither %GFP_ATOMIC nor
+|  *          %GFP_NOWAIT can be used (NMI, raw_spin_lock).
 
-I think we should revive Alex series. Not just because it has selftests
-but afaict the implementation is a bit more robust.
+If I understand this correctly then STACK_DEPOT_FLAG_CAN_ALLOC must not
+be specified if invoked from NMI. This will stop
+stack_depot_save_flags() from allocating memory the function will still
+acquire pool_lock, right?
+Do we need to update the comment saying that it must not be used from
+NMI or do we make it jump over the locked section in the NMI case?
+
+Sebastian
 
