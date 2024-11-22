@@ -1,251 +1,169 @@
-Return-Path: <linux-kernel+bounces-417855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2D89D59D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:19:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6609D9D59E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A9D4B22013
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:19:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265F82839AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C99717107F;
-	Fri, 22 Nov 2024 07:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380BF171E65;
+	Fri, 22 Nov 2024 07:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Oag1xQDF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dZHyrcmh"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5618C2309A3;
-	Fri, 22 Nov 2024 07:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A5C15B987;
+	Fri, 22 Nov 2024 07:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732259951; cv=none; b=Js3Kv+0WaNMKGjqo8X7KRTReBIr7GQyKdyiZgIBeFOncy60irgJ67wDjNceHl8QvMi6ZxxCV4CttU+3jPZFXkoBglj3E6TZDM9EDUoi4a9doWu/iVbXIW15klc39FfSWn305aR3VPcp594xdz8FEgsFvcGqAFmF8nU3PcWEsH64=
+	t=1732260019; cv=none; b=S1Ow8DcubwEnhbBAfED2VhnOAJNUxzQoZIwcyWescPYnYsmwigpNv5WJ/Av1P4ixqGbJR1/rsuYiekNHI3YDGf7lkGIHERrQtQ9vvLdBSWHNgCiqGnUtnfv4C5J+HPOOMY9mOPZWCTWDkuhnYLBrCKxG9ABCqdCFfCHqslNXljU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732259951; c=relaxed/simple;
-	bh=16hylzq8vbeBZPqayqaT4IF79jDLZFTRFsX9J+wURes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TP+0/BpUcG6Mtmisb5tTH5OSIf/M6uXc08poeXspgacLE2KacMX1e9iDicwNCdsRWXsUabJ8inbZeArbH7dM+4pnZbTJegpkSisOAkStBITlSthDtl54ciiNpMfS4C787BqUd6Ax6XfNVUWyDnEumfdjZpFED0+tN4b/O2SL8FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Oag1xQDF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM6bDF2015521;
-	Fri, 22 Nov 2024 07:19:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VUh0+HLIEv6okl/7bFQMe+M3ucNSJ0sohjL+hEcHiD4=; b=Oag1xQDFb1xHj6LO
-	IdLwTovUK7NjygtaO4mQ4H4NRwegsM//yiotQo/4N2T0T1R+cbrtEvLTa4aCglPD
-	5/ifz32IC9mfno2mrA6hXdCKm2lVcT+0BrAG5MR2bDSNogi+i+PUEeHLctxqh1pY
-	yYQFcXtCTZqttAoSsgiKizlPBfjzRkMVhrZKhqMXjHPMveu0bsc3mmDy78L99KT0
-	ICDiC9hz5RYtpSUMcAtHGw53VAh+1sZQvg0uB0QDXJ0hVEOZdlg0eXybwVu+S+v4
-	0QUSUALhpURgz1NEwBVIqqZ+gzxzK7F/HzHqgoDTpEUZaW/QvxT7YFab5ZaKxfiW
-	cmwVig==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9kaqx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:19:06 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM7J5sD014144
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:19:05 GMT
-Received: from [10.216.2.20] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 23:19:00 -0800
-Message-ID: <00cb0942-08cb-4cd2-b84a-bc265686eae2@quicinc.com>
-Date: Fri, 22 Nov 2024 12:48:57 +0530
+	s=arc-20240116; t=1732260019; c=relaxed/simple;
+	bh=sBFVC7C9RINBCv8fmIUVR8aRbHxatozvHOs/XUgRHwk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LcqXhhUM21pVJijXJcpHkxIGfk04a0cAQE4avFL+1K7RqiYu50MUOY94fl2Z1hBydBaG6Mdbw3vzed7g76N3HW08fpWyTmM1Z7qKOMMj3iezuAjHuH9rUpTzwgB4KTHk4C/ZioLWNs6/pFhMeN9VdczG8dIWjfXG72E8POYRS4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dZHyrcmh; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e388c3b0b76so1529394276.0;
+        Thu, 21 Nov 2024 23:20:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732260017; x=1732864817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=815PRNAXGixKSoavwJ5I7tnTzuqoesWmtEB/fULSXqw=;
+        b=dZHyrcmhAVuMbbK8SA4sxXyh2C9Qa9DP7/0Ibjp4RWUPHNXSzLwCrLIc9ZE6L5CACE
+         wThQYCteTbEPAoo5DxC/s0mIxiYMPqpf5nWeU2k5dxlyH9mhQVD++llrORBTXq+1xW5J
+         2hZZJ0EQPMJNmrTFyqvWHR9hq8AMNU/wddf24LJ5fnez49uL2zpAY7PLFNHWTIn0MUWA
+         OjQYg57lcx+q7uKFJ82oPPJBULaUp9qHIwP7+hB1+V/AenKQHJSJQAFmqNU5h9NjVnCS
+         JAk/6LbnX1+MyM5hL6E5PrlCjfVGI7be88Gb8+R8FpQnagrQKwMrOREY+5bE4jqvSzTI
+         gIBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732260017; x=1732864817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=815PRNAXGixKSoavwJ5I7tnTzuqoesWmtEB/fULSXqw=;
+        b=WeGZHeJc5m6d4uYc3qS2F2AGUchkyr2x7iILG/ohGoeVrZOtEYhFjfjVNc71z948VX
+         u+IhzlPyx8lzSxz1aJCwm17ZDmHjWJwCV6z6l192cHuoy2D/mBHcrU0xdsO3R2NMjVtx
+         k/rmwCw2q9HkHflVbAUD07+r5Hvi5znjEayZ7txXvSbyIm8fkQE3nnAXvXLOakAOwlxp
+         uHoJkAMXUB6akSHLkEZH8iHRHWFCmgwoc/DksyVjjwiIKPUO7GMTOOFMwkmXgWt+DvhV
+         Fq3q0WK2LN4n46ktECySUr87/jHeZP/bYlF+cX26VD4/b5BucxJMWZaiHJlOmIxSu8w3
+         X9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUF4XUvY4poZ3dNFFKGjVWjuCM54CxWitCGyfRaAzc8ioggQvaodNvhgBd+aCRGqTzqPM1S55WYI2OOqTFX@vger.kernel.org, AJvYcCVILqoG4reSE/HhktxRv9V+xuX9B6KP51o58ZFNX7aKbuo/86W2mua9IEi1V0XVRgF+WbBaK9bOx6f/I22Lvsk=@vger.kernel.org, AJvYcCViAtX8Qu/zwr9cUgewfQUgGI0pDEKV87KeH0JldFPK0ma3+OsQZgcEEAS7CN/Squ93rLIdUSrDL/sRpA==@vger.kernel.org, AJvYcCVj0yDbwFpVlo6w54EWmQ+RtX5xg8ALnCiEOOE7txifhsYfcdO437l1mNB9hy60ozI3eEoufJeD4utrB7I=@vger.kernel.org, AJvYcCW7mWRC4dA0e7wn56as4yX0iUOjErqjTaMhsFaFaRt4tQq2V+F1349z7bGS1UL+5l7oSjGzuhnP1Fg=@vger.kernel.org, AJvYcCWBMy2CSp6WnyLhH6lFb2nkA9R67+kcnHB68tTyv+5WpOjnv6+KVL5nxhHiwRhfDOTTo575OCA2pLnb@vger.kernel.org, AJvYcCWGG0yPKLiL2biTMr6C04ScIubQWj3woIQsoo46VnH4B2Iqa12YC/emg1lScNMVQYSKOq/21IS/EkwT@vger.kernel.org, AJvYcCXa+joCqNVSA0edxD2f4HDiCzQ6IOYt2Am1UNcom7jc3l+RLgeVSL1l75ZCQD727tqQUIeQTTTd@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyx2Wk7fXhHFsHFA0Wj9xo4xqnJGAgKAnRho3/ZtYJZMulenrgA
+	5s5j6pMu8vnB7cXWn9J9hykpXmVQU4tXBNIJx3dzwR8Nqp4xLNgZPDUjNs3YLkNepKHGhpPU9n+
+	oxdxwI7eSTnLP5Q1uZoiR+8A9o34=
+X-Gm-Gg: ASbGncsbK27821sCgQ0yBn1GI9r4Wo9BJm0U2NV9ArM078W9y9Of42txhz8dB0o5r1r
+	0lamvdjAd8BPiZ00K/hFdbby0wf/QuLk=
+X-Google-Smtp-Source: AGHT+IEo9z3KG+qp+L7Dv7o9KTWLJa02iuVvebytFW0OHFU307Dg/AvnlIih0s/Axe8p+7QfLYX633cDQcq1B3yoR4c=
+X-Received: by 2002:a05:6902:114d:b0:e38:b48b:5fc2 with SMTP id
+ 3f1490d57ef6-e38f8bda124mr1654950276.36.1732260017069; Thu, 21 Nov 2024
+ 23:20:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 3/4] interconnect: qcom: Add EPSS L3 support on SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>, Georgi Djakov <djakov@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Odelu Kukatla
-	<quic_okukatla@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>,
-        "Sibi
- Sankar" <quic_sibis@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241121113006.28520-1-quic_rlaggysh@quicinc.com>
- <20241121113006.28520-4-quic_rlaggysh@quicinc.com>
- <bc926d6d-e3d1-4fbf-9b6a-bbd3816a766d@kernel.org>
- <b2a05dfb-a820-4450-a156-8d6b4bd59be3@quicinc.com>
- <u2jfxvmn6qazhpvmehrh7ifc3ei7qucuwbk5dq5jzpoqkxmdbk@tsx4di2fdj4h>
-Content-Language: en-US
-From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-In-Reply-To: <u2jfxvmn6qazhpvmehrh7ifc3ei7qucuwbk5dq5jzpoqkxmdbk@tsx4di2fdj4h>
+References: <20241121064046.3724726-1-tmyu0@nuvoton.com> <20241121064046.3724726-3-tmyu0@nuvoton.com>
+ <CAMRc=MdT_iXoRJeGFEhuCvjVXVPpJVNeddPc6pi5agTaTm+QpQ@mail.gmail.com>
+In-Reply-To: <CAMRc=MdT_iXoRJeGFEhuCvjVXVPpJVNeddPc6pi5agTaTm+QpQ@mail.gmail.com>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Fri, 22 Nov 2024 15:20:06 +0800
+Message-ID: <CAOoeyxVzVF0Jiiv1MeY6b=2XR5HFuGx+4q8Kvw3kFrgC+_LnBw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] gpio: Add Nuvoton NCT6694 GPIO support
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: C3YxZj5MHzEPTZRXaf52F1fiVEz1lhJN
-X-Proofpoint-ORIG-GUID: C3YxZj5MHzEPTZRXaf52F1fiVEz1lhJN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220059
+Content-Transfer-Encoding: quoted-printable
+
+Dear Bartosz,
+
+Thank you for your comments,
+
+Bartosz Golaszewski <brgl@bgdev.pl> =E6=96=BC 2024=E5=B9=B411=E6=9C=8821=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=884:28=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> > +struct nct6694_gpio_data {
+> > +       struct nct6694 *nct6694;
+> > +       struct gpio_chip gpio;
+> > +       struct mutex lock;
+> > +       /* Protect irq operation */
+> > +       struct mutex irq_lock;
+> > +
+> > +       unsigned char xmit_buf;
+> > +       unsigned char irq_trig_falling;
+> > +       unsigned char irq_trig_rising;
+> > +
+> > +       /* Current gpio group */
+> > +       unsigned char group;
+> > +
+> > +       /* GPIO line names */
+> > +       char **names;
+>
+> You only use this in probe() and after assigning it to gc->names, you
+> never reference it again. You don't need this field here, it can be a
+> local variable in probe().
+>
+
+Understood. I will modify it in the next patch.
+
+> > +};
+...
+> > +
+> > +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> > +       if (!data)
+> > +               return -ENOMEM;
+> > +
+> > +       data->names =3D devm_kzalloc(dev, sizeof(char *) * NCT6694_NR_G=
+PIO,
+>
+> devm_kcalloc()?
+>
+
+Okay, fix it in v3.
+
+> > +                                  GFP_KERNEL);
+...
+> > +       mutex_init(&data->irq_lock);
+> > +
+> > +       platform_set_drvdata(pdev, data);
+>
+> There is no corresponding platform_get_drvdata() so you don't need this.
+>
+
+Okay, I'll drop it.
+
+> > +
+...
+> > +module_platform_driver(nct6694_gpio_driver);
+> > +
+> > +MODULE_DESCRIPTION("USB-GPIO controller driver for NCT6694");
+> > +MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
+> > +MODULE_LICENSE("GPL");
+>
+> It's an MFD device, don't you need a MODULE_ALIAS() for this module to lo=
+ad?
+>
+
+I will add MODULE_ALIAS() for each child driver.
 
 
-
-On 11/22/2024 3:44 AM, Dmitry Baryshkov wrote:
-> On Thu, Nov 21, 2024 at 11:33:04PM +0530, Raviteja Laggyshetty wrote:
->>
->>
->> On 11/21/2024 5:28 PM, Krzysztof Kozlowski wrote:
->>> On 21/11/2024 12:30, Raviteja Laggyshetty wrote:
->>>> Add Epoch Subsystem (EPSS) L3 interconnect provider on
->>>> SA8775P SoCs with multiple device support.
->>>>
->>>
->>>
->>> ...
->>>
->>>> -DEFINE_QNODE(osm_l3_master, OSM_L3_MASTER_NODE, 16, OSM_L3_SLAVE_NODE);
->>>> -DEFINE_QNODE(osm_l3_slave, OSM_L3_SLAVE_NODE, 16);
->>>> +DEFINE_QNODE(osm_l3_master, 16, osm_l3_slave);
->>>> +DEFINE_QNODE(osm_l3_slave, 16);
->>>>  
->>>> -static const struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->>>> +static struct qcom_osm_l3_node * const osm_l3_nodes[] = {
->>>>  	[MASTER_OSM_L3_APPS] = &osm_l3_master,
->>>>  	[SLAVE_OSM_L3] = &osm_l3_slave,
->>>>  };
->>>>  
->>>> -DEFINE_QNODE(epss_l3_master, OSM_L3_MASTER_NODE, 32, OSM_L3_SLAVE_NODE);
->>>> -DEFINE_QNODE(epss_l3_slave, OSM_L3_SLAVE_NODE, 32);
->>>> +DEFINE_QNODE(epss_l3_master, 32, epss_l3_slave);
->>>> +DEFINE_QNODE(epss_l3_slave, 32);
->>>>  
->>>> -static const struct qcom_osm_l3_node * const epss_l3_nodes[] = {
->>>> +static struct qcom_osm_l3_node * const epss_l3_nodes[] = {
->>>
->>>
->>> I think dropping const makes the code worse, not better. Commit msg does
->>> not explain all these changes and I could not figure out the intention
->>> (except modifying but that's just obvious).
->>
->> EPSS L3 on SA8775P has two instances and this requires creation of two device nodes in devicetree.
->> As Interconnect framework requires a unique node id, each device node needs to have different compatible and data.
->> To overcome the need of having two different compatibles and data, driver code has been modified to acquire unique node id from IDA 
->> and the node name is made dynamic (nodename@address).
->> Updating node id and node name is not possible with const.
-> 
-> Has this been described in the commit message? No. Have you had similar
-> questions since v1? Yes. What does that tell us?
-
-I will update the commit message in the next patch revision.
-> 
-> Also, while we are at it. Please fix your email client settings to wrap
-> message body text on some sensible (72-75) width.
-
-Thanks for suggesting!
-> 
->>>
->>>
->>>
->>>>  	[MASTER_EPSS_L3_APPS] = &epss_l3_master,
->>>>  	[SLAVE_EPSS_L3_SHARED] = &epss_l3_slave,
->>>>  };
->>>> @@ -123,6 +125,19 @@ static const struct qcom_osm_l3_desc epss_l3_l3_vote = {
->>>>  	.reg_perf_state = EPSS_REG_L3_VOTE,
->>>>  };
->>>>  
->>>> +static u16 get_node_id_by_name(const char *node_name,
->>>> +			       const struct qcom_osm_l3_desc *desc)
->>>> +{
->>>> +	struct qcom_osm_l3_node *const *nodes = desc->nodes;
->>>> +	int i;
->>>> +
->>>> +	for (i = 0; i < desc->num_nodes; i++) {
->>>> +		if (!strcmp(nodes[i]->name, node_name))
->>>> +			return nodes[i]->id;
->>>> +	}
->>>> +	return 0;
->>>> +}
->>>> +
->>>>  static int qcom_osm_l3_set(struct icc_node *src, struct icc_node *dst)
->>>>  {
->>>>  	struct qcom_osm_l3_icc_provider *qp;
->>>> @@ -164,10 +179,11 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>>>  	const struct qcom_osm_l3_desc *desc;
->>>>  	struct icc_onecell_data *data;
->>>>  	struct icc_provider *provider;
->>>> -	const struct qcom_osm_l3_node * const *qnodes;
->>>> +	struct qcom_osm_l3_node * const *qnodes;
->>>>  	struct icc_node *node;
->>>>  	size_t num_nodes;
->>>>  	struct clk *clk;
->>>> +	u64 addr;
->>>>  	int ret;
->>>>  
->>>>  	clk = clk_get(&pdev->dev, "xo");
->>>> @@ -188,6 +204,10 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>>>  	if (!qp)
->>>>  		return -ENOMEM;
->>>>  
->>>> +	ret = of_property_read_reg(pdev->dev.of_node, 0, &addr, NULL);
->>>> +	if (ret)
->>>> +		return ret;
->>>> +
->>>>  	qp->base = devm_platform_ioremap_resource(pdev, 0);
->>>>  	if (IS_ERR(qp->base))
->>>>  		return PTR_ERR(qp->base);
->>>> @@ -242,8 +262,13 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>>>  
->>>>  	icc_provider_init(provider);
->>>>  
->>>> +	/* Allocate unique id for qnodes */
->>>> +	for (i = 0; i < num_nodes; i++)
->>>> +		qnodes[i]->id = ida_alloc_min(&osm_l3_id, OSM_L3_NODE_ID_START, GFP_KERNEL);
->>>> +
->>>>  	for (i = 0; i < num_nodes; i++) {
->>>> -		size_t j;
->>>> +		char *node_name;
->>>> +		size_t j, len;
->>>>  
->>>>  		node = icc_node_create(qnodes[i]->id);
->>>>  		if (IS_ERR(node)) {
->>>> @@ -251,13 +276,29 @@ static int qcom_osm_l3_probe(struct platform_device *pdev)
->>>>  			goto err;
->>>>  		}
->>>>  
->>>> -		node->name = qnodes[i]->name;
->>>> +		/* len = strlen(node->name) + @ + 8 (base-address) + NULL */
->>>> +		len = strlen(qnodes[i]->name) + OSM_NODE_NAME_SUFFIX_SIZE;
->>>> +		node_name = devm_kzalloc(&pdev->dev, len, GFP_KERNEL);
->>>> +		if (!node_name) {
->>>> +			ret = -ENOMEM;
->>>> +			goto err;
->>>> +		}
->>>> +
->>>> +		snprintf(node_name, len, "%s@%08llx", qnodes[i]->name, addr);
->>>> +		node->name = node_name;
->>>
->>>
->>> Why the node name becomes dynamic?
->>>
->>> Best regards,
->>> Krzysztof
->>
-> 
-
+Best regards,
+Ming
 
