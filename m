@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-418039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2D59D5C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:48:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1FE9D5C2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31E7B1F2244F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:48:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A341B23DD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AB61D86F1;
-	Fri, 22 Nov 2024 09:48:13 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC4E1DE3DC;
+	Fri, 22 Nov 2024 09:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MV5t7/nt"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F8B18BC0B;
-	Fri, 22 Nov 2024 09:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372CD1DACA7
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732268892; cv=none; b=llMQa6i0S0U+zSpDNv9fba6NHfCyxJtbkFQfAdUXXY4INUz1opHiCORUb2x5KK6K+cDDPpfUtBKVv3E2AFtq7FZhB5qyKxZdqZupgi+4cpekHzHsRiEr7CJlhSCdf9q+kiFTSQQ1xAuy4fRam3VFy9nnEKbp1fDMx2nD4WiH5bU=
+	t=1732268902; cv=none; b=eKFRQec2S190It7Qaibyc5e/2aU9Q0JqYVfj9MJypH9d1FtKPOkyseGcFwtMIaQKGn1c2K6fcwEPg257SlYRtK4qltSyjIfCsNdhn/R2Is2L3uHBrX+yB0nlvNanCDNwuFZ3UpOW2CfX3rNWN7icYcuA2JCK8hRzL8dX1nmJSTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732268892; c=relaxed/simple;
-	bh=JvUgqjr6s2/FRqHk+qrgV73fODETPiHdTUu5OJJit9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WHfKBv2LUM7+9nWw7OTpBa9/EmzHAHaUEI0b6nXf8dWiFitTK1UcbeP7uQbtWBaY0uua/XFw4d4n7QqZV3FgSrXogBAjAPbzmGDICx27vYyN+9cB2M7xs6STHN2FryDq2k+FcBn9dZImIqYmL8xtliLdWO0itmHrxZoYYy6PM7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee7a400647so20866247b3.1;
-        Fri, 22 Nov 2024 01:48:10 -0800 (PST)
+	s=arc-20240116; t=1732268902; c=relaxed/simple;
+	bh=h7Fy6ID2Wea+cuB0h198OsRtS8B+sBBixK2ZtTg/Lzc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QXGvqklOe3yl8PFgGl7RuEXHAfyMW1WuyvNPSQKOdRaFWZizSO3E/uYHwMyeOtzfXdrhjM7BPk2p2FRGDKAM1PbvmPRXrt2laHZHAkIuyyIpM61uqerIWMIIlixRPhNIM4KeUAT9proYpK+kmzhskVZykk/YGIApndw3+fO5j94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MV5t7/nt; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4ad633f4cd9so323195137.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:48:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732268899; x=1732873699; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cs82EvgmY8NzBFhpFn/AfZi8XWnAsUV99htkSHmKbBI=;
+        b=MV5t7/ntlXkaqtRcmYYHpH0YeQAS6YNpbSBWTvhiSupqC8t10r5dRE+ymV9od7Q6Gc
+         /Zd1rrF0HZaH7JAHHGnLDd/oqWsvhZFjC7RyQuBYt3/xhQcOvvD1W7sGI69zPkzVr0DZ
+         l4q3MRNaLZst6JiWKCKh1hBRyR37p1L6y3RDs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732268888; x=1732873688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XVP/HAZ7MlP4xLGhGVdb8+DpQFHiUFQZZ+lgLfcrmgE=;
-        b=WeEdEE4y/70ZNjHCyBuGYWDDnljxkX1oulXtdm/iIDFmq1b8NhonsasCvSnYiQEjFR
-         7Ejcm1jB8/UBGp/AibnkU45YeeVkRbzhkOFq6j8Zr1C8D2vIPmtSGQUppaqVsCPAYkoP
-         VB7v3Q7lNcu3wKnNaIH+ktONr/8iXDPKz6x4d/S1chsPEvBCNoWD4d2YoPnWBW8a8eM6
-         6d257i8ljSRG1b+45Z63d8GrKFjvO2R8q0bGIpvT7o/2IQcTmxHXrVQGOCzllVU33iwk
-         ihjuznXmmtYNCnHUXFna/9s1O0t3z03N7JeShpfAxWQ3RK/llSHIiw7PqcPL2Mz9dUIg
-         o25w==
-X-Forwarded-Encrypted: i=1; AJvYcCUUom7ZQAcWMfIYX05+dMY64F6DqwbQoe+f+Y2BCCtGPyB6WvaPOaUYZgc3LfU1/vYMYf4ADxA4s4PJ7O9I@vger.kernel.org, AJvYcCV6xToqUMZl5+Ivr7TUx54rDftGT5aiF5OkLJN2934i10wUM86gLN/O5xLKGMH6Sw1AtuDs/241KwtOa9LrOQ==@vger.kernel.org, AJvYcCVjHNHGQ5fYbbRPliR/Ni3nADfpEvTB95z404hQ08eTimwPw0yJLB3tONCdgrd88gSV9pyot5rsQ6qh9XBarOz4dVRv1fVH@vger.kernel.org, AJvYcCWHx/kT88t3k3WTfviA1gn8phguglm6eDI3qUXKarlIqLMv+K0lDvm02ZNF2I5vElxdkJT8I8jtTOaEV6VhfQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYq0PyPhvFmfFGx1qQ/puI/ZE+bJYprXsqZtrCY0KxSVZx/yt7
-	DRVHzAkP58y1Mb+IA4B/ld+oEyDtdvlJxDP56OT68uSzlf055TLx0gwQ0NQm
-X-Gm-Gg: ASbGncu0Kr++nTCQQW35MajfrVt1frly60g5/9izNNkIrRGruIrlZXzOnpHjFqYExV0
-	Gkn4h/Paayrno0BjG41gpowVvFa0WralTajQxaiVFWOGfADJjiGAkY+mzcQEo2CiRGVdsBU71wN
-	sp7FfSukRXoFlVkqpYxj2rLcVsLu2NZ222DNhSpeuH1VJlhHNxht1ew1Uo8WxKmqZ3PdjhqgriI
-	OjP9K5a+MSC0g7gNCG8kk3RhkzIHewEXFOVUIhcYqE/w44qyKTl4FKMi7MvRJfpU9F8ZEpQbRxd
-	yLa9AWEq/oq29SeX
-X-Google-Smtp-Source: AGHT+IG4Volgu69JCo1TR4kVUOkN6Aj3ZwlBQTrI5rwr6zHvNjcw6OsUKiTmodaGWpsQg60xPfS62Q==
-X-Received: by 2002:a05:690c:6406:b0:6d7:f32:735b with SMTP id 00721157ae682-6eee0a12f65mr25962087b3.27.1732268888168;
-        Fri, 22 Nov 2024 01:48:08 -0800 (PST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eee00836a6sm3791867b3.71.2024.11.22.01.48.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 01:48:07 -0800 (PST)
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ee7a400647so20865617b3.1;
-        Fri, 22 Nov 2024 01:48:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVCXcKV4au1J//hgjHBYrgccerBhlNf9PqkFyYFa+KWPvNtY5aO4ZzFku4272sbWSUW9gyDrP1CV1cYhDXfdA==@vger.kernel.org, AJvYcCVWZvG4fj5TTZlmNvGgPEMaulxeVikSTBbTmJ9SOtINBpJrmwYdaybGkJyPekvsRwHsdpFfrQSfD5SAL8HmH5OxQEMINUzQ@vger.kernel.org, AJvYcCXHZf48Xb4Z6DWIot2QekBAVPjt+UcKToXtIT7h7ZSsNiDXshEMgze47uGj/HJI26Ru7gxLCLjHvoGVPoPR@vger.kernel.org, AJvYcCXOhY3ZJbjR6v9q+WvkjzDxGWkdJukumFTxK9bq352Nn0GYNytrA0T1rjhnX2BoUpEjqsyZBqEnFekLpCD8Xg==@vger.kernel.org
-X-Received: by 2002:a05:690c:3501:b0:6e7:e68b:f883 with SMTP id
- 00721157ae682-6eee0a2fa53mr23853727b3.39.1732268886935; Fri, 22 Nov 2024
- 01:48:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732268899; x=1732873699;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cs82EvgmY8NzBFhpFn/AfZi8XWnAsUV99htkSHmKbBI=;
+        b=sxE+iYbhMLprKiPcChdPGYydlVBhd7xp9mfFQd5DiEeoparwEGA4c2SDeoFeivpyML
+         s6rRzeta1nxfwCsL9hDbFjX3wjGyzFiJVjPzCSH6P8hPGZpJFEZHziOQU6OY8e4r574u
+         NJrAMaeZLCdyJimrApxRnysYKVNlTuakLLX4RCf9hmc2Lqnw0az2B2htZbiTLX39hJV5
+         BYAPB3oUPUJ9zmA0vzY7pjucThptc+jh75zLKj/ZML4GXpEtKnBPka2d25VjTyFqTKKY
+         RFocsx1y76mHxDnxHrPV97dFdIlzj+388bBOvAWnkNExqTFuvWyY7D183JYZR2P2wkt9
+         c91Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWd5RQgvjkBhXTbfx82hhvw/Dvh8CjUn1NdDmcbqh6zUMZh9tTt+4zFwdpXqFXKdS4GD32pQwwRbUgEqnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6vvuTTJfdSeNtldaX2JzlA1jhwS+R2TsDiY2UPzz7k/qRtihY
+	WHlACZ7ygdggFa/7Jgvk574jkYAqE/NiXv/cU58YTWOi0pFE5K1QXMgcNfHVuQ==
+X-Gm-Gg: ASbGnctjEV39DubI8TvegfiUJTL3+FsGB1ifOSirBUzjzpNxUDn2wEs9LVjoEYzsVTM
+	XeOVkglu1qn5z33UltYmDVupqvYysqX5+ybZ47g22WJ2LT5jFxy4VANGROJDz8IbrU+pcWh9/Jt
+	jHuVgyplENcdrJHHfo/RWO94pbq1uWMTgFSSqJVVkyRj0pt4QE0FLk+H34WbditXE2GGFkwlaQ9
+	ZxQLzT8/E5RYWJ2ZMwOEAebHGKa2DziF5srwnj8Ec61bLHQ2af1L5Kqjc69aZCrOhZp+iZ1HewZ
+	nuFIruze4uQgbP+a0WnVIYrS
+X-Google-Smtp-Source: AGHT+IG5fsWaqF4gOiWjJqQ6Ito5ITspaw7yFFwQpvPeXryHfu3kCm7Z8WMVNfAz6obym8tjtrdSCA==
+X-Received: by 2002:a05:6102:942:b0:4ac:fe47:1bcf with SMTP id ada2fe7eead31-4addce7430cmr2745642137.24.1732268899126;
+        Fri, 22 Nov 2024 01:48:19 -0800 (PST)
+Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4653c47f124sm9282731cf.62.2024.11.22.01.48.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 01:48:18 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/7] ipu6: get rid of all the IS_ENABLED(CONFIG_ACPI)
+Date: Fri, 22 Nov 2024 09:47:57 +0000
+Message-Id: <20241122-fix-ipu-v2-0-bba65856e9ff@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZtWH3SkiIEed4NDc@tiehlicka> <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
- <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
- <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
- <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
- <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
- <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
- <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
- <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2> <20241120234759.GA3707860@mit.edu>
-In-Reply-To: <20241120234759.GA3707860@mit.edu>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Nov 2024 10:47:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVdF8S_dsktOaRM49st+tfyrx6NPK8k2AK96-v=G6LYzw@mail.gmail.com>
-Message-ID: <CAMuHMdVdF8S_dsktOaRM49st+tfyrx6NPK8k2AK96-v=G6LYzw@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	"conduct@kernel.org" <conduct@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE1TQGcC/2WMyw6CMBBFf4XM2jF0Unm48j8MC6wDzAJKptJoS
+ P/dytbluffk7BBYhQNcix2UowTxSwY6FeCmfhkZ5ZkZqCRrDBEO8kZZN+xpYGrasmkrC9lelfN
+ 1lO5d5knCy+vnCEfzW/8b0aBBshXTxbpHXbubm9TPss1nryN0KaUvYJ5GEqEAAAA=
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+ Robert Moore <robert.moore@intel.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+ acpica-devel@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.13.0
 
-On Thu, Nov 21, 2024 at 12:49=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrot=
-e:
-> If you look at the git history of the kernel sources, you will see
-> that a large number of your fellow maintainers assented to this
-> approach --- for example by providing their Acked-by in commit
-> 1279dbeed36f ("Code of Conduct Interpretation: Add document explaining
-> how the Code of Conduct is to be interpreted").
+We want to be able to compile_test the ipu6 driver in situations with
+!ACPI.
 
-404
+In order to do this we had to add some conditional #ifs, which lead to
+false positives on the static analysers.
 
-The correct reference is commit 79dbeed36f7335ec ("Code of Conduct
-Interpretation: Add document explaining how the Code of Conduct is to
-be interpreted").
+Let's implement some helpers when !ACPI in the acpi headers to make the
+code more easier to maintain.
 
-Gr{oetje,eeting}s,
+We can land the first patch of this series ASAP to fix the current
+smatch warning.
 
-                        Geert
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Rafael J. Wysocki <rafael@kernel.org>
+To: Len Brown <lenb@kernel.org>
+To: Robert Moore <robert.moore@intel.com>
+To: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: acpica-devel@lists.linux.dev
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Changes in v2:
+- Add helpers in acpi to avoid conditional compilation
+- Link to v1: https://lore.kernel.org/r/20241122-fix-ipu-v1-1-246e254cb77c@chromium.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+---
+Ricardo Ribalda (7):
+      media: ipu-bridge: Fix warning when !ACPI
+      ACPI: bus: implement for_each_acpi_dev_match when !ACPI
+      ACPI: bus: implement acpi_get_physical_device_location when !ACPI
+      ACPI: header: implement acpi_device_handle when !ACPI
+      ACPI: bus: implement for_each_acpi_consumer_dev when !ACPI
+      ACPI: bus: implement acpi_device_hid when !ACPI
+      media: ipu-bridge: Remove unneeded conditional compilations
+
+ drivers/media/pci/intel/ipu-bridge.c | 23 ++---------------------
+ include/acpi/acpi_bus.h              | 16 +++++++++++++---
+ include/linux/acpi.h                 |  1 +
+ 3 files changed, 16 insertions(+), 24 deletions(-)
+---
+base-commit: 72ad4ff638047bbbdf3232178fea4bec1f429319
+change-id: 20241122-fix-ipu-a2fe28908964
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
