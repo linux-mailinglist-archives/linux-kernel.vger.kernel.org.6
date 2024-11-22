@@ -1,182 +1,102 @@
-Return-Path: <linux-kernel+bounces-417623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF9F9D56CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:41:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9821E9D56D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135BCB228B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:41:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586E028327C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47D3AD5A;
-	Fri, 22 Nov 2024 00:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3DFAD5A;
+	Fri, 22 Nov 2024 00:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlbV2ERH"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXn344qU"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD814A0C;
-	Fri, 22 Nov 2024 00:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589E66FB9;
+	Fri, 22 Nov 2024 00:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732236071; cv=none; b=sRduoQMoPBMMRF7glFRT0cg0MWuM7xRLWJ0XH3AUk8FV8hU25cy2tp/VYWqoKF+qlhWaQ7UG3LSbENDOMoeIaLulcf4gH1j929RGAQfbsfMWYIXE5izslmL8cbohJhNaAokWBWgdcYSwy2LRjIioll8p2aELPE7ASnqntJ1wIiE=
+	t=1732236186; cv=none; b=eAKqhN5TnIG+cDnnflo20PwGHehe9n2IwkRe7kFH5gEBnBleFUANJ8UWgoMRKVEcYzt4tCmYHILP89l8I0CDI2nT9KdqN4w5Z5Ik8+AscSLlwopT8osqpkzpVqI4Z1zo33ySrt0z4vQBWTGnv6ApoQdmQlXPzd62Fp9EZuUKAEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732236071; c=relaxed/simple;
-	bh=z9dF6Emhtspyw3VwGifMj3kprIqiID/ABO92TYKcqwM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=CRpekzuIf5q5fnZuNz32FDb321ZEk5NPqm9Vxh4u8yyxriK9fSEP73iZdR+sKvexMyD4xwmtVRXQLVWX6VHPNyh/jRabwVGBHaD5W5EzkMFEYyGOJLxJ1zxCrv10sRl/OQgTn6Yv5vKWSvIHsaGzaD8e9dvS/+oDFNPzv9IQB2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlbV2ERH; arc=none smtp.client-ip=209.85.166.52
+	s=arc-20240116; t=1732236186; c=relaxed/simple;
+	bh=Rqb15WRPH5MG9UzXeqMKOHd/CMRaXCuz63iXSghhFw0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=QxFa3YvOgDQrnV1SeXlUtvnigeRBuvvAfYW1qNPDg8KKnSyAhfhceX+rrnCx8x9VHO47YNfyf0W/skDsGA5++B92VNZc2TfaC+g9IgrYvRrt62SsFtbEebAno6ATYUA5NBTV+86e398yzZoINWtl4W/JetggwH5HpQlWJYA4zj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EXn344qU; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so58839639f.3;
-        Thu, 21 Nov 2024 16:41:09 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a850270e2so288212966b.0;
+        Thu, 21 Nov 2024 16:43:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732236069; x=1732840869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=04MVoN+OIvJr2YdZQzPbMEP15dXCFEy6P+SherFyn/8=;
-        b=MlbV2ERHDx6tj2pkkODaTPi8WddbuBeH7JkqxhkIaV/bcn+dDQfr0SuXZX/oRRNnih
-         TTTeRHwnsxXO9kc3Z6ag9+iCIvN8Rj7c8spXliJ/nkfbKJh+mLD7zbqr9d6gNGx4FtaJ
-         2VeHqXYsmsTS+p4ECOJqiPj0Q5OVDiVs5nDXm3AnYZUgEC7JYS+VLurnJqYUSIv7+VP1
-         9fSAiYnBxdH/vHsfWQaQjafO1jR6B3/sus+vYuKT2MdtlHqf5amQud3IVIZzGBaQVpBO
-         /h71o8QwSh5mKy5fd2wQd1X+Bcr15XBhcGcHDYQzr2Yq8EmY7JaAErxDG7ku2ptKzJU2
-         Kqkg==
+        d=gmail.com; s=20230601; t=1732236183; x=1732840983; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CO1sqiSTxqURH9+vvZf8fU5qNWSGbysLDKpYNcP0JjI=;
+        b=EXn344qUYZMcJrYA1MGfL1WSEBPQXawO3on6qjnyju8/paAsH7zzNkmMrTfzQLY03K
+         7EaSPiXaE9m+6msUreKRwp9QTbDbm7mNpu7lAS8Kmp7aCDSmOGk5lS+UL1R9+DEYRtlA
+         nBM1SuezKiX9Dzaxlkk/KPK7cuD55DcIEvElIbhJDSc5dnYLyChZED37n98nxW1LrwRO
+         nOTUeaEZHJ7WPf+I8Ag5gi7KfBQz2vVVdd9jOox25T3KAoPesdIpKLCmsy2LDH7PHCEq
+         c43T2R2bQNFMLMxpGD2Ms/HnwZktmptG/UYs6tXWVgW44HWuZ68bjp81bgEfLeusik39
+         DIkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732236069; x=1732840869;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=04MVoN+OIvJr2YdZQzPbMEP15dXCFEy6P+SherFyn/8=;
-        b=luuHYvat9Panr9C20pjat2rVX2rw6c6UBalT6MXO82MFY/a7mJFS9MoQzlHaDHqoUk
-         005hSAbVOiDgG7UoxPixO0nqvrcs8GoY18N5lwJkqfmGHK/kV5m1XwGby7QVt6o8hHZc
-         PiIDa1UVV0rxUNEYevUZY6A/t2tO8iezyz2jy8F9BPbv6n5Wh8Zm5qZx54GykJ6KC0W2
-         AgzOqH6Xo3d/sK4o9PLO3NtX8Tx4zYZAHgRdZOQNwE39pMsesSQRSc1qJsunK/PyoqLs
-         WMCWvP/t88ddYQadLfFfyI+KiPk75woyeUVzvWlFgGJxwBRVWM0Bs2Mxwn9npAP3wVzw
-         NfPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUItiGUnhyarUHOLB/hsWHAJcG5K0B1YmeD28XlCqIwhqkttLy5ECL3M3TaI9rAkZWyTo4=@vger.kernel.org, AJvYcCWpDnQENbSkcEZ23LA/hGs28r441NRwj0B8I3JWpAO4x0kej39mVpdSAKFEGavZOtRP7DiymaNKfKlTwfm/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4FhMnUEu6gA7uE1rvuLFEqtAMEEx+2ZRh45C/fqvLpXLTer5y
-	PcOSdiEc1jYnQpxnWN3RiPJMQ8RxHfCXZApd17RD7taikvOpTpjnlqU2LQ==
-X-Gm-Gg: ASbGncv+fy0A70iyTuK0NRXHkjkPdovCTxf/AqYeynnJ0QouAmV4Mvww+q87jJIcnXI
-	4aoUQJk3Rl9yUSw2oY5WcW/Bngl/sJKL++mTqEAv7OVj/xmVfLyQibLMH4O09dvYgE5cjbuO5Y6
-	RhTBeDtaiV1u0u41hKDzDZsH/pwWTn+XDuLINtHfIZcvxFk1+b1JyGBfcjv9YBJ6MYSnM0bF6JH
-	MpbBTt8koNHn5zlIpu6E+S7mpZ3Xq0rwT2su2+lfTdi45u23jw=
-X-Google-Smtp-Source: AGHT+IEpZv48o7EMNyfIQ2/+C0TuoNaUSVg007ysRSyWDMDywOYlRzeOC5AR7mKVUg9lOrgUPMj8Kw==
-X-Received: by 2002:a05:6602:154d:b0:83a:f443:875 with SMTP id ca18e2360f4ac-83ecdd140e9mr91707739f.15.1732236068775;
-        Thu, 21 Nov 2024 16:41:08 -0800 (PST)
-Received: from localhost ([98.97.39.253])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc08efsm402586a12.16.2024.11.21.16.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 16:41:08 -0800 (PST)
-Date: Thu, 21 Nov 2024 16:41:06 -0800
-From: John Fastabend <john.fastabend@gmail.com>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>, 
- Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, 
- bpf@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <673fd322ce3ac_1118208b3@john.notmuch>
-In-Reply-To: <20241119065230.19157-1-yangtiezhu@loongson.cn>
-References: <20241119065230.19157-1-yangtiezhu@loongson.cn>
-Subject: RE: [PATCH] LoongArch: BPF: Sign-extend return values
+        d=1e100.net; s=20230601; t=1732236183; x=1732840983;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CO1sqiSTxqURH9+vvZf8fU5qNWSGbysLDKpYNcP0JjI=;
+        b=mJ8kL4l3h5YjKEUbVlkmuPkjEqwSsVWgDVAjZp/dNyuiHj0e1P7itPoQPSK/QDFid7
+         +fb9j037eAYdBiAwqaMyvF/ZsVv2EDnlvbJjPw2Uvuwqmq9/1RzdASmPEEe9S5G8qyJZ
+         a526GxYIoaMOFPWXXRQsdm5KF/FCY8fEWV2SyeCFFLRUhpbNvIPZOi6SLaZ22K+ffuJ3
+         2cPi1EhBj89Eb+TPPHcnw4aRaanJxriCtt83iF3qSOTKXdnCPSP/NysHLwoxMAYsz6T6
+         qCvwRxEaBjKbmEjptr3Q/E21qLXYMauyJp38HxPuP/mxgAAOP5UkPnOWNOD0tMUCVjiJ
+         GNew==
+X-Forwarded-Encrypted: i=1; AJvYcCVZtw4Wz+FIZy41wrhwebESa0fxj5EEtp/7un85vjRWA3zT3NJwiQIWpTI0XmcEs8k7j+a1CHnpHKrzB+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYv5Eoovaftgc4uw17iQdK0BTlV5o7Jp1qryHqbvPQ70/2Ovr4
+	vuUrsKa+fnLsWHE8Lr0zoJeeODdndg0nj3AyFJiJWNxwHEeUSoM935CMpd0hDPvqHx/T6R51e50
+	6zPDsQpOJVIFUfT7aj3s5ee4dIfy023XWVY4=
+X-Gm-Gg: ASbGnctnYUoqxvtwAEnIbIw5qL0/DtkjNQEa7t/4Fup4GWVF9iKZn4S++VcdVmKG7OR
+	ykUzhwKOEcUrN9CpBU5hdXKhZKjSWH7JCYRNQTbAq3Pwwgg==
+X-Google-Smtp-Source: AGHT+IEUgcc2KaNRc86MIW3jqTKtK+v9yxm/Ui2WTerCR0xgcXQ0TPlNtN9Jgg0JaWSEbBiZeZPNT6wc+cpnQ0ql7dA=
+X-Received: by 2002:a17:906:311b:b0:aa1:e04f:e339 with SMTP id
+ a640c23a62f3a-aa50990b1dbmr72118366b.7.1732236183057; Thu, 21 Nov 2024
+ 16:43:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+From: Yuxuan Shui <yshuiv7@gmail.com>
+Date: Fri, 22 Nov 2024 00:42:51 +0000
+Message-ID: <CAGqt0zxtKboY1PWRN4kCF3uTeiH9ZJtj280ARvGWeNtR_ik0eQ@mail.gmail.com>
+Subject: uprobe_events can't accept paths that contain spaces
+To: linux-trace-kernel@vger.kernel.org
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Tiezhu Yang wrote:
-> (1) Description of Problem:
-> 
-> When testing BPF JIT with the latest compiler toolchains on LoongArch,
-> there exist some strange failed test cases, dmesg shows something like
-> this:
-> 
->   # dmesg -t | grep FAIL | head -1
->   ... ret -3 != -3 (0xfffffffd != 0xfffffffd)FAIL ...
-> 
-> (2) Steps to Reproduce:
-> 
->   # echo 1 > /proc/sys/net/core/bpf_jit_enable
->   # modprobe test_bpf
-> 
-> (3) Additional Info:
-> 
-> There are no failed test cases compiled with the lower version of GCC
-> such as 13.3.0, while the problems only appear with higher version of
-> GCC such as 14.2.0.
-> 
-> This is because the problems were hidden by the lower version of GCC
-> due to there are redundant sign extension instructions generated by
-> compiler, but with optimization of higher version of GCC, the sign
-> extension instructions have been removed.
-> 
-> (4) Root Cause Analysis:
-> 
-> The LoongArch architecture does not expose sub-registers, and hold all
-> 32-bit values in a sign-extended format. While BPF, on the other hand,
-> exposes sub-registers, and use zero-extension (similar to arm64/x86).
-> 
-> This has led to some subtle bugs, where a BPF JITted program has not
-> sign-extended the a0 register (return value in LoongArch land), passed
-> the return value up the kernel, for example:
-> 
->   | int from_bpf(void);
->   |
->   | long foo(void)
->   | {
->   |    return from_bpf();
->   | }
-> 
-> Here, a0 would be 0xffff_ffff, instead of the expected
-> 0xffff_ffff_ffff_ffff.
-> 
-> Internally, the LoongArch JIT uses a5 as a dedicated register for BPF
-> return values. That is to say, the LoongArch BPF uses a5 for BPF return
-> values, which are zero-extended, whereas the LoongArch ABI uses a0 which
-> is sign-extended.
-> 
-> (5) Final Solution:
-> 
-> Keep a5 zero-extended, but explicitly sign-extend a0 (which is used
-> outside BPF land). Because libbpf currently defines the return value
-> of an ebpf program as a 32-bit unsigned integer, just use addi.w to
-> extend bit 31 into bits 63 through 32 of a5 to a0. This is similar
-> with commit 2f1b0d3d7331 ("riscv, bpf: Sign-extend return values").
-> 
-> Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
-> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> ---
->  arch/loongarch/net/bpf_jit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index 7dbefd4ba210..dd350cba1252 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -179,7 +179,7 @@ static void __build_epilogue(struct jit_ctx *ctx, bool is_tail_call)
->  
->  	if (!is_tail_call) {
->  		/* Set return value */
-> -		move_reg(ctx, LOONGARCH_GPR_A0, regmap[BPF_REG_0]);
-> +		emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0], 0);
+Hi,
 
-Not overly familiar with this JIT but just to check this wont be used
-for BPF 2 BPF calls correct?
+I hit this problem accidentally when one of the shared libraries I was
+looking at is located in a directory with spaces in its name. `perf
+probe` reported "Failed to write event: Invalid argument".
 
->  		/* Return to the caller */
->  		emit_insn(ctx, jirl, LOONGARCH_GPR_RA, LOONGARCH_GPR_ZERO, 0);
->  	} else {
-> -- 
-> 2.42.0
-> 
-> 
+If I understand the code correctly, strings written into uprobe_events
+are strictly splitted at whitespaces (by `argv_split`). This seems
+like an unfortunate restriction. If I submit a patch to introduce
+support for either quotes (") or escapes (\), will that be considered?
 
+(For context I am running something that expects its libraries to be
+located at fixed paths, so moving them to a different path would be
+awkward at best.)
 
+Thanks.
+
+-- 
+
+Regards
+Yuxuan Shui
 
