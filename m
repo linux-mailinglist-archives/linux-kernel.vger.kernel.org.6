@@ -1,125 +1,179 @@
-Return-Path: <linux-kernel+bounces-418694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC829D646C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:10:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814859D6479
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6216C282112
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:10:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCF3CB21D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D2C1DFDA8;
-	Fri, 22 Nov 2024 19:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150AD1DF730;
+	Fri, 22 Nov 2024 19:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xv3nCgt+"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhygKJOv"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B291C70823;
-	Fri, 22 Nov 2024 19:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7A1249E5
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732302616; cv=none; b=n2oj9cd/muPIkDMUZBi7t//TL2Z7OUmV1O8+fxHFopeMnsCQi0sjN3mY1Rh97td1EP1culBlrMayMPydaztOJE1vlzIEbfSaBLe2NHq8KZjjQ2m4J7FsBokb65uBk3UwjUp9Ql31ICTOmkIAqMMLfKBP7Fdx+NuN0gf1xYdnLfw=
+	t=1732302790; cv=none; b=N0X+d9m7Lefn/nfH/zbjuNP+X1QEKmVqns+TXs/wAwxiiTPOouzNiSjTjO1g9GYNdB8+v2tKTRqNCTrHHb4m4KZkxVLuql/rwR9jxOFzThmHky9pHDllxtlmKitj9Fqr+3+oEKB2tariP2enzAKfqNHyKuiGYtm9S+u7G9Jo2e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732302616; c=relaxed/simple;
-	bh=7Js9725yuDTaqZx4v6vLyqGvlwmpzX48vHgFV4IOGeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGO943RsIpg518w3hQ9hmH3hy+HwX0QTlRPk/dctLU2kVfJ1Ez0lSfpbY23+CY5YjynGHWK3pdt9Ae+rls+KkoKV5wTxVethzCRDCrm/wWJpUfMWyk8fDxvri4SgY61N9MwfGb4/eDmsGFlE1qwPirhBWRJQob+p78aJ/hch+Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xv3nCgt+; arc=none smtp.client-ip=209.85.208.169
+	s=arc-20240116; t=1732302790; c=relaxed/simple;
+	bh=oakw8+XY4AN7yNYYnecM37ro/z2XazBxuuT0b1kIHGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NxafKtRYpRjYHdy1764qCd52r5rZ1e9QR8WO0ZdkxnYEVG4b/KfD/Rtj1iidDUeCWghFX2G85aT3J5RyYGLFSaWjRrBZ1I6utipWxYzp8OCTyPdAacVLhk6Gm4ZXgu6EJBp0x/yMiotFT6pHbdy+FAooYkkb0wqHqM0XpCZpv0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhygKJOv; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa12ad18cso25917341fa.2;
-        Fri, 22 Nov 2024 11:10:14 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb388e64b0so30313031fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:13:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732302613; x=1732907413; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EC3Zv8ppd5odVr8KSpm+U6T+1AdhI4uzCIwkEFj3kNY=;
-        b=Xv3nCgt+hdxGQiX2N+10Mx2pQxlBupVEp5+cDVm4AbFBo3fZPGx1yHtgwEH8PHiYYG
-         GS15h67LfdNLy+3ZTFJ7UC4ldmVJF2rDJqVMOecjcraKNVlLlyhulClcKhWRWjCDnPF/
-         6UayX8Fknz/WjJHsJ+GqGu+1Vp8LMHzUkeKNG0iG5ODM0N4dcntEH4blqlVIWEHm81UH
-         IS3aA6Apk1O6D0a2fPh5W9TpedA32WbXHncdcwOn43hizcy4288Hs3Px5zF014iJhXMx
-         9PaYttyIQ9ukdwg5E/yp8G3WvsquZA3GwDu8aCMe8jEaxO7FlOGxohd/cBkWaX1Lq8SO
-         /OUQ==
+        d=gmail.com; s=20230601; t=1732302787; x=1732907587; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MmhAPFg8VWswXC5OFRdt2CqQSVXzZpyoAGzuccpRgd0=;
+        b=bhygKJOv7q41KPZv+87A84H77HYX2mvLz/hjrCiqJA63mIaeeDVSNhO3w4Yc8DdrHZ
+         XhHtgiI4W2G5pioZRRssywHDgw6aJ/kx57cSoy80x4ElFC1Ohb6BxsJa4XC6g5Rb23gX
+         DLeNBWP1iFc0uiPdTZyQBhknV3rdFJaveDJayWn+c7f+QuewuQGQxGgKbtsGjfb/e8/M
+         oMmuIRi/RKKNVJStNrA4WynrNmxz9nlS7tY0YXRbad/m+ORyT2GIZSgY2nzXFs82EVRO
+         TZp8392on2llVKevSnbujUdhdnhCeIKi3V1ZkF2jvDQaqqwDgrD8Pd+mjk+DqUhJyfIn
+         P9SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732302613; x=1732907413;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EC3Zv8ppd5odVr8KSpm+U6T+1AdhI4uzCIwkEFj3kNY=;
-        b=TVHXZACpmkXsXsbLoYmVFAxFbm2CCeuKh0seANiHMKb+ZXgXdn+SnH+cMtGOHz/8jI
-         l7HHOYwSrvVq989fK+sfsq2gnup2G/lrnlVOickDsrybhzynrIDAylrv7noOCSgte8SG
-         YuHYKTLHLTfzA8+KK9BvSwnjHa6avFtBwtMQbmMNdy+UE40KzrF/ORKbclZGcBfVnCV6
-         Q9DJ93Sx9je0SwB5VuQOW9Zi+dc9KxGtradRKDRBa829Qsz3GDO+p6umIW9GzwwRGSxH
-         tsj/BMYKq4GGYBgKoslG79b5xiLhvfhfdO1cyXw1oiAXJ3TJNH3XjYhLkZX+W0To8PQX
-         tzyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMshvTEKAGxIWdnUVJJrg5yNAB9v68O196lx7zzRFUwIyrPaU1YYgGIVTlXePTUF0bUFlmZGm2cEUjlR2cQYE=@vger.kernel.org, AJvYcCV4Jlr7ByyV+JZhBrSXfqrZo8zXXFnGk56q5w0bvPJnPm4DUfwZhhaIR/j4k2b/jo2kU0rRWzPMKThHpts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYU7g5NNuB+JtCYzQiJCugnnirMhAWZxBD/OJUb4kx3aJtkTNV
-	jP6oK5gDjEmhRXeDFbhrCqPuqMuRxhkuhbTRegil1QhOhyQz5DY0
-X-Gm-Gg: ASbGncuJebPKS6AEnOObzF8brUZvaZqfKjeGfnaM0dw3DPlBMApjPhJ0HLu5BKCL0vS
-	6XkFdcdMqLMiIyYEkxDHrMhtij26wJutf8hxNad9XLmmVorvDpGxmjgP23RUfIZFs81fIDh2zmO
-	o2n1y9FVMyIUJocUFJRTbk6A2cpoUKjWHy99T/NYggBnPxX0aR1r72v94teFqX1bonjZk59PMx0
-	yujpfHViXSoMQQUufjdw1V8kymsWmPK7Tl1p/14j/gubjR2HqTrZUJz
-X-Google-Smtp-Source: AGHT+IHO0TeGbqkaOfQW2+IKeKdpnqM3Ct4QNhv9ccJAX31oRz7/MdACaTtHpxTcQrx5kpCbmVnsWA==
-X-Received: by 2002:a05:651c:1992:b0:2ff:a928:a22f with SMTP id 38308e7fff4ca-2ffa928a4ddmr27044621fa.28.1732302612596;
-        Fri, 22 Nov 2024 11:10:12 -0800 (PST)
-Received: from [192.168.0.50] ([81.196.40.57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d021179e8bsm1074416a12.23.2024.11.22.11.10.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 11:10:11 -0800 (PST)
-Message-ID: <773afd3d-91f0-4dc6-abf8-481d3125c047@gmail.com>
-Date: Fri, 22 Nov 2024 21:10:09 +0200
+        d=1e100.net; s=20230601; t=1732302787; x=1732907587;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MmhAPFg8VWswXC5OFRdt2CqQSVXzZpyoAGzuccpRgd0=;
+        b=crhDBoHi7rtrO9aolXHr+MsDjoskX+dgZM9DLvD13ci2mQ4DMWqZy9SGLHs0ndPpbm
+         Z9rCOaT7qOOby9wh8hy47b1jLfrbo0IlvsXnY8SEvEoa3fPjStuE2rHmrokG1LH/f3rn
+         o9uSN0OA3UPFOGO1sgFso8tyljo/AvXaEsV49ytWKVDnuPM/n6p+zp/SCGwbZemg/alj
+         GhSb5Ybcsjf76RztMRLFSN2DX/SaR1rHJ9jHSa519MbpfIz2SMkA34FiJYpLnWTawXNz
+         hNoHY64adwjTrtJUwYiAm6dk6PSjFs/2AVRWXxzznD7uY8HInz1BMs6qBdLglfYv30PZ
+         ngDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUgc9zpTrMyI+n6KDiaqGz7m6mL51YLqAJ50i2gs24CxdA0Wru7EwsO/zB1hFBX2ED/7B5FQ7IyoLk5Io=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHkCMYCYTtCuL1xOLeUNxhYgonTASt+a65wtkd0TwbpmYkpXN9
+	dnUkDpPBk5LOtIR/f4Pc6YBRNS8xOrbc/48FLRLFIdFL2Wpol1vNNUhYpvw8kQI=
+X-Gm-Gg: ASbGnctDqCGrFBBfMJUgQRk+GjAMU6mBmFPJ849+SDgVdYMkKQEfH/0kh3KraSvHSLn
+	HEBetugSuMEDd5/0xXSy0BpyFUUaOCueiblbElpUrkPK+QfTO40hBtO0AEoA1NpEiZWb6Y4uUHe
+	YfAud6TbsEcyzRO383gYdFfF2aZr4yxxHNg9uY9qbomoFPs6y2SNh5x75lqaJvkAEpPvEVUXWK+
+	GOAKviDjEBFeBuH6C0IC+oOHcKEl071AE/aE1CLBdtsIccmbPRaWys0vcJcHD0Z9OL2CTBBF6l/
+	HsU=
+X-Google-Smtp-Source: AGHT+IEJnnz2ws7578AwFzClNuJMA6lqwaqtty2dfYSabcM3lmWruFaTYyaxwsksR6t6QiHU95JFQg==
+X-Received: by 2002:a2e:a58d:0:b0:2fa:d978:a6a2 with SMTP id 38308e7fff4ca-2ffa716cecamr27950521fa.27.1732302786448;
+        Fri, 22 Nov 2024 11:13:06 -0800 (PST)
+Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d41af2esm1196320a12.84.2024.11.22.11.13.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 11:13:06 -0800 (PST)
+From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+To: Tianyu Lan <Tianyu.Lan@microsoft.com>,
+	Michael Kelley <mikelley@microsoft.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+	Raphael Isemann <teemperor@gmail.com>,
+	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
+	Herbert Bos <h.j.bos@vu.nl>,
+	Greg KH <gregkh@linuxfoundation.org>
+Subject: [RFC 0/1] swiotlb: Mitigate potential DoS caused by BUG_ON()
+Date: Fri, 22 Nov 2024 20:13:03 +0100
+Message-Id: <20241122191304.4182642-1-bjohannesmeyer@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH wireless-next] wifi: rtw88: Fix an unreachable code issue
-To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>,
- pkshih@realtek.com, linux-wireless@vger.kernel.org
-Cc: kvalo@kernel.org, linux-kernel@vger.kernel.org
-References: <20241122121459.134107-1-dheeraj.linuxdev@gmail.com>
-Content-Language: en-US
-From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-In-Reply-To: <20241122121459.134107-1-dheeraj.linuxdev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/11/2024 14:14, Dheeraj Reddy Jonnalagadda wrote:
-> The error handling in rtw8821a_iqk_tx_vdf_true() contained unreachable
-> code due to tx_fail being explicitly set to false before the error check.
-> This prevented proper handling of failures and resulted in dead code.
-> 
-> Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-> ---
->  drivers/net/wireless/realtek/rtw88/rtw8821a.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtw88/rtw8821a.c b/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-> index db242c9ad68f..c06ba7d615df 100644
-> --- a/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-> +++ b/drivers/net/wireless/realtek/rtw88/rtw8821a.c
-> @@ -221,8 +221,6 @@ static void rtw8821a_iqk_tx_vdf_true(struct rtw_dev *rtwdev, u32 cal,
->  				/* Originally: if (~tx_fail) {
->  				 * It looks like a typo, so make it more explicit.
->  				 */
-> -				tx_fail = false;
-> -
->  				if (!tx_fail) {
->  					rtw_write32(rtwdev, REG_RFECTL_A,
->  						    0x02000000);
+We identified a security issue in the swiotlb unmapping operation, stemming
+from the way some drivers save streaming DMA addresses. This issue can
+potentially be exploited by a malicious peripheral device to cause a
+denial-of-service (DoS) via a kernel panic.
 
-It's like that on purpose, as you can see from the comment.
+**Disclosure Context**
+We previously reported a similar issue to the Linux kernel security team.
+However, they advised submitting such cases directly to the relevant
+subsystem maintainers and the hardening mailing list, because Linux
+implicitly assumes hardware can be trusted.
 
-Your patch changes the behaviour of the code. If it really bothers you,
-fix it without changing the behaviour.
+**Threat Model**
+While Linux drivers typically trust their hardware, there may be specific
+drivers that do not operate under this assumption. Hence, we consider a
+malicious peripheral device that corrupts DMA data to exploit the kernel.
+In this scenario, the device manipulates driver-initialized data (similar
+to the attack described in the Thunderclap paper [0]) to achieve a DoS.
 
-Also, you should mention in the commit message if you tested
-with real hardware or not, and what tool brought this problem
-to your attention.
+**Background**
+Streaming DMA is often used as follows:
+(1) A driver maps a buffer to DMA using dma_map_single(), which returns a
+DMA address. This address is then saved by the driver for later use.
+(2) When the buffer is no longer needed, the driver unmaps it using
+dma_unmap_single(), passing the previously saved DMA address.
+(3) Under certain conditions---such as the driver using direct mapping
+operations, and the mapped buffer requiring a swiotlb
+buffer---dma_unmap_single() calls swiotlb_release_slots(). Here, the saved
+DMA address is passed as its tlb_addr argument.
+
+**Vulnerability**
+It is common for drivers to store the DMA address returned by
+dma_map_single() into a coherent DMA region, which can be manipulated by a
+malicious device. For example, the E100 driver and RealTek 8139C+ driver
+map socket buffers into streaming DMA and save their DMA addresses to
+coherent DMA data. While these drivers might assume trusted hardware, this
+behavior is not necessarily unique to them.
+
+If an untrusted device corrupts the DMA address, it can influence the
+tlb_addr argument passed to swiotlb_release_slots(). Inside this function,
+tlb_addr is used to calculate aindex, which is validated via BUG_ON(aindex
+>= mem->nareas). By manipulating the DMA address, an attacker can trigger
+this assertion, resulting in a kernel panic and DoS.
+
+I have a PDF document that illustrates how these steps work. Please let me
+know if you would like me to share it with you.
+
+**Proposed mitigation**
+To address this issue, two potential approaches are possible:
+
+(1) Mitigating the *initialization* of attacker data: Prevent drivers from
+saving critical data, such as DMA addresses, in attacker-controllable
+regions.
+(2) Mitigating the *use* of attacker data: Modify the handling of critical
+data, such as in the BUG_ON() statement, to not result in catastrophic
+outcomes like kernel panics.
+
+While approach (1) is more complete, it is more challenging to deploy
+universally. Hence, we propose mitigating this issue with approach (2):
+i.e., replacing the BUG_ON() assertion with more graceful error handling.
+The attached patch implements this change, ensuring the kernel can handle
+the condition safely without triggering a panic.
+
+**Request for Feedback**
+I am not deeply familiar with the swiotlb internals, so I would appreciate
+any feedback on the patch. In particular, is there a more graceful way to
+handle the error than returning?
+
+Thanks,
+
+Brian Johannesmeyer
+
+[0] Link: https://www.csl.sri.com/~neumann/ndss-iommu.pdf
+
+Brian Johannesmeyer (1):
+  swiotlb: Replace BUG_ON() with graceful error handling
+
+ kernel/dma/swiotlb.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+-- 
+2.34.1
+
 
