@@ -1,52 +1,78 @@
-Return-Path: <linux-kernel+bounces-418605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4F99D636A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:41:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB899D636C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:42:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAEB281D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:41:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E33B2342A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA201E2039;
-	Fri, 22 Nov 2024 17:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F741DFD97;
+	Fri, 22 Nov 2024 17:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JHPUpjeO"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LiqAoj7f"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F1D1E0E1D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AFD1DF98B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732297157; cv=none; b=KLlMuWrPQCiKAYEcpBTM3ds5Awwi97ToGqCi1dgrLLEcPw+gwd/X2kVgrZagZKD1G1w00UfboYklNJBhTZCJ7JCZbD03pSZMgZSF7LLGZt0LFO6PJLom8Zi4gX8xrApujXQmvgyCoo1eQZADlJ0ScNB9jsTUIWdArCNEKYusIU8=
+	t=1732297216; cv=none; b=I3gox2yOyonSlYkdFYuUVj6+upBDAStAtV99AuMk2GFSBToK+yKhDCSqow+sV+kLslKHQcDi+K1Fof7ckCpSpdIQg9SgfDke2ipG8M/HKTYDy7H9EtqPtXjDQQSExrFJwCiYjh7+lEQ4jOfwUiBXIOVX+iEhzaDmR9l4oGMcsac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732297157; c=relaxed/simple;
-	bh=K0YQanDFtYen2DYvGJHhkjozmdVGaLCxqx1SSXyopZA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JwjgTZSCYbPED4Rh5uGsN91eYwJrTjYLvbdfaOjJLg+pc7vVJFNm4Bg5PcM6HWS5aoLBNUzAsz5PQHuaMCZiKoXUHvVZNGVwsxrhn1TPvg3X1/prOW6tttzMrAShxDEwZ0z7ftHJamsT9F0YYf95o12wM5VrddOt7DVY+/LWJb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JHPUpjeO; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5E794C0004;
-	Fri, 22 Nov 2024 17:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732297153;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hj9CwfeF6o027ybdXGATpTDOE50up/2fWiEDIVtzBEo=;
-	b=JHPUpjeOmNysKwvgoFCW3gpDKU/eyvgfKJ0Jm7a2aCZNSCwxjG3i7C/Jd2G8GSz8HTfIcv
-	dQBb9nKUWh/U4f93b8UBsROF/ZucALGGBxbE2FO0AbBRpMVTiRrn0C7qEZH3vvAQEqTPaz
-	U8TeR5esWWyppbNkvI1P2um47fYNira8NjIQ4RbqBpjsgqgThI9QFWTUT/t82RIXQflX04
-	3y+Ajz2gEOXvk+8h8WVU01V20E71r6+jNN1VBN4hjCeejixrFylh/sZHT/exVZN34oo/Jd
-	DJnllg7bP4kyhttXw8l5uh0v1goyy0xSdLqnRKoHsAsAqHlFXmsiRnYw7ZJIIA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 22 Nov 2024 18:38:42 +0100
-Subject: [PATCH RFC v2 16/16] drm/vkms: Introduce configfs for encoder type
+	s=arc-20240116; t=1732297216; c=relaxed/simple;
+	bh=nGDugsEzMYyjVhn/ciMakXTGY0HkUfo5USR3UzBZaCA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eNUwE0qTyvjzsivY+SiOCe7k/Qxbdn+JeLdtfLzuETK68e3St+fOT+gqesK4144/3a8Swcze9FngvZnU7y3uaWDT7URlA9YxLSkn9ir4oXtgW+0K1iF/hGssEFFoIH2VGn+zmSAWoaN2B6HcAz+Fg+61uGnLjv5iviRh2LLt+2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LiqAoj7f; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5f86e59f1so1408821b6e.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:40:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732297213; x=1732902013; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=50h61GxOnKL1zzYHFyxBVUOS1MIjlLhbcFhOTWLtMk4=;
+        b=LiqAoj7fHbA6YqYaHDq8tK5++WTTSMzcVZ56t5U12ZnowpXAR+J7WtlY+p0xoWG8oG
+         XjxbQ9/+qnFETBPWzc1/KS0+u/7RhhBDZYRsbDW1XLep6rJNo4kclJTKcQdTAGjYF+dm
+         VKhbXOxsYth7eFG6NPH51A33eMVI14iSAgb+J7k1BcNksIWlvfz2InaITKNG5XL0in7Q
+         xCo9ylg0qnK044X6g1p1bTwANMfGR+1YzEYJENpW3NHslkWIkITBsF6L64q6vRB8O7fd
+         ApMV5q5beupzH5n0GHdmBJwaeUAHZt2bhnyult7rwwqMYXstnHLxdoEt4jY1HG/k4uzK
+         cSXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732297213; x=1732902013;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=50h61GxOnKL1zzYHFyxBVUOS1MIjlLhbcFhOTWLtMk4=;
+        b=Y4lzbQcpVhdYBQmQ0uEP3RlZqZ+0vKk9muzfPLCzLGQPsDGsmxNw1liSYMxRWpYJ0g
+         dnVyJ3jr+rG66tH5qHMvYX7FGnv1kz3HzjRwu3VkFBCnnfx8hLPvXzr63KybFNpGuZlT
+         aXu1kHdpmSa/TFSWGdC5VTt7jAaLTe+etlJ4Z37ZeJ92wN9VcvLOJWKhvDFf81wFAk5k
+         ws3gaKpC5G4k0U/Zi26O2fbg72pobwMoe67HTWbJjq/20QUcBshlKySerU3qPx5nJvKH
+         IubjT5G73+3YA+joSRV/JGa51MxUAxogW3jIxxfiQxT5Q83NvaBqo0neMhCTd9dfQspr
+         WO8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXROr4E7QFyywtJP4nTKBL+hEI4aZ7JD7oy9JGDP0eAPf6GciqxH4sS52c0NH6gU87jMIxfyxUvCtKhQzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvSKji/XI0wiSlXKB7p98fguUH0mjuNVridTx80TTUc1jjx2FY
+	EOFQtTlr5COL/WjJNrX6kqfngZNJT9v+zF9T/3FcYtAkpV5t3OGqgmBjeg4+VFU=
+X-Gm-Gg: ASbGncvGyzxcZmXL4VsCxo+CSRgJiqf37BXfNhPOqfL1zw/4DSgSvVx2rmiYsr6Ck4l
+	RtYQ93Jt5wdaUNpBgclpPFv249YeTsgWebuNBC9ohEYHHZynoOBt2nnBzyrl4G4UOZBzBey05jN
+	OiczKZWkbS09GTPynTvefLp0NiF0+MO2ZBZfujfiK3ugPTPK4Okqiwdz8Z1Ifk706jjzY9Bc70p
+	1etWXUy2lvVlo/fr+Gh7LcNWl25pxLdAfn1vkImcAHSX8HBzkHqjDzbqOq+WP4aQONkm8W+/sTx
+	iQrM8Q==
+X-Google-Smtp-Source: AGHT+IE4alabHlRI047UT+eD20FUNGJWTu8qAkN+2f0dKKvzxLm2hJ0MTx09OXWOMHkrJF8SKfiZww==
+X-Received: by 2002:a05:6808:3509:b0:3e6:2169:5a63 with SMTP id 5614622812f47-3e915aa513bmr4539214b6e.31.1732297212852;
+        Fri, 22 Nov 2024 09:40:12 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71c0381c976sm494572a34.50.2024.11.22.09.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 09:40:11 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/2] iio: adc: ad7313: fix non-const info struct
+Date: Fri, 22 Nov 2024 11:39:51 -0600
+Message-Id: <20241122-iio-adc-ad7313-fix-non-const-info-struct-v1-0-d05c02324b73@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,131 +80,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-google-config-fs-v2-16-4b7e6f183320@bootlin.com>
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
-In-Reply-To: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: jose.exposito89@gmail.com, dri-devel@lists.freedesktop.org, 
- arthurgrillo@riseup.net, linux-kernel@vger.kernel.org, 
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
- thomas.petazzoni@bootlin.com, seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2786;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=K0YQanDFtYen2DYvGJHhkjozmdVGaLCxqx1SSXyopZA=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQMGuJ1BDzmEtq5eT075LQQL8d81HB/aWBkdha
- FVABvV8GR2JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0DBrgAKCRAgrS7GWxAs
- 4qXxD/429dAuBnACRdzBaEm+ouQkpW+dMVI3KD9lrqBlRBtegC6/94d8Y7O21FGTM78OFd8UGwW
- hzf69hnWzzu7FCcur1ftoA1Jk2PG8QFTtnjhaIIftQDQdj3sJIMHF3uSHtsJLjbcKsmWATSPLsB
- 6OZDpGUl1n76s3tGY+BnZAtHZ5wW1D3mfQ7wRD0uV3rzlDTCvRHh5bK08LlGJnmOI7fjWrMsDre
- QmGNL1j5En2npXMDcA6EVS4KSxUzMH51XRUfcaqgP58y3cCIBXwh+rL02oY2/09fXCVtQtbQ9tH
- iUu1r8MoN8KEW3vuvxxkMaB/4fGuf4AU3iXIsAsyAtrJljYRSaZxkvEnND8Ni4B7KS7P84fQvBy
- 5RWUHiZQsVQFhj2EhK3tOQUPMNLRKbCXou379F9CvYZTfTduWW2Tsd5RGU4msakVXu4ujgwTCyK
- FZR1YyNfZNTwpGRwyhHBquMml53+TdtzDY2IWv08hArd0oTM68YJeY5jLsO1tk7i3Ln9jnjFJP5
- ScvkEQpuVif9btjiMZg9ESJNS38BohIjtxA0uyMiLccgPJql/qyjepQaSaou+4TpWAsKrXCI8lb
- eLKrWcyfRMBPngmrefzjcPV+y9wCG5JK/RFk5vZDCk3QJOKPsjpxf4V/+tpVT3m+SHkB/rolhjF
- C3XSmww+EN8yyPA==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOfBQGcC/x2NQQrCQAxFr1KyNmBSRcariIs6TTWbRCZjEUrvb
+ nDxFg8e/28Q0lQCrsMGTVYNdUuhwwD1NdlTUOd04COfiJhR1XGaa3IZacRFv2huWN2io9riGL1
+ 9asfCci6PQiIskHPvJhn/r273ff8BJz62AnoAAAA=
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Nuno Sa <nuno.sa@analog.com>, Michael Walle <michael@walle.cc>, 
+ Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Guillaume Ranquet <granquet@baylibre.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+While working ad7124, Uwe pointed out a bug in the ad7313 driver.
+static struct ad_sigma_delta_info ad7173_sigma_delta_info was not const
+and was being modified during driver probe, which could lead to race
+conditions if two instances of the driver were probed at the same time.
+
+I've made an attempt to fix it, but it isn't exactly trivial and I have
+only compile tested it. Guillaume has access to ad4111 hardware, so it
+would be good to get a Tested-by from him to make sure this doesn't
+break anything.
+
+Reported-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 ---
- drivers/gpu/drm/vkms/vkms_configfs.c | 57 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+David Lechner (2):
+      iio: adc: ad7313: fix irq number stored in static info struct
+      iio: adc: ad7173: make struct ad_sigma_delta_info ad7173_sigma_delta_info const
 
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index 55bd0b9a31d35eca49c67a2fe2d58e3ea84367a4..bfd3c3a0851b2cc76da52b8a190511f22d3f9fbc 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0+
- 
-+#include "drm/drm_mode.h"
- #include <linux/configfs.h>
- #include <linux/mutex.h>
- #include <drm/drm_print.h>
-@@ -754,6 +755,61 @@ static void encoder_possible_crtcs_drop_link(struct config_item *src,
- 	mutex_unlock(&vkms_configfs->lock);
- }
- 
-+static ssize_t encoder_type_show(struct config_item *item, char *page)
-+{
-+	struct vkms_config_encoder *encoder;
-+	char encoder_type = DRM_MODE_ENCODER_NONE;
-+	struct vkms_configfs_device *vkms_configfs = encoder_item_to_vkms_configfs_device(item);
-+
-+	scoped_guard(mutex, &vkms_configfs->lock)
-+	{
-+		encoder = encoder_item_to_vkms_configfs_encoder(item)->vkms_config_encoder;
-+		encoder_type = encoder->type;
-+	}
-+
-+	return sprintf(page, "%u", encoder_type);
-+}
-+
-+static ssize_t encoder_type_store(struct config_item *item,
-+				  const char *page, size_t count)
-+{
-+	struct vkms_configfs_device *vkms_configfs = encoder_item_to_vkms_configfs_device(item);
-+	int val = DRM_MODE_ENCODER_VIRTUAL;
-+	struct vkms_config_encoder *encoder;
-+	int ret;
-+
-+	ret = kstrtouint(page, 10, &val);
-+	if (ret)
-+		return ret;
-+
-+	if (val != DRM_MODE_ENCODER_DAC &&
-+	    val != DRM_MODE_ENCODER_DPI &&
-+	    val != DRM_MODE_ENCODER_DSI &&
-+	    val != DRM_MODE_ENCODER_LVDS &&
-+	    val != DRM_MODE_ENCODER_NONE &&
-+	    val != DRM_MODE_ENCODER_TMDS &&
-+	    val != DRM_MODE_ENCODER_TVDAC &&
-+	    val != DRM_MODE_ENCODER_VIRTUAL)
-+		return -EINVAL;
-+
-+	scoped_guard(mutex, &vkms_configfs->lock) {
-+		if (vkms_configfs->enabled)
-+			return -EINVAL;
-+
-+		encoder = encoder_item_to_vkms_configfs_encoder(item)->vkms_config_encoder;
-+		encoder->type = val;
-+	}
-+
-+	return count;
-+}
-+
-+CONFIGFS_ATTR(encoder_, type);
-+
-+static struct configfs_attribute *encoder_attrs[] = {
-+	&encoder_attr_type,
-+	NULL,
-+};
-+
- static struct configfs_item_operations encoder_possible_crtcs_item_operations = {
- 	.allow_link	= &encoder_possible_crtcs_allow_link,
- 	.drop_link	= &encoder_possible_crtcs_drop_link,
-@@ -782,6 +838,7 @@ static struct configfs_item_operations encoder_item_operations = {
- 
- static const struct config_item_type encoder_item_type = {
- 	.ct_item_ops	= &encoder_item_operations,
-+	.ct_attrs       = encoder_attrs,
- 	.ct_owner	= THIS_MODULE,
- };
- 
+ drivers/iio/adc/ad7173.c               | 476 +++++++++++++++++----------------
+ drivers/iio/adc/ad_sigma_delta.c       |  14 +-
+ include/linux/iio/adc/ad_sigma_delta.h |   5 +-
+ 3 files changed, 264 insertions(+), 231 deletions(-)
+---
+base-commit: 9dd2270ca0b38ee16094817f4a53e7ba78e31567
+change-id: 20241122-iio-adc-ad7313-fix-non-const-info-struct-92e59b91ee2e
 
+Best regards,
 -- 
-2.47.0
+David Lechner <dlechner@baylibre.com>
 
 
