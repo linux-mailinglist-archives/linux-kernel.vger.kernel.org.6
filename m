@@ -1,145 +1,147 @@
-Return-Path: <linux-kernel+bounces-418117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7F99D5D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:41:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F4669D5D6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E78CB28318B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74FE1F2301E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0E41DE3AA;
-	Fri, 22 Nov 2024 10:41:20 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DF01DE2C6;
+	Fri, 22 Nov 2024 10:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDyF6Tux"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7774C187321;
-	Fri, 22 Nov 2024 10:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2541A187321;
+	Fri, 22 Nov 2024 10:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732272080; cv=none; b=nSSlqTPAKCMHMqWQTE0Pb2AcRYqUAUN2Apg6wZVlu+KbNKGOu85L2nhoxj+ZO52BnyQZCzMe5DafW+uL3/Kd9MyTzeBtVXBnzc/zcARk1XDLlzv/Iv0rrizs1af7uzAz3iBpoT8la5Pc6jN0ArKQJsnjYp1g1OjtJanPMW0578A=
+	t=1732272203; cv=none; b=Joa1/GFVK5PQTmHPrWBYozIUdUEdrCihTn/2Bnk2slod8GhtDornucy+rr/aqLLEHbxSnNGkjEld8/2k7RvsOg9gzjf8clIBuhmz3kvkfMOriHDJhPqDwZrpKwwj8WIwuW2FWxw6hTD/fBFqcJ68pUZ6t084Fc8fKAZpUmOJ/Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732272080; c=relaxed/simple;
-	bh=KSYXqdrMRonpXduljyoL1qqI7zpiy/+BxUamLqdoUvU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HqPnMixelfuB2qOD1NpWk8lGUBYPJA5RIJx2Dlc8h2scuX9zGe1JLZMqFYxv9hGMmzJqWmvM3CmJaZnZKT74E0LUj4w7dfwoGqnjriQaS/YU0iq0ikmiiouajidhTUVTUtiWKGIvUSRHUGA2AO8HdYraM95z1jYm79ZFDVJZra4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xvs4K64MWz6873W;
-	Fri, 22 Nov 2024 18:37:37 +0800 (CST)
-Received: from frapeml100007.china.huawei.com (unknown [7.182.85.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4586C140133;
-	Fri, 22 Nov 2024 18:41:15 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml100007.china.huawei.com (7.182.85.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 22 Nov 2024 11:41:15 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 22 Nov 2024 11:41:15 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [PATCH 13/13] rasdaemon: ras-mc-ctl: Update logging of CXL memory
- module data to align with CXL spec rev 3.1
-Thread-Topic: [PATCH 13/13] rasdaemon: ras-mc-ctl: Update logging of CXL
- memory module data to align with CXL spec rev 3.1
-Thread-Index: AQHbOzMKWgVy8qd6/k6IUGY4Oph577LBz8AAgAFNg4A=
-Date: Fri, 22 Nov 2024 10:41:14 +0000
-Message-ID: <0fbde50ced8a478aaa4aabd04cb7cb8a@huawei.com>
-References: <20241120095923.1891-1-shiju.jose@huawei.com>
-	<20241120095923.1891-14-shiju.jose@huawei.com>
- <20241121153848.0000079a@huawei.com>
-In-Reply-To: <20241121153848.0000079a@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1732272203; c=relaxed/simple;
+	bh=x0J7TmMtWw4m8MrhPi0Qs99f62vfNGRcSXHSXU9CiEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kMoUHFQX9eK9SFUWOOkfW/xnhWLQ9i0piCtQGHrT2fSMyVZDplSIQDn9lXymRHTK0BYboKNX41G8Iuaclen5PwoLoQmw2i4bfbQyBqkWoKdz3HDpsrATILxbAgwSkvMn2DABMqYF8zNxT3qx/brSdicKhPq3A8OSNVbih9beNHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDyF6Tux; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732272202; x=1763808202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=x0J7TmMtWw4m8MrhPi0Qs99f62vfNGRcSXHSXU9CiEg=;
+  b=jDyF6TuxSXcqtVygpW1Ym6cq79zl8p3xgKVRSx4RoIbC8DdUIsoUA0kJ
+   3fpaqC50fu08IbmwRoQ1ksxymztcDfl0N2oFjW/08NtSNpKDPntkjw4RV
+   5RUTKiLMk7B1Gp68FFiSKqXPyEjOkoHGr2fTvuBeyp340GBXrq/+/TfH2
+   4PI+d3txFrhGTwWBMKmgEILVf1ZBQQg2MDN6b8cH1Fnu/EHcC30MdQVIq
+   9P9ewVn2bh1gwFXqYDjdru27TSuXrrephft0vzRezQ1AX142n0xGecqYc
+   0npWTd9L87I1q2KUhTuVjcj4kOuV8XmIhFhm+/qEu3v0qPeqLf8M0uKz/
+   w==;
+X-CSE-ConnectionGUID: FPpFIHiYTBaT36CG17lw6A==
+X-CSE-MsgGUID: xbukUEG5TveHDpuyE9YXag==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32281235"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="32281235"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 02:43:22 -0800
+X-CSE-ConnectionGUID: 26W8L4aLRFGAlM7FXXlq2Q==
+X-CSE-MsgGUID: tslC0Lf6TXWojTN2pUn7kg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="113818793"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 02:43:19 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id D110A11F726;
+	Fri, 22 Nov 2024 12:43:16 +0200 (EET)
+Date: Fri, 22 Nov 2024 10:43:16 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc: =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	sakari.ailus@iki.fi
+Subject: Re: [PATCH v2 09/13] media: i2c: imx214: Extract format and crop
+ settings
+Message-ID: <Z0BgRIlK-Tdcm8AV@kekkonen.localdomain>
+References: <20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu>
+ <20241021-imx214-v2-9-fbd23e99541e@apitzsch.eu>
+ <CAPybu_09-1E4+Xe1Tnaue01i4JPtOHz15OUei=4q=Roqcuoz2Q@mail.gmail.com>
+ <f927d1aa8718568cd7cecc90255f73ddbd673a41.camel@apitzsch.eu>
+ <CAPybu_2xPkrL=jTT0O_10KuCgyfe3BU033Y+q2+jq9ErPU9ACA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPybu_2xPkrL=jTT0O_10KuCgyfe3BU033Y+q2+jq9ErPU9ACA@mail.gmail.com>
 
-Hi Jonathan,
+Hi Ricardo,
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 21 November 2024 15:39
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org;
->mchehab@kernel.org; dave.jiang@intel.com; dan.j.williams@intel.com;
->alison.schofield@intel.com; nifan.cxl@gmail.com; vishal.l.verma@intel.com;
->ira.weiny@intel.com; dave@stgolabs.net; linux-kernel@vger.kernel.org;
->Linuxarm <linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
->Zengtao (B) <prime.zeng@hisilicon.com>
->Subject: Re: [PATCH 13/13] rasdaemon: ras-mc-ctl: Update logging of CXL
->memory module data to align with CXL spec rev 3.1
->
->On Wed, 20 Nov 2024 09:59:23 +0000
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> CXL spec 3.1 section 8.2.9.2.1.3 Table 8-47, Memory Module Event
->> Record has updated with following new fields and new info for Device
->> Event Type and Device Health Information fields.
->> 1. Validity Flags
->> 2. Component Identifier
->> 3. Device Event Sub-Type
->>
->> This update modifies ras-mc-ctl to parse and log CXL memory module
->> event data stored in the RAS SQLite database table, reflecting the
->> specification changes introduced in revision 3.1.
->>
->> Example output,
->>
->> ./util/ras-mc-ctl --errors
->> ...
->> CXL memory module events:
->> 1 2024-11-20 00:22:33 +0000 error: memdev=3Dmem0, host=3D0000:0f:00.0,
->> serial=3D0x3, \ log=3DFatal,
->> hdr_uuid=3Dfe927475-dd59-4339-a586-79bab113b774, hdr_flags=3D0x1, , \
->> hdr_handle=3D0x1, hdr_related_handle=3D0x0, hdr_timestamp=3D1970-01-01
->> 00:04:38 +0000, \ hdr_length=3D128, hdr_maint_op_class=3D0,
->> hdr_maint_op_sub_class=3D1, \
->> event_type: Temperature Change, event_sub_type: Unsupported Config
->> Data, \
->> health_status: 'MAINTENANCE_NEEDED' , 'REPLACEMENT_NEEDED' , \
->> media_status: All Data Loss in Event of Power Loss, life_used=3D8, \
->> dirty_shutdown_cnt=3D33, cor_vol_err_cnt=3D25, cor_per_err_cnt=3D45, \
->> device_temp=3D3, add_status=3D3 \
->> component_id:02 74 c5 08 9a 1a 0b fc d2 7e 2f 31 9b 3c 81 4d \
->> pldm_entity_id:00 00 00 00 00 00 pldm_resource_id:fc d2 7e 2f ...
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->Feels like there is a lot of duplication in here, but you aren't really ma=
-king it any
->worse and maybe it is hard to reduce it.
->
-ras-mc-ctl is a tool(script), used offline, to read, decode and print  the =
-error event's data stored
-by rasdaemon into the SQLite data base. Thus logging here is similar to tho=
-se done in the rasdaemon.
+On Wed, Nov 20, 2024 at 10:22:54PM +0100, Ricardo Ribalda Delgado wrote:
+> Hi André
+> 
+> On Wed, Nov 20, 2024 at 9:07 PM André Apitzsch <git@apitzsch.eu> wrote:
+> >
+> > Hi Ricardo,
+> >
+> > Am Mittwoch, dem 30.10.2024 um 13:10 +0100 schrieb Ricardo Ribalda
+> > Delgado:
+> > > Hi
+> > >
+> > > Aren't you changing the binning mode for 1920x1080  with this patch?
+> > > I think that could be considered an ABI change.
+> >
+> > Is the problem that the ABI changes or that it is not mentioned in the
+> > commit message?
+> 
+> I think it is a combination of both. There will be products out there
+> that after applying this change will get different frames using the
+> same configuration.
+> 
+> @Sakari Ailus  What do we usually do in these cases?
 
->Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Good question. Always when something is changed in the UAPI there's a
+chance for breakages and these are a big no-no, at least in principle.
+Keeping the old behaviour in place is how you generally can avoid breakages
+but this has its issues, too.
 
-Thanks,
-Shiju
+We're in the process to make changes to the sensor APIs in general,
+while old drivers would need to maintain current functionality. See
+<20241122100633.8971-1-sakari.ailus@linux.intel.com> on LMML.
+
+Ricardo: I'll cc you to the next version.
+
+> 
+> > >
+> > > Also, if we are not letting the user change the value, I do not see
+> > > much value in setting the cropping programmatically, I'd rather not
+> > > take this change.
+> >
+> > I assume the first "value" refers to "binning value", that cannot be
+> > changed by the user. Is it right, that .set_selection needs to be
+> > implemented to change that?
+> 
+> I believe set_selection is the correct way, yes. Sakari again to keep
+> me honest :)
+
+Please see the RFC set.
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
