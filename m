@@ -1,180 +1,159 @@
-Return-Path: <linux-kernel+bounces-417690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334839D57FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:03:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87319D580B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96CD5282BE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861A0B25776
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A9A15ADA6;
-	Fri, 22 Nov 2024 02:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E276815689A;
+	Fri, 22 Nov 2024 02:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AmMq5SVF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oBedGZ26"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752BF2AE84;
-	Fri, 22 Nov 2024 02:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0347B70824;
+	Fri, 22 Nov 2024 02:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732241003; cv=none; b=XAo2EAyrvt+VtARNeV+88Jv37XHouHxgzKpfoZGrD+X06HsB39lNnO5g0rlwGPKaSi5UVZktMdT8hw5WBn95toNNgr+cjTMF8+lqwd2PNMicOTm1PtNXq2FF4JyODJ3KkcAoxIU195rGwfyIDS14qxibtnbrTQpvlPoAUOFUL/s=
+	t=1732241020; cv=none; b=Apof/DNyCFT/YJPGMFgldH4hQXNZjCpZgeDoq0h/AUKzaxozAv+QmDq+P70mHdhMqpOPb8LYFKCxr1WzKBRaA7pzrUkP8VFJ/nlnimTb2arPEy0wl06nmXDEO+tPSXrwA6sOSWz2PRcGMeHWtBeYss9Ljto6JlTt5WWNKx4Ld7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732241003; c=relaxed/simple;
-	bh=12tt6sQ/sNIXlSfWJUTjSx0VcFjQAIIwLwc7a7dQV7w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cBJFa5GEbcBW2E46L4+vsgWhmCIuUwG+ZInuOVYB0/obyA29eScgSt2WgcjzcXj2XWakSVoEFoka7jVJGVzv3UIj9kiCP4Y2L29hrhdv3XMRTspGF84bJBLXkATgGLLp9lH+MurOEoPw+K9UiyVSGZDPuAG1NNli/cSeC+UAPcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AmMq5SVF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALMMi1H003971;
-	Fri, 22 Nov 2024 02:03:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=BQ1OD+cYYs3
-	yLMO7DnL1KKffAZLTMobDq5A7RSe6d54=; b=AmMq5SVFM0FUQXtOwSDGSCdx+B2
-	eUcWLzpo1KbrD7xDchNGSNBy6I4LWK3B65zvCVS42JU4lSYQJb75US69DQ+XV6b6
-	DWd3rTcMaJtHMHqQM29bUGhlLYVDecEbQ3EFe7yK3Y4CT02zeWA150t5yHa9Is4c
-	taNXYSGVMWudxCbrCJh/CAXz/Efr1vINzwxZVmTJhnV7iAdkUEbqf81pgQD05ZOQ
-	D9H3KLEeiZ5DfO/jE2LJyq+HqzZkCXJjj6S4xlYJBZnF87uoMnsoeAm9hjLY1dPK
-	zy2svtM+H8tArkUfn0r81ZE0emK5opHZiiBxCmZCXGPXE07jdvG63GRXyRg==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3duxn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:03:13 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM23Bba017956;
-	Fri, 22 Nov 2024 02:03:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 42xmfkuev1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:03:11 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AM23Bq0017945;
-	Fri, 22 Nov 2024 02:03:11 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4AM23Ael017937
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:03:11 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id D636317FD; Fri, 22 Nov 2024 10:03:08 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
-        lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
-        neil.armstrong@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: quic_tsoni@quicinc.com, quic_shashim@quicinc.com,
-        quic_kaushalk@quicinc.com, quic_tdas@quicinc.com,
-        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Subject: [PATCH v2 6/6] arm64: dts: qcom: qcs615: enable pcie for qcs615 platform dts
-Date: Fri, 22 Nov 2024 10:03:05 +0800
-Message-Id: <20241122020305.1584577-7-quic_ziyuzhan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241122020305.1584577-1-quic_ziyuzhan@quicinc.com>
-References: <20241122020305.1584577-1-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1732241020; c=relaxed/simple;
+	bh=H0o3EjIFg35q1FThBYx71l0Umjljt08gfkwVq6HGqss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozTBJV//Y5ktvHyMaZ9alQiIf/8fFq8bb6wmTB4ZbjUHpo+JqysAc8MEQpWr5rtNgKNcpsgHJb0yXlh0t+10mA17GzOaqgwWWZXMQ/haUHw8nN3mMZqLvQDq2Vl89DPEomUWAn1OeWHLxrJkU4xiq6fJZ9nnLFh6I3iBbBvvbNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oBedGZ26; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=cO28DLrqyhaXcLC+CnKPyQYG0vP5bHEaBQLUcQnkvM4=; b=oBedGZ26PuF8sAcW
+	hBNyNHs/4AoX7D2gzmGfSQOLVT7lo+SgQQVZ9wff7mFuoh0sx6cXakzClwL8WCdY2zxgcucgxYmR4
+	yZ28vwdgeuFZnIs7zAM7ozS/BNDef4GXIIVN40t/xY9v4eQ9+Zsvs1oRkt1zYgZw900pUq296DGHN
+	AoHXJ6ClvXgDsRKqqRMo07wsBCTiu9xGY6cJlDAujirM4PIoeBto0TmEKqzlZJ8A2d0O2Gxj9kRLe
+	QkHxyisz7H/h1D1jvNqaFr4KJmZKxAP037ANkPBtc/45qMJOjYTroYfjwsv48K/C1iJ3AcG1d90uF
+	1I3+Dy0lS1WjUuEEcQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tEJ1E-001Egq-03;
+	Fri, 22 Nov 2024 02:03:36 +0000
+Date: Fri, 22 Nov 2024 02:03:35 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+	kyungmin.park@samsung.com, linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / devfreq: Remove unused devfreq_event_reset_event
+Message-ID: <Zz_md0hui8nY625s@gallifrey>
+References: <20241022003157.303127-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: K0ybVl3TNM6_SOxkG_nZSc3V6ZEUzlES
-X-Proofpoint-ORIG-GUID: K0ybVl3TNM6_SOxkG_nZSc3V6ZEUzlES
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=971
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411220015
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241022003157.303127-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 02:03:24 up 197 days, 13:17,  1 user,  load average: 0.00, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> devfreq_event_reset_event() was added in 2015 by
+> commit f262f28c1470 ("PM / devfreq: event: Add devfreq_event class")
+> 
+> but has remained unused.
+> 
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-Add platform configurations in devicetree for PCIe, board related
-gpios, PMIC regulators, etc.
+Ping.
 
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Thanks,
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6..18f131ae9e07 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -202,6 +202,23 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pcie {
-+	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -210,6 +227,31 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&tlmm {
-+	pcie_default_state: pcie-default-state {
-+		clkreq-pins {
-+			pins = "gpio90";
-+			function = "pcie_clk_req";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio101";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio100";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
- };
+Dave
+> ---
+>  drivers/devfreq/devfreq-event.c | 26 --------------------------
+>  include/linux/devfreq-event.h   |  6 ------
+>  2 files changed, 32 deletions(-)
+> 
+> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+> index 3ebac2496679..a60703374006 100644
+> --- a/drivers/devfreq/devfreq-event.c
+> +++ b/drivers/devfreq/devfreq-event.c
+> @@ -183,32 +183,6 @@ int devfreq_event_get_event(struct devfreq_event_dev *edev,
+>  }
+>  EXPORT_SYMBOL_GPL(devfreq_event_get_event);
+>  
+> -/**
+> - * devfreq_event_reset_event() - Reset all opeations of devfreq-event dev.
+> - * @edev	: the devfreq-event device
+> - *
+> - * Note that this function stop all operations of devfreq-event dev and reset
+> - * the current event data to make the devfreq-event device into initial state.
+> - */
+> -int devfreq_event_reset_event(struct devfreq_event_dev *edev)
+> -{
+> -	int ret = 0;
+> -
+> -	if (!edev || !edev->desc)
+> -		return -EINVAL;
+> -
+> -	if (!devfreq_event_is_enabled(edev))
+> -		return -EPERM;
+> -
+> -	mutex_lock(&edev->lock);
+> -	if (edev->desc->ops && edev->desc->ops->reset)
+> -		ret = edev->desc->ops->reset(edev);
+> -	mutex_unlock(&edev->lock);
+> -
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(devfreq_event_reset_event);
+> -
+>  /**
+>   * devfreq_event_get_edev_by_phandle() - Get the devfreq-event dev from
+>   *					 devicetree.
+> diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
+> index 4a50a5c71a5f..461080280de9 100644
+> --- a/include/linux/devfreq-event.h
+> +++ b/include/linux/devfreq-event.h
+> @@ -104,7 +104,6 @@ extern bool devfreq_event_is_enabled(struct devfreq_event_dev *edev);
+>  extern int devfreq_event_set_event(struct devfreq_event_dev *edev);
+>  extern int devfreq_event_get_event(struct devfreq_event_dev *edev,
+>  				struct devfreq_event_data *edata);
+> -extern int devfreq_event_reset_event(struct devfreq_event_dev *edev);
+>  extern struct devfreq_event_dev *devfreq_event_get_edev_by_phandle(
+>  				struct device *dev,
+>  				const char *phandle_name,
+> @@ -149,11 +148,6 @@ static inline int devfreq_event_get_event(struct devfreq_event_dev *edev,
+>  	return -EINVAL;
+>  }
+>  
+> -static inline int devfreq_event_reset_event(struct devfreq_event_dev *edev)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+>  static inline struct devfreq_event_dev *devfreq_event_get_edev_by_phandle(
+>  					struct device *dev,
+>  					const char *phandle_name,
+> -- 
+> 2.47.0
+> 
 -- 
-2.34.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
