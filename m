@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-417827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130939D5979
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:43:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C97E19D597C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4B21F22D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:43:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F13B282614
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BE516C453;
-	Fri, 22 Nov 2024 06:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lMHFqkYF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FAF16C453;
+	Fri, 22 Nov 2024 06:44:37 +0000 (UTC)
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBAC1632DC;
-	Fri, 22 Nov 2024 06:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCF915ADA6;
+	Fri, 22 Nov 2024 06:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732257787; cv=none; b=HQc7gtAoGW/Ai6aWUiZX9vD6Q4u4slHOQcdbrNsKyUTIQYBlcUQI9WEoaGXHBmAnlE2fFtbWgMy2ObGuEobSyJLNoKX4h5ohAYpCdF0AcTUTmp8ucAcoZU1qoa5pxYCchbk5fpy49KnSL/ms6QQUhdwoICNauFUH9ZqF2Aw64W8=
+	t=1732257876; cv=none; b=FcltGv04BsJ7ERN/jRT++ua3G7/xw3r/nzRUOyItvws6TsrIN/SMcmXpFmhJyDmjbnpgpFZLOO/4GyZjlFsPSxaCY1Bbwy7vh4Ro05Tn2sdhQuC+2a4gQ23wy1bu9G6+LccwG4qafyWffPk++jq1cW8dKMDNhtvzmaLDHg/Opqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732257787; c=relaxed/simple;
-	bh=pPVeIRdsw+cjbZoONd4IcJExIcXvQWAidHNWx09Farg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DFRiB00e73cbFoEgoYddHIDGR8xaRZp4lGipCrdbh4ZdeShR7K0hkdULQgwZiffADMXuPZkRjs103cr9ngN7s6d+ap9fCMYiJctn7Huza7dSeLOD8jRTWFVHcNKX4igF8RmG7GE9PqGIlX3wONWmF6Uix82IolETRkOZNMFfXHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lMHFqkYF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B2CCC4CECE;
-	Fri, 22 Nov 2024 06:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732257786;
-	bh=pPVeIRdsw+cjbZoONd4IcJExIcXvQWAidHNWx09Farg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lMHFqkYFyxq6EtTNZq+6yaHWeqE2296YK5w3CfryKOYNIdmg+F8FnAoOaDOmH+xxk
-	 lYvW6x9zBgbomfWLFEcLC5A07nfBj3fVzurs6hcz9HpJHVO8sk8+GrNMfuc8Yl6L0F
-	 XwaRSaqugr2xoBtX8auhP0EOBNVNKIVazGnWRQGqAmjhUTQ/FpMCGeLY1SI27LmwaF
-	 uNsauxRlGTUHSyay7CkWOmrJJX7cY4FrDBZ6DiqPpRshwM55iViLnUPDUyYarbe9Nr
-	 oz8H5fklewCliSl7tYFReDqi/Xe0RZkNDQjkAbpQ3xRejp4ESplMmnjmteCX5VFeGa
-	 FJiYTevqOtylQ==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e8607c2aso1948993e87.3;
-        Thu, 21 Nov 2024 22:43:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWyFbbIRzEdmqE6rnsyNMwrzVIVksNirga4uixWQ81ZgfdTdccl8B8pPBWZh3h5oh5/BUwMIVYQQPqez+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSFwtqRTY2pD3/jwJoPkAsVJPCC7BHaOX/cQ7JAff2VGjt9jKW
-	XQmfPN2xzXoIvBdf7zpte9mxyLiW8iPHLdcBMmE2cAk4dIOzei1J808BUFMyjTsbTHnHVNka8r+
-	h1CMm9SVABrgXzhJHR0sCtAWChfM=
-X-Google-Smtp-Source: AGHT+IEZWa5ieH0Zuzv3oYICEkGpeEhHrre9AFb4UPBUadqbngvzxptEPjBajRge5GZCVY6QGK53EY3ePCPJHZwgYX4=
-X-Received: by 2002:a05:6512:1152:b0:53d:d461:80df with SMTP id
- 2adb3069b0e04-53dd461831fmr379627e87.25.1732257784872; Thu, 21 Nov 2024
- 22:43:04 -0800 (PST)
+	s=arc-20240116; t=1732257876; c=relaxed/simple;
+	bh=hRe073Qyfd3Ta4r1K3FtVgDRKPd+7AVOzmCZDc9HAtM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C0h706kCzcM1zoHyR09R4UCOb3bFRTcBVLB8HtFpWOf4OYDy1+pP1aa7s0DF4RtKCLzjoi5Se3Xt5ZbbCXY8Y5EQIzy7ltNSr0wFd7jZAdHRptJBQICreRM9R2VH++Ko2yL9GK3ITDUFY98KnzcGTg9EeKzw5pBTldKTGy9iUh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2ea45dac86eso1483719a91.3;
+        Thu, 21 Nov 2024 22:44:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732257872; x=1732862672;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0dtFVYDQBbPu9F2seAqSmpYK0Qta0k2SVYOB9dve6KU=;
+        b=Ybx6sLFqhmTCJTHatMcb1Ap40z1TVTaRSHznpkCXBC0cW448dFoqX36Bx39ePNxJH+
+         BR+NUcJ3eXz3hhSvjvFhCwUCUVQAn9FkSNHLgMpnL8cT/16Mrlr9zEiNivz5rbDbTINr
+         o2UhQFCfLrS5fD65iW8R5E5YMfwVZhiI+w+f3Z/g7kE4CXZjjq8Aola8Q5ifxx3weDY8
+         OHOIfeOJvTGtIxphEbacApsx3SUHior9csKY2JBD9T+24ZZYXXR/KCs3kfDNZSJGqXH+
+         g+08KI70S7IXUUXqMTDheWnCjSVi7FAYKtDchTqJiJqjLU3aoBnKjWFBauBfcehyRxrK
+         lAyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZk90o7yl39XbREV8D4lqzNN6u+fnv3hvQ2uajW8IRFgqw/99Wa3gggRxUjugC50apkEvd2FoA51L4yPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLoyXfqNcUNy7s3IxEKXPbLwCNoNucPX0DTrfY4ooLCIdnH5iO
+	paP3kyY35dwK2w17ZOL8WnhCC3EPw6BiBGjEQypxVoVr/yLe7dsc
+X-Gm-Gg: ASbGncsSWHS08/y5ojPLiUjYLW9LlOO8Y69nIE89RnZHtwzyvBDdIRYy87HAfggTruJ
+	qJlQjhMlMf7soWa/e1EBNUDnxyHQYxVfdUEP3ZueWkqGmLi+SrrjcjoCp8PkrvLVWGQlFKy7M/A
+	1QC1dCNhr8Sspn2Jp5AhNJHijKISy/44rZll01I3b+wbLc6B1PrKkoQTaFhQx9OvFF8LWw2fNRT
+	rCfQmnKorInE1NUnbehl9kwS974oXnmS4iR2SBrO9+OSb5cTN6D3cd5BkB2ZSx1H5pLTqjEDg==
+X-Google-Smtp-Source: AGHT+IEe2epVNQ5nqqj51zhX5oVmEqVcvpPiujnDE/Y7+L64yr9fdDW7YU5ZHjNAFtMAmf3wCvbtLg==
+X-Received: by 2002:a17:90b:2250:b0:2ea:b564:4b31 with SMTP id 98e67ed59e1d1-2eb0e51f7ecmr1860173a91.19.1732257872310;
+        Thu, 21 Nov 2024 22:44:32 -0800 (PST)
+Received: from kylin-ThinkBook-15-G2-ITL.. ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0cfe45bdsm945163a91.9.2024.11.21.22.44.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 22:44:31 -0800 (PST)
+From: xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@ucw.cz,
+	len.brown@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiongxin@kylinos.cn,
+	xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [PATCH] drivers: base: power: Optimize array out-of-bounds access logic
+Date: Fri, 22 Nov 2024 14:44:22 +0800
+Message-Id: <20241122064422.73500-1-luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-In-Reply-To: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 22 Nov 2024 07:42:54 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
-Message-ID: <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
-Subject: Re: [Bug report] kernel BUG at include/linux/scatterlist.h
-To: Zorro Lang <zlang@redhat.com>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Herbert Xu <herbert@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 22 Nov 2024 at 05:51, Zorro Lang <zlang@redhat.com> wrote:
->
-> Hi,
->
-> I hit a kernel panic on aarch64 several times recently, when I tried to do a
-> fstests test. It's not related with fstests, due to I hit it when I boot the
-> latest mainline linux kernel (HEAD=fc39fb56917bb3cb53e99560ca3612a84456ada2).
->
-> The console log looks like related with crypto things, I'm not familar with
-> it, so just send this email to linux-crypto@ and cc linux-kernel@.
->
-> I hit this panic several times, I did nothing except building and installing
-> the latest kernel and then boot it, then it crash directly on booting time.
-> Looks like crash from:
->
->        183 static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
->        184                               unsigned int buflen)
->        185 {
->        186 #ifdef CONFIG_DEBUG_SG
-> ==>    187         BUG_ON(!virt_addr_valid(buf));
->        188 #endif
->        189         sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
->        190 }
->
-> If someone need, I can provide the big linux/.config file.
->
+The code previously used snprintf to format a string into a buffer and
+manually checked for potential buffer overflows by comparing the returned
+length with the buffer size. This approach introduced unnecessary
+complexity and was prone to subtle errors.
 
-Does this help?
+Replaced snprintf with scnprintf, which directly returns the actual number
+of characters written to the buffer (excluding the null terminator). This
+change eliminates the need for manual overflow checks and simplifies the
+buffer offset and size adjustment logic.
 
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -4300,12 +4300,14 @@
+Signed-off-by: xueqin Luo <luoxueqin@kylinos.cn>
+---
+ drivers/base/power/trace.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- static int test_sig_one(struct crypto_sig *tfm, const struct sig_testvec *vecs)
- {
-+       const u8 *src __free(kfree);
-        u8 *ptr, *key __free(kfree);
-        int err, sig_size;
+diff --git a/drivers/base/power/trace.c b/drivers/base/power/trace.c
+index cd6e559648b2..d8da7195bb00 100644
+--- a/drivers/base/power/trace.c
++++ b/drivers/base/power/trace.c
+@@ -238,10 +238,8 @@ int show_trace_dev_match(char *buf, size_t size)
+ 		unsigned int hash = hash_string(DEVSEED, dev_name(dev),
+ 						DEVHASH);
+ 		if (hash == value) {
+-			int len = snprintf(buf, size, "%s\n",
++			int len = scnprintf(buf, size, "%s\n",
+ 					    dev_driver_string(dev));
+-			if (len > size)
+-				len = size;
+ 			buf += len;
+ 			ret += len;
+ 			size -= len;
+-- 
+2.34.1
 
-+       src = kmemdup_nul(vecs->c, vecs->c_size, GFP_KERNEL);
-        key = kmalloc(vecs->key_len + 2 * sizeof(u32) + vecs->param_len,
-                      GFP_KERNEL);
--       if (!key)
-+       if (!src || !key)
-                return -ENOMEM;
-
-        /* ecrdsa expects additional parameters appended to the key */
-@@ -4326,7 +4328,7 @@
-         * Run asymmetric signature verification first
-         * (which does not require a private key)
-         */
--       err = crypto_sig_verify(tfm, vecs->c, vecs->c_size,
-+       err = crypto_sig_verify(tfm, src, vecs->c_size,
-                                vecs->m, vecs->m_size);
-        if (err) {
-                pr_err("alg: sig: verify test failed: err %d\n", err);
 
