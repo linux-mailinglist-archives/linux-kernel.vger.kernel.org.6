@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-417911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5199D5AA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:06:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4F69D5AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:06:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F041F21DB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F514282E9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504ED18A6DC;
-	Fri, 22 Nov 2024 08:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A088818BBB7;
+	Fri, 22 Nov 2024 08:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Qvhy0YmW"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="bl0QVVYP"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87BB17DFEF;
-	Fri, 22 Nov 2024 08:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D27E17D8A9;
+	Fri, 22 Nov 2024 08:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262754; cv=none; b=EmRBGc0VLgz/lAyyxtz/v1yi2r3edstIisT93xpOoM0Fsu63fg7hQ6Z2ls8XAJnRfVVdNAoKRjW6V3z+Dmcq0Zggd1myUkcbgpbHfpbYSX/mG7RqAC39VLK5b0NWLaxMzUM/W4YM1+/IVu6vo32cq3yOoXYHS/pO/tGmPrzfV6g=
+	t=1732262761; cv=none; b=cEd1DNOW+EcTCpj+ucwnfXFa6QdoVqWmCizftLrkj2heEhoH/SmMG0pZi3dz4RCulao9/1Thnl46TieDa0f/noHHB/TZUcrVPMpQ6UowW4nIQNMUmggGO+slGgYMNHnSxic/SlWqeqf/3s9BSgRbVw3weN1yV5RI9GL07lcWXto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262754; c=relaxed/simple;
-	bh=Q0ovU3OhZyQAKh6JD8vsd/LxmR77/KK30xGFf4W2R0Y=;
+	s=arc-20240116; t=1732262761; c=relaxed/simple;
+	bh=x1b5yns0kG4sf7nOEqgzB78tAxBQeRDGz4ZSwFyrogM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jEl9eE8Vst9u2HKwc4YxSA/VXIgiVcOxLuPZfZVuTpVDNAs+7KHNYZPyjJZTjkbZptuvgpr/bKvPwV43XxgPIKanpN1k0zA65Z3efxg9bhdyzIlClrg5ZGSDjzBoYHn0IPausATrYiELVF6ifRtlUffgpH8K748O28u3PQLKtGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Qvhy0YmW; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=rAYszRrl3RAY1mLkiMzegE6fIBioasQ4lwyhmilMmWNDjP0U8ieCDxTuJDVhqDNdoK5hL2w5+rNxlynTDi/zo4Kmhx31MEu0UBz5mOQ7DNhy0XMpqfkZ7VV9UPSwsVFMB9+Mv2HiXRcRwfz8BRLItDTjo5r7sr2Q/ypgUP8F4hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=bl0QVVYP; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1732262753; x=1763798753;
+  t=1732262760; x=1763798760;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=Q0ovU3OhZyQAKh6JD8vsd/LxmR77/KK30xGFf4W2R0Y=;
-  b=Qvhy0YmWLwaO1o2T2TsdnD1o2yFiyCVWhnDu7fXQwQIurR/B75jR5ryv
-   hOfySV+KT4WRQhBkDXuNiaaPHnxd/LSkNo7L8VX+seCwOffndujUN7nTR
-   4CZbQBpKtzauqB022OpdtjiEXVJ3HcSBhtSBFYWT+22tcXE/ZEEKI2eao
-   VRfidFS0nKXFw4eVka2TnwrZ567i1jiUXj0UJvflH4liAS3RF0Asfu8AT
-   tMTXRj9UHv9Gq+n9TuFQk8DZEG/Lzbo6tPu08tY5O5AlqkjpOMVQ88Jb+
-   0c/tE6lZJWDfiXBR+/Vx/8JBr3tI5oPWQsAUukkyl7NGiXRZJo927NAec
-   w==;
-X-CSE-ConnectionGUID: seBZEJAOQsKqub7xMw7SQA==
-X-CSE-MsgGUID: 6ch+yPC7SWGGP1PoJryrgg==
+  bh=x1b5yns0kG4sf7nOEqgzB78tAxBQeRDGz4ZSwFyrogM=;
+  b=bl0QVVYPkj5Ji2Md8QlfB5AC3k8pG9KvKAIXzVRpVlWuMq8j9BxAEtQ3
+   l8JHuoH9t4UvlogTqNfdEJH4w0fDZ0kD/ho032eKMAPrdrP7IJR+S4DGv
+   3/IEEBecl0dJ7a7Jokt669kD8OmZZ9EAcbZ1m2Q2M2mzV0xa7Zg8cXusU
+   JthnCEyZ0gviaN4pK1mzkdGZtb0IW8u7gUPsYVfthwynio4KUFtHhm5+q
+   iRrDPmTMCyTdJ57XQtxGycHJHkFzd8DmYq7GpfhoCdHsQ4NcZXhHiFeL4
+   EZFCmjTqgYvLI30m+hYsUTNRJkrvXLZFbV1D6KeWDLYSCjExIeh7ASbmQ
+   A==;
+X-CSE-ConnectionGUID: 1R1gq0hdRfOMYCXRCiBJmQ==
+X-CSE-MsgGUID: l0P3LG4iRe6wOxoKJnSVXA==
 X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="34661813"
+   d="scan'208";a="265826808"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Nov 2024 01:05:51 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Nov 2024 01:05:59 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 22 Nov 2024 01:05:44 -0700
+ 15.1.2507.35; Fri, 22 Nov 2024 01:05:47 -0700
 Received: from archlinux.microchip.com (10.10.85.11) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 22 Nov 2024 01:05:42 -0700
+ 15.1.2507.35 via Frontend Transport; Fri, 22 Nov 2024 01:05:45 -0700
 From: Mihai Sain <mihai.sain@microchip.com>
 To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 	<claudiu.beznea@tuxon.dev>, <devicetree@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 CC: Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH 1/2] ARM: dts: microchip: sam9x7: Move i2c address/size to dtsi
-Date: Fri, 22 Nov 2024 10:05:22 +0200
-Message-ID: <20241122080523.3941-2-mihai.sain@microchip.com>
+Subject: [PATCH 2/2] ARM: dts: microchip: sam9x75_curiosity: Add power monitor support
+Date: Fri, 22 Nov 2024 10:05:23 +0200
+Message-ID: <20241122080523.3941-3-mihai.sain@microchip.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241122080523.3941-1-mihai.sain@microchip.com>
 References: <20241122080523.3941-1-mihai.sain@microchip.com>
@@ -78,149 +78,90 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Since these properties are common for all i2c subnodes,
-move them to SoC dtsi from board dts.
+Add PAC1934 support in order to monitor the board power consumption.
+Device is connected on flexcom7 in twi mode.
+
+[root@SAM9X75 ~]$ awk -f pac1934.awk
+VDD3V3 current:   10.675 mA, voltage: 3295.41 mV
+VDDOUT4 current:  5.7625 mA, voltage: 1196.78 mV
+VDDCORE current: 115.442 mA, voltage: 1243.65 mV
+VDDIODDR current: 29.585 mA, voltage: 1345.21 mV
 
 Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
 ---
- .../dts/microchip/at91-sam9x75_curiosity.dts  |  2 --
- arch/arm/boot/dts/microchip/sam9x7.dtsi       | 26 +++++++++++++++++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+ .../dts/microchip/at91-sam9x75_curiosity.dts  | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
 
 diff --git a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
-index 87b6ea97590b..d453800f8e35 100644
+index d453800f8e35..76d7a756e08c 100644
 --- a/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
 +++ b/arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
-@@ -88,8 +88,6 @@ &flx6 {
+@@ -198,6 +198,52 @@ regulator-state-standby {
+ 	};
  };
  
- &i2c6 {
--	#address-cells = <1>;
--	#size-cells = <0>;
++&flx7 {
++	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
++	status = "okay";
++};
++
++&i2c7 {
++	dmas = <0>, <0>;
++	i2c-analog-filter;
++	i2c-digital-filter;
++	i2c-digital-filter-width-ns = <35>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_flx7_default>;
++	status = "okay";
++
++	power-monitor@10 {
++		compatible = "microchip,pac1934";
++		reg = <0x10>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		channel@1 {
++			reg = <0x1>;
++			shunt-resistor-micro-ohms = <10000>;
++			label = "VDD3V3";
++		};
++
++		channel@2 {
++			reg = <0x2>;
++			shunt-resistor-micro-ohms = <10000>;
++			label = "VDDOUT4";
++		};
++
++		channel@3 {
++			reg = <0x3>;
++			shunt-resistor-micro-ohms = <10000>;
++			label = "VDDCORE";
++		};
++
++		channel@4 {
++			reg = <0x4>;
++			shunt-resistor-micro-ohms = <10000>;
++			label = "VDDIODDR";
++		};
++	};
++};
++
+ &i2s {
  	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_flx6_default>;
- 	i2c-analog-filter;
-diff --git a/arch/arm/boot/dts/microchip/sam9x7.dtsi b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-index beb1f34b38d3..aedba0a8318f 100644
---- a/arch/arm/boot/dts/microchip/sam9x7.dtsi
-+++ b/arch/arm/boot/dts/microchip/sam9x7.dtsi
-@@ -151,6 +151,8 @@ i2c4: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -220,6 +222,8 @@ i2c5: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <14 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 14>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -312,6 +316,8 @@ i2c11: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 32>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -362,6 +368,8 @@ i2c12: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 33>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -533,6 +541,8 @@ i2c6: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 9>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -583,6 +593,8 @@ i2c7: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 10>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -633,6 +645,8 @@ i2c8: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 11>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -702,6 +716,8 @@ i2c0: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 5>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -771,6 +787,8 @@ i2c1: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -840,6 +858,8 @@ i2c2: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 7>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -909,6 +929,8 @@ i2c3: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -984,6 +1006,8 @@ i2c9: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 15>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -1034,6 +1058,8 @@ i2c10: i2c@600 {
- 				compatible = "microchip,sam9x7-i2c", "microchip,sam9x60-i2c";
- 				reg = <0x600 0x200>;
- 				interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				clocks = <&pmc PMC_TYPE_PERIPHERAL 16>;
- 				dmas = <&dma0
- 					(AT91_XDMAC_DT_MEM_IF(0) |
+ 	pinctrl-0 = <&pinctrl_i2s_default>;
+@@ -231,6 +277,12 @@ pinctrl_flx6_default: flx6-default {
+ 				<AT91_PIOA 24 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>,
+ 				<AT91_PIOA 25 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
+ 		};
++
++		pinctrl_flx7_default: flx7-default {
++			atmel,pins =
++				<AT91_PIOC 0 AT91_PERIPH_C AT91_PINCTRL_PULL_UP>,
++				<AT91_PIOC 1 AT91_PERIPH_C AT91_PINCTRL_PULL_UP>;
++		};
+ 	};
+ 
+ 	gpio-keys {
 -- 
 2.47.0
 
