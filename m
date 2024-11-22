@@ -1,81 +1,97 @@
-Return-Path: <linux-kernel+bounces-418106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98139D5D48
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:29:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A769D5D4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775E31F24E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:29:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B7BDB22C93
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3161DDC3F;
-	Fri, 22 Nov 2024 10:29:23 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7360D1BD4FB;
+	Fri, 22 Nov 2024 10:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="HgANCMKs"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43926171088;
-	Fri, 22 Nov 2024 10:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D331304BA;
+	Fri, 22 Nov 2024 10:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732271363; cv=none; b=JsSxvQCxd38UWarm8KZFqpKauKcU9MMkI8CocYfowxSJIz4dagj0B0Y+n8onAatXr91XDVY2MoffMjF5ProBd0NIEGQfs3/nvtwASK9Lh60kXYmPJY/CdT3+r76R0ZmLHsS4ykkt9rNkVIpjgfkmun8T532QI2LKoUFnR5eJ4lA=
+	t=1732271485; cv=none; b=cHW2Vepo+13+rz2RsxFReYYOBIrhXwvVZR3SItZJCS7SX7pg48ab+hAZLNgSnYxJ4nETfortuwm5vBmdehWDDxRRP4ivbBdgcOXfbjCes3x81DI5rRab2hTedRKhVWnSIL/mYvM6/Acj5qj32XjZcqeXRvCPAnbTYaPDlYwSLcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732271363; c=relaxed/simple;
-	bh=KY6cZV4aUfFBErHosWRZzSawkaV7LS7+XJEKWzxNyRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOP9c0Fn+PTMCQmEPcuRf5v50VVZ55QeXL8M4CzkYURxpgATep1/iu5F9ZJtttbdQFzQqAc0HvoGOMZNqRN309PrOXzMl8BSeXBjupW0lK4jiF/y1PPoGO6BaA7TnmYzb8doTCkK+eropdUnRNnB/cFPf5zQSmKYpiOc2R+Z/T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 8A3C5102BE4DD;
-	Fri, 22 Nov 2024 11:29:16 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 57C351B9BCF; Fri, 22 Nov 2024 11:29:16 +0100 (CET)
-Date: Fri, 22 Nov 2024 11:29:16 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, bhelgaas@google.com,
-	tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
-	davem@davemloft.net, anil.s.keshavamurthy@intel.com,
-	mark.rutland@arm.com, peterz@infradead.org
-Subject: Re: [PATCH v3] PCI: hotplug: Add a generic RAS tracepoint for
- hotplug event
-Message-ID: <Z0Bc_Mws5mD03TMI@wunner.de>
-References: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
- <Zz786zZljAy2J5i7@wunner.de>
- <7002248c-f3af-42aa-ba42-a65cd738ae37@linux.alibaba.com>
- <20241121084354.4a554829@gandalf.local.home>
- <Zz-9vviSWP8oRPUx@wunner.de>
- <20241121190826.78506b40@gandalf.local.home>
- <e96ed0ee-01c8-4429-a903-17bc7813d78a@linux.alibaba.com>
+	s=arc-20240116; t=1732271485; c=relaxed/simple;
+	bh=lz5JV+UPq/FCPgqu3dAGSu1fJIPEU5uoda5RjDr51TQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ibtnEgNvTEjy5PFN88HGIURKjt0GC4DhZTLDHLOXrq/2tn1ROAK5KbsHsMsZCa/6eFj4ig9nbIcaGotoz7772f+OLb99ctFFEv5EyBnxs+UYpnHTGSIb8hvHD6VmymCL3MnBqVyZNzCn4DJghSQlvDfUEkWHpNKjc4Ld6QB+9iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=HgANCMKs; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732271479;
+	bh=lz5JV+UPq/FCPgqu3dAGSu1fJIPEU5uoda5RjDr51TQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=HgANCMKsnGedoo7ZS+kRhaiiJ7a361nd/PFP6nvGhTI6rqly5nqN5Grtmp9TlRO5Q
+	 UvgSuVHElPLizP5dieltnj3KDDAQq90RNYjVnXSYOHCZ/vINiPEbS8NHne2A3Kkl6P
+	 8BWxdq05ZkBDRdshFKo701N+6XMXmBBGMdskfh5g=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Fri, 22 Nov 2024 11:31:15 +0100
+Subject: [PATCH] efi: rci2: mark bin_attribute as __ro_after_init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e96ed0ee-01c8-4429-a903-17bc7813d78a@linux.alibaba.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241122-sysfs-const-bin_attr-rci2-v1-1-3db1ec9aa203@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAHJdQGcC/x3MwQqDMAyA4VeRnBewoazgq8iQtktnLnUkRSbiu
+ 1t2/A7/f4KxChtMwwnKu5hstcM9BshrrB9GeXcDjeSdI0I7rBjmrVrDJHWJrSlqFsLgc0r+WQL
+ HAL3/Khf5/d/z67puaMnut2sAAAA=
+X-Change-ID: 20241122-sysfs-const-bin_attr-rci2-74cbb46f7ea7
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732271477; l=1011;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=lz5JV+UPq/FCPgqu3dAGSu1fJIPEU5uoda5RjDr51TQ=;
+ b=fHUOrtR7NIQS7KukROanGonWdnybWrd6DyZ4LfFK9Iecs0gt9uH6ca95iyRlvlWOqvs4yqCK7
+ AtKoLXbjr0vAM9LYqFd6sKcp2PcKM/a0DvKYfJ3xByJ11V+b/apnIKL
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Fri, Nov 22, 2024 at 02:25:33PM +0800, Shuai Xue wrote:
-> Agreed. pci_hp_event is more reasonable. Than is:
-> 
-> - system: pci
-> - event: pci_hp_event
-> 
-> /sys/kernel/debug/tracing/events/pci/pci_hp_event
-> 
-> @Lukas, if you have any other concerns, please let me know.
+The attribute is only modified during __init phase.
+Protect it against accidental or intentional modifications afterwards.
 
-This LGTM, thank you.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ drivers/firmware/efi/rci2-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/efi/rci2-table.c b/drivers/firmware/efi/rci2-table.c
+index 4fd45d6f69a4d8b3233b2e49dc91f0b734a338e9..c1bedd244817b2c53d6cfc4cc8b13f479ba3caa9 100644
+--- a/drivers/firmware/efi/rci2-table.c
++++ b/drivers/firmware/efi/rci2-table.c
+@@ -40,7 +40,7 @@ static u8 *rci2_base;
+ static u32 rci2_table_len;
+ unsigned long rci2_table_phys __ro_after_init = EFI_INVALID_TABLE_ADDR;
+ 
+-static BIN_ATTR_SIMPLE_ADMIN_RO(rci2);
++static __ro_after_init BIN_ATTR_SIMPLE_ADMIN_RO(rci2);
+ 
+ static u16 checksum(void)
+ {
+
+---
+base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
+change-id: 20241122-sysfs-const-bin_attr-rci2-74cbb46f7ea7
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
