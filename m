@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-418197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AD59D5E82
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:00:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 488E09D5E87
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:01:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A911F218A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:00:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4041F21B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 895811DE4EE;
-	Fri, 22 Nov 2024 12:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CD11DDC0C;
+	Fri, 22 Nov 2024 12:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HtnHBx3e"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DW0yDYvo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC7524F;
-	Fri, 22 Nov 2024 11:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42D04500E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732276802; cv=none; b=L8DlB1Vxw2BND96jVWtliYk7dhI/KT2n7eQ1e6MJ+FW6ilNWZDVd9YWRy78ML6Jb218SKp+5lnG3WkCXmC7fibL6IiYzM7h0Hxs3S1yLE71Fz6Jx/e77n/X3EvYjO6jKBiQFd2Mfcyq+AJFWSANBxF9MK7Imnznj5Vjdx/3X0fo=
+	t=1732276889; cv=none; b=f2uQX1HV8XDZIqtJHqtxYXluPWqQt4EWINnohxtvR2wyL7LwoiBGQobikOp6iWlFhpjZMuHl42wA3Y2XrqziUt0dSS5nOvtc0W1dFIQbKRHBQC/dLmlxT89RtyVAuNE3Hqgg/3XsqjPralgGu0Idc1OLOvOwX4D1QZmBfqfBZ0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732276802; c=relaxed/simple;
-	bh=lX1IY5r7v5tsoLMf2bcVbuVbOPd1MvuOHDlxoiOVVQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LALLDBBi0djVAH9DB72r9qBOATqu7NEdy8NXYTGH6QH9RJqHxMFdGhbdOCAvnTquYx16fj6a/cCGhsCsEFiQWVVNDu1Xu8FP9wOg9huX7aZ+62alnzQqZRhjWLDyTtHGSrZExZG5rTHt5TgXw/7JDrLNjKxZUI/0I0TQJ5Mqcko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HtnHBx3e; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=o8WeUfkNhuU0xebIZYnnpfdPy1pYAgywRjfJ3vGwYgk=; b=HtnHBx3e6l+svFqC2GJZCgVr6b
-	F4IQLw9wKNnWVVWnWHq2Bt+/UYpnu47b6Xr2Y2Pv5n9/I14omt526ZAHefefR32bR52texkq6IqRj
-	Svreeer6Dz1JzD6jbPp/pJVbZgEf3RPOb8Bv3Z55FxYwFJozdLGw/igKT/1rQdwBp1wB2JViEcip8
-	eqVssdOaXdbR1OytUowUc/Eq9b564xRa2kM3CjzrU2nN8kTc6AGFiQ5sjWxiu+1OE3af5nG77ypkm
-	yCNCvXzDukboVxIj0Jl7eEVEnwNyylqd2zOlF3k0JY4ZaPHx1dlf6jAcRb3eH9tfm7xRuPh0elinJ
-	Bmz7r6Gg==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tESKB-00AvjT-G3; Fri, 22 Nov 2024 12:59:47 +0100
-Message-ID: <c00c6436-8abf-4b8d-a5a1-dfcab45b6f7d@igalia.com>
-Date: Fri, 22 Nov 2024 08:59:41 -0300
+	s=arc-20240116; t=1732276889; c=relaxed/simple;
+	bh=SI6rn+xuBp3BcktgH4EM27m9Tv6PFcPr2zKWa+N13t4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DRb8TCtzL1VwrwpJLlf4LveKXzXexSx+TnaEnKVTRnloSCUs0bDkcSYiKRfgZraIbw37s2pwlwhkZiioxGBUFeUwoS3d/Jft2sqXwwtFygHsvkDhwgk4Moq9xsvA16N7GgWL5R/ryy65Vp3D04v0zsK69cRPvTF7cmJwZQISANA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DW0yDYvo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1A6C4CECE;
+	Fri, 22 Nov 2024 12:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732276889;
+	bh=SI6rn+xuBp3BcktgH4EM27m9Tv6PFcPr2zKWa+N13t4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DW0yDYvoady0QZvZndYmHmjOynqvNmoWtGm0Th6gyUlUiKOOQYKf8cF6dQ9Uv+G9c
+	 UYJdyTK3e4pEvJdDojq47ScWkKmBOUshqY62jVf1WwyNqQV944z2MbqMyZhpm5gMOA
+	 KSp0E2fs+yVfvnRDYy3a02FmR/yy4NbfXkKS+L5h/L2Gclc0+7YkBTQMzmfjxAfRE5
+	 pnqK7Lda6R1ksOlwxwnSsZXESA/dKbPzH+DyG9nWigwzU5TM1ryZmS2nyMaPxvNdW7
+	 x94BjK47GyzvIwq65bMx2HNzPfOFAvIs4fOPwr34/vDu7lZX56MlvSmXVJLJhmPP44
+	 k/qSMDmmQY8Iw==
+Date: Fri, 22 Nov 2024 13:01:26 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Anthony Mallet <anthony.mallet@laas.fr>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+	Marco Elver <elver@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: posix timer freeze after some random time, under pthread
+ create/destroy load
+Message-ID: <Z0BylnuVaxwCNP9n@pavilion.home>
+References: <26411.57288.238690.681680@gargle.gargle.HOWL>
+ <Zz95qDPU2wcEp26r@localhost.localdomain>
+ <20241122082407.GA14342@redhat.com>
+ <Z0BliWkMHHzohMt3@pavilion.home>
+ <20241122114949.GA24815@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/v3d: Stop active perfmon if it is being destroyed
-To: Christian Gmeiner <christian.gmeiner@gmail.com>,
- Melissa Wen <mwen@igalia.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- "Juan A. Suarez Romero" <jasuarez@igalia.com>
-Cc: kernel-dev@igalia.com, Christian Gmeiner <cgmeiner@igalia.com>,
- stable@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241118221948.1758130-1-christian.gmeiner@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <20241118221948.1758130-1-christian.gmeiner@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241122114949.GA24815@redhat.com>
 
-Hi Christian,
-
-On 18/11/24 19:19, Christian Gmeiner wrote:
-> From: Christian Gmeiner <cgmeiner@igalia.com>
+Le Fri, Nov 22, 2024 at 12:49:50PM +0100, Oleg Nesterov a écrit :
+> On 11/22, Frederic Weisbecker wrote:
+> >
+> > Le Fri, Nov 22, 2024 at 09:24:07AM +0100, Oleg Nesterov a écrit :
+> > > On 11/21, Frederic Weisbecker wrote:
+> > > >
+> > > > I think this started with commit:
+> > > >
+> > > > bcb7ee79029d (posix-timers: Prefer delivery of signals to the current thread)
+> > > >
+> > > > The problem is that if the current task is exiting and has already been reaped,
+> > > > its sighand pointer isn't there anymore.
+> > >
+> > > Thanks...
+> > >
+> > > This can only happen if the exiting task has already passed exit_notify() which
+> > > sets exit_state. So I'd suggest to check current->exit_state instead of PF_EXITING
+> > > in the patch below.
+> > >
+> > > Oleg.
+> >
+> > Right, I don't mind either way,
 > 
-> If the active performance monitor (v3d->active_perfmon) is being
-> destroyed, stop it first. Currently, the active perfmon is not
-> stopped during destruction, leaving the v3d->active_perfmon pointer
-> stale. This can lead to undefined behavior and instability.
+> Me too, so feel free to ignore,
 > 
-> This patch ensures that the active perfmon is stopped before being
-> destroyed, aligning with the behavior introduced in commit
-> 7d1fd3638ee3 ("drm/v3d: Stop the active perfmon before being destroyed").
+> > though if it's past PF_EXITING,
+> > complete_signal() -> wants_signal() will defer to another thread anyway, right?
 > 
-> Cc: stable@vger.kernel.org # v5.15+
-> Fixes: 26a4dc29b74a ("drm/v3d: Expose performance counters to userspace")
-> Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+> Right. So I think it would be better to rely on complete_signal() in this
+> case even if the current logic is very simple and dumb.
 
-Applied to misc/kernel.git (drm-misc-next).
+Just to make sure I understand correctly, this means you'd prefer to keep
+the PF_EXITING test?
 
-Maxime, Thomas, if possible, could you cherry-pick this commit to be 
-included in 6.13? Thanks!
-
-Best Regards,
-- MaÃ­ra
-
-> ---
->   drivers/gpu/drm/v3d/v3d_perfmon.c | 5 +++++
->   1 file changed, 5 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> index 00cd081d7873..909288d43f2f 100644
-> --- a/drivers/gpu/drm/v3d/v3d_perfmon.c
-> +++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
-> @@ -383,6 +383,7 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
->   {
->   	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
->   	struct drm_v3d_perfmon_destroy *req = data;
-> +	struct v3d_dev *v3d = v3d_priv->v3d;
->   	struct v3d_perfmon *perfmon;
->   
->   	mutex_lock(&v3d_priv->perfmon.lock);
-> @@ -392,6 +393,10 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
->   	if (!perfmon)
->   		return -EINVAL;
->   
-> +	/* If the active perfmon is being destroyed, stop it first */
-> +	if (perfmon == v3d->active_perfmon)
-> +		v3d_perfmon_stop(v3d, perfmon, false);
-> +
->   	v3d_perfmon_put(perfmon);
->   
->   	return 0;
+> > Due to retarget_shared_pending() being called after the flag being set...
+> 
+> Yes. Whatever we do send_sigqueue/complete_signal can choose an exiting thread
+> which doesn't have PF_EXITING yet, in this case retarget_shared_pending() from
+> that thread will pick another target for signal_wake_up/TIF_SIGPENDING.
 
+Right.
+
+Thanks.
+
+> 
+> Thanks!
+> 
+> Oleg.
+> 
 
