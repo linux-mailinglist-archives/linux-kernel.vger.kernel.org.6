@@ -1,162 +1,177 @@
-Return-Path: <linux-kernel+bounces-417905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 527D09D5A88
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:01:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11BE89D5A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCAC91F22700
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3451F2364E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D2E187321;
-	Fri, 22 Nov 2024 08:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF8118891F;
+	Fri, 22 Nov 2024 08:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1gyijaH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WFybMwWJ"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46166CDBA;
-	Fri, 22 Nov 2024 08:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058D9187321
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262476; cv=none; b=M+5IXSMM+gsFbLoebxqBnqCjunoWDNsvPT+wQbkCAnLrlUq6EeIjztAUetLLxrkoMsZFgk/Mt7JvtdfuvnTvxnANwu+DG0H0n5J57s37tCoeBGbiqyf7xzfULa8UtTlAlkD2lrOv/4bZHOVKv2+pFmPw9fUE/akbF2DfgF2cce4=
+	t=1732262495; cv=none; b=LSCbtRHRgWmesn2WttHt3+kyEq1ncaTCPUsznN2dZGnITFnUdjiHLQjzHW7oYPB1M3fQ99YuHVF9kxuMDBP9ljPN/6SZwYfEQHNj1kDEXC3mis2+sQgP/mviO9fzWzhc+ms3Ufe5PbMz4lWVXG5ndp1GHOom/2x5yd40mk3lqAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262476; c=relaxed/simple;
-	bh=SI+Dvo5fG2wGvmS/CiWJVZivtu+gHtApg0XMcvj/EyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIM7E9P6GoMZB4A4420A3qPFkFiYddFzI/pqP1Cbv1DDXhjA346D+wrTEU4oHxggyWlVYKlttvTPRqhXWb2ecZgfxPY9FKp0AuFCP9ge+7Mub1rcLxnbWcZVMFWwjZI0bBglOKy8iuA47bn++sfPN1aTkkIOxTtqhyuTIAdRgJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1gyijaH; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732262475; x=1763798475;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SI+Dvo5fG2wGvmS/CiWJVZivtu+gHtApg0XMcvj/EyY=;
-  b=Z1gyijaHxWQ7Nr096KAPNJ1ZpNvueQNh/7w36Po3szcNBHwGpZIYNpmq
-   kLPOytDiJk4ywWhGggkRoJx5co+aggmtOpjrAhoZZm11E/598jvxbPenZ
-   IxWOT9/rcGROofzgRuZ5oudC3SEKNvFKUfUjrKjaLPCIvvTxx1OpnfiF6
-   gD4PjxiJAQk6Kxzx+IvmahZ5FQsq1TV9aBcWK2MXs0e+YwQFzSpit+tf9
-   PCiw5KyCAZZCLX+si9GZ1ssf6YMJ87ndF36eLPKE/2+makyNZhP9cTS2a
-   Bt/PzN4fUU9ahbpdLpnNAYkPGolfGBBzbGrXaocDorBpnbJDkcqCXjdYA
-   Q==;
-X-CSE-ConnectionGUID: xzZXJIp6RsOtFckTfQYONA==
-X-CSE-MsgGUID: 72MIC3aZQ2mzovIfpVDFBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="31799382"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="31799382"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:01:14 -0800
-X-CSE-ConnectionGUID: l+o41oNARJi79iIwRknaiQ==
-X-CSE-MsgGUID: GWB/6Qo0TbOl1iE4ZT80OQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="90142818"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 00:01:12 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 72C3711F7E7;
-	Fri, 22 Nov 2024 10:01:09 +0200 (EET)
-Date: Fri, 22 Nov 2024 08:01:09 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>,
-	lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Subject: Re: drivers/media/pci/intel/ipu-bridge.c:752
- ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
-Message-ID: <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain>
-References: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
+	s=arc-20240116; t=1732262495; c=relaxed/simple;
+	bh=ccGCjoR7OOGsWyQ0kZ2v3mFpY4WQi19CY9Hwz6i8ids=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tCJhjt23mLKDDRrtA3wf0bbTDETgO9uNchEPdmAUHJZ20/y2OfOmd7xmOpJ7t4KcgU/H3KEw5pdA7dyvS+BnyvLbWaqfJmITEe/fhaM6WKDs1wlkJ5ymiduZpEiXpeKjawrjM0x380luvISxvszLGE/xJnCP7c+1bCs6BmBZfc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WFybMwWJ; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e383bbcef9dso1818228276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:01:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732262492; x=1732867292; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0n9X1zO0xeMvExen0u2qj/zc+VVdF7G7eQjHYHIY33g=;
+        b=WFybMwWJbTEtuZ37Ed+MQ+AJKHSzkouq0lF8XAzplLKSZI7TLuB0IkhiGrWHe/+Diu
+         sFPwXNDdo0uAa0R7+BQwpjtOH6KZwJNohUTC3Q9s/tuig92GJGEHyNjau9nfm6t9WEb6
+         llkLRYBW3udE97j0ChK91eHoSvgt5l/fnkDp4m7FU7XVpVvLEMIYWYxe9xUuR/IJZ4XX
+         uhT5COq+BE6XzqoXc1gP1Zxy+V3/I7VKgBv6HuIzKdbNC1HHHLLcXm1l2SMBVhnis6y+
+         +ay+EEer9Pfkag5DhBEdvWM7/QI+IXW2Y0E3m0gN8UyaetCFxLQoKQ0Et98D0FwvQC5o
+         YT6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732262492; x=1732867292;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0n9X1zO0xeMvExen0u2qj/zc+VVdF7G7eQjHYHIY33g=;
+        b=pDMOuN2wRap/OqGshkgHOK4PQEibjp18SGfbpiNztPk3kV7/A7nvv+QOeqa9utXFpm
+         A+8lgdnYxNynUeAZD6qJp5USUM5xpsXjRnWcJ1wePIGtgxUOTDwmMKehdyWcKfGyc3yg
+         VC3ejM2HTQ+/a3XGsBcq0vPngKPB8MZYFByu5aggQlE/NfKDEoI6mXnPTCAkSPNtvUg+
+         AFtWr8vR/ySAiAugQXd6yHvYyeIuZa2pNnn41bw1beWSWO7aVxpCmd5IdsOAT/xGjSsh
+         9zoEvQwWEnty6ld1qzKR7AIluZ7xI5iyFcqmCfn4UGGPZ0rE2QyQP/oa2TsL6ieGaynq
+         YLTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCrG/1BXqLTOGisWDA1mrvvZzKrJIEZ0tfP8ejlNoYWl9U4dk4V5uYgqiSiYGRUqT0Vz6jtg1xw4WpwBk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5rTHQHkN/OBBH5CgIQG14HShSOKtzb48gQubvcoqKKn0AM5VP
+	2GkGBu2nCR4EFicE59fCdZgyYi2ygUdclCa52OOr1uvPFi8oedSVoTxXycnRjCh6DuMWxaRPwE1
+	CHh8IPuShvtj3y75i9hWLyQbD+YyRT+rMvvzQHw==
+X-Gm-Gg: ASbGncuqF4DCoxV6keZtHs4gZnp3XLuPB37ZfGEPomorvWxtpTZJpfRFM+Pl2CxhWYG
+	fbUprjnN/varGrU/avR60/k7ggX21QpAXpVPF91meQzupGQ==
+X-Google-Smtp-Source: AGHT+IFU5ixE8Xx6CZ0SxpuikfRRPTuuMks+1EGpEPYq7zm+H95wFUg/aT+MJnKUnRB2FID0ghRSfJDLOAnf/bPxO5E=
+X-Received: by 2002:a05:6902:2a8f:b0:e38:a031:bbd3 with SMTP id
+ 3f1490d57ef6-e38f8bcc9fbmr1727683276.39.1732262491893; Fri, 22 Nov 2024
+ 00:01:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-3-quic_chejiang@quicinc.com> <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
+ <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com> <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
+ <e8645b6c-7f78-4051-9e29-2276197714ed@quicinc.com>
+In-Reply-To: <e8645b6c-7f78-4051-9e29-2276197714ed@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 22 Nov 2024 10:01:21 +0200
+Message-ID: <CAA8EJprmdafDNpjEXg==NA3rQnMYKDxKrYLCoTH0WCv1R265Eg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: bluetooth: Add qca6698 compatible string
+To: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	quic_zijuhu@quicinc.com, linux-bluetooth@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, quic_mohamull@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dan,
+On Fri, 22 Nov 2024 at 03:55, Cheng Jiang (IOE)
+<quic_chejiang@quicinc.com> wrote:
+>
+> Hi Dmitry,
+>
+> On 11/22/2024 12:28 AM, Dmitry Baryshkov wrote:
+> > On Thu, 21 Nov 2024 at 06:12, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
+> >>
+> >> Hi Dmitry,
+> >>
+> >> On 11/20/2024 6:44 PM, Dmitry Baryshkov wrote:
+> >>> On Wed, Nov 20, 2024 at 05:54:26PM +0800, Cheng Jiang wrote:
+> >>>> Add QCA6698 qcom,qca6698-bt compatible strings.
+> >>>
+> >>> Why? Is it the same chip as WCN6855 or a different chip? Is it
+> >>> completely compatible?
+> >>>
+> >> They are different chips. But it's compatible with WCN6855.
+> >
+> > So, do we really need new compat? Will/can it use the same firmware?
+> We need to use a different firmware.
 
-On Fri, Nov 22, 2024 at 10:45:53AM +0300, Dan Carpenter wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   28eb75e178d389d325f1666e422bc13bbbb9804c
-> commit: 93da10eee90b2ffa4b496dd4a6ea276c57461fb6 media: intel/ipu6: Fix direct dependency Kconfig error
-> config: alpha-randconfig-r072-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221147.N6w23gDo-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 14.2.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-> 
-> smatch warnings:
-> drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
-> 
-> vim +/i +752 drivers/media/pci/intel/ipu-bridge.c
-> 
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  745  static int ipu_bridge_ivsc_is_ready(void)
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  746  {
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  747  	struct acpi_device *sensor_adev, *adev;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  748  	struct device *csi_dev;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  749  	bool ready = true;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  750  	unsigned int i;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  751  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03 @752  	for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  753  #if IS_ENABLED(CONFIG_ACPI)
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  754  		const struct ipu_sensor_config *cfg =
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  755  			&ipu_supported_sensors[i];
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  756  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  757  		for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  758  #else
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  759  		while (true) {
->                                                                                                         ^^^^^^^^^^^^^^
-> 
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  760  			sensor_adev = NULL;
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  761  #endif
-> 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  762  			if (!ACPI_PTR(sensor_adev->status.enabled))
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  763  				continue;
-> 
-> 
-> These continues make sense in for_each_acpi_dev_match() but not in a while (true) {
-> loop.  We're stuck forever.
+Need because of the product needs or need because of the existing
+firmware not working with the chip?
+Wait... your WiFi colleagues were more helpful and they wrote that "it
+has different RF,
+IPA, thermal, RAM size and etc, so new firmware files used." ([1]).
+Please include that information in your commit messages too to let
+reviewers understand  what is going on.
 
-The non-ACPI case is there just for the looks... I think what should be
-done is to make the entire loop conditional to CONFIG_ACPI. I can post a
-patch.
+[1] https://lore.kernel.org/linux-arm-msm/20241024002514.92290-1-quic_miaoqing@quicinc.com/
 
-> 
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  764  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  765  			adev = ipu_bridge_get_ivsc_acpi_dev(sensor_adev);
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  766  			if (!adev)
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  767  				continue;
->                                                                                                                         ^^^^^^^^
-> 
-> 
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  768  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  769  			csi_dev = ipu_bridge_get_ivsc_csi_dev(adev);
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  770  			if (!csi_dev)
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  771  				ready = false;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  772  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  773  			put_device(csi_dev);
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  774  			acpi_dev_put(adev);
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  775  		}
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  776  	}
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  777  
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  778  	return ready;
-> c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  779  }
-> 
+> Let me check if using
+> "firmware-name" allows us to omit the new soc type.
+> From the driver's perspective, the only change is the need to load a
+> different firmware.
 
--- 
-Kind regards,
+If you want to emphasise that it is not just WCN6855, extend schema to
+use fallback compatibles:
+compat = "qcom,qca6698-bt", "qcom,wcn6855-bt"; No driver changes are
+necessary with this approach.
 
-Sakari Ailus
+
+>
+> >
+> >>>>
+> >>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+> >>>> ---
+> >>>>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
+> >>>>  1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> index 9019fe7bcdc6..527f947289af 100644
+> >>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+> >>>> @@ -18,6 +18,7 @@ properties:
+> >>>>      enum:
+> >>>>        - qcom,qca2066-bt
+> >>>>        - qcom,qca6174-bt
+> >>>> +      - qcom,qca6698-bt
+> >>>>        - qcom,qca9377-bt
+> >>>>        - qcom,wcn3988-bt
+> >>>>        - qcom,wcn3990-bt
+> >>>> @@ -175,6 +176,7 @@ allOf:
+> >>>>          compatible:
+> >>>>            contains:
+> >>>>              enum:
+> >>>> +              - qcom,qca6698-bt
+> >>>>                - qcom,wcn6855-bt
+> >>>>      then:
+> >>>>        required:
+> >>>> --
+> >>>> 2.25.1
+> >>>>
+> >>>
+> >>
+> >
+> >
+>
+
+
+--
+With best wishes
+Dmitry
 
