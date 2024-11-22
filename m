@@ -1,167 +1,108 @@
-Return-Path: <linux-kernel+bounces-418125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D69A9D5D83
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:51:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BBDF9D5D84
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FEA0B23AB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:51:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D65C8281440
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105A01DE2B7;
-	Fri, 22 Nov 2024 10:51:33 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68AA1CEAD0;
+	Fri, 22 Nov 2024 10:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bUZEEQse"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96F10A3E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EE910A3E;
+	Fri, 22 Nov 2024 10:53:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732272692; cv=none; b=i8GHvXTvTIQsz8SG3wl+Cc93b2W7RkFuqmfDTI1sPwcvVlFE6rGaw+5ld8Mv1vZ17LeWlbURwW29tYZ7LoPLEmy9Ecvj+TWiTwnbRGcPGhyxcPCLyJW6s+Ur8rGyRPaiSKQpJ8cNEqS83JB45Z50/du/bd3p614G3jbvMw3at1o=
+	t=1732272786; cv=none; b=QJivWIMt/DOCwk3GQJzvQXpmQNW8qJXenPqr6j7LdAQjEzKZOGGD2AvK6cDP3qdMB+nDdekcna1OOTPagXxMpJzPi/acIv9qvQaqMiNfxWkjb3JSPiFRi8NLdvoE6urm6uSiwXrOTupLDSE+XLplGQ2fc9zBzCz0aEmdAhUnqOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732272692; c=relaxed/simple;
-	bh=rWx1QafmI98vm6lFoCjenJ26opvPskjtjsWcH3jQgs4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=X/t58tn71BAufFWcYnJTFtbJxECsUQpq/l1lSuc6gSXFMA18aaZ6WLnGp/wy/l7UecPg9LnDlZd5BcskWbhklZvqGK40UIOppUG2o/MWJXhhwQKAqZUIvbfzX0SgEIZ4xebSXCKfpbxAfb61TaDEhnrEqqtaRmBSd/EqVkVND+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83abf68e7f0so194193239f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:51:30 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732272690; x=1732877490;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a9b8gna8XYMg1/E7YRn5hKsYKfsNc4PZ7WP1R8bZk4w=;
-        b=c/Po85Zm2+mHhnWG+w6q/ev8YUXnDxGhV6FUTrSCKIjXB/p7Vnk8ep/7T7rGbO8aEq
-         ietmBx1Bsz8A23KxUEeMWjJ6ABIq8bJxO7uwZ0lscqOL/9Elr0Y5YrLXl3uDyulWgyWX
-         lyxs9YefRhUkFKm7r7VID1sjOmksTd8k91s/blzTbL8tXD0NClvh9l2xU5h/ajixM1T0
-         8ua6LSUEwHG0codwYpw0MIJ0D/z5Zk4hGxtAr4+9DDyO5PTcsC0hD/jr9B7wAolfWFtG
-         QZIlcuOqLO1LPPVCCa5MwgeF7vgH4bCVysplu4785SpEL/7wU7CipAAW9h3Ph/vOsJuT
-         v8Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKq5YaoLqxj0IgDcDalULqNkC34CtEIoeM6juWo1ba9htyWtgl1906RYGajY4K66Hn4ooV8DU34xOL4ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv5ZyrRWbIzf21nr8qVmE4aQdJbVpUMVM55+1DbkIHUvFMjT8y
-	TrhNiFReUDlwovEBp2H9gkTr9pHeFINz5rml12LcDkWNufOY5kYLCOQ0sk/oFaCo9epSq69KcaD
-	2hdb4x66AAgrMqz4nsnQcfG1mioAPdMlZY0hHCaROtOkTpvN/R02XFpM=
-X-Google-Smtp-Source: AGHT+IHjAV/oE0VZPkOLXrt3akV1X4ocIo9wz+lIV1zmziMUf4p1hx4fHtTLQvFkDjWPVZutHjfi+oJqg8j7RAvCUF4BSGLKY6BL
+	s=arc-20240116; t=1732272786; c=relaxed/simple;
+	bh=Opm0Uag6Tn/qHtwFCeuktHeQ5SSHWP8iUyMZ0AXIaHw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kelsGpCqLUwGDkq2RL5AFz0K7Gh/dhcjvOrrPhoRiVxz/DlugqZEr7+5kYPhPbiuTTmukMsyNJulC5yCRTPiFtAWyFEOKWqRFNEtKJE6Aaxi+KkQMCcxA6u6/YrpMDkdF3MwzdtHeTC4KlEDrLW8ifEXxIElsLgufII7XtXyWdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bUZEEQse; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732272765; x=1732877565; i=markus.elfring@web.de;
+	bh=61ry4edPNxCuNRBy1IwrZKEtdY25zzE8aRAKjDIlzek=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=bUZEEQseerSEZWaPJwWTIDOlfNrOCV3Br06vAdhWk8Ahince6V3c8HeN7M7zCr8d
+	 oIMIY8qr5LHOjyAJzAq/9SmX+KamYKYDmXliRT2Nsxo/d1sgYG8yWcIib9Pvsak03
+	 Sp4r9Hz+pNnwlp8Lh0SIL2V3Uf+Drfy9izBTnPowU0JZVWg7aCBCJVipSqzJviqbF
+	 sEXC9flSFQ2gsUxy8V8ZIoPqQSUONV4Pat6rZVAH0ZQt+rSrBZC1l3r672AhrYfXo
+	 IKZEz6jJpm659neg4DfvkenC7yPfF/kVsXBjHLygKRqS4sFW/z9zbPHvDQkwNQs9m
+	 rIGvfCznSFBoQlP8Cw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBB86-1tR43H2250-00DcBn; Fri, 22
+ Nov 2024 11:52:45 +0100
+Message-ID: <ac730eec-e447-495b-8637-9c11a268e371@web.de>
+Date: Fri, 22 Nov 2024 11:52:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a07:b0:3a7:9505:534b with SMTP id
- e9e14a558f8ab-3a79acfa2demr24810795ab.2.1732272690195; Fri, 22 Nov 2024
- 02:51:30 -0800 (PST)
-Date: Fri, 22 Nov 2024 02:51:30 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67406232.050a0220.3c9d61.018e.GAE@google.com>
-Subject: [syzbot] [io-uring?] WARNING in io_pin_pages
-From: syzbot <syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Matthias Brugger <matthias.bgg@gmail.com>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241122055231.3463-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: [PATCH] ASoC: mediatek: mt8188: Add error handling in
+ mtk_dai_etdm_enable_mclk
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241122055231.3463-1-zhujun2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:GmQzr0ZnmJWTazBDBy9rLexiwHSkJuYvSOIIwQYIV1b4dUiK32W
+ 0lZqoDO/cwLrprsNuikXcVG8dtpPZ6s4woy2SO5ZD+mEKkX/IreYmNW80TTBlV/7ZNRZKDD
+ KijEbz77zkmaHzk+moXi/fWVvT4mEOH9G6OvvwT2KlIx8jR7lFSSDN+4KSikVpdtYsFkGIV
+ LGsx96eadnHg8MlkQ8bhw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aPeuCtx77M4=;/kQ1N/2tkJDzcS7IbzBA/UrOpng
+ zlnmRmyp1ExMEhtEoZ8JfKGRZB+BTgjqexBpEfRDZTVlACb/pY4+2QTsfymAKC+f9koPc0CT+
+ 5lelUS5DZc4GS6mntxa9sRYpPJELdd46FbcsRqly3erV8VR8TPLj6ha+UwpWaLJGWpNIigM4o
+ YDOzk8ryFn9xg39MCr/XCc2DslRk0vMExmZaHRMe6wMp4ETnyHj1eOe+RRkcC2eDk04CvV8do
+ LDZWhaqfHKJKUSaZ0J3JyZ7bGKIbKMiVzZod84WXTN1EWP9DKjyKtjOGAfiqW8AjLFHU9w8de
+ 3w+9Z5jHXnxS8ybNtvRmsK/pGUHz2J0d2xTbzVFBHoFjg08Cd2akMUuQD5uY66zEM/yjUrenN
+ mmSDC19dQUw+sZ5WJxejvduMEXOAnFFqgkkDJzaA91rfn3JRqu18Zxy491NG9VZH2S65LjeoS
+ B4Ej/pk5xvR59d5VxL7wKiEa4fLB0npL8aKs+LQWg0eLnEGHROHLjGxWuw2+8YoMALGOzFTmy
+ Lzdpbka274mgYEinuaby9RmcWr32YpCueWokCNIOBQ0rGHFuNT/XMRYwrXPQHWisPMrya21aV
+ o/znJOZrjSAZRFk2YfgGGqRa+tlUSRl3EcpAZs3xDduFMZzpfJbPqDSlPrGYOIcZdS5FcqrxP
+ trQIXskPY4KD1GB8szZcok4XjhBcHKE8epikn+NWk5h8W65eu7g56mr3Ywp/4CflpwCPwI/lD
+ 2mrAW+rWvLb45d3/KeviOtbfzePk346/r5Lp9UBwskkc+qsTl44SGEwjAbZ0ta1PNU4utVlgM
+ UPZfvTz9qYBEPbw6UxVylwxF7oULqPVAREOF9Jzo7cy+qrfi9qzad/TCsq9Jm0u4ivC2yoZBC
+ UBYqzU+ukc9YZfx2M+/8uVO5mugeDInuGat36F3WWPHPO3Xr7OrDfK+HJCfm7yhIb5SFo8H6H
+ LhFxz4QEEd/Z5xCi57g9JbogIeiDI+xyDeppl2g90k7LmUWIYOZZi/cvPc36YYpEiZ615EvvZ
+ odibG/HhU9bUHGsJ3yzKJmF7FWQ5MJxKKALNYZ+Wc4DzUKK056LGHfIEmiUKKESvWLbSxFq1m
+ P483EiiAc=
 
-Hello,
+> Introduce error handling in mtk_dai_etdm_enable_mclk to ensure that
+> the function returns immediately if mt8188_afe_set_clk_rate fails.
 
-syzbot found the following issue on:
+* I suggest to append parentheses to function names.
 
-HEAD commit:    ae58226b89ac Add linux-next specific files for 20241118
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14a67378580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45719eec4c74e6ba
-dashboard link: https://syzkaller.appspot.com/bug?extid=2159cbb522b02847c053
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=137beac0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177beac0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fd3d650cd6b6/disk-ae58226b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/89a0fb674130/vmlinux-ae58226b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/92120e1c6775/bzImage-ae58226b.xz
-
-The issue was bisected to:
-
-commit 68685fa20edc5307fc893a06473c19661c236f29
-Author: Pavel Begunkov <asml.silence@gmail.com>
-Date:   Fri Nov 15 16:54:38 2024 +0000
-
-    io_uring: fortify io_pin_pages with a warning
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17b73bf7980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=14773bf7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=10773bf7980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2159cbb522b02847c053@syzkaller.appspotmail.com
-Fixes: 68685fa20edc ("io_uring: fortify io_pin_pages with a warning")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5834 at io_uring/memmap.c:144 io_pin_pages+0x149/0x180 io_uring/memmap.c:144
-Modules linked in:
-CPU: 0 UID: 0 PID: 5834 Comm: syz-executor825 Not tainted 6.12.0-next-20241118-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:io_pin_pages+0x149/0x180 io_uring/memmap.c:144
-Code: 63 fd 4c 89 f8 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 da c1 e3 fc 90 0f 0b 90 49 c7 c7 ea ff ff ff eb de e8 c8 c1 e3 fc 90 <0f> 0b 90 49 c7 c7 b5 ff ff ff eb cc 44 89 f1 80 e1 07 80 c1 03 38
-RSP: 0018:ffffc90003d17c10 EFLAGS: 00010293
-RAX: ffffffff84bbb6e8 RBX: fff0000000000091 RCX: ffff88802c6d5a00
-RDX: 0000000000000000 RSI: fff0000000000091 RDI: 000000007fffffff
-RBP: 000ffffffffffff0 R08: ffffffff84bbb5ee R09: 1ffff110041538c0
-R10: dffffc0000000000 R11: ffffed10041538c1 R12: ffffffffffff0000
-R13: ffffffffffff0000 R14: ffffc90003d17c80 R15: 1ffff110068d2920
-FS:  0000555568d4e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055ee7661e0d8 CR3: 0000000075cb2000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __io_uaddr_map+0xfb/0x2d0 io_uring/memmap.c:183
- io_rings_map io_uring/io_uring.c:2611 [inline]
- io_allocate_scq_urings+0x1c0/0x650 io_uring/io_uring.c:3470
- io_uring_create+0x5b5/0xc00 io_uring/io_uring.c:3692
- io_uring_setup io_uring/io_uring.c:3781 [inline]
- __do_sys_io_uring_setup io_uring/io_uring.c:3808 [inline]
- __se_sys_io_uring_setup+0x2ba/0x330 io_uring/io_uring.c:3802
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7feda57a15a9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff8a663b18 EFLAGS: 00000246 ORIG_RAX: 00000000000001a9
-RAX: ffffffffffffffda RBX: 0000000000002c0c RCX: 00007feda57a15a9
-RDX: ffffffffffffffb8 RSI: 0000000020000400 RDI: 0000000000002c0c
-RBP: 00007feda5814610 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000000000e8 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007fff8a663cf8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12#n145
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+Markus
 
