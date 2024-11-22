@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-418151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85959D5DCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90EBE9D5DCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8916928382D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50D6F283F5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA0F1DE4C5;
-	Fri, 22 Nov 2024 11:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0A11DE2C0;
+	Fri, 22 Nov 2024 11:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h9UwxLz3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MuJmY8+Q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B787017B4E9;
-	Fri, 22 Nov 2024 11:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C41C1DE2AD
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732273826; cv=none; b=DGA/STVwm28Hwa9Zl7UtjDgK5PRLpcaMiL/i//BJ3kAmctmanY5NyAB0u18bAYFpGA4IeHgv45pV+ZTCnS0byU6v3uBFOD8tWUKRwaaJ5x2HVagRHQ2++QKOdpbKqA1/mYDgdpgOrWGd0M40kg//TzV0Ltwz0zTfnF5Ybdlq5Ho=
+	t=1732273838; cv=none; b=FcSi+aosHKyxaiiJ9VUEuAlbkqUJ0/wogyBDvK1qzaMAVoHjg1wlsXNUlGxKo5iSWIpCP1OYs+JCBAPAJvwgDgHxajmI9IXepLA8vR2toTyizxLoZ7YF+oWzur7L2kxdNYTOjLlId+DbAlov98070GDpPj1VSOWXNbHAIEG4a7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732273826; c=relaxed/simple;
-	bh=xzYJ81WpRveygJaJugSCk4IIQs4xQKJZZaONDDliyOs=;
+	s=arc-20240116; t=1732273838; c=relaxed/simple;
+	bh=D0i6duhLs6p0YnTrBRTz/Rv5gj1/m94f/UPx7vBBFwo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wz1QxxO3NskJ7YMlxIayMs/Msfeh5bver1OFgDbb0UgAh2aSqQmMGrhtcJ4/uduC3YTt2WjQZCZ0GCo6X/D+8RueGB7PQnCHskWvVPo/xmcAbSABxA2/gA5rFMgzvp0IOIsc+fCaZOWIaq4yIqvRXlJaSoEp1lVJ6xm2fGMbx1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h9UwxLz3; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732273824; x=1763809824;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=xzYJ81WpRveygJaJugSCk4IIQs4xQKJZZaONDDliyOs=;
-  b=h9UwxLz3pq5Sd0ZGy/pSaRSREEKVkMec5RKcR4r4sIOWO4a6IjvQA5H1
-   psZl/xNxXG3yp0EcKneXyozp31LdefTCNtyp/QyaJLYiZAtUOZWxryyJS
-   /Je7U2nksNsTAgqFUTcbpBvBH2KZ6FTSXQLst604Ir+WtgVBCXf0//Jsm
-   34bb9jJ4aQqF5bQjv2UD5YdIgq6+ysdpGfZa/i7u6P3UKyvDN0AVDrkXZ
-   fDxPO49Nqa67ZCVmh3udQTmOPcmntUAWQVvqR06QO/C+c9ubNcBa6frH9
-   KSobSJYwNnk8ljDAFWA3glsna6l6r9Z+l9Ty8fDjh2yLxfcqNnvwJo9Eu
-   A==;
-X-CSE-ConnectionGUID: RTePfq03SPycpMdYneWLXg==
-X-CSE-MsgGUID: tmky7AuxSDqZA+9PDL95gg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32284414"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="32284414"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 03:10:24 -0800
-X-CSE-ConnectionGUID: P6mODZDUR8OMFDwPd0N0BQ==
-X-CSE-MsgGUID: ftYB1j50ReOw1B2EKRVIIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="90912776"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 03:10:18 -0800
-Message-ID: <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
-Date: Fri, 22 Nov 2024 13:10:10 +0200
+	 In-Reply-To:Content-Type; b=VSulGIHimVV+yUkYj/CdrfdYWwT4FK5aL+axLkfQfCYQTYrLXrE0A8uBmhBpQGIVUFAE7PCG2j8pzpkir+l11AYhLtPrzqidUud71NrjYrRHr8xkvNZZT1dEIVtxnYqSF1EX6OgqiwohZhW0OXvcewAm8jYO4OixP1UZPQis2zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MuJmY8+Q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732273835;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=WjuvFzSNk1HRpi+DS7yr7jLFl3FSsGwM1+OucgYZlwA=;
+	b=MuJmY8+QBvXKzpKCfVrZ7H7zMz5GXb/BwqmY0/H2KvHczUjzKSIUro+7q88bsJRYBobM9V
+	sCTVpDovX/48BcgOEkT3sL6ZzpNJ/4syAN/Fwc5bBJVJShGksXwca7Drfvk9T37YaLbRPO
+	WV3YukO8h8Fb26PVs3+Kik+YaaawlBg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-JmpcYZWiMjm0L8Uv8oZAaw-1; Fri, 22 Nov 2024 06:10:33 -0500
+X-MC-Unique: JmpcYZWiMjm0L8Uv8oZAaw-1
+X-Mimecast-MFC-AGG-ID: JmpcYZWiMjm0L8Uv8oZAaw
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-432d9b8503cso16051115e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:10:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732273832; x=1732878632;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WjuvFzSNk1HRpi+DS7yr7jLFl3FSsGwM1+OucgYZlwA=;
+        b=u6FhhMKp+zm6GDd3REfeHQpecOsFXFDQYRC1qWTti958N1fi+gF8e58HRUG8jTG79S
+         xANRFYLc3edDrLeuZnD32+pyG4Y5ufMemv/s/fKanbFOdwOgzOYN7Sl3yFhQy67cxXKj
+         rc4/fvY8WGMi0Mu48Yzcd8LMKqyeB5jJB8zOo5V8uy7loUK1FoU2LCT/EO5BIiSX9Ol5
+         hD+0lW4kEncbO2PgpMCQd4PGMDhZYH5u5IkC+6DzlfEfnTXqZO04K8Au917Y9laDk4Cu
+         epvef2pF6ux2B4b48U/y5ohLNqADZPKtL9i+ZeqOoiH6x6wnnWHlhpON+ijT9uNB5Wjd
+         uJpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcrfMhx1rfrwtQfSHOXn83hNycFQo8GuM06KUg+2vw0VsgMdFAbhnDYmOlCoYJrc3+aJXzCjzjFUiqr1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsxpeipmpmRp6hAhzVPXH22NRYWU1fTp83MUfIfnN7R0fggVBE
+	LB0kwik3CtVuMC08TTGW18KzJXoRTZekLPLY3HOdzag/WPDBAIv33rbktPSc6enhhrZfuCRTYrr
+	PikjLXOMQVl6uhS6NXCbyhcAvLykTVucW5M+ipbXsw8OWcRMm16bmw0bon5QnKg==
+X-Gm-Gg: ASbGncuSX9EQAeRpYgP0IYfH7dTCOUHTpouBX266iiVkE4LLz0tmMFuqhfhupdx26NC
+	wN3sFEIoeZaYfYu8FR9h7he7+9pitutHLSDpJt0vtr7NX4UtXosgtc/kgcmN5wKp+dcoVTtOPt4
+	6Cco/LEk9IhJL/GPp5ibb06F80+uqiosvmXw6fWWyFuEYLkr1vPD/GrvFvoUb1MpFTLLVs2Ry3E
+	T7+GWrnlJV0r8j0l2Y9e4AMai5pkm3aAA56Kvfw3bNjCPYevIL2xvu5//ZJ1zjQMChCrBo179D0
+	gR5K387DIWYsqXTpNi6REuFIg411z8vu9J+Cr7D2noUNmMO4lob1Hahx/32KV8aBXOAuRnddSMo
+	=
+X-Received: by 2002:a05:600c:917:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-433c5ce57d3mr59075795e9.15.1732273832719;
+        Fri, 22 Nov 2024 03:10:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEeYMDb7+3fkk7/17y2EpOUO4usDkj+WgYyjOGc/JOqT/cbixRvnDnT5jJtPNoIoj7vn6Vy2g==
+X-Received: by 2002:a05:600c:917:b0:428:b4a:7001 with SMTP id 5b1f17b1804b1-433c5ce57d3mr59075515e9.15.1732273832391;
+        Fri, 22 Nov 2024 03:10:32 -0800 (PST)
+Received: from ?IPV6:2003:cb:c70b:7a00:9ccd:493:d8e2:9ac8? (p200300cbc70b7a009ccd0493d8e29ac8.dip0.t-ipconnect.de. [2003:cb:c70b:7a00:9ccd:493:d8e2:9ac8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433cde8c6casm23630315e9.33.2024.11.22.03.10.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 03:10:31 -0800 (PST)
+Message-ID: <46aa36f0-64a6-4aee-8134-0ec93f62e59c@redhat.com>
+Date: Fri, 22 Nov 2024 12:10:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,741 +89,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
- TDX guest
-To: pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org,
- dave.hansen@linux.intel.com
-Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
- reinette.chatre@intel.com, xiaoyao.li@intel.com,
- tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
- dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
- chao.gao@intel.com, weijiang.yang@intel.com
-References: <20241121201448.36170-1-adrian.hunter@intel.com>
- <20241121201448.36170-2-adrian.hunter@intel.com>
+Subject: Re: [PATCH v2 1/3] seqlock: add raw_seqcount_try_begin
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: peterz@infradead.org, andrii@kernel.org, jannh@google.com,
+ Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+ mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org,
+ willy@infradead.org, brauner@kernel.org, oleg@redhat.com, arnd@arndb.de,
+ richard.weiyang@gmail.com, zhangpeng.00@bytedance.com, linmiaohe@huawei.com,
+ viro@zeniv.linux.org.uk, hca@linux.ibm.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241121162826.987947-1-surenb@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241121201448.36170-2-adrian.hunter@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241121162826.987947-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21/11/24 22:14, Adrian Hunter wrote:
-> From: Kai Huang <kai.huang@intel.com>
+On 21.11.24 17:28, Suren Baghdasaryan wrote:
+> Add raw_seqcount_try_begin() to opens a read critical section of the given
+> seqcount_t if the counter is even. This enables eliding the critical
+> section entirely if the counter is odd, instead of doing the speculation
+> knowing it will fail.
 > 
-> Intel TDX protects guest VM's from malicious host and certain physical
-> attacks.  TDX introduces a new operation mode, Secure Arbitration Mode
-> (SEAM) to isolate and protect guest VM's.  A TDX guest VM runs in SEAM and,
-> unlike VMX, direct control and interaction with the guest by the host VMM
-> is not possible.  Instead, Intel TDX Module, which also runs in SEAM,
-> provides a SEAMCALL API.
-> 
-> The SEAMCALL that provides the ability to enter a guest is TDH.VP.ENTER.
-> The TDX Module processes TDH.VP.ENTER, and enters the guest via VMX
-> VMLAUNCH/VMRESUME instructions.  When a guest VM-exit requires host VMM
-> interaction, the TDH.VP.ENTER SEAMCALL returns to the host VMM (KVM).
-> 
-> Add tdh_vp_enter() to wrap the SEAMCALL invocation of TDH.VP.ENTER.
-> 
-> TDH.VP.ENTER is different from other SEAMCALLS in several ways:
->  - it may take some time to return as the guest executes
->  - it uses more arguments
->  - after it returns some host state may need to be restored
-> 
-> TDH.VP.ENTER arguments are passed through General Purpose Registers (GPRs).
-> For the special case of the TD guest invoking TDG.VP.VMCALL, nearly any GPR
-> can be used, as well as XMM0 to XMM15. Notably, RBP is not used, and Linux
-> mandates the TDX Module feature NO_RBP_MOD, which is enforced elsewhere.
-> Additionally, XMM registers are not required for the existing Guest
-> Hypervisor Communication Interface and are handled by existing KVM code
-> should they be modified by the guest.
-> 
-> There are 2 input formats and 5 output formats for TDH.VP.ENTER arguments.
-> Input #1 : Initial entry or following a previous async. TD Exit
-> Input #2 : Following a previous TDCALL(TDG.VP.VMCALL)
-> Output #1 : On Error (No TD Entry)
-> Output #2 : Async. Exits with a VMX Architectural Exit Reason
-> Output #3 : Async. Exits with a non-VMX TD Exit Status
-> Output #4 : Async. Exits with Cross-TD Exit Details
-> Output #5 : On TDCALL(TDG.VP.VMCALL)
-> 
-> Currently, to keep things simple, the wrapper function does not attempt
-> to support different formats, and just passes all the GPRs that could be
-> used.  The GPR values are held by KVM in the area set aside for guest
-> GPRs.  KVM code uses the guest GPR area (vcpu->arch.regs[]) to set up for
-> or process results of tdh_vp_enter().
-> 
-> Therefore changing tdh_vp_enter() to use more complex argument formats
-> would also alter the way KVM code interacts with tdh_vp_enter().
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > ---
->  arch/x86/include/asm/tdx.h  | 1 +
->  arch/x86/virt/vmx/tdx/tdx.c | 8 ++++++++
->  arch/x86/virt/vmx/tdx/tdx.h | 1 +
->  3 files changed, 10 insertions(+)
+> Applies over Linus' ToT
 > 
-> diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-> index fdc81799171e..77477b905dca 100644
-> --- a/arch/x86/include/asm/tdx.h
-> +++ b/arch/x86/include/asm/tdx.h
-> @@ -123,6 +123,7 @@ int tdx_guest_keyid_alloc(void);
->  void tdx_guest_keyid_free(unsigned int keyid);
->  
->  /* SEAMCALL wrappers for creating/destroying/running TDX guests */
-> +u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args);
->  u64 tdh_mng_addcx(u64 tdr, u64 tdcs);
->  u64 tdh_mem_page_add(u64 tdr, u64 gpa, u64 hpa, u64 source, u64 *rcx, u64 *rdx);
->  u64 tdh_mem_sept_add(u64 tdr, u64 gpa, u64 level, u64 hpa, u64 *rcx, u64 *rdx);
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-> index 04cb2f1d6deb..2a8997eb1ef1 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.c
-> +++ b/arch/x86/virt/vmx/tdx/tdx.c
-> @@ -1600,6 +1600,14 @@ static inline u64 tdx_seamcall_sept(u64 op, struct tdx_module_args *in)
->  	return ret;
->  }
->  
-> +u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args)
-> +{
-> +	args->rcx = tdvpr;
-> +
-> +	return __seamcall_saved_ret(TDH_VP_ENTER, args);
-> +}
-> +EXPORT_SYMBOL_GPL(tdh_vp_enter);
+>   include/linux/seqlock.h | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+> 
+> diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+> index 5298765d6ca4..22c2c48b4265 100644
+> --- a/include/linux/seqlock.h
+> +++ b/include/linux/seqlock.h
+> @@ -318,6 +318,28 @@ SEQCOUNT_LOCKNAME(mutex,        struct mutex,    true,     mutex)
+>   	__seq;								\
+>   })
+>   
+> +/**
+> + * raw_seqcount_try_begin() - begin a seqcount_t read critical section
+> + *                            w/o lockdep and w/o counter stabilization
+> + * @s: Pointer to seqcount_t or any of the seqcount_LOCKNAME_t variants
+> + *
+> + * Similar to raw_seqcount_begin(), except it enables eliding the critical
+> + * section entirely if odd, instead of doing the speculation knowing it will
+> + * fail.
+> + *
+> + * Useful when counter stabilization is more or less equivalent to taking
+> + * the lock and there is a slowpath that does that.
+> + *
+> + * If true, start will be set to the (even) sequence count read.
+> + *
+> + * Return: true when a read critical section is started.
+> + */
+> +#define raw_seqcount_try_begin(s, start)				\
+> +({									\
+> +	start = raw_read_seqcount(s);					\
+> +	!(start & 1);							\
+> +})
 
-One alternative could be to create a union to hold the arguments:
 
-u64 tdh_vp_enter(u64 tdvpr, union tdh_vp_enter_args *vp_enter_args)
-{
-	struct tdx_module_args *args = (struct tdx_module_args *)vp_enter_args;
+In gup_fast(), we simply do
 
-	args->rcx = tdvpr;
+seq = raw_read_seqcount(&current->mm->write_protect_seq);
+if (seq & 1)
+	return 0;
 
-	return __seamcall_saved_ret(TDH_VP_ENTER, args);
-}
+Should we be using that there as well?
 
-The diff below shows what that would look like for KVM TDX, based on top
-of:
+if (!raw_seqcount_try_begin(&current->mm->write_protect_seqs, seq))
+	return 0;
 
-	https://github.com/intel/tdx/tree/tdx_kvm_dev-2024-11-20
-
-Define 'union tdh_vp_enter_args' to hold tdh_vp_enter() arguments
-instead of using vcpu->arch.regs[].  For example, in tdexit_exit_qual()
-
-	kvm_rcx_read(vcpu)
-
-becomes:
-
-	to_tdx(vcpu)->vp_enter_args.out.exit_qual
-
-which has the advantage that it provides variable names for the different
-arguments.
-
----
- arch/x86/include/asm/tdx.h  | 163 +++++++++++++++++++++++++++-
- arch/x86/kvm/vmx/tdx.c      | 205 +++++++++++++++---------------------
- arch/x86/kvm/vmx/tdx.h      |   1 +
- arch/x86/virt/vmx/tdx/tdx.c |   4 +-
- 4 files changed, 249 insertions(+), 124 deletions(-)
-
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 01409a59224d..3568e6b36b77 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -123,8 +123,169 @@ const struct tdx_sys_info *tdx_get_sysinfo(void);
- int tdx_guest_keyid_alloc(void);
- void tdx_guest_keyid_free(unsigned int keyid);
- 
-+/* TDH.VP.ENTER Input Format #2 : Following a previous TDCALL(TDG.VP.VMCALL) */
-+struct tdh_vp_enter_in {
-+	u64	__vcpu_handle_and_flags; /* Don't use. tdh_vp_enter() will take care of it */
-+	u64	unused[3];
-+	u64	ret_code;
-+	union {
-+		u64 gettdvmcallinfo[4];
-+		struct {
-+			u64	failed_gpa;
-+		} mapgpa;
-+		struct {
-+			u64	unused;
-+			u64	eax;
-+			u64	ebx;
-+			u64	ecx;
-+			u64	edx;
-+		} cpuid;
-+		/* Value read for IO, MMIO or RDMSR */
-+		struct {
-+			u64	value;
-+		} read;
-+	};
-+};
-+
-+/*
-+ * TDH.VP.ENTER Output Formats #2 and #3 combined:
-+ *	#2 : Async TD exits with a VMX Architectural Exit Reason
-+ *	#3 : Async TD exits with a non-VMX TD Exit Status
-+ */
-+struct tdh_vp_enter_out {
-+	u64	exit_qual	: 32,	/* #2 only */
-+		vm_idx		:  2,	/* #2 and #3 */
-+		reserved_0	: 30;
-+	u64	ext_exit_qual;		/* #2 only */
-+	u64	gpa;			/* #2 only */
-+	u64	interrupt_info	: 32,	/* #2 only */
-+		reserved_1	: 32;
-+	u64	unused[9];
-+};
-+
-+/*
-+ * KVM hypercall : Refer struct tdh_vp_enter_tdcall - fn is the non-zero
-+ * hypercall number (nr), subfn is the first parameter (p1), and p2 to p3
-+ * below are the remaining parameters.
-+ */
-+struct tdh_vp_enter_vmcall {
-+	u64	p2;
-+	u64	p3;
-+	u64	p4;
-+};
-+
-+/* TDVMCALL_GET_TD_VM_CALL_INFO */
-+struct tdh_vp_enter_gettdvmcallinfo {
-+	u64	leaf;
-+};
-+
-+/* TDVMCALL_MAP_GPA */
-+struct tdh_vp_enter_mapgpa {
-+	u64	gpa;
-+	u64	size;
-+};
-+
-+/* TDVMCALL_GET_QUOTE */
-+struct tdh_vp_enter_getquote {
-+	u64	shared_gpa;
-+	u64	size;
-+};
-+
-+#define TDX_ERR_DATA_PART_1 5
-+
-+/* TDVMCALL_REPORT_FATAL_ERROR */
-+struct tdh_vp_enter_reportfatalerror {
-+	union {
-+		u64	err_codes;
-+		struct {
-+			u64	err_code	: 32,
-+				ext_err_code	: 31,
-+				gpa_valid	:  1;
-+		};
-+	};
-+	u64	err_data_gpa;
-+	u64	err_data[TDX_ERR_DATA_PART_1];
-+};
-+
-+/* EXIT_REASON_CPUID */
-+struct tdh_vp_enter_cpuid {
-+	u64	eax;
-+	u64	ecx;
-+};
-+
-+/* EXIT_REASON_EPT_VIOLATION */
-+struct tdh_vp_enter_mmio {
-+	u64	size;
-+	u64	direction;
-+	u64	mmio_addr;
-+	u64	value;
-+};
-+
-+/* EXIT_REASON_HLT */
-+struct tdh_vp_enter_hlt {
-+	u64	intr_blocked_flag;
-+};
-+
-+/* EXIT_REASON_IO_INSTRUCTION */
-+struct tdh_vp_enter_io {
-+	u64	size;
-+	u64	direction;
-+	u64	port;
-+	u64	value;
-+};
-+
-+/* EXIT_REASON_MSR_READ */
-+struct tdh_vp_enter_rd {
-+	u64	msr;
-+};
-+
-+/* EXIT_REASON_MSR_WRITE */
-+struct  tdh_vp_enter_wr {
-+	u64	msr;
-+	u64	value;
-+};
-+
-+#define TDX_ERR_DATA_PART_2 3
-+
-+/* TDH.VP.ENTER  Output Format #5 : On TDCALL(TDG.VP.VMCALL) */
-+struct tdh_vp_enter_tdcall {
-+	u64	reg_mask	: 32,
-+		vm_idx		:  2,
-+		reserved_0	: 30;
-+	u64	data[TDX_ERR_DATA_PART_2];
-+	u64	fn;	/* Non-zero for hypercalls, zero otherwise */
-+	u64	subfn;
-+	union {
-+		struct tdh_vp_enter_vmcall 		vmcall;
-+		struct tdh_vp_enter_gettdvmcallinfo	gettdvmcallinfo;
-+		struct tdh_vp_enter_mapgpa		mapgpa;
-+		struct tdh_vp_enter_getquote		getquote;
-+		struct tdh_vp_enter_reportfatalerror	reportfatalerror;
-+		struct tdh_vp_enter_cpuid		cpuid;
-+		struct tdh_vp_enter_mmio		mmio;
-+		struct tdh_vp_enter_hlt			hlt;
-+		struct tdh_vp_enter_io			io;
-+		struct tdh_vp_enter_rd			rd;
-+		struct tdh_vp_enter_wr			wr;
-+	};
-+};
-+
-+/* Must be kept exactly in sync with struct tdx_module_args */
-+union tdh_vp_enter_args {
-+	/* Input Format #2 : Following a previous TDCALL(TDG.VP.VMCALL) */
-+	struct tdh_vp_enter_in in;
-+	/*
-+	 * Output Formats #2 and #3 combined:
-+	 *	#2 : Async TD exits with a VMX Architectural Exit Reason
-+	 *	#3 : Async TD exits with a non-VMX TD Exit Status
-+	 */
-+	struct tdh_vp_enter_out out;
-+	/* Output Format #5 : On TDCALL(TDG.VP.VMCALL) */
-+	struct tdh_vp_enter_tdcall tdcall;
-+};
-+
- /* SEAMCALL wrappers for creating/destroying/running TDX guests */
--u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args);
-+u64 tdh_vp_enter(u64 tdvpr, union tdh_vp_enter_args *tdh_vp_enter_args);
- u64 tdh_mng_addcx(u64 tdr, u64 tdcs);
- u64 tdh_mem_page_add(u64 tdr, u64 gpa, u64 hpa, u64 source, u64 *rcx, u64 *rdx);
- u64 tdh_mem_sept_add(u64 tdr, u64 gpa, u64 level, u64 hpa, u64 *rcx, u64 *rdx);
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index f5fc1a782b5b..56af7b8c71ab 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -211,57 +211,41 @@ static bool tdx_check_exit_reason(struct kvm_vcpu *vcpu, u16 reason)
- 
- static __always_inline unsigned long tdexit_exit_qual(struct kvm_vcpu *vcpu)
- {
--	return kvm_rcx_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.out.exit_qual;
- }
- 
- static __always_inline unsigned long tdexit_ext_exit_qual(struct kvm_vcpu *vcpu)
- {
--	return kvm_rdx_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.out.ext_exit_qual;
- }
- 
- static __always_inline unsigned long tdexit_gpa(struct kvm_vcpu *vcpu)
- {
--	return kvm_r8_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.out.gpa;
- }
- 
- static __always_inline unsigned long tdexit_intr_info(struct kvm_vcpu *vcpu)
- {
--	return kvm_r9_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.out.interrupt_info;
- }
- 
--#define BUILD_TDVMCALL_ACCESSORS(param, gpr)				\
--static __always_inline							\
--unsigned long tdvmcall_##param##_read(struct kvm_vcpu *vcpu)		\
--{									\
--	return kvm_##gpr##_read(vcpu);					\
--}									\
--static __always_inline void tdvmcall_##param##_write(struct kvm_vcpu *vcpu, \
--						     unsigned long val)  \
--{									\
--	kvm_##gpr##_write(vcpu, val);					\
--}
--BUILD_TDVMCALL_ACCESSORS(a0, r12);
--BUILD_TDVMCALL_ACCESSORS(a1, r13);
--BUILD_TDVMCALL_ACCESSORS(a2, r14);
--BUILD_TDVMCALL_ACCESSORS(a3, r15);
--
- static __always_inline unsigned long tdvmcall_exit_type(struct kvm_vcpu *vcpu)
- {
--	return kvm_r10_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.tdcall.fn;
- }
- static __always_inline unsigned long tdvmcall_leaf(struct kvm_vcpu *vcpu)
- {
--	return kvm_r11_read(vcpu);
-+	return to_tdx(vcpu)->vp_enter_args.tdcall.subfn;
- }
- static __always_inline void tdvmcall_set_return_code(struct kvm_vcpu *vcpu,
- 						     long val)
- {
--	kvm_r10_write(vcpu, val);
-+	to_tdx(vcpu)->vp_enter_args.in.ret_code = val;
- }
- static __always_inline void tdvmcall_set_return_val(struct kvm_vcpu *vcpu,
- 						    unsigned long val)
- {
--	kvm_r11_write(vcpu, val);
-+	to_tdx(vcpu)->vp_enter_args.in.read.value = val;
- }
- 
- static inline void tdx_hkid_free(struct kvm_tdx *kvm_tdx)
-@@ -745,7 +729,7 @@ bool tdx_interrupt_allowed(struct kvm_vcpu *vcpu)
- 	    tdvmcall_exit_type(vcpu) || tdvmcall_leaf(vcpu) != EXIT_REASON_HLT)
- 	    return true;
- 
--	return !tdvmcall_a0_read(vcpu);
-+	return !to_tdx(vcpu)->vp_enter_args.tdcall.hlt.intr_blocked_flag;
- }
- 
- bool tdx_protected_apic_has_interrupt(struct kvm_vcpu *vcpu)
-@@ -899,51 +883,10 @@ static void tdx_restore_host_xsave_state(struct kvm_vcpu *vcpu)
- static noinstr void tdx_vcpu_enter_exit(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_tdx *tdx = to_tdx(vcpu);
--	struct tdx_module_args args;
- 
- 	guest_state_enter_irqoff();
- 
--	/*
--	 * TODO: optimization:
--	 * - Eliminate copy between args and vcpu->arch.regs.
--	 * - copyin/copyout registers only if (tdx->tdvmvall.regs_mask != 0)
--	 *   which means TDG.VP.VMCALL.
--	 */
--	args = (struct tdx_module_args) {
--		.rcx = tdx->tdvpr_pa,
--#define REG(reg, REG)	.reg = vcpu->arch.regs[VCPU_REGS_ ## REG]
--		REG(rdx, RDX),
--		REG(r8,  R8),
--		REG(r9,  R9),
--		REG(r10, R10),
--		REG(r11, R11),
--		REG(r12, R12),
--		REG(r13, R13),
--		REG(r14, R14),
--		REG(r15, R15),
--		REG(rbx, RBX),
--		REG(rdi, RDI),
--		REG(rsi, RSI),
--#undef REG
--	};
--
--	tdx->vp_enter_ret = tdh_vp_enter(tdx->tdvpr_pa, &args);
--
--#define REG(reg, REG)	vcpu->arch.regs[VCPU_REGS_ ## REG] = args.reg
--	REG(rcx, RCX);
--	REG(rdx, RDX);
--	REG(r8,  R8);
--	REG(r9,  R9);
--	REG(r10, R10);
--	REG(r11, R11);
--	REG(r12, R12);
--	REG(r13, R13);
--	REG(r14, R14);
--	REG(r15, R15);
--	REG(rbx, RBX);
--	REG(rdi, RDI);
--	REG(rsi, RSI);
--#undef REG
-+	tdx->vp_enter_ret = tdh_vp_enter(tdx->tdvpr_pa, &tdx->vp_enter_args);
- 
- 	if (tdx_check_exit_reason(vcpu, EXIT_REASON_EXCEPTION_NMI) &&
- 	    is_nmi(tdexit_intr_info(vcpu)))
-@@ -1083,8 +1026,15 @@ static int complete_hypercall_exit(struct kvm_vcpu *vcpu)
- 
- static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
- {
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
- 	int r;
- 
-+	kvm_r10_write(vcpu, tdx->vp_enter_args.tdcall.fn);
-+	kvm_r11_write(vcpu, tdx->vp_enter_args.tdcall.subfn);
-+	kvm_r12_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p2);
-+	kvm_r13_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p3);
-+	kvm_r14_write(vcpu, tdx->vp_enter_args.tdcall.vmcall.p4);
-+
- 	/*
- 	 * ABI for KVM tdvmcall argument:
- 	 * In Guest-Hypervisor Communication Interface(GHCI) specification,
-@@ -1092,13 +1042,12 @@ static int tdx_emulate_vmcall(struct kvm_vcpu *vcpu)
- 	 * vendor-specific.  KVM uses this for KVM hypercall.  NOTE: KVM
- 	 * hypercall number starts from one.  Zero isn't used for KVM hypercall
- 	 * number.
--	 *
--	 * R10: KVM hypercall number
--	 * arguments: R11, R12, R13, R14.
- 	 */
- 	r = __kvm_emulate_hypercall(vcpu, r10, r11, r12, r13, r14, true, 0,
- 				    R10, complete_hypercall_exit);
- 
-+	tdvmcall_set_return_code(vcpu, kvm_r10_read(vcpu));
-+
- 	return r > 0;
- }
- 
-@@ -1116,7 +1065,7 @@ static int tdx_complete_vmcall_map_gpa(struct kvm_vcpu *vcpu)
- 
- 	if(vcpu->run->hypercall.ret) {
- 		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
--		kvm_r11_write(vcpu, tdx->map_gpa_next);
-+		tdx->vp_enter_args.in.mapgpa.failed_gpa = tdx->map_gpa_next;
- 		return 1;
- 	}
- 
-@@ -1137,7 +1086,7 @@ static int tdx_complete_vmcall_map_gpa(struct kvm_vcpu *vcpu)
- 	if (pi_has_pending_interrupt(vcpu) ||
- 	    kvm_test_request(KVM_REQ_NMI, vcpu) || vcpu->arch.nmi_pending) {
- 		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_RETRY);
--		kvm_r11_write(vcpu, tdx->map_gpa_next);
-+		tdx->vp_enter_args.in.mapgpa.failed_gpa = tdx->map_gpa_next;
- 		return 1;
- 	}
- 
-@@ -1169,8 +1118,8 @@ static void __tdx_map_gpa(struct vcpu_tdx * tdx)
- static int tdx_map_gpa(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_tdx * tdx = to_tdx(vcpu);
--	u64 gpa = tdvmcall_a0_read(vcpu);
--	u64 size = tdvmcall_a1_read(vcpu);
-+	u64 gpa  = tdx->vp_enter_args.tdcall.mapgpa.gpa;
-+	u64 size = tdx->vp_enter_args.tdcall.mapgpa.size;
- 	u64 ret;
- 
- 	/*
-@@ -1206,14 +1155,19 @@ static int tdx_map_gpa(struct kvm_vcpu *vcpu)
- 
- error:
- 	tdvmcall_set_return_code(vcpu, ret);
--	kvm_r11_write(vcpu, gpa);
-+	tdx->vp_enter_args.in.mapgpa.failed_gpa = gpa;
- 	return 1;
- }
- 
- static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
- {
--	u64 reg_mask = kvm_rcx_read(vcpu);
--	u64* opt_regs;
-+	union tdh_vp_enter_args *args = &to_tdx(vcpu)->vp_enter_args;
-+	__u64 *data = &vcpu->run->system_event.data[0];
-+	u64 reg_mask = args->tdcall.reg_mask;
-+	const int mask[] = {14, 15, 3, 7, 6};
-+	int cnt = 0;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(mask) != TDX_ERR_DATA_PART_1);
- 
- 	/*
- 	 * Skip sanity checks and let userspace decide what to do if sanity
-@@ -1221,32 +1175,35 @@ static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
- 	 */
- 	vcpu->run->exit_reason = KVM_EXIT_SYSTEM_EVENT;
- 	vcpu->run->system_event.type = KVM_SYSTEM_EVENT_TDX_FATAL;
--	vcpu->run->system_event.ndata = 10;
- 	/* Error codes. */
--	vcpu->run->system_event.data[0] = tdvmcall_a0_read(vcpu);
-+	data[cnt++] = args->tdcall.reportfatalerror.err_codes;
- 	/* GPA of additional information page. */
--	vcpu->run->system_event.data[1] = tdvmcall_a1_read(vcpu);
-+	data[cnt++] = args->tdcall.reportfatalerror.err_data_gpa;
-+
- 	/* Information passed via registers (up to 64 bytes). */
--	opt_regs = &vcpu->run->system_event.data[2];
-+	for (int i = 0; i < TDX_ERR_DATA_PART_1; i++) {
-+		if (reg_mask & BIT_ULL(mask[i]))
-+			data[cnt++] = args->tdcall.reportfatalerror.err_data[i];
-+		else
-+			data[cnt++] = 0;
-+	}
- 
--#define COPY_REG(REG, MASK)						\
--	do {								\
--		if (reg_mask & MASK)					\
--			*opt_regs = kvm_ ## REG ## _read(vcpu);		\
--		else							\
--			*opt_regs = 0;					\
--		opt_regs++;						\
--	} while (0)
-+	if (reg_mask & BIT_ULL(8))
-+		data[cnt++] = args->tdcall.data[1];
-+	else
-+		data[cnt++] = 0;
- 
--	/* The order is defined in GHCI. */
--	COPY_REG(r14, BIT_ULL(14));
--	COPY_REG(r15, BIT_ULL(15));
--	COPY_REG(rbx, BIT_ULL(3));
--	COPY_REG(rdi, BIT_ULL(7));
--	COPY_REG(rsi, BIT_ULL(6));
--	COPY_REG(r8, BIT_ULL(8));
--	COPY_REG(r9, BIT_ULL(9));
--	COPY_REG(rdx, BIT_ULL(2));
-+	if (reg_mask & BIT_ULL(9))
-+		data[cnt++] = args->tdcall.data[2];
-+	else
-+		data[cnt++] = 0;
-+
-+	if (reg_mask & BIT_ULL(2))
-+		data[cnt++] = args->tdcall.data[0];
-+	else
-+		data[cnt++] = 0;
-+
-+	vcpu->run->system_event.ndata = cnt;
- 
- 	/*
- 	 * Set the status code according to GHCI spec, although the vCPU may
-@@ -1260,18 +1217,18 @@ static int tdx_report_fatal_error(struct kvm_vcpu *vcpu)
- 
- static int tdx_emulate_cpuid(struct kvm_vcpu *vcpu)
- {
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
- 	u32 eax, ebx, ecx, edx;
- 
--	/* EAX and ECX for cpuid is stored in R12 and R13. */
--	eax = tdvmcall_a0_read(vcpu);
--	ecx = tdvmcall_a1_read(vcpu);
-+	eax = tdx->vp_enter_args.tdcall.cpuid.eax;
-+	ecx = tdx->vp_enter_args.tdcall.cpuid.ecx;
- 
- 	kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
- 
--	tdvmcall_a0_write(vcpu, eax);
--	tdvmcall_a1_write(vcpu, ebx);
--	tdvmcall_a2_write(vcpu, ecx);
--	tdvmcall_a3_write(vcpu, edx);
-+	tdx->vp_enter_args.in.cpuid.eax = eax;
-+	tdx->vp_enter_args.in.cpuid.ebx = ebx;
-+	tdx->vp_enter_args.in.cpuid.ecx = ecx;
-+	tdx->vp_enter_args.in.cpuid.edx = edx;
- 
- 	tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_SUCCESS);
- 
-@@ -1312,6 +1269,7 @@ static int tdx_complete_pio_in(struct kvm_vcpu *vcpu)
- static int tdx_emulate_io(struct kvm_vcpu *vcpu)
- {
- 	struct x86_emulate_ctxt *ctxt = vcpu->arch.emulate_ctxt;
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
- 	unsigned long val = 0;
- 	unsigned int port;
- 	int size, ret;
-@@ -1319,9 +1277,9 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
- 
- 	++vcpu->stat.io_exits;
- 
--	size = tdvmcall_a0_read(vcpu);
--	write = tdvmcall_a1_read(vcpu);
--	port = tdvmcall_a2_read(vcpu);
-+	size  = tdx->vp_enter_args.tdcall.io.size;
-+	write = tdx->vp_enter_args.tdcall.io.direction;
-+	port  = tdx->vp_enter_args.tdcall.io.port;
- 
- 	if (size != 1 && size != 2 && size != 4) {
- 		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
-@@ -1329,7 +1287,7 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
- 	}
- 
- 	if (write) {
--		val = tdvmcall_a3_read(vcpu);
-+		val = tdx->vp_enter_args.tdcall.io.value;
- 		ret = ctxt->ops->pio_out_emulated(ctxt, size, port, &val, 1);
- 	} else {
- 		ret = ctxt->ops->pio_in_emulated(ctxt, size, port, &val, 1);
-@@ -1397,14 +1355,15 @@ static inline int tdx_mmio_read(struct kvm_vcpu *vcpu, gpa_t gpa, int size)
- 
- static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
- {
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
- 	int size, write, r;
- 	unsigned long val;
- 	gpa_t gpa;
- 
--	size = tdvmcall_a0_read(vcpu);
--	write = tdvmcall_a1_read(vcpu);
--	gpa = tdvmcall_a2_read(vcpu);
--	val = write ? tdvmcall_a3_read(vcpu) : 0;
-+	size  = tdx->vp_enter_args.tdcall.mmio.size;
-+	write = tdx->vp_enter_args.tdcall.mmio.direction;
-+	gpa   = tdx->vp_enter_args.tdcall.mmio.mmio_addr;
-+	val = write ? tdx->vp_enter_args.tdcall.mmio.value : 0;
- 
- 	if (size != 1 && size != 2 && size != 4 && size != 8)
- 		goto error;
-@@ -1456,7 +1415,7 @@ static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
- 
- static int tdx_emulate_rdmsr(struct kvm_vcpu *vcpu)
- {
--	u32 index = tdvmcall_a0_read(vcpu);
-+	u32 index = to_tdx(vcpu)->vp_enter_args.tdcall.rd.msr;
- 	u64 data;
- 
- 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_READ) ||
-@@ -1474,8 +1433,8 @@ static int tdx_emulate_rdmsr(struct kvm_vcpu *vcpu)
- 
- static int tdx_emulate_wrmsr(struct kvm_vcpu *vcpu)
- {
--	u32 index = tdvmcall_a0_read(vcpu);
--	u64 data = tdvmcall_a1_read(vcpu);
-+	u32 index = to_tdx(vcpu)->vp_enter_args.tdcall.wr.msr;
-+	u64 data  = to_tdx(vcpu)->vp_enter_args.tdcall.wr.value;
- 
- 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_WRITE) ||
- 	    kvm_set_msr(vcpu, index, data)) {
-@@ -1491,14 +1450,16 @@ static int tdx_emulate_wrmsr(struct kvm_vcpu *vcpu)
- 
- static int tdx_get_td_vm_call_info(struct kvm_vcpu *vcpu)
- {
--	if (tdvmcall_a0_read(vcpu))
-+	struct vcpu_tdx *tdx = to_tdx(vcpu);
-+
-+	if (tdx->vp_enter_args.tdcall.gettdvmcallinfo.leaf) {
- 		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_INVALID_OPERAND);
--	else {
-+	} else {
- 		tdvmcall_set_return_code(vcpu, TDVMCALL_STATUS_SUCCESS);
--		kvm_r11_write(vcpu, 0);
--		tdvmcall_a0_write(vcpu, 0);
--		tdvmcall_a1_write(vcpu, 0);
--		tdvmcall_a2_write(vcpu, 0);
-+		tdx->vp_enter_args.in.gettdvmcallinfo[0] = 0;
-+		tdx->vp_enter_args.in.gettdvmcallinfo[1] = 0;
-+		tdx->vp_enter_args.in.gettdvmcallinfo[2] = 0;
-+		tdx->vp_enter_args.in.gettdvmcallinfo[3] = 0;
- 	}
- 	return 1;
- }
-diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index c9daf71d358a..a0d33b048b7e 100644
---- a/arch/x86/kvm/vmx/tdx.h
-+++ b/arch/x86/kvm/vmx/tdx.h
-@@ -71,6 +71,7 @@ struct vcpu_tdx {
- 	struct list_head cpu_list;
- 
- 	u64 vp_enter_ret;
-+	union tdh_vp_enter_args vp_enter_args;
- 
- 	enum vcpu_tdx_state state;
- 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 16e0b598c4ec..d5c06c5eeaec 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -1600,8 +1600,10 @@ static inline u64 tdx_seamcall_sept(u64 op, struct tdx_module_args *in)
- 	return ret;
- }
- 
--noinstr u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args)
-+noinstr u64 tdh_vp_enter(u64 tdvpr, union tdh_vp_enter_args *vp_enter_args)
- {
-+	struct tdx_module_args *args = (struct tdx_module_args *)vp_enter_args;
-+
- 	args->rcx = tdvpr;
- 
- 	return __seamcall_saved_ret(TDH_VP_ENTER, args);
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
