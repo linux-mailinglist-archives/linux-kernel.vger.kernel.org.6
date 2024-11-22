@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-418115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4549D5D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:38:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AE49D5D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 611041F248A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AE6E28327D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2B1DE3A2;
-	Fri, 22 Nov 2024 10:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3C91DAC93;
+	Fri, 22 Nov 2024 10:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E9C/i6rZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6ts14M+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11511304BA;
-	Fri, 22 Nov 2024 10:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9250818133F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732271924; cv=none; b=W9NRoe5itDWnw6GhsyUUXYoDzSQ3IKmH28JxZ6nyKk3pPgp/GHD9QQdXsp4kWQUvZLHMRpPyEF9mtF8WYu6vHjyQUUzhTBbIw94aE5xaVJ15YpeDFHab+dCtRLV8L7c5HASuUoG9HXv7QC+/rjh1pZdsfrCbKNLXT9psfQ8gDCI=
+	t=1732272055; cv=none; b=LiWpn4ADZvHBnuEK+EUFfjwXyrn9Fh65qg+bvUW9BiYlYn5IOYMEx39IjGlQgz14KdOdqqXzFhMEBl4bEdwQ7VgNeLuvjO+oOYKJOVc26+ehekWDb6ARnZ6yvYDLha5B2YobBaUkj+fn7sP+gVFtRhnUperBfltw0TOw2kN2toY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732271924; c=relaxed/simple;
-	bh=r/b3Td5N3dQTrbXMdIwv4GfFi5yyjShOpjCm4Woqxr8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=ruWX+0Hq2ndqD4KpxpJJxeJ6bXIWdMQN6S52Yvww0uwaPEAMsPWHCtSEBU9mWIjPWZENxYeba0rlMlHNR0wmX+ubSpsnYUEse7HTvPMqf6vsDy2Rnqm7ZHKRBfSw1n5jVIGt0fYrKZAs/PjHxLxZjLpQT2cwvBAZM+JqvTpMFxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E9C/i6rZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM7tmqX002954;
-	Fri, 22 Nov 2024 10:38:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yaeaYr98+fbsR9DLE90GgBAnpX0QZ47zRyGbUfUjRsU=; b=E9C/i6rZ04Ya9OED
-	928Vl3I+ckgF/YqGHF1yuLW0NsDoj7L3vHEEbfKPRGXoL1Ro2TKvneGO1iCE5Wgs
-	WaKjZeOOJXEyJ9Ed5egiAPybZwtSnfrN+d6FOJyl4LA2y4w3RuQHYca0QBiLIV3s
-	4H/qK4v4otrz+DDl/ItbMAjHj1ICThLnQBr1m7Wne+EoiNEeditIUjYe6W7ulP2d
-	/j08CeE+4gnCAmBI9HkS7kvpx3+w/GraBjUloQkX3QQZiLaIG9odHCP8DSfF3gkL
-	C3auzVusN6gl7CTeHKFU6nXQMeejijpds6h1oN+3eLLPM9HJW8ZdYEAGFRB9Rk7O
-	qchZwQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432p0d8erw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 10:38:38 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AMAcb39022911
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 10:38:37 GMT
-Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 22 Nov
- 2024 02:38:31 -0800
-Message-ID: <89228c85-9b0e-477f-9cb9-e775850b2eb0@quicinc.com>
-Date: Fri, 22 Nov 2024 18:38:29 +0800
+	s=arc-20240116; t=1732272055; c=relaxed/simple;
+	bh=lIcErWtDG7meN2uYFd1HD/oKJHuNqmctc/9BNxKL5cQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sUKagXGVY99wpEoX04fcOmP2z2JltNgwiEEYLny8KpNI+oYwGphwler8ro1srsPA+lo3PEPVRQQW39f2+xpRV2agly+A28FABpNksTScz4wPkjdE7UPxbRcqlb5uOXTR7vHR1qoDbvZFiUYLJwPQkG4BCze81lbjEeyY4vq/U9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6ts14M+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61BD1C4CECE;
+	Fri, 22 Nov 2024 10:40:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732272055;
+	bh=lIcErWtDG7meN2uYFd1HD/oKJHuNqmctc/9BNxKL5cQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j6ts14M+QIv0FkNQUbj66UZvBHV29ph/wHAUtDaqkCVxYmMl5uOPScwOp43O4NXEP
+	 9zTbsx9+rZQVS4oDHkNe50X3zpYP52eLun2b+1Rp/Uk0HqmHYKLcEdRPxEo7dQZeCq
+	 UcvOfrHRI4RsnAgANHTP2Xafr4J6TsaAGqRZvZ9J5P+P/UsUK2JXf/UuPhRqGq/GSB
+	 SmIBX3+YxCzLo9X93pr7LH/T/1W/SQjvW/+PlgWx9w0KqftT4N0EUVlcSwGdk6pQ25
+	 QJop9WM221HzxLQQ6UcJWVnIFNMzrDRSbLOPiz7sDLx9FsIyGqHFKPt6ihkZ1iZEq4
+	 MwsA0q3iX8bmw==
+Date: Fri, 22 Nov 2024 11:40:50 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH 5/6] acpi/generic_event_device: Update GHES migration to
+ cover hest addr
+Message-ID: <20241122114050.51b60f1a@foz.lan>
+In-Reply-To: <20241120150119.00007d3d@huawei.com>
+References: <cover.1731486604.git.mchehab+huawei@kernel.org>
+	<6391dfec0a26b83641c2b2062115b839490cc902.1731486604.git.mchehab+huawei@kernel.org>
+	<20241120150119.00007d3d@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sa8775p: pmic: enable rtc
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_kotarake@quicinc.com>, <quic_kamalw@quicinc.com>,
-        <quic_skakitap@quicinc.com>, <quic_fenglinw@quicinc.com>
-References: <20240902104302.3959670-1-quic_tingguoc@quicinc.com>
- <f5b768b3-37ad-4bdf-9cb6-b39b14c8ee45@kernel.org>
- <14392fbf-9bf6-4e39-8ba2-59473351a64b@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <14392fbf-9bf6-4e39-8ba2-59473351a64b@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UsCjIRpN91dkqMPcGJNU0tAOefnGXCal
-X-Proofpoint-GUID: UsCjIRpN91dkqMPcGJNU0tAOefnGXCal
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 mlxlogscore=949
- suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220090
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Em Wed, 20 Nov 2024 15:01:19 +0000
+Jonathan Cameron <Jonathan.Cameron@huawei.com> escreveu:
 
-
-On 9/19/2024 10:23 AM, Tingguo Cheng wrote:
+> On Wed, 13 Nov 2024 09:37:02 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 > 
+> > The GHES migration logic at GED should now support HEST table
+> > location too.
+> > 
+> > Increase migration version and change needed to check for both
+> > ghes_addr_le and hest_addr_le.  
 > 
-> On 9/6/2024 8:22 PM, Krzysztof Kozlowski wrote:
->> On 02/09/2024 12:43, Tingguo Cheng wrote:
->>> Add RTC node, the RTC is controlled by PMIC device via spmi bus.
->>>
->>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi b/arch/ 
->>> arm64/boot/dts/qcom/sa8775p-pmics.dtsi
->>> index 1369c3d43f86..47d05b897d5a 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-pmics.dtsi
->>
->> We achieved consensus allowing sa8775p to stay, but now Qualcomm changes
->> point of view and insists on new approach of dropping sa8775p. Therefore
->> this change does not make much sense in the new approach.
->>
-> The new approach(QCS9100+sa8775p compatible) will still use the same 
-> PMIC chip(As usually, include sa8775p-pmics.dtsi as it's pmic part). 
-> Therefore, from this point, it does make sense in the new approach.
->  From another point, for old boards, this change should have been there.
-> 
->> Best regards,
->> Krzysztof
->>
-> 
-We have aligned this internally again, "sa8775p-pmics.dtsi" still 
-continue to be used for qcs9100-ride. Can you help review/apply this
-change? We need this RTC function in some boards.
+> Where is the migration version increased?  Maybe I'm misunderstanding
+> the comment.
 
--- 
-Thank you & BRs
-Tingguo
+Legacy comment. We dropped migration version increase, as this is not
+needed anymore.
 
+Comment dropped.
+
+> 
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  hw/acpi/generic_event_device.c | 29 +++++++++++++++++++++++++++++
+> >  1 file changed, 29 insertions(+)
+> > 
+> > diff --git a/hw/acpi/generic_event_device.c b/hw/acpi/generic_event_device.c
+> > index 17baf36132a8..c1116dd8d7ae 100644
+> > --- a/hw/acpi/generic_event_device.c
+> > +++ b/hw/acpi/generic_event_device.c
+> > @@ -387,6 +387,34 @@ static const VMStateDescription vmstate_ghes_state = {
+> >      }
+> >  };
+> >  
+> > +static const VMStateDescription vmstate_hest = {
+> > +    .name = "acpi-hest",
+> > +    .version_id = 1,
+> > +    .minimum_version_id = 1,
+> > +    .fields = (const VMStateField[]) {
+> > +        VMSTATE_UINT64(hest_addr_le, AcpiGhesState),
+> > +        VMSTATE_END_OF_LIST()
+> > +    },
+> > +};
+> > +
+> > +static bool hest_needed(void *opaque)
+> > +{
+> > +    AcpiGedState *s = opaque;
+> > +    return s->ghes_state.hest_addr_le;
+> > +}
+> > +
+> > +static const VMStateDescription vmstate_hest_state = {
+> > +    .name = "acpi-ged/hest",
+> > +    .version_id = 1,
+> > +    .minimum_version_id = 1,
+> > +    .needed = hest_needed,
+> > +    .fields = (const VMStateField[]) {
+> > +        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
+> > +                       vmstate_hest, AcpiGhesState),
+> > +        VMSTATE_END_OF_LIST()
+> > +    }
+> > +};
+> > +
+> >  static const VMStateDescription vmstate_acpi_ged = {
+> >      .name = "acpi-ged",
+> >      .version_id = 1,
+> > @@ -399,6 +427,7 @@ static const VMStateDescription vmstate_acpi_ged = {
+> >          &vmstate_memhp_state,
+> >          &vmstate_cpuhp_state,
+> >          &vmstate_ghes_state,
+> > +        &vmstate_hest_state,
+> >          NULL
+> >      }
+> >  };  
+> 
+
+
+
+Thanks,
+Mauro
 
