@@ -1,94 +1,162 @@
-Return-Path: <linux-kernel+bounces-418227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52C69D5ED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:31:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872B99D5EDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FC2FB27028
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BBE91F237B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EC21DEFC8;
-	Fri, 22 Nov 2024 12:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8121DED78;
+	Fri, 22 Nov 2024 12:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZVKczI7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LGK7fAGG"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF851DE882;
-	Fri, 22 Nov 2024 12:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31F1CB329
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732278650; cv=none; b=SMA2okovBoB0ZcFtp/QO27836S9CoNWPOwGmLf0TduOgc2/xketVQL6rrM64z8dkTZcJq/XUGo6fTapLEm8WEZnPGJZVrOLAbI0iw7ees4HZCxOQW7gSEkpd+M5FBjo2+guxOZ8TtD9OmesA+N5JYZt0xmBAvGVB6Fj8ZxvMTUI=
+	t=1732278926; cv=none; b=Nq6ctQkNXZy2ab8UYtZ/5WwvGDgbUEbkdnNUHXj8pa3le7zSDTpBdVxf6K5vEu4jGdn9Tblx8tU3pCar/idd9tLHBaMEmBtxykyT60QKk1J+DcOJt2Fm8W5JEZDGSPksPDRcIoPh0yNdZhN221dmaMx3VVJUBw12x088UQczJVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732278650; c=relaxed/simple;
-	bh=fpveC+/T+g9xHAw1IGw6wyr+JR41KJBXitvj1pzaAUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Pp9YaCnZOQm51XwSx+0d8GV2kysxVLkvfpWNa5p0xGRqOo91PjR7Cr/RHDRkPQnk7dMvea/gQKbYizmGu80HE8oXMU3HZotm0Kbg+To9cI0wwlPqCccCKJifat86JR459GZjDnHV9mxNqD1fZkTMBPkKZRF0MGKsg3tTN4W21Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZVKczI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49580C4CECE;
-	Fri, 22 Nov 2024 12:30:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732278650;
-	bh=fpveC+/T+g9xHAw1IGw6wyr+JR41KJBXitvj1pzaAUE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KZVKczI7ZT/INrusJVFjMSdRWFydWbV9AnfYWj2M7Tt32rj7xBHtGR+7NPwl5luyX
-	 fBWXBTpjD6FSEHOM7o8dBX+f0cRo35ZXovS10/Ql2EwI7C4Pv/79JCRvxfWLbXdL+P
-	 1vdFpXm9ZHpjQ0WhA5T3y/G9EeXWh/nQ/zWn0OqQA0NunfTmtcoi/vfYa+WwqIZxsv
-	 fDSSNvpiwLxfWKmH7n7z8zjwg2Flb1+XJNnqUPdAWJ30+z7vtXK4jKOLFYm0Un/m/b
-	 NOUj//ieaeFsOTTs36C5s8efGkL+6ojLe2oTaA0ia028p/Qe9FAGD5dtqiCbOUKoWZ
-	 G4wC9uaRLXhjQ==
-Date: Fri, 22 Nov 2024 13:30:45 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c <linux-i2c@vger.kernel.org>, 
-	lkml <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host-fixes for v6.12
-Message-ID: <detebsw5fdnjirwzai5ldvy2arsm2jgyzojulpw77m6gujn65o@mgfxsijpsjdg>
+	s=arc-20240116; t=1732278926; c=relaxed/simple;
+	bh=/bSeenWD6NQdC1PBVIiMjftf/dqROH/FvwdD2Hsyblo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZCy1QrkayKLQ4l1PboZHyDHFdULo6z3U0TMAubuMzNpWYk/vjOiay/pzxqdH1YXb5JshrE5PGsBoLNVJ3lPr1/XuqtjrtfHXePf71IN+m8cS3t8v9YRWfaub6t25YedJBcR5mYs7wLOWX4QI144YtUv2/rWtdxPHPpHTGOf/fpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LGK7fAGG; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM8bmX5019251
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YmBijtaeUIMD2Q4qws8xURzuS2h9kjPL7kzv3y/aSvM=; b=LGK7fAGGXMuDsXuu
+	PbvILGJVBbxKQFy2xuPDyoq2o0SCdnKnqo9tJx8L0n096n4Vf+UzS9STZFTuvGyE
+	DRdmf27hQeWcu5k4XIiIPG6VfiSACX20A3lYTINN2O8ud1ej5LPZIzt5kfixGS34
+	VJonUSFLZL6rlV+lmEpEKXr9VdZNyHGhdJ/HTcnjt0xcSUdVFKDYJUZfmpjlR8dZ
+	rdLUPo9tSREuHMxzMKRcZtYEs30bG9tSU4mMicXvq45zkB7RiCBScJXRzNu14fBp
+	qZHrJj5tx8YonBIZ/zAmDLid7fs+hSYZpyLAzNDRWjZmVr7FKMBVvr9qFOCBT5cb
+	e0ahUQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hqdwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d40a926b91so5235876d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:35:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732278922; x=1732883722;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YmBijtaeUIMD2Q4qws8xURzuS2h9kjPL7kzv3y/aSvM=;
+        b=mJL73ixq0jPx+McR1TdsHAHG9i9ztYJdWH6ko2ulE8FsmZe9JpFXKzVBuKJ8T9tjmj
+         K8cQrc8zf9LKxCRn9f6f7rwO/d0KrwWhYBKpr4poAiErGBhVzBNCIBA1Sq1Vk9J1NRqs
+         qb532d8Q+bCYIYIZBDF9EXDrSTMisG/kM7g+434kiYITU5XH70+13qkOc6eecPU9wxIS
+         VZs8VxeWELoWD5BgJ2y66p5IX5QNLYWD/AjtHPwJHhq5z6KysPig9SuQmOwskVPmG0Zx
+         91Ru9qYA9P4SI84HvJwyIb/Yi14Fxm/TaBV94nPh/hMjV8PWF7a1e14pziM+w61HAS8F
+         Frqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbl8HbYfWvyiGwvm8yMsI2vbmFEIjxVbUr1fuADoUOGrH8NdV/mz/M1dHhdmi8i5eew/3vokz0edCjJ8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY+qdp3KeRMNnNktNUg8KOWUFE3ePPOoqflYSURIc2CAtD1Jan
+	E+1vF597FXZCQJtm5mC1E1lsiCeKnrkrcnAR3DzrWYYmhgMLwRqGYTtV4v+mf3t4e6bJIhCfgVH
+	DsLCN80O8LPchHCcpwZfWMQ0Pp/FnSaSL/1Rc2p45qwM2Ss/wm6I032Vi+0rliQw=
+X-Gm-Gg: ASbGncsjq6Ht3Mx/Q9823ka/WVSi+Lsj9g0vhuV2/FYj9uXcLmpT6f9vhaqmPdvKC+6
+	dI1gzoV7aYHsKWyDy1htBwdnF/XkcJJYmv0aTbcRgdMz5NRPpcaUHp6kTuOCXMxzZbLPFyPQFgs
+	EnLtgJoewjOOlotVP7PiS3a2bsFES/e0xeghZnOEUFso4e1av0w5bO0Ff+T7PyMhLRVye1wGzH2
+	og1Kgv5hkOZPCLM3WPp14AzxqgtEzFYZSSkFuBBAuG/O+Dk3W3Spwsctazs+J3UUIvQL5iJCFlA
+	xscf8CUvimxFgc5rRtK9TAojTUekQWA=
+X-Received: by 2002:a05:620a:6283:b0:7b0:6e8:9508 with SMTP id af79cd13be357-7b5144ad110mr161955985a.5.1732278921646;
+        Fri, 22 Nov 2024 04:35:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF8uIE6oiCtMgsiJkE35Zoovx430qO4c5U0D4F91/nuFLw5NZvdNcCQH20F0lI4XhKW9QuIIQ==
+X-Received: by 2002:a05:620a:6283:b0:7b0:6e8:9508 with SMTP id af79cd13be357-7b5144ad110mr161953985a.5.1732278921290;
+        Fri, 22 Nov 2024 04:35:21 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d02062428fsm754087a12.40.2024.11.22.04.35.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 04:35:20 -0800 (PST)
+Message-ID: <bf27f92a-5fc6-4b09-8653-4ac3ef438d4f@oss.qualcomm.com>
+Date: Fri, 22 Nov 2024 13:35:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/7] thermal/drivers/tsens: Add TSENS enable and
+ calibration support for V2
+To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com,
+        rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+        lukasz.luba@arm.com, andersson@kernel.org, konradybcio@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20241115103957.1157495-1-quic_mmanikan@quicinc.com>
+ <20241115103957.1157495-4-quic_mmanikan@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241115103957.1157495-4-quic_mmanikan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: doNE0t9gohQNztSiogCjcOJhtWVu77Zb
+X-Proofpoint-GUID: doNE0t9gohQNztSiogCjcOJhtWVu77Zb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220106
 
-Hi Wolfram,
+On 15.11.2024 11:39 AM, Manikanta Mylavarapu wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> 
+> SoCs without RPM need to enable sensors and calibrate them from the kernel.
+> The IPQ5332 and IPQ5424 use the tsens v2.3.3 IP and do not have RPM.
+> Therefore, add a new calibration function for V2, as the tsens.c calib
+> function only supports V1. Also add new feature_config, ops and data for
+> IPQ5332, IPQ5424.
+> 
+> Although the TSENS IP supports 16 sensors, not all are used. The hw_id
+> is used to enable the relevant sensors.
+> 
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+> ---
 
-just a MAINTAINER's update for the fixes pull request.
+[...]
 
-My branch is based on your for-current, which is 6.12-rc7.
+> +{
+> +	u32 shift = V2_SHIFT_DEFAULT;
+> +	u32 slope = V2_SLOPE_DEFAULT, czero = V2_CZERO_DEFAULT, val;
 
-Tomorrow morning I will send the second part of the merge window
-pull request, I want to give it one more night test.
+Please don't mix initialized and uninitialized variables in the same line,
+I think it would be the cleanest if you initialized the ones you want on
+separate lines and then declared val separately as well (and preferably
+in reverse-Christmas-tree order)
 
-Thanks,
-Andi
+[...]
 
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+> +	}
+> +
+> +	val =	FIELD_PREP(CONVERSION_SHIFT_MASK, shift) |
 
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+tab->space after '='
 
-are available in the Git repository at:
+[...]
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-fixes-6.12
+> +	/* Select temperature format, unit is deci-Celsius */
+> +	regmap_field_write(priv->rf[CODE_OR_TEMP], RSEULT_FORMAT_TEMP);
 
-for you to fetch changes up to 523930e4528f8e2267e8223245f0339eaec591c4:
+"result"?
 
-  MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan (2024-11-20 07:52:09 +0100)
-
-----------------------------------------------------------------
-i2c-host-fixes for v6.12
-
-i2c aspeed driver's maintenance moves from Brendan to Ryan.
-
-----------------------------------------------------------------
-Brendan Higgins (1):
-      MAINTAINERS: transfer i2c-aspeed maintainership from Brendan to Ryan
-
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Konrad
 
