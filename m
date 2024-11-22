@@ -1,393 +1,145 @@
-Return-Path: <linux-kernel+bounces-418108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAAD59D5D51
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:31:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 237309D5D57
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4167A1F23428
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC35F1F23682
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D529718B486;
-	Fri, 22 Nov 2024 10:31:44 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D381DE8A6;
+	Fri, 22 Nov 2024 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cXe2MDW/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7369C1304BA;
-	Fri, 22 Nov 2024 10:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A41D90BC;
+	Fri, 22 Nov 2024 10:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732271504; cv=none; b=Uh2PfqzD+i+Yq0qoointzYd2Vn1jwx88JVVrAtjGqCbU1UvXoYL8syKkRUKsJljb81nNBMbRwItGTnDIJKKdS6xIhJuqjg17zeSK9psgQ51iImtBbugRxWsiEh6xWaxD51dQZMz9y9nehuas7dakHF9esgwaWBchOqtyooq6uPc=
+	t=1732271530; cv=none; b=Y73Q2F0hUJiB0p/zPub09JdVjvJLlV7wjwAbTWESJ3dVwUpjb2jaRNuGJhxqQyrWZH6ay683vYmL2PMSPHsqEuI/GeHM2UOBCM2BiNxqXpgCHWyTAoMRepd3nNga4c1/2Ck9XZQU5++Mm/B9JCOYacNcb87VOo2tEyh7IHmI5KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732271504; c=relaxed/simple;
-	bh=R/wM2TOsSUpo1Ucglh5txdVqJ2VkhEGCDpQqQlknGVg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fES/dWHaiA8MkMKirHqs2oABvd5EWbMWGlWUq+VYeY+bgrpxQpS0kjIg+nbddIcS7kzgDPRjvr7ntLBH6Q7hrpAqZD5m9w4aNIKKwrlG7uqI4Y3cY34gg8xSLVDbDxDaDV7n2MBL2yyhjUaWHsxGLmlYjGZW3AyqAYWVowBpNzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xvrwx5rplz6LDJ4;
-	Fri, 22 Nov 2024 18:31:13 +0800 (CST)
-Received: from frapeml500006.china.huawei.com (unknown [7.182.85.219])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2838B140A70;
-	Fri, 22 Nov 2024 18:31:39 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (7.182.85.172) by
- frapeml500006.china.huawei.com (7.182.85.219) with Microsoft SMTP Server
+	s=arc-20240116; t=1732271530; c=relaxed/simple;
+	bh=kpX3NfYPi71EcttP9EU4etHWc+PQ9ltLoBhj6Ac9QsA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=r45tW3qu7wPckLUDiCVakiQjQN6sk8d3/sihdEcNzIE9M1ixVtrCZB0PB/wMXChNki9NeKx/mi8grF/cAsvCF0hvkg5ZB5XoZoAWCbeBzCM/u212npnUY3l0Y7LsS/xm2WnINm7DmRR5U/x/HrBTZQD2iS6MKABJfqlJTb8blVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cXe2MDW/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM4UkxD020262;
+	Fri, 22 Nov 2024 10:32:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=M7U7nnuL8F0cHhtZcGN1dv
+	3Lva34Ify9MuzathaN0qw=; b=cXe2MDW/bQWuKCSYv/x5BSjFpAdwdliLYWLSfg
+	b/piipcF0K5IhVpW5yWj4S3OMMeHCW1JiCHd0KlaAgGMjuRCUN9asm4wmg9yI8E9
+	V2LzUrf2FSUlk9VrXalS25zrBwucMuVc3Fyw4lLi/C+1KyoYUJvkgyeiMhDDcCcA
+	VCOpLfhvv/TgZQjYZd75jSDaE7XGk/3lVLT98PlrSvFVmznahVFicyg8fNe+UL+1
+	x0is6LCILHF5uXO9RmJ29AsK6QaTZbKvjgzUObLhEC3/fDsjIEE1Jpu1kHvupwby
+	PBj5RiGoFyLQFpFA/0zRhag/LLEkw0+7ivhOE3uYYCcfPdUg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4326atasca-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 10:32:04 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AMAW3hd013985
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 10:32:03 GMT
+Received: from hu-renjiang-sha.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 22 Nov 2024 11:31:38 +0100
-Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
- frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
- Fri, 22 Nov 2024 11:31:38 +0100
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "vishal.l.verma@intel.com"
-	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Linuxarm <linuxarm@huawei.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
-Subject: RE: [PATCH 03/13] rasdaemon: cxl: Add automatic indexing for storing
- CXL fields in SQLite database
-Thread-Topic: [PATCH 03/13] rasdaemon: cxl: Add automatic indexing for storing
- CXL fields in SQLite database
-Thread-Index: AQHbOzMDAZEv+G3ov0igkks6DwRDQrLByaqAgAFTOAA=
-Date: Fri, 22 Nov 2024 10:31:38 +0000
-Message-ID: <1885c10881b04c4083e8742082d68b36@huawei.com>
-References: <20241120095923.1891-1-shiju.jose@huawei.com>
-	<20241120095923.1891-4-shiju.jose@huawei.com>
- <20241121151701.00007bea@huawei.com>
-In-Reply-To: <20241121151701.00007bea@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.1544.9; Fri, 22 Nov 2024 02:31:59 -0800
+From: Renjiang Han <quic_renjiang@quicinc.com>
+Subject: [PATCH 0/2] Use APIs in gdsc genpd to switch gdsc mode for venus
+ v4 core
+Date: Fri, 22 Nov 2024 16:01:44 +0530
+Message-ID: <20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJBdQGcC/yXMyw6DIBCF4Vcxsy6JAyrUV2mMQRh0FmoFe0mM7
+ 15Sl99Jzn9AosiUoC0OiPTmxOuSgbcC3GSXkQT7bJClrBClFOnDu5v60SfXz6snMTS1ISuVctJ
+ Cvj0jBf7+k4/ucqTtlcv7NcJgEwm3zjPvbdGoQYVQKn9HSyYYXQcyutJOG7S1xKCN84QauvP8A
+ cc3IlmuAAAA
+X-Change-ID: 20241122-switch_gdsc_mode-b658ea233c2a
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Renjiang Han
+	<quic_renjiang@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732271519; l=1429;
+ i=quic_renjiang@quicinc.com; s=20241001; h=from:subject:message-id;
+ bh=kpX3NfYPi71EcttP9EU4etHWc+PQ9ltLoBhj6Ac9QsA=;
+ b=jvNeYurSYQcsIou/CC7cftagtWWQUEeXZ72iLUrJgxB5w4VAG/NaKLjV2SUJvU8C43hm5r2rY
+ b1S3WajdPxHBRkcks+4fdLLT7M/1ysfJGEtvSZB8cf7L8QlScwcqDhC
+X-Developer-Key: i=quic_renjiang@quicinc.com; a=ed25519;
+ pk=8N59kMJUiVH++5QxJzTyHB/wh/kG5LxQ44j9zhUvZmw=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 0NX9JnKRQIqPAvilWA0u1CSg-ai7Kmbo
+X-Proofpoint-GUID: 0NX9JnKRQIqPAvilWA0u1CSg-ai7Kmbo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 clxscore=1011 mlxlogscore=759 lowpriorityscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220089
 
+The Venus driver requires vcodec GDSC to be ON in SW mode for clock
+operations and move it back to HW mode to gain power benefits. Earlier,
+as there is no interface to switch the GDSC mode from GenPD framework,
+the GDSC is moved to HW control mode as part of GDSC enable callback and
+venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
+from SW whereever required. But the POWER_CONTROL register addresses are
+not constant and can vary across the variants.
 
+Also as per the HW recommendation, the GDSC mode switching needs to be
+controlled from respective GDSC register and this is a uniform approach
+across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
+controls GDSC mode switching using its respective GDSC register.
 
->-----Original Message-----
->From: Jonathan Cameron <jonathan.cameron@huawei.com>
->Sent: 21 November 2024 15:17
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org;
->mchehab@kernel.org; dave.jiang@intel.com; dan.j.williams@intel.com;
->alison.schofield@intel.com; nifan.cxl@gmail.com; vishal.l.verma@intel.com;
->ira.weiny@intel.com; dave@stgolabs.net; linux-kernel@vger.kernel.org;
->Linuxarm <linuxarm@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>;
->Zengtao (B) <prime.zeng@hisilicon.com>
->Subject: Re: [PATCH 03/13] rasdaemon: cxl: Add automatic indexing for stor=
-ing
->CXL fields in SQLite database
->
->On Wed, 20 Nov 2024 09:59:13 +0000
-><shiju.jose@huawei.com> wrote:
->
->> From: Shiju Jose <shiju.jose@huawei.com>
->>
->> When the CXL specification adds new fields to the common header of CXL
->> event records, manual updates to the indexing are required to store
->> these CXL fields in the SQLite database. This update introduces
->> automatic indexing to facilitate the storage of CXL fields in the
->> SQLite database, eliminating the need for manual update to indexing.
->>
->> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
->
->Using 0 as an error code seems odd, maybe a negative instead?
->With that changed to say -1 then this looks good to me.
+Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+---
+Renjiang Han (1):
+      venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on V4
 
-Will change error code to -1
+Taniya Das (1):
+      clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video GDSC's
 
-Thanks,
-Shiju
->
->Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->
->
->> ---
->>  ras-record.c | 134
->> ++++++++++++++++++++++++++++-----------------------
->>  1 file changed, 74 insertions(+), 60 deletions(-)
->>
->> diff --git a/ras-record.c b/ras-record.c index b4a1abd..9e68158 100644
->> --- a/ras-record.c
->> +++ b/ras-record.c
->> @@ -780,23 +780,25 @@ int ras_store_cxl_overflow_event(struct
->> ras_events *ras, struct ras_cxl_overflow
->>
->>  static int ras_store_cxl_common_hdr(sqlite3_stmt *stmt, struct
->> ras_cxl_event_common_hdr *hdr)  {
->> +	int idx =3D 1;
->> +
->>  	if (!stmt || !hdr)
->>  		return 0;
->>
->> -	sqlite3_bind_text(stmt, 1, hdr->timestamp, -1, NULL);
->> -	sqlite3_bind_text(stmt, 2, hdr->memdev, -1, NULL);
->> -	sqlite3_bind_text(stmt, 3, hdr->host, -1, NULL);
->> -	sqlite3_bind_int64(stmt, 4, hdr->serial);
->> -	sqlite3_bind_text(stmt, 5, hdr->log_type, -1, NULL);
->> -	sqlite3_bind_text(stmt, 6, hdr->hdr_uuid, -1, NULL);
->> -	sqlite3_bind_int(stmt, 7, hdr->hdr_flags);
->> -	sqlite3_bind_int(stmt, 8, hdr->hdr_handle);
->> -	sqlite3_bind_int(stmt, 9, hdr->hdr_related_handle);
->> -	sqlite3_bind_text(stmt, 10, hdr->hdr_timestamp, -1, NULL);
->> -	sqlite3_bind_int(stmt, 11, hdr->hdr_length);
->> -	sqlite3_bind_int(stmt, 12, hdr->hdr_maint_op_class);
->> -
->> -	return 0;
->> +	sqlite3_bind_text(stmt, idx++, hdr->timestamp, -1, NULL);
->> +	sqlite3_bind_text(stmt, idx++, hdr->memdev, -1, NULL);
->> +	sqlite3_bind_text(stmt, idx++, hdr->host, -1, NULL);
->> +	sqlite3_bind_int64(stmt, idx++, hdr->serial);
->> +	sqlite3_bind_text(stmt, idx++, hdr->log_type, -1, NULL);
->> +	sqlite3_bind_text(stmt, idx++, hdr->hdr_uuid, -1, NULL);
->> +	sqlite3_bind_int(stmt, idx++, hdr->hdr_flags);
->> +	sqlite3_bind_int(stmt, idx++, hdr->hdr_handle);
->> +	sqlite3_bind_int(stmt, idx++, hdr->hdr_related_handle);
->> +	sqlite3_bind_text(stmt, idx++, hdr->hdr_timestamp, -1, NULL);
->> +	sqlite3_bind_int(stmt, idx++, hdr->hdr_length);
->> +	sqlite3_bind_int(stmt, idx++, hdr->hdr_maint_op_class);
->> +
->> +	return idx;
->>  }
->>
->>  /*
->> @@ -827,15 +829,18 @@ static const struct db_table_descriptor
->> cxl_generic_event_tab =3D {
->>
->>  int ras_store_cxl_generic_event(struct ras_events *ras, struct
->> ras_cxl_generic_event *ev)  {
->> -	int rc;
->> +	int rc, idx;
->>  	struct sqlite3_priv *priv =3D ras->db_priv;
->>
->>  	if (!priv || !priv->stmt_cxl_generic_event)
->>  		return 0;
->>  	log(TERM, LOG_INFO, "cxl_generic_event store: %p\n",
->> priv->stmt_cxl_generic_event);
->>
->> -	ras_store_cxl_common_hdr(priv->stmt_cxl_generic_event, &ev->hdr);
->> -	sqlite3_bind_blob(priv->stmt_cxl_generic_event, 13, ev->data,
->> +	idx =3D ras_store_cxl_common_hdr(priv->stmt_cxl_generic_event, &ev-
->>hdr);
->> +	if (!idx)
->> +		return 0;
->Seems like an odd form of error code as without looking at implementation =
-it
->might seem reasonable for that call to return 0 because it didn't add anyt=
-hin to
->idx?
->
->> +
->> +	sqlite3_bind_blob(priv->stmt_cxl_generic_event, idx++, ev->data,
->>  			  CXL_EVENT_RECORD_DATA_LENGTH, NULL);
->>
->>  	rc =3D sqlite3_step(priv->stmt_cxl_generic_event);
->> @@ -891,7 +896,7 @@ static const struct db_table_descriptor
->> cxl_general_media_event_tab =3D {  int
->ras_store_cxl_general_media_event(struct ras_events *ras,
->>  				      struct ras_cxl_general_media_event *ev)  {
->> -	int rc;
->> +	int rc, idx;
->>  	struct sqlite3_priv *priv =3D ras->db_priv;
->>
->>  	if (!priv || !priv->stmt_cxl_general_media_event)
->> @@ -899,20 +904,23 @@ int ras_store_cxl_general_media_event(struct
->ras_events *ras,
->>  	log(TERM, LOG_INFO, "cxl_general_media_event store: %p\n",
->>  	    priv->stmt_cxl_general_media_event);
->>
->> -	ras_store_cxl_common_hdr(priv->stmt_cxl_general_media_event, &ev-
->>hdr);
->> -	sqlite3_bind_int64(priv->stmt_cxl_general_media_event, 13, ev->dpa);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 14, ev-
->>dpa_flags);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 15, ev-
->>descriptor);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 16, ev->type);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 17, ev-
->>transaction_type);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 18, ev->channel);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 19, ev->rank);
->> -	sqlite3_bind_int(priv->stmt_cxl_general_media_event, 20, ev->device);
->> -	sqlite3_bind_blob(priv->stmt_cxl_general_media_event, 21, ev-
->>comp_id,
->> +	idx =3D ras_store_cxl_common_hdr(priv->stmt_cxl_general_media_event,
->&ev->hdr);
->> +	if (!idx)
->As above,
->> +		return 0;
->> +
->> +	sqlite3_bind_int64(priv->stmt_cxl_general_media_event, idx++, ev-
->>dpa);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev-
->>dpa_flags);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev-
->>descriptor);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev->type);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev-
->>transaction_type);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev-
->>channel);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev->rank);
->> +	sqlite3_bind_int(priv->stmt_cxl_general_media_event, idx++, ev-
->>device);
->> +	sqlite3_bind_blob(priv->stmt_cxl_general_media_event, idx++,
->> +ev->comp_id,
->>  			  CXL_EVENT_GEN_MED_COMP_ID_SIZE, NULL);
->> -	sqlite3_bind_int64(priv->stmt_cxl_general_media_event, 22, ev->hpa);
->> -	sqlite3_bind_text(priv->stmt_cxl_general_media_event, 23, ev->region,
->-1, NULL);
->> -	sqlite3_bind_text(priv->stmt_cxl_general_media_event, 24, ev-
->>region_uuid, -1, NULL);
->> +	sqlite3_bind_int64(priv->stmt_cxl_general_media_event, idx++, ev-
->>hpa);
->> +	sqlite3_bind_text(priv->stmt_cxl_general_media_event, idx++, ev-
->>region, -1, NULL);
->> +	sqlite3_bind_text(priv->stmt_cxl_general_media_event, idx++,
->> +ev->region_uuid, -1, NULL);
->>
->>  	rc =3D sqlite3_step(priv->stmt_cxl_general_media_event);
->>  	if (rc !=3D SQLITE_OK && rc !=3D SQLITE_DONE) @@ -970,7 +978,7 @@
->static
->> const struct db_table_descriptor cxl_dram_event_tab =3D {
->>
->>  int ras_store_cxl_dram_event(struct ras_events *ras, struct
->> ras_cxl_dram_event *ev)  {
->> -	int rc;
->> +	int rc, idx;
->>  	struct sqlite3_priv *priv =3D ras->db_priv;
->>
->>  	if (!priv || !priv->stmt_cxl_dram_event) @@ -978,24 +986,27 @@ int
->> ras_store_cxl_dram_event(struct ras_events *ras, struct ras_cxl_dram_eve=
-nt
->*
->>  	log(TERM, LOG_INFO, "cxl_dram_event store: %p\n",
->>  	    priv->stmt_cxl_dram_event);
->>
->> -	ras_store_cxl_common_hdr(priv->stmt_cxl_dram_event, &ev->hdr);
->> -	sqlite3_bind_int64(priv->stmt_cxl_dram_event, 13, ev->dpa);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 14, ev->dpa_flags);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 15, ev->descriptor);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 16, ev->type);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 17, ev->transaction_type);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 18, ev->channel);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 19, ev->rank);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 20, ev->nibble_mask);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 21, ev->bank_group);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 22, ev->bank);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 23, ev->row);
->> -	sqlite3_bind_int(priv->stmt_cxl_dram_event, 24, ev->column);
->> -	sqlite3_bind_blob(priv->stmt_cxl_dram_event, 25, ev->cor_mask,
->> +	idx =3D ras_store_cxl_common_hdr(priv->stmt_cxl_dram_event, &ev-
->>hdr);
->> +	if (!idx)
->As above.
->
->> +		return 0;
->> +
->> +	sqlite3_bind_int64(priv->stmt_cxl_dram_event, idx++, ev->dpa);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->dpa_flags);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->descriptor);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->type);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev-
->>transaction_type);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->channel);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->rank);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->nibble_mask);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->bank_group);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->bank);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->row);
->> +	sqlite3_bind_int(priv->stmt_cxl_dram_event, idx++, ev->column);
->> +	sqlite3_bind_blob(priv->stmt_cxl_dram_event, idx++, ev->cor_mask,
->>  			  CXL_EVENT_DER_CORRECTION_MASK_SIZE, NULL);
->> -	sqlite3_bind_int64(priv->stmt_cxl_dram_event, 26, ev->hpa);
->> -	sqlite3_bind_text(priv->stmt_cxl_dram_event, 27, ev->region, -1, NULL)=
-;
->> -	sqlite3_bind_text(priv->stmt_cxl_dram_event, 28, ev->region_uuid, -1,
->NULL);
->> +	sqlite3_bind_int64(priv->stmt_cxl_dram_event, idx++, ev->hpa);
->> +	sqlite3_bind_text(priv->stmt_cxl_dram_event, idx++, ev->region, -1,
->NULL);
->> +	sqlite3_bind_text(priv->stmt_cxl_dram_event, idx++, ev->region_uuid,
->> +-1, NULL);
->>
->>  	rc =3D sqlite3_step(priv->stmt_cxl_dram_event);
->>  	if (rc !=3D SQLITE_OK && rc !=3D SQLITE_DONE) @@ -1047,7 +1058,7 @@
->> static const struct db_table_descriptor cxl_memory_module_event_tab =3D
->> {  int ras_store_cxl_memory_module_event(struct ras_events *ras,
->>  				      struct ras_cxl_memory_module_event *ev)
->{
->> -	int rc;
->> +	int rc, idx;
->>  	struct sqlite3_priv *priv =3D ras->db_priv;
->>
->>  	if (!priv || !priv->stmt_cxl_memory_module_event)
->> @@ -1055,16 +1066,19 @@ int ras_store_cxl_memory_module_event(struct
->ras_events *ras,
->>  	log(TERM, LOG_INFO, "cxl_memory_module_event store: %p\n",
->>  	    priv->stmt_cxl_memory_module_event);
->>
->> -	ras_store_cxl_common_hdr(priv->stmt_cxl_memory_module_event,
->&ev->hdr);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 13, ev-
->>event_type);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 14, ev-
->>health_status);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 15, ev-
->>media_status);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 16, ev-
->>life_used);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 17, ev-
->>dirty_shutdown_cnt);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 18, ev-
->>cor_vol_err_cnt);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 19, ev-
->>cor_per_err_cnt);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 20, ev-
->>device_temp);
->> -	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, 21, ev-
->>add_status);
->> +	idx =3D ras_store_cxl_common_hdr(priv-
->>stmt_cxl_memory_module_event, &ev->hdr);
->> +	if (!idx)
->as above
->> +		return 0;
->> +
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>event_type);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>health_status);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>media_status);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>life_used);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>dirty_shutdown_cnt);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>cor_vol_err_cnt);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>cor_per_err_cnt);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++, ev-
->>device_temp);
->> +	sqlite3_bind_int(priv->stmt_cxl_memory_module_event, idx++,
->> +ev->add_status);
->>
->>  	rc =3D sqlite3_step(priv->stmt_cxl_memory_module_event);
->>  	if (rc !=3D SQLITE_OK && rc !=3D SQLITE_DONE)
+ drivers/clk/qcom/videocc-sc7180.c              |  2 +-
+ drivers/clk/qcom/videocc-sdm845.c              |  4 ++--
+ drivers/media/platform/qcom/venus/pm_helpers.c | 10 +++++-----
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+---
+base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+change-id: 20241122-switch_gdsc_mode-b658ea233c2a
+
+Best regards,
+-- 
+Renjiang Han <quic_renjiang@quicinc.com>
 
 
