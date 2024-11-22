@@ -1,127 +1,218 @@
-Return-Path: <linux-kernel+bounces-417892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CEA29D5A52
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:51:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 798ED9D5A59
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45ADE1F22A32
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B067281709
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE40F17BEA4;
-	Fri, 22 Nov 2024 07:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D43185B46;
+	Fri, 22 Nov 2024 07:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hlbin4P1"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RwlBo9/t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB97176AA1;
-	Fri, 22 Nov 2024 07:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C79118990D;
+	Fri, 22 Nov 2024 07:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261846; cv=none; b=HEgpCDVlLK7DZWhICzMQK5+EYImBYwpC+3o1LWSrFsJVz2wmt8t1Ac2qb3LFO9wU/Hftn4TxKqClnBcEohA22y2EgvoIDgyz5f62j18oPYBQ6WUCLHN/rkFUfFcrycOor2/ur6x6oTuL/3QE8jyw+aCpAh8K/g44l1XVeYxbvG0=
+	t=1732261866; cv=none; b=UwD4KYjT1mVuEhunAIH7b3rLhKKH5GPHUyjePqTf+plY2BZ0YELBY9qdOpUh6J0saWL0Flou/F8qvUE9PcebWo5hZ5yfKp/VHNmQyyeFGAc+2ezSbnkDUI8Xxf4wP/StaQcFiZH7w8MZbu2dEnPtLmIgjlURmllo04kx07PalDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261846; c=relaxed/simple;
-	bh=Chk0jct/UEfFTBrFGgW+cRqElerrmow7Ab4tm+UCdaw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=fnWoRANsHifxX5deybwcQsVkQOfjdBtQBTRDpB2Ahqx6KsjVvunq8LfxUygQ9/eq7HUFjuJyqWAt3YuGTMtFfMT2NQss9Nu/UWcyPZtDTlqPWH0r4CEXG2VOBWshI1aC7jeZK6/g3ugToIDVAzb8gQywXozt2XngwQFHXNBPAUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hlbin4P1; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732261820; x=1732866620; i=markus.elfring@web.de;
-	bh=tUcZf+fADnYuxFdDTQYYrLURdRNVAux3JfUMmGIPZdk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=hlbin4P1PRLTyPWtasl7N6GIezhxqcpdu/VJTskHnirvv/KfNo8McKif5c3NptPW
-	 4MBUv9dtbR7feqMttuOGieflrKuCCzEru1Dk4sevSyK7+JDrDx1zozaItPpX3C/ui
-	 6cE8f6slKj4lijODXgGpFi3e0yON/vR4I3Hybymg47Up07z6O/Z17R3csVtKQ34FP
-	 DWN96EMflD0ouKHz9PFsCV+jxHwVqDQtRJwmYxGygZFaFm3ceXGE15F42iVvZev+7
-	 xit2OoJy2i41AjyWVKXCIlkXbs7Ze73pRcgXlS8z0i4HgRGu1uJ6hfbF3H5jUqjz6
-	 Iws5WtawZdVErPmYsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M7usw-1tJK6o2Qyo-006off; Fri, 22
- Nov 2024 08:50:20 +0100
-Message-ID: <d01e7201-1a7d-4097-b9fb-7f9878591e31@web.de>
-Date: Fri, 22 Nov 2024 08:50:18 +0100
+	s=arc-20240116; t=1732261866; c=relaxed/simple;
+	bh=ZZGSD+Tf9pw4+mC1CBo9amMXhYpAa31/QE57BMBPaxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DV5pnSx84fj6xvUBkGiBHuqEDxDl7DcILLbMuAhx0FQFrOVe6iSE5ohulQAd1eSKY1Zug37+vHt5kg7u/0UwXkjBdgIx0KpZA/LZxfAIWXUrCgLwfA4WLEnVY8hV6S/iQjLXoB8krrqDj2v/qexdvedBnWS392nX0psQOynCbmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RwlBo9/t; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732261863; x=1763797863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZZGSD+Tf9pw4+mC1CBo9amMXhYpAa31/QE57BMBPaxg=;
+  b=RwlBo9/t8blxKhSMNMpR4YBxuFTHRfp65pUp9JkiwuhzG1yYixvI6fJA
+   UNiMgBTdfXw46XRUntbWMNvRgtIONJ8Zu2CKA3c+iZoiHTdFEqvHwsrAX
+   DxfhVEr/DqWEm9+sv7T55CfP9GA161TtpFJndnchDQgwR1Gmh7737oHt9
+   R8LvP9lQ9TK6mt0NNUkLn6NYmZEFnbbA6Is+Gaim988EtxWbO+qQLEfol
+   kI6992JEBRxCfEuoK4xJ69OGj7IbUWefxHcwvDj0SCOzhK6E8Cse3ZysU
+   HlIUbYKJ+ooZaW+QQgBC6Jhh7ADrRSdsnrA5x0e9F5mLaw/+rWJqydYow
+   Q==;
+X-CSE-ConnectionGUID: motnuL3YTX2TwQYzP8PVGA==
+X-CSE-MsgGUID: clmGffkJQhqlvSE2LWxzjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32156850"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="32156850"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 23:51:03 -0800
+X-CSE-ConnectionGUID: nBgbhrT/TK+xGGAPGMHUJQ==
+X-CSE-MsgGUID: PPr96EqHTdWlSloqZgrpYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="91294935"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 21 Nov 2024 23:51:00 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEORN-0003lz-2n;
+	Fri, 22 Nov 2024 07:50:57 +0000
+Date: Fri, 22 Nov 2024 15:50:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+	andi.shyti@kernel.org, quic_bjorande@quicinc.com,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, --cc=konrad.dybcio@linaro.org,
+	quic_vdadhani@quicinc.com, vkoul@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Subject: Re: [PATCH v3] i2c: i2c-qcom-geni: Serve transfer during early
+ resume stage
+Message-ID: <202411221541.mTqJTK6J-lkp@intel.com>
+References: <20241119143031.3331753-1-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Paolo Perego <pperego@suse.de>, linux-wireless@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Benjamin Berg <benjamin.berg@intel.com>,
- Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
- Johannes Berg <johannes@sipsolutions.net>, Kalle Valo <kvalo@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Shaul Triebitz <shaul.triebitz@intel.com>,
- Yedidya Benshimol <yedidya.ben.shimol@intel.com>
-References: <q3pul7n2axag5xcxzzjjrhwlu3m3vh64bz4ln6dt7w757z47hk@byhyujhanky4>
-Subject: Re: wireless: Fix a dereference before null check issue
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <q3pul7n2axag5xcxzzjjrhwlu3m3vh64bz4ln6dt7w757z47hk@byhyujhanky4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:oLHWAOiTfN+/Ro8+iYsMuGQgriQpyXbw3RAf7wFJprsKkfUkoqy
- 3TvMyDMWnVUR2D7rgXGaB1zwKOok3r7bzAtdOxJxPhas4/jdSG6BVtN+Fz/R6AbIlBWe3zS
- r5VUG27ttAVZzlVmTPcLbpY97byPYxPMdRr71vFb5Oc1Y78/KSO+cM3rmLSI2WxYOhxQBem
- oF9yIV0XYUIyjpzLkLeYA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b3ToenVGJQk=;fLndjSoJsjyWqlD1XWPZju+Zv2J
- k+ZqNeK6KfZBSF6vThCweSACApq3eSzWy0fHIElUISlYSTDJYhdzyOViy2HsWkncZ9qu5UZw7
- 8qqQN4uUq7r1g/Wumbn4vSUYpTgJJsMr8p3gMF3Sn12G8fSd5niiiNHn7Dms7GzklKkndkAiz
- Mvb7zHxmEJ02eLnwpLgu8SFTaD5t8kQBMJ1QQ3z78GBdzE6Oopm08556KaVuwMc4Y/OeaCwhn
- quCH5kvWCNjkmxkKshcAHpQcBsVdsqPKsTbxT1umZMd2r+tdRiFUM8kphBO0Hws+PrSa0Wprq
- C7rgoI9VNNfiE4FyjD0nLnr3Jv6X5rJWeYkWduidtFhPP12fTeKkAI+MrlGJHibMHpBps4zrx
- 3j/zl/t5noYneGjcQ4EIzoCtLOrwmn0VeDCvKXVTg6eupzHuk1L54ifacArQNCncO8+UhsGIS
- BUnyxq0b++L7xuVnGganKMjqd+auEC21LTj3aVuOrhHAQyckFAWF3sCP50KTk4CFA8BJKZkPg
- R1vwQwQb4IQcGa0kWyyB/aikzMEDFHEtfbgFgwhpGHaCqJmQXvx949dTptPThJqumnv3sIQS9
- lQBF0o23hNDrz9OOMMMdPUOHVlIZ6m1POnQiLAo9MiaSL6I+TnAiKgj/meGmFV5g1yBEWDV/x
- ymVBwM33tqIawEatSuiVoXogEcle92trxEHr6jr95YjVTVnb9+gq/VpJUwWkpluIKE+fYRplk
- IkoLJhMHMrjJmguGEquW4GaMNRseJ136LozWldmV3DlzjhQWoxqnqEPBz6d+P805/4ZlyEoIv
- If9EiioTi3CCYYMh/KFpVG/K3EsEou1k/KpQWoVHE+a3WRdttz8lodwu+1rng/3RArIp5ybRm
- 9CQGCiB62vGRP0yp6d677oaaWdg0aRYs2WPbpMcG7Mo1/rAw/GC8/vyqWBaU8acIy0zwWJGw2
- mmxkz9mf3DUG5548b9Cx/6kf/1LBaTsASEuZE1+BjapdCYsSaAgpPXxTkgZe1Z0qVGSsUQXVe
- JN8mYYG0swdbP9xVh32JmuWg0vxdC4lbY6WJP34/gD5EWfcqgYQ2UX99UJ8LYiceAz6vg7R0E
- 8QUYJHaxE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119143031.3331753-1-quic_msavaliy@quicinc.com>
 
-> Oops, I'm so sorry this was already fixed.
+Hi Mukesh,
 
-It can occasionally happen that some contributors would like to adjust
-the same source code places somehow.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on next-20241120]
+[also build test ERROR on linus/master]
+[cannot apply to v6.12 v6.12-rc7 v6.12-rc6 v6.12]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Kumar-Savaliya/i2c-i2c-qcom-geni-Serve-transfer-during-early-resume-stage/20241121-124240
+base:   next-20241120
+patch link:    https://lore.kernel.org/r/20241119143031.3331753-1-quic_msavaliy%40quicinc.com
+patch subject: [PATCH v3] i2c: i2c-qcom-geni: Serve transfer during early resume stage
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241122/202411221541.mTqJTK6J-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221541.mTqJTK6J-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411221541.mTqJTK6J-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/i2c/busses/i2c-qcom-geni.c:6:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/i2c/busses/i2c-qcom-geni.c:706:28: error: no member named 'usage_count' in 'struct dev_pm_info'
+     706 |                         atomic_read(&dev->power.usage_count));
+         |                                      ~~~~~~~~~~ ^
+   include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
+     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                              ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:274:19: note: expanded from macro 'dynamic_dev_dbg'
+     274 |                            dev, fmt, ##__VA_ARGS__)
+         |                                        ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |                                                                  ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
+     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+         |                                                                        ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   drivers/i2c/busses/i2c-qcom-geni.c:732:28: error: no member named 'usage_count' in 'struct dev_pm_info'
+     732 |                         atomic_read(&dev->power.usage_count));
+         |                                      ~~~~~~~~~~ ^
+   include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
+     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                              ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:274:19: note: expanded from macro 'dynamic_dev_dbg'
+     274 |                            dev, fmt, ##__VA_ARGS__)
+         |                                        ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
+     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
+         |                                                                  ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
+     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
+         |                                                                        ^~~~~~~~~~~
+   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
+     224 |                 func(&id, ##__VA_ARGS__);                       \
+         |                             ^~~~~~~~~~~
+   1 warning and 2 errors generated.
 
 
->                                            In Coverity dashboard the
-> item seemed to be still open.
+vim +706 drivers/i2c/busses/i2c-qcom-geni.c
 
-It might occasionally be unclear with which delay corresponding items
-will be synchronised.
+   692	
+   693	static int geni_i2c_xfer(struct i2c_adapter *adap,
+   694				 struct i2c_msg msgs[],
+   695				 int num)
+   696	{
+   697		struct geni_i2c_dev *gi2c = i2c_get_adapdata(adap);
+   698		struct device *dev = gi2c->se.dev;
+   699		int ret;
+   700	
+   701		gi2c->err = 0;
+   702		reinit_completion(&gi2c->done);
+   703		/* Serve I2C transfer by forced resume if Runtime PM is enbled or not */
+   704		if (!pm_runtime_enabled(dev) && gi2c->suspended) {
+   705			dev_dbg(dev, "Runtime PM is disabled hence force resume, pm_usage_count: %d\n",
+ > 706				atomic_read(&dev->power.usage_count));
+   707			ret = pm_runtime_force_resume(dev);
+   708			if (ret)
+   709				return ret;
+   710		} else {
+   711			ret = pm_runtime_get_sync(gi2c->se.dev);
+   712			if (ret < 0) {
+   713				dev_err(gi2c->se.dev, "error turning SE resources:%d\n", ret);
+   714				pm_runtime_put_noidle(gi2c->se.dev);
+   715				/* Set device in suspended since resume failed */
+   716				pm_runtime_set_suspended(gi2c->se.dev);
+   717				return ret;
+   718			}
+   719		}
+   720	
+   721		qcom_geni_i2c_conf(gi2c);
+   722	
+   723		if (gi2c->gpi_mode)
+   724			ret = geni_i2c_gpi_xfer(gi2c, msgs, num);
+   725		else
+   726			ret = geni_i2c_fifo_xfer(gi2c, msgs, num);
+   727	
+   728		/* if Runtime PM is disabled, do force_suspend() else autosuspend the driver */
+   729		if (!pm_runtime_enabled(dev) && !gi2c->suspended) {
+   730			ret = pm_runtime_force_suspend(dev);
+   731			dev_dbg(dev, "Runtime PM is disabled hence force suspend, pm_usage_count: %d\n",
+   732				atomic_read(&dev->power.usage_count));
+   733			if (ret)
+   734				return ret;
+   735		} else {
+   736			pm_runtime_mark_last_busy(gi2c->se.dev);
+   737			pm_runtime_put_autosuspend(gi2c->se.dev);
+   738		}
+   739	
+   740		gi2c->cur = NULL;
+   741		gi2c->err = 0;
+   742		return ret;
+   743	}
+   744	
 
-
-> Apart from that, did I followed the right steps?
-
-Partly, yes.
-
-
->                                                  Was my submission good
-> enough? (I'm new to kernel hacking and I'm still in the learning phase)
-
-I find details improvable.
-
-1. Change description
-
-2. Patch subject
-
-
-Regards,
-Markus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
