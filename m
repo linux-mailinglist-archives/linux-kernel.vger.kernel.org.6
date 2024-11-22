@@ -1,169 +1,274 @@
-Return-Path: <linux-kernel+bounces-417682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCE19D57E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:56:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534039D57E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BAC280DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:56:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC3A3B24FF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54141465A0;
-	Fri, 22 Nov 2024 01:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21167603F;
+	Fri, 22 Nov 2024 01:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Txz7z3sZ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="WzvJHj29"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404AA31;
-	Fri, 22 Nov 2024 01:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E441F94D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732240537; cv=none; b=BzwggTpgUlx73t/OpAtjgIi0jE+c0iFVcyLUxS7G8J7cl43yDitiVPNiiY+tYYQ+SIhBndFS/2SxGQEN39dSfcd8/3rkGmJd7HfKE/1c3878oDPkcDBhKQssnvb9WenUpg8SYdk3vZ9/mv9Y1/GX+lNXsUQ5z2fkSzI0tAgPXwc=
+	t=1732240614; cv=none; b=g9K6p3xzBppPO27NxE4KKlJ5j3nWBjobREgD02uYIs+eJ2xubccu/lObpN9rPWA8pqB6AnFQwhmQfbeY+tLAmrwovd4O3HeRzp2wGy1MJKYljOp0IQWvISMNVnYW3sV2s4AJUWksnF15SveECIk2SHNVcGh0CuelX/3hXLrCRuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732240537; c=relaxed/simple;
-	bh=DSTJxqipcPbydlYj+s0y1VX/NGDpFVcREaAVSRjBbRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y//gEcl8llKvTFc3BOxHqSBeZZiVyUcInahw03NbOz2OiWXavHAzbNnZtkP4gXL2kZvLDKtWiziSvrRFWicWZyPlUFeICLzkXdXV4wubtxuPVFXlMpKsLdRXm3ssQLkFJ/UqdVXl2STDYqqOd0HHnfQRJoNfZz5/ipgXeEUCHNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Txz7z3sZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALKLlDT019613;
-	Fri, 22 Nov 2024 01:55:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zdXsykcoSzLHUg1ZOBfKv7oFlN5m18jwzcV8M6T1FOc=; b=Txz7z3sZGLBWOz3C
-	VNJlhmSZoV2ajD45hAIjvA9dpFVQO4d4W5WDuXbbvCev3wrbIY3alAw/uhPBmzfd
-	l0suimWjMSC5xmtlSYhd3Fbj7mhgu7XSPT6GutzhaaUmr2CqKCUjygFvP2CJYkws
-	/Pry9dauyNvyB1HyQ42HvLfxksfgbI6i0uuzK6OHcxlbtCRpqmlYIvow1zws824D
-	XyEdPn853Y84bCtCtFXn9NKmS49IQHl1WQ1MDyJrxjASFni39uCaIUMJE6ev1Ylm
-	uJ7K/6SOfR0D+eEM7JiATRLoSRx5I/fYJkzDHdRWrHu8THF/P1Q2v0BhWUvwjgPE
-	hTEE2w==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hnx6q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 01:55:28 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM1tS7g019016
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 01:55:28 GMT
-Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 17:55:23 -0800
-Message-ID: <e8645b6c-7f78-4051-9e29-2276197714ed@quicinc.com>
-Date: Fri, 22 Nov 2024 09:55:20 +0800
+	s=arc-20240116; t=1732240614; c=relaxed/simple;
+	bh=KkrkTNo5S8PdCIaycnsN7MtVrnpwTwYKHdgAtsIrOJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e3s8FiS4tPA4/XJ3bpzLcQFlj2EU0XlyM9aKvS2NTov9wrxVrlsZi8Ee5gysto8IRp3bHLS7XeOs48ICqpzWtphzu55dEfyMVa8m23sR23NqzcQvaxIuYW1685fTjIT/urxbM9WOD6X6Kr0GcmqyL8F8zgwnp94FExmqbIwIKOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=WzvJHj29; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ea78d164b3so1362026a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:56:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1732240612; x=1732845412; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZYw2d70zj3fLcyL/GZSLH0sLEFFOIq2ghVO7jLs6al4=;
+        b=WzvJHj29jumSZLeitXa7peEoGr52fDjkmnxAtqeIdFqv8RiHqWqLuwsEinKYJuLODS
+         ue8D4DmvDyC0pSHQD54x1qsFs8YuPQ510h71ZAa1Z9UPGprWmxhXl4XG9aCCQDaNXfIm
+         4R1II9X8JR2sRK/B1xkZUcB2Yc7IidjFsn6JOpcjqmkWYcpwNfz2RXrj4oJZ0BqwzLZg
+         cWn8uk7nN3T/e56ZvcI1WHRomvMhef5VtkQVz6KrbUc0stM0EqnWMl4crABJNqdsty3w
+         KGlYicNoTXJvwKQsnNlMspM1piBWBireLkCJHpNeKYLAF4yEkBn2qInPC6yVXmuk4iVP
+         Oung==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732240612; x=1732845412;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZYw2d70zj3fLcyL/GZSLH0sLEFFOIq2ghVO7jLs6al4=;
+        b=rBHXSdST/AiyaMpAiV2Lw86lXpMWC2FwvL4hOOu0KWMDZxxKXEth+LxZD4WEK+OtYN
+         Iv8s2AZ0Wi/pIg2MUoiKr6Vta5kG+Vbfxoum3VJTWfl1T47x2isS28+99luT+2QRJ/Pl
+         4RFy2mHLMgmvGKuuOwp1/5dlaHFHfErmrjrouAyAhQfhOdYXP12R4HVVV5a7HP3Ekm2J
+         AWbamlUsj1KQYM29jEIV0nthOapCOcO3MtozLY+XxKs1+FlspoGyV6kPaU/WAtj2utzz
+         mrA40ms42zFgga8KnICxzFuuoiTZ05gAJ4xzDxzmK7/jxp0mCGIoVZx0WlBCTmheSoa3
+         GwVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFRZUdpOWRxu06ROggPNPUucPchw4m/NY3B0hR6Lo3PWCPtlItBWFC/JKY/8yeP4SC+2/OpQYPe5gQIOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8ECfZ2kyDBL+Hem7XgXAz1WIOm3jBxu7gSxnaba+V0FfCIsBe
+	T7jBMvMk+BCvxGZm+3h8/+C64OLTvUpQLhyUieVjYnkIkEnhQzEeniqPQAfxA04=
+X-Gm-Gg: ASbGncvSzvc+NlrTWJfcpzWgCvd9YNaEc2w1BRvSXwCsKz+XRhtuQb+79M+oBbpOujh
+	ibd/zOyIAmjW+eMgC0bcNpt3iPDvrrENfgue8JmyApC6nhmUqQpLDpUFVqd5SibknSitjcECoT3
+	h80niqfG6OC80Oc1J91VhQE+MxVjRx6GlkKIYu8KeplajQ1CWj6QnS19u8+5I2eBhA7+WYqgY4F
+	pQiCqL5pIneOZ9OabrZggZVQ35kbeQ9tv3fwcY/ZAEdZdDSAcSGo3kbFDd0hdA5+l4+AYPcOcGC
+	I+ENB66+mxTim7NWNAAi+dcx7Q==
+X-Google-Smtp-Source: AGHT+IG5UfbjzHrcBQ6JBzzjEPdk8N0DmBlY27dT4IXLy8mOucaRHdLyvzq4hqFdrjdY5qkD8nwwrw==
+X-Received: by 2002:a17:90b:1c03:b0:2ea:546f:7e7b with SMTP id 98e67ed59e1d1-2eb0e52646amr1335784a91.20.1732240612595;
+        Thu, 21 Nov 2024 17:56:52 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-121-96.pa.nsw.optusnet.com.au. [49.180.121.96])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea3ddsm3954315a91.3.2024.11.21.17.56.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 17:56:52 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tEIue-00000001VSd-2OfP;
+	Fri, 22 Nov 2024 12:56:48 +1100
+Date: Fri, 22 Nov 2024 12:56:48 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, viro@zeniv.linux.org.uk,
+	jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, hughd@google.com,
+	linux-ext4@vger.kernel.org, tytso@mit.edu, linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/3] vfs: support caching symlink lengths in inodes
+Message-ID: <Zz_k4CtwOKGUbr6V@dread.disaster.area>
+References: <20241120112037.822078-1-mjguzik@gmail.com>
+ <20241120112037.822078-2-mjguzik@gmail.com>
+ <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] dt-bindings: bluetooth: Add qca6698 compatible
- string
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Balakrishna
- Godavarthi" <quic_bgodavar@quicinc.com>,
-        Rocky Liao
-	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
-        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_mohamull@quicinc.com>
-References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
- <20241120095428.1122935-3-quic_chejiang@quicinc.com>
- <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
- <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com>
- <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
-Content-Language: en-US
-From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
-In-Reply-To: <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: U2jZFR-qxQhxhouD9WWmjTUbZaaZKTdC
-X-Proofpoint-GUID: U2jZFR-qxQhxhouD9WWmjTUbZaaZKTdC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220014
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121-seilschaft-zeitig-7c8c3431bd00@brauner>
 
-Hi Dmitry,
+On Thu, Nov 21, 2024 at 11:12:52AM +0100, Christian Brauner wrote:
+> I think that i_devices should be moved into the union as it's really
+> only used with i_cdev but it's not that easily done because list_head
+> needs to be initialized.
 
-On 11/22/2024 12:28 AM, Dmitry Baryshkov wrote:
-> On Thu, 21 Nov 2024 at 06:12, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
->>
->> Hi Dmitry,
->>
->> On 11/20/2024 6:44 PM, Dmitry Baryshkov wrote:
->>> On Wed, Nov 20, 2024 at 05:54:26PM +0800, Cheng Jiang wrote:
->>>> Add QCA6698 qcom,qca6698-bt compatible strings.
->>>
->>> Why? Is it the same chip as WCN6855 or a different chip? Is it
->>> completely compatible?
->>>
->> They are different chips. But it's compatible with WCN6855.
-> 
-> So, do we really need new compat? Will/can it use the same firmware?
-We need to use a different firmware. Let me check if using 
-"firmware-name" allows us to omit the new soc type. 
-From the driver's perspective, the only change is the need to load a 
-different firmware.
+I'm planning on using i_devices with block devices, too, so the
+block device list doesn't need to use i_sb_list anymore (similar to
+how i_devices is used by the char dev infrastructure. See the patch
+below...
 
+> I roughly envisioned something like:
 > 
->>>>
->>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
->>>> ---
->>>>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
->>>>  1 file changed, 2 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> index 9019fe7bcdc6..527f947289af 100644
->>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
->>>> @@ -18,6 +18,7 @@ properties:
->>>>      enum:
->>>>        - qcom,qca2066-bt
->>>>        - qcom,qca6174-bt
->>>> +      - qcom,qca6698-bt
->>>>        - qcom,qca9377-bt
->>>>        - qcom,wcn3988-bt
->>>>        - qcom,wcn3990-bt
->>>> @@ -175,6 +176,7 @@ allOf:
->>>>          compatible:
->>>>            contains:
->>>>              enum:
->>>> +              - qcom,qca6698-bt
->>>>                - qcom,wcn6855-bt
->>>>      then:
->>>>        required:
->>>> --
->>>> 2.25.1
->>>>
->>>
->>
-> 
+> union {
+>         struct {
+>                 struct cdev             *i_cdev;
+>                 struct list_head        i_devices;
+>         };
+>         struct {
+>                 char                    *i_link;
+>                 unsigned int            i_link_len;
+>         };
+>         struct pipe_inode_info          *i_pipe;
+>         unsigned                        i_dir_seq;
+> };
 > 
 
+I'd probably have to undo any unioning/association with i_cdev to
+use i_devices with block devs...
+
+-Dave
+-- 
+Dave Chinner
+david@fromorbit.com
+
+
+bdev: stop using sb->s_inodes
+
+From: Dave Chinner <dchinner@redhat.com>
+
+Iteration of block device inodes is done via the
+blockdev_superblock->s_inodes list. We want to remove this list and
+the inode i_sb_list list heads, so we need some other way for block
+devices to be iterated.
+
+Take a leaf from the chardev code and use the inode->i_devices list
+head to link all the block device inodes together and replace the
+s_inodes list with a bdev private global list.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ block/bdev.c | 56 +++++++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 39 insertions(+), 17 deletions(-)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index 33f9c4605e3a..d733507f584a 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -317,6 +317,8 @@ EXPORT_SYMBOL(bdev_thaw);
+ 
+ static  __cacheline_aligned_in_smp DEFINE_MUTEX(bdev_lock);
+ static struct kmem_cache *bdev_cachep __ro_after_init;
++static LIST_HEAD(bdev_inodes);
++static DEFINE_SPINLOCK(bdev_inodes_lock);
+ 
+ static struct inode *bdev_alloc_inode(struct super_block *sb)
+ {
+@@ -362,6 +364,10 @@ static void init_once(void *data)
+ 
+ static void bdev_evict_inode(struct inode *inode)
+ {
++	spin_lock(&bdev_inodes_lock);
++	list_del_init(&inode->i_devices);
++	spin_unlock(&bdev_inodes_lock);
++
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	invalidate_inode_buffers(inode); /* is it needed here? */
+ 	clear_inode(inode);
+@@ -412,19 +418,35 @@ void __init bdev_cache_init(void)
+ 	blockdev_superblock = blockdev_mnt->mnt_sb;   /* For writeback */
+ }
+ 
+-struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
++static struct inode *bdev_new_inode(void)
+ {
+-	struct block_device *bdev;
+ 	struct inode *inode;
+ 
+-	inode = new_inode(blockdev_superblock);
++	inode = new_inode_pseudo(blockdev_superblock);
+ 	if (!inode)
+ 		return NULL;
++
++	spin_lock(&bdev_inodes_lock);
++	list_add(&inode->i_devices, &bdev_inodes);
++	spin_unlock(&bdev_inodes_lock);
++
+ 	inode->i_mode = S_IFBLK;
+ 	inode->i_rdev = 0;
+ 	inode->i_data.a_ops = &def_blk_aops;
+ 	mapping_set_gfp_mask(&inode->i_data, GFP_USER);
+ 
++	return inode;
++}
++
++struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
++{
++	struct block_device *bdev;
++	struct inode *inode;
++
++	inode = bdev_new_inode();
++	if (!inode)
++		return NULL;
++
+ 	bdev = I_BDEV(inode);
+ 	mutex_init(&bdev->bd_fsfreeze_mutex);
+ 	spin_lock_init(&bdev->bd_size_lock);
+@@ -477,10 +499,10 @@ long nr_blockdev_pages(void)
+ 	struct inode *inode;
+ 	long ret = 0;
+ 
+-	spin_lock(&blockdev_superblock->s_inode_list_lock);
+-	list_for_each_entry(inode, &blockdev_superblock->s_inodes, i_sb_list)
++	spin_lock(&bdev_inodes_lock);
++	list_for_each_entry(inode, &bdev_inodes, i_devices)
+ 		ret += inode->i_mapping->nrpages;
+-	spin_unlock(&blockdev_superblock->s_inode_list_lock);
++	spin_unlock(&bdev_inodes_lock);
+ 
+ 	return ret;
+ }
+@@ -1218,8 +1240,8 @@ void sync_bdevs(bool wait)
+ {
+ 	struct inode *inode, *old_inode = NULL;
+ 
+-	spin_lock(&blockdev_superblock->s_inode_list_lock);
+-	list_for_each_entry(inode, &blockdev_superblock->s_inodes, i_sb_list) {
++	spin_lock(&bdev_inodes_lock);
++	list_for_each_entry(inode, &bdev_inodes, i_devices) {
+ 		struct address_space *mapping = inode->i_mapping;
+ 		struct block_device *bdev;
+ 
+@@ -1231,14 +1253,14 @@ void sync_bdevs(bool wait)
+ 		}
+ 		__iget(inode);
+ 		spin_unlock(&inode->i_lock);
+-		spin_unlock(&blockdev_superblock->s_inode_list_lock);
++		spin_unlock(&bdev_inodes_lock);
++
+ 		/*
+-		 * We hold a reference to 'inode' so it couldn't have been
+-		 * removed from s_inodes list while we dropped the
+-		 * s_inode_list_lock  We cannot iput the inode now as we can
+-		 * be holding the last reference and we cannot iput it under
+-		 * s_inode_list_lock. So we keep the reference and iput it
+-		 * later.
++		 * We hold a reference to 'inode' so it won't get removed from
++		 * bdev inodes list while we drop the lock.  We need to hold the
++		 * reference until we have a reference on the next inode on the
++		 * list, so we can't drop it until the next time we let go of
++		 * the bdev_inodes_lock.
+ 		 */
+ 		iput(old_inode);
+ 		old_inode = inode;
+@@ -1260,9 +1282,9 @@ void sync_bdevs(bool wait)
+ 		}
+ 		mutex_unlock(&bdev->bd_disk->open_mutex);
+ 
+-		spin_lock(&blockdev_superblock->s_inode_list_lock);
++		spin_lock(&bdev_inodes_lock);
+ 	}
+-	spin_unlock(&blockdev_superblock->s_inode_list_lock);
++	spin_unlock(&bdev_inodes_lock);
+ 	iput(old_inode);
+ }
+ 
 
