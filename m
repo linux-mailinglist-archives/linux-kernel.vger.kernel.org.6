@@ -1,109 +1,182 @@
-Return-Path: <linux-kernel+bounces-417702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215499D581F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D424C9D5816
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C229E1F2399E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:14:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58E6F1F22B02
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127BB1527A7;
-	Fri, 22 Nov 2024 02:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6395614D2B1;
+	Fri, 22 Nov 2024 02:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="OPvmP5J7"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L/j6Qkbt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E5010E5;
-	Fri, 22 Nov 2024 02:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D4F4C6C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732241632; cv=none; b=gu7ErzMB8rnwHFUbkr3eB0sEa+5Zfu5iQyg/xxBv2fcCJ3xdAB4oTotx11pqA4g+JkSechWsfCUl/w+YAbMX8MFLu+q6lFcTIU6PZRUcE26qDkwh49J9UhPSKrH8J834rg/FY+Y8XTyzUBpgpu+f7/o1pLucO+w52pXS0wAo9NQ=
+	t=1732241497; cv=none; b=ofyXyGe+QoiZPwyuKOHJi4lTG6f+fZUY6aNx3WafZsOL9vz2HdbG+fUOIAWEel2PTVudpcHNGUg6gl4GkuUWLsttnfzE0Thoe204EWTgM2c+Igg14Pkk8dO19HEr+lSoRhW/hTXVI84dZQdQzxunjNOuLwuFrpXkwdQTlyPillM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732241632; c=relaxed/simple;
-	bh=Tshp1VSudz/9+uuLxamlDu/mrC4xz1+24/cWzjsTeVA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tw3q3JFdU/g3VZ1Y2OfdU/oed23wMJ7kNPQoipoBMkMzvl2HeCnRSaZC3cPWhrDhgFaNfmrfpH8uKI2JlPghLkre4uxy+z7eg2cQoQZnSgRrrcRhbScvjBR3J9yfyhJMZvQh135+MAwQ2ZdUuPgHTycp8R7o+kY4OZwHnubcCEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=OPvmP5J7; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.149.162] (254C1A9C.nat.pool.telekom.hu [37.76.26.156])
-	by mail.mainlining.org (Postfix) with ESMTPSA id 3F92CE47FC;
-	Fri, 22 Nov 2024 02:07:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1732241223;
+	s=arc-20240116; t=1732241497; c=relaxed/simple;
+	bh=15oWvzbzFsyC7/bysCZCjLNUSlvH0XT1jyi58VfdcYM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MZBmo4OmqnoTvnxLPsahf6fL9vM7b/6I+ti7ExU/Obc5gTskdgKWVgJBWS5ULwPx4c2JZUukWZcUy2Jax9bDwx1tBTtl3uELN3pTnc+l4FF1KZTECLzO0etmM545Jpkl4CD91J8/lxCZ1/S3WDD80kqfWDitneUz9AkSum+Nmy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L/j6Qkbt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732241494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+hmkiy8omPB2EdZa01IevKdy88dtQJxmZlf0j7vvpIE=;
-	b=OPvmP5J7l6/7Pank6xbxe/Ys9px4yZ5mzYxujfrR8d1YQTTiiv5qrdu8n/pbya5YMyz6oT
-	6B24yhYy+wlA94OzcsohLqBSAzdOSBJ0+ySlLg8B+kTLgsuRnS5+iA7qaxZqBclBmwmohK
-	WvUl27Z7sws10IQl+H0sc9eqcNrnh57MWdY2DkasbH+Cur5TIEX2cjBhbsJCHGIxJKOdWC
-	xCyIF0BYwiUHhTbopwebT2+HW8OyPjeJx/fSefpCwEcn/XUPFYV9fnfv7haez53ChyEU85
-	kjPRSCpKP58rzjYjklUydcq8b7mp500k1SdUV2OVWct57a7UwaYDoL/Gq6AaLQ==
-From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-Date: Fri, 22 Nov 2024 03:06:34 +0100
-Subject: [PATCH] media: qcom: camss: fix VFE pm domain off
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xprF6kwslVLv7gu/pvSQtcz8F91IGU/uA30drlMd3hg=;
+	b=L/j6QkbtkEVJxWJdAggI6x5aFjuZnSLEg3dFSRvFWAG2V8cymI87JIpmgJ3qIlu8QRQzQ+
+	efJ0gqLH5oTdVUXaEy3XpZmXAQhIWjntaBXf3zJojkvBDFA607vRiLDj06jWcZND3J7x+K
+	bJK/SB8spiLkWc7frpN4+xAHwvYUltg=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629-L6Nmgb4CMCOCKPzIFl3PcA-1; Thu, 21 Nov 2024 21:11:33 -0500
+X-MC-Unique: L6Nmgb4CMCOCKPzIFl3PcA-1
+X-Mimecast-MFC-AGG-ID: L6Nmgb4CMCOCKPzIFl3PcA
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d41a3c9c9cso21290206d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:11:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732241492; x=1732846292;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xprF6kwslVLv7gu/pvSQtcz8F91IGU/uA30drlMd3hg=;
+        b=v11DNXz+YuB3pGBS1bNXLNfQ/115MMfKx32ZNQPKUYoDTyrZunIXicJIw4qODyerlC
+         fGrDSsRCaE1QynGHb55ZNvpPkcYmG7RU/vn5YhqxsGBQ8DhVSYHDKkdQNIv6WTu10EkN
+         1GEFbuZmoFi2wsCL5o/GWdRENnQPbcZGWaV1d54TrwCTXG1F1KAtjxQjK08dwfVCaRTI
+         zzSSxUaKb63WKsO4KHpm2lJe6iEH5PLkLNqQiG+U5l3mjX6pePr1I0n5SsW8ly3D+OHO
+         201QHeFIJlGLaycHHG5Z0SQUuEUYvRAgZwhDBAxFWSdV+J9dxfsP1zLP6Bos72CGovy9
+         XC4g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5q9nEMA5IlAyZSQ1j86PFsFvKt5Mty1zK5cQNs2XxcQC5cPCQ/TgyErn72zdSM4/Bm6LzeWgWN+LFAmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEa0nKO7rpwcEj4hNoAVZ96ye/XSIFMX4WW8V9fh8Kd+ORPYPt
+	qNBWzP8SK01fIFcJtP5toUZyVVnaLsyzzCp9SIf6GbvII6llCj6qsMpC6YZr7Fa1dSi9Pp5QgBY
+	FCziAmcq40xprAIbFTVNgMTzOD+iSdwW1giW+oMUR4bz58zoB9nswtCCmmYMjkA==
+X-Gm-Gg: ASbGncsOn3LC2qC0obDOfkRroHoKC8BWiXLP8rt/P3ihbvT5qzkU1rK7L7K5qIzhs14
+	BeNppG4W7p2EkkgQosbizToVzZ4AIKr4mhsJcZpmSNizc5e2AQd4Xk4wEja89mGuJDV+mDAuqLl
+	Aq9GltbR8kCoEbvfGZSklJAGWuw6oi8cvUTlRwFXccw5MxQXWYRMHS1lQ3YTQdmCTRI6kXW2wYZ
+	lGdpMfeXQdXTMYfqgvx5qD77RMJIf2PIwiIJbGAE7JKy2hvzA==
+X-Received: by 2002:ad4:576e:0:b0:6ce:26c3:c6e6 with SMTP id 6a1803df08f44-6d45137a320mr21571326d6.40.1732241492728;
+        Thu, 21 Nov 2024 18:11:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHzV5VTqMmVWe7TtTxnNt3pCfkC0t6uOXM7iv1ufGpnFtArMOqeHEkUI6z9ExmizFfWkqlNdg==
+X-Received: by 2002:ad4:576e:0:b0:6ce:26c3:c6e6 with SMTP id 6a1803df08f44-6d45137a320mr21570996d6.40.1732241492428;
+        Thu, 21 Nov 2024 18:11:32 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451a831edsm4276196d6.10.2024.11.21.18.11.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 18:11:32 -0800 (PST)
+Message-ID: <8e5d5480e7f926329759f41933df0d59185cf1e4.camel@redhat.com>
+Subject: Re: [PATCH v2 44/49] KVM: x86: Update guest cpu_caps at runtime for
+ dynamic CPUID-based features
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Thu, 21 Nov 2024 21:11:30 -0500
+In-Reply-To: <ZuG6LqLA6tGw9Edi@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-45-seanjc@google.com>
+	 <2d554577722d30605ecd0f920f4777129fff3951.camel@redhat.com>
+	 <ZoyDTJ3nb_MQ38nW@google.com>
+	 <b9cf0083783b32fd92edb4805a20a843a09af6fc.camel@redhat.com>
+	 <ZuG6LqLA6tGw9Edi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241122-vfe_pm_domain_off-v1-1-81d18f56563d@mainlining.org>
-X-B4-Tracking: v=1; b=H4sIACnnP2cC/x3MQQqAIBBA0avErBNUNKOrRIjkWLNIQyEC8e5Jy
- 7f4v0LBTFhgGSpkfKhQih1iHGA/XTyQke8GyaUSQkr2BLT3ZX26HEWbQmC7NpzPqJWYDPTuzhj
- o/Z/r1toHZllLHmMAAAA=
-X-Change-ID: 20241122-vfe_pm_domain_off-c57008e54167
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732241223; l=1067;
- i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
- bh=Tshp1VSudz/9+uuLxamlDu/mrC4xz1+24/cWzjsTeVA=;
- b=ARrxBQ1f/CmkuNh+Nx3LQIlK/ga/oe/o6y3s3wY4/3e281n5YWcuTIHtC3oYTcPGx8rXMI5Bo
- BBcO64FaN4QCzTetGYUuRJ+y9/rMlYxtqKlVEcYnxuaXayqtywQ6I21
-X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
- pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
+Content-Transfer-Encoding: 7bit
 
-Fix NULL pointer check before device_link_del
-is called.
+On Wed, 2024-09-11 at 08:41 -0700, Sean Christopherson wrote:
+> On Tue, Sep 10, 2024, Maxim Levitsky wrote:
+> > On Mon, 2024-07-08 at 17:24 -0700, Sean Christopherson wrote:
+> > > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > > > On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
+> > > > > -		cpuid_entry_change(best, X86_FEATURE_OSPKE,
+> > > > > -				   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
+> > > > > +		kvm_update_feature_runtime(vcpu, best, X86_FEATURE_OSPKE,
+> > > > > +					   kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE));
+> > > > > +
+> > > > >  
+> > > > >  	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 0);
+> > > > >  	if (best)
+> > > > 
+> > > > I am not 100% sure that we need to do this.
+> > > > 
+> > > > Runtime cpuid changes are a hack that Intel did back then, due to various
+> > > > reasons, These changes don't really change the feature set that CPU supports,
+> > > > but merly as you like to say 'massage' the output of the CPUID instruction to
+> > > > make the unmodified OS happy usually.
+> > > > 
+> > > > Thus it feels to me that CPU caps should not include the dynamic features,
+> > > > and neither KVM should use the value of these as a source for truth, but
+> > > > rather the underlying source of the truth (e.g CR4).
+> > > > 
+> > > > But if you insist, I don't really have a very strong reason to object this.
+> > > 
+> > > FWIW, I think I agree that CR4 should be the source of truth, but it's largely a
+> > > moot point because KVM doesn't actually check OSXSAVE or OSPKE, as KVM never
+> > > emulates the relevant instructions.  So for those, it's indeed not strictly
+> > > necessary.
+> > > 
+> > > Unfortunately, KVM has established ABI for checking X86_FEATURE_MWAIT when
+> > > "emulating" MONITOR and MWAIT, i.e. KVM can't use vcpu->arch.ia32_misc_enable_msr
+> > > as the source of truth.
+> > 
+> > Can you elaborate on this? Can you give me an example of the ABI?
+> 
+> Writes to MSR_IA32_MISC_ENABLE are guarded with a quirk:
+> 
+> 		if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT) &&
+> 		    ((old_val ^ data)  & MSR_IA32_MISC_ENABLE_MWAIT)) {
+> 			if (!guest_cpuid_has(vcpu, X86_FEATURE_XMM3))
+> 				return 1;
+> 			vcpu->arch.ia32_misc_enable_msr = data;
+> 			kvm_update_cpuid_runtime(vcpu);
+> 		} else {
+> 			vcpu->arch.ia32_misc_enable_msr = data;
+> 		}
+> 
+> as is enforcement of #UD on MONITOR/MWAIT.
+> 
+>   static int kvm_emulate_monitor_mwait(struct kvm_vcpu *vcpu, const char *insn)
+>   {
+> 	if (!kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS) &&
+> 	    !guest_cpuid_has(vcpu, X86_FEATURE_MWAIT))
+> 		return kvm_handle_invalid_op(vcpu);
+> 
+> 	pr_warn_once("%s instruction emulated as NOP!\n", insn);
+> 	return kvm_emulate_as_nop(vcpu);
+>   }
+> 
+> If KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT is enabled but KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS
+> is _disabled_, then KVM's ABI is to honor X86_FEATURE_MWAIT regardless of what
+> is in vcpu->arch.ia32_misc_enable_msr (because userspace owns X86_FEATURE_MWAIT
+> in that scenario).
+> 
 
-Fixes: eb73facec2c2 ("media: qcom: camss: Use common VFE pm_domain_on/pm_domain_off where applicable")
-Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
----
- drivers/media/platform/qcom/camss/camss-vfe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-index 80a62ba11295042802cbaec617fb87c492ea6a55..1bf1473331f63b9ab106d21ea263c84d851c8a31 100644
---- a/drivers/media/platform/qcom/camss/camss-vfe.c
-+++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-@@ -595,7 +595,7 @@ void vfe_isr_reset_ack(struct vfe_device *vfe)
-  */
- void vfe_pm_domain_off(struct vfe_device *vfe)
- {
--	if (!vfe->genpd)
-+	if (!vfe->genpd_link)
- 		return;
- 
- 	device_link_del(vfe->genpd_link);
-
----
-base-commit: decc701f41d07481893fdea942c0ac6b226e84cd
-change-id: 20241122-vfe_pm_domain_off-c57008e54167
-
+OK, makes sense.
 Best regards,
--- 
-Barnabás Czémán <barnabas.czeman@mainlining.org>
+	Maxim Levitsky
+
 
 
