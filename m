@@ -1,138 +1,171 @@
-Return-Path: <linux-kernel+bounces-418706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3208C9D6488
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:21:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CD19D648C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A74F1608C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40D0316043E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339DF1DF24D;
-	Fri, 22 Nov 2024 19:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF2C1DEFF0;
+	Fri, 22 Nov 2024 19:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ec1XtyyQ"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufNmlCId"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2658F64A8F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:21:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B63564A8F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732303263; cv=none; b=grZySMKIUe54xBypjEqO9ZFlBWNVB8BmGFtVE3vPVyTT2B2Tr8tNlVWJTuzJkhqYJSjrRMMxcql1O8Ai2AEayaOMgN3t8Ml5MQ2+u0se4bcG3QuYfVqc8t9KL/ofjvaxt8el79iEGWhTawiYybn1Cbk3d5oFfioVZscyP8DbDXE=
+	t=1732303499; cv=none; b=I40LjlDra0BEVLzxysMyl5UGY7u5q6bU/fo8BmEAohIA8ptDqrptiHjo5BkXjE6vcNrY0yJ/9pwL+gi1HIWOma0Limw/NRt3n3r6tm/t5toWxM30Q3psFbIHMy1H9z0kftxRUfwgNlfiBaRYMVJ6161PYSILeyKsbc+jWQmtRhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732303263; c=relaxed/simple;
-	bh=3WPXQ/j86XWSACw4HwROq+kgydc6EoyapfuAVuDsdrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e5jpJN15exCx5tHRQIigEyqPzMu7bm1axnJ6jhlw2nNV6TArPdxOhgNKWiQwJEMDLsssUSU7tVlZLxsqaexQsA0tSiaW8n7fzEq1HFKMyLxPugx395PUWzoqm7xKTb/M553aQeHxGAhcv7Es8rT273BwCa0OEN8rWcXScdiEisI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ec1XtyyQ; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ee53b30470so1124237eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732303261; x=1732908061; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiupldtCpIPkO+YVcRZk68GlsEoDJURDOE7gxm1zjeQ=;
-        b=Ec1XtyyQ9/47OiRzva+W0j8tptvMF+XG5WoGGvawJWo/MqYoQ6SoMe8UwqSa/QRA7t
-         77KjJ37W/GhdlFV5IlTVEWvK4XdMp9UOmzLw/HGAsGz0b/WxEcj4WcXEZMim44HAngwt
-         nNbtbWq5wy3r3ot7VFijCh0r8P0CuDvWbv/yui8G9lg2rg+0l7FqInQZflWuXaJcU/zT
-         b/3ccWxDXnePY2HOAytYepC99xuJcciX/iIkPxrScw+zpnUTZLZhn64EqoNT34dbLJwR
-         XyWGiO707WwUhhxtUX3kIt5AjeyePN0UZ6q3q6eJ3OD59PUdGUXjljsQ0puffoGHwz8q
-         JQNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732303261; x=1732908061;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WiupldtCpIPkO+YVcRZk68GlsEoDJURDOE7gxm1zjeQ=;
-        b=I98TG1x6+SdrrhkmXKk6bE0+wipQenpYd6rg37wvvz+FYR2+XrlTzidTNuyfYvSIQp
-         DJ/X8pwj666djIENQUVAEBvgsaJb/spsdul9Pv0sAsMJSAbctatDP/g5+KcZV/Yfmyc4
-         ugde7M3Z1HqrglY2ctbHKdtwj19ZdkRB1oYbq17itHZOOzCFF1dRMOahWiiAWDhTWAp0
-         wupc02q17R1ZRApmaBHxqJnhYYnsAgEr9iplkhWqjPtZszfYG6mMht+ixkbivy3peI/b
-         y1A1G+dIQ6ho8yY50wNM9D1YTjE4J+iaXlTmT+Uwb0Tn/cbi/cYC9h7JJcDalULG7DML
-         S4yQ==
-X-Gm-Message-State: AOJu0YwV2nKknHFAsPDRomCkp8qLa8FiIHPNSmCRUX0Tw/bphoNYpmDB
-	ytET5VqPMs21u6weNa1tvhnW32CsPo5qIeSp0EOHPE93BeyrQmcD2ZK6CZXDYgteOYIO9gsL2SP
-	wB7tRL11aCt7zpznKcUKPu9VFr5XI3TTIprs=
-X-Gm-Gg: ASbGncvJJ0jRCBncTRYj8zROmQkSTDgj4l8P7D5Lk5YjGVMJhtndgqXYTJlhRn1l3uB
-	nNQy9Fd/AOrdNMy5diaHS0HyhIwzQNg==
-X-Google-Smtp-Source: AGHT+IH6jrUlMMz6ZS5NC72k9WkRxkgTOJO9tPsLodj4sI0YbzGt6CPH1ZIDk1kuwmvzBn4VVG5R7Z+GyUaxm/6vtO4=
-X-Received: by 2002:a05:6820:811:b0:5ee:ebcb:e6e9 with SMTP id
- 006d021491bc7-5f06a9e22a5mr3769940eaf.5.1732303259301; Fri, 22 Nov 2024
- 11:20:59 -0800 (PST)
+	s=arc-20240116; t=1732303499; c=relaxed/simple;
+	bh=4A2MsCT60AYKgm9kvhN9yKi/SAeEHaIkmIYrwsN2lWg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=pvKw3VrEUSFZ2spNzW002Y9C+vtXgLqmcNysLMaO4v5Ob46itWIl72vcYARpvJo3hukRld7yiaYW+z5ZoUe+3AiFUpKxo5diqJzWay/4o+a2ZPc8PNNrP62a0sZsByEWyytsRWheWTW7V6o48paz9o9Ls21EEQsBbqzrBLkrVQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufNmlCId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07399C4CECF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732303499;
+	bh=4A2MsCT60AYKgm9kvhN9yKi/SAeEHaIkmIYrwsN2lWg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ufNmlCIdUDnmI7piZ2yQI2fdPCWwsKtNWGHOxlJLSQDtQvjfcuEc4GMZF3AsEyeZR
+	 bsK4KwV9m49fxpNmqi7wnIlaIj6+7XxQPbFaT8wrp7sYKufxBrq3NCP4J6bLp8ilhe
+	 AOm9gimxrW4+rT2907TAVrb5w/zxbHs2KvTzq9Qy7k+6hpxGynN1/FOrpnbsiiGJvf
+	 ZAabF8S4MibLFy9TRO7Q+pjdfbUk1Zggta993RVeytoaQmiPPBk8TapgoIqZ9U4n45
+	 tNeTXM2q+k9kFOOeQJwXjubtHWicX7n8fQbYHKYSkffsptoJ/C+EvAToxBEnbD8iZB
+	 rvpKRLO0OX7jQ==
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 05FDB120006E;
+	Fri, 22 Nov 2024 14:24:58 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 22 Nov 2024 14:24:58 -0500
+X-ME-Sender: <xms:idpAZxamo3BG8NVWM_2RBNAJ-tJf-bI48f6YDduU38O--H4tyTAnYw>
+    <xme:idpAZ4aXI3XAaEd6af0nWBT1DTajBgCHA3N2RmY520E1mH-fhdsiSKMfFYCT6yO4D
+    wYbg67ThTuyjK8jxSE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeelgdellecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
+    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
+    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
+    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
+    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehhtggrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghllhgv
+    sehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtoheprghnughrihihrdhshhgvvhgthh
+    gvnhhkoheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehilhhpohdrjhgr
+    rhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepghhrvghgkh
+    hhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugies
+    rhhovggtkhdquhhsrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvrhhirghlsehv
+    ghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:idpAZz9AMrUSg6MRSj-CVbz7JTtI2TRJURQ5tJj4zkRe-URSwjFCww>
+    <xmx:idpAZ_pgFW1p9mrA376wUSFeiYkxl65jv_BirK2_ll8H5Nm8Er0kmA>
+    <xmx:idpAZ8qq9hXQgOliiYQtK8tNI2vI_ftKWlm-tlp4-khPTOErcTxQJw>
+    <xmx:idpAZ1TQlhZMma1k4Ohu1pcT1AIVhgYdaIehwdJSqZtgehbW35MLqg>
+    <xmx:idpAZ0q9b3V_Ol5JH1K8EtyPO7HAPjCUHik7xpeANWMsKWCb0vWH-W30>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CDF822220071; Fri, 22 Nov 2024 14:24:57 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPXz4EO5poAP+8+TVWOzahJMa7Q9NGVs+6RuvV38u=YX_xyV+g@mail.gmail.com>
- <6740d477.050a0220.3c9d61.0198.GAE@google.com>
-In-Reply-To: <6740d477.050a0220.3c9d61.0198.GAE@google.com>
-From: Nicolas Bretz <bretznic@gmail.com>
-Date: Fri, 22 Nov 2024 12:20:48 -0700
-Message-ID: <CAPXz4EOBuYqN4tDBuMyZ=z3wivp1cohdLt6TX85aXiFdEHwDog@mail.gmail.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (2)
-To: syzbot <syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: multipart/mixed; boundary="0000000000006a5616062785485d"
+Date: Fri, 22 Nov 2024 20:24:37 +0100
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Guenter Roeck" <linux@roeck-us.net>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>
+Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
+Message-Id: <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
+In-Reply-To: <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+References: <20240405152924.252598-1-schnelle@linux.ibm.com>
+ <20240405152924.252598-2-schnelle@linux.ibm.com>
+ <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
+ <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
+ <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
+ <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
+Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
---0000000000006a5616062785485d
-Content-Type: text/plain; charset="UTF-8"
+On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
+> On 11/22/24 08:31, Arnd Bergmann wrote:
+>> On Fri, Nov 22, 2024, at 16:35, Niklas Schnelle wrote:
+>>> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
+>> So in all four cases, the normal uart should keep working,
+>> and if something tried to start up an ISA style 8250, I
+>> would expect to see the new version produce the WARN()
+>> in place of what was a NULL pointer dereference (reading
+>> from (u8 *)0x2f8) before.
+>> 
+>> Since there are so many ways to set up a broken 8250,
+>> it is still possible that something tries to add another
+>> UPIO_PORT uart, and that this causes the WARN() to trigger,
+>> if we find any of those, the fix is to no stop registering
+>> broken ports.
+>> 
+>
+> The call chain in all cases is
+>
+> [    0.013596] Call Trace:
+> [    0.013796]  [<d06eb249>] dump_stack+0x9/0xc
+> [    0.014115]  [<d000c12c>] __warn+0x94/0xbc
+> [    0.014332]  [<d000c29c>] warn_slowpath_fmt+0x148/0x184
+> [    0.014560]  [<d04f03d8>] set_io_from_upio+0x70/0x98
+> [    0.014781]  [<d04f0459>] serial8250_set_defaults+0x59/0x8c
+> [    0.015013]  [<d04efa6a>] serial8250_setup_port+0x6e/0x90
+> [    0.015240]  [<d0ae2a12>] serial8250_isa_init_ports+0x32/0x5c
+> [    0.015473]  [<d0ae28a1>] univ8250_console_init+0x15/0x24
+> [    0.015698]  [<d0ad0684>] console_init+0x18/0x20
+> [    0.015926]  [<d0acbf43>] start_kernel+0x3db/0x4cc
+> [    0.016145]  [<d06ebc37>] _startup+0x13b/0x13b
+>
+> That seems unconditional. What is the architecture expected to do to
+> prevent this call chain from being executed ?
 
-#syz test
+This looks like a bug in drivers/tty/serial/8250/8250_platform.c
+to me, not something the architectures did wrong. My impression
+from __serial8250_isa_init_ports() is that this is supposed
+to initialize exactly the ports in the old_serial_port[]
+array, which is filled only on alpha, m68k and x86 but not
+on the other ones.
 
---0000000000006a5616062785485d
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0002-ext4-kernel-BUG-in-ext4_write_inline_data.patch"
-Content-Disposition: attachment; 
-	filename="0002-ext4-kernel-BUG-in-ext4_write_inline_data.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3t4lr2v0>
-X-Attachment-Id: f_m3t4lr2v0
+Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
+platform driver"), but I don't think this move by itself
+changed anything.
 
-RnJvbSBmNGJhZjI5ZWM3OTQyZTg5ZjAxMDEzM2Q3ZTg0OGJhNjlkN2Y3N2YxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBOaWNvbGFzIEJyZXR6IDxicmV0em5pY0BnbWFpbC5jb20+CkRh
-dGU6IEZyaSwgMjIgTm92IDIwMjQgMDg6MjM6MzggLTA3MDAKU3ViamVjdDogW1BBVENIXSBleHQ0
-OiBrZXJuZWwgQlVHIGluIGV4dDRfd3JpdGVfaW5saW5lX2RhdGEKCmtlcm5lbCBCVUcgYXQgZnMv
-ZXh0NC9pbmxpbmUuYzoyMzUhCk9vcHM6IGludmFsaWQgb3Bjb2RlOiAwMDAwIFsjMV0gUFJFRU1Q
-VCBTTVAgS0FTQU4gTk9QVEkKClJlcG9ydGVkLWJ5OiBzeXpib3QrZmUyYTI1ZGFlMDJhMjA3NzE3
-YTBAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQpTaWduZWQtb2ZmLWJ5OiBOaWNvbGFzIEJyZXR6
-IDxicmV0em5pY0BnbWFpbC5jb20+Ci0tLQogZnMvZXh0NC9leHQ0LmggICB8IDYgKysrKysrCiBm
-cy9leHQ0L2lubGluZS5jIHwgMiArLQogZnMvZXh0NC9pbm9kZS5jICB8IDMgKystCiAzIGZpbGVz
-IGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9m
-cy9leHQ0L2V4dDQuaCBiL2ZzL2V4dDQvZXh0NC5oCmluZGV4IDQ0YjBkNDE4MTQzYy4uYjlkMTI4
-MjQzMjg2IDEwMDY0NAotLS0gYS9mcy9leHQ0L2V4dDQuaAorKysgYi9mcy9leHQ0L2V4dDQuaApA
-QCAtMzU2Miw2ICszNTYyLDEyIEBAIGV4dGVybiBpbnQgZXh0NF9nZXRfbWF4X2lubGluZV9zaXpl
-KHN0cnVjdCBpbm9kZSAqaW5vZGUpOwogZXh0ZXJuIGludCBleHQ0X2ZpbmRfaW5saW5lX2RhdGFf
-bm9sb2NrKHN0cnVjdCBpbm9kZSAqaW5vZGUpOwogZXh0ZXJuIGludCBleHQ0X2Rlc3Ryb3lfaW5s
-aW5lX2RhdGEoaGFuZGxlX3QgKmhhbmRsZSwgc3RydWN0IGlub2RlICppbm9kZSk7CiAKK3N0YXRp
-YyBpbmxpbmUgYm9vbCBleHQ0X2lubGluZV9wb3NzaWJsZShzdHJ1Y3QgaW5vZGUgKmlub2RlLAor
-CQkJCQlsb2ZmX3QgcG9zLCB1bnNpZ25lZCBpbnQgbGVuKQoreworCXJldHVybiBwb3MgKyBsZW4g
-PD0gZXh0NF9nZXRfbWF4X2lubGluZV9zaXplKGlub2RlKTsKK30KKwogaW50IGV4dDRfcmVhZHBh
-Z2VfaW5saW5lKHN0cnVjdCBpbm9kZSAqaW5vZGUsIHN0cnVjdCBmb2xpbyAqZm9saW8pOwogZXh0
-ZXJuIGludCBleHQ0X3RyeV90b193cml0ZV9pbmxpbmVfZGF0YShzdHJ1Y3QgYWRkcmVzc19zcGFj
-ZSAqbWFwcGluZywKIAkJCQkJIHN0cnVjdCBpbm9kZSAqaW5vZGUsCmRpZmYgLS1naXQgYS9mcy9l
-eHQ0L2lubGluZS5jIGIvZnMvZXh0NC9pbmxpbmUuYwppbmRleCAzNTM2Y2E3ZTRmY2MuLmVjMjVm
-MDY2YTJjMiAxMDA2NDQKLS0tIGEvZnMvZXh0NC9pbmxpbmUuYworKysgYi9mcy9leHQ0L2lubGlu
-ZS5jCkBAIC02NjgsNyArNjY4LDcgQEAgaW50IGV4dDRfdHJ5X3RvX3dyaXRlX2lubGluZV9kYXRh
-KHN0cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLAogCXN0cnVjdCBmb2xpbyAqZm9saW87CiAJ
-c3RydWN0IGV4dDRfaWxvYyBpbG9jOwogCi0JaWYgKHBvcyArIGxlbiA+IGV4dDRfZ2V0X21heF9p
-bmxpbmVfc2l6ZShpbm9kZSkpCisJaWYgKCFleHQ0X2lubGluZV9wb3NzaWJsZShpbm9kZSwgcG9z
-LCBsZW4pKQogCQlnb3RvIGNvbnZlcnQ7CiAKIAlyZXQgPSBleHQ0X2dldF9pbm9kZV9sb2MoaW5v
-ZGUsICZpbG9jKTsKZGlmZiAtLWdpdCBhL2ZzL2V4dDQvaW5vZGUuYyBiL2ZzL2V4dDQvaW5vZGUu
-YwppbmRleCA1NGJkZDQ4ODRmZTYuLmQ0YzBlMGE0MmI4ZSAxMDA2NDQKLS0tIGEvZnMvZXh0NC9p
-bm9kZS5jCisrKyBiL2ZzL2V4dDQvaW5vZGUuYwpAQCAtMzA2MSw3ICszMDYxLDggQEAgc3RhdGlj
-IGludCBleHQ0X2RhX3dyaXRlX2VuZChzdHJ1Y3QgZmlsZSAqZmlsZSwKIAogCWlmICh3cml0ZV9t
-b2RlICE9IENPTlZFUlRfSU5MSU5FX0RBVEEgJiYKIAkgICAgZXh0NF90ZXN0X2lub2RlX3N0YXRl
-KGlub2RlLCBFWFQ0X1NUQVRFX01BWV9JTkxJTkVfREFUQSkgJiYKLQkgICAgZXh0NF9oYXNfaW5s
-aW5lX2RhdGEoaW5vZGUpKQorCSAgICBleHQ0X2hhc19pbmxpbmVfZGF0YShpbm9kZSkgJiYKKwkg
-ICAgZXh0NF9pbmxpbmVfcG9zc2libGUoaW5vZGUsIHBvcywgbGVuKSkKIAkJcmV0dXJuIGV4dDRf
-d3JpdGVfaW5saW5lX2RhdGFfZW5kKGlub2RlLCBwb3MsIGxlbiwgY29waWVkLAogCQkJCQkJICBm
-b2xpbyk7CiAKLS0gCjIuMzkuNQoK
---0000000000006a5616062785485d--
+serial8250_setup_port() is where it ends up using the
+uninitialized serial8250_ports[index] contents. Since 
+port->iotype is not set to anything here, it defaults to
+'0', which happens to be UPIO_PORT.
+
+The reason it doesn't immediately crash and burn is that
+this is still only setting up the structures for later
+use, but I assume that trying to use console=ttyS0, or
+opening /dev/ttyS0 on the uninitialized port would
+then cause an oops.
+
+The bit I'm less sure about is why the
+serial8250_setup_port() function is called here in
+the first place. I assume it does something for
+/some/ architecture, but it's clearly wrong for
+most of them.
+
+       Arnd
 
