@@ -1,1201 +1,143 @@
-Return-Path: <linux-kernel+bounces-418683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F6679D644A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:45:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033369D6445
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:44:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A386FB22730
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:45:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7240A161B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9471DF725;
-	Fri, 22 Nov 2024 18:44:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C411DFDAB;
+	Fri, 22 Nov 2024 18:44:27 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3AD1DEFF0
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 18:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620BD1DF26F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 18:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732301068; cv=none; b=ZzFOTwpRdmBcJp1ftzSuQBt8b3//8tlh50WICqPUamBsgfzgRKgAXQxdiGRElexYJOWDoLHPS32JRpn5T+AgC+1O/VtSWrt0Gq8o709ue4Q7RX4TVmBVlb0MVrGCwE197SKehTD7vcbyY4zFa8Nll7MgU0+DuXKXHxjSXgTe+6s=
+	t=1732301066; cv=none; b=HGfCcKvRwcE/WFCrp3psZhkFPhYZwqoxD/8YX8Xo71mmCSJ7p0dppsgPJWOCh964MFdUwQblU8+QbBL7CsDtzxnLb2eNMHREXyF+tLyDM0RPWtC6npB1BwQYOxVts3MTp4Hx3yQ2AhVnNfS5Tpau5vBHtpzqcFLtlJCj02HiCLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732301068; c=relaxed/simple;
-	bh=c4+x+Q4YVHHhSLA0v65KrpstMCen0NK4Wh3wf8GSeUY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f8xsdvGh0EoVGYSYffJRfBhPWyXklnUAbxYchDenTixrFi72aW5p/uB81GvdUfiQB6J+Ib51K+0jw921quddIjDOTtuYk9kWSQs1iMFiNxX95Jw2Tym0UUzC/TrwnxdWs+SxDF7xw4dOUAw5g7Xiw6JHVMpVkX9yJgqrmsxbUi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	s=arc-20240116; t=1732301066; c=relaxed/simple;
+	bh=TT0WGwcgJa5PFxmOZWAmQHT63o9zD42O9nipFXhjmv4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Cfn59mcbyVCkNS9Yxxu8wlE86MWztZFUGG5UoR0HQKqfEPoWOXrvjWBor49airF5WaNDjixOC7vZ5THE7xWEAm6YhM5r8cO/5d7TDbRT0t0xCQ75N8LvKDuc1tkKTbQCBTf9smgFFKiwdxLUfsBlxP0v304ctth4S/c42O1jaMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a787d32003so25263165ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:44:24 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7a72bd3a2so4845215ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:44:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1732301064; x=1732905864;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=66i2rzbJqgIXp2mnX8j2LWFwTw12gX6IqhteqHgOhx4=;
-        b=OpLkJqREvIYPgensHKLlFKil/hthqF6F2yAfLMifVFpsKWBmrpKC3LrepbxeHXcvu/
-         3N9dSE8jJ1hM7Vl4E1vteoPFA+5uIrdZTaHVHE0AznpkCwChX6kVx32YGm6xP6tRbkdF
-         iCM3iWSyQakpNhIsY1KfWnLuKHWlf40sJBsEHC1EizDh8szbpcgWnAA+C4678vfLD9Da
-         uj3sxzc7C10xidxmeK6c7bkdrmoUgs0Zw/awtIn8R8t/Zehs7ikXgscpy69hTCtjdqME
-         Z9We+z1JK+T/4eU9UZxB3XvUHmzy9RED7TOEyD2BB+VjQGBWT7HANc4OYXEH9LZrCLjZ
-         wPcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXdevBuaErJSTxfVBuV8N9QGqOSGHbGmvF+Ae3W9JiP/Vgm3iRbgS9ImIXTH5agbkkZeafIgaz03d+l+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXuWdXDqGeNGRlHb20UlFpWbNw38X4DeA86SbPaD2rBeM2zThy
-	2H8wgbzfAoVTJtEido0QwvQTH3qoAej5dIDfNizlU8PjGfIHgsCfwN8A+G9arknGvgxw5Qk+Ocq
-	qDXaxkYsWdLVvdv0fEihg4Vywsw2khEYV87VqqFQ42zb7yFEuOesRc+k=
-X-Google-Smtp-Source: AGHT+IFM+c0Fsqd5EL/LkzELI3zLYgzfAgk5N8KJQ2H4/Iy3lxW3hg6cZ7DAexwC7M8M/Nh1kBGhNa7lrPCGHs66sDN3OPC+FxRh
+        bh=ovYHuJ2vlkVrLlI7ERokuEMkiHWXbw5n5FzW7/Nf3xA=;
+        b=RooaXphbH/Kc51wzlor59LEGy0b8LqABhx/UUXE1nnh+0VrFabluPNbA2kCzjCvmOQ
+         B4F5fs/f6VjPyLzXQN2POO9jYANJ74dq9Y6dMZVxkRcAjWq0/ieY7BV6wOWdtOHk0WMq
+         293rhK9Z+gtv0VXhYvo6vrfQi8qMcgcOiPuRWglWRC2pEXIST+sJUywCkpZgqOnDeo4X
+         B5RCSDV8ZTuDRoJGR+wmER3nKgRWQau085b/1IJ5tTyoPEFZ9cy29jNJV9jDOzx9na6j
+         l/6S2ZRaWXvMtGCDaWpTiUJ+drSRO6KzDMCYxh9kg51b1n2xFi5/te/x2q+oFsmmMj/r
+         fQQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUROFn8SWSWCQYHSt+cvt1TzLI2WagfmNsgeS5tucPMhHbR/VHuqaay0IlWy8gXKSs3HH+a+FkoZstC1/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiWSD+OmKL/KXrEih8m3EtiGmXhClx4+3qkbp1RevLfP/OLRBZ
+	xxnWYCGecePX5KUBqGo0aQ3iylLIDdpQ2bZkNJ+JYD8emx6qcT8dNWmnrsR0D7QvNqga+eHKi2s
+	SfD06KzlvBgbltuTlYgIB+bmvn6sgELGtxL1bP/L3kQmu0E4PRqjwXCI=
+X-Google-Smtp-Source: AGHT+IFsOCNgD1v7Y74keTuT+MAcwV6u9M+XWo4PibhArf6aGmdT44GsDfSebct5vRNnRDqBGZEZ++er90QIAgSqhSWXmaAVgfBT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdab:0:b0:3a7:7124:bd2b with SMTP id
- e9e14a558f8ab-3a79af53200mr50451505ab.15.1732301063954; Fri, 22 Nov 2024
- 10:44:23 -0800 (PST)
-Date: Fri, 22 Nov 2024 10:44:23 -0800
+X-Received: by 2002:a05:6e02:1a82:b0:3a7:86ab:bebf with SMTP id
+ e9e14a558f8ab-3a79af6d1b5mr45296015ab.19.1732301064474; Fri, 22 Nov 2024
+ 10:44:24 -0800 (PST)
+Date: Fri, 22 Nov 2024 10:44:24 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6740d107.050a0220.3c9d61.0195.GAE@google.com>
-Subject: [syzbot] [fs?] WARNING in minix_unlink
-From: syzbot <syzbot+320c57a47bdabc1f294b@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <6740d108.050a0220.3c9d61.0197.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in rw_aux_tree_set (2)
+From: syzbot <syzbot+ed52fb987e4b52cbfad9@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a3cb78580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dfe1e340fbee3d16
-dashboard link: https://syzkaller.appspot.com/bug?extid=320c57a47bdabc1f294b
+HEAD commit:    fc39fb56917b Merge tag 'jfs-6.13' of github.com:kleikamp/l..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1346bec0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1a5c320d506b5745
+dashboard link: https://syzkaller.appspot.com/bug?extid=ed52fb987e4b52cbfad9
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d31930580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129b76c0580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16565b78580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1746bec0580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/354fe38e2935/disk-7b1d1d4c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f12e0b1ef3fd/vmlinux-7b1d1d4c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/291dbc519bb3/Image-7b1d1d4c.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/54e0ad660b2f/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/c35bd17a0dc5/disk-fc39fb56.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/900f3f8ce653/vmlinux-fc39fb56.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fae5edad1eaf/bzImage-fc39fb56.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/989b3cf7acff/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+320c57a47bdabc1f294b@syzkaller.appspotmail.com
+Reported-by: syzbot+ed52fb987e4b52cbfad9@syzkaller.appspotmail.com
 
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b6433b9
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bac135e x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd609af0 x19: ffff0000dd609aa8 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86ed5e6 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86ed5e7 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 14240
-hardirqs last  enabled at (14239): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (14239): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (14240): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (13948): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (13948): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (13941): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b66a6ce
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001babf963 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd5fcb18 x19: ffff0000dd5fcad0 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86e55de x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86e55df x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 18414
-hardirqs last  enabled at (18413): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (18413): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (18414): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (18126): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (18126): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (18107): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b683270
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bae2163 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd710b18 x19: ffff0000dd710ad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86deaf6 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86deaf7 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 22134
-hardirqs last  enabled at (22133): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (22133): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (22134): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (21124): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (21122): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b6a6a9f
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001babfd59 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd5feac8 x19: ffff0000dd5fea80 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8ab2fe6 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8ab2fe7 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 25870
-hardirqs last  enabled at (25869): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (25869): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (25870): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (25760): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (25758): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe00019b8c9b4
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bae2559 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd712ac8 x19: ffff0000dd712a80 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8ab2086 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8ab2087 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 29568
-hardirqs last  enabled at (29567): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (29567): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (29568): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (29364): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (29362): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b6a9585
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001babff54 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd5ffaa0 x19: ffff0000dd5ffa58 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8ab2fe6 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8ab2fe7 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 34332
-hardirqs last  enabled at (34331): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (34331): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (34332): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (34044): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (34044): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (34025): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b68475b
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad035e x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd681af0 x19: ffff0000dd681aa8 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86f389e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86f389f x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 38582
-hardirqs last  enabled at (38581): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (38581): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (38582): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (38300): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (38300): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (38263): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b3fcafd
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad0754 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd683aa0 x19: ffff0000dd683a58 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8d8c7be x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8d8c7bf x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 42828
-hardirqs last  enabled at (42827): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (42827): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (42828): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (42544): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (42544): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (42535): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe00019b98a12
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001badf163 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6f8b18 x19: ffff0000dd6f8ad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86f4d76 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86f4d77 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 46512
-hardirqs last  enabled at (46511): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (46511): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (46512): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (46264): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (46264): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (46255): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe00019b980c9
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001badf35e x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6f9af0 x19: ffff0000dd6f9aa8 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8707326 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8707327 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 50766
-hardirqs last  enabled at (50765): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (50765): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (50766): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (50100): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (50098): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b699b8a
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baced59 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd676ac8 x19: ffff0000dd676a80 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8707326 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8707327 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 54686
-hardirqs last  enabled at (54685): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (54685): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (54686): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (54570): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (54568): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b686b8a
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad5963 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6acb18 x19: ffff0000dd6acad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86ec2de x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86ec2df x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 58854
-hardirqs last  enabled at (58853): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (58853): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (58854): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (58796): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (58796): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (58787): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b69f7b9
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad5d59 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6aeac8 x19: ffff0000dd6aea80 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86eedfe x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86eedff x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 63018
-hardirqs last  enabled at (63017): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (63017): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (63018): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (62716): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (62716): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (62691): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b66ac6b
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bacb963 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd65cb18 x19: ffff0000dd65cad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86de36e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86de36f x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 67566
-hardirqs last  enabled at (67565): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (67565): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (67566): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (67266): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (67266): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (67251): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b637241
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad4963 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6a4b18 x19: ffff0000dd6a4ad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8708cb6 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8708cb7 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 71272
-hardirqs last  enabled at (71271): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (71271): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (71272): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (70252): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (70250): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b5a4a70
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bacbb5e x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd65daf0 x19: ffff0000dd65daa8 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86f4d76 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86f4d77 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 75078
-hardirqs last  enabled at (75077): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (75077): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (75078): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (74954): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (74952): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b690e9f
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001bad4d59 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd6a6ac8 x19: ffff0000dd6a6a80 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8708cae x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8708caf x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 78816
-hardirqs last  enabled at (78815): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (78815): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (78816): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (78694): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (78694): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (78685): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe00019bd9d56
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baea963 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd754b18 x19: ffff0000dd754ad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86de36e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86de36f x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 82554
-hardirqs last  enabled at (82553): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (82553): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (82554): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (82488): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (82486): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b680b5b
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baead59 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd756ac8 x19: ffff0000dd756a80 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff870675e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff870675f x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 86326
-hardirqs last  enabled at (86325): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (86325): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (86326): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (86260): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (86260): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (86239): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe00019bd840d
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baeaf54 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd757aa0 x19: ffff0000dd757a58 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8ab3946 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8ab3947 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 90150
-hardirqs last  enabled at (90149): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (90149): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (90150): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (90030): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (90028): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001badd270
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baee163 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd770b18 x19: ffff0000dd770ad0 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86f54ce x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86f54cf x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 94386
-hardirqs last  enabled at (94385): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (94385): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (94386): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (94268): [<ffff80008002f3d8>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
-softirqs last disabled at (94266): [<ffff80008002f3a4>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 0 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b67fcc9
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baedb5e x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd76daf0 x19: ffff0000dd76daa8 x18: 1fffe000366c6876
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff8ab3946 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff8ab3947 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 98122
-hardirqs last  enabled at (98121): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inline]
-hardirqs last  enabled at (98121): [<ffff8000802c423c>] finish_lock_switch+0xbc/0x1e4 kernel/sched/core.c:5082
-hardirqs last disabled at (98122): [<ffff80008b4b302c>] el1_dbg+0x24/0x80 arch/arm64/kernel/entry-common.c:488
-softirqs last  enabled at (98074): [<ffff80008020396c>] softirq_handle_end kernel/softirq.c:400 [inline]
-softirqs last  enabled at (98074): [<ffff80008020396c>] handle_softirqs+0xa38/0xbf8 kernel/softirq.c:582
-softirqs last disabled at (98053): [<ffff800080020db4>] __do_softirq+0x14/0x20 kernel/softirq.c:588
----[ end trace 0000000000000000 ]---
-minix_free_block (loop0:20): bit already cleared
-minix_free_block (loop0:21): bit already cleared
-minix_free_block (loop0:19): bit already cleared
-minix_free_block (loop0:22): bit already cleared
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6420 at fs/inode.c:336 drop_nlink+0xe4/0x138 fs/inode.c:336
-Modules linked in:
-CPU: 1 UID: 0 PID: 6420 Comm: syz-executor256 Tainted: G        W          6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : drop_nlink+0xe4/0x138 fs/inode.c:336
-lr : drop_nlink+0xe4/0x138 fs/inode.c:336
-sp : ffff8000a3857a60
-x29: ffff8000a3857a60 x28: dfff800000000000 x27: 1fffe0001b5e189a
-x26: 1ffff0001470af54 x25: dfff800000000000 x24: 0000000000000003
-x23: 1fffe0001baedf54 x22: dfff800000000000 x21: 0000000000000000
-x20: ffff0000dd76faa0 x19: ffff0000dd76fa58 x18: 1fffe000366cb076
-x17: ffff80008f81d000 x16: ffff8000802a7fe0 x15: 0000000000000001
-x14: 1fffffbff86f4c7e x13: 0000000000000000 x12: 0000000000000000
-x11: ffff7fbff86f4c7f x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d9638000 x7 : ffff800080c93b64 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff8000811989e4
-x2 : 0000000000000001 x1 : 0000000000000000 x0 : 0000000000000000
-Call trace:
- drop_nlink+0xe4/0x138 fs/inode.c:336 (P)
- drop_nlink+0xe4/0x138 fs/inode.c:336 (L)
- inode_dec_link_count include/linux/fs.h:2510 [inline]
- minix_unlink+0x1f8/0x2e8 fs/minix/namei.c:157
- vfs_unlink+0x2f0/0x534 fs/namei.c:4469
- do_unlinkat+0x4d0/0x700 fs/namei.c:4533
- __do_sys_unlinkat fs/namei.c:4576 [inline]
- __se_sys_unlinkat fs/namei.c:4569 [inline]
- __arm64_sys_unlinkat+0xc8/0xf8 fs/namei.c:4569
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-irq event stamp: 101832
-hardirqs last  enabled at (101831): [<ffff8000802c423c>] raw_spin_rq_unlock_irq kernel/sched/sched.h:1518 [inl
+=====================================================
+BUG: KMSAN: uninit-value in bkey_unpack_pos fs/bcachefs/bkey.h:463 [inline]
+BUG: KMSAN: uninit-value in rw_aux_tree_set+0x4d2/0x580 fs/bcachefs/bset.c:494
+ bkey_unpack_pos fs/bcachefs/bkey.h:463 [inline]
+ rw_aux_tree_set+0x4d2/0x580 fs/bcachefs/bset.c:494
+ rw_aux_tree_insert_entry+0x6c3/0x970 fs/bcachefs/bset.c:913
+ bch2_bset_fix_lookup_table+0xecc/0x13e0
+ bch2_bset_insert+0x1621/0x19f0 fs/bcachefs/bset.c:1015
+ bch2_btree_bset_insert_key+0xf4e/0x2b60 fs/bcachefs/btree_trans_commit.c:217
+ bch2_btree_insert_key_leaf+0x276/0x1050 fs/bcachefs/btree_trans_commit.c:300
+ bch2_trans_commit_write_locked fs/bcachefs/btree_trans_commit.c:820 [inline]
+ do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:900 [inline]
+ __bch2_trans_commit+0xaf5e/0xd190 fs/bcachefs/btree_trans_commit.c:1121
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ btree_update_nodes_written fs/bcachefs/btree_update_interior.c:723 [inline]
+ btree_interior_update_work+0x2080/0x4870 fs/bcachefs/btree_update_interior.c:861
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4219
+ __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4236
+ __do_kmalloc_node mm/slub.c:4252 [inline]
+ __kmalloc_node_noprof+0x9d6/0xf50 mm/slub.c:4270
+ __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:658
+ btree_node_data_alloc fs/bcachefs/btree_cache.c:153 [inline]
+ __bch2_btree_node_mem_alloc+0x2be/0xa80 fs/bcachefs/btree_cache.c:198
+ bch2_fs_btree_cache_init+0x4e4/0xb50 fs/bcachefs/btree_cache.c:653
+ bch2_fs_alloc fs/bcachefs/super.c:917 [inline]
+ bch2_fs_open+0x4d3a/0x5b40 fs/bcachefs/super.c:2065
+ bch2_fs_get_tree+0x983/0x22d0 fs/bcachefs/fs.c:2157
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:4034
+ x64_sys_call+0x39bf/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 13 Comm: kworker/u8:1 Not tainted 6.12.0-syzkaller-05676-gfc39fb56917b #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: btree_update btree_interior_update_work
+=====================================================
+
 
 ---
 This report is generated by a bot. It may contain errors.
