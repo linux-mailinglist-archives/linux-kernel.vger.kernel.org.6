@@ -1,45 +1,74 @@
-Return-Path: <linux-kernel+bounces-417816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7C59D5964
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:25:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A04C9D5965
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:27:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A05281B25
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E25AB2309A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F39D16BE23;
-	Fri, 22 Nov 2024 06:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE3166315;
+	Fri, 22 Nov 2024 06:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ElM9F3yH"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SraPdsFF"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC3222081;
-	Fri, 22 Nov 2024 06:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B3122081
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732256750; cv=none; b=VtRvCnMsnCxV1mtM4uxjn0aiTPzHa85Y86LQjrXMOQwtVu8A+UP+veK14Q47CfMIMwNSEMxmmsGuUis+Pn8l46F5kj7aFRjt3aPkWiWrEFodnrBxaoXm5+Ywm++Gc6LWyvKtl5y1vu86LYEpcryoNwoxBLg7aQNqWFmzN9gtTcE=
+	t=1732256840; cv=none; b=smru3B2wV6B9muVY4w8L9QGTVJ5GN+iMpejii510lUs/H2xSw62ct6cc7FCiWZ+JUppFXJ1I9xyhJNjnS5o4ntyJ0juKm5E1z/5ICNvVS4v72NLggOIAWX0sqCsZUZB7ju+V78okAwMUuTTvr3zadITP2GWSQJNwUhppDFa1Oog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732256750; c=relaxed/simple;
-	bh=JLGGC2upSRBy4NpebIatpx8yC3XQt7hVH/2hVqksfPA=;
+	s=arc-20240116; t=1732256840; c=relaxed/simple;
+	bh=2/napg/9Lm6hc7Dhe3BKuUXbGr76GuzjXtORiDV/kHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmqN1L90Uf6BIUSbg+wlX1Ql9vpIkK/ZbFWpmAIi5vHOolfz9W3xiGzjFelrNmscLhwdMMYt+khc7TA7mRNO/uIG4EYaqcCcGJDBQJg3kIUB8qrUFTtfWeaQBsGqZ5SmXvhdUwtzvSS4LaP4OcjF8Al8KENRXeIrztdGNZ5F7yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ElM9F3yH; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732256737; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=nnbly2k9u+G1ysjd0T5docpjLl2DZDHcRC0xrhPVEsM=;
-	b=ElM9F3yHEeeqzbXFv4SnhcMYfFdYim22+rYUk5qraM3YZlPOKSegJizE4r41oCYzyPGjzv9cgrASxtKJhPQCSZj0YmyKmKFb/NG9zCCkccyDtYGe3q6hyMBi7AF7gSZwgPun3jm8yuIVjhHFP3d/3ssZM1XQTtMkYFD5e7RU6BI=
-Received: from 30.246.161.197(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WJzY5u4_1732256734 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Nov 2024 14:25:35 +0800
-Message-ID: <e96ed0ee-01c8-4429-a903-17bc7813d78a@linux.alibaba.com>
-Date: Fri, 22 Nov 2024 14:25:33 +0800
+	 In-Reply-To:Content-Type; b=ELyAiHEBirLYh6VjThdRank+i3wGGwiHzAooo4+5c/y5nfE2LgfABi0KOMWJcesLYNZAUWj3OaFAdwmnb2spTp05wkrrS+HCdhIn+GWoa5X0LZExNgldyeHo7MxLWbdiRieh4dvIGuzDNQAU5SB6hziAzZGc72zyEEDPxBj5sDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SraPdsFF; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM1qIFJ009218;
+	Fri, 22 Nov 2024 06:26:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ICH6dp
+	Z/5QQQ5oqYxXjudOdcrNfs0CM/rAq5NgUVmZc=; b=SraPdsFFcrbvujHkXcysh1
+	bvfyqpkD1v+R57MjP0wfYzhS3w5thjox5zoP/oeew6DMoqcAKXliCmYC1Co+zLY6
+	1uj+NZC8B00QBdxf7jaY8+a8uiy9FyUgG9/0HfRu+m03y7bIqULmlPlx7KbjRkh/
+	8VfwMjVAaN9TvvLVLdeV77qzeogZBzxpYhN9AFIEMPr4OES41QIqSiK3qb8W76lb
+	BpEWgiC0Kz8SSbdKQlKwZzU6o3t+Bl0dY5qp05KaTSn0IVqhWpq56210XX5lVYji
+	gtMSElO5XWyyf0CB6a5PxlhQm4ri/HP0cpsi1GNmdXbykkh27ZJoEfmnrnlsXt6g
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 432fw215gj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 06:26:51 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM61CVc030957;
+	Fri, 22 Nov 2024 06:26:50 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y640fnar-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 06:26:50 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AM6Qno526870502
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 06:26:49 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C4BAB5805A;
+	Fri, 22 Nov 2024 06:26:49 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7BFE458054;
+	Fri, 22 Nov 2024 06:26:45 +0000 (GMT)
+Received: from [9.109.198.240] (unknown [9.109.198.240])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 22 Nov 2024 06:26:45 +0000 (GMT)
+Message-ID: <5bbfcfe6-6e7f-437c-9c0e-cb80578b0c87@linux.ibm.com>
+Date: Fri, 22 Nov 2024 11:56:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,63 +76,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Steven Rostedt <rostedt@goodmis.org>, Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org
-References: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
- <Zz786zZljAy2J5i7@wunner.de>
- <7002248c-f3af-42aa-ba42-a65cd738ae37@linux.alibaba.com>
- <20241121084354.4a554829@gandalf.local.home> <Zz-9vviSWP8oRPUx@wunner.de>
- <20241121190826.78506b40@gandalf.local.home>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241121190826.78506b40@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 1/1] nvme: always enable multipath
+To: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, kbusch@kernel.org, hch@lst.de,
+        sagi@grimberg.me, axboe@kernel.dk, mpe@ellerman.id.au,
+        naveen@kernel.org, maddy@linux.ibm.com, kernel@xen0n.name
+Cc: jmeneghi@redhat.com, bmarzins@redhat.com
+References: <20241121220321.40616-1-bgurney@redhat.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20241121220321.40616-1-bgurney@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Xho9_0v6reVO3SRlkNyKenSYw3mKZcoB
+X-Proofpoint-ORIG-GUID: Xho9_0v6reVO3SRlkNyKenSYw3mKZcoB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ adultscore=0 bulkscore=0 phishscore=0 spamscore=0 mlxscore=0
+ lowpriorityscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220048
 
 
 
-在 2024/11/22 08:08, Steven Rostedt 写道:
-> On Fri, 22 Nov 2024 00:09:50 +0100
-> Lukas Wunner <lukas@wunner.de> wrote:
+On 11/22/24 03:33, Bryan Gurney wrote:
+> Since device-mapper multipath will no longer be operating on NVMe
+> devices, there is no longer a need to set CONFIG_NVME_MULTIPATH=n.
 > 
->> Would something like
->>
->>    /sys/kernel/debug/tracing/events/pci/hotplug_event
->>
->> be possible?  It would seem more elegant than
->>
->>    /sys/kernel/debug/tracing/events/pci/pci_hp_event
->>
->> because it avoids the duplication of "pci" in the path.
+> Always enable NVMe multipath, remove CONFIG_NVME_MULTIPATH, and use
+> the code paths that would be used if CONFIG_NVME_MULTIPATH=y.
 > 
-> Most events have the name of the system in it (see the sched events).
-> That's to prevent the duplicates in other places. Also, in the trace
-> output, only the event name is shown and not the system. That is, if you
-> have more than one "hotplug_event" enabled, the trace will not
-> differentiate them.
-> 
-> My suggestion is the "pci_hp_event" as it will be more obvious in the trace
-> output.
-> 
-> -- Steve
+> Reviewed-by: John Meneghini <jmeneghi@redhat.com>
+> Tested-by: Bryan Gurney <bgurney@redhat.com>
+> Signed-off-by: Bryan Gurney <bgurney@redhat.com>
+> ---
+>  arch/loongarch/configs/loongson3_defconfig |  1 -
+>  arch/powerpc/configs/skiroot_defconfig     |  1 -
+>  drivers/nvme/host/Kconfig                  |  9 --
+>  drivers/nvme/host/Makefile                 |  3 +-
+>  drivers/nvme/host/core.c                   | 17 +---
+>  drivers/nvme/host/ioctl.c                  |  3 +-
+>  drivers/nvme/host/multipath.c              | 10 +--
+>  drivers/nvme/host/nvme.h                   | 97 +---------------------
+>  drivers/nvme/host/sysfs.c                  |  6 --
+>  9 files changed, 7 insertions(+), 140 deletions(-)
 
-Agreed. pci_hp_event is more reasonable. Than is:
+I applied the above changes to my kernel tree and ran the below blktests:
 
-- system: pci
-- event: pci_hp_event
+# ./check nvme/033 nvme/034 nvme/035 nvme/036 nvme/037 nvme/039 
+nvme/033 => nvme0n1 (tr=loop) (create and connect to an NVMeOF target with a passthru controller) [not run]
+    /dev/nvme0n1 is a NVMe multipath device
+nvme/034 => nvme0n1 (tr=loop) (run data verification fio job on an NVMeOF passthru controller) [not run]
+    /dev/nvme0n1 is a NVMe multipath device
+nvme/035 => nvme0n1 (tr=loop) (run mkfs and data verification fio job on an NVMeOF passthru controller) [not run]
+    /dev/nvme0n1 is a NVMe multipath device
+nvme/036 => nvme0n1 (tr=loop) (test NVMe reset command on an NVMeOF target with a passthru controller) [not run]
+    /dev/nvme0n1 is a NVMe multipath device
+nvme/037 => nvme0n1 (tr=loop) (test deletion of NVMeOF passthru controllers immediately after setup) [not run]
+    /dev/nvme0n1 is a NVMe multipath device
+nvme/039 => nvme0n1 (test error logging)                     [not run]
+    /dev/nvme0n1 is a NVMe multipath device
 
-/sys/kernel/debug/tracing/events/pci/pci_hp_event
+As we can see here, the above tests were skipped because the test detects 
+that the device (/dev/nvme0n1) is a multipath device. However, in fact, 
+the test device is NOT a multipath. So I think we need to update the above 
+tests. We may submit another patch to blktest and update above tests once 
+your changes are merged upstream.
 
-@Lukas, if you have any other concerns, please let me know.
-
-
-Thank you.
-Best Regards,
-Shuai
+Otherwise, changes look good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com> 
 
