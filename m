@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-417755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D15C9D58C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:00:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C26E9D58D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70FC280D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D98283437
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EA9158A31;
-	Fri, 22 Nov 2024 04:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE16157494;
+	Fri, 22 Nov 2024 04:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Qz4Gw5uD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZrBBP1+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B867603F;
-	Fri, 22 Nov 2024 04:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211EB13AA38;
+	Fri, 22 Nov 2024 04:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732248042; cv=none; b=OxZ8Uq0bA9Oh6ypHKHFz7WYSVIIHI+xbMXnfYUcq3Tz61B3Ucw6jfVcBD1XnfqxU3kfKmtpRhCyuxWGzQMipNgaL3mKQslb+RpxZEZ+ggQWMLwCKUUnPSpPuXriLFlIKKD2mtJmDrEmeMxNrWWmoGYNniAYBBKDjU25h1XEq8a8=
+	t=1732250311; cv=none; b=XgmI5G+n8FKr+gXk5yzVHUc7rkbBmfUQiS0QMIGOoK0f9z+hh8xvMbKiP5hllDXUCnGb7f9HY9WjiUlQ9CiTWFjbVbESt6pOcOnaQPlXthrh1WHiWzjXTA1MU9soR/0AFmOj9LYsUSA3ygIzaqoWxa+BU9TTTLnq6LxNlo0phr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732248042; c=relaxed/simple;
-	bh=qKIf34OkFC2YM6N84wF8TKhsdSfPIyLMzdhm9Rw6EH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=V8WJelEdT7goy67s/W6NiVi5nXv26dcnhNZRuEbMY5a8/Xe9rm4o3eqDDPSdkkvemEK26CuXTLiLBCjZBz0c4skfN+D4xbBj9/4zcuu+bVqrBb2XAtYtwG4fq7OKLkhhEhD5QcWflAQOTiG+LiSAsMyhTjmCJuv3qqxzJFScRWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Qz4Gw5uD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732248035;
-	bh=Rdt/cP7z9YEqAD3dvmt0bKLkrU/L2GCLdQEwhHFtwt0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Qz4Gw5uD9+cpZxGFS7elp9OYxK/3/2wimGhMKaJ0BoP6NlzXRR3eOcfxhdofjYZpc
-	 NhvUYOq8CVlcvgms75+Ei8xlvN2pJn8t++FAAM+PsQzlk6ZFSN+fv2/QEk3qVI/jSW
-	 VbBL7FtH54JmjUV1Cps4px+Pt2ezGmHp246oF53MPq3RSR9ZhMQw/TUzS+OK+JJ2vB
-	 0LNd3qxDk1RXeky3jh+AMAYSeaofNzBBesj7hMkMlypjDQnlYjDanWcqdUTBMbNmaf
-	 rJDqKhwtqCqAxyvky8wDtS6MW4Wz/bqLcHZBfuGSY/PU/ojWhyMXsOB1/s/3RcRWNi
-	 hzCk814HexDZA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XvhGC5YJZz4w2M;
-	Fri, 22 Nov 2024 15:00:35 +1100 (AEDT)
-Date: Fri, 22 Nov 2024 15:00:38 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anup Patel <anup@brainfault.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul@pwsan.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Palmer Dabbelt
- <palmer@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>,
- Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Subject: linux-next: manual merge of the kvm-riscv tree with the risc-v tree
-Message-ID: <20241122150038.680eab25@canb.auug.org.au>
+	s=arc-20240116; t=1732250311; c=relaxed/simple;
+	bh=yutVhNyr1EwpByH5fLGKop/h66NESLQzEwEMOCv1igs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=DyAADtTxizJaOYTCteafL594zTq9ehBrTlo02k4NcRpUssRtDPCd3ImSbwCC8Fbq/cug7vNLYK9k29EaT/QQ/PeVmDBKjHd3CeNY5XBkgdp+HEIwka9f+8tprgDICyvP3NofJtt1ykVRzPWZ4onh4IthuMqmdYmvvFefhRWcE4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZrBBP1+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5205DC4CECE;
+	Fri, 22 Nov 2024 04:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732250310;
+	bh=yutVhNyr1EwpByH5fLGKop/h66NESLQzEwEMOCv1igs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=ZZrBBP1+ckE2dJi1lJ63U0pbgcUEnys3ASUM4phcfN4vZ2D++9cYVcDESZm++8cHM
+	 GNN9T2QujrSlX3NCIhXYz9+28gK1EaqN5ELGg5tDgg+/WDKW7c7tH1nj7l8VnzySAz
+	 +JviqaP4H/HdIETX9FT7BAVmq99khDLjBlp7Vxvm9tQh5n2skGCgeWgffb24TJLiDt
+	 WNQkZnwpRnzqsIYpEWJL0sAmtn76YRhALbasEXy+InxWN6WscMvOsgIc7YsKouNumc
+	 ChLiR2HDivTNAUODdGBAAPFpyPqx84xB0vZc9V9fGSf+61J9wwsgDDIjQOgf6Z1R/U
+	 /x009S1Vbv1/Q==
+Date: Thu, 21 Nov 2024 20:38:27 -0800
+From: Kees Cook <kees@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Linus Walleij <linus.walleij@linaro.org>, David Wang <00107082@163.com>,
+ brgl@bgdev.pl, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+ linux-gpio@vger.kernel.org, geert@linux-m68k.org,
+ linux-hardening@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_Fix_a_potential_abuse_of_?=
+ =?US-ASCII?Q?seq=5Fprintf=28=29_format_string_in_drivers?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <2024112031-unreal-backslid-0c24@gregkh>
+References: <20241120053055.225195-1-00107082@163.com> <CACRpkdZ0zwn0908LDqrfQJtF7M-WRcKA4qdJdwSXZNzm0L47CA@mail.gmail.com> <202411201008.5262C14@keescook> <2024112031-unreal-backslid-0c24@gregkh>
+Message-ID: <8BEA1444-469F-4276-AB04-0CF7C324916D@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Al/oLvNfFhFhjv6fSzaij77";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/Al/oLvNfFhFhjv6fSzaij77
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the kvm-riscv tree got a conflict in:
 
-  arch/riscv/include/uapi/asm/kvm.h
+On November 20, 2024 11:28:35 AM PST, Greg Kroah-Hartman <gregkh@linuxfoun=
+dation=2Eorg> wrote:
+>On Wed, Nov 20, 2024 at 10:12:40AM -0800, Kees Cook wrote:
+>> On Wed, Nov 20, 2024 at 08:35:38AM +0100, Linus Walleij wrote:
+>> > On Wed, Nov 20, 2024 at 6:31=E2=80=AFAM David Wang <00107082@163=2Eco=
+m> wrote:
+>> >=20
+>> > > Using device name as format string of seq_printf() is proned to
+>> > > "Format string attack", opens possibility for exploitation=2E
+>> > > Seq_puts() is safer and more efficient=2E
+>> > >
+>> > > Signed-off-by: David Wang <00107082@163=2Ecom>
+>> >=20
+>> > Okay better get Kees' eye on this, he looks after string vulnerabilit=
+ies=2E
+>> > (But I think you're right=2E)
+>>=20
+>> Agreed, this may lead to kernel memory content exposures=2E seq_puts()
+>> looks right=2E
+>>=20
+>> Reviewed-by: Kees Cook <kees@kernel=2Eorg>
+>
+>Wait, userspace "shouldn't" be controlling a device name, but odds are
+>there are some paths/subsystems that do this, ugh=2E
+>
+>> To defend against this, it might be interesting to detect
+>> single-argument seq_printf() usage and aim it at seq_puts()
+>> automatically=2E=2E=2E
+>
+>Yeah, that would be good to squash this type of issue=2E
+>
+>> > >  drivers/gpio/gpio-aspeed-sgpio=2Ec            | 2 +-
+>> > >  drivers/gpio/gpio-aspeed=2Ec                  | 2 +-
+>> > >  drivers/gpio/gpio-ep93xx=2Ec                  | 2 +-
+>> > >  drivers/gpio/gpio-hlwd=2Ec                    | 2 +-
+>> > >  drivers/gpio/gpio-mlxbf2=2Ec                  | 2 +-
+>> > >  drivers/gpio/gpio-omap=2Ec                    | 2 +-
+>> > >  drivers/gpio/gpio-pca953x=2Ec                 | 2 +-
+>> > >  drivers/gpio/gpio-pl061=2Ec                   | 2 +-
+>> > >  drivers/gpio/gpio-tegra=2Ec                   | 2 +-
+>> > >  drivers/gpio/gpio-tegra186=2Ec                | 2 +-
+>> > >  drivers/gpio/gpio-tqmx86=2Ec                  | 2 +-
+>> > >  drivers/gpio/gpio-visconti=2Ec                | 2 +-
+>> > >  drivers/gpio/gpio-xgs-iproc=2Ec               | 2 +-
+>> > >  drivers/irqchip/irq-gic=2Ec                   | 2 +-
+>> > >  drivers/irqchip/irq-mvebu-pic=2Ec             | 2 +-
+>> > >  drivers/irqchip/irq-versatile-fpga=2Ec        | 2 +-
+>> > >  drivers/pinctrl/bcm/pinctrl-iproc-gpio=2Ec    | 2 +-
+>> > >  drivers/pinctrl/mvebu/pinctrl-armada-37xx=2Ec | 2 +-
+>> > >  drivers/pinctrl/pinctrl-mcp23s08=2Ec          | 2 +-
+>> > >  drivers/pinctrl/pinctrl-stmfx=2Ec             | 2 +-
+>> > >  drivers/pinctrl/pinctrl-sx150x=2Ec            | 2 +-
+>> > >  drivers/pinctrl/renesas/pinctrl-rzg2l=2Ec     | 2 +-
+>> >=20
+>> > Can you split this in three patches per-subsystem?
+>> > One for gpio, one for irqchip and one for pinctrl?
+>> >=20
+>> > Then send to each subsystem maintainer and CC kees on
+>> > each=2E
+>> >=20
+>> > I'm just the pinctrl maintainer=2E The rest can be found with
+>> > scripts/get_maintainer=2Epl=2E
+>>=20
+>> Oof=2E That's a lot of work for a mechanical change like this=2E Perhap=
+s
+>> Greg KH can take it directly to the drivers tree instead?
+>
+>I can take it all, as-is, right now, if you want me to=2E  Just let me
+>know=2E
 
-between commit:
+Yes, please do=2E I will send a patch for making seq_printf more defensive=
+ separately=2E
 
-  1851e7836212 ("RISC-V: KVM: Allow Smnpm and Ssnpm extensions for guests")
+Thanks!
 
-from the risc-v tree and commit:
-
-  97eccf7db4f2 ("RISC-V: KVM: Add Svade and Svadu Extensions Support for Gu=
-est/VM")
-
-from the kvm-riscv tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+-Kees
 
 --=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/riscv/include/uapi/asm/kvm.h
-index 4f24201376b1,85bbc472989d..000000000000
---- a/arch/riscv/include/uapi/asm/kvm.h
-+++ b/arch/riscv/include/uapi/asm/kvm.h
-@@@ -175,8 -175,8 +175,10 @@@ enum KVM_RISCV_ISA_EXT_ID=20
-  	KVM_RISCV_ISA_EXT_ZCF,
-  	KVM_RISCV_ISA_EXT_ZCMOP,
-  	KVM_RISCV_ISA_EXT_ZAWRS,
- +	KVM_RISCV_ISA_EXT_SMNPM,
- +	KVM_RISCV_ISA_EXT_SSNPM,
-+ 	KVM_RISCV_ISA_EXT_SVADE,
-+ 	KVM_RISCV_ISA_EXT_SVADU,
-  	KVM_RISCV_ISA_EXT_MAX,
-  };
- =20
-
---Sig_/Al/oLvNfFhFhjv6fSzaij77
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdAAeYACgkQAVBC80lX
-0GxHgAf/f+vqaqPuN77tVobiLbHp9RaHeV0poD+mUubimEjqTsDzB2a7MF60AsWE
-gHNnYdCfPhGOBSBvMUsBM3zO4v9YlSjuUTYQ/fDsfqhoiP8iSbGlfbAz8yfP8WWd
-96qtYcJB7+cX6ggD/lA4soLCcUu3S62yePqiRRRwm6FHYapYtdYXxDOvgY7kkitd
-9aC8tiI7yXTUzqB5cLhNKmK7eqzeSkY1SHi9F4rIhcBorX/XXJOLQL0kQx1HVGl6
-5Z45e9o5XW+OF4Po3vJGSh1EB+HXPLNJ98wvIVZYHmQXbnVDOuoACUQmipGwQMTV
-8rS3U4RdjHHlJaaXnXsNIP9qZPkfhQ==
-=qgFg
------END PGP SIGNATURE-----
-
---Sig_/Al/oLvNfFhFhjv6fSzaij77--
+Kees Cook
 
