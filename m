@@ -1,192 +1,178 @@
-Return-Path: <linux-kernel+bounces-418417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA039D6167
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:34:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C43A9D6165
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:33:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF85281F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:34:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D949EB2681F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861071DEFFD;
-	Fri, 22 Nov 2024 15:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2241DE2A2;
+	Fri, 22 Nov 2024 15:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2rZWVwi"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DPDBwdtB"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230D11DED42;
-	Fri, 22 Nov 2024 15:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19AF86A332
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732289628; cv=none; b=lRM0TzBuvuE605DhNa3/ZQxXVI/8riGuO7Pembh0Beisj/FWiuWWZFv9TJ0ZXDlV2FAGtEHo2rO9hSvEkbiMgzHeixRu/vnieuwoKhVR/aToBH7B7usqiwXxRm1wrIIDkiiMlvb9vs5Ascpl5Welck+B82+KixBkpfNfR4ncTJA=
+	t=1732289625; cv=none; b=VVKxjg7JuEiHrT+Q4rjMnJDLZkK97KMu7V7i0pIDExo2lxtQ3gZ9THlQYTFr4uI+Mjiu9AwZ27Kxga4NUHX1+dWfP+jXJ9vWZvgQzF9CHqbuHIx42b741GnZqkEPWpa5J1DjjXBxIXO7cH1IHaX1nKNGxiyhVoPbuy5ShwnK31s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732289628; c=relaxed/simple;
-	bh=xo4+kV5E+2M6xeLkNvQZ0TIbYdb7KdEbAANZfKC+f3c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c2pG96Rp9rk0gdE0MaRwCQn5QWOj7Zza8eQmzlCf8PMk2DHOr8+V0475NVG3l0DF23Bw7KxKam3d500ZRRgQa5qdchxN/6hdCqfiTuMU+W50/pejBcvZnCxFzG5oCwNZ++LEHQPuySqrCEZxsaEcjzYh1U3Nl5KrCPS572Cr9FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2rZWVwi; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4316cce103dso25838225e9.3;
-        Fri, 22 Nov 2024 07:33:46 -0800 (PST)
+	s=arc-20240116; t=1732289625; c=relaxed/simple;
+	bh=5/4mOCruP9LCg0HwglvqohMWx01ZFcFeJHiltZsn6Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbWk8p2UWJ0VSSgRI7MeTKy9GaXoUTRQF8gCRmCnEI7fors0AnePwHIU+TpN4QhsUegnmrqwhJUJDvx/sSUJqSQc5+WxDm7Kxx/CB3DNlcRFLmERtEpomdajx0OqkYWrzCEUZ8J0PNpBO4V3ig0RgGOsYMiSI++0lTFrtkFaEhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=DPDBwdtB; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460c2418e37so14536671cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:33:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732289625; x=1732894425; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uLiYpBi20EG9O8tFy3xQ55Bkp776aj9iVlBPP58TR1g=;
-        b=T2rZWVwi4m5mjRDGhpEojcoeCQrqwHJJ8DbeIw7D0/EBarYhJDRDDFlfEsX2cg1YR+
-         mdKqgN3EKDIbKefbqCXbTQ76+ibhfrHctt9teXZ46wVUkeE3jZ3DXSthZJdDehzqGhjE
-         ILdk2qzUEsjuwYmhrW2Db9b8sx5nyDKYA21eN6aOrHoMNcFXZpQGM5uLNkVd/cW932E4
-         sdCFu3VYDlcadWV4S96UECQgaHRTav75Vdo+1XmBueaZS9MF7EeZaF4ApGND3MmVosqs
-         t24JzvN5gWROCeJBjihxr6II2KnjgEukM9/oOLuvka4FdaGrfSx4DyTdLLFUdcbOfl3o
-         HCIw==
+        d=ziepe.ca; s=google; t=1732289622; x=1732894422; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EOCWTCKBT/RmxXc7uytrHzl3RpOs2C/hy6YIYREc/Lg=;
+        b=DPDBwdtBRUA3evxTQe3BT7jm8vK1mahsr4wxYESKT0YL338iFFzvFUN6pBKr3xQytM
+         fvEeWLlVmERb67jMfHvxyoGz9vwL+mwoWLkmGIuvj5oqcbImX1jZVuOEYPwjGZl1LfJf
+         18neTU66RfhIxuzMD3Z4Lk9l3cZjRb0RE+odyanE+g4AGEkkJw0mKxjxdqJcD/EckRMp
+         z0MSXLhYtiJ+xH3nbnvV7PzYvXnnYMbOO7jYDL7uBEZV1pdFjsbtRFumEQ+WrnI8MWrS
+         mNtw/82RhY+w/piaO8hxJsf+2tk71tF7yXVXiBOxbu8PWV9eowJddZ+sswNNLTbnooGy
+         c4EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732289625; x=1732894425;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uLiYpBi20EG9O8tFy3xQ55Bkp776aj9iVlBPP58TR1g=;
-        b=c6erKjwUTVZktFWS4XkJKJy8/wT9zmKzQQpUO5mPC6zTSXoOE8lVA7JndIW6hwUaUi
-         n5F95vEFB0O2whtz6AWUA8qdicnfuuuuZk62LjcTvoeFO8ENThvCNb/Ql3lKfurAtkdl
-         C7Nt1FZe5ZKRyWI/0jYy8dXVewvEPibpW3QNhp8x8ODhq/gPcrmHCpU5hAFnBErJah65
-         KMhdD9tHVf5M92JyXqMabIgI4sLzbjgCl0fqYyc62HTiOxf9RFx0m2JLCrlJUePnd4E1
-         g4btg2YcPdgbrKwUjALg3ayS/bILDsCMEfw97+vYryIYL+liY5hG4rcQF6HTMa52r2Vi
-         H8DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVItvTCLIXMppkEKG1e4wGNhblDKI0ZU/P8b+icQOz7qP0JsyltZBAyIuUtHcaxFh9E8p8EcVCRxNCkyEQ=@vger.kernel.org, AJvYcCWnd+OVrIqo/RAEKK/5bkkWGwphXyxSW4nklyb8IYirGmJTTa4awrSpIOYDMJQZPAoFmf1vUFKFIV2yUV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwabbMGfySWsGW81CXc2VTf21HlNklVzHPua5sAlQ6KsV0/fBDZ
-	rzCZtLQ/ScC23hi0/42xxyJLe8ZuQgEgpDCSKldncmJurBTc7h63
-X-Gm-Gg: ASbGncsgCNO5cneznXBgE6SQcVUgb/YEHcg5TKPWK63c74BjxopDa/Xr3rW/aTgbvSs
-	pq5Y1fgxVs+kpPWmvy1ZoVCI7kkLW/XYBFkU+Ug+ythb0isM8+nHgtugDGK8YFpvXyp9lH+nEVR
-	sdS/TdkTVXPXaVmQRYmPGONZXeF7qdJ4RRH9HNqQ/tN39fP4OaJaUgw9UrVUG3OIkQnICkEuket
-	45oY4CIyuDFjJ9QqKZdWCNLQc7n8SSzwOfs74npRZ7cbpe/j12Bcd8B4kYZbA1d
-X-Google-Smtp-Source: AGHT+IF3Jtg8QbMZ7RR1dlvXDquSxeBjyFrAYm5xZbRfvAhnQ6d14MlqNDynyDcQWJfM7FtpW0xlXQ==
-X-Received: by 2002:a05:600c:1909:b0:431:9a26:3cf6 with SMTP id 5b1f17b1804b1-433ce41047fmr34406135e9.4.1732289625323;
-        Fri, 22 Nov 2024 07:33:45 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.131.151])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-433b45d395asm93484475e9.19.2024.11.22.07.33.44
+        d=1e100.net; s=20230601; t=1732289622; x=1732894422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EOCWTCKBT/RmxXc7uytrHzl3RpOs2C/hy6YIYREc/Lg=;
+        b=RX0Rm0116tj+rI9drIo5jAwDzj16hpesnFlci5HmhaykrLCCFUyQ6qOeC8BMnuQ+3y
+         GV0pmlJ05TGzl8auf30kiZAm76UXwZGZVTiLIz+vKaPVsgpQYhqtaNspRBca265gAJG0
+         uvkR1/rXeXP4cReJHWQxELKXp4TU37syWkVy66MBioK99q3Zg6nGsRI3HIcEaA8Cd1p1
+         agInZI8Cz5JVjJd2FmBCVI2XIvGpd/foTGqvGys3Jakz9SVOgF/WmZRxPJFC+wM78ho7
+         D3wMCWX8QMs7h/LbBdksHZ1p3dIOhcHVMhHDmS0iCHl0D55Y+oc5LHpSMzkfEWJyHFJV
+         IN/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ybHUXwz8w2Ze69xeZGOoQ0W44AFJfYTc7g7zuRgeXKWwMvCGyAV06d2VedtseFFCLJH70YDcGj+txaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+OK0l6LDRCqLpYOoyx9wzGgcSpecV3olpnoNrM+s2stwd6dA3
+	fMNSNUAguz76LpsVOICQEcxwH/766o4YKt9vsA2z23LNiNVBIBob16UABq674YpomrtBTD8/KGx
+	S
+X-Gm-Gg: ASbGncvMg0WR4EWtjgh004pTAFqCbh7egsxyiD2HrKZRbrZXTW4jTwgCBn2CnMr0Rmn
+	2qQu3Y9wI0+jhegQHowxS7c+H1rHZzMd+XXyMM26BoPUnjq5SYLG43Mzsp1WJQioqGZKkFYTKyR
+	NwQr2MHGVjgGxVvTiLc7vJDiK+bgBvI39BkenXEYi+QLh6CiRH6QoCrrdnlBpKR1qA7oXyK1rKV
+	SThWC7C9gi31RQ4YzWCk/d9S+8WJDxcJdcKfItifihPJ7q/eHYWxvnJbaoQcBvkRl1hSdLN12Zt
+	+ZlR5IqfflnYMgtQwJicYmw=
+X-Google-Smtp-Source: AGHT+IE/84E5Hy9Mt/fOujPHeev+IBUL62FBMMJZ/uhWKf39i8Fv9iytqMnfgjTl0nmjaLXsEb0oaw==
+X-Received: by 2002:a05:622a:388:b0:461:186b:6b9d with SMTP id d75a77b69052e-4653d568a95mr41065441cf.17.1732289621751;
+        Fri, 22 Nov 2024 07:33:41 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b514152bbasm95886085a.100.2024.11.22.07.33.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 07:33:44 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	=?UTF-8?q?Pawe=C5=82=20Anikiel?= <panikiel@google.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: v4l: subdev: Use dev_err() to print errors and clarify
-Date: Fri, 22 Nov 2024 17:33:39 +0200
-Message-ID: <20241122153343.237308-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        Fri, 22 Nov 2024 07:33:40 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tEVfA-00000004Tw6-1J4a;
+	Fri, 22 Nov 2024 11:33:40 -0400
+Date: Fri, 22 Nov 2024 11:33:40 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, tjeznach@rivosinc.com,
+	zong.li@sifive.com, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org,
+	tglx@linutronix.de, alex.williamson@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
+ remapping
+Message-ID: <20241122153340.GC773835@ziepe.ca>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-25-ajones@ventanamicro.com>
+ <20241118184336.GB559636@ziepe.ca>
+ <20241119-62ff49fc1eedba051838dba2@orel>
+ <20241119140047.GC559636@ziepe.ca>
+ <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
+ <20241119153622.GD559636@ziepe.ca>
+ <20241121-4e637c492d554280dec3b077@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121-4e637c492d554280dec3b077@orel>
 
-The error values end up being returned to userspace, it makes sense to
-have some useful information printed when debugging them, even if the
-reason for the errors are bad configs or internal driver issues.
+On Fri, Nov 22, 2024 at 04:11:36PM +0100, Andrew Jones wrote:
 
-Replace dev_dbg() with dev_err() for errors.
+> The reason is that the RISC-V IOMMU only checks the MSI table, i.e.
+> enables its support for MSI remapping, when the g-stage (second-stage)
+> page table is in use. However, the expected virtual memory scheme for an
+> OS to use for DMA would be to have s-stage (first-stage) in use and the
+> g-stage set to 'Bare' (not in use). 
 
-Also, when using complex pipelines with multiple bridges between the
-video device and multiple source sub devices, printing just the video
-device name for each error does not provide enough context as to which
-operation failed.
+That isn't really a technical reason.
 
-Add sub device entity name to the messages where possible to clarify the
-source of the errors.
+> OIOW, it doesn't appear the spec authors expected MSI remapping to
+> be enabled for the host DMA use case.  That does make some sense,
+> since it's actually not necessary. For the host DMA use case,
+> providing mappings for each s-mode interrupt file which the device
+> is allowed to write to in the s-stage page table sufficiently
+> enables MSIs to be delivered.
 
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
----
- drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+Well, that seems to be the main problem here. You are grappling with a
+spec design that doesn't match the SW expecations. Since it has
+deviated from what everyone else has done you now have extra
+challenges to resolve in some way.
 
-diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-index 4f0eecd7fd66f..d51b4594d11c5 100644
---- a/drivers/media/v4l2-core/v4l2-subdev.c
-+++ b/drivers/media/v4l2-core/v4l2-subdev.c
-@@ -2303,20 +2303,21 @@ int v4l2_subdev_enable_streams(struct v4l2_subdev *sd, u32 pad,
- 				    &found_streams, &enabled_streams);
- 
- 	if (found_streams != streams_mask) {
--		dev_dbg(dev, "streams 0x%llx not found on %s:%u\n",
-+		dev_err(dev, "streams 0x%llx not found on %s:%u\n",
- 			streams_mask & ~found_streams, sd->entity.name, pad);
- 		ret = -EINVAL;
- 		goto done;
- 	}
- 
- 	if (enabled_streams) {
--		dev_dbg(dev, "streams 0x%llx already enabled on %s:%u\n",
-+		dev_err(dev, "streams 0x%llx already enabled on %s:%u\n",
- 			enabled_streams, sd->entity.name, pad);
- 		ret = -EALREADY;
- 		goto done;
- 	}
- 
--	dev_dbg(dev, "enable streams %u:%#llx\n", pad, streams_mask);
-+	dev_dbg(dev, "enable streams %s:%u:%#llx\n",
-+		sd->entity.name, pad, streams_mask);
- 
- 	already_streaming = v4l2_subdev_is_streaming(sd);
- 
-@@ -2333,8 +2334,8 @@ int v4l2_subdev_enable_streams(struct v4l2_subdev *sd, u32 pad,
- 	}
- 
- 	if (ret) {
--		dev_dbg(dev, "enable streams %u:%#llx failed: %d\n", pad,
--			streams_mask, ret);
-+		dev_err(dev, "enable streams %s:%u:%#llx failed: %d\n",
-+			sd->entity.name, pad, streams_mask, ret);
- 		goto done;
- 	}
- 
-@@ -2403,20 +2404,21 @@ int v4l2_subdev_disable_streams(struct v4l2_subdev *sd, u32 pad,
- 				    &found_streams, &enabled_streams);
- 
- 	if (found_streams != streams_mask) {
--		dev_dbg(dev, "streams 0x%llx not found on %s:%u\n",
-+		dev_err(dev, "streams 0x%llx not found on %s:%u\n",
- 			streams_mask & ~found_streams, sd->entity.name, pad);
- 		ret = -EINVAL;
- 		goto done;
- 	}
- 
- 	if (enabled_streams != streams_mask) {
--		dev_dbg(dev, "streams 0x%llx already disabled on %s:%u\n",
-+		dev_err(dev, "streams 0x%llx already disabled on %s:%u\n",
- 			streams_mask & ~enabled_streams, sd->entity.name, pad);
- 		ret = -EALREADY;
- 		goto done;
- 	}
- 
--	dev_dbg(dev, "disable streams %u:%#llx\n", pad, streams_mask);
-+	dev_dbg(dev, "disable streams %s:%u:%#llx\n",
-+		sd->entity.name, pad, streams_mask);
- 
- 	if (!use_s_stream) {
- 		/* Call the .disable_streams() operation. */
-@@ -2432,8 +2434,8 @@ int v4l2_subdev_disable_streams(struct v4l2_subdev *sd, u32 pad,
- 	}
- 
- 	if (ret) {
--		dev_dbg(dev, "disable streams %u:%#llx failed: %d\n", pad,
--			streams_mask, ret);
-+		dev_err(dev, "disable streams %s:%u:%#llx failed: %d\n",
-+			sd->entity.name, pad, streams_mask, ret);
- 		goto done;
- 	}
- 
--- 
-2.47.0
+Just always using interrupt remapping if the HW is capable of
+interrupt remapping and ignoring the spec "expectation" is a nice a
+simple way to make things work with existing Linux.
 
+> If "default VFIO" means VFIO without irqbypass, then it would work the
+> same as the DMA API, assuming all mappings for all necessary s-mode
+> interrupt files are created (something the DMA API needs as well).
+> However, VFIO would also need 'vfio_iommu_type1.allow_unsafe_interrupts=1'
+> to be set for this no-irqbypass configuration.
+
+Which isn't what anyone wants, you need to make the DMA API domain be
+fully functional so that VFIO works.
+
+> > That isn't ideal, the translation under the IRQs shouldn't really be
+> > changing as the translation under the IOMMU changes.
+> 
+> Unless the device is assigned to a guest, then the IRQ domain wouldn't
+> do anything at all (it'd just sit between the device and the device's
+> old MSI parent domain), but it also wouldn't come and go, risking issues
+> with anything sensitive to changes in the IRQ domain hierarchy.
+
+VFIO isn't restricted to such a simple use model. You have to support
+all the generality, which includes fully supporting changing the iommu
+translation on the fly.
+
+> > Further, VFIO assumes iommu_group_has_isolated_msi(), ie
+> > IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
+> > be true if the iommu is flapping all about? What will you do when VFIO
+> > has it attached to a blocked domain?
+> > 
+> > It just doesn't make sense to change something so fundamental as the
+> > interrupt path on an iommu domain attachement. :\
+> 
+> Yes, it does appear I should be doing this at iommu device probe time
+> instead. It won't provide any additional functionality to use cases which
+> aren't assigning devices to guests, but it also won't hurt, and it should
+> avoid the risks you point out.
+
+Even if you statically create the domain you can't change the value of
+IRQ_DOMAIN_FLAG_ISOLATED_MSI depending on what is currently attached
+to the IOMMU.
+
+What you are trying to do is not supported by the software stack right
+now. You need to make much bigger, more intrusive changes, if you
+really want to make interrupt remapping dynamic.
+
+Jason
 
