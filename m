@@ -1,198 +1,180 @@
-Return-Path: <linux-kernel+bounces-418534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359F49D62BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:08:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825939D62BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 823C2B24BA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A4328248E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7990A1DF72F;
-	Fri, 22 Nov 2024 17:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED401DF759;
+	Fri, 22 Nov 2024 17:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TRMxCFMo"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HjuZNr/w"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A761DF275;
-	Fri, 22 Nov 2024 17:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4220A1DED78
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732295258; cv=none; b=gViT45TK55zPo5lTAkXU9uAS9Xrd6CGnPePjx0McLCyf7NYwafyjHHyKIj8J/NIBS3vsNq0i33SVfXFHcCKkZmw3TFI9SMBHEJW6lh+TZm/BWKfkQbKuDuanSWuoUn/Z98DFAs+XZiTX0SHgkJwTTtR875anKmV2Mp+eIsSp4+U=
+	t=1732295288; cv=none; b=WmrU+I8PiI5ZonWP97Ohw/D+0lCAHJnJnfuEj+OgOHbvg1b+EEOY4tH3Y7k9puQPCHw2cK4No6A1499sCBH+nAhCxpsP2zx+tIzFstDxeUCg1bkm9k5buZPbFjtHncxS1vHXbZ3wLPG87aUxb9Hbl0kcnHB2/uxIv10gIotw5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732295258; c=relaxed/simple;
-	bh=MepBEeqi86REzF4Piw/RMtxF9q/67f9BaMHFsebimAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EA4xsuPN4wHJwU+T32HE8zVqiw2XanVpX/Ms43vWwpvR6csnWmm6z33FMxJ86aBNP0O0MPM/GyQodACh0imK2lnDsBCxyppqiyf7vX/x6N/mjdeiFKf/GWOSC/jguF0IiKp6eq7GIDKxISsJ04RIgaoc6zF3AT/CwuYXGCuzvOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TRMxCFMo; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21271dc4084so23241415ad.2;
-        Fri, 22 Nov 2024 09:07:36 -0800 (PST)
+	s=arc-20240116; t=1732295288; c=relaxed/simple;
+	bh=65Td0TnTUIzwe/pt9Jcl3ypj6q4zhZfthV5rP5mHkJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBz3MR5poeZmCLo08XDgR9s4ANsFCecbmzdbKZulgGmj7Fp/Ot2ZsA9pDcgAhcY84D0j6N04XGby7O85HF3xp7RZ/hdsC58rPGV3JdUZ0fSPLvnZ94PGrwa1Q5A7Nb21u6LuQAH65pWCUgAc9XbnX+HNq3iuso94dPsLqihb868=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HjuZNr/w; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d01db666ceso1381820a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:08:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732295256; x=1732900056; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=euz7Qt5oB+ObQldsMDnUpp7M7zBEDLVD6Rc8OH5eZ+s=;
-        b=TRMxCFMoukzh31koNe5rk0O/+FTjJQiqy+i/qRYd52G/+h6Mx9byh431739IDKcLOU
-         z9stRJFBGnKvrZFuQriI0IwsGgBYM10Rw57o+8rDXbBR/yKl0ppyVg3NksCTPWNQYcei
-         vvL/9QyU7iS0c+1aCueAAZQ+Wz7qM1KmdVq7sYHfl4C35pcttYkPHnrnIfeqDcHqbl2K
-         MbdBKVaP1LaNDIYbhjGDjie6/fXZAMToCjX5ZIGZYEufOwFkk5H2atJbJX+07ZKnLThd
-         AGBDiUo2Ud+CVDW1eLUDdreKUyHwMciJOelHcmTO5+r0Z1tx39/oOJL7XGYttpRuyNFe
-         KQWQ==
+        d=ventanamicro.com; s=google; t=1732295284; x=1732900084; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0DOX93bw5phi/WY0MT30BO5hYdUtb3juzdM+PG5dKU=;
+        b=HjuZNr/w7GwLLQw3JTN1SRPr2ObOq8hPJ1nkhYgMRHOCGcaFfM5X/A2bw+Tgtv6HxA
+         1j9uoglZuOkEdMcsbHpSZ52R5qSWxrJN9VCMhfYtCNeJUcf7pMt/R2ERwgTk1OVSbiWA
+         r8gQG9haIP8ztX6n7cnZgJksqhp5xZ57Ya5VrpUIdg6Mo5VWGuskgaqPa1XPgzwUmHiV
+         MG0zSS9MbOzyR9rz9cY7cwiYDTLTAExO7Gg0RkDzAX5GLIeqJDnZ73mRoT4XgW6h9NCa
+         2oZjBpWmU6ytEguPTXJF43/Fg7a3oAeJW3HxJwjdM0T+VtYfStl1yuTMGMKhbL7ThHa9
+         OIsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732295256; x=1732900056;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1732295284; x=1732900084;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=euz7Qt5oB+ObQldsMDnUpp7M7zBEDLVD6Rc8OH5eZ+s=;
-        b=pZYQHAbz9rvaapvJMJfam6thdYzUZrVmDeor0vS3A36LUbDwRAVHamj1ts3AbKPiLl
-         INUcaJCWoZrvm+WpwIQsWOzKSgThUnT0O0oABkEd+vAu0hcYEDomu8Ltt2W1oBNmXzT0
-         0W5JkSn313fxPZSBq4SM8XhayswuTH7Esni7fJVf8/+ewXY4CMiodeDsPUOtHtG1P/pm
-         wIaZaYwSMZC2F2lWI8GabaNXvAx6+mPj2e64P8VgKD+vERWonkZHxlomvuolHpRvhqph
-         PWs8xTOiujPq9uDi1/6gvNclM5iarGe8bAXVO9//1fTeQGPQCPkHVF4mEI7TXIc3rJY3
-         HWDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRpOI+B+gpYVx4NB4Dc4Igen85NZsRJMbQjnM/8rxjpd9oNATmU8qOBJuy9MRiJrnUI80IghIHsmqzl7Dz@vger.kernel.org, AJvYcCWAIClt/BI/nwQ0HfSOoc2Kp46vzPz3WWoYztTOgXC9lz+SzFGkw84DMZOR6DXHDYKM/BbYUp2sEpC+hqE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT9ZFG7Rq/0yl2G1cUoJOjqNJTLbTzDls7FHIygJ6oAzU5lI/z
-	pvPys65S9Q09jZ6QBpaR0SDDt2FkDLaDL0Xznpj5nK3vPm5TTPG3
-X-Gm-Gg: ASbGnct1uWD6Qyszj+igKBuMWl/v/L2kOTQIKIoM/LiQc25uS3Qrlp6b6id9+sgfbbL
-	QxYiWWOYnmuf9Ves4+Wse5jnJgE+1WniIa1FkKCnBoYqBU+amMO46Qnql++Em/ag1xEHuSohGS2
-	6m5iJhztX9af2Wcq72LcR69dRcRVSgoXxp2QaLLZCUn4QNUrNYVyEHKtsy0OutSet0odY1LV5Qs
-	tmwPw51WcL/w5jsoTyVrzVDb4ghpuK0e0XhUcoskTcVt5VyMt2iYpwmk4UbSaLqnYa9QzBiK2zl
-	sEaZ20nm13tFR1Rr0qCrn1E=
-X-Google-Smtp-Source: AGHT+IG2HcqI4+uC/VHmIW1bxR0A2dYvK8stBzYhGJaJDY0GmcYfxwGCVqck/s9L6tJgM4SyNWkXew==
-X-Received: by 2002:a17:902:da8b:b0:211:efa9:a4e6 with SMTP id d9443c01a7336-2129f5e73c9mr43043855ad.23.1732295256329;
-        Fri, 22 Nov 2024 09:07:36 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba29d9sm18595165ad.59.2024.11.22.09.07.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 09:07:35 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <92c2c05a-be0d-4017-a766-62832668512d@roeck-us.net>
-Date: Fri, 22 Nov 2024 09:07:33 -0800
+        bh=Y0DOX93bw5phi/WY0MT30BO5hYdUtb3juzdM+PG5dKU=;
+        b=FTPDI9LHZkdNX/sMY0dvIssIuixevyJldbCrYaGDxy4SnxlvNoVp858GDC9wRRH6Gk
+         jDT+227O9IyboIQf+QOs7BhOMTbmYwsHQ8IKXVOjmmz+wuDNKIZSqldTal2Ij3hHbSMI
+         9fmll/k8DXK7bEzyGW/CpvlGOvM8ph6NNjRhH0gCP4SQBg+e6TbwHqIrhBjG1r/lZAhy
+         YoGrEwcvAthuj1kx4UFtRxaMF/Yj8a86iKq/LOU6cHx3ng/n84VQAytjm2/6AUe/MHSj
+         vo92QbLVQWIFPNXwTkC2LhmeRfEcFlXYzgGN9fN9EfGmr5Z0+FA6WoUQmKOnWX0GHBjH
+         ovMw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0FMW9PbQ6v+u/KSB6aYtgY721gQ8OpglI0WbD9711mxzZVJTLJhS7urd1z32H80HZ/88n7oEyMkXzhfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6z9dkuRgvA/9JWUW6MuJ1UMWfdExRq/PDQUC+/HKZH/whk7Ax
+	uEjY/jfDYils+w1MW4R9WshP+FIDGa35FCzvnXiCUzDTXbeA9jxmCrgP4wDo7E0=
+X-Gm-Gg: ASbGncuOq0N3fO+zHyN+X/1OSkBsw7mXWEb5LXO90ugNE9GCG+nJSLuQUrynD8DcKc+
+	YdlKdul3YiZGqBKjJy2q+9SZpLhy7acEF2jQxYO2PQDTJwqBTSsFdFBN2fj1ZoDb76dtkaFLPCD
+	KRq9RsACQ8D3Mt8baeJJ9K+HDlL8rVHjOezgYMJsnTh3ghScUYafOOCjVoODYSxXyKtRpVlrJIf
+	imf22vqiFv9tBkahWML7AJuWdU+pox9tCzdgkvc5WbVZwPfNtC2K8FQEDKyB9uTH7fOqCSxGjQe
+	5ahrFu/zoNHtODepbiT4T6+ajaAW0zs7ajk=
+X-Google-Smtp-Source: AGHT+IGtSa/c759tcXKL36hfS9NeLmo4AZHZNWZDIockuCHHkNSeQM+NVau/IABnZYXKpy1e8IALBA==
+X-Received: by 2002:a05:6402:510c:b0:5cf:9a8:2bca with SMTP id 4fb4d7f45d1cf-5d0207b9aedmr2507880a12.31.1732295282728;
+        Fri, 22 Nov 2024 09:08:02 -0800 (PST)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d3b032esm1100517a12.19.2024.11.22.09.08.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 09:08:01 -0800 (PST)
+Date: Fri, 22 Nov 2024 18:07:59 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
+	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
+	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
+ remapping
+Message-ID: <20241122-8c00551e2383787346c5249f@orel>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-25-ajones@ventanamicro.com>
+ <20241118184336.GB559636@ziepe.ca>
+ <20241119-62ff49fc1eedba051838dba2@orel>
+ <20241119140047.GC559636@ziepe.ca>
+ <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
+ <20241119153622.GD559636@ziepe.ca>
+ <20241121-4e637c492d554280dec3b077@orel>
+ <20241122153340.GC773835@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, Arnd Bergmann <arnd@kernel.org>,
- Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122153340.GC773835@ziepe.ca>
 
-On 11/22/24 07:35, Niklas Schnelle wrote:
-> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
->> On Fri, Apr 05, 2024 at 05:29:24PM +0200, Niklas Schnelle wrote:
->>> In a future patch HAS_IOPORT=n will disable inb()/outb() and friends at
->>> compile time. We thus need to add HAS_IOPORT as dependency for those
->>> drivers using them unconditionally. For 8250 based drivers some support
->>> MMIO only use so fence only the parts requiring I/O ports.
->>>
->>> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
->>> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
->>> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
->> ...
->>> @@ -422,10 +443,12 @@ static void set_io_from_upio(struct uart_port *p)
->>>   	up->dl_write = default_serial_dl_write;
->>>   
->>> +	default:
->>> +		WARN(1, "Unsupported UART type %x\n", p->iotype);
->>
->> So, according to this patch, the serial uart on microblaze, nios2,
->> openrisc, xtensa, and possibly others is not or no longer supported.
->>
->> WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8250_set_defaults+0x1a8/0x22c
->> Unsupported UART type 0
->>
->> Any special reason ?
->>
->> Guenter
+On Fri, Nov 22, 2024 at 11:33:40AM -0400, Jason Gunthorpe wrote:
+> On Fri, Nov 22, 2024 at 04:11:36PM +0100, Andrew Jones wrote:
 > 
-> So according to the warning the p->iotype is 0 which is UPIO_PORT.
-> For UPIO_PORT the switch above the WARN would pick io_serial_in() and
-> io_serial_out() as handlers. These use inb() respectively outb() to
-> access the serial so I don't see how they would work with !HAS_IOPORT
-> and it most definitely won't work for s390.
+> > The reason is that the RISC-V IOMMU only checks the MSI table, i.e.
+> > enables its support for MSI remapping, when the g-stage (second-stage)
+> > page table is in use. However, the expected virtual memory scheme for an
+> > OS to use for DMA would be to have s-stage (first-stage) in use and the
+> > g-stage set to 'Bare' (not in use). 
 > 
-> Now for Microblaze Kconfig says to select HAS_IOPORT if PCI so I'd
-> assume that it can use inb()/outb() and maybe the PCI requirement is
-> not correct if this isn't a PCI device and it used to work with
-> inb()/outb()? For nios2, openrisc, and xtensa they don't select
-> HAS_IOPORT so either it really won't work anyway or they should select
-> it. Can you tell us more about the devices involved where you saw this?
+> That isn't really a technical reason.
 > 
+> > OIOW, it doesn't appear the spec authors expected MSI remapping to
+> > be enabled for the host DMA use case.  That does make some sense,
+> > since it's actually not necessary. For the host DMA use case,
+> > providing mappings for each s-mode interrupt file which the device
+> > is allowed to write to in the s-stage page table sufficiently
+> > enables MSIs to be delivered.
+> 
+> Well, that seems to be the main problem here. You are grappling with a
+> spec design that doesn't match the SW expecations. Since it has
+> deviated from what everyone else has done you now have extra
+> challenges to resolve in some way.
+> 
+> Just always using interrupt remapping if the HW is capable of
+> interrupt remapping and ignoring the spec "expectation" is a nice a
+> simple way to make things work with existing Linux.
+> 
+> > If "default VFIO" means VFIO without irqbypass, then it would work the
+> > same as the DMA API, assuming all mappings for all necessary s-mode
+> > interrupt files are created (something the DMA API needs as well).
+> > However, VFIO would also need 'vfio_iommu_type1.allow_unsafe_interrupts=1'
+> > to be set for this no-irqbypass configuration.
+> 
+> Which isn't what anyone wants, you need to make the DMA API domain be
+> fully functional so that VFIO works.
+> 
+> > > That isn't ideal, the translation under the IRQs shouldn't really be
+> > > changing as the translation under the IOMMU changes.
+> > 
+> > Unless the device is assigned to a guest, then the IRQ domain wouldn't
+> > do anything at all (it'd just sit between the device and the device's
+> > old MSI parent domain), but it also wouldn't come and go, risking issues
+> > with anything sensitive to changes in the IRQ domain hierarchy.
+> 
+> VFIO isn't restricted to such a simple use model. You have to support
+> all the generality, which includes fully supporting changing the iommu
+> translation on the fly.
+> 
+> > > Further, VFIO assumes iommu_group_has_isolated_msi(), ie
+> > > IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
+> > > be true if the iommu is flapping all about? What will you do when VFIO
+> > > has it attached to a blocked domain?
+> > > 
+> > > It just doesn't make sense to change something so fundamental as the
+> > > interrupt path on an iommu domain attachement. :\
+> > 
+> > Yes, it does appear I should be doing this at iommu device probe time
+> > instead. It won't provide any additional functionality to use cases which
+> > aren't assigning devices to guests, but it also won't hurt, and it should
+> > avoid the risks you point out.
+> 
+> Even if you statically create the domain you can't change the value of
+> IRQ_DOMAIN_FLAG_ISOLATED_MSI depending on what is currently attached
+> to the IOMMU.
+> 
+> What you are trying to do is not supported by the software stack right
+> now. You need to make much bigger, more intrusive changes, if you
+> really want to make interrupt remapping dynamic.
+>
 
-This is seen when booting the affected architectures with qemu.
+Let the fun begin. I'll look into this more. It also looks like I need to
+collect some test cases to ensure I can support all use cases with
+whatever I propose next. Pointers for those would be welcome.
 
-Logs:
-
-https://kerneltests.org/builders/qemu-microblaze-master/builds/327/steps/qemubuildcommand/logs/stdio
-https://kerneltests.org/builders/qemu-nios2-master/builds/314/steps/qemubuildcommand/logs/stdio
-https://kerneltests.org/builders/qemu-openrisc-master/builds/301
-https://kerneltests.org/builders/qemu-xtensa-master/builds/311/steps/qemubuildcommand/logs/stdio
-
-Guenter
-
+Thanks,
+drew
 
