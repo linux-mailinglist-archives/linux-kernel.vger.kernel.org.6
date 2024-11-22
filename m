@@ -1,92 +1,185 @@
-Return-Path: <linux-kernel+bounces-418098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F8439D5D2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:22:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6209D5D3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569EA1F234C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E004A28319E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2762D1DDA34;
-	Fri, 22 Nov 2024 10:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0231DE4CC;
+	Fri, 22 Nov 2024 10:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=skogtun.org header.i=@skogtun.org header.b="PtOfpKoO"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VDjqCOuI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755B7171088
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B901DDC39;
+	Fri, 22 Nov 2024 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732270929; cv=none; b=dAbg7QAo2dNU4G0YkgYZhWbFG/0cDCIzhiYptyqO0L1WwPHhndV3Bj4ZLOQhB19GgN0UGws7JGweIVFYwi4nKcJUNdOMPZzCqrd4hdakt/tgqjJOfVrRGvPaCI/IpBbGlxDFgzrRM85cTZECVYC2exvUnA1LoG1xpylbsXGf1UY=
+	t=1732270957; cv=none; b=MpRTB0c5FM4h2w2QxD0/f1/+D+sU0+5Y4bz8lpa6sjacQqIizqzuX/d4hucdnur1bC1Gx9i5IEK4slKToKmMFQXrKfK89lWnLrtBsV9rDtaGMKBEL1YxJc0hL80ppYADwnvOnaJZaSbIMmj53Tlv9vnmeE2o3YNZAD75IN5AYVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732270929; c=relaxed/simple;
-	bh=MG985j4h4TEB6vNdUcMB+J3tnWRBV2SkyDurD5EmC/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k0k/inD1mG4ohuyC59TswCQ1+IhGnlsVy9LUmkosrwQItNAMh+1FdIMDb+v2Z3RUn2n0IB1LDgqYxiQOb0NqPCtiNLpTfiKsPURz5Q+wTUncJojWsADtzAGa2PG+MGrkM8vVIgCqnZgIz5gF+Ch+UgZYeSZ8TgwYQ2j1seBl8O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=skogtun.org; spf=pass smtp.mailfrom=skogtun.org; dkim=pass (2048-bit key) header.d=skogtun.org header.i=@skogtun.org header.b=PtOfpKoO; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=skogtun.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=skogtun.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=skogtun.org
-	; s=ds202312; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:Sender:Reply-To:
-	Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=DEUzKWA6bADg0shRJcmS98hGe9HXD+YooKoL3Sweb+g=; b=P
-	tOfpKoOpK8UdKCWyZMjhBKw8kBRL61Hex82xixPPpyn/fKSHmRqZ7w0sLXoxkn2TAwWwVsehTTquP
-	uBtj2Mqktug2xHM5dFPkWl6XuT2b09W+VECjoiR6XwJx2GcUurQgAS2IrcdUuRg7VVI5sJeYd98kp
-	2jG28uAfvof0pszkgVtpK3Sb09rxfQ04V5F/doIRO0+sYhR+QLHKhTs/N0fyxuTzycaKTVxYxdLYT
-	HGFiaQcuHcpeXN5fk+6eRwQwQ0SrWi0NR6fmgELDzhqg51wARiTJC/vDs3RXJT+9kcusO8DhHMyh4
-	y+pKnNYOXasyN+HhrAMmX2Nqg74ZQBpFQ==;
-Received: from smtp
-	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	id 1tEQnY-00ACLt-AE;
-	Fri, 22 Nov 2024 11:22:00 +0100
-Message-ID: <b439fc9a-e0e7-4643-88be-6ffb85fc0136@skogtun.org>
-Date: Fri, 22 Nov 2024 11:21:57 +0100
+	s=arc-20240116; t=1732270957; c=relaxed/simple;
+	bh=cRe94m9FYYjIppWUlSjL4c/l+04MITohxLzc/eurtUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXo75wyMW3s5JLGRi8gO4fD1rDS9kfbSmdUky6YxYKoP7PpNQ2/Gxvpl8NT17z87A8Ziw6zLwlC/r1znfePRTdbKkFBXDj6+H2D8TmzZbhPdt0z6MoCWLij67QU08njPaInr1lI0aGCsu4+sXJ0+xNO21YbISfBRZFBa72tmv1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VDjqCOuI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 51BC38BE;
+	Fri, 22 Nov 2024 11:22:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732270934;
+	bh=cRe94m9FYYjIppWUlSjL4c/l+04MITohxLzc/eurtUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VDjqCOuIq7jR2DYTa7+I16iCWhf+kUdD/8IyvT66ob4yeJG0rUhC/yyhJOMCQlF9Z
+	 wipevVi3ZLPbJXMma6pXwSk0LbMd0n4RnpkA9LAZWsM+eoHhKwls0W5jfs9b40GnHF
+	 aTL8OHnYGgsIU3DXdH9LNYojDsUHhUGtkESApt7o=
+Date: Fri, 22 Nov 2024 11:22:30 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Subject: Re: [PATCH v2 2/3] media: i2c: imx219: make HBLANK r/w to allow
+ longer exposures
+Message-ID: <emkd4ifsubxe2cmteld2hjkvin7uaspuqvh5ptuzm5o5kgp3py@hujytrhrlc44>
+References: <20241121-imx219_fixes-v2-0-7b068a60ea40@ideasonboard.com>
+ <20241121-imx219_fixes-v2-2-7b068a60ea40@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1
-To: =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-kernel@vger.kernel.org
-References: <202411190900.FE40FA5@keescook>
- <CAHk-=wgB1L75+C89AU62n4jBEiwKs=e4dvBDOoLQ13rUwJLFXQ@mail.gmail.com>
- <87jzcxv227.fsf@email.froward.int.ebiederm.org>
- <CAHk-=wifNC+AAGVDN-B1gGNhKGqhnkoqWKCknAo6107oD0zGWA@mail.gmail.com>
- <Zz9sTFBQQSe1P8AI@kawka3.in.waw.pl>
- <87zflrsw1c.fsf@email.froward.int.ebiederm.org>
- <Z0A3EkxZZg19Dp9Q@kawka3.in.waw.pl>
-Content-Language: en-US
-From: Harald Arnesen <linux@skogtun.org>
-In-Reply-To: <Z0A3EkxZZg19Dp9Q@kawka3.in.waw.pl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241121-imx219_fixes-v2-2-7b068a60ea40@ideasonboard.com>
 
-Zbigniew Jędrzejewski-Szmek [2024-11-22 08:47:30]:
+Hi Jai
 
->> I do not see any evidence that there are daemons started by systemd
->> where systemd follows the name in /etc/alternatives on debian, or winds
->> up following a symlink on a multicall binary.  The way I understand
->> /etc/alternatives I don't think you would ever want to use it for the
->> name of a daemon that is put in a unit file.
+On Thu, Nov 21, 2024 at 05:38:03PM +0530, Jai Luthra wrote:
+> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+>
+> The HBLANK control was read-only, and always configured such
+> that the sensor HTS register was 3448. This limited the maximum
+> exposure time that could be achieved to around 1.26 secs.
+>
+> Make HBLANK read/write so that the line time can be extended,
+> and thereby allow longer exposures (and slower frame rates).
+> Retain the overall HTS setting when changing modes rather than
+> resetting it to a default.
+>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+> ---
+>  drivers/media/i2c/imx219.c | 37 ++++++++++++++++++++++++-------------
+>  1 file changed, 24 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index f98aad74fe584a18e2fe7126f92bf294762a54e3..970e6362d0ae3a9078daf337155e83d637bc1ca1 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -76,8 +76,10 @@
+>
+>  #define IMX219_VBLANK_MIN		32
+>
+> -/* HBLANK control - read only */
+> -#define IMX219_PPL_DEFAULT		3448
+> +/* HBLANK control range */
+> +#define IMX219_PPL_MIN			0x0d78
+> +#define IMX219_PPL_MAX			0x7ff0
+> +#define IMX219_REG_HTS			CCI_REG16(0x0162)
+>
+>  #define IMX219_REG_LINE_LENGTH_A	CCI_REG16(0x0162)
+>  #define IMX219_REG_X_ADD_STA_A		CCI_REG16(0x0164)
+> @@ -422,6 +424,10 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
+>  		cci_write(imx219->regmap, IMX219_REG_VTS,
+>  			  format->height + ctrl->val, &ret);
+>  		break;
+> +	case V4L2_CID_HBLANK:
+> +		cci_write(imx219->regmap, IMX219_REG_HTS,
+> +			  format->width + ctrl->val, &ret);
+> +		break;
+>  	case V4L2_CID_TEST_PATTERN_RED:
+>  		cci_write(imx219->regmap, IMX219_REG_TESTP_RED,
+>  			  ctrl->val, &ret);
+> @@ -496,12 +502,10 @@ static int imx219_init_controls(struct imx219 *imx219)
+>  					   V4L2_CID_VBLANK, IMX219_VBLANK_MIN,
+>  					   IMX219_VTS_MAX - mode->height, 1,
+>  					   mode->vts_def - mode->height);
+> -	hblank = IMX219_PPL_DEFAULT - mode->width;
+> +	hblank = IMX219_PPL_MIN - mode->width;
+>  	imx219->hblank = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
+>  					   V4L2_CID_HBLANK, hblank, hblank,
+>  					   1, hblank);
+> -	if (imx219->hblank)
+> -		imx219->hblank->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+>  	exposure_max = mode->vts_def - 4;
+>  	exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
+>  		exposure_max : IMX219_EXPOSURE_DEFAULT;
+> @@ -817,6 +821,10 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  	struct v4l2_mbus_framefmt *format;
+>  	struct v4l2_rect *crop;
+>  	unsigned int bin_h, bin_v;
+> +	u32 prev_hts;
+> +
+> +	format = v4l2_subdev_state_get_format(state, 0);
+> +	prev_hts = format->width + imx219->hblank->val;
+>
+>  	mode = v4l2_find_nearest_size(supported_modes,
+>  				      ARRAY_SIZE(supported_modes),
+> @@ -824,8 +832,6 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  				      fmt->format.width, fmt->format.height);
+>
+>  	imx219_update_pad_format(imx219, mode, &fmt->format, fmt->format.code);
+> -
+> -	format = v4l2_subdev_state_get_format(state, 0);
+>  	*format = fmt->format;
+>
+>  	/*
+> @@ -861,13 +867,18 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
+>  					 exposure_max, imx219->exposure->step,
+>  					 exposure_def);
+>  		/*
+> -		 * Currently PPL is fixed to IMX219_PPL_DEFAULT, so hblank
+> -		 * depends on mode->width only, and is not changeble in any
+> -		 * way other than changing the mode.
+> +		 * Retain PPL setting from previous mode so that the
+> +		 * line time does not change on a mode change.
+> +		 * Limits have to be recomputed as the controls define
+> +		 * the blanking only, so PPL values need to have the
+> +		 * mode width subtracted.
+>  		 */
+> -		hblank = IMX219_PPL_DEFAULT - mode->width;
+> -		__v4l2_ctrl_modify_range(imx219->hblank, hblank, hblank, 1,
+> -					 hblank);
+> +		hblank = prev_hts - mode->width;
+> +		__v4l2_ctrl_modify_range(imx219->hblank,
+> +					 IMX219_PPL_MIN - mode->width,
+> +					 IMX219_PPL_MAX - mode->width,
+> +					 1, IMX219_PPL_MIN - mode->width);
+> +		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
 
-> systemd-udevd is one example that ~everybody has installed.
-> (Though it doesn't use comm, it uses argv[0] to decide behaviour.)
+Thanks, this now looks correct to me
 
-There are quite a few of us who do NOT have systemd-udevd (or anything 
-systemd) installed.
--- 
-Hilsen Harald
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+
+Thanks
+   j
+
+>  	}
+>
+>  	return 0;
+>
+> --
+> 2.47.0
+>
+>
 
