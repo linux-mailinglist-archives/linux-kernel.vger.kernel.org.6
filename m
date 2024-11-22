@@ -1,115 +1,133 @@
-Return-Path: <linux-kernel+bounces-418831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094B89D65F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:49:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D8829D65D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2EF02859F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:49:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7459B210FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AA71E048B;
-	Fri, 22 Nov 2024 22:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eqPlq+8P"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C1918C002;
+	Fri, 22 Nov 2024 22:40:58 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77FA1A3034
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EAB176FD2
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732315674; cv=none; b=GM97HbBAHxl/sMTX9WAuWdoAC4/Wpc/0oyEZuBeESqDhhwLFVJV0OnqiH/AzeRcn88PuJ2dW/JfepAZoQcHFkqgqC0Ohm8wet6KxCdbUIb6RLnA8qUefhyYw4CJpvjplgoSgaWFtGbpKwS3MOHhyKlAz5TVb5obQeC2Q2iki6XA=
+	t=1732315258; cv=none; b=Fr6rx4PY8BBjNZFM864wLidyjJ6YdrqtXF9MlYgrhzzOSZJRvN7xze1CdRzzgOufeeMlOusqebcPBMKVhyDHHxA3EBaQlQUaUArPbPGN1weg68QGxJ3DdzdqQN2WoClAgi6LFOE2oJa0aaP4PILH1+MhPJwyn3mleGrxm5gDPjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732315674; c=relaxed/simple;
-	bh=8Rz20baMO9chwr7g9P6Po0JLe92g35121XuVgdhLAP0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MYhuw9Www8Lr0m0UCKlaD9AebHPfZApAam6F5kdc5jhh1F3M6C0a9UnkUilJ1049Ar77QZBURCUZr08m8g9iolWZAhdvq9JJofGIW5I29EwZ1UFZG+wwVOqhdtW6IGizZ7M0MOInogDMmNgvUdmssw/B8P7b/EfcDltEi6UVFA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eqPlq+8P; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JN/n6oVdrchdFC0rEj9EsgKyog6/YyewaWd3kp8GrwA=; b=eqPlq+8Pcnn9Wm6QN/urM3oJlU
-	/8Z/I/qLC3p8juCl8bKwHxS0W35gQExd/FT0b4Zapz6vZSPgBm0RbBshNbgiHmqgRw5Tc9Rq32qHi
-	r1e5SwhtUrCnrtShNKCXaV8WKRjP35ewfXGpTEmSjRgvxpFERgCqphf3MyBMAGDH5LFG15A+iMw2B
-	jozuJMz8kyg5YqdfoKYSobRNEEXhSS8e1kqL6SVjR62MXrXuVZciFl9Y2X4u4YoAd7ojZJliOqOOZ
-	t0KqIuTOdhSm4s3zSJK1Phemaew0ngdCyw6Z4VvT/giAySZYoZJNYbtBSemSQ8tbQnpTRGFlK1fq0
-	M91XDnYw==;
-Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEcQv-00000000maN-3CPb;
-	Fri, 22 Nov 2024 22:47:36 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tEcQp-00000000iim-2L1u;
-	Fri, 22 Nov 2024 22:47:19 +0000
-From: David Woodhouse <dwmw2@infradead.org>
-To: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	linux-kernel@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Dave Young <dyoung@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	jpoimboe@kernel.org
-Subject: [RFC PATCH v2 16/16] [DO NOT MERGE] x86/kexec: enable DEBUG
-Date: Fri, 22 Nov 2024 22:38:25 +0000
-Message-ID: <20241122224715.171751-17-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241122224715.171751-1-dwmw2@infradead.org>
-References: <20241122224715.171751-1-dwmw2@infradead.org>
+	s=arc-20240116; t=1732315258; c=relaxed/simple;
+	bh=MizD7KFsZZVqpitCs1S/DOAZGxYwMEWpEHjxQOxHJLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RDoqkDnsU3wYmIZr59gHaqG3TM1RBBIqjzQRTVgBkmhBvo4S7JcJdQE5ZdxgEqFgVd20I5JRbrXgUsaXjV3HAREi+3tBWMSATOnM36Hdvaw0HHcGVMRCZYjXXXTGwOfI6kyy2Ewc7ZMe0BSOBzdOPZlS5mMa//LvMG9NEFR/R3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15DF3C4CECE;
+	Fri, 22 Nov 2024 22:40:55 +0000 (UTC)
+Date: Fri, 22 Nov 2024 17:41:36 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, Colin Ian King
+ <colin.i.king@gmail.com>, Jeff Xie <jeff.xie@linux.dev>, Jinjie Ruan
+ <ruanjinjie@huawei.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Justin Stitt
+ <justinstitt@google.com>, Levi Yun <yeoreum.yun@arm.com>, Li Chen
+ <chenl311@chinatelecom.cn>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Tatsuya S
+ <tatsuya.s2862@gmail.com>, Uros Bizjak <ubizjak@gmail.com>, Zheng Yejian
+ <zhengyejian@huaweicloud.com>, guoweikang <guoweikang.kernel@gmail.com>
+Subject: Re: [GIT PULL] tracing: Updates for v6.13
+Message-ID: <20241122174136.18f97fb6@gandalf.local.home>
+In-Reply-To: <CAHk-=wh+bbO9nYxCz5CPf6oGB0upCFH4jx9Bx36f1f3+_DcDUQ@mail.gmail.com>
+References: <20241120214531.45d75a60@gandalf.local.home>
+	<CAHk-=witPrLcu22dZ93VCyRQonS7+-dFYhQbna=KBa-TAhayMw@mail.gmail.com>
+	<20241122171323.1dd0efc9@gandalf.local.home>
+	<CAHk-=wh+bbO9nYxCz5CPf6oGB0upCFH4jx9Bx36f1f3+_DcDUQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: David Woodhouse <dwmw2@infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Fri, 22 Nov 2024 14:30:10 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kernel/relocate_kernel_64.S | 4 ++++
- 1 file changed, 4 insertions(+)
+> On Fri, 22 Nov 2024 at 14:12, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > Hmm, if we make a __DO_TRACE_SYSCALL(), I don't think it needs to even have
+> > that condition parameter.  
+> 
+> That was my point. The whole conditional - and the parameter - seems
+> to be completely pointless as far as I can tell.
+> 
+> That said, I think you can actually simplify things even further: if
+> you move the TO_CONDITION() checking into the caller, you could move
+> the locking there too.
+> 
+> IOW, instead of this pattern:
+> 
+>                 if (static_branch_unlikely(&__tracepoint_##name.key))   \
+>                         __DO_TRACE(name,                                \
+>                                 TP_ARGS(args),                          \
+>                                 TP_CONDITION(cond), 0);                 \
+> 
+> you could make it be something like this instead:
+> 
+>                 if (static_branch_unlikely(&__tracepoint_##name.key)) \
+>                         if (TP_CONDITION(cond)) \
+>                                 scoped_guard(preempt_notrace) \
+>                                         __DO_TRACE(name, TP_ARGS(args)); \
 
-diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
-index 67f6853c7abe..ebbd76c9a3e9 100644
---- a/arch/x86/kernel/relocate_kernel_64.S
-+++ b/arch/x86/kernel/relocate_kernel_64.S
-@@ -14,6 +14,8 @@
- #include <asm/nospec-branch.h>
- #include <asm/unwind_hints.h>
- 
-+#define DEBUG
-+
- /*
-  * Must be relocatable PIC code callable as a C function, in particular
-  * there must be a plain RET and not jump to return thunk.
-@@ -191,6 +193,8 @@ SYM_CODE_START_LOCAL_NOALIGN(identity_mapped)
- 	pushw	$0xff
- 	lidt	(%rsp)
- 	addq	$10, %rsp
-+
-+	int3
- #endif /* DEBUG */
- 
- 	/*
--- 
-2.47.0
+Hmm, I wonder why I didn't do that in the first place :-/
 
+But doing a little git forensics, I added that with:
+
+  287050d390264 ("tracing: Add TRACE_EVENT_CONDITIONAL()")
+
+Which goes back to December of 2010!
+
+I have no idea what I was thinking back then :-p
+
+> 
+> where __DO_TRACE() would get neither the "cond" argument _nor_ that
+> locking argument, because both are just done by the two users (the
+> other one would use "scoped_guard(rcu_read_trace)" of course.
+
+IOW, remove __DO_TRACE() and just call __DO_TRACE_CALL() directly.
+
+> 
+> And look, this is another reason why unconditional locking is a good
+> thing: now you can use the "guard()" model for the lock, and don't
+> need an explicit unlock, simplifying the code more.
+> 
+> Of course, you want "guard(rcu_read_trace)" (for system call events)
+> and "guard(preempt_notrace)" (for the regular trace event case), and
+> we don't have the "notrace" versions of those guard classes yet.
+> 
+> But adding those would literally be trivial, ie something like
+> 
+>   DEFINE_LOCK_GUARD_0(rcu_notrace,
+>         rcu_read_lock_notrace(), rcu_read_unlock_notrace())
+> 
+> wouldn't that make it all look really nice?
+> 
+> NOTE NOTE NOTE! I didn't actually try any of the above in real life,
+> so I might be missing some important detail. I'm just pointing out
+> that making this all unconditional and not based on random flags has
+> the potential for even more cleanups.
+> 
+> And I might have gotten the different lock names confused too.
+
+Thanks for the analysis.
+
+-- Steve
 
