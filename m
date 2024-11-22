@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-418145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D899D5DC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:06:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0775B9D5DC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E11B25572
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:06:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D6DCB254A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3901DE4D4;
-	Fri, 22 Nov 2024 11:05:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDED1DDC2B;
+	Fri, 22 Nov 2024 11:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="X3hFTbq1"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFDqSxIK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E25414A84;
-	Fri, 22 Nov 2024 11:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC9718FDB4
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732273550; cv=none; b=glfsWhZvh8Z0h1hRYXASxm8lYQPTvG4O25GKIQFx3DIKCALWcdx1VfB5AgVqdhE/EAq1UdbWvukMK58MMXSN0QPhQDoEkrr/90bdIOe8UBfutaX5uYPGGtOv3QjXJD+5yFUnXkezUqhl2bRdUpipP7V4LAHRyQ8fKwylIdEiUko=
+	t=1732273549; cv=none; b=K4nKT9eS5Z07HbtG6cbzL2L/phf2cAXhmU0Po1J26vNfQKZbASDiQZXVBenv4l0uBKc/x560ZxzTntZZdXfUioh9AD/jR4qug41isF8n+tQP3RHmUA7wFoLTmsYo5oCEwNyP6luJHVFE3ANVCUBBZZZBINEf0AqhpFaR6sjPc3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732273550; c=relaxed/simple;
-	bh=2LhxpixEryIOYw8r1gg7oz6iH9Pzn3cVsVOZpnngAqs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=h8xUJ7X17ERp0RhUMNv0E83FeI4HCjOtAK9VKLuGFMS+iLtl4zfCQRCD/CkFb+G3kp8ONFwdslna9RVwVffxFD1J4py5/dAu+YRItNYhzu+0HpeU3r4DjWPD4xf1mv3AyXGzhPjPJEg62Ldpxrkjo7+2Lz15krjS+6rTVy1G6k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=X3hFTbq1; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1732273534; x=1732878334; i=markus.elfring@web.de;
-	bh=xqBLSHkLYHHmnFl7KvLPb0WxJGPtnhHm3e8o5bsIYAk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=X3hFTbq1EIIvNCX0PwuZu2CIphNiaUfOuuOTaIeJNCAR4/Nt1CWB15PhoFeko372
-	 W0KnTUDDmD15wtKNQ54G2wmgB+1BszhnI11+lDA+5wVzL4L1NO3xy1HCYff0+Wn7e
-	 4gEH4JVZ4VYU55jRGGWAmA3ZAf1qX1r6Zv68qK0c1m39taCRV9RmViA5Hl6e6NTzD
-	 F3GAVtZXv7AkiMy9CkCdaL4rgyt0VVqKYAT9C7aONHGv2Ls/IhGwfwYeMjkScarhz
-	 kbQE0m0pEx45zVODZEqPNW2OI4gdwUQ0joJfhXjkau5h3Ev/a6kbQEjg43gNlWaZ+
-	 Fe8CaX9TSdrEdzVQqQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7WN-1t9fYg3TP5-00V0Um; Fri, 22
- Nov 2024 12:05:33 +0100
-Message-ID: <fdcf685f-16c0-42fd-a4ab-886ce5fc21f5@web.de>
-Date: Fri, 22 Nov 2024 12:05:33 +0100
+	s=arc-20240116; t=1732273549; c=relaxed/simple;
+	bh=97OFr52T+2zclV5kEKwGrhQyXDAWRvs3IsvLsUTDp9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZhA/J9i+bgI6U/ipIQ1wA0eeeoOTG9qgzNM+6HUlCZimj14qXlYfDU+OL/g++eqbwjZUuIL6we8xELTEE7BlPAH163Fxn+X4QKIXQ4RdaN9avMQsiDQOSOJvHI0LwwGjQ3LJKwpCr/5iKQK78jDfcUhVn1oB9x28AGNJT1Q6IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFDqSxIK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D42DC4CECE;
+	Fri, 22 Nov 2024 11:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732273548;
+	bh=97OFr52T+2zclV5kEKwGrhQyXDAWRvs3IsvLsUTDp9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SFDqSxIKxOKQXpvyw6uCVVxymNd/EPsimBcaRh7127dzvE3nVqxGshFOjp7HINIJX
+	 mCqb1vQ3JJHd5oyuxfi60JN1XNKtYlI+FF9G4ZrrCv9kRSqnLUn3dmVhHr45DtY89t
+	 9ueStAoVTpLvUItnmoqfkxPRFTikY7EOCm31+CvstXntuxc/97vF2fxRrrZMljS4mr
+	 H5lUWqqyLTWBWKUezgEVYm3lBQuMLkHIU3BN5yJY8MdKH7/KCvt7X7nHpq2u29duFi
+	 llvXCExuxtyJV6e4RjgtZBu9VKKg8Ac+gq1qncHFpTGWjKBfGE7j/2p/4YTRc+pv5r
+	 cJLju+1NETsIA==
+Date: Fri, 22 Nov 2024 12:05:45 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Anthony Mallet <anthony.mallet@laas.fr>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
+	Marco Elver <elver@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: posix timer freeze after some random time, under pthread
+ create/destroy load
+Message-ID: <Z0BliWkMHHzohMt3@pavilion.home>
+References: <26411.57288.238690.681680@gargle.gargle.HOWL>
+ <Zz95qDPU2wcEp26r@localhost.localdomain>
+ <20241122082407.GA14342@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, linux-sound@vger.kernel.org,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241122063257.4419-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH] ASoC: Intel: avs: Add error handling in
- avs_tplg_parse_initial_configs
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241122063257.4419-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:9ywa6fyg/LpRxtTr/Eq/27yvtE5EIDrcAgPNVWbxkpirPTCz16A
- SlZOU9bD1QNXI5LQQBUiScz59pbS10aSWs84pHqXD30Wgx1WgS//eOvGaoAQcT0+5QoDfz3
- VCnYHwNy0yP6Br0mtz/LfRv5WcVOzkun/nWR2SzkpF74qBOIgKtZR+SKXoMY02bKwSS4+9b
- Xw6Eblff6tzs2bA+LvUQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KBP3J5fPg3U=;OmdofGCHLk43YYqfyfrmN1xVIW6
- ojUfo2iTja3qNX28rgNVm7cn2gc74gCfFpw36DaVtLfpZo4lJZFPFshzUak/Tw9yI+miy5x+P
- vz//E6oEwXd5nyLEJxuQZUXuiTKK5L6UrzZAwsKShEg3Ell1Gke1G8o1cjozDbMweCZopz2qO
- cv/Narm25sS3+JPkM5cXiGWaIFKRBLNOhLgqv06/5BYGmEMK9i5MzZ4e3BYB3bJQjQeu2W80c
- /VkAxyQLF2rjD5BxS32uBDMdrjEW0rt2rD6KVoJEn2GN82G/2C/MBOW+U2rTmirXpXJecF1o5
- GktaZRnlEoBWCeuhQcBq9TWJFY1XnOIVPXt6IRIF9YM3SB5SsGNI04HcQ/EaaGUSUn9l+Trl1
- fzTRinpCEKdI+TO5IwUOFEFtGebejYsVOD3BcINlfovyqDfSHFuH+w9jTB/7Us8taB/n7wrzx
- sXpWEFy4mYN0pF7IUZ7DHZuxsVP4nStcySQBnANaxKZk6tp6tB44An4jRT3C4ydQdr74CvOsh
- SDzsDFg4ZCjfSYiFZFoh/aK3KZH1btzXW5jGVgaOEtzLryJDdY59KLvRvirl+O/XEQZzx2K6E
- mS57i3zeIhed43W0mEQnjH82hm2JHjraucXGOVCodPkojlriqhIygAJx7KuHRx7bHQfhs+8dD
- qqrNqUTl2gmw0t8LeQMgpvh9hMLVVr0EuJSajKEJzcqGsHl/WJtSvFlj4klgcP18KZl7q71X/
- iO5akx9o7qdwMPXemwCSu/1EVBPmbKemFJr5A2qz09ATPn8MfbSy0awsFY4K5jcMFOn0A9YAU
- OX8FsWFQcmxnmc7XafRNhKw8Hc9f13KNtWmEmnXUj9oqjcItxgn8Lm5IkjqgXdCzW/JvnsCoh
- nI9VsEPME1NEZxEbZZmCzARz0fa5IjzdLYzf8t/gNsUoWMtRc21jEODJE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241122082407.GA14342@redhat.com>
 
-> Introduce error handling in avs_tplg_parse_initial_configs to ensure tha=
-t
-> the function returns immediately if parse_dictionary_entries fails.
+Le Fri, Nov 22, 2024 at 09:24:07AM +0100, Oleg Nesterov a écrit :
+> On 11/21, Frederic Weisbecker wrote:
+> >
+> > I think this started with commit:
+> >
+> > bcb7ee79029d (posix-timers: Prefer delivery of signals to the current thread)
+> >
+> > The problem is that if the current task is exiting and has already been reaped,
+> > its sighand pointer isn't there anymore.
+> 
+> Thanks...
+> 
+> This can only happen if the exiting task has already passed exit_notify() which
+> sets exit_state. So I'd suggest to check current->exit_state instead of PF_EXITING
+> in the patch below.
+> 
+> Oleg.
 
-* I propose to append parentheses to function names.
+Right, I don't mind either way, though if it's past PF_EXITING,
+complete_signal() -> wants_signal() will defer to another thread anyway, right?
+Due to retarget_shared_pending() being called after the flag being set...
 
-* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
- =E2=80=9CCc=E2=80=9D) accordingly?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.12#n145
+Thanks.
 
-
-Regards,
-Markus
+> 
+> > And so the signal is ignored even
+> > though it should be queued to and handled by the thread group that has other
+> > live threads to take care of it.
+> >
+> > Can you test the following patch? I'm cooking another patch with changelog for
+> > upstream that has seen recent changes in this area.
+> >
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 8f6330f0e9ca..4cadee618d4b 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -1984,7 +1984,8 @@ int send_sigqueue(struct sigqueue *q, struct pid *pid, enum pid_type type)
+> >  	t = pid_task(pid, type);
+> >  	if (!t)
+> >  		goto ret;
+> > -	if (type != PIDTYPE_PID && same_thread_group(t, current))
+> > +	if (type != PIDTYPE_PID && same_thread_group(t, current) &&
+> > +	    !(current->flags & PF_EXITING))
+> >  		t = current;
+> >  	if (!likely(lock_task_sighand(t, &flags)))
+> >  		goto ret;
+> >
+> >
+> 
 
