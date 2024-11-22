@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-418228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872B99D5EDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25AA9D5EE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:35:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BBE91F237B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:35:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776B528370A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8121DED78;
-	Fri, 22 Nov 2024 12:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570711DF253;
+	Fri, 22 Nov 2024 12:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LGK7fAGG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HO0N4rV3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31F1CB329
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C22322075;
+	Fri, 22 Nov 2024 12:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732278926; cv=none; b=Nq6ctQkNXZy2ab8UYtZ/5WwvGDgbUEbkdnNUHXj8pa3le7zSDTpBdVxf6K5vEu4jGdn9Tblx8tU3pCar/idd9tLHBaMEmBtxykyT60QKk1J+DcOJt2Fm8W5JEZDGSPksPDRcIoPh0yNdZhN221dmaMx3VVJUBw12x088UQczJVk=
+	t=1732278935; cv=none; b=WBDHkj4KbNQMqnkSuBLjRHtuYmjry9T0oONVCyJCn3nj/0JvzazlpkVoHfzTl/nQz94UBN6/3olZPJM0E6ey1FH+8Cj6O2UPj9doLI53lHYwr+C42gxvM485P4+FVpHuj5RVZPl4davs43CG9XS1/Vh5/xZyPL0Wf5kH9UO/Dk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732278926; c=relaxed/simple;
-	bh=/bSeenWD6NQdC1PBVIiMjftf/dqROH/FvwdD2Hsyblo=;
+	s=arc-20240116; t=1732278935; c=relaxed/simple;
+	bh=KKhWdjLM+8sQzBDLG/K/Or8E1R2tXdLk53+/b89LL/U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZCy1QrkayKLQ4l1PboZHyDHFdULo6z3U0TMAubuMzNpWYk/vjOiay/pzxqdH1YXb5JshrE5PGsBoLNVJ3lPr1/XuqtjrtfHXePf71IN+m8cS3t8v9YRWfaub6t25YedJBcR5mYs7wLOWX4QI144YtUv2/rWtdxPHPpHTGOf/fpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LGK7fAGG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM8bmX5019251
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YmBijtaeUIMD2Q4qws8xURzuS2h9kjPL7kzv3y/aSvM=; b=LGK7fAGGXMuDsXuu
-	PbvILGJVBbxKQFy2xuPDyoq2o0SCdnKnqo9tJx8L0n096n4Vf+UzS9STZFTuvGyE
-	DRdmf27hQeWcu5k4XIiIPG6VfiSACX20A3lYTINN2O8ud1ej5LPZIzt5kfixGS34
-	VJonUSFLZL6rlV+lmEpEKXr9VdZNyHGhdJ/HTcnjt0xcSUdVFKDYJUZfmpjlR8dZ
-	rdLUPo9tSREuHMxzMKRcZtYEs30bG9tSU4mMicXvq45zkB7RiCBScJXRzNu14fBp
-	qZHrJj5tx8YonBIZ/zAmDLid7fs+hSYZpyLAzNDRWjZmVr7FKMBVvr9qFOCBT5cb
-	e0ahUQ==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hqdwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:35:23 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d40a926b91so5235876d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:35:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732278922; x=1732883722;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YmBijtaeUIMD2Q4qws8xURzuS2h9kjPL7kzv3y/aSvM=;
-        b=mJL73ixq0jPx+McR1TdsHAHG9i9ztYJdWH6ko2ulE8FsmZe9JpFXKzVBuKJ8T9tjmj
-         K8cQrc8zf9LKxCRn9f6f7rwO/d0KrwWhYBKpr4poAiErGBhVzBNCIBA1Sq1Vk9J1NRqs
-         qb532d8Q+bCYIYIZBDF9EXDrSTMisG/kM7g+434kiYITU5XH70+13qkOc6eecPU9wxIS
-         VZs8VxeWELoWD5BgJ2y66p5IX5QNLYWD/AjtHPwJHhq5z6KysPig9SuQmOwskVPmG0Zx
-         91Ru9qYA9P4SI84HvJwyIb/Yi14Fxm/TaBV94nPh/hMjV8PWF7a1e14pziM+w61HAS8F
-         Frqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbl8HbYfWvyiGwvm8yMsI2vbmFEIjxVbUr1fuADoUOGrH8NdV/mz/M1dHhdmi8i5eew/3vokz0edCjJ8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY+qdp3KeRMNnNktNUg8KOWUFE3ePPOoqflYSURIc2CAtD1Jan
-	E+1vF597FXZCQJtm5mC1E1lsiCeKnrkrcnAR3DzrWYYmhgMLwRqGYTtV4v+mf3t4e6bJIhCfgVH
-	DsLCN80O8LPchHCcpwZfWMQ0Pp/FnSaSL/1Rc2p45qwM2Ss/wm6I032Vi+0rliQw=
-X-Gm-Gg: ASbGncsjq6Ht3Mx/Q9823ka/WVSi+Lsj9g0vhuV2/FYj9uXcLmpT6f9vhaqmPdvKC+6
-	dI1gzoV7aYHsKWyDy1htBwdnF/XkcJJYmv0aTbcRgdMz5NRPpcaUHp6kTuOCXMxzZbLPFyPQFgs
-	EnLtgJoewjOOlotVP7PiS3a2bsFES/e0xeghZnOEUFso4e1av0w5bO0Ff+T7PyMhLRVye1wGzH2
-	og1Kgv5hkOZPCLM3WPp14AzxqgtEzFYZSSkFuBBAuG/O+Dk3W3Spwsctazs+J3UUIvQL5iJCFlA
-	xscf8CUvimxFgc5rRtK9TAojTUekQWA=
-X-Received: by 2002:a05:620a:6283:b0:7b0:6e8:9508 with SMTP id af79cd13be357-7b5144ad110mr161955985a.5.1732278921646;
-        Fri, 22 Nov 2024 04:35:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF8uIE6oiCtMgsiJkE35Zoovx430qO4c5U0D4F91/nuFLw5NZvdNcCQH20F0lI4XhKW9QuIIQ==
-X-Received: by 2002:a05:620a:6283:b0:7b0:6e8:9508 with SMTP id af79cd13be357-7b5144ad110mr161953985a.5.1732278921290;
-        Fri, 22 Nov 2024 04:35:21 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d02062428fsm754087a12.40.2024.11.22.04.35.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 04:35:20 -0800 (PST)
-Message-ID: <bf27f92a-5fc6-4b09-8653-4ac3ef438d4f@oss.qualcomm.com>
-Date: Fri, 22 Nov 2024 13:35:17 +0100
+	 In-Reply-To:Content-Type; b=tDDnGibRbY8fJDHt/TrKw2Tfqd+gW/bslPWdpetJxHIFR4ICQ4sSmpVt+XN90M765tiXsba01AsCLDBOVqytJHWxjndq9TeLODDuLgXpForovaNgNvDDY7PcObTSjprwEMYoFKyFB2XUnxnL5PxUEzyYIa9I849P5WXZI4T1g6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HO0N4rV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14BCFC4CECE;
+	Fri, 22 Nov 2024 12:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732278935;
+	bh=KKhWdjLM+8sQzBDLG/K/Or8E1R2tXdLk53+/b89LL/U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HO0N4rV3Siv9yKLJWV0taa3YnrWWq8BfI7BMMqfguZu+lPP7Ng4DNxA+2Ndmq02FK
+	 Gi9YAxyQP6t98J9ukqXheDwftFcE7LUf9lyB4F8XbsvPqwJ11YbB0IWoZHK+qlOx/0
+	 8tqCp6Afd+MmQQcTNq4UOgiXIeytzOq4OpxUraGQFiZnWbhohlHO1QeWB91ChEIOzh
+	 wpQkEm/Tzq57C3j/QafjuSbEsqB5qsGEtH5wGhI7LIs5wAQ+Sr5RdUo6pIi30cik4K
+	 ykiwNO7ErvEYvUu0kYp4W6ItpJ+e9lU0W72XQKb36fWkQ2tOmVM+f4oN/8+zPbxdhe
+	 103zwPDv3V0/Q==
+Message-ID: <ccbc6324-0dcb-405a-901a-12dc33a8130c@kernel.org>
+Date: Fri, 22 Nov 2024 13:35:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,75 +49,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/7] thermal/drivers/tsens: Add TSENS enable and
- calibration support for V2
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-        srinivas.kandagatla@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, amitk@kernel.org, thara.gopinath@gmail.com,
-        rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
-        lukasz.luba@arm.com, andersson@kernel.org, konradybcio@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241115103957.1157495-1-quic_mmanikan@quicinc.com>
- <20241115103957.1157495-4-quic_mmanikan@quicinc.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_tingweiz@quicinc.com
+References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+ <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
+ <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
+ <Z0BDYiVaLQXaMsle@cse-cd02-lnx.ap.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241115103957.1157495-4-quic_mmanikan@quicinc.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z0BDYiVaLQXaMsle@cse-cd02-lnx.ap.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: doNE0t9gohQNztSiogCjcOJhtWVu77Zb
-X-Proofpoint-GUID: doNE0t9gohQNztSiogCjcOJhtWVu77Zb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220106
 
-On 15.11.2024 11:39 AM, Manikanta Mylavarapu wrote:
-> From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> 
-> SoCs without RPM need to enable sensors and calibrate them from the kernel.
-> The IPQ5332 and IPQ5424 use the tsens v2.3.3 IP and do not have RPM.
-> Therefore, add a new calibration function for V2, as the tsens.c calib
-> function only supports V1. Also add new feature_config, ops and data for
-> IPQ5332, IPQ5424.
-> 
-> Although the TSENS IP supports 16 sensors, not all are used. The hw_id
-> is used to enable the relevant sensors.
-> 
-> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
+On 22/11/2024 09:40, Yuanjie Yang wrote:
+> On Fri, Nov 22, 2024 at 08:04:31AM +0100, Krzysztof Kozlowski wrote:
+>> On 22/11/2024 07:51, Yuanjie Yang wrote:
+>>> Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
+>>>
+>>> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+>>> ---
+>>>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+>>>  1 file changed, 198 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>> index 590beb37f441..37c6ab217c96 100644
+>>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>>> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+>>>  			#size-cells = <1>;
+>>>  		};
+>>>  
+>>> +		sdhc_1: mmc@7c4000 {
+>>> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+>>> +			reg = <0x0 0x007c4000 0x0 0x1000>,
+>>> +			      <0x0 0x007c5000 0x0 0x1000>;
+>>> +			reg-names = "hc",
+>>> +				    "cqhci";
+>>> +
+>>> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+>>> +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+>>> +			interrupt-names = "hc_irq",
+>>> +					  "pwr_irq";
+>>> +
+>>> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+>>> +				 <&gcc GCC_SDCC1_APPS_CLK>,
+>>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>>> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+>>> +			clock-names = "iface",
+>>> +				      "core",
+>>> +				      "xo",
+>>> +				      "ice";
+>>> +
+>>> +			resets = <&gcc GCC_SDCC1_BCR>;
+>>> +
+>>> +			power-domains = <&rpmhpd RPMHPD_CX>;
+>>> +			operating-points-v2 = <&sdhc1_opp_table>;
+>>> +			iommus = <&apps_smmu 0x02c0 0x0>;
+>>> +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
+>>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>>> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
+>>> +			interconnect-names = "sdhc-ddr",
+>>> +					     "cpu-sdhc";
+>>> +
+>>> +			bus-width = <8>;
+>>> +			qcom,dll-config = <0x000f642c>;
+>>> +			qcom,ddr-config = <0x80040868>;
+>>> +			supports-cqe;
+>>> +			dma-coherent;
+>>> +			mmc-ddr-1_8v;
+>>> +			mmc-hs200-1_8v;
+>>> +			mmc-hs400-1_8v;
+>>> +			mmc-hs400-enhanced-strobe;
+>>
+>> These are properties of memory, not SoC. If the node is disabled, means
+>> memory is not attached to the SoC, right?
+>>
+>>> +			status = "disabled";
+> Thanks, I think qcom,dll-config and qcom,ddr-config are properties of Soc,
+> they are memory configurations that need to be written to the ioaddr.
+> And mmc-ddr-1_8v,mmc-hs200-1_8v,mmc-hs400-1_8v are bus speed config,
+> they indicate the bus speed at which the host contoller can operate.
+> If the node is disabled, which means Soc don't support these properties.
+No, that is not the meaning of node is disabled. When node is disabled,
+it means board does not have attached memory.
 
-[...]
-
-> +{
-> +	u32 shift = V2_SHIFT_DEFAULT;
-> +	u32 slope = V2_SLOPE_DEFAULT, czero = V2_CZERO_DEFAULT, val;
-
-Please don't mix initialized and uninitialized variables in the same line,
-I think it would be the cleanest if you initialized the ones you want on
-separate lines and then declared val separately as well (and preferably
-in reverse-Christmas-tree order)
-
-[...]
-
-> +	}
-> +
-> +	val =	FIELD_PREP(CONVERSION_SHIFT_MASK, shift) |
-
-tab->space after '='
-
-[...]
-
-> +	/* Select temperature format, unit is deci-Celsius */
-> +	regmap_field_write(priv->rf[CODE_OR_TEMP], RSEULT_FORMAT_TEMP);
-
-"result"?
-
-Konrad
+Move the memory related properties  to the board.
+Best regards,
+Krzysztof
 
