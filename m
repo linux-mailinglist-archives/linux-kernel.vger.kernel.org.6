@@ -1,135 +1,155 @@
-Return-Path: <linux-kernel+bounces-417844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E879D59AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:58:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF349D59AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BCFA1F231F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A55D1F23488
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181D216F910;
-	Fri, 22 Nov 2024 06:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D729175D39;
+	Fri, 22 Nov 2024 06:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gpwbjvf2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6mWHsDN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF741632E8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21EA170A3E;
+	Fri, 22 Nov 2024 06:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258710; cv=none; b=aVsWR0kHCa2z4c6JM0iiC8Plp1bB1FcKi74VKdNnsxEWNrEa4FKUzzqJLh5Pjz4SXvs0KbyOY5UpYuZ9aNJ3mawxbJSsVi69zVoMDSsx/4EUErgZCYAVFhh85kLnrxB250ZHUsodr71ftMmEBw0qv+xNXhgSDIEN8kzL2BaX018=
+	t=1732258715; cv=none; b=Xbq5IyL0Np8vLCRz/+gm3sah4n6nXQYdKLHIx/efrrYUER5OsD7JC5XjERPP/MhluIG6f2jCbTgNggl8Ts4DcdvHs9IvrtCWYOxn4gziiVeiU7LmPxrLhCpiS1FCfZvs7PKzG4uZUbSXS64k6NvNPUuGtT/RlqZZFTYQh15UGvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258710; c=relaxed/simple;
-	bh=MOiFricK4DDszw4CyJmE9G0AvaJlKiySlfJNlv07CVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QNmw6uNsAW945nVWhmV/FHjHFP152BL9k+tYQxr9ysOhUN8/xnLpVUzE8tOcvRPZZAWxSt5FdPmU96ZgYCtbfSoBDyXvv1EFnLwSDZJ1vX0lkWt0TEEzdrNdQ2j9UiCMKv/lsSMvLDQgGMqJFaMA9/F6tjCkY3lo1QPaFhdf6R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gpwbjvf2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732258707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X70b1Cts8T+9Tkzz2nbhOTjSUi64wRbRrogTOvjnGWs=;
-	b=Gpwbjvf2/4mTgShdwhXwM07snsykTD0pevazPcZZyPYg8qRMGD8QGoSvVm24t0xTsr7r3A
-	XjYGh/e9vtipNcfke25OqWpMlbut394bsPluPTZitNU+m7Hq9Fxh+mDiyts5Srq5UEPrbJ
-	cu/BxE2IBL44GSpp2PJEBxqbsbXI9EY=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-adsDnHtsNOuNxHcY1z4w6Q-1; Fri, 22 Nov 2024 01:58:26 -0500
-X-MC-Unique: adsDnHtsNOuNxHcY1z4w6Q-1
-X-Mimecast-MFC-AGG-ID: adsDnHtsNOuNxHcY1z4w6Q
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-71e55c9d23cso1476082b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:58:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732258705; x=1732863505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X70b1Cts8T+9Tkzz2nbhOTjSUi64wRbRrogTOvjnGWs=;
-        b=b/7lm1IK52n7A9qpux3pI8+74oZJipKrwY/Qe5/uB2qVrHIU9F9a3UF8W9n74nEiVZ
-         eOlrNFlKacbzOnZjvnDOLEHteXkBIsWsmwBhYJWoARlKnQcYqpt3R2Eh/6r+zVt5x1vT
-         AZfLUeqCsqvmfJ/ZWvtVpOFMiM8FBOAXEEJLvy2GK0pQrxW7k/qT14oj++D+hcZbZJgO
-         eBx6/8LmneYktYccQnYGFJ4AOkMBRBERa7ZAcOwN1pD3wSAI7ZvVs9Ib2QJ9UHLkpcXF
-         DlNv5S8swFaj4QtFBfWSilM5P8ahz1gGsgegSAhncLXIZ7BPKh0Cmfh1IuC491EpqIF+
-         ygRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeJZc/YT6IGRH0S2m7qAj/R+tv6smdTkl9PLY3aS7+B3L1LizNfDLgoi5aY5y7Llor9h5vL1OmeI9OfQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVuUS9qhzZ9AsozOtiVmJEyJhp7GyGk9xIDfveU0j68rI/q7HQ
-	j9XOwf3WTvQAX91l40ZMRohhGz+bMpOv+B57xmR7HQIOyYevwBqrkRdl8Yep+AzkXgt1XKGTQL/
-	9oQ3RraZ8XWvvjWu6sviffjSdi+OtEirY97A9jrydBYWMOaFbQ7PHtVybF0TwY4qT3rJAJM4iKD
-	ypucDY7ihXWA1vSVLIeRlYhgw7pQ5tYkOcMCv9
-X-Gm-Gg: ASbGnctfUY7z/aOwQ5uYXV4mta9/l2m8cRq0Y7+ZYPjp/Lv3zC0Pd5xeGlylFg4WR9x
-	KAufhNqYk1axQo79BZ8Lbq0rLLYtr9g==
-X-Received: by 2002:a05:6a00:2d10:b0:724:d926:fbeb with SMTP id d2e1a72fcca58-724de451952mr3272756b3a.0.1732258704970;
-        Thu, 21 Nov 2024 22:58:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPSEnpKvYksWAF4QRL5GVsUN0ZdXX2EoeX3KyT5hPH1bMfu/fYU5LDulmsHaln8LmVAnqI3n8oKfP6YAaw3rQ=
-X-Received: by 2002:a05:6a00:2d10:b0:724:d926:fbeb with SMTP id
- d2e1a72fcca58-724de451952mr3272712b3a.0.1732258704517; Thu, 21 Nov 2024
- 22:58:24 -0800 (PST)
+	s=arc-20240116; t=1732258715; c=relaxed/simple;
+	bh=WGgYqmX1ne39sP/ZcTJkDozZ8i2EBj6PlALYk3NAj5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pnm4JWlJrx5ey4Pv1Yd9SnNqvAcJlFwDjG8XaAF+4j6fz6gV4uAhivxba+t4ZtQGLrXrTJGv5RICb1ZxUt+lI/bhQ6NvKiBIZC5Dmnkv68OF5GUMSR0Spn4rByIpq8btEvox46VpXYJlanKw8RyoMaEomPkpYNz/BUSWFEWCdZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6mWHsDN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7C6BC4CED1;
+	Fri, 22 Nov 2024 06:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732258715;
+	bh=WGgYqmX1ne39sP/ZcTJkDozZ8i2EBj6PlALYk3NAj5A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j6mWHsDNmjfyiopaqkCa08Sj4GIwBLYFPuP783XMyBlQJQS1aY8P7g4iZHVyln/sf
+	 H7WVSSKWgFCe1GI1XKVWlJoNLkjoukIGWaSrYAQJU4otkbl/mYBVo+CKLLAtvwOLC3
+	 ocVrkPURSyFywufe24+TdEyETmdFNSoj0Y3i8OSoBW6feiDmLQ+aRWjty077MOQ0xW
+	 d/fRIWMwaBgnWGytkWQzihk5nMUAw+YL/khA1VAIXkUOupj/1DPy7MjXPY+zrO3/AS
+	 w+yZtdHxD2nJqJyZM86H88nTIzpatnm90qAtsYounBq8+SYEEXC0P+AED0s0IxcAjo
+	 wJnNebz8+CdaA==
+Message-ID: <32695cf7-01d4-4180-b7f0-230ad8a0e1a4@kernel.org>
+Date: Fri, 22 Nov 2024 07:58:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zz4MQO79vVFhgfJZ@tardis.local> <Zz4WFnyTWUDPsH4m@casper.infradead.org>
- <Zz4boXyYpdx4q35I@tardis.local> <98a46b27-c4bb-4540-8f75-f176c3f2fae1@gmail.com>
- <Zz59qgqKruqnouTl@tardis.local> <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
- <Zz-FtcjNm0TVH5v9@tardis.local> <Zz-GHlkhrz35w2YN@tardis.local>
- <Zz-ts0s3jHsNP73f@casper.infradead.org> <0195fb77-c55a-40d5-8fe2-5844158f4f63@gmail.com>
- <Zz_dPsVZOMdkLjMA@casper.infradead.org>
-In-Reply-To: <Zz_dPsVZOMdkLjMA@casper.infradead.org>
-From: David Airlie <airlied@redhat.com>
-Date: Fri, 22 Nov 2024 16:58:13 +1000
-Message-ID: <CAMwc25pC_jU-bZEBWZB6TQKfFFJs4R+Ero1mA=X=0FBWNFeMXg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page mappings
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, Kairui Song <ryncsn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net-next v3 25/27] dt-bindings: net: pse-pd:
+ microchip,pd692x0: Add manager regulator supply
+To: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
+ <20241121-feature_poe_port_prio-v3-25-83299fa6967c@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241121-feature_poe_port_prio-v3-25-83299fa6967c@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024 at 11:24=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Fri, Nov 22, 2024 at 01:18:28AM +0200, Abdiel Janulgue wrote:
-> > We need an abstraction of struct page to construct a scatterlist which =
-is
-> > needed for an internal firmware structure. Now most of pages needed the=
-re
-> > come from vmalloc_to_page() which, unlike the current rust Page abstrac=
-tion,
-> > not allocated on demand but is an existing mapping.
-> >
-> > Hope that clears things up!
->
-> That's very helpful!  So the lifetime of the scatterllist must not
-> outlive the lifetime of the vmalloc allocation.  That means you can call
-> kmap_local_page() on the page in the scatterlist without worrying about
-> the refcount of the struct page.  BTW, you can't call page_address() on
-> vmalloc memory because vmalloc can allocate pages from HIGHMEM.  Unless
-> you're willing to disable support for 32-bit systems with highmem ...
->
+On 21/11/2024 15:42, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> 
+> This patch adds the regulator supply parameter of the managers.
+> It updates also the example as the regulator supply of the PSE PIs
+> should be the managers itself and not an external regulator.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
+> 
 
-https://elixir.bootlin.com/linux/v6.11.5/source/drivers/gpu/drm/nouveau/nvk=
-m/core/firmware.c#L266
 
-This is the C code we want to rustify.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Dave.
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+... unless you do not expect review.
+
+Best regards,
+Krzysztof
 
