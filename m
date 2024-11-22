@@ -1,180 +1,131 @@
-Return-Path: <linux-kernel+bounces-417720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1BF9D5850
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:33:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A849D5864
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628DF28277C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EECA31F233F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A386157494;
-	Fri, 22 Nov 2024 02:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6561531D8;
+	Fri, 22 Nov 2024 02:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PIy3m4Y4"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WO7XrMR3"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6862870821;
-	Fri, 22 Nov 2024 02:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9501C69D
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732242813; cv=none; b=kRhfBti6Js+5pyqFPFwrokwi/jxECZ6sg4YqtGkW/4BNSlbzVtBYFh3W59FbWbTKA/uEK5oa1zWjzcUqYnnlR5BMhZWyxIh21bqSDTZ3ydhE3SgdIA97n8hWcGu3VJzwR4Ocp1k72ltELuur47MPeOkxs1c8Re2jxjg3Z34ubZ8=
+	t=1732242990; cv=none; b=kMOdt8MG+CW5CnM92ao2carn8/mVSVMYtFrsqU1HCMrhvqj67BemzPSn/U+4rBKYKPBidcXLIallUJ8/BaOgRjeYFajUzyuc1aisKNXbpk5THKC3rOjUCVcpufA8Sk4W58cy1oIbCwbmmw0/jw94yexpqDKAgxSCb+5COmgO6r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732242813; c=relaxed/simple;
-	bh=12tt6sQ/sNIXlSfWJUTjSx0VcFjQAIIwLwc7a7dQV7w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WXE870s+2UppHEMrdEonn4vNnr61Qkc4FkNtd4fPW9h1u4SWjOOffvi3L4y0z7eTWPiHddGI6zj4ihyXiOXRtmA1qMQIOU6mFW4hit3xSOqtWRveLIjYAXP3114ud/gbM/y59FO4lhs4Lzc7F37BIkQ2T7qzmFQeOT0D/75wCdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PIy3m4Y4; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALLrGlb027544;
-	Fri, 22 Nov 2024 02:33:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=BQ1OD+cYYs3
-	yLMO7DnL1KKffAZLTMobDq5A7RSe6d54=; b=PIy3m4Y4rmhdnkhJyvpJInUThxq
-	1hkou911ZRhDjYGkJi01/gu3PDBpB02m7ckk4ID6sPn+54uTnNwYP8kfhixoF7jq
-	ca9aq/6DnbOybp1phfiVhFMDVtO7ffmskHrJiWTCY+9MpnOqKLyU6QuQ4ysl0Gob
-	asIilC071nNHB92/hD3K2V+BVcw3PsfDfBRzUVoAWaa0zr/RRi1nBzDKWd3Le8vD
-	rDDQ9n8y3C5JPWw0SuRQHUNqlMNdLByQx0QVtXe4p6r1/5ZaHhW9M+mQlifyzRHo
-	wFPT0iWRIgWCU4i71xId4PYleGAdo8iEjYv7BRVK7qocPKqnKjG1Ya+fu9w==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432d5b0hdv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:33:24 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM2XMKV025363;
-	Fri, 22 Nov 2024 02:33:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 42xmfm3upc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:33:22 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AM2XMxG025352;
-	Fri, 22 Nov 2024 02:33:22 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AM2XLBc025349
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:33:22 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id 662191803; Fri, 22 Nov 2024 10:33:20 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
-        lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
-        neil.armstrong@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: quic_tsoni@quicinc.com, quic_shashim@quicinc.com,
-        quic_kaushalk@quicinc.com, quic_tdas@quicinc.com,
-        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Subject: [PATCH v2 6/6] arm64: dts: qcom: qcs615: enable pcie for qcs615 platform dts
-Date: Fri, 22 Nov 2024 10:33:14 +0800
-Message-Id: <20241122023314.1616353-7-quic_ziyuzhan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
-References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1732242990; c=relaxed/simple;
+	bh=kNZsTWOCUGeXzUUlUp6ekbBy/pNDYV/8nwOWEdQK5a0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6VoqGaIMfjMxzvBCFy4p99qLKk4mBrf7SpraYghENf/plqtR21DuI0+opLHWNLwGB0X/DTbtk/3jy0Pkcwgp5FGfgVZzeVAEWP7Y/CYaY6xyxT4/vAFtsOh7/DeRiSR+0dv3YKxhcwj92hk3y6msFabtgqzH9oepKQcdYemQfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WO7XrMR3; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dd1829b56so1150939e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:36:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732242985; x=1732847785; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w58mpTdLCyM76KOVFOa5hEFbjg7oBG1TqdCvT/1gms8=;
+        b=WO7XrMR3mR/Ixs3fi5HyF2nwjVUOR0yg9FNQfEo+JypUWDiezuL9iQCnOsmIkcki71
+         9IRAALZfsfudMVct2qQubnYJ0d0e3o5KW+kHcEkUJKlVqB73GuzLNTwZB8zu3LYE+UYt
+         wZ6V297qnhg+HuZLgqj2rGsp1LvJCOb7EaKi8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732242985; x=1732847785;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w58mpTdLCyM76KOVFOa5hEFbjg7oBG1TqdCvT/1gms8=;
+        b=h4pSGJoV5TH/hv3q6vpLdzGlPf3lq764jMlsx9n37AwnY5cVc9bTME7hvvuv00Br75
+         ryw1G59beVoZTvdxfKjJDZc6NaGdpbJbfSF3mKGiB5qWBsCyKAHiE8276UHjtqjkF3Gx
+         CkkuSWR02pB3oqa+5Eea3EQB82rljKWOT/cXISuRftU05WiWU7lmb1oyhbdf1Gg9zRJL
+         yYU7JAFRa1AeApEBjAijejMBqGKz20rDln1JdjujtYmhv8aG8JEJ9jo+o+ePNh/b/9Rk
+         b0vm9hbeaLuAwfPkJLKnLOQD/SPquKOOzLfY4qjQWwT4lFRs8/hDtzC8JG6pBiO+k0ju
+         d+YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnWpGvIV6Ni3/sL2NagbHXcBUbzpWjRaFZJzpWKW9bigCVzsDJEwUu4tuGG1Y7zEQ13WGCUFhTyk0mTuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwS7Xx403vEJujiOni3GLIQxEoMtaeEXKiTvxFDWoANQPcr5DR8
+	trhRvfIzZbdndEVKVih18IIaV/TEXcUztOCS5TYvmPg/yEgGf9+mjm9rxvxGraR7BxVAklwsdUw
+	fl11s+GXgopKuWXvQ6XH3t8QvuT1GKZnkRlcv
+X-Gm-Gg: ASbGncuOzw0ORio0zuXXaJ+Vc1uQudddrwHiDLgGKK2BNZ6w4rXSaqgiyrt56R0kJLv
+	KN4s43eF5caXLbkZ1S6lQ2L65tLEHC5Z4AmvtWp5y8tKmYmj05PEtsDUVQQ==
+X-Google-Smtp-Source: AGHT+IHv/1QmF+gjCpmGYzT7ut+STnNpVA5KQSryGBND2mlguVqBI1n74mDe76EIOb4qOgxv69lpEC6BjzzDg+jqaDc=
+X-Received: by 2002:a05:6512:1247:b0:53d:d17f:9c82 with SMTP id
+ 2adb3069b0e04-53dd39a549bmr521859e87.41.1732242985261; Thu, 21 Nov 2024
+ 18:36:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: nkudqDdmjWqGyS6mMI4TqQs_0eyldMMc
-X-Proofpoint-ORIG-GUID: nkudqDdmjWqGyS6mMI4TqQs_0eyldMMc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=971 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220020
+References: <20241121152931.51884-1-frederic@kernel.org>
+In-Reply-To: <20241121152931.51884-1-frederic@kernel.org>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 22 Nov 2024 10:36:14 +0800
+Message-ID: <CAGXv+5HtG+6D8245DFAeSKfGL75zVkEGLu74=hqtjX=-Dpj70Q@mail.gmail.com>
+Subject: Re: [PATCH] delay: Fix ndelay() spuriously treated as udelay()
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+On Thu, Nov 21, 2024 at 11:30=E2=80=AFPM Frederic Weisbecker
+<frederic@kernel.org> wrote:
+>
+> A recent rework on delay functions wrongly ended up calling __udelay()
+> instead of __ndelay() for nanosecond delays, increasing those by 1000.
+>
+> As a result hangs have been observed on boot
+>
+> Restore the right function calls.
+>
+> Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
+> Reported-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-Add platform configurations in devicetree for PCIe, board related
-gpios, PMIC regulators, etc.
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Thank you for the quick response! This fixed things for me.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6..18f131ae9e07 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -202,6 +202,23 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pcie {
-+	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -210,6 +227,31 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&tlmm {
-+	pcie_default_state: pcie-default-state {
-+		clkreq-pins {
-+			pins = "gpio90";
-+			function = "pcie_clk_req";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		perst-pins {
-+			pins = "gpio101";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio100";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
- };
--- 
-2.34.1
-
+> ---
+>  include/asm-generic/delay.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
+> index 76cf237b6e4c..03b0ec7afca6 100644
+> --- a/include/asm-generic/delay.h
+> +++ b/include/asm-generic/delay.h
+> @@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec=
+)
+>  {
+>         if (__builtin_constant_p(nsec)) {
+>                 if (nsec >=3D DELAY_CONST_MAX)
+> -                       __bad_udelay();
+> +                       __bad_ndelay();
+>                 else
+>                         __const_udelay(nsec * NDELAY_CONST_MULT);
+>         } else {
+> -               __udelay(nsec);
+> +               __ndelay(nsec);
+>         }
+>  }
+>  #define ndelay(x) ndelay(x)
+> --
+> 2.46.0
+>
 
