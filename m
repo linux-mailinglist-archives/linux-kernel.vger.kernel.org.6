@@ -1,162 +1,184 @@
-Return-Path: <linux-kernel+bounces-417803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F296A9D5942
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:10:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168B89D5943
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:11:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA7B22C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:10:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884EEB22B6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA90D1632D0;
-	Fri, 22 Nov 2024 06:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73AF1632CD;
+	Fri, 22 Nov 2024 06:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxPCzrOi"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iegPtFA0"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D146158214;
-	Fri, 22 Nov 2024 06:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F9D15ADAB
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732255816; cv=none; b=W2A1pCdnaXte8NdmYFpH7flzjembNym+JMM+mABuyi+yr881sSstE0USE5VXOCw3PWYQUPdv4A9XQavOL6AHI0hC0QDBssJjcHZORR1J0QFYOf3D+R0JJN+i7hg+oHAqyKuMdChI3szhkBxEx2KSv5Qe80qoXxHz/wrdVbxY7W4=
+	t=1732255906; cv=none; b=TpXCPDG+E7UL/3hMFjpagOfQcUts1XMpz0G2Zblvh3emR9ADyf54WpSxVElL1Cmq6XC4W/9J46ySYcR/XS10kffqKMp20MdT0+gAoWAyAHBMSZi+OSCN3V2a32yY+GBfXZoAuEhL9L3Yd6BnFCQscJsIo2mhQv3BKc3HM9TIvNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732255816; c=relaxed/simple;
-	bh=h1BuSolWKnMZV0lYRh/sj1XnIlI3eusKPoDlGjOs2YU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=roz3otCmFpjzpJPKSLMMXni37PRpEgBDQoBhQ/wTLcyD33JqqIx2u1oQi2EqbDX6TTXihvzJhRort9AIniI3gfelBRfSI0DABPBnZDiHLbnseMfe2iiER8fXqDZ8TEydpKbzQFCI5BVLbxtyOD166ZPwo4gfWR3wMMVqJsjGWlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fxPCzrOi; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa97d99d6so915481fa.1;
-        Thu, 21 Nov 2024 22:10:14 -0800 (PST)
+	s=arc-20240116; t=1732255906; c=relaxed/simple;
+	bh=I3IUElX8/5bjB//wumcR7e4AYMOuUaihltii6i/CqrU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DQAN+4EUPQ4xEtdKsSiwX+uIjt3++52lvQcOWCuVp+DzEpX11MU/2aYXlpf+MHEfo4dh/BK9AtlZHEVA5ZUi09mB12NXFSaKbhQvz9Yry+YJ8R9XUMf4c7h1/qp9F2as1q232mXuvQ2X/GLxGiO0vqWwpc3l6Z90EtjTl8wBxS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iegPtFA0; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-720d5ada03cso1687381b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 22:11:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732255812; x=1732860612; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lXmuqMypGahuge5EVWptLvwyNQ/jI/s77haxB8Mhc3E=;
-        b=fxPCzrOi/t6pYczWHZN6r84RnpqpW4GJPmJIisfGdpDkfZutCWOMu1VMtPrqtrkCqE
-         YEY68GxMln2J0qujzpMq8vZAenODeRw+EVSKKZEUHQzPLTtS+24VlhFPQHmszLwa9+0i
-         GtNfv9b3Pe0ep4y+kJMYKFZtWOTb2QP0gVzv1Z4ADnuNLRKPrCb7Y+0qnvVfEPXrEPsR
-         BlVgWhpd0FTjboz1Z8xpCJwaNoV7kRZ3qMLKS5p3j1bnGrMFYbdZHCHAgb/lxfate8F9
-         WL4CAEooqj7yjHcJM0D85ADHU7M7b3asnQ7BRgzFekOnNHfklEFIP4VykIKIUf/Iv9eP
-         /Enw==
+        d=linaro.org; s=google; t=1732255904; x=1732860704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KsdWADtCZxfDmt5l2khF1eoZiMv6I7S5kAe1tkpZwuc=;
+        b=iegPtFA0Xse2ERoxGbJ2JDRmBTFdoXu5IwPhpHd2MeHvsrgMQaw/oPQ1xL9X4/iaC9
+         emX+Y27ubLWyM7uuDvhDmiTmLxL3wQYUmWp0Uj4ADHb5MwzGJo/7LgElfJUBSHfnmKq8
+         DX0POnFvJvUdecD7JVVaSrmcqhMNGD5qsmAvCjY5Re2UZdCjtYB4zm5+T8SCKyZVFufx
+         wgXm3UamohfWp6YUlith+0oP5oE4/A+6TQkjgKML1Ug00TuZo7DA6wJeaLUu6/GaA0cU
+         yk/dZcC/uEYaZ4MXKU+23p+T1Sl++dBoA6MGi0+hhrhmx6Fb7H1imHAciXA2IMqzbAHY
+         NusA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732255812; x=1732860612;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lXmuqMypGahuge5EVWptLvwyNQ/jI/s77haxB8Mhc3E=;
-        b=hcRZU/T27YU6gV1JEog4n83MkkFdZn8r3O85ZylHUdvAIdUkO4OiYT86jxsvxJip9Y
-         HZN/NLeb0R/9ziSCtHsKqTSrQokVAwHI3BmUzAR13g9hXHP0/sIQqP7eplNfNsbYN1G9
-         avek8TaUW7tQMEMgJkkS14aCmSarjTQYXf4o/NNyrVClVdOO/mwZrYeIEStfP/ZP6hnc
-         lShrwDoaQPoAektZRq2ay4N3z71qVI98dGwEs4OWlTak00gvkoBAmXRn6QK6m6qDqVDy
-         nCzaO6e6x0CDIqep97Qnz9n2v+KGrP0k+ZDp63N/JYvk8ht6YJcz+49cMidIouRXuMjS
-         0yuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBIXwlYDHxz8+ZB/JVBDZqQblLfe3D5itMvX2NiNPHcnrtQ6eyc4h0rVleZdqi6diChdnDRkkM/GTUUT1I@vger.kernel.org, AJvYcCVKhic8lTWIwM0IX4dy5io6jaxrqU09EoWTbSuOi3vNars6YDENyfiwGt7TQQkQ5IgNSFM3RCOtTug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt4NcpUcksIYok1HliBCZPjCSqKwQ60uFppMefdOD6SvKLZ6Tm
-	cLEBF9z+511tlQQL64/Lu9hvpZp6ekK5FKHvl1sQCCfrLIWSDvQdgaI87Y8M
-X-Gm-Gg: ASbGnctOwgns79KCr8ok1JT+aKJNwijJqeqxtx4ZKPuawEp6je8MRkWqwGRTLlMzuai
-	IL4LWVogb+n8xwakMPUTPsLwzR2TeUcpy/m8vRLdpRRfri9qX6ZB+rB42IYex83jlgsZYTlW2Uc
-	jY2GrpOv7rjqEu+pcnO8RVuRAx+CvhiNPV/2LVdxD8P5spDNQmxXvPZNLP76NQiO4DMrgAQ/MiS
-	1IsyKWD/4JWETwyML/U1Nni5r3qarkMUwN0XzEF9OWH4UdY7DTvOq1ASil5tmsqFb5gEEWHju2M
-	M8M8ffrhD1vAsZKVADXdTavA+2MiPxw=
-X-Google-Smtp-Source: AGHT+IHlSjwCiOvjkf1xMUeTHog1xaJ0fNmCjHTSTG9l04ARGBd4a8eUwC1bTZei59htSK3+n/4abg==
-X-Received: by 2002:a05:6512:10ca:b0:533:4689:973c with SMTP id 2adb3069b0e04-53dd36a084emr546807e87.23.1732255812118;
-        Thu, 21 Nov 2024 22:10:12 -0800 (PST)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489d92sm242004e87.193.2024.11.21.22.10.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 22:10:10 -0800 (PST)
-Message-ID: <37bba4fa-34c6-4b7c-ae65-75929213a8f2@gmail.com>
-Date: Fri, 22 Nov 2024 08:10:08 +0200
+        d=1e100.net; s=20230601; t=1732255904; x=1732860704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KsdWADtCZxfDmt5l2khF1eoZiMv6I7S5kAe1tkpZwuc=;
+        b=oNMggzrylY1tdVkUcF7NOl2BmB2tNiPrpZWfvwv+y/2+X6A3KCRM0q6f4n09xhJUl+
+         e7Y9De5lnMxPivOuRFozE1qOZMBG4ul4w1cS3nvO/k0Rhe654FVsuSnpSGdGWaRkgQGz
+         2//fVmvRRyDKF2NCdAMEMrAYgrUuK2L51KxnZaZgABbrtDhK4WTQ3Su3nTstRnF7YsOX
+         SelRzrYO63WoWNeVd2swplHRhe1YjaG629SRJLlP8mpKGHIDiUXMWlIK1sxteDw5W0xL
+         sTeGJuIkdBWJO5GpQlSYgicT0sh6TK7KNkSJnJTDzU4Ph2Jx8uZ+PouapoJb50Zb7WpZ
+         gtXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtayAATYPUThjcGLzKa2n31gKz53Ze4yvtemsq16Jv8CyFpj70BxnSNz+I/fvZiVTjL3YswXklsOZBWoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZAdm2bapk1NaLaArZHjqMFKb6+s3TCRISvEc3/uZ6JwM+T+5n
+	0b/aGVfJIKEncAAqwfNp1vgQwg9PHfO+tApSeNipV1Yv2dcuOl+qPJgKTWJvHFI=
+X-Gm-Gg: ASbGncv8ClJ67wjD/+g11p+NbQM7mSLV5gQ6h0E3VTjFvrwAHtwNBvBnsL2+yqAXzk8
+	SgCPgEVKzKzxk4WtbQEKQpCG7ukknojRw9wrj5aZQgwZj9tJA1Tng4wBp7OIazZfMX1mfO4L0Bx
+	oDLWlUxSMv+iat/zUwmZLSMtmfn5jQH1oh8VdV6g7EoG0/l9dWhlH2zRTb/Qi75Ldkeo19hpz2Z
+	pox5MasjouWEvVUBfccOryW9PfLDPgDhxIqJy4baeRsM/YhhcB5
+X-Google-Smtp-Source: AGHT+IE0eJmFuahjKbCISpPbJp4kSO8jy3nKnYRP7eeOOTivTvW9UHLBye4KY33+7uFh0ZrM7Uugbg==
+X-Received: by 2002:a17:90b:1d03:b0:2ea:853b:276c with SMTP id 98e67ed59e1d1-2eb0e0204a8mr2029224a91.8.1732255903926;
+        Thu, 21 Nov 2024 22:11:43 -0800 (PST)
+Received: from localhost ([122.172.86.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2eb0cfe72f4sm768079a91.10.2024.11.21.22.11.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 22:11:43 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Bill Mills <bill.mills@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] firmware: arm_ffa: Add ffa_add_partition_info()
+Date: Fri, 22 Nov 2024 11:41:38 +0530
+Message-Id: <9967e35eb1cbdb8d0c0bae3f54401d806700e6b6.1732255888.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] iio: Use __cleanup for a few ROHM sensors
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1732193263.git.mazziesaccount@gmail.com>
- <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <2f321215-2ca3-4249-a9f0-427004c95d70@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Javier,
+Move common code to a new routine. No functional change.
 
-On 21/11/2024 15:54, Javier Carrasco wrote:
-> On 21/11/2024 14:04, Matti Vaittinen wrote:
->> Use __cleanup.
->>
->> The series converts the rest of the ROHM sensors (maintained by me) to
->> use guard(mutex). This simplifies the error paths.
->>
->> As a note, kx022a accelerometer driver is handled in another series,
->> which also adds support for two new accelerometers. I did also patch the
->> driver for the BU27008 and BU27010 - but when I was testing the changes
->> I found that the BU27008 status is set to "obsolete". I'll try to dig
->> some information about the BU27010 and decide if having the driver
->> in-tree is still worth the effort, or if I should just send out patches
->> to drop it all. Hence patch to rohm-bu27008.c is not included in the
->> series. If someone is actually using the BU27008 or BU27010 and wants
->> to patch it - feel free to pick
->> 131315de97ff ("iio: bu27008: simplify using guard(mutex)")
->> from
->> https://github.com/M-Vaittinen/linux/tree/bu27008-cleanup
->>
->> ---
->>
->> Matti Vaittinen (2):
->>    iio: bu27034: simplify using guard(mutex)
->>    iio: bm1390: simplify using guard(mutex)
->>
->>   drivers/iio/light/rohm-bu27034.c   | 73 ++++++++++------------------
->>   drivers/iio/pressure/rohm-bm1390.c | 78 ++++++++++++------------------
->>   2 files changed, 55 insertions(+), 96 deletions(-)
->>
->>
->> base-commit: adc218676eef25575469234709c2d87185ca223a
-> 
-> Hi Matti,
-> 
-> Both patches look good to me, but I noticed that you kept a few
-> mutex_lock() + mutex_unlock() in both drivers, in particular in the
-> cases where a scoped_guard() could simplify the code. Did you leave
-> those cases untouched on purpose?
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/firmware/arm_ffa/driver.c | 53 ++++++++++++++-----------------
+ 1 file changed, 23 insertions(+), 30 deletions(-)
 
-Thanks for taking a look at the patches. Much appreciated :)
-
-I remember leaving couple of direct calls to mutex_lock() and 
-mutex_unlock() - but I think I left them only to places where I saw no 
-real improvement by the use of guard() or scoped_guard(). It is likely I 
-considered the locking in these cases being trivial. (Probably only for 
-a duration of one or couple of function calls, with no error handling 
-when a lock is held). The direct mutex_lock()/mutex_unlock() has no real 
-room for usual errors (like leaving the function while lock was taken) 
-in such case.
-
-For me,
-
-mutex_lock();
-ret = foo();
-mutex_unlock();
-
-is as clear as it gets. I don't think scoped_guard() has benefits there. 
-On the contrary, for me the scoped_guard() would be more complex and 
-less obvious :)
-
-Yours,
-	-- Matti
+diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+index b14cbdae94e8..d50062cb6c43 100644
+--- a/drivers/firmware/arm_ffa/driver.c
++++ b/drivers/firmware/arm_ffa/driver.c
+@@ -1384,12 +1384,31 @@ static struct notifier_block ffa_bus_nb = {
+ 	.notifier_call = ffa_bus_notifier,
+ };
+ 
++static int ffa_add_partition_info(int vm_id)
++{
++	struct ffa_dev_part_info *info;
++	int ret;
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
++
++	rwlock_init(&info->rw_lock);
++	ret = xa_insert(&drv_info->partition_info, vm_id, info, GFP_KERNEL);
++	if (ret) {
++		pr_err("%s: failed to save partition ID 0x%x - ret:%d. Abort.\n",
++		       __func__, vm_id, ret);
++		kfree(info);
++	}
++
++	return ret;
++}
++
+ static int ffa_setup_partitions(void)
+ {
+ 	int count, idx, ret;
+ 	uuid_t uuid;
+ 	struct ffa_device *ffa_dev;
+-	struct ffa_dev_part_info *info;
+ 	struct ffa_partition_info *pbuf, *tpbuf;
+ 
+ 	if (drv_info->version == FFA_VERSION_1_0) {
+@@ -1427,42 +1446,16 @@ static int ffa_setup_partitions(void)
+ 		    !(tpbuf->properties & FFA_PARTITION_AARCH64_EXEC))
+ 			ffa_mode_32bit_set(ffa_dev);
+ 
+-		info = kzalloc(sizeof(*info), GFP_KERNEL);
+-		if (!info) {
++		if (ffa_add_partition_info(tpbuf->id))
+ 			ffa_device_unregister(ffa_dev);
+-			continue;
+-		}
+-		rwlock_init(&info->rw_lock);
+-		ret = xa_insert(&drv_info->partition_info, tpbuf->id,
+-				info, GFP_KERNEL);
+-		if (ret) {
+-			pr_err("%s: failed to save partition ID 0x%x - ret:%d\n",
+-			       __func__, tpbuf->id, ret);
+-			ffa_device_unregister(ffa_dev);
+-			kfree(info);
+-		}
+ 	}
+ 
+ 	kfree(pbuf);
+ 
+ 	/* Allocate for the host */
+-	info = kzalloc(sizeof(*info), GFP_KERNEL);
+-	if (!info) {
+-		/* Already registered devices are freed on bus_exit */
+-		ffa_partitions_cleanup();
+-		return -ENOMEM;
+-	}
+-
+-	rwlock_init(&info->rw_lock);
+-	ret = xa_insert(&drv_info->partition_info, drv_info->vm_id,
+-			info, GFP_KERNEL);
+-	if (ret) {
+-		pr_err("%s: failed to save Host partition ID 0x%x - ret:%d. Abort.\n",
+-		       __func__, drv_info->vm_id, ret);
+-		kfree(info);
+-		/* Already registered devices are freed on bus_exit */
++	ret = ffa_add_partition_info(drv_info->vm_id);
++	if (ret)
+ 		ffa_partitions_cleanup();
+-	}
+ 
+ 	return ret;
+ }
+-- 
+2.31.1.272.g89b43f80a514
 
 
