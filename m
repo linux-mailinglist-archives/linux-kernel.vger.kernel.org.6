@@ -1,168 +1,154 @@
-Return-Path: <linux-kernel+bounces-417941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100529D5B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:36:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AF89D5B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4543283200
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0451F22B14
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE90184101;
-	Fri, 22 Nov 2024 08:36:33 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CE318C033;
+	Fri, 22 Nov 2024 08:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBgAOS1V"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3582B156F3F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3763156F3F;
+	Fri, 22 Nov 2024 08:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732264593; cv=none; b=V0iaLw+5pp/jrK3tLy+gCRbxWBhtamD6fI9cmRdoHKuYpCCbmI13jI4ASj4O1A/WI1UVoynCEAn/A2Ab6goG/fzn2MVL+RRNY/UbOmm5dblb+8zS9pSmBl6kgbouHA1HuDd5A9eRkOMX3LjGGWBvFdTNhojcDSJGCgniJYdqLdY=
+	t=1732264605; cv=none; b=CyyoCnGDCd2Y+0lUM4pNjBWneOk3TXeVn4oDjDQghGWthuRtqSR/UAWBw+3aqZehJV8hD4CJeuUT24HRIpz2zxetgTKVyIs7eiR4JOt9jKZ8zbwMPwJU+FxGrY6BTfsvlEpAtStTs3uF3b5E8dajEhzZIi3W9NJRW8FHm/sYa7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732264593; c=relaxed/simple;
-	bh=RGyoPgiaUJAt9Sz3/OhQ9oMPv3E4lh4dZtjRRMeVrPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pzFPQ6wxDFYztHzZEgbX+1VJNije8BfmXZ1oGZgKCcqxIAqsftDFMktOmMZ9886SdLdlawSVJWreQ50A3oWTcGoLUk45qB0WiX7CeuTDt/Ej+xE7SJi7C8UXVy8rNYEAMQ63blLcgE9054G9FD1BqrJGTpCjrCuY1+RQrSEmzV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1732264605; c=relaxed/simple;
+	bh=vFW0IJ0LFbR2xrz/HIKuVD0t8pgr0vzXqGnWzS7nRwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jGA5xwNKu7eVwK9Xh4ZVCkT4lurv6yqKjos3+DyipDcAuqixzP+51/eHPha04x/7MUxBg10X0sH3Qm+IAerp7WPpcWQhsHf4XNgA/EyQKF12JDgyYiQgaeMk+WJLi/tVBnXtbGTUkNFiSssdGmBEnD/cruHYPacwbrjCtpQwNAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBgAOS1V; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6eeca49d8baso14322717b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:36:30 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53d9ff92ee9so2069170e87.1;
+        Fri, 22 Nov 2024 00:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732264602; x=1732869402; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MBEAvvG9TOvTtZsp475mYKKe/GTMGyWrpHVozBadszo=;
+        b=DBgAOS1VQPg3W1HatePsVFYaR0sUJl7e5uDd7DPw80dQYE0UppCUHCFrsAojKgW50D
+         Bdu1gPEHD7PU00vyDvTAZeEH5XI/6OODr9kEqp6csQClfBLCVzC1dzh3VcO8/GO7QV9J
+         gr+fjRzV+j8KR+TCpiq5phmnfUJmC50dqL9JtilMuose62epnKQVRjWN0t1lzYLRJB2q
+         TAx/Qnvc5/mc3pU/5PeaDoEfYAHZe+3RTPC9s9wCjW2msziKm0YuSjU0HwOt/PUXwhue
+         i/6wnx51m+yq4jSl7MCYe6a05qS0Btt62Oi5xX6LPCFGPi3pdGB7uG5YRBtikAGUmEV+
+         ubtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732264590; x=1732869390;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gAZGdYy0kLNz/HWKiT5Wenkd6deM0b7lB87bgXf3/+U=;
-        b=jEgfMBzWODQrWMAJ1xVVKF8PZ1iL0FLUOOsVBQ5j3F0sug/diab0wyagoOyuCy69eI
-         B5vLHLNjZlF9t3KxuHAuhv3n3oJ2hwvResGt07EmExn6x36OFXSBxq2yuX8tsw+c9l5/
-         9v+ytrutJV5Jehg5FLWdoFjuduyhUMlbfpDksQJ+HCvmELL/k2Fb+DmDJYAn5P/PSI32
-         1LFJ9WXUOsWWnj/uxaoMiZVD/RJ0CU0CSGqJKr9hB/gvRCww0N0/tj0HzTM76WHQ/kCQ
-         nB+LXYSbKNii2yqZTRU/rcZldptsKf2v/BImcR2h0gVqTJ5zh0pIeatEUcdzYBBsPZkX
-         wLyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWvI5I73BZ6MRm4Ky8J+BkX/8UYjJLAY7rYIenK4jvRLSnBoyBBJtc25oHHB3GI4qdeRSxsyhwsJ+Ocrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPh4y1JX35Vd5rnqAv7m7dWrwXCR4xH+XHelkCoOSniXYmjYPD
-	6QGTn49v8ZjoGpiHSSlfSq1u+uODRzesAiMjd/5iKm6K2UGgeO+vjwjRBctw
-X-Gm-Gg: ASbGncu33ZdVhOMN8zM8CVngJvz6oTkFxfENXo4Gdq85C7Btl0OSgy9+d38zcWTV47j
-	EsOmgGy/0J5Zk0yYnFi21rfWERgKP7VMkomp6/LvGLiLti5yTpty8htZZ3tYh5v51N77r1zpomM
-	X6KV09++ASXM7o8LIKqJVfhMrohOczR9jOZPjF1LiTeBkr+93wDdOKJoy2DkMPqBOkd4uB0Wam0
-	qFsdSfWC28sm9mLBvOHjLfv8k0V3UxXRRqJ9DrkxpvL9F9f5YdacHYYZUt+mv2JcNfpeoo+FWsE
-	nu/EKsyHycw2tjub
-X-Google-Smtp-Source: AGHT+IGymPyGbZj6Tn9e/FmsGcGBWib6HERmy+mF4mKyhn2aIT3E2TZ47KFqIJRrZ/fs+vp5TO7NFg==
-X-Received: by 2002:a05:690c:d0e:b0:6ea:1230:2467 with SMTP id 00721157ae682-6eee08a9687mr20163957b3.2.1732264589770;
-        Fri, 22 Nov 2024 00:36:29 -0800 (PST)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6eedfe2a46esm3549847b3.38.2024.11.22.00.36.28
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1732264602; x=1732869402;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MBEAvvG9TOvTtZsp475mYKKe/GTMGyWrpHVozBadszo=;
+        b=cATa28w66EZwKaKQCe/isjNiZPaPLiQ7vKP3Ww9Q1gLHQlneiMf+oPh3mKXfRYy6Mr
+         w+aOFJAKvlXsxD8x0IgaKVLe/CZcoy4NvGPbxQgGFUYuPx69f5G12Z9qPyAwn4Qg7l7o
+         rWaDbcY600cVHBjXzKTsevKCDrGAXQQJwi09TCjrXXpZjDaKuufwAF+hQSDJO6PA/Xco
+         cpxoe+DQNcUKd7dAbcz9a7nfg8CFfnLwbsgY6HwJhSrYuWrVYGmA0OYtU4rZI29+x6a8
+         YvWuGhtBjWRI1e+CBb5G3/OVsfgJ4Cd8Koq6SVlS8IWWSOX3k5iHUQmV/clflYsq9Ust
+         vx/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXGsUrhbq9YHymPlfVfE+yhx3yBx7yEByJ7CADux5ynHlFzCcqG9QHowxJ+3DFQB66EieQMescg6aHVUHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzb+viayfwYNqyFmi0gWCgn4b78gxHG1B+qL/LSOzgTxFVUgA2
+	RoDJXRm214mbLPNyOniiF7maf0DkguJ5B+CfJpRFdRpM/1kyRtoF
+X-Gm-Gg: ASbGnctteahKp0WzFa5UdM30mEwxCiM0WqVsalwHaQG6DJMVCAQFHxODELbdCKj8TGi
+	BCoKgp+ItM1MWSv7h7SUNCNlTO7zhgCMc21X5iaGuXYni6u1CQlVsk5wKtvJobzYKVTve3tfc8Y
+	5lHz+Wxlyvz1nB6RFJPaOI0MHz9rmJK6srBhS1SYbt+YKyxCRXsGaeaIChHWRE61Fao8deI0zLS
+	PJ/N83CFRPW2Ui2/WrGMD13fzSJnc4gxzKEmt6FSIW0P9lfGNw87qJTU6X8RuyRIQ9g04ScXZJF
+	7QCQyiAPJOwfYjrytjxQ
+X-Google-Smtp-Source: AGHT+IGdwiR49anO91g2/YPv1iIkpUxFpZJxQBmEsHcwqIfap5HF3A+oVH1AnEJU7mnuAizghBvzdg==
+X-Received: by 2002:a05:6512:1cc:b0:53d:cd25:4a61 with SMTP id 2adb3069b0e04-53dd39b15e0mr811640e87.42.1732264601474;
+        Fri, 22 Nov 2024 00:36:41 -0800 (PST)
+Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd24811b0sm289272e87.162.2024.11.22.00.36.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 00:36:28 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6eeca49d8baso14322527b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:36:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXWms7ahSitb2tXXFcJasa70lN2JpRChoeBdelQoIZPZ8zrixKf/xVteA/WqQtkoraHSpa8hhe4QPJsk5c=@vger.kernel.org
-X-Received: by 2002:a05:690c:7084:b0:6e2:2684:7f62 with SMTP id
- 00721157ae682-6eecd25bc15mr55712747b3.8.1732264588474; Fri, 22 Nov 2024
- 00:36:28 -0800 (PST)
+        Fri, 22 Nov 2024 00:36:40 -0800 (PST)
+Message-ID: <f0052c1d-ce36-447c-af1f-db12940f6cc1@gmail.com>
+Date: Fri, 22 Nov 2024 10:36:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018151016.3496613-1-arnd@kernel.org> <20241104172950.GA741087@thelio-3990X>
-In-Reply-To: <20241104172950.GA741087@thelio-3990X>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Nov 2024 09:36:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXrrCiLm2sQmpegtVHV8X5AUp-8E5BejDxRpMbeAfHhvQ@mail.gmail.com>
-Message-ID: <CAMuHMdXrrCiLm2sQmpegtVHV8X5AUp-8E5BejDxRpMbeAfHhvQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/rockchip: avoid 64-bit division
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Algea Cao <algea.cao@rock-chips.com>, 
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Arnd Bergmann <arnd@arndb.de>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page
+ mappings
+To: Alice Ryhl <aliceryhl@google.com>, Jann Horn <jannh@google.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho
+ <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>,
+ open list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <20241119112408.779243-3-abdiel.janulgue@gmail.com>
+ <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
+ <43a07c04-2985-4999-b6d6-732794906a36@gmail.com>
+ <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
+ <CAH5fLghUb8dEV9GVtJj497cJ5sp4Gg7=qeijfnV_w4BNd70qxg@mail.gmail.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CAH5fLghUb8dEV9GVtJj497cJ5sp4Gg7=qeijfnV_w4BNd70qxg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 4, 2024 at 6:30=E2=80=AFPM Nathan Chancellor <nathan@kernel.org=
-> wrote:
-> On Fri, Oct 18, 2024 at 03:10:10PM +0000, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > Dividing a 64-bit integer prevents building this for 32-bit targets:
-> >
-> > ERROR: modpost: "__aeabi_uldivmod" [drivers/gpu/drm/rockchip/rockchipdr=
-m.ko] undefined!
-> >
-> > As this function is not performance criticial, just Use the div_u64() h=
-elper.
-> >
-> > Fixes: 128a9bf8ace2 ("drm/rockchip: Add basic RK3588 HDMI output suppor=
-t")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
->
-> Can someone please pick this up? It is still broken in next-20241104...
->
-> https://storage.tuxsuite.com/public/clangbuiltlinux/continuous-integratio=
-n2/builds/2oNvJFRj8tkDieb6VfrMf4rh1Kn/build.log
->
-> > ---
-> >  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/g=
-pu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > index 9c796ee4c303..c8b362cc2b95 100644
-> > --- a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > +++ b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> > @@ -82,7 +82,7 @@ static void dw_hdmi_qp_rockchip_encoder_enable(struct=
- drm_encoder *encoder)
-> >                * comment in rk_hdptx_phy_power_on() from
-> >                * drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-> >                */
-> > -             phy_set_bus_width(hdmi->phy, rate / 100);
-> > +             phy_set_bus_width(hdmi->phy, div_u64(rate, 100));
-> >       }
-> >  }
+On 22/11/2024 09:55, Alice Ryhl wrote:
+> On Thu, Nov 21, 2024 at 9:18 PM Jann Horn <jannh@google.com> wrote:
+>>
+>> On Wed, Nov 20, 2024 at 11:56 PM Abdiel Janulgue
+>> <abdiel.janulgue@gmail.com> wrote:
+>>> On 19/11/2024 19:07, Jann Horn wrote:
+>>>>> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a Self>
+>>>>
+>>>> Sorry, can you explain to me what the semantics of this are? Does this
+>>>> create a Page reference that is not lifetime-bound to the PageSlice?
+>>>
+>>> This creates a Page reference that is tied to the lifetime of the `C
+>>> struct page` behind the PageSlice buffer. Basically, it's just a cast
+>>> from the struct page pointer and does not own that resource.
+>>
+>> How is the Page reference tied to the lifetime of the C "struct page"?
+>>
+>> I asked some Rust experts to explain to me what this method signature
+>> expands to, and they added the following to the Rust docs:
+>>
+>> https://github.com/rust-lang/reference/blob/master/src/lifetime-elision.md
+>> ```
+>> fn other_args1<'a>(arg: &str) -> &'a str;             // elided
+>> fn other_args2<'a, 'b>(arg: &'b str) -> &'a str;      // expanded
+>> ```
+>>
+>> Basically, my understanding is that since you are explicitly
+>> specifying that the result should have lifetime 'a, but you are not
+>> specifying the lifetime of the parameter, the parameter is given a
+>> separate, unrelated lifetime by the compiler? Am I misunderstanding
+>> how this works, or is that a typo in the method signature?
+> 
+> No, you are correct. The signature is wrong and lets the caller pick
+> any lifetime they want, with no relation to the lifetime of the
+> underlying `struct page`.
 
-noreply@ellerman.id.au has just told me this build issue is now upstream:
+But that could be put in the invariant that the PageSlice buffer must 
+last at least the lifetime `'a`?
 
-    FAILED linus/m68k-allmodconfig/m68k-gcc8.1 Fri Nov 22, 05:34
-    http://kisskb.ellerman.id.au/kisskb/buildresult/15277242/
+> 
+>  From a C perspective, what are the lifetime requirements of vmalloc_to_page?
+> 
 
-    Commit:   Merge tag 'drm-next-2024-11-21' of
-https://gitlab.freedesktop.org/drm/kernel
-              28eb75e178d389d325f1666e422bc13bbbb9804c
-    Compiler: m68k-linux-gcc (GCC) 8.1.0 / GNU ld (GNU Binutils) 2.30
+If I'm not mistaken, that should be the lifetime of the vmalloc'd buffer 
+right?
 
-    ERROR: modpost: "__udivdi3"
-[drivers/gpu/drm/rockchip/rockchipdrm.ko] undefined!
-
-Applying this patch fixes it, so
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Do we really need +5 weeks to apply a fix for a reported build issue?
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
