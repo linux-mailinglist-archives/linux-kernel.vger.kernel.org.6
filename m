@@ -1,131 +1,136 @@
-Return-Path: <linux-kernel+bounces-418805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E48CB9D65C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:21:57 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E099D65C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:21:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931E31616AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:20:56 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A45819DF45;
+	Fri, 22 Nov 2024 22:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BE9n+TDB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDB8282456
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:21:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE8618DF7F;
-	Fri, 22 Nov 2024 22:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCge5YV+"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079E415ADA6;
-	Fri, 22 Nov 2024 22:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C41189F36;
+	Fri, 22 Nov 2024 22:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732314112; cv=none; b=s5t9dV9NQpa8Q8ldzUu6G3HJF1RZ8DOt+3xWIStDVx0yjMVwZcmaRMFFcO4Je7SloP3kxJ/k8fcd9fa/CbBl2N30fGD1hlZ1i3A1Pv3NcN/FMNaMvLd7TWO5izA7s1wyRRnCo2H61oQS5QuqgSjTaWuYb6e/g1SAneD6vtE7QiE=
+	t=1732314052; cv=none; b=McxJhhP1LSzZhSg4ZbafgbqnQwgfYMVVoQKyKp15Lvm/q8K6WJLeFSWJPesLR44zQ1EHlcbpVnthXDNRJj8sVJkBKUXzeN5Q6mQwmyH3QGxaipcF1bR3CNwthi6CSg7z9IbUuAsgBrXPqrdecO4BeZc7ukJrE5A9kh0jUubljxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732314112; c=relaxed/simple;
-	bh=AmU7BXi+0SmutD6o3l+LZwSGNXDVBCUbymN/Qpg3vUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oaZhd0xhXWv2Ag2qrD9RrrgHjXFI9fKp53qSq4vT/uH4kIWOx6Hmgs940Uej8rR9On3K+RKSAPGPAo2s8VDfdM4ET8lQ0ZN1YuvlCBsetQigvpqdrBJnDVpZkCvLWudTy3d6h/vgQXZaZMjdjXAMiUUfPzYgPuOkR//bBf/MjoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCge5YV+; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720c286bcd6so2437951b3a.3;
-        Fri, 22 Nov 2024 14:21:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732314110; x=1732918910; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7D8SmnjpLOc6rG5pxS/zjl1MQOjwvj/EMRIhBLhBUU=;
-        b=VCge5YV+W69s0ThDUX9TnJjwIhxlP+xRAQ7p5dYY/DJThic/88G/95CqRb7aTNLhLw
-         LMBo2EV8HtQEEv4X+3UkQ+SXIPVL+fk5V9trzfIROXpGh85qDngXWBowGo5jYVYY6kZZ
-         vFYr8d0LUt1EVyFuborkz75h6ma5H04pYVJGCsaHjPjJSkTqAAiM3Xsa5EI2soicuS7W
-         1UeXOkds+vKqjLI2WI3k8KzpAshJF8Ixe8cwaRDF6FU0JTMkMPF9h5/+Yt85dEqoYLGZ
-         Ktanhn8ScGU0inFuMG6Fwhh7cq/sqn+3QsDBm8pR8g8lHRGhkcHPpDQ98J898Vmd+8vA
-         Hxyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732314110; x=1732918910;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7D8SmnjpLOc6rG5pxS/zjl1MQOjwvj/EMRIhBLhBUU=;
-        b=Ev7YOivLK10fA6tn1IhB5KHSShcS9FitOfjvPM7ZM7Q7Ds5sM7TSP8lxrWlhE598/R
-         e9hvKFPVQDPmD+j/JXPMgZ82YZEKDyZbenVFNy6+oca9u0ZQRMEq365eyvQ5HLa+Stb0
-         kBUdQpvj88KrhYTYh04WvoaQUJlgUjXHigBzJTlUy4+i8b2ih2A7imTD8DV3C24woFJg
-         +quBFmaEeOqZpG8TkCOQh/UiGwErwPJkk+KiHjBi/SOyYU4zyAE1hDNuJSfv+tpD8Y85
-         2PiAFGYLHk1TCe2vYfF6Maa2RW0zzkDUONUS2A2letnDH13VB+StIxEzAI2tSTKqsoLy
-         fJ9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUPuRXYOLR+0JX3tHLXaaxn678D5Pey40LvXlg+VfTO3KySeYX3y0aPwuasSKxX6NNNaJIOu2RdXrMBh59i@vger.kernel.org, AJvYcCXv4yetQOzVT/9UjlgS/EbPTxpBF1Z0btSAUvhUCJCx5UzY6+dbE5v64pCeSJPzacsEkS13e6AVPo+JaEJ0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7waEGVqtzKN/D2WkViCXKuaU6TuNJQSRyypdtT0N8A4q7OrgB
-	bv0ud2XHUrv7nj3RWagTlSsBXIRBVi7e6chtdoZ2h/dhq/hb1afz
-X-Gm-Gg: ASbGncv/58aZyfP2DK9+yQ+pjMRcPcowyib56Gwqx6Xvu4y8uS2uz/PQA6C1C+Sl7Ac
-	hYx9fI5UVoorK2IQQ1iSiNDMGu9wwmNarfuamL4pFpJIasAZsVG6zjQEDdJVovVZ+OvtwhCtLb+
-	aBfOwBqPfNQqWTMYg5Eu+Kb8gpiaE3Fk9/+1KRJVOSn3tWZwsZkmtFfvanZFH5QRrJ2WL1iNWk4
-	amJ/JTyMqOdwJs4K3XGuVgaDgigIqnShsVR95WKyrahFdcJnES2Y6CbT5dIikmG
-X-Google-Smtp-Source: AGHT+IF3VxqCrOk1icSTavzZJpVF1aJ/XGFSzqV+znQJt6ShnaHICJ4ETD3ildu0AdAZLj+ETO9pmA==
-X-Received: by 2002:a17:902:d2c5:b0:212:4751:ad7e with SMTP id d9443c01a7336-2129f7315dfmr51533365ad.8.1732314110100;
-        Fri, 22 Nov 2024 14:21:50 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:c052:af63:423a:20f])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc13239sm21219725ad.177.2024.11.22.14.21.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 14:21:49 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+2db3c7526ba68f4ea776@syzkaller.appspotmail.com,
-	brauner@kernel.org,
-	quic_jjohnson@quicinc.com,
-	jack@suse.cz,
-	viro@zeniv.linux.org.uk,
-	sandeen@redhat.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [hfs?] KMSAN: uninit-value in hfs_read_inode
-Date: Fri, 22 Nov 2024 14:19:50 -0800
-Message-ID: <20241122221953.18329-1-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <67400d16.050a0220.363a1b.0132.GAE@google.com>
-References: <67400d16.050a0220.363a1b.0132.GAE@google.com>
+	s=arc-20240116; t=1732314052; c=relaxed/simple;
+	bh=TDoD+lOCxLL6fD8iEhwdRn95Pj9mWgTMDjgMOuci1bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BNvbYVl7rYKoO4T3/BwtSfnK6iYNFHi2VUEn6ht0+5PYxIEPzMJZD3EACICg0fleQ/OD82U9aZjIg8kcVf+Hg91TxipOYkVu7M9ULeJCtT8QPvLMxcqPydCWHeodvrRX0iAr82mb/mJY5GiWlNGYhJRVIl6KO/5Z9XbOwZZO3mQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BE9n+TDB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAEF9C4CECE;
+	Fri, 22 Nov 2024 22:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732314052;
+	bh=TDoD+lOCxLL6fD8iEhwdRn95Pj9mWgTMDjgMOuci1bI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=BE9n+TDB06+cbTv4npSy9jlp4wRibJIPfyJTme6OgdI69fT2wzJQoGyDbiZsE/Gf3
+	 RStKNEJ8+BcJenqy9K6Im0bc2Uk5PhQdef9qb/UUK9VFFkMYJyCxnshBddkyi3VJGN
+	 wd3wg4OLyu9xzqu79o6tbSxMQdWv47QDWhv42Om5tw84iiPrJ2Vd7sDQc8buds74uB
+	 FoSG4xxR9Y50nMJ29kb25XayBuTK4FjTZloxXvZ2XsYFbrmcRGN1Ihg8TdSUDLkrCT
+	 eDM+Z1fqVzDaHn2SKMqwaRJ773cq+NTjmK6lucdswbn9QiaacDECtccBy/xWJfESed
+	 RT6K9JXbPqbCA==
+Date: Fri, 22 Nov 2024 16:20:50 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
+ the user
+Message-ID: <20241122222050.GA2444028@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118082344.8146-1-manivannan.sadhasivam@linaro.org>
 
-After the call to hfs_bnode_read on line 356 of fs/hfs/super.c, the
-struct hfs_cat_rec, which is supposed to be for the root dir, has
-type HFS_CDR_FIL. Only the first 70 bytes of that struct are then
-initialized, because the entrylength passed into hfs_bnode_read is
-70, corresponding to the size of struct hfs_cat_dir. This causes
-uninitialized values to be used later on when the hfs_cat_rec
-union is treated as a hfs_cat_file.
+[+cc Rafael]
 
-Add a check to make sure the retrieved record has the correct type
-for the root directory (HFS_CDR_DIR).
+On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
+> PCI core allows users to configure the D3Cold state for each PCI device
+> through the sysfs attribute '/sys/bus/pci/devices/.../d3cold_allowed'. This
+> attribute sets the 'pci_dev:d3cold_allowed' flag and could be used by users
+> to allow/disallow the PCI devices to enter D3Cold during system suspend.
+>
+> So make use of this flag in the NVMe driver to shutdown the NVMe device
+> during system suspend if the user has allowed D3Cold for the device.
+> Existing checks in the NVMe driver decide whether to shut down the device
+> (based on platform/device limitations), so use this flag as the last resort
+> to keep the existing behavior.
+> 
+> The default behavior of the 'pci_dev:d3cold_allowed' flag is to allow
+> D3Cold and the users can disallow it through sysfs if they want.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+What problem does this solve?  I guess there must be a case where
+suspend leaves NVMe in a higher power state than you want?
 
----
- fs/hfs/super.c | 2 ++
- 1 file changed, 2 insertions(+)
+What does it mean that this is the "last resort to keep the existing
+behavior"?  All the checks are OR'd together and none have side
+effects, so the order doesn't really matter.  It changes the existing
+behavior *unless* the user has explicitly cleared d3cold_allowed via
+sysfs.
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 3bee9b5dba5e..02d78992eefd 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -354,6 +354,8 @@ static int hfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 			goto bail_hfs_find;
- 		}
- 		hfs_bnode_read(fd.bnode, &rec, fd.entryoffset, fd.entrylength);
-+		if (rec.type != HFS_CDR_DIR)
-+			res = -EIO;
- 	}
- 	if (res)
- 		goto bail_hfs_find;
--- 
-2.43.0
+pdev->d3cold_allowed is set by default, so I guess this change means
+that unless the user clears d3cold_allowed, we let the PCI core decide
+the suspend state instead of managing it directly in nvme_suspend()?
 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/nvme/host/pci.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+> index 4b9fda0b1d9a..a4d4687854bf 100644
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -3287,7 +3287,8 @@ static int nvme_suspend(struct device *dev)
+>  	 */
+>  	if (pm_suspend_via_firmware() || !ctrl->npss ||
+>  	    !pcie_aspm_enabled(pdev) ||
+> -	    (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND))
+> +	    (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND) ||
+> +	    pdev->d3cold_allowed)
+>  		return nvme_disable_prepare_reset(ndev, true);
+
+I guess your intent is that if users prevent use of D3cold via sysfs,
+we'll use the NVMe-specific power states, and otherwise, the PCI core
+will decide?
+
+I think returning 0 here means the PCI core decides what state to use
+in the pci_pm_suspend_noirq() -> pci_prepare_to_sleep() path.  This
+could be any state from D0 to D3cold depending on platform support and
+wakeup considerations (see pci_target_state()).
+
+I'm not sure the use of pdev->d3cold_allowed here really expresses
+your underlying intent.  It suggests that you're really hoping for
+D3cold, but that's only a possibility if firmware supports it, and we
+have no visibility into that here.
+
+It also seems contrary to the earlier comment that suggests we prefer
+host managed nvme power settings:
+
+  * The platform does not remove power for a kernel managed suspend so
+  * use host managed nvme power settings for lowest idle power if
+  * possible. This should have quicker resume latency than a full device
+  * shutdown.  But if the firmware is involved after the suspend or the
+  * device does not support any non-default power states, shut down the
+  * device fully.
+
+Bjorn
 
