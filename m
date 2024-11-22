@@ -1,104 +1,148 @@
-Return-Path: <linux-kernel+bounces-418624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB099D638F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:48:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275CA9D6390
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:49:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A735A160EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:49:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DF4224CC;
+	Fri, 22 Nov 2024 17:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iistVGwY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C23F282B55
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:48:43 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC281DEFF5;
-	Fri, 22 Nov 2024 17:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jNaR18gK"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D576A154BFB;
-	Fri, 22 Nov 2024 17:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C1013B58C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732297720; cv=none; b=fRuQzL6ogCtP30Dt8YC0NutUBm3XGu4LxTgQ6A+kzgQ6nbw4AVVKeCUjHUGluJv+vzesdZJ+Dopddb4vMCX7OCoaZ6LYbYYKyg59nUeCWvjoLe+jGbRM4kUSEcyOycVulUrK2NVurZz5zwK3p57bM+STzBIGdm/oUSd0Zwy7O90=
+	t=1732297785; cv=none; b=i/zL8SLgteipGR9jKsnG3rCEBtmOUePm2Z4cuiiFevXz1qr4sCQcUuZkALZSeihfWDG7EV7plBt+2XEt3pNQajcoVzsM0V9woOGuq82ZsVrrFldSOIdh21rYFosbqI5mIKIY9pd7wEGPNdXJO/J2xp+0c1zmjc5+kvxrSaRNDjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732297720; c=relaxed/simple;
-	bh=w6keSoU5f6dIGLIgExzzYkq+02aqWSurghBh7l2zrh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lf2aiMGnWCnwHu6Ec/f8k/I/j1Flac8dtY8Oio774calkJlUgo0rLNLOtGgY9l9YHVLEmX+LFLLazLmoFfPKTOHaUhfluB9dp1RaaidPHs1fpTs5sxlqHjG/L1ajIfBf09HaEdBixhFUVLbL655fxt7FBJzMHKD+vjdPftIIaiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jNaR18gK; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7fbc1ca1046so1770140a12.0;
-        Fri, 22 Nov 2024 09:48:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732297718; x=1732902518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SZ/AGQwdlOzKawCgYUzfsSSmQhPKgvRWM4tfx6r1xQ0=;
-        b=jNaR18gKVX35OayMS/Ld3pnPXFCDmlgE3VD+ZIowIe5BTZ1yB83222K5VAd/R4I2oq
-         miyt2oHdsX5nPg1TeJJhRDVCkfjLZBK/gYotRBfzAN4vpgq8+vX24mS7gwA+X7L4UvOQ
-         WurnwySdRrjgSoiG8Y6yHX4P6yVZ+FV5cQr04DXJ5cMya2CyGEDdiqvzEr76EqQLOdna
-         cEu3/+yKQ4nna2MDPqddalValJRpCc8IDFgxCkcQaiDIL2hhGHy2nPcbk8f+Eu2u0C+n
-         GZD9x0y/U9bzWKwL+6EXeNIDdR0dK693ufGZBms6Ep6PToqTW0BgzTqq3xRKcJs6j32u
-         /aIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732297718; x=1732902518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SZ/AGQwdlOzKawCgYUzfsSSmQhPKgvRWM4tfx6r1xQ0=;
-        b=nUm0Nz8BFU8usZXprhgsvXNSoBoBeQg2yK3Ev49lSmr4XS01ZuLCK5k/HerrrFBC8p
-         OBaLuHfZ5C7fiHjh6cfhUSjSqdw3Y41+bXP+L3zl689apqMLpO3BkQie53q+UbD5aj/v
-         dyG7dsWCEl0cwhxvwBykbn9R85WG835WaqdyQXAvLWEgrGUbV3O48Fp2cTAD5DKSyQFp
-         +YpFW7w4e6BIF89a5bETPfh+Wz4dl+mQg+nYLnfDtFInFBrsYqGPBkqVIMpVcqOA4B86
-         03lA6Kl77xePGJuoQNXJ0enwfyMc9ivXenE7+o7et4ER0pGYRGicCLQnTRqfDsZup48+
-         PQ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwe6lvLmPAAd3IHxTrb1J32ZdN8dsNYJ0UKAqxfrdK4ChAYtPRLzYTLk/H5K8iKbGae+CES1NEQna/TsB9@vger.kernel.org, AJvYcCWjFexbsJtuQrj5FHQVilKGPsZKMp/g5X2mENbedkHhEXYNFphf4kxHwzesI7tBcpqjqBFXoxk68m7XhQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFTPk9kaVh/YE57e+h99SEfoW+CGAWQJ9+CpCm9UqWEPS1f3fr
-	7Qv67EMCY8BygjeqeYUuIggyRs22uDQh5znum/WBr4CWfLnPlf9RTZ2gnw==
-X-Gm-Gg: ASbGncvP53nwv3SOMFFtsFwkIEmBu6G6IT4hM0qZ89W+J6RJBDvou2YtAj0Vj8Bv4gM
-	O4A8o2KHKwYxjs5jvIjXY3xjcTHWa7Vf59Cy2YUp7yc2OVevBCzPBfW0yDUGKNIJFO7OH45WZwS
-	Q5P8X5YJKAl/JOZ5g5UZAElNPiIEYc7d4jejf7nozrCpUkNZZPTZqj/W8HyWZf0CVFgoa8rV6I/
-	WW4+4qOz6gNnaRyCuKYPCTX5iX7nja7EpL5iX6QvPB1ZTY+7bJNwBxHKjc3qMM=
-X-Google-Smtp-Source: AGHT+IFmUpOiFC9+sESmNJhNr1f62pSqA0oJF0WLQcL5MeSzxO5BRcUCjUyzEa9cqaMYRZWYPryarA==
-X-Received: by 2002:a05:6a20:6f8a:b0:1db:e0d7:675c with SMTP id adf61e73a8af0-1e09e458d10mr5368128637.13.1732297718008;
-        Fri, 22 Nov 2024 09:48:38 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724de478f71sm1897223b3a.58.2024.11.22.09.48.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 09:48:37 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 22 Nov 2024 09:48:36 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jean Delvare <jdelvare@suse.com>, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (chipcap2) Switch to guard() for mutext
- handling
-Message-ID: <f025e679-cc05-478e-8acd-7649bd94fa25@roeck-us.net>
-References: <20241121-chipcap_no_iio-v1-0-6c157848a36f@gmail.com>
- <20241121-chipcap_no_iio-v1-2-6c157848a36f@gmail.com>
+	s=arc-20240116; t=1732297785; c=relaxed/simple;
+	bh=9fb++QsIqhxMf5E+bKzz5POyMwBNlVKDaxFQeLSVdtU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P5yaEuMG+DMVDMtxokyrvNRF26Cmwa2LAq/4cy3HDBUH3KlK3ORDBU5fk/U8tDsFMXz8AB4UmlES0kc+kx0AcIvujfzJ6zr1U7yo5AxPBJTQYt9MPnrV+3TbAdRifJ5w/p5VEonSFzdTmbGpwDNYQG8Dda93+XzwitTU2KpaaqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iistVGwY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732297782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GVwEH7NKOxp7HHL6S2AFq+acEA1lo3fGSvomSOmbcTI=;
+	b=iistVGwYpctFnvfeaWH3fTVKPkbni3MbiVP0hUHL6gN7r2uiiUmMTbWnQHy69En/CsK/EZ
+	VAaQX0ieAFY2ZmU8qJa7yetgIDqT+r5A0VXtQKEgrykVRx89h956N/hxwrl9vcqWDHIQz2
+	HtKKq9yGGioMJp7gIw/I/pr6mLYY6EI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-417-nUFJHOxpOkKCm9DDV94noA-1; Fri,
+ 22 Nov 2024 12:49:38 -0500
+X-MC-Unique: nUFJHOxpOkKCm9DDV94noA-1
+X-Mimecast-MFC-AGG-ID: nUFJHOxpOkKCm9DDV94noA
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 269E719560AA;
+	Fri, 22 Nov 2024 17:49:37 +0000 (UTC)
+Received: from [10.22.81.129] (unknown [10.22.81.129])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BD8D630000DF;
+	Fri, 22 Nov 2024 17:49:33 +0000 (UTC)
+Message-ID: <a6902168-0a8e-43ff-afef-b100f75d266c@redhat.com>
+Date: Fri, 22 Nov 2024 12:49:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121-chipcap_no_iio-v1-2-6c157848a36f@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] nvme: always enable multipath
+To: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Bryan Gurney <bgurney@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, sagi@grimberg.me, axboe@kernel.dk,
+ mpe@ellerman.id.au, naveen@kernel.org, maddy@linux.ibm.com,
+ kernel@xen0n.name, bmarzins@redhat.com
+References: <20241121220321.40616-1-bgurney@redhat.com>
+ <20241122120925.GA25817@lst.de>
+ <Z0ClxgBJG_YBF-Ql@kbusch-mbp.dhcp.thefacebook.com>
+Content-Language: en-US
+From: John Meneghini <jmeneghi@redhat.com>
+Organization: RHEL Core Storge Team
+In-Reply-To: <Z0ClxgBJG_YBF-Ql@kbusch-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Nov 21, 2024 at 10:44:56PM +0100, Javier Carrasco wrote:
-> Switch to guard() for mutex handling to simplify the code, getting rid
-> of the 'ret = x, break; return ret;' construct and returning the result
-> of the operation instead.
+On 11/22/24 10:39, Keith Busch wrote:
+> On Fri, Nov 22, 2024 at 01:09:25PM +0100, Christoph Hellwig wrote:
+>> On Thu, Nov 21, 2024 at 05:03:21PM -0500, Bryan Gurney wrote:
+>>> Since device-mapper multipath will no longer be operating on NVMe
+>>> devices, there is no longer a need to set CONFIG_NVME_MULTIPATH=n.
+>>>
+>>> Always enable NVMe multipath, remove CONFIG_NVME_MULTIPATH, and use
+>>> the code paths that would be used if CONFIG_NVME_MULTIPATH=y.
+>>
+>> As mentioned last round not having to build the not tiny multipath
+>> code for embedded systems and other small builds that never require
+>> multipathing still seems like a sensible idea.
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> It's not just embedded either. I have plenty of single port datacenter
+> PCIe NVMe's that claim multi-controller capabilities. I think it's some
+> artifact of SRIOV that some versions of the firmware can bring.
+> 
+> Anyway, we only use the one physical function, so they're certainly not
+> multipath devices here. We disable the CONFIG option because while the
+> nvme multipath IO overhead is low, it's not zero.
 
-Applied.
+So you're saying you want to keep CONFIG_NVME_MULTIPATH and simply remove the modparam nvme_core.multipath? (I know I said we 
+were going to do that but that's before Bryan and I started testing his changes with blktests. I think we can fix that.)
 
-Guenter
+The problem with this solution is: when you build a kernel with CONFIG_NVME_MULTIPATH=n you get exactly the same thing as 
+CONFIG_NVME_MULTIPATH=y with nvme_core.multipath=n. You get a separate /dev/nvmeNN entry for every namespace/controller path, 
+minus the multipath.c code.
+
+So, I don't see the point. If you really want to stop supporting user space multi-path solutions like DMMP with nvme we need to 
+stop creating multiple dev entries for multi-path controllers, no matter what.
+
+Note that this multi-pathing stuff is a part of the confusion in UDEV, like I spoke about at ALPPS this year. One reason why the 
+/dev/disk/by-path symlinks are so broken is because the kernel has at least three different ways to configure multi-pathing 
+support for nvme devices.
+
+We've been saying we're going to do this since since v5.18.
+
+So how do we want to do this?
+
+-
+-		if (!multipath) {
+-			dev_warn(ctrl->device,
+-				"Found shared namespace %d, but multipathing not supported.\n",
+-				info->nsid);
+-			dev_warn_once(ctrl->device,
+-				"Support for shared namespaces without CONFIG_NVME_MULTIPATH is deprecated and will be removed in Linux 6.0.\n");
+-		}
+
+commit ce8d78616a6b637d1b763eb18e32045687a84305
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Tue Mar 15 13:27:07 2022 +0100
+
+     nvme: warn about shared namespaces without CONFIG_NVME_MULTIPATH
+
+     Start warning about exposing a namespace as multiple block devices,
+     and set a fixed deprecation release.
+
+     Signed-off-by: Christoph Hellwig <hch@lst.de>
+     Reviewed-by: Keith Busch <kbusch@kernel.org>
+
+(master) > git name-rev --tags --name-only ce8d78616a6b637d1b763eb18e32045687a84305
+nvme-5.18-2022-03-17^0
+
 
