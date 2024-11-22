@@ -1,221 +1,122 @@
-Return-Path: <linux-kernel+bounces-418748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A267A9D6501
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:44:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3859D650A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 21:46:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61398283086
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:44:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E068B160682
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE98189906;
-	Fri, 22 Nov 2024 20:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6241DF98F;
+	Fri, 22 Nov 2024 20:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbTSlCsB"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJOPxT6D"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D933189F43;
-	Fri, 22 Nov 2024 20:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B152B189BAE;
+	Fri, 22 Nov 2024 20:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732308278; cv=none; b=NGuyOcY42EYa6Q2lt51RCD1GWNp1IDmStG8db5gMIwHywlKgXmZ9hd6SLmFubzzjWrfEhICGfumPHkoXB0XbRyh45xFUgn4CZGA6MaAshqWwgZk/cv4RTWOIOGxrHnQqHQ4mszQfvcV2uwZMrfcMz0hgnJbe0oag8izTOEuImNE=
+	t=1732308370; cv=none; b=nLCmPOg7yeJlKh8IOhv9bVZ5KF/oKtkDiJmAUJcME7rWHtrrWfEKVZnMWXU3AwRY0HJ/BjA4Oji7AH4lAsLhjjp99JXP5N+wUaccKP9CkjzFfOwAfX8dH8K/g/YtZJcjIMALWOxDmugFcT3q0FLWvEwHHPtW2a08OjOj2KHj13w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732308278; c=relaxed/simple;
-	bh=HjFl3Oj6q9LDqx8ujmWl/zaen/dx9B0zKKpUssZ/+yo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnJpkmYGGapoUIwKk7ueBRv/BKgVd5HncYIst6xEFnwctooxnjTp0JNvpzbq3CZsan3gNFFISdI9/1rUy0qCGLsxw626Iyh70vXl5wn83FeM6BsGkK5F33iSYaPHrbaeDgN+gLUJSQSk0D9uhLG/+o2wGva63SUPd+V8C3W3blc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbTSlCsB; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1732308370; c=relaxed/simple;
+	bh=rfLGix8VQmuESlqsseWvC99WsyP4jvOiWI4xbdEeIFg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q1aQYLJQfD0+OxCuM5L+SuohXXBzS+qFI+kGdnDsQ51t4T0mwpE22yI6lb1dvh98x7nwt2IZ7cGxtfg5ayFweTCWM/yfZ1xB/BdzVbiiGOQlaySQ01JsP2vwpxlY93RkHVE9Yxq6epAnCuD/0Yo2ZrXGM1zSDewtQloigx7smA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJOPxT6D; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea1e605193so2164758a91.0;
-        Fri, 22 Nov 2024 12:44:36 -0800 (PST)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-460c2418e37so16706701cf.0;
+        Fri, 22 Nov 2024 12:46:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732308276; x=1732913076; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=RNsPdMG2oW5mX4YcRyTduEGbHWZOLSJxPYLHyQ64sGM=;
-        b=gbTSlCsBMD7zMPfSbPsVWCEFl9L8gULvO1FlC7wH01bNEsSdUPNJFH+ZTbxKwqCsPi
-         DRO/EcIlnaf98uN0WZiAdTioUVcQVhd8XsvBoj22HgblByYB7cSmO0SrpeLcwnrONhvX
-         7imhIfR65lFIO3uhAJJ8qnTPoaMIUeYF2FQ9DfB39nfKl6wvpNEfGGdJv2VELkhHifXp
-         N43maB0DBVeQPHL9lU5iIRLWmqO1aRJLu3w5tcU6SuPo/YNzOzV1oO++/ghkMOeWaGTV
-         GFjp5K1QkfBy73ZPrXdr3oBsuxr77DT4f6ylkX6aVHL4FKM1QnrrKZh+y6hfqogeuqPX
-         wG4A==
+        d=gmail.com; s=20230601; t=1732308366; x=1732913166; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KdfcoTAixo+mlxOpXRifnZy9GhI+cyrUE3VMtPIwmvg=;
+        b=hJOPxT6D/pvZL0guv9MUb0YNONDWlP694kHaF6eX8Mj8HMVoxgHdzJ/5k7czlZIPHp
+         410dXfiVVSHEf16+0WSHnFykA4+ip/9i0tQP6okPn/Y7rqGfyQiwaDnlym+hXEjvc0M/
+         5nuDDCl/BIy6fA9Rqpd6MNH1s4o7c0SvqVSOIScY+46motmYcTVtipRAymsdtCoA8gZL
+         NR+8ZKSRNCdIQgjJYHyWqlvsPB6IiEpj+wrK58EQVfz7YgQRzRI7yGU7ISXyOtOJMen/
+         WxunGnKYCaKddUGIgjntz6PIPaEc3A2fSohnRzPOO7Bnpb/+UEFo9N2gUon6xrfK3f2w
+         q8aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732308276; x=1732913076;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RNsPdMG2oW5mX4YcRyTduEGbHWZOLSJxPYLHyQ64sGM=;
-        b=GFaVn9aJ0qN/+wNhYivtvjuGAekS23JxGwXTcTh+aVCHSACMgeobfuLcotC2rSzn9e
-         YvRzi3kTRzxJ76Idl3PrYKjqUTvIcqkSoM6npc653LTM0DMiZAIK5zJ5X4FJpJG4snaS
-         xAXZVdH4Up57bmpg5JIm0FecvaxnCpqxqhm+9VFzpSY0nadQ09rpZyeT1I2VQIUdx2Qs
-         T0U85Xh20vqr8rfPkreLX6tJQDki27a38qw/dt0pFP/vaYNC34BZLX3H0CDuBLvPEg4M
-         BrlZkk8DaL5mQqZWLOTpOGilI/xaNgozZ4UZFFhGFfrJy6atESr9Yuh/u0WtHKn6tFbJ
-         0bVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSvdLkiJAOqmnlgUJ3rMsdA7QQkYYNREARxKfNhiImjzqpGO8KGBvHgEbdk0vwTNgLeYSfbN1arqcsJMAe@vger.kernel.org, AJvYcCWuOqjFMjsZ6eNwUp715e+ZFMfnaYqccTtIYXqC4mun8/mNKK9wJo+HTKoC5ds+iPXLoJ/e/mqE0cjuNwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/fZfj9AqGSzj4WK6H091HKA76YN/plXf+EopPnYDpapK8D/Ex
-	iLTizat1D8ApR7Srq2Rheus4Ng+I8XpkXs8RQHv7h9OVwDgHOaOqFEkK0Q==
-X-Gm-Gg: ASbGncvkVxWgKJxJizO7lSzEYO/4KjE1o14AD0ewI2aiOEecbrhnwnnvd1dWXHGgxKr
-	kNAzaeckmPGvTKKqvRKBY0JBbJCkVelGMkoSE3IaIdeWWzBxrcjWxYPzS+zkR5vNZarDfs+NTO1
-	dq+o7IvXQ+zMIwMZgdBBXbG8oEJlh2UsPBXHERHldyyR9lrM2ptJlqLAj4FLw3cUamcdLIzncyI
-	Gu6l5F1Q9AmEOMzMsdnv9+ix5Yd1Jmcu6cBMxZet28FmoMtTHG/E1TjellAlqABt7N37C5l4VTp
-	mfiMu+Pvmdc02KNoy1KNPJc=
-X-Google-Smtp-Source: AGHT+IG4NU4UZF0cebWOExJFU97sW6oQwwHPkQIFpcc+f91vpFhUKPVI6wUFjM4lXx9kc1fyeqF/cA==
-X-Received: by 2002:a17:90b:4c4b:b0:2ea:77d9:6346 with SMTP id 98e67ed59e1d1-2eb0e22f276mr5083893a91.11.1732308276085;
-        Fri, 22 Nov 2024 12:44:36 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ead02ea422sm5563673a91.6.2024.11.22.12.44.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 12:44:34 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <791f37f3-2b93-47f1-b0a3-46825c09f222@roeck-us.net>
-Date: Fri, 22 Nov 2024 12:44:33 -0800
+        d=1e100.net; s=20230601; t=1732308366; x=1732913166;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KdfcoTAixo+mlxOpXRifnZy9GhI+cyrUE3VMtPIwmvg=;
+        b=qFH+D5RWs9vXWabwrSzM3EaZ+f1Sr+CAnmJA7a7Em4qLC8b0kTnOPGG79eV8XmvgGK
+         aT0M8WgvF5W4puGYXXt4gyLRZTLD1MNE2UbF/Hx3fti9V9E6J8meG16R9Osj42fJyCSA
+         DcRIWcAAptv0WoHOBQW88AR9v8Uoy58OUeYrhDFKY5vkR36wwPHm0teNJpxaeitiY5k/
+         1dF1RLWjTepVpOioOOI4YkliZdaZMyQlHEbMbmXnp6OkXBdHmBxQpdjQufgfYD6NgVAG
+         FrUGkbz9pS84BFIj7mH76TNzIpmb+ynscdJDgqxVkP6W/bQ3LQJH+Ruv5BZsBo/VWJYd
+         2hHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJnnMeimHomPOBuJm8h2y7KzGKwFk9bqfmqUyi7bfAPO+qomYnlzECYC2gxUIpgIRBvD0/kaoAdRaLoVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC23T7NwNrVlTrNf66BHB+M2EFj9pahSKYkhJUW/PTSrMv10fE
+	MXVywjxZx6kg5vpgbXdz8DGJqloAq7pa73hT60H/dLY4KqgecAwn
+X-Gm-Gg: ASbGncsJVVFFsI3s4CwKbhN8JmsC9WGoV4iEk32A7G6AnmWJhj8X2G0bwtEvRHZLzud
+	nl20q1VUalO3XYGqIMVtH3AKtAlw9Fg2H/m8Bov2fLkFEePKxr/j0xqSDWW3IZpfMMyaX83Y4ib
+	Rgs1au9QGum23BDbtcRttoRUfZSnQb7fPmSbtH1bHiFNc0ybQ87UrAaoL/MuQLAKb9hVPKQbANU
+	p9wFJKZGWW7bX5/dTwr9b6sMO8xFxP5esnIzyNX3itkQ2qUsNvLHYqynagB1VqWl1LSXys6
+X-Google-Smtp-Source: AGHT+IEDZRkTO5+DQwSrlRCcw21oaJiFGCJZnGNbrmx62J2fNbuC3IdPrM/AFVV8d9sqgagVOv+RJg==
+X-Received: by 2002:ac8:7d92:0:b0:45d:9525:42ff with SMTP id d75a77b69052e-4653d632068mr45585081cf.54.1732308366553;
+        Fri, 22 Nov 2024 12:46:06 -0800 (PST)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4653c3ed111sm16082051cf.20.2024.11.22.12.46.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 12:46:06 -0800 (PST)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: mchehab@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	hverkuil@xs4all.nl,
+	u.kleine-koenig@baylibre.com,
+	neil.armstrong@linaro.org,
+	andrzejtp2010@gmail.com,
+	dillon.minfei@gmail.com
+Cc: linux-media@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] media: platform: stm32: Add check for clk_enable()
+Date: Fri, 22 Nov 2024 20:46:03 +0000
+Message-Id: <20241122204603.44419-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-To: Arnd Bergmann <arnd@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
- <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
- <27685942-fb62-44c5-86ed-98beb547ffed@roeck-us.net>
- <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <744920ba-551c-466b-ac5c-2607b81261a0@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/22/24 11:24, Arnd Bergmann wrote:
-> On Fri, Nov 22, 2024, at 18:22, Guenter Roeck wrote:
->> On 11/22/24 08:31, Arnd Bergmann wrote:
->>> On Fri, Nov 22, 2024, at 16:35, Niklas Schnelle wrote:
->>>> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
->>> So in all four cases, the normal uart should keep working,
->>> and if something tried to start up an ISA style 8250, I
->>> would expect to see the new version produce the WARN()
->>> in place of what was a NULL pointer dereference (reading
->>> from (u8 *)0x2f8) before.
->>>
->>> Since there are so many ways to set up a broken 8250,
->>> it is still possible that something tries to add another
->>> UPIO_PORT uart, and that this causes the WARN() to trigger,
->>> if we find any of those, the fix is to no stop registering
->>> broken ports.
->>>
->>
->> The call chain in all cases is
->>
->> [    0.013596] Call Trace:
->> [    0.013796]  [<d06eb249>] dump_stack+0x9/0xc
->> [    0.014115]  [<d000c12c>] __warn+0x94/0xbc
->> [    0.014332]  [<d000c29c>] warn_slowpath_fmt+0x148/0x184
->> [    0.014560]  [<d04f03d8>] set_io_from_upio+0x70/0x98
->> [    0.014781]  [<d04f0459>] serial8250_set_defaults+0x59/0x8c
->> [    0.015013]  [<d04efa6a>] serial8250_setup_port+0x6e/0x90
->> [    0.015240]  [<d0ae2a12>] serial8250_isa_init_ports+0x32/0x5c
->> [    0.015473]  [<d0ae28a1>] univ8250_console_init+0x15/0x24
->> [    0.015698]  [<d0ad0684>] console_init+0x18/0x20
->> [    0.015926]  [<d0acbf43>] start_kernel+0x3db/0x4cc
->> [    0.016145]  [<d06ebc37>] _startup+0x13b/0x13b
->>
->> That seems unconditional. What is the architecture expected to do to
->> prevent this call chain from being executed ?
-> 
-> This looks like a bug in drivers/tty/serial/8250/8250_platform.c
-> to me, not something the architectures did wrong. My impression
-> from __serial8250_isa_init_ports() is that this is supposed
-> to initialize exactly the ports in the old_serial_port[]
-> array, which is filled only on alpha, m68k and x86 but not
-> on the other ones.
-> 
-> Andy moved this code in ffd8e8bd26e9 ("serial: 8250: Extract
-> platform driver"), but I don't think this move by itself
-> changed anything.
-> 
-> serial8250_setup_port() is where it ends up using the
-> uninitialized serial8250_ports[index] contents. Since
-> port->iotype is not set to anything here, it defaults to
-> '0', which happens to be UPIO_PORT.
-> 
-> The reason it doesn't immediately crash and burn is that
-> this is still only setting up the structures for later
-> use, but I assume that trying to use console=ttyS0, or
-> opening /dev/ttyS0 on the uninitialized port would
-> then cause an oops.
-> 
+Add check for the return value of clk_enable() to gurantee the success.
 
-All four affected platforms use ttyS0, only it is mmio based,
-not io port based.
+Fixes: 002e8f0d5927 ("media: stm32-dma2d: STM32 DMA2D driver")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/media/platform/st/stm32/dma2d/dma2d.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Guenter
-
-> The bit I'm less sure about is why the
-> serial8250_setup_port() function is called here in
-> the first place. I assume it does something for
-> /some/ architecture, but it's clearly wrong for
-> most of them.
-> 
->         Arnd
+diff --git a/drivers/media/platform/st/stm32/dma2d/dma2d.c b/drivers/media/platform/st/stm32/dma2d/dma2d.c
+index b6c8400fb92d..48fa781aab06 100644
+--- a/drivers/media/platform/st/stm32/dma2d/dma2d.c
++++ b/drivers/media/platform/st/stm32/dma2d/dma2d.c
+@@ -490,7 +490,8 @@ static void device_run(void *prv)
+ 	dst->sequence = frm_cap->sequence++;
+ 	v4l2_m2m_buf_copy_metadata(src, dst, true);
+ 
+-	clk_enable(dev->gate);
++	if (clk_enable(dev->gate))
++		goto end;
+ 
+ 	dma2d_config_fg(dev, frm_out,
+ 			vb2_dma_contig_plane_dma_addr(&src->vb2_buf, 0));
+-- 
+2.25.1
 
 
