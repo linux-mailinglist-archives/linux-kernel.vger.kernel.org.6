@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-418514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40749D6269
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:37:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599B59D6272
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:39:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F5A28405D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB292815E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AE815ADAB;
-	Fri, 22 Nov 2024 16:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF40D1DF260;
+	Fri, 22 Nov 2024 16:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IwwAOdiv"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXlH+ds6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1296013B5A9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF35D7E792;
+	Fri, 22 Nov 2024 16:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732293427; cv=none; b=cPupma7RgdFJgVrOYQVfYtfazat5Ygl0iSGt83/1qih6OjdpjKKT1cNulM5RAyUD7dTRbmC0aylGblreBg1MqTp6KvI1W+Z6jzxiMFdGrODmliz6h7XjVnXSxz1GUvGKo551ivdwIzwa50GykSvzKYzw0KwJoBcXqvX5heF+bEY=
+	t=1732293574; cv=none; b=DC3rE9Dw5BuwWUJCGfjIr9SZu63RlfxrsPAIlZ/2zB0TRTfUNPK69t0+joTyntWbhp13FWAB0ZUCkeZg5HaKclxwi/TJYMxsrUpFicLeX0x6pFf7OjBvpQ2xs7+F1cevbrci+/DIquyRBSaiU4I2SPqMKB/ngf0KHLBtbm0TgpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732293427; c=relaxed/simple;
-	bh=FQn0/LRkgEdk0lbDArlpXcqhIAjBsyxrxbcIJCFBjDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X2auMsfDLeyDDf/KwD5HZxlhPb8i6meUd6zGstLzlX0mzsDJm0ip2GUzDyhhcTvMl/qwDgZw+HfNtu+UNk8Ac5g5WUJFWX8ii7+5yQJfTseaCA8U9+ZQA/gVQoXt/8R0BmYfnn3hBdmIhonGqZs1l0es0gox4/lxLW9KOghy5Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IwwAOdiv; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-460a8d1a9b7so265621cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:37:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732293425; x=1732898225; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FQn0/LRkgEdk0lbDArlpXcqhIAjBsyxrxbcIJCFBjDY=;
-        b=IwwAOdivoPkOcofEAj+hfKeVadAc9ZetzVD1yYYYpPh+26LYUGYQcT5LwcMpfNkz//
-         6xyvJhE7XWVIchOacGbUac0JtZOQM5JSt86P6SErp0W+2OcnjUXq9/VJ9gERZ2O5zix2
-         9EwNhjdsHJTaROfxGeBlYyuvp/ovF1zQCIIZowcLRO0MC4MoQiu1fRbI545Nzq9+JKMw
-         AUKS6ZMuS2e5rtTU9dkfyFVSlSIOlvl41/CE4CtcuZq7W1KqOf9Qw8KtTTNQhW4innCc
-         sPLYEmyqVzqiYN8dk5O46XL5QT5WTPKTXA1RfWCyE6BdGH5T5LzRw84t/RGg7cbArmXh
-         Rb2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732293425; x=1732898225;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FQn0/LRkgEdk0lbDArlpXcqhIAjBsyxrxbcIJCFBjDY=;
-        b=gkFg4P/DhNJLvVW3lyv7PmeE50JurSRQ2d95Iz+pZGmoV/HYCJqnUNdRvmwFqigWc8
-         iVWvIMAZlJ0K2a43h5q0tIX9LkJdLHTnTcvVGa+jA54G12wMY5d1P4nacDIpYI8cUkv5
-         b+ccjRIhuC2S5S5frZ/z4cqZS1g10B7uXs3jV7OuUmnNxh5SkKA++4s85T2TZ3LHkgQ1
-         lIJxudY/k42WxmpcvTQhMofQONzms9I9Qh0dTql38fy1YG31+UnjLQvB0YOLMAvyh/YH
-         PSqPc8n2QjkEIyIxNjyK4130xNbNUjFq2+dv+k00CW0hyjV1wTXVioMo7v+0BKUXoLI1
-         2/6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVJhW/EDwkYFCbmL1Xs3xwsfBrcuFWVA5/TLM9/9QAhz3NUvdNb4IOx3m1uOeMGvXaZtx2lF+c35DBMof8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0pvFWGqxb6LXE2HCnsbfbPRHO9G9t+Q5InMXopZN38pJZjlcB
-	sPij9Yn/R6E5JqOTzlXApLUtbMiZ2TiDEKAgb2qFBl0k4A10scrTPk7IzCvu2/ntZlFOVULGrN1
-	pQ0V1X1y8jmOfHA+32yHrkw+grlrThCScq6lO
-X-Gm-Gg: ASbGncvKTBsWLRGxlWQ8btNKkxuHM81+mqrM0COzAvoVX8GR3rjnjnpTJUu8FZHINTk
-	Lb5GenIftJ5lEY8w9eWz+Vdim1JgcvD0W+yQNPEs27B0eUVjQ+fcVRnvv59eFQA==
-X-Google-Smtp-Source: AGHT+IEb0dvXm8Lh4U1x+Ww0tpnjqHUUTD9I18tWGr+X9agjb/H25wNVx2Atj/FF5dXjdF4djDV8FJiSG3REib8UtM4=
-X-Received: by 2002:ac8:5a91:0:b0:461:48f9:4852 with SMTP id
- d75a77b69052e-4653d5d6d42mr4144741cf.28.1732293424596; Fri, 22 Nov 2024
- 08:37:04 -0800 (PST)
+	s=arc-20240116; t=1732293574; c=relaxed/simple;
+	bh=bVfmMZd++g9VWmMX2EizjlOyv67G/BQQFuNfEa0NLiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lxyLvIDBWwGNTVVCmjotk45B6BevuNnRiYotr1SS3e8nMclnJYsqx0kqmKrBeHFWViuXHrdvGEiwhGPr6nTXfpMCuJ6sCil1u5SRUXAqvCu2jrM94S+9GZwWcTP//iKBmDMVe2+hp28PeZ4TFPFyG//EML41bzaaV0NK66KrFFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXlH+ds6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1623C4CECE;
+	Fri, 22 Nov 2024 16:39:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732293573;
+	bh=bVfmMZd++g9VWmMX2EizjlOyv67G/BQQFuNfEa0NLiE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JXlH+ds6Bu4vcaxouVy9GHIJMQYhksn+5FEcsZbKwO1qG5QNztSK6Ejo6PzyTPdbl
+	 xPzR6GS/0CyoCC+O6m9Iq0iQl/W+6OHNKSUaxTMFB4aGA6OzTukQDHqlflA0NXysPe
+	 PAQI/8kjW+/XtNdbjEipZhEbBzuK3JoBGhZnOU3C+jWNHonND/cgmJunlqLeXnsaxT
+	 U7+onLtWXO9aMMcX3wJkkj+AmPt5zYAO3b3b0SW9M4rvHHlBs+DsBCC8erIs3gTlTJ
+	 oPI0TPO6JtfDzyFKtoMtWVESP9iQRt5PMh4J+3eHluJnyXJqyLhyAHHNQdwpwUWKWb
+	 na+zzTSqnxuKA==
+Date: Fri, 22 Nov 2024 17:39:30 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, aardelean@baylibre.com, 
+	dlechner@baylibre.com, jstephan@baylibre.com, nuno.sa@analog.com, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
+Message-ID: <gmv5tncy7xwgbc64na7ib42hdthojsfrusauk4hez5zmc6hh2k@4jfk74vt2gcb>
+References: <20241015-ad7606_add_iio_backend_support-v5-0-654faf1ae08c@baylibre.com>
+ <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
- <3676f073-028e-4855-aa87-107e0607be24@amazon.com>
-In-Reply-To: <3676f073-028e-4855-aa87-107e0607be24@amazon.com>
-From: Brendan Jackman <jackmanb@google.com>
-Date: Fri, 22 Nov 2024 17:36:53 +0100
-Message-ID: <CA+i-1C2cyypfrTNauqEn_640k36Cvtf-qw4vJEDx0bQuJOO6gg@mail.gmail.com>
-Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-To: "Manwaring, Derek" <derekmn@amazon.com>
-Cc: David.Kaplan@amd.com, bp@alien8.de, canellac@amazon.at, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, jpoimboe@kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@redhat.com, mlipp@amazon.at, 
-	pawan.kumar.gupta@linux.intel.com, peterz@infradead.org, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="g6qhxoz5xykc4ajk"
+Content-Disposition: inline
+In-Reply-To: <20241015-ad7606_add_iio_backend_support-v5-7-654faf1ae08c@baylibre.com>
 
-On Fri, 22 Nov 2024 at 17:15, Manwaring, Derek <derekmn@amazon.com> wrote:
->
-> On 2024-11-14 at 9:32+0000, Brendan Jackman wrote:
-> > On Wed, 13 Nov 2024 at 17:19, Brendan Jackman <jackmanb@google.com> wrote:
 
-> > A discussion off-list led me to realise that the specifics of this
-> > comment are nonsensical, I had L1TF in mind but I don't think you can
-> > exploit L1TF in a direct guest->guest attack (I'm probably still
-> > missing some nuance there). We wouldn't need to flush L1D there unless
-> > there's a new vuln.
->
-> With Foreshadow-VMM/CVE-2018-3646 I thought you can do guest->guest?
-> Since guest completely controls the physical address which ends up
-> probing L1D (as if it were a host physical address).
+--g6qhxoz5xykc4ajk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 7/8] iio: adc: ad7606: Add iio-backend support
+MIME-Version: 1.0
 
-You are almost certainly right!
+On Tue, Oct 15, 2024 at 01:56:20PM +0000, Guillaume Stols wrote:
+> @@ -640,6 +665,14 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+>  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+>  		*val =3D st->oversampling;
+>  		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		/*
+> +		 * TODO: return the real frequency intead of the requested one once
+> +		 * pwm_get_state_hw comes upstream.
+> +		 */
+> +		pwm_get_state(st->cnvst_pwm, &cnvst_pwm_state);
+> +		*val =3D DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC, cnvst_pwm_state.period);
+> +		return IIO_VAL_INT;
+>  	}
+>  	return -EINVAL;
+>  }
 
-> And agree with the flushes between different restricted address spaces
-> (e.g. context switch between guests, right?).
+Being late to the party as the patch is already applied:
 
-Yeah basically, although with the RFCv2 I'm gonna be proposing this
-"tainting" model where instead of having to flush, in context switch
-we just set a flag to say "another MM* might have left data in a
-sidechannel". Then if we have that flag set on an asi_enter we flush
-at that point.
+ad7606_set_sampling_freq() uses DIV_ROUND_UP_ULL to determine the period
+=66rom freq. So I guess you should a down-rounding div here to calculate
+freq from period.
 
-*We could break that down further too, e.g. whether the thing that
-left data behind was a VM guest or a userspace task, if that ever
-influences what caches/buffers we wanna burn.
+Having said that, pwm_get_state_hw() is in mainline and will be included
+in v6.13-rc1.
+
+Best regards
+Uwe
+
+--g6qhxoz5xykc4ajk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdAs78ACgkQj4D7WH0S
+/k5jlAgAirnhx9PpmZaNqFxVmISvdk94dasdcSLa7jDqkiXnNJ0oxpyUVc8lm0N6
+NNMqQZbz66q+mmza4KXN1Oz+TPgQqZApnnp58F6ECUpurA6vgB4anXwBqiN0v8PZ
+/zklo+JiCsfLuu3fkM9raKXBxRQh4xJm7PM7WTK15vzsfJCeMANwixBroV6qYtij
+qj2TqzB1yhXmvt7jk4Wk6saLFPB03OHxEbY1QFFOorBXvx6vatRfTaRKTRf2HT9i
+FAjJsluo4KiVaHYhHJwNebI0BiVzIeYKGcda4qTKoDabKW9Xu6Ikt/v2nOcAvuC9
+z5qCVuQ/q08owpk8L41RdCHFLS5W1g==
+=Cj6w
+-----END PGP SIGNATURE-----
+
+--g6qhxoz5xykc4ajk--
 
