@@ -1,206 +1,153 @@
-Return-Path: <linux-kernel+bounces-417607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F9A9D568F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:09:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558C59D5690
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738E6B211DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:08:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8DF280CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:09:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218A81388;
-	Fri, 22 Nov 2024 00:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B3F10E5;
+	Fri, 22 Nov 2024 00:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZwGUJCI"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jXJxG3Cy"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DC4A31
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A3F625
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732234131; cv=none; b=UwWMCw8j/3ncNZf7KkMj38QoAOOrFiXq1ax/HsEyxpuFsE38Q7KZy5Lp/iHjhCnuKgDUvlnjwS6Fffzvx9Yck06Peg645l6f1NUVsr4AHzVFj7b353+8Z++EUDkSSQsqJW+3v+0b8iwjNillKxcK74KLFmIbQhAPgy3BMnTJlec=
+	t=1732234171; cv=none; b=BVxizlpkLCqokS5rwV2OrOcDQrXknk0MpaGnPatLqE+qAYTOvbbW1iT42Rr3AZ1zKJOjKuV+J7UD8/eBJ4koNBhi0OGyiyK03K6jhDBtgIZ61wg5JNJ56dFGHHqX9zHKIabg4HXuUUxX61opwjaHSQtEPaTlGoYRdOVqQqvLyjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732234131; c=relaxed/simple;
-	bh=8QY0OoK99j6oVx8eixrtqtZjvjlLwAKj9WJXGC3Ants=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MPRxbIrlPlVh/j1ChMvch66u+dFrhKXfMf8oERyRNJ+ZQctLCXqqidrOwLyiHOVtMEJ/AiLPYzebMUSona3ob6C84ZHF5/SCa70ZwPPa0F3fkrW6tAwe52gK1ZqdYUfbaOZsoTrIpl5JOyxsXGWa96LgTZ29Vz0J5l9+DfmaoCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jZwGUJCI; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ff589728e4so29240531fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:08:48 -0800 (PST)
+	s=arc-20240116; t=1732234171; c=relaxed/simple;
+	bh=1d/tnel8OpAEGUunRv64WUCNjs7TwKyNdceW5M7PaJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BZw04fYjf/Bu25f3Q1+32Bog5hinoYejiH3AL8vAqpicfW1vrQ/d8S/+vpkyvuWcPo3Ypxm1HhddngWAyV3a2HaXfkHLdZGcMvpGcTzizH2JDujhtVHg1lKvp0Xpxb81/jpCEl7gEtglYaJO+L9ON1bFvGkhPHFte833MwvEs7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jXJxG3Cy; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so4495a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:09:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732234126; x=1732838926; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pb10zmYHQSv3I83zcr7E+6kREcna9ZYNd5sNu4/LV7s=;
-        b=jZwGUJCIjy/OBiAsXU38+IsoIlXzBW8rfsWcdDAujRNQKPpqGun8d7sho4EXpxV/EI
-         uJt4Y8IJpLsWzaMpRyqu+0ox+jDr6DJ3c3CycRy7hmAlusl05HMEmnt8m0dB2ZPMoVzM
-         u5P9LbP/BiUeXTc+s5BQRAW3Dg4egTLNGu5FNDl5OHJwhWj/6wg1HWJYhh8K4SxG+1pY
-         r5sm8gmIHvf5+I0E70gxOXv5gzTn8EOoiDYj4CrqiH6gguR4OJmpg4kADRxrx7TzAvhs
-         qoshMs8cuxFf/oZkqyAnrXHSMI2kb2uD0dYDZG1Cam5MfzdBuNd0iYa/bo9ofNrJ6bmg
-         eJOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732234126; x=1732838926;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732234168; x=1732838968; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Pb10zmYHQSv3I83zcr7E+6kREcna9ZYNd5sNu4/LV7s=;
-        b=cbhRbVwb/czEJmvOKt6O3qBpM8fboHg2SvQTfeV0xJW5nUFuq5KwnkuIMaIBxXzWwm
-         G8kxFVsN3F5kSVq/b1N7e6tfN8rFongN/Pq9W0l/nIdWeqLX9ZEUsNJdbyjLR0rqPbBm
-         t32HCEHS0n6YRBv3ut9JHXP5RRSm4UBMMTUZTZ9xoca0WQVLlvolKGiVuQj64EUipXGy
-         WS9Q36jFo0jfZ60tPssszRh/ijLaQBvU5bqaPStIboqZf0GJ7gcvpkpoyS/8KyD8BauA
-         6cbX+End6WrdnPsSlhs70rT6ERaqwYeU/hvMZ89OZyBBcUchtpORUdj8lyLaowT0zq9s
-         7AJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgvKXKJxyD5CDLPkySJ7PyHsO21ISYI8qG80qvXjHtDqfaAYxRzBA9IAKQnJOnKZNEFySRhiHvI6lY5WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdnahP1mIZYc6140NBy0F2PqPowlVcNlhVaggyY8NEnLUzlWkO
-	Vx+8x5D7eY6Ti713J56FvqmwhAO1nEKmRpDZJn7pThtgbUBnk8AsZfcugvU0hA0=
-X-Gm-Gg: ASbGncteNJvuoi5RW28SQZMqjnCM1IXVFfRIVOKqN/ijUXSr2rx/TIOszsNCw0hNzlR
-	HztCwg2NpKA3Qqj93VLIRyuGyPU6SoiT/6zRKUlGX4p+8GYhY2oLjoaUnUe0aMJRDJsVRqXx0kf
-	F+dOCYXWZF7rnVTnIiAn4KXe6E6BcMHmJUfIaru1VXgbRvF2R+mt20yEImPYrH5f1cLM8CPlLK1
-	LUWWRs0p4L5fXZIQ+ZB0tFwPAmw5eaArRqaQa0l5moOxASPH7u5fAju6PAyHXL6rOwDK2x2YotA
-	7hAqC7fk59potDuiYSGsTyhllf/nIw==
-X-Google-Smtp-Source: AGHT+IEuYo3TXwIBAta2+QFFKa258N+W0wLgiRkvqaQO6FoTfco4TU0xkpE/1Qfqy0nPr2pRscBPLQ==
-X-Received: by 2002:a05:6512:2247:b0:53d:d06c:cdf8 with SMTP id 2adb3069b0e04-53dd06ccfbamr1006096e87.1.1732234126460;
-        Thu, 21 Nov 2024 16:08:46 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489841sm120742e87.178.2024.11.21.16.08.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 16:08:44 -0800 (PST)
-Date: Fri, 22 Nov 2024 02:08:42 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: keith zhao <keith.zhao@starfivetech.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
-	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 5/9] drm/vs: Add Base API for VS Mode Configuration
-Message-ID: <6nztdhkgx5wm5byq46jbhivws4kvwpnmnc7r5jsqaqm5rlzb2k@dz7ohbcirnd4>
-References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
- <20241120061848.196754-6-keith.zhao@starfivetech.com>
+        bh=BK4/KCXWB96ymSESeJdIEGwR7z31fMLlbynhd7TXEng=;
+        b=jXJxG3CyLpIsrJBz60h3QZDL1XUekkMamxDXgjWKr0oPtwKzEt8SWQZ8GO5ExI6Wy0
+         XJTFDlBje4uu2zftr5sEPtIVW8lkqHzOky8NKN5KLzIlC9LV/K0cj0bbD9l/kduiuXfQ
+         gDK6FhJpE3pZ7fXqFJOQT9Qp3ZGclpkEcKw/yC/N+pGXw3DkAsMWHn4MUqrH/aAxXPy2
+         ZCGiBOc7h8hBQzHy7DH7mCzYv+K0NxeoINFPn2lSUSFhl1lKKNg1oki7GrPOpAyHYbJE
+         9SD6Jup3dT1A3srh6RUmIDWGqjpfWnZ+ghNWuwtbywR2f2iGPp3UjwiHglcPMqeR7dbX
+         CnjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732234168; x=1732838968;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BK4/KCXWB96ymSESeJdIEGwR7z31fMLlbynhd7TXEng=;
+        b=duYUzO5xC6qagQn9aWWw8Qf6CGzTzIbSXtFpaL60iQgkSYL/v8XFO+1BZ88KcTSbog
+         Gs/Tx19eNM8frnj+psLURJIc7NsQqJRiQWzPiTSdxCIHgzmfXcPVKLQk3ZG2hLtf5/kD
+         AZAOkvmuyU5R/qjkk/eOT5giPY0eNEzVtuG4NuzaTMMBduzSqsOu1aMClgW3zNqkwtwa
+         MfWbDUcDNFNBqhUv06nKWYq13Hx4ol0xQfzXsosUBgYqFTqpp2RQqxPs76IWO+IIzXQG
+         0d5uc+ydv65U5pWzrYnMxDyJJC6HYj9zpLgAM+29VDFG3oRu1+AlONxILxomnGKTsm4D
+         /XyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4WKsJDkX69aCaOpXFs1mCBsHB6NFU55n+KbSTYqt0uUX1k743bKfG+Rqq04Oc7cvx8YXo2isBkXx2whk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw0JcDsvA4HLlM3RHjj9ogL9rOAnYEmivR2FZ8h2v10RAIeIRj
+	dgk/+bada0d1QA6Qrm4kFfx9OuWzrHjKIdvEjh/ctSe2fl3roEoGcFdOrS7NQVU9Lc7GKYIqfvS
+	J5RRfZhEiFrG8aP7FiWCH0IilY1SqK6glQWOb
+X-Gm-Gg: ASbGncv9MEHeR9rhMlAtjtd1xUwMrmECZiUwtIf46wbk5iTdfNiPYduU/hCnT0VCW/b
+	sekI4FLL4iQ0K2ElbdQejI+CKrQEYd+rE
+X-Google-Smtp-Source: AGHT+IFOeisSTtf3ETJm7V2kdKcjPzKq3mrsDw+Jx5dZpVqqKBpXIMKop81k5VMCEv0SRNmOsanBi5gd10EDjCe9AXA=
+X-Received: by 2002:a05:6402:945:b0:5cf:c93f:36f3 with SMTP id
+ 4fb4d7f45d1cf-5d021787792mr10204a12.7.1732234167906; Thu, 21 Nov 2024
+ 16:09:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241120061848.196754-6-keith.zhao@starfivetech.com>
+References: <20241111182738.1832953-1-joshdon@google.com>
+In-Reply-To: <20241111182738.1832953-1-joshdon@google.com>
+From: Josh Don <joshdon@google.com>
+Date: Thu, 21 Nov 2024 16:09:16 -0800
+Message-ID: <CABk29NuO0awfERpRBHyEyRPaCcrKJ-Zx1fR9f8RgSrqpqNM_cg@mail.gmail.com>
+Subject: Re: [PATCH] sched: fix warning in sched_setaffinity
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Waiman Long <longman@redhat.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>, 
+	Roman Gushchin <kfree@google.com>, torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 20, 2024 at 02:18:44PM +0800, keith zhao wrote:
-> This commit adds a base API for configuring VS modes,
-> which will streamline the setup and management of display modes
-> in the VS DRM subsystem.
-> 
-> In this implementation, we are using drm_atomic_helper_commit_tail_rpm()
-> instead of drm_atomic_helper_commit_tail() to ensure that
-> we skip planes related to inactive CRTCs.
-> 
-> This helps to optimize the commit process and reduces unnecessary overhead
-> when dealing with inactive display resources.
-
- * This is an alternative implementation for the
- * &drm_mode_config_helper_funcs.atomic_commit_tail hook, for drivers
- * that support runtime_pm or need the CRTC to be enabled to perform a
- * commit. Otherwise, one should use the default implementation
- * drm_atomic_helper_commit_tail().
-
-Neither of the cases seem to apply here. Please use
-drm_atomic_helper_commit_tail().
-
-> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+On Mon, Nov 11, 2024 at 10:27=E2=80=AFAM Josh Don <joshdon@google.com> wrot=
+e:
+>
+> Commit 8f9ea86fdf99b added some logic to sched_setaffinity that included
+> a WARN when a per-task affinity assignment races with a cpuset update.
+>
+> Specifically, we can have a race where a cpuset update results in the
+> task affinity no longer being a subset of the cpuset. That's fine; we
+> have a fallback to instead use the cpuset mask. However, we have a WARN
+> set up that will trigger if the cpuset mask has no overlap at all with
+> the requested task affinity. This shouldn't be a warning condition; its
+> trivial to create this condition.
+>
+> Reproduced the warning by the following setup:
+>
+> - $PID inside a cpuset cgroup
+> - another thread repeatedly switching the cpuset cpus from 1-2 to just 1
+> - another thread repeatedly setting the $PID affinity (via taskset) to 2
+>
+> Fixes: 8f9ea86fdf99b ("sched: Always preserve the user requested cpumask"=
+)
+> Signed-off-by: Josh Don <joshdon@google.com>
+> Acked-by: Waiman Long <longman@redhat.com>
+> Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> Acked-and-tested-by: Vincent Guittot <vincent.guittot@linaro.org>
 > ---
->  drivers/gpu/drm/verisilicon/Makefile     |  3 ++-
->  drivers/gpu/drm/verisilicon/vs_modeset.c | 31 ++++++++++++++++++++++++
->  drivers/gpu/drm/verisilicon/vs_modeset.h | 10 ++++++++
->  3 files changed, 43 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_modeset.c
->  create mode 100644 drivers/gpu/drm/verisilicon/vs_modeset.h
-> 
-> diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/verisilicon/Makefile
-> index 7da54b259940..842867dad4cb 100644
-> --- a/drivers/gpu/drm/verisilicon/Makefile
-> +++ b/drivers/gpu/drm/verisilicon/Makefile
-> @@ -1,5 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
-> -vs_drm-objs := vs_dc_hw.o
-> +vs_drm-objs := vs_dc_hw.o \
-> +	       vs_modeset.o
->  
->  obj-$(CONFIG_DRM_VERISILICON_DC8200) += vs_drm.o
-> diff --git a/drivers/gpu/drm/verisilicon/vs_modeset.c b/drivers/gpu/drm/verisilicon/vs_modeset.c
-> new file mode 100644
-> index 000000000000..0873a3465143
-> --- /dev/null
-> +++ b/drivers/gpu/drm/verisilicon/vs_modeset.c
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
-> + */
-> +#include <drm/drm_atomic_helper.h>
-> +#include <drm/drm_fb_helper.h>
-> +#include <drm/drm_gem_framebuffer_helper.h>
-> +
-> +#include "vs_modeset.h"
-> +
-> +static const struct drm_mode_config_funcs vs_mode_config_funcs = {
-> +	.fb_create			 = drm_gem_fb_create,
-> +	.atomic_check		 = drm_atomic_helper_check,
-> +	.atomic_commit		 = drm_atomic_helper_commit,
-> +};
-> +
-> +static struct drm_mode_config_helper_funcs vs_mode_config_helpers = {
-> +	.atomic_commit_tail = drm_atomic_helper_commit_tail_rpm,
-> +};
-> +
-> +void vs_mode_config_init(struct drm_device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = drmm_mode_config_init(dev);
-> +	if (ret)
-> +		return;
-> +
-> +	dev->mode_config.funcs = &vs_mode_config_funcs;
-> +	dev->mode_config.helper_private = &vs_mode_config_helpers;
-> +}
-> diff --git a/drivers/gpu/drm/verisilicon/vs_modeset.h b/drivers/gpu/drm/verisilicon/vs_modeset.h
-> new file mode 100644
-> index 000000000000..bd04f81d2ad2
-> --- /dev/null
-> +++ b/drivers/gpu/drm/verisilicon/vs_modeset.h
-> @@ -0,0 +1,10 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2020 VeriSilicon Holdings Co., Ltd.
-> + */
-> +
-> +#ifndef __VS_MODESET_H__
-> +#define __VS_MODESET_H__
-> +
-> +void vs_mode_config_init(struct drm_device *dev);
-> +#endif /* __VS_FB_H__ */
+>  kernel/sched/syscalls.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index 4fae3cf25a3a..3a88f7c0cb69 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1321,7 +1321,7 @@ int __sched_setaffinity(struct task_struct *p, stru=
+ct affinity_context *ctx)
+>                         bool empty =3D !cpumask_and(new_mask, new_mask,
+>                                                   ctx->user_mask);
+>
+> -                       if (WARN_ON_ONCE(empty))
+> +                       if (empty)
+>                                 cpumask_copy(new_mask, cpus_allowed);
+>                 }
+>                 __set_cpus_allowed_ptr(p, ctx);
+> --
+> 2.46.0.469.g59c65b2a67-goog
+>
 
-There is no point in having single-function headers, please find
-something more global.
+Hey,
 
-> -- 
-> 2.34.1
-> 
+I wanted to bump this one last time. It's a pretty simple change that
+already has ACK's from 3 other folks, but has seemed to fall through
+the cracks [1].
 
--- 
-With best wishes
-Dmitry
+Best,
+Josh
+
+[1] Timeline:
+Original patch sent Aug 29 and quickly got ACK'd:
+https://lkml.org/lkml/2024/8/29/1819
+Pinged on Sep 30: https://lkml.org/lkml/2024/9/30/1528
+Pinged on Oct 25: https://lkml.org/lkml/2024/10/25/1708
+Resent as a new message on Nov 11: https://lkml.org/lkml/2024/11/11/1125
 
