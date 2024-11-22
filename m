@@ -1,280 +1,131 @@
-Return-Path: <linux-kernel+bounces-417736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EEC09D5890
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 865779D5891
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:31:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C9F1F22EBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C6CE1F233F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FB21547D4;
-	Fri, 22 Nov 2024 03:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A45C15572C;
+	Fri, 22 Nov 2024 03:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxzrlFXJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N6un4CWF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783BD42AA9
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 03:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A72C23098B;
+	Fri, 22 Nov 2024 03:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732246113; cv=none; b=VE5OhYzmnMj7dN+wugsLZtSGfm3sCCcP9opHH3HCOKz9T9QgEbIROOwmSe6McxQg+sJgnh7RRYo4Mc8uMTcm5FKr4TKuZ09tOiJoo5iCnMBGQjlTIe4tmm7yVxHQvX62X+4k5rTSR5Vx6Mk+BlELKpBRVqCKLVYL34ccMNHQ9UY=
+	t=1732246303; cv=none; b=nBEEwyX7zPvcSETuuqLFYXgaQ5asDbY2LFsz9yBGMddrjX0+J6A5L2SQUyppY3kglUPnxrwbguajJLcV3iXYJSF2tkZGlU0bA0teZ6fUYVShK9uRkZYMyF5rkSAoDuUwaG/2v40zeVXkocE/6XpaKsUvHPmzt40BLG1xfrp06TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732246113; c=relaxed/simple;
-	bh=VoZ3XbDcUjiDA6+KfP8pTMVWN0li18P2qwtVRE6AK5A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B05TKYzIjZ5Jh2FIjgePBuvXBnGA0LNDcBR44mDtdtnlE1cmgbTzY0K1s/+/q+axYAOJOu/kVBP/ivQSuWrmNVBEhTLAzO8dSY9FuRsNsbgRdBJyLBTYVYzfCAJzHJVzdNBh+bCKInIBDhDeCYjpaiivMC1WXoZcJpBGP7m1WKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxzrlFXJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732246110;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9NDRt3UW8rxHwZI0hypnIESBBnJNuw4yVb/N9fJds3E=;
-	b=VxzrlFXJASlMsfPZRSqDnBWVZI5mssttCRZn46NBy9UWJRqhYJO18OBSufDrlBfaPStgR5
-	kn5B8Q8z8P6PWRFFnrsTNSNviQ6rRjry++EHDWJ7rln64od19yRMBMtuaxaFE/y0fgfRyH
-	saNvDQdbILIQnhX6lhxNbNOaUfsnKtY=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-146-6w6GEqRwNXen5yJQkojtXQ-1; Thu, 21 Nov 2024 22:28:28 -0500
-X-MC-Unique: 6w6GEqRwNXen5yJQkojtXQ-1
-X-Mimecast-MFC-AGG-ID: 6w6GEqRwNXen5yJQkojtXQ
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-84fdfb0203eso431808241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 19:28:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732246108; x=1732850908;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9NDRt3UW8rxHwZI0hypnIESBBnJNuw4yVb/N9fJds3E=;
-        b=bOthxXdTNIsLXqg9n56lJ14DbY3gx8MptGldg3CbdEZJnPSRiTVJu6HKL3BN4axZlt
-         cZplvhIKqfTRO3bsVeRxZfo+9CwD64CQN9jBciIrIIanBhsvuv+y1yYQZzTnSC3GBQ4d
-         19Nwtbq3oC1pCD2FyO+c0h16RSVkQw5BHkwT8X3SamHc+TVfk8qLEcSaf66c9CTiwGVD
-         zeqkZmYM1TLuG3EgSDlZj27uqkRbtCMsYAvybumCUVgUJRqweY6nJVlEU1S721/6K68R
-         TqiShHWQ+AjN+Wfee2Uc6kv8Eqf6bXNNPXVQJwjOv1Dyt6Jr0frO3AH640zG416bVsXe
-         3Kjw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5PlKkNkVR3xfirI8o2w27VDHVj1MX1PxWMb28SWvD7Rddl+lWLeIGXq2i+XS6FFZq+0Z/saa9xZRb23A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaCOgSwVLeLD7ga495FFwKMH0IFrZkHApr8qQuPyrC+mVkfHmT
-	3bTQR3IMAPbd35vCOPKkfvF36SZB8sZU7Xhs6XWvnnfZ03/h3hT0Ei4eQiyFtj74WwNeJl5Dm3Z
-	gJ+pMcqZ8eJWpEt49WvD0rMmsUNtgMRe+GrvDpUHhW4HraZucFyYWMMbbHppdFUDdz9hBBuSf
-X-Gm-Gg: ASbGncv9u0fdZxJ3RuJyXgH/Nz0a40cGbUZOZvpfLaNc9zx6tFR/eTb6ur5x+dMWgku
-	6sn/o0GocwbtmGJHUMDqwB+p4dXXvwsZx7alN4JiziozONrwVa84Qdux6CC153ljV2vZrhuCA7q
-	vtfyBOfYwgb14y9hkI+C669kQSVJrSdu26T7CjzMSWgqnjGRcKLos8S7SeXPgIe5eNpfB3+3Y29
-	5yTRvzyC2k7lxJj2dSDpmohgGExWkrAPf5XKXVctRk78HKAzA==
-X-Received: by 2002:a05:6102:f13:b0:4a9:15c:ef8 with SMTP id ada2fe7eead31-4addceb83fdmr1823910137.24.1732246108231;
-        Thu, 21 Nov 2024 19:28:28 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFPFL3IRj+5/xjls62/Fb+f+DaU2BI42u0JjGGMC6cm0o5iDXF3giEmCmA9QGQAGJdwBkVjlw==
-X-Received: by 2002:a05:6102:f13:b0:4a9:15c:ef8 with SMTP id ada2fe7eead31-4addceb83fdmr1823894137.24.1732246107902;
-        Thu, 21 Nov 2024 19:28:27 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d451b4a59esm4727586d6.105.2024.11.21.19.28.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 19:28:27 -0800 (PST)
-Message-ID: <0e41ed2117c5cf5c97e2052aab65e39a5fef06f7.camel@redhat.com>
-Subject: Re: [PATCH v2 26/49] KVM: x86: Add a macro to init CPUID features
- that KVM emulates in software
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Thu, 21 Nov 2024 22:28:26 -0500
-In-Reply-To: <ZuG_V9k8fbh8bKc5@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-27-seanjc@google.com>
-	 <2e0f3fb63c810dd924907bccf9256f6f193b02ec.camel@redhat.com>
-	 <ZoxooTvO5vIEnS5V@google.com>
-	 <2e531204c32c05c96e852748d490424a6f69a018.camel@redhat.com>
-	 <ZqQ6DWUou8hvu0qE@google.com>
-	 <2d77b69729354b016eb76537523c9e32e7c011c5.camel@redhat.com>
-	 <ZrEvCc6yYdT-cHxD@google.com>
-	 <96b32724ad1ce9ac88abb209d196b01116536a61.camel@redhat.com>
-	 <ZuG_V9k8fbh8bKc5@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1732246303; c=relaxed/simple;
+	bh=PT+og30acbFtopbcyXmRkZgG31nt6YL5AfWiEoc3v9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8Mf+lmdiQ5gii4b22V/tVSOgJjKzmtTS3t1zMz6X8NxHmOkiNDRczszHFc3gFWDG+8HHEbgMxZjFAumifqshpVkO8XS8VaIH9hzWgoKcjYCb+Om97nUXPYmSBfNvrhjRVF/2az2f14O9pRarr5GJWSNfj6VQDNCJK9Kp0VHH9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N6un4CWF; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732246301; x=1763782301;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=PT+og30acbFtopbcyXmRkZgG31nt6YL5AfWiEoc3v9c=;
+  b=N6un4CWFUrt2HI0bsb6iAfKMdjYZ2Y0TgK39+2XvjOyZiuMtP2TO3DRb
+   +NI8dQ4I7BMA/vjgDkILPNA8IcC5hLJhJpHoP4HPTgUfp3CkMli8ZQFn8
+   Xw1iej+lg1BSuI7B1U+aHTpSwuJOpEE9NVduXVXEcwwxJAEay13nW/6Tg
+   Z3vQe+PakmpMcnau7w1yLPneWKdhdCQuMV0HvgeJx44oUUkZaEpH3y+aA
+   9PfwCYfAaf//+3bWLnLYzhW81Jgah7kt0SfifNVVWTnQZ85PiiNEggZQv
+   676j38qKjxWQy6xFN4XcVfO3HF3RRcpWVKIWFTC4rfloVnNuhlABkgNMF
+   g==;
+X-CSE-ConnectionGUID: g/klvT60SaWE89OMMWpEjA==
+X-CSE-MsgGUID: 8hYX1Jj6TPKXnvQWjhFHPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="32632252"
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="32632252"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 19:31:39 -0800
+X-CSE-ConnectionGUID: R2+N8KwJRlm1/Y40Y+GzNA==
+X-CSE-MsgGUID: HX+G1ulhRGmbttp2DpaCRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
+   d="scan'208";a="95399663"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 21 Nov 2024 19:31:36 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEKOM-0003dH-1S;
+	Fri, 22 Nov 2024 03:31:34 +0000
+Date: Fri, 22 Nov 2024 11:31:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: guanjing <guanjing@cmss.chinamobile.com>, krisman@kernel.org,
+	hughd@google.com, akpm@linux-foundation.org, andrealmeid@igalia.com,
+	brauner@kernel.org, tytso@mit.edu
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: Re: [PATCH v1] tmpfs: Unsigned expression compared with zero
+Message-ID: <202411221128.qSNFAkty-lkp@intel.com>
+References: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=unknown-8bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
 
-On Wed, 2024-09-11 at 09:03 -0700, Sean Christopherson wrote:
-> On Tue, Sep 10, 2024, Maxim Levitsky wrote:
-> > On Mon, 2024-08-05 at 12:59 -0700, Sean Christopherson wrote:
-> > > > And now we have:
-> > > > 
-> > > > kvm_cpu_cap_init_begin(CPUID_12_EAX);
-> > > >  feature_scattered(SGX1);
-> > > >  feature_scattered(SGX2);
-> > > >  feature_scattered(SGX_EDECCSSA);
-> > > > kvm_cpu_cap_init_end();
-> > > 
-> > > I don't love the syntax (mainly the need for a begin()+end()), but I'm a-ok
-> > > getting rid of the @mask param/input.
-> > > 
-> > > What about making kvm_cpu_cap_init() a variadic macro, with the relevant features
-> > > "unpacked" in the context of the macro?  That would avoid the need for a trailing
-> > > macro, and would provide a clear indication of when/where the set of features is
-> > > "initialized".
-> > > 
-> > > The biggest downside I see is that the last entry can't have a trailing comma,
-> > > i.e. adding a new feature would require updating the previous feature too.
-> > > 
-> > > #define kvm_cpu_cap_init(leaf, init_features...)			\
-> > > do {									\
-> > > 	const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);	\
-> > > 	const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;	\
-> > > 	u32 kvm_cpu_cap_virtualized= 0;					\
-> > > 	u32 kvm_cpu_cap_emulated = 0;					\
-> > > 	u32 kvm_cpu_cap_synthesized = 0;				\
-> > > 									\
-> > > 	init_features;							\
-> > > 									\
-> > > 	kvm_cpu_caps[leaf] = kvm_cpu_cap_virtualized;			\
-> > > 	kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |			\
-> > > 			       kvm_cpu_cap_synthesized);		\
-> > > 	kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;			\
-> > > } while (0)
-> > > 
-> > > 	kvm_cpu_cap_init(CPUID_1_ECX,
-> > > 		VIRTUALIZED_F(XMM3),
-> > > 		VIRTUALIZED_F(PCLMULQDQ),
-> > > 		VIRTUALIZED_F(SSSE3),
-> > > 		VIRTUALIZED_F(FMA),
-> > > 		VIRTUALIZED_F(CX16),
-> > > 		VIRTUALIZED_F(PDCM),
-> > > 		VIRTUALIZED_F(PCID),
-> > > 		VIRTUALIZED_F(XMM4_1),
-> > > 		VIRTUALIZED_F(XMM4_2),
-> > > 		EMULATED_F(X2APIC),
-> > > 		VIRTUALIZED_F(MOVBE),
-> > > 		VIRTUALIZED_F(POPCNT),
-> > > 		EMULATED_F(TSC_DEADLINE_TIMER),
-> > > 		VIRTUALIZED_F(AES),
-> > > 		VIRTUALIZED_F(XSAVE),
-> > > 		// DYNAMIC_F(OSXSAVE),
-> > > 		VIRTUALIZED_F(AVX),
-> > > 		VIRTUALIZED_F(F16C),
-> > > 		VIRTUALIZED_F(RDRAND),
-> > > 		EMULATED_F(HYPERVISOR)
-> > > 	);
-> > 
-> > Hi,
-> > 
-> > This is no doubt better than using '|'.
-> > 
-> > I still strongly prefer my version, because I don't really like the fact that
-> > _F macros have side effects, and yet passed as parameters to the
-> > kvm_cpu_cap_init function/macro.
-> > 
-> > Basically an unwritten rule, which I consider very important and because of which
-> > I raised my concerns over this patch series is that if a function has side effects,
-> > it should not be used as a parameter to another function, instead, it should be 
-> > called explicitly on its own.
-> 
-> Splitting hairs to some degree, but the above suggestion is distinctly different
-> than passing the _result_ of a function call as a parameter to another function.
-> The actual "call" happens within the body of kvm_cpu_cap_init().
+Hi guanjing,
 
-You are technically right but you use a wrong point of view: You know the implementation,
-and I pretend that I don't know it, and try to look at this from the point of view
-of someone who just looks a the code for the first time, e.g. to fix some bugs.
+kernel test robot noticed the following build warnings:
 
-Someone who doesn't know anything about this, won't know if these are macros, cleverly
-passed to another variadric macro (which is itself a feature that is not often used)
+[auto build test WARNING on brauner-vfs/vfs.all]
+[also build test WARNING on linus/master next-20241121]
+[cannot apply to v6.12]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I just state the fact: a function or what looks like a function, result of which
-is evaluated in expression or passed to another function (within a single statement)
-should not have side effects. 
-Only top level function/procedure calls allowed to have side effects - 
-otherwise this is just confusing.
+url:    https://github.com/intel-lab-lkp/linux/commits/guanjing/tmpfs-Unsigned-expression-compared-with-zero/20241121-152806
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20241120105150.24008-1-guanjing%40cmss.chinamobile.com
+patch subject: [PATCH v1] tmpfs: Unsigned expression compared with zero
+config: arc-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221128.qSNFAkty-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221128.qSNFAkty-lkp@intel.com/reproduce)
 
-Let me explain this again with code:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411221128.qSNFAkty-lkp@intel.com/
 
-When I see for the first time this:
+All warnings (new ones prefixed by >>):
 
-result = foo(x) | bar(x);
-
-I strongly expect both foo and bar to be pure functions with no side effects.
-
-Or if I see this for the first time:
-
-err = somefunc(foo(x), bar(x));
-
-I also expect that foo and bar are pure functions,
-but 'somefunc' might not be because it only returns an error code,
-and it is a top level statement.
-
-And I don't care if this is implemented with functions or macros, because it
-looks the same.
-
-This is just how my common sense works.
-
-I won't argue though more about this, I don't want to bikeshed this and block this patch series.
-If you insist, let it be, but please at least use the variadic macro.
+>> fs/unicode/utf8-core.c:225: warning: Function parameter or struct member 'version_str' not described in 'utf8_parse_version'
 
 
-> 
-> This is effectively the same as passing a function pointer to a helper, and that
-> function pointer implementation having side effects, which is quite common in the
-> kernel and KVM, e.g. msr_access_t, rmap_handler_t, tdp_handler_t, gfn_handler_t,
-> on_lock_fn_t, etc.
-> 
-> I 100% agree that it's unusual and subtle to essentially have a variable number
-> of function pointers, but I don't see it as being an inherently bad pattern,
-> especially since it is practically impossible to misuse _because_ the macro
-> unpacks the "calls" at compile time.
-> 
-> IMO, the part that is most gross is the macros operating on local variables, but
-> that behavior exists in all ideas we've discussed, probably because I'm pretty
-> sure it's unavoidable unless we do something even worse (way, waaaaay worse).
-> 
-> E.g. we could add 32 versions of kvm_cpu_cap_init() that invoke pairs of parameters
-> and pass in the variables
-> 
->   fn1(f1, virtualized, emulated, synthesized)
->   fn2(f2, virtualized, emulated, synthesized)
->   fn3(f3, virtualized, emulated, synthesized)
->   ...
->   fnN(fN, virtualized, emulated, synthesized)
-> 
-> and
-> 
->   kvm_cpu_cap_init19(CPUID_1_ECX,
-> 	F, XMM3,
-> 	F, PCLMULQDQ,
-> 	F, SSE3,
-> 	...
-> 	EMULATED_F, HYPERVISOR
->   );
+vim +225 fs/unicode/utf8-core.c
 
-I don't think that this change is worth it, but this is still better in some sense,
-because at least the user won't be able to make any assumptions about the above,
-and instead will have to read the code and figure out what was done here.
-It won't be easy though.
+9d53690f0d4e56 Gabriel Krisman Bertazi 2019-04-25  216  
+142fa60f61f938 André Almeida           2024-10-21  217  /**
+142fa60f61f938 André Almeida           2024-10-21  218   * utf8_parse_version - Parse a UTF-8 version number from a string
+142fa60f61f938 André Almeida           2024-10-21  219   *
+142fa60f61f938 André Almeida           2024-10-21  220   * @version: input string
+142fa60f61f938 André Almeida           2024-10-21  221   *
+fd9b2236cc1a2d guanjing                2024-11-20  222   * Returns 0 on success, negative code on error
+142fa60f61f938 André Almeida           2024-10-21  223   */
+fd9b2236cc1a2d guanjing                2024-11-20  224  int utf8_parse_version(char *version_str, unsigned int *version)
+142fa60f61f938 André Almeida           2024-10-21 @225  {
 
-> 
-> But that's beyond horrific :-)
-> 
-> > If you strongly prefer the variadic macro over my begin/end API, I can live with
-> > that though, it is still better than '|'ing a mask with functions that have side
-> > effects.
-
-
-
-Best regards,
-	Maxim Levitsky
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
