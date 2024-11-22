@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-417890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD649D5A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6019D5A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:49:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FC828393D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2211F21936
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB1418870F;
-	Fri, 22 Nov 2024 07:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EF6175D37;
+	Fri, 22 Nov 2024 07:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dDGwBdCr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="XiZLD5I3"
+Received: from esa1.hc1455-7.c3s2.iphmx.com (esa1.hc1455-7.c3s2.iphmx.com [207.54.90.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE8417B4E9;
-	Fri, 22 Nov 2024 07:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3256013AA38;
+	Fri, 22 Nov 2024 07:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261799; cv=none; b=dzgjbffEo9/XqcEBh1MoDsqF7SD2lWi2wIVrLmRZQy0h4JxWwdL5zDblPLtFedmJ2E3qqjFPur3Yz5QdXEdhj2q+Ou4j+ObQXJpLQL5Lq0iiJu3cxKnFMZss85o8KmJMoMkoW3b63U353agcy5DUnt7RSLimXE1hWedyg9A+bZc=
+	t=1732261740; cv=none; b=BmafTPVj8OAaiDaFbiFB8gsd3BO7s/P2ozuDFMPfwuaKpXefEVQQKEWSiH2fzIvtdfDiMB43xMLpBWx8wIcoLi2XWoa6Jt7AvRu/a8k4uQK+f2tzIsp1CeI/EW5iLI2mStPZzSfLN+OI7DTbnBdOOU7EVA50vAolVOfH0JM5bQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261799; c=relaxed/simple;
-	bh=My2daiLfBR+Mjsh4foxYiUEZjUV7dalooaztddo2IJ4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n2uSjpgJTqoDHvdf7f5Fh86V2Kiq8V9Zl76tJtuI8qeZUTurcNbBoBft3MQTI/5DIiHtJ8TKDb+nw0LE0vU4Z8B5XK9UMMHM/OP7dYEKj2Pybi5fwKf4V6iLUMktiSxc3lq+nCSxL538QPYVIOceaVWRNphkO6SpebHbTwS6JTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dDGwBdCr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM7GHr9016886;
-	Fri, 22 Nov 2024 07:49:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=bvGB5UyFGU5Om5T062j/cNyn
-	+OTjL/N8AF0U0yGGO34=; b=dDGwBdCrRbkFPgZVgPTeXdSuUsCDmVAxCYCZqBrZ
-	C6c47p/Dy+6xvMwApTfaEGyeut4yQshb9TP9vbnwpgVAWc7K1WbkxdD/iDIE7yDS
-	8RaePA1PPq22If4kC+XSy2fqqQry1ZZ19roeyRjIx/GynzqMJ7XGaWHPSyhUTH96
-	04DQQTIGxKvh1UTDL+oktqWC6MDjvMSCa38XYYOSusjunKwEOco66y+E9eGKgN2U
-	LBHEAA6irMN27IVOrUKzchhAf4ZVdiXmuxSBYSvjdmSWuOvpssdh2TGS5VHxecbY
-	myJ5UNuDsrChba0HbK5SIGnJYkxZF9pmLiS2F41QdlV2EQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4320y9kcvr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:49:50 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM7nnmI024584
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:49:49 GMT
-Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 21 Nov 2024 23:49:46 -0800
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
-        <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        Qingqing Zhou
-	<quic_qqzhou@quicinc.com>
-Subject: [PATCH 2/2] arm64: dts: qcom: qcs615: add the GPU SMMU node
-Date: Fri, 22 Nov 2024 13:19:22 +0530
-Message-ID: <20241122074922.28153-3-quic_qqzhou@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241122074922.28153-1-quic_qqzhou@quicinc.com>
-References: <20241122074922.28153-1-quic_qqzhou@quicinc.com>
+	s=arc-20240116; t=1732261740; c=relaxed/simple;
+	bh=nqL1XvYbyKSZQqMj6JbKQ0PBzBfRzjNjVetM3FWvO5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OOKeL0DPxK/vcFurvCUNZ1FqmsEfM4iGpJJg8TmBEfqrVZjYu5ZEWfjQM33KToJ0s2Kkid+orOPikkigpXHTnnsjlqUsIcA4QX9QJBH28c6x/7r3DP8w0mQdTITMbxQZLvfnBDBgHiJaBK6AX9rlKTRDxPKXoXWRLlsvUT8fI64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=XiZLD5I3; arc=none smtp.client-ip=207.54.90.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1732261738; x=1763797738;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nqL1XvYbyKSZQqMj6JbKQ0PBzBfRzjNjVetM3FWvO5g=;
+  b=XiZLD5I3mVJOUozGyLd+2RpOo7/KlxUeO62suX9sdM2VUNbVEdX5+Dti
+   OemHhODGeg4zXQsGLFQKxcP10SdQF0bq/t8aMyDTORoXoTJZxze8ilNTw
+   1AI1qwtfd3Hb+wtu7RzAqnlkWZRMiXpNIUH4hdAaRAkhX6hCPSsRnQ9Wl
+   DZxNUbF1rbW5FSDQfKSAOg9axGkhx9V6K5KwZwIifS0MA0zq3tAOyUtKG
+   eYqAzCeQBlbLaqgRs1tpC93aybTqFsJTsDRPTSmwHAbWWHyFli4qYVvkl
+   f1GYn5dEkjdVdroHZRMCxzhAR6k+UTqYzEDXAI53wIV+RBrdLEpHDVhFX
+   g==;
+X-CSE-ConnectionGUID: 9hz+0CwyTB23BXKE8gtvMQ==
+X-CSE-MsgGUID: zwtXkKwHTqCAnZXgZx+ACQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="181315553"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
+   d="scan'208";a="181315553"
+Received: from unknown (HELO oym-r1.gw.nic.fujitsu.com) ([210.162.30.89])
+  by esa1.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:48:55 +0900
+Received: from oym-m4.gw.nic.fujitsu.com (oym-nat-oym-m4.gw.nic.fujitsu.com [192.168.87.61])
+	by oym-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 7E30CD4807;
+	Fri, 22 Nov 2024 16:48:53 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 0C042D6035;
+	Fri, 22 Nov 2024 16:48:53 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 9D4082007C3F7;
+	Fri, 22 Nov 2024 16:48:52 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 251A61A000B;
+	Fri, 22 Nov 2024 15:48:52 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH for-next v3] selftests/zram: gitignore output file
+Date: Fri, 22 Nov 2024 15:49:35 +0800
+Message-ID: <20241122074935.1583747-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TZ3k1Tz6GBDgMYVKgXHGDRokyG8CGYiH
-X-Proofpoint-ORIG-GUID: TZ3k1Tz6GBDgMYVKgXHGDRokyG8CGYiH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=876 spamscore=0 mlxscore=0 malwarescore=0 clxscore=1015
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220064
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28812.003
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28812.003
+X-TMASE-Result: 10--13.042600-10.000000
+X-TMASE-MatchedRID: nUGu75wN8kWAIpLP/qXbGbnHu4BcYSmtegIHHX2L4YyjEIt+uIPPOBka
+	AZoftHktcMrdJyab/PE7316J37LffS8oE1Ngob6lrMZ+BqQt2NrJ5SXtoJPLyFcZNuxCoduSsaY
+	IF6sQsQ7+4K0BSFVcYVFLvGMRv53EHFja9OI/1x1O5y1KmK5bJSkDYTG6KmZaR/IzlV+CMbbT0P
+	pHDbMis75zVhb/Nij2V5Y/cGuAJ/uR9GF2J2xqMxRFJJyf5BJemMMxPRPIOTn6C0ePs7A07RjOl
+	t1Pi553XL7I519CZrUnlZ51V8SfPOQmlR1Z/9ig4repHbz7QeU=
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-Add the Adreno GPU SMMU node for QCS615 platform.
+After `make run_tests`, the git status complains:
+Untracked files:
+    (use "git add <file>..." to include in what will be committed)
+        zram/err.log
 
-Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
+This file will be cleaned up when execute 'make clean'
+
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Hello,
+Cover letter is here.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index 56af38d4f75f..4e0f26563db9 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -528,6 +528,33 @@
- 			#power-domain-cells = <1>;
- 		};
- 
-+		adreno_smmu: iommu@50a0000 {
-+			compatible = "qcom,qcs615-smmu-500", "qcom,adreno-smmu",
-+				     "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x50a0000 0x0 0x10000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+			dma-coherent;
-+
-+			power-domains = <&gpucc CX_GDSC>;
-+			clocks = <&gcc GCC_GPU_MEMNOC_GFX_CLK>,
-+				 <&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
-+				 <&gcc GCC_GPU_SNOC_DVM_GFX_CLK>;
-+			clock-names = "mem",
-+				      "hlos",
-+				      "iface";
-+
-+			interrupts = <GIC_SPI 585 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 590 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 591 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 592 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 593 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 594 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 595 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 596 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		dc_noc: interconnect@9160000 {
- 			reg = <0x0 0x09160000 0x0 0x3200>;
- 			compatible = "qcom,qcs615-dc-noc";
+This patch set aims to make 'git status' clear after 'make' and 'make
+run_tests' for kselftests.
+---
+V3:
+  Add Copyright description
+V2:
+   split as a separate patch from a small one [0]
+   [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
+
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+ tools/testing/selftests/zram/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 tools/testing/selftests/zram/.gitignore
+
+diff --git a/tools/testing/selftests/zram/.gitignore b/tools/testing/selftests/zram/.gitignore
+new file mode 100644
+index 000000000000..088cd9bad87a
+--- /dev/null
++++ b/tools/testing/selftests/zram/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++err.log
 -- 
-2.17.1
+2.44.0
 
 
