@@ -1,135 +1,157 @@
-Return-Path: <linux-kernel+bounces-417851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D3F9D59C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:16:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7D09D59EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9CC1F22E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:16:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0840CB22087
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37591714BD;
-	Fri, 22 Nov 2024 07:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAEF1741E0;
+	Fri, 22 Nov 2024 07:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkXu7s0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HX7iYiBI"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F75F22075;
-	Fri, 22 Nov 2024 07:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49CD230987;
+	Fri, 22 Nov 2024 07:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732259792; cv=none; b=OhqWnAz+ewUKqpWU8upPvO0r8UflBIbyPZLbhMhMGsWVehdWGP4hGvbBLpeo3pg7DEk6pJwnyuqV3VslhGRvKk783/69wBVCdo8+zqzKzGKZ486qaMJWxjHJgu/AmSYbSxt+gMgAuxuUqiP0RZmLpU0daHqnaeSO1QPDZqYNGOg=
+	t=1732260129; cv=none; b=BYIHfQ4ZlGX0N9Gi8sOcgabnxwJ8tMd7AG3z/RmOZaj7mi2Mn0fCNOogrwxssxU0Ij5/SeLXXffRQ0HNMlY6zeTwLD6EeILXWI8zE4GBuIY1UHstJt9LxDkMkONPfBA7QF4JJ6W6u8WCJwVJDe4LyeM1p0+tHwLTnZWmAeHdzSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732259792; c=relaxed/simple;
-	bh=Wd3TXSildFXJxXQZobSC5oDGUdglHsoTXiln84ITaKU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKBMWjhq0iLa9RUrEtilBqBHVPKCwidlu3WKoHUT/Wkrk5uqzuvgOsq5a06iSgVcQUItaRETpHd2zNGGootVERnqyL6m1esIuRFXP4GqwsdpkfiI+upTo8Q428MhPHYqSdF7ow61FvD95cPGfMZXrOLDyO9bO/sGTShFea9ub5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkXu7s0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5FF9C4CECE;
-	Fri, 22 Nov 2024 07:16:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732259791;
-	bh=Wd3TXSildFXJxXQZobSC5oDGUdglHsoTXiln84ITaKU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DkXu7s0Zojjn7os3jSywBf0ToISgeC0scHniO9ruy6OKMHz+e2etmCruxfUQy7Hkz
-	 eGo0gXIk2Hp0fi7QIhF8LD0z+BnDPaatvLNI/imSUS8JPAA9pteWxLNoz3qzOXAz7N
-	 0Mj6wVPX0tRKRbbaoXCYBOsjbwQ0G40UcExzz3RNcKeFkhjlxaJE9TjybW+CvCnwFO
-	 i4gxjkMH/3LKOrcFcbOhpitjL7MsN+7SKa65AvsY1at6NA0m1873dxbfsb7fpryiId
-	 IKiKHfdTzrATF3iUAM3UO5/sOx4W6UAR0wpJzp1jz2wom9dbriVaQp+gQPuAZtumNP
-	 amq9gpxdlS0CQ==
-Date: Fri, 22 Nov 2024 08:16:28 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
-	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
-	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
-	andersson@kernel.org, konradybcio@kernel.org, quic_tsoni@quicinc.com, 
-	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, 
-	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-phy@lists.infradead.org, Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: PCI: qcom: Document the QCS615 PCIe
- Controller
-Message-ID: <nxje65jbp6tmgskq765zeiy6ojnadyuh56wabk2g6kfq7bwfwl@vaoxhtu7si3a>
-References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
- <20241122023314.1616353-4-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1732260129; c=relaxed/simple;
+	bh=krLSltSvxa1b5p+97f+phk+FYHKalBzUK+6b+JMRYx4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kcN030gTVI2cPS6fur6JS9GD9paSRxsZRPw8omvw/0R+O08iLCMkt1IdP3zNVNfj17aB6bq7EnPSR2q5YK5gllq8qvVbuEI6CNSUzwL52gIJgZ250Yco5ef5IIc22YwBC0GbVCCueLzUznHrzauVF5c0M34lea2asXaDZ7Wzo5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HX7iYiBI; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1732260117; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=gaDcST95Gx4iPn815neB9XkKhGEorlv6Hxro/QIQDq0=;
+	b=HX7iYiBIv7GZGTDu2uM6KVaanHFL/1sCyAzBlwm/f8ThZXPUHENQTzwR+La72dgpDRb4q14vZ3uNd9vR9SuvVLPUe5IExZaMeKA69YmomsOEYH42rBgaK7ZP69gaqapZcPASZVajO7wlwfR09NF3kvmY88oSoPx+fK2Bd2N577Q=
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WJzio16_1732259792 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 22 Nov 2024 15:16:34 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	horms@kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 1/2] net/smc: initialize close_work early to avoid warning
+Date: Fri, 22 Nov 2024 15:16:29 +0800
+Message-Id: <20241122071630.63707-2-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+In-Reply-To: <20241122071630.63707-1-guwen@linux.alibaba.com>
+References: <20241122071630.63707-1-guwen@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122023314.1616353-4-quic_ziyuzhan@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 10:33:11AM +0800, Ziyue Zhang wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add dedicated schema for the PCIe controllers found on QCS615.
-> Due to qcs615's clock-names do not match any of the existing
-> dt-bindings, a new compatible for qcs615 is needed.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  .../bindings/pci/qcom,pcie-qcs615.yaml        | 161 ++++++++++++++++++
->  1 file changed, 161 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
+We encountered a warning that close_work was canceled before
+initialization.
 
-I propose qcom,qcs615-pcie
+  WARNING: CPU: 7 PID: 111103 at kernel/workqueue.c:3047 __flush_work+0x19e/0x1b0
+  Workqueue: events smc_lgr_terminate_work [smc]
+  RIP: 0010:__flush_work+0x19e/0x1b0
+  Call Trace:
+   ? __wake_up_common+0x7a/0x190
+   ? work_busy+0x80/0x80
+   __cancel_work_timer+0xe3/0x160
+   smc_close_cancel_work+0x1a/0x70 [smc]
+   smc_close_active_abort+0x207/0x360 [smc]
+   __smc_lgr_terminate.part.38+0xc8/0x180 [smc]
+   process_one_work+0x19e/0x340
+   worker_thread+0x30/0x370
+   ? process_one_work+0x340/0x340
+   kthread+0x117/0x130
+   ? __kthread_cancel_work+0x50/0x50
+   ret_from_fork+0x22/0x30
 
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
-> new file mode 100644
-> index 000000000000..8f7571538d23
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
-> @@ -0,0 +1,161 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/qcom,pcie-qcs615.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm QCS615 PCI Express Root Complex
-> +
-> +maintainers:
-> +  - Bjorn Andersson <andersson@kernel.org>
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +description:
-> +  Qualcomm QCS615 SoC (and compatible) PCIe root complex controller is based on
-> +  the Synopsys DesignWare PCIe IP.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,pcie-qcs615
+This is because when smc_close_cancel_work is triggered, e.g. the RDMA
+driver is rmmod and the LGR is terminated, the conn->close_work is
+flushed before initialization, resulting in WARN_ON(!work->func).
 
-I propose qcom,qcs615-pcie
+__smc_lgr_terminate             | smc_connect_{rdma|ism}
+-------------------------------------------------------------
+                                | smc_conn_create
+				| \- smc_lgr_register_conn
+for conn in lgr->conns_all      |
+\- smc_conn_kill                |
+   \- smc_close_active_abort    |
+      \- smc_close_cancel_work  |
+         \- cancel_work_sync    |
+            \- __flush_work     |
+	         (close_work)   |
+	                        | smc_close_init
+	                        | \- INIT_WORK(&close_work)
 
-> +
-> +  reg:
-> +    minItems: 6
-> +    maxItems: 6
-> +
-> +
+So fix this by initializing close_work before establishing the
+connection.
 
-...
+Fixes: 46c28dbd4c23 ("net/smc: no socket state changes in tasklet context")
+Fixes: 413498440e30 ("net/smc: add SMC-D support in af_smc")
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+---
+ net/smc/af_smc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-> +  resets:
-> +    minItems: 1
-
-Use existing code as template, e.g. sm8550, instead of coming with own stuff. Drop.
-
-> +    maxItems: 1
-
-This fails tests.
-
-Best regards,
-Krzysztof
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 9d76e902fd77..ed6d4d520bc7 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -383,6 +383,7 @@ void smc_sk_init(struct net *net, struct sock *sk, int protocol)
+ 	smc->limit_smc_hs = net->smc.limit_smc_hs;
+ 	smc->use_fallback = false; /* assume rdma capability first */
+ 	smc->fallback_rsn = 0;
++	smc_close_init(smc);
+ }
+ 
+ static struct sock *smc_sock_alloc(struct net *net, struct socket *sock,
+@@ -1299,7 +1300,6 @@ static int smc_connect_rdma(struct smc_sock *smc,
+ 		goto connect_abort;
+ 	}
+ 
+-	smc_close_init(smc);
+ 	smc_rx_init(smc);
+ 
+ 	if (ini->first_contact_local) {
+@@ -1435,7 +1435,6 @@ static int smc_connect_ism(struct smc_sock *smc,
+ 			goto connect_abort;
+ 		}
+ 	}
+-	smc_close_init(smc);
+ 	smc_rx_init(smc);
+ 	smc_tx_init(smc);
+ 
+@@ -2479,7 +2478,6 @@ static void smc_listen_work(struct work_struct *work)
+ 		goto out_decl;
+ 
+ 	mutex_lock(&smc_server_lgr_pending);
+-	smc_close_init(new_smc);
+ 	smc_rx_init(new_smc);
+ 	smc_tx_init(new_smc);
+ 
+-- 
+2.32.0.3.g01195cf9f
 
 
