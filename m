@@ -1,120 +1,146 @@
-Return-Path: <linux-kernel+bounces-418531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A799D62B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:05:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8952F9D62B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 207A1B21388
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:05:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34162B23F90
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D341DE2BD;
-	Fri, 22 Nov 2024 17:05:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E611DF978;
+	Fri, 22 Nov 2024 17:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PkI1nmkF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878FE7080C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA41C1DF971
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732295105; cv=none; b=XXk47kCehFm+C+HOAF5N9n8e8LGkpId00rxvHYHDUpIGzncy02giDeY1k9QMHFv4ejmrdGVrqdK9cn9igdkqyCgtpGBx1RmB1tqiD8F+o62cv85BJ8YGCgIkNZGvLCaMBKLh34svQNP7FvO8d9ssWZqrEfnktyMulknCXGX5i7g=
+	t=1732295252; cv=none; b=esI64d5eOF6kIrWgQdPo9TEK4nCnDzW9SJschZfGm6II5nnxgpILoSIdqQEDlR/RbHq62BoLD0gsWyPwJlF/HFMWbP5ubfA59LlFQUMa+kknU+s4EoARA1amfr4Ck0pRY7FxkV9MULDZK4HQi9rpYHuT13gNJoc9qGdhxhrjYfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732295105; c=relaxed/simple;
-	bh=fiILnnkT0f3Sk6+TIANC+LOPxiJ9Dbug9M8chnDoeEQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KTLatZoBo7OA0g6fjg0JmJr3HzG/A0KcOD/FE4G+c0Au2UlwjNm6ilMaib7BGI4B/ihEZQZajZxDYwsavpp2Lv0wvJw7tKxn0IbGzjLpABFqIiGDgOB+4hzt5NsWtADDuBaP/SZtJFzJ6lG0PpuywAq+Hs5zVA+fqAPGfRI3oE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a7a72bd3a2so3326775ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:05:03 -0800 (PST)
+	s=arc-20240116; t=1732295252; c=relaxed/simple;
+	bh=qHGeW+9YJHnoV8xlYG8Yntca2NxQVMAEhNoIhEt+6xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBdGOsU28UlxU7zvBoEsl2XamH9HTwF8Zbzjo31wtmxYGJdsbkcEd1fS9iNs7skFV9U4tH7HoN53G7O0CR6NmhLo4vW30dUf3GuZTA5Q31yjyJqmc/Cf4d58dXOhMXYphfmIkK26xVzpt/Nxspex+4WcnMtUp+p2g/nAJyq4N84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PkI1nmkF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7240d93fffdso1936588b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:07:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732295250; x=1732900050; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0/2iR2t92OCH9/EybMxXNXRhh30tebsZGZl/G3WtQ4A=;
+        b=PkI1nmkFNbg40iAjHfbpK8fx/tPj5m3Sglq2emncXcuVpB+ur+6+vf1TAnWuhzV3tU
+         bWsMb99G6w6CIlxZCp8Fu0N1gyziWG2MPKCBVuStdw5dGBMH63tP0MUipwF5appfzShs
+         VKCLFlfuR+aTaNguGX/J80uPEXokG7qLwrIGH4K7zTonUi1cWvv6H9aYN8IQcRub+IgR
+         gYdGoxjYgKqyST98FvK7E9ebSOQZebSSGDf8Dd8ZXl5hamMqdChiSiumMHzbpsZ1PdTy
+         3mE1AQ0OwC1YquluK1kzLBXmmgVB1DnsnrUeXJ5VX1UwAfihzWfs/eGIrvPikv3bSNba
+         2AgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732295102; x=1732899902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1732295250; x=1732900050;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eiYt7JnYh8zSIrdwmS1xz/AnJ63+g27Xyvtfwt9f9Yk=;
-        b=wuBNT3mWG9k5ZEFxrdSViJrlx+xgN1sarY4qDHH4ne+jrK5utxWhmnzLUZBJr7uJSH
-         aFESK4I2FJvniGveYRcERt4mqTfKKKDrHYQ21/sFWpKVgJwBS10lCq96qh9At5Xz938O
-         6Xse8HEPytmv0iKpYmvytLOgXVNt99aQfdaE7rf9sLPzaLZiSWic0wVrEhyrCAL66Flx
-         /Lc3P6oI3+gcU6Ing4RkUz1m4aKb4PH3WCDn8Y6pvXOHP3/hl5wp5JJIhpOD5p1VJPkk
-         Sxlr70tQxtqDhZlGFofxHnNDG19P2anlNDN51P3MfsNKzM1QfaD8vUvVGu7mQ9MZvyfO
-         F84Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVfFs5yhwFHt4OvRvakXvfIRgyBzd5vEFI4CoFmDuXitvCZIWHgvfVGiVQ5sW0WSKHn4d/9sP3C3fj++4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuVMC0InGfkUbSFWrsuJo7zR/mTfY7OAP8kpm2rHAYAO16DbcV
-	0tT3KaKGtlhm4yYTKoakoe7JRTnPISqvTQJB+JXhstGQlBEG3EDOTjylvxiG4oIf7l29lW4yNI2
-	aQQVYzqnR8m/2SzhjQmcBkGAmeKbxVSEIUylfHRI/eHg4uc4n8HVz8NQ=
-X-Google-Smtp-Source: AGHT+IFxLqmKQQ3aDbt+/5R15HP+DurTHA2Yuys20IgxFrah37Vht3qInWPtVRNe5MlFLAOiOjVTECXectC98XU+KRlfDDXCmHI9
+        bh=0/2iR2t92OCH9/EybMxXNXRhh30tebsZGZl/G3WtQ4A=;
+        b=SaVxT4ONrC+jK0I62q/CwFyD5f8AUm0GY/7rESm8YygRLzDHLXOUSzEG/Ch+owR4Q/
+         aInfhhshBHoCwR7EM3pWMPWcUoe2QyfAN0v3v6tjfj1FDvVY5fPuYmAvfr/NLJTDPB3z
+         mvpTgcOVHZpxzSqAHSVtLMww6B6XeDZkGaLd2kekAKieZi9xRAY9s7X1W8zVYkaddj80
+         nU0lxqyWG/gfcRggvSTQ8TVQ02/q80jtnTNAfLVqc8Ng7IVnzcjLKYj9LibLcOqXFfz4
+         p9i+xaxaxi5/vEKXYMSdgEvdFhZy/gwMG4JGiC0mvd9vNZLdSQStxxTypQTlBoirg19l
+         O5gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpvDVifIpKmQGDkh2JU9riaCB0+cPhLqytT9Tqpn1xdp8/vuTzyUDm68/NCCdtxI7ntyAsas5oranE93w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwADGQCRT5eHz+qlfYbEPhNUnmClRwdopfbGWtZPbNNOxdycpz2
+	aI3RrzeZA9d702cA+jPqqhOKprFW/37BGcVERUJzFoaFkS6pxOGJL8IPANS02Q==
+X-Gm-Gg: ASbGnctBhJ8lDxVyXUmFioj1/43i9EVUPu6ZfNIGrRWTtpEwqLWknf6k+FPRD8CUWpB
+	ZiFYt6Q5Y10jUD/pmToJfVPXkQ0tP7JeKmbMbdZwbUHStIxN45o8bRj+joXD+VPg+45gQJfbskU
+	2dBqttkhfLMKL4ImiYYjozB4ne4DAEF9lX4fehI+QdPFolD8h9qfZzRRmhMEwCz+bKwKSy++4SH
+	UmW/ZDLWROsIgB8Ce2nRmCHFW9RiLpEt3ZZfmDTyuW8C82vpXNAhVRHSF2p
+X-Google-Smtp-Source: AGHT+IGZvDpaoKhSksqbzMsm60Yp0W7DGNYEnn4YmD/coS4PDUIKaXASCZ3cNh00dMOu8rfdsP6n3g==
+X-Received: by 2002:a17:902:d4c6:b0:20e:a2f7:8ab9 with SMTP id d9443c01a7336-2129f6ac33amr44650405ad.27.1732295250203;
+        Fri, 22 Nov 2024 09:07:30 -0800 (PST)
+Received: from thinkpad ([49.207.202.49])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dba1b40sm18541705ad.87.2024.11.22.09.07.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 09:07:29 -0800 (PST)
+Date: Fri, 22 Nov 2024 22:37:23 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hongxing Zhu <hongxing.zhu@nxp.com>
+Cc: "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	Frank Li <frank.li@nxp.com>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 05/10] PCI: imx6: Make core reset assertion
+ deassertion symmetric
+Message-ID: <20241122170723.s43eokayvnuhas4r@thinkpad>
+References: <20241101070610.1267391-1-hongxing.zhu@nxp.com>
+ <20241101070610.1267391-6-hongxing.zhu@nxp.com>
+ <20241115065221.scfb2chnoetpdzu6@thinkpad>
+ <AS8PR04MB8676D25A87FBF45E2B1D26628C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a82:b0:3a7:86ab:bebf with SMTP id
- e9e14a558f8ab-3a79af6d1b5mr41537495ab.19.1732295102747; Fri, 22 Nov 2024
- 09:05:02 -0800 (PST)
-Date: Fri, 22 Nov 2024 09:05:02 -0800
-In-Reply-To: <CAHiZj8g8dFUZj+wL5Z-Y_aL4wM-ZtC0uymGytx-oFNAWUEBz1A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6740b9be.050a0220.363a1b.0148.GAE@google.com>
-Subject: Re: [syzbot] [iommu?] WARNING in iommufd_device_unbind
-From: syzbot <syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com>
-To: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
-	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <AS8PR04MB8676D25A87FBF45E2B1D26628C272@AS8PR04MB8676.eurprd04.prod.outlook.com>
 
-Hello,
+On Mon, Nov 18, 2024 at 02:59:59AM +0000, Hongxing Zhu wrote:
+> > -----Original Message-----
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > Sent: 2024年11月15日 14:52
+> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
+> > Cc: l.stach@pengutronix.de; bhelgaas@google.com; lpieralisi@kernel.org;
+> > kw@linux.com; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+> > shawnguo@kernel.org; Frank Li <frank.li@nxp.com>;
+> > s.hauer@pengutronix.de; festevam@gmail.com; imx@lists.linux.dev;
+> > kernel@pengutronix.de; linux-pci@vger.kernel.org;
+> > linux-arm-kernel@lists.infradead.org; devicetree@vger.kernel.org;
+> > linux-kernel@vger.kernel.org
+> > Subject: Re: [PATCH v6 05/10] PCI: imx6: Make core reset assertion
+> > deassertion symmetric
+> > 
+> > On Fri, Nov 01, 2024 at 03:06:05PM +0800, Richard Zhu wrote:
+> > > Add apps_reset deassertion in the imx_pcie_deassert_core_reset(). Let
+> > > it be symmetric with imx_pcie_assert_core_reset().
+> > >
+> > > In the commit first introduced apps_reset, apps_reset is asserted in
+> > > imx6_pcie_assert_core_reset(), but it is de-asserted in another place,
+> > > in
+> > 
+> > I'd suggest rewording like below to make it easy to understand,
+> > 
+> > "PCI: imx6: Deassert apps_reset in imx_pcie_assert_core_reset()
+> I'm very appreciate for your rewords. Should the imx_pcie_assert_core_reset()
+>  be imx_pcie_deassert_core_reset()?
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: trying to register non-static key in iommufd_object_remove
+Yeah!
 
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 1 UID: 0 PID: 6664 Comm: syz.3.18 Not tainted 6.12.0-syzkaller-07749-g28eb75e178d3-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- assign_lock_key+0x241/0x280 kernel/locking/lockdep.c:981
- register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1295
- __lock_acquire+0xf3/0x2100 kernel/locking/lockdep.c:5101
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x1ac/0xee0 kernel/locking/mutex.c:735
- iommufd_object_remove+0x3b7/0x770 drivers/iommu/iommufd/main.c:149
- iommufd_fops_ioctl+0x4d6/0x5a0 drivers/iommu/iommufd/main.c:418
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd7df57e759
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd7e0445038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fd7df736058 RCX: 00007fd7df57e759
-RDX: 0000000020000400 RSI: 0000000000003b80 RDI: 0000000000000003
-RBP: 00007fd7df5f175e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fd7df736058 R15: 00007ffc4693c708
- </TASK>
+- Mani
 
-
-Tested on:
-
-commit:         28eb75e1 Merge tag 'drm-next-2024-11-21' of https://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12817ec0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=402159daa216c89d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c92878e123785b1fa2db
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16933930580000
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
