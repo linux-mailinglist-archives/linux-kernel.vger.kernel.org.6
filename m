@@ -1,288 +1,208 @@
-Return-Path: <linux-kernel+bounces-418543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B902C9D62D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:18:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FDB9D62DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:20:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 142D1B211FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62FF4B21A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C56414C588;
-	Fri, 22 Nov 2024 17:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91331607AB;
+	Fri, 22 Nov 2024 17:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eorKQfzo";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MlhiRfkn"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jVUAxXej"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929251CD3F
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732295930; cv=fail; b=FpGKFpGstSBvv0T+JwPSil89mtGT8NJp8P92uV28FO+yFlCnbEjI4IP97P3SmW1kFmOIRP88eIvzxzysIv7tjtkMi0LkM/BZDVFehnY4Q4Dyge+dJ3sG9T/n5aKeEsQRCFpEIjbxxh5eI+tcdxXkjnv7p7PGCm+WRKuo8K/25+8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732295930; c=relaxed/simple;
-	bh=p7LFJ4MRYJf7q1XAnpJe6hmE79lCcaPGP9kUwhNFxbw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rVG3L09xLqRPFn5MmiaLBlfBLgFd0X5x202XBgq51IXrUHxa3Wq66zhDsc/0wBwtxb0S81C4oXLggo4Etgcxbi/sOHRJvHCQEnm/7qC20sMAnSCLRjq/sjvYT6ZjG7uRGY6ZGYTk5MWHviX+PRVIqniJCXdoNSsbSq5xF/NF6aU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eorKQfzo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MlhiRfkn; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMGBbLR016291;
-	Fri, 22 Nov 2024 17:18:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=E2Ug4/jkZ8XzlTZ3AQEqwNUwh2pEB4QjRMU3f9fjfRU=; b=
-	eorKQfzooGrV6neta+3cJkT3qITsw//QlXBDWq/0Kbo0JkIFRR1D5bBrDMVu1aK9
-	1Moq7Qs2eVLy93+lETPRWJATE8KT1AvwWoN4Zo4VTgMPnwEuZ2RiU0h0FKFHbopf
-	B3VxbU3zeR3zk/pSVkR7IhuECpuV3TyRAd7IQFSEQJMvBo5wME4FpNXwx1Ihg010
-	VNWwxW39SUuszvu9cV9aqOUzx3+fgBrxXybbbgFgcGVm7oCqMLdXUUlbxLgx8kzi
-	JW6+HC58yY/dmRzxIYIzvR6IdH7bpJRzRYr20toO/EOArPo7oik7/lXyKIhEnZ+7
-	XEFhoKunBc7XVRcRd7457Q==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xjaacns8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Nov 2024 17:18:36 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMGa0pD036388;
-	Fri, 22 Nov 2024 17:18:34 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhudjbe5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 22 Nov 2024 17:18:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RcW9EuWokjL/yJV4b8Bo6IDJhe9tLmKuFuRvO3lOj9k05vZNhwR6z3is0osxPA1qKLyLOU5kiJqt42FL2wgfUtuVp2kOi95Ex65vYE2IavmTxJrr9YEBv97WPNIraCJkzHw5hIFypeLiWfI/nfuBt/Xf/GWS4RjK8SF6XugzobHu1yhQLryUZNSMfpbPxyXSKtVxJ7gxUtQhSPa4YrKckLcFmZEdntAxKRysiTs5IuQK9iVHs4TUf8jiWT7QOpMVdNe+V9UTCQncP0wbjIFQG7BMDDL/xxHbtPNgecaVocHqrxxnspnmLXQbMhXRZenCjrUdP7FZAAJgbbhGkhS+bA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E2Ug4/jkZ8XzlTZ3AQEqwNUwh2pEB4QjRMU3f9fjfRU=;
- b=h4qHkJqNoGQtwmKf8C7a0McVnXT6NTqVXYTmuVnbYSUAV1yPbj9cXeJk2pu0ax82Oo3bObWnyuvjnPpUysO74U9Ix19dVL+isIhu6KRa1os0aHyk+HqTC1ay25Hujo2azoz0Ynt3DmlNcUquByA0KlBfFP9Nze+apXvXU7j3gxkl/6s/5jAf0pTSixgqHMmHSEUM1XwgTkG+CCoxwSIOP1SZUSj+EewADrS9Sh+YxMuATL1CeDKCMVf+MQqAVPPdU0ajznbWHBB28vSI6rwOF2rWiDIcs4BSZG2lsLWeeJ7cslGNH2LC2oS/GnoXRbH5eLVecbxoq0pkRfimHs9gIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E2Ug4/jkZ8XzlTZ3AQEqwNUwh2pEB4QjRMU3f9fjfRU=;
- b=MlhiRfkn71jmxEypQhttWzTANjd7ieLRtVlds+JahfY8AQ+GXCTj1Z+1/iQZMbkfShv9ba5jnsnhR9llwaG4lvQgjzCRIsw77U+02BtLPHLke6Z/NIrMihCzJvnWUHRgV/TGUVPkjkCVLtZ4O7N4ViN2mUzCh33uNpbqMYinWmY=
-Received: from IA0PR10MB7577.namprd10.prod.outlook.com (2603:10b6:208:483::18)
- by MW4PR10MB5882.namprd10.prod.outlook.com (2603:10b6:303:18f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Fri, 22 Nov
- 2024 17:18:14 +0000
-Received: from IA0PR10MB7577.namprd10.prod.outlook.com
- ([fe80::7923:a24d:8b74:87f8]) by IA0PR10MB7577.namprd10.prod.outlook.com
- ([fe80::7923:a24d:8b74:87f8%3]) with mapi id 15.20.8158.023; Fri, 22 Nov 2024
- 17:18:14 +0000
-Message-ID: <188e08f4-2eb3-41ad-a331-63fd5bb0e7f6@oracle.com>
-Date: Fri, 22 Nov 2024 17:18:11 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [External] : Re: [bug-report] 5-9% FIO randomwrite ext4 perf
- regression on 6.12.y kernel
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Phil Auld <pauld@redhat.com>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
-        Nicky Veitch <nicky.veitch@oracle.com>
-References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com>
- <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com>
- <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk>
- <20241121113058.GA394828@pauld.westford.csb>
- <a01ead6b-bd1d-4cd3-ade6-59ad905273e7@kernel.dk>
- <181bcb70-e0bf-4024-80b7-e79276d6eaf7@oracle.com>
- <20241122121304.GA25877@lst.de>
-Content-Language: en-US
-From: Paul Webb <paul.x.webb@oracle.com>
-In-Reply-To: <20241122121304.GA25877@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0292.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::16) To IA0PR10MB7577.namprd10.prod.outlook.com
- (2603:10b6:208:483::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B287E1CD3F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732296025; cv=none; b=DtR+kEXJ3qhYMrqM583pHDYxA1DIWwfRdclxqp4gZ+3Af6o0G7ITlqIHXqySNFILZ/63xg8tpg+/cVFmTw4ZuNdfMcp28FMXVVthJghYY73qVy9b5exIJE8vzCXZcv+r0A+y0/Qi+9a8lHxdKjvlmb9ETv/VpKuLIH7/Aj5kfP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732296025; c=relaxed/simple;
+	bh=BSvo1YAbhpgWkDemhSjZsTbg54rbwWtUrf3IRGx/XKo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZvvVX0bxdTdxBnfuG4K+5lDNOSBVk4En8IC2SlQaeqWEKncPakQtSxMVvy6X9FiY3QKZZGV7CC+lLnysPOfkh2HDE5L4h1T8oGWNifhj1soYW2v1/5lgbumiOwNToQwHrcNCHRXk8DJP5+T2TMsBGUC1BC2S69L1PXbiiccTHiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jVUAxXej; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D1C21C0006;
+	Fri, 22 Nov 2024 17:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1732296020;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rBwHBA6dWoUeKSehEikgJW7RDC/rJZpF5R9dFSy1Qes=;
+	b=jVUAxXejhtibC4POGltXHV5ptmSkAD+AZKzkwElQkfrOiknr+PEmvj9Wv/fTYRqObgib1g
+	XHrhBla0DAT4nuEwh4tErPXMrgBPR+3mOlySu5I/SqkcFSJu5wymMuodyNMXHbRiXLThzj
+	1FdBZrDyNgFuCiDwTTXaarDn6nlhjfdpAQjEDbRJeCgH5a2mPvoVy9CWrb5KDHF7eUdRhA
+	fp4NyMbyvc5s/TJA3xiJuktsoetTPAQ3EOsywtPoKov0EI3nyEtO4poTNhFmrx5fOAKC+S
+	RhHBxET5fOsaqxQZQvqNCFO444Dwcp05hiRvXNLPkgh9+nB7vDmYffrXo6RLNA==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH RFC v2 00/18] drm/vkms: Introduce detailed configuration
+Date: Fri, 22 Nov 2024 18:20:04 +0100
+Message-Id: <20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR10MB7577:EE_|MW4PR10MB5882:EE_
-X-MS-Office365-Filtering-Correlation-Id: e05ef364-efdc-48f2-e9be-08dd0b19a5ca
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cG5ndXA2am1DVkxrMVMyb1pNaCswTXJ3eFNsRHN5N25vOWhES2Noa0pzMytS?=
- =?utf-8?B?cVJtKzNISjhYVFBVTUtaWVFZUHFZK0dHSU5HN1phNFZQRXFjVUNESkRUa1Zt?=
- =?utf-8?B?cUhXamx0azA2aU1zN2xZSWQxR1BlSW5HU1JVSjNtTlVxeXc3WnJQc2VYamVF?=
- =?utf-8?B?Y0dYcklYc1RiY2JSSGVrVW44azBvRTZ4UVI5VVVpNXh6ZlRUbDJJSTBTSTdn?=
- =?utf-8?B?V0txMFlpd0tpdUUwcEtBWEMvUmpSbWgxSGVHMmdtVHB3NXpJS0dTZjNsMlhs?=
- =?utf-8?B?YnBUb3RTQklDNmVjdk1tRnhpM2VHWjNsZ1k4TnhST21KdEUyT0wwcUVlSVR0?=
- =?utf-8?B?R2hpWU4ycnZlOVAwdmlUUkxSZithb3BweFM1dWdtUDhEQk93dkp1Yk4vM0hX?=
- =?utf-8?B?WSs1bGxta1NmTHhkaVErSXNNZERFMXdzQjcrcWhHazFjMGJxYm1MR0xaZ3pW?=
- =?utf-8?B?QWI1U0hhUlBlVlBZaDVQaUtDbjE1VXNDaXhwQWp2TkIyTS85Zi9HNUtPb2Qx?=
- =?utf-8?B?U2VNbndnOVluK2pUU21VM0ZSL2hIWTlscXdGRU8xc3RCaVJpaWpGVnFnWUNU?=
- =?utf-8?B?Q2srdm5XWmV2eUtKeWI3NGpuT2I5Q0N3RENmSGJaaDltekNvVmhZWWo0S1RD?=
- =?utf-8?B?ZW5DWjNlTTl1VG03Y1Y0TmhtNTE0NXI5ekcxMUZsaVlyY2lSR0ZNMkpRVjNz?=
- =?utf-8?B?Q1l4cDNkeGlTS2hSRmorQmE5aTBaV213MG96QW5WcVZWU3AxekE5bUdrekg0?=
- =?utf-8?B?Zm9DT0dkaTYrV2p3eklLdHVzWDQ5K0RjSkgzM1dBNDI5eHBPa01OYzNlVGdW?=
- =?utf-8?B?NWw1SlZQRld2VkRtbGU5SU92MVRPMW0zeHNncXdhc0xSOUxib1V3dCs3c0Fp?=
- =?utf-8?B?Z0psZlM1cXByS0ppUGxaMjNkajdoRDhCVWxRdnZzNjdMTWtUdWxlcTZCMzQ3?=
- =?utf-8?B?SW1zT1hpUU1JT3dIMDc1MWNpSHF6R2tab2xTK2tXbzNvYnFKbWdXK1hRU3BH?=
- =?utf-8?B?TGxjOVRkVHkySVlYRWhCYzJLOHZFaklQK3EzWjlJK2hnU1dGN2M3ZGJ1N0xl?=
- =?utf-8?B?NCtXU09JZEtMR3ordnRnZitnaStRWDJJUGRXSm9aT1lOQTY5bkhQL1NCNUYv?=
- =?utf-8?B?WGhId2hYMHlRelhBZUN4bEFmQ1NXTzBNMnJDYzRudHJ5cmNJNVBXVXkwUmk4?=
- =?utf-8?B?UmZJS2JEMDZTSHFKdTErbVdjM2kxSVBWU0RNNVNuUHUyL1BWblRMS0FYM2l6?=
- =?utf-8?B?Q1phNG4rRy81U2FPRXdmL3ZCQmpDL01McCs3ZjBmdE5JQlNZcVR2NWQwTEpB?=
- =?utf-8?B?MnlPYTNKNzBsOFFLRU5hbWs1QXdaVFdiL3ZJNUtCM2gyNm9Yczdsd1FhUjZv?=
- =?utf-8?B?ZmJWb0NhL2pxeG1JQVJyMnVSVVF5allycXRRRUx6UFRRcWhpaHdkVzFSMStp?=
- =?utf-8?B?TkZOMERQTi8rd1NoWWJaa3V1c2lMcmZidlM5a0xIYm1jdGVvRXZ3eDRyWUpp?=
- =?utf-8?B?TCtzMlYzTFpBR2dZWEVpSC9xdEdOS2hraERRTzBwanFwVG16aTRkaitPZ2Vo?=
- =?utf-8?B?bnVUQkhmWGJzUGNydnc1Tkd5S0xFWWcyWDlLK2tLbkE2aHNvV2hoUEFjUEtV?=
- =?utf-8?B?cTlqc0x3dVRCakNnVEdoS1BlWkk4NFhhY09WSUpnTEQwc2VkSFdMNnNDdHQx?=
- =?utf-8?B?dENmd096WmZzV2NlOEVXQ0ZhMnhaQWxEeWJJeEZ4Y1RreVBOQzZNalpqcGVE?=
- =?utf-8?Q?gtLeZ0mfNo3gA2SwJbRDuvYLaG8bE5Tgar3JREU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR10MB7577.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RTBVOVAyN0VQK3c1WEoyeW5hdlA3dGlJRUJ3bitoak16RS9oLzNxQzJ5dkIy?=
- =?utf-8?B?eHJDY1NpVkhmdHBmbHZGS0dLbkdEQ1JPWDJ1Z3h0MEJ3OFZZWnRSWWNlelMy?=
- =?utf-8?B?ZkpVVDVRRC9MT2hmUjVPUDJtY2JQcHR4U3pNeGpzZU9KdTd3V2VKRjBtbGY5?=
- =?utf-8?B?RGpKWExGZ2hVY3dod0E3dk9WTzNKUmlCZzY2dlBJaENpaHl4ZjRZV3lsc3NH?=
- =?utf-8?B?T0t4dnlEY01tcTlxSkVKWERVUWhXUWUvQjNGMThkT1RUSXJXWGtWR0RZb1BE?=
- =?utf-8?B?SEJONVE2djA2a3FHdkFDak9JaEtEZjF6M1JkWXBMU1NSK2F2OUNnSVhvWG9L?=
- =?utf-8?B?cmluQWJPbUE4RDZiR0JGWkpZRTlrU1EybkVQeEVKWm8yR2dXZGFDR05iT1RU?=
- =?utf-8?B?TXU4d29vaHRjUWpXWUluUlhrUVRKOHRDNzEwZncxYm42TkdsVUV2SmtXSk5N?=
- =?utf-8?B?L2kybGpUcDEwL3Bkd01JZVp0c1J6WFpQamdQOWY5OEUrRTZvWHU5bFVsY1ZN?=
- =?utf-8?B?ZWIybHJDbDM0bDNYdW16TFpMMnhxNDZXQTlLWlZWZVZEVGp1a1JiZHAxNW5D?=
- =?utf-8?B?anI3b1FlY0xJd3E4MC9OSlQxbTA2Qkpzb0FxQUo4WGJYWXdLRlNDbEZXWUY1?=
- =?utf-8?B?U1JJUVVzY3lEekh2TDQ2akw3TzNKTVZzcXVLZkVEYm15ZGtIL1hndWFJdkd3?=
- =?utf-8?B?eitFcnU0NXhqL0xxL0IxNlNSaEdTM1VxZXY4K0Q0dUg4RG50ZVpHZDhPU2FJ?=
- =?utf-8?B?a2x4REJuRkYvcVVSM3pwYlJaYUpjbStjc0EzVUd3V3dTVjZBOVdLTXd1cTVT?=
- =?utf-8?B?YUZRcUp4MGRZc1dRVFNaLzZhQmR6R3RML0t0OHhtTFRGRWpBbWdyTjIzZ085?=
- =?utf-8?B?cVdGYUR2WjBnbzhlYUJ6SmI2UUxKOVMrbWdoYXplOFBIdGlDRTVmZm1WdVZB?=
- =?utf-8?B?MmRGUnBNUGpDNWdaRHpYcnN6alozYlhQZzZNMjNQdVk5cHUrVk1DSUNkcFRY?=
- =?utf-8?B?V2JSSytjbEVCY3dSa29sdFpaRkoxaitRMEU2R0dyendIT1JvOGEraEg4bUtM?=
- =?utf-8?B?b0MvQ3FaMVFCd0UvNjNYYzJSUTdwRzNsa2lMNEJCK2VqR3ZnZGRNY29qc2lC?=
- =?utf-8?B?MDRhS1Q5SEJNMnNoUm9MV0RsTFJTNTNlTk1TWTFJb3FDU09sbDJaUDh2cFRa?=
- =?utf-8?B?aER2VFBIdTJBb293RWNYTmJoL3ZlTVo4a2h2NXdlMEtGWUV5MUltMlFCSE5x?=
- =?utf-8?B?LzVhQ29RTWNlMUU0SE1EeVR3NGY2SXNtNmZkNlB2eUdHbXVTY0I4MHRFQUV3?=
- =?utf-8?B?aGlRcXNmYi9KNmtNT3BLV1Q5Z2RscGtHdkl1SElLOTJOS3R5N3djc21Uc1lX?=
- =?utf-8?B?cFM5V1c3Q2VGSDdDc1BjVTV6RjdmeFBQK1NBZjNFOWJTSUUwT0JKVk5NMWVa?=
- =?utf-8?B?MG9DakVFVHd2eXFPNDdjYmRWdVptekZmU3FCeGVaRTlTRmcyQ1BGQXlkcFNV?=
- =?utf-8?B?eHN5N3hhM0FYV0p2alJUUlkrRmZTNDBWNHN4TmJtOUJHWWxqYzZ1d3BwMExx?=
- =?utf-8?B?YTZTM3ZyeS90cm5EUDhhOFBCUzFJSW1ZNkg4dWZTQXNBN1NvTGVITlVTQm5R?=
- =?utf-8?B?NWVtYlozcEF3LzlEZ3lhdkZuNkNPMTFENWk1dWI5KzVUcjVBMlpoUkpFRGVr?=
- =?utf-8?B?M0pEV1hDYXJDNlJMMlpYbzVmaGlaTWdZR2dSRVVHeUdCaTZOeGg5SlNIRXhT?=
- =?utf-8?B?N1RIVEpUOE1jUFFwWk42RnQyUFFNZG5GcWhGc2NDY1E4VlYwdlJmeTg1OStB?=
- =?utf-8?B?WEZVVE1YMzV1clYxbmh2bStVdmttZEFVQ05GVkFiWE1wR0s0Mnd5K0RxVTVa?=
- =?utf-8?B?cVlTblBVNkM4NXplaEZIajM0SEJUMGJhQmFJRCtJRmF1TzlLZjlrc2xpeVZu?=
- =?utf-8?B?eTMvdTdqeDFLSXRGc2ZzaERlZEczd2t4OG1mR3FNRTJqWlYyL01JT3JqZUVo?=
- =?utf-8?B?UU1SWWw0emFQK2k5VkQ0a3ZpTG1JNzJxaHUwMlhpOUpqeE9Ea0daY1V4MTZR?=
- =?utf-8?B?TUdyaElGS1NEa3dOUGlTcUU1NjNBRjJYZjVzZXl3VFM4WlZUZFpXWFJLNldV?=
- =?utf-8?Q?6OjncVn2TrRrljrI3HFeHiKjM?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	cFrE2co2hvJbfbh/RkCDiq4evHmHRHqtm/h8jYuiMop/zKSy8XzlDuG89uv9nA+aAIwDgBfvn2ipHugMV5KeNZB1FtCglO6CDtJx+GpwTY5jXS9Tq0qsA3MGU6A9YYzubNHZQMKZsPKlJ3QxzpJHtCQ2LhrNRib4JUy6nMdmPq1ifCihGp7p7lV7tepQYAPGgFxWtR56tOhFbs61QCkDDQcbHWRcivZoDvhVKDnjljWJB4g69WMapvmTM6gtlIoVHD65J/KwJ4omOSNIXbeSPqiUT0pkn+aDK5WRmNpkXn3l1gdER+um7tUeBR/vtX8GGGPh0iJ0DXtp/ip6AtDY2n/FSMTV0Mz/k3wqzWCRBsE/bDp6+tfwfTxSqDx2mrQ6fNFb92qMqJ+gnso1vEFBWroX7qiD0P/RVO6GaX4F+ARm4B7gUrgrX/FYro+0dhCX5zynN/00FSoZH3gnZN9XS4RGkFvEwvnvAO+lyaF8UnH3mwx7LUUPRgfRNUgEJGB9KdEg5/ShkJz+y2YXJ6k+JGfqWMUXqp9ZD7jLdYDJyELTWP0INQDtQ90Cx1V38Xr49lOpASNA+DnbisFfqD9+q6WsT4fide8pH8W3leoADZs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e05ef364-efdc-48f2-e9be-08dd0b19a5ca
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR10MB7577.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 17:18:14.2743
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qE+ZiZWYZQg1VPrGHL3exzYi1xvELkuGllsnGB2GA5fm4iORJwFlv6jEydoskbrTFGQYS8816jcAd7osHQ0L6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5882
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-22_09,2024-11-21_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 mlxlogscore=999
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411220145
-X-Proofpoint-ORIG-GUID: b4R_4gUfOjNdyEOidJMc8lotwz8Il50x
-X-Proofpoint-GUID: b4R_4gUfOjNdyEOidJMc8lotwz8Il50x
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAEW9QGcC/42RzW5CIRCFX8WwLi1w/101adIH6LZpDD+DEi9gg
+ V41xnfveK0LF01cwcyQ7xzOnEiG5CCT5eJEEkwuuxiwEE8LojcyrIE6gzURTNSsEZyuY1yPQBP
+ 4OAHVqWjqgoEDtSl6upNJeiiQqB2kVYLrTvYNQdougXWHWemTfLy/ka9rM8H3D6qWv4mSGanRe
+ 1eWC5M89S7rl9uFBjiUC81DznI2h17RGudC3KxNW5+plwHnhk4NZZRL1bKaVTC07FXFWEYXnlH
+ kX5KqrxQ5jlHLcuEI5FjbKWOUZcqqRzkB9vifMWIiMXlZMp0qRInKdl3X8qHTw0OofcKMlNTbF
+ b6ElTrO5xXG+sY0PWe2heoOdsl443KJ6ThveOJzyPMye14/vMyJo0oLvBuksoM19b3K+Xz+BYQ
+ ChNBJAgAA
+X-Change-ID: 20240521-google-remove-crtc-index-from-parameter-f9afb21c7a85
+To: =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: arthurgrillo@riseup.net, jeremie.dautheribes@bootlin.com, 
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
+ seanpaul@google.com, nicolejadeyee@google.com, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, Louis Chauvet <louis.chauvet@bootlin.com>, 
+ =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5181;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=BSvo1YAbhpgWkDemhSjZsTbg54rbwWtUrf3IRGx/XKo=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQL1MY+Vb0R/CdSWRpuR9goOwAGdEVHccMeOM0
+ up/WMjoZD6JAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0C9TAAKCRAgrS7GWxAs
+ 4tsgEACxCoITw/hawU7UDF4QN755NOjEMNb48BFyGpX1nvqQ1RPqDhH2Q02j2x0zu6LWx6xUTve
+ zyGJU/uY5VDQ24R15dSvuhA23g/BHRETbvL6BIZUgsFydGWQ5ilNE5bUbUrH+z+odtmvgeA+coe
+ NI0Tzd85kEhSGf1wtqOdNvcM3UsOAHiocFlvlPu5BQsxKfv8jaGecdWe82eMvFkEVDoGHLsMGk+
+ lt4SM8r8BKgTfWEq7Q3QTt/EQX/KS8bbqVbUEmcLz2kSsMrR8n50yVrrCX6iyJoiY9gs73Vv1H7
+ Cs31bHqhMTDIAAb2YH7DrSUta2xljPEYRtI9FdS/mlBk647erA87a92WldeKrz4Ta/ZAaowiWR9
+ XBjiKWRzA49Pt0kzNn9EMXIGdDxxIO9Q1XWqC96n26abcgkhffdNtM5vUKKLES8oWpCbyq/Ghmi
+ ifnEU2wIibmYqbZ2cfiG72+Ubu1Or99aOjRTxfLd0y6t7inlQYzil4rVztj5+jYJNlLSX+5n+RV
+ qTQag2UbddYgccvZh1h9N4t5+kQ9iPQFnrNCJKd5lNVTpfkBDe5TVYz4SAKwFIu5zl6pSnotLWo
+ iDVAvx7WzQHWLQXaPHvOAmUjnl4h5kytNYEZF5Mbd8fCU0+WOJnGrwTQFbzXLm+4LO19EB8686k
+ qDSK8+edpURwrkg==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
+The current code is not flexible to configure the VKMS device. In
+preparation for ConfigFS interface introduce few structure that can be
+used to configure the device creation: `vkms_config`.
 
-On 22/11/2024 12:13, Christoph Hellwig wrote:
-> On Thu, Nov 21, 2024 at 09:07:32PM +0000, Paul Webb wrote:
->> Christoph:
->> To check for weird lazy init code using write zeroes
->>
->> Values in the 5.15 kernel baseline prior to the commit:
->> $ cat /sys/block/nvme*n1/queue/write_zeroes_max_bytes
->> 0
->> 0
->> 0
->> 0
->>
->> Values in the 6.11 kernel that contains the commit:
->> $ cat /sys/block/nvme*n1/queue/write_zeroes_max_bytes
->> 2199023255040
->> 2199023255040
->> 2199023255040
->> 2199023255040
-> Thanks!  So 6.11 actually enables write zeroes for your controller.
->
->> Another interesting datapoint is that while performing some runs I am
->> seeing the following output on the console in the 6.11/6.12 kernels that
->> contain the commit:
->>
->> [  473.398188] operation not supported error, dev nvme2n1, sector 13952 op 0x9:(WRITE_ZEROES) flags 0x800 phys_seg 0 prio class 0
-> .. which it doesn't handle well.
->
->> [  473.534550] nvme0n1: Dataset Management(0x9) @ LBA 14000, 256 blocks, Invalid Command Opcode (sct 0x0 / sc 0x1) DNR
-> .. and interesting this is for a Deallocate, which should only happen
-> with the quirk for certain Intel controllers from the very first days of
-> nvme.
->
-> What controller do you have?  Can you post the output of lspci and
-> "nvme list"?
+This part is splitted from the ConfigFS implementation itself to avoid
+mixing two complex interfaces.
 
-Hi Christoph,
+The vkms_config structure will allows the configuration of:
+- planes
+    - name
+    - possible_crtcs
+    - supported_color_encodings
+    - supported_rotations
+    - supported_color_ranges
+    - default_rotation
+    - default_color_range
+    - default_color_encoding
+    - type
+    - format
+- crtcs
+    - name
+    - possible_planes [automatically filled by helpers]
+    - possible_encoders [automatically filled by helpers]
+- encoders
+    - name
+    - type
+    - possible_crtcs
+- connectors:
+    - type
+    - status
+    - EDID
 
-The nvme related output from lspci is as follows:
-$ lspci | grep -i nvme
-19:00.0 Non-Volatile memory controller: Intel Corporation NVMe 
-Datacenter SSD [3DNAND, Beta Rock Controller]
-20:00.0 Non-Volatile memory controller: Intel Corporation NVMe 
-Datacenter SSD [3DNAND, Beta Rock Controller]
-94:00.0 Non-Volatile memory controller: Intel Corporation NVMe 
-Datacenter SSD [3DNAND, Beta Rock Controller]
-9b:00.0 Non-Volatile memory controller: Intel Corporation NVMe 
-Datacenter SSD [3DNAND, Beta Rock Controller]
+This series depends on:
+https://lore.kernel.org/all/20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com
+https://lore.kernel.org/all/20241122-b4-vkms-allocated-v2-0-ff7bddbf0bfb@bootlin.com
+https://lore.kernel.org/all/20241122-b4-new-color-formats-v3-0-23f7776197c9@bootlin.com
+https://lore.kernel.org/all/20241122-writeback_line_by_line-v3-0-085d5810f6e3@bootlin.com
 
+As there are some conflicts, you can find a working branch here:
+https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-config
 
-$ sudo nvme list
-Node                  Generic               SN 
-Model                                    Namespace 
-Usage                      Format           FW Rev
---------------------- --------------------- -------------------- 
----------------------------------------- ---------- 
--------------------------- ---------------- --------
-/dev/nvme0n1          /dev/ng0n1            PHLN942100EQ6P4CGN 
-7361456_ICRPC2DD2ORA6.4T                 0x1          6.40  TB / 6.40  
-TB    512   B +  0 B   VDV1RL06
-/dev/nvme1n1          /dev/ng1n1            PHLN942100PE6P4CGN 
-7361456_ICRPC2DD2ORA6.4T                 0x1          6.40  TB / 6.40  
-TB    512   B +  0 B   VDV1RL06
-/dev/nvme2n1          /dev/ng2n1            PHLN9415002B6P4CGN 
-7361456_ICRPC2DD2ORA6.4T                 0x1          6.40  TB / 6.40  
-TB    512   B +  0 B   VDV1RL06
-/dev/nvme3n1          /dev/ng3n1            PHLN942100DQ6P4CGN 
-7361456_ICRPC2DD2ORA6.4T                 0x1          6.40  TB / 6.40  
-TB    512   B +  0 B   VDV1RL06
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- Rebased on drm-misc-next
+- Added support for many new configuration
+- Link to v1: https://lore.kernel.org/r/20240814-google-remove-crtc-index-from-parameter-v1-0-6e179abf9fd4@bootlin.com
+
+---
+Louis Chauvet (18):
+      drm/vkms: Extract vkms_config header
+      drm/vkms: Add a validation function for vkms configuration
+      drm/vkms: Move default_config creation to its own function
+      drm/vkms: Introduce config for plane
+      drm/vkms: Introduce config for plane name
+      drm/vkms: Introduce config for plane rotation
+      drm/vkms: Introduce config for plane color encoding
+      drm/vkms: Introduce config for plane color range
+      drm/vkms: Introduce config for CRTCs and encoders
+      drm/vkms: Introduce config for encoder name
+      drm/vkms: Introduce config for CRTC name
+      drm/vkms: Add test for config structure
+      drm/vkms: Introduce config for connector
+      drm/vkms: Introduce config for connector type
+      drm/vkms: Introduce config for plane format
+      drm/vkms: Introduce config for connector status
+      drm/vkms: Introduce config for connector EDID
+      drm/vkms: Introduce config for encoder type
+
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/Makefile           |   1 +
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c | 137 ++++++
+ drivers/gpu/drm/vkms/vkms_config.c            | 613 ++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_config.h            | 245 ++++++++++
+ drivers/gpu/drm/vkms/vkms_crtc.c              |  16 +-
+ drivers/gpu/drm/vkms/vkms_drv.c               |  42 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  25 +-
+ drivers/gpu/drm/vkms/vkms_output.c            | 183 +++++---
+ drivers/gpu/drm/vkms/vkms_plane.c             |  62 +--
+ 10 files changed, 1152 insertions(+), 175 deletions(-)
+---
+base-commit: 98efdd02e220fea84c1491012d7292749a71faeb
+change-id: 20240521-google-remove-crtc-index-from-parameter-f9afb21c7a85
+prerequisite-message-id: 20241122-google-vkms-managed-v5-0-1ab60403e960@bootlin.com
+prerequisite-patch-id: b608594ad493a41000ee703792eac4b23f9e35dc
+prerequisite-patch-id: 5697aa87c44bbf3eda8a1ba424465dc792545d4c
+prerequisite-patch-id: 223d59c407ce28dacf3f563b5c0148d2398303f1
+prerequisite-patch-id: 720b75b21d06ce3d3f060fb9238f7903834da0e1
+prerequisite-patch-id: 30a1e033fa43241ca6a43006fd4f29f8e9217224
+prerequisite-message-id: 20241122-b4-vkms-allocated-v2-0-ff7bddbf0bfb@bootlin.com
+prerequisite-patch-id: 9741873a5f0a7a3cf117dec7837354c3ad38ac3a
+prerequisite-patch-id: 1a383d1494e4f2142b62822f2ba482a3b813563a
+prerequisite-patch-id: 7d3f49fee4d3553d52fc075b7868da9dea9209cd
+prerequisite-patch-id: 57f5aeff2a9e8f2b6f47569e44dcd8fa587ed4bf
+prerequisite-message-id: 20241122-b4-new-color-formats-v3-0-23f7776197c9@bootlin.com
+prerequisite-patch-id: e6717b75d79ae5cfb0815bab88d722082107dc0e
+prerequisite-patch-id: 4b3b1ea5ad2e3ba1922cd4b3d3d46214b27c8c2d
+prerequisite-patch-id: 060874d5a7433cc8cc654bc63e0b411036727ebb
+prerequisite-patch-id: 43115d21842e508d9d8b0468e15f67d442bffe3c
+prerequisite-patch-id: 627d0970e76d4154c982d0d4172e7a0c4dfb9a4c
+prerequisite-patch-id: 582445144ac0ab11175ef96262060b08a5e1467e
+prerequisite-patch-id: a98fac5a2c60fe23fbc6a455e9a4ab8b0f187ee8
+prerequisite-patch-id: 62c8d109a22b9978f755255b67f13fe74fb7008d
+prerequisite-message-id: 20241122-writeback_line_by_line-v3-0-085d5810f6e3@bootlin.com
+prerequisite-patch-id: 07868dd9c7bbb1ed96d675c689de86f0cf293248
+prerequisite-patch-id: 736638b76050ef7a99cfad2c1560f7af114d5fbd
+prerequisite-patch-id: 20d8823f9c1d372ab2b88f969f5110f77e49c7f9
+
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
 
 
