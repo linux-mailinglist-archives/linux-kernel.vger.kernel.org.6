@@ -1,142 +1,152 @@
-Return-Path: <linux-kernel+bounces-417904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A81FC9D5A85
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:59:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1D89D5BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 354CDB2109F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CF4283ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192E186E34;
-	Fri, 22 Nov 2024 07:59:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D54118B47B;
+	Fri, 22 Nov 2024 09:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gDjsmJlT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f2cx4Iav"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3118166F26;
-	Fri, 22 Nov 2024 07:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C91B18BBA0
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262375; cv=none; b=vGjT5whX9DqmGocqZq5ibRs750m07M3X5PkFApzi0gOe5kSIygGyLdee2jwTbuKjA3NpCOS0XyShUX1QNGHzU8gwMaTc1DNq17MzRM4sTNnEmdnpW7ovEeeMEnkQQNvR2hoLGfROxGzNw03cTgd/yl8r+aPU1PwZXLARW7C6QfU=
+	t=1732267320; cv=none; b=m9hp59XkKRegidGOebV5IDDJhU21XtuyMMfGJ4P6Pj/tRVnmDOqr+KsLhqtdNbiGib4nAckgLeEAbZ7n/YztZy17+PST76cYesvdJH1RC+bFi5e95Xya9jQv/BIZB0g2QPkoJ3CC8IO9WR8vcnVHwYcDtRkY2mb2bPrhuYi2bbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262375; c=relaxed/simple;
-	bh=wYGRj2iBykDhXHFmoI/kOYWd9wW2qzvD+ug1Q2u5OrE=;
+	s=arc-20240116; t=1732267320; c=relaxed/simple;
+	bh=PFPfni+0mt6Dw0aAiCQ9I/+7ZRwweg1H6/RkxYt+q2o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YiEASgziNXbOUCbqgkJjJEEhWbXrhLHooNgZrbRCdFzrEZ6YefQQr8rxyzz+GEuB3GNsky9mZY3OI+nCMoSDbTXe78F3lGJd0SjbMPlRS7bFeyQ1oGC/5yW5p1sG/srCEWj5srmzrtd+9ffU9HbqNV2ncajTQKbERaMTGkiTHrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gDjsmJlT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM6I3jA007373;
-	Fri, 22 Nov 2024 07:59:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NAQBA/kdjmhpvBrX/2Y1nIUNO7rIloWLIsoHN00wedM=; b=gDjsmJlT9O+1qsKs
-	c/CkdNX1o1jJ6fjaLVKf/+n9NfhD9PWgzMRG0+jlRWLx1NihB6B8ol8eZ9x/4N1y
-	CkZYv5cstHbuV+1A12AGVm04YFtqfiFp0Js9oeZPOruOw8QTWoRke4+2qf8aWnbL
-	6wiiqwaFLCNQc9X7KI8UhnVFJ5s05eH14sR8eNRzUCG+k8upUUZvere1bE3Twu3c
-	GvtbvOYKP7Ty9lv5M7bJFy6BA4RL/lEWkhAYpJqal6H4TC98FiFxlimhTF8kWoay
-	LqoF+o7/n9lVtsDEUORJA18wP0ITUPcCSHGF36h7izWbl1G8NoU5cr6ilWNYYcJj
-	s4f5Ow==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432mjh87eq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:59:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM7xT23015235
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:59:29 GMT
-Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 23:59:22 -0800
-Message-ID: <83f5aa6c-61d7-4552-859e-5518c0ebf3f4@quicinc.com>
-Date: Fri, 22 Nov 2024 15:59:19 +0800
+	 In-Reply-To:Content-Type; b=bUDGdhPmRy1BdYV0wcE/GoKvA1EL3A55eWo8Mmb4N6/LU2sdjJTrIjl3fqin5dEX/Wupvbflom7TeUoWpShDv+H4Fcw9Rj4R1cAiAUsarcHzKdGWxyNmrSgMTYcLzmtBMFhdpiNp6d+lGFWtGR63Ven7Gl+yFTHpjPbZguSJwws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f2cx4Iav; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AM80ENR014706;
+	Fri, 22 Nov 2024 02:00:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1732262414;
+	bh=NzwBJ9hoNy9zYFQF0RIjxpT+VZivN/OIvGYGZWYheJw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=f2cx4IavxdZ3ahzhjXIx07KhHeXhX9ET4PWQ56OAfnq8uVuu1ADYhF8umzu4HI1kZ
+	 VRFxR3Vk2N/vtk+/QEWYa6Azsgrg8kPSDUAPVuAkEB3zXoCmMCXJ7Ih8smwig0+jWZ
+	 j3INL2XAbltdIFGt9+wqIqTGcPwilYT1B9OB4sxE=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AM80EaC049337
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 22 Nov 2024 02:00:14 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 22
+ Nov 2024 02:00:14 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 22 Nov 2024 02:00:14 -0600
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AM80AMi052433;
+	Fri, 22 Nov 2024 02:00:11 -0600
+Message-ID: <1f47c3c3-812d-2e0e-16f8-db0209f1ebad@ti.com>
+Date: Fri, 22 Nov 2024 13:30:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs8300: Add watchdog node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <quic_tingweiz@quicinc.com>
-References: <20241119102315.3167607-1-quic_liuxin@quicinc.com>
- <20241119102315.3167607-3-quic_liuxin@quicinc.com>
- <252644d9-e304-45ee-91ed-a1452300840f@kernel.org>
-From: Xin Liu <quic_liuxin@quicinc.com>
-In-Reply-To: <252644d9-e304-45ee-91ed-a1452300840f@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VI7ZXZVpjZ6AXkHDVrWBUrg8QoWbUFQ_
-X-Proofpoint-ORIG-GUID: VI7ZXZVpjZ6AXkHDVrWBUrg8QoWbUFQ_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- mlxlogscore=999 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
- adultscore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220065
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 2/7] drm/tidss: Remove unused OCP error flag
+Content-Language: en-US
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+        Jyri Sarha
+	<jyri.sarha@iki.fi>
+CC: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        Jonathan
+ Cormier <jcormier@criticallink.com>
+References: <20241021-tidss-irq-fix-v1-0-82ddaec94e4a@ideasonboard.com>
+ <20241021-tidss-irq-fix-v1-2-82ddaec94e4a@ideasonboard.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <20241021-tidss-irq-fix-v1-2-82ddaec94e4a@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
 
 
-在 2024/11/21 1:00, Krzysztof Kozlowski 写道:
-> On 19/11/2024 11:23, Xin Liu wrote:
->> Add the watchdog node for QCS8300 SoC.
->>
->> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
->> ---
+On 21/10/24 19:37, Tomi Valkeinen wrote:
+> We never use the DSS_IRQ_DEVICE_OCP_ERR flag, and the HW doesn't even
+> have such a bit... So remove it.
 > 
-> <form letter>
-> This is a friendly reminder during the review process.
-> 
-> It looks like you received a tag and forgot to add it.
-> 
-> If you do not know the process, here is a short explanation:
-> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> versions, under or above your Signed-off-by tag. Tag is "received", when
-> provided in a message replied to you on the mailing list. Tools like b4
-> can help here. However, there's no need to repost patches *only* to add
-> the tags. The upstream maintainer will do that for tags received on the
-> version they apply.
-> 
-> https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-> 
-> If a tag was not added on purpose, please state why and what changed.
-> </form letter>
-> 
-Thank you for your comments. In my cover letter:
-PATCH 2/3：Drop the Reviewed-by tag that received by v1. Assign a label
-to the wachdog node.
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-I have made modifications to the code. Should the reviewed by tag be 
-removed in this situation.
->>   arch/arm64/boot/dts/qcom/qcs8300.dtsi | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.
-> Best regards,
-> Krzysztof
+Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
 
+Regards
+Devarsh
+> ---
+>  drivers/gpu/drm/tidss/tidss_irq.c | 5 +----
+>  drivers/gpu/drm/tidss/tidss_irq.h | 4 +---
+>  2 files changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.c b/drivers/gpu/drm/tidss/tidss_irq.c
+> index 604334ef526a..91498ff664a2 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.c
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.c
+> @@ -78,9 +78,6 @@ static irqreturn_t tidss_irq_handler(int irq, void *arg)
+>  			tidss_crtc_error_irq(crtc, irqstatus);
+>  	}
+>  
+> -	if (irqstatus & DSS_IRQ_DEVICE_OCP_ERR)
+> -		dev_err_ratelimited(tidss->dev, "OCP error\n");
+> -
+>  	return IRQ_HANDLED;
+>  }
+>  
+> @@ -105,7 +102,7 @@ int tidss_irq_install(struct drm_device *ddev, unsigned int irq)
+>  	if (ret)
+>  		return ret;
+>  
+> -	tidss->irq_mask = DSS_IRQ_DEVICE_OCP_ERR;
+> +	tidss->irq_mask = 0;
+>  
+>  	for (unsigned int i = 0; i < tidss->num_crtcs; ++i) {
+>  		struct tidss_crtc *tcrtc = to_tidss_crtc(tidss->crtcs[i]);
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.h b/drivers/gpu/drm/tidss/tidss_irq.h
+> index b512614d5863..dd61f645f662 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.h
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.h
+> @@ -19,15 +19,13 @@
+>   * bit use   |D  |fou|FEOL|FEOL|FEOL|FEOL|  UUUU  |          |
+>   * bit number|0  |1-3|4-7 |8-11|  12-19  | 20-23  |  24-31   |
+>   *
+> - * device bits:	D = OCP error
+> + * device bits:	D = Unused
+>   * WB bits:	f = frame done wb, o = wb buffer overflow,
+>   *		u = wb buffer uncomplete
+>   * vp bits:	F = frame done, E = vsync even, O = vsync odd, L = sync lost
+>   * plane bits:	U = fifo underflow
+>   */
+>  
+> -#define DSS_IRQ_DEVICE_OCP_ERR			BIT(0)
+> -
+>  #define DSS_IRQ_DEVICE_FRAMEDONEWB		BIT(1)
+>  #define DSS_IRQ_DEVICE_WBBUFFEROVERFLOW		BIT(2)
+>  #define DSS_IRQ_DEVICE_WBUNCOMPLETEERROR	BIT(3)
+> 
 
