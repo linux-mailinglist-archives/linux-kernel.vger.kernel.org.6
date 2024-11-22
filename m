@@ -1,147 +1,100 @@
-Return-Path: <linux-kernel+bounces-417644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF41C9D570B
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:21:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B67B49D570C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3312A28293E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:21:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3406DB21CDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844BC14D718;
-	Fri, 22 Nov 2024 01:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ADA13A268;
+	Fri, 22 Nov 2024 01:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CTc6EXIK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jkltob6i"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887E22309AC;
-	Fri, 22 Nov 2024 01:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6166BA31;
+	Fri, 22 Nov 2024 01:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732238484; cv=none; b=U0pQ1+y1XIUE1ZlH8av1jPWpQKQUsfpZhZpAV7FLUDkmsPuHcNpvAlvbXUVWBk1lUNrILN1GClh8KBBJDQxruhyuEkCOJKRPblso39zDxLFDy/g78tPb/JVsJOv1t3ATFfd+hgwZbp7pdt1YC9gq2+YXewxaacHFsnU6KHLKETA=
+	t=1732238661; cv=none; b=a5KZ993oc+fO2VC5SWhTMb3/iXEREWE2c5CsCQWwvbJcXiikQ3YHOhwglXy7fXhYofephx5OgwljTJxWteQH8lW7SWRvEDHzBYJTO2LulsSs3MdLzeHSykIS+xoNCxFeAoo+zrJ1zOGGXvq5sZXBGmXkPJ2TR+MA72y9M7evobg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732238484; c=relaxed/simple;
-	bh=YxeYppzDf7V8g4Tbcz+mEhSb/412HQZ+neLnniD2HVI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JGt8svCC6a2WIFQ1Y2LZtUe/oh7q1zlZvM4RRu/4paM/tqcDemAltaJAL0GwHWByIn8QBdWI5c/WzzLVUXLFCNMnpO7v+rLsaBkh6t1PKiBM6Ig/F9B6CKX4tNWjsNt++xfSNW4hogO7fZfi4HQjxBqBOpjtu7XJ3Elk2IfkdQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CTc6EXIK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALKxwOE002369;
-	Fri, 22 Nov 2024 01:20:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mJY+C2OrUNq8Cv/RftLal0ztMq2TbuzpXQ7+SdQmAU4=; b=CTc6EXIKke9fSPk7
-	mcmffX4yJhwHbTI1K7gXt59cXgLZ4DFcRqS6aLyP5DItJ02+V5Gam/067tg+Rf2l
-	LKbi/5n4f88FOTmotPeEllpLpNIRVKoUUyQCVtvCoBrpg6JE1J9igZDcgb95DING
-	YxzK0+76mXPzM/PdFSSoO9PrpsiCuoNIYKid4IET26kNLQtfrvtXgMW5Sk4nbRO7
-	Ax1IR3AhTdhram6z7UtmTs+Cwzu/POGjzH1t7irzh/p9hKi51oB6JMajm1eVKl4D
-	JvJfPBXgVNV5ElO+wBi5nyKRTLyPYI9g4iDD1IslADgsH7q8Mkb3+v1OK99tO7L3
-	NulYBw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ea75cwn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 01:20:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM1KrKK021474
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 01:20:53 GMT
-Received: from [10.253.13.126] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 17:20:46 -0800
-Message-ID: <32eb38dd-1176-4356-b36c-00aa34a07040@quicinc.com>
-Date: Fri, 22 Nov 2024 09:20:44 +0800
+	s=arc-20240116; t=1732238661; c=relaxed/simple;
+	bh=kOg+AXkIwrGc0jcfu6liT0X/5A6Luw9dbp85HX0Nef8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfI0uF89EVw4ixp89sQYsvK1DMonT/U9WAlEQVBoJv5aU902SDeyZLmZihOuB095gIGQkhHtVbqzzyfZ9abJ1JMpdJ1BFlegDLNhHZdmt8e2p4vj1BVwbUcsiD35sizW5JAr7AVTfguRs+Y86OXNpE0bsWw0zt3z08K5SNw6jcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jkltob6i; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=L8dwXGS0ROHzKBrOTtEiehHoZ7cBRiaYIE7gMz7q2dU=; b=jkltob6i+2RvV1xOh4YM42YZRE
+	8ql5OwLKBumi+6DtUFAk33tD+s3wfCm+ahUwFmkXw2jPMuOkQEk0T4j7Ulvi2t9JCqvp3x4Rv93EM
+	KVU9iA34a6XL4EalJBo3CYTngv5WsolEe503E7HyrA6fW0Dygi40hWzgi2xckHucf7/JDC3sI8Nzo
+	QrwDRETxlApONVO+VRxHbuJlxApkhsxVjuz0a2QEZx6d3787GoXA3e/+Ynd02pAzhfnOD1SnTiEQp
+	QwrENbJhxG6LYh5Zu75BFZtXNzX4DsXlT1X4IG2GK/JyV3QFdB0UbbA92o3l9Rb6YORV+VG34JIqG
+	e5kzE2mA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEIP8-000000071C3-2FUp;
+	Fri, 22 Nov 2024 01:24:14 +0000
+Date: Fri, 22 Nov 2024 01:24:14 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+	airlied@redhat.com, Kairui Song <ryncsn@gmail.com>
+Subject: Re: [PATCH v3 0/2] rust: page: Add support for existing struct page
+ mappings
+Message-ID: <Zz_dPsVZOMdkLjMA@casper.infradead.org>
+References: <Zz4MQO79vVFhgfJZ@tardis.local>
+ <Zz4WFnyTWUDPsH4m@casper.infradead.org>
+ <Zz4boXyYpdx4q35I@tardis.local>
+ <98a46b27-c4bb-4540-8f75-f176c3f2fae1@gmail.com>
+ <Zz59qgqKruqnouTl@tardis.local>
+ <650846e4-b6a0-472d-a14e-4357d20faadb@gmail.com>
+ <Zz-FtcjNm0TVH5v9@tardis.local>
+ <Zz-GHlkhrz35w2YN@tardis.local>
+ <Zz-ts0s3jHsNP73f@casper.infradead.org>
+ <0195fb77-c55a-40d5-8fe2-5844158f4f63@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Add standalone ethernet MAC entries for qcs615
-To: Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>,
-        "Andrew
- Lunn" <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric
- Dumazet" <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        "Alexandre
- Torgue" <alexandre.torgue@foss.st.com>,
-        Giuseppe Cavallaro
-	<peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>, <quic_tengfan@quicinc.com>,
-        <quic_jiegan@quicinc.com>, <quic_jingyw@quicinc.com>,
-        <quic_jsuraj@quicinc.com>
-References: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
- <3cfc2e90-c9b4-425d-80f4-ddace9aff021@redhat.com>
-Content-Language: en-US
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-In-Reply-To: <3cfc2e90-c9b4-425d-80f4-ddace9aff021@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dYuuCkmnewuO-08MOeB_S_9jO_bMNVm_
-X-Proofpoint-ORIG-GUID: dYuuCkmnewuO-08MOeB_S_9jO_bMNVm_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=587
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220009
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0195fb77-c55a-40d5-8fe2-5844158f4f63@gmail.com>
 
-
-
-On 2024-11-19 19:18, Paolo Abeni wrote:
-> On 11/18/24 07:16, Yijie Yang wrote:
->> Add separate EMAC entries for qcs615 since its core version is 2.3.1,
->> compared to sm8150's 2.1.2.
->>
->> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
-> ## Form letter - net-next-closed
+On Fri, Nov 22, 2024 at 01:18:28AM +0200, Abdiel Janulgue wrote:
+> We need an abstraction of struct page to construct a scatterlist which is
+> needed for an internal firmware structure. Now most of pages needed there
+> come from vmalloc_to_page() which, unlike the current rust Page abstraction,
+> not allocated on demand but is an existing mapping.
 > 
-> The merge window for v6.13 has begun and net-next is closed for new
-> drivers, features, code refactoring and optimizations. We are currently
-> accepting bug fixes only.
-> 
-> Please repost when net-next reopens after Dec 2nd.
-> 
-> RFC patches sent for review only are welcome at any time.
-> 
-> See:
-> https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
-> 
+> Hope that clears things up!
 
-Thank you for the reminder.
-
-> 
-
--- 
-Best Regards,
-Yijie
-
+That's very helpful!  So the lifetime of the scatterllist must not
+outlive the lifetime of the vmalloc allocation.  That means you can call
+kmap_local_page() on the page in the scatterlist without worrying about
+the refcount of the struct page.  BTW, you can't call page_address() on
+vmalloc memory because vmalloc can allocate pages from HIGHMEM.  Unless
+you're willing to disable support for 32-bit systems with highmem ...
 
