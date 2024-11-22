@@ -1,284 +1,160 @@
-Return-Path: <linux-kernel+bounces-418815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D219D65D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 234CD9D65E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2659EB20FDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F752B22222
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82ECF18DF7F;
-	Fri, 22 Nov 2024 22:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183F91AA792;
+	Fri, 22 Nov 2024 22:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a/I+0VL3"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oZwCXBxy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247DA15B13B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB1C12E4A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732315083; cv=none; b=qaRTELrjfvlp6hFnqAxxsrH7QA6H6PPLyBZWpToy3DXekei18rtRIHuGhaO1Yb259V2NYbTcPPixvl0vrRwNgfi/LThlwTcIpzQx/gmLaX7D839jNapca/+EMj454EWzsC/uHEZJ3AbManOtj0Um/cPh7FNJhAi/UGSvBmXiCqs=
+	t=1732315665; cv=none; b=e2I8omAlsc+DD6w8OKrEiYpBBiZygg6N0DGHIib7GVm62PboQmBfanEqIrLi2tqo1jssdjTzK/Kq7q6P5F2CVkCI19aALxbZRj8AGU6YxgVs5oBi+4nIdzrYlT0/Ib7eC6PcbDtmEJmmX5us4ZkPPMnosaZKwrtNh3jUVfw9ilI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732315083; c=relaxed/simple;
-	bh=6GLmjpPY6EOrT6vmph0MIzerN19LbhQl4PfcSl2fDic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tM7JyD3PsuInSHCwik5CoAD9X7sKGaRXI1iTshzKXTnzAejA5nK07JxP0tEmUHxBYqcj3pVMvaIBo2Hohx+qTBt5mvNzQKf+VXzBPzGxCAsYhLIbK76+k7NDs64F7O9w8g0C8KXMfXKzajf094ujQ8M90QbPZPXc+pY8ORArOJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a/I+0VL3; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-211f1b2bf2bso14295ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:38:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732315081; x=1732919881; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5kr5xL10rVafwH2QwXNIB2NX51MpVtbUlFWYreKeG40=;
-        b=a/I+0VL3LxFdYiNRFKss8cXJcBDrh5XqUBOytoHO3nFZBVAgYrYdXVg8AB7YytYDi7
-         Wi1AFloi060YQt7hi9FT8Gxod/0Ci3ztwnDP11radAneAB8iWr8csAH+qcNT0w433Tt3
-         2QvH7lPJFz8/VyyIbKVgMgcFykrtKU4lJkKqMoTAJUH396tSAgeBRmhqNBKjB3d8hqLi
-         7NI0RqoBJsN5aKyoKD5dYNsKUfV4emZ0COUEeLONOTsG4FDNWq3Ecy2WyHmD9sF1XG4J
-         lbFWSPgpeB/LV25Mhe1Y6kV4QXoPaFOLN1mykPy9rW9fM1vQw+njbJEq3ZcccixRyG/y
-         JRtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732315081; x=1732919881;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5kr5xL10rVafwH2QwXNIB2NX51MpVtbUlFWYreKeG40=;
-        b=u2sfa3MudGkd/L9vlhUgwhBDrAX74yBMOhCGvcNUeKPzxM3QUVB939vglV3oIIqWFq
-         PUpfzLiPQkHxaAjA32ntzelbIz+ZF9cWbh399z84+GLL70UE/wR5ZzR1VYLXP2tO9z9W
-         UYL0tJhQF6hwC1PwRjarvZq6CEF8QbP7LkwXORH2apnGQGSrgrj55+i6PJK1I9I4LwYX
-         1IGjFt7zLzo9fL6C06U5JPHiPVlBmWdii1RJSRgTnMQpXlJ0XRE0sVXFtkWIj3Hs369b
-         UA+MqBf2fkiD3pzfv5ERk5owPp4VKB0krvBZ/J7ox0yrVhnmSWI/3p7h2ngpdRM0LIWu
-         L7BA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa+8UN4hkmNCzBBm/Y0lo/KgUYEBJpS/KM1NeOt2HDaYOeCR07En89m7H3aG4g2CZ2b4xEobVnqiPw3ac=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv7Om1BF1ou+0JCbaZu/UjI+cyVbuaM6BxrL7vltt2hrM/lxPn
-	EfE8G2T/8zQYn9vsrcJ+HjaUYfCab3dEOnXagMXd85xpltcZhqHPFlCWyNE3sQ==
-X-Gm-Gg: ASbGnctvahTU2JxB7rYRg0STN49hB+nPudiGef9sHCCC9ZYBteqvce8mU7DxRpPpBzJ
-	P/FSMIOM5De5cL8DSN2FUEWn6WTmetyeao3PT1Cx7gb5teWINbBdOTGwtOfWBCNRddsx53uDc3x
-	g5844/N0EIVMTagIDps8Hjj4Tpm6Co0PvJQwNYDsg6/Yd4PBkZYwnaNe5j+3gLLdF3YzvQXetyM
-	HuCQV42coeCTqJGopBrGNf4umXldmNw46w8OyHRPIfZesvH2icdaiL80pFpykxFKq8vuGjqfkoi
-	sWqW0BX3
-X-Google-Smtp-Source: AGHT+IH7FcOLwqCX5Pk18qMpoAhw/6OPuccEjBkX6SjRRnRTGj+6abQWL8biM94lLtA5xkrz6/Cx9w==
-X-Received: by 2002:a17:902:d550:b0:20c:5cb1:de07 with SMTP id d9443c01a7336-2149e0a53c8mr239615ad.11.1732315081192;
-        Fri, 22 Nov 2024 14:38:01 -0800 (PST)
-Received: from google.com (60.89.247.35.bc.googleusercontent.com. [35.247.89.60])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fbcbfc0960sm1890512a12.11.2024.11.22.14.37.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 14:38:00 -0800 (PST)
-Date: Fri, 22 Nov 2024 14:37:56 -0800
-From: Vipin Sharma <vipinsh@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Andrew Jones <ajones@ventanamicro.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev, kvm-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Anup Patel <anup@brainfault.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/1] KVM selftests runner for running more than just
- default
-Message-ID: <20241122223756.GA2112434.vipinsh@google.com>
-References: <20240821223012.3757828-1-vipinsh@google.com>
- <CAHVum0eSxCTAme8=oV9a=cVaJ9Jzu3-W-3vgbubVZ2qAWVjfJA@mail.gmail.com>
- <CAHVum0fWJW7V5ijtPcXQAtPSdoQSKjzYwMJ-XCRH2_sKs=Kg7g@mail.gmail.com>
- <ZyuiH_CVQqJUoSB-@google.com>
- <20241108-eaacad12f1eef31481cf0c6c@orel>
- <ZzY2iAqNfeiiIGys@google.com>
- <20241115211523.GB599524.vipinsh@google.com>
- <Zz5-3A36cckhYu9K@google.com>
+	s=arc-20240116; t=1732315665; c=relaxed/simple;
+	bh=ZoUlHT28WrHx6AuGNzmVLvAbzPcL3N65tDMCne9wEz4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J//lHbPoTwoBdp530Oe7IOI43nGuUBn9hswrsjQ8KFSmixYygQRz8juQHdHxpeWJFz4omH2qIVpDZYl73SsN9YYa9pRZQrcezLBkskulxIWh+deLs5kx466o0RgK/2GBhbztFm2Qk1XH0uTJN2ZZReyncFKh3AT/RqqZCQsgXXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oZwCXBxy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=+oSJHlgV54zQ7Ilpi6mCzhyeYrpeSvM1VALAybOIPd0=; b=oZwCXBxyf3LX4kt9xkqnEnZi3m
+	DT5jtVsOPBjGPWS80jhzvpj3OuU5qT5QvqVk+j6H4TkiPlWZaO6q/bfQOlzLVTFvdm5758w90KCyc
+	a8sjguiPu8Hmu6CF9jCyPkJSWDEt3TUQi5u2z0xJlDNn8yngqs/cuywEzE5bzaWpy8AGsxKbOTcQr
+	zcAhXaGatUKEKh9UOS3/yFfj4oapYs88zQk1ZRBsckCOrij1ziYcIMsAdKY82YIfnSPt/4eCp0gNy
+	Eaaa7CV+gYti52YSDvHK1jqbnvpT1EF26pVFwv1EoVMwkIRHZLLHtjGBICNtCBFYFAh4VTIYalURC
+	3SvlrMkw==;
+Received: from [2001:8b0:10b:1::ebe] (helo=i7.infradead.org)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEcQp-00000008PHU-2DsT;
+	Fri, 22 Nov 2024 22:47:21 +0000
+Received: from dwoodhou by i7.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEcQo-00000000ii0-3L7f;
+	Fri, 22 Nov 2024 22:47:18 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	linux-kernel@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Dave Young <dyoung@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	jpoimboe@kernel.org
+Subject: [RFC PATCH v2 0/16] x86/kexec: Add exception handling for relocate_kernel and further yak-shaving
+Date: Fri, 22 Nov 2024 22:38:09 +0000
+Message-ID: <20241122224715.171751-1-dwmw2@infradead.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zz5-3A36cckhYu9K@google.com>
+Sender: David Woodhouse <dwmw2@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2024-11-20 16:29:16, Sean Christopherson wrote:
-> On Fri, Nov 15, 2024, Vipin Sharma wrote:
-> > On 2024-11-14 09:42:32, Sean Christopherson wrote:
-> > > On Fri, Nov 08, 2024, Andrew Jones wrote:
-> > > > On Wed, Nov 06, 2024 at 09:06:39AM -0800, Sean Christopherson wrote:
-> > > > > On Fri, Nov 01, 2024, Vipin Sharma wrote:
-> As discussed off-list, I think having one testcase per file is the way to go.
-> 
->   - Very discoverable (literally files)
->   - The user (or a shell script) can use regexes, globbing, etc., to select which
->     tests to run
->   - Creating "suites" is similarly easy, e.g. by having a list of files/testscase,
->     or maybe by directory layout
-> 
-> Keeping track of testcases (and their content), e.g. to avoid duplicates, might
-> be an issue, but I think we can mitigate that by establishing and following
-> guidelines for naming, e.g. so that the name of a testcase gives the user a
-> decent idea of what it does.
-> 
-> > > > Could also use an environment variable to specify a file which contains
-> > > > a config in a test-specific format if parsing environment variables is
-> > > > insufficient or awkward for configuring a test.
-> > > 
-> > > There's no reason to use a environment variable for this.  If we want to support
-> > > "advanced" setup via a test configuration, then that can simply go in configuration
-> > > file that's passed to the runner.
-> > 
-> > Can you guys specify What does this test configuration file/directory
-> > will look like? Also, is it gonna be a one file for one test? This might
-> > become ugly soon.
-> 
-> As above, I like the idea of one file per testcase.  I'm not anticipating thousands
-> of tests.  Regardless of how we organize things, mentally keeping track of that
-> many tests would be extremely difficult.  E.g. testcases would likely bitrot and/or
-> we'd end up with a lot of overlap.  And if we do get anywhere near that number of
-> testcases, they'll need to be organzied in some way.
-> 
-> One idea would be create a directory per KVM selftest, and then put testcases for
-> that test in said directory.  We could even do something clever like fail the
-> build if a test doesn't have a corresponding directory (and a default testcase?).
-> 
-> E.g. tools/testing/selftests/kvm/testcases, with sub-directories following the
-> tests themsleves and separated by architecture as appropriate.
-> 
-> That us decent organization.  If each test has a testcase directory, it's easy to
-> get a list of testcases.  At that point, the name of the testcase can be used to
-> organize and describe, e.g. by tying the name to the (most interesting) parameters.
+Make it easier to pass information into relocate_kernel by allowing it to
+have actual variables which are set from the real kernel. To do this, move
+it into the kernel's .data section, keeping its data and code together
+with linker script rules. Execute it from the *copy* instead of its
+original in the kernel data section, and clean it up a bit.
 
-Sounds good. Extending your example for testcases given below this what
-I am imagining ordering will be:
+Then do what I originally started with, which is add a GDT+IDT and some
+exception handling so we can actually catch problems instead of just
+suffering a triple fault and wondering why the world hates us.
 
-testcases/
-├── aarch64
-│   └── arch_timer
-│       └── default
-├── memslot_modification_stress_test
-│   ├── 128gib.allvcpus.partitioned_memory_access
-│   ├── default
-│   └── x86_64
-│       └── disable_slot_zap_quirk
-├── riscv
-│   └── arch_timer
-│       └── default
-├── s390x
-├── steal_time
-│   └── default
-└── x86_64
-    ├── amx_test
-    │   └── default
-    └── private_mem_conversions_test
-        ├── 2vcpu.2memslots
-        └── default
+The serial output of the debug mode can be cleaned up a little, and it's
+even now possible to pass in information about which serial port to write
+to.
 
-1. Testcases will follow directory structure of the test source files.
-2. "default" will have just path of the test relative to
-   tools/testing/selftests/kvm directory and no arguments provided in it.
-3. Extra tests can be provided as separate files with meaningful names.
-4. Some tests (memslot_modification_stress_test) have arch specific
-   options. Those testcases will be under arch specific directory of
-   that specific testcase directory.
-5. Runner will be provided with a directory path and it will run all
-   files in that and their subdirectories recursively.
-6. Runner will also filter out testcases based on filepath. For example
-   if running on ARM platform it will ignore all filepaths which have
-   x86_64, s390, and riscv in their path anywhere.
-7. If user wants to save output of runner, then output dump will follow
-   the same directory structure.
+I'll also work on resyncing with the i386 code and applying as many of
+these cleanups there as possible. And probably also make the 64-bit one
+use a separate image->arch.pgd instead of lumping it into a single 8KiB
+"control page" as we do on x86_64 at the moment.
 
-> 
-> Hmm, and for collections of multiple testscases, what if we added a separate
-> "testsuites" directory, with different syntax?  E.g. one file per testuite, which
-> is basically a list of testcases.  Maybe with some magic to allow testsuites to
-> "include" arch specific info?
-> 
-> E.g. something like this
-> 
-> $ tree test*
-> testcases
-> └── max_guest_memory_test
->     └── 128gib.allvcpus.test
-> testsuites
-> └── mmu.suite
-> 
-> 3 directories, 2 files
-> $ cat testsuites/mmu.suite 
-> $ARCH/mmu.suite
-> max_guest_memory_test/128gib.allvcpus.test
+But the basic cleanups are probably ready for another round of bikeshedding.
 
-This can be one option. For now lets table testsuites discussion. We will
-revisit if after Phase1 is completed.
+Testing the preserve_context mode with the following test case:
 
-> 
-> > This brings the question on how to handle the test execution when we are using
-> > different command line parameters for individual tests which need some
-> > specific environmnet?
-> > 
-> > Some parameters will need a very specific module or sysfs setting which
-> > might conflict with other tests. This is why I had "test_suite" in my
-> > json, which can provide some module, sysfs, or other host settings. But
-> > this also added cost of duplicating tests for each/few suites.
-> 
-> IMO, this should be handled by user, or their CI environment, not by the upstream
-> runner.  Reconfiguring module params or sysfs knobs is inherently environment
-> specific.  E.g. not all KVM module params are writable post-load, and so changing
-> a param might require stopping all VMs on the system, or even a full kernel reboot
-> if KVM is built-in.  There may also be knobs that require root access, that are
-> dependent on hardware and/or kernel config, etc.
-> 
-> I really don't want to build all that into the upstream test runner, certainly not
-> in the first few phases.  I 100% think the runner should be constructed in such a
-> way that people/organizations/CI pipeines can build infrastructure on top, I just
-> don't think it's a big need or a good fit for upstream.
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <linux/kexec.h>
+ #include <linux/reboot.h>
+ #include <sys/reboot.h>
+ #include <sys/syscall.h>
 
-For phase 2 discussion, you responded:
-	> Phase 2: Environment setup via runner
-	>
-	> Current patch, allows to write "setup" commands at test suite and test
-	> level in the json config file to setup the environment needed by a
-	> test to run. This might not be ideal as some settings are exposed
-	> differently on different platforms.
-	>
-	> For example,
-	> To enable TDP:
-	> - Intel needs npt=Y
-	> - AMD needs ept=Y
-	> - ARM always on.
-	>
-	> To enable APIC virtualization
-	> - Intel needs enable_apicv=Y
-	> - AMD needs avic=Y
-	>
-	> To enable/disable nested, they both have the same file name "nested"
-	> in their module params directory which should be changed.
-	>
-	> These kinds of settings become more verbose and unnecessary on other
-	> platforms. Instead, runners should have some programming constructs
-	> (API, command line options, default) to enable these options in a
-	> generic way. For example, enable/disable nested can be exposed as a
-	> command line --enable_nested, then based on the platform, runner can
-	> update corresponding module param or ignore.
-	>
-	> This will easily extend to providing sane configuration on the
-	> corresponding platforms without lots of hardcoding in JSON. These
-	> individual constructs will provide a generic view/option to run a KVM
-	> feature, and under the hood will do things differently based on the
-	> platform it is running on like arm, x86-intel, x86-amd, s390, etc.
+int main (void)
+{
+        struct kexec_segment segment = {};
+	unsigned char purgatory[] = {
+		0x66, 0xba, 0xf8, 0x03,	// mov $0x3f8, %dx
+		0xb0, 0x42,		// mov $0x42, %al
+		0xee,			// outb %al, (%dx)
+		0xc3,			// ret
+	};
+	int ret;
 
-	My main input on this front is that the runner needs to configure module params
-	(and other environment settings) _on behalf of the user_, i.e. in response to a
-	command line option (to the runner), not in response to per-test configurations.
+	segment.buf = &purgatory;
+	segment.bufsz = sizeof(purgatory);
+	segment.mem = (void *)0x400000;
+	segment.memsz = 0x1000;
+	ret = syscall(__NR_kexec_load, 0x400000, 1, &segment, KEXEC_PRESERVE_CONTEXT);
+	if (ret) {
+		perror("kexec_load");
+		exit(1);
+	}
+	return 0;
+}
 
-Should we still write code in runner for setting parameters which are
-writable/modifiable or just leave it? Our current plan is to provide
-some command line options to set those things but it is true that we
-might not be able to set everything via runner.
+
+David Woodhouse (16):
+      x86/kexec: Clean up and document register use in relocate_kernel_64.S
+      x86/kexec: Use named labels in swap_pages in relocate_kernel_64.S
+      x86/kexec: Restore GDT on return from preserve_context kexec
+      x86/kexec: Only swap pages for preserve_context mode
+      x86/kexec: Invoke copy of relocate_kernel() instead of the original
+      x86/kexec: Move relocate_kernel to kernel .data section
+      x86/kexec: Add data section to relocate_kernel
+      x86/kexec: Copy control page into place in machine_kexec_prepare()
+      x86/kexec: Drop page_list argument from relocate_kernel()
+      x86/kexec: Eliminate writes through kernel mapping of relocate_kernel page
+      x86/kexec: Clean up register usage in relocate_kernel()
+      x86/kexec: Mark relocate_kernel page as ROX instead of RWX
+      x86/kexec: Debugging support: load a GDT
+      x86/kexec: Debugging support: Load an IDT and basic exception entry points
+      x86/kexec: Debugging support: Dump registers on exception
+      [DO NOT MERGE] x86/kexec: enable DEBUG
+
+ arch/x86/include/asm/kexec.h         |  13 +-
+ arch/x86/include/asm/sections.h      |   1 +
+ arch/x86/kernel/machine_kexec_64.c   |  55 +++--
+ arch/x86/kernel/relocate_kernel_64.S | 384 +++++++++++++++++++++++++++--------
+ arch/x86/kernel/vmlinux.lds.S        |  12 +-
+ 5 files changed, 358 insertions(+), 107 deletions(-)
+
 
