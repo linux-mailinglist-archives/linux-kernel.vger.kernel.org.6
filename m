@@ -1,122 +1,137 @@
-Return-Path: <linux-kernel+bounces-418387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733639D6118
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:07:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F749D611B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26952B21B1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7872822D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725A413A3E4;
-	Fri, 22 Nov 2024 15:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BEB1632C2;
+	Fri, 22 Nov 2024 15:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qyl7+Ywf"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QZot2vJs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A1D73501
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 15:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2DC12CD88;
+	Fri, 22 Nov 2024 15:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732288023; cv=none; b=MPyL37rkl8PlHVdjYC5nwKCAZ+kVn5ZaxxpJ/Xd07i8XOwDaOok91eBp3v7GxU8waDjBjqBVmpuPr8uOySC2hIGJzOK9mLkaZ7V2U+aZrGrGTbhHMq+sBXVvMeoGyzPiNmS0MI3nbGvTZGTmst9j4NB7pOXfTfghdt+s7K7/Pbo=
+	t=1732288247; cv=none; b=DFg5A6anZumYwyEsl26Y3F3u95vT+1DyeyMxoFB/r5AZJ/2YqFL8q6G2rRpceDzqYaXJKPy6qhwmUftSXg/lMTqXPazlaPXJ+JKcppxIpkVE11UjvF5jmAr75/aW64uhhQhhwtULtRL/ZEcwjIa+LDT97pKGTd1R7EDwHabiwIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732288023; c=relaxed/simple;
-	bh=ZIE0TbJ33bF99CurhWw5u3B+7prsO8eQjAo6CzhabKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i84sbes/xo+C/kR3MLsdCeLvc1088UHcuR6wpEzXFKPsSw/ly5YWctrPL874HM0zGmGcWUStJfo1VvEA14moQ/WZHOOcY2KMsBXnR6s7elV5btKpgUkw9tXcw45yl+tmCLk/wkfkLzVPT2odWob2Atdbq+ub+nsrEgcCg0H/RZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qyl7+Ywf; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460969c49f2so285841cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732288021; x=1732892821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZIE0TbJ33bF99CurhWw5u3B+7prsO8eQjAo6CzhabKs=;
-        b=qyl7+YwfC//aNtK92nfBalz/X/Sl83rQdTtFc5ViBCXFbszeFSwpl24wfVsj/HfIeH
-         5v4/fCo4l6YeMyt7rXIrgrqMRxj0gTBj1WIcAzzwd+K30c/j311OJMbDCp9hG7Hqe/UM
-         RM1IKyAyHjodfqEG7up5nsgH1w0QV/OU3VHUBFaQTlGLL3TF5hp2j81J5OgP/kdBLnKR
-         mZ44+UrCJhL9D28GWmrL8g1xo+BnZmgXs7lxvMifZp4FLCl2P0pauy7giKqc0a4I1UBt
-         Nwjw3dJ5vMFcDuqXWOcYpGwLZSBQ7CUn5sxVOVe/wjgBrIPxAI6xBtiNflpQrhBr7T87
-         S5jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732288021; x=1732892821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZIE0TbJ33bF99CurhWw5u3B+7prsO8eQjAo6CzhabKs=;
-        b=b7AjYAZfQ9G0fJ+SFRfs90jkWt0Jn8W0uTydahfOL5R6flHEESkKWMpqCgVfKGvM0t
-         OkXD9SQ2I8vvljr/sEWL8EWaw8rZDa6XakFelpdoBhLa5rDI14kRJuuXnpvnW3Jwwr2O
-         1tcbXKCxKQbDGTbvkemijszREoYFPshuzBnyHr2giiNnOj4+wMVC2ZGy/LQMPkY80DmT
-         iIwyvGjXPH+4CJBP1LfkZ+kmQ//LEiyEJzvlJCM/kspREoXmhj83Fat+Y0qfVbFboc7i
-         rYcLRFX3oZ2iY1tQt5F+IIgUc2DoPffDd/znVV9642bzk7Nu9pbQ6o3ygxMF00zMN4EH
-         rCsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvAOt8dVqnthU9mQD6weXGq7Pr6Ve74W+GYJQ1ckEFOZj1eib8U4luUl7nZOBKHfrVE2m2iMKop98i0uY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTrcw1iDxCa5IXyO/rn1nSCsE1CSUs3IhMdw5gye4pOER9lEje
-	0Jvc8citavgQ3gJlWWtyg2hd6m9FzAQqvtxDGMzYI2X3TBVKey3TzZ7juu/SeUa4RklQ6sH+eoE
-	cMjXR/IuR19gqTAeZqgoiu8QF5iAnusrxcwLs
-X-Gm-Gg: ASbGncuXZPGA29ia9iVrnNptHJH1igmsFEpDveJMXRJkqgzycUY8DY7s2uK1pNUVG9O
-	EbKqjrhsjw9tQnrggqc4DzABqcxaqX4g=
-X-Google-Smtp-Source: AGHT+IE3NFWMPB84awBTKVHQKpIkIzfpP6rj90b+t0wNWbJd2/ytMK3K3Pnfa7aAXQadq08IftnKIN2x22mbUHavO30=
-X-Received: by 2002:a05:622a:54:b0:465:18f3:79c8 with SMTP id
- d75a77b69052e-4658aadae39mr3213131cf.13.1732288020964; Fri, 22 Nov 2024
- 07:07:00 -0800 (PST)
+	s=arc-20240116; t=1732288247; c=relaxed/simple;
+	bh=O8W8V2v3ggSNRbf/WtoNsYdZzZHeFWKhWoWdKWTGSXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ax6yFyr0V5CsBbfiraeCuU/n3zAbOoSxNXFQ6CLvEEy/4iB3/Xpq0ETStqQ1JOaMWhrETYNdnX1XUU5ZQJivQ++IVKg3npwTuw8EuFVkMAoZktz3uLBXlyIlh2TEgv463NBnTGhVJ+HMMnc1GOmbby6gXh5U+gSUgdveurJpyYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QZot2vJs; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732288245; x=1763824245;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O8W8V2v3ggSNRbf/WtoNsYdZzZHeFWKhWoWdKWTGSXM=;
+  b=QZot2vJs4lCCR5vKJV2Hn+waowr3Pj6cpy8IXNapPHOCLsyFXxRh80w4
+   u+xyL0QYu1aOS3ajNlA0G4xwE6wMz4PCGYEKMWBCdGslJ6gco7FjcVo4b
+   fJmdyw04ZXvJk9kAP4n0CttPSok03Ns/Wg2UVp56el1/iMN2/mpnQBmDL
+   i8m9qmdt+3nPD4fygJg1amlv5iFM7mAN8bFpAYRywY4fvV6dxFA+k+BlW
+   2qeXw+1MolrLfKp+np4maLnZiG8Kie6Gp44Vw+LxbpAE5HfjJGYCSiMU8
+   4qN62zdZNyQLZxCptEm9XLt+KLfr1wMSNpu99WkduTaXNXOYbtdbnY1gw
+   g==;
+X-CSE-ConnectionGUID: wgL+AVNbQAy+dPjevW6fsQ==
+X-CSE-MsgGUID: /otq5vtRSV2GI2DmmT9BRA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="49963259"
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="49963259"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 07:10:44 -0800
+X-CSE-ConnectionGUID: SJBTruWmRNS5ScurZDldnw==
+X-CSE-MsgGUID: K2W/b0a/RQ+8fyEru8EmRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="121551606"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 22 Nov 2024 07:10:40 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tEVIs-00040Z-0f;
+	Fri, 22 Nov 2024 15:10:38 +0000
+Date: Fri, 22 Nov 2024 23:09:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Subject: Re: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
+ driver
+Message-ID: <202411222244.oAiveIHV-lkp@intel.com>
+References: <20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120000826.335387-1-surenb@google.com> <hdvig2tptf3hi6nmszafarzqb6j56abfbebppqmruvpihlf435@46b57hyw2pfc>
- <Zz6UTvERgg9ubRu4@casper.infradead.org> <e71408ff-b088-48e6-8b18-bb846a60cc1e@lucifer.local>
-In-Reply-To: <e71408ff-b088-48e6-8b18-bb846a60cc1e@lucifer.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 22 Nov 2024 07:06:49 -0800
-Message-ID: <CAJuCfpHZH5MHVPeV_EgNb8cMR6hqq5p=Y76tgRCZK6mXL4LG=A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] move per-vma lock into vm_area_struct
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	akpm@linux-foundation.org, liam.howlett@oracle.com, mhocko@suse.com, 
-	vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com, 
-	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com, 
-	oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, brauner@kernel.org, 
-	dhowells@redhat.com, hdanton@sina.com, hughd@google.com, minchan@google.com, 
-	jannh@google.com, souravpanda@google.com, pasha.tatashin@soleen.com, 
-	corbet@lwn.net, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119-apds9160-driver-v1-2-fa00675b4ea4@dimonoff.com>
 
-On Fri, Nov 22, 2024 at 3:57=E2=80=AFAM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Thu, Nov 21, 2024 at 02:00:46AM +0000, Matthew Wilcox wrote:
-> > On Wed, Nov 20, 2024 at 02:10:44PM -0800, Shakeel Butt wrote:
-> > > If 'struct vm_area_struct' is prone to performance issues due to
-> > > cacheline misalignments then we should do something about the
-> > > __randomize_layout tag for it. I imagine we can identify the fields
-> > > which might be performance critical to be on same cacheline or differ=
-ent
-> > > cacheline due to false sharing then we can divide the fields into
-> > > different cacheline groups and fields can be __randomize_layout withi=
-n
-> > > the group. WDYT?
-> >
-> > Pretty sure the people who think security is more important than
-> > performance are the only ones who randomize structs.
->
-> I agree that I don't think we need concern ourselves with users of this
-> setting for precisely this reason.
->
-> I wouldn't want supporting this to cause difficulty for users who do not
-> enable this when those who do aren't really concerned about the perf issu=
-es
-> as Matthew says.
+Hi Mikael,
 
-Ack. Will keep it as is. Thanks!
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on adc218676eef25575469234709c2d87185ca223a]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mikael-Gonella-Bolduc-via-B4-Relay/dt-bindings-iio-light-Add-APDS9160-binding/20241121-123509
+base:   adc218676eef25575469234709c2d87185ca223a
+patch link:    https://lore.kernel.org/r/20241119-apds9160-driver-v1-2-fa00675b4ea4%40dimonoff.com
+patch subject: [PATCH 2/2] iio: light: Add APDS9160 ALS & Proximity sensor driver
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20241122/202411222244.oAiveIHV-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411222244.oAiveIHV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411222244.oAiveIHV-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/light/apds9160.c:3: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * This file is part of the APDS9160 sensor driver.
+>> drivers/iio/light/apds9160.c:565: warning: Function parameter or struct member 'data' not described in 'apds9160_set_ps_cancellation_level'
+>> drivers/iio/light/apds9160.c:565: warning: Function parameter or struct member 'val' not described in 'apds9160_set_ps_cancellation_level'
+>> drivers/iio/light/apds9160.c:565: warning: expecting prototype for The PS intelligent cancellation level register allows for an on(). Prototype was for apds9160_set_ps_cancellation_level() instead
+   drivers/iio/light/apds9160.c:585: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * This parameter determines the cancellation pulse duration in each of the PWM pulse.
+   drivers/iio/light/apds9160.c:609: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Set the proximity sensor led current
+
+
+vim +3 drivers/iio/light/apds9160.c
+
+   > 3	 * This file is part of the APDS9160 sensor driver.
+     4	 * Chip is combined proximity and ambient light sensor.
+     5	 * Author: Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>
+     6	 */
+     7	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
