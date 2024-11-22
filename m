@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-417751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C979D58BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:58:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039AD9D58BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251E91F23546
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D8B281380
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26651632CC;
-	Fri, 22 Nov 2024 03:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9438915B149;
+	Fri, 22 Nov 2024 03:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="h+EQiDSH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QteQ7s1o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FFBE155308;
-	Fri, 22 Nov 2024 03:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0D2A31;
+	Fri, 22 Nov 2024 03:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732247894; cv=none; b=gk11dpIC0x4FYS/3VlQShk7hyLXAL+y0q7KpD+0gaFPCbrvSUXoYXxwh9kUoi1ajRjhyEx1lCvEthtyp/HQX/FRw3PtIE7piEXoDmZhIXKzDko4YkZUbQEZ+L/UtD+Uo/K4iWkYdvK7XMJgQD5GHb3Pel7Aj32PkDdxZQ2vDfL4=
+	t=1732247978; cv=none; b=WhXT226VyA2npeE7QAOkedpusWAiYX77sbnXw4MGQqbJpbiGHAmij/BZZV3Bl/5VjNgNRjk2hvB0v8b9929tnGnItxrpH3Y4FFw69UtKZ3YVMwlvnElw28XgDsgPlv3PXivCZtIM3es/JWhiMAEd4hbkf7eJ5o5q0o0RNdtEuIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732247894; c=relaxed/simple;
-	bh=u5L/YJtJAR2keFWLC8ZiA46RP25hwYUeXyLicH3qgzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O7jYtJSf23Vz5hLviUrS94Qp5mPSr/0x62chMrohN42P7tAD3RfvV5piLZ7nV2l3HhCQhmrFoyrPI6sC0CIEq/fxgMD85EnwBPIUsStXYa2ZDbSAw/qMT6cGA8tFBCJ+28k3M4ccIKSBSjHMeJUAtG0UjMapY/Sjt94IWUUKMJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=h+EQiDSH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1732247886;
-	bh=REK3oFmOmHvdpR3JLVTOnL9a9/i2Yxb5hvWeyaru/kg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=h+EQiDSHLI8wuWmyb5uM6ZBcriDPNBPcg9AuBJXbU6MLnEby4E55h3crL/SqtLcqG
-	 mveMndKqk0VEylAtzIHFqyhib5KdQBOWy0BYxq1jTlQpEAOikJEp2PJ9TZotjdGjPR
-	 lR754J3Eeo6vzx1b3lPmEFlUIvL0Qqdfjs5R3GZsL/WBPuovMx8NeJYsJR/X2LoLzq
-	 2c3t/X8QlPZY+gPvnYRDSghYT2cIUZ2EuLffj7hlTesgXsXmOYLWRXsqWRgybS/c8u
-	 T1yqqqvEgaA5oObHVqiNaF29kHE1e34hBPbNWCjEG62xX4+tPMTXlurFQREfZV/S5o
-	 9VA7sMxHRZ+9g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XvhCL34Rfz4wy6;
-	Fri, 22 Nov 2024 14:58:06 +1100 (AEDT)
-Date: Fri, 22 Nov 2024 14:58:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Anup Patel <anup@brainfault.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul@pwsan.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>, Jinyu Tang <tjytimi@163.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Palmer Dabbelt
- <palmer@rivosinc.com>, Samuel Holland <samuel.holland@sifive.com>,
- Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Subject: linux-next: manual merge of the kvm-riscv tree with the risc-v tree
-Message-ID: <20241122145809.3d6a3feb@canb.auug.org.au>
+	s=arc-20240116; t=1732247978; c=relaxed/simple;
+	bh=OLi4SqzR5SzIfTiMCGYx8+GjgOw02FBSpOAD4lu+xHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FUINmdpRg1WmGtSHfPNRfsAMZDYCN95JqZOZInjYIaBUHrPUMvMsXuH/P0k6PRsoTbiw5g96Ex4iaxdRHASQFnS2lh5sNB6AzvcmlQJgC91pKIkHN2YfyzOYM/+412TzzzxhI+YqxrsnjJyhlSRcM2KnP7bVlFS5ttKGYCV2v6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QteQ7s1o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D8AC4CECE;
+	Fri, 22 Nov 2024 03:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732247977;
+	bh=OLi4SqzR5SzIfTiMCGYx8+GjgOw02FBSpOAD4lu+xHM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QteQ7s1oRJNNSxaDT28yrtw6ZpTIDCC3Bnz7cwpKqEy47yp7lrHgGUVkrzUHFzTCf
+	 yvRZEQlWkXcYX4SjdEzXWsvfM9JmXPGmFO4dn3GN2Rqg3fTQXH9qrFOVA4AytSD66q
+	 4Vm/K7EEQRQl2ME75jZPp5q3P3CJaHXe1VoEz84SCRFPuU41rEwayAKmo4+TouIgA8
+	 JZT6oPYb0ZQE4YJMMuyAtEjjUARRzrT3GsVNIaubiSm4LTjCZGy80V1xEaNlQZY5In
+	 RFgqpA7CPI0ampH4G5c4cCAKOfZYjkG2i+sLwonjLAXvUMsFnnpZwA1wlVRexesHmP
+	 NhdxKXkqo/d8w==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	torvalds@linux-foundation.org
+Cc: oleg@redhat.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	paulmck@kernel.org,
+	willy@infradead.org,
+	surenb@google.com,
+	mjguzik@gmail.com,
+	brauner@kernel.org,
+	jannh@google.com,
+	mhocko@kernel.org,
+	vbabka@suse.cz,
+	shakeel.butt@linux.dev,
+	hannes@cmpxchg.org,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	david@redhat.com,
+	arnd@arndb.de,
+	viro@zeniv.linux.org.uk,
+	hca@linux.ibm.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v5 tip/perf/core 0/2] uprobes: speculative lockless VMA-to-uprobe lookup
+Date: Thu, 21 Nov 2024 19:59:20 -0800
+Message-ID: <20241122035922.3321100-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Jp4wl8DYUdE/c6mctH5Sgb2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/Jp4wl8DYUdE/c6mctH5Sgb2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Implement speculative (lockless) resolution of VMA to inode to uprobe,
+bypassing the need to take mmap_lock for reads, if possible. This series is
+based on Suren's patch set [2], which adds mm_struct helpers that help detect
+whether mm_struct was changed, which is used by uprobe logic to validate that
+speculative results can be trusted after all the lookup logic results in
+a valid uprobe instance.
 
-Hi all,
+Patch #1 is a simplification to uprobe VMA flag checking, suggested by Oleg.
 
-Today's linux-next merge of the kvm-riscv tree got a conflict in:
+Patch #2 is the speculative VMA-to-uprobe resolution logic itself, and is the
+focal point of this patch set. It makes entry uprobes in common case scale
+very well with number of CPUs, as we avoid any locking or cache line bouncing
+between CPUs. See corresponding patch for details and benchmarking results.
 
-  arch/riscv/include/asm/hwcap.h
+Note, this patch set assumes that FMODE_BACKING files were switched to have
+SLAB_TYPE_SAFE_BY_RCU semantics, which was recently done by Christian Brauner
+in [0]. This change can be pulled into perf/core through stable
+tags/vfs-6.13.for-bpf.file tag from [1].
 
-between commits:
+  [0] https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.13.for-bpf.file&id=8b1bc2590af61129b82a189e9dc7c2804c34400e
+  [1] git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+  [2] https://lore.kernel.org/linux-mm/20241121162826.987947-1-surenb@google.com/
 
-  2e6f6ea452aa ("riscv: Add ISA extension parsing for pointer masking")
-  1658ef4314b3 ("riscv: Implement cmpxchg8/16() using Zabha")
-  2d36fe89d872 ("riscv: Add ISA extension parsing for Ziccrse")
-  64f7b77f0bd9 ("Merge patch series "Zacas/Zabha support and qspinlocks"")
+v4->v5:
+- rebase on top of Suren's latest version of mm patches addressing Peter's
+  comment and API renaming request;
+v3->v4:
+- rebased and dropped data_race(), given mm_struct uses real seqcount (Peter);
+v2->v3:
+- dropped kfree_rcu() patch (Christian);
+- added data_race() annotations for fields of vma and vma->vm_file which could
+  be modified during speculative lookup (Oleg);
+- fixed int->long problem in stubs for mmap_lock_speculation_{start,end}(),
+  caught by Kernel test robot;
+v1->v2:
+- adjusted vma_end_write_all() comment to point out it should never be called
+  manually now, but I wasn't sure how ACQUIRE/RELEASE comments should be
+  reworded (previously requested by Jann), so I'd appreciate some help there
+  (Jann);
+- int -> long change for mm_lock_seq, as agreed at LPC2024 (Jann, Suren, Liam);
+- kfree_rcu_mightsleep() for FMODE_BACKING (Suren, Christian);
+- vm_flags simplification in find_active_uprobe_rcu() and
+  find_active_uprobe_speculative() (Oleg);
+- guard(rcu)() simplified find_active_uprobe_speculative() implementation.
 
-from the risc-v tree and commit:
+Andrii Nakryiko (2):
+  uprobes: simplify find_active_uprobe_rcu() VMA checks
+  uprobes: add speculative lockless VMA-to-inode-to-uprobe resolution
 
-  94a7734d0967 ("RISC-V: Add Svade and Svadu Extensions Support")
+ kernel/events/uprobes.c | 47 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 46 insertions(+), 1 deletion(-)
 
-from the kvm-riscv tree.
+-- 
+2.43.5
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/riscv/include/asm/hwcap.h
-index 08d2a5697466,7f72789ba3d5..000000000000
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@@ -93,11 -93,8 +93,13 @@@
-  #define RISCV_ISA_EXT_ZCMOP		84
-  #define RISCV_ISA_EXT_ZAWRS		85
-  #define RISCV_ISA_EXT_SVVPTC		86
- -#define RISCV_ISA_EXT_SVADE		87
- -#define RISCV_ISA_EXT_SVADU		88
- +#define RISCV_ISA_EXT_SMMPM		87
- +#define RISCV_ISA_EXT_SMNPM		88
- +#define RISCV_ISA_EXT_SSNPM		89
- +#define RISCV_ISA_EXT_ZABHA		90
- +#define RISCV_ISA_EXT_ZICCRSE		91
-++#define RISCV_ISA_EXT_SVADE		92
-++#define RISCV_ISA_EXT_SVADU		93
- =20
-  #define RISCV_ISA_EXT_XLINUXENVCFG	127
- =20
-
---Sig_/Jp4wl8DYUdE/c6mctH5Sgb2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdAAVEACgkQAVBC80lX
-0GzGzAf8C6HxYU95tPHn1Vsec0dfm4BmfMjsTq+4B8mrczYAF8SRdAYlcnLmhBHm
-CM8ZbgDFljG2De7MD8TpOj36LTrYkDd5V/yX6wOjblwdsbYlwmAHg1CGLTLhNDpq
-KvK0HhJSOoi00LlS4OqA75Q/xtGHW1sd5SC7d0V3cA2E9/xT6QkFmwbnbdVtbEba
-nZsOAfu2YUoN4vjsPJf85gEZ+6uDt/h6H+iryz3c8HvvOtqx1PJC/t9myxie2JWi
-BtLo4hUdL2bqE/vpBWpADrCNexqeRwvDEIGDdoceYrQXzWTYrZ+/HyCiUi8iavkv
-9qR/h8hVdBcF1PoRhbW/Qy16J+46ow==
-=zKN3
------END PGP SIGNATURE-----
-
---Sig_/Jp4wl8DYUdE/c6mctH5Sgb2--
 
