@@ -1,237 +1,132 @@
-Return-Path: <linux-kernel+bounces-417945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8CF9D5B1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:40:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449649D5B21
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B25C1F21CD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:40:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13BC1F22E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268E118A6D8;
-	Fri, 22 Nov 2024 08:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2018D18A6D8;
+	Fri, 22 Nov 2024 08:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f9axSdhM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O3CLSVmz"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4629165EE6;
-	Fri, 22 Nov 2024 08:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B65165EE6;
+	Fri, 22 Nov 2024 08:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732264817; cv=none; b=SkjF8E+4k93/iPYZDUOoTGej1WkK8FIa4BVRaYE1KDiv8P4HC/4rpMqyyo6XZrKwCvfHn51Gb1UT9o78sE9Fy8YxJvPaKITKCiDjYFDUpecbK9Fh2vLY7UxKci1sKvsuCaswgkBceV+fF3Eizkwflkg5/iy9BsWSFZo2FUQ+nY0=
+	t=1732264831; cv=none; b=Hz1h1u66XIj83BCj6egET272XKzcnCS32ban1QKrzt6MLoNu9DpjdOHsIFsXLcLAF0O2DHxkYAN58IKf21toOjZmdjfat3Q7UvyCDWWoXDVOSnWFsDe9JJXLYvRbOIQA2hLwpUMWySfzuOvsZLXawHVrzSRhh3po18IMWQH/OlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732264817; c=relaxed/simple;
-	bh=SAAv+IV2q4W/K/mgYgUrQcsuChODGIVW09y4HM6oVDw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2D7jncWjQcjq4cpEBtOyKkdH065U9kuBFOL9JvsG8gsltVOW4y2L0IA+3Zp3AUkhHXcEF8Pr7DL5j04HVCDsiZayi2uqGJm5LGl+kjmQkJLURkHYBnrX9lTL6zA/tNBrPkOlOV3JpxofoRtZNkfuOa4t2a6BctJKoOxADZ2j28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f9axSdhM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALLpq6r025682;
-	Fri, 22 Nov 2024 08:40:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=haNWgxzgTjDgIowVFWR33CIu
-	WYP1uxTxuQlgVv/OIaY=; b=f9axSdhMsGxumeszge7PRflEbiKvqf3k6tuDUu3p
-	BsGBMNeqoGhmQ83OdS5UDzB8EwNmgZoW81mePdLuDMJrrp5QMOvKiAjFwQz+wSQk
-	XGbRbzBd1db4N5IfZh2IlL+R0Uddl3WsnWOImbI65m9CzFzTOjyxmQKpohCpe9sf
-	jAJGaHN3fNIS9OagA9H8yA8lKa5oXKM5I4PQ78jiK1DEQ+JQIUb2pea57gf7JeT6
-	3Qc83H3J2EWfwzQBqLO0OE75PtHjgaqlUMSF0Mg5zAOA9Kqe7Kqr7FGvXOZplARG
-	2J/HyPvf6/5qiN8dq4Jryar4ZnUcy2CyT1mlB1bjQhyPbA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432d5b1bk7-1
+	s=arc-20240116; t=1732264831; c=relaxed/simple;
+	bh=NuIAn4WN9tuE3Z3+e4/LD9vBt0vhTMGMlYSG0sjGT6c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lovGkoGvILFUNpANtoUQwnhK0g51xkiD6Rnb0oaNcLNan8lQ8zqFuuP9j5Tzff5uAa7ihcEq63eFVVCpgPS9B9BGmPGr1WCMLfce6I5f8YLVPJZAJSYzdyps7KZQQm15Qgx19g0yIfAb1Vi2yxCwF5nZT2d3OtwnQP3el2rZI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O3CLSVmz; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM1qP5U006973;
+	Fri, 22 Nov 2024 08:40:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=SaePHCRKhD41eZpCkKUbZZLRBivcQk
+	LiOz/uWyQXTGQ=; b=O3CLSVmz1Ekch1T9i3lpmR0eDkHoWv+tTb1tMfy7NjXRyR
+	FfqkcPPpOkGMpQ18kbWSPv6dB6pLIcV3Y1g+anyUeJeUYz2whK0fys6KDtX+QjU3
+	D6EvY2ROoNGgm8Hqfnfns2dDdeCybcbvpA0GG+zXRX5ZDKp+OeViftnWOR0L7B3G
+	9lIpSKuh7SZvP0ZKLCy1IL5zNIwXhicnAoQUTpOSxRJLgc+Wmd04yJh/jRy7HEDp
+	w7yj9bZDwG+PI1xdcIdNNSZCL0CMGvXy+9sbuB8B5V/5X21pqyFuPoDFq9EaMbqf
+	880br+vhgRZAtbMoLP0eTU17xSscBm/Zt1a6tjJw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu26pde-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 08:40:12 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM8eBsF010407
+	Fri, 22 Nov 2024 08:40:26 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM3Cocp025906;
+	Fri, 22 Nov 2024 08:40:25 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y8e1jff4-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 08:40:11 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 22 Nov 2024 00:40:07 -0800
-Date: Fri, 22 Nov 2024 16:40:02 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, <ulf.hansson@linaro.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <bhupesh.sharma@linaro.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
-Message-ID: <Z0BDYiVaLQXaMsle@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
- <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
- <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
+	Fri, 22 Nov 2024 08:40:25 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AM8eNo512321172
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 08:40:24 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E22DC2004E;
+	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36AC120043;
+	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.171.16.13])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 22 Nov 2024 08:40:23 +0000 (GMT)
+Date: Fri, 22 Nov 2024 09:40:17 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <brauner@kernel.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/proc/kcore.c: Clear ret value in read_kcore_iter
+ after successful iov_iter_zero
+Message-ID: <Z0BDcVpUjtbWmYTv@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20241121231118.3212000-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: O0RpfHuaPG2PlL20SvBDoP4UBuWkB1MH
-X-Proofpoint-ORIG-GUID: O0RpfHuaPG2PlL20SvBDoP4UBuWkB1MH
+In-Reply-To: <20241121231118.3212000-1-jolsa@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pMlr2yiv_z5t_79X43YJrR_QMOwYgNvr
+X-Proofpoint-ORIG-GUID: pMlr2yiv_z5t_79X43YJrR_QMOwYgNvr
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 adultscore=0 clxscore=1011 impostorscore=0 suspectscore=0
- spamscore=0 bulkscore=0 lowpriorityscore=0 mlxlogscore=999 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220072
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=778 adultscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220070
 
-On Fri, Nov 22, 2024 at 08:04:31AM +0100, Krzysztof Kozlowski wrote:
-> On 22/11/2024 07:51, Yuanjie Yang wrote:
-> > Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
-> > 
-> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
-> >  1 file changed, 198 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > index 590beb37f441..37c6ab217c96 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
-> >  			#size-cells = <1>;
-> >  		};
-> >  
-> > +		sdhc_1: mmc@7c4000 {
-> > +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
-> > +			reg = <0x0 0x007c4000 0x0 0x1000>,
-> > +			      <0x0 0x007c5000 0x0 0x1000>;
-> > +			reg-names = "hc",
-> > +				    "cqhci";
-> > +
-> > +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "hc_irq",
-> > +					  "pwr_irq";
-> > +
-> > +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
-> > +				 <&gcc GCC_SDCC1_APPS_CLK>,
-> > +				 <&rpmhcc RPMH_CXO_CLK>,
-> > +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
-> > +			clock-names = "iface",
-> > +				      "core",
-> > +				      "xo",
-> > +				      "ice";
-> > +
-> > +			resets = <&gcc GCC_SDCC1_BCR>;
-> > +
-> > +			power-domains = <&rpmhpd RPMHPD_CX>;
-> > +			operating-points-v2 = <&sdhc1_opp_table>;
-> > +			iommus = <&apps_smmu 0x02c0 0x0>;
-> > +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
-> > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
-> > +			interconnect-names = "sdhc-ddr",
-> > +					     "cpu-sdhc";
-> > +
-> > +			bus-width = <8>;
-> > +			qcom,dll-config = <0x000f642c>;
-> > +			qcom,ddr-config = <0x80040868>;
-> > +			supports-cqe;
-> > +			dma-coherent;
-> > +			mmc-ddr-1_8v;
-> > +			mmc-hs200-1_8v;
-> > +			mmc-hs400-1_8v;
-> > +			mmc-hs400-enhanced-strobe;
+On Fri, Nov 22, 2024 at 12:11:18AM +0100, Jiri Olsa wrote:
+> If iov_iter_zero succeeds after failed copy_from_kernel_nofault,
+> we need to reset the ret value to zero otherwise it will be returned
+> as final return value of read_kcore_iter.
 > 
-> These are properties of memory, not SoC. If the node is disabled, means
-> memory is not attached to the SoC, right?
+> This fixes objdump -d dump over /proc/kcore for me.
 > 
-> > +			status = "disabled";
-Thanks, I think qcom,dll-config and qcom,ddr-config are properties of Soc,
-they are memory configurations that need to be written to the ioaddr.
-And mmc-ddr-1_8v,mmc-hs200-1_8v,mmc-hs400-1_8v are bus speed config,
-they indicate the bus speed at which the host contoller can operate.
-If the node is disabled, which means Soc don't support these properties.
+> Cc: stable@vger.kernel.org
+> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+> Fixes: 3d5854d75e31 ("fs/proc/kcore.c: allow translation of physical memory addresses")
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  fs/proc/kcore.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+> index 51446c59388f..c82c408e573e 100644
+> --- a/fs/proc/kcore.c
+> +++ b/fs/proc/kcore.c
+> @@ -600,6 +600,7 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+>  					ret = -EFAULT;
+>  					goto out;
+>  				}
+> +				ret = 0;
+>  			/*
+>  			 * We know the bounce buffer is safe to copy from, so
+>  			 * use _copy_to_iter() directly.
 
-> 
-> 
-> ...
-> 
-> > +
-> > +		sdhc_2: mmc@8804000 {
-> > +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
-> > +			reg = <0x0 0x08804000 0x0 0x1000>;
-> > +			reg-names = "hc";
-> > +
-> > +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-> > +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
-> > +			interrupt-names = "hc_irq",
-> > +					  "pwr_irq";
-> > +
-> > +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-> > +				 <&gcc GCC_SDCC2_APPS_CLK>,
-> > +				 <&rpmhcc RPMH_CXO_CLK>;
-> > +			clock-names = "iface",
-> > +				      "core",
-> > +				      "xo";
-> > +
-> > +			power-domains = <&rpmhpd RPMHPD_CX>;
-> > +			operating-points-v2 = <&sdhc2_opp_table>;
-> > +			iommus = <&apps_smmu 0x02a0 0x0>;
-> > +			resets = <&gcc GCC_SDCC2_BCR>;
-> > +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
-> > +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-> > +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-> > +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
-> > +			interconnect-names = "sdhc-ddr",
-> > +					     "cpu-sdhc";
-> > +
-> > +			bus-width = <4>;
-> 
-> Same comments.
+Acked-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-Thanks, I think qcom,dll-config and qcom,ddr-config are properties of Soc,
-they are memory configurations that need to be written to the ioaddr.
-And mmc-ddr-1_8v,mmc-hs200-1_8v,mmc-hs400-1_8v are bus speed config,
-they indicate the bus speed at which the host controller can operate.
-If the node is disabled, which means Soc don't support these properties.
-
-
-> > +			qcom,dll-config = <0x0007642c>;
-> > +			qcom,ddr-config = <0x80040868>;
-> > +			dma-coherent;
-> > +			status = "disabled";
-> > +
-> > +			sdhc2_opp_table: opp-table {
-> > +				compatible = "operating-points-v2";
-> > +
-> > +				opp-100000000 {
-> > +					opp-hz = /bits/ 64 <100000000>;
-> > +					required-opps = <&rpmhpd_opp_low_svs>;
-> > +				};
-> > +
-> > +				opp-202000000 {
-> > +					opp-hz = /bits/ 64 <202000000>;
-> > +					required-opps = <&rpmhpd_opp_nom>;
-> > +				};
-> > +			};
-> >  		};
-> >  
-> >  		dc_noc: interconnect@9160000 {
-> 
-> 
-> Best regards,
-> Krzysztof
-
-Thanks,
-Yuanjie
+Thank you, Jiri!
 
