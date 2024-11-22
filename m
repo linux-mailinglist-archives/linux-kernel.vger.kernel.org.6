@@ -1,125 +1,99 @@
-Return-Path: <linux-kernel+bounces-417794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C229D5929
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:44:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A36D9D5927
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1E21F22E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C57D0283336
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39B315A85B;
-	Fri, 22 Nov 2024 05:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6691915ADA6;
+	Fri, 22 Nov 2024 05:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQHADYrV"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jpMFcOGV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D48230987
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC68230987;
+	Fri, 22 Nov 2024 05:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732254288; cv=none; b=Zc5E02OojMELNKyOaj2jGr0AhpKB1JACNyb+5Q1Sl6XPstGpWJfT83kZ0IV18dLsoJ1WrQLByGFfZYr47gdACIbPx5nsoDKwA3flsio6ZiW+TVklNiaCifmP7kAE3LJZprtavj+zngzmhaEdMd62bF/3W6+ChueWe1gCyn1tpBA=
+	t=1732254155; cv=none; b=kwUY87rECw4HV9erTsslwuLsoKB+wX8hrDIi9nEIJipo/A/14R3I1tVvX4PYLwtdYU1lKkwnQ9H2cgkEwDhKFLbm3xqDCelJES0/76o0NflsfI5yX4VooCm9L0vZqtQQ5pbqSEAEejeKbz2rH6Bq9aUNXA6rmKG43l/uvNwE8U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732254288; c=relaxed/simple;
-	bh=Gub5T2Df8Jz73HK7wvhBgYTBp/GDEpEZ06A04qe1jqg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUd0uUqp2mChl92xt5YAiipwusxIZpD3QhNJgRSLNqt2gBfK9JA/q2tn9pIhTQgqPAj6zsv1Ppj5NHEwZebkvxoKNu3k+BPA3IUv8TwPWpTus09fbGMCD/d4VS0nSGBgmylGmTAAR24KOeHsURj2nVkTP5Yijz+WjI6+Ia7EVy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TQHADYrV; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7e6d04f74faso1223796a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:44:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732254286; x=1732859086; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gub5T2Df8Jz73HK7wvhBgYTBp/GDEpEZ06A04qe1jqg=;
-        b=TQHADYrV0e/uQVx7kf9WyPxvI6dNcKkCBpn9jAjzpc/vnSLMIWcbk82P1do83pSbjK
-         QauiAEYGjPZ7AQmSryzI7jnZ9e+Uaa0jdCx0QQyy6AxcRJSIYJ8qbtWO4DYu+1pOYrVO
-         e4S4tzLiWAq86E3M0FJhWut4xBu0uXrCXB+J6p1jr0mcJN8OF21MpE4MG/kNh/98bE4r
-         jubS1PlWzwZHMMJW3mveo4sQP0aZqAoA+h9Y+DQZHNNsn+XI4QY8K5nGnoM133RHoSok
-         Bf0msPZNdaXDJmRvHbNI1ZT4SfdYv7gldSMPmMzUcZQQVb93aoxzuljeYwf51zJubagO
-         XyOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732254286; x=1732859086;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gub5T2Df8Jz73HK7wvhBgYTBp/GDEpEZ06A04qe1jqg=;
-        b=U5MyPhalmznS1BuvQW6mRR+lTaV0DTdwgSz3+f5b1zOp2fL88BmPXaklttj3gSdBG1
-         8fu7JAHNyQtCMgAPwDOvcvi/aTjm5E28QqtgGVEQkufH68cOihFi4sGBjAy/MqAg65qI
-         zpjSw1iDsoKwy0p6JKgW70tczFwFS7/mCvZWbR5u/Nk0EOLOaSBcIM0tcsFXWyq/nF0u
-         nl8JKVSobsP2AuLTdfWWZVgeyM5OMOjgqwZKG5mnZ954DhZ48jEcSJrjmeNgf6FgrWDI
-         dcIc9szUC7a2pVunMofvTFhp7afZjth8Vyb1EXCn3JvPY0HkecVLgWvNnqLOi7pmMFQd
-         Sc4g==
-X-Forwarded-Encrypted: i=1; AJvYcCW4keXLztCANBAazFb1CbBf6ihySI6jP+Sujw0KlradNQYKBq8X/Nd/ObD/y9Tt76YhqTAq++2FGcMlPkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp6XMxQ/2ROjrWaZYGwHbg+LnfKPpay7HALFff6+cVhobSBJNj
-	5WX8IZ3Zw4p/sbsvPVguaF24Zq7Xo7YH55s83Iq94OwlwNCC3AG4W4etGlBEAdpmiXQdKY04SyR
-	P8OFw3yhaj/mCdhAlVosBMMC5RAU=
-X-Gm-Gg: ASbGncuuCvm6Yl1Yxno5gGaoiIjM0494Jamtq1Ewn7d4urIMY+3k/pHuyqL4tqTDg2k
-	JsAocxkGmaRB++630s7XrJmtuM3wAP20=
-X-Google-Smtp-Source: AGHT+IEi3BM1B7tXNp8c3gLvKjDnthIxWhH9+DjzuchJxWnz7JATjUyFqjUmeNr8DreiO/n+QR7VjOlV8fejYPo8B/8=
-X-Received: by 2002:a17:90b:1b49:b0:2eb:140d:f6c5 with SMTP id
- 98e67ed59e1d1-2eb140dfdfcmr1588370a91.4.1732254286078; Thu, 21 Nov 2024
- 21:44:46 -0800 (PST)
+	s=arc-20240116; t=1732254155; c=relaxed/simple;
+	bh=NWopFJbUd56WuHEPeK22+c6oGsR2DCkaOH6RGADlLcA=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=BrikjoWxn/wFVdm9knf5nUuYYjGoNbwikgVcmxa5TlvPKEka4EvVx7tyQFOqV+DbUV5Cs9xecBhLtddJwS9DUuuRyGdOIXtQLrdvlONVnhxt22URPZLEXEr3FHDQFebH6HMbBJG1RyHiRJ4B/XHngDRphFUub8C1/RlODyCz9sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jpMFcOGV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BFE5C4CECE;
+	Fri, 22 Nov 2024 05:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732254155;
+	bh=NWopFJbUd56WuHEPeK22+c6oGsR2DCkaOH6RGADlLcA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jpMFcOGV2Xxj5FeCYuQc8wblX63XQFm8f5ScmcNMYhyFCQ8RKRRGIUmaPiYGf0caU
+	 Uuo+uFDu+gnhAPBh+ftWjk7yOXWoJ9dG8vtqYz9nvZUyq6sLIyCy3DbjnOEaHKuFjc
+	 pafWiWkW564hP4cMIIOBO4tEuiW8z+O7jo/wjMk0=
+Date: Thu, 21 Nov 2024 21:42:29 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] MM updates for 6.13-rc1
+Message-Id: <20241121214229.8fe091954f9bf0d26f54ed88@linux-foundation.org>
+In-Reply-To: <ZzwVo0ZbuG37pHdR@casper.infradead.org>
+References: <20241118193001.6aefcadd7426feafedf824e1@linux-foundation.org>
+	<ZzwVo0ZbuG37pHdR@casper.infradead.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241114023528.181583-1-linchengming884@gmail.com>
- <20241114023528.181583-3-linchengming884@gmail.com> <87serozv8y.fsf@bootlin.com>
-In-Reply-To: <87serozv8y.fsf@bootlin.com>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Fri, 22 Nov 2024 13:42:24 +0800
-Message-ID: <CAAyq3SZTiOabjw1E61nu2AX+zJgWxvgijrgamH9ESEPekZ+43w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mtd: spi-nand: macronix: Add support for read retry
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
-	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Miquel,
+On Tue, 19 Nov 2024 04:35:47 +0000 Matthew Wilcox <willy@infradead.org> wrote:
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B411=E6=9C=
-=8818=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=886:33=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> On 14/11/2024 at 10:35:28 +08, Cheng Ming Lin <linchengming884@gmail.com>=
- wrote:
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > Add function for supporting read retry:
->
-> Add read retry support.
->
-> > - Set feature on Special Read for Data Recovery register.
->
-> I am sorry this sentence is unclear. Plus there is only a single '-'
-> which is strange for a list.
->
+> On Mon, Nov 18, 2024 at 07:30:01PM -0800, Andrew Morton wrote:
+> > Matthew Wilcox (Oracle) (13):
+> >       ksm: use a folio in try_to_merge_one_page()
+> >       ksm: convert cmp_and_merge_page() to use a folio
+> 
+> Unfortunately you left the crap patch in from Gaosheng.  Linus, can you
+> apply this fixup?
+> 
+> >From 3d7e7319bbb3ced1dfb9c82bb7e8c7386380799b Mon Sep 17 00:00:00 2001
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Date: Mon, 18 Nov 2024 23:32:25 -0500
+> Subject: [PATCH] mm: Revert IS_ERR_OR_NULL check
+> 
+> &foo->bar is address arithmetic, not a dereference of foo.
+> Huawei engineers seem particularly prone to not knowing this.
 
-Sorry about this. I'll revise it to make the change log clearer.
+It isn't only Huawai people.  David acked Gaosheng's patch and it snuck
+past me (again).  People keep on getting tricked by this idiom and I
+think we'd be better off with some nicely named wrapper to help
+readers understand what's going on.
 
-> >
-> > The Special Read for Data Recovery operation is enabled by
-> > Set Feature function.
-> >
-> > There are 6 modes for the user to recover the lost data.
-> >
-> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
->
-> Thanks,
-> Miqu=C3=A8l
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -2261,8 +2261,7 @@ static void cmp_and_merge_page(struct page *page, struct ksm_rmap_item *rmap_ite
+>  
+>  	/* Start by searching for the folio in the stable tree */
+>  	kfolio = stable_tree_search(page);
+> -	if (!IS_ERR_OR_NULL(kfolio) && &kfolio->page == page &&
+> -	    rmap_item->head == stable_node) {
+> +	if (&kfolio->page == page && rmap_item->head == stable_node) {
+>  		folio_put(kfolio);
+>  		return;
+>  	}
 
-Thanks,
-Cheng Ming Lin
+Linus has already asked us to avoid this "funky sh*t":
+
+https://lkml.kernel.org/r/CAHk-=wicaWSn3JLwpexH=gu1HoHWpecyWoLYBwD3qPd0-t9aJA@mail.gmail.com
 
