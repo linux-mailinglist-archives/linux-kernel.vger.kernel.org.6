@@ -1,151 +1,111 @@
-Return-Path: <linux-kernel+bounces-418579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5799D632F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:33:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B019D6334
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:34:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D0B42825BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:33:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB776B22B37
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5191DEFFC;
-	Fri, 22 Nov 2024 17:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8761DF742;
+	Fri, 22 Nov 2024 17:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gag+zZQK"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CzKMkrcE"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9B0148FE8
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6431C9DD8;
+	Fri, 22 Nov 2024 17:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732296826; cv=none; b=qkwzM0VYMLSa/B8nYF5kOstOjeGUX77QoLtCBpoMiWXet0k8/NOt6VqJZaryjivFvzC7ylwB0sVn/staZUvpts78Stra7BuSle94d8D2dx/FbBRmNlPuUq6v+OSKnhlC/m5ZZUB3gkrnqQEskh9LYTG5m+wqQSHsoUk4CdePQck=
+	t=1732296845; cv=none; b=pu5paN+J5r73CHZqbsQbyP32SLUqrXnYiQQ0PqTWsau+oqiMjOrcE2cooyD3/gutLvOAye48DRtACV1TtU6EJxqDE8uC8QrcZFdKdgbmQLeU+N66z0NKXHxwGZRraa8biCReNxmBaWgDw5ciE09sqAIgr8IvilwGvbt6qlhVEas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732296826; c=relaxed/simple;
-	bh=hJgfwHn/pGPnOwbXVXypFdwAMvKrXZT6qGDoUkHGv5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dnaaBnTGxiiKn8e0V4Fo7eMFM0rgT0Kj/EaBkFyCgWAHFYeDJB64rYM/zXxrD+c3iCxS9wMT1HFhZmMrGuL2YeCvnUImBM2GCkoj5kK+NUpRv+3TD+Hxvs2OzAttXe1IfVDorYJLc0hINC9xjRujlq8NOzrVn72a169SQusMJqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gag+zZQK; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f2b95775so3575280e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:33:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1732296822; x=1732901622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJgfwHn/pGPnOwbXVXypFdwAMvKrXZT6qGDoUkHGv5g=;
-        b=gag+zZQK/Np9jmaVUx/qi47ROz/ZURIABLsO0QdLU4uwwnQrZhkr59aHxRJx9NjuU9
-         lkCsa5aLfSONCWAz/fghiE3vkIlHBi1GtqYvfd1axbKin5TGrxBonlkzl7YyU6sIOAuo
-         Kqepijt2MYCcVUFLteuAVEkvxGFtlKLLZa+PZjkxto1taS88JiF6rb+OxHF+9F540k4h
-         rZxfNGJHkXhSPlFLcZ/AXG8fmrXheavf+kg3mREQnxVqkIPg+Hfyjuw93X88Lv4aAEPI
-         2z0O2nbvPvCP1gHdn8CO8gwe8ScLfn37xToztGezBYkngg2l7LHOdkyWicDCvVolG5gj
-         uPkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732296822; x=1732901622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hJgfwHn/pGPnOwbXVXypFdwAMvKrXZT6qGDoUkHGv5g=;
-        b=SO2gDjRR1W8p/xxbSkcpZKnM2goPwYPdFtxiJSGs6tQlq77BpYLDJzNmucQhkN62Nu
-         EdLuPQ1BKOavXsTuZuKj1iTmp6YbMYMCmptgO3Pg4z7oNOmqnNyPSkTsB+tVgO/QVJrW
-         Ix30z/3IRtuIPHqMBA7kT4SHNn3yDWPI2ZqUZmAjU2ML/vbeBVEO3+PjO8AfG1/h0Hht
-         Hy0COVLPpDE6Ea7u3ZsRkl3fgSaaZErLcvhaOGkm0ZiUFmkpuzi+KkpObHQj3q/t1wsu
-         ONq8LryiRRKGk5+SRWTEfM5GviG3fPRPOkP8OTtqYKtUUrWVjQFxBz74BJYCfQ7fg3Qk
-         UFKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVX8px39bbkCu0z9V9PsOwCVqwWqtLzNAFrq3fPhkVipdd8oBypG8BvfnjFyNsi9InASOzo4pArqLHrYVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLimWkMaCDIf1m8ktVk67HYLjcEl7txOL39kntlq9XGbJARgQA
-	/1gTzfxNMk5vXPriyNsR7Mf5oaLFU5PP/xDNvT7jvpXvDrj8oS24xUvS1vGO4ZF2Y3U2g2nB2Wz
-	7Kzz30E7W4qZFHsF2x6LCvVJOQFT4iLuJCwNd1yVCKHLcR+ZVTypY0Q==
-X-Gm-Gg: ASbGncuGoteTQB8OH7xiKncEJhcQdu31Sc71cE3HzCZ1sXqmlUZoBx1gvGrGGrmOXcB
-	5qI99Voz4DMkcKGZECOAOEFyWtTsBjw==
-X-Google-Smtp-Source: AGHT+IERUtE7r6Bqkcln60OV9pXaIcD3cIqRGQlmhEr1EVe+nHDe5RTS7QaE3mWvb7ATZjzgv551surinvh9uqnPb4Q=
-X-Received: by 2002:a05:6512:230b:b0:539:f10b:ff97 with SMTP id
- 2adb3069b0e04-53dd39b4c39mr2976675e87.49.1732296821897; Fri, 22 Nov 2024
- 09:33:41 -0800 (PST)
+	s=arc-20240116; t=1732296845; c=relaxed/simple;
+	bh=2sHi/a+0wuB3fqVGPacRh7HtzqPdmGXg+wZjiwrdo48=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H8dnZqHRoecrnuoD1E6VjqkqJ+uzhtgv9HjQpPd5XWNvot1T/u/R2HleacFArLtaOvYkLniWQP1gJkhz1lwgPS7GkHxr3sc0ric0EjY6Mm1om8kb/WJWNheGFDlYTqMqkVLHE2Sn7XdsEhsVfRZCM2zW46SHS0Mws+9RvXVf7JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CzKMkrcE; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net EAE50403E9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1732296842; bh=mGnMSq8J7sgcF7jpZFZz2wdJr2vNucWms4i6GJBNlr4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CzKMkrcEB78tvbB+uNDHs6JKg5GQNVTEx1w2hx/9rV/OF9s318qZQFEzh5gEJ1i9J
+	 xeeISVRGAI/t9weGAbhP0Ih4vdiWsI3OQNtbv0PkabR36nFYYTZ3min3X8noudj0er
+	 E6wUPzaqmsNXvCisyLpCCgBExaBQ5BE6+X9TRVCF1ni2m5m3VD4HepkXeIfPZKagFu
+	 m4o+GWOf7ONpauAy6knmowpDQ/PF/cpFzMTK1GSnykkxdAe0kD2J4iS2vkLZWOoDFR
+	 eS1M66WYy2smr9XGJe+QJTZsrtUuHRsM8vMPeWwOBngiBaD9BgG+/2AStIeM1oC8tk
+	 4KHMwCrcC+tKg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id EAE50403E9;
+	Fri, 22 Nov 2024 17:34:01 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-doc@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, Ian Kent <raven@themaw.net>,
+ autofs@vger.kernel.org, Alexander Aring <aahringo@redhat.com>, David
+ Teigland <teigland@redhat.com>, gfs2@lists.linux.dev, Eric Biggers
+ <ebiggers@kernel.org>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+ fsverity@lists.linux.dev, Mark Fasheh <mark@fasheh.com>, Joel Becker
+ <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
+ ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH] Documentation: filesystems: update filename extensions
+In-Reply-To: <20241120055246.158368-1-rdunlap@infradead.org>
+References: <20241120055246.158368-1-rdunlap@infradead.org>
+Date: Fri, 22 Nov 2024 10:34:01 -0700
+Message-ID: <874j3z41h2.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122152856.3533625-1-neelx@suse.com> <20241122154253.GZ24774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241122154253.GZ24774@noisy.programming.kicks-ass.net>
-From: Daniel Vacek <neelx@suse.com>
-Date: Fri, 22 Nov 2024 18:33:31 +0100
-Message-ID: <CAPjX3FfDTdUvMCDJCP8tAeNeaYSWj9mSsrMmE=VP0kWAdJTSVQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: properly serialize the cfs_rq h_load calculation
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Nov 22, 2024 at 4:42=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
+Randy Dunlap <rdunlap@infradead.org> writes:
+
+> Update references to most txt files to rst files.
+> Update one reference to an md file to a rst file.
+> Update one file path to its current location.
 >
-> On Fri, Nov 22, 2024 at 04:28:55PM +0100, Daniel Vacek wrote:
-> > Make sure the given cfs_rq's h_load is always correctly updated. This
-> > prevents a race between more CPUs eventually updating the same hierarch=
-y
-> > of h_load_next return pointers.
->
-> Is there an actual problem observed?
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: linux-doc@vger.kernel.org
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Ian Kent <raven@themaw.net>
+> Cc: autofs@vger.kernel.org
+> Cc: Alexander Aring <aahringo@redhat.com>
+> Cc: David Teigland <teigland@redhat.com>
+> Cc: gfs2@lists.linux.dev
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Cc: Theodore Y. Ts'o <tytso@mit.edu>
+> Cc: fsverity@lists.linux.dev
+> Cc: Mark Fasheh <mark@fasheh.com>
+> Cc: Joel Becker <jlbec@evilplan.org>
+> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+> Cc: ocfs2-devel@lists.linux.dev
+> ---
+>  Documentation/filesystems/autofs.rst                 |    2 +-
+>  Documentation/filesystems/dlmfs.rst                  |    2 +-
+>  Documentation/filesystems/fsverity.rst               |    2 +-
+>  Documentation/filesystems/path-lookup.rst            |    2 +-
+>  Documentation/filesystems/path-lookup.txt            |    2 +-
+>  Documentation/filesystems/ramfs-rootfs-initramfs.rst |    2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
 
-Well, that depends. Do we care about correct (exact) load calculation
-every time?
-If it's not a big deal we may just drop this patch.
-I am not sure what (if any real) problems this can cause. I did not
-observe any I'm aware of. Actually I should have labeled this [RFC],
-but I forgot :-/
+Applied, thanks.
 
-This is being called from `try_to_wake_up` =3D> `select_task_rq_fair`.
-If two (or more) CPUs race to wake up =3D> `task_h_load()` *different*
-tasks on the same rq (I mean the same target CPU), they may get a
-wrong result if the tasks are in different cgroups. Well, wrong in a
-sense the `cfs_rq->h_load` may not be up to date and the old, former
-value is used for all but one of the racing cgroups (cfs_rqs).
-
-I could detect the race collisions almost every minute on my lightly
-loaded laptop (using bpftrace which admittedly opened the window a
-bit, but for sure it can happen). Though I am not sure if it's a big
-deal?
-The `cfs_rq->h_load` will get updated the next time when the race does
-not happen again. So very likely right the next time.
-And we may be pretty fine eventually using the old value from time to
-time. The question is are we fine with that or are we not? I guess we
-are and this patch can be dropped, right?
-
-It almost looks like the function is specifically designed this way as
-we really do not care about unlikely failures because the worst can
-happen is a bit older value is kept in `h_load`. It may not be even
-that different to the correct value I guess and it will (most)
-definitely get fixed/updated the next time.
-
-If that is really the intention of the current design, let's just drop
-this patch.
-
-I understand that this is adding another lock into the scheduler which
-is always to be well considered. But on the other hand the race is
-limited to once per jiffy for a given CPU otherwise the condition
-bails out early. By the nature of this race the contention should be
-unlikely most of the time. With that respect I was considering just
-using the rq lock, but using a dedicated one actually looked simpler
-to me after all. Also the scope of the lock is clear this way. It
-serves only this one purpose. Which we may not need or do not care
-about after all.
-
-Hence I'm wondering what is your opinion with regards to this?
-Would we benefit from guaranteed correct calculation every time in
-exchange for a little overhead?
-Perhaps, can you suggest a stress test or benchmark or any workload
-which heavily exercises task wake ups so that I can try to quantify
-the added overhead?
-
---nX
+jon
 
