@@ -1,189 +1,207 @@
-Return-Path: <linux-kernel+bounces-417779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B60679D58F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:52:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 056999D58FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:54:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA8EB2344F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:52:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51782B21147
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933E11547D4;
-	Fri, 22 Nov 2024 04:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF391632E5;
+	Fri, 22 Nov 2024 04:54:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkju08tl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b="a3v2yKpV"
+Received: from mx0b-00007101.pphosted.com (mx0b-00007101.pphosted.com [148.163.139.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496970821
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9552309A3;
+	Fri, 22 Nov 2024 04:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732251076; cv=none; b=qsAvpsn+kFqU57zEUyg756oa+VdiiCfOD1v5pher3tY7ktOjf/rljbI3mFsbc18gh+Z9JC+t8pBwtOrTERtsYamNhnpLlR/Dnh8AqKUk4pL2i0br9gVsSA0k5fAiFb9OqXu/47l6fzGIMytmmjcS7opDhwsE+ege/qsgujrLrAA=
+	t=1732251243; cv=none; b=mpAwPVqavjmXrN+Vw7vg/62ZNixvq47GN2HiJzuIk9eSG6TCADVXAVvYe929u6+eWqYq17DFHSkAKmGqs4UP/qh39fK/f27faEH8HewBOMB0iWfbU02iKPbEN0SGLAlKU8mW6rauMg9+2D3eQsTE+Qir/W2QUr1pB55C4qpa+9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732251076; c=relaxed/simple;
-	bh=jDw8VJdK7HsUxsxLYkcsqkJWumi7DFGQUIlQD9fGSiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ONEC8aBqLWZuSXx4vO+B+356B0tKn9+Higc01VVDjAG1j64ZbrFsHI09EPyC8CLh4sNCrvALv9uRBIUxKEKYSSlPfpU4B6X9l8ijZZIZj9JrCHEb1JSr/Y4My/bFi13A10Kfjc6U2ZOHGIpcpjzgOg1FMMNDsLfg/x5NHU0Jy8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fkju08tl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732251073;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=elmcLeOJm+mDVlXoOKcPt5H9RufxPwtwG8/LNNuQMh4=;
-	b=fkju08tlLs4UxpGA2Xbbp07Ioa0M+vN5am52bnxGSTb6fhfZ71xP5teYttNcjM8HDGCLL0
-	4Euc6Hts5VS50SaACIyNbeiJw0xsSstf8N2mqX69K1mtExJN/RUxrfR7a/MApQRQAcKs1b
-	GOZKiyGCkx1+PLuz19iLZJbeE7AnYyo=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-FjCl3_-0NmyDLOArssve5g-1; Thu, 21 Nov 2024 23:51:11 -0500
-X-MC-Unique: FjCl3_-0NmyDLOArssve5g-1
-X-Mimecast-MFC-AGG-ID: FjCl3_-0NmyDLOArssve5g
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21147fea103so21489095ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:51:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732251070; x=1732855870;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=elmcLeOJm+mDVlXoOKcPt5H9RufxPwtwG8/LNNuQMh4=;
-        b=oJk16rzTQ1wLWJD/AaS5zfIT0P7KWHkTKYjAIMGP4JZO7WBFIeyJ9zto3CrR1BsbQ0
-         6wHGvug3cVmwStFHgbVCOQ3yWFN1ZrdPdPrMh25ZgYeUdoqXeHFsmdH/swg0nqHAf0au
-         fSRBVUKn6lgkzVUp+fQsD9T/L64hPiUfKRCis5Ii0nVpnEZQjGdjSECgkTm/UiMxDTvB
-         AvXEj03hVo41k8cCUHJKXTDSsYfthaJMySXco8aLd/Py6GYRoQoaevEssMRZOtfhKsBE
-         p3ayWNOGrbtgfbt3PbSRp4JtoNex6EWXx91cZqWHhbkozSnm7znE3l0QcGcOs2dmeHXQ
-         8oQA==
-X-Gm-Message-State: AOJu0YzjqPCyJm94e2+y95+U7qjUwPCNLUy9kkuONRdc2DhiKAYXnTCv
-	O7U7k3TfuCYUZ6YXYqYoVr2ULjka9Ik4UTE7S31clgqhbvuNo8bv9kU9PnCsyZHjp3JxjHOT9hh
-	R5TIMJNhOiG9+SZ9VrgiMbGOBY9fS0iyy8T74Yz4TZ6PDBLwKa44QGJgJ/VFJzG+slgUXCZym
-X-Gm-Gg: ASbGncvwD5FdUzfB4CwtSMXy6YTVune5HmpHMRvRE5ycAi2Y9MeCfjcaZUEeMa8W8eQ
-	bpUACJsToDogxlm0olfXz43dreX8OhsrPi2vgBU08q9hu4RO4VBshrMUjtMdXzBz62hS5uApIay
-	endsmirh/9ekC6mESwmOoBGGuT+7FrLUEEQWXk+vFf4RLTq019lENSKbyBFJlqfLpJjZqInGc6o
-	M5quhqPc1OEtnPQ9xWoFbDdwRKAoqXdcubBS85MxDUnQrQNTTR8pW4ZTPsO+FSBOkzGjzjL5Pkc
-	Vn/LRv/RjsRaSmo=
-X-Received: by 2002:a17:902:c941:b0:20b:5231:cd61 with SMTP id d9443c01a7336-2129f69b854mr22674835ad.24.1732251070479;
-        Thu, 21 Nov 2024 20:51:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHBJ1BtUcuXXUDQhFQr7YmLqB9vBuzW4fZgWvFNsJCyj+YfStMRgSAXhC2TW5WeP5odlF6x7Q==
-X-Received: by 2002:a17:902:c941:b0:20b:5231:cd61 with SMTP id d9443c01a7336-2129f69b854mr22674655ad.24.1732251070090;
-        Thu, 21 Nov 2024 20:51:10 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfa834sm6870955ad.117.2024.11.21.20.51.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 20:51:09 -0800 (PST)
-Date: Fri, 22 Nov 2024 12:51:06 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [Bug report] kernel BUG at include/linux/scatterlist.h
-Message-ID: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+	s=arc-20240116; t=1732251243; c=relaxed/simple;
+	bh=GMaHCGleSOQxiJxTHlVL9PaaVm7nxmdgWbSaE90XeM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJq7Bt8kX9fXrv40uuE76Rg3yfa1+2xrgUN66bQ/gEto4YbN7qBjPWp5cHVSrgKU2DiNtu14zHixlv3JnWjg419YArly5QT/3AUs2EyuLEB1uzBqLK/q9VzZL7hhmldtxCkgDWNwAr8ViuEc3/CN19wxbCbYHWPxs0qXTvnqxe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu; spf=pass smtp.mailfrom=illinois.edu; dkim=pass (2048-bit key) header.d=illinois.edu header.i=@illinois.edu header.b=a3v2yKpV; arc=none smtp.client-ip=148.163.139.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=illinois.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=illinois.edu
+Received: from pps.filterd (m0166260.ppops.net [127.0.0.1])
+	by mx0b-00007101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM3wiai015054;
+	Fri, 22 Nov 2024 04:53:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=illinois.edu; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=campusrelays; bh=M6/FufPVvCmmC25b8oENqCCuZgyvk0Xk
+	1/pLeLp70m8=; b=a3v2yKpVbfJRf9QirliCD5jV0Ge0Gf71BLjhmrUohzCGzI8k
+	1fI/vqo5NHCzIfR0YdSBN6RrHg9nhIuiOAwiCzX28qUIlQDSd5QiQefhi219AXea
+	fZsEltVzOX4Btck+3g0pRmWJWZuaecJ98T2X9Fh7EPV2/EGdL0U7bHzefAWT6MO3
+	65a4LlG8xqj2tp1yhYJy+wq4GWRGb8x8Yt3f0y2empQWUoOU5gDchto/kDYgUNp/
+	5L/Db29XyEnKBSYH/KxOKlDWiX1QjGAZ5EDwglZQrxBXWXL1hfVzhrU+s740W9vB
+	+Ho2Q8kCoOaFbT07mjpGMvHqV4mgytf3lZ6+RQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTPS id 431yuy8mq8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 22 Nov 2024 04:53:10 +0000 (GMT)
+Received: from m0166260.ppops.net (m0166260.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AM4mFUk019718;
+	Fri, 22 Nov 2024 04:53:10 GMT
+Received: from localhost.localdomain (oasis.cs.illinois.edu [130.126.137.13])
+	by mx0b-00007101.pphosted.com (PPS) with ESMTP id 431yuy8mq5-1;
+	Fri, 22 Nov 2024 04:53:10 +0000 (GMT)
+From: Jinghao Jia <jinghao7@illinois.edu>
+To: Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>
+Cc: netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Jinghao Jia <jinghao7@illinois.edu>, kernel test robot <lkp@intel.com>,
+        Ruowen Qin <ruqin@redhat.com>
+Subject: [PATCH v2 net] ipvs: fix UB due to uninitialized stack access in ip_vs_protocol_init()
+Date: Thu, 21 Nov 2024 22:52:57 -0600
+Message-ID: <20241122045257.27452-1-jinghao7@illinois.edu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: dEH4go68XiYNgMywoM7tnrJZfxVJfS1U
+X-Proofpoint-GUID: eGPE2fUII21SyMbkJ8sFtdJoeo6eqYU_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+X-Spam-Details: rule=cautious_plus_nq_notspam policy=cautious_plus_nq score=0 bulkscore=0
+ phishscore=0 lowpriorityscore=0 mlxlogscore=999 malwarescore=0
+ impostorscore=0 suspectscore=0 spamscore=0 priorityscore=1501 mlxscore=0
+ clxscore=1015 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220039
+X-Spam-Score: 0
+X-Spam-OrigSender: jinghao7@illinois.edu
+X-Spam-Bar: 
 
-Hi,
+Under certain kernel configurations when building with Clang/LLVM, the
+compiler does not generate a return or jump as the terminator
+instruction for ip_vs_protocol_init(), triggering the following objtool
+warning during build time:
 
-I hit a kernel panic on aarch64 several times recently, when I tried to do a
-fstests test. It's not related with fstests, due to I hit it when I boot the
-latest mainline linux kernel (HEAD=fc39fb56917bb3cb53e99560ca3612a84456ada2).
+  vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
 
-The console log looks like related with crypto things, I'm not familar with
-it, so just send this email to linux-crypto@ and cc linux-kernel@.
+At runtime, this either causes an oops when trying to load the ipvs
+module or a boot-time panic if ipvs is built-in. This same issue has
+been reported by the Intel kernel test robot previously.
 
-I hit this panic several times, I did nothing except building and installing
-the latest kernel and then boot it, then it crash directly on booting time.
-Looks like crash from:
+Digging deeper into both LLVM and the kernel code reveals this to be a
+undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
+of 64 chars to store the registered protocol names and leaves it
+uninitialized after definition. The function calls strnlen() when
+concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
+strnlen() performs an extra step to check whether the last byte of the
+input char buffer is a null character (commit 3009f891bb9f ("fortify:
+Allow strlen() and strnlen() to pass compile-time known lengths")).
+This, together with possibly other configurations, cause the following
+IR to be generated:
 
-       183 static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
-       184                               unsigned int buflen)
-       185 {
-       186 #ifdef CONFIG_DEBUG_SG
-==>    187         BUG_ON(!virt_addr_valid(buf));
-       188 #endif
-       189         sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
-       190 }
+  define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
+    %1 = alloca [64 x i8], align 16
+    ...
 
-If someone need, I can provide the big linux/.config file.
+  14:                                               ; preds = %11
+    %15 = getelementptr inbounds i8, ptr %1, i64 63
+    %16 = load i8, ptr %15, align 1
+    %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
+    %18 = icmp eq i8 %16, 0
+    %19 = select i1 %17, i1 %18, i1 false
+    br i1 %19, label %20, label %23
 
-Thanks,
-Zorro
+  20:                                               ; preds = %14
+    %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
+    ...
 
+  23:                                               ; preds = %14, %11, %20
+    %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
+    ...
+  }
 
-[1]
-...
-[    7.313015] registered taskstats version 1 
-[    7.320132] Loading compiled-in X.509 certificates 
-[    7.347635] Loaded X.509 cert 'Build time autogenerated kernel key: ed2b2ec16b583dda991830c146172ef4fd4cd1cf' 
-[    7.522429] Demotion targets for Node 0: null 
-[    7.523941] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers 
-[    7.530102] page_owner is disabled 
-[    7.532083] Key type .fscrypt registered 
-[    7.533070] Key type fscrypt-provisioning registered 
-[    7.535734] Key type big_key registered 
-[    7.539305] Key type encrypted registered 
-[    7.541143] ima: secureboot mode disabled 
-[    7.542177] ima: No TPM chip found, activating TPM-bypass! 
-[    7.543508] Loading compiled-in module X.509 certificates 
-[    7.546783] Loaded X.509 cert 'Build time autogenerated kernel key: ed2b2ec16b583dda991830c146172ef4fd4cd1cf' 
-[    7.549427] ima: Allocated hash algorithm: sha256 
-[    7.550827] ima: No architecture policies found 
-[    7.552706] evm: Initialising EVM extended attributes: 
-[    7.554011] evm: security.selinux 
-[    7.554842] evm: security.SMACK64 (disabled) 
-[    7.555877] evm: security.SMACK64EXEC (disabled) 
-[    7.557025] evm: security.SMACK64TRANSMUTE (disabled) 
-[    7.558367] evm: security.SMACK64MMAP (disabled) 
-[    7.559696] evm: security.apparmor (disabled) 
-[    7.560726] evm: security.ima 
-[    7.561451] evm: security.capability 
-[    7.562297] evm: HMAC attrs: 0x1 
-[    7.631769] Running certificate verification RSA selftest 
-[    7.652546] ------------[ cut here ]------------ 
-[    7.653656] kernel BUG at include/linux/scatterlist.h:187! 
-[    7.654975] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP 
-[    7.656386] Modules linked in: 
-[    7.657104] CPU: 3 UID: 0 PID: 176 Comm: cryptomgr_test Not tainted 6.12.0+ #1 
-[    7.658822] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015 
-[    7.660575] pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--) 
-[    7.662385] pc : sg_init_one+0x124/0x150 
-[    7.663401] lr : sg_init_one+0x34/0x150 
-[    7.664380] sp : ffff800083e87950 
-[    7.665240] x29: ffff800083e87950 x28: 0000000000000048 x27: ffff3fc6f3aabc00 
-[    7.667078] x26: ffff3fc6f3aabc48 x25: ffff800083e87a60 x24: 1fffe7f8de689885 
-[    7.668895] x23: ffffb3207fb10fe0 x22: 0000000000000100 x21: ffffb3207fb7d880 
-[    7.670774] x20: ffff800083e87a20 x19: 0000b3207fb7d880 x18: 0000000000000000 
-[    7.672568] x17: ffffb3207de83630 x16: ffffb3207de8306c x15: ffffb3207de78cb0 
-[    7.674370] x14: ffffb3207d916474 x13: ffffb3207cf38c70 x12: ffff7000107d0f48 
-[    7.676156] x11: 1ffff000107d0f47 x10: ffff7000107d0f47 x9 : dfff800000000000 
-[    7.677939] x8 : ffff800083e87a40 x7 : 0000000000000000 x6 : 0000000000000004 
-[    7.679738] x5 : ffff800083e87a20 x4 : 0000000000000000 x3 : 1ffff000107d0f44 
-[    7.681515] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000600000000000 
-[    7.683305] Call trace: 
-[    7.683926]  sg_init_one+0x124/0x150 (P) 
-[    7.684919]  sg_init_one+0x34/0x150 (L) 
-[    7.685890]  rsassa_pkcs1_verify+0x288/0x980 
-[    7.686976]  test_sig_one+0x344/0x848 
-[    7.687916]  alg_test_sig+0xc0/0x168 
-[    7.688859]  alg_test+0x2e0/0xd58 
-[    7.689715]  cryptomgr_test+0x58/0x88 
-[    7.690702]  kthread+0x270/0x2f8 
-[    7.691542]  ret_from_fork+0x10/0x20 
-[    7.692470] Code: a8c47bfd d50323bf d65f03c0 d4210000 (d4210000)  
-[    7.694042] ---[ end trace 0000000000000000 ]--- 
-[    7.695246] Kernel panic - not syncing: Oops - BUG: Fatal exception 
-[    7.696819] SMP: stopping secondary CPUs 
-[    7.697868] Kernel Offset: 0x331ffcf20000 from 0xffff800080000000 
-[    7.699457] PHYS_OFFSET: 0xffffc03ac0000000 
-[    7.700505] CPU features: 0x00,40000045,00801240,82004203 
-[    7.701867] Memory Limit: none 
-[    7.702637] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]--- 
+The above code calculates the address of the last char in the buffer
+(value %15) and then loads from it (value %16). Because the buffer is
+never initialized, the LLVM GVN pass marks value %16 as undefined:
+
+  %13 = getelementptr inbounds i8, ptr %1, i64 63
+  br i1 undef, label %14, label %17
+
+This gives later passes (SCCP, in particular) more DCE opportunities by
+propagating the undef value further, and eventually removes everything
+after the load on the uninitialized stack location:
+
+  define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
+    %1 = alloca [64 x i8], align 16
+    ...
+
+  12:                                               ; preds = %11
+    %13 = getelementptr inbounds i8, ptr %1, i64 63
+    unreachable
+  }
+
+In this way, the generated native code will just fall through to the
+next function, as LLVM does not generate any code for the unreachable IR
+instruction and leaves the function without a terminator.
+
+Zero the on-stack buffer to avoid this possible UB.
+
+Changelog:
+---
+v1 -> v2:
+v1: https://lore.kernel.org/lkml/20241111065105.82431-1-jinghao7@illinois.edu/
+* Fix small error in commit message
+* Address Julian's feedback:
+  * Make this patch target the net tree rather than net-next
+  * Add a "Fixes" tag for the initial git commit
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
+Co-developed-by: Ruowen Qin <ruqin@redhat.com>
+Signed-off-by: Ruowen Qin <ruqin@redhat.com>
+Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
+---
+ net/netfilter/ipvs/ip_vs_proto.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/net/netfilter/ipvs/ip_vs_proto.c b/net/netfilter/ipvs/ip_vs_proto.c
+index f100da4ba3bc..a9fd1d3fc2cb 100644
+--- a/net/netfilter/ipvs/ip_vs_proto.c
++++ b/net/netfilter/ipvs/ip_vs_proto.c
+@@ -340,7 +340,7 @@ void __net_exit ip_vs_protocol_net_cleanup(struct netns_ipvs *ipvs)
+ 
+ int __init ip_vs_protocol_init(void)
+ {
+-	char protocols[64];
++	char protocols[64] = { 0 };
+ #define REGISTER_PROTOCOL(p)			\
+ 	do {					\
+ 		register_ip_vs_protocol(p);	\
+@@ -348,8 +348,6 @@ int __init ip_vs_protocol_init(void)
+ 		strcat(protocols, (p)->name);	\
+ 	} while (0)
+ 
+-	protocols[0] = '\0';
+-	protocols[2] = '\0';
+ #ifdef CONFIG_IP_VS_PROTO_TCP
+ 	REGISTER_PROTOCOL(&ip_vs_protocol_tcp);
+ #endif
+-- 
+2.47.0
 
 
