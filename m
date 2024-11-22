@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-418243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1289D5F39
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2479D5F3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:48:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B27D9B2703D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:48:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A2DA1F23842
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388721DE4C4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31971DE8A5;
 	Fri, 22 Nov 2024 12:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bp615+9Z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1H01eL3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B58D1DED76
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE711DEFCF
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732279685; cv=none; b=TDndl5xraaSvZwIMoi/cbuumS0v0sjMsaWBlvNpJgSIGed47cHzB/KQMl/O+1QdLQX2gDlM3Y3CRx9Zy8ZH0Fb6PfuLiWvSPScSQcvECdUMjyigBKOc8STz8Y9OBUCsAGvujx3604J+MbHGLElATHARyhV38it7OFzUaxbVUc4w=
+	t=1732279686; cv=none; b=TSFt5/du2RyF3jDw4MuJue4sA5iA+wMt0SSfnr6l1UhtOCNGt/hdY+LfBu8KLfPDJdw1n5w4MAZTAH3irxoe97PiucHScdXceYa1liq2x0iDnwySknMAVBzhRTfg25lf8y+sgFn9olk3r/1T568RDoO3iIYWuZIYjF6ZIqOLsA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732279685; c=relaxed/simple;
-	bh=AimJ11uxufoed/sDRYAOLuvEayVn4YN6qm5ISIiR3q8=;
+	s=arc-20240116; t=1732279686; c=relaxed/simple;
+	bh=Pn9mI/dQRJTaJqS3r4xCnRL05yuMMT3XBgLbATZWtGQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qVljw29QHd1EpXat15zyWyHuSfszJqzshSAQZg5FtaNUZI0ba5KrJMKjc7QB+d2AVmLEFjLtu56o4zeDNqRrqN/Hoc/sJxpUiVzSRlB7Qmd7/aLQfz9XdKR3nBvZqU7QkyLuS0378FGVslofQqR6bmCcOitZV0N5Wpfr5rXG89I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bp615+9Z; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=JuZi1Kn5oeRkz95GJkvVTI0vmNhG65asDY7sjKLfg7zeFTVFS6e4sNjY0kwJD6xnqkwiTKo+t6XmIkQyod8u5yprLVaROJM4GPSUWnZSYqyNxfB4cT7Qi3HzAKWARK6yYwZBjoWEOJT3lrXy5p0K+s8NE/WiQnfwALkA0Qr0mgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1H01eL3; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732279681;
+	s=mimecast20190719; t=1732279683;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0Uuqe0QCVbyX763fc1rUZSeIQKe9ONR1oYq0/7YUtzA=;
-	b=Bp615+9ZBFxV2O7LVmdSRuljyd6n8XqAe4lTnvM40z+6utEGK0KzJ4NycV9GbuvrQUthhN
-	dk9pXtgTq8mX5TknP16HII0OTS03TodsQdbenTrLabuFOSqoYdcdHlrfGYsJt6Zuta8BGR
-	yQgiDGNYQ0GVcNVq6FxYmHqYumNodVU=
+	bh=qNb3xWwgY1tmNqWYiqE8zMLxs0w6BlPv0Y++bDq5l+E=;
+	b=D1H01eL33mB0yPOKd7sfHDP+2+82IgXL56VsU65Kvn89s8zvPigAQunkLlJkyGjo2ix+QD
+	rOQoJOWUOcOUO3dH4UTVMRSrhpg6DOAxYNpLt41djnVKTLd5B6YLGZ1eWc/Q0H+q5fmAa9
+	x81rBS72AG/+hMFyO9RivtHcxyS8KVg=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-41-f76gJ4TlO-uLC-1dWEz_2w-1; Fri,
- 22 Nov 2024 07:47:58 -0500
-X-MC-Unique: f76gJ4TlO-uLC-1dWEz_2w-1
-X-Mimecast-MFC-AGG-ID: f76gJ4TlO-uLC-1dWEz_2w
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-356-hztCC2EUO-CgUAaN05eGZg-1; Fri,
+ 22 Nov 2024 07:48:00 -0500
+X-MC-Unique: hztCC2EUO-CgUAaN05eGZg-1
+X-Mimecast-MFC-AGG-ID: hztCC2EUO-CgUAaN05eGZg
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 017CE19560B0;
-	Fri, 22 Nov 2024 12:47:57 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CDA571955EE8;
+	Fri, 22 Nov 2024 12:47:58 +0000 (UTC)
 Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BD187195E481;
-	Fri, 22 Nov 2024 12:47:55 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 44A2B19560A3;
+	Fri, 22 Nov 2024 12:47:57 +0000 (UTC)
 From: Benjamin Coddington <bcodding@redhat.com>
 To: Trond Myklebust <trondmy@kernel.org>,
 	Anna Schumaker <anna@kernel.org>,
@@ -63,9 +63,9 @@ To: Trond Myklebust <trondmy@kernel.org>,
 Cc: linux-nfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3 1/2] nfs/blocklayout: Don't attempt unregister for invalid block device
-Date: Fri, 22 Nov 2024 07:47:52 -0500
-Message-ID: <d611e30a9f3efda5a71f6b52f5ec41cdb3b56fef.1732279560.git.bcodding@redhat.com>
+Subject: [PATCH v3 2/2] nfs/blocklayout: Limit repeat device registration on failure
+Date: Fri, 22 Nov 2024 07:47:53 -0500
+Message-ID: <b7ec971b37e41c82c38f7dbb860d5e7009567db9.1732279560.git.bcodding@redhat.com>
 In-Reply-To: <cover.1732279560.git.bcodding@redhat.com>
 References: <cover.1732279560.git.bcodding@redhat.com>
 Precedence: bulk
@@ -77,63 +77,62 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Since commit d869da91cccb ("nfs/blocklayout: Fix premature PR key
-unregistration") an unmount of a pNFS SCSI layout-enabled NFS may
-dereference a NULL block_device in:
+Every pNFS SCSI IO wants to do LAYOUTGET, then within the layout find the
+device which can drive GETDEVINFO, then finally may need to prep the device
+with a reservation.  This slow work makes a mess of IO latencies if one of
+the later steps is going to fail for awhile.
 
-  bl_unregister_scsi+0x16/0xe0 [blocklayoutdriver]
-  bl_free_device+0x70/0x80 [blocklayoutdriver]
-  bl_free_deviceid_node+0x12/0x30 [blocklayoutdriver]
-  nfs4_put_deviceid_node+0x60/0xc0 [nfsv4]
-  nfs4_deviceid_purge_client+0x132/0x190 [nfsv4]
-  unset_pnfs_layoutdriver+0x59/0x60 [nfsv4]
-  nfs4_destroy_server+0x36/0x70 [nfsv4]
-  nfs_free_server+0x23/0xe0 [nfs]
-  deactivate_locked_super+0x30/0xb0
-  cleanup_mnt+0xba/0x150
-  task_work_run+0x59/0x90
-  syscall_exit_to_user_mode+0x217/0x220
-  do_syscall_64+0x8e/0x160
+If we're unable to register a SCSI device, ensure we mark the device as
+unavailable so that it will timeout and be re-added via GETDEVINFO.  This
+avoids repeated doomed attempts to register a device in the IO path.
 
-This happens because even though we were able to create the
-nfs4_deviceid_node, the lookup for the device was unable to attach the
-block device to the pnfs_block_dev.
-
-If we never found a block device to register, we can avoid this case with
-the PNFS_BDEV_REGISTERED flag.  Move the deref behind the test for the
-flag.
+Add some clarifying comments as well.
 
 Fixes: d869da91cccb ("nfs/blocklayout: Fix premature PR key unregistration")
 Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfs/blocklayout/dev.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ fs/nfs/blocklayout/blocklayout.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/blocklayout/dev.c b/fs/nfs/blocklayout/dev.c
-index 6252f4447945..cab8809f0e0f 100644
---- a/fs/nfs/blocklayout/dev.c
-+++ b/fs/nfs/blocklayout/dev.c
-@@ -20,9 +20,6 @@ static void bl_unregister_scsi(struct pnfs_block_dev *dev)
- 	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
- 	int status;
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 0becdec12970..47189476b553 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -571,19 +571,32 @@ bl_find_get_deviceid(struct nfs_server *server,
+ 	if (!node)
+ 		return ERR_PTR(-ENODEV);
  
--	if (!test_and_clear_bit(PNFS_BDEV_REGISTERED, &dev->flags))
--		return;
--
- 	status = ops->pr_register(bdev, dev->pr_key, 0, false);
- 	if (status)
- 		trace_bl_pr_key_unreg_err(bdev, dev->pr_key, status);
-@@ -58,7 +55,8 @@ static void bl_unregister_dev(struct pnfs_block_dev *dev)
- 		return;
++	/*
++	 * Devices that are marked unavailable are left in the cache with a
++	 * timeout to avoid sending GETDEVINFO after every LAYOUTGET, or
++	 * constantly attempting to register the device.  Once marked as
++	 * unavailable they must be deleted and never reused.
++	 */
+ 	if (test_bit(NFS_DEVICEID_UNAVAILABLE, &node->flags)) {
+ 		unsigned long end = jiffies;
+ 		unsigned long start = end - PNFS_DEVICE_RETRY_TIMEOUT;
+ 
+ 		if (!time_in_range(node->timestamp_unavailable, start, end)) {
++			/* Uncork subsequent GETDEVINFO operations for this device */
+ 			nfs4_delete_deviceid(node->ld, node->nfs_client, id);
+ 			goto retry;
+ 		}
+ 		goto out_put;
  	}
  
--	if (dev->type == PNFS_BLOCK_VOLUME_SCSI)
-+	if (dev->type == PNFS_BLOCK_VOLUME_SCSI &&
-+		test_and_clear_bit(PNFS_BDEV_REGISTERED, &dev->flags))
- 		bl_unregister_scsi(dev);
- }
+-	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node)))
++	if (!bl_register_dev(container_of(node, struct pnfs_block_dev, node))) {
++		/*
++		 * If we cannot register, treat this device as transient:
++		 * Make a negative cache entry for the device
++		 */
++		nfs4_mark_deviceid_unavailable(node);
+ 		goto out_put;
++	}
+ 
+ 	return node;
  
 -- 
 2.47.0
