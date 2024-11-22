@@ -1,127 +1,173 @@
-Return-Path: <linux-kernel+bounces-417918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 013DF9D5AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:10:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B3C9D5ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB8C283A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39A31F213D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B2189F32;
-	Fri, 22 Nov 2024 08:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnCPeqTp"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04159189F50;
+	Fri, 22 Nov 2024 08:11:22 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3586722075;
-	Fri, 22 Nov 2024 08:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD541714A3;
+	Fri, 22 Nov 2024 08:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262996; cv=none; b=eE5j9PV2ZBrA6MfmQ35z9iNbcCA2uNRtuXuzT90jAlxGkmjZqlTdb9HPWYJLYJWcI8KqV30m84tZ2nL3+Xx98pvrhkmnecgcKlMUQPacliu81fkmP8NeqdlK9UwZg5UNCOo3IJ6ZYtdghqLPKsSgW19qU+ToiA7YjvwA54M4/KQ=
+	t=1732263081; cv=none; b=N4YWxxxLACkBmQCT9Sjcd/Kg0gXImLPGndrQ43vbKX+62by2S/salRHQapxTrmG2JLICP3VfrC/Zbh2gQPAEvawGg/rbiLq/XPClQB5zxIDTVUQ4zNW3Lkyasi5wYrbOpuaGZj83/NsPCpqIDa9b3vlemhqTWMU69t2lZqon6N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262996; c=relaxed/simple;
-	bh=1F3WBFGPE+8l1ot5J3aP1LGTc9TvvB3m3qvwqL+bzUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gQdWgsNgbIzxCt+5j+SvdFaaooc7EsTAWnIllVYoakNMaKB9C+0wJISYDEJy3GyWhjpX5PrKZ5aaHNNOrkFbm2SICkSZ8vu/eBq0VLJBRpNAbI5tDOSUcgCsAWGdCyTVvMC2wmJOd6ZkbkaUUMvsfM5WzWU9loIi0/JqbS0WTI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnCPeqTp; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e4b7409fso1889189e87.0;
-        Fri, 22 Nov 2024 00:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732262993; x=1732867793; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3pLWmJxBRV5wsiL9qha43ITKedUfMhF5iYbTNJojCIs=;
-        b=RnCPeqTpEX1mqmJMtLqL5O0tGhRzXRvB4gWIQeuPCRucs5JbkiSPwY/tlTsthBBAbG
-         m9CcyvtaZzC+fV9nfRLyZyM5YvgHa15n9Sz98olfW2LRJle34FZsHfdIyjzHeNW1T1VP
-         cPHgUc04i12///l8wGaqY2rPcLLjy3XBJlPojtl2TJrqnYYo+bj6nbuWClKtwlbYwDVK
-         uGEVnVugsA2G+28vg7Fc0RuvC8KDbnSdkL59Qc2MEGU0CGAM7cVIk13aWxUd4acwdYTa
-         BHAr1EIpZmdopWe8JC14KDwWJGok8iZY5D7syKKTJXHZHSD2NMZJ/oei3/dhOidSParR
-         2+8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732262993; x=1732867793;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3pLWmJxBRV5wsiL9qha43ITKedUfMhF5iYbTNJojCIs=;
-        b=YjByJmYWey7PJHDg6CJ0M7sKHOrOgFQxI5zBUH8MkJAZuFgtACZDKyooDTCE/T08qu
-         XGtgT5fevhkNwe/IIQ9gXOKP9El/bDx5RBqs9v9IT1BSIR/ZlwEl928agxKWdbJCFlzS
-         EhvJOLVuAjs8UuQL8um1ptlA0p7OtMkAJWT7G8gEOZx7sP8YTk1gLvumlOwOIIy/q/je
-         HDjKrxp7uJZMxI8G8j5Ho0miwilKFxX1uLpY6cD/EhH/OohEAC4+h42+fhwpffj4q2Vl
-         D+FFnUm0I9kAiBABFI5ymczNs3ra2CS3QcIPM+fJVoWbSw4rm/nbU/TyJ/H0+Y++ZARC
-         i0Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDjLCOnoT4kEkndmurU1/M4HH8XFciK77ywZMzpNCMTvWeG1JdzeZ9ym6LWFtFwO2GH6cqcXqgi/c9yEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza1ihsGwQJUJzR4ieRfKQJqekM9dJjRkbL1eAvuB29YP2iaKD9
-	rPH3SXZ2oSUn34o6Q1mgODTWt+9VHbK0SEq0/QzOMv1PS7kADv03
-X-Gm-Gg: ASbGncsuRCxg2fq0ZQ/Q/owJ/THsq/MjkCk4fUpeqcQkCLdR26iHZMNcwVHxIqGkYov
-	wYc8dsGFgEs60DFW/s+cuc8Fv+VYfZ2mk8ieU2Y3yBgaYmOrIHTEuPxJMDLZH/0/CWGjxx+nuWh
-	oavTs6OvVVZJe+ZL42uCaqyH8agICr4iN7jX8XvXflWwZTe4unN2GAMR1XFAATJXGJVeujDW9l3
-	U5MqbunMq/ngkj9fNOK1m5vQSVXVT7Sozz2guOm3qgUBdj9j36mBff6Vni2MXkmVX9nU5hMzOsw
-	hL81RZMfR+5kflhpt4JW
-X-Google-Smtp-Source: AGHT+IF9f8FjoZJkYIQ/sAYs81J/YYuyIbxRnRdtrfF5glPfQG0UjZvivPQNO4GT17FSFb3XXeaPZw==
-X-Received: by 2002:a05:6512:3e18:b0:53d:c287:338d with SMTP id 2adb3069b0e04-53dc6182e9emr1946973e87.17.1732262993099;
-        Fri, 22 Nov 2024 00:09:53 -0800 (PST)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2481e86sm270678e87.129.2024.11.22.00.09.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 00:09:51 -0800 (PST)
-Message-ID: <1cb1a118-7cc2-4ba5-bf56-b51bfd84cd63@gmail.com>
-Date: Fri, 22 Nov 2024 10:09:50 +0200
+	s=arc-20240116; t=1732263081; c=relaxed/simple;
+	bh=9SgXJ+0o+mC9C9/p0Q7HD+Cr3BLQ0pbZ7Nm3evt21u8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mSlR2vMkRncIL3iltNrCARewCWqt5mGpFQwx58goaQJf2waBkIeTd9OgG9IEB71sgJUKEI6LdpTqg0/an7AqViSsVGRrTNSigiu5KQD5rSYVqMfYnUxvznq8DiFLvndT/zaNL0VS5NPXFzbf8BrZjWlNykVnNtAn+PB+pTPDRu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM5E1cT010723;
+	Fri, 22 Nov 2024 08:10:44 GMT
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0ppyj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Fri, 22 Nov 2024 08:10:43 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Fri, 22 Nov 2024 00:10:28 -0800
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Fri, 22 Nov 2024 00:10:26 -0800
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lizhi.xu@windriver.com>
+CC: <viro@zeniv.linux.org.uk>, <almaz.alexandrovich@paragon-software.com>,
+        <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
+        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V4] fs/ntfs3: check if the inode is bad before creating symlink
+Date: Fri, 22 Nov 2024 16:10:25 +0800
+Message-ID: <20241122081025.1661161-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241122074952.1585521-1-lizhi.xu@windriver.com>
+References: <20241122074952.1585521-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page
- mappings
-To: Jann Horn <jannh@google.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Valentin Obst <kernel@valentinobst.de>,
- open list <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
- <20241119112408.779243-3-abdiel.janulgue@gmail.com>
- <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
- <43a07c04-2985-4999-b6d6-732794906a36@gmail.com>
- <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: AhRtL3gN848X77p4Wiytni39kt6sPfnE
+X-Proofpoint-GUID: AhRtL3gN848X77p4Wiytni39kt6sPfnE
+X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=67403c83 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=vpW_iYbbhX9-InLknqQA:9
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-22_02,2024-11-21_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
+ mlxlogscore=917 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2409260000 definitions=main-2411220068
 
-On 21/11/2024 22:17, Jann Horn wrote:
-> 
-> Does Rust also prevent safe code from invoking inc_ref() on the
-> returned Page reference? Normally, the AlwaysRefCounted trait means
-> that safe code can create an owned reference from a shared reference,
-> right?
+syzbot reported a null-ptr-deref in pick_link. [1]
 
-While it is possible for someone to *manually* convert the Page 
-reference returned in page_slice_to_page() to a refcounted Page (one 
-could wrap it in an ARef). However, by design, page_slice_to_page() 
-explicitly returns just an ordinary Page reference. We could add an 
-invariant in page_slice_to_page() to warn against such usage just in case.
+First, i_link and i_dir_seq are in the same union, they share the same memory
+address, and i_dir_seq will be updated during the execution of walk_component,
+which makes the value of i_link equal to i_dir_seq.
 
-Anyway seems like the consensus from the other thread is to avoid 
-refcounting the rust Page abstraction. If we go with that, then that 
-moots this issue.
+Secondly, the chmod execution failed, which resulted in setting the mode value
+of file0's inode to REG when executing ntfs_bad_inode.
 
-Regards,
-Abdiel
+Third, during the execution of the link command, it sets the inode of the
+symlink file to the already bad inode of file0 by calling d_instantiate, which
+ultimately leads to null-ptr-deref when performing a mount operation on the
+symbolic link bus because it use bad inode's i_link and its value is equal to
+i_dir_seq=2. 
+
+Note: ("file0, bus" are defined in reproducer [2])
+
+To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
+whether the inode of file is already bad.
+
+[1]
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
+Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
+RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
+R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
+R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
+FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ step_into+0xca9/0x1080 fs/namei.c:1923
+ lookup_last fs/namei.c:2556 [inline]
+ path_lookupat+0x16f/0x450 fs/namei.c:2580
+ filename_lookup+0x256/0x610 fs/namei.c:2609
+ user_path_at+0x3a/0x60 fs/namei.c:3016
+ do_mount fs/namespace.c:3844 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4b18ad5b19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
+R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
+ </TASK>
+
+[2]
+move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
+chmod(&(0x7f0000000080)='./file0\x00', 0x0)
+link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
+mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
+
+Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+V1 --> V2: add the root cause of the i_link not set issue and imporve the check
+V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
+V3 --> V4: add comments for symlink use bad inode, it is the root cause
+
+ fs/ntfs3/inode.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index be04d2845bb7..fefbdcf75016 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
+ 	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
+ 	struct NTFS_DE *de;
+ 
++	if (is_bad_inode(inode))
++		return -EIO;
++
+ 	/* Allocate PATH_MAX bytes. */
+ 	de = __getname();
+ 	if (!de)
+-- 
+2.43.0
+
 
