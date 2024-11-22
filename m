@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-418320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462299D605B
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256ED9D605A
 	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60ABEB235EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76BB1F23561
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6560F1419A9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D22143895;
 	Fri, 22 Nov 2024 14:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="L3S9+VSv"
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="14EZBYXs"
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C228470834
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1492C5D477;
+	Fri, 22 Nov 2024 14:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286056; cv=none; b=MVl+1M4nWjPBvglNudOg/Q5Ri+trzV+lmqEgKB/NPxWWRfraXp5T8gcXWDdqnS6QMi6+too0uifxRBFUGZ1YHEDbJ8Hfy2vmR3YEPSelqS3lb6ESN/fOUT6mFOod9tzMHuCNUQnXW3rUZBEC9iiW4Ac3/dbuqE1CV7jjVJ0rdjU=
+	t=1732286056; cv=none; b=ZhYkkf4uPSPHmW1Zh1q5GW6ssLyKUVtUAFTWmnVj19HJtxfzvSpf2Jlz2cCtfqmHJ1+yphpeE3hoZgpIcYcIq1I8rTeixtUdsp7pCxSaMQVmXmNPWBHNZsqDMhiwjjE2ht0UriGT427RTHfyjLW2IqRr4HAkiUDuz0YwCxMh4Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732286056; c=relaxed/simple;
-	bh=oj/6mcirhBGSz78MkVxQZgxWtQyM37QmbXlg51RuIoE=;
+	bh=2iJktCeaTluhzGMhzwBTsU05yTdrj/X6rZ9VX/kRBo4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GrEIQFZQxlS+NCfyIJ8KvnaUmTaMDsf46CZSbOqHa6IkOp7ZBqm507rbaG09IP79cLJ1xeG5FjV7pGQjVTK5uMO9/rJVXXet4fiA43ar8EgU99QXG1JhljkxEwOjWmiWhznCjffWwU8THhYHDN026DOOu8j1b8fYDhKBeFTQS1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=L3S9+VSv; arc=none smtp.client-ip=84.16.66.169
+	 MIME-Version:Content-Type; b=hPuyl6E1kjbletHPh5FX2oLnntHsXg0qtTVhWhOT2TGwc2yJ9OLTiaexD5RiIhxdxdmGA5bINtAVnDiY8OnCkc1tbx2r59YLr4ESq9DuAd3X+YdEAj3I9zkmuasGFJUI6GwOvhJpBj/jdK+9dIgoItYBltx6Dvgm5B6wghxFbxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=14EZBYXs; arc=none smtp.client-ip=45.157.188.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK84CR0zdhH;
-	Fri, 22 Nov 2024 15:34:04 +0100 (CET)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK94fpXzgVL;
+	Fri, 22 Nov 2024 15:34:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286044;
-	bh=t/jeJLYng7iwFnD7UmSkTCH0JnlFPYPzlVzfF2WGADk=;
+	s=20191114; t=1732286045;
+	bh=DxTkVg18bqBuopoJy37l1mwDFC0IuH3r81EWdfJlrGc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=L3S9+VSvysJWYQqUlRssyyXMNPfahLvq0LusLrc09cn3ux7e16vB9JTg/p8xgM6aU
-	 JX9vqipiE4WEmB4oQYUv8lNxOc0uHQv+2nMu4u8dogJLHB3DgcXxx9bLoVFTNSSKMk
-	 SFxlkPdBicP8mKz22XvI1QjMw33tI3gHfgtsGVec=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK76d31znDH;
-	Fri, 22 Nov 2024 15:34:03 +0100 (CET)
+	b=14EZBYXsghzpHcV4S9I/82WBIuEutrRSJbYqLSze9QEYnwPklS2xKoKvfXcVragVF
+	 be+0kf9RAHS+IJGyHlMF1Scd+I8dk97gWys97GznkAmwVStfOGqyLksLtJpdFGrR87
+	 ovaonRdKTRPB/SndwK+NJfXY5cyf2qRZXvj4afX4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK90L6Kzm5p;
+	Fri, 22 Nov 2024 15:34:05 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -69,9 +69,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 01/23] lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are set
-Date: Fri, 22 Nov 2024 15:33:31 +0100
-Message-ID: <20241122143353.59367-2-mic@digikod.net>
+Subject: [PATCH v3 02/23] lsm: Add audit_log_lsm_data() helper
+Date: Fri, 22 Nov 2024 15:33:32 +0100
+Message-ID: <20241122143353.59367-3-mic@digikod.net>
 In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
 References: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
@@ -84,103 +84,110 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and the
-dev_get_by_index and init_net symbols (used by dump_common_audit_data)
-are found by the linker.  dump_common_audit_data() should then failed to
-build when CONFIG_NET is not set. However, because the compiler is
-smart, it knows that audit_log_start() always return NULL when
-!CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
-a side effect, dump_common_audit_data() is not built and the linker
-doesn't error out because of missing symbols.
-
-Let's only build lsm_audit.o when CONFIG_SECURITY and CONFIG_AUDIT are
-both set, which is checked with the new CONFIG_HAS_SECURITY_AUDIT.
-
-ipv4_skb_to_auditdata() and ipv6_skb_to_auditdata() are only used by
-Smack if CONFIG_AUDIT is set, so they don't need fake implementations.
-
-Because common_lsm_audit() is used in multiple places without
-CONFIG_AUDIT checks, add a fake implementation.
+Extract code from dump_common_audit_data() into the audit_log_lsm_data()
+helper. This helps reuse common LSM audit data while not abusing
+AUDIT_AVC records because of the common_lsm_audit() helper.
 
 Cc: Casey Schaufler <casey@schaufler-ca.com>
 Cc: James Morris <jmorris@namei.org>
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: Serge E. Hallyn <serge@hallyn.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241122143353.59367-2-mic@digikod.net
+Link: https://lore.kernel.org/r/20241122143353.59367-3-mic@digikod.net
 ---
 
-Changes since v2:
-- Add CONFIG_HAS_SECURITY_AUDIT to fix the build with AUDIT &&
-  !SECURITY, reported by Guenter Roeck.
+Changes since v1:
+- Fix commit message (spotted by Paul).
+- Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
+  argument.
+- Fix build without CONFIG_NET: see previous patch.
 ---
- include/linux/lsm_audit.h | 14 ++++++++++++++
- security/Kconfig          |  5 +++++
- security/Makefile         |  2 +-
- 3 files changed, 20 insertions(+), 1 deletion(-)
+ include/linux/lsm_audit.h |  8 ++++++++
+ security/lsm_audit.c      | 27 ++++++++++++++++++---------
+ 2 files changed, 26 insertions(+), 9 deletions(-)
 
 diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 97a8b21eb033..c2b01380262c 100644
+index c2b01380262c..b62769a7c5fa 100644
 --- a/include/linux/lsm_audit.h
 +++ b/include/linux/lsm_audit.h
-@@ -116,14 +116,28 @@ struct common_audit_data {
- #define v4info fam.v4
- #define v6info fam.v6
- 
-+#ifdef CONFIG_AUDIT
-+
- int ipv4_skb_to_auditdata(struct sk_buff *skb,
- 		struct common_audit_data *ad, u8 *proto);
- 
-+#if IS_ENABLED(CONFIG_IPV6)
- int ipv6_skb_to_auditdata(struct sk_buff *skb,
- 		struct common_audit_data *ad, u8 *proto);
-+#endif /* IS_ENABLED(CONFIG_IPV6) */
- 
- void common_lsm_audit(struct common_audit_data *a,
+@@ -130,6 +130,9 @@ void common_lsm_audit(struct common_audit_data *a,
  	void (*pre_audit)(struct audit_buffer *, void *),
  	void (*post_audit)(struct audit_buffer *, void *));
  
-+#else /* CONFIG_AUDIT */
++void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a);
 +
-+static inline void common_lsm_audit(struct common_audit_data *a,
-+	void (*pre_audit)(struct audit_buffer *, void *),
-+	void (*post_audit)(struct audit_buffer *, void *))
+ #else /* CONFIG_AUDIT */
+ 
+ static inline void common_lsm_audit(struct common_audit_data *a,
+@@ -138,6 +141,11 @@ static inline void common_lsm_audit(struct common_audit_data *a,
+ {
+ }
+ 
++static inline void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a)
 +{
 +}
 +
-+#endif /* CONFIG_AUDIT */
-+
+ #endif /* CONFIG_AUDIT */
+ 
  #endif
-diff --git a/security/Kconfig b/security/Kconfig
-index 28e685f53bd1..f10dbf15c294 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -64,6 +64,11 @@ config SECURITY
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 849e832719e2..de29ce8ff708 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -189,16 +189,13 @@ static inline void print_ipv4_addr(struct audit_buffer *ab, __be32 addr,
+ }
  
- 	  If you are unsure how to answer this question, answer N.
+ /**
+- * dump_common_audit_data - helper to dump common audit data
++ * audit_log_lsm_data - helper to log common LSM audit data
+  * @ab : the audit buffer
+  * @a : common audit data
+- *
+  */
+-static void dump_common_audit_data(struct audit_buffer *ab,
+-				   struct common_audit_data *a)
++void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a)
+ {
+-	char comm[sizeof(current->comm)];
+-
+ 	/*
+ 	 * To keep stack sizes in check force programmers to notice if they
+ 	 * start making this union too large!  See struct lsm_network_audit
+@@ -206,9 +203,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	 */
+ 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
  
-+config HAS_SECURITY_AUDIT
-+	def_bool y
-+	depends on AUDIT
-+	depends on SECURITY
+-	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
+-	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
+-
+ 	switch (a->type) {
+ 	case LSM_AUDIT_DATA_NONE:
+ 		return;
+@@ -428,6 +422,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	} /* switch (a->type) */
+ }
+ 
++/**
++ * dump_common_audit_data - helper to dump common audit data
++ * @ab : the audit buffer
++ * @a : common audit data
++ */
++static void dump_common_audit_data(struct audit_buffer *ab,
++				   const struct common_audit_data *a)
++{
++	char comm[sizeof(current->comm)];
 +
- config SECURITYFS
- 	bool "Enable the securityfs filesystem"
- 	help
-diff --git a/security/Makefile b/security/Makefile
-index cc0982214b84..22ff4c8bd8ce 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -15,7 +15,7 @@ obj-$(CONFIG_SECURITY)			+= security.o
- obj-$(CONFIG_SECURITYFS)		+= inode.o
- obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/
- obj-$(CONFIG_SECURITY_SMACK)		+= smack/
--obj-$(CONFIG_SECURITY)			+= lsm_audit.o
-+obj-$(CONFIG_HAS_SECURITY_AUDIT)	+= lsm_audit.o
- obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
- obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
- obj-$(CONFIG_SECURITY_YAMA)		+= yama/
++	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
++	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
++	audit_log_lsm_data(ab, a);
++}
++
+ /**
+  * common_lsm_audit - generic LSM auditing function
+  * @a:  auxiliary audit data
 -- 
 2.47.0
 
