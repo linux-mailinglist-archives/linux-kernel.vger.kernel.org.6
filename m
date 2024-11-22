@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-418496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFFE9D623A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ABF49D623B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35A89160E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21F44160442
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E931DF723;
-	Fri, 22 Nov 2024 16:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176DC1DF255;
+	Fri, 22 Nov 2024 16:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="uYNlL+4z"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XHyd0mpI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B446F30C;
-	Fri, 22 Nov 2024 16:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8C86F30C;
+	Fri, 22 Nov 2024 16:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292784; cv=none; b=BqSHKsHp9X7GieoCgmUdLUt5UZM7vKxGXhgFcPG9L4nMTikMHj5A2MACq0epFqfl+ma56qlsq9KemTHH72cFUGND4xnFVPD1uuTOJvESRnqjKOypcWAfrUu9tZ0LU+qp+Xy96Y3iygBFG89QS8hrAQfqJBZLGZb/uMiB/tYcS/Y=
+	t=1732292820; cv=none; b=PDZF0WMt6d8kGs5yUKTBUSiRV2zlggwiPnBQU1rbLp5YKXU4X0ZpzN0QFa2nFnic51KiLQM0caKS0fEzWlMal+3txOV/PPosQdayrWxByOIhH+6R/d1xBPcZkK3oBG66qONFNxDbe+NDCnYoNs4S1VZrdzsghh/9KB/LjqEnZP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292784; c=relaxed/simple;
-	bh=44+y8ZYIXN3mzZSk4PSxgdEodrC0tL75rK3ncEunL8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N1yrsIqHEoNvUu/Th9Ngn1B0X1CXj7ooKyUBa4xYLWoZn8bpDXsyjEJu7+YkPheWUBbGP7F1Zsc+vS6/zs53rVs3sU5++cOm9Toq9UM8VQ0UfxD41yzSGK5QV5QLpz9E8z3FKVEJIrXlHdVqcL8Ear6Tb5BRuucyYlCOJ4+SI8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=uYNlL+4z; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 070C7A048D;
-	Fri, 22 Nov 2024 17:26:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=DgmMtx8fj816a/GURnFa
-	t6+G6RLlkVLmq0pwMu2JauI=; b=uYNlL+4zIM+zX/JiygGWkVt1kpItmI5Jz3AR
-	JvNEaPKACe/nP5lc9XyrHp1Cyz+QI1LHt8SLtKNTLHxc+lM1L+cw6TFmNjdKW+h3
-	Qdvv0YzH9suP6fLlgLdFu+Gy+RQKynj4kxujfaTgeWYaVgC0tqxbcY30hkQan4Iv
-	Cc4mfvwQatftfG4t3kMnnf0OMNF9Fca76R5Oax0AH9RMxunmFYo6Zt+A9NNuGXif
-	cZFqxqQR3UmXLA9QT3Nnis9Q2CX3j74c1UvaKwyFnZi1UHGx4Zsi72GOFt4XgLAE
-	siqeeNjBCf+vwy6pNtKuyssXyzmayo9Its+CLF5mKByod+sad+QyRbkm2OlISBV6
-	NK25wQQrjt14EcasyNAnt6tKx0GKAEJ/GQzqpj+WDf1RVpwnPUPr6k0Pz4IMBhyf
-	RAFKHxaTMckqz7v7OpmEITxwtWg2UNe0cnp+iYd9kke2TvxHyaslsoAWsbzOOvXH
-	ZKvl1RrIhpFyHkVCiVv8lp2wx093tQ7AocH3ipJhfIYUqrHW/PGnjAgvh/GpRE0T
-	K1jegw2QA3EL9rwcCo1cQkXrwLGHG0A3CApa/SE9B2gFbb4MKaX9s1/nrv/Wo5oN
-	YBFDZwLrv40Dlc6ujWUeCwjNHA+g25bBHykYAL7sSVZpasTXGihBajlHQrte2jXv
-	saqQcx8=
-Message-ID: <5bd6dc85-29db-4f57-8d8b-156ebc116d03@prolan.hu>
-Date: Fri, 22 Nov 2024 17:26:16 +0100
+	s=arc-20240116; t=1732292820; c=relaxed/simple;
+	bh=4C/iivw9Y7dBglu/GZJAXz5x4D6VKhBNQU/Ohy7IZ5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TOLXtKNmwWg+ZQR9bMd/2r3e/AYFnA3EA3IIl1IR3pgrVGbfpGk2QDjKBg8Db0acfSXZElwdeD35dzxR1QZKv/ZL3AwmjGlROKmwqP+tDOtWxkJEa4WxqPi4V7PeaoBLwFLVs0HL7SdkJ0+tYeryKK1Ds7Jc8ny73kTg2rY9cBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XHyd0mpI; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732292818; x=1763828818;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=4C/iivw9Y7dBglu/GZJAXz5x4D6VKhBNQU/Ohy7IZ5A=;
+  b=XHyd0mpIImfPN/u1/6LFuzjmeS6ATmt4hqo+BsaDDSSnQWoxpHGfEmku
+   P02sc/DkqqLavBndTe4lX7eHmBaYOqE1BN1eKymZF2NW+SLlVDXzd9VNK
+   5WJW612Jum2IxBuVFSj9ItfR24mvmYFRnOtUI8I/SwenoTDRw/ornGQ6a
+   vFrV83RWHLFJR2DUpq0fk/4JG7j0DqDYY72CyVu3WSxFMEt/LP7oxjIPm
+   7cablJQvjzX8WwsYyJ0i8RGl1HPs6izMYFnaX7pJBaYs68pVZBTHzWUmJ
+   KTQv7HbuKyzvgTzd5rIk9rD2jTsltI1H3cP4X3SxiX/LmraeQLYCgNWSN
+   g==;
+X-CSE-ConnectionGUID: eFqIRKF7T0eTwm7PVocuCg==
+X-CSE-MsgGUID: stIfbPkSQcOSC2tegffgdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="54962123"
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="54962123"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:26:58 -0800
+X-CSE-ConnectionGUID: 28KjkinsQlGj3CNglaZw6A==
+X-CSE-MsgGUID: 3ibL7OvzQRu+lDlECBL80w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="95689055"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:26:57 -0800
+Message-ID: <83defc08-c05f-438d-9c64-a46f4112333c@intel.com>
+Date: Fri, 22 Nov 2024 08:26:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,44 +66,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: atmel-quadspi: Fix register name in verbose logging
- function
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, Tudor Ambarus
-	<tudor.ambarus@linaro.org>, Mark Brown <broonie@kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>
-References: <20241122141302.2599636-1-csokas.bence@prolan.hu>
- <a326f5ab-f36a-4210-83ff-0f2ae9fa830d@tuxon.dev>
+Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+ TDX guest
+To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-2-adrian.hunter@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <a326f5ab-f36a-4210-83ff-0f2ae9fa830d@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855607263
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20241121201448.36170-2-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024. 11. 22. 15:52, Claudiu Beznea wrote:
-> 
-> 
-> On 22.11.2024 16:13, Csókás, Bence wrote:
->> `atmel_qspi_reg_name()` is used for pretty-printing register offsets
->> for verbose logging of register accesses. However, due to a typo
->> (likely a copy-paste error), QSPI_RD's offset prnts as "MR", the
-> 
-> s/prnts/prints ?
+On 11/21/24 12:14, Adrian Hunter wrote:
+> +u64 tdh_vp_enter(u64 tdvpr, struct tdx_module_args *args)
+> +{
+> +	args->rcx = tdvpr;
+> +
+> +	return __seamcall_saved_ret(TDH_VP_ENTER, args);
+> +}
+> +EXPORT_SYMBOL_GPL(tdh_vp_enter);
 
-A typo in a commit msg fixing a typo, how ironic... I guess I should a) 
-re-read my mail more carefully, and b) get my keyboard checked... It 
-starts missing letters when I quick-type :/
+I made a similar comment on another series, but it stands here too: the
+typing of this wrappers really needs a closer look. Passing u64's around
+everywhere means zero type safety.
 
-Anyways, if you pick this up, feel free to amend. If there's a v2 (I 
-doubt it'll be needed though), then I'll amend this as well obviously.
-Bence
+Type safety is the reason that we have types like pte_t and pgprot_t in
+mm code even though they're really just longs (most of the time).
 
-P.S. it missed an 'n' again, while composing this one. Ugh.
+I'd suggest keeping the tdx_td_page type as long as possible, probably
+until (for example) the ->rcx assignment, like this:
 
+	args->rcx = td_page.pa;
 
