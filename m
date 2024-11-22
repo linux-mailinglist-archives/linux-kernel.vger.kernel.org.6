@@ -1,172 +1,557 @@
-Return-Path: <linux-kernel+bounces-417618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED299D56BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C0089D56BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9E362832D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66CD282DA8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 00:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FD85CB8;
-	Fri, 22 Nov 2024 00:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0D6AD5A;
+	Fri, 22 Nov 2024 00:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QKnYPWfn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ue8G0j4t"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2311853;
-	Fri, 22 Nov 2024 00:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAAB5223
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732235361; cv=none; b=hyyeFg8sKZvPV8DWPWkzPmPQKxA+3E1c0Hk//5/eypqa8QZKBxbjlkj/+Vi7qWCOqg1MS6VSNU5L7svRGuJ6/HFXOXCAm/gjJ4U/i/qYDFrw9Pm0DCkncPqzyCR3pZ/pJdGhmePoGCZ/ZQ1D+CzOUHF+n/wIXN8/261WKy7/p+U=
+	t=1732235425; cv=none; b=HfR21kCVV6Xcc+5l96L2BB+k40/g4jysxYoIhd46RnU1RTHg4SqHJ/EjAUmG7/44RvhDyjTdxw4i2ERvHLHE18y1MMOvcRCLUDkmjyomI7bHyAN/WOXyd4DJalgxbKNWrSjoViHkSdHL6oIHpRCithJlhMIgiKRgkQ9RMJT8o3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732235361; c=relaxed/simple;
-	bh=uk+pH/rz2AQ9v7cxqSTdM222f4jWZAPRrTaqZZuR2d0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LC31YyMXeqRqz366zLEA8JmJxpK4WAR4QdfdyAhCwZeAP0pKGNC72k3X3ouJk6/xQqzGIUltx2nNrJpxcdKI3ZwQD/NFj8cYnpXyBUGPlH0whNplDuGZSdaFI7lEFUSftd1bkhfs4Ev+2mx3gJdKHYMalndKS+l4vF8sq/EoL6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QKnYPWfn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALIw43C019536;
-	Fri, 22 Nov 2024 00:28:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W04J+mMnkofmPEjfpvH8rTRYkq6LkLstGJFNeRVvoUs=; b=QKnYPWfnIQsu04/f
-	nUrB8AoWmZ2dB20jfM6BoYm+8vHk1R6jnN+kQgLfkoJMK1qljSPNLEH+gxA0o/sd
-	NRIWpo11VydTUPHFgGRQpEbLMk2YLj55AZwL//XMq4lk9NmU72DSGit0FBhl18qr
-	gjaOMhB4OzgxXZLqqff3jvgnX83YxjaFYNTDL1Lv+/ASdnEP551/qm9+d6TO/1Be
-	88Fe2M/D4dFh8Sm691Fb0uKeFEBaJYx4G+eR7w7eqbV47a+kCYKwIwNIDc5Drp+d
-	+83k1qlGtqTKGU9MHVjiDoDXuD9Xn1EIa6YaXU/TBiwNZNLXn8QXzGF/ezMgx6GB
-	LtK5ng==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hnrw4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 00:28:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM0SgwI009655
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 00:28:42 GMT
-Received: from [10.71.115.177] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 16:28:42 -0800
-Message-ID: <b1e22673-2768-445c-8c67-eae93206cca5@quicinc.com>
-Date: Thu, 21 Nov 2024 16:28:41 -0800
+	s=arc-20240116; t=1732235425; c=relaxed/simple;
+	bh=L4IuOS/KhM0oTmY7h+/hqhqs56xrAjoaaCcnug9PTwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvdmAtbvUbzAe2MkqI19c/BD00zpFYlhcSzEQT6DdTdgD1lRP+wfJuHmldVw5pOVVY2ir/9IYeEXXzGvk0qmdBOhITmrWDBc+2UOugsrxPEC3htfa/DsIfVw+iVPAY+QgY8U1pXt7txohIaeO2y39hdZIYfCpgaWKqr+vOv7n0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ue8G0j4t; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so1665939e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 16:30:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732235421; x=1732840221; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BhBLdjQdXAjcSUcVMrVvzX1dlsskkhUoC+tDH3PDqM=;
+        b=ue8G0j4tSH2vO1TP7MGuUwu++nuQKq9M4I7j1AxWQecY9xlrFx3ThxqWxFwq48ufW2
+         aHubU2mdBbYN1FslEM0mWyEuj7T2r9IU2CSsf/WJhmrE3HPyJ6fMrBeZuXc7X7xLCPlF
+         jHrFwhjRO2XRw6YYwNViU+/5JTvoLF0nCWyYKFfkSPObRPtxHeHe1iiv8G34sTDlYfBA
+         Wpa4xdu1xJE3P1n/l/YFAeDqhFbDbfC6KwGJFbSP7E8Am2zK5OzwQhPmaX3boxC4BYbo
+         iTS71k82S40hrhz1mmEzdTsnpGh/vMtBTJbh88WhhdHt50I4ok8brl1v5EVw5JI8brKi
+         TbVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732235421; x=1732840221;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5BhBLdjQdXAjcSUcVMrVvzX1dlsskkhUoC+tDH3PDqM=;
+        b=r0nnOSrshPpFQEZS/uv5pVIzmX9QPyUJUMO+GKQEPdqWa8/WB/eCmWuiyss04UbfUq
+         4dr5RLsTF9iHKFvb6+OK9wb4/xMp2mIdxZ03IMYTbQUyD0uDOGnlXzTAXwfwyoAXWXbs
+         N95P8SNU0Jl4YrEIn1TqwKeq/XLo5q3QPSho7cmWgJP6FvG1ut46T3sQTh0HL57RznOB
+         +NhNCfYriE3IB1IrtkV5YMZoDsbKzhPLViUXdFOUzQ6vaDa8LLLwro1IjN5L6cUxh/bK
+         ejv6KBjSiDi2iKGbfEbGn7BxIQgXVqETfxN255SwZpXVMpdwxIgm+y//DS+aLSNkLpHK
+         1swg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXZvrVOXLkr8x3AlIXEfZ/CDBTcYOOhsEb16v8JeoHa9RH0gn7D9kf/+N1qoZU3Dx7BCAR37YZPl2+ROQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA9zjgi48F/E0or+pSBIiLljOWuCJFE56KN4km0angDH3rFfRp
+	KftCP0qh4aKLLgEquglrQ3c80igw5sUEpuGzqltFuYZ6BoXSdBsxocwp5M3Stmk=
+X-Gm-Gg: ASbGncuQlLRZ4/mBGUJ4/kt+iFveTOYlvpOsJLEw/KbWekSRpWtGXPns+dwDg66cBCQ
+	/EG9OZPkXkTsS5JjnKefBEb8T8SniiwQH5JuOYT2zK7u3aRSPQmk016AEtm1/D8Dn6FZ6KGRdDx
+	yqR/v03m2e5aKX1dxRelVoP/gmKEc/CXQdJFgQaLGOpZi/kz+k/JSUNd35BTL0j78hw0ud+PY1v
+	4ZDrAAxM1yGzL66du88swAQq0DQPye8E0jaOuEbWR3w7rK16dymLKA3pJXIZSJrvVr09jZUoWl8
+	SlprSQA7aQVpccuHC93gqkd89WbJPw==
+X-Google-Smtp-Source: AGHT+IG4EPGA2jzHyIRfJlNpyGrwE32A0BiLSV17CvKlFjJWwM0w4vzx7gsETwH0TnIeSHKRLBWFVA==
+X-Received: by 2002:a05:6512:3ba2:b0:53d:9ff8:edcd with SMTP id 2adb3069b0e04-53dd3aaff67mr424818e87.51.1732235420958;
+        Thu, 21 Nov 2024 16:30:20 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2481ea7sm126205e87.140.2024.11.21.16.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 16:30:19 -0800 (PST)
+Date: Fri, 22 Nov 2024 02:30:15 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: keith zhao <keith.zhao@starfivetech.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, 
+	william.qiu@starfivetech.com, xingyu.wu@starfivetech.com, kernel@esmil.dk, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	p.zabel@pengutronix.de, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 7/9] drm/vs: Add VS Plane API
+Message-ID: <c3r6gl2rmqmalemwrbmgz53m4qlzuheq3nijstahketulteucv@ufr7vam3z44f>
+References: <20241120061848.196754-1-keith.zhao@starfivetech.com>
+ <20241120061848.196754-8-keith.zhao@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: qrtr: mhi: synchronize qrtr and mhi preparation
-To: Johan Hovold <johan@kernel.org>
-CC: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Simon Horman
-	<horms@kernel.org>,
-        Hemant Kumar <quic_hemantk@quicinc.com>,
-        Loic Poulain
-	<loic.poulain@linaro.org>,
-        Maxim Kochetkov <fido_max@inbox.ru>,
-        "Manivannan
- Sadhasivam" <mani@kernel.org>,
-        Bjorn Andersson
-	<bjorn.andersson@oss.qualcomm.com>,
-        <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bhaumik Bhatt
-	<bbhatt@codeaurora.org>
-References: <20241104-qrtr_mhi-v1-1-79adf7e3bba5@quicinc.com>
- <Zy3oyGLdsnDY9C0p@hovoldconsulting.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <Zy3oyGLdsnDY9C0p@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VpfRLjXQYTbh7pNEPPqQNJK-Ojdpkn3j
-X-Proofpoint-GUID: VpfRLjXQYTbh7pNEPPqQNJK-Ojdpkn3j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
- mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
- mlxlogscore=734 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220002
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120061848.196754-8-keith.zhao@starfivetech.com>
 
-
-
-On 11/8/2024 2:32 AM, Johan Hovold wrote:
-> On Mon, Nov 04, 2024 at 05:29:37PM -0800, Chris Lew wrote:
->> From: Bhaumik Bhatt <bbhatt@codeaurora.org>
->>
->> The call to qrtr_endpoint_register() was moved before
->> mhi_prepare_for_transfer_autoqueue() to prevent a case where a dl
->> callback can occur before the qrtr endpoint is registered.
->>
->> Now the reverse can happen where qrtr will try to send a packet
->> before the channels are prepared. Add a wait in the sending path to
->> ensure the channels are prepared before trying to do a ul transfer.
->>
->> Fixes: 68a838b84eff ("net: qrtr: start MHI channel after endpoit creation")
->> Reported-by: Johan Hovold <johan@kernel.org>
->> Closes: https://lore.kernel.org/linux-arm-msm/ZyTtVdkCCES0lkl4@hovoldconsulting.com/
->> Signed-off-by: Bhaumik Bhatt <bbhatt@codeaurora.org>
->> Signed-off-by: Chris Lew <quic_clew@quicinc.com>
+On Wed, Nov 20, 2024 at 02:18:46PM +0800, keith zhao wrote:
+> This commit introduces plane functions and helper functions
+> for the VS DRM subsystem, enhancing support for managing
+> display planes and their configurations.
 > 
->> @@ -53,6 +54,10 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, struct sk_buff *skb)
->>   	if (skb->sk)
->>   		sock_hold(skb->sk);
->>   
->> +	rc = wait_for_completion_interruptible(&qdev->prepared);
->> +	if (rc)
->> +		goto free_skb;
->> +
->>   	rc = skb_linearize(skb);
->>   	if (rc)
->>   		goto free_skb;
->> @@ -85,6 +90,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
->>   	qdev->mhi_dev = mhi_dev;
->>   	qdev->dev = &mhi_dev->dev;
->>   	qdev->ep.xmit = qcom_mhi_qrtr_send;
->> +	init_completion(&qdev->prepared);
->>   
->>   	dev_set_drvdata(&mhi_dev->dev, qdev);
->>   	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
->> @@ -97,6 +103,7 @@ static int qcom_mhi_qrtr_probe(struct mhi_device *mhi_dev,
->>   		qrtr_endpoint_unregister(&qdev->ep);
->>   		return rc;
->>   	}
->> +	complete_all(&qdev->prepared);
->>   
->>   	dev_dbg(qdev->dev, "Qualcomm MHI QRTR driver probed\n");
+> Signed-off-by: keith zhao <keith.zhao@starfivetech.com>
+> ---
+>  drivers/gpu/drm/verisilicon/Makefile   |   3 +-
+>  drivers/gpu/drm/verisilicon/vs_plane.c | 358 +++++++++++++++++++++++++
+>  drivers/gpu/drm/verisilicon/vs_plane.h |  27 ++
+>  3 files changed, 387 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.c
+>  create mode 100644 drivers/gpu/drm/verisilicon/vs_plane.h
 > 
-> While this probably works, it still looks like a bit of a hack.
-> 
-> Why can't you restructure the code so that the channels are fully
-> initialised before you register or enable them instead?
+> diff --git a/drivers/gpu/drm/verisilicon/Makefile b/drivers/gpu/drm/verisilicon/Makefile
+> index 37f6a4db2a12..1a0e46f38ae8 100644
+> --- a/drivers/gpu/drm/verisilicon/Makefile
+> +++ b/drivers/gpu/drm/verisilicon/Makefile
+> @@ -2,6 +2,7 @@
+>  
+>  vs_drm-objs := vs_dc_hw.o \
+>  	       vs_modeset.o \
+> -	       vs_crtc.o
+> +	       vs_crtc.o \
+> +	       vs_plane.o
+>  
+>  obj-$(CONFIG_DRM_VERISILICON_DC8200) += vs_drm.o
+> diff --git a/drivers/gpu/drm/verisilicon/vs_plane.c b/drivers/gpu/drm/verisilicon/vs_plane.c
+> new file mode 100644
+> index 000000000000..ba47d0185fc6
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_plane.c
+> @@ -0,0 +1,358 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
+> + */
+> +#include <drm/drm_atomic.h>
+> +#include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_blend.h>
+> +#include <drm/drm_gem_dma_helper.h>
+> +#include <drm/drm_fb_dma_helper.h>
+> +#include <drm/drm_framebuffer.h>
+> +#include <drm/drm_plane_helper.h>
+> +
+> +#include "vs_plane.h"
+> +#include "vs_drv.h"
+> +#include "vs_crtc.h"
+> +
+> +static inline struct vs_plane_state *
+> +to_vs_plane_state(struct drm_plane_state *state)
+> +{
+> +	return container_of(state, struct vs_plane_state, base);
+> +}
+> +
+> +static inline struct vs_plane *to_vs_plane(struct drm_plane *plane)
+> +{
+> +	return container_of(plane, struct vs_plane, base);
+> +}
+> +
+> +static void vs_plane_atomic_destroy_state(struct drm_plane *plane,
+> +					  struct drm_plane_state *state)
+> +{
+> +	struct vs_plane_state *vs_plane_state = to_vs_plane_state(state);
+> +
+> +	__drm_atomic_helper_plane_destroy_state(state);
+> +	kfree(vs_plane_state);
+> +}
+> +
+> +static void vs_plane_reset(struct drm_plane *plane)
+> +{
+> +	struct vs_plane_state *state;
+> +
+> +	if (plane->state)
+> +		vs_plane_atomic_destroy_state(plane, plane->state);
+> +
+> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
+> +	if (!state)
+> +		return;
+> +
+> +	__drm_atomic_helper_plane_reset(plane, &state->base);
+> +}
+> +
+> +static struct drm_plane_state *
+> +vs_plane_atomic_duplicate_state(struct drm_plane *plane)
+> +{
+> +	struct vs_plane_state *state;
+> +
+> +	if (WARN_ON(!plane->state))
+> +		return NULL;
+> +
+> +	state = kzalloc(sizeof(*state), GFP_KERNEL);
+> +	if (!state)
+> +		return NULL;
+> +
+> +	__drm_atomic_helper_plane_duplicate_state(plane, &state->base);
+> +
+> +	return &state->base;
+> +}
+> +
+> +static bool vs_format_mod_supported(struct drm_plane *plane,
+> +				    u32 format,
+> +				    u64 modifier)
+> +{
+> +	int i;
+> +
+> +	/* We always have to allow these modifiers:
+> +	 * 1. Core DRM checks for LINEAR support if userspace does not provide modifiers.
+> +	 * 2. Not passing any modifiers is the same as explicitly passing INVALID.
+> +	 */
+> +	if (modifier == DRM_FORMAT_MOD_LINEAR)
+> +		return true;
+> +
+> +	/* Check that the modifier is on the list of the plane's supported modifiers. */
+> +	for (i = 0; i < plane->modifier_count; i++) {
+> +		if (modifier == plane->modifiers[i])
+> +			break;
+> +	}
+> +
+> +	if (i == plane->modifier_count)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static const struct drm_plane_funcs vs_plane_funcs = {
+> +	.update_plane		= drm_atomic_helper_update_plane,
+> +	.disable_plane		= drm_atomic_helper_disable_plane,
+> +	.reset			= vs_plane_reset,
+> +	.atomic_duplicate_state = vs_plane_atomic_duplicate_state,
+> +	.atomic_destroy_state	= vs_plane_atomic_destroy_state,
+> +	.format_mod_supported	= vs_format_mod_supported,
+
+         * If not present, then any modifier in the plane's modifier
+         * list is allowed with any of the plane's formats.
+
+How is your implementation different from the default behaviour?
+
+> +};
+> +
+> +static unsigned char vs_get_plane_number(struct drm_framebuffer *fb)
+
+Inline at the calling site.
+
+> +{
+> +	const struct drm_format_info *info;
+> +
+> +	if (!fb)
+> +		return 0;
+> +
+> +	info = drm_format_info(fb->format->format);
+> +	if (!info || info->num_planes > DRM_FORMAT_MAX_PLANES)
+> +		return 0;
+> +
+> +	return info->num_planes;
+> +}
+> +
+> +static bool vs_dc_mod_supported(const struct vs_plane_info *vs_info, u64 modifier)
+> +{
+> +	const u64 *mods;
+> +
+> +	if (vs_info->type == DRM_PLANE_TYPE_CURSOR)
+> +		return 0;
+> +
+> +	if (!vs_info->data->modifiers)
+> +		return false;
+> +
+> +	for (mods = vs_info->data->modifiers; *mods != DRM_FORMAT_MOD_INVALID; mods++) {
+> +		if (*mods == modifier)
+> +			return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+> +static int vs_common_plane_atomic_check(struct drm_plane *plane, struct drm_atomic_state *state)
+> +{
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state, plane);
+> +	struct vs_drm_device *priv = to_vs_drm_private(plane->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +	struct drm_framebuffer *fb = new_state->fb;
+> +	const struct vs_plane_info *plane_info;
+> +	struct drm_crtc_state *crtc_state;
+> +
+> +	if (!new_state->crtc || !new_state->fb)
+> +		return 0;
+> +
+> +	plane_info = (struct vs_plane_info *)&dc->hw.info->info[to_vs_plane(plane)->id];
+> +
+> +	if (fb->width < plane_info->data->min_width ||
+> +	    fb->width > plane_info->data->max_width ||
+> +	    fb->height < plane_info->data->min_height ||
+> +	    fb->height > plane_info->data->max_height)
+> +		drm_err_once(plane->dev, "buffer size may not support on plane%d.\n",
+> +			     to_vs_plane(plane)->id);
+
+Don't allow users spam console. Use drm_dbg_kms(), drm_dbg_atomic() or
+drm_dbg_driver(), whichever fits better.
+
+> +
+> +	if (!vs_dc_mod_supported(plane_info, fb->modifier)) {
+
+Should not be necessary, it matches default drm behaviour, see
+drm_plane_has_format() called from drm_atomic_plane_check().
+
+> +		drm_err(plane->dev, "unsupported modifier on plane%d.\n", to_vs_plane(plane)->id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	crtc_state = drm_atomic_get_existing_crtc_state(new_state->state, new_state->crtc);
+
+drm_atomic_get_new_crtc_state(). Don't call deprecated functions.
+
+> +	return drm_atomic_helper_check_plane_state(new_state, crtc_state,
+> +						   plane_info->data->min_scale,
+> +						   plane_info->data->max_scale,
+> +						   true, true);
+> +}
+> +
+> +static void vs_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
+> +{
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state, plane);
+> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(state, plane);
+> +
+> +	unsigned char i, num_planes, display_id, id;
+> +	u32 format;
+> +	bool is_yuv;
+> +	struct vs_plane *vs_plane = to_vs_plane(plane);
+> +	struct vs_plane_state *plane_state = to_vs_plane_state(new_state);
+> +	struct vs_drm_device *priv = to_vs_drm_private(plane->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	if (!new_state->fb || !new_state->crtc)
+> +		return;
+> +
+> +	drm_fb_dma_sync_non_coherent(plane->dev, old_state, new_state);
+> +
+> +	num_planes = vs_get_plane_number(new_state->fb);
+> +
+> +	for (i = 0; i < num_planes; i++) {
+> +		dma_addr_t dma_addr;
+> +
+> +		dma_addr = drm_fb_dma_get_gem_addr(new_state->fb, new_state, i);
+> +		plane_state->dma_addr[i] = dma_addr;
+> +	}
+> +
+> +	display_id = to_vs_display_id(new_state->crtc);
+> +	format = new_state->fb->format->format;
+> +	is_yuv = new_state->fb->format->is_yuv;
+> +	id = vs_plane->id;
+> +
+> +	dc_plane_hw_update_format_colorspace(dc, format, new_state->color_encoding, id, is_yuv);
+> +	if (new_state->visible)
+> +		dc_plane_hw_update_address(dc, id, format, plane_state->dma_addr,
+> +					   new_state->fb, &new_state->src);
+> +	dc_plane_hw_update_format(dc, format, new_state->color_encoding, new_state->rotation,
+> +				  new_state->visible, new_state->zpos, id, display_id);
+> +	dc_plane_hw_update_scale(dc, &new_state->src, &new_state->dst, id,
+> +				 display_id, new_state->rotation);
+> +	dc_plane_hw_update_blend(dc, new_state->alpha, new_state->pixel_blend_mode,
+> +				 id, display_id);
+> +}
+> +
+> +static void vs_cursor_plane_atomic_update(struct drm_plane *plane, struct drm_atomic_state *state)
+> +{
+> +	struct drm_plane_state *new_state = drm_atomic_get_new_plane_state(state,
+> +									   plane);
+> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(state,
+> +									   plane);
+> +	struct vs_drm_device *priv = to_vs_drm_private(plane->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +	unsigned char display_id;
+> +	u32 crtc_w, crtc_x, crtc_y;
+> +	s32 hotspot_x, hotspot_y;
+> +	dma_addr_t dma_addr;
+> +
+> +	display_id = to_vs_display_id(new_state->crtc);
+> +
+> +	if (!new_state->fb || !new_state->crtc)
+> +		return;
+> +
+> +	drm_fb_dma_sync_non_coherent(new_state->fb->dev, old_state, new_state);
+> +	dma_addr = drm_fb_dma_get_gem_addr(new_state->fb, new_state, 0);
+> +	crtc_w = new_state->crtc_w;
+> +
+> +	if (new_state->crtc_x > 0) {
+> +		crtc_x = new_state->crtc_x;
+> +		hotspot_x = 0;
+> +	} else {
+> +		hotspot_x = -new_state->crtc_x;
+> +		crtc_x = 0;
+> +	}
+> +	if (new_state->crtc_y > 0) {
+> +		crtc_y = new_state->crtc_y;
+> +		hotspot_y = 0;
+> +	} else {
+> +		hotspot_y = -new_state->crtc_y;
+> +		crtc_y = 0;
+> +	}
+> +	dc_hw_update_cursor(&dc->hw, display_id, dma_addr, crtc_w, crtc_x,
+> +			    crtc_y, hotspot_x, hotspot_y);
+> +}
+> +
+> +static void vs_plane_atomic_disable(struct drm_plane *plane, struct drm_atomic_state *state)
+> +{
+> +	struct vs_plane *vs_plane = to_vs_plane(plane);
+> +	struct vs_drm_device *priv = to_vs_drm_private(plane->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +
+> +	dc_hw_disable_plane(dc, vs_plane->id);
+> +}
+> +
+> +static void vs_cursor_plane_atomic_disable(struct drm_plane *plane, struct drm_atomic_state *state)
+> +{
+> +	struct drm_plane_state *old_state = drm_atomic_get_old_plane_state(state, plane);
+> +	struct vs_drm_device *priv = to_vs_drm_private(plane->dev);
+> +	struct vs_dc *dc = &priv->dc;
+> +	unsigned char display_id;
+> +
+> +	display_id = to_vs_display_id(old_state->crtc);
+> +	dc_hw_disable_cursor(&dc->hw, display_id);
+> +}
+> +
+> +static const struct drm_plane_helper_funcs vs_primary_plane_helpers = {
+> +	.atomic_check	= vs_common_plane_atomic_check,
+> +	.atomic_update	= vs_plane_atomic_update,
+> +	.atomic_disable = vs_plane_atomic_disable,
+> +};
+> +
+> +static const struct drm_plane_helper_funcs vs_overlay_plane_helpers = {
+> +	.atomic_check	= vs_common_plane_atomic_check,
+> +	.atomic_update	= vs_plane_atomic_update,
+> +	.atomic_disable = vs_plane_atomic_disable,
+> +};
+> +
+> +static const struct drm_plane_helper_funcs vs_cursor_plane_helpers = {
+> +	.atomic_check	= vs_common_plane_atomic_check,
+> +	.atomic_update	= vs_cursor_plane_atomic_update,
+> +	.atomic_disable = vs_cursor_plane_atomic_disable,
+> +};
+> +
+> +struct vs_plane *vs_plane_create(struct drm_device *drm_dev,
+> +				 struct vs_plane_info *info,
+> +				 unsigned int layer_num,
+> +				 unsigned int possible_crtcs)
+> +{
+> +	struct vs_plane *plane;
+> +	const struct vs_plane_data *data = info->data;
+> +	int ret;
+> +
+> +	if (!info)
+> +		return NULL;
+> +
+> +	plane = drmm_universal_plane_alloc(drm_dev, struct vs_plane, base,
+> +					   possible_crtcs,
+> +					   &vs_plane_funcs,
+> +					   data->formats, data->num_formats,
+> +					   data->modifiers, info->type,
+> +					   NULL);
+> +	if (IS_ERR(plane))
+> +		return ERR_CAST(plane);
+> +
+> +	if (info->type == DRM_PLANE_TYPE_PRIMARY)
+> +		drm_plane_helper_add(&plane->base, &vs_primary_plane_helpers);
+> +	else if (info->type == DRM_PLANE_TYPE_OVERLAY)
+> +		drm_plane_helper_add(&plane->base, &vs_overlay_plane_helpers);
+> +	else
+> +		drm_plane_helper_add(&plane->base, &vs_cursor_plane_helpers);
+> +
+> +	if (data->blend_mode) {
+
+Which of the planes sets .blend_mode ?
+
+> +		ret = drm_plane_create_alpha_property(&plane->base);
+> +		if (ret)
+> +			return NULL;
+> +
+> +		ret = drm_plane_create_blend_mode_property(&plane->base,
+> +							   BIT(DRM_MODE_BLEND_PIXEL_NONE) |
+> +							   BIT(DRM_MODE_BLEND_PREMULTI) |
+> +							   BIT(DRM_MODE_BLEND_COVERAGE));
+> +		if (ret)
+> +			return NULL;
+> +	}
+> +
+> +	if (data->color_encoding) {
+> +		ret = drm_plane_create_color_properties(&plane->base, data->color_encoding,
+> +							BIT(DRM_COLOR_YCBCR_LIMITED_RANGE),
+> +							DRM_COLOR_YCBCR_BT709,
+> +							DRM_COLOR_YCBCR_LIMITED_RANGE);
+> +		if (ret)
+> +			return NULL;
+> +	}
+> +
+> +	if (data->rotation) {
+> +		ret = drm_plane_create_rotation_property(&plane->base,
+> +							 DRM_MODE_ROTATE_0,
+> +							 data->rotation);
+> +		if (ret)
+> +			return NULL;
+> +	}
+> +
+> +	if (data->zpos != 255) {
+> +		ret = drm_plane_create_zpos_property(&plane->base, data->zpos, 0, layer_num - 1);
+> +		if (ret)
+> +			return NULL;
+> +	} else {
+> +		ret = drm_plane_create_zpos_immutable_property(&plane->base, data->zpos);
+> +		if (ret)
+> +			return NULL;
+> +	}
+> +
+> +	return plane;
+> +}
+> diff --git a/drivers/gpu/drm/verisilicon/vs_plane.h b/drivers/gpu/drm/verisilicon/vs_plane.h
+> new file mode 100644
+> index 000000000000..60d45b69e30a
+> --- /dev/null
+> +++ b/drivers/gpu/drm/verisilicon/vs_plane.h
+> @@ -0,0 +1,27 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) VeriSilicon Holdings Co., Ltd.
+> + */
+> +
+> +#ifndef __VS_PLANE_H__
+> +#define __VS_PLANE_H__
+> +
+> +#include <drm/drm_plane.h>
+> +
+> +struct vs_plane_info;
+> +
+> +struct vs_plane_state {
+> +	struct drm_plane_state base;
+> +	dma_addr_t dma_addr[DRM_FORMAT_MAX_PLANES];
+> +};
+> +
+> +struct vs_plane {
+> +	struct drm_plane base;
+> +	u8 id;
+> +};
+
+Why do you need to export them?
+
+> +
+> +struct vs_plane *vs_plane_create(struct drm_device *drm_dev,
+> +				 struct vs_plane_info *info,
+> +				 unsigned int layer_num,
+> +				 unsigned int possible_crtcs);
+> +#endif /* __VS_PLANE_H__ */
+> -- 
+> 2.34.1
 > 
 
-Ok, I think we will have to stop using the autoqueue feature of MHI and 
-change the flow to be mhi_prepare_for_transfer() --> 
-qrtr_endpoint_register() --> mhi_queue_buf(DMA_FROM_DEVICE). This would 
-make it so ul_transfers only happen after mhi_prepare_for_transfer() and 
-dl_transfers happen after qrtr_endpoint_register().
-
-I'll take a stab at implementing this.
-
-> Johan
+-- 
+With best wishes
+Dmitry
 
