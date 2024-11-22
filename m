@@ -1,108 +1,123 @@
-Return-Path: <linux-kernel+bounces-418313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073669D6049
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 851D59D604C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B08821F229D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:29:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 356FC1F231D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5627762EF;
-	Fri, 22 Nov 2024 14:29:21 +0000 (UTC)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB82D745F2;
+	Fri, 22 Nov 2024 14:32:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wyDMQ9dm"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9D2171D2;
-	Fri, 22 Nov 2024 14:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E682AF12
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:32:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732285761; cv=none; b=Z5FqWT5UIhs+Of6eJP/BeNhD2ASdr+K1jLzQsjnJBLt63ORib4pk1cPoZKt2yDUa2MdrQWQixfeTj+gfUA/1E8l8n+QN2LpjDYo5uN4aU6X9WTOfM4+acHQoKJcD88ZdiTgk9y5343y7wpI4TvsXdz8qg/hiTWffH0TBuDI2skY=
+	t=1732285957; cv=none; b=Vsr8HYru7TlTjIKrF/ySAPRjTM3taFCYOBVwsuQuq+tr+97mwFtJrGxqo4haS81MegaxLhdcbRy16l0U8aKakLCj+rQY19HgN1D4Xi9r1hVJ1e4X5r/VazGYzOL/5oDsqEfh4WovxXJO+Zi6ldw5F4pyUBCq38tpbFabJ0nSXs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732285761; c=relaxed/simple;
-	bh=ALWtShgKlACg5peP3rjy/sBRWgmDv3+Kp9cFCaaIV7A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A8Sao7HV8FO6tx3E/Jj90QK1ncuM2lrzDUTi9MyEgUMshwJg35fWspWqftm3CKYAqMad76Cgn5CRuwonVVUwdwX7Wm9rhUUY/oSxl3o3ua4WF0XQ2v9UMfN81fs+i7ysA5EJi5qKcQTrxwgG+2l83gTeLRMZoQcCmw7i0jdo94c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21288d3b387so16865515ad.1;
-        Fri, 22 Nov 2024 06:29:19 -0800 (PST)
+	s=arc-20240116; t=1732285957; c=relaxed/simple;
+	bh=US7qdoAbpFXy3HycJWgoYHmOo5xoB8xu1iweI2W82rs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q+wKUzrhECEAlbLoUbhf548jH4w6+z50ND+HjR/mabdmO77F6YmjThZKPkBR+oekQW2zhuNBAXvvG0sfvMq/wvIXBEJmKXwS94JeyfGSS72htkzLZa5LrmP5fDXvVCdOyFh50s91I2ylTQqkS7B+ckstoRPTo2lWgsoUw8dZb9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wyDMQ9dm; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-724e2c587b1so708115b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 06:32:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732285955; x=1732890755; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5G90mSkkJJPm7o2FPUh6y7QehjJIhx3sfMq0f0QAJw=;
+        b=wyDMQ9dmSmy+m8bSgKUKs6xqxFip9Bke0eI/hXspfnregbQgVaoYvCDGrEzjrHuVQO
+         trML95bAkm9uXjXYjTZnJER638hJTaHgeuIQ3otbybgvrzBsKMfOwtvuQ9sD2qsvn7qP
+         HPUW6UoGyINQWX/IQS03KpoRxFIxig1W7e9FF/Y6BBjFfWyRlNKIanf68Sjgtyhb1TmW
+         7WS+Rt79vJrODwuwjlHHkj6fZo8dJm8MZ6FJm+wB8zaC3IbqaPHlGi17fEEPRLDl1/n+
+         yR2Gnh64EFn9oUpDtUyU23JgNC5u9j8/eM+4bNVD5cAmmX2bMzBAX/BtPpIGzFTRsEsz
+         dcdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732285759; x=1732890559;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ALWtShgKlACg5peP3rjy/sBRWgmDv3+Kp9cFCaaIV7A=;
-        b=mYO7Z73LoI/pyxzUv9UUK75M8s3m+SMwknJnp+bcC3+CCyWXish9CjakRwgrYBXI94
-         1E2k9L/9BRm5Lga2eVI8t8SHITRCAG7yRjiAVz9665vWRqGYDLaIHcuq0kgNf5yT91f5
-         vMopwnBwRyglFP96EKVHs8zkTbG58ZEGQY4jbasuf0rfp5V4QYJwlulQla3EDWvIPYH/
-         47W3aYg0OnAdqhWedctRc8Bl2bgozgpmTg5ubyqhM+R2UH1EUBQpHoo0o6gM9sLeSoYm
-         2dhkmsjUqeZQpt2xOY6L1hd/hrubvA5ATu6xWGXkYCsNJz7KtAzEMEoPt16z2YFD/fAF
-         aKeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVn9qztWX3E59Eq5UJEnayqjYX2/gxzu3hUanLCbKHHx9VgWXnVXBWJjC+4QRkvE4w9veafcA168rWJd4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZK+TxsbBSs6x+YGUk1rNLbngwkcNKtC520nALlIb4gEhttC1h
-	ALgkTDIBAOm9UyE6nq96q4Ocr8UubJipJdTPtx7ayqfN0i8vBSPRO3lb
-X-Gm-Gg: ASbGncvTvOZ7mDkqD61QVrNbps09ZRM7koxzg+nF0lwQY7nN498eggWluVSJlNFhqzs
-	L05AnFgDZojA6+2ZiOP3jabqMPWlsdRFIFydjnh6OSxbxp/S+L2/RWq0JrxbAWdeIvNTCOjHubM
-	ANstnV5oG8cTJBF+PvBTdGNIECJ1lWgyw0Npa0nUVE89FESAsqW3BGGyyqCjPFGeTzRUa7dFcUM
-	sjiduXBFjAYtENaPIzUB21bLh2IYc+remYBAZyU94OlAbJ/v+dGJKiXVGybQgM5+jcjT07P6W34
-	fSpbY0thtcH0xGqqLKfIN79Soh7JqWvVjHzEEgiHOCc=
-X-Google-Smtp-Source: AGHT+IHel6+PKEihHvZyFEe4e3RNy6kPKRotK4Z9syzvfzmS32VcpNb0Rz9EH0NPaRwp67vJtT6eOg==
-X-Received: by 2002:a17:902:d4cb:b0:212:996:3536 with SMTP id d9443c01a7336-2129f5c3cf0mr42291255ad.10.1732285758986;
-        Fri, 22 Nov 2024 06:29:18 -0800 (PST)
-Received: from leira.trondhjem.org (104-63-89-173.lightspeed.livnmi.sbcglobal.net. [104.63.89.173])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dc207bbsm16542835ad.228.2024.11.22.06.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 06:29:18 -0800 (PST)
-Message-ID: <d7b2d246dfffb921f7d2c1e59fc0e6d847fcaf2f.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] two fixes for pNFS SCSI device handling
-From: Trond Myklebust <trondmy@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>, Anna Schumaker
- <anna@kernel.org>,  Chuck Lever <chuck.lever@oracle.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph
- Hellwig	 <hch@lst.de>
-Date: Fri, 22 Nov 2024 09:29:15 -0500
-In-Reply-To: <cover.1732279560.git.bcodding@redhat.com>
-References: <cover.1732279560.git.bcodding@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+        d=1e100.net; s=20230601; t=1732285955; x=1732890755;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5G90mSkkJJPm7o2FPUh6y7QehjJIhx3sfMq0f0QAJw=;
+        b=tFsM1veOyDJaOPDgpEqKEVNJG8g89NP9wqhmDBdg8RrL2MZM7Kyck35uEpCmaS5bvv
+         i+Anr3/mv6Icbn1lALWWVAPy6PPHm+xo5hGEk2/rC+H6sASNIxvJtJmhhAxgkpCGhHct
+         Dyc5ovnOsXhkFhDzD48Sh5Hojxw3xEcUC/PXxbD7xD/s/ZAYiRgfbnTNiQtxijG1wXA5
+         Atn86z1wE7qOoMf5jGktew/nZbNu1+rixkrlzobQjcR57lT17tOy9MkVapFhGRKniqQ/
+         s52gfv9yLXsYoqmoY3MUX1hFW5xQn9aT/DGSOun97AhcjLbXM4LNGETVypQ+nnOf2/sF
+         +9Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsQNlQx9Ho6LNJ+/yZ3HU1V5Xv6IBpvfswPxSxMsQhxol+7aHfYxVSLBzZh17kZJAPJ6FOC3iz3+mZoCA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5qPO11PGN6YUREy5T/BSgWFBgPASluycBckKBAnLB7zL+ieCM
+	JnTZjIS5mwLAPRldbDkhH4HuTsbMpRTEnctzv564KtgJM6vMM4viXvVCUcOKOAHpelKgOrVmTaB
+	rig==
+X-Google-Smtp-Source: AGHT+IG2xRZ0B9krkD5T1dy/mXTNVTFzNXb6ngm7KcA6kjjz+MsRPalZoSLYmPTFr94jg1adiFpcMH9byDA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:919d:b0:71e:69bb:d0f8 with SMTP id
+ d2e1a72fcca58-724df3e3b0amr5230b3a.1.1732285955277; Fri, 22 Nov 2024 06:32:35
+ -0800 (PST)
+Date: Fri, 22 Nov 2024 06:32:33 -0800
+In-Reply-To: <878qtbvcho.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20241118130403.23184-1-kalyazin@amazon.com> <87h684ctlg.fsf@redhat.com>
+ <f8faa85e-24e6-4105-ab83-87b1b8c4bd56@amazon.com> <878qtbvcho.fsf@redhat.com>
+Message-ID: <Z0CWAXqMl-wTdGXm@google.com>
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: kalyazin@amazon.com, pbonzini@redhat.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, gshan@redhat.com, graf@amazon.de, 
+	jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com, nsaenz@amazon.es, 
+	xmarcalx@amazon.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri, 2024-11-22 at 07:47 -0500, Benjamin Coddington wrote:
-> A bit late for v6.13 perhaps, but here are two fresh corrections for
-> pNFS
-> SCSI device handling, and some comments as requested by Christoph.
->=20
-> On v2: add full commit subject in 1/2, change the caller in 2/2.
-> On v3: add r-b for Chuck, tweak comments in 2/2.
->=20
-> Benjamin Coddington (2):
-> =C2=A0 nfs/blocklayout: Don't attempt unregister for invalid block device
-> =C2=A0 nfs/blocklayout: Limit repeat device registration on failure
->=20
-> =C2=A0fs/nfs/blocklayout/blocklayout.c | 15 ++++++++++++++-
-> =C2=A0fs/nfs/blocklayout/dev.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 6 ++----
-> =C2=A02 files changed, 16 insertions(+), 5 deletions(-)
->=20
->=20
-> base-commit: adc218676eef25575469234709c2d87185ca223a
+On Fri, Nov 22, 2024, Vitaly Kuznetsov wrote:
+> diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
+> index a1efa7907a0b..5558a1ec3dc9 100644
+> --- a/arch/x86/include/uapi/asm/kvm_para.h
+> +++ b/arch/x86/include/uapi/asm/kvm_para.h
+> @@ -87,7 +87,7 @@ struct kvm_clock_pairing {
+>  #define KVM_MAX_MMU_OP_BATCH           32
+>  
+>  #define KVM_ASYNC_PF_ENABLED                   (1 << 0)
+> -#define KVM_ASYNC_PF_SEND_ALWAYS               (1 << 1)
+> +#define KVM_ASYNC_PF_SEND_ALWAYS               (1 << 1) /* deprecated */
+>  #define KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT     (1 << 2)
+>  #define KVM_ASYNC_PF_DELIVERY_AS_INT           (1 << 3)
+>  
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 83fe0a78146f..cd15e738ca9b 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3585,7 +3585,6 @@ static int kvm_pv_enable_async_pf(struct kvm_vcpu *vcpu, u64 data)
+>                                         sizeof(u64)))
+>                 return 1;
+>  
+> -       vcpu->arch.apf.send_user_only = !(data & KVM_ASYNC_PF_SEND_ALWAYS);
+>         vcpu->arch.apf.delivery_as_pf_vmexit = data & KVM_ASYNC_PF_DELIVERY_AS_PF_VMEXIT;
+>  
+>         kvm_async_pf_wakeup_all(vcpu);
+> @@ -13374,8 +13373,7 @@ static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
+>         if (!kvm_pv_async_pf_enabled(vcpu))
+>                 return false;
+>  
+> -       if (vcpu->arch.apf.send_user_only &&
+> -           kvm_x86_call(get_cpl)(vcpu) == 0)
+> +       if (kvm_x86_call(get_cpl)(vcpu) == 0)
 
-Please make those patches be incremental against what is already in
-linux-next.
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trond.myklebust@hammerspace.com
-
-
+By x86's general definition of "user", this should be "!= 3" :-)
 
