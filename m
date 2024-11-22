@@ -1,46 +1,47 @@
-Return-Path: <linux-kernel+bounces-418319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E73C9D6059
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:34:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462299D605B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:34:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E219028284C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:34:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60ABEB235EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C5213D521;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6560F1419A9;
 	Fri, 22 Nov 2024 14:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DeNK0OEs"
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="L3S9+VSv"
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDED16A009
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C228470834
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286056; cv=none; b=fta81V+dHOJM8QvSU2x4V2DqsJIOnV3i0Oie6MmnmeVGYuIxGdWxUWRYShwyzO1jABIa+nOPAQrE710dmwlzNNZiEcJR3VHLTEB7OiJalKu4PwAJSZjf6VWg/yth4nUiBGVWcK91sJfR3VP9yxujap2K6ot5kMm6U8BZpdfVRFg=
+	t=1732286056; cv=none; b=MVl+1M4nWjPBvglNudOg/Q5Ri+trzV+lmqEgKB/NPxWWRfraXp5T8gcXWDdqnS6QMi6+too0uifxRBFUGZ1YHEDbJ8Hfy2vmR3YEPSelqS3lb6ESN/fOUT6mFOod9tzMHuCNUQnXW3rUZBEC9iiW4Ac3/dbuqE1CV7jjVJ0rdjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732286056; c=relaxed/simple;
-	bh=0r4hABUh0acoMcyTkOf9Kg93ny5ffSH3S+RWZLxYoc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VrSW7w6HLeVQxZFeMS2CuCRxefDUI95r8ufzZ2SRIHjROX+my1XLSHmsRjO/1FPrAkPFwd1pEypdjnM+IQXFq4Xi/cZzVs/0X8TuL2ty/R2cFgDBnTH7Kwr6ZEx3LGHfo5pqHbzs7WOwQOZ0iQu2k6L4+PXz8YuqNrKz+ILcG3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DeNK0OEs; arc=none smtp.client-ip=45.157.188.9
+	bh=oj/6mcirhBGSz78MkVxQZgxWtQyM37QmbXlg51RuIoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GrEIQFZQxlS+NCfyIJ8KvnaUmTaMDsf46CZSbOqHa6IkOp7ZBqm507rbaG09IP79cLJ1xeG5FjV7pGQjVTK5uMO9/rJVXXet4fiA43ar8EgU99QXG1JhljkxEwOjWmiWhznCjffWwU8THhYHDN026DOOu8j1b8fYDhKBeFTQS1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=L3S9+VSv; arc=none smtp.client-ip=84.16.66.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK73Svgzcvg;
-	Fri, 22 Nov 2024 15:34:03 +0100 (CET)
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK84CR0zdhH;
+	Fri, 22 Nov 2024 15:34:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286043;
-	bh=KfB8e4QyAyEvoTpGyqB4pJ7DknRbUlvg54KRTK/YOew=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DeNK0OEsrwwGnCtpdjh4Q5FPTDApccObAsIP/Fd3CL2s3dxPCd2BJMd7JDvJ4W9eG
-	 Oqpm8a3RLrW/X6UyV9zP9Jx4w+r5RcNPlK8iknr0lyhv9b9K8LCUka3Jjo+hbmWbLt
-	 oZ2X/CDpPQwG51+NGtTuKcp3r8eYh5/i1UF3nlJw=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK54Sxczk4V;
-	Fri, 22 Nov 2024 15:34:01 +0100 (CET)
+	s=20191114; t=1732286044;
+	bh=t/jeJLYng7iwFnD7UmSkTCH0JnlFPYPzlVzfF2WGADk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=L3S9+VSvysJWYQqUlRssyyXMNPfahLvq0LusLrc09cn3ux7e16vB9JTg/p8xgM6aU
+	 JX9vqipiE4WEmB4oQYUv8lNxOc0uHQv+2nMu4u8dogJLHB3DgcXxx9bLoVFTNSSKMk
+	 SFxlkPdBicP8mKz22XvI1QjMw33tI3gHfgtsGVec=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK76d31znDH;
+	Fri, 22 Nov 2024 15:34:03 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -68,9 +69,11 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 00/23] Landlock audit support
-Date: Fri, 22 Nov 2024 15:33:30 +0100
-Message-ID: <20241122143353.59367-1-mic@digikod.net>
+Subject: [PATCH v3 01/23] lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are set
+Date: Fri, 22 Nov 2024 15:33:31 +0100
+Message-ID: <20241122143353.59367-2-mic@digikod.net>
+In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
+References: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,180 +84,103 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Hi,
+When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and the
+dev_get_by_index and init_net symbols (used by dump_common_audit_data)
+are found by the linker.  dump_common_audit_data() should then failed to
+build when CONFIG_NET is not set. However, because the compiler is
+smart, it knows that audit_log_start() always return NULL when
+!CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
+a side effect, dump_common_audit_data() is not built and the linker
+doesn't error out because of missing symbols.
 
-This patch series adds audit support to Landlock.
+Let's only build lsm_audit.o when CONFIG_SECURITY and CONFIG_AUDIT are
+both set, which is checked with the new CONFIG_HAS_SECURITY_AUDIT.
 
-Logging denied requests is useful for different use cases:
-- sysadmins: to look for users' issues
-- security experts: to detect attack attempts
-- power users: to understand denials
-- app developers: to ease and speed up sandboxing support
+ipv4_skb_to_auditdata() and ipv6_skb_to_auditdata() are only used by
+Smack if CONFIG_AUDIT is set, so they don't need fake implementations.
 
-To make logs useful, they need to contain the most relevant Landlock
-domain that denied an action, and the reason of such denial.  This
-translates to the latest nested domain and the related blockers: missing
-access rights or other kind of constraints (e.g. scoped domain).
+Because common_lsm_audit() is used in multiple places without
+CONFIG_AUDIT checks, add a fake implementation.
 
-# Changes from previous version
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20241122143353.59367-2-mic@digikod.net
+---
 
-This third patch series reduces the amount of domain information
-records: instead of creating a record for a domain hierarchy, only the
-domain that denied the request is logged, which is enough.
+Changes since v2:
+- Add CONFIG_HAS_SECURITY_AUDIT to fix the build with AUDIT &&
+  !SECURITY, reported by Guenter Roeck.
+---
+ include/linux/lsm_audit.h | 14 ++++++++++++++
+ security/Kconfig          |  5 +++++
+ security/Makefile         |  2 +-
+ 3 files changed, 20 insertions(+), 1 deletion(-)
 
-The log format for domain information don't include the parent anymore
-but the creation time instead, which is useful to know how old a domain
-is relative to a first denial.  We also now use hexadecimal numbers for
-domain IDs.
-
-Another major addition of this patch series are the new tests.  The new
-syscall flag is tested, and all the ptrace tests are extended to check
-the source of the denials (e.g. Landlock or Yama).  This greatly improve
-test consistency and I plan to extend all Landlock tests with these
-audit checks.
-
-The sandboxer sample is also updated to not generate logs by default.
-
-# Design
-
-Log records are created for any denied actions caused by a Landlock
-policy, which means that a well-sandboxed applications should not log
-anything except for unattended access requests that might be the result
-of attacks or bugs.
-
-However, sandbox tools creating restricted environments could lead to
-abundant log entries because the sandboxed processes may not be aware of
-the related restrictions.  To avoid log spam, the
-landlock_restrict_self(2) syscall gets a new
-LANDLOCK_RESTRICT_SELF_LOGLESS flag to not log denials related to this
-specific domain.  Except for well-understood exceptions, this flag
-should not be set.  Indeed, applications sandboxing themselves should
-only try to bypass their own sandbox if they are compromised, which
-should ring a bell thanks to log events.
-
-When an action is denied, the related Landlock domain ID is specified.
-If this domain was not previously described in a log record, one is
-created.  This record contains the domain ID, its creation time, and
-informations about the process that enforced the restriction (at the
-time of the call to landlock_restrict_self): PID, UID, executable path,
-and name (comm).
-
-This new approach also brings building blocks for an upcoming
-unprivileged introspection interface.  The unique Landlock IDs will be
-useful to tie audit log entries to running processes, and to get
-properties of the related Landlock domains.  This will replace the
-previously logged ruleset properties.
-
-# Samples
-
-Here are two examples of log events:
-
-$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
-
-  type=UNKNOWN[1423] msg=audit(1732186800.268:30): domain=1a6fdc66f blockers=scope_signal opid=1 ocomm="systemd"
-  type=UNKNOWN[1424] msg=audit(1732186800.268:30): domain=1a6fdc66f creation=1732186800.264 pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
-  type=SYSCALL msg=audit(1732186800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
-  type=PROCTITLE msg=audit(1732186800.268:30): proctitle=6B696C6C0031
-  type=UNKNOWN[1425] msg=audit(1732186800.324:31): domain=1a6fdc66f
-
-$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
-
-  type=UNKNOWN[1423] msg=audit(1732186800.221:33): domain=1a6fdc679 blockers=fs_write_file path="/dev/tty" dev="devtmpfs" ino=9
-  type=UNKNOWN[1424] msg=audit(1732186800.221:33): domain=1a6fdc679 creation=1732186800.221 pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
-  type=SYSCALL msg=audit(1732186800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-  type=PROCTITLE msg=audit(1732186800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
-  type=UNKNOWN[1423] msg=audit(1732186800.221:34): domain=1a6fdc679 blockers=fs_write_file path="/etc/passwd" dev="vda2" ino=143821
-  type=SYSCALL msg=audit(1732186800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-  type=PROCTITLE msg=audit(1732186800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
-  type=UNKNOWN[1425] msg=audit(1732186800.261:35): domain=1a6fdc679
-
-# Future changes
-
-It would be interesting to enhance audit with the ability to filter on
-the executable path that created a sandbox, or to filter on a Landlock
-domain ID.
-
-
-Previous versions:
-v1: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
-v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
-
-Regards,
-
-Mickaël Salaün (23):
-  lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are
-    set
-  lsm: Add audit_log_lsm_data() helper
-  landlock: Factor out check_access_path()
-  landlock: Add unique ID generator
-  landlock: Move access types
-  landlock: Simplify initially denied access rights
-  landlock: Move domain hierarchy management
-  landlock: Log ptrace denials
-  audit: Add a new audit_get_ctime() helper
-  landlock: Log domain properties and release
-  landlock: Log mount-related denials
-  landlock: Align partial refer access checks with final ones
-  selftests/landlock: Add test to check partial access in a mount tree
-  landlock: Optimize file path walks and prepare for audit support
-  landlock: Log file-related denials
-  landlock: Log truncate and ioctl denials
-  landlock: Log TCP bind and connect denials
-  landlock: Log scoped denials
-  landlock: Control log events with LANDLOCK_RESTRICT_SELF_LOGLESS
-  samples/landlock: Do not log denials from the sandboxer by default
-  selftests/landlock: Extend tests for landlock_restrict_self()'s flags
-  selftests/landlock: Add tests for audit
-  selftests/landlock: Add audit tests for ptrace
-
- Documentation/userspace-api/landlock.rst      |   2 +-
- include/linux/audit.h                         |   8 +
- include/linux/lsm_audit.h                     |  22 +
- include/uapi/linux/audit.h                    |   5 +-
- include/uapi/linux/landlock.h                 |  14 +
- kernel/auditsc.c                              |  21 +-
- samples/landlock/sandboxer.c                  |  35 +-
- security/Kconfig                              |   5 +
- security/Makefile                             |   2 +-
- security/landlock/.kunitconfig                |   2 +
- security/landlock/Makefile                    |   2 +
- security/landlock/access.h                    | 100 ++++
- security/landlock/audit.c                     | 495 ++++++++++++++++++
- security/landlock/audit.h                     |  76 +++
- security/landlock/domain.c                    | 195 +++++++
- security/landlock/domain.h                    | 117 +++++
- security/landlock/fs.c                        | 279 +++++++---
- security/landlock/fs.h                        |  10 +
- security/landlock/id.c                        | 242 +++++++++
- security/landlock/id.h                        |  25 +
- security/landlock/net.c                       |  51 +-
- security/landlock/ruleset.c                   |  35 +-
- security/landlock/ruleset.h                   |  96 ++--
- security/landlock/setup.c                     |   2 +
- security/landlock/syscalls.c                  |  26 +-
- security/landlock/task.c                      | 150 +++++-
- security/lsm_audit.c                          |  27 +-
- tools/testing/kunit/configs/all_tests.config  |   2 +
- tools/testing/selftests/landlock/audit.h      | 308 +++++++++++
- tools/testing/selftests/landlock/audit_test.c | 168 ++++++
- tools/testing/selftests/landlock/base_test.c  |  18 +-
- tools/testing/selftests/landlock/common.h     |   2 +
- tools/testing/selftests/landlock/config       |   1 +
- tools/testing/selftests/landlock/fs_test.c    |  54 +-
- .../testing/selftests/landlock/ptrace_test.c  |  62 ++-
- 35 files changed, 2454 insertions(+), 205 deletions(-)
- create mode 100644 security/landlock/access.h
- create mode 100644 security/landlock/audit.c
- create mode 100644 security/landlock/audit.h
- create mode 100644 security/landlock/domain.c
- create mode 100644 security/landlock/domain.h
- create mode 100644 security/landlock/id.c
- create mode 100644 security/landlock/id.h
- create mode 100644 tools/testing/selftests/landlock/audit.h
- create mode 100644 tools/testing/selftests/landlock/audit_test.c
-
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
+diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
+index 97a8b21eb033..c2b01380262c 100644
+--- a/include/linux/lsm_audit.h
++++ b/include/linux/lsm_audit.h
+@@ -116,14 +116,28 @@ struct common_audit_data {
+ #define v4info fam.v4
+ #define v6info fam.v6
+ 
++#ifdef CONFIG_AUDIT
++
+ int ipv4_skb_to_auditdata(struct sk_buff *skb,
+ 		struct common_audit_data *ad, u8 *proto);
+ 
++#if IS_ENABLED(CONFIG_IPV6)
+ int ipv6_skb_to_auditdata(struct sk_buff *skb,
+ 		struct common_audit_data *ad, u8 *proto);
++#endif /* IS_ENABLED(CONFIG_IPV6) */
+ 
+ void common_lsm_audit(struct common_audit_data *a,
+ 	void (*pre_audit)(struct audit_buffer *, void *),
+ 	void (*post_audit)(struct audit_buffer *, void *));
+ 
++#else /* CONFIG_AUDIT */
++
++static inline void common_lsm_audit(struct common_audit_data *a,
++	void (*pre_audit)(struct audit_buffer *, void *),
++	void (*post_audit)(struct audit_buffer *, void *))
++{
++}
++
++#endif /* CONFIG_AUDIT */
++
+ #endif
+diff --git a/security/Kconfig b/security/Kconfig
+index 28e685f53bd1..f10dbf15c294 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -64,6 +64,11 @@ config SECURITY
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++config HAS_SECURITY_AUDIT
++	def_bool y
++	depends on AUDIT
++	depends on SECURITY
++
+ config SECURITYFS
+ 	bool "Enable the securityfs filesystem"
+ 	help
+diff --git a/security/Makefile b/security/Makefile
+index cc0982214b84..22ff4c8bd8ce 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -15,7 +15,7 @@ obj-$(CONFIG_SECURITY)			+= security.o
+ obj-$(CONFIG_SECURITYFS)		+= inode.o
+ obj-$(CONFIG_SECURITY_SELINUX)		+= selinux/
+ obj-$(CONFIG_SECURITY_SMACK)		+= smack/
+-obj-$(CONFIG_SECURITY)			+= lsm_audit.o
++obj-$(CONFIG_HAS_SECURITY_AUDIT)	+= lsm_audit.o
+ obj-$(CONFIG_SECURITY_TOMOYO)		+= tomoyo/
+ obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
 -- 
 2.47.0
 
