@@ -1,116 +1,187 @@
-Return-Path: <linux-kernel+bounces-418455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363959D61D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:15:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB09F160830
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:15:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10DE1DF75E;
-	Fri, 22 Nov 2024 16:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cADUQG7g"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2C89D61DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:17:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA9F1D9598
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06729B25755
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:17:00 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE491DE3A5;
+	Fri, 22 Nov 2024 16:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fOfXgJla"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571A5AD2F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292119; cv=none; b=NZBnajKvGIPjFueBN9DglVgRN1WawdTjUzgLAN33eUI0cHeIwdEwcWlIWej/z0Dfw9Tiu/xZEZb51Z8g3arZnVzqhwKOGOY9T5zQ2GS2tIR05VVDTgXE3vvUyPhxRQEKXbNR59WKv+k/7zDZCLTzz+ooygw5wp5oe4wxspAH3M0=
+	t=1732292213; cv=none; b=Qz8Seje43cSAcromXspNp8jg0KFvq9KayEy8JYMWuYrSlAyuJTb3raMAN9/sUdjTNYp8lLjXLYEdvVzbtjeaWeXgGKzgPzFZ+cfjirSW7RbQFy/AzdYhwqKAJz9h+LgW4R60g8VsSY3h2drj82flOC8WqYROGb/q6DKc0y5Do4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292119; c=relaxed/simple;
-	bh=Gu0n2ULPyKWMJ8niorrKnik/nENpGrAT+3JB8wMdbuQ=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=C2V1YZOPKarYT+PjQLf3ejoM+deIM5eQD9u/JW5Oq9xmJS6Fo30DLLOC8rcHaw5hjoW1rsPlM4w1DkFVtEZhaAqxPijITr1wmPULnQrQi5iBV+or6REbuYhIXFSUfSs+FdOrdsxFQKEdZeAeKParI7sjGGla4UcrlimqZ9Yo/3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cADUQG7g; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732292118; x=1763828118;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Gu0n2ULPyKWMJ8niorrKnik/nENpGrAT+3JB8wMdbuQ=;
-  b=cADUQG7gOKQl1OvUUtsa/to7NRuIgnxBBcodyGFTGK4ot8FKOKW3ksbg
-   XJDi2NHSeGDwg6UpgxzIebwDi9KCMffRUmqsI+hWrqyfDQQv7q4reYkcL
-   gwJHivd3S68L9XXsS+ZtNFkbo+6unyZGRk1+/ObmU2juXcAsEFXdcI7sD
-   0=;
-X-IronPort-AV: E=Sophos;i="6.12,176,1728950400"; 
-   d="scan'208";a="472481980"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:15:17 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:17337]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.181:2525] with esmtp (Farcaster)
- id 1cad881e-4a18-4d14-ade3-488f6eb63fec; Fri, 22 Nov 2024 16:15:16 +0000 (UTC)
-X-Farcaster-Flow-ID: 1cad881e-4a18-4d14-ade3-488f6eb63fec
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 22 Nov 2024 16:15:16 +0000
-Received: from [192.168.2.77] (10.106.100.9) by EX19D003UWC002.ant.amazon.com
- (10.13.138.169) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35; Fri, 22 Nov 2024
- 16:15:15 +0000
-Message-ID: <3676f073-028e-4855-aa87-107e0607be24@amazon.com>
-Date: Fri, 22 Nov 2024 09:15:11 -0700
+	s=arc-20240116; t=1732292213; c=relaxed/simple;
+	bh=Bv/9ofc9ECBUiElXTbQzb4okhG/cF9jXPCdH7n9GtGk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XptlJQ8dDQUP1KsALNaH0oomcAn9Vkn/7y+ViXoHMhFX52KeLZE8LZJ4Wj3SJdaUxCEDhA5TY+YCFisAYHah4CJ7KgRsPWvbJ7ZSjyErTT/YEEUeHgHOUb5qNFpDDFENbTxIg8gNsniu7FHDecPcSDpkCxCTyyT5G/Nt2Cv3xL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fOfXgJla; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732292210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tqYsenDaD0i9ZHsyIrHLDcCZPQ9SNx4buFBPvNXiB+A=;
+	b=fOfXgJlaHCH45oy3idUl7GG4gJz2W4YtqWBO4oRjX5JO9jVaFhCzGdUpG7+zAtB9N74Hz2
+	Hge09rqBjt2AzAQ46EFYSD0a9C/iPZGFq3w1Ftn9hHWkVmKlDdJE/bu8fgf12WTWxSsEvG
+	84nEvKFuqZfxTaVoAzy4scF0oGT/2r8=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-78-Hi7NmrnEOvihwbkhVGsDWg-1; Fri, 22 Nov 2024 11:16:49 -0500
+X-MC-Unique: Hi7NmrnEOvihwbkhVGsDWg-1
+X-Mimecast-MFC-AGG-ID: Hi7NmrnEOvihwbkhVGsDWg
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7b14a4e771fso261391085a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:16:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732292209; x=1732897009;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tqYsenDaD0i9ZHsyIrHLDcCZPQ9SNx4buFBPvNXiB+A=;
+        b=h6YafOhpff/2t8o7I6qUNtxpUeXN+/dmSS7ju/XzM3kB4a4ekDYPnjoiM4HAsT2AaJ
+         82riLC1lml/nDzP8/1I+edO0vN6P5VFZP4zQhRjswQ5isvd1t4CCZxJvkQTrjP9eb1AD
+         0wRHk8RbKYTlPSegezPAn5u3g2g+JDKdLLh37qy7ySF7/oDFPDcd9cqjWVxEGbQkey4E
+         StcFZkEecw5naGoGsJdoSoQLqLefpighXH+6Wc5P6Mh5YsPpfoTIKZe1T5KAE/xlAHEN
+         APIBibE1G493RGYoivtClprohVTRar7L3LUtCNt0G8HKGyPv5eunss0vQ5bLdywNkSP5
+         U3tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8rRbjeehsPNef3hxCYapwKg6XxX972RjOMt8nLZZPcmwOY4DfOyf5ile4D99XHPoK71llEvOGWpbqPMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWx+cKeOyE5P2jLGtEhRw4So0RYadP9GVFqSFPTLaL7ZFLiPgT
+	67Nac+tgDEbjtYHjwGNXAOjt1tUqyuqiPdtb5Hzw30Lmo95wxZfZCd86au5HfWfUsA0hlJpOEm/
+	t2DU3nJHVkJPcnr2a1XQBoISglEMNFa5bbIvVo12zTK1wxAMQSs4s/jFsJV2dew==
+X-Gm-Gg: ASbGncssc2ypDRmhNm+oqPTRJw7T5vtc9mj7xPwitbTvtc9sx3xQpg/FUjrbblDG2M6
+	TJCj6cGdsBSyeArP+s9kL8x3b66jZALOaXbxt8GZiWrS+3U+LytzrFNds9dxXd7QRJg/qJVWE/c
+	ncSr+OZ8T7s8ZBFWRFWaQxAvIRr/U/If9ToHxkqL81FpPPK4lU3e2naZZSIlMOhC8YQEEyg4IB4
+	1uMo7SDf4JsJz5BKkFm8A4X5yEfBMF2Z0jEU8QGIgx3SprlUzN/0Vb4Vci2N7Sn6AAubSfEkhYo
+	r9yfkw6dyygrPY2HOr5RUslNW+//aqtmGsS6S+SrIg==
+X-Received: by 2002:a05:620a:1994:b0:7b0:6e8:94ef with SMTP id af79cd13be357-7b5143e427amr458832685a.0.1732292208641;
+        Fri, 22 Nov 2024 08:16:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHR6hqiPkDWQ3B2eG437kkPrGRq1PtOCZedZpuboUGW7qkMTNvEQd4gGaX5Hcs1CDt/wA1lCg==
+X-Received: by 2002:a05:620a:1994:b0:7b0:6e8:94ef with SMTP id af79cd13be357-7b5143e427amr458829385a.0.1732292208164;
+        Fri, 22 Nov 2024 08:16:48 -0800 (PST)
+Received: from thinkpad-p1.localdomain (pool-174-112-193-187.cpe.net.cable.rogers.com. [174.112.193.187])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b51416cd4bsm99077685a.117.2024.11.22.08.16.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 08:16:47 -0800 (PST)
+Message-ID: <1c5e13b7472917b5fa303553da04ae16590f3105.camel@redhat.com>
+Subject: Re: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
+From: Radu Rendec <rrendec@redhat.com>
+To: Javier Martinez Canillas <javierm@redhat.com>, Viresh Kumar
+	 <viresh.kumar@linaro.org>
+Cc: robh@kernel.org, arnd@linaro.org, linux-kernel@vger.kernel.org, Zhipeng
+ Wang <zhipeng.wang_1@nxp.com>, Maxime Ripard <mripard@kernel.org>, 
+ javier@dowhile0.org, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ linux-pm@vger.kernel.org
+Date: Fri, 22 Nov 2024 11:16:46 -0500
+In-Reply-To: <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
+References: <20241119111918.1732531-1-javierm@redhat.com>
+	 <20241121071127.y66uoamjmroukjck@vireshk-i7>
+	 <87iksh3r4x.fsf@minerva.mail-host-address-is-not-set>
+	 <20241121090357.ggd4hc43n56xzo4m@vireshk-i7>
+	 <87frnl3q63.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <jackmanb@google.com>
-CC: <David.Kaplan@amd.com>, <bp@alien8.de>, <canellac@amazon.at>,
-	<dave.hansen@linux.intel.com>, <derekmn@amazon.com>, <hpa@zytor.com>,
-	<jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
-	<mlipp@amazon.at>, <pawan.kumar.gupta@linux.intel.com>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
-References: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
-Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
- vector controls
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D039UWB004.ant.amazon.com (10.13.138.57) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-On 2024-11-14 at 9:32+0000, Brendan Jackman wrote:
-> On Wed, 13 Nov 2024 at 17:19, Brendan Jackman <jackmanb@google.com> wrote:
-> >
-> > On Wed, 13 Nov 2024 at 17:00, Kaplan, David <David.Kaplan@amd.com> wrote:
-> > > I wonder what would happen if there was a mitigation that was required
-> > > when switching to another guest, but not to the broader host address
-> > > space.
-> >
-> > This is already the case for the mitigations that "go the other way":
-> > IBPB protects the incoming domain from the outgoing one, but L1D flush
-> > protects the outgoing from the incoming. So when you exit to the
-> > unrestricted address space it never makes sense to flush L1D (everyone
-> > trusts the kernel) but e.g. guest->guest still needs one.
->
-> I'm straying quite far from the actual topic now but to avoid
-> confusion for anyone reading later:
->
-> A discussion off-list led me to realise that the specifics of this
-> comment are nonsensical, I had L1TF in mind but I don't think you can
-> exploit L1TF in a direct guest->guest attack (I'm probably still
-> missing some nuance there). We wouldn't need to flush L1D there unless
-> there's a new vuln.
+On Thu, 2024-11-21 at 10:13 +0100, Javier Martinez Canillas wrote:
+> Viresh Kumar <viresh.kumar@linaro.org> writes:
+>=20
+> > On 21-11-24, 09:52, Javier Martinez Canillas wrote:
+> > > Will autload the driver for any platform that has a Device Tree node =
+with a
+> > > compatible =3D "operating-points-v2" (assuming that this node will be=
+ a phandle
+> > > for the "operating-points-v2" property.
+> > >=20
+> > > For example, in the case of the following DT snippet:
+> > >=20
+> > > cpus {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpu@0 {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 operating-points-v2=C2=A0=C2=A0=C2=A0=C2=A0 =3D <&cpu=
+0_opp_table>;
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 };
+> > > };
+> > >=20
+> > > cpu0_opp_table: opp_table {
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "operating-=
+points-v2";
+> > > ...
+> > > };
+> > >=20
+> > > It will autoload if OF finds the opp_table node, but it register the =
+cpufreq-dt
+> > > device only if there's a cpu@0 with a "operating-points-v2" property.
+> > >=20
+> > > Yes, there may be false positives because the autload semantics don't=
+ exactly
+> > > match the criteria for the driver to "match" but I believe is better =
+to load it
+> > > and not use for those cases, than needing the driver and not autoload=
+ing it.
+> > >=20
+> > > > I am not sure what's the best way forward to fix this.
+> > > >=20
+> > >=20
+> > > I couldn't find another way to solve it, if you have a better idea pl=
+ease let
+> > > me know. But IMO we should either workaround like this or revert the =
+commit=20
+> > > that changed the driver's Kconfig symbol to be tristate.
+> >=20
+> > Yeah, this needs to be fixed and this patch is one of the ways. Lets se=
+e if Arnd
+> > or Rob have something to add, else can apply this patch.
+> >=20
+>=20
+> Ok. Please notice though that this is an RFC, since all my arm64 machines=
+ have
+> their own CPUFreq driver and are not using cpufreq-dt-platdev. So I would=
+ not
+> apply it until someone actually tested the patch.
 
-With Foreshadow-VMM/CVE-2018-3646 I thought you can do guest->guest?
-Since guest completely controls the physical address which ends up
-probing L1D (as if it were a host physical address).
+I tested the patch on a Renesas R-Car S4 Spider (r8a779f0-spider.dts)
+board, and it didn't work. I think the problem is that the OPP table DT
+node does not have a corresponding device instance that is registered,
+and therefore no modalias uevent is reported to udev/kmod.
 
-And agree with the flushes between different restricted address spaces
-(e.g. context switch between guests, right?).
+FWIW, the OPP table is defined at the top of r8a779f0.dtsi and
+referenced just a few more lines below, where the CPU nodes are
+defined.
 
-Derek
+As far as I understand, there are two options to fix this:
+   1. Revert the patch that allows the cpufreq-dt-platdev driver to be
+      built as a module. There's little benefit in allowing that anyway
+      because the overhead at init time is minimal when the driver is
+      unused, and driver can't be unloaded.
+   2. Modify the driver and create an explicit of_device_id table of
+      supported platforms for v2 too (like the existing one for v1) and
+      use that instead of the cpu0_node_has_opp_v2_prop() call and the
+      blacklist. That would of course also eliminate the blacklist.
+
+--
+Best regards,
+Radu Rendec
+
 
