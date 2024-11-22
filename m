@@ -1,129 +1,135 @@
-Return-Path: <linux-kernel+bounces-418188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941EC9D5E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:50:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DE19D5E61
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CFE5281803
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89B6D282EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8404D1CB329;
-	Fri, 22 Nov 2024 11:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718981D31A9;
+	Fri, 22 Nov 2024 11:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZRIrofwc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvVZKeYt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBD21A0726
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A3E1ABEB0;
+	Fri, 22 Nov 2024 11:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732276222; cv=none; b=Q9k9ojWN+LIoHlGmczSVPD4QEFARrzBJXhaReQzjLK9ukCSDS8k11PG3FVBSVKGxm7yjjyksoejz17zaFPgQ95dQtmZIL6yfBHQUNNeQUOwtlOvod1aVobgrQbY2vKHPGlKmplr6LRgTdXSqOOOReI60+PB5Rjqo2hCGAjaWYTA=
+	t=1732276247; cv=none; b=aapCJ/f8kaAMzVKaEldvUvpadzBx5xaPwnvz1Im+01o/bowE6S0dy8jLMC/wWfCgrS755+JavDJZniz54VqsQ4zWgqGi2IdsKKPa2ohv2J0OK/CYa19bQezFWWVpi6U6pi2zdyMuqHhOVHWG1OsMKboA6hYkvKWwK0B0H2FHDxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732276222; c=relaxed/simple;
-	bh=psmtJePHQOvZfNKGNIAfEoILSWKFcZRtdDn1wyFvj0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnYOsPPQ6BlhnBzm6m5+/SF1T0xy0rJKgr8t3f1qJKQO/jI9JmNzX9VG8GP1DBsJ6SDACU6CXfEDOZZh4i5+Irrt83zhTS+LBP8d+QAaB/U+/bKVSy8bIW9l3/dQMRPf3DyvPPN1sW3IIDVHMnrL5MZwCgu1/eqTK5hjS+C/tLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZRIrofwc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732276219;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=psmtJePHQOvZfNKGNIAfEoILSWKFcZRtdDn1wyFvj0w=;
-	b=ZRIrofwcXUlMykkFpjkvSZyEpl0srStA5w432KykAkwVy2nrFYdJ2Gfah8e1pgirIhByR7
-	/ymJmJr2oyUdb0lCqIVw0/9M88+iDzlPY6tYC/X8LwcX/Pna4Zlb0KpjWKvEMPQcEB8RuX
-	/HPOdPuNR7LYMjfKWsNrGwje1rD2WHI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-139-GFa6ftCbNSm-4Vhfxrnn6A-1; Fri,
- 22 Nov 2024 06:50:15 -0500
-X-MC-Unique: GFa6ftCbNSm-4Vhfxrnn6A-1
-X-Mimecast-MFC-AGG-ID: GFa6ftCbNSm-4Vhfxrnn6A
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 675C41955F67;
-	Fri, 22 Nov 2024 11:50:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.187])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7245B1956086;
-	Fri, 22 Nov 2024 11:50:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 22 Nov 2024 12:49:54 +0100 (CET)
-Date: Fri, 22 Nov 2024 12:49:50 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Anthony Mallet <anthony.mallet@laas.fr>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>,
-	Marco Elver <elver@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: posix timer freeze after some random time, under pthread
- create/destroy load
-Message-ID: <20241122114949.GA24815@redhat.com>
-References: <26411.57288.238690.681680@gargle.gargle.HOWL>
- <Zz95qDPU2wcEp26r@localhost.localdomain>
- <20241122082407.GA14342@redhat.com>
- <Z0BliWkMHHzohMt3@pavilion.home>
+	s=arc-20240116; t=1732276247; c=relaxed/simple;
+	bh=FeraCYzH8lC4L4m2qc0ZBAPWUcPF7/P8lzNtAcBkKkw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=UCe6dVqwXM5Ey1lhMb+XnB1KCbnJf0u6jkL8RXhzKZ6p5GEb6XvHx2gWWUco4JtMeTfbnCwC3z7HeHfpFlqmtxrZMTb1m/bwQ/VyKXt9qQrhTxDkgum5FnqtnAHM7TkJREPnOe7YjqjzlRZWIq7eQggC9xAqWOIpHvdg/OtscPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvVZKeYt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1594AC4CECE;
+	Fri, 22 Nov 2024 11:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732276247;
+	bh=FeraCYzH8lC4L4m2qc0ZBAPWUcPF7/P8lzNtAcBkKkw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=cvVZKeYtqowKKuc9HKirpk0KrdFKpfKQ4jl7xmWDjoOrsGdCm9uQUNwLftzEsIqbp
+	 UFmI2cikiopJeR8doLplR779jR8k1XqR/7tNIKItKfMgh0f0tfYPb8cQLvcACPSluA
+	 fGF/jVBgdp4QAC1n1zX2mJS2EUvwtG8Mh1JSj7CZuoq53UST0QmByKIRdlYpw9FjVa
+	 /vCoYIe86Xl0sYTXHHxOl/cjc4Xn61v8j3BuVGs6aw3UkoN/RSj1weqJNsYNsxFw//
+	 2sIlNW+Uokp9+mZQusDhwkwk6dJp2jq86ncuExRerDUh0CNs+hjSynojpnxumqbHBD
+	 Bd8h6EWTmd1fA==
+Message-ID: <27e36417-9c22-476b-a9be-f22deeb0d774@kernel.org>
+Date: Fri, 22 Nov 2024 12:50:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0BliWkMHHzohMt3@pavilion.home>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: Data race in net/mptcp/pm_netlink.c
+Content-Language: en-GB
+To: clingfei <clf700383@gmail.com>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <CADPKJ-7==Bo=Wu6cHQ_y2qQVsPoJGeP3x0GztMXYcDaKCfmrkQ@mail.gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <CADPKJ-7==Bo=Wu6cHQ_y2qQVsPoJGeP3x0GztMXYcDaKCfmrkQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 11/22, Frederic Weisbecker wrote:
->
-> Le Fri, Nov 22, 2024 at 09:24:07AM +0100, Oleg Nesterov a écrit :
-> > On 11/21, Frederic Weisbecker wrote:
-> > >
-> > > I think this started with commit:
-> > >
-> > > bcb7ee79029d (posix-timers: Prefer delivery of signals to the current thread)
-> > >
-> > > The problem is that if the current task is exiting and has already been reaped,
-> > > its sighand pointer isn't there anymore.
-> >
-> > Thanks...
-> >
-> > This can only happen if the exiting task has already passed exit_notify() which
-> > sets exit_state. So I'd suggest to check current->exit_state instead of PF_EXITING
-> > in the patch below.
-> >
-> > Oleg.
->
-> Right, I don't mind either way,
+Hello,
 
-Me too, so feel free to ignore,
+On 22/11/2024 08:34, clingfei wrote:
+> linux-next weekly scan reports that there might be data race in
+> net/mptcp/pm_netlink.c, when mptcp_pm_nl_flush_addrs_doit
+> bitmap_zeroing pernet->id_bit_map at line 1748, there might be a
+> concurrent read at line 1864.
+> Should we add a lock to protect pernet->id_bit_map?
 
-> though if it's past PF_EXITING,
-> complete_signal() -> wants_signal() will defer to another thread anyway, right?
+I don't think there is an issue here: if the flush is being done in
+parallel to an in progress dump (max 255 addresses), I don't know what
+the userspace can really expect. What's important is not to access freed
+data, which should be prevented by the 'rcu_read_lock()'.
 
-Right. So I think it would be better to rely on complete_signal() in this
-case even if the current logic is very simple and dumb.
+So it looks like no lock or id_bitmap duplication is needed here. Even
+if there was a need for a certain consistency there, these 2 operations
+should not happen in parallel, because the MPTCP generic NL family
+doesn't have ".parallel_ops = true".
 
-> Due to retarget_shared_pending() being called after the flag being set...
+So I think this report is a false positive, no?
 
-Yes. Whatever we do send_sigqueue/complete_signal can choose an exiting thread
-which doesn't have PF_EXITING yet, in this case retarget_shared_pending() from
-that thread will pick another target for signal_wake_up/TIF_SIGPENDING.
-
-Thanks!
-
-Oleg.
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
