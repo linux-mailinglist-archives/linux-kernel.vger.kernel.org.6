@@ -1,57 +1,47 @@
-Return-Path: <linux-kernel+bounces-417842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53F39D59A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:56:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 567A79D59AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56176B21BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:56:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01B63B21D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0016BE23;
-	Fri, 22 Nov 2024 06:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBE816F0CA;
+	Fri, 22 Nov 2024 06:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="HvBdJhfb"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOtaUj4V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8D31509B6;
-	Fri, 22 Nov 2024 06:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258559; cv=pass; b=gLHP62zdqp54yaCY/60imfW4/H+pZn7cWl8EdAVLHbgLYPSPqJgE8MCMJNnRrygApHXsamGN4t765od2Ns0XZeFy2p4ewdLkKpvfDsuDGWV/dO96+jqf2Vgujso1I5vWbfg54D6+Gy2vjUobAHDeoW6aocqO73sRylBPw1dkISc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258559; c=relaxed/simple;
-	bh=T/Zt13xnSI9S06gpZyk3yarbECKKw+wZukHD9qHOq34=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cjkSofC0un0BaudpQgCGY7O/TqVA5xi5+9IXdHy94U6L6ui/88qzc2uQdx6QqQgi8Mmpf00ASeycnBrNNGrFSwioUcAdnajgNlTaeBvoui+ObSTGSBbdodJ+TWtNnqvBt9Ms/W74tPfDFX8dOcV+ddmPPk7D9RzLDwyePTPac7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=HvBdJhfb; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732258523; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=R50vwk3m4SWvsU2H96UvbucJSMtxENkJoVT2oQYqsJJrzqOxIXJJ9I7+wmMj2enmsVo3XxVdMo/8kQhfNjJuiJh16jg+U/rnvXls6GkO26PuBYlUtEav2BJ7BRWwypKXTSHyycMgZKWASvNUbf2nuLRKZ+X6bvl8MSof+41VH0k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732258523; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=q+2JkKzk1jp46NgS4TyFdM4ETBmYhVEqzqdB8s0TT0U=; 
-	b=Cl3UU61HVtmEJKYDOzKcm12GYqhS+9sT6ZggZQFVarSLvJn65l22cafzkcW2wFbCo0tGzengAPi9CsqNLrQfvn0CaAQcEHqZSJTcxwHyUhWBLHLiiEa4fnOfpw3XVWzcplGlv7f4cK0cdxMYVihF9hzpAuZFTwUZBAx0r28eyTQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732258523;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=q+2JkKzk1jp46NgS4TyFdM4ETBmYhVEqzqdB8s0TT0U=;
-	b=HvBdJhfbbUjbEcuR8S+7kMlpZQO2Xlu5NUStWgyaqxBsKWb2RSyfbwNPDMJs7w+2
-	rFulbh2x9a2q/GizqRts52klGWfejFeHwUapxwe+iUvcbIzYqZKA9dL4eAI+KF/J4+T
-	gfTqIU0SBGYqrePv7dnBQZ1goJzOEc1WE+8O2Dho=
-Received: by mx.zohomail.com with SMTPS id 1732258520676116.96159492790991;
-	Thu, 21 Nov 2024 22:55:20 -0800 (PST)
-Message-ID: <3bc112f0-055d-4390-8998-880d228caa4f@collabora.com>
-Date: Fri, 22 Nov 2024 11:55:16 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BB31509B6;
+	Fri, 22 Nov 2024 06:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732258678; cv=none; b=YgTE/Vv65s9NU1gvKbbL+1BH9pF2ACliJGlBqfSNTo73CeWLzCwcKeomjkB6+WG6G/Yk2TU5wLg/rbvCbCnqH461UBQMoYkALJhYOBo6i/0SBRnRc2kjEytKgXi++Q8IdcC7CW/7TTKwp/ZJFprhdOXMd/Y/c8NLnqAn68dmln8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732258678; c=relaxed/simple;
+	bh=2bQidcpYViv2UqdnhNfZ825gVGDYKCWzRf/rTc3Yl/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WlAL+Ez1eeMgpqB5P1QUfUAqq+Y2CCc+iAc18KZMahzG+QRFNJ8M+3eRuYLWXNFjY3ZAeswuBMEq14OZRi3/+WgRQk5AoSOx5nDHJ2Gsk/2Q6Q/YtrxayTfoz4w/IqXVpc8j9mNa2eW88cZcd9hsJ2srOWyQlSuEA+7H0jUd7Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WOtaUj4V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677C7C4CECE;
+	Fri, 22 Nov 2024 06:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732258678;
+	bh=2bQidcpYViv2UqdnhNfZ825gVGDYKCWzRf/rTc3Yl/c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WOtaUj4VawlJwZPJWwWTrJhSvmRCkGwZromimL76PxZt9Em5wsSaOu+y93YyW9Qhr
+	 obt9neqrntz6Jr+UrJp80T6UcdZJNungPdtZ0TPMxH+R05SdzASWBgeWSjFtzhrJLt
+	 VpNYLT6qEeVJXkT2IVuJ4HEq/JSxysjHq+ZMVRwGo3PJXQQ4DQ6aZxHc1xszhL6i42
+	 pRwFQZIk1CjXxkTv1tZ44u7F9t0s7JqG/cKt8UQFjR+XYGj86a0iWHGwyU1YQWRYQT
+	 SfX1HNJm1Oyx0DpyKalLhCZNHVhFJUm9npgR1TwG9UwXaHtN7aZCTXesJWQMl1Xah6
+	 /prSuBIMhM2wA==
+Message-ID: <6a965d93-c3f9-4c0b-8c8d-5ea4da49f49f@kernel.org>
+Date: Fri, 22 Nov 2024 07:57:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,75 +49,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 00/82] 6.6.63-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241120125629.623666563@linuxfoundation.org>
+Subject: Re: [PATCH RFC net-next v3 17/27] regulator: dt-bindings: Add
+ regulator-power-budget property
+To: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
+ Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>,
+ Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>,
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>
+References: <20241121-feature_poe_port_prio-v3-0-83299fa6967c@bootlin.com>
+ <20241121-feature_poe_port_prio-v3-17-83299fa6967c@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241120125629.623666563@linuxfoundation.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241121-feature_poe_port_prio-v3-17-83299fa6967c@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 11/20/24 5:56 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.63 release.
-> There are 82 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 21/11/2024 15:42, Kory Maincent wrote:
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > 
-> Responses should be made by Fri, 22 Nov 2024 12:56:17 +0000.
-> Anything received after that time might be too late.
+> Introduce a new property to describe the power budget of the regulator.
+> This property will allow power management support for regulator consumers
+> like PSE controllers, enabling them to make decisions based on the
+> available power capacity.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.63-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> ---
 > 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-OVERVIEW
+Considering:
+1. This was not tested,
+2. You did not Cc DT folks
+so I assume you do not expect review as indicated by RFC. It is fine,
+but if that was not the intention, please kindly first test the patch
+and then use get_maintainers.pl or b4.
 
-        Builds: 37 passed, 0 failed
-
-    Boot tests: 482 passed, 0 failed
-
-    CI systems: broonie, maestro
-
-REVISION
-
-    Commit
-        name: v6.6.62-83-g2c6a63e3d044
-        hash: 2c6a63e3d044aa21274c98760650830a22b5d54c
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-
-
-BUILDS
-
-    No build failures found
-
-BOOT TESTS
-
-    No build failures found
-
-See complete and up-to-date report at:
-
-    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=2c6a63e3d044aa21274c98760650830a22b5d54c&var-patchset_hash=
-
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
+Best regards,
+Krzysztof
 
