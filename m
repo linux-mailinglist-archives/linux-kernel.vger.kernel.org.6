@@ -1,73 +1,81 @@
-Return-Path: <linux-kernel+bounces-418679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19E19D643E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:36:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78700161BCD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:36:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF7E1DF96A;
-	Fri, 22 Nov 2024 18:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HxqrFleI"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2059.outbound.protection.outlook.com [40.107.96.59])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E95C9D6443
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:40:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C022FC23;
-	Fri, 22 Nov 2024 18:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.59
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC87282A2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:40:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CF21DF97E;
+	Fri, 22 Nov 2024 18:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sNbtDrqP"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2080.outbound.protection.outlook.com [40.107.95.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E750ABA20;
+	Fri, 22 Nov 2024 18:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732300597; cv=fail; b=a9/Z2e72K4j5XPcEHBQHV9XTr7WuO9u82j0m6XYEtW/skGajeTaN4FKDpvFisqsRMfELN7qBCIiDe8fWSdb/ohtUs308ckTAJQkpIPO5CqHqtmUot3AgEiy5gffdxIAWOgUBI7rbbLpX5F4BOyHC/qvcL6fGd51i239vAX9EhRQ=
+	t=1732300837; cv=fail; b=axbffp1HMycw8IIEK3EXFmdiOZfLf1LEPoa1bNs9uVYaCc9RA8pKcV2qAxFuLMiPJAjUWECfxwEFO2CemQOrgc5zl1lpfOYXMDH0hzCZrgndBCvQMUjh/sZ21oAA3am5nFkUwKgj9+hQ1zyq/HDsbwjDlssnDsDDft8jUz9drlo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732300597; c=relaxed/simple;
-	bh=HGl9zLr8qRUKwr7LHDzYnzNw9ocjZV7WhN5wZL6G0hE=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=KrSneZNb/vueARNbVQp5dosALniUIazrIKZhaV608FGsv6xvxk4HTX6wvDcaG1kL7smTSbAFksMB6Jf/uWo3UjyOfETWgHW32Bd26aemMQ3IcakOAh8LJWxg4h/SQXfW+5SpoIZIDodNB5AKlM18JPKZJ1dQua9kx8fs69FyNog=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HxqrFleI; arc=fail smtp.client-ip=40.107.96.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1732300837; c=relaxed/simple;
+	bh=Tr+CCSmbSqt39nK5rtHG0dund7861QT5vv9sPNTfT/I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=I63I/pJAo6yN9UHH2VvSFPqd+zfVoQnpT8ZhhS4cOCHQWWOvy/IH07mgGpH5DuSbW3lhObh6DzU/hn5oxXG8AnypaUQj3JdbFy6Kymz/oT+jNbZUPsnYzPKtvhUrJS9GKTR4tpWG6SlgcUS4vUUBUBPFMOoJkIi/Lxan1ewOAUc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sNbtDrqP; arc=fail smtp.client-ip=40.107.95.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wHEeB2pF8Kf2Ml2yULnLvwg7f8VhbVGpPlwXMH/CI4lmGqej4XNfjZK4IDv37nYKDgDot0OzKYm7q5g/uoeEsnwtS3QUyv0rKyjiZN8eN7CJxGT0zG7nka39l5npFadSi/9NXUEL9OC+4t8w9AHGfx+aClkhXvJ+SO30qHluCU7ArKEkXLFTmBR+mGSwPJElvGjoYVJQi2UEYATC9GYt3hTLw5hAKD+cxU9uPil4BFsZqpTC2h1KxssXDtUI1hiKeGlzpSYmYbgHKcV7Rv22nt4y8QN/6kCJx1ttYYFVz5bJGdqjlfa+oFm+HJAQyKDde25dJWP5rl2phdXXijP51w==
+ b=MqLmWZBgBGgBMByyPTCkhSqOiA4MIWYckEd/QFCmn7gqVPrQQXoAh7lAE3n4J7X5n3l+QGH8Rk63GwFqyikKwg2XmBGbqFXPP7/rSdt6hpUmd6S4MSh3O0ffFnDMUfWW/gTGuhytUjPlpo6JJOIsZXEV3PlBsAEw8QPVeaU4OAaI3WJjHsgwCphW44S7nO+bo+AI06+AtLGKhuGAIFtfZhIbKBCJnPHyqsFHRCl9gJLd6z+ValySw8IgVhH5wWFAa2dkEjmhTz2xjUCqaG9O5X5ViW3H71jdG4t/lwYuvVCTSk3IbK8tA/GYTrhmEQj1S20no5fW5hEFDj9Z4FBgXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VjkNAMrkomOD2cBc23326SJp8VGRLKHVn+VmIGlIUec=;
- b=pZ33rRX6iDW0bX9mk606zH4N+HLa9M290GPxTDK1VmLN4xLl0CNz8sZx3m2RP9koMRQivUKVO5PyTy8yzcKUpmlENozl/G8rb3jO3gR3QrO+7qHEo6L1/IDaq2NsKlcT3mZ9yu0AhjOBWh7+WxWTSNs8xQMVtheSL57wXnyVkt3+LWWifJX6kFX30NtEqIsBb/rW6d5osa7AgYMyQnraJRCL96UBzP8CxDVgnHDrkN1o74s+5yGrqnVjQGXQ7EK1qYxZVDdpVoos7Xp85x4fhOyoRbmphz2t3yvsp7vbyaATC65iTmxyd6DvCE84lrUIcE42funbrFkd1iBXhtwzdw==
+ bh=t1BGl6427cV86134UyNYcTzcSEbZdRiWhYqwy6CFjUA=;
+ b=oQH8dqQL6pReEt9MR9YYR7Nsv26bxVYHcLRjya+ww20gHQ7Bzh09H2v72UuY6JcQllG+kg/FHlUHPY6DEcg4P9xeXezNg87P6AtIM7Ms2Z7Yf1Qe2iVSqbGmwj1wi+IlakUKPJPfOE1Gu2BTmyJJe1ExAbKZlz8WjOV1ee1QLUSeRMIeA9fN3Nb0fIHSvVrAISiblQaK/Y5VEoO91kiPF6Cdcx72RtqALQM1NzEHnsKtGRDTE7GEEOpkNnfAeZHizjwIB33uRLj0nV67g1cOmslirtKQggKbt3xVCxvj4pj0tdJ5pKkr+oGhsbSehDZ7FOTtFgP0EesU39Tz3T6/Ag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VjkNAMrkomOD2cBc23326SJp8VGRLKHVn+VmIGlIUec=;
- b=HxqrFleIbL1nbrp7in6j7t757zQNN+PXgfrucHlAjizqZq42YFxxRK1H+yzzFPQ7KFYF0XG2ERStiaPj3Smw5Ecnj7EyfU5khFGqEbKTCwK70QFv6C5bA1oPpNiXkZhF4s2vVdimheS92aUYPLvztAvLDYr0s26FeBMtDmikVCPsApSjAdDbypX6aZbvTyuuR7RFIVa/+6zr5Wax67Rn/fq0jhSv2t/NsyhIeby0iruvAdLwY61aH8AGOKLEbY0tvSRH5MN7H6dzGw8Hv3SNyg+TlTshTRYpdi8bGO2Vkpn7hoASWri970jLaIPe/f1/dyRs+AOd8vozjQcmMM7crw==
+ bh=t1BGl6427cV86134UyNYcTzcSEbZdRiWhYqwy6CFjUA=;
+ b=sNbtDrqPfCaawrdP7rZs5vowAMGz/bhj7cX9nqilAece6N+nd2FjIdpTTwCcVj7inTos2SqJLuPxDoTPue5V2F8LzUPmt8Fe1ZUIqPgMdA34tMkIjejdM+RmTXrIU+mkIQDHsOnt0Btnw+7sHFbFQ0O7c84sGRYs07zebiA4Gik=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ2PR12MB8942.namprd12.prod.outlook.com (2603:10b6:a03:53b::8) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5688.namprd12.prod.outlook.com (2603:10b6:510:130::9)
+ by MW4PR12MB7213.namprd12.prod.outlook.com (2603:10b6:303:22a::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Fri, 22 Nov
- 2024 18:36:30 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8158.019; Fri, 22 Nov 2024
- 18:36:30 +0000
-Date: Fri, 22 Nov 2024 14:36:28 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: [GIT PULL] Please pull RDMA subsystem changes
-Message-ID: <20241122183628.GA1102912@nvidia.com>
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2oKeXBWRiAqedICB"
-Content-Disposition: inline
-X-ClientProxiedBy: MN2PR01CA0025.prod.exchangelabs.com (2603:10b6:208:10c::38)
- To CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.27; Fri, 22 Nov
+ 2024 18:40:33 +0000
+Received: from PH7PR12MB5688.namprd12.prod.outlook.com
+ ([fe80::b26b:9164:45e2:22d5]) by PH7PR12MB5688.namprd12.prod.outlook.com
+ ([fe80::b26b:9164:45e2:22d5%4]) with mapi id 15.20.8158.019; Fri, 22 Nov 2024
+ 18:40:33 +0000
+Message-ID: <589ccb59-ae79-49db-8017-f6d28d7f6982@amd.com>
+Date: Fri, 22 Nov 2024 12:40:08 -0600
+User-Agent: Mozilla Thunderbird
+Reply-To: michael.day@amd.com
+Subject: Re: [PATCH 1/4] KVM: guest_memfd: add generic post_populate callback
+To: Nikita Kalyazin <kalyazin@amazon.com>, pbonzini@redhat.com,
+ corbet@lwn.net, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: jthoughton@google.com, brijesh.singh@amd.com, michael.roth@amd.com,
+ graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk, derekmn@amazon.com,
+ nsaenz@amazon.es, xmarcalx@amazon.com
+References: <20241024095429.54052-1-kalyazin@amazon.com>
+ <20241024095429.54052-2-kalyazin@amazon.com>
+From: Mike Day <michael.day@amd.com>
+Content-Language: en-US
+In-Reply-To: <20241024095429.54052-2-kalyazin@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0110.namprd04.prod.outlook.com
+ (2603:10b6:806:122::25) To PH7PR12MB5688.namprd12.prod.outlook.com
+ (2603:10b6:510:130::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,295 +83,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ2PR12MB8942:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9e8b691-3f0c-4c5f-3da5-08dd0b2494af
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5688:EE_|MW4PR12MB7213:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67f8c548-4e04-4cd4-3589-08dd0b25258a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BePv7E60Nqk+kIKIN2Tr/ZlqqRxo7Qq05rxtfLmBCvxAWP6nfOFKV/WKEbx1?=
- =?us-ascii?Q?ZXaWuFpqw8y5bkuxNNHpMO9nV01KYxnjtkDpQwOKNOgeEYBdxt/GpPEbLGk7?=
- =?us-ascii?Q?+13apC9B1FtUFKxUWadyJr8AS4nKnHy0z3KejtSWzyUD57jYcUcxixLI4vEZ?=
- =?us-ascii?Q?hPt/mAYus/SLiugHFxZgKZI6v+QILk/Qm96tiL2UNb02jvtj/iFjjh5NCs0w?=
- =?us-ascii?Q?m+zB6YIvoctvTUAlVbwY8Moj0HR9oiiY1vEiXB6cUvqfvZSZ+5DTKRwqLcx9?=
- =?us-ascii?Q?wAMOHdsD4t5fSFlyzmHSw9rQaxqkGOVWRBhAphPvQkfw9z4a35mamCLnXU+A?=
- =?us-ascii?Q?KJU8QmSIIrbM3ipRw7eVlv0UAp4W1YeoC1UBlfo8EtIBNQz10TVuqEEv1cUm?=
- =?us-ascii?Q?wE6qRWN4Kz5/Zgliw/fiQbZK7A/MDuScFMFw+YQ1twAsvF0RnQQ8yk5WhZID?=
- =?us-ascii?Q?B4+YRTAUR0MSKu2kSKvj2kwIWy/4i2dpaGPIwLqekGJbB+sl6LtbQhEyQ9I4?=
- =?us-ascii?Q?HtyZ23aPGEgjXY+SNUdgn6d+RxZeLWi+yySTMVNieahG+VMF9WLmC2wZwLqf?=
- =?us-ascii?Q?/qKIGa0GuPtelvn7rlW/UqZV0+56U7KPA0D2TMmvxiy2wru+yRyav1VZjgEo?=
- =?us-ascii?Q?+QDsATY7nkoCawbM9SUuRugCqavvzFRIbVLON/eMSpCOUsM3mndH8YhAcD0X?=
- =?us-ascii?Q?dPj0LCi2hncjLwocmYxdQ9L4xMG4RgVT78FJkyR4UqZIdK8pBlkuAxVgazb6?=
- =?us-ascii?Q?KS5p13R12XrSrfRrBeUi/b9ObLk8CbQR9qpM4F+k078zWre5MnFutzChjmRX?=
- =?us-ascii?Q?j3SqcVK8DjFM+JXxpO4cP+HFi8No3sOdlqt01fE6JEwg6VWiYXRwiDGTo5cW?=
- =?us-ascii?Q?jCw6Wv8Hx5SthNrtTp86ThEoUfUh7hA7RADpnB2p+M90m/nLfAEv1RmqQ8wi?=
- =?us-ascii?Q?yS0Z7EhZoXZQudYCmtuM2VczDYfUsU0E06ldcsVneD2yDccsXuLtX4tAgLBj?=
- =?us-ascii?Q?q0rRMz6FM1mDoD2mt1r3WLFaNveWbsSEtg34rP1/ql2bzutbP/m4pnzoLKbv?=
- =?us-ascii?Q?BTGolfv40Uy+x8ZtPxdQLSp9yVhuQAVhYcDgHhfgsJcmKTEFPVefilpRlH3P?=
- =?us-ascii?Q?1eCynZr642uPnT5t6MuNyMJ/JgaBqKMDnp2+R53l73MGvy2/B66Mwp4bVv4d?=
- =?us-ascii?Q?d+rJKuApWBaocY3OrlVLOM/UnNuzNJtfiX6e4wqPjOq/qFpu9VlEUZ0U5u/i?=
- =?us-ascii?Q?egDt5oFsXK3+W9kobP+icJ0PAsQBp3F/d71PAilsZQEZVEtn40bIjOu2/qNv?=
- =?us-ascii?Q?ZEp0hvNhFo6U29j9a9BbEj5MK/J+NDeRni/VuN6g7NhTpQ=3D=3D?=
+	=?utf-8?B?dmgrNVg2aWF3N21ZYjhkZWdjOTZHM3d5UHZodkZ3cXV6MnlWdXBSOVVYRzhQ?=
+ =?utf-8?B?QVh4VlhWaUJiMndpelpJcTVpc2ZmcG83UHBDZ1o3VDZVYzRVUi83NUdsYmxI?=
+ =?utf-8?B?RkU0bHVoRlY0RCtPYVV3RndlOC9TYWxER2gxUEtSNkRSNGMzZWc3NnYwVFlH?=
+ =?utf-8?B?bzA1Q3BuK3BvWW04ZnJLRGdzTkpLWTRVSUJMaFRGekJHQTlSWVYxMUtRREw2?=
+ =?utf-8?B?bjcwVmhEWkZoWnV5emZ4M3JwSU9Kc29yeWliQ21SZkp2N0ttQW9CRFFGdURm?=
+ =?utf-8?B?SnRaWkV1M2NlcGR5cEV5N1R6bTFzSjhNVnRLdGk3NlFKT2wxRTJMY3BqWTJw?=
+ =?utf-8?B?OXdUbHArWjNYeFFqM0tlZUNDQWh6VUFDbk5JQkE3Zi9UUExoR09HNWE5ZDg4?=
+ =?utf-8?B?eTBXT0JVTjR2VkZYR2c4alp5ZENEK2lHOXZXK285REJzMEZNSWZsb1hJVnpH?=
+ =?utf-8?B?b0xPL2tsY21UMEhpa3lJVDJ1ZHZ0bEorOVY5R1I0UnZDWTFsWGdnWGR3Qm1z?=
+ =?utf-8?B?UjQ4SWdLNldhYmJURXViL0R4d1VCbkJwOTBEUy9sWDFYa0g4bS95ZHA2dU1Z?=
+ =?utf-8?B?MEFaVUlaM0hLbXE3ZmZrc2pEOG5lU1pGTnZKVytidzMwZ2JXckNDZW1VYU9h?=
+ =?utf-8?B?eFdPVnVpakNYay96Y09RbDFKR2MxeTkvaWpQMWkwdHk2NU5ZVWV0d1RlOEN5?=
+ =?utf-8?B?UWdDSlpjRndaSjE2TnNYRWNyV0xTRGR0QkczdDVWV1FvTWNtMjhzdVQwOTlE?=
+ =?utf-8?B?cnZ1YkhFd1dwM3ZrSTM2WDJxYTQ4eFh5VlhOY1BEZE0rNGpIQzc3Q1pPSzB1?=
+ =?utf-8?B?elRMcGkrd1kydjBidkJHMVZGNzZIK0FCc3RlMGhYOG9UbUV3RnRoRXlabGhp?=
+ =?utf-8?B?aVhRTnAvSTM4bzVOOU5Kb01iU1dRZ2VvdDA3Skh1MHhBakpMVE5maUpPaXFU?=
+ =?utf-8?B?QmN3cENCeVBVUWpkWFJmcSt4bDNTQ0cwZjIyb0pYK2FQZXl1NERiWkM3YVE4?=
+ =?utf-8?B?SmlpK1pZcTNTMUZBMjQ1bkRxT1hSOFBtaGpweXM0RHVib2FSUHpPMjZkVElY?=
+ =?utf-8?B?cXJFSWp6eUlVSjVWRVNlNC9lcXRoUlJic094czRWVG9WTXVKcXNzMVFQWFkv?=
+ =?utf-8?B?RGVGV3FVUDBGWVZPYjFCOWZ1MmtWUVVTVVI3N1hWd21RTmdPUEN6ZzBDY2Zl?=
+ =?utf-8?B?aUNBT3pSazFMS3BWMG1MSVRvNExIOFlMM0l5d2hpdWFXOG9WK2kyTk1JZnlO?=
+ =?utf-8?B?S2Jkdzl0WjVzZWU4WEVLQUVCb1NVdVZsOHFZNlZndGtNcU5GY1hVYWtxbEFH?=
+ =?utf-8?B?UGxsZld6d3ZsTFViaks2bWc3N1lRVXdWVjVqZno1NlJEU0hFNElKWmx2SUpl?=
+ =?utf-8?B?b211R0o2K1dYRHRIdUkxeUpLcGV3SjJ2M256aXRqU2Uyb3pNYkIvQVFWanl0?=
+ =?utf-8?B?U0c3Z3QvN1lLN2F6aFowb2pXOVN4cnFOK0Q1bWFaQjVYdTVsSExwU294RU5X?=
+ =?utf-8?B?VjhGelowdC9GaWRPYTBXYlNZMk9PRE55QlBDM09DUlJ2MlZielN5NVV4dkM2?=
+ =?utf-8?B?MjFTQVlsbmI5R0xnL1FZWEMxYjVRR1psZ1NvQTJIQVB5emhiYVZ5VzBlVkdV?=
+ =?utf-8?B?T282TXRySnl3SmRXNmovSzh2N3RGV1dXUEdKbVJFU29LMG4ycmxZeSs0Rm9q?=
+ =?utf-8?B?LzMwTmVsK1p6NVdRUkc4YVFRRS8wZU1udnVYaS9BUjBOSGhTbGdFZzI1ZVpE?=
+ =?utf-8?Q?wo6797DKoMfiTYveEKRDIwsl5TXw5Xw4GPZP5MN?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5688.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?q80/WuQm6iGpFzKDvXVTzLBbL2Qb9yytymSDV5YE7C8ZA6S083ZzqygnKpTA?=
- =?us-ascii?Q?M4ANIE7xwChFdFVPd/zsNOV6ZPE/DbZcAw5R9SncsFeyQnfPb7C5pm4OSFWT?=
- =?us-ascii?Q?CpHmKfKL/VCM2PqVaFd3Mn4x4Zc4WyrlD6YI+nrzHNYlAaG93dd0pURMq3hG?=
- =?us-ascii?Q?YuviNz/KqObGdYdy8ECXjuLxhnb4h/WZkJl5htS6HqUDTx0acA41ukMkL1Yi?=
- =?us-ascii?Q?GCdwcDdO1beVT4a8kd4/BzYynX52hAjsFljOy/wa2JZC2+LEtyAhH7ZpVBhQ?=
- =?us-ascii?Q?05ymlPdpXhMXTdy7DUHwkQz90SB1zseR+xUYrlCRYYyAggzgbA2SicjpP64f?=
- =?us-ascii?Q?W0EiTn/lDGvjduBiHeq8ETTthxkOvfDq+Xw+J5dUd8NO3zH83deYRJoaIA5U?=
- =?us-ascii?Q?yTXWSL0oDD1O2g5eM+BRTu6m6lJjdJkwDt76HzgfPKZRGRODvE+h6aVJfGFA?=
- =?us-ascii?Q?acZCP+LB3rbHjEaG2fWNeB8vKXXYM5/EMUFLfTNLVWa/Noo1e+AkHaZyXZsO?=
- =?us-ascii?Q?+JJU3qAVWrXepvwtzASR12pnmMJhl+SWUVRSpgJs0N0a8TfTr7fpzMQZvD2U?=
- =?us-ascii?Q?Fk1vqR+v8QkIV0cLQmQo85GnmVWI7ec6Id8yF7YjYk4HOpa7SLxF5b1g0WlT?=
- =?us-ascii?Q?4DFQIatCKRvktzdS5EcyvUokoUjrxCTAh2r0VRLtqc1VWYQWVJC/xzAb2IeD?=
- =?us-ascii?Q?N4qicBOaGJJVrXv+Im0RTbeYVO8YsaxZRAN69dzM8ORfQEOtdBU7ReE6pqw7?=
- =?us-ascii?Q?w7Mfmn7rxKiYD8Rm+6Ndpn6Tmxe6BxOsExv5beUvZFhmRq0OgI3qn5tOjTmu?=
- =?us-ascii?Q?8ciVkwRjMvpIC6kWKC8tJKE5wfV5ZgJPKEQUsKn4D/RG32OFb6LGEqCqT4qY?=
- =?us-ascii?Q?cIcGzpScYmHK/RpjA5xoPt7+zDihLMipsbeVd1kO0khdTnAO1Cw1MX/Gs9lI?=
- =?us-ascii?Q?B4zz6qDltOKRL5kZPkTvAEdcxYNSwh1pUzwEgMtHHs0fW8t6vMPCUCEpmvys?=
- =?us-ascii?Q?5ow4xL714D4fQm1fTIREW8daIupY8jDhyhvNXG8g2w6bK9xiptR9qgJ+1Uk6?=
- =?us-ascii?Q?9FqVtLwKVRVCUw4BlBXsPl7+UyUVKu16Yd7ptfk5E8W8FDjyd5JsogYcEq7V?=
- =?us-ascii?Q?qIWqZhndEZyQRW/ibgXqJegatSkrrlkYi1bLTaztSxAZT8TnTjnuxONv+9rI?=
- =?us-ascii?Q?zHWW0O70+R1GESvX1anLQBWn08bF4DPewJmF2IFMXoAXmESpC/urc9uRLB0P?=
- =?us-ascii?Q?y6kdWdRBV6c2GE8fkBEgKPkFlW/VlxE3HhUFq24D9xxnSX7FYxKN+YvMo0Kv?=
- =?us-ascii?Q?CW8eMEo+yQu9R/SrBf5glzrB90yx/2Yd477e9s73sFYpaxGxmr4AUNy9U9rE?=
- =?us-ascii?Q?QRdrKQyFDndQXGVocV0cUQK3odG+Hrj3CZFZs+AhNKXoGCrDyj5p4eBayoOD?=
- =?us-ascii?Q?BS9LXd9G8qJxEC0hl0EpI7CFXYbUHZ1EhXgGJiOManyooNDkN7RrObMjbkxR?=
- =?us-ascii?Q?Jh9kRMPMpuetFUVA1qYf++TPPW/3VF+FxlhOniL964GrWukJqb2yyq6YQH3z?=
- =?us-ascii?Q?O/ezDhKqf0iAtjKFLx4=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9e8b691-3f0c-4c5f-3da5-08dd0b2494af
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+	=?utf-8?B?U0V2ZnBHektmQUxrSEZGZHMwN1BnelF6cTVHZVpQd3lQQ0VTakhaM3IzYk5s?=
+ =?utf-8?B?d0E2eFZ2WjVyTmlsNVV2djU2a2ZuUVpGK3gzSjJWaWtKUnV1aUxTSXgzRExp?=
+ =?utf-8?B?L24wSVB1WjROYlY0K1J6RFl1VHkyWEtGUnlKTDFnZ3pBTDBPV3QxVkVsK2ZS?=
+ =?utf-8?B?OUJQZms1SnprWVorMGV4cS9OTHRCbk9VdVE2Y1JJbk92eUVmK21NMnQ0RDZK?=
+ =?utf-8?B?TTUrYStOZmRxaWhaUG5OQ3c1bDZseWZvOFNiTVZTa0IyR0ppOVZET0lQSEow?=
+ =?utf-8?B?ZzYyclBxcHpwNi9PY0cwQ1lraXhGQk5HK1hWQ1BuNnJTT2Y1c0RvZmRtbU5S?=
+ =?utf-8?B?aEZRZm1nYlMzU2ZiSXR4TndTVVJZSFNUOENXR2RMUDFLbUZBR21IeGxwazcz?=
+ =?utf-8?B?c3BPSWYyZjI2MHF1KzN1UTF1dzF1SnQ1dDNLZEhaamtMM1Z3ZzU3SDJEYld6?=
+ =?utf-8?B?aGZXYlZyeXZPOEM4dkdaMm1CeUNWY1diS2tGOUNWOTVRRitmU3lHVWlLcVNU?=
+ =?utf-8?B?bUlsOWU0cDB3eWd4SmdIU0x6WDAwQVd3NWhKc2dORVFPSGtIQXM1UmlHYzhq?=
+ =?utf-8?B?R2x5aE5SaTFZMElJckRCeHVhamZidndzZlVLZHR0YlBNN1llS3duQW8wclh2?=
+ =?utf-8?B?R3lpQUlkczFleS9KVEt2dWt4OUs2UllEbXdYT1FVWTJKQlU1aG0zbnVLSmY2?=
+ =?utf-8?B?VW1KR0ROc1Q1ZFV1akNuNzFMZTJzR3hPL1luak8yenFxUjRhK1d5SzNkVWtH?=
+ =?utf-8?B?SXFRVGR0ZUIwVy9uRXFjR0xobFQ5K2dWcnN2NlhwMWFzZjQxLzd0UUZpRjF6?=
+ =?utf-8?B?WFVyRTg1UUFZdk5wZjg0a2JjdjR2eGJnNVNjcXZiaHo4eXk4ekFucFEwKzNH?=
+ =?utf-8?B?RGs3OExLVlpmV2NPT1h4Kzczb2FqMUdyTCttRUh0SGNIUmtxa2pRUGMvdzh4?=
+ =?utf-8?B?OUNmRW1JZlVKTklPZkMwNFNIOTRzK3lUTmVaSkhtaDdGU3VXNVdxTHZ6Wm1l?=
+ =?utf-8?B?Z1FndXg4MlhpVGZFNHpGZkhsLzB5ZWc0Q3hMbkxhaXpISUtqNmt1RUlEZmZB?=
+ =?utf-8?B?K2E2YU9oZ0NIUHhzQzhURnF0ZVJVV3V2M29ldkx2YWxBSDMrQThvMlFsUEMy?=
+ =?utf-8?B?ODhsV09Ca09EMGhGczhzRDl6NXpweXdqN1BncXZ4eFlaeEgwcVRTWFdxSFJ5?=
+ =?utf-8?B?ZFB3NTZjUldhZXRSdk41T1Rmd1VXSTZaajl6cWdoQklvNUlKaWR4aGFsQWFU?=
+ =?utf-8?B?Y1RsWnI1SitLamEzQnNWL0EzUk1oYW9tcG5UMUQrYnZ4cUp0dy9tVy9LUmhO?=
+ =?utf-8?B?ZnhsdHVtL1htUjB5OENna09UcjJKb2ZaTlFqS3JxNkovSTF1OGd2MmtSNGNs?=
+ =?utf-8?B?OWg0U3hXVUFkVEhHa0VsZVBuUG1SaWovMzVoc2RJQXdqdkE1bnFkN1RHS1ND?=
+ =?utf-8?B?TktoRE1HV3F3NStHcytuT0EzZ1lwNXJKLzd6S20wNmRSNytOVlBOYUM1SjM1?=
+ =?utf-8?B?UC9SZ3R3eURnM1M5NS9SWXNESUZscHh4S3BmQU02alpZN1VXa2RHV0hsUEt0?=
+ =?utf-8?B?Y2RxUWNPZFQrR3VEMDlMa3NiVWNqM2M3dGkvbm1jYzFkdHNnRFgrQW8vQVFQ?=
+ =?utf-8?B?U1lKeGpMaE93em1URnVQVTlqdHR1bzEyTzVnNWJKQW0xbkUySFl6VUN6ZU5N?=
+ =?utf-8?B?MkN2M094akpRZHJaUkhWZy91RWRlM3NLdkl6dnNkVlRQa1hHT0NwdGhvR2Uv?=
+ =?utf-8?B?RWMwUjhyVEUwRUgvOGVDREF0UDFYV2NHKzdGWWk1RTVvaEtzaXN3N0s0eWY4?=
+ =?utf-8?B?ZWhHUGlYblZXdDFqaXpTUlhJQ0o0ODdNVkViMngvNVY0S0tVbmQ5cmEycFJj?=
+ =?utf-8?B?M09hNm5sZ3ErM28yR2dmbjZFWVZjaEppNlNDVGc1UTRXWThMdGY5NVRFbEdx?=
+ =?utf-8?B?NXR2NUk3YTE1M2w3U2JCdlp5ejBXOUprUndVdnM3QTNVMkJuejhQY1p6M2pl?=
+ =?utf-8?B?bDcyN0NNRmI2UlpKU0xqTE15dWNsdDNLWmxMdVNkaXJ5WGdYcTIralNoQzFj?=
+ =?utf-8?B?QUxaR1VoT1NGMFZveVMzV0tEVnpkRW5ERWhuT1Q4bzdjWWtBZlJSNEN4M0RV?=
+ =?utf-8?Q?bkE3J/9onys07HCKd0y3RlOWW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67f8c548-4e04-4cd4-3589-08dd0b25258a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5688.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 18:36:30.0583
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 18:40:32.9415
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 63viJuSuslMUlzUCq2dQ7S5No+GVeubBlsvRJO6dfBSAq8hM+EBD9o9DIUbgSUr0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8942
+X-MS-Exchange-CrossTenant-UserPrincipalName: HU6ggxJ1JL03CWCn6AKL/EpC4WQS7kutGcwk6wrL8JSRzmEJ/ECE8f+K4NcrEAPaQFPR9EmJcTHwmE6dKBzJ6Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7213
 
---2oKeXBWRiAqedICB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi Linus,
 
-Usual spattering of patches this cycle
+On 10/24/24 04:54, Nikita Kalyazin wrote:
+> This adds a generic implementation of the `post_populate` callback for
+> the `kvm_gmem_populate`.  The only thing it does is populates the pages
+> with data provided by userspace if the user pointer is not NULL,
+> otherwise it clears the pages.
+> This is supposed to be used by KVM_X86_SW_PROTECTED_VM VMs.
+> 
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>   virt/kvm/guest_memfd.c | 21 +++++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index 8f079a61a56d..954312fac462 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -620,6 +620,27 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
+>   EXPORT_SYMBOL_GPL(kvm_gmem_get_pfn);
+>   
+>   #ifdef CONFIG_KVM_GENERIC_PRIVATE_MEM
 
-Thanks,
-Jason
+KVM_AMD_SEV can select KVM_GENERIC_PRIVATE_MEM, so to guarantee this is only for
+software protection it might be good to use:
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+#if defined CONFIG_KVM_GENERIC_PRIVATE_MEM && !defined CONFIG_KVM_AMD_SEV
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+That could end up too verbose so there should probably be some more concise mechanism
+to guarantee this generic callback isn't used for a hardware-protected guest.
 
-are available in the Git repository at:
+Mike
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-
-for you to fetch changes up to 68b3bca2df00f0a63f0aa2db2b2adc795665229e:
-
-  RDMA/bnxt_re: Correct the sequence of device suspend (2024-11-17 04:56:39 -0500)
-
-----------------------------------------------------------------
-RDMA v6.13 merge window pull request
-
-Seveal fixes scattered across the drivers and a few new features:
-
-- Minor updates and bug fixes to hfi1, efa, iopob, bnxt, hns
-
-- Force disassociate the userspace FD when hns does an async reset
-
-- bnxt new features for optimized modify QP to skip certain stayes, CQ
-  coalescing, better debug dumping
-
-- mlx5 new data placement ordering feature
-
-- Faster destruction of mlx5 devx HW objects
-
-- Improvements to RDMA CM mad handling
-
-----------------------------------------------------------------
-Bhargava Chenna Marreddy (1):
-      RDMA/bnxt_re: Enhance RoCE SRIOV resource configuration design
-
-Chandramohan Akula (2):
-      RDMA/bnxt_re: Add support for CQ rx coalescing
-      RDMA/bnxt_re: Support different traffic class
-
-Chengchang Tang (2):
-      RDMA/core: Provide rdma_user_mmap_disassociate() to disassociate mmap pages
-      RDMA/hns: Disassociate mmap pages for all uctx when HW is being reset
-
-Chiara Meiohas (4):
-      RDMA/mlx5: Call dev_put() after the blocking notifier
-      RDMA/core: Implement RoCE GID port rescan and export delete function
-      RDMA/mlx5: Ensure active slave attachment to the bond IB device
-      RDMA/nldev: Add IB device and net device rename events
-
-Dr. David Alan Gilbert (1):
-      IB/hfi1: make clear_all_interrupts static
-
-Edward Srouji (2):
-      net/mlx5: Introduce data placement ordering bits
-      RDMA/mlx5: Support OOO RX WQE consumption
-
-Feng Fang (1):
-      RDMA/hns: Fix different dgids mapping to the same dip_idx
-
-Gal Pressman (1):
-      RDMA/ipoib: Use the networking stack default for txqueuelen
-
-Hongguang Gao (1):
-      RDMA/bnxt_re: Fix access flags for MR and QP modify
-
-Junxian Huang (3):
-      RDMA/hns: Use dev_* printings in hem code instead of ibdev_*
-      RDMA/hns: Fix out-of-order issue of requester when setting FENCE
-      RDMA/hns: Fix NULL pointer derefernce in hns_roce_map_mr_sg()
-
-Kalesh AP (10):
-      RDMA/bnxt_re: Add support for optimized modify QP
-      RDMA/bnxt_re: Add support for modify_device hook
-      RDMA/bnxt_re: Add debugfs hook in the driver
-      RDMA/bnxt_re: Add set_func_resources support for P5/P7 adapters
-      RDMA/bnxt_re: Fail probe early when not enough MSI-x vectors are reserved
-      RDMA/bnxt_re: Refactor NQ allocation
-      RDMA/bnxt_re: Refurbish CQ to NQ hash calculation
-      RDMA/bnxt_re: Cache MSIx info to a local structure
-      RDMA/bnxt_re: Use the default mode of congestion control
-      RDMA/bnxt_re: Correct the sequence of device suspend
-
-Kashyap Desai (4):
-      RDMA/bnxt_re: Check cqe flags to know imm_data vs inv_irkey
-      RDMA/bnxt_re: Support driver specific data collection using rdma tool
-      RDMA/bnxt_re: Add support for querying HW contexts
-      RDMA/bnxt_re: Support raw data query for each resources
-
-Leon Romanovsky (1):
-      Introduce mlx5 data direct placement (DDP)
-
-Liu Jian (1):
-      RDMA/rxe: Set queue pair cur_qp_state when being queried
-
-Mark Zhang (1):
-      RDMA/mlx5: Support querying per-plane IB PortCounters
-
-Michael Margolin (3):
-      RDMA/efa: Update device interface
-      RDMA/efa: Add option to set QP service level on create
-      RDMA/efa: Report link speed according to device attributes
-
-Patrisious Haddad (4):
-      RDMA/core: Add device ufile cleanup operation
-      RDMA/core: Move ib_uverbs_file struct to uverbs_types.h
-      RDMA/mlx5: Add implementation for ufile_hw_cleanup device operation
-      RDMA/mlx5: Move events notifier registration to be after device registration
-
-Rosen Penev (1):
-      RDMA: Use ethtool string helpers
-
-Sean Hefty (3):
-      IB/cm: Explicitly mark if a response MAD is a retransmission
-      IB/cm: Do not hold reference on cm_id unless needed
-      IB/cm: Rework sending DREQ when destroying a cm_id
-
-Vikas Gupta (1):
-      bnxt_en: Add support for RoCE sriov configuration
-
-Yuyu Li (1):
-      RDMA/hns: Modify debugfs name
-
-Zhu Yanjun (1):
-      RDMA/rxe: Fix the qp flush warnings in req
-
-wenglianfa (3):
-      RDMA/hns: Fix an AEQE overflow error caused by untimely update of eq_db_ci
-      RDMA/hns: Fix flush cqe error when racing with destroy qp
-      RDMA/hns: Fix cpu stuck caused by printings during reset
-
- drivers/infiniband/core/cm.c                       | 170 ++++----
- drivers/infiniband/core/device.c                   |  39 ++
- drivers/infiniband/core/nldev.c                    |  40 +-
- drivers/infiniband/core/rdma_core.c                |  12 +-
- drivers/infiniband/core/roce_gid_mgmt.c            |  30 +-
- drivers/infiniband/core/uverbs.h                   |  29 --
- drivers/infiniband/core/uverbs_main.c              |  43 +-
- drivers/infiniband/hw/bnxt_re/Makefile             |   3 +-
- drivers/infiniband/hw/bnxt_re/bnxt_re.h            |  47 ++-
- drivers/infiniband/hw/bnxt_re/debugfs.c            | 138 +++++++
- drivers/infiniband/hw/bnxt_re/debugfs.h            |  21 +
- drivers/infiniband/hw/bnxt_re/ib_verbs.c           | 130 ++++--
- drivers/infiniband/hw/bnxt_re/ib_verbs.h           |   4 +
- drivers/infiniband/hw/bnxt_re/main.c               | 453 +++++++++++++++++----
- drivers/infiniband/hw/bnxt_re/qplib_fp.c           |  73 +++-
- drivers/infiniband/hw/bnxt_re/qplib_fp.h           |  23 +-
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.c         |  19 +-
- drivers/infiniband/hw/bnxt_re/qplib_rcfw.h         |   2 +
- drivers/infiniband/hw/bnxt_re/qplib_res.h          |  13 +
- drivers/infiniband/hw/bnxt_re/qplib_sp.c           |  35 ++
- drivers/infiniband/hw/bnxt_re/qplib_sp.h           |   2 +
- drivers/infiniband/hw/bnxt_re/roce_hsi.h           |  57 ++-
- drivers/infiniband/hw/efa/efa_admin_cmds_defs.h    |  63 ++-
- drivers/infiniband/hw/efa/efa_admin_defs.h         |   4 +-
- drivers/infiniband/hw/efa/efa_com_cmd.c            |   6 +-
- drivers/infiniband/hw/efa/efa_com_cmd.h            |   4 +-
- drivers/infiniband/hw/efa/efa_io_defs.h            | 106 ++++-
- drivers/infiniband/hw/efa/efa_verbs.c              |  51 ++-
- drivers/infiniband/hw/hfi1/chip.c                  |   2 +-
- drivers/infiniband/hw/hfi1/chip.h                  |   1 -
- drivers/infiniband/hw/hns/hns_roce_cq.c            |   4 +-
- drivers/infiniband/hw/hns/hns_roce_debugfs.c       |   3 +-
- drivers/infiniband/hw/hns/hns_roce_device.h        |  14 +-
- drivers/infiniband/hw/hns/hns_roce_hem.c           |  48 +--
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c         | 257 +++++++-----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h         |   8 +-
- drivers/infiniband/hw/hns/hns_roce_main.c          |   7 +-
- drivers/infiniband/hw/hns/hns_roce_mr.c            |  11 +-
- drivers/infiniband/hw/hns/hns_roce_qp.c            |  77 ++--
- drivers/infiniband/hw/hns/hns_roce_srq.c           |   4 +-
- drivers/infiniband/hw/mlx5/devx.c                  |  93 ++++-
- drivers/infiniband/hw/mlx5/devx.h                  |   4 +
- drivers/infiniband/hw/mlx5/mad.c                   |   8 +-
- drivers/infiniband/hw/mlx5/main.c                  |  78 ++--
- drivers/infiniband/hw/mlx5/mlx5_ib.h               |   3 +-
- drivers/infiniband/hw/mlx5/qp.c                    |  51 ++-
- drivers/infiniband/sw/rxe/rxe_qp.c                 |   1 +
- drivers/infiniband/sw/rxe/rxe_req.c                |   6 +-
- drivers/infiniband/ulp/ipoib/ipoib_ethtool.c       |   9 +-
- drivers/infiniband/ulp/ipoib/ipoib_main.c          |   3 +-
- drivers/infiniband/ulp/opa_vnic/opa_vnic_ethtool.c |   4 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          |   6 +
- drivers/net/ethernet/broadcom/bnxt/bnxt.h          |   6 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_sriov.c    |  53 +++
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c      |   2 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.h      |   1 +
- drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c  |  12 +
- include/linux/mlx5/mlx5_ifc.h                      |  23 +-
- include/rdma/ib_verbs.h                            |  17 +
- include/rdma/uverbs_types.h                        |  33 ++
- include/uapi/rdma/efa-abi.h                        |   3 +-
- include/uapi/rdma/mlx5-abi.h                       |   5 +
- include/uapi/rdma/rdma_netlink.h                   |   2 +
- 63 files changed, 1977 insertions(+), 499 deletions(-)
- create mode 100644 drivers/infiniband/hw/bnxt_re/debugfs.c
- create mode 100644 drivers/infiniband/hw/bnxt_re/debugfs.h
-
---2oKeXBWRiAqedICB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCZ0DPKgAKCRCFwuHvBreF
-YSH8AP9/pufz43bJ3uyVTk0IkwhdQqtfQ6vCIO+4tbpFOKUcBgEA3+N8SMa7t414
-ycHVhwWHlLv6d9zGegTXhpc7/4HeHwA=
-=11XT
------END PGP SIGNATURE-----
-
---2oKeXBWRiAqedICB--
+> +static int kvm_gmem_post_populate_generic(struct kvm *kvm, gfn_t gfn_start, kvm_pfn_t pfn,
+> +				  void __user *src, int order, void *opaque)
+> +{
+> +	int ret = 0, i;
+> +	int npages = (1 << order);
+> +	gfn_t gfn;
+> +
+> +	if (src) {
+> +		void *vaddr = kmap_local_pfn(pfn);
+> +
+> +		ret = copy_from_user(vaddr, src, npages * PAGE_SIZE);
+> +		if (ret)
+> +			ret = -EINVAL;
+> +		kunmap_local(vaddr);
+> +	} else
+> +		for (gfn = gfn_start, i = 0; gfn < gfn_start + npages; gfn++, i++)
+> +			clear_highpage(pfn_to_page(pfn + i));
+> +
+> +	return ret;
+> +}
+> +
+>   long kvm_gmem_populate(struct kvm *kvm, gfn_t start_gfn, void __user *src, long npages,
+>   		       kvm_gmem_populate_cb post_populate, void *opaque)
+>   {
 
