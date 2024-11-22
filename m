@@ -1,178 +1,185 @@
-Return-Path: <linux-kernel+bounces-418287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F449D5FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B80449D5FDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B197282F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:42:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F27E282F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402243BBD8;
-	Fri, 22 Nov 2024 13:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74D8F4A01;
+	Fri, 22 Nov 2024 13:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OMoMBqC0"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ML4U6GSH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C5F1CA9C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1D412E7F
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732282938; cv=none; b=OXLovB+tWye8GHeim6xpozODEBR536nZDSGXcH0TsqrObXoJHtb+QA1+H7WaiSKZMWAJe8gitY927hAlSgQWxXA4ToZvp0uhoAHsZgl6alLzVLRgF9r1R9BPAq7WJhtTX5OLJxukx5lrGT596PINJoYNoKMEbvWTInS1FSbBLqQ=
+	t=1732282985; cv=none; b=Sp3l8rfBj1yHSiL06zni24CKsXnUKtiytLLEFDEF1MgoCBHxwOU8asBMlsbdcFrCDOYpagklXRgzAd8YLIroJjgcQFOxu/T/gFgXKef41rN/U0vj6L7HK17xfx4B7uiCJIg8A/ikb7GI/+qt0bDA6Bfi6YySv+A0l15o+ufaw5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732282938; c=relaxed/simple;
-	bh=zkH6RmyvNVFvMmhT+5A7e3uFPfJEHUmdMgV1uxwJ3Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sM+/+IDUKFUuKzrP1QAutny+ki2LT4fKA4+RsAT9FqLrkHUo4/KCy9eGCFyGFNlq1h909ApxpHnbf+N52ZuENxk5xAzQ73H+YC9dDWcLwb0H5wT9gMLBmIp7Hm8Mts20Xwa8Vua7Jkz+zlTOYapm2MFj8NEgwnkFySlXbWFwfas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OMoMBqC0; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53da5a27771so2536585e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:42:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732282935; x=1732887735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4difOWFZgJjnD1C8UcBJOhNA8o5YsQWO3tN/+p0Mf1o=;
-        b=OMoMBqC0dpOi6jQJ6PGGIiAvX1RFa3ltfKUDsGZDA0xythBQNop2afL8vtWrR8lOvR
-         QCH6AfV12eG6shT+6Lx/nlDQYgva6+SmsEVjFnl9zihdjVKnzr4MM8KvPhnI/YknmKee
-         zVH64f2V+SFyN2ovbC2a1U4sG0MELNRqfAfbGCFD8WEeoFX7W+1ZM8nLuTQrkIHAuUyq
-         HKjMwCoKYUx+dTBgZCSeqG67yS8Qmrn6SxjCtnrzDMoar9IQWMXvE8KgQcgKJTubzWln
-         Mwa1GQMBSNoXxbLY8qQ6fBPE6s51CocWbZqSIEZpS9ma9WjW28CXRJM0vRGa72PH7vdb
-         y/uA==
+	s=arc-20240116; t=1732282985; c=relaxed/simple;
+	bh=mUBMZZqal/zQohdwT6EZNdZQME9eFfnneurHUwJz3TQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DsgOr/NAjTtd14rJXkJz7lYxdbELnx5QkHLpxo0MUZSnZnzMYYJysZUVAqDVYi9djC3dsTgekDIVn1gDuSJrwHBJTTRfxauYPssReQnH/A4nlvDObpghW+Kc1EhPbG2O2XKwasw5kzk3HQR9mqlTpT4ZdtZLiZKk45TtbJ56OCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ML4U6GSH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM3nk1q021660
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I4jyN5sgIKsB6Ac+agW1/Q5Zjbq+xV9LLsj7FAcZutI=; b=ML4U6GSH7KJo9+Tw
+	F9GXRdZUv/op0bnfOvkSwFo0X4ry/+IvNlonZWWRAIfd1Usjg5s5n1tpsjLfPm6/
+	rTj7uZ8KOMfhmfzvTVfKz/pboODFFFpgtJGlmfiZ/IBg+cnimCw4nwu1T0FC/LN6
+	I8EbmDDRUoCRdzmIe3LbsZDW3HmpqBDqv4mag3pMzxPS9pXgGwJ+pJ92U/J1guWS
+	jHICk46wAJLHuCXZ6a2OLsrqTUxz7qdpxfaqEYOv0JhwtCwfgQxv63z2KnClapNH
+	jFBziL0CC5QeSfGvbD6GT9t62JfoxEG5bsPpvfR4JhfZeecGNjHNuaXVfm612gGt
+	Bzkccw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4326atb845-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 13:43:02 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-460903fc1a1so5057311cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:43:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732282935; x=1732887735;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4difOWFZgJjnD1C8UcBJOhNA8o5YsQWO3tN/+p0Mf1o=;
-        b=hVDzloIVS01Hlx6O9bcKRrGNzkpWPzIP8dJhKnO7b+bPMTtn06NT9b3hlglvlABD4v
-         l6fdWUhZWp3vRPMuWCPRzUxT13X27Hs5k6KpynoGkEKYdKjwmshhNetreFAKs8qF07TV
-         Fu4Wn+ap9HP/2DnfVOView301z8/IaL3S45T6fT17tFxfLwHE2UFBo3uZmEN8YwRG8HO
-         WwneiUk8dZJn1D4j9MWeK3M+OmQSxk49TxJwS9V3vHdHHVV3aJeAL7qEChjWAnCHwO5x
-         dtze5BRXTEhBtbENufMpvkJrp2qgejkOwUNgbIJwYGCtBHckulp4dgstjuDY8RPHsXW9
-         subg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxnt8FgufRVlK73yRgKfcy3mtPEjpr1CJRnP+j/0+lt+QbQI1smcntCYLah/qBpVV2YlMiHTVH+6/pRRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1kq+YSwJqqHb9Fc/2ImjsUaXwKpddgERNIgqPNhXz8c7XSsHq
-	mXhdis27pZ+KS5wpSC15yyetdyQsTHFvdYueBFJ10WCbs4bougZJvHzj9WryjC8=
-X-Gm-Gg: ASbGncvMVZFFoePrJVduGzM4upVbi52OSAP+TKIYC+J7X1cMg2+y1XI93b5WQqjIln0
-	7mzbyvoyXiX4sjaI9la/ujaz2M5797cjMpDjbtO5u+hbKsDhu2rRPN+mldfZbZlmgHEFD6Q+2DS
-	6M2FkJAu20YP3KPkuBFNlt+c1YR8N6TRV30c1Z/6JN+nXQRiN3Ld+Gng+EWn8ggmGKotYv9acFq
-	F1WM17ujixfx+gUHgxwsToo1XUqIRNd7Jz9+ISek9yYrd3i7nMHGCp+4c+zUgmPnh5v0UYzyZ6T
-	+Jlc2vGK69ApbUNCt6sEJzTH
-X-Google-Smtp-Source: AGHT+IFpXYUD+s/zi1m8hUlKbDnxnNx0uM97l+zyDIOWiFoCB6hbeMWDPChCxVJnNPG7XSOTrGoKsg==
-X-Received: by 2002:a05:6512:3084:b0:53d:b998:b7e1 with SMTP id 2adb3069b0e04-53dd35a47ffmr1986425e87.3.1732282934904;
-        Fri, 22 Nov 2024 05:42:14 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2481e73sm376432e87.120.2024.11.22.05.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 05:42:13 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] pmdomain: core: Fix error path in pm_genpd_init() when ida alloc fails
-Date: Fri, 22 Nov 2024 14:42:03 +0100
-Message-ID: <20241122134207.157283-3-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241122134207.157283-1-ulf.hansson@linaro.org>
-References: <20241122134207.157283-1-ulf.hansson@linaro.org>
+        d=1e100.net; s=20230601; t=1732282981; x=1732887781;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I4jyN5sgIKsB6Ac+agW1/Q5Zjbq+xV9LLsj7FAcZutI=;
+        b=IWeiq+eiD3Cnek9kXg9y2l5atFrb+mqfhJd4kky5wVsoLe3YHfEYTuG0APFwf/NXRH
+         XQPa0fFpQXyutwdpCGgblN1GqZYBE21x7Z10oBAUr56ctnu4YyC3MKsCCgpTGrT975CU
+         yxXrtu7Kl6u9EC9sLF4SaT2wzKggC1Pcojd5QknUCld8K0TQGJiApvpON2h6f61/qHQO
+         wYUOi9K4q8ioJGEg8uSXSVp16cSBf7BZ92E1jp1m5z89LtDljrJZu9yRFkahNtQ36Hib
+         GHSktPZBxxs53Pur6yKld8p5tdrG+yPrdIbDNQQ+HwB8VDGxeOcYMnR7DcKKF1T3b40x
+         sILw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYXMZf6nE+7Z8FUJwySRFz0WtBqEn1l8NRw9BMDdnFQwaumqPbYzAquLHN+HPDZlfmLmFm4nZKvBdDH5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwINWwrkS1ZTXGlMIYbbQT0plOlsjiWGSDnkIh4kFJDTD+nMtmV
+	lAI4EKNBeX+snqPn014bouye7oEP8zF/aajdB0eRUggIUHLnp0k7DkebKae3fkv18qAP3XD7Aej
+	uMXcHv3dv+1zeHNJODuKXJgzv4c741MCPw0FRqpmGjxicBuzj1eJC9xJdsZjlSXg=
+X-Gm-Gg: ASbGncs8VbDG2+/UMDSbkaUzD+C/hZZaPBXutpvRmjp7AUMnwQT8IGbk6Ez4wfzVgGE
+	a2DcATEud8IdtYGXlYgebDj8hm085IP9rrjg/xLOvzW9HQmVAysuZWtOl63A2H+tENpsmZAEx88
+	3xZke2P32AF8VH3opw3OGNmtydaEKTQct5RZjTjGO/GNZ8glGrPI74t+ts1HHWXoIm1ZSLGIw/G
+	JHQrO0z0BPnrjU4xBL+E1Rb7fZ/EvFUCHXEJwLxeQ+aioNj8xGRcKN8uT96Ywl/K0XfHCGqAyKO
+	LPLI5jDNPXbMZsosUG6xY0covpAWHAM=
+X-Received: by 2002:a05:620a:4593:b0:79f:70f:ee0b with SMTP id af79cd13be357-7b5144c18admr171825985a.6.1732282981143;
+        Fri, 22 Nov 2024 05:43:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE6qWdpFprMy+djvMsdCITWGkdx6i8r/hwcoEINJOKRyzD0W2OkpAMxFf70grZjlw3X3/R3nQ==
+X-Received: by 2002:a05:620a:4593:b0:79f:70f:ee0b with SMTP id af79cd13be357-7b5144c18admr171823385a.6.1732282980786;
+        Fri, 22 Nov 2024 05:43:00 -0800 (PST)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01d41af2esm939297a12.84.2024.11.22.05.42.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 22 Nov 2024 05:42:59 -0800 (PST)
+Message-ID: <8508988c-a74b-4f65-8060-30a0cb5afa64@oss.qualcomm.com>
+Date: Fri, 22 Nov 2024 14:42:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        konrad.dybcio@linaro.org, andersson@kernel.org, andi.shyti@kernel.org,
+        linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org,
+        vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org,
+        Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org,
+        krzk+dt@kernel.org, robh@kernel.org
+Cc: quic_vdadhani@quicinc.com
+References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
+ <20241113161413.3821858-5-quic_msavaliy@quicinc.com>
+ <37762281-4903-4b2d-8f44-3cc4d988558d@oss.qualcomm.com>
+ <cbbb78c9-54ec-453a-92ec-6b174bd3d9cb@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <cbbb78c9-54ec-453a-92ec-6b174bd3d9cb@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: fM7qTdFQlA02iEqsdZRHYxIpJE0fBqJb
+X-Proofpoint-GUID: fM7qTdFQlA02iEqsdZRHYxIpJE0fBqJb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 clxscore=1015 mlxlogscore=999 lowpriorityscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220115
 
-When the ida allocation fails we need to free up the previously allocated
-memory before returning the error code. Let's fix this and while at it,
-let's also move the ida allocation to genpd_alloc_data() and the freeing to
-genpd_free_data(), as it better belongs there.
+On 18.11.2024 6:45 AM, Mukesh Kumar Savaliya wrote:
+> Thanks for the review konrad !
+> 
+> On 11/16/2024 12:58 AM, Konrad Dybcio wrote:
+>> On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
+>>> Add support to share I2C controller in multiprocessor system in a mutually
+>>> exclusive way. Use "qcom,shared-se" flag in a particular i2c instance node
+>>> if the usecase requires i2c controller to be shared.
+>>
+>> Can we read back some value from the registers to know whether such sharing
+>> takes place?
+> Actually, HW register doesn't provide such mechanism, it's add on feature if SE is programmed for GSI mode.
 
-Fixes: 899f44531fe6 ("pmdomain: core: Add GENPD_FLAG_DEV_NAME_FW flag")
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/pmdomain/core.c | 36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+So it's more of an unwritten contract between subsystems.. okay
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index 4d8b0d18bb4a..bb11f467dc78 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -2172,8 +2172,24 @@ static int genpd_alloc_data(struct generic_pm_domain *genpd)
- 	}
- 
- 	genpd->gd = gd;
--	return 0;
-+	device_initialize(&genpd->dev);
-+
-+	if (!genpd_is_dev_name_fw(genpd)) {
-+		dev_set_name(&genpd->dev, "%s", genpd->name);
-+	} else {
-+		ret = ida_alloc(&genpd_ida, GFP_KERNEL);
-+		if (ret < 0)
-+			goto put;
- 
-+		genpd->device_id = ret;
-+		dev_set_name(&genpd->dev, "%s_%u", genpd->name, genpd->device_id);
-+	}
-+
-+	return 0;
-+put:
-+	put_device(&genpd->dev);
-+	if (genpd->free_states == genpd_free_default_power_state)
-+		kfree(genpd->states);
- free:
- 	if (genpd_is_cpu_domain(genpd))
- 		free_cpumask_var(genpd->cpus);
-@@ -2184,6 +2200,8 @@ static int genpd_alloc_data(struct generic_pm_domain *genpd)
- static void genpd_free_data(struct generic_pm_domain *genpd)
- {
- 	put_device(&genpd->dev);
-+	if (genpd->device_id != -ENXIO)
-+		ida_free(&genpd_ida, genpd->device_id);
- 	if (genpd_is_cpu_domain(genpd))
- 		free_cpumask_var(genpd->cpus);
- 	if (genpd->free_states)
-@@ -2272,20 +2290,6 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
- 	if (ret)
- 		return ret;
- 
--	device_initialize(&genpd->dev);
--
--	if (!genpd_is_dev_name_fw(genpd)) {
--		dev_set_name(&genpd->dev, "%s", genpd->name);
--	} else {
--		ret = ida_alloc(&genpd_ida, GFP_KERNEL);
--		if (ret < 0) {
--			put_device(&genpd->dev);
--			return ret;
--		}
--		genpd->device_id = ret;
--		dev_set_name(&genpd->dev, "%s_%u", genpd->name, genpd->device_id);
--	}
--
- 	mutex_lock(&gpd_list_lock);
- 	list_add(&genpd->gpd_list_node, &gpd_list);
- 	mutex_unlock(&gpd_list_lock);
-@@ -2326,8 +2330,6 @@ static int genpd_remove(struct generic_pm_domain *genpd)
- 	genpd_unlock(genpd);
- 	genpd_debug_remove(genpd);
- 	cancel_work_sync(&genpd->power_off_work);
--	if (genpd->device_id != -ENXIO)
--		ida_free(&genpd_ida, genpd->device_id);
- 	genpd_free_data(genpd);
- 
- 	pr_debug("%s: removed %s\n", __func__, dev_name(&genpd->dev));
--- 
-2.43.0
+>>
+>>> Sharing of I2C SE(Serial engine) is possible only for GSI mode as client
+>>> from each processor can queue transfers over its own GPII Channel. For
+>>> non GSI mode, we should force disable this feature even if set by user
+>>> from DT by mistake.
+>>
+>> The DT is to be taken authoritatively
+>>
+> To clarify - Does it mean i should not have SW disable this feature OR override  ? And let it continue in non GSI mode even it's not going to work ?
 
+If a configuration is invalid, you should return -EINVAL from probe,
+with an appropriate error message.
+
+>>>
+>>> I2C driver just need to mark first_msg and last_msg flag to help indicate
+>>> GPI driver to take lock and unlock TRE there by protecting from concurrent
+>>> access from other EE or Subsystem.
+>>>
+>>> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+>>> Unlock TRE for the respective transfer operations.
+>>>
+>>> Since the GPIOs are also shared between two SS, do not unconfigure them
+>>> during runtime suspend. This will allow other SS to continue to transfer
+>>> the data without any disturbance over the IO lines.
+>>>
+>>> For example, Assume an I2C EEPROM device connected with an I2C controller.
+>>> Each client from ADSP and APPS processor can perform i2c transactions
+>>> without any disturbance from each other.
+>>>
+>>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>>> ---
+>>
+>> [...]
+>>
+>>>       } else {
+>>>           gi2c->gpi_mode = false;
+>>> +
+>>> +        /* Force disable shared SE case for non GSI mode */
+>>> +        gi2c->se.shared_geni_se = false;
+>>
+>> Doing this silently sounds rather odd..
+> we can have Some SW logging added ?
+
+Normally such overrides mandate a warning/notice, but as I said above,
+we should disallow such combinations altogether for sanity
+
+Konrad
 
