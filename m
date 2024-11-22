@@ -1,163 +1,156 @@
-Return-Path: <linux-kernel+bounces-418616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D65B9D638D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:48:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB3A9D637F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:45:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8CFFB265D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:44:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC881603BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537841DFD8E;
-	Fri, 22 Nov 2024 17:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30661DF747;
+	Fri, 22 Nov 2024 17:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NOmh0ROa"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fZ2YMktj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEA01DF742
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F71DEFF1;
+	Fri, 22 Nov 2024 17:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732297465; cv=none; b=W6LI71IfSoU7WKyVB5BBQpcjli52oYS6/MGI0ezS2/ZGszkJFhm6r3nT44phzwMkmSLfiqsoTgTzXiU2ZehtPPRDIZB3PTdPbOSzWAAv7Lh/eEX0zGIpPseg5DVOY4P0dGSiqZwjdmQw2uZm/3zkP+gLwAkib7CfTGK6AAfrzg4=
+	t=1732297478; cv=none; b=auVXQFZfFRmmoeQHuSYqgzTXT3qFbXS0oLAeP8TOJC4EXLwet0dwDkoDAN/3j1zmi42xEdQ55u/Y6DOWly9SzgnNpxN7hGPeZUfsWq/b7av/sWUuRV63MrjFFglU2JACEE1w3gOTvehroI/yz2HrKWF7JAIwj2QZdUnl0ezstiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732297465; c=relaxed/simple;
-	bh=zrDozU7fr9AHj9R00j5QrCDL24/mGG6bD8njpZJowLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OoF1tXYA3RufPn/6JhzkS+lAb+TMFByeAq6fjPgKOnWcwMDOZL73RqEmUNJAtzfp2UgpV9JRp+crTytlMx8zu3xoz42s6PJXi1CSV9MyIw/AVZCEJe8KF2xEZfEWF9KyuJv+iEWyBk242s4Zj/0bciol4VCH65lL+ZRcIiP+NJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NOmh0ROa; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D45CF1C0005;
-	Fri, 22 Nov 2024 17:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732297461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AdyHtCv1wL4VKWQwWV1p+h54gX2Q8uYJc9uLZKJoGjA=;
-	b=NOmh0ROa0uuR361y6qeihtW21hrKTDuGvsQcAmiwRYXVXWe14xpRWZdA9XBhdwBX1fteJL
-	wMyQOkrXyKnA7eF44SaUrrZqOT1P8FWeRHKHVz3KryIvGNB8qqbSDYhJbcyoLfo92thakR
-	XKmgLrHsgzw7XZmE1uR1iHIRLDRPS6V4ztWQCE7i25zXCzwFwYPlw2yZ6svBzkzdVGkK7Q
-	VK11j3QDgZmi8fwoqYS1Wgaq6ReJnOc4prfr4TwcqbytqTbRpzwbg5Wq6dtTUEZ7tuyeNA
-	Cazfyh51zRwBVwrQFTff1POOu9fNlcW7GlcZKJoZ7rA/eRSIe5YuoNLG6SQBtw==
-Date: Fri, 22 Nov 2024 18:44:18 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>
-Cc: jose.exposito89@gmail.com, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-Subject: Re: [PATCH RFC v2 00/16] drm/vkms: ConfigFS interface
-Message-ID: <Z0DC8nd1ZFN4A82-@louis-chauvet-laptop>
-Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>, jose.exposito89@gmail.com,
-	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
-	seanpaul@google.com, nicolejadeyee@google.com
-References: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
+	s=arc-20240116; t=1732297478; c=relaxed/simple;
+	bh=LTfcF1SnfYbuR6jnNpBsOiXWV1nNwAYPniS82toQRDU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QdXDPlu47xgyXBPT5beVknnmY5uSCOpN8+6STA8FT6JmcQ0h3VJCbeoFFu14I8AODHL4ivBOUlignMmxiXbSccwiwcYDiqPU1W+w0MCH+E0cKvbnvCjYnOEM3wPH3WO26MtfD438Rs6IARvrJqHobG1IcZL0tTUMsWREXh0E51k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fZ2YMktj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AMG8DCS003764;
+	Fri, 22 Nov 2024 17:44:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JtL69AN9oMCYjCSYEQSCltA+7HfPoe92ivrgMjlg/F8=; b=fZ2YMktjrcYHMYno
+	k/VdDwPGSL96nK4wxQaNviDas4dnpUYSejiuRF6Fp1o5bHxdVVyAOXOnyMIgUhMn
+	eBDU6nG8kO1euGMVDYgtaL+d9E0KEGEYEp7k/uMGDJCSzXnSmpfTMXXZIy2bZrR4
+	MyNb7Ml4cIi11FX0OBY6INkqgY56ADT+/eRtPNMfV2QHSm9FFBaJZEPoKDZRmDaJ
+	nu/c8kZH3kZhFD7Le3OIsCaghNKSaeUrASgYrMkbF8pwlqjdDRWiwnsRVyneX4kO
+	38fyeea7UzPqbcXNHsD5A9mrLqV4G9W5RBPrSi9rgfrEyCachH2U/oGzgK1vYjEA
+	wNwavA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432w72r72u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 17:44:21 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AMHiKVG031094
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 17:44:21 GMT
+Received: from nalasex01c.na.qualcomm.com (10.47.97.35) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 22 Nov 2024 09:44:20 -0800
+Received: from nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d]) by
+ nalasex01c.na.qualcomm.com ([fe80::5da8:4d0f:c16a:a1d%11]) with mapi id
+ 15.02.1544.009; Fri, 22 Nov 2024 09:44:20 -0800
+From: "Lakshmi Sowjanya D (QUIC)" <quic_laksd@quicinc.com>
+To: "Md Sadre Alam (QUIC)" <quic_mdalam@quicinc.com>,
+        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at"
+	<richard@nod.at>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "Sricharan Ramabadhran (QUIC)" <quic_srichara@quicinc.com>,
+        "Varadarajan
+ Narayanan (QUIC)" <quic_varada@quicinc.com>,
+        "Naina Mehta (QUIC)"
+	<quic_nainmeht@quicinc.com>,
+        "Lakshmi Sowjanya D (QUIC)"
+	<quic_laksd@quicinc.com>
+Subject: RE: [PATCH v2 0/3] QPIC v2 fixes for SDX75
+Thread-Topic: [PATCH v2 0/3] QPIC v2 fixes for SDX75
+Thread-Index: AQHbPLzmOYXrwOalokeDht4Doi7jRLLEGOtQ
+Date: Fri, 22 Nov 2024 17:44:20 +0000
+Message-ID: <741980c863444f02ad949ff1a36f718f@quicinc.com>
+References: <20241122085933.2663927-1-quic_mdalam@quicinc.com>
+In-Reply-To: <20241122085933.2663927-1-quic_mdalam@quicinc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241122-google-config-fs-v2-0-4b7e6f183320@bootlin.com>
-X-GND-Sasl: louis.chauvet@bootlin.com
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oslOqMu6BXiaXyu2pHflFmTSQxq9f-ML
+X-Proofpoint-GUID: oslOqMu6BXiaXyu2pHflFmTSQxq9f-ML
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1011 spamscore=0 priorityscore=1501 malwarescore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 impostorscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220149
 
-On 22/11/24 - 18:38, Louis Chauvet wrote:
-> VKMS is manly used to test userspace program and its behavior. The current 
-> implementation is not very configurable as you can only have one device, 
-> with few specific planes.
-> 
-> This series aims to introduce a new interface, using ConfigFS, to create 
-> and configure more devices. This will introduce:
-> - Device creation
-> - Plane creation
-> - Plane configuration (type, color encoding, color range, rotations)
-> - Encoder creation
-> - CRTC creation
-> - Linking between CRTC and planes/encoders
-> 
-> The proposition is:
-> /config/vkms
-> 	DEVICE_1
-> 	┣━ enable
-> 	┣━ writeback
-> 	┣━ planes
-> 	┃  ┣━ PLANE_1
-> 	┃  ┃  ┣━ type
-> 	┃  ┃  ┣━ supported_rotations
-> 	┃  ┃  ┣━ color_range
-> 	┃  ┃  ┣━ color_encoding
-> 	┃  ┃  ┣━ default_color_encoding
-> 	┃  ┃  ┣━ default_rotations
-> 	┃  ┃  ┣━ default_color_range
-> 	┃  ┃  ┗━ possible_crtcs
-> 	┃  ┃     ┗━ >> /config/vkms/DEVICE_1/crtc/CRTC_1 
-> 	┃  ┣━ PLANE_2
-> 	┃  ┃  ┗━ ditto
-> 	┃  ┗━ PLANE_3
-> 	┃     ┗━ ditto
-> 	┃
-> 	┣━ encoders
-> 	┃  ┣━ ENCODER_1
-> 	┃  ┃  ┗━ possible_crtcs
-> 	┃  ┃     ┗━ >> /config/vkms/DEVICE_1/crtc/CRTC_1
-> 	┃  ┗━ ENCODER_2
-> 	┃     ┗━ ditto
-> 	┃
-> 	┗━ crtc
-> 	   ┗━ CRTC_1
-> 	
-> This interface aims to be extendable (new property can easly be added in 
-> objects) and easy to use (objects are created simply by creating folders, 
-> and configured by writing files).
-> 
-> This series depends on 
-> https://lore.kernel.org/all/20241122-google-remove-crtc-index-from-parameter-v2-0-81540742535a@bootlin.com
-> but as this is a bit complex to rebase, you can find a working branch 
-> here:
-> https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-configfs
-> 
-> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-Hi all,
 
-I am also currently working on MST emulation for VKMS. If someone can read 
-what I already did and at tell me if my implementation seems on the right 
-track it could be nice.
+> -----Original Message-----
+> From: Md Sadre Alam (QUIC) <quic_mdalam@quicinc.com>
+> Sent: Friday, November 22, 2024 2:30 PM
+> To: manivannan.sadhasivam@linaro.org; miquel.raynal@bootlin.com;
+> richard@nod.at; vigneshr@ti.com; bbrezillon@kernel.org; linux-
+> mtd@lists.infradead.org; linux-arm-msm@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Cc: Sricharan Ramabadhran (QUIC) <quic_srichara@quicinc.com>;
+> Varadarajan Narayanan (QUIC) <quic_varada@quicinc.com>; Md Sadre Alam
+> (QUIC) <quic_mdalam@quicinc.com>; Naina Mehta (QUIC)
+> <quic_nainmeht@quicinc.com>; Lakshmi Sowjanya D (QUIC)
+> <quic_laksd@quicinc.com>
+> Subject: [PATCH v2 0/3] QPIC v2 fixes for SDX75
+>=20
+> v2:
+>  * Updated commit message
+>  * Added stable kernel tag
+>  * Added Fixes tag
+>  * Renamed the variable from offset_from_qpic to nandc_offset
+>  * Set buf_count to 512 in the parameter page read
+>  * Replaced the buf_count value of 512 with the len in bytes
+>=20
+> v1:
+>  * These patches will fix the following:
+>  * 1) onfi param page read which was broken by exec_op() patch.
+>  * 2) Fixed offset passed to BAM from QPIC base
+>=20
+> Md Sadre Alam (3):
+>   mtd: rawnand: qcom: Pass 18 bit offset from QPIC base address to BAM
+>   mtd: rawnand: qcom: Fix onfi param page read
+>   mtd: rawnand: qcom: Fix read len for onfi param page
+>=20
+>  drivers/mtd/nand/raw/qcom_nandc.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
+>=20
+> --
 
-The current status is not very advanced: I can emulate a mst HUB, but not 
-a screen. I am currently working on properly emulating the HUB by using an 
-other hub.
+Tested-by: Lakshmi Sowjanya D <quic_laksd@quicinc.com>     # on SDX75
 
-You can find the branch for this work here:
-https://gitlab.freedesktop.org/louischauvet/kernel/-/tree/b4/vkms-mst
+--=20
+Regards
+Lakshmi Sowjanya
 
-Thanks a lot,
-Louis Chauvet
 
