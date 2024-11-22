@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-417784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714579D5902
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0966A9D590B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:04:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B83CB22049
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 644F3B222EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FB61509B6;
-	Fri, 22 Nov 2024 05:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A729615D5CA;
+	Fri, 22 Nov 2024 05:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZcU0yjak"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zFdAxetf"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0922309B4
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752934C62E
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 05:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732251745; cv=none; b=b+6Heu2ZJoMC3xdqDlwffln2RcIOcVC7EwBEg3caep29NUyIzLyihpaPv6UlI5hei1ZXDA5/40g8IBVhqGWBbrdAAiCtYZnXpBNiAAxm8F3H+j87HTzoyrjhfYihJvvha2pDeARzgOOm6cWNUCj4Ik7l8ZbwOA/utckBwUNBuvE=
+	t=1732251863; cv=none; b=ZP01OAhaQaw5KUCVsDMIjq53vgkBxdRMtp0duoygbnqXzYgzi/WxxtXcP70u2MHBncwHRqoSDKdTQfuW5SLo+k5uWZmAI/s0zrBhwkqhHae7wLvEVkj03uC8QI2E+5lcVvn41/132P964o+NwnJ6zSx4ObcOix66W7yiDFuEHe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732251745; c=relaxed/simple;
-	bh=qS801PKOtt5qeQd2rrmw105l2ICVujdW2kRWx0Iz3Ik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tac2D+NF3lY8PMjEYfAY6pwM1zUshgrJNDabxSOfN/se+jAxpL++KxTqCRCuJJ8QQY/rzxJyY3+KZXbqFlGmBXyT65zk9jdJxctKUPgT9PoqEBDUGldUI3ypGqyMeS3SlyRK7G89eAkiYWOXxd5Ib6n3QS+5WAO577yYUb3Uq08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZcU0yjak; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460969c49f2so164611cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:02:23 -0800 (PST)
+	s=arc-20240116; t=1732251863; c=relaxed/simple;
+	bh=A/lHaHfafAQy7OfTvmDU5OKRmJrBpX9Zmsb83aoIxoE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qEUR80QLB2gfkVxxDSfjJPWTLTt1uqfDqv2czSbqN/ewM7tfJPHhhP72pbPFcAG53GnijKlGz0QMzjxR7x3D3EjBziuUkkD+eIsTIP7iVv2FBVz97BMHEsVV5j2zKR5HZ/fH1cWYh9rxrjxY/uy3e1fMot4qC4+aWCTcTCRDfrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zFdAxetf; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e5f86e59f1so1052503b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 21:04:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732251743; x=1732856543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1732251860; x=1732856660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EM2OedZjIPfu4sCxCIoKHGUlk/UJAhQ9XCieLskfQt0=;
-        b=ZcU0yjak1gL1rb2tgdUkFZ3nSZzz6PFRJ2xKX6SCsRKajNQFpzvUPgyJcZUf5/NDLP
-         Yp14Te+4XL6dt1gB8TfKLIdhUbHORGLwMVblDlVHxK9yAJTIvSfq0JHxsWGIJOhvsE9k
-         l94p+Xi7TEm0D2hJPXDKLoJev6jsORX8VQkbyHtrFHhqmCMLiVQVM5hqlgaO+d9zPEQR
-         rvLgB2C8pGpXkeO5hPrct8RHtdPsv4wTpvWD6TKeHvy14NYQhzzjJkUsz9qlJO3/lXHe
-         CnPtMxClsAsC7QYxzdNRLm1MpyjIEHdtZSB6QxoA2GsILSz3xy6APx5Smd44LvXJFvaP
-         6NVQ==
+        bh=kIzDwcozFWCn4iWIZHsgYfF1wjH7Z9fC00bR+vHVLs8=;
+        b=zFdAxetfqdy6vjgAlPnY8dcPszsTDct+6mOTzaz8OaYYhujrNWdIyDm6DWDXklwxD9
+         htk6uVhmakXRcC2Fjd+gf0VKabBgujYbdZJXpGtUEjMEEtaaIRE7vqvmJ5hR+wAFI5U8
+         L5I8GNSP3CIuT9SyFp6pG9PwV5p5HISLTOyaBErkch3CTIh7aqGsWYvgFPU1j1pqziiy
+         uKEPXqCROjEj5IyAkIC6yldMzfaMXQ/1Z9Xuj1AZ+dwr52LyscyQch1pg5tlhHkcQpqf
+         NnNm4QFDdYbsyt0pDXl38nk7FdXVag61wo0cD2DJ/VZhdCGE8Q2jpBj3wJrxcG0OJ0Lw
+         5wMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732251743; x=1732856543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732251860; x=1732856660;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EM2OedZjIPfu4sCxCIoKHGUlk/UJAhQ9XCieLskfQt0=;
-        b=cS25S1ysIPgRP8B9FxxfoCO8XDRfhWqbX2NhUj1LUxl7rvEG9xIyYUXcFAkHAbeLty
-         1ytn+0vtXEYybg03nCQOvhWPTbnPgzuC6cK1reF8OdrdJSTJcIWuV+COOf+6PRQLK/08
-         6BsU5NxmeysULJwElNGfjd1VWrY1qO051XUFMdQnLAnY93OyV15tKWk+uYFaP7wR5Xs7
-         ZOOHPIw7iDKdOcxtJL7JDlfvauLpkjvwPYCW7BNpkwrCCKUqS3R1kE23rk1+9IZJet5w
-         pJceXPRju4u0t+SBIVxv6Vd80TUDtCQX1GQlv7aVMDbrApoaoF8G7l0EQXy19o+uNMrh
-         eUgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzflSBgsX+8CQXHcjriXd5oW6527xxovAAKE8oIj46ZkYSeyj28mi8dV/LOib2jEBeEcGTAcn7NEbK5No=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH1nmWYElgbHewqsDp10nTCt4PgXqSWIIqRk9HO0U1qNSvZ41v
-	TVt63ZsSxlJqc36jAn1vvo4Djs/I8Eh6pPbhUfmosEMwv+ULFT7YRav2i0C1nPxVAaRpnN5ZXMX
-	lWpWfeZLUJ1ON2UaeRJpISCZ4Y8fFYLFIZGpV
-X-Gm-Gg: ASbGncstpuRjAmVFQ//kdpNb93mcbejRCSdX4l2iR30jLFeB9XnY6rlk6UmQ93+I2be
-	lGPqYkzghHTbI8pGKFnTocFdD6WUWIxWtkugnO7/BW8MI1gQ/mV2gZ+PIIVQ=
-X-Google-Smtp-Source: AGHT+IGSBdZWAT4cnvExtpdsqL27XrwwPqF3r4InTPu6pwGviu4eUZLWygopHUdvMXgTBRe1ZG+RSJzlreUH80PAKWg=
-X-Received: by 2002:ac8:5d02:0:b0:463:6f7b:250d with SMTP id
- d75a77b69052e-4653d5d7379mr1908991cf.24.1732251742485; Thu, 21 Nov 2024
- 21:02:22 -0800 (PST)
+        bh=kIzDwcozFWCn4iWIZHsgYfF1wjH7Z9fC00bR+vHVLs8=;
+        b=fI7iLID5DqU/nHBmIhgnmPAJ+IovmcmHkCcjAD4+aBO7ft895Hz+RjqwBZpttonCco
+         miok0e1OryygApYcnZ1Vdo0dFc/hlHf4N++jB99hBemgHg0k6ghYmeyCEhQKJxu1i9E9
+         SX/xiRd0FHSr0cRvdVUYctMz/1b+gRSeWh77jh7wJOermCM8eB+izJzhs8aCOGjjlGH9
+         xs5GAvriJMtEg7KU1NVbIlO9PIBUWcDGJZANEX63WzZEfi8HWHOiErxbXhtMhAknvRC6
+         zzhuDGCG07/iLb7PA+zf25iHKVNksr/x7ezL75UXT/F5c/rvOVEz8YimkowjBO4o/67v
+         cE0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXLvFYnyic3k8USpfpQWoIZpxI55pcxcBiiiEHMt5zl3+fGt4o/vYl5yaRygvrD5kkerfod8yKdU+6Gh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2VkVHetOGPGUMfog2u2Vp3bcuxllWjEzVpZhJosWVGGWkeJVz
+	urganPJxZpTSgrSAMheRBVA7mUQG4Q0N6PJ/PuJhOUmFsIbNhOopUmYFmFgaEC/rTC92Q5botQz
+	DVSo=
+X-Gm-Gg: ASbGncvehr/hiU5zBM+/O/XtnNLyOunmLax/7UjhNfq+6JryZfCqrMcuo645AbcMXXV
+	9FEO5MF1IRvK7BDjLUy+NuzEAfddP9hRToKeXo2UFhFI+OmnNmfnqI3dUiWUnFm/YDzvECN6Qqc
+	EThKexDreOwxogZb2oNXGbb7hGDlL06IaWktYDWUEZLBfOgxt1rm8gt8GEyoxxj7iluT4q0g7DG
+	aXmzEPyTnbKsY4JBxOAmwj6Xzu2VHUJxG81Sg1lDZVmYmIaat0tYeY=
+X-Google-Smtp-Source: AGHT+IGL6MagCY83L4jKNjJ+b2nvEUCxXAYn80qUw2BRxv2rEU4IPc31obmxQrilm0WF+k6fB1jevg==
+X-Received: by 2002:a05:6808:1b0e:b0:3e7:9f14:26cd with SMTP id 5614622812f47-3e9157a3724mr2224346b6e.8.1732251860540;
+        Thu, 21 Nov 2024 21:04:20 -0800 (PST)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71c0383ba69sm280935a34.61.2024.11.21.21.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 21:04:20 -0800 (PST)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: hch@lst.de
+Cc: axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] block: remove the ioprio field from struct request
+Date: Thu, 21 Nov 2024 23:04:19 -0600
+Message-Id: <20241122050419.21973-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241112170050.1612998-3-hch@lst.de>
+References: <20241112170050.1612998-3-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cd252b78-077b-441e-8371-106d71258ff3@alliedtelesis.co.nz> <84d9200e-25b4-4bd8-8eb5-c954ff92ac08@alliedtelesis.co.nz>
-In-Reply-To: <84d9200e-25b4-4bd8-8eb5-c954ff92ac08@alliedtelesis.co.nz>
-From: Rong Xu <xur@google.com>
-Date: Thu, 21 Nov 2024 21:02:10 -0800
-Message-ID: <CAF1bQ=RU2dZU3ENy3MLM4FvrZNaZprgPAM5vbRtUVDixJNQ_zg@mail.gmail.com>
-Subject: Re: RTL9300 (mips) fails to boot with commit d4a7f2510ff4
- ("vmlinux.lds.h: Adjust symbol ordering in text output section")
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: "Han Yao Yeo (atg)" <hanyao.yeo@alliedtelesis.com.sg>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Masahiro Gotoh <gotoh@allied-telesis.co.jp>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Does the following patch fix your issue?
-https://lore.kernel.org/lkml/CAK7LNAQSpM2hh2=3DWgribb92nHF5_peRb+gxdO1Bt1Mk=
-eL8N+hw@mail.gmail.com/t/
+Hi Christoph,
 
-Masahiro Yamada already applied the patch to kbuild-tree.
+This patch causes a regression on E850-96 board. Specifically, there are
+two noticeable time lags when booting Debian rootfs:
 
-I also proposed a similar fix as yours. But we believe the above patch
-should also work (and probably is better).
+  1. When systemd reports this stage:
 
-Please try and let us know.
+         "Reached target getty.target - Login Prompts."
+
+     it hangs for 5 seconds or so, before going further.
+
+  2. When I'm logging in, the system hangs for 60 seconds or so before
+     the shell prompt appears.
+
+It only seems to reproduce the first time (during the boot). My attempt to
+re-start the mentioned systemd target or run "login" command again worked
+fine.
+
+Reverting commit 6975c1a486a4 ("block: remove the ioprio field from
+struct request") fixes the issue for me. Do you have any ideas by chance
+what might be the reason? Or maybe you have any pointers on debugging it?
 
 Thanks!
-
--Rong
-
-On Thu, Nov 21, 2024 at 6:29=E2=80=AFPM Chris Packham
-<chris.packham@alliedtelesis.co.nz> wrote:
->
->
-> On 22/11/24 14:58, Chris Packham wrote:
-> > Hi Rong,
-> >
-> > I was just trying some of my in-flight changes against linux-next and
-> > found that my RTL9300* based board no longer boots (nothing on the
-> > serial console after U-Boot hands off to the kernel).
-> >
-> > A bisect between Linus's tree and linux-next/master points to commit
-> > d4a7f2510ff4 ("vmlinux.lds.h: Adjust symbol ordering in text output
-> > section"). A build on d4a7f2510ff4^ boots successfully. That series is
-> > well beyond my area of knowledge, there may be something that the MIPS
-> > SoCs are doing (or not doing) that is being affected by the sections
-> > moving.
->
-> Based on the sparc change that accompanied this commit the following
-> does seem to restore working order for me:
->
-> diff --git a/arch/mips/kernel/vmlinux.lds.S b/arch/mips/kernel/vmlinux.ld=
-s.S
-> index d575f945d422..e90b0f68290c 100644
-> --- a/arch/mips/kernel/vmlinux.lds.S
-> +++ b/arch/mips/kernel/vmlinux.lds.S
-> @@ -62,6 +62,8 @@ SECTIONS
->          _text =3D .;      /* Text and read-only data */
->          _stext =3D .;
->          .text : {
-> +               /* Match text section symbols in head.S first */
-> +               *head.o(.text)
->                  TEXT_TEXT
->                  SCHED_TEXT
->                  LOCK_TEXT
->
-> No idea if that's appropriate
->
 
