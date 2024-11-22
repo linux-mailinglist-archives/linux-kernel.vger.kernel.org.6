@@ -1,98 +1,124 @@
-Return-Path: <linux-kernel+bounces-418205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE799D5EA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:13:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B86E9D5EA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:14:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDAD9B24EB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:13:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9403D282EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937C41DE2D6;
-	Fri, 22 Nov 2024 12:13:10 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A5A1DE3CF;
+	Fri, 22 Nov 2024 12:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gJCvKGXb"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB471D2F50
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E550C1B0F0C;
+	Fri, 22 Nov 2024 12:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732277590; cv=none; b=Rw0jX8xMRl2lV5mAd1GBstS/OVBn3eooD+FHjanrtgE8U5CtumNscxCnss45u3vkYjOclwwvZxa4EXTQSJF4+g8O3i0Y6fz4kjGXM+gs2aEU1jjeXSiwQ2H++5LEaZRvnRe9PnpbijNrZlBMLUT/fygo6v6paYAe31M8UixiDks=
+	t=1732277646; cv=none; b=ETxPPdWYpAJ9XSDgfUQ0yVjLYYINopHne+1ygLTiEhV/VgnFH+kcs2cJnjS1AYoApNjyJhATjxu/BLmZVBvjgDDUeVDJY0dPtkIBpTCgGmZa3+aOQVUD6PjNKjE/CWflic+wjXhGc8IOJsH/wsC40DCDqvFL7LIOnKb12qFgkjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732277590; c=relaxed/simple;
-	bh=zcV4mHRQzAP1sa32/HPaseAkiBJ70x8Ya9dPVZ8rCD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndwMLixKur/qjnU3tGkYezpm0G4RuZmH4Vx9rcdfzYu0lZE4IBBVlVqDSLkBiFifK8QXYqdVjOevAuPiSyZZVfnxN3HnfS/CSLmxz6gVmPovg96OBRuuivjXhg0D/ZkcV00IMMrhmAEEwA8cdIU9UKrpgPDb6McJ6ny5Jb1qkLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 6EB1168D0A; Fri, 22 Nov 2024 13:13:04 +0100 (CET)
-Date: Fri, 22 Nov 2024 13:13:04 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Paul Webb <paul.x.webb@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Phil Auld <pauld@redhat.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	Saeed Mirzamohammadi <saeed.mirzamohammadi@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-	Ramanan Govindarajan <ramanan.govindarajan@oracle.com>,
-	Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Nicky Veitch <nicky.veitch@oracle.com>
-Subject: Re: [External] : Re: [bug-report] 5-9% FIO randomwrite ext4 perf
- regression on 6.12.y kernel
-Message-ID: <20241122121304.GA25877@lst.de>
-References: <392209D9-5AC6-4FDE-8D84-FB8A82AD9AEF@oracle.com> <0cfbfcf6-08f5-4d1b-82c4-729db9198896@nvidia.com> <d6049cd0-5755-48ee-87af-eb928016f95b@kernel.dk> <20241121113058.GA394828@pauld.westford.csb> <a01ead6b-bd1d-4cd3-ade6-59ad905273e7@kernel.dk> <181bcb70-e0bf-4024-80b7-e79276d6eaf7@oracle.com>
+	s=arc-20240116; t=1732277646; c=relaxed/simple;
+	bh=mjxMKKRR+F1h24q7KEzQjUrXuJGe7CQC+v/QTRlQe8g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sCQQ+0wD60OnMY+rkYGTF8Mac22bljk4lsHgfYlUApqI9DlSrSUwUhZAwnlYYzoSzpk050MMVbwy3llJadpWHtcSQXwv0DpX7NAGG4onSQycbQiGeLdpZTIbWvEzylRqD7Yy/sAZaER+3Wgg3XYOIkbuv62M9jS01ztSSjgJq54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gJCvKGXb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1732277641;
+	bh=mjxMKKRR+F1h24q7KEzQjUrXuJGe7CQC+v/QTRlQe8g=;
+	h=From:Date:Subject:To:Cc:From;
+	b=gJCvKGXbdFh7tPTpXtDtsTfnr1HTCCgOmCWkYV4bmWcvmHlS5gqKptvU+1sAfmQgd
+	 2z/BExWw9Csk0AfUERl1VXp+4s3aWNCZKHWltPq/gUwrroE68rCsbd3rWxi02BjONp
+	 hTFFLkilPg62LYlboU0Dst6LyDEhqrC45v0aaH78=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Fri, 22 Nov 2024 13:14:00 +0100
+Subject: [PATCH] of/fdt: Implement use BIN_ATTR_SIMPLE macro for fdt sysfs
+ attribute
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <181bcb70-e0bf-4024-80b7-e79276d6eaf7@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Message-Id: <20241122-sysfs-const-bin_attr-of-v1-1-7052f9dcd4be@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAId1QGcC/x3MTQqEMAxA4atI1hOw8Q/nKoNI1VSzaYemiCLe3
+ eLyW7x3gXIUVvgWF0TeRSX4DPMpYN6sXxllyQYqqTaGCPVUpzgHrwkn8aNNKWJw2HVt01dk+7p
+ dINf/yE6O9/wb7vsB/dgy4mkAAAA=
+X-Change-ID: 20241122-sysfs-const-bin_attr-of-7765932a946d
+To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732277640; l=1879;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=mjxMKKRR+F1h24q7KEzQjUrXuJGe7CQC+v/QTRlQe8g=;
+ b=Dp96osO/8v+LmjTy0GZ/VPon8qwOn+5MrcHwRw6ng0nN7roQ0Q0gojDE+ntC3CJFgv4vtRwqF
+ MZa3ulO+rRwBh1jowfik1cqG4Fy1xLNd25uJhyQBkWoWUyhycTTUSBf
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Thu, Nov 21, 2024 at 09:07:32PM +0000, Paul Webb wrote:
-> Christoph:
-> To check for weird lazy init code using write zeroes
->
-> Values in the 5.15 kernel baseline prior to the commit:
-> $ cat /sys/block/nvme*n1/queue/write_zeroes_max_bytes
-> 0
-> 0
-> 0
-> 0
->
-> Values in the 6.11 kernel that contains the commit:
-> $ cat /sys/block/nvme*n1/queue/write_zeroes_max_bytes
-> 2199023255040
-> 2199023255040
-> 2199023255040
-> 2199023255040
+The usage of the macro allows to remove the custom handler function,
+saving some memory. Additionally the code is easier to read.
 
-Thanks!  So 6.11 actually enables write zeroes for your controller.
+While at it also mark the attribute as __ro_after_init, as the only
+modification happens in the __init phase.
 
-> Another interesting datapoint is that while performing some runs I am 
-> seeing the following output on the console in the 6.11/6.12 kernels that 
-> contain the commit:
->
-> [† 473.398188] operation not supported error, dev nvme2n1, sector 13952 op 0x9:(WRITE_ZEROES) flags 0x800 phys_seg 0 prio class 0
+Signed-off-by: Thomas Wei√üschuh <linux@weissschuh.net>
+---
+ drivers/of/fdt.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-.. which it doesn't handle well.
+diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+index 0121100372b41d44d841784b863af5492f19c31e..4b1e9f101ce34d7212cc8de99c7e7761a2636866 100644
+--- a/drivers/of/fdt.c
++++ b/drivers/of/fdt.c
+@@ -1264,18 +1264,9 @@ void __init unflatten_and_copy_device_tree(void)
+ }
+ 
+ #ifdef CONFIG_SYSFS
+-static ssize_t of_fdt_raw_read(struct file *filp, struct kobject *kobj,
+-			       struct bin_attribute *bin_attr,
+-			       char *buf, loff_t off, size_t count)
+-{
+-	memcpy(buf, initial_boot_params + off, count);
+-	return count;
+-}
+-
+ static int __init of_fdt_raw_init(void)
+ {
+-	static struct bin_attribute of_fdt_raw_attr =
+-		__BIN_ATTR(fdt, S_IRUSR, of_fdt_raw_read, NULL, 0);
++	static __ro_after_init BIN_ATTR_SIMPLE_ADMIN_RO(fdt);
+ 
+ 	if (!initial_boot_params)
+ 		return 0;
+@@ -1285,8 +1276,9 @@ static int __init of_fdt_raw_init(void)
+ 		pr_warn("not creating '/sys/firmware/fdt': CRC check failed\n");
+ 		return 0;
+ 	}
+-	of_fdt_raw_attr.size = fdt_totalsize(initial_boot_params);
+-	return sysfs_create_bin_file(firmware_kobj, &of_fdt_raw_attr);
++	bin_attr_fdt.private = initial_boot_params;
++	bin_attr_fdt.size = fdt_totalsize(initial_boot_params);
++	return sysfs_create_bin_file(firmware_kobj, &bin_attr_fdt);
+ }
+ late_initcall(of_fdt_raw_init);
+ #endif
 
-> [† 473.534550] nvme0n1: Dataset Management(0x9) @ LBA 14000, 256 blocks, Invalid Command Opcode (sct 0x0 / sc 0x1) DNR
+---
+base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
+change-id: 20241122-sysfs-const-bin_attr-of-7765932a946d
 
-.. and interesting this is for a Deallocate, which should only happen
-with the quirk for certain Intel controllers from the very first days of
-nvme.
-
-What controller do you have?  Can you post the output of lspci and
-"nvme list"?
+Best regards,
+-- 
+Thomas Wei√üschuh <linux@weissschuh.net>
 
 
