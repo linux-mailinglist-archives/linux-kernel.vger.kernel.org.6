@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-418219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5439D5EB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:22:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBD99D5EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 13:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F38EE1F237B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:21:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C521F23788
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9AA1DE3AD;
-	Fri, 22 Nov 2024 12:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79901DEFCF;
+	Fri, 22 Nov 2024 12:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ceTL7KBv"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aE6N5Aaw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62B417BB1E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D751ABEB0;
+	Fri, 22 Nov 2024 12:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732278111; cv=none; b=TPDYFj4j20OehtvYKlOPtOS/+SKHUdx4JkajcNJnRiSFTLcsDNs0ztwPMpWBsdi1/I09I863xLlxw4Xf9bmwhpQMwPauQV6YszW4tYzsjJtlrr0IZ2SvhkhuPyNhRVTFBhIL1sENiMCi/LHxQZSId7G9c1bn0bzMFG9g4x4AsGM=
+	t=1732278407; cv=none; b=oMdldeAjVj+s6DmPHvq9I1ixqfmYInLClpbTl69VFfeBRscSFl2GOu9VGxSPR3UT0gKfQ9pZ2aYic06sjoCrk5euRJbhCCG4K+HCapI0tJu4yrYxnIazBb7FQDzkRlPNpHBfLpdhqfna9pchXS7E2r+t+KWujTxZ+TzzWt2GJqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732278111; c=relaxed/simple;
-	bh=4NdMI7i4HthevHg5xPrOBrT7ml56nJWGuXa+q7fy4/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kg/RUz3AdBx8Za+4Ntfkw3yoE6yXb7oUjjzMDMQ9ZmVMANGNI43ZWpGZwLIz2QAOQFz8kVignYRRL40Jd+EsLuDzCwcprvGYc75fFjrTmhNWcsKKkDP/B1l6deuBzPh7N6ZrJa5hmXUS2yRuSAnMlTdrGjBSSaDGQ+zXWumR/f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ceTL7KBv; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM7tgh4002265
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:21:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2zyqdqOWon+Bb6KDq9EFahJ8KwOZlSLq3h9cfnJbehE=; b=ceTL7KBvdCZ22zVi
-	udzdRY3CYZAS9dHzjhEXUYpMQFNAUEyJJWx0j9AWTrlU1Sv50SUvlGWeV1wBj3ZV
-	xGDxL/L6fh9buUgSMMSoZGS2b5L4akX3K/u3qqbXWwWJuVwvF9Zs7E9S8GNSp9+a
-	G/idSgVQg/kUfpi8Syq65G0aCwvt/YCBlgQshS8wLWWw3wshLoznkEOghhIv2/q3
-	AV1vQs78BgOValB+FPpJW+G4Kw2OUqBrW4b6lBmf12UfSBYMgJoCfM4qmpdcHDkx
-	ibuMyzc6hyysA70lfHAv2OaPegJF7bTAYNPFj40x7aiCJwHHVIjtgHDhogLw3nne
-	Y1zz4A==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432p0d8psf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 12:21:48 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d41719160cso4680846d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:21:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732278108; x=1732882908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zyqdqOWon+Bb6KDq9EFahJ8KwOZlSLq3h9cfnJbehE=;
-        b=aC8P2bT8XlDvCNfwYbSlZVH/W6M6dobKg07iaMpsT32iSnCgX2paYHr/q0zeM/KloI
-         DuSI8ZRgcWFfCodDZ8YNdUlaK2EXDlV557bh8XQCkmJlJ3xffS0uYwAOGLnzkV4upvLP
-         gc3HViDOmzcEJpwAqntsP6NOVhpO+FfDd1pdBtJ/sMP7HgqTJ/m0ChUdrD6IwZnp/fdU
-         V4QCd0iNpYDqp5RhtdXU6PRFK+mXWIm+eXLqq0E4XOUJBvS/b4N5Hy15xZAt7NAfuV3k
-         VmUnSZOgPIxLEmFjJFsxmUHwpUWksteft5WE2BbQV4U7vuGPTTOIXv54F23kVD5ojmp0
-         uJlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFIejOhyXZzkTeomc16Ch37k+6afT7stnBLtnTlpgeEgSJWxWIGPYPmTzzQ+/fHiFHN2q8bSmX3tAI9MU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8T8BOOzPkEqYzkDsnHUI20+4+nYiBWJGLvNfbsfcha5s6ZlmZ
-	bYLk/IyVMQeis+lqYdXFWLQmomPH4wYv8hFIURXhLIFFMv8oNweGtEtgd2xoQDQaId8am1y5BTv
-	na3MbE7l4YMkYA9TiCw00kc+7HfoOxulQx67mPoTUXVUGh+0+cwrvraw/KMFnzDA=
-X-Gm-Gg: ASbGnctaIzC190khCYqmke50e5Lxmr7cp0GXQD3iMLRoxIYviu8o7TWOoV5nKKcwNfs
-	dA5kbSzI77kcXD3Z3y/tlxU6FlElGa01A2q13iQrF1EZGJz0NfdAN8zIqZsL31MsGQH4qQ075zi
-	vAD06/RpO/K+ujXQAVMj5I/523Fle984z1BwHquUaEdS0d05InZBcPsYc5LpchF5SkfhunrW/WI
-	pm91fxmpH94/ugxKGSE6O7tQ7sRAPETbq7mFtM92kRO+yuluZsFFuvBAAHY+4k3VgwzJA1b+KJy
-	Kt7Z0qzj2s783cf77bv/F7Xd7nwq5M4=
-X-Received: by 2002:a05:620a:1a16:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b51457fd82mr154413285a.12.1732278107906;
-        Fri, 22 Nov 2024 04:21:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGHmLTbwm8pNChveHbGVRdyKfjc2M6rbis5hRH/aHBrK0D9jZQQS3R1hjWKmaZIuM4R3iO+zw==
-X-Received: by 2002:a05:620a:1a16:b0:7a9:c0f2:75fc with SMTP id af79cd13be357-7b51457fd82mr154411085a.12.1732278107496;
-        Fri, 22 Nov 2024 04:21:47 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa50b57c19esm92298166b.154.2024.11.22.04.21.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 04:21:46 -0800 (PST)
-Message-ID: <54601d79-4156-41f4-b1b7-250c5c970641@oss.qualcomm.com>
-Date: Fri, 22 Nov 2024 13:21:44 +0100
+	s=arc-20240116; t=1732278407; c=relaxed/simple;
+	bh=5OIR8lomOsDhd2IzlIS7HBTEiwHrDrY4r4nYsF6PaSc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NfHmdR+ZsGEpIdlfKcwYld5pFuJ5UkJ2NczUkOpRIU+wU/ef3baZN08dYcTqvZN7QQWLwQk9A2Lk45WibRb2zYFw5FuVvrq20ZZqqcQHk1eEe13oBDMR8fZ79Bo9glw8JZKcndu45uCc3jCnH9E0Htt2tlysC5IgWSsggUkOMrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=aE6N5Aaw; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A9513514;
+	Fri, 22 Nov 2024 13:26:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732278378;
+	bh=5OIR8lomOsDhd2IzlIS7HBTEiwHrDrY4r4nYsF6PaSc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aE6N5Aawsnyz3JKdP8xzQ289zEtyWaZ6Wlf6TSfJE0+yKHD4tO11e9b4S3VE3Z8tM
+	 Fl0tTpN8lLghVaw2/PLC/q643bQtze3xYWvaMFVPD3xtA6q31xDxpcEJ+5Zd+Knv6O
+	 oVf0gPgi/9XWYGYRJ0oQQ8xeKgQzNR7UO4uiRcAk=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v2 0/3] i2c: atr: A few i2c-atr fixes
+Date: Fri, 22 Nov 2024 14:26:17 +0200
+Message-Id: <20241122-i2c-atr-fixes-v2-0-0acd325b6916@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm: UAPI error reporting
-To: Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20241121164858.457921-1-robdclark@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241121164858.457921-1-robdclark@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: 34RaFK7-ykgIm2iAWxqmfln5PiZW61tC
-X-Proofpoint-GUID: 34RaFK7-ykgIm2iAWxqmfln5PiZW61tC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 mlxlogscore=999
- suspectscore=0 spamscore=0 phishscore=0 bulkscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220105
+X-B4-Tracking: v=1; b=H4sIAGl4QGcC/12MQQrCMBBFr1Jm7UhmMJW68h7SRZpM7SxMJClFK
+ b27seDG5fuf91YoklUKXJoVsixaNMUKfGjATy7eBTVUBjZ8ImJCZY9uzjjqSwq2wfLQjXY0nqA
+ 6zyz7UZVbX3nSMqf83vMLfddfif9KC6HBlr0lL+fODHLVIK6kOCSXw9GnB/Tbtn0Ae9gFl7EAA
+ AA=
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Wolfram Sang <wsa@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Cosmin Tanislav <demonsingur@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=909;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=5OIR8lomOsDhd2IzlIS7HBTEiwHrDrY4r4nYsF6PaSc=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnQHh4vEGwa+xBzSPxkJL53B78OchhZzT1K3pXv
+ 59xVew34oqJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ0B4eAAKCRD6PaqMvJYe
+ 9Qu2D/9Dhl0902HxJ0No1PXIZQjP/wYb3WLxJ5wsSgU59ErU5QygpovZ3tGfyG4kqRDbcszs0jM
+ fcFbcHShAxVR/WXhZnurWmuU1qyYL3lDO4lmodD2DumxdgchVId42cu01QXmqH8fz5DAz/b3s1Z
+ g7BmYquuB+Rkj2HWHlVB+3Tl3KbCp9aqPcURh4ZY2oelemBswSoEF+HIJT7P2AwCwGDbxPSX/AO
+ PJ2+lZFLEOsnIgTqCQ7wn/g69bTaambplVmRcWIrJ1pNfV3wi7puXp3G0V8ZNeXOxYLYZ4SkSxd
+ ZG9ASG8J4vZvKQoiNO5iBbbRFD5dGLNqZlODmdNw1TrMOADFKaAEvNsfoCRG9g6YXxJJSSfWt1U
+ jztqSai9Wu8nnVpnIG3LgbaPxDu1sdaly77PwNMXuQAGWQqLg55DnNtXX66kpzTc+1nhg3juCeW
+ oyP0N2nOoBo36tzqLipnxtVY0iqwTu8miYe8B8xIx/Ar7YbdJ63ASkQdSKCXCmZXiXqAupWy0Hl
+ 3pLe5H9oc4hxhd0f+alKMP51IZw+988OEGp1OUJbaBQW7qLH+BMj0rZVOlicRfu8One23ZJ5vZ5
+ egYj++M90bollEtZ+LeDxsduL1BlG6TDYwkxt8M6sNXfsIl7igOlHnHekk8xbn3WVFuHgGR7Y6I
+ Gcuw/7As69pgmhQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 21.11.2024 5:48 PM, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Debugging incorrect UAPI usage tends to be a bit painful, so add a
-> helper macro to make it easier to add debug logging which can be enabled
-> at runtime via drm.debug.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
+The last two are perhaps not strictly fixes, as they essentially add
+support for nested ATRs. The first one is a fix, thus stable is in cc.
 
-[...]
+ Tomi
 
-> +/* Helper for returning a UABI error with optional logging which can make
-> + * it easier for userspace to understand what it is doing wrong.
-> + */
-> +#define UERR(err, drm, fmt, ...) \
-> +	({ DRM_DEV_DEBUG_DRIVER((drm)->dev, fmt, ##__VA_ARGS__); -(err); })
-> +
->  #define DBG(fmt, ...) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS__)
->  #define VERB(fmt, ...) if (0) DRM_DEBUG_DRIVER(fmt"\n", ##__VA_ARGS__)
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v2:
+- Use mutext_init_with_key()
+- Rearrange the series so that the fix is the first patch
+- Link to v1: https://lore.kernel.org/r/20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com
 
-I'm generally not a fan of adding driver-specific debug prints..
+---
+Cosmin Tanislav (1):
+      i2c: atr: Allow unmapped addresses from nested ATRs
 
-Maybe that's something that could be pushed to the drm-common layer
-or even deeper down the stack?
+Tomi Valkeinen (2):
+      i2c: atr: Fix client detach
+      i2c: atr: Fix lockdep for nested ATRs
 
-Konrad
+ drivers/i2c/i2c-atr.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241121-i2c-atr-fixes-6d52b9f5f0c1
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
 
