@@ -1,171 +1,250 @@
-Return-Path: <linux-kernel+bounces-418684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 732459D644D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:48:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5DCD9D6450
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 327D4282BA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70C7C282B71
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269681DF724;
-	Fri, 22 Nov 2024 18:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F821DF26F;
+	Fri, 22 Nov 2024 18:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x1ualcxO"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="DWMis2OR"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC92129A5
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 18:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732301311; cv=none; b=mptYBjkfEsWPtNqklBi4exId9orDjXlGiuyN44SfDkpwPTV7hvj1thbjQPbJBm8CZeGsZbq8/zorRL63HsA3NxQGgHvdBMwShpkUlZMZ67JgdYmst06GLa4dR+pXv5au2XK3A8390xVWIORa26LVu4xw4djSlgvI/g3cOr8FsHw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732301311; c=relaxed/simple;
-	bh=V1bU1fChAa/XHvJnDBwQMQagAVDXTvNTsU8JJ7Yl6nI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EV0zxEVjN5ZRoAe6h460rgdAhWKW305ME0a5u7t0w3WjSLJsMbffiago00pfx7jbl90rmoSrRmfGRB+xRHSe+DDC494kex66SaUDaZwi8fGx7GNsL0q2+IvGTJ+3AO3Fj1hYhq6M5XEtzfebBCFMmYrMJ0tVKHsubw3rAq9reMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x1ualcxO; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so21700315e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 10:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732301308; x=1732906108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxIeahTsMKLoh9Cd1c7NSRJawE4dDHGCsOK9b9C7oa8=;
-        b=x1ualcxOb+f30+2VRrCStSnC/CU1fdeqtDlStev9YXiR9AdgsWgAXdZ/MpVpGECF1R
-         uCOdlpvFyBgwd5R23aKUGYaaKpj64ZyJbcibpsXCa5KjlSc1KJLEQORTowj89mV7HtT8
-         suHd+1Mg8iWzx0SwGIxjmHqPKfmVxAg7JUx/pCjbyYaQ86jeU2BvjOj3gBnnke0TREnz
-         f52+SIrv/6/ECh8csK9GlCgOtpd7rGCkqBG+M/K2ggp/ddm3Djd0g3p+zvKUipgBJgJJ
-         5evXJOF7OjhV5NbXkVHUVmDSNxof5NP1hmcL74ipmQPktJxMe5bXjyQ4jUfHHviJSvRi
-         0Sxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732301308; x=1732906108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxIeahTsMKLoh9Cd1c7NSRJawE4dDHGCsOK9b9C7oa8=;
-        b=eKS+AJkpUCTYzNPS9hTAsj32vPY3312COyj2xUBNRHgePwNnHaL+WtAtIi2yvJJs1R
-         D4DnuGZacUquqmD0K8/JZnmI+ZpftldNhGoHwAvX4uK4aahVLt6PsDW22OkV9Yk/+gMd
-         YMp+wgmyzQneIiM09F9eQ3WIG1TANmuqmBs+L7B/+cmxjo4n3Rk+tc/+ZZpJ2K5ysWp4
-         VKo66dRkjAq+lqF2XLNB1wzUJx7HdJx6nJi8tfks1SYSL6W3vLYcuUJ1F+skYxZEFCNm
-         UtAyKtWVu3qsUGFw+vrst6NT6Xrgs0rrJ8LfQQfnwZCW+syqOtbP5GLnPjNJE/cjAz8b
-         Ynng==
-X-Forwarded-Encrypted: i=1; AJvYcCW351dSmKrgl84okUVp5gQquElJ5VgfG3D1vX6daDzt1/E+K30yojCt9XiWPvm52ypzn6GMJ1cLtPdKuk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz3EMfN7rzUK17EYlfRVAT5JTMavLOO/y92dnjgxZokBnQU04f
-	6AQh+uRofwnNPXgFGup25Jq6CARfgq1ittC6ClMZvBpk8kI5o6270CZnb203wC1NPkDvar7Glg9
-	8YZiIPbtW8SHtWXJWdXq0IjCHls/N6IuRgMS8
-X-Gm-Gg: ASbGnctZbI0Im2MY604xRqYkz0T5gjfhGXdtCIac31aEohpexVP6/C6An8e38CaxpXS
-	GOjpku1HwWxgb0KRYzCi9yYPW6TQ4qixS
-X-Google-Smtp-Source: AGHT+IHaew+kp1my7q0xI6I8koJgRiIyjZFN91JPlAzIjCxjDZ9Xi1o5BjsQ2ZFr68SvzqEGgIZc5l0od7huX7RZf0c=
-X-Received: by 2002:a5d:5f86:0:b0:381:f5c2:df24 with SMTP id
- ffacd0b85a97d-38260bf39a6mr3130037f8f.57.1732301308033; Fri, 22 Nov 2024
- 10:48:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E82929A5;
+	Fri, 22 Nov 2024 18:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732301380; cv=pass; b=n0YjcWvsMYfz60U43TJCE2+Dd0M0/Kuf5X3TNu27hofmUfjVLq/uMYTbgAALM72WH9T+Dp8d09JJRv/9qfDJ9AttzpWmlSRJBKke3ltR7mqwvznjttocZNoAEaqgKxy48K5l/e4MU0JbEnvaby89zhvyCFJE3Md/jckCLemBL9w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732301380; c=relaxed/simple;
+	bh=hZyFPS8FYY66jn/F78yssTBCwvGUCQxX/b9/iit191k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m5Q8hXNfPXMEa50you61Ht0xd5BB7ujWj6fhlXpg4zYNV4tGkgdLGDNrs9vlIeiM3lpNQ5EHryBuUiAG9btnLReK9tQMpGSgbGLthtNc/d6tIjVrKmeWH15mlxZM0vuqvXVixwbX7BlO4/WDlusw9hlfS9bPE8psgzUcuqmFyEE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=DWMis2OR; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732301366; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=moKpI0Y1wfyp0zDTN+J7fb0RabdMywL/MPTswotmSA+KTZJOEPvVZBYQ6zlN8apO60/z20bkDuHLQxJubWsP7jRoV4xsV7QNCqg+80jltLdjdDda0kTAIZL3vDMQHPlV2WFnDD2LWuBbRhsVCShsnpHUtN2VdzQEjpbu7m2hVTI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732301366; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=pXXGQ+H4K+o+xkKJh/Eib8vedMAVJhzcT61sVNMDK18=; 
+	b=etErkPXOgA/o2PY0rmoNMNz5lETz28KLwWLF5s/Rw1o3luzgxPET4Dgn0jEHziDzE6ttWFJ6o8r3A3xNMwPA8kO3k4Wqc9Y2wGyjfxEo6t0sGz7UYHdKLEB0q5q4o67kD2mOD512rFtdfWGPIPcONMXpEKkZ8+2HtLBPtgVL7Nc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732301366;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=pXXGQ+H4K+o+xkKJh/Eib8vedMAVJhzcT61sVNMDK18=;
+	b=DWMis2ORyFa/Pf0JrjQCTPO8S503ZcLD+FfkCKMKyij0evInMtsSAmy5fdKNNYGL
+	iNdrxoVmBcowkrEe4U6TW1J044EnZKsdr4spTFkzL6Co2fTJU7vLCgHY059ZVFpB5mq
+	Qmq3JANa/lN+q8A4wTGp9SCU5s62xvQeokqdYkCM=
+Received: by mx.zohomail.com with SMTPS id 1732301365255675.6070960311865;
+	Fri, 22 Nov 2024 10:49:25 -0800 (PST)
+Received: by mercury (Postfix, from userid 1000)
+	id BF04A10604B0; Fri, 22 Nov 2024 19:49:20 +0100 (CET)
+Date: Fri, 22 Nov 2024 19:49:20 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Heiko Stuebner <heiko.stuebner@cherry.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: Add Rockchip MIPI CSI/DSI PHY
+ schema
+Message-ID: <udad4qf3o7kt45nuz6gxsvsmprh4rnyfxfogopmih6ucznizih@7oj2jrnlfonz>
+References: <20241113221018.62150-1-heiko@sntech.de>
+ <20241113221018.62150-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122-vma-v9-0-7127bfcdd54e@google.com> <20241122-vma-v9-8-7127bfcdd54e@google.com>
- <6740c786.050a0220.31315a.5363@mx.google.com>
-In-Reply-To: <6740c786.050a0220.31315a.5363@mx.google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 22 Nov 2024 19:48:16 +0100
-Message-ID: <CAH5fLgiiCgcPRkdeGX7LJcaGN5Y5E=zWOXuwqo+GU-tTt63PzA@mail.gmail.com>
-Subject: Re: [PATCH v9 8/8] task: rust: rework how current is accessed
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	John Hubbard <jhubbard@nvidia.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	rust-for-linux@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ziaozgegtmqy67sl"
+Content-Disposition: inline
+In-Reply-To: <20241113221018.62150-2-heiko@sntech.de>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.3.1/232.230.92
+X-ZohoMailClient: External
+
+
+--ziaozgegtmqy67sl
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: Add Rockchip MIPI CSI/DSI PHY
+ schema
+MIME-Version: 1.0
 
-On Fri, Nov 22, 2024 at 7:03=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Fri, Nov 22, 2024 at 03:40:33PM +0000, Alice Ryhl wrote:
-> > +/// Represents a [`Task`] obtained from the `current` global.
-> > +///
-> > +/// This type exists to provide more efficient operations that are onl=
-y valid on the current task.
-> > +/// For example, to retrieve the pid-namespace of a task, you must use=
- rcu protection unless it is
-> > +/// the current task.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// Must be equal to `current` of some thread that is currently runnin=
-g somewhere.
-> > +pub struct CurrentTask(Task);
-> > +
->
-> I think you need to make `CurrentTask` `!Sync`, right? Otherwise, other
-> threads can access the shared reference of a `CurrentTask` and the ->mm
-> field. I'm thinking if we have a scoped thread/workqueue support in the
-> future:
->
->         let task =3D current!();
->         Workqueue::scoped(|s| {
->             s.spawn(|| {
->                 let mm =3D task.mm();
->                 // do something with the mm
->             });
->         });
+Hi,
 
-I don't think this is a problem? As long as a thread exists somewhere
-with `current` being equal to the task, we should be fine?
+On Wed, Nov 13, 2024 at 11:10:17PM +0100, Heiko Stuebner wrote:
+> From: Heiko Stuebner <heiko.stuebner@cherry.de>
+>=20
+> Add dt-binding schema for the MIPI CSI/DSI PHY found on
+> Rockchip RK3588 SoCs.
+>=20
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> ---
+>  .../phy/rockchip,rk3588-mipi-dcphy.yaml       | 82 +++++++++++++++++++
+>  1 file changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3588=
+-mipi-dcphy.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-d=
+cphy.yaml b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcph=
+y.yaml
+> new file mode 100644
+> index 000000000000..5ee8d7246fa0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/rockchip,rk3588-mipi-dcphy.ya=
+ml
+> @@ -0,0 +1,82 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/rockchip,rk3588-mipi-dcphy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip MIPI CSI/DSI PHY with Samsung IP block
+> +
+> +maintainers:
+> +  - Guochun Huang <hero.huang@rock-chips.com>
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - rockchip,rk3576-mipi-dcphy
+> +      - rockchip,rk3588-mipi-dcphy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#phy-cells":
+> +    const: 0
 
-> > +impl CurrentTask {
-> > +    /// Access the address space of this task.
-> > +    ///
-> > +    /// To increment the refcount of the referenced `mm`, you can use =
-`ARef::from`.
-> > +    #[inline]
-> > +    pub fn mm(&self) -> Option<&MmWithUser> {
->
-> Hmm... similar issue, `MmWithUser` is `Sync`.
+I would expect an argument to select between D-PHY and C-PHY mode,
+so that the binding is ready for it even when the driver does not
+yet support it. E.g. something like
 
-What is the problem with that?
+  '#phy-cells':
+    const: 1
+    description: |
+      Supported modes are:
+        - PHY_TYPE_DPHY
+        - PHY_TYPE_CPHY
+      See include/dt-bindings/phy/phy.h for constants.
 
-> > +        let mm =3D unsafe { (*self.as_ptr()).mm };
-> > +
-> > +        if mm.is_null() {
-> > +            None
-> > +        } else {
-> > +            // SAFETY: If `current->mm` is non-null, then it reference=
-s a valid mm with a non-zero
-> > +            // value of `mm_users`. The returned `&MmWithUser` borrows=
- from `CurrentTask`, so the
-> > +            // `&MmWithUser` cannot escape the current task, meaning `=
-mm_users` can't reach zero
-> > +            // while the reference is still live.
->
-> Regards,
-> Boqun
->
-> > +            Some(unsafe { MmWithUser::from_raw(mm) })
-> > +        }
-> > +    }
-> > +}
-> > +
-> >  // SAFETY: The type invariants guarantee that `Task` is always refcoun=
-ted.
-> >  unsafe impl crate::types::AlwaysRefCounted for Task {
-> >      fn inc_ref(&self) {
-> >
-> > --
-> > 2.47.0.371.ga323438b13-goog
-> >
+This would match how it works for the naneng Combo PHY to switch
+between PCIe/SATA/USB3. Also Mediatek CSI DC-PHY handles it that
+way upstream (with just D-PHY being supported). I see that the
+driver stack you send upstream expects, that the PHY user (e.g.
+the DSI controller) instead manually calls phy_set_mode(phy, <mode>).
+To me it seems more sensible to just get this automaically from DT.
+
+Otherwise the whole series LGTM.
+
+Greetings,
+
+-- Sebastian
+
+> +  clocks:
+> +    maxItems: 2
+> +
+> +  clock-names:
+> +    items:
+> +      - const: pclk
+> +      - const: ref
+> +
+> +  resets:
+> +    maxItems: 4
+> +
+> +  reset-names:
+> +    items:
+> +      - const: m_phy
+> +      - const: apb
+> +      - const: grf
+> +      - const: s_phy
+> +
+> +  rockchip,grf:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing the 'mipi dcphy general register fi=
+les'.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +  - "#phy-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> +
+> +    soc {
+> +      #address-cells =3D <2>;
+> +      #size-cells =3D <2>;
+> +
+> +      phy@feda0000 {
+> +        compatible =3D "rockchip,rk3588-mipi-dcphy";
+> +        reg =3D <0x0 0xfeda0000 0x0 0x10000>;
+> +        clocks =3D <&cru PCLK_MIPI_DCPHY0>,
+> +                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
+> +        clock-names =3D "pclk", "ref";
+> +        resets =3D <&cru SRST_M_MIPI_DCPHY0>,
+> +                 <&cru SRST_P_MIPI_DCPHY0>,
+> +                 <&cru SRST_P_MIPI_DCPHY0_GRF>,
+> +                 <&cru SRST_S_MIPI_DCPHY0>;
+> +        reset-names =3D "m_phy", "apb", "grf", "s_phy";
+> +        rockchip,grf =3D <&mipidcphy0_grf>;
+> +        #phy-cells =3D <0>;
+> +      };
+> +    };
+> --=20
+> 2.45.2
+>=20
+>=20
+
+--ziaozgegtmqy67sl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmdA0iYACgkQ2O7X88g7
++pqCVxAAjfX56csgOp+pRFu/Lzsmgy2PJnA+ahOcXVFpjer1P7y6mePQgwN4QfRt
+njnHJ9CdSLqwpOoBH3igShSlZ7Udd1gXzgigk3LsjpLOLqOe66L7Yzq/pS9LDPM0
+O6o5sAlvkDCMBwZx+NFzBK3FsVZ8w+yHPFw6pcIqBATAMsT5iC+7L6v1+VKbJ0Hj
+Rc9btYfxmUfUPGUvM/fDTEoAxK3b/R6hrrIzbp6mh+IFmU0Jg8pzCxdBbAJvHclP
+CTAFeXzNZ7t2mO20zp/ErvhR71e1zKsqVhddQWg5FkEb2hVAh6QqmdYaJmhzDSqN
+/7VC0nRX9Ck9Uj/XMAOo+u/QaVSrJp8uSfygtt8xjKac4KSbi8I1K8zUcPBhnESr
+LlsbjLKOYiXL9mDOcWcsNRwQCjofWviPUz571uchvhUNnDmZAS5tgD5AmI2Bfpor
+bfF63gY1/i+eAghsyIua091anZGpZfpUhghHHz9WP7Kr3ZrhIhe3fww29H0Z0gLa
++pIS0BLCXjlzx/OYEV6JPou2zuFrMHIX4N4XaCx4oAi7S9Fh4c05yt4VljWMB0mr
+Kn4FHuM9Hf6z6ZrR70IeCtElmK/gXPXag5olucUIKy/x/cso++EDu05tXX7Rys6e
+USpG+9j6rfzZh49dTkgNU2ijnwpovTblFjae10YAMBVNlGturPk=
+=D23f
+-----END PGP SIGNATURE-----
+
+--ziaozgegtmqy67sl--
 
