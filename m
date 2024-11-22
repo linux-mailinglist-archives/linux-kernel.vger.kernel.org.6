@@ -1,118 +1,189 @@
-Return-Path: <linux-kernel+bounces-417774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7DF9D58EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:50:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60679D58F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D01F22D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:50:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA8EB2344F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DA6166F33;
-	Fri, 22 Nov 2024 04:50:29 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B4B15FD16
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933E11547D4;
+	Fri, 22 Nov 2024 04:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fkju08tl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D496970821
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732251029; cv=none; b=XWg32I7sirfUlSpYwZCkDQ26oQ2Tuqv3sZBBjdkCSKEgbcYuXk4l4R4Cnx9lYtjJ2dJ5SImjbH8qxlqovlu69843kBNGfxtLDrHbWhVwlOz3GXJIe4VUQ2241Cb5VN+ORuU13aIf19bBUZLttVbdNMxV8xx4gZfySzdMUbLIC1g=
+	t=1732251076; cv=none; b=qsAvpsn+kFqU57zEUyg756oa+VdiiCfOD1v5pher3tY7ktOjf/rljbI3mFsbc18gh+Z9JC+t8pBwtOrTERtsYamNhnpLlR/Dnh8AqKUk4pL2i0br9gVsSA0k5fAiFb9OqXu/47l6fzGIMytmmjcS7opDhwsE+ege/qsgujrLrAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732251029; c=relaxed/simple;
-	bh=hpEJE6452kJP+gGj5WwMyHNX5Dc1z8fXf0Rr7Lf363M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NkC/CM2mxuRESs4N8yMxIfbREW3awn/z9zTzdFy5Xc3E2rnYx0gtO3QAubgl40jvijNGuN6EvgmUqmyhgAsCWim/GSvTeezh3n2YK24puavWCoQk4G1K0q434bFCgH/z15H4P1VlzbPIqr1JWfmLLTty04FBcbQXMjFxiX2/Fww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxSOGRDUBnGb1FAA--.5039S3;
-	Fri, 22 Nov 2024 12:50:25 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S12;
-	Fri, 22 Nov 2024 12:50:24 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/10] LoongArch: Enable jump table for objtool
-Date: Fri, 22 Nov 2024 12:50:05 +0800
-Message-ID: <20241122045005.14617-11-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20241122045005.14617-1-yangtiezhu@loongson.cn>
-References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
+	s=arc-20240116; t=1732251076; c=relaxed/simple;
+	bh=jDw8VJdK7HsUxsxLYkcsqkJWumi7DFGQUIlQD9fGSiw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ONEC8aBqLWZuSXx4vO+B+356B0tKn9+Higc01VVDjAG1j64ZbrFsHI09EPyC8CLh4sNCrvALv9uRBIUxKEKYSSlPfpU4B6X9l8ijZZIZj9JrCHEb1JSr/Y4My/bFi13A10Kfjc6U2ZOHGIpcpjzgOg1FMMNDsLfg/x5NHU0Jy8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fkju08tl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732251073;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=elmcLeOJm+mDVlXoOKcPt5H9RufxPwtwG8/LNNuQMh4=;
+	b=fkju08tlLs4UxpGA2Xbbp07Ioa0M+vN5am52bnxGSTb6fhfZ71xP5teYttNcjM8HDGCLL0
+	4Euc6Hts5VS50SaACIyNbeiJw0xsSstf8N2mqX69K1mtExJN/RUxrfR7a/MApQRQAcKs1b
+	GOZKiyGCkx1+PLuz19iLZJbeE7AnYyo=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-94-FjCl3_-0NmyDLOArssve5g-1; Thu, 21 Nov 2024 23:51:11 -0500
+X-MC-Unique: FjCl3_-0NmyDLOArssve5g-1
+X-Mimecast-MFC-AGG-ID: FjCl3_-0NmyDLOArssve5g
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-21147fea103so21489095ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:51:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732251070; x=1732855870;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=elmcLeOJm+mDVlXoOKcPt5H9RufxPwtwG8/LNNuQMh4=;
+        b=oJk16rzTQ1wLWJD/AaS5zfIT0P7KWHkTKYjAIMGP4JZO7WBFIeyJ9zto3CrR1BsbQ0
+         6wHGvug3cVmwStFHgbVCOQ3yWFN1ZrdPdPrMh25ZgYeUdoqXeHFsmdH/swg0nqHAf0au
+         fSRBVUKn6lgkzVUp+fQsD9T/L64hPiUfKRCis5Ii0nVpnEZQjGdjSECgkTm/UiMxDTvB
+         AvXEj03hVo41k8cCUHJKXTDSsYfthaJMySXco8aLd/Py6GYRoQoaevEssMRZOtfhKsBE
+         p3ayWNOGrbtgfbt3PbSRp4JtoNex6EWXx91cZqWHhbkozSnm7znE3l0QcGcOs2dmeHXQ
+         8oQA==
+X-Gm-Message-State: AOJu0YzjqPCyJm94e2+y95+U7qjUwPCNLUy9kkuONRdc2DhiKAYXnTCv
+	O7U7k3TfuCYUZ6YXYqYoVr2ULjka9Ik4UTE7S31clgqhbvuNo8bv9kU9PnCsyZHjp3JxjHOT9hh
+	R5TIMJNhOiG9+SZ9VrgiMbGOBY9fS0iyy8T74Yz4TZ6PDBLwKa44QGJgJ/VFJzG+slgUXCZym
+X-Gm-Gg: ASbGncvwD5FdUzfB4CwtSMXy6YTVune5HmpHMRvRE5ycAi2Y9MeCfjcaZUEeMa8W8eQ
+	bpUACJsToDogxlm0olfXz43dreX8OhsrPi2vgBU08q9hu4RO4VBshrMUjtMdXzBz62hS5uApIay
+	endsmirh/9ekC6mESwmOoBGGuT+7FrLUEEQWXk+vFf4RLTq019lENSKbyBFJlqfLpJjZqInGc6o
+	M5quhqPc1OEtnPQ9xWoFbDdwRKAoqXdcubBS85MxDUnQrQNTTR8pW4ZTPsO+FSBOkzGjzjL5Pkc
+	Vn/LRv/RjsRaSmo=
+X-Received: by 2002:a17:902:c941:b0:20b:5231:cd61 with SMTP id d9443c01a7336-2129f69b854mr22674835ad.24.1732251070479;
+        Thu, 21 Nov 2024 20:51:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHBJ1BtUcuXXUDQhFQr7YmLqB9vBuzW4fZgWvFNsJCyj+YfStMRgSAXhC2TW5WeP5odlF6x7Q==
+X-Received: by 2002:a17:902:c941:b0:20b:5231:cd61 with SMTP id d9443c01a7336-2129f69b854mr22674655ad.24.1732251070090;
+        Thu, 21 Nov 2024 20:51:10 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfa834sm6870955ad.117.2024.11.21.20.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 20:51:09 -0800 (PST)
+Date: Fri, 22 Nov 2024 12:51:06 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [Bug report] kernel BUG at include/linux/scatterlist.h
+Message-ID: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S12
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uFWDuryUCw13Ww1kuryUJwc_yoW8Wr45pw
-	s7Zr4kKw4kXF4vqrZrJrWSgrZ8trnrKr43WF429a4kArW7Z345Zr48ta9rW3WUCws5JrWI
-	qFWfGa4avFWUJ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Wrv_ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
-	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjxUVCD7UUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For now, it is time to remove -fno-jump-tables to enable jump table for
-objtool if the compiler has -mannotate-tablejump, otherwise it is better
-to remain -fno-jump-tables to keep compatibility with the older compilers.
+Hi,
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/Kconfig  | 3 +++
- arch/loongarch/Makefile | 4 ++++
- 2 files changed, 7 insertions(+)
+I hit a kernel panic on aarch64 several times recently, when I tried to do a
+fstests test. It's not related with fstests, due to I hit it when I boot the
+latest mainline linux kernel (HEAD=fc39fb56917bb3cb53e99560ca3612a84456ada2).
 
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index bb35c34f86d2..500ee9b2cd88 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -284,6 +284,9 @@ config AS_HAS_LBT_EXTENSION
- config AS_HAS_LVZ_EXTENSION
- 	def_bool $(as-instr,hvcl 0)
- 
-+config CC_HAS_ANNOTATE_TABLEJUMP
-+	def_bool $(cc-option,-mannotate-tablejump)
-+
- menu "Kernel type and options"
- 
- source "kernel/Kconfig.hz"
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index ae3f80622f4c..6b84e633b8ce 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -101,8 +101,12 @@ KBUILD_AFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)
- KBUILD_CFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)-mthin-add-sub)
- 
- ifdef CONFIG_OBJTOOL
-+ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
-+KBUILD_CFLAGS			+= $(call cc-option,-mannotate-tablejump)
-+else
- KBUILD_CFLAGS			+= -fno-jump-tables
- endif
-+endif
- 
- KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat
- KBUILD_RUSTFLAGS_KERNEL		+= -Zdirect-access-external-data=yes
--- 
-2.42.0
+The console log looks like related with crypto things, I'm not familar with
+it, so just send this email to linux-crypto@ and cc linux-kernel@.
+
+I hit this panic several times, I did nothing except building and installing
+the latest kernel and then boot it, then it crash directly on booting time.
+Looks like crash from:
+
+       183 static inline void sg_set_buf(struct scatterlist *sg, const void *buf,
+       184                               unsigned int buflen)
+       185 {
+       186 #ifdef CONFIG_DEBUG_SG
+==>    187         BUG_ON(!virt_addr_valid(buf));
+       188 #endif
+       189         sg_set_page(sg, virt_to_page(buf), buflen, offset_in_page(buf));
+       190 }
+
+If someone need, I can provide the big linux/.config file.
+
+Thanks,
+Zorro
+
+
+[1]
+...
+[    7.313015] registered taskstats version 1 
+[    7.320132] Loading compiled-in X.509 certificates 
+[    7.347635] Loaded X.509 cert 'Build time autogenerated kernel key: ed2b2ec16b583dda991830c146172ef4fd4cd1cf' 
+[    7.522429] Demotion targets for Node 0: null 
+[    7.523941] debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers 
+[    7.530102] page_owner is disabled 
+[    7.532083] Key type .fscrypt registered 
+[    7.533070] Key type fscrypt-provisioning registered 
+[    7.535734] Key type big_key registered 
+[    7.539305] Key type encrypted registered 
+[    7.541143] ima: secureboot mode disabled 
+[    7.542177] ima: No TPM chip found, activating TPM-bypass! 
+[    7.543508] Loading compiled-in module X.509 certificates 
+[    7.546783] Loaded X.509 cert 'Build time autogenerated kernel key: ed2b2ec16b583dda991830c146172ef4fd4cd1cf' 
+[    7.549427] ima: Allocated hash algorithm: sha256 
+[    7.550827] ima: No architecture policies found 
+[    7.552706] evm: Initialising EVM extended attributes: 
+[    7.554011] evm: security.selinux 
+[    7.554842] evm: security.SMACK64 (disabled) 
+[    7.555877] evm: security.SMACK64EXEC (disabled) 
+[    7.557025] evm: security.SMACK64TRANSMUTE (disabled) 
+[    7.558367] evm: security.SMACK64MMAP (disabled) 
+[    7.559696] evm: security.apparmor (disabled) 
+[    7.560726] evm: security.ima 
+[    7.561451] evm: security.capability 
+[    7.562297] evm: HMAC attrs: 0x1 
+[    7.631769] Running certificate verification RSA selftest 
+[    7.652546] ------------[ cut here ]------------ 
+[    7.653656] kernel BUG at include/linux/scatterlist.h:187! 
+[    7.654975] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP 
+[    7.656386] Modules linked in: 
+[    7.657104] CPU: 3 UID: 0 PID: 176 Comm: cryptomgr_test Not tainted 6.12.0+ #1 
+[    7.658822] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015 
+[    7.660575] pstate: 20400005 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--) 
+[    7.662385] pc : sg_init_one+0x124/0x150 
+[    7.663401] lr : sg_init_one+0x34/0x150 
+[    7.664380] sp : ffff800083e87950 
+[    7.665240] x29: ffff800083e87950 x28: 0000000000000048 x27: ffff3fc6f3aabc00 
+[    7.667078] x26: ffff3fc6f3aabc48 x25: ffff800083e87a60 x24: 1fffe7f8de689885 
+[    7.668895] x23: ffffb3207fb10fe0 x22: 0000000000000100 x21: ffffb3207fb7d880 
+[    7.670774] x20: ffff800083e87a20 x19: 0000b3207fb7d880 x18: 0000000000000000 
+[    7.672568] x17: ffffb3207de83630 x16: ffffb3207de8306c x15: ffffb3207de78cb0 
+[    7.674370] x14: ffffb3207d916474 x13: ffffb3207cf38c70 x12: ffff7000107d0f48 
+[    7.676156] x11: 1ffff000107d0f47 x10: ffff7000107d0f47 x9 : dfff800000000000 
+[    7.677939] x8 : ffff800083e87a40 x7 : 0000000000000000 x6 : 0000000000000004 
+[    7.679738] x5 : ffff800083e87a20 x4 : 0000000000000000 x3 : 1ffff000107d0f44 
+[    7.681515] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000600000000000 
+[    7.683305] Call trace: 
+[    7.683926]  sg_init_one+0x124/0x150 (P) 
+[    7.684919]  sg_init_one+0x34/0x150 (L) 
+[    7.685890]  rsassa_pkcs1_verify+0x288/0x980 
+[    7.686976]  test_sig_one+0x344/0x848 
+[    7.687916]  alg_test_sig+0xc0/0x168 
+[    7.688859]  alg_test+0x2e0/0xd58 
+[    7.689715]  cryptomgr_test+0x58/0x88 
+[    7.690702]  kthread+0x270/0x2f8 
+[    7.691542]  ret_from_fork+0x10/0x20 
+[    7.692470] Code: a8c47bfd d50323bf d65f03c0 d4210000 (d4210000)  
+[    7.694042] ---[ end trace 0000000000000000 ]--- 
+[    7.695246] Kernel panic - not syncing: Oops - BUG: Fatal exception 
+[    7.696819] SMP: stopping secondary CPUs 
+[    7.697868] Kernel Offset: 0x331ffcf20000 from 0xffff800080000000 
+[    7.699457] PHYS_OFFSET: 0xffffc03ac0000000 
+[    7.700505] CPU features: 0x00,40000045,00801240,82004203 
+[    7.701867] Memory Limit: none 
+[    7.702637] ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception ]--- 
 
 
