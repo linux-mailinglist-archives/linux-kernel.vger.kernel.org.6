@@ -1,177 +1,165 @@
-Return-Path: <linux-kernel+bounces-418505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FD59D6255
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:32:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D746E160714
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:32:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDDA13635E;
-	Fri, 22 Nov 2024 16:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bM6ZSTe8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24A009D6256
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:33:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5DF6F30C
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DB97B26097
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:33:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A161DE3BF;
+	Fri, 22 Nov 2024 16:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HRl5QjNs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE447E792;
+	Fri, 22 Nov 2024 16:33:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732293152; cv=none; b=kH1zUMOyoLz6cxgGmTTAevobp5j8ivjrJWrkzX1uExSyHK8YLFyt8ICzF35REE9rR+DCLL2hi+z0RJkkd1Tm8xkvW9E01Uj0Ml1zAbES3c3bLNsK+aMB4nQB2qLrc38LhBXYCSvxhswO9ZQqby9wytZHwAUMg/aXwIgTilGo4jI=
+	t=1732293202; cv=none; b=uTfB2izOFlEQmN5ZqTnbMFodGzijAFkSshzkzoeuAhf4D7zSQDWubU/QlxRDP6PH7yPP/Dh8dA/PMLWGkVl5Op7zmNwlIvgH0OzZ1nDqr9v8FI6AqnMUfynoMINLG3E5TNYmfxhMNbPdCZqL7QF5PIIKXTbpBBMdzYiaET4lNuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732293152; c=relaxed/simple;
-	bh=Qx3DsxLqf23svbHaUxQJ7Vt+bEoe0OkHD+bRPH22oDk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=jmuOr/PfVpS89jMeu3aW562z98QQ3cMO1WQpAVvZlrR2FrD6/xCU0FcqtRenhTUowSHjqNE93kPay+XEsfZUfmMwNiHc9dFEKBGCTvt44w8w6lNx++UbFbgbshLLmkheTt9LsEAfbu7WWInkn75WI9KzkRwmirs4XG6qI4hvBXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bM6ZSTe8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A547DC4CECE;
-	Fri, 22 Nov 2024 16:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732293151;
-	bh=Qx3DsxLqf23svbHaUxQJ7Vt+bEoe0OkHD+bRPH22oDk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=bM6ZSTe84n6lcQQO4sA7xAQny4yufsMWcMTVLziViA1JTaMR7d3bKkP/CBTiXUQ6y
-	 BF+Mxp9zZBWa0s8yqf2AmpEOuBBRUEKIDy7z2PR2u4uQXkBe5UB+pUsbMjUmRKisCd
-	 MbwE6Mpvnee/9JtiY6CzhXzxN6A3ovCsVHQuWzupx/0kYC11kWo26qdpyqUF09ZRdS
-	 nqWzoY3mcNm52/wExf9yCoJO9m94k1U52VtMXKLbHotwZXyu4j2x3ggGxoBP5Ajvky
-	 Ss8RxshAYYVLY6w7+1fqZgQZWqQo0uhBTHevSOiz5Rvx5EwW3sQjaGPdD3U2VNyXUY
-	 KixMC5oiev71g==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 943DA1200086;
-	Fri, 22 Nov 2024 11:32:30 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 22 Nov 2024 11:32:30 -0500
-X-ME-Sender: <xms:HrJAZ-2V3lGPaK4EyK_8qjk4ZBtSuFidjfNjKjkVer1EgHrxMUVcjQ>
-    <xme:HrJAZxHg6toYOLjKFk_JI1VgZvgNXRppnqs6s2DGA1hNjjHT3rHxW7lQzqDlFBeTI
-    EJzTbcNUJpKW6YdNN8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeelgdeihecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
-    horhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedt
-    udeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihht
-    hidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdroh
-    hrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehhtggrsehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepshgthhhnvghllhgv
-    sehlihhnuhigrdhisghmrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnh
-    eslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhu
-    gihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigsehrohgvtghkqd
-    hushdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvghrihgrlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:HrJAZ24FXYBRKm6l1nt9-80DaG07N0bB8GTPyCol7WyCTPA6SS77RQ>
-    <xmx:HrJAZ_2Px-S45t-dempXeCJSevKvHcmKYxWqfSmL_hYFB_yr8Cs9Ww>
-    <xmx:HrJAZxFh1ROyvnkMFyF455a3ddyfr5bv6SqNFtXOM54How6HIc3WyQ>
-    <xmx:HrJAZ482ouGy_QFZd8wCEmY4UA9v_pav4S4iM78-wNcq4F41gu5K0g>
-    <xmx:HrJAZ2lGh4_ljuRmnGF2rNyzasagBE2Vsca-wggEYSsuVWVlF2Vy4_U2>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 5970A2220071; Fri, 22 Nov 2024 11:32:30 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1732293202; c=relaxed/simple;
+	bh=Sjz/K+NEFxUEEuCyvVpJZN+ShEYQCyzXT2OZtHPe+TI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L7Ti1jglINlScLEAtET5f68yQY94a5FEOzJdPd5MkevUBgLhyfeVzEAv9Gtl2F0oRye/59jKCA1wDdxTSme/wiWG9vQsMU4WeR24ihiZOVSQeEZOMW+j3X/nnhuz4iNqyuZc4K7dBy6t4W4gf1Ywg65k25VYuB/eJj/GNExLKX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HRl5QjNs; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732293201; x=1763829201;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Sjz/K+NEFxUEEuCyvVpJZN+ShEYQCyzXT2OZtHPe+TI=;
+  b=HRl5QjNsR6wFUbA+c8wIkJfIoqkNQWK1ktr2/r+w0KT2BA4zTuWmZ099
+   MsKPAN4eLJYHDrje5biYpBzkxVWs4WHkdvp3yYAU9yqwrWQKg8m6vpn/g
+   fzh1MuUOPcwG6ATA5HmBv+JhwgM6MFzA+ZB3udN5fFWlmqxKIEggd3xfF
+   b/XRD0eDjztrs63bQl2ReXfXtFpRSvmDgwVCjHZAF31zJ9lX4WQTC4MeE
+   JJmzvVMCAqq997Ry5qBbIReHth+yLcPDNDObCo78lA2hQvz5BYZfwCb7V
+   iEDZQsHjU8v0WCdCnPewfyB03dxbmhELnn/7d69ApCtRvc1mtdVAJW8p8
+   A==;
+X-CSE-ConnectionGUID: uTNDIZgfQ5Osw/C0tf6/RQ==
+X-CSE-MsgGUID: Vlm614KRRq2HAvkgSZ68eA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="36360139"
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="36360139"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:33:20 -0800
+X-CSE-ConnectionGUID: qQKvWVu1Q8OBadhfyzyZBQ==
+X-CSE-MsgGUID: tdHek+NFSu+q55zuCfsfrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="95564880"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 08:33:19 -0800
+Message-ID: <0226840c-a975-42a5-9ddf-a54da7ef8746@intel.com>
+Date: Fri, 22 Nov 2024 08:33:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 22 Nov 2024 17:31:39 +0100
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Guenter Roeck" <linux@roeck-us.net>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-serial@vger.kernel.org, "Heiko Carstens" <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org
-Message-Id: <472eb22a-dcb1-4fbb-bf2c-a4173706bc7a@app.fastmail.com>
-In-Reply-To: <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
-References: <20240405152924.252598-1-schnelle@linux.ibm.com>
- <20240405152924.252598-2-schnelle@linux.ibm.com>
- <38bf3b8b-81c4-42c9-902d-b5719f3881c5@roeck-us.net>
- <3b75b92805648577ed05ff221d0c56e381aa1c7c.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/1] tty: serial: handle HAS_IOPORT dependencies
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/7] x86/virt/tdx: Add SEAMCALL wrapper to enter/exit
+ TDX guest
+To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com, kvm@vger.kernel.org, dave.hansen@linux.intel.com
+Cc: rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, xiaoyao.li@intel.com,
+ tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com,
+ dmatlack@google.com, isaku.yamahata@intel.com, nik.borisov@suse.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20241121201448.36170-1-adrian.hunter@intel.com>
+ <20241121201448.36170-2-adrian.hunter@intel.com>
+ <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <fa817f29-e3ba-4c54-8600-e28cf6ab1953@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 22, 2024, at 16:35, Niklas Schnelle wrote:
-> On Fri, 2024-11-22 at 07:18 -0800, Guenter Roeck wrote:
->> On Fri, Apr 05, 2024 at 05:29:24PM +0200, Niklas Schnelle wrote:
->> > In a future patch HAS_IOPORT=n will disable inb()/outb() and friends at
->> > compile time. We thus need to add HAS_IOPORT as dependency for those
->> > drivers using them unconditionally. For 8250 based drivers some support
->> > MMIO only use so fence only the parts requiring I/O ports.
->> > 
->> > Co-developed-by: Arnd Bergmann <arnd@kernel.org>
->> > Signed-off-by: Arnd Bergmann <arnd@kernel.org>
->> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
->> ...
->> > @@ -422,10 +443,12 @@ static void set_io_from_upio(struct uart_port *p)
->> >  	up->dl_write = default_serial_dl_write;
->> >  
->> > +	default:
->> > +		WARN(1, "Unsupported UART type %x\n", p->iotype);
->> 
->> So, according to this patch, the serial uart on microblaze, nios2,
->> openrisc, xtensa, and possibly others is not or no longer supported.
->> 
->> WARNING: CPU: 0 PID: 0 at drivers/tty/serial/8250/8250_port.c:470 serial8250_set_defaults+0x1a8/0x22c
->> Unsupported UART type 0
->> 
->> Any special reason ?
->
-> So according to the warning the p->iotype is 0 which is UPIO_PORT.
-> For UPIO_PORT the switch above the WARN would pick io_serial_in() and
-> io_serial_out() as handlers. These use inb() respectively outb() to
-> access the serial so I don't see how they would work with !HAS_IOPORT
-> and it most definitely won't work for s390.
->
-> Now for Microblaze Kconfig says to select HAS_IOPORT if PCI so I'd
-> assume that it can use inb()/outb() and maybe the PCI requirement is
-> not correct if this isn't a PCI device and it used to work with
-> inb()/outb()? For nios2, openrisc, and xtensa they don't select
-> HAS_IOPORT so either it really won't work anyway or they should select
-> it. Can you tell us more about the devices involved where you saw this?
+On 11/22/24 03:10, Adrian Hunter wrote:
+> +struct tdh_vp_enter_tdcall {
+> +	u64	reg_mask	: 32,
+> +		vm_idx		:  2,
+> +		reserved_0	: 30;
+> +	u64	data[TDX_ERR_DATA_PART_2];
+> +	u64	fn;	/* Non-zero for hypercalls, zero otherwise */
+> +	u64	subfn;
+> +	union {
+> +		struct tdh_vp_enter_vmcall 		vmcall;
+> +		struct tdh_vp_enter_gettdvmcallinfo	gettdvmcallinfo;
+> +		struct tdh_vp_enter_mapgpa		mapgpa;
+> +		struct tdh_vp_enter_getquote		getquote;
+> +		struct tdh_vp_enter_reportfatalerror	reportfatalerror;
+> +		struct tdh_vp_enter_cpuid		cpuid;
+> +		struct tdh_vp_enter_mmio		mmio;
+> +		struct tdh_vp_enter_hlt			hlt;
+> +		struct tdh_vp_enter_io			io;
+> +		struct tdh_vp_enter_rd			rd;
+> +		struct tdh_vp_enter_wr			wr;
+> +	};
+> +};
 
-I've tried to have a quick look at the four architectures, here
-is what I see in the sources:
+Let's say someone declares this:
 
-- on microblaze, the default uart is xlnx,xps-uartlite-1.00.a,
-  and there is no 8250. The PCI code that theoretically supports
-  I/O port access through an ISA bridge (copied from powerpc),
-  but there is currently no code to set up the I/O space window,
-  so in practice the port I/O is just a NULL pointer dereference.
+struct tdh_vp_enter_mmio {
+	u64	size;
+	u64	mmio_addr;
+	u64	direction;
+	u64	value;
+};
 
-- nios2 has a 16550 compatible UART listed in the devicetree
-  file, but this uses normal UPIO_MEM registers, not ISA-style
-  I/O ports. There is no support for ISA or PCI.
+How long is that going to take you to debug?
 
-- openrisc has no support for port I/O, like on nios2 the
-  16550 style uart is on UPIO_MEM according to the devicetree
-
-- xtensa manually sets up a UPIO_MEM uart in its board files
-  and in its dts files. The PCI support does have code to
-  hand port I/O, but it looks incorrect to me and either broke
-  at some point or never worked. Most likely this was copied
-  incorrectly from old powerpc or sparc code where it worked.
-
-So in all four cases, the normal uart should keep working,
-and if something tried to start up an ISA style 8250, I
-would expect to see the new version produce the WARN()
-in place of what was a NULL pointer dereference (reading
-from (u8 *)0x2f8) before.
-
-Since there are so many ways to set up a broken 8250,
-it is still possible that something tries to add another
-UPIO_PORT uart, and that this causes the WARN() to trigger,
-if we find any of those, the fix is to no stop registering
-broken ports.
-
-     Arnd
 
