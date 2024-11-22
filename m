@@ -1,271 +1,116 @@
-Return-Path: <linux-kernel+bounces-418459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC5A9D61D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:16:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363959D61D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:15:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7179B2489D
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB09F160830
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D71DFD9F;
-	Fri, 22 Nov 2024 16:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10DE1DF75E;
+	Fri, 22 Nov 2024 16:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mZhdzTY4"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="cADUQG7g"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635671DF258
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:15:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA9F1D9598
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292120; cv=none; b=jMW0hgv7dyz69MnBQJpq9mYBndN5EyFtXpzRDsEDStrTKyW03DrI0/cSf+PvZtOstbSFgCW6qHKtIQOkRILVzbARPwTAO9lJXupVh+tCkosZjSlCapVmyz5JRzb2zmydalJHbz6nWqT9bwOLE+cspS7qwwjZ8Qqhywue+hDp/JQ=
+	t=1732292119; cv=none; b=NZBnajKvGIPjFueBN9DglVgRN1WawdTjUzgLAN33eUI0cHeIwdEwcWlIWej/z0Dfw9Tiu/xZEZb51Z8g3arZnVzqhwKOGOY9T5zQ2GS2tIR05VVDTgXE3vvUyPhxRQEKXbNR59WKv+k/7zDZCLTzz+ooygw5wp5oe4wxspAH3M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292120; c=relaxed/simple;
-	bh=nNEd7ScqpP2u8LOKBJlSl+nk9HqJjsqERZrBxXBPTzk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NerQmQCfASDJZLzl/jTPuAYwr39AokA3/7OAuj9yZqikTSd7nUqm3PdPwwF1XWaHlB6+2Pf7Kq6d5N0VMpxA2Kcqty5lBcCT6DcJJSD/b8Vp+tou1M59ROW7q3RSr2xCJ435ZFQgn6k6YwlkLWViIPrbV8J4Hyz0F/17wFhQx/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mZhdzTY4; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AA5471C000E;
-	Fri, 22 Nov 2024 16:15:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732292114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tEX5KIYM9MGflL3kKigU/rlvGYRABpADnL5AEt6CCt4=;
-	b=mZhdzTY4BsMeEBS8IZhX7nUAKfzk2spYzmaTuhTMqNe2iFFU09NjfJA3En0/Hn1uynoloe
-	FyGGMgcGI9CUzyboWYhzQTGs8durPzjyGPV/0DcLxCX6neybMT3Y4lL0c1G3OudzNfci99
-	Nx5hIqbov8HY7Pdmo5b8HVEhcxVSYTrJPoo256rVjuj7fuFB2eC4dViL2L3DWP6LeX2gaC
-	38ELomd4piypl9h7HzrSQveLSdJUW1iUQBZCcNREKu6QSc+4bIf1eXFtaUgSYpYHc4EJAv
-	po5616SmnUWye1EPIEsgEu4AnOQ8r4EITMArWf14lOOZqW7W0v0dafqP/K4JzA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 22 Nov 2024 17:15:07 +0100
-Subject: [PATCH v14 7/7] drm/vkms: Add support for DRM_FORMAT_R*
+	s=arc-20240116; t=1732292119; c=relaxed/simple;
+	bh=Gu0n2ULPyKWMJ8niorrKnik/nENpGrAT+3JB8wMdbuQ=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=C2V1YZOPKarYT+PjQLf3ejoM+deIM5eQD9u/JW5Oq9xmJS6Fo30DLLOC8rcHaw5hjoW1rsPlM4w1DkFVtEZhaAqxPijITr1wmPULnQrQi5iBV+or6REbuYhIXFSUfSs+FdOrdsxFQKEdZeAeKParI7sjGGla4UcrlimqZ9Yo/3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=cADUQG7g; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1732292118; x=1763828118;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Gu0n2ULPyKWMJ8niorrKnik/nENpGrAT+3JB8wMdbuQ=;
+  b=cADUQG7gOKQl1OvUUtsa/to7NRuIgnxBBcodyGFTGK4ot8FKOKW3ksbg
+   XJDi2NHSeGDwg6UpgxzIebwDi9KCMffRUmqsI+hWrqyfDQQv7q4reYkcL
+   gwJHivd3S68L9XXsS+ZtNFkbo+6unyZGRk1+/ObmU2juXcAsEFXdcI7sD
+   0=;
+X-IronPort-AV: E=Sophos;i="6.12,176,1728950400"; 
+   d="scan'208";a="472481980"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:15:17 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:17337]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.181:2525] with esmtp (Farcaster)
+ id 1cad881e-4a18-4d14-ade3-488f6eb63fec; Fri, 22 Nov 2024 16:15:16 +0000 (UTC)
+X-Farcaster-Flow-ID: 1cad881e-4a18-4d14-ade3-488f6eb63fec
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 22 Nov 2024 16:15:16 +0000
+Received: from [192.168.2.77] (10.106.100.9) by EX19D003UWC002.ant.amazon.com
+ (10.13.138.169) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35; Fri, 22 Nov 2024
+ 16:15:15 +0000
+Message-ID: <3676f073-028e-4855-aa87-107e0607be24@amazon.com>
+Date: Fri, 22 Nov 2024 09:15:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+To: <jackmanb@google.com>
+CC: <David.Kaplan@amd.com>, <bp@alien8.de>, <canellac@amazon.at>,
+	<dave.hansen@linux.intel.com>, <derekmn@amazon.com>, <hpa@zytor.com>,
+	<jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<mlipp@amazon.at>, <pawan.kumar.gupta@linux.intel.com>,
+	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
+References: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
+Subject: Re: [PATCH v2 19/35] Documentation/x86: Document the new attack
+ vector controls
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <CA+i-1C3R=56CAMiDwuzrtxmQN+CN14hUeMfbv4k4WqyQfexZ1g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-yuv-v14-7-e66d83d28d0c@bootlin.com>
-References: <20241122-yuv-v14-0-e66d83d28d0c@bootlin.com>
-In-Reply-To: <20241122-yuv-v14-0-e66d83d28d0c@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, rdunlap@infradead.org, 
- arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>, 
- pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
- thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
- nicolejadeyee@google.com, Louis Chauvet <louis.chauvet@bootlin.com>, 
- Pekka Paalanen <pekka.paalanen@collabora.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6494;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=nNEd7ScqpP2u8LOKBJlSl+nk9HqJjsqERZrBxXBPTzk=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQK4IFfPn0B2W772RleqAdPtJ9DER/GqVvo0QB
- x0ukqE6dLGJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CuCAAKCRAgrS7GWxAs
- 4vbjEAC13yENEnBWEYPznmMXxOb1PdgAdgCFXkw5nrQ+PAe6uSFrqblEanzTMh59NAmIelNYCn+
- YA1yyITGFiMYRkGDeL3o1v5ePlkqzkdqKf+ZQXFu8h9gftysrp1Deb2wmZFdRvtUJcspEHplfnz
- Mvx/xneml4F2M4keASSGUWLs/mYjUrJguVtUxQ0PS8iVJanfZKB4WkFReoRwihUh0aE1g6iAWf2
- YByDs5s2XwqP7QZSAchgqq+OJ1UyOrNFs7PRgAHinGBy+MnAn/DOfdCTfAjhCupc+8QQSlbW83U
- 4/h0nflidvzJ/rmG/ta1OdoTpKlCGyzwV0cIhEclSV/GHQRjswp853eWfZi4JLtSSS8yWZ9NJKp
- 2KczI5osl4aqaW79z90TED7krv5RPS0lcfG6oWoMSfp+Eb10mnmSDqbu3nvQcseTvYVZ+0V/crf
- x7A8ofxwd7M9umMEVgquREe+Knq8LscnKTK0d6/omlIbtieT3DwOOPuEMXYy7ezsZ0CJ6b09t9m
- /VbsSCYQvuRfYuvdz00kBVeOBg3FOdlkAjfw0ge0PViTCXVvfWbEoJWUrskupdXI9XvB6u8JhbL
- GXd2U6DxlELet+EQUffKxn04tRNPIBSfx7ggwlJfiC5z93M9TFhTd5nFOaBhGL4dfq9XQoMFgdp
- yFATvSLRq8wvRPg==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+X-ClientProxiedBy: EX19D039UWB004.ant.amazon.com (10.13.138.57) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-This add the support for:
-- R1/R2/R4/R8
+On 2024-11-14 at 9:32+0000, Brendan Jackman wrote:
+> On Wed, 13 Nov 2024 at 17:19, Brendan Jackman <jackmanb@google.com> wrote:
+> >
+> > On Wed, 13 Nov 2024 at 17:00, Kaplan, David <David.Kaplan@amd.com> wrote:
+> > > I wonder what would happen if there was a mitigation that was required
+> > > when switching to another guest, but not to the broader host address
+> > > space.
+> >
+> > This is already the case for the mitigations that "go the other way":
+> > IBPB protects the incoming domain from the outgoing one, but L1D flush
+> > protects the outgoing from the incoming. So when you exit to the
+> > unrestricted address space it never makes sense to flush L1D (everyone
+> > trusts the kernel) but e.g. guest->guest still needs one.
+>
+> I'm straying quite far from the actual topic now but to avoid
+> confusion for anyone reading later:
+>
+> A discussion off-list led me to realise that the specifics of this
+> comment are nonsensical, I had L1TF in mind but I don't think you can
+> exploit L1TF in a direct guest->guest attack (I'm probably still
+> missing some nuance there). We wouldn't need to flush L1D there unless
+> there's a new vuln.
 
-R1 format was tested with [1] and [2].
+With Foreshadow-VMM/CVE-2018-3646 I thought you can do guest->guest?
+Since guest completely controls the physical address which ends up
+probing L1D (as if it were a host physical address).
 
-[1]: https://lore.kernel.org/r/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com
-[2]: https://lore.kernel.org/igt-dev/20240306-b4-kms_tests-v1-0-8fe451efd2ac@bootlin.com/
+And agree with the flushes between different restricted address spaces
+(e.g. context switch between guests, right?).
 
-Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c | 110 +++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/vkms/vkms_plane.c   |   4 ++
- 2 files changed, 113 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 0b867444999105262c855a24bf03bc66d9ebea1b..2edf1ceccd37ad3a2f9f6d2dcf2044c98d9e10f0 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -249,6 +249,16 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
- 	return out_pixel;
- }
- 
-+static struct pixel_argb_u16 argb_u16_from_gray8(u8 gray)
-+{
-+	return argb_u16_from_u8888(255, gray, gray, gray);
-+}
-+
-+static struct pixel_argb_u16 argb_u16_from_grayu16(u16 gray)
-+{
-+	return argb_u16_from_u16161616(0xFFFF, gray, gray, gray);
-+}
-+
- VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
- 							    const struct conversion_matrix *matrix)
- {
-@@ -286,7 +296,7 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * The following functions are read_line function for each pixel format supported by VKMS.
-  *
-  * They read a line starting at the point @x_start,@y_start following the @direction. The result
-- * is stored in @out_pixel and in the format ARGB16161616.
-+ * is stored in @out_pixel and in a 64 bits format, see struct pixel_argb_u16.
-  *
-  * These functions are very repetitive, but the innermost pixel loops must be kept inside these
-  * functions for performance reasons. Some benchmarking was done in [1] where having the innermost
-@@ -295,6 +305,96 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
-  */
- 
-+static void Rx_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	int bits_per_pixel = drm_format_info_bpp(plane->frame_info->fb->format, 0);
-+	u8 *src_pixels;
-+	int rem_x, rem_y;
-+
-+	WARN_ONCE(drm_format_info_block_height(plane->frame_info->fb->format, 0) != 1,
-+		  "%s() only support formats with block_h == 1", __func__);
-+
-+	packed_pixels_addr(plane->frame_info, x_start, y_start, 0, &src_pixels, &rem_x, &rem_y);
-+	int bit_offset = (8 - bits_per_pixel) - rem_x * bits_per_pixel;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+	int mask = (0x1 << bits_per_pixel) - 1;
-+	int lum_per_level = 0xFFFF / mask;
-+
-+	if (direction == READ_LEFT_TO_RIGHT || direction == READ_RIGHT_TO_LEFT) {
-+		int restart_bit_offset;
-+		int step_bit_offset;
-+
-+		if (direction == READ_LEFT_TO_RIGHT) {
-+			restart_bit_offset = 8 - bits_per_pixel;
-+			step_bit_offset = -bits_per_pixel;
-+		} else {
-+			restart_bit_offset = 0;
-+			step_bit_offset = bits_per_pixel;
-+		}
-+
-+		while (out_pixel < end) {
-+			u8 val = ((*src_pixels) >> bit_offset) & mask;
-+
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+
-+			bit_offset += step_bit_offset;
-+			if (bit_offset < 0 || 8 <= bit_offset) {
-+				bit_offset = restart_bit_offset;
-+				src_pixels += step;
-+			}
-+			out_pixel += 1;
-+		}
-+	} else if (direction == READ_TOP_TO_BOTTOM || direction == READ_BOTTOM_TO_TOP) {
-+		while (out_pixel < end) {
-+			u8 val = (*src_pixels >> bit_offset) & mask;
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+			src_pixels += step;
-+			out_pixel += 1;
-+		}
-+	}
-+}
-+
-+static void R1_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R2_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R4_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R8_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	u8 *src_pixels;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+
-+	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
-+
-+	while (out_pixel < end) {
-+		*out_pixel = argb_u16_from_gray8(*src_pixels);
-+		src_pixels += step;
-+		out_pixel += 1;
-+	}
-+}
-+
- static void ARGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
- 			       enum pixel_read_direction direction, int count,
- 			       struct pixel_argb_u16 out_pixel[])
-@@ -606,6 +706,14 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
- 	case DRM_FORMAT_YVU422:
- 	case DRM_FORMAT_YVU444:
- 		return &planar_yuv_read_line;
-+	case DRM_FORMAT_R1:
-+		return &R1_read_line;
-+	case DRM_FORMAT_R2:
-+		return &R2_read_line;
-+	case DRM_FORMAT_R4:
-+		return &R4_read_line;
-+	case DRM_FORMAT_R8:
-+		return &R8_read_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_plane_atomic_check(). All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index e6ca8f2db32d92068ddba7eed92cfae0d28cd45f..81941914af87fcefb180dc393f2ec311f1a1d3fa 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -30,6 +30,10 @@ static const u32 vkms_formats[] = {
- 	DRM_FORMAT_YVU420,
- 	DRM_FORMAT_YVU422,
- 	DRM_FORMAT_YVU444,
-+	DRM_FORMAT_R1,
-+	DRM_FORMAT_R2,
-+	DRM_FORMAT_R4,
-+	DRM_FORMAT_R8,
- };
- 
- static struct drm_plane_state *
-
--- 
-2.47.0
-
+Derek
 
