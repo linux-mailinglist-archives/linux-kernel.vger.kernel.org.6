@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-418708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C22E9D6492
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:27:55 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A29259D6493
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:28:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1469EB22542
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:27:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20BCC160654
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B818B1DFDBF;
-	Fri, 22 Nov 2024 19:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5E01DFD87;
+	Fri, 22 Nov 2024 19:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O54sxMbF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCrFiXc/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA0364A8F;
-	Fri, 22 Nov 2024 19:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB9C4C62B
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 19:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732303666; cv=none; b=g38kliOnTp5bjLr269E8gZBz5QLJQ9rPwhpOaJq2alUN8SHfiKQB6v13OR4sIAFuKbfCQCXMdj9Oqg8hwTJ1LTootFEK7ENEF1XWDxNsF0MMlsYl4excVfrBfjK8Mj14KbEnzSS8kUubvY51NUtyS/k7sQSeEnsAlqLJhU2C/vI=
+	t=1732303725; cv=none; b=K280p7ulql91U8rqivIdnFF7lPvoHqh5ZtrIJRTDMn/Tr8Y28t1wu+lASTYbRFo5Rc630b55YuZ7G7CLVSS7WeZ5C/d4RssBqimJRBZ2bwqi7vAsgkpKLAPWt8D4/4pnw82I7OGvcbpsVtvVbbZqSkhMd716kV/LYFvEioGdL4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732303666; c=relaxed/simple;
-	bh=yguWofAVWAk41J3X5cJbVOW9/dPsoPltgyhYgkTdtNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TpgKJFREWffzdCHpNEpv6jj0YZel0/eead/zSzj4dHqjTUXutIyc2lnkFT/uEXFLWw0i7Sv7V+qm3MdePZtyC5oTuhZOW6YTRad9BFwub182mqmZJNpw6wQvDzzn252w4g/MsPCMQjJUp59wXq/HkKlYRXnXAp+ajLdrguIS7nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O54sxMbF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC52AC4CED7;
-	Fri, 22 Nov 2024 19:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732303665;
-	bh=yguWofAVWAk41J3X5cJbVOW9/dPsoPltgyhYgkTdtNs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O54sxMbFoHRVAVs7VcZotltbPtUm1VGWvNoUHw4DPg2ODwVYY6QkpQjXfXQ7misB+
-	 nEJkikH25Ns40iQfM0Uqx4GYbnHXCOm9gRNgOZZHCbCqREAYXp09/TFt3YlCguevlr
-	 fPotLZEBu5myYOx48RSuIQ8Nv1Dw3c7bPNsXAug7D9OK5opCGlRmo+6Y2hoav09tuF
-	 CgLeh5qEVEI1LwvYWzjYB1dN+6kAg76xk6bkygmLhZnKWSyC/t/7viDYM/XAn7eogg
-	 YMojhZe5+fe8GpVmTHmFavGU7DOyuCB4IZFHwD776ru0Ae17WlOLzbmmtd/x1kCvV5
-	 ISelCto6yQe2A==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-296994dd3bfso1642909fac.0;
-        Fri, 22 Nov 2024 11:27:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVLJKQ260GdCYRS6uiAOH0WesXzBFAAx6r7tvieSHZNKxpgQTGN4VaocsbODZT3RUNm0j6s8CZRCws=@vger.kernel.org, AJvYcCWJb/X0vsy+pf9tD3l/3Km9MSUz29pWUjrk/L5CiBHxhD8Tngx5e2PhQLLuIX5k/wO0XE+LXnQrmgP4@vger.kernel.org, AJvYcCXtnPil95js2CklVPo9JysdSsXiw+ud0NuzO49uqQ+70rkBGeRZ427him6mI5iP4T+vmHPAsaEzADI7czrn@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFUoQIBwjeMyUBfby4FJ6LBpj7yj07o9XvkMtUtKPMP+3DMSKU
-	c6Fe4+m58pIdfQ3w7Ts44N9ISgAYvOR0ZzYkooy7OwVJ8ID8hH/x5/K1vMxs9XfEdHH+xi+D55T
-	HKo3tviSChDZTYm7VL29owr9KqI8=
-X-Google-Smtp-Source: AGHT+IGB8hg7lTSwwMDovfIEQoAKW7Y09+fDewSPgzj/Id1opr5d05VkEngC9LnrhggJ31OIWfQcA8qPRZWvSPigA44=
-X-Received: by 2002:a05:6870:46a2:b0:296:cdee:f7de with SMTP id
- 586e51a60fabf-29720c33a6fmr4725047fac.21.1732303665039; Fri, 22 Nov 2024
- 11:27:45 -0800 (PST)
+	s=arc-20240116; t=1732303725; c=relaxed/simple;
+	bh=CIirRwIqXxswoKYw/C0vt7jhR+LbI6hwoJRM9Kmjx0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIxxOelBcJ5+QkjHo8d2wY00aulPnCpI0mROPmr617Yon80qSfZ6vHw2mNaAHII3ZWwJMq1bpf8NwmdVsjRFd0e+1UZ/IczuBH24z5dtOwxMXOyPn6D/F4ISr4P4ELoKfWPZx/DTmV1oE9ZLD649K5v3GQktxm45lYTdhbqR/Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCrFiXc/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732303722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FcvGsCpkjrQ7syvCrJLvbT9jNNGJMzuDnZMicFV+YWE=;
+	b=NCrFiXc/YJ7d9K2DUJF5RtSWnDCZf8X7Qx/yREmDZCXu7kiudZyxN7C1R8adTixPWcPdjO
+	yz/6iilXSptnkzwQk3hShUfZyJF8PMT0sWd+ly/1wZ7i4BKw/YR/+q6LcV/TocdWE9otj1
+	LTi2Mexz6G+YKp+MsifrVIAUlnYfGYY=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-318-YZVem5HzNBOaAC51TXNjkA-1; Fri, 22 Nov 2024 14:28:41 -0500
+X-MC-Unique: YZVem5HzNBOaAC51TXNjkA-1
+X-Mimecast-MFC-AGG-ID: YZVem5HzNBOaAC51TXNjkA
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-20ca1692cb7so25831375ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 11:28:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732303720; x=1732908520;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FcvGsCpkjrQ7syvCrJLvbT9jNNGJMzuDnZMicFV+YWE=;
+        b=NZz5l+oI6HqFDdQx2RgUEQvvoDwUDfbAiuDo9WLn/4HwKduW8wAiHRoghtXqhRvi4U
+         K95uZ/UBEnVyElUJWVChA1CSH1XAhcXOATOWNZWbRlwB+qkigeP1zcOvJWiXU628/o+X
+         rYEHhydoaoIY6t5zOTqJMWR5spIMOK+4F5w3f2/jEmRCozU22Olz3iqAiCqB2WiBUAwb
+         Mw0ON9eO47jjvZH9nakX2LLex0CTVyklqzoD9nC6RFEDIF2nnnTDBALTrOpFD6+GG6/Z
+         PtzX702zf6FR/s8F39M2FwXR41TKN/4UD2j7NswlfclC+CY7s+fp10WrM5Ft10odiTvf
+         dnbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN+LVUI4dKGUHnwkbBOxoLJQ9MuM6FrZ7qS12JmjOepIif3YBZVpHPX1st/G/BXh0+FFgZ2HanEL/tx5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx6wDtTzYAjDsZfFJRazjo6POc2H62UMfzjDh8C7NlTux5aI/6
+	8traORQt4H+YWDT4oaAO5fh7aAQgZg7/7XzPtLJ04LeHrkm98cdLkHWJLsytXl5nJGTTiDT59l2
+	2idrL3xI5Txqfeug/yaaDdZs1W1uOt10wx32YhY1fbu7zENZJi+JOeUY1tXPMig==
+X-Gm-Gg: ASbGncseu1+bYUyCpObEIcOAJSc9rw5eFUszIi11DUsASZpr0I8bj9uGQqXLQiplr3u
+	A8eqyFfCjy4zmZdCVhklKOBC64RQJ1mf8CzsJOGS23otrMr8Yw5o7KxLtdwAL5gUlgBGvPVShZs
+	IrdVhVjTT8HponjvQNDnfrmIK+bn7p3jbzz03E1LpsuuBnyuWlTSUrGtrkTtlqkw5s7eA+8/zvq
+	JNZbwKpOj5vEUwUH0Qk01oi0FbHfIuPheuwwD6Ov+9xF6GhhPVHBgZMnoimWS8haJyt0eNwBUUm
+	bYyTgl8i2yNfkxQ=
+X-Received: by 2002:a17:902:d2c2:b0:20c:a0a5:a181 with SMTP id d9443c01a7336-2129f22647dmr50381785ad.19.1732303719890;
+        Fri, 22 Nov 2024 11:28:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEiZUUX5sdsIBj7jPZBEqjq3sJYV/CnWD950OlpmmREi6SjKqkBB0USD/fBz0GQhMfKIDS+Vw==
+X-Received: by 2002:a17:902:d2c2:b0:20c:a0a5:a181 with SMTP id d9443c01a7336-2129f22647dmr50381615ad.19.1732303719599;
+        Fri, 22 Nov 2024 11:28:39 -0800 (PST)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129db8f7c5sm19899885ad.44.2024.11.22.11.28.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 11:28:39 -0800 (PST)
+Date: Sat, 23 Nov 2024 03:28:35 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Bug report] kernel BUG at include/linux/scatterlist.h
+Message-ID: <20241122192835.rsryoifhczqgmjf7@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20241122045106.tzhvm2wrqvttub6k@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+ <CAMj1kXGAuJSdDWvu7D5-PT6mSbNG9FeLObnYmpHeT08eNxaJWQ@mail.gmail.com>
+ <Z0A2W1FTTPt9PeI5@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5839859.DvuYhMxLoT@rjwysocki.net> <e7ac7561-f9ff-406a-b2d7-6d9e31ed6e98@amd.com>
-In-Reply-To: <e7ac7561-f9ff-406a-b2d7-6d9e31ed6e98@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Nov 2024 20:27:32 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jTxBt8+bc+EgUZmE84N+Vok_aM16D8HyLQUv=BSoqRCw@mail.gmail.com>
-Message-ID: <CAJZ5v0jTxBt8+bc+EgUZmE84N+Vok_aM16D8HyLQUv=BSoqRCw@mail.gmail.com>
-Subject: Re: [RFC/RFT][PATCH v0.1] ACPI: OSL: Use usleep_range() in acpi_os_sleep()
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, 
-	Pierre Gondois <pierre.gondois@arm.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Hans de Goede <hdegoede@redhat.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z0A2W1FTTPt9PeI5@gondor.apana.org.au>
 
-On Thu, Nov 21, 2024 at 11:27=E2=80=AFPM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 11/21/2024 07:15, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Nov 22, 2024 at 03:44:27PM +0800, Herbert Xu wrote:
+> On Fri, Nov 22, 2024 at 07:42:54AM +0100, Ard Biesheuvel wrote:
 > >
-> > As stated by Len in [1], the extra delay added by msleep() to the
-> > sleep time value passed to it can be significant, roughly between
-> > 1.5 ns on systems with HZ =3D 1000 and as much as 15 ms on systems with
-> > HZ =3D 100, which is hardly acceptable, at least for small sleep time
-> > values.
-> >
-> > Address this by using usleep_range() in acpi_os_sleep() instead of
-> > msleep().  For short sleep times this is a no-brainer, but even for
-> > long sleeps usleep_range() should be preferred because timer wheel
-> > timers are optimized for cancellation before they expire and this
-> > particular timer is not going to be canceled.
-> >
-> > Add at least 50 us on top of the requested sleep time in case the
-> > timer can be subject to coalescing, which is consistent with what's
-> > done in user space in this context [2], but for sleeps longer than 5 ms
-> > use 1% of the requested sleep time for this purpose.
-> >
-> > The rationale here is that longer sleeps don't need that much of a time=
-r
-> > precision as a rule and making the timer a more likely candidate for
-> > coalescing in these cases is generally desirable.  It starts at 5 ms so
-> > that the delta between the requested sleep time and the effective
-> > deadline is a contiuous function of the former.
-> >
-> > Link: https://lore.kernel.org/linux-pm/c7db7e804c453629c116d508558eaf46=
-477a2d73.1731708405.git.len.brown@intel.com/ [1]
-> > Link: https://lore.kernel.org/linux-pm/CAJvTdK=3DQ1kwWA6Wxn8Zcf0OicDEk6=
-cHYFAvQVizgA47mXu63+g@mail.gmail.com/ [2]
-> > Reported-by: Len Brown <lenb@kernel.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> You probably should also pick up this tag from the earlier version.
->
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216263
+> > Does this help?
 
-Good point.
+Hi Ard, thanks for your quick response, do you still hope to test
+your patch?
 
-> > ---
-> >
-> > This is a follow-up to the discussion started by [1] above and since
-> > the beginning of it I have changed my mind a bit, as you can see.
-> >
-> > Given Arjan's feedback, I've concluded that using usleep_range() for
-> > all sleep values is the right choice and that some slack should be
-> > used there.  I've taken 50 us as the minimum value of it because that's
-> > what is used in user space FWICT and I'm not convinced that shorter
-> > values would be suitable here.
-> >
-> > The other part, using 1% of the sleep time as the slack for longer
-> > sleeps, is likely more controversial.  It is roughly based on the
-> > observation that if one timer interrupt is sufficient for something,
-> > then using two of them will be wasteful even if this is just somewhat.
-> >
-> > Anyway, please let me know what you think.  I'd rather do whatever
-> > the majority of you are comfortable with.
->
-> Generally I'm fine with this.
->
-> I'm about to head on US holiday, but I will forward this to folks that
-> aren't and get some testing input on it to bring back later when I'm back=
-.
+> 
+> This is a bug in the API/driver.  Users should not be expected to know
+> what kind of a virtual pointer is acceptable.
+> 
+> In this particular case, rsassa-pkcs1.c should be fixed to use the
+> crypto_akcipher_sync_encrypt interface.
 
-Thanks!
+Thanks Herbert, feel free to CC me after you have a patch, I'm glad to
+give it a test.
+
+Thanks,
+Zorro
+
+> 
+> Thanks,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> 
+
 
