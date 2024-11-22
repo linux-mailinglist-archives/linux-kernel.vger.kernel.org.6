@@ -1,199 +1,343 @@
-Return-Path: <linux-kernel+bounces-418620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7E09D6385
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:46:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFCF9D6387
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EEC5160E93
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 397C4160E84
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65735158848;
-	Fri, 22 Nov 2024 17:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7D315689A;
+	Fri, 22 Nov 2024 17:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FMcYbVBm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Koztfj+9"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8043184D13
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4F113B58C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 17:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732297605; cv=none; b=WZjGU5D1TOrV6PpHVRKhDIWDUatfUhRpgS/MlIQNgPjahV6nxT4r1ewjKOuJT4buoGj5aci4z4wGEbluvdHV168w/uT63f1CDRBKT/SCv78o7kOk9ncJZ123AHhEGVSMy6EbNtLS2L0bure6A+kvc/+0gCLuvJwqbLx5Uz25ZHE=
+	t=1732297663; cv=none; b=ty3n7k3VN2eSvofE9o3n/qHn2vHeH4oCta30A9JFBT+8XISdjorqt5o3AXKuUGUuF01gW/23HcmRfx8umpLU1ug23bF7EMOAGSY3Y7x+MzAELZGrnTMZoFN5iBZS9t4XyLjFNGfkwJzHZCQywiakpt+Yj9rF0/A9lDWZUBTyRvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732297605; c=relaxed/simple;
-	bh=se3akZ4n0E5uTfufUU0Q238bduY6fpmm4qJsO1cE9e4=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=fFxGVCZP+KKaq1zmKpL56lJYtbrFPxQGWA/LdJqdvnm+MI6+ljqvxv2gxK2BZaCO+GnzIB5T2tWtp1z4LvVz+d/I2EoY/3FpYdlpeSrPzmpCfuS2P9Jyve6sWjeo1ojgpzj6NoPbilLhXchHJK6Gi6sG15T3uQmJT2WlllhVhUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FMcYbVBm; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732297603; x=1763833603;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to;
-  bh=se3akZ4n0E5uTfufUU0Q238bduY6fpmm4qJsO1cE9e4=;
-  b=FMcYbVBmi5BBj3xVSPqA3S5vuAM6Xlt2QSDK8X/h1b5vziHfQ0ipeEiY
-   rg4GiR/sCGiB/tUTx+78Vp29DEOwnSR4G1fbbQuyBl5Fil7aTYJQ2ttV1
-   hRcNMmVPHSFg6NpJbkas+shhW99JOOqTUGfFYIzObQEv4xVfwWP0tFWqX
-   QFC0lvDlMziIsaHTJ7kbJl6KcB0ad3ASqn26Tj+NS96AG/GjlUNNIhHyz
-   f7iWDp68G8RNjKrSQpJvqWelbMkSAbdGu7Pe8VhAgOnMTC4DGO9tQyye/
-   wTli2/SiYwpN/mPXCVHimUwrOE8wfgR/J8ngZSUkUYZqdvyOYC0UqghCD
-   w==;
-X-CSE-ConnectionGUID: V9sjzV0+QNy9gF7yMdEv4w==
-X-CSE-MsgGUID: eKFMTxn1TKaBeY6OHgj6Kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="42975304"
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="42975304"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 09:46:42 -0800
-X-CSE-ConnectionGUID: 2qIrx0brSJaYXPpEXz6YuA==
-X-CSE-MsgGUID: t0uVNsKuSFmsvllS3Uwx6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
-   d="scan'208";a="113913734"
-Received: from bjrankin-mobl3.amr.corp.intel.com (HELO [10.124.220.110]) ([10.124.220.110])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 09:46:42 -0800
-Content-Type: multipart/mixed; boundary="------------31DaaGTZcHgscu02RE6el0q7"
-Message-ID: <bb937b3f-e595-4aa8-a6e5-08bdbd4702bf@intel.com>
-Date: Fri, 22 Nov 2024 09:46:41 -0800
+	s=arc-20240116; t=1732297663; c=relaxed/simple;
+	bh=48zIBxXc3flL9qIYqplgEZfbGli+Ia3OqfxWxf6ncLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rEr7ACFE4fX5dtUXFtKqXVhayRshJpw46yVtICygx8CX/iFlM+jOrT3xDG20/oUxN6MjCM/D9zjncHkLcRz++/18Mk5/8ayNvdredW6tZl1MHunU8h4JmXTDU0m4MwdfI/2B/x4thn3oDskntyxlV6k/fbYKTmJeIcBYTilg1Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Koztfj+9; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4608dddaa35so5291cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:47:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732297660; x=1732902460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NXu6AT/ibx2XVcD9pO1ZbpAdsb4GGiSqwFIjR6ukUCw=;
+        b=Koztfj+9j+kQdPPkEA6MkyiKPe6EyxQLSfPbRfI4BXxLMzRBaMHbujaQH318Dqo1V3
+         fSiyxeISmto2R5JbA7lEm3KiiPJK9b/hfDdmdym+gV0ND8SumjhsNIJ/wGgDt+9ab5Rk
+         o1fBayYmlgmxEL/r7BibIQwbawJ//ZF3HvnEF3r6gPcTO7E7qV/Trjr1WfJyo2xN6w3m
+         ZScyGL7B8dZbxHITY8t0Y3dWoSdCQB37Mplm+Tyl67alce3h3eyt3GMp8mvPaN3YJlBD
+         O5jOKTBUBgK4Ld3f4Rch+CVhH1f7rlMhx3iZ0s9z+V6Kc8J7F2UJ7ilW95V2t9KxI4Ue
+         5DuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732297660; x=1732902460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NXu6AT/ibx2XVcD9pO1ZbpAdsb4GGiSqwFIjR6ukUCw=;
+        b=f6CMmentsIAjDy38GFqywgvzpS3CfJpUl2TIhd4dSnmRBbV/ldXyXRRvl3KEN1Veun
+         kWrV86onp1R8XGlmOrXPjlCpoubx3EMF48H0Kebd4WqYYkT+fkr+z1o+B50FJSG35DEV
+         AGxjPk+WaJpc9/o/TUu/9MTvyPhXdgeK5yjmLEweKd0Dhbjc1fo/VHJI3vCHD6TCn4Nr
+         vIXCqLPOa02U2wGlATydZXEHDZVyu6goG+ByQ/2cRiJB+/0Y6op4wxhtjdfUzgeoDZTv
+         sxeCMpDcAuH7S8bgwxflBnsnunGsIa2nWXvP+5R2I4oQfxqR2uxcmKTyKsmKB0Co6nWk
+         nY7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWcvv41O3uo+2xdhMhkuDAGlz7G/zaYJcNj45s8fsauoEH/dBtnAVGuMtycd8BJshjNSnaxBcE+UVcAc2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcFv7uLquV5hBDa5/uQZwgVzRmkGHgZ4R1G+RRBnHVrH5F3rQD
+	SQO52gSXwKTUxX3A40mWDM2/nF7pC59HdXP0d66fHF1Go+LlInwHvclu1qdhOLZy7G3ksHPcZpW
+	C/9ssCXInSnK3IysG+03fUQUdA7XajRcARyhF
+X-Gm-Gg: ASbGncsOUrII8cLA6zXnpBbu2HtXWUQ8Se5ygmZSzG1hMQ9mVynrGGOZ1MyKPfuETe/
+	EXyfTgXSgTWTpa8rWi6t/AS+l9qz8R948J7VBjAAD0rCxCZsX/H9FvEU89ZygDg==
+X-Google-Smtp-Source: AGHT+IFmgMkmysbndCTt9BLdV9WRe4B095x+9C/l5f22Xm7RKNPX/qreBplcxtPmMN6ho4wucxBBIS3mf6jg7JZqSiI=
+X-Received: by 2002:a05:622a:206:b0:460:463d:78dd with SMTP id
+ d75a77b69052e-4653d472de8mr4011941cf.4.1732297659816; Fri, 22 Nov 2024
+ 09:47:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] x86/fpu: Remove unnecessary CPUID level check
-To: Sean Christopherson <seanjc@google.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- bp@alien8.de, rafael@kernel.org, lenb@kernel.org, dave.jiang@intel.com,
- irenic.rajneesh@gmail.com, david.e.box@intel.com
-References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
- <20241120195340.047C9ABE@davehans-spike.ostc.intel.com>
- <Zz9VjVKbzMehRTjA@google.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <Zz9VjVKbzMehRTjA@google.com>
+References: <20241120000826.335387-1-surenb@google.com> <20241120000826.335387-4-surenb@google.com>
+ <6460975a-46b2-481a-9073-55a5f2ac2f46@lucifer.local>
+In-Reply-To: <6460975a-46b2-481a-9073-55a5f2ac2f46@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 22 Nov 2024 09:47:28 -0800
+Message-ID: <CAJuCfpHCLiYENN7QrNCoZnYxXa9SELr47+YLiXSKA=K+UXxACg@mail.gmail.com>
+Subject: Re: [PATCH v4 3/5] mm: mark vma as detached until it's added into vma tree
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
+	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
+	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
+	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
+	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------31DaaGTZcHgscu02RE6el0q7
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Fri, Nov 22, 2024 at 8:47=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Tue, Nov 19, 2024 at 04:08:24PM -0800, Suren Baghdasaryan wrote:
+> > Current implementation does not set detached flag when a VMA is first
+> > allocated. This does not represent the real state of the VMA, which is
+> > detached until it is added into mm's VMA tree. Fix this by marking new
+> > VMAs as detached and resetting detached flag only after VMA is added
+> > into a tree.
+> > Introduce vma_mark_attached() to make the API more readable and to
+> > simplify possible future cleanup when vma->vm_mm might be used to
+> > indicate detached vma and vma_mark_attached() will need an additional
+> > mm parameter.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> I tested this (whole series) locally and on real hardware and did a kerne=
+l
+> compile on real hardware just to be sure :)) and all looks good.
+>
+> The code looks sensible, so:
+>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On 11/21/24 07:45, Sean Christopherson wrote:
-> On Wed, Nov 20, 2024, Dave Hansen wrote:
->> The CPUID level dependency table will entirely zap X86_FEATURE_XSAVE
-> 
-> What table is that?  XSAVE depends on FXSR, but I can't find anything that clears
-> X86_FEATURE_XSAVE if cpuid_level < XSTATE_CPUID.  Even if it did, dropping a
-> sanity check in a one-time path adds risk for almost no reward.
+Thanks Lorenzo! I'll post a new version today, addressing Matthew's
+and other's comments but overall functionality should stay the same.
 
-arch/x86/kernel/cpu/common.c::cpuid_dependent_features[]
-
-It's hard to find because it hard-codes the leaf number:
-
-        { X86_FEATURE_XSAVE,            0x0000000d },
-
-Fixing that was my initial motivation for this series.
-
-As for removing the checks, I'd much rather have a super generic check
-in the CPUID helpers that have all the callers code something.
-Something like the attached patch?
---------------31DaaGTZcHgscu02RE6el0q7
-Content-Type: text/x-patch; charset=UTF-8; name="cpuid_count-warn.patch"
-Content-Disposition: attachment; filename="cpuid_count-warn.patch"
-Content-Transfer-Encoding: base64
-
-CgotLS0KCiBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWlkLmggfCAgICA2ICsrKysrKwog
-Yi9hcmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5jIHwgICAzOCArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKwogMiBmaWxlcyBjaGFuZ2VkLCA0NCBpbnNlcnRpb25z
-KCspCgpkaWZmIC1wdU4gYXJjaC94ODYvaW5jbHVkZS9hc20vY3B1aWQuaH5jcHVpZF9jb3Vu
-dC13YXJuIGFyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWlkLmgKLS0tIGEvYXJjaC94ODYvaW5j
-bHVkZS9hc20vY3B1aWQuaH5jcHVpZF9jb3VudC13YXJuCTIwMjQtMTEtMjIgMDg6NTA6MTIu
-NjE4MTg2NjEwIC0wODAwCisrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWlkLmgJMjAy
-NC0xMS0yMiAwOToxMDoxMi4xMTIyMTc5NDIgLTA4MDAKQEAgLTY0LDYgKzY0LDggQEAgbmF0
-aXZlX2NwdWlkX3JlZyhlZHgpCiAjZGVmaW5lIF9fY3B1aWQJCQluYXRpdmVfY3B1aWQKICNl
-bmRpZgogCitleHRlcm4gdm9pZCBjaGVja19jcHVpZF9sZXZlbCh1bnNpZ25lZCBpbnQgbGV2
-ZWwpOworCiAvKgogICogR2VuZXJpYyBDUFVJRCBmdW5jdGlvbgogICogY2xlYXIgJWVjeCBz
-aW5jZSBzb21lIGNwdXMgKEN5cml4IE1JSSkgZG8gbm90IHNldCBvciBjbGVhciAlZWN4CkBA
-IC03Myw2ICs3NSw4IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBjcHVpZCh1bnNpZ25lZCBpbnQg
-b3AKIAkJCSB1bnNpZ25lZCBpbnQgKmVheCwgdW5zaWduZWQgaW50ICplYngsCiAJCQkgdW5z
-aWduZWQgaW50ICplY3gsIHVuc2lnbmVkIGludCAqZWR4KQogeworCWNoZWNrX2NwdWlkX2xl
-dmVsKG9wKTsKKwogCSplYXggPSBvcDsKIAkqZWN4ID0gMDsKIAlfX2NwdWlkKGVheCwgZWJ4
-LCBlY3gsIGVkeCk7CkBAIC04Myw2ICs4Nyw4IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBjcHVp
-ZF9jb3VudCh1bnNpZ25lZAogCQkJICAgICAgIHVuc2lnbmVkIGludCAqZWF4LCB1bnNpZ25l
-ZCBpbnQgKmVieCwKIAkJCSAgICAgICB1bnNpZ25lZCBpbnQgKmVjeCwgdW5zaWduZWQgaW50
-ICplZHgpCiB7CisJY2hlY2tfY3B1aWRfbGV2ZWwob3ApOworCiAJKmVheCA9IG9wOwogCSpl
-Y3ggPSBjb3VudDsKIAlfX2NwdWlkKGVheCwgZWJ4LCBlY3gsIGVkeCk7CmRpZmYgLXB1TiBh
-cmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5jfmNwdWlkX2NvdW50LXdhcm4gYXJjaC94ODYv
-a2VybmVsL2NwdS9jb21tb24uYwotLS0gYS9hcmNoL3g4Ni9rZXJuZWwvY3B1L2NvbW1vbi5j
-fmNwdWlkX2NvdW50LXdhcm4JMjAyNC0xMS0yMiAwOTowNzo0My45MjI1OTE3MjAgLTA4MDAK
-KysrIGIvYXJjaC94ODYva2VybmVsL2NwdS9jb21tb24uYwkyMDI0LTExLTIyIDA5OjQyOjQ4
-Ljk1MDk1MjUzOCAtMDgwMApAQCAtMjQyNSwzICsyNDI1LDQxIEBAIHZvaWQgX19pbml0IGFy
-Y2hfY3B1X2ZpbmFsaXplX2luaXQodm9pZCkKIAkgKi8KIAltZW1fZW5jcnlwdF9pbml0KCk7
-CiB9CisKK3ZvaWQgY2hlY2tfY3B1aWRfbGV2ZWwodW5zaWduZWQgaW50IGxlYWYpCit7CisJ
-dW5zaWduZWQgaW50IHJlZ2lvbiA9IGxlYWYgPj4gNDsKKwlpbnQgbWF4X2xlYWY7CisKKwkv
-KgorCSAqIFRoZSBtYXggbGVhZiBpbiBhIHJlZ2lvbiBpcyBkaXNjb3ZlcmVkIGZyb20gdGhl
-IGZpcnN0CisJICogbGVhZi4gQWxsb3cgdGhpcyBraW5kIG9mIGRpc2NvdmVyeSB3aXRob3V0
-IGNoZWNrczoKKwkgKi8KKwlpZiAoIShsZWFmICYgR0VOTUFTSygzLCAwKSkpCisJCXJldHVy
-bjsKKworCXN3aXRjaCAocmVnaW9uKSB7CisJCWNhc2UgMHgwMDAwOgorCQkJbWF4X2xlYWYg
-PSBib290X2NwdV9kYXRhLmNwdWlkX2xldmVsOworCQkJYnJlYWs7CisJCWNhc2UgMHg4MDAw
-OgorCQkJbWF4X2xlYWYgPSBib290X2NwdV9kYXRhLmV4dGVuZGVkX2NwdWlkX2xldmVsOwor
-CQkJYnJlYWs7CisJCWRlZmF1bHQ6CisJCQkvKiBPbmx5IGNoZWNrIHRoZSBiYXNpYyBhbmQg
-ZXh0ZW5kZWQgcmVnaW9uczogKi8KKwkJCXJldHVybjsKKwl9CisKKwkvKgorCSAqIFNraXAg
-Y2hlY2tzIGJlZm9yZSAtPmNwdWlkX2xldmVsIGlzIHBvcHVsYXRlZAorCSAqIGFuZCBvbiBD
-UFVzIHdpdGhvdXQgQ1BVSUQgc3VwcG9ydDoKKwkgKi8KKwlpZiAoIW1heF9sZWFmKQorCQly
-ZXR1cm47CisKKwlpZiAobGVhZiA8PSBtYXhfbGVhZikKKwkJcmV0dXJuOworCisJV0FSTl9P
-TkNFKDEsICJDUFVJRCByZWFkIGxlYWYgMHgleCBhYm92ZSBtYXggc3VwcG9ydGVkIGxlYWY6
-IDB4JXgiLAorCQlsZWFmLCBtYXhfbGVhZik7Cit9Cl8K
-
---------------31DaaGTZcHgscu02RE6el0q7--
+>
+> > ---
+> >  include/linux/mm.h               | 27 ++++++++++++++++++++-------
+> >  kernel/fork.c                    |  4 ++++
+> >  mm/memory.c                      |  2 +-
+> >  mm/vma.c                         |  6 +++---
+> >  mm/vma.h                         |  2 ++
+> >  tools/testing/vma/vma_internal.h | 17 ++++++++++++-----
+> >  6 files changed, 42 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index 737c003b0a1e..dd1b6190df28 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -808,12 +808,21 @@ static inline void vma_assert_locked(struct vm_ar=
+ea_struct *vma)
+> >               vma_assert_write_locked(vma);
+> >  }
+> >
+> > -static inline void vma_mark_detached(struct vm_area_struct *vma, bool =
+detached)
+> > +static inline void vma_mark_attached(struct vm_area_struct *vma)
+> > +{
+> > +     vma->detached =3D false;
+> > +}
+> > +
+> > +static inline void vma_mark_detached(struct vm_area_struct *vma)
+> >  {
+> >       /* When detaching vma should be write-locked */
+> > -     if (detached)
+> > -             vma_assert_write_locked(vma);
+> > -     vma->detached =3D detached;
+> > +     vma_assert_write_locked(vma);
+> > +     vma->detached =3D true;
+> > +}
+> > +
+> > +static inline bool is_vma_detached(struct vm_area_struct *vma)
+> > +{
+> > +     return vma->detached;
+> >  }
+> >
+> >  static inline void release_fault_lock(struct vm_fault *vmf)
+> > @@ -844,8 +853,8 @@ static inline void vma_end_read(struct vm_area_stru=
+ct *vma) {}
+> >  static inline void vma_start_write(struct vm_area_struct *vma) {}
+> >  static inline void vma_assert_write_locked(struct vm_area_struct *vma)
+> >               { mmap_assert_write_locked(vma->vm_mm); }
+> > -static inline void vma_mark_detached(struct vm_area_struct *vma,
+> > -                                  bool detached) {}
+> > +static inline void vma_mark_attached(struct vm_area_struct *vma) {}
+> > +static inline void vma_mark_detached(struct vm_area_struct *vma) {}
+> >
+> >  static inline struct vm_area_struct *lock_vma_under_rcu(struct mm_stru=
+ct *mm,
+> >               unsigned long address)
+> > @@ -878,7 +887,10 @@ static inline void vma_init(struct vm_area_struct =
+*vma, struct mm_struct *mm)
+> >       vma->vm_mm =3D mm;
+> >       vma->vm_ops =3D &vma_dummy_vm_ops;
+> >       INIT_LIST_HEAD(&vma->anon_vma_chain);
+> > -     vma_mark_detached(vma, false);
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +     /* vma is not locked, can't use vma_mark_detached() */
+> > +     vma->detached =3D true;
+> > +#endif
+> >       vma_numab_state_init(vma);
+> >       vma_lock_init(vma);
+> >  }
+> > @@ -1073,6 +1085,7 @@ static inline int vma_iter_bulk_store(struct vma_=
+iterator *vmi,
+> >       if (unlikely(mas_is_err(&vmi->mas)))
+> >               return -ENOMEM;
+> >
+> > +     vma_mark_attached(vma);
+> >       return 0;
+> >  }
+> >
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 7823797e31d2..f0cec673583c 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -465,6 +465,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_=
+struct *orig)
+> >       data_race(memcpy(new, orig, sizeof(*new)));
+> >       vma_lock_init(new);
+> >       INIT_LIST_HEAD(&new->anon_vma_chain);
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +     /* vma is not locked, can't use vma_mark_detached() */
+> > +     new->detached =3D true;
+> > +#endif
+> >       vma_numab_state_init(new);
+> >       dup_anon_vma_name(orig, new);
+> >
+> > diff --git a/mm/memory.c b/mm/memory.c
+> > index 209885a4134f..d0197a0c0996 100644
+> > --- a/mm/memory.c
+> > +++ b/mm/memory.c
+> > @@ -6279,7 +6279,7 @@ struct vm_area_struct *lock_vma_under_rcu(struct =
+mm_struct *mm,
+> >               goto inval;
+> >
+> >       /* Check if the VMA got isolated after we found it */
+> > -     if (vma->detached) {
+> > +     if (is_vma_detached(vma)) {
+> >               vma_end_read(vma);
+> >               count_vm_vma_lock_event(VMA_LOCK_MISS);
+> >               /* The area was replaced with another one */
+> > diff --git a/mm/vma.c b/mm/vma.c
+> > index 8a454a7bbc80..73104d434567 100644
+> > --- a/mm/vma.c
+> > +++ b/mm/vma.c
+> > @@ -295,7 +295,7 @@ static void vma_complete(struct vma_prepare *vp, st=
+ruct vma_iterator *vmi,
+> >
+> >       if (vp->remove) {
+> >  again:
+> > -             vma_mark_detached(vp->remove, true);
+> > +             vma_mark_detached(vp->remove);
+> >               if (vp->file) {
+> >                       uprobe_munmap(vp->remove, vp->remove->vm_start,
+> >                                     vp->remove->vm_end);
+> > @@ -1220,7 +1220,7 @@ static void reattach_vmas(struct ma_state *mas_de=
+tach)
+> >
+> >       mas_set(mas_detach, 0);
+> >       mas_for_each(mas_detach, vma, ULONG_MAX)
+> > -             vma_mark_detached(vma, false);
+> > +             vma_mark_attached(vma);
+> >
+> >       __mt_destroy(mas_detach->tree);
+> >  }
+> > @@ -1295,7 +1295,7 @@ static int vms_gather_munmap_vmas(struct vma_munm=
+ap_struct *vms,
+> >               if (error)
+> >                       goto munmap_gather_failed;
+> >
+> > -             vma_mark_detached(next, true);
+> > +             vma_mark_detached(next);
+> >               nrpages =3D vma_pages(next);
+> >
+> >               vms->nr_pages +=3D nrpages;
+> > diff --git a/mm/vma.h b/mm/vma.h
+> > index 388d34748674..2e680f357ace 100644
+> > --- a/mm/vma.h
+> > +++ b/mm/vma.h
+> > @@ -162,6 +162,7 @@ static inline int vma_iter_store_gfp(struct vma_ite=
+rator *vmi,
+> >       if (unlikely(mas_is_err(&vmi->mas)))
+> >               return -ENOMEM;
+> >
+> > +     vma_mark_attached(vma);
+> >       return 0;
+> >  }
+> >
+> > @@ -385,6 +386,7 @@ static inline void vma_iter_store(struct vma_iterat=
+or *vmi,
+> >
+> >       __mas_set_range(&vmi->mas, vma->vm_start, vma->vm_end - 1);
+> >       mas_store_prealloc(&vmi->mas, vma);
+> > +     vma_mark_attached(vma);
+> >  }
+> >
+> >  static inline unsigned long vma_iter_addr(struct vma_iterator *vmi)
+> > diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_i=
+nternal.h
+> > index 11c2c38ca4e8..2fed366d20ef 100644
+> > --- a/tools/testing/vma/vma_internal.h
+> > +++ b/tools/testing/vma/vma_internal.h
+> > @@ -414,13 +414,17 @@ static inline void vma_lock_init(struct vm_area_s=
+truct *vma)
+> >       vma->vm_lock_seq =3D UINT_MAX;
+> >  }
+> >
+> > +static inline void vma_mark_attached(struct vm_area_struct *vma)
+> > +{
+> > +     vma->detached =3D false;
+> > +}
+>
+> Yeah I think sensible to just accept that sometimes we are already attach=
+ed
+> when we mark attached.
+>
+> > +
+> >  static inline void vma_assert_write_locked(struct vm_area_struct *);
+> > -static inline void vma_mark_detached(struct vm_area_struct *vma, bool =
+detached)
+> > +static inline void vma_mark_detached(struct vm_area_struct *vma)
+> >  {
+> >       /* When detaching vma should be write-locked */
+> > -     if (detached)
+> > -             vma_assert_write_locked(vma);
+> > -     vma->detached =3D detached;
+> > +     vma_assert_write_locked(vma);
+> > +     vma->detached =3D true;
+> >  }
+> >
+> >  extern const struct vm_operations_struct vma_dummy_vm_ops;
+> > @@ -431,7 +435,8 @@ static inline void vma_init(struct vm_area_struct *=
+vma, struct mm_struct *mm)
+> >       vma->vm_mm =3D mm;
+> >       vma->vm_ops =3D &vma_dummy_vm_ops;
+> >       INIT_LIST_HEAD(&vma->anon_vma_chain);
+> > -     vma_mark_detached(vma, false);
+> > +     /* vma is not locked, can't use vma_mark_detached() */
+> > +     vma->detached =3D true;
+> >       vma_lock_init(vma);
+> >  }
+> >
+> > @@ -457,6 +462,8 @@ static inline struct vm_area_struct *vm_area_dup(st=
+ruct vm_area_struct *orig)
+> >       memcpy(new, orig, sizeof(*new));
+> >       vma_lock_init(new);
+> >       INIT_LIST_HEAD(&new->anon_vma_chain);
+> > +     /* vma is not locked, can't use vma_mark_detached() */
+> > +     new->detached =3D true;
+> >
+> >       return new;
+> >  }
+> > --
+> > 2.47.0.338.g60cca15819-goog
+> >
 
