@@ -1,206 +1,100 @@
-Return-Path: <linux-kernel+bounces-418021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C709D5BEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:27:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819CD9D5BF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:29:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE7441F22ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:27:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4693728219B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA9E18C029;
-	Fri, 22 Nov 2024 09:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4GONnZB"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9541D88D1;
+	Fri, 22 Nov 2024 09:29:12 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EC610A3E
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6EF1D47A3
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732267656; cv=none; b=PC6HVEBHOs/Rhjqu1hvxBbgHO7Z0Raekvuh11tvT5gpfJCnF+ZE0hO+uTBKV4L3PXfCVyyLGGklIOYZPVeBPrxJyQKUXF1CrP68giDwR90EgCh4wa1aWzx1vvgtFqNQdsBg2jsdRyg4RurwlKqYCLBI2x0taMSvGkA8rT4c64gk=
+	t=1732267752; cv=none; b=Oy0QP8e+nrO2OSLZ5l5onyS5C1WF62ebnrAu0l7JA/vkqLbi2ss4VaOOaRFVUbIShPmW47H/cxMW6cfs8qNLF2ZZcPS7oG4QxkbuL8AdIWkd7TeEJReJdmvt3Qjf7SpSGNwU9QbCkjpNmIXfR96a4rYQXbRATFcSovHL58s4Jpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732267656; c=relaxed/simple;
-	bh=9/+Jgi/pv0kFY4+ddAct2Ut6BiknvHEsbDkOtH7C6j4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnoCGCE38sN1yTca4LGP5vFTCnfpeUlHlMd4ekbOsef1K0HsZivlOazwl3c3fVtJVC81blIcvJRZfFbVIN39scrn4NWojcyfGYCMPWb+paekRnqdS1M1iKATP/uefU0kqCsvYrSfCIJQgBVEV3kF+1tZZtUH5FjiJirJvd++Nt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4GONnZB; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ffa97d99d6so2844181fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:27:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732267651; x=1732872451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o/KjUXRCXlsWOPqYKRfBv66hdF54Xlcb8aQ4sHoZGC8=;
-        b=x4GONnZBc1oh7t001KMYnk142Ce0tAT5Un5aagRHhmbLv/omeKCLjuA5QVRYLThH78
-         ufFtABnLyru13fMs0fPlX4x0Igm1S6w+KnBBSO01ug+pYafSQJ0Hz7IjbA4eYxViZ8ex
-         hDqnSbA2clG/GzegBVLNHQAbtwQplMwwqhXk6fS+yDvgt8IOBYHZlCKPxtrCvUTVp7ou
-         5UlpRd/BZHld59X3nZxlRWX2BKWWz8MyfRjQqtwoKUBp505jdJBlCGRxSC8l2yYUo9F4
-         2rUyhsSL3rZaqiU35ol7CsBQVwYhNUGoc2t6vXyAwQCq2mq28CU0XtHRxGhO6KQ35zaO
-         BNDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732267651; x=1732872451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o/KjUXRCXlsWOPqYKRfBv66hdF54Xlcb8aQ4sHoZGC8=;
-        b=w85uuadfi/Xi6AvqdH5pCPbDgD90eiphiKi12B53LP11/6cce5rsOkNE6DgkwJQ6js
-         0WimtLlP8IMsuzt48meI/5MRqcfg3n76qy+J9r4icnbUErIcHOgKsWrnmi2nzBP59t3Z
-         MbTrrYgD0pk5M4eXwn9kyQiMD1Xca4DwsCon5FTiZyYR1NR4UHHMxkgbhDKD37mBJaeG
-         8+EDt1Vb6JXaOCNI93+psdEyudP0hmo8DnkobKaCqOG8VaRVmfjNJH3JWSkW7kiqUdMw
-         yEK3rw1feDmk5gv3/QHvYNkqUZZsP2VdkI+cnsW8uZTSYJn7jlANp4Rp7UB1Sae7OULA
-         +qwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW2rkNx2uOlhVHBI2e1lUSUVCi4kZ2fBK+DKYxJs3GzliaRenWEEb7l2bvUFqXIhFVAUBDYEVgHpqvXJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZBihm7NAauLznxLkui1+cS94+om5qE9lkWm+5Er/98xvWGpIp
-	5kyWtuUfGjbfYhpSqP0r4fG2t2IKizWPQBV/lUhzKjUvfCbLqyhG0eh8FYJrkN0=
-X-Gm-Gg: ASbGncvnTwAemkdir/+mfeg6cfj3nhZnZIxOtPkkwZunqiy+Qh1aun+rZrSNR0EGPOJ
-	U0g6rkAHYjm30qNNzFr08uGnU1Hc6UKPP+m0o3MyZBKvgjt6VKGrSSGeFWseKFCjTshsEXNgYsU
-	+SWpxA8wfW/PgEUbjxv6xpfbzdJrr4+WaDWGhBtdvtD8CH8YzQYMIbdNPYEQV3All7nVrjjSiSV
-	L/7WJv0hz7OCDaaWR3DJRxpuW7bLe1CJ6oC5O+3fgjElZx/UfVCaXolg45eRVSZkzH7BLTGD+Ti
-	t4BE470PQmHBDM4xLpia1pcXCznREw==
-X-Google-Smtp-Source: AGHT+IHz5X7WuQYcFRz/g4VX8x8yQgJsaI2Y2adSrullGcRsmNHhxorXWq5F5q45k9j4fbqgs7YKpQ==
-X-Received: by 2002:a05:651c:546:b0:2ff:4ce0:d233 with SMTP id 38308e7fff4ca-2ffa71853dcmr12506621fa.28.1732267651258;
-        Fri, 22 Nov 2024 01:27:31 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ffa735717bsm2283061fa.90.2024.11.22.01.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 01:27:30 -0800 (PST)
-Date: Fri, 22 Nov 2024 11:27:27 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: x1e80100-romulus: Set up PCIe3 /
- SDCard reader
-Message-ID: <n2iw57ngqjsyawatqjpw2kpls3hlnx62ryrihnk2t4xfojuevp@svndllaqa4zt>
-References: <20241122-topic-sl7_feat2-v1-0-33e616be879b@oss.qualcomm.com>
- <20241122-topic-sl7_feat2-v1-2-33e616be879b@oss.qualcomm.com>
+	s=arc-20240116; t=1732267752; c=relaxed/simple;
+	bh=VjR/w5HQyOyqCUeFRwUvpo8VsC91Isa5gXh7Yksg95E=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Yxu1VCc9tPJ/7nskFebOB7LHPAbMw8C+AHxwLzPUbZI655YaGPVjQhIZb3zAsP4VCm5c36L9VwCydxwU0MTes4tyBXs2qm7kd96CzmoX5kG4eIQTHklBNmYfOkgzu8Gy6+F/V70jCp2kJGcPpOl+lXsFgAPrmQP1eXJLyXisqCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 363e8f08a8b411efa216b1d71e6e1362-20241122
+X-CTIC-Tags:
+	HR_CTE_8B, HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE
+	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_LOWREP, SRC_LOWREP
+	DN_TRUSTED, SRC_TRUSTED, SA_UNTRUSTED, SA_LOWREP, SA_EXISTED
+	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-UNFAMILIAR: 1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:a37141d4-185a-4478-8dd5-a709db39fdd6,IP:20,
+	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:18,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:63
+X-CID-INFO: VERSION:1.1.38,REQID:a37141d4-185a-4478-8dd5-a709db39fdd6,IP:20,UR
+	L:0,TC:0,Content:0,EDM:25,RT:0,SF:18,FILE:0,BULK:0,RULE:Spam_GS981B3D,ACTI
+	ON:quarantine,TS:63
+X-CID-META: VersionHash:82c5f88,CLOUDID:31e71d4d61855c1377ffcc828ed128db,BulkI
+	D:241122172903BPJA7191,BulkQuantity:0,Recheck:0,SF:16|19|23|38|43|66|74,TC
+	:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,C
+	OL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_USA,TF_CID_SPAM_FSD
+X-UUID: 363e8f08a8b411efa216b1d71e6e1362-20241122
+X-User: heminhong@kylinos.cn
+Received: from localhost.localdomain [(111.48.69.246)] by mailgw.kylinos.cn
+	(envelope-from <heminhong@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1678279502; Fri, 22 Nov 2024 17:29:02 +0800
+From: Minhong He <heminhong@kylinos.cn>
+To: heminhong@kylinos.cn,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts: prevent resource leak
+Date: Fri, 22 Nov 2024 17:28:30 +0800
+Message-Id: <20241122092830.91079-1-heminhong@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122-topic-sl7_feat2-v1-2-33e616be879b@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 03:14:11AM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The Surface Laptops have a Realtek RTS5261 SD Card reader connected
-> over a Gen1x1 link to the PCIe3 host. Set up the necessary bits to
-> make it functional.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 63 ++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> index 6aea8f3573e834273d56448da772edd27855efec..66a12b20b096baa7d5cf8c5fb65927b765aa18ff 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> @@ -767,6 +767,27 @@ &mdss_dp3_phy {
->  	status = "okay";
->  };
->  
-> +&pcie3 {
-> +	perst-gpios = <&tlmm 143 GPIO_ACTIVE_LOW>;
-> +	wake-gpios = <&tlmm 145 GPIO_ACTIVE_HIGH>;
-> +
-> +	/* The power supply enable GPIOs are reserved by the secure firmware */
-> +
-> +	pinctrl-0 = <&pcie3_default>;
-> +	pinctrl-names = "default";
-> +
-> +	/* The RTS5261 chip on the other side only does Gen1x1 anyway */
-> +	max-link-speed = <1>;
-> +	status = "okay";
-> +};
-> +
-> +&pcie3_phy {
-> +	vdda-phy-supply = <&vreg_l3c>;
-> +	vdda-pll-supply = <&vreg_l3e>;
-> +
-> +	status = "okay";
-> +};
-> +
->  &pcie4 {
->  	status = "okay";
->  };
-> @@ -797,6 +818,25 @@ &pcie6a_phy {
->  	status = "okay";
->  };
->  
-> +&pm8550ve_2_gpios {
-> +	sde7_main_reg_en: sde7-main-reg-en-state {
-> +		pins = "gpio6";
-> +		function = "normal";
-> +	};
-> +
-> +	sde7_aux_reg_en: sde7-aux-reg-en-state {
-> +		pins = "gpio8";
-> +		function = "normal";
-> +	};
-> +};
-> +
-> +&pm8550ve_8_gpios {
-> +	vreg_12v_x8_en: 12v-x8-reg-en-state {
-> +		pins = "gpio8";
-> +		function = "normal";
-> +	};
-> +};
+In the main() function, the fopen() is used to open the file.
+When the file is successfully opened, not using fclose() to close the file.
+It will cause memory leak or file corruption.
 
-These pinctrls don't seem to be used.
+Signed-off-by: Minhong He <heminhong@kylinos.cn>
+---
+ scripts/insert-sys-cert.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +
->  &pmc8380_3_gpios {
->  	edp_bl_en: edp-bl-en-state {
->  		pins = "gpio4";
-> @@ -946,6 +986,29 @@ ssam_state: ssam-state-state {
->  		bias-disable;
->  	};
->  
-> +	pcie3_default: pcie3-default-state {
-> +		perst-n-pins {
-> +			pins = "gpio143";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-disable;
-> +		};
-> +
-> +		clkreq-n-pins {
-> +			pins = "gpio144";
-> +			function = "pcie3_clk";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +
-> +		wake-n-pins {
-> +			pins = "gpio145";
-> +			function = "gpio";
-> +			drive-strength = <2>;
-> +			bias-pull-up;
-> +		};
-> +	};
-> +
->  	pcie6a_default: pcie6a-default-state {
->  		perst-n-pins {
->  			pins = "gpio152";
-> 
-> -- 
-> 2.47.0
-> 
-
+diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
+index 8902836c2342..dcd1902b495e 100644
+--- a/scripts/insert-sys-cert.c
++++ b/scripts/insert-sys-cert.c
+@@ -361,6 +361,7 @@ int main(int argc, char **argv)
+ 		get_symbol_from_map(hdr, system_map, USED_SYM, &used_sym);
+ 		get_symbol_from_map(hdr, system_map, LSIZE_SYM, &lsize_sym);
+ 		cert_sym.size = used_sym.address - cert_sym.address;
++		fclose(system_map);
+ 	} else {
+ 		info("Symbol table found.\n");
+ 		if (system_map_file)
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
