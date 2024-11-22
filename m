@@ -1,169 +1,309 @@
-Return-Path: <linux-kernel+bounces-418002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329139D5BB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:18:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9E9D5BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:18:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64A9288334
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:18:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB5BB23879
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:18:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1AF1DFDAF;
-	Fri, 22 Nov 2024 09:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F971DED5A;
+	Fri, 22 Nov 2024 09:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aReSrTav"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Dz9Sta9Z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NMALlgmb"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E0B1DE2CF
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E681DE2CF;
+	Fri, 22 Nov 2024 09:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732266818; cv=none; b=odVGRistxP+GAvK5fzah9YAGtAHw8HzkSIAD0g3ZYQfDpIcjhtFmRN08TajDLc6DnzODe78ZN3dEbEaN97NFEuy+FMTN3kVVqzBE6MKfyauYM+tAC8Oi5JssknsXlBAbtWW7SM+MLClEAzCdl0iCEdgu7kzrRH+30VF96OQCqNE=
+	t=1732266837; cv=none; b=KWvReyiPOlJG1bAyc0onu+ele5UHlvtKYumDj3cVufAtf5eI1Q5vkW7Q2L8WJTij/YQh1uYXg/tD7o4ZDgCBT5xmvDqlQi14a39X2qBH74x6L5Ekj89bwHd6piu0qOf6oj/WPdcGtrICFomvZMe+vswo2Tz3AAzylvqQ17TqWpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732266818; c=relaxed/simple;
-	bh=NRpLumrdDZhSXCJcusWkwzHsBkwvkTsOwVSCIyGYQBU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TlaJ/IwWFO1O4K0tVlYuyp/QCvLVbLpaVHVn465XYGZKh+j3QD9MToxSDIOZlPzUdW/Z6hs3kRLoc5JY/uWd11etl4ibep54TNX5qQmPmRl/aWl+Vm+zcQH6xU3tLuoFpV+MTCIhcZautn+9MtmaPJW+L+Gjt0air4RJHmYFFWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aReSrTav; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53a007743e7so2078685e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:13:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732266814; x=1732871614; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L+pN3XKvVFmetq3YJbHAkykp748W6pEN5H4vcdcbZbk=;
-        b=aReSrTavPmefqiJJxzteHzuaZq2g26wDGcOsg2opcPSdbAgbuEfJI38+quBcGr9wgB
-         3hoBoliJzrVSEIQJTNTbJU1Zbz3p2Bv05mN71RhBYLXqdzSazeMmMgxaJwZagZL+7jZc
-         Mq0PXfXDY6mfVwDtMafnYPWZKIwOvR2dvymn8dxWCgioKgTflL2JVThbrG9nRAEgp7sH
-         B9ckTVWzSK7sG145LlXik+oUf76t5PbGYoF4lfkN330WrQxZw6b1+5TU78RqNOQ4PvvA
-         vGUxCXnelI8DNGjMViJsGAE7ANDk1v2PL//ZitaEMlzP13qzYjKCUWu6taljJJ7PtyrA
-         aCag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732266814; x=1732871614;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L+pN3XKvVFmetq3YJbHAkykp748W6pEN5H4vcdcbZbk=;
-        b=hJlNj+ekQpOZrRe+Ccow02r2xxc3JZmawAdAUe/dg9EullxzoP3/1NsKobZEq64YYh
-         DgUSwtR3AlGdN/PJ0WekxS8+j32rdVhLtQFesezDIH7OQ1q+BsB0AkuhbONXHeL/Zb29
-         ogi6Sv+QhyNKCkdCuBwNrfopbnonk6s6l2ylQ2nuZUZTUk3Pq6RRAGYzfCJhjPikNfmu
-         6EmOHGzgNCE0cM9VHbKOWm31XlfLSbqihDfM/CuWPD2mUu61d0bDKnCRhb+3Pn5qrpDF
-         M+Ttlu3BJC7v6bmmLwUO0y0VJ9L3kgX2tbflv1zjuRFHKRseRGD9H8w6kra14jB0r4PX
-         ivNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBgOMmNb8NsBWKrqZjMYdwRxbtJQbTHLK5WeVjZNYzvmiMoFxhTQqikUQwFYvlgWRv55deXSNVv8U4Qf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSyIk2IVQuh8QID+KDxzWpz4mkKv+Ju4YiuKBDVZXzptXfqqzO
-	mgsg3NZMh1TisC13Q63AWP2TcUvG0y2+fsWo7SkuLqDbF9622pXBA7N6ne15Gyot/TU2Fz2ul8e
-	Z
-X-Gm-Gg: ASbGncung0df3phqcO58+Ey0v9aioHE5z2xYl0622Jm0BaMoX92syGV1xQ8S1W2VDNJ
-	nF7rowOf+FP5wcLlQXh3d+pzPlQyoQDCzTsfWiSwnZPV3FJ7YjmbKNK+d9O66ns3LfZ4+GqFumo
-	yv1MFsXHXxYdhvO4H7MO8uJy6oAiRtWXseCnkCchvJJE/cSwTF7Rf2XtR5rep6WCuA4vJPnLCOT
-	yq0WP/Gkuf9T2+ErgLN6IJVFGxaS6GpvAqpfOGz+Xp/k2a2m92JcPrD0A==
-X-Google-Smtp-Source: AGHT+IFuPDVVeiIBHBx+sqGVLigoH/J3FctzJhynNILKoVJRUYGgovyLxnstEYxyEorm8Lhl1P2kvQ==
-X-Received: by 2002:a05:6512:230b:b0:539:f6c4:c29d with SMTP id 2adb3069b0e04-53dd39b4d2bmr879301e87.54.1732266814401;
-        Fri, 22 Nov 2024 01:13:34 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2451386sm299530e87.77.2024.11.22.01.13.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Nov 2024 01:13:33 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 22 Nov 2024 11:13:06 +0200
-Subject: [PATCH v4 10/10] drm/sun4i: use
- drm_atomic_helper_connector_hdmi_check()
+	s=arc-20240116; t=1732266837; c=relaxed/simple;
+	bh=/RiVaYRlUIVDOXW7SckpIS+QoWtu8hzGXOKnCdpSJak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IEZm8f0iGxDzG6GfymmEa4o0rcihSbUSzdEuF9HVeGxBJ4rIrst7cv7eYMzMk1UNzA1cDADeyqEc1uGmrDEAsFW7GR055Y2wlZ+uHXu7N81b7itZkKCkt4uvu4FrBCifdzwSWWKzTpWBicHlaU5vncRN4mwxj20UILe40uMq4ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Dz9Sta9Z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NMALlgmb; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 890BC1380267;
+	Fri, 22 Nov 2024 04:13:53 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Fri, 22 Nov 2024 04:13:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1732266833; x=
+	1732353233; bh=n7kZYzz3OBgLUHx6zbIxlb9gAM2VKHvL/nG15VT6Xps=; b=D
+	z9Sta9ZqRQvkbIA47wKXI2Xq2AlHCxyBpapV2qxCBwxLVkE3gMCno1IRZyjpZbYg
+	2miBIrOWLtr5fwQiFpcSxFXRTBDQfEo4ccR6XOUHHsc6AVOiAviy6lH9SgJ4pZD0
+	wnhvE9wLdy+UeKpv74KwbGc3urMc3nKBN3SHCx0j6k8I87d0J28DvcSUiWBoUr7K
+	Lf8ekdnB4VEO+kVOU8OMf8nJvEsRVQR3on2Yr84Hur6WM7u63tmjCKaGHYSoa0Ag
+	XIJw2B0nAH5j9yItwz/EYNJPNGpYBMYJ7yMm2gJAfhfqIj7k1/2ufNoPRajfKMvP
+	oVtIHSocJnbwSy6Kjesdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1732266833; x=1732353233; bh=n7kZYzz3OBgLUHx6zbIxlb9gAM2VKHvL/nG
+	15VT6Xps=; b=NMALlgmb5Hdxm/RazpOzDtIoVfDI8TsYJ1B4q85uKhgwST9YDhl
+	b6C2U0RQ7ROp2MM5wEbprmCcr4Rmd8FQHVIvRRq9WwQyBVgmMe0pWyyfJI1fCf/Z
+	XeK6IiDuIY+0IE7lkY1HQMk256sM9d0oePhsqhliWcRx1Z6lqDkMrG8/IrKI+xQe
+	0TnWkqyRNGC3E8j/LP2XFr6ifxHtIPaxF0aKJYrV1QeYc9tH3Q+8+dtEG7K6CApA
+	iUN13KZh3RZVqLk25Ac3FGW4Z+NSTiYS6tzBP9dtKnjdgW/pajCOpGchwcf2QEWG
+	P32xms7oFQ8lzc3u9FjlgM/AechQME32s5w==
+X-ME-Sender: <xms:UEtAZ5V9xTmA-VNQ4lU2Ffin7gPwnwBz9Kc4uV5BHZlVjoY_gXjCNA>
+    <xme:UEtAZ5lyPEtttLPc9513xqawm1IwSEDWkktDEXW1710xtIZGUeTbYINzTLlXyhg2r
+    D65_ZmoxbRSuHv2WTc>
+X-ME-Received: <xmr:UEtAZ1aZHqLs9_vG5SOs1kyTarsNnSAWjaYoQir1umeeU2r29HGf85wt8wFCKuASxQ4buQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeejgdduvdejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeeuhedvgeegfeduledu
+    geevvdeuteettefhfefgieekudehiedvuefhvdevkeeigeenucffohhmrghinhepkhgvrh
+    hnvghlrdhorhhgpdhprghgvghtrggslhgvshdrthhoohhlshenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmoh
+    hvrdhnrghmvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehmrggtihgvjhdrfihivggtiihorhdqrhgvthhmrghnsehinhhtvghlrdgtoh
+    hmpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohep
+    mhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsghpsegrlhhivghnkedrug
+    gvpdhrtghpthhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtgho
+    mhdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhphgrse
+    iihihtohhrrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:UEtAZ8X59bjHsNNaMmoYCoAOXk1QlrzxXJvOvsZvm_Hes2VoYarLZA>
+    <xmx:UEtAZzkbAhPtDUNagE5AcPyq-YVW3q4BtwCm1W8pgrCxTzeEX_jLkQ>
+    <xmx:UEtAZ5dpzQM0p035FPPKpdruaOOsv9Asx6kR6iwoyiwhpm0X0F7KkQ>
+    <xmx:UEtAZ9EwJecTaVPWy7XkSOcVc4MCv4TG14JS_WqW_3ifsdxIuLp5DA>
+    <xmx:UUtAZ8ft-R1YsBXNYXLNTY1Ra0SJsvS4tlI9iVCpJKtsx9PrfkNsGUkh>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 22 Nov 2024 04:13:48 -0500 (EST)
+Date: Fri, 22 Nov 2024 11:13:44 +0200
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3] selftests/lam: Test get_user() LAM pointer handling
+Message-ID: <kabcughnduiak2ipmzujq5gmsqu4ugfwxpd23gbic2hcinirb4@r3quhedtuvms>
+References: <20241122085521.270802-1-maciej.wieczor-retman@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-hdmi-mode-valid-v4-10-2fee4a83ab79@linaro.org>
-References: <20241122-hdmi-mode-valid-v4-0-2fee4a83ab79@linaro.org>
-In-Reply-To: <20241122-hdmi-mode-valid-v4-0-2fee4a83ab79@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2011;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=NRpLumrdDZhSXCJcusWkwzHsBkwvkTsOwVSCIyGYQBU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnQEsiTDOV2BoHyoyOts+0adMkGX+r4MYsJsnPa
- Far8OQb/72JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ0BLIgAKCRCLPIo+Aiko
- 1UrVB/4mHUMcziWq1wY32ABnFkVrTROOJMHkHk+6+aK4dszHbnC762R/MtVLV2lOqnA6MnxSNW0
- EVuY2bQWv4PVDAZe+RPKyAm1fyLq9OizOUvRo1l12zL/O2139m41O4x3tI0r6uFqif8Pn4rZMCk
- t2ZMyaLmzPC6ufRtblUgk+VXVLehNTanDBHYRGga0siqsAnC662tRVl9Nf7/u1NOCILS6qYcKel
- P1sPNcHJSvULZIp9OJpXG/FZB4M7PHg/tR5MlTQzjrj0PWaj0798D+vDyF6eDysiUqnzifGcaGx
- giuaughGqZtani8SvGv0/wuVrNdnUepnAPAPfoATeqV2sc3E
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241122085521.270802-1-maciej.wieczor-retman@intel.com>
 
-Replace sun4i_hdmi_connector_atomic_check(), which performs just TMDS
-char rate check, with drm_atomic_helper_connector_hdmi_check(), which
-performs additional checks basing on the HDMI Connector's state.
+On Fri, Nov 22, 2024 at 09:55:20AM +0100, Maciej Wieczor-Retman wrote:
+> Recent change in how get_user() handles pointers [1] has a specific case
+> for LAM. It assigns a different bitmask that's later used to check
+> whether a pointer comes from userland in get_user().
+> 
+> While currently commented out (until LASS [2] is merged into the kernel)
+> it's worth making changes to the LAM selftest ahead of time.
+> 
+> Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
+> get_user() in its implementation. Execute the syscall with differently
+> tagged pointers to verify that valid user pointers are passing through
+> and invalid kernel/non-canonical pointers are not.
+> 
+> Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
+> test was ran without issues with both the LAM lines from [1] untouched
+> and commented out. The test was also ran without issues with LAM_SUP
+> both enabled and disabled.
+> 
+> 4/5 level pagetables code paths were also successfully tested in Simics
+> on a 5-level capable machine.
+> 
+> [1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
+> [2] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
+> 
+> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+> ---
+> Changelog v3:
+> - mmap the pointer passed to get_user to high address if 5 level paging
+>   is enabled and to low address if 4 level paging is enabled.
+> 
+> Changelog v2:
+> - Use mmap with HIGH_ADDR to check if we're in 5 or 4 level pagetables.
+> 
+>  tools/testing/selftests/x86/lam.c | 110 ++++++++++++++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
+> index 0ea4f6813930..616a523c3262 100644
+> --- a/tools/testing/selftests/x86/lam.c
+> +++ b/tools/testing/selftests/x86/lam.c
+> @@ -4,6 +4,7 @@
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/syscall.h>
+> +#include <sys/ioctl.h>
+>  #include <time.h>
+>  #include <signal.h>
+>  #include <setjmp.h>
+> @@ -43,7 +44,15 @@
+>  #define FUNC_INHERITE           0x20
+>  #define FUNC_PASID              0x40
+>  
+> +/* get_user() pointer test cases */
+> +#define GET_USER_USER           0
+> +#define GET_USER_KERNEL_TOP     1
+> +#define GET_USER_KERNEL_BOT     2
+> +#define GET_USER_KERNEL         3
+> +
+>  #define TEST_MASK               0x7f
+> +#define L5_SIGN_EXT_MASK        (0xFFUL << 56)
+> +#define L4_SIGN_EXT_MASK        (0x1FFFFUL << 47)
+>  
+>  #define LOW_ADDR                (0x1UL << 30)
+>  #define HIGH_ADDR               (0x3UL << 48)
+> @@ -370,6 +379,80 @@ static int handle_syscall(struct testcases *test)
+>  	return ret;
+>  }
+>  
+> +static int get_user_syscall(struct testcases *test)
+> +{
+> +	uint64_t ptr_address, bitmask;
+> +	void *p, *ptr;
+> +	int ret = 0;
+> +	int fd;
+> +
+> +	p = mmap((void *)HIGH_ADDR, 1, PROT_READ | PROT_WRITE,
+> +		 MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+> +
+> +	if (p == MAP_FAILED) {
+> +		bitmask = L4_SIGN_EXT_MASK;
+> +		ptr_address = LOW_ADDR;
+> +
+> +	} else {
+> +		bitmask = L5_SIGN_EXT_MASK;
+> +		ptr_address = HIGH_ADDR;
+> +	}
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
+Hm. Why not use cpu_has_lam() for the paging check?
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 54b72fe220afacc208b3fd48d5160031127ea14a..b05fd77870b00aac97d003f3fb9c2b98cb73abc0 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -187,24 +187,6 @@ sun4i_hdmi_connector_clock_valid(const struct drm_connector *connector,
- 	return MODE_NOCLOCK;
- }
- 
--static int sun4i_hdmi_connector_atomic_check(struct drm_connector *connector,
--					     struct drm_atomic_state *state)
--{
--	struct drm_connector_state *conn_state =
--		drm_atomic_get_new_connector_state(state, connector);
--	struct drm_crtc *crtc = conn_state->crtc;
--	struct drm_crtc_state *crtc_state = crtc->state;
--	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
--	enum drm_mode_status status;
--
--	status = sun4i_hdmi_connector_clock_valid(connector, mode,
--						  conn_state->hdmi.tmds_char_rate);
--	if (status != MODE_OK)
--		return -EINVAL;
--
--	return 0;
--}
--
- static int sun4i_hdmi_get_modes(struct drm_connector *connector)
- {
- 	struct sun4i_hdmi *hdmi = drm_connector_to_sun4i_hdmi(connector);
-@@ -258,7 +240,7 @@ static const struct drm_connector_hdmi_funcs sun4i_hdmi_hdmi_connector_funcs = {
- };
- 
- static const struct drm_connector_helper_funcs sun4i_hdmi_connector_helper_funcs = {
--	.atomic_check	= sun4i_hdmi_connector_atomic_check,
-+	.atomic_check	= drm_atomic_helper_connector_hdmi_check,
- 	.mode_valid	= drm_hdmi_connector_mode_valid,
- 	.get_modes	= sun4i_hdmi_get_modes,
- };
+> +
+> +	munmap(p, 1);
+> +
+> +	ptr = mmap((void *)ptr_address, 1, PROT_READ | PROT_WRITE,
+> +		   MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+
+Mapping sizer of 1 byte looks odd. It is not wrong, but looks strange.
+Maybe use PAGE_SIZE instead?
+
+> +
+> +	if (ptr == MAP_FAILED) {
+> +		perror("failed to map byte to pass into get_user");
+> +		return 1;
+> +	}
+> +
+> +	if (test->lam != 0) {
+
+It is always true, right?
+
+> +		if (set_lam(test->lam) != 0) {
+> +			ret = 2;
+> +			goto error;
+> +		}
+> +	}
+> +
+> +	fd = memfd_create("lam_ioctl", 0);
+> +	if (fd == -1) {
+> +		munmap(ptr, 1);
+> +		exit(EXIT_FAILURE);
+> +	}
+> +
+> +	switch (test->later) {
+> +	case GET_USER_USER:
+> +		/* Control group - properly tagger user pointer */
+> +		ptr = (void *)set_metadata((uint64_t)ptr, test->lam);
+> +		break;
+> +	case GET_USER_KERNEL_TOP:
+> +		/* Kernel address with top bit cleared */
+> +		bitmask &= (bitmask >> 1);
+> +		ptr = (void *)((uint64_t)ptr | bitmask);
+> +		break;
+> +	case GET_USER_KERNEL_BOT:
+> +		/* Kernel address with bottom sign-extension bit cleared */
+> +		bitmask &= (bitmask << 1);
+> +		ptr = (void *)((uint64_t)ptr | bitmask);
+> +		break;
+> +	case GET_USER_KERNEL:
+> +		/* Try to pass a kernel address */
+> +		ptr = (void *)((uint64_t)ptr | bitmask);
+> +		break;
+> +	default:
+> +		printf("Invalid test case value passed!\n");
+> +		break;
+> +	}
+> +
+> +	if (ioctl(fd, FIOASYNC, ptr) != 0)
+> +		ret = 1;
+> +
+> +error:
+> +	munmap(ptr, 1);
+
+	close(fd);
+
+> +	return ret;
+> +}
+> +
+>  int sys_uring_setup(unsigned int entries, struct io_uring_params *p)
+>  {
+>  	return (int)syscall(__NR_io_uring_setup, entries, p);
+> @@ -883,6 +966,33 @@ static struct testcases syscall_cases[] = {
+>  		.test_func = handle_syscall,
+>  		.msg = "SYSCALL:[Negative] Disable LAM. Dereferencing pointer with metadata.\n",
+>  	},
+> +	{
+> +		.later = GET_USER_USER,
+> +		.lam = LAM_U57_BITS,
+> +		.test_func = get_user_syscall,
+> +		.msg = "GET_USER: get_user() and pass a properly tagged user pointer.\n",
+> +	},
+> +	{
+> +		.later = GET_USER_KERNEL_TOP,
+> +		.expected = 1,
+> +		.lam = LAM_U57_BITS,
+> +		.test_func = get_user_syscall,
+> +		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the top bit cleared.\n",
+> +	},
+> +	{
+> +		.later = GET_USER_KERNEL_BOT,
+> +		.expected = 1,
+> +		.lam = LAM_U57_BITS,
+> +		.test_func = get_user_syscall,
+> +		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the bottom sign-extension bit cleared.\n",
+> +	},
+> +	{
+> +		.later = GET_USER_KERNEL,
+> +		.expected = 1,
+> +		.lam = LAM_U57_BITS,
+> +		.test_func = get_user_syscall,
+> +		.msg = "GET_USER:[Negative] get_user() and pass a kernel pointer.\n",
+> +	},
+>  };
+>  
+>  static struct testcases mmap_cases[] = {
+> -- 
+> 2.46.2
+> 
 
 -- 
-2.39.5
-
+  Kiryl Shutsemau / Kirill A. Shutemov
 
