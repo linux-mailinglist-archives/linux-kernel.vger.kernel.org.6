@@ -1,451 +1,240 @@
-Return-Path: <linux-kernel+bounces-417706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A71779D582C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:15:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6489D582D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0396DB22CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:15:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD20280D7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19434165F17;
-	Fri, 22 Nov 2024 02:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E4514F12F;
+	Fri, 22 Nov 2024 02:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0SHRZkW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpgG1F6d"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0EF1632C8;
-	Fri, 22 Nov 2024 02:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD56139D04
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732241704; cv=none; b=ZneVyU0Mj3DgWe88pkujuaCe9HtYLsUzNnpwDCsZqztwV8X1B4w8QS57miV69huuLw10zD4j0ihDV4/1Flvy7lH6r1hfRfJCo+vvHEalSgO9Dur3VmYcSek6ssC5OgVC4rav1NaTrHcUmrC/CnQ69xGaHyfS+DA6IWsebTeC3Sk=
+	t=1732241723; cv=none; b=T5aRifL6tI0wU1RkwCGmna0pk0y+5hRSi6rQ2P2XIw7JWUfTDZSdXeQIsrksTPFhayKuFHHC/9nMV1+bx6XMFC2lUMrtPt+sW8zNecgN1eSxZQl/xrAEfxDYikE1z9M4Q2Ab/m3rbKzYb2F1/czSU9KJ2cx3zXRFdGbETK8J2Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732241704; c=relaxed/simple;
-	bh=DX98AGLoCD4TInCe+68vx6iP24DZKhb83ElpMqcnMTc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t3LKzGDGZ/ThzHawmxBLuTJmRbP8fe35caXY4mZ2yoIUWSkUBVaHHadEultw2d1fA7SxCbnvYu6BYNFmhfRhd/WeuQZyzBuiEs6WEKXANxgutgDlXHUAwc1xh1DZ1SKYuAHjNkBnJgSsaSvJ8BYTe2uP9io5tHZ4aXdb/GN9kJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0SHRZkW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA81C4CECE;
-	Fri, 22 Nov 2024 02:15:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732241703;
-	bh=DX98AGLoCD4TInCe+68vx6iP24DZKhb83ElpMqcnMTc=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=F0SHRZkWJ0EzSauhkd4/QkIfj5P6aN+Y3OELMv6nGpk5H+0ZdOBdWbbYlL+Tagaq9
-	 LlsZ1hSjWnkMm9sI6IiCsGmIdmrAWvb2yvB8tLz9OahdUEyrouLFEBCQEsj+5Pd9W7
-	 utwoXwhpQ0UCv19aUgIxo4TQqlPLNdBlqde/0E18UzI0J/K6MDHJyHYYh2wMaiTKib
-	 trDtErDjmYmZgnMO0Qi5kZC4GLbPxOqDwWiptTk/s2jwtctQXdiaymBqNet9WSC5qt
-	 lczW24a7xKrxNWrh64EajVwj+b8qqLp1FMM6Fla40gPm8UCMZw7o6Kaawith0WekFZ
-	 sVsyK7QHJynVA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Fri, 22 Nov 2024 03:14:12 +0100
-Subject: [PATCH 3/3] arm64: dts: qcom: x1e80100-romulus: Set up PS8830s
+	s=arc-20240116; t=1732241723; c=relaxed/simple;
+	bh=AZlunOm/7OmfDB9+2PPiBxhx7aa4gZTaYZt+GywRkrU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DXyNrnqNrPZXwrAr+U51VnHtPmXtCVFKbXcCZHgg8KUqVMuPgZnpeso10Y2Q/Sx/ZzoruzDnlYJ/7eSbFX6Qfnm1qNvvGj0VwOwFAz+zgSvtyzN+plioFHczk4kTNiy/GgFFtG8lSxMJW7qB8FnLnsp76qyhtNAwAfBEGdkP8Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TpgG1F6d; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-514c3c41bafso532616e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:15:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732241720; x=1732846520; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oz6G9SaQxOW9c8C2ra+oDEOFy2SOCb2+x8Bu11EjEus=;
+        b=TpgG1F6dhXG47mY8g5ke8IsmPHrSNan2WjyCeBbeYKzlSSZwRDAbRQNodcqgAwQ/5D
+         k2OYetPfHUeg0VgMEbT1WIVDSYvuqBvayj/+mfZbC9AOnbAJCSTMCAEpGD3JVgTxLhgI
+         Px3UljqQKE/LqM552X7YOi4k54Y2p1sW3HEFcZL0D7BloUmxCjJjNZAP7GZk+z+Dr54Z
+         KoYDeKjOQld4IetcO0HEmaGml4UspbN+PpP9x+ZqdN0DIYsTxwIvDbcm39IBo3lMxaJ3
+         NxguY0ENvvnOo/oINA7WHWbdt6xH1rAmElscePL0IU2VMWcghG7akqtpEbTvUGTuydMB
+         zhng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732241720; x=1732846520;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oz6G9SaQxOW9c8C2ra+oDEOFy2SOCb2+x8Bu11EjEus=;
+        b=k9dq/RD0/Lz5wUdn1MYaGc0wUM8ivqedkn7iiHdjk+Rh18ixvBd/uNqgw2zZicGHj8
+         O1aVPk5OlqfU5Rt67lydI2zYWNJ2B6+GDc97hmHJsZruVRvLb/5dXWNY60MXdKcadVCp
+         mWMQShHxVM/AQEZaG4E9CPBhj09qmlGsCvL+t26YIEMt4EzeO7yjrk6q2GdutbOwOSnS
+         OSvq1eAKeISuCe5+7KDul2/qtuqGBIgFguu3ASQOmK6ajgMKDdhIrMv26C7oYcdj4Q17
+         0ACyUOoN7ZuHc6dY7e1EiZgHa449eGXCw3NhQG4skkm2J0JGuENmbz6G8E7OrigZuuuu
+         ewDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUx3GjS90R6FxaxacT8YNO+eFwn6xj+he4Onc5IIKapaJlbv8USIdEaizSC2shVqGlJx0P3Zg9fiFPyuL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxx+Axsvtsi99Jhmu1fsEMuNBM02ZgsfOAa2Yf7VoYgYpsmKEn
+	YlQcbs5zfrEqITlDEOvh9sQhb92UnVBIRQZ+YglK9obXFdTG1mmv20k30iZw+n/5gM+T0OYnWmZ
+	Z6ncVi0tcYAwdRj+axs+5iucv/sw=
+X-Gm-Gg: ASbGncuLU7kfDriPGYQ/dYh18FyveL87qb5lsp/OBSpxkbREId3X83FvfEZUv9lbd0c
+	efFH7ok8AaWrTE773FSXArPNZ6bZvxSs=
+X-Google-Smtp-Source: AGHT+IHd6I0fQm20fL5MSa+biQ0RvNDMlaU7COJwT/qmitsZsu01W07p8MjzWp44CAEZDiZQykfY81YA6isalbDVU8o=
+X-Received: by 2002:a05:6122:91a:b0:50a:12e4:2618 with SMTP id
+ 71dfb90a1353d-515004ec248mr1438413e0c.2.1732241720222; Thu, 21 Nov 2024
+ 18:15:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-topic-sl7_feat2-v1-3-33e616be879b@oss.qualcomm.com>
-References: <20241122-topic-sl7_feat2-v1-0-33e616be879b@oss.qualcomm.com>
-In-Reply-To: <20241122-topic-sl7_feat2-v1-0-33e616be879b@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732241690; l=8297;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=fZ5KPMJFm1wvW9OMXV9+wYjbbuRp3TDVkEhEE/xALME=;
- b=rMwLNnENTN4WAmUGuedTzCFScB3C2vt2cfCMwexZF3b7Iy1cQwkw2K83RLz+Gb06tssJP3ST8
- OxiR3AtrMoJCsEIrJjueqdT/DFw2m1cEfwcS4P/UIMnKtfQG6iBf+BZ
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+References: <20241120122858.22190-1-laoar.shao@gmail.com> <0aa9f3bd-b1b6-4089-b9eb-5b72d7a1541a@redhat.com>
+ <CALOAHbBMebKtsRnfOFvNKorQk_4KGoCzKd0JcYv2p6pXhJqYbQ@mail.gmail.com>
+ <2024112134-theater-jasmine-61f3@gregkh> <056df1ac-3b90-48b8-9bba-ac84305983a6@redhat.com>
+In-Reply-To: <056df1ac-3b90-48b8-9bba-ac84305983a6@redhat.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Fri, 22 Nov 2024 10:14:44 +0800
+Message-ID: <CALOAHbCSTZz=FRDRjFW+eqssnpOAyq+UUi+KbYBR0crGHSB7qg@mail.gmail.com>
+Subject: Re: [PATCH] /dev/mem: Add a new parameter strict_devmem to bypass
+ strict devmem
+To: David Hildenbrand <david@redhat.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, mingo@redhat.com, arnd@arndb.de, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Thu, Nov 21, 2024 at 11:23=E2=80=AFPM David Hildenbrand <david@redhat.co=
+m> wrote:
+>
+> On 21.11.24 16:14, Greg KH wrote:
+> > On Thu, Nov 21, 2024 at 10:31:12PM +0800, Yafang Shao wrote:
+> >> On Thu, Nov 21, 2024 at 4:51=E2=80=AFPM David Hildenbrand <david@redha=
+t.com> wrote:
+> >>>
+> >>> On 20.11.24 13:28, Yafang Shao wrote:
+> >>>> When CONFIG_STRICT_DEVMEM is enabled, writing to /dev/mem to overrid=
+e
+> >>>> kernel data for debugging purposes is prohibited. This configuration=
+ is
+> >>>> always enabled on our production servers. However, there are times w=
+hen we
+> >>>> need to use the crash utility to modify kernel data to analyze compl=
+ex
+> >>>> issues.
+> >>>>
+> >>>> As suggested by Ingo, we can add a boot time knob of soft-enabling i=
+t.
+> >>>> Therefore, a new parameter "strict_devmem=3D" is added. The reuslt a=
+re as
+> >>>> follows,
+> >>>>
+> >>>> - Before this change
+> >>>>     crash> wr panic_on_oops 0
+> >>>>     wr: cannot write to /proc/kcore      <<<< failed
+> >>>>
+> >>>> - After this change
+> >>>>     - default
+> >>>>       crash> wr panic_on_oops 0
+> >>>>       wr: cannot write to /proc/kcore    <<<< failed
+> >>>>
+> >>>>     - strict_devmem=3Doff
+> >>>>       crash> p panic_on_oops
+> >>>>       panic_on_oops =3D $1 =3D 1
+> >>>>       crash> wr panic_on_oops 0
+> >>>>       crash> p panic_on_oops
+> >>>>       panic_on_oops =3D $2 =3D 0            <<<< succeeded
+> >>>>
+> >>>>     - strict_devmem=3Dinvalid
+> >>>>       [    0.230052] Invalid option string for strict_devmem: 'inval=
+id'
+> >>>>       crash> wr panic_on_oops 0
+> >>>>       wr: cannot write to /proc/kcore  <<<< failed
+> >>>>
+> >>>> Suggested-by: Ingo Molnar <mingo@kernel.org>
+> >>>> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> >>>> ---
+> >>>>    .../admin-guide/kernel-parameters.txt         | 16 ++++++++++++++
+> >>>>    drivers/char/mem.c                            | 21 ++++++++++++++=
++++++
+> >>>>    2 files changed, 37 insertions(+)
+> >>>>
+> >>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Docum=
+entation/admin-guide/kernel-parameters.txt
+> >>>> index 1518343bbe22..7fe0f66d0dfb 100644
+> >>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >>>> @@ -6563,6 +6563,22 @@
+> >>>>                        them frequently to increase the rate of SLB f=
+aults
+> >>>>                        on kernel addresses.
+> >>>>
+> >>>> +     strict_devmem=3D
+> >>>> +                     [KNL] Under CONFIG_STRICT_DEVMEM, whether stri=
+ct devmem
+> >>>> +                     is enabled for this boot. Strict devmem checki=
+ng is used
+> >>>> +                     to protect the userspace (root) access to all =
+of memory,
+> >>>> +                     including kernel and userspace memory. Acciden=
+tal access
+> >>>> +                     to this is obviously disastrous, but specific =
+access can
+> >>>> +                     be used by people debugging the kernel. Note t=
+hat with
+> >>>> +                     PAT support enabled, even in this case there a=
+re
+> >>>> +                     restrictions on /dev/mem use due to the cache =
+aliasing
+> >>>> +                     requirements.
+> >>>> +             on      If IO_STRICT_DEVMEM=3Dn, the /dev/mem file onl=
+y allows
+> >>>> +                     userspace access to PCI space and the BIOS cod=
+e and data
+> >>>> +                     regions. This is sufficient for dosemu and X a=
+nd all
+> >>>> +                     common users of /dev/mem. (default)
+> >>>> +             off     Disable strict devmem checks.
+> >>>> +
+> >>>>        sunrpc.min_resvport=3D
+> >>>>        sunrpc.max_resvport=3D
+> >>>>                        [NFS,SUNRPC]
+> >>>
+> >>> This will allow to violate EXCLUSIVE_SYSTEM_RAM, and I am afraid I do=
+n't
+> >>> enjoy seeing devmem handling+config getting more complicated.
+> >>
+> >> That poses a challenge. Perhaps we should also consider disabling
+> >> functions that rely on EXCLUSIVE_SYSTEM_RAM when strict_devmem=3Doff,
+> >> but implementing such a change seems overly complex.
+> >>
+> >> Our primary goal is to temporarily bypass STRICT_DEVMEM for live
+> >> kernel debugging. In an earlier version, I proposed making the
+> >> fucntion devmem_is_allowed() error-injectable, but Ingo pointed out
+> >> that it violates the principles of STRICT_DEVMEM.
+> >
+> > I think that "primary goal" is the problem here.  We don't want to do
+> > that, at all, for all the reasons why we implemented STRICT_DEVMEM and
+> > for why people enable it.
+>
+> +1
+>
+> >
+> > Either you enable it because you want the protection and "security" it
+> > provides, or you do not.  Don't try to work around it please.
+> >
+> >> Do you have any suggestions on enabling write access to /dev/mem in
+> >> debugging tools like the crash utility, while maintaining
+> >> compatibility with the existing rules?
+> >
+> > I think you just don't provide write access to /dev/mem for debugging
+> > tools as it's a huge security hole that people realized and have plugge=
+d
+> > up.  If you want to provide access to this for "debugging" then just
+> > don't enable that option and live with the risk involved, I don't see
+> > how you can have it both ways.
+>
+> Exactly. And I think a reasonable approach would be to have a debug
+> kernel around into which you can boot, and make sure the debug kernel
+> has such security features turned off.
+>
+> If you rely on distros, maybe you could convince the distro to ship the
+> debug kernel with STRICT_DEVMEM off. I just checked RHEL9, and it only
+> seems to be off in debug kernels on arm64 and s390x (IIUC). Maybe there
+> is a reason we don't even want that off on debug kernels on x86_64, or
+> nobody requested it so far, because using the crash utility with write
+> access on a live system ... is a rather weird ... debugging mechanism in
+> 2024 IMHO.
 
-The Laptop 7 features two USB-C ports, each one sporting a PS8830 USB-C
-retimer/mux. Wire them up.
+It seems I might be a bit outdated.
+Could you share how you typically modify a live system these days? Are
+you using live patching, writing kernel modules, or perhaps some
+clever tools or techniques I'm not familiar with?
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 282 ++++++++++++++++++++-
- 1 file changed, 276 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 66a12b20b096baa7d5cf8c5fb65927b765aa18ff..f930d228a6fc529acb946d0ac13cdd212808238f 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -124,7 +124,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss0_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss0_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss0_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss0_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -153,7 +161,15 @@ port@1 {
- 					reg = <1>;
- 
- 					pmic_glink_ss1_ss_in: endpoint {
--						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+						remote-endpoint = <&retimer_ss1_ss_out>;
-+					};
-+				};
-+
-+				port@2 {
-+					reg = <2>;
-+
-+					pmic_glink_ss1_con_sbu_in: endpoint {
-+						remote-endpoint = <&retimer_ss1_con_sbu_out>;
- 					};
- 				};
- 			};
-@@ -185,6 +201,109 @@ vreg_edp_3p3: regulator-edp-3p3 {
- 		regulator-boot-on;
- 	};
- 
-+	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P15";
-+
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_1P8";
-+
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR0_3P3";
-+
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr0_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P15";
-+
-+		regulator-min-microvolt = <1150000>;
-+		regulator-max-microvolt = <1150000>;
-+
-+		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p15_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_1P8";
-+
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+
-+		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_1p8_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "VREG_RTMR1_3P3";
-+
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+
-+		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+
-+		pinctrl-0 = <&rtmr1_3p3_reg_en>;
-+		pinctrl-names = "default";
-+
-+		regulator-boot-on;
-+	};
-+
-+
- 	vreg_nvme: regulator-nvme {
- 		compatible = "regulator-fixed";
- 
-@@ -665,7 +784,59 @@ &i2c3 {
- 
- 	status = "okay";
- 
--	/* PS8830 USB retimer @8 */
-+	/* Left-side rear port */
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK3>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr0_1p15>;
-+		vdd33-supply = <&vreg_rtmr0_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr0_3p3>;
-+		vddar-supply = <&vreg_rtmr0_1p15>;
-+		vddat-supply = <&vreg_rtmr0_1p15>;
-+		vddio-supply = <&vreg_rtmr0_1p8>;
-+
-+		pinctrl-0 = <&rtmr0_default>;
-+		pinctrl-names = "default";
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss0_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss0_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss0_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
-+
- };
- 
- &i2c4 {
-@@ -699,7 +870,55 @@ &i2c7 {
- 
- 	status = "okay";
- 
--	/* PS8830 USB retimer @8 */
-+	/* Left-side front port */
-+	typec-mux@8 {
-+		compatible = "parade,ps8830";
-+		reg = <0x8>;
-+
-+		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
-+
-+		clocks = <&rpmhcc RPMH_RF_CLK4>;
-+		clock-names = "xo";
-+
-+		vdd-supply = <&vreg_rtmr1_1p15>;
-+		vdd33-supply = <&vreg_rtmr1_3p3>;
-+		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
-+		vddar-supply = <&vreg_rtmr1_1p15>;
-+		vddat-supply = <&vreg_rtmr1_1p15>;
-+		vddio-supply = <&vreg_rtmr1_1p8>;
-+
-+		retimer-switch;
-+		orientation-switch;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+
-+				retimer_ss1_ss_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+
-+				retimer_ss1_ss_in: endpoint {
-+					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+
-+				retimer_ss1_con_sbu_out: endpoint {
-+					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &lpass_tlmm {
-@@ -818,6 +1037,20 @@ &pcie6a_phy {
- 	status = "okay";
- };
- 
-+&pm8550_gpios {
-+	rtmr0_default: rtmr0-reset-n-active-state {
-+		pins = "gpio10";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+
-+	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
-+		pins = "gpio11";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
- &pm8550ve_2_gpios {
- 	sde7_main_reg_en: sde7-main-reg-en-state {
- 		pins = "gpio6";
-@@ -830,6 +1063,14 @@ sde7_aux_reg_en: sde7-aux-reg-en-state {
- 	};
- };
- 
-+&pmc8380_5_gpios {
-+	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
- &pm8550ve_8_gpios {
- 	vreg_12v_x8_en: 12v-x8-reg-en-state {
- 		pins = "gpio8";
-@@ -837,6 +1078,14 @@ vreg_12v_x8_en: 12v-x8-reg-en-state {
- 	};
- };
- 
-+&pm8550ve_9_gpios {
-+	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		power-source = <1>; /* 1.8V */
-+	};
-+};
-+
- &pmc8380_3_gpios {
- 	edp_bl_en: edp-bl-en-state {
- 		pins = "gpio4";
-@@ -1032,6 +1281,27 @@ wake-n-pins {
- 		};
- 	};
- 
-+	rtmr1_1p8_reg_en: rtmr1-1p8-reg-en-state {
-+		pins = "gpio175";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_3p3_reg_en: rtmr1-3p3-reg-en-state {
-+		pins = "gpio186";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	rtmr1_1p15_reg_en: rtmr1-1p15-reg-en-state {
-+		pins = "gpio188";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	wcd_default: wcd-reset-n-active-state {
- 		pins = "gpio191";
- 		function = "gpio";
-@@ -1092,7 +1362,7 @@ &usb_1_ss0_dwc3_hs {
- };
- 
- &usb_1_ss0_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss0_ss_in>;
-+	remote-endpoint = <&retimer_ss0_ss_in>;
- };
- 
- &usb_1_ss1_hsphy {
-@@ -1124,7 +1394,7 @@ &usb_1_ss1_dwc3_hs {
- };
- 
- &usb_1_ss1_qmpphy_out {
--	remote-endpoint = <&pmic_glink_ss1_ss_in>;
-+	remote-endpoint = <&retimer_ss1_ss_in>;
- };
- 
- /* MP0 goes to the Surface Connector, MP1 goes to the USB-A port */
-
--- 
-2.47.0
-
+--=20
+Regards
+Yafang
 
