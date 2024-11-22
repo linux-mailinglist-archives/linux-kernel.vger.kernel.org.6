@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-417868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F10F9D5A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:34:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2D99D5A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C24282BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04AEB281D31
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D41A170854;
-	Fri, 22 Nov 2024 07:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2B61714BD;
+	Fri, 22 Nov 2024 07:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYars8gA"
-Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="ahsCNbN9"
+Received: from esa7.hc1455-7.c3s2.iphmx.com (esa7.hc1455-7.c3s2.iphmx.com [139.138.61.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E422075;
-	Fri, 22 Nov 2024 07:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3841465A0;
+	Fri, 22 Nov 2024 07:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.138.61.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732260862; cv=none; b=TAJmUb5EQCxz92yVZx15192YpiHLF/Sq5Idc8FwWvekgQVY7E3KuPLO1Dwbn4/14+1kK/njVpZSMJtiu1DSMU3tMtdB7EyCBg47ycVkX6smwWe4h9PVotEVEXZVMF4D8CN67x7uRIDGuw6eU17pnLp+Zm1ZyzRxWLfae8za69U4=
+	t=1732260989; cv=none; b=qGRAFe6esh17UMa/3rJAFeVC6LwZzc2AuNtlq4EFPPlacvutsjZzgnWvnQf+4kKIfbl/w67R9jfyG2m5FnZmcjORK0FB5DbE6OAVLHTt7z3lg3gLEKod/w4kXG25ZzW9m3PJBIN9zTYTghA1KZrpRROY0VFOprRwMXlrfypbxpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732260862; c=relaxed/simple;
-	bh=aKHi2s7g0Yh57xPmgKbyOF+bAC1mWROyHR/WAGtBZsQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=MIUwQdfkHKetmJualcz4eiGXXSsHhloJu70pRkzMMIVBbZR/AJw83I3YUnpAhHRsbxejTJFmRPNel6m4k9Fr5jX7sJ21M2wF3uZk9A40tntaN2JToHmWT54mxwMYMKdwir+53dN3pV7DrUPZ5G6l+VbgReFvq49jA7pZP0S86Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYars8gA; arc=none smtp.client-ip=209.85.208.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5cfe48b3427so256680a12.1;
-        Thu, 21 Nov 2024 23:34:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732260859; x=1732865659; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WP7Qyyn9P8aoIGhU2FYV6anw46pGQsyVROPp57hHtvU=;
-        b=TYars8gAAhB09Pj7MpQQScSyesXwhqVL4B9bTWn9OxCDC9VLLFfTBR7As1hjGhq4wT
-         LBIVDgQbuONeP4pAp6BKco34zk+/Nig3it4wDzqpCLeFHh+5OYYEVFZHwUDpsGs1jMeF
-         4pjiqEStV50Bj05JqwkkfoM48r6J2kowU4djR5G4EXJ8cpI2W0Jj+8DQ/ZvPR3X6kFZc
-         0uHLwRpn9BtbSU0iT2+8PAW4OdgdjmslBU0mVjsK04r0LNUAQtJAjsvze9xC45gxlyWg
-         w6H9AA2GRX3TiFzPyJaEQ4U7V4B9c5l7VRwdSnAFniYqtsaiW7x5gGj0oK+GCh2pKg+J
-         flHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732260859; x=1732865659;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WP7Qyyn9P8aoIGhU2FYV6anw46pGQsyVROPp57hHtvU=;
-        b=FYPeFTt9PbhYmQRWJDybhx8JpRYABSHAmwZm4Okj2jzdlnN+CjaTt2yW9lo7A7Hb0A
-         HvjrJfdw9LPxi6d5S+XxhrXZToGeTRK/eKL/R9fD8CYVaWmVBiRUjsjF9a7Hn377eTmR
-         r/4WLOEJbVhM4eOe60jQLp36QSx6cwTvJiq0B9VxoytDhcJZkIbUKd5BBiBoQrox/U17
-         kiQ6OWSwA1wwitorDrhyDSz9K6ElyCc9bvEA2akydvq5AB6ACj08UtJkps/6Nn7goalc
-         e/gDk+xDOrCJRhAmAxzamzoHa0dui7+urCGOAUvHnDLHk6YwQFIavItxxRh5RaPRyDD4
-         6MuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP9ab1HBtRNhqwzHoHL6zceYU486MyNuqfNno/hsNjvKKxyTRSpitY2BADjRJNJZWoFUfLBe6IIS2+H3g=@vger.kernel.org, AJvYcCX0fe5efGVlkAYIt033ambYytSGgoJKcdBNsuVPz3KvfFrg4zv7Uu910g9hHtzAZYz1BL9c/X+a@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwWfUFUzgdWQTxTiFPfjsF9AbvUP7Bz6tBaKqZ1EdeDbrxahqU
-	aICa+TgWl2xL9Wlx5c2Zj7R6Xq5bQIo/BzhDEjQhoTiOzmr4+nf/yR/t5Mzihpwi+hwWwqA5Wim
-	pSfNH1fg5Mg5PK7i5wE7WsUcIF2qR6GJaithIng==
-X-Gm-Gg: ASbGncsuSFKyvh9X+WK2O0VxFRmX4Vv+Ida+qYfE8vs5yaTJBkj+ezrADRPimpmFgtA
-	0IH//86w5LjuuClgc45WvTfnMY0Lmg0tz
-X-Google-Smtp-Source: AGHT+IGCtSvS2ymC3RmhAtG5dG3THBE+Z+tmCCHfo43Bgd+3ZuSnl0VmmL4EiEP5whUNpJGSziobzESuHMl33j7bQXA=
-X-Received: by 2002:a05:6402:350e:b0:5cf:d24c:e7cc with SMTP id
- 4fb4d7f45d1cf-5d0207cab69mr485385a12.8.1732260858540; Thu, 21 Nov 2024
- 23:34:18 -0800 (PST)
+	s=arc-20240116; t=1732260989; c=relaxed/simple;
+	bh=afEEONp3WUMXgx5tCS+iTInKTEV3C339Fvgnza8HBtM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PrYWyvz2w0hrtK3XgWUR2k6g9BVLxJScYlZOn8HGcyoKnPhgaWkXiMeVeggu3d2ys5PmG7u13tYnubjQzMfKIxx7rxKOA+kvYrTmqYwf0yxAoXj07NHXMhoa8EUdv7qUnRmdiISVjcZF0Y+TG2/sykI61Bfrb+qwMhSkfbeZ8ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=ahsCNbN9; arc=none smtp.client-ip=139.138.61.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1732260987; x=1763796987;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=afEEONp3WUMXgx5tCS+iTInKTEV3C339Fvgnza8HBtM=;
+  b=ahsCNbN9YQX+XUcyX3m1+Ur2xAMArUBjgVLsr7TYmqE0+K844TddWSSm
+   anwfrYN7oivQtL8TAWoWN3t8fBgZgv9ConpkfTl17NGHIAzfC2is0YTsF
+   7PcCplCCFD1y7HgI2idUck5c16gIVYVkBspMlUeBCRHDCvmKH1rEkf6CZ
+   BbK5Qs2oUxkqjiUADxxSCvDXtixdBaoTnproaEmBmbp9CTYwRQcjqgd5U
+   eIz1TJDN1Zz71g0YuMfx/7HTt/0FKRdG3nf0dJF+Z6HFelIcHtv2YN1kq
+   iyWO1L94Byy55ajoCFuiu6u9Y/z/SiX4f2Jjm8UG7sLg7Utg9CBwqunXM
+   g==;
+X-CSE-ConnectionGUID: /u7FMuAhQC+9fznjTiWJ8g==
+X-CSE-MsgGUID: anH2+uNkRm2Od/tPChsOIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="160180652"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728918000"; 
+   d="scan'208";a="160180652"
+Received: from unknown (HELO yto-r3.gw.nic.fujitsu.com) ([218.44.52.219])
+  by esa7.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 16:35:15 +0900
+Received: from yto-m4.gw.nic.fujitsu.com (yto-nat-yto-m4.gw.nic.fujitsu.com [192.168.83.67])
+	by yto-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id 8EE23E428A;
+	Fri, 22 Nov 2024 16:35:13 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by yto-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 239C8370C6;
+	Fri, 22 Nov 2024 16:35:13 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 9C7152007C3F7;
+	Fri, 22 Nov 2024 16:35:12 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id AA61C1A006C;
+	Fri, 22 Nov 2024 15:35:11 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-kselftest@vger.kernel.org
+Cc: shuah@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Subject: [PATCH for-next v3] selftests/alsa: Add a few missing gitignore files
+Date: Fri, 22 Nov 2024 15:36:00 +0800
+Message-ID: <20241122073600.1530791-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: clingfei <clf700383@gmail.com>
-Date: Fri, 22 Nov 2024 15:34:06 +0800
-Message-ID: <CADPKJ-7==Bo=Wu6cHQ_y2qQVsPoJGeP3x0GztMXYcDaKCfmrkQ@mail.gmail.com>
-Subject: Data race in net/mptcp/pm_netlink.c
-To: Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
-	Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, mptcp@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28812.003
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28812.003
+X-TMASE-Result: 10--1.651200-10.000000
+X-TMASE-MatchedRID: /+von0vPuFEhiKpapiFQUqoXHZz/dXlxTJDl9FKHbrnBsf5qt44jZ0/m
+	RGqrA8qmt51G676eQJPtDFjbdjEntA8rYO92b9Nm4aN9Pi1E3hczNsXWBvGVBswHSQ+yXjTDfrL
+	Hs4UTbxBQ2Im6/SeK+BFBD6+ejtliL/tBTZzO5Q12jSf4k8Vwmn0tCKdnhB58I/9UW5M5dRNp7q
+	EhmmPgy46HM5rqDwqtwY6RPb/G8ENQfGCSa8nJAT5G2ItfuwCdDTuad3CT3vE5UQkLD/tqk6jTV
+	fEW1WMaazCZYocv8d3ZJNuEPMGhCmDD1rcdOe5eFcG3+ZRETICP9kUX1Z+buE3LumkbQiNwVCqT
+	SPu8tVR7AxIEOt4h2Q==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-linux-next weekly scan reports that there might be data race in
-net/mptcp/pm_netlink.c, when mptcp_pm_nl_flush_addrs_doit
-bitmap_zeroing pernet->id_bit_map at line 1748, there might be a
-concurrent read at line 1864.
-Should we add a lock to protect pernet->id_bit_map?
+Compiled binary files should be added to .gitignore
 
-The report is listed below.
-** CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
-/net/mptcp/pm_netlink.c: 1864 in mptcp_pm_nl_dump_addr()
+'git status' complains:
+Untracked files:
+(use "git add <file>..." to include in what will be committed)
+     alsa/global-timer
+     alsa/utimer-test
 
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>
+Cc: Takashi Iwai <tiwai@suse.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+Cc: linux-sound@vger.kernel.org
+---
+Hello,
+Cover letter is here.
 
-________________________________________________________________________________________________________
-*** CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
-/net/mptcp/pm_netlink.c: 1864 in mptcp_pm_nl_dump_addr()
-1858     int i;
-1859
-1860     pernet = pm_nl_get_pernet(net);
-1861
-1862     rcu_read_lock();
-1863     for (i = id; i < MPTCP_PM_MAX_ADDR_ID + 1; i++) {
->>>     CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
->>>     Accessing "pernet->id_bitmap" without holding lock "pm_nl_pernet.lock". Elsewhere, "pm_nl_pernet.id_bitmap" is written to with "pm_nl_pernet.lock" held 1 out of 1 times.
-1864     if (test_bit(i, pernet->id_bitmap)) {
-1865     entry = __lookup_addr_by_id(pernet, i);
-1866     if (!entry)
-1867     break;
-1868
-1869     if (entry->addr.id <= id)
+This patch set aims to make 'git status' clear after 'make' and 'make
+run_tests' for kselftests.
+---
+V3:
+  sorted the ignore files
+V2:
+   split as a separate patch from a small one [0]
+   [0] https://lore.kernel.org/linux-kselftest/20241015010817.453539-1-lizhijian@fujitsu.com/
+
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+ tools/testing/selftests/alsa/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/testing/selftests/alsa/.gitignore b/tools/testing/selftests/alsa/.gitignore
+index 12dc3fcd3456..3dd8e1176b89 100644
+--- a/tools/testing/selftests/alsa/.gitignore
++++ b/tools/testing/selftests/alsa/.gitignore
+@@ -1,3 +1,5 @@
++global-timer
+ mixer-test
+ pcm-test
+ test-pcmtest-driver
++utimer-test
+-- 
+2.44.0
+
 
