@@ -1,159 +1,190 @@
-Return-Path: <linux-kernel+bounces-417686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8504C9D57EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:01:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A349D57F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171B51F21B10
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3331F2171F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C915154454;
-	Fri, 22 Nov 2024 02:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD915473C;
+	Fri, 22 Nov 2024 02:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ThDG0WY8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lMsD3OkW"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1CC2AE84;
-	Fri, 22 Nov 2024 02:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E022081
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732240863; cv=none; b=M88DQB9A1OKqwYHSmG1MPbqpu64JH7aT7i1VVfnNTqVHfRZW1xYpFaDmRqvscFU+MHbCMp7EN+cEAk5eLxNf4OjeNZa7Zv9v/33y/0OEvojlte18a6WfQOdCVlcaOEHcnEJLIH28E/VV5NQhmdwCe8VbFmGO6FYHCfyT+1a+7ss=
+	t=1732240958; cv=none; b=MOED9+VzZN1orj+HrhIGRP/2w2WR7C1bzSYY+wSZVFA8GsrGbdTZxjqdeOJxGX4QhLdi5uZ4JJ6qeHjnELCmLvkJFPqjmZDhGQTNceUkV5b02bY1gWKXYycelckKNMRfRyN9sd0hxUy2p1dMnE6qeD+UqKkec21IrPy3G3DvBSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732240863; c=relaxed/simple;
-	bh=bg+ISRuJfAXGDCZFefoAmC+qWnC/aW8hHZPiYDOLNTo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VmgY2Y19ieEbteI5POY4Amh8lzqDoF5+SHxOOV649nuHL1U9LSMnHHo7jBd16PfeLF/0SIGEbvY5o3D265WzNBU7U3HfIzndb0duW/ZUjuijmAw7Xumh50nFFBK/v9heIa0yyJSZOTcDAoEhtAY5A3R+sZBjeMPOpG5iHLQ0o+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ThDG0WY8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALKxwRM002369;
-	Fri, 22 Nov 2024 02:00:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Vd/QRQX1q4uFPSzPP7lp2Gj0RlAlChv1bbvdnnqEMOk=; b=ThDG0WY8dTAqoQfS
-	iXwhis2ScyWDc7hTkFEhjl+jHl/L4DV/XkSAfnsZ8PUENp8lX3BO17f87pjBWjcz
-	CAwMOzcWi5HnbblQ/7vT+gnHOQi11wJommRDwH38G92cEaACn5akPJMc5Mc9zL4O
-	o5je0SWDb5CJKcsYngh9H0hvJZSE7r+sIWNu9IQ6fNpbf9+pi3+gpnd0Y9KgpMVQ
-	t7NgTMyX29N6kvZ75SHLQivxXdPV+mi+TkE32LkJK62+BGEicycS/idOzLmT2hKL
-	KGpsUy50IBG4td3AWMFtb6gw2ItBONy2mu3QTDZmLoB1xx8SwTYJ7G3XbwOcAa9u
-	mIa5Jg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ea75fpw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:00:49 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM20mP6012968
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 02:00:48 GMT
-Received: from [10.253.34.50] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
- 2024 18:00:46 -0800
-Message-ID: <4be38c3e-653b-42a8-b5ce-cc2813a277de@quicinc.com>
-Date: Fri, 22 Nov 2024 10:00:44 +0800
+	s=arc-20240116; t=1732240958; c=relaxed/simple;
+	bh=zegxNpjoIHrfO2OiT9cevmLGr1iodFgCEWz4kz7Q3kg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoDc/ymuGhMxZZUxredUsiTl7yT62qgsi2vU6510rDQq5kz5FcYZoZ3xFrhcuYznkFddXcrmBilclaoJUWyqJmqRgpJRAtvZrLA22fhZZcsT2iDY07MiMTF6/gdZtIC2V+NuXS0UMHRVEKxgTH1FGPG4d66k8kn4aPeBKHnBpBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lMsD3OkW; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=Aj9SBpljQ5PLe5gzkWkkssKdPp+/uDCnSdMDd/gwj9M=; b=lMsD3OkWYZuiHtJy
+	K7AkeV9agEl1ouzl11U3JcfNE4UjMROpw//3Xgcx4sU1r0bbm5xhhJfuBJ7mxbulUKXwa522NO05G
+	SOnUWPYGM0O3+JyG5f+15M4btaav9jBY/gQboyQZCTdaXbqiiGT7h8NqtNCRiwGbOx/iQrDQFWQO+
+	UumeDw1pGsvPBZ6JsDkxzN4TD5GtwCABorkPX396qVPywYmUAOlWWbUAdz3ojqbyIhJnVRspue2Sf
+	K4lPcLmBWaa7srPdKtRvfrBY9FyPtGhgdHujwDBVCUvyWYK/q4prZwztGEpCVSmXljeVpt1rE6cl5
+	Isb+47z34n9f1aCEfg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tEJ03-001EfD-1u;
+	Fri, 22 Nov 2024 02:02:23 +0000
+Date: Fri, 22 Nov 2024 02:02:23 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com
+Cc: airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nouveau: Remove unused functions
+Message-ID: <Zz_mL2FsFGPIm1Fs@gallifrey>
+References: <20241022003102.303052-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: btusb: Add one more ID 0x0489:0xe10a for
- Qualcomm WCN785x
-To: Gregoire Stein <greyxor@protonmail.com>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241121163259.180589-1-greyxor@protonmail.com>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <20241121163259.180589-1-greyxor@protonmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jcjMQeDrmR2Z1epBqlwLu0CXr0XchJpX
-X-Proofpoint-ORIG-GUID: jcjMQeDrmR2Z1epBqlwLu0CXr0XchJpX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 lowpriorityscore=0 clxscore=1011
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220015
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241022003102.303052-1-linux@treblig.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 02:02:04 up 197 days, 13:16,  1 user,  load average: 0.00, 0.03,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 11/22/2024 12:33 AM, Gregoire Stein wrote:
-> Add an additional entry with ID (0x0489, 0xe10a) to the usb_device_id
-> table to support the Qualcomm WCN785x.
-> The device information from /sys/kernel/debug/usb/devices is provided below:
+* linux@treblig.org (linux@treblig.org) wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
-> D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=0489 ProdID=e10a Rev= 0.01
-> C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
-> E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> I:  If#= 1 Alt= 7 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  65 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  65 Ivl=1ms
+> dcb_outp_match() last use was removed in 2017 in
+> commit 99a845a30f62 ("drm/nouveau/disp/nv50-gt21x: remove workaround for
+> dp->tmds hotplug issues")
 > 
-> Signed-off-by: Gregoire Stein <greyxor@protonmail.com>
+> dcb_xpio_parse was added in 2012 in
+> commit 112a12aab8a5 ("drm/nouveau/bios: add support for parsing xpio table
+> data")
+> but never used.
+> 
+> Remove them.
+> 
+> dcb_xpio_parse was the last user of struct nvbios_xpio, so remove it
+> as well and the FLAG #defines.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+Ping.
+
+Thanks,
+
+Dave
+
 > ---
->  drivers/bluetooth/btusb.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../gpu/drm/nouveau/include/nvkm/subdev/bios/dcb.h |  2 --
+>  .../drm/nouveau/include/nvkm/subdev/bios/xpio.h    | 12 ------------
+>  drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c     | 14 --------------
+>  drivers/gpu/drm/nouveau/nvkm/subdev/bios/xpio.c    | 13 -------------
+>  4 files changed, 41 deletions(-)
 > 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index e9534fbc92e3..5e77257eef65 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -371,6 +371,8 @@ static const struct usb_device_id quirks_table[] = {
->  	/* QCA WCN785x chipset */
->  	{ USB_DEVICE(0x0cf3, 0xe700), .driver_info = BTUSB_QCA_WCN6855 |
->  						     BTUSB_WIDEBAND_SPEECH },
-> +	{ USB_DEVICE(0x0489, 0xe10a), .driver_info = BTUSB_QCA_WCN6855 |
-> +						     BTUSB_WIDEBAND_SPEECH },
+> diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/dcb.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/dcb.h
+> index 73f9d9947e7e..12e6b2f21564 100644
+> --- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/dcb.h
+> +++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/dcb.h
+> @@ -61,8 +61,6 @@ u16 dcb_table(struct nvkm_bios *, u8 *ver, u8 *hdr, u8 *ent, u8 *len);
+>  u16 dcb_outp(struct nvkm_bios *, u8 idx, u8 *ver, u8 *len);
+>  u16 dcb_outp_parse(struct nvkm_bios *, u8 idx, u8 *, u8 *,
+>  		   struct dcb_output *);
+> -u16 dcb_outp_match(struct nvkm_bios *, u16 type, u16 mask, u8 *, u8 *,
+> -		   struct dcb_output *);
+>  int dcb_outp_foreach(struct nvkm_bios *, void *data, int (*exec)
+>  		     (struct nvkm_bios *, void *, int index, u16 entry));
+>  #endif
+> diff --git a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/xpio.h b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/xpio.h
+> index 11b4c4d27e5f..cd0ffebcb73a 100644
+> --- a/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/xpio.h
+> +++ b/drivers/gpu/drm/nouveau/include/nvkm/subdev/bios/xpio.h
+> @@ -2,18 +2,6 @@
+>  #ifndef __NVBIOS_XPIO_H__
+>  #define __NVBIOS_XPIO_H__
 >  
-
-could you your new added entry after below one? place 0489 ids together.
-
-        { USB_DEVICE(0x0489, 0xe0f3), .driver_info = BTUSB_QCA_WCN6855 |
-                                                   BTUSB_WIDEBAND_SPEECH },
-
-
->  	/* Broadcom BCM2035 */
->  	{ USB_DEVICE(0x0a5c, 0x2009), .driver_info = BTUSB_BCM92035 },
-
+> -#define NVBIOS_XPIO_FLAG_AUX  0x10
+> -#define NVBIOS_XPIO_FLAG_AUX0 0x00
+> -#define NVBIOS_XPIO_FLAG_AUX1 0x10
+> -
+> -struct nvbios_xpio {
+> -	u8 type;
+> -	u8 addr;
+> -	u8 flags;
+> -};
+> -
+>  u16 dcb_xpio_table(struct nvkm_bios *, u8 idx,
+>  		   u8 *ver, u8 *hdr, u8 *cnt, u8 *len);
+> -u16 dcb_xpio_parse(struct nvkm_bios *, u8 idx,
+> -		   u8 *ver, u8 *hdr, u8 *cnt, u8 *len, struct nvbios_xpio *);
+>  #endif
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c
+> index 8698f260b988..ae1faa63d68f 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dcb.c
+> @@ -193,20 +193,6 @@ dcb_outp_parse(struct nvkm_bios *bios, u8 idx, u8 *ver, u8 *len,
+>  	return dcb;
+>  }
+>  
+> -u16
+> -dcb_outp_match(struct nvkm_bios *bios, u16 type, u16 mask,
+> -	       u8 *ver, u8 *len, struct dcb_output *outp)
+> -{
+> -	u16 dcb, idx = 0;
+> -	while ((dcb = dcb_outp_parse(bios, idx++, ver, len, outp))) {
+> -		if ((dcb_outp_hasht(outp) & 0x00ff) == (type & 0x00ff)) {
+> -			if ((dcb_outp_hashm(outp) & mask) == mask)
+> -				break;
+> -		}
+> -	}
+> -	return dcb;
+> -}
+> -
+>  int
+>  dcb_outp_foreach(struct nvkm_bios *bios, void *data,
+>  		 int (*exec)(struct nvkm_bios *, void *, int, u16))
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/xpio.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/xpio.c
+> index 250fc42d8608..a47393e90de9 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/xpio.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/xpio.c
+> @@ -59,16 +59,3 @@ dcb_xpio_table(struct nvkm_bios *bios, u8 idx,
+>  	}
+>  	return 0x0000;
+>  }
+> -
+> -u16
+> -dcb_xpio_parse(struct nvkm_bios *bios, u8 idx,
+> -	       u8 *ver, u8 *hdr, u8 *cnt, u8 *len, struct nvbios_xpio *info)
+> -{
+> -	u16 data = dcb_xpio_table(bios, idx, ver, hdr, cnt, len);
+> -	if (data && *len >= 6) {
+> -		info->type = nvbios_rd08(bios, data + 0x04);
+> -		info->addr = nvbios_rd08(bios, data + 0x05);
+> -		info->flags = nvbios_rd08(bios, data + 0x06);
+> -	}
+> -	return 0x0000;
+> -}
+> -- 
+> 2.47.0
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
