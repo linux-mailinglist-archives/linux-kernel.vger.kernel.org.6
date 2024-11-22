@@ -1,148 +1,268 @@
-Return-Path: <linux-kernel+bounces-417802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095B59D593F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:08:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A629D593C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3F3B22AB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCB11F2339F
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 06:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB4170A03;
-	Fri, 22 Nov 2024 06:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D3316B38B;
+	Fri, 22 Nov 2024 06:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8BPAbAZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NMiR9sQ1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145DC376F1;
-	Fri, 22 Nov 2024 06:07:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53470376F1;
+	Fri, 22 Nov 2024 06:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732255677; cv=none; b=Q3oY/7y9OGYoGM+frm/JGofGWR3ZtRMkWGCvYunlAyj3VBWBa2MHA0VIBi2dpfVT2ZLTZVb0KUN/Nx+bJlvf/pM/kswnLuxlyCpdbCzviH56leTArJVS9R3cIqE2Vud1Z0pIPHBhZ8k15YcyjQGkgaVPFYp5QtpO/icaq2V4H28=
+	t=1732255668; cv=none; b=FM6abXwpw7Va9SGZbeAXS4wbsfq35fkoo5Oxd2W7s2lH7tCDW9XdsDhkDvNoHkOiCHpRcG1e4P97pQYrAGvpE6prjWY+0MbxB1IE9zYvbFWFvRn+k3egSQxTGHuS2x+xD0v0ye1oFgIHi5c9Fh9Hs9TV1i10ZGzhIuZ8VhkwEe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732255677; c=relaxed/simple;
-	bh=PdOiAaswSVXNtBFTnHQFz/h1L9gKw8twpWDYv8mq0J0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ls6FYXaP4Kcf5GWmfH1vCZQv2Mm5dNEws6GWiE30vf01F2Tkz2PZcjt0TXbmSO0BxZQjMDmFItM/xpBpNs+HLvMX1U5nbssQGauFKE/3ENQcjUaKKrA9YCHRK97CBKC00esbwidTtzQySSI962pvvDtTvPRU72jAkpnKVpG5GiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8BPAbAZ; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732255676; x=1763791676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PdOiAaswSVXNtBFTnHQFz/h1L9gKw8twpWDYv8mq0J0=;
-  b=U8BPAbAZNJMUEBSflHq/narLMvbKAD6AYqeG+FAO1LlHwkglMlL/zKsM
-   Q0S6ZDpuXOdqJH6Y95nxHCM4fIdMCdu6q9XzqY4gxHwgbPkpimhhRlPAD
-   oRGFsa7ErXaJT3yJBcVF8e/UWfPO4pl5YR58M/5GG/htb9vAHnEkcftnP
-   BTajXjzULNYVK/3GUimy+Kz1Phev/jChj1n0bGHafz6HnkFwI0L9g8LgD
-   rNklLtswF5p31j0PHRsb+qG4OpemGojeRZf50iTcGnnyhmSDkHOd6WHZM
-   Tc70ImIT4jyW3ONoe9eyF5QnmaZQAJO8IySNCoKzrT+VDENy1F5FD7SaW
-   w==;
-X-CSE-ConnectionGUID: Nqnqu38oSBKdXAPZpO81zA==
-X-CSE-MsgGUID: 8tlfL79STJa+T4SGotiddA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43462466"
-X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="43462466"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Nov 2024 22:07:54 -0800
-X-CSE-ConnectionGUID: PLNtIHXbSSW2pxH4jx++fA==
-X-CSE-MsgGUID: IgErV6zhTym+m/Np/FKfSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,174,1728975600"; 
-   d="scan'208";a="90466297"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 21 Nov 2024 22:07:52 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tEMpZ-0003ih-15;
-	Fri, 22 Nov 2024 06:07:49 +0000
-Date: Fri, 22 Nov 2024 14:07:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-ext4@vger.kernel.org,
-	Jan Kara <jack@suse.com>
-Cc: oe-kbuild-all@lists.linux.dev, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
-Message-ID: <202411221326.eoWoxSKf-lkp@intel.com>
-References: <20241121123855.645335-3-ojaswin@linux.ibm.com>
+	s=arc-20240116; t=1732255668; c=relaxed/simple;
+	bh=NRx+EUQMbI6onvvuBgklMuUetuKV1RjyJw+1+uiy0K0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TqlAQSFrQD4q2R4SpUC7aedxEI6+Wir4jkyWUsW8oCwpuePtwFM16YE1JTi44RdvPX95p01myd/UX4z5qhw97B80z4Yixz19LX8RYHy1vQazNftkmwW/j0DJ0JKxwjX6qXu+jx0bwVt4TYvfw2kjp7F+97qsuxS2BqdDPSIP/SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NMiR9sQ1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM2Muil027713;
+	Fri, 22 Nov 2024 06:07:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S/AWrFKiGjI5jrs0RclHK9dtitiixWc5tMJZ/QlOQTs=; b=NMiR9sQ1gv0x2ar2
+	cvIUbsw/wFNxaAIGXcGqYyvk4zg1IfNdB/8L47Pz48kDY4tGmPD3YFcA8kqi58Zf
+	UCy1RkH2lB/N/vIgpQfhh4nolSDMIVEt1+ruZzcBIZOca0iRch4EYobHwyH+WN1F
+	IvItZ1Q43UUr3d6u/hsTmggsL3CICfJnuyCOr+Fs15V7IerGZQrc9WL5SkeB3Qp0
+	F4xXoV/EEFa5uuDjbLdTzgFmt2n7lNdF/fcY+OMlRo7U78tTYxreq/bas1QrVqw9
+	Wfvhbq122y8Mzg5M781OCTbEFqFZqk6Qm60RB/yuhT+bJtFVaysZsgD2wBkdIR0U
+	u7EK0w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 432h4dre63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 06:07:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM67GPf029964
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 06:07:16 GMT
+Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 22:07:10 -0800
+Message-ID: <c9971277-bc93-4e53-b20a-a6aac6df9023@quicinc.com>
+Date: Fri, 22 Nov 2024 14:07:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241121123855.645335-3-ojaswin@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: qcom: qcs615: add UFS node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        "Kishon Vijay Abraham I" <kishon@kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche
+	<bvanassche@acm.org>,
+        "Andy Gross" <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_sayalil@quicinc.com>
+References: <20241119022050.2995511-1-quic_liuxin@quicinc.com>
+ <20241119022050.2995511-3-quic_liuxin@quicinc.com>
+ <45cb4thpg6mrtxiwdb333w2jxgtpw426akik2l3f7qv57dvwmm@kma6vrglbrjh>
+From: Xin Liu <quic_liuxin@quicinc.com>
+In-Reply-To: <45cb4thpg6mrtxiwdb333w2jxgtpw426akik2l3f7qv57dvwmm@kma6vrglbrjh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Q3ijIbtUjn_N8OD4cNVIln5lLAvnoS0E
+X-Proofpoint-GUID: Q3ijIbtUjn_N8OD4cNVIln5lLAvnoS0E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ clxscore=1011 phishscore=0 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 spamscore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220049
 
-Hi Ojaswin,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on tytso-ext4/dev]
-[also build test ERROR on brauner-vfs/vfs.all jack-fs/for_next linus/master v6.12 next-20241121]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ojaswin-Mujoo/quota-flush-quota_release_work-upon-quota-writeback/20241121-204331
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/20241121123855.645335-3-ojaswin%40linux.ibm.com
-patch subject: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
-config: arc-randconfig-001-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221326.eoWoxSKf-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221326.eoWoxSKf-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411221326.eoWoxSKf-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   fs/ext4/super.c: In function 'ext4_acquire_dquot':
->> fs/ext4/super.c:6912:13: error: 'freeze_protected' undeclared (first use in this function); did you mean 'freeze_processes'?
-    6912 |         if (freeze_protected)
-         |             ^~~~~~~~~~~~~~~~
-         |             freeze_processes
-   fs/ext4/super.c:6912:13: note: each undeclared identifier is reported only once for each function it appears in
 
 
-vim +6912 fs/ext4/super.c
+在 2024/11/22 1:00, Dmitry Baryshkov 写道:
+> On Tue, Nov 19, 2024 at 10:20:49AM +0800, Xin Liu wrote:
+>> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+>>
+>> Add the UFS Host Controller node and its PHY for QCS615 SoC.
+>>
+>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 112 +++++++++++++++++++++++++++
+>>   1 file changed, 112 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> index 590beb37f441..ceceafb2e71f 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -458,6 +458,118 @@ mmss_noc: interconnect@1740000 {
+>>   			qcom,bcm-voters = <&apps_bcm_voter>;
+>>   		};
+>>   
+>> +		ufs_mem_hc: ufshc@1d84000 {
+>> +			compatible = "qcom,qcs615-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+>> +			reg = <0x0 0x01d84000 0x0 0x3000>, <0x0 0x01d90000 0x0 0x8000>;
+> 
+> Please consider splitting to have one entry per line (and reg-names
+> too).
+Thank you for your comments. I will fix it next version.
+> 
+>> +			reg-names = "std", "ice";
+>> +
+>> +			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +			clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+>> +				 <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_AHB_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>,
+>> +				 <&rpmhcc RPMH_CXO_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>;
+>> +			clock-names = "core_clk",
+>> +				      "bus_aggr_clk",
+>> +				      "iface_clk",
+>> +				      "core_clk_unipro",
+>> +					  "core_clk_ice",
+> 
+> Wrong indentation
+> 
+> Other than that LGTM.
+> 
+Thank you for your comments. I will fix it next version.
+> 
+>> +				      "ref_clk",
+>> +				      "tx_lane0_sync_clk",
+>> +				      "rx_lane0_sync_clk";
+>> +
+>> +			resets = <&gcc GCC_UFS_PHY_BCR>;
+>> +			reset-names = "rst";
+>> +
+>> +			operating-points-v2 = <&ufs_opp_table>;
+>> +			interconnects = <&aggre1_noc MASTER_UFS_MEM QCOM_ICC_TAG_ALWAYS
+>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+>> +					 &config_noc SLAVE_UFS_MEM_CFG QCOM_ICC_TAG_ALWAYS>;
+>> +			interconnect-names = "ufs-ddr",
+>> +					     "cpu-ufs";
+>> +
+>> +			power-domains = <&gcc UFS_PHY_GDSC>;
+>> +			required-opps = <&rpmhpd_opp_nom>;
+>> +
+>> +			iommus = <&apps_smmu 0x300 0x0>;
+>> +			dma-coherent;
+>> +
+>> +			lanes-per-direction = <1>;
+>> +
+>> +			phys = <&ufs_mem_phy>;
+>> +			phy-names = "ufsphy";
+>> +
+>> +			#reset-cells = <1>;
+>> +
+>> +			status = "disabled";
+>> +
+>> +			ufs_opp_table: opp-table {
+>> +				compatible = "operating-points-v2";
+>> +
+>> +				opp-50000000 {
+>> +					opp-hz = /bits/ 64 <50000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <37500000>,
+>> +						 /bits/ 64 <75000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>;
+>> +					required-opps = <&rpmhpd_opp_low_svs>;
+>> +				};
+>> +
+>> +				opp-100000000 {
+>> +					opp-hz = /bits/ 64 <100000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <75000000>,
+>> +						 /bits/ 64 <150000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>;
+>> +					required-opps = <&rpmhpd_opp_svs>;
+>> +				};
+>> +
+>> +				opp-200000000 {
+>> +					opp-hz = /bits/ 64 <200000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <150000000>,
+>> +						 /bits/ 64 <300000000>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>,
+>> +						 /bits/ 64 <0>;
+>> +					required-opps = <&rpmhpd_opp_nom>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		ufs_mem_phy: phy@1d87000 {
+>> +			compatible = "qcom,qcs615-qmp-ufs-phy", "qcom,sm6115-qmp-ufs-phy";
+>> +			reg = <0x0 0x01d87000 0x0 0xe00>;
+>> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> +				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>,
+>> +				 <&gcc GCC_UFS_MEM_CLKREF_CLK>;
+>> +			clock-names = "ref",
+>> +				      "ref_aux",
+>> +				      "qref";
+>> +
+>> +			power-domains = <&gcc UFS_PHY_GDSC>;
+>> +
+>> +			resets = <&ufs_mem_hc 0>;
+>> +			reset-names = "ufsphy";
+>> +
+>> +			#clock-cells = <1>;
+>> +			#phy-cells = <0>;
+>> +
+>> +			status = "disabled";
+>> +		};
+>> +
+>>   		tcsr_mutex: hwlock@1f40000 {
+>>   			compatible = "qcom,tcsr-mutex";
+>>   			reg = <0x0 0x01f40000 0x0 0x20000>;
+>> -- 
+>> 2.34.1
+>>
+>>
+>> -- 
+>> linux-phy mailing list
+>> linux-phy@lists.infradead.org
+>> https://lists.infradead.org/mailman/listinfo/linux-phy
+> 
 
-  6893	
-  6894	static int ext4_acquire_dquot(struct dquot *dquot)
-  6895	{
-  6896		int ret, err;
-  6897		handle_t *handle;
-  6898	
-  6899		handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
-  6900					    EXT4_QUOTA_INIT_BLOCKS(dquot->dq_sb));
-  6901		if (IS_ERR(handle))
-  6902			return PTR_ERR(handle);
-  6903		ret = dquot_acquire(dquot);
-  6904		if (ret < 0)
-  6905			ext4_error_err(dquot->dq_sb, -ret,
-  6906				      "Failed to acquire dquot type %d",
-  6907				      dquot->dq_id.type);
-  6908		err = ext4_journal_stop(handle);
-  6909		if (!ret)
-  6910			ret = err;
-  6911	
-> 6912		if (freeze_protected)
-  6913			sb_end_intwrite(dquot->dq_sb);
-  6914	
-  6915		return ret;
-  6916	}
-  6917	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
