@@ -1,157 +1,416 @@
-Return-Path: <linux-kernel+bounces-418494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8047D9D6235
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:25:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 245399D6239
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 17:26:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4033E283E7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:25:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D529160769
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 16:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4353B1DF96E;
-	Fri, 22 Nov 2024 16:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF3B1A0B08;
+	Fri, 22 Nov 2024 16:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Pg/9AsI3"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+DsPdu+"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B621DEFFD
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067277080C
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 16:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732292717; cv=none; b=VgWWAA+b6ndhMet3UFOE62wVx0ZBP7t3DgzfFHQZ3hLW1wC4/G/xmksAM4dpXyiiMIqFNzoHfk+hbhbr1RVhGwmNHSNNVo7a0es//kKY0k6J1UU5ZJI29JBAWH4OUNU2kBFJaytZvLZzNM8ktq9vJcCdWIIYshzAAVkNr1XzVek=
+	t=1732292782; cv=none; b=VQKBUU5e1vTI4IjiUVkAJuMYueHnlJ/sCfMkY2kVUKU/G4mFsmcOOBJMCuqKK9N+fAafJavGp8bG51YZwnqE+2lGMQsMfFXpgLbAcb2dKx81BGRKDlYPBKHV0q3GNekT14ZwwDBkUbe/acK5ia5HsgERp4+glXOG81dGGFU2hqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732292717; c=relaxed/simple;
-	bh=UoxOHiMTNSZuKXnSQuqgBjDi8qYlisedSJdTUWJ8t7k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kAoy/9AyAG6azSqJmpMJkUG5PZvR6ffCpzVsl+Kl0Ki2W0cXisHcdCxbwaI5aBMNShdI6jlnl1mV+En0UiemFhT5fmIoh0nre516clVizfkMfdAUxvA8HsO/Od0ytktq8ZplQ83Bqg0fzUYKAi8FM80WvCaP+IbDGG82W3rZhT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Pg/9AsI3; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8C611E0008;
-	Fri, 22 Nov 2024 16:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732292707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4+cxTF9KCJO78YUV+0ZHhBWyFhLzGz4nnDy5LMx5b6s=;
-	b=Pg/9AsI3WIp0tF98BPvN4L7upd3O+X7DoubntwCwOmpcDVM3clHX2iM4mZd/DUSAPcbV34
-	3jmgilU3DnEyabD4NGHdcS1BMxXb/nikqLpRtC69J7HoDO8wt3OWlj6YOD4vV6cd/Kx7Ne
-	R9Hnvbht5CvLs6vbz5OUBYSBz5IF+Gt2Y67nCnvgOuiXmKF4teevHVNkdqAGejflxiByM0
-	LMuBeaJLOGluwEuDpEi+Nb8d29Nf6EPKxp+m0rIwy/m3hsFxe9TkLlEowaRwt0KMQ7SDWm
-	4FMbvWHgPYV6WNUnvEaWpow6O5JskjqNRUjo2w9ssMdQFVwpSSFftwDujindLg==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 22 Nov 2024 17:25:02 +0100
-Subject: [PATCH v3 3/3] drm/vkms: Add support for XRGB2101010
+	s=arc-20240116; t=1732292782; c=relaxed/simple;
+	bh=bDxMvH9oVB2bjgayg85wa2IGS0MlZFO6a2brK3ahQ94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iR+mdPdctEjQtTndqydw4uJ6sr+TAGKJOtFnC/dfQpE/TlMOH9yJ0/NR70FF4Z4UtaxglWg8PxD0ap8cS1GvHLXwcv9Qgrjvh0ft6aWMrC7R9T75/AWNw/09Q6XIFnTAsEQwOzvcjWHf/j/9MYXyua8sufPo+njZ8HyURysuhMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+DsPdu+; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so2492342a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:26:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732292777; x=1732897577; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ut8S5y3x/QyXX/cAyTPWe2N3hLCbDRV3eSN2ZYEOv4o=;
+        b=S+DsPdu+S5aMk9JPDBhGf+M+NUi8gkdF47flZ7UlzLQHElI2SQ2n2XDy6O/3TVptox
+         lTuVUyNMogmeojQZpNrAIvdCDKXQoWONMDelmjfxB3ell3zbiE5ektAUSWky/LaRWDEU
+         8OFYmXt85PNW1vQDvXBnf1r716Iidf6yuNPwkBhjWEQX7My5IZmQA6G04uXClQ617Jp7
+         b8rFtqAehEm86E1dAbJBmDDxu+zCoOfgjDwSXLY4snMFS3vWpY+VDiJOLudE7Nlwn9dK
+         h29lopDv3fBApD4u4KbWP+F4qljUCzrIOUORXduoQdw6FhEqarWb9mJ3JCam0TXAf6Fw
+         QnVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732292777; x=1732897577;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ut8S5y3x/QyXX/cAyTPWe2N3hLCbDRV3eSN2ZYEOv4o=;
+        b=V63Iptr8h3dOvSKflluFyPSl37iEGzKMCWv3LUBEdSLRB3GzxkrWKyEJLD1UM8M8QX
+         xnisblkrOrKpRwtXw8sVmHeWEZXnPsEOrDbM9eh3xAjJcj9sdW2AJRNCBnzshDhJK8at
+         687VavNeZG/x2wG1De6zpl2o4sk03Sj3dtcGRLvVLTXTxl1OJLNnI23I1Zrnhk6ISHK8
+         N9z+dCGo2xbERsBjwtz9Kzw4gSlws3pHKxBNtBIifuF78n4Qgvs2rDL2onuWy8yWmFV0
+         MYP+gEPP2oeRFmTMYar+anAfkfAialr3Lufpm+78bt85aVO8cA6yhcqc7zKLtOyfc60l
+         CEVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAap4WEioHsVC+UcCZ422vTTMnHkWTbeiSGTKshpBRHTGpWf5uoZgXy/m4frziyhKXOtCR+gunCMCuhTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzofOyt9ShA7aUPjwDLNQG4LuLjbKLioxwtqvPXjN6WnSKwxIdT
+	qP2EF2E7zqPDhvBvqswLsvUnffhsuZsjM3ufOIHFqRDhI6OFiFg3Vd1v4SKXq2AnkbKYmz8JRZJ
+	yizTmAfaCtBfPMtNvu7CncLzIBHQiCQ==
+X-Gm-Gg: ASbGncs+uKWZtFFuhdMbNBx5v6GpyszjoEbyvzPfsauddLGaYpLxbRhV+nvVSW7K1U4
+	enr5fWK5rEUi1jcj82RyMQC5g87BfsR6KB9Co7Gw/WukkzZBXL+tyoNUzzif8KbE=
+X-Google-Smtp-Source: AGHT+IEZH0CcViQYBzedbSWCkplyW3/tygHOJXorUCRrQqcg7PR/7zTm8wpWJU/9478ReyCS+tEbRQXD4HdaYVoH3mA=
+X-Received: by 2002:a05:6402:4492:b0:5cf:c97c:8206 with SMTP id
+ 4fb4d7f45d1cf-5d020695181mr2846756a12.25.1732292777031; Fri, 22 Nov 2024
+ 08:26:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241122-writeback_line_by_line-v3-3-085d5810f6e3@bootlin.com>
-References: <20241122-writeback_line_by_line-v3-0-085d5810f6e3@bootlin.com>
-In-Reply-To: <20241122-writeback_line_by_line-v3-0-085d5810f6e3@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net, 
- linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com, 
- miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com, 
- seanpaul@google.com, nicolejadeyee@google.com, 
- Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2493;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=UoxOHiMTNSZuKXnSQuqgBjDi8qYlisedSJdTUWJ8t7k=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnQLBeEgU50nN/Jsq9saN6JiwszSPcxZECtubdO
- WvEhQD9nfWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ0CwXgAKCRAgrS7GWxAs
- 4jn3EAC/ztIduKbgnP6ONI9LAQmfqHBsju5aJlvQ5lZpWSIt764Ky2t9qSDaKRi541wJ3axPjux
- zYIeQ7oTx3cRLg30YK6IkaauV7RBlwzcp4ybJKk+1Z/GUVkV4RfL58NdEuDw0cQc4arRl0nQd3R
- wJPt6S78SnJsnJE95IZuzCQMmcI/zY83bIzmr2HUcb4+dFRczy6DVmh1VFMmj1RkaFsyyQ6UQID
- Vsy8RC79MorPCdClpC6GM3j6Yz4DFTNBtNWI5dngrQwpIkv7tOCqcrFanR/NpPVqCHIVVZhVvRn
- 9+LyBDVcUIBpjb6LgXbCYfNZNve1QM9o1QkKPzD3NqFIE50j/IdHrOEs8gQvwQMHhBf+6WD0CCt
- 9f4cmNUwknKKiaM4oBE9kXu+6CYloMZo/X/yiyqEZ/LCZ29JUSlrBl7dkeyeQyZtXgAiVvI7R0t
- Strpq15GjTATAMIZPYEZV1W9oTayNVmi8/uxYMDRXHTid2XJR/5w4DCGM7/voUl4/F2PPJlDFK3
- /QcDsGvgNoFYnuVjrAtrkwXdS1JJCpzGgOWRpvai8hJbHU0z4PXGN7C+FASJZTyTXuOVRE/zp7R
- iieQ6YFAwAjSSU2mtGJRbW3OmMB1zKMBhsKo5psIABS598mMVtgSAoZ655gT5iftTnY0giuViGu
- c1+RREemk3A5m2Q==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <67403e13.050a0220.3c9d61.018d.GAE@google.com>
+In-Reply-To: <67403e13.050a0220.3c9d61.018d.GAE@google.com>
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+Date: Fri, 22 Nov 2024 21:55:40 +0530
+Message-ID: <CAHiZj8g8dFUZj+wL5Z-Y_aL4wM-ZtC0uymGytx-oFNAWUEBz1A@mail.gmail.com>
+Subject: Re: [syzbot] [iommu?] WARNING in iommufd_device_unbind
+To: syzbot <syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com>
+Cc: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
+	syzkaller-bugs@googlegroups.com, will@kernel.org
+Content-Type: multipart/mixed; boundary="0000000000009f6867062782d773"
 
-Thanks to the WRITE_LINE macro, adding the format XRGB210101010 is trivial.
+--0000000000009f6867062782d773
+Content-Type: multipart/alternative; boundary="0000000000009f6865062782d771"
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c   | 12 ++++++++++++
- drivers/gpu/drm/vkms/vkms_writeback.c |  3 ++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+--0000000000009f6865062782d771
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 6a50a86291e50edab2058cf7d40c7efc8fcb4c12..2177310580ae19382d5fc2f095d6b49984033b61 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -656,6 +656,14 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
- 	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
- }
- 
-+static void argb_u16_to_XRGB2101010(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-+{
-+	out_pixel[0] = (u8)(in_pixel->b & 0xFF);
-+	out_pixel[1] = (u8)((in_pixel->b >> 8) & 0x03) | (u8)((in_pixel->g << 2) & 0xFC);
-+	out_pixel[2] = (u8)((in_pixel->g >> 6) & 0x0F) | (u8)((in_pixel->r << 4) & 0xF0);
-+	out_pixel[3] = (u8)((in_pixel->r >> 4) & 0x3F);
-+}
-+
- /**
-  * WRITE_LINE() - Generic generator for write_line functions
-  *
-@@ -700,6 +708,8 @@ WRITE_LINE(XRGB16161616_write_line, argb_u16_to_XRGB16161616)
- 
- WRITE_LINE(RGB565_write_line, argb_u16_to_RGB565)
- 
-+WRITE_LINE(XRGB2101010_write_line, argb_u16_to_XRGB2101010)
-+
- /**
-  * get_pixel_read_line_function() - Retrieve the correct read_line function for a specific
-  * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
-@@ -980,6 +990,8 @@ pixel_write_line_t get_pixel_write_line_function(u32 format)
- 		return &XRGB16161616_write_line;
- 	case DRM_FORMAT_RGB565:
- 		return &RGB565_write_line;
-+	case DRM_FORMAT_XRGB2101010:
-+		return &XRGB2101010_write_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_writeback_atomic_check. All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-index 0b31628e1b532367cc79cd7432aa070661f41a57..f25468bf4cd7b9253528869576111e7a3745a42f 100644
---- a/drivers/gpu/drm/vkms/vkms_writeback.c
-+++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-@@ -19,7 +19,8 @@ static const u32 vkms_wb_formats[] = {
- 	DRM_FORMAT_XRGB8888,
- 	DRM_FORMAT_XRGB16161616,
- 	DRM_FORMAT_ARGB16161616,
--	DRM_FORMAT_RGB565
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_XRGB2101010,
- };
- 
- static const struct drm_connector_funcs vkms_wb_connector_funcs = {
+#syz test
 
--- 
-2.47.0
+On Fri, Nov 22, 2024 at 1:47=E2=80=AFPM syzbot <
+syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com> wrote:
 
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    c6d64479d609 Merge tag 'pull-statx' of
+> git://git.kernel.or..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D129a0ae858000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db3b3b2f3eaae5=
+1f9
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Dc92878e123785b1fa2db
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
+> Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17da1bf7980=
+000
+>
+> Downloadable assets:
+> disk image:
+> https://storage.googleapis.com/syzbot-assets/9d212f6bb1af/disk-c6d64479.r=
+aw.xz
+> vmlinux:
+> https://storage.googleapis.com/syzbot-assets/21a14342211b/vmlinux-c6d6447=
+9.xz
+> kernel image:
+> https://storage.googleapis.com/syzbot-assets/f96c41f3e4a6/bzImage-c6d6447=
+9.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the
+> commit:
+> Reported-by: syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com
+>
+> iommufd: Time out waiting for iommufd object to become free
+> ------------[ cut here ]------------
+> WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208
+> iommufd_object_destroy_user drivers/iommu/iommufd/iommufd_private.h:208
+> [inline]
+> WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208
+> iommufd_device_unbind+0x81/0xa0 drivers/iommu/iommufd/device.c:280
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 6050 Comm: syz.3.18 Not tainted
+> 6.12.0-syzkaller-00239-gc6d64479d609 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 10/30/2024
+> RIP: 0010:iommufd_object_destroy_user
+> drivers/iommu/iommufd/iommufd_private.h:208 [inline]
+> RIP: 0010:iommufd_device_unbind+0x81/0xa0
+> drivers/iommu/iommufd/device.c:280
+> Code: 00 e8 83 76 01 00 89 c3 31 ff 89 c6 e8 b8 85 43 fc 85 db 75 0f e8 6=
+f
+> 81 43 fc 5b 41 5e 41 5f c3 cc cc cc cc e8 60 81 43 fc 90 <0f> 0b 90 eb eb
+> 89 f9 80 e1 07 80 c1 03 38 c1 7c b8 e8 d9 44 aa fc
+> RSP: 0018:ffffc90003017c38 EFLAGS: 00010293
+> RAX: ffffffff85516f50 RBX: 00000000fffffff0 RCX: ffff88802c693c00
+> RDX: 0000000000000000 RSI: 00000000fffffff0 RDI: 0000000000000000
+> RBP: ffffc90003017d70 R08: ffffffff85516f38 R09: 1ffff11005b9b140
+> R10: dffffc0000000000 R11: ffffed1005b9b141 R12: ffff888034149718
+> R13: ffff888034149700 R14: ffff888028d2c400 R15: dffffc0000000000
+> FS:  00007f2573c136c0(0000) GS:ffff8880b8700000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000c001633e80 CR3: 0000000032fda000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  iommufd_selftest_destroy+0x95/0xe0 drivers/iommu/iommufd/selftest.c:1439
+>  iommufd_object_remove+0x3b6/0x530 drivers/iommu/iommufd/main.c:211
+>  iommufd_fops_ioctl+0x4d6/0x5a0 drivers/iommu/iommufd/main.c:424
+>  vfs_ioctl fs/ioctl.c:51 [inline]
+>  __do_sys_ioctl fs/ioctl.c:906 [inline]
+>  __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f2572d7e759
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f2573c13038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007f2572f36058 RCX: 00007f2572d7e759
+> RDX: 0000000020000400 RSI: 0000000000003b80 RDI: 0000000000000003
+> RBP: 00007f2572df175e R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007f2572f36058 R15: 00007ffefd725ea8
+>  </TASK>
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/67403e13.050a0220.3c9d61=
+.018d.GAE%40google.com
+> .
+>
+
+--0000000000009f6865062782d771
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">#syz test<br></div><br><div class=3D"gmail_quote"><div dir=
+=3D"ltr" class=3D"gmail_attr">On Fri, Nov 22, 2024 at 1:47=E2=80=AFPM syzbo=
+t &lt;<a href=3D"mailto:syzbot%2Bc92878e123785b1fa2db@syzkaller.appspotmail=
+.com">syzbot+c92878e123785b1fa2db@syzkaller.appspotmail.com</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hello,<br>
+<br>
+syzbot found the following issue on:<br>
+<br>
+HEAD commit:=C2=A0 =C2=A0 c6d64479d609 Merge tag &#39;pull-statx&#39; of gi=
+t://git.kernel.or..<br>
+git tree:=C2=A0 =C2=A0 =C2=A0 =C2=A0upstream<br>
+console output: <a href=3D"https://syzkaller.appspot.com/x/log.txt?x=3D129a=
+0ae8580000" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.appspot.=
+com/x/log.txt?x=3D129a0ae8580000</a><br>
+kernel config:=C2=A0 <a href=3D"https://syzkaller.appspot.com/x/.config?x=
+=3Db3b3b2f3eaae51f9" rel=3D"noreferrer" target=3D"_blank">https://syzkaller=
+.appspot.com/x/.config?x=3Db3b3b2f3eaae51f9</a><br>
+dashboard link: <a href=3D"https://syzkaller.appspot.com/bug?extid=3Dc92878=
+e123785b1fa2db" rel=3D"noreferrer" target=3D"_blank">https://syzkaller.apps=
+pot.com/bug?extid=3Dc92878e123785b1fa2db</a><br>
+compiler:=C2=A0 =C2=A0 =C2=A0 =C2=A0Debian clang version 15.0.6, GNU ld (GN=
+U Binutils for Debian) 2.40<br>
+syz repro:=C2=A0 =C2=A0 =C2=A0 <a href=3D"https://syzkaller.appspot.com/x/r=
+epro.syz?x=3D17da1bf7980000" rel=3D"noreferrer" target=3D"_blank">https://s=
+yzkaller.appspot.com/x/repro.syz?x=3D17da1bf7980000</a><br>
+<br>
+Downloadable assets:<br>
+disk image: <a href=3D"https://storage.googleapis.com/syzbot-assets/9d212f6=
+bb1af/disk-c6d64479.raw.xz" rel=3D"noreferrer" target=3D"_blank">https://st=
+orage.googleapis.com/syzbot-assets/9d212f6bb1af/disk-c6d64479.raw.xz</a><br=
+>
+vmlinux: <a href=3D"https://storage.googleapis.com/syzbot-assets/21a1434221=
+1b/vmlinux-c6d64479.xz" rel=3D"noreferrer" target=3D"_blank">https://storag=
+e.googleapis.com/syzbot-assets/21a14342211b/vmlinux-c6d64479.xz</a><br>
+kernel image: <a href=3D"https://storage.googleapis.com/syzbot-assets/f96c4=
+1f3e4a6/bzImage-c6d64479.xz" rel=3D"noreferrer" target=3D"_blank">https://s=
+torage.googleapis.com/syzbot-assets/f96c41f3e4a6/bzImage-c6d64479.xz</a><br=
+>
+<br>
+IMPORTANT: if you fix the issue, please add the following tag to the commit=
+:<br>
+Reported-by: <a href=3D"mailto:syzbot%2Bc92878e123785b1fa2db@syzkaller.apps=
+potmail.com" target=3D"_blank">syzbot+c92878e123785b1fa2db@syzkaller.appspo=
+tmail.com</a><br>
+<br>
+iommufd: Time out waiting for iommufd object to become free<br>
+------------[ cut here ]------------<br>
+WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208 io=
+mmufd_object_destroy_user drivers/iommu/iommufd/iommufd_private.h:208 [inli=
+ne]<br>
+WARNING: CPU: 1 PID: 6050 at drivers/iommu/iommufd/iommufd_private.h:208 io=
+mmufd_device_unbind+0x81/0xa0 drivers/iommu/iommufd/device.c:280<br>
+Modules linked in:<br>
+CPU: 1 UID: 0 PID: 6050 Comm: syz.3.18 Not tainted 6.12.0-syzkaller-00239-g=
+c6d64479d609 #0<br>
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Goo=
+gle 10/30/2024<br>
+RIP: 0010:iommufd_object_destroy_user drivers/iommu/iommufd/iommufd_private=
+.h:208 [inline]<br>
+RIP: 0010:iommufd_device_unbind+0x81/0xa0 drivers/iommu/iommufd/device.c:28=
+0<br>
+Code: 00 e8 83 76 01 00 89 c3 31 ff 89 c6 e8 b8 85 43 fc 85 db 75 0f e8 6f =
+81 43 fc 5b 41 5e 41 5f c3 cc cc cc cc e8 60 81 43 fc 90 &lt;0f&gt; 0b 90 e=
+b eb 89 f9 80 e1 07 80 c1 03 38 c1 7c b8 e8 d9 44 aa fc<br>
+RSP: 0018:ffffc90003017c38 EFLAGS: 00010293<br>
+RAX: ffffffff85516f50 RBX: 00000000fffffff0 RCX: ffff88802c693c00<br>
+RDX: 0000000000000000 RSI: 00000000fffffff0 RDI: 0000000000000000<br>
+RBP: ffffc90003017d70 R08: ffffffff85516f38 R09: 1ffff11005b9b140<br>
+R10: dffffc0000000000 R11: ffffed1005b9b141 R12: ffff888034149718<br>
+R13: ffff888034149700 R14: ffff888028d2c400 R15: dffffc0000000000<br>
+FS:=C2=A0 00007f2573c136c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000=
+000000<br>
+CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 0000000080050033<br>
+CR2: 000000c001633e80 CR3: 0000000032fda000 CR4: 00000000003526f0<br>
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000<br>
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400<br>
+Call Trace:<br>
+=C2=A0&lt;TASK&gt;<br>
+=C2=A0iommufd_selftest_destroy+0x95/0xe0 drivers/iommu/iommufd/selftest.c:1=
+439<br>
+=C2=A0iommufd_object_remove+0x3b6/0x530 drivers/iommu/iommufd/main.c:211<br=
+>
+=C2=A0iommufd_fops_ioctl+0x4d6/0x5a0 drivers/iommu/iommufd/main.c:424<br>
+=C2=A0vfs_ioctl fs/ioctl.c:51 [inline]<br>
+=C2=A0__do_sys_ioctl fs/ioctl.c:906 [inline]<br>
+=C2=A0__se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892<br>
+=C2=A0do_syscall_x64 arch/x86/entry/common.c:52 [inline]<br>
+=C2=A0do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83<br>
+=C2=A0entry_SYSCALL_64_after_hwframe+0x77/0x7f<br>
+RIP: 0033:0x7f2572d7e759<br>
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 =
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 &lt;48&gt; 3d 01 f=
+0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48<br>
+RSP: 002b:00007f2573c13038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010<br>
+RAX: ffffffffffffffda RBX: 00007f2572f36058 RCX: 00007f2572d7e759<br>
+RDX: 0000000020000400 RSI: 0000000000003b80 RDI: 0000000000000003<br>
+RBP: 00007f2572df175e R08: 0000000000000000 R09: 0000000000000000<br>
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000<br>
+R13: 0000000000000001 R14: 00007f2572f36058 R15: 00007ffefd725ea8<br>
+=C2=A0&lt;/TASK&gt;<br>
+<br>
+<br>
+---<br>
+This report is generated by a bot. It may contain errors.<br>
+See <a href=3D"https://goo.gl/tpsmEJ" rel=3D"noreferrer" target=3D"_blank">=
+https://goo.gl/tpsmEJ</a> for more information about syzbot.<br>
+syzbot engineers can be reached at <a href=3D"mailto:syzkaller@googlegroups=
+.com" target=3D"_blank">syzkaller@googlegroups.com</a>.<br>
+<br>
+syzbot will keep track of this issue. See:<br>
+<a href=3D"https://goo.gl/tpsmEJ#status" rel=3D"noreferrer" target=3D"_blan=
+k">https://goo.gl/tpsmEJ#status</a> for how to communicate with syzbot.<br>
+<br>
+If the report is already addressed, let syzbot know by replying with:<br>
+#syz fix: exact-commit-title<br>
+<br>
+If you want syzbot to run the reproducer, reply with:<br>
+#syz test: git://repo/address.git branch-or-commit-hash<br>
+If you attach or paste a git patch, syzbot will apply it before testing.<br=
+>
+<br>
+If you want to overwrite report&#39;s subsystems, reply with:<br>
+#syz set subsystems: new-subsystem<br>
+(See the list of subsystem names on the web dashboard)<br>
+<br>
+If the report is a duplicate of another one, reply with:<br>
+#syz dup: exact-subject-of-another-report<br>
+<br>
+If you want to undo deduplication, reply with:<br>
+#syz undup<br>
+<br>
+-- <br>
+You received this message because you are subscribed to the Google Groups &=
+quot;syzkaller-bugs&quot; group.<br>
+To unsubscribe from this group and stop receiving emails from it, send an e=
+mail to <a href=3D"mailto:syzkaller-bugs%2Bunsubscribe@googlegroups.com" ta=
+rget=3D"_blank">syzkaller-bugs+unsubscribe@googlegroups.com</a>.<br>
+To view this discussion visit <a href=3D"https://groups.google.com/d/msgid/=
+syzkaller-bugs/67403e13.050a0220.3c9d61.018d.GAE%40google.com" rel=3D"noref=
+errer" target=3D"_blank">https://groups.google.com/d/msgid/syzkaller-bugs/6=
+7403e13.050a0220.3c9d61.018d.GAE%40google.com</a>.<br>
+</blockquote></div>
+
+--0000000000009f6865062782d771--
+--0000000000009f6867062782d773
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-fix-WARNING-in-iommufd_device_unbind.patch"
+Content-Disposition: attachment; 
+	filename="0001-fix-WARNING-in-iommufd_device_unbind.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3syd9xd0>
+X-Attachment-Id: f_m3syd9xd0
+
+RnJvbSA2MmI4NzNiYzcwYWI4ZjI1OWIyMjljY2FiMWFjZTNmNmJhNDM1Y2U1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBTdXJhaiBTb25hd2FuZSA8c3VyYWpzb25hd2FuZTAyMTVAZ21h
+aWwuY29tPgpEYXRlOiBGcmksIDIyIE5vdiAyMDI0IDIxOjUwOjA3ICswNTMwClN1YmplY3Q6IFtQ
+QVRDSF0gZml4IFdBUk5JTkcgaW4gaW9tbXVmZF9kZXZpY2VfdW5iaW5kCgpzeXogdGVzdAoKU2ln
+bmVkLW9mZi1ieTogU3VyYWogU29uYXdhbmUgPHN1cmFqc29uYXdhbmUwMjE1QGdtYWlsLmNvbT4K
+LS0tCiBkcml2ZXJzL2lvbW11L2lvbW11ZmQvbWFpbi5jIHwgMTEgKysrKysrKysrKy0KIDEgZmls
+ZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9pb21tdS9pb21tdWZkL21haW4uYyBiL2RyaXZlcnMvaW9tbXUvaW9tbXVmZC9tYWlu
+LmMKaW5kZXggMGE5NmNjOGYyLi5kMjY4M2FkODIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvaW9tbXUv
+aW9tbXVmZC9tYWluLmMKKysrIGIvZHJpdmVycy9pb21tdS9pb21tdWZkL21haW4uYwpAQCAtMTIy
+LDYgKzEyMiw3IEBAIGludCBpb21tdWZkX29iamVjdF9yZW1vdmUoc3RydWN0IGlvbW11ZmRfY3R4
+ICppY3R4LAogewogCXN0cnVjdCBpb21tdWZkX29iamVjdCAqb2JqOwogCVhBX1NUQVRFKHhhcywg
+JmljdHgtPm9iamVjdHMsIGlkKTsKKwlERUZJTkVfTVVURVgocmVtb3ZlX211dGV4KTsgLy8gTXV0
+ZXggZm9yIHRocmVhZCBzYWZldHkKIAlib29sIHplcm9kX3Nob3J0dGVybSA9IGZhbHNlOwogCWlu
+dCByZXQ7CiAKQEAgLTEzOSwxMSArMTQwLDE0IEBAIGludCBpb21tdWZkX29iamVjdF9yZW1vdmUo
+c3RydWN0IGlvbW11ZmRfY3R4ICppY3R4LAogCQkJICogZGVmZXIgY2xlYW5pbmcgdGhpcyBvYmpl
+Y3QgdW50aWwgY2xvc2UuCiAJCQkgKi8KIAkJCXJlZmNvdW50X2RlYygmdG9fZGVzdHJveS0+dXNl
+cnMpOworCQkJbXV0ZXhfdW5sb2NrKCZyZW1vdmVfbXV0ZXgpOwogCQkJcmV0dXJuIHJldDsKIAkJ
+fQogCQl6ZXJvZF9zaG9ydHRlcm0gPSB0cnVlOwogCX0KIAorCW11dGV4X2xvY2soJnJlbW92ZV9t
+dXRleCk7CisKIAl4YV9sb2NrKCZpY3R4LT5vYmplY3RzKTsKIAlvYmogPSB4YXNfbG9hZCgmeGFz
+KTsKIAlpZiAodG9fZGVzdHJveSkgewpAQCAtMTc2LDYgKzE4MCw5IEBAIGludCBpb21tdWZkX29i
+amVjdF9yZW1vdmUoc3RydWN0IGlvbW11ZmRfY3R4ICppY3R4LAogCSAqIFNpbmNlIHVzZXJzIGlz
+IHplcm8gYW55IHBvc2l0aXZlIHVzZXJzX3Nob3J0dGVybSBtdXN0IGJlIHJhY2luZwogCSAqIGlv
+bW11ZmRfcHV0X29iamVjdCgpLCBvciB3ZSBoYXZlIGEgYnVnLgogCSAqLworCisJbXV0ZXhfdW5s
+b2NrKCZyZW1vdmVfbXV0ZXgpOworCiAJaWYgKCF6ZXJvZF9zaG9ydHRlcm0pIHsKIAkJcmV0ID0g
+aW9tbXVmZF9vYmplY3RfZGVjX3dhaXRfc2hvcnR0ZXJtKGljdHgsIG9iaik7CiAJCWlmIChXQVJO
+X09OKHJldCkpCkBAIC0xODcsMTEgKzE5NCwxMyBAQCBpbnQgaW9tbXVmZF9vYmplY3RfcmVtb3Zl
+KHN0cnVjdCBpb21tdWZkX2N0eCAqaWN0eCwKIAlyZXR1cm4gMDsKIAogZXJyX3hhOgorCXhhX3Vu
+bG9jaygmaWN0eC0+b2JqZWN0cyk7CisJbXV0ZXhfdW5sb2NrKCZyZW1vdmVfbXV0ZXgpOworCiAJ
+aWYgKHplcm9kX3Nob3J0dGVybSkgewogCQkvKiBSZXN0b3JlIHRoZSB4YXJyYXkgb3duZWQgcmVm
+ZXJlbmNlICovCiAJCXJlZmNvdW50X3NldCgmb2JqLT5zaG9ydHRlcm1fdXNlcnMsIDEpOwogCX0K
+LQl4YV91bmxvY2soJmljdHgtPm9iamVjdHMpOwogCiAJLyogVGhlIHJldHVybmVkIG9iamVjdCBy
+ZWZlcmVuY2UgY291bnQgaXMgemVybyAqLwogCXJldHVybiByZXQ7Ci0tIAoyLjM0LjEKCg==
+--0000000000009f6867062782d773--
 
