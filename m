@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-417776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20BFD9D58F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:51:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B7DF9D58EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB2A02858F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:51:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3D01F22D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43C3178CF6;
-	Fri, 22 Nov 2024 04:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DA6166F33;
+	Fri, 22 Nov 2024 04:50:29 +0000 (UTC)
 Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BDE15B13C
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B4B15FD16
 	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732251030; cv=none; b=K2kGSuWwqGGfqz4XxP7MGdKj+Z6jjyc9fC+DDrsvTtsjzIsfo4XBUbNdFuo1/2ebrbjiklQDmm0Jty61IUA726ROUyHgv+0PH2XEzHMTHNjV1/EpfWvUAKzNyv+SKNghNpZGNTx98irQ3xRbRtAg3GMWNNUlR60itjwla6eGH5c=
+	t=1732251029; cv=none; b=XWg32I7sirfUlSpYwZCkDQ26oQ2Tuqv3sZBBjdkCSKEgbcYuXk4l4R4Cnx9lYtjJ2dJ5SImjbH8qxlqovlu69843kBNGfxtLDrHbWhVwlOz3GXJIe4VUQ2241Cb5VN+ORuU13aIf19bBUZLttVbdNMxV8xx4gZfySzdMUbLIC1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732251030; c=relaxed/simple;
-	bh=vo+nyHm4J5Y/nSI2tKzgttln0FQjBwZYWDnBlKp3wlU=;
+	s=arc-20240116; t=1732251029; c=relaxed/simple;
+	bh=hpEJE6452kJP+gGj5WwMyHNX5Dc1z8fXf0Rr7Lf363M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xn9UcFgIvSIkAgx6NDezFXjpivRxBVYsM6A8SPFZA8CHwI5mKTwRfiD99ux9CSQa05Q/YaJotDImkNESVlc/UElvm2THzBp057eO/pqujF6yNhulvn3RZQ8AoqIA5gBtvPXmQAwOwLyDdQNjMd5RJVYNeU34Glwo1I6H7tWfalo=
+	 MIME-Version; b=NkC/CM2mxuRESs4N8yMxIfbREW3awn/z9zTzdFy5Xc3E2rnYx0gtO3QAubgl40jvijNGuN6EvgmUqmyhgAsCWim/GSvTeezh3n2YK24puavWCoQk4G1K0q434bFCgH/z15H4P1VlzbPIqr1JWfmLLTty04FBcbQXMjFxiX2/Fww=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
 Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Dx2uGQDUBnFb1FAA--.7363S3;
-	Fri, 22 Nov 2024 12:50:24 +0800 (CST)
+	by gateway (Coremail) with SMTP id _____8CxSOGRDUBnGb1FAA--.5039S3;
+	Fri, 22 Nov 2024 12:50:25 +0800 (CST)
 Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S11;
+	by front1 (Coremail) with SMTP id qMiowMCxdcCIDUBnIJJiAA--.33733S12;
 	Fri, 22 Nov 2024 12:50:24 +0800 (CST)
 From: Tiezhu Yang <yangtiezhu@loongson.cn>
 To: Huacai Chen <chenhuacai@kernel.org>,
@@ -38,9 +38,9 @@ To: Huacai Chen <chenhuacai@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>
 Cc: loongarch@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 09/10] objtool/LoongArch: Add support for goto table
-Date: Fri, 22 Nov 2024 12:50:04 +0800
-Message-ID: <20241122045005.14617-10-yangtiezhu@loongson.cn>
+Subject: [PATCH v4 10/10] LoongArch: Enable jump table for objtool
+Date: Fri, 22 Nov 2024 12:50:05 +0800
+Message-ID: <20241122045005.14617-11-yangtiezhu@loongson.cn>
 X-Mailer: git-send-email 2.42.0
 In-Reply-To: <20241122045005.14617-1-yangtiezhu@loongson.cn>
 References: <20241122045005.14617-1-yangtiezhu@loongson.cn>
@@ -51,115 +51,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S11
+X-CM-TRANSID:qMiowMCxdcCIDUBnIJJiAA--.33733S12
 X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxCw4rWw18Wr1fGr1kCw4kuFX_yoWrGryfpF
-	W3C345Kr45Xr4Sgr47tay09ryaya1IgFy7GrWDt34rAw43Xr1rtF1SqF9IyFy8urZ5Ar4I
-	qr4rKr48CF4DAacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+X-Coremail-Antispam: 1Uk129KBj93XoW7uFWDuryUCw13Ww1kuryUJwc_yoW8Wr45pw
+	s7Zr4kKw4kXF4vqrZrJrWSgrZ8trnrKr43WF429a4kArW7Z345Zr48ta9rW3WUCws5JrWI
+	qFWfGa4avFWUJ3XCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
 	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWr
-	XVW3AwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7V
-	AKI48JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU0yxRDUUUUU==
+	0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr1j6F4UJwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	Wrv_ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
+	0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AK
+	xVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
+	AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI
+	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
+	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
+	WIevJa73UjIFyTuYvjxUVCD7UUUUU
 
-The objtool program needs to analysis the control flow of each object file
-generated by compiler toolchain, it needs to know all the locations that a
-branch instruction may jump into, if a jump table is used, objtool has to
-correlate the jump instruction with the table.
-
-On x86 which is the only port supported by objtool before LoongArch, there
-is a relocation on the jump instruction and to the table directly. But on
-LoongArch, the relocation is on some kind of instruction prior to the jump
-instruction, and also with scheduling it is not easy to tell the offset of
-that instruction from the jump instruction. Furthermore, because LoongArch
-has -fsection-anchors (often enabled at -O1 or above) the relocation may
-actually points to a section anchor instead of the table itself.
-
-For the jump table of switch cases, a GCC patch "LoongArch: Add support to
-annotate tablejump" and a Clang patch "[LoongArch] Add options for annotate
-tablejump" have been merged into the upstream mainline, it can parse the
-additional section ".discard.tablejump_annotate" which stores the jump info
-as pairs of addresses, each pair contains the address of jump instruction
-and the address of jump table.
-
-For the jump table of computed gotos, it is indeed not easy to implement
-in the compiler, especially if there is more than one computed goto in a
-function such as ___bpf_prog_run(). objdump kernel/bpf/core.o shows that
-there are many table jump instructions in ___bpf_prog_run(), but there are
-no relocations on the table jump instructions and to the table directly on
-LoongArch.
-
-Without the help of compiler, in order to figure out the address of goto
-table for the special case of ___bpf_prog_run(), since the instruction
-sequence is relatively single and stable, it makes sense to add a helper
-find_reloc_of_rodata_c_jump_table() to find the relocation which points
-to the section ".rodata..c_jump_table".
-
-If find_reloc_by_table_annotate() failed, it means there is no relocation
-info of switch table address in ".rela.discard.tablejump_annotate", then
-objtool may find the relocation info of goto table ".rodata..c_jump_table"
-with find_reloc_of_rodata_c_jump_table().
+For now, it is time to remove -fno-jump-tables to enable jump table for
+objtool if the compiler has -mannotate-tablejump, otherwise it is better
+to remain -fno-jump-tables to keep compatibility with the older compilers.
 
 Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- tools/objtool/arch/loongarch/special.c | 28 ++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ arch/loongarch/Kconfig  | 3 +++
+ arch/loongarch/Makefile | 4 ++++
+ 2 files changed, 7 insertions(+)
 
-diff --git a/tools/objtool/arch/loongarch/special.c b/tools/objtool/arch/loongarch/special.c
-index 366517deb35b..c5f4217df3a7 100644
---- a/tools/objtool/arch/loongarch/special.c
-+++ b/tools/objtool/arch/loongarch/special.c
-@@ -114,6 +114,27 @@ static struct reloc *find_reloc_by_table_annotate(struct objtool_file *file,
- 	return NULL;
- }
+diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
+index bb35c34f86d2..500ee9b2cd88 100644
+--- a/arch/loongarch/Kconfig
++++ b/arch/loongarch/Kconfig
+@@ -284,6 +284,9 @@ config AS_HAS_LBT_EXTENSION
+ config AS_HAS_LVZ_EXTENSION
+ 	def_bool $(as-instr,hvcl 0)
  
-+static struct reloc *find_reloc_of_rodata_c_jump_table(struct section *sec,
-+						       unsigned long offset)
-+{
-+	struct section *rsec;
-+	struct reloc *reloc;
++config CC_HAS_ANNOTATE_TABLEJUMP
++	def_bool $(cc-option,-mannotate-tablejump)
 +
-+	rsec = sec->rsec;
-+	if (!rsec)
-+		return NULL;
-+
-+	for_each_reloc(rsec, reloc) {
-+		if (reloc_offset(reloc) > offset)
-+			break;
-+
-+		if (!strncmp(reloc->sym->sec->name, ".rodata..c_jump_table", 21))
-+			return reloc;
-+	}
-+
-+	return NULL;
-+}
-+
- struct reloc *arch_find_switch_table(struct objtool_file *file,
- 				     struct instruction *insn)
- {
-@@ -123,8 +144,11 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
- 	unsigned long table_offset;
+ menu "Kernel type and options"
  
- 	annotate_reloc = find_reloc_by_table_annotate(file, insn);
--	if (!annotate_reloc)
--		return NULL;
-+	if (!annotate_reloc) {
-+		annotate_reloc = find_reloc_of_rodata_c_jump_table(insn->sec, insn->offset);
-+		if (!annotate_reloc)
-+			return NULL;
-+	}
+ source "kernel/Kconfig.hz"
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index ae3f80622f4c..6b84e633b8ce 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -101,8 +101,12 @@ KBUILD_AFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)
+ KBUILD_CFLAGS			+= $(call cc-option,-mthin-add-sub) $(call cc-option,-Wa$(comma)-mthin-add-sub)
  
- 	table_sec = annotate_reloc->sym->sec;
- 	if (annotate_reloc->sym->type == STT_SECTION)
+ ifdef CONFIG_OBJTOOL
++ifdef CONFIG_CC_HAS_ANNOTATE_TABLEJUMP
++KBUILD_CFLAGS			+= $(call cc-option,-mannotate-tablejump)
++else
+ KBUILD_CFLAGS			+= -fno-jump-tables
+ endif
++endif
+ 
+ KBUILD_RUSTFLAGS		+= --target=loongarch64-unknown-none-softfloat
+ KBUILD_RUSTFLAGS_KERNEL		+= -Zdirect-access-external-data=yes
 -- 
 2.42.0
 
