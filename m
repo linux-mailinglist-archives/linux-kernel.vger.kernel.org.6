@@ -1,105 +1,136 @@
-Return-Path: <linux-kernel+bounces-418775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE709D658C
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:09:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A909D658E
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 23:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF430B216EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:09:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05500B2274B
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 22:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E031818BC0D;
-	Fri, 22 Nov 2024 22:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDCF18BC13;
+	Fri, 22 Nov 2024 22:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKtxD7Uj"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OCf6HTb3"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB56812E4A
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D59612E4A
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 22:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732313345; cv=none; b=EtXn3AfY789drdyRso2p6f7J3IDFGcoiXvOu7aaW5u+CYJhMfefieIxPCGhGGzgE91mvDPJBaiN//bnli0heZKEQETto3CUfDrED8hVqtYtqIHEnnInKxNOK8UgWA0M4eCiqnNQdLr+Pn3FDC/USI17SDai6mCmXw4NR5KmfxJM=
+	t=1732313442; cv=none; b=Jn4KbZ64A3AfonzsICpfYkFxiBsqYRbzfT/1G8MWThWnrHztCznCLn5RKQKIwx4z0i08uu1InfOd34zMlEUm3UnFYENRFHyKLRq5Jd0K0H3ZvawCahLS1WUfyEfATHjjfKYJrLdJvdxb3tUejSwF5VAvdEh+x9nPnc10w4M1+Yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732313345; c=relaxed/simple;
-	bh=jf0oq2r/V+Sxr8mnSqnPa38uOXm85TXfL9nmSBNUrEw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hxC+HWO2ydbrSRlAlmUcR9T5wVbvus+feazi9BLjCgETBYEq1oY+PcWlX5LCUuKWVGdWh6EZgM//SpT42LIg6YQZA/X37brsyu+DBBZvbHL8HzraTjs9sM62kVpgJRprekoZvnqGW9Vh3oyo53p9XtrXbi6aYrlysey7IYf/luk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JKtxD7Uj; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-2128383b86eso25542385ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:09:03 -0800 (PST)
+	s=arc-20240116; t=1732313442; c=relaxed/simple;
+	bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a3cAkS4CksGEbImDj5qKn8p9wev7Ew5HU6QP6xtz7QFHrF2Frw/uyKKfWOabWRTz+3fpf9lsyeRMPhf/wInFTTL78Zr3fn1s1ZHOh//7RAfM4uGQRV9Aq0DZyRI93Jxa4QcNxh6o8U+PQQblbBKAizf4uvqU2KVKsWa83tI5dVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OCf6HTb3; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315a8cff85so5445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 14:10:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732313343; x=1732918143; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jf0oq2r/V+Sxr8mnSqnPa38uOXm85TXfL9nmSBNUrEw=;
-        b=JKtxD7UjF0ys37TKJYpcUilOGMSTNdwXkKAv8e/PinF+XkCl5KH4fZZqvEXFF4ZhKd
-         ptGtZc1ovHlflN/WJnIjuryOXkYNgLhYXXxI3hRibIB8EBM4NWoBt1TjT5PZWgXpkfdK
-         +nGfkRLkeVGI6HXj2p+Uj1690Ig7e/MxFlHW1xV2jVM+6qVt4fseixljSIBCcqRiSvkZ
-         R/lvEhKHWjf6Nfft1NacF8lHHX921X0gkg6UNagqUaGvS0Koq+F2Wg8NtQErNPC24qzg
-         5RMHExxdCppjpNxXhnrwAC2y8Am4INp7NVAXDO/oJy9jR0lwsqlenCrw9ep3S0B3bHQA
-         VPuw==
+        d=google.com; s=20230601; t=1732313439; x=1732918239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
+        b=OCf6HTb3BlfUZchsEjgfCt3k9KyLwDX2+0yD6JyNh7B/LGOkIGiSiKRf1vsemgxz5Q
+         ei/h3sIj7oDb5fxj5j9X4jmTPJDUwnjUtCOii6eIZl1YZWOCjrqJ7xqqehcEwlYFJ5Qj
+         4mCfcY/PbAeXJhELvz940ycZLqq0OZ851hY5QBua8ABy/5tmds2uUyPnMuRsAv9Ickhx
+         Bd72xZodUOgk1Fp+Hu1x/XIFGusqxYXqBznCSDGg7yU2NkOxde5bQrTSCJzAsRsUDbPL
+         GPubEQIQhu3OkrkrQ52FpUTqfTsiQFdMm0U7IHxJLOYps1cUUizCCD/xehkDIj2iY+k8
+         PjvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732313343; x=1732918143;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jf0oq2r/V+Sxr8mnSqnPa38uOXm85TXfL9nmSBNUrEw=;
-        b=u2vZ3BB+SsCa/mogtrqg+ORRzIHQpEwdd5FA+N0a6vW5RPUS2iIdWDpbVuWzCPv2If
-         2aSTMjDs8rKLhRB0Gls9agCeXopiYUyIkjbSNwh1dCyFYPrv8GW5Jd7VCve3LQTWvU7v
-         6zZOM2usC6qXMQjMPnx4YE2nlGto8fiJbSlFMNJS1WK1g2MbpyebgDWUtfPhcrPsmpkc
-         EHAEXnET7FCBdy+He96iL1IOyTsm5Ctzmmtd8jLwJ3vaygmuE1Aw71AI57oVMw9TfRFH
-         h3CObJEKrpyyvxbKZlJca7ZWuwYFJ9rmeJRF7QK3dM+p3Xdvt6C+QVe4jJtXBN5JxTRo
-         EA6g==
-X-Gm-Message-State: AOJu0YzOzRj59gwr6yqPoogbev5mTpBnRN3yVSSm8roK4D9YF1sAkW4m
-	y8FcPAjNCpe0JiYwx6UZeK2524uLpeuxA+dQvufXM6uQX4RzSFl2fZbSuVeGwleDE1x6fofYTB+
-	VfeoZ9i/LQBsZFUlHI95Xt/uvz7Y=
-X-Gm-Gg: ASbGnctQEDJ1b75UWoq6D6YeUijg8ndmy/bHSZI4V5VfmBQMc/75pzdqk77peoSkrtK
-	ST7/60zNIFhqT/FZZMKsrw9MoMlbOBC3i
-X-Google-Smtp-Source: AGHT+IFS9AMJYYd/EBLyTmIlb0CM51c795mkEhuuvpyb3Ym9+fkH4nPbWwk8O3cYJQ9fvlkJFURxkMnkr4qND3T0Edg=
-X-Received: by 2002:a17:903:230e:b0:212:3f13:d4d5 with SMTP id
- d9443c01a7336-2129fd22060mr55563945ad.27.1732313343142; Fri, 22 Nov 2024
- 14:09:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732313439; x=1732918239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JZZeaLOPwWolDY9YeQvGEW4vFzp1CUFGGaoHcATQS+s=;
+        b=maYg43Mpak63XgSpyk5KmpRzpSNqOaEQuvB4oQKKZ5syufyDCcw1NuwH+/3bwjYRxx
+         GezPJXnDOxxCsxnDHefNamqk3Ee8tw3PXf5QQmZ8kIqZMKs6uUY1JVIWQDNRQF4Fg16V
+         RrmQ0/PqPZArIU3vypU2TTLXwj6RqSHgcKpNX1Mj60t/M94q4SbgN7Gy8EZFDxlAEgFo
+         2G8xchjXGHF2Jm6ESFUs0d+qQPNqmSVXygAGccmI55ZX7uCjHOd0QQOXbM20J4aJmOvp
+         A9WXn0Gg6K6bHks2TVIlSo7Bs4Zu/UIENZHSeg1/n3TSZre+EowG3x6YoZxo8jsdmpx6
+         69/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwsvAEUAeswdBxFh4q+Y9J8XfN6+I3V3zn5lYhc2GLe1ILqpGSaBE85yEtk3IFXuBupV4bBPEnr0BpbAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHnJy3Qpu3atJrLUN3q4QG9AvjuAYHJQcpfAVNOxdrZBmZXTKk
+	GKUJKUBSd+ApfVW0HsiRRUlsBU0aF1mswcVn/5M4kVNaWD/uMFKhcFOKEdrV64On2rWH2fyZ+f7
+	Co6FeQ6MVdcPVOQS3lAvverROuuh08mTHcMyC
+X-Gm-Gg: ASbGncuFgKA6iXFrj2vZ6e1W61qdJbEQohf5srFVQUIy2uui84sL7Wl55ZkmPzY6qBm
+	W93g/kARgO9xIeMVfpWBhuu66th9rKesMC903+xt+DH/XlfVKBQ6pBUnmNwcQ41CY
+X-Google-Smtp-Source: AGHT+IHn2hbKjIPF1ezTNxBktlxUIPal4HpKW8bNKzDZRuGjbsJ5nlIo3O6z2oBBfRs1YAwI2NOCc3Pjz55YD+M7Nrw=
+X-Received: by 2002:a05:600c:3550:b0:431:416b:9ecf with SMTP id
+ 5b1f17b1804b1-4348be050b3mr350525e9.6.1732313439462; Fri, 22 Nov 2024
+ 14:10:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Zichen Xie <zichenxie0106@gmail.com>
-Date: Fri, 22 Nov 2024 16:08:53 -0600
-Message-ID: <CANdh5G6cyMoSjujJcGgJ0G4FrHBBc6uvHr13D09P7c-oODTf5w@mail.gmail.com>
-Subject: Question about a problem caused by copy_from_sockptr() in get_ext_report()
-To: bp@alien8.de, thomas.lendacky@amd.com, nikunj@amd.com, 
-	u.kleine-koenig@pengutronix.de, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	michael.roth@amd.com
-Cc: linux-kernel@vger.kernel.org, Chenyuan Yang <chenyuan0y@gmail.com>, 
-	Zijie Zhao <zzjas98@gmail.com>
+References: <20241107212309.3097362-1-almasrymina@google.com>
+ <20241107212309.3097362-5-almasrymina@google.com> <20241108141812.GL35848@ziepe.ca>
+ <CAHS8izOVs+Tz2nFHMfiQ7=+hk6jKg46epO2f6Whfn07fNFOSRw@mail.gmail.com> <20241115015912.GA559636@ziepe.ca>
+In-Reply-To: <20241115015912.GA559636@ziepe.ca>
+From: Samiullah Khawaja <skhawaja@google.com>
+Date: Fri, 22 Nov 2024 14:10:28 -0800
+Message-ID: <CAAywjhRb0Lb9fJocWBU1r01521sy71hLOaH=92gqceXqUOGHJg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 4/5] page_pool: disable sync for cpu for
+ dmabuf memory provider
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>, linux-kernel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear developers,
+On Thu, Nov 14, 2024 at 5:59=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Fri, Nov 08, 2024 at 11:01:21AM -0800, Mina Almasry wrote:
+>
+> > > If you do this you may want to block accepting dmabufs that have CPU
+> > > pages inside them.
 
-I'm curious about whether the function `get_ext_report` might have a
-security issue.
+I believe we should be following the dmabuf API for this purpose, if
+we really want to sync for CPU in. page_pool, and should not assume
+the behaviour of the backing memory.
 
-The function is
-https://elixir.bootlin.com/linux/v6.12/source/drivers/virt/coco/sev-guest/sev-guest.c#L577,
-and the relevant code is:
-```
-if (copy_from_sockptr(report_req, io->req_data, sizeof(*report_req)))
-return -EFAULT;
-```
+The dmabuf exporters are supposed to implement the begin_cpu_access
+(optional) and the sync for cpu is done based on the exporter
+implementation.
 
-Here copy_from_sockptr() is called without checking the length of
-io->req_data. If the remaining length of io->req_data is less than
-sizeof(*report_req), the copy should be illegal.
-So, I think a prehand check could be useful.
+For example udmabuf implementation calls `dma_sync_sg_for_cpu` on the
+underlying pages.
 
-Please kindly correct me if I missed any key information. Looking
-forward to your response!
+I think following dmabuf APIs can be used to ensure the backing memory
+is synced:
 
-Best,
-Zichen
+Before cpu access to sync for cpu
+`dma_buf_begin_cpu_access`
+
+After cpu access to be synced for device
+`dma_buf_end_cpu_access`
+
+Sami
+> > >
+> >
+> > How do I check if the dmabuf has CPU pages inside of it? The only way
+> > I can think to do that is to sg_page a scatterlist entry, then
+> > !is_zone_device_page() the page. Or something like that, but I thought
+> > calling sg_page() on the dmabuf scatterlist was banned now.
+>
+> I don't know. Many dmabuf scenarios abuse scatter list and the CPU
+> list is invalid, so you can't reference sg_page().
+>
+> I think you'd need to discuss with the dmabuf maintainers.
+>
+> Jason
 
