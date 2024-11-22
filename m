@@ -1,413 +1,782 @@
-Return-Path: <linux-kernel+bounces-417661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05DD9D5782
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:47:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D4A9D5844
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:23:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6BB282F88
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D70282EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79B11BD9DF;
-	Fri, 22 Nov 2024 01:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pYqbijaQ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1360C70824;
+	Fri, 22 Nov 2024 02:23:01 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83EF715CD60
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAB3230988
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732239737; cv=none; b=S05+supUht5TlHGxDbHYHS3Y1+BWbgTC0PMyg6EZOf2f7DcDG/7lQHktJ0IyNsY5bQttDBJJPm+lag35RsOf2oGAMavGjphtNxItD3gOyu/069FfWgBB3Fj6SWkYybX53tpnSWV01ygVKCil6Iad3Een+i0/J3h5obmdISsuHCU=
+	t=1732242180; cv=none; b=QiEDivsP7WrO6+AA8nI4Y46bJ8wNRs8JfAJVM6LuJ9R//Dk5TaYtMl833fPlvx7QFcU0UW4RdDHFdkVxUglB7jqbA6dFuMdlHV/WZyjtuNAeRm6/Idsdy8aYaCXzNkFXJ7qjz69auE2i4sETcb4SA9lNBNmSIjVqVP+/RA9U8RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732239737; c=relaxed/simple;
-	bh=T5tCzRJarXh/ghPPl08EEXYi8t76OZicYI6vaQs3AdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SsfbTtrfY7lNJTiS7JBIlbyZb6ydlqvxFytm+KyCyuRbVGC7ulPIN5LvYtIATZ6pXtyl/hqQowAyBC0O/cHtLInMWTHN/ZE8ELr1DmKhGuCD/G0BNs6IQhlp1/0I5iTuDAJ9Gcsxu7IJ6fl6lPTmbU3TDyb3DL26nTCA3+Lfa/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pYqbijaQ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53d9ff92edaso1755636e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 17:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732239733; x=1732844533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LVsCrs+2Zy1Cw9Biz6G59m8BJmA0z0mEYpX+dAlvRnk=;
-        b=pYqbijaQZVUgj0hn5P1ZN18yBpp86I5pWQ+ev7Ze/w8CuYS9ercTjHPizeX5p3CwZv
-         fJbN8as9BPx8z1mt1uT6/4VWXFAIAb+7O+BvVbt+0ztr/BzIi9sMv839rEpdr6PssUbH
-         0U1ZzSrOkF8mwbOr9tE/ukZ7gzdM9jxQR+TS+0Am1U17OTgLVzKIYmqxW5bRilk3ssZL
-         MqzINX+WW+5Yz5F1RkYIzqAMZCBP9Px6MsouOi9Y7NoGwX3ikR0HwIVaVj1Hoq0IQ37X
-         cbgOCgJFVaGMrx1Wz8KbGtOjgekm2Ser0L8eP8sDMZ/eK2AZ9mzEymr/Ln6ltR/wD855
-         69gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732239733; x=1732844533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LVsCrs+2Zy1Cw9Biz6G59m8BJmA0z0mEYpX+dAlvRnk=;
-        b=kLLEe9SmR7LoZTv3ps+agESnUJ45Xo9/6bpSyNz5rdQYbcKkF85Sgsq9yAzifVat5S
-         u0QON/FLG3kSFLO9iQGawVm9otnoOHIt0/jaBiJGtJGfeYbkukYyd5cyzHOt5o45fPH+
-         EU8LBOpFKO81WmoYJF9Zf1gnrCRQWBIvV3PgzU/Nu0ZpIOvWqsDmT9DcO+n0viZbk4Mq
-         9IHxT0CYkiXmxBZAgHPRVxThm4rLEv4z+coKswGVvMYBFCmibBfAs5qBFmzWmazq9hqr
-         fxSGs8WRGFF5HbMO373/VbBu0yxblRAtTVYAhZHKXcshpL6KWW+Oz3Jy0m2u1lXLP7v+
-         t9Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+LW5xVoEABvd4ildpEzyhFPRvAKALedqnlzCE0VLhgEY3SYy+fekK42XaxHIlZuElY0e8y00WuaLqUIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO8DACJ+6Pc6zdYwnaB0dg1s+5gFputYrdkQbJLnfj3yvUs9XX
-	WqSq2QWs3/Wi7nnvdQc3jWy9ZGmCWqS6q41Jcj8hS7+9mkJpgaoUBD5JefsAXrI=
-X-Gm-Gg: ASbGncthVDeJmMfLh2K8jXFZvQ0QkoWqKY0NMsUrWKc6lalj0eCerqYsIXkRgzVjnfF
-	PqsiU4t+a3J0F6qkNY6m+LbYkDblezlqL/wpzpeiqCFj9AjKgHkBPu0irv20n9JFe9UtIFEMRMS
-	ryhCgq4VpsEwBFpTuyVY7Zag0G1mzo9S5cjNm1bX74OaUodFgg5D4/48DwIAUFm6BN0CnUgg9Z1
-	+5skAv3NJYQrJ0wZ3hlArHrJue1FRlxMuOkLU3vVlAKRXGy3MYVFTwN1HqXZtPGwoBGnYUGYmUn
-	MAkB/3gKfmQAOuDCtaZrMrQmLPS6jg==
-X-Google-Smtp-Source: AGHT+IHpfDtdPrVUJ86s9RzE+gzLjX2pCHQyP8l5PBeNQbVWR7A9L0or9Vj6WEDx5TVLxd5lYm/wtQ==
-X-Received: by 2002:a05:6512:1303:b0:53d:cb7e:225a with SMTP id 2adb3069b0e04-53dd36aa62cmr423873e87.24.1732239733327;
-        Thu, 21 Nov 2024 17:42:13 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2450a7dsm154141e87.59.2024.11.21.17.42.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2024 17:42:11 -0800 (PST)
-Date: Fri, 22 Nov 2024 03:42:09 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 drm-dp 1/5] drm/hisilicon/hibmc: add dp aux in hibmc
-Message-ID: <augqwu7iv42ges4x53ysulbfv43x6hadku7rgwjlscelsx5iwk@xmpeutszvjev>
-References: <20241118142805.3326443-1-shiyongbang@huawei.com>
- <20241118142805.3326443-2-shiyongbang@huawei.com>
+	s=arc-20240116; t=1732242180; c=relaxed/simple;
+	bh=UworaByP5DVggPZL/l6utqftZ44MGBAnHkYOurrLFks=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gtu3sAQyoOaPHNOa/DOkoL7EL7/et22f9vn4uAoyPfapsSK6mAjeQXBox4HI89j8FlAFDmbR6ArdrZNhlNhhxKajYLcizh2CEXF+ZDn9sBCcKD9ubCjeHCSAuvyboJ93yi+DZtTmJq+lSsxrTOKJ1K+dG+ACqnX9htQBxUDjPS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from SHSQR01.spreadtrum.com (localhost [127.0.0.2] (may be forged))
+	by SHSQR01.spreadtrum.com with ESMTP id 4AM1kBl1011847
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:46:11 +0800 (+08)
+	(envelope-from catdeo.zhang@unisoc.com)
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4AM1jj1H009539;
+	Fri, 22 Nov 2024 09:45:45 +0800 (+08)
+	(envelope-from catdeo.zhang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XvdF14RRJz2KvmnS;
+	Fri, 22 Nov 2024 09:44:21 +0800 (CST)
+Received: from zeshkernups02.spreadtrum.com (10.29.35.184) by
+ shmbx06.spreadtrum.com (10.0.1.11) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 22 Nov 2024 09:45:43 +0800
+From: Catdeo Zhang <catdeo.zhang@unisoc.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S . Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+CC: Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <catdeo.zhang@unisoc.com>,
+        <cixi.geng@linux.dev>, <wade.shu@unisoc.com>, <jiawang.yu@unisoc.com>,
+        <hehe.li@unisoc.com>
+Subject: [PATCH] net/sipa: Spreadtrum IPA driver code
+Date: Fri, 22 Nov 2024 09:45:41 +0800
+Message-ID: <20241122014541.1234644-1-catdeo.zhang@unisoc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118142805.3326443-2-shiyongbang@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ shmbx06.spreadtrum.com (10.0.1.11)
+X-MAIL:SHSQR01.spreadtrum.com 4AM1jj1H009539
 
-On Mon, Nov 18, 2024 at 10:28:01PM +0800, Yongbang Shi wrote:
-> From: baihan li <libaihan@huawei.com>
-> 
-> Add dp aux read/write functions. They are basic functions
-> and will be used later.
-> 
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
-> ChangeLog:
-> v4 -> v5:
->   - fixing build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202411131438.RZWYrWTE-lkp@intel.com/
-> v3 -> v4:
->   - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
->   - replacing all ret= with returns, suggested by Dmitry Baryshkov.
->   - moving the comment below the judgment statement, suggested by Dmitry Baryshkov.
->   - moving definations to the source file and clearing headers, suggested by Dmitry Baryshkov.
->   - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
->   - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
->   - moving some structs to later patch, suggested by Dmitry Baryshkov.
-> v2 -> v3:
->   - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
->   - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
->   - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
->   - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
->   - fix build errors reported by kernel test robot <lkp@intel.com>
->     Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
-> v1 -> v2:
->   - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
->   - using drm dp header files' dp macros instead, suggested by Andy Yan.
->   v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 164 +++++++++++++++++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  38 +++++
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  27 +++
->  4 files changed, 231 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->  create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> 
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> index d25c75e60d3d..8770ec6dfffd 100644
-> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-> @@ -1,4 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
-> +hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
-> +	       dp/dp_aux.o
->  
->  obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
-> new file mode 100644
-> index 000000000000..16bdfefbf255
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
-> @@ -0,0 +1,164 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-laterHIBMC_BYTES_IN_U32
-> +// Copyright (c) 2024 Hisilicon Limited.
-> +
-> +#include <linux/io.h>
-> +#include <linux/iopoll.h>
-> +#include <linux/minmax.h>
-> +#include <drm/drm_device.h>
-> +#include <drm/drm_print.h>
-> +#include "dp_comm.h"
-> +#include "dp_reg.h"
-> +
-> +#define HIBMC_AUX_CMD_REQ_LEN		GENMASK(7, 4)
-> +#define HIBMC_AUX_CMD_ADDR		GENMASK(27, 8)
-> +#define HIBMC_AUX_CMD_I2C_ADDR_ONLY	BIT(28)
-> +#define HIBMC_BYTES_IN_U32		4
-> +#define HIBMC_AUX_I2C_WRITE_SUCCESS	0x1
-> +#define HIBMC_DP_MIN_PULSE_NUM		0x9
-> +#define BITS_IN_U8			8
-> +
-> +static inline void hibmc_dp_aux_reset(struct hibmc_dp_dev *dp)
-> +{
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x0);
-> +	usleep_range(10, 15);
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_DPTX_RST_CTRL, HIBMC_DP_CFG_AUX_RST_N, 0x1);
-> +}
-> +
-> +static void hibmc_dp_aux_read_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
-> +{
-> +	u32 reg_num;
-> +	u32 value;
-> +	u32 num;
-> +	u8 i, j;
-> +
-> +	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
-> +	for (i = 0; i < reg_num; i++) {
-> +		/* number of bytes read from a single register */
-> +		num = min(size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
-> +		value = readl(dp->base + HIBMC_DP_AUX_RD_DATA0 + i * HIBMC_BYTES_IN_U32);
-> +		/* convert the 32-bit value of the register to the buffer. */
-> +		for (j = 0; j < num; j++)
-> +			buf[i * HIBMC_BYTES_IN_U32 + j] = value >> (j * BITS_IN_U8);
-> +	}
-> +}
-> +
-> +static void hibmc_dp_aux_write_data(struct hibmc_dp_dev *dp, u8 *buf, u8 size)
-> +{
-> +	u32 reg_num;
-> +	u32 value;
-> +	u32 num;
-> +	u8 i, j;
-> +
-> +	reg_num = DIV_ROUND_UP(size, HIBMC_BYTES_IN_U32);
-> +	for (i = 0; i < reg_num; i++) {
-> +		/* number of bytes written to a single register */
-> +		num = min_t(u8, size - i * HIBMC_BYTES_IN_U32, HIBMC_BYTES_IN_U32);
-> +		value = 0;
-> +		/* obtain the 32-bit value written to a single register. */
-> +		for (j = 0; j < num; j++)
-> +			value |= buf[i * HIBMC_BYTES_IN_U32 + j] << (j * BITS_IN_U8);
-> +		/* writing data to a single register */
-> +		writel(value, dp->base + HIBMC_DP_AUX_WR_DATA0 + i * HIBMC_BYTES_IN_U32);
-> +	}
-> +}
-> +
-> +static u32 hibmc_dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
-> +{
-> +	u32 aux_cmd = msg->request;
-> +
-> +	if (msg->size)
-> +		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_REQ_LEN, (msg->size - 1));
-> +	else
-> +		aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_I2C_ADDR_ONLY, 1);
-> +
-> +	aux_cmd |= FIELD_PREP(HIBMC_AUX_CMD_ADDR, msg->address);
-> +
-> +	return aux_cmd;
-> +}
-> +
-> +/* ret >= 0, ret is size; ret < 0, ret is err code */
-> +static int hibmc_dp_aux_parse_xfer(struct hibmc_dp_dev *dp, struct drm_dp_aux_msg *msg)
-> +{
-> +	u32 buf_data_cnt;
-> +	u32 aux_status;
-> +
-> +	aux_status = readl(dp->base + HIBMC_DP_AUX_STATUS);
-> +	msg->reply = FIELD_GET(HIBMC_DP_CFG_AUX_STATUS, aux_status);
-> +
-> +	if (aux_status & HIBMC_DP_CFG_AUX_TIMEOUT)
-> +		return -ETIMEDOUT;
-> +
-> +	/* only address */
-> +	if (!msg->size)
-> +		return 0;
-> +
-> +	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
-> +		return -EIO;
-> +
-> +	buf_data_cnt = FIELD_GET(HIBMC_DP_CFG_AUX_READY_DATA_BYTE, aux_status);
-> +
-> +	switch (msg->request) {
-> +	case DP_AUX_NATIVE_WRITE:
-> +		return msg->size;
-> +	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
-> +		if (buf_data_cnt == HIBMC_AUX_I2C_WRITE_SUCCESS)
-> +			return msg->size;
-> +		else
-> +			return FIELD_GET(HIBMC_DP_CFG_AUX, aux_status);
-> +	case DP_AUX_NATIVE_READ:
-> +	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
-> +		buf_data_cnt--;
-> +		if (buf_data_cnt != msg->size) {
-> +			/* only the successful part of data is read */
-> +			return -EBUSY;
-> +		}
-> +
-> +		/* all data is successfully read */
-> +		hibmc_dp_aux_read_data(dp, msg->buffer, msg->size);
-> +		return msg->size;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
-> +static ssize_t hibmc_dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
-> +{
-> +	struct hibmc_dp_dev *dp = container_of(aux, struct hibmc_dp_dev, aux);
-> +	u32 aux_cmd;
-> +	int ret;
-> +	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
-> +
-> +	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA0);
-> +	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA1);
-> +	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA2);
-> +	writel(0, dp->base + HIBMC_DP_AUX_WR_DATA3);
-> +
-> +	hibmc_dp_aux_write_data(dp, msg->buffer, msg->size);
-> +
-> +	aux_cmd = hibmc_dp_aux_build_cmd(msg);
-> +	writel(aux_cmd, dp->base + HIBMC_DP_AUX_CMD_ADDR);
-> +
-> +	/* enable aux transfer */
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_REQ, 0x1);
-> +	ret = readl_poll_timeout(dp->base + HIBMC_DP_AUX_REQ, val,
-> +				 !(val & HIBMC_DP_CFG_AUX_REQ), 50, 5000);
-> +	if (ret) {
-> +		hibmc_dp_aux_reset(dp);
-> +		return ret;
-> +	}
-> +
-> +	return hibmc_dp_aux_parse_xfer(dp, msg);
-> +}
-> +
-> +void hibmc_dp_aux_init(struct hibmc_dp_dev *dp)
-> +{
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
-> +	hibmc_dp_reg_write_field(dp, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_MIN_PULSE_NUM,
-> +				 HIBMC_DP_MIN_PULSE_NUM);
-> +
-> +	dp->aux.transfer = hibmc_dp_aux_xfer;
-> +	dp->aux.is_remote = 0;
-> +	drm_dp_aux_init(&dp->aux);
-> +}
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-> new file mode 100644
-> index 000000000000..ce3b6fa4ea9e
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* Copyright (c) 2024 Hisilicon Limited. */
-> +
-> +#ifndef DP_COMM_H
-> +#define DP_COMM_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/bitops.h>
-> +#include <linux/errno.h>
-> +#include <linux/mutex.h>
-> +#include <linux/kernel.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/io.h>
-> +#include <drm/display/drm_dp_helper.h>
-> +
-> +struct hibmc_dp_dev {
-> +	struct drm_dp_aux aux;
-> +	struct drm_device *dev;
-> +	void __iomem *base;
-> +	struct mutex lock; /* protects concurrent RW in hibmc_dp_reg_write_field() */
-> +};
-> +
-> +#define dp_field_modify(reg_value, mask, val) ({		\
-> +	(reg_value) &= ~(mask);					\
-> +	(reg_value) |= FIELD_PREP(mask, val); })
+This is a first patch which upload the ipa driver code. IPA is an IP Packet Accelerator developed
+by Spreadtrum included in some Socs, which can provide packet filtering, forwarding etc.
 
-do { ... } while (0) or static inline. Or just inline into the calling
-function, if there is just one place where it is used.
+Signed-off-by: Catdeo Zhang <catdeo.zhang@unisoc.com>
+---
+ drivers/net/Kconfig           |   2 +
+ drivers/net/Makefile          |   1 +
+ drivers/net/sipa/Kconfig      |  16 ++
+ drivers/net/sipa/Makefile     |   6 +
+ drivers/net/sipa/sipa_core.c  | 345 ++++++++++++++++++++++++++++++++++
+ drivers/net/sipa/sipa_priv.h  | 177 +++++++++++++++++
+ include/linux/soc/sprd/sipa.h |  86 +++++++++
+ 7 files changed, 633 insertions(+)
+ create mode 100644 drivers/net/sipa/Kconfig
+ create mode 100644 drivers/net/sipa/Makefile
+ create mode 100644 drivers/net/sipa/sipa_core.c
+ create mode 100644 drivers/net/sipa/sipa_priv.h
+ create mode 100644 include/linux/soc/sprd/sipa.h
 
-> +
-> +#define hibmc_dp_reg_write_field(dp, offset, mask, val) ({	\
-> +	typeof(dp) _dp = dp;					\
-> +	typeof(_dp->base) addr = (_dp->base + (offset));	\
-> +	mutex_lock(&_dp->lock);					\
-> +	u32 reg_value = readl(addr);				\
-> +	dp_field_modify(reg_value, mask, val);			\
-> +	writel(reg_value, addr);				\
-> +	mutex_unlock(&_dp->lock); })
-
-I'd prefer a static inline function. Other than that:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
-> +
-> +void hibmc_dp_aux_init(struct hibmc_dp_dev *dp);
-> +
-> +#endif
-> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> new file mode 100644
-> index 000000000000..f3e6781e111a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* Copyright (c) 2024 Hisilicon Limited. */
-> +
-> +#ifndef DP_REG_H
-> +#define DP_REG_H
-> +
-> +#define HIBMC_DP_AUX_CMD_ADDR			0x50
-> +#define HIBMC_DP_AUX_WR_DATA0			0x54
-> +#define HIBMC_DP_AUX_WR_DATA1			0x58
-> +#define HIBMC_DP_AUX_WR_DATA2			0x5c
-> +#define HIBMC_DP_AUX_WR_DATA3			0x60
-> +#define HIBMC_DP_AUX_RD_DATA0			0x64
-> +#define HIBMC_DP_AUX_REQ			0x74
-> +#define HIBMC_DP_AUX_STATUS			0x78
-> +#define HIBMC_DP_DPTX_RST_CTRL			0x700
-> +
-> +#define HIBMC_DP_CFG_AUX_SYNC_LEN_SEL		BIT(1)
-> +#define HIBMC_DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
-> +#define HIBMC_DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
-> +#define HIBMC_DP_CFG_AUX_REQ			BIT(0)
-> +#define HIBMC_DP_CFG_AUX_RST_N			BIT(4)
-> +#define HIBMC_DP_CFG_AUX_TIMEOUT		BIT(0)
-> +#define HIBMC_DP_CFG_AUX_READY_DATA_BYTE	GENMASK(16, 12)
-> +#define HIBMC_DP_CFG_AUX			GENMASK(24, 17)
-> +#define HIBMC_DP_CFG_AUX_STATUS			GENMASK(11, 4)
-> +
-> +#endif
-> -- 
-> 2.33.0
-> 
-
+diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+index 9920b3a68ed1..c5066f6c046c 100644
+--- a/drivers/net/Kconfig
++++ b/drivers/net/Kconfig
+@@ -518,6 +518,8 @@ source "drivers/net/hippi/Kconfig"
+ 
+ source "drivers/net/ipa/Kconfig"
+ 
++source "drivers/net/sipa/Kconfig"
++
+ config NET_SB1000
+ 	tristate "General Instruments Surfboard 1000"
+ 	depends on ISA && PNP
+diff --git a/drivers/net/Makefile b/drivers/net/Makefile
+index 13743d0e83b5..3fb3b3c65a50 100644
+--- a/drivers/net/Makefile
++++ b/drivers/net/Makefile
+@@ -57,6 +57,7 @@ obj-$(CONFIG_FDDI) += fddi/
+ obj-$(CONFIG_HIPPI) += hippi/
+ obj-$(CONFIG_HAMRADIO) += hamradio/
+ obj-$(CONFIG_QCOM_IPA) += ipa/
++obj-$(CONFIG_SPRD_IPA) += sipa/
+ obj-$(CONFIG_PLIP) += plip/
+ obj-$(CONFIG_PPP) += ppp/
+ obj-$(CONFIG_PPP_ASYNC) += ppp/
+diff --git a/drivers/net/sipa/Kconfig b/drivers/net/sipa/Kconfig
+new file mode 100644
+index 000000000000..bbf91aa25fee
+--- /dev/null
++++ b/drivers/net/sipa/Kconfig
+@@ -0,0 +1,16 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# SIPA network device configuration
++#
++
++config SPRD_IPA
++	tristate "SPREADTRUM IP PACKET ACCELERATOR"
++	depends on ARCH_SPRD
++	help
++	  IPA is a hardware block present in some Unisoc SoCs, choose
++	  Y or M to enabel it if you are sure current Soc include it.
++	  IP Packet Accelerator(IPA) is a programmable protocol processor
++	  which can process L2/L3 network packets, its mainly used in
++	  5g scenarios.
++
++	  If unsure, say N.
+\ No newline at end of file
+diff --git a/drivers/net/sipa/Makefile b/drivers/net/sipa/Makefile
+new file mode 100644
+index 000000000000..1a64b9621394
+--- /dev/null
++++ b/drivers/net/sipa/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# Makefile for the SPRD IPA device drivers.
++#
++
++obj-$(CONFIG_SPRD_IPA) += sipa_core.o
+diff --git a/drivers/net/sipa/sipa_core.c b/drivers/net/sipa/sipa_core.c
+new file mode 100644
+index 000000000000..77d97c236ac8
+--- /dev/null
++++ b/drivers/net/sipa/sipa_core.c
+@@ -0,0 +1,345 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Spreadtrum pin controller driver
++ * Copyright (C) 2017 Spreadtrum  - http://www.spreadtrum.com
++ */
++
++#include <linux/clk.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/kernel_stat.h>
++#include <linux/mm.h>
++#include <linux/module.h>
++#include <linux/mfd/syscon.h>
++#include <linux/notifier.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/pm_wakeup.h>
++#include <linux/pm_runtime.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/soc/sprd/sipa.h>
++#include <linux/tick.h>
++#include <uapi/linux/sched/types.h>
++#include "sipa_priv.h"
++
++#define DRV_NAME "sipa"
++
++/**
++ * SPRD IPA contains a number of common fifo
++ * in the current Unisoc, mainly includes USB, WIFI, PCIE, AP etc.
++ */
++static struct sipa_cmn_fifo_info sipa_cmn_fifo_statics[SIPA_CFIFO_MAX] = {
++	{
++		.cfifo_name = "sprd,usb-ul",
++		.tx_fifo = "sprd,usb-ul-tx",
++		.rx_fifo = "sprd,usb-ul-rx",
++		.relate_ep = SIPA_EP_USB,
++		.src_id = SIPA_TERM_USB,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 1,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,wifi-ul",
++		.tx_fifo = "sprd,wifi-ul-tx",
++		.rx_fifo = "sprd,wifi-ul-rx",
++		.relate_ep = SIPA_EP_WIFI,
++		.src_id = SIPA_TERM_WIFI1,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 1,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,pcie-ul",
++		.tx_fifo = "sprd,pcie-ul-tx",
++		.rx_fifo = "sprd,pcie-ul-rx",
++		.relate_ep = SIPA_EP_PCIE,
++		.src_id = SIPA_TERM_PCIE0,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 1,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,wiap-dl",
++		.tx_fifo = "sprd,wiap-dl-tx",
++		.rx_fifo = "sprd,wiap-dl-rx",
++		.relate_ep = SIPA_EP_WIAP,
++		.src_id = SIPA_TERM_VAP0,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 1,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,map-in",
++		.tx_fifo = "sprd,map-in-tx",
++		.rx_fifo = "sprd,map-in-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_VCP,
++		.is_to_ipa = 1,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,usb-dl",
++		.tx_fifo = "sprd,usb-dl-tx",
++		.rx_fifo = "sprd,usb-dl-rx",
++		.relate_ep = SIPA_EP_USB,
++		.src_id = SIPA_TERM_USB,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 0,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,wifi-dl",
++		.tx_fifo = "sprd,wifi-dl-tx",
++		.rx_fifo = "sprd,wifi-dl-rx",
++		.relate_ep = SIPA_EP_WIFI,
++		.src_id = SIPA_TERM_WIFI1,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 0,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,pcie-dl",
++		.tx_fifo = "sprd,pcie-dl-tx",
++		.rx_fifo = "sprd,pcie-dl-rx",
++		.relate_ep = SIPA_EP_PCIE,
++		.src_id = SIPA_TERM_PCIE0,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 0,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,wiap-ul",
++		.tx_fifo = "sprd,wiap-ul-tx",
++		.rx_fifo = "sprd,wiap-ul-rx",
++		.relate_ep = SIPA_EP_WIAP,
++		.src_id = SIPA_TERM_VAP0,
++		.dst_id = SIPA_TERM_AP,
++		.is_to_ipa = 0,
++		.is_pam = 1,
++	},
++	{
++		.cfifo_name = "sprd,map0-out",
++		.tx_fifo = "sprd,map0-out-tx",
++		.rx_fifo = "sprd,map0-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map1-out",
++		.tx_fifo = "sprd,map1-out-tx",
++		.rx_fifo = "sprd,map1-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map2-out",
++		.tx_fifo = "sprd,map2-out-tx",
++		.rx_fifo = "sprd,map2-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map3-out",
++		.tx_fifo = "sprd,map3-out-tx",
++		.rx_fifo = "sprd,map3-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map4-out",
++		.tx_fifo = "sprd,map4-out-tx",
++		.rx_fifo = "sprd,map4-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map5-out",
++		.tx_fifo = "sprd,map5-out-tx",
++		.rx_fifo = "sprd,map5-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map6-out",
++		.tx_fifo = "sprd,map6-out-tx",
++		.rx_fifo = "sprd,map6-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++	{
++		.cfifo_name = "sprd,map7-out",
++		.tx_fifo = "sprd,map7-out-tx",
++		.rx_fifo = "sprd,map7-out-rx",
++		.relate_ep = SIPA_EP_AP,
++		.src_id = SIPA_TERM_AP,
++		.dst_id = SIPA_TERM_USB,
++		.is_to_ipa = 0,
++		.is_pam = 0,
++	},
++};
++
++static struct sipa_plat_drv_cfg *s_sipa_core;
++
++/**
++ * sipa_get_ctrl_pointer() - get the main structure of th sipa driver.
++ */
++struct sipa_plat_drv_cfg *sipa_get_ctrl_pointer(void)
++{
++	return s_sipa_core;
++}
++EXPORT_SYMBOL(sipa_get_ctrl_pointer);
++
++static int sipa_create_ep_from_fifo_idx(struct device *dev,
++					enum sipa_cmn_fifo_index fifo_idx)
++{
++	enum sipa_ep_id ep_id;
++	struct sipa_common_fifo *fifo;
++	struct sipa_endpoint *ep = NULL;
++	struct sipa_cmn_fifo_info *fifo_info;
++	struct sipa_plat_drv_cfg *ipa = dev_get_drvdata(dev);
++
++	fifo_info = (struct sipa_cmn_fifo_info *)sipa_cmn_fifo_statics;
++	ep_id = (fifo_info + fifo_idx)->relate_ep;
++
++	ep = ipa->eps[ep_id];
++	if (!ep) {
++		ep = kzalloc(sizeof(*ep), GFP_KERNEL);
++		if (!ep)
++			return -ENOMEM;
++
++		ipa->eps[ep_id] = ep;
++	} else if (fifo_idx > SIPA_CFIFO_MAP0_OUT) {
++		dev_info(dev, "ep %d has already create\n", ep->id);
++		return 0;
++	}
++
++	ep->dev = dev;
++	ep->id = (fifo_info + fifo_idx)->relate_ep;
++	dev_info(dev, "idx = %d ep = %d ep_id = %d is_to_ipa = %d\n",
++		 fifo_idx, ep->id, ep_id,
++		 (fifo_info + fifo_idx)->is_to_ipa);
++
++	ep->connected = false;
++	ep->suspended = true;
++
++	if (!(fifo_info + fifo_idx)->is_to_ipa) {
++		fifo = &ep->recv_fifo;
++		fifo->is_receiver = true;
++	} else {
++		fifo = &ep->send_fifo;
++		fifo->is_receiver = false;
++	}
++
++	fifo->rx_fifo.fifo_depth = ipa->cmn_fifo_cfg[fifo_idx].rx_fifo.depth;
++	fifo->tx_fifo.fifo_depth = ipa->cmn_fifo_cfg[fifo_idx].tx_fifo.depth;
++	fifo->dst_id = (fifo_info + fifo_idx)->dst_id;
++	fifo->src_id = (fifo_info + fifo_idx)->src_id;
++
++	fifo->idx = fifo_idx;
++
++	return 0;
++}
++
++static int sipa_create_eps(struct device *dev)
++{
++	int i, ret = 0;
++	struct sipa_plat_drv_cfg *ipa = dev_get_drvdata(dev);
++
++	dev_info(dev, "create eps start\n");
++	for (i = 0; i < SIPA_CFIFO_MAX; i++) {
++		if (ipa->cmn_fifo_cfg[i].tx_fifo.depth > 0) {
++			ret = sipa_create_ep_from_fifo_idx(dev, i);
++			if (ret) {
++				dev_err(dev, "create eps fifo %d fail\n", i);
++				return ret;
++			}
++		}
++	}
++
++	return 0;
++}
++
++static int sipa_init(struct device *dev)
++{
++	int ret;
++
++	/* init sipa eps */
++	ret = sipa_create_eps(dev);
++
++	return ret;
++}
++
++static int sipa_plat_drv_probe(struct platform_device *pdev_p)
++{
++	int ret;
++	struct device *dev = &pdev_p->dev;
++	struct sipa_plat_drv_cfg *ipa;
++
++	ipa = devm_kzalloc(dev, sizeof(*ipa), GFP_KERNEL);
++	if (!ipa)
++		return -ENOMEM;
++
++	s_sipa_core = ipa;
++	dev_set_drvdata(dev, ipa);
++
++	ipa->dev = dev;
++	if (dma_set_mask_and_coherent(dev, ipa->hw_data->dma_mask))
++		dev_warn(dev, "no suitable DMA availabld\n");
++
++	ret = sipa_init(dev);
++	if (ret) {
++		dev_err(dev, "init failed %d\n", ret);
++		return ret;
++	}
++
++	ipa->udp_frag = false;
++	ipa->udp_port = false;
++	atomic_set(&ipa->udp_port_num, 0);
++
++	return ret;
++}
++
++static const struct of_device_id sipa_plat_drv_match[] = {
++	{ .compatible = "sprd,ipa-v3", .data = NULL},
++	{}
++};
++
++static struct platform_driver sipa_plat_drv = {
++	.probe = sipa_plat_drv_probe,
++	.driver = {
++		.name = DRV_NAME,
++		.owner = THIS_MODULE,
++		.of_match_table = sipa_plat_drv_match,
++	},
++};
++module_platform_driver(sipa_plat_drv);
++
++MODULE_DESCRIPTION("Unisoc IPA HW device driver");
++MODULE_AUTHOR("Catdeo Zhang<catdeo.zhang@unisoc.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/net/sipa/sipa_priv.h b/drivers/net/sipa/sipa_priv.h
+new file mode 100644
+index 000000000000..a131d4067a86
+--- /dev/null
++++ b/drivers/net/sipa/sipa_priv.h
+@@ -0,0 +1,177 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Spreadtrum pin controller driver
++ * Copyright (C) 2017 Spreadtrum  - http://www.spreadtrum.com
++ */
++
++#ifndef _SIPA_PRIV_H_
++#define _SIPA_PRIV_H_
++
++#include <linux/alarmtimer.h>
++#include <linux/skbuff.h>
++#include <linux/interrupt.h>
++#include <linux/cdev.h>
++#include <linux/regmap.h>
++#include <linux/kfifo.h>
++#include <linux/soc/sprd/sipa.h>
++#include <linux/spinlock.h>
++
++/* common fifo id */
++enum sipa_cmn_fifo_index {
++	SIPA_CFIFO_USB_UL,
++	SIPA_CFIFO_WIFI_UL,
++	SIPA_CFIFO_PCIE_UL,
++	SIPA_CFIFO_WIAP_DL,
++	SIPA_CFIFO_MAP_IN,
++	SIPA_CFIFO_USB_DL,
++	SIPA_CFIFO_WIFI_DL,
++	SIPA_CFIFO_PCIE_DL,
++	SIPA_CFIFO_WIAP_UL,
++	SIPA_CFIFO_MAP0_OUT,
++	SIPA_CFIFO_MAP1_OUT,
++	SIPA_CFIFO_MAP2_OUT,
++	SIPA_CFIFO_MAP3_OUT,
++	SIPA_CFIFO_MAP4_OUT,
++	SIPA_CFIFO_MAP5_OUT,
++	SIPA_CFIFO_MAP6_OUT,
++	SIPA_CFIFO_MAP7_OUT,
++
++	SIPA_CFIFO_MAX,
++};
++
++struct sipa_common_fifo {
++	enum sipa_cmn_fifo_index idx;
++
++	struct sipa_fifo_attrs tx_fifo;
++	struct sipa_fifo_attrs rx_fifo;
++
++	enum sipa_term_type dst_id;
++	enum sipa_term_type src_id;
++
++	bool is_receiver;
++	bool is_pam;
++};
++
++struct sipa_cmn_fifo_tag {
++	u32 depth;
++	u32 wr;
++	u32 rd;
++	bool in_iram;
++
++	u32 fifo_base_addr_l;
++	u32 fifo_base_addr_h;
++
++	void *virt_addr;
++};
++
++struct sipa_cmn_fifo_cfg_tag {
++	const char *fifo_name;
++
++	enum sipa_cmn_fifo_index fifo_id;
++	enum sipa_cmn_fifo_index fifo_id_dst;
++
++	bool is_recv;
++	bool is_pam;
++
++	u32 state;
++	u32 pending;
++	u32 dst;
++	u32 src;
++
++	u32 irq_eb;
++
++	u64 fifo_phy_addr;
++
++	void *priv;
++	void __iomem *fifo_reg_base;
++
++	struct kfifo rx_priv_fifo;
++	struct kfifo tx_priv_fifo;
++	struct sipa_cmn_fifo_tag rx_fifo;
++	struct sipa_cmn_fifo_tag tx_fifo;
++
++	u32 enter_flow_ctrl_cnt;
++	u32 exit_flow_ctrl_cnt;
++};
++
++/* common fifo information */
++struct sipa_cmn_fifo_info {
++	const char *cfifo_name;
++	const char *tx_fifo;
++	const char *rx_fifo;
++
++	enum sipa_ep_id relate_ep;
++	enum sipa_term_type src_id;
++	enum sipa_term_type dst_id;
++
++	/* centered on IPA*/
++	bool is_to_ipa;
++	bool is_pam;
++};
++
++/* ipa hw information */
++struct sipa_hw_data {
++	const u32 ahb_regnum;
++	const struct ipa_register_map *ahb_reg;
++	const bool standalone_subsys;
++	const u64 dma_mask;
++};
++
++/* endpoint which access to IPA */
++struct sipa_endpoint {
++	enum sipa_ep_id id;
++
++	struct device *dev;
++
++	/* Centered on CPU/PAM */
++	struct sipa_common_fifo send_fifo;
++	struct sipa_common_fifo recv_fifo;
++
++	struct sipa_comm_fifo_params send_fifo_param;
++	struct sipa_comm_fifo_params recv_fifo_param;
++
++	/* private data for sipa_notify_cb */
++	void *send_priv;
++	void *recv_priv;
++
++	bool inited;
++	bool connected;
++	bool suspended;
++};
++
++/* structure of IPA platform driver */
++struct sipa_plat_drv_cfg {
++	struct device *dev;
++
++	struct sipa_endpoint *eps[SIPA_EP_MAX];
++
++	/* avoid pam connect and power_wq race */
++	struct mutex resume_lock;
++
++	struct delayed_work power_work;
++	struct workqueue_struct *power_wq;
++
++	/* ipa power status */
++	bool power_flag;
++
++	u32 enable_cnt;
++	bool udp_frag;
++	bool udp_port;
++	atomic_t udp_port_num;
++
++	int is_bypass;
++
++	phys_addr_t glb_phy;
++	resource_size_t glb_size;
++	void  __iomem *glb_virt_base;
++
++	phys_addr_t iram_phy;
++	resource_size_t iram_size;
++	void  __iomem *iram_virt_base;
++
++	const struct sipa_hw_data *hw_data;
++	u32 suspend_cnt;
++	u32 resume_cnt;
++	struct sipa_cmn_fifo_cfg_tag cmn_fifo_cfg[SIPA_CFIFO_MAX];
++};
++#endif //_SIPA_PRIV_H_
+diff --git a/include/linux/soc/sprd/sipa.h b/include/linux/soc/sprd/sipa.h
+new file mode 100644
+index 000000000000..f4107b8bdea1
+--- /dev/null
++++ b/include/linux/soc/sprd/sipa.h
+@@ -0,0 +1,86 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Spreadtrum pin controller driver
++ * Copyright (C) 2017 Spreadtrum  - http://www.spreadtrum.com
++ */
++
++#ifndef _SIPA_H_
++#define _SIPA_H_
++
++/**
++ * enum sipa_ep_type - names for the various IPA end points
++ * these ids used for rx/tx data with IPA
++ * NOTE: one sipa EP may related to more than one sipa_term_types
++ */
++enum sipa_ep_id {
++	SIPA_EP_USB,
++	SIPA_EP_AP,
++	SIPA_EP_CP,
++	SIPA_EP_WIAP,
++	SIPA_EP_PCIE,
++	SIPA_EP_WIFI,
++
++	SIPA_EP_MAX,
++};
++
++/**
++ * enum sipa_term_type - names for the various IPA source / destination ID
++ */
++enum sipa_term_type {
++	SIPA_TERM_USB = 0x1,
++	SIPA_TERM_WIFI1 = 0x2,
++	SIPA_TERM_WIFI2 = 0x3,
++	SIPA_TERM_CP0 = 0x4,
++	SIPA_TERM_CP1 = 0x5,
++	SIPA_TERM_VCP = 0x6,
++	SIPA_TERM_VAP0 = 0xc,
++	SIPA_TERM_VAP1 = 0xd,
++	SIPA_TERM_VAP2 = 0xe,
++	SIPA_TERM_PCIE0 = 0x10,
++	SIPA_TERM_PCIE1 = 0x11,
++	SIPA_TERM_PCIE2 = 0x12,
++	SIPA_TERM_AP = 0x19,
++
++	SIPA_TERM_MAX = 0x20, /* max 5-bit register */
++};
++
++/* rx/tx fifo attribute of cfifo*/
++struct sipa_fifo_attrs {
++	dma_addr_t dma_addr;
++	u32 fifo_depth;
++};
++
++/**
++ * struct sipa_comm_fifo_params - information needed to setup an IPA
++ * common FIFO, the tx/rx are from the perspective of IPA
++ * @tx_intr_delay_us: timeout value for interrupt
++ * @tx_intr_threshol: threshold value for interrupt
++ * @errcode_intr: enable/disable of errcode interrupt
++ * @flowctrl_in_tx_full: enable/disable of tx cfifo full interrupt
++ * @flow_ctrl_cfg: flow control config
++ * @flow_ctrl_irq_mode: flow control interrupt mode
++ */
++struct sipa_comm_fifo_params {
++	u32 intr_to_ap;
++
++	u32 tx_intr_delay_us;
++	u32 tx_intr_threshold;
++	bool errcode_intr;
++	bool flowctrl_in_tx_full;
++	u32 flow_ctrl_cfg;
++	u32 flow_ctrl_irq_mode;
++	u32 tx_enter_flowctrl_watermark;
++	u32 tx_leave_flowctrl_watermark;
++	u32 rx_enter_flowctrl_watermark;
++	u32 rx_leave_flowctrl_watermark;
++
++	u32 data_ptr_cnt;
++	u32 buf_size;
++	dma_addr_t data_ptr;
++};
++
++/**
++ * sipa_get_ctrl_pointer() - get the main structure of th sipa driver.
++ */
++struct sipa_plat_drv_cfg *sipa_get_ctrl_pointer(void);
++#endif //_SIPA_H_
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
