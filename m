@@ -1,251 +1,110 @@
-Return-Path: <linux-kernel+bounces-417894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225059D5A60
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:52:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DE09D5A6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8951281C12
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:52:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56ACEB23D43
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2509A18A6A0;
-	Fri, 22 Nov 2024 07:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867E4189F3E;
+	Fri, 22 Nov 2024 07:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UaeGTkaJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IETxJzIg"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554761865E7;
-	Fri, 22 Nov 2024 07:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5789188592;
+	Fri, 22 Nov 2024 07:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732261880; cv=none; b=GKmEUbh8h9ZURC6rsybK/DfPP5+/bLaFNwZ9+WxkAicOgcBOpIIS2vzP3eRbJLsweGm/Xy96n9cIPajsvVB3bTsZwDVc9J+tmDMDzpIyENJiJyiSIANrl77OsjHyn92h/orf/bpDRTwPvvaQJf8e/OP/QdIxUnuvB1VpBbFrDc4=
+	t=1732261935; cv=none; b=F/viwGcJwjTHgGsnqHbCiZaoYAlce3vaeMS9YyfY0dShhycKMk5oCT/GStTheMrzT8R0rcu3A/uTZhVGBd4A7PeTD6aTtHvo1n5XqJ7ss1ti2i/CSgG0C0iFMYFfEFBRNb1jqIWns24FUmqhV2bhYPAeJqsXRF7W3CSZia67va8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732261880; c=relaxed/simple;
-	bh=C2xxxCSxcgNZJ6leMsg28bVXsfJ/P2l084v0AQ4W7Fs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=hMjZL34aTb3Vqn6z2B/nUe0+YH/rviya/1iO5yPFy1ZQld9xnf8U+5hQoPt8OZ3ho9pLgpncc0796SWvYTDjs5B/LpWqa8ldhoYdOl5TG8gdhm6yhcyp9DLWyybwhMaCV3ToxFuCWFTOdVM68+anpwXfdOWckWZjb04U6J0infE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UaeGTkaJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM5F6bP020377;
-	Fri, 22 Nov 2024 07:51:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=sJEwCo+ghoL55XsmCLIJU0
-	a7yfszGQc288qfvj5WF3c=; b=UaeGTkaJsD6dNVtelSCpxE/ffXN+65DhSuSZTQ
-	2+ippeS/2wYBRCVcAR0lZufOFXwK3mfzldUzkAWwAHJWthVZ6KPlBBWQLNiPsskG
-	n/nhQ180Du2QmtRvfSk+/vlc+5znN/+Rp2c7rtV0ujO9rDctSMDw4gsioEdI2s7S
-	YvqO0LXB2Syu+x7HRQxpyjM0g070iP6+FW5NvCTGc9qEhwVOiy9VWpLQ9G88Gea0
-	P0JRo+yz+yUa4UPXzwintrnPSJi/hiFrZI3IP+lLYBhD0AzCwwJ52ef2eAgjgllf
-	0UOaxT/xyaOypkxQTaPqaf5f0M3efQ38rqRkEKeSzbXMt/Vw==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4326ataanm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:51:14 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AM7ov2T022164;
-	Fri, 22 Nov 2024 07:50:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 42xmfkvmx0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:50:57 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AM7ovth022159;
-	Fri, 22 Nov 2024 07:50:57 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4AM7ouBd022157
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 22 Nov 2024 07:50:57 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
-	id 297891801; Fri, 22 Nov 2024 15:50:55 +0800 (CST)
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_tengfan@quicinc.com, quic_tingweiz@quicinc.com,
-        quic_zhgao@quicinc.com, Yuanjie Yang <quic_yuanjiey@quicinc.com>
-Subject: [PATCH v1] mmc: sdhci-msm: Correctly set the load for the regulator
-Date: Fri, 22 Nov 2024 15:50:48 +0800
-Message-Id: <20241122075048.2006894-1-quic_yuanjiey@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732261935; c=relaxed/simple;
+	bh=mZj7FnKAVErRfFltYoWX7/xSElAseIuMvSbGoMTLv8Y=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SM2Lsj3OwMw/LdvtbkT4Tb7kAMDXsc8r1+WcTrJM0sOZ6AUG2vy1pQRwqSmxiUHr61yklpitcSNwqSQN27VQo5eSizTNPvH+/DxmlIVRKbMr+i4OnPimkJ5sGeiIDXHiomIe5uHHWfVFI3RNwAPOr7raeLdNMtHCpYn7lHzigDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IETxJzIg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9E4164C7;
+	Fri, 22 Nov 2024 08:51:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1732261911;
+	bh=mZj7FnKAVErRfFltYoWX7/xSElAseIuMvSbGoMTLv8Y=;
+	h=From:Subject:Date:To:Cc:From;
+	b=IETxJzIgTY1rLCUNoqQw3jBITcVOnXlynicaWje4fvbDAxozNOi8+pfX2pXNQwlfG
+	 Jna1wiO7ZvtGHT4YQ0TZL0xrKJ2KrLSyUM1CuUdZJYzOstipUk9KTcIpQR/s+vQdlu
+	 Nbqe0gv371zkcFs+AuPVAKvFNeb+hHaBDLee0Uuk=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH 0/3] i2c: atr: A few i2c-atr fixes
+Date: Fri, 22 Nov 2024 09:51:37 +0200
+Message-Id: <20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: m7wjLmSXfswSyEaL9qyKFzVChZmvczbq
-X-Proofpoint-GUID: m7wjLmSXfswSyEaL9qyKFzVChZmvczbq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1011 mlxlogscore=938 lowpriorityscore=0
- phishscore=0 adultscore=0 priorityscore=1501 bulkscore=0 spamscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411220065
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAk4QGcC/x3LMQqAMAxA0atIZgNNsIJeRRy0TTVLlVZEKN7d4
+ vj4/AJZkkqGsSmQ5NasR6ygtgG3L3ETVF8NbLgjYkJlh8uVMOgjGXtveR2CDcYR1OdM8oe6TPP
+ 7fmL/rltfAAAA
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Wolfram Sang <wsa@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Cosmin Tanislav <demonsingur@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=697;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=mZj7FnKAVErRfFltYoWX7/xSElAseIuMvSbGoMTLv8Y=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnQDgk26NSbVJAgKNj9VyJXXqUcYmsXrS9IvwJi
+ erCi53biiKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ0A4JAAKCRD6PaqMvJYe
+ 9RAOD/9uj+Gb7qnlHZdN/lXHC4fYLGEJFjsZyM5LAV9bbSddpR7ArivNWUxMhOhus6iUo8AGsY6
+ 4ZAGPporn7H6a9m5yjXm4g3ckmH0FdJYH6ulsEbozjgdGtRdNFKXZstymcNzURZF5dftlhsbjfM
+ ko035LMvLEERRoBYx3o6fvb+OJYff1vNjtR0wNXXJ2xaQwEPU3aIDbm61x2S9EFFA9PVX0DN5sR
+ BHUFL+DyMPkLc1YHsum9KhJ0f9NMxC+PU0Q64xvI9CqNbsx36Bxr/CJvXtcmdPWk32OEtfKnXe8
+ PmFBmBiHrfB784T9R/A9wyZKlkaw2Dt9PNq+Cd+OAsbtS1SlDo62aMLo2TzmF55MK6gZ4ZxuFiJ
+ JrolUKvJ7TcasN5e8MURe6zuq1xH6ahOQVTorM1b0c5BmWCjc5DOQRm3lOEuV2kx1rEQbDZr/lN
+ UHAtFHUJsZuoVq/dG1kKN7J1WFlOvLLRXrmXhH0PH8991vi0ryTY6eP5bCO8mN5qBKywK8CvLKG
+ snuT8L0ie4hyKGYxBE3Ku46Fq1VdciDjZH9LnMpnYUMkwjL4SVv4qGvRJCTw57OfudjetqqaI/7
+ dVhr1qxPf0xxtQQ4TGcBpo7cLdHPqFPnQXK9hEwjjf7kCr4s+AVx2updrU3xnudPjk4Pv1x+wi0
+ 7vjOyHQCX8g1xHA==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-Qualcomm regulator supports two power supply modes: HPM and LPM.
-Currently, the sdhci-msm.c driver does not set the load to adjust
-the current for eMMC and SD. Therefore, if the regulator set load
-in LPM state, it will lead to the inability to properly initialize
-eMMC and SD.
+The first two are perhaps not strictly fixes, as they essentially add
+support for nested ATRs. The third one is a fix, thus stable is in cc.
 
-Set the correct regulator current for eMMC and SD to ensure that the
-device can work normally even when the regulator is in LPM.
+ Tomi
 
-Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 ---
- drivers/mmc/host/sdhci-msm.c | 91 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 89 insertions(+), 2 deletions(-)
+Cosmin Tanislav (1):
+      i2c: atr: Allow unmapped addresses from nested ATRs
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index e00208535bd1..f2a2260d54c6 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -134,9 +134,22 @@
- /* Timeout value to avoid infinite waiting for pwr_irq */
- #define MSM_PWR_IRQ_TIMEOUT_MS 5000
- 
-+/* Max load for eMMC Vdd supply */
-+#define MMC_VMMC_MAX_LOAD_UA	570000
-+
- /* Max load for eMMC Vdd-io supply */
- #define MMC_VQMMC_MAX_LOAD_UA	325000
- 
-+/* Max load for SD Vdd supply */
-+#define SD_VMMC_MAX_LOAD_UA	800000
-+
-+/* Max load for SD Vdd-io supply */
-+#define SD_VQMMC_MAX_LOAD_UA	22000
-+
-+#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
-+
-+#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
-+
- #define msm_host_readl(msm_host, host, offset) \
- 	msm_host->var_ops->msm_readl_relaxed(host, offset)
- 
-@@ -147,6 +160,11 @@
- #define CQHCI_VENDOR_CFG1	0xA00
- #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
- 
-+enum {
-+	VMMC_REGULATOR,
-+	VQMMC_REGULATOR,
-+};
-+
- struct sdhci_msm_offset {
- 	u32 core_hc_mode;
- 	u32 core_mci_data_cnt;
-@@ -1403,11 +1421,70 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
- 	return ret;
- }
- 
--static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
-+static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current, int type)
-+{
-+	int load = 0;
-+
-+	/*
-+	 * When eMMC and SD are powered on for the first time, select a higher
-+	 * current value from the corresponding current for eMMC and SD to
-+	 * ensure that the eMMC and SD cards start up properly and complete
-+	 * initialization. After the initialization process is finished, use
-+	 * the corresponding current to set the eMMC and SD to ensure the
-+	 * normal work of the device.
-+	 */
-+
-+	if (!mmc->card)
-+		return max_current;
-+
-+	if (mmc_card_is_removable(mmc) && mmc_card_mmc(mmc->card))
-+		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
-+	else if (mmc_card_sd(mmc->card))
-+		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
-+
-+	return load;
-+}
-+
-+static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
-+				     bool hpm, int max_current, int type)
-+{
-+	int ret;
-+	int load = 0;
-+
-+	/*
-+	 * After the initialization process is finished, Once the type of card
-+	 * is determined，only set the corresponding current for SD and eMMC.
-+	 */
-+
-+	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
-+		return 0;
-+
-+	if (hpm)
-+		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
-+
-+	if (type == VMMC_REGULATOR)
-+		ret = regulator_set_load(mmc->supply.vmmc, load);
-+	else
-+		ret = regulator_set_load(mmc->supply.vqmmc, load);
-+	if (ret)
-+		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
-+			mmc_hostname(mmc), ret);
-+	return ret;
-+}
-+
-+static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
-+			      struct mmc_host *mmc, bool hpm)
- {
-+	int ret;
-+
- 	if (IS_ERR(mmc->supply.vmmc))
- 		return 0;
- 
-+	ret = msm_config_regulator_load(msm_host, mmc, hpm,
-+					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
-+	if (ret)
-+		return ret;
-+
- 	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
- }
- 
-@@ -1435,6 +1512,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
- 				goto out;
- 			}
- 		}
-+
-+		ret = msm_config_regulator_load(msm_host, mmc, level,
-+						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
-+		if (ret < 0) {
-+			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
-+				mmc_hostname(mmc), ret);
-+			goto out;
-+		}
-+
- 		ret = regulator_enable(mmc->supply.vqmmc);
- 	} else {
- 		ret = regulator_disable(mmc->supply.vqmmc);
-@@ -1642,7 +1728,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
- 	}
- 
- 	if (pwr_state) {
--		ret = sdhci_msm_set_vmmc(mmc);
-+		ret = sdhci_msm_set_vmmc(msm_host, mmc,
-+					 pwr_state & REQ_BUS_ON);
- 		if (!ret)
- 			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
- 					pwr_state & REQ_BUS_ON);
+Tomi Valkeinen (2):
+      i2c: atr: Fix lockdep for nested ATRs
+      i2c: atr: Fix client detach
+
+ drivers/i2c/i2c-atr.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241121-i2c-atr-fixes-6d52b9f5f0c1
+
+Best regards,
 -- 
-2.34.1
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
 
