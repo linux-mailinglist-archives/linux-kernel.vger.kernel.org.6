@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-417848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836CD9D59B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:01:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F84F9D59BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19912B21F3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7151B22214
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BB5166315;
-	Fri, 22 Nov 2024 07:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134DC16EC0E;
+	Fri, 22 Nov 2024 07:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQ7c/grQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qceSWXwZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE68230999;
-	Fri, 22 Nov 2024 07:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A690230999;
+	Fri, 22 Nov 2024 07:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732258906; cv=none; b=hTlpQstyiyNmMPRDIbLuMwHS4P+UpG+dbyhrvPfhbEVrT44a7bfmEBndoaM7TUHXlhxiBf0/tIprVXOdkjAdnM42u/MW4ssMtnDUhQ1aMQzsyuKILwnX4VihQMF6KQhGZ7O4mGIqHH03X9z4SNFA+v/EUgwZdsf6dXwhrpOgo08=
+	t=1732259079; cv=none; b=SXmRzas7K98tH607kljZnp9bvSOoXtrebQIe7WHeHv+8zJCz2ZzjCBReVvXDkqkg08c+LqwOxXEVrDeOKeNG0947jGh/ndBDQvvS9EoMQqOBn6EA23yciHWmJv4plChUEpniim+K52rBa4Qg50G3JZPnbEOxrRJzvlgxN6GkT+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732258906; c=relaxed/simple;
-	bh=TC2ExaLW56ZU7QnSiNIXQcx02KM5tVtD/3GUuINRrto=;
+	s=arc-20240116; t=1732259079; c=relaxed/simple;
+	bh=wXwjN6SWwb8tK8TltC9LInDSonKNvt9F2o/bm/x8k3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PljfCOvl3GTJouMdmektIRLZXSj1InL+wpwP+k4vpT1vgE/3w23dpCoet1LcXzrMRjNncW1DB0AFIoYadcwbVVl25Q1TwgU8Qlw5gGj6OIgLKfngMiMxtYt/nDHdjJxhfk+VL4KFCz4vVmSh/5/tm1/eCKH3kUrfrMqqNxtzUPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQ7c/grQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DD0C4CECE;
-	Fri, 22 Nov 2024 07:01:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LjVhfJ7gmbzMPNJOG8qP0j90946oD2GmtKlXMrCAkkKuyIiGNo6K11LqcmwFgvLferOZ2TEe7eL/z2ZCBQH1YfXtgA9gdOpbOSEcncWVvzhGFKrLffTTMUKFmvfywdyMu2HzoF4czSiqB0Tn4nuJyY8bW5YHRgRXFkz2CvXRPLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qceSWXwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF64C4CECE;
+	Fri, 22 Nov 2024 07:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732258905;
-	bh=TC2ExaLW56ZU7QnSiNIXQcx02KM5tVtD/3GUuINRrto=;
+	s=k20201202; t=1732259078;
+	bh=wXwjN6SWwb8tK8TltC9LInDSonKNvt9F2o/bm/x8k3I=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DQ7c/grQlvZaJzysoCnYgZxoq1WFoXlSZ4WyZzVShlp18T1jPEvg/hecdmQV+AfNI
-	 f3T3agXY8L44SpjHqs57eMSbyLn9O6w47YURga21NOJ+cppFD8g/01ZAi9veLROJa1
-	 buwla/TjxYY1xBPwOmy7t+pQOcLJfny3gRPpQ0hXbpMatAg2SvNWMJYAOiEObQ/9WN
-	 FvafdRrFUFFALaKZxStQu676SFai/CSDZOdmnRZnlZRJFr0QGw61H/ZXzxnlHI/EgN
-	 rM0qGvnNyTd6V3ghiO9YJZnjD7eGy2Hx/FEpZZkbhXNfl4OYeYwWEQmxUbZ4haIbKo
-	 Bbes89A6HCcjg==
-Message-ID: <b3ef3855-f95f-43ad-9a2a-3803c1f00046@kernel.org>
-Date: Fri, 22 Nov 2024 08:01:39 +0100
+	b=qceSWXwZ+LDXTxO8USb9/Vvs7KaZwYqyiCmdclP9SmSUMmCVBNv3sOba1xU9C5rtW
+	 5634eLtQREdQlGn1Jgd4sVraQJVZma6Cn5QjYJpmK6YgCGfV5U1C1gTfuRf+0VlLiz
+	 +klKyTFbi5kmtlTcsh/WAZccpfa3m3w6GKsF4h2TCKx1rQfi3b60AUJ9Zve0uQBEMx
+	 81XdjHAfWT9SqI3GHrb+deRCO5P42w95KDSDqPjcvB9Blz6rWv+3LUFW3h64WYvc5H
+	 /mjpQZXq5+4dsucu8/c6fFwDIY2Si+YCSJpy5Z6/+w7J4aFfYdHVgZroaIGqvM3071
+	 qhUXw7Pb6Xb4A==
+Message-ID: <f9b01690-8940-4f8b-b142-6c2ec4db3e83@kernel.org>
+Date: Fri, 22 Nov 2024 08:04:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: mipi-csis: Add check for clk_enable()
-To: Jiasheng Jiang <jiashengjiangcool@gmail.com>,
- sylvester.nawrocki@gmail.com, mchehab@kernel.org, dron0gus@gmail.com,
- tomasz.figa@gmail.com, alim.akhtar@samsung.com, kyungmin.park@samsung.com,
- laurent.pinchart@ideasonboard.com
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241121210543.8190-1-jiashengjiangcool@gmail.com>
- <20241121210543.8190-2-jiashengjiangcool@gmail.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: qcs615: add SDHC1 and SDHC2
+To: Yuanjie Yang <quic_yuanjiey@quicinc.com>, ulf.hansson@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bhupesh.sharma@linaro.org, andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_tingweiz@quicinc.com
+References: <20241122065101.1918470-1-quic_yuanjiey@quicinc.com>
+ <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,33 +103,134 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241121210543.8190-2-jiashengjiangcool@gmail.com>
+In-Reply-To: <20241122065101.1918470-2-quic_yuanjiey@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21/11/2024 22:05, Jiasheng Jiang wrote:
-> Add check for the return value of clk_enable() to gurantee the success.
+On 22/11/2024 07:51, Yuanjie Yang wrote:
+> Add SDHC1 and SDHC2 support to the QCS615 Ride platform.
 > 
-> Fixes: b5f1220d587d ("[media] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI receivers")
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+> Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
 > ---
->  drivers/media/platform/samsung/exynos4-is/mipi-csis.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi | 198 +++++++++++++++++++++++++++
+>  1 file changed, 198 insertions(+)
 > 
-> diff --git a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-> index 63f3eecdd7e6..d1c938065475 100644
-> --- a/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-> +++ b/drivers/media/platform/samsung/exynos4-is/mipi-csis.c
-> @@ -940,7 +940,9 @@ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
->  					       state->supplies);
->  			goto unlock;
->  		}
-> -		clk_enable(state->clock[CSIS_CLK_GATE]);
-> +		ret = clk_enable(state->clock[CSIS_CLK_GATE]);
-> +		if (ret)
-> +			goto unlock;
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index 590beb37f441..37c6ab217c96 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -399,6 +399,65 @@ qfprom: efuse@780000 {
+>  			#size-cells = <1>;
+>  		};
+>  
+> +		sdhc_1: mmc@7c4000 {
+> +			compatible = "qcom,qcs615-sdhci", "qcom,sdhci-msm-v5";
+> +			reg = <0x0 0x007c4000 0x0 0x1000>,
+> +			      <0x0 0x007c5000 0x0 0x1000>;
+> +			reg-names = "hc",
+> +				    "cqhci";
+> +
+> +			interrupts = <GIC_SPI 641 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 644 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hc_irq",
+> +					  "pwr_irq";
+> +
+> +			clocks = <&gcc GCC_SDCC1_AHB_CLK>,
+> +				 <&gcc GCC_SDCC1_APPS_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_SDCC1_ICE_CORE_CLK>;
+> +			clock-names = "iface",
+> +				      "core",
+> +				      "xo",
+> +				      "ice";
+> +
+> +			resets = <&gcc GCC_SDCC1_BCR>;
+> +
+> +			power-domains = <&rpmhpd RPMHPD_CX>;
+> +			operating-points-v2 = <&sdhc1_opp_table>;
+> +			iommus = <&apps_smmu 0x02c0 0x0>;
+> +			interconnects = <&aggre1_noc MASTER_SDCC_1 QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &config_noc SLAVE_SDCC_1 QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "sdhc-ddr",
+> +					     "cpu-sdhc";
+> +
+> +			bus-width = <8>;
+> +			qcom,dll-config = <0x000f642c>;
+> +			qcom,ddr-config = <0x80040868>;
+> +			supports-cqe;
+> +			dma-coherent;
+> +			mmc-ddr-1_8v;
+> +			mmc-hs200-1_8v;
+> +			mmc-hs400-1_8v;
+> +			mmc-hs400-enhanced-strobe;
 
-You should unwind the work done, so power off the phy and disble regulators.
+These are properties of memory, not SoC. If the node is disabled, means
+memory is not attached to the SoC, right?
+
+> +			status = "disabled";
+
+
+
+
+...
+
+> +
+> +		sdhc_2: mmc@8804000 {
+> +			compatible = "qcom,qcs615-sdhci","qcom,sdhci-msm-v5";
+> +			reg = <0x0 0x08804000 0x0 0x1000>;
+> +			reg-names = "hc";
+> +
+> +			interrupts = <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 222 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hc_irq",
+> +					  "pwr_irq";
+> +
+> +			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+> +				 <&gcc GCC_SDCC2_APPS_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>;
+> +			clock-names = "iface",
+> +				      "core",
+> +				      "xo";
+> +
+> +			power-domains = <&rpmhpd RPMHPD_CX>;
+> +			operating-points-v2 = <&sdhc2_opp_table>;
+> +			iommus = <&apps_smmu 0x02a0 0x0>;
+> +			resets = <&gcc GCC_SDCC2_BCR>;
+> +			interconnects = <&aggre1_noc MASTER_SDCC_2 QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &config_noc SLAVE_SDCC_2 QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "sdhc-ddr",
+> +					     "cpu-sdhc";
+> +
+> +			bus-width = <4>;
+
+Same comments.
+
+> +			qcom,dll-config = <0x0007642c>;
+> +			qcom,ddr-config = <0x80040868>;
+> +			dma-coherent;
+> +			status = "disabled";
+> +
+> +			sdhc2_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-100000000 {
+> +					opp-hz = /bits/ 64 <100000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +				};
+> +
+> +				opp-202000000 {
+> +					opp-hz = /bits/ 64 <202000000>;
+> +					required-opps = <&rpmhpd_opp_nom>;
+> +				};
+> +			};
+>  		};
+>  
+>  		dc_noc: interconnect@9160000 {
+
 
 Best regards,
 Krzysztof
