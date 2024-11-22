@@ -1,102 +1,102 @@
-Return-Path: <linux-kernel+bounces-418308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA969D6031
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:13:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004A49D603A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26BAB1F21E98
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:13:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8545FB246C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9AE135A4B;
-	Fri, 22 Nov 2024 14:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D28138490;
+	Fri, 22 Nov 2024 14:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="sWtnn2ba"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UZpensGR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FCD50285;
-	Fri, 22 Nov 2024 14:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C96E2AEFE;
+	Fri, 22 Nov 2024 14:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732284795; cv=none; b=vDYKMHcAS7srDqYookDfpa2wC8rkEIQa22oVkPxgXxGRCqgpj3oYILuIcVwo2EPDAjxRS9iTZ7U1Nd5NOgEQa5QQtd2U4c72aPf9TjHzrQzi7P3//geeUlkYGT6Aj6OhoT0FfIZSkce6+vHEmKkAMDNGewzHSbLqobW3hsf/evM=
+	t=1732284831; cv=none; b=tcvbnR3rcrhIP1z4uXvyyaWhCfnXMLOFGbZMIHIhtzmZb6WvvEmNN1kgP+qfJzilJ3XduIbsjN8ARRL7FS+8n/J4fQg5VpgGprUgzeBwR+YFVyhdSfYW7YICeMy6L1kixGtLc+tu83FNxO3eq16wK1Xu0XLoySPwoelHTf3WGBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732284795; c=relaxed/simple;
-	bh=rp0g2gMEttojyRYI4uDvxDp6DkOIrfoVvMqrg8up9eE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ldUH5Fxm56E2ZenA9E3XdTcZ3ZDAd0uTm4zpBUVO57x8mkHfUNbrhq98sgT2IPY2fl0zTDdo/TQf31BS4TbMHAX3A1RDZy24zXpbwO4/JDQGkarwZqvSPl6n+2MwUIbohzI2j2vt1qhy7Ipc5viYtDOCjWvtStyNZn8APbQVo4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=sWtnn2ba; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 92386A03A7;
-	Fri, 22 Nov 2024 15:13:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=rS0h64lEvJkOELi9LIcTxMezSjA08oWQTk1+bZmTreU=; b=
-	sWtnn2baWensTrkkaHkuUpwJM2czdi1p2y9W4swtcx1CRcy3N/dv9XFnsZrKDsiB
-	PNpkUC1RR7hhJlrMV+KhD1QpZCaMKyyCWnqhhexQsSJU9lBc0iAgF7M+k/LZ0UBO
-	hiFOIQ3/fFsovTZVR8xNw2g1Yacdrj0nUBirDodQZhoFyZIPjDgk7w87KaZ+Ad6K
-	DX3NkAoLQ4kyjHD/P3IEbIHeYBcGi9HMswz9kKFIlvI23rnRqCmzM3VQAPP9aAtm
-	0QRBeZK64+1VA7WAkAQcVBZUeKsq2GgiYrYgxyLRMqQOjwc/9s9MuBGbv2v2kFuC
-	RMjrqgW8t6kBh65NXSETzEmRjw0RdW4Ie9inGhdjoNhMkdKTd91mhNXCp78df8sL
-	lxBsw1Ym+SNw5n9Aq+ZYSuLqN3bLCGbsJ3CujGAGToMIX19ruHLuk+MDtaLHk1m4
-	JzU7CJRuPiN36TnLjkBjnMI6/q5fMF8aYevNwd4PxHKMksKAgzZye37+yPlsoe34
-	ci30W4z4yMjP3R31RNgX6H9RC3gxsqz8oXFB1BItc7vlXjngNDyPL0DX/dxRpADZ
-	3kNUr7TrpEgMfvRHYgRtlLJgYFuPmTQUm/B3LXbWrUFKfBF+rE+LbYd/tuIvKUav
-	XEljaGDkoqiSCjKPLr/BNrHY6XYlg870uo9XUOLMjYU=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Mark Brown <broonie@kernel.org>,
-	<linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Nicolas
- Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Subject: [PATCH] spi: atmel-quadspi: Fix register name in verbose logging function
-Date: Fri, 22 Nov 2024 15:13:02 +0100
-Message-ID: <20241122141302.2599636-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732284831; c=relaxed/simple;
+	bh=ypl+SVm/vowo72kux/mF1Apop3W03Eh3zLxLFhXiyeI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qsyNL/INE/6UdIJ1SY5uDjpN415KglAqLUV+W2lIBwtGP7Btv+M8E8nluF7JA1giS4O2Al0dYSLX2cfMKR26Dh/kCHajfP6BRFzE8eJUc1CYwAqcdq8WDdOk5B5+P9/LpgmnW3FQQPLEyXcBUWOx8id1agLziFy34Fm00kC3ajc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UZpensGR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732284829; x=1763820829;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=ypl+SVm/vowo72kux/mF1Apop3W03Eh3zLxLFhXiyeI=;
+  b=UZpensGRV8BAOoEXZPyne2wSRUQ6wGLcBafB/5piEZXrTrJAVx+OZbrX
+   xHM9+Ob2IPsu5jxuGWH9c5auJ9+Q4VEvZjRTgB5PUQqBdS9RJ3zswDbKN
+   U4DiNHcVjkqnJgxyT36LtzDX50SGrQM43CKrJlLWrtY66B6W+7cTwO5wW
+   cMxuzWVosczHGZXo0prXBR9gCsuMZlPGIGKXayCaf2kMaPVn9CKeUjzKK
+   TXW7ybD/+SCxM5gJdD0KrMjz9hlqgy/4dIEqgw/wT/nL0kbDW3EWuxm3r
+   pB/jHlWM2rjV9IPH+HBa8Fvha2SZcYtObCGG4iqW6aZaV7dSn1mIkZyUZ
+   g==;
+X-CSE-ConnectionGUID: fI3DR0IaS8WxXQ34XuA9Zg==
+X-CSE-MsgGUID: GOmNZpijTCy0nNdbwkrTFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="54945917"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="54945917"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:13:48 -0800
+X-CSE-ConnectionGUID: frUTGn/+QE+IF4pFfk2OIg==
+X-CSE-MsgGUID: nopFpGsqQhu9zNHu+omBLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="121539891"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.157])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 06:13:44 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Petr Vorel <pvorel@suse.cz>,
+ linux-arm-msm@vger.kernel.org, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kbuild@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dave Airlie
+ <airlied@redhat.com>
+Subject: Re: [PATCH v4 1/2] init/Kconfig: add python3 availability config
+In-Reply-To: <CAF6AEGtXEcNijTqH+NZ5-8ZX2TnzsxACJQ9XXWC9zGTJGxNv=w@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241120204125.52644-1-pvorel@suse.cz>
+ <CAK7LNASYr+pjUs-W40d_Gc+vP67nX7NHXyE0AnOpXxXgxrCtqQ@mail.gmail.com>
+ <20241121011720.GA69389@pevik>
+ <CAK7LNARc4Cp1a8G9p0KiCGyu0WL3BNEd0BY0COMPL4U8bLr8gA@mail.gmail.com>
+ <87h67zzjdc.fsf@intel.com>
+ <CAF6AEGtXEcNijTqH+NZ5-8ZX2TnzsxACJQ9XXWC9zGTJGxNv=w@mail.gmail.com>
+Date: Fri, 22 Nov 2024 16:13:37 +0200
+Message-ID: <878qtbz78u.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732284790;VERSION=7980;MC=2726538235;ID=74493;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD9485560736B
+Content-Type: text/plain
 
-`atmel_qspi_reg_name()` is used for pretty-printing register offsets
-for verbose logging of register accesses. However, due to a typo
-(likely a copy-paste error), QSPI_RD's offset prnts as "MR", the
-name of the previous register. Fix this typo.
+On Fri, 22 Nov 2024, Rob Clark <robdclark@gmail.com> wrote:
+> I may be biased here, but being able to generate code/tables/etc at
+> build time is something that python is very useful for, and has been
+> used to great effect in mesa.
 
-Fixes: c528ecfbef04 ("spi: atmel-quadspi: Add verbose debug facilities to monitor register accesses")
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/spi/atmel-quadspi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Agreed. I look at the list of required dependencies, and none of the
+alternatives seem more appropriate for the task. Not having to worry
+about hostprogs build is a bonus.
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index 91108ddfaef2..316bce577081 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -183,7 +183,7 @@ static const char *atmel_qspi_reg_name(u32 offset, char *tmp, size_t sz)
- 	case QSPI_MR:
- 		return "MR";
- 	case QSPI_RD:
--		return "MR";
-+		return "RD";
- 	case QSPI_TD:
- 		return "TD";
- 	case QSPI_SR:
+BR,
+Jani.
+
+
 -- 
-2.34.1
-
-
+Jani Nikula, Intel
 
