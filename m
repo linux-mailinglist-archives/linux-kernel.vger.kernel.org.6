@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-417768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B1B9D58E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:41:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62DCB9D58E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 05:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F261F22CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:41:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007301F22E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 04:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5CF15D5CA;
-	Fri, 22 Nov 2024 04:41:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9828316133C;
+	Fri, 22 Nov 2024 04:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="aV+sFiTw"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nicho1as.wang header.i=me@nicho1as.wang header.b="Lu9CpxVg"
+Received: from sender4-of-o54.zoho.com (sender4-of-o54.zoho.com [136.143.188.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90DD15531B
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 04:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732250459; cv=none; b=LfGujVekBdQHrPECks66zVIUUSxxZhUf/5in9ciXCwW5pSB7WmgPJRSb0GqPAsGJCvpd9iQMHS/xQITq4XevXdnkqawoKZ3ONxD1vc9uQ0mjOE7MGWbJwT2LLMnyC8UA8+wWWrdzt6CjLrIEaJvtWu7aMkt+ZYc983zPgey7tmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732250459; c=relaxed/simple;
-	bh=rEec2QI3lDHuUv5dFSdEg8+6K5yE1/oNnAPhmw2YwWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8V474PsesTzcTdRxYdr8PmRvUO0tox2Qhh0eu8v/i1rL+lQEV5czWslT9R8WbVyaGNqNYLz7ctG+1MzF7nwFBXI14olo1F72D5TemNuTAE/3fjtj53r7Nez9CryWLW2KGrnBzaLs6sb3p+1PAiYyblTBi4FBZOmuwxjI4Psdq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=aV+sFiTw; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83abf71f244so52273139f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 20:40:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1732250456; x=1732855256; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nrq9QDDyqlB6+9xg5qKRAM5E4/iGhQvqb5r8OZhoYvU=;
-        b=aV+sFiTwv+CS6mWevpg2FBg07XreL3RfPTpyjevvbbTKDMkGzZE4Lt+BaAz9Ns9QXF
-         9YL+Exolpaa+JCi69pph1Vue5GqTHA8jCWANpcSMG+krE9tkwDQkNUhAXt5GE7R+982j
-         E8WFtbXPF6Ctoge+ytvsRl0deuoJml1o0v0UotdWcWtMODVxFuN1LO0VxMPLgiS1xRqr
-         cOtmz/6pGHkUM1F2GW2K0OpVeCaWmxFphqLSygs1W0rUsAF15EzPizkIhlZwf9E9cEwH
-         /aXEnT9bImC1t1WLwV/y5Qn9SXclUgRFmthbrtdUe+dHL9px4mvZJWMhu+pgMl70B3um
-         L3Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732250456; x=1732855256;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nrq9QDDyqlB6+9xg5qKRAM5E4/iGhQvqb5r8OZhoYvU=;
-        b=bDj9FQg3lujhJNIWDHgPHL4xpNBZNLWo9rb9BS1ej7fH4t5+hOA7yH4sLEbzQj/qQD
-         uzD6yWy+BibL6Urke1pEC4MV4OLhSid9JdW+qLwRTA7fO2zeGemy6zER5sgMVBSXgYaO
-         Xshc5Cc9QB6LcVhZIR44sWKct8EDJj6oKqlK1lxbsHoCLG66zgVwRcVl3wke93guqzGK
-         TIQL3wk3WgTkzv+PDsLoXEPp21c4x3OYRgKWnsIsQSJsFCIAvXBYy+AOSt2xOXfdID4p
-         nl9pTti3gI122K7rKs92XrpX/+gZ3pDRpHWMxYkjpOE2QfuuWnNQOlXfr6JtYleIhpv0
-         Si1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUMTOTaOrq+mkgCqZteCn3ABK/JB9VMKJcIAubFrpLDtSDQ36xnxICHIfgVRdV76Dm8+mOZcYNwyRr4hBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0Nf4Hf65ciPKbKpohe8mWhOT2+vObsKTyvz6Jj9RTpi1b38m
-	zYs4E7ldldZbg5/Xj6kFIio5MxpHzSA74NwUY6Q4/dLew4Qm2S9laogaCSQv4OyNGuGQnmNXYmQ
-	F/IqM/mvq56Qr5fnkfa3DfSUJF/BsxfwAEpeBIg==
-X-Gm-Gg: ASbGncvSM2wBq9uVz+jmUHV7mJdan5IrN5BmSMTC/GEKwU11xF04ZA7rl+S4ti500Nu
-	lRT1OyKRnCLRpFiZIKKbhwUkFJQpREjGg
-X-Google-Smtp-Source: AGHT+IGZWepgtK/CehACTEFXOquehGtc7AqzFe9KdaXsbBt78BlUCH1bpgHyJxB6jhIPgjVfA62Lix8LBgfhCnp9AQI=
-X-Received: by 2002:a05:6602:2c09:b0:83a:ab63:20b with SMTP id
- ca18e2360f4ac-83ecdc52218mr179806439f.4.1732250456540; Thu, 21 Nov 2024
- 20:40:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689932309A3;
+	Fri, 22 Nov 2024 04:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=136.143.188.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732250726; cv=fail; b=q6V2tmORxJv9R7nIphjYv+sRhu9M67//oOnr/IFwmBz32dZJDm4Rt7+LopSQhShBhZhcusFVAZtsqro2cDK8OPq0unecJG9MFj2F4grFY+9Afi8wY8NmE8m75hi46ORFLWE24DBWoVm3we80TVADmmf7xzLYWP17/rh81LmH/5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732250726; c=relaxed/simple;
+	bh=JUcA1bOHvmnjxCTM53VB17ECRxLFSgxf9W89YDNqZq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y8W0ECl7nPw2ftWkuKDCINBIQZS4tzAffYuZKrRS8i7WJRpBWlJcSwKz/JbkIHfpyPb1XQ2UqrxbjlzXO26/ONk17VTW/D7wL2/5wPDGhuzVd3Vgu+m4MUb1sVz/SsSfsEVvOsiIg5xE1Gb5Yr6w7xm0OnKb5aYi9F/87leC84g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nicho1as.wang; spf=pass smtp.mailfrom=nicho1as.wang; dkim=pass (1024-bit key) header.d=nicho1as.wang header.i=me@nicho1as.wang header.b=Lu9CpxVg; arc=fail smtp.client-ip=136.143.188.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nicho1as.wang
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nicho1as.wang
+ARC-Seal: i=1; a=rsa-sha256; t=1732250710; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MQePpJv34rjDABlajgoPa4g3Vyh99KtXy+QQUm9/ZAQdCtUOBmxaI8kmAS2KMTpXTlktoS1k3ashr/pDsPTgMA3N+OlXQTIGO64rTHe9XxhevTPCx9eUEmAArxnktLcoX/4H9ZidCsd//3FGpGyiWNd3o9dLG2owD6RZ8fboq6c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732250710; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:Message-Id:Reply-To:To; 
+	bh=l6oCEtHqP/NOgK6DqPuGbdGaj2Iw5tZNALBVL95StJ4=; 
+	b=HU4IJeCy5yMNr1hdn6jtHq11rlsVGNjx/YFPTJ/sprZwgm7H5789fhWgBSrruXO4MC9CUiP17iLNtIO40UCsDtH2MYjEj7ECWYG7BOgNo7gAX79bN+MLHQF0v1mhNtnIzAOBTAMND+Nu5ZBnKnYwpW2G30EdlWtESHXGxLUmN50=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=nicho1as.wang;
+	spf=pass  smtp.mailfrom=me@nicho1as.wang;
+	dmarc=pass header.from=<me@nicho1as.wang>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732250710;
+	s=zoho; d=nicho1as.wang; i=me@nicho1as.wang;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=l6oCEtHqP/NOgK6DqPuGbdGaj2Iw5tZNALBVL95StJ4=;
+	b=Lu9CpxVgN2RcigGNm3PulZzQYJZgeXLSr79v0BV6pFkHOcGj6lupMLHPlKQvSqaN
+	19D79isPQ/3P+HPTbQWEIO9CD/8U5Ew7HqH2yJCfN2nG4zyEHDoBqQiypZc4NGcUD0x
+	N8l/neB7yV1J6+sI/zqIgkakMOQsxn4XqImoEypM=
+Received: by mx.zohomail.com with SMTPS id 1732250707256147.57707776680536;
+	Thu, 21 Nov 2024 20:45:07 -0800 (PST)
+From: Nicholas Wang <me@nicho1as.wang>
+To: 
+Cc: Nicholas Wang <me@nicho1as.wang>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: hda: cs35l41: Support HP Elite Dragonfly 13.5 inch G4
+Date: Thu, 21 Nov 2024 22:44:25 -0600
+Message-ID: <20241122044435.28061-1-me@nicho1as.wang>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241120135842.79625-1-pbonzini@redhat.com> <Zz8t95SNFqOjFEHe@sashalap>
- <20241121132608.GA4113699@thelio-3990X> <901c7d58-9ca2-491b-8884-c78c8fb75b37@redhat.com>
- <Zz9E8lYTsfrMjROi@sashalap> <d4048dc8-b740-47f6-8e1e-258441eb77d1@redhat.com>
-In-Reply-To: <d4048dc8-b740-47f6-8e1e-258441eb77d1@redhat.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 22 Nov 2024 10:10:45 +0530
-Message-ID: <CAAhSdy29hLvyetBa_LsegiBqvVAaDf92b5ZPUD=okNBSTLjdxA@mail.gmail.com>
-Subject: Re: [GIT PULL] First batch of KVM changes for Linux 6.13 merge window
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Sasha Levin <sashal@kernel.org>, Nathan Chancellor <nathan@kernel.org>, torvalds@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu, Nov 21, 2024 at 11:49=E2=80=AFPM Paolo Bonzini <pbonzini@redhat.com=
-> wrote:
->
-> On 11/21/24 15:34, Sasha Levin wrote:
-> > On Thu, Nov 21, 2024 at 03:07:03PM +0100, Paolo Bonzini wrote:
-> >> On 11/21/24 14:26, Nathan Chancellor wrote:
-> >>> On Thu, Nov 21, 2024 at 07:56:23AM -0500, Sasha Levin wrote:
-> >>>> Hi Paolo,
-> >>>>
-> >>>> On Wed, Nov 20, 2024 at 08:58:42AM -0500, Paolo Bonzini wrote:
-> >>>>>      riscv: perf: add guest vs host distinction
-> >>>>
-> >>>> When merging this PR into linus-next, I've started seeing build erro=
-rs:
-> >>>>
-> >>>> Looks like this is due to 2c47e7a74f44 ("perf/core: Correct perf
-> >>>> sampling with guest VMs") which went in couple of days ago through
-> >>>> Ingo's perf tree and changed the number of parameters for
-> >>>> perf_misc_flags().
-> >>
-> >> Thanks Sasha. :(  Looks like Stephen does not build for risc-v.
-> >
-> > He does :)
-> >
-> > This issue was reported[1] about a week ago in linux-next
->
-> Yeah, that's Linaro not Stephen.
->
-> > and a fix was
-> > sent out (the one you linked to be used for conflict resolution), but i=
-t
-> > looks like it wasn't picked up by either the perf tree or the KVM tree.
->
-> Yeah, that's not surprising. :(  Neither KVM nor I weren't CC'd on
-> either the report or the bugfix; and the perf tree didn't have the code
-> at all as Ingo pointed out
-> (https://lore.kernel.org/all/ZzxDvLKGz1ouWzgX@gmail.com/).  Anup was
-> CC'd on the bugfix but he must have missed too and didn't notify me.
->
+This laptop needs to be supported via the configuration table.
 
-Sorry, I totally missed this one.
+Signed-off-by: Nicholas Wang <me@nicho1as.wang>
+---
+ sound/pci/hda/cs35l41_hda_property.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I generally rely on linux-next to report cross-tree conflicts or issues
-but this one was somehow not reported.
+diff --git a/sound/pci/hda/cs35l41_hda_property.c b/sound/pci/hda/cs35l41_hda_property.c
+index 61d231483..c97b8f808 100644
+--- a/sound/pci/hda/cs35l41_hda_property.c
++++ b/sound/pci/hda/cs35l41_hda_property.c
+@@ -52,6 +52,7 @@ static const struct cs35l41_config cs35l41_config_table[] = {
+ 	{ "103C8A30", 2, INTERNAL, { CS35L41_LEFT, CS35L41_RIGHT, 0, 0 }, 0, 1, -1, 1000, 4100, 24 },
+ 	{ "103C8A31", 2, INTERNAL, { CS35L41_LEFT, CS35L41_RIGHT, 0, 0 }, 0, 1, -1, 1000, 4100, 24 },
+ 	{ "103C8A6E", 4, EXTERNAL, { CS35L41_LEFT, CS35L41_LEFT, CS35L41_RIGHT, CS35L41_RIGHT }, 0, -1, -1, 0, 0, 0 },
++	{ "103C8B63", 4, EXTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, CS35L41_RIGHT, CS35L41_LEFT }, 0, -1, -1, 0, 0, 0 },
+ 	{ "103C8BB3", 2, INTERNAL, { CS35L41_LEFT, CS35L41_RIGHT, 0, 0 }, 0, 1, -1, 1000, 4100, 24 },
+ 	{ "103C8BB4", 2, INTERNAL, { CS35L41_LEFT, CS35L41_RIGHT, 0, 0 }, 0, 1, -1, 1000, 4100, 24 },
+ 	{ "103C8BDD", 2, INTERNAL, { CS35L41_LEFT, CS35L41_RIGHT, 0, 0 }, 0, 1, -1, 1000, 4100, 24 },
+@@ -467,6 +468,7 @@ static const struct cs35l41_prop_model cs35l41_prop_model_table[] = {
+ 	{ "CSC3551", "103C8A30", generic_dsd_config },
+ 	{ "CSC3551", "103C8A31", generic_dsd_config },
+ 	{ "CSC3551", "103C8A6E", generic_dsd_config },
++	{ "CSC3551", "103C8B63", generic_dsd_config },
+ 	{ "CSC3551", "103C8BB3", generic_dsd_config },
+ 	{ "CSC3551", "103C8BB4", generic_dsd_config },
+ 	{ "CSC3551", "103C8BDD", generic_dsd_config },
+-- 
+2.47.0
 
-Let me know if you need any action from my side.
-
-Regards,
-Anup
 
