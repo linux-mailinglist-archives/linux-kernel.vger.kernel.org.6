@@ -1,126 +1,171 @@
-Return-Path: <linux-kernel+bounces-417902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A48D9D5A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:56:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EF59D5A7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:56:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8ADEB21E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:56:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 361241F233FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C8817C9B7;
-	Fri, 22 Nov 2024 07:55:58 +0000 (UTC)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9131187855;
+	Fri, 22 Nov 2024 07:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W5qUZw8I"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB86166F26;
-	Fri, 22 Nov 2024 07:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF6C176237
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262157; cv=none; b=m24HrTeWB2Uhxu1B5DTSUtNUOjXOZh5W2KfjnM+xHlsRajRj6Dqb2X11Ur9TcVhmPQDjo6DXwXkKoNRlXP813qOiXC28Ug+YB2ULnUlD2X3UIYFwjwOTQy3w8NQGMyzz2fbT3fWITSZYCO6MJTWSQNQr51W4bFOHo0Xj9k1gmRI=
+	t=1732262159; cv=none; b=pCc9yqhvWZtoH9cvbEt1CQufRMgNK9j3DSDDJpaHE/VbFpuBk6UNibUWs3/nlu5cABOE2z0VEw98oxRVNpnJRuOlLnHPxKuMpl/nKd7XD7hoSDM1BLJZBWDvkXjGn0PtKKqy9dDR+m9sQLjZyBZpP0iwzv+bi7BCluYufxOiJsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262157; c=relaxed/simple;
-	bh=E6XN3WybVfKWKJRQPJ5MNXJpNAvgN5BlD/2FWxJAndk=;
+	s=arc-20240116; t=1732262159; c=relaxed/simple;
+	bh=xVGcxLcjSynzoAVzrOsFTd0jLpmncSnphm899Xcd02g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dfDvC63/Z+ZJozKrT8kWg4GSlUaxhLCG82+gpkxO4uWn3avQwFueiN1tmLEO3VcN7pT3VUULJYRr0tVxNXv3Ekniw5ak4uwUcX7uRNoE8ed94Hcdx+X9YmuSghXfOcBsIdt9Wm0cGlIuAdq3mqjqm/FfxSyi0D37KeJNzQkJhiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e388503c0d7so1566305276.0;
-        Thu, 21 Nov 2024 23:55:55 -0800 (PST)
+	 To:Cc:Content-Type; b=gXDAVtxuyViWXHc+KI6y/oSkpsFvd8LoVMwceVcZjHKgJBR3wfkADuVPlnW2Ra4WIt5IWJqtwBHRSOyr+Kf55MvS8EXS3cE2R2SXmLO46cVsn3fySz57VXRKojnCrc+79KaCAh9SgXC6dRL8JBOWdiuFAdlYagKab54ccTogstY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W5qUZw8I; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so15564885e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 23:55:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732262156; x=1732866956; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z4vKBieIfUnfP5rb/GIVJx7pJ7hMdseAArRaDJN1LAw=;
+        b=W5qUZw8ICXhpwUfKMNnezDi4hu9nbiy8SzLIwe1dtsS9KasBDWWj0fIC/f2DEmKxkl
+         BTgZJXCZgaMvQRrgw6YuliCsv2utUiXuWzkJhtLDi3Iuol6vzABgrcxaPR72btnjz6MN
+         mpxusd7nLaPGKaNUM/zV2E5XFiQ9yKwR0fvCLscUmU2qqUXDuXLWmDyE7G9SgdsjBwoi
+         wIOzqYxeQ5mVNg9VsbfImVSkF/sdhdSKz+29jB9YZ+zWpUWZy+92xJeUUgrtCbdj2n89
+         ZZSyy5P7iU674IXen7YPPAxJfcah+oMAACjMRmgc16dl877CtMwrXsVIDRMIcBsUdSSI
+         eIoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732262154; x=1732866954;
+        d=1e100.net; s=20230601; t=1732262156; x=1732866956;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EVhLm7NWxBppx3IfHYH1TmEaGrU/HiyCgYSRO2+1hPA=;
-        b=eLBRjKAM58jrtlra4Xy8ayM+xq3SktmUiM/QR7N6Ve/3CiHfiyc5HksTS1phxNbshU
-         1aswtRARLoHLMEMDr3DT0ahjYF/A9YFRJ2Zp8A3b8COtkoa2aDzdy2QZ9bDALiGFWq6n
-         IbbAB/s22XkBPbJmMXvPQLaVWdQYiRrQInin45GBvKTl1F4/Qxn+dqZ473RWg/gCQEaz
-         YTsnnspZnvEzCx3Y77p2XFW5Mnh2CdrQB06Zt9VykCvLOv1+2ExDGkm50o8oCC8nFTdr
-         zAdBit3bMpsGPPKqn1Se4J5DnActbl40og+6p0r2a28Nmuv9t9juXve2gBsEh1iw4Pb/
-         rUSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV01QP29s9Q4/SlnJ0ogUIt30cyYzzp2ceVIZtxAbCB1ggHLNdt2FtBzTR2bszAqLI40tllVkFvd6P6YA==@vger.kernel.org, AJvYcCW3u3tLG79ndVV8yA1iKMORHpTc/BFxVuJXA2uGpwc+/L7nQSvTk7peaCnJpNUtCzSJvznWHlkfWA==@vger.kernel.org, AJvYcCXtBx6UyTdXARSdmBqZZY8y75YVyGglMtWuuSy59PoK8eGbqn8dRVXL69VVbHhMMpPj05SSTvyjMHJzR+SC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxndc3jsesDBAPlDXfKo3/f2gv9BuNZutb4v4EFZdJFkApB536N
-	FDc0fSYRF6AsLZ2MKBGRCHJj/Pcf0lB1/edmuFFV546IfVh09SaXti0xzDzv
-X-Gm-Gg: ASbGnctzi2u+aqKdfCeNr3hpXVccgUXfVPostWPoXrdXTig8i4cqCyHOqt5TP14mAju
-	ylHkddIn9g4UNKDDmcQ+DT8/vh84iWGnfubcfp432fHjZsVm8yCxeh0ZUxTDOiyRKtZZXHQL6V9
-	zPrfXoUCXH1sR5YqNrbDz9w2URDfdiMANGTcssXrxMZxgy8yMuXypJOGefKYfwZqK8+H4OmAljb
-	JHhwwGpZLWCpQl5e264RNuVS0xEL7bwwEhmbOSjQ0k8MjoZvUK/mzGiQX6/gsIyNQpfSxRTRagh
-	Kv3lPEzKHVbGwy78
-X-Google-Smtp-Source: AGHT+IHAaw8BiaVDG1QASW5T+kDcdQHvBeKkIQ4shBG+H212FzxkJuGahXjR3VH24z1pOhcWMOJe5Q==
-X-Received: by 2002:a05:6902:1824:b0:e38:8646:45e3 with SMTP id 3f1490d57ef6-e38f8bfe500mr1281299276.48.1732262153801;
-        Thu, 21 Nov 2024 23:55:53 -0800 (PST)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e38f608ea41sm452194276.30.2024.11.21.23.55.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 21 Nov 2024 23:55:50 -0800 (PST)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ee676b4e20so19079517b3.3;
-        Thu, 21 Nov 2024 23:55:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUrWMGyupW6v+flijHQnywWJ2KgopqxbJIxTpZzAiftfiadD7XdXsGnIejP+Vw0J2l7mawU4BITvg==@vger.kernel.org, AJvYcCVRCJr79eOQzWr7kbuBeBe+gC0SkYSm9uDn2//S0hnYaxm9Z5d1h8FWkaWo5497d3sk9ssdBogGjuGoRlNo@vger.kernel.org, AJvYcCWioLNpqSV+jr6c4ZjHbuW4vOMQ2H/n7TlubhDXRVxVN8w6o49Lv4Ry+zckyOARPjSrYRhebH6Rs6FGLA==@vger.kernel.org
-X-Received: by 2002:a0d:c2c1:0:b0:6ee:9052:8e18 with SMTP id
- 00721157ae682-6eee087b79amr17540997b3.6.1732262149807; Thu, 21 Nov 2024
- 23:55:49 -0800 (PST)
+        bh=z4vKBieIfUnfP5rb/GIVJx7pJ7hMdseAArRaDJN1LAw=;
+        b=GJSYqCIn1d11VOx+Z66VJ/hoqvMJktWdC2CXN7NffzUxKmwM4jGLn5ZJWv7CkaEG20
+         7Ev8B85HtYzvV3j5SDCKZyqHIpR5cyq0mYLvn0hl1tmqyJ11FFH3gLDkA8be/4PUmmxf
+         m0DxuF1SnGa4p9fiMcJBU25mFCsxinlYn7kcTNtaWQ4BQomJ4lxVlz0QFg4ZOEYNtEH1
+         VoaiYhRb0krHu/seDKPnDD1RW4WbEOjpMfDypClN7L+qx/DbzZNBYySIwbi4dC56F+CK
+         lfMd/rMdOMxvhr9KzhCM6fyoEc57/Ty/RZCP7AC5Gf0ZJjg2OZ05GA7qSk7hV3UhABAR
+         uBww==
+X-Forwarded-Encrypted: i=1; AJvYcCW21I0MpCI5UhRNCCEdIIlmRcX/gi7Lu9/wmNMPio8qLbtxqNEiAShbaUm9nsH7FYIWARaUW9R3Hh7lGfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8/YYeCaGUM4wYU2FdqRlwsWcPO8fjgylLw9Wk/JwTH2VOagBr
+	RiAFE9w3nV5fn6tuUMsIzXLNxG4rT2kJWGPcSM0znXaL/5AkXuruR18HCehbbeXU86Pg7fLME+X
+	lMvYFw/HkrDk7/5Mcnmw/F9lAxbScTtLvk642
+X-Gm-Gg: ASbGnctU/dkTqQEcWb+vLnl86H/B23KI8ImWt6r+8Qmh6SaDRsATixEjCPI3qGuxi4j
+	FUXOuC3jiHJar/1UqD++iTMY6TJaf1qA/
+X-Google-Smtp-Source: AGHT+IFkzG3/qxSMU//RMD7jHCtgcpHQJ+DTwGvLNDlSxbRcCSQe+8OMIoK+cYjmebrEz5l80i1lbp8WkF/Cant0Mek=
+X-Received: by 2002:adf:e18c:0:b0:382:3894:346c with SMTP id
+ ffacd0b85a97d-38260b76c31mr1646813f8f.27.1732262155734; Thu, 21 Nov 2024
+ 23:55:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <80c767a5d5927c099aea5178fbf2c897b459fa90.1732106544.git.geert@linux-m68k.org>
- <d0d818bb9635d43bde2331864733504f6f7a3635.camel@physik.fu-berlin.de> <dcf5f09a-6c68-4391-2b88-cceac7ff462f@linux-m68k.org>
-In-Reply-To: <dcf5f09a-6c68-4391-2b88-cceac7ff462f@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 22 Nov 2024 08:55:37 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWvmwvtA3F3vuYxiDf94Mn2o7TTQ9G-erv-ZfNVjMZrRg@mail.gmail.com>
-Message-ID: <CAMuHMdWvmwvtA3F3vuYxiDf94Mn2o7TTQ9G-erv-ZfNVjMZrRg@mail.gmail.com>
-Subject: Re: [PATCH] slab: Fix too strict alignment check in create_cache()
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Jens Axboe <axboe@kernel.dk>, 
-	Pavel Begunkov <asml.silence@gmail.com>, Mike@rox.of.borg, Rapoport@rox.of.borg, 
-	Christian Brauner <brauner@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org, 
-	io-uring@vger.kernel.org, linux-m68k@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com>
+ <20241119112408.779243-3-abdiel.janulgue@gmail.com> <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
+ <43a07c04-2985-4999-b6d6-732794906a36@gmail.com> <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
+In-Reply-To: <CAG48ez1uzoEcsFG7Tsfj2WCXor9-mhffoWO8VFoit3j_mUC7-A@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 22 Nov 2024 08:55:42 +0100
+Message-ID: <CAH5fLghUb8dEV9GVtJj497cJ5sp4Gg7=qeijfnV_w4BNd70qxg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page mappings
+To: Jann Horn <jannh@google.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
+	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 22, 2024 at 3:11=E2=80=AFAM Finn Thain <fthain@linux-m68k.org> =
-wrote:
-> On Thu, 21 Nov 2024, John Paul Adrian Glaubitz wrote:
-> > On Wed, 2024-11-20 at 13:46 +0100, Geert Uytterhoeven wrote:
-> > > On m68k, where the minimum alignment of unsigned long is 2 bytes:
-> >
-> > Well, well, well, my old friend strikes again ;-).
-> >
-> > These will always come up until we fix the alignment issue on m68k.
+On Thu, Nov 21, 2024 at 9:18=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
 >
-> Hmmm. That patch you're replying too. Does it make the kernel source code
-> better or worse?
+> On Wed, Nov 20, 2024 at 11:56=E2=80=AFPM Abdiel Janulgue
+> <abdiel.janulgue@gmail.com> wrote:
+> > On 19/11/2024 19:07, Jann Horn wrote:
+> > >> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a S=
+elf>
+> > >
+> > > Sorry, can you explain to me what the semantics of this are? Does thi=
+s
+> > > create a Page reference that is not lifetime-bound to the PageSlice?
+> >
+> > This creates a Page reference that is tied to the lifetime of the `C
+> > struct page` behind the PageSlice buffer. Basically, it's just a cast
+> > from the struct page pointer and does not own that resource.
+>
+> How is the Page reference tied to the lifetime of the C "struct page"?
+>
+> I asked some Rust experts to explain to me what this method signature
+> expands to, and they added the following to the Rust docs:
+>
+> https://github.com/rust-lang/reference/blob/master/src/lifetime-elision.m=
+d
+> ```
+> fn other_args1<'a>(arg: &str) -> &'a str;             // elided
+> fn other_args2<'a, 'b>(arg: &'b str) -> &'a str;      // expanded
+> ```
+>
+> Basically, my understanding is that since you are explicitly
+> specifying that the result should have lifetime 'a, but you are not
+> specifying the lifetime of the parameter, the parameter is given a
+> separate, unrelated lifetime by the compiler? Am I misunderstanding
+> how this works, or is that a typo in the method signature?
 
-Touch=C3=A9 ;-)
+No, you are correct. The signature is wrong and lets the caller pick
+any lifetime they want, with no relation to the lifetime of the
+underlying `struct page`.
 
-The same can be said about commit d811ac148f0afd2f ("virtchnl: fix
-m68k build."): if you rely on a specific alignment, make sure to use
-__aligned__ and/or struct padding.
+From a C perspective, what are the lifetime requirements of vmalloc_to_page=
+?
 
-Gr{oetje,eeting}s,
+> > >> +fn to_vec_with_allocator<A: Allocator>(val: &[u8]) -> Result<Vec<Pa=
+geSlice, A>, AllocError> {
+> > > Do I understand correctly that this can be used to create a kmalloc
+> > > allocation whose pages can then basically be passed to
+> > > page_slice_to_page()?
+> > >
+> > > FYI, the page refcount does not protect against UAF of slab
+> > > allocations through new slab allocations of the same size. In other
+> > > words: The slab allocator can internally recycle memory without going
+> > > through the page allocator, and the slab allocator itself does not
+> > > care about page refcounts.
+> > >
+> > > If the Page returned from calling page_slice_to_page() on the slab
+> > > memory pages returned from to_vec_with_allocator() is purely usable a=
+s
+> > > a borrow and there is no way to later grab a refcounted reference to
+> > > it or pass it into a C function that assumes it can grab a reference
+> > > to the page, I guess that works.
+> >
+> > Yes, I think that is the intent. I appreciate your help in pointing out
+> > the issues with using refcounts in slab memory pages. As you can see,
+> > page_slice_to_page() only returns a Page reference (not a refcounted
+> > Page). Hopefully that addresses your concern?
+>
+> Does Rust also prevent safe code from invoking inc_ref() on the
+> returned Page reference? Normally, the AlwaysRefCounted trait means
+> that safe code can create an owned reference from a shared reference,
+> right?
 
-                        Geert
+In principle, no, you could invoke inc_ref() directly. But the correct
+way to do it would be to use ARef::from(my_ref) to obtain an actual
+refcounted reference.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Alice
 
