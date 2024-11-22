@@ -1,104 +1,83 @@
-Return-Path: <linux-kernel+bounces-418190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5687D9D5E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:51:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CC3F9D5E6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 12:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179E4282203
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0DA11F22826
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 11:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8E01DED7F;
-	Fri, 22 Nov 2024 11:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9378D1DE4E4;
+	Fri, 22 Nov 2024 11:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vq8j0YBG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mG2nPwLL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vq8j0YBG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mG2nPwLL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q0dicT3V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FAC1DE3DE;
-	Fri, 22 Nov 2024 11:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21701C9DD8;
+	Fri, 22 Nov 2024 11:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732276254; cv=none; b=my2P3aMR0Rr7uyKZy8kzy14ek/mXo2HJ83iK9BmhZpB0AU5IQQONmUhRfsIFNkaJnwwYvRwUfL6WyulXoooohnslOVY+6LTp9IoZprUAGaEU1G9x6MGxP96fjpT2JKvntWfStTOejstbXyHYHVVMMFRpDNkK2kw6bu6Z69v66Tg=
+	t=1732276348; cv=none; b=FcpmM6VTgbfZbAMwOxLjR0Oa+QzomFxPlEknLcgHTzvOCB+5ZbuLL6AWBDXAvKfQ4J+l1KboG+CTBSA2Qy5CwNjnPc6KDFkXho34LcESHlhqFprhEgU3xAMsSLRxMJWbQn9bQfQsYo8dKCd8jLaAZDD17sd1tnVbei/jBnB7a+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732276254; c=relaxed/simple;
-	bh=46YuAdYTa54L9lzoosFwe+UOpZiJ6UxxcaMH4kPOvZw=;
+	s=arc-20240116; t=1732276348; c=relaxed/simple;
+	bh=oHOunADvi+vIy3JhCVGF2ZdiCG/NxMIxl0/zchipkCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2E/rIw3LdzABfZF87GloNIJVDANJnpImmDEIeyLlsDKplV8WQkcqlInOu1a6nlH972jYBFHznMw4gty4n1bYab10uu/6C0G8dxpuUG9ZTfkGGsnZ19gjStLIeR6ifwvwS0Z7DsTUVYZR3cbflf+TvbBlQH4KADUc3obO/Vsavg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vq8j0YBG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mG2nPwLL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vq8j0YBG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mG2nPwLL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A0DC1211F9;
-	Fri, 22 Nov 2024 11:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732276250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
-	b=Vq8j0YBGYZ94c7t2HaLJWJQAH1ygfRDlnoej4U3atMYH71rTeyRJADuUaH6fXcmyfV7Y/i
-	3WBUDyjBb5VjPm/qAbto8FGygjolvZUchHeSl8Ks7WoWJEPtMb3hWJgsI3m5te0gDuqLFs
-	RcG4be4ayrGX7UJRf9svW9kGlxk6K38=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732276250;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
-	b=mG2nPwLLFBfHpUzlZWPYZznOFgT+uYSYV4URwy6w+17zlFSQWKGQMnkUtdrtGs1SL+NPXh
-	Hsub4QHN2GpOYiAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Vq8j0YBG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mG2nPwLL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732276250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
-	b=Vq8j0YBGYZ94c7t2HaLJWJQAH1ygfRDlnoej4U3atMYH71rTeyRJADuUaH6fXcmyfV7Y/i
-	3WBUDyjBb5VjPm/qAbto8FGygjolvZUchHeSl8Ks7WoWJEPtMb3hWJgsI3m5te0gDuqLFs
-	RcG4be4ayrGX7UJRf9svW9kGlxk6K38=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732276250;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FtNi5I7reiPlqqHt5gbVXCwATFjkyHB+xhF8Ivt2H0g=;
-	b=mG2nPwLLFBfHpUzlZWPYZznOFgT+uYSYV4URwy6w+17zlFSQWKGQMnkUtdrtGs1SL+NPXh
-	Hsub4QHN2GpOYiAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8012A13998;
-	Fri, 22 Nov 2024 11:50:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5go/HxpwQGcSOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 22 Nov 2024 11:50:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2BF09A08B5; Fri, 22 Nov 2024 12:50:50 +0100 (CET)
-Date: Fri, 22 Nov 2024 12:50:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: viro@zeniv.linux.org.uk, almaz.alexandrovich@paragon-software.com,
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev,
-	syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V4] fs/ntfs3: check if the inode is bad before creating
- symlink
-Message-ID: <20241122115050.7i3eslwb77tee37j@quack3>
-References: <20241122074952.1585521-1-lizhi.xu@windriver.com>
- <20241122081025.1661161-1-lizhi.xu@windriver.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWFVCPOvnvCq2s+lWn7FtIads2h99KG0LDZqC7/XRkCxzppgXz7NT8OIwPQYai4C+cPtZi39sAa+/2Gma+nlxjlDvgaT3As+lYStTvhlfUbwLsSWbGxqbbxL6rkKs+z4+uKCJSbUxC+ECsyceXZDjFp8aAJcc5UkjDdg+MLVXLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q0dicT3V; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732276347; x=1763812347;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oHOunADvi+vIy3JhCVGF2ZdiCG/NxMIxl0/zchipkCU=;
+  b=Q0dicT3V3NjFtGEPujIZhR3zqnCmdNYbJ3ztLPveUyy/uu8mrdzdQ360
+   WL0WEz9DoL/9RcGwIOGM/IC5Zt+qWZPsSENH5pFgUO4nC0sRznCL4LKa0
+   IAa7M2v5FIpzf3HKjS0gMxg2sPdaJfAi7ouWkkj5nVi0a4ECdDih65Wfr
+   ru/8L7SO1KkoaOPdvkykrDB6G5IbltG1yuTkXLnJfXzJem0KWTbkgbxeb
+   5H+iEQIcEYO0HaIxHB4XZAKi51TlViVWNwomAJKQ1yDN3lW2IUiEOsJnT
+   i2nKxLmAWkJQBIodLte+9M31wD9W7TqzRpx68lUNMHXwUt5h5qS2mrNC8
+   Q==;
+X-CSE-ConnectionGUID: kb5luEpJQt+aJ9nDqj3DqQ==
+X-CSE-MsgGUID: Aoicl7RAS1aMeTSz/8J0lQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="35287347"
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="35287347"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 03:52:26 -0800
+X-CSE-ConnectionGUID: Lo8E8s5IQAyDBezPcZfrHA==
+X-CSE-MsgGUID: sUBvT3y6SrOc4tV2IGsaCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
+   d="scan'208";a="90722980"
+Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 22 Nov 2024 03:52:20 -0800
+Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tESCv-0003sJ-2j;
+	Fri, 22 Nov 2024 11:52:17 +0000
+Date: Fri, 22 Nov 2024 19:51:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ming Yu <a0282524688@gmail.com>, tmyu0@nuvoton.com, lee@kernel.org,
+	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org,
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org,
+	linux@roeck-us.net, jdelvare@suse.com,
+	alexandre.belloni@bootlin.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2 6/7] hwmon: Add Nuvoton NCT6694 HWMON support
+Message-ID: <202411221902.1IFRsKWS-lkp@intel.com>
+References: <20241121064046.3724726-7-tmyu0@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,120 +86,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122081025.1661161-1-lizhi.xu@windriver.com>
-X-Rspamd-Queue-Id: A0DC1211F9
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TAGGED_RCPT(0.00)[73d8fc29ec7cba8286fa];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,windriver.com:email,suse.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
-X-Spam-Flag: NO
+In-Reply-To: <20241121064046.3724726-7-tmyu0@nuvoton.com>
 
-On Fri 22-11-24 16:10:25, Lizhi Xu wrote:
-> syzbot reported a null-ptr-deref in pick_link. [1]
-> 
-> First, i_link and i_dir_seq are in the same union, they share the same memory
-> address, and i_dir_seq will be updated during the execution of walk_component,
-> which makes the value of i_link equal to i_dir_seq.
-> 
-> Secondly, the chmod execution failed, which resulted in setting the mode value
-> of file0's inode to REG when executing ntfs_bad_inode.
-> 
-> Third, during the execution of the link command, it sets the inode of the
-> symlink file to the already bad inode of file0 by calling d_instantiate, which
-> ultimately leads to null-ptr-deref when performing a mount operation on the
-> symbolic link bus because it use bad inode's i_link and its value is equal to
-> i_dir_seq=2. 
-> 
-> Note: ("file0, bus" are defined in reproducer [2])
-> 
-> To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
-> whether the inode of file is already bad.
+Hi Ming,
 
-So actually there's no symbolic link involved here at all (which what was
-confusing me all the time).
+kernel test robot noticed the following build errors:
 
-> move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
-> chmod(&(0x7f0000000080)='./file0\x00', 0x0)
-> link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
-> mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
+[auto build test ERROR on andi-shyti/i2c/i2c-host]
+[also build test ERROR on mkl-can-next/testing groeck-staging/hwmon-next abelloni/rtc-next linus/master lee-mfd/for-mfd-fixes v6.12 next-20241121]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This creates only a hardlink. And in fact the creation of the link seems to
-be totally irrelevant for this problem. I believe:
+url:    https://github.com/intel-lab-lkp/linux/commits/Ming-Yu/mfd-Add-core-driver-for-Nuvoton-NCT6694/20241121-155723
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20241121064046.3724726-7-tmyu0%40nuvoton.com
+patch subject: [PATCH v2 6/7] hwmon: Add Nuvoton NCT6694 HWMON support
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241122/202411221902.1IFRsKWS-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241122/202411221902.1IFRsKWS-lkp@intel.com/reproduce)
 
-move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
-chmod(&(0x7f0000000080)='./file0\x00', 0x0)
-mount$overlay(0x0, &(0x7f00000000c0)='./file0\x00', 0x0, 0x0, 0x0)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411221902.1IFRsKWS-lkp@intel.com/
 
-would be as good reproducer of the problem. The core of the problem is that
-NTFS3 calls make_bad_inode() on inode that is accessible to userspace and
-is something else than a regular file. As long as that happens, some
-variant of this NULL-ptr-dereference can happen as well, just the
-reproducers will be somewhat different.
+All errors (new ones prefixed by >>):
 
-So I don't think patching ntfs_link_inode() makes a lot of sense. If
-anything, I'd patch NTFS3 to not mark the inode as bad somewhere inside
-ntfs_setattr() and deal with the error in a better way.
+>> drivers/hwmon/nct6694-hwmon.c:263:15: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     263 |                 frac_part = FIELD_GET(NCT6694_LSB_REG_MASK, data->xmit_buf[1]);
+         |                             ^
+>> drivers/hwmon/nct6694-hwmon.c:508:10: error: call to undeclared function 'FIELD_PREP'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     508 |                        FIELD_PREP(NCT6694_TIN_HYST_MASK, temp_hyst);
+         |                        ^
+   2 errors generated.
 
-								Honza
 
-> 
-> Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> ---
-> V1 --> V2: add the root cause of the i_link not set issue and imporve the check
-> V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
-> V3 --> V4: add comments for symlink use bad inode, it is the root cause
-> 
->  fs/ntfs3/inode.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-> index be04d2845bb7..fefbdcf75016 100644
-> --- a/fs/ntfs3/inode.c
-> +++ b/fs/ntfs3/inode.c
-> @@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
->  	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
->  	struct NTFS_DE *de;
->  
-> +	if (is_bad_inode(inode))
-> +		return -EIO;
-> +
->  	/* Allocate PATH_MAX bytes. */
->  	de = __getname();
->  	if (!de)
-> -- 
-> 2.43.0
-> 
+vim +/FIELD_GET +263 drivers/hwmon/nct6694-hwmon.c
+
+   238	
+   239	static int nct6694_temp_read(struct device *dev, u32 attr, int channel,
+   240				     long *val)
+   241	{
+   242		struct nct6694_hwmon_data *data = dev_get_drvdata(dev);
+   243		unsigned char temp_en, temp_hyst;
+   244		int ret, int_part, frac_part;
+   245		signed char temp_max;
+   246	
+   247		guard(mutex)(&data->lock);
+   248	
+   249		switch (attr) {
+   250		case hwmon_temp_enable:
+   251			temp_en = data->hwmon_en[NCT6694_TIN_EN(channel / 8)];
+   252			*val = temp_en & BIT(channel % 8) ? 1 : 0;
+   253	
+   254			return 0;
+   255		case hwmon_temp_input:
+   256			ret = nct6694_read_msg(data->nct6694, NCT6694_RPT_MOD,
+   257					       NCT6694_TIN_IDX(channel), 2,
+   258					       data->xmit_buf);
+   259			if (ret)
+   260				return ret;
+   261	
+   262			int_part = sign_extend32(data->xmit_buf[0], 7);
+ > 263			frac_part = FIELD_GET(NCT6694_LSB_REG_MASK, data->xmit_buf[1]);
+   264			if (int_part < 0)
+   265				*val = (int_part + 1) * 1000 - (8 - frac_part) * 125;
+   266			else
+   267				*val = int_part * 1000 + frac_part * 125;
+   268	
+   269			return 0;
+   270		case hwmon_temp_max:
+   271			ret = nct6694_read_msg(data->nct6694, NCT6694_HWMON_MOD,
+   272					       NCT6694_HWMON_CMD2_OFFSET,
+   273					       NCT6694_HWMON_CMD2_LEN,
+   274					       data->xmit_buf);
+   275			if (ret)
+   276				return ret;
+   277	
+   278			*val = temp_from_reg(data->xmit_buf[NCT6694_TIN_HL(channel)]);
+   279	
+   280			return 0;
+   281		case hwmon_temp_max_hyst:
+   282			ret = nct6694_read_msg(data->nct6694, NCT6694_HWMON_MOD,
+   283					       NCT6694_HWMON_CMD2_OFFSET,
+   284					       NCT6694_HWMON_CMD2_LEN,
+   285					       data->xmit_buf);
+   286			if (ret)
+   287				return ret;
+   288	
+   289			temp_max = (signed char)data->xmit_buf[NCT6694_TIN_HL(channel)];
+   290			temp_hyst = FIELD_GET(NCT6694_TIN_HYST_MASK,
+   291					      data->xmit_buf[NCT6694_TIN_HYST(channel)]);
+   292			if (temp_max < 0)
+   293				*val = temp_from_reg(temp_max + temp_hyst);
+   294			else
+   295				*val = temp_from_reg(temp_max - temp_hyst);
+   296	
+   297			return 0;
+   298		case hwmon_temp_max_alarm:
+   299			ret = nct6694_read_msg(data->nct6694, NCT6694_RPT_MOD,
+   300					       NCT6694_TIN_STS(channel / 8), 1,
+   301						   data->xmit_buf);
+   302			if (ret)
+   303				return ret;
+   304	
+   305			*val = !!(data->xmit_buf[0] & BIT(channel % 8));
+   306	
+   307			return 0;
+   308		default:
+   309			return -EOPNOTSUPP;
+   310		}
+   311	}
+   312	
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
