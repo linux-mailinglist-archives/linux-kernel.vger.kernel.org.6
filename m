@@ -1,45 +1,62 @@
-Return-Path: <linux-kernel+bounces-417681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0A59D57E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:55:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCE19D57E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:56:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88FF21F209E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BAC280DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 01:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C38179958;
-	Fri, 22 Nov 2024 01:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54141465A0;
+	Fri, 22 Nov 2024 01:55:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s2VpgaRV"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Txz7z3sZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BBB16BE14;
-	Fri, 22 Nov 2024 01:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9404AA31;
+	Fri, 22 Nov 2024 01:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732240405; cv=none; b=PVh/xaJWaCfYHYq9W8IFoNXQ0Hx6jLvwnAayM4vE1r0yxwaeyg4Dj9lFBqXrv1KeQDRjk+605iQJ46WvtOeixpd6PYAhz3WUsf80lNJ3GULe5OqjPqJV5b6IyPfIjXMaHddfhBPmYivNwRTtjQP2m0ZPUGJzU7ZDU9bJS/f+I+8=
+	t=1732240537; cv=none; b=BzwggTpgUlx73t/OpAtjgIi0jE+c0iFVcyLUxS7G8J7cl43yDitiVPNiiY+tYYQ+SIhBndFS/2SxGQEN39dSfcd8/3rkGmJd7HfKE/1c3878oDPkcDBhKQssnvb9WenUpg8SYdk3vZ9/mv9Y1/GX+lNXsUQ5z2fkSzI0tAgPXwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732240405; c=relaxed/simple;
-	bh=mLlfRtBu8W4YXdufHsN+Hh7aEi5K5STCPwNPOH+/4ZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UyA6Bn5GV/5XHwvyd/uMfDue91RQSaZf6IqR7z0qdIADv/vH7JK1gIZY81YWu3MTIyC2iL9wT/TTszBG2LegyhAhb4vluXXCub6BNXaIizmB7GEA7suxOHdTDyd+qXhEqiPbNwksyFhKSSBAN+4Lf5xz5aOgmVHk1MUTUXAKR/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s2VpgaRV; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1732240394; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=0w7XvBE2P7BNoXQjEnWX/nWFWyUO7hkvrfRZsmxX9RM=;
-	b=s2VpgaRVQVXUwEqTy1NmuNoSe6VOJV5XqnBOqjANnqAyJJnzFzwaw82hQkIZOLCKkHjOmHgMmWFmhft6rrdtNYlz9aCq4BtvEcGHJ89oEWvPMEA12t6fp4KsqeUWupjzePABqENjGgZ1X0Iu4v3SFmHGZMZiSGDm3PYfWL+WjIc=
-Received: from 30.246.161.197(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WJyg7UH_1732240390 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 22 Nov 2024 09:53:12 +0800
-Message-ID: <3f9b87c0-ff22-433f-adca-80716502c28f@linux.alibaba.com>
-Date: Fri, 22 Nov 2024 09:53:10 +0800
+	s=arc-20240116; t=1732240537; c=relaxed/simple;
+	bh=DSTJxqipcPbydlYj+s0y1VX/NGDpFVcREaAVSRjBbRQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y//gEcl8llKvTFc3BOxHqSBeZZiVyUcInahw03NbOz2OiWXavHAzbNnZtkP4gXL2kZvLDKtWiziSvrRFWicWZyPlUFeICLzkXdXV4wubtxuPVFXlMpKsLdRXm3ssQLkFJ/UqdVXl2STDYqqOd0HHnfQRJoNfZz5/ipgXeEUCHNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Txz7z3sZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ALKLlDT019613;
+	Fri, 22 Nov 2024 01:55:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zdXsykcoSzLHUg1ZOBfKv7oFlN5m18jwzcV8M6T1FOc=; b=Txz7z3sZGLBWOz3C
+	VNJlhmSZoV2ajD45hAIjvA9dpFVQO4d4W5WDuXbbvCev3wrbIY3alAw/uhPBmzfd
+	l0suimWjMSC5xmtlSYhd3Fbj7mhgu7XSPT6GutzhaaUmr2CqKCUjygFvP2CJYkws
+	/Pry9dauyNvyB1HyQ42HvLfxksfgbI6i0uuzK6OHcxlbtCRpqmlYIvow1zws824D
+	XyEdPn853Y84bCtCtFXn9NKmS49IQHl1WQ1MDyJrxjASFni39uCaIUMJE6ev1Ylm
+	uJ7K/6SOfR0D+eEM7JiATRLoSRx5I/fYJkzDHdRWrHu8THF/P1Q2v0BhWUvwjgPE
+	hTEE2w==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431c7hnx6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 01:55:28 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AM1tS7g019016
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 22 Nov 2024 01:55:28 GMT
+Received: from [10.231.216.175] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 21 Nov
+ 2024 17:55:23 -0800
+Message-ID: <e8645b6c-7f78-4051-9e29-2276197714ed@quicinc.com>
+Date: Fri, 22 Nov 2024 09:55:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,92 +64,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Steven Rostedt <rostedt@goodmis.org>, Lukas Wunner <lukas@wunner.de>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, oleg@redhat.com, naveen@kernel.org,
- davem@davemloft.net, anil.s.keshavamurthy@intel.com, mark.rutland@arm.com,
- peterz@infradead.org
-References: <20241120124328.19111-1-xueshuai@linux.alibaba.com>
- <Zz786zZljAy2J5i7@wunner.de>
- <7002248c-f3af-42aa-ba42-a65cd738ae37@linux.alibaba.com>
- <20241121084354.4a554829@gandalf.local.home>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20241121084354.4a554829@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2 2/4] dt-bindings: bluetooth: Add qca6698 compatible
+ string
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        "Balakrishna
+ Godavarthi" <quic_bgodavar@quicinc.com>,
+        Rocky Liao
+	<quic_rjliao@quicinc.com>, <quic_zijuhu@quicinc.com>,
+        <linux-bluetooth@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_mohamull@quicinc.com>
+References: <20241120095428.1122935-1-quic_chejiang@quicinc.com>
+ <20241120095428.1122935-3-quic_chejiang@quicinc.com>
+ <smwxrjvdvyxw6tknucl6fb5jpjau2q4jcyjxpunbtt5ep6xsr4@ztuyfkrwgxoo>
+ <44932c08-000f-4e6c-89b3-d7556a0a7a88@quicinc.com>
+ <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
+Content-Language: en-US
+From: "Cheng Jiang (IOE)" <quic_chejiang@quicinc.com>
+In-Reply-To: <CAA8EJpq1u6ngze81LKAcGzQEJz=yJ-u6MjvRMJHdKp3aPVnewg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: U2jZFR-qxQhxhouD9WWmjTUbZaaZKTdC
+X-Proofpoint-GUID: U2jZFR-qxQhxhouD9WWmjTUbZaaZKTdC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ phishscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411220014
 
+Hi Dmitry,
 
-
-在 2024/11/21 21:43, Steven Rostedt 写道:
-> On Thu, 21 Nov 2024 19:34:31 +0800
-> Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-> 
->> Sure, I can reorganize the directory. You have two optional proposals:
+On 11/22/2024 12:28 AM, Dmitry Baryshkov wrote:
+> On Thu, 21 Nov 2024 at 06:12, Cheng Jiang <quic_chejiang@quicinc.com> wrote:
 >>
->> 1. /sys/kernel/debug/tracing/events/pci_hp_event
-> 
-> I'm guessing the above has TRACING_SYSTEM = pci_hp_event ? That is, the
-> above is a system and not an event.
-> 
->> 2. /sys/kernel/debug/tracing/events/pci/pci_hp_event
-> 
-> Whereas here, it's an event.
-> 
+>> Hi Dmitry,
 >>
->> I personally prefer the second approach. However, I'll defer the final decision
->> to the tracing subsystem maintainer, considering their expertise and
->> familiarity with the existing conventions.
+>> On 11/20/2024 6:44 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Nov 20, 2024 at 05:54:26PM +0800, Cheng Jiang wrote:
+>>>> Add QCA6698 qcom,qca6698-bt compatible strings.
+>>>
+>>> Why? Is it the same chip as WCN6855 or a different chip? Is it
+>>> completely compatible?
+>>>
+>> They are different chips. But it's compatible with WCN6855.
 > 
-> Normally the system is determined by the users of the tracing
-> infrastructure and not the tracing maintainers. But I can give you some
-> guidelines.
-> 
-> The "system" level:
-> 
->    /sys/kernel/tracing/events/<system>
-> 
-> is just a way to group like events making it easier to enable them all at once:
-> 
->   echo 1 > /sys/kernel/tracing/events/<system>/enable
-> 
-> or
-> 
->    trace-cmd start -e <system>
-> 
-> The name of the "system" should be something that all the events underneath
-> represent. Note, although events in two different systems can have the same
-> name, it's best to try to keep them all unique. That's because if you have:
-> 
-> 
->   systemA/foo  and systemB/foo
-> 
-> If you add to the kernel command line: trace_event=foo
-> it will enable both events. Although that could be fixed with: trace_event=systemA:foo
-> 
-> Note: trace_event=systemA  would enable all systemA events at boot.
-> 
-> That said, is all these events going to be related to hotplug? If so, you
-> probably want "hotplug" or "hp" in the system name. If you make it just
-> "pci", then it will be expected that all the events will be related to PCI
-> in general.
-
-I think Lukas is asking for a system for pci related tracepoint.
+> So, do we really need new compat? Will/can it use the same firmware?
+We need to use a different firmware. Let me check if using 
+"firmware-name" allows us to omit the new soc type. 
+From the driver's perspective, the only change is the need to load a 
+different firmware.
 
 > 
-> Does that help?
-
-Yes, it really does.
-
+>>>>
+>>>> Signed-off-by: Cheng Jiang <quic_chejiang@quicinc.com>
+>>>> ---
+>>>>  .../devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml   | 2 ++
+>>>>  1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> index 9019fe7bcdc6..527f947289af 100644
+>>>> --- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> +++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+>>>> @@ -18,6 +18,7 @@ properties:
+>>>>      enum:
+>>>>        - qcom,qca2066-bt
+>>>>        - qcom,qca6174-bt
+>>>> +      - qcom,qca6698-bt
+>>>>        - qcom,qca9377-bt
+>>>>        - qcom,wcn3988-bt
+>>>>        - qcom,wcn3990-bt
+>>>> @@ -175,6 +176,7 @@ allOf:
+>>>>          compatible:
+>>>>            contains:
+>>>>              enum:
+>>>> +              - qcom,qca6698-bt
+>>>>                - qcom,wcn6855-bt
+>>>>      then:
+>>>>        required:
+>>>> --
+>>>> 2.25.1
+>>>>
+>>>
+>>
 > 
-> -- Steve
-
-Thanks a lot.
-
-Best Regards,
-Shuai
+> 
 
 
