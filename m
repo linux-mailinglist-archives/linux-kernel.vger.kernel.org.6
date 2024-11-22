@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-418353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9209D60B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 190969D60B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 15:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C3B255E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:46:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF4FB258BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 14:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB0384D13;
-	Fri, 22 Nov 2024 14:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EE876036;
+	Fri, 22 Nov 2024 14:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Tn58/XiY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="t5SCQr5M"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA63C230995;
-	Fri, 22 Nov 2024 14:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A294A3F9FB;
+	Fri, 22 Nov 2024 14:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286761; cv=none; b=Dt8wB5QPvr67AkUkqDLU4yQgjNxTG11zvddI5M7los79EHCF0JM/OOo3Z7PsbaikudHzMNsubDIbNJ+2HGqKJtHHSGLG85ih1/EDe8KbyNDAMgOEPyDIu9RM4WEnjgApJEqWlEld/BYGIyiwjSrKNLG42jbV/kmFS8+HmDrHz/s=
+	t=1732286778; cv=none; b=eZZlwPOP0mWa2zkmHiX5zTATRXra/etxDCWTKIGIGAwgmX5m+EAnY3UQz46P+1TFSOV4ITnQ53vtJCw8oMJFosZ6vX9k0nUkWBT1hp6omjBD2I+1Et9vx2hvrzNLg8K9kyeUemvVyyqnJpjw7VWgVJb+N160kVtpo1LzRxCo1a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286761; c=relaxed/simple;
-	bh=7Ay/3r+wW0JDRN5wnHDl+VfBwqOAMEjjkxIuQW5QdEA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/vfZu6UbmeX4iqGi8SVcCuxfzhws4pOVjFNvTUKpHfHqA4ykRgZS9LfH8tdE89Css74/hyBVWsqoxY1z6GuW+VB333nFaiKT566P59eI6O+2Hemf3fpfhYrQoXkmIBSVTT9tC3vKYcExVVmFrPsoOEqgsX9+WMZ/O9EV4orgww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Tn58/XiY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-46-82-201.ip106.fastwebnet.it [93.46.82.201])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 852DB514;
-	Fri, 22 Nov 2024 15:45:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1732286738;
-	bh=7Ay/3r+wW0JDRN5wnHDl+VfBwqOAMEjjkxIuQW5QdEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tn58/XiYKHc2bN3o5vJLZbbYGiGYg6GTxEPKhNaf63ycPKV3N6CiVULhi5dvmQaKQ
-	 lq6VAp0MKLn/yB0NelV2MaP6ZJ4GnLY4QvzJv0J10bFbDoM2TBLF5BGdj3F2ei3v1j
-	 AGq47shVfRQS4ChCYQ9fPASgUE2Sh/sLZhJWBgBs=
-Date: Fri, 22 Nov 2024 15:45:55 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Naushir Patuck <naush@raspberrypi.com>
-Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-media@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, jacopo.mondi@ideasonboard.com, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v1 1/5] drivers: media: bcm2835-unicam: Improve frame
- sequence count handling
-Message-ID: <gl7qb2rqmqzd6tw7pei3ldbu6m4l3qiwld3ddhvn4pemdpgfjz@bvaf5prvmz3c>
-References: <20241122084152.1841419-1-naush@raspberrypi.com>
- <20241122084152.1841419-2-naush@raspberrypi.com>
+	s=arc-20240116; t=1732286778; c=relaxed/simple;
+	bh=uuKUsOajQgM80O8VvkAX5tv435pauF973/vP1CI5xTI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=kZTUOQ9oglmR5PBRZkKUay497v54X/Nxhs0+K6FUilPuaQs9dBiUouKjCY9pTJzRAt3qokY/tOwiUSHvyuP6H3TdL2CQb9yUd4rVWg8FEvgHN3QUd9syLw5N3u0IJzzRTNgtbRToLZ1IoHcu4ZE0xtl1MCWjcvnbmBFh3QdrfoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=t5SCQr5M; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732286759; x=1732891559; i=markus.elfring@web.de;
+	bh=uuKUsOajQgM80O8VvkAX5tv435pauF973/vP1CI5xTI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=t5SCQr5MlXPwnj62/Gu3Q3slJRtRyreYUSLX9imsubMTJ1jMhYo8MRnGZ8a3V/Yj
+	 iYcUAfbAt/0wBMwnz+KezgWXwK6J4yxGFe3tynO6bkyomTBJB9qIMvA1TJlIll4Rk
+	 w9rNUrDoKXDhxONNBXLjqsw2TgQvVxEjTY/R+tSM+wdvJNDP12BDKbgvau6K/qR7I
+	 qfVzUE+EsnsMfMwWCt6k9yC0JLs/X2cazHrkOczGFYe0gU2kZtfyjcBT42uS6VM6t
+	 BRrAUd6yfio5OLZDrIPwwngRgPNazspK+xBIOiIQawniaSH/6L/tW4/7vqfzE+Hh4
+	 Der5O+K9V0N5jUJSRA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MK574-1t0ocT1BHC-00MWE4; Fri, 22
+ Nov 2024 15:45:59 +0100
+Message-ID: <a5f7928a-1628-4e37-9a49-07e0562ef463@web.de>
+Date: Fri, 22 Nov 2024 15:45:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241122084152.1841419-2-naush@raspberrypi.com>
+User-Agent: Mozilla Thunderbird
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ linux-hwmon@vger.kernel.org, =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?=
+ <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241121-chipcap_no_iio-v1-2-6c157848a36f@gmail.com>
+Subject: Re: [PATCH 2/2] hwmon: (chipcap2) Switch to guard() for mutext
+ handling
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241121-chipcap_no_iio-v1-2-6c157848a36f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:42xoAbuinLYVrB5vXZkPFcB8xWPF9XDfgxX2ZFC1AYAHhCIkWrR
+ UKE25j66jwJRuP84w5kSqDhKYPZDtS17zCrtL9T0knl9nXyPEAKJu1V4YnYbf2UDj+AEkhg
+ mhdA0Rqs1b165kQw3OtqQp79Sk31Z8byJlnxnD57KNppVTdKzAq/z2Nx2uAwnsG2OXPvP6G
+ gUorEipxzhsEptIx4iSLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zTuWA0vXtrs=;9C+EBkwKGMKdQ/TCtVN6RoI6lWg
+ dPkTYP2E5/C5H+uS/MSkPSd1s7PixlJAg/lkNuE/Qa1gqoA9MmJb7e0gOuVSTId36tvvPvAeC
+ rfEetgaUT0QHakre5z/HuSOz2q1aHxz/TjXRCRvfDJzssG9yUrCm/uVJBA5l0pLsPfjj2jdel
+ jSUzqWt077YPM9lyVmFsU6SDwEDTTTOZTbnNrO+HxtwRWcny55hi7Y72buwKZ5zVPcNyN5SiS
+ s4JdqXJGUdNj9yrQNWVGfQkbvFLdAYbgTjhdnWtvdtTxQ5rvoElq8YEhi+6fwecel4apbI/qh
+ ZNpI7K08B8YT7YsfhDkT4zI+7I3bpH/Y1CyLc7Y0TZl64Bi7xFVu1qgsmXKPy+EOUsg491moi
+ hu4gWvZ8SokuNwMpBsrLvQFq1E4iGqEsptgeaJ0SdVvyAFgOIfU0YKf23J99pbMcF7m8iQZg0
+ OWg0Byoj8VTpTbU+k1ZJ7gQdjtTUUQqO9q903+Kq6iw1tvQdaEOKM+O9ci72L8ACop1TrCTx3
+ jptmWfbQz3dBgX13M9nPdaQW8+WzgMmjtW/UWPahIzh++sqSu59RBJ+PUMojpQceQNJELMm2A
+ gf0hqdKdF7L3x66xhAI4wg7Zv4GNtCl0xk1UWuYOefFOZZpsk387HAUFFXjj2zLmnRcWKI2S8
+ pP9RZjbgGLmQqMSs2kubdZtENbQkqYCTdSSQhU36hsuMBc2BKJ5q+fSeIf+hti0x13m3e0Wns
+ zNqHiHVnmOfgzvqAqW5dUtPf8A+RANkkrJOyoud8Zy7LsdnOXwSdyUULFDEPhclNFjtIFjL8i
+ wSVJfCcx86vWdJkC3oevBZg9XrWjxmWjhcXL355Zxe4IJoK4GAZT5e5NNfNinClPAL6h4SK47
+ L4Vf0kr9zP+2zHC88ZUjMUOQ04EKS088+XQyhsXEijWL3v4kcnXxR7+2araxrTpvR/5HKqHgc
+ Kne76cGOLPyBGLEF7uCnB1npamNuLOK5FDk/6sLzGeZntYtzEQj2wJVlRz0n1j+xOVF2masly
+ WiNzHcdbEX9At22LkTd+Szt2O25uIYQKku0L1/aWifW2SDiuOc43xkD+zfdLmBsp1WpORxFOH
+ Ry2mkocpE=
 
-Hi Naush
+> Switch to guard() for mutex handling to simplify the code, =E2=80=A6
 
-On Fri, Nov 22, 2024 at 08:41:48AM +0000, Naushir Patuck wrote:
-> Ensure that the frame sequence counter is incremented only if a previous
-> frame start interrupt has occurred, or a frame start + frame end has
-> occurred simultaneously.
->
-> This corresponds the sequence number with the actual number of frames
-> produced by the sensor, not the number of frame buffers dequeued back
-> to userland.
->
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+I suggest to avoid a typo in the summary phrase accordingly.
 
-
-Thanks, looks good to me
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-> ---
->  .../media/platform/broadcom/bcm2835-unicam.c  | 22 +++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/broadcom/bcm2835-unicam.c b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> index 3aed0e493c81..36fb186a0421 100644
-> --- a/drivers/media/platform/broadcom/bcm2835-unicam.c
-> +++ b/drivers/media/platform/broadcom/bcm2835-unicam.c
-> @@ -199,6 +199,7 @@ struct unicam_device {
->  	/* subdevice async notifier */
->  	struct v4l2_async_notifier notifier;
->  	unsigned int sequence;
-> +	bool frame_started;
->
->  	/* Sensor node */
->  	struct {
-> @@ -742,6 +743,8 @@ static irqreturn_t unicam_isr(int irq, void *dev)
->  	 * buffer forever.
->  	 */
->  	if (fe) {
-> +		bool inc_seq = unicam->frame_started;
-> +
->  		/*
->  		 * Ensure we have swapped buffers already as we can't
->  		 * stop the peripheral. If no buffer is available, use a
-> @@ -761,11 +764,24 @@ static irqreturn_t unicam_isr(int irq, void *dev)
->  			 * + FS + LS). In this case, we cannot signal the buffer
->  			 * as complete, as the HW will reuse that buffer.
->  			 */
-> -			if (node->cur_frm && node->cur_frm != node->next_frm)
-> +			if (node->cur_frm && node->cur_frm != node->next_frm) {
->  				unicam_process_buffer_complete(node, sequence);
-> +				inc_seq = true;
-> +			}
->  			node->cur_frm = node->next_frm;
->  		}
-> -		unicam->sequence++;
-> +
-> +		/*
-> +		 * Increment the sequence number conditionally on either a FS
-> +		 * having already occurred, or in the FE + FS condition as
-> +		 * caught in the FE handler above. This ensures the sequence
-> +		 * number corresponds to the frames generated by the sensor, not
-> +		 * the frames dequeued to userland.
-> +		 */
-> +		if (inc_seq) {
-> +			unicam->sequence++;
-> +			unicam->frame_started = false;
-> +		}
->  	}
->
->  	if (ista & UNICAM_FSI) {
-> @@ -795,6 +811,7 @@ static irqreturn_t unicam_isr(int irq, void *dev)
->  		}
->
->  		unicam_queue_event_sof(unicam);
-> +		unicam->frame_started = true;
->  	}
->
->  	/*
-> @@ -1413,6 +1430,7 @@ static int unicam_sd_enable_streams(struct v4l2_subdev *sd,
->  		if (unicam->pipe.nodes & BIT(UNICAM_METADATA_NODE))
->  			unicam_start_metadata(unicam);
->
-> +		unicam->frame_started = false;
->  		unicam_start_rx(unicam, state);
->  	}
->
-> --
-> 2.34.1
->
->
+Regards,
+Markus
 
