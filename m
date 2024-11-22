@@ -1,193 +1,196 @@
-Return-Path: <linux-kernel+bounces-417914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3D09D5AA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:07:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16EF99D5AAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C358F283AAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:07:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB35D282F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB9818A6DE;
-	Fri, 22 Nov 2024 08:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2A18BC1E;
+	Fri, 22 Nov 2024 08:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cUIFdHPq"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="edvwVN81"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D183184522
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 08:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262816; cv=none; b=VaBiKb0Xh4acw3thbUQqVkBNpJ+9UtwZdCPSUM2m2qPDp7oGd/PeveqSHICedxHxltySJYU/TDn8tH4blH4JKYfMN9+wfNpAVftXObMi1bN04JZfNvthU1lyaFgTzfJcW29oQb5tv1QlNd4S9YZJic1lxGgJW1S8ZeV3rotcyMo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262816; c=relaxed/simple;
-	bh=Qi4/idXLvnIThje2gN76UzBa1XdNh7XOjU86E3VjFGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PPIrhbMXlRypBmt8fGs0/rnF5iERHXdWc5VPiWNjFRU1VUoUeCQjnG1JizvKyzTGhkcNIBtRuqO8Rx/oD7cSn/sqcT0H9jguBomVZpbINVPAG9raVV4mDwjGwKkResp7OvWqfL6T1/MbAcQi5Y200cS7G012Snx3jR7+zZ1Un4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cUIFdHPq; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-212a3067b11so3857375ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:06:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732262813; x=1732867613; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EheqArWCj4tc46f2BqzjXCWprDHEPhu6m5IV043oQTA=;
-        b=cUIFdHPqsXs1c3u61CqpZLtj0VY+X4PR6epBiV8x4ptKZA41aj+nXx24/C8ehX0bgh
-         D2CZxsvjNfkQSfljVxaoDF5Z4KVSmsFLESpIZAhoGsfld3grE7WOtHW745FJwAl3tvK3
-         4esFlpT0byxFwwTzxXSktbkKP7m1BlUVWSGtM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732262813; x=1732867613;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EheqArWCj4tc46f2BqzjXCWprDHEPhu6m5IV043oQTA=;
-        b=v6atUKWoTeDPFAQLmva0kwbVoWtOup88YcD8PAZcoZUZpvZWyjxLM9lvhhv8EIztvg
-         MSHu4RI3h25hoQvEiKCniYN5Mi2jo6xR83FDDZZirvC7ru/2gEjA5GTFjxL2U8j4reVT
-         kcctAxbg/nv6rkAgiv68g9u+MJF9HRSS5LanXED/EugjC4rT1U64yVKI73shTmBZPWZX
-         9y66jI/cM9RuIKnhWtkzzlXZF8carL7Ok2Eeooi5gZs8eXt79dXSNZRN/m2H7J7xGQLB
-         oztX7FL4cSl2zJHX1+6b3yPMMIlVqRG+fS12OkJdPc3bCWhu/GSE0QrEkNC+fdWveizW
-         KKdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkWgW+ikYigdx0wwwA6i1yUOXZKATmLxlj0LmshXdtV2kHdFzIiHt50WPyjlx9AfrW4gXH4+m18SlgCuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9ufhPv4maDq7oT+xQcsCcNtmhIgsPxs9MBPVZ/TJfpejS6EH
-	CiqAyrRTe0pcnRmsRc5V5aT0WOYhuQIaHvIJxP0KRws2VWRNJMDjymZ/2SCeKobF3Lsf2OdEEl0
-	=
-X-Gm-Gg: ASbGncvoagZJsuEKv2p23USuKCsd6XarXfwqZV2RADyZI8UY6Pu0xKFa5sH9YCJXs1X
-	v7X+bfz9rORFZKs4W/zy8NJfSbWYwlFpLiACHZHf/MYqjuCgIIvm4DcpP79GSKYym2nCrSsLVld
-	1hpKREysVkUZNA+/b/OUNkHisfx876lwZzhIKR4j8wWcfVaTP7exLFB+UuCjhvGRtdx5wwPX4FM
-	HcIQaPm9ClVVdbruSUZ1RWM7aRnHqVPdcGzt0vk47+DLABYDiS7Ah58sazth3Tw5bzF83zu/W1/
-	D+2sHIiILTaguvU1
-X-Google-Smtp-Source: AGHT+IEvS9cWF1kA0MDSc6Gv30EptKP1Hm501soZbMffIuFu5GQu9ybBG5atM6ahMPaDuRmt+9egJg==
-X-Received: by 2002:a17:902:cec9:b0:212:23e5:6202 with SMTP id d9443c01a7336-2129f67b3f6mr19520245ad.6.1732262813413;
-        Fri, 22 Nov 2024 00:06:53 -0800 (PST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2129dbfa1edsm10543465ad.158.2024.11.22.00.06.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 00:06:52 -0800 (PST)
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7eb0bc007edso1254603a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 00:06:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUf6tBV315RYjSbpNlRIqytBkNCsdXMbyGmtp4H1aN33MoQltNak4EmFdRrjwlbMwbpT6+m/wi1P1Yzypw=@vger.kernel.org
-X-Received: by 2002:a05:6a21:999d:b0:1db:e328:dd13 with SMTP id
- adf61e73a8af0-1e09e3fe116mr2932241637.11.1732262812168; Fri, 22 Nov 2024
- 00:06:52 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D401C18BC13;
+	Fri, 22 Nov 2024 08:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732262821; cv=fail; b=uh0HeYeVF0D09KaQ3PWsnMbyzsdqhz0KMQyj01P7E6MzJb5yMdz6oWGUi38/Zi+z/wi2MtPgnXX141tzsMY1WwLOsXixH3yX1s8MASvIv+aeXG5F0+3rI4wvFipadQHpStuttV7WLSRgdAZGzkXeQHwmZMtlP3diNAG5j8yOWWM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732262821; c=relaxed/simple;
+	bh=ERJnHrEivan+3bdtCK30fcRjAKL6mRWZLZ3zVbTvb+U=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=IxWqBwTazLdcUQ5prloY3Y+UMGkuJOpGPReqwiBNqwvnpmr7NlQUwBiJXfcs5izpxVfW1iPmk5Yl9T7aeXfxOz7MKy9QHSxf41Y52bFtlAvvP46/yxbb+gruRPktL7aGW7LBzPz+FRM3KlepsSiFo+5dGfBPiP8DsWdmJ2hjb54=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=edvwVN81; arc=fail smtp.client-ip=40.107.223.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q/+JUyui4VpBYjgrpCLy6nlnChIZB7e41oIiaihZZx5rGN4UU6ltwXhs8wj2+ZpJMreAihKGPp4QRhZuWN2+maA9iQWQW0Vk3qIrWRhtW3eZGF8PnjJONScpyjLJWDkSCYkNbbKaxX0XJSB7I/7cIkxVkx+Uf0KK776d//z6GRIuENR7P65Df9xqYbPQwxJp8XCg850riditwFuhhH42clXFQSE1SJSCoDlkxuX73QB56NVKt/KRB1OODvgLumfPPiZlz1gJ1DxEekh7oZmgkUsINxbRnkS7BAm7mr8oreyBme1IHF7R98BshQs+EdDDPAumM0C4JV+XgjTyKj/B7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
+ b=HxFOgli4z955dALKZNOX5e4r3WCkdqU9FdDZRSfZ0mIKUcRxGxyn5D2WimwVEqTxQN5sjeZ8wh1PdDp9H7fJB20sDTHNqpvHjt6jAbt3/Judb29TWJdy6BCLOCVbP83mRyzJV8JyUvYrr6Bdml7aW0/CpzYOTPDrYece508FP3OmvD/b8BnLlkqvbu/E+AFmxzrp5uxQwduLMfq4Gw8gA1X2q2Qy5U4uXs1COyKa4+be2ivzJj5/MgFr6ayuAoKdM2q9FYpF1Y4YlqzKXtlBv4UisD3OF6nxqPa+y6lJrTlV2ePJaEqmH6CdYpkGNVn0u1PZEQPoGmbv5MBEbHiYcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
+ b=edvwVN81tiOISKCR4gDTgN+axMNgHbwlr/IvfNNgKQsdAJqUNFJ4FtgXsxNPHSn88LkHyJqj9IuTF3FiC99xL+9F1cr0/UXjj/goJWxi9xwYNWseC4UBxsGaKw+GzBRf6QOws8U8vjrEW6tr6KF2X0QkmiPnciiCnGMV/CKAOO2LW2RSolaqCLbgwESS6kCSgnTF3alNDWvliKahllvOfiQ0pRBegZZ8KsDq8QmWjNqZH5cmxkdutG4DxXKLLe9yxsW2pV8e8tS1O8xcfkFRzi3Ru5Fan8X4PpO1/LC0qBvWVHPTUgoW2Z8vxPxDDVPr2bgigtL2YPU7Ax3FtuSkzw==
+Received: from CH2PR04CA0027.namprd04.prod.outlook.com (2603:10b6:610:52::37)
+ by CH2PR12MB4277.namprd12.prod.outlook.com (2603:10b6:610:ae::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Fri, 22 Nov
+ 2024 08:06:56 +0000
+Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
+ (2603:10b6:610:52:cafe::fd) by CH2PR04CA0027.outlook.office365.com
+ (2603:10b6:610:52::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15 via Frontend
+ Transport; Fri, 22 Nov 2024 08:06:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 08:06:55 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 22 Nov
+ 2024 00:06:44 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Fri, 22 Nov 2024 00:06:44 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Fri, 22 Nov 2024 00:06:44 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
+In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
+References: <20241120125629.681745345@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain> <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain>
-In-Reply-To: <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 22 Nov 2024 09:06:40 +0100
-X-Gmail-Original-Message-ID: <CANiDSCuQFmrPTLTFs0GPJ209EEKN=MCg8cK3xcsxp8c2eEMhVg@mail.gmail.com>
-Message-ID: <CANiDSCuQFmrPTLTFs0GPJ209EEKN=MCg8cK3xcsxp8c2eEMhVg@mail.gmail.com>
-Subject: Re: drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready()
- warn: iterator 'i' not incremented
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, oe-kbuild@lists.linux.dev, lkp@intel.com, 
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <0ba6eac5-541a-44df-a234-842bbcc433b0@drhqmail201.nvidia.com>
+Date: Fri, 22 Nov 2024 00:06:44 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|CH2PR12MB4277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WDdoZFdUWWFTSHhYakgzOEVCb3FYQ3k5SzZ4bldLS3NlMFJBQmR5YkdTTzBx?=
+ =?utf-8?B?NklRUGFOS3FPLzFDcCsxOVdDdnByc243ZUtpN2hzaUNzK0tEd3VPZ1FUQmxL?=
+ =?utf-8?B?b3JKUnB2TFB3WWhzTVlrL3YyZnBaSmZ2RzZVampnQUhQN1l6dHlLMFdCTk5i?=
+ =?utf-8?B?aTdLZ2RQWUV4aXlrWXFBQVlrK294bFg1SjNWd1FubXNmSW04TnhrYW8wY2V5?=
+ =?utf-8?B?R1g2N1FkazgyZCsyOGFwR0phSTFOdzlqM0w1UHF6dmM1WjBuclNYbTFJeGhn?=
+ =?utf-8?B?UmUzMWJsMzYyNUpLeGxrcXRQRG9DMzR2ZWc1NUxOdzhCSEtwaGEwVDBjdWJl?=
+ =?utf-8?B?VEdjcWZESTFRRlhkWjkyWTcwOVJMMTRUMEJNRWJHNVRxYUIxWU5uR3JTZXUw?=
+ =?utf-8?B?aUtvVitLclNmTVcxTVRVeWpuU3hNdFpEOWN5UjNvNlpabjRJdFRTUDZOZHh5?=
+ =?utf-8?B?blI5ckRCaVJBVktYQkFxRm1SdnhXWnlyZWovaHdhVFdVR2lmYjA4MW9vWGhy?=
+ =?utf-8?B?N2NtSXVvVFBBNDdCNW1qc2dwdThIaVNGaFFXVkZQNVdTaGZJamVwbTMzZnlu?=
+ =?utf-8?B?SFQxRTBCMkQzbnQ2aVZjempBRmFkWnhCSTZRTFJkcEJWT3l1NUFVT0xMVnFO?=
+ =?utf-8?B?MDFnNG1QeGpBL25CR2FMQ281Njh3eUEvc1NiTkcxMXRXRk1CUXVXdFVFSGpG?=
+ =?utf-8?B?T0JUMUZ1aVZtQkpvOHB4TFYrRVdQVlpFRnJYVzBZNkJhWi9SZFVwMm1CRUIr?=
+ =?utf-8?B?TUpsUDJIWVVKbVRxSHlLNmFzWmdhNExaYWdzRTZiOXlFQU5RMUdLeFFXVk5z?=
+ =?utf-8?B?eUJBaGhSdm9mTkFJN3VFdEw3L29hZGRIUVJ5QVZjUnUrYlMrMndOZU5Eek16?=
+ =?utf-8?B?a1hlT1F5VTVNWFltMFBSRWRZdElSc1lKaWVCRGlBeWtPYVNZOWM5NUkrUGZa?=
+ =?utf-8?B?aENwMUlmYThqUzQ5OFZ2K2VIQk5WM0tkcVJpTlJMbnZ4SGprdXVEeXpleDFr?=
+ =?utf-8?B?Nmhmc3FyTk9YYWRUQ0hQODJTcWVKazJyc1YyYTlpUlNQZjhDMW5iY1JPL3lI?=
+ =?utf-8?B?M3VUS1VJQW9QbkE3NERFS2dJT0pHbUt1SkdsWUNJN25tWFErM0lNVjdKVFF2?=
+ =?utf-8?B?ZGs4WnFVK0t1NEYyN1VkRWxMMkNTRGdzclJrSnFUNHQwbzdXTTlQV3c4RUJK?=
+ =?utf-8?B?SVpUeVhQcmI1aSs1MlVOdjR6SmVLVTRLMm1HR1c5VEVUaVVDVmhnOFZvbE5X?=
+ =?utf-8?B?b0xBRUJhS3JLQkxqU0ZMM1lTYVNHZ3E1b0JLczlyVXgyRWNVb3VnS2s0UHI4?=
+ =?utf-8?B?SGdqcGYzVkJCK2V3RWRoMWZVN0x3U0hRVDFzMlh5c2tjVmttVm95VGU3YjhJ?=
+ =?utf-8?B?MTRBREhIM1pnUm5OWmRSR3dGY0w3V0RVUXl1U1B6NWQzZDV2QlNEcS9nRUto?=
+ =?utf-8?B?aUd5UXFhOTJwK21NZFg1eFdQMURhVHM3Qk9wS3l6d3lUSUdJUGJnUm1tTDU5?=
+ =?utf-8?B?MWVOMnZkWDBtSWZNRjRkTlNiRy9nVlBrL3oybDNTQW52dlBZQXFhTGgxb290?=
+ =?utf-8?B?NzV2MDFyQUl2OXA3MmtPclQ1bFNwOWlTdmoxazIxbm1VKzFZNW4xMEo2QmY5?=
+ =?utf-8?B?aExUN2FCOGhUSThVYXJ4Y1VIMC9qOVRBVkJlc1RjalQ4QWVSZU52SGMyOGNK?=
+ =?utf-8?B?OUJ4alpyMkNIUlZCWTdEYWZxTURlUjdtRFBHWnM0RmF4NmtoS0lGMFZ6cHda?=
+ =?utf-8?B?S0x6bFV6Uzk0NFZkcmlpU0wxU0JOYlhoVk02WTQxVmNZbzk5eTR0NExFbzVr?=
+ =?utf-8?B?R2hOT3lCUDZQQzArUHd4VUpjVTF1dlNQTU5jK3RrV3JtNW0rRkxMeVRqeHho?=
+ =?utf-8?B?cWIra3dCTUVYc2FWdkhDR3BtVnhzZGVaNUN0dzlsZDVYZEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 08:06:55.8554
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000013B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4277
 
-Hi
+On Wed, 20 Nov 2024 13:55:35 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.10 release.
+> There are 107 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On Fri, 22 Nov 2024 at 09:01, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
->
-> Hi Dan,
->
-> On Fri, Nov 22, 2024 at 10:45:53AM +0300, Dan Carpenter wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > head:   28eb75e178d389d325f1666e422bc13bbbb9804c
-> > commit: 93da10eee90b2ffa4b496dd4a6ea276c57461fb6 media: intel/ipu6: Fix direct dependency Kconfig error
-> > config: alpha-randconfig-r072-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221147.N6w23gDo-lkp@intel.com/config)
-> > compiler: alpha-linux-gcc (GCC) 14.2.0
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > | Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-> >
-> > smatch warnings:
-> > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
-> >
-> > vim +/i +752 drivers/media/pci/intel/ipu-bridge.c
-> >
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  745  static int ipu_bridge_ivsc_is_ready(void)
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  746  {
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  747     struct acpi_device *sensor_adev, *adev;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  748     struct device *csi_dev;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  749     bool ready = true;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  750     unsigned int i;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  751
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03 @752     for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  753  #if IS_ENABLED(CONFIG_ACPI)
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  754             const struct ipu_sensor_config *cfg =
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  755                     &ipu_supported_sensors[i];
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  756
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  757             for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  758  #else
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  759             while (true) {
-> >                                                                                                         ^^^^^^^^^^^^^^
-> >
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  760                     sensor_adev = NULL;
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  761  #endif
-> > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  762                     if (!ACPI_PTR(sensor_adev->status.enabled))
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  763                             continue;
-> >
-> >
-> > These continues make sense in for_each_acpi_dev_match() but not in a while (true) {
-> > loop.  We're stuck forever.
->
-> The non-ACPI case is there just for the looks... I think what should be
-> done is to make the entire loop conditional to CONFIG_ACPI. I can post a
-> patch.
+All tests passing for Tegra ...
 
-I saw your mail after I sent my patch :)
-https://patchwork.linuxtv.org/project/linux-media/patch/20241122-fix-ipu-v1-1-246e254cb77c@chromium.org/
+Test results for stable-v6.11:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    107 tests:	107 pass, 0 fail
 
-If we make the entire loop conditional then we would not compile test the loop.
+Linux version:	6.11.10-rc1-gc9b39c48bf4a
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Regards!
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
-
->
-> >
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  764
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  765                     adev = ipu_bridge_get_ivsc_acpi_dev(sensor_adev);
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  766                     if (!adev)
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  767                             continue;
-> >                                                                                                                         ^^^^^^^^
-> >
-> >
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  768
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  769                     csi_dev = ipu_bridge_get_ivsc_csi_dev(adev);
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  770                     if (!csi_dev)
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  771                             ready = false;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  772
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  773                     put_device(csi_dev);
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  774                     acpi_dev_put(adev);
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  775             }
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  776     }
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  777
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  778     return ready;
-> > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  779  }
-> >
->
-> --
-> Kind regards,
->
-> Sakari Ailus
-
-
-
--- 
-Ricardo Ribalda
+Jon
 
