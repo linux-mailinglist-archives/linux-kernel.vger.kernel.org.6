@@ -1,183 +1,181 @@
-Return-Path: <linux-kernel+bounces-418050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36E129D5C69
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:51:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046319D5C7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1D7F1F22423
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A6EA1F228B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB411DE3D9;
-	Fri, 22 Nov 2024 09:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25E41D6DD1;
+	Fri, 22 Nov 2024 09:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OqCmheme"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2BfhWSc"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5D11DE3AB
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0925C15AAD9;
+	Fri, 22 Nov 2024 09:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732269005; cv=none; b=TV7Ha4y8qMvb0eJBG3kCvPh2rALmT0efUtH9fGfhAVKFbq7BjHm68o6opz1AmGpwt19v8u4McDDvzC8rxmQ/0NNTT4zfNKIxHsvw04LMq5CkkGv0e1kgliytdFSxtvOAonX1LPmnGPqz6pwhfC/hAU0VH9ypmIYBAheco2Swt2g=
+	t=1732269278; cv=none; b=LkxPsXXXYBkK/iHiGs9QDcewLgTLr/hnP7RvxzqNypq/m0c7IhNl056JrahBpdK2q92F3VN1/GveDW4Bz0rC39MXJJ+IX9loMo8eTSBSL+2llNP3t1RuGxaqReJzKkibx+nMeW3fZYAv1PS92fvj3xkZeKSLKTlLykaUxSDoLqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732269005; c=relaxed/simple;
-	bh=PvEGdxriQ64q0nn9Stq2sPLaEpishpGozwR3OcVmBwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irquNeZHak/60d0PfP7hnVGa5EJJDPGTloKUxq2JSjUQqLmLsL3hSrOVSFoOzkwBTTzEEW0x4ZH6q90WWFWnm+ZQmWkZXi1+L9+CnKe9bCgQo76VyTySmQNOuNL6guvkL1JwjRAg6gy4a39VTcbm2a0HU0BDRvVoHfgmUAgRjK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OqCmheme; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2967af48248so1084313fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:50:03 -0800 (PST)
+	s=arc-20240116; t=1732269278; c=relaxed/simple;
+	bh=4r/AQaOmKgXOK7Xpqvsxu30yzczQ3+695c7PBSnrjUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=htXbuaED93MRzClltmYCCiYFbE1Xhn5oCfDshxamF/pfPSZ1ARITVQu3v3Hf6cO46rn6bwfJi0X0ynjHsx/1C85b0EXvahOQ27i9OIEKLHy91JH1hdWCwCHoyAPC3yXtwQXTiMKV2MfgQ/OFfyvjYLSxIoYCKzHIxeHk9jpkkM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2BfhWSc; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724e1b08fc7so422141b3a.0;
+        Fri, 22 Nov 2024 01:54:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732269002; x=1732873802; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hVK3siImP8xz7KIb6KpsrNuBusfSPJqPiJxMHJ1HiJQ=;
-        b=OqCmhemeGGK1k8JdXWWd2alM/p7fl1rHeDVh4zF+2o0ahGXqeF/WvMv5BX3t0vUXX3
-         bjNPexX5Qgms542HTjSUfFLgyc1j9gtlY1wATu1UH87XjrZORJhLT2I7IYlQ3jIAgooW
-         TtOrKf2h4aVh5d+pKGw0HhRUtIYl0fMb+UOI0=
+        d=gmail.com; s=20230601; t=1732269275; x=1732874075; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jMwyC39icc4IvLpJGYFqdt3FBTe+CoSHG8g9XwWwf/M=;
+        b=e2BfhWScEYInykT8I5cW0cF8jlh6QmYfGvdisV6Od66AQHpz7ziehWLDR7JB07atjH
+         ilb7iVpQQJN3oQDGsT7ne0ml1k1mXpnAKAa3tNLuABJ6sSAHVFAF43IXkWwyLMm9PwxV
+         mTNJEQJ3mpn+HJTLFzIHM44HgihqUDsq5bNkVpES/CAjdV8m8dewSvtd3xrHW4T/Hp+H
+         2IAAVluAlTcQzCTQfuMIOtNzM2q+hjHKRQzXV4tQ8IdpjUpx9h4C1uDdtWIczBdPdnMc
+         hDRoSkwuyWi5cQsuDGjlQ+CyO0cOyf2YoXeaf7n7mmrQqSSHM87rf9leY5JKpskgpG5H
+         hTzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732269002; x=1732873802;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1732269275; x=1732874075;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hVK3siImP8xz7KIb6KpsrNuBusfSPJqPiJxMHJ1HiJQ=;
-        b=rm/t5lKtgFR/UZZr+6sj8n8Z0b2unG3HYDcH0NoARKpJUUMy00KD5SdO1iitRvb674
-         KxP1kqezJ6T3yeiq5dKRzdgLG6sVrv7u22dFXytwaeA1sU+192KtP6G63iNFerFVcSPs
-         lKJWQc32pn6MX0NOGdXzshj8uEr9qMCnSexe7q3k9mwZPDNVyyTrk1Ct695f3Sv1adpv
-         5XYTVI74oa65uSha+B8aS7Y3k2eKsb2VFLK2bk41/+RNDOBUkCH/6nv1pJlk1DWHBOTT
-         sS1SWdGOYwLig89wQPWBW8ifvC+T+JZgCuk+/ijidXkxalg9UXNe7lEU23082Mzki6qm
-         zcxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWA5pqUfjRGtO0jNocUgWOzq+qOfxvCAJ+jfJ6O3ZxHOA3qgeW0Ev4gsH8tsAW2hFaOP5/6iqmYGRtTqTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyNw6GHBUEr+iJBWBpe9EDYOLZaEAevyIlS4isdWUiKiegTrmU
-	fpjozqprW7pxsN1aU77mBRkMMzQ7Etalu1oUJZRfXQrkSZJBmYJ5Nyrq4kZ0y17OiOQuRRR9ewk
-	=
-X-Gm-Gg: ASbGncuubHrdcC9LdlZXqPhBopiE//NtKu7cGusirKtCNkwThlCFbcQu9DX5EBECl+c
-	2W04LCU1gUb+dJnwff49TWE3IrxKaTidHzQmjnjKaTYwNUNsF+saGpMeZeW579IXUJkzpJCW1Af
-	wWOS4Bo5BfDdefq9oSfjcnyXrntqHrcE04SxOPXSx1xGCE2YikngHRd7WRPczPKRk4Kc3G3bAv1
-	o4YLmQwEvgV0MHSji/TLe+hIOWL04JTGpC+0njGDQKz+G41kqepoOE5jkqM+w/p2CUyTPkDJ8L8
-	nApwY8XG2cBPErN6
-X-Google-Smtp-Source: AGHT+IEw6ZlA+tv20OjqnDjog3snaOMuqNOt4/+xDt6ZzKuL3Ux4W4PltbUozgzyo1RWV5p5A3fVKw==
-X-Received: by 2002:a05:6871:3230:b0:297:26c3:e0ab with SMTP id 586e51a60fabf-29726c3e82bmr1079257fac.32.1732269002099;
-        Fri, 22 Nov 2024 01:50:02 -0800 (PST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f069765e21sm333613eaf.17.2024.11.22.01.49.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Nov 2024 01:50:00 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e5fa17a79dso1190307b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:49:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVkaf/hSRb/4z2mK5gc0wYd7ZrJI5QgCETjtYvg1bR5e0az4ZmZJU7ynFsFzM5JXt2NClBWioaKlvRSBeU=@vger.kernel.org
-X-Received: by 2002:a05:6808:1590:b0:3e7:6468:1fd5 with SMTP id
- 5614622812f47-3e915a5886cmr2412276b6e.34.1732268998797; Fri, 22 Nov 2024
- 01:49:58 -0800 (PST)
+        bh=jMwyC39icc4IvLpJGYFqdt3FBTe+CoSHG8g9XwWwf/M=;
+        b=U0gj+3SbNW+w/546xJinbeuGCcIYuQe59mnbn2jX9YNvHsA1L8sdU3iyUpL+BMI1eR
+         cc0L6IHZvgXDaCGAZnD4HMteKYUZ9LhIOKcTV51TLCK4cMDWwe+CRANkGipO/wuQVT3y
+         ATDrJfM54oqoU2jYa4xK3AKpeCSOFBSle30LSbOJ6QC2lpC9Jl2B8P+evvAtfzz09VJX
+         ApfvBXGrzOmALSXLo/NAyFEN0dO7jx7zA/8bYIrnhAcfmwwn2Cz9eW2iB5T3b6UcodCM
+         kTjsaVnL+s6xTMTfUg4c5BSwv8M0iDSNxVTWOMbDVUIl4q8yzlCB2eiUtP+v2tuC0b/U
+         vGBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgAuHoKM/65/95AW9cRksAcToCXtS+hx6P5OCwgbgwhtdmfqxzJsENJMhuAwvGLUNFs6JM/GNZov9r2CSS@vger.kernel.org, AJvYcCV5QWg9Qrelp5pqSZ5Y34FeptbUpUlREVAVktKchWnDPNVEYbmpHZ9CQnSgi6/nnSnc4lcDB0YE6VFp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAZtegi4GfBTOreJXdnSWIwI4gUia4E3ImCm72lAzEGy3QCjM0
+	K80iQHEvhcIAS0GyWwYPLcj1TjDq3XPIMM2XKhPP5fuIVOm89e+f
+X-Gm-Gg: ASbGncvDgN5U5KVu3efvYENqrIpQfbANxrscjybr1JFTFnqBDz6YClaZSxd24ianf6H
+	n1jt9ewnAAq2MUXD13+m15nzMo1CJw9m7N3R4J2oYy1YeqlEI2xa1sKzNY0XXRpDUeiu/vzovbc
+	YGC6ItVlZElN6Z2uAXD0DnNxUg9c+YIQgBDxAUYCZp2x5tzjqXngS8UzAmRLBL9YPy8TZDvzy+T
+	DOzQS4Dv0CQqfiAmB0U9ECF73/Ggbcxe2S/0MmxiLpb+1MaGQqW59NreykH0F58oEw=
+X-Google-Smtp-Source: AGHT+IEjVX8VWWWGoeSVP64ft86gsom9aoLkVu92O9mQT+9mQ+XFMKlDJE5V2OCvy3SC3WAbz6IS8Q==
+X-Received: by 2002:a05:6a00:c81:b0:71e:cc7:c511 with SMTP id d2e1a72fcca58-724df68f1a3mr2932208b3a.23.1732269275199;
+        Fri, 22 Nov 2024 01:54:35 -0800 (PST)
+Received: from localhost.localdomain ([182.152.110.125])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7fbcc218a87sm1236332a12.39.2024.11.22.01.54.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 01:54:34 -0800 (PST)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH v3 RESEND 00/10] Add PMGR nodes for Apple A7-A11 SoCs
+Date: Fri, 22 Nov 2024 17:50:29 +0800
+Message-ID: <20241122095136.35046-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <54307d9c-a9bf-4bc1-b15d-60c5ba53d0ea@stanley.mountain>
- <Z0A6Rc-HUPcsIw8z@kekkonen.localdomain> <CANiDSCuQFmrPTLTFs0GPJ209EEKN=MCg8cK3xcsxp8c2eEMhVg@mail.gmail.com>
- <Z0A8njOPBMtkb5wJ@valkosipuli.retiisi.eu>
-In-Reply-To: <Z0A8njOPBMtkb5wJ@valkosipuli.retiisi.eu>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Fri, 22 Nov 2024 10:49:47 +0100
-X-Gmail-Original-Message-ID: <CANiDSCtRife4KNYmCFX56hroGJCHTQvSWdwwMRHGC7mpVbKCYQ@mail.gmail.com>
-Message-ID: <CANiDSCtRife4KNYmCFX56hroGJCHTQvSWdwwMRHGC7mpVbKCYQ@mail.gmail.com>
-Subject: Re: drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready()
- warn: iterator 'i' not incremented
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari
+This series adds the PMGR nodes and all known power state subnodes for
+Apple A7-A11 SoCs, along with the associated dt-bindings.
 
-On Fri, 22 Nov 2024 at 09:11, Sakari Ailus <sakari.ailus@iki.fi> wrote:
->
-> Hi Ricardo,
->
-> On Fri, Nov 22, 2024 at 09:06:40AM +0100, Ricardo Ribalda wrote:
-> > Hi
-> >
-> > On Fri, 22 Nov 2024 at 09:01, Sakari Ailus <sakari.ailus@linux.intel.com> wrote:
-> > >
-> > > Hi Dan,
-> > >
-> > > On Fri, Nov 22, 2024 at 10:45:53AM +0300, Dan Carpenter wrote:
-> > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > > > head:   28eb75e178d389d325f1666e422bc13bbbb9804c
-> > > > commit: 93da10eee90b2ffa4b496dd4a6ea276c57461fb6 media: intel/ipu6: Fix direct dependency Kconfig error
-> > > > config: alpha-randconfig-r072-20241122 (https://download.01.org/0day-ci/archive/20241122/202411221147.N6w23gDo-lkp@intel.com/config)
-> > > > compiler: alpha-linux-gcc (GCC) 14.2.0
-> > > >
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > | Closes: https://lore.kernel.org/r/202411221147.N6w23gDo-lkp@intel.com/
-> > > >
-> > > > smatch warnings:
-> > > > drivers/media/pci/intel/ipu-bridge.c:752 ipu_bridge_ivsc_is_ready() warn: iterator 'i' not incremented
-> > > >
-> > > > vim +/i +752 drivers/media/pci/intel/ipu-bridge.c
-> > > >
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  745  static int ipu_bridge_ivsc_is_ready(void)
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  746  {
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  747     struct acpi_device *sensor_adev, *adev;
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  748     struct device *csi_dev;
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  749     bool ready = true;
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  750     unsigned int i;
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  751
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03 @752     for (i = 0; i < ARRAY_SIZE(ipu_supported_sensors); i++) {
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  753  #if IS_ENABLED(CONFIG_ACPI)
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  754             const struct ipu_sensor_config *cfg =
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  755                     &ipu_supported_sensors[i];
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  756
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  757             for_each_acpi_dev_match(sensor_adev, cfg->hid, NULL, -1) {
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  758  #else
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  759             while (true) {
-> > > >                                                                                                         ^^^^^^^^^^^^^^
-> > > >
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  760                     sensor_adev = NULL;
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  761  #endif
-> > > > 8810e055b57543 drivers/media/pci/intel/ipu-bridge.c       Ricardo Ribalda 2024-05-01  762                     if (!ACPI_PTR(sensor_adev->status.enabled))
-> > > > c66821f381aed2 drivers/media/pci/intel/ipu-bridge.c       Wentong Wu      2023-08-03  763                             continue;
-> > > >
-> > > >
-> > > > These continues make sense in for_each_acpi_dev_match() but not in a while (true) {
-> > > > loop.  We're stuck forever.
-> > >
-> > > The non-ACPI case is there just for the looks... I think what should be
-> > > done is to make the entire loop conditional to CONFIG_ACPI. I can post a
-> > > patch.
-> >
-> > I saw your mail after I sent my patch :)
-> > https://patchwork.linuxtv.org/project/linux-media/patch/20241122-fix-ipu-v1-1-246e254cb77c@chromium.org/
-> >
-> > If we make the entire loop conditional then we would not compile test the
-> > loop.
->
-> I'm fine with the patch as such but don't you think we might get just a
-> different warning from this one? :-) I'm fine trying this though.
+Changes since v2:
+- Removed "apple,always-on" property from "ps_pmp" from s8001, t8011,
+t8015 power domains. It is not on at boot. (Mixed up with ps_pms which
+is required to be on)
+- Add asahi-soc/dt back into the subject prefix, missing from v2.
 
-I have send a new series to fix it for real. Until the acpi guys
-review the code we can land the first patch of the series. I have
-tested it with smatch and sparse and it seems to be fine.
+Link to v2: https://lore.kernel.org/asahi/20241102011004.59339-1-towinchenmi@gmail.com
 
->
-> --
-> Sakari Ailus
+Changes since v1:
+- Removed "framebuffer0" dt aliases. It is not standard and not needed.
+
+Link to v1: https://lore.kernel.org/asahi/20241029010526.42052-1-towinchenmi@gmail.com
+
+Nick Chan
+
+---
+Nick Chan (10):
+  dt-bindings: arm: apple: apple,pmgr: Add A7-A11 compatibles
+  dt-bindings: arm: apple: apple,pmgr-pwrstate: Add A7-A11 compatibles
+  arm64: dts: apple: s5l8960x: Add PMGR node
+  arm64: dts: apple: t7000: Add PMGR node
+  arm64: dts: apple: t7001: Add PMGR node
+  arm64: dts: apple: s8000: Add PMGR nodes
+  arm64: dts: apple: s8001: Add PMGR nodes
+  arm64: dts: apple: t8010: Add PMGR nodes
+  arm64: dts: apple: t8011: Add PMGR nodes
+  arm64: dts: apple: t8015: Add PMGR nodes
+
+ .../bindings/arm/apple/apple,pmgr.yaml        |   5 +
+ .../bindings/power/apple,pmgr-pwrstate.yaml   |   5 +
+ arch/arm64/boot/dts/apple/s5l8960x-5s.dtsi    |   4 +
+ arch/arm64/boot/dts/apple/s5l8960x-air1.dtsi  |   4 +
+ arch/arm64/boot/dts/apple/s5l8960x-mini2.dtsi |   4 +
+ arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi  | 610 ++++++++++++
+ arch/arm64/boot/dts/apple/s5l8960x.dtsi       |  13 +
+ arch/arm64/boot/dts/apple/s8000-pmgr.dtsi     | 757 ++++++++++++++
+ arch/arm64/boot/dts/apple/s8000.dtsi          |  22 +
+ arch/arm64/boot/dts/apple/s8001-common.dtsi   |   1 +
+ .../arm64/boot/dts/apple/s8001-j98a-j99a.dtsi |  26 +
+ arch/arm64/boot/dts/apple/s8001-j98a.dts      |   1 +
+ arch/arm64/boot/dts/apple/s8001-j99a.dts      |   1 +
+ arch/arm64/boot/dts/apple/s8001-pmgr.dtsi     | 822 ++++++++++++++++
+ arch/arm64/boot/dts/apple/s8001.dtsi          |  22 +
+ arch/arm64/boot/dts/apple/s800x-6s.dtsi       |   4 +
+ arch/arm64/boot/dts/apple/s800x-ipad5.dtsi    |   4 +
+ arch/arm64/boot/dts/apple/s800x-se.dtsi       |   4 +
+ arch/arm64/boot/dts/apple/t7000-6.dtsi        |   4 +
+ arch/arm64/boot/dts/apple/t7000-j42d.dts      |   1 +
+ arch/arm64/boot/dts/apple/t7000-mini4.dtsi    |   4 +
+ arch/arm64/boot/dts/apple/t7000-n102.dts      |   4 +
+ arch/arm64/boot/dts/apple/t7000-pmgr.dtsi     | 641 ++++++++++++
+ arch/arm64/boot/dts/apple/t7000.dtsi          |  14 +
+ arch/arm64/boot/dts/apple/t7001-air2.dtsi     |   1 +
+ arch/arm64/boot/dts/apple/t7001-pmgr.dtsi     | 650 ++++++++++++
+ arch/arm64/boot/dts/apple/t7001.dtsi          |  13 +
+ arch/arm64/boot/dts/apple/t8010-7.dtsi        |   4 +
+ arch/arm64/boot/dts/apple/t8010-ipad6.dtsi    |   4 +
+ arch/arm64/boot/dts/apple/t8010-n112.dts      |   4 +
+ arch/arm64/boot/dts/apple/t8010-pmgr.dtsi     | 772 +++++++++++++++
+ arch/arm64/boot/dts/apple/t8010.dtsi          |  22 +
+ arch/arm64/boot/dts/apple/t8011-common.dtsi   |   1 +
+ arch/arm64/boot/dts/apple/t8011-pmgr.dtsi     | 806 +++++++++++++++
+ arch/arm64/boot/dts/apple/t8011-pro2.dtsi     |   8 +
+ arch/arm64/boot/dts/apple/t8011.dtsi          |  22 +
+ arch/arm64/boot/dts/apple/t8015-common.dtsi   |   1 +
+ arch/arm64/boot/dts/apple/t8015-pmgr.dtsi     | 930 ++++++++++++++++++
+ arch/arm64/boot/dts/apple/t8015.dtsi          |  21 +
+ 39 files changed, 6236 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/apple/s5l8960x-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/s8000-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/s8001-j98a-j99a.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/s8001-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t7000-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t7001-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t8010-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t8011-pmgr.dtsi
+ create mode 100644 arch/arm64/boot/dts/apple/t8015-pmgr.dtsi
 
 
-
+base-commit: 28eb75e178d389d325f1666e422bc13bbbb9804c
 -- 
-Ricardo Ribalda
+2.47.0
+
 
