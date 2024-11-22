@@ -1,82 +1,86 @@
-Return-Path: <linux-kernel+bounces-418019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833039D5BE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:26:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8782A9D5BE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 10:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EF101F226D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCCF283BCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 09:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEBD1D798E;
-	Fri, 22 Nov 2024 09:26:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1F41C8FD3;
+	Fri, 22 Nov 2024 09:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B0pT/eDI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Am26H4Fd"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9CE188588;
-	Fri, 22 Nov 2024 09:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F23C176AB6
+	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732267565; cv=none; b=qXZgV7Czxs34vFAw8OOshEkVhhBYL+RASvM42Yk6hiL3KOjwre4AbLYsQTUs0PBw3ZbaymCQ7jHK3gW/EtjKujmkdC6aWA+RCOVSDH0uvoBcu9lb5ELgRKHE5KpQOj08oTpxX2nF5G26LgTwvVdpAj43cGOXjwCREmojlp5AfDg=
+	t=1732267585; cv=none; b=V9LUTNsIjsOdjOs+vnnilEtqZz2+priktwEAQA2Cuk3WskS9H7tcOtyKPv5YhGBkLZoFvNR5Lp3hojHxiRNREWcGcGWCqjhRYZwjzqEk6rRexYW7l2dF4JofueKpHf7N7OVesc3UjTFI7gppO784dlcEJNC0Ix7vXeIKqMVzfBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732267565; c=relaxed/simple;
-	bh=ItK2ieHOD3jQaFeBtBu3mIhcXZKeSTp7iS6aSNZ58cA=;
+	s=arc-20240116; t=1732267585; c=relaxed/simple;
+	bh=dCo5WcETBMcNS9Qzzve6l/My5/g1x7ep5vh7uZGOmFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VU68UGSmRvZBnXWUOOLjPSJ9ZK5gBJA5l0ZFj4Erf1fLnCAyfQEAaPBCJIv9hysCS1lrWI6vQa5fyR09loDSB85bAEXHmTSVkjVgofS0U4h6Pa5+ff+/8ZsiuxtESWd00VuoWvf99vCO4A46J71bCCAlfBARR1DOqxh9cnsDQ74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B0pT/eDI; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732267564; x=1763803564;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ItK2ieHOD3jQaFeBtBu3mIhcXZKeSTp7iS6aSNZ58cA=;
-  b=B0pT/eDILiRoNvMBobVtJcLGJ8SFAwMfpA+GKhZr0pjQG2PcWzW+degk
-   SJSPyzIvPO98+nxJmNgxjNth+1I8irc0aWvMdP6CQwZBKpbETyRtChmxN
-   kezR/17ssXFp0tuvsSMScNf7/Z5WY0QCfnz5FQwLsCt3VfSLM9UkBx6xZ
-   wAPJnKyEstIjGR92v3hH9l7nWFfcbXQ6cCBIDLNqaTNcpS237QRhV2UCj
-   ci5GP4cpN1O2zw3rOB0jxoKx1jAiwkOWpfnabx6qJEOzYYcEQcUlDzBVB
-   NBfXOcDKTMhPU29AZtKURV5Oyx4x0YDPoqcUKPamQSbN8R1GPaWxMug4H
-   Q==;
-X-CSE-ConnectionGUID: MpeX0wOaTjyEAJNZiTDDCQ==
-X-CSE-MsgGUID: 18DBjMQqQa+DasMATzgDqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11263"; a="43065134"
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="43065134"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 01:26:04 -0800
-X-CSE-ConnectionGUID: h15QkogKSUy8CGiWmktVWQ==
-X-CSE-MsgGUID: wxlK1Wf6QxiUB1Z/22hjLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,175,1728975600"; 
-   d="scan'208";a="95317910"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 01:26:01 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tEPvK-0000000HMdE-1Zsh;
-	Fri, 22 Nov 2024 11:25:58 +0200
-Date: Fri, 22 Nov 2024 11:25:58 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Cosmin Tanislav <demonsingur@gmail.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 3/3] i2c: atr: Fix client detach
-Message-ID: <Z0BOJpCV22nzZgHS@smile.fi.intel.com>
-References: <20241122-i2c-atr-fixes-v1-0-62c51ce790be@ideasonboard.com>
- <20241122-i2c-atr-fixes-v1-3-62c51ce790be@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwdO/1LB7fzjqcQ61x/RRd7RVSKYOw5Fw/Jcg3Pb6gppMwkdzCIgS9TjPxJeX4qQxr6hBeaB7vmFovRXyk1T+F5PkivBWLpur5lZCVP0ZOASh/GVEyw6v+eJ3wGu17nniu+k5mWjvZKV+E9ZhK7zXIBGFvPATuMxBTiso/mUE7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Am26H4Fd; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e63c8678so2089247e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 01:26:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732267582; x=1732872382; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FkQ5Ep9WmP3Y9BsrfbLwUHrvE7faiWZQ86IAEJDAzQs=;
+        b=Am26H4FdOs0u4J6kJCtyhZeJDSflM7/VdzYJKykIy3Sx5MQsOVeEHuYfmvjl02QHlT
+         b0POBXIsWoPKQMoqP5v7gcE51ZyBY+gp/mXLXjDiAOmfM20oCRJX6pXSfwOY9GIXOdoS
+         1tZ4yjGzhdmrNdbJjYVr5capzQtpD8nXvS4PS/rWf03+W6nNKTAVjl+e178QD+isk/eY
+         URTCjHhKr+kkEghkWPt3lzavFqHpSwns3wsVWiAtG9uaKYOBZ3AenChWVgPO8zj5UTcI
+         f7iiIDdKfv5vW5r9CSmOBm7kZT21pDiVN7ZnKaMors3ZRGWUiCkHnUFuzzp5TT9PHJOs
+         U/4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732267582; x=1732872382;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FkQ5Ep9WmP3Y9BsrfbLwUHrvE7faiWZQ86IAEJDAzQs=;
+        b=Rc8QLxG1z9n72FD7W9n1ep5Xfq72hIyIoL+Moqezia0UnELwU5/Ztk+FFIphmHupJK
+         onruBEGMAUiBsAtj7Gihw4xZsFz7PipVRvroEWG3LQYUsPIlZ9Oj/apwLbPaCOQ/hYpa
+         lGs9o8dUGwBzVqRXRYW9AQkMsqOV4LSYtCZQzimwbhlbdiugzlh8cy1yrbpFoRnlyvts
+         JrlitAUdAscPZ8ePk8TVY1W1OQe69DD/xXrOKTAjWPa9vG+0Pxw6ZUGyZZF11dRdL6Vk
+         +9wmDz7uC8P+7H1m6lChgSYLB4QKKd+JoVf/zXxmcH3E0hgi7U6Ebisj0dQ3Tw+bZZn4
+         z6bA==
+X-Forwarded-Encrypted: i=1; AJvYcCUut+VFZM3hiwx/4st7WDMumxf8xnpmyh5jql0MbDRwdAQXGqG5wj3vsJH3OzNOkcEZHvzreeQ63gwmWew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Pel65INxUl10wSzwZ2+TULfrbIhUMRZ7XnzhPwgdJkJCZkJ8
+	n0Hwo24L6b8zhLWMexQ/duKMv2HRx3vKquqHTbaMVkxtOLzNG8NlfbGgQNvD7Ts=
+X-Gm-Gg: ASbGncu0otw+Nbe4ah8gDyOkg+O0wZn6ObsENNYoGZlkClM3DtTt7NM0rxW/GR1ZnMe
+	ikLiKElYuMR9lJWRvsL4+7XZh4Lb31OpxATdnluaWxwxI4VbDkMUVtoqHwMNOLt69rEVQzjYVSk
+	fcBIaT5B5eja1eFSQj7DOIhYNuZsi9AGHqmqiYVWTsC1CA9QgQN/voVh5TB6t2e19vfK72j5b9S
+	LzdSzsyIJ79Y799uyuf2laxUSTOPowNoOAgKJUruxU65NQDtpOJeLoXInMsQKz4uGSPF0srSnGW
+	XBSS94c+xetJFnRY7iBCDwZfRPjeJA==
+X-Google-Smtp-Source: AGHT+IGjOSOUXKHpIv4ORalMWAD+9J6EICd3dwbmza26pZuvNjV9lmhvE7Y1AsjhDuKglOVOtMxGNA==
+X-Received: by 2002:a05:6512:3a8d:b0:539:8bc6:694a with SMTP id 2adb3069b0e04-53dd39b55a0mr908182e87.43.1732267581687;
+        Fri, 22 Nov 2024 01:26:21 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dd2489adfsm301413e87.185.2024.11.22.01.26.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 01:26:20 -0800 (PST)
+Date: Fri, 22 Nov 2024 11:26:17 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-romulus: Set up PS8830s
+Message-ID: <yb6hq6cknqizlmtap5n6lnp7gvswuakay5wrateuqakzjxfy4y@5fqsezlwqbm3>
+References: <20241122-topic-sl7_feat2-v1-0-33e616be879b@oss.qualcomm.com>
+ <20241122-topic-sl7_feat2-v1-3-33e616be879b@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,32 +89,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241122-i2c-atr-fixes-v1-3-62c51ce790be@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241122-topic-sl7_feat2-v1-3-33e616be879b@oss.qualcomm.com>
 
-On Fri, Nov 22, 2024 at 09:51:40AM +0200, Tomi Valkeinen wrote:
-> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On Fri, Nov 22, 2024 at 03:14:12AM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> i2c-atr catches the BUS_NOTIFY_DEL_DEVICE event on the bus and removes
-> the translation by calling i2c_atr_detach_client().
+> The Laptop 7 features two USB-C ports, each one sporting a PS8830 USB-C
+> retimer/mux. Wire them up.
 > 
-> However, BUS_NOTIFY_DEL_DEVICE happens when the device is about to be
-> removed from this bus, i.e. before removal, and thus before calling
-> .remove() on the driver. If the driver happens to do any i2c
-> transactions in its remove(), they will fail.
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../boot/dts/qcom/x1e80100-microsoft-romulus.dtsi  | 282 ++++++++++++++++++++-
+>  1 file changed, 276 insertions(+), 6 deletions(-)
 > 
-> Fix this by catching BUS_NOTIFY_REMOVED_DEVICE instead, thus removing
-> the translation only after the device is actually removed.
 
-...
-
-> Fixes: a076a860acae ("media: i2c: add I2C Address Translator (ATR) support")
-
-Fixes should lead the patch series, and other way around.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+With best wishes
+Dmitry
 
