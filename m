@@ -1,189 +1,111 @@
-Return-Path: <linux-kernel+bounces-417866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 525499D5A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:31:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F10F9D5A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 08:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85E90B22282
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C24282BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 07:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5434E170A37;
-	Fri, 22 Nov 2024 07:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D41A170854;
+	Fri, 22 Nov 2024 07:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZdxqzQol"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYars8gA"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A5635885
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 07:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746E422075;
+	Fri, 22 Nov 2024 07:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732260694; cv=none; b=IMeHnxnX3G7IRNQOvyO42XTH98QsAZqgsiF5YkHdbw5HEqx2w10kklSb7t6w0FPv4I54y3mhzr4A+ULq0M0lOz5jJ6tUKyUAUO06fP3WrHZvZXwAOwhezUrVenvXtpDAmSCsrE2KsPH6qP+2lYLBWKfKkdFrrj8l5XWCOd/seeM=
+	t=1732260862; cv=none; b=TAJmUb5EQCxz92yVZx15192YpiHLF/Sq5Idc8FwWvekgQVY7E3KuPLO1Dwbn4/14+1kK/njVpZSMJtiu1DSMU3tMtdB7EyCBg47ycVkX6smwWe4h9PVotEVEXZVMF4D8CN67x7uRIDGuw6eU17pnLp+Zm1ZyzRxWLfae8za69U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732260694; c=relaxed/simple;
-	bh=HQvBfxRd8qJug47oyF/nl4DbLd5Lm22tQlEI+j4EkI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWhJQWw4y1UrHG4y0LoEM5ak3br4kTZ5Htz5l8Y61ZjRRNKNjT0zIJQ1uSFWLKzWyUlaE6sXBa9MxjRQkvm8+D+Z5R4xn4jXHDIa08gQJBIq0tzzdcYfyzCrMj+LkTMP/DFdHNeJo8z7i+NH16NbxFZ+E20DZaaIwuho7zQxhBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZdxqzQol; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732260691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PXq9Wjiti00hPsb6uBFVS+EGZ67OZCcyDnwcfoAoCsg=;
-	b=ZdxqzQol/MDBgHc/osje2eoEJZ8FNHTUNyw70iAFXsJsWA9dhM6wY/ammKHPx6nkAajBF/
-	VLTROi29mW00gom9J5UfJr2mhhd6ULLsHicDG4pfJCOljAPr7XQ+/VrGnLqRwHSm1xniXI
-	pp+95igGRLHTPf2UUzDo6FEaltPEOyU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-sLMKtwRkP9C3ZZ084QJlQw-1; Fri,
- 22 Nov 2024 02:31:28 -0500
-X-MC-Unique: sLMKtwRkP9C3ZZ084QJlQw-1
-X-Mimecast-MFC-AGG-ID: sLMKtwRkP9C3ZZ084QJlQw
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8D46195608A;
-	Fri, 22 Nov 2024 07:31:25 +0000 (UTC)
-Received: from localhost (unknown [10.72.113.10])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA2AF19560A3;
-	Fri, 22 Nov 2024 07:31:23 +0000 (UTC)
-Date: Fri, 22 Nov 2024 15:31:19 +0800
-From: Baoquan He <bhe@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kexec@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
-	Thomas Huth <thuth@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	Eric Farman <farman@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 07/11] fs/proc/vmcore: introduce
- PROC_VMCORE_DEVICE_RAM to detect device RAM ranges in 2nd kernel
-Message-ID: <Z0AzR2Yhl527wkbP@MiWiFi-R3L-srv>
-References: <20241025151134.1275575-1-david@redhat.com>
- <20241025151134.1275575-8-david@redhat.com>
+	s=arc-20240116; t=1732260862; c=relaxed/simple;
+	bh=aKHi2s7g0Yh57xPmgKbyOF+bAC1mWROyHR/WAGtBZsQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=MIUwQdfkHKetmJualcz4eiGXXSsHhloJu70pRkzMMIVBbZR/AJw83I3YUnpAhHRsbxejTJFmRPNel6m4k9Fr5jX7sJ21M2wF3uZk9A40tntaN2JToHmWT54mxwMYMKdwir+53dN3pV7DrUPZ5G6l+VbgReFvq49jA7pZP0S86Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYars8gA; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-5cfe48b3427so256680a12.1;
+        Thu, 21 Nov 2024 23:34:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732260859; x=1732865659; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WP7Qyyn9P8aoIGhU2FYV6anw46pGQsyVROPp57hHtvU=;
+        b=TYars8gAAhB09Pj7MpQQScSyesXwhqVL4B9bTWn9OxCDC9VLLFfTBR7As1hjGhq4wT
+         LBIVDgQbuONeP4pAp6BKco34zk+/Nig3it4wDzqpCLeFHh+5OYYEVFZHwUDpsGs1jMeF
+         4pjiqEStV50Bj05JqwkkfoM48r6J2kowU4djR5G4EXJ8cpI2W0Jj+8DQ/ZvPR3X6kFZc
+         0uHLwRpn9BtbSU0iT2+8PAW4OdgdjmslBU0mVjsK04r0LNUAQtJAjsvze9xC45gxlyWg
+         w6H9AA2GRX3TiFzPyJaEQ4U7V4B9c5l7VRwdSnAFniYqtsaiW7x5gGj0oK+GCh2pKg+J
+         flHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732260859; x=1732865659;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WP7Qyyn9P8aoIGhU2FYV6anw46pGQsyVROPp57hHtvU=;
+        b=FYPeFTt9PbhYmQRWJDybhx8JpRYABSHAmwZm4Okj2jzdlnN+CjaTt2yW9lo7A7Hb0A
+         HvjrJfdw9LPxi6d5S+XxhrXZToGeTRK/eKL/R9fD8CYVaWmVBiRUjsjF9a7Hn377eTmR
+         r/4WLOEJbVhM4eOe60jQLp36QSx6cwTvJiq0B9VxoytDhcJZkIbUKd5BBiBoQrox/U17
+         kiQ6OWSwA1wwitorDrhyDSz9K6ElyCc9bvEA2akydvq5AB6ACj08UtJkps/6Nn7goalc
+         e/gDk+xDOrCJRhAmAxzamzoHa0dui7+urCGOAUvHnDLHk6YwQFIavItxxRh5RaPRyDD4
+         6MuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP9ab1HBtRNhqwzHoHL6zceYU486MyNuqfNno/hsNjvKKxyTRSpitY2BADjRJNJZWoFUfLBe6IIS2+H3g=@vger.kernel.org, AJvYcCX0fe5efGVlkAYIt033ambYytSGgoJKcdBNsuVPz3KvfFrg4zv7Uu910g9hHtzAZYz1BL9c/X+a@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwWfUFUzgdWQTxTiFPfjsF9AbvUP7Bz6tBaKqZ1EdeDbrxahqU
+	aICa+TgWl2xL9Wlx5c2Zj7R6Xq5bQIo/BzhDEjQhoTiOzmr4+nf/yR/t5Mzihpwi+hwWwqA5Wim
+	pSfNH1fg5Mg5PK7i5wE7WsUcIF2qR6GJaithIng==
+X-Gm-Gg: ASbGncsuSFKyvh9X+WK2O0VxFRmX4Vv+Ida+qYfE8vs5yaTJBkj+ezrADRPimpmFgtA
+	0IH//86w5LjuuClgc45WvTfnMY0Lmg0tz
+X-Google-Smtp-Source: AGHT+IGCtSvS2ymC3RmhAtG5dG3THBE+Z+tmCCHfo43Bgd+3ZuSnl0VmmL4EiEP5whUNpJGSziobzESuHMl33j7bQXA=
+X-Received: by 2002:a05:6402:350e:b0:5cf:d24c:e7cc with SMTP id
+ 4fb4d7f45d1cf-5d0207cab69mr485385a12.8.1732260858540; Thu, 21 Nov 2024
+ 23:34:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025151134.1275575-8-david@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+From: clingfei <clf700383@gmail.com>
+Date: Fri, 22 Nov 2024 15:34:06 +0800
+Message-ID: <CADPKJ-7==Bo=Wu6cHQ_y2qQVsPoJGeP3x0GztMXYcDaKCfmrkQ@mail.gmail.com>
+Subject: Data race in net/mptcp/pm_netlink.c
+To: Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/25/24 at 05:11pm, David Hildenbrand wrote:
-......snip...
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index 3e90416ee54e..c332a9a4920b 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -69,6 +69,8 @@ static LIST_HEAD(vmcore_cb_list);
->  /* Whether the vmcore has been opened once. */
->  static bool vmcore_opened;
->  
-> +static void vmcore_process_device_ram(struct vmcore_cb *cb);
-> +
->  void register_vmcore_cb(struct vmcore_cb *cb)
->  {
->  	INIT_LIST_HEAD(&cb->next);
-> @@ -80,6 +82,8 @@ void register_vmcore_cb(struct vmcore_cb *cb)
->  	 */
->  	if (vmcore_opened)
->  		pr_warn_once("Unexpected vmcore callback registration\n");
-> +	else if (cb->get_device_ram)
-> +		vmcore_process_device_ram(cb);
+linux-next weekly scan reports that there might be data race in
+net/mptcp/pm_netlink.c, when mptcp_pm_nl_flush_addrs_doit
+bitmap_zeroing pernet->id_bit_map at line 1748, there might be a
+concurrent read at line 1864.
+Should we add a lock to protect pernet->id_bit_map?
 
-Global variable 'vmcore_opened' is used to indicate if /proc/vmcore is
-opened. With &vmcore_mutex, we don't need to worry about concurrent
-opening and modification. However, if people just open /proc/vmcore and
-close it after checking, then s390 will miss the vmcore dumping, is it
-acceptable?
+The report is listed below.
+** CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
+/net/mptcp/pm_netlink.c: 1864 in mptcp_pm_nl_dump_addr()
 
->  	mutex_unlock(&vmcore_mutex);
->  }
->  EXPORT_SYMBOL_GPL(register_vmcore_cb);
-> @@ -1511,6 +1515,158 @@ int vmcore_add_device_dump(struct vmcoredd_data *data)
-......
-> +
-> +static void vmcore_process_device_ram(struct vmcore_cb *cb)
-> +{
-> +	unsigned char *e_ident = (unsigned char *)elfcorebuf;
-> +	struct vmcore_mem_node *first, *m;
-> +	LIST_HEAD(list);
-> +	int count;
-> +
-> +	if (cb->get_device_ram(cb, &list)) {
-> +		pr_err("Kdump: obtaining device ram ranges failed\n");
-> +		return;
-> +	}
-> +	count = list_count_nodes(&list);
-> +	if (!count)
-> +		return;
-> +
-> +	/* We only support Elf64 dumps for now. */
-> +	if (WARN_ON_ONCE(e_ident[EI_CLASS] != ELFCLASS64)) {
-> +		pr_err("Kdump: device ram ranges only support Elf64\n");
-> +		goto out_free;
-> +	}
 
-Only supporting Elf64 dumps seems to be a basic checking, do we need
-to put it at the beginning of function? Otherwise, we spend efforts to
-call cb->get_device_ram(), then fail.
-
-> +
-> +	/*
-> +	 * For some reason these ranges are already know? Might happen
-> +	 * with unusual register->unregister->register sequences; we'll simply
-> +	 * sanity check using the first range.
-> +	 */
-> +	first = list_first_entry(&list, struct vmcore_mem_node, list);
-> +	list_for_each_entry(m, &vmcore_list, list) {
-> +		unsigned long long m_end = m->paddr + m->size;
-> +		unsigned long long first_end = first->paddr + first->size;
-> +
-> +		if (first->paddr < m_end && m->paddr < first_end)
-> +			goto out_free;
-> +	}
-> +
-> +	/* If adding the mem nodes succeeds, they must not be freed. */
-> +	if (!vmcore_add_device_ram_elf64(&list, count))
-> +		return;
-> +out_free:
-> +	vmcore_free_mem_nodes(&list);
-> +}
-> +#else /* !CONFIG_PROC_VMCORE_DEVICE_RAM */
-> +static void vmcore_process_device_ram(struct vmcore_cb *cb)
-> +{
-> +}
-> +#endif /* CONFIG_PROC_VMCORE_DEVICE_RAM */
-> +
->  /* Free all dumps in vmcore device dump list */
->  static void vmcore_free_device_dumps(void)
->  {
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index 722dbcff7371..8e581a053d7f 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-
+________________________________________________________________________________________________________
+*** CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
+/net/mptcp/pm_netlink.c: 1864 in mptcp_pm_nl_dump_addr()
+1858     int i;
+1859
+1860     pernet = pm_nl_get_pernet(net);
+1861
+1862     rcu_read_lock();
+1863     for (i = id; i < MPTCP_PM_MAX_ADDR_ID + 1; i++) {
+>>>     CID 1601938:  Concurrent data access violations  (MISSING_LOCK)
+>>>     Accessing "pernet->id_bitmap" without holding lock "pm_nl_pernet.lock". Elsewhere, "pm_nl_pernet.id_bitmap" is written to with "pm_nl_pernet.lock" held 1 out of 1 times.
+1864     if (test_bit(i, pernet->id_bitmap)) {
+1865     entry = __lookup_addr_by_id(pernet, i);
+1866     if (!entry)
+1867     break;
+1868
+1869     if (entry->addr.id <= id)
 
