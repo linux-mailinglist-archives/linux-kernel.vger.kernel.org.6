@@ -1,166 +1,105 @@
-Return-Path: <linux-kernel+bounces-418711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C6A9D649A
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E229D6496
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D663E2837F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C657C2831C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED0A1DF725;
-	Fri, 22 Nov 2024 19:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7901DFE1E;
+	Fri, 22 Nov 2024 19:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=boeing.com header.i=@boeing.com header.b="b9Fe4hYW"
-Received: from ewa-mbsout-02.mbs.boeing.net (ewa-mbsout-02.mbs.boeing.net [130.76.20.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KUzvgbhN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AE52FC23;
-	Fri, 22 Nov 2024 19:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.76.20.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7881DFE0B;
+	Fri, 22 Nov 2024 19:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732303942; cv=none; b=t7gTuCueGsGgYfu3vXzOfaa+RSZHr4gDZY3SVkYDWsPkHxBas6oy1ZeqN91tehX25WKCw+noo26AcQx9RBcOrb/XAxx1QOaPFTEoEGtxCnA+BilvKnEIWaMoEniDdD5dluHGihvn3Pb+cjPHJusVvTzS5+rWDrvrKrLS+LKpmp8=
+	t=1732303817; cv=none; b=fzAt2SiaRA+Yk1SX+xRMNP6z1Z43q/2ZQWj0drAaBeGZAZtSvgU2KdRmKCR8Q+bKn7cx0t96Smu1/H9Ef+y0p81y98RvGZL4F/qU3mFTXPMN5hK2Gf3Zm7B4bxuBQKeHi87T6YGc4VMEOGuffTDt/hdjmeQOlz7MHJhDRZtj660=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732303942; c=relaxed/simple;
-	bh=wG2inwSpR/9+X54wlCts1dEXVIrIecNMNuwaBfvJ464=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lEYXUpBP8KqO9oAwSkGQzAXOx/YwW2nchqIkiwDqaznAC4OyxyxKtkA9I3bbXW0xyWRs5Ow1z0gMUvTU7CFX+YbjxUxzns0DTos5eHTXYG7InnsFq5Ljv057BhFp6fqrL7Py9hnnboY4ftYyswXUuoMAVaCdoSMncminuDUP0pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=boeing.com; spf=pass smtp.mailfrom=boeing.com; dkim=pass (2048-bit key) header.d=boeing.com header.i=@boeing.com header.b=b9Fe4hYW; arc=none smtp.client-ip=130.76.20.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=boeing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=boeing.com
-Received: from localhost (localhost [127.0.0.1])
-	by ewa-mbsout-02.mbs.boeing.net (8.15.2/8.15.2/DOWNSTREAM_MBSOUT) with SMTP id 4AMJT4ff028071;
-	Fri, 22 Nov 2024 11:29:12 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=boeing.com;
-	s=boeing-s1912; t=1732303752;
-	bh=wG2inwSpR/9+X54wlCts1dEXVIrIecNMNuwaBfvJ464=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=b9Fe4hYWJDv8vlgzCTBJRYxvgKsY2s2xN94nQIX+oFkSQfukvayGgoYYk2nABAroA
-	 FyZHzL14PUk4dE7FeKfiYrdms0/c2Vmu48G4BAUwsNW31cUmUJ5wIDmV59Gl5HWM1f
-	 iWdyqjsc/Ggb0sfh6meyffWTBwpOyr0wg7hCawcPRADGq7XEJkDRRuVmYsyPH0CbXu
-	 0Y095/BH8cur5GmSkVqsTcqUMQJXv+O9LU1g9sOpMspF+v622PaLECbD6NozlIstk3
-	 KPMGdG1e0eMFNTqhMkBz09iXV4wnSRLF6/2hbHKR9ZBX+3phMSKB9eC934hVPIqO+H
-	 6zpiT4xVsj+YA==
-Received: from XCH16-03-02.nos.boeing.com (xch16-03-02.nos.boeing.com [137.137.111.11])
-	by ewa-mbsout-02.mbs.boeing.net (8.15.2/8.15.2/8.15.2/UPSTREAM_MBSOUT) with ESMTPS id 4AMJSmxp027883
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 22 Nov 2024 11:28:49 -0800
-Received: from XCH16-03-04.nos.boeing.com (137.137.111.13) by
- XCH16-03-02.nos.boeing.com (137.137.111.11) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 22 Nov 2024 11:28:46 -0800
-Received: from XCH16-03-04.nos.boeing.com ([fe80::7809:c78b:36c8:935e]) by
- XCH16-03-04.nos.boeing.com ([fe80::7809:c78b:36c8:935e%13]) with mapi id
- 15.01.2507.039; Fri, 22 Nov 2024 11:28:46 -0800
-From: "Wolber (US), Chuck" <chuck.wolber@boeing.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-        Nathan Chancellor
-	<nathan@kernel.org>
-CC: Wentao Zhang <wentaoz5@illinois.edu>,
-        "Kelly (US), Matt"
-	<Matt.Kelly2@boeing.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        "Oppelt (US), Andrew J"
-	<andrew.j.oppelt@boeing.com>,
-        "anton.ivanov@cambridgegreys.com"
-	<anton.ivanov@cambridgegreys.com>,
-        "ardb@kernel.org" <ardb@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>,
-        "dvyukov@google.com" <dvyukov@google.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "jinghao7@illinois.edu"
-	<jinghao7@illinois.edu>,
-        "johannes@sipsolutions.net"
-	<johannes@sipsolutions.net>,
-        "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-        "justinstitt@google.com" <justinstitt@google.com>,
-        "kees@kernel.org"
-	<kees@kernel.org>,
-        "kent.overstreet@linux.dev" <kent.overstreet@linux.dev>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-        "luto@kernel.org"
-	<luto@kernel.org>,
-        "marinov@illinois.edu" <marinov@illinois.edu>,
-        "masahiroy@kernel.org" <masahiroy@kernel.org>,
-        "maskray@google.com"
-	<maskray@google.com>,
-        "mathieu.desnoyers@efficios.com"
-	<mathieu.desnoyers@efficios.com>,
-        "Weber (US), Matthew L"
-	<matthew.l.weber3@boeing.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "morbo@google.com" <morbo@google.com>,
-        "ndesaulniers@google.com" <ndesaulniers@google.com>,
-        "oberpar@linux.ibm.com"
-	<oberpar@linux.ibm.com>,
-        "paulmck@kernel.org" <paulmck@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "rostedt@goodmis.org"
-	<rostedt@goodmis.org>,
-        "samitolvanen@google.com" <samitolvanen@google.com>,
-        "Sarkisian (US), Samuel" <samuel.sarkisian@boeing.com>,
-        "Vanderleest (US),
- Steven H" <steven.h.vanderleest@boeing.com>,
-        "tglx@linutronix.de"
-	<tglx@linutronix.de>,
-        "tingxur@illinois.edu" <tingxur@illinois.edu>,
-        "tyxu@illinois.edu" <tyxu@illinois.edu>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH v2 0/4] Enable measuring the kernel's
- Source-based Code Coverage and MC/DC with Clang
-Thread-Topic: [EXTERNAL] Re: [PATCH v2 0/4] Enable measuring the kernel's
- Source-based Code Coverage and MC/DC with Clang
-Thread-Index: AQHbFIcZxf21kGRuK0Wyyav9pF/OKLJzeOYAgAKrngCATew1gP//77aA
-Date: Fri, 22 Nov 2024 19:28:46 +0000
-Message-ID: <5F5EA6BE-94BD-4352-ADA9-D14BBE703D4F@boeing.com>
-References: <20241002045347.GE555609@thelio-3990X>
- <20241002064252.41999-1-wentaoz5@illinois.edu>
- <20241003232938.GA1663252@thelio-3990X>
- <20241122122703.GW24774@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241122122703.GW24774@noisy.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Microsoft-MacOutlook/16.90.24110120
-x-tm-snts-smtp: 7DF70432748D194DD0E592FE746D6476C899CCB5789BECADCB3900194B2B36932000:8
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <16FA026E611EC84494309EE6F018901D@boeing.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732303817; c=relaxed/simple;
+	bh=+3m/sqMbk7e8r3shpL/2EOX5ejSAqRdgfUos4mMz5zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhQJcJva2rHbjZSWhoUsIgBXTn0DpZGKIYR1cd5untMV1AZekWRJJ6ywPD7vVl85e+/y3+SI+4SSWSxcKCwrAAODpL1ckBRbweFNfqAlLmsJPPCAtaWtGepDR+PdHGYx4nmstg3VDIrjUBTOuI1l6zfHM74dQEeOI6X/CoY9nlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KUzvgbhN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ztkprX5jutqocexXLVcqCzsyxKcO7uHAEhhsDp96C+s=; b=KUzvgbhNAlUBEtmaF9e4fBqURz
+	bj0bnFo2mdNxSrXng3M5tESIzY+Xfb82vMLtJggPntlwQz5KCvMraF69t/rhIjlFLuXR5S7tvgD7O
+	H/d72p7KYqb4jVL20MxK9IUW9VNlWzF/ltkWuIdfBdjiik/JQwArwsOMATy7FHrUiK0waEZG8+/6d
+	gkygLH4TOPF8Xpe1TOtXcyoGX8p0/IKZlMv/b8toURshIUMP/J/onyX5RRqOZIqsxoobqLuzX+PoY
+	z3YI60k7aNV4MKiyDhxG32b7TF3ZZWJ4zG1dthPjm8ZljWQFPahIK9qt1WO0QoyG9G1Gw2S7pms5h
+	aCDtvD5w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tEZLx-00000008CQ6-40BA;
+	Fri, 22 Nov 2024 19:30:05 +0000
+Date: Fri, 22 Nov 2024 19:30:05 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	John Hubbard <jhubbard@nvidia.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, rust-for-linux@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v9 8/8] task: rust: rework how current is accessed
+Message-ID: <Z0Dbvbj39c87EQTq@casper.infradead.org>
+References: <20241122-vma-v9-0-7127bfcdd54e@google.com>
+ <20241122-vma-v9-8-7127bfcdd54e@google.com>
+ <6740c786.050a0220.31315a.5363@mx.google.com>
+ <CAH5fLgiiCgcPRkdeGX7LJcaGN5Y5E=zWOXuwqo+GU-tTt63PzA@mail.gmail.com>
+ <6740d8be.050a0220.30b282.4f2e@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6740d8be.050a0220.30b282.4f2e@mx.google.com>
 
-PiA+IE9uIFRodSwgT2N0IDAzLCAyMDI0IGF0IDA0OjI5OjM4UE0gLTA3MDAsIE5hdGhhbiBDaGFu
-Y2VsbG9yIHdyb3RlOg0KPiA+DQo+ID4gJCAvdXNyL2Jpbi90aW1lIC12IG1ha2UgLXNraiIkKG5w
-cm9jKSIgQVJDSD14ODZfNjQgTExWTT0xIG1ycHJvcGVyIHtkZWYsYW1kX21lbV9lbmNyeXB0Lixm
-b3J0aWZ5X3NvdXJjZS4sbGx2bV9jb3YufWNvbmZpZyBiekltYWdlDQo+ID4gLi4uDQo+ID4gdm1s
-aW51eC5vOiB3YXJuaW5nOiBvYmp0b29sOiBfX3Nldl9lc19ubWlfY29tcGxldGUrMHg2ZTogY2Fs
-bCB0byBrYXNhbl9jaGVja193cml0ZSgpIGxlYXZlcyAubm9pbnN0ci50ZXh0IHNlY3Rpb24NCg0K
-JTwgU05JUCAlPA0KDQo+ID4gdm1saW51eC5vOiB3YXJuaW5nOiBvYmp0b29sOiBhY3BpX2lkbGVf
-ZG9fZW50cnkrMHg0OiBjYWxsIHRvIHBlcmZfbG9wd3JfY2IoKSBsZWF2ZXMgLm5vaW5zdHIudGV4
-dCBzZWN0aW9uDQo+DQo+DQo+IEp1c3Qgc2F3IHRoaXMgZmx5IGJ5LCB0aGF0IGxvb2tzIGxpa2Ug
-c29tZXRoaW5nIGlzIGJ1Z2dlcmVkIGJhZC4gTm90YWJseQ0KPiBsb2NrZGVwX2hhcmRpcnFzX3tv
-bixvZmZ9KCkgYXJlIG5vaW5zdHIuDQo+DQo+DQo+IElzIHRoaXMgcGF0Y2gtc2V0IGNhdXNpbmcg
-dGhpcywgb3Igd2hhdD8NCg0KTm8sIHRoZXNlIHBhdGNoZXMgYXJlIG5vdCBjYXVzaW5nIHRoaXMu
-IFRoaXMgcGF0Y2gtc2V0IGFwcGVhcnMgdG8gaGF2ZSBleHBvc2VkIGENCmJ1ZyBpbiB0aGUgbGx2
-bSBsaW5rZXIgKGxsZCk6DQoNCmh0dHBzOi8vZ2l0aHViLmNvbS9sbHZtL2xsdm0tcHJvamVjdC9p
-c3N1ZXMvMTE2NTc1DQoNCi4uQ2g6Vy4uDQoNCg==
+On Fri, Nov 22, 2024 at 11:17:15AM -0800, Boqun Feng wrote:
+> > I don't think this is a problem? As long as a thread exists somewhere
+> > with `current` being equal to the task, we should be fine?
+> > 
+> 
+> I think I had a misunderstanding on what you meant by "operations
+> that are only valid on the current task", you mean these operations can
+> be run by other threads, but it has to be *on* a task_struct that's
+> "currently running", right? BTW, you probably want to reword a bit,
+> because the "current" task may be blocked, so technically it's not
+> "running".
+> 
+> Basically, the operations that `CurrentTask` have are the methods that
+> are safe to call (even on a different thread) for the "current" task, as
+> long as it exists (not dead or exited). In that definition, not being
+> `Sync` is fine.
+> 
+> But I have to admit I'm a bit worried that people may be confused, and
+> add new methods that can be only run by the current thread in the
+> future.
+
+I agree, I think CurrentTask should refer to "current".  Or we'll
+confuse everyone.  Would ActiveTask be a good name for this CurrentTask?
 
