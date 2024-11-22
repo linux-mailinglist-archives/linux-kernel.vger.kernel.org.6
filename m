@@ -1,177 +1,111 @@
-Return-Path: <linux-kernel+bounces-418715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F81B9D64A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:37:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CCB9D64A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 20:43:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FAA11608AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:37:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A74283498
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4789A1DF96C;
-	Fri, 22 Nov 2024 19:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C491DFD9F;
+	Fri, 22 Nov 2024 19:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZDZT8a4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0F3158DA3;
-	Fri, 22 Nov 2024 19:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B5F158DA3;
+	Fri, 22 Nov 2024 19:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732304224; cv=none; b=oaudYRteW9lC26hwk0pRUow834Jd0j4cZtnpc/JKbophs+l3yxn2xwuzInBMDei+cNXHBFIuUtmO7kgLMK5pZ7/0sIp689OP5jSXPkKhTuxq6tuz9qYrdddE3VkcMgBZezxfuqTuAm3E23nk8bWOeCpYvffNCSkWoAqGN/Px5Io=
+	t=1732304591; cv=none; b=UB2wdVNOAkqv/DCiTNvJ9rHFvvasJiaiFDnw/FElGcOO+uvRC0Xbb1fXftneq4qRFxmOFHOCbJ7s2MFHAizLnwb5R1Nl/2QbjUH0huaGRSqOC7P1VWnc3vR0jst0F+gHK0aqHDZdcxHDOAx14w/Na9JiTswzjFJCmr5nItNc5rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732304224; c=relaxed/simple;
-	bh=2aZdsr64gCgbmX8G1clSDXM0XanXQOIOxyXY62g7TE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gr5amddzzxpVcM3RQ0Eo8kyGv6HSNorQsWxep4aZnjImPZgGH/LK0nZ/CHzmQey48QVvTbCMtLc30GGVXCI69BfG+cVB1c5eie2lxj7k1qxqMRVB+2l9CgTZZjCJaIb5fSKWDMUdmAG38/tRPopWq6EUQGVfLNeq4B01SbV30vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E34C4CECE;
-	Fri, 22 Nov 2024 19:37:02 +0000 (UTC)
-Date: Fri, 22 Nov 2024 14:37:42 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Peter
- Zijlstra <peterz@infradead.org>, tglx@linutronix.de, mingo@kernel.org,
- juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
- vschneid@redhat.com, ankur.a.arora@oracle.com, efault@gmx.de, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v3] tracing: Record task flag NEED_RESCHED_LAZY.
-Message-ID: <20241122143742.038c77fa@gandalf.local.home>
-In-Reply-To: <20241122173201.tsqK0eeD@linutronix.de>
-References: <20241122173201.tsqK0eeD@linutronix.de>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732304591; c=relaxed/simple;
+	bh=/TIiTo6aiG1HaE3NLyCTytKHWSq3kTXteNNE8a+vUqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWozaBL3/RKBpdzKUv99CTqEV+EtkqfmeLWZUR/Hs1c5cTZHFua3C1xPZwb4JxtWEulkz7KSZGmQXgvELDkG1mu2I63Ma1S5+9VJczdiUX3ayhavCDFaqAoPVoiCRn3SappiMKQaMK8a2QBp1Z+hdqQEbF0zZFYVI1Dr8pqXDls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZDZT8a4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51DEEC4CECE;
+	Fri, 22 Nov 2024 19:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732304590;
+	bh=/TIiTo6aiG1HaE3NLyCTytKHWSq3kTXteNNE8a+vUqg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YZDZT8a4bQJbljENBmawqwStZT6k2l2i1qgcJe2U5Q9KECabOmXUbEOts4zRte5AI
+	 +iHbhsH7CusmDEFsWSL4qZD7ZdT34omju98KTvotqtJv9gFe92YQy/aK+Nl4Sulrk3
+	 UTpqc15JnnERWgb9e2yEOVWAJnKAt2rFef4v3fdv+12YtaSVw3RJaX99M17z3M0LuF
+	 E8DmoQyIz+B02mF16CKSnOnmlp2GRyEldpWG2xD4Q1hQsd4jYbVFi85b+yhWSthMeX
+	 wNOJT2zc9B+VxzUWxUUN9osLlZdDTP/e/PTmtYs20sk7vG6hbL0nTsAph5rJVDwDoI
+	 0P8CSv5UAN43Q==
+Date: Fri, 22 Nov 2024 21:43:06 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Jean Delvare <jdelvare@suse.de>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v2] PCI/sysfs: Change read permissions for VPD attributes
+Message-ID: <20241122194306.GC160612@unreal>
+References: <20241121121301.GA160612@unreal>
+ <20241121224142.GA2401143@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121224142.GA2401143@bhelgaas>
 
-On Fri, 22 Nov 2024 18:32:01 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+On Thu, Nov 21, 2024 at 04:41:42PM -0600, Bjorn Helgaas wrote:
+> On Thu, Nov 21, 2024 at 02:13:01PM +0200, Leon Romanovsky wrote:
+> > On Thu, Nov 21, 2024 at 01:01:27PM +0100, Jean Delvare wrote:
+> > > On Wed, 13 Nov 2024 14:59:58 +0200, Leon Romanovsky wrote:
+> > > > --- a/drivers/pci/vpd.c
+> > > > +++ b/drivers/pci/vpd.c
+> > > > @@ -332,6 +332,14 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
+> > > >  	if (!pdev->vpd.cap)
+> > > >  		return 0;
+> > > >  
+> > > > +	/*
+> > > > +	 * Mellanox devices have implementation that allows VPD read by
+> > > > +	 * unprivileged users, so just add needed bits to allow read.
+> > > > +	 */
+> > > > +	WARN_ON_ONCE(a->attr.mode != 0600);
+> > > > +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
+> > > > +		return a->attr.mode + 0044;
+> > ...
+> 
+> > I still didn't lost hope that at some point VPD will be open for read to
+> > all kernel devices.
+> > 
+> > Bjorn, are you ok with this patch? If yes, I'll resend the patch with
+> > the suggested change after the merge window.
+> 
+> Reading VPD is a fairly complicated dance that only works if the VPD
+> data is well-formatted, and the benefit of unprivileged access seems
+> pretty small, so the risk/reward tradeoff for making it unprivileged
+> for all devices doesn't seem favorable in my mind.
+> 
+> This quirk seems like the least bad option, so I guess I'm ok with it.
 
-> From: Thomas Gleixner <tglx@linutronix.de>
->=20
-> The scheduler added NEED_RESCHED_LAZY scheduling. Record this state as
-> part of trace flags and expose it in the need_resched field.
->=20
-> Record and expose NEED_RESCHED_LAZY.
->=20
-> [bigeasy: Commit description, documentation bits.]
->=20
-> Reviewed-by: Ankur Arora <ankur.a.arora@oracle.com>
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
-> v2=E2=80=A6v3:
->   - Use 0x02 for TRACE_FLAG_NEED_RESCHED_LAZY which is the freshly
->     created gap.
->=20
->  Documentation/trace/ftrace.rst |  4 ++++
->  include/linux/trace_events.h   |  1 +
->  kernel/trace/trace.c           |  2 ++
->  kernel/trace/trace_output.c    | 14 +++++++++++++-
->  4 files changed, 20 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.=
-rst
-> index 74d5bd801b1a8..16892b844108c 100644
-> --- a/Documentation/trace/ftrace.rst
-> +++ b/Documentation/trace/ftrace.rst
-> @@ -1033,9 +1033,13 @@ explains which is which.
->    irqs-off: 'd' interrupts are disabled. '.' otherwise.
-> =20
->    need-resched:
-> +	- 'B' all, TIF_NEED_RESCHED, PREEMPT_NEED_RESCHED and TIF_RESCHED_LAZY =
-is set,
->  	- 'N' both TIF_NEED_RESCHED and PREEMPT_NEED_RESCHED is set,
->  	- 'n' only TIF_NEED_RESCHED is set,
->  	- 'p' only PREEMPT_NEED_RESCHED is set,
+Thanks a lot.
 
-> +	- 'L' borg PREEMPT_NEED_RESCHED and TIF_RESCHED_LAZY is set,
-> +	- 'b' borg TIF_NEED_RESCHED and TIF_RESCHED_LAZY is set,
-
-   Is resistance futile?
-
-I can switch it over to "both" if that's what you meant.
-
--- Steve
-
-> +	- 'l' only TIF_RESCHED_LAZY is set
->  	- '.' otherwise.
-> =20
->    hardirq/softirq:
-> diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-> index 016b29a56c875..2a5df5b62cfc7 100644
-> --- a/include/linux/trace_events.h
-> +++ b/include/linux/trace_events.h
-> @@ -184,6 +184,7 @@ unsigned int tracing_gen_ctx_irq_test(unsigned int ir=
-qs_status);
-> =20
->  enum trace_flag_type {
->  	TRACE_FLAG_IRQS_OFF		=3D 0x01,
-> +	TRACE_FLAG_NEED_RESCHED_LAZY	=3D 0x02,
->  	TRACE_FLAG_NEED_RESCHED		=3D 0x04,
->  	TRACE_FLAG_HARDIRQ		=3D 0x08,
->  	TRACE_FLAG_SOFTIRQ		=3D 0x10,
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 3ef047ed97055..be62f0ea1814d 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -2552,6 +2552,8 @@ unsigned int tracing_gen_ctx_irq_test(unsigned int =
-irqs_status)
->  		trace_flags |=3D TRACE_FLAG_NEED_RESCHED;
->  	if (test_preempt_need_resched())
->  		trace_flags |=3D TRACE_FLAG_PREEMPT_RESCHED;
-> +	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && tif_test_bit(TIF_NEED_R=
-ESCHED_LAZY))
-> +		trace_flags |=3D TRACE_FLAG_NEED_RESCHED_LAZY;
->  	return (trace_flags << 16) | (min_t(unsigned int, pc & 0xff, 0xf)) |
->  		(min_t(unsigned int, migration_disable_value(), 0xf)) << 4;
->  }
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index e08aee34ef63d..da748b7cbc4d5 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -462,17 +462,29 @@ int trace_print_lat_fmt(struct trace_seq *s, struct=
- trace_entry *entry)
->  		bh_off ? 'b' :
->  		'.';
-> =20
-> -	switch (entry->flags & (TRACE_FLAG_NEED_RESCHED |
-> +	switch (entry->flags & (TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCH=
-ED_LAZY |
->  				TRACE_FLAG_PREEMPT_RESCHED)) {
-> +	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCHED_LAZY | TRACE_FLA=
-G_PREEMPT_RESCHED:
-> +		need_resched =3D 'B';
-> +		break;
->  	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_PREEMPT_RESCHED:
->  		need_resched =3D 'N';
->  		break;
-> +	case TRACE_FLAG_NEED_RESCHED_LAZY | TRACE_FLAG_PREEMPT_RESCHED:
-> +		need_resched =3D 'L';
-> +		break;
-> +	case TRACE_FLAG_NEED_RESCHED | TRACE_FLAG_NEED_RESCHED_LAZY:
-> +		need_resched =3D 'b';
-> +		break;
->  	case TRACE_FLAG_NEED_RESCHED:
->  		need_resched =3D 'n';
->  		break;
->  	case TRACE_FLAG_PREEMPT_RESCHED:
->  		need_resched =3D 'p';
->  		break;
-> +	case TRACE_FLAG_NEED_RESCHED_LAZY:
-> +		need_resched =3D 'l';
-> +		break;
->  	default:
->  		need_resched =3D '.';
->  		break;
-
+> 
+> Bjorn
 
