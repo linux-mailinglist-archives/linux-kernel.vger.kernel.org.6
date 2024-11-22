@@ -1,494 +1,280 @@
-Return-Path: <linux-kernel+bounces-418660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-418661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA8289D63F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:09:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD089D63FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 19:11:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA8F28520E
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:09:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDC12847EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 18:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C431E47B0;
-	Fri, 22 Nov 2024 18:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDBA1DF98F;
+	Fri, 22 Nov 2024 18:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZxgAXqn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="bXsjQlK7"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazolkn19012053.outbound.protection.outlook.com [52.103.7.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D2F1E3DCA;
-	Fri, 22 Nov 2024 18:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732298739; cv=none; b=Y2BJrd5BGlVC8txqsVTnEatyVuYwj6tAyDuL4qZ2F9sefsKiA0B3nD8r1DcBXN0BGZKjcatZsdoQqdeWhICVDXl2DDowzuC90qbnBu18xwlzpn5G9s+6Ai14Tdh/H3yHHTuWZcAhFDQNz9pk9fJPM7Wjp2Fgl0iSNO+9Qiudbx8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732298739; c=relaxed/simple;
-	bh=SfJXTQziLY7a9QtdjnJrWk+h7t37B3e9l99AeaDQstw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XT0cp8lg/ZGSMjbGXA5nI0JmEHVs8EEF+ymBF00LzsArZWNpRfR/GdWDfpqqJ85whqBXNqORe8L5d0jybWvzKXDbKQJ26koSR4Fys5PEpDx4lFTHM7BUzGyylO32ujFvWN4fRk4c0Txt/pA1rYij5Od0IubItcxjy6TGINWRSow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZxgAXqn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6B1C4CED3;
-	Fri, 22 Nov 2024 18:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732298738;
-	bh=SfJXTQziLY7a9QtdjnJrWk+h7t37B3e9l99AeaDQstw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oZxgAXqnD9bSkXd6kFSytl8aJEGR8YcB5TQTUcP3E4wjnCupz165epeywTfMhk++o
-	 zaAJ7LZC1/K96QFkBwEFBE8Dofcjf/HjHowm01Z1a5oD/jDFfoZf4V4Fx93bOudNej
-	 rmuYmbOaA2T6pao99RhDE0N5DfXFW2NkFIqNOWuclHmRlQCf/Rv1NHilRNkmX+XUpK
-	 6JdRSRo2ijsnBFhzuNupRE1zhd9bh0skJ4EEa9yoWbfvfmN4o+LdpiP2TzNvKCJo5F
-	 wEQ/+Vtl1I0OCSlAbMyCjlnCLbKCD+/d2+xBfUYRY0X++fjJV4GifvB8w3o/WBmvVk
-	 xNad4HPi6s3rQ==
-Date: Fri, 22 Nov 2024 19:05:33 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mkl@pengutronix.de, 
-	mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, 
-	jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 8/9] pwm: Add Nuvoton NCT6694 PWM support
-Message-ID: <imxfhjb5h5bneql6hadxanmzshxi2ev2tosprrncrerxrhvocl@lnoi32zupqct>
-References: <20241024085922.133071-1-tmyu0@nuvoton.com>
- <20241024085922.133071-9-tmyu0@nuvoton.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D881215B97D;
+	Fri, 22 Nov 2024 18:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.7.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732299101; cv=fail; b=J5DtzWnWX7Hr1cMuY6AFGVyx/YmnqUnsTvCiFyhJxn4hODTRd7/EX4oUrWTrlI9IPOC1uDFF7tFS2dPOmPkfcVoTRb0O0Lx7z9bPtuxLczEcfHKYk8/4LXTL6gJaxtFcwfKt/Jn86YhMqUkLuiq9t6oc1Zw6PSnomZaZPLvGhpg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732299101; c=relaxed/simple;
+	bh=PEnHOIsW9CWx5NQwPS+XSChJGJ266Ja8iia41vflW5s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sfqHlLsbMRAdD7adlDS2jB2iBT17acr3X6XnoPWIpzoB3OsRUgjPn8V73L8AUpkdkLBt0F8vmHH4SWTEEf4EYyLWClxOjX1en3yvZouM4aibYKV2Z3ymbOxRK/N8eDVZvAk0oRdMLt05KCHA4Gn1JuKUuxXU1oHAlDKvtdtMvx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=bXsjQlK7; arc=fail smtp.client-ip=52.103.7.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IQjVdoDltf+NR93DyTVIFqMZrTyiA+kO9FZ8x4hD3JvVcE5uMxbsAObLvZ2OEq4pNolrXwACmZFCG2fmFhSole/r+D4mzjFvHVeGpHF6cDzUlohNj1W742j8yB83nl8SQ2G3icZBGI3y0xvL8TehJ4EbhB/m2bcZKRqxiWZvWl8frVwoyZUIH17l9yZvmRU96BAElXEj67JbiCbxEMY6di4zbvDDl4fb2v9LDW9aAmIsr9h3kAww+p97JSUKugDvCunfPNsFGwMPYJ4u+ZOkhpgPd5eQFm5fppdT2akTLvY2v3VsyqIOiIa+B04glguCeAlN8Ds5+c9G/reW7vP3Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rhEQmZH2X80e/x8VH9fciIozCph7cFkTwx1wusWZnJo=;
+ b=fabOURpIF4YFFZd6FpGIP2UFroPJ/tshjEJAYT3rZ9ThBW7Xnfgc5+a42VDR1xv7+NlVfYA3ckKYdZeaEntIgOTwpK5DWswEAU+upEWDp/iWoeZehwMO9x66/0QWw03csXhFBmdVbEDYi3i+J0Rph+NWkGDLnCOUAUr59VJJDVZ4jibJek2D5wn/21LfOBlxfc1uDHU68pGapSxO3j0LSbXj7YKnJiUK/9PJNY2osvLi5CsbWDO2PhhXs0FfBVxeA2vcTx4x+5o5Fd7Rs5sc4Lkore5pIGp2ZPnogjLi1yrIzRN9p1F4J43D5VnmMRvqhDHibkypVg6xvF7JtpPdlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rhEQmZH2X80e/x8VH9fciIozCph7cFkTwx1wusWZnJo=;
+ b=bXsjQlK7OFAdRG1+XQcQUD7rt82KsV2k/PmfxXm57TAlYjP5y1Vk7CD7ZX9u3GhOWDBHj7Yb4G9TGOhdWIBmSTxym3ZCsIu4GN+57jkGrJdaVMov9eFmmpIevxiu5T8key1vwkJyu4CxoCsqG0a9ZXjMfCNrkpIqgaAmg0GaI87UXhR4L2GScJVxr2GAnsnH4JSd8gSewIQLL65guW2+aVyvXptOIBonZFf3A+EcjNqF9ie016ROtIOb7/+Fe1fSDOFpK3QnlgnbDIEWIPpuST0197ryffWu+nznGpxytT+OUw1GVhYBgQ18QCFtz36SAL9xXe3x+a56wZtSq9n8RA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SJ0PR02MB8355.namprd02.prod.outlook.com (2603:10b6:a03:3e7::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.18; Fri, 22 Nov
+ 2024 18:11:36 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%6]) with mapi id 15.20.8158.024; Fri, 22 Nov 2024
+ 18:11:36 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Cathy Avery <cavery@redhat.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "decui@microsoft.com" <decui@microsoft.com>,
+	"jejb@linux.ibm.com" <jejb@linux.ibm.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>
+CC: "bhull@redhat.com" <bhull@redhat.com>, "emilne@redhat.com"
+	<emilne@redhat.com>, "loberman@redhat.com" <loberman@redhat.com>
+Subject: RE: [PATCH] scsi: storvsc: Do not flag MAINTENANCE_IN return of
+ SRB_STATUS_DATA_OVERRUN as an error
+Thread-Topic: [PATCH] scsi: storvsc: Do not flag MAINTENANCE_IN return of
+ SRB_STATUS_DATA_OVERRUN as an error
+Thread-Index: AQHbPPrzCSHlA72PXEiQzfj0ZnqGwLLDkwHw
+Date: Fri, 22 Nov 2024 18:11:35 +0000
+Message-ID:
+ <SN6PR02MB4157B4A80A1BCF778117DC13D4232@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20241122162355.2859481-1-cavery@redhat.com>
+In-Reply-To: <20241122162355.2859481-1-cavery@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SJ0PR02MB8355:EE_
+x-ms-office365-filtering-correlation-id: afdebe4c-4b00-44ef-683c-08dd0b211a49
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|461199028|8062599003|19110799003|15080799006|3412199025|440099028|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?uVRknVaIzlhUmpKPMDKyl6QTko+5QXVJwSoJ3pTRmOu3D64SLESEkd6vWvtK?=
+ =?us-ascii?Q?t4Lq/iKsqz5ghS5Er/m4mpTaWBkXSzk5Mu7ChbXN2an4uikUItVP5glKHRKO?=
+ =?us-ascii?Q?lZ8CTLH31FKMU7l9+tesUiZH/8yGTV3Gu4HdlIPXwM9T8bd9W4skOwVcKoms?=
+ =?us-ascii?Q?olGs4yx5kA08KH2NSw6F+QcWNk2YP2h59OolG2b7LMVTwEM4pDBcXa0WDhps?=
+ =?us-ascii?Q?1TEyQAQqJ71uqEkJ/SqRX79zzX6kEEWTJvlIHfofGfPyoJEWSWRiCqbL5DSO?=
+ =?us-ascii?Q?PtWX9+QxvBih1Ry9U5LuAHxfFMuiJxvROiHwqslLHtrwnabr6alvmIlnjXRt?=
+ =?us-ascii?Q?5UXDwE3/+K2vV6GNg01LAf7dx9eUo59ZiyKNC3codeJZKY+tMeFL+tjpA2KY?=
+ =?us-ascii?Q?5KQA23lUCVeh4oHrXmTvYYxVITO9aAgPQyzm66pbOWlDq0qMp+JvqfQ3f1jr?=
+ =?us-ascii?Q?4uTIzs/fnv8OLcrnKvxV+ZAdpZnOiOSun0yDVi8J3Zo9J+N8hYgssf/fE5aY?=
+ =?us-ascii?Q?9RXVblr2anEY98xmCVVKttX/vtqcncfipKrndF9/LD5S3oNjGw5k4cBJ08ne?=
+ =?us-ascii?Q?5Y54EEFeB3eRTwWgY81yBl0T2+f/KSiaKLdBat0qaRW0lcFlEhVjBLTo3q9D?=
+ =?us-ascii?Q?zpMf7M+xYx3KckYfvU1VjtCJ8OWCYrNW+6/wIDy/IMYhFhDbJUA0gGq1MdPG?=
+ =?us-ascii?Q?znY2268VEbH8bZplCNNrhgfzbPyyv2idrMflVeVlRMhjOY1WiseMbnid2LO6?=
+ =?us-ascii?Q?whstCrWp+BISLrGWMYxZCxNXldssrGtIwus6IKweYsn4tTdyjlSU1thfjA1d?=
+ =?us-ascii?Q?Z0MC5SgoV683iKv7O/IehFx4oEdv7JeK3+yNt+0wAjJGbs9AN15t7brhl6kL?=
+ =?us-ascii?Q?uSIUZvzlN8GturlzBsRfBC+0ZB5E/3LdB62kpH3289hPsjnSYHgqPpeiDbE8?=
+ =?us-ascii?Q?gf66f4TbzLwGpZFimgAQoSACT/UIWKIFEiDmhmvacGo6r2c3sTQNA8Rh2rep?=
+ =?us-ascii?Q?uy9iv7V48tfeqrfloG6gMHvCIQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?XvSyZ4UJqUZW06JtLTVwl1KbyeSKt1kXbFFlK7JRgz1zNNK1/NrOWurXDU98?=
+ =?us-ascii?Q?iqnK9N3yKS1wWpyQ8mDj6NeC4z9rQJl4A2gf+jA8qHiaqVSlZlEbPJBvJE3O?=
+ =?us-ascii?Q?Y19jxNk2ldQ1uwhOcBxWnT4lxp/Mm9kuqe4slYsx60st8jojVYD7I7QVY5OU?=
+ =?us-ascii?Q?Jw/dw32NwsrtQl3g0MY60jGTX2kNc4MIxRxfzrm4gtNJPRSoWksdWlvt9O+o?=
+ =?us-ascii?Q?pl1YSnacTUVVzm4kupMjXOA5J7EQe9yrOrpiMrGg+O0PkokhpKFS0lh69A1x?=
+ =?us-ascii?Q?Otf2oFNv5JbDdDD4uyrAoI2IPUp0EUlvJsLjuaLn5b9vijwXp7d+vAXHKmV0?=
+ =?us-ascii?Q?HBMCpbQgRiDMbf6cIW9Ho1TW32blmR0Hmsq30dyKw0HX07zsaB43+JRoxC7f?=
+ =?us-ascii?Q?c4TFDFSDej7Ih04Go51RH2ZhOMuTh7/aKYORcYdySmT45qDwDZo5S1K0f8X9?=
+ =?us-ascii?Q?gkUrDsJ7tZVYh+KYiDbYE2XHN2QuoF8N3W6gxOYmbZ/UCijXl3cCGVLbHF/6?=
+ =?us-ascii?Q?gNgdP+QdBwpf8q82/qDHZ+3YKvyh8damTZcM8RrlNVzoGRugKZ4WJHfQPSQ2?=
+ =?us-ascii?Q?y8A2xsXdBjHfmKvv3RTgUcfS8OkDWZcTYkxHomMd7i3TRJBqtX+O+EOmfXJ5?=
+ =?us-ascii?Q?uZ/7W2ukBiE5uaLoFKd9qKa6Hb7KP4wrEIpzd4AJE7ScwA9ZQE83TWyc9ijV?=
+ =?us-ascii?Q?GDvFrwAB7J0tvCKBcSLZpWh8WG47bYaSfDu3fICYm0/5s1XqP8s5XnXb8GYX?=
+ =?us-ascii?Q?/R9KZZxoB73NMgqkkTiZ8kb9JE2767h64J44SnQjgTZa45y8tKTeDSjEorLd?=
+ =?us-ascii?Q?tzauX3Kh2NV+H2oB/zhgh0s/53Qo2pcoHwI0ufDAwSWgTpZTM6bBJAqB2bj7?=
+ =?us-ascii?Q?LwLb0Guz0noXYCb4KUBYPiMA+aFoYVn+GhbEQofdX5uThTGgG/UlEVXxUms3?=
+ =?us-ascii?Q?JSwffEm9Babh32fEwWW8wv2HqTEQdBP5T2yIOuud5pZrdjInCno5Cr2qEKx8?=
+ =?us-ascii?Q?TQLQfT7G9KZopLk2ReJzvH0z2uQc4gHcUQqxGBWIjw2dPDNG2Ja5rYRG+po5?=
+ =?us-ascii?Q?Learj//RgcScAX4jiHWG5XKNBSBbBnH2TXo1YUqf/+gKRaBjXfpEa8DA6Gnn?=
+ =?us-ascii?Q?7c+R+1QuiGRDafE8ol4QCCRrj8GAJei5Xh2RaQ1F12JsoL9iQ39IEHTSWH2v?=
+ =?us-ascii?Q?u6Q9rAryVp9l/8+kuv0oTN8WZzDki9dTe+c9iMEXl+2OFAJXwBuaJiEcjws?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iddd2vffbehamsfe"
-Content-Disposition: inline
-In-Reply-To: <20241024085922.133071-9-tmyu0@nuvoton.com>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: afdebe4c-4b00-44ef-683c-08dd0b211a49
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Nov 2024 18:11:35.9267
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8355
 
-
---iddd2vffbehamsfe
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 8/9] pwm: Add Nuvoton NCT6694 PWM support
-MIME-Version: 1.0
-
-Hello,
-
-On Thu, Oct 24, 2024 at 04:59:21PM +0800, Ming Yu wrote:
-> This driver supports PWM functionality for NCT6694 MFD device
-> based on USB interface.
+From: Cathy Avery <cavery@redhat.com> Sent: Friday, November 22, 2024 8:24 =
+AM
 >=20
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
+> This patch partially reverts
+>=20
+> 	commit 812fe6420a6e789db68f18cdb25c5c89f4561334
+> 	Author: Michael Kelley <mikelley@microsoft.com>
+> 	Date:   Fri Aug 25 10:21:24 2023 -0700
+>=20
+> 	scsi: storvsc: Handle additional SRB status values
+>=20
+> HyperV does not support MAINTENANCE_IN resulting in FC passthrough
+> returning the SRB_STATUS_DATA_OVERRUN value. Now that
+> SRB_STATUS_DATA_OVERRUN
+> is treated as an error multipath ALUA paths go into a faulty state as mul=
+tipath
+> ALUA submits RTPG commands via MAINTENANCE_IN.
+>=20
+> [    3.215560] hv_storvsc 1d69d403-9692-4460-89f9-a8cbcc0f94f3:
+> tag#230 cmd 0xa3 status: scsi 0x0 srb 0x12 hv 0xc0000001
+> [    3.215572] scsi 1:0:0:32: alua: rtpg failed, result 458752
+>=20
+> This patch essentially restores the previous handling of MAINTENANCE_IN
+> along with supressing any logging noise.
+>=20
+> Signed-off-by: Cathy Avery <cavery@redhat.com>
 > ---
->  MAINTAINERS               |   1 +
->  drivers/pwm/Kconfig       |  10 ++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-nct6694.c | 245 ++++++++++++++++++++++++++++++++++++++
->  4 files changed, 257 insertions(+)
->  create mode 100644 drivers/pwm/pwm-nct6694.c
+>  drivers/scsi/storvsc_drv.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5c350eac187d..4d5a5eded3b9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16444,6 +16444,7 @@ F:	drivers/iio/adc/nct6694_adc.c
->  F:	drivers/i2c/busses/i2c-nct6694.c
->  F:	drivers/mfd/nct6694.c
->  F:	drivers/net/can/nct6694_canfd.c
-> +F:	drivers/pwm/pwm-nct6694.c
->  F:	drivers/watchdog/nct6694_wdt.c
->  F:	include/linux/mfd/nct6694.h
-> =20
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 0915c1e7df16..00b5eb13f99d 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -471,6 +471,16 @@ config PWM_NTXEC
->  	  controller found in certain e-book readers designed by the original
->  	  design manufacturer Netronix.
-> =20
-> +config PWM_NCT6694
-> +	tristate "Nuvoton NCT6694 PWM support"
-> +	depends on MFD_NCT6694
-> +	help
-> +	If you say yes to this option, support will be included for Nuvoton
-> +	NCT6694, a USB device to PWM controller.
+> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+> index 7ceb982040a5..088fefe40999 100644
+> --- a/drivers/scsi/storvsc_drv.c
+> +++ b/drivers/scsi/storvsc_drv.c
+> @@ -149,6 +149,8 @@ struct hv_fc_wwn_packet {
+>  */
+>  static int vmstor_proto_version;
+>=20
+> +static bool hv_dev_is_fc(struct hv_device *hv_dev);
 > +
-> +	This driver can also be built as a module. If so, the module
-> +	will be called pwm-nct6694.
-> +
->  config PWM_OMAP_DMTIMER
->  	tristate "OMAP Dual-Mode Timer PWM support"
->  	depends on OF
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 9081e0c0e9e0..5c5602b79402 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -42,6 +42,7 @@ obj-$(CONFIG_PWM_MICROCHIP_CORE)	+=3D pwm-microchip-cor=
-e.o
->  obj-$(CONFIG_PWM_MTK_DISP)	+=3D pwm-mtk-disp.o
->  obj-$(CONFIG_PWM_MXS)		+=3D pwm-mxs.o
->  obj-$(CONFIG_PWM_NTXEC)		+=3D pwm-ntxec.o
-> +obj-$(CONFIG_PWM_NCT6694)	+=3D pwm-nct6694.o
->  obj-$(CONFIG_PWM_OMAP_DMTIMER)	+=3D pwm-omap-dmtimer.o
->  obj-$(CONFIG_PWM_PCA9685)	+=3D pwm-pca9685.o
->  obj-$(CONFIG_PWM_PXA)		+=3D pwm-pxa.o
-> diff --git a/drivers/pwm/pwm-nct6694.c b/drivers/pwm/pwm-nct6694.c
-> new file mode 100644
-> index 000000000000..915a2ab50834
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-nct6694.c
-> @@ -0,0 +1,245 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton NCT6694 PWM driver based on USB interface.
-> + *
-> + * Copyright (C) 2024 Nuvoton Technology Corp.
-> + */
-> +
-> +#include <linux/slab.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/pwm.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/nct6694.h>
-> +
-> +#define DRVNAME "nct6694-pwm"
-> +
-> +#define NR_PWM	10
-> +#define MAX_PERIOD_NS	40000		/* PWM Maximum Frequency =3D 25kHz */
-
-Please use a prefix for your defines, otherwise they make a more general
-impression than justified.
-
-> +#define PERIOD_NS_CONST	10200000	/* Period_ns to Freq_reg */
-
-What is Freq_reg?
-
-> +/* Host interface */
-> +#define REQUEST_RPT_MOD			0xFF
-> +#define REQUEST_HWMON_MOD		0x00
-> +#define REQUEST_PWM_MOD			0x01
-> +
-> +/* Report Channel */
-> +#define HWMON_PWM_IDX(x)		(0x70 + (x))
-> +
-> +/* Message Channel -HWMON */
-> +/* Command 00h */
-> +#define REQUEST_HWMON_CMD0_LEN		0x40
-> +#define REQUEST_HWMON_CMD0_OFFSET	0x0000	/* OFFSET =3D SEL|CMD */
-> +#define HWMON_PWM_EN(x)			(0x06 + (x))
-> +#define HWMON_PWM_PP(x)			(0x08 + (x))
-> +#define HWMON_PWM_FREQ_IDX(x)		(0x30 + (x))
-> +
-> +/* Message Channel -FAN */
-> +/* Command 00h */
-> +#define REQUEST_PWM_CMD0_LEN		0x08
-> +#define REQUEST_PWM_CMD0_OFFSET		0x0000	/* OFFSET =3D SEL|CMD */
-> +#define PWM_CH_EN(x)			(x ? 0x00 : 0x01)
-> +/* Command 01h */
-> +#define REQUEST_PWM_CMD1_LEN		0x20
-> +#define REQUEST_PWM_CMD1_OFFSET		0x0001	/* OFFSET =3D SEL|CMD */
-> +#define PWM_MAL_EN(x)			(x ? 0x00 : 0x01)
-> +#define PWM_MAL_VAL(x)			(0x02 + (x))
-> +
-> +/*
-> + *		Frequency <-> Period
-> + * (10^9 * 255) / (25000 * Freq_reg) =3D Period_ns
-> + *		10200000 / Freq_reg  =3D Period_ns
-> + *
-> + * | Freq_reg | Freq_Hz | Period_ns |
-> + * |  1 (01h  |  98.039 |  10200000 |
-
-missing )
-
-> + * |  2 (02h) | 196.078 |   5100000 |
-> + * |  3 (03h) | 294.117 |   3400000 |
-> + * |		  ...		    |
-> + * |		  ...		    |
-> + * |		  ...		    |
-
-Better use spaces for indention here.
-
-> + * | 253 (FDh)| 24803.9 |  40316.20 |
-> + * | 254 (FEh)| 24901.9 |  40157.48 |
-> + * | 255 (FFh)|  25000  |    40000  |
-
-Is this table useful?
-
-I'd just write:
-
-	The emitted period P depends on the value F configured in
-	the freq register:
-
-	P =3D 255 s / (25000 * F)
-	  =3D 10200000 ns / F
-
-I wonder what happens if F =3D=3D 0?
-
-> + */
-> +
-> +struct nct6694_pwm_data {
-> +	struct nct6694 *nct6694;
-> +	unsigned char hwmon_cmd0_buf[REQUEST_HWMON_CMD0_LEN];
-> +	unsigned char pwm_cmd0_buf[REQUEST_PWM_CMD0_LEN];
-> +	unsigned char pwm_cmd1_buf[REQUEST_PWM_CMD1_LEN];
-
-What are these arrays? register caches?
-
-> +};
-> +
-> +static inline struct nct6694_pwm_data *to_nct6694_pwm_data(struct pwm_ch=
-ip *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static int nct6694_pwm_request(struct pwm_chip *chip, struct pwm_device =
-*pwm)
-> +{
-> +	struct nct6694_pwm_data *data =3D to_nct6694_pwm_data(chip);
-> +	unsigned char ch_enable =3D data->pwm_cmd0_buf[PWM_CH_EN(pwm->hwpwm / 8=
-)];
-> +	unsigned char mal_enable =3D data->pwm_cmd1_buf[PWM_MAL_EN(pwm->hwpwm /=
- 8)];
-> +	bool ch_en =3D ch_enable & BIT(pwm->hwpwm % 8);
-> +	bool mal_en =3D mal_enable & BIT(pwm->hwpwm % 8);
-
-What is "mal"?
-
-> +
-> +	if (!(ch_en && mal_en)) {
-> +		pr_err("%s: PWM(%d) is running in other mode!\n",
-> +		       __func__, pwm->hwpwm);
-> +		return -EINVAL;
-> +	}
-
-No error messages after .probe() please. dev_dbg() is fine however.
-
-> +	return 0;
-> +}
-> +
-> +static int nct6694_pwm_get_state(struct pwm_chip *chip,
-> +				 struct pwm_device *pwm,
-> +				 struct pwm_state *state)
-> +{
-> +	struct nct6694_pwm_data *data =3D to_nct6694_pwm_data(chip);
-> +	unsigned char freq_reg, duty;
-> +
-> +	/* Get pwm device initial state */
-> +	state->enabled =3D true;
-> +
-> +	freq_reg =3D data->hwmon_cmd0_buf[HWMON_PWM_FREQ_IDX(pwm->hwpwm)];
-> +	state->period =3D PERIOD_NS_CONST / freq_reg;
-
-I doubt you extensively tested your driver with PWM_DEBUG enabled. Hint:
-You should probably use DIV_ROUND_UP here.
-
-> +	duty =3D data->pwm_cmd1_buf[PWM_MAL_VAL(pwm->hwpwm)];
-> +	state->duty_cycle =3D duty * state->period / 0xFF;
-> +
-> +	return 0;
-> +}
-> +
-> +static int nct6694_pwm_apply(struct pwm_chip *chip,
-> +			     struct pwm_device *pwm,
-> +			     const struct pwm_state *state)
-> +{
-> +	struct nct6694_pwm_data *data =3D to_nct6694_pwm_data(chip);
-> +	unsigned char freq_reg, duty;
-> +	int ret;
-> +
-> +	if (state->period < MAX_PERIOD_NS)
-> +		return -EINVAL;
-> +
-> +	/* (10^9 * 255) / (25000 * Freq_reg) =3D Period_ns */
-
-This could be less irritating if the formula included units. See above.
-
-> +	freq_reg =3D (unsigned char)(PERIOD_NS_CONST / state->period);
-
-No need for the cast.
-
-If state->period is bigger than PERIOD_NS_CONST, freq_reg ends up being
-zero. That's related to the question above about F =3D=3D 0.
-
-> +	data->hwmon_cmd0_buf[HWMON_PWM_FREQ_IDX(pwm->hwpwm)] =3D freq_reg;
-> +	ret =3D nct6694_write_msg(data->nct6694, REQUEST_HWMON_MOD,
-> +				REQUEST_HWMON_CMD0_OFFSET,
-> +				REQUEST_HWMON_CMD0_LEN,
-> +				data->hwmon_cmd0_buf);
-> +	if (ret)
-> +		return -EIO;
-
-return ret;?
-
-> +
-> +	/* Duty =3D duty * 0xFF */
-
-I don't understand that.
-
-> +	duty =3D (unsigned char)(state->duty_cycle * 0xFF / state->period);
-
-Please use the actual period implemented and not state->period.
-
-> +	data->pwm_cmd1_buf[PWM_MAL_VAL(pwm->hwpwm)] =3D duty;
-> +	if (state->enabled)
-> +		data->pwm_cmd1_buf[PWM_MAL_EN(pwm->hwpwm / 8)] |=3D BIT(pwm->hwpwm  % =
-8);
-> +	else
-> +		data->pwm_cmd1_buf[PWM_MAL_EN(pwm->hwpwm / 8)] &=3D ~BIT(pwm->hwpwm  %=
- 8);
-
-s/  / /
-
-> +	ret =3D nct6694_write_msg(data->nct6694, REQUEST_PWM_MOD,
-> +				REQUEST_PWM_CMD1_OFFSET, REQUEST_PWM_CMD1_LEN,
-> +				data->pwm_cmd1_buf);
-> +	if (ret)
-> +		return -EIO;
-
-return ret;
-
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops nct6694_pwm_ops =3D {
-> +	.request =3D nct6694_pwm_request,
-> +	.apply =3D nct6694_pwm_apply,
-> +	.get_state =3D nct6694_pwm_get_state,
-> +};
-> +
-> +static int nct6694_pwm_init(struct nct6694_pwm_data *data)
-> +{
-> +	struct nct6694 *nct6694 =3D data->nct6694;
-> +	int ret;
-> +
-> +	ret =3D nct6694_read_msg(nct6694, REQUEST_HWMON_MOD,
-> +			       REQUEST_HWMON_CMD0_OFFSET,
-> +			       REQUEST_HWMON_CMD0_LEN, 0,
-> +			       REQUEST_HWMON_CMD0_LEN,
-> +			       data->hwmon_cmd0_buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D nct6694_read_msg(nct6694, REQUEST_PWM_MOD,
-> +			       REQUEST_PWM_CMD0_OFFSET,
-> +			       REQUEST_PWM_CMD0_LEN, 0,
-> +			       REQUEST_PWM_CMD0_LEN,
-> +			       data->pwm_cmd0_buf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D nct6694_read_msg(nct6694, REQUEST_PWM_MOD,
-> +			       REQUEST_PWM_CMD1_OFFSET,
-> +			       REQUEST_PWM_CMD1_LEN, 0,
-> +			       REQUEST_PWM_CMD1_LEN,
-> +			       data->pwm_cmd1_buf);
-> +	return ret;
-> +}
-> +
-> +static int nct6694_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct pwm_chip *chip;
-> +	struct nct6694_pwm_data *data;
-> +	struct nct6694 *nct6694 =3D dev_get_drvdata(pdev->dev.parent);
-> +	int ret;
-> +
-> +	chip =3D devm_pwmchip_alloc(&pdev->dev, NR_PWM, sizeof(*data));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	data =3D to_nct6694_pwm_data(chip);
-> +
-> +	data->nct6694 =3D nct6694;
-> +	chip->ops =3D &nct6694_pwm_ops;
-> +
-> +	ret =3D nct6694_pwm_init(data);
-> +	if (ret)
-> +		return -EIO;
-
-return dev_err_probe(dev, ret, "....\n");
-
-> +	/* Register pwm device to PWM framework */
-> +	ret =3D devm_pwmchip_add(&pdev->dev, chip);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register pwm device!\n");
-> +		return ret;
-> +	}
-
-Please use dev_err_probe().
-
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver nct6694_pwm_driver =3D {
-> +	.driver =3D {
-> +		.name	=3D DRVNAME,
-
-DRVNAME is only used once (and a too generic name). Please just put the
-string here directly.
-
-> +	},
-> +	.probe		=3D nct6694_pwm_probe,
-> +};
-
-I don't like your aligning choices. Why do you intend the =3D for .probe
-but not for .driver? My preferred style is a single space before the =3D.
-While aligning the =3D is a subjective choice, a relevant downside is that
-if later a longer member should get initialized you have to realign all
-the otherwise unaffected lines to restore the alignment.
-
-> +static int __init nct6694_init(void)
-> +{
-> +	int err;
-> +
-> +	err =3D platform_driver_register(&nct6694_pwm_driver);
-> +	if (!err) {
-> +		if (err)
-
-Huh?
-
-> +			platform_driver_unregister(&nct6694_pwm_driver);
+>  #define STORVSC_LOGGING_NONE	0
+>  #define STORVSC_LOGGING_ERROR	1
+>  #define STORVSC_LOGGING_WARN	2
+> @@ -980,6 +982,13 @@ static void storvsc_handle_error(struct vmscsi_reque=
+st
+> *vm_srb,
+>  	void (*process_err_fn)(struct work_struct *work);
+>  	struct hv_host_device *host_dev =3D shost_priv(host);
+>=20
+> +	// HyperV FC does not support MAINTENANCE_IN ignore
+> +	if ((scmnd->cmnd[0] =3D=3D MAINTENANCE_IN) &&
+> +		(SRB_STATUS(vm_srb->srb_status) =3D=3D SRB_STATUS_DATA_OVERRUN) &&
+> +		hv_dev_is_fc(host_dev->dev)) {
+> +		return;
 > +	}
 > +
-> +	return err;
-> +}
-> +subsys_initcall(nct6694_init);
 
-Do you really need this to be at subsys init time?
+Could use the following coding instead to avoid the explicit check of srb_s=
+tatus:
 
-> +static void __exit nct6694_exit(void)
-> +{
-> +	platform_driver_unregister(&nct6694_pwm_driver);
-> +}
-> +module_exit(nct6694_exit);
+@@ -981,6 +981,16 @@ static void storvsc_handle_error(struct vmscsi_request=
+ *vm_srb,
+        struct hv_host_device *host_dev =3D shost_priv(host);
+
+        switch (SRB_STATUS(vm_srb->srb_status)) {
++       case SRB_STATUS_DATA_OVERRUN:
++               /*
++                * Hyper-V does not support MAINTENANCE_IN, resulting in FC
++                * passthrough returning DATA_OVERRUN. But treating as an
++                * error incorrectly puts ALUA paths into a fault state.
++                */
++               if ((scmnd->cmnd[0] =3D=3D MAINTENANCE_IN) &&
++                               hv_dev_is_fc(host_dev->dev))
++                       return;
++               fallthrough;
+        case SRB_STATUS_ERROR:
+        case SRB_STATUS_ABORTED:
+        case SRB_STATUS_INVALID_REQUEST:
+@@ -988,7 +998,6 @@ static void storvsc_handle_error(struct vmscsi_request =
+*vm_srb,
+        case SRB_STATUS_TIMEOUT:
+        case SRB_STATUS_SELECTION_TIMEOUT:
+        case SRB_STATUS_BUS_RESET:
+-       case SRB_STATUS_DATA_OVERRUN:
+                if (vm_srb->srb_status & SRB_STATUS_AUTOSENSE_VALID) {
+                        /* Check for capacity change */
+
+>  	switch (SRB_STATUS(vm_srb->srb_status)) {
+>  	case SRB_STATUS_ERROR:
+>  	case SRB_STATUS_ABORTED:
+> @@ -1161,6 +1170,12 @@ static void storvsc_on_io_completion(struct storvs=
+c_device *stor_device,
+>  	stor_pkt->vm_srb.sense_info_length =3D min_t(u8, STORVSC_SENSE_BUFFER_S=
+IZE,
+>  		vstor_packet->vm_srb.sense_info_length);
+>=20
+> +	// HyperV FC does not support MAINTENANCE_IN ignore
+
+For consistency, prefer to not use C++ style comments.
+
+> +	if ((SRB_STATUS(vstor_packet->vm_srb.srb_status) =3D=3D SRB_STATUS_DATA=
+_OVERRUN) &&
+> +		(stor_pkt->vm_srb.cdb[0] =3D=3D MAINTENANCE_IN) &&
+> +		hv_dev_is_fc(device))
+> +		goto skip_logging;
 > +
-> +MODULE_DESCRIPTION("USB-PWM driver for NCT6694");
-> +MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
-> +MODULE_LICENSE("GPL");
 
-Best regards
-Uwe
+Just wondering:  There's already a hack earlier in this function for
+INQUIRY and MODE_SENSE commands that sets scsi_status and
+srb_status to indicate success. What if this case did the same? Then
+nothing would be logged, and a special case would not be needed in
+storvsc_handle_error().  Or do you still need the error and sense info to
+propagate to higher levels?  (in which case what you've done here is OK)
 
---iddd2vffbehamsfe
-Content-Type: application/pgp-signature; name="signature.asc"
+Michael
 
------BEGIN PGP SIGNATURE-----
+>  	if (vstor_packet->vm_srb.scsi_status !=3D 0 ||
+>  	    vstor_packet->vm_srb.srb_status !=3D SRB_STATUS_SUCCESS) {
+>=20
+> @@ -1181,6 +1196,7 @@ static void storvsc_on_io_completion(struct storvsc=
+_device *stor_device,
+>  			vstor_packet->status);
+>  	}
+>=20
+> +skip_logging:
+>  	if (vstor_packet->vm_srb.scsi_status =3D=3D SAM_STAT_CHECK_CONDITION &&
+>  	    (vstor_packet->vm_srb.srb_status & SRB_STATUS_AUTOSENSE_VALID))
+>  		memcpy(request->cmd->sense_buffer,
+> --
+> 2.42.0
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdAx+oACgkQj4D7WH0S
-/k5qOAf/T2+rcQXdOX8t9UuEfG+QnoXIYHB5QWVAgIb3ZtY3tWpx0e3DYmkILlHt
-FFWbh4TeRluZCR6Pk4cFPCIyrWW4luAuUK493LTRoXwpBRr2XueNQRN2SIZ56Shl
-ezJzGWe8lOTYjo19jfg78jKp3JPrTXk7XqdB3uAAwfyHVo1NsqmKfeQ/x9HrbN+1
-1fe0FJCey2bVoTrOzZYPBxQNbt8yRr4cKxE/ctKyR0zHYpv2hWHXUYaWlv8bG6WY
-iK7Oh3ZlkekX2hYiE3sqbkUQlXFCVR36+UIi3h2IPc4xv9Vlwp80BOM6FNX8EGj+
-tOL+gRkzX2kxM5jyTzW5t0ewh1ZGtw==
-=bA38
------END PGP SIGNATURE-----
-
---iddd2vffbehamsfe--
 
