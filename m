@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-417727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-417728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A849D5864
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:36:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1339D586A
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 03:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EECA31F233F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:36:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C70B2282B74
+	for <lists+linux-kernel@lfdr.de>; Fri, 22 Nov 2024 02:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6561531D8;
-	Fri, 22 Nov 2024 02:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WO7XrMR3"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2848A158861;
+	Fri, 22 Nov 2024 02:45:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9501C69D
-	for <linux-kernel@vger.kernel.org>; Fri, 22 Nov 2024 02:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3D4C66;
+	Fri, 22 Nov 2024 02:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732242990; cv=none; b=kMOdt8MG+CW5CnM92ao2carn8/mVSVMYtFrsqU1HCMrhvqj67BemzPSn/U+4rBKYKPBidcXLIallUJ8/BaOgRjeYFajUzyuc1aisKNXbpk5THKC3rOjUCVcpufA8Sk4W58cy1oIbCwbmmw0/jw94yexpqDKAgxSCb+5COmgO6r8=
+	t=1732243554; cv=none; b=gBeNGw9p0ye1g5wD0jIw9Ijl7gVCh+sHIyLXMTXpV05EWJ2GBlNOD3apHJaA02cNLlG/LT5Gaj419m6jZeZ9gn57FbmyiBU3VnzS1gmVIF9oQuySkvThMAP5YaTWwJGnzUTppkThfGOq0m/M5B6BAIk/htDQfNFW193C0H8aaHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732242990; c=relaxed/simple;
-	bh=kNZsTWOCUGeXzUUlUp6ekbBy/pNDYV/8nwOWEdQK5a0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6VoqGaIMfjMxzvBCFy4p99qLKk4mBrf7SpraYghENf/plqtR21DuI0+opLHWNLwGB0X/DTbtk/3jy0Pkcwgp5FGfgVZzeVAEWP7Y/CYaY6xyxT4/vAFtsOh7/DeRiSR+0dv3YKxhcwj92hk3y6msFabtgqzH9oepKQcdYemQfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WO7XrMR3; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53dd1829b56so1150939e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 21 Nov 2024 18:36:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732242985; x=1732847785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w58mpTdLCyM76KOVFOa5hEFbjg7oBG1TqdCvT/1gms8=;
-        b=WO7XrMR3mR/Ixs3fi5HyF2nwjVUOR0yg9FNQfEo+JypUWDiezuL9iQCnOsmIkcki71
-         9IRAALZfsfudMVct2qQubnYJ0d0e3o5KW+kHcEkUJKlVqB73GuzLNTwZB8zu3LYE+UYt
-         wZ6V297qnhg+HuZLgqj2rGsp1LvJCOb7EaKi8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732242985; x=1732847785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w58mpTdLCyM76KOVFOa5hEFbjg7oBG1TqdCvT/1gms8=;
-        b=h4pSGJoV5TH/hv3q6vpLdzGlPf3lq764jMlsx9n37AwnY5cVc9bTME7hvvuv00Br75
-         ryw1G59beVoZTvdxfKjJDZc6NaGdpbJbfSF3mKGiB5qWBsCyKAHiE8276UHjtqjkF3Gx
-         CkkuSWR02pB3oqa+5Eea3EQB82rljKWOT/cXISuRftU05WiWU7lmb1oyhbdf1Gg9zRJL
-         yYU7JAFRa1AeApEBjAijejMBqGKz20rDln1JdjujtYmhv8aG8JEJ9jo+o+ePNh/b/9Rk
-         b0vm9hbeaLuAwfPkJLKnLOQD/SPquKOOzLfY4qjQWwT4lFRs8/hDtzC8JG6pBiO+k0ju
-         d+YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnWpGvIV6Ni3/sL2NagbHXcBUbzpWjRaFZJzpWKW9bigCVzsDJEwUu4tuGG1Y7zEQ13WGCUFhTyk0mTuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS7Xx403vEJujiOni3GLIQxEoMtaeEXKiTvxFDWoANQPcr5DR8
-	trhRvfIzZbdndEVKVih18IIaV/TEXcUztOCS5TYvmPg/yEgGf9+mjm9rxvxGraR7BxVAklwsdUw
-	fl11s+GXgopKuWXvQ6XH3t8QvuT1GKZnkRlcv
-X-Gm-Gg: ASbGncuOzw0ORio0zuXXaJ+Vc1uQudddrwHiDLgGKK2BNZ6w4rXSaqgiyrt56R0kJLv
-	KN4s43eF5caXLbkZ1S6lQ2L65tLEHC5Z4AmvtWp5y8tKmYmj05PEtsDUVQQ==
-X-Google-Smtp-Source: AGHT+IHv/1QmF+gjCpmGYzT7ut+STnNpVA5KQSryGBND2mlguVqBI1n74mDe76EIOb4qOgxv69lpEC6BjzzDg+jqaDc=
-X-Received: by 2002:a05:6512:1247:b0:53d:d17f:9c82 with SMTP id
- 2adb3069b0e04-53dd39a549bmr521859e87.41.1732242985261; Thu, 21 Nov 2024
- 18:36:25 -0800 (PST)
+	s=arc-20240116; t=1732243554; c=relaxed/simple;
+	bh=bqvSoCMsXdacbGux47FYTDryU13WxZaa3CRGdb/BYjo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PQ8WlEwYDHCADG3Pc/kPt45AT3zs4p/WkOKh71xFZda09lgwm8bMaL3nqV3ZVBRVXr1EkciHvxka/5hmm0YaMbO4Dz5lZwaxYce4f5Ln3T/J801gUBb9kjnwkJwlw/ZPiUrqK6gyJ0ASfmAtHuKgh/xt8VkCX2g5hLYsJPECtQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xvfbf3zrFz4f3jqF;
+	Fri, 22 Nov 2024 10:45:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 106341A0194;
+	Fri, 22 Nov 2024 10:45:48 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4da8D9nlY_oCQ--.57100S3;
+	Fri, 22 Nov 2024 10:45:47 +0800 (CST)
+Subject: Re: [PATCH md-6.13 5/5] md/md-bitmap: move bitmap_{start, end}write
+ to md upper layer
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241118114157.355749-1-yukuai1@huaweicloud.com>
+ <20241118114157.355749-6-yukuai1@huaweicloud.com>
+ <CALTww28JrdXoNXQNPxx2Sg9L2iL20jZZ80Y-qZzqcyF780M1fg@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e6843d53-c7f4-2e38-0a15-91b49afec8f1@huaweicloud.com>
+Date: Fri, 22 Nov 2024 10:45:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121152931.51884-1-frederic@kernel.org>
-In-Reply-To: <20241121152931.51884-1-frederic@kernel.org>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Fri, 22 Nov 2024 10:36:14 +0800
-Message-ID: <CAGXv+5HtG+6D8245DFAeSKfGL75zVkEGLu74=hqtjX=-Dpj70Q@mail.gmail.com>
-Subject: Re: [PATCH] delay: Fix ndelay() spuriously treated as udelay()
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALTww28JrdXoNXQNPxx2Sg9L2iL20jZZ80Y-qZzqcyF780M1fg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHY4da8D9nlY_oCQ--.57100S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFyxtrWDZF4UuFW3JryxZrb_yoWfZrc_GF
+	92y3s5Cw1DZFs3Ka1rur15ZFZFkFW5JFyDXr1kt390g34rXa95AFZ0v34vyw4fCa98tr93
+	Gr9rXr4DGrs8ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbSfO7UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Nov 21, 2024 at 11:30=E2=80=AFPM Frederic Weisbecker
-<frederic@kernel.org> wrote:
->
-> A recent rework on delay functions wrongly ended up calling __udelay()
-> instead of __ndelay() for nanosecond delays, increasing those by 1000.
->
-> As a result hangs have been observed on boot
->
-> Restore the right function calls.
->
-> Fixes: 19e2d91d8cb1 ("delay: Rework udelay and ndelay")
-> Reported-by: Chen-Yu Tsai <wenst@chromium.org>
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Hi,
 
-Tested-by: Chen-Yu Tsai <wenst@chromium.org>
-Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+在 2024/11/22 10:06, Xiao Ni 写道:
+> On Mon, Nov 18, 2024 at 7:44 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> There are two BUG reports that raid5 will hang at
+>> bitmap_startwrite([1],[2]), root cause is that bitmap start write and end
+>> write is unbalanced, and while reviewing raid5 code, it's found that
+> 
+> Hi Kuai
+> 
+> It's better to describe more about "unbalanced" in the patch. For
+> raid5, bitmap is set and cleared based on stripe->dev[] now. It looks
+> like the set operation matches the clear operation already.
 
-Thank you for the quick response! This fixed things for me.
+Ok, one place that I found is that raid5 can do extra end write while
+stripe->dev[].towrite is NULL, the null checking is missing. I'll
+mention that in the next version.
 
-> ---
->  include/asm-generic/delay.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/include/asm-generic/delay.h b/include/asm-generic/delay.h
-> index 76cf237b6e4c..03b0ec7afca6 100644
-> --- a/include/asm-generic/delay.h
-> +++ b/include/asm-generic/delay.h
-> @@ -75,11 +75,11 @@ static __always_inline void ndelay(unsigned long nsec=
-)
->  {
->         if (__builtin_constant_p(nsec)) {
->                 if (nsec >=3D DELAY_CONST_MAX)
-> -                       __bad_udelay();
-> +                       __bad_ndelay();
->                 else
->                         __const_udelay(nsec * NDELAY_CONST_MULT);
->         } else {
-> -               __udelay(nsec);
-> +               __ndelay(nsec);
->         }
->  }
->  #define ndelay(x) ndelay(x)
-> --
-> 2.46.0
->
+...
+
+> 
+> This patch looks good to me.
+> 
+> Reviewd-by: Xiao Ni <xni@redhat.com>
+> 
+
+Thanks for the review. I'll also remove the unused STRIPE_BITMAP_PENDING
+in v2.
+
+Kuai
+
+> 
+> .
+> 
+
 
